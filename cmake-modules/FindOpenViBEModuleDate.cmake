@@ -1,0 +1,29 @@
+# ---------------------------------
+# Finds module Date
+# Adds library to target
+# Adds include path
+# ---------------------------------
+OPTION(DYNAMIC_LINK_OPENVIBE_MODULE_DATE "Dynamically link OpenViBE module Date" OFF)
+
+IF(DYNAMIC_LINK_OPENVIBE_MODULE_DATE)
+	SET(OPENVIBE_MODULE_DATE_LINKING "")
+	ADD_DEFINITIONS(-DDATE_Shared)
+ELSE()
+	SET(OPENVIBE_MODULE_DATE_LINKING "-static")
+	ADD_DEFINITIONS(-DDATE_Static)
+ENDIF()
+
+set(PATH_OPENVIBE_MODULES_DATE "PATH_OPENVIBE_MODULES_DATE-NOTFOUND")
+set(SRC_DIR ${OV_BASE_DIR}/modules/date/include)
+
+FIND_PATH(PATH_OPENVIBE_MODULES_DATE date/defines.h PATHS ${SRC_DIR}  NO_DEFAULT_PATH)
+IF(PATH_OPENVIBE_MODULES_DATE)
+	debug_message("  Found OpenViBE module Date...")
+	INCLUDE_DIRECTORIES(${PATH_OPENVIBE_MODULES_DATE}/)
+
+	TARGET_LINK_LIBRARIES(${PROJECT_NAME} openvibe-module-date${OPENVIBE_MODULE_DATE_LINKING})
+
+	ADD_DEFINITIONS(-DTARGET_HAS_DATE)
+ELSE()
+	MESSAGE(STATUS "  FAILED to find OpenViBE module Date...")
+ENDIF()

@@ -1,0 +1,40 @@
+#include "winres.h"
+
+@CONFIGURE_ICON@
+
+// Language is US English
+LANGUAGE LANG_ENGLISH, SUBLANG_DEFAULT
+
+#ifndef DEBUG
+#define VER_DEBUG                   0
+#else
+#define VER_DEBUG                   VS_FF_DEBUG
+#endif
+
+// Add version information
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION @OV_GLOBAL_VERSION_MAJOR@,@OV_GLOBAL_VERSION_MINOR@,@OV_GLOBAL_VERSION_PATCH@
+ PRODUCTVERSION @OV_GLOBAL_VERSION_MAJOR@,@OV_GLOBAL_VERSION_MINOR@,@OV_GLOBAL_VERSION_PATCH@
+ FILEOS VOS__WINDOWS32
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904E4"
+        BEGIN
+            VALUE "CompanyName", "Mensia Technologies"
+            VALUE "FileDescription", "@FILE_DESCRIPTION@"
+            VALUE "FileVersion", "@MENSIA_GLOBAL_VERSION_STRING@"
+            VALUE "InternalName", "@PROJECT_NAME@"
+            VALUE "LegalCopyright", "Copyright - Mensia Technologies SA 2012-2015"
+            VALUE "OriginalFilename", "@PROJECT_NAME@"
+            VALUE "ProductName", "@PROJECT_PRODUCT_NAME@"
+            VALUE "ProductVersion", "@MENSIA_GLOBAL_VERSION_STRING@"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+		// Indicates that Software is translated in US English in the Windows ANSI codepage (1252).
+        VALUE "Translation", 0x409, 1252
+    END
+END
+

@@ -1,0 +1,63 @@
+#!/bin/bash
+
+## By default, paths specified by CMake install will be used to locate OpenViBE components. If defined, these ENV variables can override the CMake defines.
+#export OV_PATH_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+#export OV_PATH_BIN="$OV_PATH_ROOT/bin"
+#export OV_PATH_LIB="$OV_PATH_ROOT/lib"
+#export OV_PATH_DATA="$OV_PATH_ROOT/share/openvibe"
+
+# Tries to locate matlab executable from $PATH, and set the library path to the corresponding matlab libs.
+if [ "`which matlab`" != "" ] ; then
+	MATLAB_ROOT=`matlab -e | grep "^MATLAB=" | sed -e "s/^MATLAB=//"`
+	MATLAB_ARCH=`matlab -e | grep "^ARCH=" | sed -e "s/^ARCH=//"`
+	MATLAB_LIBPATH="$MATLAB_ROOT/bin/$MATLAB_ARCH"
+	# echo Matlab libs expected at $MATLAB_LIBPATH
+	export DYLD_LIBRARY_PATH="$MATLAB_LIBPATH:$DYLD_LIBRARY_PATH"
+fi
+
+if [ "$OV_PATH_BIN" == "" ]; then
+	OV_PATH_BIN="@CMAKE_INSTALL_FULL_BINDIR@"
+fi
+if [ "$OV_PATH_LIB" == "" ]; then
+	OV_PATH_LIB="@CMAKE_INSTALL_FULL_LIBDIR@"
+fi
+if [ "$OV_PATH_DATA" == "" ]; then
+	OV_PATH_DATA="@CMAKE_INSTALL_FULL_DATADIR@"
+fi
+# if [ "$MENSIA_PATH_DATA" == "" ]; then
+# 	MENSIA_PATH_DATA="@CMAKE_INSTALL_FULL_DATADIR@"
+# fi
+
+export DYLD_LIBRARY_PATH="$OV_PATH_LIB:@CMAKE_SOURCE_DIR@/dependencies/lib:$DYLD_LIBRARY_PATH"
+export LC_ALL=C
+
+export GTK_PATH=/usr/local/lib/gtk-2.0
+
+export LUA_CPATH="$OV_PATH_LIB/lib?.dylib;`echo 'print(package.cpath)' | lua - `"
+export LUA_PATH="$OV_PATH_BIN/?.lua;`echo 'print(package.path)' | lua - `"
+
+# The following line is there to help in cases where OpenViBE can consume excessive
+# amounts of CPU or grind the swap. You can remove it if you know what you're doing.
+renice 19 $$
+
+ov_debugger=
+if [ "$1" == "--debug" ]; then
+	ov_debugger="gdb --args"
+	shift
+fi
+ov_run_bg=0
+if [ "$1" == "--run-bg" ]; then
+	ov_run_bg=1
+	shift
+fi
+
+ret_code=0
+
+if [ $ov_run_bg == 0 ]; then
+	eval $ov_debugger "$OV_PATH_BIN/@OV_CMD_EXECUTABLE@" @OV_CMD_ARGS@ $*
+	ret_code=$?
+else
+	$ov_debugger "$OV_PATH_BIN/@OV_CMD_EXECUTABLE@" @OV_CMD_ARGS@ $* &
+fi
+
+exit $ret_code

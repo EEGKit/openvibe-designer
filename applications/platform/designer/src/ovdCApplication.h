@@ -1,0 +1,209 @@
+#ifndef __OpenViBEDesigner_CApplication_H__
+#define __OpenViBEDesigner_CApplication_H__
+
+#include "ovd_base.h"
+#if defined TARGET_HAS_LibArchway
+#include "ovdCArchwayHandler.h"
+#include "ovdCArchwayHandlerGUI.h"
+#endif
+
+#include <vector>
+namespace Mensia
+{
+	class CMetaboxLoader;
+
+	namespace ActivationTool
+	{
+		class CActivationTool;
+	};
+};
+
+namespace OpenViBEDesigner
+{
+
+	class CInterfacedScenario;
+
+	class CLogListenerDesigner;
+
+	class CApplication
+	{
+	public:
+		CApplication(const OpenViBE::Kernel::IKernelContext& rKernelContext);
+		~CApplication(void);
+
+		void initialize(OpenViBEDesigner::ECommandLineFlag eCommandLineFlags);
+
+		OpenViBE::boolean openScenario(const char* sFileName);
+
+		/** \name Drag and drop management */
+		//@{
+
+		void dragDataGetCB(
+			::GtkWidget* pWidget,
+			::GdkDragContext* pDragContex,
+			::GtkSelectionData* pSelectionData,
+			guint uiInfo,
+			guint uiT);
+
+		//@}
+
+		/** \name Selection management */
+		//@{
+
+		void undoCB(void);
+		void redoCB(void);
+
+		void copySelectionCB(void);
+		void cutSelectionCB(void);
+		void pasteSelectionCB(void);
+		void deleteSelectionCB(void);
+		void preferencesCB(void);
+
+		//@}
+
+		/** \name Scenario management */
+		//@{
+
+		OpenViBE::CString getWorkingDirectory(void);
+
+		OpenViBE::boolean hasRunningScenario(void);
+		OpenViBE::boolean hasUnsavedScenario(void);
+
+		OpenViBEDesigner::CInterfacedScenario* getCurrentInterfacedScenario(void);
+		void saveOpenedScenarios(void);
+
+		void testCB(void);
+		void newScenarioCB(void);
+		void openScenarioCB(void);
+		void saveScenarioCB(OpenViBEDesigner::CInterfacedScenario* pInterfacedScenario=NULL); // defaults to current scenario if NULL
+		void saveScenarioAsCB(OpenViBEDesigner::CInterfacedScenario* pInterfacedScenario=NULL); // defaults to current scenario if NULL
+		void closeScenarioCB(
+			OpenViBEDesigner::CInterfacedScenario* pInterfacedScenario);
+
+		void stopScenarioCB(void);
+		void pauseScenarioCB(void);
+		void nextScenarioCB(void);
+		void playScenarioCB(void);
+		void forwardScenarioCB(void);
+
+		void configureScenarioSettingsCB(OpenViBEDesigner::CInterfacedScenario* pScenario);
+
+		void addCommentCB(
+			OpenViBEDesigner::CInterfacedScenario* pScenario);
+
+		void changeCurrentScenario(
+			OpenViBE::int32 i32PageIndex);
+		void reorderCurrentScenario(
+			OpenViBE::uint32 i32NewPageIndex);
+
+		//@}
+
+		/** \name Designer visualisation management */
+		//@{
+
+		void deleteDesignerVisualisationCB();
+
+		void toggleDesignerVisualisationCB();
+
+		//@}
+
+		/** \name Player management */
+		//@{
+
+		OpenViBE::Kernel::IPlayer* getPlayer(void);
+
+		OpenViBE::boolean createPlayer(void);
+
+		void releasePlayer(void);
+
+		//@}
+
+		/** \name Application management */
+		//@{
+
+		OpenViBE::boolean quitApplicationCB(void);
+		void aboutOpenViBECB(void);
+		void aboutScenarioCB(OpenViBEDesigner::CInterfacedScenario* pScenario);
+		void aboutLinkClickedCB(const gchar *url);
+
+		void browseDocumentationCB(void);
+		void reportIssueCB(void);
+		void windowStateChangedCB(OpenViBE::boolean bIsMaximized);
+		OpenViBE::boolean displayChangelogWhenAvailable();
+
+		//@}
+
+		/** \name Log management */
+		//@{
+
+		void logLevelCB(void);
+		void logLevelMessagesCB(void);
+
+		//@}
+
+		/** \name CPU usage */
+		//@{
+
+		void CPUUsageCB(void);
+
+		//@}
+
+	public:
+
+		const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
+		OpenViBE::Kernel::IPluginManager* m_pPluginManager;
+		OpenViBE::Kernel::IScenarioManager* m_pScenarioManager;
+		OpenViBE::Kernel::IVisualisationManager* m_pVisualisationManager;
+		OpenViBE::Kernel::IScenario* m_pClipboardScenario;
+
+		OpenViBEDesigner::CLogListenerDesigner* m_pLogListenerDesigner;
+
+		OpenViBEDesigner::ECommandLineFlag m_eCommandLineFlags;
+
+		::GtkBuilder* m_pBuilderInterface;
+		::GtkWidget* m_pMainWindow;
+		::GtkWidget* m_pSplashScreen;
+		::GtkNotebook* m_pScenarioNotebook;
+		::GtkNotebook* m_pResourceNotebook;
+		::GtkTreeStore* m_pBoxAlgorithmTreeModel;
+		::GtkTreeModel* m_pBoxAlgorithmTreeModelFilter;
+		::GtkTreeModel* m_pBoxAlgorithmTreeModelFilter2;
+		::GtkTreeModel* m_pBoxAlgorithmTreeModelFilter3;
+		::GtkTreeModel* m_pBoxAlgorithmTreeModelFilter4;
+		::GtkTreeView* m_pBoxAlgorithmTreeView;
+		::GtkTreeStore* m_pAlgorithmTreeModel;
+		::GtkTreeView* m_pAlgorithmTreeView;
+		::GtkSpinButton* m_pFastForwardFactor;
+		GtkWidget* m_pConfigureSettingsAddSettingButton;
+
+		// UI for adding inputs and outputs to a scenario
+		GtkWidget* m_pTableInputs;
+		GtkWidget* m_pTableOutputs;
+
+		gint m_giFilterTimeout;
+
+		OpenViBE::boolean m_bIsMaximized;
+		OpenViBE::boolean m_bCanImportBinary;
+		OpenViBE::boolean m_bCanExportBinary;
+
+		const gchar* m_sSearchTerm;
+
+		OpenViBE::uint64 m_ui64LastTimeRefresh;
+		OpenViBE::boolean m_bIsQuitting;
+		OpenViBE::boolean m_bIsNewVersion;
+
+		std::vector < OpenViBEDesigner::CInterfacedScenario* > m_vInterfacedScenario;
+		OpenViBE::uint32 m_ui32CurrentInterfacedScenarioIndex;
+		Mensia::CMetaboxLoader* m_pMetaboxLoader;
+		Mensia::ActivationTool::CActivationTool* m_pActivationTool;
+		std::vector <const OpenViBE::Plugins::IPluginObjectDesc*> m_vNewBoxes;
+		std::vector <const OpenViBE::Plugins::IPluginObjectDesc*> m_vUpdatedBoxes;
+		std::vector <std::string> m_vDocumentedBoxes;
+#if defined TARGET_HAS_LibArchway
+		Mensia::CArchwayHandler m_oArchwayHandler;
+		Mensia::CArchwayHandlerGUI m_oArchwayHandlerGUI;
+#endif
+	};
+}
+
+#endif // __OpenViBEDesigner_CApplication_H__
