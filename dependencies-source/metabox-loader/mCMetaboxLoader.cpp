@@ -195,8 +195,8 @@ CIdentifier CMetaboxLoader::openScenario(const char* sFileName)
 				{
 					l_pImporter->initialize();
 
-					TParameterHandler < const IMemoryBuffer* > ip_pMemoryBuffer(l_pImporter->getInputParameter(OVTK_Algorithm_ScenarioImporter_InputParameterId_MemoryBuffer));
-					TParameterHandler < IScenario* > op_pScenario(l_pImporter->getOutputParameter(OVTK_Algorithm_ScenarioImporter_OutputParameterId_Scenario));
+					TParameterHandler < const IMemoryBuffer* > ip_pMemoryBuffer(l_pImporter->getInputParameter(OV_Algorithm_ScenarioImporter_InputParameterId_MemoryBuffer));
+					TParameterHandler < IScenario* > op_pScenario(l_pImporter->getOutputParameter(OV_Algorithm_ScenarioImporter_OutputParameterId_Scenario));
 
 					ip_pMemoryBuffer = &l_oMemoryBuffer;
 					op_pScenario = &l_rScenario;

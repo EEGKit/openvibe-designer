@@ -1,0 +1,26 @@
+# This file is an example configuration of OpenViBE build system
+# By default all changes are disabled, you can un-comment any that are of interest to you
+# In order to use the file make a copy of it an rename it "CustomCMakeLists.txt"
+
+# ----------------------------------
+# USEFUL ELEMENTS
+# ----------------------------------
+#SET(INSTALL_EXE OFF)
+
+# Uncomment the following to build documentation
+# both the global project and the specific projects are affected by this token
+#SET(SKIP_DOCUMENTATION OFF)
+
+# Optionally skip whole projects
+#SET(SKIP_APPLICATIONS ON)
+#SET(SKIP_LIBRARIES ON)
+#SET(SKIP_PLUGINS ON)
+
+#SET(SKIP_APPLICATIONS_PLATFORM ON)
+#SET(SKIP_APPLICATIONS_PLATFORM_DESIGNER ON)
+
+
+#SET(SKIP_LIBRARIES_LIB-ADVANCED-VISUALIZATION ON)
+
+# Plugins
+#SET(SKIP_PLUGINS_OVP-ADVANCED-VISUALIZATION ON)

@@ -20,8 +20,3 @@ INCLUDE("FindThirdPartyBoost")
 # ---------------------------------
 SET_BUILD_PLATFORM()
 
-# -----------------------------
-# Install files
-# -----------------------------
-
-INSTALL(DIRECTORY include/   DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR} FILES_MATCHING PATTERN "*.hpp" PATTERN "*.h" PATTERN ".svn" EXCLUDE PATTERN "doc" EXCLUDE)

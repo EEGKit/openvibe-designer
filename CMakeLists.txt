@@ -37,7 +37,9 @@ INCLUDE("OvMessages")
 debug_message("Checking local dependencies manifest...")
 
 SET(OV_CUSTOM_DEPENDENCIES_PATH "${CMAKE_SOURCE_DIR}/dependencies")
-SET(OV_ICON_PATH "${CMAKE_SOURCE_DIR}/scripts/components/icons")
+SET(OV_SOURCE_DEPENDENCIES_PATH "${CMAKE_SOURCE_DIR}/dependencies-source")
+SET(OV_ICON_PATH "${CMAKE_SOURCE_DIR}/scripts/icons")
+SET(OPENVIBE_SDK_PATH "${OV_CUSTOM_DEPENDENCIES_PATH}/certivibe" CACHE STRING "")
 IF(WIN32)
 	SET(MANDATORY_DEPENDENCIES_LIST "")
 	# update this section when updating the dependencies.
@@ -140,7 +142,7 @@ ENDIF() # WIN32
 ###################################################################################
 
 SET(OEM_DISTRIBUTION "mensia")
-SET(INSTALL_EXE ON)
+SET(INSTALL_EXE OFF)
 
 # The user files will be stored in .../mensia/OV_PROJECT_NAME folder
 ADD_DEFINITIONS("-DOV_PROJECT_NAME=\"openvibe\"")
@@ -296,7 +298,8 @@ ENDIF()
 
 # make a copy of the dependency script, this is done so we can use the same launch scripts both in win install and win devel situations.
 IF(WIN32)
-	INSTALL(PROGRAMS ${CMAKE_SOURCE_DIR}/scripts/win32-dependencies.cmd DESTINATION ${CMAKE_INSTALL_FULL_BINDIR} RENAME "openvibe-set-env.cmd")
+    set(ABSOLUTE_PATH_DEPENDENCIES "${OV_CUSTOM_DEPENDENCIES_PATH}")
+	configure_file("${CMAKE_SOURCE_DIR}/scripts/windows-set-environment.cmd-base" "${CMAKE_INSTALL_FULL_BINDIR}/openvibe-set-env.cmd" @ONLY)
 ENDIF(WIN32)
 
 # add the scripts to the project so IDEs using the CMake file are aware of them

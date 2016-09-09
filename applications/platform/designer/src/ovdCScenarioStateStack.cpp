@@ -1,6 +1,7 @@
 #include "ovdCScenarioStateStack.h"
 
 #include <zlib.h>
+#include <ovp_global_defines.h>
 
 using namespace OpenViBE;
 using namespace OpenViBE::Kernel;
@@ -179,9 +180,10 @@ boolean CScenarioStateStack::restoreState(const IMemoryBuffer& rState)
 
 	l_pImporter->initialize();
 
-	TParameterHandler < const IMemoryBuffer* > ip_pMemoryBuffer(l_pImporter->getInputParameter(OVTK_Algorithm_ScenarioImporter_InputParameterId_MemoryBuffer));
-	TParameterHandler < IScenario* > op_pScenario(l_pImporter->getOutputParameter(OVTK_Algorithm_ScenarioImporter_OutputParameterId_Scenario));
+	TParameterHandler < const IMemoryBuffer* > ip_pMemoryBuffer(l_pImporter->getInputParameter(OV_Algorithm_ScenarioImporter_InputParameterId_MemoryBuffer));
+	TParameterHandler < IScenario* > op_pScenario(l_pImporter->getOutputParameter(OV_Algorithm_ScenarioImporter_OutputParameterId_Scenario));
 
+	/*
 	CIdentifier l_oWidgetIdentifier;
 	while(m_rScenario.getVisualisationTreeDetails().getNextVisualisationWidgetIdentifier(l_oWidgetIdentifier))
 	{
@@ -189,6 +191,7 @@ boolean CScenarioStateStack::restoreState(const IMemoryBuffer& rState)
 		l_oWidgetIdentifier=OV_UndefinedIdentifier;
 	}
 	m_rScenario.getVisualisationTreeDetails().reloadTree();
+	*/
 	m_rScenario.clear();
 
 	ip_pMemoryBuffer=&l_oUncompressedMemoryBuffer;
@@ -198,7 +201,7 @@ boolean CScenarioStateStack::restoreState(const IMemoryBuffer& rState)
 	l_pImporter->uninitialize();
 	m_rKernelContext.getAlgorithmManager().releaseAlgorithm(*l_pImporter);
 
-	m_rScenario.getVisualisationTreeDetails().reloadTree();
+//	m_rScenario.getVisualisationTreeDetails().reloadTree();
 
 	return true;
 }
@@ -222,8 +225,8 @@ boolean CScenarioStateStack::dumpState(IMemoryBuffer& rState)
 
 	l_pExporter->initialize();
 
-	TParameterHandler < const IScenario* > ip_pScenario(l_pExporter->getInputParameter(OVTK_Algorithm_ScenarioExporter_InputParameterId_Scenario));
-	TParameterHandler < IMemoryBuffer* > op_pMemoryBuffer(l_pExporter->getOutputParameter(OVTK_Algorithm_ScenarioExporter_OutputParameterId_MemoryBuffer));
+	TParameterHandler < const IScenario* > ip_pScenario(l_pExporter->getInputParameter(OV_Algorithm_ScenarioExporter_InputParameterId_Scenario));
+	TParameterHandler < IMemoryBuffer* > op_pMemoryBuffer(l_pExporter->getOutputParameter(OV_Algorithm_ScenarioExporter_OutputParameterId_MemoryBuffer));
 
 	ip_pScenario=&m_rScenario;
 	op_pMemoryBuffer=&l_oUncompressedMemoryBuffer;

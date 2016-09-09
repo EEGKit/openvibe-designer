@@ -1,6 +1,6 @@
 #include "ovd_base.h"
 
-#include <system/Time.h>
+#include <system/ovCTime.h>
 
 #include <stack>
 #include <vector>
@@ -10,12 +10,10 @@
 #include <sstream>
 #include <algorithm>
 
-#include "ovdCDesignerVisualisation.h"
-#include "ovdCPlayerVisualisation.h"
 #include "ovdCInterfacedObject.h"
 #include "ovdCInterfacedScenario.h"
 #include "ovdCApplication.h"
-#include <mCMetaboxLoader.h>
+#include <metabox-loader/mCMetaboxLoader.h>
 
 #if defined TARGET_OS_Windows
 #include "windows.h"
@@ -143,7 +141,7 @@ public:
 // ------------------------------------------------------------------------------------------------------------------------------------
 
 static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernelContext, map<string, const IPluginObjectDesc*>& vPluginObjectDesc, ::GtkTreeStore* pTreeStore, 
-	std::vector<const IPluginObjectDesc*>& vNewBoxes, std::vector<const IPluginObjectDesc*>& vUpdatedBoxes, boolean bIsNewVersion = false)
+	std::vector<const IPluginObjectDesc*>& vNewBoxes, std::vector<const IPluginObjectDesc*>& vUpdatedBoxes, bool bIsNewVersion = false)
 {
 	// By default, fix version to current version - to display the new/update boxes available since current version only
 	uint32 l_uiMajorLastVersionOpened = M_VERSION_MAJOR;
@@ -630,6 +628,11 @@ int go(int argc, char ** argv)
 			cout << "[  INF  ] Got kernel descriptor, trying to create kernel" << "\n";
 
 			l_pKernelContext = l_pKernelDesc->createKernel("designer", OpenViBE::Directories::getDataDir() + "/kernel/openvibe.conf");
+			l_pKernelContext->initialize();
+			l_pKernelContext->getConfigurationManager().addConfigurationFromFile(OpenViBE::Directories::getDataDir() + "/applications/designer/designer.conf");
+			OpenViBE::CString l_sAppConfigFile = l_pKernelContext->getConfigurationManager().expand("${Designer_CustomConfigurationFile}");
+
+			l_pKernelContext->getConfigurationManager().addConfigurationFromFile(l_sAppConfigFile);
 			if (!l_pKernelContext)
 			{
 				cout << "[ FAILED ] No kernel created by kernel descriptor" << "\n";
@@ -704,11 +707,6 @@ int go(int argc, char ** argv)
 					{
 						l_rLogManager << LogLevel_Trace << "An instance of Studio is already running.\n";
 						return 0;
-					}
-
-					if (l_rConfigurationManager.expandAsBoolean("${Kernel_3DVisualisationEnabled}"))
-					{
-						l_pKernelContext->getVisualisationManager().initialize3DContext();
 					}
 
 					{

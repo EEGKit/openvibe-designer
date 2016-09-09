@@ -6,6 +6,7 @@
 #include "ovdCInterfacedObject.h"
 #include "ovdCScenarioStateStack.h"
 #include "ovdCSettingCollectionHelper.h"
+#include "ovdCFileFormats.h"
 
 #include <map>
 #include <vector>
@@ -95,28 +96,11 @@ namespace OpenViBEDesigner
 
 		void contextMenuBoxDocumentationCB(OpenViBE::Kernel::IBox& rBox);
 
-		void contextMenuBoxAddMessageInputCB(OpenViBE::Kernel::IBox& rBox);
-		void contextMenuBoxRemoveMessageInputCB(OpenViBE::Kernel::IBox& rBox, OpenViBE::uint32 ui32Index);
-		void contextMenuBoxAddMessageOutputCB(OpenViBE::Kernel::IBox& rBox);
-		void contextMenuBoxRemoveMessageOutputCB(OpenViBE::Kernel::IBox& rBox, OpenViBE::uint32 ui32Index);
-
-		void contextMenuBoxEditMessageInputCB(OpenViBE::Kernel::IBox& rBox, OpenViBE::uint32 ui32Index);
-		void contextMenuBoxEditMessageOutputCB(OpenViBE::Kernel::IBox& rBox, OpenViBE::uint32 ui32Index);
-
 		void contextMenuScenarioAddCommentCB(void);
 		void contextMenuScenarioAboutCB(void);
 
 		bool browseURL(OpenViBE::CString sURL, OpenViBE::CString sBrowser = "");
 		bool browseBoxDocumentation(OpenViBE::CIdentifier oBoxId);
-
-		void toggleDesignerVisualisation();
-		OpenViBE::boolean isDesignerVisualisationToggled();
-
-		void showCurrentVisualisation();
-		void hideCurrentVisualisation();
-
-		void createPlayerVisualisation(OpenViBE::Kernel::IVisualisationTree* pVisualisationTree = NULL);
-		void releasePlayerVisualisation(void);
 
 		OpenViBE::boolean hasSelection(void);
 /*
@@ -130,17 +114,12 @@ namespace OpenViBEDesigner
 		OpenViBE::CIdentifier m_oScenarioIdentifier;
 		OpenViBE::CIdentifier m_oPlayerIdentifier;
 		OpenViBE::CIdentifier m_oVisualisationTreeIdentifier;
-		OpenViBE::CIdentifier m_oExporterIdentifier;
 		OpenViBEDesigner::CApplication& m_rApplication;
 		const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
 		OpenViBE::Kernel::IScenario& m_rScenario;
 		OpenViBE::Kernel::IPlayer* m_pPlayer;
 		OpenViBE::uint64 m_ui64LastLoopTime;
 		::GtkNotebook& m_rNotebook;
-		OpenViBE::Kernel::IVisualisationTree* m_pVisualisationTree;
-		OpenViBE::boolean m_bDesignerVisualisationToggled;
-		OpenViBEDesigner::CDesignerVisualisation* m_pDesignerVisualisation;
-		OpenViBEDesigner::CPlayerVisualisation* m_pPlayerVisualisation;
 		::GtkBuilder* m_pGUIBuilder;
 //		::GtkBuilder* m_pSettingsGUIBuilder;
 /*		::GtkBuilder* m_pBuilder;

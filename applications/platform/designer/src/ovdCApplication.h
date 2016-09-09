@@ -98,15 +98,6 @@ namespace OpenViBEDesigner
 
 		//@}
 
-		/** \name Designer visualisation management */
-		//@{
-
-		void deleteDesignerVisualisationCB();
-
-		void toggleDesignerVisualisationCB();
-
-		//@}
-
 		/** \name Player management */
 		//@{
 
@@ -153,7 +144,6 @@ namespace OpenViBEDesigner
 		const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
 		OpenViBE::Kernel::IPluginManager* m_pPluginManager;
 		OpenViBE::Kernel::IScenarioManager* m_pScenarioManager;
-		OpenViBE::Kernel::IVisualisationManager* m_pVisualisationManager;
 		OpenViBE::Kernel::IScenario* m_pClipboardScenario;
 
 		OpenViBEDesigner::CLogListenerDesigner* m_pLogListenerDesigner;
@@ -183,8 +173,6 @@ namespace OpenViBEDesigner
 		gint m_giFilterTimeout;
 
 		OpenViBE::boolean m_bIsMaximized;
-		OpenViBE::boolean m_bCanImportBinary;
-		OpenViBE::boolean m_bCanExportBinary;
 
 		const gchar* m_sSearchTerm;
 
