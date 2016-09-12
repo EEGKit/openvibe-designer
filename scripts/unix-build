@@ -15,6 +15,7 @@ function usage()
 		echo "--build-dir=<dirname> : build directory"
 		echo "--install-dir=<dirname> : binaries deployment directory"
 		echo "--test-data-dir=<dirname> : test data directory"
+		echo "--sdk=<dirname> : path to the Openvibe SDK"
 }
 
 # Script starting point
@@ -23,10 +24,11 @@ function usage()
 # variables
 ov_script_dir="${PWD}"
 ov_build_type=Release
-ov_build_dir="${ov_script_dir}/../../certivibe-build/build-${ov_build_type}"
-ov_install_dir="${ov_script_dir}/../../certivibe-build/dist-${ov_build_type}"
+ov_build_dir="${ov_script_dir}/../build/build-${ov_build_type}"
+ov_install_dir="${ov_script_dir}/../build/dist"
 ov_test_data_dir="${ov_script_dir}/../dependencies/test-data"
-verbose=0
+ov_sdk_dir="${ov_sdk_dir}/../dependencies/scripts"
+verbose="OFF"
 
 # Parse arguments
 for i in "$@"
@@ -37,7 +39,7 @@ do
 			exit
 			;;
 		-v | --verbose)
-			verbose=1
+			verbose="ON"
 			shift
 			;;
 		--build-type=*)
@@ -56,6 +58,10 @@ do
 			ov_test_data_dir="${i#*=}"
 			shift
 			;;
+        --sdk=*)
+            ov_sdk_dir="${i#*=}"
+            shift
+            ;;
 		*)
 			echo "ERROR: Unknown parameter $i"
 			exit 1
@@ -70,6 +76,12 @@ if [[ ${ov_build_type} != "Debug" ]] \
 then
 	echo "ERROR: ${ov_build_type} not handled as build type"
 	exit 1
+fi
+
+if [[ ${ov_build_type} == "Debug" ]]; then
+    ov_install_dir="${ov_script_dir}/../build/dist-debug"
+elif [[ ${ov_build_type} == "RelWithDebInfo" ]]; then
+    ov_install_dir="${ov_script_dir}/../build/dist-relwdeb"
 fi
 
 echo "**************************************"
@@ -102,7 +114,10 @@ cmake ${ov_script_dir}/.. \
 		-G Ninja \
 		-DCMAKE_BUILD_TYPE=${ov_build_type} \
 		-DCMAKE_INSTALL_PREFIX=${ov_install_dir} \
-		-DOVT_TEST_DATA_DIR=${ov_test_data_dir}
+		-DOVT_TEST_DATA_DIR=${ov_test_data_dir} \
+        -DFlag_VerboseOutput=${verbose} \
+        -DOPENVIBE_SDK_PATH=${ov_sdk_dir}
+
 
 
 if [[ $? == 0 ]]; then
@@ -114,9 +129,9 @@ fi
 
 echo "Building project..."
 
-if [[ $verbose == 1 ]]; then
+if [[ $verbose == "ON" ]]; then
 	ninja -v install
-else 
+else
 	ninja install
 fi
 
