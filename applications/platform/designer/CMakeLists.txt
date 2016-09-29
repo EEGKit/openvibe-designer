@@ -8,7 +8,7 @@ ELSE(WIN32)
 SET(ENTRYPOINT )
 ENDIF(WIN32)
 
-FILE(GLOB_RECURSE source_files src/*.cpp src/*.inl)
+FILE(GLOB_RECURSE source_files src/*.cpp src/visualisation/*.cpp src/visualisation/*.h)
 INCLUDE("FindSourceCommonBase")
 INCLUDE("FindSourceDependencyOptionParser")
 INCLUDE("FindSourceCommonMetaboxLoader")
