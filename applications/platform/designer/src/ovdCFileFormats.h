@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <string>
 #include <openvibe/ovCIdentifier.h>
 
 namespace OpenViBEDesigner
