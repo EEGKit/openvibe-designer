@@ -9,8 +9,6 @@ SET(ENTRYPOINT )
 ENDIF(WIN32)
 
 FILE(GLOB_RECURSE source_files src/*.cpp src/visualisation/*.cpp src/visualisation/*.h)
-INCLUDE("FindSourceCommonBase")
-INCLUDE("FindSourceDependencyOptionParser")
 INCLUDE("FindSourceCommonMetaboxLoader")
 
 OV_INSTALL_LAUNCH_SCRIPT(SCRIPT_PREFIX "${LOWER_BRAND_NAME}-${LOWER_STUDIO_NAME}" EXECUTABLE_NAME "${PROJECT_NAME}" ICON_PATH "${OV_ICON_PATH}/designer.ico")
