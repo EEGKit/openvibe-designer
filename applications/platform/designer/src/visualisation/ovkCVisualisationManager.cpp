@@ -17,6 +17,7 @@ using namespace std;
 using namespace OpenViBE;
 using namespace OpenViBE::Kernel;
 using namespace OpenViBE::Plugins;
+using namespace OpenViBEVisualizationToolkit;
 //using namespace OpenViBE::Tools;
 
 CVisualisationManager::CVisualisationManager(const IKernelContext& rKernelContext)
@@ -31,7 +32,7 @@ CVisualisationManager::~CVisualisationManager()
 bool CVisualisationManager::createVisualisationTree(CIdentifier& rVisualisationTreeIdentifier)
 {
 	//create visualisation tree
-	IVisualisationTree* l_pVisualisationTree = new CVisualisationTree(m_rKernelContext);
+	OpenViBEVisualizationToolkit::IVisualisationTree* l_pVisualisationTree = new CVisualisationTree(m_rKernelContext);
 //		CKernelObjectFactoryHelper(getKernelContext().getKernelObjectFactory()).createObject<IVisualisationTree*>(OV_ClassId_Kernel_Visualisation_VisualisationTree);
 
 	//generate an identifier for visualisation tree

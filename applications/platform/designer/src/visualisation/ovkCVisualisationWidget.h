@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ovkIVisualisationWidget.h"
+#include <visualization-toolkit/ovvtkIVisualizationWidget.h>
 
 #include <vector>
 
@@ -8,67 +8,111 @@ namespace OpenViBE
 {
 	namespace Kernel
 	{
-		class CVisualisationWidget : public OpenViBE::Kernel::IVisualisationWidget
+		class CVisualisationWidget final: public OpenViBEVisualizationToolkit::IVisualisationWidget
 		{
 		public:
 			CVisualisationWidget(const OpenViBE::Kernel::IKernelContext& rKernelContext);
 
-			virtual ~CVisualisationWidget(void);
+			~CVisualisationWidget(void);
 
-			virtual OpenViBE::boolean initialize(
+			OpenViBE::boolean initialize(
 				const OpenViBE::CIdentifier& rIdentifier,
 				const OpenViBE::CString& rName,
-				OpenViBE::Kernel::EVisualisationWidgetType oType,
+				OpenViBEVisualizationToolkit::EVisualisationWidgetType oType,
 				const OpenViBE::CIdentifier& rParentIdentifier,
 				const OpenViBE::CIdentifier& rBoxIdentifier,
 				OpenViBE::uint32 ui32NbChildren);
 
-			virtual OpenViBE::CIdentifier getIdentifier(void) const;
+			OpenViBE::CIdentifier getIdentifier(void) const;
 
-			virtual const OpenViBE::CString& getName(void) const;
+			const OpenViBE::CString& getName(void) const;
 
-			virtual void setName(
+			void setName(
 				const OpenViBE::CString& rName);
 
-			virtual EVisualisationWidgetType getType(void) const;
+			OpenViBEVisualizationToolkit::EVisualisationWidgetType getType(void) const;
 
-			virtual OpenViBE::CIdentifier getParentIdentifier(void) const;
+			OpenViBE::CIdentifier getParentIdentifier(void) const;
 
-			virtual void setParentIdentifier(
+			void setParentIdentifier(
 				const OpenViBE::CIdentifier& rParentIdentifier);
 
-			virtual OpenViBE::CIdentifier getBoxIdentifier(void) const;
+			OpenViBE::CIdentifier getBoxIdentifier(void) const;
 
-			virtual OpenViBE::uint32 getNbChildren(void) const;
+			OpenViBE::uint32 getNbChildren(void) const;
 
-			virtual OpenViBE::boolean getChildIndex(
+			OpenViBE::boolean getChildIndex(
 				const OpenViBE::CIdentifier& rIdentifier,
 				OpenViBE::uint32& ui32Index) const;
 
 			//for windows, the number of children is unknown a priori
-			virtual OpenViBE::boolean addChild(
+			OpenViBE::boolean addChild(
 				const OpenViBE::CIdentifier& rChildIdentifier);
 
-			virtual OpenViBE::boolean removeChild(
+			OpenViBE::boolean removeChild(
 				const OpenViBE::CIdentifier& rIdentifier);
 
-			virtual OpenViBE::boolean getChildIdentifier(
+			OpenViBE::boolean getChildIdentifier(
 				OpenViBE::uint32 ui32ChildIndex,
 				OpenViBE::CIdentifier& rIdentifier) const;
 
-			virtual OpenViBE::boolean setChildIdentifier(
+			OpenViBE::boolean setChildIdentifier(
 				OpenViBE::uint32 ui32ChildIndex,
 				const OpenViBE::CIdentifier& rIdentifier);
+
+			void setWidth(unsigned int width)
+			{
+				m_width = width;
+			}
+
+			void setHeight(unsigned int height)
+			{
+				m_height = height;
+			}
+
+			unsigned int getWidth()
+			{
+				return m_width;
+			}
+
+			unsigned int getHeight()
+			{
+				return m_height;
+			}
+
+			void setDividerPosition(int dividerPosition)
+			{
+				m_dividerPosition = dividerPosition;
+			}
+
+			void setMaxDividerPosition(int maxDividerPosition)
+			{
+				m_maxDividerPosition = maxDividerPosition;
+			}
+
+			int getDividerPosition()
+			{
+				return m_dividerPosition;
+			}
+
+			int getMaxDividerPosition()
+			{
+				return m_maxDividerPosition;
+			}
 
 		private:
 
 			OpenViBE::CIdentifier m_oIdentifier; //unique identifier
 			OpenViBE::CString m_oName;
-			OpenViBE::Kernel::EVisualisationWidgetType m_oType;
+			OpenViBEVisualizationToolkit::EVisualisationWidgetType m_oType;
 			OpenViBE::CIdentifier m_oParentIdentifier; //VisualisationWidget
 			OpenViBE::CIdentifier m_oBoxIdentifier; //id of an existing CBox
 			std::vector<OpenViBE::CIdentifier> m_vChildren;
 			void* m_pParentWidget;
+			unsigned int m_width;
+			unsigned int m_height;
+			int m_dividerPosition;
+			int m_maxDividerPosition;
 		};
 	};
 };

@@ -65,6 +65,7 @@ add_definitions(-DTARGET_HAS_FS)
 add_definitions(-DTARGET_HAS_Socket)
 add_definitions(-DTARGET_HAS_XML)
 add_definitions(-DTARGET_HAS_OpenViBEToolkit)
+add_definitions(-DTARGET_HAS_ThirdPartyOpenViBEPluginsGlobalDefines)
 
 # if we link with the module socket in Static, we must link the project with the dependency on win32
 if(WIN32 AND NOT DYNAMIC_LINK_CERTIVIBE)

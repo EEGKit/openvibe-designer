@@ -286,14 +286,17 @@ MESSAGE(STATUS "BUILDING VERSION : ${PROJECT_VERSION} OpenViBE : ${OV_PROJECT_BR
 
 # Add vendor specific installation instructions
 # Traverse these directories and build their components
-ADD_SUBDIRECTORY("common/")
 
 IF(NOT(SKIP_PLUGINS))
-    #ADD_SUBDIRECTORY("plugins/")
+	ADD_SUBDIRECTORY("plugins/")
 ENDIF()
 
 IF(NOT(SKIP_APPLICATIONS))
 	ADD_SUBDIRECTORY("applications/")
+ENDIF()
+
+IF(NOT(SKIP_VISUALIZATION_TOOLKIT))
+	ADD_SUBDIRECTORY("visualization-toolkit/")
 ENDIF()
 
 # make a copy of the dependency script, this is done so we can use the same launch scripts both in win install and win devel situations.

@@ -2,8 +2,9 @@
 
 #include <openvibe/ov_all.h>
 #include <map>
-#include "ovkIVisualisationManager.h"
-#include "ovkIVisualisationTree.h"
+
+#include <visualization-toolkit/ovvtkIVisualizationManager.h>
+#include <visualization-toolkit/ovvtkIVisualizationTree.h>
 
 typedef struct _GtkWidget GtkWidget;
 
@@ -11,7 +12,7 @@ namespace OpenViBE
 {
 	namespace Kernel
 	{
-		class CVisualisationManager : public OpenViBE::Kernel::IVisualisationManager
+		class CVisualisationManager : public OpenViBEVisualizationToolkit::IVisualisationManager
 		{
 		public:
 
@@ -24,10 +25,10 @@ namespace OpenViBE
 				OpenViBE::CIdentifier& rVisualisationTreeIdentifier);
 			virtual bool releaseVisualisationTree(
 				const OpenViBE::CIdentifier& rVisualisationTreeIdentifier);
-			virtual OpenViBE::Kernel::IVisualisationTree& getVisualisationTree(
+			virtual OpenViBEVisualizationToolkit::IVisualisationTree& getVisualisationTree(
 				const OpenViBE::CIdentifier& rVisualisationTreeIdentifier);
 			virtual bool enumerateVisualisationTrees(
-				OpenViBE::Kernel::IVisualisationManager::IVisualisationTreeEnum& rCallBack) const;
+				OpenViBEVisualizationToolkit::IVisualisationManager::IVisualisationTreeEnum& rCallBack) const;
 
 			virtual bool setToolbar(
 				const CIdentifier& rVisualisationTreeIdentifier,
@@ -45,7 +46,7 @@ namespace OpenViBE
 		protected:
 
 			/// Map of visualisation trees (one per scenario, storing visualisation widgets arrangement in space)
-			std::map<OpenViBE::CIdentifier, OpenViBE::Kernel::IVisualisationTree*> m_vVisualisationTree;
+			std::map<OpenViBE::CIdentifier, OpenViBEVisualizationToolkit::IVisualisationTree*> m_vVisualisationTree;
 			const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
 		};
 	}

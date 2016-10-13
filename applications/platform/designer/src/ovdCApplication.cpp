@@ -22,6 +22,8 @@
 #endif
 
 #include <openvibe/ovITimeArithmetics.h>
+#include <visualization-toolkit/ovvtk_defines.h>
+#include <visualization-toolkit/ovvtkIVisualizationContext.h>
 #include <ovp_global_defines.h>
 
 #if defined TARGET_OS_Linux || defined TARGET_OS_MacOS
@@ -35,11 +37,15 @@
 #define OVD_AttributeId_ScenarioFilename OpenViBE::CIdentifier(0x4C536D0A, 0xB23DC545)
 #define OVD_README_File                  OpenViBE::Directories::getDistRootDir() + "/ReadMe.txt"
 
+#include "ovdCDesignerVisualisation.h"
+#include "ovdCPlayerVisualisation.h"
 #include "ovdCInterfacedObject.h"
 #include "ovdCInterfacedScenario.h"
 #include "ovdCApplication.h"
 #include "ovdCLogListenerDesigner.h"
 #include <metabox-loader/mCMetaboxLoader.h>
+
+#include "visualisation/ovkCVisualisationManager.h"
 
 using namespace OpenViBE;
 using namespace OpenViBE::Kernel;
@@ -333,6 +339,15 @@ namespace
 		l_pApplication->m_oArchwayHandlerGUI.toggleNeuroRTEngineConfigurationDialog(gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(pMenuItem)));
 	}
 #endif
+
+	void delete_designer_visualisation_cb(gpointer user_data)
+	{
+		static_cast<CApplication*>(user_data)->deleteDesignerVisualisationCB();
+	}
+	void button_toggle_window_manager_cb(::GtkToggleToolButton* pButton, gpointer pUserData)
+	{
+		static_cast<CApplication*>(pUserData)->toggleDesignerVisualisationCB();
+	}
 
 	void button_comment_cb(::GtkButton* pButton, CApplication* pApplication)
 	{
@@ -711,7 +726,6 @@ namespace
 	**/
 	gboolean receiveSecondInstanceMessage(gpointer pUserData)
 	{
-		return TRUE;
 		try
 		{	// Open or create ensures that 
 			boost::interprocess::named_mutex l_oMutex(boost::interprocess::open_or_create, MUTEX_NAME);
@@ -784,6 +798,7 @@ CApplication::CApplication(const IKernelContext& rKernelContext)
 	:m_rKernelContext(rKernelContext)
 	,m_pPluginManager(NULL)
 	,m_pScenarioManager(NULL)
+	,m_pVisualisationManager(NULL)
 	,m_pClipboardScenario(NULL)
 	,m_eCommandLineFlags(CommandLineFlag_None)
 	,m_pBuilderInterface(NULL)
@@ -810,6 +825,9 @@ CApplication::CApplication(const IKernelContext& rKernelContext)
 {
 	m_pPluginManager=&m_rKernelContext.getPluginManager();
 	m_pScenarioManager=&m_rKernelContext.getScenarioManager();
+	m_pVisualisationManager = new CVisualisationManager(m_rKernelContext);
+	m_visualizationContext = dynamic_cast<OpenViBEVisualizationToolkit::IVisualizationContext*>(m_rKernelContext.getPluginManager().createPluginObject(OVP_ClassId_Plugin_VisualizationContext));
+	m_visualizationContext->setManager(m_pVisualisationManager);
 	m_pLogListenerDesigner = NULL;
 	m_pMetaboxLoader = new Mensia::CMetaboxLoader(m_rKernelContext);
 
@@ -889,6 +907,7 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 
 	
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_log_level")),     "clicked",  G_CALLBACK(log_level_cb),                    this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager")), "toggled",  G_CALLBACK(button_toggle_window_manager_cb), this);
 
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_comment")),       "clicked", G_CALLBACK(button_comment_cb),        this);
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_aboutscenario")), "clicked", G_CALLBACK(button_about_scenario_cb), this);
@@ -1110,10 +1129,6 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 			if (l_sTabLabel == GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-algorithm_title_container"))) {
 				gtk_notebook_remove_page(l_pSidebar, l_iNotebookIndex);
 			}
-		}
-
-		if (l_sTabLabel == GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-scenario_configuration_title_container"))) {
-			gtk_notebook_remove_page(l_pSidebar, l_iNotebookIndex);
 		}
 
 		if (m_pMetaboxLoader == NULL)
@@ -1342,16 +1357,18 @@ OpenViBE::boolean CApplication::openScenario(const char* sFileName)
 
 	std::string scenarioFilenameExtension = boost::filesystem::extension(sFileName);
 	if (!CFileFormats::filenameExtensionImporters.count(scenarioFilenameExtension))
-	{
+				{
 		// TODO: Report error
-		return false;
-	}
+					return false;
+				}
 
 	CIdentifier scenarioImporterIdentifier = CFileFormats::filenameExtensionImporters.at(scenarioFilenameExtension);
 
 	CIdentifier l_oScenarioIdentifier;
 	if (m_pScenarioManager->importScenarioFromFile(l_oScenarioIdentifier, sFileName, scenarioImporterIdentifier))
 	{
+
+
 		// Closes first unnamed scenario
 		if(m_vInterfacedScenario.size()==1)
 		{
@@ -1368,10 +1385,65 @@ OpenViBE::boolean CApplication::openScenario(const char* sFileName)
 
 		// Creates interfaced scenario
 		CInterfacedScenario* l_pInterfacedScenario=new CInterfacedScenario(m_rKernelContext, *this, l_rScenario, l_oScenarioIdentifier, *m_pScenarioNotebook, OVD_GUI_File, OVD_GUI_Settings_File);
+
+		// Deserialize the visualization tree from the scenario metadata, if it exists
+
+		// Find the VisualizationTree metadata
+		IMetadata* visualizationTreeMetadata = nullptr;
+		CIdentifier metadataIdentifier = OV_UndefinedIdentifier;
+		while ((metadataIdentifier = l_rScenario.getNextMetadataIdentifier(metadataIdentifier)) != OV_UndefinedIdentifier)
+		{
+			if (l_rScenario.getMetadataDetails(metadataIdentifier)->getType() == OVVTK_MetadataIdentifier_VisualizationTree)
+			{
+				visualizationTreeMetadata = l_rScenario.getMetadataDetails(metadataIdentifier);
+				break;
+			}
+		}
+		OpenViBEVisualizationToolkit::IVisualisationTree* visualizationTree = l_pInterfacedScenario->m_pVisualisationTree;
+		if (visualizationTreeMetadata && visualizationTree)
+		{
+			visualizationTree->deserialize(visualizationTreeMetadata->getData());
+		}
+
+		CIdentifier l_oVisualisationWidgetIdentifier;
+
+		// Ensure visualization widgets contained in the scenario (if any) appear in the window manager
+		//  even when the VisualisationTree section of a scenario file is missing, erroneous or deprecated
+
+		// no visualisation widget was added to visualisation tree : ensure there aren't any in scenario
+		CIdentifier boxIdentifier;
+		while ((boxIdentifier = l_rScenario.getNextBoxIdentifier(boxIdentifier)) != OV_UndefinedIdentifier)
+		{
+			if (!visualizationTree->getVisualisationWidgetFromBoxIdentifier(boxIdentifier))
+			{
+				const IBox* box = l_rScenario.getBoxDetails(boxIdentifier);
+				const IPluginObjectDesc* boxAlgorithmDesc = m_rKernelContext.getPluginManager().getPluginObjectDescCreating(box->getAlgorithmClassIdentifier());
+				if (boxAlgorithmDesc && boxAlgorithmDesc->hasFunctionality(OVD_Functionality_Visualisation))
+				{
+					//a visualisation widget was found in scenario : manually add it to visualisation tree
+					visualizationTree->addVisualisationWidget(
+					            l_oVisualisationWidgetIdentifier,
+					            box->getName(),
+					            OpenViBEVisualizationToolkit::EVisualisationWidget_VisualisationBox,
+					            OV_UndefinedIdentifier,
+					            0,
+					            box->getIdentifier(),
+					            0,
+					            OV_UndefinedIdentifier);
+				}
+			}
+		}
+
+		if(l_pInterfacedScenario->m_pDesignerVisualisation != NULL)
+		{
+			l_pInterfacedScenario->m_pDesignerVisualisation->setDeleteEventCB(&::delete_designer_visualisation_cb, this);
+			l_pInterfacedScenario->m_pDesignerVisualisation->load();
+		}
 		//l_pInterfacedScenario->snapshotCB(); --> a snapshot is already created in CInterfacedScenario builder !
 		l_pInterfacedScenario->m_sFileName=sFileName;
 		l_pInterfacedScenario->m_bHasFileName=true;
 		l_pInterfacedScenario->m_bHasBeenModified=false;
+
 		m_vInterfacedScenario.push_back(l_pInterfacedScenario);
 
 		l_pInterfacedScenario->redrawScenarioSettings();
@@ -1396,13 +1468,13 @@ OpenViBE::boolean CApplication::openScenario(const char* sFileName)
 		l_oStringStream << "the selected scenario importer...";
 
 		::GtkWidget* l_pErrorDialog=gtk_message_dialog_new(
-				NULL,
-				GTK_DIALOG_MODAL,
-				GTK_MESSAGE_WARNING,
-				GTK_BUTTONS_OK,
-				"Scenario importation process failed !");
+		            NULL,
+		            GTK_DIALOG_MODAL,
+		            GTK_MESSAGE_WARNING,
+		            GTK_BUTTONS_OK,
+		            "Scenario importation process failed !");
 		gtk_message_dialog_format_secondary_text(
-				GTK_MESSAGE_DIALOG(l_pErrorDialog), "%s", l_oStringStream.str().c_str());
+		            GTK_MESSAGE_DIALOG(l_pErrorDialog), "%s", l_oStringStream.str().c_str());
 		gtk_dialog_run(GTK_DIALOG(l_pErrorDialog));
 		gtk_widget_destroy(l_pErrorDialog);
 	}
@@ -1710,6 +1782,11 @@ void CApplication::newScenarioCB(void)
 	{
 		IScenario& l_rScenario=m_pScenarioManager->getScenario(l_oScenarioIdentifier);
 		CInterfacedScenario* l_pInterfacedScenario=new CInterfacedScenario(m_rKernelContext, *this, l_rScenario, l_oScenarioIdentifier, *m_pScenarioNotebook, OVD_GUI_File, OVD_GUI_Settings_File);
+		if(l_pInterfacedScenario->m_pDesignerVisualisation != NULL)
+		{
+			l_pInterfacedScenario->m_pDesignerVisualisation->setDeleteEventCB(&::delete_designer_visualisation_cb, this);
+			l_pInterfacedScenario->m_pDesignerVisualisation->newVisualisationWindow("Default window");
+		}
 		l_pInterfacedScenario->updateScenarioLabel();
 		m_vInterfacedScenario.push_back(l_pInterfacedScenario);
 		gtk_notebook_set_current_page(m_pScenarioNotebook, gtk_notebook_get_n_pages(m_pScenarioNotebook)-1);
@@ -1721,8 +1798,8 @@ void CApplication::openScenarioCB(void)
 {
 	m_rKernelContext.getLogManager() << LogLevel_Debug << "openScenarioCB\n";
 
-	::GtkFileFilter* l_pFileFilterSpecific = gtk_file_filter_new();
-	::GtkFileFilter* l_pFileFilterAll = gtk_file_filter_new();
+	::GtkFileFilter* l_pFileFilterSpecific=gtk_file_filter_new();
+	::GtkFileFilter* l_pFileFilterAll=gtk_file_filter_new();
 
 	std::string allFileFormatsString = "All available formats (";
 	for (auto const& fileFormat : CFileFormats::filenameExtensionImporters)
@@ -1861,16 +1938,32 @@ void CApplication::saveScenarioCB(CInterfacedScenario* pScenario)
 			return;
 		}
 
+		// Remove all VisualizationTree type metadata
+		CIdentifier metadataIdentifier = OV_UndefinedIdentifier;
+		while ((metadataIdentifier = l_pCurrentInterfacedScenario->m_rScenario.getNextMetadataIdentifier(metadataIdentifier)) != OV_UndefinedIdentifier)
+		{
+			if (l_pCurrentInterfacedScenario->m_rScenario.getMetadataDetails(metadataIdentifier)->getType() == OVVTK_MetadataIdentifier_VisualizationTree)
+			{
+				l_pCurrentInterfacedScenario->m_rScenario.removeMetadata(metadataIdentifier);
+				metadataIdentifier = OV_UndefinedIdentifier;
+			}
+		}
+
+		// Insert new metadata
+		l_pCurrentInterfacedScenario->m_rScenario.addMetadata(metadataIdentifier, OV_UndefinedIdentifier);
+		l_pCurrentInterfacedScenario->m_rScenario.getMetadataDetails(metadataIdentifier)->setType(OVVTK_MetadataIdentifier_VisualizationTree);
+		l_pCurrentInterfacedScenario->m_rScenario.getMetadataDetails(metadataIdentifier)->setData(l_pCurrentInterfacedScenario->m_pVisualisationTree->serialize());
+
 		CIdentifier scenarioExporterIdentifier = CFileFormats::filenameExtensionExporters.at(scenarioFilenameExtension);
 
 		if (m_pScenarioManager->exportScenarioToFile(l_sScenarioFileName, l_pCurrentInterfacedScenario->m_oScenarioIdentifier, scenarioExporterIdentifier))
 		{
-			l_pCurrentInterfacedScenario->snapshotCB();
-			l_pCurrentInterfacedScenario->m_bHasFileName=true;
-			l_pCurrentInterfacedScenario->m_bHasBeenModified=false;
-			l_pCurrentInterfacedScenario->updateScenarioLabel();
-			this->saveOpenedScenarios();
-		}
+				l_pCurrentInterfacedScenario->snapshotCB();
+				l_pCurrentInterfacedScenario->m_bHasFileName=true;
+				l_pCurrentInterfacedScenario->m_bHasBeenModified=false;
+				l_pCurrentInterfacedScenario->updateScenarioLabel();
+					this->saveOpenedScenarios();
+				}
 		else
 		{
 			m_rKernelContext.getLogManager() << LogLevel_Warning << "Exporting scenario failed...\n";
@@ -1933,7 +2026,7 @@ void CApplication::saveScenarioAsCB(CInterfacedScenario* pScenario)
 
 			allCompatibleFormatsFilterName += fileFilterWildcard + ", ";
 			gtk_file_filter_add_pattern(allCompatibleFormatsFileFilter, fileFilterWildcard.c_str());
-		}
+	}
 	}
 	allCompatibleFormatsFilterName.erase(allCompatibleFormatsFilterName.size() - 2); // because the loop adds one ", " too much
 	allCompatibleFormatsFilterName += ")";
@@ -1998,7 +2091,7 @@ void CApplication::saveScenarioAsCB(CInterfacedScenario* pScenario)
 		int l_iFilenameLength=::sprintf(l_sFilename, "%s", l_sTempFilename);
 		g_free(l_sTempFilename);
 
-		::GtkFileFilter* l_pFileFilter = gtk_file_chooser_get_filter(GTK_FILE_CHOOSER(l_pWidgetDialogSaveAs));
+		::GtkFileFilter* l_pFileFilter=gtk_file_chooser_get_filter(GTK_FILE_CHOOSER(l_pWidgetDialogSaveAs));
 		if (fileFilters.count(l_pFileFilter) != 0)
 		{
 			// User chose a specific filter
@@ -2026,12 +2119,12 @@ void CApplication::saveScenarioAsCB(CInterfacedScenario* pScenario)
 			if(l_bIsCurrentScenarioAMetabox)
 			{
 				strcat(l_sFilename, ".mxb");
-				l_iFilenameLength += 4;
+				l_iFilenameLength+=4;
 			}
 			else
 			{
 				strcat(l_sFilename, ".mxs");
-				l_iFilenameLength += 4;
+				l_iFilenameLength+=4;
 			}
 		}
 
@@ -2147,6 +2240,31 @@ void CApplication::closeScenarioCB(CInterfacedScenario* pInterfacedScenario)
 	}
 
 	this->saveOpenedScenarios();
+}
+
+void CApplication::deleteDesignerVisualisationCB()
+{
+	//untoggle window manager button when its associated dialog is closed
+	gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager")), FALSE);
+
+	CInterfacedScenario* l_pCurrentInterfacedScenario = getCurrentInterfacedScenario();
+	if(l_pCurrentInterfacedScenario)
+	{
+		l_pCurrentInterfacedScenario->snapshotCB();
+	}
+}
+
+void CApplication::toggleDesignerVisualisationCB()
+{
+	CInterfacedScenario* l_pCurrentInterfacedScenario = getCurrentInterfacedScenario();
+	if(l_pCurrentInterfacedScenario != NULL && l_pCurrentInterfacedScenario->isLocked() == false)
+	{
+		uint32 l_ui32Index=(uint32)gtk_notebook_get_current_page(m_pScenarioNotebook);
+		if(l_ui32Index<m_vInterfacedScenario.size())
+		{
+			m_vInterfacedScenario[l_ui32Index]->toggleDesignerVisualisation();
+		}
+	}
 }
 
 void CApplication::aboutOpenViBECB(void)
@@ -2291,6 +2409,12 @@ OpenViBE::boolean CApplication::createPlayer(void)
 			m_rKernelContext.getPlayerManager().releasePlayer(l_oPlayerIdentifier);
 			return false;
 		}
+
+		// The visualization manager needs to know the visualization tree in which the widgets should be inserted
+		l_pCurrentInterfacedScenario->m_pPlayer->getRuntimeConfigurationManager().createConfigurationToken("VisualizationContext_GroupId", l_pCurrentInterfacedScenario->m_oVisualisationTreeIdentifier.toString());
+
+		// TODO_JL: This should be a copy of the tree containing visualisations from the metaboxes
+		l_pCurrentInterfacedScenario->createPlayerVisualisation(l_pCurrentInterfacedScenario->m_pVisualisationTree);
 		if(l_pCurrentInterfacedScenario->m_pPlayer->initialize() != EPlayerReturnCode::PlayerReturnCode_Sucess)
 		{
 			m_rKernelContext.getLogManager() << LogLevel_Error << "The player could not be initialized.\n";
@@ -2329,6 +2453,9 @@ void CApplication::releasePlayer(void)
 
 		// restore the snapshot so settings override does not modify the scenario !
 		l_pCurrentInterfacedScenario->undoCB(false);
+
+		// destroy player windows
+		l_pCurrentInterfacedScenario->releasePlayerVisualisation();
 
 		// redraws scenario
 		l_pCurrentInterfacedScenario->redraw();
@@ -2651,6 +2778,11 @@ void CApplication::changeCurrentScenario(int32 i32PageIndex)
 
 	//hide window manager of previously active scenario, if any
 	int i = gtk_notebook_get_current_page(m_pScenarioNotebook);
+	if(i >= 0 && i < (int)m_vInterfacedScenario.size())
+	{
+		m_vInterfacedScenario[i]->hideCurrentVisualisation();
+	}
+
 	//closing last open scenario
 	if(i32PageIndex == -1)
 	{
@@ -2665,6 +2797,12 @@ void CApplication::changeCurrentScenario(int32 i32PageIndex)
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-togglebutton_cpu_usage")), false);
 		g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-togglebutton_cpu_usage")), "toggled", G_CALLBACK(cpu_usage_cb), this);
 
+		//toggle off window manager button
+		GtkWidget* l_pWindowManagerButton=GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager"));
+		g_signal_handlers_disconnect_by_func(l_pWindowManagerButton, G_CALLBACK2(button_toggle_window_manager_cb), this);
+		gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(l_pWindowManagerButton), false);
+		g_signal_connect(l_pWindowManagerButton, "toggled", G_CALLBACK(button_toggle_window_manager_cb), this);
+		
 		// toggle off and reset scenario settings
 		GtkWidget* l_pSettingsVBox = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-scenario_configuration_vbox"));
 
@@ -2713,14 +2851,26 @@ void CApplication::changeCurrentScenario(int32 i32PageIndex)
 		// gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_save")),   l_pCurrentInterfacedScenario->m_bHasFileName && l_pCurrentInterfacedScenario->m_bHasBeenModified);
 
 		//don't show window manager if in offline mode and it is toggled off
-		if(l_ePlayerStatus==PlayerStatus_Stop)
+		if(l_ePlayerStatus==PlayerStatus_Stop && m_vInterfacedScenario[i32PageIndex]->isDesignerVisualisationToggled() == false)
 		{
+			m_vInterfacedScenario[i32PageIndex]->hideCurrentVisualisation();
+			
 			// we are in edition mode, updating internal configuration token
 			std::string l_sPath = m_vInterfacedScenario[i32PageIndex]->m_sFileName;
 			l_sPath = l_sPath.substr(0, l_sPath.rfind('/'));
 			m_rKernelContext.getConfigurationManager().setConfigurationTokenValue(m_rKernelContext.getConfigurationManager().lookUpConfigurationTokenIdentifier("Player_ScenarioDirectory"), l_sPath.c_str());
 			m_rKernelContext.getConfigurationManager().setConfigurationTokenValue(m_rKernelContext.getConfigurationManager().lookUpConfigurationTokenIdentifier("__volatile_ScenarioDir"), l_sPath.c_str());
 		}
+		else
+		{
+			m_vInterfacedScenario[i32PageIndex]->showCurrentVisualisation();
+		}
+
+		//update window manager button state
+		GtkWidget* l_pWindowManagerButton=GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager"));
+		g_signal_handlers_disconnect_by_func(l_pWindowManagerButton, G_CALLBACK2(button_toggle_window_manager_cb), this);
+		gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(l_pWindowManagerButton), m_vInterfacedScenario[i32PageIndex]->isDesignerVisualisationToggled() ? true : false);
+		g_signal_connect(l_pWindowManagerButton, "toggled", G_CALLBACK(button_toggle_window_manager_cb), this);
 
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-scenario_configuration_button_configure")), true);
 		m_vInterfacedScenario[i32PageIndex]->redrawScenarioSettings();
@@ -2747,6 +2897,12 @@ void CApplication::changeCurrentScenario(int32 i32PageIndex)
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager")), true);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-togglebutton_cpu_usage")), false);
 		g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-togglebutton_cpu_usage")), "toggled", G_CALLBACK(cpu_usage_cb), this);
+
+		//toggle off window manager button
+		GtkWidget* l_pWindowManagerButton=GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager"));
+		g_signal_handlers_disconnect_by_func(l_pWindowManagerButton, G_CALLBACK2(button_toggle_window_manager_cb), this);
+		gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(l_pWindowManagerButton), false);
+		g_signal_connect(l_pWindowManagerButton, "toggled", G_CALLBACK(button_toggle_window_manager_cb), this);
 
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-scenario_configuration_button_configure")), true);
 

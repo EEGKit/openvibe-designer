@@ -4,10 +4,12 @@
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
+#include <json/json.h>
 
 using namespace OpenViBE;
 using namespace OpenViBE::Kernel;
 using namespace OpenViBE::Plugins;
+using namespace OpenViBEVisualizationToolkit;
 using namespace std;
 
 namespace
@@ -88,7 +90,7 @@ CVisualisationTree::~CVisualisationTree()
 	//delete display panels
 	//TODO!
 
-	std::map<OpenViBE::CIdentifier, OpenViBE::Kernel::IVisualisationWidget*>::iterator i;
+	std::map<OpenViBE::CIdentifier, IVisualisationWidget*>::iterator i;
 	for (i=m_vVisualisationWidget.begin();i!=m_vVisualisationWidget.end();i++)
 	{
 		delete (*i).second;
@@ -933,4 +935,152 @@ boolean CVisualisationTree::setWidget(const CIdentifier& rBoxIdentifier, ::GtkWi
 	{
 		return false;
 	}
+}
+
+
+
+json::Object CVisualisationTree::serializeWidget(IVisualisationWidget& widget) const
+{
+	json::Object jsonRepresentation;
+
+	jsonRepresentation["identifier"] = widget.getIdentifier().toString().toASCIIString();
+
+	// visualisation box name can be retrieved from corresponding IBox, so we can skip it for these
+	if (widget.getType() != EVisualisationWidget_VisualisationBox)
+	{
+		jsonRepresentation["name"] = widget.getName().toASCIIString();
+	}
+
+	jsonRepresentation["type"] = widget.getType();
+	jsonRepresentation["parentIdentifier"] = widget.getParentIdentifier().toString().toASCIIString();
+
+	// visualisation widget index
+	IVisualisationWidget* parentVisualisationWidget = this->getVisualisationWidget(widget.getParentIdentifier());
+	if (parentVisualisationWidget)
+	{
+		uint32 childIndex = 0;
+		parentVisualisationWidget->getChildIndex(widget.getIdentifier(), childIndex);
+		jsonRepresentation["index"] = static_cast<int>(childIndex);
+	}
+
+	jsonRepresentation["boxIdentifier"] = widget.getBoxIdentifier().toString().toASCIIString();
+	jsonRepresentation["childCount"] = static_cast<int>(widget.getNbChildren());
+	jsonRepresentation["width"] = static_cast<int>(widget.getWidth());
+	jsonRepresentation["height"] = static_cast<int>(widget.getHeight());
+	jsonRepresentation["dividerPosition"] = widget.getDividerPosition();
+	jsonRepresentation["maxDividerPosition"] = widget.getMaxDividerPosition();
+
+	return jsonRepresentation;
+}
+
+OpenViBE::CString CVisualisationTree::serialize() const
+{
+	json::Array jsonRepresentation;
+
+	std::vector<CIdentifier> widgetsToExport;
+
+	CIdentifier visualizationWidgetIdentifier;
+	while (this->getNextVisualisationWidgetIdentifier(visualizationWidgetIdentifier))
+	{
+		IVisualisationWidget* widget = this->getVisualisationWidget(visualizationWidgetIdentifier);
+		if (widget->getType() == EVisualisationWidget_VisualisationWindow
+		        || widget->getParentIdentifier()==OV_UndefinedIdentifier)
+		{
+			widgetsToExport.push_back(visualizationWidgetIdentifier);
+		}
+	}
+
+	for (size_t i = 0; i < widgetsToExport.size(); ++i)
+	{
+		IVisualisationWidget* widget = this->getVisualisationWidget(widgetsToExport[i]);
+
+		jsonRepresentation.push_back(this->serializeWidget(*widget));
+
+		for (uint32 j = 0; j < widget->getNbChildren(); ++j)
+		{
+			if (widget->getChildIdentifier(j, visualizationWidgetIdentifier))
+			{
+				widgetsToExport.push_back(visualizationWidgetIdentifier);
+			}
+		}
+	}
+
+	CString serializedString = json::Serialize(jsonRepresentation).c_str();
+	return serializedString;
+}
+
+bool CVisualisationTree::deserialize(const CString& serializedVisualizationTree)
+{
+	json::Array jsonRepresentation = json::Deserialize(serializedVisualizationTree.toASCIIString());
+
+	for (auto itWidget = jsonRepresentation.begin(); itWidget != jsonRepresentation.end(); ++itWidget)
+	{
+		json::Value& jsonWidget = *itWidget;
+
+		CIdentifier widgetIdentifier;
+		widgetIdentifier.fromString(jsonWidget["identifier"].ToString().c_str());
+
+		CIdentifier boxIdentifier;
+		boxIdentifier.fromString(jsonWidget["boxIdentifier"].ToString().c_str());
+
+		EVisualisationWidgetType widgetType = EVisualisationWidgetType(jsonWidget["type"].ToInt());
+
+		CString widgetName;
+		if (widgetType == EVisualisationWidget_VisualisationBox)
+		{
+			const IBox* box = m_pScenario->getBoxDetails(boxIdentifier);
+			if(!box)
+			{
+				m_rKernelContext.getLogManager() << LogLevel_Error << "The box identifier [" << boxIdentifier << "] used in Window manager was not found in the scenario.\n";
+				return false;
+			}
+			widgetName = box->getName();
+		}
+		else
+		{
+			widgetName = jsonWidget["name"].ToString().c_str();
+		}
+
+		CIdentifier newVisualizationWidgetIdentifier;
+
+		CIdentifier parentIdentifier;
+		parentIdentifier.fromString(jsonWidget["parentIdentifier"].ToString().c_str());
+
+		unsigned int widgetIndex = 0;
+		if (this->getVisualisationWidget(parentIdentifier))
+		{
+			widgetIndex = static_cast<unsigned int>(jsonWidget["index"].ToInt());
+		}
+		unsigned int widgetChildCount = static_cast<unsigned int>(jsonWidget["childCount"].ToInt());
+
+		this->addVisualisationWidget(
+		            newVisualizationWidgetIdentifier,
+		            widgetName,
+		            widgetType,
+		            parentIdentifier,
+		            widgetIndex,
+		            boxIdentifier,
+		            widgetChildCount,
+		            widgetIdentifier
+		            );
+
+		if (widgetIdentifier != newVisualizationWidgetIdentifier)
+		{
+			m_rKernelContext.getLogManager() << LogLevel_Error << "Visualization widget [" << widgetIdentifier << "] for box [" << boxIdentifier << "] could not be imported.\n";
+			return false;
+		}
+
+		IVisualisationWidget* visualizationWidget = this->getVisualisationWidget(widgetIdentifier);
+
+		if (visualizationWidget)
+		{
+			visualizationWidget->setWidth(static_cast<unsigned int>(jsonWidget["width"].ToInt()));
+			visualizationWidget->setHeight(static_cast<unsigned int>(jsonWidget["height"].ToInt()));
+			visualizationWidget->setDividerPosition(jsonWidget["dividerPosition"].ToInt());
+			visualizationWidget->setMaxDividerPosition(jsonWidget["maxDividerPosition"].ToInt());
+		}
+
+	}
+
+	return true;
 }

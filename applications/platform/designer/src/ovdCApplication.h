@@ -1,6 +1,7 @@
 #ifndef __OpenViBEDesigner_CApplication_H__
 #define __OpenViBEDesigner_CApplication_H__
 
+#include <visualization-toolkit/ovvtkIVisualizationManager.h>
 #include "ovd_base.h"
 #if defined TARGET_HAS_LibArchway
 #include "ovdCArchwayHandler.h"
@@ -98,6 +99,15 @@ namespace OpenViBEDesigner
 
 		//@}
 
+		/** \name Designer visualisation management */
+		//@{
+
+		void deleteDesignerVisualisationCB();
+
+		void toggleDesignerVisualisationCB();
+
+		//@}
+
 		/** \name Player management */
 		//@{
 
@@ -144,6 +154,8 @@ namespace OpenViBEDesigner
 		const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
 		OpenViBE::Kernel::IPluginManager* m_pPluginManager;
 		OpenViBE::Kernel::IScenarioManager* m_pScenarioManager;
+		OpenViBEVisualizationToolkit::IVisualisationManager* m_pVisualisationManager;
+		OpenViBEVisualizationToolkit::IVisualizationContext* m_visualizationContext;
 		OpenViBE::Kernel::IScenario* m_pClipboardScenario;
 
 		OpenViBEDesigner::CLogListenerDesigner* m_pLogListenerDesigner;

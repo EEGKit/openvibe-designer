@@ -10,6 +10,7 @@ ENDIF(WIN32)
 
 FILE(GLOB_RECURSE source_files src/*.cpp src/visualisation/*.cpp src/visualisation/*.h)
 INCLUDE("FindSourceCommonMetaboxLoader")
+INCLUDE("FindSourceDependencyJSON")
 
 OV_INSTALL_LAUNCH_SCRIPT(SCRIPT_PREFIX "${LOWER_BRAND_NAME}-${LOWER_STUDIO_NAME}" EXECUTABLE_NAME "${PROJECT_NAME}" ICON_PATH "${OV_ICON_PATH}/designer.ico")
 SET(source_files "${source_files};${CMAKE_INSTALL_FULL_DATADIR}/resource-files/${LOWER_BRAND_NAME}-${LOWER_STUDIO_NAME}.rc")
@@ -24,6 +25,7 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${RLM_LIB_FILES})
 ADD_DEFINITIONS("-DOV_PATH_ROOT=\"${CMAKE_INSTALL_PREFIX}\"")
 
 INCLUDE("FindCertivibe")
+include("FindOpenViBEVisualizationToolkit")
 INCLUDE("FindThirdPartyGTK")
 INCLUDE("FindThirdPartyBoost")
 INCLUDE("FindThirdPartyBoost_System")

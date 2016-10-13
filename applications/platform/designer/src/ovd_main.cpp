@@ -640,6 +640,7 @@ int go(int argc, char ** argv)
 			else
 			{
 				OpenViBEToolkit::initialize(*l_pKernelContext);
+				OpenViBEVisualizationToolkit::initialize(*l_pKernelContext);
 
 				//initialise Gtk before 3D context
 				gtk_init(&argc, &argv);
@@ -811,6 +812,7 @@ int go(int argc, char ** argv)
 
 				l_rLogManager << LogLevel_Info << "Application terminated, releasing allocated objects\n";
 
+				OpenViBEVisualizationToolkit::uninitialize(*l_pKernelContext);
 				OpenViBEToolkit::uninitialize(*l_pKernelContext);
 
 				l_pKernelDesc->releaseKernel(l_pKernelContext);

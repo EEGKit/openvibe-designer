@@ -183,7 +183,7 @@ boolean CScenarioStateStack::restoreState(const IMemoryBuffer& rState)
 	TParameterHandler < const IMemoryBuffer* > ip_pMemoryBuffer(l_pImporter->getInputParameter(OV_Algorithm_ScenarioImporter_InputParameterId_MemoryBuffer));
 	TParameterHandler < IScenario* > op_pScenario(l_pImporter->getOutputParameter(OV_Algorithm_ScenarioImporter_OutputParameterId_Scenario));
 
-	/*
+	/* TODO_JL: Restore the visualisation tree
 	CIdentifier l_oWidgetIdentifier;
 	while(m_rScenario.getVisualisationTreeDetails().getNextVisualisationWidgetIdentifier(l_oWidgetIdentifier))
 	{
@@ -191,7 +191,6 @@ boolean CScenarioStateStack::restoreState(const IMemoryBuffer& rState)
 		l_oWidgetIdentifier=OV_UndefinedIdentifier;
 	}
 	m_rScenario.getVisualisationTreeDetails().reloadTree();
-	*/
 	m_rScenario.clear();
 
 	ip_pMemoryBuffer=&l_oUncompressedMemoryBuffer;
@@ -201,8 +200,8 @@ boolean CScenarioStateStack::restoreState(const IMemoryBuffer& rState)
 	l_pImporter->uninitialize();
 	m_rKernelContext.getAlgorithmManager().releaseAlgorithm(*l_pImporter);
 
-//	m_rScenario.getVisualisationTreeDetails().reloadTree();
-
+	m_rScenario.getVisualisationTreeDetails().reloadTree();
+	*/
 	return true;
 }
 

@@ -3,6 +3,7 @@
 
 #include <openvibe/ov_all.h>
 #include <toolkit/ovtk_all.h>
+#include <visualization-toolkit/ovvtk_all.h>
 
 #include <gtk/gtk.h>
 

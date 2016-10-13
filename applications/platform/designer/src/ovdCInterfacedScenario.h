@@ -7,6 +7,7 @@
 #include "ovdCScenarioStateStack.h"
 #include "ovdCSettingCollectionHelper.h"
 #include "ovdCFileFormats.h"
+#include <visualization-toolkit/ovvtkIVisualizationTree.h>
 
 #include <map>
 #include <vector>
@@ -102,6 +103,15 @@ namespace OpenViBEDesigner
 		bool browseURL(OpenViBE::CString sURL, OpenViBE::CString sBrowser = "");
 		bool browseBoxDocumentation(OpenViBE::CIdentifier oBoxId);
 
+		void toggleDesignerVisualisation();
+		OpenViBE::boolean isDesignerVisualisationToggled();
+
+		void showCurrentVisualisation();
+		void hideCurrentVisualisation();
+
+		void createPlayerVisualisation(OpenViBEVisualizationToolkit::IVisualisationTree* pVisualisationTree = NULL);
+		void releasePlayerVisualisation(void);
+
 		OpenViBE::boolean hasSelection(void);
 /*
 	private:
@@ -120,6 +130,10 @@ namespace OpenViBEDesigner
 		OpenViBE::Kernel::IPlayer* m_pPlayer;
 		OpenViBE::uint64 m_ui64LastLoopTime;
 		::GtkNotebook& m_rNotebook;
+		OpenViBEVisualizationToolkit::IVisualisationTree* m_pVisualisationTree;
+		OpenViBE::boolean m_bDesignerVisualisationToggled;
+		OpenViBEDesigner::CDesignerVisualisation* m_pDesignerVisualisation;
+		OpenViBEDesigner::CPlayerVisualisation* m_pPlayerVisualisation;
 		::GtkBuilder* m_pGUIBuilder;
 //		::GtkBuilder* m_pSettingsGUIBuilder;
 /*		::GtkBuilder* m_pBuilder;
@@ -206,9 +220,6 @@ namespace OpenViBEDesigner
 		// Object necessary for holding scenario inputs/outputs
 
 		std::map<std::string, OpenViBE::CIdentifier> m_mStreamType;
-
-
-
 
 		// This struct is used for both inputs and outputs of the scenario
 

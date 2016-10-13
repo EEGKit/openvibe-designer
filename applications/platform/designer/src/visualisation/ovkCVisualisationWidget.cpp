@@ -5,6 +5,7 @@
 using namespace std;
 using namespace OpenViBE;
 using namespace OpenViBE::Kernel;
+using namespace OpenViBEVisualizationToolkit;
 
 CVisualisationWidget::CVisualisationWidget(const IKernelContext& rKernelContext) :
 	m_oIdentifier(OV_UndefinedIdentifier),
