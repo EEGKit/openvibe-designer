@@ -1,0 +1,5 @@
+set PATH=C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin;%PATH%
+set "SCRIPT_PATH=%~dp0"
+set "PATH_DEPENDENCIES=@ABSOLUTE_PATH_DEPENDENCIES@"
+
+set PATH=%PATH_DEPENDENCIES%\gtk\bin;%PATH%
