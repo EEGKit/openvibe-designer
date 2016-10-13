@@ -13,7 +13,7 @@ SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES
 	SOVERSION ${PROJECT_VERSION_MAJOR}
 	COMPILE_FLAGS "-DOVP_Exports -DOVP_Shared")
 
-INCLUDE("FindCertiViBE")
+INCLUDE("FindCertivibe")
 include("FindOpenViBEVisualizationToolkit")
 INCLUDE("FindThirdPartyGTK")
 

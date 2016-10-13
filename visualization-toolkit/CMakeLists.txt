@@ -18,7 +18,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 	SOVERSION ${PROJECT_VERSION_MAJOR}
 	COMPILE_FLAGS "-DOVVTK_Exports -DOVVTK_Shared")
 
-include("FindCertiViBE")
+include("FindCertivibe")
 include("FindThirdPartyGTK")
 
 # ---------------------------------

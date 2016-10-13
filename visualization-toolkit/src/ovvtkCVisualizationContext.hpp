@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <memory>
 
 #include <openvibe/ov_all.h>
 #include <toolkit/ovtk_all.h>
@@ -26,6 +27,7 @@ namespace OpenViBEToolkit
 		bool setManager(OpenViBEVisualizationToolkit::IVisualisationManager* visualizationManager) override
 		{
 			m_visualizationManager = visualizationManager;
+			return true;
 		}
 		bool setWidget(OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>& box, GtkWidget* widget) override;
 		bool setToolbar(OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>& box, GtkWidget* toolbarWidget) override;
