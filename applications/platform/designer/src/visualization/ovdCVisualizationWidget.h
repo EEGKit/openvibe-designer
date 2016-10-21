@@ -1,22 +1,22 @@
 #pragma once
 
-#include <visualization-toolkit/ovvtkIVisualizationWidget.h>
+#include <visualization-toolkit/ovvizIVisualizationWidget.h>
 
 #include <vector>
 
 namespace OpenViBEDesigner
 {
-	class CVisualisationWidget final: public OpenViBEVisualizationToolkit::IVisualisationWidget
+	class CVisualizationWidget final: public OpenViBEVisualizationToolkit::IVisualizationWidget
 	{
 	public:
-		CVisualisationWidget(const OpenViBE::Kernel::IKernelContext& kernelContext);
+		CVisualizationWidget(const OpenViBE::Kernel::IKernelContext& kernelContext);
 
-		~CVisualisationWidget(void);
+		~CVisualizationWidget(void);
 
 		bool initialize(
 		        const OpenViBE::CIdentifier& identifier,
 		        const OpenViBE::CString& name,
-		        OpenViBEVisualizationToolkit::EVisualisationWidgetType type,
+		        OpenViBEVisualizationToolkit::EVisualizationWidgetType type,
 		        const OpenViBE::CIdentifier& parentIdentifier,
 		        const OpenViBE::CIdentifier& boxIdentifier,
 		        OpenViBE::uint32 childCount);
@@ -27,7 +27,7 @@ namespace OpenViBEDesigner
 
 		void setName(const OpenViBE::CString& name);
 
-		OpenViBEVisualizationToolkit::EVisualisationWidgetType getType(void) const;
+		OpenViBEVisualizationToolkit::EVisualizationWidgetType getType(void) const;
 
 		OpenViBE::CIdentifier getParentIdentifier(void) const;
 
@@ -93,7 +93,7 @@ namespace OpenViBEDesigner
 		const OpenViBE::Kernel::IKernelContext& m_KernelContext;
 		OpenViBE::CIdentifier m_Identifier;
 		OpenViBE::CString m_Name;
-		OpenViBEVisualizationToolkit::EVisualisationWidgetType m_Type;
+		OpenViBEVisualizationToolkit::EVisualizationWidgetType m_Type;
 		OpenViBE::CIdentifier m_ParentIdentifier;
 		OpenViBE::CIdentifier m_BoxIdentifier;
 		std::vector<OpenViBE::CIdentifier> m_Children;

@@ -12,13 +12,13 @@
 #include "ovdCScenarioStateStack.h"
 #include "ovdCSettingCollectionHelper.h"
 #include "ovdCFileFormats.h"
-#include <visualization-toolkit/ovvtkIVisualizationTree.h>
+#include <visualization-toolkit/ovvizIVisualizationTree.h>
 
 namespace OpenViBEDesigner
 {
 	class CApplication;
-	class CDesignerVisualisation;
-	class CPlayerVisualisation;
+	class CDesignerVisualization;
+	class CPlayerVisualization;
 
 	class CInterfacedScenario
 	{
@@ -103,14 +103,14 @@ namespace OpenViBEDesigner
 		bool browseURL(OpenViBE::CString sURL, OpenViBE::CString sBrowser = "");
 		bool browseBoxDocumentation(OpenViBE::CIdentifier oBoxId);
 
-		void toggleDesignerVisualisation();
-		OpenViBE::boolean isDesignerVisualisationToggled();
+		void toggleDesignerVisualization();
+		OpenViBE::boolean isDesignerVisualizationToggled();
 
-		void showCurrentVisualisation();
-		void hideCurrentVisualisation();
+		void showCurrentVisualization();
+		void hideCurrentVisualization();
 
-		void createPlayerVisualisation(OpenViBEVisualizationToolkit::IVisualisationTree* pVisualisationTree = NULL);
-		void releasePlayerVisualisation(void);
+		void createPlayerVisualization(OpenViBEVisualizationToolkit::IVisualizationTree* pVisualizationTree = NULL);
+		void releasePlayerVisualization(void);
 
 		OpenViBE::boolean hasSelection(void);
 /*
@@ -123,17 +123,17 @@ namespace OpenViBEDesigner
 		OpenViBE::Kernel::EPlayerStatus m_ePlayerStatus;
 		OpenViBE::CIdentifier m_oScenarioIdentifier;
 		OpenViBE::CIdentifier m_oPlayerIdentifier;
-		OpenViBE::CIdentifier m_oVisualisationTreeIdentifier;
+		OpenViBE::CIdentifier m_oVisualizationTreeIdentifier;
 		OpenViBEDesigner::CApplication& m_rApplication;
 		const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
 		OpenViBE::Kernel::IScenario& m_rScenario;
 		OpenViBE::Kernel::IPlayer* m_pPlayer;
 		OpenViBE::uint64 m_ui64LastLoopTime;
 		::GtkNotebook& m_rNotebook;
-		OpenViBEVisualizationToolkit::IVisualisationTree* m_pVisualisationTree;
-		OpenViBE::boolean m_bDesignerVisualisationToggled;
-		OpenViBEDesigner::CDesignerVisualisation* m_pDesignerVisualisation;
-		OpenViBEDesigner::CPlayerVisualisation* m_pPlayerVisualisation;
+		OpenViBEVisualizationToolkit::IVisualizationTree* m_pVisualizationTree;
+		OpenViBE::boolean m_bDesignerVisualizationToggled;
+		OpenViBEDesigner::CDesignerVisualization* m_pDesignerVisualization;
+		OpenViBEDesigner::CPlayerVisualization* m_pPlayerVisualization;
 		::GtkBuilder* m_pGUIBuilder;
 //		::GtkBuilder* m_pSettingsGUIBuilder;
 /*		::GtkBuilder* m_pBuilder;

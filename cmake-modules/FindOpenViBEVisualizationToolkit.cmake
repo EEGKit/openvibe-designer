@@ -8,16 +8,16 @@ option(DYNAMIC_LINK_OPENVIBE_VISUALIZATION_TOOLKIT "Dynamically link openvibe-vi
 
 if(DYNAMIC_LINK_OPENVIBE_VISUALIZATION_TOOLKIT)
 	set(OPENVIBE_VISUALIZATION_TOOLKIT_LINKING "")
-	add_definitions(-DOVVTK_Shared)
+	add_definitions(-DOVVIZ_Shared)
 else()
 	set(OPENVIBE_VISUALIZATION_TOOLKIT_LINKING "-static")
-	add_definitions(-DOVVTK_Static)
+	add_definitions(-DOVVIZ_Static)
 endif()
 
 set(SRC_DIR ${OV_BASE_DIR}/visualization-toolkit/include)
 
 set(PATH_OPENVIBE_VISUALIZATION_TOOLKIT "PATH_OPENVIBE_VISUALIZATION_TOOLKIT-NOTFOUND")
-find_path(PATH_OPENVIBE_VISUALIZATION_TOOLKIT visualization-toolkit/ovvtk_all.h PATHS ${SRC_DIR} NO_DEFAULT_PATH)
+find_path(PATH_OPENVIBE_VISUALIZATION_TOOLKIT visualization-toolkit/ovviz_all.h PATHS ${SRC_DIR} NO_DEFAULT_PATH)
 if(PATH_OPENVIBE_VISUALIZATION_TOOLKIT)
 	debug_message( "  Found openvibe-toolkit...  ${PATH_OPENVIBE_VISUALIZATION_TOOLKIT}")
 	include_directories(${PATH_OPENVIBE_VISUALIZATION_TOOLKIT}/)

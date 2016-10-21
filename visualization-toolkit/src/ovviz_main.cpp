@@ -1,14 +1,14 @@
 #include <cstdio>
 
-#include "visualization-toolkit/ovvtk_all.h"
-#include "ovvtkCVisualizationContext.hpp"
+#include "visualization-toolkit/ovviz_all.h"
+#include "ovvizCVisualizationContext.hpp"
 
 using namespace OpenViBE;
 using namespace OpenViBE::Kernel;
 
 namespace
 {
-	OpenViBEVisualizationToolkit::CVisualizationContextDesc visualisationContextDesc;
+	OpenViBEVisualizationToolkit::CVisualizationContextDesc visualizationContextDesc;
 }
 
 bool OpenViBEVisualizationToolkit::initialize(const IKernelContext& kernelContext)
@@ -19,7 +19,7 @@ bool OpenViBEVisualizationToolkit::initialize(const IKernelContext& kernelContex
 	typeManager.registerType(OV_TypeId_Color, "Color");
 	typeManager.registerType(OV_TypeId_ColorGradient, "Color Gradient");
 
-	pluginManager.registerPluginDesc(visualisationContextDesc);
+	pluginManager.registerPluginDesc(visualizationContextDesc);
 
 	return true;
 }

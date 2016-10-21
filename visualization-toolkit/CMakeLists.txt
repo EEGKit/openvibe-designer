@@ -16,7 +16,7 @@ add_library(${PROJECT_NAME} SHARED ${source_files})
 set_target_properties(${PROJECT_NAME} PROPERTIES
 	VERSION ${PROJECT_VERSION}
 	SOVERSION ${PROJECT_VERSION_MAJOR}
-	COMPILE_FLAGS "-DOVVTK_Exports -DOVVTK_Shared")
+	COMPILE_FLAGS "-DOVVIZ_Exports -DOVVIZ_Shared")
 
 include("FindCertivibe")
 include("FindThirdPartyGTK")

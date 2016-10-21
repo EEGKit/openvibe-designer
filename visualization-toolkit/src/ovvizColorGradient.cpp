@@ -1,4 +1,4 @@
-#include "ovvtkColorGradient.h"
+#include "ovvizColorGradient.h"
 
 #include <cstdio>
 #include <string>

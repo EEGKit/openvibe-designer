@@ -1,5 +1,5 @@
-#ifndef __OpenViBEDesigner_CPlayerVisualisation_H__
-#define __OpenViBEDesigner_CPlayerVisualisation_H__
+#ifndef __OpenViBEDesigner_CPlayerVisualization_H__
+#define __OpenViBEDesigner_CPlayerVisualization_H__
 
 #include "ovd_base.h"
 
@@ -10,24 +10,24 @@
 namespace OpenViBEDesigner
 {
 	class CInterfacedScenario;
-	class CPlayerVisualisation : public OpenViBEVisualizationToolkit::ITreeViewCB
+	class CPlayerVisualization : public OpenViBEVisualizationToolkit::ITreeViewCB
 	{
 	public:
-		CPlayerVisualisation(
+		CPlayerVisualization(
 			const OpenViBE::Kernel::IKernelContext& rKernelContext,
-			OpenViBEVisualizationToolkit::IVisualisationTree& rVisualisationTree,
+			OpenViBEVisualizationToolkit::IVisualizationTree& rVisualizationTree,
 			CInterfacedScenario& rInterfacedScenario);
 
-		virtual ~CPlayerVisualisation();
+		virtual ~CPlayerVisualization();
 
 		void init();
 
 		/** \name ITreeViewCB interface implementation */
 		//@{
 		::GtkWidget* loadTreeWidget(
-			OpenViBEVisualizationToolkit::IVisualisationWidget* pVisualisationWidget);
+			OpenViBEVisualizationToolkit::IVisualizationWidget* pVisualizationWidget);
 		void endLoadTreeWidget(
-			OpenViBEVisualizationToolkit::IVisualisationWidget* pVisualisationWidget);
+			OpenViBEVisualizationToolkit::IVisualizationWidget* pVisualizationWidget);
 		OpenViBE::boolean setToolbar(
 			const OpenViBE::CIdentifier& rBoxIdentifier,
 			::GtkWidget* pToolbarWidget);
@@ -42,7 +42,7 @@ namespace OpenViBEDesigner
 
 	protected:
 		OpenViBE::boolean parentWidgetBox(
-			OpenViBEVisualizationToolkit::IVisualisationWidget* pWidget,
+			OpenViBEVisualizationToolkit::IVisualizationWidget* pWidget,
 			::GtkBox* pWidgetBox);
 
 		static gboolean configure_event_cb(
@@ -88,7 +88,7 @@ namespace OpenViBEDesigner
 	private:
 
 		const OpenViBE::Kernel::IKernelContext&	m_rKernelContext;
-		OpenViBEVisualizationToolkit::IVisualisationTree& m_rVisualisationTree;
+		OpenViBEVisualizationToolkit::IVisualizationTree& m_rVisualizationTree;
 		OpenViBEDesigner::CInterfacedScenario& m_rInterfacedScenario;
 
 		/**
@@ -125,10 +125,10 @@ namespace OpenViBEDesigner
 		};
 
 		/**
-		 * \brief Map of visualisation plugins
+		 * \brief Map of visualization plugins
 		 */
-		std::map < OpenViBE::CIdentifier, CPlayerVisualisation::CPluginWidgets > m_mPlugins;
+		std::map < OpenViBE::CIdentifier, CPlayerVisualization::CPluginWidgets > m_mPlugins;
 	};
 };
 
-#endif // __OpenViBEDesigner_CPlayerVisualisation_H__
+#endif // __OpenViBEDesigner_CPlayerVisualization_H__

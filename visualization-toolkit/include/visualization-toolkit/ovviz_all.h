@@ -7,23 +7,23 @@
 // Basic includes                                                    //
 //___________________________________________________________________//
 
-#include "ovvtk_defines.h"
-#include "ovvtk_base.h"
+#include "ovviz_defines.h"
+#include "ovviz_base.h"
 
 //___________________________________________________________________//
 //                                                                   //
 // Tools                                                             //
 //___________________________________________________________________//
 
-#include "ovvtkColorGradient.h"
-#include "ovvtkIVisualizationContext.h"
-#include "ovvtkIVisualizationManager.h"
-#include "ovvtkIVisualizationTree.h"
-#include "ovvtkIVisualizationWidget.h"
+#include "ovvizColorGradient.h"
+#include "ovvizIVisualizationContext.h"
+#include "ovvizIVisualizationManager.h"
+#include "ovvizIVisualizationTree.h"
+#include "ovvizIVisualizationWidget.h"
 
 namespace OpenViBEVisualizationToolkit
 {
-	OVVTK_API bool initialize(const OpenViBE::Kernel::IKernelContext& kernelContext);
-	OVVTK_API bool uninitialize(const OpenViBE::Kernel::IKernelContext& kernelContext);
+	OVVIZ_API bool initialize(const OpenViBE::Kernel::IKernelContext& kernelContext);
+	OVVIZ_API bool uninitialize(const OpenViBE::Kernel::IKernelContext& kernelContext);
 };
 

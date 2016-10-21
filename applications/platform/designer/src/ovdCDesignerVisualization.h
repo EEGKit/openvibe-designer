@@ -1,27 +1,27 @@
-#ifndef __OpenViBEDesigner_CDesignerVisualisation_H__
-#define __OpenViBEDesigner_CDesignerVisualisation_H__
+#ifndef __OpenViBEDesigner_CDesignerVisualization_H__
+#define __OpenViBEDesigner_CDesignerVisualization_H__
 
 #include <string>
 #include <vector>
 
 #include <gtk/gtk.h>
-#include <visualization-toolkit/ovvtkIVisualizationTree.h>
+#include <visualization-toolkit/ovvizIVisualizationTree.h>
 
 namespace OpenViBEDesigner
 {
-	typedef void (*fpDesignerVisualisationDeleteEventCB)(gpointer user_data);
+	typedef void (*fpDesignerVisualizationDeleteEventCB)(gpointer user_data);
 
 	class CInterfacedScenario;
 
-	class CDesignerVisualisation : public OpenViBEVisualizationToolkit::ITreeViewCB
+	class CDesignerVisualization : public OpenViBEVisualizationToolkit::ITreeViewCB
 	{
 	public:
-		CDesignerVisualisation(
+		CDesignerVisualization(
 			const OpenViBE::Kernel::IKernelContext& rKernelContext,
-			OpenViBEVisualizationToolkit::IVisualisationTree& rVisualisationTree,
+			OpenViBEVisualizationToolkit::IVisualizationTree& rVisualizationTree,
 			CInterfacedScenario& rInterfacedScenario);
 
-		virtual ~CDesignerVisualisation();
+		virtual ~CDesignerVisualization();
 
 		void init(
 			std::string guiFile);
@@ -29,28 +29,28 @@ namespace OpenViBEDesigner
 		void show();
 		void hide();
 
-		void setDeleteEventCB(fpDesignerVisualisationDeleteEventCB fpDeleteEventCB, gpointer user_data);
+		void setDeleteEventCB(fpDesignerVisualizationDeleteEventCB fpDeleteEventCB, gpointer user_data);
 
-		void onVisualisationBoxAdded(
+		void onVisualizationBoxAdded(
 			const OpenViBE::Kernel::IBox* pBox);
-		void onVisualisationBoxRemoved(
+		void onVisualizationBoxRemoved(
 			const OpenViBE::CIdentifier& rBoxIdentifier);
-		void onVisualisationBoxRenamed(
+		void onVisualizationBoxRenamed(
 			const OpenViBE::CIdentifier& rBoxIdentifier);
 
 		//ITreeViewCB callbacks overloading
 		void createTreeWidget(
-			OpenViBEVisualizationToolkit::IVisualisationWidget* pVisualisationWidget);
+			OpenViBEVisualizationToolkit::IVisualizationWidget* pVisualizationWidget);
 		GtkWidget* loadTreeWidget(
-			OpenViBEVisualizationToolkit::IVisualisationWidget*);
+			OpenViBEVisualizationToolkit::IVisualizationWidget*);
 		void endLoadTreeWidget(
-			OpenViBEVisualizationToolkit::IVisualisationWidget*);
+			OpenViBEVisualizationToolkit::IVisualizationWidget*);
 		GtkWidget* getTreeWidget(
-			GtkWidget* visualisationWidget);
-		GtkWidget* getVisualisationWidget(
+			GtkWidget* visualizationWidget);
+		GtkWidget* getVisualizationWidget(
 			GtkWidget* treeWidget);
 		const char* getTreeWidgetIcon(
-			OpenViBEVisualizationToolkit::EVisualisationTreeNode);
+			OpenViBEVisualizationToolkit::EVisualizationTreeNode);
 
 		//callbacks for dialog
 #ifdef HANDLE_MIN_MAX_EVENTS
@@ -68,7 +68,7 @@ namespace OpenViBEDesigner
 			GdkEventExpose* event,
 			gpointer user_data);
 		void resizeCB(
-			OpenViBEVisualizationToolkit::IVisualisationWidget* pVisualisationWidget);
+			OpenViBEVisualizationToolkit::IVisualizationWidget* pVisualizationWidget);
 
 		static void notebook_page_switch_cb(
 			GtkNotebook* notebook,
@@ -82,45 +82,45 @@ namespace OpenViBEDesigner
 			GParamSpec* spec,
 			gpointer user_data);
 
-		static void ask_new_visualisation_window_cb(
+		static void ask_new_visualization_window_cb(
 			gpointer pUserData,
 			guint callback_action,
 			GtkWidget* pWidget);
-		static void new_visualisation_window_cb(
+		static void new_visualization_window_cb(
 			GtkWidget* pWidget,
 			gpointer pUserData);
-		static void ask_rename_visualisation_window_cb(
+		static void ask_rename_visualization_window_cb(
 			gpointer pUserData,
 			guint callback_action,
 			GtkWidget* pWidget);
-		static void rename_visualisation_window_cb(
+		static void rename_visualization_window_cb(
 			GtkWidget* pWidget,
 			gpointer pUserData);
-		static void remove_visualisation_window_cb(
+		static void remove_visualization_window_cb(
 			gpointer pUserData,
 			guint callback_action,
 			GtkWidget* pWidget);
 
-		static void ask_new_visualisation_panel_cb(
+		static void ask_new_visualization_panel_cb(
 			gpointer pUserData,
 			guint callback_action,
 			GtkWidget* pWidget);
-		static void new_visualisation_panel_cb(
+		static void new_visualization_panel_cb(
 			GtkWidget* pWidget,
 			gpointer pUserData);
-		static void ask_rename_visualisation_panel_cb(
+		static void ask_rename_visualization_panel_cb(
 			gpointer pUserData,
 			guint callback_action,
 			GtkWidget* pWidget);
-		static void rename_visualisation_panel_cb(
+		static void rename_visualization_panel_cb(
 			GtkWidget* pWidget,
 			gpointer pUserData);
-		static void remove_visualisation_panel_cb(
+		static void remove_visualization_panel_cb(
 			gpointer pUserData,
 			guint callback_action,
 			GtkWidget* pWidget);
 
-		static void remove_visualisation_widget_cb(
+		static void remove_visualization_widget_cb(
 			gpointer pUserData,
 			guint callback_action,
 			GtkWidget* pWidget);
@@ -132,10 +132,10 @@ namespace OpenViBEDesigner
       gpointer user_data);
 		OpenViBE::boolean deleteEventCB();
 
-		void refreshActiveVisualisation(
+		void refreshActiveVisualization(
 			GtkTreePath* pSelectedItemPath);
 
-		void setActiveVisualisation(
+		void setActiveVisualization(
 			const char* activeWindow,
 			const char* activePanel);
 
@@ -143,31 +143,31 @@ namespace OpenViBEDesigner
 		void setupNewEventBoxTable(
 			GtkBuilder* xml);
 
-		//visualisation windows
-		void askNewVisualisationWindow(void);
+		//visualization windows
+		void askNewVisualizationWindow(void);
 	public:
-		OpenViBE::boolean newVisualisationWindow(
+		OpenViBE::boolean newVisualizationWindow(
 			const char* label);
 	private:
-		void askRenameVisualisationWindow(void);
-		OpenViBE::boolean renameVisualisationWindow(
+		void askRenameVisualizationWindow(void);
+		OpenViBE::boolean renameVisualizationWindow(
 			const char* label);
-		OpenViBE::boolean	removeVisualisationWindow(void);
+		OpenViBE::boolean	removeVisualizationWindow(void);
 
-		//visualisation panels
-		void askNewVisualisationPanel(void);
-		OpenViBE::boolean newVisualisationPanel(
+		//visualization panels
+		void askNewVisualizationPanel(void);
+		OpenViBE::boolean newVisualizationPanel(
 			const char* label);
-		void askRenameVisualisationPanel(void);
-		OpenViBE::boolean renameVisualisationPanel(
+		void askRenameVisualizationPanel(void);
+		OpenViBE::boolean renameVisualizationPanel(
 			const char* label);
-		OpenViBE::boolean removeVisualisationPanel(void);
+		OpenViBE::boolean removeVisualizationPanel(void);
 
-		//visualisation widgets
-		OpenViBE::boolean removeVisualisationWidget(void);
-		OpenViBE::boolean removeVisualisationWidget(
+		//visualization widgets
+		OpenViBE::boolean removeVisualizationWidget(void);
+		OpenViBE::boolean removeVisualizationWidget(
 			const OpenViBE::CIdentifier& rIdentifier);
-		OpenViBE::boolean destroyVisualisationWidget(
+		OpenViBE::boolean destroyVisualizationWidget(
 			const OpenViBE::CIdentifier& rIdentifier);
 
 		void enableNotebookSignals(
@@ -184,25 +184,25 @@ namespace OpenViBEDesigner
 			GtkWidget* widget);
 
 		//Mouse/Key event callbacks
-		static void visualisation_widget_key_press_event_cb(
+		static void visualization_widget_key_press_event_cb(
 			GtkWidget* pWidget,
 			GdkEventKey* pEvent,
 			gpointer pUserData);
-		void visualisationWidgetKeyPressEventCB(
+		void visualizationWidgetKeyPressEventCB(
 			GtkWidget* pWidget,
 			GdkEventKey* pEventKey);
-		static gboolean visualisation_widget_enter_notify_event_cb(
+		static gboolean visualization_widget_enter_notify_event_cb(
 			GtkWidget* pWidget,
       GdkEventCrossing* pEventCrossing,
       gpointer pUserData);
-		void visualisationWidgetEnterNotifyEventCB(
+		void visualizationWidgetEnterNotifyEventCB(
 			GtkWidget* pWidget,
 			GdkEventCrossing* pEventCrossing);
-		static gboolean visualisation_widget_leave_notify_event_cb(
+		static gboolean visualization_widget_leave_notify_event_cb(
 			GtkWidget* pWidget,
       GdkEventCrossing* pEventCrossing,
       gpointer pUserData);
-		void visualisationWidgetLeaveNotifyEventCB(
+		void visualizationWidgetLeaveNotifyEventCB(
 			GtkWidget* pWidget,
 			GdkEventCrossing* pEventCrossing);
 
@@ -274,9 +274,9 @@ namespace OpenViBEDesigner
 	private:
 
 		const OpenViBE::Kernel::IKernelContext&	m_rKernelContext;
-		OpenViBEVisualizationToolkit::IVisualisationTree& m_rVisualisationTree;
+		OpenViBEVisualizationToolkit::IVisualizationTree& m_rVisualizationTree;
 		OpenViBEDesigner::CInterfacedScenario& m_rInterfacedScenario;
-		fpDesignerVisualisationDeleteEventCB m_fpDeleteEventCB;
+		fpDesignerVisualizationDeleteEventCB m_fpDeleteEventCB;
 		gpointer m_pDeleteEventUserData;
 		std::string m_sGuiFile;
 		GtkTreeView* m_pTreeView;
@@ -285,18 +285,18 @@ namespace OpenViBEDesigner
 		//highlighted widget
 		GtkWidget* m_pHighlightedWidget;
 		//active items
-		OpenViBE::CString m_oActiveVisualisationWindowName, m_oActiveVisualisationPanelName;
-		OpenViBE::CIdentifier m_oActiveVisualisationBoxIdentifier;
+		OpenViBE::CString m_oActiveVisualizationWindowName, m_oActiveVisualizationPanelName;
+		OpenViBE::CIdentifier m_oActiveVisualizationBoxIdentifier;
 		//preview window visibility flag
 		OpenViBE::boolean m_bPreviewWindowVisible;
 		OpenViBE::uint32 m_ui32PreviewWindowWidth;
 		OpenViBE::uint32 m_ui32PreviewWindowHeight;
 		//factories used to build contextual menus
-		GtkItemFactory *m_pUnaffectedItemFactory, *m_pVisualisationWindowItemFactory, *m_pVisualisationPanelItemFactory;
-		GtkItemFactory *m_pVisualisationBoxItemFactory, *m_pUndefinedItemFactory, *m_pSplitItemFactory;
+		GtkItemFactory *m_pUnaffectedItemFactory, *m_pVisualizationWindowItemFactory, *m_pVisualizationPanelItemFactory;
+		GtkItemFactory *m_pVisualizationBoxItemFactory, *m_pUndefinedItemFactory, *m_pSplitItemFactory;
 		//strings identifying top, left, right and bottom event boxes
 		std::string m_sTopEventBoxData, m_sLeftEventBoxData, m_sRightEventBoxData, m_sBottomEventBoxData;
 	};
 };
 
-#endif // __OpenViBEDesigner_CDesignerVisualisation_H__
+#endif // __OpenViBEDesigner_CDesignerVisualization_H__

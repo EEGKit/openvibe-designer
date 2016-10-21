@@ -10,7 +10,7 @@ else()
 	set(ENTRYPOINT )
 endif()
 
-file(GLOB_RECURSE source_files src/*.cpp src/visualisation/*.cpp)
+file(GLOB_RECURSE source_files src/*.cpp src/visualization/*.cpp)
 
 include("FindSourceCommonMetaboxLoader")
 include("FindSourceDependencyJSON")

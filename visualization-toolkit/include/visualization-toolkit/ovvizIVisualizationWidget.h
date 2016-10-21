@@ -5,44 +5,44 @@
 namespace OpenViBEVisualizationToolkit
 {
 	/**
-	 * \brief This enum lists the different types of IVisualisationWidget supported by the platform
+	 * \brief This enum lists the different types of IVisualizationWidget supported by the platform
 	 */
-	enum EVisualisationWidgetType
+	enum EVisualizationWidgetType
 	{
-		EVisualisationWidget_Undefined, /**< Undefined widget (empty slot in an IVisualisationTree) */
-		EVisualisationWidget_VisualisationWindow, /**< Top-level IVisualisationWidget container */
-		EVisualisationWidget_VisualisationPanel, /**< Notebook tab containing IVisualisationWidget objects */
-		EVisualisationWidget_VisualisationBox, /**< Visualisation plugin */
-		EVisualisationWidget_VerticalSplit, /**< Split widget that divides its client area vertically in two */
-		EVisualisationWidget_HorizontalSplit /**< Split widget that divides its client area horizontally in two */
+		EVisualizationWidget_Undefined, /**< Undefined widget (empty slot in an IVisualizationTree) */
+		EVisualizationWidget_VisualizationWindow, /**< Top-level IVisualizationWidget container */
+		EVisualizationWidget_VisualizationPanel, /**< Notebook tab containing IVisualizationWidget objects */
+		EVisualizationWidget_VisualizationBox, /**< Visualization plugin */
+		EVisualizationWidget_VerticalSplit, /**< Split widget that divides its client area vertically in two */
+		EVisualizationWidget_HorizontalSplit /**< Split widget that divides its client area horizontally in two */
 	};
 
 	/**
-	 * \class IVisualisationWidget
+	 * \class IVisualizationWidget
 	 * \author Vincent Delannoy (INRIA/IRISA)
 	 * \date 2007-11
-	 * \brief Interface of visualisation widgets that are handled by an IVisualisationTree
-	 * These objects are stored in an IVisualisationTree object as they are being created and modified
+	 * \brief Interface of visualization widgets that are handled by an IVisualizationTree
+	 * These objects are stored in an IVisualizationTree object as they are being created and modified
 	 * to suit the graphical needs of a scenario.
 	 */
-	class IVisualisationWidget
+	class IVisualizationWidget
 	{
 	public:
-		virtual ~IVisualisationWidget() {}
+		virtual ~IVisualizationWidget() {}
 		/**
 		 * \brief Initializes the widget
 		 * \param identifier identifier of the widget
 		 * \param name name of the widget (optional)
 		 * \param type type of the widget
 		 * \param parentIdentifier parent widget identifier (OV_Undefined for top-level widgets)
-		 * \param boxIdentifier if widget type is EVisualisationWidget_VisualisationBox, identifier of corresponding IBox
-		 * \param childCount number of children of this widget (none for a visualisation box, 1 for a visualisation panel, 2 for split widgets, variable number for windows)
+		 * \param boxIdentifier if widget type is EVisualizationWidget_VisualizationBox, identifier of corresponding IBox
+		 * \param childCount number of children of this widget (none for a visualization box, 1 for a visualization panel, 2 for split widgets, variable number for windows)
 		 * \return True if widget was successfully initialized, false otherwise
 		 */
 		virtual OpenViBE::boolean initialize(
 		        const OpenViBE::CIdentifier& identifier,
 		        const OpenViBE::CString& name,
-		        EVisualisationWidgetType type,
+		        EVisualizationWidgetType type,
 		        const OpenViBE::CIdentifier& parentIdentifier,
 		        const OpenViBE::CIdentifier& boxIdentifier,
 		        OpenViBE::uint32 childCount) = 0;
@@ -69,7 +69,7 @@ namespace OpenViBEVisualizationToolkit
 		 * \brief Returns the type of the widget
 		 * \return Widget type
 		 */
-		virtual EVisualisationWidgetType getType(void) const = 0;
+		virtual EVisualizationWidgetType getType(void) const = 0;
 
 		/**
 		 * \brief Returns the identifier of the widget's parent (if any)
@@ -85,7 +85,7 @@ namespace OpenViBEVisualizationToolkit
 		/**
 		 * \brief Returns the identifier of the IBox associated to this widget.
 		 *
-		 * This only applies to widgets of type EVisualisationWidget_VisualisationBox.
+		 * This only applies to widgets of type EVisualizationWidget_VisualizationBox.
 		 * \return Identifier of IBox associated to this widget
 		 */
 		virtual OpenViBE::CIdentifier getBoxIdentifier(void) const = 0;
@@ -107,7 +107,7 @@ namespace OpenViBEVisualizationToolkit
 		/**
 		 * \brief Adds a child to a widget
 		 *
-		 * Only useful for top-level widgets (EVisualisationWidget_VisualisationWindow) since the number
+		 * Only useful for top-level widgets (EVisualizationWidget_VisualizationWindow) since the number
 		 * of tabs their notebook may contain is unknown a priori. The child is added after existing children.
 		 * \param childIdentifier identifier of child to be added to widget
 		 * \return True if child was successfully added

@@ -1,5 +1,5 @@
 #include <cstdio>
-#include "ovvtkCVisualizationContext.hpp"
+#include "ovvizCVisualizationContext.hpp"
 
 using namespace OpenViBE;
 using namespace OpenViBEVisualizationToolkit;

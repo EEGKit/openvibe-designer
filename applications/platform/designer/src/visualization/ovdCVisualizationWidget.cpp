@@ -2,7 +2,7 @@
 
 #include "../ovdAssert.h"
 
-#include "ovkCVisualisationWidget.h"
+#include "ovdCVisualizationWidget.h"
 
 namespace OpenViBE
 {
@@ -19,20 +19,20 @@ using namespace OpenViBEDesigner;
 using namespace OpenViBE::Kernel;
 using namespace OpenViBEVisualizationToolkit;
 
-CVisualisationWidget::CVisualisationWidget(const IKernelContext& kernelContext)
+CVisualizationWidget::CVisualizationWidget(const IKernelContext& kernelContext)
     : m_KernelContext(kernelContext)
     , m_Identifier(OV_UndefinedIdentifier)
-    , m_Type(EVisualisationWidget_Undefined)
+    , m_Type(EVisualizationWidget_Undefined)
     , m_ParentIdentifier(OV_UndefinedIdentifier)
     , m_BoxIdentifier(OV_UndefinedIdentifier)
 {
 }
 
-CVisualisationWidget::~CVisualisationWidget(void)
+CVisualizationWidget::~CVisualizationWidget(void)
 {
 }
 
-bool CVisualisationWidget::initialize(const CIdentifier& identifier, const CString& name, EVisualisationWidgetType type,
+bool CVisualizationWidget::initialize(const CIdentifier& identifier, const CString& name, EVisualizationWidgetType type,
 	const CIdentifier& parentIdentifier, const CIdentifier& boxIdentifier, uint32 childCount)
 {
 	m_Identifier = identifier;
@@ -44,47 +44,47 @@ bool CVisualisationWidget::initialize(const CIdentifier& identifier, const CStri
 	return true;
 }
 
-CIdentifier CVisualisationWidget::getIdentifier(void) const
+CIdentifier CVisualizationWidget::getIdentifier(void) const
 {
 	return m_Identifier;
 }
 
-const CString& CVisualisationWidget::getName(void) const
+const CString& CVisualizationWidget::getName(void) const
 {
 	return m_Name;
 }
 
-void CVisualisationWidget::setName(const CString& name)
+void CVisualizationWidget::setName(const CString& name)
 {
 	m_Name = name;
 }
 
-EVisualisationWidgetType CVisualisationWidget::getType(void) const
+EVisualizationWidgetType CVisualizationWidget::getType(void) const
 {
 	return m_Type;
 }
 
-CIdentifier CVisualisationWidget::getParentIdentifier(void) const
+CIdentifier CVisualizationWidget::getParentIdentifier(void) const
 {
 	return m_ParentIdentifier;
 }
 
-void CVisualisationWidget::setParentIdentifier(const CIdentifier& parentIdentifier)
+void CVisualizationWidget::setParentIdentifier(const CIdentifier& parentIdentifier)
 {
 	m_ParentIdentifier = parentIdentifier;
 }
 
-CIdentifier CVisualisationWidget::getBoxIdentifier(void) const
+CIdentifier CVisualizationWidget::getBoxIdentifier(void) const
 {
 	return m_BoxIdentifier;
 }
 
-uint32 CVisualisationWidget::getNbChildren(void) const
+uint32 CVisualizationWidget::getNbChildren(void) const
 {
 	return static_cast<uint32>(m_Children.size());
 }
 
-bool CVisualisationWidget::getChildIndex(const CIdentifier& identifier, uint32& index) const
+bool CVisualizationWidget::getChildIndex(const CIdentifier& identifier, uint32& index) const
 {
 	for (index = 0; index < m_Children.size(); index++)
 	{
@@ -96,20 +96,20 @@ bool CVisualisationWidget::getChildIndex(const CIdentifier& identifier, uint32& 
 	return false;
 }
 
-bool CVisualisationWidget::addChild(const CIdentifier& childIdentifier)
+bool CVisualizationWidget::addChild(const CIdentifier& childIdentifier)
 {
 	m_Children.push_back(childIdentifier);
 	return true;
 }
 
-bool CVisualisationWidget::removeChild(const CIdentifier& identifier)
+bool CVisualizationWidget::removeChild(const CIdentifier& identifier)
 {
 	for (unsigned int i = 0; i < m_Children.size(); i++)
 	{
 		if (m_Children[i] == identifier)
 		{
 			//remove tab from a window (variable number of children)
-			if (m_Type == EVisualisationWidget_VisualisationWindow)
+			if (m_Type == EVisualizationWidget_VisualizationWindow)
 			{
 				m_Children.erase(m_Children.begin() + i);
 			}
@@ -125,7 +125,7 @@ bool CVisualisationWidget::removeChild(const CIdentifier& identifier)
 	             ErrorType::ResourceNotFound);
 }
 
-bool CVisualisationWidget::getChildIdentifier(uint32 childIndex, CIdentifier& identifier) const
+bool CVisualizationWidget::getChildIdentifier(uint32 childIndex, CIdentifier& identifier) const
 {
 	if (childIndex >= m_Children.size())
 	{
@@ -140,7 +140,7 @@ bool CVisualisationWidget::getChildIdentifier(uint32 childIndex, CIdentifier& id
 	}
 }
 
-bool CVisualisationWidget::setChildIdentifier(uint32 childIndex, const CIdentifier& identifier)
+bool CVisualizationWidget::setChildIdentifier(uint32 childIndex, const CIdentifier& identifier)
 {
 	if (childIndex >= m_Children.size())
 	{

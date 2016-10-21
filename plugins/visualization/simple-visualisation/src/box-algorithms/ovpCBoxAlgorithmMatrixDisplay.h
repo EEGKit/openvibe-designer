@@ -4,7 +4,7 @@
 #include "../ovp_defines.h"
 #include <openvibe/ov_all.h>
 #include <toolkit/ovtk_all.h>
-#include <visualization-toolkit/ovvtk_all.h>
+#include <visualization-toolkit/ovviz_all.h>
 #include <gtk/gtk.h>
 #include <map>
 #include <string>

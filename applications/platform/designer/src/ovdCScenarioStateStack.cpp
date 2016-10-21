@@ -189,13 +189,13 @@ bool CScenarioStateStack::restoreState(const IMemoryBuffer& state)
 	while ((metadataIdentifier = m_Scenario.getNextMetadataIdentifier(metadataIdentifier)) != OV_UndefinedIdentifier)
 	{
 		visualizationTreeMetadata = m_Scenario.getMetadataDetails(metadataIdentifier);
-		if (visualizationTreeMetadata && visualizationTreeMetadata->getType() == OVVTK_MetadataIdentifier_VisualizationTree)
+		if (visualizationTreeMetadata && visualizationTreeMetadata->getType() == OVVIZ_MetadataIdentifier_VisualizationTree)
 		{
 			break;
 		}
 	}
 
-	OpenViBEVisualizationToolkit::IVisualisationTree* visualizationTree = m_InterfacedScenario.m_pVisualisationTree;
+	OpenViBEVisualizationToolkit::IVisualizationTree* visualizationTree = m_InterfacedScenario.m_pVisualizationTree;
 	if (visualizationTreeMetadata && visualizationTree)
 	{
 		visualizationTree->deserialize(visualizationTreeMetadata->getData());
@@ -216,7 +216,7 @@ bool CScenarioStateStack::dumpState(IMemoryBuffer& state)
 	CIdentifier metadataIdentifier = OV_UndefinedIdentifier;
 	while ((metadataIdentifier = m_Scenario.getNextMetadataIdentifier(metadataIdentifier)) != OV_UndefinedIdentifier)
 	{
-		if (m_Scenario.getMetadataDetails(metadataIdentifier)->getType() == OVVTK_MetadataIdentifier_VisualizationTree)
+		if (m_Scenario.getMetadataDetails(metadataIdentifier)->getType() == OVVIZ_MetadataIdentifier_VisualizationTree)
 		{
 			oldVisualizationTreeMetadataIdentifier = metadataIdentifier;
 			m_Scenario.removeMetadata(metadataIdentifier);
@@ -226,8 +226,8 @@ bool CScenarioStateStack::dumpState(IMemoryBuffer& state)
 
 	// Insert new metadata
 	m_Scenario.addMetadata(metadataIdentifier, oldVisualizationTreeMetadataIdentifier);
-	m_Scenario.getMetadataDetails(metadataIdentifier)->setType(OVVTK_MetadataIdentifier_VisualizationTree);
-	m_Scenario.getMetadataDetails(metadataIdentifier)->setData(m_InterfacedScenario.m_pVisualisationTree->serialize());
+	m_Scenario.getMetadataDetails(metadataIdentifier)->setType(OVVIZ_MetadataIdentifier_VisualizationTree);
+	m_Scenario.getMetadataDetails(metadataIdentifier)->setData(m_InterfacedScenario.m_pVisualizationTree->serialize());
 
 	CIdentifier exporterIdentifier = m_KernelContext.getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_XMLScenarioExporter);
 

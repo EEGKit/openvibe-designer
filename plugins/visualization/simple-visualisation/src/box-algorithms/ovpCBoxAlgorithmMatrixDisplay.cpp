@@ -7,7 +7,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <system/ovCMemory.h>
-#include <visualization-toolkit/ovvtkColorGradient.h>
+#include <visualization-toolkit/ovvizColorGradient.h>
 
 using namespace std;
 

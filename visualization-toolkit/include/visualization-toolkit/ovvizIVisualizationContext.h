@@ -4,7 +4,7 @@
 #include <toolkit/ovtk_all.h>
 #include <gtk/gtk.h>
 
-#include "ovvtkIVisualizationManager.h"
+#include "ovvizIVisualizationManager.h"
 
 #define OV_ClassId_VisualizationContext OpenViBE::CIdentifier(0xE06B92EF, 0xB6B68081)
 
