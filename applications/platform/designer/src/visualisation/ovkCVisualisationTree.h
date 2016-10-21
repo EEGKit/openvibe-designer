@@ -9,271 +9,87 @@ namespace json
 {
 	class Object;
 }
-namespace OpenViBE
+namespace OpenViBEDesigner
 {
-	namespace Kernel
+	class CVisualisationTree final : public OpenViBEVisualizationToolkit::IVisualisationTree
 	{
-		class CVisualisationTree : public OpenViBEVisualizationToolkit::IVisualisationTree
-		{
-		public:
-			CVisualisationTree(
-				const OpenViBE::Kernel::IKernelContext& rKernelContext);
-			virtual ~CVisualisationTree(void);
+	public:
+		CVisualisationTree(const OpenViBE::Kernel::IKernelContext& kernelContext);
+		virtual ~CVisualisationTree(void);
 
-			OpenViBE::boolean init(
-				const OpenViBE::Kernel::IScenario* pScenario);
+		bool init(const OpenViBE::Kernel::IScenario* scenario);
 
-			/** \name VisualisationWidget management */
-			//@{
-			OpenViBE::boolean getNextVisualisationWidgetIdentifier(
-				OpenViBE::CIdentifier& rIdentifier) const;
-			OpenViBE::boolean getNextVisualisationWidgetIdentifier(
-				OpenViBE::CIdentifier& rIdentifier,
-				OpenViBEVisualizationToolkit::EVisualisationWidgetType oType) const;
-			OpenViBE::boolean isVisualisationWidget(
-				const OpenViBE::CIdentifier& rIdentifier) const;
-			OpenViBEVisualizationToolkit::IVisualisationWidget* getVisualisationWidget(
-				const OpenViBE::CIdentifier& rIdentifier) const;
-			OpenViBEVisualizationToolkit::IVisualisationWidget* getVisualisationWidgetFromBoxIdentifier(
-				const OpenViBE::CIdentifier& rBoxIdentifier) const;
-			OpenViBE::boolean addVisualisationWidget(
-				OpenViBE::CIdentifier& rIdentifier,
-				const OpenViBE::CString& rName,
-				OpenViBEVisualizationToolkit::EVisualisationWidgetType oType,
-				const OpenViBE::CIdentifier& rParentIdentifier,
-				OpenViBE::uint32 ui32ParentIndex,
-				const OpenViBE::CIdentifier& rBoxIdentifier,
-				OpenViBE::uint32 ui32NbChildren,
-				const OpenViBE::CIdentifier& rSuggestedIdentifier);
-			OpenViBE::boolean getVisualisationWidgetIndex(
-				const OpenViBE::CIdentifier& rIdentifier,
-				OpenViBE::uint32& rIndex) const;
-			OpenViBE::boolean unparentVisualisationWidget(
-				const OpenViBE::CIdentifier& rIdentifier,
-				OpenViBE::uint32& ui32Index);
-			OpenViBE::boolean parentVisualisationWidget(
-				const OpenViBE::CIdentifier& rIdentifier,
-				const OpenViBE::CIdentifier& rParentIdentifier,
-				OpenViBE::uint32 ui32Index);
-			OpenViBE::boolean destroyHierarchy(
-				const OpenViBE::CIdentifier& rIdentifier,
-				OpenViBE::boolean bDestroyVisualisationBoxes);
-			//@}
+		bool getNextVisualisationWidgetIdentifier(OpenViBE::CIdentifier& identifier) const;
+		bool getNextVisualisationWidgetIdentifier(OpenViBE::CIdentifier& identifier, OpenViBEVisualizationToolkit::EVisualisationWidgetType type) const;
+		bool isVisualisationWidget(const OpenViBE::CIdentifier& identifier) const;
+		OpenViBEVisualizationToolkit::IVisualisationWidget* getVisualisationWidget(const OpenViBE::CIdentifier& identifier) const;
+		OpenViBEVisualizationToolkit::IVisualisationWidget* getVisualisationWidgetFromBoxIdentifier(const OpenViBE::CIdentifier& boxIdentifier) const;
+		bool addVisualisationWidget(
+		        OpenViBE::CIdentifier& identifier,
+		        const OpenViBE::CString& name,
+		        OpenViBEVisualizationToolkit::EVisualisationWidgetType type,
+		        const OpenViBE::CIdentifier& parentIdentifier,
+		        OpenViBE::uint32 parentIndex,
+		        const OpenViBE::CIdentifier& boxIdentifier,
+		        OpenViBE::uint32 childCount,
+		        const OpenViBE::CIdentifier& suggestedIdentifier);
+		bool getVisualisationWidgetIndex(const OpenViBE::CIdentifier& identifier, OpenViBE::uint32& index) const;
+		bool unparentVisualisationWidget(const OpenViBE::CIdentifier& identifier, OpenViBE::uint32& index);
+		bool parentVisualisationWidget(const OpenViBE::CIdentifier& identifier, const OpenViBE::CIdentifier& parentIdentifier, OpenViBE::uint32 index);
+		bool destroyHierarchy(const OpenViBE::CIdentifier& identifier, bool destroyVisualisationBoxes);
 
-			/**
-			 * \brief Creates a tree view from the internal tree store/model
-			 * \return pointer to newly created tree view
-			 */
-			::GtkTreeView* createTreeViewWithModel(void);
-			OpenViBE::boolean setTreeViewCB(
-				OpenViBEVisualizationToolkit::ITreeViewCB* pTreeViewCB);
+		::GtkTreeView* createTreeViewWithModel(void);
+		bool setTreeViewCB(OpenViBEVisualizationToolkit::ITreeViewCB* treeViewCB);
 
-			/**
-			 * \brief Recreates Gtk widgets based on the widgets description stored in the internal tree store.
-			 * \remarks Side effects : all iterators and GtkWidget pointers are invalidated and replaced with new values
-			 * To be called upon widget creation, deletion or repositioning.
-			 * \return true if widgets were successfully reloaded, false otherwise
-			 */
-			OpenViBE::boolean reloadTree(void);
+		bool reloadTree(void);
 
-			/** \name Helper functions */
-			//@{
-			OpenViBE::boolean getTreeSelection(
-				::GtkTreeView* pTreeView,
-				::GtkTreeIter* pIter);
-			::GtkTreePath* getTreePath(
-				::GtkTreeIter* pTreeIter) const;
-			unsigned long getULongValueFromTreeIter(
-				::GtkTreeIter* pTreeIter,
-				OpenViBEVisualizationToolkit::EVisualisationTreeColumn eVisualisationTreeColumn) const;
-			OpenViBE::boolean getStringValueFromTreeIter(
-				::GtkTreeIter* pTreeIter,
-				char*& rString,
-				OpenViBEVisualizationToolkit::EVisualisationTreeColumn eVisualisationTreeColumn) const;
-			OpenViBE::boolean getPointerValueFromTreeIter(
-				::GtkTreeIter* pTreeIter,
-				void*& rPointer,
-				OpenViBEVisualizationToolkit::EVisualisationTreeColumn eVisualisationTreeColumn) const;
-			OpenViBE::boolean getIdentifierFromTreeIter(
-				::GtkTreeIter* pIter,
-				OpenViBE::CIdentifier& rIdentifier,
-				OpenViBEVisualizationToolkit::EVisualisationTreeColumn eVisualisationTreeColumn) const;
-			//@}
+		bool getTreeSelection(::GtkTreeView* preeView, ::GtkTreeIter* iter);
+		::GtkTreePath* getTreePath(::GtkTreeIter* treeIter) const;
+		unsigned long getULongValueFromTreeIter(::GtkTreeIter* treeIter, OpenViBEVisualizationToolkit::EVisualisationTreeColumn visualisationTreeColumn) const;
+		bool getStringValueFromTreeIter(::GtkTreeIter* treeIter, char*& string, OpenViBEVisualizationToolkit::EVisualisationTreeColumn visualisationTreeColumn) const;
+		bool getPointerValueFromTreeIter(::GtkTreeIter* treeIter, void*& pointer, OpenViBEVisualizationToolkit::EVisualisationTreeColumn visualisationTreeColumn) const;
+		bool getIdentifierFromTreeIter(::GtkTreeIter* iter, OpenViBE::CIdentifier& identifier, OpenViBEVisualizationToolkit::EVisualisationTreeColumn visualisationTreeColumn) const;
 
-			/** \name Node searching */
-			//@{
-			/**
-			 * \brief Looks for a node of name 'label' and type 'eType' from the root of the internal tree store
-			 * \param pIter [out] pointer to node to be retrieved
-			 * \param pLabel [in] label of node to be retrieved, as stored in the EVisualisationTreeColumn_StringName column
-			 * \param eType [in] type of node to be retrieved, as stored in the EVisualisationTreeColumn_ULongNodeType column
-			 * \return true if node was found, false otherwise
-			 */
-			OpenViBE::boolean findChildNodeFromRoot(
-				::GtkTreeIter* pIter,
-				const char* label,
-				OpenViBEVisualizationToolkit::EVisualisationTreeNode rType);
-			/**
-			 * \brief Looks for a node of name 'label' and type 'eType' from a given node in the internal tree store
-			 * \param pIter [in/out] pointer to node from which to start searching when calling function and to node found upon return
-			 * \param pLabel [in] label of node to be retrieved, as stored in the EVisualisationTreeColumn_StringName column
-			 * \param eType [in] type of node to be retrieved, as stored in the EVisualisationTreeColumn_ULongNodeType column
-			 * \return true if node was found, false otherwise
-			 */
-			OpenViBE::boolean findChildNodeFromParent(
-				::GtkTreeIter* pIter,
-				const char* label,
-				OpenViBEVisualizationToolkit::EVisualisationTreeNode rType);
-			/**
-			 * \brief Looks for a node whose associated Gtk widget matches 'pWidget' from the root of the internal tree store
-			 * \param pIter [out] pointer to node to be retrieved
-			 * \param pWidget [in] pointer to Gtk widget of node to be retrieved, as stored in the EVisualisationTreeColumn_PointerWidget column
-			 * \return true if node was found, false otherwise
-			 */
-			OpenViBE::boolean findChildNodeFromRoot(
-				::GtkTreeIter* pIter,
-				void* pWidget);
-			/**
-			 * \brief Looks for a node whose associated Gtk widget matches 'pWidget' from a given node in the internal tree store
-			 * \param pIter [in/out] pointer to node from which to start searching when calling function and to node found upon return
-			 * \param pWidget [in] pointer to Gtk widget of node to be retrieved, as stored in the EVisualisationTreeColumn_PointerWidget column
-			 * \return true if node was found, false otherwise
-			 */
-			OpenViBE::boolean findChildNodeFromParent(
-				::GtkTreeIter* pIter,
-				void* pWidget);
-			/**
-			 * \brief Looks for a node whose identifier matches 'oIdentifier' from the root of the internal tree store
-			 * \param pIter [out] pointer to node to be retrieved
-			 * \param oIdentifier [in] identifier of node to be retrieved, as stored in the EVisualisationTreeColumn_StringIdentifier column
-			 * \return true if node was found, false otherwise
-			 */
-			OpenViBE::boolean findChildNodeFromRoot(
-				::GtkTreeIter* pIter,
-				OpenViBE::CIdentifier oIdentifier);
-			/**
-			 * \brief Looks for a node whose identifier matches 'oIdentifier' from a given node in the internal tree store
-			 * \param pIter [in/out] pointer to node from which to start searching when calling function and to node found upon return
-			 * \param oIdentifier [in] identifier of node to be retrieved, as stored in the EVisualisationTreeColumn_StringIdentifier column
-			 * \return true if node was found, false otherwise
-			 */
-			OpenViBE::boolean findChildNodeFromParent(
-				::GtkTreeIter* pIter,
-				OpenViBE::CIdentifier oIdentifier);
-			/**
-			 * \brief Find first parent node of a given type
-			 * Looks for first parent node of type 'eType' from a given node in the internal tree store
-			 * \param pIter [in/out] pointer to node from which to start searching when calling function and to node found upon return
-			 * \param eType [in] type of parent node looked for, as stored in the EVisualisationTreeColumn_ULongNodeType column
-			 * \return true if node was found, false otherwise
-			 */
-			OpenViBE::boolean findParentNode(
-				::GtkTreeIter* pIter,
-				OpenViBEVisualizationToolkit::EVisualisationTreeNode rType);
-			//@}
+		bool findChildNodeFromRoot(::GtkTreeIter* iter, const char* label, OpenViBEVisualizationToolkit::EVisualisationTreeNode type);
+		bool findChildNodeFromParent(::GtkTreeIter* iter, const char* label, OpenViBEVisualizationToolkit::EVisualisationTreeNode type);
+		bool findChildNodeFromRoot(::GtkTreeIter* iter, void* widget);
+		bool findChildNodeFromParent(::GtkTreeIter* iter, void* widget);
+		bool findChildNodeFromRoot(::GtkTreeIter* iter, OpenViBE::CIdentifier identifier);
+		bool findChildNodeFromParent(::GtkTreeIter* iter, OpenViBE::CIdentifier identifier);
+		bool findParentNode(::GtkTreeIter* iter, OpenViBEVisualizationToolkit::EVisualisationTreeNode type);
 
-			/** \name Drag n drop functions */
-			//@{
+		bool dragDataReceivedInWidgetCB(const OpenViBE::CIdentifier& sourceWidgetIdentifier, ::GtkWidget* destinationWidget);
+		bool dragDataReceivedOutsideWidgetCB(const OpenViBE::CIdentifier& sourceWidgetIdentifier, ::GtkWidget* destinationWidget, OpenViBEVisualizationToolkit::EDragDataLocation location);
 
-			/**
-			 * \brief Handles drop of a widget in an existing widget
-			 * This operation replaces the existing widget with the one passed in parameter. The existing widget
-			 * is unaffected if it is of type EVisualisationTreeNode_VisualisationBox, or destroyed if it is of
-			 * type EVisualisationTreeNode_Undefined (placeholder widget).
-			 * \param rSrcIdentifier [in] identifier of widget being dropped
-			 * \param pDstWidget [in] pointer to widget on which the drop operation is performed
-			 * \return true if drop operation was successfully completed, false otherwise
-			 */
-			OpenViBE::boolean dragDataReceivedInWidgetCB(
-				const OpenViBE::CIdentifier& rSrcIdentifier,
-				::GtkWidget* pDstWidget);
+		bool setToolbar(const OpenViBE::CIdentifier& boxIdentifier, ::GtkWidget* toolbarWidget);
+		bool setWidget(const OpenViBE::CIdentifier& boxIdentifier, ::GtkWidget* topmostWidget);
 
-			/**
-			 * \brief Handles drop of a widget in an event box
-			 * This operation adds a widget to the tree and changes the tree structure.
-			 * If a widget is moved from one place to the other in the tree, it is automatically
-			 * simplified to avoid placeholders creation.
-			 * \param rSrcIdentifier [in] identifier of widget being dropped
-			 * \param pDstWidget [in] pointer to widget on which the drop operation is performed
-			 * \return true if drop operation was successfully completed, false otherwise
-			 */
-			OpenViBE::boolean dragDataReceivedOutsideWidgetCB(
-				const OpenViBE::CIdentifier& rSrcIdentifier,
-				::GtkWidget* pDstWidget,
-				OpenViBEVisualizationToolkit::EDragDataLocation eLocation);
-			//@}
+		OpenViBE::CString serialize() const;
+		bool deserialize(const OpenViBE::CString& serializedVisualizationTree);
 
-			/**
-			 * \name Dynamic widget parenting
-			 */
-			//@{
+	private:
+		json::Object serializeWidget(OpenViBEVisualizationToolkit::IVisualisationWidget& widget) const;
 
-			/**
-			 * \brief Forward pointer to the toolbar of a visualisation plugin (if any) to the tree view
-			 * \param rBoxIdentifier [in] Identifier of IBox whose toolbar is being set
-			 * \param pToolbarWidget [in] pointer to toolbar
-			 * \return \e true in case of success, \e false otherwise.
-			 */
-			virtual OpenViBE::boolean setToolbar(
-				const OpenViBE::CIdentifier& rBoxIdentifier,
-				::GtkWidget* pToolbarWidget);
+	private:
 
-			/**
-			 * \brief Forward pointer to the main widget of a visualisation plugin to the tree view
-			 * \param rBoxIdentifier [in] Identifier of IBox whose topmost widget is being set
-			 * \param pWidget [in] pointer to main window
-			 * \return \e true in case of success, \e false otherwise.
-			 */
-			virtual OpenViBE::boolean setWidget(
-				const OpenViBE::CIdentifier& rBoxIdentifier,
-				::GtkWidget* pTopmostWidget);
+		bool _destroyHierarchy(const OpenViBE::CIdentifier& identifier, bool destroyVisualisationBoxes);
+		OpenViBE::CIdentifier getUnusedIdentifier(const OpenViBE::CIdentifier& suggestedIdentifier) const;
 
-			//@}
+		bool _findChildNodeFromParent(::GtkTreeIter* iter, const char* label, OpenViBEVisualizationToolkit::EVisualisationTreeNode type);
+		bool _findChildNodeFromParent(::GtkTreeIter* iter, void* widget);
+		bool _findChildNodeFromParent(::GtkTreeIter* iter, OpenViBE::CIdentifier identifier);
 
-			OpenViBE::CString serialize() const;
-			bool deserialize(const OpenViBE::CString& serializedVisualizationTree);
+		bool loadVisualisationWidget(OpenViBEVisualizationToolkit::IVisualisationWidget* visualisationWidget, ::GtkTreeIter* parentIter);
 
-		private:
-			json::Object serializeWidget(OpenViBEVisualizationToolkit::IVisualisationWidget& widget) const;
+	private:
 
-		private:
-
-			OpenViBE::boolean _destroyHierarchy(
-				const OpenViBE::CIdentifier& rIdentifier,
-				OpenViBE::boolean bDestroyVisualisationBoxes);
-			OpenViBE::CIdentifier getUnusedIdentifier(const CIdentifier& rSuggestedIdentifier) const;
-
-			OpenViBE::boolean _findChildNodeFromParent(
-				::GtkTreeIter* pIter,
-				const char* label,
-				OpenViBEVisualizationToolkit::EVisualisationTreeNode rType);
-			OpenViBE::boolean _findChildNodeFromParent(
-				::GtkTreeIter* pIter,
-				void* pWidget);
-			OpenViBE::boolean _findChildNodeFromParent(
-				::GtkTreeIter* pIter,
-				OpenViBE::CIdentifier oIdentifier);
-
-			//tree loading
-			OpenViBE::boolean loadVisualisationWidget(
-				OpenViBEVisualizationToolkit::IVisualisationWidget* pVisualisationWidget,
-				::GtkTreeIter* pParentIter);
-
-			OpenViBE::boolean visitVisualisationWidget(
-				OpenViBE::IObjectVisitor& rObjectVisitor,
-				OpenViBE::CIdentifier oVisualisationWidgetIdentifier,
-				OpenViBE::boolean bRecurse);
-
-		private:
-
-			std::map<OpenViBE::CIdentifier, OpenViBEVisualizationToolkit::IVisualisationWidget*> m_vVisualisationWidget;
-			OpenViBE::CIdentifier m_rScenarioIdentifier;
-			const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
-			const OpenViBE::Kernel::IScenario* m_pScenario;
-			::GtkTreeStore* m_pTreeStore;
-			::GtkTreeIter m_oInternalTreeNode;
-			OpenViBEVisualizationToolkit::ITreeViewCB* m_pTreeViewCB;
-		};
+		std::map<OpenViBE::CIdentifier, OpenViBEVisualizationToolkit::IVisualisationWidget*> m_VisualisationWidgets;
+		OpenViBE::CIdentifier m_ScenarioIdentifier;
+		const OpenViBE::Kernel::IKernelContext& m_KernelContext;
+		const OpenViBE::Kernel::IScenario* m_Scenario;
+		::GtkTreeStore* m_TreeStore;
+		::GtkTreeIter m_InternalTreeNode;
+		OpenViBEVisualizationToolkit::ITreeViewCB* m_TreeViewCB;
 	};
-};
+}
 

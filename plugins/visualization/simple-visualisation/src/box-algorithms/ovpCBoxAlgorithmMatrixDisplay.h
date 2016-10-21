@@ -12,7 +12,6 @@
 #define OVP_ClassId_BoxAlgorithm_MatrixDisplay     OpenViBE::CIdentifier(0x54F0796D, 0x3EDE2CC0)
 #define OVP_ClassId_BoxAlgorithm_MatrixDisplayDesc OpenViBE::CIdentifier(0x63AB4BA7, 0x022C1524)
 
-#define OVD_Functionality_Visualisation OpenViBE::CIdentifier(0x2BF50617, 0xE0983625)
 
 namespace OpenViBEPlugins
 {
@@ -92,7 +91,7 @@ namespace OpenViBEPlugins
 
 			virtual OpenViBE::boolean hasFunctionality(OpenViBE::CIdentifier functionalityIdentifier) const
 			{
-				return functionalityIdentifier == OVD_Functionality_Visualisation;
+				return functionalityIdentifier == OVD_Functionality_Visualization;
 			}
 
 			virtual OpenViBE::boolean getBoxPrototype(

@@ -1,18 +1,30 @@
+#include <vector>
+
+#include "../ovdAssert.h"
+
 #include "ovkCVisualisationWidget.h"
 
-#include <vector>
+namespace OpenViBE
+{
+	std::ostream& operator<<(std::ostream& os, const OpenViBE::CIdentifier& identifier)
+	{
+		return os << identifier.toString().toASCIIString();
+	}
+}
+
 
 using namespace std;
 using namespace OpenViBE;
+using namespace OpenViBEDesigner;
 using namespace OpenViBE::Kernel;
 using namespace OpenViBEVisualizationToolkit;
 
-CVisualisationWidget::CVisualisationWidget(const IKernelContext& rKernelContext) :
-	m_oIdentifier(OV_UndefinedIdentifier),
-	m_oType(EVisualisationWidget_Undefined),
-	m_oParentIdentifier(OV_UndefinedIdentifier),
-	m_oBoxIdentifier(OV_UndefinedIdentifier),
-	m_pParentWidget(NULL)
+CVisualisationWidget::CVisualisationWidget(const IKernelContext& kernelContext)
+    : m_KernelContext(kernelContext)
+    , m_Identifier(OV_UndefinedIdentifier)
+    , m_Type(EVisualisationWidget_Undefined)
+    , m_ParentIdentifier(OV_UndefinedIdentifier)
+    , m_BoxIdentifier(OV_UndefinedIdentifier)
 {
 }
 
@@ -20,63 +32,63 @@ CVisualisationWidget::~CVisualisationWidget(void)
 {
 }
 
-boolean CVisualisationWidget::initialize(const CIdentifier& rIdentifier, const CString& rName, EVisualisationWidgetType oType,
-	const CIdentifier& rParentIdentifier, const CIdentifier& rBoxIdentifier, uint32 ui32NbChildren)
+bool CVisualisationWidget::initialize(const CIdentifier& identifier, const CString& name, EVisualisationWidgetType type,
+	const CIdentifier& parentIdentifier, const CIdentifier& boxIdentifier, uint32 childCount)
 {
-	m_oIdentifier = rIdentifier;
-	m_oName = rName;
-	m_oType = oType;
-	m_oParentIdentifier = rParentIdentifier;
-	m_oBoxIdentifier = rBoxIdentifier;
-	m_vChildren.resize(ui32NbChildren, OV_UndefinedIdentifier);
+	m_Identifier = identifier;
+	m_Name = name;
+	m_Type = type;
+	m_ParentIdentifier = parentIdentifier;
+	m_BoxIdentifier = boxIdentifier;
+	m_Children.resize(childCount, OV_UndefinedIdentifier);
 	return true;
 }
 
 CIdentifier CVisualisationWidget::getIdentifier(void) const
 {
-	return m_oIdentifier;
+	return m_Identifier;
 }
 
 const CString& CVisualisationWidget::getName(void) const
 {
-	return m_oName;
+	return m_Name;
 }
 
-void CVisualisationWidget::setName(const CString& rName)
+void CVisualisationWidget::setName(const CString& name)
 {
-	m_oName = rName;
+	m_Name = name;
 }
 
 EVisualisationWidgetType CVisualisationWidget::getType(void) const
 {
-	return m_oType;
+	return m_Type;
 }
 
 CIdentifier CVisualisationWidget::getParentIdentifier(void) const
 {
-	return m_oParentIdentifier;
+	return m_ParentIdentifier;
 }
 
-void CVisualisationWidget::setParentIdentifier(const CIdentifier& rParentIdentifier)
+void CVisualisationWidget::setParentIdentifier(const CIdentifier& parentIdentifier)
 {
-	m_oParentIdentifier = rParentIdentifier;
+	m_ParentIdentifier = parentIdentifier;
 }
 
 CIdentifier CVisualisationWidget::getBoxIdentifier(void) const
 {
-	return m_oBoxIdentifier;
+	return m_BoxIdentifier;
 }
 
 uint32 CVisualisationWidget::getNbChildren(void) const
 {
-	return m_vChildren.size();
+	return static_cast<uint32>(m_Children.size());
 }
 
-boolean CVisualisationWidget::getChildIndex(const CIdentifier& rIdentifier, uint32& ui32Index) const
+bool CVisualisationWidget::getChildIndex(const CIdentifier& identifier, uint32& index) const
 {
-	for(ui32Index=0; ui32Index<m_vChildren.size(); ui32Index++)
+	for (index = 0; index < m_Children.size(); index++)
 	{
-		if(m_vChildren[ui32Index] == rIdentifier)
+		if (m_Children[index] == identifier)
 		{
 			return true;
 		}
@@ -84,57 +96,60 @@ boolean CVisualisationWidget::getChildIndex(const CIdentifier& rIdentifier, uint
 	return false;
 }
 
-boolean CVisualisationWidget::addChild(const CIdentifier& rChildIdentifier)
+bool CVisualisationWidget::addChild(const CIdentifier& childIdentifier)
 {
-	m_vChildren.push_back(rChildIdentifier);
+	m_Children.push_back(childIdentifier);
 	return true;
 }
 
-boolean CVisualisationWidget::removeChild(const CIdentifier& rIdentifier)
+bool CVisualisationWidget::removeChild(const CIdentifier& identifier)
 {
-	for(unsigned int i=0; i<m_vChildren.size(); i++)
+	for (unsigned int i = 0; i < m_Children.size(); i++)
 	{
-		if(m_vChildren[i] == rIdentifier)
+		if (m_Children[i] == identifier)
 		{
 			//remove tab from a window (variable number of children)
-			if(m_oType == EVisualisationWidget_VisualisationWindow)
+			if (m_Type == EVisualisationWidget_VisualisationWindow)
 			{
-				m_vChildren.erase(m_vChildren.begin() + i);
+				m_Children.erase(m_Children.begin() + i);
 			}
 			else //clear identifier if ith child for a regular widget (fixed number of children)
 			{
-				m_vChildren[i] = OV_UndefinedIdentifier;
+				m_Children[i] = OV_UndefinedIdentifier;
 			}
 			return true;
 		}
 	}
 
-	return false;
+	OV_ERROR_DRF("Trying to remove non existing visualization widget " << identifier,
+	             ErrorType::ResourceNotFound);
 }
 
-boolean CVisualisationWidget::getChildIdentifier(uint32 ui32ChildIndex, CIdentifier& rIdentifier) const
+bool CVisualisationWidget::getChildIdentifier(uint32 childIndex, CIdentifier& identifier) const
 {
-	if(ui32ChildIndex >= m_vChildren.size())
+	if (childIndex >= m_Children.size())
 	{
-		rIdentifier = OV_UndefinedIdentifier;
-		return false;
+		identifier = OV_UndefinedIdentifier;
+		OV_ERROR_DRF("Child with index " << childIndex << " not found",
+		             ErrorType::ResourceNotFound);
 	}
 	else
 	{
-		rIdentifier = m_vChildren[ui32ChildIndex];
+		identifier = m_Children[childIndex];
 		return true;
 	}
 }
 
-boolean CVisualisationWidget::setChildIdentifier(uint32 ui32ChildIndex, const CIdentifier& rIdentifier)
+bool CVisualisationWidget::setChildIdentifier(uint32 childIndex, const CIdentifier& identifier)
 {
-	if(ui32ChildIndex >= m_vChildren.size())
+	if (childIndex >= m_Children.size())
 	{
-		return false;
+		OV_ERROR_DRF("Child with index " << childIndex << " not found",
+		             ErrorType::ResourceNotFound);
 	}
 	else
 	{
-		m_vChildren[ui32ChildIndex] = rIdentifier;
+		m_Children[childIndex] = identifier;
 		return true;
 	}
 }

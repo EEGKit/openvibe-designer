@@ -8,47 +8,30 @@
 
 typedef struct _GtkWidget GtkWidget;
 
-namespace OpenViBE
+namespace OpenViBEDesigner
 {
-	namespace Kernel
+	class CVisualisationManager final : public OpenViBEVisualizationToolkit::IVisualizationManager
 	{
-		class CVisualisationManager : public OpenViBEVisualizationToolkit::IVisualisationManager
-		{
-		public:
+	public:
 
-			CVisualisationManager(
-				const OpenViBE::Kernel::IKernelContext& rKernelContext);
+		CVisualisationManager(const OpenViBE::Kernel::IKernelContext& kernelContext);
 
-			virtual ~CVisualisationManager();
+		~CVisualisationManager();
 
-			virtual bool createVisualisationTree(
-				OpenViBE::CIdentifier& rVisualisationTreeIdentifier);
-			virtual bool releaseVisualisationTree(
-				const OpenViBE::CIdentifier& rVisualisationTreeIdentifier);
-			virtual OpenViBEVisualizationToolkit::IVisualisationTree& getVisualisationTree(
-				const OpenViBE::CIdentifier& rVisualisationTreeIdentifier);
-			virtual bool enumerateVisualisationTrees(
-				OpenViBEVisualizationToolkit::IVisualisationManager::IVisualisationTreeEnum& rCallBack) const;
+		bool createVisualizationTree(OpenViBE::CIdentifier& visualisationTreeIdentifier);
+		bool releaseVisualizationTree(const OpenViBE::CIdentifier& visualisationTreeIdentifier);
+		OpenViBEVisualizationToolkit::IVisualisationTree& getVisualizationTree(const OpenViBE::CIdentifier& visualisationTreeIdentifier);
 
-			virtual bool setToolbar(
-				const CIdentifier& rVisualisationTreeIdentifier,
-				const CIdentifier& rBoxIdentifier,
-				::GtkWidget* pToolbar);
-			virtual bool setWidget(
-				const CIdentifier& rVisualisationTreeIdentifier,
-				const CIdentifier& rBoxIdentifier,
-				::GtkWidget* pTopmostWidget);
+		bool setToolbar(const OpenViBE::CIdentifier& visualisationTreeIdentifier, const OpenViBE::CIdentifier& boxIdentifier, ::GtkWidget* toolbar);
+		bool setWidget(const OpenViBE::CIdentifier& visualisationTreeIdentifier, const OpenViBE::CIdentifier& boxIdentifier, ::GtkWidget* topmostWidget);
 
-		protected:
+	private:
 
-			virtual OpenViBE::CIdentifier getUnusedIdentifier(void) const;
+		OpenViBE::CIdentifier getUnusedIdentifier(void) const;
 
-		protected:
-
-			/// Map of visualisation trees (one per scenario, storing visualisation widgets arrangement in space)
-			std::map<OpenViBE::CIdentifier, OpenViBEVisualizationToolkit::IVisualisationTree*> m_vVisualisationTree;
-			const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
-		};
-	}
+		/// Map of visualisation trees (one per scenario, storing visualisation widgets arrangement in space)
+		std::map<OpenViBE::CIdentifier, OpenViBEVisualizationToolkit::IVisualisationTree*> m_VisualizationTrees;
+		const OpenViBE::Kernel::IKernelContext& m_KernelContext;
+	};
 }
 

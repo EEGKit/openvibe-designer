@@ -108,12 +108,12 @@ boolean CBoxAlgorithmMatrixDisplay::initialize(void)
 
 	CString l_sColorGradientSetting;
 	getBoxAlgorithmContext()->getStaticBoxContext()->getSettingValue(0,l_sColorGradientSetting);
-	OpenViBEToolkit::Tools::ColorGradient::parse(m_MatrixColorGradient,l_sColorGradientSetting);
+	OpenViBEVisualizationToolkit::Tools::ColorGradient::parse(m_MatrixColorGradient,l_sColorGradientSetting);
 
 	CString l_sGradientStepsSetting;
 	getBoxAlgorithmContext()->getStaticBoxContext()->getSettingValue(1,l_sGradientStepsSetting);
 	m_GradientSteps = atoi(l_sGradientStepsSetting);
-	OpenViBEToolkit::Tools::ColorGradient::interpolate(m_MatrixInterpolatedColorGardient,m_MatrixColorGradient,m_GradientSteps);
+	OpenViBEVisualizationToolkit::Tools::ColorGradient::interpolate(m_MatrixInterpolatedColorGardient,m_MatrixColorGradient,m_GradientSteps);
 	m_f64MaxValue = 0;
 	m_f64MinValue = 0;
 

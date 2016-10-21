@@ -2,16 +2,16 @@
 
 #include "ovvtk_base.h"
 
-namespace OpenViBEToolkit
+namespace OpenViBEVisualizationToolkit
 {
 	namespace Tools
 	{
 		namespace ColorGradient
 		{
-			OVVTK_API OpenViBE::boolean parse(OpenViBE::IMatrix& rColorGradient, const OpenViBE::CString& rString);
-			OVVTK_API OpenViBE::boolean format(OpenViBE::CString& rString, const OpenViBE::IMatrix& rColorGradient);
-			OVVTK_API OpenViBE::boolean interpolate(OpenViBE::IMatrix& rInterpolatedColorGradient, const OpenViBE::IMatrix& rColorGradient, const OpenViBE::uint32 ui32Steps);
-		};
-	};
-};
+			OVVTK_API bool parse(OpenViBE::IMatrix& colorGradient, const OpenViBE::CString& string);
+			OVVTK_API bool format(OpenViBE::CString& string, const OpenViBE::IMatrix& colorGradient);
+			OVVTK_API bool interpolate(OpenViBE::IMatrix& interpolatedColorGradient, const OpenViBE::IMatrix& colorGradient, const OpenViBE::uint32 steps);
+		}
+	}
+}
 

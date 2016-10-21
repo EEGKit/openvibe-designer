@@ -543,7 +543,6 @@ CInterfacedScenario::CInterfacedScenario(const IKernelContext& rKernelContext, C
 	,m_i32ViewOffsetX(0)
 	,m_i32ViewOffsetY(0)
 	,m_ui32CurrentMode(Mode_None)
-	,m_oStateStack(rKernelContext, rApplication, rScenario)
 	,m_pSettingHelper(NULL)
 	,m_pConfigureSettingsDialog(NULL)
 	,m_pSettingsVBox(NULL)
@@ -619,8 +618,8 @@ CInterfacedScenario::CInterfacedScenario(const IKernelContext& rKernelContext, C
 	
 	//retrieve visualisation tree
 
-	m_rApplication.m_pVisualisationManager->createVisualisationTree(m_oVisualisationTreeIdentifier);
-	m_pVisualisationTree = &m_rApplication.m_pVisualisationManager->getVisualisationTree(m_oVisualisationTreeIdentifier);
+	m_rApplication.m_pVisualisationManager->createVisualizationTree(m_oVisualisationTreeIdentifier);
+	m_pVisualisationTree = &m_rApplication.m_pVisualisationManager->getVisualizationTree(m_oVisualisationTreeIdentifier);
 	m_pVisualisationTree->init(&m_rScenario);
 
 	//create window manager
@@ -637,8 +636,8 @@ CInterfacedScenario::CInterfacedScenario(const IKernelContext& rKernelContext, C
 	this->redrawScenarioInputSettings();
 	this->redrawScenarioOutputSettings();
 
-	this->snapshotCB();
-	m_bHasBeenModified=false;
+	m_oStateStack.reset(new CScenarioStateStack(rKernelContext, *this, rScenario));
+
 	this->updateScenarioLabel();
 }
 
@@ -1734,7 +1733,7 @@ boolean CInterfacedScenario::pickInterfacedObject(int x, int y, int iSizeX, int 
 
 void CInterfacedScenario::undoCB(boolean bManageModifiedStatusFlag)
 {
-	if(m_oStateStack.undo())
+	if(m_oStateStack->undo())
 	{
 		CIdentifier l_oIdentifier;
 		m_vCurrentObject.clear();
@@ -1760,8 +1759,8 @@ void CInterfacedScenario::undoCB(boolean bManageModifiedStatusFlag)
 		this->redrawScenarioOutputSettings();
 
 		this->redraw();
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(this->m_rApplication.m_pBuilderInterface, "openvibe-button_redo")), m_oStateStack.isRedoPossible());
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(this->m_rApplication.m_pBuilderInterface, "openvibe-button_undo")), m_oStateStack.isUndoPossible());
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(this->m_rApplication.m_pBuilderInterface, "openvibe-button_redo")), m_oStateStack->isRedoPossible());
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(this->m_rApplication.m_pBuilderInterface, "openvibe-button_undo")), m_oStateStack->isUndoPossible());
 	}
 	else
 	{
@@ -1773,7 +1772,7 @@ void CInterfacedScenario::undoCB(boolean bManageModifiedStatusFlag)
 
 void CInterfacedScenario::redoCB(boolean bManageModifiedStatusFlag)
 {
-	if(m_oStateStack.redo())
+	if(m_oStateStack->redo())
 	{
 		CIdentifier l_oIdentifier;
 		m_vCurrentObject.clear();
@@ -1798,8 +1797,8 @@ void CInterfacedScenario::redoCB(boolean bManageModifiedStatusFlag)
 		this->redrawScenarioOutputSettings();
 
 		this->redraw();
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(this->m_rApplication.m_pBuilderInterface, "openvibe-button_redo")), m_oStateStack.isRedoPossible());
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(this->m_rApplication.m_pBuilderInterface, "openvibe-button_undo")), m_oStateStack.isUndoPossible());
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(this->m_rApplication.m_pBuilderInterface, "openvibe-button_redo")), m_oStateStack->isRedoPossible());
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(this->m_rApplication.m_pBuilderInterface, "openvibe-button_undo")), m_oStateStack->isUndoPossible());
 	}
 	else
 	{
@@ -1827,9 +1826,9 @@ void CInterfacedScenario::snapshotCB(boolean bManageModifiedStatusFlag)
 		m_bHasBeenModified = true;
 	}
 	this->updateScenarioLabel();
-	m_oStateStack.snapshot();
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(this->m_rApplication.m_pBuilderInterface, "openvibe-button_redo")), m_oStateStack.isRedoPossible());
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(this->m_rApplication.m_pBuilderInterface, "openvibe-button_undo")), m_oStateStack.isUndoPossible());
+	m_oStateStack->snapshot();
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(this->m_rApplication.m_pBuilderInterface, "openvibe-button_redo")), m_oStateStack->isRedoPossible());
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(this->m_rApplication.m_pBuilderInterface, "openvibe-button_undo")), m_oStateStack->isUndoPossible());
 }
 
 void CInterfacedScenario::addCommentCB(int x, int y)
@@ -2200,7 +2199,7 @@ void CInterfacedScenario::scenarioDrawingAreaDragDataReceivedCB(::GdkDragContext
 		m_vCurrentObject[l_oBoxIdentifier]=true;
 
 		// If a visualisation box was dropped, add it in window manager
-		if(l_pPOD && l_pPOD->hasFunctionality(OVD_Functionality_Visualisation))
+		if(l_pPOD && l_pPOD->hasFunctionality(OVD_Functionality_Visualization))
 		{
 			// Let window manager know about new box
 			if(m_pDesignerVisualisation)
@@ -3213,7 +3212,7 @@ void CInterfacedScenario::pasteSelection(void)
 		const IPluginObjectDesc* l_pPOD = m_rKernelContext.getPluginManager().getPluginObjectDescCreating(l_oBoxAlgorithmIdentifier);
 
 		// If a visualisation box was dropped, add it in window manager
-		if(l_pPOD && l_pPOD->hasFunctionality(OVD_Functionality_Visualisation))
+		if(l_pPOD && l_pPOD->hasFunctionality(OVD_Functionality_Visualization))
 		{
 			// Let window manager know about new box
 			if(m_pDesignerVisualisation)
@@ -3370,7 +3369,7 @@ void CInterfacedScenario::contextMenuBoxRenameCB(IBox& rBox)
 		const IPluginObjectDesc* l_pPOD = m_rKernelContext.getPluginManager().getPluginObjectDescCreating(l_oId);
 
 		//if a visualisation box was renamed, tell window manager about it
-		if(l_pPOD && l_pPOD->hasFunctionality(OVD_Functionality_Visualisation))
+		if(l_pPOD && l_pPOD->hasFunctionality(OVD_Functionality_Visualization))
 		{
 			if(m_pDesignerVisualisation)
 			{
@@ -3440,7 +3439,7 @@ void CInterfacedScenario::contextMenuBoxRenameAllCB()
 						const IPluginObjectDesc* l_pPOD = m_rKernelContext.getPluginManager().getPluginObjectDescCreating(l_oId);
 
 						//if a visualisation box was renamed, tell window manager about it
-						if(l_pPOD && l_pPOD->hasFunctionality(OVD_Functionality_Visualisation))
+						if(l_pPOD && l_pPOD->hasFunctionality(OVD_Functionality_Visualization))
 						{
 							if(m_pDesignerVisualisation)
 							{

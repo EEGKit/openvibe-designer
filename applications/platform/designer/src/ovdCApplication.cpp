@@ -1357,10 +1357,10 @@ OpenViBE::boolean CApplication::openScenario(const char* sFileName)
 
 	std::string scenarioFilenameExtension = boost::filesystem::extension(sFileName);
 	if (!CFileFormats::filenameExtensionImporters.count(scenarioFilenameExtension))
-				{
+	{
 		// TODO: Report error
-					return false;
-				}
+		return false;
+	}
 
 	CIdentifier scenarioImporterIdentifier = CFileFormats::filenameExtensionImporters.at(scenarioFilenameExtension);
 
@@ -1393,9 +1393,9 @@ OpenViBE::boolean CApplication::openScenario(const char* sFileName)
 		CIdentifier metadataIdentifier = OV_UndefinedIdentifier;
 		while ((metadataIdentifier = l_rScenario.getNextMetadataIdentifier(metadataIdentifier)) != OV_UndefinedIdentifier)
 		{
-			if (l_rScenario.getMetadataDetails(metadataIdentifier)->getType() == OVVTK_MetadataIdentifier_VisualizationTree)
+			visualizationTreeMetadata = l_rScenario.getMetadataDetails(metadataIdentifier);
+			if (visualizationTreeMetadata && visualizationTreeMetadata->getType() == OVVTK_MetadataIdentifier_VisualizationTree)
 			{
-				visualizationTreeMetadata = l_rScenario.getMetadataDetails(metadataIdentifier);
 				break;
 			}
 		}
@@ -1418,7 +1418,7 @@ OpenViBE::boolean CApplication::openScenario(const char* sFileName)
 			{
 				const IBox* box = l_rScenario.getBoxDetails(boxIdentifier);
 				const IPluginObjectDesc* boxAlgorithmDesc = m_rKernelContext.getPluginManager().getPluginObjectDescCreating(box->getAlgorithmClassIdentifier());
-				if (boxAlgorithmDesc && boxAlgorithmDesc->hasFunctionality(OVD_Functionality_Visualisation))
+				if (boxAlgorithmDesc && boxAlgorithmDesc->hasFunctionality(OVD_Functionality_Visualization))
 				{
 					//a visualisation widget was found in scenario : manually add it to visualisation tree
 					visualizationTree->addVisualisationWidget(
@@ -1443,6 +1443,7 @@ OpenViBE::boolean CApplication::openScenario(const char* sFileName)
 		l_pInterfacedScenario->m_sFileName=sFileName;
 		l_pInterfacedScenario->m_bHasFileName=true;
 		l_pInterfacedScenario->m_bHasBeenModified=false;
+		l_pInterfacedScenario->snapshotCB(false);
 
 		m_vInterfacedScenario.push_back(l_pInterfacedScenario);
 
@@ -2373,7 +2374,7 @@ IPlayer* CApplication::getPlayer(void)
 
 OpenViBE::boolean CApplication::createPlayer(void)
 {
-	m_rKernelContext.getLogManager() << LogLevel_Debug << "createPlayer\n";
+	m_rKernelContext.getLogManager() << LogLevel_Info << m_rKernelContext.getErrorManager().hasError() <<"\n";
 
 	CInterfacedScenario* l_pCurrentInterfacedScenario = getCurrentInterfacedScenario();
 	if(l_pCurrentInterfacedScenario && !l_pCurrentInterfacedScenario->m_pPlayer)
@@ -2411,12 +2412,13 @@ OpenViBE::boolean CApplication::createPlayer(void)
 		}
 
 		// The visualization manager needs to know the visualization tree in which the widgets should be inserted
-		l_pCurrentInterfacedScenario->m_pPlayer->getRuntimeConfigurationManager().createConfigurationToken("VisualizationContext_GroupId", l_pCurrentInterfacedScenario->m_oVisualisationTreeIdentifier.toString());
+		l_pCurrentInterfacedScenario->m_pPlayer->getRuntimeConfigurationManager().createConfigurationToken("VisualizationContext_VisualizationTreeId", l_pCurrentInterfacedScenario->m_oVisualisationTreeIdentifier.toString());
 
 		// TODO_JL: This should be a copy of the tree containing visualisations from the metaboxes
 		l_pCurrentInterfacedScenario->createPlayerVisualisation(l_pCurrentInterfacedScenario->m_pVisualisationTree);
 		if(l_pCurrentInterfacedScenario->m_pPlayer->initialize() != EPlayerReturnCode::PlayerReturnCode_Sucess)
 		{
+			l_pCurrentInterfacedScenario->releasePlayerVisualisation();
 			m_rKernelContext.getLogManager() << LogLevel_Error << "The player could not be initialized.\n";
 			l_pCurrentInterfacedScenario->m_oPlayerIdentifier = OV_UndefinedIdentifier;
 			l_pCurrentInterfacedScenario->m_pPlayer=NULL;
@@ -2839,8 +2841,8 @@ void CApplication::changeCurrentScenario(int32 i32PageIndex)
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_forward")),    l_ePlayerStatus!=PlayerStatus_Forward);
 		gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), (l_ePlayerStatus==PlayerStatus_Stop || l_ePlayerStatus==PlayerStatus_Pause) ? GTK_STOCK_MEDIA_PLAY : GTK_STOCK_MEDIA_PAUSE);
 
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_undo")), l_pCurrentInterfacedScenario->m_oStateStack.isUndoPossible());
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_redo")), l_pCurrentInterfacedScenario->m_oStateStack.isRedoPossible());
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_undo")), l_pCurrentInterfacedScenario->m_oStateStack->isUndoPossible());
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_redo")), l_pCurrentInterfacedScenario->m_oStateStack->isRedoPossible());
 
 		g_signal_handlers_disconnect_by_func(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-togglebutton_cpu_usage")), G_CALLBACK2(cpu_usage_cb), this);
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager")), l_ePlayerStatus==PlayerStatus_Stop);

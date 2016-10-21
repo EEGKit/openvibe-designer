@@ -4,7 +4,4 @@
 
 #include <openvibe/ov_all.h>
 
-namespace OpenViBEToolkit
-{
-};
 

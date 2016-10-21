@@ -8,7 +8,7 @@ using namespace OpenViBE::Kernel;
 
 namespace
 {
-	OpenViBEToolkit::CVisualizationContextDesc visualisationContextDesc;
+	OpenViBEVisualizationToolkit::CVisualizationContextDesc visualisationContextDesc;
 }
 
 bool OpenViBEVisualizationToolkit::initialize(const IKernelContext& kernelContext)

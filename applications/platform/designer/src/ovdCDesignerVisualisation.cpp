@@ -540,7 +540,7 @@ static gboolean s_iconFill = TRUE;
 					if(l_pParentWidget != NULL && GTK_IS_PANED(l_pParentWidget))
 					{
 						uint32 l_ui32ChildIndex;
-						if(l_pParentVisualisationWidget->getChildIndex(pVisualisationWidget->getIdentifier(), l_ui32ChildIndex) == true)
+						if(l_pParentVisualisationWidget->getChildIndex(pVisualisationWidget->getIdentifier(), l_ui32ChildIndex))
 						{
 							if(l_ui32ChildIndex == 0)
 							{
@@ -933,7 +933,7 @@ void CDesignerVisualisation::setActiveVisualisation(const char* _activeWindow, c
 		m_rVisualisationTree.getIdentifierFromTreeIter(&l_oWindowIter, l_oWindowIdentifier, EVisualisationTreeColumn_StringIdentifier);
 		IVisualisationWidget* l_pVisualisationWindow = m_rVisualisationTree.getVisualisationWidget(l_oWindowIdentifier);
 		CIdentifier l_oPanelIdentifier;
-		if(l_pVisualisationWindow->getChildIdentifier(0, l_oPanelIdentifier) == true)
+		if(l_pVisualisationWindow->getChildIdentifier(0, l_oPanelIdentifier))
 		{
 			l_oPanelIter = l_oWindowIter;
 			m_rVisualisationTree.findChildNodeFromParent(&l_oPanelIter, l_oPanelIdentifier);

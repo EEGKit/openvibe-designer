@@ -6,6 +6,8 @@
 #define OVP_ClassId_Plugin_VisualizationContext OpenViBE::CIdentifier(0x05A7171D, 0x78E4FE3C)
 #define OVVTK_MetadataIdentifier_VisualizationTree OpenViBE::CIdentifier(0x3BCCE5D2, 0x43F2D968)
 
+#define OVD_Functionality_Visualization OpenViBE::CIdentifier(0x2BF50617, 0xE0983625)
+
 //___________________________________________________________________//
 //                                                                   //
 // API Definition                                                    //

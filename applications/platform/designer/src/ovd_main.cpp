@@ -1,7 +1,3 @@
-#include "ovd_base.h"
-
-#include <system/ovCTime.h>
-
 #include <stack>
 #include <vector>
 #include <map>
@@ -10,15 +6,19 @@
 #include <sstream>
 #include <algorithm>
 
+#include <system/ovCTime.h>
+#include <metabox-loader/mCMetaboxLoader.h>
+
+#include "ovd_base.h"
+
 #include "ovdCInterfacedObject.h"
 #include "ovdCInterfacedScenario.h"
 #include "ovdCApplication.h"
-#include <metabox-loader/mCMetaboxLoader.h>
 
+#include "ovdAssert.h"
 #if defined TARGET_OS_Windows
 #include "windows.h"
 #endif
-//#include "optionparser/optionparser.h"
 
 using namespace OpenViBE;
 using namespace OpenViBE::Kernel;
@@ -802,9 +802,23 @@ int go(int argc, char ** argv)
 							{
 								gtk_main();
 							}
+							catch (DesignerException ex)
+							{
+								std::cerr << "Caught designer exception" << std::endl;
+								::GtkWidget* errorDialog = gtk_message_dialog_new(
+								            NULL,
+								            GTK_DIALOG_MODAL,
+								            GTK_MESSAGE_ERROR,
+								            GTK_BUTTONS_CLOSE,
+								            "%s",
+								            ex.getErrorString().c_str()
+								            );
+								gtk_window_set_title(GTK_WINDOW(errorDialog), (std::string(BRAND_NAME) + " has stopped functioning").c_str());
+								gtk_dialog_run(GTK_DIALOG(errorDialog));
+							}
 							catch (...)
 							{
-								l_pKernelContext->getLogManager() << LogLevel_Fatal << "Catched top level exception\n";
+								std::cerr << "Caught top level exception" << std::endl;
 							}
 						}
 					}

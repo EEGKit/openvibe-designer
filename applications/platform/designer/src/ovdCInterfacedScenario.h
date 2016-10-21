@@ -1,5 +1,10 @@
-#ifndef __OpenViBEDesigner_CInterfacedScenario_H__
-#define __OpenViBEDesigner_CInterfacedScenario_H__
+#pragma once
+
+#include <map>
+#include <vector>
+#include <string>
+#include <iostream>
+#include <memory>
 
 #include "ovd_base.h"
 
@@ -8,11 +13,6 @@
 #include "ovdCSettingCollectionHelper.h"
 #include "ovdCFileFormats.h"
 #include <visualization-toolkit/ovvtkIVisualizationTree.h>
-
-#include <map>
-#include <vector>
-#include <string>
-#include <iostream>
 
 namespace OpenViBEDesigner
 {
@@ -188,7 +188,7 @@ namespace OpenViBEDesigner
 		} BoxContextMenuCB;
 		std::map < OpenViBE::uint32, BoxContextMenuCB > m_vBoxContextMenuCB;
 
-		OpenViBEDesigner::CScenarioStateStack m_oStateStack;
+		std::unique_ptr<OpenViBEDesigner::CScenarioStateStack> m_oStateStack;
 
 		// Objects necessary for holding settings GUI
 		std::map<std::string, OpenViBE::CIdentifier> m_vSettingType;
@@ -246,4 +246,3 @@ namespace OpenViBEDesigner
 	};
 }
 
-#endif // __OpenViBEDesigner_CInterfacedScenario_H__

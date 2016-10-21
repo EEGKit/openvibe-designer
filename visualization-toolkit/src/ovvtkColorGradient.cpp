@@ -5,175 +5,175 @@
 #include <map>
 
 using namespace OpenViBE;
+using namespace OpenViBEVisualizationToolkit;
 
 namespace
 {
 	typedef struct
 	{
-		float64 fPercent;
-		float64 fRed;
-		float64 fGreen;
-		float64 fBlue;
+		float64 percent;
+		float64 red;
+		float64 green;
+		float64 blue;
 	} SColor;
 };
 
-boolean OpenViBEToolkit::Tools::ColorGradient::parse(IMatrix& rColorGradient, const CString& rString)
+bool OpenViBEVisualizationToolkit::Tools::ColorGradient::parse(IMatrix& colorGradientMatrix, const CString& string)
 {
-	std::string l_sString(rString.toASCIIString());
-	std::string::size_type l_iStart=0;
-	std::string::size_type l_iEnd;
+	std::string colorString(string.toASCIIString());
+	std::string::size_type startPosition = 0;
+	std::string::size_type endPosition;
 
-	std::map < float64, SColor > l_vColorGradient;
+	std::map < float64, SColor > colorGradientVector;
 
 	do
 	{
-		l_iEnd=l_sString.find(OV_Value_EnumeratedStringSeparator, l_iStart);
-		if(l_iEnd==std::string::npos)
+		endPosition = colorString.find(OV_Value_EnumeratedStringSeparator, startPosition);
+		if (endPosition == std::string::npos)
 		{
-			l_iEnd=l_sString.length();
+			endPosition = colorString.length();
 		}
 
-		std::string l_sColor;
-		l_sColor.assign(l_sString, l_iStart, l_iEnd-l_iStart);
+		std::string colorSubString;
+		colorSubString.assign(colorString, startPosition, endPosition - startPosition);
 
 		int p,r,g,b;
-		if(sscanf(l_sColor.c_str(), "%i:%i,%i,%i", &p, &r, &g, &b) == 4)
+		if(sscanf(colorSubString.c_str(), "%i:%i,%i,%i", &p, &r, &g, &b) == 4)
 		{
-			SColor l_oColor;
-			l_oColor.fPercent=p;
-			l_oColor.fRed=r;
-			l_oColor.fGreen=g;
-			l_oColor.fBlue=b;
-			l_vColorGradient[l_oColor.fPercent]=l_oColor;
+			SColor color;
+			color.percent=p;
+			color.red=r;
+			color.green=g;
+			color.blue=b;
+			colorGradientVector[color.percent] = color;
 		}
 
-		l_iStart=l_iEnd+1;
+		startPosition = endPosition + 1;
 	}
-	while(l_iStart<l_sString.length());
+	while (startPosition < colorString.length());
 
-	rColorGradient.setDimensionCount(2);
-	rColorGradient.setDimensionSize(0, 4);
-	rColorGradient.setDimensionSize(1, l_vColorGradient.size());
+	colorGradientMatrix.setDimensionCount(2);
+	colorGradientMatrix.setDimensionSize(0, 4);
+	colorGradientMatrix.setDimensionSize(1, static_cast<uint32>(colorGradientVector.size()));
 
-	uint32 i=0;
-	std::map < float64, SColor > ::const_iterator it;
-	for(it=l_vColorGradient.begin(); it!=l_vColorGradient.end(); it++, i++)
+	uint32 i = 0;
+	for (auto it = colorGradientVector.begin(); it != colorGradientVector.end(); it++, i++)
 	{
-		rColorGradient[i*4  ]=it->second.fPercent;
-		rColorGradient[i*4+1]=it->second.fRed;
-		rColorGradient[i*4+2]=it->second.fGreen;
-		rColorGradient[i*4+3]=it->second.fBlue;
+		colorGradientMatrix[i*4  ]=it->second.percent;
+		colorGradientMatrix[i*4+1]=it->second.red;
+		colorGradientMatrix[i*4+2]=it->second.green;
+		colorGradientMatrix[i*4+3]=it->second.blue;
 	}
 
 	return true;
 }
 
-boolean OpenViBEToolkit::Tools::ColorGradient::format(CString& rString, const IMatrix& rColorGradient)
+bool OpenViBEVisualizationToolkit::Tools::ColorGradient::format(CString& string, const IMatrix& colorGradient)
 {
-	if(rColorGradient.getDimensionCount() != 2)
+	if (colorGradient.getDimensionCount() != 2)
 	{
 		return false;
 	}
 
-	if(rColorGradient.getDimensionSize(0) != 4)
+	if (colorGradient.getDimensionSize(0) != 4)
 	{
 		return false;
 	}
 
-	std::string l_sSeparator("  ");
-	l_sSeparator[0]=OV_Value_EnumeratedStringSeparator;
+	std::string separator("  ");
+	separator[0] = OV_Value_EnumeratedStringSeparator;
 
-	std::string l_sResult;
-	for(uint32 i=0; i<rColorGradient.getDimensionSize(1); i++)
+	std::string result;
+	for (uint32 i = 0; i < colorGradient.getDimensionSize(1); i++)
 	{
-		char l_sBuffer[1024];
+		char buffer[1024];
 		sprintf(
-			l_sBuffer,
+			buffer,
 			"%.0lf:%i,%i,%i",
-			rColorGradient[i*4],
-			(int)rColorGradient[i*4+1],
-			(int)rColorGradient[i*4+2],
-			(int)rColorGradient[i*4+3]);
-		l_sResult+=(i==0?"":l_sSeparator);
-		l_sResult+=l_sBuffer;
+			colorGradient[i*4],
+			static_cast<int>(colorGradient[i*4+1]),
+			static_cast<int>(colorGradient[i*4+2]),
+			static_cast<int>(colorGradient[i*4+3]));
+		result += (i==0 ? "" : separator);
+		result += buffer;
 	}
 
-	rString=l_sResult.c_str();
+	string=result.c_str();
 	return true;
 }
 
-boolean OpenViBEToolkit::Tools::ColorGradient::interpolate(IMatrix& rInterpolatedColorGradient, const IMatrix& rColorGradient, const uint32 ui32Steps)
+bool OpenViBEVisualizationToolkit::Tools::ColorGradient::interpolate(IMatrix& interpolatedColorGradient, const IMatrix& colorGradient, const uint32 steps)
 {
 	uint32 i;
 
-	if(rColorGradient.getDimensionCount() != 2)
+	if (colorGradient.getDimensionCount() != 2)
 	{
 		return false;
 	}
 
-	if(rColorGradient.getDimensionSize(0) != 4)
+	if (colorGradient.getDimensionSize(0) != 4)
 	{
 		return false;
 	}
 
-	if(ui32Steps <= 1)
+	if (steps <= 1)
 	{
 		return false;
 	}
 
-	rInterpolatedColorGradient.setDimensionCount(2);
-	rInterpolatedColorGradient.setDimensionSize(0, 4);
-	rInterpolatedColorGradient.setDimensionSize(1, ui32Steps);
+	interpolatedColorGradient.setDimensionCount(2);
+	interpolatedColorGradient.setDimensionSize(0, 4);
+	interpolatedColorGradient.setDimensionSize(1, steps);
 
-	std::map < float64, SColor > l_vColors;
+	std::map<float64, SColor> colors;
 
-	for(i=0; i<rColorGradient.getDimensionSize(1); i++)
+	for (i = 0; i < colorGradient.getDimensionSize(1); i++)
 	{
-		SColor l_oColor;
-		l_oColor.fPercent=rColorGradient[i*4];
-		l_oColor.fRed    =rColorGradient[i*4+1];
-		l_oColor.fGreen  =rColorGradient[i*4+2];
-		l_oColor.fBlue   =rColorGradient[i*4+3];
-		l_vColors[l_oColor.fPercent]=l_oColor;
+		SColor color;
+		color.percent = colorGradient[i*4];
+		color.red = colorGradient[i*4+1];
+		color.green = colorGradient[i*4+2];
+		color.blue = colorGradient[i*4+3];
+		colors[color.percent]=color;
 	}
 
-	if(l_vColors.find(0) == l_vColors.end())
+	if (colors.find(0) == colors.end())
 	{
-		SColor l_oColor;
-		l_oColor=l_vColors.begin()->second;
-		l_oColor.fPercent=0;
-		l_vColors[0]=l_oColor;
+		SColor color;
+		color = colors.begin()->second;
+		color.percent=0;
+		colors[0] = color;
 	}
 
-	if(l_vColors.find(100) == l_vColors.end())
+	if (colors.find(100) == colors.end())
 	{
-		SColor l_oColor;
-		l_oColor=l_vColors.rbegin()->second;
-		l_oColor.fPercent=100;
-		l_vColors[100]=l_oColor;
+		SColor color;
+		color = colors.rbegin()->second;
+		color.percent=100;
+		colors[100] = color;
 	}
 
-	std::map < float64, SColor >::const_iterator it1=l_vColors.begin();
-	std::map < float64, SColor >::const_iterator it2=l_vColors.begin();
+	auto it1 = colors.begin();
+	auto it2 = colors.begin();
 	it2++;
 
-	for(i=0; i<ui32Steps; i++)
+	for (i = 0; i < steps; i++)
 	{
-		float64 t=i*100/(ui32Steps-1);
-		while(it2->first < t)
+		float64 t = i * 100 / (steps - 1);
+		while (it2->first < t)
 		{
 			it1++;
 			it2++;
 		}
 
-		float64 a=it2->first-t;
-		float64 b=t-it1->first;
-		float64 d=it2->first-it1->first;
+		float64 a = it2->first - t;
+		float64 b = t - it1->first;
+		float64 d = it2->first - it1->first;
 
-		rInterpolatedColorGradient[i*4  ]=t;
-		rInterpolatedColorGradient[i*4+1]=(it1->second.fRed   * a + it2->second.fRed   * b) / d;
-		rInterpolatedColorGradient[i*4+2]=(it1->second.fGreen * a + it2->second.fGreen * b) / d;
-		rInterpolatedColorGradient[i*4+3]=(it1->second.fBlue  * a + it2->second.fBlue  * b) / d;
+		interpolatedColorGradient[i*4  ] = t;
+		interpolatedColorGradient[i*4+1] = (it1->second.red   * a + it2->second.red   * b) / d;
+		interpolatedColorGradient[i*4+2] = (it1->second.green * a + it2->second.green * b) / d;
+		interpolatedColorGradient[i*4+3] = (it1->second.blue  * a + it2->second.blue  * b) / d;
 	}
 
 	return true;
