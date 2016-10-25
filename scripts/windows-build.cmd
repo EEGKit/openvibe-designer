@@ -1,4 +1,4 @@
-@echo off
+REM @echo off
 setlocal EnableDelayedExpansion
 setlocal enableextensions 
 
@@ -6,12 +6,13 @@ set BuildType=Release
 set PauseCommand=pause
 set RefreshCMake=F
 set PathSDK=""
+set PathDep=""
 set VerboseOuptut=OFF
 
 goto parameter_parse
 
 :print_help
-	echo Usage: win32-build.cmd --sdk <path to openvibe SDK> [-h ^| --help] [--no-pause] [-d^|--debug] [-r^|--release] [-f^|--force] [-v^|--verbose]
+	echo Usage: windows-build.cmd --sdk <path to openvibe SDK> --dep <path to openvibe dependencies> [-h ^| --help] [--no-pause] [-d^|--debug] [-r^|--release] [-f^|--force] [-v^|--verbose]
 	echo -- Build Type option can be : --release (-r) or --debug (-d). Default is Release.
 	echo -- --force option will force the cmake re-run
 	exit /b
@@ -45,25 +46,36 @@ for %%A in (%*) DO (
 	) else if "!next!"=="SDK" (
 		set PathSDK=%%A
 		set next=
+	) else if /i "%%A"=="--dep" (
+		set next=DEP
+	) else if "!next!"=="DEP" (
+		set PathDep=%%A
+		set next=
 	)
 )
 
 setlocal
 
-call "windows-initialize-environment.cmd"
+call "windows-initialize-environment.cmd" --sdk "%PathSDK%"
 
 set script_dir=%CD%
-set build_dir=%script_dir%\..\build\build-%BuildType%
+set build_dir=%script_dir%\..\..\certivibe-build\build-studio-%BuildType%
 if %PathSDK%=="" (
 	set sdk_dir=%script_dir%\..\dependencies\certivibe
 ) else (
 	set sdk_dir=%PathSDK%
 )
 
-if "%BuildType%"=="Debug" (
-	set install_dir=%script_dir%\..\build\dist-debug
+if %PathDep%=="" (
+	set dep_dir=%script_dir%\..\dependencies\
 ) else (
-	set install_dir=%script_dir%\..\build\dist
+	set dep_dir=%PathDep%
+)
+
+if "%BuildType%"=="Debug" (
+	set install_dir=%script_dir%\..\..\certivibe-build\dist-studio-debug
+) else (
+	set install_dir=%script_dir%\..\..\certivibe-build\dist-studio
 )
 
 mkdir %build_dir% 2>NUL
@@ -73,7 +85,7 @@ echo Build type is set to: %BuildType%. SDK is located at %sdk_dir%
 
 if not exist "%build_dir%\CMakeCache.txt" set RefreshCMake=T
 if "%RefreshCMake%"=="T" (
-	cmake -DFlag_VerboseOutput=%VerboseOutput% %script_dir%\.. -G"Ninja" -DCMAKE_BUILD_TYPE=!BuildType! -DCMAKE_INSTALL_PREFIX=!install_dir! -DOPENVIBE_SDK_PATH=!sdk_dir!
+	cmake -DFlag_VerboseOutput=%VerboseOutput% %script_dir%\.. -G"Ninja" -DCMAKE_BUILD_TYPE=!BuildType! -DCMAKE_INSTALL_PREFIX=!install_dir! -DOPENVIBE_SDK_PATH=!sdk_dir! -DCV_DEPENDENCIES_PATH=!dep_dir!
 )
 
 if not "!ERRORLEVEL!" == "0" goto terminate_error
