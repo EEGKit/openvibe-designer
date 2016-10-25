@@ -35,8 +35,7 @@ public:
 
 	const char* what() const noexcept override
 	{
-		m_ErrorManager.releaseErrors();
-		return "Designer exception";
+		return m_ErrorManager.getLastErrorString();
 	}
 
 	std::string getErrorString() const
@@ -48,7 +47,7 @@ public:
 			char location[1024];
 			FS::Files::getFilename(error->getErrorLocation(), location);
 			errorMessage += "Message: " + std::string(error->getErrorString()) +
-			        "\nFile: " + location;
+			        "\nFile: " + location + "\n";
 			error = error->getNestedError();
 		}
 		m_ErrorManager.releaseErrors();
