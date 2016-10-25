@@ -25,6 +25,12 @@
 #define OV_FATAL_D(description, type) OV_FATAL(description, type, m_KernelContext.getLogManager())
 #define OV_FATAL_UNLESS_D(expression, description, type) OV_FATAL_UNLESS(expression, description, type, m_KernelContext.getLogManager())
 
+#ifndef _MSC_VER
+#define NOEXCEPT noexcept
+#else
+#define NOEXCEPT
+#endif
+
 class DesignerException final: public std::runtime_error
 {
 public:
@@ -33,7 +39,7 @@ public:
 	    , m_ErrorManager(errorManager)
 	{}
 
-	const char* what() const noexcept override
+	const char* what() const NOEXCEPT override
 	{
 		return m_ErrorManager.getLastErrorString();
 	}
@@ -54,7 +60,7 @@ public:
 		return errorMessage;
 	}
 
-	void releaseErrors() noexcept
+	void releaseErrors() NOEXCEPT
 	{
 		m_ErrorManager.releaseErrors();
 	}
