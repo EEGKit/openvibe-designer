@@ -1,6 +1,6 @@
-REM @echo off
+@echo off
 setlocal EnableDelayedExpansion
-setlocal enableextensions 
+setlocal enableextensions
 
 set BuildType=Release
 set PauseCommand=pause

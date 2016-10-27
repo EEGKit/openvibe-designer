@@ -79,9 +79,6 @@ CVisualizationTree::CVisualizationTree(const IKernelContext& kernelContext) :
 
 CVisualizationTree::~CVisualizationTree()
 {
-	//delete display panels
-	//TODO!
-
 	for (auto& widget : m_VisualizationWidgets)
 	{
 		delete widget.second;
@@ -1007,9 +1004,9 @@ OpenViBE::CString CVisualizationTree::serialize() const
 		}
 	}
 
-	for (size_t i = 0; i < widgetsToExport.size(); ++i)
+	for (auto& widgetIdentifier : widgetsToExport)
 	{
-		IVisualizationWidget* widget = this->getVisualizationWidget(widgetsToExport[i]);
+		IVisualizationWidget* widget = this->getVisualizationWidget(widgetIdentifier);
 
 		jsonRepresentation.push_back(this->serializeWidget(*widget));
 
