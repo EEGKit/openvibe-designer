@@ -1,44 +1,42 @@
-#ifndef __OpenViBEDesigner_CScenarioStateStack_H__
-#define __OpenViBEDesigner_CScenarioStateStack_H__
-
-#include "ovd_base.h"
+#pragma once
 
 #include <list>
 
+#include "ovd_base.h"
+
 namespace OpenViBEDesigner
 {
-	class CApplication;
+	class CInterfacedScenario;
 
 	class CScenarioStateStack
 	{
 	public:
 
-		CScenarioStateStack(const OpenViBE::Kernel::IKernelContext& rKernelContext, OpenViBEDesigner::CApplication& rApplication, OpenViBE::Kernel::IScenario& rScenario);
+		CScenarioStateStack(const OpenViBE::Kernel::IKernelContext& kernelContext, OpenViBEDesigner::CInterfacedScenario& interfacedScenario, OpenViBE::Kernel::IScenario& scenario);
 		virtual ~CScenarioStateStack(void);
 
-		virtual OpenViBE::boolean isUndoPossible(void);
-		virtual OpenViBE::boolean undo(void);
-		virtual OpenViBE::boolean isRedoPossible(void);
-		virtual OpenViBE::boolean redo(void);
+		virtual bool isUndoPossible(void);
+		virtual bool undo(void);
+		virtual bool isRedoPossible(void);
+		virtual bool redo(void);
 
-		virtual OpenViBE::boolean snapshot(void);
+		virtual bool snapshot(void);
 
 	private:
 
-		virtual OpenViBE::boolean restoreState(const OpenViBE::IMemoryBuffer& rState);
-		virtual OpenViBE::boolean dumpState(OpenViBE::IMemoryBuffer& rState);
+		virtual bool restoreState(const OpenViBE::IMemoryBuffer& state);
+		virtual bool dumpState(OpenViBE::IMemoryBuffer& state);
 
 	protected:
 
-		const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
-		OpenViBEDesigner::CApplication& m_rApplication;
-		OpenViBE::Kernel::IScenario& m_rScenario;
+		const OpenViBE::Kernel::IKernelContext& m_KernelContext;
+		OpenViBEDesigner::CInterfacedScenario& m_InterfacedScenario;
+		OpenViBE::Kernel::IScenario& m_Scenario;
 
-		std::list < OpenViBE::CMemoryBuffer* > m_vStates;
-		std::list < OpenViBE::CMemoryBuffer* >::iterator m_itCurrentState;
+		std::list<OpenViBE::CMemoryBuffer*> m_States;
+		std::list<OpenViBE::CMemoryBuffer*>::iterator m_CurrentState;
 
-		OpenViBE::uint32 m_ui32MaximumStateCount;
+		OpenViBE::uint32 m_MaximumStateCount;
 	};
-};
+}
 
-#endif // __OpenViBEDesigner_CScenarioStateStack_H__

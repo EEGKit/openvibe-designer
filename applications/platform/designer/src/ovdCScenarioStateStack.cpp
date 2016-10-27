@@ -1,5 +1,6 @@
 #include "ovdCScenarioStateStack.h"
 
+#include "ovdCInterfacedScenario.h"
 #include <zlib.h>
 #include <ovp_global_defines.h>
 
@@ -9,29 +10,28 @@ using namespace OpenViBE::Plugins;
 using namespace OpenViBEDesigner;
 using namespace OpenViBEToolkit;
 
-CScenarioStateStack::CScenarioStateStack(const IKernelContext& rKernelContext, CApplication& rApplication, IScenario& rScenario)
-	:m_rKernelContext(rKernelContext)
-	,m_rApplication(rApplication)
-	,m_rScenario(rScenario)
-	,m_ui32MaximumStateCount(0)
+CScenarioStateStack::CScenarioStateStack(const IKernelContext& rKernelContext, CInterfacedScenario& interfacedScenario, IScenario& scenario)
+	:m_KernelContext(rKernelContext)
+	,m_InterfacedScenario(interfacedScenario)
+	,m_Scenario(scenario)
+	,m_MaximumStateCount(0)
 {
-	m_itCurrentState=m_vStates.begin();
-	m_ui32MaximumStateCount=(uint32)m_rKernelContext.getConfigurationManager().expandAsUInteger("${Designer_UndoRedoStackSize}", 64);
+	m_CurrentState = m_States.begin();
+	m_MaximumStateCount = static_cast<uint32>(m_KernelContext.getConfigurationManager().expandAsUInteger("${Designer_UndoRedoStackSize}", 64));
 }
 
 CScenarioStateStack::~CScenarioStateStack(void)
 {
-	std::list < CMemoryBuffer* >::iterator itState;
-	for(itState=m_vStates.begin(); itState!=m_vStates.end(); itState++)
+	for (auto& state : m_States)
 	{
-		delete *itState;
+		delete state;
 	}
 }
 
-boolean CScenarioStateStack::isUndoPossible()
+bool CScenarioStateStack::isUndoPossible()
 {
-	std::list < CMemoryBuffer* >::iterator itState = m_itCurrentState;
-	if (itState == m_vStates.begin())
+	auto itState = m_CurrentState;
+	if (itState == m_States.begin())
 	{
 		return false;
 	}
@@ -39,226 +39,237 @@ boolean CScenarioStateStack::isUndoPossible()
 	return true;
 }
 
-boolean CScenarioStateStack::undo(void)
+bool CScenarioStateStack::undo(void)
 {
-	m_rKernelContext.getLogManager() << LogLevel_Debug << "enters undo\n";
-
-	std::list < CMemoryBuffer* >::iterator itState=m_itCurrentState;
-	if(itState==m_vStates.begin())
+	auto itState = m_CurrentState;
+	if (itState == m_States.begin())
 	{
 		return false;
 	}
 
 	itState--;
 
-	m_itCurrentState=itState;
+	m_CurrentState = itState;
 
-	if(!this->restoreState(**m_itCurrentState))
+	if (!this->restoreState(**m_CurrentState))
 	{
 		return false;
 	}
 
-	m_rKernelContext.getLogManager() << LogLevel_Debug << "leaves undo\n";
 	return true;
 }
 
-boolean CScenarioStateStack::isRedoPossible()
+bool CScenarioStateStack::isRedoPossible()
 {
-	std::list < CMemoryBuffer* >::iterator itState = m_itCurrentState;
-	if (itState == m_vStates.end())
+	auto itState = m_CurrentState;
+	if (itState == m_States.end())
 	{
 		return false;
 	}
 
 	itState++;
-	if (itState == m_vStates.end())
+	if (itState == m_States.end())
 	{
 		return false;
 	}
 	return true;
 }
 
-boolean CScenarioStateStack::redo(void)
+bool CScenarioStateStack::redo(void)
 {
-	m_rKernelContext.getLogManager() << LogLevel_Debug << "enters redo\n";
-
-	std::list < CMemoryBuffer* >::iterator itState=m_itCurrentState;
-	if(itState==m_vStates.end())
+	auto itState = m_CurrentState;
+	if (itState == m_States.end())
 	{
 		return false;
 	}
 
 	itState++;
-	if(itState==m_vStates.end())
+	if (itState == m_States.end())
 	{
 		return false;
 	}
 
-	m_itCurrentState=itState;
+	m_CurrentState=itState;
 
-	if(!this->restoreState(**m_itCurrentState))
+	if (!this->restoreState(**m_CurrentState))
 	{
 		return false;
 	}
 
-	m_rKernelContext.getLogManager() << LogLevel_Debug << "leaves redo\n";
 	return true;
 }
 
-boolean CScenarioStateStack::snapshot(void)
+bool CScenarioStateStack::snapshot(void)
 {
-	m_rKernelContext.getLogManager() << LogLevel_Debug << "enters snapshot\n";
+	CMemoryBuffer* newState = new CMemoryBuffer();
 
-	CMemoryBuffer* l_pNewState=new CMemoryBuffer();
-
-	if(!this->dumpState(*l_pNewState))
+	if (!this->dumpState(*newState))
 	{
-		delete l_pNewState;
+		delete newState;
 		return false;
 	}
 
-	if(m_itCurrentState!=m_vStates.end())
+	if (m_CurrentState != m_States.end())
 	{
-		m_itCurrentState++;
+		m_CurrentState++;
 	}
 
-	while(m_itCurrentState!=m_vStates.end())
+	while (m_CurrentState != m_States.end())
 	{
-		delete *m_itCurrentState;
-		m_itCurrentState=m_vStates.erase(m_itCurrentState);
+		delete *m_CurrentState;
+		m_CurrentState = m_States.erase(m_CurrentState);
 	}
 
-	if(m_ui32MaximumStateCount!=0)
+	if (m_MaximumStateCount != 0)
 	{
-		while(m_vStates.size() >= m_ui32MaximumStateCount)
+		while (m_States.size() >= m_MaximumStateCount)
 		{
-			m_vStates.erase(m_vStates.begin());
+			m_States.erase(m_States.begin());
 		}
 	}
 
-	m_vStates.push_back(l_pNewState);
+	m_States.push_back(newState);
 
-	m_itCurrentState=m_vStates.end();
-	m_itCurrentState--;
-
-	m_rKernelContext.getLogManager() << LogLevel_Debug << "leaves snapshot\n";
-	return true;
-}
-
-boolean CScenarioStateStack::restoreState(const IMemoryBuffer& rState)
-{
-	CMemoryBuffer l_oUncompressedMemoryBuffer;
-
-	if(rState.getSize()==0)
-	{
-		return false;
-	}
-
-	CIdentifier l_oImporterIdentifier=m_rKernelContext.getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_XMLScenarioImporter);
-	if(l_oImporterIdentifier==OV_UndefinedIdentifier)
-	{
-		return false;
-	}
-
-	IAlgorithmProxy* l_pImporter=&m_rKernelContext.getAlgorithmManager().getAlgorithm(l_oImporterIdentifier);
-	if(!l_pImporter)
-	{
-		return false;
-	}
-
-	::uLongf l_ulSrcSize  =(::uLongf)rState.getSize()-sizeof(uLongf);
-	::Bytef* l_pSrcBuffer =(::Bytef*)rState.getDirectPointer();
-
-	::uLongf l_ulDestSize =*(::uLongf*)(rState.getDirectPointer()+rState.getSize()-sizeof(uLongf));
-	l_oUncompressedMemoryBuffer.setSize(l_ulDestSize, true);
-	::Bytef* l_pDestBuffer=(::Bytef*)l_oUncompressedMemoryBuffer.getDirectPointer();
-
-	if(::uncompress(l_pDestBuffer, &l_ulDestSize, l_pSrcBuffer, l_ulSrcSize)!=Z_OK)
-	{
-		return false;
-	}
-
-	l_pImporter->initialize();
-
-	TParameterHandler < const IMemoryBuffer* > ip_pMemoryBuffer(l_pImporter->getInputParameter(OV_Algorithm_ScenarioImporter_InputParameterId_MemoryBuffer));
-	TParameterHandler < IScenario* > op_pScenario(l_pImporter->getOutputParameter(OV_Algorithm_ScenarioImporter_OutputParameterId_Scenario));
-
-	/*
-	CIdentifier l_oWidgetIdentifier;
-	while(m_rScenario.getVisualisationTreeDetails().getNextVisualisationWidgetIdentifier(l_oWidgetIdentifier))
-	{
-		m_rScenario.getVisualisationTreeDetails().destroyHierarchy(l_oWidgetIdentifier);
-		l_oWidgetIdentifier=OV_UndefinedIdentifier;
-	}
-	m_rScenario.getVisualisationTreeDetails().reloadTree();
-	*/
-	m_rScenario.clear();
-
-	ip_pMemoryBuffer=&l_oUncompressedMemoryBuffer;
-	op_pScenario=&m_rScenario;
-
-	l_pImporter->process();
-	l_pImporter->uninitialize();
-	m_rKernelContext.getAlgorithmManager().releaseAlgorithm(*l_pImporter);
-
-//	m_rScenario.getVisualisationTreeDetails().reloadTree();
+	m_CurrentState=m_States.end();
+	m_CurrentState--;
 
 	return true;
 }
 
-boolean CScenarioStateStack::dumpState(IMemoryBuffer& rState)
+bool CScenarioStateStack::restoreState(const IMemoryBuffer& state)
 {
-	CMemoryBuffer l_oUncompressedMemoryBuffer;
-	CMemoryBuffer l_oCompressedMemoryBuffer;
+	CMemoryBuffer uncompressedMemoryBuffer;
 
-	CIdentifier l_oExporterIdentifier=m_rKernelContext.getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_XMLScenarioExporter);
-	if(l_oExporterIdentifier==OV_UndefinedIdentifier)
+	if (state.getSize() == 0)
 	{
 		return false;
 	}
 
-	IAlgorithmProxy* l_pExporter=&m_rKernelContext.getAlgorithmManager().getAlgorithm(l_oExporterIdentifier);
-	if(!l_pExporter)
+	CIdentifier importerIdentifier = m_KernelContext.getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_XMLScenarioImporter);
+	if (importerIdentifier == OV_UndefinedIdentifier)
 	{
 		return false;
 	}
 
-	l_pExporter->initialize();
-
-	TParameterHandler < const IScenario* > ip_pScenario(l_pExporter->getInputParameter(OV_Algorithm_ScenarioExporter_InputParameterId_Scenario));
-	TParameterHandler < IMemoryBuffer* > op_pMemoryBuffer(l_pExporter->getOutputParameter(OV_Algorithm_ScenarioExporter_OutputParameterId_MemoryBuffer));
-
-	ip_pScenario=&m_rScenario;
-	op_pMemoryBuffer=&l_oUncompressedMemoryBuffer;
-
-	l_pExporter->process();
-	l_pExporter->uninitialize();
-	m_rKernelContext.getAlgorithmManager().releaseAlgorithm(*l_pExporter);
-
-#if 0
-	FILE* pFile = FS::Files::open(m_rKernelContext.getConfigurationManager().expand("undo-redo-snapshot-$core{index}.xml").toASCIIString(), "wb");
-	fwrite(l_oUncompressedMemoryBuffer.getDirectPointer(), l_oUncompressedMemoryBuffer.getSize(), 1, pFile);
-	fclose(pFile);
-#endif
-
-	::uLongf l_ulSrcSize  =(::uLongf)l_oUncompressedMemoryBuffer.getSize();
-	::Bytef* l_pSrcBuffer =(::Bytef*)l_oUncompressedMemoryBuffer.getDirectPointer();
-
-	l_oCompressedMemoryBuffer.setSize(12+(uint64)(l_ulSrcSize*1.1), true);
-
-	::uLongf l_ulDestSize =(::uLongf)l_oCompressedMemoryBuffer.getSize();
-	::Bytef* l_pDestBuffer=(::Bytef*)l_oCompressedMemoryBuffer.getDirectPointer();
-
-	if(::compress(l_pDestBuffer, &l_ulDestSize, l_pSrcBuffer, l_ulSrcSize)!=Z_OK)
+	IAlgorithmProxy* importer = &m_KernelContext.getAlgorithmManager().getAlgorithm(importerIdentifier);
+	if (!importer)
 	{
 		return false;
 	}
 
-	rState.setSize(0, true);
-	rState.append(l_oCompressedMemoryBuffer.getDirectPointer(), l_ulDestSize);
-	rState.append((const uint8*)&l_ulSrcSize, sizeof(::uLongf));
+	::uLongf sourceSize  =(::uLongf)state.getSize()-sizeof(uLongf);
+	::Bytef* sourceBuffer =(::Bytef*)state.getDirectPointer();
 
-	m_rKernelContext.getLogManager() << LogLevel_Debug << "Pushed compressed scenario state [uncompressed:" << (uint64)l_ulSrcSize << "|compressed:" << (uint64)l_ulDestSize << "|ratio:" << (float64)(l_ulDestSize*100./l_ulSrcSize) << "]\n";
+	::uLongf destinationSize =*(::uLongf*)(state.getDirectPointer()+state.getSize()-sizeof(uLongf));
+	uncompressedMemoryBuffer.setSize(destinationSize, true);
+	::Bytef* destinationBuffer=(::Bytef*)uncompressedMemoryBuffer.getDirectPointer();
+
+	if(::uncompress(destinationBuffer, &destinationSize, sourceBuffer, sourceSize)!=Z_OK)
+	{
+		return false;
+	}
+
+	importer->initialize();
+
+	TParameterHandler<const IMemoryBuffer*> ip_MemoryBuffer(importer->getInputParameter(OV_Algorithm_ScenarioImporter_InputParameterId_MemoryBuffer));
+	TParameterHandler<IScenario*> op_Scenario(importer->getOutputParameter(OV_Algorithm_ScenarioImporter_OutputParameterId_Scenario));
+
+	m_Scenario.clear();
+
+	ip_MemoryBuffer = &uncompressedMemoryBuffer;
+	op_Scenario = &m_Scenario;
+
+	importer->process();
+	importer->uninitialize();
+	m_KernelContext.getAlgorithmManager().releaseAlgorithm(*importer);
+
+	// Find the VisualizationTree metadata
+	IMetadata* visualizationTreeMetadata = nullptr;
+	CIdentifier metadataIdentifier = OV_UndefinedIdentifier;
+	while ((metadataIdentifier = m_Scenario.getNextMetadataIdentifier(metadataIdentifier)) != OV_UndefinedIdentifier)
+	{
+		visualizationTreeMetadata = m_Scenario.getMetadataDetails(metadataIdentifier);
+		if (visualizationTreeMetadata && visualizationTreeMetadata->getType() == OVVIZ_MetadataIdentifier_VisualizationTree)
+		{
+			break;
+		}
+	}
+
+	OpenViBEVisualizationToolkit::IVisualizationTree* visualizationTree = m_InterfacedScenario.m_pVisualizationTree;
+	if (visualizationTreeMetadata && visualizationTree)
+	{
+		visualizationTree->deserialize(visualizationTreeMetadata->getData());
+	}
+
+	return true;
+}
+
+bool CScenarioStateStack::dumpState(IMemoryBuffer& state)
+{
+	CMemoryBuffer uncompressedMemoryBuffer;
+	CMemoryBuffer compressedMemoryBuffer;
+
+	// Update the scenario metadata according to the current state of the visualization tree
+
+	// Remove all VisualizationTree type metadata
+	CIdentifier oldVisualizationTreeMetadataIdentifier = OV_UndefinedIdentifier;
+	CIdentifier metadataIdentifier = OV_UndefinedIdentifier;
+	while ((metadataIdentifier = m_Scenario.getNextMetadataIdentifier(metadataIdentifier)) != OV_UndefinedIdentifier)
+	{
+		if (m_Scenario.getMetadataDetails(metadataIdentifier)->getType() == OVVIZ_MetadataIdentifier_VisualizationTree)
+		{
+			oldVisualizationTreeMetadataIdentifier = metadataIdentifier;
+			m_Scenario.removeMetadata(metadataIdentifier);
+			metadataIdentifier = OV_UndefinedIdentifier;
+		}
+	}
+
+	// Insert new metadata
+	m_Scenario.addMetadata(metadataIdentifier, oldVisualizationTreeMetadataIdentifier);
+	m_Scenario.getMetadataDetails(metadataIdentifier)->setType(OVVIZ_MetadataIdentifier_VisualizationTree);
+	m_Scenario.getMetadataDetails(metadataIdentifier)->setData(m_InterfacedScenario.m_pVisualizationTree->serialize());
+
+	CIdentifier exporterIdentifier = m_KernelContext.getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_XMLScenarioExporter);
+
+	if (exporterIdentifier == OV_UndefinedIdentifier)
+	{
+		return false;
+	}
+
+	IAlgorithmProxy* exporter = &m_KernelContext.getAlgorithmManager().getAlgorithm(exporterIdentifier);
+	if(!exporter)
+	{
+		return false;
+	}
+
+	exporter->initialize();
+
+	TParameterHandler<const IScenario*> ip_Scenario(exporter->getInputParameter(OV_Algorithm_ScenarioExporter_InputParameterId_Scenario));
+	TParameterHandler<IMemoryBuffer*> op_MemoryBuffer(exporter->getOutputParameter(OV_Algorithm_ScenarioExporter_OutputParameterId_MemoryBuffer));
+
+	ip_Scenario = &m_Scenario;
+	op_MemoryBuffer = &uncompressedMemoryBuffer;
+
+	exporter->process();
+	exporter->uninitialize();
+	m_KernelContext.getAlgorithmManager().releaseAlgorithm(*exporter);
+
+	::uLongf sourceSize  =(::uLongf)uncompressedMemoryBuffer.getSize();
+	::Bytef* sourceBuffer =(::Bytef*)uncompressedMemoryBuffer.getDirectPointer();
+
+	compressedMemoryBuffer.setSize(12+(uint64)(sourceSize*1.1), true);
+
+	::uLongf destinationSize =(::uLongf)compressedMemoryBuffer.getSize();
+	::Bytef* destinationBuffer=(::Bytef*)compressedMemoryBuffer.getDirectPointer();
+
+	if (::compress(destinationBuffer, &destinationSize, sourceBuffer, sourceSize) != Z_OK)
+	{
+		return false;
+	}
+
+	state.setSize(0, true);
+	state.append(compressedMemoryBuffer.getDirectPointer(), destinationSize);
+	state.append((const uint8*)&sourceSize, sizeof(::uLongf));
 
 	return true;
 }

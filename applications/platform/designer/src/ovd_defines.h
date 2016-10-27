@@ -11,7 +11,6 @@
 
 #define OV_AttributeId_Box_Disabled                         OpenViBE::CIdentifier(0x341D3912, 0x1478DE86)
 
-
 namespace OpenViBEDesigner
 {
 
@@ -132,10 +131,7 @@ namespace OpenViBEDesigner
 		Connector_Input,
 		Connector_Output,
 		Connector_Setting,
-		Connector_Link,
-		Connector_MessageInput,
-		Connector_MessageOutput,
-		Connector_MessageLink
+		Connector_Link
 	};
 
 	enum

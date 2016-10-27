@@ -8,6 +8,8 @@
 #include "ovdCBoxConfigurationDialog.h"
 #include "ovdCInterfacedObject.h"
 #include "ovdTAttributeHandler.h"
+#include "ovdCDesignerVisualization.h"
+#include "ovdCPlayerVisualization.h"
 #include "ovdCRenameDialog.h"
 #include "ovdCAboutPluginDialog.h"
 #include "ovdCAboutScenarioDialog.h"
@@ -36,6 +38,7 @@ using namespace OpenViBE;
 using namespace OpenViBE::Kernel;
 using namespace OpenViBE::Plugins;
 using namespace OpenViBEDesigner;
+using namespace OpenViBEVisualizationToolkit;
 using namespace std;
 
 extern map<uint32, ::GdkColor> g_vColors;
@@ -513,6 +516,10 @@ CInterfacedScenario::CInterfacedScenario(const IKernelContext& rKernelContext, C
 	,m_rScenario(rScenario)
 	,m_pPlayer(NULL)
 	,m_rNotebook(rNotebook)
+	,m_pVisualizationTree(NULL)
+	,m_bDesignerVisualizationToggled(false)
+	,m_pDesignerVisualization(NULL)
+	,m_pPlayerVisualization(NULL)
 	,m_pGUIBuilder(NULL)
 //    ,m_pSettingsGUIBuilder(NULL)
 /*    ,m_pBuilder(NULL)
@@ -536,7 +543,6 @@ CInterfacedScenario::CInterfacedScenario(const IKernelContext& rKernelContext, C
 	,m_i32ViewOffsetX(0)
 	,m_i32ViewOffsetY(0)
 	,m_ui32CurrentMode(Mode_None)
-	,m_oStateStack(rKernelContext, rApplication, rScenario)
 	,m_pSettingHelper(NULL)
 	,m_pConfigureSettingsDialog(NULL)
 	,m_pSettingsVBox(NULL)
@@ -610,6 +616,16 @@ CInterfacedScenario::CInterfacedScenario(const IKernelContext& rKernelContext, C
 	gtk_drag_dest_add_uri_targets(GTK_WIDGET(m_pScenarioDrawingArea));
 #endif
 	
+	//retrieve visualization tree
+
+	m_rApplication.m_pVisualizationManager->createVisualizationTree(m_oVisualizationTreeIdentifier);
+	m_pVisualizationTree = &m_rApplication.m_pVisualizationManager->getVisualizationTree(m_oVisualizationTreeIdentifier);
+	m_pVisualizationTree->init(&m_rScenario);
+
+	//create window manager
+	m_pDesignerVisualization = new CDesignerVisualization(m_rKernelContext, *m_pVisualizationTree, *this);
+	m_pDesignerVisualization->init(string(sGUIFilename));
+
 	m_pConfigureSettingsDialog = GTK_WIDGET(gtk_builder_get_object(m_rApplication.m_pBuilderInterface, "dialog_scenario_configuration"));
 
 	m_pSettingsVBox = GTK_WIDGET(gtk_builder_get_object(m_rApplication.m_pBuilderInterface, "dialog_scenario_configuration-vbox"));
@@ -620,13 +636,19 @@ CInterfacedScenario::CInterfacedScenario(const IKernelContext& rKernelContext, C
 	this->redrawScenarioInputSettings();
 	this->redrawScenarioOutputSettings();
 
-	this->snapshotCB();
-	m_bHasBeenModified=false;
+	m_oStateStack.reset(new CScenarioStateStack(rKernelContext, *this, rScenario));
+
 	this->updateScenarioLabel();
 }
 
 CInterfacedScenario::~CInterfacedScenario(void)
 {
+	//delete window manager
+	if(m_pDesignerVisualization)
+	{
+		delete m_pDesignerVisualization;
+	}
+
 	if(m_pStencilBuffer)
 	{
 		g_object_unref(m_pStencilBuffer);
@@ -1711,7 +1733,7 @@ boolean CInterfacedScenario::pickInterfacedObject(int x, int y, int iSizeX, int 
 
 void CInterfacedScenario::undoCB(boolean bManageModifiedStatusFlag)
 {
-	if(m_oStateStack.undo())
+	if(m_oStateStack->undo())
 	{
 		CIdentifier l_oIdentifier;
 		m_vCurrentObject.clear();
@@ -1721,6 +1743,11 @@ void CInterfacedScenario::undoCB(boolean bManageModifiedStatusFlag)
 		while((l_oIdentifier=m_rScenario.getNextLinkIdentifier(l_oIdentifier))!=OV_UndefinedIdentifier)
 			if(m_rScenario.getLinkDetails(l_oIdentifier)->hasAttribute(OV_ClassId_Selected))
 				m_vCurrentObject[l_oIdentifier]=true;
+
+		if(m_pDesignerVisualization)
+		{
+			m_pDesignerVisualization->load();
+		}
 
 		if(bManageModifiedStatusFlag)
 		{
@@ -1732,8 +1759,8 @@ void CInterfacedScenario::undoCB(boolean bManageModifiedStatusFlag)
 		this->redrawScenarioOutputSettings();
 
 		this->redraw();
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(this->m_rApplication.m_pBuilderInterface, "openvibe-button_redo")), m_oStateStack.isRedoPossible());
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(this->m_rApplication.m_pBuilderInterface, "openvibe-button_undo")), m_oStateStack.isUndoPossible());
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(this->m_rApplication.m_pBuilderInterface, "openvibe-button_redo")), m_oStateStack->isRedoPossible());
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(this->m_rApplication.m_pBuilderInterface, "openvibe-button_undo")), m_oStateStack->isUndoPossible());
 	}
 	else
 	{
@@ -1745,7 +1772,7 @@ void CInterfacedScenario::undoCB(boolean bManageModifiedStatusFlag)
 
 void CInterfacedScenario::redoCB(boolean bManageModifiedStatusFlag)
 {
-	if(m_oStateStack.redo())
+	if(m_oStateStack->redo())
 	{
 		CIdentifier l_oIdentifier;
 		m_vCurrentObject.clear();
@@ -1756,6 +1783,11 @@ void CInterfacedScenario::redoCB(boolean bManageModifiedStatusFlag)
 			if(m_rScenario.getLinkDetails(l_oIdentifier)->hasAttribute(OV_ClassId_Selected))
 				m_vCurrentObject[l_oIdentifier]=true;
 
+		if(m_pDesignerVisualization)
+		{
+			m_pDesignerVisualization->load();
+		}
+
 		if(bManageModifiedStatusFlag)
 		{
 			m_bHasBeenModified=true;
@@ -1765,8 +1797,8 @@ void CInterfacedScenario::redoCB(boolean bManageModifiedStatusFlag)
 		this->redrawScenarioOutputSettings();
 
 		this->redraw();
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(this->m_rApplication.m_pBuilderInterface, "openvibe-button_redo")), m_oStateStack.isRedoPossible());
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(this->m_rApplication.m_pBuilderInterface, "openvibe-button_undo")), m_oStateStack.isUndoPossible());
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(this->m_rApplication.m_pBuilderInterface, "openvibe-button_redo")), m_oStateStack->isRedoPossible());
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(this->m_rApplication.m_pBuilderInterface, "openvibe-button_undo")), m_oStateStack->isUndoPossible());
 	}
 	else
 	{
@@ -1794,9 +1826,9 @@ void CInterfacedScenario::snapshotCB(boolean bManageModifiedStatusFlag)
 		m_bHasBeenModified = true;
 	}
 	this->updateScenarioLabel();
-	m_oStateStack.snapshot();
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(this->m_rApplication.m_pBuilderInterface, "openvibe-button_redo")), m_oStateStack.isRedoPossible());
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(this->m_rApplication.m_pBuilderInterface, "openvibe-button_undo")), m_oStateStack.isUndoPossible());
+	m_oStateStack->snapshot();
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(this->m_rApplication.m_pBuilderInterface, "openvibe-button_redo")), m_oStateStack->isRedoPossible());
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(this->m_rApplication.m_pBuilderInterface, "openvibe-button_undo")), m_oStateStack->isUndoPossible());
 }
 
 void CInterfacedScenario::addCommentCB(int x, int y)
@@ -2166,6 +2198,16 @@ void CInterfacedScenario::scenarioDrawingAreaDragDataReceivedCB(::GdkDragContext
 		m_vCurrentObject.clear();
 		m_vCurrentObject[l_oBoxIdentifier]=true;
 
+		// If a visualization box was dropped, add it in window manager
+		if(l_pPOD && l_pPOD->hasFunctionality(OVD_Functionality_Visualization))
+		{
+			// Let window manager know about new box
+			if(m_pDesignerVisualization)
+			{
+				m_pDesignerVisualization->onVisualizationBoxAdded(l_pBox);
+			}
+		}
+
 		CBoxProxy l_oBoxProxy(m_rKernelContext, m_rScenario, l_oBoxIdentifier);
 		l_oBoxProxy.setCenter(iX-m_i32ViewOffsetX, iY-m_i32ViewOffsetY);
 
@@ -2351,7 +2393,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 					}
 					else
 					{
-						if(m_oCurrentObject.m_ui32ConnectorType==Connector_Input || m_oCurrentObject.m_ui32ConnectorType==Connector_Output || m_oCurrentObject.m_ui32ConnectorType==Connector_MessageOutput || m_oCurrentObject.m_ui32ConnectorType==Connector_MessageInput)
+						if(m_oCurrentObject.m_ui32ConnectorType==Connector_Input || m_oCurrentObject.m_ui32ConnectorType==Connector_Output)
 						{
 							m_ui32CurrentMode=Mode_Connect;
 						}
@@ -2395,7 +2437,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 									}
 								}
 							}
-						}//double clicking on a message in/output
+						}
 						else
 						{
 							if(m_rScenario.isBox(m_oCurrentObject.m_oIdentifier))
@@ -2502,6 +2544,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 								char l_sCompleteName[1024];
 
 								gtk_menu_add_separator_menu_item_with_condition(!m_vBoxContextMenuCB.empty(), l_pMenu);
+								gtk_menu_shell_append(GTK_MENU_SHELL(l_pMenu), gtk_menu_item_new_with_label(l_pBox->getIdentifier().toString().toASCIIString()));
 
 								// -------------- INPUTS --------------
 
@@ -2797,21 +2840,6 @@ void CInterfacedScenario::scenarioDrawingAreaButtonReleasedCB(::GtkWidget* pWidg
 				l_oSourceObject=m_oCurrentObject;
 				l_oTargetObject=l_oCurrentObject;
 				l_bIsActuallyConnecting=true;
-			}
-			//
-			if(l_oCurrentObject.m_ui32ConnectorType==Connector_MessageOutput && m_oCurrentObject.m_ui32ConnectorType==Connector_MessageInput)
-			{
-				l_oSourceObject=l_oCurrentObject;
-				l_oTargetObject=m_oCurrentObject;
-				l_bIsActuallyConnecting=true;
-				l_bConnectionIsMessage = true;
-			}
-			if(l_oCurrentObject.m_ui32ConnectorType==Connector_MessageInput && m_oCurrentObject.m_ui32ConnectorType==Connector_MessageOutput)
-			{
-				l_oSourceObject=m_oCurrentObject;
-				l_oTargetObject=l_oCurrentObject;
-				l_bIsActuallyConnecting=true;
-				l_bConnectionIsMessage = true;
 			}
 			//
 			if(l_bIsActuallyConnecting)
@@ -3144,7 +3172,6 @@ void CInterfacedScenario::copySelection(void)
 			}
 		}
 	}
-
 }
 void CInterfacedScenario::cutSelection(void)
 {
@@ -3180,9 +3207,19 @@ void CInterfacedScenario::pasteSelection(void)
 			l_oIdentifier);
 		l_vIdMapping[l_oIdentifier]=l_oNewIdentifier;
 
-		// Updates visualisation manager
+		// Updates visualization manager
 		CIdentifier l_oBoxAlgorithmIdentifier=l_pBox->getAlgorithmClassIdentifier();
 		const IPluginObjectDesc* l_pPOD = m_rKernelContext.getPluginManager().getPluginObjectDescCreating(l_oBoxAlgorithmIdentifier);
+
+		// If a visualization box was dropped, add it in window manager
+		if(l_pPOD && l_pPOD->hasFunctionality(OVD_Functionality_Visualization))
+		{
+			// Let window manager know about new box
+			if(m_pDesignerVisualization)
+			{
+				m_pDesignerVisualization->onVisualizationBoxAdded(m_rScenario.getBoxDetails(l_oNewIdentifier));
+			}
+		}
 
 		CBoxProxy l_oBoxProxy(m_rKernelContext, m_rScenario, l_oNewIdentifier);
 
@@ -3284,6 +3321,12 @@ void CInterfacedScenario::deleteSelection(void)
 		{
 			if(m_rScenario.isBox(i->first))
 			{
+				// removes visualization box from window manager
+				if(m_pDesignerVisualization)
+				{
+					m_pDesignerVisualization->onVisualizationBoxRemoved(i->first);
+				}
+
 				// removes box from scenario
 				m_rScenario.removeBox(i->first);
 			}
@@ -3320,6 +3363,19 @@ void CInterfacedScenario::contextMenuBoxRenameCB(IBox& rBox)
 	if(l_oRename.run())
 	{
 		rBox.setName(l_oRename.getResult());
+
+		//check whether it is a visualization box
+		CIdentifier l_oId = rBox.getAlgorithmClassIdentifier();
+		const IPluginObjectDesc* l_pPOD = m_rKernelContext.getPluginManager().getPluginObjectDescCreating(l_oId);
+
+		//if a visualization box was renamed, tell window manager about it
+		if(l_pPOD && l_pPOD->hasFunctionality(OVD_Functionality_Visualization))
+		{
+			if(m_pDesignerVisualization)
+			{
+				m_pDesignerVisualization->onVisualizationBoxRenamed(rBox.getIdentifier());
+			}
+		}
 		this->snapshotCB();
 	}
 }
@@ -3377,6 +3433,19 @@ void CInterfacedScenario::contextMenuBoxRenameAllCB()
 					if(l_bDialogOk)
 					{
 						l_pBox->setName(l_sNewName);
+
+						//check whether it is a visualization box
+						CIdentifier l_oId = l_pBox->getAlgorithmClassIdentifier();
+						const IPluginObjectDesc* l_pPOD = m_rKernelContext.getPluginManager().getPluginObjectDescCreating(l_oId);
+
+						//if a visualization box was renamed, tell window manager about it
+						if(l_pPOD && l_pPOD->hasFunctionality(OVD_Functionality_Visualization))
+						{
+							if(m_pDesignerVisualization)
+							{
+								m_pDesignerVisualization->onVisualizationBoxRenamed(l_pBox->getIdentifier());
+							}
+						}
 					}
 				}
 			}
@@ -3416,6 +3485,10 @@ void CInterfacedScenario::contextMenuBoxToggleEnableAllCB(void)
 void CInterfacedScenario::contextMenuBoxDeleteCB(IBox& rBox)
 {
 	m_rKernelContext.getLogManager() << LogLevel_Debug << "contextMenuBoxDeleteCB\n";
+	if(m_pDesignerVisualization)
+	{
+		m_pDesignerVisualization->onVisualizationBoxRemoved(rBox.getIdentifier());
+	}
 	m_rScenario.removeBox(rBox.getIdentifier());
 	this->snapshotCB();
 	this->redraw();
@@ -3796,6 +3869,110 @@ void CInterfacedScenario::contextMenuScenarioAboutCB(void)
 	CAboutScenarioDialog l_oAboutScenarioDialog(m_rKernelContext, m_rScenario, m_sGUIFilename.c_str());
 	l_oAboutScenarioDialog.run();
 	this->snapshotCB();
+}
+
+void CInterfacedScenario::toggleDesignerVisualization()
+{
+	m_bDesignerVisualizationToggled = !m_bDesignerVisualizationToggled;
+
+	if(m_pDesignerVisualization)
+	{
+		if(m_bDesignerVisualizationToggled)
+		{
+			m_pDesignerVisualization->show();
+		}
+		else
+		{
+			m_pDesignerVisualization->hide();
+		}
+	}
+}
+
+boolean CInterfacedScenario::isDesignerVisualizationToggled()
+{
+	return m_bDesignerVisualizationToggled;
+}
+
+void CInterfacedScenario::showCurrentVisualization()
+{
+	if(isLocked())
+	{
+		if(m_pPlayerVisualization != NULL)
+		{
+			m_pPlayerVisualization->showTopLevelWindows();
+		}
+	}
+	else
+	{
+		if(m_pDesignerVisualization != NULL)
+		{
+			m_pDesignerVisualization->show();
+		}
+	}
+}
+
+void CInterfacedScenario::hideCurrentVisualization()
+{
+	if(isLocked())
+	{
+		if(m_pPlayerVisualization != NULL)
+		{
+			m_pPlayerVisualization->hideTopLevelWindows();
+		}
+	}
+	else
+	{
+		if(m_pDesignerVisualization != NULL)
+		{
+			m_pDesignerVisualization->hide();
+		}
+	}
+
+}
+
+void CInterfacedScenario::createPlayerVisualization(IVisualizationTree* pVisualizationTree)
+{
+	//hide window manager
+	if(m_pDesignerVisualization)
+	{
+		m_pDesignerVisualization->hide();
+	}
+
+	if(m_pPlayerVisualization == NULL)
+	{
+		if (pVisualizationTree)
+		{
+			m_pPlayerVisualization = new CPlayerVisualization(m_rKernelContext, *pVisualizationTree, *this);
+		}
+		else
+		{
+			m_pPlayerVisualization = new CPlayerVisualization(m_rKernelContext, *m_pVisualizationTree, *this);
+		}
+	}
+
+	//initialize and show windows
+	m_pPlayerVisualization->init();
+}
+
+void CInterfacedScenario::releasePlayerVisualization(void)
+{
+	if(m_pPlayerVisualization != NULL)
+	{
+		delete m_pPlayerVisualization;
+		m_pPlayerVisualization = NULL;
+	}
+
+	//reload designer visualization
+	if(m_pDesignerVisualization)
+	{
+		m_pDesignerVisualization->load();
+	}
+
+	//show it if it was toggled on
+	if(m_bDesignerVisualizationToggled == true)
+	{
+		m_pDesignerVisualization->show();
+	}
 }
 
 boolean CInterfacedScenario::hasSelection(void)

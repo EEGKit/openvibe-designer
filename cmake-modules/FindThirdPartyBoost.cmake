@@ -5,8 +5,8 @@
 # ---------------------------------
 
 SET(PATH_BOOST "PATH_BOOST-NOTFOUND")
-FIND_PATH(PATH_BOOST "include/boost/config/auto_link.hpp" PATHS ${OV_CUSTOM_DEPENDENCIES_PATH}/boost ${OV_CUSTOM_DEPENDENCIES_PATH} NO_DEFAULT_PATH)
-FIND_PATH(PATH_BOOST "include/boost/config/auto_link.hpp" PATHS ${OV_CUSTOM_DEPENDENCIES_PATH}/boost)
+FIND_PATH(PATH_BOOST "include/boost/config/auto_link.hpp" PATHS ${CV_DEPENDENCIES_PATH}/boost ${CV_DEPENDENCIES_PATH} NO_DEFAULT_PATH)
+FIND_PATH(PATH_BOOST "include/boost/config/auto_link.hpp" PATHS ${CV_DEPENDENCIES_PATH}/boost)
 
 IF(PATH_BOOST)
 	debug_message( "  Found boost includes...")

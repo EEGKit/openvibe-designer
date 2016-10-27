@@ -1,5 +1,10 @@
-#ifndef __OpenViBEDesigner_CInterfacedScenario_H__
-#define __OpenViBEDesigner_CInterfacedScenario_H__
+#pragma once
+
+#include <map>
+#include <vector>
+#include <string>
+#include <iostream>
+#include <memory>
 
 #include "ovd_base.h"
 
@@ -7,17 +12,13 @@
 #include "ovdCScenarioStateStack.h"
 #include "ovdCSettingCollectionHelper.h"
 #include "ovdCFileFormats.h"
-
-#include <map>
-#include <vector>
-#include <string>
-#include <iostream>
+#include <visualization-toolkit/ovvizIVisualizationTree.h>
 
 namespace OpenViBEDesigner
 {
 	class CApplication;
-	class CDesignerVisualisation;
-	class CPlayerVisualisation;
+	class CDesignerVisualization;
+	class CPlayerVisualization;
 
 	class CInterfacedScenario
 	{
@@ -102,6 +103,15 @@ namespace OpenViBEDesigner
 		bool browseURL(OpenViBE::CString sURL, OpenViBE::CString sBrowser = "");
 		bool browseBoxDocumentation(OpenViBE::CIdentifier oBoxId);
 
+		void toggleDesignerVisualization();
+		OpenViBE::boolean isDesignerVisualizationToggled();
+
+		void showCurrentVisualization();
+		void hideCurrentVisualization();
+
+		void createPlayerVisualization(OpenViBEVisualizationToolkit::IVisualizationTree* pVisualizationTree = NULL);
+		void releasePlayerVisualization(void);
+
 		OpenViBE::boolean hasSelection(void);
 /*
 	private:
@@ -113,13 +123,17 @@ namespace OpenViBEDesigner
 		OpenViBE::Kernel::EPlayerStatus m_ePlayerStatus;
 		OpenViBE::CIdentifier m_oScenarioIdentifier;
 		OpenViBE::CIdentifier m_oPlayerIdentifier;
-		OpenViBE::CIdentifier m_oVisualisationTreeIdentifier;
+		OpenViBE::CIdentifier m_oVisualizationTreeIdentifier;
 		OpenViBEDesigner::CApplication& m_rApplication;
 		const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
 		OpenViBE::Kernel::IScenario& m_rScenario;
 		OpenViBE::Kernel::IPlayer* m_pPlayer;
 		OpenViBE::uint64 m_ui64LastLoopTime;
 		::GtkNotebook& m_rNotebook;
+		OpenViBEVisualizationToolkit::IVisualizationTree* m_pVisualizationTree;
+		OpenViBE::boolean m_bDesignerVisualizationToggled;
+		OpenViBEDesigner::CDesignerVisualization* m_pDesignerVisualization;
+		OpenViBEDesigner::CPlayerVisualization* m_pPlayerVisualization;
 		::GtkBuilder* m_pGUIBuilder;
 //		::GtkBuilder* m_pSettingsGUIBuilder;
 /*		::GtkBuilder* m_pBuilder;
@@ -174,7 +188,7 @@ namespace OpenViBEDesigner
 		} BoxContextMenuCB;
 		std::map < OpenViBE::uint32, BoxContextMenuCB > m_vBoxContextMenuCB;
 
-		OpenViBEDesigner::CScenarioStateStack m_oStateStack;
+		std::unique_ptr<OpenViBEDesigner::CScenarioStateStack> m_oStateStack;
 
 		// Objects necessary for holding settings GUI
 		std::map<std::string, OpenViBE::CIdentifier> m_vSettingType;
@@ -207,9 +221,6 @@ namespace OpenViBEDesigner
 
 		std::map<std::string, OpenViBE::CIdentifier> m_mStreamType;
 
-
-
-
 		// This struct is used for both inputs and outputs of the scenario
 
 		typedef struct _SLinkCallbackData
@@ -235,4 +246,3 @@ namespace OpenViBEDesigner
 	};
 }
 
-#endif // __OpenViBEDesigner_CInterfacedScenario_H__

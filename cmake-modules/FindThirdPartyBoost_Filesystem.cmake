@@ -5,7 +5,7 @@
 # ---------------------------------
 
 IF(UNIX)
-	FIND_LIBRARY(LIB_Boost_Filesystem NAMES "boost_filesystem-mt" PATHS ${OV_CUSTOM_DEPENDENCIES_PATH}/lib NO_DEFAULT_PATH)
+    FIND_LIBRARY(LIB_Boost_Filesystem NAMES "boost_filesystem-mt" PATHS ${OV_CUSTOM_DEPENDENCIES_PATH}/lib NO_DEFAULT_PATH)
 	FIND_LIBRARY(LIB_Boost_Filesystem NAMES "boost_filesystem-mt" PATHS ${OV_CUSTOM_DEPENDENCIES_PATH}/lib)
 	FIND_LIBRARY(LIB_Boost_Filesystem NAMES "boost_filesystem" PATHS ${OV_CUSTOM_DEPENDENCIES_PATH}/lib NO_DEFAULT_PATH)
 	FIND_LIBRARY(LIB_Boost_Filesystem NAMES "boost_filesystem" PATHS ${OV_CUSTOM_DEPENDENCIES_PATH}/lib)
