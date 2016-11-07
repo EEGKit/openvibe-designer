@@ -1004,9 +1004,9 @@ OpenViBE::CString CVisualizationTree::serialize() const
 		}
 	}
 
-	for (auto& widgetIdentifier : widgetsToExport)
+	for (size_t i = 0; i < widgetsToExport.size(); ++i)
 	{
-		IVisualizationWidget* widget = this->getVisualizationWidget(widgetIdentifier);
+		IVisualizationWidget* widget = this->getVisualizationWidget(widgetsToExport[i]);
 
 		jsonRepresentation.push_back(this->serializeWidget(*widget));
 
