@@ -2374,16 +2374,11 @@ IPlayer* CApplication::getPlayer(void)
 
 OpenViBE::boolean CApplication::createPlayer(void)
 {
-	m_rKernelContext.getLogManager() << LogLevel_Info << m_rKernelContext.getErrorManager().hasError() <<"\n";
-
 	CInterfacedScenario* l_pCurrentInterfacedScenario = getCurrentInterfacedScenario();
 	if(l_pCurrentInterfacedScenario && !l_pCurrentInterfacedScenario->m_pPlayer)
 	{
 		// create a snapshot so settings override does not modify the scenario !
 		l_pCurrentInterfacedScenario->snapshotCB(false);
-
-		// generate player windows
-//		l_pCurrentInterfacedScenario->createPlayerVisualization();
 
 		// set filename attribute to scenario so delayed configuration can be used
 		if(l_pCurrentInterfacedScenario->m_bHasFileName)
