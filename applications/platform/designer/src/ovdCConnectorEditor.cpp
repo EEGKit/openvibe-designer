@@ -76,15 +76,15 @@ boolean CConnectorEditor::run(void)
 	{
 		//First check if the type is support by the connector
 		if((m_rBox.*isTypeSupported)(l_oCurrentTypeIdentifier))
-	{
-			//If the input type is support by the connector, let's add it to the list
-		if(m_rKernelContext.getTypeManager().isStream(l_oCurrentTypeIdentifier))
 		{
-			gtk_combo_box_append_text(l_pConnectorTypeComboBox, m_rKernelContext.getTypeManager().getTypeName(l_oCurrentTypeIdentifier).toASCIIString());
-			if(l_oCurrentTypeIdentifier==l_oConnectorType)
+			//If the input type is support by the connector, let's add it to the list
+			if(m_rKernelContext.getTypeManager().isStream(l_oCurrentTypeIdentifier))
 			{
+				gtk_combo_box_append_text(l_pConnectorTypeComboBox, m_rKernelContext.getTypeManager().getTypeName(l_oCurrentTypeIdentifier).toASCIIString());
+				if(l_oCurrentTypeIdentifier==l_oConnectorType)
+				{
 					l_iActive=l_vStreamTypes.size();
-				gtk_combo_box_set_active(l_pConnectorTypeComboBox, l_iActive);
+					gtk_combo_box_set_active(l_pConnectorTypeComboBox, l_iActive);
 				}
 				l_vStreamTypes[m_rKernelContext.getTypeManager().getTypeName(l_oCurrentTypeIdentifier).toASCIIString()]=l_oCurrentTypeIdentifier;
 			}
