@@ -703,7 +703,10 @@ namespace
 			l_pInterfacedScenario->m_ui64LastLoopTime = l_ui64CurrentTime;
 		}
 		l_pInterfacedScenario->m_pPlayer->setFastForwardMaximumFactor(::gtk_spin_button_get_value(l_pInterfacedScenario->m_rApplication.m_pFastForwardFactor));
-		l_pInterfacedScenario->m_pPlayer->loop(l_ui64CurrentTime-l_pInterfacedScenario->m_ui64LastLoopTime);
+		if (!l_pInterfacedScenario->m_pPlayer->loop(l_ui64CurrentTime-l_pInterfacedScenario->m_ui64LastLoopTime))
+		{
+			l_pInterfacedScenario->m_rApplication.stopInterfacedScenario(l_pInterfacedScenario);
+		}
 		l_pInterfacedScenario->m_ui64LastLoopTime=l_ui64CurrentTime;
 		return TRUE;
 	}
@@ -2459,6 +2462,40 @@ void CApplication::releasePlayer(void)
 	}
 }
 
+void CApplication::stopInterfacedScenario(CInterfacedScenario* interfacedScenario)
+{
+	interfacedScenario->m_rKernelContext.getErrorManager().releaseErrors();
+	interfacedScenario->m_pPlayer->stop();
+	interfacedScenario->m_ePlayerStatus = interfacedScenario->m_pPlayer->getStatus();
+	// removes idle function
+	g_idle_remove_by_data(interfacedScenario);
+
+	interfacedScenario->m_pPlayer->uninitialize();
+
+	interfacedScenario->m_rKernelContext.getPlayerManager().releasePlayer(interfacedScenario->m_oPlayerIdentifier);
+
+	interfacedScenario->m_oPlayerIdentifier = OV_UndefinedIdentifier;
+	interfacedScenario->m_pPlayer = NULL;
+
+	// restore the snapshot so settings override does not modify the scenario !
+	interfacedScenario->undoCB(false);
+
+	// destroy player windows
+	interfacedScenario->releasePlayerVisualization();
+
+	// redraws scenario
+	interfacedScenario->redraw();
+	if (interfacedScenario == this->getCurrentInterfacedScenario())
+	{
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")),          false);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")),    true);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_next")),          true);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_forward")),       true);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager")), true);
+		gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), GTK_STOCK_MEDIA_PLAY);
+	}
+}
+
 void CApplication::stopScenarioCB(void)
 {
 	m_rKernelContext.getLogManager() << LogLevel_Debug << "stopScenarioCB\n";
@@ -2577,7 +2614,11 @@ void CApplication::playScenarioCB(void)
 		m_rKernelContext.getLogManager() << LogLevel_Error << "The initialization of player failed. Check the above log messages to get the issue.\n";
 		return;
 	}
-	this->getPlayer()->play();
+	if (!this->getPlayer()->play())
+	{
+		this->stopInterfacedScenario(this->getCurrentInterfacedScenario());
+		return;
+	}
 	this->getCurrentInterfacedScenario()->m_ePlayerStatus=this->getPlayer()->getStatus();
 
 	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")),          true);

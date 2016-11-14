@@ -117,6 +117,8 @@ namespace OpenViBEDesigner
 
 		void releasePlayer(void);
 
+		void stopInterfacedScenario(OpenViBEDesigner::CInterfacedScenario* interfacedScenario);
+
 		//@}
 
 		/** \name Application management */
