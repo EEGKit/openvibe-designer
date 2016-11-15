@@ -7,8 +7,8 @@ set script_dir=%CD%
 set BuildType=Release
 set PauseCommand=pause
 set RefreshCMake=F
-set PathSDK="%script_dir%\dependencies\certivibe"
-set PathDep="%script_dir%\dependencies\certivibe-dependencies"
+set PathSDK=%script_dir%\..\dependencies\certivibe
+set PathDep=%script_dir%\..\dependencies\certivibe-dependencies
 set VerboseOuptut=OFF
 
 goto parameter_parse
