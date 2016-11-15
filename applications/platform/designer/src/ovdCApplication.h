@@ -115,9 +115,7 @@ namespace OpenViBEDesigner
 
 		OpenViBE::boolean createPlayer(void);
 
-		void releasePlayer(void);
-
-		void stopInterfacedScenario(OpenViBEDesigner::CInterfacedScenario* interfacedScenario);
+		void stopInterfacedScenarioAndReleasePlayer(OpenViBEDesigner::CInterfacedScenario* interfacedScenario);
 
 		//@}
 

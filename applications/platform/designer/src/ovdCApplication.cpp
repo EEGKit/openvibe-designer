@@ -705,7 +705,7 @@ namespace
 		l_pInterfacedScenario->m_pPlayer->setFastForwardMaximumFactor(::gtk_spin_button_get_value(l_pInterfacedScenario->m_rApplication.m_pFastForwardFactor));
 		if (!l_pInterfacedScenario->m_pPlayer->loop(l_ui64CurrentTime-l_pInterfacedScenario->m_ui64LastLoopTime))
 		{
-			l_pInterfacedScenario->m_rApplication.stopInterfacedScenario(l_pInterfacedScenario);
+			l_pInterfacedScenario->m_rApplication.stopInterfacedScenarioAndReleasePlayer(l_pInterfacedScenario);
 		}
 		l_pInterfacedScenario->m_ui64LastLoopTime=l_ui64CurrentTime;
 		return TRUE;
@@ -2434,35 +2434,7 @@ OpenViBE::boolean CApplication::createPlayer(void)
 	return true;
 }
 
-void CApplication::releasePlayer(void)
-{
-	m_rKernelContext.getLogManager() << LogLevel_Debug << "releasePlayer\n";
-
-	CInterfacedScenario* l_pCurrentInterfacedScenario=getCurrentInterfacedScenario();
-	if(l_pCurrentInterfacedScenario && l_pCurrentInterfacedScenario->m_pPlayer)
-	{
-		// removes idle function
-		g_idle_remove_by_data(l_pCurrentInterfacedScenario);
-
-		l_pCurrentInterfacedScenario->m_pPlayer->uninitialize();
-
-		m_rKernelContext.getPlayerManager().releasePlayer(l_pCurrentInterfacedScenario->m_oPlayerIdentifier);
-
-		l_pCurrentInterfacedScenario->m_oPlayerIdentifier=OV_UndefinedIdentifier;
-		l_pCurrentInterfacedScenario->m_pPlayer=NULL;
-
-		// restore the snapshot so settings override does not modify the scenario !
-		l_pCurrentInterfacedScenario->undoCB(false);
-
-		// destroy player windows
-		l_pCurrentInterfacedScenario->releasePlayerVisualization();
-
-		// redraws scenario
-		l_pCurrentInterfacedScenario->redraw();
-	}
-}
-
-void CApplication::stopInterfacedScenario(CInterfacedScenario* interfacedScenario)
+void CApplication::stopInterfacedScenarioAndReleasePlayer(CInterfacedScenario* interfacedScenario)
 {
 	interfacedScenario->m_rKernelContext.getErrorManager().releaseErrors();
 	interfacedScenario->m_pPlayer->stop();
@@ -2500,18 +2472,9 @@ void CApplication::stopScenarioCB(void)
 {
 	m_rKernelContext.getLogManager() << LogLevel_Debug << "stopScenarioCB\n";
 
-	if(this->getCurrentInterfacedScenario()->m_ePlayerStatus == PlayerStatus_Play || this->getCurrentInterfacedScenario()->m_ePlayerStatus == PlayerStatus_Pause || this->getCurrentInterfacedScenario()->m_ePlayerStatus == PlayerStatus_Forward)
+	if (this->getCurrentInterfacedScenario()->m_ePlayerStatus == PlayerStatus_Play || this->getCurrentInterfacedScenario()->m_ePlayerStatus == PlayerStatus_Pause || this->getCurrentInterfacedScenario()->m_ePlayerStatus == PlayerStatus_Forward)
 	{
-		this->getPlayer()->stop();
-		this->getCurrentInterfacedScenario()->m_ePlayerStatus=this->getPlayer()->getStatus();
-		this->releasePlayer();
-
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")),          false);
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")),    true);
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_next")),          true);
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_forward")),       true);
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager")), true);
-		gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), GTK_STOCK_MEDIA_PLAY);
+		this->stopInterfacedScenarioAndReleasePlayer(this->getCurrentInterfacedScenario());
 	}
 }
 
@@ -2616,7 +2579,7 @@ void CApplication::playScenarioCB(void)
 	}
 	if (!this->getPlayer()->play())
 	{
-		this->stopInterfacedScenario(this->getCurrentInterfacedScenario());
+		this->stopInterfacedScenarioAndReleasePlayer(this->getCurrentInterfacedScenario());
 		return;
 	}
 	this->getCurrentInterfacedScenario()->m_ePlayerStatus=this->getPlayer()->getStatus();
