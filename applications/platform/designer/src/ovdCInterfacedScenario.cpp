@@ -3496,7 +3496,7 @@ void CInterfacedScenario::contextMenuBoxDeleteCB(IBox& rBox)
 void CInterfacedScenario::contextMenuBoxAddInputCB(IBox& rBox)
 {
 	m_rKernelContext.getLogManager() << LogLevel_Debug << "contextMenuBoxAddInputCB\n";
-	rBox.addInput("New input", OV_UndefinedIdentifier);
+	rBox.addInput("New input", OV_TypeId_EBMLStream);
 	if(rBox.hasAttribute(OV_AttributeId_Box_FlagCanModifyInput))
 	{
 		CConnectorEditor l_oConnectorEditor(m_rKernelContext, rBox, Connector_Input, rBox.getInputCount()-1, "Add Input", m_sGUIFilename.c_str());
@@ -3534,7 +3534,7 @@ void CInterfacedScenario::contextMenuBoxRemoveInputCB(IBox& rBox, uint32 ui32Ind
 void CInterfacedScenario::contextMenuBoxAddOutputCB(IBox& rBox)
 {
 	m_rKernelContext.getLogManager() << LogLevel_Debug << "contextMenuBoxAddOutputCB\n";
-	rBox.addOutput("New output", OV_UndefinedIdentifier);
+	rBox.addOutput("New output", OV_TypeId_EBMLStream);
 	if(rBox.hasAttribute(OV_AttributeId_Box_FlagCanModifyOutput))
 	{
 		CConnectorEditor l_oConnectorEditor(m_rKernelContext, rBox, Connector_Output, rBox.getOutputCount()-1, "Add Output", m_sGUIFilename.c_str());
