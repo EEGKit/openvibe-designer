@@ -2436,15 +2436,27 @@ OpenViBE::boolean CApplication::createPlayer(void)
 
 void CApplication::stopInterfacedScenarioAndReleasePlayer(CInterfacedScenario* interfacedScenario)
 {
+	if (!(interfacedScenario && interfacedScenario->m_pPlayer))
+	{
+		m_rKernelContext.getLogManager() << LogLevel_Warning << "Trying to stop a non-started scenario" << "\n";
+		return;
+	}
+
 	interfacedScenario->m_rKernelContext.getErrorManager().releaseErrors();
 	interfacedScenario->m_pPlayer->stop();
 	interfacedScenario->m_ePlayerStatus = interfacedScenario->m_pPlayer->getStatus();
 	// removes idle function
 	g_idle_remove_by_data(interfacedScenario);
 
-	interfacedScenario->m_pPlayer->uninitialize();
+	if (!interfacedScenario->m_pPlayer->uninitialize())
+	{
+		m_rKernelContext.getLogManager() << LogLevel_Error << "Failed to uninitialize the player" << "\n";
+	}
 
-	interfacedScenario->m_rKernelContext.getPlayerManager().releasePlayer(interfacedScenario->m_oPlayerIdentifier);
+	if (!interfacedScenario->m_rKernelContext.getPlayerManager().releasePlayer(interfacedScenario->m_oPlayerIdentifier))
+	{
+		m_rKernelContext.getLogManager() << LogLevel_Error << "Failed to release the player" << "\n";
+	}
 
 	interfacedScenario->m_oPlayerIdentifier = OV_UndefinedIdentifier;
 	interfacedScenario->m_pPlayer = NULL;
@@ -2602,7 +2614,12 @@ void CApplication::forwardScenarioCB(void)
 		return;
 	}
 
-	this->getPlayer()->forward();
+	if (!this->getPlayer()->forward())
+	{
+		this->stopInterfacedScenarioAndReleasePlayer(this->getCurrentInterfacedScenario());
+		return;
+	}
+
 	this->getCurrentInterfacedScenario()->m_ePlayerStatus=this->getPlayer()->getStatus();
 
 	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")),          true);
