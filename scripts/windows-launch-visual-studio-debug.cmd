@@ -4,7 +4,7 @@ setlocal enableextensions
 
 set script_dir=%CD%
 
-set PathSDK="%script_dir%\..\dependencies\certivibe"
+set PathSDK="%script_dir%\..\dependencies\certivibe-debug"
 set VerboseOuptut=OFF
 
 goto parameter_parse
@@ -25,7 +25,7 @@ for %%A in (%*) DO (
 
 call "windows-initialize-environment.cmd" --sdk "%PathSDK%"
 
-SET "OV_PATH_ROOT=%CD%\..\..\certivibe-build\dist-studio"
+SET "OV_PATH_ROOT=%CD%\..\..\certivibe-build\dist-studio-debug"
 SET "OV_PATH_BIN=%OV_PATH_ROOT%\bin"
 SET "OV_PATH_DATA=%OV_PATH_ROOT%\share\openvibe"
 SET "OV_PATH_LIB=%OV_PATH_ROOT%\bin"
@@ -38,14 +38,14 @@ if %USE_EXPRESS% == 1 (
 	echo Use Visual Studio Express Edition
 	
 	if "%VSCMake%"=="Visual Studio 12" (
-		start /b "%VSINSTALLDIR%\Common7\IDE\WDExpress.exe" ..\..\certivibe-build\studio-vs-project\OpenViBE.sln
+		start /b "%VSINSTALLDIR%\Common7\IDE\WDExpress.exe" ..\..\certivibe-build\studio-vs-project-debug\OpenViBE.sln
 	) else (
-		"%VSINSTALLDIR%\Common7\IDE\VCExpress.exe" ..\..\certivibe-build\studio-vs-project\OpenViBE.sln
+		"%VSINSTALLDIR%\Common7\IDE\VCExpress.exe" ..\..\certivibe-build\studio-vs-project-debug\OpenViBE.sln
 	)
 ) else (
 	if "%VSCMake%"=="Visual Studio 12" (
 		echo Use Visual Studio Community Edition
-		"%VSINSTALLDIR%\Common7\IDE\devenv.exe" ..\..\certivibe-build\studio-vs-project\OpenViBE.sln
+		"%VSINSTALLDIR%\Common7\IDE\devenv.exe" ..\..\certivibe-build\studio-vs-project-debug\OpenViBE.sln
 	)
 )
 

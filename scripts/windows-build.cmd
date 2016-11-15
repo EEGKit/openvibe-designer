@@ -2,11 +2,13 @@
 setlocal EnableDelayedExpansion
 setlocal enableextensions
 
+set script_dir=%CD%
+
 set BuildType=Release
 set PauseCommand=pause
 set RefreshCMake=F
-set PathSDK=""
-set PathDep=""
+set PathSDK="%script_dir%\dependencies\certivibe"
+set PathDep="%script_dir%\dependencies\certivibe-dependencies"
 set VerboseOuptut=OFF
 
 goto parameter_parse
@@ -58,7 +60,6 @@ setlocal
 
 call "windows-initialize-environment.cmd" --sdk "%PathSDK%"
 
-set script_dir=%CD%
 set build_dir=%script_dir%\..\..\certivibe-build\build-studio-%BuildType%
 if %PathSDK%=="" (
 	set sdk_dir=%script_dir%\..\dependencies\certivibe

@@ -4,10 +4,10 @@ setlocal enableextensions
 
 set script_dir=%CD%
 
-set BuildType=Release
+set BuildType=Debug
 set PauseCommand=pause
 set RefreshCMake=F
-set PathSDK="%script_dir%\..\dependencies\certivibe"
+set PathSDK="%script_dir%\..\dependencies\certivibe-debug"
 set PathDep="%script_dir%\..\dependencies\certivibe-dependencies"
 set VerboseOuptut=OFF
 
@@ -35,8 +35,8 @@ setlocal
 
 call "windows-initialize-environment.cmd" --sdk "%PathSDK%"
 
-set build_dir=%script_dir%\..\..\certivibe-build\studio-vs-project
-set install_dir=%script_dir%\..\..\certivibe-build\dist-studio
+set build_dir=%script_dir%\..\..\certivibe-build\studio-vs-project-debug
+set install_dir=%script_dir%\..\..\certivibe-build\dist-studio-debug
 
 mkdir %build_dir% 2>NUL
 pushd %build_dir%

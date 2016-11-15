@@ -6,6 +6,10 @@ This repository contains the NeuroRT Studio based on Certivibe kernel. It also c
 
 In order to be able to compile this project you will need to have the Certivibe project compiled somewhere, let us call this path `PATH_CERTIVIBE`. The other requirement is to know where Certivibe dependencies can be found, let us call this path `PATH_CERTIVIBE_DEPENDENCIES`. Finally, let us call the location of the source code `PATH_STUDIO_SOURCE`.
 
+By default the scripts expects the SDK to be in `PATH_STUDIO_SOURCE/dependencies/certivibe` and certivibe dependencies to be in `PATH_STUDIO_SOURCE/dependencies/certivibe-dependencies`
+
+If you wish to build the Studio with complete debugging support, the default location for a debug build of Cerrtivibe is in `PATH_STUDIO_SOURCE/dependencies/certivibe-debug`
+
 ### Windows
 
 #### Installing Studio Dependencies
