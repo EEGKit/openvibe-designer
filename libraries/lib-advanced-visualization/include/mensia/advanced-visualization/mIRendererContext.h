@@ -37,6 +37,7 @@ namespace Mensia
 				DataType_Matrix,
 				DataType_Signal,
 				DataType_Spectrum,
+				DataType_TimeFrequency
 			} EDataType;
 
 			static IRendererContext* create(IRendererContext* pParentRendererContext=NULL);
@@ -53,6 +54,10 @@ namespace Mensia
 			virtual void selectChannel(uint32 ui32Index)=0;
 			virtual void unselectChannel(uint32 ui32Index)=0;
 			virtual void sortSelectedChannel(uint32 ui32SortMode)=0;
+
+			virtual void setDimensionLabel(size_t dimensionIndex, size_t labelIndex, const char* label) = 0;
+			virtual size_t getDimensionLabelCount(size_t dimensionIndex) const = 0;
+			virtual const char* getDimensionLabel(size_t dimensionIndex, size_t labelIndex) const = 0;
 
 			virtual void clearTransformInfo(void)=0;
 			virtual void scaleBy(float32 f32Scale)=0;

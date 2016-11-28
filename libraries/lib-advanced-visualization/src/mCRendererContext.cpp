@@ -24,7 +24,6 @@
 
 using namespace Mensia;
 using namespace Mensia::AdvancedVisualization;
-#define boolean Mensia::boolean
 
 namespace
 {
@@ -116,6 +115,7 @@ void CRendererContext::clear(void)
 {
 	this->clearChannelInfo();
 	this->clearTransformInfo();
+	m_DimensionLabels.clear();
 }
 
 void CRendererContext::setParentRendererContext(IRendererContext* pParentRendererContext)
@@ -203,6 +203,35 @@ void CRendererContext::sortSelectedChannel(uint32 ui32SortMode)
 		default:
 			break;
 	}
+}
+
+// ____________________________________________________________________________________________________________________________________________________________________________________
+
+void CRendererContext::setDimensionLabel(size_t dimensionIndex, size_t labelIndex, const char* label)
+{
+	if (m_DimensionLabels[dimensionIndex].size() <= labelIndex)
+	{
+		m_DimensionLabels[dimensionIndex].resize(labelIndex + 1);
+	}
+	m_DimensionLabels[dimensionIndex][labelIndex] = label;
+}
+
+size_t CRendererContext::getDimensionLabelCount(size_t dimensionIndex) const
+{
+	if (m_DimensionLabels.count(dimensionIndex) == 0)
+	{
+		return 0;
+	}
+	return m_DimensionLabels.at(dimensionIndex).size();
+}
+
+const char* CRendererContext::getDimensionLabel(size_t dimensionIndex, size_t labelIndex) const
+{
+	if (m_DimensionLabels.count(dimensionIndex) == 0 || m_DimensionLabels.at(dimensionIndex).size() <= labelIndex)
+	{
+		return nullptr;
+	}
+	return m_DimensionLabels.at(dimensionIndex)[labelIndex].c_str();
 }
 
 // ____________________________________________________________________________________________________________________________________________________________________________________
@@ -298,37 +327,37 @@ void CRendererContext::setFlowerRingCount(uint64 ui64FlowerRingCount)
 	m_ui64FlowerRingCount=ui64FlowerRingCount;
 }
 
-void CRendererContext::setXYZPlotDepth(boolean bHasDepth)
+void CRendererContext::setXYZPlotDepth(bool bHasDepth)
 {
 	m_bHasXYZPlotDepth=bHasDepth;
 }
 
-void CRendererContext::setAxisDisplay(boolean bIsAxisDisplayed)
+void CRendererContext::setAxisDisplay(bool bIsAxisDisplayed)
 {
 	m_bIsAxisDisplayed=bIsAxisDisplayed;
 }
 
-void CRendererContext::setPositiveOnly(boolean bPositiveOnly)
+void CRendererContext::setPositiveOnly(bool bPositiveOnly)
 {
 	m_bIsPositiveOnly=bPositiveOnly;
 }
 
-void CRendererContext::setTimeLocked(boolean bIsTimeLocked)
+void CRendererContext::setTimeLocked(bool bIsTimeLocked)
 {
 	m_bIsTimeLocked=bIsTimeLocked;
 }
 
-void CRendererContext::setScrollModeActive(boolean bScrollModeActive)
+void CRendererContext::setScrollModeActive(bool bScrollModeActive)
 {
 	m_bIsScrollModeActive=bScrollModeActive;
 }
 
-void CRendererContext::setScaleVisibility(boolean bVisibility)
+void CRendererContext::setScaleVisibility(bool bVisibility)
 {
 	m_bScaleVisiblity=bVisibility;
 }
 
-void CRendererContext::setCheckBoardVisibility(boolean bVisibility)
+void CRendererContext::setCheckBoardVisibility(bool bVisibility)
 {
 	m_bCheckBoardVisiblity=bVisibility;
 }
@@ -363,12 +392,12 @@ void CRendererContext::setStackIndex(uint32 ui32StackIndex)
 	m_ui32StackIndex=ui32StackIndex;
 }
 
-void CRendererContext::setFaceMeshVisible(boolean bVisible)
+void CRendererContext::setFaceMeshVisible(bool bVisible)
 {
 	m_bFaceMeshVisible = bVisible;
 }
 
-void CRendererContext::setScalpMeshVisible(boolean bVisible)
+void CRendererContext::setScalpMeshVisible(bool bVisible)
 {
 	m_bScalpMeshVisible = bVisible;
 }
@@ -376,7 +405,7 @@ void CRendererContext::setScalpMeshVisible(boolean bVisible)
 // ____________________________________________________________________________________________________________________________________________________________________________________
 //
 
-void CRendererContext::setERPPlayerActive(boolean bActive)
+void CRendererContext::setERPPlayerActive(bool bActive)
 {
 	m_bERPPlayerActive=bActive;
 }
@@ -399,7 +428,7 @@ std::string CRendererContext::getChannelName(uint32 ui32Index) const
 	return "";
 }
 
-boolean CRendererContext::getChannelLocalisation(uint32 ui32Index, float& x, float& y, float& z) const
+bool CRendererContext::getChannelLocalisation(uint32 ui32Index, float& x, float& y, float& z) const
 {
 	const CVertex& l_rChannelLocalisation=m_vChannelLocalisation[ui32Index];
 	x = l_rChannelLocalisation.x;
@@ -423,7 +452,7 @@ uint32 CRendererContext::getSelected(uint32 ui32Index) const
 	return m_vChannelLookup[ui32Index];
 }
 
-boolean CRendererContext::isSelected(uint32 ui32Index) const
+bool CRendererContext::isSelected(uint32 ui32Index) const
 {
 	for(uint32 i=0; i<m_vChannelLookup.size(); i++)
 	{
@@ -491,47 +520,47 @@ uint64 CRendererContext::getFlowerRingCount(void) const
 	return m_ui64FlowerRingCount;
 }
 
-boolean CRendererContext::hasXYZPlotDepth(void) const
+bool CRendererContext::hasXYZPlotDepth(void) const
 {
 	return m_bHasXYZPlotDepth;
 }
 
-boolean CRendererContext::isAxisDisplayed(void) const
+bool CRendererContext::isAxisDisplayed(void) const
 {
 	return m_bIsAxisDisplayed;
 }
 
-boolean CRendererContext::isPositiveOnly(void) const
+bool CRendererContext::isPositiveOnly(void) const
 {
 	return m_bIsPositiveOnly;
 }
 
-boolean CRendererContext::isFaceMeshVisible(void) const
+bool CRendererContext::isFaceMeshVisible(void) const
 {
 	return m_bFaceMeshVisible;
 }
 
-boolean CRendererContext::isScalpMeshVisible(void) const
+bool CRendererContext::isScalpMeshVisible(void) const
 {
 	return m_bScalpMeshVisible;
 }
 
-boolean CRendererContext::isTimeLocked(void) const
+bool CRendererContext::isTimeLocked(void) const
 {
 	return m_bIsTimeLocked;
 }
 
-boolean CRendererContext::isScrollModeActive(void) const
+bool CRendererContext::isScrollModeActive(void) const
 {
 	return m_bIsScrollModeActive;
 }
 
-boolean CRendererContext::getCheckBoardVisibility(void) const
+bool CRendererContext::getCheckBoardVisibility(void) const
 {
 	return (m_pParentRendererContext?m_pParentRendererContext->getCheckBoardVisibility():m_bCheckBoardVisiblity);
 }
 
-boolean CRendererContext::getScaleVisibility(void) const
+bool CRendererContext::getScaleVisibility(void) const
 {
 	return (m_pParentRendererContext?m_pParentRendererContext->getScaleVisibility():m_bScaleVisiblity);
 }
@@ -569,7 +598,7 @@ uint32 CRendererContext::getStackIndex(void) const
 // ____________________________________________________________________________________________________________________________________________________________________________________
 //
 
-boolean CRendererContext::isERPPlayerActive(void) const
+bool CRendererContext::isERPPlayerActive(void) const
 {
 	return m_bERPPlayerActive || (m_pParentRendererContext?m_pParentRendererContext->isERPPlayerActive():false);
 }

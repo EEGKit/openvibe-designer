@@ -45,6 +45,10 @@ namespace Mensia
 			virtual void unselectChannel(uint32 ui32Index);
 			virtual void sortSelectedChannel(uint32 ui32SortMode);
 
+			virtual void setDimensionLabel(size_t dimensionIndex, size_t labelIndex, const char* label);
+			virtual size_t getDimensionLabelCount(size_t dimensionIndex) const;
+			virtual const char* getDimensionLabel(size_t dimensionIndex, size_t labelIndex) const;
+
 			virtual void clearTransformInfo(void);
 			virtual void scaleBy(float32 f32Scale);
 			virtual void setScale(float32 f32Scale);
@@ -123,6 +127,7 @@ namespace Mensia
 			std::vector < uint32 > m_vChannelLookup;
 			std::vector < std::string > m_vChannelName;
 			std::vector < CVertex > m_vChannelLocalisation;
+			std::map<size_t, std::vector<std::string>> m_DimensionLabels;
 
 			std::map < std::string, float32 > m_vLeftRightScore;
 			std::map < std::string, float32 > m_vFrontBackScore;
