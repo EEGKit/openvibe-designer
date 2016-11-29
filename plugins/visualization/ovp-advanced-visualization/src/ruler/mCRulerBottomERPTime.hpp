@@ -36,8 +36,8 @@ namespace Mensia
 				if(m_pRenderer->getHistoryCount() == 0) return;
 				if(m_pRenderer->getHistoryIndex() == 0) return;
 
-				uint32 l_ui32SampleCount=m_pRenderer->getSampleCount();
-				uint64 l_ui64SampleDuration=m_pRendererContext->getSampleDuration();
+				uint32_t l_ui32SampleCount=m_pRenderer->getSampleCount();
+				uint64_t l_ui64SampleDuration=m_pRendererContext->getSampleDuration();
 
 				double l_fDuration=((l_ui32SampleCount*l_ui64SampleDuration)>>16)/65536.;
 				std::vector < double > l_vRange;

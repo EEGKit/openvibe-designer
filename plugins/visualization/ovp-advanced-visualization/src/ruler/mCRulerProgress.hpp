@@ -41,8 +41,8 @@ namespace Mensia
 				if(m_pRenderer->getHistoryCount() == 0) return;
 				if(m_pRenderer->getHistoryIndex() == 0) return;
 
-				uint32 l_ui32SampleCount=m_pRenderer->getSampleCount();
-				uint32 l_ui32HistoryIndex=m_pRenderer->getHistoryIndex();
+				uint32_t l_ui32SampleCount=m_pRenderer->getSampleCount();
+				uint32_t l_ui32HistoryIndex=m_pRenderer->getHistoryIndex();
 
 				float l_fProgress=(l_ui32HistoryIndex-(l_ui32HistoryIndex/l_ui32SampleCount)*l_ui32SampleCount)/float(l_ui32SampleCount);
 				if(l_fProgress!=0 && l_fProgress!=1)

@@ -36,17 +36,17 @@ namespace Mensia
 				if(m_pRenderer->getHistoryCount() == 0) return;
 				if(m_pRenderer->getHistoryIndex() == 0) return;
 
-				uint32 l_ui32SampleCount=m_pRenderer->getSampleCount();
-				uint32 l_ui32HistoryIndex=m_pRenderer->getHistoryIndex();
+				uint32_t l_ui32SampleCount=m_pRenderer->getSampleCount();
+				uint32_t l_ui32HistoryIndex=m_pRenderer->getHistoryIndex();
 
 				std::vector < double > l_vRange1;
 				std::vector < double > l_vRange2;
 				std::vector < double >::iterator it;
 
-				uint32 l_ui32LeftIndex1=l_ui32HistoryIndex-l_ui32HistoryIndex%l_ui32SampleCount;
-				uint32 l_ui32LeftIndex2=l_ui32HistoryIndex;
-				uint32 l_ui32RightIndex1=l_ui32LeftIndex2-l_ui32SampleCount;
-				uint32 l_ui32RightIndex2=l_ui32LeftIndex1;
+				uint32_t l_ui32LeftIndex1=l_ui32HistoryIndex-l_ui32HistoryIndex%l_ui32SampleCount;
+				uint32_t l_ui32LeftIndex2=l_ui32HistoryIndex;
+				uint32_t l_ui32RightIndex1=l_ui32LeftIndex2-l_ui32SampleCount;
+				uint32_t l_ui32RightIndex2=l_ui32LeftIndex1;
 
 				l_vRange1=this->split_range(l_ui32LeftIndex1,  l_ui32LeftIndex1+l_ui32SampleCount,  10);
 				l_vRange2=this->split_range(l_ui32RightIndex1, l_ui32RightIndex1+l_ui32SampleCount, 10);

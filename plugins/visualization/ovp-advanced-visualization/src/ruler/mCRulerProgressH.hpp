@@ -30,8 +30,8 @@ namespace Mensia
 
 			virtual void renderFinal(float fProgress)
 			{
-	uint32 l_ui32SelectedCount=m_pRendererContext->getSelectedCount();
-	uint32 i;
+	uint32_t l_ui32SelectedCount=m_pRendererContext->getSelectedCount();
+	uint32_t i;
 				::glDisable(GL_TEXTURE_1D);
 				::glDisable(GL_BLEND);
 

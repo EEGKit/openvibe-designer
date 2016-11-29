@@ -28,7 +28,7 @@ namespace Mensia
 {
 	namespace AdvancedVisualization
 	{
-		std::string sanitize(const std::string& sValue);
+		std::string trim(const std::string& sValue);
 		IRendererContext& getContext(void);
 	};
 };

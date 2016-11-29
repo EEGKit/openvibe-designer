@@ -37,8 +37,8 @@ namespace Mensia
 				gint w, h, y;
 				gint lw, lh;
 
-				uint32 l_ui32ChannelCount=m_pRendererContext->getSelectedCount();
-				for(uint32 i=0; i<l_ui32ChannelCount; i++)
+				uint32_t l_ui32ChannelCount=m_pRendererContext->getSelectedCount();
+				for(uint32_t i=0; i<l_ui32ChannelCount; i++)
 				{
 					::gdk_drawable_get_size(pWidget->window, &w, &h);
 					::GdkGC* l_pDrawGC=gdk_gc_new(pWidget->window);

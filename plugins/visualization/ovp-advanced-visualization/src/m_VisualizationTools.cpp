@@ -17,12 +17,10 @@
 
 #include "m_VisualizationTools.hpp"
 
-#define boolean bool
-
 using namespace Mensia;
 using namespace Mensia::AdvancedVisualization;
 
-std::string Mensia::AdvancedVisualization::sanitize(const std::string& sValue)
+std::string Mensia::AdvancedVisualization::trim(const std::string& sValue)
 {
 	if(sValue.length()==0) return "";
 	size_t i=0;

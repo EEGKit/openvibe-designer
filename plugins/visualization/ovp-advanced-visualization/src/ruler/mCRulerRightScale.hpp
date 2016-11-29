@@ -35,7 +35,7 @@ namespace Mensia
 
 			virtual void renderRight(::GtkWidget* pWidget)
 			{
-				uint32 l_ui32SelectedCount=m_pRendererContext->getSelectedCount();
+				uint32_t l_ui32SelectedCount=m_pRendererContext->getSelectedCount();
 				if(!l_ui32SelectedCount) return;
 
 				float l_fScale=1.f/m_pRendererContext->getScale();

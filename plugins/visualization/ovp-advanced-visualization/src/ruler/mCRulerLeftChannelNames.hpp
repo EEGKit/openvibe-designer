@@ -37,7 +37,7 @@ namespace Mensia
 				gint lw, lh;
 
 				char l_sLabel[1024];
-				uint32 i, l_ui32Index;
+				uint32_t i, l_ui32Index;
 
 				::gdk_drawable_get_size(pWidget->window, &w, &h);
 				::GdkGC* l_pDrawGC=gdk_gc_new(pWidget->window);

@@ -19,7 +19,7 @@
 
 #include "mCBoxAlgorithmViz.hpp"
 
-#define boolean bool
+#define bool bool
 
 // OpenGL 1.2
 #ifndef GL_BGRA
@@ -55,7 +55,7 @@ namespace
 
 	void channel_selection_changed_(::GtkTreeSelection* pTreeSelection, IRendererContext* pRendererContext)
 	{
-		uint32 i=0;
+		uint32_t i=0;
 		::GtkTreeView* l_pTreeView=::gtk_tree_selection_get_tree_view(pTreeSelection);
 		::GtkTreeModel* l_pTreeModel=::gtk_tree_view_get_model(l_pTreeView);
 		if(l_pTreeModel)
@@ -82,12 +82,12 @@ namespace
 
 	void spinbutton_time_scale_change_value_callback(::GtkSpinButton* pSpinButton, IRendererContext* pRendererContext)
 	{
-		pRendererContext->setTimeScale(uint64(::gtk_spin_button_get_value(pSpinButton)*(1LL<<32)));
+		pRendererContext->setTimeScale(uint64_t(::gtk_spin_button_get_value(pSpinButton)*(1LL<<32)));
 	}
 
 	void spinbutton_element_count_change_value_callback(::GtkSpinButton* pSpinButton, IRendererContext* pRendererContext)
 	{
-		pRendererContext->setElementCount(uint64(::gtk_spin_button_get_value(pSpinButton)));
+		pRendererContext->setElementCount(uint64_t(::gtk_spin_button_get_value(pSpinButton)));
 	}
 
 	void checkbutton_positive_toggled_callback(::GtkToggleButton* pButton, IRendererContext* pRendererContext)
@@ -111,7 +111,7 @@ namespace
 		char l_sLabel[1024];
 		::sprintf(l_sLabel, "%.02f%%", ::gtk_range_get_value(pRange)*100);
 		::gtk_label_set_text(pLabel, l_sLabel);
-		Mensia::AdvancedVisualization::getContext().stepERPFractionBy(static_cast<Mensia::float32>(::gtk_range_get_value(pRange))-Mensia::AdvancedVisualization::getContext().getERPFraction());
+		Mensia::AdvancedVisualization::getContext().stepERPFractionBy(static_cast<float>(::gtk_range_get_value(pRange))-Mensia::AdvancedVisualization::getContext().getERPFraction());
 	}
 
 	void button_erp_play_pause_pressed_callback(::GtkButton* pButton, IRendererContext* pRendererContext)
@@ -121,16 +121,16 @@ namespace
 
 	void spinbutton_freq_band_min_change_value_callback(::GtkSpinButton* pSpinButton, IRendererContext* pRendererContext)
 	{
-		pRendererContext->setMinimumSpectrumFrequency(uint32(::gtk_spin_button_get_value(pSpinButton)));
+		pRendererContext->setMinimumSpectrumFrequency(uint32_t(::gtk_spin_button_get_value(pSpinButton)));
 	}
 
 	void spinbutton_freq_band_max_change_value_callback(::GtkSpinButton* pSpinButton, IRendererContext* pRendererContext)
 	{
-		pRendererContext->setMaximumSpectrumFrequency(uint32(::gtk_spin_button_get_value(pSpinButton)));
+		pRendererContext->setMaximumSpectrumFrequency(uint32_t(::gtk_spin_button_get_value(pSpinButton)));
 	}
 }
 
-boolean CBoxAlgorithmViz::initialize(void)
+bool CBoxAlgorithmViz::initialize(void)
 {
 	m_pRendererContext=IRendererContext::create();
 	m_pSubRendererContext=IRendererContext::create();
@@ -155,15 +155,15 @@ boolean CBoxAlgorithmViz::initialize(void)
 	m_vColor.clear();
 
 	// Initializes fast forward behavior
-	m_f32FastForwardMaximumFactorHighDefinition = (float32)this->getConfigurationManager().expandAsFloat("${AdvancedViz_HighDefinition_FastForwardFactor}", 5.f);
-	m_f32FastForwardMaximumFactorLowDefinition = (float32)this->getConfigurationManager().expandAsFloat("${AdvancedViz_LowDefinition_FastForwardFactor}", 20.f);
+	m_f32FastForwardMaximumFactorHighDefinition = (float)this->getConfigurationManager().expandAsFloat("${AdvancedViz_HighDefinition_FastForwardFactor}", 5.f);
+	m_f32FastForwardMaximumFactorLowDefinition = (float)this->getConfigurationManager().expandAsFloat("${AdvancedViz_LowDefinition_FastForwardFactor}", 20.f);
 
 	// Gets data stream type
 	this->getStaticBoxContext().getInputType(0, m_oTypeIdentifier);
 
 	// Prepares GUI
 	m_pBuilder=gtk_builder_new();
-	::gtk_builder_add_from_file(m_pBuilder, std::string(Mensia::Directories::getDataDir() + "/openvibe-plugins/advanced-visualization.ui").c_str(), NULL);
+	::gtk_builder_add_from_file(m_pBuilder, std::string(OpenViBE::Directories::getDataDir() + "/plugins/advanced-visualization.ui").c_str(), NULL);
 
 	::GtkWidget* l_pMain=GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "table"));
 	::GtkWidget* l_pToolbar=GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "toolbar-window"));
@@ -229,14 +229,21 @@ boolean CBoxAlgorithmViz::initialize(void)
 	m_oGtkGLWidget.setPointSmoothingActive(this->getConfigurationManager().expandAsBoolean("${AdvancedViz_SmoothPoint}", false));
 
 	// Fowards widgets to the OpenViBE viz context
-	this->getVisualisationContext().setWidget(l_pMain);
-	this->getVisualisationContext().setToolbar(l_pToolbar);
+	if (!this->canCreatePluginObject(OVP_ClassId_Plugin_VisualizationContext))
+	{
+		this->getLogManager() << LogLevel_Error << "Visualization framework is not loaded" << "\n";
+		return false;
+	}
+
+	m_visualizationContext = dynamic_cast<OpenViBEVisualizationToolkit::IVisualizationContext*>(this->createPluginObject(OVP_ClassId_Plugin_VisualizationContext));
+	m_visualizationContext->setWidget(*this, l_pMain);
+	m_visualizationContext->setToolbar(*this, l_pToolbar);
 
 	// Parses box settings
-	uint32 i, l_ui32SettingIndex=0;
+	uint32_t i, l_ui32SettingIndex=0;
 	for (int iParameter : m_vParameter)
 	{
-		float64 l_fValue;
+		double l_fValue;
 		switch (iParameter)
 		{
 		case S_ChannelLocalisation:
@@ -259,7 +266,7 @@ boolean CBoxAlgorithmViz::initialize(void)
 			break;
 		case S_TimeScale:
 			l_fValue = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
-			m_ui64TimeScale = uint64(l_fValue*(1LL << 32));
+			m_ui64TimeScale = uint64_t(l_fValue*(1LL << 32));
 			break;
 		case S_ElementCount:
 			m_ui64ElementCount = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
@@ -344,11 +351,11 @@ boolean CBoxAlgorithmViz::initialize(void)
 	// Reads channel localisation
 	if(m_sLocalisation!=OpenViBE::CString(""))
 	{
-		OpenViBE::Kernel::IAlgorithmProxy* l_pChannelLocalisationReader=&this->getAlgorithmManager().getAlgorithm(this->getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_OpenViBEMatrixFileReader));
+		OpenViBE::Kernel::IAlgorithmProxy* l_pChannelLocalisationReader=&this->getAlgorithmManager().getAlgorithm(this->getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_OVMatrixFileReader));
 		l_pChannelLocalisationReader->initialize();
 
-		TParameterHandler < OpenViBE::CString* > ip_sFilename(l_pChannelLocalisationReader->getInputParameter(OVP_GD_Algorithm_OpenViBEMatrixFileReader_InputParameterId_Filename));
-		TParameterHandler < OpenViBE::IMatrix* > op_pMatrix(l_pChannelLocalisationReader->getOutputParameter(OVP_GD_Algorithm_OpenViBEMatrixFileReader_OutputParameterId_Matrix));
+		TParameterHandler < OpenViBE::CString* > ip_sFilename(l_pChannelLocalisationReader->getInputParameter(OVP_GD_Algorithm_OVMatrixFileReader_InputParameterId_Filename));
+		TParameterHandler < OpenViBE::IMatrix* > op_pMatrix(l_pChannelLocalisationReader->getOutputParameter(OVP_GD_Algorithm_OVMatrixFileReader_OutputParameterId_Matrix));
 
 		*ip_sFilename = m_sLocalisation;
 
@@ -360,11 +367,11 @@ boolean CBoxAlgorithmViz::initialize(void)
 		}
 		else
 		{
-			uint32 l_ui32ChannelCount=op_pMatrix->getDimensionSize(0);
-			float64* l_pBuffer=op_pMatrix->getBuffer();
+			uint32_t l_ui32ChannelCount=op_pMatrix->getDimensionSize(0);
+			double* l_pBuffer=op_pMatrix->getBuffer();
 			for(i=0; i<l_ui32ChannelCount; i++)
 			{
-				std::string l_sName=sanitize(op_pMatrix->getDimensionLabel(0, i));
+				std::string l_sName=trim(op_pMatrix->getDimensionLabel(0, i));
 				std::transform(l_sName.begin(), l_sName.end(), l_sName.begin(), ::tolower);
 				m_vChannelLocalisation[l_sName]=CVertex(-l_pBuffer[1], l_pBuffer[2], -l_pBuffer[0]);
 				l_pBuffer+=3;
@@ -393,7 +400,7 @@ boolean CBoxAlgorithmViz::initialize(void)
 	return true;
 }
 
-boolean CBoxAlgorithmViz::uninitialize(void)
+bool CBoxAlgorithmViz::uninitialize(void)
 {
 	g_object_unref(m_pBuilder);
 	m_pBuilder=NULL;
@@ -412,29 +419,29 @@ boolean CBoxAlgorithmViz::uninitialize(void)
 	return true;
 }
 
-boolean CBoxAlgorithmViz::processClock(IMessageClock& rClock)
+bool CBoxAlgorithmViz::processClock(IMessageClock& rClock)
 {
-	uint64 l_ui64CurrentTime=this->getPlayerContext().getCurrentTime();
-	uint64 l_ui64MinDeltaTime=0;
+	uint64_t l_ui64CurrentTime=this->getPlayerContext().getCurrentTime();
+	uint64_t l_ui64MinDeltaTime=0;
 
-	const uint64 l_ui64MinDeltaTimeHighDefinition = (1LL<<32)/16;
-	const uint64 l_ui64MinDeltaTimeLowDefinition  = (1LL<<32);
-	const uint64 l_ui64MinDeltaTimeLowDefinition2 = (1LL<<32)*5;
+	const uint64_t l_ui64MinDeltaTimeHighDefinition = (1LL<<32)/16;
+	const uint64_t l_ui64MinDeltaTimeLowDefinition  = (1LL<<32);
+	const uint64_t l_ui64MinDeltaTimeLowDefinition2 = (1LL<<32)*5;
 	if(this->getPlayerContext().getStatus() == PlayerStatus_Play)
 	{
 		l_ui64MinDeltaTime=l_ui64MinDeltaTimeHighDefinition;
 	}
 	else
 	{
-		float32 l_f32CurrentFastForwardMaximumFactor=this->getPlayerContext().getCurrentFastForwardMaximumFactor();
+		float l_f32CurrentFastForwardMaximumFactor=this->getPlayerContext().getCurrentFastForwardMaximumFactor();
 		if(l_f32CurrentFastForwardMaximumFactor <= m_f32FastForwardMaximumFactorHighDefinition)
 		{
 			l_ui64MinDeltaTime=l_ui64MinDeltaTimeHighDefinition;
 		}
 		else if(l_f32CurrentFastForwardMaximumFactor <= m_f32FastForwardMaximumFactorLowDefinition)
 		{
-			float32 alpha=(l_f32CurrentFastForwardMaximumFactor-m_f32FastForwardMaximumFactorHighDefinition)/(m_f32FastForwardMaximumFactorLowDefinition-m_f32FastForwardMaximumFactorHighDefinition);
-			l_ui64MinDeltaTime=uint64((l_ui64MinDeltaTimeLowDefinition*alpha)+l_ui64MinDeltaTimeHighDefinition*(1.f-alpha));
+			float alpha=(l_f32CurrentFastForwardMaximumFactor-m_f32FastForwardMaximumFactorHighDefinition)/(m_f32FastForwardMaximumFactorLowDefinition-m_f32FastForwardMaximumFactorHighDefinition);
+			l_ui64MinDeltaTime=uint64_t((l_ui64MinDeltaTimeLowDefinition*alpha)+l_ui64MinDeltaTimeHighDefinition*(1.f-alpha));
 		}
 		else
 		{
@@ -474,10 +481,10 @@ void CBoxAlgorithmViz::updateRulerVisibility(void)
 	}
 }
 
-void CBoxAlgorithmViz::reshape(int32 width, int32 height)
+void CBoxAlgorithmViz::reshape(int32_t width, int32_t height)
 {
-	m_ui32Width=uint32(width);
-	m_ui32Height=uint32(height);
+	m_ui32Width=uint32_t(width);
+	m_ui32Height=uint32_t(height);
 	m_pRendererContext->setAspect(width*1.f/height);
 }
 
@@ -516,7 +523,7 @@ void CBoxAlgorithmViz::postDraw(void)
 		unsigned char* l_pSwap=&l_vSwap[0];
 		unsigned char* l_pSource1=cairo_image_surface_get_data(l_pCairoSurface);
 		unsigned char* l_pSource2=cairo_image_surface_get_data(l_pCairoSurface)+m_ui32Width*(m_ui32Height-1)*l_ui32BytesInPixel;
-		for(uint32 i=0; i<m_ui32Height/2; i++)
+		for(uint32_t i=0; i<m_ui32Height/2; i++)
 		{
 			System::Memory::copy(l_pSwap, l_pSource1, m_ui32Width*l_ui32BytesInPixel);
 			System::Memory::copy(l_pSource1, l_pSource2, m_ui32Width*l_ui32BytesInPixel);
@@ -550,7 +557,7 @@ void CBoxAlgorithmViz::drawBottom(void)
 	if(m_pRuler) m_pRuler->doRenderBottom(m_pBottom);
 }
 
-void CBoxAlgorithmViz::mouseButton(int32 x, int32 y, int32 button, int32 status)
+void CBoxAlgorithmViz::mouseButton(int32_t x, int32_t y, int32_t button, int32_t status)
 {
 #if 0
 	// Mouse interacts with local renderer context
@@ -563,7 +570,7 @@ void CBoxAlgorithmViz::mouseButton(int32 x, int32 y, int32 button, int32 status)
 	this->redraw();
 }
 
-void CBoxAlgorithmViz::mouseMotion(int32 x, int32 y)
+void CBoxAlgorithmViz::mouseMotion(int32_t x, int32_t y)
 {
 #if 0
 	// Mouse interacts with local renderer context
@@ -579,14 +586,14 @@ void CBoxAlgorithmViz::mouseMotion(int32 x, int32 y)
 	}
 }
 
-void CBoxAlgorithmViz::keyboard(int32 x, int32 y, uint32 key, boolean status)
+void CBoxAlgorithmViz::keyboard(int32_t x, int32_t y, uint32_t key, bool status)
 {
 	::printf("keyboard : x=%i y=%i key=%u status=%s", x, y, key, status?"pressed":"released");
 }
 
 void CBoxAlgorithmViz::parseColor(TColor& rColor, const std::string& sColor)
 {
-	float32 r, g, b;
+	float r, g, b;
 	if(::sscanf(sColor.c_str(), "%f,%f,%f", &r, &g, &b)==3)
 	{
 		rColor.r=r*.01f;

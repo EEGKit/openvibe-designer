@@ -143,7 +143,7 @@ namespace Mensia
 				}
 				while(l_fValue<=fStop)
 				{
-					l_vResult.push_back(::abs(l_fValue) < ::abs(l_fRange/1000) ? 0 : l_fValue);
+					l_vResult.push_back(std::abs(l_fValue) < std::abs(l_fRange/1000) ? 0 : l_fValue);
 					l_fValue+=l_fStep;
 				}
 				return l_vResult;
