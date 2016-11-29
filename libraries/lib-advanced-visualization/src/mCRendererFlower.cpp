@@ -15,6 +15,9 @@
  * from Mensia Technologies SA.
  */
 
+#define _USE_MATH_DEFINES
+#include <cmath>
+
 #include "mCRendererFlower.hpp"
 
 using namespace Mensia;
