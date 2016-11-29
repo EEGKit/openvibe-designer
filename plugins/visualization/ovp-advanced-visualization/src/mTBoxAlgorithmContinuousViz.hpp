@@ -303,7 +303,7 @@ namespace Mensia
 			{
 				for(i=0; i<l_rDynamicBoxContext.getInputChunkCount(1); i++)
 				{
-					m_oStimulationDecoder.decode(1, i);
+					m_oStimulationDecoder.decode(i);
 					if(m_oStimulationDecoder.isBufferReceived())
 					{
 						OpenViBE::IStimulationSet* l_pStimulationSet=m_oStimulationDecoder.getOutputStimulationSet();

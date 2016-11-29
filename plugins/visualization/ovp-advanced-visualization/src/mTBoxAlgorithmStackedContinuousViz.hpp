@@ -162,7 +162,7 @@ namespace Mensia
 
 			for(i=0; i<l_rDynamicBoxContext.getInputChunkCount(0); i++)
 			{
-				m_oMatrixDecoder.decode(0, i);
+				m_oMatrixDecoder.decode(i);
 
 				OpenViBE::IMatrix* l_pMatrix=m_oMatrixDecoder.getOutputMatrix();
 				uint32_t l_ui32ChannelCount=l_pMatrix->getDimensionSize(0);
@@ -338,7 +338,7 @@ namespace Mensia
 			{
 				for(i=0; i<l_rDynamicBoxContext.getInputChunkCount(1); i++)
 				{
-					m_oStimulationDecoder.decode(1, i);
+					m_oStimulationDecoder.decode(i);
 					if(m_oStimulationDecoder.isBufferReceived())
 					{
 						OpenViBE::IStimulationSet* l_pStimulationSet=m_oStimulationDecoder.getOutputStimulationSet();
