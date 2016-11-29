@@ -22,13 +22,12 @@
 
 using namespace Mensia;
 using namespace Mensia::AdvancedVisualization;
-#define boolean Mensia::boolean
 
 void CRendererMountain::rebuild(const IRendererContext& rContext)
 {
 	CRenderer::rebuild(rContext);
 
-	uint32 i, j, k;
+	uint32_t i, j, k;
 
 	m_oMountain.m_vVertex.clear();
 	m_oMountain.m_vVertex.resize(m_ui32ChannelCount*m_ui32SampleCount);
@@ -71,12 +70,12 @@ void CRendererMountain::refresh(const IRendererContext& rContext)
 
 	if(!m_ui32HistoryCount) return;
 
-	uint32 i, j, k;
+	uint32_t i, j, k;
 
 	for(i=0, k=0; i<rContext.getSelectedCount(); i++)
 	{
 		k=((m_ui32HistoryCount-1)/m_ui32SampleCount)*m_ui32SampleCount;
-		std::vector < float32 >& l_vHistory=m_vHistory[rContext.getSelected(i)];
+		std::vector < float >& l_vHistory=m_vHistory[rContext.getSelected(i)];
 		CVertex* l_pVertex=&m_oMountain.m_vVertex[i*m_ui32SampleCount];
 		for(j=0; j<m_ui32SampleCount; j++, k++)
 		{
@@ -93,12 +92,12 @@ void CRendererMountain::refresh(const IRendererContext& rContext)
 	m_ui32HistoryIndex=m_ui32HistoryCount;
 }
 
-boolean CRendererMountain::render(const IRendererContext& rContext)
+bool CRendererMountain::render(const IRendererContext& rContext)
 {
 	if(!m_oMountain.m_vVertex.size()) return false;
 	if(!m_ui32HistoryCount) return false;
 
-	float32 d=2.5f;
+	float d=2.5f;
 
 	::glEnable(GL_LIGHTING);
 

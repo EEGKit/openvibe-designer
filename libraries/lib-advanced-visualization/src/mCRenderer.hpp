@@ -49,37 +49,37 @@ namespace Mensia
 			virtual ~CRenderer(void);
 
 			virtual void setChannelLocalisation(const char* sFilename);
-			virtual void setChannelCount(uint32 ui32ChannelCount);
-			virtual void setSampleCount(uint32 ui32SampleCount);
-			virtual void setHistoryDrawIndex(uint32 ui32HistoryDrawIndex);
-			virtual void feed(const float32* pDataVector);
-			virtual void feed(const float32* pDataVector, uint32 ui32SampleCount);
-			virtual void feed(uint64 ui64StimulationDate, uint64 ui64StimulationId);
-			virtual void prefeed(uint32 ui32PreFeedSampleCount);
+			virtual void setChannelCount(uint32_t ui32ChannelCount);
+			virtual void setSampleCount(uint32_t ui32SampleCount);
+			virtual void setHistoryDrawIndex(uint32_t ui32HistoryDrawIndex);
+			virtual void feed(const float* pDataVector);
+			virtual void feed(const float* pDataVector, uint32_t ui32SampleCount);
+			virtual void feed(uint64_t ui64StimulationDate, uint64_t ui64StimulationId);
+			virtual void prefeed(uint32_t ui32PreFeedSampleCount);
 
 			virtual float getSuggestedScale();
 
-			virtual void clear(uint32 ui32SampleCountToKeep);
+			virtual void clear(uint32_t ui32SampleCountToKeep);
 
-			virtual uint32 getChannelCount(void) const;
-			virtual uint32 getSampleCount(void) const;
-			virtual uint32 getHistoryCount(void) const;
-			virtual uint32 getHistoryIndex(void) const;
-			virtual boolean getSampleAtERPFraction(float32 f32Alpha, std::vector < float32 >& vSample) const;
+			virtual uint32_t getChannelCount(void) const;
+			virtual uint32_t getSampleCount(void) const;
+			virtual uint32_t getHistoryCount(void) const;
+			virtual uint32_t getHistoryIndex(void) const;
+			virtual bool getSampleAtERPFraction(float f32Alpha, std::vector < float >& vSample) const;
 
 			virtual void rebuild(const IRendererContext& rContext);
 			virtual void refresh(const IRendererContext& rContext);
-//			virtual boolean render(const IRendererContext& rContext);
+//			virtual bool render(const IRendererContext& rContext);
 
 			virtual void clearRegionSelection(void) { }
-			virtual uint32 getRegionCategoryCount(void) { return 0; }
-			virtual uint32 getRegionCount(uint32 ui32RegionCategory) { return 0; }
-			virtual const char* getRegionCategoryName(uint32 ui32RegionCategory) { return NULL; }
-			virtual const char* getRegionName(uint32 ui32RegionCategory, uint32 ui32RegionIndex) { return NULL; }
-			virtual void selectRegion(uint32 ui32RegionCategory, const char* sRegionName) { }
-			virtual void selectRegion(uint32 ui32RegionCategory, uint32 ui32RegionIndex) { }
+			virtual uint32_t getRegionCategoryCount(void) { return 0; }
+			virtual uint32_t getRegionCount(uint32_t ui32RegionCategory) { return 0; }
+			virtual const char* getRegionCategoryName(uint32_t ui32RegionCategory) { return NULL; }
+			virtual const char* getRegionName(uint32_t ui32RegionCategory, uint32_t ui32RegionIndex) { return NULL; }
+			virtual void selectRegion(uint32_t ui32RegionCategory, const char* sRegionName) { }
+			virtual void selectRegion(uint32_t ui32RegionCategory, uint32_t ui32RegionIndex) { }
 			
-			virtual void SetFaceMeshVisible(boolean bVisible = true) { }
+			virtual void SetFaceMeshVisible(bool bVisible = true) { }
 
 			virtual void draw3DCoordinateSystem(void);
 			virtual void draw2DCoordinateSystem(void);
@@ -92,24 +92,24 @@ namespace Mensia
 		protected:
 
 			std::string m_sChannelLocalisationFilename;
-			uint32 m_ui32HistoryIndex;
-			uint32 m_ui32HistoryDrawIndex;
-			uint32 m_ui32HistoryCount;
-			uint32 m_ui32ChannelCount;
-			uint32 m_ui32SampleCount;
+			uint32_t m_ui32HistoryIndex;
+			uint32_t m_ui32HistoryDrawIndex;
+			uint32_t m_ui32HistoryCount;
+			uint32_t m_ui32ChannelCount;
+			uint32_t m_ui32SampleCount;
 
-			float32 m_f32InverseChannelCount;
-			float32 m_f32InverseSampleCount;
-			uint32 m_ui32AutoDecimationFactor;
+			float m_f32InverseChannelCount;
+			float m_f32InverseSampleCount;
+			uint32_t m_ui32AutoDecimationFactor;
 
-			float32 m_f32ERPFraction;
-			uint32 m_ui32SampleIndexERP;
+			float m_f32ERPFraction;
+			uint32_t m_ui32SampleIndexERP;
 
 //			std::map < std::string, CVertex > m_vChannelLocalisation;
-			std::vector < std::pair < float64, uint64 > > m_vStimulationHistory;
-			std::vector < std::vector < float32 > > m_vHistory;
+			std::vector < std::pair < double, uint64_t > > m_vStimulationHistory;
+			std::vector < std::vector < float > > m_vHistory;
 			std::vector < std::vector < CVertex > > m_vVertex;
-			std::vector < uint32 > m_vMesh;
+			std::vector < uint32_t > m_vMesh;
 		};
 	};
 };

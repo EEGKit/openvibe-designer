@@ -28,7 +28,7 @@ namespace Mensia
 		{
 		public:
 
-			virtual boolean render(const IRendererContext& rContext);
+			virtual bool render(const IRendererContext& rContext);
 		};
 	};
 };

@@ -20,10 +20,6 @@ SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES
 
 SET(DYNAMIC_LINK_OPENVIBE_MODULE_SYSTEM false)
 
-INCLUDE("FindOpenViBECommon")
-INCLUDE("FindOpenViBEModuleSystem")
-
-INCLUDE("FindLibMensiaBase")
 INCLUDE("FindThirdPartyOpenGL")
 INCLUDE("FindThirdPartyEigen")
 

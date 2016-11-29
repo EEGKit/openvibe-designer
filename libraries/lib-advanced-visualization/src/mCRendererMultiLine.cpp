@@ -19,23 +19,22 @@
 
 using namespace Mensia;
 using namespace Mensia::AdvancedVisualization;
-#define boolean Mensia::boolean
 
-boolean CRendererMultiLine::render(const IRendererContext& rContext)
+bool CRendererMultiLine::render(const IRendererContext& rContext)
 {
 	if(!rContext.getSelectedCount()) return false;
 	if(!m_vMuliVertex.size()) return false;
 	if(!m_ui32HistoryCount) return false;
 
-	uint32 i, z;
-	int32 n  = (int32)(m_ui32SampleCount/m_ui32AutoDecimationFactor);
-	int32 n1 = (int32)(((m_ui32HistoryIndex % m_ui32SampleCount) * n)/m_ui32SampleCount);
-	int32 n2 = (int32)(n - n1);
+	uint32_t i, z;
+	int32_t n  = (int32_t)(m_ui32SampleCount/m_ui32AutoDecimationFactor);
+	int32_t n1 = (int32_t)(((m_ui32HistoryIndex % m_ui32SampleCount) * n)/m_ui32SampleCount);
+	int32_t n2 = (int32_t)(n - n1);
 
 	if(!n) return false;
 
-	float32 t1 =  n2 * 1.f / n;
-	float32 t2 = -n1 * 1.f / n;
+	float t1 =  n2 * 1.f / n;
+	float t2 = -n1 * 1.f / n;
 
 	::glMatrixMode(GL_TEXTURE);
 	::glPushMatrix();

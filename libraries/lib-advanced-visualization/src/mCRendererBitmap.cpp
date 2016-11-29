@@ -19,15 +19,14 @@
 
 using namespace Mensia;
 using namespace Mensia::AdvancedVisualization;
-#define boolean Mensia::boolean
 
 void CRendererBitmap::rebuild(const IRendererContext& rContext)
 {
 	CRenderer::rebuild(rContext);
 
-	uint32 i, j;
+	uint32_t i, j;
 
-	m_ui32AutoDecimationFactor=1+uint32((m_ui32SampleCount-1)/rContext.getMaximumSampleCountPerDisplay());
+	m_ui32AutoDecimationFactor=1+uint32_t((m_ui32SampleCount-1)/rContext.getMaximumSampleCountPerDisplay());
 
 	m_vVertex.clear();
 	m_vVertex.resize(m_ui32ChannelCount);
@@ -36,7 +35,7 @@ void CRendererBitmap::rebuild(const IRendererContext& rContext)
 		m_vVertex[i].resize((m_ui32SampleCount/m_ui32AutoDecimationFactor)*4);
 		for(j=0; j<m_ui32SampleCount-m_ui32AutoDecimationFactor+1; j+=m_ui32AutoDecimationFactor)
 		{
-			uint32 l=j/m_ui32AutoDecimationFactor;
+			uint32_t l=j/m_ui32AutoDecimationFactor;
 
 			m_vVertex[i][l*4  ].x=(l  )*m_ui32AutoDecimationFactor*m_f32InverseSampleCount;
 			m_vVertex[i][l*4  ].y=0;
@@ -61,18 +60,18 @@ void CRendererBitmap::refresh(const IRendererContext& rContext)
 
 	if(!m_ui32HistoryCount) return;
 
-	uint32 i, j, k;
+	uint32_t i, j, k;
 
 	for(i=0; i<m_ui32ChannelCount; i++)
 	{
 		k=((m_ui32HistoryCount-1)/m_ui32SampleCount)*m_ui32SampleCount;
-		std::vector < float32 >& l_vHistory=m_vHistory[i];
+		std::vector < float >& l_vHistory=m_vHistory[i];
 		CVertex* l_pVertex=&m_vVertex[i][0];
 		for(j=0; j<m_ui32SampleCount-m_ui32AutoDecimationFactor+1; j+=m_ui32AutoDecimationFactor, k+=m_ui32AutoDecimationFactor)
 		{
 			if(k>=m_ui32HistoryIndex && k<m_ui32HistoryCount)
 			{
-				float32 l_f32Value=l_vHistory[k];
+				float l_f32Value=l_vHistory[k];
 				l_pVertex++->u=l_f32Value;
 				l_pVertex++->u=l_f32Value;
 				l_pVertex++->u=l_f32Value;
@@ -87,13 +86,13 @@ void CRendererBitmap::refresh(const IRendererContext& rContext)
 	m_ui32HistoryIndex=m_ui32HistoryCount;
 }
 
-boolean CRendererBitmap::render(const IRendererContext& rContext)
+bool CRendererBitmap::render(const IRendererContext& rContext)
 {
 	if(!rContext.getSelectedCount()) return false;
 	if(!m_vVertex.size()) return false;
 	if(!m_ui32HistoryCount) return false;
 
-	uint32 i;
+	uint32_t i;
 
 	::glMatrixMode(GL_TEXTURE);
 	::glPushMatrix();

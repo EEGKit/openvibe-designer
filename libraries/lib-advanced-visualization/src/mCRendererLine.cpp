@@ -19,9 +19,8 @@
 
 using namespace Mensia;
 using namespace Mensia::AdvancedVisualization;
-#define boolean Mensia::boolean
 
-CRendererLine::CRendererLine(uint32 ui32MultiCount)
+CRendererLine::CRendererLine(uint32_t ui32MultiCount)
 {
 	m_vMuliVertex.resize(ui32MultiCount);
 }
@@ -30,9 +29,9 @@ void CRendererLine::rebuild(const IRendererContext& rContext)
 {
 	CRenderer::rebuild(rContext);
 
-	uint32 i, j, z;
+	uint32_t i, j, z;
 
-	m_ui32AutoDecimationFactor=1+uint32((m_ui32SampleCount-1)/rContext.getMaximumSampleCountPerDisplay());
+	m_ui32AutoDecimationFactor=1+uint32_t((m_ui32SampleCount-1)/rContext.getMaximumSampleCountPerDisplay());
 
 	for(z=0; z<m_vMuliVertex.size(); z++)
 	{
@@ -57,8 +56,8 @@ void CRendererLine::refresh(const IRendererContext& rContext)
 
 	if(!m_ui32HistoryCount) return;
 
-	uint32 i, j, k, l, z, count, l_ui32HistoryIndexMax;
-	float32 sum;
+	uint32_t i, j, k, l, z, count, l_ui32HistoryIndexMax;
+	float sum;
 
 	if( m_ui32HistoryDrawIndex == 0 ) // Draw real-time
 	{
@@ -74,7 +73,7 @@ void CRendererLine::refresh(const IRendererContext& rContext)
 		for( i = 0; i < m_ui32ChannelCount; i++ )
 		{
 			k = ((l_ui32HistoryIndexMax - 1 - z*m_vMuliVertex[z][i].size()) / m_ui32SampleCount)*m_ui32SampleCount;
-			std::vector < float32 >& l_vHistory = m_vHistory[i];
+			std::vector < float >& l_vHistory = m_vHistory[i];
 			CVertex* l_pVertex = &m_vMuliVertex[z][i][0];
 
 			for( j = 0; j < m_ui32SampleCount - m_ui32AutoDecimationFactor + 1; j += m_ui32AutoDecimationFactor, k += m_ui32AutoDecimationFactor )
@@ -111,21 +110,21 @@ void CRendererLine::refresh(const IRendererContext& rContext)
 	m_ui32HistoryIndex = l_ui32HistoryIndexMax;
 }
 
-boolean CRendererLine::render(const IRendererContext& rContext)
+bool CRendererLine::render(const IRendererContext& rContext)
 {
 	if(!rContext.getSelectedCount()) return false;
 	if(!m_vMuliVertex.size()) return false;
 	if(!m_ui32HistoryCount) return false;
 
-	uint32 i, z;
-	int32 n  = (int32)(m_ui32SampleCount/m_ui32AutoDecimationFactor);
-	int32 n1 = (int32)(((m_ui32HistoryIndex % m_ui32SampleCount) * n)/m_ui32SampleCount);
-	int32 n2 = (int32)(n - n1);
+	uint32_t i, z;
+	int32_t n  = (int32_t)(m_ui32SampleCount/m_ui32AutoDecimationFactor);
+	int32_t n1 = (int32_t)(((m_ui32HistoryIndex % m_ui32SampleCount) * n)/m_ui32SampleCount);
+	int32_t n2 = (int32_t)(n - n1);
 
 	if(!n) return false;
 
-	float32 t1 =  n2 * 1.f / n;
-	float32 t2 = -n1 * 1.f / n;
+	float t1 =  n2 * 1.f / n;
+	float t2 = -n1 * 1.f / n;
 
 	::glDisable(GL_TEXTURE_1D);
 

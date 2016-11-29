@@ -19,28 +19,31 @@
 
 #include "mC3DMesh.hpp"
 
-#include <system/Memory.h>
-
 #include <cstdio>
 
 using namespace Mensia;
 using namespace Mensia::AdvancedVisualization;
 
+namespace
+{
+	template <typename T> bool littleEndianToHost(const uint8_t* pBuffer, T* pValue)
+	{
+		if(!pBuffer) return false;
+		if(!pValue) return false;
+		memset(pValue, 0, sizeof(T));
+		for(unsigned int i=0; i<sizeof(T); i++)
+		{
+			((uint8_t*)pValue)[i]=pBuffer[i];
+		}
+		return true;
+	}
+}
 
 C3DMesh::C3DMesh(void)
 {
 	m_vColor[0]=1;
 	m_vColor[1]=1;
 	m_vColor[2]=1;
-}
-
-C3DMesh::C3DMesh(const char* sFilename)
-{
-	m_vColor[0]=1;
-	m_vColor[1]=1;
-	m_vColor[2]=1;
-
-	this->load(sFilename);
 }
 
 C3DMesh::~C3DMesh(void)
@@ -58,31 +61,31 @@ void C3DMesh::clear(void)
 	m_vTriangle.clear();
 }
 
-boolean C3DMesh::load(const void* pBuffer, unsigned int uiBufferSize)
+bool C3DMesh::load(const void* pBuffer, unsigned int uiBufferSize)
 {
-	const uint32* l_pBuffer=reinterpret_cast<const uint32*>(pBuffer);
+	const uint32_t* l_pBuffer=reinterpret_cast<const uint32_t*>(pBuffer);
 
-	uint32 l_ui32VertexCount;
-	uint32 l_ui32TriangleCount;
+	uint32_t l_ui32VertexCount;
+	uint32_t l_ui32TriangleCount;
 
-	System::Memory::littleEndianToHost(reinterpret_cast<const uint8*>(&l_pBuffer[0]), &l_ui32VertexCount);
-	System::Memory::littleEndianToHost(reinterpret_cast<const uint8*>(&l_pBuffer[1]), &l_ui32TriangleCount);
+	littleEndianToHost<uint32_t>(reinterpret_cast<const uint8_t*>(&l_pBuffer[0]), &l_ui32VertexCount);
+	littleEndianToHost<uint32_t>(reinterpret_cast<const uint8_t*>(&l_pBuffer[1]), &l_ui32TriangleCount);
 
 	m_vVertex.resize(l_ui32VertexCount);
 	m_vTriangle.resize(l_ui32TriangleCount*3);
 
-	uint32 i, j=2;
+	uint32_t i, j=2;
 
 	for(i=0; i<l_ui32VertexCount; i++)
 	{
-		System::Memory::littleEndianToHost(reinterpret_cast<const uint8*>(&l_pBuffer[j++]), &m_vVertex[i].x);
-		System::Memory::littleEndianToHost(reinterpret_cast<const uint8*>(&l_pBuffer[j++]), &m_vVertex[i].y);
-		System::Memory::littleEndianToHost(reinterpret_cast<const uint8*>(&l_pBuffer[j++]), &m_vVertex[i].z);
+		littleEndianToHost<float>(reinterpret_cast<const uint8_t*>(&l_pBuffer[j++]), &m_vVertex[i].x);
+		littleEndianToHost<float>(reinterpret_cast<const uint8_t*>(&l_pBuffer[j++]), &m_vVertex[i].y);
+		littleEndianToHost<float>(reinterpret_cast<const uint8_t*>(&l_pBuffer[j++]), &m_vVertex[i].z);
 	}
 
 	for(i=0; i<l_ui32TriangleCount*3; i++)
 	{
-		System::Memory::littleEndianToHost(reinterpret_cast<const uint8*>(&l_pBuffer[j++]), &m_vTriangle[i]);
+		littleEndianToHost<uint32_t>(reinterpret_cast<const uint8_t*>(&l_pBuffer[j++]), &m_vTriangle[i]);
 	}
 
 	this->compile();
@@ -90,51 +93,9 @@ boolean C3DMesh::load(const void* pBuffer, unsigned int uiBufferSize)
 	return true;
 }
 
-boolean C3DMesh::load(const char* sFilename)
+bool C3DMesh::compile(void)
 {
-	FILE* l_pFile = Mensia::Files::open(sFilename, "rb");
-	if(!l_pFile) return false;
-
-	std::vector < char > l_vBuffer;
-	::fseek(l_pFile, 0, SEEK_END);
-	l_vBuffer.resize(::ftell(l_pFile));
-	::fseek(l_pFile, 0, SEEK_SET);
-	boolean l_bResult=(::fread(&l_vBuffer[0], l_vBuffer.size(), 1, l_pFile)!=0);
-	::fclose(l_pFile);
-
-	return l_bResult && this->load(&l_vBuffer[0], l_vBuffer.size());
-}
-
-boolean C3DMesh::save(const char* sFilename) const
-{
-	FILE* l_pFile = Mensia::Files::open(sFilename, "wb");
-	if(!l_pFile) return false;
-
-	uint32 l_ui32VertexCount=m_vVertex.size();
-	uint32 l_ui32TriangleCount=m_vTriangle.size()/3;
-
-	std::vector < float32 > l_vVertex;
-	l_vVertex.resize(l_ui32VertexCount*3);
-
-	for(uint32 i=0; i<l_ui32VertexCount; i++)
-	{
-		l_vVertex[i*3  ]=m_vVertex[i].x;
-		l_vVertex[i*3+1]=m_vVertex[i].y;
-		l_vVertex[i*3+2]=m_vVertex[i].z;
-	}
-
-	::fwrite(&l_ui32VertexCount, 1, sizeof(uint32), l_pFile);
-	::fwrite(&l_ui32TriangleCount, 1, sizeof(uint32), l_pFile);
-	::fwrite(&l_vVertex[0], 1, sizeof(float32)*l_ui32VertexCount*3, l_pFile);
-	::fwrite(&m_vTriangle[0], 1, sizeof(uint32)*l_ui32TriangleCount*3, l_pFile);
-	::fclose(l_pFile);
-
-	return true;
-}
-
-boolean C3DMesh::compile(void)
-{
-	uint32 i, i1, i2, i3;
+	uint32_t i, i1, i2, i3;
 	m_vNormal.clear();
 	m_vNormal.resize(m_vVertex.size());
 	for(i=0; i<m_vTriangle.size(); i+=3)
@@ -170,7 +131,7 @@ boolean C3DMesh::compile(void)
 	return true;
 }
 
-boolean C3DMesh::project(std::vector < CVertex >& vProjectedChannelCoordinate, const std::vector < CVertex >& vChannelCoordinate)
+bool C3DMesh::project(std::vector < CVertex >& vProjectedChannelCoordinate, const std::vector < CVertex >& vChannelCoordinate)
 {
 	size_t i, j;
 
@@ -182,7 +143,7 @@ boolean C3DMesh::project(std::vector < CVertex >& vProjectedChannelCoordinate, c
 //		q = vChannelCoordinate[i];
 		for(j=0; j<this->m_vTriangle.size(); j+=3)
 		{
-			uint32 i1, i2, i3;
+			uint32_t i1, i2, i3;
 			i1=this->m_vTriangle[j  ];
 			i2=this->m_vTriangle[j+1];
 			i3=this->m_vTriangle[j+2];
@@ -196,7 +157,7 @@ boolean C3DMesh::project(std::vector < CVertex >& vProjectedChannelCoordinate, c
 			CVertex e2(v1, v3);
 			CVertex n = CVertex::cross(e1, e2).normalize();
 
-			float32 t = CVertex::dot(v1, n) / CVertex::dot(p, n);
+			float t = CVertex::dot(v1, n) / CVertex::dot(p, n);
 			q.x = t * p.x;
 			q.y = t * p.y;
 			q.z = t * p.z;

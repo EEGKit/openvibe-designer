@@ -34,7 +34,7 @@ namespace Mensia
 
 			virtual void rebuild(const IRendererContext& rContext);
 			virtual void refresh(const IRendererContext& rContext);
-			virtual boolean render(const IRendererContext& rContext);
+			virtual bool render(const IRendererContext& rContext);
 
 			C3DMesh m_oMountain;
 		};

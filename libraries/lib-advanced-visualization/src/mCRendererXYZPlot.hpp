@@ -30,11 +30,11 @@ namespace Mensia
 
 			virtual void rebuild(const IRendererContext& rContext);
 			virtual void refresh(const IRendererContext& rContext);
-			virtual boolean render(const IRendererContext& rContext);
+			virtual bool render(const IRendererContext& rContext);
 
-			boolean m_bHasDepth;
-			uint32 m_ui32PlotDimension;
-			uint32 m_ui32PlotCount;
+			bool m_bHasDepth;
+			uint32_t m_ui32PlotDimension;
+			uint32_t m_ui32PlotCount;
 			std::vector < std::vector < CVertex > > m_vVertex;
 		};
 	};
