@@ -19,13 +19,12 @@
 
 using namespace Mensia;
 using namespace Mensia::AdvancedVisualization;
-#define boolean Mensia::boolean
 
 void CRendererBars::rebuild(const IRendererContext& rContext)
 {
 	CRenderer::rebuild(rContext);
 
-	uint32 i, j;
+	uint32_t i, j;
 
 	m_vVertex.resize(m_ui32ChannelCount);
 	for(i=0; i<m_ui32ChannelCount; i++)
@@ -54,18 +53,18 @@ void CRendererBars::refresh(const IRendererContext& rContext)
 
 	if(!m_ui32HistoryCount) return;
 
-	uint32 i, j, k;
+	uint32_t i, j, k;
 
 	for(i=0; i<m_ui32ChannelCount; i++)
 	{
 		k=((m_ui32HistoryCount-1)/m_ui32SampleCount)*m_ui32SampleCount;
-		std::vector < float32 >& l_vHistory=m_vHistory[i];
+		std::vector < float >& l_vHistory=m_vHistory[i];
 		CVertex* l_pVertex=&m_vVertex[i][0];
 		for(j=0; j<m_ui32SampleCount; j++, k++)
 		{
 			if(k>=m_ui32HistoryIndex && k<m_ui32HistoryCount)
 			{
-				float32 l_f32Value=l_vHistory[k];
+				float l_f32Value=l_vHistory[k];
 				l_pVertex++->y=0;
 				l_pVertex++->y=0;
 				l_pVertex++->y=l_f32Value;
@@ -80,13 +79,13 @@ void CRendererBars::refresh(const IRendererContext& rContext)
 	m_ui32HistoryIndex=m_ui32HistoryCount;
 }
 
-boolean CRendererBars::render(const IRendererContext& rContext)
+bool CRendererBars::render(const IRendererContext& rContext)
 {
 	if(!rContext.getSelectedCount()) return false;
 	if(!m_vVertex.size()) return false;
 	if(!m_ui32HistoryCount) return false;
 
-	uint32 i;
+	uint32_t i;
 
 	::glMatrixMode(GL_TEXTURE);
 	::glPushMatrix();

@@ -15,14 +15,15 @@
  * from Mensia Technologies SA.
  */
 
+#pragma once
+
 #if defined TARGET_HAS_ThirdPartyOpenGL
 
-#ifndef __Mensia_AdvancedVisualization_C3DMesh_H__
-#define __Mensia_AdvancedVisualization_C3DMesh_H__
+#include <cstdint>
+#include <vector>
 
 #include "mCVertex.hpp"
 
-#include <vector>
 
 namespace Mensia
 {
@@ -37,23 +38,20 @@ namespace Mensia
 			virtual ~C3DMesh(void);
 
 			virtual void clear(void);
-			virtual boolean load(const void* pBuffer, unsigned int uiBufferSize);
-			virtual boolean load(const char* sFilename);
-			virtual boolean save(const char* sFilename) const;
-			virtual boolean compile(void);
+			virtual bool load(const void* pBuffer, unsigned int uiBufferSize);
+			virtual bool compile(void);
 
-			virtual boolean project(std::vector < CVertex >& vProjectedChannelCoordinate, const std::vector < CVertex >& vChannelCoordinate);
+			virtual bool project(std::vector < CVertex >& vProjectedChannelCoordinate, const std::vector < CVertex >& vChannelCoordinate);
 
 		public:
 
 			std::vector < CVertex > m_vVertex;
 			std::vector < CVertex > m_vNormal;
-			std::vector < uint32 > m_vTriangle;
-			float32 m_vColor[3];
+			std::vector < uint32_t > m_vTriangle;
+			float m_vColor[3];
 		};
 	};
 };
 
-#endif // __Mensia_AdvancedVisualization_C3DMesh_H__
 
 #endif // TARGET_HAS_ThirdPartyOpenGL

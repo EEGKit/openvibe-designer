@@ -15,8 +15,7 @@
  * from Mensia Technologies SA.
  */
 
-#ifndef __OpenViBEPlugins_CMouse_H__
-#define __OpenViBEPlugins_CMouse_H__
+#pragma once
 
 #include <mensia/advanced-visualization.h>
 
@@ -33,16 +32,15 @@ namespace Mensia
 		public:
 
 			CMouse(CBoxAlgorithmViz& rBoxAlgorithmViz);
-			void mouseButton(IRendererContext& rContext, int32 x, int32 y, int32 button, int status);
-			void mouseMotion(IRendererContext& rContext, int32 x, int32 y);
-			boolean hasButtonPressed(void);
+			void mouseButton(IRendererContext& rContext, int32_t x, int32_t y, int32_t button, int status);
+			void mouseMotion(IRendererContext& rContext, int32_t x, int32_t y);
+			bool hasButtonPressed(void);
 
 			CBoxAlgorithmViz& m_rBoxAlgorithmViz;
-			std::map < int32, int > m_vButton;
-			int32 m_i32MouseX;
-			int32 m_i32MouseY;
+			std::map < int32_t, int > m_vButton;
+			int32_t m_i32MouseX;
+			int32_t m_i32MouseY;
 		};
 	};
 };
 
-#endif // __OpenViBEPlugins_CMouse_H__

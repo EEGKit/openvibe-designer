@@ -28,11 +28,11 @@ namespace Mensia
 		{
 		public:
 
-			CRendererFlower(uint32 ui32MultiCount=1);
+			CRendererFlower(uint32_t ui32MultiCount=1);
 
 			virtual void rebuild(const IRendererContext& rContext);
 			virtual void refresh(const IRendererContext& rContext);
-			virtual boolean render(const IRendererContext& rContext);
+			virtual bool render(const IRendererContext& rContext);
 
 			std::vector < std::vector < std::vector < CVertex > > > m_vMuliVertex;
 			std::vector < CVertex > m_vCircle;

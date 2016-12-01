@@ -38,28 +38,28 @@ namespace Mensia
 
 			virtual void rebuild(const IRendererContext& rContext);
 			virtual void refresh(const IRendererContext& rContext);
-			virtual boolean render(const IRendererContext& rContext);
+			virtual bool render(const IRendererContext& rContext);
 
 			virtual void clearRegionSelection(void);
-			virtual uint32 getRegionCategoryCount(void);
-			virtual uint32 getRegionCount(uint32 ui32RegionCategory);
-			virtual const char* getRegionCategoryName(uint32 ui32RegionCategory);
-			virtual const char* getRegionName(uint32 ui32RegionCategory, uint32 ui32RegionIndex);
-			virtual void selectRegion(uint32 ui32RegionCategory, const char* sRegionName);
-			virtual void selectRegion(uint32 ui32RegionCategory, uint32 ui32RegionIndex);
+			virtual uint32_t getRegionCategoryCount(void);
+			virtual uint32_t getRegionCount(uint32_t ui32RegionCategory);
+			virtual const char* getRegionCategoryName(uint32_t ui32RegionCategory);
+			virtual const char* getRegionName(uint32_t ui32RegionCategory, uint32_t ui32RegionIndex);
+			virtual void selectRegion(uint32_t ui32RegionCategory, const char* sRegionName);
+			virtual void selectRegion(uint32_t ui32RegionCategory, uint32_t ui32RegionIndex);
 
 			virtual void refreshBrainSubset(void);
 
 		protected:
 
-			std::vector < std::map < std::string, std::vector < uint32 > > > m_vLookup;
-			std::vector < boolean > m_vSelected;
+			std::vector < std::map < std::string, std::vector < uint32_t > > > m_vLookup;
+			std::vector < bool > m_vSelected;
 
 			C3DMesh m_oFace;
 			C3DMesh m_oScalp;
 			C3DMesh m_oBrain;
 
-			std::vector < uint32 > m_vBrainSubsetTriangle;
+			std::vector < uint32_t > m_vBrainSubsetTriangle;
 		};
 	};
 };

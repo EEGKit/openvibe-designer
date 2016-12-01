@@ -23,9 +23,8 @@
 
 using namespace Mensia;
 using namespace Mensia::AdvancedVisualization;
-#define boolean Mensia::boolean
 
-const boolean m_bMultiSlice=false;
+const bool m_bMultiSlice=false;
 
 namespace
 {
@@ -109,7 +108,7 @@ void CRendererTopo::rebuild(const IRendererContext& rContext)
 {
 	CRenderer::rebuild(rContext);
 
-	uint32 i, j;
+	uint32_t i, j;
 
 	this->rebuild3DMeshesPre(rContext);
 
@@ -134,7 +133,7 @@ void CRendererTopo::rebuild(const IRendererContext& rContext)
 		rContext.getChannelLocalisation(i, p.x, p.y, p.z);
 		for(j=0; j<m_oScalp.m_vTriangle.size(); j+=3)
 		{
-			uint32 i1, i2, i3;
+			uint32_t i1, i2, i3;
 			i1=m_oScalp.m_vTriangle[j  ];
 			i2=m_oScalp.m_vTriangle[j+1];
 			i3=m_oScalp.m_vTriangle[j+2];
@@ -148,7 +147,7 @@ void CRendererTopo::rebuild(const IRendererContext& rContext)
 			CVertex e2(v1, v3);
 			CVertex n = CVertex::cross(e1, e2).normalize();
 
-			float32 t = CVertex::dot(v1, n) / CVertex::dot(p, n);
+			float t = CVertex::dot(v1, n) / CVertex::dot(p, n);
 			q.x = t * p.x;
 			q.y = t * p.y;
 			q.z = t * p.z;
@@ -178,8 +177,8 @@ void CRendererTopo::rebuild(const IRendererContext& rContext)
 	std::vector < double > l_vHCache;
 	build(N, M, l_vGCache, l_vHCache);
 
-	uint32 nc=rContext.getChannelCount();
-	uint32 vc=m_oScalp.m_vVertex.size();
+	uint32_t nc=rContext.getChannelCount();
+	uint32_t vc=m_oScalp.m_vVertex.size();
 
 	A=Eigen::MatrixXd(nc+1, nc+1);
 	A(nc, nc)=0;
@@ -193,7 +192,7 @@ void CRendererTopo::rebuild(const IRendererContext& rContext)
 			rContext.getChannelLocalisation(i, v1.x, v1.y, v1.z);
 			rContext.getChannelLocalisation(j, v2.x, v2.y, v2.z);
 
-			float64 cosine=CVertex::dot(v1, v2);
+			double cosine=CVertex::dot(v1, v2);
 			A(i, j)=cache(cosine, l_vGCache);
 			A(j, i)=cache(cosine, l_vGCache);
 		}
@@ -216,7 +215,7 @@ void CRendererTopo::rebuild(const IRendererContext& rContext)
 			v1.normalize();
 			rContext.getChannelLocalisation(j, v2.x, v2.y, v2.z);
 
-			float64 cosine=CVertex::dot(v1, v2);
+			double cosine=CVertex::dot(v1, v2);
 			B(i, j)=cache(cosine, l_vGCache);
 			D(i, j)=cache(cosine, l_vHCache);
 		}
@@ -261,12 +260,12 @@ void CRendererTopo::refresh(const IRendererContext& rContext)
 
 	if(!m_ui32HistoryCount) return;
 
-	uint32 i, j, k;
+	uint32_t i, j, k;
 
-	uint32 nc=rContext.getChannelCount();
-	uint32 vc=m_oScalp.m_vVertex.size();
+	uint32_t nc=rContext.getChannelCount();
+	uint32_t vc=m_oScalp.m_vVertex.size();
 
-	std::vector < float32 > l_vSample;
+	std::vector < float > l_vSample;
 	Eigen::VectorXd V = Eigen::VectorXd::Zero(nc+1);
 	Eigen::VectorXd W;
 	Eigen::VectorXd Z;
@@ -294,7 +293,7 @@ void CRendererTopo::refresh(const IRendererContext& rContext)
 	m_ui32HistoryIndex=m_ui32HistoryCount;
 }
 
-boolean CRendererTopo::render(const IRendererContext& rContext)
+bool CRendererTopo::render(const IRendererContext& rContext)
 {
 	std::map < std::string, CVertex >::const_iterator it;
 
@@ -302,8 +301,8 @@ boolean CRendererTopo::render(const IRendererContext& rContext)
 	if(!m_oScalp.m_vVertex.size()) return false;
 	if(!m_ui32HistoryCount) return false;
 
-	uint32 j;
-	float32 d=3.5;
+	uint32_t j;
+	float d=3.5;
 
 //	::glEnable(GL_DEPTH_TEST);
 //	::glDisable(GL_BLEND);
@@ -396,9 +395,9 @@ boolean CRendererTopo::render(const IRendererContext& rContext)
 				::glColor4f(1.f, 1.f, 1.f, 4.f/m_ui32SampleCount);
 				::glDisable(GL_DEPTH_TEST);
 				::glEnable(GL_BLEND);
-				for(uint32 i=0; i<m_ui32SampleCount; i++)
+				for(uint32_t i=0; i<m_ui32SampleCount; i++)
 				{
-					float32 l_f32Scale = 1.f + i*0.25f/m_ui32SampleCount;
+					float l_f32Scale = 1.f + i*0.25f/m_ui32SampleCount;
 					::glPushMatrix();
 					::glScalef(l_f32Scale, l_f32Scale, l_f32Scale);
 					::glTexCoordPointer(1, GL_DOUBLE, 0, &m_vInterpolatedSample[i][0]);

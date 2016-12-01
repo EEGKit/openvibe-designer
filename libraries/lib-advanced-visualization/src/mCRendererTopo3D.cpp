@@ -5,7 +5,6 @@
 
 using namespace Mensia;
 using namespace Mensia::AdvancedVisualization;
-#define boolean Mensia::boolean
 
 void CRendererTopo3D::rebuild3DMeshesPre(const IRendererContext& rContext)
 {

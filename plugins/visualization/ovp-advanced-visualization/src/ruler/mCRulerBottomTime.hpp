@@ -36,19 +36,19 @@ namespace Mensia
 				if(m_pRenderer->getHistoryCount() == 0) return;
 				if(m_pRenderer->getHistoryIndex() == 0) return;
 
-				uint32 l_ui32SampleCount=m_pRenderer->getSampleCount();
-				uint32 l_ui32HistoryIndex=m_pRenderer->getHistoryIndex();
-				uint64 l_ui64SampleDuration=m_pRendererContext->getSampleDuration();
+				uint32_t l_ui32SampleCount=m_pRenderer->getSampleCount();
+				uint32_t l_ui32HistoryIndex=m_pRenderer->getHistoryIndex();
+				uint64_t l_ui64SampleDuration=m_pRendererContext->getSampleDuration();
 
 				std::vector < double > l_vRange1;
 				std::vector < double > l_vRange2;
 				std::vector < double >::iterator it;
 
-				uint32 l_ui32LeftIndex=l_ui32HistoryIndex-l_ui32HistoryIndex%l_ui32SampleCount;
-				uint32 l_ui32MidIndex =l_ui32HistoryIndex;
-				float64 l_f64StartTime=((l_ui32LeftIndex  *l_ui64SampleDuration)>>16)/65536.;
-				float64 l_f64MidTime  =((l_ui32MidIndex   *l_ui64SampleDuration)>>16)/65536.;
-				float64 l_f64Duration =((l_ui32SampleCount*l_ui64SampleDuration)>>16)/65536.;
+				uint32_t l_ui32LeftIndex=l_ui32HistoryIndex-l_ui32HistoryIndex%l_ui32SampleCount;
+				uint32_t l_ui32MidIndex =l_ui32HistoryIndex;
+				double l_f64StartTime=((l_ui32LeftIndex  *l_ui64SampleDuration)>>16)/65536.;
+				double l_f64MidTime  =((l_ui32MidIndex   *l_ui64SampleDuration)>>16)/65536.;
+				double l_f64Duration =((l_ui32SampleCount*l_ui64SampleDuration)>>16)/65536.;
 
 				l_vRange1=this->split_range(l_f64StartTime-l_f64Duration, l_f64StartTime              , 10);
 				l_vRange2=this->split_range(l_f64StartTime              , l_f64StartTime+l_f64Duration, 10);

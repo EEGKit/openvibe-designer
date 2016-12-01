@@ -20,8 +20,6 @@
 
 #include <cmath>
 
-#define boolean bool
-
 using namespace Mensia;
 using namespace Mensia::AdvancedVisualization;
 
@@ -32,7 +30,7 @@ CMouse::CMouse(CBoxAlgorithmViz& rBoxAlgorithmViz)
 {
 }
 
-void CMouse::mouseButton(IRendererContext& rContext, int32 x, int32 y, int32 button, int status)
+void CMouse::mouseButton(IRendererContext& rContext, int32_t x, int32_t y, int32_t button, int status)
 {
 	m_vButton[button]=status;
 
@@ -46,7 +44,7 @@ void CMouse::mouseButton(IRendererContext& rContext, int32 x, int32 y, int32 but
 	m_i32MouseY=y;
 }
 
-void CMouse::mouseMotion(IRendererContext& rContext, int32 x, int32 y)
+void CMouse::mouseMotion(IRendererContext& rContext, int32_t x, int32_t y)
 {
 	if(m_vButton[3])
 	{
@@ -66,9 +64,9 @@ void CMouse::mouseMotion(IRendererContext& rContext, int32 x, int32 y)
 	m_i32MouseY=y;
 }
 
-boolean CMouse::hasButtonPressed(void)
+bool CMouse::hasButtonPressed(void)
 {
-	std::map < int32, int >::const_iterator it;
+	std::map < int32_t, int >::const_iterator it;
 	for(it=m_vButton.begin(); it!=m_vButton.end(); it++)
 	{
 		if(it->second) return true;

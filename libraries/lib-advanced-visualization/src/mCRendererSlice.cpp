@@ -20,13 +20,12 @@
 
 using namespace Mensia;
 using namespace Mensia::AdvancedVisualization;
-#define boolean Mensia::boolean
 
 void CRendererSlice::rebuild(const IRendererContext& rContext)
 {
 	CRenderer::rebuild(rContext);
 
-	uint32 i, j, k=0, l=0;
+	uint32_t i, j, k=0, l=0;
 
 	m_vVertex.clear();
 	m_vVertex.resize(m_ui32SampleCount*m_ui32ChannelCount*8);
@@ -38,7 +37,7 @@ void CRendererSlice::rebuild(const IRendererContext& rContext)
 	{
 		for(j=0; j<m_ui32ChannelCount; j++)
 		{
-			const float32 f32Size=.5;
+			const float f32Size=.5;
 
 			m_vQuad[l++] = k + 0;
 			m_vQuad[l++] = k + 1; // q0
@@ -70,9 +69,9 @@ void CRendererSlice::rebuild(const IRendererContext& rContext)
 			m_vQuad[l++] = k + 3;
 			m_vQuad[l++] = k + 2;
 
-			float32 ox = 0;
-			float32 oy = ((m_ui32ChannelCount-1)*.5f-j);
-			float32 oz = ((m_ui32SampleCount-1)*.5f-i);
+			float ox = 0;
+			float oy = ((m_ui32ChannelCount-1)*.5f-j);
+			float oz = ((m_ui32SampleCount-1)*.5f-i);
 
 			m_vVertex[k].x = ox + f32Size;
 			m_vVertex[k].y = oy - f32Size; // v0
@@ -122,7 +121,7 @@ void CRendererSlice::refresh(const IRendererContext& rContext)
 {
 	CRenderer::refresh(rContext);
 
-	uint32 i, j, k, l;
+	uint32_t i, j, k, l;
 
 	for(i=m_ui32HistoryIndex; i<m_ui32HistoryCount; i++)
 	{
@@ -139,10 +138,10 @@ void CRendererSlice::refresh(const IRendererContext& rContext)
 	m_ui32HistoryIndex=m_ui32HistoryCount;
 }
 
-boolean CRendererSlice::render(const IRendererContext& rContext)
+bool CRendererSlice::render(const IRendererContext& rContext)
 {
-	// uint32 i, j;
-	float32 d=3.5;
+	// uint32_t i, j;
+	float d=3.5;
 
 	if(!rContext.getSelectedCount()) return false;
 	if(!m_ui32HistoryCount) return false;
@@ -187,7 +186,7 @@ boolean CRendererSlice::render(const IRendererContext& rContext)
 
 	::glDisable(GL_TEXTURE_1D);
 
-	float32 l_f32Progress = 1 - (m_ui32HistoryIndex%m_ui32SampleCount)*2.f/m_ui32SampleCount;
+	float l_f32Progress = 1 - (m_ui32HistoryIndex%m_ui32SampleCount)*2.f/m_ui32SampleCount;
 	::glScalef(.5, .5, .5);
 	::glBegin(GL_LINE_LOOP);
 		::glColor3f(1, 1, 1);

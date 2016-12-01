@@ -19,7 +19,7 @@ ELSE()
 ENDIF()
 
 SET(PATH_LIBADVVIZ "PATH_LIBADVVIZ-NOTFOUND")
-SET(MENSIA_SRC_DIR ${MENSIA_BASE_DIR}/libraries/lib-advanced-visualization/include/)
+SET(MENSIA_SRC_DIR ${CMAKE_SOURCE_DIR}/libraries/lib-advanced-visualization/include/)
 
 FIND_PATH(PATH_LIBADVVIZ mensia/advanced-visualization.h PATHS ${MENSIA_SRC_DIR} NO_DEFAULT_PATH)
 IF(PATH_LIBADVVIZ)

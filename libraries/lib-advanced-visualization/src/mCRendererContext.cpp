@@ -24,27 +24,26 @@
 
 using namespace Mensia;
 using namespace Mensia::AdvancedVisualization;
-#define boolean Mensia::boolean
 
 namespace
 {
-	static void getLeftRightScore(std::map < std::string, float32 >& vScore, const std::vector < std::string >& vChannelName, const std::vector < CVertex >& vChannelLocalisation)
+	static void getLeftRightScore(std::map < std::string, float >& vScore, const std::vector < std::string >& vChannelName, const std::vector < CVertex >& vChannelLocalisation)
 	{
-		for(uint32 i=0; i<vChannelName.size() && i<vChannelLocalisation.size(); i++)
+		for(uint32_t i=0; i<vChannelName.size() && i<vChannelLocalisation.size(); i++)
 		{
 			std::string l_sChannelName=std::string(",")+vChannelName[i]+std::string(",");
 			std::transform(l_sChannelName.begin(), l_sChannelName.end(), l_sChannelName.begin(), ::tolower);
-			vScore[l_sChannelName] = float32(vChannelLocalisation[i].x*1E-0 + vChannelLocalisation[i].y*1E-10 + vChannelLocalisation[i].z*1E-5);
+			vScore[l_sChannelName] = float(vChannelLocalisation[i].x*1E-0 + vChannelLocalisation[i].y*1E-10 + vChannelLocalisation[i].z*1E-5);
 		}
 	}
 
-	static void getFrontBackScore(std::map < std::string, float32 >& vScore, const std::vector < std::string >& vChannelName, const std::vector < CVertex >& vChannelLocalisation)
+	static void getFrontBackScore(std::map < std::string, float >& vScore, const std::vector < std::string >& vChannelName, const std::vector < CVertex >& vChannelLocalisation)
 	{
-		for(uint32 i=0; i<vChannelName.size() && i<vChannelLocalisation.size(); i++)
+		for(uint32_t i=0; i<vChannelName.size() && i<vChannelLocalisation.size(); i++)
 		{
 			std::string l_sChannelName=std::string(",")+vChannelName[i]+std::string(",");
 			std::transform(l_sChannelName.begin(), l_sChannelName.end(), l_sChannelName.begin(), ::tolower);
-			vScore[l_sChannelName] = float32(vChannelLocalisation[i].x*1E-5 + vChannelLocalisation[i].y*1E-10 + vChannelLocalisation[i].z*1E-0);
+			vScore[l_sChannelName] = float(vChannelLocalisation[i].x*1E-5 + vChannelLocalisation[i].y*1E-10 + vChannelLocalisation[i].z*1E-0);
 		}
 	}
 
@@ -55,7 +54,7 @@ namespace
 		{
 		}
 
-		bool operator()(uint32 i, uint32 j)
+		bool operator()(uint32_t i, uint32_t j)
 		{
 			std::string l_sChannelName_i=m_vChannelName[i];
 			std::string l_sChannelName_j=m_vChannelName[j];
@@ -70,18 +69,18 @@ namespace
 
 	struct sort_special
 	{
-		sort_special(const std::vector < std::string >& vChannelName, const std::map < std::string, float32 >& vScore)
+		sort_special(const std::vector < std::string >& vChannelName, const std::map < std::string, float >& vScore)
 			:m_vChannelName(vChannelName)
 			,m_vScore(vScore)
 		{
 		}
 
-		bool operator()(uint32 i, uint32 j)
+		bool operator()(uint32_t i, uint32_t j)
 		{
-			std::map < std::string, float32 >::const_iterator it;
+			std::map < std::string, float >::const_iterator it;
 
-			float32 l_f32Score_i=0;
-			float32 l_f32Score_j=0;
+			float l_f32Score_i=0;
+			float l_f32Score_j=0;
 
 			std::string l_sChannelName_i=std::string(",")+m_vChannelName[i]+std::string(",");
 			std::string l_sChannelName_j=std::string(",")+m_vChannelName[j]+std::string(",");
@@ -98,7 +97,7 @@ namespace
 		}
 
 		const std::vector < std::string >& m_vChannelName;
-		const std::map < std::string, float32 >& m_vScore;
+		const std::map < std::string, float >& m_vScore;
 	};
 }
 
@@ -116,6 +115,7 @@ void CRendererContext::clear(void)
 {
 	this->clearChannelInfo();
 	this->clearTransformInfo();
+	m_DimensionLabels.clear();
 }
 
 void CRendererContext::setParentRendererContext(IRendererContext* pParentRendererContext)
@@ -149,18 +149,18 @@ void CRendererContext::addChannel(const std::string& sChannelName, float x, floa
 	m_vChannelLocalisation.push_back(l_oChannelLocalisation);
 }
 
-void CRendererContext::selectChannel(uint32 ui32Index)
+void CRendererContext::selectChannel(uint32_t ui32Index)
 {
-	for(uint32 i=0; i<m_vChannelLookup.size(); i++)
+	for(uint32_t i=0; i<m_vChannelLookup.size(); i++)
 	{
 		if(m_vChannelLookup[i]==ui32Index) return;
 	}
 	m_vChannelLookup.push_back(ui32Index);
 }
 
-void CRendererContext::unselectChannel(uint32 ui32Index)
+void CRendererContext::unselectChannel(uint32_t ui32Index)
 {
-	for(uint32 i=0; i<m_vChannelLookup.size(); i++)
+	for(uint32_t i=0; i<m_vChannelLookup.size(); i++)
 	{
 		if(m_vChannelLookup[i]==ui32Index)
 		{
@@ -170,7 +170,7 @@ void CRendererContext::unselectChannel(uint32 ui32Index)
 	}
 }
 
-void CRendererContext::sortSelectedChannel(uint32 ui32SortMode)
+void CRendererContext::sortSelectedChannel(uint32_t ui32SortMode)
 {
 	if(m_vLeftRightScore.size() == 0) getLeftRightScore(m_vLeftRightScore, m_vChannelName, m_vChannelLocalisation);
 	if(m_vFrontBackScore.size() == 0) getFrontBackScore(m_vFrontBackScore, m_vChannelName, m_vChannelLocalisation);
@@ -203,6 +203,35 @@ void CRendererContext::sortSelectedChannel(uint32 ui32SortMode)
 		default:
 			break;
 	}
+}
+
+// ____________________________________________________________________________________________________________________________________________________________________________________
+
+void CRendererContext::setDimensionLabel(size_t dimensionIndex, size_t labelIndex, const char* label)
+{
+	if (m_DimensionLabels[dimensionIndex].size() <= labelIndex)
+	{
+		m_DimensionLabels[dimensionIndex].resize(labelIndex + 1);
+	}
+	m_DimensionLabels[dimensionIndex][labelIndex] = label;
+}
+
+size_t CRendererContext::getDimensionLabelCount(size_t dimensionIndex) const
+{
+	if (m_DimensionLabels.count(dimensionIndex) == 0)
+	{
+		return 0;
+	}
+	return m_DimensionLabels.at(dimensionIndex).size();
+}
+
+const char* CRendererContext::getDimensionLabel(size_t dimensionIndex, size_t labelIndex) const
+{
+	if (m_DimensionLabels.count(dimensionIndex) == 0 || m_DimensionLabels.at(dimensionIndex).size() <= labelIndex)
+	{
+		return nullptr;
+	}
+	return m_DimensionLabels.at(dimensionIndex)[labelIndex].c_str();
 }
 
 // ____________________________________________________________________________________________________________________________________________________________________________________
@@ -240,22 +269,22 @@ void CRendererContext::clearTransformInfo(void)
 	m_bScalpMeshVisible = true;
 }
 
-void CRendererContext::scaleBy(float32 f32Scale)
+void CRendererContext::scaleBy(float f32Scale)
 {
 	m_f32Scale*=f32Scale;
 }
 
-void CRendererContext::setScale(float32 f32Scale)
+void CRendererContext::setScale(float f32Scale)
 {
 	m_f32Scale = f32Scale;
 }
 
-void CRendererContext::zoomBy(float32 f32Zoom)
+void CRendererContext::zoomBy(float f32Zoom)
 {
 	m_f32Zoom*=f32Zoom;
 }
 
-void CRendererContext::rotateByX(float32 f32Rotation)
+void CRendererContext::rotateByX(float f32Rotation)
 {
 //	#define M_SMALL_PI2 (45./2)
 	m_f32RotationX+=f32Rotation;
@@ -263,72 +292,72 @@ void CRendererContext::rotateByX(float32 f32Rotation)
 //	if(m_f32RotationX <-M_SMALL_PI2) m_f32RotationX=-M_SMALL_PI2;
 }
 
-void CRendererContext::rotateByY(float32 f32Rotation)
+void CRendererContext::rotateByY(float f32Rotation)
 {
 	m_f32RotationY+=f32Rotation;
 }
 
-void CRendererContext::setTranslucency(float32 f32Translucency)
+void CRendererContext::setTranslucency(float f32Translucency)
 {
 	m_f32Translucency=f32Translucency;
 }
 
-void CRendererContext::setAspect(float32 f32Aspect)
+void CRendererContext::setAspect(float f32Aspect)
 {
 	m_f32Aspect=f32Aspect;
 }
 
-void CRendererContext::setSampleDuration(uint64 ui64SampleDuration)
+void CRendererContext::setSampleDuration(uint64_t ui64SampleDuration)
 {
 	m_ui64SampleDuration=ui64SampleDuration;
 }
 
-void CRendererContext::setTimeScale(uint64 ui64TimeScale)
+void CRendererContext::setTimeScale(uint64_t ui64TimeScale)
 {
 	m_ui64TimeScale=ui64TimeScale;
 }
 
-void CRendererContext::setElementCount(uint64 ui64ElementCount)
+void CRendererContext::setElementCount(uint64_t ui64ElementCount)
 {
 	m_ui64ElementCount=ui64ElementCount;
 }
 
-void CRendererContext::setFlowerRingCount(uint64 ui64FlowerRingCount)
+void CRendererContext::setFlowerRingCount(uint64_t ui64FlowerRingCount)
 {
 	m_ui64FlowerRingCount=ui64FlowerRingCount;
 }
 
-void CRendererContext::setXYZPlotDepth(boolean bHasDepth)
+void CRendererContext::setXYZPlotDepth(bool bHasDepth)
 {
 	m_bHasXYZPlotDepth=bHasDepth;
 }
 
-void CRendererContext::setAxisDisplay(boolean bIsAxisDisplayed)
+void CRendererContext::setAxisDisplay(bool bIsAxisDisplayed)
 {
 	m_bIsAxisDisplayed=bIsAxisDisplayed;
 }
 
-void CRendererContext::setPositiveOnly(boolean bPositiveOnly)
+void CRendererContext::setPositiveOnly(bool bPositiveOnly)
 {
 	m_bIsPositiveOnly=bPositiveOnly;
 }
 
-void CRendererContext::setTimeLocked(boolean bIsTimeLocked)
+void CRendererContext::setTimeLocked(bool bIsTimeLocked)
 {
 	m_bIsTimeLocked=bIsTimeLocked;
 }
 
-void CRendererContext::setScrollModeActive(boolean bScrollModeActive)
+void CRendererContext::setScrollModeActive(bool bScrollModeActive)
 {
 	m_bIsScrollModeActive=bScrollModeActive;
 }
 
-void CRendererContext::setScaleVisibility(boolean bVisibility)
+void CRendererContext::setScaleVisibility(bool bVisibility)
 {
 	m_bScaleVisiblity=bVisibility;
 }
 
-void CRendererContext::setCheckBoardVisibility(boolean bVisibility)
+void CRendererContext::setCheckBoardVisibility(bool bVisibility)
 {
 	m_bCheckBoardVisiblity=bVisibility;
 }
@@ -338,37 +367,37 @@ void CRendererContext::setDataType(IRendererContext::EDataType eDataType)
 	m_eDataType=eDataType;
 }
 
-void CRendererContext::setSpectrumFrequencyRange(uint32 ui32SpectrumFrequencyRange)
+void CRendererContext::setSpectrumFrequencyRange(uint32_t ui32SpectrumFrequencyRange)
 {
 	m_ui32SpectrumFrequencyRange=ui32SpectrumFrequencyRange;
 }
 
-void CRendererContext::setMinimumSpectrumFrequency(uint32 ui32MinSpectrumFrequency)
+void CRendererContext::setMinimumSpectrumFrequency(uint32_t ui32MinSpectrumFrequency)
 {
 	m_ui32MinSpectrumFrequency=ui32MinSpectrumFrequency;
 }
 
-void CRendererContext::setMaximumSpectrumFrequency(uint32 ui32MaxSpectrumFrequency)
+void CRendererContext::setMaximumSpectrumFrequency(uint32_t ui32MaxSpectrumFrequency)
 {
 	m_ui32MaxSpectrumFrequency=ui32MaxSpectrumFrequency;
 }
 
-void CRendererContext::setStackCount(uint32 ui32StackCount)
+void CRendererContext::setStackCount(uint32_t ui32StackCount)
 {
 	m_ui32StackCount=ui32StackCount;
 }
 
-void CRendererContext::setStackIndex(uint32 ui32StackIndex)
+void CRendererContext::setStackIndex(uint32_t ui32StackIndex)
 {
 	m_ui32StackIndex=ui32StackIndex;
 }
 
-void CRendererContext::setFaceMeshVisible(boolean bVisible)
+void CRendererContext::setFaceMeshVisible(bool bVisible)
 {
 	m_bFaceMeshVisible = bVisible;
 }
 
-void CRendererContext::setScalpMeshVisible(boolean bVisible)
+void CRendererContext::setScalpMeshVisible(bool bVisible)
 {
 	m_bScalpMeshVisible = bVisible;
 }
@@ -376,12 +405,12 @@ void CRendererContext::setScalpMeshVisible(boolean bVisible)
 // ____________________________________________________________________________________________________________________________________________________________________________________
 //
 
-void CRendererContext::setERPPlayerActive(boolean bActive)
+void CRendererContext::setERPPlayerActive(bool bActive)
 {
 	m_bERPPlayerActive=bActive;
 }
 
-void CRendererContext::stepERPFractionBy(float32 f32ERPFraction)
+void CRendererContext::stepERPFractionBy(float f32ERPFraction)
 {
 	m_f32ERPFraction+=f32ERPFraction;
 }
@@ -389,7 +418,7 @@ void CRendererContext::stepERPFractionBy(float32 f32ERPFraction)
 // ____________________________________________________________________________________________________________________________________________________________________________________
 //
 
-std::string CRendererContext::getChannelName(uint32 ui32Index) const
+std::string CRendererContext::getChannelName(uint32_t ui32Index) const
 {
 	if(ui32Index < m_vChannelName.size())
 	{
@@ -399,7 +428,7 @@ std::string CRendererContext::getChannelName(uint32 ui32Index) const
 	return "";
 }
 
-boolean CRendererContext::getChannelLocalisation(uint32 ui32Index, float& x, float& y, float& z) const
+bool CRendererContext::getChannelLocalisation(uint32_t ui32Index, float& x, float& y, float& z) const
 {
 	const CVertex& l_rChannelLocalisation=m_vChannelLocalisation[ui32Index];
 	x = l_rChannelLocalisation.x;
@@ -408,24 +437,24 @@ boolean CRendererContext::getChannelLocalisation(uint32 ui32Index, float& x, flo
 	return true;
 }
 
-uint32 CRendererContext::getChannelCount(void) const
+uint32_t CRendererContext::getChannelCount(void) const
 {
 	return m_vChannelName.size();
 }
 
-uint32 CRendererContext::getSelectedCount(void) const
+uint32_t CRendererContext::getSelectedCount(void) const
 {
 	return m_vChannelLookup.size();
 }
 
-uint32 CRendererContext::getSelected(uint32 ui32Index) const
+uint32_t CRendererContext::getSelected(uint32_t ui32Index) const
 {
 	return m_vChannelLookup[ui32Index];
 }
 
-boolean CRendererContext::isSelected(uint32 ui32Index) const
+bool CRendererContext::isSelected(uint32_t ui32Index) const
 {
-	for(uint32 i=0; i<m_vChannelLookup.size(); i++)
+	for(uint32_t i=0; i<m_vChannelLookup.size(); i++)
 	{
 		if(m_vChannelLookup[i]==ui32Index)
 		{
@@ -438,22 +467,22 @@ boolean CRendererContext::isSelected(uint32 ui32Index) const
 // ____________________________________________________________________________________________________________________________________________________________________________________
 //
 
-float32 CRendererContext::getScale(void) const
+float CRendererContext::getScale(void) const
 {
 	return m_f32Scale*(m_pParentRendererContext?m_pParentRendererContext->getScale():1);
 }
 
-float32 CRendererContext::getZoom(void) const
+float CRendererContext::getZoom(void) const
 {
 	return m_f32Zoom*(m_pParentRendererContext?m_pParentRendererContext->getZoom():1);
 }
 
-float32 CRendererContext::getRotationX(void) const
+float CRendererContext::getRotationX(void) const
 {
 	return m_f32RotationX+(m_pParentRendererContext?m_pParentRendererContext->getRotationX():0);
 }
 
-float32 CRendererContext::getRotationY(void) const
+float CRendererContext::getRotationY(void) const
 {
 	return m_f32RotationY+(m_pParentRendererContext?m_pParentRendererContext->getRotationY():0);
 }
@@ -461,77 +490,77 @@ float32 CRendererContext::getRotationY(void) const
 // ____________________________________________________________________________________________________________________________________________________________________________________
 //
 
-float32 CRendererContext::getTranslucency(void) const
+float CRendererContext::getTranslucency(void) const
 {
 	return m_f32Translucency*(m_pParentRendererContext?m_pParentRendererContext->getTranslucency():1);
 }
 
-float32 CRendererContext::getAspect(void) const
+float CRendererContext::getAspect(void) const
 {
 	return m_f32Aspect*(m_pParentRendererContext?m_pParentRendererContext->getAspect():1);
 }
 
-uint64 CRendererContext::getSampleDuration(void) const
+uint64_t CRendererContext::getSampleDuration(void) const
 {
 	return m_ui64SampleDuration;
 }
 
-uint64 CRendererContext::getTimeScale(void) const
+uint64_t CRendererContext::getTimeScale(void) const
 {
 	return m_ui64TimeScale;
 }
 
-uint64 CRendererContext::getElementCount(void) const
+uint64_t CRendererContext::getElementCount(void) const
 {
 	return m_ui64ElementCount;
 }
 
-uint64 CRendererContext::getFlowerRingCount(void) const
+uint64_t CRendererContext::getFlowerRingCount(void) const
 {
 	return m_ui64FlowerRingCount;
 }
 
-boolean CRendererContext::hasXYZPlotDepth(void) const
+bool CRendererContext::hasXYZPlotDepth(void) const
 {
 	return m_bHasXYZPlotDepth;
 }
 
-boolean CRendererContext::isAxisDisplayed(void) const
+bool CRendererContext::isAxisDisplayed(void) const
 {
 	return m_bIsAxisDisplayed;
 }
 
-boolean CRendererContext::isPositiveOnly(void) const
+bool CRendererContext::isPositiveOnly(void) const
 {
 	return m_bIsPositiveOnly;
 }
 
-boolean CRendererContext::isFaceMeshVisible(void) const
+bool CRendererContext::isFaceMeshVisible(void) const
 {
 	return m_bFaceMeshVisible;
 }
 
-boolean CRendererContext::isScalpMeshVisible(void) const
+bool CRendererContext::isScalpMeshVisible(void) const
 {
 	return m_bScalpMeshVisible;
 }
 
-boolean CRendererContext::isTimeLocked(void) const
+bool CRendererContext::isTimeLocked(void) const
 {
 	return m_bIsTimeLocked;
 }
 
-boolean CRendererContext::isScrollModeActive(void) const
+bool CRendererContext::isScrollModeActive(void) const
 {
 	return m_bIsScrollModeActive;
 }
 
-boolean CRendererContext::getCheckBoardVisibility(void) const
+bool CRendererContext::getCheckBoardVisibility(void) const
 {
 	return (m_pParentRendererContext?m_pParentRendererContext->getCheckBoardVisibility():m_bCheckBoardVisiblity);
 }
 
-boolean CRendererContext::getScaleVisibility(void) const
+bool CRendererContext::getScaleVisibility(void) const
 {
 	return (m_pParentRendererContext?m_pParentRendererContext->getScaleVisibility():m_bScaleVisiblity);
 }
@@ -541,27 +570,27 @@ IRendererContext::EDataType CRendererContext::getDataType(void) const
 	return m_eDataType;
 }
 
-uint32 CRendererContext::getSpectrumFrequencyRange(void) const
+uint32_t CRendererContext::getSpectrumFrequencyRange(void) const
 {
 	return m_ui32SpectrumFrequencyRange;
 }
 
-uint32 CRendererContext::getMinSpectrumFrequency(void) const
+uint32_t CRendererContext::getMinSpectrumFrequency(void) const
 {
 	return m_ui32MinSpectrumFrequency>m_ui32SpectrumFrequencyRange?m_ui32SpectrumFrequencyRange:m_ui32MinSpectrumFrequency;
 }
 
-uint32 CRendererContext::getMaxSpectrumFrequency(void) const
+uint32_t CRendererContext::getMaxSpectrumFrequency(void) const
 {
 	return m_ui32MaxSpectrumFrequency>m_ui32SpectrumFrequencyRange?m_ui32SpectrumFrequencyRange:m_ui32MaxSpectrumFrequency;
 }
 
-uint32 CRendererContext::getStackCount(void) const
+uint32_t CRendererContext::getStackCount(void) const
 {
 	return m_ui32StackCount;
 }
 
-uint32 CRendererContext::getStackIndex(void) const
+uint32_t CRendererContext::getStackIndex(void) const
 {
 	return m_ui32StackIndex;
 }
@@ -569,13 +598,13 @@ uint32 CRendererContext::getStackIndex(void) const
 // ____________________________________________________________________________________________________________________________________________________________________________________
 //
 
-boolean CRendererContext::isERPPlayerActive(void) const
+bool CRendererContext::isERPPlayerActive(void) const
 {
 	return m_bERPPlayerActive || (m_pParentRendererContext?m_pParentRendererContext->isERPPlayerActive():false);
 }
 
-float32 CRendererContext::getERPFraction(void) const
+float CRendererContext::getERPFraction(void) const
 {
-	float32 l_fERPFraction = m_f32ERPFraction + (m_pParentRendererContext?m_pParentRendererContext->getERPFraction():0);
+	float l_fERPFraction = m_f32ERPFraction + (m_pParentRendererContext?m_pParentRendererContext->getERPFraction():0);
 	return l_fERPFraction - ::floorf(l_fERPFraction);
 }

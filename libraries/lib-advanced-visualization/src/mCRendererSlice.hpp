@@ -32,10 +32,10 @@ namespace Mensia
 
 			virtual void rebuild(const IRendererContext& rContext);
 			virtual void refresh(const IRendererContext& rContext);
-			virtual boolean render(const IRendererContext& rContext);
+			virtual bool render(const IRendererContext& rContext);
 
 			std::vector < CVertex > m_vVertex;
-			std::vector < uint32 > m_vQuad;
+			std::vector < uint32_t > m_vQuad;
 		};
 	};
 };

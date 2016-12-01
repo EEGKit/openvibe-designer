@@ -36,7 +36,7 @@ namespace Mensia
 				if(m_pRenderer->getHistoryCount() == 0) return;
 				if(m_pRenderer->getHistoryIndex() == 0) return;
 
-				uint32 l_ui32SampleCount=m_pRenderer->getSampleCount();
+				uint32_t l_ui32SampleCount=m_pRenderer->getSampleCount();
 				double l_fDuration=l_ui32SampleCount*1.;
 				std::vector < double > l_vRange;
 				std::vector < double >::iterator it;

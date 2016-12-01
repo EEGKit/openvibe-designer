@@ -23,7 +23,7 @@
 #include "m_GtkGL.hpp"
 
 #include <openvibe/ov_all.h>
-#include <toolkit/ovtk_all.h>
+#include <visualization-toolkit/ovviz_all.h>
 
 #if defined TARGET_OS_Windows
 #include <windows.h>
@@ -191,7 +191,7 @@ namespace Mensia
 				}
 			}
 
-			virtual OpenViBE::uint32 createTexture(const std::string& sValue)
+			virtual uint32_t createTexture(const std::string& sValue)
 			{
 #define M_GRADIENT_SIZE 128
 
@@ -199,19 +199,19 @@ namespace Mensia
 				{
 					std::string l_sValue=(sValue==""?"0:0,0,100; 25:0,100,100; 50:0,49,0; 75:100,100,0; 100:100,0,0":sValue);
 
-					OpenViBE::uint32 i;
+					uint32_t i;
 
 					OpenViBE::CMatrix m_oGradientBase;
 					OpenViBE::CMatrix m_oGradient;
-					OpenViBEToolkit::Tools::ColorGradient::parse(m_oGradientBase, l_sValue.c_str());
-					OpenViBEToolkit::Tools::ColorGradient::interpolate(m_oGradient, m_oGradientBase, M_GRADIENT_SIZE);
+					OpenViBEVisualizationToolkit::Tools::ColorGradient::parse(m_oGradientBase, l_sValue.c_str());
+					OpenViBEVisualizationToolkit::Tools::ColorGradient::interpolate(m_oGradient, m_oGradientBase, M_GRADIENT_SIZE);
 
-					OpenViBE::float32 l_vTexture[M_GRADIENT_SIZE][3];
+					float l_vTexture[M_GRADIENT_SIZE][3];
 					for(i=0; i<M_GRADIENT_SIZE; i++)
 					{
-						l_vTexture[i][0]=float32(m_oGradient[i*4+1]*.01);
-						l_vTexture[i][1]=float32(m_oGradient[i*4+2]*.01);
-						l_vTexture[i][2]=float32(m_oGradient[i*4+3]*.01);
+						l_vTexture[i][0]=float(m_oGradient[i*4+1]*.01);
+						l_vTexture[i][1]=float(m_oGradient[i*4+2]*.01);
+						l_vTexture[i][2]=float(m_oGradient[i*4+3]*.01);
 					}
 
 					::glGenTextures(1, &m_ui32TextureId);
@@ -240,7 +240,7 @@ namespace Mensia
 
 			TBox* m_pBox;
 
-			OpenViBE::uint32 m_ui32TextureId;
+			uint32_t m_ui32TextureId;
 
 		private:
 
@@ -302,9 +302,9 @@ namespace Mensia
 				::glColor3f(1, 1, 1);
 
 				// Lighting
-				float32 fAmbient = 0.0f;
-				float32 fDiffuse = 1.0f;
-				float32 fSpecular = 1.0f;
+				float fAmbient = 0.0f;
+				float fDiffuse = 1.0f;
+				float fSpecular = 1.0f;
 				::GLfloat l_vAmbient[] = { fAmbient, fAmbient, fAmbient, 1 };
 				::GLfloat l_vDiffuse[] = { fDiffuse, fDiffuse, fDiffuse, 1 };
 				::GLfloat l_vSpecular[] = { fSpecular, fSpecular, fSpecular, 1 };
@@ -367,27 +367,25 @@ namespace Mensia
 					case GDK_3BUTTON_PRESS: l_iStatus=3; break;
 					default: break;
 				}
-				pBox->mouseButton(int32(pEvent->x), int32(pEvent->y), pEvent->button, l_iStatus);
+				pBox->mouseButton(int32_t(pEvent->x), int32_t(pEvent->y), pEvent->button, l_iStatus);
 				pBox->draw();
 				return TRUE;
 			}
 
 			static gboolean __motion_notify_cb(::GtkWidget* pWidget, ::GdkEventMotion* pEvent, TBox* pBox)
 			{
-				pBox->mouseMotion(int32(pEvent->x), int32(pEvent->y));
+				pBox->mouseMotion(int32_t(pEvent->x), int32_t(pEvent->y));
 				return TRUE;
 			}
 
 			static gboolean __key_press_cb(::GtkWidget* pWidget, ::GdkEventKey* pEvent, TBox* pBox)
 			{
-//::printf("__key_press_cb\n");
 				pBox->keyboard(0, 0, /*pEvent->x, pEvent->y,*/ pEvent->keyval, true);
 				return TRUE;
 			}
 
 			static gboolean __key_release_cb(::GtkWidget* pWidget, ::GdkEventKey* pEvent, TBox* pBox)
 			{
-//::printf("__key_release_cb\n");
 				pBox->keyboard(0, 0, /*pEvent->x, pEvent->y,*/ pEvent->keyval, false);
 				return TRUE;
 			}

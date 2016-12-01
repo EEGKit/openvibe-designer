@@ -30,7 +30,6 @@
 
 using namespace Mensia;
 using namespace Mensia::AdvancedVisualization;
-#define boolean Mensia::boolean
 
 static void q_rotate(Eigen::VectorXd& vDest, const Eigen::VectorXd& vSrc, const Eigen::Quaterniond& q)
 {
@@ -57,7 +56,7 @@ void CRendererConnectivity::rebuild(const IRendererContext& rContext)
 	std::map < std::string, CVertex >::const_iterator it1;
 	std::map < std::string, CVertex >::const_iterator it2;
 
-	uint32 i, j, k, l=0;
+	uint32_t i, j, k, l=0;
 
 	Eigen::Quaterniond q = Eigen::Quaterniond::Identity();
 	Eigen::Quaterniond q_id = Eigen::Quaterniond::Identity();
@@ -133,7 +132,7 @@ void CRendererConnectivity::refresh(const IRendererContext& rContext)
 	if(!m_ui32HistoryCount) return;
 	if(m_ui32HistoryCount<m_ui32ChannelCount) return;
 
-	uint32 i, j, k, l=0;
+	uint32_t i, j, k, l=0;
 
 	for(i=0; i<m_ui32ChannelCount; i++)
 	{
@@ -150,15 +149,15 @@ void CRendererConnectivity::refresh(const IRendererContext& rContext)
 	m_ui32HistoryIndex=m_ui32HistoryCount;
 }
 
-boolean CRendererConnectivity::render(const IRendererContext& rContext)
+bool CRendererConnectivity::render(const IRendererContext& rContext)
 {
 	if(!rContext.getSelectedCount()) return false;
 	if(!m_vVertex.size()) return false;
 	if(!m_ui32HistoryCount) return false;
 
 	std::map < std::string, std::pair < float, float > >::const_iterator it;
-	uint32 i;
-	float32 d=3.5;
+	uint32_t i;
+	float d=3.5;
 
 	::glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
@@ -179,7 +178,7 @@ boolean CRendererConnectivity::render(const IRendererContext& rContext)
 	::glLoadIdentity();
 	::glScalef(rContext.getZoom(), rContext.getZoom(), rContext.getZoom());
 
-//	uint32 l_ui32ChannelCountSquare=m_ui32ChannelCount*m_ui32ChannelCount;
+//	uint32_t l_ui32ChannelCountSquare=m_ui32ChannelCount*m_ui32ChannelCount;
 	float rgb=1.f;
 	::glColor4f(rgb, rgb, rgb, rContext.getTranslucency());
 	::glPushMatrix();

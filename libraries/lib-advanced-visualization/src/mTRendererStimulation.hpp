@@ -38,7 +38,7 @@ namespace Mensia
 		{
 		public:
 			std::vector<std::pair<float, float>> m_vCircle;
-			std::map<uint64, int> m_mEncounteredStimulations;
+			std::map<uint64_t, int> m_mEncounteredStimulations;
 
 			TRendererStimulation()
 			{
@@ -54,9 +54,9 @@ namespace Mensia
 				}
 			}
 
-			virtual boolean render(const IRendererContext& rContext)
+			virtual bool render(const IRendererContext& rContext)
 			{
-				boolean l_bResult=true;
+				bool l_bResult=true;
 
 				if(bPreRender)
 				{
@@ -74,21 +74,21 @@ namespace Mensia
 				{
 					::glPushAttrib(GL_ALL_ATTRIB_BITS);
 
-					uint32 l_ui32SampleCount=CRenderer::getSampleCount();
-					uint32 l_ui32HistoryIndex=CRenderer::getHistoryIndex();
-					uint64 l_ui64SampleDuration=rContext.getSampleDuration();
+					uint32_t l_ui32SampleCount=CRenderer::getSampleCount();
+					uint32_t l_ui32HistoryIndex=CRenderer::getHistoryIndex();
+					uint64_t l_ui64SampleDuration=rContext.getSampleDuration();
 
 					::glDisable(GL_TEXTURE_1D);
 					::glDisable(GL_BLEND);
 					::glDisable(GL_LINE_SMOOTH);
 
-					uint32 l_ui32LeftIndex=l_ui32HistoryIndex-l_ui32HistoryIndex%l_ui32SampleCount;
-					uint32 l_ui32MidIndex =l_ui32HistoryIndex;
-					float64 l_f64StartTime=((l_ui32LeftIndex  *l_ui64SampleDuration)>>16)/65536.;
-					float64 l_f64MidTime  =((l_ui32MidIndex   *l_ui64SampleDuration)>>16)/65536.;
-					float64 l_f64Duration =((l_ui32SampleCount*l_ui64SampleDuration)>>16)/65536.;
+					uint32_t l_ui32LeftIndex=l_ui32HistoryIndex-l_ui32HistoryIndex%l_ui32SampleCount;
+					uint32_t l_ui32MidIndex =l_ui32HistoryIndex;
+					double l_f64StartTime=((l_ui32LeftIndex  *l_ui64SampleDuration)>>16)/65536.;
+					double l_f64MidTime  =((l_ui32MidIndex   *l_ui64SampleDuration)>>16)/65536.;
+					double l_f64Duration =((l_ui32SampleCount*l_ui64SampleDuration)>>16)/65536.;
 
-					std::vector < std::pair < float64, uint64 > >::const_iterator it;
+					std::vector < std::pair < double, uint64_t > >::const_iterator it;
 					for(it=CRenderer::m_vStimulationHistory.begin(); it!=CRenderer::m_vStimulationHistory.end(); it++)
 					{
 						if (m_mEncounteredStimulations.count(it->second) == 0)
@@ -166,11 +166,11 @@ namespace Mensia
 				return l_bResult && ok;
 			}
 
-			float32* getMarkerColor(uint64 ui64Identifier)
+			float* getMarkerColor(uint64_t ui64Identifier)
 			{
-				static float32 color[4];
-				float32 alpha=reverse<>(uint8(ui64Identifier&255))*3.f/255.f;
-				int32 alphai=int32(alpha);
+				static float color[4];
+				float alpha=reverse<>(uint8_t(ui64Identifier&255))*3.f/255.f;
+				int32_t alphai=int32_t(alpha);
 				color[(alphai+0)%3]=1-alpha/3.f;
 				color[(alphai+1)%3]=alpha/3.f;
 				color[(alphai+2)%3]=0;

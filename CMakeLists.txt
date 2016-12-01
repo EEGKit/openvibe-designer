@@ -288,15 +288,16 @@ MESSAGE(STATUS "BUILDING VERSION : ${PROJECT_VERSION} OpenViBE : ${OV_PROJECT_BR
 # Add vendor specific installation instructions
 # Traverse these directories and build their components
 
-# TODO: Remove this whent the visualizations will be ported
-SET(SKIP_PLUGINS_VISUALIZATION_OVP-ADVANCED-VISUALIZATION ON)
-
 IF(NOT(SKIP_PLUGINS))
 	ADD_SUBDIRECTORY("plugins/")
 ENDIF()
 
 IF(NOT(SKIP_APPLICATIONS))
 	ADD_SUBDIRECTORY("applications/")
+ENDIF()
+
+IF(NOT(SKIP_LIBRARIES))
+	ADD_SUBDIRECTORY("libraries/")
 ENDIF()
 
 IF(NOT(SKIP_VISUALIZATION_TOOLKIT))

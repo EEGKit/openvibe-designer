@@ -15,11 +15,12 @@
  * from Mensia Technologies SA.
  */
 
-#include <ovp_license_checkout.h>
-
 #include "m_defines.hpp"
 
+// #define TARGET_Has_Experimental
+
 #include "mTBoxAlgorithmStackedContinuousViz.hpp"
+#include "mTBoxAlgorithmStackedInstantViz.hpp"
 #include "mTBoxAlgorithmContinuousViz.hpp"
 #include "mTBoxAlgorithmInstantViz.hpp"
 #include "mTBoxAlgorithmInstantLoretaViz.hpp"
@@ -50,8 +51,9 @@
 #include "ruler/mCRulerRightMonoScale.hpp"
 #include "ruler/mCRulerRightTexture.hpp"
 #include "ruler/mCRulerRightScale.hpp"
+#include "ruler/mCRulerRightLabels.hpp"
 
-#include <system/Time.h>
+#include <system/ovCTime.h>
 
 #include <ctime>
 
@@ -95,6 +97,7 @@ namespace Mensia
 
 		typedef TBoxAlgorithmStackedContinuousVizDesc < false, true, TRendererProto < IRenderer::RendererType_Bitmap, true > , TRulerPair < TRulerAutoType < CRulerBottomERPCount, CRulerBottomERPTime, CRulerBottomFrequency >, TRulerPair < CRulerLeftChannelNames, CRulerProgressH > > > SVBitmap;
 		typedef TBoxAlgorithmStackedContinuousVizDesc < true,  true, TRendererProto < IRenderer::RendererType_Bitmap, true > , TRulerPair < TRulerConditionalPair < CRulerBottomTime, CRulerBottomCount, CRulerConditionIsTimeLocked >, TRulerPair < TRulerAutoType < IRuler, IRuler, CRulerRightFrequency >, TRulerPair < CRulerLeftChannelNames, CRulerProgressV > > > > SHBitmap;
+		typedef TBoxAlgorithmStackedInstantVizDesc < true, TRendererProto < IRenderer::RendererType_Bitmap, true > , TRulerPair < CRulerBottomERPTime, TRulerPair < CRulerRightLabels<1>, TRulerPair < CRulerLeftChannelNames, CRulerProgressV > > > > SIBitmap;
 
 		typedef TBoxAlgorithmInstantVizDesc < TRendererProto < IRenderer::RendererType_2DTopography > , CRulerBottomTexture > Topography2D;
 		typedef TBoxAlgorithmInstantVizDesc < TRendererProto < IRenderer::RendererType_3DTopography > , CRulerBottomTexture > Topography3D;
@@ -104,7 +107,6 @@ namespace Mensia
 }
 
 OVP_Declare_Begin()
-
 
 	rPluginModuleContext.getTypeManager().registerEnumerationType (OVP_TypeId_TemporalCoherence, "Temporal Coherence");
 	rPluginModuleContext.getTypeManager().registerEnumerationEntry(OVP_TypeId_TemporalCoherence, "Time Locked", OVP_TypeId_TemporalCoherence_TimeLocked.toUInteger());
@@ -126,10 +128,12 @@ OVP_Declare_Begin()
 
 	OVP_Declare_New(Mensia::AdvancedVisualization::SVBitmap      ("Stacked Bitmap (Vertical)",            OID(0x93F400CF9F6C5AFD), OID(0x9926A761BA82D233), "2.0.0.0", "2.2.0.0", CParameterSet(I_Matrix, I_Stimulations, S_ChannelLocalisation, S_TemporalCoherence, S_TimeScale, S_ElementCount, S_DataScale, S_Caption, S_ColorGradient, P_None), OpenViBE::CString("Displays the input matrices as a map of colored tiles, or bitmap, continuously.\nAll the bitmaps are stacked vertically, starting from the bottom edge of the window"), OpenViBE::CString("")))
 	OVP_Declare_New(Mensia::AdvancedVisualization::SHBitmap      ("Stacked Bitmap (Horizontal)",          OID(0x6B22DC653AB0EC0F), OID(0x7B0DDB65FDC51488), "2.0.0.0", "2.2.0.0", CParameterSet(I_Matrix, I_Stimulations, S_ChannelLocalisation, S_TemporalCoherence, S_TimeScale, S_ElementCount, S_DataScale, S_Caption, S_ColorGradient, P_None), OpenViBE::CString("Displays the input matrices as a map of colored tiles, or bitmap, continuously.\nAll the bitmaps are stacked horizontally, starting from the left edge of the window"), OpenViBE::CString("")))
+	OVP_Declare_New(Mensia::AdvancedVisualization::SIBitmap      ("Instant Bitmap (3D Stream)",           OID(0x0C61E7632A5C3178), OID(0xC3CC8B43EE985C1D), "2.6.0.0", "2.6.0.0", CParameterSet(I_TimeFrequency, I_Stimulations, S_ChannelLocalisation, S_DataScale, S_Caption, S_ColorGradient, P_None), OpenViBE::CString("Displays the input matrices as a map of colored tiles, or bitmap, continuously."), OpenViBE::CString("")))
 
 	OVP_Declare_New(Mensia::AdvancedVisualization::Topography2D  ("2D Topography",                        OID(0x0A0C12A7E695F3FB), OID(0x7C3A05B8C45386F8), "2.0.0.0", "2.0.0.0", CParameterSet(I_Signal, S_ChannelLocalisation, S_DataScale, S_Caption, S_ColorGradient, F_FixedChannelOrder, P_None), OpenViBE::CString("The input is mapped to a 2 dimensional plane model of the scalp surface, using a color gradient and interpolation."), OpenViBE::CString("")))
 	OVP_Declare_New(Mensia::AdvancedVisualization::Topography3D  ("3D Topography",                        OID(0xA3F1CF20DEC477F3), OID(0xC709EA84B577D910), "2.0.0.0", "2.0.0.0", CParameterSet(I_Signal, S_ChannelLocalisation, S_DataScale, S_Caption, S_ColorGradient, F_FixedChannelOrder, P_None), OpenViBE::CString("The input is mapped to a 3D model of the scalp, using a color gradient and interpolation."), OpenViBE::CString("")))
 	OVP_Declare_New(Mensia::AdvancedVisualization::Cubes         ("3D Cubes",                             OID(0x6307469DF938EF27), OID(0xE028305D4ACF9D1A), "2.0.0.0", "2.0.0.0", CParameterSet(I_Signal, S_ChannelLocalisation, S_DataScale, S_Caption, S_ColorGradient, F_FixedChannelOrder, P_None), OpenViBE::CString("The input is mapped to a 3D representation of the EEG setup where electrodes are symbolized with cubes,\nusing a color gradient and interpolation."), OpenViBE::CString("")))
+
 	OVP_Declare_New(Mensia::AdvancedVisualization::SLoreta       ("3D Tomographic Visualization",         OID(0xD5F62E7685E0D97C), OID(0xFD0826035C47E922), "2.0.0.0", "2.2.0.0", CParameterSet(I_Signal, S_DataScale, S_Caption, S_Translucency, S_ColorGradient, F_FixedChannelOrder, P_None), OpenViBE::CString("Displays sources activity by mapping it to voxels in a 3D model of the scalp."), OpenViBE::CString("")))
 
 OVP_Declare_End()

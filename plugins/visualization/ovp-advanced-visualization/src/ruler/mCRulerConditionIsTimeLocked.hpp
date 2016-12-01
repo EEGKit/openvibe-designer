@@ -44,7 +44,7 @@ namespace Mensia
 				m_pRenderer=pRenderer;
 			}
 
-			boolean operator()(void)
+			bool operator()(void)
 			{
 				return m_pRendererContext->isTimeLocked();
 			}

@@ -1056,7 +1056,14 @@ void CInterfacedScenario::updateScenarioLabel(void)
 
 	gtk_label_set_text(l_pTitleLabel, l_sLabel.c_str());
 
-	gtk_widget_set_tooltip_markup(GTK_WIDGET(l_pTitleLabel), ("<i>"+l_sTitleLabelUntrimmed+ (m_bHasBeenModified ? " - unsaved":"")+"</i>").c_str());
+	std::string tooltipLabel = l_sTitleLabelUntrimmed;
+	size_t index = 0;
+	while ((index = tooltipLabel.find("&", index)) != std::string::npos)
+	{
+		 tooltipLabel.replace(index, 1, "&amp;");
+		 index += 5;
+	}
+	gtk_widget_set_tooltip_markup(GTK_WIDGET(l_pTitleLabel), ("<i>"+tooltipLabel+ (m_bHasBeenModified ? " - unsaved":"")+"</i>").c_str());
 
 }
 

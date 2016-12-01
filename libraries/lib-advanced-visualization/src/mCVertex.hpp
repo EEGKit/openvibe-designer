@@ -15,10 +15,9 @@
  * from Mensia Technologies SA.
  */
 
-#ifndef __Mensia_AdvancedVisualization_CVertex_H__
-#define __Mensia_AdvancedVisualization_CVertex_H__
+#pragma once
 
-#include <mensia/base.h>
+//#include <mensia/base.h>
 
 #include <cmath>
 
@@ -31,12 +30,12 @@ namespace Mensia
 		{
 		public:
 
-			CVertex(float64 _x=0, float64 _y=0, float64 _z=0, float64 _u=0, float64 _v=0)
-				:x(float32(_x))
-				,y(float32(_y))
-				,z(float32(_z))
-				,u(float32(_u))
-				,v(float32(_v))
+			CVertex(double _x=0, double _y=0, double _z=0, double _u=0, double _v=0)
+				:x(float(_x))
+				,y(float(_y))
+				,z(float(_z))
+				,u(float(_u))
+				,v(float(_v))
 			{
 			}
 
@@ -49,18 +48,18 @@ namespace Mensia
 			{
 			}
 
-			float32 x;
-			float32 y;
-			float32 z;
-			float32 u;
-			float32 v;
+			float x;
+			float y;
+			float z;
+			float u;
+			float v;
 
 			CVertex& normalize(void)
 			{
-				float32 n=this->length();
+				float n=this->length();
 				if(n!=0)
 				{
-					float32 in=1.f/n;
+					float in=1.f/n;
 					this->x*=in;
 					this->y*=in;
 					this->z*=in;
@@ -68,17 +67,17 @@ namespace Mensia
 				return *this;
 			}
 
-			float32 length(void) const
+			float length(void) const
 			{
 				return ::sqrt(this->sqr_length());
 			}
 
-			float32 sqr_length(void) const
+			float sqr_length(void) const
 			{
 				return CVertex::dot(*this, *this);
 			}
 
-			static float32 dot(const CVertex& v1, const CVertex& v2)
+			static float dot(const CVertex& v1, const CVertex& v2)
 			{
 				return v1.x*v2.x + v1.y*v2.y + v1.z*v2.z;
 			}
@@ -99,14 +98,14 @@ namespace Mensia
 				return CVertex::cross(v1, v2);
 			}
 
-			static boolean isOnSameSide(const CVertex& p1, const CVertex& p2, const CVertex& a, const CVertex& b)
+			static bool isOnSameSide(const CVertex& p1, const CVertex& p2, const CVertex& a, const CVertex& b)
 			{
 				CVertex cp1=CVertex::cross(a, b, a, p1);
 				CVertex cp2=CVertex::cross(a, b, a, p2);
 				return CVertex::dot(cp1, cp2) >= 0;
 			}
 
-			static boolean isInTriangle(const CVertex& p, const CVertex& a, const CVertex& b, const CVertex& c)
+			static bool isInTriangle(const CVertex& p, const CVertex& a, const CVertex& b, const CVertex& c)
 			{
 				return CVertex::isOnSameSide(p, a, b, c) && CVertex::isOnSameSide(p, b, c, a) && CVertex::isOnSameSide(p, c, a, b);
 			}
@@ -114,5 +113,3 @@ namespace Mensia
 	};
 };
 #pragma pack()
-
-#endif // __Mensia_AdvancedVisualization_CVertex_H__

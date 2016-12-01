@@ -15,13 +15,15 @@
  * from Mensia Technologies SA.
  */
 
+#define _USE_MATH_DEFINES
+#include <cmath>
+
 #include "mCRendererFlower.hpp"
 
 using namespace Mensia;
 using namespace Mensia::AdvancedVisualization;
-#define boolean Mensia::boolean
 
-CRendererFlower::CRendererFlower(uint32 ui32MultiCount)
+CRendererFlower::CRendererFlower(uint32_t ui32MultiCount)
 {
 	m_vMuliVertex.resize(ui32MultiCount);
 }
@@ -30,11 +32,11 @@ void CRendererFlower::rebuild(const IRendererContext& rContext)
 {
 	CRenderer::rebuild(rContext);
 
-	uint32 i, j, z;
+	uint32_t i, j, z;
 
-	m_ui32AutoDecimationFactor=1+uint32((m_ui32SampleCount-1)/rContext.getMaximumSampleCountPerDisplay());
+	m_ui32AutoDecimationFactor=1+uint32_t((m_ui32SampleCount-1)/rContext.getMaximumSampleCountPerDisplay());
 
-	uint32 n = m_ui32SampleCount/m_ui32AutoDecimationFactor;
+	uint32_t n = m_ui32SampleCount/m_ui32AutoDecimationFactor;
 
 	for(z=0; z<m_vMuliVertex.size(); z++)
 	{
@@ -54,8 +56,8 @@ void CRendererFlower::rebuild(const IRendererContext& rContext)
 	m_vCircle.resize(n);
 	for(i=0; i<n; i++)
 	{
-		m_vCircle[i].x=::cosf(rContext.getFlowerRingCount()*i*M_PIf*2.f/n);
-		m_vCircle[i].y=::sinf(rContext.getFlowerRingCount()*i*M_PIf*2.f/n);
+		m_vCircle[i].x=::cosf(rContext.getFlowerRingCount()*i*static_cast<float>(M_PI)*2.f/n);
+		m_vCircle[i].y=::sinf(rContext.getFlowerRingCount()*i*static_cast<float>(M_PI)*2.f/n);
 		m_vCircle[i].z=0;
 	}
 
@@ -68,15 +70,15 @@ void CRendererFlower::refresh(const IRendererContext& rContext)
 
 	if(!m_ui32HistoryCount) return;
 
-	uint32 i, j, k, l, z, count;
-	float32 sum;
+	uint32_t i, j, k, l, z, count;
+	float sum;
 
 	for(z=0; z<m_vMuliVertex.size(); z++)
 	{
 		for(i=0; i<m_ui32ChannelCount; i++)
 		{
 			k=((m_ui32HistoryCount-1-z*m_vMuliVertex[z][i].size())/m_ui32SampleCount)*m_ui32SampleCount;
-			std::vector < float32 >& l_vHistory=m_vHistory[i];
+			std::vector < float >& l_vHistory=m_vHistory[i];
 			CVertex* l_pVertex=&m_vMuliVertex[z][i][0];
 			CVertex* l_pCircleVertex=&m_vCircle[0];
 			for(j=0; j<m_ui32SampleCount-m_ui32AutoDecimationFactor+1; j+=m_ui32AutoDecimationFactor, k+=m_ui32AutoDecimationFactor)
@@ -95,7 +97,7 @@ void CRendererFlower::refresh(const IRendererContext& rContext)
 
 				if(count)
 				{
-					float32 v=sum/count;
+					float v=sum/count;
 					l_pVertex->x=l_pCircleVertex->x*v;
 					l_pVertex->y=l_pCircleVertex->y*v;
 					l_pVertex->z=l_pCircleVertex->z*v;
@@ -114,15 +116,15 @@ void CRendererFlower::refresh(const IRendererContext& rContext)
 	m_ui32HistoryIndex=m_ui32HistoryCount;
 }
 
-boolean CRendererFlower::render(const IRendererContext& rContext)
+bool CRendererFlower::render(const IRendererContext& rContext)
 {
 	if(!rContext.getSelectedCount()) return false;
 	if(!m_vMuliVertex.size()) return false;
 	if(!m_ui32HistoryCount) return false;
 
-	uint32 i, z;
-	uint32 n = m_ui32SampleCount/m_ui32AutoDecimationFactor;
-	uint32 d = (m_ui32HistoryIndex%m_ui32SampleCount)/m_ui32AutoDecimationFactor;
+	uint32_t i, z;
+	uint32_t n = m_ui32SampleCount/m_ui32AutoDecimationFactor;
+	uint32_t d = (m_ui32HistoryIndex%m_ui32SampleCount)/m_ui32AutoDecimationFactor;
 
 	::glMatrixMode(GL_TEXTURE);
 	::glPushMatrix();

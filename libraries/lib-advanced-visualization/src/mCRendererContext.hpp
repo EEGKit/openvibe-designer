@@ -41,121 +41,126 @@ namespace Mensia
 
 			virtual void clearChannelInfo(void);
 			virtual void addChannel(const std::string& sChannelName, float x, float y, float z);
-			virtual void selectChannel(uint32 ui32Index);
-			virtual void unselectChannel(uint32 ui32Index);
-			virtual void sortSelectedChannel(uint32 ui32SortMode);
+			virtual void selectChannel(uint32_t ui32Index);
+			virtual void unselectChannel(uint32_t ui32Index);
+			virtual void sortSelectedChannel(uint32_t ui32SortMode);
+
+			virtual void setDimensionLabel(size_t dimensionIndex, size_t labelIndex, const char* label);
+			virtual size_t getDimensionLabelCount(size_t dimensionIndex) const;
+			virtual const char* getDimensionLabel(size_t dimensionIndex, size_t labelIndex) const;
 
 			virtual void clearTransformInfo(void);
-			virtual void scaleBy(float32 f32Scale);
-			virtual void setScale(float32 f32Scale);
-			virtual void zoomBy(float32 f32Zoom);
-			virtual void rotateByX(float32 f32Rotation);
-			virtual void rotateByY(float32 f32Rotation);
+			virtual void scaleBy(float f32Scale);
+			virtual void setScale(float f32Scale);
+			virtual void zoomBy(float f32Zoom);
+			virtual void rotateByX(float f32Rotation);
+			virtual void rotateByY(float f32Rotation);
 
-			virtual void setTranslucency(float32 f32Translucency);
-			virtual void setAspect(float32 f32Aspect);
-			virtual void setSampleDuration(uint64 ui64SampleDuration);
-			virtual void setTimeScale(uint64 ui64TimeScale);
-			virtual void setElementCount(uint64 ui64ElementCount);
-			virtual void setFlowerRingCount(uint64 ui64FlowerRingCount);
-			virtual void setXYZPlotDepth(boolean bHasDepth);
-			virtual void setAxisDisplay(boolean bIsAxisDisplayed);
-			virtual void setPositiveOnly(boolean bPositiveOnly);
-			virtual void setTimeLocked(boolean bTimeLocked);
-			virtual void setScrollModeActive(boolean bScrollModeActive);
-			virtual void setScaleVisibility(boolean bVisibility);
-			virtual void setCheckBoardVisibility(boolean bVisibility);
+			virtual void setTranslucency(float f32Translucency);
+			virtual void setAspect(float f32Aspect);
+			virtual void setSampleDuration(uint64_t ui64SampleDuration);
+			virtual void setTimeScale(uint64_t ui64TimeScale);
+			virtual void setElementCount(uint64_t ui64ElementCount);
+			virtual void setFlowerRingCount(uint64_t ui64FlowerRingCount);
+			virtual void setXYZPlotDepth(bool bHasDepth);
+			virtual void setAxisDisplay(bool bIsAxisDisplayed);
+			virtual void setPositiveOnly(bool bPositiveOnly);
+			virtual void setTimeLocked(bool bTimeLocked);
+			virtual void setScrollModeActive(bool bScrollModeActive);
+			virtual void setScaleVisibility(bool bVisibility);
+			virtual void setCheckBoardVisibility(bool bVisibility);
 			virtual void setDataType(EDataType eDataType);
-			virtual void setSpectrumFrequencyRange(uint32 ui32SpectrumFrequencyRange);
-			virtual void setMinimumSpectrumFrequency(uint32 ui32MinSpectrumFrequency);
-			virtual void setMaximumSpectrumFrequency(uint32 ui32MaxSpectrumFrequency);
-			virtual void setStackCount(uint32 ui32StackCount);
-			virtual void setStackIndex(uint32 ui32StackIndex);
-			virtual void setFaceMeshVisible(boolean bVisible);
-			virtual void setScalpMeshVisible(boolean bVisible);
+			virtual void setSpectrumFrequencyRange(uint32_t ui32SpectrumFrequencyRange);
+			virtual void setMinimumSpectrumFrequency(uint32_t ui32MinSpectrumFrequency);
+			virtual void setMaximumSpectrumFrequency(uint32_t ui32MaxSpectrumFrequency);
+			virtual void setStackCount(uint32_t ui32StackCount);
+			virtual void setStackIndex(uint32_t ui32StackIndex);
+			virtual void setFaceMeshVisible(bool bVisible);
+			virtual void setScalpMeshVisible(bool bVisible);
 
-			virtual void setERPPlayerActive(boolean bActive);
-			virtual void stepERPFractionBy(float32 f32ERPFraction);
+			virtual void setERPPlayerActive(bool bActive);
+			virtual void stepERPFractionBy(float f32ERPFraction);
 
-			virtual std::string getChannelName(uint32 ui32Index) const;
-			virtual boolean getChannelLocalisation(uint32 ui32Index, float& x, float& y, float& z) const;
-			virtual uint32 getChannelCount(void) const;
-			virtual uint32 getSelectedCount(void) const;
-			virtual uint32 getSelected(uint32 ui32Index) const;
-			virtual boolean isSelected(uint32 ui32Index) const;
+			virtual std::string getChannelName(uint32_t ui32Index) const;
+			virtual bool getChannelLocalisation(uint32_t ui32Index, float& x, float& y, float& z) const;
+			virtual uint32_t getChannelCount(void) const;
+			virtual uint32_t getSelectedCount(void) const;
+			virtual uint32_t getSelected(uint32_t ui32Index) const;
+			virtual bool isSelected(uint32_t ui32Index) const;
 
-			virtual float32 getScale(void) const;
-			virtual float32 getZoom(void) const;
-			virtual float32 getRotationX(void) const;
-			virtual float32 getRotationY(void) const;
+			virtual float getScale(void) const;
+			virtual float getZoom(void) const;
+			virtual float getRotationX(void) const;
+			virtual float getRotationY(void) const;
 
-			virtual float32 getTranslucency(void) const;
-			virtual float32 getAspect(void) const;
-			virtual uint64 getSampleDuration(void) const;
-			virtual uint64 getTimeScale(void) const;
-			virtual uint64 getElementCount(void) const;
-			virtual uint64 getFlowerRingCount(void) const;
-			virtual boolean hasXYZPlotDepth(void) const;
-			virtual boolean isAxisDisplayed(void) const;
-			virtual boolean isPositiveOnly(void) const;
-			virtual boolean isTimeLocked(void) const;
-			virtual boolean isScrollModeActive(void) const;
-			virtual boolean getScaleVisibility(void) const;
-			virtual boolean getCheckBoardVisibility(void) const;
+			virtual float getTranslucency(void) const;
+			virtual float getAspect(void) const;
+			virtual uint64_t getSampleDuration(void) const;
+			virtual uint64_t getTimeScale(void) const;
+			virtual uint64_t getElementCount(void) const;
+			virtual uint64_t getFlowerRingCount(void) const;
+			virtual bool hasXYZPlotDepth(void) const;
+			virtual bool isAxisDisplayed(void) const;
+			virtual bool isPositiveOnly(void) const;
+			virtual bool isTimeLocked(void) const;
+			virtual bool isScrollModeActive(void) const;
+			virtual bool getScaleVisibility(void) const;
+			virtual bool getCheckBoardVisibility(void) const;
 			virtual EDataType getDataType(void) const;
-			virtual uint32 getSpectrumFrequencyRange(void) const;
-			virtual uint32 getMinSpectrumFrequency(void) const;
-			virtual uint32 getMaxSpectrumFrequency(void) const;
-			virtual uint32 getStackCount(void) const;
-			virtual uint32 getStackIndex(void) const;
-			virtual boolean isFaceMeshVisible(void) const;
-			virtual boolean isScalpMeshVisible(void) const;
+			virtual uint32_t getSpectrumFrequencyRange(void) const;
+			virtual uint32_t getMinSpectrumFrequency(void) const;
+			virtual uint32_t getMaxSpectrumFrequency(void) const;
+			virtual uint32_t getStackCount(void) const;
+			virtual uint32_t getStackIndex(void) const;
+			virtual bool isFaceMeshVisible(void) const;
+			virtual bool isScalpMeshVisible(void) const;
 
-			virtual boolean isERPPlayerActive(void) const;
-			virtual float32 getERPFraction(void) const;
+			virtual bool isERPPlayerActive(void) const;
+			virtual float getERPFraction(void) const;
 
-			uint32 getMaximumSampleCountPerDisplay(void) const { return 1000; /*500;*/ /*128*/ }
+			uint32_t getMaximumSampleCountPerDisplay(void) const { return 1000; /*500;*/ /*128*/ }
 
 		protected:
 
 			IRendererContext* m_pParentRendererContext;
 
-			std::vector < uint32 > m_vChannelLookup;
+			std::vector < uint32_t > m_vChannelLookup;
 			std::vector < std::string > m_vChannelName;
 			std::vector < CVertex > m_vChannelLocalisation;
+			std::map<size_t, std::vector<std::string>> m_DimensionLabels;
 
-			std::map < std::string, float32 > m_vLeftRightScore;
-			std::map < std::string, float32 > m_vFrontBackScore;
+			std::map < std::string, float > m_vLeftRightScore;
+			std::map < std::string, float > m_vFrontBackScore;
 
-			float32 m_f32Scale;
-			float32 m_f32Zoom;
-			float32 m_f32RotationX;
-			float32 m_f32RotationY;
+			float m_f32Scale;
+			float m_f32Zoom;
+			float m_f32RotationX;
+			float m_f32RotationY;
 
-			float32 m_f32Translucency;
-			float32 m_f32Aspect;
-			uint64 m_ui64SampleDuration;
-			uint64 m_ui64TimeScale;
-			uint64 m_ui64ElementCount;
-			uint64 m_ui64FlowerRingCount;
-			boolean m_bHasXYZPlotDepth;
-			boolean m_bIsAxisDisplayed;
-			boolean m_bIsPositiveOnly;
-			boolean m_bIsTimeLocked;
-			boolean m_bIsScrollModeActive;
-			boolean m_bScaleVisiblity;
-			boolean m_bCheckBoardVisiblity;
+			float m_f32Translucency;
+			float m_f32Aspect;
+			uint64_t m_ui64SampleDuration;
+			uint64_t m_ui64TimeScale;
+			uint64_t m_ui64ElementCount;
+			uint64_t m_ui64FlowerRingCount;
+			bool m_bHasXYZPlotDepth;
+			bool m_bIsAxisDisplayed;
+			bool m_bIsPositiveOnly;
+			bool m_bIsTimeLocked;
+			bool m_bIsScrollModeActive;
+			bool m_bScaleVisiblity;
+			bool m_bCheckBoardVisiblity;
 			EDataType m_eDataType;
-			uint32 m_ui32SpectrumFrequencyRange;
-			uint32 m_ui32MinSpectrumFrequency;
-			uint32 m_ui32MaxSpectrumFrequency;
-			uint32 m_ui32StackCount;
-			uint32 m_ui32StackIndex;
-			boolean m_bFaceMeshVisible;
-			boolean m_bScalpMeshVisible;
+			uint32_t m_ui32SpectrumFrequencyRange;
+			uint32_t m_ui32MinSpectrumFrequency;
+			uint32_t m_ui32MaxSpectrumFrequency;
+			uint32_t m_ui32StackCount;
+			uint32_t m_ui32StackIndex;
+			bool m_bFaceMeshVisible;
+			bool m_bScalpMeshVisible;
 
-			boolean m_bERPPlayerActive;
-			float32 m_f32ERPFraction;
+			bool m_bERPPlayerActive;
+			float m_f32ERPFraction;
 		};
 	};
 };

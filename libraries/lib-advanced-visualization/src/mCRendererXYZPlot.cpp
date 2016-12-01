@@ -19,7 +19,6 @@
 
 using namespace Mensia;
 using namespace Mensia::AdvancedVisualization;
-#define boolean Mensia::boolean
 
 void CRendererXYZPlot::rebuild(const IRendererContext& rContext)
 {
@@ -29,11 +28,11 @@ void CRendererXYZPlot::rebuild(const IRendererContext& rContext)
 	m_ui32PlotDimension=(m_bHasDepth?3:2);
 	m_ui32PlotCount=(rContext.getChannelCount()+m_ui32PlotDimension-1) / m_ui32PlotDimension;
 	m_vVertex.resize(m_ui32PlotCount);
-	float32 l_f32InverseSampleCount = 1.f / (m_ui32SampleCount < 2 ? 1 : (m_ui32SampleCount - 1));
-	for(uint32 i=0; i<m_ui32PlotCount; i++)
+	float l_f32InverseSampleCount = 1.f / (m_ui32SampleCount < 2 ? 1 : (m_ui32SampleCount - 1));
+	for(uint32_t i=0; i<m_ui32PlotCount; i++)
 	{
 		m_vVertex[i].resize(this->m_ui32SampleCount);
-		for(uint32 j=0; j<this->m_ui32SampleCount; j++)
+		for(uint32_t j=0; j<this->m_ui32SampleCount; j++)
 		{
 			m_vVertex[i][j].u = j*l_f32InverseSampleCount;
 		}
@@ -50,7 +49,7 @@ void CRendererXYZPlot::refresh(const IRendererContext& rContext)
 
 	while(m_ui32HistoryIndex < m_ui32HistoryCount)
 	{
-		uint32 i, i3, j = m_ui32HistoryIndex % this->m_ui32SampleCount;
+		uint32_t i, i3, j = m_ui32HistoryIndex % this->m_ui32SampleCount;
 		for(i=0; i<m_ui32PlotCount; i++)
 		{
 
@@ -72,7 +71,7 @@ void CRendererXYZPlot::refresh(const IRendererContext& rContext)
 	}
 }
 
-boolean CRendererXYZPlot::render(const IRendererContext& rContext)
+bool CRendererXYZPlot::render(const IRendererContext& rContext)
 {
 	if(!rContext.getSelectedCount()) return false;
 	if(!m_vVertex.size()) return false;
@@ -82,7 +81,7 @@ boolean CRendererXYZPlot::render(const IRendererContext& rContext)
 
 	if(m_bHasDepth)
 	{
-		float32 d=3.5;
+		float d=3.5;
 
 		::glMatrixMode(GL_PROJECTION);
 		::glPushMatrix();
@@ -113,12 +112,12 @@ boolean CRendererXYZPlot::render(const IRendererContext& rContext)
 		}
 	}
 
-	uint32 n = m_ui32SampleCount;
-	uint32 d = (m_ui32HistoryIndex%m_ui32SampleCount);
+	uint32_t n = m_ui32SampleCount;
+	uint32_t d = (m_ui32HistoryIndex%m_ui32SampleCount);
 
 	::glEnableClientState(GL_VERTEX_ARRAY);
 	::glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	for(uint32 i=0; i<m_ui32PlotCount; i++)
+	for(uint32_t i=0; i<m_ui32PlotCount; i++)
 	{
 		::glPushMatrix();
 		::glScalef(rContext.getScale(), rContext.getScale(), rContext.getScale());

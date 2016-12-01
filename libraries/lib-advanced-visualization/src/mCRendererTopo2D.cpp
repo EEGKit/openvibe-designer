@@ -3,23 +3,22 @@
 
 using namespace Mensia;
 using namespace Mensia::AdvancedVisualization;
-#define boolean Mensia::boolean
 
 #define OFFSET .0001f
 
 void CRendererTopo2D::rebuild3DMeshesPre(const IRendererContext& rContext)
 {
-	uint32 i, j, k;
+	uint32_t i, j, k;
 
-	const uint32 l_ui32VertexCount1 = 32;
-	const uint32 l_ui32VertexCount2 = 32;
-	const uint32 l_ui32CircleVertexCount = 128;
+	const uint32_t l_ui32VertexCount1 = 32;
+	const uint32_t l_ui32VertexCount2 = 32;
+	const uint32_t l_ui32CircleVertexCount = 128;
 
 	{
 		m_oScalp.clear();
 
 		std::vector < CVertex >& l_vVertex=m_oScalp.m_vVertex;
-		std::vector < uint32 >& l_vTriangle=m_oScalp.m_vTriangle;
+		std::vector < uint32_t >& l_vTriangle=m_oScalp.m_vTriangle;
 
 		l_vVertex.resize(l_ui32VertexCount1*l_ui32VertexCount2);
 		for(i=0, k=0; i<l_ui32VertexCount1; i++)
@@ -61,7 +60,7 @@ void CRendererTopo2D::rebuild3DMeshesPre(const IRendererContext& rContext)
 		m_oFace.clear();
 
 		std::vector < CVertex >& l_vVertex=m_oFace.m_vVertex;
-		std::vector < uint32 >& l_vTriangle=m_oFace.m_vTriangle;
+		std::vector < uint32_t >& l_vTriangle=m_oFace.m_vTriangle;
 
 		// Ribbon mesh
 
@@ -147,15 +146,15 @@ void CRendererTopo2D::rebuild3DMeshesPre(const IRendererContext& rContext)
 
 namespace
 {
-	static void unfold(std::vector < CVertex >& rVertex, float32 fLayer=0)
+	static void unfold(std::vector < CVertex >& rVertex, float fLayer=0)
 	{
 		std::vector < CVertex >::iterator it;
 		for(it=rVertex.begin(); it!=rVertex.end(); it++)
 		{
 			CVertex& p=(*it);
 			p.y += OFFSET;
-			float32 phi=M_PIf*.5f - ::asinf(p.y);
-			float32 psi=::atan2f(p.z, p.x);
+			float phi=static_cast<float>(M_PI)*.5f - ::asinf(p.y);
+			float psi=::atan2f(p.z, p.x);
 
 			p.x = phi*::cos(psi);
 			p.y = fLayer;
@@ -166,7 +165,7 @@ namespace
 
 void CRendererTopo2D::rebuild3DMeshesPost(const IRendererContext& rContext)
 {
-	const float32 l_f32Layer=1E-3f;
+	const float l_f32Layer=1E-3f;
 
 	unfold(m_oScalp.m_vVertex, -l_f32Layer);
 	unfold(m_oFace.m_vVertex, l_f32Layer);

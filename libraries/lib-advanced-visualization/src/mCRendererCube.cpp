@@ -23,7 +23,6 @@
 
 using namespace Mensia;
 using namespace Mensia::AdvancedVisualization;
-#define boolean Mensia::boolean
 
 CRendererCube::CRendererCube(void)
 {
@@ -45,12 +44,12 @@ void CRendererCube::refresh(const IRendererContext& rContext)
 
 	if(!m_ui32HistoryCount) return;
 
-	float32 l_f32SampleIndexERP=(m_f32ERPFraction*(m_ui32SampleCount-1));
-	float32 l_f32Alpha=l_f32SampleIndexERP-std::floor(l_f32SampleIndexERP);
-	uint32 l_ui32SampleIndexERP1=uint32(l_f32SampleIndexERP  )%m_ui32SampleCount;
-	uint32 l_ui32SampleIndexERP2=uint32(l_f32SampleIndexERP+1)%m_ui32SampleCount;
+	float l_f32SampleIndexERP=(m_f32ERPFraction*(m_ui32SampleCount-1));
+	float l_f32Alpha=l_f32SampleIndexERP-std::floor(l_f32SampleIndexERP);
+	uint32_t l_ui32SampleIndexERP1=uint32_t(l_f32SampleIndexERP  )%m_ui32SampleCount;
+	uint32_t l_ui32SampleIndexERP2=uint32_t(l_f32SampleIndexERP+1)%m_ui32SampleCount;
 
-	for(uint32 i=0; i<m_vVertex.size(); i++)
+	for(uint32_t i=0; i<m_vVertex.size(); i++)
 	{
 		m_vVertex[i].u=m_vHistory[i][m_ui32HistoryCount-m_ui32SampleCount+l_ui32SampleIndexERP1]*(1-l_f32Alpha)
 		              +m_vHistory[i][m_ui32HistoryCount-m_ui32SampleCount+l_ui32SampleIndexERP2]*(  l_f32Alpha);
@@ -59,7 +58,7 @@ void CRendererCube::refresh(const IRendererContext& rContext)
 	m_ui32HistoryIndex=m_ui32HistoryCount;
 }
 
-boolean CRendererCube::render(const IRendererContext& rContext)
+bool CRendererCube::render(const IRendererContext& rContext)
 {
 	std::map < std::string, CVertex >::const_iterator it;
 
@@ -67,8 +66,8 @@ boolean CRendererCube::render(const IRendererContext& rContext)
 	if(!m_vVertex.size()) return false;
 	if(!m_ui32HistoryCount) return false;
 
-	uint32 j, k;
-	float32 d=3.5;
+	uint32_t j, k;
+	float d=3.5;
 
 	::glEnable(GL_DEPTH_TEST);
 	::glDisable(GL_BLEND);
