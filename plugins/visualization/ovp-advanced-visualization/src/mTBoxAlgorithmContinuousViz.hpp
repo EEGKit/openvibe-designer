@@ -15,8 +15,7 @@
  * from Mensia Technologies SA.
  */
 
-#ifndef __OpenViBEPlugins_BoxAlgorithm_ContinuousViz_H__
-#define __OpenViBEPlugins_BoxAlgorithm_ContinuousViz_H__
+#pragma once
 
 #include "mCBoxAlgorithmViz.hpp"
 
@@ -157,15 +156,9 @@ namespace Mensia
 
 				if(l_pMatrix->getDimensionCount()==1)
 				{
-		#if 1
 					l_ui32ChannelCount=l_pMatrix->getDimensionSize(0);
 					l_ui32SampleCount=1;
-		#else
-					l_ui32ChannelCount=1;
-					l_ui32SampleCount=l_pMatrix->getDimensionSize(0);
-		#endif
 				}
-		//		if(l_ui32SampleCount==0) l_ui32SampleCount=1;
 
 				if(m_oMatrixDecoder.isHeaderReceived())
 				{
@@ -197,12 +190,11 @@ namespace Mensia
 						if(l_sName == "")
 						{
 							char l_sIndexedChannelName[1024];
-							::sprintf(l_sIndexedChannelName, "Channel %i", j+1);
+							::sprintf(l_sIndexedChannelName, "Channel %u", j+1);
 							l_sName=l_sIndexedChannelName;
 						}
 
 						m_pRendererContext->addChannel(l_sName, v.x, v.y, v.z);
-		//				m_pRendererContext->addChannel(trim(l_pMatrix->getDimensionLabel(0, j)));
 						::gtk_list_store_append(m_pChannelListStore, &l_oGtkTreeIterator);
 						::gtk_list_store_set(m_pChannelListStore, &l_oGtkTreeIterator, 0, j+1, 1, l_sName.c_str(), -1);
 					}
@@ -210,7 +202,6 @@ namespace Mensia
 					::gtk_tree_selection_select_all(::gtk_tree_view_get_selection(m_pChannelTreeView));
 
 					m_pRenderer->setChannelCount(l_ui32ChannelCount);
-		//			m_pRenderer->setSampleCount(uint32_t(m_f64TimeScale)); // $$$
 
 					if(m_oTypeIdentifier==OV_TypeId_Signal)
 					{
@@ -227,34 +218,29 @@ namespace Mensia
 
 					if(l_ui32SampleCount!=1)
 					{
-						OpenViBE::Kernel::ELogLevel l_eLogLevel = this->getConfigurationManager().expandAsBoolean("${AdvancedViz_WarnIfSuspiciousSettings}", true) ? OpenViBE::Kernel::LogLevel_Warning : OpenViBE::Kernel::LogLevel_Trace;
 						bool l_bWarned=false;
 						if(m_oTypeIdentifier == OV_TypeId_Spectrum)
 						{
 							l_bWarned=true;
-							this->getLogManager() << l_eLogLevel << "Input matrix has 'spectrum' type\n";
-							this->getLogManager() << l_eLogLevel << "Such configuration is uncommon for a 'continous' kind of visualization !\n";
-							this->getLogManager() << l_eLogLevel << "You might want to consider the 'stacked' kind of visualization for time/frequency analysis for instance\n";
-							this->getLogManager() << l_eLogLevel << "Please double check your scenario\n";
+							this->getLogManager() << OpenViBE::Kernel::LogLevel_Warning << "Input matrix has 'spectrum' type\n";
+							this->getLogManager() << OpenViBE::Kernel::LogLevel_Warning << "Such configuration is uncommon for a 'continous' kind of visualization !\n";
+							this->getLogManager() << OpenViBE::Kernel::LogLevel_Warning << "You might want to consider the 'stacked' kind of visualization for time/frequency analysis for instance\n";
+							this->getLogManager() << OpenViBE::Kernel::LogLevel_Warning << "Please double check your scenario\n";
 						}
 						else
 						{
 							if(!m_pRendererContext->isTimeLocked())
 							{
 								l_bWarned=true;
-								this->getLogManager() << l_eLogLevel << "Input matrix has " << static_cast<OpenViBE::uint32>(l_ui32SampleCount) << " elements and the box settings say the elements are independant with " << static_cast<OpenViBE::uint64>(m_ui64ElementCount) << " elements to render\n";
-								this->getLogManager() << l_eLogLevel << "Such configuration is uncommon for a 'continous' kind of visualization !\n";
-								this->getLogManager() << l_eLogLevel << "You might want either of the following alternative :\n";
-								this->getLogManager() << l_eLogLevel << " - an 'instant' kind of visualization to highlight the " << static_cast<OpenViBE::uint64>(m_ui64ElementCount) << " elements of the matrix\n";
-								this->getLogManager() << l_eLogLevel << " - a 'time locked' kind of elements (thus the scenario must refresh the matrix on a regular basis)\n";
-								this->getLogManager() << l_eLogLevel << "Please double check your scenario and box settings\n";
+								this->getLogManager() << OpenViBE::Kernel::LogLevel_Warning << "Input matrix has " << static_cast<OpenViBE::uint32>(l_ui32SampleCount) << " elements and the box settings say the elements are independant with " << static_cast<OpenViBE::uint64>(m_ui64ElementCount) << " elements to render\n";
+								this->getLogManager() << OpenViBE::Kernel::LogLevel_Warning << "Such configuration is uncommon for a 'continous' kind of visualization !\n";
+								this->getLogManager() << OpenViBE::Kernel::LogLevel_Warning << "You might want either of the following alternative :\n";
+								this->getLogManager() << OpenViBE::Kernel::LogLevel_Warning << " - an 'instant' kind of visualization to highlight the " << static_cast<OpenViBE::uint64>(m_ui64ElementCount) << " elements of the matrix\n";
+								this->getLogManager() << OpenViBE::Kernel::LogLevel_Warning << " - a 'time locked' kind of elements (thus the scenario must refresh the matrix on a regular basis)\n";
+								this->getLogManager() << OpenViBE::Kernel::LogLevel_Warning << "Please double check your scenario and box settings\n";
 							}
 						}
 
-						if(l_bWarned && l_eLogLevel == OpenViBE::Kernel::LogLevel_Warning)
-						{
-							this->getLogManager() << l_eLogLevel << "This message can be logged at down from Warning to Trace level setting the environment variable " << OpenViBE::CString("AdvancedViz_WarnIfSuspiciousSettings") << " to " << bool(false) << "\n";
-						}
 					}
 
 					m_bRebuildNeeded=true;
@@ -316,39 +302,30 @@ namespace Mensia
 				}
 			}
 
-		#if 1
-			if(true)
+			uint32_t l_ui32RendererSampleCount=0;
+			if(m_pRendererContext->isTimeLocked())
 			{
-				uint32_t l_ui32RendererSampleCount=0;
-				if(m_pRendererContext->isTimeLocked())
+				if(0 != m_pRendererContext->getSampleDuration())
 				{
-					if(0 != m_pRendererContext->getSampleDuration())
-					{
-						l_ui32RendererSampleCount=uint32_t(m_pRendererContext->getTimeScale()/m_pRendererContext->getSampleDuration());
-					}
-				}
-				else
-				{
-					l_ui32RendererSampleCount=static_cast<uint32_t>(m_pRendererContext->getElementCount()); // *l_ui32SampleCount;
-				}
-
-				if(l_ui32RendererSampleCount!=0 && l_ui32RendererSampleCount!=m_pRenderer->getSampleCount())
-				{
-					m_pRenderer->setSampleCount(l_ui32RendererSampleCount);
-					m_bRebuildNeeded=true;
-					m_bRefreshNeeded=true;
-					m_bRedrawNeeded=true;
+					l_ui32RendererSampleCount=uint32_t(m_pRendererContext->getTimeScale()/m_pRendererContext->getSampleDuration());
 				}
 			}
-		#endif
+			else
+			{
+				l_ui32RendererSampleCount=static_cast<uint32_t>(m_pRendererContext->getElementCount()); // *l_ui32SampleCount;
+			}
+
+			if(l_ui32RendererSampleCount!=0 && l_ui32RendererSampleCount!=m_pRenderer->getSampleCount())
+			{
+				m_pRenderer->setSampleCount(l_ui32RendererSampleCount);
+				m_bRebuildNeeded=true;
+				m_bRefreshNeeded=true;
+				m_bRedrawNeeded=true;
+			}
 
 			if(m_bRebuildNeeded) m_pRenderer->rebuild(*m_pRendererContext);
 			if(m_bRefreshNeeded) m_pRenderer->refresh(*m_pRendererContext);
 			if(m_bRedrawNeeded) this->redraw();
-		//	if(m_bRedrawNeeded) m_oGtkGLWidget.redraw();
-		//	if(m_bRedrawNeeded) m_oGtkGLWidget.redrawLeft();
-		//	if(m_bRedrawNeeded) m_oGtkGLWidget.redrawRight();
-		//	if(m_bRedrawNeeded) m_oGtkGLWidget.redrawBottom();
 
 			m_bRebuildNeeded=false;
 			m_bRefreshNeeded=false;
@@ -374,4 +351,3 @@ namespace Mensia
 	};
 };
 
-#endif // __OpenViBEPlugins_BoxAlgorithm_ContinuousViz_H__

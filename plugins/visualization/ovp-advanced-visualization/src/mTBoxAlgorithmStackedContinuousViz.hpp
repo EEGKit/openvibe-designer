@@ -15,8 +15,7 @@
  * from Mensia Technologies SA.
  */
 
-#ifndef __OpenViBEPlugins_BoxAlgorithm_StackedContinuousViz_H__
-#define __OpenViBEPlugins_BoxAlgorithm_StackedContinuousViz_H__
+#pragma once
 
 #include "mCBoxAlgorithmViz.hpp"
 
@@ -170,21 +169,15 @@ namespace Mensia
 
 				if(l_ui32ChannelCount == 0)
 				{
-//					this->getLogManager() << OpenViBE::Kernel::LogLevel_Error << "Input stream " << i << " has 0 channels\n";
+					this->getLogManager() << OpenViBE::Kernel::LogLevel_Error << "Input stream " << static_cast<OpenViBE::uint32>(i) << " has 0 channels\n";
 					return false;
 				}
 
 				if(l_pMatrix->getDimensionCount()==1)
 				{
-#if 1
 					l_ui32ChannelCount=l_pMatrix->getDimensionSize(0);
 					l_ui32SampleCount=1;
-#else
-					l_ui32ChannelCount=1;
-					l_ui32SampleCount=l_pMatrix->getDimensionSize(0);
-#endif
 				}
-				//		if(l_ui32SampleCount==0) l_ui32SampleCount=1;
 
 				if(m_oMatrixDecoder.isHeaderReceived())
 				{
@@ -233,7 +226,7 @@ namespace Mensia
 						if(l_sName == "")
 						{
 							char l_sIndexedChannelName[1024];
-							::sprintf(l_sIndexedChannelName, "Channel %i", j+1);
+							::sprintf(l_sIndexedChannelName, "Channel %u", j+1);
 							l_sName=l_sIndexedChannelName;
 						}
 
@@ -274,17 +267,6 @@ namespace Mensia
 				}
 				if(m_oMatrixDecoder.isBufferReceived())
 				{
-#if 0 // TODO FIXME ***
-					m_ui64Time1=m_ui64Time2;
-					m_ui64Time2=l_rDynamicBoxContext.getInputChunkEndTime(0, i);
-					uint64_t l_ui64SampleDuration=m_ui64Time2-m_ui64Time1;
-					if((l_ui64SampleDuration&~0xf)!=(m_pRendererContext->getSampleDuration()&~0xf) && l_ui64SampleDuration!=0) // 0xf mask avoids rounding errors
-					{
-						m_pSubRendererContext->setSampleDuration(l_ui64SampleDuration);
-						m_pRendererContext->setSampleDuration(l_ui64SampleDuration);
-					}
-					m_pRendererContext->setSpectrumFrequencyRange(uint32_t((uint64_t(l_ui32SampleCount)<<32)/(l_rDynamicBoxContext.getInputChunkEndTime(0, i)-l_rDynamicBoxContext.getInputChunkStartTime(0, i))));
-#else
 					m_ui64Time1=m_ui64Time2;
 					m_ui64Time2=l_rDynamicBoxContext.getInputChunkEndTime(0, i);
 					uint64_t l_ui64InterChunkDuration=m_ui64Time2-m_ui64Time1;
@@ -305,7 +287,6 @@ namespace Mensia
 					}
 
 					m_pRendererContext->setSpectrumFrequencyRange(uint32_t((uint64_t(l_ui32SampleCount)<<32)/l_ui64ChunkDuration));
-#endif
 					m_pRendererContext->setMinimumSpectrumFrequency(uint32_t(::gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_pFrequencyBandMin))));
 					m_pRendererContext->setMaximumSpectrumFrequency(uint32_t(::gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_pFrequencyBandMax))));
 
@@ -351,45 +332,48 @@ namespace Mensia
 				}
 			}
 
-#if 1
-			if(true)
+			uint32_t l_ui32RendererSampleCount=0;
+			if(m_pRendererContext->isTimeLocked())
 			{
-				uint32_t l_ui32RendererSampleCount=0;
-				if(m_pRendererContext->isTimeLocked())
+				if(0 != m_pRendererContext->getSampleDuration())
 				{
-					if(0 != m_pRendererContext->getSampleDuration())
-					{
-						l_ui32RendererSampleCount=uint32_t(m_pRendererContext->getTimeScale()/m_pRendererContext->getSampleDuration());
-					}
+					l_ui32RendererSampleCount=uint32_t(m_pRendererContext->getTimeScale()/m_pRendererContext->getSampleDuration());
 				}
-				else
-				{
-					l_ui32RendererSampleCount=static_cast<uint32_t>(m_pRendererContext->getElementCount());
-				}
+			}
+			else
+			{
+				l_ui32RendererSampleCount=static_cast<uint32_t>(m_pRendererContext->getElementCount());
+			}
 
-				if(l_ui32RendererSampleCount!=0)
+			if(l_ui32RendererSampleCount!=0)
+			{
+				for(j=0; j<m_vRenderer.size(); j++)
 				{
-					for(j=0; j<m_vRenderer.size(); j++)
+					if(l_ui32RendererSampleCount!=m_vRenderer[j]->getSampleCount())
 					{
-						if(l_ui32RendererSampleCount!=m_vRenderer[j]->getSampleCount())
-						{
-							m_vRenderer[j]->setSampleCount(l_ui32RendererSampleCount);
-							m_bRebuildNeeded=true;
-							m_bRefreshNeeded=true;
-							m_bRedrawNeeded=true;
-						}
+						m_vRenderer[j]->setSampleCount(l_ui32RendererSampleCount);
+						m_bRebuildNeeded=true;
+						m_bRefreshNeeded=true;
+						m_bRedrawNeeded=true;
 					}
 				}
 			}
-#endif
 
-			if(m_bRebuildNeeded) for(j=0; j<m_vRenderer.size(); j++) m_vRenderer[j]->rebuild(*m_pSubRendererContext);
-			if(m_bRefreshNeeded) for(j=0; j<m_vRenderer.size(); j++) m_vRenderer[j]->refresh(*m_pSubRendererContext);
+			if(m_bRebuildNeeded)
+			{
+				for (auto& renderer : m_vRenderer)
+				{
+					renderer->rebuild(*m_pSubRendererContext);
+				}
+			}
+			if(m_bRefreshNeeded)
+			{
+				for (auto& renderer : m_vRenderer)
+				{
+					renderer->refresh(*m_pSubRendererContext);
+				}
+			}
 			if(m_bRedrawNeeded) this->redraw();
-			//	if(m_bRedrawNeeded) m_oGtkGLWidget.redraw();
-			//	if(m_bRedrawNeeded) m_oGtkGLWidget.redrawLeft();
-			//	if(m_bRedrawNeeded) m_oGtkGLWidget.redrawRight();
-			//	if(m_bRedrawNeeded) m_oGtkGLWidget.redrawBottom();
 
 			m_bRebuildNeeded=false;
 			m_bRefreshNeeded=false;
@@ -448,4 +432,3 @@ namespace Mensia
 	};
 };
 
-#endif // __OpenViBEPlugins_BoxAlgorithm_StackedContinuousViz_H__

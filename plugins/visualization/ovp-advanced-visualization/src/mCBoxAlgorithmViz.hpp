@@ -17,7 +17,6 @@
 
 #pragma once
 
-#ifndef TARGET_IS_Application
 
 #include "m_defines.hpp"
 
@@ -430,6 +429,4 @@ namespace Mensia
 		};
 	};
 };
-
-#endif // TARGET_IS_Application
 

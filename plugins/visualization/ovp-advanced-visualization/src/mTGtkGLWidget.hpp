@@ -380,14 +380,12 @@ namespace Mensia
 
 			static gboolean __key_press_cb(::GtkWidget* pWidget, ::GdkEventKey* pEvent, TBox* pBox)
 			{
-//::printf("__key_press_cb\n");
 				pBox->keyboard(0, 0, /*pEvent->x, pEvent->y,*/ pEvent->keyval, true);
 				return TRUE;
 			}
 
 			static gboolean __key_release_cb(::GtkWidget* pWidget, ::GdkEventKey* pEvent, TBox* pBox)
 			{
-//::printf("__key_release_cb\n");
 				pBox->keyboard(0, 0, /*pEvent->x, pEvent->y,*/ pEvent->keyval, false);
 				return TRUE;
 			}

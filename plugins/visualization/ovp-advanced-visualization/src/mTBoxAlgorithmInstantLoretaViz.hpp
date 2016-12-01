@@ -15,8 +15,7 @@
  * from Mensia Technologies SA.
  */
 
-#ifndef __OpenViBEPlugins_BoxAlgorithm_LoretaInstantViz_H__
-#define __OpenViBEPlugins_BoxAlgorithm_LoretaInstantViz_H__
+#pragma once
 
 #include "mTBoxAlgorithmInstantViz.hpp"
 
@@ -125,4 +124,3 @@ namespace Mensia
 	};
 };
 
-#endif // __OpenViBEPlugins_BoxAlgorithm_InstantViz_H__

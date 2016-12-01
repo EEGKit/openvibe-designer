@@ -135,7 +135,7 @@ namespace Mensia
 
 			OpenViBE::CMatrix gradientMatrix;
 			OpenViBEVisualizationToolkit::Tools::ColorGradient::parse(gradientMatrix, m_sColorGradient);
-			for (int step = 0; step < gradientMatrix.getDimensionSize(1); ++step)
+			for (unsigned int step = 0; step < gradientMatrix.getDimensionSize(1); ++step)
 			{
 				double currentStepValue = gradientMatrix.getBuffer()[4 * step + 0];
 				gradientMatrix.getBuffer()[4 * step + 0] = (currentStepValue / 100.0) * 50.0 + 50.0;
@@ -174,7 +174,7 @@ namespace Mensia
 		{
 			const OpenViBE::Kernel::IBox& staticBoxContext=this->getStaticBoxContext();
 			OpenViBE::Kernel::IBoxIO& dynamicBoxContext=this->getDynamicBoxContext();
-				uint32_t i, j;
+			uint32_t i, j;
 
 			for(uint32_t chunk = 0; chunk < dynamicBoxContext.getInputChunkCount(0); chunk++)
 			{
@@ -258,7 +258,7 @@ namespace Mensia
 							if (channelName == "")
 							{
 								char indexedChannelName[1024];
-								::sprintf(indexedChannelName, "Channel %i", channel + 1);
+								::sprintf(indexedChannelName, "Channel %u", channel + 1);
 								channelName = indexedChannelName;
 							}
 
@@ -312,7 +312,7 @@ namespace Mensia
 								m_vSwap.resize(frequencyCount);
 								for (uint32_t frequency = 0; frequency < frequencyCount; frequency++)
 								{
-									m_vSwap[frequencyCount - frequency - 1] = inputMatrix->getBuffer()[sample + frequency * sampleCount + channel * sampleCount * frequencyCount];
+									m_vSwap[frequencyCount - frequency - 1] = static_cast<float>(inputMatrix->getBuffer()[sample + frequency * sampleCount + channel * sampleCount * frequencyCount]);
 								}
 								m_vRenderer[channel]->feed(&m_vSwap[0]);
 							}
@@ -341,13 +341,21 @@ namespace Mensia
 				}
 			}
 
-			if(m_bRebuildNeeded) for(j=0; j<m_vRenderer.size(); j++) m_vRenderer[j]->rebuild(*m_pSubRendererContext);
-			if(m_bRefreshNeeded) for(j=0; j<m_vRenderer.size(); j++) m_vRenderer[j]->refresh(*m_pSubRendererContext);
+			if(m_bRebuildNeeded)
+			{
+				for (auto& renderer : m_vRenderer)
+				{
+					renderer->rebuild(*m_pSubRendererContext);
+				}
+			}
+			if(m_bRefreshNeeded)
+			{
+				for (auto& renderer : m_vRenderer)
+				{
+					renderer->refresh(*m_pSubRendererContext);
+				}
+			}
 			if(m_bRedrawNeeded) this->redraw();
-			//	if(m_bRedrawNeeded) m_oGtkGLWidget.redraw();
-			//	if(m_bRedrawNeeded) m_oGtkGLWidget.redrawLeft();
-			//	if(m_bRedrawNeeded) m_oGtkGLWidget.redrawRight();
-			//	if(m_bRedrawNeeded) m_oGtkGLWidget.redrawBottom();
 
 			m_bRebuildNeeded=false;
 			m_bRefreshNeeded=false;
@@ -373,12 +381,6 @@ namespace Mensia
 					::glPushMatrix();
 					::glColor4f(m_oColor.r, m_oColor.g, m_oColor.b, m_pRendererContext->getTranslucency());
 					::glTranslatef(0, m_pRendererContext->getSelectedCount()-i-1.f, 0);
-
-					// These two lines come from horizontal stacking
-					/*
-					::glScalef(1, -1, 1);
-					::glRotatef(-90, 0, 0, 1);
-					*/
 
 					m_pSubRendererContext->setAspect(m_pRendererContext->getAspect());
 					m_pSubRendererContext->setStackCount(m_pRendererContext->getSelectedCount());

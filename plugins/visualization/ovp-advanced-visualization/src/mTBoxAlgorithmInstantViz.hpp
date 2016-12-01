@@ -15,8 +15,7 @@
  * from Mensia Technologies SA.
  */
 
-#ifndef __OpenViBEPlugins_BoxAlgorithm_InstantViz_H__
-#define __OpenViBEPlugins_BoxAlgorithm_InstantViz_H__
+#pragma once
 
 #include "mCBoxAlgorithmViz.hpp"
 
@@ -145,7 +144,7 @@ namespace Mensia
 				m_vMatrixDecoder[i].initialize(*this, i);
 				if(!m_vRenderer[i])
 				{
-					this->getLogManager() << OpenViBE::Kernel::LogLevel_ImportantWarning << "Could not create renderer, it might have disabled at compile time\n";
+					this->getLogManager() << OpenViBE::Kernel::LogLevel_Error << "Could not create renderer, it might have been disabled at compile time\n";
 					l_bResult = false;
 				}
 			}
@@ -199,15 +198,9 @@ namespace Mensia
 
 					if(l_pMatrix->getDimensionCount()==1)
 					{
-		#if 0
-						l_ui32ChannelCount=l_pMatrix->getDimensionSize(0);
-						l_ui32SampleCount=1;
-		#else
 						l_ui32ChannelCount=1;
 						l_ui32SampleCount=l_pMatrix->getDimensionSize(0);
-		#endif
 					}
-		//			if(l_ui32SampleCount==0) l_ui32SampleCount=1;
 
 					if(m_vMatrixDecoder[i].isHeaderReceived())
 					{
@@ -241,12 +234,11 @@ namespace Mensia
 							if(l_sName == "")
 							{
 								char l_sIndexedChannelName[1024];
-								::sprintf(l_sIndexedChannelName, "Channel %i", j+1);
+								::sprintf(l_sIndexedChannelName, "Channel %u", j+1);
 								l_sName=l_sIndexedChannelName;
 							}
 
 							m_pRendererContext->addChannel(l_sName, v.x, v.y, v.z);
-		//					m_pRendererContext->addChannel(trim(l_pMatrix->getDimensionLabel(0, j)));
 							::gtk_list_store_append(m_pChannelListStore, &l_oGtkTreeIterator);
 							::gtk_list_store_set(m_pChannelListStore, &l_oGtkTreeIterator, 0, j+1, 1, l_sName.c_str(), -1);
 						}
@@ -320,13 +312,21 @@ namespace Mensia
 				m_bRedrawNeeded=true;
 			}
 
-			if(m_bRebuildNeeded) for(j=0; j<m_vRenderer.size(); j++) m_vRenderer[j]->rebuild(*m_pRendererContext);
-			if(m_bRefreshNeeded) for(j=0; j<m_vRenderer.size(); j++) m_vRenderer[j]->refresh(*m_pRendererContext);
+			if(m_bRebuildNeeded)
+			{
+				for (auto& renderer : m_vRenderer)
+				{
+					renderer->rebuild(*m_pRendererContext);
+				}
+			}
+			if(m_bRefreshNeeded)
+			{
+				for (auto& renderer : m_vRenderer)
+				{
+					renderer->refresh(*m_pRendererContext);
+				}
+			}
 			if(m_bRedrawNeeded) this->redraw();
-		//	if(m_bRedrawNeeded) m_oGtkGLWidget.redraw();
-		//	if(m_bRedrawNeeded) m_oGtkGLWidget.redrawLeft();
-		//	if(m_bRedrawNeeded) m_oGtkGLWidget.redrawRight();
-		//	if(m_bRedrawNeeded) m_oGtkGLWidget.redrawBottom();
 
 			m_bRebuildNeeded=false;
 			m_bRefreshNeeded=false;
@@ -364,4 +364,3 @@ namespace Mensia
 	};
 };
 
-#endif // __OpenViBEPlugins_BoxAlgorithm_InstantViz_H__

@@ -20,8 +20,6 @@
 
 #include <cmath>
 
-#define bool bool
-
 using namespace Mensia;
 using namespace Mensia::AdvancedVisualization;
 

@@ -15,11 +15,7 @@
  * from Mensia Technologies SA.
  */
 
-#ifndef TARGET_IS_Application
-
 #include "mCBoxAlgorithmViz.hpp"
-
-#define bool bool
 
 // OpenGL 1.2
 #ifndef GL_BGRA
@@ -42,14 +38,7 @@ namespace
 		static void callback(::GtkButton* pButton, CBoxAlgorithmViz* pThis)
 		{
 			pThis->m_pRendererContext->sortSelectedChannel(i);
-#if 1
 			pThis->m_bRedrawNeeded=true;
-#else
-			pThis->m_oGtkGLWidget.redraw();
-			pThis->m_oGtkGLWidget.redrawLeft();
-			pThis->m_oGtkGLWidget.redrawRight();
-			pThis->m_oGtkGLWidget.redrawBottom();
-#endif
 		}
 	};
 
@@ -204,14 +193,9 @@ bool CBoxAlgorithmViz::initialize(void)
 	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "spinbutton_element_count"),         "value-changed", G_CALLBACK(::spinbutton_element_count_change_value_callback), m_pRendererContext);
 	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "spinbutton_element_count"),         "value-changed", G_CALLBACK(::spinbutton_element_count_change_value_callback), m_pSubRendererContext);
 	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "checkbutton_positive"),            "toggled", G_CALLBACK(::checkbutton_positive_toggled_callback), m_pRendererContext);
-#if 0
-	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "checkbutton_show_scale"),          "toggled", G_CALLBACK(::checkbutton_show_scale_toggled_callback), m_pRendererContext);
-	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "button_erp_play_pause"),           "pressed", G_CALLBACK(::button_erp_play_pause_pressed_callback), m_pRendererContext);
-#else
 	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "checkbutton_show_scale"),          "toggled", G_CALLBACK(::checkbutton_show_scale_toggled_callback), &Mensia::AdvancedVisualization::getContext());
 	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "button_erp_play_pause"),           "pressed", G_CALLBACK(::button_erp_play_pause_pressed_callback), &Mensia::AdvancedVisualization::getContext());
 	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "button_video_recording"),          "pressed", G_CALLBACK(::button_video_recording_pressed_callback), this);
-#endif
 	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "range_erp"),                       "value-changed", G_CALLBACK(::range_erp_value_changed_callback), ::gtk_builder_get_object(m_pBuilder, "label_erp_progress"));
 	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "spinbutton_freq_band_min"),        "value-changed", G_CALLBACK(::spinbutton_freq_band_min_change_value_callback), m_pRendererContext);
 	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "spinbutton_freq_band_max"),        "value-changed", G_CALLBACK(::spinbutton_freq_band_max_change_value_callback), m_pRendererContext);
@@ -240,7 +224,7 @@ bool CBoxAlgorithmViz::initialize(void)
 	m_visualizationContext->setToolbar(*this, l_pToolbar);
 
 	// Parses box settings
-	uint32_t i, l_ui32SettingIndex=0;
+	uint32_t l_ui32SettingIndex=0;
 	for (int iParameter : m_vParameter)
 	{
 		double l_fValue;
@@ -310,7 +294,7 @@ bool CBoxAlgorithmViz::initialize(void)
 	m_vColor.push_back(m_oColor);
 
 	// Parses color string - special for instant oscilloscope which can have several inputs
-	for(i=l_ui32SettingIndex; i<this->getStaticBoxContext().getSettingCount(); i++)
+	for(OpenViBE::uint32 i=l_ui32SettingIndex; i<this->getStaticBoxContext().getSettingCount(); i++)
 	{
 		m_sColor=FSettingValueAutoCast(*this->getBoxAlgorithmContext(), i);
 		this->parseColor(m_oColor, m_sColor.toASCIIString());
@@ -369,7 +353,7 @@ bool CBoxAlgorithmViz::initialize(void)
 		{
 			uint32_t l_ui32ChannelCount=op_pMatrix->getDimensionSize(0);
 			double* l_pBuffer=op_pMatrix->getBuffer();
-			for(i=0; i<l_ui32ChannelCount; i++)
+			for(uint32_t i=0; i<l_ui32ChannelCount; i++)
 			{
 				std::string l_sName=trim(op_pMatrix->getDimensionLabel(0, i));
 				std::transform(l_sName.begin(), l_sName.end(), l_sName.begin(), ::tolower);
@@ -405,10 +389,8 @@ bool CBoxAlgorithmViz::uninitialize(void)
 	g_object_unref(m_pBuilder);
 	m_pBuilder=NULL;
 
-#if 1
 	Mensia::AdvancedVisualization::getContext().stepERPFractionBy(-Mensia::AdvancedVisualization::getContext().getERPFraction());
 	Mensia::AdvancedVisualization::getContext().setERPPlayerActive(false);
-#endif
 
 	IRendererContext::release(m_pSubRendererContext);
 	m_pSubRendererContext=NULL;
@@ -435,7 +417,7 @@ bool CBoxAlgorithmViz::processClock(IMessageClock& rClock)
 	}
 	else
 	{
-		float l_f32CurrentFastForwardMaximumFactor=this->getPlayerContext().getCurrentFastForwardMaximumFactor();
+		float l_f32CurrentFastForwardMaximumFactor=static_cast<float>(this->getPlayerContext().getCurrentFastForwardMaximumFactor());
 		if(l_f32CurrentFastForwardMaximumFactor <= m_f32FastForwardMaximumFactorHighDefinition)
 		{
 			l_ui64MinDeltaTime=l_ui64MinDeltaTimeHighDefinition;
@@ -610,4 +592,3 @@ void CBoxAlgorithmViz::parseColor(TColor& rColor, const std::string& sColor)
 	}
 }
 
-#endif
