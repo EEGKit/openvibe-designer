@@ -262,20 +262,20 @@ bool CBoxAlgorithmViz::initialize(void)
 			m_bIsPositive = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
 			break;
 		case S_TemporalCoherence:
-			m_ui64TemporalCoherence = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
+			m_ui64TemporalCoherence = static_cast<OpenViBE::uint64>(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex));
 			break;
 		case S_TimeScale:
 			l_fValue = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
 			m_ui64TimeScale = uint64_t(l_fValue*(1LL << 32));
 			break;
 		case S_ElementCount:
-			m_ui64ElementCount = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
+			m_ui64ElementCount = static_cast<OpenViBE::uint64>(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex));
 			break;
 		case S_DataScale:
 			m_f64DataScale = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
 			break;
 		case S_FlowerRingCount:
-			m_ui64FlowerRingCount = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
+			m_ui64FlowerRingCount = static_cast<OpenViBE::uint64>(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex));
 			break;
 		case S_Translucency:
 			m_f64Translucency = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
@@ -415,6 +415,8 @@ bool CBoxAlgorithmViz::uninitialize(void)
 
 	IRendererContext::release(m_pRendererContext);
 	m_pRendererContext=NULL;
+
+	this->releasePluginObject(m_visualizationContext);
 
 	return true;
 }

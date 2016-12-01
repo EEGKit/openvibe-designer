@@ -20,6 +20,7 @@
 #include "mC3DMesh.hpp"
 
 #include <cstdio>
+#include <cstring>
 
 using namespace Mensia;
 using namespace Mensia::AdvancedVisualization;

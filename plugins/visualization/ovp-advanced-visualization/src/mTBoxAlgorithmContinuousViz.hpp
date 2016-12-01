@@ -151,7 +151,7 @@ namespace Mensia
 
 				if(l_ui32ChannelCount == 0)
 				{
-					this->getLogManager() << OpenViBE::Kernel::LogLevel_Error << "Input stream " << i << " has 0 channels\n";
+					this->getLogManager() << OpenViBE::Kernel::LogLevel_Error << "Input stream " << static_cast<OpenViBE::uint32>(i) << " has 0 channels\n";
 					return false;
 				}
 
@@ -242,10 +242,10 @@ namespace Mensia
 							if(!m_pRendererContext->isTimeLocked())
 							{
 								l_bWarned=true;
-								this->getLogManager() << l_eLogLevel << "Input matrix has " << l_ui32SampleCount << " elements and the box settings say the elements are independant with " << m_ui64ElementCount << " elements to render\n";
+								this->getLogManager() << l_eLogLevel << "Input matrix has " << static_cast<OpenViBE::uint32>(l_ui32SampleCount) << " elements and the box settings say the elements are independant with " << static_cast<OpenViBE::uint64>(m_ui64ElementCount) << " elements to render\n";
 								this->getLogManager() << l_eLogLevel << "Such configuration is uncommon for a 'continous' kind of visualization !\n";
 								this->getLogManager() << l_eLogLevel << "You might want either of the following alternative :\n";
-								this->getLogManager() << l_eLogLevel << " - an 'instant' kind of visualization to highlight the " << m_ui64ElementCount << " elements of the matrix\n";
+								this->getLogManager() << l_eLogLevel << " - an 'instant' kind of visualization to highlight the " << static_cast<OpenViBE::uint64>(m_ui64ElementCount) << " elements of the matrix\n";
 								this->getLogManager() << l_eLogLevel << " - a 'time locked' kind of elements (thus the scenario must refresh the matrix on a regular basis)\n";
 								this->getLogManager() << l_eLogLevel << "Please double check your scenario and box settings\n";
 							}
