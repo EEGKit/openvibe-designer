@@ -36,6 +36,7 @@
 #define OVD_GUI_Settings_File OpenViBE::Directories::getDataDir() + "/applications/designer/interface-settings.ui"
 #define OVD_AttributeId_ScenarioFilename OpenViBE::CIdentifier(0x4C536D0A, 0xB23DC545)
 #define OVD_README_File                  OpenViBE::Directories::getDistRootDir() + "/ReadMe.txt"
+#define OVD_RecentFile_NUMBER            10
 
 #include "ovdCDesignerVisualization.h"
 #include "ovdCPlayerVisualization.h"
@@ -238,6 +239,11 @@ namespace
 	void menu_open_scenario_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
 	{
 		static_cast<CApplication*>(pUserData)->openScenarioCB();
+	}
+	void menu_open_recent_scenario_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
+	{
+		const gchar* fileName = gtk_menu_item_get_label(pMenuItem);
+		static_cast<CApplication*>(pUserData)->openScenario(fileName);
 	}
 	void menu_save_scenario_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
 	{
@@ -806,12 +812,20 @@ CApplication::CApplication(const IKernelContext& rKernelContext)
 	,m_eCommandLineFlags(CommandLineFlag_None)
 	,m_pBuilderInterface(NULL)
 	,m_pMainWindow(NULL)
+	,m_pSplashScreen(NULL)
 	,m_pScenarioNotebook(NULL)
 	,m_pResourceNotebook(NULL)
 	,m_pBoxAlgorithmTreeModel(NULL)
+	,m_pBoxAlgorithmTreeModelFilter(NULL)
+	,m_pBoxAlgorithmTreeModelFilter2(NULL)
+	,m_pBoxAlgorithmTreeModelFilter3(NULL)
+	,m_pBoxAlgorithmTreeModelFilter4(NULL)
 	,m_pBoxAlgorithmTreeView(NULL)
 	,m_pAlgorithmTreeModel(NULL)
 	,m_pAlgorithmTreeView(NULL)
+	,m_pFastForwardFactor(NULL)
+	,m_pConfigureSettingsAddSettingButton(NULL)
+	,m_MenuOpenRecent(NULL)
 	,m_pTableInputs(NULL)
 	,m_pTableOutputs(NULL)
 	,m_giFilterTimeout(0)
@@ -982,6 +996,10 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 
 	// Creates an empty scnenario
 	gtk_notebook_remove_page(m_pScenarioNotebook, 0);
+
+	// Initialize menu open recent
+	m_MenuOpenRecent = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_recent_content"));
+
 	//newScenarioCB();
 	{
 		// Prepares box algorithm view
@@ -1153,13 +1171,13 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 		unsigned i=0;
 		do
 		{
-			::sprintf(l_sVarName, "Designer_LastScenarioFilename_%03i", ++i);
+			::sprintf(l_sVarName, "Designer_LastScenarioFilename_%03u", ++i);
 			if((l_oTokenIdentifier=m_rKernelContext.getConfigurationManager().lookUpConfigurationTokenIdentifier(l_sVarName))!=OV_UndefinedIdentifier)
 			{
 				CString l_sFilename;
 				l_sFilename=m_rKernelContext.getConfigurationManager().getConfigurationTokenValue(l_oTokenIdentifier);
 				l_sFilename=m_rKernelContext.getConfigurationManager().expand(l_sFilename);
-				m_rKernelContext.getLogManager() << LogLevel_Info << "Restoring scenario [" << l_sFilename << "]\n";
+				m_rKernelContext.getLogManager() << LogLevel_Trace << "Restoring scenario [" << l_sFilename << "]\n";
 				if(!this->openScenario(l_sFilename.toASCIIString()))
 				{
 					m_rKernelContext.getLogManager() << LogLevel_ImportantWarning << "Failed to restore scenario [" << l_sFilename << "]\n";
@@ -1168,6 +1186,27 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 		}
 		while(l_oTokenIdentifier!=OV_UndefinedIdentifier);
 	}
+
+	CIdentifier l_oTokenIdentifier;
+	char l_sVarName[1024];
+	unsigned i = 0;
+	do
+	{
+		::sprintf(l_sVarName, "Designer_RecentScenario_%03u", ++i);
+		if ((l_oTokenIdentifier = m_rKernelContext.getConfigurationManager().lookUpConfigurationTokenIdentifier(l_sVarName)) != OV_UndefinedIdentifier)
+		{
+			CString l_sFilename;
+			l_sFilename = m_rKernelContext.getConfigurationManager().getConfigurationTokenValue(l_oTokenIdentifier);
+			l_sFilename = m_rKernelContext.getConfigurationManager().expand(l_sFilename);
+			m_rKernelContext.getLogManager() << LogLevel_Trace << "Restoring scenario [" << l_sFilename << "]\n";
+			if (!this->openScenario(l_sFilename.toASCIIString()))
+			{
+				m_rKernelContext.getLogManager() << LogLevel_ImportantWarning << "Failed to restore scenario [" << l_sFilename << "]\n";
+			}
+			this->addRecentScenario(l_sFilename.toASCIIString());
+		}
+	} while (l_oTokenIdentifier != OV_UndefinedIdentifier);
+
 	refresh_search_no_data_cb(NULL, this);
 	// Add the designer log listener
 	CString l_sLogLevel = m_rKernelContext.getConfigurationManager().expand("${Kernel_ConsoleLogLevel}");
@@ -1585,6 +1624,18 @@ void CApplication::saveOpenedScenarios(void)
 			::fprintf(l_pFile, "# Last version of Studio used:\n");
 			::fprintf(l_pFile, "Designer_LastVersionUsed = %s\n", ProjectVersion);
 			::fprintf(l_pFile, "\n");
+
+			if (!m_RecentScenarios.empty())
+			{
+				::fprintf(l_pFile, "# Recently opened scenario\n");
+				unsigned int scenarioID = 1;
+				for (const GtkWidget* recentScenario : m_RecentScenarios)
+				{
+					const gchar* recentScenarioPath = gtk_menu_item_get_label(GTK_MENU_ITEM(recentScenario));
+					::fprintf(l_pFile, "Designer_RecentScenario_%03u = %s\n", scenarioID, recentScenarioPath);
+					++scenarioID;
+				}
+			}
 			
 			::fclose(l_pFile);
 		}
@@ -2164,6 +2215,29 @@ void CApplication::saveScenarioAsCB(CInterfacedScenario* pScenario)
 //	g_object_unref(l_pFileFilterAll);
 }
 
+void CApplication::addRecentScenario(std::string scenarioPath)
+{
+	GtkWidget* newRecentItem = gtk_image_menu_item_new_with_label(scenarioPath.c_str());
+
+	g_signal_connect(G_OBJECT(newRecentItem), "activate", G_CALLBACK(menu_open_recent_scenario_cb), this);
+	gtk_menu_shell_prepend(GTK_MENU_SHELL(m_MenuOpenRecent), newRecentItem);
+	gtk_widget_show(newRecentItem);
+	m_RecentScenarios.insert(m_RecentScenarios.begin(), newRecentItem);
+
+	/*GList* recentScenarios = gtk_container_get_children(GTK_CONTAINER(m_MenuOpenRecent));
+	guint recentScenariosLength = g_list_length(recentScenarios);*/
+	if (m_RecentScenarios.size() > OVD_RecentFile_NUMBER)
+	{
+		for (unsigned int i = OVD_RecentFile_NUMBER; i < m_RecentScenarios.size(); i++)
+		{
+			//gtk_container_child_get(GTK_CONTAINER(m_MenuOpenRecent), , "Position", i);
+			gtk_container_remove(GTK_CONTAINER(m_MenuOpenRecent), GTK_WIDGET(m_RecentScenarios[i]));
+			gtk_widget_destroy(GTK_WIDGET(m_RecentScenarios[i]));
+			m_RecentScenarios.erase(m_RecentScenarios.begin() + OVD_RecentFile_NUMBER);
+		}
+	}
+}
+
 void CApplication::closeScenarioCB(CInterfacedScenario* pInterfacedScenario)
 {
 	m_rKernelContext.getLogManager() << LogLevel_Debug << "closeScenarioCB\n";
@@ -2217,6 +2291,8 @@ void CApplication::closeScenarioCB(CInterfacedScenario* pInterfacedScenario)
 				break;
 		}
 	}
+	// Add scenario to recently opened:
+	addRecentScenario(pInterfacedScenario->m_sFileName.c_str());
 
 	vector<CInterfacedScenario*>::iterator i=m_vInterfacedScenario.begin();
 	while(i!=m_vInterfacedScenario.end() && *i!=pInterfacedScenario)
