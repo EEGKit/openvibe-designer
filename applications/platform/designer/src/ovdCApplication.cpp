@@ -244,6 +244,7 @@ namespace
 	{
 		const gchar* fileName = gtk_menu_item_get_label(pMenuItem);
 		static_cast<CApplication*>(pUserData)->openScenario(fileName);
+		static_cast<CApplication*>(pUserData)->removeRecentScenario(fileName);
 	}
 	void menu_save_scenario_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
 	{
@@ -998,7 +999,7 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 	gtk_notebook_remove_page(m_pScenarioNotebook, 0);
 
 	// Initialize menu open recent
-	m_MenuOpenRecent = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_recent_content"));
+	m_MenuOpenRecent = GTK_CONTAINER(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_recent_content"));
 
 	//newScenarioCB();
 	{
@@ -2215,8 +2216,11 @@ void CApplication::saveScenarioAsCB(CInterfacedScenario* pScenario)
 //	g_object_unref(l_pFileFilterAll);
 }
 
-void CApplication::addRecentScenario(std::string scenarioPath)
+void CApplication::addRecentScenario(const std::string& scenarioPath)
 {
+	// If scenario path is already in menu, remove, and re-add it on top of list
+	removeRecentScenario(scenarioPath);
+
 	GtkWidget* newRecentItem = gtk_image_menu_item_new_with_label(scenarioPath.c_str());
 
 	g_signal_connect(G_OBJECT(newRecentItem), "activate", G_CALLBACK(menu_open_recent_scenario_cb), this);
@@ -2224,16 +2228,29 @@ void CApplication::addRecentScenario(std::string scenarioPath)
 	gtk_widget_show(newRecentItem);
 	m_RecentScenarios.insert(m_RecentScenarios.begin(), newRecentItem);
 
-	/*GList* recentScenarios = gtk_container_get_children(GTK_CONTAINER(m_MenuOpenRecent));
-	guint recentScenariosLength = g_list_length(recentScenarios);*/
 	if (m_RecentScenarios.size() > OVD_RecentFile_NUMBER)
 	{
-		for (unsigned int i = OVD_RecentFile_NUMBER; i < m_RecentScenarios.size(); i++)
+		unsigned int i;
+		for (i = OVD_RecentFile_NUMBER; i < m_RecentScenarios.size(); i++)
 		{
-			//gtk_container_child_get(GTK_CONTAINER(m_MenuOpenRecent), , "Position", i);
-			gtk_container_remove(GTK_CONTAINER(m_MenuOpenRecent), GTK_WIDGET(m_RecentScenarios[i]));
+			gtk_container_remove(m_MenuOpenRecent, GTK_WIDGET(m_RecentScenarios[i]));
 			gtk_widget_destroy(GTK_WIDGET(m_RecentScenarios[i]));
-			m_RecentScenarios.erase(m_RecentScenarios.begin() + OVD_RecentFile_NUMBER);
+		}
+		m_RecentScenarios.erase(m_RecentScenarios.begin() + OVD_RecentFile_NUMBER, m_RecentScenarios.begin() + i);
+	}
+}
+
+void CApplication::removeRecentScenario(const std::string& scenarioPath)
+{
+	for (unsigned int i = 0; i < m_RecentScenarios.size(); ++i)
+	{
+		const gchar* fileName = gtk_menu_item_get_label(GTK_MENU_ITEM(m_RecentScenarios[i]));
+		if (strcmp(fileName, scenarioPath.c_str()) == 0)
+		{
+			gtk_container_remove(m_MenuOpenRecent, GTK_WIDGET(m_RecentScenarios[i]));
+			gtk_widget_destroy(GTK_WIDGET(m_RecentScenarios[i]));
+			m_RecentScenarios.erase(m_RecentScenarios.begin() + i);
+			return;
 		}
 	}
 }

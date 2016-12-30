@@ -97,7 +97,8 @@ namespace OpenViBEDesigner
 		void reorderCurrentScenario(
 			OpenViBE::uint32 i32NewPageIndex);
 
-		void addRecentScenario(std::string scenarioPath);
+		void addRecentScenario(const std::string& scenarioPath);
+		void removeRecentScenario(const std::string& scenarioPath);
 
 		//@}
 
@@ -179,7 +180,7 @@ namespace OpenViBEDesigner
 		::GtkTreeView* m_pAlgorithmTreeView;
 		::GtkSpinButton* m_pFastForwardFactor;
 		::GtkWidget* m_pConfigureSettingsAddSettingButton;
-		::GtkWidget* m_MenuOpenRecent;
+		::GtkContainer* m_MenuOpenRecent;
 		std::vector <const GtkWidget*> m_RecentScenarios;
 
 		// UI for adding inputs and outputs to a scenario
