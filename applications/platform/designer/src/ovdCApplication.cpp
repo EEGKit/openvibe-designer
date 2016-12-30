@@ -343,7 +343,7 @@ namespace
 	{
 		auto l_pApplication = static_cast<CApplication*>(pUserData);
 
-		l_pApplication->m_oArchwayHandlerGUI.toggleNeuroRTEngineConfigurationDialog(gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(pMenuItem)));
+		l_pApplication->m_oArchwayHandlerGUI.toggleNeuroRTEngineConfigurationDialog(static_cast<bool>(gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(pMenuItem))));
 	}
 #endif
 
@@ -761,22 +761,22 @@ namespace
 					char* l_sMessage = strtok(l_pBuffer, ";");
 					while(l_sMessage != NULL)
 					{
-						sscanf(l_sMessage, "%d : <%[^>]> ", &l_iMode, &l_sScenarioPath);
+						sscanf(l_sMessage, "%1d : <%1024[^>]> ", &l_iMode, &l_sScenarioPath);
 						switch(l_iMode)
 						{
 						case MessageType_OpenScenario:
-							l_pApplication->m_rKernelContext.getLogManager() << LogLevel_Info << "ovdCApplication::receiveSecondInstanceMessage- Open scenario: " << l_sScenarioPath << "\n";
+							l_pApplication->m_rKernelContext.getLogManager() << LogLevel_Trace << "ovdCApplication::receiveSecondInstanceMessage- Open scenario: " << l_sScenarioPath << "\n";
 							l_pApplication->openScenario(l_sScenarioPath);
 							break;
 						case MessageType_PlayScenario:
-							l_pApplication->m_rKernelContext.getLogManager() << LogLevel_Info << "ovdCApplication::receiveSecondInstanceMessage- Play scenario: " << l_sScenarioPath << "\n";
+							l_pApplication->m_rKernelContext.getLogManager() << LogLevel_Trace << "ovdCApplication::receiveSecondInstanceMessage- Play scenario: " << l_sScenarioPath << "\n";
 							if(l_pApplication->openScenario(l_sScenarioPath))
 							{
 								l_pApplication->playScenarioCB();
 							}
 							break;
 						case MessageType_PlayFastScenario:
-							l_pApplication->m_rKernelContext.getLogManager() << LogLevel_Info << "ovdCApplication::receiveSecondInstanceMessage- Play fast scenario: " << l_sScenarioPath << "\n";
+							l_pApplication->m_rKernelContext.getLogManager() << LogLevel_Trace << "ovdCApplication::receiveSecondInstanceMessage- Play fast scenario: " << l_sScenarioPath << "\n";
 							if(l_pApplication->openScenario(l_sScenarioPath))
 							{
 								l_pApplication->forwardScenarioCB();
@@ -1612,31 +1612,30 @@ void CApplication::saveOpenedScenarios(void)
 			::fprintf(l_pFile, "Designer_FullscreenEditor = %s\n", m_bIsMaximized ? "True":"False");
 
 			::fprintf(l_pFile, "# Last files opened in %s\n", std::string(STUDIO_NAME).c_str());
-			std::vector < CInterfacedScenario* >::const_iterator it;
-			for(it=m_vInterfacedScenario.begin(); it!=m_vInterfacedScenario.end(); it++)
+
+			for (CInterfacedScenario* scenario : m_vInterfacedScenario)
 			{
-				if((*it)->m_sFileName != "")
+				if (scenario->m_sFileName != "")
 				{
-					::fprintf(l_pFile, "Designer_LastScenarioFilename_%03u = %s\n", i, (*it)->m_sFileName.c_str());
+					::fprintf(l_pFile, "Designer_LastScenarioFilename_%03u = %s\n", i, scenario->m_sFileName.c_str());
 					i++;
 				}
 			}
+			::fprintf(l_pFile, "\n");
 
 			::fprintf(l_pFile, "# Last version of Studio used:\n");
 			::fprintf(l_pFile, "Designer_LastVersionUsed = %s\n", ProjectVersion);
 			::fprintf(l_pFile, "\n");
 
-			if (!m_RecentScenarios.empty())
+			::fprintf(l_pFile, "# Recently opened scenario\n");
+			unsigned int scenarioID = 1;
+			for (const GtkWidget* recentScenario : m_RecentScenarios)
 			{
-				::fprintf(l_pFile, "# Recently opened scenario\n");
-				unsigned int scenarioID = 1;
-				for (const GtkWidget* recentScenario : m_RecentScenarios)
-				{
-					const gchar* recentScenarioPath = gtk_menu_item_get_label(GTK_MENU_ITEM(recentScenario));
-					::fprintf(l_pFile, "Designer_RecentScenario_%03u = %s\n", scenarioID, recentScenarioPath);
-					++scenarioID;
-				}
+				const gchar* recentScenarioPath = gtk_menu_item_get_label(GTK_MENU_ITEM(recentScenario));
+				::fprintf(l_pFile, "Designer_RecentScenario_%03u = %s\n", scenarioID, recentScenarioPath);
+				++scenarioID;
 			}
+			::fprintf(l_pFile, "\n");
 			
 			::fclose(l_pFile);
 		}
@@ -2230,7 +2229,7 @@ void CApplication::addRecentScenario(const std::string& scenarioPath)
 
 	if (m_RecentScenarios.size() > OVD_RecentFile_NUMBER)
 	{
-		unsigned int i;
+		size_t i;
 		for (i = OVD_RecentFile_NUMBER; i < m_RecentScenarios.size(); i++)
 		{
 			gtk_container_remove(m_MenuOpenRecent, GTK_WIDGET(m_RecentScenarios[i]));
@@ -2242,7 +2241,7 @@ void CApplication::addRecentScenario(const std::string& scenarioPath)
 
 void CApplication::removeRecentScenario(const std::string& scenarioPath)
 {
-	for (unsigned int i = 0; i < m_RecentScenarios.size(); ++i)
+	for (size_t i = 0; i < m_RecentScenarios.size(); ++i)
 	{
 		const gchar* fileName = gtk_menu_item_get_label(GTK_MENU_ITEM(m_RecentScenarios[i]));
 		if (strcmp(fileName, scenarioPath.c_str()) == 0)
