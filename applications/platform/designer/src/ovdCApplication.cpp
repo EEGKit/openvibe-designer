@@ -2244,13 +2244,12 @@ void CApplication::addRecentScenario(const std::string& scenarioPath)
 
 	if (m_RecentScenarios.size() > s_RecentFileNumber)
 	{
-		size_t i;
-		for (i = s_RecentFileNumber; i < m_RecentScenarios.size(); i++)
+		for (size_t i = s_RecentFileNumber; i < m_RecentScenarios.size(); i++)
 		{
 			gtk_container_remove(m_MenuOpenRecent, GTK_WIDGET(m_RecentScenarios[i]));
 			gtk_widget_destroy(GTK_WIDGET(m_RecentScenarios[i]));
 		}
-		m_RecentScenarios.erase(m_RecentScenarios.begin() + s_RecentFileNumber, m_RecentScenarios.begin() + i);
+		m_RecentScenarios.erase(m_RecentScenarios.begin() + s_RecentFileNumber, m_RecentScenarios.end());
 	}
 }
 
