@@ -36,7 +36,7 @@
 #define OVD_GUI_Settings_File OpenViBE::Directories::getDataDir() + "/applications/designer/interface-settings.ui"
 #define OVD_AttributeId_ScenarioFilename OpenViBE::CIdentifier(0x4C536D0A, 0xB23DC545)
 #define OVD_README_File                  OpenViBE::Directories::getDistRootDir() + "/ReadMe.txt"
-#define OVD_RecentFile_NUMBER            10
+static const unsigned int s_RecentFileNumber = 10;
 
 #include "ovdCDesignerVisualization.h"
 #include "ovdCPlayerVisualization.h"
@@ -244,7 +244,6 @@ namespace
 	{
 		const gchar* fileName = gtk_menu_item_get_label(pMenuItem);
 		static_cast<CApplication*>(pUserData)->openScenario(fileName);
-		static_cast<CApplication*>(pUserData)->removeRecentScenario(fileName);
 	}
 	void menu_save_scenario_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
 	{
@@ -1199,12 +1198,12 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 			CString l_sFilename;
 			l_sFilename = m_rKernelContext.getConfigurationManager().getConfigurationTokenValue(l_oTokenIdentifier);
 			l_sFilename = m_rKernelContext.getConfigurationManager().expand(l_sFilename);
-			m_rKernelContext.getLogManager() << LogLevel_Trace << "Restoring scenario [" << l_sFilename << "]\n";
-			if (!this->openScenario(l_sFilename.toASCIIString()))
-			{
-				m_rKernelContext.getLogManager() << LogLevel_ImportantWarning << "Failed to restore scenario [" << l_sFilename << "]\n";
-			}
-			this->addRecentScenario(l_sFilename.toASCIIString());
+
+			GtkWidget* newRecentItem = gtk_image_menu_item_new_with_label(l_sFilename.toASCIIString());
+			g_signal_connect(G_OBJECT(newRecentItem), "activate", G_CALLBACK(menu_open_recent_scenario_cb), this);
+			gtk_menu_shell_append(GTK_MENU_SHELL(m_MenuOpenRecent), newRecentItem);
+			gtk_widget_show(newRecentItem);
+			m_RecentScenarios.push_back(newRecentItem);
 		}
 	} while (l_oTokenIdentifier != OV_UndefinedIdentifier);
 
@@ -2217,40 +2216,41 @@ void CApplication::saveScenarioAsCB(CInterfacedScenario* pScenario)
 
 void CApplication::addRecentScenario(const std::string& scenarioPath)
 {
-	// If scenario path is already in menu, remove, and re-add it on top of list
-	removeRecentScenario(scenarioPath);
-
-	GtkWidget* newRecentItem = gtk_image_menu_item_new_with_label(scenarioPath.c_str());
-
-	g_signal_connect(G_OBJECT(newRecentItem), "activate", G_CALLBACK(menu_open_recent_scenario_cb), this);
-	gtk_menu_shell_prepend(GTK_MENU_SHELL(m_MenuOpenRecent), newRecentItem);
-	gtk_widget_show(newRecentItem);
-	m_RecentScenarios.insert(m_RecentScenarios.begin(), newRecentItem);
-
-	if (m_RecentScenarios.size() > OVD_RecentFile_NUMBER)
-	{
-		size_t i;
-		for (i = OVD_RecentFile_NUMBER; i < m_RecentScenarios.size(); i++)
-		{
-			gtk_container_remove(m_MenuOpenRecent, GTK_WIDGET(m_RecentScenarios[i]));
-			gtk_widget_destroy(GTK_WIDGET(m_RecentScenarios[i]));
-		}
-		m_RecentScenarios.erase(m_RecentScenarios.begin() + OVD_RecentFile_NUMBER, m_RecentScenarios.begin() + i);
-	}
-}
-
-void CApplication::removeRecentScenario(const std::string& scenarioPath)
-{
+	bool scenarioFound = false;
+	// If scenario path is already in menu, remove it from menu shell and re-add it on top of list
 	for (size_t i = 0; i < m_RecentScenarios.size(); ++i)
 	{
 		const gchar* fileName = gtk_menu_item_get_label(GTK_MENU_ITEM(m_RecentScenarios[i]));
 		if (strcmp(fileName, scenarioPath.c_str()) == 0)
 		{
 			gtk_container_remove(m_MenuOpenRecent, GTK_WIDGET(m_RecentScenarios[i]));
-			gtk_widget_destroy(GTK_WIDGET(m_RecentScenarios[i]));
-			m_RecentScenarios.erase(m_RecentScenarios.begin() + i);
-			return;
+			gtk_menu_shell_prepend(GTK_MENU_SHELL(m_MenuOpenRecent), GTK_WIDGET(m_RecentScenarios[i]));
+			scenarioFound = true;
+			m_RecentScenarios.insert(m_RecentScenarios.begin(), m_RecentScenarios[i]);
+			m_RecentScenarios.erase(m_RecentScenarios.begin() + i+1);
+			break;
 		}
+	}
+	// If scenario is not in menu, create new widget and add it to menu shell
+	if (!scenarioFound)
+	{
+		GtkWidget* newRecentItem = gtk_image_menu_item_new_with_label(scenarioPath.c_str());
+
+		g_signal_connect(G_OBJECT(newRecentItem), "activate", G_CALLBACK(menu_open_recent_scenario_cb), this);
+		gtk_menu_shell_prepend(GTK_MENU_SHELL(m_MenuOpenRecent), newRecentItem);
+		gtk_widget_show(newRecentItem);
+		m_RecentScenarios.insert(m_RecentScenarios.begin(), newRecentItem);
+	}
+
+	if (m_RecentScenarios.size() > s_RecentFileNumber)
+	{
+		size_t i;
+		for (i = s_RecentFileNumber; i < m_RecentScenarios.size(); i++)
+		{
+			gtk_container_remove(m_MenuOpenRecent, GTK_WIDGET(m_RecentScenarios[i]));
+			gtk_widget_destroy(GTK_WIDGET(m_RecentScenarios[i]));
+		}
+		m_RecentScenarios.erase(m_RecentScenarios.begin() + s_RecentFileNumber, m_RecentScenarios.begin() + i);
 	}
 }
 
@@ -2308,7 +2308,7 @@ void CApplication::closeScenarioCB(CInterfacedScenario* pInterfacedScenario)
 		}
 	}
 	// Add scenario to recently opened:
-	addRecentScenario(pInterfacedScenario->m_sFileName.c_str());
+	this->addRecentScenario(pInterfacedScenario->m_sFileName.c_str());
 
 	vector<CInterfacedScenario*>::iterator i=m_vInterfacedScenario.begin();
 	while(i!=m_vInterfacedScenario.end() && *i!=pInterfacedScenario)

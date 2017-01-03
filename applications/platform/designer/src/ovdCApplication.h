@@ -98,7 +98,6 @@ namespace OpenViBEDesigner
 			OpenViBE::uint32 i32NewPageIndex);
 
 		void addRecentScenario(const std::string& scenarioPath);
-		void removeRecentScenario(const std::string& scenarioPath);
 
 		//@}
 
