@@ -36,6 +36,7 @@
 #define OVD_GUI_Settings_File OpenViBE::Directories::getDataDir() + "/applications/designer/interface-settings.ui"
 #define OVD_AttributeId_ScenarioFilename OpenViBE::CIdentifier(0x4C536D0A, 0xB23DC545)
 #define OVD_README_File                  OpenViBE::Directories::getDistRootDir() + "/ReadMe.txt"
+static const unsigned int s_RecentFileNumber = 10;
 
 #include "ovdCDesignerVisualization.h"
 #include "ovdCPlayerVisualization.h"
@@ -239,6 +240,11 @@ namespace
 	{
 		static_cast<CApplication*>(pUserData)->openScenarioCB();
 	}
+	void menu_open_recent_scenario_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
+	{
+		const gchar* fileName = gtk_menu_item_get_label(pMenuItem);
+		static_cast<CApplication*>(pUserData)->openScenario(fileName);
+	}
 	void menu_save_scenario_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
 	{
 		static_cast<CApplication*>(pUserData)->saveScenarioCB();
@@ -336,7 +342,7 @@ namespace
 	{
 		auto l_pApplication = static_cast<CApplication*>(pUserData);
 
-		l_pApplication->m_oArchwayHandlerGUI.toggleNeuroRTEngineConfigurationDialog(gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(pMenuItem)));
+		l_pApplication->m_oArchwayHandlerGUI.toggleNeuroRTEngineConfigurationDialog(static_cast<bool>(gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(pMenuItem))));
 	}
 #endif
 
@@ -754,22 +760,22 @@ namespace
 					char* l_sMessage = strtok(l_pBuffer, ";");
 					while(l_sMessage != NULL)
 					{
-						sscanf(l_sMessage, "%d : <%[^>]> ", &l_iMode, &l_sScenarioPath);
+						sscanf(l_sMessage, "%1d : <%1024[^>]> ", &l_iMode, &l_sScenarioPath);
 						switch(l_iMode)
 						{
 						case MessageType_OpenScenario:
-							l_pApplication->m_rKernelContext.getLogManager() << LogLevel_Info << "ovdCApplication::receiveSecondInstanceMessage- Open scenario: " << l_sScenarioPath << "\n";
+							l_pApplication->m_rKernelContext.getLogManager() << LogLevel_Trace << "ovdCApplication::receiveSecondInstanceMessage- Open scenario: " << l_sScenarioPath << "\n";
 							l_pApplication->openScenario(l_sScenarioPath);
 							break;
 						case MessageType_PlayScenario:
-							l_pApplication->m_rKernelContext.getLogManager() << LogLevel_Info << "ovdCApplication::receiveSecondInstanceMessage- Play scenario: " << l_sScenarioPath << "\n";
+							l_pApplication->m_rKernelContext.getLogManager() << LogLevel_Trace << "ovdCApplication::receiveSecondInstanceMessage- Play scenario: " << l_sScenarioPath << "\n";
 							if(l_pApplication->openScenario(l_sScenarioPath))
 							{
 								l_pApplication->playScenarioCB();
 							}
 							break;
 						case MessageType_PlayFastScenario:
-							l_pApplication->m_rKernelContext.getLogManager() << LogLevel_Info << "ovdCApplication::receiveSecondInstanceMessage- Play fast scenario: " << l_sScenarioPath << "\n";
+							l_pApplication->m_rKernelContext.getLogManager() << LogLevel_Trace << "ovdCApplication::receiveSecondInstanceMessage- Play fast scenario: " << l_sScenarioPath << "\n";
 							if(l_pApplication->openScenario(l_sScenarioPath))
 							{
 								l_pApplication->forwardScenarioCB();
@@ -806,12 +812,20 @@ CApplication::CApplication(const IKernelContext& rKernelContext)
 	,m_eCommandLineFlags(CommandLineFlag_None)
 	,m_pBuilderInterface(NULL)
 	,m_pMainWindow(NULL)
+	,m_pSplashScreen(NULL)
 	,m_pScenarioNotebook(NULL)
 	,m_pResourceNotebook(NULL)
 	,m_pBoxAlgorithmTreeModel(NULL)
+	,m_pBoxAlgorithmTreeModelFilter(NULL)
+	,m_pBoxAlgorithmTreeModelFilter2(NULL)
+	,m_pBoxAlgorithmTreeModelFilter3(NULL)
+	,m_pBoxAlgorithmTreeModelFilter4(NULL)
 	,m_pBoxAlgorithmTreeView(NULL)
 	,m_pAlgorithmTreeModel(NULL)
 	,m_pAlgorithmTreeView(NULL)
+	,m_pFastForwardFactor(NULL)
+	,m_pConfigureSettingsAddSettingButton(NULL)
+	,m_MenuOpenRecent(NULL)
 	,m_pTableInputs(NULL)
 	,m_pTableOutputs(NULL)
 	,m_giFilterTimeout(0)
@@ -982,6 +996,10 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 
 	// Creates an empty scnenario
 	gtk_notebook_remove_page(m_pScenarioNotebook, 0);
+
+	// Initialize menu open recent
+	m_MenuOpenRecent = GTK_CONTAINER(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_recent_content"));
+
 	//newScenarioCB();
 	{
 		// Prepares box algorithm view
@@ -1153,13 +1171,13 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 		unsigned i=0;
 		do
 		{
-			::sprintf(l_sVarName, "Designer_LastScenarioFilename_%03i", ++i);
+			::sprintf(l_sVarName, "Designer_LastScenarioFilename_%03u", ++i);
 			if((l_oTokenIdentifier=m_rKernelContext.getConfigurationManager().lookUpConfigurationTokenIdentifier(l_sVarName))!=OV_UndefinedIdentifier)
 			{
 				CString l_sFilename;
 				l_sFilename=m_rKernelContext.getConfigurationManager().getConfigurationTokenValue(l_oTokenIdentifier);
 				l_sFilename=m_rKernelContext.getConfigurationManager().expand(l_sFilename);
-				m_rKernelContext.getLogManager() << LogLevel_Info << "Restoring scenario [" << l_sFilename << "]\n";
+				m_rKernelContext.getLogManager() << LogLevel_Trace << "Restoring scenario [" << l_sFilename << "]\n";
 				if(!this->openScenario(l_sFilename.toASCIIString()))
 				{
 					m_rKernelContext.getLogManager() << LogLevel_ImportantWarning << "Failed to restore scenario [" << l_sFilename << "]\n";
@@ -1168,6 +1186,27 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 		}
 		while(l_oTokenIdentifier!=OV_UndefinedIdentifier);
 	}
+
+	CIdentifier l_oTokenIdentifier;
+	char l_sVarName[1024];
+	unsigned i = 0;
+	do
+	{
+		::sprintf(l_sVarName, "Designer_RecentScenario_%03u", ++i);
+		if ((l_oTokenIdentifier = m_rKernelContext.getConfigurationManager().lookUpConfigurationTokenIdentifier(l_sVarName)) != OV_UndefinedIdentifier)
+		{
+			CString l_sFilename;
+			l_sFilename = m_rKernelContext.getConfigurationManager().getConfigurationTokenValue(l_oTokenIdentifier);
+			l_sFilename = m_rKernelContext.getConfigurationManager().expand(l_sFilename);
+
+			GtkWidget* newRecentItem = gtk_image_menu_item_new_with_label(l_sFilename.toASCIIString());
+			g_signal_connect(G_OBJECT(newRecentItem), "activate", G_CALLBACK(menu_open_recent_scenario_cb), this);
+			gtk_menu_shell_append(GTK_MENU_SHELL(m_MenuOpenRecent), newRecentItem);
+			gtk_widget_show(newRecentItem);
+			m_RecentScenarios.push_back(newRecentItem);
+		}
+	} while (l_oTokenIdentifier != OV_UndefinedIdentifier);
+
 	refresh_search_no_data_cb(NULL, this);
 	// Add the designer log listener
 	CString l_sLogLevel = m_rKernelContext.getConfigurationManager().expand("${Kernel_ConsoleLogLevel}");
@@ -1572,18 +1611,29 @@ void CApplication::saveOpenedScenarios(void)
 			::fprintf(l_pFile, "Designer_FullscreenEditor = %s\n", m_bIsMaximized ? "True":"False");
 
 			::fprintf(l_pFile, "# Last files opened in %s\n", std::string(STUDIO_NAME).c_str());
-			std::vector < CInterfacedScenario* >::const_iterator it;
-			for(it=m_vInterfacedScenario.begin(); it!=m_vInterfacedScenario.end(); it++)
+
+			for (CInterfacedScenario* scenario : m_vInterfacedScenario)
 			{
-				if((*it)->m_sFileName != "")
+				if (scenario->m_sFileName != "")
 				{
-					::fprintf(l_pFile, "Designer_LastScenarioFilename_%03u = %s\n", i, (*it)->m_sFileName.c_str());
+					::fprintf(l_pFile, "Designer_LastScenarioFilename_%03u = %s\n", i, scenario->m_sFileName.c_str());
 					i++;
 				}
 			}
+			::fprintf(l_pFile, "\n");
 
 			::fprintf(l_pFile, "# Last version of Studio used:\n");
 			::fprintf(l_pFile, "Designer_LastVersionUsed = %s\n", ProjectVersion);
+			::fprintf(l_pFile, "\n");
+
+			::fprintf(l_pFile, "# Recently opened scenario\n");
+			unsigned int scenarioID = 1;
+			for (const GtkWidget* recentScenario : m_RecentScenarios)
+			{
+				const gchar* recentScenarioPath = gtk_menu_item_get_label(GTK_MENU_ITEM(recentScenario));
+				::fprintf(l_pFile, "Designer_RecentScenario_%03u = %s\n", scenarioID, recentScenarioPath);
+				++scenarioID;
+			}
 			::fprintf(l_pFile, "\n");
 			
 			::fclose(l_pFile);
@@ -2164,6 +2214,45 @@ void CApplication::saveScenarioAsCB(CInterfacedScenario* pScenario)
 //	g_object_unref(l_pFileFilterAll);
 }
 
+void CApplication::addRecentScenario(const std::string& scenarioPath)
+{
+	bool scenarioFound = false;
+	// If scenario path is already in menu, remove it from menu shell and re-add it on top of list
+	for (size_t i = 0; i < m_RecentScenarios.size(); ++i)
+	{
+		const gchar* fileName = gtk_menu_item_get_label(GTK_MENU_ITEM(m_RecentScenarios[i]));
+		if (strcmp(fileName, scenarioPath.c_str()) == 0)
+		{
+			gtk_container_remove(m_MenuOpenRecent, GTK_WIDGET(m_RecentScenarios[i]));
+			gtk_menu_shell_prepend(GTK_MENU_SHELL(m_MenuOpenRecent), GTK_WIDGET(m_RecentScenarios[i]));
+			scenarioFound = true;
+			m_RecentScenarios.insert(m_RecentScenarios.begin(), m_RecentScenarios[i]);
+			m_RecentScenarios.erase(m_RecentScenarios.begin() + i+1);
+			break;
+		}
+	}
+	// If scenario is not in menu, create new widget and add it to menu shell
+	if (!scenarioFound)
+	{
+		GtkWidget* newRecentItem = gtk_image_menu_item_new_with_label(scenarioPath.c_str());
+
+		g_signal_connect(G_OBJECT(newRecentItem), "activate", G_CALLBACK(menu_open_recent_scenario_cb), this);
+		gtk_menu_shell_prepend(GTK_MENU_SHELL(m_MenuOpenRecent), newRecentItem);
+		gtk_widget_show(newRecentItem);
+		m_RecentScenarios.insert(m_RecentScenarios.begin(), newRecentItem);
+	}
+
+	if (m_RecentScenarios.size() > s_RecentFileNumber)
+	{
+		for (size_t i = s_RecentFileNumber; i < m_RecentScenarios.size(); i++)
+		{
+			gtk_container_remove(m_MenuOpenRecent, GTK_WIDGET(m_RecentScenarios[i]));
+			gtk_widget_destroy(GTK_WIDGET(m_RecentScenarios[i]));
+		}
+		m_RecentScenarios.erase(m_RecentScenarios.begin() + s_RecentFileNumber, m_RecentScenarios.end());
+	}
+}
+
 void CApplication::closeScenarioCB(CInterfacedScenario* pInterfacedScenario)
 {
 	m_rKernelContext.getLogManager() << LogLevel_Debug << "closeScenarioCB\n";
@@ -2217,6 +2306,8 @@ void CApplication::closeScenarioCB(CInterfacedScenario* pInterfacedScenario)
 				break;
 		}
 	}
+	// Add scenario to recently opened:
+	this->addRecentScenario(pInterfacedScenario->m_sFileName.c_str());
 
 	vector<CInterfacedScenario*>::iterator i=m_vInterfacedScenario.begin();
 	while(i!=m_vInterfacedScenario.end() && *i!=pInterfacedScenario)
