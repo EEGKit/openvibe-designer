@@ -8,7 +8,7 @@
 //#include "box-algorithms/ovpCBoxAlgorithmP300SpellerVisualisation.h"
 //#include "box-algorithms/ovpCBoxAlgorithmP300MagicCardVisualisation.h"
 //#include "box-algorithms/ovpCBoxAlgorithmP300IdentifierCardVisualisation.h"
-//#include "box-algorithms/ovpCDisplayCueImage.h"
+#include "box-algorithms/ovpCDisplayCueImage.h"
 
 //2D plugins
 //#include "box-algorithms/ovpCSignalDisplay.h"
@@ -22,6 +22,8 @@
 //#include "box-algorithms/ovpCSimple3DDisplay.h"
 //#include "box-algorithms/ovpCTopographicMap3DDisplay.h"
 //#include "box-algorithms/ovpCVoxelDisplay.h"
+
+#include "box-algorithms/ovpCKeyboardStimulator.h"
 
 OVP_Declare_Begin()
 
@@ -39,7 +41,7 @@ OVP_Declare_Begin()
 //	OVP_Declare_New(OpenViBEPlugins::SimpleVisualisation::CGrazVisualizationDesc)
 //	OVP_Declare_New(OpenViBEPlugins::SimpleVisualisation::CBoxAlgorithmP300SpellerVisualisationDesc)
 //	OVP_Declare_New(OpenViBEPlugins::SimpleVisualisation::CBoxAlgorithmP300MagicCardVisualisationDesc)
-//	OVP_Declare_New(OpenViBEPlugins::SimpleVisualisation::CDisplayCueImageDesc)
+	OVP_Declare_New(OpenViBEPlugins::SimpleVisualisation::CDisplayCueImageDesc)
 
 //	OVP_Declare_New(OpenViBEPlugins::SimpleVisualisation::CSignalDisplayDesc)
 //	OVP_Declare_New(OpenViBEPlugins::SimpleVisualisation::CTimeFrequencyMapDisplayDesc)
@@ -53,5 +55,9 @@ OVP_Declare_Begin()
 //	OVP_Declare_New(OpenViBEPlugins::SimpleVisualisation::CTopographicMap3DDisplayDesc)
 //	OVP_Declare_New(OpenViBEPlugins::SimpleVisualisation::CVoxelDisplayDesc)
 //	OVP_Declare_New(OpenViBEPlugins::SimpleVisualisation::CBoxAlgorithmP300IdentifierCardVisualisationDesc)
+
+	OVP_Declare_New(OpenViBEPlugins::SimpleVisualisation::CBoxAlgorithmMatrixDisplayDesc)
+
+	OVP_Declare_New(OpenViBEPlugins::SimpleVisualisation::CKeyboardStimulatorDesc)
 
 OVP_Declare_End()
