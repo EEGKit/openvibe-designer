@@ -22,14 +22,14 @@ namespace OpenViBEPlugins
 
 			virtual void release(void) { delete this; }
 
-			virtual OpenViBE::boolean initialize();
-			virtual OpenViBE::boolean uninitialize();
+			virtual bool initialize();
+			virtual bool uninitialize();
 
-			virtual OpenViBE::uint64 getClockFrequency() { return (32LL << 32); }
+			virtual unsigned long long getClockFrequency() { return (32LL << 32); }
 
-			virtual OpenViBE::boolean processClock(OpenViBE::CMessageClock &rMessageClock);
+			virtual bool processClock(OpenViBE::CMessageClock &rMessageClock);
 
-			virtual OpenViBE::boolean process();
+			virtual bool process();
 
 			/**
 			 * \brief Called when a key has been pressed.
@@ -38,13 +38,14 @@ namespace OpenViBEPlugins
 			virtual void processKey(guint uiKey, bool bState);
 
 			_IsDerivedFromClass_Final_(OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>, OVP_ClassId_KeyboardStimulator)
+		
 		private:
 			/**
 			 * \brief Parse the configuration file and creates the Key/Stimulation associations.
 			 * \param pFilename The name of the configuration file.
 			 * \return True if the file was correctly parsed.
 			 */
-			OpenViBE::boolean parseConfigurationFile(const char * pFilename);
+			bool parseConfigurationFile(const char* pFilename);
 
 		private:
 
@@ -54,23 +55,23 @@ namespace OpenViBEPlugins
 
 			typedef struct
 			{
-				OpenViBE::uint64 m_StimulationPress;
-				OpenViBE::uint64 m_StimulationRelease;
-				OpenViBE::boolean m_Status;
+				unsigned long long m_StimulationPress;
+				unsigned long long m_StimulationRelease;
+				bool m_Status;
 			} SKey;
 
 			//! Stores keyvalue/stimulation couples
 			std::map<guint, SKey > m_KeyToStimulation;
 
 			//! Vector of the stimulations to send when possible
-			std::vector<OpenViBE::uint64> m_StimulationToSend;
+			std::vector<unsigned long long> m_StimulationToSend;
 
 			//! Plugin's previous activation date
-			OpenViBE::uint64 m_PreviousActivationTime;
+			unsigned long long m_PreviousActivationTime;
 
 		private:
-			OpenViBE::boolean m_UnknownKeyPressed;
-			OpenViBE::uint32 m_UnknownKeyCode;
+			bool m_UnknownKeyPressed;
+			unsigned int m_UnknownKeyCode;
 			OpenViBEVisualizationToolkit::IVisualizationContext* m_VisualizationContext;
 		};
 

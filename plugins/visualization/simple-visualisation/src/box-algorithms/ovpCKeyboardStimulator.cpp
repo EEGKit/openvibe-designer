@@ -59,7 +59,7 @@ namespace OpenViBEPlugins
 			}
 		}
 
-		boolean CKeyboardStimulator::parseConfigurationFile(const char * filename)
+		bool CKeyboardStimulator::parseConfigurationFile(const char * filename)
 		{
 			std::ifstream file;
 			FS::Files::openIFStream(file, filename);
@@ -101,7 +101,7 @@ namespace OpenViBEPlugins
 		{
 		}
 
-		boolean CKeyboardStimulator::initialize()
+		bool CKeyboardStimulator::initialize()
 		{
 			const IBox* boxContext = getBoxAlgorithmContext()->getStaticBoxContext();
 			CString fileName;
@@ -156,7 +156,7 @@ namespace OpenViBEPlugins
 			return true;
 		}
 
-		boolean CKeyboardStimulator::uninitialize()
+		bool CKeyboardStimulator::uninitialize()
 		{
 			m_Encoder.uninitialize();
 
@@ -175,7 +175,7 @@ namespace OpenViBEPlugins
 			return true;
 		}
 
-		boolean CKeyboardStimulator::processClock(CMessageClock& messageClock)
+		bool CKeyboardStimulator::processClock(CMessageClock& messageClock)
 		{
 			if (m_UnknownKeyPressed)
 			{
@@ -209,7 +209,7 @@ namespace OpenViBEPlugins
 			return true;
 		}
 
-		boolean CKeyboardStimulator::process()
+		bool CKeyboardStimulator::process()
 		{
 			return true;
 		}

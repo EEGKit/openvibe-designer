@@ -25,7 +25,7 @@ namespace OpenViBEPlugins
 	{
 		gboolean DisplayCueImage_SizeAllocateCallback(GtkWidget *widget, GtkAllocation *allocation, gpointer data)
 		{
-			reinterpret_cast<CDisplayCueImage*>(data)->resize((uint32)allocation->width, (uint32)allocation->height);
+			reinterpret_cast<CDisplayCueImage*>(data)->resize((unsigned int)allocation->width, (unsigned int)allocation->height);
 			return FALSE;
 		}
 
@@ -74,7 +74,7 @@ namespace OpenViBEPlugins
 			m_ImageNames.resize(m_NumberOfCue);
 			m_StimulationsId.resize(m_NumberOfCue);
 
-			for (uint32 i = 0; i < m_NumberOfCue; i++)
+			for (unsigned int i = 0; i < m_NumberOfCue; i++)
 			{
 				m_ImageNames[i] = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), 2 * i + 2);
 				m_StimulationsId[i] = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), 2 * i + 3);
@@ -115,7 +115,7 @@ namespace OpenViBEPlugins
 			m_StartingWidth = 64;
 			m_StartingHeight = 64;
 
-			for (uint32 i = 0; i < m_NumberOfCue; i++)
+			for (unsigned int i = 0; i < m_NumberOfCue; i++)
 			{
 				m_OriginalPicture[i] = gdk_pixbuf_new_from_file_at_size(m_ImageNames[i].toASCIIString(), -1, -1, NULL);
 
@@ -123,8 +123,8 @@ namespace OpenViBEPlugins
 									"Error couldn't load ressource file: " << m_ImageNames[i],
 									ErrorType::ResourceNotFound);
 
-				const uint32 l_ui32ImageWidth = gdk_pixbuf_get_width(m_OriginalPicture[i]);
-				const uint32 l_ui32ImageHeight = gdk_pixbuf_get_height(m_OriginalPicture[i]);
+				const unsigned int l_ui32ImageWidth = gdk_pixbuf_get_width(m_OriginalPicture[i]);
+				const unsigned int l_ui32ImageHeight = gdk_pixbuf_get_height(m_OriginalPicture[i]);
 
 				m_StartingWidth = (l_ui32ImageWidth > m_StartingWidth) ? l_ui32ImageWidth : m_StartingWidth;
 				m_StartingHeight = (l_ui32ImageHeight > m_StartingHeight) ? l_ui32ImageHeight : m_StartingHeight;
@@ -226,10 +226,10 @@ namespace OpenViBEPlugins
 			m_LastOutputChunkDate = this->getPlayerContext().getCurrentTime();
 
 			// We check if some images must be display
-			for (uint64 stim = 0; stim < m_PendingStimulationSet.getStimulationCount();)
+			for (unsigned long long stim = 0; stim < m_PendingStimulationSet.getStimulationCount();)
 			{
-				const uint64 stimDate = m_PendingStimulationSet.getStimulationDate(stim);
-				const uint64 time = this->getPlayerContext().getCurrentTime();
+				const unsigned long long stimDate = m_PendingStimulationSet.getStimulationDate(stim);
+				const unsigned long long time = this->getPlayerContext().getCurrentTime();
 
 				if (stimDate < time)
 				{
@@ -240,7 +240,7 @@ namespace OpenViBEPlugins
 						OV_WARNING_K("Image was late: " << delay << " ms");
 					}
 
-					const uint64 stimID = m_PendingStimulationSet.getStimulationIdentifier(stim);
+					const unsigned long long stimID = m_PendingStimulationSet.getStimulationIdentifier(stim);
 
 					if (stimID == m_ClearScreenStimulation)
 					{
@@ -254,7 +254,7 @@ namespace OpenViBEPlugins
 					}
 					else
 					{
-						for (uint32 i = 0; i <= m_NumberOfCue; i++)
+						for (unsigned int i = 0; i <= m_NumberOfCue; i++)
 						{
 							if (stimID == m_StimulationsId[i])
 							{
@@ -287,7 +287,7 @@ namespace OpenViBEPlugins
 			return true;
 		}
 
-		boolean CDisplayCueImage::processInput(uint32 inputIndex)
+		boolean CDisplayCueImage::processInput(unsigned int inputIndex)
 		{
 			getBoxAlgorithmContext()->markAlgorithmAsReadyToProcess();
 			return true;
@@ -298,9 +298,9 @@ namespace OpenViBEPlugins
 			IBoxIO* boxIO = getBoxAlgorithmContext()->getDynamicBoxContext();
 
 			// We decode and save the received stimulations.
-			for (uint32 input = 0; input < getBoxAlgorithmContext()->getStaticBoxContext()->getInputCount(); input++)
+			for (unsigned int input = 0; input < getBoxAlgorithmContext()->getStaticBoxContext()->getInputCount(); input++)
 			{
-				for (uint32 chunk = 0; chunk < boxIO->getInputChunkCount(input); chunk++)
+				for (unsigned int chunk = 0; chunk < boxIO->getInputChunkCount(input); chunk++)
 				{
 					m_StimulationDecoder.decode(chunk, true);
 
@@ -313,10 +313,10 @@ namespace OpenViBEPlugins
 
 					if (m_StimulationDecoder.isBufferReceived())
 					{
-						for (uint32 stim = 0; stim < m_StimulationDecoder.getOutputStimulationSet()->getStimulationCount(); stim++)
+						for (unsigned long long stim = 0; stim < m_StimulationDecoder.getOutputStimulationSet()->getStimulationCount(); stim++)
 						{
-							const uint64 stimID = m_StimulationDecoder.getOutputStimulationSet()->getStimulationIdentifier(stim);
-							boolean addStim = false;
+							const unsigned long long stimID = m_StimulationDecoder.getOutputStimulationSet()->getStimulationIdentifier(stim);
+							bool addStim = false;
 
 							if (stimID == m_ClearScreenStimulation)
 							{
@@ -332,9 +332,9 @@ namespace OpenViBEPlugins
 
 							if (addStim)
 							{
-								const uint64 stimDate = m_StimulationDecoder.getOutputStimulationSet()->getStimulationDate(stim);
-								const uint64 stimDuration = m_StimulationDecoder.getOutputStimulationSet()->getStimulationDuration(stim);
-								const uint64 time = this->getPlayerContext().getCurrentTime();
+								const unsigned long long stimDate = m_StimulationDecoder.getOutputStimulationSet()->getStimulationDate(stim);
+								const unsigned long long stimDuration = m_StimulationDecoder.getOutputStimulationSet()->getStimulationDuration(stim);
+								const unsigned long long time = this->getPlayerContext().getCurrentTime();
 
 								if (stimDate < time)
 								{
@@ -382,7 +382,7 @@ namespace OpenViBEPlugins
 			}
 		}
 
-		void CDisplayCueImage::drawCuePicture(OpenViBE::uint32 cueID)
+		void CDisplayCueImage::drawCuePicture(unsigned int cueID)
 		{
 			if (m_IsFullScreen)
 			{
@@ -396,9 +396,9 @@ namespace OpenViBEPlugins
 			}
 		}
 
-		void CDisplayCueImage::resize(uint32 width, uint32 height)
+		void CDisplayCueImage::resize(unsigned int width, unsigned int height)
 		{
-			for (uint32 i = 0; i < m_NumberOfCue; i++)
+			for (unsigned int i = 0; i < m_NumberOfCue; i++)
 			{
 				if (m_ScaledPicture[i])
 				{
@@ -408,14 +408,14 @@ namespace OpenViBEPlugins
 
 			if (m_IsFullScreen)
 			{
-				for (uint32 i = 0; i < m_NumberOfCue; i++)
+				for (unsigned int i = 0; i < m_NumberOfCue; i++)
 				{
 					m_ScaledPicture[i] = gdk_pixbuf_scale_simple(m_OriginalPicture[i], width, height, GDK_INTERP_BILINEAR);
 				}
 			}
 			else
 			{
-				for (uint32 i = 0; i < m_NumberOfCue; i++)
+				for (unsigned int i = 0; i < m_NumberOfCue; i++)
 				{
 					m_ScaledPicture[i] = gdk_pixbuf_scale_simple(m_OriginalPicture[i],
 																 gdk_pixbuf_get_width(m_OriginalPicture[i]),

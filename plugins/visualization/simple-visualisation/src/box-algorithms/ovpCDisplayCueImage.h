@@ -25,19 +25,19 @@ namespace OpenViBEPlugins
 
 			virtual void release(void) { delete this; }
 
-			virtual OpenViBE::boolean initialize();
-			virtual OpenViBE::boolean uninitialize();
-			virtual OpenViBE::boolean processInput(OpenViBE::uint32 ui32InputIndex);
-			virtual OpenViBE::uint64 getClockFrequency(void) { return (128LL << 32); }
-			virtual OpenViBE::boolean processClock(OpenViBE::CMessageClock& rMessageClock);
-			virtual OpenViBE::boolean process();
+			virtual bool initialize();
+			virtual bool uninitialize();
+			virtual bool processInput(unsigned intui32InputIndex);
+			virtual unsigned long long getClockFrequency(void) { return (128LL << 32); }
+			virtual bool processClock(OpenViBE::CMessageClock& rMessageClock);
+			virtual bool process();
 			virtual void redraw(void);
-			virtual void resize(OpenViBE::uint32 width, OpenViBE::uint32 height);
+			virtual void resize(unsigned int width, unsigned int height);
 
 			_IsDerivedFromClass_Final_(OpenViBE::Plugins::IBoxAlgorithm, OVP_ClassId_DisplayCueImage)
 
 		protected:
-			virtual void drawCuePicture(OpenViBE::uint32 cueID);
+			virtual void drawCuePicture(unsigned int cueID);
 
 			//The Builder handler used to create the interface
 			::GtkBuilder* m_BuilderInterface;
@@ -48,11 +48,11 @@ namespace OpenViBEPlugins
 			OpenViBEToolkit::TStimulationEncoder<CDisplayCueImage> m_StimulationEncoder;
 
 			// For the display of the images:
-			OpenViBE::boolean m_ImageRequested;        //when true: a new image must be drawn
-			OpenViBE::int32   m_RequestedImageID;  //ID of the requested image. -1 => clear the screen
+			bool m_ImageRequested;        //when true: a new image must be drawn
+			unsigned int m_RequestedImageID;  //ID of the requested image. -1 => clear the screen
 
-			OpenViBE::boolean m_ImageDrawn;            //when true: the new image has been drawn
-			OpenViBE::int32   m_DrawnImageID;      //ID of the drawn image. -1 => clear the screen
+			bool m_ImageDrawn;            //when true: the new image has been drawn
+			int m_DrawnImageID;      //ID of the drawn image. -1 => clear the screen
 
 			std::vector<::GdkPixbuf*> m_OriginalPicture;
 			std::vector<::GdkPixbuf*> m_ScaledPicture;
@@ -61,23 +61,23 @@ namespace OpenViBEPlugins
 			::GdkColor m_ForegroundColor;
 
 			//Settings
-			OpenViBE::uint32   m_NumberOfCue;
-			std::vector<OpenViBE::uint64>  m_StimulationsId;
+			unsigned int   m_NumberOfCue;
+			std::vector<unsigned long long>  m_StimulationsId;
 			std::vector<OpenViBE::CString> m_ImageNames;
-			OpenViBE::uint64   m_ClearScreenStimulation;
-			OpenViBE::boolean  m_IsFullScreen;
+			unsigned long long  m_ClearScreenStimulation;
+			bool  m_IsFullScreen;
 
 			//Start and end time of the last buffer
-			OpenViBE::uint64 m_StartTime;
-			OpenViBE::uint64 m_EndTime;
-			OpenViBE::uint64 m_LastOutputChunkDate;
+			unsigned long long m_StartTime;
+			unsigned long long m_EndTime;
+			unsigned long long m_LastOutputChunkDate;
 
 			//We save the received stimulations
 			OpenViBE::CStimulationSet m_PendingStimulationSet;
 
 			// Size of the window
-			OpenViBE::uint32 m_StartingWidth;
-			OpenViBE::uint32 m_StartingHeight;
+			unsigned int m_StartingWidth;
+			unsigned int m_StartingHeight;
 
 		private:
 			OpenViBEVisualizationToolkit::IVisualizationContext* m_VisualizationContext;
@@ -87,27 +87,27 @@ namespace OpenViBEPlugins
 		{
 		public:
 
-			virtual OpenViBE::boolean onSettingAdded(OpenViBE::Kernel::IBox& rBox, const OpenViBE::uint32 ui32Index)
+			virtual bool onSettingAdded(OpenViBE::Kernel::IBox& box, const unsigned int index)
 			{
-				OpenViBE::CString l_sDefaultName = OpenViBE::Directories::getDataDir() + "/plugins/simple-visualisation/p300-magic-card/bomberman.png";
+				OpenViBE::CString defaultName = OpenViBE::Directories::getDataDir() + "/plugins/simple-visualisation/p300-magic-card/bomberman.png";
 
-				rBox.setSettingDefaultValue(ui32Index, l_sDefaultName.toASCIIString());
-				rBox.setSettingValue(ui32Index, l_sDefaultName.toASCIIString());
+				box.setSettingDefaultValue(index, defaultName.toASCIIString());
+				box.setSettingValue(index, defaultName.toASCIIString());
 
-				char l_sName[1024];
-				sprintf(l_sName, "OVTK_StimulationId_Label_%02X", ui32Index / 2);
-				rBox.addSetting("", OV_TypeId_Stimulation, l_sName);
-				rBox.setSettingDefaultValue(ui32Index + 1, l_sName);
-				rBox.setSettingValue(ui32Index + 1, l_sName);
+				char name[1024];
+				sprintf(name, "OVTK_StimulationId_Label_%02X", index / 2);
+				box.addSetting("", OV_TypeId_Stimulation, name);
+				box.setSettingDefaultValue(index + 1, name);
+				box.setSettingValue(index + 1, name);
 
-				this->checkSettingNames(rBox);
+				this->checkSettingNames(box);
 				return true;
 			}
 
-			virtual OpenViBE::boolean onSettingRemoved(OpenViBE::Kernel::IBox& rBox, const OpenViBE::uint32 ui32Index)
+			virtual bool onSettingRemoved(OpenViBE::Kernel::IBox& box, const unsigned int index)
 			{
-				rBox.removeSetting((ui32Index / 2) * 2);
-				this->checkSettingNames(rBox);
+				box.removeSetting((index / 2) * 2);
+				this->checkSettingNames(box);
 				return true;
 			}
 
@@ -115,17 +115,17 @@ namespace OpenViBEPlugins
 
 		private:
 
-			OpenViBE::boolean checkSettingNames(OpenViBE::Kernel::IBox& rBox)
+			bool checkSettingNames(OpenViBE::Kernel::IBox& box)
 			{
-				char l_sName[1024];
-				for (OpenViBE::uint32 i = 2; i < rBox.getSettingCount() - 1; i += 2)
+				char name[1024];
+				for (unsigned int i = 2; i < box.getSettingCount() - 1; i += 2)
 				{
-					sprintf(l_sName, "Cue Image %i", i / 2);
-					rBox.setSettingName(i, l_sName);
-					rBox.setSettingType(i, OV_TypeId_Filename);
-					sprintf(l_sName, "Stimulation %i", i / 2);
-					rBox.setSettingName(i + 1, l_sName);
-					rBox.setSettingType(i + 1, OV_TypeId_Stimulation);
+					sprintf(name, "Cue Image %i", i / 2);
+					box.setSettingName(i, name);
+					box.setSettingType(i, OV_TypeId_Filename);
+					sprintf(name, "Stimulation %i", i / 2);
+					box.setSettingName(i + 1, name);
+					box.setSettingType(i + 1, OV_TypeId_Stimulation);
 				}
 				return true;
 			}
@@ -152,12 +152,12 @@ namespace OpenViBEPlugins
 			virtual OpenViBE::Plugins::IBoxListener* createBoxListener(void) const { return new CDisplayCueImageListener; }
 			virtual void releaseBoxListener(OpenViBE::Plugins::IBoxListener* pBoxListener) const { delete pBoxListener; }
 
-			virtual OpenViBE::boolean hasFunctionality(OpenViBE::CIdentifier functionalityIdentifier) const
+			virtual bool hasFunctionality(OpenViBE::CIdentifier functionalityIdentifier) const
 			{
 				return functionalityIdentifier == OVD_Functionality_Visualization;
 			}
 
-			virtual OpenViBE::boolean getBoxPrototype(OpenViBE::Kernel::IBoxProto& rPrototype) const
+			virtual bool getBoxPrototype(OpenViBE::Kernel::IBoxProto& rPrototype) const
 			{
 				rPrototype.addInput("Stimulations", OV_TypeId_Stimulations);
 				rPrototype.addOutput("Stimulations", OV_TypeId_Stimulations);
