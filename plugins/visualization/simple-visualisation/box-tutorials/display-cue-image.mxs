@@ -75,7 +75,7 @@
 					<TypeIdentifier>(0x330306dd, 0x74a95f98)</TypeIdentifier>
 					<Name>Filename</Name>
 					<DefaultValue>${Path_Data}/plugins/stimulation/simple-keyboard-to-stimulations.txt</DefaultValue>
-					<Value>C:/Git/neurort/plugins/processing/stimulation/box-tutorials/display-cue-image-keyboard-stimulator.txt</Value>
+					<Value>${Player_ScenarioDirectory}/display-cue-image-keyboard-stimulator.txt</Value>
 					<Modifiability>false</Modifiability>
 				</Setting>
 			</Settings>
@@ -99,6 +99,10 @@
 				<Attribute>
 					<Identifier>(0xad100179, 0xa3c984ab)</Identifier>
 					<Value>123</Value>
+				</Attribute>
+				<Attribute>
+					<Identifier>(0xc67a01dc, 0x28ce06c1)</Identifier>
+					<Value></Value>
 				</Attribute>
 				<Attribute>
 					<Identifier>(0xc80ce8af, 0xf699f813)</Identifier>
@@ -180,10 +184,6 @@
 				<Attribute>
 					<Identifier>(0xad100179, 0xa3c984ab)</Identifier>
 					<Value>109</Value>
-				</Attribute>
-				<Attribute>
-					<Identifier>(0xc67a01dc, 0x28ce06c1)</Identifier>
-					<Value></Value>
 				</Attribute>
 				<Attribute>
 					<Identifier>(0xc80ce8af, 0xf699f813)</Identifier>
@@ -328,7 +328,7 @@ to know when to display an image.</Text>
 	</Comments>
 	<Metadata>
 		<Entry>
-			<Identifier>(0x00000a41, 0x0000641c)</Identifier>
+			<Identifier>(0x00003f0b, 0x00003088)</Identifier>
 			<Type>(0x3bcce5d2, 0x43f2d968)</Type>
 			<Data>[{&quot;boxIdentifier&quot;:&quot;(0x63a24d68, 0x4fb7a02b)&quot;,&quot;childCount&quot;:0,&quot;dividerPosition&quot;:-842150451,&quot;height&quot;:-842150451,&quot;identifier&quot;:&quot;(0x00004e08, 0x00007a62)&quot;,&quot;maxDividerPosition&quot;:-842150451,&quot;parentIdentifier&quot;:&quot;(0xffffffff, 0xffffffff)&quot;,&quot;type&quot;:3,&quot;width&quot;:-842150451},{&quot;boxIdentifier&quot;:&quot;(0x3459648f, 0x3adf331e)&quot;,&quot;childCount&quot;:0,&quot;dividerPosition&quot;:-842150451,&quot;height&quot;:-842150451,&quot;identifier&quot;:&quot;(0x00006479, 0x00004326)&quot;,&quot;maxDividerPosition&quot;:-842150451,&quot;parentIdentifier&quot;:&quot;(0xffffffff, 0xffffffff)&quot;,&quot;type&quot;:3,&quot;width&quot;:-842150451}]</Data>
 		</Entry>

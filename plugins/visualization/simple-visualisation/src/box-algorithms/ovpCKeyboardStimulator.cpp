@@ -66,7 +66,7 @@ namespace OpenViBEPlugins
 
 			OV_ERROR_UNLESS_KRF(
 				file.is_open(),
-				"File does not exist!",
+				"Configuration file not found: " << filename,
 				ErrorType::BadFileRead);
 
 			//reads all the couples key name/stim
@@ -103,16 +103,19 @@ namespace OpenViBEPlugins
 
 		bool CKeyboardStimulator::initialize()
 		{
-			const IBox* boxContext = getBoxAlgorithmContext()->getStaticBoxContext();
-			CString fileName;
-
-			// Parses box settings to find input file's name
-			boxContext->getSettingValue(0, fileName);
+			const CString fileName = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), 0);
 
 			OV_ERROR_UNLESS_KRF(
 				parseConfigurationFile(fileName.toASCIIString()), 
-				"Problem while parsing configuration file!", 
+				"Problem while parsing configuration file", 
 				ErrorType::BadFileParsing);
+
+			std::string userInterfacePath = OpenViBE::Directories::getDataDir() + "/plugins/simple-visualisation/keyboard-stimulator.ui";
+			
+			OV_ERROR_UNLESS_KRF(
+				FS::Files::fileExists(userInterfacePath.c_str()),
+				"User interface file not found: " << userInterfacePath.c_str(),
+				ErrorType::BadFileRead);
 
 			m_Encoder.initialize(*this, 0);
 
@@ -135,10 +138,16 @@ namespace OpenViBEPlugins
 			}
 
 			::GtkBuilder* l_pBuilder = gtk_builder_new();
-			gtk_builder_add_from_file(l_pBuilder, OpenViBE::Directories::getDataDir() + "/plugins/stimulation/keyboard-stimulator.ui", NULL);
+			
+			gtk_builder_add_from_file(l_pBuilder, userInterfacePath.c_str(), NULL);
 			gtk_builder_connect_signals(l_pBuilder, NULL);
 
 			m_Widget = GTK_WIDGET(gtk_builder_get_object(l_pBuilder, "keyboard_stimulator-eventbox"));
+
+			OV_ERROR_UNLESS_KRF(
+				m_Widget != NULL,
+				"Failed to create user interface",
+				ErrorType::BadFileRead);
 
 			gtk_label_set_markup(GTK_LABEL(gtk_builder_get_object(l_pBuilder, "keyboard_stimulator-label")), ss.str().c_str());
 

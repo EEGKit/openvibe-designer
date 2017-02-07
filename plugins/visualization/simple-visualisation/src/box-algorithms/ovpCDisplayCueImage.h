@@ -37,7 +37,7 @@ namespace OpenViBEPlugins
 			_IsDerivedFromClass_Final_(OpenViBE::Plugins::IBoxAlgorithm, OVP_ClassId_DisplayCueImage)
 
 		protected:
-			virtual void drawCuePicture(unsigned int cueID);
+			virtual bool drawCuePicture(unsigned int cueID);
 
 			//The Builder handler used to create the interface
 			::GtkBuilder* m_BuilderInterface;
@@ -49,7 +49,7 @@ namespace OpenViBEPlugins
 
 			// For the display of the images:
 			bool m_ImageRequested;        //when true: a new image must be drawn
-			unsigned int m_RequestedImageID;  //ID of the requested image. -1 => clear the screen
+			int m_RequestedImageID;  //ID of the requested image. -1 => clear the screen
 
 			bool m_ImageDrawn;            //when true: the new image has been drawn
 			int m_DrawnImageID;      //ID of the drawn image. -1 => clear the screen
@@ -65,7 +65,7 @@ namespace OpenViBEPlugins
 			std::vector<unsigned long long>  m_StimulationsId;
 			std::vector<OpenViBE::CString> m_ImageNames;
 			unsigned long long  m_ClearScreenStimulation;
-			bool  m_IsFullScreen;
+			bool m_IsFullScreen;
 
 			//Start and end time of the last buffer
 			unsigned long long m_StartTime;

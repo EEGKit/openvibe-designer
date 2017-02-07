@@ -306,9 +306,10 @@ namespace OpenViBEPlugins
 
 					if (m_StimulationDecoder.isHeaderReceived())
 					{
-						m_LastOutputChunkDate = this->getPlayerContext().getCurrentTime();
+						const unsigned long long currentTime = this->getPlayerContext().getCurrentTime();
 						m_StimulationEncoder.encodeHeader();
-						boxIO->markOutputAsReadyToSend(0, 0, m_LastOutputChunkDate);
+						boxIO->markOutputAsReadyToSend(0, m_LastOutputChunkDate, currentTime);
+						m_LastOutputChunkDate = currentTime;
 					}
 
 					if (m_StimulationDecoder.isBufferReceived())
@@ -382,8 +383,13 @@ namespace OpenViBEPlugins
 			}
 		}
 
-		void CDisplayCueImage::drawCuePicture(unsigned int cueID)
+		bool CDisplayCueImage::drawCuePicture(unsigned int cueID)
 		{
+			if (m_ScaledPicture.size() + 1 < cueID)
+			{
+				return false; 
+			}
+
 			if (m_IsFullScreen)
 			{
 				gdk_draw_pixbuf(m_DrawingArea->window, NULL, m_ScaledPicture[cueID], 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
@@ -394,6 +400,8 @@ namespace OpenViBEPlugins
 				gint y = (m_DrawingArea->allocation.height / 2) - gdk_pixbuf_get_height(m_ScaledPicture[cueID]) / 2;;
 				gdk_draw_pixbuf(m_DrawingArea->window, NULL, m_ScaledPicture[cueID], 0, 0, x, y, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
 			}
+
+			return true;
 		}
 
 		void CDisplayCueImage::resize(unsigned int width, unsigned int height)
