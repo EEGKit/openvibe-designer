@@ -101,7 +101,7 @@ namespace OpenViBEPlugins
 			{
 				rPrototype.addOutput("Outgoing Stimulations", OV_TypeId_Stimulations);
 
-				rPrototype.addSetting("Filename", OV_TypeId_Filename, "${Path_Data}/plugins/visualization/simple-visualisation/share/simple-keyboard-to-stimulations.txt");
+				rPrototype.addSetting("Filename", OV_TypeId_Filename, "${Path_Data}/plugins/simple-visualisation/simple-keyboard-to-stimulations.txt");
 
 				return true;
 			}

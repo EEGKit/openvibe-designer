@@ -110,7 +110,7 @@ namespace OpenViBEPlugins
 				"Problem while parsing configuration file", 
 				ErrorType::BadFileParsing);
 
-			std::string userInterfacePath = OpenViBE::Directories::getDataDir() + "/plugins/simple-visualisation/keyboard-stimulator.ui";
+			std::string userInterfacePath = std::string(OpenViBE::Directories::getDataDir().toASCIIString()) + "/plugins/simple-visualisation/keyboard-stimulator.ui";
 			
 			OV_ERROR_UNLESS_KRF(
 				FS::Files::fileExists(userInterfacePath.c_str()),
