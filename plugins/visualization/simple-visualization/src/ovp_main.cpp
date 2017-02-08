@@ -35,28 +35,26 @@ OVP_Declare_Begin()
 //	rPluginModuleContext.getTypeManager().registerEnumerationEntry(OVP_TypeId_SignalDisplayMode, "Scroll", OVP_TypeId_SignalDisplayMode_Scroll.toUInteger());
 //	rPluginModuleContext.getTypeManager().registerEnumerationEntry(OVP_TypeId_SignalDisplayMode, "Scan",  OVP_TypeId_SignalDisplayMode_Scan.toUInteger());
 
-//	OVP_Declare_New(OpenViBEPlugins::Simplevisualization::CAlgorithmLevelMeasureDesc)
+//	OVP_Declare_New(OpenViBEPlugins::SimpleVisualization::CAlgorithmLevelMeasureDesc)
 //	OVP_Declare_New(OpenViBEPlugins::Test::CAlgorithmSphericalSplineInterpolationDesc)
 
-//	OVP_Declare_New(OpenViBEPlugins::Simplevisualization::CGrazVisualizationDesc)
-//	OVP_Declare_New(OpenViBEPlugins::Simplevisualization::CBoxAlgorithmP300SpellervisualizationDesc)
-//	OVP_Declare_New(OpenViBEPlugins::Simplevisualization::CBoxAlgorithmP300MagicCardvisualizationDesc)
+//	OVP_Declare_New(OpenViBEPlugins::SimpleVisualization::CGrazVisualizationDesc)
+//	OVP_Declare_New(OpenViBEPlugins::SimpleVisualization::CBoxAlgorithmP300SpellervisualizationDesc)
+//	OVP_Declare_New(OpenViBEPlugins::SimpleVisualization::CBoxAlgorithmP300MagicCardvisualizationDesc)
 	OVP_Declare_New(OpenViBEPlugins::SimpleVisualization::CDisplayCueImageDesc)
 
-//	OVP_Declare_New(OpenViBEPlugins::Simplevisualization::CSignalDisplayDesc)
-//	OVP_Declare_New(OpenViBEPlugins::Simplevisualization::CTimeFrequencyMapDisplayDesc)
-//	OVP_Declare_New(OpenViBEPlugins::Simplevisualization::CPowerSpectrumDisplayDesc)
-//	OVP_Declare_New(OpenViBEPlugins::Simplevisualization::CTopographicMap2DDisplayDesc)
-//	OVP_Declare_New(OpenViBEPlugins::Simplevisualization::CBoxAlgorithmLevelMeasureDesc)
-//	OVP_Declare_New(OpenViBEPlugins::Simplevisualization::CBoxAlgorithmClassifierAccuracyMeasureDesc)
+//	OVP_Declare_New(OpenViBEPlugins::SimpleVisualization::CSignalDisplayDesc)
+//	OVP_Declare_New(OpenViBEPlugins::SimpleVisualization::CTimeFrequencyMapDisplayDesc)
+//	OVP_Declare_New(OpenViBEPlugins::SimpleVisualization::CPowerSpectrumDisplayDesc)
+//	OVP_Declare_New(OpenViBEPlugins::SimpleVisualization::CTopographicMap2DDisplayDesc)
+//	OVP_Declare_New(OpenViBEPlugins::SimpleVisualization::CBoxAlgorithmLevelMeasureDesc)
+//	OVP_Declare_New(OpenViBEPlugins::SimpleVisualization::CBoxAlgorithmClassifierAccuracyMeasureDesc)
 	OVP_Declare_New(OpenViBEPlugins::SimpleVisualization::CBoxAlgorithmMatrixDisplayDesc)
 
-//	OVP_Declare_New(OpenViBEPlugins::Simplevisualization::CSimple3DDisplayDesc)
-//	OVP_Declare_New(OpenViBEPlugins::Simplevisualization::CTopographicMap3DDisplayDesc)
-//	OVP_Declare_New(OpenViBEPlugins::Simplevisualization::CVoxelDisplayDesc)
-//	OVP_Declare_New(OpenViBEPlugins::Simplevisualization::CBoxAlgorithmP300IdentifierCardvisualizationDesc)
-
-	OVP_Declare_New(OpenViBEPlugins::SimpleVisualization::CBoxAlgorithmMatrixDisplayDesc)
+//	OVP_Declare_New(OpenViBEPlugins::SimpleVisualization::CSimple3DDisplayDesc)
+//	OVP_Declare_New(OpenViBEPlugins::SimpleVisualization::CTopographicMap3DDisplayDesc)
+//	OVP_Declare_New(OpenViBEPlugins::SimpleVisualization::CVoxelDisplayDesc)
+//	OVP_Declare_New(OpenViBEPlugins::SimpleVisualization::CBoxAlgorithmP300IdentifierCardvisualizationDesc)
 
 	OVP_Declare_New(OpenViBEPlugins::SimpleVisualization::CKeyboardStimulatorDesc)
 
