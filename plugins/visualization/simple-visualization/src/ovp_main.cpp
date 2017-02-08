@@ -5,9 +5,9 @@
 
 //Presentation
 //#include "box-algorithms/ovpCGrazVisualization.h"
-//#include "box-algorithms/ovpCBoxAlgorithmP300SpellerVisualisation.h"
-//#include "box-algorithms/ovpCBoxAlgorithmP300MagicCardVisualisation.h"
-//#include "box-algorithms/ovpCBoxAlgorithmP300IdentifierCardVisualisation.h"
+//#include "box-algorithms/ovpCBoxAlgorithmP300Spellervisualization.h"
+//#include "box-algorithms/ovpCBoxAlgorithmP300MagicCardvisualization.h"
+//#include "box-algorithms/ovpCBoxAlgorithmP300IdentifierCardvisualization.h"
 #include "box-algorithms/ovpCDisplayCueImage.h"
 
 //2D plugins
@@ -35,29 +35,29 @@ OVP_Declare_Begin()
 //	rPluginModuleContext.getTypeManager().registerEnumerationEntry(OVP_TypeId_SignalDisplayMode, "Scroll", OVP_TypeId_SignalDisplayMode_Scroll.toUInteger());
 //	rPluginModuleContext.getTypeManager().registerEnumerationEntry(OVP_TypeId_SignalDisplayMode, "Scan",  OVP_TypeId_SignalDisplayMode_Scan.toUInteger());
 
-//	OVP_Declare_New(OpenViBEPlugins::SimpleVisualisation::CAlgorithmLevelMeasureDesc)
+//	OVP_Declare_New(OpenViBEPlugins::Simplevisualization::CAlgorithmLevelMeasureDesc)
 //	OVP_Declare_New(OpenViBEPlugins::Test::CAlgorithmSphericalSplineInterpolationDesc)
 
-//	OVP_Declare_New(OpenViBEPlugins::SimpleVisualisation::CGrazVisualizationDesc)
-//	OVP_Declare_New(OpenViBEPlugins::SimpleVisualisation::CBoxAlgorithmP300SpellerVisualisationDesc)
-//	OVP_Declare_New(OpenViBEPlugins::SimpleVisualisation::CBoxAlgorithmP300MagicCardVisualisationDesc)
-	OVP_Declare_New(OpenViBEPlugins::SimpleVisualisation::CDisplayCueImageDesc)
+//	OVP_Declare_New(OpenViBEPlugins::Simplevisualization::CGrazVisualizationDesc)
+//	OVP_Declare_New(OpenViBEPlugins::Simplevisualization::CBoxAlgorithmP300SpellervisualizationDesc)
+//	OVP_Declare_New(OpenViBEPlugins::Simplevisualization::CBoxAlgorithmP300MagicCardvisualizationDesc)
+	OVP_Declare_New(OpenViBEPlugins::SimpleVisualization::CDisplayCueImageDesc)
 
-//	OVP_Declare_New(OpenViBEPlugins::SimpleVisualisation::CSignalDisplayDesc)
-//	OVP_Declare_New(OpenViBEPlugins::SimpleVisualisation::CTimeFrequencyMapDisplayDesc)
-//	OVP_Declare_New(OpenViBEPlugins::SimpleVisualisation::CPowerSpectrumDisplayDesc)
-//	OVP_Declare_New(OpenViBEPlugins::SimpleVisualisation::CTopographicMap2DDisplayDesc)
-//	OVP_Declare_New(OpenViBEPlugins::SimpleVisualisation::CBoxAlgorithmLevelMeasureDesc)
-//	OVP_Declare_New(OpenViBEPlugins::SimpleVisualisation::CBoxAlgorithmClassifierAccuracyMeasureDesc)
-	OVP_Declare_New(OpenViBEPlugins::SimpleVisualisation::CBoxAlgorithmMatrixDisplayDesc)
+//	OVP_Declare_New(OpenViBEPlugins::Simplevisualization::CSignalDisplayDesc)
+//	OVP_Declare_New(OpenViBEPlugins::Simplevisualization::CTimeFrequencyMapDisplayDesc)
+//	OVP_Declare_New(OpenViBEPlugins::Simplevisualization::CPowerSpectrumDisplayDesc)
+//	OVP_Declare_New(OpenViBEPlugins::Simplevisualization::CTopographicMap2DDisplayDesc)
+//	OVP_Declare_New(OpenViBEPlugins::Simplevisualization::CBoxAlgorithmLevelMeasureDesc)
+//	OVP_Declare_New(OpenViBEPlugins::Simplevisualization::CBoxAlgorithmClassifierAccuracyMeasureDesc)
+	OVP_Declare_New(OpenViBEPlugins::SimpleVisualization::CBoxAlgorithmMatrixDisplayDesc)
 
-//	OVP_Declare_New(OpenViBEPlugins::SimpleVisualisation::CSimple3DDisplayDesc)
-//	OVP_Declare_New(OpenViBEPlugins::SimpleVisualisation::CTopographicMap3DDisplayDesc)
-//	OVP_Declare_New(OpenViBEPlugins::SimpleVisualisation::CVoxelDisplayDesc)
-//	OVP_Declare_New(OpenViBEPlugins::SimpleVisualisation::CBoxAlgorithmP300IdentifierCardVisualisationDesc)
+//	OVP_Declare_New(OpenViBEPlugins::Simplevisualization::CSimple3DDisplayDesc)
+//	OVP_Declare_New(OpenViBEPlugins::Simplevisualization::CTopographicMap3DDisplayDesc)
+//	OVP_Declare_New(OpenViBEPlugins::Simplevisualization::CVoxelDisplayDesc)
+//	OVP_Declare_New(OpenViBEPlugins::Simplevisualization::CBoxAlgorithmP300IdentifierCardvisualizationDesc)
 
-	OVP_Declare_New(OpenViBEPlugins::SimpleVisualisation::CBoxAlgorithmMatrixDisplayDesc)
+	OVP_Declare_New(OpenViBEPlugins::SimpleVisualization::CBoxAlgorithmMatrixDisplayDesc)
 
-	OVP_Declare_New(OpenViBEPlugins::SimpleVisualisation::CKeyboardStimulatorDesc)
+	OVP_Declare_New(OpenViBEPlugins::SimpleVisualization::CKeyboardStimulatorDesc)
 
 OVP_Declare_End()

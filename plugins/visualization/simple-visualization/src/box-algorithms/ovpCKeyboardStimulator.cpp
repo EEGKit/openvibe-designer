@@ -16,7 +16,7 @@ using namespace OpenViBEToolkit;
 
 namespace OpenViBEPlugins
 {
-	namespace SimpleVisualisation
+	namespace SimpleVisualization
 	{
 		/**
 		 * \brief Called when a key is pressed on the keyboard.
@@ -110,7 +110,7 @@ namespace OpenViBEPlugins
 				"Problem while parsing configuration file", 
 				ErrorType::BadFileParsing);
 
-			std::string userInterfacePath = std::string(OpenViBE::Directories::getDataDir().toASCIIString()) + "/plugins/simple-visualisation/keyboard-stimulator.ui";
+			std::string userInterfacePath = std::string(OpenViBE::Directories::getDataDir().toASCIIString()) + "/plugins/simple-visualization/keyboard-stimulator.ui";
 			
 			OV_ERROR_UNLESS_KRF(
 				FS::Files::fileExists(userInterfacePath.c_str()),

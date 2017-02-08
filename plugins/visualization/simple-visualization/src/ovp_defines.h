@@ -95,7 +95,7 @@
 
 namespace OpenViBEPlugins
 {
-	namespace SimpleVisualisation
+	namespace SimpleVisualization
 	{
 		enum EDisplayMode
 		{

@@ -15,13 +15,13 @@ using namespace Plugins;
 using namespace Kernel;
 
 using namespace OpenViBEPlugins;
-using namespace OpenViBEPlugins::SimpleVisualisation;
+using namespace OpenViBEPlugins::SimpleVisualization;
 
 using namespace OpenViBEToolkit;
 
 namespace OpenViBEPlugins
 {
-	namespace SimpleVisualisation
+	namespace SimpleVisualization
 	{
 		gboolean DisplayCueImage_SizeAllocateCallback(GtkWidget *widget, GtkAllocation *allocation, gpointer data)
 		{
@@ -86,7 +86,7 @@ namespace OpenViBEPlugins
 
 			//load the gtk builder interface
 			m_BuilderInterface = gtk_builder_new();
-			gtk_builder_add_from_file(m_BuilderInterface, OpenViBE::Directories::getDataDir() + "/plugins/simple-visualisation/openvibe-simple-visualisation-DisplayCueImage.ui", NULL);
+			gtk_builder_add_from_file(m_BuilderInterface, OpenViBE::Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-DisplayCueImage.ui", NULL);
 
 			OV_ERROR_UNLESS_KRF(
 				m_BuilderInterface,

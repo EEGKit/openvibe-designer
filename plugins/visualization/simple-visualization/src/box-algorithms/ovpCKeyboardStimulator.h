@@ -13,7 +13,7 @@
 
 namespace OpenViBEPlugins
 {
-	namespace SimpleVisualisation
+	namespace SimpleVisualization
 	{
 		class CKeyboardStimulator : public OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>
 		{
@@ -90,7 +90,7 @@ namespace OpenViBEPlugins
 			virtual OpenViBE::CString getVersion(void) const { return OpenViBE::CString("0.1"); }
 			virtual void release(void) {}
 			virtual OpenViBE::CIdentifier getCreatedClass(void) const { return OVP_ClassId_KeyboardStimulator; }
-			virtual OpenViBE::Plugins::IPluginObject* create(void) { return new OpenViBEPlugins::SimpleVisualisation::CKeyboardStimulator(); }
+			virtual OpenViBE::Plugins::IPluginObject* create(void) { return new OpenViBEPlugins::SimpleVisualization::CKeyboardStimulator(); }
 
 			virtual OpenViBE::boolean hasFunctionality(OpenViBE::CIdentifier functionalityIdentifier) const
 			{
@@ -101,7 +101,7 @@ namespace OpenViBEPlugins
 			{
 				rPrototype.addOutput("Outgoing Stimulations", OV_TypeId_Stimulations);
 
-				rPrototype.addSetting("Filename", OV_TypeId_Filename, "${Path_Data}/plugins/simple-visualisation/simple-keyboard-to-stimulations.txt");
+				rPrototype.addSetting("Filename", OV_TypeId_Filename, "${Path_Data}/plugins/simple-visualization/simple-keyboard-to-stimulations.txt");
 
 				return true;
 			}

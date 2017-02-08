@@ -14,7 +14,7 @@
 
 namespace OpenViBEPlugins
 {
-	namespace SimpleVisualisation
+	namespace SimpleVisualization
 	{
 		class CDisplayCueImage :
 			public OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>
@@ -148,7 +148,7 @@ namespace OpenViBEPlugins
 			virtual OpenViBE::CIdentifier getCreatedClass(void) const { return OVP_ClassId_DisplayCueImage; }
 
 			virtual OpenViBE::CString getStockItemName(void) const { return OpenViBE::CString("gtk-fullscreen"); }
-			virtual OpenViBE::Plugins::IPluginObject* create(void) { return new OpenViBEPlugins::SimpleVisualisation::CDisplayCueImage(); }
+			virtual OpenViBE::Plugins::IPluginObject* create(void) { return new OpenViBEPlugins::SimpleVisualization::CDisplayCueImage(); }
 			virtual OpenViBE::Plugins::IBoxListener* createBoxListener(void) const { return new CDisplayCueImageListener; }
 			virtual void releaseBoxListener(OpenViBE::Plugins::IBoxListener* pBoxListener) const { delete pBoxListener; }
 
