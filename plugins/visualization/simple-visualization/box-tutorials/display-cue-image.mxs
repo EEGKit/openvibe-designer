@@ -148,7 +148,7 @@
 				<Setting>
 					<TypeIdentifier>(0x330306dd, 0x74a95f98)</TypeIdentifier>
 					<Name>Cue Image 1</Name>
-					<DefaultValue>${Path_Data}/plugins/simple-visualisation/p300-magic-card/mario.png</DefaultValue>
+					<DefaultValue>${Path_Data}/share/openvibe/scenarios/box-tutorials/openvibe-logo.png</DefaultValue>
 					<Value>${Player_ScenarioDirectory}/openvibe-logo.png</Value>
 					<Modifiability>false</Modifiability>
 				</Setting>
@@ -336,7 +336,7 @@ to know when to display an image.</Text>
 	<Attributes>
 		<Attribute>
 			<Identifier>(0x4c536d0a, 0xb23dc545)</Identifier>
-			<Value>C:/Git/studio/plugins/visualization/simple-visualisation/box-tutorials/display-cue-image.mxs</Value>
+			<Value>${Player_ScenarioDirectory}/display-cue-image.mxs</Value>
 		</Attribute>
 		<Attribute>
 			<Identifier>(0x4c90d4ad, 0x7a2554ec)</Identifier>

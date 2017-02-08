@@ -77,12 +77,24 @@ namespace OpenViBEPlugins
 				std::string stimulationRelease;
 
 				file >> keyName >> stimulationPress >> stimulationRelease;
+				
+				if (file.fail())
+				{
+					break;
+				}
 
 				SKey key{ 0, 0, false };
 
 				// MAY CAUSE ENDIANNESS PROBLEMS !
-				sscanf(stimulationPress.c_str(), "0x%08Lx", &key.m_StimulationPress);
-				sscanf(stimulationRelease.c_str(), "0x%08Lx", &key.m_StimulationRelease);
+				OV_ERROR_UNLESS_KRF(
+					sscanf(stimulationPress.c_str(), "0x%08llx", &key.m_StimulationPress) == 1,
+					"Failed to format " << key.m_StimulationPress,
+					ErrorType::BadArgument);
+
+				OV_ERROR_UNLESS_KRF(
+					sscanf(stimulationRelease.c_str(), "0x%08llx", &key.m_StimulationRelease) == 1,
+					"Failed to format " << key.m_StimulationRelease,
+					ErrorType::BadArgument);
 
 				m_KeyToStimulation[gdk_keyval_from_name(keyName.c_str())] = key;
 			}
@@ -129,11 +141,23 @@ namespace OpenViBEPlugins
 			for (std::map<guint, SKey>::const_iterator i = m_KeyToStimulation.begin(); i != m_KeyToStimulation.end(); i++)
 			{
 				ss << "<span size=\"smaller\">\t";
-				ss << "<span style=\"italic\" foreground=\"" << greenColorCode << "\">" << gdk_keyval_name(i->first) << "</span>";
+				ss << "<span style=\"italic\" foreground=\"" 
+					<< greenColorCode
+					<< "\">" 
+					<< gdk_keyval_name(i->first) 
+					<< "</span>";
 				ss << "\t";
-				ss << "Pressed : <span style=\"italic\" foreground=\"" << blueColorCode << "\">" << this->getTypeManager().getEnumerationEntryNameFromValue(OV_TypeId_Stimulation, i->second.m_StimulationPress) << "</span>";
+				ss << "Pressed : <span style=\"italic\" foreground=\"" 
+					<< blueColorCode 
+					<< "\">" 
+					<< this->getTypeManager().getEnumerationEntryNameFromValue(OV_TypeId_Stimulation, i->second.m_StimulationPress) 
+					<< "</span>";
 				ss << "\t";
-				ss << "Released : <span style=\"italic\" foreground=\"" << blueColorCode << "\">" << this->getTypeManager().getEnumerationEntryNameFromValue(OV_TypeId_Stimulation, i->second.m_StimulationRelease) << "</span>";
+				ss << "Released : <span style=\"italic\" foreground=\"" 
+					<< blueColorCode 
+					<< "\">" 
+					<< this->getTypeManager().getEnumerationEntryNameFromValue(OV_TypeId_Stimulation, i->second.m_StimulationRelease) 
+					<< "</span>";
 				ss << "\t</span>\n";
 			}
 
