@@ -15,7 +15,7 @@
 
 namespace OpenViBEPlugins
 {
-	namespace SimpleVisualisation
+	namespace SimpleVisualization
 	{
 		class CBoxAlgorithmMatrixDisplay : public OpenViBEToolkit::TBoxAlgorithm < OpenViBE::Plugins::IBoxAlgorithm >
 		{
@@ -87,7 +87,7 @@ namespace OpenViBEPlugins
 			virtual OpenViBE::CString getStockItemName(void) const       { return OpenViBE::CString("gtk-select-color"); }
 
 			virtual OpenViBE::CIdentifier getCreatedClass(void) const    { return OVP_ClassId_BoxAlgorithm_MatrixDisplay; }
-			virtual OpenViBE::Plugins::IPluginObject* create(void)       { return new OpenViBEPlugins::SimpleVisualisation::CBoxAlgorithmMatrixDisplay; }
+			virtual OpenViBE::Plugins::IPluginObject* create(void)       { return new OpenViBEPlugins::SimpleVisualization::CBoxAlgorithmMatrixDisplay; }
 
 			virtual OpenViBE::boolean hasFunctionality(OpenViBE::CIdentifier functionalityIdentifier) const
 			{
