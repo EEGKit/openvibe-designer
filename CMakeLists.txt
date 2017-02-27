@@ -7,9 +7,13 @@ cmake_policy(SET CMP0042 OLD)
 cmake_policy(SET CMP0043 OLD)
 cmake_policy(SET CMP0045 OLD)
 cmake_policy(SET CMP0048 OLD)
+cmake_policy(SET CMP0057 NEW)
 ENDIF()
 
 PROJECT(OpenVIBE)
+
+# Certivibes modules list
+SET(INCLUDED_CERTIVIBE_COMPONENTS BASE ALLPLUGINS EBML SYSTEM FS XML TOOLKIT)
 
 # These versions are used by the subprojects by default.
 # If you wish to maintain specific version numbers for a subproject, please do so in the projects CMakeLists.txt
@@ -27,7 +31,8 @@ SET(OV_GLOBAL_VERSION_STRING "${OV_GLOBAL_VERSION_MAJOR}.${OV_GLOBAL_VERSION_MIN
 OPTION(Flag_VerboseOutput "Verbose CMake output" OFF)
 OPTION(Flag_SilentConsole "Disable logs to console in Archway" ON)
 
-SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/externals/mensia/cmake-modules;${CMAKE_SOURCE_DIR}/cmake-modules")
+SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/externals/mensia/cmake-modules;${CMAKE_SOURCE_DIR}/cmake-modules;${OPENVIBE_SDK_PATH}/share")
+
 INCLUDE("OvMessages")
 
 ###################################################################################

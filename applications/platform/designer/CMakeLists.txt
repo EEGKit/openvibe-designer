@@ -22,7 +22,7 @@ set(source_files "${source_files};${CMAKE_INSTALL_FULL_DATADIR}/resource-files/$
 
 add_executable(${PROJECT_NAME} ${ENTRYPOINT} ${source_files})
 
-include("FindCertivibe")
+include("AddCertivibeComponents")
 include("FindOpenViBEVisualizationToolkit")
 include("FindThirdPartyGTK")
 include("FindThirdPartyBoost")
