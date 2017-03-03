@@ -31,6 +31,12 @@ SET(OV_GLOBAL_VERSION_STRING "${OV_GLOBAL_VERSION_MAJOR}.${OV_GLOBAL_VERSION_MIN
 OPTION(Flag_VerboseOutput "Verbose CMake output" OFF)
 OPTION(Flag_SilentConsole "Disable logs to console in Archway" ON)
 
+SET(OV_CUSTOM_DEPENDENCIES_PATH "${CMAKE_SOURCE_DIR}/dependencies")
+SET(OV_SOURCE_DEPENDENCIES_PATH "${CMAKE_SOURCE_DIR}/dependencies-source")
+SET(OV_ICON_PATH "${CMAKE_SOURCE_DIR}/scripts/icons")
+SET(OPENVIBE_SDK_PATH "${OV_CUSTOM_DEPENDENCIES_PATH}/certivibe" CACHE STRING "")
+SET(CV_DEPENDENCIES_PATH "${CMAKE_SOURCE_DIR}/dependencies" CACHE STRING "")
+SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake-modules;${OPENVIBE_SDK_PATH}/share")
 
 INCLUDE("OvMessages")
 
@@ -39,13 +45,6 @@ INCLUDE("OvMessages")
 # The installer should install local manifest, if a mismatch is detected CMake will cancel the build
 # and ask to reinstall the missing/update dependencies
 debug_message("Checking local dependencies manifest...")
-
-SET(OV_CUSTOM_DEPENDENCIES_PATH "${CMAKE_SOURCE_DIR}/dependencies")
-SET(OV_SOURCE_DEPENDENCIES_PATH "${CMAKE_SOURCE_DIR}/dependencies-source")
-SET(OV_ICON_PATH "${CMAKE_SOURCE_DIR}/scripts/icons")
-SET(OPENVIBE_SDK_PATH "${OV_CUSTOM_DEPENDENCIES_PATH}/certivibe" CACHE STRING "")
-SET(CV_DEPENDENCIES_PATH "${CMAKE_SOURCE_DIR}/dependencies" CACHE STRING "")
-SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake-modules;${OPENVIBE_SDK_PATH}/share")
 
 IF(WIN32)
 	SET(MANDATORY_DEPENDENCIES_LIST "")
