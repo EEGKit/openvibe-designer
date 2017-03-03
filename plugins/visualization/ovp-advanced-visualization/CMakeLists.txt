@@ -19,7 +19,7 @@ ENDIF()
 
 ADD_DEFINITIONS(-D__MensiaLog_LogFilename__=\"mensia-plugins-advanced-visualization.log\")
 
-INCLUDE("FindCertivibe")
+INCLUDE("AddCertivibeComponents")
 include("FindOpenViBEVisualizationToolkit")
 INCLUDE("FindThirdPartyGTK")
 
