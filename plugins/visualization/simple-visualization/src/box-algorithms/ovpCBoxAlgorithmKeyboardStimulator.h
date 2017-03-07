@@ -15,10 +15,10 @@ namespace OpenViBEPlugins
 {
 	namespace SimpleVisualization
 	{
-		class CKeyboardStimulator : public OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>
+		class CBoxAlgorithmKeyboardStimulator : public OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>
 		{
 		public:
-			CKeyboardStimulator(void);
+			CBoxAlgorithmKeyboardStimulator(void);
 
 			virtual void release(void) { delete this; }
 
@@ -49,7 +49,7 @@ namespace OpenViBEPlugins
 
 		private:
 
-			OpenViBEToolkit::TStimulationEncoder<CKeyboardStimulator> m_Encoder;
+			OpenViBEToolkit::TStimulationEncoder<CBoxAlgorithmKeyboardStimulator> m_Encoder;
 
 			::GtkWidget* m_Widget;
 
@@ -78,7 +78,7 @@ namespace OpenViBEPlugins
 		/**
 		 * Plugin's description
 		 */
-		class CKeyboardStimulatorDesc : public OpenViBE::Plugins::IBoxAlgorithmDesc
+		class CBoxAlgorithmKeyboardStimulatorDesc : public OpenViBE::Plugins::IBoxAlgorithmDesc
 		{
 		public:
 			virtual OpenViBE::CString getName(void) const { return OpenViBE::CString("Keyboard stimulator"); }
@@ -90,7 +90,7 @@ namespace OpenViBEPlugins
 			virtual OpenViBE::CString getVersion(void) const { return OpenViBE::CString("0.1"); }
 			virtual void release(void) {}
 			virtual OpenViBE::CIdentifier getCreatedClass(void) const { return OVP_ClassId_KeyboardStimulator; }
-			virtual OpenViBE::Plugins::IPluginObject* create(void) { return new OpenViBEPlugins::SimpleVisualization::CKeyboardStimulator(); }
+			virtual OpenViBE::Plugins::IPluginObject* create(void) { return new OpenViBEPlugins::SimpleVisualization::CBoxAlgorithmKeyboardStimulator(); }
 
 			virtual OpenViBE::boolean hasFunctionality(OpenViBE::CIdentifier functionalityIdentifier) const
 			{

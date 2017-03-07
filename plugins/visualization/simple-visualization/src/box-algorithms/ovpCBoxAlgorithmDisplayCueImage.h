@@ -16,12 +16,12 @@ namespace OpenViBEPlugins
 {
 	namespace SimpleVisualization
 	{
-		class CDisplayCueImage :
+		class CBoxAlgorithmDisplayCueImage :
 			public OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>
 		{
 		public:
 
-			CDisplayCueImage(void);
+			CBoxAlgorithmDisplayCueImage(void);
 
 			virtual void release(void) { delete this; }
 
@@ -44,8 +44,8 @@ namespace OpenViBEPlugins
 			::GtkWidget*  m_MainWindow;
 			::GtkWidget*  m_DrawingArea;
 
-			OpenViBEToolkit::TStimulationDecoder<CDisplayCueImage> m_StimulationDecoder;
-			OpenViBEToolkit::TStimulationEncoder<CDisplayCueImage> m_StimulationEncoder;
+			OpenViBEToolkit::TStimulationDecoder<CBoxAlgorithmDisplayCueImage> m_StimulationDecoder;
+			OpenViBEToolkit::TStimulationEncoder<CBoxAlgorithmDisplayCueImage> m_StimulationEncoder;
 
 			// For the display of the images:
 			bool m_ImageRequested;        //when true: a new image must be drawn
@@ -83,7 +83,7 @@ namespace OpenViBEPlugins
 			OpenViBEVisualizationToolkit::IVisualizationContext* m_VisualizationContext;
 		};
 
-		class CDisplayCueImageListener : public OpenViBEToolkit::TBoxListener < OpenViBE::Plugins::IBoxListener >
+		class CBoxAlgorithmDisplayCueImageListener : public OpenViBEToolkit::TBoxListener < OpenViBE::Plugins::IBoxListener >
 		{
 		public:
 
@@ -134,7 +134,7 @@ namespace OpenViBEPlugins
 		/**
 		 * Plugin's description
 		 */
-		class CDisplayCueImageDesc : public OpenViBE::Plugins::IBoxAlgorithmDesc
+		class CBoxAlgorithmDisplayCueImageDesc : public OpenViBE::Plugins::IBoxAlgorithmDesc
 		{
 		public:
 			virtual OpenViBE::CString getName(void) const { return OpenViBE::CString("Display cue image"); }
@@ -148,8 +148,8 @@ namespace OpenViBEPlugins
 			virtual OpenViBE::CIdentifier getCreatedClass(void) const { return OVP_ClassId_DisplayCueImage; }
 
 			virtual OpenViBE::CString getStockItemName(void) const { return OpenViBE::CString("gtk-fullscreen"); }
-			virtual OpenViBE::Plugins::IPluginObject* create(void) { return new OpenViBEPlugins::SimpleVisualization::CDisplayCueImage(); }
-			virtual OpenViBE::Plugins::IBoxListener* createBoxListener(void) const { return new CDisplayCueImageListener; }
+			virtual OpenViBE::Plugins::IPluginObject* create(void) { return new OpenViBEPlugins::SimpleVisualization::CBoxAlgorithmDisplayCueImage(); }
+			virtual OpenViBE::Plugins::IBoxListener* createBoxListener(void) const { return new CBoxAlgorithmDisplayCueImageListener; }
 			virtual void releaseBoxListener(OpenViBE::Plugins::IBoxListener* pBoxListener) const { delete pBoxListener; }
 
 			virtual bool hasFunctionality(OpenViBE::CIdentifier functionalityIdentifier) const

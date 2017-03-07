@@ -1,4 +1,4 @@
-#include "ovpCKeyboardStimulator.h"
+#include "ovpCBoxAlgorithmKeyboardStimulator.h"
 
 #include <fstream>
 #include <iostream>
@@ -24,7 +24,7 @@ namespace OpenViBEPlugins
 		 */
 		gboolean KeyboardStimulator_KeyPressCallback(GtkWidget* widget, GdkEventKey* thisEvent, gpointer data)
 		{
-			reinterpret_cast<CKeyboardStimulator*>(data)->processKey(thisEvent->keyval, true);
+			reinterpret_cast<CBoxAlgorithmKeyboardStimulator*>(data)->processKey(thisEvent->keyval, true);
 			return true;
 		}
 
@@ -33,11 +33,11 @@ namespace OpenViBEPlugins
 		 */
 		gboolean KeyboardStimulator_KeyReleaseCallback(GtkWidget* widget, GdkEventKey* thisEvent, gpointer data)
 		{
-			reinterpret_cast<CKeyboardStimulator*>(data)->processKey(thisEvent->keyval, false);
+			reinterpret_cast<CBoxAlgorithmKeyboardStimulator*>(data)->processKey(thisEvent->keyval, false);
 			return true;
 		}
 
-		void CKeyboardStimulator::processKey(guint key, bool state)
+		void CBoxAlgorithmKeyboardStimulator::processKey(guint key, bool state)
 		{
 			//if there is one entry, adds the stimulation to the list of stims to be sent
 			if (m_KeyToStimulation.count(key) != 0 && state != m_KeyToStimulation[key].m_Status)
@@ -60,7 +60,7 @@ namespace OpenViBEPlugins
 			}
 		}
 
-		bool CKeyboardStimulator::parseConfigurationFile(const char * filename)
+		bool CBoxAlgorithmKeyboardStimulator::parseConfigurationFile(const char * filename)
 		{
 			std::ifstream file;
 			FS::Files::openIFStream(file, filename);
@@ -105,7 +105,7 @@ namespace OpenViBEPlugins
 			return true;
 		}
 
-		CKeyboardStimulator::CKeyboardStimulator(void) :
+		CBoxAlgorithmKeyboardStimulator::CBoxAlgorithmKeyboardStimulator(void) :
 			m_Widget(NULL),
 			m_PreviousActivationTime(0),
 			m_UnknownKeyPressed(false),
@@ -114,7 +114,7 @@ namespace OpenViBEPlugins
 		{
 		}
 
-		bool CKeyboardStimulator::initialize()
+		bool CBoxAlgorithmKeyboardStimulator::initialize()
 		{
 			const CString fileName = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), 0);
 
@@ -190,7 +190,7 @@ namespace OpenViBEPlugins
 			return true;
 		}
 
-		bool CKeyboardStimulator::uninitialize()
+		bool CBoxAlgorithmKeyboardStimulator::uninitialize()
 		{
 			m_Encoder.uninitialize();
 
@@ -209,7 +209,7 @@ namespace OpenViBEPlugins
 			return true;
 		}
 
-		bool CKeyboardStimulator::processClock(CMessageClock& messageClock)
+		bool CBoxAlgorithmKeyboardStimulator::processClock(CMessageClock& messageClock)
 		{
 			if (m_UnknownKeyPressed)
 			{
@@ -243,7 +243,7 @@ namespace OpenViBEPlugins
 			return true;
 		}
 
-		bool CKeyboardStimulator::process()
+		bool CBoxAlgorithmKeyboardStimulator::process()
 		{
 			return true;
 		}

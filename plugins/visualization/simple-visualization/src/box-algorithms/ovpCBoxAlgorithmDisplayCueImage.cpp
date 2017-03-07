@@ -1,4 +1,4 @@
-#include "ovpCDisplayCueImage.h"
+#include "ovpCBoxAlgorithmDisplayCueImage.h"
 
 #include <cmath>
 #include <iostream>
@@ -25,17 +25,17 @@ namespace OpenViBEPlugins
 	{
 		gboolean DisplayCueImage_SizeAllocateCallback(GtkWidget *widget, GtkAllocation *allocation, gpointer data)
 		{
-			reinterpret_cast<CDisplayCueImage*>(data)->resize((unsigned int)allocation->width, (unsigned int)allocation->height);
+			reinterpret_cast<CBoxAlgorithmDisplayCueImage*>(data)->resize((unsigned int)allocation->width, (unsigned int)allocation->height);
 			return FALSE;
 		}
 
 		gboolean DisplayCueImage_RedrawCallback(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 		{
-			reinterpret_cast<CDisplayCueImage*>(data)->redraw();
+			reinterpret_cast<CBoxAlgorithmDisplayCueImage*>(data)->redraw();
 			return TRUE;
 		}
 
-		CDisplayCueImage::CDisplayCueImage(void) :
+		CBoxAlgorithmDisplayCueImage::CBoxAlgorithmDisplayCueImage(void) :
 			m_BuilderInterface(NULL),
 			m_MainWindow(NULL),
 			m_DrawingArea(NULL),
@@ -57,7 +57,7 @@ namespace OpenViBEPlugins
 			m_ForegroundColor.blue = 0xFFFF;
 		}
 
-		boolean CDisplayCueImage::initialize()
+		boolean CBoxAlgorithmDisplayCueImage::initialize()
 		{
 			//>>>> Reading Settings:
 
@@ -140,7 +140,7 @@ namespace OpenViBEPlugins
 			return true;
 		}
 
-		boolean CDisplayCueImage::uninitialize()
+		boolean CBoxAlgorithmDisplayCueImage::uninitialize()
 		{
 			m_StimulationDecoder.uninitialize();
 			m_StimulationEncoder.uninitialize();
@@ -185,7 +185,7 @@ namespace OpenViBEPlugins
 			return true;
 		}
 
-		boolean CDisplayCueImage::processClock(CMessageClock& rMessageClock)
+		boolean CBoxAlgorithmDisplayCueImage::processClock(CMessageClock& rMessageClock)
 		{
 			IBoxIO* l_pBoxIO = getBoxAlgorithmContext()->getDynamicBoxContext();
 			m_StimulationEncoder.getInputStimulationSet()->clear();
@@ -287,13 +287,13 @@ namespace OpenViBEPlugins
 			return true;
 		}
 
-		boolean CDisplayCueImage::processInput(unsigned int inputIndex)
+		boolean CBoxAlgorithmDisplayCueImage::processInput(unsigned int inputIndex)
 		{
 			getBoxAlgorithmContext()->markAlgorithmAsReadyToProcess();
 			return true;
 		}
 
-		boolean CDisplayCueImage::process()
+		boolean CBoxAlgorithmDisplayCueImage::process()
 		{
 			IBoxIO* boxIO = getBoxAlgorithmContext()->getDynamicBoxContext();
 
@@ -368,7 +368,7 @@ namespace OpenViBEPlugins
 		}
 
 		//Callback called by GTK
-		void CDisplayCueImage::redraw()
+		void CBoxAlgorithmDisplayCueImage::redraw()
 		{
 			if (m_RequestedImageID >= 0)
 			{
@@ -383,7 +383,7 @@ namespace OpenViBEPlugins
 			}
 		}
 
-		bool CDisplayCueImage::drawCuePicture(unsigned int cueID)
+		bool CBoxAlgorithmDisplayCueImage::drawCuePicture(unsigned int cueID)
 		{
 			if (m_ScaledPicture.size() + 1 < cueID)
 			{
@@ -404,7 +404,7 @@ namespace OpenViBEPlugins
 			return true;
 		}
 
-		void CDisplayCueImage::resize(unsigned int width, unsigned int height)
+		void CBoxAlgorithmDisplayCueImage::resize(unsigned int width, unsigned int height)
 		{
 			for (unsigned int i = 0; i < m_NumberOfCue; i++)
 			{
