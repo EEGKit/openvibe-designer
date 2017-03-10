@@ -27,20 +27,6 @@ IF /i "%1"=="--run-bg" (
 	SHIFT
 )
 
-SET "OV_ENVIRONMENT_FILE=%OV_PATH_ROOT%\bin\openvibe-set-env.cmd"
-IF NOT EXIST "%OV_ENVIRONMENT_FILE%" (
-	ECHO Error: "%OV_ENVIRONMENT_FILE%" was not found
-	GOTO EndOfScript
-)
-CALL "%OV_ENVIRONMENT_FILE%"
-
-SET "OV_STUDIO_ENVIRONMENT_FILE=%OV_PATH_ROOT%\bin\openvibe-set-studio-env.cmd"
-IF NOT EXIST "%OV_STUDIO_ENVIRONMENT_FILE%" (
-    ECHO Error: "%OV_STUDIO_ENVIRONMENT_FILE%" was not found
-	GOTO EndOfScript
-)
-CALL "%OV_STUDIO_ENVIRONMENT_FILE%"
-
 SET LUA_EXE_PATH=
 FOR %%F IN (lua.exe) DO (
 	SET LUA_EXE_PATH_FULL=%%~$PATH:F

@@ -309,12 +309,6 @@ IF(NOT(SKIP_VISUALIZATION_TOOLKIT))
 	ADD_SUBDIRECTORY("visualization-toolkit/")
 ENDIF()
 
-# make a copy of the dependency script, this is done so we can use the same launch scripts both in win install and win devel situations.
-IF(WIN32)
-    set(ABSOLUTE_PATH_DEPENDENCIES "${OV_CUSTOM_DEPENDENCIES_PATH}")
-	configure_file("${CMAKE_SOURCE_DIR}/scripts/windows-set-studio-environment.cmd-base" "${CMAKE_INSTALL_FULL_BINDIR}/openvibe-set-studio-env.cmd" @ONLY)
-ENDIF(WIN32)
-
 # add the scripts to the project so IDEs using the CMake file are aware of them
 FILE(GLOB_RECURSE script_files scripts/*.cmd scripts/*.sh scripts/*.nsi)
 ADD_CUSTOM_TARGET(openvibe-scripts SOURCES ${script_files})
