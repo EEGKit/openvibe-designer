@@ -117,12 +117,8 @@ namespace OpenViBEDesigner
 		Color_LinkInvalid,
 		Color_SelectionArea,
 		Color_SelectionAreaBorder,
-		Color_BoxBackgroundGhost = 8001,
 		Color_BoxBackgroundMensia = 8002,
-		Color_BoxBorderGhost = 8003,
-		Color_BoxBorderMensia = 8004,
-		Color_BoxInputBorderGhost = 8005,
-		Color_BoxOutputBorderGhost = 8006
+		Color_BoxBorderMensia = 8004
 	};
 
 	enum

@@ -75,9 +75,6 @@ namespace
 
 		SBoxProto(void)
 			:m_bIsDeprecated(false)
-			,m_bIsUnstable(false)
-			,m_bIsGhost(false)
-			,m_bIsMensia(false)
 			,m_ui64InputCountHash  (0x64AC3CB54A35888CLL)
 			,m_ui64OutputCountHash (0x21E0FAAFE5CAF1E1LL)
 			,m_ui64SettingCountHash(0x6BDFB15B54B09F63LL)
@@ -157,9 +154,6 @@ namespace
 
 		CIdentifier m_oHash;
 		OpenViBE::boolean m_bIsDeprecated;
-		OpenViBE::boolean m_bIsUnstable;
-		OpenViBE::boolean m_bIsGhost;
-		OpenViBE::boolean m_bIsMensia;
 		uint64 m_ui64InputCountHash;
 		uint64 m_ui64OutputCountHash;
 		uint64 m_ui64SettingCountHash;
