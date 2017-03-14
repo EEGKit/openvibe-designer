@@ -1250,16 +1250,6 @@ void CInterfacedScenario::redraw(IBox& rBox)
 
 	TAttributeHandler l_oAttributeHandler(rBox);
 
-	if(!l_oAttributeHandler.hasAttribute(OV_AttributeId_Box_XSize))
-		l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Box_XSize, xSize);
-	else
-		l_oAttributeHandler.setAttributeValue<int>(OV_AttributeId_Box_XSize, xSize);
-
-	if(!l_oAttributeHandler.hasAttribute(OV_AttributeId_Box_YSize))
-		l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Box_YSize, ySize);
-	else
-		l_oAttributeHandler.setAttributeValue<int>(OV_AttributeId_Box_YSize, ySize);
-
 	int l_iInputOffset=xSize/2-rBox.getInputCount()*(iCircleSpace+iCircleSize)/2+iCircleSize/4;
 	for(i=0; i<rBox.getInputCount(); i++)
 	{

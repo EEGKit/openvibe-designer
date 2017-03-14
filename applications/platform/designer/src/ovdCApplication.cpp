@@ -1986,19 +1986,42 @@ void CApplication::saveScenarioCB(CInterfacedScenario* pScenario)
 			return;
 		}
 
+		// Remove link attributes
+		CIdentifier linkIdentifier;
+		while ((linkIdentifier = l_pCurrentInterfacedScenario->m_rScenario.getNextLinkIdentifier(linkIdentifier)) != OV_UndefinedIdentifier)
+		{
+			auto link = l_pCurrentInterfacedScenario->m_rScenario.getLinkDetails(linkIdentifier);
+			link->removeAttribute(OV_AttributeId_Link_XSourcePosition);
+			link->removeAttribute(OV_AttributeId_Link_YSourcePosition);
+			link->removeAttribute(OV_AttributeId_Link_XTargetPosition);
+			link->removeAttribute(OV_AttributeId_Link_YTargetPosition);
+		}
+
+		// Remove box attributes
+		CIdentifier boxIdentifier;
+		while ((boxIdentifier = l_pCurrentInterfacedScenario->m_rScenario.getNextBoxIdentifier(boxIdentifier)) != OV_UndefinedIdentifier)
+		{
+			auto box = l_pCurrentInterfacedScenario->m_rScenario.getBoxDetails(boxIdentifier);
+			box->removeAttribute(OV_AttributeId_Box_XSize);
+			box->removeAttribute(OV_AttributeId_Box_YSize);
+		}
+
 		// Remove all VisualizationTree type metadata
+		// We save the last found identifier if there was one, this allows us to not modify it on subsequent saves
 		CIdentifier metadataIdentifier = OV_UndefinedIdentifier;
+		CIdentifier lastFoundTreeIdentifier = OV_UndefinedIdentifier;
 		while ((metadataIdentifier = l_pCurrentInterfacedScenario->m_rScenario.getNextMetadataIdentifier(metadataIdentifier)) != OV_UndefinedIdentifier)
 		{
 			if (l_pCurrentInterfacedScenario->m_rScenario.getMetadataDetails(metadataIdentifier)->getType() == OVVIZ_MetadataIdentifier_VisualizationTree)
 			{
 				l_pCurrentInterfacedScenario->m_rScenario.removeMetadata(metadataIdentifier);
+				lastFoundTreeIdentifier = metadataIdentifier;
 				metadataIdentifier = OV_UndefinedIdentifier;
 			}
 		}
 
 		// Insert new metadata
-		l_pCurrentInterfacedScenario->m_rScenario.addMetadata(metadataIdentifier, OV_UndefinedIdentifier);
+		l_pCurrentInterfacedScenario->m_rScenario.addMetadata(metadataIdentifier, lastFoundTreeIdentifier);
 		l_pCurrentInterfacedScenario->m_rScenario.getMetadataDetails(metadataIdentifier)->setType(OVVIZ_MetadataIdentifier_VisualizationTree);
 		l_pCurrentInterfacedScenario->m_rScenario.getMetadataDetails(metadataIdentifier)->setData(l_pCurrentInterfacedScenario->m_pVisualizationTree->serialize());
 
@@ -2011,7 +2034,7 @@ void CApplication::saveScenarioCB(CInterfacedScenario* pScenario)
 				l_pCurrentInterfacedScenario->m_bHasBeenModified=false;
 				l_pCurrentInterfacedScenario->updateScenarioLabel();
 					this->saveOpenedScenarios();
-				}
+		}
 		else
 		{
 			m_rKernelContext.getLogManager() << LogLevel_Warning << "Exporting scenario failed...\n";

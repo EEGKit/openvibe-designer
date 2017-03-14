@@ -288,6 +288,18 @@ void CDesignerVisualization::load(void)
 
 	m_rVisualizationTree.reloadTree();
 
+	//if at least one window was created, retrieve its dimensions
+	CIdentifier l_oVisualizationWindowIdentifier;
+	if(m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowIdentifier, EVisualizationWidget_VisualizationWindow) == true)
+	{
+		IVisualizationWidget* l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowIdentifier);
+		m_ui32PreviewWindowWidth = l_pVisualizationWindow->getWidth();
+		m_ui32PreviewWindowHeight = l_pVisualizationWindow->getHeight();
+	}
+	uint32 l_ui32TreeViewWidth;
+	l_ui32TreeViewWidth = gtk_paned_get_position(GTK_PANED(m_pPane));
+	gtk_widget_set_size_request(GTK_WIDGET(m_pDialog), (gint)(l_ui32TreeViewWidth + m_ui32PreviewWindowWidth), (gint)m_ui32PreviewWindowHeight);
+
 	gtk_tree_view_expand_all(m_pTreeView);
 
 	setActiveVisualization(m_oActiveVisualizationWindowName, m_oActiveVisualizationPanelName);
