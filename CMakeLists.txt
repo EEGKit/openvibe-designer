@@ -36,6 +36,7 @@ SET(OV_SOURCE_DEPENDENCIES_PATH "${CMAKE_SOURCE_DIR}/dependencies-source")
 SET(OV_ICON_PATH "${CMAKE_SOURCE_DIR}/scripts/icons")
 SET(OPENVIBE_SDK_PATH "${OV_CUSTOM_DEPENDENCIES_PATH}/certivibe" CACHE STRING "")
 SET(CV_DEPENDENCIES_PATH "${CMAKE_SOURCE_DIR}/dependencies" CACHE STRING "")
+SET(OV_CONFIG_SUBDIR "OpenVIBE" CACHE STRING "Subdirectory under user directory when configuration and logs will be saved")
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake-modules;${OPENVIBE_SDK_PATH}/share")
 
 INCLUDE("OvMessages")
@@ -150,8 +151,9 @@ ENDIF() # WIN32
 SET(OEM_DISTRIBUTION "mensia")
 SET(INSTALL_EXE OFF)
 
-# The user files will be stored in .../mensia/OV_PROJECT_NAME folder
+# The user files will be stored in .../OV_CONFIG_SUBDIR folder
 ADD_DEFINITIONS("-DOV_PROJECT_NAME=\"openvibe\"")
+ADD_DEFINITIONS("-DOV_CONFIG_SUBDIR=\"${OV_CONFIG_SUBDIR}\"")
 
 # Default is to build to dist/. If you wish a custom install, set your own MAKE_INSTALL_PREFIX when you call CMake. Safest to do under a fakeroot.
 IF(NOT CMAKE_INSTALL_PREFIX)
