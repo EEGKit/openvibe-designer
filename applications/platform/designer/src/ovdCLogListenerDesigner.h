@@ -15,6 +15,91 @@ namespace OpenViBEDesigner
 	class CLogListenerDesigner : public OpenViBE::Kernel::ILogListener
 	{
 		public:
+			class CLogObject
+			{
+			public:
+				CLogObject(GtkTextBuffer* pBuffer)
+				{
+					m_pBuffer = gtk_text_buffer_new(gtk_text_buffer_get_tag_table(pBuffer));
+					m_bPassedFilter = false;//by default the log does not pass the filter;
+				}
+
+				::GtkTextBuffer* getTextBuffer()
+				{
+					return m_pBuffer;
+				}
+
+
+				/*
+				bool copyFromBuffer(GtkTextIter* range_begin, GtkTextIter* range_end)
+				{
+					GtkTextIter l_oEndLogIter;
+					gtk_text_buffer_get_end_iter(m_pBuffer, &l_oEndLogIter);
+					gtk_text_buffer_insert_range(m_pBuffer, &l_oEndLogIter, range_begin, range_end);
+					return true;
+				}//*/
+
+				//determine if the log contains the sSearchTerm and tag the part with the sSerachTerm in gray
+				const OpenViBE::boolean Filter(OpenViBE::CString sSearchTerm)
+				{
+					m_bPassedFilter = false;
+					GtkTextIter start_find, end_find;
+					gtk_text_buffer_get_start_iter(m_pBuffer, &start_find);
+					gtk_text_buffer_get_end_iter(m_pBuffer, &end_find);
+
+					//tag for highlighting the search term
+					GtkTextTag* tag = gtk_text_tag_table_lookup(gtk_text_buffer_get_tag_table(m_pBuffer), "gray_bg");
+					if(tag==nullptr)
+					{
+						gtk_text_buffer_create_tag(m_pBuffer, "gray_bg", "background", "gray", nullptr);
+					}
+
+					//remove previous tagging
+					gtk_text_buffer_remove_tag_by_name(m_pBuffer, "gray_bg", &start_find, &end_find);
+
+					//no term means no research so no filter we let all pass
+					if(sSearchTerm==OpenViBE::CString(""))
+					{
+						m_bPassedFilter = true;
+						return m_bPassedFilter;
+					}
+
+
+					GtkTextIter start_match, end_match;
+					const gchar *text = sSearchTerm.toASCIIString();
+					while ( gtk_text_iter_forward_search(&start_find, text, GTK_TEXT_SEARCH_TEXT_ONLY, &start_match, &end_match, nullptr) )
+					{
+						gtk_text_buffer_apply_tag_by_name(m_pBuffer, "gray_bg", &start_match, &end_match);
+						//offset to end_match
+						int offset = gtk_text_iter_get_offset(&end_match);
+						//begin next search at end match
+						gtk_text_buffer_get_iter_at_offset(m_pBuffer, &start_find, offset);
+						m_bPassedFilter = true;
+					}
+					return m_bPassedFilter;
+				}
+
+				void appendToCurrentLog(const char *textColor, const char *logMessage, bool bIsLink /* = false */)
+				{
+
+					GtkTextIter l_oEndLogIter;
+					gtk_text_buffer_get_end_iter(m_pBuffer, &l_oEndLogIter);
+
+					if(bIsLink)
+					{
+						gtk_text_buffer_insert_with_tags_by_name(m_pBuffer, &l_oEndLogIter, logMessage, -1, "f_mono", textColor, "link", nullptr);
+					}
+					else
+					{
+						gtk_text_buffer_insert_with_tags_by_name(m_pBuffer, &l_oEndLogIter, logMessage, -1, "f_mono", textColor, nullptr);
+					}
+
+				}
+
+				public:
+					::GtkTextBuffer* m_pBuffer;
+					bool m_bPassedFilter;
+			};
 
 			CLogListenerDesigner(const OpenViBE::Kernel::IKernelContext& rKernelContext, ::GtkBuilder* pBuilderInterface);
 
@@ -50,11 +135,22 @@ namespace OpenViBEDesigner
 			void clearMessages();
 			void focusMessageWindow();
 
+			// TODO
+			void searchMessages(OpenViBE::CString l_sSearchTerm);
+			void displayLog(CLogObject* oLog);
+			void appendLog(CLogObject* oLog);
+			void scrollToBottom(void);
+
 			_IsDerivedFromClass_Final_(OpenViBE::Kernel::ILogListener, OV_UndefinedIdentifier);
+
+			OpenViBE::CString m_sSearchTerm;
 
 		protected:
 
 			std::map<OpenViBE::Kernel::ELogLevel, OpenViBE::boolean> m_vActiveLevel;
+
+			//logs
+			std::vector<CLogObject*> m_vStoredLog;
 
 		private:
 
@@ -85,18 +181,21 @@ namespace OpenViBEDesigner
 
 			::GtkWindow* m_pAlertWindow;
 
-			OpenViBE::boolean m_bIngnoreMessages;
+			bool m_bIngnoreMessages;
 
 			OpenViBE::uint32 m_ui32CountMessages;
 			OpenViBE::uint32 m_ui32CountWarnings;
 			OpenViBE::uint32 m_ui32CountErrors;
 
 			void updateMessageCounts();
+			void checkAppendFilterCurrentLog(const char *textColor, const char *logMessage, bool bIsLink = false);
 
-			OpenViBE::boolean m_bConsoleLogWithHexa;
-			OpenViBE::boolean m_bConsoleLogTimeInSecond;
+
+			bool m_bConsoleLogWithHexa;
+			bool m_bConsoleLogTimeInSecond;
 			OpenViBE::uint32 m_ui32ConsoleLogTimePrecision;
 
+			CLogObject* m_pCurrentLog;
 	};
 };
 
