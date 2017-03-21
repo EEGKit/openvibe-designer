@@ -2,8 +2,6 @@
 
 #include "algorithms/ovpCAlgorithmSphericalSplineInterpolation.h"
 
-#include "box-algorithms/ovpCBoxAlgorithmDisplayCueImage.h"
-
 #include "box-algorithms/ovpCBoxAlgorithmTopographicMap2DDisplay.h"
 #include "box-algorithms/ovpCBoxAlgorithmMatrixDisplay.h"
 
@@ -17,8 +15,6 @@ OVP_Declare_Begin()
 
 
 	OVP_Declare_New(OpenViBEPlugins::Test::CAlgorithmSphericalSplineInterpolationDesc)
-
-	OVP_Declare_New(OpenViBEPlugins::SimpleVisualization::CBoxAlgorithmDisplayCueImageDesc)
 
 	OVP_Declare_New(OpenViBEPlugins::SimpleVisualization::CBoxAlgorithmTopographicMap2DDisplayDesc)
 	OVP_Declare_New(OpenViBEPlugins::SimpleVisualization::CBoxAlgorithmMatrixDisplayDesc)
