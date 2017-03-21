@@ -7,14 +7,15 @@ set script_dir=%CD%
 set BuildType=Release
 set PauseCommand=pause
 set RefreshCMake=F
-set PathSDK=%script_dir%\..\dependencies\certivibe
-set PathDep=%script_dir%\..\dependencies\certivibe-dependencies
+set PathSDK=%script_dir%\..\dependencies\certivibe-release
+set PathDep=%script_dir%\..\dependencies
+set UserDataSubdir=OpenVIBE
 set VerboseOuptut=OFF
 
 goto parameter_parse
 
 :print_help
-	echo Usage: windows-build.cmd --sdk <path to openvibe SDK> --dep <path to openvibe dependencies> [-h ^| --help] [--no-pause] [-d^|--debug] [-r^|--release] [-f^|--force] [-v^|--verbose]
+	echo Usage: windows-build.cmd --sdk <path to openvibe SDK> --dep <path to openvibe dependencies> [--userdata-subdir <name of the userdata sub directory>] [-h ^| --help] [--no-pause] [-d^|--debug] [-r^|--release] [-f^|--force] [-v^|--verbose]
 	echo -- Build Type option can be : --release (-r) or --debug (-d). Default is Release.
 	echo -- --force option will force the cmake re-run
 	exit /b
@@ -53,16 +54,21 @@ for %%A in (%*) DO (
 	) else if "!next!"=="DEP" (
 		set PathDep=%%A
 		set next=
+	) else if /i "%%A"=="--userdata-subdir" (
+    set next=USERDATA_SUBDIR
+  ) else if "!next!"=="USERDATA_SUBDIR" (
+    set UserDataSubdir=%%A
+    set next=
 	)
 )
 
 setlocal
 
-call "windows-initialize-environment.cmd" --sdk "%PathSDK%"
+call "windows-initialize-environment.cmd" --dep %PathDep%
 
 set build_dir=%script_dir%\..\..\certivibe-build\build-studio-%BuildType%
 if %PathSDK%=="" (
-	set sdk_dir=%script_dir%\..\dependencies\certivibe
+	set sdk_dir=%script_dir%\..\dependencies\certivibe-release
 ) else (
 	set sdk_dir=%PathSDK%
 )
@@ -86,7 +92,8 @@ echo Build type is set to: %BuildType%. SDK is located at %sdk_dir%
 
 if not exist "%build_dir%\CMakeCache.txt" set RefreshCMake=T
 if "%RefreshCMake%"=="T" (
-	cmake -DFlag_VerboseOutput=%VerboseOutput% %script_dir%\.. -G"Ninja" -DCMAKE_BUILD_TYPE=!BuildType! -DCMAKE_INSTALL_PREFIX=!install_dir! -DOPENVIBE_SDK_PATH=!sdk_dir! -DCV_DEPENDENCIES_PATH=!dep_dir!
+	cmake -DFlag_VerboseOutput=%VerboseOutput% %script_dir%\.. -G"Ninja" -DCMAKE_BUILD_TYPE=!BuildType! -DCMAKE_INSTALL_PREFIX=!install_dir! -DOPENVIBE_SDK_PATH=!sdk_dir! -DCV_DEPENDENCIES_PATH=!dep_dir! -DOV_CONFIG_SUBDIR=%UserDataSubdir%
+
 )
 
 if not "!ERRORLEVEL!" == "0" goto terminate_error
