@@ -40,7 +40,7 @@ static void on_button_save_clicked(::GtkButton*, gpointer pUserData)
 	static_cast<CBoxConfigurationDialog *>(pUserData)->saveConfiguration();
 }
 
-CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& rKernelContext, IBox& rBox, const char* sGUIFilename, const char* sGUISettingsFilename)
+CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& rKernelContext, IBox& rBox, const char* sGUIFilename, const char* sGUISettingsFilename, bool isScenarioRunning)
 	:m_rKernelContext(rKernelContext)
 	,m_rBox(rBox)
 	,m_sGUIFilename(sGUIFilename)
@@ -49,37 +49,27 @@ CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& rKernelCo
 	,m_pSettingsTable(nullptr)
 	,m_pViewPort(nullptr)
 	,m_pScrolledWindow(nullptr)
-	,m_bIsScenarioRunning(false)
+	,m_bIsScenarioRunning(isScenarioRunning)
 	,m_pOverrideEntry(nullptr)
+	,m_pSettingDialog(nullptr)
+	,m_pFileOverrideCheck(nullptr)
 {
 	m_rBox.addObserver(this);
-}
 
-CBoxConfigurationDialog::~CBoxConfigurationDialog(void)
-{
-	m_rBox.deleteObserver(this);
-}
-
-bool CBoxConfigurationDialog::run(void)
-{
-	bool l_bModified=false;
 	if(m_rBox.getSettingCount())
 	{
-		CString l_oSettingValue;
-		CIdentifier l_oSettingType;
-
 		::GtkBuilder* l_pBuilderInterfaceSetting=gtk_builder_new(); // glade_xml_new(m_sGUIFilename.toASCIIString(), "box_configuration", NULL);
 		gtk_builder_add_from_file(l_pBuilderInterfaceSetting, m_sGUIFilename.toASCIIString(), NULL);
 		gtk_builder_connect_signals(l_pBuilderInterfaceSetting, NULL);
 
 #if 1 // this approach fails to set a modal dialog
 
-		::GtkWidget* l_pSettingDialog=GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration"));
+		m_pSettingDialog=GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration"));
 		char l_sTitle[1024];
 		sprintf(l_sTitle, "Configure %s settings", m_rBox.getName().toASCIIString());
-		gtk_window_set_title(GTK_WINDOW(l_pSettingDialog), l_sTitle);
+		gtk_window_set_title(GTK_WINDOW(m_pSettingDialog), l_sTitle);
 #else
-		::GtkWidget *l_pSettingDialog = gtk_dialog_new_with_buttons(
+		::GtkWidget *m_pSettingDialog = gtk_dialog_new_with_buttons(
 			"Configure Box Settings",
 			&m_rMainWindow, //set dialog transient for main window
 			GTK_DIALOG_MODAL,
@@ -90,7 +80,7 @@ bool CBoxConfigurationDialog::run(void)
 		gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(l_pContents)), l_pContents);
 
 		//add contents to dialog
-		::GtkWidget* l_pContentsArea=GTK_DIALOG(l_pSettingDialog)->vbox; //gtk_dialog_get_content_area() not available in current Gtk distribution
+		::GtkWidget* l_pContentsArea=GTK_DIALOG(m_pSettingDialog)->vbox; //gtk_dialog_get_content_area() not available in current Gtk distribution
 		gtk_container_add(GTK_CONTAINER(l_pContentsArea), l_pContents);
 
 		//action buttons can't be unparented from builder interface and added to dialog, which is why they are added at dialog creation time
@@ -100,9 +90,26 @@ bool CBoxConfigurationDialog::run(void)
 		m_pViewPort=GTK_VIEWPORT(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration-viewport"));
 
 		::GtkContainer* l_pFileOverrideContainer=GTK_CONTAINER(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration-hbox_filename_override"));
-		::GtkCheckButton* l_pFileOverrideCheck=GTK_CHECK_BUTTON(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration-checkbutton_filename_override"));
+		m_pFileOverrideCheck = GTK_CHECK_BUTTON(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration-checkbutton_filename_override"));
 		::GtkButton* l_pButtonLoad=GTK_BUTTON(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration-button_load_current_from_file"));
 		::GtkButton* l_pButtonSave=GTK_BUTTON(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration-button_save_current_to_file"));
+
+		if(m_bIsScenarioRunning) // in a running scenario, we just hide the buttons
+		{
+				gtk_widget_set_visible(GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration-hseparator")), false);
+				gtk_widget_set_visible(GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration-expander")), false);
+				gtk_widget_set_visible(GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration-action_area")), false);
+
+				//unparent widget
+	//			::GtkWidget* l_pWidgetParent = gtk_widget_get_parent(m_pWidgetToReturn);
+	//			if(GTK_IS_CONTAINER(l_pWidgetParent))
+	//			{
+	//				g_object_ref(m_pWidgetToReturn);
+	//				gtk_container_remove(GTK_CONTAINER(l_pWidgetParent), m_pWidgetToReturn);
+	//				gtk_widget_destroy(m_pWidget);
+	//				m_pWidget = NULL;
+	//			}
+		}
 		g_object_unref(l_pBuilderInterfaceSetting);
 
 		gtk_table_resize(m_pSettingsTable, m_rBox.getSettingCount(), 4);
@@ -110,43 +117,62 @@ bool CBoxConfigurationDialog::run(void)
 		generateSettingsTable();
 
 		CSettingCollectionHelper l_oHelper(m_rKernelContext, m_sGUISettingsFilename.toASCIIString());
-		string l_sSettingOverrideWidgetName=l_oHelper.getSettingWidgetName(OV_TypeId_Filename).toASCIIString();
-		::GtkBuilder* l_pBuilderInterfaceSettingCollection=gtk_builder_new(); // glade_xml_new(m_sGUIFilename.toASCIIString(), l_sSettingOverrideWidgetName.c_str(), NULL);
-		gtk_builder_add_from_file(l_pBuilderInterfaceSettingCollection, m_sGUISettingsFilename.toASCIIString(), NULL);
-		gtk_builder_connect_signals(l_pBuilderInterfaceSettingCollection, NULL);
 
-		m_pOverrideEntry = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceSettingCollection, l_sSettingOverrideWidgetName.c_str()));
 
-		gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(m_pOverrideEntry)), m_pOverrideEntry);
-		gtk_container_add(l_pFileOverrideContainer, m_pOverrideEntry);
-
-		g_object_unref(l_pBuilderInterfaceSettingCollection);
-
-		g_signal_connect(G_OBJECT(l_pFileOverrideCheck), "toggled", G_CALLBACK(on_file_override_check_toggled), GTK_WIDGET(m_pSettingsTable));
-//		g_signal_connect(G_OBJECT(l_vWidget[1]),         "clicked", G_CALLBACK(on_override_browse_clicked), this);
-		g_signal_connect(G_OBJECT(l_pButtonLoad),        "clicked", G_CALLBACK(on_button_load_clicked), this);
-		g_signal_connect(G_OBJECT(l_pButtonSave),        "clicked", G_CALLBACK(on_button_save_clicked), this);
-
-		if(m_rBox.hasAttribute(OV_AttributeId_Box_SettingOverrideFilename))
+		if (!m_bIsScenarioRunning)
 		{
-			l_oHelper.setValue(OV_TypeId_Filename, m_pOverrideEntry, m_rBox.getAttributeValue(OV_AttributeId_Box_SettingOverrideFilename));
-			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(l_pFileOverrideCheck), true);
-			gtk_widget_set_sensitive(GTK_WIDGET(m_pSettingsTable), false);
-		}
-		else
-		{
-			l_oHelper.setValue(OV_TypeId_Filename, m_pOverrideEntry, "");
+			string l_sSettingOverrideWidgetName=l_oHelper.getSettingWidgetName(OV_TypeId_Filename).toASCIIString();
+			::GtkBuilder* l_pBuilderInterfaceSettingCollection=gtk_builder_new(); // glade_xml_new(m_sGUIFilename.toASCIIString(), l_sSettingOverrideWidgetName.c_str(), NULL);
+			gtk_builder_add_from_file(l_pBuilderInterfaceSettingCollection, m_sGUISettingsFilename.toASCIIString(), NULL);
+			gtk_builder_connect_signals(l_pBuilderInterfaceSettingCollection, NULL);
+
+			m_pOverrideEntry = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceSettingCollection, l_sSettingOverrideWidgetName.c_str()));
+
+			gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(m_pOverrideEntry)), m_pOverrideEntry);
+			gtk_container_add(l_pFileOverrideContainer, m_pOverrideEntry);
+
+			g_object_unref(l_pBuilderInterfaceSettingCollection);
+
+			g_signal_connect(G_OBJECT(m_pFileOverrideCheck), "toggled", G_CALLBACK(on_file_override_check_toggled), GTK_WIDGET(m_pSettingsTable));
+	//		g_signal_connect(G_OBJECT(l_vWidget[1]),         "clicked", G_CALLBACK(on_override_browse_clicked), this);
+			g_signal_connect(G_OBJECT(l_pButtonLoad),        "clicked", G_CALLBACK(on_button_load_clicked), this);
+			g_signal_connect(G_OBJECT(l_pButtonSave),        "clicked", G_CALLBACK(on_button_save_clicked), this);
+
+			if(m_rBox.hasAttribute(OV_AttributeId_Box_SettingOverrideFilename))
+			{
+				l_oHelper.setValue(OV_TypeId_Filename, m_pOverrideEntry, m_rBox.getAttributeValue(OV_AttributeId_Box_SettingOverrideFilename));
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_pFileOverrideCheck), true);
+				gtk_widget_set_sensitive(GTK_WIDGET(m_pSettingsTable), false);
+			}
+			else
+			{
+				l_oHelper.setValue(OV_TypeId_Filename, m_pOverrideEntry, "");
+			}
 		}
 
+	}
+}
 
+CBoxConfigurationDialog::~CBoxConfigurationDialog(void)
+{
+	m_rBox.deleteObserver(this);
+	gtk_widget_destroy(m_pSettingDialog);
+}
+
+bool CBoxConfigurationDialog::run(void)
+{
+	bool l_bModified=false;
+	if(m_rBox.getSettingCount())
+	{
+		CSettingCollectionHelper l_oHelper(m_rKernelContext, m_sGUISettingsFilename.toASCIIString());
 		storeState();
 		bool l_bFinished=false;
 		while(!l_bFinished)
 		{
-			gint l_iResult=gtk_dialog_run(GTK_DIALOG(l_pSettingDialog));
+			gint l_iResult=gtk_dialog_run(GTK_DIALOG(m_pSettingDialog));
 			if(l_iResult==GTK_RESPONSE_APPLY)
 			{
-				if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(l_pFileOverrideCheck)))
+				if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(m_pFileOverrideCheck)))
 				{
 					if(m_rBox.hasAttribute(OV_AttributeId_Box_SettingOverrideFilename))
 					{
@@ -179,13 +205,14 @@ bool CBoxConfigurationDialog::run(void)
 				// by evaluating m_rBox.getSettingCount() each time we ensure not ending somewhere in the oblivion
 				for(uint32_t i = 0; i < m_vSettingViewVector.size(); i++)
 				{
+					CString l_oSettingValue;
 					m_rBox.getSettingDefaultValue(i, l_oSettingValue);
 					m_rBox.setSettingValue(i, l_oSettingValue);
 //					m_vSettingViewVector[i]->setValue(l_oSettingValue);
 //					l_oHelper.setValue(l_oSettingType, i < m_vSettingViewVector.size()? m_vSettingViewVector[i]->getEntryWidget() : NULL, l_oSettingValue);
 				}
 				gtk_entry_set_text(GTK_ENTRY(m_pOverrideEntry), "");
-				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(l_pFileOverrideCheck), false);
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_pFileOverrideCheck), false);
 //				gtk_widget_set_sensitive(GTK_WIDGET(m_pSettingsTable), true);
 				l_bModified=false;
 			}
@@ -196,12 +223,12 @@ bool CBoxConfigurationDialog::run(void)
 				if(m_rBox.hasAttribute(OV_AttributeId_Box_SettingOverrideFilename))
 				{
 					gtk_entry_set_text(GTK_ENTRY(m_pOverrideEntry), m_rBox.getAttributeValue(OV_AttributeId_Box_SettingOverrideFilename).toASCIIString());
-					gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(l_pFileOverrideCheck), true);
+					gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_pFileOverrideCheck), true);
 				}
 				else
 				{
 					gtk_entry_set_text(GTK_ENTRY(m_pOverrideEntry), "");
-					gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(l_pFileOverrideCheck), false);
+					gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_pFileOverrideCheck), false);
 				}
 			}
 			else if(l_iResult==3) // load
@@ -216,8 +243,6 @@ bool CBoxConfigurationDialog::run(void)
 				l_bFinished=true;
 			}
 		}
-
-		gtk_widget_destroy(l_pSettingDialog);
 	}
 	return l_bModified;
 }
@@ -271,7 +296,24 @@ void CBoxConfigurationDialog::generateSettingsTable()
 							},
 						  GTK_WIDGET(m_pSettingsTable));
 
-	gtk_table_resize(m_pSettingsTable, m_rBox.getSettingCount() + 2, 4);
+	uint32_t l_ui32TableSize = 0;
+	if (m_bIsScenarioRunning)
+	{
+		for(uint32_t i = 0; i < m_rBox.getSettingCount(); i++)
+		{
+			bool l_IsMod = false;
+			m_rBox.getSettingMod(i, l_IsMod);
+			if (l_IsMod)
+			{
+				l_ui32TableSize++;
+			}
+		}
+	}
+	else
+	{
+		l_ui32TableSize = m_rBox.getSettingCount();
+	}
+	gtk_table_resize(m_pSettingsTable, l_ui32TableSize + 2, 4);
 
 	// Iterate over box settings, generate corresponding gtk widgets. If the scenario is running, we are making a
 	// 'modifiable settings' dialog and use a subset of widgets with a slightly different layout and buttons.
@@ -569,4 +611,14 @@ void CBoxConfigurationDialog::restoreState(void)
 		}
 		m_rBox.setSettingValue(i, m_SettingsMemory[i]);
 	}
+}
+
+::GtkWidget* CBoxConfigurationDialog::getWidget()
+{
+	return m_pSettingDialog;
+}
+
+const CIdentifier CBoxConfigurationDialog::getBoxID() const
+{
+	return m_rBox.getIdentifier();
 }

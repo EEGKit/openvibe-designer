@@ -14,13 +14,19 @@ namespace OpenViBEDesigner
 	{
 	public:
 
-		CBoxConfigurationDialog(const OpenViBE::Kernel::IKernelContext& rKernelContext, OpenViBE::Kernel::IBox& rBox, const char* sGUIFilename, const char* sGUISettingsFilename);
+		CBoxConfigurationDialog(const OpenViBE::Kernel::IKernelContext& rKernelContext, OpenViBE::Kernel::IBox& rBox, const char* sGUIFilename, const char* sGUISettingsFilename, bool isScenarioRunning = false);
 		virtual ~CBoxConfigurationDialog(void);
 		virtual bool run(void);
 		virtual void update(OpenViBE::CObservable &o, void* data);
 
 		void saveConfiguration();
 		void loadConfiguration();
+
+		void storeState(void);
+		void restoreState(void);
+
+		virtual const OpenViBE::CIdentifier getBoxID() const;
+		virtual ::GtkWidget* getWidget();
 	protected:
 
 		void generateSettingsTable();
@@ -34,9 +40,6 @@ namespace OpenViBEDesigner
 
 		int32_t getTableIndex(uint32_t ui32SettingIndex);
 
-		void storeState(void);
-		void restoreState(void);
-
 		const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
 		OpenViBE::Kernel::IBox& m_rBox;
 		OpenViBE::CString m_sGUIFilename;
@@ -48,6 +51,8 @@ namespace OpenViBEDesigner
 		::GtkViewport *m_pViewPort;
 		::GtkScrolledWindow * m_pScrolledWindow;
 		::GtkWidget* m_pOverrideEntry;
+		::GtkWidget* m_pSettingDialog;
+		::GtkCheckButton* m_pFileOverrideCheck;
 		bool m_bIsScenarioRunning;
 
 		std::vector<OpenViBE::CString> m_SettingsMemory;

@@ -5,7 +5,6 @@
 #include "ovdCCommentProxy.h"
 #include "ovdCLinkProxy.h"
 #include "ovdCConnectorEditor.h"
-#include "ovdCBoxConfigurationDialog.h"
 #include "ovdCInterfacedObject.h"
 #include "ovdTAttributeHandler.h"
 #include "ovdCDesignerVisualization.h"
@@ -514,21 +513,21 @@ CInterfacedScenario::CInterfacedScenario(const IKernelContext& rKernelContext, C
 	,m_rApplication(rApplication)
 	,m_rKernelContext(rKernelContext)
 	,m_rScenario(rScenario)
-	,m_pPlayer(NULL)
+	,m_pPlayer(nullptr)
 	,m_rNotebook(rNotebook)
-	,m_pVisualizationTree(NULL)
+	,m_pVisualizationTree(nullptr)
 	,m_bDesignerVisualizationToggled(false)
-	,m_pDesignerVisualization(NULL)
-	,m_pPlayerVisualization(NULL)
-	,m_pGUIBuilder(NULL)
-//    ,m_pSettingsGUIBuilder(NULL)
-/*    ,m_pBuilder(NULL)
-	,m_pBuilder(NULL)*/
-	,m_pNotebookPageTitle(NULL)
-	,m_pNotebookPageContent(NULL)
-	,m_pScenarioViewport(NULL)
-	,m_pScenarioDrawingArea(NULL)
-	,m_pStencilBuffer(NULL)
+	,m_pDesignerVisualization(nullptr)
+	,m_pPlayerVisualization(nullptr)
+	,m_pGUIBuilder(nullptr)
+//    ,m_pSettingsGUIBuilder(nullptr)
+/*    ,m_pBuilder(nullptr)
+	,m_pBuilder(nullptr)*/
+	,m_pNotebookPageTitle(nullptr)
+	,m_pNotebookPageContent(nullptr)
+	,m_pScenarioViewport(nullptr)
+	,m_pScenarioDrawingArea(nullptr)
+	,m_pStencilBuffer(nullptr)
 	,m_bHasFileName(false)
 	,m_bHasBeenModified(false)
 	,m_bButtonPressed(false)
@@ -543,9 +542,9 @@ CInterfacedScenario::CInterfacedScenario(const IKernelContext& rKernelContext, C
 	,m_i32ViewOffsetX(0)
 	,m_i32ViewOffsetY(0)
 	,m_ui32CurrentMode(Mode_None)
-	,m_pSettingHelper(NULL)
-	,m_pConfigureSettingsDialog(NULL)
-	,m_pSettingsVBox(NULL)
+	,m_pSettingHelper(nullptr)
+	,m_pConfigureSettingsDialog(nullptr)
+	,m_pSettingsVBox(nullptr)
 {
 	m_pGUIBuilder=gtk_builder_new(); // glade_xml_new(m_sGUIFilename.c_str(), "openvibe_scenario_notebook_title", NULL);
 	gtk_builder_add_from_file(m_pGUIBuilder, m_sGUIFilename.c_str(), NULL);
@@ -2383,7 +2382,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 
 	switch(pEvent->button)
 	{
-		case 1:
+		case 1: //left button
 			switch(pEvent->type)
 			{
 				case GDK_BUTTON_PRESS:
@@ -2459,7 +2458,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 								IBox* l_pBox=m_rScenario.getBoxDetails(m_oCurrentObject.m_oIdentifier);
 								if(l_pBox)
 								{
-									CBoxConfigurationDialog l_oBoxConfigurationDialog(m_rKernelContext, *l_pBox, m_sGUIFilename.c_str(), m_sGUISettingsFilename.c_str());
+									CBoxConfigurationDialog l_oBoxConfigurationDialog(m_rKernelContext, *l_pBox, m_sGUIFilename.c_str(), m_sGUISettingsFilename.c_str(), false);
 									if(l_oBoxConfigurationDialog.run())
 									{
 										this->snapshotCB();
@@ -2486,10 +2485,10 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 			}
 			break;
 
-		case 2:
+		case 2: //middle button (supposedly)
 			break;
 
-		case 3:
+		case 3: //right button
 			switch(pEvent->type)
 			{
 				case GDK_BUTTON_PRESS:
@@ -3921,14 +3920,14 @@ void CInterfacedScenario::showCurrentVisualization()
 {
 	if(isLocked())
 	{
-		if(m_pPlayerVisualization != NULL)
+		if(m_pPlayerVisualization != nullptr)
 		{
 			m_pPlayerVisualization->showTopLevelWindows();
 		}
 	}
 	else
 	{
-		if(m_pDesignerVisualization != NULL)
+		if(m_pDesignerVisualization != nullptr)
 		{
 			m_pDesignerVisualization->show();
 		}
@@ -3939,14 +3938,14 @@ void CInterfacedScenario::hideCurrentVisualization()
 {
 	if(isLocked())
 	{
-		if(m_pPlayerVisualization != NULL)
+		if(m_pPlayerVisualization != nullptr)
 		{
 			m_pPlayerVisualization->hideTopLevelWindows();
 		}
 	}
 	else
 	{
-		if(m_pDesignerVisualization != NULL)
+		if(m_pDesignerVisualization != nullptr)
 		{
 			m_pDesignerVisualization->hide();
 		}
@@ -3962,7 +3961,7 @@ void CInterfacedScenario::createPlayerVisualization(IVisualizationTree* pVisuali
 		m_pDesignerVisualization->hide();
 	}
 
-	if(m_pPlayerVisualization == NULL)
+	if(m_pPlayerVisualization == nullptr)
 	{
 		if (pVisualizationTree)
 		{
@@ -3972,6 +3971,24 @@ void CInterfacedScenario::createPlayerVisualization(IVisualizationTree* pVisuali
 		{
 			m_pPlayerVisualization = new CPlayerVisualization(m_rKernelContext, *m_pVisualizationTree, *this);
 		}
+
+
+		//we go here when we press start
+		//we have to set the modUI here
+		//first, find the concerned boxes
+		CIdentifier l_oId = m_rScenario.getNextBoxIdentifier(OV_UndefinedIdentifier);
+		while (l_oId!=OV_UndefinedIdentifier)
+		{
+			IBox* l_oBox = m_rScenario.getBoxDetails (l_oId);
+			if(l_oBox->hasModifiableSettings())//if the box has modUI
+			{
+				//create a BoxConfigurationDialog in mode true
+				CBoxConfigurationDialog* l_oBoxConfigurationDialog = new CBoxConfigurationDialog(m_rKernelContext,*l_oBox,m_sGUIFilename.c_str(), m_sGUISettingsFilename.c_str(), true);
+				//store it
+				m_vBoxConfigurationDialog.push_back(l_oBoxConfigurationDialog);
+			}
+			l_oId = m_rScenario.getNextBoxIdentifier(l_oId);
+		}
 	}
 
 	//initialize and show windows
@@ -3980,10 +3997,10 @@ void CInterfacedScenario::createPlayerVisualization(IVisualizationTree* pVisuali
 
 void CInterfacedScenario::releasePlayerVisualization(void)
 {
-	if(m_pPlayerVisualization != NULL)
+	if(m_pPlayerVisualization != nullptr)
 	{
 		delete m_pPlayerVisualization;
-		m_pPlayerVisualization = NULL;
+		m_pPlayerVisualization = nullptr;
 	}
 
 	//reload designer visualization
@@ -4001,13 +4018,60 @@ void CInterfacedScenario::releasePlayerVisualization(void)
 
 boolean CInterfacedScenario::hasSelection(void)
 {
-	map<CIdentifier, boolean>::const_iterator i;
-	for(i=m_vCurrentObject.begin(); i!=m_vCurrentObject.end(); i++)
+	return std::any_of(m_vCurrentObject.begin(), m_vCurrentObject.end(), [](std::pair<OpenViBE::CIdentifier, OpenViBE::boolean> it){ return it.second; });
+}
+
+
+void CInterfacedScenario::stopAndReleasePlayer(void)
+{
+	m_rKernelContext.getErrorManager().releaseErrors();
+	m_pPlayer->stop();
+	m_ePlayerStatus = m_pPlayer->getStatus();
+	// removes idle function
+	g_idle_remove_by_data(this);
+
+	if (!m_pPlayer->uninitialize())
 	{
-		if(i->second)
-		{
-			return true;
-		}
+		m_rKernelContext.getLogManager() << LogLevel_Error << "Failed to uninitialize the player" << "\n";
 	}
-	return false;
+
+	for(auto elem : m_vBoxConfigurationDialog)
+	{
+		elem->restoreState();
+		delete elem;
+	}
+	m_vBoxConfigurationDialog.clear();
+
+
+	if (!m_rKernelContext.getPlayerManager().releasePlayer(m_oPlayerIdentifier))
+	{
+		m_rKernelContext.getLogManager() << LogLevel_Error << "Failed to release the player" << "\n";
+	}
+
+	m_oPlayerIdentifier = OV_UndefinedIdentifier;
+	m_pPlayer = nullptr;
+
+
+	// A. commenting this line allow modified (by UI) settings to be saved (however, the scenario is not marked as changed)
+	//should already be commented in wip-all-designer branch
+	// B. commenting this line make centerOnBox still valid after stop
+	// restore the snapshot so settings override does not modify the scenario !
+	undoCB(false);
+
+	// destroy player windows
+	releasePlayerVisualization();
+
+	// redraws scenario
+	redraw();
+}
+
+//give the PlayerVisualisation the matching between the GtkWidget created by the CBoxConfigurationDialog and the Box CIdentifier
+boolean CInterfacedScenario::setModifiableSettingsWidgets(void)
+{
+	for (auto& elem : m_vBoxConfigurationDialog)
+	{
+		m_pPlayerVisualization->setWidget(elem->getBoxID(),  elem->getWidget());
+	}
+
+	return true;
 }
