@@ -15,7 +15,6 @@ namespace OpenViBEDesigner
 			FileFormatType_Metabox
 		};
 		static const std::map<std::string, std::pair<std::string, CFileFormats::EFileFormatType>> filenameExtensionDescriptions;
-		static const std::map<std::string, OpenViBE::CIdentifier> filenameExtensionImporters;
 		static const std::map<std::string, OpenViBE::CIdentifier> filenameExtensionExporters;
 	};
 

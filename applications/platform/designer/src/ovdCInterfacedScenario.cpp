@@ -2765,7 +2765,20 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 
 										std::string metaboxScenarioPathString(l_sMetaboxScenarioPath.toASCIIString());
 										std::string metaboxScenarioExtension = boost::filesystem::extension(metaboxScenarioPathString);
-										bool canImportFile = (CFileFormats::filenameExtensionImporters.count(metaboxScenarioExtension) > 0);
+										bool canImportFile = false;
+
+										for (uint32 importerIndex = 0; importerIndex < m_rKernelContext.getScenarioManager().getRegisteredScenarioImportersCount(OVD_ScenarioImportContext_OpenScenario); ++importerIndex)
+										{
+											const char* fileNameExtension;
+											CIdentifier algorithmId;
+											m_rKernelContext.getScenarioManager().getRegisteredScenarioImporterDetails(OVD_ScenarioImportContext_OpenScenario, importerIndex, &fileNameExtension, algorithmId);
+											if (metaboxScenarioExtension == fileNameExtension)
+											{
+												canImportFile = true;
+												break;
+											}
+										}
+
 
 										if (canImportFile)
 										{

@@ -36,6 +36,8 @@
 #define OVD_GUI_Settings_File OpenViBE::Directories::getDataDir() + "/applications/designer/interface-settings.ui"
 #define OVD_AttributeId_ScenarioFilename OpenViBE::CIdentifier(0x4C536D0A, 0xB23DC545)
 #define OVD_README_File                  OpenViBE::Directories::getDistRootDir() + "/ReadMe.txt"
+
+
 static const unsigned int s_RecentFileNumber = 10;
 
 #include "ovdCDesignerVisualization.h"
@@ -47,6 +49,7 @@ static const unsigned int s_RecentFileNumber = 10;
 #include <metabox-loader/mCMetaboxLoader.h>
 
 #include "visualization/ovdCVisualizationManager.h"
+
 
 using namespace OpenViBE;
 using namespace OpenViBE::Kernel;
@@ -836,6 +839,10 @@ CApplication::CApplication(const IKernelContext& rKernelContext)
 {
 	m_pPluginManager=&m_rKernelContext.getPluginManager();
 	m_pScenarioManager=&m_rKernelContext.getScenarioManager();
+	m_pScenarioManager->registerScenarioImporter(OVD_ScenarioImportContext_OpenScenario, ".xml", OVP_GD_ClassId_Algorithm_XMLScenarioImporter);
+	m_pScenarioManager->registerScenarioImporter(OVD_ScenarioImportContext_OpenScenario, ".mxs", OVP_GD_ClassId_Algorithm_XMLScenarioImporter);
+	m_pScenarioManager->registerScenarioImporter(OVD_ScenarioImportContext_OpenScenario, ".mxb", OVP_GD_ClassId_Algorithm_XMLScenarioImporter);
+
 	m_pVisualizationManager = new CVisualizationManager(m_rKernelContext);
 	m_visualizationContext = dynamic_cast<OpenViBEVisualizationToolkit::IVisualizationContext*>(m_rKernelContext.getPluginManager().createPluginObject(OVP_ClassId_Plugin_VisualizationContext));
 	m_visualizationContext->setManager(m_pVisualizationManager);
@@ -1391,20 +1398,9 @@ OpenViBE::boolean CApplication::openScenario(const char* sFileName)
 		}
 	}
 
-	std::string scenarioFilenameExtension = boost::filesystem::extension(sFileName);
-	if (!CFileFormats::filenameExtensionImporters.count(scenarioFilenameExtension))
-	{
-		// TODO: Report error
-		return false;
-	}
-
-	CIdentifier scenarioImporterIdentifier = CFileFormats::filenameExtensionImporters.at(scenarioFilenameExtension);
-
 	CIdentifier l_oScenarioIdentifier;
-	if (m_pScenarioManager->importScenarioFromFile(l_oScenarioIdentifier, sFileName, scenarioImporterIdentifier))
+	if (m_pScenarioManager->importScenarioFromFile(l_oScenarioIdentifier, OVD_ScenarioImportContext_OpenScenario, sFileName))
 	{
-
-
 		// Closes first unnamed scenario
 		if(m_vInterfacedScenario.size()==1)
 		{
@@ -1850,12 +1846,16 @@ void CApplication::openScenarioCB(void)
 	::GtkFileFilter* l_pFileFilterAll=gtk_file_filter_new();
 
 	std::string allFileFormatsString = "All available formats (";
-	for (auto const& fileFormat : CFileFormats::filenameExtensionImporters)
+	for (uint32 importerIndex = 0; importerIndex < m_rKernelContext.getScenarioManager().getRegisteredScenarioImportersCount(OVD_ScenarioImportContext_OpenScenario); ++importerIndex)
 	{
-		std::string currentFileFormatMask = "*" + fileFormat.first;
+		const char* fileNameExtension;
+		CIdentifier algorithmId;
+		m_rKernelContext.getScenarioManager().getRegisteredScenarioImporterDetails(OVD_ScenarioImportContext_OpenScenario, importerIndex, &fileNameExtension, algorithmId);
+		std::string currentFileFormatMask = "*" + std::string(fileNameExtension);
 		gtk_file_filter_add_pattern(l_pFileFilterSpecific, currentFileFormatMask.c_str());
-		allFileFormatsString += "*" + fileFormat.first + ", ";
+		allFileFormatsString += "*" + std::string(fileNameExtension) + ", ";
 	}
+
 	allFileFormatsString.erase(allFileFormatsString.size() - 2); // because the loop adds one ", " too much
 	allFileFormatsString += ")";
 
@@ -1980,7 +1980,7 @@ void CApplication::saveScenarioCB(CInterfacedScenario* pScenario)
 		const char* l_sScenarioFileName = l_pCurrentInterfacedScenario->m_sFileName.c_str();
 
 		std::string scenarioFilenameExtension = boost::filesystem::extension(l_sScenarioFileName);
-		if (!CFileFormats::filenameExtensionImporters.count(scenarioFilenameExtension))
+		if (!CFileFormats::filenameExtensionExporters.count(scenarioFilenameExtension))
 		{
 			// TODO: Report error
 			return;

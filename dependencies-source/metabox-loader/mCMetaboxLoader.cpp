@@ -154,69 +154,8 @@ boolean CMetaboxLoader::loadPluginDescriptorsFromWildcard(const CString& rFileNa
 CIdentifier CMetaboxLoader::openScenario(const char* sFileName)
 {
 	CIdentifier l_oScenarioIdentifier;
-	if(m_rScenarioManager.createScenario(l_oScenarioIdentifier))
-	{
-		IScenario& l_rScenario = m_rScenarioManager.getScenario(l_oScenarioIdentifier);
-
-		CMemoryBuffer l_oMemoryBuffer;
-//		boolean l_bSuccess = false;
-
-		FILE* l_pFile = FS::Files::open(sFileName, "rb");
-		if(l_pFile)
-		{
-			::fseek(l_pFile, 0, SEEK_END);
-			l_oMemoryBuffer.setSize(::ftell(l_pFile), true);
-			::fseek(l_pFile, 0, SEEK_SET);
-			if(::fread(reinterpret_cast<char*>(l_oMemoryBuffer.getDirectPointer()), (size_t)l_oMemoryBuffer.getSize(), 1, l_pFile)!=1)
-			{
-				m_rKernelContext.getLogManager() << LogLevel_Error << "Problem reading '" << sFileName << "'\n";
-				::fclose(l_pFile);
-				m_rScenarioManager.releaseScenario(l_oScenarioIdentifier);
-				return OV_UndefinedIdentifier;
-			}
-			::fclose(l_pFile);
-		}
-		else
-		{
-			m_rKernelContext.getLogManager() << LogLevel_Error << "Unable to open '" << sFileName << "' for reading\n";
-			m_rScenarioManager.releaseScenario(l_oScenarioIdentifier);
-			return OV_UndefinedIdentifier;
-		}
-
-		if(l_oMemoryBuffer.getSize())
-		{
-			CIdentifier l_oImporterIdentifierToUse = OVP_GD_ClassId_Algorithm_XMLScenarioImporter;
-
-			CIdentifier l_oImporterIdentifier = m_rKernelContext.getAlgorithmManager().createAlgorithm(l_oImporterIdentifierToUse);
-			if(l_oImporterIdentifier != OV_UndefinedIdentifier)
-			{
-				IAlgorithmProxy* l_pImporter = &m_rKernelContext.getAlgorithmManager().getAlgorithm(l_oImporterIdentifier);
-				if(l_pImporter)
-				{
-					l_pImporter->initialize();
-
-					TParameterHandler < const IMemoryBuffer* > ip_pMemoryBuffer(l_pImporter->getInputParameter(OV_Algorithm_ScenarioImporter_InputParameterId_MemoryBuffer));
-					TParameterHandler < IScenario* > op_pScenario(l_pImporter->getOutputParameter(OV_Algorithm_ScenarioImporter_OutputParameterId_Scenario));
-
-					ip_pMemoryBuffer = &l_oMemoryBuffer;
-					op_pScenario = &l_rScenario;
-
-					/* l_bSuccess = */l_pImporter->process();
-					l_pImporter->uninitialize();
-					m_rKernelContext.getAlgorithmManager().releaseAlgorithm(*l_pImporter);
-
-				}
-			}
-
-			return l_oScenarioIdentifier;
-		}
-		else
-		{
-			m_rKernelContext.getLogManager() << LogLevel_Warning << "Importing metabox failed...\n";
-			m_rScenarioManager.releaseScenario(l_oScenarioIdentifier);
-		}
-	}
-	return OV_UndefinedIdentifier;
+	m_rScenarioManager.importScenarioFromFile(l_oScenarioIdentifier, OVD_ScenarioimportContext_OnLoadMetaboxImport, sFileName);
+	return l_oScenarioIdentifier;
 }
 
 void CMetaboxLoader::closeScenario(const CIdentifier& rIdentifier)

@@ -8,6 +8,8 @@
 #include "ovdCArchwayHandlerGUI.h"
 #endif
 
+#define OVD_ScenarioImportContext_OpenScenario OpenViBE::CIdentifier(0xA180DB91, 0x19235AEE)
+
 #include <vector>
 namespace Mensia
 {

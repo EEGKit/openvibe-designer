@@ -9,12 +9,6 @@ namespace OpenViBEDesigner
 		{".mxb", {"Mensia XML Component", CFileFormats::FileFormatType_Metabox}}
 	};
 
-	const std::map<std::string, OpenViBE::CIdentifier> CFileFormats::filenameExtensionImporters = {
-		{".xml", OVP_GD_ClassId_Algorithm_XMLScenarioImporter},
-		{".mxs", OVP_GD_ClassId_Algorithm_XMLScenarioImporter},
-		{".mxb", OVP_GD_ClassId_Algorithm_XMLScenarioImporter}
-	};
-
 	const std::map<std::string, OpenViBE::CIdentifier> CFileFormats::filenameExtensionExporters = {
 		{".xml", OVP_GD_ClassId_Algorithm_XMLScenarioExporter},
 		{".mxs", OVP_GD_ClassId_Algorithm_XMLScenarioExporter},
