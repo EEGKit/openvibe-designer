@@ -5,6 +5,9 @@
 
 #include <openvibe/ovITimeArithmetics.h>
 
+#include "ovdCApplication.h"
+#include "ovdCInterfacedScenario.h"
+
 #define OVD_GUI_File OpenViBE::Directories::getDataDir() + "/applications/designer/interface.ui"
 
 using namespace OpenViBE;
@@ -29,6 +32,52 @@ namespace
 		CLogListenerDesigner* designerLog_ptr = static_cast<CLogListenerDesigner*>(pUserData);
 		designerLog_ptr->m_sSearchTerm = gtk_entry_get_text(pTextfield);
 		designerLog_ptr->searchMessages(designerLog_ptr->m_sSearchTerm);
+	}
+	void focus_on_box_cidentifier_clicked(::GtkWidget* pWidget, GdkEventButton *pEvent, gpointer pData)
+	{
+		//log text view grab the focus so isLogAreaClicked() return true and CTRL+F will focus on the log searchEntry
+		gtk_widget_grab_focus(pWidget);
+
+		CLogListenerDesigner* designerLog_ptr = static_cast<CLogListenerDesigner*>(pData);
+
+		//if left click
+		if (pEvent->button == 1)
+		{
+			GtkTextView* l_pTextView = GTK_TEXT_VIEW(pWidget);
+			GtkTextWindowType l_oWindowType = gtk_text_view_get_window_type(l_pTextView, pEvent->window);
+			gint l_iBufferX, l_iBufferY;
+			//convert event coord (mouse position) in buffer coord (character in buffer)
+			gtk_text_view_window_to_buffer_coords(l_pTextView, l_oWindowType, round(pEvent->x), round(pEvent->y), &l_iBufferX, &l_iBufferY);
+			//get the text iter corresponding to that position
+			GtkTextIter l_oIter;
+			gtk_text_view_get_iter_at_location(l_pTextView, &l_oIter, l_iBufferX, l_iBufferY);
+
+			//if this position is not tagged, exit
+			if(!gtk_text_iter_has_tag(&l_oIter, designerLog_ptr->m_pCIdentifierTag))
+			{
+				return;
+			}
+			//the position is tagged, we are on a CIdentifier
+			GtkTextIter l_oStart = l_oIter;
+			GtkTextIter l_oEnd = l_oIter;
+
+			while(gtk_text_iter_has_tag(&l_oEnd, designerLog_ptr->m_pCIdentifierTag))
+			{
+				gtk_text_iter_forward_char(&l_oEnd);
+			}
+			while(gtk_text_iter_has_tag(&l_oStart, designerLog_ptr->m_pCIdentifierTag))
+			{
+				gtk_text_iter_backward_char(&l_oStart);
+			}
+			//we went one char to far for start
+			gtk_text_iter_forward_char(&l_oStart);
+			//this contains the CIdentifier
+			gchar * l_sLink=gtk_text_iter_get_text(&l_oStart, &l_oEnd);
+			//cout << "cid is |" << link << "|" << endl;
+			CIdentifier l_oId;
+			l_oId.fromString(CString(l_sLink));
+			designerLog_ptr->m_centerOnBoxFun(l_oId);
+		}
 	}
 }
 
@@ -67,6 +116,7 @@ CLogListenerDesigner::CLogListenerDesigner(const IKernelContext& rKernelContext,
 	,m_ui32CountWarnings( 0 )
 	,m_ui32CountErrors( 0 )
 	,m_sSearchTerm("")
+	,m_centerOnBoxFun([](CIdentifier& id){})
 {
 	m_pTextView = GTK_TEXT_VIEW(gtk_builder_get_object(m_pBuilderInterface, "openvibe-textview_messages"));
 	m_pAlertWindow = GTK_WINDOW(gtk_builder_get_object(m_pBuilderInterface, "dialog_error_popup"));
@@ -99,7 +149,7 @@ CLogListenerDesigner::CLogListenerDesigner(const IKernelContext& rKernelContext,
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "dialog_error_popup-button_ok")), "clicked", G_CALLBACK(::close_messages_alert_window_cb), m_pAlertWindow);
 
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "searchEntry")), "changed", G_CALLBACK(::refresh_search_log_entry), this);
-
+	g_signal_connect(G_OBJECT(m_pTextView), "button_press_event", G_CALLBACK(focus_on_box_cidentifier_clicked), this);
 	m_pBuffer = gtk_text_view_get_buffer( m_pTextView );
 
 	gtk_text_buffer_create_tag(m_pBuffer, "f_mono", "family", "monospace", nullptr);
@@ -112,6 +162,10 @@ CLogListenerDesigner::CLogListenerDesigner(const IKernelContext& rKernelContext,
 	gtk_text_buffer_create_tag(m_pBuffer, "c_aqua", "foreground", "#00FFFF", nullptr); // number
 	gtk_text_buffer_create_tag(m_pBuffer, "c_darkViolet", "foreground", "#6900D7", nullptr); // warning
 	gtk_text_buffer_create_tag(m_pBuffer, "c_blueChill", "foreground", "#3d889b", nullptr); // information
+	gtk_text_buffer_create_tag(m_pBuffer, "link", "underline", PANGO_UNDERLINE_SINGLE, NULL); // link for CIdentifier
+
+	GtkTextTagTable* l_pTagtable =  gtk_text_buffer_get_tag_table(m_pBuffer);
+	m_pCIdentifierTag = gtk_text_tag_table_lookup(l_pTagtable, "link");
 
 	m_bConsoleLogWithHexa = rKernelContext.getConfigurationManager().expandAsBoolean("${Designer_ConsoleLogWithHexa}",false);
 	m_bConsoleLogTimeInSecond = rKernelContext.getConfigurationManager().expandAsBoolean("${Kernel_ConsoleLogTimeInSecond}",false);
@@ -326,7 +380,7 @@ void CLogListenerDesigner::log(const CIdentifier& rValue)
 {
 	if(m_bIngnoreMessages) return;
 
-	checkAppendFilterCurrentLog("c_blueChill", rValue.toString());
+	checkAppendFilterCurrentLog("c_blueChill", rValue.toString(), true);
 }
 
 void CLogListenerDesigner::log(const CString& rValue)

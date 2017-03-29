@@ -144,6 +144,8 @@ namespace OpenViBEDesigner
 			_IsDerivedFromClass_Final_(OpenViBE::Kernel::ILogListener, OV_UndefinedIdentifier);
 
 			OpenViBE::CString m_sSearchTerm;
+			::GtkTextTag* m_pCIdentifierTag;
+			std::function<void(OpenViBE::CIdentifier&)> m_centerOnBoxFun;
 
 		protected:
 
@@ -196,6 +198,7 @@ namespace OpenViBEDesigner
 			OpenViBE::uint32 m_ui32ConsoleLogTimePrecision;
 
 			CLogObject* m_pCurrentLog;
+
 	};
 };
 

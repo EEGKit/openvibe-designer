@@ -4075,3 +4075,74 @@ boolean CInterfacedScenario::setModifiableSettingsWidgets(void)
 
 	return true;
 }
+
+bool CInterfacedScenario::centerOnBox(CIdentifier rIdentifier)
+{
+	//m_rKernelContext.getLogManager() << LogLevel_Fatal << "CInterfacedScenario::centerOnBox" << "\n";
+	bool ret_val = false;
+	if(m_rScenario.isBox(rIdentifier))
+	{
+		//m_rKernelContext.getLogManager() << LogLevel_Fatal << "CInterfacedScenario::centerOnBox is box" << "\n";
+		IBox* rBox = m_rScenario.getBoxDetails(rIdentifier);
+
+		//clear previous selection
+		m_vCurrentObject.clear();
+		//to select the box
+		m_vCurrentObject[rIdentifier] = true;
+//		m_bScenarioModified=true;
+		redraw();
+
+		CBoxProxy l_oBoxProxy(m_rKernelContext, *rBox);
+		int m_f64CurrentScale = 1; // The rescale functionality is comming next !
+		const float64 xMargin = 5.0 * m_f64CurrentScale;
+		const float64 yMargin = 5.0 * m_f64CurrentScale;
+		int xSize=round(l_oBoxProxy.getWidth(GTK_WIDGET(m_pScenarioDrawingArea)) + xMargin * 2.0 );
+		int ySize=round(l_oBoxProxy.getHeight(GTK_WIDGET(m_pScenarioDrawingArea)) + yMargin * 2.0);
+		const float64 l_f64XCenter = l_oBoxProxy.getXCenter() * m_f64CurrentScale;
+		const float64 l_f64YCenter = l_oBoxProxy.getYCenter() * m_f64CurrentScale;
+		int x, y;
+
+		//get the parameters of the current adjustement
+		GtkAdjustment* l_pOldHAdjustement = gtk_scrolled_window_get_hadjustment(GTK_SCROLLED_WINDOW(m_pNotebookPageContent));//gtk_viewport_get_vadjustment(m_pScenarioViewport);
+		GtkAdjustment* l_pOldVAdjustement = gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(m_pNotebookPageContent));
+		gdouble upper, lower, step, page, pagesize, value;
+		g_object_get(l_pOldHAdjustement, "upper", &upper, "lower", &lower, "step-increment", &step, "page-increment", &page, "page-size", &pagesize, "value", &value, NULL);
+		//get the size of the current viewport
+		gint l_iViewportX = -1, l_iViewportY = -1;
+		gdk_window_get_size(GTK_WIDGET(m_pScenarioViewport)->window, &l_iViewportX, &l_iViewportY);
+
+		//the upper bound of the adjustement is too big, we must substract the current size of the viewport
+		upper -= l_iViewportX;
+
+		//create a new adjustement with the correct value since we can not change the upper bound of the old adjustement
+		GtkAdjustment* l_pAdjustement = (GtkAdjustment*)gtk_adjustment_new(value, lower, upper, step, page, pagesize);
+		if(l_f64XCenter + m_i32ViewOffsetX < l_iViewportX/2)
+		{
+			x = round(l_f64XCenter - 2*xSize) + m_i32ViewOffsetX;
+		}
+		else{
+			x = round(l_f64XCenter + 2*xSize) + m_i32ViewOffsetX;
+			x = round( (x/(float64)l_iViewportX) * upper - pagesize);
+		}
+
+		gtk_adjustment_set_value(l_pAdjustement, x);
+		gtk_scrolled_window_set_hadjustment(GTK_SCROLLED_WINDOW(m_pNotebookPageContent), l_pAdjustement);
+
+		g_object_get(l_pOldVAdjustement, "upper", &upper, "lower", &lower, "step-increment", &step, "page-increment", &page, "page-size", &pagesize, "value", &value, NULL);
+		//upper-=l_iViewportY;
+		l_pAdjustement = (GtkAdjustment*)gtk_adjustment_new(value, lower, upper, step, page, pagesize);
+		if(l_f64YCenter + m_i32ViewOffsetY < l_iViewportY/2)
+		{
+			y = round(l_f64YCenter - 2*ySize) + m_i32ViewOffsetY;
+		}
+		else{
+			y = round(l_f64YCenter + 2*ySize) + m_i32ViewOffsetY;
+			//Here the formula is different because we need to align the other side of the scroll bar
+			y = round((y / (float64)l_iViewportY) * upper - pagesize);
+		}
+		gtk_adjustment_set_value(l_pAdjustement, y);
+		gtk_scrolled_window_set_vadjustment(GTK_SCROLLED_WINDOW(m_pNotebookPageContent), l_pAdjustement);
+		ret_val = true;
+	}
+	return ret_val;
+}

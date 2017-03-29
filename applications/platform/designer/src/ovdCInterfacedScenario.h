@@ -117,6 +117,8 @@ namespace OpenViBEDesigner
 		void stopAndReleasePlayer(void);
 		OpenViBE::boolean setModifiableSettingsWidgets(void);
 		OpenViBE::boolean hasSelection(void);
+		bool centerOnBox(OpenViBE::CIdentifier rIdentifier);
+
 /*
 	private:
 
