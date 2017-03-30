@@ -11,7 +11,6 @@
 #include "ovdCInterfacedObject.h"
 #include "ovdCScenarioStateStack.h"
 #include "ovdCSettingCollectionHelper.h"
-#include "ovdCFileFormats.h"
 #include <visualization-toolkit/ovvizIVisualizationTree.h>
 
 namespace OpenViBEDesigner
