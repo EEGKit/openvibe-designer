@@ -868,6 +868,8 @@ CApplication::~CApplication(void)
 		m_pBuilderInterface = NULL;
 	}
 
+	m_rKernelContext.getPluginManager().releasePluginObject(m_visualizationContext);
+
 	delete m_pMetaboxLoader;
 }
 
