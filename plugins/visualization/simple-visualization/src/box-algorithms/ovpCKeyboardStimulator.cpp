@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <inttypes.h>
 
 #include <fs/Files.h>
 
@@ -87,12 +88,12 @@ namespace OpenViBEPlugins
 
 				// MAY CAUSE ENDIANNESS PROBLEMS !
 				OV_ERROR_UNLESS_KRF(
-					sscanf(stimulationPress.c_str(), "0x%08llx", &key.m_StimulationPress) == 1,
+					sscanf(stimulationPress.c_str(), "0x%08" PRIx64, &key.m_StimulationPress) == 1,
 					"Failed to format " << key.m_StimulationPress,
 					ErrorType::BadArgument);
 
 				OV_ERROR_UNLESS_KRF(
-					sscanf(stimulationRelease.c_str(), "0x%08llx", &key.m_StimulationRelease) == 1,
+					sscanf(stimulationRelease.c_str(), "0x%08" PRIx64, &key.m_StimulationRelease) == 1,
 					"Failed to format " << key.m_StimulationRelease,
 					ErrorType::BadArgument);
 

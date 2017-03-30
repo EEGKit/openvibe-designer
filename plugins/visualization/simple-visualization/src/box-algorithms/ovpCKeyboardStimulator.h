@@ -25,7 +25,7 @@ namespace OpenViBEPlugins
 			virtual bool initialize();
 			virtual bool uninitialize();
 
-			virtual unsigned long long getClockFrequency() { return (32LL << 32); }
+			virtual OpenViBE::uint64 getClockFrequency() { return (32LL << 32); }
 
 			virtual bool processClock(OpenViBE::CMessageClock &rMessageClock);
 
@@ -55,8 +55,8 @@ namespace OpenViBEPlugins
 
 			typedef struct
 			{
-				unsigned long long m_StimulationPress;
-				unsigned long long m_StimulationRelease;
+				uint64_t m_StimulationPress;
+				uint64_t m_StimulationRelease;
 				bool m_Status;
 			} SKey;
 
@@ -64,10 +64,10 @@ namespace OpenViBEPlugins
 			std::map<guint, SKey > m_KeyToStimulation;
 
 			//! Vector of the stimulations to send when possible
-			std::vector<unsigned long long> m_StimulationToSend;
+			std::vector<uint64_t> m_StimulationToSend;
 
 			//! Plugin's previous activation date
-			unsigned long long m_PreviousActivationTime;
+			uint64_t m_PreviousActivationTime;
 
 		private:
 			bool m_UnknownKeyPressed;

@@ -28,7 +28,7 @@ namespace OpenViBEPlugins
 			virtual bool initialize();
 			virtual bool uninitialize();
 			virtual bool processInput(unsigned intui32InputIndex);
-			virtual unsigned long long getClockFrequency(void) { return (128LL << 32); }
+			virtual uint64_t getClockFrequency(void) { return (128LL << 32); }
 			virtual bool processClock(OpenViBE::CMessageClock& rMessageClock);
 			virtual bool process();
 			virtual void redraw(void);
@@ -62,15 +62,15 @@ namespace OpenViBEPlugins
 
 			//Settings
 			unsigned int   m_NumberOfCue;
-			std::vector<unsigned long long>  m_StimulationsId;
+			std::vector<uint64_t>  m_StimulationsId;
 			std::vector<OpenViBE::CString> m_ImageNames;
-			unsigned long long  m_ClearScreenStimulation;
+			uint64_t  m_ClearScreenStimulation;
 			bool m_IsFullScreen;
 
 			//Start and end time of the last buffer
-			unsigned long long m_StartTime;
-			unsigned long long m_EndTime;
-			unsigned long long m_LastOutputChunkDate;
+			uint64_t m_StartTime;
+			uint64_t m_EndTime;
+			uint64_t m_LastOutputChunkDate;
 
 			//We save the received stimulations
 			OpenViBE::CStimulationSet m_PendingStimulationSet;
