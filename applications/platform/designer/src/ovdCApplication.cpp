@@ -809,6 +809,23 @@ namespace
 		catch(boost::interprocess::interprocess_exception) {}
 		return TRUE;
 	}
+
+	void zoom_in_scenario_cb(::GtkButton* pButton, gpointer pUserData)
+	{
+		static_cast<CApplication*>(pUserData)->zoomInCB();
+	}
+
+	void zoom_out_scenario_cb(::GtkButton* pButton, gpointer pUserData)
+	{
+		static_cast<CApplication*>(pUserData)->zoomOutCB();
+	}
+
+
+	void spinner_zoom_changed_cb(::GtkSpinButton* pButton, gpointer pUserData)
+	{
+		static_cast<CApplication*>(pUserData)->spinnerZoomChangedCB(static_cast<uint32_t>(gtk_spin_button_get_value(pButton)));
+	}
+
 }
 
 static ::GtkTargetEntry g_vTargetEntry[]= {
@@ -970,6 +987,11 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-show_unstable")), "toggled", G_CALLBACK(refresh_search_no_data_cb), this);
 
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-scenario_configuration_button_configure")), "clicked", G_CALLBACK(button_configure_current_scenario_settings_cb), this);
+
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_zoomin")), "clicked",  G_CALLBACK(zoom_in_scenario_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_zoomout")), "clicked",  G_CALLBACK(zoom_out_scenario_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-zoom_spinner")), "value-changed",  G_CALLBACK(spinner_zoom_changed_cb), this);
+
 #if defined TARGET_HAS_LibArchway
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration")),       "clicked", G_CALLBACK(button_toggle_neurort_engine_configuration_cb),   this);
 	m_oArchwayHandlerGUI.m_pButtonOpenEngineConfigurationDialog = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration"));
@@ -3061,3 +3083,24 @@ void CApplication::reorderCurrentScenario(OpenViBE::uint32 i32NewPageIndex)
 	this->changeCurrentScenario(i32NewPageIndex);
 }
 
+//Increase the zoom of the current scenario
+void CApplication::zoomInCB(void)
+{
+	gtk_spin_button_set_value(GTK_SPIN_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-zoom_spinner")),
+							  round(getCurrentInterfacedScenario()->getScale()*100.0) + 5);
+}
+
+//Decrease the zoom of the current scenario
+void CApplication::zoomOutCB(void)
+{
+	gtk_spin_button_set_value(GTK_SPIN_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-zoom_spinner")),
+							  round(getCurrentInterfacedScenario()->getScale()*100.0) - 5);
+}
+
+void CApplication::spinnerZoomChangedCB(uint32_t scalePercentage)
+{
+	if(getCurrentInterfacedScenario() != nullptr)
+	{
+		getCurrentInterfacedScenario()->setScale(static_cast<float64>(scalePercentage)/100.0);
+	}
+}

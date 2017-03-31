@@ -38,7 +38,7 @@ namespace OpenViBEDesigner
 
 		void initialize(OpenViBEDesigner::ECommandLineFlag eCommandLineFlags);
 
-		OpenViBE::boolean openScenario(const char* sFileName);
+		bool openScenario(const char* sFileName);
 
 		/** \name Drag and drop management */
 		//@{
@@ -154,6 +154,9 @@ namespace OpenViBEDesigner
 		void CPUUsageCB(void);
 
 		//@}
+		void zoomInCB(void);//Call when a zoom in is required
+		void zoomOutCB(void);//Call when a zoom out is required
+		void spinnerZoomChangedCB(uint32_t scaleDelta);
 
 	public:
 
