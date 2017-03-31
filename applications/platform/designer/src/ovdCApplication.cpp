@@ -380,6 +380,7 @@ namespace
 	{
 		static_cast<CApplication*>(pUserData)->stopScenarioCB();
 	}
+
 	void play_pause_scenario_cb(::GtkButton* pButton, gpointer pUserData)
 	{
 		if(std::string(gtk_tool_button_get_stock_id(GTK_TOOL_BUTTON(pButton)))==GTK_STOCK_MEDIA_PLAY)
@@ -391,10 +392,12 @@ namespace
 			static_cast<CApplication*>(pUserData)->pauseScenarioCB();
 		}
 	}
+
 	void next_scenario_cb(::GtkButton* pButton, gpointer pUserData)
 	{
 		static_cast<CApplication*>(pUserData)->nextScenarioCB();
 	}
+
 	void forward_scenario_cb(::GtkButton* pButton, gpointer pUserData)
 	{
 		static_cast<CApplication*>(pUserData)->forwardScenarioCB();
@@ -652,6 +655,7 @@ namespace
 		{
 			if(l_pApplication->getPlayer() && l_pCurrentInterfacedScenario->m_ePlayerStatus != l_pApplication->getPlayer()->getStatus())
 			{
+				auto w = l_pApplication->getPlayer()->getStatus();
 				switch(l_pApplication->getPlayer()->getStatus())
 				{
 					case PlayerStatus_Stop:    gtk_signal_emit_by_name(GTK_OBJECT(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-button_stop")), "clicked"); break;
@@ -1588,26 +1592,12 @@ CString CApplication::getWorkingDirectory(void)
 
 bool CApplication::hasRunningScenario(void)
 {
-	for(CInterfacedScenario* pInterfacedScenario : m_vInterfacedScenario)
-	{
-		if(pInterfacedScenario->m_pPlayer)
-		{
-			return true;
-		}
-	}
-	return false;
+	return std::any_of(m_vInterfacedScenario.begin(), m_vInterfacedScenario.end(), [](CInterfacedScenario* elem){ return elem->m_pPlayer != nullptr; });
 }
 
 bool CApplication::hasUnsavedScenario(void)
 {
-	for(CInterfacedScenario* pInterfacedScenario : m_vInterfacedScenario)
-	{
-		if(pInterfacedScenario->m_bHasBeenModified)
-		{
-			return true;
-		}
-	}
-	return false;
+	return std::any_of(m_vInterfacedScenario.begin(), m_vInterfacedScenario.end(), [](CInterfacedScenario* elem){ return elem->m_bHasBeenModified; });
 }
 
 CInterfacedScenario* CApplication::getCurrentInterfacedScenario(void)
@@ -1617,7 +1607,7 @@ CInterfacedScenario* CApplication::getCurrentInterfacedScenario(void)
 	{
 		return m_vInterfacedScenario[m_ui32CurrentInterfacedScenarioIndex];
 	}
-	return NULL;
+	return nullptr;
 }
 
 void CApplication::saveOpenedScenarios(void)
@@ -2313,10 +2303,10 @@ void CApplication::addRecentScenario(const std::string& scenarioPath)
 
 	if (m_RecentScenarios.size() > s_RecentFileNumber)
 	{
-		for (size_t i = s_RecentFileNumber; i < m_RecentScenarios.size(); i++)
+		for (auto it = m_RecentScenarios.begin() + s_RecentFileNumber ; it != m_RecentScenarios.end(); ++it)
 		{
-			gtk_container_remove(m_MenuOpenRecent, GTK_WIDGET(m_RecentScenarios[i]));
-			gtk_widget_destroy(GTK_WIDGET(m_RecentScenarios[i]));
+			gtk_container_remove(m_MenuOpenRecent, GTK_WIDGET(*it));
+			gtk_widget_destroy(GTK_WIDGET(*it));
 		}
 		m_RecentScenarios.erase(m_RecentScenarios.begin() + s_RecentFileNumber, m_RecentScenarios.end());
 	}
@@ -2378,17 +2368,12 @@ void CApplication::closeScenarioCB(CInterfacedScenario* pInterfacedScenario)
 	// Add scenario to recently opened:
 	this->addRecentScenario(pInterfacedScenario->m_sFileName.c_str());
 
-	vector<CInterfacedScenario*>::iterator i=m_vInterfacedScenario.begin();
-	while(i!=m_vInterfacedScenario.end() && *i!=pInterfacedScenario)
-	{
-		i++;
-	}
-
-	if(i!=m_vInterfacedScenario.end())
+	auto it = std::find(m_vInterfacedScenario.begin(), m_vInterfacedScenario.end(), pInterfacedScenario);
+	if(it != m_vInterfacedScenario.end())
 	{
 		// We need to erase the scenario from the list first, because deleting the scenario will launch a "switch-page"
 		// callback accessing this array with the identifier of the deleted scenario (if its not the last one) -> boom.
-		m_vInterfacedScenario.erase(i);
+		m_vInterfacedScenario.erase(it);
 		CIdentifier l_oScenarioIdentifier=pInterfacedScenario->m_oScenarioIdentifier;
 		delete pInterfacedScenario;
 		m_pScenarioManager->releaseScenario(l_oScenarioIdentifier);
@@ -2619,9 +2604,21 @@ void CApplication::stopScenarioCB(void)
 {
 	m_rKernelContext.getLogManager() << LogLevel_Debug << "stopScenarioCB\n";
 
-	if (this->getCurrentInterfacedScenario()->m_ePlayerStatus == PlayerStatus_Play || this->getCurrentInterfacedScenario()->m_ePlayerStatus == PlayerStatus_Pause || this->getCurrentInterfacedScenario()->m_ePlayerStatus == PlayerStatus_Forward)
+	OpenViBE::Kernel::EPlayerStatus currentState = this->getCurrentInterfacedScenario()->m_ePlayerStatus;
+	if (currentState == PlayerStatus_Play || currentState == PlayerStatus_Pause || currentState == PlayerStatus_Forward)
 	{
 		this->stopInterfacedScenarioAndReleasePlayer(this->getCurrentInterfacedScenario());
+
+		if(gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-toggle_button_loop"))))
+		{
+			switch(currentState)
+			{
+			case PlayerStatus_Play: playScenarioCB(); break;
+			case PlayerStatus_Forward: forwardScenarioCB(); break;
+			default:
+				break;
+			}
+		}
 	}
 }
 
