@@ -1264,7 +1264,7 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 	if(!(m_eCommandLineFlags&CommandLineFlag_NoGui))
 	{
 		m_pLogListenerDesigner = new CLogListenerDesigner(m_rKernelContext, m_pBuilderInterface);
-		m_pLogListenerDesigner->m_centerOnBoxFun = [this](CIdentifier& id) { this->getCurrentInterfacedScenario()->centerOnBox(id); };
+		m_pLogListenerDesigner->m_CenterOnBoxFun = [this](CIdentifier& id) { this->getCurrentInterfacedScenario()->centerOnBox(id); };
 		m_rKernelContext.getLogManager().addListener(m_pLogListenerDesigner);
 		g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_clear")),       "clicked",  G_CALLBACK(clear_messages_cb), m_pLogListenerDesigner);
 		gtk_widget_show(m_pMainWindow);

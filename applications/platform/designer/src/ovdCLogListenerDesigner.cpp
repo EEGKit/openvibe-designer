@@ -5,9 +5,6 @@
 
 #include <openvibe/ovITimeArithmetics.h>
 
-#include "ovdCApplication.h"
-#include "ovdCInterfacedScenario.h"
-
 #define OVD_GUI_File OpenViBE::Directories::getDataDir() + "/applications/designer/interface.ui"
 
 using namespace OpenViBE;
@@ -76,7 +73,7 @@ namespace
 			//cout << "cid is |" << link << "|" << endl;
 			CIdentifier l_oId;
 			l_oId.fromString(CString(l_sLink));
-			designerLog_ptr->m_centerOnBoxFun(l_oId);
+			designerLog_ptr->m_CenterOnBoxFun(l_oId);
 		}
 	}
 }
@@ -87,12 +84,12 @@ void CLogListenerDesigner::searchMessages(CString l_sSearchTerm)
 	//clear displayed buffer
 	gtk_text_buffer_set_text(m_pBuffer, "", -1);
 	m_sSearchTerm = l_sSearchTerm;
-	for(uint32 log=0; log<m_vStoredLog.size(); log++)
+	for(CLogObject* log : m_vStoredLog)
 	{
-		if(m_vStoredLog[log]->Filter(l_sSearchTerm))
+		if(log->Filter(l_sSearchTerm))
 		{
 			//display the log
-			appendLog(m_vStoredLog[log]);
+			appendLog(log);
 		}
 	}
 }
@@ -116,7 +113,7 @@ CLogListenerDesigner::CLogListenerDesigner(const IKernelContext& rKernelContext,
 	,m_ui32CountWarnings( 0 )
 	,m_ui32CountErrors( 0 )
 	,m_sSearchTerm("")
-	,m_centerOnBoxFun([](CIdentifier& id){})
+	,m_CenterOnBoxFun([](CIdentifier& id){})
 {
 	m_pTextView = GTK_TEXT_VIEW(gtk_builder_get_object(m_pBuilderInterface, "openvibe-textview_messages"));
 	m_pAlertWindow = GTK_WINDOW(gtk_builder_get_object(m_pBuilderInterface, "dialog_error_popup"));
@@ -558,9 +555,7 @@ void CLogListenerDesigner::clearMessages()
 
 	gtk_text_buffer_set_text(m_pBuffer, "", -1);
 
-	for(size_t i=0;i<m_vStoredLog.size();i++) {
-		delete m_vStoredLog[i];
-	}
+	std::for_each(m_vStoredLog.begin(), m_vStoredLog.end(), [](CLogObject* elem){ delete elem;});
 	m_vStoredLog.clear();
 
 	m_pCurrentLog = nullptr;

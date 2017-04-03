@@ -29,18 +29,8 @@ namespace OpenViBEDesigner
 					return m_pBuffer;
 				}
 
-
-				/*
-				bool copyFromBuffer(GtkTextIter* range_begin, GtkTextIter* range_end)
-				{
-					GtkTextIter l_oEndLogIter;
-					gtk_text_buffer_get_end_iter(m_pBuffer, &l_oEndLogIter);
-					gtk_text_buffer_insert_range(m_pBuffer, &l_oEndLogIter, range_begin, range_end);
-					return true;
-				}//*/
-
 				//determine if the log contains the sSearchTerm and tag the part with the sSerachTerm in gray
-				const OpenViBE::boolean Filter(OpenViBE::CString sSearchTerm)
+				const bool Filter(OpenViBE::CString sSearchTerm)
 				{
 					m_bPassedFilter = false;
 					GtkTextIter start_find, end_find;
@@ -145,7 +135,7 @@ namespace OpenViBEDesigner
 
 			OpenViBE::CString m_sSearchTerm;
 			::GtkTextTag* m_pCIdentifierTag;
-			std::function<void(OpenViBE::CIdentifier&)> m_centerOnBoxFun;
+			std::function<void(OpenViBE::CIdentifier&)> m_CenterOnBoxFun;
 
 		protected:
 

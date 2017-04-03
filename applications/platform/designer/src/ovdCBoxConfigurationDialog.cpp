@@ -403,9 +403,8 @@ void CBoxConfigurationDialog::addSetting(uint32_t ui32SettingIndex)
 	//Even if nothing is add to the interface, we still need to update index
 	else
 	{
-		for(size_t i = 0; i < m_vSettingViewVector.size() ; ++i)
+		for(Setting::CAbstractSettingView* l_oView : m_vSettingViewVector)
 		{
-			Setting::CAbstractSettingView *l_oView = m_vSettingViewVector[i];
 			if(l_oView->getSettingIndex() >= ui32SettingIndex)
 			{
 				l_oView->setSettingIndex(l_oView->getSettingIndex() + 1);
@@ -452,9 +451,8 @@ void CBoxConfigurationDialog::removeSetting(uint32_t ui32SettingIndex, bool bShi
 	//Even if we delete an "invisible" setting we need to update every index.
 	else
 	{
-		for(size_t i = 0; i < m_vSettingViewVector.size() ; ++i)
+		for(Setting::CAbstractSettingView* l_oView : m_vSettingViewVector)
 		{
-			Setting::CAbstractSettingView *l_oView = m_vSettingViewVector[i];
 			if(l_oView->getSettingIndex() >= ui32SettingIndex)
 			{
 				l_oView->setSettingIndex(l_oView->getSettingIndex() - 1);
