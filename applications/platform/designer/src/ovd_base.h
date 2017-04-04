@@ -21,6 +21,8 @@
 
 #define G_CALLBACK2(x) G_CALLBACK_AUTOCAST(G_CALLBACK(x))
 
+#define M_Functionality_IsMensia OpenViBE::CIdentifier(0x8FF0F98F, 0x2917E3BB)
+
 class G_CALLBACK_AUTOCAST
 {
 public:

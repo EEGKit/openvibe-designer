@@ -1986,7 +1986,8 @@ void CApplication::saveScenarioCB(CInterfacedScenario* pScenario)
 			return;
 		}
 
-		// Remove link attributes
+		// Remove attributes that were added to links and boxes by the designer and which are used only for interal functionality.
+		// This way the scenarios do not change if, for example somebody opens them on a system with different font metrics.
 		CIdentifier linkIdentifier;
 		while ((linkIdentifier = l_pCurrentInterfacedScenario->m_rScenario.getNextLinkIdentifier(linkIdentifier)) != OV_UndefinedIdentifier)
 		{
@@ -1997,7 +1998,6 @@ void CApplication::saveScenarioCB(CInterfacedScenario* pScenario)
 			link->removeAttribute(OV_AttributeId_Link_YTargetPosition);
 		}
 
-		// Remove box attributes
 		CIdentifier boxIdentifier;
 		while ((boxIdentifier = l_pCurrentInterfacedScenario->m_rScenario.getNextBoxIdentifier(boxIdentifier)) != OV_UndefinedIdentifier)
 		{

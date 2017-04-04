@@ -20,8 +20,6 @@
 #include "windows.h"
 #endif
 
-#define M_Functionality_IsMensia OpenViBE::CIdentifier(0x8FF0F98F, 0x2917E3BB)
-
 using namespace OpenViBE;
 using namespace OpenViBE::Kernel;
 using namespace OpenViBE::Plugins;
