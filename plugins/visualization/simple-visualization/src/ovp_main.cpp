@@ -5,7 +5,6 @@
 #include "box-algorithms/ovpCBoxAlgorithmTopographicMap2DDisplay.h"
 #include "box-algorithms/ovpCBoxAlgorithmMatrixDisplay.h"
 
-#include "box-algorithms/ovpCBoxAlgorithmKeyboardStimulator.h"
 
 OVP_Declare_Begin()
 
@@ -19,6 +18,5 @@ OVP_Declare_Begin()
 	OVP_Declare_New(OpenViBEPlugins::SimpleVisualization::CBoxAlgorithmTopographicMap2DDisplayDesc)
 	OVP_Declare_New(OpenViBEPlugins::SimpleVisualization::CBoxAlgorithmMatrixDisplayDesc)
 
-	OVP_Declare_New(OpenViBEPlugins::SimpleVisualization::CBoxAlgorithmKeyboardStimulatorDesc)
 
 OVP_Declare_End()
