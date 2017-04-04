@@ -7,7 +7,7 @@ set script_dir=%CD%
 set BuildType=Release
 set PauseCommand=pause
 set RefreshCMake=F
-set PathSDK=%script_dir%\..\dependencies\openvibe-release
+set PathSDK=%script_dir%\..\dependencies\openvibe-sdk-release
 set PathDep=%script_dir%\..\dependencies
 set UserDataSubdir=OpenVIBE
 set VerboseOuptut=OFF
@@ -68,7 +68,7 @@ call "windows-initialize-environment.cmd" --dep %PathDep%
 
 set build_dir=%script_dir%\..\..\certivibe-build\build-studio-%BuildType%
 if %PathSDK%=="" (
-	set sdk_dir=%script_dir%\..\dependencies\openvibe-release
+  set sdk_dir=%script_dir%\..\dependencies\openvibe-sdk-release
 ) else (
 	set sdk_dir=%PathSDK%
 )
