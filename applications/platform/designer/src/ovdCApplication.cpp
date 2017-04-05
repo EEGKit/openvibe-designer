@@ -1853,12 +1853,10 @@ void CApplication::openScenarioCB(void)
 	::GtkFileFilter* l_pFileFilterAll=gtk_file_filter_new();
 
 	std::string allFileFormatsString = "All available formats (";
-	for (uint32 importerIndex = 0; importerIndex < m_rKernelContext.getScenarioManager().getRegisteredScenarioImportersCount(OVD_ScenarioImportContext_OpenScenario); ++importerIndex)
+	CString fileNameExtension = "";
+	while ((fileNameExtension = m_rKernelContext.getScenarioManager().getNextScenarioImporter(OVD_ScenarioImportContext_OpenScenario, fileNameExtension)) != CString(""))
 	{
-		const char* fileNameExtension;
-		CIdentifier algorithmId;
-		m_rKernelContext.getScenarioManager().getRegisteredScenarioImporterDetails(OVD_ScenarioImportContext_OpenScenario, importerIndex, &fileNameExtension, algorithmId);
-		std::string currentFileFormatMask = "*" + std::string(fileNameExtension);
+		std::string currentFileFormatMask = "*" + std::string(fileNameExtension.toASCIIString());
 		gtk_file_filter_add_pattern(l_pFileFilterSpecific, currentFileFormatMask.c_str());
 		allFileFormatsString += "*" + std::string(fileNameExtension) + ", ";
 	}
@@ -2089,21 +2087,16 @@ void CApplication::saveScenarioAsCB(CInterfacedScenario* pScenario)
 
 
 	std::set<std::string> compatibleExtensions;
+	CString fileNameExtension;
 	if (!l_bIsCurrentScenarioAMetabox)
 	{
-		for (uint32 exporterIndex = 0; exporterIndex < m_rKernelContext.getScenarioManager().getRegisteredScenarioExportersCount(OVD_ScenarioExportContext_SaveScenario); ++exporterIndex)
+		while ((fileNameExtension = m_rKernelContext.getScenarioManager().getNextScenarioExporter(OVD_ScenarioExportContext_SaveScenario, fileNameExtension)) != CString(""))
 		{
-			const char* fileNameExtension;
-			CIdentifier algorithmId;
-			m_rKernelContext.getScenarioManager().getRegisteredScenarioExporterDetails(OVD_ScenarioExportContext_SaveScenario, exporterIndex, &fileNameExtension, algorithmId);
 			compatibleExtensions.emplace(fileNameExtension);
 		}
 	}
-	for (uint32 exporterIndex = 0; exporterIndex < m_rKernelContext.getScenarioManager().getRegisteredScenarioExportersCount(OVD_ScenarioExportContext_SaveMetabox); ++exporterIndex)
+	while ((fileNameExtension = m_rKernelContext.getScenarioManager().getNextScenarioExporter(OVD_ScenarioExportContext_SaveMetabox, fileNameExtension)) != CString(""))
 	{
-		const char* fileNameExtension;
-		CIdentifier algorithmId;
-		m_rKernelContext.getScenarioManager().getRegisteredScenarioExporterDetails(OVD_ScenarioExportContext_SaveMetabox, exporterIndex, &fileNameExtension, algorithmId);
 		compatibleExtensions.emplace(fileNameExtension);
 	}
 
