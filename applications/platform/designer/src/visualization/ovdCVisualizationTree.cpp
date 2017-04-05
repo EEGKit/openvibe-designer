@@ -979,10 +979,17 @@ json::Object CVisualizationTree::serializeWidget(IVisualizationWidget& widget) c
 
 	jsonRepresentation["boxIdentifier"] = widget.getBoxIdentifier().toString().toASCIIString();
 	jsonRepresentation["childCount"] = static_cast<int>(widget.getNbChildren());
-	jsonRepresentation["width"] = static_cast<int>(widget.getWidth());
-	jsonRepresentation["height"] = static_cast<int>(widget.getHeight());
-	jsonRepresentation["dividerPosition"] = widget.getDividerPosition();
-	jsonRepresentation["maxDividerPosition"] = widget.getMaxDividerPosition();
+
+	if (widget.getType() == EVisualizationWidget_VisualizationWindow)
+	{
+		jsonRepresentation["width"] = static_cast<int>(widget.getWidth());
+		jsonRepresentation["height"] = static_cast<int>(widget.getHeight());
+	}
+	if (widget.getType() == EVisualizationWidget_HorizontalSplit || widget.getType() == EVisualizationWidget_VerticalSplit)
+	{
+		jsonRepresentation["dividerPosition"] = widget.getDividerPosition();
+		jsonRepresentation["maxDividerPosition"] = widget.getMaxDividerPosition();
+	}
 
 	return jsonRepresentation;
 }
@@ -1097,10 +1104,16 @@ bool CVisualizationTree::deserialize(const CString& serializedVisualizationTree)
 
 		if (visualizationWidget)
 		{
-			visualizationWidget->setWidth(static_cast<unsigned int>(jsonWidget["width"].ToInt()));
-			visualizationWidget->setHeight(static_cast<unsigned int>(jsonWidget["height"].ToInt()));
-			visualizationWidget->setDividerPosition(jsonWidget["dividerPosition"].ToInt());
-			visualizationWidget->setMaxDividerPosition(jsonWidget["maxDividerPosition"].ToInt());
+			if (visualizationWidget->getType() == EVisualizationWidget_VisualizationWindow)
+			{
+				visualizationWidget->setWidth(static_cast<unsigned int>(jsonWidget["width"].ToInt()));
+				visualizationWidget->setHeight(static_cast<unsigned int>(jsonWidget["height"].ToInt()));
+			}
+			if (visualizationWidget->getType() == EVisualizationWidget_HorizontalSplit || visualizationWidget->getType() == EVisualizationWidget_VerticalSplit)
+			{
+				visualizationWidget->setDividerPosition(jsonWidget["dividerPosition"].ToInt());
+				visualizationWidget->setMaxDividerPosition(jsonWidget["maxDividerPosition"].ToInt());
+			}
 		}
 
 	}

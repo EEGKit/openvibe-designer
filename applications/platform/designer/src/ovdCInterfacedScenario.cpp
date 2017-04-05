@@ -1108,6 +1108,11 @@ void CInterfacedScenario::redraw(IBox& rBox)
 	boolean l_bMetabox    = l_bCanCreate && l_oBoxProxy.isMetabox();
 	boolean l_bDisabled   = l_oBoxProxy.isDisabled();
 
+
+	// Check if this is a mensia box
+	auto l_pPOD = m_rKernelContext.getPluginManager().getPluginObjectDescCreating(rBox.getAlgorithmClassIdentifier());
+	bool l_bMensia = (l_pPOD && l_pPOD->hasFunctionality(M_Functionality_IsMensia));
+
 	// Add a thick dashed border around selected boxes
 	if (m_vCurrentObject[rBox.getIdentifier()])
 	{
@@ -1155,6 +1160,10 @@ void CInterfacedScenario::redraw(IBox& rBox)
 		else if(!l_bUpToDate)
 		{
 			gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[Color_BoxBackgroundNeedsUpdate]);
+		}
+		else if(l_bMensia)
+		{
+			gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[Color_BoxBackgroundMensia]);
 		}
 /*
 		else if(l_bMetabox)
@@ -1208,8 +1217,16 @@ void CInterfacedScenario::redraw(IBox& rBox)
 		TRUE,
 		xStart, yStart, xSize, ySize);
 
-	int l_iBorderColor = Color_BoxBorder;
+	if (l_bMensia)
+	{
+		gdk_draw_pixbuf(l_pWidget->window, l_pDrawGC, m_pMensiaLogoPixbuf, 5, 5, xStart, yStart, 80, (ySize < 50)?ySize:50, GDK_RGB_DITHER_NONE, 0, 0);
+	}
 
+	int l_iBorderColor = Color_BoxBorder;
+	if (l_bMensia)
+	{
+		l_iBorderColor = Color_BoxBorderMensia;
+	}
 	gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[l_iBorderColor]);
 	gdk_gc_set_line_attributes(l_pDrawGC, 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_ROUND);
 	gdk_draw_rounded_rectangle(
@@ -1230,16 +1247,6 @@ void CInterfacedScenario::redraw(IBox& rBox)
 	}
 
 	TAttributeHandler l_oAttributeHandler(rBox);
-
-	if(!l_oAttributeHandler.hasAttribute(OV_AttributeId_Box_XSize))
-		l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Box_XSize, xSize);
-	else
-		l_oAttributeHandler.setAttributeValue<int>(OV_AttributeId_Box_XSize, xSize);
-
-	if(!l_oAttributeHandler.hasAttribute(OV_AttributeId_Box_YSize))
-		l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Box_YSize, ySize);
-	else
-		l_oAttributeHandler.setAttributeValue<int>(OV_AttributeId_Box_YSize, ySize);
 
 	int l_iInputOffset=xSize/2-rBox.getInputCount()*(iCircleSpace+iCircleSize)/2+iCircleSize/4;
 	for(i=0; i<rBox.getInputCount(); i++)

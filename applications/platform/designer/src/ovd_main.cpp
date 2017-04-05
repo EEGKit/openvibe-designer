@@ -330,6 +330,14 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 				l_sBoxAlgorithmDescriptor += dynamic_cast<const Mensia::CBoxAlgorithmMetaboxDesc*>(l_pPluginObjectDesc)->getMetaboxDescriptor();
 				l_sTextColor = "#007020";
 			}
+			else
+			{
+				if (l_pPluginObjectDesc->hasFunctionality(M_Functionality_IsMensia))
+				{
+					l_sTextColor = "#00b090";
+				}
+			}
+
 
 			gtk_tree_store_set(
 				GTK_TREE_STORE(pTreeStore),
@@ -565,19 +573,15 @@ int go(int argc, char ** argv)
 	gdk_color_set(g_vColors[Color_BoxBackgroundNeedsUpdate], 57343, 57343, 57343);
 	gdk_color_set(g_vColors[Color_BoxBackgroundMetabox], 58343, 65535, 62343);
 	gdk_color_set(g_vColors[Color_BoxBackgroundUnstable], 49151, 49151, 49151);
-	gdk_color_set(g_vColors[Color_BoxBackgroundGhost], 63000, 63000, 63000);
 	gdk_color_set(g_vColors[Color_BoxBackgroundMensia], 65535, 65535, 65535);
 	gdk_color_set(g_vColors[Color_BoxBackground], 65535, 65535, 65535);
 	gdk_color_set(g_vColors[Color_BoxBorderSelected], 0, 0, 0);
 	gdk_color_set(g_vColors[Color_BoxBorder], 0, 0, 0);
-	gdk_color_set(g_vColors[Color_BoxBorderGhost], 35000, 45535, 40535);
 	gdk_color_set(g_vColors[Color_BoxBorderMensia], 10000, 45535, 35535);
 	gdk_color_set(g_vColors[Color_BoxInputBackground], 65535, 49151, 32767);
 	gdk_color_set(g_vColors[Color_BoxInputBorder], 16383, 16383, 16383);
-	gdk_color_set(g_vColors[Color_BoxInputBorderGhost], 35000, 45535, 40535);
 	gdk_color_set(g_vColors[Color_BoxOutputBackground], 32767, 65535, 49151);
 	gdk_color_set(g_vColors[Color_BoxOutputBorder], 16383, 16383, 16383);
-	gdk_color_set(g_vColors[Color_BoxOutputBorderGhost], 35000, 45535, 40535);
 	gdk_color_set(g_vColors[Color_BoxSettingBackground], 49151, 32767, 65535);
 	gdk_color_set(g_vColors[Color_BoxSettingBorder], 16383, 16383, 16383);
 

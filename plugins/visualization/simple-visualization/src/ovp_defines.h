@@ -71,11 +71,6 @@
 #define OVP_ClassId_TimeFrequencyMapDisplayDesc                          OpenViBE::CIdentifier(0x1BAE74F3, 0x20FB7C89)
 #define OVP_ClassId_BoxAlgorithm_P300IdentifierCardVisualisationDesc     OpenViBE::CIdentifier(0x84F146EF, 0x4AA712A4)
 
-#define OVP_ClassId_DisplayCueImage                                      OpenViBE::CIdentifier(0x005789A4, 0x3AB78A36)
-#define OVP_ClassId_DisplayCueImageDesc                                  OpenViBE::CIdentifier(0x086185A4, 0x796A854C)
-
-#define OVP_ClassId_KeyboardStimulator                                   OpenViBE::CIdentifier(0x00D317B9, 0x6324C3FF)
-#define OVP_ClassId_KeyboardStimulatorDesc                               OpenViBE::CIdentifier(0x00E51ACD, 0x284CA2CF)
 
 //___________________________________________________________________//
 //                                                                   //

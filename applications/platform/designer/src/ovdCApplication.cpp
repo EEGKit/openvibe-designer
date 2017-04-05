@@ -75,9 +75,6 @@ namespace
 
 		SBoxProto(void)
 			:m_bIsDeprecated(false)
-			,m_bIsUnstable(false)
-			,m_bIsGhost(false)
-			,m_bIsMensia(false)
 			,m_ui64InputCountHash  (0x64AC3CB54A35888CLL)
 			,m_ui64OutputCountHash (0x21E0FAAFE5CAF1E1LL)
 			,m_ui64SettingCountHash(0x6BDFB15B54B09F63LL)
@@ -157,9 +154,6 @@ namespace
 
 		CIdentifier m_oHash;
 		OpenViBE::boolean m_bIsDeprecated;
-		OpenViBE::boolean m_bIsUnstable;
-		OpenViBE::boolean m_bIsGhost;
-		OpenViBE::boolean m_bIsMensia;
 		uint64 m_ui64InputCountHash;
 		uint64 m_ui64OutputCountHash;
 		uint64 m_ui64SettingCountHash;
@@ -1992,19 +1986,42 @@ void CApplication::saveScenarioCB(CInterfacedScenario* pScenario)
 			return;
 		}
 
+		// Remove attributes that were added to links and boxes by the designer and which are used only for interal functionality.
+		// This way the scenarios do not change if, for example somebody opens them on a system with different font metrics.
+		CIdentifier linkIdentifier;
+		while ((linkIdentifier = l_pCurrentInterfacedScenario->m_rScenario.getNextLinkIdentifier(linkIdentifier)) != OV_UndefinedIdentifier)
+		{
+			auto link = l_pCurrentInterfacedScenario->m_rScenario.getLinkDetails(linkIdentifier);
+			link->removeAttribute(OV_AttributeId_Link_XSourcePosition);
+			link->removeAttribute(OV_AttributeId_Link_YSourcePosition);
+			link->removeAttribute(OV_AttributeId_Link_XTargetPosition);
+			link->removeAttribute(OV_AttributeId_Link_YTargetPosition);
+		}
+
+		CIdentifier boxIdentifier;
+		while ((boxIdentifier = l_pCurrentInterfacedScenario->m_rScenario.getNextBoxIdentifier(boxIdentifier)) != OV_UndefinedIdentifier)
+		{
+			auto box = l_pCurrentInterfacedScenario->m_rScenario.getBoxDetails(boxIdentifier);
+			box->removeAttribute(OV_AttributeId_Box_XSize);
+			box->removeAttribute(OV_AttributeId_Box_YSize);
+		}
+
 		// Remove all VisualizationTree type metadata
+		// We save the last found identifier if there was one, this allows us to not modify it on subsequent saves
 		CIdentifier metadataIdentifier = OV_UndefinedIdentifier;
+		CIdentifier lastFoundTreeIdentifier = OV_UndefinedIdentifier;
 		while ((metadataIdentifier = l_pCurrentInterfacedScenario->m_rScenario.getNextMetadataIdentifier(metadataIdentifier)) != OV_UndefinedIdentifier)
 		{
 			if (l_pCurrentInterfacedScenario->m_rScenario.getMetadataDetails(metadataIdentifier)->getType() == OVVIZ_MetadataIdentifier_VisualizationTree)
 			{
 				l_pCurrentInterfacedScenario->m_rScenario.removeMetadata(metadataIdentifier);
+				lastFoundTreeIdentifier = metadataIdentifier;
 				metadataIdentifier = OV_UndefinedIdentifier;
 			}
 		}
 
 		// Insert new metadata
-		l_pCurrentInterfacedScenario->m_rScenario.addMetadata(metadataIdentifier, OV_UndefinedIdentifier);
+		l_pCurrentInterfacedScenario->m_rScenario.addMetadata(metadataIdentifier, lastFoundTreeIdentifier);
 		l_pCurrentInterfacedScenario->m_rScenario.getMetadataDetails(metadataIdentifier)->setType(OVVIZ_MetadataIdentifier_VisualizationTree);
 		l_pCurrentInterfacedScenario->m_rScenario.getMetadataDetails(metadataIdentifier)->setData(l_pCurrentInterfacedScenario->m_pVisualizationTree->serialize());
 
@@ -2017,7 +2034,7 @@ void CApplication::saveScenarioCB(CInterfacedScenario* pScenario)
 				l_pCurrentInterfacedScenario->m_bHasBeenModified=false;
 				l_pCurrentInterfacedScenario->updateScenarioLabel();
 					this->saveOpenedScenarios();
-				}
+		}
 		else
 		{
 			m_rKernelContext.getLogManager() << LogLevel_Warning << "Exporting scenario failed...\n";

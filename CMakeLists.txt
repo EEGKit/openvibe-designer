@@ -10,7 +10,7 @@ cmake_policy(SET CMP0048 OLD)
 cmake_policy(SET CMP0057 NEW)
 ENDIF()
 
-PROJECT(OpenVIBE)
+PROJECT(Designer)
 
 # Certivibes modules list
 SET(INCLUDED_CERTIVIBE_COMPONENTS BASE ALLPLUGINS EBML SYSTEM FS XML TOOLKIT)
@@ -34,8 +34,15 @@ OPTION(Flag_SilentConsole "Disable logs to console in Archway" ON)
 SET(OV_CUSTOM_DEPENDENCIES_PATH "${CMAKE_SOURCE_DIR}/dependencies")
 SET(OV_SOURCE_DEPENDENCIES_PATH "${CMAKE_SOURCE_DIR}/dependencies-source")
 SET(OV_ICON_PATH "${CMAKE_SOURCE_DIR}/scripts/icons")
-SET(OPENVIBE_SDK_PATH "${OV_CUSTOM_DEPENDENCIES_PATH}/certivibe" CACHE STRING "")
+
+IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  SET(OPENVIBE_SDK_PATH "${OV_CUSTOM_DEPENDENCIES_PATH}/openvibe-sdk-debug" CACHE STRING "")
+ELSE()
+  SET(OPENVIBE_SDK_PATH "${OV_CUSTOM_DEPENDENCIES_PATH}/openvibe-sdk-release" CACHE STRING "")
+ENDIF()
+
 SET(CV_DEPENDENCIES_PATH "${CMAKE_SOURCE_DIR}/dependencies" CACHE STRING "")
+SET(OV_CONFIG_SUBDIR "OpenVIBE" CACHE STRING "Subdirectory under user directory when configuration and logs will be saved")
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake-modules;${OPENVIBE_SDK_PATH}/share")
 
 INCLUDE("OvMessages")
@@ -150,8 +157,9 @@ ENDIF() # WIN32
 SET(OEM_DISTRIBUTION "mensia")
 SET(INSTALL_EXE OFF)
 
-# The user files will be stored in .../mensia/OV_PROJECT_NAME folder
+# The user files will be stored in .../OV_CONFIG_SUBDIR folder
 ADD_DEFINITIONS("-DOV_PROJECT_NAME=\"openvibe\"")
+ADD_DEFINITIONS("-DOV_CONFIG_SUBDIR=\"${OV_CONFIG_SUBDIR}\"")
 
 # Default is to build to dist/. If you wish a custom install, set your own MAKE_INSTALL_PREFIX when you call CMake. Safest to do under a fakeroot.
 IF(NOT CMAKE_INSTALL_PREFIX)
@@ -308,12 +316,6 @@ ENDIF()
 IF(NOT(SKIP_VISUALIZATION_TOOLKIT))
 	ADD_SUBDIRECTORY("visualization-toolkit/")
 ENDIF()
-
-# make a copy of the dependency script, this is done so we can use the same launch scripts both in win install and win devel situations.
-IF(WIN32)
-    set(ABSOLUTE_PATH_DEPENDENCIES "${OV_CUSTOM_DEPENDENCIES_PATH}")
-	configure_file("${CMAKE_SOURCE_DIR}/scripts/windows-set-studio-environment.cmd-base" "${CMAKE_INSTALL_FULL_BINDIR}/openvibe-set-studio-env.cmd" @ONLY)
-ENDIF(WIN32)
 
 # add the scripts to the project so IDEs using the CMake file are aware of them
 FILE(GLOB_RECURSE script_files scripts/*.cmd scripts/*.sh scripts/*.nsi)
