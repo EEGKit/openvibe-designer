@@ -6,6 +6,7 @@
 #include <system/ovCMemory.h>
 #include <stack>
 #include <vector>
+#include <set>
 #include <map>
 #include <string>
 #include <iostream>
@@ -36,6 +37,8 @@
 #define OVD_GUI_Settings_File OpenViBE::Directories::getDataDir() + "/applications/designer/interface-settings.ui"
 #define OVD_AttributeId_ScenarioFilename OpenViBE::CIdentifier(0x4C536D0A, 0xB23DC545)
 #define OVD_README_File                  OpenViBE::Directories::getDistRootDir() + "/ReadMe.txt"
+
+
 static const unsigned int s_RecentFileNumber = 10;
 
 #include "ovdCDesignerVisualization.h"
@@ -47,6 +50,7 @@ static const unsigned int s_RecentFileNumber = 10;
 #include <metabox-loader/mCMetaboxLoader.h>
 
 #include "visualization/ovdCVisualizationManager.h"
+
 
 using namespace OpenViBE;
 using namespace OpenViBE::Kernel;
@@ -836,6 +840,14 @@ CApplication::CApplication(const IKernelContext& rKernelContext)
 {
 	m_pPluginManager=&m_rKernelContext.getPluginManager();
 	m_pScenarioManager=&m_rKernelContext.getScenarioManager();
+	m_pScenarioManager->registerScenarioImporter(OVD_ScenarioImportContext_OpenScenario, ".xml", OVP_GD_ClassId_Algorithm_XMLScenarioImporter);
+	m_pScenarioManager->registerScenarioImporter(OVD_ScenarioImportContext_OpenScenario, ".mxs", OVP_GD_ClassId_Algorithm_XMLScenarioImporter);
+	m_pScenarioManager->registerScenarioImporter(OVD_ScenarioImportContext_OpenScenario, ".mxb", OVP_GD_ClassId_Algorithm_XMLScenarioImporter);
+	m_pScenarioManager->registerScenarioExporter(OVD_ScenarioExportContext_SaveScenario, ".xml", OVP_GD_ClassId_Algorithm_XMLScenarioExporter);
+	m_pScenarioManager->registerScenarioExporter(OVD_ScenarioExportContext_SaveScenario, ".mxs", OVP_GD_ClassId_Algorithm_XMLScenarioExporter);
+	m_pScenarioManager->registerScenarioExporter(OVD_ScenarioExportContext_SaveMetabox, ".mxb", OVP_GD_ClassId_Algorithm_XMLScenarioExporter);
+
+
 	m_pVisualizationManager = new CVisualizationManager(m_rKernelContext);
 	m_visualizationContext = dynamic_cast<OpenViBEVisualizationToolkit::IVisualizationContext*>(m_rKernelContext.getPluginManager().createPluginObject(OVP_ClassId_Plugin_VisualizationContext));
 	m_visualizationContext->setManager(m_pVisualizationManager);
@@ -855,6 +867,8 @@ CApplication::~CApplication(void)
 		g_object_unref(G_OBJECT(m_pBuilderInterface));
 		m_pBuilderInterface = NULL;
 	}
+
+	m_rKernelContext.getPluginManager().releasePluginObject(m_visualizationContext);
 
 	delete m_pMetaboxLoader;
 }
@@ -1391,20 +1405,9 @@ OpenViBE::boolean CApplication::openScenario(const char* sFileName)
 		}
 	}
 
-	std::string scenarioFilenameExtension = boost::filesystem::extension(sFileName);
-	if (!CFileFormats::filenameExtensionImporters.count(scenarioFilenameExtension))
-	{
-		// TODO: Report error
-		return false;
-	}
-
-	CIdentifier scenarioImporterIdentifier = CFileFormats::filenameExtensionImporters.at(scenarioFilenameExtension);
-
 	CIdentifier l_oScenarioIdentifier;
-	if (m_pScenarioManager->importScenarioFromFile(l_oScenarioIdentifier, sFileName, scenarioImporterIdentifier))
+	if (m_pScenarioManager->importScenarioFromFile(l_oScenarioIdentifier, OVD_ScenarioImportContext_OpenScenario, sFileName))
 	{
-
-
 		// Closes first unnamed scenario
 		if(m_vInterfacedScenario.size()==1)
 		{
@@ -1850,12 +1853,14 @@ void CApplication::openScenarioCB(void)
 	::GtkFileFilter* l_pFileFilterAll=gtk_file_filter_new();
 
 	std::string allFileFormatsString = "All available formats (";
-	for (auto const& fileFormat : CFileFormats::filenameExtensionImporters)
+	CString fileNameExtension = "";
+	while ((fileNameExtension = m_rKernelContext.getScenarioManager().getNextScenarioImporter(OVD_ScenarioImportContext_OpenScenario, fileNameExtension)) != CString(""))
 	{
-		std::string currentFileFormatMask = "*" + fileFormat.first;
+		std::string currentFileFormatMask = "*" + std::string(fileNameExtension.toASCIIString());
 		gtk_file_filter_add_pattern(l_pFileFilterSpecific, currentFileFormatMask.c_str());
-		allFileFormatsString += "*" + fileFormat.first + ", ";
+		allFileFormatsString += "*" + std::string(fileNameExtension) + ", ";
 	}
+
 	allFileFormatsString.erase(allFileFormatsString.size() - 2); // because the loop adds one ", " too much
 	allFileFormatsString += ")";
 
@@ -1979,13 +1984,6 @@ void CApplication::saveScenarioCB(CInterfacedScenario* pScenario)
 
 		const char* l_sScenarioFileName = l_pCurrentInterfacedScenario->m_sFileName.c_str();
 
-		std::string scenarioFilenameExtension = boost::filesystem::extension(l_sScenarioFileName);
-		if (!CFileFormats::filenameExtensionImporters.count(scenarioFilenameExtension))
-		{
-			// TODO: Report error
-			return;
-		}
-
 		// Remove attributes that were added to links and boxes by the designer and which are used only for interal functionality.
 		// This way the scenarios do not change if, for example somebody opens them on a system with different font metrics.
 		CIdentifier linkIdentifier;
@@ -2025,15 +2023,19 @@ void CApplication::saveScenarioCB(CInterfacedScenario* pScenario)
 		l_pCurrentInterfacedScenario->m_rScenario.getMetadataDetails(metadataIdentifier)->setType(OVVIZ_MetadataIdentifier_VisualizationTree);
 		l_pCurrentInterfacedScenario->m_rScenario.getMetadataDetails(metadataIdentifier)->setData(l_pCurrentInterfacedScenario->m_pVisualizationTree->serialize());
 
-		CIdentifier scenarioExporterIdentifier = CFileFormats::filenameExtensionExporters.at(scenarioFilenameExtension);
-
-		if (m_pScenarioManager->exportScenarioToFile(l_sScenarioFileName, l_pCurrentInterfacedScenario->m_oScenarioIdentifier, scenarioExporterIdentifier))
+		CIdentifier scenarioExportContext = OVD_ScenarioExportContext_SaveScenario;
+		if (l_pCurrentInterfacedScenario->m_rScenario.isMetabox())
 		{
-				l_pCurrentInterfacedScenario->snapshotCB();
-				l_pCurrentInterfacedScenario->m_bHasFileName=true;
-				l_pCurrentInterfacedScenario->m_bHasBeenModified=false;
-				l_pCurrentInterfacedScenario->updateScenarioLabel();
-					this->saveOpenedScenarios();
+			scenarioExportContext = OVD_ScenarioExportContext_SaveMetabox;
+		}
+
+		if (m_pScenarioManager->exportScenarioToFile(scenarioExportContext, l_sScenarioFileName, l_pCurrentInterfacedScenario->m_oScenarioIdentifier))
+		{
+			l_pCurrentInterfacedScenario->snapshotCB();
+			l_pCurrentInterfacedScenario->m_bHasFileName=true;
+			l_pCurrentInterfacedScenario->m_bHasBeenModified=false;
+			l_pCurrentInterfacedScenario->updateScenarioLabel();
+			this->saveOpenedScenarios();
 		}
 		else
 		{
@@ -2083,22 +2085,36 @@ void CApplication::saveScenarioAsCB(CInterfacedScenario* pScenario)
 
 	std::map<GtkFileFilter*, std::string> fileFilters;
 
-	std::string allCompatibleFormatsFilterName = "All compatible formats (";
-	for (auto const& fileFormat : CFileFormats::filenameExtensionExporters)
-	{
-		if (!l_bIsCurrentScenarioAMetabox || CFileFormats::filenameExtensionDescriptions.at(fileFormat.first).second == CFileFormats::FileFormatType_Metabox)
-		{
-			GtkFileFilter* fileFilter = gtk_file_filter_new();
-			std::string fileFilterName = CFileFormats::filenameExtensionDescriptions.at(fileFormat.first).first + " (*" + fileFormat.first + ")";
-			gtk_file_filter_set_name(fileFilter, fileFilterName.c_str());
-			std::string fileFilterWildcard = "*" + fileFormat.first;
-			gtk_file_filter_add_pattern(fileFilter, fileFilterWildcard.c_str());
-			fileFilters[fileFilter] = fileFormat.first;
 
-			allCompatibleFormatsFilterName += fileFilterWildcard + ", ";
-			gtk_file_filter_add_pattern(allCompatibleFormatsFileFilter, fileFilterWildcard.c_str());
+	std::set<std::string> compatibleExtensions;
+	CString fileNameExtension;
+	if (!l_bIsCurrentScenarioAMetabox)
+	{
+		while ((fileNameExtension = m_rKernelContext.getScenarioManager().getNextScenarioExporter(OVD_ScenarioExportContext_SaveScenario, fileNameExtension)) != CString(""))
+		{
+			compatibleExtensions.emplace(fileNameExtension);
+		}
 	}
+	while ((fileNameExtension = m_rKernelContext.getScenarioManager().getNextScenarioExporter(OVD_ScenarioExportContext_SaveMetabox, fileNameExtension)) != CString(""))
+	{
+		compatibleExtensions.emplace(fileNameExtension);
 	}
+
+	std::string allCompatibleFormatsFilterName = "All compatible formats (";
+
+	for (auto& fileNameExtension : compatibleExtensions)
+	{
+		GtkFileFilter* fileFilter = gtk_file_filter_new();
+		std::string fileFilterName = m_rKernelContext.getConfigurationManager().expand(std::string("${ScenarioFileNameExtension" + fileNameExtension + "}").c_str()).toASCIIString() + std::string(" (*") + fileNameExtension + ")";
+		gtk_file_filter_set_name(fileFilter, fileFilterName.c_str());
+		std::string fileFilterWildcard = "*" + fileNameExtension;
+		gtk_file_filter_add_pattern(fileFilter, fileFilterWildcard.c_str());
+		fileFilters[fileFilter] = fileNameExtension;
+
+		allCompatibleFormatsFilterName += fileFilterWildcard + ", ";
+		gtk_file_filter_add_pattern(allCompatibleFormatsFileFilter, fileFilterWildcard.c_str());
+	}
+
 	allCompatibleFormatsFilterName.erase(allCompatibleFormatsFilterName.size() - 2); // because the loop adds one ", " too much
 	allCompatibleFormatsFilterName += ")";
 
@@ -2183,9 +2199,9 @@ void CApplication::saveScenarioAsCB(CInterfacedScenario* pScenario)
 			}
 		}
 
-		// Finaly decide export strategy based on extensions
+		// Set a default extension in case the current one is not compatible or there is none
 		std::string scenarioFilenameExtension = boost::filesystem::extension(l_sFilename);
-		if (CFileFormats::filenameExtensionExporters.count(scenarioFilenameExtension) == 0)
+		if (!compatibleExtensions.count(scenarioFilenameExtension))
 		{
 			if(l_bIsCurrentScenarioAMetabox)
 			{

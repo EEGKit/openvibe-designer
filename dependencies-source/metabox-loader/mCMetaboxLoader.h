@@ -13,6 +13,9 @@
 #include <vector>
 #include <string>
 
+#define OVD_ScenarioimportContext_OnLoadMetaboxImport OpenViBE::CIdentifier(0xED48480A, 0x9F6DBAA7)
+
+
 /*
  * Enumerator for loading scenarios
  *
@@ -263,6 +266,8 @@ namespace Mensia
 		    : m_rKernelContext(rKernelContext),
 		      m_rScenarioManager(rKernelContext.getScenarioManager())
 		{
+			// Register the default XML importer for xml metaboxes
+			m_rScenarioManager.registerScenarioImporter(OVD_ScenarioimportContext_OnLoadMetaboxImport, ".mxb", OVP_GD_ClassId_Algorithm_XMLScenarioImporter);
 		}
 
 		OpenViBE::boolean loadPluginDescriptorsFromWildcard(OpenViBE::CString const& rFileNameWildCard);
