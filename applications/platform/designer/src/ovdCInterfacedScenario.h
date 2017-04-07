@@ -11,6 +11,7 @@
 #include "ovdCInterfacedObject.h"
 #include "ovdCScenarioStateStack.h"
 #include "ovdCSettingCollectionHelper.h"
+#include "ovdCBoxConfigurationDialog.h"
 #include <visualization-toolkit/ovvizIVisualizationTree.h>
 
 namespace OpenViBEDesigner
@@ -111,7 +112,12 @@ namespace OpenViBEDesigner
 		void createPlayerVisualization(OpenViBEVisualizationToolkit::IVisualizationTree* pVisualizationTree = NULL);
 		void releasePlayerVisualization(void);
 
+
+		void stopAndReleasePlayer(void);
+		OpenViBE::boolean setModifiableSettingsWidgets(void);
 		OpenViBE::boolean hasSelection(void);
+		bool centerOnBox(OpenViBE::CIdentifier rIdentifier);
+
 /*
 	private:
 
@@ -242,6 +248,9 @@ namespace OpenViBEDesigner
 		        OpenViBE::boolean (OpenViBE::Kernel::IScenario::*pfGetLinkName)(OpenViBE::uint32, OpenViBE::CString&) const,
 		        OpenViBE::boolean (OpenViBE::Kernel::IScenario::*pfGetLinkType)(OpenViBE::uint32, OpenViBE::CIdentifier&) const
 		        );
+
+
+		std::vector<CBoxConfigurationDialog*> m_vBoxConfigurationDialog;
 	};
 }
 

@@ -1264,9 +1264,9 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 	if(!(m_eCommandLineFlags&CommandLineFlag_NoGui))
 	{
 		m_pLogListenerDesigner = new CLogListenerDesigner(m_rKernelContext, m_pBuilderInterface);
+		m_pLogListenerDesigner->m_CenterOnBoxFun = [this](CIdentifier& id) { this->getCurrentInterfacedScenario()->centerOnBox(id); };
 		m_rKernelContext.getLogManager().addListener(m_pLogListenerDesigner);
 		g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_clear")),       "clicked",  G_CALLBACK(clear_messages_cb), m_pLogListenerDesigner);
-
 		gtk_widget_show(m_pMainWindow);
 	}
 	// If last version of Studio used is anterior or null, then consider it as a new version
@@ -2566,33 +2566,8 @@ void CApplication::stopInterfacedScenarioAndReleasePlayer(CInterfacedScenario* i
 		return;
 	}
 
-	interfacedScenario->m_rKernelContext.getErrorManager().releaseErrors();
-	interfacedScenario->m_pPlayer->stop();
-	interfacedScenario->m_ePlayerStatus = interfacedScenario->m_pPlayer->getStatus();
-	// removes idle function
-	g_idle_remove_by_data(interfacedScenario);
+	interfacedScenario->stopAndReleasePlayer();
 
-	if (!interfacedScenario->m_pPlayer->uninitialize())
-	{
-		m_rKernelContext.getLogManager() << LogLevel_Error << "Failed to uninitialize the player" << "\n";
-	}
-
-	if (!interfacedScenario->m_rKernelContext.getPlayerManager().releasePlayer(interfacedScenario->m_oPlayerIdentifier))
-	{
-		m_rKernelContext.getLogManager() << LogLevel_Error << "Failed to release the player" << "\n";
-	}
-
-	interfacedScenario->m_oPlayerIdentifier = OV_UndefinedIdentifier;
-	interfacedScenario->m_pPlayer = NULL;
-
-	// restore the snapshot so settings override does not modify the scenario !
-	interfacedScenario->undoCB(false);
-
-	// destroy player windows
-	interfacedScenario->releasePlayerVisualization();
-
-	// redraws scenario
-	interfacedScenario->redraw();
 	if (interfacedScenario == this->getCurrentInterfacedScenario())
 	{
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")),          false);
