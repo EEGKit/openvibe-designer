@@ -77,14 +77,15 @@ namespace
 	{
 	public:
 
-		SBoxProto(void)
+		SBoxProto(OpenViBE::Kernel::ITypeManager& typeManager)
 			:m_bIsDeprecated(false)
 			,m_ui64InputCountHash  (0x64AC3CB54A35888CLL)
 			,m_ui64OutputCountHash (0x21E0FAAFE5CAF1E1LL)
 			,m_ui64SettingCountHash(0x6BDFB15B54B09F63LL)
+			,m_TypeManager(typeManager)
 		{
 		}
-		virtual OpenViBE::boolean addInput(const CString& sName, const CIdentifier& rTypeIdentifier)
+		virtual bool addInput(const CString& sName, const CIdentifier& rTypeIdentifier)
 		{
 			uint64 v=rTypeIdentifier.toUInteger();
 			swap_byte(v, m_ui64InputCountHash);
@@ -93,7 +94,7 @@ namespace
 			return true;
 		}
 		//
-		virtual OpenViBE::boolean addOutput(const CString& sName, const CIdentifier& rTypeIdentifier)
+		virtual bool addOutput(const CString& sName, const CIdentifier& rTypeIdentifier)
 		{
 			uint64 v=rTypeIdentifier.toUInteger();
 			swap_byte(v, m_ui64OutputCountHash);
@@ -101,7 +102,7 @@ namespace
 			m_oHash=m_oHash.toUInteger()^v;
 			return true;
 		}
-		virtual OpenViBE::boolean addSetting(const CString& sName, const CIdentifier& rTypeIdentifier, const CString& sDefaultValue, const bool bModifiable)
+		virtual bool addSetting(const CString& sName, const CIdentifier& rTypeIdentifier, const CString& sDefaultValue, const bool bModifiable)
 		{
 			uint64 v=rTypeIdentifier.toUInteger();
 			swap_byte(v, m_ui64SettingCountHash);
@@ -109,17 +110,17 @@ namespace
 			m_oHash=m_oHash.toUInteger()^v;
 			return true;
 		}
-		virtual OpenViBE::boolean addInputSupport(const OpenViBE::CIdentifier &rTypeIdentifier)
+		virtual bool addInputSupport(const OpenViBE::CIdentifier &rTypeIdentifier)
 		{
 			return true;
 		}
 
-		virtual OpenViBE::boolean addOutputSupport(const OpenViBE::CIdentifier &rTypeIdentifier)
+		virtual bool addOutputSupport(const OpenViBE::CIdentifier &rTypeIdentifier)
 		{
 			return true;
 		}
 
-		virtual OpenViBE::boolean addFlag(const EBoxFlag eBoxFlag)
+		virtual bool addFlag(const EBoxFlag eBoxFlag)
 		{
 			switch(eBoxFlag)
 			{
@@ -136,6 +137,18 @@ namespace
 			}
 			return true;
 		}
+
+		virtual bool addFlag(const OpenViBE::CString& cStringFlag)
+		{
+			uint64_t flagValue = m_TypeManager.getEnumerationEntryValueFromName(OV_TypeId_Flag, cStringFlag);
+			if (flagValue == 0xffffffffffffffffLL)
+			{
+				return false;
+			}
+			m_oHash=m_oHash.toUInteger()^flagValue;
+			return true;
+		}
+
 		void swap_byte(uint64& v, const uint64 s)
 		{
 			uint8 t;
@@ -157,10 +170,11 @@ namespace
 		_IsDerivedFromClass_Final_(IBoxProto, OV_UndefinedIdentifier)
 
 		CIdentifier m_oHash;
-		OpenViBE::boolean m_bIsDeprecated;
+		bool m_bIsDeprecated;
 		uint64 m_ui64InputCountHash;
 		uint64 m_ui64OutputCountHash;
 		uint64 m_ui64SettingCountHash;
+		OpenViBE::Kernel::ITypeManager& m_TypeManager;
 	};
 }
 
@@ -1331,7 +1345,7 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 #endif
 }
 
-OpenViBE::boolean CApplication::displayChangelogWhenAvailable()
+bool CApplication::displayChangelogWhenAvailable()
 {	
 	// If last version used is ulterior as current version, and at least one box was added/updated, show the list
 	if(!m_vNewBoxes.empty() || !m_vUpdatedBoxes.empty())
@@ -1343,7 +1357,7 @@ OpenViBE::boolean CApplication::displayChangelogWhenAvailable()
 		gtk_window_set_title(GTK_WINDOW(l_pDialog), "Changelog");
 
 		std::string l_sLabelNewBoxesList = "<big><b>Changes in version "+std::string(ProjectVersion) + " of the software:</b></big>";
-		OpenViBE::boolean l_bUnstableBoxes = false;
+		bool l_bUnstableBoxes = false;
 		if(!m_vNewBoxes.empty())
 		{
 			l_sLabelNewBoxesList += "\n<big>The following boxes were added:</big>\n";
@@ -1392,7 +1406,7 @@ OpenViBE::boolean CApplication::displayChangelogWhenAvailable()
 	return true;
 }
 
-OpenViBE::boolean CApplication::openScenario(const char* sFileName)
+bool CApplication::openScenario(const char* sFileName)
 {
 	// Prevent opening twice the same scenario
 	for(uint32 i = 0; i < m_vInterfacedScenario.size(); i++)
@@ -1550,7 +1564,7 @@ CString CApplication::getWorkingDirectory(void)
 	return l_sWorkingDirectory;
 }
 
-OpenViBE::boolean CApplication::hasRunningScenario(void)
+bool CApplication::hasRunningScenario(void)
 {
 	for(CInterfacedScenario* pInterfacedScenario : m_vInterfacedScenario)
 	{
@@ -1562,7 +1576,7 @@ OpenViBE::boolean CApplication::hasRunningScenario(void)
 	return false;
 }
 
-OpenViBE::boolean CApplication::hasUnsavedScenario(void)
+bool CApplication::hasUnsavedScenario(void)
 {
 	for(CInterfacedScenario* pInterfacedScenario : m_vInterfacedScenario)
 	{
@@ -1932,7 +1946,7 @@ void CApplication::saveScenarioCB(CInterfacedScenario* pScenario)
 		// that way the standalone scheduler can check whether metaboxes included inside need updating.
 		if (l_pCurrentInterfacedScenario->m_rScenario.isMetabox())
 		{
-			SBoxProto l_oMetaboxProto;
+			SBoxProto l_oMetaboxProto(m_rKernelContext.getTypeManager());
 
 			IScenario& l_rScenario = l_pCurrentInterfacedScenario->m_rScenario;
 			for (uint32 l_ui32ScenarioInputIndex = 0; l_ui32ScenarioInputIndex < l_rScenario.getInputCount(); l_ui32ScenarioInputIndex++)
@@ -2216,7 +2230,7 @@ void CApplication::saveScenarioAsCB(CInterfacedScenario* pScenario)
 		}
 
 		// We ensure the file does not exist
-		OpenViBE::boolean l_bIsSaveActionValid=true;
+		bool l_bIsSaveActionValid=true;
 		FILE* l_pFile=FS::Files::open(l_sFilename, "r");
 		if(l_pFile)
 		{
@@ -2499,7 +2513,7 @@ IPlayer* CApplication::getPlayer(void)
 	return (l_pCurrentInterfacedScenario?l_pCurrentInterfacedScenario->m_pPlayer:NULL);
 }
 
-OpenViBE::boolean CApplication::createPlayer(void)
+bool CApplication::createPlayer(void)
 {
 	CInterfacedScenario* l_pCurrentInterfacedScenario = getCurrentInterfacedScenario();
 	if(l_pCurrentInterfacedScenario && !l_pCurrentInterfacedScenario->m_pPlayer)
@@ -2729,7 +2743,7 @@ void CApplication::forwardScenarioCB(void)
 	gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), GTK_STOCK_MEDIA_PLAY);
 }
 
-OpenViBE::boolean CApplication::quitApplicationCB(void)
+bool CApplication::quitApplicationCB(void)
 {
 	std::vector < CInterfacedScenario* >::iterator it;
 
@@ -2826,7 +2840,7 @@ OpenViBE::boolean CApplication::quitApplicationCB(void)
 	return true;
 }
 
-void CApplication::windowStateChangedCB(OpenViBE::boolean bIsMaximized)
+void CApplication::windowStateChangedCB(bool bIsMaximized)
 {
 	if(m_bIsMaximized != bIsMaximized && !bIsMaximized) // we switched to not maximized
 	{
