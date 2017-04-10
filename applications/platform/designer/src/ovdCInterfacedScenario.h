@@ -1,6 +1,6 @@
 #pragma once
 
-#include <map>
+#include <set>
 #include <vector>
 #include <string>
 #include <iostream>
@@ -117,8 +117,8 @@ namespace OpenViBEDesigner
 		bool setModifiableSettingsWidgets(void);
 		bool hasSelection(void);
 		bool centerOnBox(OpenViBE::CIdentifier rIdentifier);
-		void CInterfacedScenario::setScale(OpenViBE::float64 rScale);
-		OpenViBE::float64 CInterfacedScenario::getScale();
+		void setScale(OpenViBE::float64 scale);
+		OpenViBE::float64 getScale();
 
 /*
 	private:
@@ -142,8 +142,6 @@ namespace OpenViBEDesigner
 		OpenViBEDesigner::CDesignerVisualization* m_pDesignerVisualization;
 		OpenViBEDesigner::CPlayerVisualization* m_pPlayerVisualization;
 		::GtkBuilder* m_pGUIBuilder;
-//		::GtkBuilder* m_pSettingsGUIBuilder;
-//		::GtkBuilder* m_pBuilder;
 		::GtkWidget* m_pNotebookPageTitle;
 		::GtkWidget* m_pNotebookPageContent;
 		::GtkViewport* m_pScenarioViewport;
@@ -178,7 +176,7 @@ namespace OpenViBEDesigner
 
 		OpenViBE::uint32 m_ui32InterfacedObjectId;
 		std::map<OpenViBE::uint32, OpenViBEDesigner::CInterfacedObject> m_vInterfacedObject;
-		std::map<OpenViBE::CIdentifier, bool> m_vCurrentObject;
+		std::set<OpenViBE::CIdentifier> m_sSelectedObjects;
 		OpenViBEDesigner::CInterfacedObject m_oCurrentObject;
 
 		OpenViBE::float64 m_f64HPanInitialPosition;
