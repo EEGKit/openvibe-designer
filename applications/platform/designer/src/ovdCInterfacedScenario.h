@@ -176,7 +176,7 @@ namespace OpenViBEDesigner
 
 		OpenViBE::uint32 m_ui32InterfacedObjectId;
 		std::map<OpenViBE::uint32, OpenViBEDesigner::CInterfacedObject> m_vInterfacedObject;
-		std::set<OpenViBE::CIdentifier> m_sSelectedObjects;
+		std::set<OpenViBE::CIdentifier> m_SelectedObjects;
 		OpenViBEDesigner::CInterfacedObject m_oCurrentObject;
 
 		OpenViBE::float64 m_f64HPanInitialPosition;

@@ -1112,7 +1112,7 @@ void CInterfacedScenario::redraw(IBox& rBox)
 	bool l_bMensia = (l_pPOD && l_pPOD->hasFunctionality(M_Functionality_IsMensia));
 
 	// Add a thick dashed border around selected boxes
-	if (m_sSelectedObjects.count(rBox.getIdentifier()))
+	if (m_SelectedObjects.count(rBox.getIdentifier()))
 	{
 		int l_iTopLeftOffset = 2;
 #if defined TARGET_OS_Windows
@@ -1541,13 +1541,13 @@ void CInterfacedScenario::redraw(IComment& rComment)
 		xStart, yStart, xSize, ySize, static_cast<gint>(round(16.0*m_f64CurrentScale)));
 	m_vInterfacedObject[m_ui32InterfacedObjectId]=CInterfacedObject(rComment.getIdentifier());
 
-	gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[m_sSelectedObjects.count(rComment.getIdentifier())?Color_CommentBackgroundSelected:Color_CommentBackground]);
+	gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[m_SelectedObjects.count(rComment.getIdentifier())?Color_CommentBackgroundSelected:Color_CommentBackground]);
 	gdk_draw_rounded_rectangle(
 		l_pWidget->window,
 		l_pDrawGC,
 		TRUE,
 		xStart, yStart, xSize, ySize, static_cast<gint>(round(16.0*m_f64CurrentScale)));
-	gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[m_sSelectedObjects.count(rComment.getIdentifier())?Color_CommentBorderSelected:Color_CommentBorder]);
+	gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[m_SelectedObjects.count(rComment.getIdentifier())?Color_CommentBorderSelected:Color_CommentBorder]);
 	gdk_draw_rounded_rectangle(
 		l_pWidget->window,
 		l_pDrawGC,
@@ -1591,7 +1591,7 @@ void CInterfacedScenario::redraw(ILink& rLink)
 	m_rScenario.getBoxDetails(rLink.getSourceBoxIdentifier())->getOutputType(rLink.getSourceBoxOutputIndex(), l_oSourceOutputTypeIdentifier);
 	m_rScenario.getBoxDetails(rLink.getTargetBoxIdentifier())->getInputType(rLink.getTargetBoxInputIndex(), l_oTargetInputTypeIdentifier);
 
-	if(m_sSelectedObjects.count(rLink.getIdentifier()))
+	if(m_SelectedObjects.count(rLink.getIdentifier()))
 	{
 		gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[Color_LinkSelected]);
 	}
@@ -1729,7 +1729,7 @@ bool CInterfacedScenario::pickInterfacedObject(int x, int y, int iSizeX, int iSi
 			l_ui32InterfacedObjectId+=(l_pPixels[j*l_iRowBytesCount+i*l_iChannelCount+2]);
 			if(m_vInterfacedObject[l_ui32InterfacedObjectId].m_oIdentifier!=OV_UndefinedIdentifier)
 			{
-				m_sSelectedObjects.insert(m_vInterfacedObject[l_ui32InterfacedObjectId].m_oIdentifier);
+				m_SelectedObjects.insert(m_vInterfacedObject[l_ui32InterfacedObjectId].m_oIdentifier);
 			}
 		}
 	}
@@ -1745,19 +1745,19 @@ void CInterfacedScenario::undoCB(bool bManageModifiedStatusFlag)
 	if(m_oStateStack->undo())
 	{
 		CIdentifier l_oIdentifier;
-		m_sSelectedObjects.clear();
+		m_SelectedObjects.clear();
 		while((l_oIdentifier=m_rScenario.getNextBoxIdentifier(l_oIdentifier))!=OV_UndefinedIdentifier)
 		{
 			if(m_rScenario.getBoxDetails(l_oIdentifier)->hasAttribute(OV_ClassId_Selected))
 			{
-				m_sSelectedObjects.insert(l_oIdentifier);
+				m_SelectedObjects.insert(l_oIdentifier);
 			}
 		}
 		while((l_oIdentifier=m_rScenario.getNextLinkIdentifier(l_oIdentifier))!=OV_UndefinedIdentifier)
 		{
 			if(m_rScenario.getLinkDetails(l_oIdentifier)->hasAttribute(OV_ClassId_Selected))
 			{
-				m_sSelectedObjects.insert(l_oIdentifier);
+				m_SelectedObjects.insert(l_oIdentifier);
 			}
 		}
 
@@ -1792,19 +1792,19 @@ void CInterfacedScenario::redoCB(bool bManageModifiedStatusFlag)
 	if(m_oStateStack->redo())
 	{
 		CIdentifier l_oIdentifier;
-		m_sSelectedObjects.clear();
+		m_SelectedObjects.clear();
 		while((l_oIdentifier=m_rScenario.getNextBoxIdentifier(l_oIdentifier))!=OV_UndefinedIdentifier)
 		{
 			if(m_rScenario.getBoxDetails(l_oIdentifier)->hasAttribute(OV_ClassId_Selected))
 			{
-				m_sSelectedObjects.insert(l_oIdentifier);
+				m_SelectedObjects.insert(l_oIdentifier);
 			}
 		}
 		while((l_oIdentifier=m_rScenario.getNextLinkIdentifier(l_oIdentifier))!=OV_UndefinedIdentifier)
 		{
 			if(m_rScenario.getLinkDetails(l_oIdentifier)->hasAttribute(OV_ClassId_Selected))
 			{
-				m_sSelectedObjects.insert(l_oIdentifier);
+				m_SelectedObjects.insert(l_oIdentifier);
 			}
 		}
 
@@ -1838,14 +1838,14 @@ void CInterfacedScenario::snapshotCB(bool bManageModifiedStatusFlag)
 
 	while((l_oIdentifier=m_rScenario.getNextBoxIdentifier(l_oIdentifier))!=OV_UndefinedIdentifier)
 	{
-		if(m_sSelectedObjects.count(l_oIdentifier))
+		if(m_SelectedObjects.count(l_oIdentifier))
 			m_rScenario.getBoxDetails(l_oIdentifier)->addAttribute(OV_ClassId_Selected, "");
 		else
 			m_rScenario.getBoxDetails(l_oIdentifier)->removeAttribute(OV_ClassId_Selected);
 	}
 	while((l_oIdentifier=m_rScenario.getNextLinkIdentifier(l_oIdentifier))!=OV_UndefinedIdentifier)
 	{
-		if(m_sSelectedObjects.count(l_oIdentifier))
+		if(m_SelectedObjects.count(l_oIdentifier))
 			m_rScenario.getLinkDetails(l_oIdentifier)->addAttribute(OV_ClassId_Selected, "");
 		else
 			m_rScenario.getLinkDetails(l_oIdentifier)->removeAttribute(OV_ClassId_Selected);
@@ -1903,8 +1903,8 @@ void CInterfacedScenario::addCommentCB(int x, int y)
 	}
 	else
 	{
-		m_sSelectedObjects.clear();
-		m_sSelectedObjects.insert(l_oIdentifier);
+		m_SelectedObjects.clear();
+		m_SelectedObjects.insert(l_oIdentifier);
 
 		this->snapshotCB();
 	}
@@ -2224,8 +2224,8 @@ void CInterfacedScenario::scenarioDrawingAreaDragDataReceivedCB(::GdkDragContext
 
 		}
 
-		m_sSelectedObjects.clear();
-		m_sSelectedObjects.insert(l_oBoxIdentifier);
+		m_SelectedObjects.clear();
+		m_SelectedObjects.insert(l_oBoxIdentifier);
 
 		// If a visualization box was dropped, add it in window manager
 		if(l_pPOD && l_pPOD->hasFunctionality(OVD_Functionality_Visualization))
@@ -2345,17 +2345,17 @@ void CInterfacedScenario::scenarioDrawingAreaMotionNotifyCB(::GtkWidget* pWidget
 		{
 			if(m_bControlPressed)
 			{
-				m_sSelectedObjects.insert(m_oCurrentObject.m_oIdentifier);
+				m_SelectedObjects.insert(m_oCurrentObject.m_oIdentifier);
 			}
 			else
 			{
-				if(!m_sSelectedObjects.count(m_oCurrentObject.m_oIdentifier))
+				if(!m_SelectedObjects.count(m_oCurrentObject.m_oIdentifier))
 				{
-					m_sSelectedObjects.clear();
-					m_sSelectedObjects.insert(m_oCurrentObject.m_oIdentifier);
+					m_SelectedObjects.clear();
+					m_SelectedObjects.insert(m_oCurrentObject.m_oIdentifier);
 				}
 			}
-			for(auto& objectId : m_sSelectedObjects)
+			for(auto& objectId : m_SelectedObjects)
 			{
 				if(m_rScenario.isBox(objectId))
 				{
@@ -2858,7 +2858,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonReleasedCB(::GtkWidget* pWidg
 		{
 			if(m_ui32CurrentMode==Mode_Selection)
 			{
-				m_sSelectedObjects.clear();
+				m_SelectedObjects.clear();
 			}
 			pickInterfacedObject(l_iStartX, l_iStartY, l_iSizeX, l_iSizeY);
 		}
@@ -2919,24 +2919,24 @@ void CInterfacedScenario::scenarioDrawingAreaButtonReleasedCB(::GtkWidget* pWidg
 			{
 				if(m_bControlPressed)
 				{
-					if (m_sSelectedObjects.count(m_oCurrentObject.m_oIdentifier))
+					if (m_SelectedObjects.count(m_oCurrentObject.m_oIdentifier))
 					{
-						m_sSelectedObjects.erase(m_oCurrentObject.m_oIdentifier);
+						m_SelectedObjects.erase(m_oCurrentObject.m_oIdentifier);
 					}
 					else
 					{
-						m_sSelectedObjects.insert(m_oCurrentObject.m_oIdentifier);
+						m_SelectedObjects.insert(m_oCurrentObject.m_oIdentifier);
 					}
 				}
 				else
 				{
-					m_sSelectedObjects.clear();
-					m_sSelectedObjects.insert(m_oCurrentObject.m_oIdentifier);
+					m_SelectedObjects.clear();
+					m_SelectedObjects.insert(m_oCurrentObject.m_oIdentifier);
 				}
 			}
 			else
 			{
-				for(auto& objectId : m_sSelectedObjects)
+				for(auto& objectId : m_SelectedObjects)
 				{
 					if(m_rScenario.isBox(objectId))
 					{
@@ -3031,7 +3031,7 @@ void CInterfacedScenario::scenarioDrawingAreaKeyPressEventCB(::GtkWidget* pWidge
 	if(pEvent->keyval==GDK_F1)
 	{
 		map < CIdentifier, bool > l_vSelectedBoxAlgorithm;
-		for(auto& objectId : m_sSelectedObjects)
+		for(auto& objectId : m_SelectedObjects)
 		{
 			if(m_rScenario.isBox(objectId))
 			{
@@ -3157,7 +3157,7 @@ void CInterfacedScenario::copySelection(void)
 	m_rApplication.m_pClipboardScenario->clear();
 
 	// Copies boxes to clipboard
-	for(auto& objectId : m_sSelectedObjects)
+	for(auto& objectId : m_SelectedObjects)
 	{
 		if(m_rScenario.isBox(objectId))
 		{
@@ -3172,7 +3172,7 @@ void CInterfacedScenario::copySelection(void)
 	}
 
 	// Copies comments to clipboard
-	for(auto& objectId : m_sSelectedObjects)
+	for(auto& objectId : m_SelectedObjects)
 	{
 		if(m_rScenario.isComment(objectId))
 		{
@@ -3187,7 +3187,7 @@ void CInterfacedScenario::copySelection(void)
 	}
 
 	// Copies links to clipboard
-	for(auto& objectId : m_sSelectedObjects)
+	for(auto& objectId : m_SelectedObjects)
 	{
 		if(m_rScenario.isLink(objectId))
 		{
@@ -3301,10 +3301,10 @@ void CInterfacedScenario::pasteSelection(void)
 	// Moves comments under cursor
 	if(m_rApplication.m_pClipboardScenario->getNextBoxIdentifier(OV_UndefinedIdentifier)!=OV_UndefinedIdentifier || m_rApplication.m_pClipboardScenario->getNextCommentIdentifier(OV_UndefinedIdentifier)!=OV_UndefinedIdentifier)
 	{
-		m_sSelectedObjects.clear();
+		m_SelectedObjects.clear();
 		for(auto it = l_vIdMapping.begin(); it != l_vIdMapping.end(); it++)
 		{
-			m_sSelectedObjects.insert(it->second);
+			m_SelectedObjects.insert(it->second);
 
 			if(m_rScenario.isBox(it->second))
 			{
@@ -3345,7 +3345,7 @@ void CInterfacedScenario::pasteSelection(void)
 void CInterfacedScenario::deleteSelection(void)
 {
 	m_rKernelContext.getLogManager() << LogLevel_Debug << "deleteSelection\n";
-	for(auto& objectId : m_sSelectedObjects)
+	for(auto& objectId : m_SelectedObjects)
 	{
 		if(m_rScenario.isBox(objectId))
 		{
@@ -3369,7 +3369,7 @@ void CInterfacedScenario::deleteSelection(void)
 			m_rScenario.disconnect(objectId);
 		}
 	}
-	m_sSelectedObjects.clear();
+	m_SelectedObjects.clear();
 
 	this->redraw();
 	this->snapshotCB();
@@ -3411,7 +3411,7 @@ void CInterfacedScenario::contextMenuBoxRenameAllCB()
 {
 	//we find all selected boxes
 	map < CIdentifier, CIdentifier > l_vSelectedBox; // map(object,class)
-	for(auto& objectId : m_sSelectedObjects)
+	for(auto& objectId : m_SelectedObjects)
 	{
 		if(m_rScenario.isBox(objectId))
 		{
@@ -3482,7 +3482,7 @@ void CInterfacedScenario::contextMenuBoxRenameAllCB()
 void CInterfacedScenario::contextMenuBoxToggleEnableAllCB(void)
 {
 	//we find all selected boxes
-	for(auto objectId : m_sSelectedObjects)
+	for(auto objectId : m_SelectedObjects)
 	{
 		if(m_rScenario.isBox(objectId))
 		{
@@ -4019,7 +4019,7 @@ void CInterfacedScenario::releasePlayerVisualization(void)
 
 bool CInterfacedScenario::hasSelection(void)
 {
-	return m_sSelectedObjects.size() != 0;
+	return m_SelectedObjects.size() != 0;
 }
 
 
@@ -4087,10 +4087,10 @@ bool CInterfacedScenario::centerOnBox(CIdentifier rIdentifier)
 		IBox* rBox = m_rScenario.getBoxDetails(rIdentifier);
 
 		//clear previous selection
-		m_sSelectedObjects.clear();
+		m_SelectedObjects.clear();
 		//to select the box
 
-		m_sSelectedObjects.insert(rIdentifier);
+		m_SelectedObjects.insert(rIdentifier);
 //		m_bScenarioModified=true;
 		redraw();
 
@@ -4139,7 +4139,7 @@ bool CInterfacedScenario::centerOnBox(CIdentifier rIdentifier)
 
 void CInterfacedScenario::setScale(float64 scale)
 {
-	m_f64CurrentScale = scale < 0.1 ? 0.1 : scale;
+	m_f64CurrentScale = std::max(scale, 0.1);
 
 	PangoContext* l_pPangoContext = gtk_widget_get_pango_context(GTK_WIDGET(m_pScenarioDrawingArea));
 	PangoFontDescription *l_pPangoFontDescription = pango_context_get_font_description(l_pPangoContext);
