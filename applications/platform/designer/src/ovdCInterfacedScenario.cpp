@@ -2986,6 +2986,11 @@ void CInterfacedScenario::scenarioDrawingAreaKeyPressEventCB(::GtkWidget* pWidge
 	// CTRL+A = select all
 	if(m_bAPressed && m_bControlPressed && !m_bShiftPressed && ! m_bAltPressed)
 	{
+		OpenViBE::CIdentifier l_oIdentifier;
+		while((l_oIdentifier = m_rScenario.getNextBoxIdentifier(l_oIdentifier))!= OV_UndefinedIdentifier)
+		{
+			m_SelectedObjects.insert(l_oIdentifier);
+		}
 		this->redraw();
 	}
 
@@ -3030,24 +3035,17 @@ void CInterfacedScenario::scenarioDrawingAreaKeyPressEventCB(::GtkWidget* pWidge
 	// F1 : browse documentation
 	if(pEvent->keyval==GDK_F1)
 	{
-		map < CIdentifier, bool > l_vSelectedBoxAlgorithm;
+		bool hasDoc = false;
 		for(auto& objectId : m_SelectedObjects)
 		{
 			if(m_rScenario.isBox(objectId))
 			{
-				//l_vSelectedBoxAlgorithm[m_rScenario.getBoxDetails(it->first)->getAlgorithmClassIdentifier()]=true;
-				l_vSelectedBoxAlgorithm[objectId]=true;
+				browseBoxDocumentation(objectId);
+				hasDoc = true;
 			}
 		}
 
-		if(l_vSelectedBoxAlgorithm.size())
-		{
-			for(auto it = l_vSelectedBoxAlgorithm.begin(); it != l_vSelectedBoxAlgorithm.end(); it++)
-			{
-				browseBoxDocumentation(it->first);
-			}
-		}
-		else
+		if (!hasDoc)
 		{
 			CString l_sFullURL=m_rScenario.getAttributeValue(OV_AttributeId_Scenario_DocumentationPage);
 			if(l_sFullURL!=CString(""))
@@ -3979,7 +3977,7 @@ void CInterfacedScenario::createPlayerVisualization(IVisualizationTree* pVisuali
 		//we go here when we press start
 		//we have to set the modUI here
 		//first, find the concerned boxes
-		CIdentifier objectId = m_rScenario.getNextBoxIdentifier(OV_UndefinedIdentifier);
+		CIdentifier objectId;
 		while ((objectId = m_rScenario.getNextBoxIdentifier(objectId)) != OV_UndefinedIdentifier)
 		{
 			IBox* l_oBox = m_rScenario.getBoxDetails (objectId);

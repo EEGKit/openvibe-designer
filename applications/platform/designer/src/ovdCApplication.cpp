@@ -124,13 +124,27 @@ namespace
 		{
 			switch(eBoxFlag)
 			{
-				case BoxFlag_CanAddInput:       m_oHash=m_oHash.toUInteger()^OpenViBE::CIdentifier(0x07507AC8, 0xEB643ACE).toUInteger(); break;
-				case BoxFlag_CanModifyInput:    m_oHash=m_oHash.toUInteger()^OpenViBE::CIdentifier(0x5C985376, 0x8D74CDB8).toUInteger(); break;
-				case BoxFlag_CanAddOutput:      m_oHash=m_oHash.toUInteger()^OpenViBE::CIdentifier(0x58DEA69B, 0x12411365).toUInteger(); break;
-				case BoxFlag_CanModifyOutput:   m_oHash=m_oHash.toUInteger()^OpenViBE::CIdentifier(0x6E162C01, 0xAC979F22).toUInteger(); break;
-				case BoxFlag_CanAddSetting:     m_oHash=m_oHash.toUInteger()^OpenViBE::CIdentifier(0xFA7A50DC, 0x2140C013).toUInteger(); break;
-				case BoxFlag_CanModifySetting:  m_oHash=m_oHash.toUInteger()^OpenViBE::CIdentifier(0x624D7661, 0xD8DDEA0A).toUInteger(); break;
-				case BoxFlag_IsDeprecated:      m_bIsDeprecated=true; break;
+				case BoxFlag_CanAddInput:
+					m_oHash=m_oHash.toUInteger()^OpenViBE::CIdentifier(0x07507AC8, 0xEB643ACE).toUInteger();
+					break;
+				case BoxFlag_CanModifyInput:
+					m_oHash=m_oHash.toUInteger()^OpenViBE::CIdentifier(0x5C985376, 0x8D74CDB8).toUInteger();
+					break;
+				case BoxFlag_CanAddOutput:
+					m_oHash=m_oHash.toUInteger()^OpenViBE::CIdentifier(0x58DEA69B, 0x12411365).toUInteger();
+					break;
+				case BoxFlag_CanModifyOutput:
+					m_oHash=m_oHash.toUInteger()^OpenViBE::CIdentifier(0x6E162C01, 0xAC979F22).toUInteger();
+					break;
+				case BoxFlag_CanAddSetting:
+					m_oHash=m_oHash.toUInteger()^OpenViBE::CIdentifier(0xFA7A50DC, 0x2140C013).toUInteger();
+					break;
+				case BoxFlag_CanModifySetting:
+					m_oHash=m_oHash.toUInteger()^OpenViBE::CIdentifier(0x624D7661, 0xD8DDEA0A).toUInteger();
+					break;
+				case BoxFlag_IsDeprecated:
+					m_bIsDeprecated=true;
+					break;
 				default:
 					return false;
 					break;
@@ -655,15 +669,27 @@ namespace
 		{
 			if(l_pApplication->getPlayer() && l_pCurrentInterfacedScenario->m_ePlayerStatus != l_pApplication->getPlayer()->getStatus())
 			{
-				auto w = l_pApplication->getPlayer()->getStatus();
 				switch(l_pApplication->getPlayer()->getStatus())
 				{
-					case PlayerStatus_Stop:    gtk_signal_emit_by_name(GTK_OBJECT(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-button_stop")), "clicked"); break;
-					case PlayerStatus_Pause:   while(l_pCurrentInterfacedScenario->m_ePlayerStatus != PlayerStatus_Pause) gtk_signal_emit_by_name(GTK_OBJECT(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-button_play_pause")), "clicked"); break;
-					case PlayerStatus_Step:          break;
-					case PlayerStatus_Play:    while(l_pCurrentInterfacedScenario->m_ePlayerStatus != PlayerStatus_Play)  gtk_signal_emit_by_name(GTK_OBJECT(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-button_play_pause")), "clicked"); break;
-					case PlayerStatus_Forward: gtk_signal_emit_by_name(GTK_OBJECT(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-button_forward")), "clicked"); break;
-					default: std::cout << "unhandled player status : " << l_pApplication->getPlayer()->getStatus() << " :(\n"; break;
+					case PlayerStatus_Stop:
+						gtk_signal_emit_by_name(GTK_OBJECT(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-button_stop")), "clicked");
+						break;
+					case PlayerStatus_Pause:
+						while(l_pCurrentInterfacedScenario->m_ePlayerStatus != PlayerStatus_Pause)
+							gtk_signal_emit_by_name(GTK_OBJECT(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-button_play_pause")), "clicked");
+						break;
+					case PlayerStatus_Step:
+						break;
+					case PlayerStatus_Play:
+						while(l_pCurrentInterfacedScenario->m_ePlayerStatus != PlayerStatus_Play)
+							gtk_signal_emit_by_name(GTK_OBJECT(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-button_play_pause")), "clicked");
+						break;
+					case PlayerStatus_Forward:
+						gtk_signal_emit_by_name(GTK_OBJECT(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-button_forward")), "clicked");
+						break;
+					default:
+						std::cout << "unhandled player status : " << l_pApplication->getPlayer()->getStatus() << " :(\n";
+						break;
 				}
 			}
 			else
@@ -2613,8 +2639,12 @@ void CApplication::stopScenarioCB(void)
 		{
 			switch(currentState)
 			{
-			case PlayerStatus_Play: playScenarioCB(); break;
-			case PlayerStatus_Forward: forwardScenarioCB(); break;
+			case PlayerStatus_Play:
+				playScenarioCB();
+				break;
+			case PlayerStatus_Forward:
+				forwardScenarioCB();
+				break;
 			default:
 				break;
 			}
