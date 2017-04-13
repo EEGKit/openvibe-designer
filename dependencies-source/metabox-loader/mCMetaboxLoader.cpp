@@ -107,13 +107,6 @@ FS::boolean CMetaboxLoaderEntryEnumeratorCallBack::callback(
 		m_rMetaboxLoader.getMetaboxInfo(l_sMetaboxIdentifier).assignMetaboxHash(l_oMetaboxPrototypeHash);
 
 		m_rMetaboxLoader.getPluginObjectDescMap()[l_sVirtualBoxIdentifier] = &(m_rMetaboxLoader.getMetaboxInfo(l_sMetaboxIdentifier).m_oMetaboxDesc);
-
-		// Insert the path to the metabox scenario inside the configuration manager
-		std::string l_sConfigurationTokenName = "Metabox_Scenario_Path_For_" + l_sMetaboxIdentifier;
-		m_rMetaboxLoader.getKernelContext().getConfigurationManager().createConfigurationToken(l_sConfigurationTokenName.c_str(), l_sFullFileName.c_str());
-
-		l_sConfigurationTokenName = "Metabox_Scenario_Hash_For_" + l_sMetaboxIdentifier;
-		m_rMetaboxLoader.getKernelContext().getConfigurationManager().createConfigurationToken(l_sConfigurationTokenName.c_str(), l_oMetaboxPrototypeHash.toString());
 	}
 
 	return true;

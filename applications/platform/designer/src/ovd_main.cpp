@@ -794,6 +794,8 @@ int go(int argc, char ** argv)
 								app.m_pMetaboxLoader->loadPluginDescriptorsFromWildcard(l_pKernelContext->getConfigurationManager().expand("${Path_UserData}/metaboxes/*.mxb"));
 								app.m_pMetaboxLoader->loadPluginDescriptorsFromWildcard(l_pKernelContext->getConfigurationManager().expand("${Path_Data}/metaboxes/*.mbb"));
 								app.m_pMetaboxLoader->loadPluginDescriptorsFromWildcard(l_pKernelContext->getConfigurationManager().expand("${Path_UserData}/metaboxes/*.mbb"));
+
+								l_pKernelContext->getMetaboxManager().addMetaboxFromFiles(l_pKernelContext->getConfigurationManager().expand("${Kernel_Metabox}"));
 								insertPluginObjectDesc_to_GtkTreeStore(*l_pKernelContext, app.m_pMetaboxLoader->getPluginObjectDescMap(), app.m_pBoxAlgorithmTreeModel, app.m_vNewBoxes, app.m_vUpdatedBoxes, app.m_bIsNewVersion);
 							}
 							l_pKernelContext->getLogManager() << LogLevel_Info << "Initialization took " << l_pKernelContext->getConfigurationManager().expand("$Core{real-time}") << " ms\n";
