@@ -2991,6 +2991,14 @@ void CInterfacedScenario::scenarioDrawingAreaKeyPressEventCB(::GtkWidget* pWidge
 		{
 			m_SelectedObjects.insert(l_oIdentifier);
 		}
+		while((l_oIdentifier = m_rScenario.getNextLinkIdentifier(l_oIdentifier))!= OV_UndefinedIdentifier)
+		{
+			m_SelectedObjects.insert(l_oIdentifier);
+		}
+		while((l_oIdentifier = m_rScenario.getNextCommentIdentifier(l_oIdentifier))!= OV_UndefinedIdentifier)
+		{
+			m_SelectedObjects.insert(l_oIdentifier);
+		}
 		this->redraw();
 	}
 
