@@ -3099,6 +3099,16 @@ void CApplication::changeCurrentScenario(int32 i32PageIndex)
 	{
 		m_vInterfacedScenario[i]->updateScenarioLabel();
 	}
+	// Reset zoom
+	if (getCurrentInterfacedScenario())
+	{
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-zoom_spinner")),
+								  round(getCurrentInterfacedScenario()->getScale()*100.0));
+	}
+	else
+	{
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-zoom_spinner")), 100);
+	}
 }
 
 void CApplication::reorderCurrentScenario(OpenViBE::uint32 i32NewPageIndex)
