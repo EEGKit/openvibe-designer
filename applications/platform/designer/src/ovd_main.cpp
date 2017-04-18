@@ -8,7 +8,7 @@
 
 #include <system/ovCTime.h>
 #include <metabox-loader/mCMetaboxLoader.h>
-
+#include <openvibe/kernel/metabox/ovIMetaboxManager.h>
 #include "ovd_base.h"
 
 #include "ovdCInterfacedObject.h"
@@ -26,6 +26,7 @@ using namespace OpenViBE::Plugins;
 using namespace OpenViBEDesigner;
 using namespace std;
 
+#define OVP_ScenarioImportContext_OnLoadMetaboxImport OpenViBE::CIdentifier(0xED48480A, 0x9F6DBAA7)
 
 map<uint32, ::GdkColor> g_vColors;
 
@@ -327,7 +328,7 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 
 			if (l_pPluginObjectDesc->getCreatedClass() == OVP_ClassId_BoxAlgorithm_Metabox)
 			{
-				l_sBoxAlgorithmDescriptor += dynamic_cast<const Mensia::CBoxAlgorithmMetaboxDesc*>(l_pPluginObjectDesc)->getMetaboxDescriptor();
+				l_sBoxAlgorithmDescriptor += dynamic_cast<const OpenViBE::Metabox::IMetaboxObjectDesc*>(l_pPluginObjectDesc)->getMetaboxDescriptor();
 				l_sTextColor = "#007020";
 			}
 			else
@@ -786,18 +787,16 @@ int go(int argc, char ** argv)
 							insertPluginObjectDesc_to_GtkTreeStore(*l_pKernelContext, cb_collector1.getPluginObjectDescMap(), app.m_pBoxAlgorithmTreeModel, app.m_vNewBoxes, app.m_vUpdatedBoxes, app.m_bIsNewVersion);
 							insertPluginObjectDesc_to_GtkTreeStore(*l_pKernelContext, cb_collector2.getPluginObjectDescMap(), app.m_pAlgorithmTreeModel, app.m_vNewBoxes, app.m_vUpdatedBoxes);
 
-							if (app.m_pMetaboxLoader != NULL)
+							l_pKernelContext->getScenarioManager().registerScenarioImporter(OVP_ScenarioImportContext_OnLoadMetaboxImport, ".mxb", OVP_GD_ClassId_Algorithm_XMLScenarioImporter);
+							l_pKernelContext->getMetaboxManager().addMetaboxFromFiles(l_pKernelContext->getConfigurationManager().expand("${Kernel_Metabox}"));
+							std::map<std::string, const OpenViBE::Plugins::IPluginObjectDesc*> metaboxDescMap;
+							CIdentifier l_oIdentifier;
+							while ((l_oIdentifier = l_pKernelContext->getMetaboxManager().getNextMetaboxObjectDescIdentifier(l_oIdentifier)) != OV_UndefinedIdentifier)
 							{
-								app.m_pMetaboxLoader->loadPluginDescriptorsFromWildcard(l_pKernelContext->getConfigurationManager().expand("${Path_Data}/metaboxes/*.xml"));
-								app.m_pMetaboxLoader->loadPluginDescriptorsFromWildcard(l_pKernelContext->getConfigurationManager().expand("${Path_UserData}/metaboxes/*.xml"));
-								app.m_pMetaboxLoader->loadPluginDescriptorsFromWildcard(l_pKernelContext->getConfigurationManager().expand("${Path_Data}/metaboxes/*.mxb"));
-								app.m_pMetaboxLoader->loadPluginDescriptorsFromWildcard(l_pKernelContext->getConfigurationManager().expand("${Path_UserData}/metaboxes/*.mxb"));
-								app.m_pMetaboxLoader->loadPluginDescriptorsFromWildcard(l_pKernelContext->getConfigurationManager().expand("${Path_Data}/metaboxes/*.mbb"));
-								app.m_pMetaboxLoader->loadPluginDescriptorsFromWildcard(l_pKernelContext->getConfigurationManager().expand("${Path_UserData}/metaboxes/*.mbb"));
-
-								l_pKernelContext->getMetaboxManager().addMetaboxFromFiles(l_pKernelContext->getConfigurationManager().expand("${Kernel_Metabox}"));
-								insertPluginObjectDesc_to_GtkTreeStore(*l_pKernelContext, app.m_pMetaboxLoader->getPluginObjectDescMap(), app.m_pBoxAlgorithmTreeModel, app.m_vNewBoxes, app.m_vUpdatedBoxes, app.m_bIsNewVersion);
+								metaboxDescMap[std::string(l_oIdentifier.toString())] = l_pKernelContext->getMetaboxManager().getMetaboxObjectDesc(l_oIdentifier);
 							}
+							insertPluginObjectDesc_to_GtkTreeStore(*l_pKernelContext, metaboxDescMap, app.m_pBoxAlgorithmTreeModel, app.m_vNewBoxes, app.m_vUpdatedBoxes, app.m_bIsNewVersion);
+
 							l_pKernelContext->getLogManager() << LogLevel_Info << "Initialization took " << l_pKernelContext->getConfigurationManager().expand("$Core{real-time}") << " ms\n";
 							// If the application is a newly launched version, and not launched without GUI -> display changelog
 							if(app.m_bIsNewVersion && l_oConfiguration.m_eNoGui != CommandLineFlag_NoGui)

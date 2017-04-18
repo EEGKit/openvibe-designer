@@ -1081,10 +1081,11 @@ void CInterfacedScenario::redraw(IBox& rBox)
 
 	CBoxProxy l_oBoxProxy(m_rKernelContext, rBox);
 
-	if (m_rApplication.m_pMetaboxLoader != nullptr && rBox.getAlgorithmClassIdentifier() == OVP_ClassId_BoxAlgorithm_Metabox)
+	if (rBox.getAlgorithmClassIdentifier() == OVP_ClassId_BoxAlgorithm_Metabox)
 	{
-		CString l_sMetaboxIdentifier = rBox.getAttributeValue(OVP_AttributeId_Metabox_Scenario);
-		l_oBoxProxy.setBoxAlgorithmDescriptorOverride(&(m_rApplication.m_pMetaboxLoader->getMetaboxInfo(l_sMetaboxIdentifier.toASCIIString()).m_oMetaboxDesc));
+		CIdentifier metaboxId;
+		metaboxId.fromString(rBox.getAttributeValue(OVP_AttributeId_Metabox_Identifier));
+		l_oBoxProxy.setBoxAlgorithmDescriptorOverride(static_cast<const IBoxAlgorithmDesc*>(m_rKernelContext.getMetaboxManager().getMetaboxObjectDesc(metaboxId)));
 	}
 
 	int xSize = static_cast<int>(round(l_oBoxProxy.getWidth(GTK_WIDGET(m_pScenarioDrawingArea)) *  m_f64CurrentScale) + xMargin * 2);
@@ -2199,20 +2200,18 @@ void CInterfacedScenario::scenarioDrawingAreaDragDataReceivedCB(::GdkDragContext
 		}
 		else if (l_oBoxAlgorithmClassIdentifier == OVP_ClassId_BoxAlgorithm_Metabox)
 		{
-			if (m_rApplication.m_pMetaboxLoader != NULL)
-			{
-				// extract the name of the metabox from the drag data string
-				std::string l_sMetaboxIdentifier = l_sSelectionData.substr(l_sSelectionData.find(')') + 1, string::npos);
-				//m_rKernelContext.getLogManager() << LogLevel_Info << "This is a metabox with ID " << l_sMetaboxIdentifier.c_str() << "\n";
+			// extract the name of the metabox from the drag data string
+			std::string l_sMetaboxIdentifier = l_sSelectionData.substr(l_sSelectionData.find(')') + 1, string::npos);
+			//m_rKernelContext.getLogManager() << LogLevel_Info << "This is a metabox with ID " << l_sMetaboxIdentifier.c_str() << "\n";
 
-				// insert a box into the scenario, initialize it from the proxy-descriptor from the metabox loader
-				m_rScenario.addBox(l_oBoxIdentifier, m_rApplication.m_pMetaboxLoader->getMetaboxInfo(l_sMetaboxIdentifier).m_oMetaboxDesc, OV_UndefinedIdentifier);
+			// insert a box into the scenario, initialize it from the proxy-descriptor from the metabox loader
+//			m_rScenario.addBox(l_oBoxIdentifier, m_rKernelContext.getMetaboxManager().getMetaboxInfo(l_sMetaboxIdentifier).m_oMetaboxDesc, OV_UndefinedIdentifier);
 
-				l_pBox = m_rScenario.getBoxDetails(l_oBoxIdentifier);
-				l_pPOD = &m_rApplication.m_pMetaboxLoader->getMetaboxInfo(l_sMetaboxIdentifier).m_oMetaboxDesc;
+			l_pBox = m_rScenario.getBoxDetails(l_oBoxIdentifier);
+//			l_pPOD = &m_rKernelContext.getMetaboxManager().getMetaboxInfo(l_sMetaboxIdentifier).m_oMetaboxDesc;
 
-				l_pBox->addAttribute(OVP_AttributeId_Metabox_Scenario, l_sMetaboxIdentifier.c_str());
-			}
+			l_pBox->addAttribute(OVP_AttributeId_Metabox_Scenario, l_sMetaboxIdentifier.c_str());
+//			OVP_AttributeId_Metabox_Identifier
 		}
 		else
 		{
@@ -2772,31 +2771,28 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 									gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, l_pMenuItemEdit, GTK_STOCK_PREFERENCES, "configure box...", context_menu_cb, l_pBox, ContextMenu_BoxConfigure, -1);
 								}
 								// Add this option only if the user has the authorization to open a metabox
-								if (m_rApplication.m_pMetaboxLoader != NULL)
+								if (l_pBox->getAlgorithmClassIdentifier() == OVP_ClassId_BoxAlgorithm_Metabox)
 								{
-									if (l_pBox->getAlgorithmClassIdentifier() == OVP_ClassId_BoxAlgorithm_Metabox)
+									CIdentifier metaboxId;
+									metaboxId.fromString(l_pBox->getAttributeValue(OVP_AttributeId_Metabox_Scenario));
+
+									std::string metaboxScenarioPathString(m_rKernelContext.getMetaboxManager().getMetaboxFilePath(metaboxId).toASCIIString());
+									std::string metaboxScenarioExtension = boost::filesystem::extension(metaboxScenarioPathString);
+									bool canImportFile = false;
+
+									CString fileNameExtension;
+									while ((fileNameExtension = m_rKernelContext.getScenarioManager().getNextScenarioImporter(OVD_ScenarioImportContext_OpenScenario, fileNameExtension)) != CString(""))
 									{
-										CString l_sMetaboxIdentifier = l_pBox->getAttributeValue(OVP_AttributeId_Metabox_Scenario);
-										CString l_sMetaboxScenarioPath = m_rKernelContext.getConfigurationManager().lookUpConfigurationTokenValue(CString("Metabox_Scenario_Path_For_") + l_sMetaboxIdentifier);
-
-										std::string metaboxScenarioPathString(l_sMetaboxScenarioPath.toASCIIString());
-										std::string metaboxScenarioExtension = boost::filesystem::extension(metaboxScenarioPathString);
-										bool canImportFile = false;
-
-										CString fileNameExtension;
-										while ((fileNameExtension = m_rKernelContext.getScenarioManager().getNextScenarioImporter(OVD_ScenarioImportContext_OpenScenario, fileNameExtension)) != CString(""))
+										if (metaboxScenarioExtension == fileNameExtension.toASCIIString())
 										{
-											if (metaboxScenarioExtension == fileNameExtension.toASCIIString())
-											{
-												canImportFile = true;
-												break;
-											}
+											canImportFile = true;
+											break;
 										}
+									}
 
-										if (canImportFile)
-										{
-											gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, l_pMenuItemEdit, GTK_STOCK_PREFERENCES, "open this meta box in editor", context_menu_cb, l_pBox, ContextMenu_BoxEditMetabox, -1);
-										}
+									if (canImportFile)
+									{
+										gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, l_pMenuItemEdit, GTK_STOCK_PREFERENCES, "open this meta box in editor", context_menu_cb, l_pBox, ContextMenu_BoxEditMetabox, -1);
 									}
 								}
 								gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, l_pMenuItemEnable, GTK_STOCK_CONNECT, "enable box...", context_menu_cb, l_pBox, ContextMenu_BoxEnable, -1);
@@ -3386,10 +3382,11 @@ void CInterfacedScenario::contextMenuBoxRenameCB(IBox& rBox)
 	const IPluginObjectDesc* l_pPluginObjectDescriptor=m_rKernelContext.getPluginManager().getPluginObjectDescCreating(rBox.getAlgorithmClassIdentifier());
 	m_rKernelContext.getLogManager() << LogLevel_Debug << "contextMenuBoxRenameCB\n";
 
-	if (m_rApplication.m_pMetaboxLoader != NULL && rBox.getAlgorithmClassIdentifier() == OVP_ClassId_BoxAlgorithm_Metabox)
+	if (rBox.getAlgorithmClassIdentifier() == OVP_ClassId_BoxAlgorithm_Metabox)
 	{
-		CString l_sMetaboxIdentifier = rBox.getAttributeValue(OVP_AttributeId_Metabox_Scenario);
-		l_pPluginObjectDescriptor = &(m_rApplication.m_pMetaboxLoader->getMetaboxInfo(l_sMetaboxIdentifier.toASCIIString()).m_oMetaboxDesc);
+		CIdentifier metaboxId;
+		metaboxId.fromString(rBox.getAttributeValue(OVP_AttributeId_Metabox_Identifier));
+		l_pPluginObjectDescriptor = m_rKernelContext.getMetaboxManager().getMetaboxObjectDesc(metaboxId);
 	}
 
 	CRenameDialog l_oRename(m_rKernelContext, rBox.getName(), l_pPluginObjectDescriptor?l_pPluginObjectDescriptor->getName():rBox.getName(), m_sGUIFilename.c_str());
@@ -3441,10 +3438,11 @@ void CInterfacedScenario::contextMenuBoxRenameAllCB()
 					{
 						l_bFirstBox = false;
 						const IPluginObjectDesc* l_pPluginObjectDescriptor=m_rKernelContext.getPluginManager().getPluginObjectDescCreating(l_pBox->getAlgorithmClassIdentifier());
-						if (m_rApplication.m_pMetaboxLoader != NULL && l_pBox->getAlgorithmClassIdentifier() == OVP_ClassId_BoxAlgorithm_Metabox)
+						if (l_pBox->getAlgorithmClassIdentifier() == OVP_ClassId_BoxAlgorithm_Metabox)
 						{
-							CString l_sMetaboxIdentifier = l_pBox->getAttributeValue(OVP_AttributeId_Metabox_Scenario);
-							l_pPluginObjectDescriptor = &(m_rApplication.m_pMetaboxLoader->getMetaboxInfo(l_sMetaboxIdentifier.toASCIIString()).m_oMetaboxDesc);
+							CIdentifier metaboxId;
+							metaboxId.fromString(l_pBox->getAttributeValue(OVP_AttributeId_Metabox_Identifier));
+							l_pPluginObjectDescriptor = m_rKernelContext.getMetaboxManager().getMetaboxObjectDesc(metaboxId);
 						}
 
 						CRenameDialog l_oRename(m_rKernelContext, l_pBox->getName(), l_pPluginObjectDescriptor?l_pPluginObjectDescriptor->getName():l_pBox->getName(), m_sGUIFilename.c_str());
@@ -3724,12 +3722,10 @@ void CInterfacedScenario::contextMenuBoxAboutCB(IBox& rBox)
 	}
 	else
 	{
-		if (m_rApplication.m_pMetaboxLoader != NULL)
-		{
-			CString l_sMetaboxIdentifier = rBox.getAttributeValue(OVP_AttributeId_Metabox_Scenario);
-			CAboutPluginDialog l_oAboutPluginDialog(m_rKernelContext, &m_rApplication.m_pMetaboxLoader->getMetaboxInfo(l_sMetaboxIdentifier.toASCIIString()).m_oMetaboxDesc, m_sGUIFilename.c_str());
-			l_oAboutPluginDialog.run();
-		}
+		CIdentifier metaboxId;
+		metaboxId.fromString(rBox.getAttributeValue(OVP_AttributeId_Metabox_Identifier));
+		CAboutPluginDialog l_oAboutPluginDialog(m_rKernelContext, m_rKernelContext.getMetaboxManager().getMetaboxObjectDesc(metaboxId), m_sGUIFilename.c_str());
+		l_oAboutPluginDialog.run();
 	}
 }
 
@@ -3737,9 +3733,9 @@ void CInterfacedScenario::contextMenuBoxEditMetaboxCB(IBox& rBox)
 {
 	m_rKernelContext.getLogManager() << LogLevel_Debug << "contextMenuBoxEditMetaboxCB\n";
 
-	CString l_sMetaboxIdentifier = rBox.getAttributeValue(OVP_AttributeId_Metabox_Scenario);
-
-	CString l_sMetaboxScenarioPath = m_rKernelContext.getConfigurationManager().lookUpConfigurationTokenValue(CString("Metabox_Scenario_Path_For_") + l_sMetaboxIdentifier);
+	CIdentifier metaboxId;
+	metaboxId.fromString(rBox.getAttributeValue(OVP_AttributeId_Metabox_Identifier));
+	CString l_sMetaboxScenarioPath(m_rKernelContext.getMetaboxManager().getMetaboxFilePath(metaboxId));
 
 	m_rApplication.openScenario(l_sMetaboxScenarioPath.toASCIIString());
 }
@@ -3789,9 +3785,9 @@ bool CInterfacedScenario::browseBoxDocumentation(CIdentifier oBoxId)
 	CString l_sHTMLName = "Doc_BoxAlgorithm_";
 	if (m_rScenario.getBoxDetails(oBoxId)->getAlgorithmClassIdentifier() == OVP_ClassId_BoxAlgorithm_Metabox)
 	{
-		// We have to pull the original name of the box from the metaboxLoader cache of the descriptors
-		std::string l_sMetaboxScenarioIdentifier(m_rScenario.getBoxDetails(oBoxId)->getAttributeValue(OVP_AttributeId_Metabox_Scenario).toASCIIString());
-		l_sBoxName = this->m_rApplication.m_pMetaboxLoader->getMetaboxInfo(l_sMetaboxScenarioIdentifier).m_oMetaboxDesc.getName();
+		CIdentifier metaboxId;
+		metaboxId.fromString(m_rScenario.getBoxDetails(oBoxId)->getAttributeValue(OVP_AttributeId_Metabox_Identifier));
+		l_sBoxName = m_rKernelContext.getMetaboxManager().getMetaboxObjectDesc(metaboxId)->getName();
 	}
 	else
 	{

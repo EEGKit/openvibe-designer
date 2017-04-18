@@ -893,7 +893,6 @@ CApplication::CApplication(const IKernelContext& rKernelContext)
 	,m_bIsQuitting(false)
 	,m_bIsNewVersion(false)
 	,m_ui32CurrentInterfacedScenarioIndex(0)
-    ,m_pMetaboxLoader(NULL)
 #if defined TARGET_HAS_LibArchway
     ,m_oArchwayHandler(rKernelContext)
     ,m_oArchwayHandlerGUI(m_oArchwayHandler)
@@ -909,11 +908,11 @@ CApplication::CApplication(const IKernelContext& rKernelContext)
 	m_pScenarioManager->registerScenarioExporter(OVD_ScenarioExportContext_SaveMetabox, ".mxb", OVP_GD_ClassId_Algorithm_XMLScenarioExporter);
 
 
+	// TODO : register metabox scenario importer
 	m_pVisualizationManager = new CVisualizationManager(m_rKernelContext);
 	m_visualizationContext = dynamic_cast<OpenViBEVisualizationToolkit::IVisualizationContext*>(m_rKernelContext.getPluginManager().createPluginObject(OVP_ClassId_Plugin_VisualizationContext));
 	m_visualizationContext->setManager(m_pVisualizationManager);
 	m_pLogListenerDesigner = NULL;
-	m_pMetaboxLoader = new Mensia::CMetaboxLoader(m_rKernelContext);
 
 	m_rKernelContext.getConfigurationManager().createConfigurationToken("Player_ScenarioDirectory", "");
 	m_rKernelContext.getConfigurationManager().createConfigurationToken("__volatile_ScenarioDir", "");
@@ -930,8 +929,6 @@ CApplication::~CApplication(void)
 	}
 
 	m_rKernelContext.getPluginManager().releasePluginObject(m_visualizationContext);
-
-	delete m_pMetaboxLoader;
 }
 
 void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
@@ -1226,11 +1223,8 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 			}
 		}
 
-		if (m_pMetaboxLoader == NULL)
-		{
-			if (l_sTabLabel == GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-scenario_links_title_container"))) {
-				gtk_notebook_remove_page(l_pSidebar, l_iNotebookIndex);
-			}
+		if (l_sTabLabel == GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-scenario_links_title_container"))) {
+			gtk_notebook_remove_page(l_pSidebar, l_iNotebookIndex);
 		}
 	}
 

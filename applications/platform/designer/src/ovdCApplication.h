@@ -205,7 +205,6 @@ namespace OpenViBEDesigner
 
 		std::vector < OpenViBEDesigner::CInterfacedScenario* > m_vInterfacedScenario;
 		OpenViBE::uint32 m_ui32CurrentInterfacedScenarioIndex;
-		Mensia::CMetaboxLoader* m_pMetaboxLoader;
 		Mensia::ActivationTool::CActivationTool* m_pActivationTool;
 		std::vector <const OpenViBE::Plugins::IPluginObjectDesc*> m_vNewBoxes;
 		std::vector <const OpenViBE::Plugins::IPluginObjectDesc*> m_vUpdatedBoxes;

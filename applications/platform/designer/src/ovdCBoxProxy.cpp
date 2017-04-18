@@ -231,8 +231,9 @@ boolean CBoxProxy::isBoxAlgorithmPluginPresent(void) const
 {
 	if (m_pConstBox->getAlgorithmClassIdentifier() == OVP_ClassId_BoxAlgorithm_Metabox)
 	{
-		CString l_sMetaboxIdentifier = m_pConstBox->getAttributeValue(OVP_AttributeId_Metabox_Scenario);
-		CString l_sMetaboxScenarioPath = m_rKernelContext.getConfigurationManager().lookUpConfigurationTokenValue(CString("Metabox_Scenario_Path_For_") + l_sMetaboxIdentifier);
+		CIdentifier metaboxId;
+		metaboxId.fromString(m_pConstBox->getAttributeValue(OVP_AttributeId_Metabox_Identifier));
+		CString l_sMetaboxScenarioPath(m_rKernelContext.getMetaboxManager().getMetaboxFilePath(metaboxId));
 
 		return FS::Files::fileExists(l_sMetaboxScenarioPath.toASCIIString());
 	}
@@ -244,20 +245,21 @@ boolean CBoxProxy::isUpToDate(void) const
 	// TODO_JL Manage the updating stuff here
 	// one way would be to calculate the hashes inside the metaboxmanager and use that here
 
-	CIdentifier l_oBoxHashCode1;
-	CIdentifier l_oBoxHashCode2;
+	CIdentifier boxHashCode1;
+	CIdentifier boxHashCode2;
 	if (m_pConstBox->getAlgorithmClassIdentifier() == OVP_ClassId_BoxAlgorithm_Metabox)
 	{
-		CString l_sMetaboxIdentifier = m_pConstBox->getAttributeValue(OVP_AttributeId_Metabox_Scenario);
-		l_oBoxHashCode1.fromString(m_rKernelContext.getConfigurationManager().lookUpConfigurationTokenValue(CString("Metabox_Scenario_Hash_For_") + l_sMetaboxIdentifier));
+		CIdentifier metaboxId;
+		metaboxId.fromString(m_pConstBox->getAttributeValue(OVP_AttributeId_Metabox_Identifier));
+		boxHashCode1 = m_rKernelContext.getMetaboxManager().getMetaboxHash(metaboxId);
 	}
 	else
 	{
-		l_oBoxHashCode1 = m_rKernelContext.getPluginManager().getPluginObjectHashValue(m_pConstBox->getAlgorithmClassIdentifier());
+		boxHashCode1 = m_rKernelContext.getPluginManager().getPluginObjectHashValue(m_pConstBox->getAlgorithmClassIdentifier());
 	}
 
-	l_oBoxHashCode2.fromString(m_pConstBox->getAttributeValue(OV_AttributeId_Box_InitialPrototypeHashValue));
-	return l_oBoxHashCode1==OV_UndefinedIdentifier || (l_oBoxHashCode1!=OV_UndefinedIdentifier && l_oBoxHashCode1==l_oBoxHashCode2);
+	boxHashCode2.fromString(m_pConstBox->getAttributeValue(OV_AttributeId_Box_InitialPrototypeHashValue));
+	return boxHashCode1==OV_UndefinedIdentifier || (boxHashCode1!=OV_UndefinedIdentifier && boxHashCode1==boxHashCode2);
 }
 
 boolean CBoxProxy::isDeprecated(void) const
