@@ -124,13 +124,27 @@ namespace
 		{
 			switch(eBoxFlag)
 			{
-				case BoxFlag_CanAddInput:       m_oHash=m_oHash.toUInteger()^OpenViBE::CIdentifier(0x07507AC8, 0xEB643ACE).toUInteger(); break;
-				case BoxFlag_CanModifyInput:    m_oHash=m_oHash.toUInteger()^OpenViBE::CIdentifier(0x5C985376, 0x8D74CDB8).toUInteger(); break;
-				case BoxFlag_CanAddOutput:      m_oHash=m_oHash.toUInteger()^OpenViBE::CIdentifier(0x58DEA69B, 0x12411365).toUInteger(); break;
-				case BoxFlag_CanModifyOutput:   m_oHash=m_oHash.toUInteger()^OpenViBE::CIdentifier(0x6E162C01, 0xAC979F22).toUInteger(); break;
-				case BoxFlag_CanAddSetting:     m_oHash=m_oHash.toUInteger()^OpenViBE::CIdentifier(0xFA7A50DC, 0x2140C013).toUInteger(); break;
-				case BoxFlag_CanModifySetting:  m_oHash=m_oHash.toUInteger()^OpenViBE::CIdentifier(0x624D7661, 0xD8DDEA0A).toUInteger(); break;
-				case BoxFlag_IsDeprecated:      m_bIsDeprecated=true; break;
+				case BoxFlag_CanAddInput:
+					m_oHash=m_oHash.toUInteger()^OpenViBE::CIdentifier(0x07507AC8, 0xEB643ACE).toUInteger();
+					break;
+				case BoxFlag_CanModifyInput:
+					m_oHash=m_oHash.toUInteger()^OpenViBE::CIdentifier(0x5C985376, 0x8D74CDB8).toUInteger();
+					break;
+				case BoxFlag_CanAddOutput:
+					m_oHash=m_oHash.toUInteger()^OpenViBE::CIdentifier(0x58DEA69B, 0x12411365).toUInteger();
+					break;
+				case BoxFlag_CanModifyOutput:
+					m_oHash=m_oHash.toUInteger()^OpenViBE::CIdentifier(0x6E162C01, 0xAC979F22).toUInteger();
+					break;
+				case BoxFlag_CanAddSetting:
+					m_oHash=m_oHash.toUInteger()^OpenViBE::CIdentifier(0xFA7A50DC, 0x2140C013).toUInteger();
+					break;
+				case BoxFlag_CanModifySetting:
+					m_oHash=m_oHash.toUInteger()^OpenViBE::CIdentifier(0x624D7661, 0xD8DDEA0A).toUInteger();
+					break;
+				case BoxFlag_IsDeprecated:
+					m_bIsDeprecated=true;
+					break;
 				default:
 					return false;
 					break;
@@ -380,6 +394,7 @@ namespace
 	{
 		static_cast<CApplication*>(pUserData)->stopScenarioCB();
 	}
+
 	void play_pause_scenario_cb(::GtkButton* pButton, gpointer pUserData)
 	{
 		if(std::string(gtk_tool_button_get_stock_id(GTK_TOOL_BUTTON(pButton)))==GTK_STOCK_MEDIA_PLAY)
@@ -391,10 +406,12 @@ namespace
 			static_cast<CApplication*>(pUserData)->pauseScenarioCB();
 		}
 	}
+
 	void next_scenario_cb(::GtkButton* pButton, gpointer pUserData)
 	{
 		static_cast<CApplication*>(pUserData)->nextScenarioCB();
 	}
+
 	void forward_scenario_cb(::GtkButton* pButton, gpointer pUserData)
 	{
 		static_cast<CApplication*>(pUserData)->forwardScenarioCB();
@@ -654,12 +671,25 @@ namespace
 			{
 				switch(l_pApplication->getPlayer()->getStatus())
 				{
-					case PlayerStatus_Stop:    gtk_signal_emit_by_name(GTK_OBJECT(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-button_stop")), "clicked"); break;
-					case PlayerStatus_Pause:   while(l_pCurrentInterfacedScenario->m_ePlayerStatus != PlayerStatus_Pause) gtk_signal_emit_by_name(GTK_OBJECT(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-button_play_pause")), "clicked"); break;
-					case PlayerStatus_Step:          break;
-					case PlayerStatus_Play:    while(l_pCurrentInterfacedScenario->m_ePlayerStatus != PlayerStatus_Play)  gtk_signal_emit_by_name(GTK_OBJECT(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-button_play_pause")), "clicked"); break;
-					case PlayerStatus_Forward: gtk_signal_emit_by_name(GTK_OBJECT(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-button_forward")), "clicked"); break;
-					default: std::cout << "unhandled player status : " << l_pApplication->getPlayer()->getStatus() << " :(\n"; break;
+					case PlayerStatus_Stop:
+						gtk_signal_emit_by_name(GTK_OBJECT(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-button_stop")), "clicked");
+						break;
+					case PlayerStatus_Pause:
+						while(l_pCurrentInterfacedScenario->m_ePlayerStatus != PlayerStatus_Pause)
+							gtk_signal_emit_by_name(GTK_OBJECT(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-button_play_pause")), "clicked");
+						break;
+					case PlayerStatus_Step:
+						break;
+					case PlayerStatus_Play:
+						while(l_pCurrentInterfacedScenario->m_ePlayerStatus != PlayerStatus_Play)
+							gtk_signal_emit_by_name(GTK_OBJECT(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-button_play_pause")), "clicked");
+						break;
+					case PlayerStatus_Forward:
+						gtk_signal_emit_by_name(GTK_OBJECT(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-button_forward")), "clicked");
+						break;
+					default:
+						std::cout << "unhandled player status : " << l_pApplication->getPlayer()->getStatus() << " :(\n";
+						break;
 				}
 			}
 			else
@@ -809,6 +839,23 @@ namespace
 		catch(boost::interprocess::interprocess_exception) {}
 		return TRUE;
 	}
+
+	void zoom_in_scenario_cb(::GtkButton* pButton, gpointer pUserData)
+	{
+		static_cast<CApplication*>(pUserData)->zoomInCB();
+	}
+
+	void zoom_out_scenario_cb(::GtkButton* pButton, gpointer pUserData)
+	{
+		static_cast<CApplication*>(pUserData)->zoomOutCB();
+	}
+
+
+	void spinner_zoom_changed_cb(::GtkSpinButton* pButton, gpointer pUserData)
+	{
+		static_cast<CApplication*>(pUserData)->spinnerZoomChangedCB(static_cast<uint32_t>(gtk_spin_button_get_value(pButton)));
+	}
+
 }
 
 static ::GtkTargetEntry g_vTargetEntry[]= {
@@ -970,6 +1017,11 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-show_unstable")), "toggled", G_CALLBACK(refresh_search_no_data_cb), this);
 
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-scenario_configuration_button_configure")), "clicked", G_CALLBACK(button_configure_current_scenario_settings_cb), this);
+
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_zoomin")), "clicked",  G_CALLBACK(zoom_in_scenario_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_zoomout")), "clicked",  G_CALLBACK(zoom_out_scenario_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-zoom_spinner")), "value-changed",  G_CALLBACK(spinner_zoom_changed_cb), this);
+
 #if defined TARGET_HAS_LibArchway
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration")),       "clicked", G_CALLBACK(button_toggle_neurort_engine_configuration_cb),   this);
 	m_oArchwayHandlerGUI.m_pButtonOpenEngineConfigurationDialog = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration"));
@@ -1566,26 +1618,12 @@ CString CApplication::getWorkingDirectory(void)
 
 bool CApplication::hasRunningScenario(void)
 {
-	for(CInterfacedScenario* pInterfacedScenario : m_vInterfacedScenario)
-	{
-		if(pInterfacedScenario->m_pPlayer)
-		{
-			return true;
-		}
-	}
-	return false;
+	return std::any_of(m_vInterfacedScenario.begin(), m_vInterfacedScenario.end(), [](CInterfacedScenario* elem){ return elem->m_pPlayer != nullptr; });
 }
 
 bool CApplication::hasUnsavedScenario(void)
 {
-	for(CInterfacedScenario* pInterfacedScenario : m_vInterfacedScenario)
-	{
-		if(pInterfacedScenario->m_bHasBeenModified)
-		{
-			return true;
-		}
-	}
-	return false;
+	return std::any_of(m_vInterfacedScenario.begin(), m_vInterfacedScenario.end(), [](CInterfacedScenario* elem){ return elem->m_bHasBeenModified; });
 }
 
 CInterfacedScenario* CApplication::getCurrentInterfacedScenario(void)
@@ -1595,7 +1633,7 @@ CInterfacedScenario* CApplication::getCurrentInterfacedScenario(void)
 	{
 		return m_vInterfacedScenario[m_ui32CurrentInterfacedScenarioIndex];
 	}
-	return NULL;
+	return nullptr;
 }
 
 void CApplication::saveOpenedScenarios(void)
@@ -2291,10 +2329,10 @@ void CApplication::addRecentScenario(const std::string& scenarioPath)
 
 	if (m_RecentScenarios.size() > s_RecentFileNumber)
 	{
-		for (size_t i = s_RecentFileNumber; i < m_RecentScenarios.size(); i++)
+		for (auto it = m_RecentScenarios.begin() + s_RecentFileNumber ; it != m_RecentScenarios.end(); ++it)
 		{
-			gtk_container_remove(m_MenuOpenRecent, GTK_WIDGET(m_RecentScenarios[i]));
-			gtk_widget_destroy(GTK_WIDGET(m_RecentScenarios[i]));
+			gtk_container_remove(m_MenuOpenRecent, GTK_WIDGET(*it));
+			gtk_widget_destroy(GTK_WIDGET(*it));
 		}
 		m_RecentScenarios.erase(m_RecentScenarios.begin() + s_RecentFileNumber, m_RecentScenarios.end());
 	}
@@ -2356,17 +2394,12 @@ void CApplication::closeScenarioCB(CInterfacedScenario* pInterfacedScenario)
 	// Add scenario to recently opened:
 	this->addRecentScenario(pInterfacedScenario->m_sFileName.c_str());
 
-	vector<CInterfacedScenario*>::iterator i=m_vInterfacedScenario.begin();
-	while(i!=m_vInterfacedScenario.end() && *i!=pInterfacedScenario)
-	{
-		i++;
-	}
-
-	if(i!=m_vInterfacedScenario.end())
+	auto it = std::find(m_vInterfacedScenario.begin(), m_vInterfacedScenario.end(), pInterfacedScenario);
+	if(it != m_vInterfacedScenario.end())
 	{
 		// We need to erase the scenario from the list first, because deleting the scenario will launch a "switch-page"
 		// callback accessing this array with the identifier of the deleted scenario (if its not the last one) -> boom.
-		m_vInterfacedScenario.erase(i);
+		m_vInterfacedScenario.erase(it);
 		CIdentifier l_oScenarioIdentifier=pInterfacedScenario->m_oScenarioIdentifier;
 		delete pInterfacedScenario;
 		m_pScenarioManager->releaseScenario(l_oScenarioIdentifier);
@@ -2597,9 +2630,25 @@ void CApplication::stopScenarioCB(void)
 {
 	m_rKernelContext.getLogManager() << LogLevel_Debug << "stopScenarioCB\n";
 
-	if (this->getCurrentInterfacedScenario()->m_ePlayerStatus == PlayerStatus_Play || this->getCurrentInterfacedScenario()->m_ePlayerStatus == PlayerStatus_Pause || this->getCurrentInterfacedScenario()->m_ePlayerStatus == PlayerStatus_Forward)
+	OpenViBE::Kernel::EPlayerStatus currentState = this->getCurrentInterfacedScenario()->m_ePlayerStatus;
+	if (currentState == PlayerStatus_Play || currentState == PlayerStatus_Pause || currentState == PlayerStatus_Forward)
 	{
 		this->stopInterfacedScenarioAndReleasePlayer(this->getCurrentInterfacedScenario());
+
+		if(gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-toggle_button_loop"))))
+		{
+			switch(currentState)
+			{
+			case PlayerStatus_Play:
+				playScenarioCB();
+				break;
+			case PlayerStatus_Forward:
+				forwardScenarioCB();
+				break;
+			default:
+				break;
+			}
+		}
 	}
 }
 
@@ -3050,6 +3099,16 @@ void CApplication::changeCurrentScenario(int32 i32PageIndex)
 	{
 		m_vInterfacedScenario[i]->updateScenarioLabel();
 	}
+	// Reset zoom
+	if (getCurrentInterfacedScenario())
+	{
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-zoom_spinner")),
+								  round(getCurrentInterfacedScenario()->getScale()*100.0));
+	}
+	else
+	{
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-zoom_spinner")), 100);
+	}
 }
 
 void CApplication::reorderCurrentScenario(OpenViBE::uint32 i32NewPageIndex)
@@ -3061,3 +3120,24 @@ void CApplication::reorderCurrentScenario(OpenViBE::uint32 i32NewPageIndex)
 	this->changeCurrentScenario(i32NewPageIndex);
 }
 
+//Increase the zoom of the current scenario
+void CApplication::zoomInCB(void)
+{
+	gtk_spin_button_set_value(GTK_SPIN_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-zoom_spinner")),
+							  round(getCurrentInterfacedScenario()->getScale()*100.0) + 5);
+}
+
+//Decrease the zoom of the current scenario
+void CApplication::zoomOutCB(void)
+{
+	gtk_spin_button_set_value(GTK_SPIN_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-zoom_spinner")),
+							  round(getCurrentInterfacedScenario()->getScale()*100.0) - 5);
+}
+
+void CApplication::spinnerZoomChangedCB(uint32_t scalePercentage)
+{
+	if(getCurrentInterfacedScenario() != nullptr)
+	{
+		getCurrentInterfacedScenario()->setScale(static_cast<float64>(scalePercentage)/100.0);
+	}
+}

@@ -38,7 +38,7 @@ namespace OpenViBEDesigner
 
 		void initialize(OpenViBEDesigner::ECommandLineFlag eCommandLineFlags);
 
-		OpenViBE::boolean openScenario(const char* sFileName);
+		bool openScenario(const char* sFileName);
 
 		/** \name Drag and drop management */
 		//@{
@@ -71,8 +71,8 @@ namespace OpenViBEDesigner
 
 		OpenViBE::CString getWorkingDirectory(void);
 
-		OpenViBE::boolean hasRunningScenario(void);
-		OpenViBE::boolean hasUnsavedScenario(void);
+		bool hasRunningScenario(void);
+		bool hasUnsavedScenario(void);
 
 		OpenViBEDesigner::CInterfacedScenario* getCurrentInterfacedScenario(void);
 		void saveOpenedScenarios(void);
@@ -119,7 +119,7 @@ namespace OpenViBEDesigner
 
 		OpenViBE::Kernel::IPlayer* getPlayer(void);
 
-		OpenViBE::boolean createPlayer(void);
+		bool createPlayer(void);
 
 		void stopInterfacedScenarioAndReleasePlayer(OpenViBEDesigner::CInterfacedScenario* interfacedScenario);
 
@@ -128,15 +128,15 @@ namespace OpenViBEDesigner
 		/** \name Application management */
 		//@{
 
-		OpenViBE::boolean quitApplicationCB(void);
+		bool quitApplicationCB(void);
 		void aboutOpenViBECB(void);
 		void aboutScenarioCB(OpenViBEDesigner::CInterfacedScenario* pScenario);
 		void aboutLinkClickedCB(const gchar *url);
 
 		void browseDocumentationCB(void);
 		void reportIssueCB(void);
-		void windowStateChangedCB(OpenViBE::boolean bIsMaximized);
-		OpenViBE::boolean displayChangelogWhenAvailable();
+		void windowStateChangedCB(bool bIsMaximized);
+		bool displayChangelogWhenAvailable();
 
 		//@}
 
@@ -154,6 +154,9 @@ namespace OpenViBEDesigner
 		void CPUUsageCB(void);
 
 		//@}
+		void zoomInCB(void);//Call when a zoom in is required
+		void zoomOutCB(void);//Call when a zoom out is required
+		void spinnerZoomChangedCB(uint32_t scaleDelta);
 
 	public:
 
@@ -197,8 +200,8 @@ namespace OpenViBEDesigner
 		const gchar* m_sSearchTerm;
 
 		OpenViBE::uint64 m_ui64LastTimeRefresh;
-		OpenViBE::boolean m_bIsQuitting;
-		OpenViBE::boolean m_bIsNewVersion;
+		bool m_bIsQuitting;
+		bool m_bIsNewVersion;
 
 		std::vector < OpenViBEDesigner::CInterfacedScenario* > m_vInterfacedScenario;
 		OpenViBE::uint32 m_ui32CurrentInterfacedScenarioIndex;
