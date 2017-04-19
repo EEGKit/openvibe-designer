@@ -25,8 +25,6 @@ using namespace OpenViBE::Plugins;
 using namespace OpenViBEDesigner;
 using namespace std;
 
-#define OVP_ScenarioImportContext_OnLoadMetaboxImport OpenViBE::CIdentifier(0xED48480A, 0x9F6DBAA7)
-
 map<uint32, ::GdkColor> g_vColors;
 
 class CPluginObjectDescEnum
@@ -786,7 +784,6 @@ int go(int argc, char ** argv)
 							insertPluginObjectDesc_to_GtkTreeStore(*l_pKernelContext, cb_collector1.getPluginObjectDescMap(), app.m_pBoxAlgorithmTreeModel, app.m_vNewBoxes, app.m_vUpdatedBoxes, app.m_bIsNewVersion);
 							insertPluginObjectDesc_to_GtkTreeStore(*l_pKernelContext, cb_collector2.getPluginObjectDescMap(), app.m_pAlgorithmTreeModel, app.m_vNewBoxes, app.m_vUpdatedBoxes);
 
-							l_pKernelContext->getScenarioManager().registerScenarioImporter(OVP_ScenarioImportContext_OnLoadMetaboxImport, ".mxb", OVP_GD_ClassId_Algorithm_XMLScenarioImporter);
 							l_pKernelContext->getMetaboxManager().addMetaboxFromFiles(l_pKernelContext->getConfigurationManager().expand("${Kernel_Metabox}"));
 							std::map<std::string, const OpenViBE::Plugins::IPluginObjectDesc*> metaboxDescMap;
 							CIdentifier l_oIdentifier;
