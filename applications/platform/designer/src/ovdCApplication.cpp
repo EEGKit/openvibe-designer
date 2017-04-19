@@ -26,6 +26,7 @@
 #include <visualization-toolkit/ovviz_defines.h>
 #include <visualization-toolkit/ovvizIVisualizationContext.h>
 #include <ovp_global_defines.h>
+#include <fs/Files.h>
 
 #if defined TARGET_OS_Linux || defined TARGET_OS_MacOS
 #include <strings.h>
@@ -47,7 +48,6 @@ static const unsigned int s_RecentFileNumber = 10;
 #include "ovdCInterfacedScenario.h"
 #include "ovdCApplication.h"
 #include "ovdCLogListenerDesigner.h"
-#include <metabox-loader/mCMetaboxLoader.h>
 
 #include "visualization/ovdCVisualizationManager.h"
 

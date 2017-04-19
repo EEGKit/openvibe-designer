@@ -12,7 +12,6 @@ endif()
 
 file(GLOB_RECURSE source_files src/*.cpp src/visualization/*.cpp src/dynamic_settings/*.cpp)
 
-include("FindSourceCommonMetaboxLoader")
 include("FindSourceDependencyJSON")
 
 # Generate launch script

@@ -14,7 +14,6 @@
 #include "ovdCAboutScenarioDialog.h"
 #include "ovdCSettingEditorDialog.h"
 #include "ovdCCommentEditorDialog.h"
-#include <metabox-loader/mCMetaboxLoader.h>
 
 #include <vector>
 #include <iostream>

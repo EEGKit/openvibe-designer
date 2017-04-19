@@ -7,7 +7,6 @@
 #include <algorithm>
 
 #include <system/ovCTime.h>
-#include <metabox-loader/mCMetaboxLoader.h>
 #include <openvibe/kernel/metabox/ovIMetaboxManager.h>
 #include "ovd_base.h"
 
