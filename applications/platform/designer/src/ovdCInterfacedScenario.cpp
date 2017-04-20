@@ -2200,17 +2200,17 @@ void CInterfacedScenario::scenarioDrawingAreaDragDataReceivedCB(::GdkDragContext
 		else if (l_oBoxAlgorithmClassIdentifier == OVP_ClassId_BoxAlgorithm_Metabox)
 		{
 			// extract the name of the metabox from the drag data string
-			std::string l_sMetaboxIdentifier = l_sSelectionData.substr(l_sSelectionData.find(')') + 1, string::npos);
-			l_oBoxIdentifier.fromString(CString(l_sMetaboxIdentifier.c_str()));
+			CIdentifier metaboxId;
+			metaboxId.fromString(CString(l_sSelectionData.substr(l_sSelectionData.find(')') + 1).c_str()));
+
 			//m_rKernelContext.getLogManager() << LogLevel_Info << "This is a metabox with ID " << l_sMetaboxIdentifier.c_str() << "\n";
+			l_pPOD = m_rKernelContext.getMetaboxManager().getMetaboxObjectDesc(metaboxId);
 
 			// insert a box into the scenario, initialize it from the proxy-descriptor from the metabox loader
-			m_rScenario.addBox(l_oBoxIdentifier, *static_cast<const OpenViBE::Plugins::IBoxAlgorithmDesc*>(m_rKernelContext.getMetaboxManager().getMetaboxObjectDesc(l_oBoxIdentifier)), OV_UndefinedIdentifier);
+			m_rScenario.addBox(l_oBoxIdentifier, *static_cast<const OpenViBE::Plugins::IBoxAlgorithmDesc*>(l_pPOD), OV_UndefinedIdentifier);
 
 			l_pBox = m_rScenario.getBoxDetails(l_oBoxIdentifier);
-			l_pPOD = m_rKernelContext.getMetaboxManager().getMetaboxObjectDesc(l_oBoxIdentifier);
-
-			l_pBox->addAttribute(OVP_AttributeId_Metabox_Identifier, l_oBoxIdentifier.toString());
+			l_pBox->addAttribute(OVP_AttributeId_Metabox_Identifier, metaboxId.toString());
 		}
 		else
 		{
