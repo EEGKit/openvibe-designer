@@ -1,7 +1,5 @@
 #include "ovdCAboutScenarioDialog.h"
 
-#include <random>
-
 using namespace OpenViBEDesigner;
 using namespace OpenViBE;
 using namespace OpenViBE::Plugins;
@@ -22,11 +20,7 @@ namespace
 {
 	void buttonMetaboxReset_clicked(GtkWidget *widget, gpointer data)
 	{
-		std::random_device rd;
-		std::default_random_engine rng(rd());
-		std::uniform_int_distribution<uint64_t> uni(0, std::numeric_limits<uint64_t>::max() - 1); // This exclude OV_UndefinedIdentifier value
-		CIdentifier randId(uni(rng));
-		gtk_entry_set_text(GTK_ENTRY(data), randId.toString().toASCIIString());
+		gtk_entry_set_text(GTK_ENTRY(data), CIdentifier::random().toString().toASCIIString());
 	}
 }
 

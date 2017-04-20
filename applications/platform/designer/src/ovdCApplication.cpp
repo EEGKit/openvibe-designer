@@ -16,7 +16,6 @@
 #include <cstring>
 #include <cstdlib>
 #include <algorithm>
-#include <random>
 
 #if defined TARGET_OS_Windows
 #include "system/WindowsUtilities.h"
@@ -1223,10 +1222,6 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 				gtk_notebook_remove_page(l_pSidebar, l_iNotebookIndex);
 			}
 		}
-
-		if (l_sTabLabel == GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-scenario_links_title_container"))) {
-			gtk_notebook_remove_page(l_pSidebar, l_iNotebookIndex);
-		}
 	}
 
 	// gtk_window_set_icon_name(GTK_WINDOW(m_pMainWindow), "ov-logo");
@@ -2028,11 +2023,7 @@ void CApplication::saveScenarioCB(CInterfacedScenario* pScenario)
 
 			if (!l_rScenario.hasAttribute(OVP_AttributeId_Metabox_Identifier))
 			{
-				std::random_device rd;
-				std::default_random_engine rng(rd());
-				std::uniform_int_distribution<uint64_t> uni(0, std::numeric_limits<uint64_t>::max() - 1); // This exclude OV_UndefinedIdentifier value
-				CIdentifier randId(uni(rng));
-				l_rScenario.setAttributeValue(OVP_AttributeId_Metabox_Identifier, randId.toString().toASCIIString());
+				l_rScenario.setAttributeValue(OVP_AttributeId_Metabox_Identifier, CIdentifier::random().toString().toASCIIString());
 			}
 
 			m_rKernelContext.getLogManager() << LogLevel_Trace << "This metaboxes Hash : " << l_oMetaboxProto.m_oHash << "\n";
