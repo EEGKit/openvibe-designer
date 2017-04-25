@@ -16,6 +16,14 @@ CAboutScenarioDialog::~CAboutScenarioDialog(void)
 {
 }
 
+namespace
+{
+	void buttonMetaboxReset_clicked(GtkWidget *widget, gpointer data)
+	{
+		gtk_entry_set_text(GTK_ENTRY(data), CIdentifier::random().toString().toASCIIString());
+	}
+}
+
 boolean CAboutScenarioDialog::run(void)
 {
 	::GtkBuilder* l_pInterface=gtk_builder_new(); // glade_xml_new(m_sGUIFilename.toASCIIString(), "scenario_about", NULL);
@@ -32,6 +40,11 @@ boolean CAboutScenarioDialog::run(void)
 	::GtkWidget* l_pAddedSoftwareVersion=GTK_WIDGET(gtk_builder_get_object(l_pInterface, "scenario_about-entry_added_software_version"));
 	::GtkWidget* l_pUpdatedSoftwareVersion=GTK_WIDGET(gtk_builder_get_object(l_pInterface, "scenario_about-entry_update_software_version"));
 
+	::GtkWidget* l_pMetaboxId=GTK_WIDGET(gtk_builder_get_object(l_pInterface, "scenario_about-entry_metabox_id"));
+
+	::GtkWidget* l_pResetMetaboxId=GTK_WIDGET(gtk_builder_get_object(l_pInterface, "scenario_about-button_reset_metabox_id"));
+	gulong signalHandlerId = g_signal_connect(G_OBJECT(l_pResetMetaboxId), "clicked", G_CALLBACK(buttonMetaboxReset_clicked), l_pMetaboxId);
+
 	::GtkWidget* l_pShortDescription = GTK_WIDGET(gtk_builder_get_object(l_pInterface, "scenario_about-textview_short_description"));
 	::GtkWidget* l_pDetailedDescription = GTK_WIDGET(gtk_builder_get_object(l_pInterface, "scenario_about-textview_detailed_description"));
 
@@ -46,6 +59,16 @@ boolean CAboutScenarioDialog::run(void)
 	gtk_entry_set_text(GTK_ENTRY(l_pAddedSoftwareVersion), m_rScenario.getAttributeValue(OV_AttributeId_Scenario_AddedSoftwareVersion).toASCIIString());
 	gtk_entry_set_text(GTK_ENTRY(l_pUpdatedSoftwareVersion), m_rScenario.getAttributeValue(OV_AttributeId_Scenario_UpdatedSoftwareVersion).toASCIIString());
 
+	if (m_rScenario.isMetabox())
+	{
+		gtk_entry_set_text(GTK_ENTRY(l_pMetaboxId), m_rScenario.getAttributeValue(OVP_AttributeId_Metabox_Identifier).toASCIIString());
+	}
+	else
+	{
+		gtk_widget_set_sensitive (l_pMetaboxId, FALSE);
+		gtk_widget_set_sensitive (l_pResetMetaboxId, FALSE);
+	}
+
 	GtkTextBuffer* l_pShortDescriptionBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(l_pShortDescription));
 	gtk_text_buffer_set_text(l_pShortDescriptionBuffer, m_rScenario.getAttributeValue(OV_AttributeId_Scenario_ShortDescription).toASCIIString(), -1);
 	GtkTextBuffer* l_pDetailedDescriptionBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(l_pDetailedDescription));
@@ -53,6 +76,7 @@ boolean CAboutScenarioDialog::run(void)
 
 	gtk_dialog_run(GTK_DIALOG(l_pDialog));
 
+	g_signal_handler_disconnect (G_OBJECT(l_pResetMetaboxId), signalHandlerId);
 	m_rScenario.setAttributeValue(OV_AttributeId_Scenario_Name, gtk_entry_get_text(GTK_ENTRY(l_pName)));
 	m_rScenario.setAttributeValue(OV_AttributeId_Scenario_Author, gtk_entry_get_text(GTK_ENTRY(l_pAuthorName)));
 	m_rScenario.setAttributeValue(OV_AttributeId_Scenario_Company, gtk_entry_get_text(GTK_ENTRY(l_pAuthorCompanyName)));
@@ -61,6 +85,21 @@ boolean CAboutScenarioDialog::run(void)
 	m_rScenario.setAttributeValue(OV_AttributeId_Scenario_DocumentationPage, gtk_entry_get_text(GTK_ENTRY(l_pDocumentationPage)));
 	m_rScenario.setAttributeValue(OV_AttributeId_Scenario_AddedSoftwareVersion, gtk_entry_get_text(GTK_ENTRY(l_pAddedSoftwareVersion)));
 	m_rScenario.setAttributeValue(OV_AttributeId_Scenario_UpdatedSoftwareVersion, gtk_entry_get_text(GTK_ENTRY(l_pUpdatedSoftwareVersion)));
+
+	if (m_rScenario.isMetabox())
+	{
+		CString textId(gtk_entry_get_text(GTK_ENTRY(l_pMetaboxId)));
+		CIdentifier cid;
+		if (!cid.fromString(textId))
+		{
+			m_rKernelContext.getLogManager() << LogLevel_Error << "Invalid identifier " << textId << " is not in the \"(0x[0-9a-f]{1-8}, 0x[0-9a-f]{1-8})\" format. ";
+			m_rKernelContext.getLogManager() << "Reverting to " << m_rScenario.getAttributeValue(OVP_AttributeId_Metabox_Identifier).toASCIIString() << ".\n";
+		}
+		else
+		{
+			m_rScenario.setAttributeValue(OVP_AttributeId_Metabox_Identifier, textId);
+		}
+	}
 
 	GtkTextIter l_pTextIterStart;
 	GtkTextIter l_pTextIterEnd;
