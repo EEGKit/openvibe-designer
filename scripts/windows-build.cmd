@@ -18,7 +18,7 @@ goto parameter_parse
 	echo Usage: windows-build.cmd 
 	echo --sdk <path to openvibe SDK> 
 	echo --dep <path to openvibe dependencies> 
-	echo [--oem-distribution <name of the userdata sub directory>] 
+	echo [--oem-distribution <name of the distribution>] 
 	echo [-h ^| --help]
 	echo [--no-pause]
 	echo [-d^|--debug]

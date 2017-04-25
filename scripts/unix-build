@@ -16,6 +16,7 @@ function usage()
 		echo "--install-dir=<dirname> : binaries deployment directory"
 		echo "--test-data-dir=<dirname> : test data directory"
 		echo "--sdk=<dirname> : path to the Openvibe SDK"
+		echo "--oem-distribution=<name of the oem distribution> : distribution name, can be openvibe or mensia"
 }
 
 # Script starting point
@@ -28,6 +29,7 @@ ov_build_dir="${ov_script_dir}/../build/build-${ov_build_type}"
 ov_install_dir="${ov_script_dir}/../build/dist"
 ov_test_data_dir="${ov_script_dir}/../dependencies/test-data"
 ov_sdk_dir="${ov_sdk_dir}/../dependencies/scripts"
+ov_oem_distribution="openvibe"
 verbose="OFF"
 
 # Parse arguments
@@ -58,11 +60,15 @@ do
 			ov_test_data_dir="${i#*=}"
 			shift
 			;;
-        --sdk=*)
-            ov_sdk_dir="${i#*=}"
-            shift
-            ;;
-		*)
+    --sdk=*)
+      ov_sdk_dir="${i#*=}"
+      shift
+      ;;
+    --oem-distribution=*)
+      ov_oem_distribution="${i#*=}"
+      shift
+      ;;
+    *)
 			echo "ERROR: Unknown parameter $i"
 			exit 1
 			;;
@@ -90,6 +96,8 @@ echo "[build-type] = ${ov_build_type}"
 echo "[build-dir] = ${ov_build_dir}"
 echo "[install-dir] = ${ov_install_dir}"
 echo "[test-data-dir] = ${ov_test_data_dir}"
+echo "[sdk] = ${ov_sdk_dir}"
+echo "[oem-distribution] = ${ov_oem_distribution}"
 echo "**************************************"
 echo ""
 echo ""
@@ -115,8 +123,9 @@ cmake ${ov_script_dir}/.. \
 		-DCMAKE_BUILD_TYPE=${ov_build_type} \
 		-DCMAKE_INSTALL_PREFIX=${ov_install_dir} \
 		-DOVT_TEST_DATA_DIR=${ov_test_data_dir} \
-        -DFlag_VerboseOutput=${verbose} \
-        -DOPENVIBE_SDK_PATH=${ov_sdk_dir}
+    -DFlag_VerboseOutput=${verbose} \
+    -DOPENVIBE_SDK_PATH=${ov_sdk_dir} \
+    -DOEM_DISTRIBUTION=${ov_oem_distribution}
 
 
 
