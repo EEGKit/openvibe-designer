@@ -9,13 +9,22 @@ set PauseCommand=pause
 set RefreshCMake=F
 set PathSDK=%script_dir%\..\dependencies\openvibe-sdk-release
 set PathDep=%script_dir%\..\dependencies
-set UserDataSubdir=OpenVIBE
+set OEMDistribution=openvibe
 set VerboseOuptut=OFF
 
 goto parameter_parse
 
 :print_help
-	echo Usage: windows-build.cmd --sdk <path to openvibe SDK> --dep <path to openvibe dependencies> [--userdata-subdir <name of the userdata sub directory>] [-h ^| --help] [--no-pause] [-d^|--debug] [-r^|--release] [-f^|--force] [-v^|--verbose]
+	echo Usage: windows-build.cmd 
+	echo --sdk <path to openvibe SDK> 
+	echo --dep <path to openvibe dependencies> 
+	echo [--oem-distribution <name of the userdata sub directory>] 
+	echo [-h ^| --help]
+	echo [--no-pause]
+	echo [-d^|--debug]
+	echo [-r^|--release]
+	echo [-f^|--force]
+	echo [-v^|--verbose]
 	echo -- Build Type option can be : --release (-r) or --debug (-d). Default is Release.
 	echo -- --force option will force the cmake re-run
 	exit /b
@@ -54,10 +63,10 @@ for %%A in (%*) DO (
 	) else if "!next!"=="DEP" (
 		set PathDep=%%A
 		set next=
-	) else if /i "%%A"=="--userdata-subdir" (
-    set next=USERDATA_SUBDIR
-  ) else if "!next!"=="USERDATA_SUBDIR" (
-    set UserDataSubdir=%%A
+	) else if /i "%%A"=="--oem-distribution" (
+    set next=OEM_DISTRIBUTION
+  ) else if "!next!"=="OEM_DISTRIBUTION" (
+    set OEMDistribution=%%A
     set next=
 	)
 )
@@ -92,7 +101,7 @@ echo Build type is set to: %BuildType%. SDK is located at %sdk_dir%
 
 if not exist "%build_dir%\CMakeCache.txt" set RefreshCMake=T
 if "%RefreshCMake%"=="T" (
-	cmake -DFlag_VerboseOutput=%VerboseOutput% %script_dir%\.. -G"Ninja" -DCMAKE_BUILD_TYPE=!BuildType! -DCMAKE_INSTALL_PREFIX=!install_dir! -DOPENVIBE_SDK_PATH=!sdk_dir! -DCV_DEPENDENCIES_PATH=!dep_dir! -DOV_CONFIG_SUBDIR=%UserDataSubdir%
+	cmake -DFlag_VerboseOutput=%VerboseOutput% %script_dir%\.. -G"Ninja" -DCMAKE_BUILD_TYPE=!BuildType! -DCMAKE_INSTALL_PREFIX=!install_dir! -DOPENVIBE_SDK_PATH=!sdk_dir! -DCV_DEPENDENCIES_PATH=!dep_dir! -DOEM_DISTRIBUTION=%OEMDistribution%
 
 )
 

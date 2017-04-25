@@ -30,6 +30,7 @@ SET(OV_GLOBAL_VERSION_STRING "${OV_GLOBAL_VERSION_MAJOR}.${OV_GLOBAL_VERSION_MIN
 
 OPTION(Flag_VerboseOutput "Verbose CMake output" OFF)
 OPTION(Flag_SilentConsole "Disable logs to console in Archway" ON)
+SET(OEM_DISTRIBUTION "openvibe" CACHE STRING "The OEM distribution for this build, can be openvibe or mensia")
 
 SET(OV_CUSTOM_DEPENDENCIES_PATH "${CMAKE_SOURCE_DIR}/dependencies")
 SET(OV_SOURCE_DEPENDENCIES_PATH "${CMAKE_SOURCE_DIR}/dependencies-source")
@@ -41,9 +42,26 @@ ELSE()
   SET(OPENVIBE_SDK_PATH "${OV_CUSTOM_DEPENDENCIES_PATH}/openvibe-sdk-release" CACHE STRING "")
 ENDIF()
 
+
 SET(CV_DEPENDENCIES_PATH "${CMAKE_SOURCE_DIR}/dependencies" CACHE STRING "")
-SET(OV_CONFIG_SUBDIR "OpenVIBE" CACHE STRING "Subdirectory under user directory when configuration and logs will be saved")
+
+
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake-modules;${OPENVIBE_SDK_PATH}/share")
+
+
+# We deduce the branding from the OEM_DISTRIBUTION
+IF(OEM_DISTRIBUTION STREQUAL "openvibe")
+	SET(OV_CONFIG_SUBDIR "OpenVIBE")
+	SET(BRAND_NAME "OpenViBE")
+	SET(STUDIO_NAME "Designer")
+ELSEIF(OEM_DISTRIBUTION STREQUAL "mensia")
+	SET(OV_CONFIG_SUBDIR "mensia")
+	SET(BRAND_NAME "NeuroRT")
+	SET(STUDIO_NAME "Studio")
+ELSE()
+	MESSAGE(FATAL_ERROR "OEM_DISTRIBUTION unrocognized (${OEM_DISTRIBUTION}) ! CMake cannot deduce the brand and product names. ")
+ENDIF()
+
 
 INCLUDE("OvMessages")
 
@@ -154,9 +172,6 @@ ENDIF() # WIN32
 
 ###################################################################################
 
-SET(OEM_DISTRIBUTION "mensia")
-SET(INSTALL_EXE OFF)
-
 # The user files will be stored in .../OV_CONFIG_SUBDIR folder
 ADD_DEFINITIONS("-DOV_PROJECT_NAME=\"openvibe\"")
 ADD_DEFINITIONS("-DOV_CONFIG_SUBDIR=\"${OV_CONFIG_SUBDIR}\"")
@@ -235,17 +250,6 @@ IF(EXISTS "${CMAKE_SOURCE_DIR}/CustomCMakeLists.txt")
 ENDIF()
 
 #################################################################
-# We deduce the branding from the OEM_DISTRIBUTION
-IF(OEM_DISTRIBUTION STREQUAL "openvibe")
-	SET(BRAND_NAME "OpenViBE")
-	SET(STUDIO_NAME "Designer")
-ELSEIF(OEM_DISTRIBUTION STREQUAL "mensia")
-	SET(BRAND_NAME "NeuroRT")
-	SET(STUDIO_NAME "Studio")
-ELSE()
-	MESSAGE(FATAL_ERROR "OEM_DISTRIBUTION unrocognized (${OEM_DISTRIBUTION}) ! CMake cannot deduce the brand and product names. ")
-ENDIF()
-
 string(TOLOWER ${BRAND_NAME} LOWER_BRAND_NAME)
 string(TOLOWER ${STUDIO_NAME} LOWER_STUDIO_NAME)
 ADD_DEFINITIONS(-DBRAND_NAME="${BRAND_NAME}")
