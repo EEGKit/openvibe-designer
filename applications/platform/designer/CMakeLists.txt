@@ -14,12 +14,11 @@ file(GLOB_RECURSE source_files src/*.cpp src/visualization/*.cpp src/dynamic_set
 
 include("FindSourceDependencyJSON")
 
+set(source_files "${source_files};${CMAKE_INSTALL_FULL_DATADIR}/resource-files/${LOWER_BRAND_NAME}-${LOWER_STUDIO_NAME}.rc")
+add_executable(${PROJECT_NAME} ${ENTRYPOINT} ${source_files})
+
 # Generate launch script
 OV_INSTALL_LAUNCH_SCRIPT(SCRIPT_PREFIX "${LOWER_BRAND_NAME}-${LOWER_STUDIO_NAME}" EXECUTABLE_NAME "${PROJECT_NAME}" ICON_PATH "${OV_ICON_PATH}/designer.ico")
-
-set(source_files "${source_files};${CMAKE_INSTALL_FULL_DATADIR}/resource-files/${LOWER_BRAND_NAME}-${LOWER_STUDIO_NAME}.rc")
-
-add_executable(${PROJECT_NAME} ${ENTRYPOINT} ${source_files})
 
 SET(INCLUDED_CERTIVIBE_COMPONENTS BASE ALLPLUGINS ALLMODULES DEPENDENCIES)
 include("AddCertivibeComponents")
