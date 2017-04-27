@@ -1,5 +1,5 @@
 PROJECT(mensia-advanced-visualization)
-MESSAGE(STATUS "Now building ${PROJECT_NAME} ${PROJECT_VERSION} (${PROJECT_BRANCH}/${PROJECT_COMMITHASH})" )
+MESSAGE(STATUS "Now building ${PROJECT_NAME} ${PROJECT_VERSION} (${OV_PROJECT_BRANCH}~${OV_PROJECT_COMMITHASH})" )
 
 INCLUDE_DIRECTORIES("include/mensia/")
 INCLUDE_DIRECTORIES("include/mensia/advanced-visualization")
