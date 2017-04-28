@@ -545,15 +545,10 @@ CInterfacedScenario::CInterfacedScenario(const IKernelContext& rKernelContext, C
 	,m_ui32NormalFontSize(0)
 {
 
-	m_pGUIBuilder=gtk_builder_new(); // glade_xml_new(m_sGUIFilename.c_str(), "openvibe_scenario_notebook_title", NULL);
+	m_pGUIBuilder=gtk_builder_new();
 	gtk_builder_add_from_file(m_pGUIBuilder, m_sGUIFilename.c_str(), NULL);
 	gtk_builder_connect_signals(m_pGUIBuilder, NULL);
 
-//	m_pSettingsGUIBuilder=gtk_builder_new(); // glade_xml_new(m_sGUIFilename.c_str(), "openvibe_scenario_notebook_title", NULL);
-//	gtk_builder_add_from_file(m_pSettingsGUIBuilder, m_sGUISettingsFilename.c_str(), NULL);
-
-	// We are going to use this builder _a lot_, so we read it to a string in hope of speeding things up
-	// note that it does not really help that much but at least we feel good for not spinning the disk for nothing
 	std::ifstream l_oSettingGUIFilestream;
 	FS::Files::openIFStream(l_oSettingGUIFilestream, m_sGUISettingsFilename.c_str());
 	m_sSerializedSettingGUIXML = std::string((std::istreambuf_iterator<char>(l_oSettingGUIFilestream)), std::istreambuf_iterator<char>());
@@ -573,16 +568,6 @@ CInterfacedScenario::CInterfacedScenario(const IKernelContext& rKernelContext, C
 			m_mStreamType[m_rKernelContext.getTypeManager().getTypeName(l_oCurrentTypeIdentifier).toASCIIString()]=l_oCurrentTypeIdentifier;
 		}
 	}
-
-	/*
-	m_pBuilder=gtk_builder_new(); // glade_xml_new(m_sGUIFilename.c_str(), "openvibe_scenario_notebook_scrolledwindow", NULL);
-	gtk_builder_add_from_file(m_pBuilder, m_sGUIFilename.c_str(), NULL);
-	gtk_builder_connect_signals(m_pBuilder, NULL);
-
-	m_pBuilder=gtk_builder_new(); // glade_xml_new(m_sGUIFilename.c_str(), "tooltip", NULL);
-	gtk_builder_add_from_file(m_pBuilder, m_sGUIFilename.c_str(), NULL);
-	gtk_builder_connect_signals(m_pBuilder, NULL);
-	*/
 
 	m_pNotebookPageTitle=GTK_WIDGET(gtk_builder_get_object(m_pGUIBuilder, "openvibe_scenario_notebook_title"));
 	m_pNotebookPageContent=GTK_WIDGET(gtk_builder_get_object(m_pGUIBuilder, "openvibe_scenario_notebook_scrolledwindow"));
@@ -2572,8 +2557,6 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 								char l_sCompleteName[1024];
 
 								gtk_menu_add_separator_menu_item_with_condition(!m_vBoxContextMenuCB.empty(), l_pMenu);
-								gtk_menu_shell_append(GTK_MENU_SHELL(l_pMenu), gtk_menu_item_new_with_label(l_pBox->getIdentifier().toString().toASCIIString()));
-
 								// -------------- INPUTS --------------
 
 								bool l_bFlagCanAddInput=l_pBox->hasAttribute(OV_AttributeId_Box_FlagCanAddInput);
@@ -2752,15 +2735,6 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 									gtk_menu_item_set_submenu(GTK_MENU_ITEM(l_pMenuItemSetting), GTK_WIDGET(l_pMenuSetting));
 								}
 
-								// -------------- PROCESSING UNIT --------------
-#if 0
-								gtk_menu_add_new_image_menu_item(l_pMenu, l_pMenuItemProcessUnit, GTK_STOCK_EXECUTE, "process unit", NULL);
-								::GtkMenu* l_pMenuProcessingUnit=GTK_MENU(gtk_menu_new());
-								gtk_menu_add_new_image_menu_item(l_pMenuProcessingUnit, l_pMenuProcessingUnitDefault, GTK_STOCK_HOME, "default", NULL);
-								gtk_menu_add_separator_menu_item(l_pMenuProcessingUnit);
-								gtk_menu_add_new_image_menu_item(l_pMenuProcessingUnit, l_pMenuProcessingUnitAdd, GTK_STOCK_ADD, "new...", NULL);
-								gtk_menu_item_set_submenu(GTK_MENU_ITEM(l_pMenuItemProcessUnit), GTK_WIDGET(l_pMenuProcessingUnit));
-#endif
 								// -------------- ABOUT / RENAME --------------
 
 								gtk_menu_add_separator_menu_item_with_condition(!m_vBoxContextMenuCB.empty(), l_pMenu);

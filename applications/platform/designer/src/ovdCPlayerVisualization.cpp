@@ -18,12 +18,6 @@ static ::GtkTargetEntry targets [] =
 	{ (gchar*)"text/plain", 0, 0 },
 };
 
-/*
-static void dummy_callback(::GtkWidget*)
-{
-}
-*/
-
 static void delete_window_manager_window_cb(::GtkWidget* pWidget, GdkEvent*, gpointer data)
 {
 	CPlayerVisualization* l_pVisualization = reinterpret_cast<CPlayerVisualization*>(data);
@@ -234,8 +228,8 @@ void CPlayerVisualization::init(void)
 			//retrieve its size
 			gtk_window_set_default_size(
 				GTK_WINDOW(l_pTreeWidget),
-				pVisualizationWidget->getWidth(),
-				pVisualizationWidget->getHeight());
+				static_cast<int>(pVisualizationWidget->getWidth()),
+				static_cast<int>(pVisualizationWidget->getHeight()));
 			//set its title
 			gtk_window_set_title(GTK_WINDOW(l_pTreeWidget), (const char*)pVisualizationWidget->getName());
 
@@ -260,16 +254,6 @@ void CPlayerVisualization::init(void)
 	{
 		gtk_widget_show(l_pTreeWidget);
 	}
-
-#if 0
-	//*** moved to setWidget() ***
-	//resize widgets once they are allocated : this is the case when they are shown on an expose event
-	//FIXME : perform resizing only once (when it is done as many times as there are widgets in the tree here)
-	if(l_pTreeWidget != NULL)
-	{
-		gtk_signal_connect(GTK_OBJECT(l_pTreeWidget), "expose-event", G_CALLBACK(widget_expose_event_cb), this);
-	}
-#endif
 
 	return l_pTreeWidget;
 }
@@ -456,21 +440,9 @@ boolean CPlayerVisualization::parentWidgetBox(IVisualizationWidget* pWidget, ::G
 		//create a top level window
 		::GtkWidget* l_pWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 		m_vWindows.push_back(GTK_WINDOW(l_pWindow));
-#if 1
 		uint64 l_ui64DefaultWidth = m_rKernelContext.getConfigurationManager().expandAsUInteger("${Designer_UnaffectedVisualizationWindowWidth}", 400);
 		uint64 l_ui64DefaultHeight = m_rKernelContext.getConfigurationManager().expandAsUInteger("${Designer_UnaffectedVisualizationWindowHeight}", 400);
-#else
-		//one could also choose to initialize unaffected windows with the size of user-created windows
-		//=>look for an existing window and get its size from its attributes
-		CIdentifier l_oVisualizationWindowIdentifier;
-		if(m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowIdentifier, EVisualizationWidget_VisualizationWindow) == true)
-		{
-			IVisualizationWidget* l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowIdentifier);
-			TAttributeHandler l_oAttributeHandler(*l_pVisualizationWindow);
-			l_ui64DefaultWidth = l_oAttributeHandler.getAttributeValue<int>(OVD_AttributeId_VisualizationWindow_Width);
-			l_ui64DefaultHeight = l_oAttributeHandler.getAttributeValue<int>(OVD_AttributeId_VisualizationWindow_Height);
-		}
-#endif
+
 		gtk_window_set_default_size(GTK_WINDOW(l_pWindow), (gint)l_ui64DefaultWidth, (gint)l_ui64DefaultHeight);
 		//set its title
 		gtk_window_set_title(GTK_WINDOW(l_pWindow), (const char*)pWidget->getName());
