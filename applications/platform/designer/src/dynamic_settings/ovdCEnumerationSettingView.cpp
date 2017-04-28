@@ -46,8 +46,7 @@ CEnumerationSettingView::CEnumerationSettingView(OpenViBE::Kernel::IBox &rBox, O
 	gtk_combo_box_set_wrap_width(m_pComboBox, 0);
 	gtk_list_store_clear(l_pList);
 
-	size_t i;
-	for(i = 0; i < l_vEntries.size(); i++)
+	for (size_t i = 0; i < l_vEntries.size(); i++)
 	{
 		gtk_list_store_append(l_pList, &l_oListIter);
 		gtk_list_store_set(l_pList, &l_oListIter, 0, l_vEntries[i].c_str(), -1);
@@ -85,7 +84,7 @@ void CEnumerationSettingView::setValue(const OpenViBE::CString &rValue)
 		::GtkTreeIter l_oListIter;
 		::GtkListStore* l_pList = GTK_LIST_STORE(gtk_combo_box_get_model(m_pComboBox));
 		int valuesInModel = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(l_pList), NULL);
-		if (valuesInModel == m_mEntriesIndex.size())
+		if (valuesInModel == static_cast<int>(m_mEntriesIndex.size()))
 		{
 			gtk_list_store_append(l_pList, &l_oListIter);
 			valuesInModel += 1;
