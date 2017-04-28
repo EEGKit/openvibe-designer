@@ -33,7 +33,7 @@ namespace
 	{
 		vector< ::GtkWidget* > l_vWidget;
 		gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(pEntry))), collect_widget_cb, &l_vWidget);
-		::GtkToggleButton* l_pWidget=GTK_TOGGLE_BUTTON(l_vWidget[0]);
+		::GtkToggleButton* l_pWidget=GTK_TOGGLE_BUTTON(l_vWidget[1]);
 
 		std::string l_sEntryValue=::gtk_entry_get_text(pEntry);
 		if(l_sEntryValue=="true")
@@ -56,7 +56,7 @@ namespace
 	{
 		vector< ::GtkWidget* > l_vWidget;
 		gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(pButton))), collect_widget_cb, &l_vWidget);
-		::GtkEntry* l_pWidget=GTK_ENTRY(l_vWidget[1]);
+		::GtkEntry* l_pWidget=GTK_ENTRY(l_vWidget[0]);
 
 		if(::gtk_toggle_button_get_active(pButton))
 		{
@@ -704,8 +704,8 @@ void CSettingCollectionHelper::setValueBoolean(::GtkWidget* pWidget, const CStri
 {
 	vector< ::GtkWidget* > l_vWidget;
 	gtk_container_foreach(GTK_CONTAINER(pWidget), collect_widget_cb, &l_vWidget);
-	::GtkToggleButton* l_pToggleButtonWidget=GTK_TOGGLE_BUTTON(l_vWidget[0]);
-	::GtkEntry* l_pEntryWidget=GTK_ENTRY(l_vWidget[1]);
+	::GtkEntry* l_pEntryWidget=GTK_ENTRY(l_vWidget[0]);
+	::GtkToggleButton* l_pToggleButtonWidget=GTK_TOGGLE_BUTTON(l_vWidget[1]);
 
 	if(rValue==CString("true"))
 	{
@@ -722,8 +722,8 @@ void CSettingCollectionHelper::setValueBoolean(::GtkWidget* pWidget, const CStri
 
 	gtk_entry_set_text(l_pEntryWidget, rValue);
 
-	g_signal_connect(G_OBJECT(l_vWidget[0]), "toggled", G_CALLBACK(on_checkbutton_setting_boolean_pressed), this);
-	g_signal_connect(G_OBJECT(l_vWidget[1]), "changed", G_CALLBACK(on_entry_setting_boolean_edited), this);
+	g_signal_connect(G_OBJECT(l_pToggleButtonWidget), "toggled", G_CALLBACK(on_checkbutton_setting_boolean_pressed), this);
+	g_signal_connect(G_OBJECT(l_pEntryWidget), "changed", G_CALLBACK(on_entry_setting_boolean_edited), this);
 }
 
 void CSettingCollectionHelper::setValueInteger(::GtkWidget* pWidget, const CString& rValue)

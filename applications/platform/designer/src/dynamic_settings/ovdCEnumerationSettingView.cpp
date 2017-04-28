@@ -46,12 +46,21 @@ CEnumerationSettingView::CEnumerationSettingView(OpenViBE::Kernel::IBox &rBox, O
 	gtk_combo_box_set_wrap_width(m_pComboBox, 0);
 	gtk_list_store_clear(l_pList);
 
-	for(size_t i=0;i<l_vEntries.size();i++)
+	size_t i;
+	for(i = 0; i < l_vEntries.size(); i++)
 	{
 		gtk_list_store_append(l_pList, &l_oListIter);
 		gtk_list_store_set(l_pList, &l_oListIter, 0, l_vEntries[i].c_str(), -1);
 
 		m_mEntriesIndex[CString(l_vEntries[i].c_str())] = static_cast<uint64>(i);
+	}
+
+	CString settingValue;
+	rBox.getSettingValue(ui32Index, settingValue);
+	if (m_mEntriesIndex.count(settingValue.toASCIIString()) == 0)
+	{
+		gtk_list_store_append(l_pList, &l_oListIter);
+		gtk_list_store_set(l_pList, &l_oListIter, 0, settingValue.toASCIIString(), -1);
 	}
 
 	initializeValue();
@@ -69,7 +78,33 @@ void CEnumerationSettingView::getValue(OpenViBE::CString &rValue) const
 void CEnumerationSettingView::setValue(const OpenViBE::CString &rValue)
 {
 	m_bOnValueSetting = true;
-	gtk_combo_box_set_active(m_pComboBox, (gint)m_mEntriesIndex[rValue]);
+
+	// If the current value of the setting is not in the enumeration list, we will add or replace the last value in the list, so it can be set to this value
+	if (m_mEntriesIndex.count(rValue) == 0)
+	{
+		::GtkTreeIter l_oListIter;
+		::GtkListStore* l_pList = GTK_LIST_STORE(gtk_combo_box_get_model(m_pComboBox));
+		int valuesInModel = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(l_pList), NULL);
+		if (valuesInModel == m_mEntriesIndex.size())
+		{
+			gtk_list_store_append(l_pList, &l_oListIter);
+			valuesInModel += 1;
+		}
+		else
+		{
+			// We just set the iterator at the end
+			GtkTreePath* treePath = gtk_tree_path_new_from_indices(valuesInModel - 1, -1);
+			gtk_tree_model_get_iter(GTK_TREE_MODEL(l_pList), &l_oListIter, treePath);
+			gtk_tree_path_free(treePath);
+
+		}
+		gtk_list_store_set(l_pList, &l_oListIter, 0, rValue.toASCIIString(), -1);
+		gtk_combo_box_set_active(m_pComboBox, valuesInModel - 1);
+	}
+	else
+	{
+		gtk_combo_box_set_active(m_pComboBox, (gint)m_mEntriesIndex[rValue]);
+	}
 	m_bOnValueSetting =false;
 }
 
