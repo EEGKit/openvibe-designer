@@ -17,6 +17,7 @@ namespace OpenViBEDesigner
 			virtual void setValue(const OpenViBE::CString &rValue);
 
 			void toggleButtonClick();
+			void onChange();
 
 
 		private:

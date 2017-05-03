@@ -51,6 +51,7 @@ static const unsigned int s_RecentFileNumber = 10;
 
 #include "visualization/ovdCVisualizationManager.h"
 
+#define OV_ClassId_Selected OpenViBE::CIdentifier(0xC67A01DC, 0x28CE06C1)
 
 using namespace OpenViBE;
 using namespace OpenViBE::Kernel;
@@ -2041,6 +2042,7 @@ void CApplication::saveScenarioCB(CInterfacedScenario* pScenario)
 			link->removeAttribute(OV_AttributeId_Link_YSourcePosition);
 			link->removeAttribute(OV_AttributeId_Link_XTargetPosition);
 			link->removeAttribute(OV_AttributeId_Link_YTargetPosition);
+			link->removeAttribute(OV_ClassId_Selected);
 		}
 
 		CIdentifier boxIdentifier;
@@ -2049,6 +2051,14 @@ void CApplication::saveScenarioCB(CInterfacedScenario* pScenario)
 			auto box = l_pCurrentInterfacedScenario->m_rScenario.getBoxDetails(boxIdentifier);
 			box->removeAttribute(OV_AttributeId_Box_XSize);
 			box->removeAttribute(OV_AttributeId_Box_YSize);
+			box->removeAttribute(OV_ClassId_Selected);
+		}
+
+		CIdentifier commentIdentifier;
+		while ((commentIdentifier = l_pCurrentInterfacedScenario->m_rScenario.getNextCommentIdentifier(commentIdentifier)) != OV_UndefinedIdentifier)
+		{
+			auto comment = l_pCurrentInterfacedScenario->m_rScenario.getCommentDetails(commentIdentifier);
+			comment->removeAttribute(OV_ClassId_Selected);
 		}
 
 		// Remove all VisualizationTree type metadata
