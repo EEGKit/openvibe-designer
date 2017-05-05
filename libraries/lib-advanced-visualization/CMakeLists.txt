@@ -18,12 +18,8 @@ SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES
 	SOVERSION ${PROJECT_VERSION_MAJOR}
 	COMPILE_FLAGS "-DLMAV_Exports -DLMAV_Shared")
 
-SET(DYNAMIC_LINK_OPENVIBE_MODULE_SYSTEM false)
-
 INCLUDE("FindThirdPartyOpenGL")
 INCLUDE("FindThirdPartyEigen")
-
-ADD_DEFINITIONS(-D__MensiaLog_LogFilename__=\"mensia-advanced-viz.log\")
 
 # ---------------------------------
 # Target macros

@@ -142,8 +142,8 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 	std::vector<const IPluginObjectDesc*>& vNewBoxes, std::vector<const IPluginObjectDesc*>& vUpdatedBoxes, bool bIsNewVersion = false)
 {
 	// By default, fix version to current version - to display the new/update boxes available since current version only
-	uint32 l_uiMajorLastVersionOpened = M_VERSION_MAJOR;
-	uint32 l_uiMinorLastVersionOpened = M_VERSION_MINOR;
+	uint64 l_uiMajorLastVersionOpened = rKernelContext.getConfigurationManager().expandAsUInteger("${ProjectVersion_Major}");
+	uint64 l_uiMinorLastVersionOpened = rKernelContext.getConfigurationManager().expandAsUInteger("${ProjectVersion_Minor}");
 	CString l_sLastUsedVersion = rKernelContext.getConfigurationManager().expand("${Designer_LastVersionUsed}");
 	if(l_sLastUsedVersion.length() != 0)
 	{
@@ -278,22 +278,24 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 			}
 
 			// If the software is launched for the first time after update, highlight new/updated boxes in tree-view
+			uint64 currentVersionMajor = rKernelContext.getConfigurationManager().expandAsUInteger("${ProjectVersion_Major}");
+			uint64 currentVersionMinor = rKernelContext.getConfigurationManager().expandAsUInteger("${ProjectVersion_Minor}");
 			uint32 l_uiMajor = 0;
 			uint32 l_uiMinor = 0;
 			sscanf(l_pPluginObjectDesc->getAddedSoftwareVersion().toASCIIString(), "%3u.%3u.%*u.%*u", &l_uiMajor, &l_uiMinor);
 			// If this is a new version, then add in list all the updated/new boxes since last version opened
 			if(bIsNewVersion && (
-				(l_uiMajorLastVersionOpened < l_uiMajor && l_uiMajor <= M_VERSION_MAJOR)
-				|| (l_uiMajor == M_VERSION_MAJOR && l_uiMinorLastVersionOpened < l_uiMinor && l_uiMinor <= M_VERSION_MINOR)
+				(l_uiMajorLastVersionOpened < l_uiMajor && l_uiMajor <= currentVersionMajor)
+				|| (l_uiMajor == currentVersionMajor && l_uiMinorLastVersionOpened < l_uiMinor && l_uiMinor <= currentVersionMajor)
 				// As default value for l_uiMinorLastVersionOpened and l_uiMajorLastVersionOpened are the current software version
-				|| (l_uiMajor == M_VERSION_MAJOR && l_uiMinor == M_VERSION_MINOR)) )
+				|| (l_uiMajor == currentVersionMajor && l_uiMinor == currentVersionMinor)) )
 			{
 				l_sName = l_sName + " (New)";
 				l_sBackGroundColor = "#FFFFC4";
 				vNewBoxes.push_back(l_pPluginObjectDesc);
 			}
 			// Otherwise 
-			else if(l_uiMajor == M_VERSION_MAJOR && l_uiMinor == M_VERSION_MINOR)
+			else if(l_uiMajor == currentVersionMajor && l_uiMinor == currentVersionMinor)
 			{
 				vNewBoxes.push_back(l_pPluginObjectDesc);
 			}
@@ -304,17 +306,17 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 				sscanf(l_pPluginObjectDesc->getUpdatedSoftwareVersion().toASCIIString(), "%3u.%3u.%*u.%*u", &l_uiMajor, &l_uiMinor);
 				// If this is a new version, then add in list all the updated/new boxes since last version opened
 				if( bIsNewVersion && (
-					(l_uiMajorLastVersionOpened < l_uiMajor && l_uiMajor <= M_VERSION_MAJOR)
-					|| (l_uiMajor == M_VERSION_MAJOR && l_uiMinorLastVersionOpened < l_uiMinor && l_uiMinor <= M_VERSION_MINOR)
+					(l_uiMajorLastVersionOpened < l_uiMajor && l_uiMajor <= currentVersionMajor)
+					|| (l_uiMajor == currentVersionMajor && l_uiMinorLastVersionOpened < l_uiMinor && l_uiMinor <= currentVersionMinor)
 					// If this is a new version Studio, and last version opened was set to default value i.e. version of current software
-					|| (l_uiMajor == M_VERSION_MAJOR && l_uiMinor == M_VERSION_MINOR)) )
+					|| (l_uiMajor == currentVersionMajor && l_uiMinor == currentVersionMinor)) )
 				{
 					l_sName = l_sName + " (New)";
 					l_sBackGroundColor = "#FFFFC4";
 					vUpdatedBoxes.push_back(l_pPluginObjectDesc);
 				}
 				// Otherwise 
-				else if(!bIsNewVersion && (l_uiMajor == M_VERSION_MAJOR && l_uiMinor == M_VERSION_MINOR))
+				else if(!bIsNewVersion && (l_uiMajor == currentVersionMajor && l_uiMinor == currentVersionMinor))
 				{
 					vUpdatedBoxes.push_back(l_pPluginObjectDesc);
 				}

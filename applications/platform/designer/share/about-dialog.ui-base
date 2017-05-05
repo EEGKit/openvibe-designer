@@ -8,90 +8,15 @@
     <property name="modal">True</property>
     <property name="type_hint">dialog</property>
     <property name="program_name">@BRAND_NAME@ @STUDIO_NAME@</property>
-    <property name="version">@MENSIA_GLOBAL_VERSION_STRING@</property>
+    <property name="version">@OV_GLOBAL_VERSION_STRING@</property>
     <property name="comments" translatable="yes">Software technologies for the development of new research, diagnostic and therapeutic solutions leveraging real-time EEG and neurofeedback.
 
-Based on OpenViBE @OV_GLOBAL_VERSION_STRING@, a software from Inria
+Based on OpenViBE SDK @OV_SDK_VERSION_STRING@, a software from Inria
 </property>
-    <property name="license" translatable="yes">End-User License Agreement (EULA) 
-END-USER LICENSE AGREEMENT
-
-IMPORTANT PLEASE READ THE TERMS AND CONDITIONS OF THIS LICENSE AGREEMENT CAREFULLY BEFORE CONTINUING WITH THIS PROGRAM INSTALL:
-
-Mensia's End-User License Agreement ("EULA") is a legal agreement between you, whether as an individual or a single entity, and Mensia Technologies SA (BP 97143, place du Granier, 35571 Chantepie Cedex France), (hereafter 'Mensia'), for the Mensia software product(s) identified above which may include associated software components, media, printed materials, and "online" or electronic documentation (the "SOFTWARE PRODUCT").
-
-By installing, copying, or otherwise using the SOFTWARE PRODUCT, you agree to be bound by the terms of this EULA. This license agreement represents the entire agreement concerning the program between you, the "licensee" and Mensia, the  "licensor", and it supersedes any prior proposal, representation, or understanding between the parties. If you do not agree to the terms of this EULA, do not install or use the SOFTWARE PRODUCT.
-
-The SOFTWARE PRODUCT is protected by copyright laws and international copyright treaties, as well as other intellectual property laws and treaties. The SOFTWARE PRODUCT is licensed, not sold.
-
-1. GRANT OF LICENSE. 
-
-The SOFTWARE PRODUCT is licensed as follows: 
-
-(a) Installation and Use.
-
-Mensia grants you the right to install and use copies of the SOFTWARE PRODUCT on your computer running a validly licensed copy of the operating system for which the SOFTWARE PRODUCT was designed, either Windows 7 (32-bit)  or Windows 7 (64-bit).
-
-(b) Backup Copies.
-
-You may also make copies of the SOFTWARE PRODUCT as may be necessary for backup and archival purposes.
-
-2. DESCRIPTION OF OTHER RIGHTS AND LIMITATIONS.
-
-(a) Maintenance of Copyright Notices.
-
-You must not remove or alter any copyright notices on any and all copies of the SOFTWARE PRODUCT.
-
-(b) Distribution.
-
-You may not distribute copies of the SOFTWARE PRODUCT to third parties without express written consent of Mensia.
-
-(c) Prohibition on Reverse Engineering, Decompilation, and Disassembly.
-
-You may not reverse engineer, decompile, or disassemble the SOFTWARE PRODUCT, except and only to the extent that such activity is expressly permitted by applicable law notwithstanding this limitation. 
-
-(d) Rental.
-
-You may not rent, lease, or lend the SOFTWARE PRODUCT.
-
-(e) Support Services.
-
-Mensia may provide you with support services related to the SOFTWARE PRODUCT ("Support Services"). Any supplemental software code provided to you as part of the Support Services shall be considered part of the SOFTWARE PRODUCT and subject to the terms and conditions of this EULA. 
-
-(f) Compliance with Applicable Laws.
-
-You must comply with all applicable laws regarding use of the SOFTWARE PRODUCT.
-
-3. TERMINATION 
-
-Without prejudice to any other rights, Mensia may terminate this EULA if you fail to comply with the terms and conditions of this EULA. In such event, you must destroy all copies of the SOFTWARE PRODUCT in your possession.
-
-4. COPYRIGHT
-
-All title, including but not limited to trademarks and copyrights, in and to the SOFTWARE PRODUCT and any copies thereof are owned by Mensia or its suppliers. All title and intellectual property rights in and to the content which may be accessed through use of the SOFTWARE PRODUCT is the property of the respective content owner and may be protected by applicable copyright or other intellectual property laws and treaties. This EULA grants you no rights to use such content. All rights not expressly granted are reserved by Mensia.
-
-5. LIMITED WARRANTY
-
-The SOFTWARE PRODUCT is licensed to you on an "as is" basis without warranty of any kind. Mensia and its suppliers do not and cannot warrant the performance or results you may obtain using the SOFTWARE PRODUCT. Where allowed by your local laws, Mensia  excludes implied warranties of merchantability, fitness for a particular purpose and non-infringement. Mensia does not warrant or assume responsibility for the accuracy or completeness of any information, text, graphics, links or other items contained within the SOFTWARE PRODUCT. Mensia makes no warranties respecting any harm that may be caused by the transmission of a computer virus, worm, time bomb, logic bomb, or other such computer program. 
-
-6. LIMITATION OF LIABILITY
-
-To the maximum extent permitted by applicable laws, in no event shall Mensia be liable for any damages (including, without limitation, lost profits, business interruption, or lost information) rising out of 'Authorized Users' use of or inability to use the SOFTWARE PRODUCT, even if Mensia has been advised of the possibility of such damages. In no event will Mensia be liable for loss of data or for indirect, special, incidental, consequential (including lost profit), or other damages based in contract, tort or otherwise. Mensia shall have no liability with respect to the content of the SOFTWARE PRODUCT or any part thereof, including but not limited to errors or omissions contained therein, libel, infringements of rights of publicity, privacy, trademark rights, business interruption, personal injury, loss of privacy, moral rights or the disclosure of confidential information.
-
-7. NOT A MEDICAL DEVICE
-
-The SOFTWARE PRODUCT is not a medical device, nor is it intended for use in the diagnosis, cure, treatment or prevention of disease. The SOFTWARE PRODUCT is not designed for use in environments requiring fail-safe performance, where the SOFTWARE PRODUCT&#x2019;s failure could lead to death, injury or loss of chance.
-
-8. APPLICABLE LAW
-
-Unless expressly prohibited by local law, this Warranty is governed by the laws of France without regard to any conflict of law principles to the contrary. The 1980 U.N. Convention on Contracts for the International Sale of Goods or any successor thereto does not apply.
-
-
-</property>
+    <property name="license" translatable="yes">
+	</property>
     <property name="authors">Inria &amp; Mensia Technologies SA
 ---
-Contact: support@mensiatech.com
-
 Mensia Contributors :
  - Yann Renard
  - Laurent Bonnet
@@ -131,32 +56,6 @@ Inria Contributors :
         <property name="visible">True</property>
         <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_ENTER_NOTIFY_MASK</property>
         <property name="spacing">2</property>
-        <child>
-          <object class="GtkVBox" id="vbox1">
-            <property name="visible">True</property>
-            <child>
-              <object class="GtkButton" id="button_wwwmensia">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <signal name="clicked" handler="open_url_mensia_cb"/>
-                <child>
-                  <object class="GtkLabel" id="label1">
-                    <property name="visible">True</property>
-                    <property name="label" translatable="yes">&lt;u&gt;&lt;span color="blue"&gt;Visit Mensia Technologies SA Website&lt;/span&gt;&lt;/u&gt;</property>
-                    <property name="use_markup">True</property>
-                  </object>
-                </child>
-              </object>
-              <packing>
-                <property name="position">0</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="position">2</property>
-          </packing>
-        </child>
         <child internal-child="action_area">
           <object class="GtkHButtonBox" id="dialog-action_area26">
             <property name="visible">True</property>

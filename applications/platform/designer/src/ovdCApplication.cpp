@@ -948,7 +948,13 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 	gtk_builder_add_from_file(m_pBuilderInterface, OVD_GUI_File, NULL);
 	gtk_builder_connect_signals(m_pBuilderInterface, NULL);
 
+	uint64 currentVersionMajor = m_rKernelContext.getConfigurationManager().expandAsUInteger("${ProjectVersion_Major}");
+	uint64 currentVersionMinor = m_rKernelContext.getConfigurationManager().expandAsUInteger("${ProjectVersion_Minor}");
+	uint64 currentVersionPatch = m_rKernelContext.getConfigurationManager().expandAsUInteger("${ProjectVersion_Patch}");
+
+	std::string windowTitle = BRAND_NAME " " STUDIO_NAME " " + std::to_string(currentVersionMajor) + "." + std::to_string(currentVersionMinor) + "." + std::to_string(currentVersionPatch);
 	m_pMainWindow=GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe"));
+	gtk_window_set_title(GTK_WINDOW(m_pMainWindow), windowTitle.c_str());
 
 	// Catch delete events when close button is clicked
 	g_signal_connect(m_pMainWindow, "delete_event", G_CALLBACK(button_quit_application_cb), this);
@@ -1331,8 +1337,8 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 	uint32 l_uiMajor = 0;
 	uint32 l_uiMinor = 0;
 	sscanf(l_sLastUsedVersion.toASCIIString(), "%3u.%3u.%*u.%*u", &l_uiMajor, &l_uiMinor);
-	if(l_uiMajor < M_VERSION_MAJOR
-		|| (l_uiMajor == M_VERSION_MAJOR && l_uiMinor < M_VERSION_MINOR)
+	if(l_uiMajor < currentVersionMajor
+		|| (l_uiMajor == currentVersionMajor && l_uiMinor < currentVersionMinor)
 		|| (l_uiMajor == 0 && l_uiMinor == 0))
 	{
 		m_bIsNewVersion = true;
@@ -1662,8 +1668,9 @@ void CApplication::saveOpenedScenarios(void)
 			}
 			::fprintf(l_pFile, "\n");
 
+			CString projectVersion = m_rKernelContext.getConfigurationManager().expand("${ProjectVersion_Major}.${ProjectVersion_Minor}.${ProjectVersion_Patch}");
 			::fprintf(l_pFile, "# Last version of Studio used:\n");
-			::fprintf(l_pFile, "Designer_LastVersionUsed = %s\n", ProjectVersion);
+			::fprintf(l_pFile, "Designer_LastVersionUsed = %s\n", projectVersion.toASCIIString());
 			::fprintf(l_pFile, "\n");
 
 			::fprintf(l_pFile, "# Recently opened scenario\n");

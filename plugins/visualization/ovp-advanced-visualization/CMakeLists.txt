@@ -1,5 +1,6 @@
 PROJECT(openvibe-plugins-mensia-advanced-visualization)
 SET(PROJECT_PRODUCT_NAME "Mensia Advanced Visualization Toolset")
+MESSAGE(STATUS "Now building ${PROJECT_NAME} ${PROJECT_VERSION} (${OV_PROJECT_BRANCH}~${OV_PROJECT_COMMITHASH})" )
 
 FILE(GLOB_RECURSE source_files src/*.cpp src/*.h src/*.hpp src/*.inl include/*.h)
 
@@ -16,8 +17,6 @@ IF(MENSIA_ADVANCED_VISUALIZATION_EXPERIMENTAL)
 	MESSAGE(STATUS "  MENSIA_ADVANCED_VISUALIZATION_EXPERIMENTAL is set, experimental visualization will be built.")
 	ADD_DEFINITIONS(-DTARGET_Has_Experimental)
 ENDIF()
-
-ADD_DEFINITIONS(-D__MensiaLog_LogFilename__=\"mensia-plugins-advanced-visualization.log\")
 
 INCLUDE("AddCertivibeComponents")
 include("FindOpenViBEVisualizationToolkit")

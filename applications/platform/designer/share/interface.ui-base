@@ -10,7 +10,7 @@
     <property name="default_height">700</property>
     <property name="type_hint">normal</property>
     <property name="program_name">@BRAND_NAME@ @STUDIO_NAME@</property>
-    <property name="version">@MENSIA_GLOBAL_VERSION_STRING@</property>
+    <property name="version">@OV_GLOBAL_VERSION_STRING@</property>
     <property name="comments" translatable="yes">Software technologies for the development of new research, diagnostic and therapeutic solutions leveraging real-time EEG and neurofeedback</property>
     <property name="logo">header_logo.png</property>
     <child internal-child="vbox">
@@ -3990,7 +3990,7 @@ u
     <property name="width_request">320</property>
     <property name="height_request">240</property>
     <property name="can_focus">False</property>
-    <property name="title" translatable="yes">@BRAND_NAME@ @STUDIO_NAME@ @MENSIA_GLOBAL_VERSION_STRING@</property>
+    <property name="title" translatable="yes">@BRAND_NAME@ @STUDIO_NAME@ @OV_GLOBAL_VERSION_STRING@</property>
     <property name="window_position">center</property>
     <property name="default_width">1024</property>
     <property name="default_height">768</property>
