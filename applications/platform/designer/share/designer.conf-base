@@ -1,7 +1,6 @@
-ProjectVersion_Major = 0
-ProjectVersion_Minor = 1
-ProjectVersion_Patch = 0
-
+ProjectVersion_Major = @OV_GLOBAL_VERSION_MAJOR@
+ProjectVersion_Minor = @OV_GLOBAL_VERSION_MINOR@
+ProjectVersion_Patch = @OV_GLOBAL_VERSION_PATCH@
 
 Designer_Locale = C
 Designer_UndoRedoStackSize = 64
