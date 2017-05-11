@@ -305,7 +305,7 @@
 				</Attribute>
 				<Attribute>
 					<Identifier>(0x8d21ff41, 0xdf6afe7e)</Identifier>
-					<Value>${Path_Samples}/bci-examples/p300-speller-xDAWN/p300-speller-visualisation.cfg</Value>
+					<Value>${Path_Data}/scenarios/bci-examples/p300-speller-xDAWN/p300-speller-visualisation.cfg</Value>
 				</Attribute>
 				<Attribute>
 					<Identifier>(0xc80ce8af, 0xf699f813)</Identifier>
@@ -1496,7 +1496,7 @@
 					<TypeIdentifier>(0x330306dd, 0x74a95f98)</TypeIdentifier>
 					<Name>Filename</Name>
 					<DefaultValue></DefaultValue>
-					<Value>${Path_Samples}/signals/bci-p300-speller.ov</Value>
+					<Value>${Path_Data}/scenarios/signals/bci-p300-speller.ov</Value>
 					<Modifiability>false</Modifiability>
 				</Setting>
 			</Settings>
