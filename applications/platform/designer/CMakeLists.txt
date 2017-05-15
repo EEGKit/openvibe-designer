@@ -41,10 +41,13 @@ install(TARGETS ${PROJECT_NAME}
 	LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
 	ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
 
+
+configure_file(share/designer.conf-base "${CMAKE_CURRENT_BINARY_DIR}/designer.conf" @ONLY)
 configure_file(share/about-dialog.ui-base "${CMAKE_CURRENT_BINARY_DIR}/about-dialog.ui")
 configure_file(share/interface.ui-base "${CMAKE_CURRENT_BINARY_DIR}/interface.ui")
 configure_file(share/interface-settings.ui-base "${CMAKE_CURRENT_BINARY_DIR}/interface-settings.ui")
 
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/designer.conf" DESTINATION ${CMAKE_INSTALL_FULL_DATADIR}/openvibe/applications/designer)
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/about-dialog.ui" DESTINATION ${CMAKE_INSTALL_FULL_DATADIR}/openvibe/applications/designer)
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/interface.ui" DESTINATION ${CMAKE_INSTALL_FULL_DATADIR}/openvibe/applications/designer)
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/interface-settings.ui" DESTINATION ${CMAKE_INSTALL_FULL_DATADIR}/openvibe/applications/designer)

@@ -7,10 +7,10 @@
     <property name="border_width">5</property>
     <property name="window_position">center</property>
     <property name="default_width">500</property>
-    <property name="default_height">700</property>
+    <property name="default_height">900</property>
     <property name="type_hint">normal</property>
     <property name="program_name">@BRAND_NAME@ @STUDIO_NAME@</property>
-    <property name="version">@MENSIA_GLOBAL_VERSION_STRING@</property>
+    <property name="version">@OV_GLOBAL_VERSION_STRING@</property>
     <property name="comments" translatable="yes">Software technologies for the development of new research, diagnostic and therapeutic solutions leveraging real-time EEG and neurofeedback</property>
     <property name="logo">header_logo.png</property>
     <child internal-child="vbox">
@@ -35,10 +35,24 @@
           </packing>
         </child>
         <child>
-          <object class="GtkLabel" id="label-newversion">
+          <object class="GtkScrolledWindow" id="scrolledwindow5">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="use_markup">True</property>
+            <property name="can_focus">True</property>
+            <property name="hscrollbar_policy">never</property>
+            <child>
+              <object class="GtkViewport" id="viewport3">
+                <property name="height_request">300</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <child>
+                  <object class="GtkLabel" id="label-newversion">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="use_markup">True</property>
+                  </object>
+                </child>
+              </object>
+            </child>
           </object>
           <packing>
             <property name="expand">True</property>
@@ -293,6 +307,9 @@
                     <property name="can_focus">False</property>
                     <property name="column_spacing">4</property>
                     <property name="row_spacing">8</property>
+                    <child>
+                      <placeholder/>
+                    </child>
                     <child>
                       <placeholder/>
                     </child>
@@ -3990,7 +4007,7 @@ u
     <property name="width_request">320</property>
     <property name="height_request">240</property>
     <property name="can_focus">False</property>
-    <property name="title" translatable="yes">@BRAND_NAME@ @STUDIO_NAME@ @MENSIA_GLOBAL_VERSION_STRING@</property>
+    <property name="title" translatable="yes">@BRAND_NAME@ @STUDIO_NAME@ @OV_GLOBAL_VERSION_STRING@</property>
     <property name="window_position">center</property>
     <property name="default_width">1024</property>
     <property name="default_height">768</property>

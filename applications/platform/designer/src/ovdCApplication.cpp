@@ -948,7 +948,16 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 	gtk_builder_add_from_file(m_pBuilderInterface, OVD_GUI_File, NULL);
 	gtk_builder_connect_signals(m_pBuilderInterface, NULL);
 
+	uint64 currentVersionMajor = m_rKernelContext.getConfigurationManager().expandAsUInteger("${ProjectVersion_Major}");
+	uint64 currentVersionMinor = m_rKernelContext.getConfigurationManager().expandAsUInteger("${ProjectVersion_Minor}");
+	uint64 currentVersionPatch = m_rKernelContext.getConfigurationManager().expandAsUInteger("${ProjectVersion_Patch}");
+
+	std::string windowTitle = BRAND_NAME " " STUDIO_NAME " " + std::to_string(currentVersionMajor) + "." + std::to_string(currentVersionMinor) + "." + std::to_string(currentVersionPatch);
+	std::string projectVersion = std::to_string(currentVersionMajor) + "." + std::to_string(currentVersionMinor) + "." + std::to_string(currentVersionPatch);
+
 	m_pMainWindow=GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe"));
+	gtk_window_set_title(GTK_WINDOW(m_pMainWindow), windowTitle.c_str());
+	gtk_menu_item_set_label(GTK_MENU_ITEM(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_display_changelog")), ("What's new in " + projectVersion + " version of " + BRAND_NAME " " STUDIO_NAME).c_str());
 
 	// Catch delete events when close button is clicked
 	g_signal_connect(m_pMainWindow, "delete_event", G_CALLBACK(button_quit_application_cb), this);
@@ -1331,8 +1340,8 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 	uint32 l_uiMajor = 0;
 	uint32 l_uiMinor = 0;
 	sscanf(l_sLastUsedVersion.toASCIIString(), "%3u.%3u.%*u.%*u", &l_uiMajor, &l_uiMinor);
-	if(l_uiMajor < M_VERSION_MAJOR
-		|| (l_uiMajor == M_VERSION_MAJOR && l_uiMinor < M_VERSION_MINOR)
+	if(l_uiMajor < currentVersionMajor
+		|| (l_uiMajor == currentVersionMajor && l_uiMinor < currentVersionMinor)
 		|| (l_uiMajor == 0 && l_uiMinor == 0))
 	{
 		m_bIsNewVersion = true;
@@ -1399,7 +1408,15 @@ bool CApplication::displayChangelogWhenAvailable()
 		::GtkWidget* l_pDialog=GTK_WIDGET(gtk_builder_get_object(l_pInterface, "aboutdialog-newversion"));
 		gtk_window_set_title(GTK_WINDOW(l_pDialog), "Changelog");
 
-		std::string l_sLabelNewBoxesList = "<big><b>Changes in version "+std::string(ProjectVersion) + " of the software:</b></big>";
+		uint64 currentVersionMajor = m_rKernelContext.getConfigurationManager().expandAsUInteger("${ProjectVersion_Major}");
+		uint64 currentVersionMinor = m_rKernelContext.getConfigurationManager().expandAsUInteger("${ProjectVersion_Minor}");
+		uint64 currentVersionPatch = m_rKernelContext.getConfigurationManager().expandAsUInteger("${ProjectVersion_Patch}");
+
+		std::string projectVersion = std::to_string(currentVersionMajor) + "." + std::to_string(currentVersionMinor) + "." + std::to_string(currentVersionPatch);
+
+		gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(l_pDialog), projectVersion.c_str());
+
+		std::string l_sLabelNewBoxesList = "<big><b>Changes in version " + projectVersion + " of the software:</b></big>";
 		bool l_bUnstableBoxes = false;
 		if(!m_vNewBoxes.empty())
 		{
@@ -1662,8 +1679,9 @@ void CApplication::saveOpenedScenarios(void)
 			}
 			::fprintf(l_pFile, "\n");
 
+			CString projectVersion = m_rKernelContext.getConfigurationManager().expand("${ProjectVersion_Major}.${ProjectVersion_Minor}.${ProjectVersion_Patch}");
 			::fprintf(l_pFile, "# Last version of Studio used:\n");
-			::fprintf(l_pFile, "Designer_LastVersionUsed = %s\n", ProjectVersion);
+			::fprintf(l_pFile, "Designer_LastVersionUsed = %s\n", projectVersion.toASCIIString());
 			::fprintf(l_pFile, "\n");
 
 			::fprintf(l_pFile, "# Recently opened scenario\n");
