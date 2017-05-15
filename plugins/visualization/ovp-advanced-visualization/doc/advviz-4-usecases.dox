@@ -64,43 +64,4 @@
   \image html UseCase1_5.png "2D and 3D Topographies"
   \image latex UseCase1_5.png "2D and 3D Topographies" width=10cm
   
-  \page Doc_Mensia_AdvViz_UseCases_ERPAnalysis Use-case 2: Event-Related Potentials analysis
-  \section Doc_Mensia_AdvViz_UseCases_ERPAnalysis_Intro Introduction
-  In this scenario, we extract target and non-target responses from a <b>P300 speller</b> session.
-  The Event-Related potentials are displayed using oscilloscope to view the temporal response pattern, 
-  and using stacked bitmaps to see all target trials at once and catch the P300 pattern.
-    
-  \section Doc_Mensia_AdvViz_UseCases_ERPAnalysis_Scenario The scenario
-  The signal used as example here is a record provided with the official release of OpenViBE, but can be easily played on new data.
-  As such, this scenario can be added to the <em>p300-speller-xDAWN</em> BCI provided within the official software package.
-  
-  \subsection Doc_Mensia_AdvViz_UseCases_ERPAnalysis_Scenario_Replay Replay and filter
-  We replay the data and deduce the target/non-target flagging from the P300 speller box.
-  The signal is filtered and downsampled before further use. We keep only low frequencies as the P300 response should belong in this range.
-  \image html UseCase2_1.png "Replaying P300 speller data"
-  \image latex UseCase2_1.png "Replaying P300 speller data" width=10cm
-   
-  \subsection Doc_Mensia_AdvViz_UseCases_ERPAnalysis_Scenario_Electrode At the electrode level
-  We extract the target and non-target trials, as the 600ms signal epochs starting after a flash.
-  The \ref Doc_BoxAlgorithm_InstantOscilloscope box displays the average target response in green, and the average non-target response in red, for every electrode.
-  We stack all the target trials in the \ref Doc_BoxAlgorithm_StackedBitmapVertical box, to see if a pattern emerges.
-  We add a \ref Doc_BoxAlgorithm_3DTopography box to visualize the spatial course of the ERP.
-  \image html UseCase2_2.png "Displaying the ERP at the electrode level"
-  \image latex UseCase2_2.png "Displaying the ERP at the electrode level" width=10cm
-  
-  \subsection Doc_Mensia_AdvViz_UseCases_ERPAnalysis_Scenario_xDAWN xDAWN components
-  We similarly extract and visualize the target and non-target trials.
-  However this time we filter the signal spatially using the xDAWN, an algorithm that enhances the P300 response. 
-  This step supposes you already have trained the xDAWN spatial filter on your data, using the scenario set provided with the official release of OpenViBE.
- 
-  <em>NB: the record provided has only 3 channels (O1, O2, Cz), which is a rather low number of electrode for xDAWN to have a clear and visible effect.</em>
-  \image html UseCase2_3.png "Displaying the ERP at the xDAWN level"
-  \image latex UseCase2_3.png "Displaying the ERP at the xDAWN level" width=10cm
-    
-  \section Doc_Mensia_AdvViz_UseCases_ERPAnalysis_Result Result
-  Here is the online visualization when we play this scenario on the provided data.
-
-  \image html UseCase2_4.png "ERP visualization using the Mensia Advanced Visualization Toolset"  
-  \image latex UseCase2_4.png "ERP visualization using the Mensia Advanced Visualization Toolset" width=10cm
-  
  */
