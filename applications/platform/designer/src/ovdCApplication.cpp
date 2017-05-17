@@ -948,9 +948,9 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 	gtk_builder_add_from_file(m_pBuilderInterface, OVD_GUI_File, NULL);
 	gtk_builder_connect_signals(m_pBuilderInterface, NULL);
 
-	uint64 currentVersionMajor = m_rKernelContext.getConfigurationManager().expandAsUInteger("${ProjectVersion_Major}");
-	uint64 currentVersionMinor = m_rKernelContext.getConfigurationManager().expandAsUInteger("${ProjectVersion_Minor}");
-	uint64 currentVersionPatch = m_rKernelContext.getConfigurationManager().expandAsUInteger("${ProjectVersion_Patch}");
+	int currentVersionMajor = static_cast<int>(m_rKernelContext.getConfigurationManager().expandAsInteger("${ProjectVersion_Major}"));
+	int currentVersionMinor = static_cast<int>(m_rKernelContext.getConfigurationManager().expandAsInteger("${ProjectVersion_Minor}"));
+	int currentVersionPatch = static_cast<int>(m_rKernelContext.getConfigurationManager().expandAsInteger("${ProjectVersion_Patch}"));
 
 	std::string windowTitle = BRAND_NAME " " STUDIO_NAME " " + std::to_string(currentVersionMajor) + "." + std::to_string(currentVersionMinor) + "." + std::to_string(currentVersionPatch);
 	std::string projectVersion = std::to_string(currentVersionMajor) + "." + std::to_string(currentVersionMinor) + "." + std::to_string(currentVersionPatch);
@@ -1337,12 +1337,14 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 	}
 	// If last version of Studio used is anterior or null, then consider it as a new version
 	CString l_sLastUsedVersion = m_rKernelContext.getConfigurationManager().expand("${Designer_LastVersionUsed}");
-	uint32 l_uiMajor = 0;
-	uint32 l_uiMinor = 0;
-	sscanf(l_sLastUsedVersion.toASCIIString(), "%3u.%3u.%*u.%*u", &l_uiMajor, &l_uiMinor);
-	if(l_uiMajor < currentVersionMajor
-		|| (l_uiMajor == currentVersionMajor && l_uiMinor < currentVersionMinor)
-		|| (l_uiMajor == 0 && l_uiMinor == 0))
+	int lastUsedVersionMajor = 0;
+	int lastUsedVersionMinor = 0;
+	int lastUsedVersionPatch = 0;
+	sscanf(l_sLastUsedVersion.toASCIIString(), "%d.%d.%d", &lastUsedVersionMajor, &lastUsedVersionMinor, &lastUsedVersionPatch);
+	if(lastUsedVersionMajor < currentVersionMajor
+		|| (lastUsedVersionMajor == currentVersionMajor && lastUsedVersionMinor < currentVersionMinor)
+		|| (lastUsedVersionMinor == currentVersionMinor && lastUsedVersionPatch < currentVersionPatch)
+		|| (lastUsedVersionMajor == 0 && lastUsedVersionMinor == 0 && lastUsedVersionPatch == 0))
 	{
 		m_bIsNewVersion = true;
 	}
@@ -1680,8 +1682,10 @@ void CApplication::saveOpenedScenarios(void)
 			::fprintf(l_pFile, "\n");
 
 			CString projectVersion = m_rKernelContext.getConfigurationManager().expand("${ProjectVersion_Major}.${ProjectVersion_Minor}.${ProjectVersion_Patch}");
+			CString componentVersions = m_rKernelContext.getConfigurationManager().lookUpConfigurationTokenValue("ProjectVersion_Components");
 			::fprintf(l_pFile, "# Last version of Studio used:\n");
 			::fprintf(l_pFile, "Designer_LastVersionUsed = %s\n", projectVersion.toASCIIString());
+			::fprintf(l_pFile, "Designer_LastComponentVersionsUsed = %s\n", componentVersions.toASCIIString());
 			::fprintf(l_pFile, "\n");
 
 			::fprintf(l_pFile, "# Recently opened scenario\n");

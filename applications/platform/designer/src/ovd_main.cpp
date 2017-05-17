@@ -1,10 +1,12 @@
 #include <stack>
 #include <vector>
 #include <map>
+#include <tuple>
 #include <string>
 #include <iostream>
 #include <sstream>
 #include <algorithm>
+#include <json/json.h>
 
 #include <system/ovCTime.h>
 #include <openvibe/kernel/metabox/ovIMetaboxManager.h>
@@ -138,17 +140,43 @@ public:
 // ------------------------------------------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------------------------------------------
 
+namespace {
+	typedef std::map<std::string, std::tuple<int, int, int>> componentsMap;
+	// Parses a JSON encoded list of components with their versions
+	// We use an output variable because we want to be able to "enhance" an already existing list if necessary
+	void getVersionComponentsFromConfigurationToken(const IKernelContext& context, const char* configurationToken, componentsMap& componentVersions)
+	{
+		json::Object componentVersionsObject;
+		// We use a lookup instead of expansion as JSON can contain {} characters
+
+		CString componentVersionsJSON = context.getConfigurationManager().lookUpConfigurationTokenValue(configurationToken);
+		if (componentVersionsJSON.length() != 0)
+		{
+			// This check is necessary because the asignemt operator would fail with an assert
+			if (json::Deserialize(componentVersionsJSON.toASCIIString()).GetType() == json::ObjectVal)
+			{
+				componentVersionsObject = json::Deserialize(componentVersionsJSON.toASCIIString());
+			}
+			for (auto component : componentVersionsObject)
+			{
+				int versionMajor, versionMinor, versionPatch;
+				sscanf(component.second, "%d.%d.%d", &versionMajor, &versionMinor, &versionPatch);
+				componentVersions[component.first] = std::make_tuple(versionMajor, versionMinor, versionPatch);
+			}
+		}
+	}
+}
+
 static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernelContext, map<string, const IPluginObjectDesc*>& vPluginObjectDesc, ::GtkTreeStore* pTreeStore, 
 	std::vector<const IPluginObjectDesc*>& vNewBoxes, std::vector<const IPluginObjectDesc*>& vUpdatedBoxes, bool bIsNewVersion = false)
 {
+	typedef std::map<std::string, std::tuple<int, int, int>> componentsMap;
+	componentsMap currentVersions;
+	getVersionComponentsFromConfigurationToken(rKernelContext, "ProjectVersion_Components", currentVersions);
 	// By default, fix version to current version - to display the new/update boxes available since current version only
-	uint64 l_uiMajorLastVersionOpened = rKernelContext.getConfigurationManager().expandAsUInteger("${ProjectVersion_Major}");
-	uint64 l_uiMinorLastVersionOpened = rKernelContext.getConfigurationManager().expandAsUInteger("${ProjectVersion_Minor}");
-	CString l_sLastUsedVersion = rKernelContext.getConfigurationManager().expand("${Designer_LastVersionUsed}");
-	if(l_sLastUsedVersion.length() != 0)
-	{
-		sscanf(l_sLastUsedVersion.toASCIIString(), "%3u.%3u.%*u.%*u", &l_uiMajorLastVersionOpened, &l_uiMinorLastVersionOpened);
-	}
+	componentsMap lastUsedVersions = currentVersions;
+	getVersionComponentsFromConfigurationToken(rKernelContext, "Designer_LastComponentVersionsUsed", lastUsedVersions);
+
 	for(auto pPluginObjectDesc : vPluginObjectDesc)
 	{
 		const IPluginObjectDesc* l_pPluginObjectDesc = pPluginObjectDesc.second;
@@ -278,47 +306,62 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 			}
 
 			// If the software is launched for the first time after update, highlight new/updated boxes in tree-view
-			uint64 currentVersionMajor = rKernelContext.getConfigurationManager().expandAsUInteger("${ProjectVersion_Major}");
-			uint64 currentVersionMinor = rKernelContext.getConfigurationManager().expandAsUInteger("${ProjectVersion_Minor}");
-			uint32 l_uiMajor = 0;
-			uint32 l_uiMinor = 0;
-			sscanf(l_pPluginObjectDesc->getAddedSoftwareVersion().toASCIIString(), "%3u.%3u.%*u.%*u", &l_uiMajor, &l_uiMinor);
-			// If this is a new version, then add in list all the updated/new boxes since last version opened
-			if(bIsNewVersion && (
-				(l_uiMajorLastVersionOpened < l_uiMajor && l_uiMajor <= currentVersionMajor)
-				|| (l_uiMajor == currentVersionMajor && l_uiMinorLastVersionOpened < l_uiMinor && l_uiMinor <= currentVersionMajor)
-				// As default value for l_uiMinorLastVersionOpened and l_uiMajorLastVersionOpened are the current software version
-				|| (l_uiMajor == currentVersionMajor && l_uiMinor == currentVersionMinor)) )
+
+
+			std::string boxSoftwareComponent = l_pPluginObjectDesc->getSoftwareComponent().toASCIIString();
+
+			if (boxSoftwareComponent != "unknown")
 			{
-				l_sName = l_sName + " (New)";
-				l_sBackGroundColor = "#FFFFC4";
-				vNewBoxes.push_back(l_pPluginObjectDesc);
-			}
-			// Otherwise 
-			else if(l_uiMajor == currentVersionMajor && l_uiMinor == currentVersionMinor)
-			{
-				vNewBoxes.push_back(l_pPluginObjectDesc);
-			}
-			else
-			{
-				uint32 l_uiMajor = 0;
-				uint32 l_uiMinor = 0;
-				sscanf(l_pPluginObjectDesc->getUpdatedSoftwareVersion().toASCIIString(), "%3u.%3u.%*u.%*u", &l_uiMajor, &l_uiMinor);
+				int currentVersionMajor = std::get<0>(currentVersions[boxSoftwareComponent]);
+				int currentVersionMinor = std::get<1>(currentVersions[boxSoftwareComponent]);
+				int currentVersionPatch = std::get<2>(currentVersions[boxSoftwareComponent]);
+				int lastUsedVersionMajor = std::get<0>(lastUsedVersions[boxSoftwareComponent]);
+				int lastUsedVersionMinor = std::get<1>(lastUsedVersions[boxSoftwareComponent]);
+				int lastUsedVersionPatch = std::get<2>(lastUsedVersions[boxSoftwareComponent]);
+				int boxComponentVersionMajor = 0;
+				int boxComponentVersionMinor = 0;
+				int boxComponentVersionPatch = 0;
+				sscanf(l_pPluginObjectDesc->getAddedSoftwareVersion().toASCIIString(), "%d.%d.%d", &boxComponentVersionMajor, &boxComponentVersionMinor, &boxComponentVersionPatch);
 				// If this is a new version, then add in list all the updated/new boxes since last version opened
-				if( bIsNewVersion && (
-					(l_uiMajorLastVersionOpened < l_uiMajor && l_uiMajor <= currentVersionMajor)
-					|| (l_uiMajor == currentVersionMajor && l_uiMinorLastVersionOpened < l_uiMinor && l_uiMinor <= currentVersionMinor)
-					// If this is a new version Studio, and last version opened was set to default value i.e. version of current software
-					|| (l_uiMajor == currentVersionMajor && l_uiMinor == currentVersionMinor)) )
+				if(bIsNewVersion && (
+				            (lastUsedVersionMajor < boxComponentVersionMajor && boxComponentVersionMajor <= currentVersionMajor)
+				            || (boxComponentVersionMajor == currentVersionMajor && lastUsedVersionMinor < boxComponentVersionMinor && boxComponentVersionMinor <= currentVersionMinor)
+				            || (boxComponentVersionMinor == currentVersionMinor && lastUsedVersionPatch < boxComponentVersionPatch && boxComponentVersionPatch <= currentVersionPatch)
+				            // As default value for l_uiMinorLastVersionOpened and l_uiMajorLastVersionOpened are the current software version
+				            || (boxComponentVersionMajor == currentVersionMajor && boxComponentVersionMinor == currentVersionMinor && boxComponentVersionPatch == currentVersionPatch)) )
 				{
 					l_sName = l_sName + " (New)";
 					l_sBackGroundColor = "#FFFFC4";
-					vUpdatedBoxes.push_back(l_pPluginObjectDesc);
+					vNewBoxes.push_back(l_pPluginObjectDesc);
 				}
-				// Otherwise 
-				else if(!bIsNewVersion && (l_uiMajor == currentVersionMajor && l_uiMinor == currentVersionMinor))
+				// Otherwise
+				else if(boxComponentVersionMajor == currentVersionMajor && boxComponentVersionMinor == currentVersionMinor && boxComponentVersionPatch == currentVersionPatch)
 				{
-					vUpdatedBoxes.push_back(l_pPluginObjectDesc);
+					vNewBoxes.push_back(l_pPluginObjectDesc);
+				}
+				else
+				{
+					int boxComponentUpdatedVersionMajor = 0;
+					int boxComponentUpdatedVersionMinor = 0;
+					int boxComponentUpdatedVersionPatch = 0;
+					sscanf(l_pPluginObjectDesc->getUpdatedSoftwareVersion().toASCIIString(), "%d.%d.%d", &boxComponentUpdatedVersionMajor, &boxComponentUpdatedVersionMinor, &boxComponentUpdatedVersionPatch);
+					// If this is a new version, then add in list all the updated/new boxes since last version opened
+					if( bIsNewVersion && (
+					            (lastUsedVersionMajor < boxComponentUpdatedVersionMajor && boxComponentUpdatedVersionMajor <= currentVersionMajor)
+					            || (boxComponentUpdatedVersionMajor == currentVersionMajor && lastUsedVersionMinor < boxComponentUpdatedVersionMinor && boxComponentUpdatedVersionMinor <= currentVersionMinor)
+					            || (boxComponentUpdatedVersionMinor == currentVersionMinor && lastUsedVersionPatch < boxComponentUpdatedVersionPatch && boxComponentUpdatedVersionPatch <= currentVersionPatch)
+					            // If this is a new version Studio, and last version opened was set to default value i.e. version of current software
+					            || (boxComponentUpdatedVersionMajor == currentVersionMajor && boxComponentUpdatedVersionMinor == currentVersionMinor && boxComponentUpdatedVersionPatch == currentVersionPatch)) )
+					{
+						l_sName = l_sName + " (New)";
+						l_sBackGroundColor = "#FFFFC4";
+						vUpdatedBoxes.push_back(l_pPluginObjectDesc);
+					}
+					// Otherwise
+					else if(!bIsNewVersion && (boxComponentUpdatedVersionMajor == currentVersionMajor && boxComponentUpdatedVersionMinor == currentVersionMinor && boxComponentUpdatedVersionPatch == currentVersionPatch))
+					{
+						vUpdatedBoxes.push_back(l_pPluginObjectDesc);
+					}
 				}
 			}
 

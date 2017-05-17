@@ -379,6 +379,7 @@ namespace Mensia
 			virtual OpenViBE::CString getDetailedDescription(void) const { return m_sDetailedDescription; }
 //			virtual OpenViBE::CString getCategory(void) const            { return OpenViBE::CString(""); }
 			virtual OpenViBE::CString getVersion(void) const             { return OpenViBE::CString("1.0"); }
+			virtual OpenViBE::CString getSoftwareComponent(void) const   { return "openvibe-designer"; }
 			virtual OpenViBE::CString getAddedSoftwareVersion(void) const   { return m_sAddedSoftwareVersion; }
 			virtual OpenViBE::CString getUpdatedSoftwareVersion(void) const { return m_sUpdatedSoftwareVersion; }
 			virtual OpenViBE::CString getStockItemName(void) const       { return OpenViBE::CString("gtk-find"); }
