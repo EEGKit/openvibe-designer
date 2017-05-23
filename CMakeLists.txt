@@ -1,10 +1,11 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.2)
 
+cmake_policy(SET CMP0010 OLD)
 cmake_policy(SET CMP0026 OLD)
 cmake_policy(SET CMP0039 NEW)
 cmake_policy(SET CMP0042 OLD)
 cmake_policy(SET CMP0043 OLD)
-cmake_policy(SET CMP0045 OLD)
+cmake_policy(SET CMP0045 OLD) 
 cmake_policy(SET CMP0048 OLD)
 cmake_policy(SET CMP0057 NEW)
 
