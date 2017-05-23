@@ -9,7 +9,7 @@ popd
 set BuildType=Release
 set PauseCommand=pause
 set RefreshCMake=F
-set PathSDK=%root_dir%\dependencies\openvibe-sdk-release
+set PathSDK=
 set PathDep=%root_dir%\dependencies
 set OEMDistribution=openvibe
 set VerboseOuptut=OFF
@@ -81,17 +81,8 @@ setlocal
 call "windows-initialize-environment.cmd" --dep %PathDep%
 
 set build_dir=%root_dir%\..\certivibe-build\build-studio-%BuildType%
-if %PathSDK%=="" (
-  set sdk_dir=%root_dir%\dependencies\openvibe-sdk-release
-) else (
-	set sdk_dir=%PathSDK%
-)
-
-if %PathDep%=="" (
-	set dep_dir=%root_dir%\dependencies\
-) else (
-	set dep_dir=%PathDep%
-)
+set sdk_dir=%PathSDK%
+set dep_dir=%PathDep%
 
 if "%BuildType%"=="Debug" (
 	set install_dir=%root_dir%\..\certivibe-build\dist-studio-debug

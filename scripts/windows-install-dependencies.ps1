@@ -28,15 +28,15 @@
 	is extracted from cache_dir to 'dest_dir\folder_to_unzip'.
 
 .NOTES
-	File Name      : windows-get-dependencies.ps1
-	Prerequisite   : Tested with PS v4.0 on windows 8.1 pro.
+	File Name      : windows-install-dependencies.ps1
+	Prerequisite   : Tested with PS v4.0 on windows 10 pro.
 .LINK
 	Detailed specifications:
 	https://jira.mensiatech.com/confluence/pages/viewpage.action?spaceKey=CT&title=Dependency+management
 .EXAMPLE
-	powershell.exe -NoExit -NoProfile -ExecutionPolicy Bypass -File \absolute\path\to\windows-get-dependencies.ps1 -manifest_file dependencies
+	powershell.exe -NoExit -NoProfile -ExecutionPolicy Bypass -File \absolute\path\to\windows-get-dependencies.ps1 -manifest_file .\windows-dependencies.txt
 .EXAMPLE
-	powershell.exe -NoExit -NoProfile -ExecutionPolicy Bypass -File \absolute\path\to\windows-get-dependencies.ps1 -manifest_file dependencies -dest_dir \absolute\path\to\dep\ -cache_dir \absolute\path\to\cache -proxy_pass user:passwd
+	powershell.exe -NoExit -NoProfile -ExecutionPolicy Bypass -File \absolute\path\to\windows-get-dependencies.ps1 -manifest_file .\windows-dependencies.txt -dest_dir \absolute\path\to\dep\ -cache_dir \absolute\path\to\cache -proxy_pass user:passwd
 #>
 
 #
