@@ -15,35 +15,29 @@
  * from Mensia Technologies SA.
  */
 
+#include <cstdint>
 #include "mCRendererLine.hpp"
 
 using namespace Mensia;
 using namespace Mensia::AdvancedVisualization;
 
-CRendererLine::CRendererLine(uint32_t ui32MultiCount)
+CRendererLine::CRendererLine()
 {
-	m_vMuliVertex.resize(ui32MultiCount);
 }
 
 void CRendererLine::rebuild(const IRendererContext& rContext)
 {
 	CRenderer::rebuild(rContext);
 
-	uint32_t i, j, z;
+	m_Vertices.clear();
+	m_Vertices.resize(m_ui32ChannelCount);
 
-	m_ui32AutoDecimationFactor=1+uint32_t((m_ui32SampleCount-1)/rContext.getMaximumSampleCountPerDisplay());
-
-	for(z=0; z<m_vMuliVertex.size(); z++)
+	for (size_t channel=0; channel < m_ui32ChannelCount; channel++)
 	{
-		m_vMuliVertex[z].clear();
-		m_vMuliVertex[z].resize(m_ui32ChannelCount);
-		for(i=0; i<m_ui32ChannelCount; i++)
+		m_Vertices[channel].resize(m_ui32SampleCount);
+		for (size_t sample=0; sample < m_ui32SampleCount; sample++)
 		{
-			m_vMuliVertex[z][i].resize(m_ui32SampleCount/m_ui32AutoDecimationFactor);
-			for(j=0; j<m_ui32SampleCount-m_ui32AutoDecimationFactor+1; j+=m_ui32AutoDecimationFactor)
-			{
-				m_vMuliVertex[z][i][j/m_ui32AutoDecimationFactor].x=j*m_f32InverseSampleCount;
-			}
+			m_Vertices[channel][sample].x = sample * m_f32InverseSampleCount;
 		}
 	}
 
@@ -56,54 +50,37 @@ void CRendererLine::refresh(const IRendererContext& rContext)
 
 	if(!m_ui32HistoryCount) return;
 
-	uint32_t i, j, k, l, z, count, l_ui32HistoryIndexMax;
-	float sum;
+	uint32_t l_ui32HistoryIndexMax;
 
-	if( m_ui32HistoryDrawIndex == 0 ) // Draw real-time
+	if (m_ui32HistoryDrawIndex == 0) // Draw real-time
 	{
-		l_ui32HistoryIndexMax = m_ui32HistoryCount; 
+		l_ui32HistoryIndexMax = m_ui32HistoryCount;
 	}
 	else // stay at the m_ui32HistoryDrawIndex
 	{
 		l_ui32HistoryIndexMax = m_ui32HistoryDrawIndex;
 	}
 
-	for( z = 0; z < m_vMuliVertex.size(); z++ )
+	for (size_t channel = 0; channel < m_ui32ChannelCount; channel++)
 	{
-		for( i = 0; i < m_ui32ChannelCount; i++ )
+		uint32_t firstSampleIndex = ((l_ui32HistoryIndexMax - 1) / m_ui32SampleCount)*m_ui32SampleCount;
+		std::vector<float>& l_vHistory = m_vHistory[channel];
+		CVertex* l_pVertex = &m_Vertices[channel][0];
+
+		for (uint32_t sample = 0; sample < m_ui32SampleCount; sample++)
 		{
-			k = ((l_ui32HistoryIndexMax - 1 - z*m_vMuliVertex[z][i].size()) / m_ui32SampleCount)*m_ui32SampleCount;
-			std::vector < float >& l_vHistory = m_vHistory[i];
-			CVertex* l_pVertex = &m_vMuliVertex[z][i][0];
+			uint32_t currentSampleIndex = firstSampleIndex + sample;
 
-			for( j = 0; j < m_ui32SampleCount - m_ui32AutoDecimationFactor + 1; j += m_ui32AutoDecimationFactor, k += m_ui32AutoDecimationFactor )
+			if (currentSampleIndex < l_ui32HistoryIndexMax )
 			{
-				sum = 0;
-				count = 0;
-
-				for( l = 0; l < m_ui32AutoDecimationFactor; l++ )
-				{
-					if(/*k+l>=m_ui32HistoryIndex && */k + l < l_ui32HistoryIndexMax )
-					{
-						sum += l_vHistory[k + l];
-						count++;
-					}
-					else if(k+l >= m_ui32SampleCount)
-					{
-						sum+=l_vHistory[k+l-m_ui32SampleCount];
-						count++;
-					}
-				}
-
-				if(count)
-				{
-					l_pVertex++->y = sum / count;
-				}
-				else
-				{
-					l_pVertex++;
-				}
+				l_pVertex->y = l_vHistory[currentSampleIndex];
 			}
+			else if(currentSampleIndex >= m_ui32SampleCount)
+			{
+				l_pVertex->y = l_vHistory[currentSampleIndex - m_ui32SampleCount];
+			}
+
+			l_pVertex++;
 		}
 	}
 
@@ -113,18 +90,30 @@ void CRendererLine::refresh(const IRendererContext& rContext)
 bool CRendererLine::render(const IRendererContext& rContext)
 {
 	if(!rContext.getSelectedCount()) return false;
-	if(!m_vMuliVertex.size()) return false;
 	if(!m_ui32HistoryCount) return false;
 
-	uint32_t i, z;
-	int32_t n  = (int32_t)(m_ui32SampleCount/m_ui32AutoDecimationFactor);
-	int32_t n1 = (int32_t)(((m_ui32HistoryIndex % m_ui32SampleCount) * n)/m_ui32SampleCount);
-	int32_t n2 = (int32_t)(n - n1);
+	int32_t sampleCount  = static_cast<int32_t>(m_ui32SampleCount);
 
-	if(!n) return false;
 
-	float t1 =  n2 * 1.f / n;
-	float t2 = -n1 * 1.f / n;
+	// When the display is in continuous mode, there will be n1 samples
+	// displayed until the 'cursor' and n2 samples will be displayed to
+	// complete the whole window.
+	// For example at 25s with a display size of 20s
+	// <- n1 samples -><------------ n2 samples ---------------->
+	// | ____         |                    ___                  |
+	// |/    \        |      ___          /   \     ____        |
+	// |------\------/|-----/---\--------/-----\___/----\-------|
+	// |       \____/ |    /     \______/                \______|
+	// |              |___/                                     |
+	// Time          25s              10s                      20s
+
+	int32_t n1 = static_cast<int32_t>(m_ui32HistoryIndex % m_ui32SampleCount);
+	int32_t n2 = static_cast<int32_t>(sampleCount - n1);
+
+	if(!sampleCount) return false;
+
+	float t1 =  n2 * 1.f / sampleCount;
+	float t2 = -n1 * 1.f / sampleCount;
 
 	::glDisable(GL_TEXTURE_1D);
 
@@ -135,74 +124,53 @@ bool CRendererLine::render(const IRendererContext& rContext)
 	::glPushAttrib(GL_CURRENT_BIT);
 	::glColor3f(.2f, .2f, .2f);
 	::glBegin(GL_LINES);
-	for(i=0; i<rContext.getSelectedCount(); i++)
+	for(uint32_t selectedChannel=0; selectedChannel<rContext.getSelectedCount(); selectedChannel++)
 	{
-		::glVertex2f(0, float(i));
-		::glVertex2f(1, float(i));
+		::glVertex2f(0, static_cast<float>(selectedChannel));
+		::glVertex2f(1, static_cast<float>(selectedChannel));
 	}
 	::glEnd();
 	::glPopAttrib();
 
-/*
-	::glPushAttrib(GL_CURRENT_BIT);
-	::glColor3f(.2f, .2f, .2f);
-	::glBegin(GL_LINES);
-		::glVertex2f(n1*1.f/n, 0);
-		::glVertex2f(n1*1.f/n, 1);
-	::glEnd();
-	::glPopAttrib();
-*/
-
 	::glEnableClientState(GL_VERTEX_ARRAY);
-//	::glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	for(i=0; i<rContext.getSelectedCount(); i++)
+	for(uint32_t selectedChannel=0; selectedChannel<rContext.getSelectedCount(); selectedChannel++)
 	{
 		::glPushMatrix();
-		::glTranslatef(0, rContext.getSelectedCount()-i-1.f, 0);
+		::glTranslatef(0, rContext.getSelectedCount()-selectedChannel-1.f, 0);
 		::glScalef(1, rContext.getScale(), 1);
-		for(z=0; z<m_vMuliVertex.size(); z++)
-		{
-			if(m_vMuliVertex[z].size())
-			{
-				std::vector < CVertex >& l_rVertex=m_vMuliVertex[z][rContext.getSelected(i)];
-				if(rContext.isScrollModeActive())
-				{
-					::glPushMatrix();
-					::glTranslatef(t1, 0, 0);
-					::glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &l_rVertex[0].x);
-//					::glTextureCoordPointer(1, GL_FLOAT, sizeof(CVertex), &l_rVertex[0].u);
-					::glDrawArrays(GL_LINE_STRIP, 0, n1);
-					::glPopMatrix();
-					if(n2 > 0)
-					{
-						::glPushMatrix();
-						::glTranslatef(t2, 0, 0);
-						::glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &l_rVertex[n1].x);
-//						::glTextureCoordPointer(1, GL_FLOAT, sizeof(CVertex), &l_rVertex[n1].u);
-						::glDrawArrays(GL_LINE_STRIP, 0, n2);
-						::glPopMatrix();
 
-						if(n1 > 0)
-						{
-							::glBegin(GL_LINES);
-//								::glTexCoord1fv(&l_rVertex[n2].u);
-								::glVertex2f(l_rVertex[n-1].x + t2, l_rVertex[n-1].y);
-								::glVertex2f(l_rVertex[0].x   + t1, l_rVertex[0].y);
-							::glEnd();
-						}
-					}
-				}
-				else
+		std::vector < CVertex >& l_rVertex=m_Vertices[rContext.getSelected(selectedChannel)];
+		if(rContext.isScrollModeActive())
+		{
+			::glPushMatrix();
+			::glTranslatef(t1, 0, 0);
+			::glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &l_rVertex[0].x);
+			::glDrawArrays(GL_LINE_STRIP, 0, n1);
+			::glPopMatrix();
+			if(n2 > 0)
+			{
+				::glPushMatrix();
+				::glTranslatef(t2, 0, 0);
+				::glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &l_rVertex[n1].x);
+				::glDrawArrays(GL_LINE_STRIP, 0, n2);
+				::glPopMatrix();
+
+				if(n1 > 0)
 				{
-					::glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &l_rVertex[0].x);
-//					::glTextureCoordPointer(1, GL_FLOAT, sizeof(CVertex), &l_rVertex[0].u);
-					::glDrawArrays(GL_LINE_STRIP, 0, n);
+					::glBegin(GL_LINES);
+					::glVertex2f(l_rVertex[sampleCount-1].x + t2, l_rVertex[sampleCount-1].y);
+					::glVertex2f(l_rVertex[0].x   + t1, l_rVertex[0].y);
+					::glEnd();
 				}
 			}
 		}
+		else
+		{
+			::glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &l_rVertex[0].x);
+			::glDrawArrays(GL_LINE_STRIP, 0, sampleCount);
+		}
 		::glPopMatrix();
 	}
-//	::glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	::glDisableClientState(GL_VERTEX_ARRAY);
 
 	::glPopMatrix();

@@ -144,9 +144,9 @@ void CRenderer::clear(uint32_t ui32SampleCountToKeep = 0)
 	{
 		if( ui32SampleCountToKeep == 0 )
 		{
-			for (int i = 0; i < m_vHistory.size(); i++)
+			for (std::vector<float>& vec : m_vHistory)
 			{
-				m_vHistory[i].clear();
+				vec.clear();
 			}
 			
 			m_ui32HistoryCount = 0;
