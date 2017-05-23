@@ -59,7 +59,7 @@ ELSEIF(OEM_DISTRIBUTION STREQUAL "mensia")
 	SET(BRAND_NAME "NeuroRT")
 	SET(STUDIO_NAME "Studio")
 ELSE()
-	MESSAGE(FATAL_ERROR "OEM_DISTRIBUTION unrocognized (${OEM_DISTRIBUTION}) ! CMake cannot deduce the brand and product names. ")
+	MESSAGE(FATAL_ERROR "OEM_DISTRIBUTION unrecognized (${OEM_DISTRIBUTION}) ! CMake cannot deduce the brand and product names. ")
 ENDIF()
 
 IF(NOT DEFINED OV_PACKAGE)
