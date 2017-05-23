@@ -7,17 +7,16 @@ set script_dir=%CD%
 set BuildType=Release
 set PauseCommand=pause
 set RefreshCMake=F
-set PathSDK="%script_dir%\..\dependencies\certivibe"
-set PathDep="%script_dir%\..\dependencies\certivibe-dependencies"
 set VerboseOuptut=OFF
 
 goto parameter_parse
 
 :print_help
-	echo Usage: winndows-generate-vs-project.cmd --sdk <path to openvibe SDK> --dep <path to openvibe dependencies>
-	exit /b
+	echo Usage: windows-generate-vs-project.cmd --sdk ^<path to openvibe SDK^> --dep ^<path to openvibe dependencies^> [--debug]
+	goto :terminate
 
 :parameter_parse
+
 for %%A in (%*) DO (
 	if /i "%%A"=="--sdk" (
 		set next=SDK
@@ -29,19 +28,44 @@ for %%A in (%*) DO (
 	) else if "!next!"=="DEP" (
 		set PathDep=%%A
 		set next=
+	) else if /i "%%A"=="--debug" (
+		set BuildType=Debug
+		set next=
+	) else if /i "%%A"=="--help" (
+		goto :print_help
 	)
 )
+
 setlocal
 
-call "windows-initialize-environment.cmd" --sdk "%PathSDK%"
+if not defined PathSDK (
+	set PathSDK="%script_dir%\..\dependencies\certivibe-%BuildType%"
+	echo "No SDK's path provided. Set to the default one: %PathSDK%"
+)
 
-set build_dir=%script_dir%\..\..\certivibe-build\studio-vs-project
-set install_dir=%script_dir%\..\..\certivibe-build\dist-studio
+if not defined PathDep (
+	set PathDep="%script_dir%\..\dependencies\certivibe-dependencies-%BuildType%"
+	echo "No dependencies's path provided. Set to the default one: %PathDep%"
+)
+
+REM To compile with the Visual Studio toolset v120
+set SKIP_VS2017=1
+set SKIP_VS2015=1
+
+call "windows-initialize-environment.cmd" --dep "%PathDep%"
+
+set build_dir=%script_dir%\..\..\studio-build\vs-project-%BuildType%
+set install_dir=%script_dir%\..\..\studio-build\dist-%BuildType%
+
+echo install_dir: %install_dir%
 
 mkdir %build_dir% 2>NUL
 pushd %build_dir%
 
-cmake %script_dir%\.. -G"%VSCMake%" -DCMAKE_BUILD_TYPE=%BuildType% -DCMAKE_INSTALL_PREFIX=%install_dir% -DOPENVIBE_SDK_PATH=!PathSDK! -DCV_DEPENDENCIES_PATH=!PathDep!
+echo SDK's path: %PathSDK%
+echo Dependencies SDK's path: %PathDep%
+
+cmake %script_dir%\.. -G"%VSCMake%" -T "v120" -DCMAKE_BUILD_TYPE=%BuildType% -DCMAKE_INSTALL_PREFIX=%install_dir% -DOPENVIBE_SDK_PATH=!PathSDK! -DCV_DEPENDENCIES_PATH=!PathDep!
 
 if not "!ERRORLEVEL!" == "0" goto terminate_error
 
