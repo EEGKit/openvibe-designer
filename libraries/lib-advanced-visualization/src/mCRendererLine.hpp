@@ -28,13 +28,13 @@ namespace Mensia
 		{
 		public:
 
-			CRendererLine(uint32_t ui32MultiCount=1);
+			CRendererLine();
 
 			virtual void rebuild(const IRendererContext& rContext);
 			virtual void refresh(const IRendererContext& rContext);
 			virtual bool render(const IRendererContext& rContext);
 
-			std::vector < std::vector < std::vector < CVertex > > > m_vMuliVertex;
+			std::vector<std::vector<CVertex>> m_Vertices;
 		};
 	};
 };
