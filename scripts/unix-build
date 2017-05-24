@@ -15,6 +15,7 @@ function usage()
 		echo "--build-dir=<dirname> : build directory"
 		echo "--install-dir=<dirname> : binaries deployment directory"
 		echo "--test-data-dir=<dirname> : test data directory"
+		echo "--make-package : a package will be created in build directory"
 		echo "--sdk=<dirname> : path to the Openvibe SDK"
 		echo "--oem-distribution=<name of the oem distribution> : distribution name, can be openvibe or mensia"
 }
@@ -31,6 +32,7 @@ ov_test_data_dir="${ov_script_dir}/../dependencies/test-data"
 ov_sdk_dir="${ov_script_dir}/../dependencies/openvibe-sdk-release"
 ov_oem_distribution="openvibe"
 verbose="OFF"
+package_option="FALSE"
 
 # Parse arguments
 for i in "$@"
@@ -56,19 +58,23 @@ do
 			ov_install_dir="${i#*=}"
 			shift
 			;;
+		--make-package)
+			package_option="TRUE"
+			shift
+			;;
 		--test-data-dir=*)
 			ov_test_data_dir="${i#*=}"
 			shift
 			;;
-    --sdk=*)
-      ov_sdk_dir="${i#*=}"
-      shift
-      ;;
-    --oem-distribution=*)
-      ov_oem_distribution="${i#*=}"
-      shift
-      ;;
-    *)
+		--sdk=*)
+			ov_sdk_dir="${i#*=}"
+			shift
+			;;
+		--oem-distribution=*)
+			ov_oem_distribution="${i#*=}"
+			shift
+			;;
+		*)
 			echo "ERROR: Unknown parameter $i"
 			exit 1
 			;;
@@ -85,9 +91,9 @@ then
 fi
 
 if [[ ${ov_build_type} == "Debug" ]]; then
-    ov_install_dir="${ov_script_dir}/../build/dist-debug"
+	ov_install_dir="${ov_script_dir}/../build/dist-debug"
 elif [[ ${ov_build_type} == "RelWithDebInfo" ]]; then
-    ov_install_dir="${ov_script_dir}/../build/dist-relwdeb"
+	ov_install_dir="${ov_script_dir}/../build/dist-relwdeb"
 fi
 
 echo "**************************************"
@@ -106,7 +112,7 @@ echo ""
 uname_string=$(uname)
 
 if [[ "$uname_string" == 'Darwin' ]]; then
-  export PKG_CONFIG_PATH="/opt/X11/lib/pkgconfig:$PKG_CONFIG_PATH"
+	export PKG_CONFIG_PATH="/opt/X11/lib/pkgconfig:$PKG_CONFIG_PATH"
 fi
 
 # Create necessary directories
@@ -122,10 +128,11 @@ cmake ${ov_script_dir}/.. \
 		-G Ninja \
 		-DCMAKE_BUILD_TYPE=${ov_build_type} \
 		-DCMAKE_INSTALL_PREFIX=${ov_install_dir} \
+		-DOV_PACKAGE=${package_option} \
 		-DOVT_TEST_DATA_DIR=${ov_test_data_dir} \
-    -DFlag_VerboseOutput=${verbose} \
-    -DOPENVIBE_SDK_PATH=${ov_sdk_dir} \
-    -DOEM_DISTRIBUTION=${ov_oem_distribution}
+		-DFlag_VerboseOutput=${verbose} \
+		-DOPENVIBE_SDK_PATH=${ov_sdk_dir} \
+		-DOEM_DISTRIBUTION=${ov_oem_distribution}
 
 
 
@@ -149,6 +156,16 @@ if [[ $? == 0 ]]; then
 else
 	echo "ERROR: Build failed"
 	exit 1
+fi
+
+if [[ ${package_option} == "TRUE" ]]; then
+	cmake --build . --target package
+	if [[ $? == 0 ]]; then
+		echo "Package succeeded!"
+	else
+		echo "ERROR: Package failed"
+		exit 1
+	fi
 fi
 
 popd &> /dev/null

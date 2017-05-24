@@ -3,6 +3,7 @@ dependencies
 scripts/win32-dependencies.cmd
 dist
 build
+libraries/doc-tmp
 CMakeLists.txt.*
 CustomCMakeLists.txt
 .*.swp
