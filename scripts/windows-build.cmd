@@ -13,7 +13,7 @@ set SKIP_VS2015=1
 set BuildType=Release
 set PauseCommand=pause
 set RefreshCMake=F
-set PathSDK=
+set PathSDK=%root_dir%\dependencies\openvibe-sdk-release
 set PathDep=%root_dir%\dependencies
 set OEMDistribution=openvibe
 set VerboseOuptut=OFF
@@ -79,23 +79,20 @@ for %%A in (%*) DO (
         set next=
 	)
 )
-
 setlocal
 
 call "windows-initialize-environment.cmd" --dep %PathDep%
 
-if %PathSDK%=="" (
-  set sdk_dir=%script_dir%\..\dependencies\openvibe-sdk-release
-) else (
-	set sdk_dir=%PathSDK%
-)
 set build_dir=%root_dir%\..\certivibe-build\build-studio-%BuildType%
 
-if %PathDep%=="" (
-	set dep_dir=%script_dir%\..\dependencies\
-) else (
-	set dep_dir=%PathDep%
-)
+if "%BuildType%"=="Debug" ( 
+	set install_dir=%root_dir%\..\certivibe-build\dist-studio-debug 
+) else ( 
+	set install_dir=%root_dir%\..\certivibe-build\dist-studio 
+) 
+
+set sdk_dir=%PathSDK%
+set dep_dir=%PathDep%
 
 mkdir %build_dir% 2>NUL
 pushd %build_dir%
