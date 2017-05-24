@@ -364,14 +364,12 @@ namespace
 		static_cast<CApplication*>(pUserData)->redoCB();
 	}
 
-#if defined TARGET_HAS_LibArchway
 	void button_toggle_neurort_engine_configuration_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
 	{
 		auto l_pApplication = static_cast<CApplication*>(pUserData);
 
 		l_pApplication->m_oArchwayHandlerGUI.toggleNeuroRTEngineConfigurationDialog(static_cast<bool>(gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(pMenuItem))));
 	}
-#endif
 
 	void delete_designer_visualisation_cb(gpointer user_data)
 	{
@@ -658,12 +656,10 @@ namespace
 	gboolean idle_application_loop(gpointer pUserData)
 	{
 		CApplication* l_pApplication=static_cast<CApplication*>(pUserData);
-#if defined TARGET_HAS_LibArchway
 		if (l_pApplication->m_oArchwayHandler.isEngineStarted())
 		{
 			l_pApplication->m_oArchwayHandler.loopEngine();
 		}
-#endif
 
 		CInterfacedScenario* l_pCurrentInterfacedScenario=l_pApplication->getCurrentInterfacedScenario();
 		if(l_pCurrentInterfacedScenario)
@@ -894,10 +890,8 @@ CApplication::CApplication(const IKernelContext& rKernelContext)
 	,m_bIsQuitting(false)
 	,m_bIsNewVersion(false)
 	,m_ui32CurrentInterfacedScenarioIndex(0)
-#if defined TARGET_HAS_LibArchway
     ,m_oArchwayHandler(rKernelContext)
     ,m_oArchwayHandlerGUI(m_oArchwayHandler)
-#endif
 {
 	m_pPluginManager=&m_rKernelContext.getPluginManager();
 	m_pScenarioManager=&m_rKernelContext.getScenarioManager();
@@ -1029,10 +1023,8 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_zoomout")), "clicked",  G_CALLBACK(zoom_out_scenario_cb), this);
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-zoom_spinner")), "value-changed",  G_CALLBACK(spinner_zoom_changed_cb), this);
 
-#if defined TARGET_HAS_LibArchway
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration")),       "clicked", G_CALLBACK(button_toggle_neurort_engine_configuration_cb),   this);
-	m_oArchwayHandlerGUI.m_pButtonOpenEngineConfigurationDialog = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration"));
-#endif
+	m_oArchwayHandlerGUI.m_ButtonOpenEngineConfigurationDialog = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration"));
 
 #if !defined(TARGET_OS_Windows) && !defined(TARGET_OS_Linux)
 	gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_issue_report")));
@@ -1391,12 +1383,10 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 		m_rKernelContext.getLogManager() << LogLevel_Error << "The configuration token ${Designer_HelpBrowserURLBase} seems to be set to an incorrect value.\n";
 	}
 
-#if defined TARGET_HAS_LibArchway
 	if (m_oArchwayHandler.initialize() == Mensia::EngineInitialisationStatus::NotAvailable)
 	{
 		gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration")));
 	}
-#endif
 }
 
 bool CApplication::displayChangelogWhenAvailable()

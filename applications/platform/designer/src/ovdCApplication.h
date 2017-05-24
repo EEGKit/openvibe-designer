@@ -3,10 +3,9 @@
 
 #include <visualization-toolkit/ovvizIVisualizationManager.h>
 #include "ovd_base.h"
-#if defined TARGET_HAS_LibArchway
+
 #include "ovdCArchwayHandler.h"
 #include "ovdCArchwayHandlerGUI.h"
-#endif
 
 #define OVD_ScenarioImportContext_OpenScenario OpenViBE::CIdentifier(0xA180DB91, 0x19235AEE)
 #define OVD_ScenarioExportContext_SaveScenario OpenViBE::CIdentifier(0xC98C47AD, 0xCBD952B2)
@@ -209,10 +208,8 @@ namespace OpenViBEDesigner
 		std::vector <const OpenViBE::Plugins::IPluginObjectDesc*> m_vNewBoxes;
 		std::vector <const OpenViBE::Plugins::IPluginObjectDesc*> m_vUpdatedBoxes;
 		std::vector <std::string> m_vDocumentedBoxes;
-#if defined TARGET_HAS_LibArchway
 		Mensia::CArchwayHandler m_oArchwayHandler;
 		Mensia::CArchwayHandlerGUI m_oArchwayHandlerGUI;
-#endif
 	};
 }
 

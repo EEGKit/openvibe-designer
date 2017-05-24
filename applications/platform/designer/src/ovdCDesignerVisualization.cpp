@@ -1057,7 +1057,7 @@ void CDesignerVisualization::askNewVisualizationWindow()
 	id.run();
 }
 
-boolean CDesignerVisualization::newVisualizationWindow(const char* label)
+bool CDesignerVisualization::newVisualizationWindow(const char* label)
 {
 	//ensure name is unique
 	IVisualizationWidget* l_pVisualizationWindow;
@@ -1124,7 +1124,7 @@ void CDesignerVisualization::askRenameVisualizationWindow()
 	id.run();
 }
 
-boolean CDesignerVisualization::renameVisualizationWindow(const char* pNewVisualizationWindowName)
+bool CDesignerVisualization::renameVisualizationWindow(const char* pNewVisualizationWindowName)
 {
 	//retrieve visualization window
 	::GtkTreeIter l_oIter;
@@ -1174,7 +1174,7 @@ boolean CDesignerVisualization::renameVisualizationWindow(const char* pNewVisual
 	return true;
 }
 
-boolean CDesignerVisualization::removeVisualizationWindow()
+bool CDesignerVisualization::removeVisualizationWindow()
 {
 	//retrieve visualization window
 	CIdentifier l_oVisualizationWindowIdentifier = OV_UndefinedIdentifier;
@@ -1212,7 +1212,7 @@ void CDesignerVisualization::askNewVisualizationPanel()
 	id.run();
 }
 
-boolean CDesignerVisualization::newVisualizationPanel(const char* label)
+bool CDesignerVisualization::newVisualizationPanel(const char* label)
 {
 	//retrieve visualization window
 	IVisualizationWidget* l_pVisualizationWindow=NULL;
@@ -1277,7 +1277,7 @@ void CDesignerVisualization::askRenameVisualizationPanel()
 	id.run();
 }
 
-boolean CDesignerVisualization::renameVisualizationPanel(const char* pNewVisualizationPanelName)
+bool CDesignerVisualization::renameVisualizationPanel(const char* pNewVisualizationPanelName)
 {
 	//retrieve visualization window
 	::GtkTreeIter l_oIter;
@@ -1341,7 +1341,7 @@ boolean CDesignerVisualization::renameVisualizationPanel(const char* pNewVisuali
 	return true;
 }
 
-boolean CDesignerVisualization::removeVisualizationPanel()
+bool CDesignerVisualization::removeVisualizationPanel()
 {
 	//retrieve visualization window
 	::GtkTreeIter l_oIter;
@@ -1367,7 +1367,7 @@ boolean CDesignerVisualization::removeVisualizationPanel()
 	return true;
 }
 
-boolean CDesignerVisualization::removeVisualizationWidget()
+bool CDesignerVisualization::removeVisualizationWidget()
 {
 	//retrieve widget
 	::GtkTreeIter l_oIter;
@@ -1381,7 +1381,7 @@ boolean CDesignerVisualization::removeVisualizationWidget()
 }
 
 //TODO : move this to CVisualizationTree?
-boolean CDesignerVisualization::removeVisualizationWidget(const CIdentifier& rIdentifier)
+bool CDesignerVisualization::removeVisualizationWidget(const CIdentifier& rIdentifier)
 {
 	IVisualizationWidget* l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(rIdentifier);
 	if(l_pVisualizationWidget == NULL)
@@ -1427,9 +1427,9 @@ boolean CDesignerVisualization::removeVisualizationWidget(const CIdentifier& rId
 	return true;
 }
 
-boolean CDesignerVisualization::destroyVisualizationWidget(const CIdentifier& rIdentifier)
+bool CDesignerVisualization::destroyVisualizationWidget(const CIdentifier& rIdentifier)
 {
-	boolean b = removeVisualizationWidget(rIdentifier);
+	bool b = removeVisualizationWidget(rIdentifier);
 	m_rVisualizationTree.destroyHierarchy(rIdentifier, true);
 	return b;
 }
@@ -1458,7 +1458,7 @@ void CDesignerVisualization::notebookPageSelectedCB(::GtkNotebook* pNotebook, gu
 	}
 }
 
-void CDesignerVisualization::enableNotebookSignals(::GtkWidget* pNotebook, boolean b)
+void CDesignerVisualization::enableNotebookSignals(::GtkWidget* pNotebook, bool b)
 {
 	if(b)
 	{
@@ -1499,7 +1499,7 @@ void CDesignerVisualization::notifyPositionPanedCB(::GtkWidget* pWidget)
 	}
 }
 
-void CDesignerVisualization::enablePanedSignals(::GtkWidget* pPaned, boolean b)
+void CDesignerVisualization::enablePanedSignals(::GtkWidget* pPaned, bool b)
 {
 	if(b)
 	{
