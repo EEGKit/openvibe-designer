@@ -3168,13 +3168,19 @@ void CInterfacedScenario::copySelection(void)
 		{
 			CIdentifier l_oNewIdentifier;
 			const ILink* l_pLink=m_rScenario.getLinkDetails(objectId);
-			m_rApplication.m_pClipboardScenario->connect(
-				l_oNewIdentifier,
-				l_vIdMapping[l_pLink->getSourceBoxIdentifier()],
-				l_pLink->getSourceBoxOutputIndex(),
-				l_vIdMapping[l_pLink->getTargetBoxIdentifier()],
-				l_pLink->getTargetBoxInputIndex(),
-				l_pLink->getIdentifier());
+
+			// Connect link only if the source and target boxes are copied
+			if (l_vIdMapping.find(l_pLink->getSourceBoxIdentifier()) != l_vIdMapping.end()
+				&& l_vIdMapping.find(l_pLink->getTargetBoxIdentifier()) != l_vIdMapping.end())
+			{
+				m_rApplication.m_pClipboardScenario->connect(
+					l_oNewIdentifier,
+					l_vIdMapping[l_pLink->getSourceBoxIdentifier()],
+					l_pLink->getSourceBoxOutputIndex(),
+					l_vIdMapping[l_pLink->getTargetBoxIdentifier()],
+					l_pLink->getTargetBoxInputIndex(),
+					l_pLink->getIdentifier());
+			}		
 		}
 	}
 }
