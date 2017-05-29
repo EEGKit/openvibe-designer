@@ -1,2 +1,2 @@
-gtk-2.22.1-dev.zip;gtk;https://www.dropbox.com/s/akvv9m2v52qbuje/gtk-2.22.1-dev.zip?dl=1
-gtk-2.22.1-runtime.zip;gtk;https://www.dropbox.com/s/e2f4ivr8znef4jw/gtk-2.22.1-runtime.zip?dl=1
+gtk-2.22.1-dev.zip;gtk;https://www.dropbox.com/s/uyngn3ywxgijh3i/gtk-2.22.1-dev.zip?dl=1
+gtk-2.22.1-runtime.zip;gtk;https://www.dropbox.com/s/lqd5j98dbswi5nb/gtk-2.22.1-runtime.zip?dl=1
