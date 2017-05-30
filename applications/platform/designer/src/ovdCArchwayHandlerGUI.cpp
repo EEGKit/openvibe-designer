@@ -32,7 +32,7 @@ namespace
 	{
 		auto gui = static_cast<CArchwayHandlerGUI*>(userData);
 
-		std::string configurationToolLaunchCmd = OpenViBE::Directories::getBinDir() + "/mensia-device-configuration";
+		std::string configurationToolLaunchCmd = std::string(OpenViBE::Directories::getBinDir().toASCIIString()) + "/mensia-device-configuration";
 		//std::string configurationFilePath = std::string(getenv("USERPROFILE")) + "\\lib-mensia-engine.conf";
 
 		std::string escapedURL = gui->m_Controller.m_sDeviceURL;
@@ -47,7 +47,7 @@ namespace
 #if defined TARGET_OS_Windows
 		std::string command = "\"\"" + configurationToolLaunchCmd + "\" --no-file \"" + escapedURL + "\"\"";
 #elif defined TARGET_OS_Linux || defined TARGET_OS_MacOS
-		std::string command = configurationToolLaunchCmd + " --no-file \"" + l_sEscapedURL + "\"";
+		std::string command = configurationToolLaunchCmd + " --no-file \"" + escapedURL + "\"";
 #endif
 		FILE* commandPipe = FS::Files::popen(command.c_str(), "r");
 
