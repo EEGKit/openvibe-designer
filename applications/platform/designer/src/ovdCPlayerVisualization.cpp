@@ -197,7 +197,7 @@ void CPlayerVisualization::init(void)
 	{
 		//create this window only if it contains at least one visualization box
 		CIdentifier l_oIdentifier = OV_UndefinedIdentifier;
-		boolean l_bCreateWindow = false;
+		bool l_bCreateWindow = false;
 
 		//for all visualization boxes
 		while(m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oIdentifier, EVisualizationWidget_VisualizationBox) == true)
@@ -284,7 +284,7 @@ void CPlayerVisualization::endLoadTreeWidget(OpenViBEVisualizationToolkit::IVisu
 	}
 }
 
-boolean CPlayerVisualization::setToolbar(const CIdentifier& rBoxIdentifier, ::GtkWidget* pToolbarWidget)
+bool CPlayerVisualization::setToolbar(const CIdentifier& rBoxIdentifier, ::GtkWidget* pToolbarWidget)
 {
 	//retrieve visualization widget
 	IVisualizationWidget* l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidgetFromBoxIdentifier(rBoxIdentifier);
@@ -332,7 +332,7 @@ boolean CPlayerVisualization::setToolbar(const CIdentifier& rBoxIdentifier, ::Gt
 	return true;
 }
 
-boolean CPlayerVisualization::setWidget(const CIdentifier& rBoxIdentifier, ::GtkWidget* pWidget)
+bool CPlayerVisualization::setWidget(const CIdentifier& rBoxIdentifier, ::GtkWidget* pWidget)
 {
 	//retrieve visualization widget
 	IVisualizationWidget* l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidgetFromBoxIdentifier(rBoxIdentifier);
@@ -432,7 +432,7 @@ boolean CPlayerVisualization::setWidget(const CIdentifier& rBoxIdentifier, ::Gtk
 	return true;
 }
 
-boolean CPlayerVisualization::parentWidgetBox(IVisualizationWidget* pWidget, ::GtkBox* pWidgetBox)
+bool CPlayerVisualization::parentWidgetBox(IVisualizationWidget* pWidget, ::GtkBox* pWidgetBox)
 {
 	//if widget is unaffected, open it in its own window
 	if(pWidget->getParentIdentifier() == OV_UndefinedIdentifier)
@@ -852,7 +852,7 @@ void CPlayerVisualization::toolbar_button_toggled_cb(::GtkToggleButton* pButton,
 	static_cast<CPlayerVisualization*>(user_data)->toggleToolbarCB(pButton);
 }
 
-boolean CPlayerVisualization::toggleToolbarCB(::GtkToggleButton* pToolbarButton)
+bool CPlayerVisualization::toggleToolbarCB(::GtkToggleButton* pToolbarButton)
 {
 	//retrieve toolbar
 	if(m_mToolbars.find(pToolbarButton) == m_mToolbars.end())
@@ -916,7 +916,7 @@ gboolean CPlayerVisualization::toolbar_delete_event_cb(GtkWidget* widget, GdkEve
 	return TRUE;
 }
 
-boolean CPlayerVisualization::deleteToolbarCB(GtkWidget* pToolbarWidget)
+bool CPlayerVisualization::deleteToolbarCB(GtkWidget* pToolbarWidget)
 {
 	if(m_pActiveToolbarButton == NULL || m_mToolbars[m_pActiveToolbarButton] != pToolbarWidget)
 	{

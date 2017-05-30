@@ -96,6 +96,7 @@
             </child>
             <child>
               <object class="GtkToolButton" id="button-start-engine-fast">
+                <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Fast Forward</property>

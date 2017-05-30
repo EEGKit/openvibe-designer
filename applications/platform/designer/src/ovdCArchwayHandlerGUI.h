@@ -1,7 +1,5 @@
 #pragma once
 
-#if defined TARGET_HAS_LibArchway
-
 #include "ovdCArchwayHandler.h"
 #include <gtk/gtk.h>
 
@@ -11,38 +9,37 @@ namespace Mensia {
 	//class CArchwayHandlerGUI final {
 	class CArchwayHandlerGUI {
 	public:
-		CArchwayHandlerGUI(CArchwayHandler& rController);
+		CArchwayHandlerGUI(CArchwayHandler& controller);
 		~CArchwayHandlerGUI();
 
 		void refreshEnginePipelines();
-		void toggleNeuroRTEngineConfigurationDialog(bool bShouldDisplay);
-		void displayPipelineConfigurationDialog(unsigned int uiPipelineId);
+		void toggleNeuroRTEngineConfigurationDialog(bool shouldDisplay);
+		void displayPipelineConfigurationDialog(unsigned int pipelineId);
 
-		bool setPipelineParameterValueAtPath(gchar const* sPath, gchar const* sNewValue);
+		bool setPipelineParameterValueAtPath(gchar const* path, gchar const* newValue);
 
 	public:
-		GtkBuilder* m_pBuilder;
-		GtkBuilder* m_pApplicationBuilder;
-		CArchwayHandler& m_rController;
+		GtkBuilder* m_Builder;
+		GtkBuilder* m_ApplicationBuilder;
+		CArchwayHandler& m_Controller;
 
 		// This variable is used to store the path of an edited cell
 		// while editing the PipelineParameters.
-		std::string m_sCurrentlyEditedCellPath;
+		std::string m_CurrentlyEditedCellPath;
 
-		GtkWidget* m_pButtonOpenEngineConfigurationDialog;
-		GtkWidget* m_pButtonReinitializeArchway;
+		GtkWidget* m_ButtonOpenEngineConfigurationDialog;
+		GtkWidget* m_ButtonReinitializeArchway;
 
-		GtkWidget* m_pButtonStartEngine;
-		GtkWidget* m_pButtonStopEngine;
+		GtkWidget* m_ButtonStartEngine;
+		GtkWidget* m_ButtonStartEngineFastFoward;
+		GtkWidget* m_ButtonStopEngine;
 
-		GtkWidget* m_pTreeViewEnginePipelines;
+		GtkWidget* m_TreeViewEnginePipelines;
 
-		GtkSpinner* m_pSpinnerEngineActivity;
+		GtkSpinner* m_SpinnerEngineActivity;
 
-		GtkTreeModel* m_pTreeModelEnginePipelines;
+		GtkTreeModel* m_TreeModelEnginePipelines;
 
-	private:
 	};
 }
 
-#endif

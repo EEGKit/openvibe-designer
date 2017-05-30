@@ -1,7 +1,4 @@
-#if defined TARGET_HAS_LibArchway
-
 #include "ovdCArchwayHandlerGUI.h"
-#include <mensia/base/m_directories.h>
 #include <openvibe/ov_directories.h>
 #include <fs/Files.h>
 #include <sstream>
@@ -31,62 +28,61 @@ namespace
 		Column_SettingValue =3
 	};
 
-	void on_button_configure_acquisition_clicked(GtkMenuItem* pMenuItem, gpointer pUserData)
+	void on_button_configure_acquisition_clicked(GtkMenuItem* menuItem, gpointer userData)
 	{
-		auto l_pGUI = static_cast<CArchwayHandlerGUI*>(pUserData);
+		auto gui = static_cast<CArchwayHandlerGUI*>(userData);
 
-		std::string configurationToolLaunchCmd = Mensia::Directories::getBinDir() + "/mensia-device-configuration";
+		std::string configurationToolLaunchCmd = OpenViBE::Directories::getBinDir() + "/mensia-device-configuration";
 		//std::string configurationFilePath = std::string(getenv("USERPROFILE")) + "\\lib-mensia-engine.conf";
 
-		std::string l_sEscapedURL = l_pGUI->m_rController.m_sDeviceURL;
+		std::string escapedURL = gui->m_Controller.m_sDeviceURL;
 
-		size_t l_uiStartPosition = 0;
-	    while((l_uiStartPosition = l_sEscapedURL.find("\"", l_uiStartPosition)) != std::string::npos) {
-	        l_sEscapedURL.replace(l_uiStartPosition, 1, "\\\"");
-	        l_uiStartPosition += 2; // Handles case where 'to' is a substring of 'from'
-	    }
+		size_t startPosition = 0;
+		while((startPosition = escapedURL.find("\"", startPosition)) != std::string::npos) {
+			escapedURL.replace(startPosition, 1, "\\\"");
+			startPosition += 2; // Handles case where 'to' is a substring of 'from'
+		}
 
 
 #if defined TARGET_OS_Windows
-		std::string command = "\"\"" + configurationToolLaunchCmd + "\" --no-file \"" + l_sEscapedURL + "\"\"";
+		std::string command = "\"\"" + configurationToolLaunchCmd + "\" --no-file \"" + escapedURL + "\"\"";
 #elif defined TARGET_OS_Linux || defined TARGET_OS_MacOS
 		std::string command = configurationToolLaunchCmd + " --no-file \"" + l_sEscapedURL + "\"";
 #endif
-		FILE* l_pCommandPipe = FS::Files::popen(command.c_str(), "r");
+		FILE* commandPipe = FS::Files::popen(command.c_str(), "r");
 
-		char l_sBuffer[512];
-		std::stringstream l_oURLStream;
-		while (fgets(l_sBuffer, sizeof(l_sBuffer), l_pCommandPipe) != NULL)
+		char buffer[512];
+		std::stringstream urlStream;
+		while (fgets(buffer, sizeof(buffer), commandPipe) != NULL)
 		{
-			l_oURLStream << l_sBuffer;
+			urlStream << buffer;
 		}
-		pclose(l_pCommandPipe);
+		pclose(commandPipe);
 
-		auto l_sDeviceURL = l_oURLStream.str();
-		l_sDeviceURL = l_sDeviceURL.substr(0, l_sDeviceURL.length() - 1);
+		auto deviceURL = urlStream.str();
+		deviceURL = deviceURL.substr(0, deviceURL.length() - 1);
 
-		l_pGUI->m_rController.m_sDeviceURL = l_sDeviceURL;
-		l_pGUI->m_rController.writeArchwayConfigurationFile();
+		gui->m_Controller.m_sDeviceURL = deviceURL;
+		gui->m_Controller.writeArchwayConfigurationFile();
 	}
 
-	void on_button_reinitialize_archway_clicked(::GtkMenuItem* pMenuItem, gpointer pUserData)
+	void on_button_reinitialize_archway_clicked(::GtkMenuItem* menuItem, gpointer userData)
 	{
-		auto l_pGUI = static_cast<CArchwayHandlerGUI*>(pUserData);
-		auto l_pEngineTypeCombobox =
-		        GTK_COMBO_BOX(gtk_builder_get_object(l_pGUI->m_pBuilder, "combobox-engine-connection-type"));
-		auto l_iSelectedEngineType = gtk_combo_box_get_active(l_pEngineTypeCombobox);
+		auto gui = static_cast<CArchwayHandlerGUI*>(userData);
+		auto engineTypeCombobox = GTK_COMBO_BOX(gtk_builder_get_object(gui->m_Builder, "combobox-engine-connection-type"));
+		auto selectedEngineType = gtk_combo_box_get_active(engineTypeCombobox);
 
 		// TODO: For now we always assume LAN Engine connection
-		l_iSelectedEngineType = 1;
-		l_pGUI->m_rController.reinitializeArchway(l_iSelectedEngineType == 0 ? EngineType::Local : EngineType::LAN);
-		l_pGUI->refreshEnginePipelines();
+		selectedEngineType = 1;
+		gui->m_Controller.reinitializeArchway(selectedEngineType == 0 ? EngineType::Local : EngineType::LAN);
+		gui->refreshEnginePipelines();
 	}
 
-	gboolean on_dialog_engine_configuration_delete_event(::GtkDialog* pDialog, ::GdkEvent*, gpointer pUserData)
+	gboolean on_dialog_engine_configuration_delete_event(::GtkDialog* dialog, ::GdkEvent*, gpointer userData)
 	{
-		auto l_pGUI = static_cast<CArchwayHandlerGUI*>(pUserData);
-		gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(l_pGUI->m_pButtonOpenEngineConfigurationDialog), false);
-		gtk_widget_hide(GTK_WIDGET(pDialog));
+		auto gui = static_cast<CArchwayHandlerGUI*>(userData);
+		gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(gui->m_ButtonOpenEngineConfigurationDialog), false);
+		gtk_widget_hide(GTK_WIDGET(dialog));
 		return TRUE;
 	}
 
@@ -97,200 +93,225 @@ namespace
 		return TRUE;
 	}
 
-	void on_treeview_engine_pipelines_row_activated(GtkTreeView* pTreeView, GtkTreePath* pPath, GtkTreeViewColumn*, gpointer pUserData)
+	void on_treeview_engine_pipelines_row_activated(GtkTreeView* treeView, GtkTreePath* path, GtkTreeViewColumn*, gpointer userData)
 	{
-		auto l_pGUI = static_cast<CArchwayHandlerGUI*>(pUserData);
+		auto gui = static_cast<CArchwayHandlerGUI*>(userData);
 
-		GtkTreeIter l_oIterator;
-		auto l_pTreeModel = gtk_tree_view_get_model(pTreeView);
-		if (gtk_tree_model_get_iter(l_pTreeModel, &l_oIterator, pPath))
+		GtkTreeIter pipelineIter;
+		auto treeModel = gtk_tree_view_get_model(treeView);
+		if (gtk_tree_model_get_iter(treeModel, &pipelineIter, path))
 		{
-			guint64 uiPipelineId;
+			guint64 pipelineId;
 
-			gtk_tree_model_get(l_pTreeModel, &l_oIterator,
-			                   Column_PipelineId, &uiPipelineId,
-			                   -1);
+			gtk_tree_model_get(treeModel, &pipelineIter, Column_PipelineId, &pipelineId, -1);
 
-			l_pGUI->displayPipelineConfigurationDialog(static_cast<unsigned int>(uiPipelineId));
+			gui->displayPipelineConfigurationDialog(static_cast<unsigned int>(pipelineId));
 
-			auto l_vEnginePipelines = l_pGUI->m_rController.getEnginePipelines();
-			for (auto& pipeline : l_vEnginePipelines)
+			auto enginePipelines = gui->m_Controller.getEnginePipelines();
+			for (const auto& pipeline : enginePipelines)
 			{
-				if (pipeline.id != uiPipelineId)
+				if (pipeline.id != pipelineId)
 				{
 					continue;
 				}
-				gtk_list_store_set(GTK_LIST_STORE(l_pTreeModel), &l_oIterator,
-				                   Column_PipelineIsConfigured, pipeline.isConfigured,
-				                   -1);
+				gtk_list_store_set(GTK_LIST_STORE(treeModel), &pipelineIter, Column_PipelineIsConfigured, pipeline.isConfigured, -1);
 			}
 		}
 	}
 
-	void on_button_start_engine_clicked(GtkWidget* pWidget, gpointer pUserData)
+	void startEngine(GtkWidget* widget, gpointer userData, bool isFastForward)
 	{
-		auto l_pGUI = static_cast<CArchwayHandlerGUI*>(pUserData);
+		auto gui = static_cast<CArchwayHandlerGUI*>(userData);
 
 		// Get the currently selected pipeline in the list
-		auto l_pSelection = gtk_tree_view_get_selection(GTK_TREE_VIEW(l_pGUI->m_pTreeViewEnginePipelines));
-		if (gtk_tree_selection_count_selected_rows(l_pSelection) == 1)
-		{
-			GtkTreeIter l_oIterator;
-			gtk_tree_selection_get_selected(l_pSelection, &l_pGUI->m_pTreeModelEnginePipelines, &l_oIterator);
+		auto selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gui->m_TreeViewEnginePipelines));
 
-			unsigned long long uiPipelineId = 0;
-			gtk_tree_model_get(l_pGUI->m_pTreeModelEnginePipelines, &l_oIterator,
-			                   Column_PipelineId, &uiPipelineId,
+		if (gtk_tree_selection_count_selected_rows(selection) == 1)
+		{
+			GtkTreeIter pipelineIterator;
+			gtk_tree_selection_get_selected(selection, &gui->m_TreeModelEnginePipelines, &pipelineIterator);
+
+			unsigned long long pipelineId = 0;
+			gtk_tree_model_get(gui->m_TreeModelEnginePipelines,
+			                   &pipelineIterator,
+			                   Column_PipelineId,
+			                   &pipelineId,
 			                   -1);
-			if (l_pGUI->m_rController.startEngineWithPipeline(static_cast<unsigned int>(uiPipelineId))) {
-				gtk_widget_set_sensitive(l_pGUI->m_pButtonStartEngine, false);
-				gtk_widget_set_sensitive(l_pGUI->m_pButtonStopEngine, true);
-				gtk_widget_set_sensitive(l_pGUI->m_pTreeViewEnginePipelines, false);
-				gtk_spinner_start(l_pGUI->m_pSpinnerEngineActivity);
-				gtk_widget_show(GTK_WIDGET(l_pGUI->m_pSpinnerEngineActivity));
+
+			if (gui->m_Controller.startEngineWithPipeline(static_cast<unsigned int>(pipelineId), isFastForward))
+			{
+				gtk_widget_set_sensitive(gui->m_ButtonStartEngine, false);
+				gtk_widget_set_sensitive(gui->m_ButtonStartEngineFastFoward, false);
+				gtk_widget_set_sensitive(gui->m_ButtonStopEngine, true);
+				gtk_widget_set_sensitive(gui->m_TreeViewEnginePipelines, false);
+				gtk_spinner_start(gui->m_SpinnerEngineActivity);
+				gtk_widget_show(GTK_WIDGET(gui->m_SpinnerEngineActivity));
 			}
 		}
 		else
 		{
-			auto m_pAlertDialog = gtk_message_dialog_new(NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_OK, "Plase select a pipeline to run.");
-			gtk_dialog_run(GTK_DIALOG(m_pAlertDialog));
-			gtk_widget_destroy(m_pAlertDialog);
+			auto alertDialog = gtk_message_dialog_new(NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_OK, "Please select a pipeline to run.");
+			gtk_dialog_run(GTK_DIALOG(alertDialog));
+			gtk_widget_destroy(alertDialog);
 		}
 	}
 
-	void on_button_stop_engine_clicked(GtkWidget* pWidget, gpointer pUserData)
+	void on_button_start_engine_clicked(GtkWidget* widget, gpointer userData)
 	{
-		auto l_pGUI = static_cast<CArchwayHandlerGUI*>(pUserData);
+		startEngine(widget, userData, false);
+	}
 
-		if (l_pGUI->m_rController.stopEngine()) {
-			gtk_widget_set_sensitive(l_pGUI->m_pButtonStartEngine, true);
-			gtk_widget_set_sensitive(l_pGUI->m_pButtonStopEngine, false);
-			gtk_widget_set_sensitive(l_pGUI->m_pTreeViewEnginePipelines, true);
-			gtk_spinner_stop(l_pGUI->m_pSpinnerEngineActivity);
-			gtk_widget_hide(GTK_WIDGET(l_pGUI->m_pSpinnerEngineActivity));
+	void on_button_start_engine_fast_forward_clicked(GtkWidget* widget, gpointer userData)
+	{
+		startEngine(widget, userData, true);
+	}
+
+	void on_button_stop_engine_clicked(GtkWidget* widget, gpointer userData)
+	{
+		auto gui = static_cast<CArchwayHandlerGUI*>(userData);
+
+		if (gui->m_Controller.stopEngine())
+		{
+			gtk_widget_set_sensitive(gui->m_ButtonStartEngine, true);
+			gtk_widget_set_sensitive(gui->m_ButtonStartEngineFastFoward, true);
+			gtk_widget_set_sensitive(gui->m_ButtonStopEngine, false);
+			gtk_widget_set_sensitive(gui->m_TreeViewEnginePipelines, true);
+			gtk_spinner_stop(gui->m_SpinnerEngineActivity);
+			gtk_widget_hide(GTK_WIDGET(gui->m_SpinnerEngineActivity));
 		}
 	}
 
-	void on_button_pipeline_configuration_apply_clicked(GtkWidget* pWidget, gpointer)
+	void on_button_pipeline_configuration_apply_clicked(GtkWidget* widget, gpointer)
 	{
-		GtkWidget* l_pDialog = gtk_widget_get_parent(gtk_widget_get_parent((gtk_widget_get_parent(pWidget))));
-		gtk_dialog_response(GTK_DIALOG(l_pDialog), GTK_RESPONSE_APPLY);
-		gtk_widget_hide(l_pDialog);
+		GtkWidget* dialog = gtk_widget_get_parent(gtk_widget_get_parent((gtk_widget_get_parent(widget))));
+		gtk_dialog_response(GTK_DIALOG(dialog), GTK_RESPONSE_APPLY);
+		gtk_widget_hide(dialog);
 	}
 
-	void on_button_pipeline_configuration_cancel_clicked(GtkWidget* pWidget, gpointer)
+	void on_button_pipeline_configuration_cancel_clicked(GtkWidget* widget, gpointer)
 	{
-		GtkWidget* l_pDialog = gtk_widget_get_parent(gtk_widget_get_parent((gtk_widget_get_parent(pWidget))));
-		gtk_dialog_response(GTK_DIALOG(l_pDialog), GTK_RESPONSE_CANCEL);
-		gtk_widget_hide(l_pDialog);
+		GtkWidget* dialog = gtk_widget_get_parent(gtk_widget_get_parent((gtk_widget_get_parent(widget))));
+		gtk_dialog_response(GTK_DIALOG(dialog), GTK_RESPONSE_CANCEL);
+		gtk_widget_hide(dialog);
 	}
 
-	void on_pipeline_configuration_cellrenderer_parameter_value_edited(GtkCellRendererText *pCell, gchar* sPath, gchar* sNewText, gpointer pUserData)
+	void on_pipeline_configuration_cellrenderer_parameter_value_edited(GtkCellRendererText *cell, gchar* path, gchar* newText, gpointer userData)
 	{
-		auto l_pGUI = static_cast<CArchwayHandlerGUI*>(pUserData);
-		l_pGUI->setPipelineParameterValueAtPath(sPath, sNewText);
+		auto gui = static_cast<CArchwayHandlerGUI*>(userData);
+		gui->setPipelineParameterValueAtPath(path, newText);
 	}
 
-	gboolean on_pipeline_configuration_cellrenderer_parameter_value_entry_focus_out(GtkWidget* pWidget, GdkEvent* pEvent, gpointer pUserData)
+	gboolean on_pipeline_configuration_cellrenderer_parameter_value_entry_focus_out(GtkWidget* widget, GdkEvent* event, gpointer userData)
 	{
-		auto l_pGUI = static_cast<CArchwayHandlerGUI*>(pUserData);
-		auto l_pEntry = GTK_ENTRY(pWidget);
-		l_pGUI->setPipelineParameterValueAtPath(l_pGUI->m_sCurrentlyEditedCellPath.c_str(), gtk_entry_get_text(l_pEntry));
+		auto gui = static_cast<CArchwayHandlerGUI*>(userData);
+		auto entry = GTK_ENTRY(widget);
+		gui->setPipelineParameterValueAtPath(gui->m_CurrentlyEditedCellPath.c_str(), gtk_entry_get_text(entry));
 		return FALSE;
 	}
 
-	void on_pipeline_configuration_cellrenderer_parameter_value_editing_started(GtkCellRenderer* pCell, GtkCellEditable* pEditable, gchar* sPath, gpointer pUserData)
+	void on_pipeline_configuration_cellrenderer_parameter_value_editing_started(GtkCellRenderer* pCell, GtkCellEditable* pEditable, gchar* sPath, gpointer userData)
 	{
-		auto l_pGUI = static_cast<CArchwayHandlerGUI*>(pUserData);
+		auto gui = static_cast<CArchwayHandlerGUI*>(userData);
 
 		// As we are sending data to a callback created within a callback, we really want to avoid
 		// allocating memory.
-		l_pGUI->m_sCurrentlyEditedCellPath = sPath;
+		gui->m_CurrentlyEditedCellPath = sPath;
 
-		auto l_pEntry = GTK_ENTRY(pEditable);
-		g_signal_connect(G_OBJECT(l_pEntry),
+		auto entry = GTK_ENTRY(pEditable);
+		g_signal_connect(G_OBJECT(entry),
 		                 "focus-out-event",
-		                 G_CALLBACK(on_pipeline_configuration_cellrenderer_parameter_value_entry_focus_out), pUserData);
+		                 G_CALLBACK(on_pipeline_configuration_cellrenderer_parameter_value_entry_focus_out), userData);
 	}
 
 
 }
 
-CArchwayHandlerGUI::CArchwayHandlerGUI(CArchwayHandler& rController)
-    : m_rController(rController)
+CArchwayHandlerGUI::CArchwayHandlerGUI(CArchwayHandler& controller)
+    : m_Controller(controller)
 {
-	m_pBuilder = gtk_builder_new();
-	GError* l_pError = nullptr;
-	gtk_builder_add_from_file(m_pBuilder, OpenViBE::Directories::getDataDir() + "/applications/designer/interface-archway.ui", &l_pError);
+	m_Builder = gtk_builder_new();
+	GError* gtkError = nullptr;
+	gtk_builder_add_from_file(m_Builder, OpenViBE::Directories::getDataDir() + "/applications/designer/interface-archway.ui", &gtkError);
 
-	assert(l_pError == nullptr);
+	assert(gtkError == nullptr);
 //	gtk_builder_connect_signals(m_pBuilder, NULL);
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilder, "button-configure-acquisition")),
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "button-configure-acquisition")),
 	                 "clicked", G_CALLBACK(on_button_configure_acquisition_clicked), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilder, "button-reinitialize-archway")),
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "button-reinitialize-archway")),
 	                 "clicked", G_CALLBACK(on_button_reinitialize_archway_clicked), this);
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilder, "button-pipeline-configuration-apply")),
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "button-pipeline-configuration-apply")),
 	                 "clicked", G_CALLBACK(on_button_pipeline_configuration_apply_clicked), this);
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilder, "button-pipeline-configuration-cancel")),
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "button-pipeline-configuration-cancel")),
 	                 "clicked", G_CALLBACK(on_button_pipeline_configuration_cancel_clicked), this);
 
-	m_pSpinnerEngineActivity = GTK_SPINNER(gtk_builder_get_object(m_pBuilder, "spinner-engine-activity"));
-	gtk_widget_hide(GTK_WIDGET(m_pSpinnerEngineActivity));
+	m_SpinnerEngineActivity = GTK_SPINNER(gtk_builder_get_object(m_Builder, "spinner-engine-activity"));
+	gtk_widget_hide(GTK_WIDGET(m_SpinnerEngineActivity));
 
-	m_pButtonStartEngine = GTK_WIDGET(gtk_builder_get_object(m_pBuilder, "button-start-engine"));
-	m_pButtonStopEngine = GTK_WIDGET(gtk_builder_get_object(m_pBuilder, "button-stop-engine"));
-	gtk_widget_set_sensitive(m_pButtonStopEngine, false);
+	m_ButtonStartEngine = GTK_WIDGET(gtk_builder_get_object(m_Builder, "button-start-engine"));
+	m_ButtonStartEngineFastFoward = GTK_WIDGET(gtk_builder_get_object(m_Builder, "button-start-engine-fast"));
+	m_ButtonStopEngine = GTK_WIDGET(gtk_builder_get_object(m_Builder, "button-stop-engine"));
+	gtk_widget_set_sensitive(m_ButtonStopEngine, false);
 
-	g_signal_connect(G_OBJECT(m_pButtonStartEngine), "clicked", G_CALLBACK(on_button_start_engine_clicked), this);
-	g_signal_connect(G_OBJECT(m_pButtonStopEngine), "clicked", G_CALLBACK(on_button_stop_engine_clicked), this);
+	g_signal_connect(G_OBJECT(m_ButtonStartEngine), "clicked", G_CALLBACK(on_button_start_engine_clicked), this);
+	g_signal_connect(G_OBJECT(m_ButtonStartEngineFastFoward), "clicked", G_CALLBACK(on_button_start_engine_fast_forward_clicked), this);
+	g_signal_connect(G_OBJECT(m_ButtonStopEngine), "clicked", G_CALLBACK(on_button_stop_engine_clicked), this);
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilder, "dialog-engine-configuration")),
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "dialog-engine-configuration")),
 	                 "delete-event", G_CALLBACK(on_dialog_engine_configuration_delete_event), this);
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilder, "dialog-pipeline-configuration")),
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "dialog-pipeline-configuration")),
 	                 "delete-event", G_CALLBACK(on_dialog_pipeline_configuration_delete_event), this);
 
-	m_pTreeViewEnginePipelines = GTK_WIDGET(gtk_builder_get_object(m_pBuilder, "treeview-engine-pipelines"));
-	g_signal_connect(G_OBJECT(m_pTreeViewEnginePipelines), "row-activated", G_CALLBACK(on_treeview_engine_pipelines_row_activated), this);
+	m_TreeViewEnginePipelines = GTK_WIDGET(gtk_builder_get_object(m_Builder, "treeview-engine-pipelines"));
+	g_signal_connect(G_OBJECT(m_TreeViewEnginePipelines), "row-activated", G_CALLBACK(on_treeview_engine_pipelines_row_activated), this);
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilder, "pipeline-configuration-cellrenderer-parameter-value")),
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "pipeline-configuration-cellrenderer-parameter-value")),
 	                 "edited",
 	                 G_CALLBACK(on_pipeline_configuration_cellrenderer_parameter_value_edited), this);
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilder, "pipeline-configuration-cellrenderer-parameter-value")),
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "pipeline-configuration-cellrenderer-parameter-value")),
 	                 "editing-started",
 	                 G_CALLBACK(on_pipeline_configuration_cellrenderer_parameter_value_editing_started), this);
 
-	m_pTreeModelEnginePipelines = GTK_TREE_MODEL(gtk_builder_get_object(m_pBuilder, "liststore-pipelines"));
+	m_TreeModelEnginePipelines = GTK_TREE_MODEL(gtk_builder_get_object(m_Builder, "liststore-pipelines"));
+
+	m_Controller.m_guiBridge.resfreshStoppedEngine = [this](){
+		gtk_widget_set_sensitive(m_ButtonStartEngine, true);
+		gtk_widget_set_sensitive(m_ButtonStartEngineFastFoward, true);
+		gtk_widget_set_sensitive(m_ButtonStopEngine, false);
+		gtk_widget_set_sensitive(m_TreeViewEnginePipelines, true);
+		gtk_spinner_stop(m_SpinnerEngineActivity);
+		gtk_widget_hide(GTK_WIDGET(m_SpinnerEngineActivity));
+	};
 }
 
 CArchwayHandlerGUI::~CArchwayHandlerGUI()
 {
-	if(m_pBuilder)
+	if(m_Builder)
 	{
-		g_object_unref(G_OBJECT(m_pBuilder));
+		g_object_unref(G_OBJECT(m_Builder));
 	}
 }
 
 void CArchwayHandlerGUI::refreshEnginePipelines()
 {
-	auto l_pListStorePipelines = GTK_LIST_STORE(m_pTreeModelEnginePipelines);
+	auto listStorePipelines = GTK_LIST_STORE(m_TreeModelEnginePipelines);
 
-	gtk_list_store_clear(l_pListStorePipelines);
-	auto l_vEnginePipelines = m_rController.getEnginePipelines();
+	gtk_list_store_clear(listStorePipelines);
+	auto enginePipelines = m_Controller.getEnginePipelines();
 	GtkTreeIter iter;
-	for (auto& pipeline : l_vEnginePipelines)
+	for (auto& pipeline : enginePipelines)
 	{
-		std::stringstream l_sPipelineIdInHex;
-		l_sPipelineIdInHex << std::hex << pipeline.id;
+		std::stringstream pipelineIdInHex;
+		pipelineIdInHex << std::hex << pipeline.id;
 
-		gtk_list_store_append(l_pListStorePipelines, &iter);
-		gtk_list_store_set(l_pListStorePipelines, &iter,
+		gtk_list_store_append(listStorePipelines, &iter);
+		gtk_list_store_set(listStorePipelines, &iter,
 		                   Column_PipelineId, pipeline.id,
-		                   Column_PipelineHexId, l_sPipelineIdInHex.str().c_str(),
+		                   Column_PipelineHexId, pipelineIdInHex.str().c_str(),
 		                   Column_PipelineDescription, pipeline.description.c_str(),
 		                   Column_PipelineIsConfigured, pipeline.isConfigured,
 		                   -1);
@@ -298,81 +319,77 @@ void CArchwayHandlerGUI::refreshEnginePipelines()
 
 }
 
-void CArchwayHandlerGUI::toggleNeuroRTEngineConfigurationDialog(bool bShouldDisplay)
+void CArchwayHandlerGUI::toggleNeuroRTEngineConfigurationDialog(bool shouldDisplay)
 {
-	auto l_pEngineConfigurationWidget = GTK_WIDGET(gtk_builder_get_object(m_pBuilder, "dialog-engine-configuration"));
+	auto engineConfigurationWidget = GTK_WIDGET(gtk_builder_get_object(m_Builder, "dialog-engine-configuration"));
 
-	if (bShouldDisplay)
+	if (shouldDisplay)
 	{
 		this->refreshEnginePipelines();
-		gtk_widget_show(l_pEngineConfigurationWidget);
+		gtk_widget_show(engineConfigurationWidget);
 	}
 	else
 	{
-		gtk_widget_hide(l_pEngineConfigurationWidget);
+		gtk_widget_hide(engineConfigurationWidget);
 	}
 }
 
-void CArchwayHandlerGUI::displayPipelineConfigurationDialog(unsigned int uiPipelineId)
+void CArchwayHandlerGUI::displayPipelineConfigurationDialog(unsigned int pipelineId)
 {
-	auto l_pPipelineConfigurationWidget =
-	        GTK_WIDGET(gtk_builder_get_object(m_pBuilder, "dialog-pipeline-configuration"));
-	auto l_pPipelineConfigurationListStore =
-	        GTK_LIST_STORE(gtk_builder_get_object(m_pBuilder, "liststore-pipeline-configuration"));
+	auto pipelineConfigurationWidget = GTK_WIDGET(gtk_builder_get_object(m_Builder, "dialog-pipeline-configuration"));
+	auto pipelineConfigurationListStore = GTK_LIST_STORE(gtk_builder_get_object(m_Builder, "liststore-pipeline-configuration"));
 
-	gtk_list_store_clear(l_pPipelineConfigurationListStore);
+	gtk_list_store_clear(pipelineConfigurationListStore);
 
-	auto l_vPipelineParameters = m_rController.getPipelineParameters(uiPipelineId);
+	auto pipelineParameters = m_Controller.getPipelineParameters(pipelineId);
 
 	GtkTreeIter iter;
-	for (auto& parameter : l_vPipelineParameters)
+	for (auto& parameter : pipelineParameters)
 	{
-		gtk_list_store_append(l_pPipelineConfigurationListStore, &iter);
-		unsigned long long l_ui64PipelineId = uiPipelineId;
-		gtk_list_store_set(l_pPipelineConfigurationListStore, &iter,
-						   Column_SettingPipelineId, l_ui64PipelineId,
+		gtk_list_store_append(pipelineConfigurationListStore, &iter);
+		gtk_list_store_set(pipelineConfigurationListStore, &iter,
+		                   Column_SettingPipelineId, static_cast<unsigned long long>(pipelineId),
 		                   Column_SettingName, parameter.name.c_str(),
 		                   Column_SettingDefaultValue, parameter.defaultValue.c_str(),
 		                   Column_SettingValue, parameter.value.c_str(),
 		                   -1);
 	}
 
-	auto l_vSavedSettings = m_rController.getPipelineSettings(uiPipelineId);
-	auto l_iResponse = gtk_dialog_run(GTK_DIALOG(l_pPipelineConfigurationWidget));
-	if (l_iResponse == GTK_RESPONSE_CANCEL)
+	auto savedSettings = m_Controller.getPipelineSettings(pipelineId);
+	auto response = gtk_dialog_run(GTK_DIALOG(pipelineConfigurationWidget));
+	if (response == GTK_RESPONSE_CANCEL)
 	{
-		m_rController.getPipelineSettings(uiPipelineId) = l_vSavedSettings;
+		m_Controller.getPipelineSettings(pipelineId) = savedSettings;
 	}
 }
 
-bool CArchwayHandlerGUI::setPipelineParameterValueAtPath(gchar const* sPath, gchar const* sNewValue)
+bool CArchwayHandlerGUI::setPipelineParameterValueAtPath(gchar const* path, gchar const* newValue)
 {
-	auto l_pPipelineConfigurationListStore =
-	        GTK_TREE_MODEL(gtk_builder_get_object(this->m_pBuilder, "liststore-pipeline-configuration"));
+	auto pipelineConfigurationListStore =
+	        GTK_TREE_MODEL(gtk_builder_get_object(this->m_Builder, "liststore-pipeline-configuration"));
 
-	GtkTreeIter l_oIterator;
-	gboolean l_bIsIteratorValid = gtk_tree_model_get_iter_from_string(l_pPipelineConfigurationListStore, &l_oIterator, sPath);
-	assert(l_bIsIteratorValid);
+	GtkTreeIter parameterIter;
+	gboolean isIteratorValid = gtk_tree_model_get_iter_from_string(pipelineConfigurationListStore, &parameterIter, path);
+	assert(isIteratorValid);
 
-	unsigned long long uiPipelineId = 0;
-	gchar* sParameterName;
+	unsigned long long pipelineId = 0;
+	gchar* parameterName;
 	
-	gtk_tree_model_get(l_pPipelineConfigurationListStore, &l_oIterator,
-	                   Column_SettingName, &sParameterName,
+	gtk_tree_model_get(pipelineConfigurationListStore, &parameterIter,
+	                   Column_SettingName, &parameterName,
 					   -1);
 					   
-	gtk_tree_model_get(l_pPipelineConfigurationListStore, &l_oIterator,
-					   Column_SettingPipelineId, &uiPipelineId,
+	gtk_tree_model_get(pipelineConfigurationListStore, &parameterIter,
+					   Column_SettingPipelineId, &pipelineId,
 					   -1);
 	
-	gtk_list_store_set(GTK_LIST_STORE(l_pPipelineConfigurationListStore), &l_oIterator,
-					   Column_SettingValue, sNewValue,
+	gtk_list_store_set(GTK_LIST_STORE(pipelineConfigurationListStore), &parameterIter,
+					   Column_SettingValue, newValue,
 					   -1);
 
-	this->m_rController.setPipelineParameterValue(static_cast<unsigned int>(uiPipelineId), sParameterName, sNewValue);
-	g_free(sParameterName);
+	this->m_Controller.setPipelineParameterValue(static_cast<unsigned int>(pipelineId), parameterName, newValue);
+	g_free(parameterName);
 
 	return true;
 }
 
-#endif
