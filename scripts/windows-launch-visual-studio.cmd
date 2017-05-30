@@ -41,7 +41,7 @@ if not defined USE_EXPRESS (
 	SET USE_EXPRESS=0
 )
 
-set SolutionPath=%CD%\..\..\studio-build\studio-vs-project-%BuildType%\Designer.sln
+set SolutionPath=%CD%\..\..\certivibe-build\studio-vs-project\Designer.sln
 
 if %USE_EXPRESS% == 1 (
 	echo Use %VSCMake% Express Edition
