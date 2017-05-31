@@ -2262,7 +2262,6 @@ void CApplication::saveScenarioAsCB(CInterfacedScenario* pScenario)
 				}
 
 				// When user did not put appropriate extension, append it
-				strcat(l_sFilename, ".");
 				strcat(l_sFilename, l_sExpectedExtension.c_str());
 				l_iFilenameLength += 1+l_sExpectedExtension.length();
 			}
