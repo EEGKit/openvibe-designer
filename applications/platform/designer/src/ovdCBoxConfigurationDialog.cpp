@@ -40,6 +40,15 @@ static void on_button_save_clicked(::GtkButton*, gpointer pUserData)
 	static_cast<CBoxConfigurationDialog *>(pUserData)->saveConfiguration();
 }
 
+static void on_override_browse_clicked(::GtkButton* pButton, gpointer pUserData)
+{
+	static_cast<CBoxConfigurationDialog *>(pUserData)->onOverrideBrowse();
+}
+
+static void collect_widget_cb(::GtkWidget* pWidget, gpointer pUserData)
+{
+	static_cast< std::vector< ::GtkWidget* > *>(pUserData)->push_back(pWidget);
+}
 CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& rKernelContext, IBox& rBox, const char* sGUIFilename, const char* sGUISettingsFilename, bool isScenarioRunning)
 	:m_rKernelContext(rKernelContext)
 	,m_rBox(rBox)
@@ -50,7 +59,7 @@ CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& rKernelCo
 	,m_pViewPort(nullptr)
 	,m_pScrolledWindow(nullptr)
 	,m_bIsScenarioRunning(isScenarioRunning)
-	,m_pOverrideEntry(nullptr)
+	,m_pOverrideEntryContainer(nullptr)
 	,m_pSettingDialog(nullptr)
 	,m_pFileOverrideCheck(nullptr)
 {
@@ -110,7 +119,6 @@ CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& rKernelCo
 	//				m_pWidget = NULL;
 	//			}
 		}
-		g_object_unref(l_pBuilderInterfaceSetting);
 
 		gtk_table_resize(m_pSettingsTable, m_rBox.getSettingCount(), 4);
 
@@ -124,30 +132,40 @@ CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& rKernelCo
 			string l_sSettingOverrideWidgetName=l_oHelper.getSettingWidgetName(OV_TypeId_Filename).toASCIIString();
 			::GtkBuilder* l_pBuilderInterfaceSettingCollection=gtk_builder_new(); // glade_xml_new(m_sGUIFilename.toASCIIString(), l_sSettingOverrideWidgetName.c_str(), NULL);
 			gtk_builder_add_from_file(l_pBuilderInterfaceSettingCollection, m_sGUISettingsFilename.toASCIIString(), NULL);
-			gtk_builder_connect_signals(l_pBuilderInterfaceSettingCollection, NULL);
+//			gtk_builder_connect_signals(l_pBuilderInterfaceSettingCollection, NULL);
 
-			m_pOverrideEntry = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceSettingCollection, l_sSettingOverrideWidgetName.c_str()));
+			m_pOverrideEntryContainer = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceSettingCollection, l_sSettingOverrideWidgetName.c_str()));
 
-			gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(m_pOverrideEntry)), m_pOverrideEntry);
-			gtk_container_add(l_pFileOverrideContainer, m_pOverrideEntry);
+			std::vector < ::GtkWidget* > l_vWidget;
+			gtk_container_foreach(GTK_CONTAINER(m_pOverrideEntryContainer), collect_widget_cb, &l_vWidget);
 
-			g_object_unref(l_pBuilderInterfaceSettingCollection);
+			gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(m_pOverrideEntryContainer)), m_pOverrideEntryContainer);
+			gtk_container_add(l_pFileOverrideContainer, m_pOverrideEntryContainer);
+			m_pOverrideEntry = GTK_ENTRY(l_vWidget[0]);
+
 
 			g_signal_connect(G_OBJECT(m_pFileOverrideCheck), "toggled", G_CALLBACK(on_file_override_check_toggled), GTK_WIDGET(m_pSettingsTable));
-	//		g_signal_connect(G_OBJECT(l_vWidget[1]),         "clicked", G_CALLBACK(on_override_browse_clicked), this);
+			g_signal_connect(G_OBJECT(l_vWidget[1]),         "clicked", G_CALLBACK(on_override_browse_clicked), this);
 			g_signal_connect(G_OBJECT(l_pButtonLoad),        "clicked", G_CALLBACK(on_button_load_clicked), this);
 			g_signal_connect(G_OBJECT(l_pButtonSave),        "clicked", G_CALLBACK(on_button_save_clicked), this);
 
 			if(m_rBox.hasAttribute(OV_AttributeId_Box_SettingOverrideFilename))
 			{
-				l_oHelper.setValue(OV_TypeId_Filename, m_pOverrideEntry, m_rBox.getAttributeValue(OV_AttributeId_Box_SettingOverrideFilename));
+				::GtkExpander *l_pExpander = GTK_EXPANDER(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration-expander"));
+				gtk_expander_set_expanded(l_pExpander, true);
+
+				gtk_entry_set_text(m_pOverrideEntry, m_rBox.getAttributeValue(OV_AttributeId_Box_SettingOverrideFilename).toASCIIString());
 				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_pFileOverrideCheck), true);
 				gtk_widget_set_sensitive(GTK_WIDGET(m_pSettingsTable), false);
 			}
 			else
 			{
-				l_oHelper.setValue(OV_TypeId_Filename, m_pOverrideEntry, "");
+				gtk_entry_set_text(m_pOverrideEntry, "");
 			}
+
+			g_object_unref(l_pBuilderInterfaceSetting);
+			g_object_unref(l_pBuilderInterfaceSettingCollection);
+
 		}
 
 	}
@@ -174,13 +192,14 @@ bool CBoxConfigurationDialog::run(void)
 			{
 				if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(m_pFileOverrideCheck)))
 				{
+					const gchar* l_sFilename = gtk_entry_get_text(m_pOverrideEntry);
 					if(m_rBox.hasAttribute(OV_AttributeId_Box_SettingOverrideFilename))
 					{
-						m_rBox.setAttributeValue(OV_AttributeId_Box_SettingOverrideFilename, l_oHelper.getValue(OV_TypeId_Filename, m_pOverrideEntry));
+						m_rBox.setAttributeValue(OV_AttributeId_Box_SettingOverrideFilename, l_sFilename);
 					}
 					else
 					{
-						m_rBox.addAttribute(OV_AttributeId_Box_SettingOverrideFilename, l_oHelper.getValue(OV_TypeId_Filename, m_pOverrideEntry));
+						m_rBox.addAttribute(OV_AttributeId_Box_SettingOverrideFilename, l_sFilename);
 					}
 				}
 				else
@@ -211,7 +230,7 @@ bool CBoxConfigurationDialog::run(void)
 //					m_vSettingViewVector[i]->setValue(l_oSettingValue);
 //					l_oHelper.setValue(l_oSettingType, i < m_vSettingViewVector.size()? m_vSettingViewVector[i]->getEntryWidget() : NULL, l_oSettingValue);
 				}
-				gtk_entry_set_text(GTK_ENTRY(m_pOverrideEntry), "");
+				gtk_entry_set_text(GTK_ENTRY(m_pOverrideEntryContainer), "");
 				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_pFileOverrideCheck), false);
 //				gtk_widget_set_sensitive(GTK_WIDGET(m_pSettingsTable), true);
 				l_bModified=false;
@@ -222,12 +241,12 @@ bool CBoxConfigurationDialog::run(void)
 
 				if(m_rBox.hasAttribute(OV_AttributeId_Box_SettingOverrideFilename))
 				{
-					gtk_entry_set_text(GTK_ENTRY(m_pOverrideEntry), m_rBox.getAttributeValue(OV_AttributeId_Box_SettingOverrideFilename).toASCIIString());
+					gtk_entry_set_text(GTK_ENTRY(m_pOverrideEntryContainer), m_rBox.getAttributeValue(OV_AttributeId_Box_SettingOverrideFilename).toASCIIString());
 					gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_pFileOverrideCheck), true);
 				}
 				else
 				{
-					gtk_entry_set_text(GTK_ENTRY(m_pOverrideEntry), "");
+					gtk_entry_set_text(GTK_ENTRY(m_pOverrideEntryContainer), "");
 					gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_pFileOverrideCheck), false);
 				}
 			}
@@ -502,7 +521,7 @@ void CBoxConfigurationDialog::saveConfiguration()
 		GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
 		NULL);
 
-	const gchar* l_sInitialFileNameToExpand = gtk_entry_get_text(GTK_ENTRY(m_pOverrideEntry));
+	const gchar* l_sInitialFileNameToExpand = gtk_entry_get_text(GTK_ENTRY(m_pOverrideEntryContainer));
 	CString l_sInitialFileName=m_rKernelContext.getConfigurationManager().expand(l_sInitialFileNameToExpand);
 	if(g_path_is_absolute(l_sInitialFileName.toASCIIString()))
 	{
@@ -551,7 +570,7 @@ void CBoxConfigurationDialog::loadConfiguration()
 		GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
 		NULL);
 
-	const gchar* l_sInitialFileNameToExpand = gtk_entry_get_text(GTK_ENTRY(m_pOverrideEntry));
+	const gchar* l_sInitialFileNameToExpand = gtk_entry_get_text(GTK_ENTRY(m_pOverrideEntryContainer));
 
 	CString l_sInitialFileName=m_rKernelContext.getConfigurationManager().expand(l_sInitialFileNameToExpand);
 	if(g_path_is_absolute(l_sInitialFileName.toASCIIString()))
@@ -582,6 +601,45 @@ void CBoxConfigurationDialog::loadConfiguration()
 		l_pHandler->release();
 		g_free(l_sFileName);
 
+	}
+	gtk_widget_destroy(l_pWidgetDialogOpen);
+}
+
+void CBoxConfigurationDialog::onOverrideBrowse()
+{
+	::GtkWidget* l_pWidgetDialogOpen=gtk_file_chooser_dialog_new(
+		"Select file to open...",
+		NULL,
+		GTK_FILE_CHOOSER_ACTION_SAVE,
+		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+		GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+		NULL);
+
+	CString l_sInitialFileName=m_rKernelContext.getConfigurationManager().expand(gtk_entry_get_text(GTK_ENTRY(m_pOverrideEntry)));
+	if(g_path_is_absolute(l_sInitialFileName.toASCIIString()))
+	{
+		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(l_pWidgetDialogOpen), l_sInitialFileName.toASCIIString());
+	}
+	else
+	{
+		char* l_sFullPath=g_build_filename(g_get_current_dir(), l_sInitialFileName.toASCIIString(), NULL);
+		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(l_pWidgetDialogOpen), l_sFullPath);
+		g_free(l_sFullPath);
+	}
+
+	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(l_pWidgetDialogOpen), false);
+
+	if(gtk_dialog_run(GTK_DIALOG(l_pWidgetDialogOpen))==GTK_RESPONSE_ACCEPT)
+	{
+		char* l_sFileName=gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(l_pWidgetDialogOpen));
+		char* l_pBackslash = NULL;
+		while((l_pBackslash = ::strchr(l_sFileName, '\\'))!=NULL)
+		{
+			*l_pBackslash = '/';
+		}
+
+		gtk_entry_set_text(GTK_ENTRY(m_pOverrideEntry), l_sFileName);
+		g_free(l_sFileName);
 	}
 	gtk_widget_destroy(l_pWidgetDialogOpen);
 }
