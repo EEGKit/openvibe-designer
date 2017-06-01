@@ -6,6 +6,10 @@ pushd %~dp0\..
 set "root_dir=%CD%"
 popd
 
+REM To compile with the Visual Studio toolset v120
+set SKIP_VS2017=1
+set SKIP_VS2015=1
+
 set BuildType=Release
 set PauseCommand=pause
 set RefreshCMake=F
@@ -75,20 +79,20 @@ for %%A in (%*) DO (
         set next=
 	)
 )
-
 setlocal
 
 call "windows-initialize-environment.cmd" --dep %PathDep%
 
 set build_dir=%root_dir%\..\certivibe-build\build-studio-%BuildType%
+
+if "%BuildType%"=="Debug" ( 
+	set install_dir=%root_dir%\..\certivibe-build\dist-studio-debug 
+) else ( 
+	set install_dir=%root_dir%\..\certivibe-build\dist-studio 
+) 
+
 set sdk_dir=%PathSDK%
 set dep_dir=%PathDep%
-
-if "%BuildType%"=="Debug" (
-	set install_dir=%root_dir%\..\certivibe-build\dist-studio-debug
-) else (
-	set install_dir=%root_dir%\..\certivibe-build\dist-studio
-)
 
 mkdir %build_dir% 2>NUL
 pushd %build_dir%
