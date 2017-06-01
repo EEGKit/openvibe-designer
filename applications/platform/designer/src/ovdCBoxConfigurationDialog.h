@@ -21,6 +21,7 @@ namespace OpenViBEDesigner
 
 		void saveConfiguration();
 		void loadConfiguration();
+		void onOverrideBrowse();
 
 		void storeState(void);
 		void restoreState(void);
@@ -50,7 +51,8 @@ namespace OpenViBEDesigner
 		::GtkTable *m_pSettingsTable;
 		::GtkViewport *m_pViewPort;
 		::GtkScrolledWindow * m_pScrolledWindow;
-		::GtkWidget* m_pOverrideEntry;
+		::GtkEntry* m_pOverrideEntry;
+		::GtkWidget* m_pOverrideEntryContainer;
 		::GtkWidget* m_pSettingDialog;
 		::GtkCheckButton* m_pFileOverrideCheck;
 		bool m_bIsScenarioRunning;
