@@ -35,6 +35,8 @@ goto parameter_parse
 	echo [-v^|--verbose]
 	echo [--sdk <path to openvibe SDK>]
 	echo [--dep <path to openvibe dependencies>]
+	echo [--build-dir <dirname>] build directory
+	echo [--install-dir <dirname>] binaries deployment directory
 	echo [--oem-distribution <name of the distribution>]
 	echo -- Build Type option can be : --release (-r) or --debug (-d). Default is Release.
 	exit /b
@@ -83,20 +85,32 @@ for %%A in (%*) DO (
     ) else if "!next!"=="OEM_DISTRIBUTION" (
         set OEMDistribution=%%A
         set next=
+	) else if /i "%%A"=="--build-dir" (
+        set next=BUILDDIR
+    ) else if "!next!"=="BUILDDIR" (
+        set build_dir=%%A
+        set next=
+	) else if /i "%%A"=="--install-dir" (
+        set next=INSTALLDIR
+    ) else if "!next!"=="INSTALLDIR" (
+        set install_dir=%%A
+        set next=
 	)
 )
 setlocal
 
 call "windows-initialize-environment.cmd" --dep %PathDep%
 
-set build_dir=%root_dir%\..\certivibe-build\build-studio-%BuildType%
-
-if "%BuildType%"=="Debug" ( 
-	set install_dir=%root_dir%\..\certivibe-build\dist-studio-debug 
-) else ( 
-	set install_dir=%root_dir%\..\certivibe-build\dist-studio 
-) 
-
+if not defined build_dir (
+	set build_dir=%root_dir%\..\certivibe-build\build-studio-%BuildType%
+)
+if not defined install_dir (
+	if "%BuildType%"=="Debug" (
+		set install_dir=%root_dir%\..\certivibe-build\dist-studio-debug
+	) else (
+		set install_dir=%root_dir%\..\certivibe-build\dist-studio
+	)
+)
 set sdk_dir=%PathSDK%
 set dep_dir=%PathDep%
 
