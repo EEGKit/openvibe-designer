@@ -38,7 +38,7 @@ SET "PATH=%OV_PATH_ROOT%\bin;%PATH%"
 
 REM for visual studio express...
 if not defined USE_EXPRESS (
-	SET USE_EXPRESS=0
+	SET USE_EXPRESS=1
 )
 
 set SolutionPath=%CD%\..\..\certivibe-build\studio-vs-project\Designer.sln

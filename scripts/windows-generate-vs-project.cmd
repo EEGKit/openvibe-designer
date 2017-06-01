@@ -38,11 +38,6 @@ for %%A in (%*) DO (
 
 setlocal
 
-if not defined PathSDK (
-	set PathSDK="%script_dir%/../dependencies/openvibe-sdk-release"
-	echo No SDK's path provided. Set to the default one: !PathSDK!
-)
-
 if not defined PathDep (
 	set PathDep="%script_dir%/../dependencies/"
 	echo No dependencies's path provided. Set to the default one: !PathDep!

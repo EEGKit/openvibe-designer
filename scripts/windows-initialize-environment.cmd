@@ -28,7 +28,7 @@ if not defined SKIP_VS2017 (
 	SET SKIP_VS2017=1
 )
 if not defined SKIP_VS2015 (
-	SET SKIP_VS2015=0
+	SET SKIP_VS2015=1
 )
 if not defined SKIP_VS2013 (
 	SET SKIP_VS2013=0
