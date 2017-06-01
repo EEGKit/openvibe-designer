@@ -631,15 +631,11 @@ void CBoxConfigurationDialog::onOverrideBrowse()
 
 	if(gtk_dialog_run(GTK_DIALOG(l_pWidgetDialogOpen))==GTK_RESPONSE_ACCEPT)
 	{
-		char* l_sFileName=gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(l_pWidgetDialogOpen));
-		char* l_pBackslash = NULL;
-		while((l_pBackslash = ::strchr(l_sFileName, '\\'))!=NULL)
-		{
-			*l_pBackslash = '/';
-		}
-
-		gtk_entry_set_text(GTK_ENTRY(m_pOverrideEntry), l_sFileName);
-		g_free(l_sFileName);
+		gchar* cFileName = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(l_pWidgetDialogOpen));
+		std::string fileName(cFileName);
+		g_free(cFileName);
+		std::replace(fileName.begin(), fileName.end(), '\\', '/');
+		gtk_entry_set_text(GTK_ENTRY(m_pOverrideEntry), fileName.c_str());
 	}
 	gtk_widget_destroy(l_pWidgetDialogOpen);
 }
