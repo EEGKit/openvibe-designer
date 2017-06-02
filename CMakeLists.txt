@@ -27,6 +27,7 @@ SET(OV_SDK_VERSION_STRING "0.1.0")
 # ----------------------
 OPTION(Flag_VerboseOutput "Verbose CMake output" OFF)
 SET(OEM_DISTRIBUTION "openvibe" CACHE STRING "The OEM distribution for this build, can be openvibe or mensia")
+OPTION(OV_DISPLAY_ERROR_LOCATION ON)
 
 SET(OV_CUSTOM_DEPENDENCIES_PATH "${CMAKE_SOURCE_DIR}/dependencies")
 SET(OV_SOURCE_DEPENDENCIES_PATH "${CMAKE_SOURCE_DIR}/dependencies-source")
@@ -61,6 +62,10 @@ ELSEIF(OEM_DISTRIBUTION STREQUAL "mensia")
 	SET(STUDIO_NAME "Studio")
 ELSE()
 	MESSAGE(FATAL_ERROR "OEM_DISTRIBUTION unrecognized (${OEM_DISTRIBUTION}) ! CMake cannot deduce the brand and product names. ")
+ENDIF()
+
+IF(OV_DISPLAY_ERROR_LOCATION)
+	ADD_DEFINITIONS(-DOV_DISPLAY_ERROR_LOCATION)
 ENDIF()
 
 IF(NOT DEFINED OV_PACKAGE)
