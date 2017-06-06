@@ -17,6 +17,8 @@ set PathSDK=
 set PathDep=%root_dir%\dependencies
 set OEMDistribution=openvibe
 set VerboseOuptut=OFF
+set DisplayErrorLocation=ON
+
 
 goto parameter_parse
 
@@ -28,6 +30,7 @@ goto parameter_parse
 	echo [-d^|--debug]    build in debug mode
 	echo [-r^|--release]  build in release mode
 	echo [--make-package] build zip packages instead of installing files
+	echo [--hide-error-location] do not display complete error locations
 	echo [-f^|--force]    force option will force the cmake re-run
 	echo [-v^|--verbose]
 	echo [--sdk <path to openvibe SDK>]
@@ -53,7 +56,10 @@ for %%A in (%*) DO (
 	) else if /i "%%A"=="--release" (
 		set BuildType=Release
 	) else if /i "%%A"=="--make-package" (
-        set PackageOption=TRUE
+		set PackageOption=TRUE
+		set DisplayErrorLocation=OFF
+	) else if /i "%1" == "--hide-error-location" (
+		set DisplayErrorLocation=OFF
 	) else if /i "%%A"=="-f" (
 		set RefreshCMake=T
 	) else if /i "%%A"=="--force" (
@@ -101,16 +107,17 @@ echo Build type is set to: %BuildType%. SDK is located at %sdk_dir%
 
 set CallCmake=false
 if not exist "%build_dir%\CMakeCache.txt" set CallCmake="true"
-if %RefreshCMake%=="true" set CallCmake="true"
+if %RefreshCMake%==T set CallCmake="true"
 if %CallCmake%=="true" (
 	cmake %root_dir%\ -G"Ninja" ^
 		-DCMAKE_BUILD_TYPE=%BuildType% ^
 		-DCMAKE_INSTALL_PREFIX=%install_dir% ^
-        -DOPENVIBE_SDK_PATH=!sdk_dir! ^
-        -DCV_DEPENDENCIES_PATH=!dep_dir!^
-        -DOEM_DISTRIBUTION=%OEMDistribution% ^
+		-DOPENVIBE_SDK_PATH=!sdk_dir! ^
+		-DOV_DISPLAY_ERROR_LOCATION=%DisplayErrorLocation% ^
+		-DCV_DEPENDENCIES_PATH=!dep_dir!^
+		-DOEM_DISTRIBUTION=%OEMDistribution% ^
 		-DOV_PACKAGE=%PackageOption% ^
-        -DFlag_VerboseOutput=%VerboseOutput%
+		-DFlag_VerboseOutput=%VerboseOutput%
 )
 
 if not "!ERRORLEVEL!" == "0" goto terminate_error
