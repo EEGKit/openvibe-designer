@@ -1,27 +1,30 @@
-@echo off  
+@echo off
+REM setlocal EnableDelayedExpansion
+REM setlocal enableextensions 
 
 set PATH=C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin;%PATH%
 set "SCRIPT_PATH=%~dp0"
-set "PATH_DEPENDENCIES=%SCRIPT_PATH%\..\dependencies"
-set PathDep=
 
-
-set PATH=%PATH_DEPENDENCIES%\gtk\bin;%PATH%
-
-rem Inject the necessary dependencies from the Certivibe project
-
-:parameter_parse
-for %%A in (%*) DO (
-	if /i "%%A"=="--dep" (
-		set next=DEP
-	) else if "!next!"=="DEP" (
-		set PathDep=%%A
-		set next=
-	)
+if "%1"=="" (
+	set args=%SCRIPT_PATH%\..\dependencies
+) else (
+	set args=%*
 )
 
-set PATH=%PathDep%\cmake\bin;%PATH%
-set PATH=%PathDep%\ninja;%PATH%
+rem Inject the necessary dependencies from the Certivibe project
+REM echo %PATH%
+
+for %%A in (%args%) DO (
+	if exist "%%A\cmake\bin\" (
+		set "PATH=%%A\cmake\bin;!PATH!"
+	)
+	if exist "%%A\gtk\bin\" (
+		set "PATH=%%A\gtk\bin;!PATH!"
+	)
+	if exist "%%A\ninja\" (
+		set "PATH=%%A\ninja;!PATH!"
+	)
+)
 
 REM # Set to 1 to skip new compilers.
 if not defined SKIP_VS2017 (

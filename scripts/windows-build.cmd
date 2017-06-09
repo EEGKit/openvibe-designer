@@ -6,10 +6,6 @@ pushd %~dp0\..
 set "root_dir=%CD%"
 popd
 
-REM To compile with the Visual Studio toolset v120
-set SKIP_VS2017=1
-set SKIP_VS2015=1
-
 set BuildType=Release
 set PauseCommand=pause
 set RefreshCMake=F
@@ -18,7 +14,6 @@ set PathDep=%root_dir%\dependencies
 set OEMDistribution=openvibe
 set VerboseOuptut=OFF
 set DisplayErrorLocation=ON
-
 
 goto parameter_parse
 
@@ -42,64 +37,89 @@ goto parameter_parse
 	exit /b
 
 :parameter_parse
-for %%A in (%*) DO (
-	if /i "%%A"=="-h" (
-		goto print_help
-	) else if /i "%%A"=="--help" (
-		goto print_help
-	) else if /i "%%A"=="--no-pause" (
-		set PauseCommand=echo ""
-	) else if /i "%%A"=="-d" (
-		set BuildType=Debug
-	) else if /i "%%A"=="--debug" (
-		set BuildType=Debug
-	) else if /i "%%A"=="-r" (
-		set BuildType=Release
-	) else if /i "%%A"=="--release" (
-		set BuildType=Release
-	) else if /i "%%A"=="--make-package" (
-		set PackageOption=TRUE
-		set DisplayErrorLocation=OFF
-	) else if /i "%1" == "--hide-error-location" (
-		set DisplayErrorLocation=OFF
-	) else if /i "%%A"=="-f" (
-		set RefreshCMake=T
-	) else if /i "%%A"=="--force" (
-		set RefreshCMake=T
-	) else if /i "%%A"=="-v" (
-		set VerboseOutput=ON
-	) else if /i "%%A"=="--verbose" (
-		set VerboseOutput=ON
-	) else if /i "%%A"=="--sdk" (
-		set next=SDK
-	) else if "!next!"=="SDK" (
-		set PathSDK=%%A
-		set next=
-	) else if /i "%%A"=="--dep" (
-		set next=DEP
-	) else if "!next!"=="DEP" (
-		set PathDep=%%A
-		set next=
-	) else if /i "%%A"=="--oem-distribution" (
-        set next=OEM_DISTRIBUTION
-    ) else if "!next!"=="OEM_DISTRIBUTION" (
-        set OEMDistribution=%%A
-        set next=
-	) else if /i "%%A"=="--build-dir" (
-        set next=BUILDDIR
-    ) else if "!next!"=="BUILDDIR" (
-        set build_dir=%%A
-        set next=
-	) else if /i "%%A"=="--install-dir" (
-        set next=INSTALLDIR
-    ) else if "!next!"=="INSTALLDIR" (
-        set install_dir=%%A
-        set next=
-	)
+if /i "%1"=="-h" (
+	goto print_help
+) else if /i "%1"=="--help" (
+	goto print_help
+) else if /i "%1"=="--no-pause" (
+	set PauseCommand=echo ""
+	SHIFT
+	Goto parameter_parse
+) else if /i "%1"=="-d" (
+	set BuildType=Debug
+	SHIFT
+	Goto parameter_parse
+) else if /i "%1"=="--debug" (
+	set BuildType=Debug
+	SHIFT
+	Goto parameter_parse
+) else if /i "%1"=="-r" (
+	set BuildType=Release
+	SHIFT
+	Goto parameter_parse
+) else if /i "%1"=="--release" (
+	set BuildType=Release
+	SHIFT
+	Goto parameter_parse
+) else if /i "%1"=="--make-package" (
+	set PackageOption=TRUE
+	set DisplayErrorLocation=OFF
+	SHIFT
+	Goto parameter_parse
+) else if /i "%1" == "--hide-error-location" (
+	set DisplayErrorLocation=OFF
+	SHIFT
+	Goto parameter_parse
+) else if /i "%1"=="-f" (
+	set RefreshCMake=T
+	SHIFT
+	Goto parameter_parse
+) else if /i "%1"=="--force" (
+	set RefreshCMake=T
+	SHIFT
+	Goto parameter_parse
+) else if /i "%1"=="-v" (
+	set VerboseOutput=ON
+	SHIFT
+	Goto parameter_parse
+) else if /i "%%1"=="--verbose" (
+	set VerboseOutput=ON
+	SHIFT
+	Goto parameter_parse
+) else if /i "%1"=="--sdk" (
+	set PathSDK=%2
+	SHIFT
+	SHIFT
+	Goto parameter_parse
+) else if /i "%1"=="--dependencies-dir" (
+	set dependencies_dir=-DLIST_DEPENDENCIES_PATH=%2
+	set otherdep=%2
+	SHIFT
+	SHIFT
+	Goto parameter_parse
+) else if /i "%1"=="--oem-distribution" (
+	set OEMDistribution=%2
+	SHIFT
+	SHIFT
+	Goto parameter_parse
+) else if /i "%1"=="--build-dir" (
+	set build_dir=%2
+	SHIFT
+	SHIFT
+	Goto parameter_parse
+) else if /i "%1"=="--install-dir" (
+	set install_dir=%2
+	SHIFT
+	SHIFT
+	Goto parameter_parse
+) else if not "%1" == "" (
+	echo unrecognized option [%1]
+	Goto terminate_error
 )
+
 setlocal
 
-call "windows-initialize-environment.cmd" --dep %PathDep%
+call "windows-initialize-environment.cmd" %PathDep% %otherdep%
 
 if not defined build_dir (
 	set build_dir=%root_dir%\..\certivibe-build\build-studio-%BuildType%
@@ -111,6 +131,7 @@ if not defined install_dir (
 		set install_dir=%root_dir%\..\certivibe-build\dist-studio
 	)
 )
+
 set sdk_dir=%PathSDK%
 set dep_dir=%PathDep%
 
@@ -131,9 +152,9 @@ if %CallCmake%=="true" (
 		-DCV_DEPENDENCIES_PATH=!dep_dir!^
 		-DOEM_DISTRIBUTION=%OEMDistribution% ^
 		-DOV_PACKAGE=%PackageOption% ^
-		-DFlag_VerboseOutput=%VerboseOutput%
+		-DFlag_VerboseOutput=%VerboseOutput% ^
+		%dependencies_dir%
 )
-
 if not "!ERRORLEVEL!" == "0" goto terminate_error
 
 ninja install
@@ -143,6 +164,7 @@ if not "!ERRORLEVEL!" == "0" goto terminate_error
 if "%PackageOption%"=="TRUE" (
 	cmake --build . --target package
 )
+
 
 if not "!ERRORLEVEL!" == "0" goto terminate_error
 
@@ -167,3 +189,4 @@ goto terminate
 popd
 
 endlocal
+

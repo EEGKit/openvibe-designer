@@ -5,10 +5,10 @@
 # ---------------------------------
 
 IF(UNIX)
-    FIND_LIBRARY(LIB_Boost_Filesystem NAMES "boost_filesystem-mt" PATHS ${OV_CUSTOM_DEPENDENCIES_PATH}/lib NO_DEFAULT_PATH)
-	FIND_LIBRARY(LIB_Boost_Filesystem NAMES "boost_filesystem-mt" PATHS ${OV_CUSTOM_DEPENDENCIES_PATH}/lib)
-	FIND_LIBRARY(LIB_Boost_Filesystem NAMES "boost_filesystem" PATHS ${OV_CUSTOM_DEPENDENCIES_PATH}/lib NO_DEFAULT_PATH)
-	FIND_LIBRARY(LIB_Boost_Filesystem NAMES "boost_filesystem" PATHS ${OV_CUSTOM_DEPENDENCIES_PATH}/lib)
+    FIND_LIBRARY(LIB_Boost_Filesystem NAMES "boost_filesystem-mt" PATHS ${LIST_DEPENDENCIES_PATH} PATH_SUFFIXES lib NO_DEFAULT_PATH)
+	FIND_LIBRARY(LIB_Boost_Filesystem NAMES "boost_filesystem-mt" PATHS ${LIST_DEPENDENCIES_PATH} PATH_SUFFIXES lib)
+	FIND_LIBRARY(LIB_Boost_Filesystem NAMES "boost_filesystem" PATHS ${LIST_DEPENDENCIES_PATH} PATH_SUFFIXES lib NO_DEFAULT_PATH)
+	FIND_LIBRARY(LIB_Boost_Filesystem NAMES "boost_filesystem" PATHS ${LIST_DEPENDENCIES_PATH} PATH_SUFFIXES lib)
 	IF(LIB_Boost_Filesystem)
 		debug_message( "    [  OK  ] lib ${LIB_Boost_Filesystem}")
 		TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${LIB_Boost_Filesystem} )

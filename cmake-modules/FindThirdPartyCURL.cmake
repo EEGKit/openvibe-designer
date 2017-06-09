@@ -4,11 +4,11 @@
 # Requires FindThirdPartyCurl.cmake to have been run successfully before
 # ---------------------------------
 
-FIND_PATH(PATH_CURL include/curl.h PATHS ${OV_CUSTOM_DEPENDENCIES_PATH}/curl ${OV_CUSTOM_DEPENDENCIES_PATH})
+FIND_PATH(PATH_CURL include/curl.h PATHS ${LIST_DEPENDENCIES_PATH} PATH_SUFFIXES curl)
 IF(PATH_CURL)
 	debug_message("  Found CURL...")
 ELSE()
-	MESSAGE(WARNING "  FAILED to find CURL in ${OV_CUSTOM_DEPENDENCIES_PATH}")
+	MESSAGE(WARNING "  FAILED to find CURL in ${LIST_DEPENDENCIES_PATH}")
 ENDIF()
 
 SET(CURL_STATICLIB ON)
