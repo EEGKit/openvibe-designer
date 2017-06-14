@@ -29,7 +29,6 @@ goto parameter_parse
 	echo [-f^|--force]    force option will force the cmake re-run
 	echo [-v^|--verbose]
 	echo [--sdk <path to openvibe SDK>]
-	echo [--dep <path to openvibe dependencies>]
 	echo [--build-dir <dirname>] build directory
 	echo [--install-dir <dirname>] binaries deployment directory
 	echo [--oem-distribution <name of the distribution>]
@@ -88,6 +87,7 @@ if /i "%1"=="-h" (
 	Goto parameter_parse
 ) else if /i "%1"=="--sdk" (
 	set PathSDK=%2
+	set sdk_dir=-DOPENVIBE_SDK_PATH=%2%
 	SHIFT
 	SHIFT
 	Goto parameter_parse
@@ -132,13 +132,13 @@ if not defined install_dir (
 	)
 )
 
-set sdk_dir=%PathSDK%
+
 set dep_dir=%PathDep%
 
 mkdir %build_dir% 2>NUL
 pushd %build_dir%
 
-echo Build type is set to: %BuildType%. SDK is located at %sdk_dir%
+echo Build type is set to: %BuildType%. SDK is located at %PathSDK%
 
 set CallCmake=false
 if not exist "%build_dir%\CMakeCache.txt" set CallCmake="true"
@@ -147,7 +147,7 @@ if %CallCmake%=="true" (
 	cmake %root_dir%\ -G"Ninja" ^
 		-DCMAKE_BUILD_TYPE=%BuildType% ^
 		-DCMAKE_INSTALL_PREFIX=%install_dir% ^
-		-DOPENVIBE_SDK_PATH=!sdk_dir! ^
+		!sdk_dir! ^
 		-DOV_DISPLAY_ERROR_LOCATION=%DisplayErrorLocation% ^
 		-DCV_DEPENDENCIES_PATH=!dep_dir!^
 		-DOEM_DISTRIBUTION=%OEMDistribution% ^
