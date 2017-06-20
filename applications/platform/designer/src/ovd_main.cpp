@@ -406,16 +406,16 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 typedef struct _SConfiguration
 {
 	_SConfiguration(void)
-		:m_eNoGui(CommandLineFlag_None)
-		, m_eNoCheckColorDepth(CommandLineFlag_None)
-		, m_eNoManageSession(CommandLineFlag_None)
+	    :m_eNoGui(CommandLineFlag_None)
+	    , m_eNoCheckColorDepth(CommandLineFlag_None)
+	    , m_eNoManageSession(CommandLineFlag_None)
 	    , m_eNoVisualization(CommandLineFlag_None)
 	    , m_eDefine(CommandLineFlag_None)
 	    , m_eRandomSeed(CommandLineFlag_None)
 	    , m_eConfig(CommandLineFlag_None)
 	{
 	}
-
+	
 	OpenViBEDesigner::ECommandLineFlag getFlags(void)
 	{
 		return OpenViBEDesigner::ECommandLineFlag(
@@ -906,13 +906,10 @@ int go(int argc, char ** argv)
 						}
 
 						{ // Add or replace a configuration token if required in command line
-							std::map<std::string, std::string>::const_iterator itr;
-							for(itr=l_oConfiguration.m_oTokenMap.begin();
-							    itr!=l_oConfiguration.m_oTokenMap.end();
-							    itr++)
+							for (auto token : l_oConfiguration.m_oTokenMap)
 							{
-								l_rLogManager << LogLevel_Trace << "Adding command line configuration token [" << (*itr).first.c_str() << " = " << (*itr).second.c_str() << "]\n";
-								l_rConfigurationManager.addOrReplaceConfigurationToken((*itr).first.c_str(), (*itr).second.c_str());
+								l_rLogManager << LogLevel_Trace << "Adding command line configuration token [" << token.first.c_str() << " = " << token.second.c_str() << "]\n";
+								l_rConfigurationManager.addOrReplaceConfigurationToken(token.first.c_str(), token.second.c_str());
 							}
 						}
 						
