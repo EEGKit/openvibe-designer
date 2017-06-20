@@ -16,6 +16,7 @@ function usage()
 		echo "--install-dir=<dirname> : binaries deployment directory"
 		echo "--test-data-dir=<dirname> : test data directory"
 		echo "--make-package : a package will be created in build directory"
+		echo "--hide-error-location : do not display complete error locations"
 		echo "--sdk=<dirname> : path to the Openvibe SDK"
 		echo "--oem-distribution=<name of the oem distribution> : distribution name, can be openvibe or mensia"
 }
@@ -33,6 +34,7 @@ ov_sdk_dir="${ov_script_dir}/../dependencies/openvibe-sdk-release"
 ov_oem_distribution="openvibe"
 verbose="OFF"
 package_option="FALSE"
+display_error_location="ON"
 
 # Parse arguments
 for i in "$@"
@@ -60,8 +62,12 @@ do
 			;;
 		--make-package)
 			package_option="TRUE"
+      display_error_location="OFF"
 			shift
 			;;
+    --hide-error-location)
+      display_error_location=OFF
+      ;;
 		--test-data-dir=*)
 			ov_test_data_dir="${i#*=}"
 			shift
@@ -104,6 +110,7 @@ echo "[install-dir] = ${ov_install_dir}"
 echo "[test-data-dir] = ${ov_test_data_dir}"
 echo "[sdk] = ${ov_sdk_dir}"
 echo "[oem-distribution] = ${ov_oem_distribution}"
+echo "[display-error-location] = ${display_error_location}"
 echo "**************************************"
 echo ""
 echo ""
@@ -129,6 +136,7 @@ cmake ${ov_script_dir}/.. \
 		-DCMAKE_BUILD_TYPE=${ov_build_type} \
 		-DCMAKE_INSTALL_PREFIX=${ov_install_dir} \
 		-DOV_PACKAGE=${package_option} \
+		-DOV_DISPLAY_ERROR_LOCATION=${display_error_location} \
 		-DOVT_TEST_DATA_DIR=${ov_test_data_dir} \
 		-DFlag_VerboseOutput=${verbose} \
 		-DOPENVIBE_SDK_PATH=${ov_sdk_dir} \
