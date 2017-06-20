@@ -18,7 +18,7 @@
 	archive_name;folder_to_unzip;archive_url
 	...
 .PARAMETER dest_dir
-	Optional: if unspecified then by default it will be set to $script_root\..\dependencies (i.e. [mensia-test-root]\dependencies])
+	Optional: if unspecified then by default it will be set to $script_root\..\dependencies
 	Destination directory for extracted archives. Each archive found in the manifest file
 	is extracted in 'dest_dir\folder_to_unzip'.
 
