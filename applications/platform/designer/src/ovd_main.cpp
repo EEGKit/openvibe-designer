@@ -9,6 +9,7 @@
 #include <json/json.h>
 
 #include <system/ovCTime.h>
+#include <system/ovCMath.h>
 #include <openvibe/kernel/metabox/ovIMetaboxManager.h>
 #include "ovd_base.h"
 
@@ -408,18 +409,38 @@ typedef struct _SConfiguration
 		:m_eNoGui(CommandLineFlag_None)
 		, m_eNoCheckColorDepth(CommandLineFlag_None)
 		, m_eNoManageSession(CommandLineFlag_None)
+	    , m_eNoVisualization(CommandLineFlag_None)
+	    , m_eDefine(CommandLineFlag_None)
+	    , m_eRandomSeed(CommandLineFlag_None)
+	    , m_eConfig(CommandLineFlag_None)
 	{
 	}
 
 	OpenViBEDesigner::ECommandLineFlag getFlags(void)
 	{
-		return OpenViBEDesigner::ECommandLineFlag(m_eNoGui | m_eNoCheckColorDepth | m_eNoManageSession);
+		return OpenViBEDesigner::ECommandLineFlag(
+		            m_eNoGui
+		            | m_eNoCheckColorDepth
+		            | m_eNoManageSession
+		            | m_eNoVisualization
+		            | m_eDefine
+		            | m_eRandomSeed
+		            | m_eConfig
+		            );
 	}
 
 	std::vector < std::pair < ECommandLineFlag, std::string > > m_vFlag;
 	OpenViBEDesigner::ECommandLineFlag m_eNoGui;
 	OpenViBEDesigner::ECommandLineFlag m_eNoCheckColorDepth;
 	OpenViBEDesigner::ECommandLineFlag m_eNoManageSession;
+	OpenViBEDesigner::ECommandLineFlag m_eNoVisualization;
+	OpenViBEDesigner::ECommandLineFlag m_eDefine;
+	OpenViBEDesigner::ECommandLineFlag m_eRandomSeed;
+	OpenViBEDesigner::ECommandLineFlag m_eConfig;
+	// to resolve warning: padding struct '_SConfiguration' with 4 bytes to align 'm_oTokenMap
+	int32_t							   m_i32StructPadding;
+	std::map < std::string, std::string > m_oTokenMap;
+	
 } SConfiguration;
 
 static char backslash_to_slash(char c)
@@ -536,6 +557,18 @@ OpenViBE::boolean parse_arguments(int argc, char** argv, SConfiguration& rConfig
 			l_oConfiguration.m_eNoCheckColorDepth = CommandLineFlag_NoCheckColorDepth;
 			l_oConfiguration.m_eNoManageSession = CommandLineFlag_NoManageSession;
 		}
+		else if(*it=="--no-visualization")
+		{
+			l_oConfiguration.m_eNoVisualization=CommandLineFlag_NoVisualization;
+		}
+		else if(*it=="--invisible")
+		{
+			// no-gui + no-visualization
+			l_oConfiguration.m_eNoVisualization=CommandLineFlag_NoVisualization;
+			l_oConfiguration.m_eNoGui=CommandLineFlag_NoGui;
+			l_oConfiguration.m_eNoCheckColorDepth=CommandLineFlag_NoCheckColorDepth;
+			l_oConfiguration.m_eNoManageSession=CommandLineFlag_NoManageSession;
+		}
 		else if(*it == "--no-check-color-depth")
 		{
 			l_oConfiguration.m_eNoCheckColorDepth = CommandLineFlag_NoCheckColorDepth;
@@ -544,10 +577,36 @@ OpenViBE::boolean parse_arguments(int argc, char** argv, SConfiguration& rConfig
 		{
 			l_oConfiguration.m_eNoManageSession = CommandLineFlag_NoManageSession;
 		}
-		//		else if(*it=="--define")
-		//		{
-		//			l_oConfiguration.m_vFlag.push_back(std::make_pair(Flag_NoGui, *++it));
-		//		}
+		else if(*it=="-c" || *it=="--config")
+		{
+			if(*++it=="") { std::cout << "Error: Switch --config needs an argument\n"; return false; }
+			l_oConfiguration.m_vFlag.push_back(std::make_pair(CommandLineFlag_Config, *it));
+		}
+		else if(*it=="-d" || *it=="--define")
+		{
+			if(*++it=="") {
+				std::cout << "Error: Need two arguments after -d / --define.\n";
+				return false;
+			}
+			
+			// Were not using = as a separator for token/value, as on Windows its a problem passing = to the cmd interpreter
+			// which is used to launch the actual designer exe.
+			const std::string& l_rToken = *it;
+			if(*++it=="") {
+				std::cout << "Error: Need two arguments after -d / --define.\n";
+				return false;
+			}
+			
+			const std::string& l_rValue = *it;	// iterator will increment later
+			
+			l_oConfiguration.m_oTokenMap[l_rToken] = l_rValue;
+			
+		}
+		else if(*it=="--random-seed")
+		{
+			if(*++it=="") { std::cout << "Error: Switch --random-seed needs an argument\n"; return false; }
+			l_oConfiguration.m_vFlag.push_back(std::make_pair(CommandLineFlag_RandomSeed, *it));
+		}
 		else
 		{
 #if 0
@@ -672,14 +731,38 @@ int go(int argc, char ** argv)
 		}
 		else
 		{
+			SConfiguration l_oConfiguration;
+			OpenViBE::boolean bArgParseResult = parse_arguments(argc, argv, l_oConfiguration);
+			
 			cout << "[  INF  ] Got kernel descriptor, trying to create kernel" << "\n";
 
 			l_pKernelContext = l_pKernelDesc->createKernel("designer", OpenViBE::Directories::getDataDir() + "/kernel/openvibe.conf");
 			l_pKernelContext->initialize();
 			l_pKernelContext->getConfigurationManager().addConfigurationFromFile(OpenViBE::Directories::getDataDir() + "/applications/designer/designer.conf");
 			OpenViBE::CString l_sAppConfigFile = l_pKernelContext->getConfigurationManager().expand("${Designer_CustomConfigurationFile}");
-
 			l_pKernelContext->getConfigurationManager().addConfigurationFromFile(l_sAppConfigFile);
+			// add other configuration file if --config option
+			std::vector < std::pair < ECommandLineFlag, std::string > >::iterator it = l_oConfiguration.m_vFlag.begin();
+			
+			// initialize random number generator with NULL by default
+			System::Math::initializeRandomMachine(time(NULL));
+
+			while(it != l_oConfiguration.m_vFlag.end())
+			{
+				if (it->first == CommandLineFlag_Config)
+				{
+					l_sAppConfigFile = CString(it->second.c_str());
+			l_pKernelContext->getConfigurationManager().addConfigurationFromFile(l_sAppConfigFile);
+				}
+				if(it->first == CommandLineFlag_RandomSeed)
+				{
+					const int64_t l_i32Seed = atol(it->second.c_str());
+					System::Math::initializeRandomMachine(static_cast<const uint32>(l_i32Seed));
+				}
+				it++;
+			}
+			
+			
 			if (!l_pKernelContext)
 			{
 				cout << "[ FAILED ] No kernel created by kernel descriptor" << "\n";
@@ -714,8 +797,6 @@ int go(int argc, char ** argv)
 				IConfigurationManager& l_rConfigurationManager = l_pKernelContext->getConfigurationManager();
 				ILogManager& l_rLogManager = l_pKernelContext->getLogManager();
 
-				SConfiguration l_oConfiguration;
-				OpenViBE::boolean bArgParseResult = parse_arguments(argc, argv, l_oConfiguration);
 				l_rLogManager << LogLevel_Info << "Syntax :\n";
 
 				l_pKernelContext->getPluginManager().addPluginsFromFiles(l_rConfigurationManager.expand("${Kernel_Plugins}"));
@@ -733,13 +814,18 @@ int go(int argc, char ** argv)
 					l_rLogManager << LogLevel_Info << "Syntax : " << argv[0] << " [ switches ]\n";
 					l_rLogManager << LogLevel_Info << "Possible switches :\n";
 					l_rLogManager << LogLevel_Info << "  --help                  : displays this help message and exits\n";
+					l_rLogManager << LogLevel_Info << "  --config filename       : path to config file\n";
+					l_rLogManager << LogLevel_Info << "  --define token value    : specify configuration token with a given value\n";
 					l_rLogManager << LogLevel_Info << "  --open filename         : opens a scenario (see also --no-session-management)\n";
 					l_rLogManager << LogLevel_Info << "  --play filename         : plays the opened scenario (see also --no-session-management)\n";
 					l_rLogManager << LogLevel_Info << "  --play-fast filename    : plays fast forward the opened scenario (see also --no-session-management)\n";
 					l_rLogManager << LogLevel_Info << ("  --no-gui                : hides the " + std::string(STUDIO_NAME) + " graphical user interface (assumes --no-color-depth-test)\n").c_str();
+					l_rLogManager << LogLevel_Info << "  --no-visualization      : hides the visualisation widgets\n";
+					l_rLogManager << LogLevel_Info << "  --invisible             : hides the designer and the visualisation widgets (assumes --no-check-color-depth and --no-session-management)\n";
 					l_rLogManager << LogLevel_Info << "  --no-check-color-depth  : does not check 24/32 bits color depth\n";
 					l_rLogManager << LogLevel_Info << "  --no-session-management : neither restore last used scenarios nor saves them at exit\n";
-					//					l_rLogManager << LogLevel_Info << "  --define                : defines a variable in the configuration manager\n";
+					l_rLogManager << LogLevel_Info << "  --random-seed uint      : initialize random number generator with value, default=time(NULL)\n";
+					
 				}
 				else
 				{
@@ -819,6 +905,17 @@ int go(int argc, char ** argv)
 							app.newScenarioCB();
 						}
 
+						{ // Add or replace a configuration token if required in command line
+							std::map<std::string, std::string>::const_iterator itr;
+							for(itr=l_oConfiguration.m_oTokenMap.begin();
+							    itr!=l_oConfiguration.m_oTokenMap.end();
+							    itr++)
+							{
+								l_rLogManager << LogLevel_Trace << "Adding command line configuration token [" << (*itr).first.c_str() << " = " << (*itr).second.c_str() << "]\n";
+								l_rConfigurationManager.addOrReplaceConfigurationToken((*itr).first.c_str(), (*itr).second.c_str());
+							}
+						}
+						
 						{
 							CPluginObjectDescCollector cb_collector1(*l_pKernelContext);
 							CPluginObjectDescCollector cb_collector2(*l_pKernelContext);

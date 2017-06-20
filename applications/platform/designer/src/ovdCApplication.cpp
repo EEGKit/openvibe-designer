@@ -2626,15 +2626,21 @@ bool CApplication::createPlayer(void)
 			m_rKernelContext.getPlayerManager().releasePlayer(l_oPlayerIdentifier);
 			return false;
 		}
-
+		if(!(m_eCommandLineFlags&CommandLineFlag_NoVisualization))
+		{
 		// The visualization manager needs to know the visualization tree in which the widgets should be inserted
 		l_pCurrentInterfacedScenario->m_pPlayer->getRuntimeConfigurationManager().createConfigurationToken("VisualizationContext_VisualizationTreeId", l_pCurrentInterfacedScenario->m_oVisualizationTreeIdentifier.toString());
-
 		// TODO_JL: This should be a copy of the tree containing visualizations from the metaboxes
 		l_pCurrentInterfacedScenario->createPlayerVisualization(l_pCurrentInterfacedScenario->m_pVisualizationTree);
+		}
+
+
 		if(l_pCurrentInterfacedScenario->m_pPlayer->initialize() != EPlayerReturnCode::PlayerReturnCode_Sucess)
 		{
+			if(!(m_eCommandLineFlags&CommandLineFlag_NoGui))
+			{
 			l_pCurrentInterfacedScenario->releasePlayerVisualization();
+			}
 			m_rKernelContext.getLogManager() << LogLevel_Error << "The player could not be initialized.\n";
 			l_pCurrentInterfacedScenario->m_oPlayerIdentifier = OV_UndefinedIdentifier;
 			l_pCurrentInterfacedScenario->m_pPlayer=NULL;
