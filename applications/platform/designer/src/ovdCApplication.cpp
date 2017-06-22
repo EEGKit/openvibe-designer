@@ -2540,9 +2540,8 @@ void CApplication::registerLicenseCB(void)
 		exit(1);
 	}
 #elif defined TARGET_OS_Linux
-	//On other os, open Zendesk home page
-	std::string command = "mensia-flexnet-activation";
-	system(command.c_str());
+	m_rKernelContext.getLogManager() << LogLevel_Info << "Register License application's GUI cannot run on Linux. In order to activate your license," 
+		<< " you can use the tool 'mensia-flexnet-activation' in command line.\n";
 #endif
 }
 
