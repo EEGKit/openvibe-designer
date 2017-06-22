@@ -438,7 +438,7 @@ typedef struct _SConfiguration
 	OpenViBEDesigner::ECommandLineFlag m_eRandomSeed;
 	OpenViBEDesigner::ECommandLineFlag m_eConfig;
 	// to resolve warning: padding struct '_SConfiguration' with 4 bytes to align 'm_oTokenMap
-	int32_t							   m_i32StructPadding;
+	int32_t	                           m_i32StructPadding;
 	std::map < std::string, std::string > m_oTokenMap;
 	
 } SConfiguration;
