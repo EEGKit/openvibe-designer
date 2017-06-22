@@ -80,13 +80,4 @@ __________________________________________________________________
  \image html InstantBitmap3DStream_Example.png "Example of scenario using the Instant Bitmap (3D Stream)"
  \image latex InstantBitmap3DStream_Example.png "Example of scenario using the Instant Bitmap (3D Stream)" width=\textwidth
  * |OVP_DocEnd_BoxAlgorithm_InstantBitmap3DStream_Examples|
-__________________________________________________________________
-
-Miscellaneous description
-__________________________________________________________________
-
- * |OVP_DocBegin_BoxAlgorithm_InstantBitmap3DStream_Miscellaneous|
- The <em>Instant Bitmap (3D Stream) box</em> is included in the Mensia Advanced Visualization Toolset, a licensed product by Mensia Technologies SA (c) 2013.
- For further information, please contact Mensia Technologies SA at <a href="http://www.mensiatech.com">www.mensiatech.com</a>.
- * |OVP_DocEnd_BoxAlgorithm_InstantBitmap3DStream_Miscellaneous|
  */

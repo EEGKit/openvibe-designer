@@ -1199,22 +1199,6 @@ Filter in a large alpha-beta band</Text>
 			</Attributes>
 		</Comment>
 		<Comment>
-			<Identifier>(0x00001414, 0x00006908)</Identifier>
-			<Text>&lt;i&gt;This sample scenario is a part of the
-Mensia Advanced Visualization Toolset documentation.&lt;/i&gt;
-&lt;small&gt;&lt;span color="grey"&gt;Mensia Technologies SA (c) 2013&lt;/span&gt;&lt;/small&gt;</Text>
-			<Attributes>
-				<Attribute>
-					<Identifier>(0x473d9a43, 0x97fc0a97)</Identifier>
-					<Value>320</Value>
-				</Attribute>
-				<Attribute>
-					<Identifier>(0x7234b86b, 0x2b8651a5)</Identifier>
-					<Value>288</Value>
-				</Attribute>
-			</Attributes>
-		</Comment>
-		<Comment>
 			<Identifier>(0x00002922, 0x00006fd7)</Identifier>
 			<Text>&lt;b&gt;File Reader&lt;/b&gt;
 10 (+1 ref) channels, 512 Hz, 32 samples per block

@@ -91,13 +91,4 @@ __________________________________________________________________
  \image html InstantMultiOscilloscope_Example.png "Example of scenario using the Instant Multi-Oscilloscope"
  \image latex InstantMultiOscilloscope_Example.png "Example of scenario using the Instant Multi-Oscilloscope" width=\textwidth
  * |OVP_DocEnd_BoxAlgorithm_InstantMultiOscilloscope_Examples|
-__________________________________________________________________
-
-Miscellaneous description
-__________________________________________________________________
-
- * |OVP_DocBegin_BoxAlgorithm_InstantMultiOscilloscope_Miscellaneous|
- The <em> Instant Multi-Oscilloscope </em> is a box included in the Mensia Advanced Visualization Toolset, a licensed product by Mensia Technologies SA (c) 2013.
- For further information, please contact Mensia Technologies SA at <a href="http://www.mensiatech.com">www.mensiatech.com</a>.
- * |OVP_DocEnd_BoxAlgorithm_InstantMultiOscilloscope_Miscellaneous|
  */

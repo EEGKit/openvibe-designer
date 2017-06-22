@@ -800,22 +800,6 @@ on the same vertical axis.</Text>
 				</Attribute>
 			</Attributes>
 		</Comment>
-		<Comment>
-			<Identifier>(0x00007920, 0x0000434c)</Identifier>
-			<Text>&lt;i&gt;This sample scenario is a part of the
-Mensia Advanced Visualization Toolset documentation.&lt;/i&gt;
-&lt;small&gt;&lt;span color="grey"&gt;Mensia Technologies SA (c) 2013&lt;/span&gt;&lt;/small&gt;</Text>
-			<Attributes>
-				<Attribute>
-					<Identifier>(0x473d9a43, 0x97fc0a97)</Identifier>
-					<Value>336</Value>
-				</Attribute>
-				<Attribute>
-					<Identifier>(0x7234b86b, 0x2b8651a5)</Identifier>
-					<Value>256</Value>
-				</Attribute>
-			</Attributes>
-		</Comment>
 	</Comments>
 	<Metadata>
 		<Entry>
