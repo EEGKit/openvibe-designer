@@ -4273,7 +4273,7 @@ u
                     </child>
                     <child>
                       <object class="GtkImageMenuItem" id="openvibe-menu_display_changelog">
-                        <property name="label" translatable="yes">What's new in version @MENSIA_GLOBAL_VERSION_STRING@ of @STUDIO_NAME@</property>
+                        <property name="label" translatable="yes">What's new in version @OV_GLOBAL_VERSION_STRING@ of @STUDIO_NAME@</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>

@@ -30,9 +30,6 @@
 .NOTES
 	File Name      : windows-install-dependencies.ps1
 	Prerequisite   : Tested with PS v4.0 on windows 10 pro.
-.LINK
-	Detailed specifications:
-	https://jira.mensiatech.com/confluence/pages/viewpage.action?spaceKey=CT&title=Dependency+management
 .EXAMPLE
 	powershell.exe -NoExit -NoProfile -ExecutionPolicy Bypass -File \absolute\path\to\windows-get-dependencies.ps1 -manifest_file .\windows-dependencies.txt
 .EXAMPLE

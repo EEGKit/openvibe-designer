@@ -197,7 +197,7 @@ namespace
 {
 	extern "C" G_MODULE_EXPORT void open_url_mensia_cb(GtkWidget* pWidget, gpointer data)
 	{
-	#ifdef TARGET_OS_Windows
+	#if defined(TARGET_OS_Windows) && defined(MENSIA_DISTRIBUTION)
 		system("start http://mensiatech.com");
 	#endif
 	}
@@ -2548,7 +2548,7 @@ void CApplication::registerLicenseCB(void)
 
 void CApplication::reportIssueCB(void)
 {
-#if defined TARGET_OS_Windows
+#if defined(TARGET_OS_Windows) && defined(MENSIA_DISTRIBUTION)
 	//On windows, call the issue reporter tool
 	m_rKernelContext.getLogManager() << LogLevel_Debug << "CApplication::reportIssueCB\n";
 	std::string l_sCommand = Directories::getBinDir() + "/neurort-issue_reporter.exe";
@@ -2559,7 +2559,7 @@ void CApplication::reportIssueCB(void)
 	{
 		exit(1);
 	}
-#elif defined TARGET_OS_Linux
+#elif defined TARGET_OS_Linux && defined(MENSIA_DISTRIBUTION)
 	//On other os, open Zendesk home page
 	std::string l_sCommand = "x-www-browser https://mensiatech.zendesk.com/&";
 	system(l_sCommand.c_str());
