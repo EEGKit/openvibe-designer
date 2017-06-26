@@ -869,6 +869,14 @@ int go(int argc, char ** argv)
 								}
 							}
 						}
+						{ 
+							// Add or replace a configuration token if required in command line
+							for (auto token : l_oConfiguration.m_oTokenMap)
+							{
+								l_rLogManager << LogLevel_Trace << "Adding command line configuration token [" << token.first.c_str() << " = " << token.second.c_str() << "]\n";
+								l_rConfigurationManager.addOrReplaceConfigurationToken(token.first.c_str(), token.second.c_str());
+							}
+						}
 						for (size_t i = 0; i<l_oConfiguration.m_vFlag.size(); i++)
 						{
 							std::string l_sFileName = l_oConfiguration.m_vFlag[i].second;
@@ -903,14 +911,6 @@ int go(int argc, char ** argv)
 						if (app.m_vInterfacedScenario.empty())
 						{
 							app.newScenarioCB();
-						}
-
-						{ // Add or replace a configuration token if required in command line
-							for (auto token : l_oConfiguration.m_oTokenMap)
-							{
-								l_rLogManager << LogLevel_Trace << "Adding command line configuration token [" << token.first.c_str() << " = " << token.second.c_str() << "]\n";
-								l_rConfigurationManager.addOrReplaceConfigurationToken(token.first.c_str(), token.second.c_str());
-							}
 						}
 						
 						{
