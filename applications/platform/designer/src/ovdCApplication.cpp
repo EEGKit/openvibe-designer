@@ -2627,8 +2627,10 @@ bool CApplication::createPlayer(void)
 			m_rKernelContext.getPlayerManager().releasePlayer(l_oPlayerIdentifier);
 			return false;
 		}
+		
 		// The visualization manager needs to know the visualization tree in which the widgets should be inserted
 		l_pCurrentInterfacedScenario->m_pPlayer->getRuntimeConfigurationManager().createConfigurationToken("VisualizationContext_VisualizationTreeId", l_pCurrentInterfacedScenario->m_oVisualizationTreeIdentifier.toString());
+		
 		// TODO_JL: This should be a copy of the tree containing visualizations from the metaboxes			
 		l_pCurrentInterfacedScenario->createPlayerVisualization(l_pCurrentInterfacedScenario->m_pVisualizationTree);
 		
@@ -2815,8 +2817,12 @@ void CApplication::playScenarioCB(void)
 	gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), GTK_STOCK_MEDIA_PAUSE);
 	
 	if(m_eCommandLineFlags&CommandLineFlag_NoVisualization)
-		for (auto iScenario : m_vInterfacedScenario)		
+	{
+		for (auto &iScenario : m_vInterfacedScenario)
+		{
 			iScenario->hideCurrentVisualization();
+		}
+	}
 	
 }
 
@@ -2846,7 +2852,7 @@ void CApplication::forwardScenarioCB(void)
 	gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), GTK_STOCK_MEDIA_PLAY);
 	
 	if(m_eCommandLineFlags&CommandLineFlag_NoVisualization)
-		for (auto iScenario : m_vInterfacedScenario)		
+		for (auto &iScenario : m_vInterfacedScenario)		
 			iScenario->hideCurrentVisualization();
 }
 

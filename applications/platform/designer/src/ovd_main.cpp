@@ -584,7 +584,8 @@ OpenViBE::boolean parse_arguments(int argc, char** argv, SConfiguration& rConfig
 		}
 		else if(*it=="-d" || *it=="--define")
 		{
-			if(*++it=="") {
+			if(*++it=="") 
+			{
 				std::cout << "Error: Need two arguments after -d / --define.\n";
 				return false;
 			}
@@ -592,7 +593,8 @@ OpenViBE::boolean parse_arguments(int argc, char** argv, SConfiguration& rConfig
 			// Were not using = as a separator for token/value, as on Windows its a problem passing = to the cmd interpreter
 			// which is used to launch the actual designer exe.
 			const std::string& l_rToken = *it;
-			if(*++it=="") {
+			if(*++it=="") 
+			{
 				std::cout << "Error: Need two arguments after -d / --define.\n";
 				return false;
 			}
@@ -752,9 +754,9 @@ int go(int argc, char ** argv)
 				if (it->first == CommandLineFlag_Config)
 				{
 					l_sAppConfigFile = CString(it->second.c_str());
-			l_pKernelContext->getConfigurationManager().addConfigurationFromFile(l_sAppConfigFile);
+					l_pKernelContext->getConfigurationManager().addConfigurationFromFile(l_sAppConfigFile);
 				}
-				if(it->first == CommandLineFlag_RandomSeed)
+				else if(it->first == CommandLineFlag_RandomSeed)
 				{
 					const int64_t l_i32Seed = atol(it->second.c_str());
 					System::Math::initializeRandomMachine(static_cast<const uint32>(l_i32Seed));
@@ -869,14 +871,14 @@ int go(int argc, char ** argv)
 								}
 							}
 						}
-						{ 
-							// Add or replace a configuration token if required in command line
-							for (auto token : l_oConfiguration.m_oTokenMap)
-							{
-								l_rLogManager << LogLevel_Trace << "Adding command line configuration token [" << token.first.c_str() << " = " << token.second.c_str() << "]\n";
-								l_rConfigurationManager.addOrReplaceConfigurationToken(token.first.c_str(), token.second.c_str());
-							}
+						
+						// Add or replace a configuration token if required in command line
+						for (const auto &token : l_oConfiguration.m_oTokenMap)
+						{
+							l_rLogManager << LogLevel_Trace << "Adding command line configuration token [" << token.first.c_str() << " = " << token.second.c_str() << "]\n";
+							l_rConfigurationManager.addOrReplaceConfigurationToken(token.first.c_str(), token.second.c_str());
 						}
+						
 						for (size_t i = 0; i<l_oConfiguration.m_vFlag.size(); i++)
 						{
 							std::string l_sFileName = l_oConfiguration.m_vFlag[i].second;
