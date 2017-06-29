@@ -14,7 +14,7 @@ namespace OpenViBEDesigner
 
 		CSettingEditorDialog(const OpenViBE::Kernel::IKernelContext& rKernelContext, OpenViBE::Kernel::IBox& rBox, OpenViBE::uint32 ui32SettingIndex, const char* sTitle, const char* sGUIFilename, const char* sGUISettingsFilename);
 		virtual ~CSettingEditorDialog(void);
-		virtual OpenViBE::boolean run(void);
+		virtual bool run(void);
 
 		virtual void typeChangedCB(void);
 
@@ -23,7 +23,7 @@ namespace OpenViBEDesigner
 		const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
 		OpenViBE::Kernel::IBox& m_rBox;
 		OpenViBEDesigner::CSettingCollectionHelper m_oHelper;
-		OpenViBE::uint32 m_ui32SettingIndex;
+		uint32_t m_ui32SettingIndex;
 		OpenViBE::CString m_sGUIFilename;
 		OpenViBE::CString m_sGUISettingsFilename;
 		std::string m_sTitle;

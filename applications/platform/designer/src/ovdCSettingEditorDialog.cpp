@@ -26,7 +26,7 @@ CSettingEditorDialog::~CSettingEditorDialog(void)
 {
 }
 
-boolean CSettingEditorDialog::run(void)
+bool CSettingEditorDialog::run(void)
 {
 	::GtkBuilder* l_pBuilderInterfaceSetting=gtk_builder_new(); // glade_xml_new(m_sGUIFilename.toASCIIString(), "setting_editor", NULL);
 	gtk_builder_add_from_file(l_pBuilderInterfaceSetting, m_sGUIFilename.toASCIIString(), NULL);
@@ -52,16 +52,19 @@ boolean CSettingEditorDialog::run(void)
 
 	CIdentifier l_oCurrentTypeIdentifier;
 	gint l_iActive=-1;
+	uint32_t numSettings = 0; // Cannot rely on m_vSettingTypes.size() -- if there are any duplicates, it wont increment properly (and should be an error anyway) ...
 	while((l_oCurrentTypeIdentifier=m_rKernelContext.getTypeManager().getNextTypeIdentifier(l_oCurrentTypeIdentifier))!=OV_UndefinedIdentifier)
 	{
 		if(!m_rKernelContext.getTypeManager().isStream(l_oCurrentTypeIdentifier))
 		{
-			gtk_combo_box_append_text(GTK_COMBO_BOX(m_pType), m_rKernelContext.getTypeManager().getTypeName(l_oCurrentTypeIdentifier).toASCIIString());
+			const CString l_sThisType = m_rKernelContext.getTypeManager().getTypeName(l_oCurrentTypeIdentifier);
+			gtk_combo_box_append_text(GTK_COMBO_BOX(m_pType), l_sThisType.toASCIIString());
 			if(l_oCurrentTypeIdentifier==l_oSettingType)
 			{
-				l_iActive=m_vSettingTypes.size();
+				l_iActive = numSettings;
 			}
-			m_vSettingTypes[m_rKernelContext.getTypeManager().getTypeName(l_oCurrentTypeIdentifier).toASCIIString()]=l_oCurrentTypeIdentifier;
+			m_vSettingTypes[l_sThisType.toASCIIString()] = l_oCurrentTypeIdentifier;
+			numSettings++;
 		}
 	}
 
@@ -70,8 +73,8 @@ boolean CSettingEditorDialog::run(void)
 		gtk_combo_box_set_active(GTK_COMBO_BOX(m_pType), l_iActive);
 	}
 
-	boolean l_bFinished=false;
-	boolean l_bResult=false;
+	bool l_bFinished=false;
+	bool l_bResult=false;
 	while(!l_bFinished)
 	{
 		gint l_iResult=gtk_dialog_run(GTK_DIALOG(l_pDialog));
