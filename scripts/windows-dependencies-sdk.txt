@@ -3,3 +3,4 @@ cmake-3.4.0.zip;cmake;https://www.dropbox.com/s/bgdqi3k0p8aak4d/cmake-3.4.0.zip?
 eigen-3.2.0.zip;eigen;https://www.dropbox.com/s/7uso2oaaenkjerb/eigen-3.2.0.zip?dl=1
 ninja-1.4.0.zip;ninja;https://www.dropbox.com/s/cmqglycj2ztfes7/ninja-1.4.0.zip?dl=1
 OpenVIBE-Release-0.1.0-win32.zip;openvibe-sdk-release;https://drive.google.com/uc?export=download&id=0B8xL5zT5tZd0R29MejhhY2RVY0k
+OpenVIBE-Debug-0.1.0-win32.zip;openvibe-sdk-debug;https://drive.google.com/uc?export=download&id=0B3jtTn2U9IRfZnlzU01OakZLSWc
