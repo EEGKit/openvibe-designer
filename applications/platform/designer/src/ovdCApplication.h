@@ -133,7 +133,7 @@ namespace OpenViBEDesigner
 		void aboutLinkClickedCB(const gchar *url);
 
 		void browseDocumentationCB(void);
-		void CApplication::registerLicenseCB(void);
+		void registerLicenseCB(void);
 		void reportIssueCB(void);
 		void windowStateChangedCB(bool bIsMaximized);
 		bool displayChangelogWhenAvailable();
