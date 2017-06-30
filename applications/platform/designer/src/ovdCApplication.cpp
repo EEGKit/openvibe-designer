@@ -2852,8 +2852,12 @@ void CApplication::forwardScenarioCB(void)
 	gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), GTK_STOCK_MEDIA_PLAY);
 	
 	if(m_eCommandLineFlags&CommandLineFlag_NoVisualization)
+	{
 		for (auto &iScenario : m_vInterfacedScenario)		
+		{		
 			iScenario->hideCurrentVisualization();
+		}
+	}
 }
 
 bool CApplication::quitApplicationCB(void)
