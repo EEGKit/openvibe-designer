@@ -39,7 +39,7 @@ using namespace OpenViBEDesigner;
 using namespace OpenViBEVisualizationToolkit;
 using namespace std;
 
-extern map<uint32, ::GdkColor> g_vColors;
+extern map<uint32_t, ::GdkColor> g_vColors;
 
 namespace
 {
@@ -53,7 +53,7 @@ namespace
 		::GdkColor l_oGdkColor;
 		unsigned int l_ui32Value1=0;
 		unsigned int l_ui32Value2=0;
-		uint64 l_ui64Result=0;
+		uint64_t l_ui64Result=0;
 
 		sscanf(rIdentifier.toString(), "(0x%08X, 0x%08X)", &l_ui32Value1, &l_ui32Value2);
 		l_ui64Result+=l_ui32Value1;
@@ -76,7 +76,7 @@ namespace
 
 		for(std::string::size_type i=0; i<l_sInput.length(); i++)
 		{
-			if((l_sInput[i]>='a' && l_sInput[i]<='z') || (l_sInput[i]>='A' && l_sInput[i]<='Z') || (l_sInput[i]>='0' && l_sInput[i]<='9') || (!bRemoveSlash && l_sInput[i]=='/'))
+			if(std::isalnum(l_sInput[i]) || (!bRemoveSlash && l_sInput[i]=='/'))
 			{
 				if(l_sInput[i]=='/')
 				{
@@ -86,14 +86,7 @@ namespace
 				{
 					if(l_bLastWasSeparator)
 					{
-						if('a' <= l_sInput[i] && l_sInput[i] <= 'z')
-						{
-							l_sOutput+=l_sInput[i]+'A'-'a';
-						}
-						else
-						{
-							l_sOutput+=l_sInput[i];
-						}
+						l_sOutput += std::toupper(l_sInput[i]);
 					}
 					else
 					{
@@ -622,6 +615,35 @@ CInterfacedScenario::CInterfacedScenario(const IKernelContext& rKernelContext, C
 	m_oStateStack.reset(new CScenarioStateStack(rKernelContext, *this, rScenario));
 
 	this->updateScenarioLabel();
+
+	// Output a log message if any box of the scenario is in some special state
+	CIdentifier l_oBoxIdentifier = OV_UndefinedIdentifier;
+	bool l_bWarningUpdate = false, l_bWarningDeprecated = false, l_bNoteUnstable = false, l_bWarningUnknown = false;
+	while ((l_oBoxIdentifier = m_rScenario.getNextBoxIdentifier(l_oBoxIdentifier)) != OV_UndefinedIdentifier)
+	{
+		const IBox *l_pBox = m_rScenario.getBoxDetails(l_oBoxIdentifier);
+		const CBoxProxy l_oBoxProxy(m_rKernelContext, *l_pBox);
+		if (!l_bWarningUpdate && !l_oBoxProxy.isUpToDate())
+		{
+			m_rKernelContext.getLogManager() << LogLevel_Warning << "Scenario requires 'update' of some box(es). You need to replace these boxes or the scenario may not work correctly.\n";
+			l_bWarningUpdate = true;
+		}
+		if (!l_bWarningDeprecated && l_oBoxProxy.isDeprecated())
+		{
+			m_rKernelContext.getLogManager() << LogLevel_Warning << "Scenario constains deprecated box(es). Please consider using other boxes instead.\n";
+			l_bWarningDeprecated = true;
+		}
+//		if (!l_bNoteUnstable && l_oBoxProxy.isUnstable())
+//		{
+//			m_rKernelContext.getLogManager() << LogLevel_Debug << "Scenario contains unstable box(es).\n";
+//			l_bNoteUnstable = true;
+//		}
+		if (!l_bWarningUnknown && !l_oBoxProxy.isBoxAlgorithmPluginPresent())
+		{
+			m_rKernelContext.getLogManager() << LogLevel_Warning << "Scenario contains unknown box algorithm(s).\n";
+			l_bWarningUnknown = true;
+		}
+	}
 }
 
 CInterfacedScenario::~CInterfacedScenario(void)

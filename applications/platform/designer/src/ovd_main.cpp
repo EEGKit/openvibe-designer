@@ -661,6 +661,7 @@ void message(const char* sTitle, const char* sMessage, GtkMessageType eType)
 
 int go(int argc, char ** argv)
 {
+	bool errorWhileLoadingScenario = false, playRequested = false;
 	/*
 	{ 0,     0,     0,     0 },
 	{ 0, 16383, 16383, 16383 },
@@ -799,6 +800,9 @@ int go(int argc, char ** argv)
 				IConfigurationManager& l_rConfigurationManager = l_pKernelContext->getConfigurationManager();
 				ILogManager& l_rLogManager = l_pKernelContext->getLogManager();
 
+				SConfiguration l_oConfiguration;
+				bool bArgParseResult = parse_arguments(argc, argv, l_oConfiguration);
+
 				l_rLogManager << LogLevel_Info << "Syntax :\n";
 
 				l_pKernelContext->getPluginManager().addPluginsFromFiles(l_rConfigurationManager.expand("${Kernel_Plugins}"));
@@ -883,25 +887,45 @@ int go(int argc, char ** argv)
 						{
 							std::string l_sFileName = l_oConfiguration.m_vFlag[i].second;
 							std::transform(l_sFileName.begin(), l_sFileName.end(), l_sFileName.begin(), backslash_to_slash);
+							bool error;
 							switch (l_oConfiguration.m_vFlag[i].first)
 							{
 							case CommandLineFlag_Open:
 								l_rLogManager << LogLevel_Info << "Opening scenario [" << CString(l_sFileName.c_str()) << "]\n";
-								app.openScenario(l_sFileName.c_str());
+								if(!app.openScenario(l_sFileName.c_str()))
+								{
+									l_rLogManager << LogLevel_Error << "Could not open scenario" << l_sFileName.c_str();
+									errorWhileLoadingScenario = l_oConfiguration.m_eNoGui == CommandLineFlag_NoGui;
+								}
 								break;
 							case CommandLineFlag_Play:
 								l_rLogManager << LogLevel_Info << "Opening and playing scenario [" << CString(l_sFileName.c_str()) << "]\n";
-								if (app.openScenario(l_sFileName.c_str()))
+								error = !app.openScenario(l_sFileName.c_str());
+								if(!error)
 								{
 									app.playScenarioCB();
+									error = app.getCurrentInterfacedScenario()->m_ePlayerStatus != OpenViBE::Kernel::EPlayerStatus::PlayerStatus_Play;
+								}
+								if(error)
+								{
+									l_rLogManager << LogLevel_Error << "Scenario open or load error with --play.\n";
+									errorWhileLoadingScenario = l_oConfiguration.m_eNoGui == CommandLineFlag_NoGui;
 								}
 								break;
 							case CommandLineFlag_PlayFast:
 								l_rLogManager << LogLevel_Info << "Opening and fast playing scenario [" << CString(l_sFileName.c_str()) << "]\n";
-								if (app.openScenario(l_sFileName.c_str()))
+								error = !app.openScenario(l_sFileName.c_str());
+								if(!error)
 								{
 									app.forwardScenarioCB();
+									error = app.getCurrentInterfacedScenario()->m_ePlayerStatus != OpenViBE::Kernel::EPlayerStatus::PlayerStatus_Forward;
 								}
+								if(error)
+								{
+									l_rLogManager << LogLevel_Error << "Scenario open or load error with --play-fast.\n";
+									errorWhileLoadingScenario = l_oConfiguration.m_eNoGui == CommandLineFlag_NoGui;
+								}
+								playRequested = true;
 								break;
 								//								case CommandLineFlag_Define:
 								//									break;
@@ -909,7 +933,10 @@ int go(int argc, char ** argv)
 								break;
 							}
 						}
-
+						if(!playRequested && l_oConfiguration.m_eNoGui == CommandLineFlag_NoGui)
+						{
+							l_rLogManager << LogLevel_Info << "Switch --no-gui is enabled but no play operation was requested. Designer will exit automatically.\n";
+						}
 						if (app.m_vInterfacedScenario.empty())
 						{
 							app.newScenarioCB();
@@ -983,8 +1010,7 @@ int go(int argc, char ** argv)
 		l_oKernelLoader.uninitialize();
 		l_oKernelLoader.unload();
 	}
-
-	return 0;
+	return errorWhileLoadingScenario ? -1 : 0;
 }
 
 int main(int argc, char ** argv)
