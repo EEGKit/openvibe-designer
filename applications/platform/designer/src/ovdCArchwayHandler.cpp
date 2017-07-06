@@ -1,3 +1,5 @@
+#ifdef MENSIA_DISTRIBUTION
+
 #include "ovdCArchwayHandler.h"
 
 #include <openvibe/ov_directories.h>
@@ -594,3 +596,4 @@ bool CArchwayHandler::loadPipelineConfigurations()
 	return true;
 }
 
+#endif

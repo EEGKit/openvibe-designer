@@ -1,5 +1,7 @@
 #pragma once
 
+#ifdef MENSIA_DISTRIBUTION
+
 #include <memory>
 #include <vector>
 #include <string>
@@ -147,3 +149,5 @@ namespace Mensia {
 		unsigned int m_RunningPipelineId;
 	};
 }
+
+#endif

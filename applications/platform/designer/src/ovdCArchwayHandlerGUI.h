@@ -1,5 +1,7 @@
 #pragma once
 
+#ifdef MENSIA_DISTRIBUTION
+
 #include "ovdCArchwayHandler.h"
 #include <gtk/gtk.h>
 
@@ -43,3 +45,4 @@ namespace Mensia {
 	};
 }
 
+#endif
