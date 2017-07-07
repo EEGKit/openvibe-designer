@@ -909,6 +909,7 @@ CApplication::CApplication(const IKernelContext& rKernelContext)
 
 
 	// TODO : register metabox scenario importer
+	
 	m_pVisualizationManager = new CVisualizationManager(m_rKernelContext);
 	m_visualizationContext = dynamic_cast<OpenViBEVisualizationToolkit::IVisualizationContext*>(m_rKernelContext.getPluginManager().createPluginObject(OVP_ClassId_Plugin_VisualizationContext));
 	m_visualizationContext->setManager(m_pVisualizationManager);
@@ -2626,12 +2627,15 @@ bool CApplication::createPlayer(void)
 			m_rKernelContext.getPlayerManager().releasePlayer(l_oPlayerIdentifier);
 			return false;
 		}
-
+		
 		// The visualization manager needs to know the visualization tree in which the widgets should be inserted
 		l_pCurrentInterfacedScenario->m_pPlayer->getRuntimeConfigurationManager().createConfigurationToken("VisualizationContext_VisualizationTreeId", l_pCurrentInterfacedScenario->m_oVisualizationTreeIdentifier.toString());
-
-		// TODO_JL: This should be a copy of the tree containing visualizations from the metaboxes
+		
+		// TODO_JL: This should be a copy of the tree containing visualizations from the metaboxes			
 		l_pCurrentInterfacedScenario->createPlayerVisualization(l_pCurrentInterfacedScenario->m_pVisualizationTree);
+		
+		
+
 		if(l_pCurrentInterfacedScenario->m_pPlayer->initialize() != EPlayerReturnCode::PlayerReturnCode_Sucess)
 		{
 			l_pCurrentInterfacedScenario->releasePlayerVisualization();
@@ -2811,6 +2815,15 @@ void CApplication::playScenarioCB(void)
 	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_forward")),       true);
 	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager")), false);
 	gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), GTK_STOCK_MEDIA_PAUSE);
+	
+	if(m_eCommandLineFlags&CommandLineFlag_NoVisualization)
+	{
+		for (auto &iScenario : m_vInterfacedScenario)
+		{
+			iScenario->hideCurrentVisualization();
+		}
+	}
+	
 }
 
 void CApplication::forwardScenarioCB(void)
@@ -2837,6 +2850,14 @@ void CApplication::forwardScenarioCB(void)
 	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_forward")),       false);
 	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager")), false);
 	gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), GTK_STOCK_MEDIA_PLAY);
+	
+	if(m_eCommandLineFlags&CommandLineFlag_NoVisualization)
+	{
+		for (auto &iScenario : m_vInterfacedScenario)		
+		{		
+			iScenario->hideCurrentVisualization();
+		}
+	}
 }
 
 bool CApplication::quitApplicationCB(void)
