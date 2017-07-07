@@ -310,11 +310,13 @@ namespace
 		static_cast<CApplication*>(pUserData)->browseDocumentationCB();
 	}
 
+#ifdef MENSIA_DISTRIBUTION
 	void menu_register_license_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
 	{
 		static_cast<CApplication*>(pUserData)->registerLicenseCB();
 	}
-	
+#endif
+
 	void menu_report_issue_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
 	{
 		static_cast<CApplication*>(pUserData)->reportIssueCB();
@@ -991,6 +993,7 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_about")),          "activate", G_CALLBACK(menu_about_openvibe_cb),  this);
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_scenario_about")), "activate", G_CALLBACK(menu_about_scenario_cb),  this);
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_documentation")), "activate", G_CALLBACK(menu_browse_documentation_cb), this);
+#ifdef MENSIA_DISTRIBUTION
 	if (FS::Files::fileExists(Directories::getBinDir() + "/mensia-flexnet-activation.exe"))
 	{
 		g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_register_license")), "activate", G_CALLBACK(menu_register_license_cb), this);
@@ -999,6 +1002,10 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 	{
 		gtk_widget_hide(GTK_WIDGET((gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_register_license"))));
 	}
+#else
+	gtk_widget_hide(GTK_WIDGET((gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_register_license"))));
+#endif
+
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_issue_report")),  "activate", G_CALLBACK(menu_report_issue_cb),   this);
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_display_changelog")),  "activate", G_CALLBACK(menu_display_changelog_cb),   this);
 
@@ -2540,7 +2547,7 @@ void CApplication::browseDocumentationCB(void)
 
 void CApplication::registerLicenseCB(void)
 {
-#if defined TARGET_OS_Windows
+#if defined TARGET_OS_Windows && defined(MENSIA_DISTRIBUTION)
 	m_rKernelContext.getLogManager() << LogLevel_Debug << "CApplication::registerLicenseCB\n";
 	std::string command = Directories::getBinDir() + "/mensia-flexnet-activation.exe";
 	STARTUPINFO startupInfo;
@@ -2550,7 +2557,7 @@ void CApplication::registerLicenseCB(void)
 	{
 		exit(1);
 	}
-#elif defined TARGET_OS_Linux
+#elif defined TARGET_OS_Linux && defined(MENSIA_DISTRIBUTION)
 	m_rKernelContext.getLogManager() << LogLevel_Info << "Register License application's GUI cannot run on Linux. In order to activate your license," 
 		<< " you can use the tool 'mensia-flexnet-activation' in command line.\n";
 #endif
