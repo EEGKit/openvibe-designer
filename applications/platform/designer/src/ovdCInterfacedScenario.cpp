@@ -618,30 +618,33 @@ CInterfacedScenario::CInterfacedScenario(const IKernelContext& rKernelContext, C
 
 	// Output a log message if any box of the scenario is in some special state
 	CIdentifier l_oBoxIdentifier = OV_UndefinedIdentifier;
-	bool l_bWarningUpdate = false, l_bWarningDeprecated = false, l_bNoteUnstable = false, l_bWarningUnknown = false;
+	bool warningUpdate = false;
+	bool warningDeprecated = false;
+	bool noteUnstable = false;
+	bool warningUnknown = false;
 	while ((l_oBoxIdentifier = m_rScenario.getNextBoxIdentifier(l_oBoxIdentifier)) != OV_UndefinedIdentifier)
 	{
 		const IBox *l_pBox = m_rScenario.getBoxDetails(l_oBoxIdentifier);
 		const CBoxProxy l_oBoxProxy(m_rKernelContext, *l_pBox);
-		if (!l_bWarningUpdate && !l_oBoxProxy.isUpToDate())
+		if (!warningUpdate && !l_oBoxProxy.isUpToDate())
 		{
 			m_rKernelContext.getLogManager() << LogLevel_Warning << "Scenario requires 'update' of some box(es). You need to replace these boxes or the scenario may not work correctly.\n";
-			l_bWarningUpdate = true;
+			warningUpdate = true;
 		}
-		if (!l_bWarningDeprecated && l_oBoxProxy.isDeprecated())
+		if (!warningDeprecated && l_oBoxProxy.isDeprecated())
 		{
 			m_rKernelContext.getLogManager() << LogLevel_Warning << "Scenario constains deprecated box(es). Please consider using other boxes instead.\n";
-			l_bWarningDeprecated = true;
+			warningDeprecated = true;
 		}
-//		if (!l_bNoteUnstable && l_oBoxProxy.isUnstable())
+//		if (!noteUnstable && l_oBoxProxy.isUnstable())
 //		{
 //			m_rKernelContext.getLogManager() << LogLevel_Debug << "Scenario contains unstable box(es).\n";
-//			l_bNoteUnstable = true;
+//			noteUnstable = true;
 //		}
-		if (!l_bWarningUnknown && !l_oBoxProxy.isBoxAlgorithmPluginPresent())
+		if (!warningUnknown && !l_oBoxProxy.isBoxAlgorithmPluginPresent())
 		{
 			m_rKernelContext.getLogManager() << LogLevel_Warning << "Scenario contains unknown box algorithm(s).\n";
-			l_bWarningUnknown = true;
+			warningUnknown = true;
 		}
 	}
 }
