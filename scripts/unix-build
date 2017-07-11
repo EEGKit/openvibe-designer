@@ -27,10 +27,10 @@ function usage()
 # variables
 ov_script_dir="${PWD}"
 ov_build_type=Release
-ov_build_dir="${ov_script_dir}/../build/build-${ov_build_type}"
+ov_sdk_dir="${ov_script_dir}/../dependencies/openvibe-sdk-release"
+ov_build_dir="${ov_script_dir}/../build/build-Release"
 ov_install_dir="${ov_script_dir}/../build/dist"
 ov_test_data_dir="${ov_script_dir}/../dependencies/test-data"
-ov_sdk_dir="${ov_script_dir}/../dependencies/openvibe-sdk-release"
 ov_oem_distribution="openvibe"
 verbose="OFF"
 package_option="FALSE"
@@ -98,6 +98,8 @@ fi
 
 if [[ ${ov_build_type} == "Debug" ]]; then
 	ov_install_dir="${ov_script_dir}/../build/dist-debug"
+	ov_sdk_dir="${ov_script_dir}/../dependencies/openvibe-sdk-debug"
+	ov_build_dir="${ov_script_dir}/../build/build-Debug"
 elif [[ ${ov_build_type} == "RelWithDebInfo" ]]; then
 	ov_install_dir="${ov_script_dir}/../build/dist-relwdeb"
 fi

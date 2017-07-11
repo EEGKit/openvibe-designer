@@ -1,0 +1,2 @@
+OpenViBE-Release-0.1.99-Ubuntu16.04.zip;openvibe-sdk-release;https://drive.google.com/uc?export=download&id=0B9oYmBwk8WzwdmFIUkNDcHVYN2s
+OpenViBE-Debug-0.1.99-Ubuntu16.04.zip;openvibe-sdk-debug;https://drive.google.com/uc?export=download&id=0B9oYmBwk8WzwdndKbnkwaHJwZVE
