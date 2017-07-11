@@ -92,13 +92,4 @@ __________________________________________________________________
  \image html InstantBars_Example.png "Example of scenario using the Instant Bars to display spectrum"
  \image latex InstantBars_Example.png "Example of scenario using the Instant Bars to display spectrum" width=\textwidth
  * |OVP_DocEnd_BoxAlgorithm_InstantBars_Examples|
-__________________________________________________________________
-
-Miscellaneous description
-__________________________________________________________________
-
- * |OVP_DocBegin_BoxAlgorithm_InstantBars_Miscellaneous|
- The <em> Instant Bars </em> is a box included in the Mensia Advanced Visualization Toolset, a licensed product by Mensia Technologies SA (c) 2013.
- For further information, please contact Mensia Technologies SA at <a href="http://www.mensiatech.com">www.mensiatech.com</a>.
- * |OVP_DocEnd_BoxAlgorithm_InstantBars_Miscellaneous|
  */

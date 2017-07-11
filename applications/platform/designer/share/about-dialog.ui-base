@@ -14,6 +14,7 @@
 Based on OpenViBE SDK @OV_SDK_VERSION_STRING@, a software from Inria
 </property>
     <property name="license" translatable="yes">
+	@LICENCE_TEXT@
 	</property>
     <property name="authors">Inria &amp; Mensia Technologies SA
 ---

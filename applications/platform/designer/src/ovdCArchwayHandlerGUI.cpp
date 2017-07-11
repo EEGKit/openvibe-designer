@@ -1,3 +1,4 @@
+#ifdef MENSIA_DISTRIBUTION
 #include "ovdCArchwayHandlerGUI.h"
 #include <openvibe/ov_directories.h>
 #include <fs/Files.h>
@@ -393,3 +394,4 @@ bool CArchwayHandlerGUI::setPipelineParameterValueAtPath(gchar const* path, gcha
 	return true;
 }
 
+#endif

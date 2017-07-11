@@ -1,18 +1,22 @@
-/*
- * MENSIA TECHNOLOGIES CONFIDENTIAL
- * ________________________________
+/*********************************************************************
+ * Software License Agreement (AGPL-3 License)
  *
- *  [2012] - [2013] Mensia Technologies SA
- *  Copyright, All Rights Reserved.
+ * OpenViBE Designer
+ * Based on OpenViBE V1.1.0, Copyright (C) Inria, 2006-2015
+ * Copyright (C) Inria, 2015-2017,V1.0
  *
- * NOTICE: All information contained herein is, and remains
- * the property of Mensia Technologies SA.
- * The intellectual and technical concepts contained
- * herein are proprietary to Mensia Technologies SA
- * and are covered copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from Mensia Technologies SA.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License version 3,
+ * as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.
+ * If not, see <http://www.gnu.org/licenses/>.
  */
 
 #if defined TARGET_HAS_ThirdPartyOpenGL
@@ -197,7 +201,7 @@ CRendererLoreta::CRendererLoreta(void)
 
 		const char* l_sDataFilename="./loreta_anatomic_voxels.hpp";
 		l_pFile = ::Mensia::Files::open(l_sDataFilename, "w");
-		::fprintf(l_pFile,"/*\n * MENSIA TECHNOLOGIES CONFIDENTIAL\n * ________________________________\n *\n * [2012] - [2013] Mensia Technologies SA\n * Copyright, All Rights Reserved.\n *\n * NOTICE: All information contained herein is, and remains\n * the property of Mensia Technologies SA.\n * The intellectual and technical concepts contained\n * herein are proprietary to Mensia Technologies SA\n * and are covered copyright law.\n * Dissemination of this information or reproduction of this material\n * is strictly forbidden unless prior written permission is obtained\n * from Mensia Technologies SA.\n */\n");
+		::fprintf(l_pFile,"/*********************************************************************\n * Software License Agreement (AGPL-3 License)\n *\n * OpenViBE Designer\n * Based on OpenViBE V1.1.0, Copyright (C) Inria, 2006-2015\n * Copyright (C) Inria, 2015-2017,V1.0\n *\n * This program is free software: you can redistribute it and/or modify\n * it under the terms of the GNU Affero General Public License version 3,\n * as published by the Free Software Foundation.\n *\n * This program is distributed in the hope that it will be useful,\n * but WITHOUT ANY WARRANTY; without even the implied warranty of\n * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the\n * GNU Affero General Public License for more details.\n *\n * You should have received a copy of the GNU Affero General Public License\n * along with this program.\n * If not, see <http://www.gnu.org/licenses/>.\n */\n");
 		::fprintf(l_pFile,"#ifndef __autoconvert__LoretaAnatomic_csv__\n#define __autoconvert__LoretaAnatomic_csv__\n");
 		::fprintf(l_pFile,"\nnamespace LoretaRegions\n{\n");
 		::fprintf(l_pFile,"#ifndef LoretaRegions_VoxelRegionStruct\n#define LoretaRegions_VoxelRegionStruct\n\ttypedef struct\n\t{\n\t\tconst char * _sName;\n\t\tunsigned int _uiVoxelCount;\n\t\tunsigned int * _pVoxels;\n\t}SVoxelRegion;\n#endif\n\n");

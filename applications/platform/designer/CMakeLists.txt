@@ -29,9 +29,9 @@ include("FindThirdPartyBoost_System")
 include("FindThirdPartyBoost_Thread")
 include("FindThirdPartyBoost_Filesystem")
 
-add_definitions(-DProjectVersion=\"${MENSIA_GLOBAL_VERSION_STRING}\")
-add_definitions(-DM_VERSION_MAJOR=${MENSIA_GLOBAL_VERSION_MAJOR})
-add_definitions(-DM_VERSION_MINOR=${MENSIA_GLOBAL_VERSION_MINOR})
+add_definitions(-DProjectVersion=\"${OV_GLOBAL_VERSION_STRING}\")
+add_definitions(-DM_VERSION_MAJOR=${OV_GLOBAL_VERSION_MAJOR})
+add_definitions(-DM_VERSION_MINOR=${OV_GLOBAL_VERSION_MINOR})
 
 set_build_platform()
 

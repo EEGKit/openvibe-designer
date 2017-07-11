@@ -21,14 +21,14 @@ BEGIN
     BEGIN
         BLOCK "040904E4"
         BEGIN
-            VALUE "CompanyName", "Mensia Technologies"
+            VALUE "CompanyName", "@COMPANY_NAME@"
             VALUE "FileDescription", "@FILE_DESCRIPTION@"
-            VALUE "FileVersion", "@MENSIA_GLOBAL_VERSION_STRING@"
+            VALUE "FileVersion", "@OV_GLOBAL_VERSION_STRING@"
             VALUE "InternalName", "@PROJECT_NAME@"
-            VALUE "LegalCopyright", "Copyright - Mensia Technologies SA 2012-2015"
+            VALUE "LegalCopyright", "Copyright - @COMPANY_NAME@"
             VALUE "OriginalFilename", "@PROJECT_NAME@"
             VALUE "ProductName", "@PROJECT_PRODUCT_NAME@"
-            VALUE "ProductVersion", "@MENSIA_GLOBAL_VERSION_STRING@"
+            VALUE "ProductVersion", "@OV_GLOBAL_VERSION_STRING@"
         END
     END
     BLOCK "VarFileInfo"

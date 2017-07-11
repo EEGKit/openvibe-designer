@@ -715,22 +715,6 @@ Maps the alpha power onto a 3D model of the scalp</Text>
 			</Attributes>
 		</Comment>
 		<Comment>
-			<Identifier>(0x000026ba, 0x00001f07)</Identifier>
-			<Text>&lt;i&gt;This sample scenario is a part of the
-Mensia Advanced Visualization Toolset documentation.&lt;/i&gt;
-&lt;small&gt;&lt;span color="grey"&gt;Mensia Technologies SA (c) 2013&lt;/span&gt;&lt;/small&gt;</Text>
-			<Attributes>
-				<Attribute>
-					<Identifier>(0x473d9a43, 0x97fc0a97)</Identifier>
-					<Value>336</Value>
-				</Attribute>
-				<Attribute>
-					<Identifier>(0x7234b86b, 0x2b8651a5)</Identifier>
-					<Value>224</Value>
-				</Attribute>
-			</Attributes>
-		</Comment>
-		<Comment>
 			<Identifier>(0x0000584e, 0x00004a1d)</Identifier>
 			<Text>&lt;b&gt;Reference Channel&lt;/b&gt;
 The reference channel is 'Nz'</Text>

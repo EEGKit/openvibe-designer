@@ -18,7 +18,7 @@
 	archive_name;folder_to_unzip;archive_url
 	...
 .PARAMETER dest_dir
-	Optional: if unspecified then by default it will be set to $script_root\..\dependencies (i.e. [mensia-test-root]\dependencies])
+	Optional: if unspecified then by default it will be set to $script_root\..\dependencies
 	Destination directory for extracted archives. Each archive found in the manifest file
 	is extracted in 'dest_dir\folder_to_unzip'.
 
@@ -30,9 +30,6 @@
 .NOTES
 	File Name      : windows-install-dependencies.ps1
 	Prerequisite   : Tested with PS v4.0 on windows 10 pro.
-.LINK
-	Detailed specifications:
-	https://jira.mensiatech.com/confluence/pages/viewpage.action?spaceKey=CT&title=Dependency+management
 .EXAMPLE
 	powershell.exe -NoExit -NoProfile -ExecutionPolicy Bypass -File \absolute\path\to\windows-get-dependencies.ps1 -manifest_file .\windows-dependencies.txt
 .EXAMPLE

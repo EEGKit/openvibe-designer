@@ -106,13 +106,4 @@ __________________________________________________________________
  \image html ContinuousBitmap_Example.png "Example of scenario using the Continuous Bitmap"
  \image latex ContinuousBitmap_Example.png "Example of scenario using the Continuous Bitmap" width=\textwidth
  * |OVP_DocEnd_BoxAlgorithm_ContinuousBitmap_Examples|
-__________________________________________________________________
-
-Miscellaneous description
-__________________________________________________________________
-
- * |OVP_DocBegin_BoxAlgorithm_ContinuousBitmap_Miscellaneous|
- The <em> Continuous Bitmap </em> is a box included in the Mensia Advanced Visualization Toolset, a licensed product by Mensia Technologies SA (c) 2013.
- For further information, please contact Mensia Technologies SA at <a href="http://www.mensiatech.com">www.mensiatech.com</a>.
- * |OVP_DocEnd_BoxAlgorithm_ContinuousBitmap_Miscellaneous|
  */

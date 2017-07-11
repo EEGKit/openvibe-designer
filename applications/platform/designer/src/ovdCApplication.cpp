@@ -197,7 +197,7 @@ namespace
 {
 	extern "C" G_MODULE_EXPORT void open_url_mensia_cb(GtkWidget* pWidget, gpointer data)
 	{
-	#ifdef TARGET_OS_Windows
+	#if defined(TARGET_OS_Windows) && defined(MENSIA_DISTRIBUTION)
 		system("start http://mensiatech.com");
 	#endif
 	}
@@ -310,11 +310,13 @@ namespace
 		static_cast<CApplication*>(pUserData)->browseDocumentationCB();
 	}
 
+#ifdef MENSIA_DISTRIBUTION
 	void menu_register_license_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
 	{
 		static_cast<CApplication*>(pUserData)->registerLicenseCB();
 	}
-	
+#endif
+
 	void menu_report_issue_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
 	{
 		static_cast<CApplication*>(pUserData)->reportIssueCB();
@@ -369,13 +371,15 @@ namespace
 		static_cast<CApplication*>(pUserData)->redoCB();
 	}
 
+#ifdef MENSIA_DISTRIBUTION
 	void button_toggle_neurort_engine_configuration_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
 	{
 		auto l_pApplication = static_cast<CApplication*>(pUserData);
 
 		l_pApplication->m_oArchwayHandlerGUI.toggleNeuroRTEngineConfigurationDialog(static_cast<bool>(gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(pMenuItem))));
 	}
-
+#endif 
+	
 	void delete_designer_visualisation_cb(gpointer user_data)
 	{
 		static_cast<CApplication*>(user_data)->deleteDesignerVisualizationCB();
@@ -661,10 +665,12 @@ namespace
 	gboolean idle_application_loop(gpointer pUserData)
 	{
 		CApplication* l_pApplication=static_cast<CApplication*>(pUserData);
+#ifdef MENSIA_DISTRIBUTION
 		if (l_pApplication->m_oArchwayHandler.isEngineStarted())
 		{
 			l_pApplication->m_oArchwayHandler.loopEngine();
 		}
+#endif
 
 		CInterfacedScenario* l_pCurrentInterfacedScenario=l_pApplication->getCurrentInterfacedScenario();
 		if(l_pCurrentInterfacedScenario)
@@ -895,8 +901,10 @@ CApplication::CApplication(const IKernelContext& rKernelContext)
 	,m_bIsQuitting(false)
 	,m_bIsNewVersion(false)
 	,m_ui32CurrentInterfacedScenarioIndex(0)
+#ifdef MENSIA_DISTRIBUTION
     ,m_oArchwayHandler(rKernelContext)
     ,m_oArchwayHandlerGUI(m_oArchwayHandler)
+#endif
 {
 	m_pPluginManager=&m_rKernelContext.getPluginManager();
 	m_pScenarioManager=&m_rKernelContext.getScenarioManager();
@@ -985,6 +993,7 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_about")),          "activate", G_CALLBACK(menu_about_openvibe_cb),  this);
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_scenario_about")), "activate", G_CALLBACK(menu_about_scenario_cb),  this);
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_documentation")), "activate", G_CALLBACK(menu_browse_documentation_cb), this);
+#ifdef MENSIA_DISTRIBUTION
 	if (FS::Files::fileExists(Directories::getBinDir() + "/mensia-flexnet-activation.exe"))
 	{
 		g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_register_license")), "activate", G_CALLBACK(menu_register_license_cb), this);
@@ -993,6 +1002,10 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 	{
 		gtk_widget_hide(GTK_WIDGET((gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_register_license"))));
 	}
+#else
+	gtk_widget_hide(GTK_WIDGET((gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_register_license"))));
+#endif
+
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_issue_report")),  "activate", G_CALLBACK(menu_report_issue_cb),   this);
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_display_changelog")),  "activate", G_CALLBACK(menu_display_changelog_cb),   this);
 
@@ -1036,10 +1049,10 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_zoomin")), "clicked",  G_CALLBACK(zoom_in_scenario_cb), this);
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_zoomout")), "clicked",  G_CALLBACK(zoom_out_scenario_cb), this);
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-zoom_spinner")), "value-changed",  G_CALLBACK(spinner_zoom_changed_cb), this);
-
+#ifdef MENSIA_DISTRIBUTION
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration")),       "clicked", G_CALLBACK(button_toggle_neurort_engine_configuration_cb),   this);
 	m_oArchwayHandlerGUI.m_ButtonOpenEngineConfigurationDialog = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration"));
-
+#endif
 #if !defined(TARGET_OS_Windows) && !defined(TARGET_OS_Linux)
 	gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_issue_report")));
 #endif
@@ -1397,10 +1410,14 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 		m_rKernelContext.getLogManager() << LogLevel_Error << "The configuration token ${Designer_HelpBrowserURLBase} seems to be set to an incorrect value.\n";
 	}
 
+#ifdef MENSIA_DISTRIBUTION
 	if (m_oArchwayHandler.initialize() == Mensia::EngineInitialisationStatus::NotAvailable)
 	{
 		gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration")));
 	}
+#else
+	gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration")));
+#endif
 }
 
 bool CApplication::displayChangelogWhenAvailable()
@@ -2530,7 +2547,7 @@ void CApplication::browseDocumentationCB(void)
 
 void CApplication::registerLicenseCB(void)
 {
-#if defined TARGET_OS_Windows
+#if defined TARGET_OS_Windows && defined(MENSIA_DISTRIBUTION)
 	m_rKernelContext.getLogManager() << LogLevel_Debug << "CApplication::registerLicenseCB\n";
 	std::string command = Directories::getBinDir() + "/mensia-flexnet-activation.exe";
 	STARTUPINFO startupInfo;
@@ -2540,7 +2557,7 @@ void CApplication::registerLicenseCB(void)
 	{
 		exit(1);
 	}
-#elif defined TARGET_OS_Linux
+#elif defined TARGET_OS_Linux && defined(MENSIA_DISTRIBUTION)
 	m_rKernelContext.getLogManager() << LogLevel_Info << "Register License application's GUI cannot run on Linux. In order to activate your license," 
 		<< " you can use the tool 'mensia-flexnet-activation' in command line.\n";
 #endif
@@ -2548,7 +2565,7 @@ void CApplication::registerLicenseCB(void)
 
 void CApplication::reportIssueCB(void)
 {
-#if defined TARGET_OS_Windows
+#if defined(TARGET_OS_Windows) && defined(MENSIA_DISTRIBUTION)
 	//On windows, call the issue reporter tool
 	m_rKernelContext.getLogManager() << LogLevel_Debug << "CApplication::reportIssueCB\n";
 	std::string l_sCommand = Directories::getBinDir() + "/neurort-issue_reporter.exe";
@@ -2559,7 +2576,7 @@ void CApplication::reportIssueCB(void)
 	{
 		exit(1);
 	}
-#elif defined TARGET_OS_Linux
+#elif defined TARGET_OS_Linux && defined(MENSIA_DISTRIBUTION)
 	//On other os, open Zendesk home page
 	std::string l_sCommand = "x-www-browser https://mensiatech.zendesk.com/&";
 	system(l_sCommand.c_str());
