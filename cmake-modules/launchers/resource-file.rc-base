@@ -21,11 +21,11 @@ BEGIN
     BEGIN
         BLOCK "040904E4"
         BEGIN
-            VALUE "CompanyName", "Mensia Technologies"
+            VALUE "CompanyName", "@COMPANY_NAME@"
             VALUE "FileDescription", "@FILE_DESCRIPTION@"
             VALUE "FileVersion", "@OV_GLOBAL_VERSION_STRING@"
             VALUE "InternalName", "@PROJECT_NAME@"
-            VALUE "LegalCopyright", "Copyright - Inria & Mensia Technologies SA"
+            VALUE "LegalCopyright", "Copyright - @COMPANY_NAME@"
             VALUE "OriginalFilename", "@PROJECT_NAME@"
             VALUE "ProductName", "@PROJECT_PRODUCT_NAME@"
             VALUE "ProductVersion", "@OV_GLOBAL_VERSION_STRING@"
