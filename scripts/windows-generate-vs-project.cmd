@@ -26,7 +26,7 @@ for %%A in (%*) DO (
 	) else if /i "%%A"=="--dep" (
 		set next=DEP
 	) else if "!next!"=="DEP" (
-		set PathDep=%%A
+		set PathDep=-DOPENVIBE_SDK_PATH=%%A
 		set next=
 	) else if /i "%%A"=="--debug" (
 		set BuildType=Debug
@@ -65,7 +65,7 @@ cmake %script_dir%\.. ^
 	-T "v120" ^
 	-DCMAKE_BUILD_TYPE=%BuildType% ^
 	-DCMAKE_INSTALL_PREFIX=%install_dir% ^
-	-DOPENVIBE_SDK_PATH=!PathSDK! ^
+	!PathSDK! ^
 	-DCV_DEPENDENCIES_PATH=!PathDep!
 
 if not "!ERRORLEVEL!" == "0" goto terminate_error
