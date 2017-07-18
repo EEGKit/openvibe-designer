@@ -27,13 +27,19 @@
 	Cache directory for extracted archives. Each archive found in the manifest file
 	is extracted from cache_dir to 'dest_dir\folder_to_unzip'.
 
+.PARAMETER 7zip
+	Path to 7zip executable on machine.
+	optional: if specified, 7zip is used to extract archives (much faster).
 .NOTES
 	File Name      : windows-install-dependencies.ps1
 	Prerequisite   : Tested with PS v4.0 on windows 10 pro.
+.LINK
+	Detailed specifications:
+	https://jira.mensiatech.com/confluence/pages/viewpage.action?spaceKey=CT&title=Dependency+management
 .EXAMPLE
-	powershell.exe -NoExit -NoProfile -ExecutionPolicy Bypass -File \absolute\path\to\windows-get-dependencies.ps1 -manifest_file .\windows-dependencies.txt
+	powershell.exe -NoExit -NoProfile -ExecutionPolicy Bypass -File \absolute\path\to\windows-install-dependencies.ps1 -manifest_file .\windows-dependencies.txt
 .EXAMPLE
-	powershell.exe -NoExit -NoProfile -ExecutionPolicy Bypass -File \absolute\path\to\windows-get-dependencies.ps1 -manifest_file .\windows-dependencies.txt -dest_dir \absolute\path\to\dep\ -cache_dir \absolute\path\to\cache -proxy_pass user:passwd
+	powershell.exe -NoExit -NoProfile -ExecutionPolicy Bypass -File \absolute\path\to\windows-install-dependencies.ps1 -manifest_file .\windows-dependencies.txt -dest_dir \absolute\path\to\dep\ -cache_dir \absolute\path\to\cache -proxy_pass user:passwd -7zip "\C:\Program Files\7-Zip\7z.exe"
 #>
 
 #
@@ -44,7 +50,8 @@ Param(
 [parameter(Mandatory=$true)][ValidateScript({Test-Path $_ })][string]$manifest_file,
 [parameter(Mandatory=$false)][ValidateScript({Test-Path $_ })][string]$cache_dir,
 [parameter(Mandatory=$false)][ValidateNotNullOrEmpty()][string]$dest_dir = ".\..\dependencies",
-[parameter(Mandatory=$false)][string]$proxy_pass
+[parameter(Mandatory=$false)][string]$proxy_pass,
+[parameter(Mandatory=$false)][ValidateScript({Test-Path $_ })][string]$7zip_executable
 )
 
 $manifest_file = [System.IO.Path]::GetFullPath($manifest_file)
@@ -61,6 +68,31 @@ if (Test-Path $dest_dir){
 	New-Item $dest_dir -itemtype directory | Out-Null
 	Write-Host "Created destination directory: "  $dest_dir
 }
+
+# if -cache_dir is specified, use its value, otherwise check if an environment variable exists 
+if($cache_dir) {
+	Write-Host "Cache directory provided by parameter: $cache_dir"
+} elseif ($env:DEPENDENCY_CACHE -and (Test-Path $env:DEPENDENCY_CACHE)) {
+	Write-Host "Found cache directory: " ($env:DEPENDENCY_CACHE)
+	$cache_dir = $env:DEPENDENCY_CACHE
+} else {
+	Write-Host "Found no cache directory"
+	$cache_dir = $dest_dir + "\arch"
+}
+if(-Not (Test-Path $cache_dir)) {
+	New-Item $cache_dir -itemtype directory | Out-Null
+	Write-Host "Created archive directory in destination: "  $cache_dir
+}
+Write-Host "All archives will be downloaded in " $cache_dir
+Write-Host ""
+
+Write-Host "Configure Web client"
+$WebClient = New-Object System.Net.WebClient
+if($proxy_pass){
+	$Username, $Password = $proxy_pass.split(':',2)
+	Write-Host "Credentials are provided. Try to download from server with username [$Username]."
+	$WebClient.Credentials = New-Object System.Net.Networkcredential($Username, $Password)
+}
 Write-Host ""
 
 Write-Host "===Parameters==="
@@ -71,11 +103,6 @@ Write-Host ""
 #
 # script variables
 #
-
-# we keep 2 different variables here because there are 2 different behaviors:
-# - cache archives shoud not be overwritten (It is the responsability of the system admin to keep it in sync with remote directories)
-# - destination directory archives must be overwritten to ensure a regular update
-$Script:arch_dir = ""
 
 # monitoring variables
 $Script:download_count = 0
@@ -91,54 +118,56 @@ function ExpandZipFile($zip, $dest)
 {
 	Write-Host "Extract: [" $zip "] -> [" $dest "]"
 	$shell = New-Object -ComObject Shell.Application
+	
+	if ([string]::IsNullOrEmpty($7zip_executable)){
+		# expand folders because NameSpace command expects absolute paths
+		$zip = (Resolve-Path $zip)
+		$dest = (Resolve-Path $dest)
 
-	# create dest if it does not exists
-	if(-Not (Test-Path $dest)) {
-		New-Item $dest -itemtype directory | Out-Null
+		$folder = $shell.NameSpace("$zip")
+
+		# Progress based on count is pretty dumb. However
+		# the sizes retrieved by $folder.GetDetailsOf($item, 2)
+		# or $item.Size are unreliable. At least, it allows the script
+		# user to see something is going on.
+		$count = 0
+		$total_count = $folder.Items().Count
+		ForEach($item in $folder.Items()) {
+
+			$item_name = $folder.GetDetailsOf($item, 0)
+			$percent_complete = [System.Math]::Floor(100 * $count / $total_count)
+			Write-Progress `
+				-Status "Progress: $percent_complete%" `
+				-Activity ("Extracting " + (Split-Path -Leaf $zip) + " to " + (Split-Path -Leaf $dest)) `
+				-CurrentOperation "Copying $item_name (this can take a long time...)" `
+				-PercentComplete $percent_complete
+
+			# 0x14 = sum of options 4 (donnot display windows box) and 16 (answer yes to all)
+			$shell.Namespace("$dest").CopyHere($item, 0x14)
+
+			$count++
+		}
+	} else {
+		$7z_Arguments = @(
+			'x'            ## extract files with full paths
+			'-y'           ## assume Yes on all queries
+			$zip           ## archive path
+			"`"-o$dest`""  ## dest path        
+
+		)
+		& $7zip_executable $7z_Arguments
 	}
-
-	# expand folders because NameSpace command expects absolute paths
-	$zip = (Resolve-Path $zip)
-	$dest = (Resolve-Path $dest)
-
-	$folder = $shell.NameSpace("$zip")
-
-	# Progress based on count is pretty dumb. However
-	# the sizes retrieved by $folder.GetDetailsOf($item, 2)
-	# or $item.Size are unreliable. At least, it allows the script
-	# user to see something is going on.
-	$count = 0
-	$total_count = $folder.Items().Count
-	foreach($item in $folder.Items()) {
-
-		$item_name = $folder.GetDetailsOf($item, 0)
-		$percent_complete = [System.Math]::Floor(100 * $count / $total_count)
-		Write-Progress `
-			-Status "Progress: $percent_complete%" `
-			-Activity ("Extracting " + (Split-Path -Leaf $zip) + " to " + (Split-Path -Leaf $dest)) `
-			-CurrentOperation "Copying $item_name (this can take a long time...)" `
-			-PercentComplete $percent_complete
-
-		# 0x14 = sum of options 4 (donnot display windows box) and 16 (answer yes to all)
-		$shell.Namespace("$dest").CopyHere($item, 0x14)
-
-		$count++
-	}
-
 	$Script:extract_count++
+
 }
 
 function InstallDeps($arch, $dir, $dropbox_url)
 {
-	$zip = $Script:arch_dir + "\" + $arch
+	$zip = $Script:cache_dir + "\" + $arch
 
 	if(-Not (Test-Path $zip)) {
-		$WebClient = New-Object System.Net.WebClient
 		if($proxy_pass){
-			Write-Host "- Credentials are specified. Try to download from server with username [$Username]."
 			$url = $Script:dependency_server + "/" + $arch
-			$Username, $Password = $proxy_pass.split(':',2)
-			$WebClient.Credentials = New-Object System.Net.Networkcredential($Username, $Password)
 		}
 		elseif($dropbox_url) {
 			Write-Host "- Credentials are not specified. Try to download from Dropbox."
@@ -150,7 +179,7 @@ function InstallDeps($arch, $dir, $dropbox_url)
 		}
 
 		Write-Host "Download: [" $url "] -> [" $zip "]."
-		$WebClient.DownloadFile( $url, $zip )
+		$Script:WebClient.DownloadFile( $url, $zip )
 		
 		if(-Not (Test-Path $zip)) {
 			exit
@@ -163,41 +192,6 @@ function InstallDeps($arch, $dir, $dropbox_url)
 #
 # core script
 #
-
-# check if a cache directory is available through DEPENDENCY_CACHE env variable
-Write-Host "===Looking for cache==="
-
-# if -cache_dir is specified, use its value, otherwise check if an environment variable exists 
-if($cache_dir) {
-	Write-Host "Cache directory provided by parameter: $cache_dir"
-} elseif ((Test-Path env:\DEPENDENCY_CACHE) -and (Test-Path $env:DEPENDENCY_CACHE)) {
-	Write-Host "Found cache directory: "  ($env:DEPENDENCY_CACHE)
-	$cache_dir = $env:CV_DEPENDENCY_CACHE
-}
-
-if ($cache_dir) {
-# check if a cache directory was passed as parameters, and if it exists
-	Write-Host "Found cache directory: "  ($cache_dir)
-	$arch_dir = $cache_dir
-	if(-Not (Test-Path $arch_dir)) {
-		New-Item $arch_dir -itemtype directory | Out-Null
-		Write-Host "Created archive directory in cache: "  $arch_dir
-	}
-
-	Write-Host "Missing archives will be transferred to " $arch_dir
-
-} else {
-	Write-Host "Found no cache directory"
-
-	$arch_dir = $dest_dir + "\arch"
-
-	if(-Not (Test-Path $arch_dir)) {
-		New-Item $arch_dir -itemtype directory | Out-Null
-		Write-Host "Created archive directory in destination: "  $arch_dir
-	}
-
-	Write-Host "All archives will be transferred to " $arch_dir
-}
 
 Write-Host ""
 Write-Host "===Installing dependencies==="
