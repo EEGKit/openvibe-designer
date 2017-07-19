@@ -1,4 +1,5 @@
 PROJECT(openvibe-plugins-mensia-advanced-visualization)
+# should it be renamed to fit openvibe-plugin-designer-* pattern ?
 SET(PROJECT_PRODUCT_NAME "Mensia Advanced Visualization Toolset")
 MESSAGE(STATUS "Now building ${PROJECT_NAME} ${PROJECT_VERSION} (${OV_PROJECT_BRANCH}~${OV_PROJECT_COMMITHASH})" )
 
