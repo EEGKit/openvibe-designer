@@ -894,7 +894,7 @@ int go(int argc, char ** argv)
 								l_rLogManager << LogLevel_Info << "Opening scenario [" << CString(l_sFileName.c_str()) << "]\n";
 								if(!app.openScenario(l_sFileName.c_str()))
 								{
-									l_rLogManager << LogLevel_Error << "Could not open scenario" << l_sFileName.c_str();
+									l_rLogManager << LogLevel_Error << "Could not open scenario " << l_sFileName.c_str() << "\n";
 									errorWhileLoadingScenario = l_oConfiguration.m_eNoGui == CommandLineFlag_NoGui;
 								}
 								break;

@@ -1595,9 +1595,10 @@ bool CApplication::openScenario(const char* sFileName)
 	}
 	else
 	{
-		m_rKernelContext.getLogManager() << LogLevel_Warning << "Importing scenario failed...\n";
+		m_rKernelContext.getLogManager() << LogLevel_Error << "Importing scenario from file [" << sFileName << "] failed... "
+			<< " Current file either is corrupted or is not compatible with the selected scenario importer (ie not an OpenViBE scenario file)\n";
 
-		if (!(m_eCommandLineFlags&CommandLineFlag_NoGui))
+		if (!(m_eCommandLineFlags & CommandLineFlag_NoGui))
 		{
 			std::stringstream l_oStringStream;
 			l_oStringStream << "The requested file: " << sFileName << "\n";
@@ -1605,11 +1606,10 @@ bool CApplication::openScenario(const char* sFileName)
 			l_oStringStream << "a " + std::string(BRAND_NAME) + " scenario file, \n";
 			l_oStringStream << "be corrupted or not compatible with \n";
 			l_oStringStream << "the selected scenario importer...";
-
 			::GtkWidget* l_pErrorDialog=gtk_message_dialog_new(
 						NULL,
 						GTK_DIALOG_MODAL,
-						GTK_MESSAGE_WARNING,
+						GTK_MESSAGE_ERROR,
 						GTK_BUTTONS_OK,
 						"Scenario importation process failed !");
 			gtk_message_dialog_format_secondary_text(
