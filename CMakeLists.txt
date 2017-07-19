@@ -11,8 +11,8 @@ cmake_policy(SET CMP0057 NEW)
 
 PROJECT(Designer)
 
-# Certivibes modules list
-SET(INCLUDED_CERTIVIBE_COMPONENTS BASE ALLPLUGINS EBML SYSTEM FS XML TOOLKIT)
+# OpenViBE SDK modules list
+SET(INCLUDED_OV_SDK_COMPONENTS BASE ALLPLUGINS EBML SYSTEM FS XML TOOLKIT)
 
 # These versions are used by the subprojects by default.
 # If you wish to maintain specific version numbers for a subproject, please do so in the projects CMakeLists.txt
@@ -55,7 +55,7 @@ IF(OEM_DISTRIBUTION STREQUAL "openvibe")
 	SET(OV_CONFIG_SUBDIR "OpenVIBE")
 	SET(BRAND_NAME "OpenViBE")
 	SET(COMPANY_NAME "Inria")
-	SET(STUDIO_NAME "Designer")
+	SET(DESIGNER_NAME "Designer")
 	SET(LICENCE_TEXT "\
 This program is free software: you can redistribute it and/or modify\
 it under the terms of the GNU Affero General Public License as\
@@ -72,7 +72,7 @@ License along with this program.  If not, see http://www.gnu.org/licenses/ .")
 ELSEIF(OEM_DISTRIBUTION STREQUAL "mensia")
 	SET(OV_CONFIG_SUBDIR "mensia")
 	SET(BRAND_NAME "NeuroRT")
-	SET(STUDIO_NAME "Studio")
+	SET(DESIGNER_NAME "Studio")
 	SET(COMPANY_NAME "Mensia Technologies SA")
 	ADD_DEFINITIONS(-DMENSIA_DISTRIBUTION)
 ELSE()
@@ -147,9 +147,9 @@ ENDIF()
 
 #################################################################
 string(TOLOWER ${BRAND_NAME} LOWER_BRAND_NAME)
-string(TOLOWER ${STUDIO_NAME} LOWER_STUDIO_NAME)
+string(TOLOWER ${DESIGNER_NAME} LOWER_DESIGNER_NAME)
 ADD_DEFINITIONS(-DBRAND_NAME="${BRAND_NAME}")
-ADD_DEFINITIONS(-DSTUDIO_NAME="${STUDIO_NAME}")
+ADD_DEFINITIONS(-DDESIGNER_NAME="${DESIGNER_NAME}")
 #################################################################
 
 SET(OV_LAUNCHER_SOURCE_PATH "${CMAKE_SOURCE_DIR}/cmake-modules/launchers")
@@ -210,7 +210,7 @@ ELSE()
 	SET(DIST_DOCDIR ${CMAKE_INSTALL_FULL_BINDIR}/../doc)
 ENDIF()
 
-MESSAGE(STATUS "Building ${BRAND_NAME} ${STUDIO_NAME} [${OEM_DISTRIBUTION}] Version : ${PROJECT_VERSION} ${OV_PROJECT_BRANCH}~${OV_PROJECT_COMMITHASH}")
+MESSAGE(STATUS "Building ${BRAND_NAME} ${DESIGNER_NAME} [${OEM_DISTRIBUTION}] Version : ${PROJECT_VERSION} ${OV_PROJECT_BRANCH}~${OV_PROJECT_COMMITHASH}")
 
 # Add vendor specific installation instructions
 # Traverse these directories and build their components

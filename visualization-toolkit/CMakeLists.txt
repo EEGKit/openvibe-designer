@@ -15,7 +15,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 	SOVERSION ${PROJECT_VERSION_MAJOR}
 	COMPILE_FLAGS "-DOVVIZ_Exports -DOVVIZ_Shared")
 
-include("AddCertivibeComponents")
+include("AddOpenViBESDKComponents")
 include("FindThirdPartyGTK")
 
 # ---------------------------------

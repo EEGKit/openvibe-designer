@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 =pod
-This script will install dependencies for CertiViBE.
+This script will install dependencies for OpenViBE Designer.
 
 The installer uses the native package manager.
 

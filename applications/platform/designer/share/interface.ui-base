@@ -9,7 +9,7 @@
     <property name="default_width">500</property>
     <property name="default_height">900</property>
     <property name="type_hint">normal</property>
-    <property name="program_name">@BRAND_NAME@ @STUDIO_NAME@</property>
+    <property name="program_name">@BRAND_NAME@ @DESIGNER_NAME@</property>
     <property name="version">@OV_GLOBAL_VERSION_STRING@</property>
     <property name="comments" translatable="yes">Software technologies for the development of new research, diagnostic and therapeutic solutions leveraging real-time EEG and neurofeedback</property>
     <property name="logo">header_logo.png</property>
@@ -4010,7 +4010,7 @@ u
     <property name="width_request">320</property>
     <property name="height_request">240</property>
     <property name="can_focus">False</property>
-    <property name="title" translatable="yes">@BRAND_NAME@ @STUDIO_NAME@ @OV_GLOBAL_VERSION_STRING@</property>
+    <property name="title" translatable="yes">@BRAND_NAME@ @DESIGNER_NAME@ @OV_GLOBAL_VERSION_STRING@</property>
     <property name="window_position">center</property>
     <property name="default_width">1024</property>
     <property name="default_height">768</property>
@@ -4276,7 +4276,7 @@ u
                     </child>
                     <child>
                       <object class="GtkImageMenuItem" id="openvibe-menu_display_changelog">
-                        <property name="label" translatable="yes">What's new in version @OV_GLOBAL_VERSION_STRING@ of @STUDIO_NAME@</property>
+                        <property name="label" translatable="yes">What's new in version @OV_GLOBAL_VERSION_STRING@ of @DESIGNER_NAME@</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
@@ -4959,7 +4959,7 @@ only the boxes containing the keyword you entered in their name or descriptionwi
                       <object class="GtkLabel" id="openvibe-box_algorithm_title_label">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="tooltip_text" translatable="yes">Display the list of boxes available in @BRAND_NAME@ @STUDIO_NAME@</property>
+                        <property name="tooltip_text" translatable="yes">Display the list of boxes available in @BRAND_NAME@ @DESIGNER_NAME@</property>
                         <property name="label" translatable="yes">Boxes</property>
                       </object>
                       <packing>
@@ -5261,7 +5261,7 @@ only the boxes containing the keyword you entered in their name or descriptionwi
           <object class="GtkExpander" id="openvibe-expander_messages">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="tooltip_text" translatable="yes">Display the @STUDIO_NAME@ console</property>
+            <property name="tooltip_text" translatable="yes">Display the @DESIGNER_NAME@ console</property>
             <child>
               <object class="GtkVBox" id="vbox2">
                 <property name="visible">True</property>

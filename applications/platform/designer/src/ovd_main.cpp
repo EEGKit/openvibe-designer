@@ -351,7 +351,7 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 					            (lastUsedVersionMajor < boxComponentUpdatedVersionMajor && boxComponentUpdatedVersionMajor <= currentVersionMajor)
 					            || (boxComponentUpdatedVersionMajor == currentVersionMajor && lastUsedVersionMinor < boxComponentUpdatedVersionMinor && boxComponentUpdatedVersionMinor <= currentVersionMinor)
 					            || (boxComponentUpdatedVersionMinor == currentVersionMinor && lastUsedVersionPatch < boxComponentUpdatedVersionPatch && boxComponentUpdatedVersionPatch <= currentVersionPatch)
-					            // If this is a new version Studio, and last version opened was set to default value i.e. version of current software
+					            // If this is a new version Designer, and last version opened was set to default value i.e. version of current software
 					            || (boxComponentUpdatedVersionMajor == currentVersionMajor && boxComponentUpdatedVersionMinor == currentVersionMinor && boxComponentUpdatedVersionPatch == currentVersionPatch)) )
 					{
 						l_sName = l_sName + " (New)";
@@ -449,7 +449,7 @@ static char backslash_to_slash(char c)
 }
 
 /** ------------------------------------------------------------------------------------------------------------------------------------
-* Use Mutex to ensure that only one instance with GUI of Studio runs at the same time
+* Use Mutex to ensure that only one instance with GUI of Designer runs at the same time
 * if another instance exists, sends a message to it so that it opens a scenario or get the focus back
 * \param sMode: play, play-fast or open
 * \param sScenarioPath: name of the scenario to open
@@ -497,7 +497,7 @@ static bool ensureOneInstanceOfDesigner(SConfiguration& pConfiguration, ILogMana
 			l_sMessage = l_sMessage + l_s32Mode + ": <" + l_sFileName + "> ; ";
 		}
 		const char* l_sFinalMessage = l_sMessage.c_str(); 
-		l_rLogManager << LogLevel_Trace << "There is already an instance of studio running. " << l_sFinalMessage << " \n";
+		l_rLogManager << LogLevel_Trace << "There is already an instance of Designer running. " << l_sFinalMessage << " \n";
 		size_t l_sizeMessage = (strlen(l_sFinalMessage) * sizeof(char));
 
 		boost::interprocess::message_queue l_oMessageToFirstInstance(boost::interprocess::open_or_create, MESSAGE_NAME, l_sizeMessage, l_sizeMessage);
@@ -507,8 +507,8 @@ static bool ensureOneInstanceOfDesigner(SConfiguration& pConfiguration, ILogMana
 	}
 	catch(boost::interprocess::interprocess_exception&)
 	{
-		//Create the named mutex to catch the potential next instance of studio that could open
-		l_rLogManager << LogLevel_Trace << "EnsureOneInstanceOfDesigner- This is the only instance of studio with a gui, open it normally.\n";
+		//Create the named mutex to catch the potential next instance of Designer that could open
+		l_rLogManager << LogLevel_Trace << "EnsureOneInstanceOfDesigner- This is the only instance of Designer with a gui, open it normally.\n";
 		boost::interprocess::named_mutex l_oMutex(boost::interprocess::create_only, MUTEX_NAME);
 		return true;
 	}
@@ -825,7 +825,7 @@ int go(int argc, char ** argv)
 					l_rLogManager << LogLevel_Info << "  --open filename         : opens a scenario (see also --no-session-management)\n";
 					l_rLogManager << LogLevel_Info << "  --play filename         : plays the opened scenario (see also --no-session-management)\n";
 					l_rLogManager << LogLevel_Info << "  --play-fast filename    : plays fast forward the opened scenario (see also --no-session-management)\n";
-					l_rLogManager << LogLevel_Info << ("  --no-gui                : hides the " + std::string(STUDIO_NAME) + " graphical user interface (assumes --no-color-depth-test)\n").c_str();
+					l_rLogManager << LogLevel_Info << ("  --no-gui                : hides the " + std::string(DESIGNER_NAME) + " graphical user interface (assumes --no-color-depth-test)\n").c_str();
 					l_rLogManager << LogLevel_Info << "  --no-visualization      : hides the visualisation widgets\n";
 					l_rLogManager << LogLevel_Info << "  --invisible             : hides the designer and the visualisation widgets (assumes --no-check-color-depth and --no-session-management)\n";
 					l_rLogManager << LogLevel_Info << "  --no-check-color-depth  : does not check 24/32 bits color depth\n";
@@ -845,7 +845,7 @@ int go(int argc, char ** argv)
 	
 					if(l_oConfiguration.m_eNoGui != CommandLineFlag_NoGui && !ensureOneInstanceOfDesigner(l_oConfiguration, l_rLogManager))
 					{
-						l_rLogManager << LogLevel_Trace << "An instance of Studio is already running.\n";
+						l_rLogManager << LogLevel_Trace << "An instance of Designer is already running.\n";
 						return 0;
 					}
 

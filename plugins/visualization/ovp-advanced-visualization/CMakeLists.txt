@@ -18,7 +18,7 @@ IF(MENSIA_ADVANCED_VISUALIZATION_EXPERIMENTAL)
 	ADD_DEFINITIONS(-DTARGET_Has_Experimental)
 ENDIF()
 
-INCLUDE("AddCertivibeComponents")
+INCLUDE("AddOpenViBESDKComponents")
 include("FindOpenViBEVisualizationToolkit")
 INCLUDE("FindThirdPartyGTK")
 

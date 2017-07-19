@@ -11,7 +11,7 @@ if "%1"=="" (
 	set args=%*
 )
 
-rem Inject the necessary dependencies from the Certivibe project
+rem Inject the necessary dependencies from the OpenViBE SDK project
 REM echo %PATH%
 
 for %%A in (%args%) DO (
