@@ -7,7 +7,6 @@ Designer_Locale = C
 Designer_UndoRedoStackSize = 64
 Designer_ShowAlgorithms = false
 Designer_ShowDeprecated = false
-Designer_ShowUnstable = false
 Designer_ShowOriginalBoxName = true
 Designer_FullscreenEditor = false
 #Designer_FullscreenVisualisation = true
