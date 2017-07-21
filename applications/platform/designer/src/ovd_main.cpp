@@ -894,7 +894,7 @@ int go(int argc, char ** argv)
 								l_rLogManager << LogLevel_Info << "Opening scenario [" << CString(l_sFileName.c_str()) << "]\n";
 								if(!app.openScenario(l_sFileName.c_str()))
 								{
-									l_rLogManager << LogLevel_Error << "Could not open scenario" << l_sFileName.c_str();
+									l_rLogManager << LogLevel_Error << "Could not open scenario " << l_sFileName.c_str() << "\n";
 									errorWhileLoadingScenario = l_oConfiguration.m_eNoGui == CommandLineFlag_NoGui;
 								}
 								break;
@@ -933,15 +933,18 @@ int go(int argc, char ** argv)
 								break;
 							}
 						}
+ 
 						if(!playRequested && l_oConfiguration.m_eNoGui == CommandLineFlag_NoGui)
 						{
 							l_rLogManager << LogLevel_Info << "Switch --no-gui is enabled but no play operation was requested. Designer will exit automatically.\n";
 						}
-						if (app.m_vInterfacedScenario.empty())
+
+						if (app.m_vInterfacedScenario.empty() && l_oConfiguration.m_eNoGui != CommandLineFlag_NoGui)
 						{
 							app.newScenarioCB();
 						}
-						
+
+						if (!app.m_vInterfacedScenario.empty())
 						{
 							CPluginObjectDescCollector cb_collector1(*l_pKernelContext);
 							CPluginObjectDescCollector cb_collector2(*l_pKernelContext);
