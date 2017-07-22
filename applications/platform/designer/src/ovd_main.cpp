@@ -413,6 +413,7 @@ typedef struct _SConfiguration
 	    , m_eDefine(CommandLineFlag_None)
 	    , m_eRandomSeed(CommandLineFlag_None)
 	    , m_eConfig(CommandLineFlag_None)
+	    , m_help(false)
 	{
 	}
 	
@@ -437,6 +438,7 @@ typedef struct _SConfiguration
 	OpenViBEDesigner::ECommandLineFlag m_eDefine;
 	OpenViBEDesigner::ECommandLineFlag m_eRandomSeed;
 	OpenViBEDesigner::ECommandLineFlag m_eConfig;
+	bool                               m_help;
 	// to resolve warning: padding struct '_SConfiguration' with 4 bytes to align 'm_oTokenMap
 	int32_t	                           m_i32StructPadding;
 	std::map < std::string, std::string > m_oTokenMap;
@@ -537,6 +539,8 @@ OpenViBE::boolean parse_arguments(int argc, char** argv, SConfiguration& rConfig
 		}
 		else if(*it == "-h" || *it == "--help")
 		{
+			l_oConfiguration.m_help = true;
+			rConfiguration          = l_oConfiguration;
 			return false;
 		}
 		else if(*it == "-o" || *it == "--open")
@@ -659,6 +663,42 @@ void message(const char* sTitle, const char* sMessage, GtkMessageType eType)
 	::gtk_widget_destroy(l_pDialog);
 }
 
+void user_info(char ** argv, ILogManager* l_rLogManager)
+{
+	const std::vector<std::string> messages =
+	{
+	    "Syntax : " + std::string(argv[0]) + " [ switches ]\n",
+	    "Possible switches :\n",
+	    "  --help                  : displays this help message and exits\n",
+	    "  --config filename       : path to config file\n",
+	    "  --define token value    : specify configuration token with a given value\n",
+	    "  --open filename         : opens a scenario (see also --no-session-management)\n",
+	    "  --play filename         : plays the opened scenario (see also --no-session-management)\n",
+	    "  --play-fast filename    : plays fast forward the opened scenario (see also --no-session-management)\n",
+	    "  --no-gui                : hides the " DESIGNER_NAME " graphical user interface (assumes --no-color-depth-test)\n",
+	    "  --no-visualization      : hides the visualisation widgets\n",
+	    "  --invisible             : hides the designer and the visualisation widgets (assumes --no-check-color-depth and --no-session-management)\n",
+	    "  --no-check-color-depth  : does not check 24/32 bits color depth\n",
+	    "  --no-session-management : neither restore last used scenarios nor saves them at exit\n",
+	    "  --random-seed uint      : initialize random number generator with value, default=time(NULL)\n"		
+	};
+	
+	if (l_rLogManager)
+	{
+		for (const auto &m : messages)
+		{
+			(*l_rLogManager) << LogLevel_Info << m.c_str();
+		}
+	}
+	else
+	{
+		for (const auto &m : messages)
+		{
+			cout << m;
+		}
+	}	
+}
+
 int go(int argc, char ** argv)
 {
 	bool errorWhileLoadingScenario = false, playRequested = false;
@@ -705,6 +745,17 @@ int go(int argc, char ** argv)
 #undef gdk_color_set
 	//___________________________________________________________________//
 	//                                                                   //
+	
+	SConfiguration l_oConfiguration;
+	bool bArgParseResult = parse_arguments(argc, argv, l_oConfiguration);
+	if(!bArgParseResult)
+	{
+		if (l_oConfiguration.m_help)
+		{
+			user_info(argv,NULL);		
+			return 0;
+		}
+	}
 
 	CKernelLoader l_oKernelLoader;
 
@@ -733,10 +784,7 @@ int go(int argc, char ** argv)
 			cout << "[ FAILED ] No kernel descriptor" << "\n";
 		}
 		else
-		{
-			SConfiguration l_oConfiguration;
-			OpenViBE::boolean bArgParseResult = parse_arguments(argc, argv, l_oConfiguration);
-			
+		{						
 			cout << "[  INF  ] Got kernel descriptor, trying to create kernel" << "\n";
 
 			l_pKernelContext = l_pKernelDesc->createKernel("designer", OpenViBE::Directories::getDataDir() + "/kernel/openvibe.conf");
@@ -815,23 +863,9 @@ int go(int argc, char ** argv)
 				}
 				setlocale(LC_ALL, l_sLocale.toASCIIString());
 
-				if(!bArgParseResult)
+				if (!(bArgParseResult || l_oConfiguration.m_help))
 				{
-					l_rLogManager << LogLevel_Info << "Syntax : " << argv[0] << " [ switches ]\n";
-					l_rLogManager << LogLevel_Info << "Possible switches :\n";
-					l_rLogManager << LogLevel_Info << "  --help                  : displays this help message and exits\n";
-					l_rLogManager << LogLevel_Info << "  --config filename       : path to config file\n";
-					l_rLogManager << LogLevel_Info << "  --define token value    : specify configuration token with a given value\n";
-					l_rLogManager << LogLevel_Info << "  --open filename         : opens a scenario (see also --no-session-management)\n";
-					l_rLogManager << LogLevel_Info << "  --play filename         : plays the opened scenario (see also --no-session-management)\n";
-					l_rLogManager << LogLevel_Info << "  --play-fast filename    : plays fast forward the opened scenario (see also --no-session-management)\n";
-					l_rLogManager << LogLevel_Info << ("  --no-gui                : hides the " + std::string(DESIGNER_NAME) + " graphical user interface (assumes --no-color-depth-test)\n").c_str();
-					l_rLogManager << LogLevel_Info << "  --no-visualization      : hides the visualisation widgets\n";
-					l_rLogManager << LogLevel_Info << "  --invisible             : hides the designer and the visualisation widgets (assumes --no-check-color-depth and --no-session-management)\n";
-					l_rLogManager << LogLevel_Info << "  --no-check-color-depth  : does not check 24/32 bits color depth\n";
-					l_rLogManager << LogLevel_Info << "  --no-session-management : neither restore last used scenarios nor saves them at exit\n";
-					l_rLogManager << LogLevel_Info << "  --random-seed uint      : initialize random number generator with value, default=time(NULL)\n";
-					
+					user_info(argv,&l_rLogManager);
 				}
 				else
 				{
