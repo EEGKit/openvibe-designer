@@ -4,7 +4,7 @@ setlocal enableextensions
 
 set script_dir=%CD%
 
-set PathSDK="%script_dir%\..\dependencies\openvibe-sdk"
+set PathSDK="%script_dir%\..\dependencies\openvibe-sdk-release"
 set VerboseOuptut=OFF
 
 set BuildType=Release
@@ -24,6 +24,7 @@ for %%A in (%*) DO (
 		set next=
 	) else if /i "%%A"=="--debug" (
 		set BuildType=Debug
+		set PathSDK="%script_dir%\..\dependencies\openvibe-sdk-debug"
 		set next=
 	)
 )

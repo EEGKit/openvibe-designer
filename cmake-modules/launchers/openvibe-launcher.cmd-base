@@ -50,12 +50,4 @@ IF "%~1" NEQ "" (
 
 %OV_RUN_IN_BG% "@OV_CMD_EXECUTABLE@" @OV_CMD_ARGS@ %args%
 
-:EndOfScript
-IF errorlevel 1 (
-	REM The application exited with error, the neurort-log_packager.exe should be called, silently if the user already specified a mail address, normally otherwise
-	echo "Application exited with error %errorlevel%"
-	"%OV_PATH_ROOT%\bin\neurort-issue_reporter.exe" --application-name="@SCRIPT_PREFIX@" --application-exit-code="%errorlevel%"
-	%OV_PAUSE%
-	exit %errorlevel%
-)
 %OV_PAUSE%

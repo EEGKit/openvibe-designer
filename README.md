@@ -1,4 +1,4 @@
-# NeuroRT Studio
+# OpenViBE Designer
 
 This repository contains the Designer graphical interface, based on OpenViBE SDK. It also contains various visualization plugins.
 

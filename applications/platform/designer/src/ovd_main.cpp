@@ -497,7 +497,7 @@ static bool ensureOneInstanceOfDesigner(SConfiguration& pConfiguration, ILogMana
 			l_sMessage = l_sMessage + l_s32Mode + ": <" + l_sFileName + "> ; ";
 		}
 		const char* l_sFinalMessage = l_sMessage.c_str(); 
-		l_rLogManager << LogLevel_Trace << "There is already an instance of Designer running. " << l_sFinalMessage << " \n";
+		l_rLogManager << LogLevel_Trace << "There is already an instance of " << DESIGNER_NAME << " running. " << l_sFinalMessage << " \n";
 		size_t l_sizeMessage = (strlen(l_sFinalMessage) * sizeof(char));
 
 		boost::interprocess::message_queue l_oMessageToFirstInstance(boost::interprocess::open_or_create, MESSAGE_NAME, l_sizeMessage, l_sizeMessage);
@@ -508,7 +508,7 @@ static bool ensureOneInstanceOfDesigner(SConfiguration& pConfiguration, ILogMana
 	catch(boost::interprocess::interprocess_exception&)
 	{
 		//Create the named mutex to catch the potential next instance of Designer that could open
-		l_rLogManager << LogLevel_Trace << "EnsureOneInstanceOfDesigner- This is the only instance of Designer with a gui, open it normally.\n";
+		l_rLogManager << LogLevel_Trace << "EnsureOneInstanceOfDesigner- This is the only instance of " << DESIGNER_NAME << " with a gui, open it normally.\n";
 		boost::interprocess::named_mutex l_oMutex(boost::interprocess::create_only, MUTEX_NAME);
 		return true;
 	}
