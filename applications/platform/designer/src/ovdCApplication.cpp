@@ -536,7 +536,10 @@ namespace
 		// consider only leaf nodes which match the search term
 		if (l_sHaystackName!=NULL && l_sHaystackDescription!=NULL)
 		{
-			if (!l_bHaystackUnstable && (string::npos != strtoupper(l_sHaystackName).find(strtoupper(l_pApplication->m_sSearchTerm)) || string::npos != strtoupper(l_sHaystackDescription).find(strtoupper(l_pApplication->m_sSearchTerm)) || gtk_tree_model_iter_has_child(model, iter)))
+			if (!l_bHaystackUnstable 
+				&& (string::npos != strtoupper(l_sHaystackName).find(strtoupper(l_pApplication->m_sSearchTerm)) 
+					|| string::npos != strtoupper(l_sHaystackDescription).find(strtoupper(l_pApplication->m_sSearchTerm)) 
+					|| gtk_tree_model_iter_has_child(model, iter)))
 			{
 				//std::cout << "value : " << l_pApplication->m_sSearchTerm << "\n";
 				l_bVisible = true;
