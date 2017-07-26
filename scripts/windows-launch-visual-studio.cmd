@@ -31,7 +31,7 @@ for %%A in (%*) DO (
 
 call "windows-initialize-environment.cmd" --sdk "%PathSDK%"
 
-SET "OV_PATH_ROOT=%CD%\..\..\openvibe-build\dist-studio"
+SET "OV_PATH_ROOT=%CD%\..\..\openvibe-designer-build\dist-studio"
 SET "OV_PATH_BIN=%OV_PATH_ROOT%\bin"
 SET "OV_PATH_DATA=%OV_PATH_ROOT%\share\openvibe"
 SET "OV_PATH_LIB=%OV_PATH_ROOT%\bin"
@@ -42,7 +42,7 @@ if not defined USE_EXPRESS (
 	SET USE_EXPRESS=1
 )
 
-set SolutionPath=%CD%\..\..\openvibe-build\studio-vs-project\Designer.sln
+set SolutionPath=%CD%\..\..\openvibe-designer-build\studio-vs-project\Designer.sln
 
 if %USE_EXPRESS% == 1 (
 	echo Use %VSCMake% Express Edition

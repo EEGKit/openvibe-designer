@@ -147,13 +147,13 @@ if defined vsgenerate (
 )
 
 if not defined build_dir (
-	set build_dir=%root_dir%\..\openvibe-build\build-studio-%BuildType%
+	set build_dir=%root_dir%\..\openvibe-designer-build\build-studio-%BuildType%
 )
 if not defined install_dir (
 	if "%BuildType%"=="Debug" (
-		set install_dir=%root_dir%\..\openvibe-build\dist-studio-debug
+		set install_dir=%root_dir%\..\openvibe-designer-build\dist-studio-debug
 	) else (
-		set install_dir=%root_dir%\..\openvibe-build\dist-studio
+		set install_dir=%root_dir%\..\openvibe-designer-build\dist-studio
 	)
 )
 
