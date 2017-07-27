@@ -138,6 +138,12 @@ call "windows-initialize-environment.cmd" %PathDep% %otherdep%
 
 if defined vsgenerate (
 	set generator=-G"%VSCMake%" -T "v120"
+	if not defined build_dir (
+		set build_dir=%root_dir%\..\certivibe-build\studio-vs-project
+	)
+	if not defined install_dir (
+		set install_dir=%root_dir%\..\certivibe-build\dist-studio
+	)
 )
 
 if not defined build_dir (
@@ -154,7 +160,13 @@ if not defined install_dir (
 mkdir %build_dir% 2>NUL
 pushd %build_dir%
 
-echo Build type is set to: %BuildType%. SDK is located at %PathSDK%
+echo Build type is set to: %BuildType%.
+
+if defined PathSDK (
+	echo SDK is located at %PathSDK%
+) else (
+	echo "Using default for SDK path (check CMake for inferred value)"
+)
 
 set CallCmake=false
 if not exist "%build_dir%\CMakeCache.txt" set CallCmake="true"
