@@ -7,6 +7,7 @@ set "root_dir=%CD%"
 popd
 
 set BuildType=Release
+set PackageOption=FALSE
 set PauseCommand=pause
 set RefreshCMake=F
 set PathSDK=
@@ -14,6 +15,8 @@ set PathDep=%root_dir%\dependencies
 set OEMDistribution=openvibe
 set VerboseOuptut=OFF
 set DisplayErrorLocation=ON
+set generator=-G"Ninja"
+set builder=Ninja
 
 goto parameter_parse
 
@@ -32,6 +35,8 @@ goto parameter_parse
 	echo [--build-dir <dirname>] build directory
 	echo [--install-dir <dirname>] binaries deployment directory
 	echo [--oem-distribution <name of the distribution>]
+	echo [--vsproject] Create visual studio project (.sln)
+	echo [--vsbuild] Create visual studio project (.sln) and compiles it
 	echo -- Build Type option can be : --release (-r) or --debug (-d). Default is Release.
 	exit /b
 
@@ -112,6 +117,16 @@ if /i "%1"=="-h" (
 	SHIFT
 	SHIFT
 	Goto parameter_parse
+) else if /i "%1"=="--vsproject" (
+	set vsgenerate=TRUE
+	set builder=None
+	SHIFT
+	Goto parameter_parse
+) else if /i "%1"=="--vsbuild" (
+	set vsgenerate=TRUE
+	set builder=Visual
+	SHIFT
+	Goto parameter_parse
 ) else if not "%1" == "" (
 	echo unrecognized option [%1]
 	Goto terminate_error
@@ -120,6 +135,16 @@ if /i "%1"=="-h" (
 setlocal
 
 call "windows-initialize-environment.cmd" %PathDep% %otherdep%
+
+if defined vsgenerate (
+	set generator=-G"%VSCMake%" -T "v120"
+	if not defined build_dir (
+		set build_dir=%root_dir%\..\certivibe-build\studio-vs-project
+	)
+	if not defined install_dir (
+		set install_dir=%root_dir%\..\certivibe-build\dist-studio
+	)
+)
 
 if not defined build_dir (
 	set build_dir=%root_dir%\..\certivibe-build\build-studio-%BuildType%
@@ -132,24 +157,26 @@ if not defined install_dir (
 	)
 )
 
-
-set dep_dir=%PathDep%
-
 mkdir %build_dir% 2>NUL
 pushd %build_dir%
 
-echo Build type is set to: %BuildType%. SDK is located at %PathSDK%
+echo Build type is set to: %BuildType%.
+
+if defined PathSDK (
+	echo SDK is located at %PathSDK%
+) else (
+	echo "Using default for SDK path (check CMake for inferred value)"
+)
 
 set CallCmake=false
 if not exist "%build_dir%\CMakeCache.txt" set CallCmake="true"
 if %RefreshCMake%==T set CallCmake="true"
 if %CallCmake%=="true" (
-	cmake %root_dir%\ -G"Ninja" ^
+	cmake %root_dir%\ %generator% ^
 		-DCMAKE_BUILD_TYPE=%BuildType% ^
 		-DCMAKE_INSTALL_PREFIX=%install_dir% ^
 		!sdk_dir! ^
 		-DOV_DISPLAY_ERROR_LOCATION=%DisplayErrorLocation% ^
-		-DCV_DEPENDENCIES_PATH=!dep_dir!^
 		-DOEM_DISTRIBUTION=%OEMDistribution% ^
 		-DOV_PACKAGE=%PackageOption% ^
 		-DFlag_VerboseOutput=%VerboseOutput% ^
@@ -157,16 +184,24 @@ if %CallCmake%=="true" (
 )
 if not "!ERRORLEVEL!" == "0" goto terminate_error
 
-ninja install
 
-if not "!ERRORLEVEL!" == "0" goto terminate_error
-
-if "%PackageOption%"=="TRUE" (
-	cmake --build . --target package
+if !builder! == None (
+	goto terminate_success
+) else if !builder! == Ninja (
+	ninja install
+	if not "!ERRORLEVEL!" == "0" goto terminate_error
+) else if !builder! == Visual (
+	msbuild Designer.sln
+	if not "!ERRORLEVEL!" == "0" goto terminate_error
+	
+	cmake --build . --target install
+	if not "!ERRORLEVEL!" == "0" goto terminate_error
 )
 
-
-if not "!ERRORLEVEL!" == "0" goto terminate_error
+if PackageOption == TRUE (
+	cmake --build . --target package
+	if not "!ERRORLEVEL!" == "0" goto terminate_error
+)
 
 goto terminate_success
 

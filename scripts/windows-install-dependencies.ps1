@@ -48,7 +48,7 @@
 
 Param(
 [parameter(Mandatory=$true)][ValidateScript({Test-Path $_ })][string]$manifest_file,
-[parameter(Mandatory=$false)][ValidateScript({Test-Path $_ })][string]$cache_dir,
+[parameter(Mandatory=$false)][string]$cache_dir,
 [parameter(Mandatory=$false)][ValidateNotNullOrEmpty()][string]$dest_dir = ".\..\dependencies",
 [parameter(Mandatory=$false)][string]$proxy_pass,
 [parameter(Mandatory=$false)][ValidateScript({Test-Path $_ })][string]$7zip_executable
@@ -76,8 +76,8 @@ if($cache_dir) {
 	Write-Host "Found cache directory: " ($env:DEPENDENCY_CACHE)
 	$cache_dir = $env:DEPENDENCY_CACHE
 } else {
-	Write-Host "Found no cache directory"
 	$cache_dir = $dest_dir + "\arch"
+	Write-Host "Found no cache directory. Set it to default value: $cache_dir"
 }
 if(-Not (Test-Path $cache_dir)) {
 	New-Item $cache_dir -itemtype directory | Out-Null
@@ -119,10 +119,11 @@ function ExpandZipFile($zip, $dest)
 	Write-Host "Extract: [" $zip "] -> [" $dest "]"
 	$shell = New-Object -ComObject Shell.Application
 	
-	if ([string]::IsNullOrEmpty($7zip_executable)){
-		# expand folders because NameSpace command expects absolute paths
-		$zip = (Resolve-Path $zip)
-		$dest = (Resolve-Path $dest)
+	if ([string]::IsNullOrEmpty($Script:7zip_executable)){
+		# create dest if it does not exists
+		if(-Not (Test-Path $dest)) {
+			New-Item $dest -itemtype directory | Out-Null
+		}
 
 		$folder = $shell.NameSpace("$zip")
 
