@@ -1,2 +1,2 @@
 @echo off
-call "windows-build.cmd" --vsbuild --debug %*
+call "windows-build.cmd" --vsproject --debug %*

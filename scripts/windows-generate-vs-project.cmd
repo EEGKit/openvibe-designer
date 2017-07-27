@@ -1,3 +1,3 @@
 @echo off
 
-call "windows-build.cmd" --vsbuild --release %*
+call "windows-build.cmd" --vsproject --release %*
