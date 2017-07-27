@@ -527,8 +527,6 @@ namespace
 
 
 		gboolean l_bVisible = false;
-		gboolean l_bShowUnstable = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(static_cast<CApplication*>(pUserData)->m_pBuilderInterface, "openvibe-show_unstable")));
-
 		gchar* l_sHaystackName;
 		gchar* l_sHaystackDescription;
 		gboolean l_bHaystackUnstable;
@@ -538,7 +536,10 @@ namespace
 		// consider only leaf nodes which match the search term
 		if (l_sHaystackName!=NULL && l_sHaystackDescription!=NULL)
 		{
-			if ((l_bShowUnstable || !l_bHaystackUnstable) && (string::npos != strtoupper(l_sHaystackName).find(strtoupper(l_pApplication->m_sSearchTerm)) || string::npos != strtoupper(l_sHaystackDescription).find(strtoupper(l_pApplication->m_sSearchTerm)) || gtk_tree_model_iter_has_child(model, iter)))
+			if (!l_bHaystackUnstable 
+				&& (string::npos != strtoupper(l_sHaystackName).find(strtoupper(l_pApplication->m_sSearchTerm)) 
+					|| string::npos != strtoupper(l_sHaystackDescription).find(strtoupper(l_pApplication->m_sSearchTerm)) 
+					|| gtk_tree_model_iter_has_child(model, iter)))
 			{
 				//std::cout << "value : " << l_pApplication->m_sSearchTerm << "\n";
 				l_bVisible = true;
@@ -1042,8 +1043,6 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-box_algorithm_searchbox")), "focus-in-event", G_CALLBACK(searchbox_focus_in_cb), this);
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-box_algorithm_searchbox")), "focus-out-event", G_CALLBACK(searchbox_focus_out_cb), this);
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-show_unstable")), "toggled", G_CALLBACK(refresh_search_no_data_cb), this);
-
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-scenario_configuration_button_configure")), "clicked", G_CALLBACK(button_configure_current_scenario_settings_cb), this);
 
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_zoomin")), "clicked",  G_CALLBACK(zoom_in_scenario_cb), this);
@@ -1166,7 +1165,6 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 		gtk_tree_view_column_set_fixed_width(l_pTreeViewColumnDesc, 512);
 		gtk_tree_view_append_column(m_pAlgorithmTreeView, l_pTreeViewColumnName);
 		gtk_tree_view_append_column(m_pAlgorithmTreeView, l_pTreeViewColumnDesc);
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-show_unstable")), m_rKernelContext.getConfigurationManager().expandAsBoolean("${Designer_ShowUnstable}"));
 
 		// Prepares algorithm model
 		m_pAlgorithmTreeModel=gtk_tree_store_new(9, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN, G_TYPE_STRING);
@@ -1457,10 +1455,6 @@ bool CApplication::displayChangelogWhenAvailable()
 				l_sLabelNewBoxesList += "    <b>" + pUpdatedBoxDesc->getName() + ":</b> " + pUpdatedBoxDesc->getShortDescription()+"\n";
 			}
 		}
-		if(m_bIsNewVersion && l_bUnstableBoxes)
-		{
-			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-show_unstable")), true);
-		}
 #if defined TARGET_OS_Windows // This function makes Windows calls only, hide button on other OSs
 		g_signal_connect(G_OBJECT(gtk_builder_get_object(l_pInterface, "button-display_changelog")), "clicked", G_CALLBACK(about_newversion_button_display_changelog_cb),  this);
 #else
@@ -1684,7 +1678,6 @@ void CApplication::saveOpenedScenarios(void)
 			::fprintf(l_pFile, "# This file is generated\n");
 			::fprintf(l_pFile, "# Do not modify\n");
 			::fprintf(l_pFile, "\n");
-			::fprintf(l_pFile, "Designer_ShowUnstable = %s\n", gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-show_unstable")))?"True":"False");
 
 			int l_iWidth, l_iHeight;
 			gtk_window_get_size(GTK_WINDOW(m_pMainWindow), &l_iWidth, & l_iHeight);
