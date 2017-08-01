@@ -27,9 +27,6 @@ function usage()
 # variables
 ov_script_dir="${PWD}"
 ov_build_type=Release
-ov_sdk_dir="${ov_script_dir}/../dependencies/openvibe-sdk-release"
-ov_build_dir="${ov_script_dir}/../build/build-Release"
-ov_install_dir="${ov_script_dir}/../build/dist"
 ov_test_data_dir="${ov_script_dir}/../dependencies/test-data"
 ov_oem_distribution="openvibe"
 verbose="OFF"
@@ -62,12 +59,12 @@ do
 			;;
 		--make-package)
 			package_option="TRUE"
-      display_error_location="OFF"
+			display_error_location="OFF"
 			shift
 			;;
-    --hide-error-location)
-      display_error_location=OFF
-      ;;
+		--hide-error-location)
+			display_error_location="OFF"
+			;;
 		--test-data-dir=*)
 			ov_test_data_dir="${i#*=}"
 			shift
@@ -97,13 +94,20 @@ then
 fi
 
 if [[ ${ov_build_type} == "Debug" ]]; then
-	ov_install_dir="${ov_script_dir}/../build/dist-debug"
-	ov_sdk_dir="${ov_script_dir}/../dependencies/openvibe-sdk-debug"
-	ov_build_dir="${ov_script_dir}/../build/build-Debug"
-elif [[ ${ov_build_type} == "RelWithDebInfo" ]]; then
-	ov_install_dir="${ov_script_dir}/../build/dist-relwdeb"
+	sdk_affix="debug"
+elif [[ ${ov_build_type} == "Release" ]] || [[ ${ov_build_type} == "RelWithDebInfo" ]]; then
+	sdk_affix="release"
 fi
-
+if [[ ! -v ov_sdk_dir ]]; then
+	ov_sdk_dir="${ov_script_dir}/../dependencies/openvibe-sdk-${sdk_affix}"
+fi
+if [[ ! -v ov_build_dir ]]; then
+	ov_build_dir="${ov_script_dir}/../../openvibe-designer-build/build-${ov_build_type}"
+fi
+if [[ ! -v ov_install_dir ]]; then
+	ov_install_dir="${ov_script_dir}/../../openvibe-designer-build/dist-${ov_build_type}"
+fi
+	
 echo "**************************************"
 echo "Build with parameters:"
 echo "[build-type] = ${ov_build_type}"

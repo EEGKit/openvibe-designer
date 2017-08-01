@@ -331,7 +331,7 @@ namespace
 				GTK_DIALOG_MODAL,
 				GTK_MESSAGE_INFO,
 				GTK_BUTTONS_OK,
-				"No boxes were added or updated in version %s of " + DESIGNER_NAME + ".",
+				"No boxes were added or updated in version %s of " DESIGNER_NAME ".",
 				ProjectVersion
 				);
 			gtk_window_set_title(GTK_WINDOW(l_pInfoDialog), "No new boxes");
@@ -1700,7 +1700,7 @@ void CApplication::saveOpenedScenarios(void)
 
 			CString projectVersion = m_rKernelContext.getConfigurationManager().expand("${ProjectVersion_Major}.${ProjectVersion_Minor}.${ProjectVersion_Patch}");
 			CString componentVersions = m_rKernelContext.getConfigurationManager().lookUpConfigurationTokenValue("ProjectVersion_Components");
-			::fprintf(l_pFile, "# Last version of " + DESIGNER_NAME + " used:\n");
+			::fprintf(l_pFile, "# Last version of " DESIGNER_NAME " used:\n");
 			::fprintf(l_pFile, "Designer_LastVersionUsed = %s\n", projectVersion.toASCIIString());
 			::fprintf(l_pFile, "Designer_LastComponentVersionsUsed = %s\n", componentVersions.toASCIIString());
 			::fprintf(l_pFile, "\n");
