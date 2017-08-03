@@ -14,13 +14,15 @@ PROJECT(Designer)
 # OpenViBE SDK modules list
 SET(INCLUDED_OV_SDK_COMPONENTS BASE ALLPLUGINS EBML SYSTEM FS XML TOOLKIT)
 
+LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake-modules")
+INCLUDE("SetProjectVersion")
+INCLUDE("Utilities") # Include functions debug_message, set_build_platform
 # These versions are used by the subprojects by default.
 # If you wish to maintain specific version numbers for a subproject, please do so in the projects CMakeLists.txt
-SET(OV_GLOBAL_VERSION_MAJOR 0)
-SET(OV_GLOBAL_VERSION_MINOR 2)
-SET(OV_GLOBAL_VERSION_PATCH 99)
-SET(OV_GLOBAL_VERSION_STRING "${OV_GLOBAL_VERSION_MAJOR}.${OV_GLOBAL_VERSION_MINOR}.${OV_GLOBAL_VERSION_PATCH}")
-SET(OV_SDK_VERSION_STRING "0.2.0")
+SET(OV_SDK_VERSION_STRING "0.2.99")
+set_version()
+# Sets the PROJECT_VERSION variable to something, depending on overriding OvSetProjectVersion.cmake files
+OV_SET_PROJECT_VERSION()
 
 # ----------------------
 # Build CMake flags
@@ -39,6 +41,7 @@ IF(CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT(OPENVIBE_SDK_PATH))
 ELSEIF(NOT(OPENVIBE_SDK_PATH))
 	FIND_PATH(OPENVIBE_SDK_PATH bin PATHS ${LIST_DEPENDENCIES_PATH} PATH_SUFFIXES openvibe-sdk-release NO_DEFAULT_PATH)
 ENDIF()
+LIST(APPEND CMAKE_MODULE_PATH "${OPENVIBE_SDK_PATH}/share")
 
 IF(OV_PACKAGE)
 	SET(CMAKE_INSTALL_PREFIX .)
@@ -46,9 +49,6 @@ ELSEIF(NOT CMAKE_INSTALL_PREFIX)
 	# Default is to build to dist/. If you wish a custom install, set your own MAKE_INSTALL_PREFIX when you call CMake. Safest to do under a fakeroot.
 	SET(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}/dist")
 ENDIF()
-
-LIST(APPEND CMAKE_MODULE_PATH "${OPENVIBE_SDK_PATH}/share")
-LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake-modules")
 
 # We deduce the branding from the OEM_DISTRIBUTION
 IF(OEM_DISTRIBUTION STREQUAL "openvibe")
@@ -92,8 +92,6 @@ INCLUDE("OvAddProjects")
 INCLUDE("OvInstallLaunchScript")
 INCLUDE("OvLinkBoostLib")
 INCLUDE("OvDelayLoad")
-INCLUDE("SetProjectVersion")
-INCLUDE("Utilities") # Include functions debug_message, set_build_platform
 
 # The user files will be stored in .../OV_CONFIG_SUBDIR folder
 ADD_DEFINITIONS("-DOV_PROJECT_NAME=\"openvibe\"")
@@ -176,9 +174,6 @@ ADD_DEFINITIONS(-DOV_CMAKE_PATH_ROOT="${CMAKE_INSTALL_PREFIX}")
 ADD_DEFINITIONS(-DOV_CMAKE_PATH_BIN="${CMAKE_INSTALL_FULL_BINDIR}")
 ADD_DEFINITIONS(-DOV_CMAKE_PATH_LIB="${CMAKE_INSTALL_FULL_LIBDIR}")
 ADD_DEFINITIONS(-DOV_CMAKE_PATH_DATA="${CMAKE_INSTALL_FULL_DATADIR}/openvibe")
-
-# Sets the PROJECT_VERSION variable to something, depending on overriding OvSetProjectVersion.cmake files
-OV_SET_PROJECT_VERSION()
 
 SET(DIST_ROOT ${CMAKE_INSTALL_PREFIX})
 IF(OV_PACKAGE)
