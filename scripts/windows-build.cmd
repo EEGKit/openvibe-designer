@@ -147,14 +147,10 @@ if defined vsgenerate (
 )
 
 if not defined build_dir (
-	set build_dir=%root_dir%\..\certivibe-build\build-studio-%BuildType%
+	set build_dir=%root_dir%\..\openvibe-designer-build\build-%BuildType%
 )
 if not defined install_dir (
-	if "%BuildType%"=="Debug" (
-		set install_dir=%root_dir%\..\certivibe-build\dist-studio-debug
-	) else (
-		set install_dir=%root_dir%\..\certivibe-build\dist-studio
-	)
+	set install_dir=%root_dir%\..\openvibe-designer-build\dist-%BuildType%
 )
 
 mkdir %build_dir% 2>NUL
@@ -198,7 +194,7 @@ if !builder! == None (
 	if not "!ERRORLEVEL!" == "0" goto terminate_error
 )
 
-if PackageOption == TRUE (
+if %PackageOption% == TRUE (
 	cmake --build . --target package
 	if not "!ERRORLEVEL!" == "0" goto terminate_error
 )

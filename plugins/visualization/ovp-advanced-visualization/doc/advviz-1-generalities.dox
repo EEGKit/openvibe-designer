@@ -1,7 +1,7 @@
 /** 
-  \page Doc_Mensia_AdvViz NeuroRT Advanced Visualization Boxes 
+  \page Doc_Mensia_AdvViz Advanced Visualization Boxes 
   
-  General information on the NeuroRT Advanced Visualization Toolset:
+  General information on the Advanced Visualization Toolset:
    - \subpage Doc_Mensia_AdvViz_Generalities : generalities about the toolset.
    - \subpage Doc_Mensia_AdvViz_Concepts : understanding the Toolset design and the different visualization paradigms.
    - \subpage Doc_Mensia_AdvViz_Configuration : how to configure the Advanced Visualization boxes.

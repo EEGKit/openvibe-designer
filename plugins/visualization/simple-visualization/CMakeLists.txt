@@ -1,4 +1,4 @@
-PROJECT(openvibe-plugins-simple-visualization)
+PROJECT(openvibe-plugins-designer-simple-visualization)
 MESSAGE(STATUS "Now building ${PROJECT_NAME} ${PROJECT_VERSION} (${OV_PROJECT_BRANCH}~${OV_PROJECT_COMMITHASH})" )
 
 FILE(GLOB_RECURSE source_files src/*.cpp src/*.h src/*.hpp src/*.inl)
@@ -9,7 +9,7 @@ SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES
 	SOVERSION ${PROJECT_VERSION_MAJOR}
 	COMPILE_FLAGS "-DOVP_Exports -DOVP_Shared")
 
-INCLUDE("AddCertivibeComponents")
+INCLUDE("AddOpenViBESDKComponents")
 include("FindOpenViBEVisualizationToolkit")
 INCLUDE("FindThirdPartyGTK")
 

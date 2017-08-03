@@ -56,9 +56,9 @@ Designer_ConsoleLogTimePrecision = 3
 
 Designer_FastForwardFactor = 100.0
 
-#Use both Certibie and openbibe plugins
-Kernel_PluginsPatternMacOS = ${Path_Lib}/libopenvibe-plugins-*.dylib;${Path_Lib}/libcertivibe-plugins-*.dylib
-Kernel_PluginsPatternLinux = ${Path_Lib}/libopenvibe-plugins-*.so;${Path_Lib}/libcertivibe-plugins-*.so
-Kernel_PluginsPatternWindows = ${Path_Bin}/openvibe-plugins-*.dll;${Path_Bin}/certivibe-plugins-*.dll
+#Use all OpenViBE plugins, including SDK, Designer and extras
+Kernel_PluginsPatternMacOS = ${Path_Lib}/libopenvibe-plugins-*.dylib
+Kernel_PluginsPatternLinux = ${Path_Lib}/libopenvibe-plugins-*.so
+Kernel_PluginsPatternWindows = ${Path_Bin}/openvibe-plugins-*.dll
 
 Designer_CustomConfigurationFile = ${Path_UserData}/openvibe-designer.conf

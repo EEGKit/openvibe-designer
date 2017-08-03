@@ -1,4 +1,4 @@
-PROJECT(openvibe-plugins-mensia-advanced-visualization)
+PROJECT(openvibe-plugins-designer-advanced-visualization)
 SET(PROJECT_PRODUCT_NAME "Mensia Advanced Visualization Toolset")
 MESSAGE(STATUS "Now building ${PROJECT_NAME} ${PROJECT_VERSION} (${OV_PROJECT_BRANCH}~${OV_PROJECT_COMMITHASH})" )
 
@@ -18,7 +18,7 @@ IF(MENSIA_ADVANCED_VISUALIZATION_EXPERIMENTAL)
 	ADD_DEFINITIONS(-DTARGET_Has_Experimental)
 ENDIF()
 
-INCLUDE("AddCertivibeComponents")
+INCLUDE("AddOpenViBESDKComponents")
 include("FindOpenViBEVisualizationToolkit")
 INCLUDE("FindThirdPartyGTK")
 

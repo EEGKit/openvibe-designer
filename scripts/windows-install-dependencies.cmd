@@ -1,4 +1,4 @@
-REM Install studio dependencies
+REM Install Designer dependencies
 REM 
 @echo off
 

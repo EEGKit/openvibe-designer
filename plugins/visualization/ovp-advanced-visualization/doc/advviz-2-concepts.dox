@@ -14,8 +14,8 @@
   be tuned to elicit and detect the best brain response.
   
   
-  \image html designer-box-list.png "Simple integration in NeuroRT Studio"
-  \image latex designer-box-list.png "Simple integration in NeuroRT Studio" width=\textwidth
+  \image html designer-box-list.png "Simple integration in the graphical user interface"
+  \image latex designer-box-list.png "Simple integration in the graphical user interface" width=\textwidth
  
   \section Doc_Mensia_AdvViz_Concepts_VisualizationParadigms Visualization paradigms
   This Toolset has been designed to be very versatile. The main design concept revolves around

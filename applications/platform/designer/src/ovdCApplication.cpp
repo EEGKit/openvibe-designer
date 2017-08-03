@@ -331,7 +331,7 @@ namespace
 				GTK_DIALOG_MODAL,
 				GTK_MESSAGE_INFO,
 				GTK_BUTTONS_OK,
-				"No boxes were added or updated in version %s of Studio.",
+				"No boxes were added or updated in version %s of " DESIGNER_NAME ".",
 				ProjectVersion
 				);
 			gtk_window_set_title(GTK_WINDOW(l_pInfoDialog), "No new boxes");
@@ -781,8 +781,8 @@ namespace
 	}
 
 	/**
-	* Function called in gtk loop: to check each 0.1second if a message was sent by a second instance of Studio
-	* (Meaning that someone tried to reopen Studio and this instance has to do something)
+	* Function called in gtk loop: to check each 0.1second if a message was sent by a second instance of Designer
+	* (Meaning that someone tried to reopen Designer and this instance has to do something)
 	**/
 	gboolean receiveSecondInstanceMessage(gpointer pUserData)
 	{
@@ -961,12 +961,12 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 	int currentVersionMinor = static_cast<int>(m_rKernelContext.getConfigurationManager().expandAsInteger("${ProjectVersion_Minor}"));
 	int currentVersionPatch = static_cast<int>(m_rKernelContext.getConfigurationManager().expandAsInteger("${ProjectVersion_Patch}"));
 
-	std::string windowTitle = BRAND_NAME " " STUDIO_NAME " " + std::to_string(currentVersionMajor) + "." + std::to_string(currentVersionMinor) + "." + std::to_string(currentVersionPatch);
+	std::string windowTitle = BRAND_NAME " " DESIGNER_NAME " " + std::to_string(currentVersionMajor) + "." + std::to_string(currentVersionMinor) + "." + std::to_string(currentVersionPatch);
 	std::string projectVersion = std::to_string(currentVersionMajor) + "." + std::to_string(currentVersionMinor) + "." + std::to_string(currentVersionPatch);
 
 	m_pMainWindow=GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe"));
 	gtk_window_set_title(GTK_WINDOW(m_pMainWindow), windowTitle.c_str());
-	gtk_menu_item_set_label(GTK_MENU_ITEM(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_display_changelog")), ("What's new in " + projectVersion + " version of " + BRAND_NAME " " STUDIO_NAME).c_str());
+	gtk_menu_item_set_label(GTK_MENU_ITEM(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_display_changelog")), ("What's new in " + projectVersion + " version of " + BRAND_NAME " " DESIGNER_NAME).c_str());
 
 	// Catch delete events when close button is clicked
 	g_signal_connect(m_pMainWindow, "delete_event", G_CALLBACK(button_quit_application_cb), this);
@@ -1352,7 +1352,7 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 		g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_clear")),       "clicked",  G_CALLBACK(clear_messages_cb), m_pLogListenerDesigner);
 		gtk_widget_show(m_pMainWindow);
 	}
-	// If last version of Studio used is anterior or null, then consider it as a new version
+	// If last version of Designer used is anterior or null, then consider it as a new version
 	CString l_sLastUsedVersion = m_rKernelContext.getConfigurationManager().expand("${Designer_LastVersionUsed}");
 	int lastUsedVersionMajor = 0;
 	int lastUsedVersionMinor = 0;
@@ -1686,7 +1686,7 @@ void CApplication::saveOpenedScenarios(void)
 			::fprintf(l_pFile, "Designer_EditorPanedPosition = %i\n", gtk_paned_get_position(GTK_PANED(gtk_builder_get_object(m_pBuilderInterface, "openvibe-horizontal_container"))));
 			::fprintf(l_pFile, "Designer_FullscreenEditor = %s\n", m_bIsMaximized ? "True":"False");
 
-			::fprintf(l_pFile, "# Last files opened in %s\n", std::string(STUDIO_NAME).c_str());
+			::fprintf(l_pFile, "# Last files opened in %s\n", std::string(DESIGNER_NAME).c_str());
 
 			for (CInterfacedScenario* scenario : m_vInterfacedScenario)
 			{
@@ -1700,7 +1700,7 @@ void CApplication::saveOpenedScenarios(void)
 
 			CString projectVersion = m_rKernelContext.getConfigurationManager().expand("${ProjectVersion_Major}.${ProjectVersion_Minor}.${ProjectVersion_Patch}");
 			CString componentVersions = m_rKernelContext.getConfigurationManager().lookUpConfigurationTokenValue("ProjectVersion_Components");
-			::fprintf(l_pFile, "# Last version of Studio used:\n");
+			::fprintf(l_pFile, "# Last version of " DESIGNER_NAME " used:\n");
 			::fprintf(l_pFile, "Designer_LastVersionUsed = %s\n", projectVersion.toASCIIString());
 			::fprintf(l_pFile, "Designer_LastComponentVersionsUsed = %s\n", componentVersions.toASCIIString());
 			::fprintf(l_pFile, "\n");

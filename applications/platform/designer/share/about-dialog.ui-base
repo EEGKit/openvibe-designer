@@ -7,7 +7,7 @@
     <property name="resizable">False</property>
     <property name="modal">True</property>
     <property name="type_hint">dialog</property>
-    <property name="program_name">@BRAND_NAME@ @STUDIO_NAME@</property>
+    <property name="program_name">@BRAND_NAME@ @DESIGNER_NAME@</property>
     <property name="version">@OV_GLOBAL_VERSION_STRING@</property>
     <property name="comments" translatable="yes">Software technologies for the development of new research, diagnostic and therapeutic solutions leveraging real-time EEG and neurofeedback.
 
