@@ -1,5 +1,4 @@
-#ifndef __OpenViBE_Designer_Setting_CScriptSettingView_H__
-#define __OpenViBE_Designer_Setting_CScriptSettingView_H__
+#pragma once
 
 #include "../ovd_base.h"
 #include "ovdCAbstractSettingView.h"
@@ -23,7 +22,9 @@ namespace OpenViBEDesigner
 			void edit();
 
 			void onChange();
-
+#if defined TARGET_OS_Windows
+			void onFocusLost();
+#endif
 
 		private:
 			::GtkEntry* m_pEntry;
@@ -32,7 +33,4 @@ namespace OpenViBEDesigner
 			OpenViBE::boolean m_bOnValueSetting;
 		};
 	}
-
 }
-
-#endif // __OpenViBE_Designer_Setting_CScriptSettingView_H__

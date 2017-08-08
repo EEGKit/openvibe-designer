@@ -24,6 +24,14 @@ static void on_change(::GtkEntry *entry, gpointer pUserData)
 	static_cast<CScriptSettingView *>(pUserData)->onChange();
 }
 
+#if defined TARGET_OS_Windows
+static gboolean on_focus_out_event(::GtkEntry *entry, GdkEvent* event, gpointer pUserData)
+{
+	static_cast<CScriptSettingView *>(pUserData)->onFocusLost();
+	return FALSE;
+}
+#endif
+
 CScriptSettingView::CScriptSettingView(OpenViBE::Kernel::IBox &rBox, OpenViBE::uint32 ui32Index, CString &rBuilderName, const Kernel::IKernelContext &rKernelContext):
 	CAbstractSettingView(rBox, ui32Index, rBuilderName, "settings_collection-hbox_setting_script"), m_rKernelContext(rKernelContext), m_bOnValueSetting(false)
 {
@@ -34,6 +42,10 @@ CScriptSettingView::CScriptSettingView(OpenViBE::Kernel::IBox &rBox, OpenViBE::u
 	m_pEntry = GTK_ENTRY(l_vWidget[0]);
 
 	g_signal_connect(G_OBJECT(m_pEntry), "changed", G_CALLBACK(on_change), this);
+#if defined TARGET_OS_Windows
+	// Only called for Windows path
+	g_signal_connect(G_OBJECT(m_pEntry), "focus_out_event", G_CALLBACK(on_focus_out_event), this);
+#endif
 	g_signal_connect(G_OBJECT(l_vWidget[1]), "clicked", G_CALLBACK(on_button_setting_script_edit_pressed), this);
 	g_signal_connect(G_OBJECT(l_vWidget[2]), "clicked", G_CALLBACK(on_button_setting_filename_browse_pressed), this);
 
@@ -121,3 +133,33 @@ void CScriptSettingView::onChange()
 		getBox().setSettingValue(getSettingIndex(), l_sValue);
 	}
 }
+
+#if defined TARGET_OS_Windows
+void CScriptSettingView::onFocusLost()
+{
+	// We replace antislash, interpreted as escape, by slash in Windows path
+	if (!m_bOnValueSetting)
+	{
+		std::string fileName = gtk_entry_get_text(m_pEntry);
+		std::string::iterator iter = fileName.begin();
+
+		while ((iter = std::find(iter, fileName.end(), '\\')) != fileName.end())
+		{
+			if (iter == std::prev(fileName.end()))
+			{
+				*iter = '/';
+				break;
+			}
+			else if (*std::next(iter) != '{' && *std::next(iter) != '$' && *std::next(iter) != '}')
+			{
+				*iter = '/';
+			}
+
+			std::advance(iter, 1);
+		}
+
+		gtk_entry_set_text(m_pEntry, fileName.c_str());
+		getBox().setSettingValue(this->getSettingIndex(), fileName.c_str());
+	}
+}
+#endif
