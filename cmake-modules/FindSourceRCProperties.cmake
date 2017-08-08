@@ -5,6 +5,6 @@
 # ---------------------------------
 IF(WIN32)
 	OV_CONFIGURE_RC(NAME ${PROJECT_NAME})
-	SET(source_files "${source_files};${CMAKE_INSTALL_FULL_DATADIR}/resource-files/${PROJECT_NAME}.rc")
+	SET(source_files "${source_files};${CMAKE_BINARY_DIR}/resource-files/${PROJECT_NAME}.rc")
 ENDIF()
 

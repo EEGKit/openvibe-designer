@@ -99,6 +99,8 @@ if /i "%1"=="-h" (
 ) else if /i "%1"=="--dependencies-dir" (
 	set dependencies_dir=-DLIST_DEPENDENCIES_PATH=%2
 	set otherdep=%2
+	set otherdep=!otherdep:;= !
+	set otherdep=!otherdep:"=!
 	SHIFT
 	SHIFT
 	Goto parameter_parse
@@ -120,6 +122,7 @@ if /i "%1"=="-h" (
 ) else if /i "%1"=="--vsproject" (
 	set vsgenerate=TRUE
 	set builder=None
+	set "BuildType="
 	SHIFT
 	Goto parameter_parse
 ) else if /i "%1"=="--vsbuild" (
@@ -139,10 +142,10 @@ call "windows-initialize-environment.cmd" %PathDep% %otherdep%
 if defined vsgenerate (
 	set generator=-G"%VSCMake%" -T "v120"
 	if not defined build_dir (
-		set build_dir=%root_dir%\..\certivibe-build\studio-vs-project
+		set build_dir=%root_dir%\..\openvibe-designer-build\studio-vs-project
 	)
 	if not defined install_dir (
-		set install_dir=%root_dir%\..\certivibe-build\dist-studio
+		set install_dir=%root_dir%\..\openvibe-designer-build\dist-studio
 	)
 )
 
