@@ -60,7 +60,7 @@ function(set_version)
 	string(REPLACE "." ";" version_list ${PROJECT_VERSION})
 	list(GET version_list 0 PROJECT_VERSION_MAJOR)
 	list(GET version_list 1 PROJECT_VERSION_MINOR)
-	if(NOT(PROJECT_VERSION_PATCH))
+	if(NOT PROJECT_VERSION_PATCH)
 		list(GET version_list 2 PROJECT_VERSION_PATCH)
 	endif()
 
