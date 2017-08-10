@@ -37,15 +37,36 @@ ENDFUNCTION()
 #  Else use last tag major and minor number and set patch number to 99
 #
 # This function should remain generic to be usable in every projects.
-function(set_version)  
-	execute_process(COMMAND git describe
-		WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-		OUTPUT_VARIABLE  PROJECT_VERSION
-		ERROR_VARIABLE  ERROR)
-	
-	if(ERROR)
-		message(WARNING "No tags found, set version to 0.0.0")
+function(set_version)
+	find_package(Git)
+	if(NOT GIT_FOUND)
+		message(WARNING "Git not found, set version to 0.0.0")
 		set(PROJECT_VERSION "0.0.0")
+		set(PROJECT_BRANCH_STRING "unknown")
+		set(PROJECT_COMMITHASH_STRING "0")
+	else()
+		debug_message("Found Git: ${GIT_EXECUTABLE}")
+		execute_process(COMMAND ${GIT_EXECUTABLE} describe
+			WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+			OUTPUT_VARIABLE  PROJECT_VERSION
+			ERROR_VARIABLE  ERROR)
+		if(ERROR)
+			message(WARNING "No tags found, set version to 0.0.0")
+			set(PROJECT_VERSION "0.0.0")
+		endif()
+		# codename = the name of the current branch
+		execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse --abbrev-ref HEAD
+			WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+			OUTPUT_VARIABLE  PROJECT_BRANCH_STRING)
+		# command output may contain carriage return
+		string(STRIP ${PROJECT_BRANCH_STRING} PROJECT_BRANCH_STRING)
+
+		# commithash = short hash of latest revision
+		execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
+			WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+			OUTPUT_VARIABLE  PROJECT_COMMITHASH_STRING)
+		# command output may contain carriage return
+		string(STRIP ${PROJECT_COMMITHASH_STRING} PROJECT_COMMITHASH_STRING)
 	endif()
 
 	# if current commit is not tagged result is formed as: "major.minor.patch-number of commits since last tag-hash"
@@ -72,6 +93,9 @@ function(set_version)
 	else()
 		set(PROJECT_VERSION_BUILD 0)
 	endif()
+	
+	set(PROJECT_BRANCH ${PROJECT_BRANCH_STRING} PARENT_SCOPE)
+	set(PROJECT_COMMITHASH ${PROJECT_COMMITHASH_STRING} PARENT_SCOPE)
 
 	set(PROJECT_VERSION_MAJOR ${PROJECT_VERSION_MAJOR} PARENT_SCOPE)
 	set(PROJECT_VERSION_MINOR ${PROJECT_VERSION_MINOR} PARENT_SCOPE)
@@ -79,3 +103,4 @@ function(set_version)
 	set(PROJECT_VERSION_BUILD ${PROJECT_VERSION_BUILD} PARENT_SCOPE)
 	set(PROJECT_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH} PARENT_SCOPE)
 endfunction()
+
