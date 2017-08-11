@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.2)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.4)
 
 cmake_policy(SET CMP0010 OLD)
 cmake_policy(SET CMP0026 OLD)
@@ -13,14 +13,6 @@ PROJECT(Designer)
 
 # OpenViBE SDK modules list
 SET(INCLUDED_OV_SDK_COMPONENTS BASE ALLPLUGINS EBML SYSTEM FS XML TOOLKIT)
-
-# These versions are used by the subprojects by default.
-# If you wish to maintain specific version numbers for a subproject, please do so in the projects CMakeLists.txt
-SET(OV_GLOBAL_VERSION_MAJOR 0)
-SET(OV_GLOBAL_VERSION_MINOR 2)
-SET(OV_GLOBAL_VERSION_PATCH 99)
-SET(OV_GLOBAL_VERSION_STRING "${OV_GLOBAL_VERSION_MAJOR}.${OV_GLOBAL_VERSION_MINOR}.${OV_GLOBAL_VERSION_PATCH}")
-SET(OV_SDK_VERSION_STRING "0.2.0")
 
 # ----------------------
 # Build CMake flags
@@ -39,6 +31,8 @@ IF(CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT(OPENVIBE_SDK_PATH))
 ELSEIF(NOT(OPENVIBE_SDK_PATH))
 	FIND_PATH(OPENVIBE_SDK_PATH bin PATHS ${LIST_DEPENDENCIES_PATH} PATH_SUFFIXES openvibe-sdk-release NO_DEFAULT_PATH)
 ENDIF()
+LIST(APPEND CMAKE_MODULE_PATH "${OPENVIBE_SDK_PATH}/share")
+LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake-modules")
 
 IF(OV_PACKAGE)
 	SET(CMAKE_INSTALL_PREFIX .)
@@ -47,9 +41,7 @@ ELSEIF(NOT CMAKE_INSTALL_PREFIX)
 	SET(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}/dist")
 ENDIF()
 
-LIST(APPEND CMAKE_MODULE_PATH "${OPENVIBE_SDK_PATH}/share")
-LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake-modules")
-
+string(TIMESTAMP COPYRIGHT_DATE "2012-%Y")
 # We deduce the branding from the OEM_DISTRIBUTION
 IF(OEM_DISTRIBUTION STREQUAL "openvibe")
 	SET(OV_CONFIG_SUBDIR "OpenVIBE")
@@ -145,6 +137,16 @@ IF(EXISTS "${CMAKE_SOURCE_DIR}/CustomCMakeLists.txt")
 	INCLUDE("${CMAKE_SOURCE_DIR}/CustomCMakeLists.txt")
 ENDIF()
 
+# ----------------------
+# Set build version
+# ----------------------
+
+# These versions are used by the subprojects by default.
+set_version()
+# Sets the PROJECT_VERSION variable to something, depending on overriding OvSetProjectVersion.cmake files
+OV_SET_PROJECT_VERSION()
+MESSAGE(STATUS "BUILDING VERSION Designer: ${PROJECT_VERSION} Branch : ${OV_PROJECT_BRANCH}~${OV_PROJECT_COMMITHASH}. Based on OpenViBE SDK: ${OV_SDK_VERSION_STRING}")
+
 #################################################################
 string(TOLOWER ${BRAND_NAME} LOWER_BRAND_NAME)
 string(TOLOWER ${DESIGNER_NAME} LOWER_DESIGNER_NAME)
@@ -176,9 +178,6 @@ ADD_DEFINITIONS(-DOV_CMAKE_PATH_ROOT="${CMAKE_INSTALL_PREFIX}")
 ADD_DEFINITIONS(-DOV_CMAKE_PATH_BIN="${CMAKE_INSTALL_FULL_BINDIR}")
 ADD_DEFINITIONS(-DOV_CMAKE_PATH_LIB="${CMAKE_INSTALL_FULL_LIBDIR}")
 ADD_DEFINITIONS(-DOV_CMAKE_PATH_DATA="${CMAKE_INSTALL_FULL_DATADIR}/openvibe")
-
-# Sets the PROJECT_VERSION variable to something, depending on overriding OvSetProjectVersion.cmake files
-OV_SET_PROJECT_VERSION()
 
 SET(DIST_ROOT ${CMAKE_INSTALL_PREFIX})
 IF(OV_PACKAGE)
@@ -232,5 +231,7 @@ IF(NOT(SKIP_VISUALIZATION_TOOLKIT))
 ENDIF()
 
 # add the scripts to the project so IDEs using the CMake file are aware of them
-FILE(GLOB_RECURSE script_files scripts/*.cmd scripts/*.sh scripts/*.nsi)
+FILE(GLOB_RECURSE script_files scripts/*.cmd scripts/*.sh )
 ADD_CUSTOM_TARGET(openvibe-scripts SOURCES ${script_files})
+
+INSTALL(FILES "${CMAKE_BINARY_DIR}/.install" DESTINATION ${CMAKE_INSTALL_PREFIX})
