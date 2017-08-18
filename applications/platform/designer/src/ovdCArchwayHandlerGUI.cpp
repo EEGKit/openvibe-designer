@@ -39,7 +39,8 @@ namespace
 		std::string escapedURL = gui->m_Controller.m_sDeviceURL;
 
 		size_t startPosition = 0;
-		while((startPosition = escapedURL.find("\"", startPosition)) != std::string::npos) {
+		while((startPosition = escapedURL.find("\"", startPosition)) != std::string::npos)
+		{
 			escapedURL.replace(startPosition, 1, "\\\"");
 			startPosition += 2; // Handles case where 'to' is a substring of 'from'
 		}
@@ -47,6 +48,15 @@ namespace
 
 #if defined TARGET_OS_Windows
 		std::string command = "\"\"" + configurationToolLaunchCmd + "\" --no-file \"" + escapedURL + "\"\"";
+		for (std::string stringToEscape : {"^", "<", ">", "&", "|", "%"}) // ^ must be escaped first!
+		{
+			size_t startPosition = 0;
+			while((startPosition = command.find(stringToEscape, startPosition)) != std::string::npos)
+			{
+				command.replace(startPosition, stringToEscape.size(), "^" + stringToEscape);
+				startPosition += 1 + stringToEscape.size();
+			}
+		}
 #elif defined TARGET_OS_Linux || defined TARGET_OS_MacOS
 		std::string command = configurationToolLaunchCmd + " --no-file \"" + escapedURL + "\"";
 #endif
