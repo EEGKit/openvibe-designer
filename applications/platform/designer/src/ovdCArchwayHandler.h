@@ -64,7 +64,7 @@ namespace Mensia {
 		EngineInitialisationStatus initialize();
 		bool uninitialize();
 
-		bool reinitializeArchway(EngineType engineType);
+		bool reinitializeArchway();
 		std::vector<SPipeline> getEnginePipelines() const;
 		std::vector<SPipelineParameter> getPipelineParameters(unsigned int pipelineClassId) const;
 		bool setPipelineParameterValue(unsigned int pipelineClassId, std::string const& parameterName, std::string const& parameterValue);
@@ -82,12 +82,13 @@ namespace Mensia {
 		}
 
 	public:
-		SArchwayBridge m_oArchwayBridge;
-		SGUIBridge m_guiBridge;
-		std::string m_sDeviceURL;
+		SArchwayBridge m_ArchwayBridge;
+		SGUIBridge m_GUIBridge;
+		std::string m_DeviceURL;
+		EngineType m_EngineType;
 
 	private:
-		bool initializeArchway(EngineType eEngineType);
+		bool initializeArchway();
 		bool uninitializeArchway();
 		bool savePipelineConfigurations();
 		bool loadPipelineConfigurations();

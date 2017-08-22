@@ -916,9 +916,6 @@ CApplication::CApplication(const IKernelContext& rKernelContext)
 	m_pScenarioManager->registerScenarioExporter(OVD_ScenarioExportContext_SaveScenario, ".mxs", OVP_GD_ClassId_Algorithm_XMLScenarioExporter);
 	m_pScenarioManager->registerScenarioExporter(OVD_ScenarioExportContext_SaveMetabox, ".mxb", OVP_GD_ClassId_Algorithm_XMLScenarioExporter);
 
-
-	// TODO : register metabox scenario importer
-	
 	m_pVisualizationManager = new CVisualizationManager(m_rKernelContext);
 	m_visualizationContext = dynamic_cast<OpenViBEVisualizationToolkit::IVisualizationContext*>(m_rKernelContext.getPluginManager().createPluginObject(OVP_ClassId_Plugin_VisualizationContext));
 	m_visualizationContext->setManager(m_pVisualizationManager);

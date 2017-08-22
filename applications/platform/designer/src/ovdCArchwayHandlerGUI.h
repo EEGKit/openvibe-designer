@@ -30,6 +30,8 @@ namespace Mensia {
 		std::string m_CurrentlyEditedCellPath;
 
 		GtkWidget* m_ButtonOpenEngineConfigurationDialog;
+
+		GtkComboBox* m_EngineTypeComboBox;
 		GtkWidget* m_ButtonReinitializeArchway;
 
 		GtkWidget* m_ButtonStartEngine;

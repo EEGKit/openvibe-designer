@@ -36,7 +36,7 @@ namespace
 		std::string configurationToolLaunchCmd = std::string(OpenViBE::Directories::getBinDir().toASCIIString()) + "/mensia-device-configuration";
 		//std::string configurationFilePath = std::string(getenv("USERPROFILE")) + "\\lib-mensia-engine.conf";
 
-		std::string escapedURL = gui->m_Controller.m_sDeviceURL;
+		std::string escapedURL = gui->m_Controller.m_DeviceURL;
 
 		size_t startPosition = 0;
 		while((startPosition = escapedURL.find("\"", startPosition)) != std::string::npos)
@@ -73,7 +73,7 @@ namespace
 		auto deviceURL = urlStream.str();
 		deviceURL = deviceURL.substr(0, deviceURL.length() - 1);
 
-		gui->m_Controller.m_sDeviceURL = deviceURL;
+		gui->m_Controller.m_DeviceURL = deviceURL;
 		gui->m_Controller.writeArchwayConfigurationFile();
 	}
 
@@ -81,11 +81,9 @@ namespace
 	{
 		auto gui = static_cast<CArchwayHandlerGUI*>(userData);
 		auto engineTypeCombobox = GTK_COMBO_BOX(gtk_builder_get_object(gui->m_Builder, "combobox-engine-connection-type"));
-		auto selectedEngineType = gtk_combo_box_get_active(engineTypeCombobox);
+		gui->m_Controller.m_EngineType = (gtk_combo_box_get_active(engineTypeCombobox) == 0 ? EngineType::Local : EngineType::LAN);
 
-		// TODO: For now we always assume LAN Engine connection
-		selectedEngineType = 1;
-		gui->m_Controller.reinitializeArchway(selectedEngineType == 0 ? EngineType::Local : EngineType::LAN);
+		gui->m_Controller.reinitializeArchway();
 		gui->refreshEnginePipelines();
 	}
 
@@ -247,6 +245,7 @@ CArchwayHandlerGUI::CArchwayHandlerGUI(CArchwayHandler& controller)
 	assert(gtkError == nullptr);
 //	gtk_builder_connect_signals(m_pBuilder, NULL);
 
+
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "button-configure-acquisition")),
 	                 "clicked", G_CALLBACK(on_button_configure_acquisition_clicked), this);
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "button-reinitialize-archway")),
@@ -289,7 +288,7 @@ CArchwayHandlerGUI::CArchwayHandlerGUI(CArchwayHandler& controller)
 
 	m_TreeModelEnginePipelines = GTK_TREE_MODEL(gtk_builder_get_object(m_Builder, "liststore-pipelines"));
 
-	m_Controller.m_guiBridge.resfreshStoppedEngine = [this](){
+	m_Controller.m_GUIBridge.resfreshStoppedEngine = [this](){
 		gtk_widget_set_sensitive(m_ButtonStartEngine, true);
 		gtk_widget_set_sensitive(m_ButtonStartEngineFastFoward, true);
 		gtk_widget_set_sensitive(m_ButtonStopEngine, false);
@@ -297,6 +296,11 @@ CArchwayHandlerGUI::CArchwayHandlerGUI(CArchwayHandler& controller)
 		gtk_spinner_stop(m_SpinnerEngineActivity);
 		gtk_widget_hide(GTK_WIDGET(m_SpinnerEngineActivity));
 	};
+
+	m_EngineTypeComboBox = GTK_COMBO_BOX(gtk_builder_get_object(m_Builder, "combobox-engine-connection-type"));
+	g_signal_connect(G_OBJECT(m_EngineTypeComboBox),
+	                 "changed", G_CALLBACK(on_button_reinitialize_archway_clicked), this);
+
 }
 
 CArchwayHandlerGUI::~CArchwayHandlerGUI()
@@ -336,6 +340,7 @@ void CArchwayHandlerGUI::toggleNeuroRTEngineConfigurationDialog(bool shouldDispl
 
 	if (shouldDisplay)
 	{
+		gtk_combo_box_set_active(m_EngineTypeComboBox, m_Controller.m_EngineType == EngineType::Local ? 0 : 1);
 		this->refreshEnginePipelines();
 		gtk_widget_show(engineConfigurationWidget);
 	}
