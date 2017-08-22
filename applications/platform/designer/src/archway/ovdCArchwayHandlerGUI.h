@@ -31,8 +31,9 @@ namespace Mensia {
 
 		GtkWidget* m_ButtonOpenEngineConfigurationDialog;
 
-		GtkComboBox* m_EngineTypeComboBox;
+		GtkComboBox* m_ComboBoxEngineType;
 		GtkWidget* m_ButtonReinitializeArchway;
+		GtkWidget* m_ButtonLaunchEngine;
 
 		GtkWidget* m_ButtonStartEngine;
 		GtkWidget* m_ButtonStartEngineFastFoward;

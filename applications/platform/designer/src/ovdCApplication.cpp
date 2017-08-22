@@ -254,11 +254,6 @@ namespace
 	{
 		static_cast<CApplication*>(pUserData)->preferencesCB();
 	}
-
-	void menu_test_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
-	{
-		static_cast<CApplication*>(pUserData)->testCB();
-	}
 	void menu_new_scenario_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
 	{
 		static_cast<CApplication*>(pUserData)->newScenarioCB();
@@ -514,10 +509,7 @@ namespace
 
 	string strtoupper(string str)
 	{
-		int leng=str.length();
-		for(int i=0; i<leng; i++)
-			if (97<=str[i]&&str[i]<=122)//a-z
-				str[i]-=32;
+		std::transform(str.begin(), str.end(), str.begin(), std::ptr_fun<int, int>(std::toupper));
 		return str;
 	}
 	static gboolean box_algorithm_search_func(GtkTreeModel *model, GtkTreeIter *iter, gpointer pUserData)
@@ -780,6 +772,7 @@ namespace
 		return TRUE;
 	}
 
+#ifdef _NDEBUG
 	/**
 	* Function called in gtk loop: to check each 0.1second if a message was sent by a second instance of Designer
 	* (Meaning that someone tried to reopen Designer and this instance has to do something)
@@ -848,6 +841,7 @@ namespace
 		catch(boost::interprocess::interprocess_exception) {}
 		return TRUE;
 	}
+#endif
 
 	void zoom_in_scenario_cb(::GtkButton* pButton, gpointer pUserData)
 	{
@@ -1074,7 +1068,7 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 
 	__g_idle_add__(idle_application_loop, this);
 	__g_timeout_add__(1000, timeout_application_loop, this);
-#if _NDEBUG
+#ifdef _NDEBUG
 	__g_timeout_add__(100, receiveSecondInstanceMessage, this);
 #endif
 

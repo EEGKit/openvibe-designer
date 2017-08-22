@@ -7,6 +7,8 @@
 #include <cstdio>
 #include <sstream>
 
+#include "ovProcessUtilities.hpp"
+
 #if defined TARGET_OS_Windows
 #define pclose _pclose
 #endif
@@ -77,7 +79,7 @@ namespace
 		gui->m_Controller.writeArchwayConfigurationFile();
 	}
 
-	void on_button_reinitialize_archway_clicked(::GtkMenuItem* menuItem, gpointer userData)
+	void on_button_reinitialize_archway_clicked(::GtkMenuItem*, gpointer userData)
 	{
 		auto gui = static_cast<CArchwayHandlerGUI*>(userData);
 		auto engineTypeCombobox = GTK_COMBO_BOX(gtk_builder_get_object(gui->m_Builder, "combobox-engine-connection-type"));
@@ -85,6 +87,20 @@ namespace
 
 		gui->m_Controller.reinitializeArchway();
 		gui->refreshEnginePipelines();
+	}
+
+	void on_combobox_engine_type_changed(::GtkComboBox*, gpointer userData)
+	{
+		auto gui = static_cast<CArchwayHandlerGUI*>(userData);
+		if (gtk_combo_box_get_active(gui->m_ComboBoxEngineType) == 0)
+		{
+			gtk_widget_set_sensitive(gui->m_ButtonLaunchEngine, FALSE);
+		}
+		else
+		{
+			gtk_widget_set_sensitive(gui->m_ButtonLaunchEngine, TRUE);
+		}
+		on_button_reinitialize_archway_clicked(nullptr, userData);
 	}
 
 	gboolean on_dialog_engine_configuration_delete_event(::GtkDialog* dialog, ::GdkEvent*, gpointer userData)
@@ -233,6 +249,28 @@ namespace
 	}
 
 
+	void on_button_launch_engine_clicked(GtkWidget* widget, gpointer userData)
+	{
+//		auto gui = static_cast<CArchwayHandlerGUI*>(userData);
+
+		if (!OpenViBE::ProcessUtilities::doesProcessExist("mensia-engine-server")) {
+#if defined TARGET_OS_Windows
+			if (FS::Files::fileExists(OpenViBE::Directories::getBinDir() + "/mensia-engine-server.exe"))
+			{
+				OpenViBE::ProcessUtilities::launchCommand(std::string(OpenViBE::Directories::getBinDir() + "/mensia-engine-server.exe").c_str());
+			}
+			else if (FS::Files::fileExists("C:/Program Files (x86)/NeuroRT/NeuroRT Engine Server/bin/mensia-engine-server.exe"))
+			{
+				OpenViBE::ProcessUtilities::launchCommand(std::string("C:/Program Files (x86)/NeuroRT/NeuroRT Engine Server/neurort-engine-server.cmd").c_str());
+			}
+#elif defined TARGET_OS_Linux || defined TARGET_OS_MacOS
+			if (FS::Files::fileExists(OpenViBE::Directories::getBinDir() + "/mensia-engine-server"))
+			{
+				OpenViBE::ProcessUtilities::launchCommand(std::string(OpenViBE::Directories::getBinDir() + "/mensia-engine-server").c_str());
+			}
+#endif
+		}
+	}
 }
 
 CArchwayHandlerGUI::CArchwayHandlerGUI(CArchwayHandler& controller)
@@ -297,9 +335,11 @@ CArchwayHandlerGUI::CArchwayHandlerGUI(CArchwayHandler& controller)
 		gtk_widget_hide(GTK_WIDGET(m_SpinnerEngineActivity));
 	};
 
-	m_EngineTypeComboBox = GTK_COMBO_BOX(gtk_builder_get_object(m_Builder, "combobox-engine-connection-type"));
-	g_signal_connect(G_OBJECT(m_EngineTypeComboBox),
-	                 "changed", G_CALLBACK(on_button_reinitialize_archway_clicked), this);
+	m_ComboBoxEngineType = GTK_COMBO_BOX(gtk_builder_get_object(m_Builder, "combobox-engine-connection-type"));
+	g_signal_connect(G_OBJECT(m_ComboBoxEngineType), "changed", G_CALLBACK(on_combobox_engine_type_changed), this);
+
+	m_ButtonLaunchEngine = GTK_WIDGET(gtk_builder_get_object(m_Builder, "button-launch-engine-server"));
+	g_signal_connect(G_OBJECT(m_ButtonLaunchEngine), "clicked", G_CALLBACK(on_button_launch_engine_clicked), this);
 
 }
 
@@ -340,7 +380,7 @@ void CArchwayHandlerGUI::toggleNeuroRTEngineConfigurationDialog(bool shouldDispl
 
 	if (shouldDisplay)
 	{
-		gtk_combo_box_set_active(m_EngineTypeComboBox, m_Controller.m_EngineType == EngineType::Local ? 0 : 1);
+		gtk_combo_box_set_active(m_ComboBoxEngineType, m_Controller.m_EngineType == EngineType::Local ? 0 : 1);
 		this->refreshEnginePipelines();
 		gtk_widget_show(engineConfigurationWidget);
 	}

@@ -149,21 +149,29 @@ EngineInitialisationStatus CArchwayHandler::initialize()
 	FS::Files::openIFStream(archwayConfigurationFile, s_ArchwayConfigurationFile.c_str());
 	if (archwayConfigurationFile.good())
 	{
-		std::string line;
-		while (std::getline(archwayConfigurationFile, line))
+		try
 		{
-			std::cmatch cm;
-			if (std::regex_match(line.c_str(), cm, std::regex("config.server\\s*=\\s*'(lan|local)'")))
+			std::string line;
+			while (std::getline(archwayConfigurationFile, line))
 			{
-				if (cm[1] == "lan")
+				std::cmatch cm;
+				if (std::regex_match(line.c_str(), cm, std::regex("config.server\\s*=\\s*'(lan|local)'")))
 				{
-					m_EngineType = EngineType::LAN;
+					if (cm[1] == "lan")
+					{
+						m_EngineType = EngineType::LAN;
+					}
+				}
+				else if (std::regex_match(line.c_str(), cm, std::regex("config.device[1]\\s*=\\s*'([^']*)'")))
+				{
+					m_DeviceURL = cm[1];
 				}
 			}
-			else if (std::regex_match(line.c_str(), cm, std::regex("config.device[1]\\s*=\\s*'([^']*)'")))
-			{
-				m_DeviceURL = cm[1];
-			}
+		}
+		catch (...)
+		{
+			// An exception will be thrown when using libc++ from ubuntu 14.04
+			// in that case we do nothing and keep the defaults
 		}
 	}
 
