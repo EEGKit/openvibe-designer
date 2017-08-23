@@ -10,8 +10,24 @@ cmake_policy(SET CMP0057 NEW)
 
 PROJECT(Designer)
 
-# OpenViBE SDK modules list
-SET(INCLUDED_OV_SDK_COMPONENTS BASE ALLPLUGINS EBML SYSTEM FS XML TOOLKIT)
+LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake-modules")
+# OpenViBE-specific helper functions that are used by the CMakeLists of the subprojects.
+INCLUDE("OvAddProjects")
+INCLUDE("OvInstallLaunchScript")
+INCLUDE("OvLinkBoostLib")
+INCLUDE("OvDelayLoad")
+INCLUDE("SetProjectVersion")
+INCLUDE("Utilities") # Include functions debug_message, set_build_platform
+
+# ----------------------
+# Set build version
+# ----------------------
+
+# These versions are used by the subprojects by default.
+set_version()
+# Sets the PROJECT_VERSION variable to something, depending on overriding OvSetProjectVersion.cmake files
+OV_SET_PROJECT_VERSION()
+MESSAGE(STATUS "BUILDING VERSION Designer: ${PROJECT_VERSION} Branch : ${OV_PROJECT_BRANCH}~${OV_PROJECT_COMMITHASH}. Based on OpenViBE SDK: ${OV_SDK_VERSION_STRING}")
 
 # ----------------------
 # Build CMake flags
@@ -108,19 +124,17 @@ else()
 endif()
 
 find_path(SDK_MODULE_PATH NAMES "AddOpenViBESDKComponents.cmake" PATHS ${OPENVIBE_SDK_PATH} PATH_SUFFIXES share NO_DEFAULT_PATH) # Finds multi-type builds
-# message(FATAL_ERROR ${OPENVIBE_SDK_PATH} -- ${SDK_MODULE_PATH})
 
 if(CMAKE_BUILD_TYPE)
 	string(TOLOWER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_LOWER)
 	find_path(SDK_MODULE_PATH NAMES AddOpenViBESDKComponents.cmake PATHS ${OPENVIBE_SDK_PATH};${LIST_DEPENDENCIES_PATH} PATH_SUFFIXES openvibe-sdk-${CMAKE_BUILD_TYPE_LOWER}/share NO_DEFAULT_PATH) # Find "regular builds
 endif()
-# message(FATAL_ERROR ${OPENVIBE_SDK_PATH})
-LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake-modules")
+
 if(SDK_MODULE_PATH)
 	LIST(APPEND CMAKE_MODULE_PATH ${SDK_MODULE_PATH})
 endif()
 include(FindOVSDK)
-include(AddOpenViBESDKComponents)
+# include(AddOpenViBESDKComponents)
 # OpenViBE SDK modules list
 SET(INCLUDED_OV_SDK_COMPONENTS BASE ALLPLUGINS EBML SYSTEM FS XML TOOLKIT)
 
@@ -159,14 +173,6 @@ ENDIF()
 IF(OV_DISPLAY_ERROR_LOCATION)
 	ADD_DEFINITIONS(-DOV_DISPLAY_ERROR_LOCATION)
 ENDIF()
-
-# OpenViBE-specific helper functions that are used by the CMakeLists of the subprojects.
-INCLUDE("OvAddProjects")
-INCLUDE("OvInstallLaunchScript")
-INCLUDE("OvLinkBoostLib")
-INCLUDE("OvDelayLoad")
-INCLUDE("SetProjectVersion")
-INCLUDE("Utilities") # Include functions debug_message, set_build_platform
 
 # The user files will be stored in .../OV_CONFIG_SUBDIR folder
 ADD_DEFINITIONS("-DOV_PROJECT_NAME=\"openvibe\"")
@@ -207,15 +213,6 @@ IF(EXISTS "${CMAKE_SOURCE_DIR}/CustomCMakeLists.txt")
 	INCLUDE("${CMAKE_SOURCE_DIR}/CustomCMakeLists.txt")
 ENDIF()
 
-# ----------------------
-# Set build version
-# ----------------------
-
-# These versions are used by the subprojects by default.
-set_version()
-# Sets the PROJECT_VERSION variable to something, depending on overriding OvSetProjectVersion.cmake files
-OV_SET_PROJECT_VERSION()
-MESSAGE(STATUS "BUILDING VERSION Designer: ${PROJECT_VERSION} Branch : ${OV_PROJECT_BRANCH}~${OV_PROJECT_COMMITHASH}. Based on OpenViBE SDK: ${OV_SDK_VERSION_STRING}")
 
 #################################################################
 string(TOLOWER ${BRAND_NAME} LOWER_BRAND_NAME)
@@ -238,47 +235,8 @@ SET_PROPERTY(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS_DEBUG "TARGET_BUILDTY
 SET_PROPERTY(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS_RELEASE "TARGET_BUILDTYPE_Release")
 SET_PROPERTY(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS_RELWITHDEBINFO "TARGET_BUILDTYPE_Release")
 
-SET(CMAKE_INSTALL_FULL_DOCDIR "${CMAKE_INSTALL_FULL_BINDIR}/../doc/html")
-
-# Add directories that OpenViBE will use to look for its components runtime, unless overridden by environment variables in the launch scripts.
-# These defines should only be used in "openvibe/ov_directories.h".
-ADD_DEFINITIONS(-DOV_CMAKE_PATH_ROOT="${CMAKE_INSTALL_PREFIX}")
-ADD_DEFINITIONS(-DOV_CMAKE_PATH_BIN="${CMAKE_INSTALL_FULL_BINDIR}")
-ADD_DEFINITIONS(-DOV_CMAKE_PATH_LIB="${CMAKE_INSTALL_FULL_LIBDIR}")
-ADD_DEFINITIONS(-DOV_CMAKE_PATH_DATA="${CMAKE_INSTALL_FULL_DATADIR}/openvibe")
-
-SET(DIST_ROOT ${CMAKE_INSTALL_PREFIX})
-IF(OV_PACKAGE)
-	SET(DIST_BINDIR ${CMAKE_INSTALL_BINDIR})
-	SET(DIST_LIBDIR ${CMAKE_INSTALL_LIBDIR})
-	SET(DIST_INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR})
-	SET(DIST_DATADIR ${CMAKE_INSTALL_DATADIR})
-	SET(DIST_DOCDIR ${CMAKE_INSTALL_BINDIR}/../doc)
-	SET(CPACK_GENERATOR "ZIP")
-	SET(CPACK_INCLUDE_TOPLEVEL_DIRECTORY OFF)
-	SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "OpenViBE Designer")
-	SET(CPACK_PACKAGE_VENDOR "Inria & Mensia Technologies")
-	SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
-	SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING.md")
-	SET(CPACK_PACKAGE_VERSION_MAJOR ${OV_GLOBAL_VERSION_MAJOR})
-	SET(CPACK_PACKAGE_VERSION_MINOR ${OV_GLOBAL_VERSION_MINOR})
-	SET(CPACK_PACKAGE_VERSION_PATCH ${OV_GLOBAL_VERSION_PATCH})
-	if(UNIX)
-		execute_process(COMMAND bash -c "echo -n $(lsb_release -i -s)$(lsb_release -r -s)"
-			OUTPUT_VARIABLE CPACK_SYSTEM_NAME)
-	endif()
-	SET(CPACK_PACKAGE_NAME "OpenViBE${CMAKE_PROJECT_NAME}-${CMAKE_BUILD_TYPE}")
-	INCLUDE(CPack)
-ELSE()
-	SET(DIST_BINDIR ${CMAKE_INSTALL_FULL_BINDIR})
-	SET(DIST_LIBDIR ${CMAKE_INSTALL_FULL_LIBDIR})
-	SET(DIST_INCLUDEDIR ${CMAKE_INSTALL_FULL_INCLUDEDIR})
-	SET(DIST_DATADIR ${CMAKE_INSTALL_FULL_DATADIR})
-	SET(DIST_DOCDIR ${CMAKE_INSTALL_FULL_BINDIR}/../doc)
-ENDIF()
-
 # Sets the PROJECT_VERSION variable to something, depending on overriding OvSetProjectVersion.cmake files
-OV_SET_PROJECT_VERSION()
+# OV_SET_PROJECT_VERSION()
 
 MESSAGE(STATUS "Building ${BRAND_NAME} ${DESIGNER_NAME} [${OEM_DISTRIBUTION}] Version : ${PROJECT_VERSION} ${OV_PROJECT_BRANCH}~${OV_PROJECT_COMMITHASH}")
 
