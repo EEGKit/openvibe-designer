@@ -4,8 +4,8 @@
 #include <visualization-toolkit/ovvizIVisualizationManager.h>
 #include "ovd_base.h"
 
-#include "ovdCArchwayHandler.h"
-#include "ovdCArchwayHandlerGUI.h"
+#include "archway/ovdCArchwayHandler.h"
+#include "archway/ovdCArchwayHandlerGUI.h"
 
 #define OVD_ScenarioImportContext_OpenScenario OpenViBE::CIdentifier(0xA180DB91, 0x19235AEE)
 #define OVD_ScenarioExportContext_SaveScenario OpenViBE::CIdentifier(0xC98C47AD, 0xCBD952B2)
@@ -14,8 +14,6 @@
 #include <vector>
 namespace Mensia
 {
-	class CMetaboxLoader;
-
 	namespace ActivationTool
 	{
 		class CActivationTool;

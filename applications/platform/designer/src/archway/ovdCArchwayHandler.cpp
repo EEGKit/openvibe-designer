@@ -11,6 +11,7 @@
 #include <cassert>
 #include <fstream>
 #include <sstream>
+#include <regex>
 
 using namespace Mensia;
 using namespace OpenViBE::Kernel;
@@ -31,7 +32,7 @@ std::string CArchwayHandler::getArchwayErrorString() const
 }
 
 CArchwayHandler::CArchwayHandler(const OpenViBE::Kernel::IKernelContext& kernelContext)
-	: m_sDeviceURL("simulator://")
+	: m_DeviceURL("simulator://")
 	, m_Archway(nullptr)
 	, m_KernelContext(kernelContext)
 	, m_RunningPipelineId(0)
@@ -99,17 +100,17 @@ EngineInitialisationStatus CArchwayHandler::initialize()
 	// Now initialize the ArchwayBridge structure with closures that bridge to local Archway functions
 	// this way we do not have to expose the Archway object or the C API
 
-	m_oArchwayBridge.isStarted = [this](){
+	m_ArchwayBridge.isStarted = [this](){
 		return this->m_Archway->isStarted();
 	};
-	m_oArchwayBridge.getAvailableValueMatrixCount = [this](unsigned int uiValueChannelId){
+	m_ArchwayBridge.getAvailableValueMatrixCount = [this](unsigned int uiValueChannelId){
 		return this->m_Archway->getPendingValueCount(m_RunningPipelineId, uiValueChannelId);
 	};
 
 	// This function returns the last getPendingValue result as a vector
 	// Such encapsulation enables us to avoid a call to getPendingValueDimension
 	// from the client plugin.
-	m_oArchwayBridge.popValueMatrix = [this](unsigned int uiValueChannelId){
+	m_ArchwayBridge.popValueMatrix = [this](unsigned int uiValueChannelId){
 		std::vector<float> m_vValueMatrix;
 		auto l_uiValueChannelDimension = this->m_Archway->getPendingValueDimension(m_RunningPipelineId, uiValueChannelId);
 		m_vValueMatrix.resize(l_uiValueChannelDimension);
@@ -124,7 +125,7 @@ EngineInitialisationStatus CArchwayHandler::initialize()
 	};
 
 	// As archway buffers signals we have to expose this function to the client plugins
-	m_oArchwayBridge.dropBuffers = [this](){
+	m_ArchwayBridge.dropBuffers = [this](){
 		m_Archway->dropPendingEvents(0);
 		m_Archway->dropPendingValues(0);
 		return true;
@@ -133,7 +134,7 @@ EngineInitialisationStatus CArchwayHandler::initialize()
 	// We save the address of the structure in the heap memory as a string and save it in
 	// the ConfigurationManager, this is because a box can not communicate directly with the Designer
 	std::ostringstream l_ssArchwayBridgeAddress;
-	l_ssArchwayBridgeAddress << static_cast<void const *>(&m_oArchwayBridge);
+	l_ssArchwayBridgeAddress << static_cast<void const *>(&m_ArchwayBridge);
 	m_KernelContext.getConfigurationManager().createConfigurationToken("Designer_ArchwayBridgeAddress", l_ssArchwayBridgeAddress.str().c_str());
 
 	if (!this->loadPipelineConfigurations())
@@ -141,16 +142,49 @@ EngineInitialisationStatus CArchwayHandler::initialize()
 		return EngineInitialisationStatus::Failure;
 	}
 
-	// TODO_JL: Get the engine type from configuration
-	if (!this->initializeArchway(EngineType::LAN))
+	m_EngineType = EngineType::Local;
+
+	// Get the starting engine type from configuration
+	std::ifstream archwayConfigurationFile;
+	FS::Files::openIFStream(archwayConfigurationFile, s_ArchwayConfigurationFile.c_str());
+	if (archwayConfigurationFile.good())
 	{
-		m_KernelContext.getLogManager() << LogLevel_Warning << "Failed to initialize the LAN engine " << this->getArchwayErrorString().c_str() << "\n";
+		try
+		{
+			std::string line;
+			while (std::getline(archwayConfigurationFile, line))
+			{
+				std::cmatch cm;
+				if (std::regex_match(line.c_str(), cm, std::regex("config.server\\s*=\\s*'(lan|local)'")))
+				{
+					if (cm[1] == "lan")
+					{
+						m_EngineType = EngineType::LAN;
+					}
+				}
+				else if (std::regex_match(line.c_str(), cm, std::regex("config.device[1]\\s*=\\s*'([^']*)'")))
+				{
+					m_DeviceURL = cm[1];
+				}
+			}
+		}
+		catch (...)
+		{
+			// An exception will be thrown when using libc++ from ubuntu 14.04
+			// in that case we do nothing and keep the defaults
+		}
+	}
+
+
+	if (!this->initializeArchway())
+	{
+		m_KernelContext.getLogManager() << LogLevel_Warning << "Failed to initialize the engine " << this->getArchwayErrorString().c_str() << "\n";
 		return EngineInitialisationStatus::Failure;
 	}
 
 	char l_sDeviceURL[2048];
 	m_Archway->getConfigurationParameterAsString("config.device[1]", l_sDeviceURL, sizeof(l_sDeviceURL));
-	m_sDeviceURL = l_sDeviceURL;
+	m_DeviceURL = l_sDeviceURL;
 
 	return EngineInitialisationStatus::Success;
 }
@@ -203,11 +237,11 @@ CArchwayHandler::~CArchwayHandler()
 }
 
 
-bool CArchwayHandler::initializeArchway(EngineType eEngineType)
+bool CArchwayHandler::initializeArchway()
 {
 	assert(m_Archway);
 
-	m_KernelContext.getLogManager() << LogLevel_Trace << "Re-initializing engine in [" << (eEngineType == EngineType::Local ? "Local" : "LAN") << "]" << "\n";
+	m_KernelContext.getLogManager() << LogLevel_Trace << "Re-initializing engine in [" << (m_EngineType == EngineType::Local ? "Local" : "LAN") << "]" << "\n";
 	return m_Archway->initialize("user", "pass", "neurort-studio", s_ArchwayConfigurationFile.c_str());
 }
 
@@ -227,7 +261,7 @@ bool CArchwayHandler::uninitializeArchway()
 	return true;
 }
 
-bool CArchwayHandler::reinitializeArchway(EngineType engineType)
+bool CArchwayHandler::reinitializeArchway()
 {
 	assert(m_Archway);
 
@@ -237,7 +271,9 @@ bool CArchwayHandler::reinitializeArchway(EngineType engineType)
 		return false;
 	}
 
-	if (!this->initializeArchway(engineType))
+	this->writeArchwayConfigurationFile();
+
+	if (!this->initializeArchway())
 	{
 		m_KernelContext.getLogManager() << LogLevel_Warning << "Failed to initialize Engine " << this->getArchwayErrorString().c_str() << "\n";
 		return false;
@@ -377,7 +413,7 @@ bool CArchwayHandler::loopEngine()
 			return false;
 		}
 
-		m_guiBridge.resfreshStoppedEngine();
+		m_GUIBridge.resfreshStoppedEngine();
 		
 		return success && !isPipelineInErrorState;
 	}
@@ -529,8 +565,8 @@ bool CArchwayHandler::writeArchwayConfigurationFile()
 		return false;
 	}
 
-	file << "config.server = 'lan'\n";
-	file << "config.device[1] = '" << m_sDeviceURL << "'\n";
+	file << "config.server = '" << (m_EngineType == EngineType::LAN ? "lan" : "local") << "'\n";
+	file << "config.device[1] = '" << m_DeviceURL << "'\n";
 	file.close();
 
 	return true;
