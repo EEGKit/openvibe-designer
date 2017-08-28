@@ -72,11 +72,18 @@ CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& rKernelCo
 		gtk_builder_connect_signals(l_pBuilderInterfaceSetting, NULL);
 
 #if 1 // this approach fails to set a modal dialog
-
-		m_pSettingDialog=GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration"));
-		char l_sTitle[1024];
-		sprintf(l_sTitle, "Configure %s settings", m_rBox.getName().toASCIIString());
-		gtk_window_set_title(GTK_WINDOW(m_pSettingDialog), l_sTitle);
+		if (!m_bIsScenarioRunning) // in a running scenario, we just hide the buttons
+		{
+			m_pSettingDialog = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration"));
+			char l_sTitle[1024];
+			sprintf(l_sTitle, "Configure %s settings", m_rBox.getName().toASCIIString());
+			gtk_window_set_title(GTK_WINDOW(m_pSettingDialog), l_sTitle);
+		}
+		else
+		{
+			// This is actually *not* a dialog
+			m_pSettingDialog = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration-scrolledwindow"));
+		}
 #else
 		::GtkWidget *m_pSettingDialog = gtk_dialog_new_with_buttons(
 			"Configure Box Settings",
@@ -98,37 +105,19 @@ CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& rKernelCo
 		m_pScrolledWindow=GTK_SCROLLED_WINDOW(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration-scrolledwindow"));
 		m_pViewPort=GTK_VIEWPORT(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration-viewport"));
 
-		::GtkContainer* l_pFileOverrideContainer=GTK_CONTAINER(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration-hbox_filename_override"));
-		m_pFileOverrideCheck = GTK_CHECK_BUTTON(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration-checkbutton_filename_override"));
-		::GtkButton* l_pButtonLoad=GTK_BUTTON(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration-button_load_current_from_file"));
-		::GtkButton* l_pButtonSave=GTK_BUTTON(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration-button_save_current_to_file"));
-
-		if(m_bIsScenarioRunning) // in a running scenario, we just hide the buttons
-		{
-				gtk_widget_set_visible(GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration-hseparator")), false);
-				gtk_widget_set_visible(GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration-expander")), false);
-				gtk_widget_set_visible(GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration-action_area")), false);
-
-				//unparent widget
-	//			::GtkWidget* l_pWidgetParent = gtk_widget_get_parent(m_pWidgetToReturn);
-	//			if(GTK_IS_CONTAINER(l_pWidgetParent))
-	//			{
-	//				g_object_ref(m_pWidgetToReturn);
-	//				gtk_container_remove(GTK_CONTAINER(l_pWidgetParent), m_pWidgetToReturn);
-	//				gtk_widget_destroy(m_pWidget);
-	//				m_pWidget = NULL;
-	//			}
-		}
-
 		gtk_table_resize(m_pSettingsTable, m_rBox.getSettingCount(), 4);
 
 		generateSettingsTable();
 
 		CSettingCollectionHelper l_oHelper(m_rKernelContext, m_sGUISettingsFilename.toASCIIString());
 
-
 		if (!m_bIsScenarioRunning)
 		{
+			::GtkContainer* l_pFileOverrideContainer = GTK_CONTAINER(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration-hbox_filename_override"));
+			m_pFileOverrideCheck = GTK_CHECK_BUTTON(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration-checkbutton_filename_override"));
+			::GtkButton* l_pButtonLoad = GTK_BUTTON(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration-button_load_current_from_file"));
+			::GtkButton* l_pButtonSave = GTK_BUTTON(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration-button_save_current_to_file"));
+
 			string l_sSettingOverrideWidgetName=l_oHelper.getSettingWidgetName(OV_TypeId_Filename).toASCIIString();
 			::GtkBuilder* l_pBuilderInterfaceSettingCollection=gtk_builder_new(); // glade_xml_new(m_sGUIFilename.toASCIIString(), l_sSettingOverrideWidgetName.c_str(), NULL);
 			gtk_builder_add_from_file(l_pBuilderInterfaceSettingCollection, m_sGUISettingsFilename.toASCIIString(), NULL);

@@ -203,13 +203,13 @@ namespace OpenViBEDesigner
 
 		std::vector < OpenViBEDesigner::CInterfacedScenario* > m_vInterfacedScenario;
 		OpenViBE::uint32 m_ui32CurrentInterfacedScenarioIndex;
-		Mensia::ActivationTool::CActivationTool* m_pActivationTool;
 		std::vector <const OpenViBE::Plugins::IPluginObjectDesc*> m_vNewBoxes;
 		std::vector <const OpenViBE::Plugins::IPluginObjectDesc*> m_vUpdatedBoxes;
 		std::vector <std::string> m_vDocumentedBoxes;
 #ifdef MENSIA_DISTRIBUTION
 		Mensia::CArchwayHandler m_oArchwayHandler;
 		Mensia::CArchwayHandlerGUI m_oArchwayHandlerGUI;
+		Mensia::ActivationTool::CActivationTool* m_pActivationTool;
 #endif
 	};
 }

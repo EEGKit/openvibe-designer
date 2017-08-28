@@ -52,7 +52,7 @@ void CFloatSettingView::setValue(const OpenViBE::CString &rValue)
 {
 	m_bOnValueSetting = true;
 	gtk_entry_set_text(m_pEntry, rValue);
-	m_bOnValueSetting =false;
+	m_bOnValueSetting = false;
 }
 
 void CFloatSettingView::adjustValue(float64 amount)
@@ -63,6 +63,7 @@ void CFloatSettingView::adjustValue(float64 amount)
 	::sprintf(l_sValue, "%lf", l_f64lValue);
 
 	getBox().setSettingValue(getSettingIndex(), l_sValue);
+	setValue(l_sValue);
 }
 
 void CFloatSettingView::onChange()

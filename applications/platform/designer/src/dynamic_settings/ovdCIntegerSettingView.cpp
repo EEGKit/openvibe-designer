@@ -62,6 +62,7 @@ void CIntegerSettingView::adjustValue(int amount)
 	::sprintf(l_sValue, "%lli", l_i64lValue);
 
 	getBox().setSettingValue(getSettingIndex(), l_sValue);
+	setValue(l_sValue);
 }
 
 void CIntegerSettingView::onChange()

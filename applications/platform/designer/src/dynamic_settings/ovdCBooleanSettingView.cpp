@@ -71,10 +71,12 @@ void CBooleanSettingView::toggleButtonClick()
 		if(::gtk_toggle_button_get_active(m_pToggle))
 		{
 			getBox().setSettingValue(getSettingIndex(), "true");
+			setValue("true");
 		}
 		else
 		{
 			getBox().setSettingValue(getSettingIndex(), "false");
+			setValue("false");
 		}
 	}
 }

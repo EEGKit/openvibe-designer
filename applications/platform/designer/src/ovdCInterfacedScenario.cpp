@@ -3985,10 +3985,11 @@ void CInterfacedScenario::createPlayerVisualization(IVisualizationTree* pVisuali
 		//we go here when we press start
 		//we have to set the modUI here
 		//first, find the concerned boxes
+		IScenario& runtimeScenario = m_pPlayer->getRuntimeScenarioManager().getScenario(m_pPlayer->getRuntimeScenarioIdentifier());
 		CIdentifier objectId;
-		while ((objectId = m_rScenario.getNextBoxIdentifier(objectId)) != OV_UndefinedIdentifier)
+		while ((objectId = runtimeScenario.getNextBoxIdentifier(objectId)) != OV_UndefinedIdentifier)
 		{
-			IBox* l_oBox = m_rScenario.getBoxDetails (objectId);
+			IBox* l_oBox = runtimeScenario.getBoxDetails(objectId);
 			if(l_oBox->hasModifiableSettings())//if the box has modUI
 			{
 				//create a BoxConfigurationDialog in mode true

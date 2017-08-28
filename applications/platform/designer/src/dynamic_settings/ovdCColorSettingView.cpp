@@ -72,6 +72,7 @@ void CColorSettingView::selectColor()
 	sprintf(l_sBuffer, "%i,%i,%i", ov_round((l_oColor.red*100)/65535.), ov_round((l_oColor.green*100)/65535.), ov_round((l_oColor.blue*100)/65535.));
 
 	getBox().setSettingValue(getSettingIndex(), l_sBuffer);
+	setValue(l_sBuffer);
 }
 
 void CColorSettingView::onChange()
