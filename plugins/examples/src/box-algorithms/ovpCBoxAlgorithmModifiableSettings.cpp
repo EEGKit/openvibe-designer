@@ -45,7 +45,7 @@ bool CBoxAlgorithmModifiableSettings::processClock(OpenViBE::Kernel::IMessageClo
 bool CBoxAlgorithmModifiableSettings::updateSettings()
 {
 	m_SettingsValue.clear();
-	// const IBox& l_rStaticBoxContext = this->getStaticBoxContext();
+	const IBox& l_rStaticBoxContext = this->getStaticBoxContext();
 	for(uint32_t i=0; i < l_rStaticBoxContext.getSettingCount(); ++i)
 	{
 		CString l_sSettingValue = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), i);
