@@ -12,13 +12,6 @@
 #define OVD_ScenarioExportContext_SaveMetabox  OpenViBE::CIdentifier(0x529494F1, 0x6C2527D9)
 
 #include <vector>
-namespace Mensia
-{
-	namespace ActivationTool
-	{
-		class CActivationTool;
-	};
-};
 
 namespace OpenViBEDesigner
 {
@@ -209,7 +202,6 @@ namespace OpenViBEDesigner
 #ifdef MENSIA_DISTRIBUTION
 		Mensia::CArchwayHandler m_oArchwayHandler;
 		Mensia::CArchwayHandlerGUI m_oArchwayHandlerGUI;
-		Mensia::ActivationTool::CActivationTool* m_pActivationTool;
 #endif
 	};
 }

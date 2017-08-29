@@ -71,9 +71,9 @@ CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& rKernelCo
 		gtk_builder_add_from_file(l_pBuilderInterfaceSetting, m_sGUIFilename.toASCIIString(), NULL);
 		gtk_builder_connect_signals(l_pBuilderInterfaceSetting, NULL);
 
-#if 1 // this approach fails to set a modal dialog
-		if (!m_bIsScenarioRunning) // in a running scenario, we just hide the buttons
+		if (!m_bIsScenarioRunning)
 		{
+			// TODO : This is not a modal dialog. It would be better if it was.
 			m_pSettingDialog = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration"));
 			char l_sTitle[1024];
 			sprintf(l_sTitle, "Configure %s settings", m_rBox.getName().toASCIIString());
@@ -84,23 +84,6 @@ CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& rKernelCo
 			// This is actually *not* a dialog
 			m_pSettingDialog = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration-scrolledwindow"));
 		}
-#else
-		::GtkWidget *m_pSettingDialog = gtk_dialog_new_with_buttons(
-			"Configure Box Settings",
-			&m_rMainWindow, //set dialog transient for main window
-			GTK_DIALOG_MODAL,
-			"Revert", 0, "Apply", GTK_RESPONSE_APPLY, "Cancel", GTK_RESPONSE_CANCEL, NULL); //set up action buttons
-
-		//unparent contents from builder interface
-		::GtkWidget* l_pContents=GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration-table"));
-		gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(l_pContents)), l_pContents);
-
-		//add contents to dialog
-		::GtkWidget* l_pContentsArea=GTK_DIALOG(m_pSettingDialog)->vbox; //gtk_dialog_get_content_area() not available in current Gtk distribution
-		gtk_container_add(GTK_CONTAINER(l_pContentsArea), l_pContents);
-
-		//action buttons can't be unparented from builder interface and added to dialog, which is why they are added at dialog creation time
-#endif
 		m_pSettingsTable=GTK_TABLE(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration-table"));
 		m_pScrolledWindow=GTK_SCROLLED_WINDOW(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration-scrolledwindow"));
 		m_pViewPort=GTK_VIEWPORT(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration-viewport"));
