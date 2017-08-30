@@ -9,7 +9,7 @@ cmake_policy(SET CMP0048 OLD)
 cmake_policy(SET CMP0057 NEW)
 
 PROJECT(Designer)
-
+SET(CMAKE_INSTALL_LIBDIR lib) # Fix for non debian-based distrib, as it seeems to be a common occurence to name this folder lib32/lib64
 LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake-modules")
 # OpenViBE-specific helper functions that are used by the CMakeLists of the subprojects.
 INCLUDE("OvAddProjects")
@@ -18,16 +18,6 @@ INCLUDE("OvLinkBoostLib")
 INCLUDE("OvDelayLoad")
 INCLUDE("SetProjectVersion")
 INCLUDE("Utilities") # Include functions debug_message, set_build_platform
-
-# ----------------------
-# Set build version
-# ----------------------
-
-# These versions are used by the subprojects by default.
-set_version()
-# Sets the PROJECT_VERSION variable to something, depending on overriding OvSetProjectVersion.cmake files
-OV_SET_PROJECT_VERSION()
-MESSAGE(STATUS "BUILDING VERSION Designer: ${PROJECT_VERSION} Branch : ${OV_PROJECT_BRANCH}~${OV_PROJECT_COMMITHASH}. Based on OpenViBE SDK: ${OV_SDK_VERSION_STRING}")
 
 # ----------------------
 # Build CMake flags
@@ -40,6 +30,16 @@ SET(OV_SOURCE_DEPENDENCIES_PATH "${CMAKE_SOURCE_DIR}/dependencies-source")
 SET(OV_ICON_PATH "${CMAKE_SOURCE_DIR}/scripts/icons")
 
 LIST(APPEND LIST_DEPENDENCIES_PATH "${CMAKE_SOURCE_DIR}/dependencies")
+
+# ----------------------
+# Set build version
+# ----------------------
+
+# These versions are used by the subprojects by default.
+set_version()
+# Sets the PROJECT_VERSION variable to something, depending on overriding OvSetProjectVersion.cmake files
+OV_SET_PROJECT_VERSION()
+MESSAGE(STATUS "BUILDING VERSION Designer: ${PROJECT_VERSION} Branch : ${OV_PROJECT_BRANCH}~${OV_PROJECT_COMMITHASH}. Based on OpenViBE SDK: ${OV_SDK_VERSION_STRING}")
 
 IF(NOT CMAKE_INSTALL_PREFIX)
 	# Default is to build to dist/. If you wish a custom install, set your own MAKE_INSTALL_PREFIX when you call CMake. Safest to do under a fakeroot.

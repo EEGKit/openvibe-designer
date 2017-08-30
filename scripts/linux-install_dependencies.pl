@@ -82,6 +82,7 @@ if ($distribution eq 'Ubuntu 14.04') {
 } elsif ($distribution eq 'Ubuntu 16.04') {
   push @packages, "libgtk2.0-dev";
   push @packages, "libglade2-dev";
+  push @packages, "freeglut3-dev";
 }
 
 # Update package list

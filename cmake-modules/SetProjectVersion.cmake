@@ -1,6 +1,12 @@
 function(OV_SET_PROJECT_VERSION)
+	
+	find_file(OVSDK_DOTINSTALL NAMES .install PATHS ${OPENVIBE_SDK_PATH} NO_DEFAULT_PATH)
+	if(CMAKE_BUILD_TYPE)
+		string(TOLOWER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_LOWER)
+		find_file(OVSDK_DOTINSTALL NAMES .install PATHS ${LIST_DEPENDENCIES_PATH} PATH_SUFFIXES openvibe-sdk-${CMAKE_BUILD_TYPE_LOWER} NO_DEFAULT_PATH)
+	endif()
 
-	file(STRINGS ${OPENVIBE_SDK_PATH}/.install ov_sdk_install_manifest)
+	file(STRINGS ${OVSDK_DOTINSTALL} ov_sdk_install_manifest)
 	foreach(NameAndValue ${ov_sdk_install_manifest})
 		string(STRIP NameAndValue ${NameAndValue})
 		string(REGEX MATCH "^[^=]+" Name ${NameAndValue})
