@@ -12,7 +12,7 @@ using namespace OpenViBEDesigner;
 using namespace std;
 
 #include <iostream>
-#include "ovtkColorGradient.h"
+#include <visualization-toolkit/ovvizColorGradient.h>
 // ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- -----------
 
 namespace
@@ -302,7 +302,7 @@ namespace
 		}
 
 		CMatrix l_oInterpolatedMatrix;
-		OpenViBEToolkit::Tools::ColorGradient::interpolate(l_oInterpolatedMatrix, l_oGradientMatrix, ui32Steps);
+		OpenViBEVisualizationToolkit::Tools::ColorGradient::interpolate(l_oInterpolatedMatrix, l_oGradientMatrix, ui32Steps);
 
 		::GdkGC* l_pGC=gdk_gc_new(l_pUserData->pDrawingArea->window);
 		::GdkColor l_oColor;
@@ -456,7 +456,7 @@ namespace
 		CString l_sInitialGradient=static_cast < CSettingCollectionHelper* >(pUserData)->m_rKernelContext.getConfigurationManager().expand(gtk_entry_get_text(l_pWidget));
 		CMatrix l_oInitialGradient;
 
-		OpenViBEToolkit::Tools::ColorGradient::parse(l_oInitialGradient, l_sInitialGradient);
+		OpenViBEVisualizationToolkit::Tools::ColorGradient::parse(l_oInitialGradient, l_sInitialGradient);
 
 		l_oUserData.vColorGradient.resize(l_oInitialGradient.getDimensionSize(1) > 2 ? l_oInitialGradient.getDimensionSize(1) : 2);
 		for(uint32 i=0; i<l_oInitialGradient.getDimensionSize(1); i++)
@@ -489,7 +489,7 @@ namespace
 				l_oFinalGradient[i*4+2] = l_oUserData.vColorGradient[i].oColor.green * 100. / 65535.;
 				l_oFinalGradient[i*4+3] = l_oUserData.vColorGradient[i].oColor.blue  * 100. / 65535.;
 			}
-			OpenViBEToolkit::Tools::ColorGradient::format(l_sFinalGradient, l_oFinalGradient);
+			OpenViBEVisualizationToolkit::Tools::ColorGradient::format(l_sFinalGradient, l_oFinalGradient);
 			gtk_entry_set_text(l_pWidget, l_sFinalGradient.toASCIIString());
 		}
 

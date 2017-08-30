@@ -1,7 +1,7 @@
 
 #include "ovdCColorGradientSettingView.h"
 #include "../ovd_base.h"
-#include "../ovtkColorGradient.h"
+#include <visualization-toolkit/ovvizColorGradient.h>
 
 #include <iostream>
 #include <cstring>
@@ -99,7 +99,7 @@ void CColorGradientSettingView::configurePressed()
 	CString l_sInitialGradient=m_rKernelContext.getConfigurationManager().expand(gtk_entry_get_text(m_pEntry));
 	CMatrix l_oInitialGradient;
 
-	OpenViBEToolkit::Tools::ColorGradient::parse(l_oInitialGradient, l_sInitialGradient);
+	OpenViBEVisualizationToolkit::Tools::ColorGradient::parse(l_oInitialGradient, l_sInitialGradient);
 	vColorGradient.resize(std::max<size_t>(l_oInitialGradient.getDimensionSize(1), 2));
 	for(size_t i=0; i<l_oInitialGradient.getDimensionSize(1); ++i)
 	{
@@ -131,7 +131,7 @@ void CColorGradientSettingView::configurePressed()
 			l_oFinalGradient[i*4+2] = round(vColorGradient[i].oColor.green * 100. / 65535.);
 			l_oFinalGradient[i*4+3] = round(vColorGradient[i].oColor.blue  * 100. / 65535.);
 		}
-		OpenViBEToolkit::Tools::ColorGradient::format(l_sFinalGradient, l_oFinalGradient);
+		OpenViBEVisualizationToolkit::Tools::ColorGradient::format(l_sFinalGradient, l_oFinalGradient);
 		if(!m_bOnValueSetting)
 		{
 			getBox().setSettingValue(getSettingIndex(), l_sFinalGradient.toASCIIString());
@@ -208,7 +208,7 @@ void CColorGradientSettingView::refreshColorGradient()
 	}
 
 	CMatrix l_oInterpolatedMatrix;
-	OpenViBEToolkit::Tools::ColorGradient::interpolate(l_oInterpolatedMatrix, l_oGradientMatrix, ui32Steps);
+	OpenViBEVisualizationToolkit::Tools::ColorGradient::interpolate(l_oInterpolatedMatrix, l_oGradientMatrix, ui32Steps);
 
 	::GdkGC* l_pGC=gdk_gc_new(pDrawingArea->window);
 	::GdkColor l_oColor;
