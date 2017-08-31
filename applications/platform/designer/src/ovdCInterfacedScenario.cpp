@@ -4059,13 +4059,6 @@ void CInterfacedScenario::stopAndReleasePlayer(void)
 	m_oPlayerIdentifier = OV_UndefinedIdentifier;
 	m_pPlayer = nullptr;
 
-
-	// A. commenting this line allow modified (by UI) settings to be saved (however, the scenario is not marked as changed)
-	//should already be commented in wip-all-designer branch
-	// B. commenting this line make centerOnBox still valid after stop
-	// restore the snapshot so settings override does not modify the scenario !
-	undoCB(false);
-
 	// destroy player windows
 	releasePlayerVisualization();
 
