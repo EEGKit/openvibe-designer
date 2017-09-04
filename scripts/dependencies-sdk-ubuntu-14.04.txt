@@ -1,2 +1,2 @@
-OpenViBE-Release-0.2.99-Ubuntu14.04.zip;openvibe-sdk-release;https://drive.google.com/uc?export=download&id=0B9oYmBwk8WzwcHVzbVEyaHlEZFk
-OpenViBE-Debug-0.2.99-Ubuntu14.04.zip;openvibe-sdk-debug;https://drive.google.com/uc?export=download&id= 0B9oYmBwk8WzwNkFaUUI2NTBXRzg
+OpenViBE-Release-0.2.99.36-Ubuntu14.04.zip;openvibe-sdk-release;https://drive.google.com/uc?export=download&id=0B3jtTn2U9IRfLURYUXJXZ0cyUkU
+OpenViBE-Debug-0.2.99.36-Ubuntu14.04.zip;openvibe-sdk-debug;https://drive.google.com/uc?export=download&id=0B3jtTn2U9IRfLVlQRncyeTF2TEk

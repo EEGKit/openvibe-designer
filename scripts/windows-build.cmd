@@ -180,7 +180,6 @@ if %CallCmake%=="true" (
 )
 if not "!ERRORLEVEL!" == "0" goto terminate_error
 
-
 if !builder! == None (
 	goto terminate_success
 ) else if !builder! == Ninja (

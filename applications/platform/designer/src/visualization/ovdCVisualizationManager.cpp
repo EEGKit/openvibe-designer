@@ -84,7 +84,7 @@ bool CVisualizationManager::setWidget(const CIdentifier& rVisualizationTreeIdent
 
 CIdentifier CVisualizationManager::getUnusedIdentifier(void) const
 {
-	uint64 possibleIdentifier = (((uint64)rand())<<32)+((uint64)rand());
+	uint64_t possibleIdentifier = CIdentifier::random().toUInteger();
 	CIdentifier finalIdentifier;
 	map<CIdentifier, IVisualizationTree*>::const_iterator it;
 	do

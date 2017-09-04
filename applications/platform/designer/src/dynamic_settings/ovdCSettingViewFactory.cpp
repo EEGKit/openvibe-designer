@@ -7,7 +7,7 @@
 #include "ovdCFilenameSettingView.h"
 #include "ovdCScriptSettingView.h"
 #include "ovdCColorSettingView.h"
-//#include "ovdCColorGradientSettingView.h"
+#include "ovdCColorGradientSettingView.h"
 #include "ovdCEnumerationSettingView.h"
 #include "ovdCBitMaskSettingView.h"
 
@@ -46,8 +46,8 @@ CAbstractSettingView *CSettingViewFactory::getSettingView(Kernel::IBox &rBox,
 		return new CScriptSettingView(rBox, ui32Index, m_sBuilderName, m_rKernelContext);
 	if(l_oSettingType==OV_TypeId_Color)
 		return new CColorSettingView(rBox, ui32Index, m_sBuilderName, m_rKernelContext);
-//	if(l_oSettingType==OV_TypeId_ColorGradient)
-//		return new CColorGradientSettingView(rBox, ui32Index, m_sBuilderName, m_rKernelContext);
+	if(l_oSettingType==OV_TypeId_ColorGradient)
+		return new CColorGradientSettingView(rBox, ui32Index, m_sBuilderName, m_rKernelContext);
 	if(m_rKernelContext.getTypeManager().isEnumeration(l_oSettingType))
 		return new CEnumerationSettingView(rBox, ui32Index, m_sBuilderName, m_rKernelContext, l_oSettingType);
 	if(m_rKernelContext.getTypeManager().isBitMask(l_oSettingType))
