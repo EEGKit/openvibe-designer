@@ -540,10 +540,7 @@ OpenViBE::boolean parse_arguments(int argc, char** argv, SConfiguration& rConfig
 		}
 	}
 #else
-	for(int i = 1; i<argc; i++)
-	{
-		l_vArgValue.push_back(argv[i]);
-	}
+	l_vArgValue = std::vector<std::string>(argv + 1, argv + argc);
 #endif
 	l_vArgValue.push_back("");
 
