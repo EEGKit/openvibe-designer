@@ -523,16 +523,28 @@ OpenViBE::boolean parse_arguments(int argc, char** argv, SConfiguration& rConfig
 {
 	SConfiguration l_oConfiguration;
 
-	int i;
 	std::vector < std::string > l_vArgValue;
-	std::vector < std::string >::const_iterator it;
-	for(i = 1; i<argc; i++)
+#if defined TARGET_OS_Windows
+	int argCount;
+	LPWSTR* argListUtf16 = CommandLineToArgvW(GetCommandLineW(), &argCount);
+	for (int i = 1; i < argCount; i++)
 	{
-		l_vArgValue.push_back(argv[i]);
+		GError* error = nullptr;
+		glong itemsRead, itemsWritten;
+		char* argUtf8 = g_utf16_to_utf8(reinterpret_cast<gunichar2*>(argListUtf16[i]), static_cast<size_t>(wcslen(argListUtf16[i])), &itemsRead, &itemsWritten, &error);
+		l_vArgValue.push_back(argUtf8);
+		if (error)
+		{
+			g_error_free(error);
+			return false;
+		}
 	}
+#else
+	l_vArgValue = std::vector<std::string>(argv + 1, argv + argc);
+#endif
 	l_vArgValue.push_back("");
 
-	for(it = l_vArgValue.begin(); it != l_vArgValue.end(); ++it)
+	for(auto it = l_vArgValue.cbegin(); it != l_vArgValue.cend(); ++it)
 	{
 		if(*it == "")
 		{
@@ -612,6 +624,10 @@ OpenViBE::boolean parse_arguments(int argc, char** argv, SConfiguration& rConfig
 		{
 			if(*++it=="") { std::cout << "Error: Switch --random-seed needs an argument\n"; return false; }
 			l_oConfiguration.m_vFlag.push_back(std::make_pair(CommandLineFlag_RandomSeed, *it));
+		}
+		else if (*it == "--g-fatal-warnings")
+		{
+			// Do nothing here but accept this gtk flag
 		}
 		else
 		{

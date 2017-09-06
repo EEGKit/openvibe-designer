@@ -1,4 +1,4 @@
 boost-1.55.zip;boost;https://www.dropbox.com/s/xheqbwrv0m6wgaq/boost-1.55.zip?dl=1
 eigen-3.2.0.zip;eigen;https://www.dropbox.com/s/7uso2oaaenkjerb/eigen-3.2.0.zip?dl=1
-OpenViBE-Release-0.2.99.77-win32.zip;openvibe-sdk-release;https://drive.google.com/uc?export=download&id=0B3jtTn2U9IRfLUlQck9QdUhvTzg
-OpenViBE-Debug-0.2.99.77-win32.zip;openvibe-sdk-debug;https://drive.google.com/uc?export=download&id=0B3jtTn2U9IRfLUlVODhBd0RUejQ
+OpenViBE-Release-0.2.99.80-win32.zip;openvibe-sdk-release;https://drive.google.com/uc?export=download&id=0B9oYmBwk8WzwRWpXYkd5SzlKcUk
+OpenViBE-Debug-0.2.99.80-win32.zip;openvibe-sdk-debug;https://drive.google.com/uc?export=download&id=0B9oYmBwk8WzwOUdGcHVYX09VTG8
