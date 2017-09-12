@@ -130,6 +130,8 @@ find_path(SDK_MODULE_PATH NAMES "AddOpenViBESDKComponents.cmake" PATHS ${OPENVIB
 if(CMAKE_BUILD_TYPE)
 	string(TOLOWER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_LOWER)
 	find_path(SDK_MODULE_PATH NAMES AddOpenViBESDKComponents.cmake PATHS ${OPENVIBE_SDK_PATH};${LIST_DEPENDENCIES_PATH} PATH_SUFFIXES openvibe-sdk-${CMAKE_BUILD_TYPE_LOWER}/share NO_DEFAULT_PATH) # Find "regular builds
+else()
+	find_path(SDK_MODULE_PATH NAMES "AddOpenViBESDKComponents.cmake" PATHS ${LIST_DEPENDENCIES_PATH} PATH_SUFFIXES openvibe-sdk-debug/share openvibe-sdk-release/share NO_DEFAULT_PATH) # Finds multi-type builds
 endif()
 
 if(SDK_MODULE_PATH)
