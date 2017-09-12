@@ -1043,9 +1043,6 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration")),       "clicked", G_CALLBACK(button_toggle_neurort_engine_configuration_cb),   this);
 	m_oArchwayHandlerGUI.m_ButtonOpenEngineConfigurationDialog = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration"));
 #endif
-#if !defined(TARGET_OS_Windows) && !defined(TARGET_OS_Linux)
-	gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_issue_report")));
-#endif
 	// Prepares fast forward feature
 	float64 l_f64FastForwardFactor=m_rKernelContext.getConfigurationManager().expandAsFloat("${Designer_FastForwardFactor}", -1);
 	m_pFastForwardFactor=GTK_SPIN_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-spinbutton_fast-forward-factor"));
@@ -1393,13 +1390,12 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 				"Either the configuration token ${Designer_HelpBrowserURLBase} was modified to an incorrect value, or the documentation is missing.\n";
 		}
 	}
+#ifdef MENSIA_DISTRIBUTION
 	else
 	{
 		// Should not happen unless the user modified the token by hand
 		m_rKernelContext.getLogManager() << LogLevel_Error << "The configuration token ${Designer_HelpBrowserURLBase} seems to be set to an incorrect value.\n";
 	}
-
-#ifdef MENSIA_DISTRIBUTION
 	if (m_oArchwayHandler.initialize() == Mensia::EngineInitialisationStatus::NotAvailable)
 	{
 		gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration")));
@@ -2523,13 +2519,14 @@ void CApplication::aboutLinkClickedCB(const gchar *url)
 void CApplication::browseDocumentationCB(void)
 {
 	m_rKernelContext.getLogManager() << LogLevel_Debug << "CApplication::browseDocumentationCB\n";
-	CString l_sCommand = m_rKernelContext.getConfigurationManager().expand("${Designer_HelpBrowserCommand} \"${Designer_HelpBrowserURLBase}\" ${Designer_HelpBrowserCommandPostfix}");
-	int l_iResult = system(l_sCommand.toASCIIString());
+	CString l_Command = m_rKernelContext.getConfigurationManager().expand("${Designer_HelpBrowserCommand} ${Designer_HelpBrowserDocumentationIndex} ${Designer_HelpBrowserCommandPostfix}");
 
-	if(l_iResult<0)
-	{
-		m_rKernelContext.getLogManager() << LogLevel_Warning << "Could not launch command " << l_sCommand << "\n";
-	}
+	int l_Result = system(l_Command.toASCIIString());
+	OV_WARNING_UNLESS(
+		(l_Result == 0),
+		"Could not launch command " << l_Command << "\n",
+		m_rKernelContext.getLogManager()
+		);
 }
 
 void CApplication::registerLicenseCB(void)
@@ -2555,18 +2552,25 @@ void CApplication::reportIssueCB(void)
 #if defined(TARGET_OS_Windows) && defined(MENSIA_DISTRIBUTION)
 	//On windows, call the issue reporter tool
 	m_rKernelContext.getLogManager() << LogLevel_Debug << "CApplication::reportIssueCB\n";
-	std::string l_sCommand = Directories::getBinDir() + "/neurort-issue_reporter.exe";
+	CString l_Command = Directories::getBinDir() + "/neurort-issue_reporter.exe";
 	STARTUPINFO l_oStartupInfo;
 	PROCESS_INFORMATION lpProcessInfo;
 	GetStartupInfo(&l_oStartupInfo);
-	if(!System::WindowsUtilities::utf16CompliantCreateProcess(NULL,const_cast<char*>(l_sCommand.c_str()), NULL, NULL, NULL, NULL, NULL, NULL, &l_oStartupInfo, &lpProcessInfo))
-	{
-		exit(1);
-	}
-#elif defined TARGET_OS_Linux && defined(MENSIA_DISTRIBUTION)
-	//On other os, open Zendesk home page
-	std::string l_sCommand = "x-www-browser https://mensiatech.zendesk.com/&";
-	system(l_sCommand.c_str());
+	OV_WARNING_UNLESS(
+        (System::WindowsUtilities::utf16CompliantCreateProcess(NULL,const_cast<char*>(l_Command.toASCIIString()), NULL, NULL, NULL, NULL, NULL, NULL, &l_oStartupInfo, &lpProcessInfo)),
+        "Could not launch issue reporter program " << l_Command << "\n",
+        m_rKernelContext.getLogManager()
+        );
+#else
+	m_rKernelContext.getLogManager() << LogLevel_Debug << "CApplication::reportIssueCB\n";
+	CString l_Command = m_rKernelContext.getConfigurationManager().expand("${Designer_WebBrowserCommand} ${Designer_WebBrowserSupportURL} ${Designer_WebBrowserCommandPostfix}");
+	int l_Result = system(l_Command.toASCIIString());
+	
+	OV_WARNING_UNLESS(
+		(l_Result == 0),
+		"Could not launch command " << l_Command << "\n",
+		m_rKernelContext.getLogManager()
+		);	
 #endif
 
 }

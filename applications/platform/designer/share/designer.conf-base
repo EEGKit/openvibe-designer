@@ -1,7 +1,7 @@
 ProjectVersion_Major = @OV_GLOBAL_VERSION_MAJOR@
 ProjectVersion_Minor = @OV_GLOBAL_VERSION_MINOR@
 ProjectVersion_Patch = @OV_GLOBAL_VERSION_PATCH@
-ProjectVersion_Components = {"openvibe-sdk":"@OV_SDK_VERSION_STRING@", "openvibe-designer":"@OV_GLOBAL_VERSION_MAJOR@.@OV_GLOBAL_VERSION_MINOR@.@OV_GLOBAL_VERSION_PATCH@"}
+ProjectVersion_Components = \{"openvibe-sdk":"@OV_SDK_VERSION_STRING@", "openvibe-designer":"@OV_GLOBAL_VERSION_MAJOR@.@OV_GLOBAL_VERSION_MINOR@.@OV_GLOBAL_VERSION_PATCH@"\}
 
 Designer_Locale = C
 Designer_UndoRedoStackSize = 64
@@ -25,24 +25,28 @@ Designer_WebBrowserCommand_Linux = nohup xdg-open
 Designer_WebBrowserCommand_MacOS = open
 Designer_WebBrowserCommand = ${Designer_WebBrowserCommand_${OperatingSystem}}
 Designer_WebBrowserCommandPostfix_Windows = 
-Designer_WebBrowserCommandPostfix_Linux = &
+Designer_WebBrowserCommandPostfix_Linux = >/dev/null 2>&1
 Designer_WebBrowserCommandPostfix_MacOS = &
 Designer_WebBrowserCommandPostfix = ${Designer_WebBrowserCommandPostfix_${OperatingSystem}}
 Designer_WebBrowserOpenViBEHomepage = http://openvibe.inria.fr/
+Designer_WebBrowserSupportURL = ${Designer_WebBrowserOpenViBEHomepage}/tracker
+Designer_WebBrowserHelpURLBase = ${Designer_WebBrowserOpenViBEHomepage}/documentation/@OV_GLOBAL_VERSION_STRING@
 
 #####################################################################################
 # Designer Help (F1) Configuration
 #####################################################################################
 
-Designer_HelpBrowserCommand_Windows = start hh.exe
-Designer_HelpBrowserCommand_Linux = nohup chmsee
-Designer_HelpBrowserCommand_MacOS = open
-Designer_HelpBrowserCommand = ${Designer_HelpBrowserCommand_${OperatingSystem}}
-Designer_HelpBrowserCommandPostfix_Windows = 
-Designer_HelpBrowserCommandPostfix_Linux = &
-Designer_HelpBrowserCommandPostfix_MacOS = &
-Designer_HelpBrowserURLBase = ${Path_Root}/doc/${Brand_Name} Box Plugins Documentation/${Brand_Name} Box Plugins Documentation.chm::
+Designer_HelpBrowserCommand_Windows = ${Designer_WebBrowserCommand_Windows}
+Designer_HelpBrowserCommand_Linux = ${Designer_WebBrowserCommand_Linux}
+Designer_HelpBrowserCommand_MacOS = ${Designer_WebBrowserCommand_MacOS}
+Designer_HelpBrowserCommand = ${Designer_WebBrowserCommand}
+Designer_HelpBrowserCommandPostfix_Windows = ${Designer_WebBrowserCommandPostfix_Windows}
+Designer_HelpBrowserCommandPostfix_Linux = ${Designer_WebBrowserCommandPostfix_Linux}
+Designer_HelpBrowserCommandPostfix_MacOS = ${Designer_WebBrowserCommandPostfix_MacOS}
+Designer_HelpBrowserURLBase = ${Designer_WebBrowserHelpURLBase}
+Designer_HelpBrowserDocumentationIndex =  ${Designer_WebBrowserOpenViBEHomepage}/documentation-index
 Designer_HelpBrowserCommandPostfix = ${Designer_HelpBrowserCommandPostfix_${OperatingSystem}}
+
 
 Designer_ScriptEditorCommand_Windows = notepad
 Designer_ScriptEditorCommand_Linux = xdg-open
