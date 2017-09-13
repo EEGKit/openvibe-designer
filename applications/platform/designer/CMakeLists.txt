@@ -14,7 +14,7 @@ file(GLOB_RECURSE source_files src/*.cpp src/visualization/*.cpp src/dynamic_set
 
 include("FindSourceDependencyJSON")
 
-set(source_files "${source_files};${CMAKE_INSTALL_FULL_DATADIR}/resource-files/${LOWER_BRAND_NAME}-${LOWER_DESIGNER_NAME}.rc")
+set(source_files "${source_files};${CMAKE_BINARY_DIR}/resource-files/${LOWER_BRAND_NAME}-${LOWER_DESIGNER_NAME}.rc")
 add_executable(${PROJECT_NAME} ${ENTRYPOINT} ${source_files})
 
 # Generate launch script
@@ -37,9 +37,9 @@ set_build_platform()
 
 # Install files
 install(TARGETS ${PROJECT_NAME}
-	RUNTIME DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
-	LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
-	ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
+	RUNTIME DESTINATION ${DIST_BINDIR}
+	LIBRARY DESTINATION ${DIST_LIBDIR}
+	ARCHIVE DESTINATION ${DIST_LIBDIR})
 
 
 configure_file(share/designer.conf-base "${CMAKE_CURRENT_BINARY_DIR}/designer.conf" @ONLY)
@@ -47,10 +47,10 @@ configure_file(share/about-dialog.ui-base "${CMAKE_CURRENT_BINARY_DIR}/about-dia
 configure_file(share/interface.ui-base "${CMAKE_CURRENT_BINARY_DIR}/interface.ui")
 configure_file(share/interface-settings.ui-base "${CMAKE_CURRENT_BINARY_DIR}/interface-settings.ui")
 
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/designer.conf" DESTINATION ${CMAKE_INSTALL_FULL_DATADIR}/openvibe/applications/designer)
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/about-dialog.ui" DESTINATION ${CMAKE_INSTALL_FULL_DATADIR}/openvibe/applications/designer)
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/interface.ui" DESTINATION ${CMAKE_INSTALL_FULL_DATADIR}/openvibe/applications/designer)
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/interface-settings.ui" DESTINATION ${CMAKE_INSTALL_FULL_DATADIR}/openvibe/applications/designer)
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/designer.conf" DESTINATION ${DIST_DATADIR}/openvibe/applications/designer)
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/about-dialog.ui" DESTINATION ${DIST_DATADIR}/openvibe/applications/designer)
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/interface.ui" DESTINATION ${DIST_DATADIR}/openvibe/applications/designer)
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/interface-settings.ui" DESTINATION ${DIST_DATADIR}/openvibe/applications/designer)
 
-install(DIRECTORY share/ DESTINATION ${CMAKE_INSTALL_FULL_DATADIR}/openvibe/applications/designer PATTERN PATTERN "*-base*" EXCLUDE)
+install(DIRECTORY share/ DESTINATION ${DIST_DATADIR}/openvibe/applications/designer PATTERN PATTERN "*-base*" EXCLUDE)
 

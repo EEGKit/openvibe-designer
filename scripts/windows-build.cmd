@@ -99,6 +99,8 @@ if /i "%1"=="-h" (
 ) else if /i "%1"=="--dependencies-dir" (
 	set dependencies_dir=-DLIST_DEPENDENCIES_PATH=%2
 	set otherdep=%2
+	set otherdep=!otherdep:;= !
+	set otherdep=!otherdep:"=!
 	SHIFT
 	SHIFT
 	Goto parameter_parse
@@ -132,6 +134,12 @@ if /i "%1"=="-h" (
 	Goto terminate_error
 )
 
+if defined vsgenerate (
+	echo Build type is set to: MultiType.
+) else (
+	echo Build type is set to: %BuildType%.
+)
+
 setlocal
 
 call "windows-initialize-environment.cmd" %PathDep% %otherdep%
@@ -139,24 +147,23 @@ call "windows-initialize-environment.cmd" %PathDep% %otherdep%
 if defined vsgenerate (
 	set generator=-G"%VSCMake%" -T "v120"
 	if not defined build_dir (
-		set build_dir=%root_dir%\..\certivibe-build\studio-vs-project
+		set build_dir=%root_dir%\..\openvibe-designer-build\vs-project
 	)
 	if not defined install_dir (
-		set install_dir=%root_dir%\..\certivibe-build\dist-studio
+		set install_dir=%root_dir%\..\openvibe-designer-build\dist
 	)
-)
-
-if not defined build_dir (
-	set build_dir=%root_dir%\..\openvibe-designer-build\build-%BuildType%
-)
-if not defined install_dir (
-	set install_dir=%root_dir%\..\openvibe-designer-build\dist-%BuildType%
+) else (
+	set build_type="-DCMAKE_BUILD_TYPE=%BuildType%"
+	if not defined build_dir (
+		set build_dir=%root_dir%\..\openvibe-designer-build\build-%BuildType%
+	)
+	if not defined install_dir (
+		set install_dir=%root_dir%\..\openvibe-designer-build\dist-%BuildType%
+	)
 )
 
 mkdir %build_dir% 2>NUL
 pushd %build_dir%
-
-echo Build type is set to: %BuildType%.
 
 if defined PathSDK (
 	echo SDK is located at %PathSDK%
@@ -169,7 +176,7 @@ if not exist "%build_dir%\CMakeCache.txt" set CallCmake="true"
 if %RefreshCMake%==T set CallCmake="true"
 if %CallCmake%=="true" (
 	cmake %root_dir%\ %generator% ^
-		-DCMAKE_BUILD_TYPE=%BuildType% ^
+		%build_type% ^
 		-DCMAKE_INSTALL_PREFIX=%install_dir% ^
 		!sdk_dir! ^
 		-DOV_DISPLAY_ERROR_LOCATION=%DisplayErrorLocation% ^
@@ -186,7 +193,7 @@ if !builder! == None (
 	ninja install
 	if not "!ERRORLEVEL!" == "0" goto terminate_error
 ) else if !builder! == Visual (
-	msbuild Designer.sln
+	msbuild Designer.sln /p:Configuration=%BuildType%
 	if not "!ERRORLEVEL!" == "0" goto terminate_error
 	
 	cmake --build . --target install
