@@ -15,42 +15,27 @@ Let us call this path `PATH_OPENVIBE_SDK`. The other requirement is to know wher
 In order to build Designer, you need a compiler installed. On Windows you need to have Visual Studio 2013 installed, the build system is based on CMake and Ninja, 
 if you don't want to install it on your system, then you can unzip it locally with command by:
 
-Going to `PATH_DESIGNER_SOURCE\scripts` and run:
+Going to `PATH_DESIGNER_SOURCE\scripts` and open command terminal, set variable PROXYPASS with `username:passwd` and run (or use `windows-install-dependencies-auth.cmd` -> see below):
 
 ```
-    powershell.exe -NoExit -NoProfile -ExecutionPolicy Bypass -File windows-install-dependencies.ps1 -dependencies_file PATH_DESIGNER_SOURCE\scripts\windows-build-tools.txt -data_type dependencies -dest_dir PATH_DESIGNER_SOURCE\dependencies
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -file "windows-get-dependencies.ps1" -manifest_file .\windows-build-tools.txt
 ```
-
-### Use last released version of openvibe-sdk
-
-Go to `PATH_DESIGNER_SOURCE\scripts` and run:
-
-```
-    powershell.exe -NoExit -NoProfile -ExecutionPolicy Bypass -File windows-install-dependencies.ps1 -dependencies_file PATH_DESIGNER_SOURCE\scripts\windows-dependencies-sdk.txt -data_type dependencies -dest_dir PATH_DESIGNER_SOURCE\dependencies
-```
-
-This script will download and unzip openvibe-sdk Debug and Release version under respectively `PATH_DESIGNER_SOURCE/dependencies/openvibe-sdk-${build_type}` (${build_type} being debug or release)
-folders. In this configuration, you won't need to overwrite `PATH_OPENVIBE_SDK` and `PATH_OPENVIBE_SDK_DEPENDENCIES`.
-
-### Use local version of openvibe-sdk
-
-By default the scripts expects the SDK to be in `PATH_DESIGNER_SOURCE/dependencies/openvibe-sdk-${build_type}` (${build_type} being debug or release) and 
-certivibe dependencies to be in packet.
-If you use another repository, you need to set 
 
 ### Windows
 
 #### Installing Designer Dependencies
 
-First, install Designer dependencies.
+The simplest way to install dependencies, is, in folder `scripts`:
 
-Go to `PATH_DESIGNER_SOURCE\scripts` and run:
+* copy `windows-install-dependencies-auth.cmd-skeleton`
+* rename it to `windows-install-dependencies-auth.cmd` 
+* edit line `set PROXYPASS=XXX:XXX` with appropriate usernamee and password
+* run it whenever you want to update dependencies.
 
-```
-    powershell.exe -NoExit -NoProfile -ExecutionPolicy Bypass -File windows-install-dependencies.ps1 -dependencies_file PATH_DESIGNER_SOURCE\scripts\windows-dependencies.txt -data_type dependencies -dest_dir PATH_DESIGNER_SOURCE\dependencies
-```
+This file is ignored by Git, since credentials should not be commited to repository.
 
-This will install Designer dependencies into `PATH_DESIGNER_SOURCE\dependencies`
+This script install build tools, SDK dependencies and Designer dependencies. If you have your own CMake install and want to use a local version of openvibe-sdk 
+you can comment the lines build-tools.txt.
 
 #### Compile the source code via the script
 

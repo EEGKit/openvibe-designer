@@ -1,2 +1,3 @@
-cmake-3.4.0.zip;cmake;https://www.dropbox.com/s/bgdqi3k0p8aak4d/cmake-3.4.0.zip?dl=1
-ninja-1.4.0.zip;ninja;https://www.dropbox.com/s/cmqglycj2ztfes7/ninja-1.4.0.zip?dl=1
+https://extranet.mensiatech.com/dependencies/build/windows
+cmake-3.4.0.zip;cmake;3.4.0
+ninja-1.4.0.zip;ninja;1.4.0

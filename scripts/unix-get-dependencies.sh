@@ -48,10 +48,20 @@ while test -n "$1"; do
     esac
     shift
 done
-
 if [ -z ${DEPENDENCIES} ] || [ -z ${CACHE_DIR} ]; then
     usage
     exit 1
+fi
+
+echo "read file: $DEPENDENCIES"
+DEPENDENCY_SERVER=`head -1 ${DEPENDENCIES}`
+echo "Download dependencies from server [$DEPENDENCY_SERVER]."
+if [ -z ${PROXYPASS} ]; then
+    echo "Credentials were not provided. If your dependencies are not up-to-date, you won't be able to download new files."
+else
+    user=`echo ${PROXYPASS} | cut -d ':' -f 1`
+    pass=`echo ${PROXYPASS} | cut -d ':' -f 2`
+    echo "Credentials are provided. Try to download from server with username [$user]."
 fi
 
 if [ ! -d ${CACHE_DIR} ]; then
@@ -59,23 +69,35 @@ if [ ! -d ${CACHE_DIR} ]; then
     exit 2
 fi
 
+function get_dependency() {
+    local _dep=$1
+
+    if [ ! -f ${CACHE_DIR}/${_dep} ]; then
+        echo "Download zip archive: [${DEPENDENCY_SERVER}/${_dep}]"
+        wget --user=$user --password=$pass -nv -P ${CACHE_DIR} ${DEPENDENCY_SERVER}/${_dep}
+    fi
+}
+
 function install_dependency() {
     local _dep=$1 _dir=$2
-    echo "Unzip ${_dep} to ${_dir}"
-    if [ ! -f ${_dep} ]; then
+
+    get_dependency ${_dep}
+
+    echo "Unzip ${CACHE_DIR}/${_dep} to ${OUTPUT_DIR}/${_dir}"
+    if [ ! -f ${CACHE_DIR}/${_dep} ]; then
         echo "Dependency ${_dep} does not exist in cache ${CACHE_DIR}"
         exit 3
     fi
-	mkdir -p ${_dir}
-    unzip -o ${_dep} -d ${_dir}
+    mkdir -p ${OUTPUT_DIR}/${_dir}
+    unzip -q -o ${CACHE_DIR}/${_dep} -d ${OUTPUT_DIR}/${_dir}
 }
 
 
 mkdir -p ${OUTPUT_DIR}
 echo "Get and unzip dependencies"
-cat ${DEPENDENCIES} | while read d; do
+sed 1d ${DEPENDENCIES} | while read d; do
     dep=`echo $d | cut -d ';' -f 1`
-    rep=`echo $d | cut -d ';' -f 2`
+    dir=`echo $d | cut -d ';' -f 2`
 
-    install_dependency ${CACHE_DIR}/${dep} ${OUTPUT_DIR}/${rep}
+    install_dependency ${dep} ${dir}
 done

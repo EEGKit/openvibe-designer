@@ -1,2 +1,3 @@
-gtk-2.22.1-dev.zip;gtk;https://www.dropbox.com/s/uyngn3ywxgijh3i/gtk-2.22.1-dev.zip?dl=1
-gtk-2.22.1-runtime.zip;gtk;https://www.dropbox.com/s/lqd5j98dbswi5nb/gtk-2.22.1-runtime.zip?dl=1
+https://extranet.mensiatech.com/dependencies/build/windows
+gtk-2.22.1-dev.zip;gtk;2.22.1
+gtk-2.22.1-runtime.zip;gtk;2.22.1
