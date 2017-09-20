@@ -936,13 +936,16 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 {
 	m_eCommandLineFlags=eCommandLineFlags;
 	m_sSearchTerm = "";
+	
+	// Load metaboxes from metabox path
+	m_rKernelContext.getMetaboxManager().addMetaboxesFromFiles(m_rKernelContext.getConfigurationManager().expand("${Kernel_Metabox}"));
 
 	// Prepares scenario clipboard
 	CIdentifier l_oClipboardScenarioIdentifier;
 	if(m_pScenarioManager->createScenario(l_oClipboardScenarioIdentifier))
 	{
 		m_pClipboardScenario=&m_pScenarioManager->getScenario(l_oClipboardScenarioIdentifier);
-	}
+	}	
 
 	m_pBuilderInterface=gtk_builder_new(); // glade_xml_new(OVD_GUI_File, "openvibe", NULL);
 	gtk_builder_add_from_file(m_pBuilderInterface, OVD_GUI_File, NULL);
