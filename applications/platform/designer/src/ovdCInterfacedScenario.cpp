@@ -3800,11 +3800,13 @@ bool CInterfacedScenario::browseBoxDocumentation(CIdentifier oBoxId)
 	}
 	// The documentation files do not have spaces in their name, so we remove them
 	l_sHTMLName = l_sHTMLName + CString(getBoxAlgorithmURL(l_sBoxName.toASCIIString()).c_str());
-	
+
+
 	if(m_rScenario.getBoxDetails(oBoxId)->hasAttribute(OV_AttributeId_Box_DocumentationURLBase))
 	{
 		l_sURLBase = m_rKernelContext.getConfigurationManager().expand(m_rScenario.getBoxDetails(oBoxId)->getAttributeValue(OV_AttributeId_Box_DocumentationURLBase));
 	}
+#ifdef MENSIA_DISTRIBUTION	
 	else if(!std::binary_search(m_rApplication.m_vDocumentedBoxes.begin(), m_rApplication.m_vDocumentedBoxes.end(), l_sHTMLName.toASCIIString()))
 	{
 		std::string l_sMsg = std::string("The Documentation for the box ["+ l_sBoxName + "] is missing in ["+ l_sDefaultURLBase +"].\n"
@@ -3816,10 +3818,6 @@ bool CInterfacedScenario::browseBoxDocumentation(CIdentifier oBoxId)
 		gint l_iResponse = gtk_dialog_run(GTK_DIALOG(m_pNoHelpDialog));
 		l_sHTMLName = "";
 		return false;
-	}
-	if(m_rScenario.getBoxDetails(oBoxId)->hasAttribute(OV_AttributeId_Box_DocumentationCommand))
-	{
-		l_sBrowser = m_rKernelContext.getConfigurationManager().expand(m_rScenario.getBoxDetails(oBoxId)->getAttributeValue(OV_AttributeId_Box_DocumentationCommand));
 	}
 
 	// check if the CHM file is present
@@ -3847,7 +3845,13 @@ bool CInterfacedScenario::browseBoxDocumentation(CIdentifier oBoxId)
 			l_sURLBase = l_sDefaultURLBase;
 		}
 	}
+#endif
 	l_sHTMLName = l_sHTMLName + ".html";
+
+	if(m_rScenario.getBoxDetails(oBoxId)->hasAttribute(OV_AttributeId_Box_DocumentationCommand))
+	{
+		l_sBrowser = m_rKernelContext.getConfigurationManager().expand(m_rScenario.getBoxDetails(oBoxId)->getAttributeValue(OV_AttributeId_Box_DocumentationCommand));
+	}
 
 	CString l_sFullURL=l_sURLBase+CString("/")+l_sHTMLName;
 	if(m_rScenario.getBoxDetails(oBoxId)->hasAttribute(OV_AttributeId_Box_DocumentationURL))
