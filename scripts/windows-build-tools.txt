@@ -1,3 +1,2 @@
-https://extranet.mensiatech.com/dependencies/build/windows
-cmake-3.4.0.zip;cmake;3.4.0
-ninja-1.4.0.zip;ninja;1.4.0
+build/windows/cmake-3.4.0.zip;cmake;3.4.0
+build/windows/ninja-1.4.0.zip;ninja;1.4.0

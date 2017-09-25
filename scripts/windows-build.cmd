@@ -17,6 +17,7 @@ set VerboseOuptut=OFF
 set DisplayErrorLocation=ON
 set generator=-G"Ninja"
 set builder=Ninja
+set PlatformTarget=x86
 
 goto parameter_parse
 
@@ -31,12 +32,13 @@ goto parameter_parse
 	echo [--hide-error-location] do not display complete error locations
 	echo [-f^|--force]    force option will force the cmake re-run
 	echo [-v^|--verbose]
-	echo [--sdk <path to openvibe SDK>]
-	echo [--build-dir <dirname>] build directory
-	echo [--install-dir <dirname>] binaries deployment directory
-	echo [--oem-distribution <name of the distribution>]
+	echo [--sdk ^<path to openvibe SDK^>]
+	echo [--build-dir ^<dirname^>] build directory
+	echo [--install-dir ^<dirname^>] binaries deployment directory
+	echo [--oem-distribution ^<name of the distribution^>]
 	echo [--vsproject] Create visual studio project (.sln)
 	echo [--vsbuild] Create visual studio project (.sln) and compiles it
+	echo [--platform-target ^<x86 or x64^>]  Create a 32 or 64 bit. 32bit is the default
 	echo -- Build Type option can be : --release (-r) or --debug (-d). Default is Release.
 	exit /b
 
@@ -129,6 +131,11 @@ if /i "%1"=="-h" (
 	set builder=Visual
 	SHIFT
 	Goto parameter_parse
+) else if /i "%1"=="--platform-target" (
+ 	set PlatformTarget=%2
+	SHIFT
+	SHIFT
+	Goto parameter_parse
 ) else if not "%1" == "" (
 	echo unrecognized option [%1]
 	Goto terminate_error
@@ -142,23 +149,27 @@ if defined vsgenerate (
 
 setlocal
 
-call "windows-initialize-environment.cmd" %PathDep% %otherdep%
+if defined otherdep (
+	set initialize_env_args="--dependencies-dir %otherdep%"
+)
+
+call "windows-initialize-environment.cmd" --platform-target %PlatformTarget% %initialize_env_args%
 
 if defined vsgenerate (
 	set generator=-G"%VSCMake%" -T "v120"
 	if not defined build_dir (
-		set build_dir=%root_dir%\..\openvibe-designer-build\vs-project
+		set build_dir=%root_dir%\..\openvibe-designer-build\vs-project-%PlatformTarget%
 	)
 	if not defined install_dir (
-		set install_dir=%root_dir%\..\openvibe-designer-build\dist
+		set install_dir=%root_dir%\..\openvibe-designer-build\dist-%BuildType%-%PlatformTarget%
 	)
 ) else (
 	set build_type="-DCMAKE_BUILD_TYPE=%BuildType%"
 	if not defined build_dir (
-		set build_dir=%root_dir%\..\openvibe-designer-build\build-%BuildType%
+		set build_dir=%root_dir%\..\openvibe-designer-build\build-%BuildType%-%PlatformTarget%
 	)
 	if not defined install_dir (
-		set install_dir=%root_dir%\..\openvibe-designer-build\dist-%BuildType%
+		set install_dir=%root_dir%\..\openvibe-designer-build\dist-%BuildType%-%PlatformTarget%
 	)
 )
 
@@ -196,7 +207,7 @@ if !builder! == None (
 	msbuild Designer.sln /p:Configuration=%BuildType%
 	if not "!ERRORLEVEL!" == "0" goto terminate_error
 	
-	cmake --build . --target install
+	cmake --build . --config %BuildType% --target install
 	if not "!ERRORLEVEL!" == "0" goto terminate_error
 )
 

@@ -31,7 +31,7 @@ for %%A in (%*) DO (
 
 call "windows-initialize-environment.cmd" --sdk "%PathSDK%"
 
-SET "OV_PATH_ROOT=%CD%\..\..\openvibe-designer-build\dist\%BuildType%"
+SET "OV_PATH_ROOT=%CD%\..\..\openvibe-designer-build\dist\%BuildType%-%PlatformTarget%"
 SET "PATH=%OV_PATH_ROOT%\bin;%PATH%"
 
 REM for visual studio express...

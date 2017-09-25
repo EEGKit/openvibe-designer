@@ -1037,11 +1037,6 @@ namespace OpenViBEPlugins
 				uint32 l_ui32Index=m_oSampleValues[i];
 				if(l_ui32Index>12)
 				{
-#if defined TARGET_OS_Windows
-#ifndef NDEBUG
-					_asm int 3;
-#endif
-#endif
 					l_ui32Index=12;
 				}
 
