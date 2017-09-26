@@ -9,3 +9,7 @@ CustomCMakeLists.txt
 .*.swp
 *~
 *.swp
+# .build is generated on automated packaging on CI
+.build
+# this file can be copied from skeleton, and updated with appropriate credentials
+scripts/windows-install-dependencies-auth.cmd

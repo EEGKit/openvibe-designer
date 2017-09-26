@@ -1,0 +1,17 @@
+REM Install Designer dependencies
+REM 
+@echo off
+
+echo Install all dependencies
+
+REM PROXYPASS must be changed with appropriate credentials
+set PROXYPASS=XXX:XXX
+
+REM Install build tools, CMake, Ninja, comment line if you already have an instance of CMake installed
+powershell.exe -NoProfile -ExecutionPolicy Bypass -file "windows-get-dependencies.ps1" -manifest_file .\windows-build-tools.txt
+REM Install openvibe-SDK dependencies, you can comment this line if you always wish to use a local version of openvibe-sdk
+powershell.exe -NoProfile -ExecutionPolicy Bypass -file "windows-get-dependencies.ps1" -manifest_file .\windows-dependencies-sdk.txt
+REM Install Designer dependencies
+powershell.exe -NoProfile -ExecutionPolicy Bypass -file "windows-get-dependencies.ps1" -manifest_file .\windows-dependencies.txt
+
+pause

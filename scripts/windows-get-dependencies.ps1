@@ -8,14 +8,19 @@
 	- Download dependencies if: (Currently does not download!)
 		* cache found but dependency not found in the cache
 		* cache not found (old archives are overwritten)
-	- Extract dependencies in destination folder (old dependencies are overwritten)
+	- Extract dependencies in destination folder (old dependencies are overwritten) if:
+		* dependencies were never unzipped
+		* the version of unzipped dependency is correct (read from manifest version file)
+	- write manifest version file, named after the manifest file name and suffixed with "-version", 
+	it contains the version of lastly unzipped dependencies such as:
+		folder_to_unzip=version_number
 
 .PARAMETER dependencies_file
 	The manifest file containing the required archives to install.
 
-	Expected format is:
-	archive_name;folder_to_unzip;archive_url
-	archive_name;folder_to_unzip;archive_url
+	First line is the base URL of the dependencies, following lines are formatted as:
+	archive_name;folder_to_unzip;version_number
+	archive_name;folder_to_unzip;version_number
 	...
 .PARAMETER dest_dir
 	Optional: if unspecified then by default it will be set to $script_root\..\dependencies
@@ -27,31 +32,29 @@
 	Cache directory for extracted archives. Each archive found in the manifest file
 	is extracted from cache_dir to 'dest_dir\folder_to_unzip'.
 
-.PARAMETER 7zip
-	Path to 7zip executable on machine.
-	optional: if specified, 7zip is used to extract archives (much faster).
 .NOTES
-	File Name      : windows-install-dependencies.ps1
+	File Name      : windows-get-dependencies.ps1
 	Prerequisite   : Tested with PS v4.0 on windows 10 pro.
+	
+	Environment variables will be used if set:
+		* PROXYPASS: Used to set credentials, should be formed as user:passwd
+		* ZIP_EXECUTABLE: should be set to the path to 7zip executable. If unset, script will try to read registry keys.
 .LINK
 	Detailed specifications:
 	https://jira.mensiatech.com/confluence/pages/viewpage.action?spaceKey=CT&title=Dependency+management
 .EXAMPLE
-	powershell.exe -NoExit -NoProfile -ExecutionPolicy Bypass -File \absolute\path\to\windows-install-dependencies.ps1 -manifest_file .\windows-dependencies.txt
+	powershell.exe -NoExit -NoProfile -ExecutionPolicy Bypass -File \absolute\path\to\windows-get-dependencies.ps1 -manifest_file .\windows-dependencies.txt
 .EXAMPLE
-	powershell.exe -NoExit -NoProfile -ExecutionPolicy Bypass -File \absolute\path\to\windows-install-dependencies.ps1 -manifest_file .\windows-dependencies.txt -dest_dir \absolute\path\to\dep\ -cache_dir \absolute\path\to\cache -proxy_pass user:passwd -7zip "\C:\Program Files\7-Zip\7z.exe"
+	powershell.exe -NoExit -NoProfile -ExecutionPolicy Bypass -File \absolute\path\to\windows-get-dependencies.ps1 -manifest_file .\windows-dependencies.txt -dest_dir \absolute\path\to\dep\ -cache_dir \absolute\path\to\cache
 #>
 
 #
 # script parameters
 #
-
 Param(
 [parameter(Mandatory=$true)][ValidateScript({Test-Path $_ })][string]$manifest_file,
 [parameter(Mandatory=$false)][string]$cache_dir,
-[parameter(Mandatory=$false)][ValidateNotNullOrEmpty()][string]$dest_dir = ".\..\dependencies",
-[parameter(Mandatory=$false)][string]$proxy_pass,
-[parameter(Mandatory=$false)][ValidateScript({Test-Path $_ })][string]$7zip_executable
+[parameter(Mandatory=$false)][ValidateNotNullOrEmpty()][string]$dest_dir = ".\..\dependencies"
 )
 
 $manifest_file = [System.IO.Path]::GetFullPath($manifest_file)
@@ -88,12 +91,30 @@ Write-Host ""
 
 Write-Host "Configure Web client"
 $WebClient = New-Object System.Net.WebClient
-if($proxy_pass){
-	$Username, $Password = $proxy_pass.split(':',2)
+if($env:PROXYPASS){
+	$Username, $Password = $env:PROXYPASS.split(':',2)
 	Write-Host "Credentials are provided. Try to download from server with username [$Username]."
 	$WebClient.Credentials = New-Object System.Net.Networkcredential($Username, $Password)
+} else {
+	Write-Host "Credentials were not provided. If your dependencies are not up-to-date, you won't be able to download new files."
 }
 Write-Host ""
+
+if ($env:ZIP_EXECUTABLE) {
+	$Script:7zip_executable=$env:ZIP_EXECUTABLE
+} else {
+	Try {
+		$Script:7zip_executable=(Get-ItemProperty HKLM:\Software\7-Zip).Path + "\7z.exe"
+	} Catch {
+		Write-Host "7-Zip was not found in register keys. Install it will fasten unzip."
+	}
+}
+if ($Script:7zip_executable -and (Test-Path $Script:7zip_executable)) {
+	Write-Host "Found 7-Zip in registry keys. It will be used to unzip archives."
+} else {
+	Write-Host "7-Zip was not found in register keys. Install it will quicken the unzipping."
+	$Script:7zip_executable=""
+}
 
 Write-Host "===Parameters==="
 Write-Host "Dependencies file = $manifest_file"
@@ -105,10 +126,17 @@ Write-Host ""
 #
 
 # monitoring variables
-$Script:download_count = 0
 $Script:extract_count = 0
+$Script:download_count = 0
+$Script:dependency_server = "https://extranet.mensiatech.com/dependencies/build"
+$Script:manifest_file_name = (Get-Item $manifest_file).Basename
 
-$Script:dependency_server = "UNUSED"
+Try { 
+	$Script:old_dep_versions = import-csv $dest_dir\$Script:manifest_file_name-versions.txt -Delimiter '=' -Header Dependency,Version
+} Catch {
+	Write-Host "Found no manifest version file."
+}
+$Script:dep_versions = ""
 
 #
 # script functions
@@ -162,32 +190,34 @@ function ExpandZipFile($zip, $dest)
 
 }
 
-function InstallDeps($arch, $dir, $dropbox_url)
+function InstallDeps($arch, $dir, $version)
 {
 	$zip = $Script:cache_dir + "\" + $arch
 
 	if(-Not (Test-Path $zip)) {
-		if($proxy_pass){
+		if($Username){
 			$url = $Script:dependency_server + "/" + $arch
-		}
-		elseif($dropbox_url) {
-			Write-Host "- Credentials are not specified. Try to download from Dropbox."
-			$url = $dropbox_url
-		}
-		else {
+		} else {
 			Write-Host "- Credentials and dropbox link are not specified, can not download dependency."
-			return
+			exit
 		}
 
 		Write-Host "Download: [" $url "] -> [" $zip "]."
 		$Script:WebClient.DownloadFile( $url, $zip )
-		
-		if(-Not (Test-Path $zip)) {
-			exit
-		}
+		$Script:download_count++
+	}
+	if(-Not (Test-Path $zip)) {
+		exit
 	}
 
-	ExpandZipFile $zip ($Script:dest_dir + "\" + $dir)
+	$old_dep_version=$($Script:old_dep_versions | Where-Object  {$_.dependency -eq $dir}).version
+	if((Test-Path ($Script:dest_dir + "\" + $dir)) -and ($old_dep_version -eq $version)) {
+		Write-Host "No need to unzip dependency. Already at the good version: " $old_dep_version "."
+	} else {
+		Write-Host "Dependency version is not the good one: [" $old_dep_version "]. Should be " $version
+		ExpandZipFile $zip ($Script:dest_dir + "\" + $dir)
+	}
+	$Script:dep_versions += $dir + "=" + $version + "`n"
 }
 
 #
@@ -198,16 +228,19 @@ Write-Host ""
 Write-Host "===Installing dependencies==="
 
 $Script:timer = [System.Diagnostics.Stopwatch]::StartNew()
-foreach ($dep in (Get-Content $manifest_file)) {
-	$arch, $dir, $dropbox_url = $dep.split(';',3)
-	InstallDeps $arch $dir $dropbox_url
+$Script:dependency_server,$manifest_content = Get-Content $manifest_file
+foreach ($dep in $manifest_content) {
+	$arch, $dir, $version = $dep.split(';',3)
+	InstallDeps $arch $dir $version
 }
 $timer.Stop()
+
+$Script:dep_versions > $dest_dir\$Script:manifest_file_name-versions.txt
 
 Write-Host ""
 Write-Host "===Install Summary==="
 Write-Host "State = Success"
-Write-Host "Number of archives downloaded = $download_count"
-Write-Host "Number of archives extracted = $extract_count"
+Write-Host "Number of archives downloaded = $Script:download_count"
+Write-Host "Number of archives extracted = $Script:extract_count"
 Write-Host "Installation time = "  $([string]::Format("{0:d2}h:{1:d2}mn:{2:d2}s", $timer.Elapsed.hours, $timer.Elapsed.minutes, $timer.Elapsed.seconds)) -nonewline
 Write-Host ""
