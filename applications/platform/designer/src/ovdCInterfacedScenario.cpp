@@ -644,6 +644,11 @@ CInterfacedScenario::CInterfacedScenario(const IKernelContext& rKernelContext, C
 		if (!warningUnknown && !l_oBoxProxy.isBoxAlgorithmPluginPresent())
 		{
 			m_rKernelContext.getLogManager() << LogLevel_Warning << "Scenario contains unknown box algorithm(s).\n";
+			if (l_oBoxProxy.isMetabox())
+			{	
+				CString mPath = m_rKernelContext.getConfigurationManager().expand("${Kernel_Metabox}");
+				m_rKernelContext.getLogManager() <<  LogLevel_Warning << "Some Metaboxes could not be found in [" << mPath << "]\n";
+			}		
 			warningUnknown = true;
 		}
 	}

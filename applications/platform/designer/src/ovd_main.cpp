@@ -1005,7 +1005,6 @@ int go(int argc, char ** argv)
 							insertPluginObjectDesc_to_GtkTreeStore(*l_pKernelContext, cb_collector1.getPluginObjectDescMap(), app.m_pBoxAlgorithmTreeModel, app.m_vNewBoxes, app.m_vUpdatedBoxes, app.m_bIsNewVersion);
 							insertPluginObjectDesc_to_GtkTreeStore(*l_pKernelContext, cb_collector2.getPluginObjectDescMap(), app.m_pAlgorithmTreeModel, app.m_vNewBoxes, app.m_vUpdatedBoxes);
 
-							l_pKernelContext->getMetaboxManager().addMetaboxesFromFiles(l_pKernelContext->getConfigurationManager().expand("${Kernel_Metabox}"));
 							std::map<std::string, const OpenViBE::Plugins::IPluginObjectDesc*> metaboxDescMap;
 							CIdentifier l_oIdentifier;
 							while ((l_oIdentifier = l_pKernelContext->getMetaboxManager().getNextMetaboxObjectDescIdentifier(l_oIdentifier)) != OV_UndefinedIdentifier)
