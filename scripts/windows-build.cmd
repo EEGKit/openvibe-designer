@@ -204,7 +204,13 @@ if !builder! == None (
 	ninja install
 	if not "!ERRORLEVEL!" == "0" goto terminate_error
 ) else if !builder! == Visual (
-	msbuild Designer.sln /p:Configuration=%BuildType%
+	if %PlatformTarget% == x86 (
+		set msplatform=Win32
+	) else (
+		set msplatform=%PlatformTarget%
+	)
+	msbuild Designer.sln /p:Configuration=%BuildType% /p:Platform="!msplatform!"
+
 	if not "!ERRORLEVEL!" == "0" goto terminate_error
 	
 	cmake --build . --config %BuildType% --target install
