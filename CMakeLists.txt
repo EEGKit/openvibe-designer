@@ -170,7 +170,7 @@ string(TIMESTAMP COPYRIGHT_DATE "2012-%Y")
 
 # We deduce the branding from the OEM_DISTRIBUTION
 IF(OEM_DISTRIBUTION STREQUAL "openvibe")
-	SET(OV_CONFIG_SUBDIR "OpenVIBE")
+	SET(OV_CONFIG_SUBDIR "OpenVIBE" CACHE STRING "Subdirectory under user directory when configuration and logs will be saved")
 	SET(BRAND_NAME "OpenViBE")
 	SET(COMPANY_NAME "Inria")
 	SET(DESIGNER_NAME "Designer")
@@ -188,7 +188,7 @@ Affero General Public License for more details.\
 You should have received a copy of the GNU Affero General Public\
 License along with this program.  If not, see http://www.gnu.org/licenses/ .")
 ELSEIF(OEM_DISTRIBUTION STREQUAL "mensia")
-	SET(OV_CONFIG_SUBDIR "mensia")
+	SET(OV_CONFIG_SUBDIR "mensia" CACHE STRING "Subdirectory under user directory when configuration and logs will be saved")
 	SET(BRAND_NAME "NeuroRT")
 	SET(DESIGNER_NAME "Studio")
 	SET(COMPANY_NAME "Mensia Technologies SA")

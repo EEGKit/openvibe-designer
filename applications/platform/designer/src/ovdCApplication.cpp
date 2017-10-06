@@ -323,14 +323,14 @@ namespace
 	{
 		if(!static_cast<CApplication*>(pUserData)->displayChangelogWhenAvailable())
 		{
-			std::string applicationVersion = static_cast<CApplication*>(pUserData)->m_rKernelContext.getConfigurationManager().expand("${Application_Version}");
+			std::string applicationVersion = static_cast<const char*>(static_cast<CApplication*>(pUserData)->m_rKernelContext.getConfigurationManager().expand("${Application_Version}"));
 			::GtkWidget* l_pInfoDialog = gtk_message_dialog_new(
 				NULL,
 				GTK_DIALOG_MODAL,
 				GTK_MESSAGE_INFO,
 				GTK_BUTTONS_OK,
 				"No boxes were added or updated in version %s of " DESIGNER_NAME ".",
-				applicationVersion != "${Application_Version}" ? applicationVersion : ProjectVersion
+				applicationVersion != "${Application_Version}" ? applicationVersion.c_str() : ProjectVersion
 				);
 			gtk_window_set_title(GTK_WINDOW(l_pInfoDialog), "No new boxes");
 			gtk_dialog_run(GTK_DIALOG(l_pInfoDialog));
@@ -954,11 +954,10 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 	gtk_builder_add_from_file(m_pBuilderInterface, OVD_GUI_File, NULL);
 	gtk_builder_connect_signals(m_pBuilderInterface, NULL);
 
-	const std::string defaultProjectVersion = m_rKernelContext.getConfigurationManager().expand("${ProjectVersion_Major}.${ProjectVersion_Minor}.${ProjectVersion_Patch}");
-	std::string applicationVersion = m_rKernelContext.getConfigurationManager().expand("${Application_Version}");
+	std::string applicationVersion = static_cast<const char*>(m_rKernelContext.getConfigurationManager().expand("${Application_Version}"));
 	if (applicationVersion == "${Application_Version}")
 	{
-		applicationVersion = defaultProjectVersion;
+		applicationVersion = static_cast<const char*>(m_rKernelContext.getConfigurationManager().expand("${ProjectVersion_Major}.${ProjectVersion_Minor}.${ProjectVersion_Patch}"));
 	}
 	std::string defaultWindowTitle = BRAND_NAME " " DESIGNER_NAME " " + applicationVersion;
 
@@ -1428,13 +1427,12 @@ bool CApplication::displayChangelogWhenAvailable()
 		gtk_window_set_title(GTK_WINDOW(l_pDialog), "Changelog");
 
 
-		std::string projectVersion = m_rKernelContext.getConfigurationManager().expand("${Application_Version}");
+		std::string projectVersion = static_cast<const char*>(m_rKernelContext.getConfigurationManager().expand("${Application_Version}"));
 		projectVersion = (projectVersion != "${Application_Version}") ? projectVersion : static_cast<std::string>(m_rKernelContext.getConfigurationManager().expand("${ProjectVersion_Major}.${ProjectVersion_Minor}.${ProjectVersion_Patch}"));
 
 		gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(l_pDialog), projectVersion.c_str());
 
 		std::string l_sLabelNewBoxesList = "<big><b>Changes in version " + projectVersion + " of the software:</b></big>";
-		bool l_bUnstableBoxes = false;
 		if(!m_vNewBoxes.empty())
 		{
 			l_sLabelNewBoxesList += "\n<big>The following boxes were added:</big>\n";
@@ -2498,7 +2496,7 @@ void CApplication::aboutOpenViBECB(void)
 	gchar *strval;
 	g_object_get(l_pDialog, "comments", &strval, NULL);
 	// We use a lookup instead of expansion as JSON can contain {} characters
-	std::string componentVersionsJSON = m_rKernelContext.getConfigurationManager().lookUpConfigurationTokenValue("ProjectVersion_Components");
+	std::string componentVersionsJSON = static_cast<const char*>(m_rKernelContext.getConfigurationManager().expand("${ProjectVersion_Components}"));
 	if (componentVersionsJSON.length() != 0)
 	{
 		// This check is necessary because the asignemt operator would fail with an assert

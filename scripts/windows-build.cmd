@@ -36,6 +36,7 @@ goto parameter_parse
 	echo [--build-dir ^<dirname^>] build directory
 	echo [--install-dir ^<dirname^>] binaries deployment directory
 	echo [--oem-distribution ^<name of the distribution^>]
+	echo [--userdata-subdir ^<dirname^>] name of the userdata sub directory
 	echo [--vsproject] Create visual studio project (.sln)
 	echo [--vsbuild] Create visual studio project (.sln) and compiles it
 	echo [--platform-target ^<x86 or x64^>]  Create a 32 or 64 bit. 32bit is the default
@@ -100,14 +101,19 @@ if /i "%1"=="-h" (
 	Goto parameter_parse
 ) else if /i "%1"=="--dependencies-dir" (
 	set dependencies_dir=-DLIST_DEPENDENCIES_PATH=%2
-	set otherdep=%2
-	set otherdep=!otherdep:;= !
-	set otherdep=!otherdep:"=!
+	set initialize_env_args=%2
+	set initialize_env_args=!initialize_env_args:;= !
+	set initialize_env_args=--dependencies-dir !initialize_env_args:"=!
 	SHIFT
 	SHIFT
 	Goto parameter_parse
 ) else if /i "%1"=="--oem-distribution" (
 	set OEMDistribution=%2
+	SHIFT
+	SHIFT
+	Goto parameter_parse
+) else if /i "%1" == "--userdata-subdir" (
+	set UserDataSubdir="-DOV_CONFIG_SUBDIR=%2"
 	SHIFT
 	SHIFT
 	Goto parameter_parse
@@ -149,12 +155,7 @@ if defined vsgenerate (
 
 setlocal
 
-if defined otherdep (
-	set initialize_env_args="--dependencies-dir %otherdep%"
-)
-
 call "windows-initialize-environment.cmd" --platform-target %PlatformTarget% %initialize_env_args%
-
 if defined vsgenerate (
 	set generator=-G"%VSCMake%" -T "v120"
 	if not defined build_dir (
@@ -192,6 +193,7 @@ if %CallCmake%=="true" (
 		!sdk_dir! ^
 		-DOV_DISPLAY_ERROR_LOCATION=%DisplayErrorLocation% ^
 		-DOEM_DISTRIBUTION=%OEMDistribution% ^
+		%UserDataSubdir% ^
 		-DOV_PACKAGE=%PackageOption% ^
 		-DFlag_VerboseOutput=%VerboseOutput% ^
 		%dependencies_dir%
