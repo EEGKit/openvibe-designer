@@ -1,7 +1,7 @@
 #include "ovdCScenarioStateStack.h"
 
 #include "ovdCInterfacedScenario.h"
-#include <zlib.h>
+#include <../zlib.h>
 #include <ovp_global_defines.h>
 
 using namespace OpenViBE;

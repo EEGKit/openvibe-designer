@@ -1,5 +1,4 @@
-https://extranet.mensiatech.com/dependencies/build/windows
-boost-1.55.zip;boost;1.55
-eigen-3.2.0.zip;eigen;3.2.0
-OpenViBE-Release-0.2.99.80-win32.zip;openvibe-sdk-release;0.2.99.80
-OpenViBE-Debug-0.2.99.80-win32.zip;openvibe-sdk-debug;0.2.99.80
+build/windows/boost_1.58_x86_vc120_dev.zip;boost;1.58
+build/windows/eigen-3.2.0.zip;eigen;3.2.0
+build/windows/OpenViBE-Release-0.2.99.beta64bit-win32.zip;openvibe-sdk-release;0.2.99.beta64bit
+build/windows/OpenViBE-Debug-0.2.99.beta64bit-win32.zip;openvibe-sdk-debug;0.2.99.beta64bit

@@ -90,6 +90,10 @@ Write-Host "All archives will be downloaded in " $cache_dir
 Write-Host ""
 
 Write-Host "Configure Web client"
+
+# Base URL of dependency server is read in environment variable
+$Script:dependency_server = $env:URL
+
 $WebClient = New-Object System.Net.WebClient
 if($env:PROXYPASS){
 	$Username, $Password = $env:PROXYPASS.split(':',2)
@@ -128,7 +132,6 @@ Write-Host ""
 # monitoring variables
 $Script:extract_count = 0
 $Script:download_count = 0
-$Script:dependency_server = "https://extranet.mensiatech.com/dependencies/build"
 $Script:manifest_file_name = (Get-Item $manifest_file).Basename
 
 Try { 
@@ -195,10 +198,11 @@ function InstallDeps($arch, $dir, $version)
 	$zip = $Script:cache_dir + "\" + $arch
 
 	if(-Not (Test-Path $zip)) {
-		if($Username){
+		if($Username -and $Script:dependency_server){
 			$url = $Script:dependency_server + "/" + $arch
 		} else {
-			Write-Host "- Credentials and dropbox link are not specified, can not download dependency."
+			Write-Host "- Credentials or $Script:dependency_server are not specified, can not download dependency. "
+			Write-Host "- They have to be set through environment variables: PROXYPASS and URL."
 			exit
 		}
 
@@ -228,8 +232,7 @@ Write-Host ""
 Write-Host "===Installing dependencies==="
 
 $Script:timer = [System.Diagnostics.Stopwatch]::StartNew()
-$Script:dependency_server,$manifest_content = Get-Content $manifest_file
-foreach ($dep in $manifest_content) {
+foreach ($dep in Get-Content $manifest_file) {
 	$arch, $dir, $version = $dep.split(';',3)
 	InstallDeps $arch $dir $version
 }

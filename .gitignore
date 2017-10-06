@@ -1,5 +1,6 @@
 local-tmp
 dependencies
+dependencies_x64
 scripts/win32-dependencies.cmd
 dist
 build
@@ -12,4 +13,5 @@ CustomCMakeLists.txt
 # .build is generated on automated packaging on CI
 .build
 # this file can be copied from skeleton, and updated with appropriate credentials
-scripts/windows-install-dependencies-auth.cmd
+scripts/windows-install-dependencies-custom.cmd
+scripts/windows-install-dependencies-x64-custom.cmd

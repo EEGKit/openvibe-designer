@@ -29,7 +29,19 @@ OPTION(OV_DISPLAY_ERROR_LOCATION ON)
 SET(OV_SOURCE_DEPENDENCIES_PATH "${CMAKE_SOURCE_DIR}/dependencies-source")
 SET(OV_ICON_PATH "${CMAKE_SOURCE_DIR}/scripts/icons")
 
-LIST(APPEND LIST_DEPENDENCIES_PATH "${CMAKE_SOURCE_DIR}/dependencies")
+IF(WIN32)
+	IF("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+		SET(OV_DEPENDENCIES_PLATFORM_FOLDER_NAME "dependencies_x64")
+	ELSEIF("${CMAKE_SIZEOF_VOID_P}" EQUAL "4")
+		SET(OV_DEPENDENCIES_PLATFORM_FOLDER_NAME "dependencies")
+	ELSE()
+		SET(OV_DEPENDENCIES_PLATFORM_FOLDER_NAME "dependencies")
+	ENDIF()
+ELSE()
+	SET(OV_DEPENDENCIES_PLATFORM_FOLDER_NAME "dependencies")
+ENDIF()
+
+LIST(APPEND LIST_DEPENDENCIES_PATH "${CMAKE_SOURCE_DIR}/${OV_DEPENDENCIES_PLATFORM_FOLDER_NAME}")
 
 # ----------------------
 # Set build version
@@ -78,6 +90,7 @@ if(NOT CMAKE_BUILD_TYPE AND CMAKE_GENERATOR MATCHES "Visual Studio*")
 elseif(CMAKE_BUILD_TYPE AND OV_PACKAGE)
 	# Add directories that OpenViBE will use to look for its components runtime, unless overridden by environment variables in the launch scripts.
 	# These defines should only be used in "openvibe/ov_directories.h".
+
 	add_definitions(-DOV_CMAKE_PATH_ROOT="${CMAKE_INSTALL_PREFIX}")
 	add_definitions(-DOV_CMAKE_PATH_BIN="${CMAKE_INSTALL_FULL_BINDIR}")
 	add_definitions(-DOV_CMAKE_PATH_LIB="${CMAKE_INSTALL_FULL_LIBDIR}")
@@ -105,7 +118,16 @@ elseif(CMAKE_BUILD_TYPE AND OV_PACKAGE)
 		execute_process(COMMAND bash -c "echo -n $(lsb_release -i -s)$(lsb_release -r -s)"
 			OUTPUT_VARIABLE CPACK_SYSTEM_NAME)
 	endif()
-	set(CPACK_PACKAGE_NAME "OpenViBE${CMAKE_PROJECT_NAME}-${CMAKE_BUILD_TYPE}")
+
+	IF("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+		SET(PLATFORM_TARGET "x64")
+	ELSEIF("${CMAKE_SIZEOF_VOID_P}" EQUAL "4")
+		SET(PLATFORM_TARGET "x86")
+	ELSE()
+		SET(PLATFORM_TARGET "Unknown")
+	ENDIF()
+
+	set(CPACK_PACKAGE_NAME "OpenViBE${CMAKE_PROJECT_NAME}-${CMAKE_BUILD_TYPE}-${PLATFORM_TARGET}")
 	include(CPack)
 elseif(CMAKE_BUILD_TYPE)
 	# Add directories that OpenViBE will use to look for its components runtime, unless overridden by environment variables in the launch scripts.
@@ -132,7 +154,7 @@ if(CMAKE_BUILD_TYPE)
 	string(TOLOWER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_LOWER)
 	find_path(SDK_MODULE_PATH NAMES AddOpenViBESDKComponents.cmake PATHS ${OPENVIBE_SDK_PATH};${LIST_DEPENDENCIES_PATH} PATH_SUFFIXES openvibe-sdk-${CMAKE_BUILD_TYPE_LOWER}/share NO_DEFAULT_PATH) # Find "regular builds
 else()
-	find_path(SDK_MODULE_PATH NAMES "AddOpenViBESDKComponents.cmake" PATHS ${LIST_DEPENDENCIES_PATH} PATH_SUFFIXES openvibe-sdk-debug/share openvibe-sdk-release/share NO_DEFAULT_PATH) # Finds multi-type builds
+	find_path(SDK_MODULE_PATH NAMES "AddOpenViBESDKComponents.cmake" PATHS ${LIST_DEPENDENCIES_PATH} PATH_SUFFIXES openvibe-sdk-Debug/share openvibe-sdk-Release/share NO_DEFAULT_PATH) # Finds multi-type builds
 endif()
 
 if(SDK_MODULE_PATH)
@@ -188,7 +210,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 IF(WIN32)
 	ADD_DEFINITIONS("-DNOMINMAX -DBOOST_ALL_NO_LIB")
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4355")
-	SET(OV_WIN32_BOOST_VERSION "1_55")
+	SET(OV_WIN32_BOOST_VERSION "1_58")
 ELSEIF(APPLE)
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 ELSEIF(UNIX)

@@ -1,0 +1,2 @@
+build/windows/gtk_2.24.31_x64_vc120_dev.zip;gtk;2.24.31
+build/windows/gtk_2.24.31_x64_vc120_runtime.zip;gtk;2.24.31
