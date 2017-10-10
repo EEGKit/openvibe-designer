@@ -323,7 +323,7 @@ namespace
 	{
 		if(!static_cast<CApplication*>(pUserData)->displayChangelogWhenAvailable())
 		{
-			std::string applicationVersion = static_cast<const char*>(static_cast<CApplication*>(pUserData)->m_rKernelContext.getConfigurationManager().expand("${Application_Version}"));
+			const std::string applicationVersion = static_cast<CApplication*>(pUserData)->m_rKernelContext.getConfigurationManager().expand("${Application_Version}").toASCIIString();
 			::GtkWidget* l_pInfoDialog = gtk_message_dialog_new(
 				NULL,
 				GTK_DIALOG_MODAL,
@@ -954,12 +954,12 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 	gtk_builder_add_from_file(m_pBuilderInterface, OVD_GUI_File, NULL);
 	gtk_builder_connect_signals(m_pBuilderInterface, NULL);
 
-	std::string applicationVersion = static_cast<const char*>(m_rKernelContext.getConfigurationManager().expand("${Application_Version}"));
+	std::string applicationVersion = m_rKernelContext.getConfigurationManager().expand("${Application_Version}").toASCIIString();
 	if (applicationVersion == "${Application_Version}")
 	{
-		applicationVersion = static_cast<const char*>(m_rKernelContext.getConfigurationManager().expand("${ProjectVersion_Major}.${ProjectVersion_Minor}.${ProjectVersion_Patch}"));
+		applicationVersion = m_rKernelContext.getConfigurationManager().expand("${ProjectVersion_Major}.${ProjectVersion_Minor}.${ProjectVersion_Patch}").toASCIIString();
 	}
-	std::string defaultWindowTitle = BRAND_NAME " " DESIGNER_NAME " " + applicationVersion;
+	const std::string defaultWindowTitle = BRAND_NAME " " DESIGNER_NAME " " + applicationVersion;
 
 	m_pMainWindow=GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe"));
 	gtk_window_set_title(GTK_WINDOW(m_pMainWindow), defaultWindowTitle.c_str());
@@ -1427,8 +1427,8 @@ bool CApplication::displayChangelogWhenAvailable()
 		gtk_window_set_title(GTK_WINDOW(l_pDialog), "Changelog");
 
 
-		std::string projectVersion = static_cast<const char*>(m_rKernelContext.getConfigurationManager().expand("${Application_Version}"));
-		projectVersion = (projectVersion != "${Application_Version}") ? projectVersion : static_cast<std::string>(m_rKernelContext.getConfigurationManager().expand("${ProjectVersion_Major}.${ProjectVersion_Minor}.${ProjectVersion_Patch}"));
+		std::string projectVersion = m_rKernelContext.getConfigurationManager().expand("${Application_Version}").toASCIIString();
+		projectVersion = (projectVersion != "${Application_Version}") ? projectVersion : m_rKernelContext.getConfigurationManager().expand("${ProjectVersion_Major}.${ProjectVersion_Minor}.${ProjectVersion_Patch}").toASCIIString();
 
 		gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(l_pDialog), projectVersion.c_str());
 
@@ -2496,8 +2496,8 @@ void CApplication::aboutOpenViBECB(void)
 	gchar *strval;
 	g_object_get(l_pDialog, "comments", &strval, NULL);
 	// We use a lookup instead of expansion as JSON can contain {} characters
-	std::string componentVersionsJSON = static_cast<const char*>(m_rKernelContext.getConfigurationManager().expand("${ProjectVersion_Components}"));
-	if (componentVersionsJSON.length() != 0)
+	const std::string componentVersionsJSON = m_rKernelContext.getConfigurationManager().expand("${ProjectVersion_Components}").toASCIIString();
+	if (!componentVersionsJSON.empty())
 	{
 		// This check is necessary because the asignemt operator would fail with an assert
 		if (json::Deserialize(componentVersionsJSON).GetType() == json::ObjectVal)
