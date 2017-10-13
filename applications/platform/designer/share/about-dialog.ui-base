@@ -10,8 +10,7 @@
     <property name="program_name">@BRAND_NAME@ @DESIGNER_NAME@</property>
     <property name="version">@OV_GLOBAL_VERSION_STRING@</property>
     <property name="comments" translatable="yes">Software technologies for the development of new research, diagnostic and therapeutic solutions leveraging real-time EEG and neurofeedback.
-
-Based on OpenViBE SDK @OV_SDK_VERSION_STRING@, a software from Inria
+Based on OpenViBE, a software from Inria.
 </property>
     <property name="license" translatable="yes">
 	@LICENCE_TEXT@

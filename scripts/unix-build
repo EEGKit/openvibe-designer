@@ -19,6 +19,7 @@ function usage()
 		echo "--hide-error-location : do not display complete error locations"
 		echo "--sdk=<dirname> : path to the Openvibe SDK"
 		echo "--oem-distribution=<name of the oem distribution> : distribution name, can be openvibe or mensia"
+		echo "--userdata-subdir=<dirname> name of the userdata sub directory"
 }
 
 # Script starting point
@@ -75,6 +76,10 @@ do
 			;;
 		--oem-distribution=*)
 			ov_oem_distribution="${i#*=}"
+			shift
+			;;
+		--userdata-subdir=*)
+			UserDataSubdir="-DOV_CONFIG_SUBDIR=${i#*=}"
 			shift
 			;;
 		*)
@@ -146,7 +151,8 @@ cmake ${ov_script_dir}/.. \
 		-DOVT_TEST_DATA_DIR=${ov_test_data_dir} \
 		-DFlag_VerboseOutput=${verbose} \
 		-DOPENVIBE_SDK_PATH=${ov_sdk_dir} \
-		-DOEM_DISTRIBUTION=${ov_oem_distribution}
+		-DOEM_DISTRIBUTION=${ov_oem_distribution} \
+		${UserDataSubdir}
 
 
 

@@ -16,6 +16,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <algorithm>
+#include <numeric>
 
 #if defined TARGET_OS_Windows
 #include "system/WindowsUtilities.h"
@@ -27,6 +28,7 @@
 #include <visualization-toolkit/ovvizIVisualizationContext.h>
 #include <ovp_global_defines.h>
 #include <fs/Files.h>
+#include <json/json.h>
 
 #if defined TARGET_OS_Linux || defined TARGET_OS_MacOS
 #include <strings.h>
@@ -321,13 +323,14 @@ namespace
 	{
 		if(!static_cast<CApplication*>(pUserData)->displayChangelogWhenAvailable())
 		{
+			const std::string applicationVersion = static_cast<CApplication*>(pUserData)->m_rKernelContext.getConfigurationManager().expand("${Application_Version}").toASCIIString();
 			::GtkWidget* l_pInfoDialog = gtk_message_dialog_new(
 				NULL,
 				GTK_DIALOG_MODAL,
 				GTK_MESSAGE_INFO,
 				GTK_BUTTONS_OK,
 				"No boxes were added or updated in version %s of " DESIGNER_NAME ".",
-				ProjectVersion
+				applicationVersion != "${Application_Version}" ? applicationVersion.c_str() : ProjectVersion
 				);
 			gtk_window_set_title(GTK_WINDOW(l_pInfoDialog), "No new boxes");
 			gtk_dialog_run(GTK_DIALOG(l_pInfoDialog));
@@ -951,16 +954,16 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 	gtk_builder_add_from_file(m_pBuilderInterface, OVD_GUI_File, NULL);
 	gtk_builder_connect_signals(m_pBuilderInterface, NULL);
 
-	int currentVersionMajor = static_cast<int>(m_rKernelContext.getConfigurationManager().expandAsInteger("${ProjectVersion_Major}"));
-	int currentVersionMinor = static_cast<int>(m_rKernelContext.getConfigurationManager().expandAsInteger("${ProjectVersion_Minor}"));
-	int currentVersionPatch = static_cast<int>(m_rKernelContext.getConfigurationManager().expandAsInteger("${ProjectVersion_Patch}"));
-
-	std::string windowTitle = BRAND_NAME " " DESIGNER_NAME " " + std::to_string(currentVersionMajor) + "." + std::to_string(currentVersionMinor) + "." + std::to_string(currentVersionPatch);
-	std::string projectVersion = std::to_string(currentVersionMajor) + "." + std::to_string(currentVersionMinor) + "." + std::to_string(currentVersionPatch);
+	std::string applicationVersion = m_rKernelContext.getConfigurationManager().expand("${Application_Version}").toASCIIString();
+	if (applicationVersion == "${Application_Version}")
+	{
+		applicationVersion = m_rKernelContext.getConfigurationManager().expand("${ProjectVersion_Major}.${ProjectVersion_Minor}.${ProjectVersion_Patch}").toASCIIString();
+	}
+	const std::string defaultWindowTitle = BRAND_NAME " " DESIGNER_NAME " " + applicationVersion;
 
 	m_pMainWindow=GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe"));
-	gtk_window_set_title(GTK_WINDOW(m_pMainWindow), windowTitle.c_str());
-	gtk_menu_item_set_label(GTK_MENU_ITEM(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_display_changelog")), ("What's new in " + projectVersion + " version of " + BRAND_NAME " " DESIGNER_NAME).c_str());
+	gtk_window_set_title(GTK_WINDOW(m_pMainWindow), defaultWindowTitle.c_str());
+	gtk_menu_item_set_label(GTK_MENU_ITEM(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_display_changelog")), ("What's new in " + applicationVersion + " version of " + BRAND_NAME " " DESIGNER_NAME).c_str());
 
 	// Catch delete events when close button is clicked
 	g_signal_connect(m_pMainWindow, "delete_event", G_CALLBACK(button_quit_application_cb), this);
@@ -1348,6 +1351,10 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 	int lastUsedVersionMajor = 0;
 	int lastUsedVersionMinor = 0;
 	int lastUsedVersionPatch = 0;
+	int currentVersionMajor = static_cast<int>(m_rKernelContext.getConfigurationManager().expandAsInteger("${ProjectVersion_Major}"));
+	int currentVersionMinor = static_cast<int>(m_rKernelContext.getConfigurationManager().expandAsInteger("${ProjectVersion_Minor}"));
+	int currentVersionPatch = static_cast<int>(m_rKernelContext.getConfigurationManager().expandAsInteger("${ProjectVersion_Patch}"));
+
 	sscanf(l_sLastUsedVersion.toASCIIString(), "%d.%d.%d", &lastUsedVersionMajor, &lastUsedVersionMinor, &lastUsedVersionPatch);
 	if(lastUsedVersionMajor < currentVersionMajor
 		|| (lastUsedVersionMajor == currentVersionMajor && lastUsedVersionMinor < currentVersionMinor)
@@ -1419,16 +1426,13 @@ bool CApplication::displayChangelogWhenAvailable()
 		::GtkWidget* l_pDialog=GTK_WIDGET(gtk_builder_get_object(l_pInterface, "aboutdialog-newversion"));
 		gtk_window_set_title(GTK_WINDOW(l_pDialog), "Changelog");
 
-		uint64 currentVersionMajor = m_rKernelContext.getConfigurationManager().expandAsUInteger("${ProjectVersion_Major}");
-		uint64 currentVersionMinor = m_rKernelContext.getConfigurationManager().expandAsUInteger("${ProjectVersion_Minor}");
-		uint64 currentVersionPatch = m_rKernelContext.getConfigurationManager().expandAsUInteger("${ProjectVersion_Patch}");
 
-		std::string projectVersion = std::to_string(currentVersionMajor) + "." + std::to_string(currentVersionMinor) + "." + std::to_string(currentVersionPatch);
+		std::string projectVersion = m_rKernelContext.getConfigurationManager().expand("${Application_Version}").toASCIIString();
+		projectVersion = (projectVersion != "${Application_Version}") ? projectVersion : m_rKernelContext.getConfigurationManager().expand("${ProjectVersion_Major}.${ProjectVersion_Minor}.${ProjectVersion_Patch}").toASCIIString();
 
 		gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(l_pDialog), projectVersion.c_str());
 
 		std::string l_sLabelNewBoxesList = "<big><b>Changes in version " + projectVersion + " of the software:</b></big>";
-		bool l_bUnstableBoxes = false;
 		if(!m_vNewBoxes.empty())
 		{
 			l_sLabelNewBoxesList += "\n<big>The following boxes were added:</big>\n";
@@ -2489,6 +2493,26 @@ void CApplication::aboutOpenViBECB(void)
 		return;
 
 	}
+	gchar *strval;
+	g_object_get(l_pDialog, "comments", &strval, NULL);
+	// We use a lookup instead of expansion as JSON can contain {} characters
+	const std::string componentVersionsJSON = m_rKernelContext.getConfigurationManager().expand("${ProjectVersion_Components}").toASCIIString();
+	if (!componentVersionsJSON.empty())
+	{
+		// This check is necessary because the asignemt operator would fail with an assert
+		if (json::Deserialize(componentVersionsJSON).GetType() == json::ObjectVal)
+		{
+			json::Object components = json::Deserialize(componentVersionsJSON);
+			std::string updatedComment = std::accumulate(components.begin(), components.end(),
+				std::string(strval) + "\nComponents :\n",
+				[](std::string a, std::pair<std::string, json::Value> b)
+				{
+					return a + b.first + " version " + b.second.ToString() + "\n";
+				});
+			g_object_set(l_pDialog, "comments", updatedComment.c_str(), NULL);
+		}
+	}
+	g_free(strval);
 	gtk_dialog_set_response_sensitive(GTK_DIALOG(l_pDialog), GTK_RESPONSE_CLOSE, true);
 	gtk_dialog_run(GTK_DIALOG(l_pDialog));
 	gtk_widget_destroy(l_pDialog);

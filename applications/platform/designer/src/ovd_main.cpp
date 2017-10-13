@@ -150,7 +150,7 @@ namespace {
 		json::Object componentVersionsObject;
 		// We use a lookup instead of expansion as JSON can contain {} characters
 
-		CString componentVersionsJSON = context.getConfigurationManager().lookUpConfigurationTokenValue(configurationToken);
+		CString componentVersionsJSON = context.getConfigurationManager().expand(CString("${") + configurationToken + "}");
 		if (componentVersionsJSON.length() != 0)
 		{
 			// This check is necessary because the asignemt operator would fail with an assert
