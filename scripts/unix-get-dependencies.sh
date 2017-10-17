@@ -53,9 +53,12 @@ if [ -z ${DEPENDENCIES} ] || [ -z ${CACHE_DIR} ]; then
     exit 1
 fi
 
-echo "read file: $DEPENDENCIES"
-DEPENDENCY_SERVER=`head -1 ${DEPENDENCIES}`
-echo "Download dependencies from server [$DEPENDENCY_SERVER]."
+if [ -z ${DEPENDENCY_SERVER} ]; then
+    echo "If your dependencies are not up-to-date, you won't be able to download new files."
+else
+    echo "Download dependencies from server [$DEPENDENCY_SERVER]."
+fi
+
 if [ -z ${PROXYPASS} ]; then
     echo "Credentials were not provided. If your dependencies are not up-to-date, you won't be able to download new files."
 else
@@ -65,7 +68,7 @@ else
 fi
 
 if [ ! -d ${CACHE_DIR} ]; then
-    echo "${CACHE_DIR} does not exists"
+    echo "${CACHE_DIR} does not exist"
     exit 2
 fi
 
@@ -94,7 +97,7 @@ function install_dependency() {
 
 
 mkdir -p ${OUTPUT_DIR}
-echo "Get and unzip dependencies"
+echo "Get and unzip dependencies. Read dependencies from manifest [$DEPENDENCIES]"
 sed 1d ${DEPENDENCIES} | while read d; do
     dep=`echo $d | cut -d ';' -f 1`
     dir=`echo $d | cut -d ';' -f 2`
