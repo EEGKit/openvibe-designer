@@ -22,6 +22,11 @@
 	archive_name;folder_to_unzip;version_number
 	archive_name;folder_to_unzip;version_number
 	...
+	
+	The `folder_to_unzip` can be the same for several dependencies, but in this case you have to make sure
+	that the archives share the same `version_number`.
+	If this is not the case an error will be thrown.
+	
 .PARAMETER dest_dir
 	Optional: if unspecified then by default it will be set to $script_root\..\dependencies
 	Destination directory for extracted archives. Each archive found in the manifest file
@@ -45,7 +50,8 @@
 .EXAMPLE
 	powershell.exe -NoExit -NoProfile -ExecutionPolicy Bypass -File \absolute\path\to\windows-get-dependencies.ps1 -manifest_file .\windows-dependencies.txt
 .EXAMPLE
-	powershell.exe -NoExit -NoProfile -ExecutionPolicy Bypass -File \absolute\path\to\windows-get-dependencies.ps1 -manifest_file .\windows-dependencies.txt -dest_dir \absolute\path\to\dep\ -cache_dir \absolute\path\to\cache
+	powershell.exe -NoExit -NoProfile -ExecutionPolicy Bypass -File \absolute\path\to\windows-get-dependencies.ps1 -manifest_file .\windows-dependencies.txt
+		-dest_dir \absolute\path\to\dep\ -cache_dir \absolute\path\to\cache
 #>
 
 #
@@ -132,14 +138,7 @@ Write-Host ""
 # monitoring variables
 $Script:extract_count = 0
 $Script:download_count = 0
-$Script:manifest_file_name = (Get-Item $manifest_file).Basename
-
-Try { 
-	$Script:old_dep_versions = import-csv $dest_dir\$Script:manifest_file_name-versions.txt -Delimiter '=' -Header Dependency,Version
-} Catch {
-	Write-Host "Found no manifest version file."
-}
-$Script:dep_versions = ""
+$Script:new_versions = @{}
 
 #
 # script functions
@@ -201,8 +200,8 @@ function InstallDeps($arch, $dir, $version)
 		if($Username -and $Script:dependency_server){
 			$url = $Script:dependency_server + "/" + $arch
 		} else {
-			Write-Host "- Credentials or $Script:dependency_server are not specified, can not download dependency. "
-			Write-Host "- They have to be set through environment variables: PROXYPASS and URL."
+			Write-Error "- Credentials or $Script:dependency_server are not specified, can not download dependency. "
+			Write-Error "- They have to be set through environment variables: PROXYPASS and URL."
 			exit
 		}
 
@@ -211,17 +210,34 @@ function InstallDeps($arch, $dir, $version)
 		$Script:download_count++
 	}
 	if(-Not (Test-Path $zip)) {
+		Write-Error "Archive [$zip] was not found in cache and could not be downloaded."
 		exit
 	}
 
-	$old_dep_version=$($Script:old_dep_versions | Where-Object  {$_.dependency -eq $dir}).version
+	if(Test-Path $dest_dir\$dir-version.txt) {
+		$old_dep_version=$(Get-Content $dest_dir\$dir-version.txt) 
+	}
 	if((Test-Path ($Script:dest_dir + "\" + $dir)) -and ($old_dep_version -eq $version)) {
 		Write-Host "No need to unzip dependency. Already at the good version: " $old_dep_version "."
 	} else {
 		Write-Host "Dependency version is not the good one: [" $old_dep_version "]. Should be " $version
+		if((Test-Path ($Script:dest_dir + "\" + $dir)) -and (-Not $Script:new_versions.ContainsKey($dir))) {
+			Remove-item ($Script:dest_dir + "\" + $dir) -Force -Recurse
+		}
 		ExpandZipFile $zip ($Script:dest_dir + "\" + $dir)
 	}
-	$Script:dep_versions += $dir + "=" + $version + "`n"
+	# Add new version to table 
+	if($Script:new_versions.ContainsKey($dir)) {
+		# If (during this install process) an archive was already extracted to this folder and its version is 
+		# not the same as new version, we raise an error
+		if($Script:new_versions[$dir] -ne $version) {
+			Write-Error "- Several dependencies are extracted in the same folder with different versions.
+				You have to make sure that they carry the same version."
+			exit
+		}
+	} else {
+		$Script:new_versions.Add($dir, $version)
+	}
 }
 
 #
@@ -238,7 +254,10 @@ foreach ($dep in Get-Content $manifest_file) {
 }
 $timer.Stop()
 
-$Script:dep_versions > $dest_dir\$Script:manifest_file_name-versions.txt
+Write-Host "Write token version files, to quicken next dependencies "
+foreach ($new_version in $Script:new_versions.GetEnumerator()) {
+	$new_version.Value > $dest_dir\$($new_version.Key)-version.txt
+}
 
 Write-Host ""
 Write-Host "===Install Summary==="
