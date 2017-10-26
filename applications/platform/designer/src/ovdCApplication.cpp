@@ -2493,6 +2493,16 @@ void CApplication::aboutOpenViBECB(void)
 		return;
 
 	}
+
+	if (m_rKernelContext.getConfigurationManager().expand("${Application_Name}").length() > 0)
+	{
+		gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(l_pDialog), m_rKernelContext.getConfigurationManager().expand("${Application_Name}").toASCIIString());
+	}
+	if (m_rKernelContext.getConfigurationManager().expand("${Application_Version}").length()>0)
+	{
+		gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(l_pDialog), m_rKernelContext.getConfigurationManager().expand("${Application_Version}").toASCIIString());
+	}
+
 	gchar *strval;
 	g_object_get(l_pDialog, "comments", &strval, NULL);
 	// We use a lookup instead of expansion as JSON can contain {} characters
