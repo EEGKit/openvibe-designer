@@ -1,2 +1,2 @@
-build/windows/gtk_2.24.31_x86_vc120_dev.zip;gtk;2.24.31
-build/windows/gtk_2.24.31_x86_vc120_runtime.zip;gtk;2.24.31
+build/windows/gtk-2.22.1-dev.zip;gtk;2.22.1
+build/windows/gtk-2.22.1-runtime.zip;gtk;2.22.1
