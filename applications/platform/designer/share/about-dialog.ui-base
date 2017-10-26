@@ -17,37 +17,55 @@ Based on OpenViBE, a software from Inria.
 	</property>
     <property name="authors">Inria &amp; Mensia Technologies SA
 ---
-Mensia Contributors :
- - Yann Renard
- - Laurent Bonnet
- - Jozef Leg&#xE9;ny
- - Quentin Barth&#xE9;l&#xE9;my
- - Alexis Placet
- - Morgane Fauvet
- - Esrevi Huynh
+Contributors :
+ - Guillermo Andrade-Barroso / Inria
+ - Quentin Barth&#xE9;l&#xE9;my / Mensia
+ - Laurent Bonnet / Mensia
+ - Alison Cellard / Inria
+ - J&#xE9;r&#xF4;me Chabrol / Inria
+ - Vincent Delannoy / Inria
+ - Morgane Fauvet / Mensia
+ - Charles Garraud / Inria
+ - Thierry Gaugry / Inria
+ - Esrevi Huynh / Mensia
+ - Anatole Lecuyer / Inria
+ - Jozef Leg&#xE9;ny / Mensia
+ - Jussi T. Lindgren / Inria
+ - Fabien Lotte / Inria
+ - Lo&#xEF;c Mah&#xEB; / Inria
+ - Benoit Perrin / Mensia
+ - Alexis Placet / Mensia
+ - Yann Renard / Mensia
+ - C&#xE9;dric Riou / Inria
+ - Guillaume Serri&#xE8;re / Inria
 
-Mensia Testers:
- - Agn&#xE8;s Dos Santos
- - Marie Prat
+Testers:
+ - Marie Prat / Mensia
+ - Agn&#xE8;s Dos Santos / Mensia
 
-Inria Contributors :
- - Vincent Delannoy
- - Baptiste Payan
- - Fabien Lotte
- - Bruno Renier
- - Jussi Lindgren
- - Guillaume Serri&#xE8;re
  </property>
-    <property name="documenters">Documenters :
- - Yann Renard
- - Laurent Bonnet
- - Jozef Leg&#xE9;ny
- - Quentin Barth&#xE9;l&#xE9;my
- - Alexis Placet
- - Morgane Fauvet
- - Esrevi Huynh
- - Agn&#xE8;s Dos Santos
- - Marie Prat
+    <property name="documenters">Inria &amp; Mensia Technologies SA
+---
+Documenters :
+ - Quentin Barth&#xE9;l&#xE9;my / Mensia
+ - Laurent Bonnet / Mensia
+ - J&#xE9;r&#xF4;me Chabrol / Inria
+ - Morgane Fauvet / Mensia
+ - Charles Garraud / Inria 
+ - Thierry Gaugry / Inria
+ - Esrevi Huynh / Mensia
+ - Jozef Leg&#xE9;ny / Mensia
+ - Jussi T. Lindgren / Inria
+ - Alexis Placet / Mensia
+ - Marie Prat / Mensia
+ - Yann Renard / Mensia
+ - C&#xE9;dric Riou / Inria
+ - Agn&#xE8;s Dos Santos / Mensia
+
+
+
+
+
  </property>
     <property name="logo">header_logo.png</property>
     <property name="wrap_license">True</property>

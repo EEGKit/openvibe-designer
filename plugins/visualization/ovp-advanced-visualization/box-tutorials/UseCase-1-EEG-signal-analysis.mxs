@@ -431,7 +431,7 @@
 					<TypeIdentifier>(0x512a166f, 0x5c3ef83f)</TypeIdentifier>
 					<Name>Gain</Name>
 					<DefaultValue>1</DefaultValue>
-					<Value>50.0</Value>
+					<Value>0.01</Value>
 					<Modifiability>false</Modifiability>
 				</Setting>
 				<Setting>
@@ -585,7 +585,7 @@
 					<TypeIdentifier>(0x512a166f, 0x5c3ef83f)</TypeIdentifier>
 					<Name>Gain</Name>
 					<DefaultValue>1</DefaultValue>
-					<Value>12.000000</Value>
+					<Value>0.01</Value>
 					<Modifiability>false</Modifiability>
 				</Setting>
 				<Setting>
@@ -660,7 +660,7 @@
 					<TypeIdentifier>(0x512a166f, 0x5c3ef83f)</TypeIdentifier>
 					<Name>Gain</Name>
 					<DefaultValue>1</DefaultValue>
-					<Value>30.000000</Value>
+					<Value>0.03</Value>
 					<Modifiability>false</Modifiability>
 				</Setting>
 				<Setting>
@@ -869,7 +869,7 @@
 					<TypeIdentifier>(0x512a166f, 0x5c3ef83f)</TypeIdentifier>
 					<Name>Gain</Name>
 					<DefaultValue>1</DefaultValue>
-					<Value>12.000000</Value>
+					<Value>0.01</Value>
 					<Modifiability>false</Modifiability>
 				</Setting>
 				<Setting>
@@ -1182,7 +1182,7 @@
 					<TypeIdentifier>(0x512a166f, 0x5c3ef83f)</TypeIdentifier>
 					<Name>Gain</Name>
 					<DefaultValue>1</DefaultValue>
-					<Value>30</Value>
+					<Value>0.025</Value>
 					<Modifiability>false</Modifiability>
 				</Setting>
 				<Setting>
