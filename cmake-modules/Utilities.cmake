@@ -53,20 +53,23 @@ function(set_version)
 		if(ERROR)
 			message(WARNING "No tags found, set version to 0.0.0")
 			set(PROJECT_VERSION "0.0.0")
-		endif()
-		# codename = the name of the current branch
-		execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse --abbrev-ref HEAD
-			WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-			OUTPUT_VARIABLE  PROJECT_BRANCH_STRING)
-		# command output may contain carriage return
-		string(STRIP ${PROJECT_BRANCH_STRING} PROJECT_BRANCH_STRING)
+			set(PROJECT_BRANCH_STRING "unknown")
+			set(PROJECT_COMMITHASH_STRING "0")
+		else()
+			# codename = the name of the current branch
+			execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse --abbrev-ref HEAD
+				WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+				OUTPUT_VARIABLE  PROJECT_BRANCH_STRING)
+			# command output may contain carriage return
+			string(STRIP ${PROJECT_BRANCH_STRING} PROJECT_BRANCH_STRING)
 
-		# commithash = short hash of latest revision
-		execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
-			WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-			OUTPUT_VARIABLE  PROJECT_COMMITHASH_STRING)
-		# command output may contain carriage return
-		string(STRIP ${PROJECT_COMMITHASH_STRING} PROJECT_COMMITHASH_STRING)
+			# commithash = short hash of latest revision
+			execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
+				WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+				OUTPUT_VARIABLE  PROJECT_COMMITHASH_STRING)
+			# command output may contain carriage return
+			string(STRIP ${PROJECT_COMMITHASH_STRING} PROJECT_COMMITHASH_STRING)
+		endif()
 	endif()
 
 	# if current commit is not tagged result is formed as: "major.minor.patch-number of commits since last tag-hash"
