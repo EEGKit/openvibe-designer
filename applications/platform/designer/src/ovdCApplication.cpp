@@ -2067,6 +2067,8 @@ void CApplication::saveScenarioCB(CInterfacedScenario* pScenario)
 
 		// Remove attributes that were added to links and boxes by the designer and which are used only for interal functionality.
 		// This way the scenarios do not change if, for example somebody opens them on a system with different font metrics.
+		l_pCurrentInterfacedScenario->m_rScenario.removeAttribute(OV_AttributeId_ScenarioFilename);
+
 		CIdentifier linkIdentifier;
 		while ((linkIdentifier = l_pCurrentInterfacedScenario->m_rScenario.getNextLinkIdentifier(linkIdentifier)) != OV_UndefinedIdentifier)
 		{
