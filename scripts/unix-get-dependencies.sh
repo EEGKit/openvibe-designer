@@ -3,7 +3,7 @@
 ## dest folder.
 #
 
-DEPENDENCIES="./data.txt"
+DEPENDENCIES="./tests-data.txt"
 CACHE_DIR="../dependencies/arch"
 if [ ! -z $DEPENDENCY_CACHE ]; then
     CACHE_DIR=$DEPENDENCY_CACHE
@@ -77,7 +77,7 @@ function get_dependency() {
 
     if [ ! -f ${CACHE_DIR}/${_dep} ]; then
         echo "Download zip archive: [${DEPENDENCY_SERVER}/${_dep}]"
-        wget --user=$user --password=$pass -nv -P ${CACHE_DIR} ${DEPENDENCY_SERVER}/${_dep}
+        wget --user=$user --password=$pass -nv -P ${CACHE_DIR}/${_dep%/*} ${DEPENDENCY_SERVER}/${_dep}
     fi
 }
 
