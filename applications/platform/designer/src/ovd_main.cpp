@@ -19,7 +19,8 @@
 
 #include "ovdAssert.h"
 #if defined TARGET_OS_Windows
-#include "windows.h"
+#include "Windows.h"
+#include "shellapi.h"
 #endif
 
 using namespace OpenViBE;
