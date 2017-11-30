@@ -4522,6 +4522,7 @@ the information about the scenario...</property>
                   <object class="GtkToggleToolButton" id="neurort-toggle_engine_configuration">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">open engine control panel...</property>
                     <property name="label" translatable="yes">Mensia Engine</property>
                     <property name="stock_id">gtk-connect</property>
                   </object>
@@ -4606,6 +4607,8 @@ possible...</property>
                   <object class="GtkToggleToolButton" id="openvibe-toggle_button_loop">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">run the scenario in a loop,
+un-check it to stop loop...</property>
                     <property name="label" translatable="yes">loop</property>
                     <property name="stock_id">gtk-refresh</property>
                   </object>
@@ -4688,6 +4691,7 @@ Factor : </property>
                       <object class="GtkLabel" id="openvibe-label_current_time">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="tooltip_text" translatable="yes">current time of the scenario...</property>
                         <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                         <property name="label" translatable="yes">Time : 0</property>
                       </object>
@@ -4726,6 +4730,7 @@ Factor : </property>
                   <object class="GtkToolButton" id="openvibe-button_zoomin">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">zoom in...</property>
                     <property name="label" translatable="yes">Zoom in</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-zoom-in</property>
@@ -4739,6 +4744,7 @@ Factor : </property>
                   <object class="GtkToolButton" id="openvibe-button_zoomout">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">zoom out...</property>
                     <property name="label" translatable="yes">Zoom out</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-zoom-out</property>
@@ -4756,6 +4762,7 @@ Factor : </property>
                       <object class="GtkSpinButton" id="openvibe-zoom_spinner">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
+                        <property name="tooltip_text" translatable="yes">zoom rate...</property>
                         <property name="invisible_char">●</property>
                         <property name="primary_icon_activatable">False</property>
                         <property name="secondary_icon_activatable">False</property>
