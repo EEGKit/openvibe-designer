@@ -1,4 +1,4 @@
 build/windows/boost_1.58_x86_vc120_dev.zip;boost;1.58
 build/windows/eigen-3.2.0.zip;eigen;3.2.0
-build/windows/OpenViBE-Release-0.3.2.124-win32.zip;openvibe-sdk-release;0.3.2.124
-build/windows/OpenViBE-Debug-0.3.2.124-win32.zip;openvibe-sdk-debug;0.3.2.124
+build/windows/OpenViBE-Release-0.3.3.127-win32.zip;openvibe-sdk-release;0.3.3.127
+build/windows/OpenViBE-Debug-0.3.3.127-win32.zip;openvibe-sdk-debug;0.3.3.127
