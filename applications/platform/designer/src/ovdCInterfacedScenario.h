@@ -94,6 +94,8 @@ namespace OpenViBEDesigner
 
 		void contextMenuBoxEnableCB(OpenViBE::Kernel::IBox& rBox);
 		void contextMenuBoxDisableCB(OpenViBE::Kernel::IBox& rBox);
+		void contextMenuBoxEnableAllCB(void);
+		void contextMenuBoxDisableAllCB(void);
 
 		void contextMenuBoxDocumentationCB(OpenViBE::Kernel::IBox& rBox);
 
