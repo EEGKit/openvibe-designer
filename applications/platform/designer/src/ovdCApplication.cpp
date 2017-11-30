@@ -2121,6 +2121,7 @@ void CApplication::saveScenarioCB(CInterfacedScenario* pScenario)
 			scenarioExportContext = OVD_ScenarioExportContext_SaveMetabox;
 		}
 
+		m_rKernelContext.getErrorManager().releaseErrors();
 		if (m_pScenarioManager->exportScenarioToFile(scenarioExportContext, l_sScenarioFileName, l_pCurrentInterfacedScenario->m_oScenarioIdentifier))
 		{
 			l_pCurrentInterfacedScenario->snapshotCB();
@@ -2137,6 +2138,12 @@ void CApplication::saveScenarioCB(CInterfacedScenario* pScenario)
 			gtk_builder_add_from_file(l_pBuilder, OVD_GUI_File, NULL);
 			gtk_builder_connect_signals(l_pBuilder, NULL);
 			::GtkWidget* l_pDialog = GTK_WIDGET(gtk_builder_get_object(l_pBuilder, "dialog_error_popup_saving"));
+			// Reset the labels
+			gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(l_pBuilder, "dialog_error_popup_saving-label1")), "");
+			gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(l_pBuilder, "dialog_error_popup_saving-label2")), "");
+			if (m_rKernelContext.getErrorManager().hasError()) {
+				gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(l_pBuilder, "dialog_error_popup_saving-label1")), m_rKernelContext.getErrorManager().getLastErrorString());
+			}
 			gtk_builder_connect_signals(l_pBuilder, NULL);
 			l_iResponseId = gtk_dialog_run(GTK_DIALOG(l_pDialog));
 			gtk_widget_destroy(l_pDialog);
