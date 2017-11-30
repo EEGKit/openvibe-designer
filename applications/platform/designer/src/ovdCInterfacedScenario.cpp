@@ -345,6 +345,8 @@ namespace
 		CIdentifier l_oSettingType = OV_UndefinedIdentifier;
 		pData->m_pInterfacedScenario->m_rScenario.getSettingType(pData->m_iSettingIndex, l_oSettingType);
 		pData->m_pInterfacedScenario->m_rScenario.setSettingValue(pData->m_iSettingIndex, pData->m_pInterfacedScenario->m_pSettingHelper->getValue(l_oSettingType, pData->m_pWidgetValue));
+		pData->m_pInterfacedScenario->m_bHasBeenModified = true;
+		pData->m_pInterfacedScenario->updateScenarioLabel();
 	}
 
 	void modify_scenario_setting_default_value_cb(GtkWidget*, OpenViBEDesigner::CInterfacedScenario::SSettingCallbackData* pData)
@@ -355,6 +357,8 @@ namespace
 
 		// We also se the 'actual' value to this
 		pData->m_pInterfacedScenario->m_rScenario.setSettingValue(pData->m_iSettingIndex, pData->m_pInterfacedScenario->m_pSettingHelper->getValue(l_oSettingType, pData->m_pWidgetValue));
+		pData->m_pInterfacedScenario->m_bHasBeenModified = true;
+		pData->m_pInterfacedScenario->updateScenarioLabel();
 	}
 
 	void modify_scenario_setting_move_up_cb(GtkWidget*, OpenViBEDesigner::CInterfacedScenario::SSettingCallbackData* pData)
