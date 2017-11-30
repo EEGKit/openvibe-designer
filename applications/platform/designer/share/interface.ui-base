@@ -5763,19 +5763,6 @@ on Warnings and Errors</property>
           </packing>
         </child>
         <child>
-          <object class="GtkLabel" id="dialog_scenario_configuration-label">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="ypad">6</property>
-            <property name="label" translatable="yes">No scenario is open</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-        <child>
           <object class="GtkScrolledWindow" id="scrolledwindow2">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
