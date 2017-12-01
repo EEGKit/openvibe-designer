@@ -207,8 +207,29 @@ namespace
 			case ContextMenu_BoxRemoveSetting: pContextMenuCB->pInterfacedScenario->contextMenuBoxRemoveSettingCB(*pContextMenuCB->pBox, pContextMenuCB->ui32Index); break;
 			case ContextMenu_BoxConfigure:     pContextMenuCB->pInterfacedScenario->contextMenuBoxConfigureCB(*pContextMenuCB->pBox); break;
 			case ContextMenu_BoxAbout:         pContextMenuCB->pInterfacedScenario->contextMenuBoxAboutCB(*pContextMenuCB->pBox); break;
-			case ContextMenu_BoxEnable:        pContextMenuCB->pInterfacedScenario->contextMenuBoxEnableCB(*pContextMenuCB->pBox); break;
-			case ContextMenu_BoxDisable:       pContextMenuCB->pInterfacedScenario->contextMenuBoxDisableCB(*pContextMenuCB->pBox); break;
+			case ContextMenu_BoxEnable:
+			{
+				if (pContextMenuCB->pInterfacedScenario->m_SelectedObjects.empty())
+				{
+					pContextMenuCB->pInterfacedScenario->contextMenuBoxEnableCB(*pContextMenuCB->pBox);
+				}
+				else
+				{
+					pContextMenuCB->pInterfacedScenario->contextMenuBoxEnableAllCB();
+				}
+				break;
+			}
+			case ContextMenu_BoxDisable:
+			{
+				if (pContextMenuCB->pInterfacedScenario->m_SelectedObjects.empty())
+				{
+					pContextMenuCB->pInterfacedScenario->contextMenuBoxDisableCB(*pContextMenuCB->pBox); break;
+				}
+				else
+				{
+					pContextMenuCB->pInterfacedScenario->contextMenuBoxDisableAllCB(); break;
+				}
+			}
 			case ContextMenu_BoxDocumentation: pContextMenuCB->pInterfacedScenario->contextMenuBoxDocumentationCB(*pContextMenuCB->pBox); break;
 
 			case ContextMenu_BoxEditMetabox:   pContextMenuCB->pInterfacedScenario->contextMenuBoxEditMetaboxCB(*pContextMenuCB->pBox); break;
@@ -345,6 +366,8 @@ namespace
 		CIdentifier l_oSettingType = OV_UndefinedIdentifier;
 		pData->m_pInterfacedScenario->m_rScenario.getSettingType(pData->m_iSettingIndex, l_oSettingType);
 		pData->m_pInterfacedScenario->m_rScenario.setSettingValue(pData->m_iSettingIndex, pData->m_pInterfacedScenario->m_pSettingHelper->getValue(l_oSettingType, pData->m_pWidgetValue));
+		pData->m_pInterfacedScenario->m_bHasBeenModified = true;
+		pData->m_pInterfacedScenario->updateScenarioLabel();
 	}
 
 	void modify_scenario_setting_default_value_cb(GtkWidget*, OpenViBEDesigner::CInterfacedScenario::SSettingCallbackData* pData)
@@ -355,6 +378,8 @@ namespace
 
 		// We also se the 'actual' value to this
 		pData->m_pInterfacedScenario->m_rScenario.setSettingValue(pData->m_iSettingIndex, pData->m_pInterfacedScenario->m_pSettingHelper->getValue(l_oSettingType, pData->m_pWidgetValue));
+		pData->m_pInterfacedScenario->m_bHasBeenModified = true;
+		pData->m_pInterfacedScenario->updateScenarioLabel();
 	}
 
 	void modify_scenario_setting_move_up_cb(GtkWidget*, OpenViBEDesigner::CInterfacedScenario::SSettingCallbackData* pData)
@@ -3505,6 +3530,40 @@ void CInterfacedScenario::contextMenuBoxToggleEnableAllCB(void)
 				l_oAttributeHandler.removeAttribute(OV_AttributeId_Box_Disabled);
 			}
 			else
+			{
+				l_oAttributeHandler.addAttribute(OV_AttributeId_Box_Disabled, 1);
+			}
+		}
+	}
+	this->snapshotCB();
+}
+
+void CInterfacedScenario::contextMenuBoxEnableAllCB(void)
+{
+	//we find all selected boxes
+	for(auto objectId : m_SelectedObjects)
+	{
+		if(m_rScenario.isBox(objectId))
+		{
+			TAttributeHandler l_oAttributeHandler(*m_rScenario.getBoxDetails(objectId));
+			if(l_oAttributeHandler.hasAttribute(OV_AttributeId_Box_Disabled))
+			{
+				l_oAttributeHandler.removeAttribute(OV_AttributeId_Box_Disabled);
+			}
+		}
+	}
+	this->snapshotCB();
+}
+
+void CInterfacedScenario::contextMenuBoxDisableAllCB(void)
+{
+	//we find all selected boxes
+	for(auto objectId : m_SelectedObjects)
+	{
+		if(m_rScenario.isBox(objectId))
+		{
+			TAttributeHandler l_oAttributeHandler(*m_rScenario.getBoxDetails(objectId));
+			if(!l_oAttributeHandler.hasAttribute(OV_AttributeId_Box_Disabled))
 			{
 				l_oAttributeHandler.addAttribute(OV_AttributeId_Box_Disabled, 1);
 			}
