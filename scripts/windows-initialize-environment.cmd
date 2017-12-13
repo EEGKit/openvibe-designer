@@ -58,6 +58,8 @@ if not defined PATH_DEPENDENCIES (
 	)
 )
 
+REM ########################################################################################################################
+
 REM # Set to 1 to skip new compilers.
 if not defined SKIP_VS2017 (
 	SET SKIP_VS2017=1
@@ -69,91 +71,61 @@ if not defined SKIP_VS2013 (
 	SET SKIP_VS2013=0
 )
 
-set VSTOOLS=
-set VSCMake=
-
+SET VSTOOLS=
+SET VSCMake=
 set VCVARSALLPATH=../../VC/vcvarsall.bat
 
-if %SKIP_VS2017% == 1 (
+if %SKIP_VS2017% == 0 (
+	set "VSTOOLS=%VS150COMNTOOLS%"
+	set VSCMake=Visual Studio 15 2017
+) else if %SKIP_VS2015% == 0 (
 	echo Visual Studio 2017 detection skipped as requested
+	set "VSTOOLS=%VS140COMNTOOLS%"
+	set VSCMake=Visual Studio 14 2015
 ) else (
-	if exist "%VS150COMNTOOLS%%VCVARSALLPATH%" (
-		echo Found VS150 tools at "%VS150COMNTOOLS%%VCVARSALLPATH%" ...
-		if %PLATFORM% == x64 (
-			if exist "%VS150COMNTOOLS%/../../bin/x64" (
-				call "%VS150COMNTOOLS%%VCVARSALLPATH%" %PLATFORM%
-			) else (
-				call "%VS150COMNTOOLS%%VCVARSALLPATH%" x86_amd64
-			)
-		) else (
-			call "%VS150COMNTOOLS%%VCVARSALLPATH%" %PLATFORM%
- 		)
-		set VSCMake=Visual Studio 15 2017
-		if %PLATFORM% == x64 (
-			set VSCMake=!VSCMake! %VSPLATFORMGENERATOR%
-		)
-		goto terminate
-	)
-)
-
-if %SKIP_VS2015% == 1 (
+	echo Visual Studio 2017 detection skipped as requested
 	echo Visual Studio 2015 detection skipped as requested
-) else (
-	if exist "%VS140COMNTOOLS%%VCVARSALLPATH%" (
-		echo Found VS140 tools at "%VS140COMNTOOLS%%VCVARSALLPATH%" ...
-		if %PLATFORM% == x64 (
-			if exist "%VS140COMNTOOLS%/../../bin/x64" (
-				call "%VS140COMNTOOLS%%VCVARSALLPATH%" %PLATFORM%
-			) else (
-				call "%VS140COMNTOOLS%%VCVARSALLPATH%" x86_amd64
-			)
-		) else (
-			call "%VS140COMNTOOLS%%VCVARSALLPATH%" %PLATFORM%
- 		)
-		set VSCMake=Visual Studio 14 2015
-		if %PLATFORM% == x64 (
-			set VSCMake=!VSCMake! %VSPLATFORMGENERATOR%
-		)
-		goto terminate
-	)
+	set "VSTOOLS=%VS120COMNTOOLS%"
+	set VSCMake=Visual Studio 12 2013
 )
 
-if %SKIP_VS2013% == 1 (
-	echo Visual Studio 2013 detection skipped as requested
-) else (
-	if exist "%VS120COMNTOOLS%%VCVARSALLPATH%" (
-		echo Found VS120 tools at "%VS120COMNTOOLS%%VCVARSALLPATH%" ...
-		if %PLATFORM% == x64 (
-			if exist "%VS120COMNTOOLS%../../VC/bin/x64" (
-				call "%VS120COMNTOOLS%%VCVARSALLPATH%" %PLATFORM%
-			) else (
-				call "%VS120COMNTOOLS%%VCVARSALLPATH%" x86_amd64
-			)
+
+if exist "!VSTOOLS!%VCVARSALLPATH%" (
+	if %PLATFORM% == x64 (
+		if exist "!VSTOOLS!../../VC/bin/x64" (
+			echo Found %VSCMake% tools: !VSTOOLS!%VCVARSALLPATH% %PLATFORM%
+			call "!VSTOOLS!%VCVARSALLPATH%" %PLATFORM%
 		) else (
-			call "%VS120COMNTOOLS%%VCVARSALLPATH%" %PLATFORM%
- 		)
-		set VSCMake=Visual Studio 12 2013
-		if %PLATFORM% == x64 (
-			set VSCMake=!VSCMake! %VSPLATFORMGENERATOR%
+			echo Found %VSCMake% tools: !VSTOOLS!%VCVARSALLPATH% x86_amd64
+			call "!VSTOOLS!%VCVARSALLPATH%" x86_amd64
 		)
-		goto terminate
+	) else (
+		echo Found %VSCMake% tools: !VSTOOLS!vsvars32.bat
+		call "!VSTOOLS!vsvars32.bat"
 	)
+	goto terminate
 )
+
+set VSCMake=!VSCMake! %VSPLATFORMGENERATOR%
 
 goto terminate_success
 
 :terminate_error
 
+echo ######################################################################################
+echo ##                                                                                  ##
+echo ##  ERROR : Microsoft Visual Studio Common tools initialisation script not found    ##
+echo ##                                                                                  ##
+echo ######################################################################################
 echo An error occured during environment initializing !
 
-goto terminate
+pause
+exit 1
 
+REM #######################################################################################
 :terminate_success
 
 goto terminate
 
+REM #######################################################################################
 :terminate
-
-popd
-
-endlocal
