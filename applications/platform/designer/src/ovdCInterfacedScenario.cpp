@@ -188,7 +188,17 @@ namespace
 
 			case ContextMenu_BoxRename:        pContextMenuCB->pInterfacedScenario->contextMenuBoxRenameCB(*pContextMenuCB->pBox); break;
 				//case ContextMenu_BoxRename:        l_pContextMenuCB->pInterfacedScenario->contextMenuBoxRenameAllCB(); break;
-			case ContextMenu_BoxDelete:        pContextMenuCB->pInterfacedScenario->contextMenuBoxDeleteCB(*pContextMenuCB->pBox); break;
+			case ContextMenu_BoxDelete:
+			{
+				// Remove current box
+				if (pContextMenuCB->pInterfacedScenario->m_pDesignerVisualization)
+				{
+					pContextMenuCB->pInterfacedScenario->m_pDesignerVisualization->onVisualizationBoxRemoved(pContextMenuCB->pBox->getIdentifier());
+				}
+				pContextMenuCB->pInterfacedScenario->m_rScenario.removeBox(pContextMenuCB->pBox->getIdentifier());
+				// Remove selected box
+				pContextMenuCB->pInterfacedScenario->deleteSelection();
+			}
 			case ContextMenu_BoxAddInput:      pContextMenuCB->pInterfacedScenario->contextMenuBoxAddInputCB(*pContextMenuCB->pBox); break;
 			case ContextMenu_BoxEditInput:     pContextMenuCB->pInterfacedScenario->contextMenuBoxEditInputCB(*pContextMenuCB->pBox, pContextMenuCB->ui32Index); break;
 			case ContextMenu_BoxRemoveInput:   pContextMenuCB->pInterfacedScenario->contextMenuBoxRemoveInputCB(*pContextMenuCB->pBox, pContextMenuCB->ui32Index); break;
@@ -3152,7 +3162,6 @@ void CInterfacedScenario::scenarioDrawingAreaKeyPressEventCB(::GtkWidget* pWidge
 #endif
 	{
 		this->deleteSelection();
-		this->redraw();
 	}
 }
 
@@ -3570,18 +3579,6 @@ void CInterfacedScenario::contextMenuBoxDisableAllCB(void)
 		}
 	}
 	this->snapshotCB();
-}
-
-void CInterfacedScenario::contextMenuBoxDeleteCB(IBox& rBox)
-{
-	m_rKernelContext.getLogManager() << LogLevel_Debug << "contextMenuBoxDeleteCB\n";
-	if(m_pDesignerVisualization)
-	{
-		m_pDesignerVisualization->onVisualizationBoxRemoved(rBox.getIdentifier());
-	}
-	m_rScenario.removeBox(rBox.getIdentifier());
-	this->snapshotCB();
-	this->redraw();
 }
 
 void CInterfacedScenario::contextMenuBoxAddInputCB(IBox& rBox)
