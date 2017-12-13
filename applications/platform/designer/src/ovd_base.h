@@ -46,12 +46,4 @@ private:
 	G_CALLBACK_AUTOCAST(void);
 };
 
-enum MessageType
-{
-	MessageType_NoArguments,
-	MessageType_OpenScenario,
-	MessageType_PlayScenario,
-	MessageType_PlayFastScenario
-};
-
 #endif // __OpenViBEDesigner_base_H__

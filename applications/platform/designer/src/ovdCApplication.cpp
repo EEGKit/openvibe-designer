@@ -775,7 +775,7 @@ namespace
 		return TRUE;
 	}
 
-#ifdef _NDEBUG
+#ifdef NDEBUG
 	/**
 	* Function called in gtk loop: to check each 0.1second if a message was sent by a second instance of Designer
 	* (Meaning that someone tried to reopen Designer and this instance has to do something)
@@ -799,30 +799,26 @@ namespace
 				char l_pBuffer[2048];
 				if ( l_oMessage.try_receive(&l_pBuffer, sizeof(l_pBuffer), recvd_size, priority))
 				{
-					l_pApplication->m_rKernelContext.getLogManager() << LogLevel_Trace << "ovdCApplication::receiveSecondInstanceMessage- Remove message: \n";
 					boost::interprocess::message_queue::remove(MESSAGE_NAME);
 
 					int32 l_iMode = 0;
-					char l_sScenarioPath[1024];
+					char l_sScenarioPath[2048];
 					char* l_sMessage = strtok(l_pBuffer, ";");
 					while(l_sMessage != NULL)
 					{
-						sscanf(l_sMessage, "%1d : <%1024[^>]> ", &l_iMode, &l_sScenarioPath);
+						sscanf(l_sMessage, "%1d : <%2048[^>]> ", &l_iMode, &l_sScenarioPath);
 						switch(l_iMode)
 						{
-						case MessageType_OpenScenario:
-							l_pApplication->m_rKernelContext.getLogManager() << LogLevel_Trace << "ovdCApplication::receiveSecondInstanceMessage- Open scenario: " << l_sScenarioPath << "\n";
+						case CommandLineFlag_Open:
 							l_pApplication->openScenario(l_sScenarioPath);
 							break;
-						case MessageType_PlayScenario:
-							l_pApplication->m_rKernelContext.getLogManager() << LogLevel_Trace << "ovdCApplication::receiveSecondInstanceMessage- Play scenario: " << l_sScenarioPath << "\n";
+						case CommandLineFlag_Play:
 							if(l_pApplication->openScenario(l_sScenarioPath))
 							{
 								l_pApplication->playScenarioCB();
 							}
 							break;
-						case MessageType_PlayFastScenario:
-							l_pApplication->m_rKernelContext.getLogManager() << LogLevel_Trace << "ovdCApplication::receiveSecondInstanceMessage- Play fast scenario: " << l_sScenarioPath << "\n";
+						case CommandLineFlag_PlayFast:
 							if(l_pApplication->openScenario(l_sScenarioPath))
 							{
 								l_pApplication->forwardScenarioCB();
@@ -835,7 +831,6 @@ namespace
 				}
 				else
 				{
-					l_pApplication->m_rKernelContext.getLogManager() << LogLevel_Trace << "ovdCApplication::receiveSecondInstanceMessage- Remove message: \n";
 					boost::interprocess::message_queue::remove(MESSAGE_NAME);
 				}
 			}
@@ -1071,7 +1066,7 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 
 	__g_idle_add__(idle_application_loop, this);
 	__g_timeout_add__(1000, timeout_application_loop, this);
-#ifdef _NDEBUG
+#ifdef NDEBUG
 	__g_timeout_add__(100, receiveSecondInstanceMessage, this);
 #endif
 
