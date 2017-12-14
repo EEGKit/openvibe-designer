@@ -190,14 +190,18 @@ namespace
 				//case ContextMenu_BoxRename:        l_pContextMenuCB->pInterfacedScenario->contextMenuBoxRenameAllCB(); break;
 			case ContextMenu_BoxDelete:
 			{
-				// Remove current box
-				if (pContextMenuCB->pInterfacedScenario->m_pDesignerVisualization)
+				// If selection is empty delete the box under cursor
+				if (pContextMenuCB->pInterfacedScenario->m_SelectedObjects.empty())
 				{
-					pContextMenuCB->pInterfacedScenario->m_pDesignerVisualization->onVisualizationBoxRemoved(pContextMenuCB->pBox->getIdentifier());
+					pContextMenuCB->pInterfacedScenario->deleteBox(pContextMenuCB->pBox->getIdentifier());
+					pContextMenuCB->pInterfacedScenario->redraw();
+					pContextMenuCB->pInterfacedScenario->snapshotCB();
 				}
-				pContextMenuCB->pInterfacedScenario->m_rScenario.removeBox(pContextMenuCB->pBox->getIdentifier());
-				// Remove selected box
-				pContextMenuCB->pInterfacedScenario->deleteSelection();
+				else
+				{
+					pContextMenuCB->pInterfacedScenario->deleteSelection();
+				}
+				break;
 			}
 			case ContextMenu_BoxAddInput:      pContextMenuCB->pInterfacedScenario->contextMenuBoxAddInputCB(*pContextMenuCB->pBox); break;
 			case ContextMenu_BoxEditInput:     pContextMenuCB->pInterfacedScenario->contextMenuBoxEditInputCB(*pContextMenuCB->pBox, pContextMenuCB->ui32Index); break;
@@ -3394,14 +3398,7 @@ void CInterfacedScenario::deleteSelection(void)
 	{
 		if(m_rScenario.isBox(objectId))
 		{
-			// removes visualization box from window manager
-			if(m_pDesignerVisualization)
-			{
-				m_pDesignerVisualization->onVisualizationBoxRemoved(objectId);
-			}
-
-			// removes box from scenario
-			m_rScenario.removeBox(objectId);
+			this->deleteBox(objectId);
 		}
 		if(m_rScenario.isComment(objectId))
 		{
@@ -3418,6 +3415,18 @@ void CInterfacedScenario::deleteSelection(void)
 
 	this->redraw();
 	this->snapshotCB();
+}
+
+void CInterfacedScenario::deleteBox(const OpenViBE::CIdentifier& rBoxIdentifier)
+{
+	// removes visualization box from window manager
+	if (m_pDesignerVisualization)
+	{
+		m_pDesignerVisualization->onVisualizationBoxRemoved(rBoxIdentifier);
+	}
+
+	// removes box from scenario
+	m_rScenario.removeBox(rBoxIdentifier);
 }
 
 void CInterfacedScenario::contextMenuBoxRenameCB(IBox& rBox)

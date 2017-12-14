@@ -69,10 +69,10 @@ namespace OpenViBEDesigner
 		void pasteSelection(void);
 		void deleteSelection(void);
 
+		void deleteBox(const OpenViBE::CIdentifier& rBoxIdentifier); // Utility method to remove box from scenario and visualization
 		void contextMenuBoxRenameCB(OpenViBE::Kernel::IBox& rBox);
 		void contextMenuBoxRenameAllCB();
 		void contextMenuBoxToggleEnableAllCB(void);
-		void contextMenuBoxDeleteCB(OpenViBE::Kernel::IBox& rBox);
 		void contextMenuBoxAddInputCB(OpenViBE::Kernel::IBox& rBox);
 		void contextMenuBoxEditInputCB(OpenViBE::Kernel::IBox& rBox, OpenViBE::uint32 ui32Index);
 		void contextMenuBoxRemoveInputCB(OpenViBE::Kernel::IBox& rBox, OpenViBE::uint32 ui32Index);
