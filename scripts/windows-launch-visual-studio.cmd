@@ -3,8 +3,6 @@ setlocal EnableDelayedExpansion
 setlocal enableextensions 
 
 set script_dir=%CD%
-set USE_EXPRESS=0
-REM set SKIP_VS2015=0
 
 set PathSDK="%script_dir%\..\dependencies\openvibe-sdk-release"
 set VerboseOuptut=OFF
