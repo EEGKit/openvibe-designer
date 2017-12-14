@@ -25,11 +25,11 @@ if /i "%1" == "--dependencies-dir" (
  	SHIFT
  	SHIFT
  	Goto parameter_parse
-)  else if /i "%%A"=="--debug" (
+)  else if /i "%1"=="--debug" (
 	set BuildType=Debug
 	set PathSDK="%script_dir%\..\dependencies\openvibe-sdk-debug"
 	SHIFT
-) else if /i "%%A"=="--sdk" (
+) else if /i "%1"=="--sdk" (
 	set PathSDK=%2
 	SHIFT
 	SHIFT
