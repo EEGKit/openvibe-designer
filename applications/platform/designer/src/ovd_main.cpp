@@ -457,9 +457,9 @@ static char backslash_to_slash(char c)
 * \param sMode: play, play-fast or open
 * \param sScenarioPath: name of the scenario to open
 ------------------------------------------------------------------------------------------------------------------------------------**/
-static bool ensureOneInstanceOfDesigner(SConfiguration& pConfiguration, ILogManager& l_rLogManager)
+static bool ensureOneInstanceOfDesigner(SConfiguration& configuration, ILogManager& l_rLogManager)
 {
-#if defined _NDEBUG
+#if defined NDEBUG
 	try
 	{
 		// If the mutex cannot be opened, it's the first instance of Designer, go to catch
@@ -469,49 +469,29 @@ static bool ensureOneInstanceOfDesigner(SConfiguration& pConfiguration, ILogMana
 		// The message contains the command to send: sMode: open, play, play-fast a scenario, sScenarioPath: path of the scenario
 		boost::interprocess::scoped_lock<boost::interprocess::named_mutex> lock(l_oMutex);
 		std::string l_sMessage="";
-		int32 l_i32Mode;
-		if(pConfiguration.m_vFlag.size() == 0)
+		if (configuration.m_vFlag.empty())
 		{
-			char l_s32Mode[32];
-			sprintf(l_s32Mode, "%d", MessageType_NoArguments);
-			l_sMessage = std::string(l_s32Mode) + ": ;";
+			l_sMessage = std::to_string(static_cast<int>(CommandLineFlag_None)) + ": ;";
 		}
-		for(size_t i = 0; i<pConfiguration.m_vFlag.size(); i++)
+
+		for (auto& flag : configuration.m_vFlag)
 		{
-			std::string l_sFileName = pConfiguration.m_vFlag[i].second;
+			std::string l_sFileName = flag.second;
 			std::transform(l_sFileName.begin(), l_sFileName.end(), l_sFileName.begin(), backslash_to_slash);
-			switch(pConfiguration.m_vFlag[i].first)
-			{
-			case CommandLineFlag_Open:
-				l_i32Mode = MessageType_OpenScenario;
-				break;
-			case CommandLineFlag_Play:
-				l_i32Mode = MessageType_PlayScenario;
-				break;
-			case CommandLineFlag_PlayFast:
-				l_i32Mode = MessageType_PlayFastScenario;
-				break;
-			default:
-				l_i32Mode = MessageType_NoArguments;
-				break;
-			}
-			char l_s32Mode[32];
-			sprintf(l_s32Mode, "%d", l_i32Mode);
-			l_sMessage = l_sMessage + l_s32Mode + ": <" + l_sFileName + "> ; ";
+
+			l_sMessage = l_sMessage + std::to_string(static_cast<int>(flag.first)) + ": <" + l_sFileName + "> ; ";
 		}
-		const char* l_sFinalMessage = l_sMessage.c_str(); 
-		l_rLogManager << LogLevel_Trace << "There is already an instance of " << DESIGNER_NAME << " running. " << l_sFinalMessage << " \n";
-		size_t l_sizeMessage = (strlen(l_sFinalMessage) * sizeof(char));
+
+		size_t l_sizeMessage = (strlen(l_sMessage.c_str()) * sizeof(char));
 
 		boost::interprocess::message_queue l_oMessageToFirstInstance(boost::interprocess::open_or_create, MESSAGE_NAME, l_sizeMessage, l_sizeMessage);
-		l_oMessageToFirstInstance.send(l_sFinalMessage, l_sizeMessage, 0);
+		l_oMessageToFirstInstance.send(l_sMessage.c_str(), l_sizeMessage, 0);
 
 		return false;
 	}
 	catch(boost::interprocess::interprocess_exception&)
 	{
 		//Create the named mutex to catch the potential next instance of Designer that could open
-		l_rLogManager << LogLevel_Trace << "EnsureOneInstanceOfDesigner- This is the only instance of " << DESIGNER_NAME << " with a gui, open it normally.\n";
 		boost::interprocess::named_mutex l_oMutex(boost::interprocess::create_only, MUTEX_NAME);
 		return true;
 	}
@@ -1056,7 +1036,7 @@ int go(int argc, char ** argv)
 				// Remove the mutex only if the application was run with a gui
 				if (l_oConfiguration.m_eNoGui != CommandLineFlag_NoGui )
 				{
-					boost::interprocess::named_mutex::remove("openvibe_designer_mutex");
+					boost::interprocess::named_mutex::remove(MUTEX_NAME);
 				}
 			}
 		}
@@ -1071,7 +1051,7 @@ int main(int argc, char ** argv)
 	// Remove mutex at startup, as the main loop regenerates frequently this mutex,
 	// if another instance is running, it should have the time to regenerate it
 	// Avoids that after crashing, a mutex stays blocking
-	boost::interprocess::named_mutex::remove("openvibe_designer_mutex");
+	boost::interprocess::named_mutex::remove(MUTEX_NAME);
 	int l_iRet = -1;
 //	try
 	{

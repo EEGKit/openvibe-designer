@@ -6,30 +6,44 @@ set script_dir=%CD%
 
 set PathSDK="%script_dir%\..\dependencies\openvibe-sdk-release"
 set VerboseOuptut=OFF
+set PlatformTarget=x86
+set PATH_DEPENDENCIES=
 
 set BuildType=Release
 
 goto parameter_parse
 
 :print_help
-	echo Usage: windows-launch-visual-studio.cmd --sdk ^<path to openvibe SDK^>
+	echo Usage: windows-launch-visual-studio.cmd [--debug] [--sdk ^<path to openvibe SDK^>] [--dependencies-dir ^<path to dependencies^>]
 	exit /b
 
 :parameter_parse
-for %%A in (%*) DO (
-	if /i "%%A"=="--sdk" (
-		set next=SDK
-	) else if "!next!"=="SDK" (
-		set PathSDK=%%A
-		set next=
-	) else if /i "%%A"=="--debug" (
-		set BuildType=Debug
-		set PathSDK="%script_dir%\..\dependencies\openvibe-sdk-debug"
-		set next=
-	)
-)
+if /i "%1" == "--dependencies-dir" (
+ 	set "PATH_DEPENDENCIES=%2"
+ 	SHIFT
+ 	SHIFT
+ 	Goto parameter_parse
+)  else if /i "%1"=="--debug" (
+	set BuildType=Debug
+	set PathSDK="%script_dir%\..\dependencies\openvibe-sdk-debug"
+	SHIFT
+) else if /i "%1"=="--sdk" (
+	set PathSDK=%2
+	SHIFT
+	SHIFT
+ 	Goto parameter_parse
+) else if /i "%1" == "--platform-target" (
+	if "%2"=="x64" (
+		set PlatformTarget=%2
+		SHIFT
+		SHIFT
 
-call "windows-initialize-environment.cmd" --sdk "%PathSDK%"
+		Goto parameter_parse
+	)
+) 
+
+
+call "windows-initialize-environment.cmd" --platform-target %PlatformTarget%
 
 SET "OV_PATH_ROOT=%CD%\..\..\openvibe-designer-build\dist\%BuildType%-%PlatformTarget%"
 SET "PATH=%OV_PATH_ROOT%\bin;%PATH%"
@@ -39,7 +53,7 @@ if not defined USE_EXPRESS (
 	SET USE_EXPRESS=1
 )
 
-set SolutionPath=%CD%\..\..\openvibe-designer-build\vs-project\Designer.sln
+set SolutionPath=%CD%\..\..\openvibe-designer-build\vs-project-%PlatformTarget%\Designer.sln
 
 if %USE_EXPRESS% == 1 (
 	echo Use %VSCMake% Express Edition
