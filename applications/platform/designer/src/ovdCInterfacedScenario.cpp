@@ -3705,7 +3705,7 @@ void CInterfacedScenario::contextMenuBoxAddSettingCB(IBox& rBox)
 	m_rKernelContext.getLogManager() << LogLevel_Debug << "contextMenuBoxAddSettingCB\n";
 	// Store setting count in case the custom "onSettingAdded" of the box adds more than one setting
 	uint32 l_ui32OldSettingsCount = rBox.getSettingCount();
-	rBox.addSetting("New setting", OV_UndefinedIdentifier, "");
+	rBox.addSetting("New setting", OV_UndefinedIdentifier, "",Kernel::SettingLastIndexRequest,false,m_rScenario.getUnusedIdentifier());
 	uint32 l_ui32NewSettingsCount = rBox.getSettingCount();
 	// Check that at least one setting was added
 	if(l_ui32NewSettingsCount > l_ui32OldSettingsCount && rBox.hasAttribute(OV_AttributeId_Box_FlagCanModifySetting))

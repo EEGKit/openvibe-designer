@@ -109,7 +109,7 @@ namespace
 			m_oHash=m_oHash.toUInteger()^v;
 			return true;
 		}
-		virtual bool addSetting(const CString& sName, const CIdentifier& rTypeIdentifier, const CString& sDefaultValue, const bool bModifiable)
+		virtual bool addSetting(const CString& sName, const CIdentifier& rTypeIdentifier, const CString& sDefaultValue, const bool bModifiable, const CIdentifier oIdentifier)
 		{
 			uint64 v=rTypeIdentifier.toUInteger();
 			swap_byte(v, m_ui64SettingCountHash);
@@ -2069,7 +2069,7 @@ void CApplication::saveScenarioCB(CInterfacedScenario* pScenario)
 				l_rScenario.getSettingType(l_ui32ScenarioSettingIndex, l_oSettingTypeIdentifier);
 				l_rScenario.getSettingDefaultValue(l_ui32ScenarioSettingIndex, l_sSettingDefaultValue);
 
-				l_oMetaboxProto.addSetting(l_sSettingName, l_oSettingTypeIdentifier, l_sSettingDefaultValue, false);
+				l_oMetaboxProto.addSetting(l_sSettingName, l_oSettingTypeIdentifier, l_sSettingDefaultValue, false, OV_UndefinedIdentifier);
 			}
 
 			if (l_rScenario.hasAttribute(OV_AttributeId_Scenario_MetaboxHash))
