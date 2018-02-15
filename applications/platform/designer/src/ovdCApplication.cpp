@@ -92,7 +92,7 @@ namespace
 			,m_TypeManager(typeManager)
 		{
 		}
-		virtual bool addInput(const CString& sName, const CIdentifier& rTypeIdentifier)
+		virtual bool addInput(const CString& sName, const CIdentifier& rTypeIdentifier, const CIdentifier oIdentifier)
 		{
 			uint64 v=rTypeIdentifier.toUInteger();
 			swap_byte(v, m_ui64InputCountHash);
@@ -101,7 +101,7 @@ namespace
 			return true;
 		}
 		//
-		virtual bool addOutput(const CString& sName, const CIdentifier& rTypeIdentifier)
+		virtual bool addOutput(const CString& sName, const CIdentifier& rTypeIdentifier,const CIdentifier oIdentifier)
 		{
 			uint64 v=rTypeIdentifier.toUInteger();
 			swap_byte(v, m_ui64OutputCountHash);
@@ -2041,22 +2041,26 @@ void CApplication::saveScenarioCB(CInterfacedScenario* pScenario)
 			{
 				CString l_sInputName;
 				CIdentifier l_oInputTypeIdentifier;
+				CIdentifier l_oInputIdentifier;
 
 				l_rScenario.getInputType(l_ui32ScenarioInputIndex, l_oInputTypeIdentifier);
 				l_rScenario.getInputName(l_ui32ScenarioInputIndex, l_sInputName);
+				l_rScenario.getInputIdentifier(l_ui32ScenarioInputIndex, l_oInputIdentifier);
 
-				l_oMetaboxProto.addInput(l_sInputName, l_oInputTypeIdentifier);
+				l_oMetaboxProto.addInput(l_sInputName, l_oInputTypeIdentifier,l_oInputIdentifier);
 			}
 
 			for (uint32 l_ui32ScenarioOutputIndex = 0; l_ui32ScenarioOutputIndex < l_rScenario.getOutputCount(); l_ui32ScenarioOutputIndex++)
 			{
 				CString l_sOutputName;
 				CIdentifier l_oOutputTypeIdentifier;
+				CIdentifier l_oOutputIdentifier;
 
 				l_rScenario.getOutputType(l_ui32ScenarioOutputIndex, l_oOutputTypeIdentifier);
 				l_rScenario.getOutputName(l_ui32ScenarioOutputIndex, l_sOutputName);
+				l_rScenario.getOutputIdentifier(l_ui32ScenarioOutputIndex, l_oOutputIdentifier);
 
-				l_oMetaboxProto.addOutput(l_sOutputName, l_oOutputTypeIdentifier);
+				l_oMetaboxProto.addOutput(l_sOutputName, l_oOutputTypeIdentifier,l_oOutputIdentifier);
 			}
 
 			for (uint32 l_ui32ScenarioSettingIndex = 0; l_ui32ScenarioSettingIndex < l_rScenario.getSettingCount(); l_ui32ScenarioSettingIndex++)

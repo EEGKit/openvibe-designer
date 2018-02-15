@@ -408,7 +408,7 @@ namespace
 
 	void modify_scenario_setting_move_down_cb(GtkWidget*, OpenViBEDesigner::CInterfacedScenario::SSettingCallbackData* pData)
 	{
-		if (pData->m_iSettingIndex >= static_cast<int32>(pData->m_pInterfacedScenario->m_rScenario.getSettingCount()))
+		if (pData->m_iSettingIndex >= static_cast<int32>(pData->m_pInterfacedScenario->m_rScenario.getSettingCount()-1))
 		{
 			return;
 		}
@@ -1995,7 +1995,7 @@ void CInterfacedScenario::addScenarioSettingCB(void)
 {
 	char l_sName[1024];
 	sprintf(l_sName, "Setting %u", m_rScenario.getSettingCount()+1);
-	m_rScenario.addSetting(l_sName, OVTK_TypeId_Integer, "0");
+	m_rScenario.addSetting(l_sName, OVTK_TypeId_Integer, "0", OV_Value_UndefinedIndexUInt, false, m_rScenario.getUnusedIdentifier());
 
 	this->redrawConfigureScenarioSettingsDialog();
 }
@@ -2004,7 +2004,11 @@ void CInterfacedScenario::addScenarioInputCB(void)
 {
 	char l_sName[1024];
 	sprintf(l_sName, "Input %u", m_rScenario.getInputCount()+1);
-	m_rScenario.addInput(l_sName, OVTK_TypeId_StreamedMatrix);
+	
+	// TO BE DONE: CRIO - Change GUI for adding/modifying input: Identifier should be initialized by hashing StreamType id with the name of the input.
+	// Adding/modifying should be done by using a specific window with validation button.
+	// Modifying should be : removing + adding in order to reinitialize identifier.
+	m_rScenario.addInput(l_sName, OVTK_TypeId_StreamedMatrix,m_rScenario.getUnusedIdentifier(m_rScenario.combineIdentifierWithString(OVTK_TypeId_StreamedMatrix,l_sName)));
 	this->snapshotCB();
 
 	this->redrawScenarioInputSettings();
@@ -2014,46 +2018,19 @@ void CInterfacedScenario::addScenarioOutputCB(void)
 {
 	char l_sName[1024];
 	sprintf(l_sName, "Output %u", m_rScenario.getOutputCount()+1);
-	m_rScenario.addOutput(l_sName, OVTK_TypeId_StreamedMatrix);
+	
+	// TO BE DONE: CRIO - Change GUI for adding/modifying output: Identifier should be initialized by hashing StreamType id with the name of the output.
+	// Adding/modifying should be done by using a specific window with validation button.
+	// Modifying should be : removing + adding in order to reinitialize identifier.
+	m_rScenario.addOutput(l_sName, OVTK_TypeId_StreamedMatrix,m_rScenario.getUnusedIdentifier(m_rScenario.combineIdentifierWithString(OVTK_TypeId_StreamedMatrix,l_sName)));
 	this->snapshotCB();
 
 	this->redrawScenarioOutputSettings();
 }
 
 void CInterfacedScenario::swapScenarioSettings(unsigned int uiSettingAIndex, unsigned int uiSettingBIndex)
-{
-	// Load values
-	CString l_sSettingAName;
-	CIdentifier l_sSettingAType;
-	CString l_sSettingADefaultValue;
-	CString l_sSettingAValue;
-
-	m_rScenario.getSettingName(uiSettingAIndex, l_sSettingAName);
-	m_rScenario.getSettingType(uiSettingAIndex, l_sSettingAType);
-	m_rScenario.getSettingDefaultValue(uiSettingAIndex, l_sSettingADefaultValue);
-	m_rScenario.getSettingValue(uiSettingAIndex, l_sSettingAValue);
-
-	CString l_sSettingBName;
-	CIdentifier l_sSettingBType;
-	CString l_sSettingBDefaultValue;
-	CString l_sSettingBValue;
-
-	m_rScenario.getSettingName(uiSettingBIndex, l_sSettingBName);
-	m_rScenario.getSettingType(uiSettingBIndex, l_sSettingBType);
-	m_rScenario.getSettingDefaultValue(uiSettingBIndex, l_sSettingBDefaultValue);
-	m_rScenario.getSettingValue(uiSettingBIndex, l_sSettingBValue);
-
-	// Set new values
-	m_rScenario.setSettingName(uiSettingAIndex, l_sSettingBName);
-	m_rScenario.setSettingType(uiSettingAIndex, l_sSettingBType);
-	m_rScenario.setSettingDefaultValue(uiSettingAIndex, l_sSettingBDefaultValue);
-	m_rScenario.setSettingValue(uiSettingAIndex, l_sSettingBValue);
-
-	m_rScenario.setSettingName(uiSettingBIndex, l_sSettingAName);
-	m_rScenario.setSettingType(uiSettingBIndex, l_sSettingAType);
-	m_rScenario.setSettingDefaultValue(uiSettingBIndex, l_sSettingADefaultValue);
-	m_rScenario.setSettingValue(uiSettingBIndex, l_sSettingAValue);
-
+{	
+	m_rScenario.swapSettings(uiSettingAIndex,uiSettingBIndex);
 	this->redrawConfigureScenarioSettingsDialog();
 }
 
@@ -3593,7 +3570,7 @@ void CInterfacedScenario::contextMenuBoxDisableAllCB(void)
 void CInterfacedScenario::contextMenuBoxAddInputCB(IBox& rBox)
 {
 	m_rKernelContext.getLogManager() << LogLevel_Debug << "contextMenuBoxAddInputCB\n";
-	rBox.addInput("New input", OV_TypeId_EBMLStream);
+	rBox.addInput("New input", OV_TypeId_EBMLStream,m_rScenario.getUnusedIdentifier());
 	if(rBox.hasAttribute(OV_AttributeId_Box_FlagCanModifyInput))
 	{
 		CConnectorEditor l_oConnectorEditor(m_rKernelContext, rBox, Connector_Input, rBox.getInputCount()-1, "Add Input", m_sGUIFilename.c_str());
@@ -3633,7 +3610,7 @@ void CInterfacedScenario::contextMenuBoxRemoveInputCB(IBox& rBox, uint32 ui32Ind
 void CInterfacedScenario::contextMenuBoxAddOutputCB(IBox& rBox)
 {
 	m_rKernelContext.getLogManager() << LogLevel_Debug << "contextMenuBoxAddOutputCB\n";
-	rBox.addOutput("New output", OV_TypeId_EBMLStream);
+	rBox.addOutput("New output", OV_TypeId_EBMLStream,m_rScenario.getUnusedIdentifier());
 	if(rBox.hasAttribute(OV_AttributeId_Box_FlagCanModifyOutput))
 	{
 		CConnectorEditor l_oConnectorEditor(m_rKernelContext, rBox, Connector_Output, rBox.getOutputCount()-1, "Add Output", m_sGUIFilename.c_str());
@@ -3705,7 +3682,7 @@ void CInterfacedScenario::contextMenuBoxAddSettingCB(IBox& rBox)
 	m_rKernelContext.getLogManager() << LogLevel_Debug << "contextMenuBoxAddSettingCB\n";
 	// Store setting count in case the custom "onSettingAdded" of the box adds more than one setting
 	uint32 l_ui32OldSettingsCount = rBox.getSettingCount();
-	rBox.addSetting("New setting", OV_UndefinedIdentifier, "",Kernel::SettingLastIndexRequest,false,m_rScenario.getUnusedIdentifier());
+	rBox.addSetting("New setting", OV_UndefinedIdentifier, "",OV_Value_UndefinedIndexUInt,false,m_rScenario.getUnusedIdentifier());
 	uint32 l_ui32NewSettingsCount = rBox.getSettingCount();
 	// Check that at least one setting was added
 	if(l_ui32NewSettingsCount > l_ui32OldSettingsCount && rBox.hasAttribute(OV_AttributeId_Box_FlagCanModifySetting))
