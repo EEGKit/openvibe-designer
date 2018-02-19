@@ -848,8 +848,6 @@ int go(int argc, char ** argv)
 				SConfiguration l_oConfiguration;
 				bool bArgParseResult = parse_arguments(argc, argv, l_oConfiguration);
 
-				l_rLogManager << LogLevel_Info << "Syntax :\n";
-
 				l_pKernelContext->getPluginManager().addPluginsFromFiles(l_rConfigurationManager.expand("${Kernel_Plugins}"));
 
 				//FIXME : set locale only when needed
