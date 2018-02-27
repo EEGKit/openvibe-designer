@@ -163,7 +163,8 @@ namespace
 			                   &pipelineId,
 			                   -1);
 
-			if (gui->m_Controller.startEngineWithPipeline(static_cast<unsigned int>(pipelineId), isFastForward))
+			bool shouldAcquireImpedance = (gtk_toggle_tool_button_get_active(gui->m_ToggleAcquireImpedance) == TRUE);
+			if (gui->m_Controller.startEngineWithPipeline(static_cast<unsigned int>(pipelineId), isFastForward, shouldAcquireImpedance))
 			{
 				gtk_widget_set_sensitive(gui->m_ButtonStartEngine, false);
 				gtk_widget_set_sensitive(gui->m_ButtonStartEngineFastFoward, false);
@@ -297,6 +298,8 @@ CArchwayHandlerGUI::CArchwayHandlerGUI(CArchwayHandler& controller)
 
 	m_SpinnerEngineActivity = GTK_SPINNER(gtk_builder_get_object(m_Builder, "spinner-engine-activity"));
 	gtk_widget_hide(GTK_WIDGET(m_SpinnerEngineActivity));
+
+	m_ToggleAcquireImpedance = GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_Builder, "toggle-acquire-impedance"));
 
 	m_ButtonStartEngine = GTK_WIDGET(gtk_builder_get_object(m_Builder, "button-start-engine"));
 	m_ButtonStartEngineFastFoward = GTK_WIDGET(gtk_builder_get_object(m_Builder, "button-start-engine-fast"));
