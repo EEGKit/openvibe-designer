@@ -51,7 +51,7 @@ namespace Mensia {
 
 	struct SGUIBridge
 	{
-		std::function<void()> resfreshStoppedEngine;
+		std::function<void()> refreshStoppedEngine;
 	};
 
 	// Replace this line when we stop supporting gcc 4.6.3 (Ubuntu 12.04)

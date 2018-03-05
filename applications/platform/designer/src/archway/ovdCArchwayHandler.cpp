@@ -422,7 +422,7 @@ bool CArchwayHandler::loopEngine()
 			return false;
 		}
 
-		m_GUIBridge.resfreshStoppedEngine();
+		m_GUIBridge.refreshStoppedEngine();
 		
 		return success && !isPipelineInErrorState;
 	}

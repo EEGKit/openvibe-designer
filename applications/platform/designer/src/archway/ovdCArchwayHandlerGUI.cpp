@@ -166,6 +166,10 @@ namespace
 			bool shouldAcquireImpedance = (gtk_toggle_tool_button_get_active(gui->m_ToggleAcquireImpedance) == TRUE);
 			if (gui->m_Controller.startEngineWithPipeline(static_cast<unsigned int>(pipelineId), isFastForward, shouldAcquireImpedance))
 			{
+				gtk_widget_set_sensitive(GTK_WIDGET(gui->m_ToggleAcquireImpedance), false);
+				gtk_widget_set_sensitive(GTK_WIDGET(gui->m_ComboBoxEngineType), false);
+				gtk_widget_set_sensitive(gui->m_ButtonConfigureAcquisition, false);
+				gtk_widget_set_sensitive(gui->m_ButtonLaunchEngine, false);
 				gtk_widget_set_sensitive(gui->m_ButtonStartEngine, false);
 				gtk_widget_set_sensitive(gui->m_ButtonStartEngineFastFoward, false);
 				gtk_widget_set_sensitive(gui->m_ButtonStopEngine, true);
@@ -198,6 +202,10 @@ namespace
 
 		if (gui->m_Controller.stopEngine())
 		{
+			gtk_widget_set_sensitive(GTK_WIDGET(gui->m_ToggleAcquireImpedance), true);
+			gtk_widget_set_sensitive(GTK_WIDGET(gui->m_ComboBoxEngineType), true);
+			gtk_widget_set_sensitive(gui->m_ButtonConfigureAcquisition, true);
+			gtk_widget_set_sensitive(gui->m_ButtonLaunchEngine, true);
 			gtk_widget_set_sensitive(gui->m_ButtonStartEngine, true);
 			gtk_widget_set_sensitive(gui->m_ButtonStartEngineFastFoward, true);
 			gtk_widget_set_sensitive(gui->m_ButtonStopEngine, false);
@@ -285,10 +293,11 @@ CArchwayHandlerGUI::CArchwayHandlerGUI(CArchwayHandler& controller)
 //	gtk_builder_connect_signals(m_pBuilder, NULL);
 
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "button-configure-acquisition")),
-	                 "clicked", G_CALLBACK(on_button_configure_acquisition_clicked), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "button-reinitialize-archway")),
-	                 "clicked", G_CALLBACK(on_button_reinitialize_archway_clicked), this);
+	m_ButtonConfigureAcquisition = GTK_WIDGET(gtk_builder_get_object(m_Builder, "button-configure-acquisition"));
+	g_signal_connect(G_OBJECT(m_ButtonConfigureAcquisition), "clicked", G_CALLBACK(on_button_configure_acquisition_clicked), this);
+
+	m_ButtonReinitializeArchway = GTK_WIDGET(gtk_builder_get_object(m_Builder, "button-reinitialize-archway"));
+	g_signal_connect(G_OBJECT(m_ButtonReinitializeArchway), "clicked", G_CALLBACK(on_button_reinitialize_archway_clicked), this);
 
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "button-pipeline-configuration-apply")),
 	                 "clicked", G_CALLBACK(on_button_pipeline_configuration_apply_clicked), this);
@@ -329,7 +338,11 @@ CArchwayHandlerGUI::CArchwayHandlerGUI(CArchwayHandler& controller)
 
 	m_TreeModelEnginePipelines = GTK_TREE_MODEL(gtk_builder_get_object(m_Builder, "liststore-pipelines"));
 
-	m_Controller.m_GUIBridge.resfreshStoppedEngine = [this](){
+	m_Controller.m_GUIBridge.refreshStoppedEngine = [this](){
+		gtk_widget_set_sensitive(GTK_WIDGET(m_ToggleAcquireImpedance), true);
+		gtk_widget_set_sensitive(GTK_WIDGET(m_ComboBoxEngineType), true);
+		gtk_widget_set_sensitive(m_ButtonConfigureAcquisition, true);
+		gtk_widget_set_sensitive(m_ButtonLaunchEngine, true);
 		gtk_widget_set_sensitive(m_ButtonStartEngine, true);
 		gtk_widget_set_sensitive(m_ButtonStartEngineFastFoward, true);
 		gtk_widget_set_sensitive(m_ButtonStopEngine, false);
