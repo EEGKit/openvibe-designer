@@ -51,7 +51,7 @@ namespace Mensia {
 
 	struct SGUIBridge
 	{
-		std::function<void()> resfreshStoppedEngine;
+		std::function<void()> refreshStoppedEngine;
 	};
 
 	// Replace this line when we stop supporting gcc 4.6.3 (Ubuntu 12.04)
@@ -69,7 +69,7 @@ namespace Mensia {
 		std::vector<SPipelineParameter> getPipelineParameters(unsigned int pipelineClassId) const;
 		bool setPipelineParameterValue(unsigned int pipelineClassId, std::string const& parameterName, std::string const& parameterValue);
 
-		bool startEngineWithPipeline(unsigned int pipelineClassId, bool isFastForward);
+		bool startEngineWithPipeline(unsigned int pipelineClassId, bool isFastForward, bool shouldAcquireImpedance);
 		bool loopEngine();
 		bool stopEngine();
 
@@ -107,6 +107,7 @@ namespace Mensia {
 
 			bool (*initialize)(const char* login, const char* password, const char* applicationName, const char* configurationFilename);
 			bool (*startAllAcquisitionDevices)(void);
+			bool (*startImpedanceCheckOnAllAcquisitionDevices)(void);
 			bool (*startEngine)(void);
 			bool (*startEngineInFastForward)(void);
 			bool (*stopEngine)(void);

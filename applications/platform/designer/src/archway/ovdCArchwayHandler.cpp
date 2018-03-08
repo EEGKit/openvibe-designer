@@ -62,6 +62,7 @@ EngineInitialisationStatus CArchwayHandler::initialize()
 	didLoad &= System::CDynamicModuleSymbolLoader::getSymbol<>(m_ArchwayModule, "getConfigurationParameterAsString", &m_Archway->getConfigurationParameterAsString);
 	didLoad &= System::CDynamicModuleSymbolLoader::getSymbol<>(m_ArchwayModule, "initialize", &m_Archway->initialize);
 	didLoad &= System::CDynamicModuleSymbolLoader::getSymbol<>(m_ArchwayModule, "startAllAcquisitionDevices", &m_Archway->startAllAcquisitionDevices);
+	didLoad &= System::CDynamicModuleSymbolLoader::getSymbol<>(m_ArchwayModule, "startImpedanceCheckOnAllAcquisitionDevices", &m_Archway->startImpedanceCheckOnAllAcquisitionDevices);
 	didLoad &= System::CDynamicModuleSymbolLoader::getSymbol<>(m_ArchwayModule, "startEngine", &m_Archway->startEngine);
 	didLoad &= System::CDynamicModuleSymbolLoader::getSymbol<>(m_ArchwayModule, "startEngineInFastForward", &m_Archway->startEngineInFastForward);
 	didLoad &= System::CDynamicModuleSymbolLoader::getSymbol<>(m_ArchwayModule, "stopEngine", &m_Archway->stopEngine);
@@ -283,7 +284,7 @@ bool CArchwayHandler::reinitializeArchway()
 	return true;
 }
 
-bool CArchwayHandler::startEngineWithPipeline(unsigned int uiPipelineClassId, bool isFastForward)
+bool CArchwayHandler::startEngineWithPipeline(unsigned int uiPipelineClassId, bool isFastForward, bool shouldAcquireImpedance)
 {
 	assert(m_Archway);
 
@@ -295,9 +296,17 @@ bool CArchwayHandler::startEngineWithPipeline(unsigned int uiPipelineClassId, bo
 
 	if (!m_Archway->isAcquiring())
 	{
-		if (!m_Archway->startAllAcquisitionDevices())
+		if (shouldAcquireImpedance)
 		{
-			m_KernelContext.getLogManager() << LogLevel_Error << "Failed to start the acquisition" << this->getArchwayErrorString().c_str() << "\n";
+			if (!m_Archway->startImpedanceCheckOnAllAcquisitionDevices())
+			{
+				m_KernelContext.getLogManager() << LogLevel_Error << "Failed to start the impedance acquisition" << this->getArchwayErrorString().c_str() << "\n";
+				return false;
+			}
+		}
+		else if (!m_Archway->startAllAcquisitionDevices())
+		{
+			m_KernelContext.getLogManager() << LogLevel_Error << "Failed to start the data acquisition" << this->getArchwayErrorString().c_str() << "\n";
 			return false;
 		}
 	}
@@ -413,7 +422,7 @@ bool CArchwayHandler::loopEngine()
 			return false;
 		}
 
-		m_GUIBridge.resfreshStoppedEngine();
+		m_GUIBridge.refreshStoppedEngine();
 		
 		return success && !isPipelineInErrorState;
 	}
