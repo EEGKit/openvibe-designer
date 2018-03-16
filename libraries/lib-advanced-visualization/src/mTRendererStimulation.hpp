@@ -92,8 +92,8 @@ namespace Mensia
 					double l_f64MidTime  =((l_ui32MidIndex   *l_ui64SampleDuration)>>16)/65536.;
 					double l_f64Duration =((l_ui32SampleCount*l_ui64SampleDuration)>>16)/65536.;
 
-					std::vector < std::pair < double, uint64_t > >::const_iterator it;
-					for(it=CRenderer::m_vStimulationHistory.begin(); it!=CRenderer::m_vStimulationHistory.end(); it++)
+					m_mEncounteredStimulations.clear();
+					for(auto it=CRenderer::m_vStimulationHistory.begin(); it!=CRenderer::m_vStimulationHistory.end(); it++)
 					{
 						if (m_mEncounteredStimulations.count(it->second) == 0)
 						{
