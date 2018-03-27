@@ -170,6 +170,9 @@ void CRenderer::clear(uint32_t ui32SampleCountToKeep = 0)
 			}
 		}
 	}
+	// We always delete all of the stimulations, ideally we would know the time
+	// scale so we can keep the stimulations according to the kept samples
+	m_vStimulationHistory.clear();
 	m_ui32HistoryIndex=0;
 }
 
