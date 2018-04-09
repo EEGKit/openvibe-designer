@@ -42,6 +42,9 @@
 #define OVD_README_File                  OpenViBE::Directories::getDistRootDir() + "/ReadMe.txt"
 
 
+#define OVD_SCENARIOS_PATH		"${Path_Data}/scenarios"
+#define OVD_WORKING_SCENARIOS_PATH	"${Designer_DefaultWorkingDirectory}/scenarios"
+
 static const unsigned int s_RecentFileNumber = 10;
 
 #include "ovdCDesignerVisualization.h"
@@ -276,6 +279,10 @@ namespace
 	void menu_save_scenario_as_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
 	{
 		static_cast<CApplication*>(pUserData)->saveScenarioAsCB();
+	}
+	void menu_restore_default_scenarios_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
+	{
+		static_cast<CApplication*>(pUserData)->restoreDefaultScenariosCB();
 	}
 	void menu_close_scenario_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
 	{
@@ -938,6 +945,21 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 	// Load metaboxes from metabox path
 	m_rKernelContext.getMetaboxManager().addMetaboxesFromFiles(m_rKernelContext.getConfigurationManager().expand("${Kernel_Metabox}"));
 
+	// Copy recursively default scenario directory to the default working directory if not exists
+	CString l_sDefaultWorkingDirectory = m_rKernelContext.getConfigurationManager().expand(OVD_WORKING_SCENARIOS_PATH);	
+	CString l_sDefaultScenariosDirectory=m_rKernelContext.getConfigurationManager().expand(OVD_SCENARIOS_PATH);	
+	if ( !FS::Files::directoryExists(l_sDefaultWorkingDirectory) && FS::Files::directoryExists(l_sDefaultScenariosDirectory))
+	{
+		if(!FS::Files::copyDirectory(l_sDefaultScenariosDirectory, l_sDefaultWorkingDirectory))
+		{
+			m_rKernelContext.getLogManager() << LogLevel_Error << "Could not create " 
+			                                 << l_sDefaultWorkingDirectory << " folder\n";
+		}
+	}
+	
+	
+	
+
 	// Prepares scenario clipboard
 	CIdentifier l_oClipboardScenarioIdentifier;
 	if(m_pScenarioManager->createScenario(l_oClipboardScenarioIdentifier))
@@ -983,6 +1005,8 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_close")),       "activate", G_CALLBACK(menu_close_scenario_cb),     this);
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_quit")),        "activate", G_CALLBACK(menu_quit_application_cb),   this);
 
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_restore_default_scenarios")),     "activate", G_CALLBACK(menu_restore_default_scenarios_cb),   this);
+	
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_about")),          "activate", G_CALLBACK(menu_about_openvibe_cb),  this);
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_scenario_about")), "activate", G_CALLBACK(menu_about_scenario_cb),  this);
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_documentation")), "activate", G_CALLBACK(menu_browse_documentation_cb), this);
@@ -1606,7 +1630,7 @@ bool CApplication::openScenario(const char* sFileName)
 
 CString CApplication::getWorkingDirectory(void)
 {
-	CString l_sWorkingDirectory=m_rKernelContext.getConfigurationManager().expand("${Designer_DefaultWorkingDirectory}");
+	CString l_sWorkingDirectory=m_rKernelContext.getConfigurationManager().expand("${Designer_DefaultWorkingDirectory}/scenarios");
 
 	CInterfacedScenario* l_pCurrentScenario=this->getCurrentInterfacedScenario();
 	if(l_pCurrentScenario)
@@ -2157,6 +2181,54 @@ void CApplication::saveScenarioCB(CInterfacedScenario* pScenario)
 			}
 		}
 	}
+}
+
+void CApplication::restoreDefaultScenariosCB()
+{		
+	CString l_sDefaultScenariosDirectory = m_rKernelContext.getConfigurationManager().expand(OVD_SCENARIOS_PATH);	
+	CString l_sDefaultWorkingDirectory   = m_rKernelContext.getConfigurationManager().expand(OVD_WORKING_SCENARIOS_PATH);		
+	CString message = "Default scenarios will be restored in '" + l_sDefaultWorkingDirectory + "' folder.\n"
+	        + "All previous scenarios in this folder will be removed.\n"
+	        + "Do you want to continue ?\n";
+	
+	::GtkWidget* l_pWidgetDialogRestoreScenarios = gtk_message_dialog_new(
+	            NULL, GTK_DIALOG_DESTROY_WITH_PARENT,
+            GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
+             "%s", message.toASCIIString());
+	
+	
+	CString backupFolder = l_sDefaultWorkingDirectory + m_rKernelContext.getConfigurationManager().expand("-$core{date}-$core{time}");
+		
+	if(gtk_dialog_run(GTK_DIALOG(l_pWidgetDialogRestoreScenarios))==GTK_RESPONSE_YES)
+	{			
+		// to avoid to loose old data, make a backup
+		FS::Files::removeAll(backupFolder);					
+		if(FS::Files::copyDirectory(l_sDefaultWorkingDirectory, backupFolder))
+		{
+			m_rKernelContext.getLogManager() << LogLevel_Info << "Old scenario folder backed up into "
+			                                 << backupFolder << " folder\n";
+			// make the copy
+			FS::Files::removeAll(l_sDefaultWorkingDirectory);
+			if (FS::Files::copyDirectory(l_sDefaultScenariosDirectory, l_sDefaultWorkingDirectory))
+			{					
+				m_rKernelContext.getLogManager() << LogLevel_Info << "Default scenarios restored into "
+				                                 << l_sDefaultWorkingDirectory <<" folder\n";
+			}
+			else
+			{
+				m_rKernelContext.getLogManager() << LogLevel_Error << "Could not copy " 
+				                                 << l_sDefaultWorkingDirectory << " folder\n";
+			}
+		}
+		else
+		{
+			m_rKernelContext.getLogManager() << LogLevel_Error << "Could not back up " 
+			                                 << l_sDefaultWorkingDirectory << " folder. Copy has aborted.\n";
+		}
+		
+	}
+	
+	gtk_widget_destroy(l_pWidgetDialogRestoreScenarios);
 }
 
 void CApplication::saveScenarioAsCB(CInterfacedScenario* pScenario)

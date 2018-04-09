@@ -4220,6 +4220,29 @@ u
               </object>
             </child>
             <child>
+              <object class="GtkMenuItem" id="openvibe-menu_tools">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">_Tools</property>
+                <property name="use_underline">True</property>
+                <child type="submenu">
+                  <object class="GtkMenu" id="openvibe-menu_tools_content">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkImageMenuItem" id="openvibe-menu_restore_default_scenarios">
+                        <property name="label" translatable="yes">Restore default scenarios</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">False</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
               <object class="GtkMenuItem" id="openvibe-menu_help">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
