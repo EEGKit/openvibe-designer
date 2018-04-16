@@ -2024,6 +2024,13 @@ void CApplication::saveScenarioCB(CInterfacedScenario* pScenario)
 	{
 		return;
 	}
+	
+	if (l_pCurrentInterfacedScenario->m_rScenario.hasPendingMissings())
+	{
+		cannotSaveScenarioBeforeUpdate();
+		return;
+	}
+			
 	if(!l_pCurrentInterfacedScenario->m_bHasFileName)
 	{
 		saveScenarioAsCB(pScenario);
@@ -2249,6 +2256,12 @@ void CApplication::saveScenarioAsCB(CInterfacedScenario* pScenario)
 	CInterfacedScenario* l_pCurrentInterfacedScenario=pScenario?pScenario:getCurrentInterfacedScenario();
 	if(!l_pCurrentInterfacedScenario)
 	{
+		return;
+	}
+	
+	if (l_pCurrentInterfacedScenario->m_rScenario.hasPendingMissings())
+	{
+		cannotSaveScenarioBeforeUpdate();
 		return;
 	}
 
@@ -3331,4 +3344,19 @@ void CApplication::spinnerZoomChangedCB(uint32_t scalePercentage)
 	{
 		getCurrentInterfacedScenario()->setScale(static_cast<float64>(scalePercentage)/100.0);
 	}
+}
+
+void CApplication::cannotSaveScenarioBeforeUpdate(void)
+{
+	CString message = "Cannot save a scenario if missing I/O or Settings are still pending.\n"
+	                  "Please update all boxes or delete pending missings I/O before saving scenario.";
+	::GtkWidget* l_pDialog=::gtk_message_dialog_new(
+	            NULL,
+	            ::GtkDialogFlags(GTK_DIALOG_MODAL|GTK_DIALOG_DESTROY_WITH_PARENT),
+	            GtkMessageType::GTK_MESSAGE_INFO,
+	            GTK_BUTTONS_OK,
+	            message.toASCIIString(),
+	            "Scenario needs update.");
+	::gtk_dialog_run(GTK_DIALOG(l_pDialog));
+	::gtk_widget_destroy(l_pDialog);
 }

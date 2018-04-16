@@ -2946,12 +2946,15 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 								char l_sCompleteName[1024];
 
 								gtk_menu_add_separator_menu_item_with_condition(!m_vBoxContextMenuCB.empty(), l_pMenu);
+								
+								bool l_bFlagToBeUpdated=l_pBox->hasAttribute(OV_AttributeId_Box_ToBeUpdated);
+								bool l_bFlagPendingMissings=l_pBox->hasAttribute(OV_AttributeId_Box_PendingMissings);
+								
 								// -------------- INPUTS --------------
-
 								bool l_bFlagCanAddInput=l_pBox->hasAttribute(OV_AttributeId_Box_FlagCanAddInput);
-								bool l_bFlagCanModifyInput=l_pBox->hasAttribute(OV_AttributeId_Box_FlagCanModifyInput);
+								bool l_bFlagCanModifyInput=l_pBox->hasAttribute(OV_AttributeId_Box_FlagCanModifyInput);								
 								bool l_bCanConnectScenarioInput=(l_pBox->getInputCount()>0 && m_rScenario.getInputCount()>0);
-								if(l_bFlagCanAddInput || l_bFlagCanModifyInput || l_bCanConnectScenarioInput)
+								if(!l_bFlagPendingMissings && !l_bFlagToBeUpdated && (l_bFlagCanAddInput || l_bFlagCanModifyInput || l_bCanConnectScenarioInput))
 								{
 									uint32 l_ui32FixedInputCount=0;
 									::sscanf(l_pBox->getAttributeValue(OV_AttributeId_Box_InitialInputCount).toASCIIString(), "%d", &l_ui32FixedInputCount);
@@ -3022,7 +3025,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 								bool l_bFlagCanAddOutput=l_pBox->hasAttribute(OV_AttributeId_Box_FlagCanAddOutput);
 								bool l_bFlagCanModifyOutput=l_pBox->hasAttribute(OV_AttributeId_Box_FlagCanModifyOutput);
 								bool l_bCanConnectScenarioOutput=(l_pBox->getOutputCount()>0 && m_rScenario.getOutputCount()>0);
-								if(l_bFlagCanAddOutput || l_bFlagCanModifyOutput || l_bCanConnectScenarioOutput)
+								if(!l_bFlagPendingMissings && !l_bFlagToBeUpdated && (l_bFlagCanAddOutput || l_bFlagCanModifyOutput || l_bCanConnectScenarioOutput))
 								{
 									uint32 l_ui32FixedOutputCount=0;
 									::sscanf(l_pBox->getAttributeValue(OV_AttributeId_Box_InitialOutputCount).toASCIIString(), "%d", &l_ui32FixedOutputCount);
@@ -3092,7 +3095,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 
 								bool l_bFlagCanAddSetting=l_pBox->hasAttribute(OV_AttributeId_Box_FlagCanAddSetting);
 								bool l_bFlagCanModifySetting=l_pBox->hasAttribute(OV_AttributeId_Box_FlagCanModifySetting);
-								if(l_bFlagCanAddSetting || l_bFlagCanModifySetting)
+								if(!l_bFlagPendingMissings && !l_bFlagToBeUpdated && (l_bFlagCanAddSetting || l_bFlagCanModifySetting))
 								{
 									uint32 l_ui32FixedSettingCount=0;
 									::sscanf(l_pBox->getAttributeValue(OV_AttributeId_Box_InitialSettingCount).toASCIIString(), "%d", &l_ui32FixedSettingCount);
