@@ -2662,19 +2662,6 @@ void CApplication::registerLicenseCB(void)
 
 void CApplication::reportIssueCB(void)
 {
-#if defined(TARGET_OS_Windows) && defined(MENSIA_DISTRIBUTION)
-	//On windows, call the issue reporter tool
-	m_rKernelContext.getLogManager() << LogLevel_Debug << "CApplication::reportIssueCB\n";
-	CString l_Command = Directories::getBinDir() + "/neurort-issue_reporter.exe";
-	STARTUPINFO l_oStartupInfo;
-	PROCESS_INFORMATION lpProcessInfo;
-	GetStartupInfo(&l_oStartupInfo);
-	OV_WARNING_UNLESS(
-        (System::WindowsUtilities::utf16CompliantCreateProcess(NULL,const_cast<char*>(l_Command.toASCIIString()), NULL, NULL, NULL, NULL, NULL, NULL, &l_oStartupInfo, &lpProcessInfo)),
-        "Could not launch issue reporter program " << l_Command << "\n",
-        m_rKernelContext.getLogManager()
-        );
-#else
 	m_rKernelContext.getLogManager() << LogLevel_Debug << "CApplication::reportIssueCB\n";
 	CString l_Command = m_rKernelContext.getConfigurationManager().expand("${Designer_WebBrowserCommand} ${Designer_WebBrowserSupportURL} ${Designer_WebBrowserCommandPostfix}");
 	int l_Result = system(l_Command.toASCIIString());
@@ -2683,9 +2670,7 @@ void CApplication::reportIssueCB(void)
 		(l_Result == 0),
 		"Could not launch command " << l_Command << "\n",
 		m_rKernelContext.getLogManager()
-		);	
-#endif
-
+		);
 }
 
 void CApplication::addCommentCB(
