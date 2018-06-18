@@ -152,7 +152,7 @@ namespace OpenViBEDesigner
 
 	public:
 
-		const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
+		const OpenViBE::Kernel::IKernelContext& m_KernelContext;
 		OpenViBE::Kernel::IPluginManager* m_pPluginManager;
 		OpenViBE::Kernel::IScenarioManager* m_pScenarioManager;
 		OpenViBEVisualizationToolkit::IVisualizationManager* m_pVisualizationManager;
