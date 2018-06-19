@@ -2646,8 +2646,8 @@ void CApplication::browseDocumentationCB(void)
 void CApplication::registerLicenseCB(void)
 {
 #if defined TARGET_OS_Windows && defined(MENSIA_DISTRIBUTION)
-	m_rKernelContext.getLogManager() << LogLevel_Debug << "CApplication::registerLicenseCB\n";
-	std::string command = Directories::getBinDir() + "/mensia-flexnet-activation.exe";
+	m_KernelContext.getLogManager() << LogLevel_Debug << "CApplication::registerLicenseCB\n";
+	std::string command = (Directories::getBinDir() + "/mensia-flexnet-activation.exe").toASCIIString();
 	STARTUPINFO startupInfo;
 	PROCESS_INFORMATION processInfo;
 	GetStartupInfo(&startupInfo);
@@ -2656,7 +2656,7 @@ void CApplication::registerLicenseCB(void)
 		exit(1);
 	}
 #elif defined TARGET_OS_Linux && defined(MENSIA_DISTRIBUTION)
-	m_rKernelContext.getLogManager() << LogLevel_Info << "Register License application's GUI cannot run on Linux. In order to activate your license," 
+	m_KernelContext.getLogManager() << LogLevel_Info << "Register License application's GUI cannot run on Linux. In order to activate your license,"
 		<< " you can use the tool 'mensia-flexnet-activation' in command line.\n";
 #endif
 }
