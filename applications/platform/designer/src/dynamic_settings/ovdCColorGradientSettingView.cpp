@@ -103,10 +103,11 @@ void CColorGradientSettingView::configurePressed()
 	vColorGradient.resize(std::max<size_t>(l_oInitialGradient.getDimensionSize(1), 2));
 	for(size_t i=0; i<l_oInitialGradient.getDimensionSize(1); ++i)
 	{
-		vColorGradient[i].fPercent = l_oInitialGradient[i*4];
-		vColorGradient[i].oColor.red  = static_cast<guint>(l_oInitialGradient[i*4+1]*.01*65535.);
-		vColorGradient[i].oColor.green = static_cast<guint>(l_oInitialGradient[i*4+2]*.01*65535.);
-		vColorGradient[i].oColor.blue = static_cast<guint>(l_oInitialGradient[i*4+3]*.01*65535.);
+		uint32_t ovIndex = static_cast<uint32_t>(i);
+		vColorGradient[i].fPercent = l_oInitialGradient[ovIndex*4];
+		vColorGradient[i].oColor.red  = static_cast<guint>(l_oInitialGradient[ovIndex*4+1]*.01*65535.);
+		vColorGradient[i].oColor.green = static_cast<guint>(l_oInitialGradient[ovIndex*4+2]*.01*65535.);
+		vColorGradient[i].oColor.blue = static_cast<guint>(l_oInitialGradient[ovIndex*4+3]*.01*65535.);
 	}
 
 	pContainer=GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-vbox"));
@@ -123,8 +124,8 @@ void CColorGradientSettingView::configurePressed()
 		CMatrix l_oFinalGradient;
 		l_oFinalGradient.setDimensionCount(2);
 		l_oFinalGradient.setDimensionSize(0, 4);
-		l_oFinalGradient.setDimensionSize(1, vColorGradient.size());
-		for(size_t i = 0; i<vColorGradient.size(); i++)
+		l_oFinalGradient.setDimensionSize(1, static_cast<uint32_t>(vColorGradient.size()));
+		for(uint32_t i = 0; i<static_cast<uint32_t>(vColorGradient.size()); i++)
 		{
 			l_oFinalGradient[i*4]   = vColorGradient[i].fPercent;
 			l_oFinalGradient[i*4+1] = round(vColorGradient[i].oColor.red   * 100. / 65535.);
@@ -151,7 +152,7 @@ void CColorGradientSettingView::initializeGradient()
 	gtk_container_foreach(GTK_CONTAINER(pContainer), on_gtk_widget_destroy_cb, NULL);
 
 	uint32 i=0;
-	uint32 count=vColorGradient.size();
+	uint32_t count = static_cast<uint32_t>(vColorGradient.size());
 	vColorButtonMap.clear();
 	vSpinButtonMap.clear();
 	for(auto it=vColorGradient.begin(); it != vColorGradient.end(); it++, i++)
@@ -198,8 +199,8 @@ void CColorGradientSettingView::refreshColorGradient()
 	CMatrix l_oGradientMatrix;
 	l_oGradientMatrix.setDimensionCount(2);
 	l_oGradientMatrix.setDimensionSize(0, 4);
-	l_oGradientMatrix.setDimensionSize(1, vColorGradient.size());
-	for(size_t i = 0; i < vColorGradient.size(); ++i)
+	l_oGradientMatrix.setDimensionSize(1, static_cast<uint32_t>(vColorGradient.size()));
+	for(uint32_t i = 0; i < vColorGradient.size(); ++i)
 	{
 		l_oGradientMatrix[i*4  ]=vColorGradient[i].fPercent;
 		l_oGradientMatrix[i*4+1]=vColorGradient[i].oColor.red  *100./65535.;
@@ -213,7 +214,7 @@ void CColorGradientSettingView::refreshColorGradient()
 	::GdkGC* l_pGC=gdk_gc_new(pDrawingArea->window);
 	::GdkColor l_oColor;
 
-	for(size_t i = 0; i < ui32Steps; ++i)
+	for(uint32_t i = 0; i < ui32Steps; ++i)
 	{
 		l_oColor.red  =(guint)(l_oInterpolatedMatrix[i*4+1]*65535*.01);
 		l_oColor.green=(guint)(l_oInterpolatedMatrix[i*4+2]*65535*.01);

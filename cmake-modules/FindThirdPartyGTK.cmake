@@ -28,7 +28,10 @@ ELSE()
 ENDIF()
 IF(GTK_FOUND)
 	debug_message( "  Found GTK+...")
-	INCLUDE_DIRECTORIES(${GTK_INCLUDE_DIRS} ${GTHREAD_INCLUDE_DIRS} "${GTK_INCLUDE_DIRS}/..")
+	# This is a bit convoluted way of finding zlib (because GTK_INCLUDE_DIRS
+	# is actually a list of folders, not a single one)
+	find_path(PATH_ZLIB gtk/include/zlib.h PATHS ${LIST_DEPENDENCIES_PATH} NO_DEFAULT_PATH)
+	INCLUDE_DIRECTORIES(${GTK_INCLUDE_DIRS} ${GTHREAD_INCLUDE_DIRS} "${PATH_ZLIB}/gtk/include")
 	#shouldn't add GTK_CFLAGS, this results in AdditionalIncludeDirectories becoming broken in visual studio
 	#ADD_DEFINITIONS(${GTK_CFLAGS} ${GTK_CFLAGS_OTHERS} ${GTHREAD_CFLAGS}${GTHREAD_CFLAGS_OTHERS})
 	#LINK_DIRECTORIES(${GTK_LIBRARY_DIRS} ${GTHREAD_LIBRARY_DIRS})
