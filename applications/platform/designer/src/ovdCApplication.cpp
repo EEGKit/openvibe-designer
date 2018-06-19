@@ -798,7 +798,7 @@ namespace
 				CApplication* l_pApplication = static_cast<CApplication*>(pUserData);
 				//Tries to open a message, if fails, go to catch
 				boost::interprocess::message_queue l_oMessage(boost::interprocess::open_only, MESSAGE_NAME);
-				l_pApplication->m_rKernelContext.getLogManager() << LogLevel_Trace << "ovdCApplication::receiveSecondInstanceMessage- A message was detected \n";
+				l_pApplication->m_KernelContext.getLogManager() << LogLevel_Trace << "ovdCApplication::receiveSecondInstanceMessage- A message was detected \n";
 
 				// Whatever contains the message the first instance should try to take the focus
 				gtk_window_present(GTK_WINDOW(l_pApplication->m_pMainWindow));
