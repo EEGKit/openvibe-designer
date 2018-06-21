@@ -401,18 +401,18 @@ bool CArchwayHandler::loopEngine()
 	if (isPipelineInErrorState)
 	{
 		m_KernelContext.getLogManager() << LogLevel_Error << "Pipeline [" << m_RunningPipelineId << "] is in error state.\n";
+	}
 
-		unsigned int pendingLogMessageCount = m_Archway->getPendingLogMessageCount(m_RunningPipelineId);
+	unsigned int pendingLogMessageCount = m_Archway->getPendingLogMessageCount(m_RunningPipelineId);
 
-		for (unsigned int i = 0; i < pendingLogMessageCount; i++)
-		{
-			unsigned int logLevel;
-			char messageBuffer[2048];
-			std::string logMessages;
+	for (unsigned int i = 0; i < pendingLogMessageCount; i++)
+	{
+		unsigned int logLevel;
+		char messageBuffer[2048];
+		std::string logMessages;
 
-			m_Archway->getPendingLogMessage(m_RunningPipelineId, &logLevel, messageBuffer, sizeof(messageBuffer));
-			m_KernelContext.getLogManager() << static_cast<ELogLevel>(logLevel) << messageBuffer;
-		}
+		m_Archway->getPendingLogMessage(m_RunningPipelineId, &logLevel, messageBuffer, sizeof(messageBuffer));
+		m_KernelContext.getLogManager() << static_cast<ELogLevel>(logLevel) << messageBuffer;
 	}
 
 	if (!isPipelineRunning || isPipelineInErrorState)

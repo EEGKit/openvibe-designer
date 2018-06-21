@@ -39,7 +39,18 @@ ENDFUNCTION()
 # This function should remain generic to be usable in every projects.
 function(set_version)
 	find_package(Git)
-	if(NOT GIT_FOUND)
+	if(EXISTS ${CMAKE_SOURCE_DIR}/.version)
+
+		# These versions are used by the subprojects by default.
+		# If you wish to maintain specific version numbers for a subproject, please do so in the projects CMakeLists.txt
+		file(READ ${CMAKE_SOURCE_DIR}/.version PROJECT_VERSION)
+		string(STRIP ${PROJECT_VERSION} PROJECT_VERSION)
+		string(REPLACE "." ";" VERSION_LIST ${PROJECT_VERSION})
+		list(GET VERSION_LIST 0 PROJECT_VERSION_MAJOR)
+		list(GET VERSION_LIST 1 PROJECT_VERSION_MINOR)
+		list(GET VERSION_LIST 2 PROJECT_VERSION_PATCH)
+
+	elseif(NOT GIT_FOUND)
 		message(WARNING "Git not found, set version to 0.0.0")
 		set(PROJECT_VERSION "0.0.0")
 		set(PROJECT_BRANCH_STRING "unknown")
