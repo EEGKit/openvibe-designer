@@ -12,6 +12,6 @@ IF(NOT OV_MS_SDK_PATH)
 ENDIF(NOT OV_MS_SDK_PATH)
 
 IF(NOT OV_MS_SDK_PATH)
-	MESSAGE(STATUS "Could not find Microsoft Windows SDK")
+	MESSAGE(WARNING "Could not find Microsoft Windows SDK")
 ENDIF(NOT OV_MS_SDK_PATH)
 
