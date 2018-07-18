@@ -69,24 +69,23 @@ boolean CConnectorEditor::run(void)
 
 	//get a list of stream types and display connector type
 	map<string, CIdentifier> l_vStreamTypes;
-	CIdentifier l_oCurrentTypeIdentifier;
 	gint l_iActive=-1;
 
-	while((l_oCurrentTypeIdentifier=m_rKernelContext.getTypeManager().getNextTypeIdentifier(l_oCurrentTypeIdentifier))!=OV_UndefinedIdentifier)
+	for(auto l_oCurrentTypeIdentifier: m_rKernelContext.getTypeManager().getSortedTypes())
 	{
 		//First check if the type is support by the connector
-		if((m_rBox.*isTypeSupported)(l_oCurrentTypeIdentifier))
+		if((m_rBox.*isTypeSupported)(l_oCurrentTypeIdentifier.first))
 		{
 			//If the input type is support by the connector, let's add it to the list
-			if(m_rKernelContext.getTypeManager().isStream(l_oCurrentTypeIdentifier))
+			if(m_rKernelContext.getTypeManager().isStream(l_oCurrentTypeIdentifier.first))
 			{
-				gtk_combo_box_append_text(l_pConnectorTypeComboBox, m_rKernelContext.getTypeManager().getTypeName(l_oCurrentTypeIdentifier).toASCIIString());
-				if(l_oCurrentTypeIdentifier==l_oConnectorType)
+				gtk_combo_box_append_text(l_pConnectorTypeComboBox, l_oCurrentTypeIdentifier.second.toASCIIString());
+				if(l_oCurrentTypeIdentifier.first == l_oConnectorType)
 				{
 					l_iActive=l_vStreamTypes.size();
 					gtk_combo_box_set_active(l_pConnectorTypeComboBox, l_iActive);
 				}
-				l_vStreamTypes[m_rKernelContext.getTypeManager().getTypeName(l_oCurrentTypeIdentifier).toASCIIString()]=l_oCurrentTypeIdentifier;
+				l_vStreamTypes[l_oCurrentTypeIdentifier.second.toASCIIString()]=l_oCurrentTypeIdentifier.first;
 			}
 		}
 	}

@@ -42,13 +42,22 @@ namespace OpenViBEDesigner
 		void snapshotCB(bool bManageModifiedStatusFlag=true);
 		void addCommentCB(int x=-1, int y=-1);
 
+		// Utility functions for scenario settings, inputs and outputs
+
 		void addScenarioSettingCB(void);
+     	void editScenarioSettingCB(unsigned int l_ui32SettingIndex);
+		void swapScenarioSettings(unsigned int uiSettingAIndex, unsigned int uiSettingBIndex);
+			
 		void addScenarioInputCB(void);
+		void editScenarioInputCB(unsigned int l_ui32InputIndex);
+		void swapScenarioInputs(unsigned int ui32InputAIndex, unsigned int ui32InputBIndex);
 		void addScenarioOutputCB(void);
+		void editScenarioOutputCB(unsigned int l_ui32OutputIndex);
+		void swapScenarioOutputs(unsigned int ui32OutputAIndex, unsigned int ui32OutputBIndex);
+		
 
 		// Utility functions for scenario settings, inputs and outputs
 		void configureScenarioSettingsCB(void);
-		void swapScenarioSettings(unsigned int uiSettingAIndex, unsigned int uiSettingBIndex);
 
 		// Drawing functions for scenario settings, inputs and outputs
 		void redrawConfigureScenarioSettingsDialog();

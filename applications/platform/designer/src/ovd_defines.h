@@ -130,7 +130,9 @@ namespace OpenViBEDesigner
 		Connector_Input,
 		Connector_Output,
 		Connector_Setting,
-		Connector_Link
+		Connector_Link,
+		Connector_ScenarioInput,
+		Connector_ScenarioOutput
 	};
 
 	enum

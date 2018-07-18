@@ -92,7 +92,7 @@ namespace
 			,m_TypeManager(typeManager)
 		{
 		}
-		virtual bool addInput(const CString& sName, const CIdentifier& rTypeIdentifier, const CIdentifier oIdentifier)
+		virtual bool addInput(const CString& sName, const CIdentifier& rTypeIdentifier, const CIdentifier& oIdentifier)
 		{
 			uint64 v=rTypeIdentifier.toUInteger();
 			swap_byte(v, m_ui64InputCountHash);
@@ -101,7 +101,7 @@ namespace
 			return true;
 		}
 		//
-		virtual bool addOutput(const CString& sName, const CIdentifier& rTypeIdentifier,const CIdentifier oIdentifier)
+		virtual bool addOutput(const CString& sName, const CIdentifier& rTypeIdentifier,const CIdentifier& oIdentifier)
 		{
 			uint64 v=rTypeIdentifier.toUInteger();
 			swap_byte(v, m_ui64OutputCountHash);
@@ -109,7 +109,7 @@ namespace
 			m_oHash=m_oHash.toUInteger()^v;
 			return true;
 		}
-		virtual bool addSetting(const CString& sName, const CIdentifier& rTypeIdentifier, const CString& sDefaultValue, const bool bModifiable, const CIdentifier oIdentifier)
+		virtual bool addSetting(const CString& sName, const CIdentifier& rTypeIdentifier, const CString& sDefaultValue, const bool bModifiable, const CIdentifier& rIdentifier)
 		{
 			uint64 v=rTypeIdentifier.toUInteger();
 			swap_byte(v, m_ui64SettingCountHash);
