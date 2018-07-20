@@ -484,7 +484,25 @@ namespace
 	{
 		pData->m_pInterfacedScenario->m_rScenario.setSettingName(pData->m_iSettingIndex, gtk_entry_get_text(GTK_ENTRY(pEntry)));
 	}
-	
+
+	void reset_scenario_setting_identifier_cb(GtkWidget* button, OpenViBEDesigner::CInterfacedScenario::SSettingCallbackData* data)
+	{
+		CIdentifier newIdentifier = data->m_pInterfacedScenario->m_rScenario.getUnusedSettingIdentifier(OV_UndefinedIdentifier);
+		if (newIdentifier != OV_UndefinedIdentifier)
+		{
+			data->m_pInterfacedScenario->m_rScenario.updateSettingIdentifier(static_cast<uint32_t>(data->m_iSettingIndex), newIdentifier);
+			data->m_pInterfacedScenario->redrawConfigureScenarioSettingsDialog();
+		}
+	}
+	void modify_scenario_setting_identifier_cb(GtkWidget* entry, OpenViBEDesigner::CInterfacedScenario::SSettingCallbackData* data)
+	{
+		CIdentifier newIdentifier;
+		if (newIdentifier.fromString(gtk_entry_get_text(GTK_ENTRY(entry))))
+		{
+			data->m_pInterfacedScenario->m_rScenario.updateSettingIdentifier(static_cast<uint32_t>(data->m_iSettingIndex), newIdentifier);
+		}
+	}
+
 	void edit_scenario_link_cb(GtkWidget*, OpenViBEDesigner::CInterfacedScenario::SLinkCallbackData* pData)
 	{
 		if (pData->m_bIsInput)
@@ -832,6 +850,8 @@ void CInterfacedScenario::redrawConfigureScenarioSettingsDialog()
 			GtkWidget* l_pSettingButtonUp = GTK_WIDGET(gtk_builder_get_object(l_pSettingsGUIBuilder, "scenario_configuration_setting-button_move_up"));
 			GtkWidget* l_pSettingButtonDown = GTK_WIDGET(gtk_builder_get_object(l_pSettingsGUIBuilder, "scenario_configuration_setting-button_move_down"));
 			GtkWidget* l_pSettingButtonDelete = GTK_WIDGET(gtk_builder_get_object(l_pSettingsGUIBuilder, "scenario_configuration_setting-button_delete"));
+			GtkWidget* l_pSettingEntryIdentifier = GTK_WIDGET(gtk_builder_get_object(l_pSettingsGUIBuilder, "scenario_configuration_setting-entry_identifier"));
+			GtkWidget* l_pSettingButtonResetIdentifier = GTK_WIDGET(gtk_builder_get_object(l_pSettingsGUIBuilder, "scenario_configuration_setting-button_reset_identifier"));
 
 			// fill the type dropdown
 			CIdentifier l_oSettingTypeIdentifier = OV_UndefinedIdentifier;
@@ -854,7 +874,12 @@ void CInterfacedScenario::redrawConfigureScenarioSettingsDialog()
 			// Set name
 			CString l_sSettingLabel;
 			m_rScenario.getSettingName(l_ui32SettingIndex, l_sSettingLabel);
-			gtk_entry_set_text(GTK_ENTRY(gtk_builder_get_object(l_pSettingsGUIBuilder, "scenario_configuration_setting-entry_name")), l_sSettingLabel.toASCIIString());
+			gtk_entry_set_text(GTK_ENTRY(l_pSettingEntryName), l_sSettingLabel.toASCIIString());
+
+			// Set the identifer
+			CIdentifier settingIdentifier;
+			m_rScenario.getSettingIdentifier(l_ui32SettingIndex, settingIdentifier);
+			gtk_entry_set_text(GTK_ENTRY(l_pSettingEntryIdentifier), settingIdentifier.toString().toASCIIString());
 
 			// Add widget for the actual setting
 			CString l_sSettingWidgetName = m_pSettingHelper->getSettingWidgetName(l_oSettingTypeIdentifier);
@@ -889,6 +914,8 @@ void CInterfacedScenario::redrawConfigureScenarioSettingsDialog()
 			g_signal_connect(G_OBJECT(l_pSettingButtonUp), "clicked", G_CALLBACK(modify_scenario_setting_move_up_cb), &m_vSettingConfigurationCallbackData[l_ui32SettingIndex]);
 			g_signal_connect(G_OBJECT(l_pSettingButtonDown), "clicked", G_CALLBACK(modify_scenario_setting_move_down_cb), &m_vSettingConfigurationCallbackData[l_ui32SettingIndex]);
 			g_signal_connect(G_OBJECT(l_pSettingEntryName), "changed", G_CALLBACK(modify_scenario_setting_name_cb), &m_vSettingConfigurationCallbackData[l_ui32SettingIndex]);
+			g_signal_connect(G_OBJECT(l_pSettingEntryIdentifier), "activate", G_CALLBACK(modify_scenario_setting_identifier_cb), &m_vSettingConfigurationCallbackData[l_ui32SettingIndex]);
+			g_signal_connect(G_OBJECT(l_pSettingButtonResetIdentifier), "clicked", G_CALLBACK(reset_scenario_setting_identifier_cb), &m_vSettingConfigurationCallbackData[l_ui32SettingIndex]);
 
 			// these callbacks assure that we can use copy/paste and undo within editable fields
 			// as otherwise the keyboard shortucts are stolen by the designer
@@ -2078,14 +2105,13 @@ void CInterfacedScenario::configureScenarioSettingsCB(void)
 
 	gtk_widget_hide(m_pConfigureSettingsDialog);
 	this->redrawScenarioSettings();
-
 }
 
 void CInterfacedScenario::addScenarioSettingCB(void)
 {
 	char l_sName[1024];
 	sprintf(l_sName, "Setting %u", m_rScenario.getSettingCount()+1);
-	m_rScenario.addSetting(l_sName, OVTK_TypeId_Integer, "0", OV_Value_UndefinedIndexUInt, false, m_rScenario.combineIdentifierWithString(OVTK_TypeId_Integer,l_sName));
+	m_rScenario.addSetting(l_sName, OVTK_TypeId_Integer, "0", OV_Value_UndefinedIndexUInt, false, m_rScenario.getUnusedSettingIdentifier(OV_UndefinedIdentifier));
 
 	this->redrawConfigureScenarioSettingsDialog();
 }
@@ -2096,13 +2122,11 @@ void CInterfacedScenario::addScenarioInputCB(void)
 	sprintf(l_sName, "Input %u", m_rScenario.getInputCount()+1);
 	
 	// scenario I/O are identified by name/type combination value, at worst uniq in the scope of the inputs of the box.
-	m_rScenario.addInput(l_sName, OVTK_TypeId_StreamedMatrix,m_rScenario.getUnusedInputIdentifier(m_rScenario.combineIdentifierWithString(OVTK_TypeId_StreamedMatrix,l_sName)));
+	m_rScenario.addInput(l_sName, OVTK_TypeId_StreamedMatrix, m_rScenario.getUnusedInputIdentifier(OV_UndefinedIdentifier));
 	
 	CConnectorEditor l_oConnectorEditor(m_rKernelContext, m_rScenario, Connector_Input, m_rScenario.getInputCount()-1, "Add Input", m_sGUIFilename.c_str());
 	if(l_oConnectorEditor.run())
 	{
-		m_rScenario.updateInputIdentifier(m_rScenario.getInputCount()-1);
-		
 		this->snapshotCB();
 	}
 	else
@@ -2119,8 +2143,6 @@ void CInterfacedScenario::editScenarioInputCB(unsigned int l_ui32InputIndex)
 	CConnectorEditor l_oConnectorEditor(m_rKernelContext, m_rScenario, Connector_Input, l_ui32InputIndex, "Edit Output", m_sGUIFilename.c_str());
 	if(l_oConnectorEditor.run())
 	{
-		m_rScenario.updateInputIdentifier(l_ui32InputIndex);
-		
 		this->snapshotCB();
 	}
 		
@@ -2133,7 +2155,7 @@ void CInterfacedScenario::addScenarioOutputCB(void)
 	sprintf(l_sName, "Output %u", m_rScenario.getOutputCount()+1);
 
 	// scenario I/O are identified by name/type combination value, at worst uniq in the scope of the outputs of the box.
-	m_rScenario.addOutput(l_sName, OVTK_TypeId_StreamedMatrix,m_rScenario.getUnusedOutputIdentifier(m_rScenario.combineIdentifierWithString(OVTK_TypeId_StreamedMatrix,l_sName)));
+	m_rScenario.addOutput(l_sName, OVTK_TypeId_StreamedMatrix, m_rScenario.getUnusedOutputIdentifier(OV_UndefinedIdentifier));
 	
 	CConnectorEditor l_oConnectorEditor(m_rKernelContext, m_rScenario, Connector_Output, m_rScenario.getOutputCount()-1, "Add Output", m_sGUIFilename.c_str());
 	if(l_oConnectorEditor.run())
@@ -3901,7 +3923,7 @@ void CInterfacedScenario::contextMenuBoxAddSettingCB(IBox& rBox)
 	m_rKernelContext.getLogManager() << LogLevel_Debug << "contextMenuBoxAddSettingCB\n";
 	// Store setting count in case the custom "onSettingAdded" of the box adds more than one setting
 	uint32 l_ui32OldSettingsCount = rBox.getSettingCount();
-	rBox.addSetting("New setting", OV_UndefinedIdentifier, "",OV_Value_UndefinedIndexUInt,false,m_rScenario.getUnusedSettingIdentifier());
+	rBox.addSetting("New setting", OV_UndefinedIdentifier, "",OV_Value_UndefinedIndexUInt,false,m_rScenario.getUnusedSettingIdentifier(OV_UndefinedIdentifier));
 	uint32 l_ui32NewSettingsCount = rBox.getSettingCount();
 	// Check that at least one setting was added
 	if(l_ui32NewSettingsCount > l_ui32OldSettingsCount && rBox.hasAttribute(OV_AttributeId_Box_FlagCanModifySetting))
