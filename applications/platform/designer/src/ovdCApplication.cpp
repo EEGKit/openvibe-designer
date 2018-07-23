@@ -92,7 +92,7 @@ namespace
 			,m_TypeManager(typeManager)
 		{
 		}
-		virtual bool addInput(const CString& sName, const CIdentifier& rTypeIdentifier, const CIdentifier& oIdentifier, const bool bNotify = false)
+		virtual bool addInput(const CString& sName, const CIdentifier& rTypeIdentifier, const CIdentifier& oIdentifier, const bool bNotify)
 		{
 			uint64 v=rTypeIdentifier.toUInteger();
 			swap_byte(v, m_ui64InputCountHash);
@@ -101,7 +101,7 @@ namespace
 			return true;
 		}
 		//
-		virtual bool addOutput(const CString& sName, const CIdentifier& rTypeIdentifier,const CIdentifier& oIdentifier, const bool bNotify = false)
+		virtual bool addOutput(const CString& sName, const CIdentifier& rTypeIdentifier,const CIdentifier& oIdentifier, const bool bNotify)
 		{
 			uint64 v=rTypeIdentifier.toUInteger();
 			swap_byte(v, m_ui64OutputCountHash);
@@ -109,7 +109,7 @@ namespace
 			m_oHash=m_oHash.toUInteger()^v;
 			return true;
 		}
-		virtual bool addSetting(const CString& sName, const CIdentifier& rTypeIdentifier, const CString& sDefaultValue, const bool bModifiable, const CIdentifier& rIdentifier, const bool bNotify = false)
+		virtual bool addSetting(const CString& sName, const CIdentifier& rTypeIdentifier, const CString& sDefaultValue, const bool bModifiable, const CIdentifier& rIdentifier, const bool bNotify)
 		{
 			uint64 v=rTypeIdentifier.toUInteger();
 			swap_byte(v, m_ui64SettingCountHash);
@@ -2054,7 +2054,7 @@ void CApplication::saveScenarioCB(CInterfacedScenario* pScenario)
 				l_rScenario.getInputName(l_ui32ScenarioInputIndex, l_sInputName);
 				l_rScenario.getInputIdentifier(l_ui32ScenarioInputIndex, l_oInputIdentifier);
 
-				l_oMetaboxProto.addInput(l_sInputName, l_oInputTypeIdentifier,l_oInputIdentifier);
+				l_oMetaboxProto.addInput(l_sInputName, l_oInputTypeIdentifier,l_oInputIdentifier, true);
 			}
 
 			for (uint32 l_ui32ScenarioOutputIndex = 0; l_ui32ScenarioOutputIndex < l_rScenario.getOutputCount(); l_ui32ScenarioOutputIndex++)
@@ -2067,7 +2067,7 @@ void CApplication::saveScenarioCB(CInterfacedScenario* pScenario)
 				l_rScenario.getOutputName(l_ui32ScenarioOutputIndex, l_sOutputName);
 				l_rScenario.getOutputIdentifier(l_ui32ScenarioOutputIndex, l_oOutputIdentifier);
 
-				l_oMetaboxProto.addOutput(l_sOutputName, l_oOutputTypeIdentifier,l_oOutputIdentifier);
+				l_oMetaboxProto.addOutput(l_sOutputName, l_oOutputTypeIdentifier,l_oOutputIdentifier, true);
 			}
 
 			for (uint32 l_ui32ScenarioSettingIndex = 0; l_ui32ScenarioSettingIndex < l_rScenario.getSettingCount(); l_ui32ScenarioSettingIndex++)
@@ -2080,7 +2080,7 @@ void CApplication::saveScenarioCB(CInterfacedScenario* pScenario)
 				l_rScenario.getSettingType(l_ui32ScenarioSettingIndex, l_oSettingTypeIdentifier);
 				l_rScenario.getSettingDefaultValue(l_ui32ScenarioSettingIndex, l_sSettingDefaultValue);
 
-				l_oMetaboxProto.addSetting(l_sSettingName, l_oSettingTypeIdentifier, l_sSettingDefaultValue, false, OV_UndefinedIdentifier);
+				l_oMetaboxProto.addSetting(l_sSettingName, l_oSettingTypeIdentifier, l_sSettingDefaultValue, false, OV_UndefinedIdentifier, true);
 			}
 
 			if (l_rScenario.hasAttribute(OV_AttributeId_Scenario_MetaboxHash))
