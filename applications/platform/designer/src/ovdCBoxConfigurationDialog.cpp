@@ -65,7 +65,7 @@ CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& rKernelCo
 {
 	m_rBox.addObserver(this);
 
-	if(m_rBox.getSettingCount())
+	if(m_rBox.getSettingCountWithMissing())
 	{
 		::GtkBuilder* l_pBuilderInterfaceSetting=gtk_builder_new(); // glade_xml_new(m_sGUIFilename.toASCIIString(), "box_configuration", NULL);
 		gtk_builder_add_from_file(l_pBuilderInterfaceSetting, m_sGUIFilename.toASCIIString(), NULL);
@@ -88,7 +88,7 @@ CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& rKernelCo
 		m_pScrolledWindow=GTK_SCROLLED_WINDOW(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration-scrolledwindow"));
 		m_pViewPort=GTK_VIEWPORT(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration-viewport"));
 
-		gtk_table_resize(m_pSettingsTable, m_rBox.getSettingCount(), 4);
+		gtk_table_resize(m_pSettingsTable, m_rBox.getSettingCountWithMissing(), 4);
 
 		generateSettingsTable();
 
@@ -155,7 +155,7 @@ CBoxConfigurationDialog::~CBoxConfigurationDialog(void)
 bool CBoxConfigurationDialog::run(void)
 {
 	bool l_bModified=false;
-	if(m_rBox.getSettingCount())
+	if(m_rBox.getSettingCountWithMissing())
 	{
 		CSettingCollectionHelper l_oHelper(m_rKernelContext, m_sGUISettingsFilename.toASCIIString());
 		storeState();
@@ -293,7 +293,7 @@ void CBoxConfigurationDialog::generateSettingsTable()
 	uint32_t l_ui32TableSize = 0;
 	if (m_bIsScenarioRunning)
 	{
-		for(uint32_t i = 0; i < m_rBox.getSettingCount(); i++)
+		for(uint32_t i = 0; i < m_rBox.getSettingCountWithMissing(); i++)
 		{
 			bool l_IsMod = false;
 			m_rBox.getSettingMod(i, l_IsMod);
@@ -305,13 +305,13 @@ void CBoxConfigurationDialog::generateSettingsTable()
 	}
 	else
 	{
-		l_ui32TableSize = m_rBox.getSettingCount();
+		l_ui32TableSize = m_rBox.getSettingCountWithMissing();
 	}
 	gtk_table_resize(m_pSettingsTable, l_ui32TableSize + 2, 4);
 
 	// Iterate over box settings, generate corresponding gtk widgets. If the scenario is running, we are making a
 	// 'modifiable settings' dialog and use a subset of widgets with a slightly different layout and buttons.
-	for(uint32 settingIndex = 0, tableIndex = 0; settingIndex < m_rBox.getSettingCount(); settingIndex++)
+	for(uint32 settingIndex = 0, tableIndex = 0; settingIndex < m_rBox.getSettingCountWithMissing(); settingIndex++)
 	{
 		if(addSettingsToView(settingIndex, tableIndex))
 		{
@@ -332,6 +332,14 @@ bool CBoxConfigurationDialog::addSettingsToView(uint32_t ui32SettingIndex, uint3
 
 		m_rBox.getSettingName(ui32SettingIndex, l_sSettingName);
 		Setting::CAbstractSettingView* l_oView = m_oSettingFactory.getSettingView(m_rBox, ui32SettingIndex);
+
+		bool l_bSettingMissing = false;
+		m_rBox.getSettingMissingStatus(ui32SettingIndex,l_bSettingMissing);
+		if (l_bSettingMissing)
+		{
+			gtk_widget_set_sensitive(GTK_WIDGET(l_oView->getNameWidget()), false);
+			gtk_widget_set_sensitive(GTK_WIDGET(l_oView->getEntryWidget()), false);
+		}
 
 		gtk_table_attach(m_pSettingsTable, l_oView->getNameWidget() ,   0, 1, ui32TableIndex, ui32TableIndex+1, ::GtkAttachOptions(GTK_FILL), ::GtkAttachOptions(GTK_FILL), 0, 0);
 		gtk_table_attach(m_pSettingsTable, l_oView->getEntryWidget(),   1, 4, ui32TableIndex, ui32TableIndex+1, ::GtkAttachOptions(GTK_SHRINK|GTK_FILL|GTK_EXPAND), ::GtkAttachOptions(GTK_SHRINK), 0, 0);
@@ -515,7 +523,7 @@ void CBoxConfigurationDialog::saveConfiguration()
 
 		XML::IXMLHandler *l_pHandler = XML::createXMLHandler();
 		XML::IXMLNode *l_pRootNode = XML::createNode(c_sRootName);
-		for(size_t i = 0; i < m_rBox.getSettingCount() ; ++i)
+		for(size_t i = 0; i < m_rBox.getSettingCountWithMissing() ; ++i)
 		{
 			XML::IXMLNode *l_pTempNode = XML::createNode(c_sSettingName);
 			CString l_sValue;
@@ -619,7 +627,7 @@ void CBoxConfigurationDialog::onOverrideBrowse()
 void CBoxConfigurationDialog::storeState(void)
 {
 	m_SettingsMemory.clear();
-	for (uint32_t i =0; i < m_rBox.getSettingCount(); i++)
+	for (uint32_t i =0; i < m_rBox.getSettingCountWithMissing(); i++)
 	{
 		OpenViBE::CString temp;
 		m_rBox.getSettingValue(i, temp);
@@ -631,7 +639,7 @@ void CBoxConfigurationDialog::restoreState(void)
 {
 	for (uint32_t i =0; i < m_SettingsMemory.size(); i++)
 	{
-		if (i >= m_rBox.getSettingCount())
+		if (i >= m_rBox.getSettingCountWithMissing())
 		{
 			// This is not supposed to happen
 			return;

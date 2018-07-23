@@ -1408,6 +1408,60 @@
       <action-widget response="-5">unsaved_scenario_global-button_save</action-widget>
     </action-widgets>
   </object>
+ <object class="GtkMessageDialog" id="dialog_pending_missings">
+    <property name="can_focus">False</property>
+    <property name="border_width">5</property>
+    <property name="title" translatable="yes">Oops...</property>
+    <property name="resizable">False</property>
+    <property name="modal">True</property>
+    <property name="window_position">center</property>
+    <property name="default_width">400</property>
+    <property name="default_height">125</property>
+    <property name="type_hint">dialog</property>
+    <property name="skip_taskbar_hint">True</property>
+    <property name="urgency_hint">True</property>
+    <property name="message_type">warning</property>
+    <property name="buttons">close</property>
+    <property name="text">&lt;big&gt;&lt;b&gt;Operation not permitted!&lt;/b&gt;&lt;/big&gt;</property>
+    <property name="use_markup">True</property>
+    <property name="secondary_text">Missing I/O or Settings are still pending. Please remove missing data to terminate the box update, and retry operation.</property>
+    <signal name="destroy" handler="gtk_widget_hide" swapped="no"/>
+    <signal name="close" handler="gtk_widget_hide" swapped="no"/>
+    <signal name="response" handler="gtk_widget_hide" swapped="no"/>
+    <child internal-child="vbox">
+      <object class="GtkVBox" id="dialog-vbox22">
+        <property name="can_focus">False</property>
+        <child internal-child="action_area">
+          <object class="GtkHButtonBox" id="dialog-action_area22">
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="pack_type">end</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="dialog_pending_missings_label">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="use_markup">True</property>
+            <property name="wrap">True</property>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
+      </object>
+    </child>
+  </object>
   <object class="GtkImage" id="image1">
     <property name="visible">True</property>
     <property name="can_focus">False</property>

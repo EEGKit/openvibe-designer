@@ -4,14 +4,14 @@ using namespace OpenViBE;
 using namespace OpenViBEDesigner;
 
 CInterfacedObject::CInterfacedObject(void)
-	:m_ui32ConnectorType(Connector_None)
+	:m_ui32ConnectorType(Box_None)
 	,m_ui32ConnectorIndex(0)
 {
 }
 
 CInterfacedObject::CInterfacedObject(const CIdentifier& rIdentifier)
 	:m_oIdentifier(rIdentifier)
-	,m_ui32ConnectorType(Connector_None)
+	,m_ui32ConnectorType(Box_None)
 	,m_ui32ConnectorIndex(0)
 {
 }

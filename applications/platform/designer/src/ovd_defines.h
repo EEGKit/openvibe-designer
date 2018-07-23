@@ -36,6 +36,8 @@ namespace OpenViBEDesigner
 		ContextMenu_SelectionPaste,
 		ContextMenu_SelectionDelete,
 
+		ContextMenu_BoxUpdate,
+		ContextMenu_BoxRemoveMissings,
 		ContextMenu_BoxRename,
 		ContextMenu_BoxDelete,
 		ContextMenu_BoxAddInput,
@@ -126,13 +128,14 @@ namespace OpenViBEDesigner
 
 	enum
 	{
-		Connector_None,
-		Connector_Input,
-		Connector_Output,
-		Connector_Setting,
-		Connector_Link,
-		Connector_ScenarioInput,
-		Connector_ScenarioOutput
+		Box_None,
+		Box_Input,
+		Box_Output,
+		Box_Setting,
+		Box_Link,
+		Box_ScenarioInput,
+		Box_ScenarioOutput,
+		Box_Update
 	};
 
 	enum

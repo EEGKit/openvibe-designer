@@ -79,6 +79,8 @@ namespace OpenViBEDesigner
 		void deleteSelection(void);
 
 		void deleteBox(const OpenViBE::CIdentifier& rBoxIdentifier); // Utility method to remove box from scenario and visualization
+		void contextMenuBoxUpdateCB(OpenViBE::Kernel::IBox& rBox);
+		void contextMenuBoxRemoveMissingsCB(OpenViBE::Kernel::IBox& rBox);
 		void contextMenuBoxRenameCB(OpenViBE::Kernel::IBox& rBox);
 		void contextMenuBoxRenameAllCB();
 		void contextMenuBoxToggleEnableAllCB(void);
@@ -215,6 +217,8 @@ namespace OpenViBEDesigner
 		GtkWidget* m_pSettingsVBox;
 
 		GtkWidget* m_pNoHelpDialog;
+		
+		GtkWidget* m_pErrorPendingMissingsDialog;
 
 		// This struct is used for both settings inside the scenario and inside
 		// the settings configurator
