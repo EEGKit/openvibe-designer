@@ -47,7 +47,7 @@ boolean CConnectorEditor::run(void)
 
 	switch(m_ui32ConnectorType)
 	{
-		case Connector_Input:
+		case Box_Input:
 			getConnectorIdentifier=&IBox::getInputIdentifier;
 			getConnectorName=&IBox::getInputName;
 			setConnectorName=&IBox::setInputName;
@@ -57,7 +57,7 @@ boolean CConnectorEditor::run(void)
 			updateConnectorIdentifier = &IBox::updateInputIdentifier;
 			break;
 
-		case Connector_Output:
+		case Box_Output:
 			getConnectorIdentifier=&IBox::getOutputIdentifier;
 			getConnectorName=&IBox::getOutputName;
 			setConnectorName=&IBox::setOutputName;

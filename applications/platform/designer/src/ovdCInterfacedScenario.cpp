@@ -2249,8 +2249,6 @@ void CInterfacedScenario::addScenarioOutputCB(void)
 	CConnectorEditor l_oConnectorEditor(m_rKernelContext, m_rScenario, Box_Output, m_rScenario.getOutputCount()-1, "Add Output", m_sGUIFilename.c_str());
 	if(l_oConnectorEditor.run())
 	{
-		m_rScenario.updateOutputIdentifier(m_rScenario.getOutputCount()-1);
-		
 		this->snapshotCB();
 	}
 	else
@@ -2267,8 +2265,6 @@ void CInterfacedScenario::editScenarioOutputCB(unsigned int l_ui32OutputIndex)
 	CConnectorEditor l_oConnectorEditor(m_rKernelContext, m_rScenario, Box_Output, l_ui32OutputIndex, "Edit Output", m_sGUIFilename.c_str());
 	if(l_oConnectorEditor.run())
 	{
-		m_rScenario.updateOutputIdentifier(l_ui32OutputIndex);
-		
 		this->snapshotCB();
 	}
 		
