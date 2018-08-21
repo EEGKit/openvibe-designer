@@ -630,7 +630,7 @@ CInterfacedScenario::CInterfacedScenario(const IKernelContext& rKernelContext, C
 	// add drag-n-drop capabilities onto the scenario notebook to open new scenario
 	gtk_drag_dest_add_uri_targets(GTK_WIDGET(m_pScenarioDrawingArea));
 #endif
-	
+
 	//retrieve visualization tree
 
 	m_rApplication.m_pVisualizationManager->createVisualizationTree(m_oVisualizationTreeIdentifier);
@@ -684,10 +684,10 @@ CInterfacedScenario::CInterfacedScenario(const IKernelContext& rKernelContext, C
 		{
 			m_rKernelContext.getLogManager() << LogLevel_Warning << "Scenario contains unknown box algorithm(s).\n";
 			if (l_oBoxProxy.isMetabox())
-			{	
+			{
 				CString mPath = m_rKernelContext.getConfigurationManager().expand("${Kernel_Metabox}");
 				m_rKernelContext.getLogManager() <<  LogLevel_Warning << "Some Metaboxes could not be found in [" << mPath << "]\n";
-			}		
+			}
 			warningUnknown = true;
 		}
 	}
@@ -2227,7 +2227,7 @@ void CInterfacedScenario::scenarioDrawingAreaDragDataReceivedCB(::GdkDragContext
 	// two cases: dragged from inside the program = a box ...
 	if(pDragContext->protocol == GDK_DRAG_PROTO_LOCAL || pDragContext->protocol == GDK_DRAG_PROTO_XDND)
 	{
-	
+
 		CIdentifier l_oBoxIdentifier;
 		CIdentifier l_oBoxAlgorithmClassIdentifier;
 
@@ -2324,18 +2324,18 @@ void CInterfacedScenario::scenarioDrawingAreaDragDataReceivedCB(::GdkDragContext
 			// the path starts with file:/// and ends with \r\n,
 			// once parsed line after line, a \r remains on Windows
 			l_sLine = l_sLine.substr(8, l_sLine.length()-9);
-			
+
 			// uri to path (to remove %xx escape characters):
 			l_sLine = g_uri_unescape_string(l_sLine.c_str(), NULL);
-			
+
 			l_vFilesToOpen.push_back(l_sLine);
 		}
-		
+
 		for(auto& fileName : l_vFilesToOpen)
 		{
 			m_rApplication.openScenario(fileName.c_str());
 		}
-		
+
 	}
 #endif
 
@@ -2611,8 +2611,8 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 						if(this->hasSelection()) { gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, l_pMenuItemSelectionCopy, GTK_STOCK_COPY, "copy...", context_menu_cb, NULL, ContextMenu_SelectionCopy, -1); }
 						if( (m_rApplication.m_pClipboardScenario->getNextBoxIdentifier(OV_UndefinedIdentifier)!=OV_UndefinedIdentifier)
 							|| (m_rApplication.m_pClipboardScenario->getNextCommentIdentifier(OV_UndefinedIdentifier)!=OV_UndefinedIdentifier)
-							) 
-						{ 
+							)
+						{
 							gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, l_pMenuItemSelectionPaste, GTK_STOCK_PASTE, "paste...", context_menu_cb, NULL, ContextMenu_SelectionPaste, -1);
 						}
 						if(this->hasSelection()) { gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, l_pMenuItemSelectionCut, GTK_STOCK_DELETE, "delete...", context_menu_cb, NULL, ContextMenu_SelectionDelete, -1); }
@@ -3248,7 +3248,7 @@ void CInterfacedScenario::copySelection(void)
 					l_vIdMapping[l_pLink->getTargetBoxIdentifier()],
 					l_pLink->getTargetBoxInputIndex(),
 					l_pLink->getIdentifier());
-			}		
+			}
 		}
 	}
 }
@@ -3855,7 +3855,7 @@ bool CInterfacedScenario::browseBoxDocumentation(CIdentifier oBoxId)
 	CString l_sURLBase=l_sDefaultURLBase;
 	CString l_sBrowser = m_rKernelContext.getConfigurationManager().expand("${Designer_HelpBrowserCommand}");
 	CString l_sBoxName;
-	
+
 	CString l_sHTMLName = "Doc_BoxAlgorithm_";
 	if (m_rScenario.getBoxDetails(oBoxId)->getAlgorithmClassIdentifier() == OVP_ClassId_BoxAlgorithm_Metabox)
 	{
@@ -3876,46 +3876,6 @@ bool CInterfacedScenario::browseBoxDocumentation(CIdentifier oBoxId)
 	{
 		l_sURLBase = m_rKernelContext.getConfigurationManager().expand(m_rScenario.getBoxDetails(oBoxId)->getAttributeValue(OV_AttributeId_Box_DocumentationURLBase));
 	}
-#ifdef MENSIA_DISTRIBUTION	
-	else if(!std::binary_search(m_rApplication.m_vDocumentedBoxes.begin(), m_rApplication.m_vDocumentedBoxes.end(), l_sHTMLName.toASCIIString()))
-	{
-		std::string l_sMsg = std::string("The Documentation for the box ["+ l_sBoxName + "] is missing in ["+ l_sDefaultURLBase +"].\n"
-			+"Box documentation cannot be displayed.");
-		// If searched doc was not found throw warning.
-		m_rKernelContext.getLogManager() << LogLevel_Warning << "The documentation requested CHM Help file for box [" << l_sBoxName.toASCIIString() << "] does not exist.\n";
-		GtkLabel* l_pLabel =  GTK_LABEL(gtk_builder_get_object(m_rApplication.m_pBuilderInterface, "dialog_no_help_label"));
-		gtk_label_set_text(l_pLabel, l_sMsg.c_str());
-		gint l_iResponse = gtk_dialog_run(GTK_DIALOG(m_pNoHelpDialog));
-		l_sHTMLName = "";
-		return false;
-	}
-
-	// check if the CHM file is present
-	std::string l_sURLBaseString = std::string(l_sURLBase.toASCIIString());
-	if(l_sURLBaseString.substr(l_sURLBaseString.find_last_of(".") + 1) == "chm::")
-	{
-		// we probe for the chm file removing the '::' from the URL
-		std::string l_sCHMFile = l_sURLBaseString.substr(0, l_sURLBase.length() - 2);
-		if(!FS::Files::fileExists(l_sCHMFile.c_str()))
-		{
-			// If box documentation not available in default documentation
-			if(!std::binary_search(m_rApplication.m_vDocumentedBoxes.begin(), m_rApplication.m_vDocumentedBoxes.end(), l_sHTMLName.toASCIIString()))
-			{
-				// If searched doc was not found throw warning.
-				m_rKernelContext.getLogManager() << LogLevel_Warning << "The requested CHM Help file [" << l_sCHMFile.c_str() << "] does not exist.\n";
-				GtkLabel* l_pLabel =  GTK_LABEL(gtk_builder_get_object(m_rApplication.m_pBuilderInterface, "dialog_no_help_label"));
-				std::string l_sMsg = std::string("The requested CHM Help file [") + l_sCHMFile + "] is missing and the box documentation does not exist in default documentation.\n" +
-					"Box documentation cannot be displayed.";
-				gtk_label_set_text(l_pLabel, l_sMsg.c_str());
-				gint l_iResponse = gtk_dialog_run(GTK_DIALOG(m_pNoHelpDialog));
-				// just an info dialog
-
-				return false;
-			}
-			l_sURLBase = l_sDefaultURLBase;
-		}
-	}
-#endif
 	l_sHTMLName = l_sHTMLName + ".html";
 
 	if(m_rScenario.getBoxDetails(oBoxId)->hasAttribute(OV_AttributeId_Box_DocumentationCommand))
