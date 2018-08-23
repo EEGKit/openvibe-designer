@@ -3830,7 +3830,7 @@ bool CInterfacedScenario::browseURL(CString sURL, CString sBrowser)  {
 	m_rKernelContext.getLogManager() << LogLevel_Trace << "Requesting web browser on URL " << sURL << "\n";
 
 //	m_rKernelContext.getLogManager() << LogLevel_Trace << "Launching '" << l_sCommand << "'\n";
-	int l_iResult=::system((l_sBrowser+CString(" ")+sURL+CString(" ")+l_sHelpCommandPostfix).toASCIIString());
+	int l_iResult=::system((l_sBrowser+CString("\"")+sURL+CString("\"")+l_sHelpCommandPostfix).toASCIIString());
 	if(l_iResult<0)
 	{
 		m_rKernelContext.getLogManager() << LogLevel_Warning << "Could not launch command " << l_sBrowser+CString(" ")+sURL << "\n";
