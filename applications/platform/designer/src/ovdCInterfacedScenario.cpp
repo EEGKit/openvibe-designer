@@ -3096,7 +3096,7 @@ void CInterfacedScenario::scenarioDrawingAreaKeyPressEventCB(::GtkWidget* pWidge
 			CString l_sFullURL=m_rScenario.getAttributeValue(OV_AttributeId_Scenario_DocumentationPage);
 			if(l_sFullURL!=CString(""))
 			{
-				browseURL(l_sFullURL);
+				browseURL(l_sFullURL, m_rKernelContext.getConfigurationManager().expand("${Designer_WebBrowserCommand}"), m_rKernelContext.getConfigurationManager().expand("${Designer_WebBrowserCommandPostfix}"));
 			}
 			else
 			{
@@ -3814,26 +3814,15 @@ void CInterfacedScenario::contextMenuBoxEditMetaboxCB(IBox& rBox)
 	m_rApplication.openScenario(l_sMetaboxScenarioPath.toASCIIString());
 }
 
-bool CInterfacedScenario::browseURL(CString sURL, CString sBrowser)  {
-	CString l_sBrowser;
-	if (sBrowser == CString(""))
-	{
-		l_sBrowser = m_rKernelContext.getConfigurationManager().expand("${Designer_WebBrowserCommand}");
-	}
-	else
-	{
-		l_sBrowser = sBrowser;
-	}
-	CString l_sHelpCommandPostfix=m_rKernelContext.getConfigurationManager().expand("${Designer_WebBrowserCommandPostfix}");
-//	CString l_sURLBase=m_rKernelContext.getConfigurationManager().expand("${Designer_WebBrowserHelpURLBase}");
+bool CInterfacedScenario::browseURL(CString url, CString browserPrefix, CString browserPostfix) {
+	m_rKernelContext.getLogManager() << LogLevel_Trace << "Requesting web browser on URL " << url << "\n";
 
-	m_rKernelContext.getLogManager() << LogLevel_Trace << "Requesting web browser on URL " << sURL << "\n";
-
-//	m_rKernelContext.getLogManager() << LogLevel_Trace << "Launching '" << l_sCommand << "'\n";
-	int l_iResult=::system((l_sBrowser+CString("\"")+sURL+CString("\"")+l_sHelpCommandPostfix).toASCIIString());
-	if(l_iResult<0)
+	CString command = browserPrefix + CString(" \"") + url + CString("\"") + browserPostfix;
+	m_rKernelContext.getLogManager() << LogLevel_Debug << "Launching [" << command << "]\n";
+	int result=::system(command.toASCIIString());
+	if (result < 0)
 	{
-		m_rKernelContext.getLogManager() << LogLevel_Warning << "Could not launch command " << l_sBrowser+CString(" ")+sURL << "\n";
+		OV_WARNING("Could not launch command [" << command << "]\n", m_rKernelContext.getLogManager());
 		return false;
 	}
 	return true;
@@ -3854,6 +3843,7 @@ bool CInterfacedScenario::browseBoxDocumentation(CIdentifier oBoxId)
 	CString l_sDefaultURLBase=m_rKernelContext.getConfigurationManager().expand("${Designer_HelpBrowserURLBase}");
 	CString l_sURLBase=l_sDefaultURLBase;
 	CString l_sBrowser = m_rKernelContext.getConfigurationManager().expand("${Designer_HelpBrowserCommand}");
+	CString l_sBrowserPostfix = m_rKernelContext.getConfigurationManager().expand("${Designer_HelpBrowserCommandPostfix}");
 	CString l_sBoxName;
 
 	CString l_sHTMLName = "Doc_BoxAlgorithm_";
@@ -3881,6 +3871,7 @@ bool CInterfacedScenario::browseBoxDocumentation(CIdentifier oBoxId)
 	if(m_rScenario.getBoxDetails(oBoxId)->hasAttribute(OV_AttributeId_Box_DocumentationCommand))
 	{
 		l_sBrowser = m_rKernelContext.getConfigurationManager().expand(m_rScenario.getBoxDetails(oBoxId)->getAttributeValue(OV_AttributeId_Box_DocumentationCommand));
+		l_sBrowserPostfix = "";
 	}
 
 	CString l_sFullURL=l_sURLBase+CString("/")+l_sHTMLName;
@@ -3889,7 +3880,7 @@ bool CInterfacedScenario::browseBoxDocumentation(CIdentifier oBoxId)
 		l_sFullURL = m_rKernelContext.getConfigurationManager().expand(m_rScenario.getBoxDetails(oBoxId)->getAttributeValue(OV_AttributeId_Box_DocumentationURL));
 	}
 
-	return browseURL(l_sFullURL, l_sBrowser);
+	return browseURL(l_sFullURL, l_sBrowser, l_sBrowserPostfix);
 }
 
 void CInterfacedScenario::contextMenuBoxDocumentationCB(IBox& rBox)

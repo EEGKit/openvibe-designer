@@ -102,7 +102,7 @@ namespace OpenViBEDesigner
 		void contextMenuScenarioAddCommentCB(void);
 		void contextMenuScenarioAboutCB(void);
 
-		bool browseURL(OpenViBE::CString sURL, OpenViBE::CString sBrowser = "");
+		bool browseURL(OpenViBE::CString url, OpenViBE::CString browserPrefix, OpenViBE::CString browserPostfix);
 		bool browseBoxDocumentation(OpenViBE::CIdentifier oBoxId);
 
 		void toggleDesignerVisualization();
