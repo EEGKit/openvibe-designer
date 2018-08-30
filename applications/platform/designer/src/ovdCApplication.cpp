@@ -384,8 +384,8 @@ namespace
 
 		l_pApplication->m_pArchwayHandlerGUI->toggleNeuroRTEngineConfigurationDialog(static_cast<bool>(gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(pMenuItem))==TRUE));
 	}
-#endif 
-	
+#endif
+
 	void delete_designer_visualisation_cb(gpointer user_data)
 	{
 		static_cast<CApplication*>(user_data)->deleteDesignerVisualizationCB();
@@ -539,9 +539,9 @@ namespace
 		// consider only leaf nodes which match the search term
 		if (l_sHaystackName!=NULL && l_sHaystackDescription!=NULL)
 		{
-			if (!l_bHaystackUnstable 
-				&& (string::npos != strtoupper(l_sHaystackName).find(strtoupper(l_pApplication->m_sSearchTerm)) 
-					|| string::npos != strtoupper(l_sHaystackDescription).find(strtoupper(l_pApplication->m_sSearchTerm)) 
+			if (!l_bHaystackUnstable
+				&& (string::npos != strtoupper(l_sHaystackName).find(strtoupper(l_pApplication->m_sSearchTerm))
+					|| string::npos != strtoupper(l_sHaystackDescription).find(strtoupper(l_pApplication->m_sSearchTerm))
 					|| gtk_tree_model_iter_has_child(model, iter)))
 			{
 				//std::cout << "value : " << l_pApplication->m_sSearchTerm << "\n";
@@ -658,7 +658,7 @@ namespace
 		gtk_editable_select_region(GTK_EDITABLE(pWidget), 0, 0);
 		return false;
 	}
-	
+
 	static void about_newversion_button_display_changelog_cb(::GtkButton* pButton, gpointer pUserData)
 	{
 #if defined TARGET_OS_Windows
@@ -791,7 +791,7 @@ namespace
 	gboolean receiveSecondInstanceMessage(gpointer pUserData)
 	{
 		try
-		{	// Open or create ensures that 
+		{	// Open or create ensures that
 			boost::interprocess::named_mutex l_oMutex(boost::interprocess::open_or_create, MUTEX_NAME);
 			{
 				boost::interprocess::scoped_lock<boost::interprocess::named_mutex> lock(l_oMutex);
@@ -948,7 +948,7 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 {
 	m_eCommandLineFlags=eCommandLineFlags;
 	m_sSearchTerm = "";
-	
+
 	// Load metaboxes from metabox path
 	m_KernelContext.getMetaboxManager().addMetaboxesFromFiles(m_KernelContext.getConfigurationManager().expand("${Kernel_Metabox}"));
 
@@ -963,16 +963,16 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 			                                 << l_sDefaultWorkingDirectory << " folder\n";
 		}
 	}
-	
-	
-	
+
+
+
 
 	// Prepares scenario clipboard
 	CIdentifier l_oClipboardScenarioIdentifier;
 	if(m_pScenarioManager->createScenario(l_oClipboardScenarioIdentifier))
 	{
 		m_pClipboardScenario=&m_pScenarioManager->getScenario(l_oClipboardScenarioIdentifier);
-	}	
+	}
 
 	m_pBuilderInterface=gtk_builder_new(); // glade_xml_new(OVD_GUI_File, "openvibe", NULL);
 	gtk_builder_add_from_file(m_pBuilderInterface, OVD_GUI_File, NULL);
@@ -1013,7 +1013,7 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_quit")),        "activate", G_CALLBACK(menu_quit_application_cb),   this);
 
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_restore_default_scenarios")),     "activate", G_CALLBACK(menu_restore_default_scenarios_cb),   this);
-	
+
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_about")),          "activate", G_CALLBACK(menu_about_openvibe_cb),  this);
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_scenario_about")), "activate", G_CALLBACK(menu_about_scenario_cb),  this);
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_documentation")), "activate", G_CALLBACK(menu_browse_documentation_cb), this);
@@ -1043,7 +1043,7 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_undo")), "clicked", G_CALLBACK(button_undo_cb), this);
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_redo")), "clicked", G_CALLBACK(button_redo_cb), this);
 
-	
+
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_log_level")),     "clicked",  G_CALLBACK(log_level_cb),                    this);
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager")), "toggled",  G_CALLBACK(button_toggle_window_manager_cb), this);
 
@@ -1432,7 +1432,7 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 		}
 		else
 		{
-			// Should not happen unless the user removed the documentation 
+			// Should not happen unless the user removed the documentation
 			m_KernelContext.getLogManager() << LogLevel_Error << "The box documentation could not be found at ["<< l_sCHMFile.c_str() <<"]. "<<
 				"Either the configuration token ${Designer_HelpBrowserURLBase} was modified to an incorrect value, or the documentation is missing.\n";
 		}
@@ -1442,7 +1442,7 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 }
 
 bool CApplication::displayChangelogWhenAvailable()
-{	
+{
 	// If last version used is ulterior as current version, and at least one box was added/updated, show the list
 	if(!m_vNewBoxes.empty() || !m_vUpdatedBoxes.empty())
 	{
@@ -1676,7 +1676,7 @@ bool CApplication::hasUnsavedScenario(void)
 
 CInterfacedScenario* CApplication::getCurrentInterfacedScenario(void)
 {
-	
+
 	if(m_ui32CurrentInterfacedScenarioIndex<m_vInterfacedScenario.size())
 	{
 		return m_vInterfacedScenario[m_ui32CurrentInterfacedScenarioIndex];
@@ -1734,7 +1734,7 @@ void CApplication::saveOpenedScenarios(void)
 				++scenarioID;
 			}
 			::fprintf(l_pFile, "\n");
-			
+
 			::fclose(l_pFile);
 		}
 		else
@@ -2024,13 +2024,13 @@ void CApplication::saveScenarioCB(CInterfacedScenario* pScenario)
 	{
 		return;
 	}
-	
-	if (l_pCurrentInterfacedScenario->m_rScenario.hasPendingMissings())
+
+	if (l_pCurrentInterfacedScenario->m_rScenario.doesBoxMissFeatures())
 	{
 		cannotSaveScenarioBeforeUpdate();
 		return;
 	}
-			
+
 	if(!l_pCurrentInterfacedScenario->m_bHasFileName)
 	{
 		saveScenarioAsCB(pScenario);
@@ -2202,25 +2202,25 @@ void CApplication::saveScenarioCB(CInterfacedScenario* pScenario)
 }
 
 void CApplication::restoreDefaultScenariosCB()
-{		
+{
 	CString l_sDefaultScenariosDirectory = m_KernelContext.getConfigurationManager().expand(OVD_SCENARIOS_PATH);
 	CString l_sDefaultWorkingDirectory   = m_KernelContext.getConfigurationManager().expand(OVD_WORKING_SCENARIOS_PATH);
 	CString message = "Default scenarios will be restored in '" + l_sDefaultWorkingDirectory + "' folder.\n"
 	        + "All previous scenarios in this folder will be removed.\n"
 	        + "Do you want to continue ?\n";
-	
+
 	::GtkWidget* l_pWidgetDialogRestoreScenarios = gtk_message_dialog_new(
 	            NULL, GTK_DIALOG_DESTROY_WITH_PARENT,
             GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
              "%s", message.toASCIIString());
-	
-	
+
+
 	CString backupFolder = l_sDefaultWorkingDirectory + m_KernelContext.getConfigurationManager().expand("-$core{date}-$core{time}");
-		
+
 	if(gtk_dialog_run(GTK_DIALOG(l_pWidgetDialogRestoreScenarios))==GTK_RESPONSE_YES)
-	{			
+	{
 		// to avoid to loose old data, make a backup
-		FS::Files::removeAll(backupFolder);					
+		FS::Files::removeAll(backupFolder);
 		if(FS::Files::copyDirectory(l_sDefaultWorkingDirectory, backupFolder))
 		{
 			m_KernelContext.getLogManager() << LogLevel_Info << "Old scenario folder backed up into "
@@ -2228,7 +2228,7 @@ void CApplication::restoreDefaultScenariosCB()
 			// make the copy
 			FS::Files::removeAll(l_sDefaultWorkingDirectory);
 			if (FS::Files::copyDirectory(l_sDefaultScenariosDirectory, l_sDefaultWorkingDirectory))
-			{					
+			{
 				m_KernelContext.getLogManager() << LogLevel_Info << "Default scenarios restored into "
 				                                 << l_sDefaultWorkingDirectory <<" folder\n";
 			}
@@ -2243,9 +2243,9 @@ void CApplication::restoreDefaultScenariosCB()
 			m_KernelContext.getLogManager() << LogLevel_Error << "Could not back up "
 			                                 << l_sDefaultWorkingDirectory << " folder. Copy has aborted.\n";
 		}
-		
+
 	}
-	
+
 	gtk_widget_destroy(l_pWidgetDialogRestoreScenarios);
 }
 
@@ -2258,8 +2258,8 @@ void CApplication::saveScenarioAsCB(CInterfacedScenario* pScenario)
 	{
 		return;
 	}
-	
-	if (l_pCurrentInterfacedScenario->m_rScenario.hasPendingMissings())
+
+	if (l_pCurrentInterfacedScenario->m_rScenario.doesBoxMissFeatures())
 	{
 		cannotSaveScenarioBeforeUpdate();
 		return;
@@ -2689,7 +2689,7 @@ void CApplication::reportIssueCB(void)
 	m_KernelContext.getLogManager() << LogLevel_Debug << "CApplication::reportIssueCB\n";
 	CString l_Command = m_KernelContext.getConfigurationManager().expand("${Designer_WebBrowserCommand} ${Designer_WebBrowserSupportURL} ${Designer_WebBrowserCommandPostfix}");
 	int l_Result = system(l_Command.toASCIIString());
-	
+
 	OV_WARNING_UNLESS(
 		(l_Result == 0),
 		"Could not launch command " << l_Command << "\n",
@@ -2757,14 +2757,14 @@ bool CApplication::createPlayer(void)
 			OV_ERROR_DRF("The current scenario could not be loaded by the player.\n",
 			               ErrorType::BadCall);
 		}
-		
+
 		// The visualization manager needs to know the visualization tree in which the widgets should be inserted
 		l_pCurrentInterfacedScenario->m_pPlayer->getRuntimeConfigurationManager().createConfigurationToken("VisualizationContext_VisualizationTreeId", l_pCurrentInterfacedScenario->m_oVisualizationTreeIdentifier.toString());
-		
-		// TODO_JL: This should be a copy of the tree containing visualizations from the metaboxes			
+
+		// TODO_JL: This should be a copy of the tree containing visualizations from the metaboxes
 		l_pCurrentInterfacedScenario->createPlayerVisualization(l_pCurrentInterfacedScenario->m_pVisualizationTree);
-		
-		
+
+
 
 		if(l_pCurrentInterfacedScenario->m_pPlayer->initialize() != EPlayerReturnCode::PlayerReturnCode_Sucess)
 		{
@@ -2919,7 +2919,7 @@ void CApplication::playScenarioCB(void)
 					"Box needs update.");
 				gint l_iResponse = ::gtk_dialog_run(GTK_DIALOG(l_pDialog));
 				::gtk_widget_destroy(l_pDialog);
-		
+
 				if(l_iResponse == GTK_RESPONSE_YES)
 				{
 					m_KernelContext.getLogManager() << LogLevel_Trace << "CApplication::playScenarioCB - GTK_RESPONSE_YES: the scenario will be played. \n";
@@ -2951,7 +2951,7 @@ void CApplication::playScenarioCB(void)
 	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_forward")),       true);
 	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager")), false);
 	gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), GTK_STOCK_MEDIA_PAUSE);
-	
+
 	if(m_eCommandLineFlags&CommandLineFlag_NoVisualization)
 	{
 		for (auto &iScenario : m_vInterfacedScenario)
@@ -2959,7 +2959,7 @@ void CApplication::playScenarioCB(void)
 			iScenario->hideCurrentVisualization();
 		}
 	}
-	
+
 }
 
 void CApplication::forwardScenarioCB(void)
@@ -2986,11 +2986,11 @@ void CApplication::forwardScenarioCB(void)
 	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_forward")),       false);
 	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager")), false);
 	gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), GTK_STOCK_MEDIA_PLAY);
-	
+
 	if(m_eCommandLineFlags&CommandLineFlag_NoVisualization)
 	{
-		for (auto &iScenario : m_vInterfacedScenario)		
-		{		
+		for (auto &iScenario : m_vInterfacedScenario)
+		{
 			iScenario->hideCurrentVisualization();
 		}
 	}
@@ -3186,7 +3186,7 @@ void CApplication::changeCurrentScenario(int32 i32PageIndex)
 		g_signal_handlers_disconnect_by_func(l_pWindowManagerButton, G_CALLBACK2(button_toggle_window_manager_cb), this);
 		gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(l_pWindowManagerButton), false);
 		g_signal_connect(l_pWindowManagerButton, "toggled", G_CALLBACK(button_toggle_window_manager_cb), this);
-		
+
 		// toggle off and reset scenario settings
 		GtkWidget* l_pSettingsVBox = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-scenario_configuration_vbox"));
 
@@ -3238,7 +3238,7 @@ void CApplication::changeCurrentScenario(int32 i32PageIndex)
 		if(l_ePlayerStatus==PlayerStatus_Stop && m_vInterfacedScenario[i32PageIndex]->isDesignerVisualizationToggled() == false)
 		{
 			m_vInterfacedScenario[i32PageIndex]->hideCurrentVisualization();
-			
+
 			// we are in edition mode, updating internal configuration token
 			std::string l_sPath = m_vInterfacedScenario[i32PageIndex]->m_sFileName;
 			l_sPath = l_sPath.substr(0, l_sPath.rfind('/'));
@@ -3261,7 +3261,7 @@ void CApplication::changeCurrentScenario(int32 i32PageIndex)
 		m_vInterfacedScenario[i32PageIndex]->redrawScenarioInputSettings();
 		m_vInterfacedScenario[i32PageIndex]->redrawScenarioOutputSettings();
 
-	
+
 		// current scenario is the selected one
 		m_ui32CurrentInterfacedScenarioIndex = i32PageIndex;
 	}
