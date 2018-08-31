@@ -20,7 +20,7 @@ Designer_ScenarioTabsVerticalStack = false
 
 Designer_ThrowPopUpWhenBoxNeedsUpdate = false
 
-Designer_WebBrowserCommand_Windows = start
+Designer_WebBrowserCommand_Windows = start ""
 Designer_WebBrowserCommand_Linux = nohup xdg-open
 Designer_WebBrowserCommand_MacOS = open
 Designer_WebBrowserCommand = ${Designer_WebBrowserCommand_${OperatingSystem}}
