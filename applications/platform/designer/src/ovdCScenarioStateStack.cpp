@@ -59,6 +59,11 @@ bool CScenarioStateStack::undo(void)
 	return true;
 }
 
+void CScenarioStateStack::dropLastState()
+{
+	m_States.pop_back();
+}
+
 bool CScenarioStateStack::isRedoPossible()
 {
 	auto itState = m_CurrentState;

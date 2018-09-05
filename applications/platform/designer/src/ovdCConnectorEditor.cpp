@@ -37,34 +37,27 @@ CConnectorEditor::~CConnectorEditor(void)
 
 boolean CConnectorEditor::run(void)
 {
-	t_getConnectorIdentifier getConnectorIdentifier = nullptr;
-	t_getConnectorName getConnectorName=NULL;
+//	t_getConnectorIdentifier getConnectorIdentifier = nullptr;
 	t_setConnectorName setConnectorName=NULL;
-	t_getConnectorType getConnectorType=NULL;
 	t_setConnectorType setConnectorType=NULL;
 	t_isTypeSupported isTypeSupported=NULL;
-	t_updateConnectorIdentifier updateConnectorIdentifier = nullptr;
+//	t_updateConnectorIdentifier updateConnectorIdentifier = nullptr;
 
+	OpenViBE::Kernel::BoxInterfacorType interfacorType;
 	switch(m_ui32ConnectorType)
 	{
 		case Box_Input:
-			getConnectorIdentifier=&IBox::getInputIdentifier;
-			getConnectorName=&IBox::getInputName;
 			setConnectorName=&IBox::setInputName;
-			getConnectorType=&IBox::getInputType;
 			setConnectorType=&IBox::setInputType;
 			isTypeSupported=&IBox::hasInputSupport;
-			updateConnectorIdentifier = &IBox::updateInputIdentifier;
+			interfacorType = Input;
 			break;
 
 		case Box_Output:
-			getConnectorIdentifier=&IBox::getOutputIdentifier;
-			getConnectorName=&IBox::getOutputName;
 			setConnectorName=&IBox::setOutputName;
-			getConnectorType=&IBox::getOutputType;
 			setConnectorType=&IBox::setOutputType;
 			isTypeSupported=&IBox::hasOutputSupport;
-			updateConnectorIdentifier = &IBox::updateOutputIdentifier;
+			interfacorType = Output;
 			break;
 
 		default:
@@ -74,9 +67,9 @@ boolean CConnectorEditor::run(void)
 	CString l_oConnectorName;
 	CIdentifier l_oConnectorType;
 	CIdentifier connectorIdentifier;
-	(m_rBox.*getConnectorIdentifier)(m_ui32ConnectorIndex, connectorIdentifier);
-	(m_rBox.*getConnectorName)(m_ui32ConnectorIndex, l_oConnectorName);
-	(m_rBox.*getConnectorType)(m_ui32ConnectorIndex, l_oConnectorType);
+	m_rBox.getInterfacorIdentifier(interfacorType, m_ui32ConnectorIndex, connectorIdentifier);
+	m_rBox.getInterfacorName(interfacorType, m_ui32ConnectorIndex, l_oConnectorName);
+	m_rBox.getInterfacorType(interfacorType, m_ui32ConnectorIndex, l_oConnectorType);
 
 	::GtkBuilder* l_pBuilderInterfaceConnector=gtk_builder_new();
 	gtk_builder_add_from_file(l_pBuilderInterfaceConnector, m_sGUIFilename.c_str(), NULL);
@@ -147,7 +140,7 @@ boolean CConnectorEditor::run(void)
 				CIdentifier newIdentifier;
 				if (newIdentifier.fromString(newIdentifierString) && (newIdentifier != connectorIdentifier))
 				{
-					(m_rBox.*updateConnectorIdentifier)(m_ui32ConnectorIndex, newIdentifier);
+					m_rBox.updateInterfacorIdentifier(interfacorType, m_ui32ConnectorIndex, newIdentifier);
 				}
 //				(m_rBox.*addConnector)(newName, newType);
 				l_bFinished=true;
@@ -156,8 +149,8 @@ boolean CConnectorEditor::run(void)
 		}
 		else if(l_iResult==2) // revert
 		{
-			(m_rBox.*getConnectorName)(m_ui32ConnectorIndex, l_oConnectorName);
-			(m_rBox.*getConnectorType)(m_ui32ConnectorIndex, l_oConnectorType);
+			m_rBox.getInterfacorName(interfacorType, m_ui32ConnectorIndex, l_oConnectorName);
+			m_rBox.getInterfacorType(interfacorType, m_ui32ConnectorIndex, l_oConnectorType);
 
 			gtk_entry_set_text(l_pConnectorNameEntry, l_oConnectorName.toASCIIString());
 			gtk_combo_box_set_active(l_pConnectorTypeComboBox, l_iActive);

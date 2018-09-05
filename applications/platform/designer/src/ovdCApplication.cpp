@@ -2052,7 +2052,7 @@ void CApplication::saveScenarioCB(CInterfacedScenario* pScenario)
 
 				l_rScenario.getInputType(l_ui32ScenarioInputIndex, l_oInputTypeIdentifier);
 				l_rScenario.getInputName(l_ui32ScenarioInputIndex, l_sInputName);
-				l_rScenario.getInputIdentifier(l_ui32ScenarioInputIndex, l_oInputIdentifier);
+				l_rScenario.getInterfacorIdentifier(Input, l_ui32ScenarioInputIndex, l_oInputIdentifier);
 
 				l_oMetaboxProto.addInput(l_sInputName, l_oInputTypeIdentifier,l_oInputIdentifier, true);
 			}
@@ -2065,7 +2065,7 @@ void CApplication::saveScenarioCB(CInterfacedScenario* pScenario)
 
 				l_rScenario.getOutputType(l_ui32ScenarioOutputIndex, l_oOutputTypeIdentifier);
 				l_rScenario.getOutputName(l_ui32ScenarioOutputIndex, l_sOutputName);
-				l_rScenario.getOutputIdentifier(l_ui32ScenarioOutputIndex, l_oOutputIdentifier);
+				l_rScenario.getInterfacorIdentifier(Output, l_ui32ScenarioOutputIndex, l_oOutputIdentifier);
 
 				l_oMetaboxProto.addOutput(l_sOutputName, l_oOutputTypeIdentifier,l_oOutputIdentifier, true);
 			}
@@ -2877,7 +2877,7 @@ void CApplication::playScenarioCB(void)
 	{
 		OpenViBE::Kernel::IScenario& l_oCurrentScenario = this->getCurrentInterfacedScenario()->m_rScenario;
 		m_KernelContext.getLogManager() << LogLevel_Debug << "playScenarioCB\n";
-		if (l_oCurrentScenario.checkNeedsUpdateBoxes())
+		if (l_oCurrentScenario.hasNeedsUpdateBox())
 		{
 			if(m_KernelContext.getConfigurationManager().expandAsBoolean("${Kernel_AbortPlayerWhenBoxNeedsUpdate}", false))
 			{
