@@ -146,7 +146,10 @@ CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& rKernelCo
 CBoxConfigurationDialog::~CBoxConfigurationDialog(void)
 {
 	m_rBox.deleteObserver(this);
-	gtk_widget_destroy(m_pSettingDialog);
+	if (m_pSettingDialog)
+	{
+		gtk_widget_destroy(m_pSettingDialog);
+	}
 }
 
 bool CBoxConfigurationDialog::run(void)
