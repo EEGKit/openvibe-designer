@@ -546,6 +546,7 @@ static gboolean s_iconFill = TRUE;
 				void* l_pParentTreeWidget = NULL;
 				m_rVisualizationTree.getPointerValueFromTreeIter(&l_oParentIter, l_pParentTreeWidget, EVisualizationTreeColumn_PointerWidget);
 
+
 				if(l_pParentTreeWidget != NULL && GTK_IS_WIDGET(l_pParentTreeWidget))
 				{
 					GtkWidget* l_pParentWidget = getVisualizationWidget(GTK_WIDGET(l_pParentTreeWidget));
@@ -805,6 +806,11 @@ void CDesignerVisualization::resizeCB(IVisualizationWidget* pVisualizationWidget
 			int l_i32HandlePos = pVisualizationWidget->getDividerPosition();
 			int l_i32MaxHandlePos = pVisualizationWidget->getMaxDividerPosition();
 
+			if(l_i32HandlePos == std::numeric_limits<int>::min() || l_i32MaxHandlePos == std::numeric_limits<int>::min() )
+			{
+				// these variables hadn't been initialized meaningfully before. @fixme what is the correct place to init them?
+				notifyPositionPanedCB(l_pPaned); // for now, this inits them as a side effect
+			}
 			if(l_i32MaxHandlePos > 0)
 			{
 				//retrieve current maximum handle position
