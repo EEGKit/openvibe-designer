@@ -16,7 +16,6 @@
 #include "ovdCCommentEditorDialog.h"
 
 #include <vector>
-#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <streambuf>
@@ -3212,30 +3211,22 @@ void CInterfacedScenario::copySelection(void)
 				objectId);
 			l_vIdMapping[objectId]=l_oNewIdentifier;
 		}
-	}
 
-	// Copies comments to clipboard
-	for(auto& objectId : m_SelectedObjects)
-	{
-		if(m_rScenario.isComment(objectId))
+		if (m_rScenario.isComment(objectId))
 		{
 			CIdentifier l_oNewIdentifier;
-			const IComment* l_pComment=m_rScenario.getCommentDetails(objectId);
+			const IComment* l_pComment = m_rScenario.getCommentDetails(objectId);
 			m_rApplication.m_pClipboardScenario->addComment(
 				l_oNewIdentifier,
 				*l_pComment,
 				objectId);
-			l_vIdMapping[objectId]=l_oNewIdentifier;
+			l_vIdMapping[objectId] = l_oNewIdentifier;
 		}
-	}
 
-	// Copies links to clipboard
-	for(auto& objectId : m_SelectedObjects)
-	{
-		if(m_rScenario.isLink(objectId))
+		if (m_rScenario.isLink(objectId))
 		{
 			CIdentifier l_oNewIdentifier;
-			const ILink* l_pLink=m_rScenario.getLinkDetails(objectId);
+			const ILink* l_pLink = m_rScenario.getLinkDetails(objectId);
 
 			// Connect link only if the source and target boxes are copied
 			if (l_vIdMapping.find(l_pLink->getSourceBoxIdentifier()) != l_vIdMapping.end()
@@ -3268,13 +3259,8 @@ void CInterfacedScenario::pasteSelection(void)
 	// Prepares paste
 	CIdentifier l_oIdentifier;
 	map < CIdentifier, CIdentifier > l_vIdMapping;
-	/*
-	int32 l_iCenterX=0;
-	int32 l_iCenterY=0;
-	*/
 	int32 l_iTopmostLeftmostCopiedBoxCenterX = 1 << 15;
 	int32 l_iTopmostLeftmostCopiedBoxCenterY = 1 << 15;
-	// std::cout << "Mouse position : " << m_f64CurrentMouseX << "/" << m_f64CurrentMouseY << std::endl;
 
 	// Pastes boxes from clipboard
 	while((l_oIdentifier=m_rApplication.m_pClipboardScenario->getNextBoxIdentifier(l_oIdentifier))!=OV_UndefinedIdentifier)
@@ -3303,11 +3289,11 @@ void CInterfacedScenario::pasteSelection(void)
 
 		CBoxProxy l_oBoxProxy(m_rKernelContext, m_rScenario, l_oNewIdentifier);
 
-		// get the position of the topmost-leftmost box (always position on an actual box so when user pastes he sees something)
+		// get the position of the topmost-leftmost box - prefer positionning on an actual box (with a light drift) so when user pastes he sees something
 		if (l_oBoxProxy.getXCenter() < l_iTopmostLeftmostCopiedBoxCenterX && l_oBoxProxy.getXCenter() < l_iTopmostLeftmostCopiedBoxCenterY)
 		{
-			l_iTopmostLeftmostCopiedBoxCenterX = l_oBoxProxy.getXCenter();
-			l_iTopmostLeftmostCopiedBoxCenterY = l_oBoxProxy.getYCenter();
+			l_iTopmostLeftmostCopiedBoxCenterX = l_oBoxProxy.getXCenter() + 5;
+			l_iTopmostLeftmostCopiedBoxCenterY = l_oBoxProxy.getYCenter() + 5;
 		}
 	}
 
@@ -3326,8 +3312,8 @@ void CInterfacedScenario::pasteSelection(void)
 
 		if (l_oCommentProxy.getXCenter() < l_iTopmostLeftmostCopiedBoxCenterX && l_oCommentProxy.getYCenter() < l_iTopmostLeftmostCopiedBoxCenterY)
 		{
-			l_iTopmostLeftmostCopiedBoxCenterX = l_oCommentProxy.getXCenter();
-			l_iTopmostLeftmostCopiedBoxCenterY = l_oCommentProxy.getYCenter();
+			l_iTopmostLeftmostCopiedBoxCenterX = l_oCommentProxy.getXCenter() + 5;
+			l_iTopmostLeftmostCopiedBoxCenterY = l_oCommentProxy.getYCenter() + 5;
 		}
 	}
 
