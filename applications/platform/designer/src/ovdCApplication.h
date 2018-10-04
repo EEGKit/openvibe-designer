@@ -13,6 +13,11 @@
 
 #include <vector>
 
+namespace Mensia {
+	class CArchwayHandler;
+	class CArchwayHandlerGUI;
+};
+
 namespace OpenViBEDesigner
 {
 
@@ -201,8 +206,8 @@ namespace OpenViBEDesigner
 		std::vector <const OpenViBE::Plugins::IPluginObjectDesc*> m_vUpdatedBoxes;
 		std::vector <std::string> m_vDocumentedBoxes;
 #ifdef MENSIA_DISTRIBUTION
-		Mensia::CArchwayHandler m_oArchwayHandler;
-		Mensia::CArchwayHandlerGUI m_oArchwayHandlerGUI;
+		Mensia::CArchwayHandler* m_pArchwayHandler;
+		Mensia::CArchwayHandlerGUI* m_pArchwayHandlerGUI;
 #endif
 	};
 }

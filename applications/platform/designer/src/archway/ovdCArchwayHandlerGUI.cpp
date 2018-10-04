@@ -14,6 +14,7 @@
 #endif
 
 using namespace Mensia;
+using namespace OpenViBEDesigner;
 
 namespace
 {
@@ -144,11 +145,13 @@ namespace
 		guint64 pipelineId;
 		gtk_tree_model_get(treeModel, &gui->m_SelectedPipelineIter, Column_PipelineId, &pipelineId, -1);
 
-		std::string path = gui->m_Controller.getPipelinePath(pipelineId);
-		g_print("open: %s", path.c_str());
-
-		//gui->m_Application.openScenario(path.c_str());
+		if (gui->m_Controller.m_EngineType == EngineType::Local)
+		{
+			std::string path = gui->m_Controller.getPipelinePath(static_cast<unsigned int>(pipelineId));
+			gui->m_Application.openScenario(path.c_str());
+		}
 	}
+
 	void view_popup_menu_onConfItem(GtkWidget* menuitem, gpointer userData)
 	{
 		auto gui = static_cast<CArchwayHandlerGUI*>(userData);
@@ -158,14 +161,16 @@ namespace
 	void on_treeview_engine_pipelines_popup_menu(CArchwayHandlerGUI* gui, GdkEventButton* event)
 	{
 		GtkWidget* menu = gtk_menu_new();
-
-		GtkWidget* openScenarioItem = gtk_menu_item_new_with_label("Open scenario");
 		GtkWidget* openConfItem = gtk_menu_item_new_with_label("Open configuration file");
-		g_signal_connect(openScenarioItem, "activate", (GCallback)view_popup_menu_onOpenScenario, gui);
 		g_signal_connect(openConfItem, "activate", (GCallback)view_popup_menu_onConfItem, gui);
-
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), openScenarioItem);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), openConfItem);
+
+		if (gui->m_Controller.m_EngineType == EngineType::Local)
+		{
+			GtkWidget* openScenarioItem = gtk_menu_item_new_with_label("Open scenario");
+			g_signal_connect(openScenarioItem, "activate", (GCallback)view_popup_menu_onOpenScenario, gui);
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), openScenarioItem);
+		}
 
 		gtk_widget_show_all(menu);
 		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, event->button, gdk_event_get_time((GdkEvent*)event));
@@ -184,7 +189,6 @@ namespace
 		GtkTreeSelection* selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gui->m_TreeViewEnginePipelines));
 		if (gtk_tree_selection_count_selected_rows(selection) == 1)
 		{
-			GtkTreeIter pipelineIterator;
 			gtk_tree_selection_get_selected(selection, &gui->m_TreeModelEnginePipelines, &gui->m_SelectedPipelineIter);
 
 			// single click with the right mouse button
@@ -195,7 +199,6 @@ namespace
 			}
 			else if (event->type == GDK_2BUTTON_PRESS  &&  event->button == 1)
 			{
-				auto gui = static_cast<CArchwayHandlerGUI*>(userData);
 				view_pipeline_config(gui);
 				return TRUE;
 			}
@@ -212,12 +215,11 @@ namespace
 
 		if (gtk_tree_selection_count_selected_rows(selection) == 1)
 		{
-			GtkTreeIter pipelineIterator;
-			gtk_tree_selection_get_selected(selection, &gui->m_TreeModelEnginePipelines, &pipelineIterator);
+			gtk_tree_selection_get_selected(selection, &gui->m_TreeModelEnginePipelines, &gui->m_SelectedPipelineIter);
 
 			unsigned long long pipelineId = 0;
 			gtk_tree_model_get(gui->m_TreeModelEnginePipelines,
-			                   &pipelineIterator,
+			                   &gui->m_SelectedPipelineIter,
 			                   Column_PipelineId,
 			                   &pipelineId,
 			                   -1);
@@ -341,8 +343,9 @@ namespace
 	}
 }
 
-CArchwayHandlerGUI::CArchwayHandlerGUI(CArchwayHandler& controller)
-    : m_Controller(controller)
+CArchwayHandlerGUI::CArchwayHandlerGUI(CArchwayHandler& controller, OpenViBEDesigner::CApplication& application)
+    : m_Controller(controller),
+	m_Application(application)
 {
 	m_Builder = gtk_builder_new();
 	GError* gtkError = nullptr;

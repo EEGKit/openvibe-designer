@@ -551,7 +551,10 @@ std::string CArchwayHandler::getPipelinePath(unsigned int pipelineClassId) const
 	char messageBuffer[2048];
 	std::string logMessages;
 
-	m_Archway->getPipelinePath(pipelineClassId, messageBuffer, sizeof(messageBuffer));
+	if (!m_Archway->getPipelinePath(pipelineClassId, messageBuffer, sizeof(messageBuffer)))
+	{
+		return "";
+	}
 	return std::string(messageBuffer);
 }
 
