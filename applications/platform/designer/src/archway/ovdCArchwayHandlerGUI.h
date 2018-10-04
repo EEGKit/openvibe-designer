@@ -7,9 +7,7 @@
 
 namespace Mensia {
 
-	// Replace this line when we stop supporting gcc 4.6.3 (Ubuntu 12.04)
-	//class CArchwayHandlerGUI final {
-	class CArchwayHandlerGUI {
+	class CArchwayHandlerGUI final {
 	public:
 		CArchwayHandlerGUI(CArchwayHandler& controller);
 		~CArchwayHandlerGUI();
@@ -47,6 +45,7 @@ namespace Mensia {
 		GtkSpinner* m_SpinnerEngineActivity;
 
 		GtkTreeModel* m_TreeModelEnginePipelines;
+		GtkTreeIter m_SelectedPipelineIter;
 
 	};
 }

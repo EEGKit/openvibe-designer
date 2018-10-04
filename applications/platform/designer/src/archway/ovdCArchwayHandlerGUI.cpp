@@ -118,30 +118,89 @@ namespace
 		return TRUE;
 	}
 
-	void on_treeview_engine_pipelines_row_activated(GtkTreeView* treeView, GtkTreePath* path, GtkTreeViewColumn*, gpointer userData)
+	void view_pipeline_config(CArchwayHandlerGUI* gui)
+	{
+		auto treeModel = gtk_tree_view_get_model(GTK_TREE_VIEW(gui->m_TreeViewEnginePipelines));
+		guint64 pipelineId;
+		gtk_tree_model_get(treeModel, &gui->m_SelectedPipelineIter, Column_PipelineId, &pipelineId, -1);
+
+		gui->displayPipelineConfigurationDialog(static_cast<unsigned int>(pipelineId));
+
+		auto enginePipelines = gui->m_Controller.getEnginePipelines();
+		for (const auto& pipeline : enginePipelines)
+		{
+			if (pipeline.id != pipelineId)
+			{
+				continue;
+			}
+			gtk_list_store_set(GTK_LIST_STORE(treeModel), &gui->m_SelectedPipelineIter, Column_PipelineIsConfigured, pipeline.isConfigured, -1);
+		}
+	}
+
+	void view_popup_menu_onOpenScenario(GtkWidget* menuitem, gpointer userData)
 	{
 		auto gui = static_cast<CArchwayHandlerGUI*>(userData);
+		auto treeModel = gtk_tree_view_get_model(GTK_TREE_VIEW(gui->m_TreeViewEnginePipelines));
+		guint64 pipelineId;
+		gtk_tree_model_get(treeModel, &gui->m_SelectedPipelineIter, Column_PipelineId, &pipelineId, -1);
 
-		GtkTreeIter pipelineIter;
-		auto treeModel = gtk_tree_view_get_model(treeView);
-		if (gtk_tree_model_get_iter(treeModel, &pipelineIter, path))
+		std::string path = gui->m_Controller.getPipelinePath(pipelineId);
+		g_print("open: %s", path.c_str());
+
+		//gui->m_Application.openScenario(path.c_str());
+	}
+	void view_popup_menu_onConfItem(GtkWidget* menuitem, gpointer userData)
+	{
+		auto gui = static_cast<CArchwayHandlerGUI*>(userData);
+		view_pipeline_config(gui);
+	}
+
+	void on_treeview_engine_pipelines_popup_menu(CArchwayHandlerGUI* gui, GdkEventButton* event)
+	{
+		GtkWidget* menu = gtk_menu_new();
+
+		GtkWidget* openScenarioItem = gtk_menu_item_new_with_label("Open scenario");
+		GtkWidget* openConfItem = gtk_menu_item_new_with_label("Open configuration file");
+		g_signal_connect(openScenarioItem, "activate", (GCallback)view_popup_menu_onOpenScenario, gui);
+		g_signal_connect(openConfItem, "activate", (GCallback)view_popup_menu_onConfItem, gui);
+
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), openScenarioItem);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), openConfItem);
+
+		gtk_widget_show_all(menu);
+		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, event->button, gdk_event_get_time((GdkEvent*)event));
+	}
+
+	gboolean on_treeview_engine_pipelines_button_pressed(GtkWidget* treeView, GdkEventButton *event, gpointer userData)
+	{
+		// Only acknowledge, if it's a right click, or double click
+		if (!(event->type == GDK_BUTTON_PRESS  &&  event->button == 3) && !(event->type == GDK_2BUTTON_PRESS  &&  event->button == 1))
 		{
-			guint64 pipelineId;
+			return FALSE;
+		}
 
-			gtk_tree_model_get(treeModel, &pipelineIter, Column_PipelineId, &pipelineId, -1);
+		auto gui = static_cast<CArchwayHandlerGUI*>(userData);
 
-			gui->displayPipelineConfigurationDialog(static_cast<unsigned int>(pipelineId));
+		GtkTreeSelection* selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gui->m_TreeViewEnginePipelines));
+		if (gtk_tree_selection_count_selected_rows(selection) == 1)
+		{
+			GtkTreeIter pipelineIterator;
+			gtk_tree_selection_get_selected(selection, &gui->m_TreeModelEnginePipelines, &gui->m_SelectedPipelineIter);
 
-			auto enginePipelines = gui->m_Controller.getEnginePipelines();
-			for (const auto& pipeline : enginePipelines)
+			// single click with the right mouse button
+			if (event->type == GDK_BUTTON_PRESS  &&  event->button == 3)
 			{
-				if (pipeline.id != pipelineId)
-				{
-					continue;
-				}
-				gtk_list_store_set(GTK_LIST_STORE(treeModel), &pipelineIter, Column_PipelineIsConfigured, pipeline.isConfigured, -1);
+				on_treeview_engine_pipelines_popup_menu(gui, event);
+				return TRUE;
+			}
+			else if (event->type == GDK_2BUTTON_PRESS  &&  event->button == 1)
+			{
+				auto gui = static_cast<CArchwayHandlerGUI*>(userData);
+				view_pipeline_config(gui);
+				return TRUE;
 			}
 		}
+		return FALSE;
 	}
 
 	void startEngine(GtkWidget* widget, gpointer userData, bool isFastForward)
@@ -163,7 +222,7 @@ namespace
 			                   &pipelineId,
 			                   -1);
 
-			bool shouldAcquireImpedance = (gtk_toggle_tool_button_get_active(gui->m_ToggleAcquireImpedance) == TRUE);
+			bool shouldAcquireImpedance = (gtk_toggle_tool_button_get_active(gui->m_ToggleAcquireImpedance) == gboolean(true));
 			if (gui->m_Controller.startEngineWithPipeline(static_cast<unsigned int>(pipelineId), isFastForward, shouldAcquireImpedance))
 			{
 				gtk_widget_set_sensitive(GTK_WIDGET(gui->m_ToggleAcquireImpedance), false);
@@ -326,7 +385,7 @@ CArchwayHandlerGUI::CArchwayHandlerGUI(CArchwayHandler& controller)
 	                 "delete-event", G_CALLBACK(on_dialog_pipeline_configuration_delete_event), this);
 
 	m_TreeViewEnginePipelines = GTK_WIDGET(gtk_builder_get_object(m_Builder, "treeview-engine-pipelines"));
-	g_signal_connect(G_OBJECT(m_TreeViewEnginePipelines), "row-activated", G_CALLBACK(on_treeview_engine_pipelines_row_activated), this);
+	g_signal_connect(m_TreeViewEnginePipelines, "button-press-event", (GCallback)on_treeview_engine_pipelines_button_pressed, this);
 
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "pipeline-configuration-cellrenderer-parameter-value")),
 	                 "edited",

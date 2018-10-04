@@ -60,6 +60,7 @@ EngineInitialisationStatus CArchwayHandler::initialize()
 	didLoad &= System::CDynamicModuleSymbolLoader::getSymbol<>(m_ArchwayModule, "getErrorString", &m_Archway->getErrorString);
 	didLoad &= System::CDynamicModuleSymbolLoader::getSymbol<>(m_ArchwayModule, "getVersionDescription", &m_Archway->getVersionDescription);
 	didLoad &= System::CDynamicModuleSymbolLoader::getSymbol<>(m_ArchwayModule, "getConfigurationParameterAsString", &m_Archway->getConfigurationParameterAsString);
+	didLoad &= System::CDynamicModuleSymbolLoader::getSymbol<>(m_ArchwayModule, "getPipelinePath", &m_Archway->getPipelinePath);
 	didLoad &= System::CDynamicModuleSymbolLoader::getSymbol<>(m_ArchwayModule, "initialize", &m_Archway->initialize);
 	didLoad &= System::CDynamicModuleSymbolLoader::getSymbol<>(m_ArchwayModule, "startAllAcquisitionDevices", &m_Archway->startAllAcquisitionDevices);
 	didLoad &= System::CDynamicModuleSymbolLoader::getSymbol<>(m_ArchwayModule, "startImpedanceCheckOnAllAcquisitionDevices", &m_Archway->startImpedanceCheckOnAllAcquisitionDevices);
@@ -331,6 +332,18 @@ bool CArchwayHandler::startEngineWithPipeline(unsigned int uiPipelineClassId, bo
 	if (!(isFastForward ? m_Archway->startEngineInFastForward() : m_Archway->startEngine()))
 	{
 		m_KernelContext.getLogManager() << LogLevel_Error << "Engine failed to start " << this->getArchwayErrorString().c_str() << "\n";
+
+		unsigned int pendingLogMessageCount = m_Archway->getPendingLogMessageCount(m_RunningPipelineId);
+
+		for (unsigned int i = 0; i < pendingLogMessageCount; i++)
+		{
+			unsigned int logLevel;
+			char messageBuffer[2048];
+			std::string logMessages;
+
+			m_Archway->getPendingLogMessage(m_RunningPipelineId, &logLevel, messageBuffer, sizeof(messageBuffer));
+			m_KernelContext.getLogManager() << static_cast<ELogLevel>(logLevel) << messageBuffer;
+		}
 		
 		if (!m_Archway->stopAllAcquisitionDevices())
 		{
@@ -530,6 +543,18 @@ std::vector<SPipelineParameter> CArchwayHandler::getPipelineParameters(unsigned 
 
 	return pipelineParameters;
 }
+
+std::string CArchwayHandler::getPipelinePath(unsigned int pipelineClassId) const
+{
+	assert(m_Archway);
+
+	char messageBuffer[2048];
+	std::string logMessages;
+
+	m_Archway->getPipelinePath(pipelineClassId, messageBuffer, sizeof(messageBuffer));
+	return std::string(messageBuffer);
+}
+
 
 bool CArchwayHandler::setPipelineParameterValue(unsigned int pipelineClassId, std::string const& parameterName, std::string const& parameterValue)
 {
