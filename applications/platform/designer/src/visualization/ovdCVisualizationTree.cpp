@@ -140,7 +140,7 @@ IVisualizationWidget* CVisualizationTree::getVisualizationWidgetFromBoxIdentifie
 bool CVisualizationTree::addVisualizationWidget(CIdentifier& identifier, const CString& name, EVisualizationWidgetType type,
 	const CIdentifier& parentIdentifier, uint32 parentIndex, const CIdentifier& boxIdentifier, uint32 childCount, const OpenViBE::CIdentifier& suggestedIdentifier)
 {
-	m_KernelContext.getLogManager() << LogLevel_Trace << "Adding new visualization widget\n";
+	m_KernelContext.getLogManager() << LogLevel_Debug << "Adding new visualization widget\n";
 
 	//create new widget
 	IVisualizationWidget* visualizationWidget = new CVisualizationWidget(m_KernelContext);
@@ -148,7 +148,7 @@ bool CVisualizationTree::addVisualizationWidget(CIdentifier& identifier, const C
 
 	if(visualizationWidget->initialize(identifier, name, type, parentIdentifier, boxIdentifier, childCount) == false)
 	{
-		m_KernelContext.getLogManager() << LogLevel_Warning << "Failed to add new visualization widget (couldn't initialize it)\n";
+		m_KernelContext.getLogManager() << LogLevel_Error << "Failed to add new visualization widget (couldn't initialize it)\n";
 		delete visualizationWidget;
 		return false;
 	}
@@ -156,7 +156,7 @@ bool CVisualizationTree::addVisualizationWidget(CIdentifier& identifier, const C
 	// assign a parent to it
 	if(parentIdentifier != OV_UndefinedIdentifier)
 	{
-		m_KernelContext.getLogManager() << LogLevel_Trace << "Parenting visualization widget\n";
+		m_KernelContext.getLogManager() << LogLevel_Debug << "Parenting visualization widget\n";
 		IVisualizationWidget* parentVisualizationWidget = getVisualizationWidget(parentIdentifier);
 
 		if (parentVisualizationWidget != NULL)
@@ -175,13 +175,13 @@ bool CVisualizationTree::addVisualizationWidget(CIdentifier& identifier, const C
 
 			if(parentVisualizationWidget->setChildIdentifier(parentIndex, identifier) == false)
 			{
-				m_KernelContext.getLogManager() << LogLevel_Warning << "Failed to add new visualization widget (couldn't set child identifier in parent window)\n";
+				m_KernelContext.getLogManager() << LogLevel_Error << "Failed to add new visualization widget (couldn't set child identifier in parent window)\n";
 				return false;
 			}
 		}
 		else
 		{
-			m_KernelContext.getLogManager() << LogLevel_Warning << "Failed to add new visualization widget (couldn't find parent)\n";
+			m_KernelContext.getLogManager() << LogLevel_Error << "Failed to add new visualization widget (couldn't find parent)\n";
 			return false;
 		}
 	}
@@ -196,19 +196,21 @@ bool CVisualizationTree::getVisualizationWidgetIndex(const CIdentifier& identifi
 	IVisualizationWidget* visualizationWidget = getVisualizationWidget(identifier);
 	if (!visualizationWidget)
 	{
+		m_KernelContext.getLogManager() << LogLevel_Error << "Failed to get widget.\n";
 		return false;
 	}
 
 	const CIdentifier& parentIdentifier = visualizationWidget->getParentIdentifier();
 	if (parentIdentifier == OV_UndefinedIdentifier)
 	{
+		m_KernelContext.getLogManager() << LogLevel_Error << "Failed to get parent identifier widget\n";
 		return false;
 	}
 
 	IVisualizationWidget* parentVisualizationWidget = getVisualizationWidget(parentIdentifier);
 	if (!parentVisualizationWidget)
 	{
-		m_KernelContext.getLogManager() << LogLevel_Warning << "Failed to unparent visualization widget (couldn't find parent)\n";
+		m_KernelContext.getLogManager() << LogLevel_Error << "Failed to unparent visualization widget (couldn't find parent)\n";
 		return false;
 	}
 
@@ -283,7 +285,7 @@ bool CVisualizationTree::_destroyHierarchy(const CIdentifier& identifier, bool d
 	}
 	else
 	{
-		m_KernelContext.getLogManager() << LogLevel_Trace << "Deleting visualization widget\n";
+		m_KernelContext.getLogManager() << LogLevel_Debug << "Deleting visualization widget\n";
 		delete visualizationWidget;
 		map<CIdentifier, IVisualizationWidget*>::iterator it = m_VisualizationWidgets.find(identifier);
 		m_VisualizationWidgets.erase(it);
@@ -342,7 +344,7 @@ bool CVisualizationTree::parentVisualizationWidget(const CIdentifier& identifier
 	IVisualizationWidget* parentVisualizationWidget = getVisualizationWidget(rParentIdentifier);
 	if (!parentVisualizationWidget)
 	{
-		m_KernelContext.getLogManager() << LogLevel_Warning << "Failed to parent visualization widget (couldn't find parent)\n";
+		m_KernelContext.getLogManager() << LogLevel_Error << "Failed to parent visualization widget (couldn't find parent)\n";
 		return false;
 	}
 
