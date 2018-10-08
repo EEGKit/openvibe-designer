@@ -2025,7 +2025,7 @@ void CApplication::saveScenarioCB(CInterfacedScenario* pScenario)
 		return;
 	}
 
-	if (l_pCurrentInterfacedScenario->m_rScenario.doesBoxMissFeatures())
+	if (l_pCurrentInterfacedScenario->m_rScenario.containsBoxWithDeprecatedInterfacors())
 	{
 		cannotSaveScenarioBeforeUpdate();
 		return;
@@ -2259,7 +2259,7 @@ void CApplication::saveScenarioAsCB(CInterfacedScenario* pScenario)
 		return;
 	}
 
-	if (l_pCurrentInterfacedScenario->m_rScenario.doesBoxMissFeatures())
+	if (l_pCurrentInterfacedScenario->m_rScenario.containsBoxWithDeprecatedInterfacors())
 	{
 		cannotSaveScenarioBeforeUpdate();
 		return;
@@ -3348,8 +3348,8 @@ void CApplication::spinnerZoomChangedCB(uint32_t scalePercentage)
 
 void CApplication::cannotSaveScenarioBeforeUpdate(void)
 {
-	CString message = "Cannot save a scenario if missing I/O or Settings are still pending.\n"
-	                  "Please update all boxes or delete pending missings I/O before saving scenario.";
+	CString message = "Cannot save a scenario if deprecated I/O or Settings are still pending.\n"
+	                  "Please handle or delete all pending deprecated I/O before saving scenario.";
 	::GtkWidget* l_pDialog=::gtk_message_dialog_new(
 	            NULL,
 	            ::GtkDialogFlags(GTK_DIALOG_MODAL|GTK_DIALOG_DESTROY_WITH_PARENT),

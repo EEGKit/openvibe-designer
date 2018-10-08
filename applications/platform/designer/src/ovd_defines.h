@@ -37,7 +37,7 @@ namespace OpenViBEDesigner
 		ContextMenu_SelectionDelete,
 
 		ContextMenu_BoxUpdate,
-		ContextMenu_BoxRemoveMissings,
+		ContextMenu_BoxRemoveDeprecatedInterfacors,
 		ContextMenu_BoxRename,
 		ContextMenu_BoxDelete,
 		ContextMenu_BoxAddInput,

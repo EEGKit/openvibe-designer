@@ -194,9 +194,9 @@ namespace
 				pContextMenuCB->pInterfacedScenario->redraw();
 				break;
 			}
-			case ContextMenu_BoxRemoveMissings:
+			case ContextMenu_BoxRemoveDeprecatedInterfacors:
 			{
-				pContextMenuCB->pInterfacedScenario->contextMenuBoxRemoveMissingsCB(*pContextMenuCB->pBox);
+				pContextMenuCB->pInterfacedScenario->contextMenuBoxRemoveDeprecatedInterfacorsCB(*pContextMenuCB->pBox);
 				pContextMenuCB->pInterfacedScenario->redraw();
 				break;
 			}
@@ -726,7 +726,7 @@ CInterfacedScenario::CInterfacedScenario(const IKernelContext& rKernelContext, C
 
 	m_pNoHelpDialog = GTK_WIDGET(gtk_builder_get_object(m_rApplication.m_pBuilderInterface, "dialog_no_help"));
 
-	m_pErrorPendingMissingsDialog = GTK_WIDGET(gtk_builder_get_object(m_rApplication.m_pBuilderInterface, "dialog_pending_missings"));
+	m_pErrorPendingDeprecatedInterfacorsDialog = GTK_WIDGET(gtk_builder_get_object(m_rApplication.m_pBuilderInterface, "dialog_pending_deprecated_interfacors"));
 
 	this->redrawScenarioSettings();
 	this->redrawScenarioInputSettings();
@@ -740,7 +740,6 @@ CInterfacedScenario::CInterfacedScenario(const IKernelContext& rKernelContext, C
 	CIdentifier l_oBoxIdentifier = OV_UndefinedIdentifier;
 	bool warningUpdate = false;
 	bool warningDeprecated = false;
-	bool noteUnstable = false;
 	bool warningUnknown = false;
 	while ((l_oBoxIdentifier = m_rScenario.getNextBoxIdentifier(l_oBoxIdentifier)) != OV_UndefinedIdentifier)
 	{
@@ -1274,7 +1273,7 @@ void CInterfacedScenario::redraw(IBox& rBox)
 
 	bool l_bCanCreate  = l_oBoxProxy.isBoxAlgorithmPluginPresent();
 	bool l_bUpToDate   = l_bCanCreate ?  l_oBoxProxy.isUpToDate() : true;
-	bool l_bPendingMissings = l_oBoxProxy.isPendingMissings();
+	bool l_bPendingDeprecatedInterfacors = l_oBoxProxy.hasPendingDeprecatedInterfacors();
 	bool l_bDeprecated = l_bCanCreate && l_oBoxProxy.isDeprecated();
 	bool l_bMetabox    = l_bCanCreate && l_oBoxProxy.isMetabox();
 	bool l_bDisabled   = l_oBoxProxy.isDisabled();
@@ -1328,7 +1327,7 @@ void CInterfacedScenario::redraw(IBox& rBox)
 		{
 			gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[Color_BoxBackgroundDeprecated]);
 		}
-		else if(!l_bUpToDate || l_bPendingMissings)
+		else if(!l_bUpToDate || l_bPendingDeprecatedInterfacors)
 		{
 			gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[Color_BoxBackgroundNeedsUpdate]);
 		}
@@ -1420,12 +1419,12 @@ void CInterfacedScenario::redraw(IBox& rBox)
 	TAttributeHandler l_oAttributeHandler(rBox);
 
 	int l_iInputOffset=xSize/2-rBox.getInputCount()*(iCircleSpace+iCircleSize)/2+iCircleSize/4;
-	for(uint32_t i = 0; i < rBox.getInterfacorCountIncludingMissing(Input); i++)
+	for(uint32_t i = 0; i < rBox.getInterfacorCountIncludingDeprecated(Input); i++)
 	{
 		CIdentifier l_oInputIdentifier;
-		bool missing;
+		bool isDeprecated;
 		rBox.getInputType(i, l_oInputIdentifier);
-		rBox.getInterfacorMissingStatus(OpenViBE::Kernel::BoxInterfacorType::Input, i, missing);
+		rBox.getInterfacorDeprecatedStatus(OpenViBE::Kernel::BoxInterfacorType::Input, i, isDeprecated);
 		::GdkColor l_oInputColor=colorFromIdentifier(l_oInputIdentifier);
 
 
@@ -1451,7 +1450,7 @@ void CInterfacedScenario::redraw(IBox& rBox)
 			3);
 		m_vInterfacedObject[m_ui32InterfacedObjectId]=CInterfacedObject(rBox.getIdentifier(), Box_Input, i);
 
-		if (missing)
+		if (isDeprecated)
 		{
 			l_oInputColor.blue = 2 * l_oInputColor.blue / 3;
 			l_oInputColor.red = 2 * l_oInputColor.red / 3;
@@ -1467,7 +1466,7 @@ void CInterfacedScenario::redraw(IBox& rBox)
 			l_vPoint,
 			3);
 		int l_iBoxInputBorderColor = Color_BoxInputBorder;
-		if (missing)
+		if (isDeprecated)
 		{
 			gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[Color_LinkInvalid]);
 		}
@@ -1569,15 +1568,15 @@ void CInterfacedScenario::redraw(IBox& rBox)
 	gdk_gc_set_line_attributes(l_pDrawGC, 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_ROUND);
 
 	int l_iOutputOffset=xSize/2-rBox.getOutputCount()*(iCircleSpace+iCircleSize)/2+iCircleSize/4;
-	for(uint32_t i = 0; i < rBox.getInterfacorCountIncludingMissing(Kernel::BoxInterfacorType::Output); i++)
+	for(uint32_t i = 0; i < rBox.getInterfacorCountIncludingDeprecated(Kernel::BoxInterfacorType::Output); i++)
 	{
 		CIdentifier l_oOutputIdentifier;
-		bool missing;
+		bool isDeprecated;
 		rBox.getOutputType(i, l_oOutputIdentifier);
-		rBox.getInterfacorMissingStatus(Output, i, missing);
+		rBox.getInterfacorDeprecatedStatus(Output, i, isDeprecated);
 		::GdkColor l_oOutputColor=colorFromIdentifier(l_oOutputIdentifier);
 
-		if (missing)
+		if (isDeprecated)
 		{
 			l_oOutputColor.blue = 2 * l_oOutputColor.blue / 3;
 			l_oOutputColor.red = 2 * l_oOutputColor.red / 3;
@@ -1614,7 +1613,7 @@ void CInterfacedScenario::redraw(IBox& rBox)
 		            l_vPoint,
 		            3);
 		int l_iBoxOutputBorderColor = Color_BoxOutputBorder;
-		if (missing)
+		if (isDeprecated)
 		{
 			gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[Color_LinkInvalid]);
 		}
@@ -2007,7 +2006,7 @@ void CInterfacedScenario::undoCB(bool bManageModifiedStatusFlag)
 	// This will result in two indentical undo states, in order to avoid weird Redo, we drop the
 	// reduntant state at this moment
 	bool shouldDropLastState = false;
-	if (m_rScenario.doesBoxMissFeatures())
+	if (m_rScenario.containsBoxWithDeprecatedInterfacors())
 	{
 		shouldDropLastState = true;
 	}
@@ -2110,8 +2109,8 @@ void CInterfacedScenario::redoCB(bool bManageModifiedStatusFlag)
 
 void CInterfacedScenario::snapshotCB(bool bManageModifiedStatusFlag)
 {
-	if (m_rScenario.doesBoxMissFeatures()) {
-		OV_WARNING("Scenario with missing features does not support undo", m_rKernelContext.getLogManager());
+	if (m_rScenario.containsBoxWithDeprecatedInterfacors()) {
+		OV_WARNING("Scenario containing boxes with deprecated I/O or Settings does not support undo", m_rKernelContext.getLogManager());
 	} else {
 		CIdentifier l_oIdentifier;
 
@@ -2427,7 +2426,7 @@ void CInterfacedScenario::scenarioDrawingAreaExposeCB(::GdkEventExpose* pEvent)
 			0, 0, x, y);
 		g_object_unref(l_pDrawGC);
 	}
-	else if (m_rScenario.doesBoxMissFeatures()) // TODO: optimize this as this will be called endlessly
+	else if (/*m_rScenario.containsBoxWithDeprecatedInterfacors()*/ false) // TODO: optimize this as this will be called endlessly
 	{
 		::GdkColor l_oColor;
 		l_oColor.pixel=0;
@@ -2965,13 +2964,13 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 					if (!m_vBoxContextMenuCB.empty()) gtk_menu_add_separator_menu_item(l_pMenu);
 
 					bool l_bFlagToBeUpdated=l_pBox->hasAttribute(OV_AttributeId_Box_ToBeUpdated);
-					bool l_bFlagPendingMissings=l_pBox->hasAttribute(OV_AttributeId_Box_PendingMissings);
+					bool l_bFlagPendingDeprecatedInterfacors=l_pBox->hasAttribute(OV_AttributeId_Box_PendingDeprecatedInterfacors);
 
 					// -------------- INPUTS --------------
 					bool l_bFlagCanAddInput=l_pBox->hasAttribute(OV_AttributeId_Box_FlagCanAddInput);
 					bool l_bFlagCanModifyInput=l_pBox->hasAttribute(OV_AttributeId_Box_FlagCanModifyInput);
 					bool l_bCanConnectScenarioInput=(l_pBox->getInputCount()>0 && m_rScenario.getInputCount()>0);
-					if(!l_bFlagPendingMissings && !l_bFlagToBeUpdated && (l_bFlagCanAddInput || l_bFlagCanModifyInput || l_bCanConnectScenarioInput))
+					if(!l_bFlagPendingDeprecatedInterfacors && !l_bFlagToBeUpdated && (l_bFlagCanAddInput || l_bFlagCanModifyInput || l_bCanConnectScenarioInput))
 					{
 						uint32 l_ui32FixedInputCount=0;
 						::sscanf(l_pBox->getAttributeValue(OV_AttributeId_Box_InitialInputCount).toASCIIString(), "%d", &l_ui32FixedInputCount);
@@ -3049,7 +3048,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 					bool l_bFlagCanAddOutput=l_pBox->hasAttribute(OV_AttributeId_Box_FlagCanAddOutput);
 					bool l_bFlagCanModifyOutput=l_pBox->hasAttribute(OV_AttributeId_Box_FlagCanModifyOutput);
 					bool l_bCanConnectScenarioOutput=(l_pBox->getOutputCount()>0 && m_rScenario.getOutputCount()>0);
-					if(!l_bFlagPendingMissings && !l_bFlagToBeUpdated && (l_bFlagCanAddOutput || l_bFlagCanModifyOutput || l_bCanConnectScenarioOutput))
+					if(!l_bFlagPendingDeprecatedInterfacors && !l_bFlagToBeUpdated && (l_bFlagCanAddOutput || l_bFlagCanModifyOutput || l_bCanConnectScenarioOutput))
 					{
 						uint32 l_ui32FixedOutputCount=0;
 						::sscanf(l_pBox->getAttributeValue(OV_AttributeId_Box_InitialOutputCount).toASCIIString(), "%d", &l_ui32FixedOutputCount);
@@ -3122,7 +3121,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 
 					bool l_bFlagCanAddSetting=l_pBox->hasAttribute(OV_AttributeId_Box_FlagCanAddSetting);
 					bool l_bFlagCanModifySetting=l_pBox->hasAttribute(OV_AttributeId_Box_FlagCanModifySetting);
-					if(!l_bFlagPendingMissings && !l_bFlagToBeUpdated && (l_bFlagCanAddSetting || l_bFlagCanModifySetting))
+					if(!l_bFlagPendingDeprecatedInterfacors && !l_bFlagToBeUpdated && (l_bFlagCanAddSetting || l_bFlagCanModifySetting))
 					{
 						uint32 l_ui32FixedSettingCount=0;
 						::sscanf(l_pBox->getAttributeValue(OV_AttributeId_Box_InitialSettingCount).toASCIIString(), "%d", &l_ui32FixedSettingCount);
@@ -3169,9 +3168,9 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 					{
 						gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_REFRESH, "update box...", context_menu_cb, l_pBox, ContextMenu_BoxUpdate, -1);
 					}
-					if (l_pBox->hasAttribute(OV_AttributeId_Box_PendingMissings))
+					if (l_pBox->hasAttribute(OV_AttributeId_Box_PendingDeprecatedInterfacors))
 					{
-						gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_REFRESH, "remove missings ...", context_menu_cb, l_pBox, ContextMenu_BoxRemoveMissings, -1);
+						gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_REFRESH, "remove deprecated I/O/S ...", context_menu_cb, l_pBox, ContextMenu_BoxRemoveDeprecatedInterfacors, -1);
 					}
 					gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_EDIT, "rename box...", context_menu_cb, l_pBox, ContextMenu_BoxRename, -1);
 					if(l_pBox->getSettingCount()!=0)
@@ -3287,29 +3286,29 @@ void CInterfacedScenario::scenarioDrawingAreaButtonReleasedCB(::GtkWidget* pWidg
 					l_pSourceBox->getOutputType(l_oSourceObject.m_ui32ConnectorIndex, l_oSourceTypeIdentifier);
 					l_pTargetBox->getInputType(l_oTargetObject.m_ui32ConnectorIndex, l_oTargetTypeIdentifier);
 
-					bool isMissingInput = false;
-					l_pSourceBox->getInterfacorMissingStatus(Kernel::BoxInterfacorType::Output, l_oSourceObject.m_ui32ConnectorIndex, isMissingInput);
-					bool isMissingOutput = false;
-					l_pTargetBox->getInterfacorMissingStatus(Kernel::BoxInterfacorType::Input, l_oTargetObject.m_ui32ConnectorIndex, isMissingOutput);
+					bool hasDeprecatedInput = false;
+					l_pSourceBox->getInterfacorDeprecatedStatus(Kernel::BoxInterfacorType::Output, l_oSourceObject.m_ui32ConnectorIndex, hasDeprecatedInput);
+					bool hasDeprecatedOutput = false;
+					l_pTargetBox->getInterfacorDeprecatedStatus(Kernel::BoxInterfacorType::Input, l_oTargetObject.m_ui32ConnectorIndex, hasDeprecatedOutput);
 
 					if((m_rKernelContext.getTypeManager().isDerivedFromStream(l_oSourceTypeIdentifier, l_oTargetTypeIdentifier)
 							|| m_rKernelContext.getConfigurationManager().expandAsBoolean("${Designer_AllowUpCastConnection}", false))&&(!l_bConnectionIsMessage))
 					{
-						if (!isMissingInput && !isMissingOutput)
+						if (!hasDeprecatedInput && !hasDeprecatedOutput)
 						{
-						CIdentifier l_oLinkIdentifier;
-						m_rScenario.connect(
-							l_oLinkIdentifier,
-							l_oSourceObject.m_oIdentifier,
-							l_oSourceObject.m_ui32ConnectorIndex,
-							l_oTargetObject.m_oIdentifier,
-							l_oTargetObject.m_ui32ConnectorIndex,
-							OV_UndefinedIdentifier);
-						this->snapshotCB();
+							CIdentifier l_oLinkIdentifier;
+							m_rScenario.connect(
+							            l_oLinkIdentifier,
+							            l_oSourceObject.m_oIdentifier,
+							            l_oSourceObject.m_ui32ConnectorIndex,
+							            l_oTargetObject.m_oIdentifier,
+							            l_oTargetObject.m_ui32ConnectorIndex,
+							            OV_UndefinedIdentifier);
+							this->snapshotCB();
 						}
 						else
 						{
-							m_rKernelContext.getLogManager() << LogLevel_Warning << "Cannot connect to/from missing I/O\n";
+							m_rKernelContext.getLogManager() << LogLevel_Warning << "Cannot connect to/from deprecated I/O\n";
 						}
 					}
 					else
@@ -3805,10 +3804,10 @@ void CInterfacedScenario::contextMenuBoxUpdateCB(IBox& rBox)
 	this->snapshotCB();
 }
 
-void CInterfacedScenario::contextMenuBoxRemoveMissingsCB(IBox& rBox)
+void CInterfacedScenario::contextMenuBoxRemoveDeprecatedInterfacorsCB(IBox& rBox)
 {
-	m_rScenario.removeBoxMissings(rBox.getIdentifier());
-	m_rKernelContext.getLogManager() << LogLevel_Debug << "contextMenuBoxRemoveMissingsCB\n";
+	m_rScenario.removeDeprecatedInterfacorsFromBox(rBox.getIdentifier());
+	m_rKernelContext.getLogManager() << LogLevel_Debug << "contextMenuBoxRemoveDeprecatedInterfacorsCB\n";
 	this->snapshotCB();
 }
 
@@ -3975,9 +3974,9 @@ void CInterfacedScenario::contextMenuBoxDisableAllCB(void)
 
 void CInterfacedScenario::contextMenuBoxAddInputCB(IBox& rBox)
 {
-	if (rBox.hasAttribute(OV_AttributeId_Box_PendingMissings))
+	if (rBox.hasAttribute(OV_AttributeId_Box_PendingDeprecatedInterfacors))
 	{
-		gtk_dialog_run(GTK_DIALOG(m_pErrorPendingMissingsDialog));
+		gtk_dialog_run(GTK_DIALOG(m_pErrorPendingDeprecatedInterfacorsDialog));
 		return;
 	}
 	m_rKernelContext.getLogManager() << LogLevel_Debug << "contextMenuBoxAddInputCB\n";

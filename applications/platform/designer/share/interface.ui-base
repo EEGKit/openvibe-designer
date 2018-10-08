@@ -1408,7 +1408,7 @@
       <action-widget response="-5">unsaved_scenario_global-button_save</action-widget>
     </action-widgets>
   </object>
- <object class="GtkMessageDialog" id="dialog_pending_missings">
+ <object class="GtkMessageDialog" id="dialog_pending_deprecated_interfacors">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
     <property name="title" translatable="yes">Oops...</property>
@@ -1424,7 +1424,7 @@
     <property name="buttons">close</property>
     <property name="text">&lt;big&gt;&lt;b&gt;Operation not permitted!&lt;/b&gt;&lt;/big&gt;</property>
     <property name="use_markup">True</property>
-    <property name="secondary_text">Missing I/O or Settings are still pending. Please remove missing data to terminate the box update, and retry operation.</property>
+    <property name="secondary_text">Deprecated I/O or Settings are still pending. Please remove them to terminate the box update, and retry operation.</property>
     <signal name="destroy" handler="gtk_widget_hide" swapped="no"/>
     <signal name="close" handler="gtk_widget_hide" swapped="no"/>
     <signal name="response" handler="gtk_widget_hide" swapped="no"/>
@@ -1444,7 +1444,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkLabel" id="dialog_pending_missings_label">
+          <object class="GtkLabel" id="dialog_pending_deprecated_interfacors_label">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="use_markup">True</property>
@@ -3745,7 +3745,7 @@ will print 'text' in red.
 &lt;span name=value&gt; attributes
 ------------------------------------------------
 font, font_desc
-	A font description string, such as "Sans Italic 12". 
+	A font description string, such as "Sans Italic 12".
 font_family, face
 	A font family name
 font_size, size

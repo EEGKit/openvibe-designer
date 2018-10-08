@@ -106,7 +106,7 @@ const char* CBoxProxy::getLabel(void) const
 	boolean l_bBoxCanChangeInput  (m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanModifyInput)  ||m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanAddInput));
 	boolean l_bBoxCanChangeOutput (m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanModifyOutput) ||m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanAddOutput));
 	boolean l_bBoxCanChangeSetting(m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanModifySetting)||m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanAddSetting));
-	
+
 	const IPluginObjectDesc* l_pDesc = NULL;
 
 	if (m_pBoxAlgorithmDescriptorOverride == NULL)
@@ -121,13 +121,13 @@ const char* CBoxProxy::getLabel(void) const
 	string l_sBoxName(m_pConstBox->getName());
 
 	const string l_sRed("#602020");
-	const string l_sGreen("#206020");	
+	const string l_sGreen("#206020");
 	const string l_sGrey("#404040");
 
 	// pango is used in the box diplay to format the box name (e.g. bold to tell it's a configurable box)
 	// incidently, this makes the box name pango-enabled. If an error appears in the markup, the box display would be wrong.
 	if (!pango_parse_markup(l_sBoxName.c_str(), -1, 0, NULL, NULL, NULL, NULL))
-	{	
+	{
 		// the name uses invalid markup characters
 		// we sanitize the markup tag overture '<'
 		// markup should not be used in the box name anyway (hidden feature),
@@ -181,27 +181,27 @@ const char* CBoxProxy::getLabel(void) const
 		m_sLabel+="<span foreground=\""+(l_bBoxCanChangeSetting?l_sGreen:l_sRed)+"\">Set</span>";
 		m_sLabel+="</span>";
 	}
-	
+
 	return m_sLabel.c_str();
 }
 
 const char* CBoxProxy::getStatusLabel(void) const
 {
-	boolean l_bBoxToBeUpdated	  (m_pBox->hasAttribute(OV_AttributeId_Box_ToBeUpdated));
-	boolean l_bBoxPendingMissings (m_pBox->hasAttribute(OV_AttributeId_Box_PendingMissings));
-	boolean l_bBoxIsDeprecated    (this->isBoxAlgorithmPluginPresent() && this->isDeprecated());
-	boolean l_bBoxIsDisabled      (this->isDisabled());
-	
+	bool l_bBoxToBeUpdated (m_pBox->hasAttribute(OV_AttributeId_Box_ToBeUpdated));
+	bool l_bBoxPendingDeprecatedInterfacors (m_pBox->hasAttribute(OV_AttributeId_Box_PendingDeprecatedInterfacors));
+	bool l_bBoxIsDeprecated (this->isBoxAlgorithmPluginPresent() && this->isDeprecated());
+	bool l_bBoxIsDisabled (this->isDisabled());
+
 	const string l_sBlue("#202060");
-	
-	m_sStatus="";		
-	if(l_bBoxIsDeprecated || l_bBoxToBeUpdated || l_bBoxIsDisabled || l_bBoxPendingMissings)
-	{		
+
+	m_sStatus="";
+	if(l_bBoxIsDeprecated || l_bBoxToBeUpdated || l_bBoxIsDisabled || l_bBoxPendingDeprecatedInterfacors)
+	{
 		m_sStatus+="<span size=\"smaller\" foreground=\""+l_sBlue+"\">";
 		if(l_bBoxIsDeprecated) m_sStatus+=" <span style=\"italic\">deprecated</span>";
 		if(l_bBoxToBeUpdated)  m_sStatus+=" <span style=\"italic\">update</span>";
 		if(l_bBoxIsDisabled)   m_sStatus+=" <span style=\"italic\">disabled</span>";
-		if(l_bBoxPendingMissings)   m_sStatus+=" <span style=\"italic\">missing I/O</span>";
+		if(l_bBoxPendingDeprecatedInterfacors)   m_sStatus+=" <span style=\"italic\">deprecated I/O/S</span>";
 		m_sStatus+=" </span>";
 	}
 	return m_sStatus.c_str();
@@ -225,9 +225,9 @@ boolean CBoxProxy::isUpToDate(void) const
 	return !m_pBox->hasAttribute(OV_AttributeId_Box_ToBeUpdated);
 }
 
-boolean CBoxProxy::isPendingMissings(void) const
+boolean CBoxProxy::hasPendingDeprecatedInterfacors(void) const
 {
-	return m_pBox->hasAttribute(OV_AttributeId_Box_PendingMissings);
+	return m_pBox->hasAttribute(OV_AttributeId_Box_PendingDeprecatedInterfacors);
 }
 
 boolean CBoxProxy::isDeprecated(void) const
@@ -253,21 +253,21 @@ void CBoxProxy::updateSize(::GtkWidget* pWidget, const char* sLabel, const char*
 	::PangoRectangle l_oPangoLabelRect;
 	::PangoRectangle l_oPangoStatusRect;
 	l_pPangoContext=gtk_widget_create_pango_context(pWidget);
-	l_pPangoLayout=pango_layout_new(l_pPangoContext);	
+	l_pPangoLayout=pango_layout_new(l_pPangoContext);
 	pango_layout_set_markup(l_pPangoLayout, sLabel, -1);
-	pango_layout_get_pixel_extents(l_pPangoLayout, NULL, &l_oPangoLabelRect);	
+	pango_layout_get_pixel_extents(l_pPangoLayout, NULL, &l_oPangoLabelRect);
 	pango_layout_set_markup(l_pPangoLayout, sStatus, -1);
 	pango_layout_get_pixel_extents(l_pPangoLayout, NULL, &l_oPangoStatusRect);
-			
+
 	if (!strlen(sStatus))
 	{
 		l_oPangoStatusRect.width = 0;
 		l_oPangoStatusRect.height = 0;
 	}
-	
+
 	*pXSize=max(l_oPangoLabelRect.width,l_oPangoStatusRect.width);
 	*pYSize=l_oPangoLabelRect.height + l_oPangoStatusRect.height;
-	
+
 	g_object_unref(l_pPangoLayout);
 	g_object_unref(l_pPangoContext);
 }

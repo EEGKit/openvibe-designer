@@ -10,7 +10,7 @@ namespace OpenViBEDesigner
 	class CBoxProxy
 	{
 	public:
-		
+
 		CBoxProxy(
 			const OpenViBE::Kernel::IKernelContext& rKernelContext,
 			OpenViBE::Kernel::IScenario& rScenario,
@@ -41,7 +41,7 @@ namespace OpenViBEDesigner
 
 		OpenViBE::boolean isBoxAlgorithmPluginPresent(void) const;
 		OpenViBE::boolean isUpToDate(void) const;
-		OpenViBE::boolean isPendingMissings(void) const;
+		OpenViBE::boolean hasPendingDeprecatedInterfacors(void) const;
 		OpenViBE::boolean isDeprecated(void) const;
 		OpenViBE::boolean isUnstable(void) const;
 		OpenViBE::boolean isDisabled(void) const;
@@ -51,11 +51,11 @@ namespace OpenViBEDesigner
 
 		virtual void updateSize(
 			::GtkWidget* pWidget,
-			const char* sLabel,	
-			const char* sStatus,		
+			const char* sLabel,
+			const char* sStatus,
 			int* pXSize,
 			int* pYSize) const;
-			
+
 	protected:
 
 		const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
@@ -67,7 +67,7 @@ namespace OpenViBEDesigner
 		int m_iXCenter;
 		int m_iYCenter;
 		mutable std::string m_sLabel;
-		mutable std::string m_sStatus;		
+		mutable std::string m_sStatus;
 	};
 };
 
