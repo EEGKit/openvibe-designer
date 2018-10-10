@@ -147,7 +147,7 @@ namespace
 
 		if (gui->m_Controller.m_EngineType == EngineType::Local)
 		{
-			std::string path = gui->m_Controller.getPipelinePath(static_cast<unsigned int>(pipelineId));
+			std::string path = gui->m_Controller.getPipelineScenarioPath(static_cast<uint64_t>(pipelineId));
 			gui->m_Application.openScenario(path.c_str());
 		}
 	}

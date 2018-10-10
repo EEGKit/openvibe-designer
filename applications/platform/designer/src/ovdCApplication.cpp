@@ -937,8 +937,8 @@ CApplication::~CApplication(void)
 	}
 
 	m_KernelContext.getPluginManager().releasePluginObject(m_visualizationContext);
-	delete m_pArchwayHandler;
 	delete m_pArchwayHandlerGUI;
+	delete m_pArchwayHandler;
 }
 
 void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
@@ -1387,7 +1387,18 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 		m_bIsNewVersion = true;
 	}
 
-	std::string l_sDefaultURLBaseString=std::string(m_KernelContext.getConfigurationManager().expand("${Designer_HelpBrowserURLBase}"));
+	std::string l_sDefaultURLBaseString = std::string(m_KernelContext.getConfigurationManager().expand("${Designer_HelpBrowserURLBase}"));
+#ifdef MENSIA_DISTRIBUTION
+	if (!FS::Files::directoryExists(l_sDefaultURLBaseString.c_str()))
+	{
+		// Should not happen unless the user modified the token by hand
+		m_KernelContext.getLogManager() << LogLevel_Error << "The configuration token ${Designer_HelpBrowserURLBase} seems to be set to an incorrect value.\n";
+	}
+	if (m_pArchwayHandler->initialize() == Mensia::EngineInitialisationStatus::NotAvailable)
+	{
+		gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration")));
+	}
+#else
 	// Search txt file that contains the list of boxes
 	if(l_sDefaultURLBaseString.substr(l_sDefaultURLBaseString.find_last_of(".") + 1) == "chm::")
 	{
@@ -1423,17 +1434,6 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 				"Either the configuration token ${Designer_HelpBrowserURLBase} was modified to an incorrect value, or the documentation is missing.\n";
 		}
 	}
-#ifdef MENSIA_DISTRIBUTION
-	else
-	{
-		// Should not happen unless the user modified the token by hand
-		m_KernelContext.getLogManager() << LogLevel_Error << "The configuration token ${Designer_HelpBrowserURLBase} seems to be set to an incorrect value.\n";
-	}
-	if (m_pArchwayHandler->initialize() == Mensia::EngineInitialisationStatus::NotAvailable)
-	{
-		gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration")));
-	}
-#else
 	gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration")));
 #endif
 }

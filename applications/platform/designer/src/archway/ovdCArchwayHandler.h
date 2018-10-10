@@ -66,7 +66,7 @@ namespace Mensia {
 		std::vector<SPipeline> getEnginePipelines() const;
 		std::vector<SPipelineParameter> getPipelineParameters(unsigned int pipelineClassId) const;
 		bool setPipelineParameterValue(unsigned int pipelineClassId, std::string const& parameterName, std::string const& parameterValue);
-		std::string getPipelinePath(unsigned int pipelineId) const;
+		std::string getPipelineScenarioPath(uint64_t pipelineId) const;
 
 		bool startEngineWithPipeline(unsigned int pipelineClassId, bool isFastForward, bool shouldAcquireImpedance);
 		bool loopEngine();
@@ -103,7 +103,7 @@ namespace Mensia {
 			const char* (*getVersionDescription)(void);
 
 			void (*getConfigurationParameterAsString)(const char* configurationParameter, char* outputBuffer, unsigned int bufferLength);
-			bool (*getPipelinePath)(unsigned int pipelineId, char* messageBuffer, unsigned int bufferLength);
+			bool(*getPipelineScenarioPath)(uint64_t pipelineId, char* messageBuffer, unsigned int bufferLength);
 
 			bool (*initialize)(const char* login, const char* password, const char* applicationName, const char* configurationFilename);
 			bool (*startAllAcquisitionDevices)(void);

@@ -60,7 +60,7 @@ EngineInitialisationStatus CArchwayHandler::initialize()
 	didLoad &= System::CDynamicModuleSymbolLoader::getSymbol<>(m_ArchwayModule, "getErrorString", &m_Archway->getErrorString);
 	didLoad &= System::CDynamicModuleSymbolLoader::getSymbol<>(m_ArchwayModule, "getVersionDescription", &m_Archway->getVersionDescription);
 	didLoad &= System::CDynamicModuleSymbolLoader::getSymbol<>(m_ArchwayModule, "getConfigurationParameterAsString", &m_Archway->getConfigurationParameterAsString);
-	didLoad &= System::CDynamicModuleSymbolLoader::getSymbol<>(m_ArchwayModule, "getPipelinePath", &m_Archway->getPipelinePath);
+	didLoad &= System::CDynamicModuleSymbolLoader::getSymbol<>(m_ArchwayModule, "getPipelineScenarioPath", &m_Archway->getPipelineScenarioPath);
 	didLoad &= System::CDynamicModuleSymbolLoader::getSymbol<>(m_ArchwayModule, "initialize", &m_Archway->initialize);
 	didLoad &= System::CDynamicModuleSymbolLoader::getSymbol<>(m_ArchwayModule, "startAllAcquisitionDevices", &m_Archway->startAllAcquisitionDevices);
 	didLoad &= System::CDynamicModuleSymbolLoader::getSymbol<>(m_ArchwayModule, "startImpedanceCheckOnAllAcquisitionDevices", &m_Archway->startImpedanceCheckOnAllAcquisitionDevices);
@@ -544,14 +544,14 @@ std::vector<SPipelineParameter> CArchwayHandler::getPipelineParameters(unsigned 
 	return pipelineParameters;
 }
 
-std::string CArchwayHandler::getPipelinePath(unsigned int pipelineClassId) const
+std::string CArchwayHandler::getPipelineScenarioPath(uint64_t pipelineClassId) const
 {
 	assert(m_Archway);
 
 	char messageBuffer[2048];
 	std::string logMessages;
 
-	if (!m_Archway->getPipelinePath(pipelineClassId, messageBuffer, sizeof(messageBuffer)))
+	if (!m_Archway->getPipelineScenarioPath(pipelineClassId, messageBuffer, sizeof(messageBuffer)))
 	{
 		return "";
 	}

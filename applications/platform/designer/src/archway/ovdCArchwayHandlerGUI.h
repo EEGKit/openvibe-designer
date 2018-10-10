@@ -4,7 +4,7 @@
 
 #include "ovdCArchwayHandler.h"
 #include <gtk/gtk.h>
-#include "..\ovdCApplication.h"
+#include "../ovdCApplication.h"
 
 namespace OpenViBEDesigner {
 	class CApplication;
