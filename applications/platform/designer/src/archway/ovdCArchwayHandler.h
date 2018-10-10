@@ -103,7 +103,7 @@ namespace Mensia {
 			const char* (*getVersionDescription)(void);
 
 			void (*getConfigurationParameterAsString)(const char* configurationParameter, char* outputBuffer, unsigned int bufferLength);
-			bool(*getPipelineScenarioPath)(uint64_t pipelineId, char* messageBuffer, unsigned int bufferLength);
+			bool (*getPipelineScenarioPath)(uint64_t pipelineId, char* messageBuffer, unsigned int bufferLength);
 
 			bool (*initialize)(const char* login, const char* password, const char* applicationName, const char* configurationFilename);
 			bool (*startAllAcquisitionDevices)(void);
