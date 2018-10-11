@@ -4,14 +4,18 @@
 
 #include "ovdCArchwayHandler.h"
 #include <gtk/gtk.h>
+#include "../ovdCApplication.h"
+
+namespace OpenViBEDesigner {
+	class CApplication;
+}
+
 
 namespace Mensia {
 
-	// Replace this line when we stop supporting gcc 4.6.3 (Ubuntu 12.04)
-	//class CArchwayHandlerGUI final {
-	class CArchwayHandlerGUI {
+	class CArchwayHandlerGUI final {
 	public:
-		CArchwayHandlerGUI(CArchwayHandler& controller);
+		CArchwayHandlerGUI(CArchwayHandler& controller, OpenViBEDesigner::CApplication& application);
 		~CArchwayHandlerGUI();
 
 		void refreshEnginePipelines();
@@ -24,6 +28,7 @@ namespace Mensia {
 		GtkBuilder* m_Builder;
 		GtkBuilder* m_ApplicationBuilder;
 		CArchwayHandler& m_Controller;
+		OpenViBEDesigner::CApplication& m_Application;
 
 		// This variable is used to store the path of an edited cell
 		// while editing the PipelineParameters.
@@ -47,6 +52,7 @@ namespace Mensia {
 		GtkSpinner* m_SpinnerEngineActivity;
 
 		GtkTreeModel* m_TreeModelEnginePipelines;
+		GtkTreeIter m_SelectedPipelineIter;
 
 	};
 }

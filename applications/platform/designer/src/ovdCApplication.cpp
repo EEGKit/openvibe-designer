@@ -382,7 +382,7 @@ namespace
 	{
 		auto l_pApplication = static_cast<CApplication*>(pUserData);
 
-		l_pApplication->m_oArchwayHandlerGUI.toggleNeuroRTEngineConfigurationDialog(static_cast<bool>(gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(pMenuItem))));
+		l_pApplication->m_pArchwayHandlerGUI->toggleNeuroRTEngineConfigurationDialog(static_cast<bool>(gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(pMenuItem))==TRUE));
 	}
 #endif 
 	
@@ -670,9 +670,9 @@ namespace
 	{
 		CApplication* l_pApplication=static_cast<CApplication*>(pUserData);
 #ifdef MENSIA_DISTRIBUTION
-		if (l_pApplication->m_oArchwayHandler.isEngineStarted())
+		if (l_pApplication->m_pArchwayHandler->isEngineStarted())
 		{
-			l_pApplication->m_oArchwayHandler.loopEngine();
+			l_pApplication->m_pArchwayHandler->loopEngine();
 		}
 #endif
 
@@ -902,10 +902,6 @@ CApplication::CApplication(const IKernelContext& rKernelContext)
 	,m_bIsQuitting(false)
 	,m_bIsNewVersion(false)
 	,m_ui32CurrentInterfacedScenarioIndex(0)
-#ifdef MENSIA_DISTRIBUTION
-    ,m_oArchwayHandler(rKernelContext)
-    ,m_oArchwayHandlerGUI(m_oArchwayHandler)
-#endif
 {
 	m_pPluginManager=&m_KernelContext.getPluginManager();
 	m_pScenarioManager=&m_KernelContext.getScenarioManager();
@@ -923,6 +919,11 @@ CApplication::CApplication(const IKernelContext& rKernelContext)
 
 	m_KernelContext.getConfigurationManager().createConfigurationToken("Player_ScenarioDirectory", "");
 	m_KernelContext.getConfigurationManager().createConfigurationToken("__volatile_ScenarioDir", "");
+
+#ifdef MENSIA_DISTRIBUTION
+	m_pArchwayHandler = new Mensia::CArchwayHandler(rKernelContext);
+	m_pArchwayHandlerGUI = new Mensia::CArchwayHandlerGUI(*m_pArchwayHandler, *this);
+#endif
 }
 
 CApplication::~CApplication(void)
@@ -936,6 +937,8 @@ CApplication::~CApplication(void)
 	}
 
 	m_KernelContext.getPluginManager().releasePluginObject(m_visualizationContext);
+	delete m_pArchwayHandlerGUI;
+	delete m_pArchwayHandler;
 }
 
 void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
@@ -1067,7 +1070,7 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-zoom_spinner")), "value-changed",  G_CALLBACK(spinner_zoom_changed_cb), this);
 #ifdef MENSIA_DISTRIBUTION
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration")),       "clicked", G_CALLBACK(button_toggle_neurort_engine_configuration_cb),   this);
-	m_oArchwayHandlerGUI.m_ButtonOpenEngineConfigurationDialog = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration"));
+	m_pArchwayHandlerGUI->m_ButtonOpenEngineConfigurationDialog = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration"));
 #endif
 	// Prepares fast forward feature
 	float64 l_f64FastForwardFactor=m_KernelContext.getConfigurationManager().expandAsFloat("${Designer_FastForwardFactor}", -1);
@@ -1384,7 +1387,18 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 		m_bIsNewVersion = true;
 	}
 
-	std::string l_sDefaultURLBaseString=std::string(m_KernelContext.getConfigurationManager().expand("${Designer_HelpBrowserURLBase}"));
+	std::string l_sDefaultURLBaseString = std::string(m_KernelContext.getConfigurationManager().expand("${Designer_HelpBrowserURLBase}"));
+#ifdef MENSIA_DISTRIBUTION
+	if (!FS::Files::directoryExists(l_sDefaultURLBaseString.c_str()))
+	{
+		// Should not happen unless the user modified the token by hand
+		m_KernelContext.getLogManager() << LogLevel_Error << "The configuration token ${Designer_HelpBrowserURLBase} seems to be set to an incorrect value.\n";
+	}
+	if (m_pArchwayHandler->initialize() == Mensia::EngineInitialisationStatus::NotAvailable)
+	{
+		gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration")));
+	}
+#else
 	// Search txt file that contains the list of boxes
 	if(l_sDefaultURLBaseString.substr(l_sDefaultURLBaseString.find_last_of(".") + 1) == "chm::")
 	{
@@ -1420,17 +1434,6 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 				"Either the configuration token ${Designer_HelpBrowserURLBase} was modified to an incorrect value, or the documentation is missing.\n";
 		}
 	}
-#ifdef MENSIA_DISTRIBUTION
-	else
-	{
-		// Should not happen unless the user modified the token by hand
-		m_KernelContext.getLogManager() << LogLevel_Error << "The configuration token ${Designer_HelpBrowserURLBase} seems to be set to an incorrect value.\n";
-	}
-	if (m_oArchwayHandler.initialize() == Mensia::EngineInitialisationStatus::NotAvailable)
-	{
-		gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration")));
-	}
-#else
 	gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration")));
 #endif
 }

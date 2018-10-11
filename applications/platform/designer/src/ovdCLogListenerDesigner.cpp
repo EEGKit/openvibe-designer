@@ -44,7 +44,7 @@ namespace
 			GtkTextWindowType l_oWindowType = gtk_text_view_get_window_type(l_pTextView, pEvent->window);
 			gint l_iBufferX, l_iBufferY;
 			//convert event coord (mouse position) in buffer coord (character in buffer)
-			gtk_text_view_window_to_buffer_coords(l_pTextView, l_oWindowType, round(pEvent->x), round(pEvent->y), &l_iBufferX, &l_iBufferY);
+			gtk_text_view_window_to_buffer_coords(l_pTextView, l_oWindowType, static_cast<gint>(round(pEvent->x)), static_cast<gint>(round(pEvent->y)), &l_iBufferX, &l_iBufferY);
 			//get the text iter corresponding to that position
 			GtkTextIter l_oIter;
 			gtk_text_view_get_iter_at_location(l_pTextView, &l_oIter, l_iBufferX, l_iBufferY);
