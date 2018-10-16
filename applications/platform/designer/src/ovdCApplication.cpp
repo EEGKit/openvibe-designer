@@ -922,7 +922,7 @@ CApplication::CApplication(const IKernelContext& rKernelContext)
 
 #ifdef MENSIA_DISTRIBUTION
 	m_pArchwayHandler = new Mensia::CArchwayHandler(rKernelContext);
-	m_pArchwayHandlerGUI = new Mensia::CArchwayHandlerGUI(*m_pArchwayHandler, *this);
+	m_pArchwayHandlerGUI = new Mensia::CArchwayHandlerGUI(*m_pArchwayHandler, this);
 #endif
 }
 
@@ -937,8 +937,11 @@ CApplication::~CApplication(void)
 	}
 
 	m_KernelContext.getPluginManager().releasePluginObject(m_visualizationContext);
+
+#ifdef MENSIA_DISTRIBUTION
 	delete m_pArchwayHandlerGUI;
 	delete m_pArchwayHandler;
+#endif
 }
 
 void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
