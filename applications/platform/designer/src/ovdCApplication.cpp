@@ -2877,46 +2877,46 @@ void CApplication::playScenarioCB(void)
 	{
 		OpenViBE::Kernel::IScenario& l_oCurrentScenario = this->getCurrentInterfacedScenario()->m_rScenario;
 		m_KernelContext.getLogManager() << LogLevel_Debug << "playScenarioCB\n";
-		if (l_oCurrentScenario.hasNeedsUpdateBox())
+		if (l_oCurrentScenario.hasOutdatedBox())
 		{
-			if(m_KernelContext.getConfigurationManager().expandAsBoolean("${Kernel_AbortPlayerWhenBoxNeedsUpdate}", false))
+			if(m_KernelContext.getConfigurationManager().expandAsBoolean("${Kernel_AbortPlayerWhenBoxIsOutdated}", false))
 			{
-				std::string l_sNeedsUpdatesBoxesList = "You can not start the scenario because following boxes need to be updated: \n";
+				std::string l_sOutdatedBoxesList = "You can not start the scenario because following boxes need to be updated: \n";
 				CIdentifier l_oBoxIdentifier;
-				while((l_oBoxIdentifier = l_oCurrentScenario.getNextNeedsUpdateBoxIdentifier(l_oBoxIdentifier)) != OV_UndefinedIdentifier)
+				while((l_oBoxIdentifier = l_oCurrentScenario.getNextOutdatedBoxIdentifier(l_oBoxIdentifier)) != OV_UndefinedIdentifier)
 				{
 					const IBox* l_pBox = l_oCurrentScenario.getBoxDetails(l_oBoxIdentifier);
-					l_sNeedsUpdatesBoxesList += "\t[" + l_pBox->getName() + "]\n";
+					l_sOutdatedBoxesList += "\t[" + l_pBox->getName() + "]\n";
 				}
-				l_sNeedsUpdatesBoxesList += "To update a box you need to delete it from scenario, and add it again.";
+				l_sOutdatedBoxesList += "To update a box you need to delete it from scenario, and add it again.";
 				::GtkWidget* l_pDialog=::gtk_message_dialog_new(
-					NULL,
-					::GtkDialogFlags(GTK_DIALOG_MODAL|GTK_DIALOG_DESTROY_WITH_PARENT),
-					GtkMessageType::GTK_MESSAGE_INFO,
-					GTK_BUTTONS_OK,
-					l_sNeedsUpdatesBoxesList.c_str(),
-					"Box needs update.");
+				            NULL,
+				            ::GtkDialogFlags(GTK_DIALOG_MODAL|GTK_DIALOG_DESTROY_WITH_PARENT),
+				            GtkMessageType::GTK_MESSAGE_INFO,
+				            GTK_BUTTONS_OK,
+				            "%s",
+				            l_sOutdatedBoxesList.c_str());
 				gint l_iResponse = ::gtk_dialog_run(GTK_DIALOG(l_pDialog));
 				::gtk_widget_destroy(l_pDialog);
 				return;
 			}
-			else if(m_KernelContext.getConfigurationManager().expandAsBoolean("${Designer_ThrowPopUpWhenBoxNeedsUpdate}", false))
+			else if(m_KernelContext.getConfigurationManager().expandAsBoolean("${Designer_ThrowPopUpWhenBoxIsOutdated}", false))
 			{
-				std::string l_sNeedsUpdatesBoxesList = "The following boxes need to be updated: \n";
+				std::string l_sOutdatedBoxesList = "The following boxes need to be updated: \n";
 				CIdentifier l_oBoxIdentifier;
-				while((l_oBoxIdentifier = l_oCurrentScenario.getNextNeedsUpdateBoxIdentifier(l_oBoxIdentifier)) != OV_UndefinedIdentifier)
+				while((l_oBoxIdentifier = l_oCurrentScenario.getNextOutdatedBoxIdentifier(l_oBoxIdentifier)) != OV_UndefinedIdentifier)
 				{
 					const IBox* l_pBox = l_oCurrentScenario.getBoxDetails(l_oBoxIdentifier);
-					l_sNeedsUpdatesBoxesList += "\t[" + l_pBox->getName() + "]\n";
+					l_sOutdatedBoxesList += "\t[" + l_pBox->getName() + "]\n";
 				}
-				l_sNeedsUpdatesBoxesList += "Do you still want to play the scenario ?";
+				l_sOutdatedBoxesList += "Do you still want to play the scenario ?";
 				::GtkWidget* l_pDialog=::gtk_message_dialog_new(
-					NULL,
-					::GtkDialogFlags(GTK_DIALOG_MODAL|GTK_DIALOG_DESTROY_WITH_PARENT),
-					GtkMessageType::GTK_MESSAGE_QUESTION,
-					GTK_BUTTONS_YES_NO,
-					l_sNeedsUpdatesBoxesList.c_str(),
-					"Box needs update.");
+				            NULL,
+				            ::GtkDialogFlags(GTK_DIALOG_MODAL|GTK_DIALOG_DESTROY_WITH_PARENT),
+				            GtkMessageType::GTK_MESSAGE_QUESTION,
+				            GTK_BUTTONS_YES_NO,
+				            "%s",
+				            l_sOutdatedBoxesList.c_str());
 				gint l_iResponse = ::gtk_dialog_run(GTK_DIALOG(l_pDialog));
 				::gtk_widget_destroy(l_pDialog);
 
@@ -3355,8 +3355,8 @@ void CApplication::cannotSaveScenarioBeforeUpdate(void)
 	            ::GtkDialogFlags(GTK_DIALOG_MODAL|GTK_DIALOG_DESTROY_WITH_PARENT),
 	            GtkMessageType::GTK_MESSAGE_INFO,
 	            GTK_BUTTONS_OK,
-	            message.toASCIIString(),
-	            "Scenario needs update.");
+	            "%s",
+	            message.toASCIIString());
 	::gtk_dialog_run(GTK_DIALOG(l_pDialog));
 	::gtk_widget_destroy(l_pDialog);
 }
