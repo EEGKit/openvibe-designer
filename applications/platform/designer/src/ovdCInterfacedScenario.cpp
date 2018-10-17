@@ -520,28 +520,28 @@ namespace
 	{
 		if (pData->m_bIsInput)
 		{
-			pData->m_pInterfacedScenario->editScenarioInputCB(pData->m_iLinkIndex);
+			pData->m_pInterfacedScenario->editScenarioInputCB(pData->m_uiLinkIndex);
 		}
 		else
 		{
-			pData->m_pInterfacedScenario->editScenarioOutputCB(pData->m_iLinkIndex);
+			pData->m_pInterfacedScenario->editScenarioOutputCB(pData->m_uiLinkIndex);
 		}
 		pData->m_pInterfacedScenario->redraw();
 	}
 
 	void modify_scenario_link_move_up_cb(GtkWidget*, OpenViBEDesigner::CInterfacedScenario::SLinkCallbackData* pData)
 	{
-		if (pData->m_iLinkIndex == 0)
+		if (pData->m_uiLinkIndex == 0)
 		{
 			return;
 		}
 		if (pData->m_bIsInput)
 		{
-			pData->m_pInterfacedScenario->swapScenarioInputs(pData->m_iLinkIndex - 1, pData->m_iLinkIndex);
+			pData->m_pInterfacedScenario->swapScenarioInputs(pData->m_uiLinkIndex - 1, pData->m_uiLinkIndex);
 		}
 		else
 		{
-			pData->m_pInterfacedScenario->swapScenarioOutputs(pData->m_iLinkIndex - 1, pData->m_iLinkIndex);
+			pData->m_pInterfacedScenario->swapScenarioOutputs(pData->m_uiLinkIndex - 1, pData->m_uiLinkIndex);
 		}
 
 		pData->m_pInterfacedScenario->snapshotCB();
@@ -549,23 +549,20 @@ namespace
 
 	void modify_scenario_link_move_down_cb(GtkWidget*, OpenViBEDesigner::CInterfacedScenario::SLinkCallbackData* pData)
 	{
+		auto interfacorType = pData->m_bIsInput ? Kernel::Input : Kernel::Output;
+		if (pData->m_pInterfacedScenario->m_rScenario.getInterfacorCount(interfacorType) < 2
+		        || pData->m_uiLinkIndex >= pData->m_pInterfacedScenario->m_rScenario.getInterfacorCount(interfacorType)-1)
+		{
+			return;
+		}
+
 		if (pData->m_bIsInput)
 		{
-			if (pData->m_iLinkIndex >= static_cast<int32>(pData->m_pInterfacedScenario->m_rScenario.getInputCount()-1))
-			{
-				return;
-			}
-
-			pData->m_pInterfacedScenario->swapScenarioInputs(pData->m_iLinkIndex, pData->m_iLinkIndex + 1);
+			pData->m_pInterfacedScenario->swapScenarioInputs(pData->m_uiLinkIndex, pData->m_uiLinkIndex + 1);
 		}
 		else
 		{
-			if (pData->m_iLinkIndex >= static_cast<int32>(pData->m_pInterfacedScenario->m_rScenario.getOutputCount()-1))
-			{
-				return;
-			}
-
-			pData->m_pInterfacedScenario->swapScenarioOutputs(pData->m_iLinkIndex, pData->m_iLinkIndex + 1);
+			pData->m_pInterfacedScenario->swapScenarioOutputs(pData->m_uiLinkIndex, pData->m_uiLinkIndex + 1);
 		}
 		pData->m_pInterfacedScenario->snapshotCB();
 	}
@@ -574,12 +571,12 @@ namespace
 	{
 		if (pData->m_bIsInput)
 		{
-			pData->m_pInterfacedScenario->m_rScenario.removeScenarioInput(pData->m_iLinkIndex);
+			pData->m_pInterfacedScenario->m_rScenario.removeScenarioInput(pData->m_uiLinkIndex);
 			pData->m_pInterfacedScenario->redrawScenarioInputSettings();
 		}
 		else
 		{
-			pData->m_pInterfacedScenario->m_rScenario.removeScenarioOutput(pData->m_iLinkIndex);
+			pData->m_pInterfacedScenario->m_rScenario.removeScenarioOutput(pData->m_uiLinkIndex);
 			pData->m_pInterfacedScenario->redrawScenarioOutputSettings();
 		}
 
@@ -591,11 +588,11 @@ namespace
 	{
 		if (pData->m_bIsInput)
 		{
-			pData->m_pInterfacedScenario->m_rScenario.setInputName(pData->m_iLinkIndex, gtk_entry_get_text(GTK_ENTRY(pEntry)));
+			pData->m_pInterfacedScenario->m_rScenario.setInputName(pData->m_uiLinkIndex, gtk_entry_get_text(GTK_ENTRY(pEntry)));
 		}
 		else
 		{
-			pData->m_pInterfacedScenario->m_rScenario.setOutputName(pData->m_iLinkIndex, gtk_entry_get_text(GTK_ENTRY(pEntry)));
+			pData->m_pInterfacedScenario->m_rScenario.setOutputName(pData->m_uiLinkIndex, gtk_entry_get_text(GTK_ENTRY(pEntry)));
 		}
 	}
 
@@ -605,11 +602,11 @@ namespace
 
 		if (pData->m_bIsInput)
 		{
-			pData->m_pInterfacedScenario->m_rScenario.setInputType(pData->m_iLinkIndex, l_oStreamType);
+			pData->m_pInterfacedScenario->m_rScenario.setInputType(pData->m_uiLinkIndex, l_oStreamType);
 		}
 		else
 		{
-			pData->m_pInterfacedScenario->m_rScenario.setOutputType(pData->m_iLinkIndex, l_oStreamType);
+			pData->m_pInterfacedScenario->m_rScenario.setOutputType(pData->m_uiLinkIndex, l_oStreamType);
 		}
 
 		pData->m_pInterfacedScenario->redraw();
@@ -1156,7 +1153,7 @@ void CInterfacedScenario::redrawScenarioLinkSettings(
 			// Set the callbacks
 			SLinkCallbackData l_oCallbackData;
 			l_oCallbackData.m_pInterfacedScenario = this;
-			l_oCallbackData.m_iLinkIndex = l_ui32LinkIndex;
+			l_oCallbackData.m_uiLinkIndex = l_ui32LinkIndex;
 			l_oCallbackData.m_bIsInput = bIsInput;
 
 			vLinkCallbackData[l_ui32LinkIndex] = l_oCallbackData;

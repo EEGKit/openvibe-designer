@@ -245,7 +245,7 @@ namespace OpenViBEDesigner
 		typedef struct _SLinkCallbackData
 		{
 			CInterfacedScenario* m_pInterfacedScenario;
-			int m_iLinkIndex;
+			uint32_t m_uiLinkIndex;
 			bool m_bIsInput;
 
 		} SLinkCallbackData;
