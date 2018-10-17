@@ -7,6 +7,7 @@
 #include <cstdio>
 #include <sstream>
 
+#include "../ovdCApplication.h"
 #include "ovProcessUtilities.hpp"
 
 #if defined TARGET_OS_Windows
@@ -148,7 +149,7 @@ namespace
 		if (gui->m_Controller.m_EngineType == EngineType::Local)
 		{
 			std::string path = gui->m_Controller.getPipelineScenarioPath(static_cast<uint64_t>(pipelineId));
-			gui->m_Application.openScenario(path.c_str());
+			gui->m_Application->openScenario(path.c_str());
 		}
 	}
 
@@ -343,7 +344,7 @@ namespace
 	}
 }
 
-CArchwayHandlerGUI::CArchwayHandlerGUI(CArchwayHandler& controller, OpenViBEDesigner::CApplication& application)
+CArchwayHandlerGUI::CArchwayHandlerGUI(CArchwayHandler& controller, OpenViBEDesigner::CApplication* application)
     : m_Controller(controller),
 	m_Application(application)
 {

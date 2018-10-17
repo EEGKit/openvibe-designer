@@ -1,5 +1,4 @@
-#ifndef __OpenViBEDesigner_CApplication_H__
-#define __OpenViBEDesigner_CApplication_H__
+#pragma once
 
 #include <visualization-toolkit/ovvizIVisualizationManager.h>
 #include "ovd_base.h"
@@ -12,11 +11,6 @@
 #define OVD_ScenarioExportContext_SaveMetabox  OpenViBE::CIdentifier(0x529494F1, 0x6C2527D9)
 
 #include <vector>
-
-namespace Mensia {
-	class CArchwayHandler;
-	class CArchwayHandlerGUI;
-};
 
 namespace OpenViBEDesigner
 {
@@ -212,4 +206,3 @@ namespace OpenViBEDesigner
 	};
 }
 
-#endif // __OpenViBEDesigner_CApplication_H__
