@@ -712,7 +712,7 @@ int go(int argc, char ** argv)
 	gdk_color_set(g_vColors[Color_BoxBackgroundMissing], 49151, 32767, 32767);
 	gdk_color_set(g_vColors[Color_BoxBackgroundDisabled], 46767, 46767, 59151);
 	gdk_color_set(g_vColors[Color_BoxBackgroundDeprecated], 65535, 50000, 32767);
-	gdk_color_set(g_vColors[Color_BoxBackgroundNeedsUpdate], 57343, 57343, 57343);
+	gdk_color_set(g_vColors[Color_BoxBackgroundOutdated], 57343, 57343, 57343);
 	gdk_color_set(g_vColors[Color_BoxBackgroundMetabox], 58343, 65535, 62343);
 	gdk_color_set(g_vColors[Color_BoxBackgroundUnstable], 49151, 49151, 49151);
 	gdk_color_set(g_vColors[Color_BoxBackgroundMensia], 65535, 65535, 65535);
