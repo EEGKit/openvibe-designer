@@ -101,7 +101,7 @@ namespace OpenViBEDesigner
 		Color_BoxBackgroundDisabled,
 		Color_BoxBackgroundDeprecated,
 		Color_BoxBackgroundUnstable,
-		Color_BoxBackgroundNeedsUpdate,
+		Color_BoxBackgroundOutdated,
 		Color_BoxBackgroundMetabox,
 		Color_BoxBorder,
 		Color_BoxBorderSelected,

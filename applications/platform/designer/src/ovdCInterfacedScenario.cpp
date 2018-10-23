@@ -1326,7 +1326,7 @@ void CInterfacedScenario::redraw(IBox& rBox)
 		}
 		else if(!l_bUpToDate || l_bPendingDeprecatedInterfacors)
 		{
-			gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[Color_BoxBackgroundNeedsUpdate]);
+			gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[Color_BoxBackgroundOutdated]);
 		}
 		else if(l_bMensia)
 		{
