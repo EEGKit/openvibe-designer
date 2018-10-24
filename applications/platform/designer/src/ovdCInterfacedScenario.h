@@ -256,9 +256,9 @@ namespace OpenViBEDesigner
 	private:
 		typedef void (*menu_callback_function)(::GtkMenuItem*, CInterfacedScenario::BoxContextMenuCB*);
 		GtkImageMenuItem* gtk_menu_add_new_image_menu_item_with_cb_generic(GtkMenu* menu, const char* icon, const char* label, menu_callback_function cb, OpenViBE::Kernel::IBox* cb_box, uint32_t cb_command, uint32_t cb_index, uint32_t cb_index2);
-		void gtk_menu_add_new_image_menu_item_with_cb(GtkMenu* menu, const char* icon, const char* label, menu_callback_function cb, OpenViBE::Kernel::IBox* cb_box, uint32_t cb_command, uint32_t cb_index)
+		GtkImageMenuItem* gtk_menu_add_new_image_menu_item_with_cb(GtkMenu* menu, const char* icon, const char* label, menu_callback_function cb, OpenViBE::Kernel::IBox* cb_box, uint32_t cb_command, uint32_t cb_index)
 		{
-			gtk_menu_add_new_image_menu_item_with_cb_generic(menu, icon, label, cb, cb_box, cb_command, cb_index, 0);
+			return gtk_menu_add_new_image_menu_item_with_cb_generic(menu, icon, label, cb, cb_box, cb_command, cb_index, 0);
 		}
 
 		void redrawScenarioLinkSettings(

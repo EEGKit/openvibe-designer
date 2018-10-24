@@ -2935,6 +2935,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 	{
 		if (pEvent->type == GDK_BUTTON_PRESS)
 		{
+			const uint32_t unused = static_cast<uint32_t>(-1);
 			::GtkMenu* l_pMenu=GTK_MENU(gtk_menu_new());
 			m_vBoxContextMenuCB.clear();
 
@@ -3163,7 +3164,20 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 					if (!m_vBoxContextMenuCB.empty()) gtk_menu_add_separator_menu_item(l_pMenu);
 					if (l_pBox->hasAttribute(OV_AttributeId_Box_ToBeUpdated))
 					{
-						gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_REFRESH, "update box...", context_menu_cb, l_pBox, ContextMenu_BoxUpdate, -1);
+						auto updateMenuItem = gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_REFRESH, "update box", context_menu_cb, l_pBox, ContextMenu_BoxUpdate, unused);
+						if (l_pBox->hasAttribute(OV_AttributeId_Box_FlagNeedsManualUpdate)
+						        || l_pBox->hasAttribute(OV_AttributeId_Box_FlagCanAddInput)
+						        || l_pBox->hasAttribute(OV_AttributeId_Box_FlagCanAddOutput)
+						        || l_pBox->hasAttribute(OV_AttributeId_Box_FlagCanAddSetting)
+						        || l_pBox->hasAttribute(OV_AttributeId_Box_FlagCanModifyInput)
+						        || l_pBox->hasAttribute(OV_AttributeId_Box_FlagCanModifyOutput)
+						        || l_pBox->hasAttribute(OV_AttributeId_Box_FlagCanModifySetting)
+						        )
+						{
+							gtk_widget_set_sensitive(GTK_WIDGET(updateMenuItem), FALSE);
+							gtk_widget_set_tooltip_text(GTK_WIDGET(updateMenuItem), "Box must be manually updated due to its complexity.");
+						}
+
 					}
 					if (l_pBox->hasAttribute(OV_AttributeId_Box_PendingDeprecatedInterfacors))
 					{
