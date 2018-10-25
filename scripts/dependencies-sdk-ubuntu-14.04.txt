@@ -1,2 +1,2 @@
-build/linux/OpenViBE-Release-1.1.0.109-Ubuntu14.04.zip;openvibe-sdk-release;1.1.0.109
-build/linux/OpenViBE-Debug-1.1.0.109-Ubuntu14.04.zip;openvibe-sdk-debug;1.1.0.109
+build/linux/OpenViBE-Release-1.1.99.77-Ubuntu14.04.zip;openvibe-sdk-release;1.1.99.77
+build/linux/OpenViBE-Debug-1.1.99.77-Ubuntu14.04.zip;openvibe-sdk-debug;1.1.99.77
