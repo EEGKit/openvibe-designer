@@ -81,6 +81,9 @@ namespace Mensia
 			virtual uint32_t getHistoryCount(void) const=0;
 			virtual uint32_t getHistoryIndex(void) const=0;
 
+			virtual void setTimeOffset(uint64_t offset) = 0;
+			virtual uint64_t getTimeOffset(void) const = 0;
+
 			virtual void rebuild(const IRendererContext& rContext)=0;
 			virtual void refresh(const IRendererContext& rContext)=0;
 			virtual bool render(const IRendererContext& rContext)=0;

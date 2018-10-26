@@ -70,6 +70,9 @@ namespace Mensia
 			virtual uint32_t getHistoryIndex(void) const;
 			virtual bool getSampleAtERPFraction(float f32Alpha, std::vector < float >& vSample) const;
 
+			virtual void setTimeOffset(uint64_t offset) { m_ui64TimeOffset = offset; };
+			virtual uint64_t getTimeOffset(void) const { return m_ui64TimeOffset; }
+
 			virtual void rebuild(const IRendererContext& rContext);
 			virtual void refresh(const IRendererContext& rContext);
 //			virtual bool render(const IRendererContext& rContext);
@@ -107,6 +110,8 @@ namespace Mensia
 
 			float m_f32ERPFraction;
 			uint32_t m_ui32SampleIndexERP;
+
+			uint64_t m_ui64TimeOffset;
 
 //			std::map < std::string, CVertex > m_vChannelLocalisation;
 			std::vector < std::pair < double, uint64_t > > m_vStimulationHistory;

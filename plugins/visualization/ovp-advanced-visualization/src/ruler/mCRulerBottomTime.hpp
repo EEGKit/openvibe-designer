@@ -54,6 +54,10 @@ namespace Mensia
 				double l_f64MidTime  =((l_ui32MidIndex   *l_ui64SampleDuration)>>16)/65536.;
 				double l_f64Duration =((l_ui32SampleCount*l_ui64SampleDuration)>>16)/65536.;
 
+				double l_f64Offset = (m_pRenderer->getTimeOffset() >> 16) / 65536.;
+				l_f64StartTime += l_f64Offset;
+				l_f64MidTime += l_f64Offset;
+
 				l_vRange1=this->split_range(l_f64StartTime-l_f64Duration, l_f64StartTime              , 10);
 				l_vRange2=this->split_range(l_f64StartTime              , l_f64StartTime+l_f64Duration, 10);
 
