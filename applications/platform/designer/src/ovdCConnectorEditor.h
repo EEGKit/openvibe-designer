@@ -1,5 +1,4 @@
-#ifndef __OpenViBEDesigner_CConnectorEditor_H__
-#define __OpenViBEDesigner_CConnectorEditor_H__
+#pragma once
 
 #include "ovd_base.h"
 
@@ -15,7 +14,6 @@ namespace OpenViBEDesigner
 		virtual ~CConnectorEditor(void);
 		virtual OpenViBE::boolean run(void);
 
-	protected:
 
 		const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
 		OpenViBE::Kernel::IBox& m_rBox;
@@ -23,10 +21,14 @@ namespace OpenViBEDesigner
 		OpenViBE::uint32 m_ui32ConnectorIndex;
 		const std::string m_sGUIFilename;
 		const std::string m_sTitle;
+		GtkEntry* m_ConnectorIdentifierEntry;
 
 	private:
 
-		typedef OpenViBE::uint32 (OpenViBE::Kernel::IBox::*t_getConnectorCount)(void) const;
+//		typedef OpenViBE::uint32 (OpenViBE::Kernel::IBox::*t_getConnectorCount)(void) const;
+		typedef bool (OpenViBE::Kernel::IBox::*t_getConnectorIdentifier)(
+			const uint32_t inputIndex,
+			OpenViBE::CIdentifier& identifier) const;
 		typedef OpenViBE::boolean (OpenViBE::Kernel::IBox::*t_getConnectorType)(
 			const OpenViBE::uint32 ui32InputIndex,
 			OpenViBE::CIdentifier& rTypeIdentifier) const;
@@ -41,7 +43,8 @@ namespace OpenViBEDesigner
 			const OpenViBE::CString& rName);
 		typedef OpenViBE::boolean (OpenViBE::Kernel::IBox::*t_isTypeSupported)(
 			const OpenViBE::CIdentifier& rTypeIdentifier) const;
+		typedef bool (OpenViBE::Kernel::IBox::*t_updateConnectorIdentifier)(
+		        const uint32_t inputIndex, const OpenViBE::CIdentifier& newIdentifier);
 	};
 };
 
-#endif // __OpenViBEDesigner_CConnectorEditor_H__

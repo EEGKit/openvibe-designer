@@ -42,13 +42,22 @@ namespace OpenViBEDesigner
 		void snapshotCB(bool bManageModifiedStatusFlag=true);
 		void addCommentCB(int x=-1, int y=-1);
 
+		// Utility functions for scenario settings, inputs and outputs
+
 		void addScenarioSettingCB(void);
+		void editScenarioSettingCB(unsigned int l_ui32SettingIndex);
+		void swapScenarioSettings(unsigned int uiSettingAIndex, unsigned int uiSettingBIndex);
+
 		void addScenarioInputCB(void);
+		void editScenarioInputCB(unsigned int l_ui32InputIndex);
+		void swapScenarioInputs(unsigned int ui32InputAIndex, unsigned int ui32InputBIndex);
 		void addScenarioOutputCB(void);
+		void editScenarioOutputCB(unsigned int l_ui32OutputIndex);
+		void swapScenarioOutputs(unsigned int ui32OutputAIndex, unsigned int ui32OutputBIndex);
+
 
 		// Utility functions for scenario settings, inputs and outputs
 		void configureScenarioSettingsCB(void);
-		void swapScenarioSettings(unsigned int uiSettingAIndex, unsigned int uiSettingBIndex);
 
 		// Drawing functions for scenario settings, inputs and outputs
 		void redrawConfigureScenarioSettingsDialog();
@@ -70,6 +79,8 @@ namespace OpenViBEDesigner
 		void deleteSelection(void);
 
 		void deleteBox(const OpenViBE::CIdentifier& rBoxIdentifier); // Utility method to remove box from scenario and visualization
+		void contextMenuBoxUpdateCB(OpenViBE::Kernel::IBox& rBox);
+		void contextMenuBoxRemoveDeprecatedInterfacorsCB(OpenViBE::Kernel::IBox& rBox);
 		void contextMenuBoxRenameCB(OpenViBE::Kernel::IBox& rBox);
 		void contextMenuBoxRenameAllCB();
 		void contextMenuBoxToggleEnableAllCB(void);
@@ -207,15 +218,17 @@ namespace OpenViBEDesigner
 
 		GtkWidget* m_pNoHelpDialog;
 
+		GtkWidget* m_pErrorPendingDeprecatedInterfacorsDialog;
+
 		// This struct is used for both settings inside the scenario and inside
 		// the settings configurator
 		typedef struct _SSettingCallbackData
 		{
-			CInterfacedScenario* m_pInterfacedScenario;
-			int m_iSettingIndex;
-			GtkWidget* m_pWidgetValue;
-			GtkWidget* m_pWidgetEntryValue;
-			GtkWidget* m_pContainer;
+			CInterfacedScenario* interfacedScenario;
+			uint32_t settingIndex;
+			GtkWidget* widgetValue;
+			GtkWidget* widgetEntryValue;
+			GtkWidget* container;
 
 		} SSettingCallbackData;
 
@@ -232,7 +245,7 @@ namespace OpenViBEDesigner
 		typedef struct _SLinkCallbackData
 		{
 			CInterfacedScenario* m_pInterfacedScenario;
-			int m_iLinkIndex;
+			uint32_t m_uiLinkIndex;
 			bool m_bIsInput;
 
 		} SLinkCallbackData;
@@ -241,6 +254,13 @@ namespace OpenViBEDesigner
 		std::vector<SLinkCallbackData> m_vScenarioOutputCallbackData;
 
 	private:
+		typedef void (*menu_callback_function)(::GtkMenuItem*, CInterfacedScenario::BoxContextMenuCB*);
+		GtkImageMenuItem* gtk_menu_add_new_image_menu_item_with_cb_generic(GtkMenu* menu, const char* icon, const char* label, menu_callback_function cb, OpenViBE::Kernel::IBox* cb_box, uint32_t cb_command, uint32_t cb_index, uint32_t cb_index2);
+		GtkImageMenuItem* gtk_menu_add_new_image_menu_item_with_cb(GtkMenu* menu, const char* icon, const char* label, menu_callback_function cb, OpenViBE::Kernel::IBox* cb_box, uint32_t cb_command, uint32_t cb_index)
+		{
+			return gtk_menu_add_new_image_menu_item_with_cb_generic(menu, icon, label, cb, cb_box, cb_command, cb_index, 0);
+		}
+
 		void redrawScenarioLinkSettings(
 		        GtkWidget* pLinkTable,
 				bool bIsInput,

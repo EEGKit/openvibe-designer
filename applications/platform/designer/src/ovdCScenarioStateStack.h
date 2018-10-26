@@ -16,9 +16,10 @@ namespace OpenViBEDesigner
 		virtual ~CScenarioStateStack(void);
 
 		virtual bool isUndoPossible(void);
-		virtual bool undo(void);
+		virtual bool undo();
 		virtual bool isRedoPossible(void);
 		virtual bool redo(void);
+		void dropLastState();
 
 		virtual bool snapshot(void);
 

@@ -36,6 +36,8 @@ namespace OpenViBEDesigner
 		ContextMenu_SelectionPaste,
 		ContextMenu_SelectionDelete,
 
+		ContextMenu_BoxUpdate,
+		ContextMenu_BoxRemoveDeprecatedInterfacors,
 		ContextMenu_BoxRename,
 		ContextMenu_BoxDelete,
 		ContextMenu_BoxAddInput,
@@ -99,7 +101,7 @@ namespace OpenViBEDesigner
 		Color_BoxBackgroundDisabled,
 		Color_BoxBackgroundDeprecated,
 		Color_BoxBackgroundUnstable,
-		Color_BoxBackgroundNeedsUpdate,
+		Color_BoxBackgroundOutdated,
 		Color_BoxBackgroundMetabox,
 		Color_BoxBorder,
 		Color_BoxBorderSelected,
@@ -126,11 +128,14 @@ namespace OpenViBEDesigner
 
 	enum
 	{
-		Connector_None,
-		Connector_Input,
-		Connector_Output,
-		Connector_Setting,
-		Connector_Link
+		Box_None,
+		Box_Input,
+		Box_Output,
+		Box_Setting,
+		Box_Link,
+		Box_ScenarioInput,
+		Box_ScenarioOutput,
+		Box_Update
 	};
 
 	enum

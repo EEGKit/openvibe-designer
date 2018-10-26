@@ -50,20 +50,19 @@ bool CSettingEditorDialog::run(void)
 
 	gtk_entry_set_text(GTK_ENTRY(l_pName), l_sSettingName.toASCIIString());
 
-	CIdentifier l_oCurrentTypeIdentifier;
 	gint l_iActive=-1;
 	uint32_t numSettings = 0; // Cannot rely on m_vSettingTypes.size() -- if there are any duplicates, it wont increment properly (and should be an error anyway) ...
-	while((l_oCurrentTypeIdentifier=m_rKernelContext.getTypeManager().getNextTypeIdentifier(l_oCurrentTypeIdentifier))!=OV_UndefinedIdentifier)
+	
+	for (auto l_oCurrentTypeIdentifier: m_rKernelContext.getTypeManager().getSortedTypes())
 	{
-		if(!m_rKernelContext.getTypeManager().isStream(l_oCurrentTypeIdentifier))
+		if(!m_rKernelContext.getTypeManager().isStream(l_oCurrentTypeIdentifier.first))
 		{
-			const CString l_sThisType = m_rKernelContext.getTypeManager().getTypeName(l_oCurrentTypeIdentifier);
-			gtk_combo_box_append_text(GTK_COMBO_BOX(m_pType), l_sThisType.toASCIIString());
-			if(l_oCurrentTypeIdentifier==l_oSettingType)
+			gtk_combo_box_append_text(GTK_COMBO_BOX(m_pType), l_oCurrentTypeIdentifier.second.toASCIIString());
+			if(l_oCurrentTypeIdentifier.first == l_oSettingType)
 			{
 				l_iActive = numSettings;
 			}
-			m_vSettingTypes[l_sThisType.toASCIIString()] = l_oCurrentTypeIdentifier;
+			m_vSettingTypes[l_oCurrentTypeIdentifier.second.toASCIIString()] = l_oCurrentTypeIdentifier.first;
 			numSettings++;
 		}
 	}
