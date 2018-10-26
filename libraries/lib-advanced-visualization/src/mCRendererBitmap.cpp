@@ -63,15 +63,16 @@ void CRendererBitmap::refresh(const IRendererContext& rContext)
 	CRenderer::refresh(rContext);
 
 	if(!m_ui32HistoryCount) return;
+	if (m_vVertex.empty()) {
+		return;
+	}
 
-	uint32_t i, j, k;
-
-	for(i=0; i<m_ui32ChannelCount; i++)
+	for(uint32_t i=0; i<m_ui32ChannelCount; i++)
 	{
-		k=((m_ui32HistoryCount-1)/m_ui32SampleCount)*m_ui32SampleCount;
+		uint32_t k=((m_ui32HistoryCount-1)/m_ui32SampleCount)*m_ui32SampleCount;
 		std::vector < float >& l_vHistory=m_vHistory[i];
 		CVertex* l_pVertex=&m_vVertex[i][0];
-		for(j=0; j<m_ui32SampleCount-m_ui32AutoDecimationFactor+1; j+=m_ui32AutoDecimationFactor, k+=m_ui32AutoDecimationFactor)
+		for(uint32_t j=0; j<m_ui32SampleCount-m_ui32AutoDecimationFactor+1; j+=m_ui32AutoDecimationFactor, k+=m_ui32AutoDecimationFactor)
 		{
 			if(k>=m_ui32HistoryIndex && k<m_ui32HistoryCount)
 			{
