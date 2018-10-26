@@ -9,17 +9,33 @@ using namespace OpenViBEDesigner;
 using namespace std;
 
 CBoxProxy::CBoxProxy(const IKernelContext& rKernelContext, IScenario& rScenario, const CIdentifier& rBoxIdentifier)
-	:m_rKernelContext(rKernelContext)
-	,m_pBoxAlgorithmDescriptorOverride(NULL)
-	,m_pConstBox(rScenario.getBoxDetails(rBoxIdentifier))
-	,m_pBox(rScenario.getBoxDetails(rBoxIdentifier))
-	,m_bApplied(false)
-	,m_bShowOriginalNameWhenModified(false)
-	,m_iXCenter(0)
-	,m_iYCenter(0)
+    :m_rKernelContext(rKernelContext)
+    ,m_pBoxAlgorithmDescriptorOverride(NULL)
+    ,m_pConstBox(rScenario.getBoxDetails(rBoxIdentifier))
+    ,m_pBox(rScenario.getBoxDetails(rBoxIdentifier))
+    ,m_bApplied(false)
+    ,m_bShowOriginalNameWhenModified(false)
+    ,m_iXCenter(0)
+    ,m_iYCenter(0)
+    ,m_IsDeprecated(m_rKernelContext.getPluginManager().isPluginObjectFlaggedAsDeprecated(m_pConstBox->getAlgorithmClassIdentifier()))
 {
+	m_IsBoxAlgorithmPresent = false;
+
 	if(m_pConstBox)
 	{
+		if (m_pConstBox->getAlgorithmClassIdentifier() == OVP_ClassId_BoxAlgorithm_Metabox)
+		{
+			CIdentifier metaboxId;
+			metaboxId.fromString(m_pConstBox->getAttributeValue(OVP_AttributeId_Metabox_Identifier));
+			CString l_sMetaboxScenarioPath(m_rKernelContext.getMetaboxManager().getMetaboxFilePath(metaboxId));
+
+			m_IsBoxAlgorithmPresent = FS::Files::fileExists(l_sMetaboxScenarioPath.toASCIIString());
+		}
+		else
+		{
+			m_IsBoxAlgorithmPresent = m_rKernelContext.getPluginManager().canCreatePluginObject(m_pConstBox->getAlgorithmClassIdentifier());
+		}
+
 		TAttributeHandler l_oAttributeHandler(*m_pConstBox);
 		m_iXCenter=l_oAttributeHandler.getAttributeValue<int>(OV_AttributeId_Box_XCenterPosition);
 		m_iYCenter=l_oAttributeHandler.getAttributeValue<int>(OV_AttributeId_Box_YCenterPosition);
@@ -103,9 +119,9 @@ void CBoxProxy::apply(void)
 
 const char* CBoxProxy::getLabel(void) const
 {
-	boolean l_bBoxCanChangeInput  (m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanModifyInput)  ||m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanAddInput));
-	boolean l_bBoxCanChangeOutput (m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanModifyOutput) ||m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanAddOutput));
-	boolean l_bBoxCanChangeSetting(m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanModifySetting)||m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanAddSetting));
+	bool l_bBoxCanChangeInput  (m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanModifyInput)  ||m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanAddInput));
+	bool l_bBoxCanChangeOutput (m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanModifyOutput) ||m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanAddOutput));
+	bool l_bBoxCanChangeSetting(m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanModifySetting)||m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanAddSetting));
 
 	const IPluginObjectDesc* l_pDesc = NULL;
 
@@ -207,40 +223,32 @@ const char* CBoxProxy::getStatusLabel(void) const
 	return m_sStatus.c_str();
 }
 
-boolean CBoxProxy::isBoxAlgorithmPluginPresent(void) const
+bool CBoxProxy::isBoxAlgorithmPluginPresent(void) const
 {
-	if (m_pConstBox->getAlgorithmClassIdentifier() == OVP_ClassId_BoxAlgorithm_Metabox)
-	{
-		CIdentifier metaboxId;
-		metaboxId.fromString(m_pConstBox->getAttributeValue(OVP_AttributeId_Metabox_Identifier));
-		CString l_sMetaboxScenarioPath(m_rKernelContext.getMetaboxManager().getMetaboxFilePath(metaboxId));
-
-		return FS::Files::fileExists(l_sMetaboxScenarioPath.toASCIIString());
-	}
-	return m_rKernelContext.getPluginManager().canCreatePluginObject(m_pConstBox->getAlgorithmClassIdentifier());
+	return m_IsBoxAlgorithmPresent;
 }
 
-boolean CBoxProxy::isUpToDate(void) const
+bool CBoxProxy::isUpToDate(void) const
 {
 	return !m_pBox->hasAttribute(OV_AttributeId_Box_ToBeUpdated);
 }
 
-boolean CBoxProxy::hasPendingDeprecatedInterfacors(void) const
+bool CBoxProxy::hasPendingDeprecatedInterfacors(void) const
 {
 	return m_pBox->hasAttribute(OV_AttributeId_Box_PendingDeprecatedInterfacors);
 }
 
-boolean CBoxProxy::isDeprecated(void) const
+bool CBoxProxy::isDeprecated(void) const
 {
-	return m_rKernelContext.getPluginManager().isPluginObjectFlaggedAsDeprecated(m_pConstBox->getAlgorithmClassIdentifier());
+	return m_IsDeprecated;
 }
 
-boolean CBoxProxy::isMetabox(void) const
+bool CBoxProxy::isMetabox(void) const
 {
 	return m_pConstBox->getAlgorithmClassIdentifier() == OVP_ClassId_BoxAlgorithm_Metabox;
 }
 
-boolean CBoxProxy::isDisabled(void) const
+bool CBoxProxy::isDisabled(void) const
 {
 	TAttributeHandler l_oAttributeHandler(*m_pConstBox);
 	return l_oAttributeHandler.hasAttribute(OV_AttributeId_Box_Disabled);
