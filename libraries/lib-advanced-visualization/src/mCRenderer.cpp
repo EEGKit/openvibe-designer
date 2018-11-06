@@ -43,6 +43,7 @@ CRenderer::CRenderer(void)
 	,m_ui32AutoDecimationFactor(1)
 	,m_f32ERPFraction(0)
 	,m_ui32SampleIndexERP(0)
+	, m_ui64TimeOffset(0)
 {
 	iCount++;
 }

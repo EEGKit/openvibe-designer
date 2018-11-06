@@ -39,13 +39,13 @@ namespace OpenViBEDesigner
 		virtual const char* getLabel(void) const;
 		virtual const char* getStatusLabel(void) const;
 
-		OpenViBE::boolean isBoxAlgorithmPluginPresent(void) const;
-		OpenViBE::boolean isUpToDate(void) const;
-		OpenViBE::boolean hasPendingDeprecatedInterfacors(void) const;
-		OpenViBE::boolean isDeprecated(void) const;
-		OpenViBE::boolean isUnstable(void) const;
-		OpenViBE::boolean isDisabled(void) const;
-		OpenViBE::boolean isMetabox(void) const;
+		bool isBoxAlgorithmPluginPresent(void) const;
+		bool isUpToDate(void) const;
+		bool hasPendingDeprecatedInterfacors(void) const;
+		bool isDeprecated(void) const;
+		bool isUnstable(void) const;
+		bool isDisabled(void) const;
+		bool isMetabox(void) const;
 
 	protected:
 
@@ -62,12 +62,14 @@ namespace OpenViBEDesigner
 		const OpenViBE::Plugins::IBoxAlgorithmDesc* m_pBoxAlgorithmDescriptorOverride;
 		const OpenViBE::Kernel::IBox* m_pConstBox;
 		OpenViBE::Kernel::IBox* m_pBox;
-		OpenViBE::boolean m_bApplied;
-		OpenViBE::boolean m_bShowOriginalNameWhenModified;
+		bool m_bApplied;
+		bool m_bShowOriginalNameWhenModified;
 		int m_iXCenter;
 		int m_iYCenter;
 		mutable std::string m_sLabel;
 		mutable std::string m_sStatus;
+		bool m_IsBoxAlgorithmPresent;
+		bool m_IsDeprecated;
 	};
 };
 

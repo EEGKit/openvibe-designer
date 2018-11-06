@@ -1660,9 +1660,9 @@ void CInterfacedScenario::redraw(IBox& rBox)
 			if (l_oScenarioOutputLinkBoxIdentifier == rBox.getIdentifier() && l_ui32ScenarioOutputLinkBoxOutputIndex == i)
 			{
 				// Since the circle representing the Output is quite large, we are going to offset each other one
-				int l_iOutputDiscOffset = (i % 2) * iCircleSize * 2;
+				int l_iOutputDiscOffset = (static_cast<int>(i) % 2) * iCircleSize * 2;
 
-				int l_iScenarioOutputIndicatorLeft = xStart + i * (iCircleSpace + iCircleSize) + l_iOutputOffset - static_cast<int>(iCircleSize * 0.5);
+				int l_iScenarioOutputIndicatorLeft = xStart + static_cast<int>(i) * (iCircleSpace + iCircleSize) + l_iOutputOffset - static_cast<int>(iCircleSize * 0.5);
 				int l_iScenarioOutputIndicatorTop = yStart - (iCircleSize >> 1) + ySize + l_iOutputDiscOffset + iCircleSize * 2;
 
 				CIdentifier l_oScenarioOutputTypeIdentifier;
@@ -1838,11 +1838,8 @@ void CInterfacedScenario::redraw(ILink& rLink)
 	CIdentifier l_oSourceOutputTypeIdentifier;
 	CIdentifier l_oTargetInputTypeIdentifier;
 
-	bool shadowedLink = rLink.hasAttribute(OV_AttributeId_Link_Invalid);
-
 	m_rScenario.getBoxDetails(rLink.getSourceBoxIdentifier())->getOutputType(rLink.getSourceBoxOutputIndex(), l_oSourceOutputTypeIdentifier);
 	m_rScenario.getBoxDetails(rLink.getTargetBoxIdentifier())->getInputType(rLink.getTargetBoxInputIndex(), l_oTargetInputTypeIdentifier);
-
 
 	if (rLink.hasAttribute(OV_AttributeId_Link_Invalid))
 	{
@@ -2166,8 +2163,8 @@ void CInterfacedScenario::addCommentCB(int x, int y)
 
 	// Aligns comemnts on grid
 	l_oCommentProxy.setCenter(
-		((l_oCommentProxy.getXCenter()+8)&0xfffffff0),
-		((l_oCommentProxy.getYCenter()+8)&0xfffffff0));
+		static_cast<int32_t>((l_oCommentProxy.getXCenter()+8)&0xfffffff0L),
+		static_cast<int32_t>((l_oCommentProxy.getYCenter()+8)&0xfffffff0L));
 
 	// Applies modifications before snapshot
 	l_oCommentProxy.apply();
@@ -2585,11 +2582,10 @@ void CInterfacedScenario::scenarioDrawingAreaDragDataReceivedCB(::GdkDragContext
 
 		CBoxProxy l_oBoxProxy(m_rKernelContext, m_rScenario, l_oBoxIdentifier);
 		l_oBoxProxy.setCenter(iX-m_i32ViewOffsetX, iY-m_i32ViewOffsetY);
-
 		// Aligns boxes on grid
 		l_oBoxProxy.setCenter(
-			((l_oBoxProxy.getXCenter()+8)&0xfffffff0),
-			((l_oBoxProxy.getYCenter()+8)&0xfffffff0));
+			static_cast<int32_t>((l_oBoxProxy.getXCenter()+8)&0xfffffff0L),
+			static_cast<int32_t>((l_oBoxProxy.getYCenter()+8)&0xfffffff0L));
 
 		// Applies modifications before snapshot
 		l_oBoxProxy.apply();
@@ -2941,15 +2937,15 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 
 			// -------------- SELECTION -----------
 
-			if(this->hasSelection()) { gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_CUT, "cut...", context_menu_cb, NULL, ContextMenu_SelectionCut, -1); }
-			if(this->hasSelection()) { gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_COPY, "copy...", context_menu_cb, NULL, ContextMenu_SelectionCopy, -1); }
+			if(this->hasSelection()) { gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_CUT, "cut", context_menu_cb, NULL, ContextMenu_SelectionCut, unused); }
+			if(this->hasSelection()) { gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_COPY, "copy", context_menu_cb, NULL, ContextMenu_SelectionCopy, unused); }
 			if( (m_rApplication.m_pClipboardScenario->getNextBoxIdentifier(OV_UndefinedIdentifier)!=OV_UndefinedIdentifier)
 			        || (m_rApplication.m_pClipboardScenario->getNextCommentIdentifier(OV_UndefinedIdentifier)!=OV_UndefinedIdentifier)
 			        )
 			{
-				gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_PASTE, "paste...", context_menu_cb, NULL, ContextMenu_SelectionPaste, -1);
+				gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_PASTE, "paste", context_menu_cb, NULL, ContextMenu_SelectionPaste, unused);
 			}
-			if(this->hasSelection()) { gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_DELETE, "delete...", context_menu_cb, NULL, ContextMenu_SelectionDelete, -1); }
+			if(this->hasSelection()) { gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_DELETE, "delete", context_menu_cb, NULL, ContextMenu_SelectionDelete, unused); }
 
 			if(m_oCurrentObject.m_oIdentifier!=OV_UndefinedIdentifier && m_rScenario.isBox(m_oCurrentObject.m_oIdentifier))
 			{
@@ -3021,7 +3017,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 
 							if (l_bFlagCanAddInput && l_ui32FixedInputCount <= i)
 							{
-								gtk_menu_add_new_image_menu_item_with_cb( l_pMenuInputMenuAction, GTK_STOCK_REMOVE, "delete...", context_menu_cb, l_pBox, ContextMenu_BoxRemoveInput, i);
+								gtk_menu_add_new_image_menu_item_with_cb( l_pMenuInputMenuAction, GTK_STOCK_REMOVE, "delete", context_menu_cb, l_pBox, ContextMenu_BoxRemoveInput, i);
 							}
 
 							if(::gtk_container_get_children_count(GTK_CONTAINER(l_pMenuInputMenuAction)) > 0)
@@ -3036,7 +3032,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 						gtk_menu_add_separator_menu_item(l_pMenuInput);
 						if (l_bFlagCanAddInput)
 						{
-							gtk_menu_add_new_image_menu_item_with_cb( l_pMenuInput, GTK_STOCK_ADD, "new...", context_menu_cb, l_pBox, ContextMenu_BoxAddInput, -1);
+							gtk_menu_add_new_image_menu_item_with_cb( l_pMenuInput, GTK_STOCK_ADD, "new...", context_menu_cb, l_pBox, ContextMenu_BoxAddInput, unused);
 						}
 						gtk_menu_item_set_submenu(GTK_MENU_ITEM(l_pMenuItemInput), GTK_WIDGET(l_pMenuInput));
 					}
@@ -3095,7 +3091,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 							}
 							if (l_bFlagCanAddOutput && l_ui32FixedOutputCount <= i)
 							{
-								gtk_menu_add_new_image_menu_item_with_cb( l_pMenuOutputMenuAction, GTK_STOCK_REMOVE, "delete...", context_menu_cb, l_pBox, ContextMenu_BoxRemoveOutput, i);
+								gtk_menu_add_new_image_menu_item_with_cb( l_pMenuOutputMenuAction, GTK_STOCK_REMOVE, "delete", context_menu_cb, l_pBox, ContextMenu_BoxRemoveOutput, i);
 							}
 
 							if(::gtk_container_get_children_count(GTK_CONTAINER(l_pMenuOutputMenuAction)) > 0)
@@ -3110,7 +3106,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 						gtk_menu_add_separator_menu_item(l_pMenuOutput);
 						if (l_bFlagCanAddOutput)
 						{
-							gtk_menu_add_new_image_menu_item_with_cb( l_pMenuOutput, GTK_STOCK_ADD, "new...", context_menu_cb, l_pBox, ContextMenu_BoxAddOutput, -1);
+							gtk_menu_add_new_image_menu_item_with_cb( l_pMenuOutput, GTK_STOCK_ADD, "new...", context_menu_cb, l_pBox, ContextMenu_BoxAddOutput, unused);
 						}
 						gtk_menu_item_set_submenu(GTK_MENU_ITEM(l_pMenuItemOutput), GTK_WIDGET(l_pMenuOutput));
 					}
@@ -3142,7 +3138,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 									gtk_menu_add_new_image_menu_item_with_cb( l_pMenuSettingMenuAction, GTK_STOCK_EDIT, "configure...", context_menu_cb, l_pBox, ContextMenu_BoxEditSetting, i);
 								}
 								if (l_bFlagCanAddSetting && l_ui32FixedSettingCount <= i) {
-									gtk_menu_add_new_image_menu_item_with_cb( l_pMenuSettingMenuAction, GTK_STOCK_REMOVE, "delete...", context_menu_cb, l_pBox, ContextMenu_BoxRemoveSetting, i);
+									gtk_menu_add_new_image_menu_item_with_cb( l_pMenuSettingMenuAction, GTK_STOCK_REMOVE, "delete", context_menu_cb, l_pBox, ContextMenu_BoxRemoveSetting, i);
 								}
 								gtk_menu_item_set_submenu(GTK_MENU_ITEM(l_pMenuSettingMenuItem), GTK_WIDGET(l_pMenuSettingMenuAction));
 							}
@@ -3154,7 +3150,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 						gtk_menu_add_separator_menu_item(l_pMenuSetting);
 						if (l_bFlagCanAddSetting)
 						{
-							gtk_menu_add_new_image_menu_item_with_cb( l_pMenuSetting, GTK_STOCK_ADD, "new...", context_menu_cb, l_pBox, ContextMenu_BoxAddSetting, -1);
+							gtk_menu_add_new_image_menu_item_with_cb( l_pMenuSetting, GTK_STOCK_ADD, "new...", context_menu_cb, l_pBox, ContextMenu_BoxAddSetting, unused);
 						}
 						gtk_menu_item_set_submenu(GTK_MENU_ITEM(l_pMenuItemSetting), GTK_WIDGET(l_pMenuSetting));
 					}
@@ -3181,12 +3177,12 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 					}
 					if (l_pBox->hasAttribute(OV_AttributeId_Box_PendingDeprecatedInterfacors))
 					{
-						gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_REFRESH, "remove deprecated I/O/S ...", context_menu_cb, l_pBox, ContextMenu_BoxRemoveDeprecatedInterfacors, -1);
+						gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_REFRESH, "remove deprecated I/O/S", context_menu_cb, l_pBox, ContextMenu_BoxRemoveDeprecatedInterfacors, unused);
 					}
-					gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_EDIT, "rename box...", context_menu_cb, l_pBox, ContextMenu_BoxRename, -1);
+					gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_EDIT, "rename box...", context_menu_cb, l_pBox, ContextMenu_BoxRename, unused);
 					if(l_pBox->getSettingCount()!=0)
 					{
-						gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_PREFERENCES, "configure box...", context_menu_cb, l_pBox, ContextMenu_BoxConfigure, -1);
+						gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_PREFERENCES, "configure box...", context_menu_cb, l_pBox, ContextMenu_BoxConfigure, unused);
 					}
 					// Add this option only if the user has the authorization to open a metabox
 					if (l_pBox->getAlgorithmClassIdentifier() == OVP_ClassId_BoxAlgorithm_Metabox)
@@ -3210,20 +3206,20 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 
 						if (canImportFile)
 						{
-							gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_PREFERENCES, "open this meta box in editor", context_menu_cb, l_pBox, ContextMenu_BoxEditMetabox, -1);
+							gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_PREFERENCES, "open this meta box in editor", context_menu_cb, l_pBox, ContextMenu_BoxEditMetabox, unused);
 						}
 					}
-					gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_CONNECT, "enable box...", context_menu_cb, l_pBox, ContextMenu_BoxEnable, -1);
-					gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_DISCONNECT, "disable box...", context_menu_cb, l_pBox, ContextMenu_BoxDisable, -1);
-					gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_CUT, "delete box...", context_menu_cb, l_pBox, ContextMenu_BoxDelete, -1);
-					gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_HELP, "box documentation...", context_menu_cb, l_pBox, ContextMenu_BoxDocumentation, -1);
-					gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_ABOUT, "about box...", context_menu_cb, l_pBox, ContextMenu_BoxAbout, -1);
+					gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_CONNECT, "enable box", context_menu_cb, l_pBox, ContextMenu_BoxEnable, unused);
+					gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_DISCONNECT, "disable box", context_menu_cb, l_pBox, ContextMenu_BoxDisable, unused);
+					gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_CUT, "delete box", context_menu_cb, l_pBox, ContextMenu_BoxDelete, unused);
+					gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_HELP, "box documentation...", context_menu_cb, l_pBox, ContextMenu_BoxDocumentation, unused);
+					gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_ABOUT, "about box...", context_menu_cb, l_pBox, ContextMenu_BoxAbout, unused);
 				}
 			}
 
 			gtk_menu_add_separator_menu_item(l_pMenu);
-			gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_EDIT, "add comment to scenario...", context_menu_cb, NULL, ContextMenu_ScenarioAddComment, -1);
-			gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_ABOUT, "about scenario...", context_menu_cb, NULL, ContextMenu_ScenarioAbout, -1);
+			gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_EDIT, "add comment to scenario...", context_menu_cb, NULL, ContextMenu_ScenarioAddComment, unused);
+			gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_ABOUT, "about scenario...", context_menu_cb, NULL, ContextMenu_ScenarioAbout, unused);
 
 			// -------------- RUN --------------
 
@@ -3744,8 +3740,8 @@ void CInterfacedScenario::pasteSelection(void)
 
 				// Aligns boxes on grid
 				l_oBoxProxy.setCenter(
-					((l_oBoxProxy.getXCenter()+8)&0xfffffff0),
-					((l_oBoxProxy.getYCenter()+8)&0xfffffff0));
+				            static_cast<int32_t>((l_oBoxProxy.getXCenter()+8)&0xfffffff0L),
+				            static_cast<int32_t>((l_oBoxProxy.getYCenter()+8)&0xfffffff0L));
 			}
 
 			if(m_rScenario.isComment(it->second))
@@ -3759,8 +3755,8 @@ void CInterfacedScenario::pasteSelection(void)
 
 				// Aligns commentes on grid
 				l_oCommentProxy.setCenter(
-					((l_oCommentProxy.getXCenter()+8)&0xfffffff0),
-					((l_oCommentProxy.getYCenter()+8)&0xfffffff0));
+				            static_cast<int32_t>((l_oCommentProxy.getXCenter()+8)&0xfffffff0L),
+				            static_cast<int32_t>((l_oCommentProxy.getYCenter()+8)&0xfffffff0L));
 			}
 		}
 	}

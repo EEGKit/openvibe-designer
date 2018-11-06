@@ -92,21 +92,33 @@ namespace
 			,m_TypeManager(typeManager)
 		{
 		}
-		virtual bool addInput(const CString& sName, const CIdentifier& rTypeIdentifier, const CIdentifier& oIdentifier, const bool bNotify)
+		virtual bool addInput(const CString& sName, const CIdentifier& rTypeIdentifier, const CIdentifier& rIdentifier, const bool bNotify)
 		{
 			uint64 v=rTypeIdentifier.toUInteger();
 			swap_byte(v, m_ui64InputCountHash);
 			swap_byte(m_ui64InputCountHash, 0x7936A0F3BD12D936LL);
 			m_oHash=m_oHash.toUInteger()^v;
+			if (rIdentifier != OV_UndefinedIdentifier)
+			{
+				v=rIdentifier.toUInteger();
+				swap_byte(v, 0x2BD1D158F340014D);
+				m_oHash=m_oHash.toUInteger()^v;
+			}
 			return true;
 		}
 		//
-		virtual bool addOutput(const CString& sName, const CIdentifier& rTypeIdentifier,const CIdentifier& oIdentifier, const bool bNotify)
+		virtual bool addOutput(const CString& sName, const CIdentifier& rTypeIdentifier,const CIdentifier& rIdentifier, const bool bNotify)
 		{
 			uint64 v=rTypeIdentifier.toUInteger();
 			swap_byte(v, m_ui64OutputCountHash);
 			swap_byte(m_ui64OutputCountHash, 0xCBB66A5B893AA4E9LL);
 			m_oHash=m_oHash.toUInteger()^v;
+			if (rIdentifier != OV_UndefinedIdentifier)
+			{
+				v=rIdentifier.toUInteger();
+				swap_byte(v, 0x87CA0F5EFC4FAC68);
+				m_oHash=m_oHash.toUInteger()^v;
+			}
 			return true;
 		}
 		virtual bool addSetting(const CString& sName, const CIdentifier& rTypeIdentifier, const CString& sDefaultValue, const bool bModifiable, const CIdentifier& rIdentifier, const bool bNotify)
@@ -115,6 +127,12 @@ namespace
 			swap_byte(v, m_ui64SettingCountHash);
 			swap_byte(m_ui64SettingCountHash, 0x3C87F3AAE9F8303BLL);
 			m_oHash=m_oHash.toUInteger()^v;
+			if (rIdentifier != OV_UndefinedIdentifier)
+			{
+				v=rIdentifier.toUInteger();
+				swap_byte(v, 0x17185F7CDA63A9FA);
+				m_oHash=m_oHash.toUInteger()^v;
+			}
 			return true;
 		}
 		virtual bool addInputSupport(const OpenViBE::CIdentifier &rTypeIdentifier)
@@ -1392,51 +1410,11 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 
 	std::string l_sDefaultURLBaseString = std::string(m_KernelContext.getConfigurationManager().expand("${Designer_HelpBrowserURLBase}"));
 #ifdef MENSIA_DISTRIBUTION
-	if (!FS::Files::directoryExists(l_sDefaultURLBaseString.c_str()))
-	{
-		// Should not happen unless the user modified the token by hand
-		m_KernelContext.getLogManager() << LogLevel_Error << "The configuration token ${Designer_HelpBrowserURLBase} seems to be set to an incorrect value.\n";
-	}
 	if (m_pArchwayHandler->initialize() == Mensia::EngineInitialisationStatus::NotAvailable)
 	{
 		gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration")));
 	}
 #else
-	// Search txt file that contains the list of boxes
-	if(l_sDefaultURLBaseString.substr(l_sDefaultURLBaseString.find_last_of(".") + 1) == "chm::")
-	{
-		std::string l_sCHMFile = l_sDefaultURLBaseString.substr(0, l_sDefaultURLBaseString.length() - 2);
-		if(FS::Files::fileExists(l_sCHMFile.c_str()))
-		{
-			std::string l_sTXTFile = l_sDefaultURLBaseString.substr(0, l_sDefaultURLBaseString.length() - 5) + "txt";
-			if( FS::Files::fileExists(l_sTXTFile.c_str()))
-			{
-				std::ifstream l_pDocumentationStream;
-				FS::Files::openIFStream(l_pDocumentationStream, l_sTXTFile.c_str());
-				std::string l_sLine;
-				// Check if current box's documentation is listed (thus available in default documentation)
-				while(!l_pDocumentationStream.eof())
-				{
-					l_pDocumentationStream >> l_sLine;
-					m_vDocumentedBoxes.push_back(l_sLine);
-				}
-				// Sort vector to ease search of elements
-				 std::sort(m_vDocumentedBoxes.begin(), m_vDocumentedBoxes.end());
-			}
-			else
-			{
-				// Should not happen unless the user removes it
-				m_KernelContext.getLogManager() << LogLevel_Error << "The list of documented boxes could not be found at ["<< l_sTXTFile.c_str() <<"]. "<<
-					"Either the configuration token ${Designer_HelpBrowserURLBase} was modified to an incorrect value, or it is missing.\n";
-			}
-		}
-		else
-		{
-			// Should not happen unless the user removed the documentation
-			m_KernelContext.getLogManager() << LogLevel_Error << "The box documentation could not be found at ["<< l_sCHMFile.c_str() <<"]. "<<
-				"Either the configuration token ${Designer_HelpBrowserURLBase} was modified to an incorrect value, or the documentation is missing.\n";
-		}
-	}
 	gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration")));
 #endif
 }
@@ -2656,7 +2634,7 @@ void CApplication::aboutLinkClickedCB(const gchar *url)
 void CApplication::browseDocumentationCB(void)
 {
 	m_KernelContext.getLogManager() << LogLevel_Debug << "CApplication::browseDocumentationCB\n";
-	CString l_Command = m_KernelContext.getConfigurationManager().expand("${Designer_HelpBrowserCommand} ${Designer_HelpBrowserDocumentationIndex} ${Designer_HelpBrowserCommandPostfix}");
+	CString l_Command = m_KernelContext.getConfigurationManager().expand("${Designer_HelpBrowserCommand} \"${Designer_HelpBrowserDocumentationIndex}\" ${Designer_HelpBrowserCommandPostfix}");
 
 	int l_Result = system(l_Command.toASCIIString());
 	OV_WARNING_UNLESS(
