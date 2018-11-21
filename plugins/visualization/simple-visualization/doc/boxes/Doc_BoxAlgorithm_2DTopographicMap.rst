@@ -3,6 +3,12 @@
 2D topographic map
 ==================
 
+.. container:: attribution
+
+   :Author:
+      Vincent Delannoy
+   :Company:
+      INRIA/IRISA
 
 .. image:: images/Doc_BoxAlgorithm_2DTopographicMap.png
 

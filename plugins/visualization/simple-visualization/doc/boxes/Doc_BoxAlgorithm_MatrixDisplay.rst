@@ -3,6 +3,12 @@
 Matrix Display
 ==============
 
+.. container:: attribution
+
+   :Author:
+      Laurent Bonnet
+   :Company:
+      INRIA/IRISA
 
 .. image:: images/Doc_BoxAlgorithm_MatrixDisplay.png
 

@@ -3,6 +3,12 @@
 Stacked Bitmap (Vertical)
 =========================
 
+.. container:: attribution
+
+   :Author:
+      Yann Renard
+   :Company:
+      Mensia Technologies SA
 
 .. image:: images/Doc_BoxAlgorithm_StackedBitmapVertical.png
 
