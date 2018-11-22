@@ -12,9 +12,9 @@
 
 .. image:: images/Doc_BoxAlgorithm_3DTomographicVisualization.png
 
-The *3D Tomographic Visualization* is designed to display the output of a signal filtered using the a tomographic reconstruction algorithm such as :ref:`Doc_BoxAlgorithm_XLORETA`.
-:ref:`Doc_BoxAlgorithm_XLORETA` computes the spatial filter that transforms an input signal with :math:`C` channels/sensors to :math:`V =` 2394 sources.
-These sources form a subdivision of the brain in 3 dimensions, each source being encoded as a small cube (7mm resolution) called *voxel*.
+The *3D Tomographic Visualization* is designed to display the output of a signal filtered using the a tomographic reconstruction algorithm such as LORETA.
+LORETA computes the spatial filter that transforms an input signal with :math:`C` channels/sensors to :math:`V =` 2394 sources. 
+These sources form a subdivision of the brain in 3 dimensions, each source being encoded as a small cube (7mm resolution) called *voxel*. The input to the box should thus be a matrix of 2394x3 values.
 
 The *3D Tomographic Visualization* box shares common concepts and settings with the other boxes in the **Mensia Advanced Visualization Toolset**.
 Additional information are available in the dedicated documentation pages:
@@ -35,7 +35,7 @@ Inputs
 Matrix
 ~~~~~~
 
-This box expects a source current density power stream coming from :ref:`Doc_BoxAlgorithm_XLORETA`, ie matrices of :math:`V =` 2394 channels, one value per voxel of the reconstruction.
+This box expects a source current density power stream coming from a LORETA transformation, ie matrices of :math:`V =` 2394 channels, one value per voxel of the reconstruction.
 
 .. _Doc_BoxAlgorithm_3DTomographicVisualization_Settings:
 

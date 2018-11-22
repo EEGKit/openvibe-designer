@@ -6,7 +6,7 @@ FILE(MAKE_DIRECTORY "${DIST_DOCTMP}/sphinx")
 set(INCLUDED_OV_SDK_COMPONENTS DEPENDENCIES DEVELOPER_TOOLS)
 include("AddOpenViBESDKComponents")
 
-install(DIRECTORY "${OPENVIBE_SDK_PATH}/doc-tmp/" DESTINATION ${DIST_DOCTMP})
+file(COPY "${OPENVIBE_SDK_PATH}/doc-tmp/" DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/doc-tmp)
 
 file(GLOB SPHINX_DOC_DIRS LIST_DIRECTORIES true LIST_FILES false
 	"${PROJECT_SOURCE_DIR}/plugins/visualization/*"
@@ -14,8 +14,10 @@ file(GLOB SPHINX_DOC_DIRS LIST_DIRECTORIES true LIST_FILES false
 	)
 foreach(DOCDIR ${SPHINX_DOC_DIRS})
 	if(IS_DIRECTORY "${DOCDIR}/doc/boxes")
-		INSTALL(DIRECTORY "${DOCDIR}/doc/boxes" DESTINATION ${DIST_DOCTMP}/sphinx/source)
+		file(COPY "${DOCDIR}/doc/boxes" DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/doc-tmp/sphinx/source)
 	endif()
 endforeach()
 
-install(DIRECTORY sphinx/source DESTINATION ${DIST_DOCTMP}/sphinx)
+file(COPY sphinx/source DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/doc-tmp/sphinx)
+
+install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc-tmp/ DESTINATION ${DIST_DOCTMP})
