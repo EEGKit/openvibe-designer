@@ -4,7 +4,7 @@ cmake_policy(SET CMP0026 OLD)
 cmake_policy(SET CMP0039 NEW)
 cmake_policy(SET CMP0042 OLD)
 cmake_policy(SET CMP0043 OLD)
-cmake_policy(SET CMP0045 OLD) 
+cmake_policy(SET CMP0045 OLD)
 cmake_policy(SET CMP0048 OLD)
 cmake_policy(SET CMP0057 NEW)
 
@@ -270,6 +270,8 @@ MESSAGE(STATUS "Building ${BRAND_NAME} ${DESIGNER_NAME} [${OEM_DISTRIBUTION}] Ve
 
 # Add vendor specific installation instructions
 # Traverse these directories and build their components
+
+ADD_SUBDIRECTORY("documentation/")
 
 IF(NOT(SKIP_PLUGINS))
 	ADD_SUBDIRECTORY("plugins/")

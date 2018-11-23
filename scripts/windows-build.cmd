@@ -157,7 +157,11 @@ setlocal
 
 call "windows-initialize-environment.cmd" --platform-target %PlatformTarget% %initialize_env_args%
 if defined vsgenerate (
-	set generator=-G"%VSCMake%" -T "v120"
+	if /i "%PlatformTarget%" == "x64" (
+		set generator=-G"%VSCMake% Win64" -T "v120"
+	) else (
+		set generator=-G"%VSCMake%" -T "v120"	
+	)
 	if not defined build_dir (
 		set build_dir=%root_dir%\..\openvibe-designer-build\vs-project-%PlatformTarget%
 	)
