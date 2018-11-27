@@ -1,6 +1,6 @@
 # Sphinx Documentation
 
-FILE(MAKE_DIRECTORY "${DIST_DOCTMP}/sphinx")
+install(DIRECTORY DESTINATION "${DIST_DOCTMP}/sphinx")
 
 # Collect all sphinx documentation files from all projects
 set(INCLUDED_OV_SDK_COMPONENTS DEPENDENCIES DEVELOPER_TOOLS)
