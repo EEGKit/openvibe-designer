@@ -3,6 +3,7 @@
 #include <visualization-toolkit/ovvizIVisualizationWidget.h>
 
 #include <vector>
+#include <limits>
 
 namespace OpenViBEDesigner
 {
