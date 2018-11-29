@@ -3,6 +3,7 @@
 #include <visualization-toolkit/ovvizIVisualizationWidget.h>
 
 #include <vector>
+#include <limits>
 
 namespace OpenViBEDesigner
 {
@@ -97,9 +98,11 @@ namespace OpenViBEDesigner
 		OpenViBE::CIdentifier m_ParentIdentifier;
 		OpenViBE::CIdentifier m_BoxIdentifier;
 		std::vector<OpenViBE::CIdentifier> m_Children;
-		unsigned int m_Width;
-		unsigned int m_Height;
-		int m_DividerPosition;
-		int m_MaxDividerPosition;
+
+		// @fixme should initialize meaningfully in constructor or initialize()?
+		unsigned int m_Width = 0;
+		unsigned int m_Height = 0;
+		int m_DividerPosition = std::numeric_limits<int>::min();
+		int m_MaxDividerPosition = std::numeric_limits<int>::min();
 	};
 }
