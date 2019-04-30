@@ -273,7 +273,7 @@ namespace OpenViBEPlugins
 			 * \return True if electrode position could be retrieved
 			 */
 			virtual bool getElectrodePosition(
-				const uint32_t ui32ElectrodeIndex,
+				uint32_t ui32ElectrodeIndex,
 				double* pElectrodePosition);
 
 			/**
@@ -294,7 +294,7 @@ namespace OpenViBEPlugins
 			 * \return True if electrode label could be retrieved
 			 */
 			virtual bool getElectrodeLabel(
-				const uint32_t ui32ElectrodeIndex,
+				uint32_t ui32ElectrodeIndex,
 				OpenViBE::CString& rElectrodeLabel);
 
 			/**
@@ -311,7 +311,7 @@ namespace OpenViBEPlugins
 			 * \return True if channel position could be retrieved (rChannelPosition then points to an array of 3 floats)
 			 */
 			virtual bool getChannelPosition(
-				const uint32_t ui32ChannelIndex,
+				uint32_t ui32ChannelIndex,
 				double*& rChannelPosition);
 
 			/**
@@ -322,7 +322,7 @@ namespace OpenViBEPlugins
 			 * \return True if channel coordinates could be retrieved
 			 */
 			virtual bool getChannelSphericalCoordinates(
-				const uint32_t ui32ChannelIndex,
+				uint32_t ui32ChannelIndex,
 				double& rTheta,
 				double& rPhi);
 
@@ -333,17 +333,17 @@ namespace OpenViBEPlugins
 			 * \return True if channel label could be retrieved
 			 */
 			virtual bool getChannelLabel(
-				const uint32_t ui32ChannelIndex,
+				uint32_t ui32ChannelIndex,
 				OpenViBE::CString& rChannelLabel);
 
 			virtual void setMatrixDimensionCount(
-				const uint32_t ui32DimensionCount);
+				uint32_t ui32DimensionCount);
 			virtual void setMatrixDimensionSize(
-				const uint32_t ui32DimensionIndex,
-				const uint32_t ui32DimensionSize);
+				uint32_t ui32DimensionIndex,
+				uint32_t ui32DimensionSize);
 			virtual void setMatrixDimensionLabel(
-				const uint32_t ui32DimensionIndex,
-				const uint32_t ui32DimensionEntryIndex,
+				uint32_t ui32DimensionIndex,
+				uint32_t ui32DimensionEntryIndex,
 				const char* sDimensionLabel);
 
 			// Returns false on failure
@@ -358,11 +358,11 @@ namespace OpenViBEPlugins
 				uint32_t ui32SamplingFrequency);
 
 			virtual void setStimulationCount(
-				const uint32_t ui32StimulationCount);
+				uint32_t ui32StimulationCount);
 			virtual void setStimulation(
-				const uint32_t ui32StimulationIndex,
-				const uint64_t ui64StimulationIdentifier,
-				const uint64_t ui64StimulationDate);
+				uint32_t ui32StimulationIndex,
+				uint64_t ui64StimulationIdentifier,
+				uint64_t ui64StimulationDate);
 
 			/**
 			 * \brief Set display mode

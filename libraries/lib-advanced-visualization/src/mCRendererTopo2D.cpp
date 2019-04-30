@@ -146,7 +146,7 @@ void CRendererTopo2D::rebuild3DMeshesPre(const IRendererContext& rContext)
 
 namespace
 {
-	static void unfold(std::vector < CVertex >& rVertex, float fLayer=0)
+	void unfold(std::vector < CVertex >& rVertex, float fLayer=0)
 	{
 		std::vector < CVertex >::iterator it;
 		for(it=rVertex.begin(); it!=rVertex.end(); it++)

@@ -39,8 +39,8 @@ namespace OpenViBEPlugins
 			~CTopographicMapDatabase();
 
 			void setMatrixDimensionSize(
-				const uint32_t ui32DimensionIndex,
-				const uint32_t ui32DimensionSize);
+				uint32_t ui32DimensionIndex,
+				uint32_t ui32DimensionSize);
 
 			/**
 			 * \brief Callback called upon channel localisation buffer reception

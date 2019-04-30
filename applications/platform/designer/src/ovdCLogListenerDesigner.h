@@ -98,29 +98,29 @@ namespace OpenViBEDesigner
 			virtual bool activate(OpenViBE::Kernel::ELogLevel eStartLogLevel, OpenViBE::Kernel::ELogLevel eEndLogLevel, bool bActive);
 			virtual bool activate(bool bActive);
 
-			virtual void log(const OpenViBE::time64 time64Value);
+			virtual void log(OpenViBE::time64 time64Value);
 
-			virtual void log(const uint64_t ui64Value);
-			virtual void log(const uint32_t ui32Value);
-			virtual void log(const uint16_t ui16Value);
-			virtual void log(const uint8_t ui8Value);
+			virtual void log(uint64_t ui64Value);
+			virtual void log(uint32_t ui32Value);
+			virtual void log(uint16_t ui16Value);
+			virtual void log(uint8_t ui8Value);
 
-			virtual void log(const int64_t i64Value);
-			virtual void log(const int32_t i32Value);
-			virtual void log(const int16_t i16Value);
-			virtual void log(const int8_t i8Value);
+			virtual void log(int64_t i64Value);
+			virtual void log(int32_t i32Value);
+			virtual void log(int16_t i16Value);
+			virtual void log(int8_t i8Value);
 
-			virtual void log(const double f64Value);
-			virtual void log(const float f32Value);
+			virtual void log(double f64Value);
+			virtual void log(float f32Value);
 
-			virtual void log(const bool bValue);
+			virtual void log(bool bValue);
 
 			virtual void log(const OpenViBE::CIdentifier& rValue);
 			virtual void log(const OpenViBE::CString& rValue);
 			virtual void log(const char* pValue);
 
-			virtual void log(const OpenViBE::Kernel::ELogLevel eLogLevel);
-			virtual void log(const OpenViBE::Kernel::ELogColor eLogColor);
+			virtual void log(OpenViBE::Kernel::ELogLevel eLogLevel);
+			virtual void log(OpenViBE::Kernel::ELogColor eLogColor);
 
 			void clearMessages();
 			void focusMessageWindow();

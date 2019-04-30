@@ -17,19 +17,19 @@ using namespace std;
 
 namespace
 {
-	static void collect_widget_cb(GtkWidget* pWidget, gpointer pUserData)
+	void collect_widget_cb(GtkWidget* pWidget, gpointer pUserData)
 	{
 		static_cast< vector< GtkWidget* > *>(pUserData)->push_back(pWidget);
 	}
 
-	static void remove_widget_cb(GtkWidget* pWidget, gpointer pUserData)
+	void remove_widget_cb(GtkWidget* pWidget, gpointer pUserData)
 	{
 		gtk_container_remove(GTK_CONTAINER(pUserData), pWidget);
 	}
 
 // ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- -----------
 
-	static void on_entry_setting_bool_edited(GtkEntry* pEntry, gpointer pUserData)
+	void on_entry_setting_bool_edited(GtkEntry* pEntry, gpointer pUserData)
 	{
 		vector< GtkWidget* > l_vWidget;
 		gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(pEntry))), collect_widget_cb, &l_vWidget);
@@ -52,7 +52,7 @@ namespace
 		}
 	}
 
-	static void on_checkbutton_setting_bool_pressed(GtkToggleButton* pButton, gpointer pUserData)
+	void on_checkbutton_setting_bool_pressed(GtkToggleButton* pButton, gpointer pUserData)
 	{
 		vector< GtkWidget* > l_vWidget;
 		gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(pButton))), collect_widget_cb, &l_vWidget);
@@ -69,7 +69,7 @@ namespace
 		gtk_toggle_button_set_inconsistent(pButton, false);
 	}
 
-	static void on_button_setting_integer_pressed(GtkButton* pButton, gpointer pUserData, gint iOffset)
+	void on_button_setting_integer_pressed(GtkButton* pButton, gpointer pUserData, gint iOffset)
 	{
 		const IKernelContext& l_rKernelContext=static_cast < CSettingCollectionHelper* >(pUserData)->m_rKernelContext;
 
@@ -84,17 +84,17 @@ namespace
 		gtk_entry_set_text(l_pWidget, l_sValue);
 	}
 
-	static void on_button_setting_integer_up_pressed(GtkButton* pButton, gpointer pUserData)
+	void on_button_setting_integer_up_pressed(GtkButton* pButton, gpointer pUserData)
 	{
 		on_button_setting_integer_pressed(pButton, pUserData, 1);
 	}
 
-	static void on_button_setting_integer_down_pressed(GtkButton* pButton, gpointer pUserData)
+	void on_button_setting_integer_down_pressed(GtkButton* pButton, gpointer pUserData)
 	{
 		on_button_setting_integer_pressed(pButton, pUserData, -1);
 	}
 
-	static void on_button_setting_float_pressed(GtkButton* pButton, gpointer pUserData, gdouble dOffset)
+	void on_button_setting_float_pressed(GtkButton* pButton, gpointer pUserData, gdouble dOffset)
 	{
 		const IKernelContext& l_rKernelContext=static_cast < CSettingCollectionHelper* >(pUserData)->m_rKernelContext;
 
@@ -109,17 +109,17 @@ namespace
 		gtk_entry_set_text(l_pWidget, l_sValue);
 	}
 
-	static void on_button_setting_float_up_pressed(GtkButton* pButton, gpointer pUserData)
+	void on_button_setting_float_up_pressed(GtkButton* pButton, gpointer pUserData)
 	{
 		on_button_setting_float_pressed(pButton, pUserData, 1);
 	}
 
-	static void on_button_setting_float_down_pressed(GtkButton* pButton, gpointer pUserData)
+	void on_button_setting_float_down_pressed(GtkButton* pButton, gpointer pUserData)
 	{
 		on_button_setting_float_pressed(pButton, pUserData, -1);
 	}
 
-	static void on_button_setting_filename_browse_pressed(GtkButton* pButton, gpointer pUserData)
+	void on_button_setting_filename_browse_pressed(GtkButton* pButton, gpointer pUserData)
 	{
 		const IKernelContext& l_rKernelContext=static_cast < CSettingCollectionHelper* >(pUserData)->m_rKernelContext;
 
@@ -163,7 +163,7 @@ namespace
 		gtk_widget_destroy(l_pWidgetDialogOpen);
 	}
 
-	static void on_button_setting_foldername_browse_pressed(GtkButton* pButton, gpointer pUserData)
+	void on_button_setting_foldername_browse_pressed(GtkButton* pButton, gpointer pUserData)
 	{
 		const IKernelContext& l_rKernelContext=static_cast < CSettingCollectionHelper* >(pUserData)->m_rKernelContext;
 
@@ -208,7 +208,7 @@ namespace
 	}
 // ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- -----------
 
-	static void on_button_setting_script_edit_pressed(GtkButton* pButton, gpointer pUserData)
+	void on_button_setting_script_edit_pressed(GtkButton* pButton, gpointer pUserData)
 	{
 		const IKernelContext& l_rKernelContext=static_cast < CSettingCollectionHelper* >(pUserData)->m_rKernelContext;
 
@@ -237,7 +237,7 @@ namespace
 
 // ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- -----------
 
-	static void on_button_setting_color_choose_pressed(GtkColorButton* pButton, gpointer pUserData)
+	void on_button_setting_color_choose_pressed(GtkColorButton* pButton, gpointer pUserData)
 	{
 		vector< GtkWidget* > l_vWidget;
 		gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(pButton))), collect_widget_cb, &l_vWidget);
@@ -272,14 +272,14 @@ namespace
 		map < GtkSpinButton*, uint32_t > vSpinButtonMap;
 	} SColorGradientData;
 
-	static void on_gtk_widget_destroy_cb(GtkWidget* pWidget, gpointer pUserData)
+	void on_gtk_widget_destroy_cb(GtkWidget* pWidget, gpointer pUserData)
 	{
 		gtk_widget_destroy(pWidget);
 	}
 
-	static void on_initialize_color_gradient(GtkWidget* pWidget, gpointer pUserData);
+	void on_initialize_color_gradient(GtkWidget* pWidget, gpointer pUserData);
 
-	static void on_refresh_color_gradient(GtkWidget* pWidget, GdkEventExpose* pEvent, gpointer pUserData)
+	void on_refresh_color_gradient(GtkWidget* pWidget, GdkEventExpose* pEvent, gpointer pUserData)
 	{
 		SColorGradientData* l_pUserData=static_cast<SColorGradientData*>(pUserData);
 
@@ -325,7 +325,7 @@ namespace
 		g_object_unref(l_pGC);
 	}
 
-	static void on_color_gradient_spin_button_value_changed(GtkSpinButton* pButton, gpointer pUserData)
+	void on_color_gradient_spin_button_value_changed(GtkSpinButton* pButton, gpointer pUserData)
 	{
 		SColorGradientData* l_pUserData=static_cast<SColorGradientData*>(pUserData);
 
@@ -356,7 +356,7 @@ namespace
 		on_refresh_color_gradient(nullptr, nullptr, pUserData);
 	}
 
-	static void on_color_gradient_color_button_pressed(GtkColorButton* pButton, gpointer pUserData)
+	void on_color_gradient_color_button_pressed(GtkColorButton* pButton, gpointer pUserData)
 	{
 		SColorGradientData* l_pUserData=static_cast<SColorGradientData*>(pUserData);
 
@@ -368,7 +368,7 @@ namespace
 		on_refresh_color_gradient(nullptr, nullptr, pUserData);
 	}
 
-	static void on_initialize_color_gradient(GtkWidget* pWidget, gpointer pUserData)
+	void on_initialize_color_gradient(GtkWidget* pWidget, gpointer pUserData)
 	{
 		SColorGradientData* l_pUserData=static_cast<SColorGradientData*>(pUserData);
 
@@ -416,7 +416,7 @@ namespace
 		gtk_widget_show(l_pUserData->pContainer);
 	}
 
-	static void on_button_color_gradient_add_pressed(GtkButton* pButton, gpointer pUserData)
+	void on_button_color_gradient_add_pressed(GtkButton* pButton, gpointer pUserData)
 	{
 		SColorGradientData* l_pUserData=static_cast<SColorGradientData*>(pUserData);
 		l_pUserData->vColorGradient.resize(l_pUserData->vColorGradient.size()+1);
@@ -425,7 +425,7 @@ namespace
 		on_refresh_color_gradient(nullptr, nullptr, pUserData);
 	}
 
-	static void on_button_color_gradient_remove_pressed(GtkButton* pButton, gpointer pUserData)
+	void on_button_color_gradient_remove_pressed(GtkButton* pButton, gpointer pUserData)
 	{
 		SColorGradientData* l_pUserData=static_cast<SColorGradientData*>(pUserData);
 		if(l_pUserData->vColorGradient.size() > 2)
@@ -437,7 +437,7 @@ namespace
 		}
 	}
 
-	static void on_button_setting_color_gradient_configure_pressed(GtkButton* pButton, gpointer pUserData)
+	void on_button_setting_color_gradient_configure_pressed(GtkButton* pButton, gpointer pUserData)
 	{
 		SColorGradientData l_oUserData;
 

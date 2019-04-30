@@ -119,7 +119,7 @@ namespace Mensia
 
 		protected:
 
-			inline std::vector < double > split_range(double fStart, double fStop, unsigned int uiCount=10)
+			std::vector < double > split_range(double fStart, double fStop, unsigned int uiCount=10)
 			{
 				std::vector < double > l_vResult;
 				double l_fRange=fStop-fStart;

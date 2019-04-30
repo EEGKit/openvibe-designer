@@ -539,7 +539,8 @@ namespace
 		std::transform(str.begin(), str.end(), str.begin(), std::ptr_fun<int, int>(std::toupper));
 		return str;
 	}
-	static gboolean box_algorithm_search_func(GtkTreeModel *model, GtkTreeIter *iter, gpointer pUserData)
+
+	gboolean box_algorithm_search_func(GtkTreeModel *model, GtkTreeIter *iter, gpointer pUserData)
 	{
 		CApplication* l_pApplication=static_cast<CApplication*>(pUserData);
 		/* Visible if row is non-empty and first column is "HI" */
@@ -575,7 +576,7 @@ namespace
 		return l_bVisible;
 	}
 
-	static gboolean box_algorithm_prune_empty_folders(GtkTreeModel *model, GtkTreeIter *iter, gpointer pUserData)
+	gboolean box_algorithm_prune_empty_folders(GtkTreeModel *model, GtkTreeIter *iter, gpointer pUserData)
 	{
 		gboolean l_bIsPlugin;
 		gtk_tree_model_get(model, iter, Resource_BooleanIsPlugin, &l_bIsPlugin, -1);
@@ -588,7 +589,7 @@ namespace
 		return false;
 	}
 
-	static gboolean	do_refilter( CApplication *pApplication )
+	gboolean	do_refilter( CApplication *pApplication )
 	{
 		/*
 		if (0 == strcmp(pApplication->m_sSearchTerm, ""))
@@ -632,7 +633,7 @@ namespace
 		return false;
 	}
 
-	static void	queue_refilter( CApplication* pApplication )
+	void	queue_refilter( CApplication* pApplication )
 	{
 		if( pApplication->m_giFilterTimeout )
 			g_source_remove( pApplication->m_giFilterTimeout );
@@ -654,7 +655,7 @@ namespace
 		queue_refilter(pApplication);
 	}
 
-	static gboolean searchbox_select_all_cb(GtkWidget* pWidget, GdkEvent* pEvent, CApplication* pApplication)
+	gboolean searchbox_select_all_cb(GtkWidget* pWidget, GdkEvent* pEvent, CApplication* pApplication)
 	{
 		// we select the current search
 		gtk_widget_grab_focus(pWidget); // we must grab or selection wont work. It also triggers the other CBs.
@@ -662,20 +663,20 @@ namespace
 		return false;
 	}
 
-	static gboolean searchbox_focus_in_cb(GtkWidget* pWidget, GdkEvent* pEvent, CApplication* pApplication)
+	gboolean searchbox_focus_in_cb(GtkWidget* pWidget, GdkEvent* pEvent, CApplication* pApplication)
 	{
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(pApplication->m_pBuilderInterface, "openvibe-menu_edit")), false);
 		return false;
 	}
 
-	static gboolean searchbox_focus_out_cb(GtkWidget* pWidget, GdkEvent* pEvent, CApplication* pApplication)
+	gboolean searchbox_focus_out_cb(GtkWidget* pWidget, GdkEvent* pEvent, CApplication* pApplication)
 	{
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(pApplication->m_pBuilderInterface, "openvibe-menu_edit")), true);
 		gtk_editable_select_region(GTK_EDITABLE(pWidget), 0, 0);
 		return false;
 	}
 
-	static void about_newversion_button_display_changelog_cb(GtkButton* pButton, gpointer pUserData)
+	void about_newversion_button_display_changelog_cb(GtkButton* pButton, gpointer pUserData)
 	{
 #if defined TARGET_OS_Windows
 		System::WindowsUtilities::utf16CompliantShellExecute(nullptr, "open", (OVD_README_File).toASCIIString(), nullptr, nullptr, SHOW_OPENWINDOW);

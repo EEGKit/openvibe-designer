@@ -43,12 +43,11 @@ extern map<uint32_t, GdkColor> g_vColors;
 
 namespace
 {
-
-	static GtkTargetEntry g_vTargetEntry[]= {
+	GtkTargetEntry g_vTargetEntry[]= {
 		{ (gchar*)"STRING", 0, 0 },
 		{ (gchar*)"text/plain", 0, 0 } };
 
-	static GdkColor colorFromIdentifier(const CIdentifier& rIdentifier)
+	GdkColor colorFromIdentifier(const CIdentifier& rIdentifier)
 	{
 		GdkColor l_oGdkColor;
 		unsigned int l_ui32Value1=0;
@@ -68,7 +67,7 @@ namespace
 		return l_oGdkColor;
 	}
 
-	static std::string getBoxAlgorithmURL(const std::string& sInput, const bool bRemoveSlash=false)
+	std::string getBoxAlgorithmURL(const std::string& sInput, const bool bRemoveSlash=false)
 	{
 		std::string l_sInput(sInput);
 		std::string l_sOutput;
@@ -109,7 +108,7 @@ namespace
 		return l_sOutput;
 	}
 
-	static void count_widget_cb(GtkWidget* pWidget, gpointer pUserData)
+	void count_widget_cb(GtkWidget* pWidget, gpointer pUserData)
 	{
 		int* i=reinterpret_cast < int* > (pUserData);
 		if(i)
@@ -118,14 +117,14 @@ namespace
 		}
 	}
 
-	static int gtk_container_get_children_count(GtkContainer* pContainer)
+	int gtk_container_get_children_count(GtkContainer* pContainer)
 	{
 		int l_iCount=0;
 		gtk_container_foreach(pContainer, count_widget_cb, &l_iCount);
 		return l_iCount;
 	}
 
-	static gboolean scenario_scrolledwindow_scroll_event_cb(GtkWidget* pWidget, GdkEventScroll* pEvent)
+	gboolean scenario_scrolledwindow_scroll_event_cb(GtkWidget* pWidget, GdkEventScroll* pEvent)
 	{
 		guint l_uiState = pEvent->state & gtk_accelerator_get_default_mod_mask ();
 
@@ -147,36 +146,43 @@ namespace
 		return FALSE;
 	}
 
-	static void scenario_drawing_area_expose_cb(GtkWidget* pWidget, GdkEventExpose* pEvent, gpointer pUserData)
+	void scenario_drawing_area_expose_cb(GtkWidget* pWidget, GdkEventExpose* pEvent, gpointer pUserData)
 	{
 		static_cast<CInterfacedScenario*>(pUserData)->scenarioDrawingAreaExposeCB(pEvent);
 	}
-	static void scenario_drawing_area_drag_data_received_cb(GtkWidget* pWidget, GdkDragContext* pDragContext, gint iX, gint iY, GtkSelectionData* pSelectionData, guint uiInfo, guint uiT, gpointer pUserData)
+
+	void scenario_drawing_area_drag_data_received_cb(GtkWidget* pWidget, GdkDragContext* pDragContext, gint iX, gint iY, GtkSelectionData* pSelectionData, guint uiInfo, guint uiT, gpointer pUserData)
 	{
 		static_cast<CInterfacedScenario*>(pUserData)->scenarioDrawingAreaDragDataReceivedCB(pDragContext, iX, iY, pSelectionData, uiInfo, uiT);
 	}
-	static gboolean scenario_drawing_area_motion_notify_cb(GtkWidget* pWidget, GdkEventMotion* pEvent, gpointer pUserData)
+
+	gboolean scenario_drawing_area_motion_notify_cb(GtkWidget* pWidget, GdkEventMotion* pEvent, gpointer pUserData)
 	{
 		static_cast<CInterfacedScenario*>(pUserData)->scenarioDrawingAreaMotionNotifyCB(pWidget, pEvent);
 		return FALSE;
 	}
-	static void scenario_drawing_area_button_pressed_cb(GtkWidget* pWidget, GdkEventButton* pEvent, gpointer pUserData)
+
+	void scenario_drawing_area_button_pressed_cb(GtkWidget* pWidget, GdkEventButton* pEvent, gpointer pUserData)
 	{
 		static_cast<CInterfacedScenario*>(pUserData)->scenarioDrawingAreaButtonPressedCB(pWidget, pEvent);
 	}
-	static void scenario_drawing_area_button_released_cb(GtkWidget* pWidget, GdkEventButton* pEvent, gpointer pUserData)
+
+	void scenario_drawing_area_button_released_cb(GtkWidget* pWidget, GdkEventButton* pEvent, gpointer pUserData)
 	{
 		static_cast<CInterfacedScenario*>(pUserData)->scenarioDrawingAreaButtonReleasedCB(pWidget, pEvent);
 	}
-	static void scenario_drawing_area_key_press_event_cb(GtkWidget* pWidget, GdkEventKey* pEvent, gpointer pUserData)
+
+	void scenario_drawing_area_key_press_event_cb(GtkWidget* pWidget, GdkEventKey* pEvent, gpointer pUserData)
 	{
 		static_cast<CInterfacedScenario*>(pUserData)->scenarioDrawingAreaKeyPressEventCB(pWidget, pEvent);
 	}
-	static void scenario_drawing_area_key_release_event_cb(GtkWidget* pWidget, GdkEventKey* pEvent, gpointer pUserData)
+
+	void scenario_drawing_area_key_release_event_cb(GtkWidget* pWidget, GdkEventKey* pEvent, gpointer pUserData)
 	{
 		static_cast<CInterfacedScenario*>(pUserData)->scenarioDrawingAreaKeyReleaseEventCB(pWidget, pEvent);
 	}
-	static void context_menu_cb(GtkMenuItem* pMenuItem, CInterfacedScenario::BoxContextMenuCB* pContextMenuCB)
+
+	void context_menu_cb(GtkMenuItem* pMenuItem, CInterfacedScenario::BoxContextMenuCB* pContextMenuCB)
 	{
 		//CInterfacedScenario::BoxContextMenuCB* pContextMenuCB=static_cast < CInterfacedScenario::BoxContextMenuCB* >(pUserData);
 		switch(pContextMenuCB->ui32Command)
@@ -266,7 +272,7 @@ namespace
 		pContextMenuCB->pInterfacedScenario->redraw();
 	}
 
-	static void gdk_draw_rounded_rectangle(GdkDrawable* pDrawable, GdkGC* pDrawGC, gboolean bFill, gint x, gint y, gint width, gint height, gint radius=8)
+	void gdk_draw_rounded_rectangle(GdkDrawable* pDrawable, GdkGC* pDrawGC, gboolean bFill, gint x, gint y, gint width, gint height, gint radius=8)
 	{
 		if(bFill)
 		{
@@ -367,14 +373,14 @@ namespace
 		static_cast<CInterfacedScenario*>(pUserData)->m_rApplication.closeScenarioCB(static_cast<CInterfacedScenario*>(pUserData));
 	}
 
-	static gboolean editable_widget_focus_in_cb(GtkWidget*, GdkEvent*, CApplication* pApplication)
+	gboolean editable_widget_focus_in_cb(GtkWidget*, GdkEvent*, CApplication* pApplication)
 	{
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(pApplication->m_pBuilderInterface, "openvibe-menu_edit")), false);
 
 		return false;
 	}
 
-	static gboolean editable_widget_focus_out_cb(GtkWidget*, GdkEvent*, CApplication* pApplication)
+	gboolean editable_widget_focus_out_cb(GtkWidget*, GdkEvent*, CApplication* pApplication)
 	{
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(pApplication->m_pBuilderInterface, "openvibe-menu_edit")), true);
 

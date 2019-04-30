@@ -30,7 +30,7 @@ using namespace AdvancedVisualization;
 
 namespace
 {
-	static void getLeftRightScore(std::map < std::string, float >& vScore, const std::vector < std::string >& vChannelName, const std::vector < CVertex >& vChannelLocalisation)
+	void getLeftRightScore(std::map < std::string, float >& vScore, const std::vector < std::string >& vChannelName, const std::vector < CVertex >& vChannelLocalisation)
 	{
 		for(uint32_t i=0; i<vChannelName.size() && i<vChannelLocalisation.size(); i++)
 		{
@@ -40,7 +40,7 @@ namespace
 		}
 	}
 
-	static void getFrontBackScore(std::map < std::string, float >& vScore, const std::vector < std::string >& vChannelName, const std::vector < CVertex >& vChannelLocalisation)
+	void getFrontBackScore(std::map < std::string, float >& vScore, const std::vector < std::string >& vChannelName, const std::vector < CVertex >& vChannelLocalisation)
 	{
 		for(uint32_t i=0; i<vChannelName.size() && i<vChannelLocalisation.size(); i++)
 		{

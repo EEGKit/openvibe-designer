@@ -223,11 +223,11 @@ namespace json
 			Object& operator =(const Object& obj);
 
 			friend bool operator ==(const Object& lhs, const Object& rhs);
-			inline friend bool operator !=(const Object& lhs, const Object& rhs) 	{return !(lhs == rhs);}
+			friend bool operator !=(const Object& lhs, const Object& rhs) 	{return !(lhs == rhs);}
 			friend bool operator <(const Object& lhs, const Object& rhs);
-			inline friend bool operator >(const Object& lhs, const Object& rhs) 	{return operator<(rhs, lhs);}
-			inline friend bool operator <=(const Object& lhs, const Object& rhs)	{return !operator>(lhs, rhs);}
-			inline friend bool operator >=(const Object& lhs, const Object& rhs)	{return !operator<(lhs, rhs);}
+			friend bool operator >(const Object& lhs, const Object& rhs) 	{return operator<(rhs, lhs);}
+			friend bool operator <=(const Object& lhs, const Object& rhs)	{return !operator>(lhs, rhs);}
+			friend bool operator >=(const Object& lhs, const Object& rhs)	{return !operator<(lhs, rhs);}
 
 			Value& operator [](const std::string& key);
 			const Value& operator [](const std::string& key) const;
@@ -276,11 +276,11 @@ namespace json
 			Array& operator =(const Array& a);
 
 			friend bool operator ==(const Array& lhs, const Array& rhs);
-			inline friend bool operator !=(const Array& lhs, const Array& rhs) {return !(lhs == rhs);}
+			friend bool operator !=(const Array& lhs, const Array& rhs) {return !(lhs == rhs);}
 			friend bool operator <(const Array& lhs, const Array& rhs);
-			inline friend bool operator >(const Array& lhs, const Array& rhs) 	{return operator<(rhs, lhs);}
-			inline friend bool operator <=(const Array& lhs, const Array& rhs)	{return !operator>(lhs, rhs);}
-			inline friend bool operator >=(const Array& lhs, const Array& rhs)	{return !operator<(lhs, rhs);}
+			friend bool operator >(const Array& lhs, const Array& rhs) 	{return operator<(rhs, lhs);}
+			friend bool operator <=(const Array& lhs, const Array& rhs)	{return !operator>(lhs, rhs);}
+			friend bool operator >=(const Array& lhs, const Array& rhs)	{return !operator<(lhs, rhs);}
 
 			Value& operator[] (size_t i);
 			const Value& operator[] (size_t i) const;
@@ -337,11 +337,11 @@ namespace json
 			Value& operator =(const Value& v);
 
 			friend bool operator ==(const Value& lhs, const Value& rhs);
-			inline friend bool operator !=(const Value& lhs, const Value& rhs) 	{return !(lhs == rhs);}
+			friend bool operator !=(const Value& lhs, const Value& rhs) 	{return !(lhs == rhs);}
 			friend bool operator <(const Value& lhs, const Value& rhs);
-			inline friend bool operator >(const Value& lhs, const Value& rhs) 	{return operator<(rhs, lhs);}
-			inline friend bool operator <=(const Value& lhs, const Value& rhs)	{return !operator>(lhs, rhs);}
-			inline friend bool operator >=(const Value& lhs, const Value& rhs)	{return !operator<(lhs, rhs);}
+			friend bool operator >(const Value& lhs, const Value& rhs) 	{return operator<(rhs, lhs);}
+			friend bool operator <=(const Value& lhs, const Value& rhs)	{return !operator>(lhs, rhs);}
+			friend bool operator >=(const Value& lhs, const Value& rhs)	{return !operator<(lhs, rhs);}
 
 
 			// For use with Array/ObjectVal types, respectively

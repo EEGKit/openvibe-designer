@@ -71,7 +71,7 @@ namespace
 
 namespace
 {
-	static void on_realize_cb(GtkWidget* pWidget, void*)
+	void on_realize_cb(GtkWidget* pWidget, void*)
 	{
 		GtkGL_Debug("realize-callback");
 

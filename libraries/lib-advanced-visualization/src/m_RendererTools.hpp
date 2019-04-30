@@ -24,7 +24,7 @@
 
 namespace
 {
-	inline void cube(const float fSize=1)
+	void cube(const float fSize=1)
 	{
 		glBegin(GL_QUADS);
 
