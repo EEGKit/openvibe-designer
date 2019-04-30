@@ -74,7 +74,8 @@ namespace Mensia
 		{
 		public:
 
-			IRenderer* create(void)
+			IRenderer* create()
+
 			{
 				return IRenderer::create(iType, bStimulation);
 			}

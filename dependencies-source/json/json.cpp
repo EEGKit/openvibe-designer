@@ -58,9 +58,9 @@ static size_t GetQuotePos(const std::string& str, size_t start_pos = 0)
 			found_slash = true;
 			continue;
 		}
-		else if ((c == '\"') && !found_slash)
+		if ((c == '\"') && !found_slash)
 			return i;
-		
+
 		found_slash = false;
 	}
 	
@@ -144,7 +144,7 @@ const Value& Value::operator [](const std::string& key) const
 
 void Value::Clear()
 {
-	mValueType = NULLVal;
+	mValueType = nullptrVal;
 }
 
 size_t Value::size() const
@@ -175,13 +175,9 @@ int Value::HasKeys(const char **keys, int key_count) const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-Array::Array()
-{
-}
+Array::Array() { }
 
-Array::Array(const Array& a) : mValues(a.mValues)
-{
-}
+Array::Array(const Array& a) : mValues(a.mValues) { }
 
 Array& Array::operator =(const Array& a)
 {
@@ -262,9 +258,7 @@ bool Array::HasValue(const Value& v) const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-Object::Object()
-{
-}
+Object::Object() { }
 
 Object::Object(const Object& obj) : mValues(obj.mValues)
 {
@@ -381,7 +375,7 @@ std::string SerializeValue(const Value& v)
 		case FloatVal		: snprintf(buff, BUFF_SZ, "%f", (float)v); str = buff; break;
 		case DoubleVal		: snprintf(buff, BUFF_SZ, "%f", (double)v); str = buff; break;
 		case BoolVal		: str = v ? "true" : "false"; break;
-		case NULLVal		: str = "null"; break;
+		case nullptrVal		: str = "null"; break;
 		case ObjectVal		: str = Serialize(v); break;
 		case ArrayVal		: str = SerializeArray(v); break;
 		case StringVal		: str = std::string("\"") + v.ToString() + std::string("\""); break;
@@ -475,7 +469,7 @@ static Value DeserializeInternal(const std::string& _str, std::stack<StackDepthT
 		
 		depth_stack.push(InObject);
 		v = DeserializeObj(str, depth_stack);
-		if ((v.GetType() == NULLVal) || (depth_stack.top() != InObject))
+		if ((v.GetType() == nullptrVal) || (depth_stack.top() != InObject))
 			return v;
 		
 		depth_stack.pop();
@@ -488,7 +482,7 @@ static Value DeserializeInternal(const std::string& _str, std::stack<StackDepthT
 		
 		depth_stack.push(InArray);
 		v = DeserializeArray(str, depth_stack);
-		if ((v.GetType() == NULLVal) || (depth_stack.top() != InArray))
+		if ((v.GetType() == nullptrVal) || (depth_stack.top() != InArray))
 			return v;
 		
 		depth_stack.pop();
@@ -739,7 +733,7 @@ static Value DeserializeArray(std::string& str, std::stack<StackDepthType>& dept
 				if (had_error)
 					return Value();
 				
-				if (v.GetType() != NULLVal)
+				if (v.GetType() != nullptrVal)
 					a.push_back(v);
 
 				break;
@@ -763,7 +757,7 @@ static Value DeserializeArray(std::string& str, std::stack<StackDepthType>& dept
 				if (had_error)
 					return Value();
 				
-				if (v.GetType() != NULLVal)
+				if (v.GetType() != nullptrVal)
 					a.push_back(v);
 
 				str = str.substr(i + 1, str.length());
@@ -783,8 +777,7 @@ static Value DeserializeObj(const std::string& _str, std::stack<StackDepthType>&
 
 	if ((str[0] != '{') && (str[str.length() - 1] != '}'))
 		return Value();
-	else
-		str = str.substr(1, str.length() - 2);
+	str = str.substr(1, str.length() - 2);
 
 	while (str.length() > 0)
 	{

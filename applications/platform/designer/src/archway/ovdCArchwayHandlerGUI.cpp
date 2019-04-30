@@ -68,7 +68,7 @@ namespace
 
 		char buffer[512];
 		std::stringstream urlStream;
-		while (fgets(buffer, sizeof(buffer), commandPipe) != NULL)
+		while (fgets(buffer, sizeof(buffer), commandPipe) != nullptr)
 		{
 			urlStream << buffer;
 		}
@@ -174,7 +174,7 @@ namespace
 		}
 
 		gtk_widget_show_all(menu);
-		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, event->button, gdk_event_get_time((GdkEvent*)event));
+		gtk_menu_popup(GTK_MENU(menu), nullptr, nullptr, nullptr, nullptr, event->button, gdk_event_get_time((GdkEvent*)event));
 	}
 
 	gboolean on_treeview_engine_pipelines_button_pressed(GtkWidget* treeView, GdkEventButton *event, gpointer userData)
@@ -242,7 +242,7 @@ namespace
 		}
 		else
 		{
-			auto alertDialog = gtk_message_dialog_new(NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_OK, "Please select a pipeline to run.");
+			auto alertDialog = gtk_message_dialog_new(nullptr, GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_OK, "Please select a pipeline to run.");
 			gtk_dialog_run(GTK_DIALOG(alertDialog));
 			gtk_widget_destroy(alertDialog);
 		}
@@ -353,7 +353,7 @@ CArchwayHandlerGUI::CArchwayHandlerGUI(CArchwayHandler& controller, OpenViBEDesi
 	gtk_builder_add_from_file(m_Builder, OpenViBE::Directories::getDataDir() + "/applications/designer/interface-archway.ui", &gtkError);
 
 	assert(gtkError == nullptr);
-//	gtk_builder_connect_signals(m_pBuilder, NULL);
+//	gtk_builder_connect_signals(m_pBuilder, nullptr);
 
 
 	m_ButtonConfigureAcquisition = GTK_WIDGET(gtk_builder_get_object(m_Builder, "button-configure-acquisition"));

@@ -3,20 +3,16 @@
 #include <cstdlib>
 
 using namespace OpenViBE;
-using namespace OpenViBE::Kernel;
+using namespace Kernel;
 using namespace OpenViBEDesigner;
 
 TAttributeHandler::TAttributeHandler(IAttributable& rAttributable)
 	:m_pConstAttributable(&rAttributable)
-	,m_pAttributable(&rAttributable)
-{
-}
+	,m_pAttributable(&rAttributable) { }
 
 TAttributeHandler::TAttributeHandler(const IAttributable& rAttributable)
 	:m_pConstAttributable(&rAttributable)
-	,m_pAttributable(NULL)
-{
-}
+	,m_pAttributable(nullptr) { }
 
 boolean TAttributeHandler::removeAttribute(
 	const CIdentifier& rAttributeIdentifier)
@@ -28,7 +24,8 @@ boolean TAttributeHandler::removeAttribute(
 	return m_pAttributable->removeAttribute(rAttributeIdentifier);
 }
 
-boolean TAttributeHandler::removeAllAttributes(void)
+boolean TAttributeHandler::removeAllAttributes()
+
 {
 	if(!m_pAttributable)
 	{
@@ -43,7 +40,7 @@ boolean TAttributeHandler::hasAttribute(
 	return m_pConstAttributable->hasAttribute(rAttributeIdentifier);
 }
 
-boolean TAttributeHandler::hasAttributes(void) const
+boolean TAttributeHandler::hasAttributes() const
 {
 	return m_pConstAttributable->hasAttributes();
 }

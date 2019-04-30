@@ -94,23 +94,23 @@ namespace OpenViBEPlugins
 			 * \param [out] pToolbarWidget Pointer to (optional) toolbar widget
 			 */
 			void getWidgets(
-				::GtkWidget*& pWidget,
-				::GtkWidget*& pToolbarWidget);
+				GtkWidget*& pWidget,
+				GtkWidget*& pToolbarWidget);
 
 			/**
 			 * \brief Get ID of current view
 			 * \return ID of current view
 			 */
-			ETopographicMap2DView getCurrentView(void);
+			ETopographicMap2DView getCurrentView();
 
 			/** \name Callbacks */
 			//@{
 
 			void resizeCB(OpenViBE::uint32 ui32Width, OpenViBE::uint32 ui32Height);
 			void toggleElectrodesCB();
-			void setProjectionCB(::GtkWidget* pWidget);
-			void setViewCB(::GtkWidget* pWidget);
-			void setInterpolationCB(::GtkWidget* pWidget);
+			void setProjectionCB(GtkWidget* pWidget);
+			void setViewCB(GtkWidget* pWidget);
+			void setInterpolationCB(GtkWidget* pWidget);
 			void setDelayCB(OpenViBE::float64 f64Delay);
 
 			//@}
@@ -211,16 +211,16 @@ namespace OpenViBEPlugins
 			//Maximum delay that can be applied to displayed data
 			OpenViBE::float64 m_f64MaxDelay;
 
-			::GtkBuilder* m_pBuilderInterface;
+			GtkBuilder* m_pBuilderInterface;
 
-			::GtkWidget* m_pDrawingArea;
-			::GdkBitmap* m_pClipmask; //origin (m_ui32SkullX, m_ui32SkullY)
+			GtkWidget* m_pDrawingArea;
+			GdkBitmap* m_pClipmask; //origin (m_ui32SkullX, m_ui32SkullY)
 			OpenViBE::uint32 m_ui32ClipmaskWidth;
 			OpenViBE::uint32 m_ui32ClipmaskHeight;
-			::GdkGC* m_pClipmaskGC;
-			::GdkRegion* m_pVisibleRegion; //reallocated whenever clipmask changes
+			GdkGC* m_pClipmaskGC;
+			GdkRegion* m_pVisibleRegion; //reallocated whenever clipmask changes
 
-			::GdkColor m_oBackgroundColor;
+			GdkColor m_oBackgroundColor;
 
 			//! Active projection
 			ETopographicMap2DProjection m_ui32CurrentProjection;

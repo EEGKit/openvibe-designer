@@ -32,11 +32,10 @@ namespace Mensia
 		{
 		public:
 
-			CRulerConditionIsTimeLocked(void)
-				:m_pRendererContext(NULL)
-				,m_pRenderer(NULL)
-			{
-			}
+			CRulerConditionIsTimeLocked()
+
+				:m_pRendererContext(nullptr)
+				,m_pRenderer(nullptr) { }
 
 			virtual void setRendererContext(const IRendererContext* pRendererContext)
 			{
@@ -48,7 +47,8 @@ namespace Mensia
 				m_pRenderer=pRenderer;
 			}
 
-			bool operator()(void)
+			bool operator()()
+
 			{
 				return m_pRendererContext->isTimeLocked();
 			}

@@ -38,12 +38,12 @@ public:
 	G_CALLBACK_AUTOCAST(gpointer p) { m_pData.p = p; }
 	G_CALLBACK_AUTOCAST(GCallback fp) { m_pData.fp = fp; }
 
-	operator gpointer (void) { return m_pData.p; }
-	operator GCallback (void) { return m_pData.fp; }
+	operator gpointer () { return m_pData.p; }
+	operator GCallback () { return m_pData.fp; }
 
 private:
 
-	G_CALLBACK_AUTOCAST(void);
+	G_CALLBACK_AUTOCAST();
 };
 
 #endif // __OpenViBEDesigner_base_H__

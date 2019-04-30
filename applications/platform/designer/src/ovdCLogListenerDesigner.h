@@ -129,7 +129,7 @@ namespace OpenViBEDesigner
 			void searchMessages(OpenViBE::CString l_sSearchTerm);
 			void displayLog(CLogObject* oLog);
 			void appendLog(CLogObject* oLog);
-			void scrollToBottom(void);
+			void scrollToBottom();
 
 			_IsDerivedFromClass_Final_(OpenViBE::Kernel::ILogListener, OV_UndefinedIdentifier);
 

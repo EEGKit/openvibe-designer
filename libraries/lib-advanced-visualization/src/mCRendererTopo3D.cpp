@@ -4,7 +4,7 @@
 #include "content/Scalp.obj.hpp"
 
 using namespace Mensia;
-using namespace Mensia::AdvancedVisualization;
+using namespace AdvancedVisualization;
 
 void CRendererTopo3D::rebuild3DMeshesPre(const IRendererContext& rContext)
 {
@@ -24,6 +24,4 @@ void CRendererTopo3D::rebuild3DMeshesPre(const IRendererContext& rContext)
 	m_oFace.m_vColor[2]=.5f;
 }
 
-void CRendererTopo3D::rebuild3DMeshesPost(const IRendererContext& rContext)
-{
-}
+void CRendererTopo3D::rebuild3DMeshesPost(const IRendererContext& rContext) { }

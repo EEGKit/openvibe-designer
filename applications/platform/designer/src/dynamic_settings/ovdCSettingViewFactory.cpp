@@ -13,9 +13,9 @@
 
 using namespace OpenViBEDesigner;
 using namespace OpenViBE;
-using namespace OpenViBEDesigner::Setting;
+using namespace Setting;
 
-CSettingViewFactory::CSettingViewFactory(const CString &rBuilderName, const OpenViBE::Kernel::IKernelContext& rKernelContext):
+CSettingViewFactory::CSettingViewFactory(const CString &rBuilderName, const Kernel::IKernelContext& rKernelContext):
 	m_sBuilderName(rBuilderName), m_rKernelContext(rKernelContext)
 {
 

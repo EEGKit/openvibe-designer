@@ -26,7 +26,7 @@ namespace OpenViBEPlugins
 		{
 			public:
 
-				virtual ~CSignalDisplayDrawable(){}
+				virtual ~CSignalDisplayDrawable(){ }
 				virtual void init() = 0;
 				virtual void redraw() = 0;
 		};

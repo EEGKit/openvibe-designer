@@ -33,9 +33,9 @@ namespace Mensia
 		{
 		public:
 
-			virtual void renderRight(::GtkWidget* pWidget)
+			virtual void renderRight(GtkWidget* pWidget)
 			{
-				if(m_pRenderer == NULL) return;
+				if(m_pRenderer == nullptr) return;
 				if(m_pRenderer->getSampleCount() == 0) return;
 				if(m_pRenderer->getHistoryCount() == 0) return;
 				if(m_pRenderer->getHistoryIndex() == 0) return;
@@ -57,16 +57,16 @@ namespace Mensia
 
 				gint w, h, y;
 
-				::gdk_drawable_get_size(pWidget->window, &w, &h);
-				::GdkGC* l_pDrawGC=gdk_gc_new(pWidget->window);
+				gdk_drawable_get_size(pWidget->window, &w, &h);
+				GdkGC* l_pDrawGC=gdk_gc_new(pWidget->window);
 				for(it=l_vRange1.begin(); it!=l_vRange1.end(); it++)
 				{
 					if(*it >= l_ui32LeftIndex1 && *it < l_ui32LeftIndex2)
 					{
 						y=gint(((*it-l_ui32LeftIndex1)/l_ui32SampleCount)*h);
-						::PangoLayout* l_pPangoLayout=::gtk_widget_create_pango_layout(pWidget, this->getLabel(*it).c_str());
-						::gdk_draw_layout(pWidget->window, l_pDrawGC, 5, y, l_pPangoLayout);
-						::gdk_draw_line(pWidget->window, l_pDrawGC, 0, y, 3, y);
+						PangoLayout* l_pPangoLayout=gtk_widget_create_pango_layout(pWidget, this->getLabel(*it).c_str());
+						gdk_draw_layout(pWidget->window, l_pDrawGC, 5, y, l_pPangoLayout);
+						gdk_draw_line(pWidget->window, l_pDrawGC, 0, y, 3, y);
 						g_object_unref(l_pPangoLayout);
 					}
 				}
@@ -75,9 +75,9 @@ namespace Mensia
 					if(*it >= l_ui32RightIndex1 && *it < l_ui32RightIndex2)
 					{
 						y=gint(((*it+l_ui32SampleCount-l_ui32LeftIndex1)/l_ui32SampleCount)*h);
-						::PangoLayout* l_pPangoLayout=::gtk_widget_create_pango_layout(pWidget, this->getLabel(*it).c_str());
-						::gdk_draw_layout(pWidget->window, l_pDrawGC, 5, y, l_pPangoLayout);
-						::gdk_draw_line(pWidget->window, l_pDrawGC, 0, y, 3, y);
+						PangoLayout* l_pPangoLayout=gtk_widget_create_pango_layout(pWidget, this->getLabel(*it).c_str());
+						gdk_draw_layout(pWidget->window, l_pDrawGC, 5, y, l_pPangoLayout);
+						gdk_draw_line(pWidget->window, l_pDrawGC, 0, y, 3, y);
 						g_object_unref(l_pPangoLayout);
 					}
 				}

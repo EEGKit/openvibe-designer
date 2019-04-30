@@ -50,7 +50,8 @@ namespace Mensia
 				m_oRulerMatrix.setRenderer(pRenderer);
 			}
 
-			virtual void render(void)
+			virtual void render()
+
 			{
 				IRendererContext::EDataType l_eDataType=m_pRendererContext->getDataType();
 				if(l_eDataType==IRendererContext::DataType_Signal)
@@ -67,7 +68,7 @@ namespace Mensia
 				}
 			}
 
-			virtual void renderLeft(::GtkWidget* pWidget)
+			virtual void renderLeft(GtkWidget* pWidget)
 			{
 				IRendererContext::EDataType l_eDataType=m_pRendererContext->getDataType();
 				if(l_eDataType==IRendererContext::DataType_Signal)
@@ -84,7 +85,7 @@ namespace Mensia
 				}
 			}
 
-			virtual void renderRight(::GtkWidget* pWidget)
+			virtual void renderRight(GtkWidget* pWidget)
 			{
 				IRendererContext::EDataType l_eDataType=m_pRendererContext->getDataType();
 				if(l_eDataType==IRendererContext::DataType_Signal)
@@ -101,7 +102,7 @@ namespace Mensia
 				}
 			}
 
-			virtual void renderBottom(::GtkWidget* pWidget)
+			virtual void renderBottom(GtkWidget* pWidget)
 			{
 				IRendererContext::EDataType l_eDataType=m_pRendererContext->getDataType();
 

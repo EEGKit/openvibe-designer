@@ -22,7 +22,7 @@
 #include "mCRendererBars.hpp"
 
 using namespace Mensia;
-using namespace Mensia::AdvancedVisualization;
+using namespace AdvancedVisualization;
 
 void CRendererBars::rebuild(const IRendererContext& rContext)
 {
@@ -91,48 +91,48 @@ bool CRendererBars::render(const IRendererContext& rContext)
 
 	uint32_t i;
 
-	::glMatrixMode(GL_TEXTURE);
-	::glPushMatrix();
-	::glLoadIdentity();
+	glMatrixMode(GL_TEXTURE);
+	glPushMatrix();
+	glLoadIdentity();
 
-	::glMatrixMode(GL_MODELVIEW);
-	::glPushMatrix();
-	::glScalef(1, 1.f/rContext.getSelectedCount(), 1);
-	::glTranslatef(0, rContext.isPositiveOnly()?0:0.5f, 0);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glScalef(1, 1.f/rContext.getSelectedCount(), 1);
+	glTranslatef(0, rContext.isPositiveOnly()?0:0.5f, 0);
 
-	::glPushAttrib(GL_CURRENT_BIT);
-	::glDisable(GL_TEXTURE_1D);
-	::glColor3f(.2f, .2f, .2f);
-	::glBegin(GL_LINES);
+	glPushAttrib(GL_CURRENT_BIT);
+	glDisable(GL_TEXTURE_1D);
+	glColor3f(.2f, .2f, .2f);
+	glBegin(GL_LINES);
 	for(i=0; i<rContext.getSelectedCount(); i++)
 	{
-		::glVertex2f(0, float(i));
-		::glVertex2f(1, float(i));
+		glVertex2f(0, float(i));
+		glVertex2f(1, float(i));
 	}
-	::glEnd();
-	::glEnable(GL_TEXTURE_1D);
-	::glPopAttrib();
+	glEnd();
+	glEnable(GL_TEXTURE_1D);
+	glPopAttrib();
 
-	::glEnableClientState(GL_VERTEX_ARRAY);
-	::glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	for(i=0; i<rContext.getSelectedCount(); i++)
 	{
-		::glPushMatrix();
-		::glTranslatef(0, rContext.getSelectedCount()-i-1.f, 0);
-		::glScalef(1, rContext.getScale(), 1);
-		::glVertexPointer(2, GL_FLOAT, sizeof(CVertex), &m_vVertex[rContext.getSelected(i)][0].x);
-		::glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_vVertex[rContext.getSelected(i)][0].u);
-		::glDrawArrays(GL_QUADS, 0, m_ui32SampleCount*4);
-		::glPopMatrix();
+		glPushMatrix();
+		glTranslatef(0, rContext.getSelectedCount()-i-1.f, 0);
+		glScalef(1, rContext.getScale(), 1);
+		glVertexPointer(2, GL_FLOAT, sizeof(CVertex), &m_vVertex[rContext.getSelected(i)][0].x);
+		glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_vVertex[rContext.getSelected(i)][0].u);
+		glDrawArrays(GL_QUADS, 0, m_ui32SampleCount*4);
+		glPopMatrix();
 	}
-	::glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	::glDisableClientState(GL_VERTEX_ARRAY);
-	::glPopMatrix();
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glPopMatrix();
 
-	::glMatrixMode(GL_TEXTURE);
-	::glPopMatrix();
+	glMatrixMode(GL_TEXTURE);
+	glPopMatrix();
 
-	::glMatrixMode(GL_MODELVIEW);
+	glMatrixMode(GL_MODELVIEW);
 
 	return true;
 }

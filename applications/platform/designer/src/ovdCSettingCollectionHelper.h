@@ -12,7 +12,7 @@ namespace OpenViBEDesigner
 	public:
 
 		CSettingCollectionHelper(const OpenViBE::Kernel::IKernelContext& rKernelContext, const char* sGUIFilename);
-		virtual ~CSettingCollectionHelper(void);
+		virtual ~CSettingCollectionHelper();
 
 		OpenViBE::CString getSettingWidgetName(const OpenViBE::CIdentifier& rTypeIdentifier);
 		OpenViBE::CString getSettingEntryWidgetName(const OpenViBE::CIdentifier& rTypeIdentifier);
@@ -50,7 +50,7 @@ namespace OpenViBEDesigner
 
 	private:
 
-		CSettingCollectionHelper(void);
+		CSettingCollectionHelper();
 	};
 };
 

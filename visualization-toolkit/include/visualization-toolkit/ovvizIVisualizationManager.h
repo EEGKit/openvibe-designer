@@ -27,7 +27,7 @@ namespace OpenViBEVisualizationToolkit
 		class IVisualizationTreeEnum
 		{
 		public:
-			virtual ~IVisualizationTreeEnum(void) { }
+			virtual ~IVisualizationTreeEnum() { }
 			/**
 				 * \brief Callback method called iteratively as the IVisualizationManager goes through a set of IVisualizationTree objects
 				 * \param visualizationTreeIdentifier identifier of an IVisualizationTree object
@@ -65,7 +65,7 @@ namespace OpenViBEVisualizationToolkit
 			 * \param pToolbarWidget pointer to the toolbar of the widget
 			 * \return True if pointer was successfully forwarded to IVisualizationTree, false otherwise
 			 */
-		virtual bool setToolbar(const OpenViBE::CIdentifier& visualizationTreeIdentifier, const OpenViBE::CIdentifier& boxIdentifier, ::GtkWidget* toolbar) = 0;
+		virtual bool setToolbar(const OpenViBE::CIdentifier& visualizationTreeIdentifier, const OpenViBE::CIdentifier& boxIdentifier, GtkWidget* toolbar) = 0;
 
 		/**
 		 * \brief Set the topmost widget of a visualization plugin.
@@ -76,7 +76,7 @@ namespace OpenViBEVisualizationToolkit
 		 * \param pWidget pointer to the main window of the widget
 		 * \return True if pointer was successfully forwarded to IVisualizationTree, false otherwise
 		 */
-		virtual bool setWidget(const OpenViBE::CIdentifier& visualizationTreeIdentifier, const OpenViBE::CIdentifier& boxIdentifier, ::GtkWidget* topmostWidget) = 0;
+		virtual bool setWidget(const OpenViBE::CIdentifier& visualizationTreeIdentifier, const OpenViBE::CIdentifier& boxIdentifier, GtkWidget* topmostWidget) = 0;
 
 	};
 };

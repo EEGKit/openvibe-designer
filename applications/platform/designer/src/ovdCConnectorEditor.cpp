@@ -4,7 +4,7 @@
 #include <string>
 
 using namespace OpenViBE;
-using namespace OpenViBE::Kernel;
+using namespace Kernel;
 using namespace OpenViBEDesigner;
 using namespace std;
 
@@ -27,23 +27,20 @@ CConnectorEditor::CConnectorEditor(const IKernelContext& rKernelContext, IBox& r
 	,m_ui32ConnectorIndex(ui32ConnectorIndex)
 	,m_sGUIFilename(sGUIFilename)
 	,m_sTitle(sTitle?sTitle:"")
-	,m_ConnectorIdentifierEntry(nullptr)
-{
-}
+	,m_ConnectorIdentifierEntry(nullptr) { }
 
-CConnectorEditor::~CConnectorEditor(void)
-{
-}
+CConnectorEditor::~CConnectorEditor() { }
 
-boolean CConnectorEditor::run(void)
+boolean CConnectorEditor::run()
+
 {
 //	t_getConnectorIdentifier getConnectorIdentifier = nullptr;
-	t_setConnectorName setConnectorName=NULL;
-	t_setConnectorType setConnectorType=NULL;
-	t_isTypeSupported isTypeSupported=NULL;
+	t_setConnectorName setConnectorName=nullptr;
+	t_setConnectorType setConnectorType=nullptr;
+	t_isTypeSupported isTypeSupported=nullptr;
 //	t_updateConnectorIdentifier updateConnectorIdentifier = nullptr;
 
-	OpenViBE::Kernel::BoxInterfacorType interfacorType;
+	BoxInterfacorType interfacorType;
 	switch(m_ui32ConnectorType)
 	{
 		case Box_Input:
@@ -71,15 +68,15 @@ boolean CConnectorEditor::run(void)
 	m_rBox.getInterfacorName(interfacorType, m_ui32ConnectorIndex, l_oConnectorName);
 	m_rBox.getInterfacorType(interfacorType, m_ui32ConnectorIndex, l_oConnectorType);
 
-	::GtkBuilder* l_pBuilderInterfaceConnector=gtk_builder_new();
-	gtk_builder_add_from_file(l_pBuilderInterfaceConnector, m_sGUIFilename.c_str(), NULL);
-	gtk_builder_connect_signals(l_pBuilderInterfaceConnector, NULL);
+	GtkBuilder* l_pBuilderInterfaceConnector=gtk_builder_new();
+	gtk_builder_add_from_file(l_pBuilderInterfaceConnector, m_sGUIFilename.c_str(), nullptr);
+	gtk_builder_connect_signals(l_pBuilderInterfaceConnector, nullptr);
 
-	::GtkWidget* l_pConnectorDialog=GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceConnector, "connector_editor"));
-	::GtkEntry* l_pConnectorNameEntry=GTK_ENTRY(gtk_builder_get_object(l_pBuilderInterfaceConnector, "connector_editor-connector_name_entry"));
-	::GtkComboBox* l_pConnectorTypeComboBox=GTK_COMBO_BOX(gtk_builder_get_object(l_pBuilderInterfaceConnector,"connector_editor-connector_type_combobox"));
+	GtkWidget* l_pConnectorDialog=GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceConnector, "connector_editor"));
+	GtkEntry* l_pConnectorNameEntry=GTK_ENTRY(gtk_builder_get_object(l_pBuilderInterfaceConnector, "connector_editor-connector_name_entry"));
+	GtkComboBox* l_pConnectorTypeComboBox=GTK_COMBO_BOX(gtk_builder_get_object(l_pBuilderInterfaceConnector,"connector_editor-connector_type_combobox"));
 	m_ConnectorIdentifierEntry = GTK_ENTRY(gtk_builder_get_object(l_pBuilderInterfaceConnector, "connector_editor-connector_identifier_entry"));
-	::GtkButton* connectorIdentifierResetButton = GTK_BUTTON(gtk_builder_get_object(l_pBuilderInterfaceConnector, "connector_editor-connector_identifier_reset_button"));
+	GtkButton* connectorIdentifierResetButton = GTK_BUTTON(gtk_builder_get_object(l_pBuilderInterfaceConnector, "connector_editor-connector_identifier_reset_button"));
 	gtk_list_store_clear(GTK_LIST_STORE(gtk_combo_box_get_model(l_pConnectorTypeComboBox)));
 	gtk_window_set_title(GTK_WINDOW(l_pConnectorDialog), m_sTitle.c_str());
 

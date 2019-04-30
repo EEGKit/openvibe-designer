@@ -43,7 +43,7 @@
  		need to be changed.
  	* Fixed bug with checking for proper opening/closing sequence for braces/brackets.
  		Previously, this code: 
-			const char *json = "{\"arr\":[{}}]}";
+			const char *json = "{\"arr\":[{ }}]}";
 			auto val = json::Deserialize(json);
 		worked fine with no errors. That's a bug. I did a major overhaul so that
  		now improperly formatted pairs will now correctly result in an error.
@@ -70,14 +70,14 @@
  
  	1/27/2014
  	----------
- 	* Deserialize will now return a NULLType Value instance if there was an
+ 	* Deserialize will now return a nullptrType Value instance if there was an
  		error instead of asserting. This way you can handle however you want to
  		invalid JSON being passed in. As a top level object must be either an
- 		array or an object, a NULL value return indicates an invalid result.
+ 		array or an object, a nullptr value return indicates an invalid result.
  
  	1/11/2014
  	---------
- 	* Major bug fix: Strings containing []{} characters could cause
+ 	* Major bug fix: Strings containing []{ } characters could cause
  		parsing errors under certain conditions. I've just tested
  		the class parsing a 300KB JSON file with all manner of bizarre
  		characters and permutations and it worked, so hopefully this should
@@ -107,8 +107,8 @@
  		The Value type can be checked if it's an array (or any other type),
  		and furthermore can even be accessed with the [] operator for
  		convenience.
- 	* I've made the NULL value type set numeric fields to 0 and bool to false.
- 		This is for convenience for using the NULL type as a default return
+ 	* I've made the nullptr value type set numeric fields to 0 and bool to false.
+ 		This is for convenience for using the nullptr type as a default return
  		value in your code.
  	* asserts added to casting (Gerry Beauregard)
  	* Added method HasKeys to json::Object which will check if all the keys
@@ -193,7 +193,7 @@ namespace json
 {
 	enum ValueType
 	{
-		NULLVal,
+		nullptrVal,
 		StringVal,
 		IntVal,
 		FloatVal,
@@ -321,15 +321,15 @@ namespace json
 		public:
 			const std::string& getStringImplementation() const { return mStringVal; }
 
-			Value() 					: mValueType(NULLVal), mIntVal(0), mFloatVal(0), mDoubleVal(0), mBoolVal(false) {}
-			Value(int v)				: mValueType(IntVal), mIntVal(v), mFloatVal((float)v), mDoubleVal((double)v) {}
-			Value(float v)				: mValueType(FloatVal), mIntVal((int)v), mFloatVal(v), mDoubleVal((double)v) {}
-			Value(double v)				: mValueType(DoubleVal), mIntVal((int)v), mFloatVal((float)v), mDoubleVal(v) {}
-			Value(const std::string& v)	: mValueType(StringVal), mStringVal(v) {}
-			Value(const char* v)		: mValueType(StringVal), mStringVal(v) {}
-			Value(const Object& v)		: mValueType(ObjectVal), mObjectVal(v) {}
-			Value(const Array& v)		: mValueType(ArrayVal), mArrayVal(v) {}
-			Value(const bool v)			: mValueType(BoolVal), mBoolVal(v) {}
+			Value() 					: mValueType(nullptrVal), mIntVal(0), mFloatVal(0), mDoubleVal(0), mBoolVal(false) { }
+			Value(int v)				: mValueType(IntVal), mIntVal(v), mFloatVal((float)v), mDoubleVal((double)v) { }
+			Value(float v)				: mValueType(FloatVal), mIntVal((int)v), mFloatVal(v), mDoubleVal((double)v) { }
+			Value(double v)				: mValueType(DoubleVal), mIntVal((int)v), mFloatVal((float)v), mDoubleVal(v) { }
+			Value(const std::string& v)	: mValueType(StringVal), mStringVal(v) { }
+			Value(const char* v)		: mValueType(StringVal), mStringVal(v) { }
+			Value(const Object& v)		: mValueType(ObjectVal), mObjectVal(v) { }
+			Value(const Array& v)		: mValueType(ArrayVal), mArrayVal(v) { }
+			Value(const bool v)			: mValueType(BoolVal), mBoolVal(v) { }
 			Value(const Value& v);
 
 			ValueType GetType() const {return mValueType;}
@@ -391,7 +391,7 @@ namespace json
 			// Returns 1 for anything not an Array/ObjectVal
 			size_t size() const;
 
-			// Resets the state back to default, aka NULLVal
+			// Resets the state back to default, aka nullptrVal
 			void Clear();
 
 	};
@@ -401,7 +401,7 @@ namespace json
 	// Converts a JSON Object or Array instance into a JSON string representing it.
 	std::string Serialize(const Value& obj);
 
-	// If there is an error, Value will be NULLType
+	// If there is an error, Value will be nullptrType
 	Value 		Deserialize(const std::string& str);
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -444,35 +444,41 @@ namespace json
 		{
 			case StringVal		: 	return lhs.mStringVal == rhs.mStringVal;
 
-			case IntVal			: 	if (rhs.GetType() == FloatVal)
-										return lhs.mIntVal == rhs.mFloatVal;
-									else if (rhs.GetType() == DoubleVal)
-										return lhs.mIntVal == rhs.mDoubleVal;
-									else if (rhs.GetType() == IntVal)
-										return lhs.mIntVal == rhs.mIntVal;
-									else
+			case IntVal			:
+				{
+					if (rhs.GetType() == FloatVal)
+						return lhs.mIntVal == rhs.mFloatVal;
+					if (rhs.GetType() == DoubleVal)
+						return lhs.mIntVal == rhs.mDoubleVal;
+					if (rhs.GetType() == IntVal)
+						return lhs.mIntVal == rhs.mIntVal;
+					return false;
+				}
+
+			case FloatVal		:
+				{
+					if (rhs.GetType() == FloatVal)
+						return lhs.mFloatVal == rhs.mFloatVal;
+					if (rhs.GetType() == DoubleVal)
+						return lhs.mFloatVal == rhs.mDoubleVal;
+					if (rhs.GetType() == IntVal)
+						return lhs.mFloatVal == rhs.mIntVal;
+					return false;
+				}
+
+
+								case DoubleVal		:
+									{
+										if (rhs.GetType() == FloatVal)
+											return lhs.mDoubleVal == rhs.mFloatVal;
+										if (rhs.GetType() == DoubleVal)
+											return lhs.mDoubleVal == rhs.mDoubleVal;
+										if (rhs.GetType() == IntVal)
+											return lhs.mDoubleVal == rhs.mIntVal;
 										return false;
+									}
 
-			case FloatVal		: 	if (rhs.GetType() == FloatVal)
-										return lhs.mFloatVal == rhs.mFloatVal;
-									else if (rhs.GetType() == DoubleVal)
-										return lhs.mFloatVal == rhs.mDoubleVal;
-									else if (rhs.GetType() == IntVal)
-										return lhs.mFloatVal == rhs.mIntVal;
-									else
-										return false;
-
-
-			case DoubleVal		: 	if (rhs.GetType() == FloatVal)
-										return lhs.mDoubleVal == rhs.mFloatVal;
-									else if (rhs.GetType() == DoubleVal)
-										return lhs.mDoubleVal == rhs.mDoubleVal;
-									else if (rhs.GetType() == IntVal)
-										return lhs.mDoubleVal == rhs.mIntVal;
-									else
-										return false;
-
-			case BoolVal		: 	return lhs.mBoolVal == rhs.mBoolVal;
+								case BoolVal		: 	return lhs.mBoolVal == rhs.mBoolVal;
 
 			case ObjectVal		: 	return lhs.mObjectVal == rhs.mObjectVal;
 
@@ -492,32 +498,38 @@ namespace json
 		{
 			case StringVal		: 	return lhs.mStringVal < rhs.mStringVal;
 
-			case IntVal			: 	if (rhs.GetType() == FloatVal)
-										return lhs.mIntVal < rhs.mFloatVal;
-									else if (rhs.GetType() == DoubleVal)
-										return lhs.mIntVal < rhs.mDoubleVal;
-									else if (rhs.GetType() == IntVal)
-										return lhs.mIntVal < rhs.mIntVal;
-									else
-										return false;
+			case IntVal			:
+				{
+					if (rhs.GetType() == FloatVal)
+						return lhs.mIntVal < rhs.mFloatVal;
+					if (rhs.GetType() == DoubleVal)
+						return lhs.mIntVal < rhs.mDoubleVal;
+					if (rhs.GetType() == IntVal)
+						return lhs.mIntVal < rhs.mIntVal;
+					return false;
+				}
 
-			case FloatVal		: 	if (rhs.GetType() == FloatVal)
-										return lhs.mFloatVal < rhs.mFloatVal;
-									else if (rhs.GetType() == DoubleVal)
-										return lhs.mFloatVal < rhs.mDoubleVal;
-									else if (rhs.GetType() == IntVal)
-										return lhs.mFloatVal < rhs.mIntVal;
-									else
-										return false;
+			case FloatVal		:
+				{
+					if (rhs.GetType() == FloatVal)
+						return lhs.mFloatVal < rhs.mFloatVal;
+					if (rhs.GetType() == DoubleVal)
+						return lhs.mFloatVal < rhs.mDoubleVal;
+					if (rhs.GetType() == IntVal)
+						return lhs.mFloatVal < rhs.mIntVal;
+					return false;
+				}
 
-			case DoubleVal		: 	if (rhs.GetType() == FloatVal)
-										return lhs.mDoubleVal < rhs.mFloatVal;
-									else if (rhs.GetType() == DoubleVal)
-										return lhs.mDoubleVal < rhs.mDoubleVal;
-									else if (rhs.GetType() == IntVal)
-										return lhs.mDoubleVal < rhs.mIntVal;
-									else
-										return false;
+			case DoubleVal		:
+				{
+					if (rhs.GetType() == FloatVal)
+						return lhs.mDoubleVal < rhs.mFloatVal;
+					if (rhs.GetType() == DoubleVal)
+						return lhs.mDoubleVal < rhs.mDoubleVal;
+					if (rhs.GetType() == IntVal)
+						return lhs.mDoubleVal < rhs.mIntVal;
+					return false;
+				}
 
 			case BoolVal		: 	return lhs.mBoolVal < rhs.mBoolVal;
 

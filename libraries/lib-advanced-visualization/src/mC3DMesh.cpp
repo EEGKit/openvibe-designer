@@ -27,7 +27,7 @@
 #include <cstring>
 
 using namespace Mensia;
-using namespace Mensia::AdvancedVisualization;
+using namespace AdvancedVisualization;
 
 namespace
 {
@@ -44,18 +44,18 @@ namespace
 	}
 }
 
-C3DMesh::C3DMesh(void)
+C3DMesh::C3DMesh()
+
 {
 	m_vColor[0]=1;
 	m_vColor[1]=1;
 	m_vColor[2]=1;
 }
 
-C3DMesh::~C3DMesh(void)
-{
-}
+C3DMesh::~C3DMesh() { }
 
-void C3DMesh::clear(void)
+void C3DMesh::clear()
+
 {
 	m_vColor[0]=1;
 	m_vColor[1]=1;
@@ -98,7 +98,8 @@ bool C3DMesh::load(const void* pBuffer, unsigned int uiBufferSize)
 	return true;
 }
 
-bool C3DMesh::compile(void)
+bool C3DMesh::compile()
+
 {
 	uint32_t i, i1, i2, i3;
 	m_vNormal.clear();

@@ -36,7 +36,7 @@ namespace Mensia
 		{
 		public:
 
-			virtual void renderRight(::GtkWidget* widget)
+			virtual void renderRight(GtkWidget* widget)
 			{
 
 				gint w, h, y;
@@ -45,8 +45,8 @@ namespace Mensia
 				uint32_t channelCount = m_pRendererContext->getSelectedCount();
 				for (uint32_t channel = 0; channel < channelCount; ++channel)
 				{
-					::gdk_drawable_get_size(widget->window, &w, &h);
-					::GdkGC* drawGC = gdk_gc_new(widget->window);
+					gdk_drawable_get_size(widget->window, &w, &h);
+					GdkGC* drawGC = gdk_gc_new(widget->window);
 
 					float labelCount = static_cast<float>(m_pRendererContext->getDimensionLabelCount(dimension));
 
@@ -57,12 +57,12 @@ namespace Mensia
 						y = gint((channel + (label + 0.5f)/labelCount) * (h * 1.f / channelCount));
 						if (y >= last_y + 10)
 						{
-							::PangoLayout* l_pPangoLayout = ::gtk_widget_create_pango_layout(widget, m_pRendererContext->getDimensionLabel(dimension, label));
-							::pango_layout_get_size(l_pPangoLayout, &lw, &lh);
+							PangoLayout* l_pPangoLayout = gtk_widget_create_pango_layout(widget, m_pRendererContext->getDimensionLabel(dimension, label));
+							pango_layout_get_size(l_pPangoLayout, &lw, &lh);
 							lw/=PANGO_SCALE;
 							lh/=PANGO_SCALE;
-							::gdk_draw_layout(widget->window, drawGC, 8, h-y-lh/2, l_pPangoLayout);
-							::gdk_draw_line(widget->window, drawGC, 0, h-y, 3, h-y);
+							gdk_draw_layout(widget->window, drawGC, 8, h-y-lh/2, l_pPangoLayout);
+							gdk_draw_line(widget->window, drawGC, 0, h-y, 3, h-y);
 							g_object_unref(l_pPangoLayout);
 							last_y = y;
 						}

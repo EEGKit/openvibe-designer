@@ -35,12 +35,13 @@ namespace Mensia
 
 			virtual void renderFinal(float fProgress)=0;
 
-			virtual void render(void)
+			virtual void render()
+
 			{
 #if 0
 				::printf("%p = %p\n", this, m_pRenderer);
 #endif
-				if(m_pRenderer == NULL) return;
+				if(m_pRenderer == nullptr) return;
 				if(m_pRenderer->getSampleCount() == 0) return;
 				if(m_pRenderer->getHistoryCount() == 0) return;
 				if(m_pRenderer->getHistoryIndex() == 0) return;

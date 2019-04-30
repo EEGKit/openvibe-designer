@@ -33,7 +33,7 @@
 #define __Count__ 16
 
 using namespace Mensia;
-using namespace Mensia::AdvancedVisualization;
+using namespace AdvancedVisualization;
 
 static void q_rotate(Eigen::VectorXd& vDest, const Eigen::VectorXd& vSrc, const Eigen::Quaterniond& q)
 {
@@ -100,7 +100,7 @@ void CRendererConnectivity::rebuild(const IRendererContext& rContext)
 			float vi_len = l_vProjectedChannelCoordinate[i].length();
 			float vj_len = l_vProjectedChannelCoordinate[j].length();
 
-			::q_from_polar(q_diff, v1, v2, vi, vj);
+			q_from_polar(q_diff, v1, v2, vi, vj);
 
 			const double alpha=0;
 			const double dot=(1-CVertex::dot(vi, vj))*.5;
@@ -113,7 +113,7 @@ void CRendererConnectivity::rebuild(const IRendererContext& rContext)
 
 				q = q_id.slerp(t, q_diff);
 
-				::q_rotate(v, v1, q);
+				q_rotate(v, v1, q);
 
 				float len=(vi_len*(1-t)+vj_len*t);
 				m_vVertex[l][k].x=float(s*v[0]*len);
@@ -163,63 +163,63 @@ bool CRendererConnectivity::render(const IRendererContext& rContext)
 	uint32_t i;
 	float d=3.5;
 
-	::glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
-	::glMatrixMode(GL_PROJECTION);
-	::glPushMatrix();
-	::glLoadIdentity();
-	::gluPerspective(60, rContext.getAspect(), .01, 100);
-	::glTranslatef(0, 0, -d);
-	::glRotatef(rContext.getRotationX()*10, 1, 0, 0);
-	::glRotatef(rContext.getRotationY()*10, 0, 1, 0);
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	gluPerspective(60, rContext.getAspect(), .01, 100);
+	glTranslatef(0, 0, -d);
+	glRotatef(rContext.getRotationX()*10, 1, 0, 0);
+	glRotatef(rContext.getRotationY()*10, 0, 1, 0);
 
-	::glMatrixMode(GL_TEXTURE);
-	::glPushMatrix();
-	::glScalef(rContext.getScale(), 1, 1);
+	glMatrixMode(GL_TEXTURE);
+	glPushMatrix();
+	glScalef(rContext.getScale(), 1, 1);
 
-	::glMatrixMode(GL_MODELVIEW);
-	::glPushMatrix();
-	::glLoadIdentity();
-	::glScalef(rContext.getZoom(), rContext.getZoom(), rContext.getZoom());
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+	glScalef(rContext.getZoom(), rContext.getZoom(), rContext.getZoom());
 
 //	uint32_t l_ui32ChannelCountSquare=m_ui32ChannelCount*m_ui32ChannelCount;
 	float rgb=1.f;
-	::glColor4f(rgb, rgb, rgb, rContext.getTranslucency());
-	::glPushMatrix();
+	glColor4f(rgb, rgb, rgb, rContext.getTranslucency());
+	glPushMatrix();
 #if 1
-	::glTranslatef(0, .5f, 0);
-	::glRotatef(19, 1, 0, 0);
-	::glTranslatef(0, -.2f, .35f);
+	glTranslatef(0, .5f, 0);
+	glRotatef(19, 1, 0, 0);
+	glTranslatef(0, -.2f, .35f);
 //	::glScalef(1.8f, 1.8f, 1.8f);
 #else
 	::glRotatef(19, 1, 0, 0);
 #endif
 
-	::glEnableClientState(GL_VERTEX_ARRAY);
-	::glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	for(i=0; i<m_ui32ChannelCount*(m_ui32ChannelCount-1)/2; i++)
 	{
-		::glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_vVertex[i][0].x);
-		::glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_vVertex[i][0].u);
-		::glDrawArrays(GL_LINE_STRIP, 0, __Count__);
+		glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_vVertex[i][0].x);
+		glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_vVertex[i][0].u);
+		glDrawArrays(GL_LINE_STRIP, 0, __Count__);
 	}
-	::glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	::glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState(GL_VERTEX_ARRAY);
 
-	::glPopMatrix();
+	glPopMatrix();
 
 	if(rContext.getCheckBoardVisibility()) this->drawCoordinateSystem();
 
-	::glMatrixMode(GL_MODELVIEW);
-	::glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
 
-	::glMatrixMode(GL_TEXTURE);
-	::glPopMatrix();
+	glMatrixMode(GL_TEXTURE);
+	glPopMatrix();
 
-	::glMatrixMode(GL_PROJECTION);
-	::glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
 
-	::glMatrixMode(GL_MODELVIEW);
+	glMatrixMode(GL_MODELVIEW);
 
 	return true;
 }

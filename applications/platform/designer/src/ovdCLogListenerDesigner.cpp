@@ -8,29 +8,29 @@
 #define OVD_GUI_File OpenViBE::Directories::getDataDir() + "/applications/designer/interface.ui"
 
 using namespace OpenViBE;
-using namespace OpenViBE::Kernel;
+using namespace Kernel;
 using namespace OpenViBEDesigner;
 using namespace std;
 
 namespace
 {
-	void close_messages_alert_window_cb(::GtkButton* pButton, gpointer pUserData)
+	void close_messages_alert_window_cb(GtkButton* pButton, gpointer pUserData)
 	{
 		gtk_widget_hide(GTK_WIDGET(pUserData));
 	}
 
-	void focus_message_window_cb(::GtkButton* pButton, gpointer pUserData)
+	void focus_message_window_cb(GtkButton* pButton, gpointer pUserData)
 	{
 		static_cast<CLogListenerDesigner*>(pUserData)->focusMessageWindow();
 	}
 
-	void refresh_search_log_entry(::GtkEntry* pTextfield, gpointer pUserData)
+	void refresh_search_log_entry(GtkEntry* pTextfield, gpointer pUserData)
 	{
 		CLogListenerDesigner* designerLog_ptr = static_cast<CLogListenerDesigner*>(pUserData);
 		designerLog_ptr->m_sSearchTerm = gtk_entry_get_text(pTextfield);
 		designerLog_ptr->searchMessages(designerLog_ptr->m_sSearchTerm);
 	}
-	void focus_on_box_cidentifier_clicked(::GtkWidget* pWidget, GdkEventButton *pEvent, gpointer pData)
+	void focus_on_box_cidentifier_clicked(GtkWidget* pWidget, GdkEventButton *pEvent, gpointer pData)
 	{
 		//log text view grab the focus so isLogAreaClicked() return true and CTRL+F will focus on the log searchEntry
 		gtk_widget_grab_focus(pWidget);
@@ -105,7 +105,7 @@ void CLogListenerDesigner::appendLog(CLogObject *oLog)
 	gtk_text_buffer_insert_range(m_pBuffer, &l_oEndter, &l_oLogBegin, &l_oLogEnd );
 }
 
-CLogListenerDesigner::CLogListenerDesigner(const IKernelContext& rKernelContext, ::GtkBuilder* pBuilderInterface)
+CLogListenerDesigner::CLogListenerDesigner(const IKernelContext& rKernelContext, GtkBuilder* pBuilderInterface)
 	:m_pBuilderInterface( pBuilderInterface )
 	,m_pAlertWindow(nullptr)
 	,m_bIngnoreMessages( false )
@@ -113,7 +113,7 @@ CLogListenerDesigner::CLogListenerDesigner(const IKernelContext& rKernelContext,
 	,m_ui32CountWarnings( 0 )
 	,m_ui32CountErrors( 0 )
 	,m_sSearchTerm("")
-	,m_CenterOnBoxFun([](CIdentifier& id){})
+	,m_CenterOnBoxFun([](CIdentifier& id){ })
 {
 	m_pTextView = GTK_TEXT_VIEW(gtk_builder_get_object(m_pBuilderInterface, "openvibe-textview_messages"));
 	m_pAlertWindow = GTK_WINDOW(gtk_builder_get_object(m_pBuilderInterface, "dialog_error_popup"));
@@ -139,7 +139,7 @@ CLogListenerDesigner::CLogListenerDesigner(const IKernelContext& rKernelContext,
 	m_pToggleButtonActive_Fatal = GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_fatal"));
 
 	// set the popup-on-error checkbox according to the configuration token
-	gtk_toggle_button_set_active(m_pToggleButtonPopup, (OpenViBE::boolean)(rKernelContext.getConfigurationManager().expandAsBoolean("${Designer_PopUpOnError}")));
+	gtk_toggle_button_set_active(m_pToggleButtonPopup, (boolean)(rKernelContext.getConfigurationManager().expandAsBoolean("${Designer_PopUpOnError}")));
 
 	g_signal_connect(G_OBJECT(m_pAlertWindow), "delete_event", G_CALLBACK(::gtk_widget_hide), nullptr);
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "dialog_error_popup-button_view")), "clicked", G_CALLBACK(::focus_message_window_cb), this);
@@ -159,7 +159,7 @@ CLogListenerDesigner::CLogListenerDesigner(const IKernelContext& rKernelContext,
 	gtk_text_buffer_create_tag(m_pBuffer, "c_aqua", "foreground", "#00FFFF", nullptr); // number
 	gtk_text_buffer_create_tag(m_pBuffer, "c_darkViolet", "foreground", "#6900D7", nullptr); // warning
 	gtk_text_buffer_create_tag(m_pBuffer, "c_blueChill", "foreground", "#3d889b", nullptr); // information
-	gtk_text_buffer_create_tag(m_pBuffer, "link", "underline", PANGO_UNDERLINE_SINGLE, NULL); // link for CIdentifier
+	gtk_text_buffer_create_tag(m_pBuffer, "link", "underline", PANGO_UNDERLINE_SINGLE, nullptr); // link for CIdentifier
 
 	GtkTextTagTable* l_pTagtable =  gtk_text_buffer_get_tag_table(m_pBuffer);
 	m_pCIdentifierTag = gtk_text_tag_table_lookup(l_pTagtable, "link");
@@ -406,7 +406,7 @@ void CLogListenerDesigner::log(const ELogLevel eLogLevel)
 	GtkTextIter l_oEndLogIter;
 	gtk_text_buffer_get_end_iter(m_pCurrentLog->getTextBuffer(), &l_oEndLogIter);
 
-	auto addTagName = [this, &l_oEndLogIter](GtkToggleToolButton* activeButton, OpenViBE::uint32& countVariable, const char* state, const char* color)
+	auto addTagName = [this, &l_oEndLogIter](GtkToggleToolButton* activeButton, uint32& countVariable, const char* state, const char* color)
 	{
 		m_bIngnoreMessages = !gtk_toggle_tool_button_get_active(activeButton);
 		if(m_bIngnoreMessages) return;
@@ -480,7 +480,7 @@ void CLogListenerDesigner::log(const ELogLevel eLogLevel)
 
 	this->updateMessageCounts();
 
-	::GtkTextMark l_oMark;
+	GtkTextMark l_oMark;
 	l_oMark = *(gtk_text_buffer_get_mark (gtk_text_view_get_buffer( m_pTextView ), "insert"));
 	gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (m_pTextView), &l_oMark, 0.0, FALSE, 0.0, 0.0);
 }

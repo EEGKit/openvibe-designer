@@ -9,62 +9,62 @@
 
 using namespace OpenViBE;
 using namespace OpenViBEDesigner;
-using namespace OpenViBEDesigner::Setting;
+using namespace Setting;
 
-static void on_color_gradient_color_button_pressed(::GtkColorButton* pButton, gpointer pUserData)
+static void on_color_gradient_color_button_pressed(GtkColorButton* pButton, gpointer pUserData)
 {
 	static_cast< CColorGradientSettingView *>(pUserData)->colorChange(pButton);
 }
 
-static void on_button_setting_color_gradient_configure_pressed(::GtkButton* pButton, gpointer pUserData)
+static void on_button_setting_color_gradient_configure_pressed(GtkButton* pButton, gpointer pUserData)
 {
 	static_cast< CColorGradientSettingView *>(pUserData)->configurePressed();
 }
 
-static void on_refresh_color_gradient(::GtkWidget* pWidget, ::GdkEventExpose* pEvent, gpointer pUserData)
+static void on_refresh_color_gradient(GtkWidget* pWidget, GdkEventExpose* pEvent, gpointer pUserData)
 {
 	static_cast< CColorGradientSettingView *>(pUserData)->refreshColorGradient();
 }
 
-static void on_gtk_widget_destroy_cb(::GtkWidget* pWidget, gpointer pUserData)
+static void on_gtk_widget_destroy_cb(GtkWidget* pWidget, gpointer pUserData)
 {
 	gtk_widget_destroy(pWidget);
 }
 
-static void on_initialize_color_gradient(::GtkWidget* pWidget, gpointer pUserData)
+static void on_initialize_color_gradient(GtkWidget* pWidget, gpointer pUserData)
 {
 	static_cast< CColorGradientSettingView *>(pUserData)->initializeGradient();
 }
 
-static void on_button_color_gradient_add_pressed(::GtkButton* pButton, gpointer pUserData)
+static void on_button_color_gradient_add_pressed(GtkButton* pButton, gpointer pUserData)
 {
 	static_cast< CColorGradientSettingView *>(pUserData)->addColor();
 }
 
-static void on_button_color_gradient_remove_pressed(::GtkButton* pButton, gpointer pUserData)
+static void on_button_color_gradient_remove_pressed(GtkButton* pButton, gpointer pUserData)
 {
 	static_cast< CColorGradientSettingView *>(pUserData)->removeColor();
 }
 
-static void on_color_gradient_spin_button_value_changed(::GtkSpinButton* pButton, gpointer pUserData)
+static void on_color_gradient_spin_button_value_changed(GtkSpinButton* pButton, gpointer pUserData)
 {
 	static_cast< CColorGradientSettingView *>(pUserData)->spinChange(pButton);
 }
 
-static void on_change(::GtkEntry *entry, gpointer pUserData)
+static void on_change(GtkEntry *entry, gpointer pUserData)
 {
 	static_cast<CColorGradientSettingView *>(pUserData)->onChange();
 }
 
-CColorGradientSettingView::CColorGradientSettingView(OpenViBE::Kernel::IBox &rBox, uint32_t ui32Index, CString &rBuilderName, const Kernel::IKernelContext &rKernelContext)
+CColorGradientSettingView::CColorGradientSettingView(Kernel::IBox &rBox, uint32_t ui32Index, CString &rBuilderName, const Kernel::IKernelContext &rKernelContext)
 	: CAbstractSettingView(rBox, ui32Index, rBuilderName, "settings_collection-hbox_setting_color_gradient")
 	, m_rKernelContext(rKernelContext)
 	, m_sBuilderName(rBuilderName)
 	, m_bOnValueSetting(false)
 {
-	::GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
+	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 
-	std::vector< ::GtkWidget* > l_vWidget;
+	std::vector< GtkWidget* > l_vWidget;
 	extractWidget(l_pSettingWidget, l_vWidget);
 	m_pEntry = GTK_ENTRY(l_vWidget[0]);
 
@@ -75,13 +75,13 @@ CColorGradientSettingView::CColorGradientSettingView(OpenViBE::Kernel::IBox &rBo
 }
 
 
-void CColorGradientSettingView::getValue(OpenViBE::CString &rValue) const
+void CColorGradientSettingView::getValue(CString &rValue) const
 {
 	rValue = CString(gtk_entry_get_text(m_pEntry));
 }
 
 
-void CColorGradientSettingView::setValue(const OpenViBE::CString &rValue)
+void CColorGradientSettingView::setValue(const CString &rValue)
 {
 	m_bOnValueSetting = true;
 	gtk_entry_set_text(m_pEntry, rValue);
@@ -90,9 +90,9 @@ void CColorGradientSettingView::setValue(const OpenViBE::CString &rValue)
 
 void CColorGradientSettingView::configurePressed()
 {
-	::GtkBuilder* l_pBuilderInterface=gtk_builder_new(); // glade_xml_new(l_oUserData.sGUIFilename.c_str(), "setting_editor-color_gradient-dialog", NULL);
-	gtk_builder_add_from_file(l_pBuilderInterface, m_sBuilderName.toASCIIString(), NULL);
-	gtk_builder_connect_signals(l_pBuilderInterface, NULL);
+	GtkBuilder* l_pBuilderInterface=gtk_builder_new(); // glade_xml_new(l_oUserData.sGUIFilename.c_str(), "setting_editor-color_gradient-dialog", nullptr);
+	gtk_builder_add_from_file(l_pBuilderInterface, m_sBuilderName.toASCIIString(), nullptr);
+	gtk_builder_connect_signals(l_pBuilderInterface, nullptr);
 
 	pDialog=GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-dialog"));
 
@@ -149,7 +149,7 @@ void CColorGradientSettingView::initializeGradient()
 {
 	gtk_widget_hide(pContainer);
 
-	gtk_container_foreach(GTK_CONTAINER(pContainer), on_gtk_widget_destroy_cb, NULL);
+	gtk_container_foreach(GTK_CONTAINER(pContainer), on_gtk_widget_destroy_cb, nullptr);
 
 	uint32 i=0;
 	uint32_t count = static_cast<uint32_t>(vColorGradient.size());
@@ -157,11 +157,11 @@ void CColorGradientSettingView::initializeGradient()
 	vSpinButtonMap.clear();
 	for(auto it=vColorGradient.begin(); it != vColorGradient.end(); it++, i++)
 	{
-		::GtkBuilder* l_pBuilderInterface=gtk_builder_new(); // glade_xml_new(l_pUserData->sGUIFilename.c_str(), "setting_editor-color_gradient-hbox", NULL);
-		gtk_builder_add_from_file(l_pBuilderInterface, m_sBuilderName.toASCIIString(), NULL);
-		gtk_builder_connect_signals(l_pBuilderInterface, NULL);
+		GtkBuilder* l_pBuilderInterface=gtk_builder_new(); // glade_xml_new(l_pUserData->sGUIFilename.c_str(), "setting_editor-color_gradient-hbox", nullptr);
+		gtk_builder_add_from_file(l_pBuilderInterface, m_sBuilderName.toASCIIString(), nullptr);
+		gtk_builder_connect_signals(l_pBuilderInterface, nullptr);
 
-		::GtkWidget* l_pWidget=GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-hbox"));
+		GtkWidget* l_pWidget=GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-hbox"));
 
 		it->pColorButton=GTK_COLOR_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-colorbutton"));
 		it->pSpinButton=GTK_SPIN_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-spinbutton"));
@@ -211,8 +211,8 @@ void CColorGradientSettingView::refreshColorGradient()
 	CMatrix l_oInterpolatedMatrix;
 	OpenViBEVisualizationToolkit::Tools::ColorGradient::interpolate(l_oInterpolatedMatrix, l_oGradientMatrix, ui32Steps);
 
-	::GdkGC* l_pGC=gdk_gc_new(pDrawingArea->window);
-	::GdkColor l_oColor;
+	GdkGC* l_pGC=gdk_gc_new(pDrawingArea->window);
+	GdkColor l_oColor;
 
 	for(uint32_t i = 0; i < ui32Steps; ++i)
 	{
@@ -251,13 +251,13 @@ void CColorGradientSettingView::removeColor()
 	}
 }
 
-void CColorGradientSettingView::spinChange(::GtkSpinButton* pButton)
+void CColorGradientSettingView::spinChange(GtkSpinButton* pButton)
 {
 	gtk_spin_button_update(pButton);
 
 	uint32_t i = vSpinButtonMap[pButton];
-	::GtkSpinButton* l_pPrevSpinButton = i > 0 ? vColorGradient[i-1].pSpinButton : nullptr;
-	::GtkSpinButton* l_pNextSpinButton = i < vColorGradient.size() - 1 ? vColorGradient[i+1].pSpinButton : nullptr;
+	GtkSpinButton* l_pPrevSpinButton = i > 0 ? vColorGradient[i-1].pSpinButton : nullptr;
+	GtkSpinButton* l_pNextSpinButton = i < vColorGradient.size() - 1 ? vColorGradient[i+1].pSpinButton : nullptr;
 	if(!l_pPrevSpinButton)
 	{
 		gtk_spin_button_set_value(pButton, 0);
@@ -282,7 +282,7 @@ void CColorGradientSettingView::spinChange(::GtkSpinButton* pButton)
 
 void CColorGradientSettingView::colorChange(GtkColorButton *pButton)
 {
-	::GdkColor l_oColor;
+	GdkColor l_oColor;
 	gtk_color_button_get_color(pButton, &l_oColor);
 
 	vColorGradient[vColorButtonMap[pButton]].oColor = l_oColor;

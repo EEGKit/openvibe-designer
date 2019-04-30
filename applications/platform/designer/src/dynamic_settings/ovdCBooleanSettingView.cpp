@@ -5,24 +5,24 @@
 
 using namespace OpenViBE;
 using namespace OpenViBEDesigner;
-using namespace OpenViBEDesigner::Setting;
+using namespace Setting;
 
-static void on_checkbutton_setting_boolean_pressed(::GtkToggleButton* pButton, gpointer pUserData)
+static void on_checkbutton_setting_boolean_pressed(GtkToggleButton* pButton, gpointer pUserData)
 {
 	static_cast<CBooleanSettingView *>(pUserData)->toggleButtonClick();
 }
 
-static void on_insertion(::GtkEntry *entry, gpointer pUserData)
+static void on_insertion(GtkEntry *entry, gpointer pUserData)
 {
 	static_cast<CBooleanSettingView *>(pUserData)->onChange();
 }
 
-CBooleanSettingView::CBooleanSettingView(OpenViBE::Kernel::IBox &rBox, OpenViBE::uint32 ui32Index, CString &rBuilderName):
+CBooleanSettingView::CBooleanSettingView(Kernel::IBox &rBox, uint32 ui32Index, CString &rBuilderName):
 	CAbstractSettingView(rBox, ui32Index, rBuilderName, "settings_collection-hbox_setting_boolean"), m_bOnValueSetting(false)
 {
-	::GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
+	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 
-	std::vector< ::GtkWidget* > l_vWidget;
+	std::vector< GtkWidget* > l_vWidget;
 	extractWidget(l_pSettingWidget, l_vWidget);
 	m_pToggle = GTK_TOGGLE_BUTTON(l_vWidget[1]);
 	m_pEntry = GTK_ENTRY(l_vWidget[0]);
@@ -35,13 +35,13 @@ CBooleanSettingView::CBooleanSettingView(OpenViBE::Kernel::IBox &rBox, OpenViBE:
 }
 
 
-void CBooleanSettingView::getValue(OpenViBE::CString &rValue) const
+void CBooleanSettingView::getValue(CString &rValue) const
 {
 	rValue = CString(gtk_entry_get_text(m_pEntry));
 }
 
 
-void CBooleanSettingView::setValue(const OpenViBE::CString &rValue)
+void CBooleanSettingView::setValue(const CString &rValue)
 {
 	m_bOnValueSetting = true;
 	if(rValue==CString("true"))
@@ -68,7 +68,7 @@ void CBooleanSettingView::toggleButtonClick()
 {
 	if(!m_bOnValueSetting)
 	{
-		if(::gtk_toggle_button_get_active(m_pToggle))
+		if(gtk_toggle_button_get_active(m_pToggle))
 		{
 			getBox().setSettingValue(getSettingIndex(), "true");
 			setValue("true");

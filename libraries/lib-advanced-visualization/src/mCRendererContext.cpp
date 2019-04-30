@@ -26,7 +26,7 @@
 #include <cmath>
 
 using namespace Mensia;
-using namespace Mensia::AdvancedVisualization;
+using namespace AdvancedVisualization;
 
 namespace
 {
@@ -35,7 +35,7 @@ namespace
 		for(uint32_t i=0; i<vChannelName.size() && i<vChannelLocalisation.size(); i++)
 		{
 			std::string l_sChannelName=std::string(",")+vChannelName[i]+std::string(",");
-			std::transform(l_sChannelName.begin(), l_sChannelName.end(), l_sChannelName.begin(), ::tolower);
+			std::transform(l_sChannelName.begin(), l_sChannelName.end(), l_sChannelName.begin(), tolower);
 			vScore[l_sChannelName] = float(vChannelLocalisation[i].x*1E-0 + vChannelLocalisation[i].y*1E-10 + vChannelLocalisation[i].z*1E-5);
 		}
 	}
@@ -45,7 +45,7 @@ namespace
 		for(uint32_t i=0; i<vChannelName.size() && i<vChannelLocalisation.size(); i++)
 		{
 			std::string l_sChannelName=std::string(",")+vChannelName[i]+std::string(",");
-			std::transform(l_sChannelName.begin(), l_sChannelName.end(), l_sChannelName.begin(), ::tolower);
+			std::transform(l_sChannelName.begin(), l_sChannelName.end(), l_sChannelName.begin(), tolower);
 			vScore[l_sChannelName] = float(vChannelLocalisation[i].x*1E-5 + vChannelLocalisation[i].y*1E-10 + vChannelLocalisation[i].z*1E-0);
 		}
 	}
@@ -53,16 +53,14 @@ namespace
 	struct sort_alpha
 	{
 		sort_alpha(const std::vector < std::string >& vChannelName)
-			:m_vChannelName(vChannelName)
-		{
-		}
+			:m_vChannelName(vChannelName) { }
 
 		bool operator()(uint32_t i, uint32_t j)
 		{
 			std::string l_sChannelName_i=m_vChannelName[i];
 			std::string l_sChannelName_j=m_vChannelName[j];
-			std::transform(l_sChannelName_i.begin(), l_sChannelName_i.end(), l_sChannelName_i.begin(), ::tolower);
-			std::transform(l_sChannelName_j.begin(), l_sChannelName_j.end(), l_sChannelName_j.begin(), ::tolower);
+			std::transform(l_sChannelName_i.begin(), l_sChannelName_i.end(), l_sChannelName_i.begin(), tolower);
+			std::transform(l_sChannelName_j.begin(), l_sChannelName_j.end(), l_sChannelName_j.begin(), tolower);
 
 			return l_sChannelName_i < l_sChannelName_j;
 		}
@@ -74,9 +72,7 @@ namespace
 	{
 		sort_special(const std::vector < std::string >& vChannelName, const std::map < std::string, float >& vScore)
 			:m_vChannelName(vChannelName)
-			,m_vScore(vScore)
-		{
-		}
+			,m_vScore(vScore) { }
 
 		bool operator()(uint32_t i, uint32_t j)
 		{
@@ -87,8 +83,8 @@ namespace
 
 			std::string l_sChannelName_i=std::string(",")+m_vChannelName[i]+std::string(",");
 			std::string l_sChannelName_j=std::string(",")+m_vChannelName[j]+std::string(",");
-			std::transform(l_sChannelName_i.begin(), l_sChannelName_i.end(), l_sChannelName_i.begin(), ::tolower);
-			std::transform(l_sChannelName_j.begin(), l_sChannelName_j.end(), l_sChannelName_j.begin(), ::tolower);
+			std::transform(l_sChannelName_i.begin(), l_sChannelName_i.end(), l_sChannelName_i.begin(), tolower);
+			std::transform(l_sChannelName_j.begin(), l_sChannelName_j.end(), l_sChannelName_j.begin(), tolower);
 
 			for(it=m_vScore.begin(); it!=m_vScore.end(); it++)
 			{
@@ -108,13 +104,14 @@ namespace
 //
 
 CRendererContext::CRendererContext(IRendererContext* pParentRendererContext)
-	:m_pParentRendererContext(NULL)
+	:m_pParentRendererContext(nullptr)
 {
 	this->clear();
 	this->setParentRendererContext(pParentRendererContext);
 }
 
-void CRendererContext::clear(void)
+void CRendererContext::clear()
+
 {
 	this->clearChannelInfo();
 	this->clearTransformInfo();
@@ -129,7 +126,8 @@ void CRendererContext::setParentRendererContext(IRendererContext* pParentRendere
 // ____________________________________________________________________________________________________________________________________________________________________________________
 //
 
-void CRendererContext::clearChannelInfo(void)
+void CRendererContext::clearChannelInfo()
+
 {
 	m_vChannelLookup.clear();
 	m_vChannelName.clear();
@@ -141,7 +139,7 @@ void CRendererContext::clearChannelInfo(void)
 
 void CRendererContext::addChannel(const std::string& sChannelName, float x, float y, float z)
 {
-	float l_fNorm=float(::sqrt(x*x+ y*y + z*z));
+	float l_fNorm=float(sqrt(x*x+ y*y + z*z));
 	float l_fInvNorm=(l_fNorm!=0?1.f/l_fNorm:0);
 	CVertex l_oChannelLocalisation;
 	l_oChannelLocalisation.x = x*l_fInvNorm;
@@ -240,9 +238,10 @@ const char* CRendererContext::getDimensionLabel(size_t dimensionIndex, size_t la
 // ____________________________________________________________________________________________________________________________________________________________________________________
 //
 
-void CRendererContext::clearTransformInfo(void)
+void CRendererContext::clearTransformInfo()
+
 {
-	m_pParentRendererContext=NULL;
+	m_pParentRendererContext=nullptr;
 	m_f32Scale=1;
 	m_f32Zoom=1;
 	m_f32RotationX=2;
@@ -365,7 +364,7 @@ void CRendererContext::setCheckBoardVisibility(bool bVisibility)
 	m_bCheckBoardVisiblity=bVisibility;
 }
 
-void CRendererContext::setDataType(IRendererContext::EDataType eDataType)
+void CRendererContext::setDataType(EDataType eDataType)
 {
 	m_eDataType=eDataType;
 }
@@ -427,7 +426,7 @@ std::string CRendererContext::getChannelName(uint32_t ui32Index) const
 	{
 		return m_vChannelName[ui32Index];
 	}
-	::printf("No name for channel %u\n", ui32Index);
+	printf("No name for channel %u\n", ui32Index);
 	return "";
 }
 
@@ -440,12 +439,12 @@ bool CRendererContext::getChannelLocalisation(uint32_t ui32Index, float& x, floa
 	return true;
 }
 
-uint32_t CRendererContext::getChannelCount(void) const
+uint32_t CRendererContext::getChannelCount() const
 {
 	return m_vChannelName.size();
 }
 
-uint32_t CRendererContext::getSelectedCount(void) const
+uint32_t CRendererContext::getSelectedCount() const
 {
 	return m_vChannelLookup.size();
 }
@@ -470,22 +469,22 @@ bool CRendererContext::isSelected(uint32_t ui32Index) const
 // ____________________________________________________________________________________________________________________________________________________________________________________
 //
 
-float CRendererContext::getScale(void) const
+float CRendererContext::getScale() const
 {
 	return m_f32Scale*(m_pParentRendererContext?m_pParentRendererContext->getScale():1);
 }
 
-float CRendererContext::getZoom(void) const
+float CRendererContext::getZoom() const
 {
 	return m_f32Zoom*(m_pParentRendererContext?m_pParentRendererContext->getZoom():1);
 }
 
-float CRendererContext::getRotationX(void) const
+float CRendererContext::getRotationX() const
 {
 	return m_f32RotationX+(m_pParentRendererContext?m_pParentRendererContext->getRotationX():0);
 }
 
-float CRendererContext::getRotationY(void) const
+float CRendererContext::getRotationY() const
 {
 	return m_f32RotationY+(m_pParentRendererContext?m_pParentRendererContext->getRotationY():0);
 }
@@ -493,107 +492,107 @@ float CRendererContext::getRotationY(void) const
 // ____________________________________________________________________________________________________________________________________________________________________________________
 //
 
-float CRendererContext::getTranslucency(void) const
+float CRendererContext::getTranslucency() const
 {
 	return m_f32Translucency*(m_pParentRendererContext?m_pParentRendererContext->getTranslucency():1);
 }
 
-float CRendererContext::getAspect(void) const
+float CRendererContext::getAspect() const
 {
 	return m_f32Aspect*(m_pParentRendererContext?m_pParentRendererContext->getAspect():1);
 }
 
-uint64_t CRendererContext::getSampleDuration(void) const
+uint64_t CRendererContext::getSampleDuration() const
 {
 	return m_ui64SampleDuration;
 }
 
-uint64_t CRendererContext::getTimeScale(void) const
+uint64_t CRendererContext::getTimeScale() const
 {
 	return m_ui64TimeScale;
 }
 
-uint64_t CRendererContext::getElementCount(void) const
+uint64_t CRendererContext::getElementCount() const
 {
 	return m_ui64ElementCount;
 }
 
-uint64_t CRendererContext::getFlowerRingCount(void) const
+uint64_t CRendererContext::getFlowerRingCount() const
 {
 	return m_ui64FlowerRingCount;
 }
 
-bool CRendererContext::hasXYZPlotDepth(void) const
+bool CRendererContext::hasXYZPlotDepth() const
 {
 	return m_bHasXYZPlotDepth;
 }
 
-bool CRendererContext::isAxisDisplayed(void) const
+bool CRendererContext::isAxisDisplayed() const
 {
 	return m_bIsAxisDisplayed;
 }
 
-bool CRendererContext::isPositiveOnly(void) const
+bool CRendererContext::isPositiveOnly() const
 {
 	return m_bIsPositiveOnly;
 }
 
-bool CRendererContext::isFaceMeshVisible(void) const
+bool CRendererContext::isFaceMeshVisible() const
 {
 	return m_bFaceMeshVisible;
 }
 
-bool CRendererContext::isScalpMeshVisible(void) const
+bool CRendererContext::isScalpMeshVisible() const
 {
 	return m_bScalpMeshVisible;
 }
 
-bool CRendererContext::isTimeLocked(void) const
+bool CRendererContext::isTimeLocked() const
 {
 	return m_bIsTimeLocked;
 }
 
-bool CRendererContext::isScrollModeActive(void) const
+bool CRendererContext::isScrollModeActive() const
 {
 	return m_bIsScrollModeActive;
 }
 
-bool CRendererContext::getCheckBoardVisibility(void) const
+bool CRendererContext::getCheckBoardVisibility() const
 {
 	return (m_pParentRendererContext?m_pParentRendererContext->getCheckBoardVisibility():m_bCheckBoardVisiblity);
 }
 
-bool CRendererContext::getScaleVisibility(void) const
+bool CRendererContext::getScaleVisibility() const
 {
 	return (m_pParentRendererContext?m_pParentRendererContext->getScaleVisibility():m_bScaleVisiblity);
 }
 
-IRendererContext::EDataType CRendererContext::getDataType(void) const
+IRendererContext::EDataType CRendererContext::getDataType() const
 {
 	return m_eDataType;
 }
 
-uint32_t CRendererContext::getSpectrumFrequencyRange(void) const
+uint32_t CRendererContext::getSpectrumFrequencyRange() const
 {
 	return m_ui32SpectrumFrequencyRange;
 }
 
-uint32_t CRendererContext::getMinSpectrumFrequency(void) const
+uint32_t CRendererContext::getMinSpectrumFrequency() const
 {
 	return m_ui32MinSpectrumFrequency>m_ui32SpectrumFrequencyRange?m_ui32SpectrumFrequencyRange:m_ui32MinSpectrumFrequency;
 }
 
-uint32_t CRendererContext::getMaxSpectrumFrequency(void) const
+uint32_t CRendererContext::getMaxSpectrumFrequency() const
 {
 	return m_ui32MaxSpectrumFrequency>m_ui32SpectrumFrequencyRange?m_ui32SpectrumFrequencyRange:m_ui32MaxSpectrumFrequency;
 }
 
-uint32_t CRendererContext::getStackCount(void) const
+uint32_t CRendererContext::getStackCount() const
 {
 	return m_ui32StackCount;
 }
 
-uint32_t CRendererContext::getStackIndex(void) const
+uint32_t CRendererContext::getStackIndex() const
 {
 	return m_ui32StackIndex;
 }
@@ -601,13 +600,13 @@ uint32_t CRendererContext::getStackIndex(void) const
 // ____________________________________________________________________________________________________________________________________________________________________________________
 //
 
-bool CRendererContext::isERPPlayerActive(void) const
+bool CRendererContext::isERPPlayerActive() const
 {
 	return m_bERPPlayerActive || (m_pParentRendererContext?m_pParentRendererContext->isERPPlayerActive():false);
 }
 
-float CRendererContext::getERPFraction(void) const
+float CRendererContext::getERPFraction() const
 {
 	float l_fERPFraction = m_f32ERPFraction + (m_pParentRendererContext?m_pParentRendererContext->getERPFraction():0);
-	return l_fERPFraction - ::floorf(l_fERPFraction);
+	return l_fERPFraction - floorf(l_fERPFraction);
 }

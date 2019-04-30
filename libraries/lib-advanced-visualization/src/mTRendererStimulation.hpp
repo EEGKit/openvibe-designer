@@ -64,9 +64,9 @@ namespace Mensia
 
 				if(bPreRender)
 				{
-					::glPushAttrib(GL_ALL_ATTRIB_BITS);
+					glPushAttrib(GL_ALL_ATTRIB_BITS);
 					l_bResult = T::render(rContext);
-					::glPopAttrib();
+					glPopAttrib();
 				}
 
 				bool ok=true;
@@ -76,15 +76,15 @@ namespace Mensia
 
 				if(ok)
 				{
-					::glPushAttrib(GL_ALL_ATTRIB_BITS);
+					glPushAttrib(GL_ALL_ATTRIB_BITS);
 
 					uint32_t l_ui32SampleCount=CRenderer::getSampleCount();
 					uint32_t l_ui32HistoryIndex=CRenderer::getHistoryIndex();
 					uint64_t l_ui64SampleDuration=rContext.getSampleDuration();
 
-					::glDisable(GL_TEXTURE_1D);
-					::glDisable(GL_BLEND);
-					::glDisable(GL_LINE_SMOOTH);
+					glDisable(GL_TEXTURE_1D);
+					glDisable(GL_BLEND);
+					glDisable(GL_LINE_SMOOTH);
 
 					uint32_t l_ui32LeftIndex=l_ui32HistoryIndex-l_ui32HistoryIndex%l_ui32SampleCount;
 					uint32_t l_ui32MidIndex =l_ui32HistoryIndex;
@@ -118,53 +118,53 @@ namespace Mensia
 							*/
 
 							// draw a vertical line representing the stimulation
-							::glLineWidth(1);
-							::glColor3fv(getMarkerColor(it->second));
-							::glBegin(GL_LINES);
-								::glVertex2f(l_fProgress, 0);
-								::glVertex2f(l_fProgress, 1);
-							::glEnd();
+							glLineWidth(1);
+							glColor3fv(getMarkerColor(it->second));
+							glBegin(GL_LINES);
+								glVertex2f(l_fProgress, 0);
+								glVertex2f(l_fProgress, 1);
+							glEnd();
 
 
 							// draw a (ugly) disc representing a stimulation
-							::glBegin(GL_TRIANGLE_FAN);
+							glBegin(GL_TRIANGLE_FAN);
 							for (auto l_oVertex = m_vCircle.cbegin(); l_oVertex != m_vCircle.cend(); l_oVertex++)
 							{
-								::glVertex2f(float(l_oVertex->first / rContext.getAspect() + l_fProgress), float(l_oVertex->second + 0.95f - m_mEncounteredStimulations[it->second] * s_fStimulationIndicatorSpacing));
+								glVertex2f(float(l_oVertex->first / rContext.getAspect() + l_fProgress), float(l_oVertex->second + 0.95f - m_mEncounteredStimulations[it->second] * s_fStimulationIndicatorSpacing));
 							}
-							::glEnd();
+							glEnd();
 
 
 							// now draw
-							::glLineWidth(2);
-							::glEnable(GL_BLEND);
-							::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-							::glEnable(GL_LINE_SMOOTH);
-							::glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-							::glBegin(GL_LINE_LOOP);
+							glLineWidth(2);
+							glEnable(GL_BLEND);
+							glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+							glEnable(GL_LINE_SMOOTH);
+							glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+							glBegin(GL_LINE_LOOP);
 							for (auto l_oVertex = m_vCircle.cbegin(); l_oVertex != m_vCircle.cend(); l_oVertex++)
 							{
-								::glVertex2f(float(l_oVertex->first / rContext.getAspect() + l_fProgress), float(l_oVertex->second + 0.95f - m_mEncounteredStimulations[it->second] * s_fStimulationIndicatorSpacing));
+								glVertex2f(float(l_oVertex->first / rContext.getAspect() + l_fProgress), float(l_oVertex->second + 0.95f - m_mEncounteredStimulations[it->second] * s_fStimulationIndicatorSpacing));
 							}
-							::glEnd();
-							::glDisable(GL_LINE_SMOOTH);
+							glEnd();
+							glDisable(GL_LINE_SMOOTH);
 
-							::glDisable(GL_BLEND);
+							glDisable(GL_BLEND);
 						}
 					}
 
-					::glEnable(GL_LINE_SMOOTH);
-					::glEnable(GL_BLEND);
-					::glEnable(GL_TEXTURE_1D);
+					glEnable(GL_LINE_SMOOTH);
+					glEnable(GL_BLEND);
+					glEnable(GL_TEXTURE_1D);
 
-					::glPopAttrib();
+					glPopAttrib();
 				}
 
 				if(!bPreRender)
 				{
-					::glPushAttrib(GL_ALL_ATTRIB_BITS);
+					glPushAttrib(GL_ALL_ATTRIB_BITS);
 					l_bResult = T::render(rContext);
-					::glPopAttrib();
+					glPopAttrib();
 				}
 
 				return l_bResult && ok;

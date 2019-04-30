@@ -25,14 +25,12 @@
 #include <cmath>
 
 using namespace Mensia;
-using namespace Mensia::AdvancedVisualization;
+using namespace AdvancedVisualization;
 
 CMouse::CMouse(CBoxAlgorithmViz& rBoxAlgorithmViz)
 	:m_rBoxAlgorithmViz(rBoxAlgorithmViz)
 	,m_i32MouseX(0)
-	,m_i32MouseY(0)
-{
-}
+	,m_i32MouseY(0) { }
 
 void CMouse::mouseButton(IRendererContext& rContext, int32_t x, int32_t y, int32_t button, int status)
 {
@@ -52,11 +50,11 @@ void CMouse::mouseMotion(IRendererContext& rContext, int32_t x, int32_t y)
 {
 	if(m_vButton[3])
 	{
-		rContext.scaleBy(::powf(.99f, float(y-m_i32MouseY)));
+		rContext.scaleBy(powf(.99f, float(y-m_i32MouseY)));
 	}
 	if(m_vButton[2])
 	{
-		rContext.zoomBy(::powf(.99f, float(y-m_i32MouseY)));
+		rContext.zoomBy(powf(.99f, float(y-m_i32MouseY)));
 	}
 	if(m_vButton[1])
 	{
@@ -68,7 +66,8 @@ void CMouse::mouseMotion(IRendererContext& rContext, int32_t x, int32_t y)
 	m_i32MouseY=y;
 }
 
-bool CMouse::hasButtonPressed(void)
+bool CMouse::hasButtonPressed()
+
 {
 	std::map < int32_t, int >::const_iterator it;
 	for(it=m_vButton.begin(); it!=m_vButton.end(); it++)

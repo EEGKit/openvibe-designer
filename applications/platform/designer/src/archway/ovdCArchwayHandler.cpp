@@ -35,9 +35,7 @@ CArchwayHandler::CArchwayHandler(const OpenViBE::Kernel::IKernelContext& kernelC
 	: m_DeviceURL("simulator://")
 	, m_Archway(nullptr)
 	, m_KernelContext(kernelContext)
-	, m_RunningPipelineId(0)
-{
-}
+	, m_RunningPipelineId(0) { }
 
 EngineInitialisationStatus CArchwayHandler::initialize()
 {

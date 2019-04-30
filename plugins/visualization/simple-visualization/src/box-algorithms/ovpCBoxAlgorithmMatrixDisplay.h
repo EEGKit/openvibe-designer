@@ -21,12 +21,12 @@ namespace OpenViBEPlugins
 		{
 		public:
 
-			virtual void release(void) { delete this; }
+			virtual void release() { delete this; }
 
-			virtual OpenViBE::boolean initialize(void);
-			virtual OpenViBE::boolean uninitialize(void);
+			virtual OpenViBE::boolean initialize();
+			virtual OpenViBE::boolean uninitialize();
 			virtual OpenViBE::boolean processInput(OpenViBE::uint32 ui32InputIndex);
-			virtual OpenViBE::boolean process(void);
+			virtual OpenViBE::boolean process();
 
 			_IsDerivedFromClass_Final_(OpenViBEToolkit::TBoxAlgorithm < OpenViBE::Plugins::IBoxAlgorithm >, OVP_ClassId_BoxAlgorithm_MatrixDisplay);
 
@@ -41,10 +41,10 @@ namespace OpenViBEPlugins
 			OpenViBE::Kernel::TParameterHandler < OpenViBE::IMatrix* > op_pMatrix;
 
 			// Outputs: visualization in a gtk window
-			::GtkBuilder* m_pMainWidgetInterface;
-			::GtkBuilder* m_pToolbarWidgetInterface;
-			::GtkWidget* m_pMainWidget;
-			::GtkWidget* m_pToolbarWidget;
+			GtkBuilder* m_pMainWidgetInterface;
+			GtkBuilder* m_pToolbarWidgetInterface;
+			GtkWidget* m_pMainWidget;
+			GtkWidget* m_pToolbarWidget;
 
 			std::vector< std::pair <GtkWidget*,GdkColor> > m_vEventBoxCache;
 			std::vector< std::pair <GtkLabel*, std::string> > m_vLabelCache;
@@ -66,7 +66,7 @@ namespace OpenViBEPlugins
 			OpenViBE::boolean m_bShowValues;
 			OpenViBE::boolean m_bShowColors;
 
-			virtual OpenViBE::boolean resetColors(void);
+			virtual OpenViBE::boolean resetColors();
 		private:
 			OpenViBEVisualizationToolkit::IVisualizationContext* m_visualizationContext;
 		};
@@ -75,22 +75,22 @@ namespace OpenViBEPlugins
 		{
 		public:
 
-			virtual void release(void) { }
+			virtual void release() { }
 
-			virtual OpenViBE::CString getName(void) const                { return OpenViBE::CString("Matrix Display"); }
-			virtual OpenViBE::CString getAuthorName(void) const          { return OpenViBE::CString("Laurent Bonnet"); }
-			virtual OpenViBE::CString getAuthorCompanyName(void) const   { return OpenViBE::CString("INRIA/IRISA"); }
-			virtual OpenViBE::CString getShortDescription(void) const    { return OpenViBE::CString("Display a streamed matrix"); }
-			virtual OpenViBE::CString getDetailedDescription(void) const { return OpenViBE::CString("The streamed matrix can be visualized using a table of values and/or a color gradient."); }
-			virtual OpenViBE::CString getCategory(void) const            { return OpenViBE::CString("Visualization/Basic"); }
-			virtual OpenViBE::CString getVersion(void) const             { return OpenViBE::CString("1.0"); }
-			virtual OpenViBE::CString getStockItemName(void) const       { return OpenViBE::CString("gtk-select-color"); }
-			virtual OpenViBE::CString getSoftwareComponent(void) const   { return OpenViBE::CString("openvibe-designer"); }
-			virtual OpenViBE::CString getAddedSoftwareVersion(void) const   { return OpenViBE::CString("0.0.0"); }
-			virtual OpenViBE::CString getUpdatedSoftwareVersion(void) const { return OpenViBE::CString("0.0.0"); }
+			virtual OpenViBE::CString getName() const                { return OpenViBE::CString("Matrix Display"); }
+			virtual OpenViBE::CString getAuthorName() const          { return OpenViBE::CString("Laurent Bonnet"); }
+			virtual OpenViBE::CString getAuthorCompanyName() const   { return OpenViBE::CString("INRIA/IRISA"); }
+			virtual OpenViBE::CString getShortDescription() const    { return OpenViBE::CString("Display a streamed matrix"); }
+			virtual OpenViBE::CString getDetailedDescription() const { return OpenViBE::CString("The streamed matrix can be visualized using a table of values and/or a color gradient."); }
+			virtual OpenViBE::CString getCategory() const            { return OpenViBE::CString("Visualization/Basic"); }
+			virtual OpenViBE::CString getVersion() const             { return OpenViBE::CString("1.0"); }
+			virtual OpenViBE::CString getStockItemName() const       { return OpenViBE::CString("gtk-select-color"); }
+			virtual OpenViBE::CString getSoftwareComponent() const   { return OpenViBE::CString("openvibe-designer"); }
+			virtual OpenViBE::CString getAddedSoftwareVersion() const   { return OpenViBE::CString("0.0.0"); }
+			virtual OpenViBE::CString getUpdatedSoftwareVersion() const { return OpenViBE::CString("0.0.0"); }
 
-			virtual OpenViBE::CIdentifier getCreatedClass(void) const    { return OVP_ClassId_BoxAlgorithm_MatrixDisplay; }
-			virtual OpenViBE::Plugins::IPluginObject* create(void)       { return new OpenViBEPlugins::SimpleVisualization::CBoxAlgorithmMatrixDisplay; }
+			virtual OpenViBE::CIdentifier getCreatedClass() const    { return OVP_ClassId_BoxAlgorithm_MatrixDisplay; }
+			virtual OpenViBE::Plugins::IPluginObject* create()       { return new CBoxAlgorithmMatrixDisplay; }
 
 			virtual OpenViBE::boolean hasFunctionality(OpenViBE::CIdentifier functionalityIdentifier) const
 			{

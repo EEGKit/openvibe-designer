@@ -25,7 +25,7 @@
 #include <algorithm>
 
 using namespace Mensia;
-using namespace Mensia::AdvancedVisualization;
+using namespace AdvancedVisualization;
 
 void CRendererMountain::rebuild(const IRendererContext& rContext)
 {
@@ -103,39 +103,39 @@ bool CRendererMountain::render(const IRendererContext& rContext)
 
 	float d=2.5f;
 
-	::glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHTING);
 
-	::glEnable(GL_DEPTH_TEST);
-	::glDisable(GL_BLEND);
+	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_BLEND);
 
-	::glMatrixMode(GL_PROJECTION);
-	::glPushMatrix();
-	::glLoadIdentity();
-	::gluPerspective(60, rContext.getAspect(), .01, 100);
-	::glTranslatef(0, -.2f, -d);
-	::glRotatef(rContext.getRotationX()*10, 1, 0, 0);
-	::glRotatef(rContext.getRotationY()*10, 0, 1, 0);
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	gluPerspective(60, rContext.getAspect(), .01, 100);
+	glTranslatef(0, -.2f, -d);
+	glRotatef(rContext.getRotationX()*10, 1, 0, 0);
+	glRotatef(rContext.getRotationY()*10, 0, 1, 0);
 
-	::glMatrixMode(GL_TEXTURE);
-	::glPushMatrix();
-	::glScalef(rContext.getScale(), 1, 1);
+	glMatrixMode(GL_TEXTURE);
+	glPushMatrix();
+	glScalef(rContext.getScale(), 1, 1);
 
-	::glMatrixMode(GL_MODELVIEW);
-	::glPushMatrix();
-	::glLoadIdentity();
-	::glScalef(3*rContext.getZoom(), 3*rContext.getZoom(), 3*rContext.getZoom());
-	::glTranslatef(-.5f, 0, -.5f);
-	::glScalef(m_ui32ChannelCount*1.f/rContext.getSelectedCount(), rContext.getScale(), 1);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+	glScalef(3*rContext.getZoom(), 3*rContext.getZoom(), 3*rContext.getZoom());
+	glTranslatef(-.5f, 0, -.5f);
+	glScalef(m_ui32ChannelCount*1.f/rContext.getSelectedCount(), rContext.getScale(), 1);
 
-	::glEnableClientState(GL_VERTEX_ARRAY);
-	::glEnableClientState(GL_NORMAL_ARRAY);
-	::glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	::glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_oMountain.m_vVertex[0].x);
-	::glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_oMountain.m_vNormal[0].x);
-	::glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_oMountain.m_vVertex[0].u);
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_oMountain.m_vVertex[0].x);
+	glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_oMountain.m_vNormal[0].x);
+	glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_oMountain.m_vVertex[0].u);
 
-	::glColor3f(rContext.getTranslucency(), rContext.getTranslucency(), rContext.getTranslucency());
-	::glDrawElements(GL_TRIANGLES, (rContext.getSelectedCount()-1)*(m_ui32SampleCount-1)*6, GL_UNSIGNED_INT, &m_oMountain.m_vTriangle[0]);
+	glColor3f(rContext.getTranslucency(), rContext.getTranslucency(), rContext.getTranslucency());
+	glDrawElements(GL_TRIANGLES, (rContext.getSelectedCount()-1)*(m_ui32SampleCount-1)*6, GL_UNSIGNED_INT, &m_oMountain.m_vTriangle[0]);
 /*
 	::glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	::glColor3f(0, 0, 0);
@@ -143,20 +143,20 @@ bool CRendererMountain::render(const IRendererContext& rContext)
 	::glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 */
 
-	::glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	::glDisableClientState(GL_NORMAL_ARRAY);
-	::glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState(GL_NORMAL_ARRAY);
+	glDisableClientState(GL_VERTEX_ARRAY);
 
-	::glMatrixMode(GL_MODELVIEW);
-	::glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
 
-	::glMatrixMode(GL_TEXTURE);
-	::glPopMatrix();
+	glMatrixMode(GL_TEXTURE);
+	glPopMatrix();
 
-	::glMatrixMode(GL_PROJECTION);
-	::glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
 
-	::glMatrixMode(GL_MODELVIEW);
+	glMatrixMode(GL_MODELVIEW);
 
 	return true;
 }

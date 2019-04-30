@@ -33,7 +33,7 @@ namespace Mensia
 	namespace AdvancedVisualization
 	{
 		std::string trim(const std::string& sValue);
-		IRendererContext& getContext(void);
+		IRendererContext& getContext();
 	};
 };
 

@@ -35,7 +35,7 @@ namespace Mensia
 		{
 		public:
 
-			virtual void renderLeft(::GtkWidget* pWidget)
+			virtual void renderLeft(GtkWidget* pWidget)
 			{
 				gint w, h;
 				gint lw, lh;
@@ -43,17 +43,17 @@ namespace Mensia
 				char l_sLabel[1024];
 				uint32_t i, l_ui32Index;
 
-				::gdk_drawable_get_size(pWidget->window, &w, &h);
-				::GdkGC* l_pDrawGC=gdk_gc_new(pWidget->window);
+				gdk_drawable_get_size(pWidget->window, &w, &h);
+				GdkGC* l_pDrawGC=gdk_gc_new(pWidget->window);
 				for(i=0; i<m_pRendererContext->getSelectedCount(); i++)
 				{
 					l_ui32Index=m_pRendererContext->getSelected(i);
-					::sprintf(l_sLabel, "%s (%i)", m_pRendererContext->getChannelName(l_ui32Index).c_str(), l_ui32Index+1);
-					::PangoLayout* l_pPangoLayout=::gtk_widget_create_pango_layout(pWidget, l_sLabel);
-					::pango_layout_get_size(l_pPangoLayout, &lw, &lh);
+					sprintf(l_sLabel, "%s (%i)", m_pRendererContext->getChannelName(l_ui32Index).c_str(), l_ui32Index+1);
+					PangoLayout* l_pPangoLayout=gtk_widget_create_pango_layout(pWidget, l_sLabel);
+					pango_layout_get_size(l_pPangoLayout, &lw, &lh);
 					lw/=PANGO_SCALE;
 					lh/=PANGO_SCALE;
-					::gdk_draw_layout(
+					gdk_draw_layout(
 						pWidget->window,
 						l_pDrawGC,
 						w-lw,

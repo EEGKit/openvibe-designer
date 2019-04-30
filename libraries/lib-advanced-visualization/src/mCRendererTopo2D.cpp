@@ -2,7 +2,7 @@
 #include <cmath>
 
 using namespace Mensia;
-using namespace Mensia::AdvancedVisualization;
+using namespace AdvancedVisualization;
 
 #define OFFSET .0001f
 
@@ -27,9 +27,9 @@ void CRendererTopo2D::rebuild3DMeshesPre(const IRendererContext& rContext)
 			{
 				float a=float(i*M_PI/(l_ui32VertexCount1-1));
 				float b=float(j*1.25*M_PI/(l_ui32VertexCount2-1)-M_PI*.2);
-				l_vVertex[k].x=::cosf(a);
-				l_vVertex[k].y=::sinf(a)*::sinf(b)-OFFSET;
-				l_vVertex[k].z=::sinf(a)*::cosf(b);
+				l_vVertex[k].x=cosf(a);
+				l_vVertex[k].y=sinf(a)*sinf(b)-OFFSET;
+				l_vVertex[k].z=sinf(a)*cosf(b);
 				l_vVertex[k].u=k*200.f/(l_ui32VertexCount1*l_ui32VertexCount2);
 			}
 		}
@@ -69,13 +69,13 @@ void CRendererTopo2D::rebuild3DMeshesPre(const IRendererContext& rContext)
 		{
 			float a=float(i*4*M_PI/l_ui32CircleVertexCount);
 
-			l_vVertex[k  ].x=::cosf(a);
+			l_vVertex[k  ].x=cosf(a);
 			l_vVertex[k  ].y=.01f;
-			l_vVertex[k  ].z=::sinf(a);
+			l_vVertex[k  ].z=sinf(a);
 
-			l_vVertex[k+1].x=::cosf(a);
+			l_vVertex[k+1].x=cosf(a);
 			l_vVertex[k+1].y=-.01f;
-			l_vVertex[k+1].z=::sinf(a);
+			l_vVertex[k+1].z=sinf(a);
 		}
 
 		// Nose mesh
@@ -153,12 +153,12 @@ namespace
 		{
 			CVertex& p=(*it);
 			p.y += OFFSET;
-			float phi=static_cast<float>(M_PI)*.5f - ::asinf(p.y);
-			float psi=::atan2f(p.z, p.x);
+			float phi=static_cast<float>(M_PI)*.5f - asinf(p.y);
+			float psi=atan2f(p.z, p.x);
 
-			p.x = phi*::cos(psi);
+			p.x = phi*cos(psi);
 			p.y = fLayer;
-			p.z = phi*::sin(psi);
+			p.z = phi*sin(psi);
 		}
 	}
 }

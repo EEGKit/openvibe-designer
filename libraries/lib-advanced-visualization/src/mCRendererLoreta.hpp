@@ -38,21 +38,21 @@ namespace Mensia
 		{
 		public:
 
-			CRendererLoreta(void);
+			CRendererLoreta();
 
 			virtual void rebuild(const IRendererContext& rContext);
 			virtual void refresh(const IRendererContext& rContext);
 			virtual bool render(const IRendererContext& rContext);
 
-			virtual void clearRegionSelection(void);
-			virtual uint32_t getRegionCategoryCount(void);
+			virtual void clearRegionSelection();
+			virtual uint32_t getRegionCategoryCount();
 			virtual uint32_t getRegionCount(uint32_t ui32RegionCategory);
 			virtual const char* getRegionCategoryName(uint32_t ui32RegionCategory);
 			virtual const char* getRegionName(uint32_t ui32RegionCategory, uint32_t ui32RegionIndex);
 			virtual void selectRegion(uint32_t ui32RegionCategory, const char* sRegionName);
 			virtual void selectRegion(uint32_t ui32RegionCategory, uint32_t ui32RegionIndex);
 
-			virtual void refreshBrainSubset(void);
+			virtual void refreshBrainSubset();
 
 		protected:
 

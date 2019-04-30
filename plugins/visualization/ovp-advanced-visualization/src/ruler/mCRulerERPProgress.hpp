@@ -33,9 +33,10 @@ namespace Mensia
 		{
 		public:
 
-			virtual void render(void)
+			virtual void render()
+
 			{
-				if(m_pRenderer == NULL) return;
+				if(m_pRenderer == nullptr) return;
 				if(m_pRenderer->getSampleCount() == 0) return;
 				if(m_pRenderer->getHistoryCount() == 0) return;
 				if(m_pRenderer->getHistoryIndex() == 0) return;
@@ -43,21 +44,21 @@ namespace Mensia
 				float l_fProgress=m_pRendererContext->getERPFraction();
 				if(l_fProgress!=0 && l_fProgress!=1)
 				{
-					::glDisable(GL_TEXTURE_1D);
+					glDisable(GL_TEXTURE_1D);
 
-					::glLineWidth(4);
-					::glColor3f(0, 0, 0);
-					::glBegin(GL_LINES);
-						::glVertex2f(l_fProgress, 0);
-						::glVertex2f(l_fProgress, 1);
-					::glEnd();
+					glLineWidth(4);
+					glColor3f(0, 0, 0);
+					glBegin(GL_LINES);
+						glVertex2f(l_fProgress, 0);
+						glVertex2f(l_fProgress, 1);
+					glEnd();
 
-					::glLineWidth(2);
-					::glColor3f(0.25, 1, 0.25);
-					::glBegin(GL_LINES);
-						::glVertex2f(l_fProgress, 0);
-						::glVertex2f(l_fProgress, 1);
-					::glEnd();
+					glLineWidth(2);
+					glColor3f(0.25, 1, 0.25);
+					glBegin(GL_LINES);
+						glVertex2f(l_fProgress, 0);
+						glVertex2f(l_fProgress, 1);
+					glEnd();
 				}
 			}
 		};

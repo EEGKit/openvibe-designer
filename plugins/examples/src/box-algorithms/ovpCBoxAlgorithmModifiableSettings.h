@@ -25,17 +25,17 @@ namespace OpenViBEPlugins
 		class CBoxAlgorithmModifiableSettings : virtual public OpenViBEToolkit::TBoxAlgorithm < OpenViBE::Plugins::IBoxAlgorithm >
 		{
 		public:
-			virtual void release(void) { delete this; }
-			virtual bool initialize(void);
-			virtual bool uninitialize(void);
+			virtual void release() { delete this; }
+			virtual bool initialize();
+			virtual bool uninitialize();
 			virtual bool processClock(OpenViBE::CMessageClock& rMessageClock);
-			virtual uint64_t getClockFrequency(void);
+			virtual uint64_t getClockFrequency();
 			
-			virtual bool process(void);
+			virtual bool process();
 			_IsDerivedFromClass_Final_(OpenViBEToolkit::TBoxAlgorithm < OpenViBE::Plugins::IBoxAlgorithm >, OVP_ClassId_BoxAlgorithm_ModifiableSettings);
 
 		protected:
-			bool updateSettings(void);
+			bool updateSettings();
 
 			std::vector<OpenViBE::CString> m_SettingsValue;
 		};
@@ -51,19 +51,19 @@ namespace OpenViBEPlugins
 		{
 		public:
 
-			virtual void release(void) { }
+			virtual void release() { }
 
-			virtual OpenViBE::CString getName(void) const                { return OpenViBE::CString("Modifiable Settings example"); }
-			virtual OpenViBE::CString getAuthorName(void) const          { return OpenViBE::CString("lmahe"); }
-			virtual OpenViBE::CString getAuthorCompanyName(void) const   { return OpenViBE::CString("Inria"); }
-			virtual OpenViBE::CString getShortDescription(void) const    { return OpenViBE::CString("Settings of this box are modifiable during playback. Values are displayed in log every 5 seconds"); }
-			virtual OpenViBE::CString getDetailedDescription(void) const { return OpenViBE::CString("This box purpose is to test and demonstrate the modifiable settings feature.\n It has a setting of each type and all are modifiable during scenario playback.\n"); }
-			virtual OpenViBE::CString getCategory(void) const            { return OpenViBE::CString("Examples/Basic"); }
-			virtual OpenViBE::CString getVersion(void) const             { return OpenViBE::CString("1.0"); }
-			virtual OpenViBE::CString getStockItemName(void) const       { return OpenViBE::CString(""); }
+			virtual OpenViBE::CString getName() const                { return OpenViBE::CString("Modifiable Settings example"); }
+			virtual OpenViBE::CString getAuthorName() const          { return OpenViBE::CString("lmahe"); }
+			virtual OpenViBE::CString getAuthorCompanyName() const   { return OpenViBE::CString("Inria"); }
+			virtual OpenViBE::CString getShortDescription() const    { return OpenViBE::CString("Settings of this box are modifiable during playback. Values are displayed in log every 5 seconds"); }
+			virtual OpenViBE::CString getDetailedDescription() const { return OpenViBE::CString("This box purpose is to test and demonstrate the modifiable settings feature.\n It has a setting of each type and all are modifiable during scenario playback.\n"); }
+			virtual OpenViBE::CString getCategory() const            { return OpenViBE::CString("Examples/Basic"); }
+			virtual OpenViBE::CString getVersion() const             { return OpenViBE::CString("1.0"); }
+			virtual OpenViBE::CString getStockItemName() const       { return OpenViBE::CString(""); }
 
-			virtual OpenViBE::CIdentifier getCreatedClass(void) const    { return OVP_ClassId_BoxAlgorithm_ModifiableSettings; }
-			virtual OpenViBE::Plugins::IPluginObject* create(void)       { return new OpenViBEPlugins::Examples::CBoxAlgorithmModifiableSettings; }
+			virtual OpenViBE::CIdentifier getCreatedClass() const    { return OVP_ClassId_BoxAlgorithm_ModifiableSettings; }
+			virtual OpenViBE::Plugins::IPluginObject* create()       { return new CBoxAlgorithmModifiableSettings; }
 			
 			virtual bool hasFunctionality(OpenViBE::CIdentifier functionalityIdentifier) const
 			{

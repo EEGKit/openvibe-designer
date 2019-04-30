@@ -120,11 +120,10 @@ namespace Mensia
 		public:
 
 			CBoxAlgorithmVizListener(const std::vector < int >& vParameter)
-				:m_vParameter(vParameter)
-			{
-			}
+				:m_vParameter(vParameter) { }
 
-			uint32_t getBaseSettingCount(void)
+			uint32_t getBaseSettingCount()
+
 			{
 				uint32_t l_ui32Result=0;
 				std::vector < int >::const_iterator it;
@@ -202,7 +201,7 @@ namespace Mensia
 			CBoxAlgorithmViz(const OpenViBE::CIdentifier& rClassId, const std::vector < int >& vParameter)
 				:m_oClassId(rClassId)
 				,m_vParameter(vParameter)
-				,m_pRuler(NULL)
+				,m_pRuler(nullptr)
 				,m_oMouseHandler(*this)
 			{
 				m_oColor.r=1;
@@ -210,11 +209,11 @@ namespace Mensia
 				m_oColor.b=1;
 			}
 
-			virtual void release(void) { delete this; }
+			virtual void release() { delete this; }
 
-			virtual OpenViBE::uint64 getClockFrequency(void) { return (32LL<<32); }
-			virtual bool initialize(void);
-			virtual bool uninitialize(void);
+			virtual OpenViBE::uint64 getClockFrequency() { return (32LL<<32); }
+			virtual bool initialize();
+			virtual bool uninitialize();
 			virtual bool processInput(OpenViBE::uint32 ui32InputIndex) { return true; };
 			virtual bool processClock(OpenViBE::Kernel::IMessageClock& rClock);
 
@@ -241,14 +240,14 @@ namespace Mensia
 				}
 			}
 
-			virtual void updateRulerVisibility(void);
+			virtual void updateRulerVisibility();
 			virtual void reshape(int32_t width, int32_t height);
-			virtual void preDraw(void);
-			virtual void postDraw(void);
-			virtual void draw(void);
-			virtual void drawLeft(void);
-			virtual void drawRight(void);
-			virtual void drawBottom(void);
+			virtual void preDraw();
+			virtual void postDraw();
+			virtual void draw();
+			virtual void drawLeft();
+			virtual void drawRight();
+			virtual void drawBottom();
 			virtual void mouseButton(int32_t x, int32_t y, int32_t button, int32_t status);
 			virtual void mouseMotion(int32_t x, int32_t y);
 			virtual void keyboard(int32_t x, int32_t y, uint32_t key, bool status);
@@ -299,27 +298,27 @@ namespace Mensia
 
 			std::vector < float > m_vSwap;
 
-			::GtkBuilder* m_pBuilder;
+			GtkBuilder* m_pBuilder;
 
-			::GtkWidget* m_pViewport;
-			::GtkWidget* m_pTop;
-			::GtkWidget* m_pLeft;
-			::GtkWidget* m_pRight;
-			::GtkWidget* m_pBottom;
-			::GtkWidget* m_pCornerLeft;
-			::GtkWidget* m_pCornerRight;
+			GtkWidget* m_pViewport;
+			GtkWidget* m_pTop;
+			GtkWidget* m_pLeft;
+			GtkWidget* m_pRight;
+			GtkWidget* m_pBottom;
+			GtkWidget* m_pCornerLeft;
+			GtkWidget* m_pCornerRight;
 
-			::GtkWidget* m_pTimeScale;
-			::GtkWidget* m_pElementCount;
-			::GtkWidget* m_pERPRange;
-			::GtkWidget* m_pERPPlayerButton;
-			::GtkWidget* m_pERPPlayer;
-			::GtkWidget* m_pScaleVisible;
-			::GtkWidget* m_pFrequencyBandMin;
-			::GtkWidget* m_pFrequencyBandMax;
+			GtkWidget* m_pTimeScale;
+			GtkWidget* m_pElementCount;
+			GtkWidget* m_pERPRange;
+			GtkWidget* m_pERPPlayerButton;
+			GtkWidget* m_pERPPlayer;
+			GtkWidget* m_pScaleVisible;
+			GtkWidget* m_pFrequencyBandMin;
+			GtkWidget* m_pFrequencyBandMax;
 
-			::GtkTreeView* m_pChannelTreeView;
-			::GtkListStore* m_pChannelListStore;
+			GtkTreeView* m_pChannelTreeView;
+			GtkListStore* m_pChannelListStore;
 
 			uint32_t m_ui32Width;
 			uint32_t m_ui32Height;
@@ -374,20 +373,20 @@ namespace Mensia
 				}
 			}
 
-			virtual void release(void) { }
+			virtual void release() { }
 
-			virtual OpenViBE::CString getName(void) const                { return m_sName; }
-			virtual OpenViBE::CString getAuthorName(void) const          { return OpenViBE::CString("Yann Renard"); }
-			virtual OpenViBE::CString getAuthorCompanyName(void) const   { return OpenViBE::CString("Mensia Technologies SA"); }
-			virtual OpenViBE::CString getShortDescription(void) const    { return m_sShortDescription; }
-			virtual OpenViBE::CString getDetailedDescription(void) const { return m_sDetailedDescription; }
-//			virtual OpenViBE::CString getCategory(void) const            { return OpenViBE::CString(""); }
-			virtual OpenViBE::CString getVersion(void) const             { return OpenViBE::CString("1.0"); }
-			virtual OpenViBE::CString getSoftwareComponent(void) const   { return "openvibe-designer"; }
-			virtual OpenViBE::CString getAddedSoftwareVersion(void) const   { return m_sAddedSoftwareVersion; }
-			virtual OpenViBE::CString getUpdatedSoftwareVersion(void) const { return m_sUpdatedSoftwareVersion; }
-			virtual OpenViBE::CString getStockItemName(void) const       { return OpenViBE::CString("gtk-find"); }
-			virtual OpenViBE::CIdentifier getCreatedClass(void) const    { return m_oClassId; }
+			virtual OpenViBE::CString getName() const                { return m_sName; }
+			virtual OpenViBE::CString getAuthorName() const          { return OpenViBE::CString("Yann Renard"); }
+			virtual OpenViBE::CString getAuthorCompanyName() const   { return OpenViBE::CString("Mensia Technologies SA"); }
+			virtual OpenViBE::CString getShortDescription() const    { return m_sShortDescription; }
+			virtual OpenViBE::CString getDetailedDescription() const { return m_sDetailedDescription; }
+//			virtual OpenViBE::CString getCategory() const            { return OpenViBE::CString(""); }
+			virtual OpenViBE::CString getVersion() const             { return OpenViBE::CString("1.0"); }
+			virtual OpenViBE::CString getSoftwareComponent() const   { return "openvibe-designer"; }
+			virtual OpenViBE::CString getAddedSoftwareVersion() const   { return m_sAddedSoftwareVersion; }
+			virtual OpenViBE::CString getUpdatedSoftwareVersion() const { return m_sUpdatedSoftwareVersion; }
+			virtual OpenViBE::CString getStockItemName() const       { return OpenViBE::CString("gtk-find"); }
+			virtual OpenViBE::CIdentifier getCreatedClass() const    { return m_oClassId; }
 
 			virtual void releaseBoxListener(OpenViBE::Plugins::IBoxListener* pBoxListener) const
 			{

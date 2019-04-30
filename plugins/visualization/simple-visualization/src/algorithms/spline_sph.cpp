@@ -64,104 +64,101 @@ if (order <= 2)
     printf("spline_table error : spline order <= 2\n");
     return (-1);
     }
-else
-    {
-    /*===========================================================*/
-    /* Estimate the number of terms for the Legendre series      */
-    /* to have an error lower than 1e-10                         */
-    /*===========================================================*/
-    dexp = 10./(float)(2*order-2);
-    kv = imin(400,(int)(pow(10.0,dexp)-1.0));
-    fsv = 1.0;
-    if ((int)fmod((double)kv,2.0) == 1) fsv = -1.0;
+/*===========================================================*/
+/* Estimate the number of terms for the Legendre series      */
+/* to have an error lower than 1e-10                         */
+/*===========================================================*/
+dexp = 10./(float)(2*order-2);
+kv = imin(400,(int)(pow(10.0,dexp)-1.0));
+fsv = 1.0;
+if ((int)fmod((double)kv,2.0) == 1) fsv = -1.0;
 
-    dexp = 10./(float)(2*order-4);
-    kc = imin(400,(int)(pow(10.0,dexp)-1.0));
-    fsc = 1.0;
-    if ((int)fmod((double)kc,2.0) == 1) fsc = -1.0;
+dexp = 10./(float)(2*order-4);
+kc = imin(400,(int)(pow(10.0,dexp)-1.0));
+fsc = 1.0;
+if ((int)fmod((double)kc,2.0) == 1) fsc = -1.0;
 
-    c = (double *)malloc(sizeof(double)*kc);
-    p = (double *)malloc(sizeof(double)*kc);
+c = (double *)malloc(sizeof(double)*kc);
+p = (double *)malloc(sizeof(double)*kc);
 
-    /*=========================*/
-    /* Coefficient computation */
-    /*=========================*/
-    cn = 1.0;
-    for (j=1; j<order; j++) { cn /= 2.0; }
-    c[0] = cn*3.0;
-    for (n=2; n<=kc; n++)
-        {
-        fn = (double)n;
-        cx = (fn-1.0)/(fn+1.0);
-        for (j=1; j<order; j++) { cn *= cx; }
-        c[n-1] = (2.0*fn + 1.0)*cn;
-        }
+/*=========================*/
+/* Coefficient computation */
+/*=========================*/
+cn = 1.0;
+for (j=1; j<order; j++) { cn /= 2.0; }
+c[0] = cn*3.0;
+for (n=2; n<=kc; n++)
+{
+	fn = (double)n;
+	cx = (fn-1.0)/(fn+1.0);
+	for (j=1; j<order; j++) { cn *= cx; }
+	c[n-1] = (2.0*fn + 1.0)*cn;
+}
 
-    /*========================*/
-    /* Table generation       */
-    /*========================*/
-    for (ig=0; ig<=1000; ig++)
-        {
-        /*-------------------------*/
-        /* Pn polynomial           */
-        /*-------------------------*/
-        gamma = (double)ig/1000.0;
-        gamma = 1.0 - gamma;
-        p0 = 1.0;
-        p1 = gamma;
-        p[0] = p1;
-        for (n=2; n<=kc; n++)
-            {
-            fn = (double)n;
-            usfn = 1.0/fn;
-            pn = (2.0-usfn)*gamma*p1 - (1.0-usfn)*p0;
-            p0 = p1;
-            p1 = pn;
-            p[n-1] = pn;
-            }
+/*========================*/
+/* Table generation       */
+/*========================*/
+for (ig=0; ig<=1000; ig++)
+{
+	/*-------------------------*/
+	/* Pn polynomial           */
+	/*-------------------------*/
+	gamma = (double)ig/1000.0;
+	gamma = 1.0 - gamma;
+	p0 = 1.0;
+	p1 = gamma;
+	p[0] = p1;
+	for (n=2; n<=kc; n++)
+	{
+		fn = (double)n;
+		usfn = 1.0/fn;
+		pn = (2.0-usfn)*gamma*p1 - (1.0-usfn)*p0;
+		p0 = p1;
+		p1 = pn;
+		p[n-1] = pn;
+	}
 
-        /*-----------------------*/
-        /* pot_table computation */
-        /*-----------------------*/
-        s1 = 0.0; s2 = 0.0;
-        fs = fsv;
-        for (n=kv; n>=1; n--)
-            {
-            fn = (double)n;
-            cnpn = c[n-1]*p[n-1]/(fn*(fn+1.0));
-            s1 += cnpn;
-            s2 += fs*cnpn;
-            fs = -fs;
-            }
-        *(pot_table+2001-ig) = s1*1000.0;
-        *(pot_table+1+ig)    = s2*1000.0;
+	/*-----------------------*/
+	/* pot_table computation */
+	/*-----------------------*/
+	s1 = 0.0; s2 = 0.0;
+	fs = fsv;
+	for (n=kv; n>=1; n--)
+	{
+		fn = (double)n;
+		cnpn = c[n-1]*p[n-1]/(fn*(fn+1.0));
+		s1 += cnpn;
+		s2 += fs*cnpn;
+		fs = -fs;
+	}
+	*(pot_table+2001-ig) = s1*1000.0;
+	*(pot_table+1+ig)    = s2*1000.0;
 
-        /*-----------------------*/
-        /* scd_table computation */
-        /*-----------------------*/
-        s1 = 0.0; s2 = 0.0;
-        fs = fsc;
-        for (n=kc; n>=1; n--)
-            {
-            cnpn = c[n-1]*p[n-1];
-            s1 += cnpn;
-            s2 += fs*cnpn;
-            fs = -fs;
-            }
-        *(scd_table+2001-ig) = s1*1000.0;
-        *(scd_table+1+ig)    = s2*1000.0;
-        }
+	/*-----------------------*/
+	/* scd_table computation */
+	/*-----------------------*/
+	s1 = 0.0; s2 = 0.0;
+	fs = fsc;
+	for (n=kc; n>=1; n--)
+	{
+		cnpn = c[n-1]*p[n-1];
+		s1 += cnpn;
+		s2 += fs*cnpn;
+		fs = -fs;
+	}
+	*(scd_table+2001-ig) = s1*1000.0;
+	*(scd_table+1+ig)    = s2*1000.0;
+}
 
-    *(pot_table+2002) = *(pot_table+2001);
-    *(scd_table+2002) = *(scd_table+2001);
-    *(pot_table+2003) = *(pot_table+2002);
-    *(scd_table+2003) = *(scd_table+2002);
-    *pot_table = *(pot_table+1);
-    *scd_table = *(scd_table+1);
+*(pot_table+2002) = *(pot_table+2001);
+*(scd_table+2002) = *(scd_table+2001);
+*(pot_table+2003) = *(pot_table+2002);
+*(scd_table+2003) = *(scd_table+2002);
+*pot_table = *(pot_table+1);
+*scd_table = *(scd_table+1);
 
-    free(c);
-    free(p);
-    }
+free(c);
+free(p);
 return (0);
 }
 
@@ -198,20 +195,20 @@ int    i, j, l0, ih, igam, info, itmp;
 double t1, t2, t3, tp, v1, v2, fgam;
 double xj, yj, zj;
 
-double *p_mat_a = NULL;
-int    *p_iwork = NULL;
+double *p_mat_a = nullptr;
+int    *p_iwork = nullptr;
 
 /*=========================================*/
 /* allocation of temporary arrays          */
 /*=========================================*/
 p_mat_a = (double *)malloc(sizeof(double)*((nb_value+1)*(nb_value+2))/2);
-if (p_mat_a == NULL)
+if (p_mat_a == nullptr)
     {
     printf("spline_coef error : allocation p_mat_a\n");
     return (-1);
     }
 p_iwork = (int *)malloc(sizeof(int)*(nb_value+1));
-if (p_iwork == NULL)
+if (p_iwork == nullptr)
     {
     printf("spline_coef error : allocation p_iwork\n");
     return (-1);

@@ -19,7 +19,7 @@ namespace OpenViBEVisualizationToolkit
 		 * @retval true In case of success.
 		 * @retval false In case of error.
 		 */
-		virtual bool setManager(OpenViBEVisualizationToolkit::IVisualizationManager* visualizationManager) = 0;
+		virtual bool setManager(IVisualizationManager* visualizationManager) = 0;
 
 		/**
 		 * @brief Forward a GtkWidget which displays content to the visualization manager

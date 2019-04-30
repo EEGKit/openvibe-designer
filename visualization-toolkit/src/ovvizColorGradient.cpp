@@ -18,7 +18,7 @@ namespace
 	} SColor;
 };
 
-bool OpenViBEVisualizationToolkit::Tools::ColorGradient::parse(IMatrix& colorGradientMatrix, const CString& string)
+bool Tools::ColorGradient::parse(IMatrix& colorGradientMatrix, const CString& string)
 {
 	std::string colorString(string.toASCIIString());
 	std::string::size_type startPosition = 0;
@@ -68,7 +68,7 @@ bool OpenViBEVisualizationToolkit::Tools::ColorGradient::parse(IMatrix& colorGra
 	return true;
 }
 
-bool OpenViBEVisualizationToolkit::Tools::ColorGradient::format(CString& string, const IMatrix& colorGradient)
+bool Tools::ColorGradient::format(CString& string, const IMatrix& colorGradient)
 {
 	if (colorGradient.getDimensionCount() != 2)
 	{
@@ -102,7 +102,7 @@ bool OpenViBEVisualizationToolkit::Tools::ColorGradient::format(CString& string,
 	return true;
 }
 
-bool OpenViBEVisualizationToolkit::Tools::ColorGradient::interpolate(IMatrix& interpolatedColorGradient, const IMatrix& colorGradient, const uint32 steps)
+bool Tools::ColorGradient::interpolate(IMatrix& interpolatedColorGradient, const IMatrix& colorGradient, const uint32 steps)
 {
 	uint32 i;
 

@@ -33,9 +33,9 @@ namespace Mensia
 		{
 		public:
 
-			virtual void renderBottom(::GtkWidget* pWidget)
+			virtual void renderBottom(GtkWidget* pWidget)
 			{
-				if(m_pRenderer == NULL) return;
+				if(m_pRenderer == nullptr) return;
 				if(m_pRenderer->getSampleCount() == 0) return;
 				if(m_pRenderer->getHistoryCount() == 0) return;
 				if(m_pRenderer->getHistoryIndex() == 0) return;
@@ -49,14 +49,14 @@ namespace Mensia
 
 				gint w, h, x;
 
-				::gdk_drawable_get_size(pWidget->window, &w, &h);
-				::GdkGC* l_pDrawGC=gdk_gc_new(pWidget->window);
+				gdk_drawable_get_size(pWidget->window, &w, &h);
+				GdkGC* l_pDrawGC=gdk_gc_new(pWidget->window);
 				for(it=l_vRange.begin(); it!=l_vRange.end(); it++)
 				{
 					x=gint((*it/l_fDuration)*w);
-					::PangoLayout* l_pPangoLayout=::gtk_widget_create_pango_layout(pWidget, this->getLabel(*it).c_str());
-					::gdk_draw_layout(pWidget->window, l_pDrawGC, x, 5, l_pPangoLayout);
-					::gdk_draw_line(pWidget->window, l_pDrawGC, x, 0, x, 3);
+					PangoLayout* l_pPangoLayout=gtk_widget_create_pango_layout(pWidget, this->getLabel(*it).c_str());
+					gdk_draw_layout(pWidget->window, l_pDrawGC, x, 5, l_pPangoLayout);
+					gdk_draw_line(pWidget->window, l_pDrawGC, x, 0, x, 3);
 					g_object_unref(l_pPangoLayout);
 				}
 				g_object_unref(l_pDrawGC);

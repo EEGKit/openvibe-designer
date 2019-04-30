@@ -26,7 +26,7 @@
 #include <algorithm>
 
 using namespace Mensia;
-using namespace Mensia::AdvancedVisualization;
+using namespace AdvancedVisualization;
 
 const bool m_bMultiSlice=false;
 
@@ -58,7 +58,7 @@ namespace
 		double result=0;
 		for(unsigned int i=1; i<=n; i++)
 		{
-			result += (2*i+1)/::pow(double(i*(i+1)), int(m)) * vLegendre[i];
+			result += (2*i+1)/pow(double(i*(i+1)), int(m)) * vLegendre[i];
 		}
 		return result / (4*M_PI);
 	}
@@ -72,7 +72,7 @@ namespace
 		double result=0;
 		for(unsigned int i=1; i<=n; i++)
 		{
-			result += (2*i+1)/::pow(double(i*(i+1)), int(m-1)) * vLegendre[i];
+			result += (2*i+1)/pow(double(i*(i+1)), int(m-1)) * vLegendre[i];
 		}
 		return result / (4*M_PI);
 	}
@@ -174,7 +174,7 @@ void CRendererTopo::rebuild(const IRendererContext& rContext)
 	// Generates transformation matrices based spherical spline interpolations
 
 	unsigned int M=3;
-	unsigned int N=(unsigned int)::pow(10., 10./(2*M-2));
+	unsigned int N=(unsigned int)pow(10., 10./(2*M-2));
 
 	std::vector < double > l_vLegendre;
 	std::vector < double > l_vGCache;
@@ -311,30 +311,30 @@ bool CRendererTopo::render(const IRendererContext& rContext)
 //	::glEnable(GL_DEPTH_TEST);
 //	::glDisable(GL_BLEND);
 
-	::glMatrixMode(GL_PROJECTION);
-	::glPushMatrix();
-	::glLoadIdentity();
-	::gluPerspective(60, rContext.getAspect(), .01, 100);
-	::glTranslatef(0, 0, -d);
-	::glRotatef(rContext.getRotationX()*10, 1, 0, 0);
-	::glRotatef(rContext.getRotationY()*10, 0, 1, 0);
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	gluPerspective(60, rContext.getAspect(), .01, 100);
+	glTranslatef(0, 0, -d);
+	glRotatef(rContext.getRotationX()*10, 1, 0, 0);
+	glRotatef(rContext.getRotationY()*10, 0, 1, 0);
 
-	::glMatrixMode(GL_TEXTURE);
-	::glPushMatrix();
-	::glScalef(rContext.getScale(), 1, 1);
+	glMatrixMode(GL_TEXTURE);
+	glPushMatrix();
+	glScalef(rContext.getScale(), 1, 1);
 
-	::glMatrixMode(GL_MODELVIEW);
-	::glPushMatrix();
-	::glLoadIdentity();
-	::glScalef(rContext.getZoom(), rContext.getZoom(), rContext.getZoom());
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+	glScalef(rContext.getZoom(), rContext.getZoom(), rContext.getZoom());
 
 	// Now renders
 
-	::glPushMatrix();
+	glPushMatrix();
 #if 1
-	::glTranslatef(0, .5f, 0);
-	::glRotatef(19, 1, 0, 0);
-	::glTranslatef(0, -.2f, .35f);
+	glTranslatef(0, .5f, 0);
+	glRotatef(19, 1, 0, 0);
+	glTranslatef(0, -.2f, .35f);
 //	::glScalef(1.8f, 1.8f, 1.8f);
 #else
 	::glRotatef(19, 1, 0, 0);
@@ -344,83 +344,83 @@ bool CRendererTopo::render(const IRendererContext& rContext)
 
 	if(rContext.isFaceMeshVisible())
 	{
-		::glEnable(GL_DEPTH_TEST);
-		::glDisable(GL_BLEND);
-		::glDisable(GL_TEXTURE_1D);
+		glEnable(GL_DEPTH_TEST);
+		glDisable(GL_BLEND);
+		glDisable(GL_TEXTURE_1D);
 		if(!m_oFace.m_vTriangle.empty())
 		{
 			if(!m_oFace.m_vNormal.empty())
 			{
-				::glEnable(GL_LIGHTING);
-				::glEnableClientState(GL_NORMAL_ARRAY);
+				glEnable(GL_LIGHTING);
+				glEnableClientState(GL_NORMAL_ARRAY);
 			}
-			::glColor3f(m_oFace.m_vColor[0], m_oFace.m_vColor[1], m_oFace.m_vColor[2]);
-			::glEnableClientState(GL_VERTEX_ARRAY);
-			::glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_oFace.m_vVertex[0].x);
+			glColor3f(m_oFace.m_vColor[0], m_oFace.m_vColor[1], m_oFace.m_vColor[2]);
+			glEnableClientState(GL_VERTEX_ARRAY);
+			glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_oFace.m_vVertex[0].x);
 			if(!m_oFace.m_vNormal.empty())
 			{
-				::glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_oFace.m_vNormal[0].x);
+				glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_oFace.m_vNormal[0].x);
 			}
-			::glDrawElements(GL_TRIANGLES, m_oFace.m_vTriangle.size(), GL_UNSIGNED_INT, &m_oFace.m_vTriangle[0]);
-			::glDisableClientState(GL_NORMAL_ARRAY);
-			::glDisableClientState(GL_VERTEX_ARRAY);
-			::glDisable(GL_LIGHTING);
+			glDrawElements(GL_TRIANGLES, m_oFace.m_vTriangle.size(), GL_UNSIGNED_INT, &m_oFace.m_vTriangle[0]);
+			glDisableClientState(GL_NORMAL_ARRAY);
+			glDisableClientState(GL_VERTEX_ARRAY);
+			glDisable(GL_LIGHTING);
 		}
 	}
 	
 	if(rContext.isScalpMeshVisible())
 	{
-		::glEnable(GL_TEXTURE_1D);
+		glEnable(GL_TEXTURE_1D);
 		if(!m_oScalp.m_vTriangle.empty())
 		{
 			if(!m_oScalp.m_vNormal.empty())
 			{
-				::glEnable(GL_LIGHTING);
-				::glEnableClientState(GL_NORMAL_ARRAY);
+				glEnable(GL_LIGHTING);
+				glEnableClientState(GL_NORMAL_ARRAY);
 			}
-			::glColor3f(m_oScalp.m_vColor[0], m_oScalp.m_vColor[1], m_oScalp.m_vColor[2]);
-			::glEnableClientState(GL_VERTEX_ARRAY);
-			::glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-			::glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_oScalp.m_vVertex[0].x);
+			glColor3f(m_oScalp.m_vColor[0], m_oScalp.m_vColor[1], m_oScalp.m_vColor[2]);
+			glEnableClientState(GL_VERTEX_ARRAY);
+			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+			glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_oScalp.m_vVertex[0].x);
 			if(!m_oScalp.m_vNormal.empty())
 			{
-				::glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_oScalp.m_vNormal[0].x);
+				glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_oScalp.m_vNormal[0].x);
 			}
 			if(!m_bMultiSlice)
 			{
-				::glColor3f(1, 1, 1);
-				::glEnable(GL_DEPTH_TEST);
-				::glDisable(GL_BLEND);
-				::glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_oScalp.m_vVertex[0].u);
-				::glDrawElements(GL_TRIANGLES, m_oScalp.m_vTriangle.size(), GL_UNSIGNED_INT, &m_oScalp.m_vTriangle[0]);
+				glColor3f(1, 1, 1);
+				glEnable(GL_DEPTH_TEST);
+				glDisable(GL_BLEND);
+				glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_oScalp.m_vVertex[0].u);
+				glDrawElements(GL_TRIANGLES, m_oScalp.m_vTriangle.size(), GL_UNSIGNED_INT, &m_oScalp.m_vTriangle[0]);
 			}
 			else
 			{
-				::glColor4f(1.f, 1.f, 1.f, 4.f/m_ui32SampleCount);
-				::glDisable(GL_DEPTH_TEST);
-				::glEnable(GL_BLEND);
+				glColor4f(1.f, 1.f, 1.f, 4.f/m_ui32SampleCount);
+				glDisable(GL_DEPTH_TEST);
+				glEnable(GL_BLEND);
 				for(uint32_t i=0; i<m_ui32SampleCount; i++)
 				{
 					float l_f32Scale = 1.f + i*0.25f/m_ui32SampleCount;
-					::glPushMatrix();
-					::glScalef(l_f32Scale, l_f32Scale, l_f32Scale);
-					::glTexCoordPointer(1, GL_DOUBLE, 0, &m_vInterpolatedSample[i][0]);
-					::glDrawElements(GL_TRIANGLES, m_oScalp.m_vTriangle.size(), GL_UNSIGNED_INT, &m_oScalp.m_vTriangle[0]);
-					::glPopMatrix();
+					glPushMatrix();
+					glScalef(l_f32Scale, l_f32Scale, l_f32Scale);
+					glTexCoordPointer(1, GL_DOUBLE, 0, &m_vInterpolatedSample[i][0]);
+					glDrawElements(GL_TRIANGLES, m_oScalp.m_vTriangle.size(), GL_UNSIGNED_INT, &m_oScalp.m_vTriangle[0]);
+					glPopMatrix();
 				}
 			}
-			::glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-			::glDisableClientState(GL_NORMAL_ARRAY);
-			::glDisableClientState(GL_VERTEX_ARRAY);
-			::glDisable(GL_LIGHTING);
+			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+			glDisableClientState(GL_NORMAL_ARRAY);
+			glDisableClientState(GL_VERTEX_ARRAY);
+			glDisable(GL_LIGHTING);
 		}
 	}
 
-	::glEnable(GL_DEPTH_TEST);
-	::glDisable(GL_BLEND);
-	::glDisable(GL_TEXTURE_1D);
+	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_BLEND);
+	glDisable(GL_TEXTURE_1D);
 
-	::glLineWidth(3);
+	glLineWidth(3);
 	for(j=0; j<rContext.getChannelCount(); j++)
 	{
 		float l_fCubeScale=.025f;
@@ -428,38 +428,38 @@ bool CRendererTopo::render(const IRendererContext& rContext)
 		v=m_vProjectedChannelCoordinate[j];
 		//rContext.getChannelLocalisation(j, v.x, v.y, v.z);
 
-		::glPushMatrix();
-		::glTranslatef(v.x, v.y, v.z);
-		::glScalef(l_fCubeScale, l_fCubeScale, l_fCubeScale);
+		glPushMatrix();
+		glTranslatef(v.x, v.y, v.z);
+		glScalef(l_fCubeScale, l_fCubeScale, l_fCubeScale);
 
 float l_vSelected[] = { 1, 1, 1 };
 float l_vUnselected[] = { .2f, .2f, .2f };
-::glColor3fv(rContext.isSelected(j)?l_vSelected:l_vUnselected);
-::glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+glColor3fv(rContext.isSelected(j)?l_vSelected:l_vUnselected);
+glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		cube();
 
-::glColor3f(0, 0, 0);
-::glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+glColor3f(0, 0, 0);
+glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		cube();
 
-		::glPopMatrix();
+		glPopMatrix();
 	}
-	::glPopMatrix();
+	glPopMatrix();
 
-::glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	if(rContext.getCheckBoardVisibility()) this->drawCoordinateSystem();
 
-	::glMatrixMode(GL_MODELVIEW);
-	::glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
 
-	::glMatrixMode(GL_TEXTURE);
-	::glPopMatrix();
+	glMatrixMode(GL_TEXTURE);
+	glPopMatrix();
 
-	::glMatrixMode(GL_PROJECTION);
-	::glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
 
-	::glMatrixMode(GL_MODELVIEW);
+	glMatrixMode(GL_MODELVIEW);
 
 	return true;
 }

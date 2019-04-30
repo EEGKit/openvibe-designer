@@ -80,155 +80,152 @@ if (k <= 1)
     if (*ap == 0.0) *info = 1;
     goto end_dspfa;
     }
+km1 = k-1;
+kk  = ik + k;
+absakk = fabs(*(ap+kk-1));
+itmp = k-1;
+imax = isamax(&itmp, (ap+ik), &one);
+imk = ik + imax;
+colmax = fabs(*(ap+imk-1));
+if (absakk >= (alpha*colmax))
+{
+	kstep = 1;
+	swap = 0;
+}
 else
-    {
-    km1 = k-1;
-    kk  = ik + k;
-    absakk = fabs(*(ap+kk-1));
-    itmp = k-1;
-    imax = isamax(&itmp, (ap+ik), &one);
-    imk = ik + imax;
-    colmax = fabs(*(ap+imk-1));
-    if (absakk >= (alpha*colmax))
-        {
-        kstep = 1;
-        swap = 0;
-        }
-    else
-        {
-        rowmax = 0.0;
-        imaxp1 = imax + 1;
-        im = (imax*(imax-1))/2;
-        imj = im + 2*imax;
-        for (j=imaxp1; j<=k; j++)
-            {
-            rowmax = dmax(rowmax,fabs(*(ap+imj-1)));
-            imj += j;
-            }
-        if (imax != 1)
-            {
-            itmp = imax-1;
-            jmax = isamax(&itmp, (ap+im), &one);
-            jmim = jmax + im;
-            rowmax = dmax(rowmax,fabs(*(ap+jmim-1)));
-            }
-        imim = imax + im;
-        if (fabs(*(ap+imim-1)) >= (alpha*rowmax))
-            {
-            kstep = 1;
-            swap = 1;
-            }
-        else
-            {
-            if (absakk >= (alpha*colmax*(colmax/rowmax)))
-                {
-                kstep = 1;
-                swap = 0;
-                }
-            else
-                {
-                kstep = 2;
-                swap = (imax != km1);
-                }
-            }
-        }
-    if (dmax(absakk,colmax) == 0.0)
-        {
-        *(kpvt+k-1) = k;
-        *info = k;
-        }
-    else
-        {
-        if (kstep != 2)
-            {
-            if (swap)
-                {
-                sswap(&imax, (ap+im), &one, (ap+ik), &one);
-                imj = ik + imax;
-                for (jj=imax; jj <=k; jj++)
-                    {
-                    j = k + imax - jj;
-                    jk = ik + j;
-                    t = *(ap+jk-1);
-                    *(ap+jk-1) = *(ap+imj-1);
-                    *(ap+imj-1) = t;
-                    imj -= j-1;
-                    }
-                }
-            ij = ik - (k-1);
-            for (jj=1; jj<=km1; jj++)
-                {
-                j = k - jj;
-                jk = ik + j;
-                tulk = -(*(ap+jk-1))/(*(ap+kk-1));
-                t = tulk;
-                saxpy(&j, &t, (ap+ik), &one, (ap+ij), &one);
-                // FIXME is it necessary to keep next line uncomment ?
-                //ijj = ij + j;
-                *(ap+jk-1) = tulk;
-                ij -= j-1;
-                }
-            *(kpvt+k-1) = k;
-            if (swap) *(kpvt+k-1) = imax;
-            }
-        else
-            {
-            km1k = ik + k - 1;
-            ikm1 = ik - (k-1);
-            if (swap)
-                {
-                sswap(&imax, (ap+im), &one, (ap+ikm1), &one);
-                imj = ikm1 + imax;
-                for (jj=imax; jj<=km1; jj++)
-                    {
-                    j = km1 + imax -jj;
-                    jkm1 = ikm1 + j;
-                    t = *(ap+jkm1-1);
-                    *(ap+jkm1-1) = *(ap+imj-1);
-                    *(ap+imj-1) = t;
-                    imj -= j-1;
-                    }
-                t = *(ap+km1k-1);
-                *(ap+km1k-1) = *(ap+imk-1);
-                *(ap+imk-1) = t;
-                }
-            km2 = k - 2;
-            if (km2 != 0)
-                {
-                ak = *(ap+kk-1)/(*(ap+km1k-1));
-                km1km1 = ikm1 +k -1;
-                akm1 = *(ap+km1km1-1)/(*(ap+km1k-1));
-                denom = 1.0 - ak*akm1;
-                ij = ik - (k-1) - (k-2);
-                for (jj=1; jj<=km2; jj++)
-                    {
-                    j = km1 - jj;
-                    jk = ik + j;
-                    bk = *(ap+jk-1)/(*(ap+km1k-1));
-                    jkm1 = ikm1 + j;
-                    bkm1 = *(ap+jkm1-1)/(*(ap+km1k-1));
-                    tulk = (akm1*bk - bkm1)/denom;
-                    tulkm1 = (ak*bkm1 - bk)/denom;
-                    t = tulk;
-                    saxpy(&j, &t, (ap+ik), &one, (ap+ij), &one);
-                    t = tulkm1;
-                    saxpy(&j, &t, (ap+ikm1), &one, (ap+ij), &one);
-                    *(ap+jk-1) = tulk;
-                    *(ap+jkm1-1) = tulkm1;
-                    // FIXME is it necessary to keep next line uncomment ?
-                    //ijj = ij + j;
-                    ij -= j-1;
-                    }
-                }
-            *(kpvt+k-1) = 1-k;
-            if (swap) *(kpvt+k-1) = -imax;
-            *(kpvt+k-2) = *(kpvt+k-1);
-            }
-        }
-    ik -= k-1;
-    if (kstep == 2) ik -= k-2;
-    k -= kstep;
-    }
+{
+	rowmax = 0.0;
+	imaxp1 = imax + 1;
+	im = (imax*(imax-1))/2;
+	imj = im + 2*imax;
+	for (j=imaxp1; j<=k; j++)
+	{
+		rowmax = dmax(rowmax,fabs(*(ap+imj-1)));
+		imj += j;
+	}
+	if (imax != 1)
+	{
+		itmp = imax-1;
+		jmax = isamax(&itmp, (ap+im), &one);
+		jmim = jmax + im;
+		rowmax = dmax(rowmax,fabs(*(ap+jmim-1)));
+	}
+	imim = imax + im;
+	if (fabs(*(ap+imim-1)) >= (alpha*rowmax))
+	{
+		kstep = 1;
+		swap = 1;
+	}
+	else
+	{
+		if (absakk >= (alpha*colmax*(colmax/rowmax)))
+		{
+			kstep = 1;
+			swap = 0;
+		}
+		else
+		{
+			kstep = 2;
+			swap = (imax != km1);
+		}
+	}
+}
+if (dmax(absakk,colmax) == 0.0)
+{
+	*(kpvt+k-1) = k;
+	*info = k;
+}
+else
+{
+	if (kstep != 2)
+	{
+		if (swap)
+		{
+			sswap(&imax, (ap+im), &one, (ap+ik), &one);
+			imj = ik + imax;
+			for (jj=imax; jj <=k; jj++)
+			{
+				j = k + imax - jj;
+				jk = ik + j;
+				t = *(ap+jk-1);
+				*(ap+jk-1) = *(ap+imj-1);
+				*(ap+imj-1) = t;
+				imj -= j-1;
+			}
+		}
+		ij = ik - (k-1);
+		for (jj=1; jj<=km1; jj++)
+		{
+			j = k - jj;
+			jk = ik + j;
+			tulk = -(*(ap+jk-1))/(*(ap+kk-1));
+			t = tulk;
+			saxpy(&j, &t, (ap+ik), &one, (ap+ij), &one);
+			// FIXME is it necessary to keep next line uncomment ?
+			//ijj = ij + j;
+			*(ap+jk-1) = tulk;
+			ij -= j-1;
+		}
+		*(kpvt+k-1) = k;
+		if (swap) *(kpvt+k-1) = imax;
+	}
+	else
+	{
+		km1k = ik + k - 1;
+		ikm1 = ik - (k-1);
+		if (swap)
+		{
+			sswap(&imax, (ap+im), &one, (ap+ikm1), &one);
+			imj = ikm1 + imax;
+			for (jj=imax; jj<=km1; jj++)
+			{
+				j = km1 + imax -jj;
+				jkm1 = ikm1 + j;
+				t = *(ap+jkm1-1);
+				*(ap+jkm1-1) = *(ap+imj-1);
+				*(ap+imj-1) = t;
+				imj -= j-1;
+			}
+			t = *(ap+km1k-1);
+			*(ap+km1k-1) = *(ap+imk-1);
+			*(ap+imk-1) = t;
+		}
+		km2 = k - 2;
+		if (km2 != 0)
+		{
+			ak = *(ap+kk-1)/(*(ap+km1k-1));
+			km1km1 = ikm1 +k -1;
+			akm1 = *(ap+km1km1-1)/(*(ap+km1k-1));
+			denom = 1.0 - ak*akm1;
+			ij = ik - (k-1) - (k-2);
+			for (jj=1; jj<=km2; jj++)
+			{
+				j = km1 - jj;
+				jk = ik + j;
+				bk = *(ap+jk-1)/(*(ap+km1k-1));
+				jkm1 = ikm1 + j;
+				bkm1 = *(ap+jkm1-1)/(*(ap+km1k-1));
+				tulk = (akm1*bk - bkm1)/denom;
+				tulkm1 = (ak*bkm1 - bk)/denom;
+				t = tulk;
+				saxpy(&j, &t, (ap+ik), &one, (ap+ij), &one);
+				t = tulkm1;
+				saxpy(&j, &t, (ap+ikm1), &one, (ap+ij), &one);
+				*(ap+jk-1) = tulk;
+				*(ap+jkm1-1) = tulkm1;
+				// FIXME is it necessary to keep next line uncomment ?
+				//ijj = ij + j;
+				ij -= j-1;
+			}
+		}
+		*(kpvt+k-1) = 1-k;
+		if (swap) *(kpvt+k-1) = -imax;
+		*(kpvt+k-2) = *(kpvt+k-1);
+	}
+}
+ik -= k-1;
+if (kstep == 2) ik -= k-2;
+k -= kstep;
 goto begin_dspfa;
 end_dspfa:;
 }

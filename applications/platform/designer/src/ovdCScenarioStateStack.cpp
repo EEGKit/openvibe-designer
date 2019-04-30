@@ -5,8 +5,8 @@
 #include <ovp_global_defines.h>
 
 using namespace OpenViBE;
-using namespace OpenViBE::Kernel;
-using namespace OpenViBE::Plugins;
+using namespace Kernel;
+using namespace Plugins;
 using namespace OpenViBEDesigner;
 using namespace OpenViBEToolkit;
 
@@ -20,7 +20,8 @@ CScenarioStateStack::CScenarioStateStack(const IKernelContext& rKernelContext, C
 	m_MaximumStateCount = static_cast<uint32>(m_KernelContext.getConfigurationManager().expandAsUInteger("${Designer_UndoRedoStackSize}", 64));
 }
 
-CScenarioStateStack::~CScenarioStateStack(void)
+CScenarioStateStack::~CScenarioStateStack()
+
 {
 	for (auto& state : m_States)
 	{
@@ -39,7 +40,8 @@ bool CScenarioStateStack::isUndoPossible()
 	return true;
 }
 
-bool CScenarioStateStack::undo(void)
+bool CScenarioStateStack::undo()
+
 {
 	auto itState = m_CurrentState;
 	if (itState == m_States.begin())
@@ -80,7 +82,8 @@ bool CScenarioStateStack::isRedoPossible()
 	return true;
 }
 
-bool CScenarioStateStack::redo(void)
+bool CScenarioStateStack::redo()
+
 {
 	auto itState = m_CurrentState;
 	if (itState == m_States.end())
@@ -104,7 +107,8 @@ bool CScenarioStateStack::redo(void)
 	return true;
 }
 
-bool CScenarioStateStack::snapshot(void)
+bool CScenarioStateStack::snapshot()
+
 {
 	CMemoryBuffer* newState = new CMemoryBuffer();
 
@@ -162,14 +166,14 @@ bool CScenarioStateStack::restoreState(const IMemoryBuffer& state)
 		return false;
 	}
 
-	::uLongf sourceSize  =(::uLongf)state.getSize()-sizeof(uLongf);
-	::Bytef* sourceBuffer =(::Bytef*)state.getDirectPointer();
+	uLongf sourceSize  =(uLongf)state.getSize()-sizeof(uLongf);
+	Bytef* sourceBuffer =(Bytef*)state.getDirectPointer();
 
-	::uLongf destinationSize =*(::uLongf*)(state.getDirectPointer()+state.getSize()-sizeof(uLongf));
+	uLongf destinationSize =*(uLongf*)(state.getDirectPointer()+state.getSize()-sizeof(uLongf));
 	uncompressedMemoryBuffer.setSize(destinationSize, true);
-	::Bytef* destinationBuffer=(::Bytef*)uncompressedMemoryBuffer.getDirectPointer();
+	Bytef* destinationBuffer=(Bytef*)uncompressedMemoryBuffer.getDirectPointer();
 
-	if(::uncompress(destinationBuffer, &destinationSize, sourceBuffer, sourceSize)!=Z_OK)
+	if(uncompress(destinationBuffer, &destinationSize, sourceBuffer, sourceSize)!=Z_OK)
 	{
 		return false;
 	}
@@ -259,22 +263,22 @@ bool CScenarioStateStack::dumpState(IMemoryBuffer& state)
 	exporter->uninitialize();
 	m_KernelContext.getAlgorithmManager().releaseAlgorithm(*exporter);
 
-	::uLongf sourceSize  =(::uLongf)uncompressedMemoryBuffer.getSize();
-	::Bytef* sourceBuffer =(::Bytef*)uncompressedMemoryBuffer.getDirectPointer();
+	uLongf sourceSize  =(uLongf)uncompressedMemoryBuffer.getSize();
+	Bytef* sourceBuffer =(Bytef*)uncompressedMemoryBuffer.getDirectPointer();
 
 	compressedMemoryBuffer.setSize(12+(uint64)(sourceSize*1.1), true);
 
-	::uLongf destinationSize =(::uLongf)compressedMemoryBuffer.getSize();
-	::Bytef* destinationBuffer=(::Bytef*)compressedMemoryBuffer.getDirectPointer();
+	uLongf destinationSize =(uLongf)compressedMemoryBuffer.getSize();
+	Bytef* destinationBuffer=(Bytef*)compressedMemoryBuffer.getDirectPointer();
 
-	if (::compress(destinationBuffer, &destinationSize, sourceBuffer, sourceSize) != Z_OK)
+	if (compress(destinationBuffer, &destinationSize, sourceBuffer, sourceSize) != Z_OK)
 	{
 		return false;
 	}
 
 	state.setSize(0, true);
 	state.append(compressedMemoryBuffer.getDirectPointer(), destinationSize);
-	state.append((const uint8*)&sourceSize, sizeof(::uLongf));
+	state.append((const uint8*)&sourceSize, sizeof(uLongf));
 
 	return true;
 }

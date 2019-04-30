@@ -22,7 +22,7 @@
 #include "mCRendererBitmap.hpp"
 
 using namespace Mensia;
-using namespace Mensia::AdvancedVisualization;
+using namespace AdvancedVisualization;
 
 void CRendererBitmap::rebuild(const IRendererContext& rContext)
 {
@@ -99,31 +99,31 @@ bool CRendererBitmap::render(const IRendererContext& rContext)
 
 	uint32_t i;
 
-	::glMatrixMode(GL_TEXTURE);
-	::glPushMatrix();
-	::glScalef(rContext.getScale(), 1, 1);
-	::glMatrixMode(GL_MODELVIEW);
+	glMatrixMode(GL_TEXTURE);
+	glPushMatrix();
+	glScalef(rContext.getScale(), 1, 1);
+	glMatrixMode(GL_MODELVIEW);
 
-	::glPushMatrix();
-	::glEnableClientState(GL_VERTEX_ARRAY);
-	::glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	::glScalef(1, 1.f/rContext.getSelectedCount(), 1);
+	glPushMatrix();
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glScalef(1, 1.f/rContext.getSelectedCount(), 1);
 	for(i=0; i<rContext.getSelectedCount(); i++)
 	{
-		::glPushMatrix();
-		::glTranslatef(0, rContext.getSelectedCount()-i-1.f, 0);
-		::glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_vVertex[rContext.getSelected(i)][0].x);
-		::glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_vVertex[rContext.getSelected(i)][0].u);
-		::glDrawArrays(GL_QUADS, 0, (m_ui32SampleCount/m_ui32AutoDecimationFactor)*4);
-		::glPopMatrix();
+		glPushMatrix();
+		glTranslatef(0, rContext.getSelectedCount()-i-1.f, 0);
+		glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_vVertex[rContext.getSelected(i)][0].x);
+		glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_vVertex[rContext.getSelected(i)][0].u);
+		glDrawArrays(GL_QUADS, 0, (m_ui32SampleCount/m_ui32AutoDecimationFactor)*4);
+		glPopMatrix();
 	}
-	::glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	::glDisableClientState(GL_VERTEX_ARRAY);
-	::glPopMatrix();
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glPopMatrix();
 
-	::glMatrixMode(GL_TEXTURE);
-	::glPopMatrix();
-	::glMatrixMode(GL_MODELVIEW);
+	glMatrixMode(GL_TEXTURE);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
 
 	return true;
 }

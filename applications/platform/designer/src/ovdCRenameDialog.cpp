@@ -2,30 +2,27 @@
 
 using namespace OpenViBEDesigner;
 using namespace OpenViBE;
-using namespace OpenViBE::Plugins;
-using namespace OpenViBE::Kernel;
+using namespace Plugins;
+using namespace Kernel;
 
 CRenameDialog::CRenameDialog(const IKernelContext& rKernelContext, const CString& rInitialName, const CString& rDefaultName, const char* sGUIFilename)
 	:m_rKernelContext(rKernelContext)
 	,m_sInitialName(rInitialName)
 	,m_sDefaultName(rDefaultName)
 	,m_sResult(rInitialName)
-	,m_sGUIFilename(sGUIFilename)
-{
-}
+	,m_sGUIFilename(sGUIFilename) { }
 
-CRenameDialog::~CRenameDialog(void)
-{
-}
+CRenameDialog::~CRenameDialog() { }
 
-boolean CRenameDialog::run(void)
-{
-	::GtkBuilder* l_pInterface=gtk_builder_new(); // glade_xml_new(m_sGUIFilename.toASCIIString(), "rename", NULL);
-	gtk_builder_add_from_file(l_pInterface, m_sGUIFilename.toASCIIString(), NULL);
-	gtk_builder_connect_signals(l_pInterface, NULL);
+boolean CRenameDialog::run()
 
-	::GtkWidget* l_pDialog=GTK_WIDGET(gtk_builder_get_object(l_pInterface, "rename"));
-	::GtkWidget* l_pName=GTK_WIDGET(gtk_builder_get_object(l_pInterface, "rename-entry"));
+{
+	GtkBuilder* l_pInterface=gtk_builder_new(); // glade_xml_new(m_sGUIFilename.toASCIIString(), "rename", nullptr);
+	gtk_builder_add_from_file(l_pInterface, m_sGUIFilename.toASCIIString(), nullptr);
+	gtk_builder_connect_signals(l_pInterface, nullptr);
+
+	GtkWidget* l_pDialog=GTK_WIDGET(gtk_builder_get_object(l_pInterface, "rename"));
+	GtkWidget* l_pName=GTK_WIDGET(gtk_builder_get_object(l_pInterface, "rename-entry"));
 	g_object_unref(l_pInterface);
 
 	gtk_entry_set_text(GTK_ENTRY(l_pName), m_sInitialName.toASCIIString());
@@ -61,7 +58,8 @@ boolean CRenameDialog::run(void)
 	return l_bResult;
 }
 
-CString CRenameDialog::getResult(void)
+CString CRenameDialog::getResult()
+
 {
 	return m_sResult;
 }

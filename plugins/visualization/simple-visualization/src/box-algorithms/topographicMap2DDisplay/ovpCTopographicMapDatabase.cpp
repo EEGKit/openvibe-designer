@@ -5,27 +5,27 @@
 #include <cmath>
 
 using namespace OpenViBE;
-using namespace OpenViBE::Plugins;
-using namespace OpenViBE::Kernel;
+using namespace Plugins;
+using namespace Kernel;
 
 using namespace OpenViBEPlugins;
-using namespace OpenViBEPlugins::SimpleVisualization;
+using namespace SimpleVisualization;
 
 using namespace OpenViBEToolkit;
 
 using namespace std;
 
 
-CTopographicMapDatabase::CTopographicMapDatabase(OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>& oPlugin, IAlgorithmProxy& rSphericalSplineInterpolation)
+CTopographicMapDatabase::CTopographicMapDatabase(TBoxAlgorithm<IBoxAlgorithm>& oPlugin, IAlgorithmProxy& rSphericalSplineInterpolation)
 	:CBufferDatabase(oPlugin)
 	,m_bFirstProcess(true)
 	,m_rSphericalSplineInterpolation(rSphericalSplineInterpolation)
 	,m_i64SplineOrder(4)
 	,m_ui64InterpolationType(OVP_TypeId_SphericalLinearInterpolationType_Spline)
 	,m_bElectrodeCoordsInitialized(false)
-	,m_pElectrodeCoords(NULL)
-	,m_pElectrodePotentials(NULL)
-	,m_pSamplePointCoords(NULL)
+	,m_pElectrodeCoords(nullptr)
+	,m_pElectrodePotentials(nullptr)
+	,m_pSamplePointCoords(nullptr)
 	,m_ui64Delay(0)
 {
 	//map input parameters
@@ -50,9 +50,7 @@ CTopographicMapDatabase::CTopographicMapDatabase(OpenViBEToolkit::TBoxAlgorithm<
 	m_oMaxSamplePointValue.initialize(m_rSphericalSplineInterpolation.getOutputParameter(OVP_Algorithm_SphericalSplineInterpolation_OutputParameterId_MaxSamplePointValue));
 }
 
-CTopographicMapDatabase::~CTopographicMapDatabase()
-{
-}
+CTopographicMapDatabase::~CTopographicMapDatabase() { }
 
 void CTopographicMapDatabase::setMatrixDimensionSize(const uint32 ui32DimensionIndex, const uint32 ui32DimensionSize)
 {
@@ -102,7 +100,7 @@ boolean CTopographicMapDatabase::onChannelLocalisationBufferReceived(uint32 ui32
 	return true;
 }
 
-void CTopographicMapDatabase::getLastBufferInterpolatedMinMaxValue(OpenViBE::float64& f64Min, OpenViBE::float64& f64Max)
+void CTopographicMapDatabase::getLastBufferInterpolatedMinMaxValue(float64& f64Min, float64& f64Max)
 {
 	f64Min = m_oMinSamplePointValue;
 	f64Max = m_oMaxSamplePointValue;
@@ -173,7 +171,7 @@ boolean CTopographicMapDatabase::processValues()
 	//retrieve up-to-date pointer to sample matrix
 	m_pSamplePointCoords = dynamic_cast<CTopographicMapDrawable*>(m_pDrawable)->getSampleCoordinatesMatrix();
 
-	if(m_pSamplePointCoords != NULL)
+	if(m_pSamplePointCoords != nullptr)
 	{
 		//map pointer to input parameter
 		m_rSphericalSplineInterpolation.getInputParameter(OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_SamplePointsCoordinates)->setReferenceTarget(&m_pSamplePointCoords);
@@ -197,10 +195,10 @@ boolean CTopographicMapDatabase::processValues()
 	}
 	else
 	{
-		if(m_pSamplePointCoords != NULL)
+		if(m_pSamplePointCoords != nullptr)
 		{
 			//retrieve interpolation results
-			OpenViBE::Kernel::TParameterHandler < OpenViBE::IMatrix* > l_oSampleValuesMatrix;
+			TParameterHandler < IMatrix* > l_oSampleValuesMatrix;
 			l_oSampleValuesMatrix.initialize(m_rSphericalSplineInterpolation.getOutputParameter(OVP_Algorithm_SphericalSplineInterpolation_OutputParameterId_SamplePointsValues));
 			dynamic_cast<CTopographicMapDrawable*>(m_pDrawable)->setSampleValuesMatrix(l_oSampleValuesMatrix);
 
@@ -212,7 +210,7 @@ boolean CTopographicMapDatabase::processValues()
 	return l_bProcess;
 }
 
-boolean CTopographicMapDatabase::setDelay(OpenViBE::float64 f64Delay)
+boolean CTopographicMapDatabase::setDelay(float64 f64Delay)
 {
 	if(f64Delay > m_f64TotalDuration)
 	{
@@ -224,7 +222,7 @@ boolean CTopographicMapDatabase::setDelay(OpenViBE::float64 f64Delay)
 	return true;
 }
 
-boolean CTopographicMapDatabase::setInterpolationType(OpenViBE::uint64 ui64InterpolationType)
+boolean CTopographicMapDatabase::setInterpolationType(uint64 ui64InterpolationType)
 {
 	m_ui64InterpolationType = ui64InterpolationType;
 	return true;
@@ -241,7 +239,7 @@ boolean CTopographicMapDatabase::interpolateValues()
 	//retrieve up-to-date pointer to sample matrix
 	m_pSamplePointCoords = dynamic_cast<CTopographicMapDrawable*>(m_pDrawable)->getSampleCoordinatesMatrix();
 
-	if(m_pSamplePointCoords != NULL)
+	if(m_pSamplePointCoords != nullptr)
 	{
 		//map pointer to input parameter
 		m_rSphericalSplineInterpolation.getInputParameter(OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_SamplePointsCoordinates)->setReferenceTarget(&m_pSamplePointCoords);
@@ -265,10 +263,10 @@ boolean CTopographicMapDatabase::interpolateValues()
 	}
 	else
 	{
-		if(m_pSamplePointCoords != NULL)
+		if(m_pSamplePointCoords != nullptr)
 		{
 			//retrieve interpolation results
-			OpenViBE::Kernel::TParameterHandler < OpenViBE::IMatrix* > l_oSampleValuesMatrix;
+			TParameterHandler < IMatrix* > l_oSampleValuesMatrix;
 			l_oSampleValuesMatrix.initialize(m_rSphericalSplineInterpolation.getOutputParameter(OVP_Algorithm_SphericalSplineInterpolation_OutputParameterId_SamplePointsValues));
 			dynamic_cast<CTopographicMapDrawable*>(m_pDrawable)->setSampleValuesMatrix(l_oSampleValuesMatrix);
 		}
@@ -289,24 +287,21 @@ boolean CTopographicMapDatabase::getBufferIndexFromTime(uint64 ui64Time, uint32&
 		rBufferIndex = 0;
 		return false;
 	}
-	else if(ui64Time > m_oEndTime.back())
+	if(ui64Time > m_oEndTime.back())
 	{
 		rBufferIndex = m_oSampleBuffers.size() - 1;
 		return false;
 	}
-	else
+	for(uint32 i=0; i<m_oSampleBuffers.size(); i++)
 	{
-		for(uint32 i=0; i<m_oSampleBuffers.size(); i++)
+		if(ui64Time <= m_oEndTime[i])
 		{
-			if(ui64Time <= m_oEndTime[i])
-			{
-				rBufferIndex = i;
-				break;
-			}
+			rBufferIndex = i;
+			break;
 		}
-
-		return true;
 	}
+
+	return true;
 }
 
 boolean CTopographicMapDatabase::checkElectrodeCoordinates()
@@ -315,7 +310,7 @@ boolean CTopographicMapDatabase::checkElectrodeCoordinates()
 
 	for(uint32 i=0; i<l_ui64ChannelCount; i++)
 	{
-		float64* l_pNormalizedChannelCoords = NULL;
+		float64* l_pNormalizedChannelCoords = nullptr;
 		if(getChannelPosition(i, l_pNormalizedChannelCoords) == false)
 		{
 			CString l_sChannelLabel;

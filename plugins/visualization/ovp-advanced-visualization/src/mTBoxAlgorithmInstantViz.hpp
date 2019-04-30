@@ -33,9 +33,9 @@ namespace Mensia
 		public:
 
 			TBoxAlgorithmInstantViz(const OpenViBE::CIdentifier& rClassId, const std::vector < int >& vParameter);
-			virtual bool initialize(void);
-			virtual bool uninitialize(void);
-			virtual bool process(void);
+			virtual bool initialize();
+			virtual bool uninitialize();
+			virtual bool process();
 
 			_IsDerivedFromClass_Final_(CBoxAlgorithmViz, m_oClassId);
 
@@ -49,7 +49,7 @@ namespace Mensia
 
 		protected:
 
-			virtual void draw(void);
+			virtual void draw();
 		};
 
 		class CBoxAlgorithmInstantVizListener : public CBoxAlgorithmVizListener
@@ -57,11 +57,9 @@ namespace Mensia
 		public:
 
 			CBoxAlgorithmInstantVizListener(const std::vector < int >& vParameter)
-				:CBoxAlgorithmVizListener(vParameter)
-			{
-			}
+				:CBoxAlgorithmVizListener(vParameter) { }
 
-			virtual bool onInputTypeChanged(OpenViBE::Kernel::IBox& rBox, const uint32_t ui32Index)
+			virtual bool onInputTypeChanged(IBox& rBox, const uint32_t ui32Index)
 			{
 				OpenViBE::CIdentifier l_oTypeIdentifier;
 				rBox.getInputType(ui32Index, l_oTypeIdentifier);
@@ -79,7 +77,7 @@ namespace Mensia
 				return true;
 			}
 
-			virtual bool onInputAdded(OpenViBE::Kernel::IBox& rBox, const uint32_t ui32Index)
+			virtual bool onInputAdded(IBox& rBox, const uint32_t ui32Index)
 			{
 				OpenViBE::CIdentifier l_oTypeIdentifier;
 				rBox.getInputType(0, l_oTypeIdentifier);
@@ -89,7 +87,7 @@ namespace Mensia
 				return true;
 			}
 
-			virtual bool onInputRemoved(OpenViBE::Kernel::IBox& rBox, const uint32_t ui32Index)
+			virtual bool onInputRemoved(IBox& rBox, const uint32_t ui32Index)
 			{
 				rBox.removeSetting(this->getBaseSettingCount()+ui32Index-1);
 				return true;
@@ -101,22 +99,21 @@ namespace Mensia
 		{
 		public:
 
-			TBoxAlgorithmInstantVizDesc(const OpenViBE::CString& sName, const OpenViBE::CIdentifier& rDescClassId, const OpenViBE::CIdentifier& rClassId, const OpenViBE::CString& sAddedSoftwareVersion, const OpenViBE::CString& sUpdatedSoftwareVersion, const Mensia::AdvancedVisualization::CParameterSet& rParameterSet, const OpenViBE::CString& sShortDescription,const OpenViBE::CString& sDetailedDescription)
-				:CBoxAlgorithmVizDesc(sName, rDescClassId, rClassId, sAddedSoftwareVersion, sUpdatedSoftwareVersion, rParameterSet, sShortDescription, sDetailedDescription)
-			{
-			}
+			TBoxAlgorithmInstantVizDesc(const OpenViBE::CString& sName, const OpenViBE::CIdentifier& rDescClassId, const OpenViBE::CIdentifier& rClassId, const OpenViBE::CString& sAddedSoftwareVersion, const OpenViBE::CString& sUpdatedSoftwareVersion, const CParameterSet& rParameterSet, const OpenViBE::CString& sShortDescription,const OpenViBE::CString& sDetailedDescription)
+				:CBoxAlgorithmVizDesc(sName, rDescClassId, rClassId, sAddedSoftwareVersion, sUpdatedSoftwareVersion, rParameterSet, sShortDescription, sDetailedDescription) { }
 
-			virtual OpenViBE::Plugins::IPluginObject* create(void)
+			virtual OpenViBE::Plugins::IPluginObject* create()
+
 			{
 				return new TBoxAlgorithm<TRendererFactoryClass, TRulerClass>(m_oClassId, m_vParameter);
 			}
 
-			virtual OpenViBE::Plugins::IBoxListener* createBoxListener(void) const
+			virtual OpenViBE::Plugins::IBoxListener* createBoxListener() const
 			{
 				return new CBoxAlgorithmInstantVizListener(m_vParameter);
 			}
 
-			virtual OpenViBE::CString getCategory(void) const
+			virtual OpenViBE::CString getCategory() const
 			{
 				return OpenViBE::CString("Advanced Visualization/")+m_sCategoryName;
 			}
@@ -127,18 +124,17 @@ namespace Mensia
 
 		template <class TRendererFactoryClass, class TRulerClass>
 		TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::TBoxAlgorithmInstantViz(const OpenViBE::CIdentifier& rClassId, const std::vector < int >& vParameter)
-			:CBoxAlgorithmViz(rClassId, vParameter)
-		{
-		}
+			:CBoxAlgorithmViz(rClassId, vParameter) { }
 
 		template <class TRendererFactoryClass, class TRulerClass>
-		bool TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::initialize(void)
+		bool TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::initialize()
+
 		{
 			bool l_bResult=CBoxAlgorithmViz::initialize();
 
 			m_dLastERPFraction=0;
 
-			const OpenViBE::Kernel::IBox& l_rStaticBoxContext=this->getStaticBoxContext();
+			const IBox& l_rStaticBoxContext=this->getStaticBoxContext();
 			m_ui32InputCount=l_rStaticBoxContext.getInputCount();
 			m_vRenderer.resize(m_ui32InputCount);
 			m_vMatrixDecoder.resize(m_ui32InputCount);
@@ -148,7 +144,7 @@ namespace Mensia
 				m_vMatrixDecoder[i].initialize(*this, i);
 				if(!m_vRenderer[i])
 				{
-					this->getLogManager() << OpenViBE::Kernel::LogLevel_Error << "Could not create renderer, it might have been disabled at compile time\n";
+					this->getLogManager() << LogLevel_Error << "Could not create renderer, it might have been disabled at compile time\n";
 					l_bResult = false;
 				}
 			}
@@ -157,13 +153,14 @@ namespace Mensia
 			m_pRuler->setRendererContext(m_pRendererContext);
 			m_pRuler->setRenderer(m_vRenderer[0]);
 
-			::gtk_widget_set_sensitive(m_pTimeScale, false);
+			gtk_widget_set_sensitive(m_pTimeScale, false);
 
 			return l_bResult;
 		}
 
 		template <class TRendererFactoryClass, class TRulerClass>
-		bool TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::uninitialize(void)
+		bool TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::uninitialize()
+
 		{
 			for(uint32_t i=0; i<m_ui32InputCount; i++)
 			{
@@ -178,10 +175,11 @@ namespace Mensia
 		}
 
 		template <class TRendererFactoryClass, class TRulerClass>
-		bool TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::process(void)
+		bool TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::process()
+
 		{
-			const OpenViBE::Kernel::IBox& l_rStaticBoxContext=this->getStaticBoxContext();
-			OpenViBE::Kernel::IBoxIO& l_rDynamicBoxContext=this->getDynamicBoxContext();
+			const IBox& l_rStaticBoxContext=this->getStaticBoxContext();
+			IBoxIO& l_rDynamicBoxContext=this->getDynamicBoxContext();
 			uint32_t i, j, k, l;
 
 			for(i=0; i<l_rStaticBoxContext.getInputCount(); i++)
@@ -196,7 +194,7 @@ namespace Mensia
 
 					if(l_ui32ChannelCount == 0)
 					{
-						this->getLogManager() << OpenViBE::Kernel::LogLevel_Error << "Input stream " << static_cast<OpenViBE::uint32>(i) << " has 0 channels\n";
+						this->getLogManager() << LogLevel_Error << "Input stream " << static_cast<OpenViBE::uint32>(i) << " has 0 channels\n";
 						return false;
 					}
 
@@ -212,8 +210,8 @@ namespace Mensia
 						// Check dimension coherence
 						// Only apply renderer context when first header is received
 
-						::GtkTreeIter l_oGtkTreeIterator;
-						::gtk_list_store_clear(m_pChannelListStore);
+						GtkTreeIter l_oGtkTreeIterator;
+						gtk_list_store_clear(m_pChannelListStore);
 
 						m_vSwap.resize(l_ui32ChannelCount);
 
@@ -224,37 +222,37 @@ namespace Mensia
 						m_pRendererContext->scaleBy(float(m_f64DataScale));
 						m_pRendererContext->setPositiveOnly(m_bIsPositive);
 						m_pRendererContext->setAxisDisplay(m_bShowAxis);
-						m_pRendererContext->setParentRendererContext(&Mensia::AdvancedVisualization::getContext());
+						m_pRendererContext->setParentRendererContext(&getContext());
 						m_pRendererContext->setXYZPlotDepth(m_bXYZPlotHasDepth);
 
-						::gtk_tree_view_set_model(m_pChannelTreeView, NULL);
+						gtk_tree_view_set_model(m_pChannelTreeView, nullptr);
 						for(j=0; j<l_ui32ChannelCount; j++)
 						{
 							std::string l_sName=trim(l_pMatrix->getDimensionLabel(0, j));
 							std::string l_sSubname=l_sName;
-							std::transform(l_sName.begin(), l_sName.end(), l_sSubname.begin(), ::tolower);
+							std::transform(l_sName.begin(), l_sName.end(), l_sSubname.begin(), tolower);
 							CVertex v=m_vChannelLocalisation[l_sSubname];
 
 							if(l_sName.empty())
 							{
 								char l_sIndexedChannelName[1024];
-								::sprintf(l_sIndexedChannelName, "Channel %u", j+1);
+								sprintf(l_sIndexedChannelName, "Channel %u", j+1);
 								l_sName=l_sIndexedChannelName;
 							}
 
 							m_pRendererContext->addChannel(l_sName, v.x, v.y, v.z);
-							::gtk_list_store_append(m_pChannelListStore, &l_oGtkTreeIterator);
-							::gtk_list_store_set(m_pChannelListStore, &l_oGtkTreeIterator, 0, j+1, 1, l_sName.c_str(), -1);
+							gtk_list_store_append(m_pChannelListStore, &l_oGtkTreeIterator);
+							gtk_list_store_set(m_pChannelListStore, &l_oGtkTreeIterator, 0, j+1, 1, l_sName.c_str(), -1);
 						}
-						::gtk_tree_view_set_model(m_pChannelTreeView, GTK_TREE_MODEL(m_pChannelListStore));
-						::gtk_tree_selection_select_all(::gtk_tree_view_get_selection(m_pChannelTreeView));
+						gtk_tree_view_set_model(m_pChannelTreeView, GTK_TREE_MODEL(m_pChannelListStore));
+						gtk_tree_selection_select_all(gtk_tree_view_get_selection(m_pChannelTreeView));
 
 						m_vRenderer[i]->setChannelCount(l_ui32ChannelCount);
 						m_vRenderer[i]->setSampleCount(l_ui32SampleCount);
 
 						if(l_ui32SampleCount>1 && m_oTypeIdentifier!=OV_TypeId_Spectrum)
 						{
-							::gtk_widget_show(m_pERPPlayer);
+							gtk_widget_show(m_pERPPlayer);
 						}
 
 						if(m_oTypeIdentifier==OV_TypeId_Signal)
@@ -280,11 +278,11 @@ namespace Mensia
 
 						m_pRendererContext->setSampleDuration(l_ui64ChunkDuration/l_ui32SampleCount);
 						m_pRendererContext->setSpectrumFrequencyRange(uint32_t((uint64_t(l_ui32SampleCount)<<32)/l_ui64ChunkDuration));
-						m_pRendererContext->setMinimumSpectrumFrequency(uint32_t(::gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_pFrequencyBandMin))));
-						m_pRendererContext->setMaximumSpectrumFrequency(uint32_t(::gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_pFrequencyBandMax))));
+						m_pRendererContext->setMinimumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_pFrequencyBandMin))));
+						m_pRendererContext->setMaximumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_pFrequencyBandMax))));
 
 						// Sets time scale
-						::gtk_spin_button_set_value(GTK_SPIN_BUTTON(::gtk_builder_get_object(m_pBuilder, "spinbutton_time_scale")), (l_ui64ChunkDuration>>22)/1024.);
+						gtk_spin_button_set_value(GTK_SPIN_BUTTON(::gtk_builder_get_object(m_pBuilder, "spinbutton_time_scale")), (l_ui64ChunkDuration>>22)/1024.);
 
 						m_vRenderer[i]->clear(0); // Drop last samples as they will be fed again
 						for(k=0; k<l_ui32SampleCount; k++)
@@ -302,7 +300,7 @@ namespace Mensia
 				}
 			}
 
-			double l_dERPFraction = Mensia::AdvancedVisualization::getContext().getERPFraction();
+			double l_dERPFraction = getContext().getERPFraction();
 			if(m_pRendererContext->isERPPlayerActive())
 			{
 				l_dERPFraction+=.0025;
@@ -310,7 +308,7 @@ namespace Mensia
 			}
 			if(m_dLastERPFraction!=l_dERPFraction)
 			{
-				::gtk_range_set_value(GTK_RANGE(m_pERPRange), l_dERPFraction);
+				gtk_range_set_value(GTK_RANGE(m_pERPRange), l_dERPFraction);
 				m_dLastERPFraction=l_dERPFraction;
 				m_bRefreshNeeded=true;
 				m_bRedrawNeeded=true;
@@ -338,28 +336,29 @@ namespace Mensia
 
 			if(m_pRendererContext->isERPPlayerActive())
 			{
-				::gtk_button_set_label(GTK_BUTTON(m_pERPPlayerButton), GTK_STOCK_MEDIA_PAUSE);
+				gtk_button_set_label(GTK_BUTTON(m_pERPPlayerButton), GTK_STOCK_MEDIA_PAUSE);
 			}
 			else
 			{
-				::gtk_button_set_label(GTK_BUTTON(m_pERPPlayerButton), GTK_STOCK_MEDIA_PLAY);
+				gtk_button_set_label(GTK_BUTTON(m_pERPPlayerButton), GTK_STOCK_MEDIA_PLAY);
 			}
 
 			return true;
 		}
 
 		template <class TRendererFactoryClass, class TRulerClass>
-		void TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::draw(void)
+		void TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::draw()
+
 		{
 			CBoxAlgorithmViz::preDraw();
 
 			for(uint32_t i=0; i<m_ui32InputCount; i++)
 			{
-				::glPushAttrib(GL_ALL_ATTRIB_BITS);
-				if(i<m_vColor.size()) ::glColor4f(m_vColor[i].r, m_vColor[i].g, m_vColor[i].b, m_pRendererContext->getTranslucency());
-				else                  ::glColor4f(m_oColor.r, m_oColor.g, m_oColor.b, m_pRendererContext->getTranslucency());
+				glPushAttrib(GL_ALL_ATTRIB_BITS);
+				if(i<m_vColor.size()) glColor4f(m_vColor[i].r, m_vColor[i].g, m_vColor[i].b, m_pRendererContext->getTranslucency());
+				else                  glColor4f(m_oColor.r, m_oColor.g, m_oColor.b, m_pRendererContext->getTranslucency());
 				if(m_vRenderer[i]) m_vRenderer[i]->render(*m_pRendererContext);
-				::glPopAttrib();
+				glPopAttrib();
 			}
 
 			CBoxAlgorithmViz::postDraw();

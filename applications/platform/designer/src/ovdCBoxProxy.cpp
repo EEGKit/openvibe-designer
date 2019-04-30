@@ -3,14 +3,14 @@
 #include <fs/Files.h>
 
 using namespace OpenViBE;
-using namespace OpenViBE::Kernel;
-using namespace OpenViBE::Plugins;
+using namespace Kernel;
+using namespace Plugins;
 using namespace OpenViBEDesigner;
 using namespace std;
 
 CBoxProxy::CBoxProxy(const IKernelContext& rKernelContext, IScenario& rScenario, const CIdentifier& rBoxIdentifier)
     :m_rKernelContext(rKernelContext)
-    ,m_pBoxAlgorithmDescriptorOverride(NULL)
+    ,m_pBoxAlgorithmDescriptorOverride(nullptr)
     ,m_pConstBox(rScenario.getBoxDetails(rBoxIdentifier))
     ,m_pBox(rScenario.getBoxDetails(rBoxIdentifier))
     ,m_bApplied(false)
@@ -43,7 +43,8 @@ CBoxProxy::CBoxProxy(const IKernelContext& rKernelContext, IScenario& rScenario,
 	m_bShowOriginalNameWhenModified=m_rKernelContext.getConfigurationManager().expandAsBoolean("${Designer_ShowOriginalBoxName}", true);
 }
 
-CBoxProxy::~CBoxProxy(void)
+CBoxProxy::~CBoxProxy()
+
 {
 	if(!m_bApplied)
 	{
@@ -51,36 +52,38 @@ CBoxProxy::~CBoxProxy(void)
 	}
 }
 
-CBoxProxy::operator IBox* (void)
+CBoxProxy::operator IBox* ()
+
 {
 	return m_pBox;
 }
 
-CBoxProxy::operator const IBox* (void)
+CBoxProxy::operator const IBox* ()
+
 {
 	return m_pConstBox;
 }
 
-int32 CBoxProxy::getWidth(::GtkWidget* pWidget) const
+int32 CBoxProxy::getWidth(GtkWidget* pWidget) const
 {
 	int x, y;
 	updateSize(pWidget, getLabel(), getStatusLabel(), &x, &y);
 	return x;
 }
 
-int32 CBoxProxy::getHeight(::GtkWidget* pWidget) const
+int32 CBoxProxy::getHeight(GtkWidget* pWidget) const
 {
 	int x, y;
 	updateSize(pWidget, getLabel(), getStatusLabel(), &x, &y);
 	return y;
 }
 
-int32 CBoxProxy::getXCenter(void) const
+int32 CBoxProxy::getXCenter() const
 {
 	return m_iXCenter;
 }
 
-int32 CBoxProxy::getYCenter(void) const
+int32 CBoxProxy::getYCenter() const
 {
 	return m_iYCenter;
 }
@@ -97,7 +100,8 @@ void CBoxProxy::setBoxAlgorithmDescriptorOverride(const IBoxAlgorithmDesc* pBoxA
 	m_pBoxAlgorithmDescriptorOverride = pBoxAlgorithmDescriptor;
 }
 
-void CBoxProxy::apply(void)
+void CBoxProxy::apply()
+
 {
 	if(m_pBox)
 	{
@@ -117,15 +121,15 @@ void CBoxProxy::apply(void)
 	}
 }
 
-const char* CBoxProxy::getLabel(void) const
+const char* CBoxProxy::getLabel() const
 {
 	bool l_bBoxCanChangeInput  (m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanModifyInput)  ||m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanAddInput));
 	bool l_bBoxCanChangeOutput (m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanModifyOutput) ||m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanAddOutput));
 	bool l_bBoxCanChangeSetting(m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanModifySetting)||m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanAddSetting));
 
-	const IPluginObjectDesc* l_pDesc = NULL;
+	const IPluginObjectDesc* l_pDesc = nullptr;
 
-	if (m_pBoxAlgorithmDescriptorOverride == NULL)
+	if (m_pBoxAlgorithmDescriptorOverride == nullptr)
 	{
 		l_pDesc = m_rKernelContext.getPluginManager().getPluginObjectDescCreating(m_pConstBox->getAlgorithmClassIdentifier());
 	}
@@ -142,7 +146,7 @@ const char* CBoxProxy::getLabel(void) const
 
 	// pango is used in the box diplay to format the box name (e.g. bold to tell it's a configurable box)
 	// incidently, this makes the box name pango-enabled. If an error appears in the markup, the box display would be wrong.
-	if (!pango_parse_markup(l_sBoxName.c_str(), -1, 0, NULL, NULL, NULL, NULL))
+	if (!pango_parse_markup(l_sBoxName.c_str(), -1, 0, nullptr, nullptr, nullptr, nullptr))
 	{
 		// the name uses invalid markup characters
 		// we sanitize the markup tag overture '<'
@@ -201,7 +205,7 @@ const char* CBoxProxy::getLabel(void) const
 	return m_sLabel.c_str();
 }
 
-const char* CBoxProxy::getStatusLabel(void) const
+const char* CBoxProxy::getStatusLabel() const
 {
 	bool l_bBoxToBeUpdated (m_pBox->hasAttribute(OV_AttributeId_Box_ToBeUpdated));
 	bool l_bBoxPendingDeprecatedInterfacors (m_pBox->hasAttribute(OV_AttributeId_Box_PendingDeprecatedInterfacors));
@@ -223,49 +227,49 @@ const char* CBoxProxy::getStatusLabel(void) const
 	return m_sStatus.c_str();
 }
 
-bool CBoxProxy::isBoxAlgorithmPluginPresent(void) const
+bool CBoxProxy::isBoxAlgorithmPluginPresent() const
 {
 	return m_IsBoxAlgorithmPresent;
 }
 
-bool CBoxProxy::isUpToDate(void) const
+bool CBoxProxy::isUpToDate() const
 {
 	return !m_pBox->hasAttribute(OV_AttributeId_Box_ToBeUpdated);
 }
 
-bool CBoxProxy::hasPendingDeprecatedInterfacors(void) const
+bool CBoxProxy::hasPendingDeprecatedInterfacors() const
 {
 	return m_pBox->hasAttribute(OV_AttributeId_Box_PendingDeprecatedInterfacors);
 }
 
-bool CBoxProxy::isDeprecated(void) const
+bool CBoxProxy::isDeprecated() const
 {
 	return m_IsDeprecated;
 }
 
-bool CBoxProxy::isMetabox(void) const
+bool CBoxProxy::isMetabox() const
 {
 	return m_pConstBox->getAlgorithmClassIdentifier() == OVP_ClassId_BoxAlgorithm_Metabox;
 }
 
-bool CBoxProxy::isDisabled(void) const
+bool CBoxProxy::isDisabled() const
 {
 	TAttributeHandler l_oAttributeHandler(*m_pConstBox);
 	return l_oAttributeHandler.hasAttribute(OV_AttributeId_Box_Disabled);
 }
 
-void CBoxProxy::updateSize(::GtkWidget* pWidget, const char* sLabel, const char* sStatus, int* pXSize, int* pYSize) const
+void CBoxProxy::updateSize(GtkWidget* pWidget, const char* sLabel, const char* sStatus, int* pXSize, int* pYSize) const
 {
-	::PangoContext* l_pPangoContext=NULL;
-	::PangoLayout* l_pPangoLayout=NULL;
-	::PangoRectangle l_oPangoLabelRect;
-	::PangoRectangle l_oPangoStatusRect;
+	PangoContext* l_pPangoContext=nullptr;
+	PangoLayout* l_pPangoLayout=nullptr;
+	PangoRectangle l_oPangoLabelRect;
+	PangoRectangle l_oPangoStatusRect;
 	l_pPangoContext=gtk_widget_create_pango_context(pWidget);
 	l_pPangoLayout=pango_layout_new(l_pPangoContext);
 	pango_layout_set_markup(l_pPangoLayout, sLabel, -1);
-	pango_layout_get_pixel_extents(l_pPangoLayout, NULL, &l_oPangoLabelRect);
+	pango_layout_get_pixel_extents(l_pPangoLayout, nullptr, &l_oPangoLabelRect);
 	pango_layout_set_markup(l_pPangoLayout, sStatus, -1);
-	pango_layout_get_pixel_extents(l_pPangoLayout, NULL, &l_oPangoStatusRect);
+	pango_layout_get_pixel_extents(l_pPangoLayout, nullptr, &l_oPangoStatusRect);
 
 	if (!strlen(sStatus))
 	{

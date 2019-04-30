@@ -23,7 +23,7 @@
 #include "mCRendererContext.hpp"
 
 using namespace Mensia;
-using namespace Mensia::AdvancedVisualization;
+using namespace AdvancedVisualization;
 
 IRendererContext* IRendererContext::create(IRendererContext* pParentRendererContext)
 {

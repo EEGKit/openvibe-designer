@@ -8,17 +8,17 @@
 #include <cstring>
 
 using namespace OpenViBE;
-using namespace OpenViBE::Plugins;
-using namespace OpenViBE::Kernel;
+using namespace Plugins;
+using namespace Kernel;
 
 using namespace OpenViBEPlugins;
-using namespace OpenViBEPlugins::SimpleVisualization;
+using namespace SimpleVisualization;
 
 using namespace OpenViBEToolkit;
 
 using namespace std;
 
-CBufferDatabase::CBufferDatabase(OpenViBEToolkit::TBoxAlgorithm<Plugins::IBoxAlgorithm>& oPlugin)
+CBufferDatabase::CBufferDatabase(TBoxAlgorithm<IBoxAlgorithm>& oPlugin)
 	:m_i64NbElectrodes(0)
 	,m_bFirstBufferReceived(false)
 	,m_ui32SamplingFrequency(0)
@@ -33,11 +33,11 @@ CBufferDatabase::CBufferDatabase(OpenViBEToolkit::TBoxAlgorithm<Plugins::IBoxAlg
 	,m_ui64BufferStep(0)
 	,m_ui64LastBufferEndTime(0)
 	,m_bWarningPrinted(false)
-	,m_pDrawable(NULL)
+	,m_pDrawable(nullptr)
 	,m_oParentPlugin(oPlugin)
 	,m_bError(false)
 	,m_bRedrawOnNewData(true)
-	,m_pChannelLocalisationStreamDecoder(NULL)
+	,m_pChannelLocalisationStreamDecoder(nullptr)
 	,m_bChannelLocalisationHeaderReceived(false)
 	,m_bDynamicChannelLocalisation(false)
 	,m_bCartesianStreamedCoords(false)
@@ -90,7 +90,7 @@ boolean CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuff
 	if(m_pChannelLocalisationStreamDecoder->isOutputTriggerActive(OVP_GD_Algorithm_ChannelLocalisationStreamDecoder_OutputTriggerId_ReceivedHeader) == true)
 	{
 		//retrieve matrix header
-		OpenViBE::Kernel::TParameterHandler < OpenViBE::IMatrix* > l_oMatrix;
+		TParameterHandler < IMatrix* > l_oMatrix;
 		l_oMatrix.initialize(m_pChannelLocalisationStreamDecoder->getOutputParameter(OVP_GD_Algorithm_ChannelLocalisationStreamDecoder_OutputParameterId_Matrix));
 
 		//copy channel labels
@@ -101,7 +101,7 @@ boolean CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuff
 		}
 
 		//retrieve dynamic flag
-		OpenViBE::Kernel::TParameterHandler < OpenViBE::boolean > l_bDynamic;
+		TParameterHandler < boolean > l_bDynamic;
 		l_bDynamic.initialize(m_pChannelLocalisationStreamDecoder->getOutputParameter(OVP_GD_Algorithm_ChannelLocalisationStreamDecoder_OutputParameterId_Dynamic));
 		m_bDynamicChannelLocalisation = l_bDynamic;
 
@@ -159,12 +159,12 @@ boolean CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuff
 		}
 
 		//retrieve coordinates matrix
-		OpenViBE::Kernel::TParameterHandler < OpenViBE::IMatrix* > l_oMatrix;
+		TParameterHandler < IMatrix* > l_oMatrix;
 		l_oMatrix.initialize(m_pChannelLocalisationStreamDecoder->getOutputParameter(OVP_GD_Algorithm_ChannelLocalisationStreamDecoder_OutputParameterId_Matrix));
 
 		//get pointer to destination matrix
-		CMatrix* l_pChannelLocalisation = NULL;
-		//CMatrix* l_pAlternateChannelLocalisation = NULL;
+		CMatrix* l_pChannelLocalisation = nullptr;
+		//CMatrix* l_pAlternateChannelLocalisation = nullptr;
 		if(m_oChannelLocalisationStreamedCoords.size() < l_ui64MaxBufferCount)
 		{
 			//create a new matrix and resize it
@@ -421,7 +421,7 @@ boolean CBufferDatabase::setMatrixBuffer(const float64* pBuffer, uint64 ui64Star
 		}
 	}
 
-	float64* l_pBufferToWrite = NULL;
+	float64* l_pBufferToWrite = nullptr;
 	const uint64 l_ui64NumberOfSamplesPerBuffer = m_pDimensionSizes[0] * m_pDimensionSizes[1];
 
 	//if old buffers need to be removed
@@ -461,7 +461,7 @@ boolean CBufferDatabase::setMatrixBuffer(const float64* pBuffer, uint64 ui64Star
 	}
 
 	//do we need to allocate a new buffer?
-	if(l_pBufferToWrite == NULL)
+	if(l_pBufferToWrite == nullptr)
 	{
 		l_pBufferToWrite = new float64[(size_t)l_ui64NumberOfSamplesPerBuffer];
 	}
@@ -558,7 +558,7 @@ boolean CBufferDatabase::isTimeInDisplayedInterval(const uint64& ui64Time) const
 	return ui64Time >= m_oStartTime.front() && ui64Time <= m_oEndTime.back();
 }
 
-boolean CBufferDatabase::getIndexOfBufferStartingAtTime(const OpenViBE::uint64& ui64Time, uint32& rIndex) const
+boolean CBufferDatabase::getIndexOfBufferStartingAtTime(const uint64& ui64Time, uint32& rIndex) const
 {
 	rIndex = 0;
 
@@ -683,16 +683,11 @@ boolean CBufferDatabase::getChannelSphericalCoordinates(const uint32 ui32Channel
 			//convert to spherical coords
 			return convertCartesianToSpherical(l_pCoords, rTheta, rPhi);
 		}
-		else //streamed coordinates are spherical already
-		{
-			//TODO
-			return false;
-		}
-	}
-	else
-	{
+			//streamed coordinates are spherical already
+		//TODO
 		return false;
 	}
+	return false;
 }
 
 boolean CBufferDatabase::getChannelLabel(const uint32 ui32ChannelIndex, CString& rChannelLabel)
@@ -702,16 +697,11 @@ boolean CBufferDatabase::getChannelLabel(const uint32 ui32ChannelIndex, CString&
 		rChannelLabel = m_oChannelLocalisationLabels[m_oChannelLookupIndices[ui32ChannelIndex]];
 		return true;
 	}
-	else
-	{
-		rChannelLabel = "";
-		return false;
-	}
+	rChannelLabel = "";
+	return false;
 }
 
-void CBufferDatabase::setStimulationCount(const uint32 ui32StimulationCount)
-{
-}
+void CBufferDatabase::setStimulationCount(const uint32 ui32StimulationCount) { }
 
 void CBufferDatabase::setStimulation(const uint32 ui32StimulationIndex, const uint64 ui64StimulationIdentifier, const uint64 ui64StimulationDate)
 {

@@ -2,14 +2,14 @@
 #include "ovdTAttributeHandler.h"
 
 using namespace OpenViBE;
-using namespace OpenViBE::Kernel;
+using namespace Kernel;
 using namespace OpenViBEDesigner;
 using namespace std;
 
 CCommentProxy::CCommentProxy(const IKernelContext& rKernelContext, const IComment& rComment)
 	:m_rKernelContext(rKernelContext)
 	,m_pConstComment(&rComment)
-	,m_pComment(NULL)
+	,m_pComment(nullptr)
 	,m_bApplied(false)
 	,m_iXCenter(0)
 	,m_iYCenter(0)
@@ -37,7 +37,8 @@ CCommentProxy::CCommentProxy(const IKernelContext& rKernelContext, IScenario& rS
 	}
 }
 
-CCommentProxy::~CCommentProxy(void)
+CCommentProxy::~CCommentProxy()
+
 {
 	if(!m_bApplied)
 	{
@@ -45,36 +46,38 @@ CCommentProxy::~CCommentProxy(void)
 	}
 }
 
-CCommentProxy::operator IComment* (void)
+CCommentProxy::operator IComment* ()
+
 {
 	return m_pComment;
 }
 
-CCommentProxy::operator const IComment* (void)
+CCommentProxy::operator const IComment* ()
+
 {
 	return m_pConstComment;
 }
 
-int32 CCommentProxy::getWidth(::GtkWidget* pWidget) const
+int32 CCommentProxy::getWidth(GtkWidget* pWidget) const
 {
 	int x, y;
 	updateSize(pWidget, getLabel(), &x, &y);
 	return x;
 }
 
-int32 CCommentProxy::getHeight(::GtkWidget* pWidget) const
+int32 CCommentProxy::getHeight(GtkWidget* pWidget) const
 {
 	int x, y;
 	updateSize(pWidget, getLabel(), &x, &y);
 	return y;
 }
 
-int32 CCommentProxy::getXCenter(void) const
+int32 CCommentProxy::getXCenter() const
 {
 	return m_iXCenter;
 }
 
-int32 CCommentProxy::getYCenter(void) const
+int32 CCommentProxy::getYCenter() const
 {
 	return m_iYCenter;
 }
@@ -86,7 +89,8 @@ void CCommentProxy::setCenter(int32 i32XCenter, int32 i32YCenter)
 	m_bApplied=false;
 }
 
-void CCommentProxy::apply(void)
+void CCommentProxy::apply()
+
 {
 	if(m_pComment)
 	{
@@ -105,21 +109,21 @@ void CCommentProxy::apply(void)
 	}
 }
 
-const char* CCommentProxy::getLabel(void) const
+const char* CCommentProxy::getLabel() const
 {
 	m_sLabel=m_pConstComment->getText().toASCIIString();
 	return m_sLabel.c_str();
 }
 
-void CCommentProxy::updateSize(::GtkWidget* pWidget, const char* sText, int* pXSize, int* pYSize) const
+void CCommentProxy::updateSize(GtkWidget* pWidget, const char* sText, int* pXSize, int* pYSize) const
 {
-	::PangoContext* l_pPangoContext=NULL;
-	::PangoLayout* l_pPangoLayout=NULL;
-	::PangoRectangle l_oPangoRectangle;
+	PangoContext* l_pPangoContext=nullptr;
+	PangoLayout* l_pPangoLayout=nullptr;
+	PangoRectangle l_oPangoRectangle;
 	l_pPangoContext=gtk_widget_create_pango_context(pWidget);
 	l_pPangoLayout=pango_layout_new(l_pPangoContext);
 	pango_layout_set_alignment(l_pPangoLayout, PANGO_ALIGN_CENTER);
-	if(pango_parse_markup(sText, -1, 0, NULL, NULL, NULL, NULL))
+	if(pango_parse_markup(sText, -1, 0, nullptr, nullptr, nullptr, nullptr))
 	{
 		pango_layout_set_markup(l_pPangoLayout, sText, -1);
 	}
@@ -127,7 +131,7 @@ void CCommentProxy::updateSize(::GtkWidget* pWidget, const char* sText, int* pXS
 	{
 		pango_layout_set_text(l_pPangoLayout, sText, -1);
 	}
-	pango_layout_get_pixel_extents(l_pPangoLayout, NULL, &l_oPangoRectangle);
+	pango_layout_get_pixel_extents(l_pPangoLayout, nullptr, &l_oPangoRectangle);
 	*pXSize=l_oPangoRectangle.width;
 	*pYSize=l_oPangoRectangle.height;
 	g_object_unref(l_pPangoLayout);

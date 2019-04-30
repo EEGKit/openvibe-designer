@@ -33,24 +33,24 @@
 #endif
 
 using namespace OpenViBE;
-using namespace OpenViBE::Kernel;
-using namespace OpenViBE::Plugins;
+using namespace Kernel;
+using namespace Plugins;
 using namespace OpenViBEDesigner;
 using namespace OpenViBEVisualizationToolkit;
 using namespace std;
 
-extern map<uint32_t, ::GdkColor> g_vColors;
+extern map<uint32_t, GdkColor> g_vColors;
 
 namespace
 {
 
-	static ::GtkTargetEntry g_vTargetEntry[]= {
+	static GtkTargetEntry g_vTargetEntry[]= {
 		{ (gchar*)"STRING", 0, 0 },
 		{ (gchar*)"text/plain", 0, 0 } };
 
-	static ::GdkColor colorFromIdentifier(const CIdentifier& rIdentifier)
+	static GdkColor colorFromIdentifier(const CIdentifier& rIdentifier)
 	{
-		::GdkColor l_oGdkColor;
+		GdkColor l_oGdkColor;
 		unsigned int l_ui32Value1=0;
 		unsigned int l_ui32Value2=0;
 		uint64_t l_ui64Result=0;
@@ -109,7 +109,7 @@ namespace
 		return l_sOutput;
 	}
 
-	static void count_widget_cb(::GtkWidget* pWidget, gpointer pUserData)
+	static void count_widget_cb(GtkWidget* pWidget, gpointer pUserData)
 	{
 		int* i=reinterpret_cast < int* > (pUserData);
 		if(i)
@@ -118,14 +118,14 @@ namespace
 		}
 	}
 
-	static int gtk_container_get_children_count(::GtkContainer* pContainer)
+	static int gtk_container_get_children_count(GtkContainer* pContainer)
 	{
 		int l_iCount=0;
-		::gtk_container_foreach(pContainer, count_widget_cb, &l_iCount);
+		gtk_container_foreach(pContainer, count_widget_cb, &l_iCount);
 		return l_iCount;
 	}
 
-	static gboolean scenario_scrolledwindow_scroll_event_cb(::GtkWidget* pWidget, ::GdkEventScroll* pEvent)
+	static gboolean scenario_scrolledwindow_scroll_event_cb(GtkWidget* pWidget, GdkEventScroll* pEvent)
 	{
 		guint l_uiState = pEvent->state & gtk_accelerator_get_default_mod_mask ();
 
@@ -147,36 +147,36 @@ namespace
 		return FALSE;
 	}
 
-	static void scenario_drawing_area_expose_cb(::GtkWidget* pWidget, ::GdkEventExpose* pEvent, gpointer pUserData)
+	static void scenario_drawing_area_expose_cb(GtkWidget* pWidget, GdkEventExpose* pEvent, gpointer pUserData)
 	{
 		static_cast<CInterfacedScenario*>(pUserData)->scenarioDrawingAreaExposeCB(pEvent);
 	}
-	static void scenario_drawing_area_drag_data_received_cb(::GtkWidget* pWidget, ::GdkDragContext* pDragContext, gint iX, gint iY, ::GtkSelectionData* pSelectionData, guint uiInfo, guint uiT, gpointer pUserData)
+	static void scenario_drawing_area_drag_data_received_cb(GtkWidget* pWidget, GdkDragContext* pDragContext, gint iX, gint iY, GtkSelectionData* pSelectionData, guint uiInfo, guint uiT, gpointer pUserData)
 	{
 		static_cast<CInterfacedScenario*>(pUserData)->scenarioDrawingAreaDragDataReceivedCB(pDragContext, iX, iY, pSelectionData, uiInfo, uiT);
 	}
-	static gboolean scenario_drawing_area_motion_notify_cb(::GtkWidget* pWidget, ::GdkEventMotion* pEvent, gpointer pUserData)
+	static gboolean scenario_drawing_area_motion_notify_cb(GtkWidget* pWidget, GdkEventMotion* pEvent, gpointer pUserData)
 	{
 		static_cast<CInterfacedScenario*>(pUserData)->scenarioDrawingAreaMotionNotifyCB(pWidget, pEvent);
 		return FALSE;
 	}
-	static void scenario_drawing_area_button_pressed_cb(::GtkWidget* pWidget, ::GdkEventButton* pEvent, gpointer pUserData)
+	static void scenario_drawing_area_button_pressed_cb(GtkWidget* pWidget, GdkEventButton* pEvent, gpointer pUserData)
 	{
 		static_cast<CInterfacedScenario*>(pUserData)->scenarioDrawingAreaButtonPressedCB(pWidget, pEvent);
 	}
-	static void scenario_drawing_area_button_released_cb(::GtkWidget* pWidget, ::GdkEventButton* pEvent, gpointer pUserData)
+	static void scenario_drawing_area_button_released_cb(GtkWidget* pWidget, GdkEventButton* pEvent, gpointer pUserData)
 	{
 		static_cast<CInterfacedScenario*>(pUserData)->scenarioDrawingAreaButtonReleasedCB(pWidget, pEvent);
 	}
-	static void scenario_drawing_area_key_press_event_cb(::GtkWidget* pWidget, ::GdkEventKey* pEvent, gpointer pUserData)
+	static void scenario_drawing_area_key_press_event_cb(GtkWidget* pWidget, GdkEventKey* pEvent, gpointer pUserData)
 	{
 		static_cast<CInterfacedScenario*>(pUserData)->scenarioDrawingAreaKeyPressEventCB(pWidget, pEvent);
 	}
-	static void scenario_drawing_area_key_release_event_cb(::GtkWidget* pWidget, ::GdkEventKey* pEvent, gpointer pUserData)
+	static void scenario_drawing_area_key_release_event_cb(GtkWidget* pWidget, GdkEventKey* pEvent, gpointer pUserData)
 	{
 		static_cast<CInterfacedScenario*>(pUserData)->scenarioDrawingAreaKeyReleaseEventCB(pWidget, pEvent);
 	}
-	static void context_menu_cb(::GtkMenuItem* pMenuItem, CInterfacedScenario::BoxContextMenuCB* pContextMenuCB)
+	static void context_menu_cb(GtkMenuItem* pMenuItem, CInterfacedScenario::BoxContextMenuCB* pContextMenuCB)
 	{
 		//CInterfacedScenario::BoxContextMenuCB* pContextMenuCB=static_cast < CInterfacedScenario::BoxContextMenuCB* >(pUserData);
 		switch(pContextMenuCB->ui32Command)
@@ -252,10 +252,7 @@ namespace
 				{
 					pContextMenuCB->pInterfacedScenario->contextMenuBoxDisableCB(*pContextMenuCB->pBox); break;
 				}
-				else
-				{
-					pContextMenuCB->pInterfacedScenario->contextMenuBoxDisableAllCB(); break;
-				}
+				pContextMenuCB->pInterfacedScenario->contextMenuBoxDisableAllCB(); break;
 			}
 			case ContextMenu_BoxDocumentation: pContextMenuCB->pInterfacedScenario->contextMenuBoxDocumentationCB(*pContextMenuCB->pBox); break;
 
@@ -269,7 +266,7 @@ namespace
 		pContextMenuCB->pInterfacedScenario->redraw();
 	}
 
-	static void gdk_draw_rounded_rectangle(::GdkDrawable* pDrawable, ::GdkGC* pDrawGC, ::gboolean bFill, gint x, gint y, gint width, gint height, gint radius=8)
+	static void gdk_draw_rounded_rectangle(GdkDrawable* pDrawable, GdkGC* pDrawGC, gboolean bFill, gint x, gint y, gint width, gint height, gint radius=8)
 	{
 		if(bFill)
 		{
@@ -365,19 +362,19 @@ namespace
 #endif
 	}
 
-	void scenario_title_button_close_cb(::GtkButton* pButton, gpointer pUserData)
+	void scenario_title_button_close_cb(GtkButton* pButton, gpointer pUserData)
 	{
 		static_cast<CInterfacedScenario*>(pUserData)->m_rApplication.closeScenarioCB(static_cast<CInterfacedScenario*>(pUserData));
 	}
 
-	static gboolean editable_widget_focus_in_cb(GtkWidget*, ::GdkEvent*, CApplication* pApplication)
+	static gboolean editable_widget_focus_in_cb(GtkWidget*, GdkEvent*, CApplication* pApplication)
 	{
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(pApplication->m_pBuilderInterface, "openvibe-menu_edit")), false);
 
 		return false;
 	}
 
-	static gboolean editable_widget_focus_out_cb(GtkWidget*, ::GdkEvent*, CApplication* pApplication)
+	static gboolean editable_widget_focus_out_cb(GtkWidget*, GdkEvent*, CApplication* pApplication)
 	{
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(pApplication->m_pBuilderInterface, "openvibe-menu_edit")), true);
 
@@ -388,7 +385,7 @@ namespace
 		pInterfacedScenario->addScenarioSettingCB();
 	}
 
-	void modify_scenario_setting_value_cb(GtkWidget*, OpenViBEDesigner::CInterfacedScenario::SSettingCallbackData* pData)
+	void modify_scenario_setting_value_cb(GtkWidget*, CInterfacedScenario::SSettingCallbackData* pData)
 	{
 		CIdentifier l_oSettingType = OV_UndefinedIdentifier;
 		pData->interfacedScenario->m_rScenario.getSettingType(pData->settingIndex, l_oSettingType);
@@ -397,7 +394,7 @@ namespace
 		pData->interfacedScenario->updateScenarioLabel();
 	}
 
-	void modify_scenario_setting_default_value_cb(GtkWidget*, OpenViBEDesigner::CInterfacedScenario::SSettingCallbackData* pData)
+	void modify_scenario_setting_default_value_cb(GtkWidget*, CInterfacedScenario::SSettingCallbackData* pData)
 	{
 		CIdentifier l_oSettingType = OV_UndefinedIdentifier;
 		pData->interfacedScenario->m_rScenario.getSettingType(pData->settingIndex, l_oSettingType);
@@ -409,7 +406,7 @@ namespace
 		pData->interfacedScenario->updateScenarioLabel();
 	}
 
-	void modify_scenario_setting_move_up_cb(GtkWidget*, OpenViBEDesigner::CInterfacedScenario::SSettingCallbackData* pData)
+	void modify_scenario_setting_move_up_cb(GtkWidget*, CInterfacedScenario::SSettingCallbackData* pData)
 	{
 		if (pData->settingIndex == 0)
 		{
@@ -419,7 +416,7 @@ namespace
 		pData->interfacedScenario->swapScenarioSettings(pData->settingIndex - 1, pData->settingIndex);
 	}
 
-	void modify_scenario_setting_move_down_cb(GtkWidget*, OpenViBEDesigner::CInterfacedScenario::SSettingCallbackData* pData)
+	void modify_scenario_setting_move_down_cb(GtkWidget*, CInterfacedScenario::SSettingCallbackData* pData)
 	{
 		if (pData->settingIndex >= pData->interfacedScenario->m_rScenario.getSettingCount()-1)
 		{
@@ -429,7 +426,7 @@ namespace
 		pData->interfacedScenario->swapScenarioSettings(pData->settingIndex, pData->settingIndex + 1);
 	}
 
-	void modify_scenario_setting_revert_to_default_cb(GtkWidget*, OpenViBEDesigner::CInterfacedScenario::SSettingCallbackData* pData)
+	void modify_scenario_setting_revert_to_default_cb(GtkWidget*, CInterfacedScenario::SSettingCallbackData* pData)
 	{
 		CString l_sSettingDefaultValue;
 		pData->interfacedScenario->m_rScenario.getSettingDefaultValue(pData->settingIndex, l_sSettingDefaultValue);
@@ -438,7 +435,7 @@ namespace
 		pData->interfacedScenario->redrawScenarioSettings();
 	}
 
-	void copy_scenario_setting_token_cb(GtkWidget*, OpenViBEDesigner::CInterfacedScenario::SSettingCallbackData* pData)
+	void copy_scenario_setting_token_cb(GtkWidget*, CInterfacedScenario::SSettingCallbackData* pData)
 	{
 
 		CString l_sSettingName;
@@ -453,10 +450,10 @@ namespace
 		gtk_clipboard_set_text(l_pX11Clipboard, l_sSettingName.toASCIIString(), -1);
 	}
 
-	void modify_scenario_setting_type_cb(GtkWidget* pCombobox, OpenViBEDesigner::CInterfacedScenario::SSettingCallbackData* pData)
+	void modify_scenario_setting_type_cb(GtkWidget* pCombobox, CInterfacedScenario::SSettingCallbackData* pData)
 	{
 		GtkBuilder* l_pSettingsGUIBuilder=gtk_builder_new();
-		gtk_builder_add_from_string(l_pSettingsGUIBuilder, pData->interfacedScenario->m_sSerializedSettingGUIXML.c_str(), pData->interfacedScenario->m_sSerializedSettingGUIXML.length(), NULL);
+		gtk_builder_add_from_string(l_pSettingsGUIBuilder, pData->interfacedScenario->m_sSerializedSettingGUIXML.c_str(), pData->interfacedScenario->m_sSerializedSettingGUIXML.length(), nullptr);
 
 		gtk_widget_destroy(pData->widgetValue);
 
@@ -487,36 +484,36 @@ namespace
 		g_object_unref(l_pSettingsGUIBuilder);
 	}
 
-	void delete_scenario_setting_cb(GtkWidget* pDeleteButton, OpenViBEDesigner::CInterfacedScenario::SSettingCallbackData* pData)
+	void delete_scenario_setting_cb(GtkWidget* pDeleteButton, CInterfacedScenario::SSettingCallbackData* pData)
 	{
 		pData->interfacedScenario->m_rScenario.removeSetting(pData->settingIndex);
 		pData->interfacedScenario->redrawConfigureScenarioSettingsDialog();
 	}
 
-	void modify_scenario_setting_name_cb(GtkWidget* pEntry, OpenViBEDesigner::CInterfacedScenario::SSettingCallbackData* pData)
+	void modify_scenario_setting_name_cb(GtkWidget* pEntry, CInterfacedScenario::SSettingCallbackData* pData)
 	{
 		pData->interfacedScenario->m_rScenario.setSettingName(pData->settingIndex, gtk_entry_get_text(GTK_ENTRY(pEntry)));
 	}
 
-	void reset_scenario_setting_identifier_cb(GtkWidget* button, OpenViBEDesigner::CInterfacedScenario::SSettingCallbackData* data)
+	void reset_scenario_setting_identifier_cb(GtkWidget* button, CInterfacedScenario::SSettingCallbackData* data)
 	{
 		CIdentifier newIdentifier = data->interfacedScenario->m_rScenario.getUnusedSettingIdentifier(OV_UndefinedIdentifier);
 		if (newIdentifier != OV_UndefinedIdentifier)
 		{
-			data->interfacedScenario->m_rScenario.updateInterfacorIdentifier(OpenViBE::Kernel::BoxInterfacorType::Setting, static_cast<uint32_t>(data->settingIndex), newIdentifier);
+			data->interfacedScenario->m_rScenario.updateInterfacorIdentifier(BoxInterfacorType::Setting, static_cast<uint32_t>(data->settingIndex), newIdentifier);
 			data->interfacedScenario->redrawConfigureScenarioSettingsDialog();
 		}
 	}
-	void modify_scenario_setting_identifier_cb(GtkWidget* entry, OpenViBEDesigner::CInterfacedScenario::SSettingCallbackData* data)
+	void modify_scenario_setting_identifier_cb(GtkWidget* entry, CInterfacedScenario::SSettingCallbackData* data)
 	{
 		CIdentifier newIdentifier;
 		if (newIdentifier.fromString(gtk_entry_get_text(GTK_ENTRY(entry))))
 		{
-			data->interfacedScenario->m_rScenario.updateInterfacorIdentifier(OpenViBE::Kernel::BoxInterfacorType::Setting, static_cast<uint32_t>(data->settingIndex), newIdentifier);
+			data->interfacedScenario->m_rScenario.updateInterfacorIdentifier(BoxInterfacorType::Setting, static_cast<uint32_t>(data->settingIndex), newIdentifier);
 		}
 	}
 
-	void edit_scenario_link_cb(GtkWidget*, OpenViBEDesigner::CInterfacedScenario::SLinkCallbackData* pData)
+	void edit_scenario_link_cb(GtkWidget*, CInterfacedScenario::SLinkCallbackData* pData)
 	{
 		if (pData->m_bIsInput)
 		{
@@ -529,7 +526,7 @@ namespace
 		pData->m_pInterfacedScenario->redraw();
 	}
 
-	void modify_scenario_link_move_up_cb(GtkWidget*, OpenViBEDesigner::CInterfacedScenario::SLinkCallbackData* pData)
+	void modify_scenario_link_move_up_cb(GtkWidget*, CInterfacedScenario::SLinkCallbackData* pData)
 	{
 		if (pData->m_uiLinkIndex == 0)
 		{
@@ -547,9 +544,9 @@ namespace
 		pData->m_pInterfacedScenario->snapshotCB();
 	}
 
-	void modify_scenario_link_move_down_cb(GtkWidget*, OpenViBEDesigner::CInterfacedScenario::SLinkCallbackData* pData)
+	void modify_scenario_link_move_down_cb(GtkWidget*, CInterfacedScenario::SLinkCallbackData* pData)
 	{
-		auto interfacorType = pData->m_bIsInput ? Kernel::Input : Kernel::Output;
+		auto interfacorType = pData->m_bIsInput ? Input : Output;
 		if (pData->m_pInterfacedScenario->m_rScenario.getInterfacorCount(interfacorType) < 2
 		        || pData->m_uiLinkIndex >= pData->m_pInterfacedScenario->m_rScenario.getInterfacorCount(interfacorType)-1)
 		{
@@ -567,7 +564,7 @@ namespace
 		pData->m_pInterfacedScenario->snapshotCB();
 	}
 
-	void delete_scenario_link_cb(GtkButton*, OpenViBEDesigner::CInterfacedScenario::SLinkCallbackData* pData)
+	void delete_scenario_link_cb(GtkButton*, CInterfacedScenario::SLinkCallbackData* pData)
 	{
 		if (pData->m_bIsInput)
 		{
@@ -584,7 +581,7 @@ namespace
 		pData->m_pInterfacedScenario->redraw();
 	}
 
-	void modify_scenario_link_name_cb(GtkWidget* pEntry, OpenViBEDesigner::CInterfacedScenario::SLinkCallbackData* pData)
+	void modify_scenario_link_name_cb(GtkWidget* pEntry, CInterfacedScenario::SLinkCallbackData* pData)
 	{
 		if (pData->m_bIsInput)
 		{
@@ -596,7 +593,7 @@ namespace
 		}
 	}
 
-	void modify_scenario_link_type_cb(GtkWidget* pComboBox, OpenViBEDesigner::CInterfacedScenario::SLinkCallbackData* pData)
+	void modify_scenario_link_type_cb(GtkWidget* pComboBox, CInterfacedScenario::SLinkCallbackData* pData)
 	{
 		CIdentifier l_oStreamType=pData->m_pInterfacedScenario->m_mStreamType[gtk_combo_box_get_active_text(GTK_COMBO_BOX(pComboBox))];
 
@@ -614,7 +611,7 @@ namespace
 
 }
 
-CInterfacedScenario::CInterfacedScenario(const IKernelContext& rKernelContext, CApplication& rApplication, IScenario& rScenario, CIdentifier& rScenarioIdentifier, ::GtkNotebook& rNotebook, const char* sGUIFilename, const char* sGUISettingsFilename)
+CInterfacedScenario::CInterfacedScenario(const IKernelContext& rKernelContext, CApplication& rApplication, IScenario& rScenario, CIdentifier& rScenarioIdentifier, GtkNotebook& rNotebook, const char* sGUIFilename, const char* sGUISettingsFilename)
 	:m_ePlayerStatus(PlayerStatus_Stop)
 	,m_oScenarioIdentifier(rScenarioIdentifier)
 	,m_rApplication(rApplication)
@@ -654,8 +651,8 @@ CInterfacedScenario::CInterfacedScenario(const IKernelContext& rKernelContext, C
 {
 
 	m_pGUIBuilder=gtk_builder_new();
-	gtk_builder_add_from_file(m_pGUIBuilder, m_sGUIFilename.c_str(), NULL);
-	gtk_builder_connect_signals(m_pGUIBuilder, NULL);
+	gtk_builder_add_from_file(m_pGUIBuilder, m_sGUIFilename.c_str(), nullptr);
+	gtk_builder_connect_signals(m_pGUIBuilder, nullptr);
 
 	std::ifstream l_oSettingGUIFilestream;
 	FS::Files::openIFStream(l_oSettingGUIFilestream, m_sGUISettingsFilename.c_str());
@@ -690,7 +687,7 @@ CInterfacedScenario::CInterfacedScenario(const IKernelContext& rKernelContext, C
 
 	m_pScenarioDrawingArea=GTK_DRAWING_AREA(gtk_builder_get_object(m_pGUIBuilder, "openvibe-scenario_drawing_area"));
 	m_pScenarioViewport=GTK_VIEWPORT(gtk_builder_get_object(m_pGUIBuilder, "openvibe-scenario_viewport"));
-	gtk_drag_dest_set(GTK_WIDGET(m_pScenarioDrawingArea), GTK_DEST_DEFAULT_ALL, g_vTargetEntry, sizeof(g_vTargetEntry)/sizeof(::GtkTargetEntry), GDK_ACTION_COPY);
+	gtk_drag_dest_set(GTK_WIDGET(m_pScenarioDrawingArea), GTK_DEST_DEFAULT_ALL, g_vTargetEntry, sizeof(g_vTargetEntry)/sizeof(GtkTargetEntry), GDK_ACTION_COPY);
 	g_signal_connect(G_OBJECT(m_pScenarioDrawingArea), "expose_event", G_CALLBACK(scenario_drawing_area_expose_cb), this);
 	g_signal_connect(G_OBJECT(m_pScenarioDrawingArea), "drag_data_received", G_CALLBACK(scenario_drawing_area_drag_data_received_cb), this);
 	g_signal_connect(G_OBJECT(m_pScenarioDrawingArea), "motion_notify_event", G_CALLBACK(scenario_drawing_area_motion_notify_cb), this);
@@ -700,7 +697,7 @@ CInterfacedScenario::CInterfacedScenario(const IKernelContext& rKernelContext, C
 	g_signal_connect(G_OBJECT(m_pScenarioDrawingArea), "key-release-event", G_CALLBACK(scenario_drawing_area_key_release_event_cb), this);
 	g_signal_connect(G_OBJECT(m_pNotebookPageContent), "scroll-event", G_CALLBACK(scenario_scrolledwindow_scroll_event_cb), this);
 
-	m_pMensiaLogoPixbuf = gdk_pixbuf_new_from_file(OpenViBE::Directories::getDataDir() + "/applications/designer/mensia-decoration.png", NULL);
+	m_pMensiaLogoPixbuf = gdk_pixbuf_new_from_file(Directories::getDataDir() + "/applications/designer/mensia-decoration.png", nullptr);
 
 #if defined TARGET_OS_Windows
 	// add drag-n-drop capabilities onto the scenario notebook to open new scenario
@@ -772,7 +769,8 @@ CInterfacedScenario::CInterfacedScenario(const IKernelContext& rKernelContext, C
 	}
 }
 
-CInterfacedScenario::~CInterfacedScenario(void)
+CInterfacedScenario::~CInterfacedScenario()
+
 {
 	//delete window manager
 	if(m_pDesignerVisualization)
@@ -796,18 +794,19 @@ CInterfacedScenario::~CInterfacedScenario(void)
 		gtk_notebook_page_num(&m_rNotebook, m_pNotebookPageContent));
 }
 
-bool CInterfacedScenario::isLocked(void) const
+bool CInterfacedScenario::isLocked() const
 {
 	return m_pPlayer != nullptr;
 }
 
-void CInterfacedScenario::redraw(void)
+void CInterfacedScenario::redraw()
+
 {
 	if(GDK_IS_WINDOW(GTK_WIDGET(m_pScenarioDrawingArea)->window))
 	{
 		gdk_window_invalidate_rect(
 			GTK_WIDGET(m_pScenarioDrawingArea)->window,
-			NULL,
+			nullptr,
 			true);
 	}
 }
@@ -832,7 +831,7 @@ void CInterfacedScenario::redrawConfigureScenarioSettingsDialog()
 	GList* l_pSettingIterator;
 
 	l_pSettingWidgets = gtk_container_get_children(GTK_CONTAINER(m_pSettingsVBox));
-	for (l_pSettingIterator = l_pSettingWidgets; l_pSettingIterator != NULL; l_pSettingIterator = g_list_next(l_pSettingIterator))
+	for (l_pSettingIterator = l_pSettingWidgets; l_pSettingIterator != nullptr; l_pSettingIterator = g_list_next(l_pSettingIterator))
 	{
 		gtk_widget_destroy(GTK_WIDGET(l_pSettingIterator->data));
 	}
@@ -851,7 +850,7 @@ void CInterfacedScenario::redrawConfigureScenarioSettingsDialog()
 		for (uint32 l_ui32SettingIndex = 0; l_ui32SettingIndex < m_rScenario.getSettingCount(); l_ui32SettingIndex++)
 		{
 			GtkBuilder* l_pSettingsGUIBuilder=gtk_builder_new();
-			gtk_builder_add_from_string(l_pSettingsGUIBuilder, m_sSerializedSettingGUIXML.c_str(), m_sSerializedSettingGUIXML.length(), NULL);
+			gtk_builder_add_from_string(l_pSettingsGUIBuilder, m_sSerializedSettingGUIXML.c_str(), m_sSerializedSettingGUIXML.length(), nullptr);
 
 			GtkWidget* l_pSettingContainerWidget = GTK_WIDGET(gtk_builder_get_object(l_pSettingsGUIBuilder, "scenario_configuration_setting-table"));
 			// this has to be done since the widget is already inside a parent in the gtkbuilder
@@ -891,7 +890,7 @@ void CInterfacedScenario::redrawConfigureScenarioSettingsDialog()
 
 			// Set the identifer
 			CIdentifier settingIdentifier;
-			m_rScenario.getInterfacorIdentifier(Kernel::BoxInterfacorType::Setting, l_ui32SettingIndex, settingIdentifier);
+			m_rScenario.getInterfacorIdentifier(BoxInterfacorType::Setting, l_ui32SettingIndex, settingIdentifier);
 			gtk_entry_set_text(GTK_ENTRY(l_pSettingEntryIdentifier), settingIdentifier.toString().toASCIIString());
 
 			// Add widget for the actual setting
@@ -954,7 +953,7 @@ void CInterfacedScenario::redrawScenarioSettings()
 	GList* l_pSettingIterator;
 
 	l_pSettingWidgets = gtk_container_get_children(GTK_CONTAINER(l_pSettingsVBox));
-	for (l_pSettingIterator = l_pSettingWidgets; l_pSettingIterator != NULL; l_pSettingIterator = g_list_next(l_pSettingIterator))
+	for (l_pSettingIterator = l_pSettingWidgets; l_pSettingIterator != nullptr; l_pSettingIterator = g_list_next(l_pSettingIterator))
 	{
 		gtk_widget_destroy(GTK_WIDGET(l_pSettingIterator->data));
 	}
@@ -973,7 +972,7 @@ void CInterfacedScenario::redrawScenarioSettings()
 		for (uint32 l_ui32SettingIndex = 0; l_ui32SettingIndex < m_rScenario.getSettingCount(); l_ui32SettingIndex++)
 		{
 			GtkBuilder* l_pSettingsGUIBuilder=gtk_builder_new();
-			gtk_builder_add_from_string(l_pSettingsGUIBuilder, m_sSerializedSettingGUIXML.c_str(), m_sSerializedSettingGUIXML.length(), NULL);
+			gtk_builder_add_from_string(l_pSettingsGUIBuilder, m_sSerializedSettingGUIXML.c_str(), m_sSerializedSettingGUIXML.length(), nullptr);
 
 			GtkWidget* l_pSettingContainerWidget = GTK_WIDGET(gtk_builder_get_object(l_pSettingsGUIBuilder, "scenario_setting-table"));
 			// this has to be done since the widget is already inside a parent in the gtkbuilder
@@ -1071,7 +1070,7 @@ void CInterfacedScenario::redrawScenarioLinkSettings(
 	GList* l_pSettingIterator;
 
 	l_pSettingWidgets = gtk_container_get_children(GTK_CONTAINER(pLinkTable));
-	for (l_pSettingIterator = l_pSettingWidgets; l_pSettingIterator != NULL; l_pSettingIterator = g_list_next(l_pSettingIterator))
+	for (l_pSettingIterator = l_pSettingWidgets; l_pSettingIterator != nullptr; l_pSettingIterator = g_list_next(l_pSettingIterator))
 	{
 		gtk_widget_destroy(GTK_WIDGET(l_pSettingIterator->data));
 	}
@@ -1094,7 +1093,7 @@ void CInterfacedScenario::redrawScenarioLinkSettings(
 		for (uint32 l_ui32LinkIndex = 0; l_ui32LinkIndex < l_ui32LinkCount; l_ui32LinkIndex++)
 		{
 			GtkBuilder* l_pIoSettingsGUIBuilder=gtk_builder_new();
-			gtk_builder_add_from_string(l_pIoSettingsGUIBuilder, m_sSerializedSettingGUIXML.c_str(), m_sSerializedSettingGUIXML.length(), NULL);
+			gtk_builder_add_from_string(l_pIoSettingsGUIBuilder, m_sSerializedSettingGUIXML.c_str(), m_sSerializedSettingGUIXML.length(), nullptr);
 
 			GtkWidget* l_pSettingContainerWidget = GTK_WIDGET(gtk_builder_get_object(l_pIoSettingsGUIBuilder, "scenario_io_setting-table"));
 			// this has to be done since the widget is already inside a parent in the gtkbuilder
@@ -1172,9 +1171,10 @@ void CInterfacedScenario::redrawScenarioLinkSettings(
 
 }
 
-void CInterfacedScenario::updateScenarioLabel(void)
+void CInterfacedScenario::updateScenarioLabel()
+
 {
-	::GtkLabel* l_pTitleLabel=GTK_LABEL(gtk_builder_get_object(m_pGUIBuilder, "openvibe-scenario_label"));
+	GtkLabel* l_pTitleLabel=GTK_LABEL(gtk_builder_get_object(m_pGUIBuilder, "openvibe-scenario_label"));
 	string l_sLabel;
 	string l_sTempFileName=m_sFileName;
 	string l_sTitleLabelUntrimmed = "unsaved document";
@@ -1236,9 +1236,9 @@ void CInterfacedScenario::updateScenarioLabel(void)
 
 void CInterfacedScenario::redraw(IBox& rBox)
 {
-	::GtkWidget* l_pWidget=GTK_WIDGET(m_pScenarioDrawingArea);
-	::GdkGC* l_pStencilGC=gdk_gc_new(GDK_DRAWABLE(m_pStencilBuffer));
-	::GdkGC* l_pDrawGC=gdk_gc_new(l_pWidget->window);
+	GtkWidget* l_pWidget=GTK_WIDGET(m_pScenarioDrawingArea);
+	GdkGC* l_pStencilGC=gdk_gc_new(GDK_DRAWABLE(m_pStencilBuffer));
+	GdkGC* l_pDrawGC=gdk_gc_new(l_pWidget->window);
 
 	const int xMargin = static_cast<const int>(round(5 * m_f64CurrentScale));
 	const int yMargin = static_cast<const int>(round(5 * m_f64CurrentScale));
@@ -1350,7 +1350,7 @@ void CInterfacedScenario::redraw(IBox& rBox)
 		uint64 l_ui64ComputationTime=(l_oComputationTime==OV_UndefinedIdentifier?0:l_oComputationTime.toUInteger());
 		uint64 l_ui64ComputationTimeReference=(1LL<<32)/(m_ui32BoxCount==0?1:m_ui32BoxCount);
 
-		::GdkColor l_oColor;
+		GdkColor l_oColor;
 		if(l_ui64ComputationTime<l_ui64ComputationTimeReference)
 		{
 			l_oColor.pixel=0;
@@ -1421,11 +1421,11 @@ void CInterfacedScenario::redraw(IBox& rBox)
 		CIdentifier l_oInputIdentifier;
 		bool isDeprecated;
 		rBox.getInputType(i, l_oInputIdentifier);
-		rBox.getInterfacorDeprecatedStatus(OpenViBE::Kernel::BoxInterfacorType::Input, i, isDeprecated);
-		::GdkColor l_oInputColor=colorFromIdentifier(l_oInputIdentifier);
+		rBox.getInterfacorDeprecatedStatus(Input, i, isDeprecated);
+		GdkColor l_oInputColor=colorFromIdentifier(l_oInputIdentifier);
 
 
-		::GdkPoint l_vPoint[4];
+		GdkPoint l_vPoint[4];
 		l_vPoint[0].x=iCircleSize>>1;
 		l_vPoint[0].y=iCircleSize;
 		l_vPoint[1].x=0;
@@ -1519,7 +1519,7 @@ void CInterfacedScenario::redraw(IBox& rBox)
 
 				CIdentifier l_oScenarioInputTypeIdentifier;
 				this->m_rScenario.getInputType(l_ui32ScenarioInputIndex, l_oScenarioInputTypeIdentifier);
-				::GdkColor l_oInputColor = colorFromIdentifier(l_oScenarioInputTypeIdentifier);
+				GdkColor l_oInputColor = colorFromIdentifier(l_oScenarioInputTypeIdentifier);
 
 				updateStencilIndex(m_ui32InterfacedObjectId, l_pStencilGC);
 				gdk_draw_arc(GDK_DRAWABLE(m_pStencilBuffer), l_pStencilGC, TRUE,
@@ -1541,8 +1541,8 @@ void CInterfacedScenario::redraw(IBox& rBox)
 							 iCircleSize * 2, iCircleSize * 2, 0, 64 * 360);
 
 				// Draw the text indicating the scenario input index
-				PangoContext* l_pPangoContext = NULL;
-				PangoLayout* l_pPangoLayout = NULL;
+				PangoContext* l_pPangoContext = nullptr;
+				PangoLayout* l_pPangoLayout = nullptr;
 				l_pPangoContext = gtk_widget_get_pango_context(l_pWidget);
 				l_pPangoLayout = pango_layout_new(l_pPangoContext);
 				pango_layout_set_alignment(l_pPangoLayout, PANGO_ALIGN_CENTER);
@@ -1565,13 +1565,13 @@ void CInterfacedScenario::redraw(IBox& rBox)
 	gdk_gc_set_line_attributes(l_pDrawGC, 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_ROUND);
 
 	int l_iOutputOffset=xSize/2-rBox.getOutputCount()*(iCircleSpace+iCircleSize)/2+iCircleSize/4;
-	for(uint32_t i = 0; i < rBox.getInterfacorCountIncludingDeprecated(Kernel::BoxInterfacorType::Output); i++)
+	for(uint32_t i = 0; i < rBox.getInterfacorCountIncludingDeprecated(Output); i++)
 	{
 		CIdentifier l_oOutputIdentifier;
 		bool isDeprecated;
 		rBox.getOutputType(i, l_oOutputIdentifier);
 		rBox.getInterfacorDeprecatedStatus(Output, i, isDeprecated);
-		::GdkColor l_oOutputColor=colorFromIdentifier(l_oOutputIdentifier);
+		GdkColor l_oOutputColor=colorFromIdentifier(l_oOutputIdentifier);
 
 		if (isDeprecated)
 		{
@@ -1580,7 +1580,7 @@ void CInterfacedScenario::redraw(IBox& rBox)
 			l_oOutputColor.green = 2 * l_oOutputColor.green / 3;
 		}
 
-		::GdkPoint l_vPoint[4];
+		GdkPoint l_vPoint[4];
 		l_vPoint[0].x=iCircleSize>>1;
 		l_vPoint[0].y=iCircleSize;
 		l_vPoint[1].x=0;
@@ -1667,7 +1667,7 @@ void CInterfacedScenario::redraw(IBox& rBox)
 
 				CIdentifier l_oScenarioOutputTypeIdentifier;
 				this->m_rScenario.getOutputType(l_ui32ScenarioOutputIndex, l_oScenarioOutputTypeIdentifier);
-				::GdkColor l_oOutputColor = colorFromIdentifier(l_oScenarioOutputTypeIdentifier);
+				GdkColor l_oOutputColor = colorFromIdentifier(l_oScenarioOutputTypeIdentifier);
 
 				updateStencilIndex(m_ui32InterfacedObjectId, l_pStencilGC);
 				gdk_draw_arc(GDK_DRAWABLE(m_pStencilBuffer), l_pStencilGC, TRUE,
@@ -1687,8 +1687,8 @@ void CInterfacedScenario::redraw(IBox& rBox)
 							 l_iScenarioOutputIndicatorTop,
 							 iCircleSize * 2, iCircleSize * 2, 0, 64 * 360);
 
-				PangoContext* l_pPangoContext = NULL;
-				PangoLayout* l_pPangoLayout = NULL;
+				PangoContext* l_pPangoContext = nullptr;
+				PangoLayout* l_pPangoLayout = nullptr;
 				l_pPangoContext = gtk_widget_get_pango_context(l_pWidget);
 				l_pPangoLayout = pango_layout_new(l_pPangoContext);
 				pango_layout_set_alignment(l_pPangoLayout, PANGO_ALIGN_CENTER);
@@ -1718,25 +1718,25 @@ void CInterfacedScenario::redraw(IBox& rBox)
 
 	// Draw labels
 
-	::PangoContext* l_pPangoContext=NULL;
-	::PangoLayout* l_pPangoLayout=NULL;
+	PangoContext* l_pPangoContext=nullptr;
+	PangoLayout* l_pPangoLayout=nullptr;
 	l_pPangoContext=gtk_widget_get_pango_context(l_pWidget);
 	l_pPangoLayout=pango_layout_new(l_pPangoContext);
 
 	// Draw box label
-	::PangoRectangle l_oPangoLabelRect;
+	PangoRectangle l_oPangoLabelRect;
 	pango_layout_set_alignment(l_pPangoLayout, PANGO_ALIGN_CENTER);
 	pango_layout_set_markup(l_pPangoLayout, l_oBoxProxy.getLabel(), -1);
-	pango_layout_get_pixel_extents(l_pPangoLayout, NULL, &l_oPangoLabelRect);
+	pango_layout_get_pixel_extents(l_pPangoLayout, nullptr, &l_oPangoLabelRect);
 	gdk_draw_layout(
 		l_pWidget->window,
 		l_pWidget->style->text_gc[GTK_WIDGET_STATE(l_pWidget)],
 		xStart+xMargin, yStart+yMargin, l_pPangoLayout);
 
 	// Draw box status label
-	::PangoRectangle l_oPangoStatusRect;
+	PangoRectangle l_oPangoStatusRect;
 	pango_layout_set_markup(l_pPangoLayout, l_oBoxProxy.getStatusLabel(), -1);
-	pango_layout_get_pixel_extents(l_pPangoLayout, NULL, &l_oPangoStatusRect);
+	pango_layout_get_pixel_extents(l_pPangoLayout, nullptr, &l_oPangoStatusRect);
 	int xShift = (max(l_oPangoLabelRect.width,l_oPangoStatusRect.width)-
 	              min(l_oPangoLabelRect.width,l_oPangoStatusRect.width)) / 2;
 
@@ -1769,9 +1769,9 @@ void CInterfacedScenario::redraw(IBox& rBox)
 
 void CInterfacedScenario::redraw(IComment& rComment)
 {
-	::GtkWidget* l_pWidget=GTK_WIDGET(m_pScenarioDrawingArea);
-	::GdkGC* l_pStencilGC=gdk_gc_new(GDK_DRAWABLE(m_pStencilBuffer));
-	::GdkGC* l_pDrawGC=gdk_gc_new(l_pWidget->window);
+	GtkWidget* l_pWidget=GTK_WIDGET(m_pScenarioDrawingArea);
+	GdkGC* l_pStencilGC=gdk_gc_new(GDK_DRAWABLE(m_pStencilBuffer));
+	GdkGC* l_pDrawGC=gdk_gc_new(l_pWidget->window);
 
 	// uint32 i;
 	const int xMargin = static_cast<const int>(round(16 * m_f64CurrentScale));
@@ -1804,12 +1804,12 @@ void CInterfacedScenario::redraw(IComment& rComment)
 		FALSE,
 		xStart, yStart, xSize, ySize, static_cast<gint>(round(16.0*m_f64CurrentScale)));
 
-	::PangoContext* l_pPangoContext=NULL;
-	::PangoLayout* l_pPangoLayout=NULL;
+	PangoContext* l_pPangoContext=nullptr;
+	PangoLayout* l_pPangoLayout=nullptr;
 	l_pPangoContext=gtk_widget_get_pango_context(l_pWidget);
 	l_pPangoLayout=pango_layout_new(l_pPangoContext);
 	pango_layout_set_alignment(l_pPangoLayout, PANGO_ALIGN_CENTER);
-	if(pango_parse_markup(rComment.getText().toASCIIString(), -1, 0, NULL, NULL, NULL, NULL))
+	if(pango_parse_markup(rComment.getText().toASCIIString(), -1, 0, nullptr, nullptr, nullptr, nullptr))
 	{
 		pango_layout_set_markup(l_pPangoLayout, rComment.getText().toASCIIString(), -1);
 	}
@@ -1829,9 +1829,9 @@ void CInterfacedScenario::redraw(IComment& rComment)
 
 void CInterfacedScenario::redraw(ILink& rLink)
 {
-	::GtkWidget* l_pWidget=GTK_WIDGET(m_pScenarioDrawingArea);
-	::GdkGC* l_pStencilGC=gdk_gc_new(GDK_DRAWABLE(m_pStencilBuffer));
-	::GdkGC* l_pDrawGC=gdk_gc_new(l_pWidget->window);
+	GtkWidget* l_pWidget=GTK_WIDGET(m_pScenarioDrawingArea);
+	GdkGC* l_pStencilGC=gdk_gc_new(GDK_DRAWABLE(m_pStencilBuffer));
+	GdkGC* l_pDrawGC=gdk_gc_new(l_pWidget->window);
 
 	CLinkProxy l_oLinkProxy(rLink);
 
@@ -1902,7 +1902,7 @@ uint32 CInterfacedScenario::pickInterfacedObject(int x, int y)
 	gdk_drawable_get_size(GDK_DRAWABLE(m_pStencilBuffer), &l_iMaxX, &l_iMaxY);
 	if(x>=0 && y>=0 && x<l_iMaxX && y<l_iMaxY)
 	{
-		::GdkPixbuf* l_pPixbuf=gdk_pixbuf_get_from_drawable(NULL, GDK_DRAWABLE(m_pStencilBuffer), NULL, x, y, 0, 0, 1, 1);
+		GdkPixbuf* l_pPixbuf=gdk_pixbuf_get_from_drawable(nullptr, GDK_DRAWABLE(m_pStencilBuffer), nullptr, x, y, 0, 0, 1, 1);
 		if(!l_pPixbuf)
 		{
 			m_rKernelContext.getLogManager() << LogLevel_ImportantWarning << "Could not get pixbuf from stencil buffer - couldn't pick object... this should never happen !\n";
@@ -1957,7 +1957,7 @@ bool CInterfacedScenario::pickInterfacedObject(int x, int y, int iSizeX, int iSi
 	iSizeX=iEndX-iStartX+1;
 	iSizeY=iEndY-iStartY+1;
 
-	::GdkPixbuf* l_pPixbuf=gdk_pixbuf_get_from_drawable(NULL, GDK_DRAWABLE(m_pStencilBuffer), NULL, iStartX, iStartY, 0, 0, iSizeX, iSizeY);
+	GdkPixbuf* l_pPixbuf=gdk_pixbuf_get_from_drawable(nullptr, GDK_DRAWABLE(m_pStencilBuffer), nullptr, iStartX, iStartY, 0, 0, iSizeX, iSizeY);
 	if(!l_pPixbuf)
 	{
 		m_rKernelContext.getLogManager() << LogLevel_ImportantWarning << "Could not get pixbuf from stencil buffer - couldn't pick object... this should never happen !\n";
@@ -2140,9 +2140,9 @@ void CInterfacedScenario::addCommentCB(int x, int y)
 	m_rScenario.addComment(l_oIdentifier, OV_UndefinedIdentifier);
 	if(x==-1 || y==-1)
 	{
-		::GtkWidget* l_pScrolledWindow=gtk_widget_get_parent(gtk_widget_get_parent(GTK_WIDGET(m_pScenarioDrawingArea)));
-		::GtkAdjustment* l_pHAdjustment=gtk_scrolled_window_get_hadjustment(GTK_SCROLLED_WINDOW(l_pScrolledWindow));
-		::GtkAdjustment* l_pVAdjustment=gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(l_pScrolledWindow));
+		GtkWidget* l_pScrolledWindow=gtk_widget_get_parent(gtk_widget_get_parent(GTK_WIDGET(m_pScenarioDrawingArea)));
+		GtkAdjustment* l_pHAdjustment=gtk_scrolled_window_get_hadjustment(GTK_SCROLLED_WINDOW(l_pScrolledWindow));
+		GtkAdjustment* l_pVAdjustment=gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(l_pScrolledWindow));
 
 #if defined TARGET_OS_Linux && !defined TARGET_OS_MacOS
 		x=(int)(gtk_adjustment_get_value(l_pHAdjustment)+gtk_adjustment_get_page_size(l_pHAdjustment)/2);
@@ -2185,7 +2185,8 @@ void CInterfacedScenario::addCommentCB(int x, int y)
 	this->redraw();
 }
 
-void CInterfacedScenario::configureScenarioSettingsCB(void)
+void CInterfacedScenario::configureScenarioSettingsCB()
+
 {
 	this->snapshotCB();
 
@@ -2209,7 +2210,8 @@ void CInterfacedScenario::configureScenarioSettingsCB(void)
 	this->redrawScenarioSettings();
 }
 
-void CInterfacedScenario::addScenarioSettingCB(void)
+void CInterfacedScenario::addScenarioSettingCB()
+
 {
 	char l_sName[1024];
 	sprintf(l_sName, "Setting %u", m_rScenario.getSettingCount()+1);
@@ -2218,7 +2220,8 @@ void CInterfacedScenario::addScenarioSettingCB(void)
 	this->redrawConfigureScenarioSettingsDialog();
 }
 
-void CInterfacedScenario::addScenarioInputCB(void)
+void CInterfacedScenario::addScenarioInputCB()
+
 {
 	char l_sName[1024];
 	sprintf(l_sName, "Input %u", m_rScenario.getInputCount()+1);
@@ -2251,7 +2254,8 @@ void CInterfacedScenario::editScenarioInputCB(unsigned int l_ui32InputIndex)
 	this->redrawScenarioInputSettings();
 }
 
-void CInterfacedScenario::addScenarioOutputCB(void)
+void CInterfacedScenario::addScenarioOutputCB()
+
 {
 	char l_sName[1024];
 	sprintf(l_sName, "Output %u", m_rScenario.getOutputCount()+1);
@@ -2329,7 +2333,7 @@ void CInterfacedScenario::swapScenarioOutputs(unsigned int ui32OutputAIndex, uns
 	this->redraw();
 }
 
-void CInterfacedScenario::scenarioDrawingAreaExposeCB(::GdkEventExpose* pEvent)
+void CInterfacedScenario::scenarioDrawingAreaExposeCB(GdkEventExpose* pEvent)
 {
 	if(m_ui32CurrentMode==Mode_None)
 	{
@@ -2392,8 +2396,8 @@ void CInterfacedScenario::scenarioDrawingAreaExposeCB(::GdkEventExpose* pEvent)
 	if(m_pStencilBuffer) g_object_unref(m_pStencilBuffer);
 	m_pStencilBuffer=gdk_pixmap_new(GTK_WIDGET(m_pScenarioDrawingArea)->window, x, y, -1);
 
-	::GdkGC* l_pStencilGC=gdk_gc_new(m_pStencilBuffer);
-	::GdkColor l_oColor={0, 0, 0, 0};
+	GdkGC* l_pStencilGC=gdk_gc_new(m_pStencilBuffer);
+	GdkColor l_oColor={0, 0, 0, 0};
 	gdk_gc_set_rgb_fg_color(l_pStencilGC, &l_oColor);
 	gdk_draw_rectangle(
 		GDK_DRAWABLE(m_pStencilBuffer),
@@ -2404,13 +2408,13 @@ void CInterfacedScenario::scenarioDrawingAreaExposeCB(::GdkEventExpose* pEvent)
 
 	if(this->isLocked())
 	{
-		::GdkColor l_oColor;
+		GdkColor l_oColor;
 		l_oColor.pixel=0;
 		l_oColor.red  =0x0f00;
 		l_oColor.green=0x0f00;
 		l_oColor.blue =0x0f00;
 
-		::GdkGC* l_pDrawGC=gdk_gc_new(GTK_WIDGET(m_pScenarioDrawingArea)->window);
+		GdkGC* l_pDrawGC=gdk_gc_new(GTK_WIDGET(m_pScenarioDrawingArea)->window);
 		gdk_gc_set_rgb_fg_color(l_pDrawGC, &l_oColor);
 		gdk_gc_set_function(l_pDrawGC, GDK_XOR);
 		gdk_draw_rectangle(
@@ -2422,13 +2426,13 @@ void CInterfacedScenario::scenarioDrawingAreaExposeCB(::GdkEventExpose* pEvent)
 	}
 	else if (/*m_rScenario.containsBoxWithDeprecatedInterfacors()*/ false) // TODO: optimize this as this will be called endlessly
 	{
-		::GdkColor l_oColor;
+		GdkColor l_oColor;
 		l_oColor.pixel=0;
 		l_oColor.red  =0xffff;
 		l_oColor.green=0xefff;
 		l_oColor.blue =0xefff;
 
-		::GdkGC* l_pDrawGC=gdk_gc_new(GTK_WIDGET(m_pScenarioDrawingArea)->window);
+		GdkGC* l_pDrawGC=gdk_gc_new(GTK_WIDGET(m_pScenarioDrawingArea)->window);
 		gdk_gc_set_rgb_fg_color(l_pDrawGC, &l_oColor);
 		gdk_gc_set_function(l_pDrawGC, GDK_AND);
 		gdk_draw_rectangle(
@@ -2476,8 +2480,8 @@ void CInterfacedScenario::scenarioDrawingAreaExposeCB(::GdkEventExpose* pEvent)
 		int l_iSizeX = static_cast<int>(std::max(m_f64PressMouseX - m_f64CurrentMouseX, m_f64CurrentMouseX - m_f64PressMouseX));
 		int l_iSizeY = static_cast<int>(std::max(m_f64PressMouseY - m_f64CurrentMouseY, m_f64CurrentMouseY - m_f64PressMouseY));
 
-		::GtkWidget* l_pWidget=GTK_WIDGET(m_pScenarioDrawingArea);
-		::GdkGC* l_pDrawGC=gdk_gc_new(l_pWidget->window);
+		GtkWidget* l_pWidget=GTK_WIDGET(m_pScenarioDrawingArea);
+		GdkGC* l_pDrawGC=gdk_gc_new(l_pWidget->window);
 		gdk_gc_set_function(l_pDrawGC, GDK_OR);
 		gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[Color_SelectionArea]);
 		gdk_draw_rectangle(
@@ -2497,8 +2501,8 @@ void CInterfacedScenario::scenarioDrawingAreaExposeCB(::GdkEventExpose* pEvent)
 
 	if(m_ui32CurrentMode==Mode_Connect)
 	{
-		::GtkWidget* l_pWidget=GTK_WIDGET(m_pScenarioDrawingArea);
-		::GdkGC* l_pDrawGC=gdk_gc_new(l_pWidget->window);
+		GtkWidget* l_pWidget=GTK_WIDGET(m_pScenarioDrawingArea);
+		GdkGC* l_pDrawGC=gdk_gc_new(l_pWidget->window);
 
 		gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[Color_Link]);
 		gdk_draw_line(
@@ -2511,7 +2515,7 @@ void CInterfacedScenario::scenarioDrawingAreaExposeCB(::GdkEventExpose* pEvent)
 }
 
 // This method inserts a box into the scenario upon receiving data
-void CInterfacedScenario::scenarioDrawingAreaDragDataReceivedCB(::GdkDragContext* pDragContext, gint iX, gint iY, ::GtkSelectionData* pSelectionData, guint uiInfo, guint uiT)
+void CInterfacedScenario::scenarioDrawingAreaDragDataReceivedCB(GdkDragContext* pDragContext, gint iX, gint iY, GtkSelectionData* pSelectionData, guint uiInfo, guint uiT)
 {
 	if(this->isLocked()) return;
 
@@ -2533,8 +2537,8 @@ void CInterfacedScenario::scenarioDrawingAreaDragDataReceivedCB(::GdkDragContext
 			l_oBoxAlgorithmClassIdentifier.fromString(l_sSelectionData.substr(0, l_sSelectionData.find(')')).c_str());
 		}
 
-		IBox* l_pBox = NULL;
-		const IPluginObjectDesc* l_pPOD = NULL;
+		IBox* l_pBox = nullptr;
+		const IPluginObjectDesc* l_pPOD = nullptr;
 
 		if(l_oBoxAlgorithmClassIdentifier == OV_UndefinedIdentifier)
 		{
@@ -2542,7 +2546,7 @@ void CInterfacedScenario::scenarioDrawingAreaDragDataReceivedCB(::GdkDragContext
 			m_f64CurrentMouseY=iY;
 			return;
 		}
-		else if (l_oBoxAlgorithmClassIdentifier == OVP_ClassId_BoxAlgorithm_Metabox)
+		if (l_oBoxAlgorithmClassIdentifier == OVP_ClassId_BoxAlgorithm_Metabox)
 		{
 			// extract the name of the metabox from the drag data string
 			CIdentifier metaboxId;
@@ -2552,7 +2556,7 @@ void CInterfacedScenario::scenarioDrawingAreaDragDataReceivedCB(::GdkDragContext
 			l_pPOD = m_rKernelContext.getMetaboxManager().getMetaboxObjectDesc(metaboxId);
 
 			// insert a box into the scenario, initialize it from the proxy-descriptor from the metabox loader
-			m_rScenario.addBox(l_oBoxIdentifier, *static_cast<const OpenViBE::Plugins::IBoxAlgorithmDesc*>(l_pPOD), OV_UndefinedIdentifier);
+			m_rScenario.addBox(l_oBoxIdentifier, *static_cast<const IBoxAlgorithmDesc*>(l_pPOD), OV_UndefinedIdentifier);
 
 			l_pBox = m_rScenario.getBoxDetails(l_oBoxIdentifier);
 			l_pBox->addAttribute(OVP_AttributeId_Metabox_Identifier, metaboxId.toString());
@@ -2616,7 +2620,7 @@ void CInterfacedScenario::scenarioDrawingAreaDragDataReceivedCB(::GdkDragContext
 			l_sLine = l_sLine.substr(8, l_sLine.length()-9);
 
 			// uri to path (to remove %xx escape characters):
-			l_sLine = g_uri_unescape_string(l_sLine.c_str(), NULL);
+			l_sLine = g_uri_unescape_string(l_sLine.c_str(), nullptr);
 
 			l_vFilesToOpen.push_back(l_sLine);
 		}
@@ -2631,13 +2635,13 @@ void CInterfacedScenario::scenarioDrawingAreaDragDataReceivedCB(::GdkDragContext
 
 }
 
-void CInterfacedScenario::scenarioDrawingAreaMotionNotifyCB(::GtkWidget* pWidget, ::GdkEventMotion* pEvent)
+void CInterfacedScenario::scenarioDrawingAreaMotionNotifyCB(GtkWidget* pWidget, GdkEventMotion* pEvent)
 {
 	// m_rKernelContext.getLogManager() << LogLevel_Debug << "scenarioDrawingAreaMotionNotifyCB\n";
 
 	if(this->isLocked()) return;
 
-	::GtkWidget* l_pTooltip=GTK_WIDGET(gtk_builder_get_object(m_pGUIBuilder, "tooltip"));
+	GtkWidget* l_pTooltip=GTK_WIDGET(gtk_builder_get_object(m_pGUIBuilder, "tooltip"));
 	gtk_widget_set_name(l_pTooltip, "gtk-tooltips");
 	uint32 l_ui32InterfacedObjectId=pickInterfacedObject((int)pEvent->x, (int)pEvent->y);
 	CInterfacedObject& l_rObject=m_vInterfacedObject[l_ui32InterfacedObjectId];
@@ -2782,13 +2786,13 @@ namespace {
 
 	void gtk_menu_add_separator_menu_item(GtkMenu* menu)
 	{
-		::GtkSeparatorMenuItem* menuitem=GTK_SEPARATOR_MENU_ITEM(gtk_separator_menu_item_new());
+		GtkSeparatorMenuItem* menuitem=GTK_SEPARATOR_MENU_ITEM(gtk_separator_menu_item_new());
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(menuitem));
 	}
 
 	GtkImageMenuItem* gtk_menu_add_new_image_menu_item(GtkMenu* menu, const char* icon, const char* label)
 	{
-		::GtkImageMenuItem* menuitem = GTK_IMAGE_MENU_ITEM(gtk_image_menu_item_new_with_label(label));
+		GtkImageMenuItem* menuitem = GTK_IMAGE_MENU_ITEM(gtk_image_menu_item_new_with_label(label));
 		gtk_image_menu_item_set_image(menuitem, gtk_image_new_from_stock(icon, GTK_ICON_SIZE_MENU));
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(menuitem));
 		return menuitem;
@@ -2798,7 +2802,7 @@ namespace {
 GtkImageMenuItem* CInterfacedScenario::gtk_menu_add_new_image_menu_item_with_cb_generic(GtkMenu* menu, const char* icon, const char* label, menu_callback_function cb, IBox* cb_box, uint32_t cb_command, uint32_t cb_index, uint32_t cb_index2)
 {
 	GtkImageMenuItem* menuitem = gtk_menu_add_new_image_menu_item(menu, icon, label);
-	CInterfacedScenario::BoxContextMenuCB l_oBoxContextMenuCB;
+	BoxContextMenuCB l_oBoxContextMenuCB;
 	l_oBoxContextMenuCB.ui32Command=cb_command;
 	l_oBoxContextMenuCB.ui32Index=cb_index;
 	l_oBoxContextMenuCB.ui32SecondaryIndex=cb_index2;
@@ -2810,13 +2814,13 @@ GtkImageMenuItem* CInterfacedScenario::gtk_menu_add_new_image_menu_item_with_cb_
 	return menuitem;
 }
 
-void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidget, ::GdkEventButton* pEvent)
+void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(GtkWidget* pWidget, GdkEventButton* pEvent)
 {
 	m_rKernelContext.getLogManager() << LogLevel_Debug << "scenarioDrawingAreaButtonPressedCB\n";
 
 	if(this->isLocked()) return;
 
-	::GtkWidget* l_pTooltip=GTK_WIDGET(gtk_builder_get_object(m_pGUIBuilder, "tooltip"));
+	GtkWidget* l_pTooltip=GTK_WIDGET(gtk_builder_get_object(m_pGUIBuilder, "tooltip"));
 	gtk_widget_hide(l_pTooltip);
 	gtk_widget_grab_focus(pWidget);
 
@@ -2932,20 +2936,20 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 		if (pEvent->type == GDK_BUTTON_PRESS)
 		{
 			const uint32_t unused = static_cast<uint32_t>(-1);
-			::GtkMenu* l_pMenu=GTK_MENU(gtk_menu_new());
+			GtkMenu* l_pMenu=GTK_MENU(gtk_menu_new());
 			m_vBoxContextMenuCB.clear();
 
 			// -------------- SELECTION -----------
 
-			if(this->hasSelection()) { gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_CUT, "cut", context_menu_cb, NULL, ContextMenu_SelectionCut, unused); }
-			if(this->hasSelection()) { gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_COPY, "copy", context_menu_cb, NULL, ContextMenu_SelectionCopy, unused); }
+			if(this->hasSelection()) { gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_CUT, "cut", context_menu_cb, nullptr, ContextMenu_SelectionCut, unused); }
+			if(this->hasSelection()) { gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_COPY, "copy", context_menu_cb, nullptr, ContextMenu_SelectionCopy, unused); }
 			if( (m_rApplication.m_pClipboardScenario->getNextBoxIdentifier(OV_UndefinedIdentifier)!=OV_UndefinedIdentifier)
 			        || (m_rApplication.m_pClipboardScenario->getNextCommentIdentifier(OV_UndefinedIdentifier)!=OV_UndefinedIdentifier)
 			        )
 			{
-				gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_PASTE, "paste", context_menu_cb, NULL, ContextMenu_SelectionPaste, unused);
+				gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_PASTE, "paste", context_menu_cb, nullptr, ContextMenu_SelectionPaste, unused);
 			}
-			if(this->hasSelection()) { gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_DELETE, "delete", context_menu_cb, NULL, ContextMenu_SelectionDelete, unused); }
+			if(this->hasSelection()) { gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_DELETE, "delete", context_menu_cb, nullptr, ContextMenu_SelectionDelete, unused); }
 
 			if(m_oCurrentObject.m_oIdentifier!=OV_UndefinedIdentifier && m_rScenario.isBox(m_oCurrentObject.m_oIdentifier))
 			{
@@ -2967,8 +2971,8 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 					if(!l_bFlagPendingDeprecatedInterfacors && !l_bFlagToBeUpdated && (l_bFlagCanAddInput || l_bFlagCanModifyInput || l_bCanConnectScenarioInput))
 					{
 						uint32 l_ui32FixedInputCount=0;
-						::sscanf(l_pBox->getAttributeValue(OV_AttributeId_Box_InitialInputCount).toASCIIString(), "%d", &l_ui32FixedInputCount);
-						::GtkMenu* l_pMenuInput=GTK_MENU(gtk_menu_new());
+						sscanf(l_pBox->getAttributeValue(OV_AttributeId_Box_InitialInputCount).toASCIIString(), "%d", &l_ui32FixedInputCount);
+						GtkMenu* l_pMenuInput=GTK_MENU(gtk_menu_new());
 						GtkImageMenuItem* l_pMenuItemInput = gtk_menu_add_new_image_menu_item(l_pMenu, GTK_STOCK_PROPERTIES, "inputs");
 						for(i=0; i<l_pBox->getInputCount(); i++)
 						{
@@ -2981,7 +2985,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 							sprintf(l_sCompleteName, "%i : %s", (int)i+1, l_sName.toASCIIString());
 							GtkImageMenuItem* l_pMenuInputMenuItem = gtk_menu_add_new_image_menu_item(l_pMenuInput, GTK_STOCK_PROPERTIES, l_sCompleteName);
 
-							::GtkMenu* l_pMenuInputMenuAction=GTK_MENU(gtk_menu_new());
+							GtkMenu* l_pMenuInputMenuAction=GTK_MENU(gtk_menu_new());
 
 							if(l_bCanConnectScenarioInput)
 							{
@@ -3020,7 +3024,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 								gtk_menu_add_new_image_menu_item_with_cb( l_pMenuInputMenuAction, GTK_STOCK_REMOVE, "delete", context_menu_cb, l_pBox, ContextMenu_BoxRemoveInput, i);
 							}
 
-							if(::gtk_container_get_children_count(GTK_CONTAINER(l_pMenuInputMenuAction)) > 0)
+							if(gtk_container_get_children_count(GTK_CONTAINER(l_pMenuInputMenuAction)) > 0)
 							{
 								gtk_menu_item_set_submenu(GTK_MENU_ITEM(l_pMenuInputMenuItem), GTK_WIDGET(l_pMenuInputMenuAction));
 							}
@@ -3045,9 +3049,9 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 					if(!l_bFlagPendingDeprecatedInterfacors && !l_bFlagToBeUpdated && (l_bFlagCanAddOutput || l_bFlagCanModifyOutput || l_bCanConnectScenarioOutput))
 					{
 						uint32 l_ui32FixedOutputCount=0;
-						::sscanf(l_pBox->getAttributeValue(OV_AttributeId_Box_InitialOutputCount).toASCIIString(), "%d", &l_ui32FixedOutputCount);
+						sscanf(l_pBox->getAttributeValue(OV_AttributeId_Box_InitialOutputCount).toASCIIString(), "%d", &l_ui32FixedOutputCount);
 						GtkImageMenuItem* l_pMenuItemOutput = gtk_menu_add_new_image_menu_item(l_pMenu, GTK_STOCK_PROPERTIES, "outputs");
-						::GtkMenu* l_pMenuOutput=GTK_MENU(gtk_menu_new());
+						GtkMenu* l_pMenuOutput=GTK_MENU(gtk_menu_new());
 						for(i=0; i<l_pBox->getOutputCount(); i++)
 						{
 							CString l_sName;
@@ -3059,7 +3063,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 							sprintf(l_sCompleteName, "%i : %s", (int)i+1, l_sName.toASCIIString());
 							GtkImageMenuItem* l_pMenuOutputMenuItem = gtk_menu_add_new_image_menu_item(l_pMenuOutput, GTK_STOCK_PROPERTIES, l_sCompleteName);
 
-							::GtkMenu* l_pMenuOutputMenuAction=GTK_MENU(gtk_menu_new());
+							GtkMenu* l_pMenuOutputMenuAction=GTK_MENU(gtk_menu_new());
 
 							if(l_bCanConnectScenarioOutput)
 							{
@@ -3094,7 +3098,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 								gtk_menu_add_new_image_menu_item_with_cb( l_pMenuOutputMenuAction, GTK_STOCK_REMOVE, "delete", context_menu_cb, l_pBox, ContextMenu_BoxRemoveOutput, i);
 							}
 
-							if(::gtk_container_get_children_count(GTK_CONTAINER(l_pMenuOutputMenuAction)) > 0)
+							if(gtk_container_get_children_count(GTK_CONTAINER(l_pMenuOutputMenuAction)) > 0)
 							{
 								gtk_menu_item_set_submenu(GTK_MENU_ITEM(l_pMenuOutputMenuItem), GTK_WIDGET(l_pMenuOutputMenuAction));
 							}
@@ -3118,9 +3122,9 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 					if(!l_bFlagPendingDeprecatedInterfacors && !l_bFlagToBeUpdated && (l_bFlagCanAddSetting || l_bFlagCanModifySetting))
 					{
 						uint32 l_ui32FixedSettingCount=0;
-						::sscanf(l_pBox->getAttributeValue(OV_AttributeId_Box_InitialSettingCount).toASCIIString(), "%d", &l_ui32FixedSettingCount);
+						sscanf(l_pBox->getAttributeValue(OV_AttributeId_Box_InitialSettingCount).toASCIIString(), "%d", &l_ui32FixedSettingCount);
 						GtkImageMenuItem* l_pMenuItemSetting = gtk_menu_add_new_image_menu_item(l_pMenu, GTK_STOCK_PROPERTIES, "modify settings");
-						::GtkMenu* l_pMenuSetting=GTK_MENU(gtk_menu_new());
+						GtkMenu* l_pMenuSetting=GTK_MENU(gtk_menu_new());
 						for(i=0; i<l_pBox->getSettingCount(); i++)
 						{
 							CString l_sName;
@@ -3132,7 +3136,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 
 							if(l_bFlagCanModifySetting || l_ui32FixedSettingCount <= i)
 							{
-								::GtkMenu* l_pMenuSettingMenuAction = GTK_MENU(gtk_menu_new());
+								GtkMenu* l_pMenuSettingMenuAction = GTK_MENU(gtk_menu_new());
 								if (l_bFlagCanModifySetting)
 								{
 									gtk_menu_add_new_image_menu_item_with_cb( l_pMenuSettingMenuAction, GTK_STOCK_EDIT, "configure...", context_menu_cb, l_pBox, ContextMenu_BoxEditSetting, i);
@@ -3218,13 +3222,13 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 			}
 
 			gtk_menu_add_separator_menu_item(l_pMenu);
-			gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_EDIT, "add comment to scenario...", context_menu_cb, NULL, ContextMenu_ScenarioAddComment, unused);
-			gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_ABOUT, "about scenario...", context_menu_cb, NULL, ContextMenu_ScenarioAbout, unused);
+			gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_EDIT, "add comment to scenario...", context_menu_cb, nullptr, ContextMenu_ScenarioAddComment, unused);
+			gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_ABOUT, "about scenario...", context_menu_cb, nullptr, ContextMenu_ScenarioAbout, unused);
 
 			// -------------- RUN --------------
 
 			gtk_widget_show_all(GTK_WIDGET(l_pMenu));
-			gtk_menu_popup(l_pMenu, NULL, NULL, NULL, NULL, 3, pEvent->time);
+			gtk_menu_popup(l_pMenu, nullptr, nullptr, nullptr, nullptr, 3, pEvent->time);
 			if(m_vBoxContextMenuCB.empty())
 			{
 				gtk_menu_popdown(l_pMenu);
@@ -3236,7 +3240,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(::GtkWidget* pWidge
 	this->redraw();
 }
 
-void CInterfacedScenario::scenarioDrawingAreaButtonReleasedCB(::GtkWidget* pWidget, ::GdkEventButton* pEvent)
+void CInterfacedScenario::scenarioDrawingAreaButtonReleasedCB(GtkWidget* pWidget, GdkEventButton* pEvent)
 {
 	m_rKernelContext.getLogManager() << LogLevel_Debug << "scenarioDrawingAreaButtonReleasedCB\n";
 
@@ -3294,9 +3298,9 @@ void CInterfacedScenario::scenarioDrawingAreaButtonReleasedCB(::GtkWidget* pWidg
 					l_pTargetBox->getInputType(l_oTargetObject.m_ui32ConnectorIndex, l_oTargetTypeIdentifier);
 
 					bool hasDeprecatedInput = false;
-					l_pSourceBox->getInterfacorDeprecatedStatus(Kernel::BoxInterfacorType::Output, l_oSourceObject.m_ui32ConnectorIndex, hasDeprecatedInput);
+					l_pSourceBox->getInterfacorDeprecatedStatus(Output, l_oSourceObject.m_ui32ConnectorIndex, hasDeprecatedInput);
 					bool hasDeprecatedOutput = false;
-					l_pTargetBox->getInterfacorDeprecatedStatus(Kernel::BoxInterfacorType::Input, l_oTargetObject.m_ui32ConnectorIndex, hasDeprecatedOutput);
+					l_pTargetBox->getInterfacorDeprecatedStatus(Input, l_oTargetObject.m_ui32ConnectorIndex, hasDeprecatedOutput);
 
 					if((m_rKernelContext.getTypeManager().isDerivedFromStream(l_oSourceTypeIdentifier, l_oTargetTypeIdentifier)
 							|| m_rKernelContext.getConfigurationManager().expandAsBoolean("${Designer_AllowUpCastConnection}", false))&&(!l_bConnectionIsMessage))
@@ -3375,7 +3379,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonReleasedCB(::GtkWidget* pWidg
 	m_ui32CurrentMode=Mode_None;
 }
 
-void CInterfacedScenario::scenarioDrawingAreaKeyPressEventCB(::GtkWidget* pWidget, ::GdkEventKey* pEvent)
+void CInterfacedScenario::scenarioDrawingAreaKeyPressEventCB(GtkWidget* pWidget, GdkEventKey* pEvent)
 {
 	m_bShiftPressed  |=(pEvent->keyval==GDK_Shift_L   || pEvent->keyval==GDK_Shift_R);
 	m_bControlPressed|=(pEvent->keyval==GDK_Control_L || pEvent->keyval==GDK_Control_R);
@@ -3398,7 +3402,7 @@ void CInterfacedScenario::scenarioDrawingAreaKeyPressEventCB(::GtkWidget* pWidge
 	// CTRL+A = select all
 	if(m_bAPressed && m_bControlPressed && !m_bShiftPressed && ! m_bAltPressed)
 	{
-		OpenViBE::CIdentifier l_oIdentifier;
+		CIdentifier l_oIdentifier;
 		while((l_oIdentifier = m_rScenario.getNextBoxIdentifier(l_oIdentifier))!= OV_UndefinedIdentifier)
 		{
 			m_SelectedObjects.insert(l_oIdentifier);
@@ -3425,7 +3429,7 @@ void CInterfacedScenario::scenarioDrawingAreaKeyPressEventCB(::GtkWidget* pWidge
 	{
 		gint iX=0;
 		gint iY=0;
-		::gdk_window_get_pointer(GTK_WIDGET(m_pScenarioDrawingArea)->window, &iX, &iY, NULL);
+		gdk_window_get_pointer(GTK_WIDGET(m_pScenarioDrawingArea)->window, &iX, &iY, nullptr);
 
 		this->addCommentCB(iX, iY);
 	}
@@ -3543,7 +3547,7 @@ void CInterfacedScenario::scenarioDrawingAreaKeyPressEventCB(::GtkWidget* pWidge
 	}
 }
 
-void CInterfacedScenario::scenarioDrawingAreaKeyReleaseEventCB(::GtkWidget* pWidget, ::GdkEventKey* pEvent)
+void CInterfacedScenario::scenarioDrawingAreaKeyReleaseEventCB(GtkWidget* pWidget, GdkEventKey* pEvent)
 {
 	m_bShiftPressed  &=!(pEvent->keyval==GDK_Shift_L   || pEvent->keyval==GDK_Shift_R);
 	m_bControlPressed&=!(pEvent->keyval==GDK_Control_L || pEvent->keyval==GDK_Control_R);
@@ -3565,7 +3569,8 @@ void CInterfacedScenario::scenarioDrawingAreaKeyReleaseEventCB(::GtkWidget* pWid
 	// ...
 }
 
-void CInterfacedScenario::copySelection(void)
+void CInterfacedScenario::copySelection()
+
 {
 	m_rKernelContext.getLogManager() << LogLevel_Debug << "copySelection\n";
 
@@ -3627,7 +3632,8 @@ void CInterfacedScenario::copySelection(void)
 	}
 }
 
-void CInterfacedScenario::cutSelection(void)
+void CInterfacedScenario::cutSelection()
+
 {
 	m_rKernelContext.getLogManager() << LogLevel_Debug << "cutSelection\n";
 
@@ -3635,7 +3641,8 @@ void CInterfacedScenario::cutSelection(void)
 	this->deleteSelection();
 }
 
-void CInterfacedScenario::pasteSelection(void)
+void CInterfacedScenario::pasteSelection()
+
 {
 	m_rKernelContext.getLogManager() << LogLevel_Debug << "pasteSelection\n";
 
@@ -3765,7 +3772,8 @@ void CInterfacedScenario::pasteSelection(void)
 	this->snapshotCB();
 }
 
-void CInterfacedScenario::deleteSelection(void)
+void CInterfacedScenario::deleteSelection()
+
 {
 	m_rKernelContext.getLogManager() << LogLevel_Debug << "deleteSelection\n";
 	for(auto& objectId : m_SelectedObjects)
@@ -3791,7 +3799,7 @@ void CInterfacedScenario::deleteSelection(void)
 	this->snapshotCB();
 }
 
-void CInterfacedScenario::deleteBox(const OpenViBE::CIdentifier& rBoxIdentifier)
+void CInterfacedScenario::deleteBox(const CIdentifier& rBoxIdentifier)
 {
 	// removes visualization box from window manager
 	if (m_pDesignerVisualization)
@@ -3924,7 +3932,8 @@ void CInterfacedScenario::contextMenuBoxRenameAllCB()
 	}
 }
 
-void CInterfacedScenario::contextMenuBoxToggleEnableAllCB(void)
+void CInterfacedScenario::contextMenuBoxToggleEnableAllCB()
+
 {
 	//we find all selected boxes
 	for(auto objectId : m_SelectedObjects)
@@ -3945,7 +3954,8 @@ void CInterfacedScenario::contextMenuBoxToggleEnableAllCB(void)
 	this->snapshotCB();
 }
 
-void CInterfacedScenario::contextMenuBoxEnableAllCB(void)
+void CInterfacedScenario::contextMenuBoxEnableAllCB()
+
 {
 	//we find all selected boxes
 	for(auto objectId : m_SelectedObjects)
@@ -3962,7 +3972,8 @@ void CInterfacedScenario::contextMenuBoxEnableAllCB(void)
 	this->snapshotCB();
 }
 
-void CInterfacedScenario::contextMenuBoxDisableAllCB(void)
+void CInterfacedScenario::contextMenuBoxDisableAllCB()
+
 {
 	//we find all selected boxes
 	for(auto objectId : m_SelectedObjects)
@@ -4213,7 +4224,7 @@ bool CInterfacedScenario::browseURL(CString url, CString browserPrefix, CString 
 
 	CString command = browserPrefix + CString(" \"") + url + CString("\"") + browserPostfix;
 	m_rKernelContext.getLogManager() << LogLevel_Debug << "Launching [" << command << "]\n";
-	int result=::system(command.toASCIIString());
+	int result=system(command.toASCIIString());
 	if (result < 0)
 	{
 		OV_WARNING("Could not launch command [" << command << "]\n", m_rKernelContext.getLogManager());
@@ -4308,13 +4319,15 @@ void CInterfacedScenario::contextMenuBoxDisableCB(IBox& rBox)
 	this->snapshotCB();
 }
 
-void CInterfacedScenario::contextMenuScenarioAddCommentCB(void)
+void CInterfacedScenario::contextMenuScenarioAddCommentCB()
+
 {
 	m_rKernelContext.getLogManager() << LogLevel_Debug << "contextMenuScenarioAddCommentCB\n";
 	this->addCommentCB();
 }
 
-void CInterfacedScenario::contextMenuScenarioAboutCB(void)
+void CInterfacedScenario::contextMenuScenarioAboutCB()
+
 {
 	m_rKernelContext.getLogManager() << LogLevel_Debug << "contextMenuScenarioAboutCB\n";
 	CAboutScenarioDialog l_oAboutScenarioDialog(m_rKernelContext, m_rScenario, m_sGUIFilename.c_str());
@@ -4423,7 +4436,8 @@ void CInterfacedScenario::createPlayerVisualization(IVisualizationTree* pVisuali
 	m_pPlayerVisualization->init();
 }
 
-void CInterfacedScenario::releasePlayerVisualization(void)
+void CInterfacedScenario::releasePlayerVisualization()
+
 {
 	if(m_pPlayerVisualization != nullptr)
 	{
@@ -4443,13 +4457,15 @@ void CInterfacedScenario::releasePlayerVisualization(void)
 	}
 }
 
-bool CInterfacedScenario::hasSelection(void)
+bool CInterfacedScenario::hasSelection()
+
 {
 	return !m_SelectedObjects.empty();
 }
 
 
-void CInterfacedScenario::stopAndReleasePlayer(void)
+void CInterfacedScenario::stopAndReleasePlayer()
+
 {
 	m_rKernelContext.getErrorManager().releaseErrors();
 	m_pPlayer->stop();
@@ -4486,7 +4502,8 @@ void CInterfacedScenario::stopAndReleasePlayer(void)
 }
 
 //give the PlayerVisualisation the matching between the GtkWidget created by the CBoxConfigurationDialog and the Box CIdentifier
-bool CInterfacedScenario::setModifiableSettingsWidgets(void)
+bool CInterfacedScenario::setModifiableSettingsWidgets()
+
 {
 	for (auto& elem : m_vBoxConfigurationDialog)
 	{
@@ -4528,7 +4545,7 @@ bool CInterfacedScenario::centerOnBox(CIdentifier rIdentifier)
 		GtkAdjustment* l_pOldVAdjustement = gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(m_pNotebookPageContent));
 		gdouble upper, lower, step, page, pagesize, value;
 
-		g_object_get(l_pOldHAdjustement, "upper", &upper, "lower", &lower, "step-increment", &step, "page-increment", &page, "page-size", &pagesize, "value", &value, NULL);
+		g_object_get(l_pOldHAdjustement, "upper", &upper, "lower", &lower, "step-increment", &step, "page-increment", &page, "page-size", &pagesize, "value", &value, nullptr);
 		//create a new adjustement with the correct value since we can not change the upper bound of the old adjustement
 		GtkAdjustment* l_pAdjustement = (GtkAdjustment*)gtk_adjustment_new(value, lower, upper, step, page, pagesize);
 		if(l_f64XCenter + m_i32ViewOffsetX < upper/2)
@@ -4541,7 +4558,7 @@ bool CInterfacedScenario::centerOnBox(CIdentifier rIdentifier)
 		gtk_adjustment_set_value(l_pAdjustement, x);
 		gtk_scrolled_window_set_hadjustment(GTK_SCROLLED_WINDOW(m_pNotebookPageContent), l_pAdjustement);
 
-		g_object_get(l_pOldVAdjustement, "upper", &upper, "lower", &lower, "step-increment", &step, "page-increment", &page, "page-size", &pagesize, "value", &value, NULL);
+		g_object_get(l_pOldVAdjustement, "upper", &upper, "lower", &lower, "step-increment", &step, "page-increment", &page, "page-size", &pagesize, "value", &value, nullptr);
 		l_pAdjustement = (GtkAdjustment*)gtk_adjustment_new(value, lower, upper, step, page, pagesize);
 		if(l_f64YCenter - m_i32ViewOffsetY < upper/2)
 		{

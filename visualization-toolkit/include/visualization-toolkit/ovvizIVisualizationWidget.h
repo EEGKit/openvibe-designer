@@ -28,7 +28,7 @@ namespace OpenViBEVisualizationToolkit
 	class IVisualizationWidget
 	{
 	public:
-		virtual ~IVisualizationWidget() {}
+		virtual ~IVisualizationWidget() { }
 		/**
 		 * \brief Initializes the widget
 		 * \param identifier identifier of the widget
@@ -51,13 +51,13 @@ namespace OpenViBEVisualizationToolkit
 		 * \brief Returns the identifier of the widget
 		 * \return Widget identifier
 		 */
-		virtual OpenViBE::CIdentifier getIdentifier(void) const = 0;
+		virtual OpenViBE::CIdentifier getIdentifier() const = 0;
 
 		/**
 		 * \brief Returns the name of the widget
 		 * \return Widget name
 		 */
-		virtual const OpenViBE::CString& getName(void) const = 0;
+		virtual const OpenViBE::CString& getName() const = 0;
 
 		/**
 		 * \brief Sets the name of the widget
@@ -69,13 +69,13 @@ namespace OpenViBEVisualizationToolkit
 		 * \brief Returns the type of the widget
 		 * \return Widget type
 		 */
-		virtual EVisualizationWidgetType getType(void) const = 0;
+		virtual EVisualizationWidgetType getType() const = 0;
 
 		/**
 		 * \brief Returns the identifier of the widget's parent (if any)
 		 * \return Widget's parent identifier if any, OV_Undefined otherwise
 		 */
-		virtual OpenViBE::CIdentifier getParentIdentifier(void) const = 0;
+		virtual OpenViBE::CIdentifier getParentIdentifier() const = 0;
 		/**
 		 * \brief Sets the identifier of the widget's parent
 		 * \param parentIdentifier identifier of the widget's parent
@@ -88,13 +88,13 @@ namespace OpenViBEVisualizationToolkit
 		 * This only applies to widgets of type EVisualizationWidget_VisualizationBox.
 		 * \return Identifier of IBox associated to this widget
 		 */
-		virtual OpenViBE::CIdentifier getBoxIdentifier(void) const = 0;
+		virtual OpenViBE::CIdentifier getBoxIdentifier() const = 0;
 
 		/**
 		 * \brief Returns the number of children of this widget
 		 * \return Number of child widgets
 		 */
-		virtual OpenViBE::uint32 getNbChildren(void) const = 0;
+		virtual OpenViBE::uint32 getNbChildren() const = 0;
 
 		/**
 		 * \brief Returns the index of a given child

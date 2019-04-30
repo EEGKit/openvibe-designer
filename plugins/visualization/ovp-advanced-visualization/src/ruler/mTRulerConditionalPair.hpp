@@ -61,7 +61,7 @@ namespace Mensia
 				}
 			}
 
-			virtual void renderLeft(::GtkWidget* pWidget)
+			virtual void renderLeft(GtkWidget* pWidget)
 			{
 				if(condition())
 				{
@@ -73,7 +73,7 @@ namespace Mensia
 				}
 			}
 
-			virtual void renderRight(::GtkWidget* pWidget)
+			virtual void renderRight(GtkWidget* pWidget)
 			{
 				if(condition())
 				{
@@ -85,7 +85,7 @@ namespace Mensia
 				}
 			}
 
-			virtual void renderBottom(::GtkWidget* pWidget)
+			virtual void renderBottom(GtkWidget* pWidget)
 			{
 				if(condition())
 				{

@@ -2,12 +2,12 @@
 #include "ovdTAttributeHandler.h"
 
 using namespace OpenViBE;
-using namespace OpenViBE::Kernel;
+using namespace Kernel;
 using namespace OpenViBEDesigner;
 
 CLinkProxy::CLinkProxy(const ILink& rLink)
 	:m_pConstLink(&rLink)
-	,m_pLink(NULL)
+	,m_pLink(nullptr)
 	,m_iXSource(0)
 	,m_iYSource(0)
 	,m_iXTarget(0)
@@ -41,7 +41,8 @@ CLinkProxy::CLinkProxy(IScenario& rScenario, const CIdentifier& rLinkIdentifier)
 	}
 }
 
-CLinkProxy::~CLinkProxy(void)
+CLinkProxy::~CLinkProxy()
+
 {
 	if(m_pLink)
 	{
@@ -69,32 +70,38 @@ CLinkProxy::~CLinkProxy(void)
 	}
 }
 
-CLinkProxy::operator ILink* (void)
+CLinkProxy::operator ILink* ()
+
 {
 	return m_pLink;
 }
 
-CLinkProxy::operator const ILink* (void)
+CLinkProxy::operator const ILink* ()
+
 {
 	return m_pConstLink;
 }
 
-int32 CLinkProxy::getXSource(void)
+int32 CLinkProxy::getXSource()
+
 {
 	return m_iXSource;
 }
 
-int32 CLinkProxy::getYSource(void)
+int32 CLinkProxy::getYSource()
+
 {
 	return m_iYSource;
 }
 
-int32 CLinkProxy::getXTarget(void)
+int32 CLinkProxy::getXTarget()
+
 {
 	return m_iXTarget;
 }
 
-int32 CLinkProxy::getYTarget(void)
+int32 CLinkProxy::getYTarget()
+
 {
 	return m_iYTarget;
 }

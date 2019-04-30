@@ -62,7 +62,7 @@ namespace Mensia
 
 		public:
 
-			virtual ~IRenderer(void) { }
+			virtual ~IRenderer() { }
 
 			virtual void setChannelLocalisation(const char* sFilename)=0;
 			virtual void setChannelCount(uint32_t ui32ChannelCount)=0;
@@ -76,21 +76,21 @@ namespace Mensia
 
 			virtual float getSuggestedScale() = 0;
 
-			virtual uint32_t getChannelCount(void) const=0;
-			virtual uint32_t getSampleCount(void) const=0;
-			virtual uint32_t getHistoryCount(void) const=0;
-			virtual uint32_t getHistoryIndex(void) const=0;
+			virtual uint32_t getChannelCount() const=0;
+			virtual uint32_t getSampleCount() const=0;
+			virtual uint32_t getHistoryCount() const=0;
+			virtual uint32_t getHistoryIndex() const=0;
 
 			virtual void setTimeOffset(uint64_t offset) = 0;
-			virtual uint64_t getTimeOffset(void) const = 0;
+			virtual uint64_t getTimeOffset() const = 0;
 
 			virtual void rebuild(const IRendererContext& rContext)=0;
 			virtual void refresh(const IRendererContext& rContext)=0;
 			virtual bool render(const IRendererContext& rContext)=0;
 
 			// For regions of interest
-			virtual void clearRegionSelection(void)=0;
-			virtual uint32_t getRegionCategoryCount(void)=0;
+			virtual void clearRegionSelection()=0;
+			virtual uint32_t getRegionCategoryCount()=0;
 			virtual uint32_t getRegionCount(uint32_t ui32RegionCategory)=0;
 			virtual const char* getRegionCategoryName(uint32_t ui32RegionCategory)=0;
 			virtual const char* getRegionName(uint32_t ui32RegionCategory, uint32_t ui32RegionIndex)=0;

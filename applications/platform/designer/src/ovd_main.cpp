@@ -24,27 +24,23 @@
 #endif
 
 using namespace OpenViBE;
-using namespace OpenViBE::Kernel;
-using namespace OpenViBE::Plugins;
+using namespace Kernel;
+using namespace Plugins;
 using namespace OpenViBEDesigner;
 using namespace std;
 
-map<uint32, ::GdkColor> g_vColors;
+map<uint32, GdkColor> g_vColors;
 
 class CPluginObjectDescEnum
 {
 public:
 
-	CPluginObjectDescEnum(const IKernelContext& rKernelContext)
-		:m_rKernelContext(rKernelContext)
-	{
-	}
+	CPluginObjectDescEnum(const IKernelContext& rKernelContext) : m_rKernelContext(rKernelContext) { }
 
-	virtual ~CPluginObjectDescEnum(void)
-	{
-	}
+	virtual ~CPluginObjectDescEnum() { }
 
-	virtual OpenViBE::boolean enumeratePluginObjectDesc(void)
+	virtual boolean enumeratePluginObjectDesc()
+
 	{
 		CIdentifier l_oIdentifier;
 		while ((l_oIdentifier = m_rKernelContext.getPluginManager().getNextPluginObjectDescIdentifier(l_oIdentifier)) != OV_UndefinedIdentifier)
@@ -54,7 +50,7 @@ public:
 		return true;
 	}
 
-	virtual OpenViBE::boolean enumeratePluginObjectDesc(
+	virtual boolean enumeratePluginObjectDesc(
 		const CIdentifier& rParentClassIdentifier)
 	{
 		CIdentifier l_oIdentifier;
@@ -65,7 +61,7 @@ public:
 		return true;
 	}
 
-	virtual OpenViBE::boolean callback(
+	virtual boolean callback(
 		const IPluginObjectDesc& rPluginObjectDesc) = 0;
 
 protected:
@@ -81,12 +77,9 @@ class CPluginObjectDescCollector : public CPluginObjectDescEnum
 {
 public:
 
-	CPluginObjectDescCollector(const IKernelContext& rKernelContext)
-		:CPluginObjectDescEnum(rKernelContext)
-	{
-	}
+	CPluginObjectDescCollector(const IKernelContext& rKernelContext) : CPluginObjectDescEnum(rKernelContext) { }
 
-	virtual OpenViBE::boolean callback(
+	virtual boolean callback(
 		const IPluginObjectDesc& rPluginObjectDesc)
 	{
 		string l_sFullName = string(rPluginObjectDesc.getCategory()) + "/" + string(rPluginObjectDesc.getName());
@@ -99,7 +92,8 @@ public:
 		return true;
 	}
 
-	map<string, const IPluginObjectDesc*>& getPluginObjectDescMap(void)
+	map<string, const IPluginObjectDesc*>& getPluginObjectDescMap()
+
 	{
 		return m_vPluginObjectDesc;
 	}
@@ -118,11 +112,9 @@ class CPluginObjectDescLogger : public CPluginObjectDescEnum
 public:
 
 	CPluginObjectDescLogger(const IKernelContext& rKernelContext)
-		:CPluginObjectDescEnum(rKernelContext)
-	{
-	}
+		:CPluginObjectDescEnum(rKernelContext) { }
 
-	virtual OpenViBE::boolean callback(
+	virtual boolean callback(
 		const IPluginObjectDesc& rPluginObjectDesc)
 	{
 		// Outputs plugin info to console
@@ -149,7 +141,7 @@ namespace {
 	void getVersionComponentsFromConfigurationToken(const IKernelContext& context, const char* configurationToken, componentsMap& componentVersions)
 	{
 		json::Object componentVersionsObject;
-		// We use a lookup instead of expansion as JSON can contain {} characters
+		// We use a lookup instead of expansion as JSON can contain { } characters
 
 		CString componentVersionsJSON = context.getConfigurationManager().expand(CString("${") + configurationToken + "}");
 		if (componentVersionsJSON.length() != 0)
@@ -169,7 +161,7 @@ namespace {
 	}
 }
 
-static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernelContext, map<string, const IPluginObjectDesc*>& vPluginObjectDesc, ::GtkTreeStore* pTreeStore, 
+static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernelContext, map<string, const IPluginObjectDesc*>& vPluginObjectDesc, GtkTreeStore* pTreeStore,
 	std::vector<const IPluginObjectDesc*>& vNewBoxes, std::vector<const IPluginObjectDesc*>& vUpdatedBoxes, bool bIsNewVersion = false)
 {
 	typedef std::map<std::string, std::tuple<int, int, int>> componentsMap;
@@ -179,7 +171,7 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 	componentsMap lastUsedVersions = currentVersions;
 	getVersionComponentsFromConfigurationToken(rKernelContext, "Designer_LastComponentVersionsUsed", lastUsedVersions);
 
-	for(auto pPluginObjectDesc : vPluginObjectDesc)
+	for (auto pPluginObjectDesc : vPluginObjectDesc)
 	{
 		const IPluginObjectDesc* l_pPluginObjectDesc = pPluginObjectDesc.second;
 
@@ -191,7 +183,7 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 			l_sStockItemName = l_pBoxAlgorithmDesc->getStockItemName();
 		}
 
-		OpenViBE::boolean l_bShouldShow = true;
+		boolean l_bShouldShow = true;
 
 		if (rKernelContext.getPluginManager().isPluginObjectFlaggedAsDeprecated(l_pPluginObjectDesc->getCreatedClass())
 			&& !rKernelContext.getConfigurationManager().expandAsBoolean("${Designer_ShowDeprecated}", false))
@@ -209,7 +201,7 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 
 		if (l_bShouldShow)
 		{
-			::GtkStockItem l_oStockItem;
+			GtkStockItem l_oStockItem;
 			if (!gtk_stock_lookup(l_sStockItemName, &l_oStockItem))
 			{
 				l_sStockItemName = GTK_STOCK_NEW;
@@ -234,20 +226,20 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 			}
 
 			// Fills plugin in the tree
-			::GtkTreeIter l_oGtkIter1;
-			::GtkTreeIter l_oGtkIter2;
-			::GtkTreeIter* l_pGtkIterParent = NULL;
-			::GtkTreeIter* l_pGtkIterChild = &l_oGtkIter1;
-			for(string l_sCategory : l_vCategory)
+			GtkTreeIter l_oGtkIter1;
+			GtkTreeIter l_oGtkIter2;
+			GtkTreeIter* l_pGtkIterParent = nullptr;
+			GtkTreeIter* l_pGtkIterChild = &l_oGtkIter1;
+			for (string l_sCategory : l_vCategory)
 			{
-				OpenViBE::boolean l_bFound = false;
-				OpenViBE::boolean l_bValid = gtk_tree_model_iter_children(
+				boolean l_bFound = false;
+				boolean l_bValid = gtk_tree_model_iter_children(
 					GTK_TREE_MODEL(pTreeStore),
 					l_pGtkIterChild,
 					l_pGtkIterParent) ? true : false;
 				while (l_bValid && !l_bFound)
 				{
-					gchar* l_sName = NULL;
+					gchar* l_sName = nullptr;
 					gboolean l_bIsPlugin;
 					gtk_tree_model_get(
 						GTK_TREE_MODEL(pTreeStore),
@@ -287,7 +279,7 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 				{
 					l_pGtkIterParent = &l_oGtkIter2;
 				}
-				::GtkTreeIter* l_pGtkIterSwap = l_pGtkIterChild;
+				GtkTreeIter* l_pGtkIterSwap = l_pGtkIterChild;
 				l_pGtkIterChild = l_pGtkIterParent;
 				l_pGtkIterParent = l_pGtkIterSwap;
 			}
@@ -325,19 +317,19 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 				int boxComponentVersionPatch = 0;
 				sscanf(l_pPluginObjectDesc->getAddedSoftwareVersion().toASCIIString(), "%d.%d.%d", &boxComponentVersionMajor, &boxComponentVersionMinor, &boxComponentVersionPatch);
 				// If this is a new version, then add in list all the updated/new boxes since last version opened
-				if(bIsNewVersion && (
-				            (lastUsedVersionMajor < boxComponentVersionMajor && boxComponentVersionMajor <= currentVersionMajor)
-				            || (boxComponentVersionMajor == currentVersionMajor && lastUsedVersionMinor < boxComponentVersionMinor && boxComponentVersionMinor <= currentVersionMinor)
-				            || (boxComponentVersionMinor == currentVersionMinor && lastUsedVersionPatch < boxComponentVersionPatch && boxComponentVersionPatch <= currentVersionPatch)
-				            // As default value for l_uiMinorLastVersionOpened and l_uiMajorLastVersionOpened are the current software version
-				            || (boxComponentVersionMajor == currentVersionMajor && boxComponentVersionMinor == currentVersionMinor && boxComponentVersionPatch == currentVersionPatch)) )
+				if (bIsNewVersion && (
+					(lastUsedVersionMajor < boxComponentVersionMajor && boxComponentVersionMajor <= currentVersionMajor)
+					|| (boxComponentVersionMajor == currentVersionMajor && lastUsedVersionMinor < boxComponentVersionMinor && boxComponentVersionMinor <= currentVersionMinor)
+					|| (boxComponentVersionMinor == currentVersionMinor && lastUsedVersionPatch < boxComponentVersionPatch && boxComponentVersionPatch <= currentVersionPatch)
+					// As default value for l_uiMinorLastVersionOpened and l_uiMajorLastVersionOpened are the current software version
+					|| (boxComponentVersionMajor == currentVersionMajor && boxComponentVersionMinor == currentVersionMinor && boxComponentVersionPatch == currentVersionPatch)))
 				{
 					l_sName = l_sName + " (New)";
 					l_sBackGroundColor = "#FFFFC4";
 					vNewBoxes.push_back(l_pPluginObjectDesc);
 				}
 				// Otherwise
-				else if(boxComponentVersionMajor == currentVersionMajor && boxComponentVersionMinor == currentVersionMinor && boxComponentVersionPatch == currentVersionPatch)
+				else if (boxComponentVersionMajor == currentVersionMajor && boxComponentVersionMinor == currentVersionMinor && boxComponentVersionPatch == currentVersionPatch)
 				{
 					vNewBoxes.push_back(l_pPluginObjectDesc);
 				}
@@ -348,19 +340,19 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 					int boxComponentUpdatedVersionPatch = 0;
 					sscanf(l_pPluginObjectDesc->getUpdatedSoftwareVersion().toASCIIString(), "%d.%d.%d", &boxComponentUpdatedVersionMajor, &boxComponentUpdatedVersionMinor, &boxComponentUpdatedVersionPatch);
 					// If this is a new version, then add in list all the updated/new boxes since last version opened
-					if( bIsNewVersion && (
-					            (lastUsedVersionMajor < boxComponentUpdatedVersionMajor && boxComponentUpdatedVersionMajor <= currentVersionMajor)
-					            || (boxComponentUpdatedVersionMajor == currentVersionMajor && lastUsedVersionMinor < boxComponentUpdatedVersionMinor && boxComponentUpdatedVersionMinor <= currentVersionMinor)
-					            || (boxComponentUpdatedVersionMinor == currentVersionMinor && lastUsedVersionPatch < boxComponentUpdatedVersionPatch && boxComponentUpdatedVersionPatch <= currentVersionPatch)
-					            // If this is a new version Designer, and last version opened was set to default value i.e. version of current software
-					            || (boxComponentUpdatedVersionMajor == currentVersionMajor && boxComponentUpdatedVersionMinor == currentVersionMinor && boxComponentUpdatedVersionPatch == currentVersionPatch)) )
+					if (bIsNewVersion && (
+						(lastUsedVersionMajor < boxComponentUpdatedVersionMajor && boxComponentUpdatedVersionMajor <= currentVersionMajor)
+						|| (boxComponentUpdatedVersionMajor == currentVersionMajor && lastUsedVersionMinor < boxComponentUpdatedVersionMinor && boxComponentUpdatedVersionMinor <= currentVersionMinor)
+						|| (boxComponentUpdatedVersionMinor == currentVersionMinor && lastUsedVersionPatch < boxComponentUpdatedVersionPatch && boxComponentUpdatedVersionPatch <= currentVersionPatch)
+						// If this is a new version Designer, and last version opened was set to default value i.e. version of current software
+						|| (boxComponentUpdatedVersionMajor == currentVersionMajor && boxComponentUpdatedVersionMinor == currentVersionMinor && boxComponentUpdatedVersionPatch == currentVersionPatch)))
 					{
 						l_sName = l_sName + " (New)";
 						l_sBackGroundColor = "#FFFFC4";
 						vUpdatedBoxes.push_back(l_pPluginObjectDesc);
 					}
 					// Otherwise
-					else if(!bIsNewVersion && (boxComponentUpdatedVersionMajor == currentVersionMajor && boxComponentUpdatedVersionMinor == currentVersionMinor && boxComponentUpdatedVersionPatch == currentVersionPatch))
+					else if (!bIsNewVersion && (boxComponentUpdatedVersionMajor == currentVersionMajor && boxComponentUpdatedVersionMinor == currentVersionMinor && boxComponentUpdatedVersionPatch == currentVersionPatch))
 					{
 						vUpdatedBoxes.push_back(l_pPluginObjectDesc);
 					}
@@ -372,7 +364,7 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 
 			if (l_pPluginObjectDesc->getCreatedClass() == OVP_ClassId_BoxAlgorithm_Metabox)
 			{
-				l_sBoxAlgorithmDescriptor += dynamic_cast<const OpenViBE::Metabox::IMetaboxObjectDesc*>(l_pPluginObjectDesc)->getMetaboxDescriptor();
+				l_sBoxAlgorithmDescriptor += dynamic_cast<const Metabox::IMetaboxObjectDesc*>(l_pPluginObjectDesc)->getMetaboxDescriptor();
 				l_sTextColor = "#007020";
 			}
 			else
@@ -406,44 +398,44 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 
 typedef struct _SConfiguration
 {
-	_SConfiguration(void)
-	    :m_eNoGui(CommandLineFlag_None)
-	    , m_eNoCheckColorDepth(CommandLineFlag_None)
-	    , m_eNoManageSession(CommandLineFlag_None)
-	    , m_eNoVisualization(CommandLineFlag_None)
-	    , m_eDefine(CommandLineFlag_None)
-	    , m_eRandomSeed(CommandLineFlag_None)
-	    , m_eConfig(CommandLineFlag_None)
-	    , m_help(false)
+	_SConfiguration()
+
+		:m_eNoGui(CommandLineFlag_None)
+		, m_eNoCheckColorDepth(CommandLineFlag_None)
+		, m_eNoManageSession(CommandLineFlag_None)
+		, m_eNoVisualization(CommandLineFlag_None)
+		, m_eDefine(CommandLineFlag_None)
+		, m_eRandomSeed(CommandLineFlag_None)
+		, m_eConfig(CommandLineFlag_None)
+		, m_help(false) { }
+
+	ECommandLineFlag getFlags()
+
 	{
-	}
-	
-	OpenViBEDesigner::ECommandLineFlag getFlags(void)
-	{
-		return OpenViBEDesigner::ECommandLineFlag(
-		            m_eNoGui
-		            | m_eNoCheckColorDepth
-		            | m_eNoManageSession
-		            | m_eNoVisualization
-		            | m_eDefine
-		            | m_eRandomSeed
-		            | m_eConfig
-		            );
+		return ECommandLineFlag(
+			m_eNoGui
+			| m_eNoCheckColorDepth
+			| m_eNoManageSession
+			| m_eNoVisualization
+			| m_eDefine
+			| m_eRandomSeed
+			| m_eConfig
+		);
 	}
 
 	std::vector < std::pair < ECommandLineFlag, std::string > > m_vFlag;
-	OpenViBEDesigner::ECommandLineFlag m_eNoGui;
-	OpenViBEDesigner::ECommandLineFlag m_eNoCheckColorDepth;
-	OpenViBEDesigner::ECommandLineFlag m_eNoManageSession;
-	OpenViBEDesigner::ECommandLineFlag m_eNoVisualization;
-	OpenViBEDesigner::ECommandLineFlag m_eDefine;
-	OpenViBEDesigner::ECommandLineFlag m_eRandomSeed;
-	OpenViBEDesigner::ECommandLineFlag m_eConfig;
+	ECommandLineFlag m_eNoGui;
+	ECommandLineFlag m_eNoCheckColorDepth;
+	ECommandLineFlag m_eNoManageSession;
+	ECommandLineFlag m_eNoVisualization;
+	ECommandLineFlag m_eDefine;
+	ECommandLineFlag m_eRandomSeed;
+	ECommandLineFlag m_eConfig;
 	bool                               m_help;
 	// to resolve warning: padding struct '_SConfiguration' with 4 bytes to align 'm_oTokenMap
 	int32_t	                           m_i32StructPadding;
 	std::map < std::string, std::string > m_oTokenMap;
-	
+
 } SConfiguration;
 
 static char backslash_to_slash(char c)
@@ -468,7 +460,7 @@ static bool ensureOneInstanceOfDesigner(SConfiguration& configuration, ILogManag
 		// If the mutex was opened, then an instance of designer is already running, we send it a message before dying
 		// The message contains the command to send: sMode: open, play, play-fast a scenario, sScenarioPath: path of the scenario
 		boost::interprocess::scoped_lock<boost::interprocess::named_mutex> lock(l_oMutex);
-		std::string l_sMessage="";
+		std::string l_sMessage = "";
 		if (configuration.m_vFlag.empty())
 		{
 			l_sMessage = std::to_string(static_cast<int>(CommandLineFlag_None)) + ": ;";
@@ -489,7 +481,7 @@ static bool ensureOneInstanceOfDesigner(SConfiguration& configuration, ILogManag
 
 		return false;
 	}
-	catch(boost::interprocess::interprocess_exception&)
+	catch (boost::interprocess::interprocess_exception&)
 	{
 		//Create the named mutex to catch the potential next instance of Designer that could open
 		boost::interprocess::named_mutex l_oMutex(boost::interprocess::create_only, MUTEX_NAME);
@@ -500,7 +492,7 @@ static bool ensureOneInstanceOfDesigner(SConfiguration& configuration, ILogManag
 #endif
 }
 
-OpenViBE::boolean parse_arguments(int argc, char** argv, SConfiguration& rConfiguration)
+boolean parse_arguments(int argc, char** argv, SConfiguration& rConfiguration)
 {
 	SConfiguration l_oConfiguration;
 
@@ -525,85 +517,83 @@ OpenViBE::boolean parse_arguments(int argc, char** argv, SConfiguration& rConfig
 #endif
 	l_vArgValue.push_back("");
 
-	for(auto it = l_vArgValue.cbegin(); it != l_vArgValue.cend(); ++it)
+	for (auto it = l_vArgValue.cbegin(); it != l_vArgValue.cend(); ++it)
 	{
-		if(*it.empty())
-		{
-		}
-		else if(*it == "-h" || *it == "--help")
+		if (*it == "") { }
+		else if (*it == "-h" || *it == "--help")
 		{
 			l_oConfiguration.m_help = true;
-			rConfiguration          = l_oConfiguration;
+			rConfiguration = l_oConfiguration;
 			return false;
 		}
-		else if(*it == "-o" || *it == "--open")
+		else if (*it == "-o" || *it == "--open")
 		{
 			l_oConfiguration.m_vFlag.push_back(std::make_pair(CommandLineFlag_Open, *++it));
 		}
-		else if(*it == "-p" || *it == "--play")
+		else if (*it == "-p" || *it == "--play")
 		{
 			l_oConfiguration.m_vFlag.push_back(std::make_pair(CommandLineFlag_Play, *++it));
 		}
-		else if(*it == "-pf" || *it == "--play-fast")
+		else if (*it == "-pf" || *it == "--play-fast")
 		{
 			l_oConfiguration.m_vFlag.push_back(std::make_pair(CommandLineFlag_PlayFast, *++it));
 		}
-		else if(*it == "--no-gui")
+		else if (*it == "--no-gui")
 		{
 			l_oConfiguration.m_eNoGui = CommandLineFlag_NoGui;
 			l_oConfiguration.m_eNoCheckColorDepth = CommandLineFlag_NoCheckColorDepth;
 			l_oConfiguration.m_eNoManageSession = CommandLineFlag_NoManageSession;
 		}
-		else if(*it=="--no-visualization")
+		else if (*it == "--no-visualization")
 		{
-			l_oConfiguration.m_eNoVisualization=CommandLineFlag_NoVisualization;
+			l_oConfiguration.m_eNoVisualization = CommandLineFlag_NoVisualization;
 		}
-		else if(*it=="--invisible")
+		else if (*it == "--invisible")
 		{
 			// no-gui + no-visualization
-			l_oConfiguration.m_eNoVisualization=CommandLineFlag_NoVisualization;
-			l_oConfiguration.m_eNoGui=CommandLineFlag_NoGui;
-			l_oConfiguration.m_eNoCheckColorDepth=CommandLineFlag_NoCheckColorDepth;
-			l_oConfiguration.m_eNoManageSession=CommandLineFlag_NoManageSession;
+			l_oConfiguration.m_eNoVisualization = CommandLineFlag_NoVisualization;
+			l_oConfiguration.m_eNoGui = CommandLineFlag_NoGui;
+			l_oConfiguration.m_eNoCheckColorDepth = CommandLineFlag_NoCheckColorDepth;
+			l_oConfiguration.m_eNoManageSession = CommandLineFlag_NoManageSession;
 		}
-		else if(*it == "--no-check-color-depth")
+		else if (*it == "--no-check-color-depth")
 		{
 			l_oConfiguration.m_eNoCheckColorDepth = CommandLineFlag_NoCheckColorDepth;
 		}
-		else if(*it == "--no-session-management")
+		else if (*it == "--no-session-management")
 		{
 			l_oConfiguration.m_eNoManageSession = CommandLineFlag_NoManageSession;
 		}
-		else if(*it=="-c" || *it=="--config")
+		else if (*it == "-c" || *it == "--config")
 		{
-			if(*++it.empty()) { std::cout << "Error: Switch --config needs an argument\n"; return false; }
+			if (*++it == "") { std::cout << "Error: Switch --config needs an argument\n"; return false; }
 			l_oConfiguration.m_vFlag.push_back(std::make_pair(CommandLineFlag_Config, *it));
 		}
-		else if(*it=="-d" || *it=="--define")
+		else if (*it == "-d" || *it == "--define")
 		{
-			if(*++it.empty()) 
+			if (*++it == "")
 			{
 				std::cout << "Error: Need two arguments after -d / --define.\n";
 				return false;
 			}
-			
+
 			// Were not using = as a separator for token/value, as on Windows its a problem passing = to the cmd interpreter
 			// which is used to launch the actual designer exe.
 			const std::string& l_rToken = *it;
-			if(*++it.empty()) 
+			if (*++it == "")
 			{
 				std::cout << "Error: Need two arguments after -d / --define.\n";
 				return false;
 			}
-			
+
 			const std::string& l_rValue = *it;	// iterator will increment later
-			
+
 			l_oConfiguration.m_oTokenMap[l_rToken] = l_rValue;
-			
+
 		}
-		else if(*it=="--random-seed")
+		else if (*it == "--random-seed")
 		{
-			if(*++it.empty()) { std::cout << "Error: Switch --random-seed needs an argument\n"; return false; }
+			if (*++it == "") { std::cout << "Error: Switch --random-seed needs an argument\n"; return false; }
 			l_oConfiguration.m_vFlag.push_back(std::make_pair(CommandLineFlag_RandomSeed, *it));
 		}
 		else if (*it == "--g-fatal-warnings")
@@ -622,10 +612,10 @@ OpenViBE::boolean parse_arguments(int argc, char** argv, SConfiguration& rConfig
 
 #if 0
 	rConfiguration.m_vFlag = l_oConfiguration.m_vFlag;
-	rConfiguration.m_bCheckColorDepth=l_oConfiguration.m_bCheckColorDepth;
-	rConfiguration.m_bShowGui=l_oConfiguration.m_bShowGui;
+	rConfiguration.m_bCheckColorDepth = l_oConfiguration.m_bCheckColorDepth;
+	rConfiguration.m_bShowGui = l_oConfiguration.m_bShowGui;
 #else
-	rConfiguration=l_oConfiguration;
+	rConfiguration = l_oConfiguration;
 #endif
 	return true;
 }
@@ -647,56 +637,56 @@ gboolean cb_remove_splashscreen(gpointer data)
 
 void message(const char* sTitle, const char* sMessage, GtkMessageType eType)
 {
-	::GtkWidget* l_pDialog=::gtk_message_dialog_new(
-		NULL,
-		::GtkDialogFlags(GTK_DIALOG_MODAL|GTK_DIALOG_DESTROY_WITH_PARENT),
+	GtkWidget* l_pDialog = gtk_message_dialog_new(
+		nullptr,
+		GtkDialogFlags(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
 		eType,
 		GTK_BUTTONS_OK,
 		"%s", sTitle);
-	::gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(l_pDialog), "%s", sMessage);
-	::gtk_window_set_icon_from_file(GTK_WINDOW(l_pDialog), (OpenViBE::Directories::getDataDir() + CString("/applications/designer/designer.ico")).toASCIIString(), NULL);
-	::gtk_window_set_title(GTK_WINDOW(l_pDialog), sTitle);
-	::gtk_dialog_run(GTK_DIALOG(l_pDialog));
-	::gtk_widget_destroy(l_pDialog);
+	gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(l_pDialog), "%s", sMessage);
+	::gtk_window_set_icon_from_file(GTK_WINDOW(l_pDialog), (Directories::getDataDir() + CString("/applications/designer/designer.ico")).toASCIIString(), nullptr);
+	gtk_window_set_title(GTK_WINDOW(l_pDialog), sTitle);
+	gtk_dialog_run(GTK_DIALOG(l_pDialog));
+	gtk_widget_destroy(l_pDialog);
 }
 
-void user_info(char ** argv, ILogManager* l_rLogManager)
+void user_info(char** argv, ILogManager * l_rLogManager)
 {
 	const std::vector<std::string> messages =
 	{
-	    "Syntax : " + std::string(argv[0]) + " [ switches ]\n",
-	    "Possible switches :\n",
-	    "  --help                  : displays this help message and exits\n",
-	    "  --config filename       : path to config file\n",
-	    "  --define token value    : specify configuration token with a given value\n",
-	    "  --open filename         : opens a scenario (see also --no-session-management)\n",
-	    "  --play filename         : plays the opened scenario (see also --no-session-management)\n",
-	    "  --play-fast filename    : plays fast forward the opened scenario (see also --no-session-management)\n",
-	    "  --no-gui                : hides the " DESIGNER_NAME " graphical user interface (assumes --no-color-depth-test)\n",
-	    "  --no-visualization      : hides the visualisation widgets\n",
-	    "  --invisible             : hides the designer and the visualisation widgets (assumes --no-check-color-depth and --no-session-management)\n",
-	    "  --no-check-color-depth  : does not check 24/32 bits color depth\n",
-	    "  --no-session-management : neither restore last used scenarios nor saves them at exit\n",
-	    "  --random-seed uint      : initialize random number generator with value, default=time(NULL)\n"		
+		"Syntax : " + std::string(argv[0]) + " [ switches ]\n",
+		"Possible switches :\n",
+		"  --help                  : displays this help message and exits\n",
+		"  --config filename       : path to config file\n",
+		"  --define token value    : specify configuration token with a given value\n",
+		"  --open filename         : opens a scenario (see also --no-session-management)\n",
+		"  --play filename         : plays the opened scenario (see also --no-session-management)\n",
+		"  --play-fast filename    : plays fast forward the opened scenario (see also --no-session-management)\n",
+		"  --no-gui                : hides the " DESIGNER_NAME " graphical user interface (assumes --no-color-depth-test)\n",
+		"  --no-visualization      : hides the visualisation widgets\n",
+		"  --invisible             : hides the designer and the visualisation widgets (assumes --no-check-color-depth and --no-session-management)\n",
+		"  --no-check-color-depth  : does not check 24/32 bits color depth\n",
+		"  --no-session-management : neither restore last used scenarios nor saves them at exit\n",
+		"  --random-seed uint      : initialize random number generator with value, default=time(nullptr)\n"
 	};
-	
+
 	if (l_rLogManager)
 	{
-		for (const auto &m : messages)
+		for (const auto& m : messages)
 		{
 			(*l_rLogManager) << LogLevel_Info << m.c_str();
 		}
 	}
 	else
 	{
-		for (const auto &m : messages)
+		for (const auto& m : messages)
 		{
 			cout << m;
 		}
-	}	
+	}
 }
 
-int go(int argc, char ** argv)
+int go(int argc, char** argv)
 {
 	bool errorWhileLoadingScenario = false, playRequested = false;
 	/*
@@ -742,14 +732,14 @@ int go(int argc, char ** argv)
 #undef gdk_color_set
 	//___________________________________________________________________//
 	//                                                                   //
-	
+
 	SConfiguration l_oConfiguration;
 	bool bArgParseResult = parse_arguments(argc, argv, l_oConfiguration);
-	if(!bArgParseResult)
+	if (!bArgParseResult)
 	{
 		if (l_oConfiguration.m_help)
 		{
-			user_info(argv,NULL);		
+			user_info(argv, nullptr);
 			return 0;
 		}
 	}
@@ -759,7 +749,7 @@ int go(int argc, char ** argv)
 	cout << "[  INF  ] Created kernel loader, trying to load kernel module" << "\n";
 	CString l_sError;
 #if defined TARGET_OS_Windows
-	CString l_sKernelFile = OpenViBE::Directories::getLibDir() + "/openvibe-kernel.dll";
+	CString l_sKernelFile = Directories::getLibDir() + "/openvibe-kernel.dll";
 #elif defined TARGET_OS_Linux
 	CString l_sKernelFile = OpenViBE::Directories::getLibDir() + "/libopenvibe-kernel.so";
 #elif defined TARGET_OS_MacOS
@@ -772,8 +762,8 @@ int go(int argc, char ** argv)
 	else
 	{
 		cout << "[  INF  ] Kernel module loaded, trying to get kernel descriptor" << "\n";
-		IKernelDesc* l_pKernelDesc = NULL;
-		IKernelContext* l_pKernelContext = NULL;
+		IKernelDesc* l_pKernelDesc = nullptr;
+		IKernelContext* l_pKernelContext = nullptr;
 		l_oKernelLoader.initialize();
 		l_oKernelLoader.getKernelDesc(l_pKernelDesc);
 		if (!l_pKernelDesc)
@@ -781,36 +771,36 @@ int go(int argc, char ** argv)
 			cout << "[ FAILED ] No kernel descriptor" << "\n";
 		}
 		else
-		{						
+		{
 			cout << "[  INF  ] Got kernel descriptor, trying to create kernel" << "\n";
 
-			l_pKernelContext = l_pKernelDesc->createKernel("designer", OpenViBE::Directories::getDataDir() + "/kernel/openvibe.conf");
+			l_pKernelContext = l_pKernelDesc->createKernel("designer", Directories::getDataDir() + "/kernel/openvibe.conf");
 			l_pKernelContext->initialize();
-			l_pKernelContext->getConfigurationManager().addConfigurationFromFile(OpenViBE::Directories::getDataDir() + "/applications/designer/designer.conf");
-			OpenViBE::CString l_sAppConfigFile = l_pKernelContext->getConfigurationManager().expand("${Designer_CustomConfigurationFile}");
+			l_pKernelContext->getConfigurationManager().addConfigurationFromFile(Directories::getDataDir() + "/applications/designer/designer.conf");
+			CString l_sAppConfigFile = l_pKernelContext->getConfigurationManager().expand("${Designer_CustomConfigurationFile}");
 			l_pKernelContext->getConfigurationManager().addConfigurationFromFile(l_sAppConfigFile);
 			// add other configuration file if --config option
 			std::vector < std::pair < ECommandLineFlag, std::string > >::iterator it = l_oConfiguration.m_vFlag.begin();
-			
-			// initialize random number generator with NULL by default
-			System::Math::initializeRandomMachine(time(NULL));
 
-			while(it != l_oConfiguration.m_vFlag.end())
+			// initialize random number generator with nullptr by default
+			System::Math::initializeRandomMachine(time(nullptr));
+
+			while (it != l_oConfiguration.m_vFlag.end())
 			{
 				if (it->first == CommandLineFlag_Config)
 				{
 					l_sAppConfigFile = CString(it->second.c_str());
 					l_pKernelContext->getConfigurationManager().addConfigurationFromFile(l_sAppConfigFile);
 				}
-				else if(it->first == CommandLineFlag_RandomSeed)
+				else if (it->first == CommandLineFlag_RandomSeed)
 				{
 					const int64_t l_i32Seed = atol(it->second.c_str());
 					System::Math::initializeRandomMachine(static_cast<const uint32>(l_i32Seed));
 				}
 				it++;
 			}
-			
-			
+
+
 			if (!l_pKernelContext)
 			{
 				cout << "[ FAILED ] No kernel created by kernel descriptor" << "\n";
@@ -860,26 +850,26 @@ int go(int argc, char ** argv)
 
 				if (!(bArgParseResult || l_oConfiguration.m_help))
 				{
-					user_info(argv,&l_rLogManager);
+					user_info(argv, &l_rLogManager);
 				}
 				else
 				{
-					if ((l_rConfigurationManager.expandAsBoolean("${Kernel_WithGUI}", true) == false) && ((l_oConfiguration.getFlags()&CommandLineFlag_NoGui) == 0))
+					if ((l_rConfigurationManager.expandAsBoolean("${Kernel_WithGUI}", true) == false) && ((l_oConfiguration.getFlags() & CommandLineFlag_NoGui) == 0))
 					{
 						l_rLogManager << LogLevel_ImportantWarning << "${Kernel_WithGUI} is set to false and --no-gui flag not set. Forcing the --no-gui flag\n";
 						l_oConfiguration.m_eNoGui = CommandLineFlag_NoGui;
 						l_oConfiguration.m_eNoCheckColorDepth = CommandLineFlag_NoCheckColorDepth;
 						l_oConfiguration.m_eNoManageSession = CommandLineFlag_NoManageSession;
 					}
-	
-					if(l_oConfiguration.m_eNoGui != CommandLineFlag_NoGui && !ensureOneInstanceOfDesigner(l_oConfiguration, l_rLogManager))
+
+					if (l_oConfiguration.m_eNoGui != CommandLineFlag_NoGui && !ensureOneInstanceOfDesigner(l_oConfiguration, l_rLogManager))
 					{
 						l_rLogManager << LogLevel_Trace << "An instance of Designer is already running.\n";
 						return 0;
 					}
 
 					{
-						::CApplication app(*l_pKernelContext);
+						CApplication app(*l_pKernelContext);
 						app.initialize(l_oConfiguration.getFlags());
 
 						// FIXME is it necessary to keep next line uncomment ?
@@ -904,15 +894,15 @@ int go(int argc, char ** argv)
 								}
 							}
 						}
-						
+
 						// Add or replace a configuration token if required in command line
-						for (const auto &token : l_oConfiguration.m_oTokenMap)
+						for (const auto& token : l_oConfiguration.m_oTokenMap)
 						{
 							l_rLogManager << LogLevel_Trace << "Adding command line configuration token [" << token.first.c_str() << " = " << token.second.c_str() << "]\n";
 							l_rConfigurationManager.addOrReplaceConfigurationToken(token.first.c_str(), token.second.c_str());
 						}
-						
-						for (size_t i = 0; i<l_oConfiguration.m_vFlag.size(); i++)
+
+						for (size_t i = 0; i < l_oConfiguration.m_vFlag.size(); i++)
 						{
 							std::string l_sFileName = l_oConfiguration.m_vFlag[i].second;
 							std::transform(l_sFileName.begin(), l_sFileName.end(), l_sFileName.begin(), backslash_to_slash);
@@ -921,7 +911,7 @@ int go(int argc, char ** argv)
 							{
 							case CommandLineFlag_Open:
 								l_rLogManager << LogLevel_Info << "Opening scenario [" << CString(l_sFileName.c_str()) << "]\n";
-								if(!app.openScenario(l_sFileName.c_str()))
+								if (!app.openScenario(l_sFileName.c_str()))
 								{
 									l_rLogManager << LogLevel_Error << "Could not open scenario " << l_sFileName.c_str() << "\n";
 									errorWhileLoadingScenario = l_oConfiguration.m_eNoGui == CommandLineFlag_NoGui;
@@ -930,12 +920,12 @@ int go(int argc, char ** argv)
 							case CommandLineFlag_Play:
 								l_rLogManager << LogLevel_Info << "Opening and playing scenario [" << CString(l_sFileName.c_str()) << "]\n";
 								error = !app.openScenario(l_sFileName.c_str());
-								if(!error)
+								if (!error)
 								{
 									app.playScenarioCB();
-									error = app.getCurrentInterfacedScenario()->m_ePlayerStatus != OpenViBE::Kernel::EPlayerStatus::PlayerStatus_Play;
+									error = app.getCurrentInterfacedScenario()->m_ePlayerStatus != PlayerStatus_Play;
 								}
-								if(error)
+								if (error)
 								{
 									l_rLogManager << LogLevel_Error << "Scenario open or load error with --play.\n";
 									errorWhileLoadingScenario = l_oConfiguration.m_eNoGui == CommandLineFlag_NoGui;
@@ -944,12 +934,12 @@ int go(int argc, char ** argv)
 							case CommandLineFlag_PlayFast:
 								l_rLogManager << LogLevel_Info << "Opening and fast playing scenario [" << CString(l_sFileName.c_str()) << "]\n";
 								error = !app.openScenario(l_sFileName.c_str());
-								if(!error)
+								if (!error)
 								{
 									app.forwardScenarioCB();
-									error = app.getCurrentInterfacedScenario()->m_ePlayerStatus != OpenViBE::Kernel::EPlayerStatus::PlayerStatus_Forward;
+									error = app.getCurrentInterfacedScenario()->m_ePlayerStatus != PlayerStatus_Forward;
 								}
-								if(error)
+								if (error)
 								{
 									l_rLogManager << LogLevel_Error << "Scenario open or load error with --play-fast.\n";
 									errorWhileLoadingScenario = l_oConfiguration.m_eNoGui == CommandLineFlag_NoGui;
@@ -962,8 +952,8 @@ int go(int argc, char ** argv)
 								break;
 							}
 						}
- 
-						if(!playRequested && l_oConfiguration.m_eNoGui == CommandLineFlag_NoGui)
+
+						if (!playRequested && l_oConfiguration.m_eNoGui == CommandLineFlag_NoGui)
 						{
 							l_rLogManager << LogLevel_Info << "Switch --no-gui is enabled but no play operation was requested. Designer will exit automatically.\n";
 						}
@@ -984,7 +974,7 @@ int go(int argc, char ** argv)
 							insertPluginObjectDesc_to_GtkTreeStore(*l_pKernelContext, cb_collector1.getPluginObjectDescMap(), app.m_pBoxAlgorithmTreeModel, app.m_vNewBoxes, app.m_vUpdatedBoxes, app.m_bIsNewVersion);
 							insertPluginObjectDesc_to_GtkTreeStore(*l_pKernelContext, cb_collector2.getPluginObjectDescMap(), app.m_pAlgorithmTreeModel, app.m_vNewBoxes, app.m_vUpdatedBoxes);
 
-							std::map<std::string, const OpenViBE::Plugins::IPluginObjectDesc*> metaboxDescMap;
+							std::map<std::string, const IPluginObjectDesc*> metaboxDescMap;
 							CIdentifier l_oIdentifier;
 							while ((l_oIdentifier = l_pKernelContext->getMetaboxManager().getNextMetaboxObjectDescIdentifier(l_oIdentifier)) != OV_UndefinedIdentifier)
 							{
@@ -994,7 +984,7 @@ int go(int argc, char ** argv)
 
 							l_pKernelContext->getLogManager() << LogLevel_Info << "Initialization took " << l_pKernelContext->getConfigurationManager().expand("$Core{real-time}") << " ms\n";
 							// If the application is a newly launched version, and not launched without GUI -> display changelog
-							if(app.m_bIsNewVersion && l_oConfiguration.m_eNoGui != CommandLineFlag_NoGui)
+							if (app.m_bIsNewVersion && l_oConfiguration.m_eNoGui != CommandLineFlag_NoGui)
 							{
 								app.displayChangelogWhenAvailable();
 							}
@@ -1005,14 +995,14 @@ int go(int argc, char ** argv)
 							catch (DesignerException ex)
 							{
 								std::cerr << "Caught designer exception" << std::endl;
-								::GtkWidget* errorDialog = gtk_message_dialog_new(
-								            NULL,
-								            GTK_DIALOG_MODAL,
-								            GTK_MESSAGE_ERROR,
-								            GTK_BUTTONS_CLOSE,
-								            "%s",
-								            ex.getErrorString().c_str()
-								            );
+								GtkWidget* errorDialog = gtk_message_dialog_new(
+									nullptr,
+									GTK_DIALOG_MODAL,
+									GTK_MESSAGE_ERROR,
+									GTK_BUTTONS_CLOSE,
+									"%s",
+									ex.getErrorString().c_str()
+								);
 								gtk_window_set_title(GTK_WINDOW(errorDialog), (std::string(BRAND_NAME) + " has stopped functioning").c_str());
 								gtk_dialog_run(GTK_DIALOG(errorDialog));
 							}
@@ -1032,7 +1022,7 @@ int go(int argc, char ** argv)
 				l_pKernelDesc->releaseKernel(l_pKernelContext);
 
 				// Remove the mutex only if the application was run with a gui
-				if (l_oConfiguration.m_eNoGui != CommandLineFlag_NoGui )
+				if (l_oConfiguration.m_eNoGui != CommandLineFlag_NoGui)
 				{
 					boost::interprocess::named_mutex::remove(MUTEX_NAME);
 				}
@@ -1044,14 +1034,14 @@ int go(int argc, char ** argv)
 	return errorWhileLoadingScenario ? -1 : 0;
 }
 
-int main(int argc, char ** argv)
+int main(int argc, char** argv)
 {
 	// Remove mutex at startup, as the main loop regenerates frequently this mutex,
 	// if another instance is running, it should have the time to regenerate it
 	// Avoids that after crashing, a mutex stays blocking
 	boost::interprocess::named_mutex::remove(MUTEX_NAME);
 	int l_iRet = -1;
-//	try
+	//	try
 	{
 		l_iRet = go(argc, argv);
 	}

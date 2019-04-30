@@ -22,7 +22,7 @@
 #include "mCRendererXYZPlot.hpp"
 
 using namespace Mensia;
-using namespace Mensia::AdvancedVisualization;
+using namespace AdvancedVisualization;
 
 void CRendererXYZPlot::rebuild(const IRendererContext& rContext)
 {
@@ -81,28 +81,28 @@ bool CRendererXYZPlot::render(const IRendererContext& rContext)
 	if(m_vVertex.empty()) return false;
 	if(!m_ui32HistoryCount) return false;
 
-	::glPointSize(5);
+	glPointSize(5);
 
 	if(m_bHasDepth)
 	{
 		float d=3.5;
 
-		::glMatrixMode(GL_PROJECTION);
-		::glPushMatrix();
-		::glLoadIdentity();
-		::gluPerspective(60, rContext.getAspect(), .01, 100);
-		::glTranslatef(0, 0, -d);
-		::glRotatef(rContext.getRotationX()*10, 1, 0, 0);
-		::glRotatef(rContext.getRotationY()*10, 0, 1, 0);
+		glMatrixMode(GL_PROJECTION);
+		glPushMatrix();
+		glLoadIdentity();
+		gluPerspective(60, rContext.getAspect(), .01, 100);
+		glTranslatef(0, 0, -d);
+		glRotatef(rContext.getRotationX()*10, 1, 0, 0);
+		glRotatef(rContext.getRotationY()*10, 0, 1, 0);
 	}
 
-	::glMatrixMode(GL_TEXTURE);
-	::glPushMatrix();
-	::glLoadIdentity();
+	glMatrixMode(GL_TEXTURE);
+	glPushMatrix();
+	glLoadIdentity();
 
-	::glMatrixMode(GL_MODELVIEW);
-	::glTranslatef(m_bHasDepth?0:0.5f, m_bHasDepth?0:0.5f, 0);
-	::glScalef(rContext.getZoom(), rContext.getZoom(), rContext.getZoom());
+	glMatrixMode(GL_MODELVIEW);
+	glTranslatef(m_bHasDepth?0:0.5f, m_bHasDepth?0:0.5f, 0);
+	glScalef(rContext.getZoom(), rContext.getZoom(), rContext.getZoom());
 
 	if(rContext.isAxisDisplayed())
 	{
@@ -119,36 +119,36 @@ bool CRendererXYZPlot::render(const IRendererContext& rContext)
 	uint32_t n = m_ui32SampleCount;
 	uint32_t d = (m_ui32HistoryIndex%m_ui32SampleCount);
 
-	::glEnableClientState(GL_VERTEX_ARRAY);
-	::glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	for(uint32_t i=0; i<m_ui32PlotCount; i++)
 	{
-		::glPushMatrix();
-		::glScalef(rContext.getScale(), rContext.getScale(), rContext.getScale());
+		glPushMatrix();
+		glScalef(rContext.getScale(), rContext.getScale(), rContext.getScale());
 
-		::glVertexPointer(m_ui32PlotDimension, GL_FLOAT, sizeof(CVertex), &m_vVertex[i][0].x);
-		::glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_vVertex[i][n - d].u);
-		::glDrawArrays(GL_POINTS, 0, d);
+		glVertexPointer(m_ui32PlotDimension, GL_FLOAT, sizeof(CVertex), &m_vVertex[i][0].x);
+		glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_vVertex[i][n - d].u);
+		glDrawArrays(GL_POINTS, 0, d);
 
-		::glVertexPointer(m_ui32PlotDimension, GL_FLOAT, sizeof(CVertex), &m_vVertex[i][d].x);
-		::glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_vVertex[i][0].u);
-		::glDrawArrays(GL_POINTS, 0, (m_ui32HistoryIndex>n ? n : m_ui32HistoryIndex) - d);
+		glVertexPointer(m_ui32PlotDimension, GL_FLOAT, sizeof(CVertex), &m_vVertex[i][d].x);
+		glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_vVertex[i][0].u);
+		glDrawArrays(GL_POINTS, 0, (m_ui32HistoryIndex>n ? n : m_ui32HistoryIndex) - d);
 
-		::glPopMatrix();
+		glPopMatrix();
 	}
-	::glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	::glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState(GL_VERTEX_ARRAY);
 
-	::glMatrixMode(GL_TEXTURE);
-	::glPopMatrix();
+	glMatrixMode(GL_TEXTURE);
+	glPopMatrix();
 
 	if(m_bHasDepth)
 	{
-		::glMatrixMode(GL_PROJECTION);
-		::glPopMatrix();
+		glMatrixMode(GL_PROJECTION);
+		glPopMatrix();
 	}
 
-	::glMatrixMode(GL_MODELVIEW);
+	glMatrixMode(GL_MODELVIEW);
 
 	return true;
 }

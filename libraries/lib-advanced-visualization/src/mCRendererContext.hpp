@@ -39,11 +39,11 @@ namespace Mensia
 
 			CRendererContext(IRendererContext* pParentRendererContext);
 
-			virtual void clear(void);
+			virtual void clear();
 
 			virtual void setParentRendererContext(IRendererContext* pParentRendererContext);
 
-			virtual void clearChannelInfo(void);
+			virtual void clearChannelInfo();
 			virtual void addChannel(const std::string& sChannelName, float x, float y, float z);
 			virtual void selectChannel(uint32_t ui32Index);
 			virtual void unselectChannel(uint32_t ui32Index);
@@ -53,7 +53,7 @@ namespace Mensia
 			virtual size_t getDimensionLabelCount(size_t dimensionIndex) const;
 			virtual const char* getDimensionLabel(size_t dimensionIndex, size_t labelIndex) const;
 
-			virtual void clearTransformInfo(void);
+			virtual void clearTransformInfo();
 			virtual void scaleBy(float f32Scale);
 			virtual void setScale(float f32Scale);
 			virtual void zoomBy(float f32Zoom);
@@ -87,42 +87,42 @@ namespace Mensia
 
 			virtual std::string getChannelName(uint32_t ui32Index) const;
 			virtual bool getChannelLocalisation(uint32_t ui32Index, float& x, float& y, float& z) const;
-			virtual uint32_t getChannelCount(void) const;
-			virtual uint32_t getSelectedCount(void) const;
+			virtual uint32_t getChannelCount() const;
+			virtual uint32_t getSelectedCount() const;
 			virtual uint32_t getSelected(uint32_t ui32Index) const;
 			virtual bool isSelected(uint32_t ui32Index) const;
 
-			virtual float getScale(void) const;
-			virtual float getZoom(void) const;
-			virtual float getRotationX(void) const;
-			virtual float getRotationY(void) const;
+			virtual float getScale() const;
+			virtual float getZoom() const;
+			virtual float getRotationX() const;
+			virtual float getRotationY() const;
 
-			virtual float getTranslucency(void) const;
-			virtual float getAspect(void) const;
-			virtual uint64_t getSampleDuration(void) const;
-			virtual uint64_t getTimeScale(void) const;
-			virtual uint64_t getElementCount(void) const;
-			virtual uint64_t getFlowerRingCount(void) const;
-			virtual bool hasXYZPlotDepth(void) const;
-			virtual bool isAxisDisplayed(void) const;
-			virtual bool isPositiveOnly(void) const;
-			virtual bool isTimeLocked(void) const;
-			virtual bool isScrollModeActive(void) const;
-			virtual bool getScaleVisibility(void) const;
-			virtual bool getCheckBoardVisibility(void) const;
-			virtual EDataType getDataType(void) const;
-			virtual uint32_t getSpectrumFrequencyRange(void) const;
-			virtual uint32_t getMinSpectrumFrequency(void) const;
-			virtual uint32_t getMaxSpectrumFrequency(void) const;
-			virtual uint32_t getStackCount(void) const;
-			virtual uint32_t getStackIndex(void) const;
-			virtual bool isFaceMeshVisible(void) const;
-			virtual bool isScalpMeshVisible(void) const;
+			virtual float getTranslucency() const;
+			virtual float getAspect() const;
+			virtual uint64_t getSampleDuration() const;
+			virtual uint64_t getTimeScale() const;
+			virtual uint64_t getElementCount() const;
+			virtual uint64_t getFlowerRingCount() const;
+			virtual bool hasXYZPlotDepth() const;
+			virtual bool isAxisDisplayed() const;
+			virtual bool isPositiveOnly() const;
+			virtual bool isTimeLocked() const;
+			virtual bool isScrollModeActive() const;
+			virtual bool getScaleVisibility() const;
+			virtual bool getCheckBoardVisibility() const;
+			virtual EDataType getDataType() const;
+			virtual uint32_t getSpectrumFrequencyRange() const;
+			virtual uint32_t getMinSpectrumFrequency() const;
+			virtual uint32_t getMaxSpectrumFrequency() const;
+			virtual uint32_t getStackCount() const;
+			virtual uint32_t getStackIndex() const;
+			virtual bool isFaceMeshVisible() const;
+			virtual bool isScalpMeshVisible() const;
 
-			virtual bool isERPPlayerActive(void) const;
-			virtual float getERPFraction(void) const;
+			virtual bool isERPPlayerActive() const;
+			virtual float getERPFraction() const;
 
-			uint32_t getMaximumSampleCountPerDisplay(void) const { return 1000; /*500;*/ /*128*/ }
+			uint32_t getMaximumSampleCountPerDisplay() const { return 1000; /*500;*/ /*128*/ }
 
 		protected:
 

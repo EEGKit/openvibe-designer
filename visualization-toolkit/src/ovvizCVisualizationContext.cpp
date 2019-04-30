@@ -4,7 +4,7 @@
 using namespace OpenViBE;
 using namespace OpenViBEVisualizationToolkit;
 
-bool CVisualizationContext::setWidget(OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>& box, GtkWidget* widget)
+bool CVisualizationContext::setWidget(OpenViBEToolkit::TBoxAlgorithm<Plugins::IBoxAlgorithm>& box, GtkWidget* widget)
 {
 	CIdentifier boxIdentifier = box.getStaticBoxContext().getIdentifier();
 
@@ -24,7 +24,7 @@ bool CVisualizationContext::setWidget(OpenViBEToolkit::TBoxAlgorithm<OpenViBE::P
 	return m_VisualizationManager->setWidget(treeIdentifier, boxIdentifier, widget);
 }
 
-bool CVisualizationContext::setToolbar(OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>& box, GtkWidget* toolbarWidget)
+bool CVisualizationContext::setToolbar(OpenViBEToolkit::TBoxAlgorithm<Plugins::IBoxAlgorithm>& box, GtkWidget* toolbarWidget)
 {
 	CIdentifier boxIdentifier = box.getStaticBoxContext().getIdentifier();
 

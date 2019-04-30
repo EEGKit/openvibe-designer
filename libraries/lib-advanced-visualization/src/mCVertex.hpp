@@ -37,18 +37,14 @@ namespace Mensia
 				,y(float(_y))
 				,z(float(_z))
 				,u(float(_u))
-				,v(float(_v))
-			{
-			}
+				,v(float(_v)) { }
 
 			CVertex(const CVertex& a, const CVertex& b)
 				:x(b.x - a.x)
 				,y(b.y - a.y)
 				,z(b.z - a.z)
 				,u(b.u - a.u)
-				,v(b.v - a.v)
-			{
-			}
+				,v(b.v - a.v) { }
 
 			float x;
 			float y;
@@ -56,7 +52,8 @@ namespace Mensia
 			float u;
 			float v;
 
-			CVertex& normalize(void)
+			CVertex& normalize()
+
 			{
 				float n=this->length();
 				if(n!=0)
@@ -69,14 +66,14 @@ namespace Mensia
 				return *this;
 			}
 
-			float length(void) const
+			float length() const
 			{
-				return ::sqrt(this->sqr_length());
+				return sqrt(this->sqr_length());
 			}
 
-			float sqr_length(void) const
+			float sqr_length() const
 			{
-				return CVertex::dot(*this, *this);
+				return dot(*this, *this);
 			}
 
 			static float dot(const CVertex& v1, const CVertex& v2)
@@ -97,19 +94,19 @@ namespace Mensia
 			{
 				CVertex v1(v1a, v1b);
 				CVertex v2(v2a, v2b);
-				return CVertex::cross(v1, v2);
+				return cross(v1, v2);
 			}
 
 			static bool isOnSameSide(const CVertex& p1, const CVertex& p2, const CVertex& a, const CVertex& b)
 			{
-				CVertex cp1=CVertex::cross(a, b, a, p1);
-				CVertex cp2=CVertex::cross(a, b, a, p2);
-				return CVertex::dot(cp1, cp2) >= 0;
+				CVertex cp1=cross(a, b, a, p1);
+				CVertex cp2=cross(a, b, a, p2);
+				return dot(cp1, cp2) >= 0;
 			}
 
 			static bool isInTriangle(const CVertex& p, const CVertex& a, const CVertex& b, const CVertex& c)
 			{
-				return CVertex::isOnSameSide(p, a, b, c) && CVertex::isOnSameSide(p, b, c, a) && CVertex::isOnSameSide(p, c, a, b);
+				return isOnSameSide(p, a, b, c) && isOnSameSide(p, b, c, a) && isOnSameSide(p, c, a, b);
 			}
 		};
 	};

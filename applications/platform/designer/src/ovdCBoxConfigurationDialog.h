@@ -15,16 +15,16 @@ namespace OpenViBEDesigner
 	public:
 
 		CBoxConfigurationDialog(const OpenViBE::Kernel::IKernelContext& rKernelContext, OpenViBE::Kernel::IBox& rBox, const char* sGUIFilename, const char* sGUISettingsFilename, bool isScenarioRunning = false);
-		virtual ~CBoxConfigurationDialog(void);
-		virtual bool run(void);
+		virtual ~CBoxConfigurationDialog();
+		virtual bool run();
 		virtual void update(OpenViBE::CObservable &o, void* data);
 
 		void saveConfiguration();
 		void loadConfiguration();
 		void onOverrideBrowse();
 
-		void storeState(void);
-		void restoreState(void);
+		void storeState();
+		void restoreState();
 
 		virtual const OpenViBE::CIdentifier getBoxID() const;
 		virtual ::GtkWidget* getWidget();
@@ -36,7 +36,7 @@ namespace OpenViBEDesigner
 		void settingChange(uint32_t ui32SettingIndex);
 		void addSetting(uint32_t ui32SettingIndex);
 
-		void clearSettingWrappersVector(void);
+		void clearSettingWrappersVector();
 		void removeSetting(uint32_t ui32SettingIndex, bool bShift = true);
 
 		int32_t getTableIndex(uint32_t ui32SettingIndex);

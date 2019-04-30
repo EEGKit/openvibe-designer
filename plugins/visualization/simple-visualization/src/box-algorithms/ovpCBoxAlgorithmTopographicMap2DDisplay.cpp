@@ -5,25 +5,25 @@
 #include <memory.h>
 
 using namespace OpenViBE;
-using namespace OpenViBE::Kernel;
-using namespace OpenViBE::Plugins;
+using namespace Kernel;
+using namespace Plugins;
 
 using namespace OpenViBEPlugins;
-using namespace OpenViBEPlugins::SimpleVisualization;
+using namespace SimpleVisualization;
 
-CBoxAlgorithmTopographicMap2DDisplay::CBoxAlgorithmTopographicMap2DDisplay(void) :
-	m_pSphericalSplineInterpolation(NULL),
-	m_pTopographicMapDatabase(NULL),
-	m_pTopographicMap2DView(NULL)
-{
-}
+CBoxAlgorithmTopographicMap2DDisplay::CBoxAlgorithmTopographicMap2DDisplay() :
+	m_pSphericalSplineInterpolation(nullptr),
+	m_pTopographicMapDatabase(nullptr),
+	m_pTopographicMap2DView(nullptr) { }
 
-uint64 CBoxAlgorithmTopographicMap2DDisplay::getClockFrequency(void)
+uint64 CBoxAlgorithmTopographicMap2DDisplay::getClockFrequency()
+
 {
 	return ((uint64)1LL)<<37;
 }
 
-boolean CBoxAlgorithmTopographicMap2DDisplay::initialize(void)
+boolean CBoxAlgorithmTopographicMap2DDisplay::initialize()
+
 {
 	m_bFirstBufferReceived=false;
 	m_pDecoder = new OpenViBEToolkit::TStreamedMatrixDecoder < CBoxAlgorithmTopographicMap2DDisplay >;
@@ -53,8 +53,8 @@ boolean CBoxAlgorithmTopographicMap2DDisplay::initialize(void)
 	m_pTopographicMapDatabase->setRedrawOnNewData(false);
 
 	//send widget pointers to visualisation context for parenting
-	::GtkWidget* l_pWidget=NULL;
-	::GtkWidget* l_pToolbarWidget=NULL;
+	GtkWidget* l_pWidget=nullptr;
+	GtkWidget* l_pToolbarWidget=nullptr;
 	dynamic_cast<CTopographicMap2DView*>(m_pTopographicMap2DView)->getWidgets(l_pWidget, l_pToolbarWidget);
 
 	if (!this->canCreatePluginObject(OVP_ClassId_Plugin_VisualizationContext))
@@ -70,7 +70,8 @@ boolean CBoxAlgorithmTopographicMap2DDisplay::initialize(void)
 	return true;
 }
 
-boolean CBoxAlgorithmTopographicMap2DDisplay::uninitialize(void)
+boolean CBoxAlgorithmTopographicMap2DDisplay::uninitialize()
+
 {
 	if(m_pDecoder)
 	{
@@ -79,9 +80,9 @@ boolean CBoxAlgorithmTopographicMap2DDisplay::uninitialize(void)
 	}
 
 	delete m_pTopographicMap2DView;
-	m_pTopographicMap2DView = NULL;
+	m_pTopographicMap2DView = nullptr;
 	delete m_pTopographicMapDatabase;
-	m_pTopographicMapDatabase = NULL;
+	m_pTopographicMapDatabase = nullptr;
 
 	m_pSphericalSplineInterpolation->uninitialize();
 
@@ -90,7 +91,7 @@ boolean CBoxAlgorithmTopographicMap2DDisplay::uninitialize(void)
 	return true;
 }
 
-boolean CBoxAlgorithmTopographicMap2DDisplay::processInput(OpenViBE::uint32 ui32InputIndex)
+boolean CBoxAlgorithmTopographicMap2DDisplay::processInput(uint32 ui32InputIndex)
 {
 	getBoxAlgorithmContext()->markAlgorithmAsReadyToProcess();
 	return true;
@@ -102,7 +103,8 @@ boolean CBoxAlgorithmTopographicMap2DDisplay::processClock(IMessageClock& rMessa
 	return true;
 }
 
-boolean CBoxAlgorithmTopographicMap2DDisplay::process(void)
+boolean CBoxAlgorithmTopographicMap2DDisplay::process()
+
 {
 	IDynamicBoxContext* l_pDynamicBoxContext=getBoxAlgorithmContext()->getDynamicBoxContext();
 	uint32 i;

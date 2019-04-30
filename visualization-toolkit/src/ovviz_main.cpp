@@ -4,7 +4,7 @@
 #include "ovvizCVisualizationContext.hpp"
 
 using namespace OpenViBE;
-using namespace OpenViBE::Kernel;
+using namespace Kernel;
 
 namespace
 {

@@ -38,7 +38,7 @@ namespace Mensia
 			CMouse(CBoxAlgorithmViz& rBoxAlgorithmViz);
 			void mouseButton(IRendererContext& rContext, int32_t x, int32_t y, int32_t button, int status);
 			void mouseMotion(IRendererContext& rContext, int32_t x, int32_t y);
-			bool hasButtonPressed(void);
+			bool hasButtonPressed();
 
 			CBoxAlgorithmViz& m_rBoxAlgorithmViz;
 			std::map < int32_t, int > m_vButton;

@@ -53,19 +53,19 @@ namespace Mensia
 				second.doRender();
 			}
 
-			virtual void renderLeft(::GtkWidget* pWidget)
+			virtual void renderLeft(GtkWidget* pWidget)
 			{
 				first.doRenderLeft(pWidget);
 				second.doRenderLeft(pWidget);
 			}
 
-			virtual void renderRight(::GtkWidget* pWidget)
+			virtual void renderRight(GtkWidget* pWidget)
 			{
 				first.doRenderRight(pWidget);
 				second.doRenderRight(pWidget);
 			}
 
-			virtual void renderBottom(::GtkWidget* pWidget)
+			virtual void renderBottom(GtkWidget* pWidget)
 			{
 				first.doRenderBottom(pWidget);
 				second.doRenderBottom(pWidget);

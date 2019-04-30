@@ -48,8 +48,8 @@ namespace Mensia
 
 		public:
 
-			CRenderer(void);
-			virtual ~CRenderer(void);
+			CRenderer();
+			virtual ~CRenderer();
 
 			virtual void setChannelLocalisation(const char* sFilename);
 			virtual void setChannelCount(uint32_t ui32ChannelCount);
@@ -64,33 +64,33 @@ namespace Mensia
 
 			virtual void clear(uint32_t ui32SampleCountToKeep);
 
-			virtual uint32_t getChannelCount(void) const;
-			virtual uint32_t getSampleCount(void) const;
-			virtual uint32_t getHistoryCount(void) const;
-			virtual uint32_t getHistoryIndex(void) const;
+			virtual uint32_t getChannelCount() const;
+			virtual uint32_t getSampleCount() const;
+			virtual uint32_t getHistoryCount() const;
+			virtual uint32_t getHistoryIndex() const;
 			virtual bool getSampleAtERPFraction(float f32Alpha, std::vector < float >& vSample) const;
 
 			virtual void setTimeOffset(uint64_t offset) { m_ui64TimeOffset = offset; };
-			virtual uint64_t getTimeOffset(void) const { return m_ui64TimeOffset; }
+			virtual uint64_t getTimeOffset() const { return m_ui64TimeOffset; }
 
 			virtual void rebuild(const IRendererContext& rContext);
 			virtual void refresh(const IRendererContext& rContext);
 //			virtual bool render(const IRendererContext& rContext);
 
-			virtual void clearRegionSelection(void) { }
-			virtual uint32_t getRegionCategoryCount(void) { return 0; }
+			virtual void clearRegionSelection() { }
+			virtual uint32_t getRegionCategoryCount() { return 0; }
 			virtual uint32_t getRegionCount(uint32_t ui32RegionCategory) { return 0; }
-			virtual const char* getRegionCategoryName(uint32_t ui32RegionCategory) { return NULL; }
-			virtual const char* getRegionName(uint32_t ui32RegionCategory, uint32_t ui32RegionIndex) { return NULL; }
+			virtual const char* getRegionCategoryName(uint32_t ui32RegionCategory) { return nullptr; }
+			virtual const char* getRegionName(uint32_t ui32RegionCategory, uint32_t ui32RegionIndex) { return nullptr; }
 			virtual void selectRegion(uint32_t ui32RegionCategory, const char* sRegionName) { }
 			virtual void selectRegion(uint32_t ui32RegionCategory, uint32_t ui32RegionIndex) { }
 			
 			virtual void SetFaceMeshVisible(bool bVisible = true) { }
 
-			virtual void draw3DCoordinateSystem(void);
-			virtual void draw2DCoordinateSystem(void);
+			virtual void draw3DCoordinateSystem();
+			virtual void draw2DCoordinateSystem();
 
-			virtual void drawCoordinateSystem(void) // for retro compatibility
+			virtual void drawCoordinateSystem() // for retro compatibility
 			{
 				this->draw3DCoordinateSystem();
 			}

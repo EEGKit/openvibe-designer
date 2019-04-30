@@ -25,11 +25,9 @@
 #include <algorithm>
 
 using namespace Mensia;
-using namespace Mensia::AdvancedVisualization;
+using namespace AdvancedVisualization;
 
-CRendererCube::CRendererCube(void)
-{
-}
+CRendererCube::CRendererCube() { }
 
 void CRendererCube::rebuild(const IRendererContext& rContext)
 {
@@ -72,28 +70,28 @@ bool CRendererCube::render(const IRendererContext& rContext)
 	uint32_t j, k;
 	float d=3.5;
 
-	::glEnable(GL_DEPTH_TEST);
-	::glDisable(GL_BLEND);
+	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_BLEND);
 
-	::glMatrixMode(GL_PROJECTION);
-	::glPushMatrix();
-	::glLoadIdentity();
-	::gluPerspective(60, rContext.getAspect(), .01, 100);
-	::glTranslatef(0, 0, -d);
-	::glRotatef(rContext.getRotationX()*10, 1, 0, 0);
-	::glRotatef(rContext.getRotationY()*10, 0, 1, 0);
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	gluPerspective(60, rContext.getAspect(), .01, 100);
+	glTranslatef(0, 0, -d);
+	glRotatef(rContext.getRotationX()*10, 1, 0, 0);
+	glRotatef(rContext.getRotationY()*10, 0, 1, 0);
 
-	::glMatrixMode(GL_TEXTURE);
-	::glPushMatrix();
-	::glScalef(rContext.getScale(), 1, 1);
+	glMatrixMode(GL_TEXTURE);
+	glPushMatrix();
+	glScalef(rContext.getScale(), 1, 1);
 
-	::glMatrixMode(GL_MODELVIEW);
-	::glPushMatrix();
-	::glLoadIdentity();
-	::glScalef(rContext.getZoom(), rContext.getZoom(), rContext.getZoom());
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+	glScalef(rContext.getZoom(), rContext.getZoom(), rContext.getZoom());
 
-	::glPushMatrix();
-	::glRotatef(19, 1, 0, 0);
+	glPushMatrix();
+	glRotatef(19, 1, 0, 0);
 	for(j=0; j<rContext.getSelectedCount(); j++)
 	{
 		CVertex v;
@@ -107,41 +105,41 @@ bool CRendererCube::render(const IRendererContext& rContext)
 		if(it!=m_vChannelLocalisation.end())
 		{
 */
-			float l_fCubeScale=.1f*(.25f+::fabs(m_vVertex[k].u*rContext.getScale()));
+			float l_fCubeScale=.1f*(.25f+fabs(m_vVertex[k].u*rContext.getScale()));
 
-			::glPushMatrix();
+			glPushMatrix();
 //			::glTranslatef(it->second.x, it->second.y, it->second.z);
-			::glTranslatef(v.x, v.y, v.z);
-			::glTexCoord1f(m_vVertex[k].u);
-			::glScalef(l_fCubeScale, l_fCubeScale, l_fCubeScale);
+			glTranslatef(v.x, v.y, v.z);
+			glTexCoord1f(m_vVertex[k].u);
+			glScalef(l_fCubeScale, l_fCubeScale, l_fCubeScale);
 
-::glColor3f(1, 1, 1);
-::glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+glColor3f(1, 1, 1);
+glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 			cube();
 
-::glColor3f(0, 0, 0);
-::glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+glColor3f(0, 0, 0);
+glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			cube();
 
-			::glPopMatrix();
+			glPopMatrix();
 //		}
 	}
-	::glPopMatrix();
+	glPopMatrix();
 
-::glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	if(rContext.getCheckBoardVisibility()) this->drawCoordinateSystem();
 
-	::glMatrixMode(GL_MODELVIEW);
-	::glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
 
-	::glMatrixMode(GL_TEXTURE);
-	::glPopMatrix();
+	glMatrixMode(GL_TEXTURE);
+	glPopMatrix();
 
-	::glMatrixMode(GL_PROJECTION);
-	::glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
 
-	::glMatrixMode(GL_MODELVIEW);
+	glMatrixMode(GL_MODELVIEW);
 
 	return true;
 }

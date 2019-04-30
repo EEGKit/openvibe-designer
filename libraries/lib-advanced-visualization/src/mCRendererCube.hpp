@@ -34,7 +34,7 @@ namespace Mensia
 		{
 		public:
 
-			CRendererCube(void);
+			CRendererCube();
 
 			virtual void rebuild(const IRendererContext& rContext);
 			virtual void refresh(const IRendererContext& rContext);

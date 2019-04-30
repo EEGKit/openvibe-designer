@@ -52,17 +52,14 @@ namespace Mensia
 
 		public:
 
-			IRuler(void)
-				:m_pRendererContext(NULL)
-				,m_pRenderer(NULL)
-				,m_fBlackAlpha(.9f)
-				,m_fWhiteAlpha(1.f)
-			{
-			}
+			IRuler()
 
-			virtual ~IRuler(void)
-			{
-			}
+				:m_pRendererContext(nullptr)
+				,m_pRenderer(nullptr)
+				,m_fBlackAlpha(.9f)
+				,m_fWhiteAlpha(1.f) { }
+
+			virtual ~IRuler() { }
 
 			virtual void setRendererContext(const IRendererContext* pRendererContext)
 			{
@@ -77,7 +74,8 @@ namespace Mensia
 				m_pRenderer=pRenderer;
 			}
 
-			virtual void doRender(void)
+			virtual void doRender()
+
 			{
 				// if(m_pRendererContext->getScaleVisibility())
 				{
@@ -85,7 +83,7 @@ namespace Mensia
 				}
 			}
 
-			virtual void doRenderLeft(::GtkWidget* pWidget)
+			virtual void doRenderLeft(GtkWidget* pWidget)
 			{
 				if(m_pRendererContext->getScaleVisibility())
 				{
@@ -93,7 +91,7 @@ namespace Mensia
 				}
 			}
 
-			virtual void doRenderRight(::GtkWidget* pWidget)
+			virtual void doRenderRight(GtkWidget* pWidget)
 			{
 				if(m_pRendererContext->getScaleVisibility())
 				{
@@ -101,7 +99,7 @@ namespace Mensia
 				}
 			}
 
-			virtual void doRenderBottom(::GtkWidget* pWidget)
+			virtual void doRenderBottom(GtkWidget* pWidget)
 			{
 				if(m_pRendererContext->getScaleVisibility())
 				{
@@ -111,21 +109,13 @@ namespace Mensia
 
 		protected:
 
-			virtual void render(void)
-			{
-			}
+			virtual void render() { }
 
-			virtual void renderLeft(::GtkWidget* pWidget)
-			{
-			}
+			virtual void renderLeft(GtkWidget* pWidget) { }
 
-			virtual void renderRight(::GtkWidget* pWidget)
-			{
-			}
+			virtual void renderRight(GtkWidget* pWidget) { }
 
-			virtual void renderBottom(::GtkWidget* pWidget)
-			{
-			}
+			virtual void renderBottom(GtkWidget* pWidget) { }
 
 		protected:
 
@@ -133,14 +123,14 @@ namespace Mensia
 			{
 				std::vector < double > l_vResult;
 				double l_fRange=fStop-fStart;
-				double l_fOrder=::floor(::log(l_fRange) / ::log(10.) - .1f);
-				double l_fStep=::pow(10, l_fOrder);
-				double l_fStepCount=::trunc(l_fRange/l_fStep);
+				double l_fOrder=floor(log(l_fRange) / log(10.) - .1f);
+				double l_fStep=pow(10, l_fOrder);
+				double l_fStepCount=trunc(l_fRange/l_fStep);
 
 				while(l_fStepCount<uiCount) { l_fStepCount*=2; l_fStep/=2; }
 				while(l_fStepCount>uiCount) { l_fStepCount/=2; l_fStep*=2; }
 
-				double l_fValue=::trunc(fStart/l_fStep)*l_fStep;
+				double l_fValue=trunc(fStart/l_fStep)*l_fStep;
 				while(l_fValue<fStart)
 				{
 					l_fValue+=l_fStep;
@@ -166,13 +156,13 @@ namespace Mensia
 				}
 				if(l_sLabel[i]=='.') l_sLabel[i]='\0';
 #else
-				if(::fabs(v)<1E-10)
+				if(fabs(v)<1E-10)
 				{
-					::sprintf(l_sLabel, "0");
+					sprintf(l_sLabel, "0");
 				}
 				else
 				{
-					::sprintf(l_sLabel, "%g", v);
+					sprintf(l_sLabel, "%g", v);
 				}
 #endif
 				return l_sLabel;

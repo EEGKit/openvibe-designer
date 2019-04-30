@@ -7,23 +7,23 @@
 
 using namespace OpenViBE;
 using namespace OpenViBEDesigner;
-using namespace OpenViBEDesigner::Setting;
+using namespace Setting;
 
-static void on_change(::GtkEntry *entry, gpointer pUserData)
+static void on_change(GtkEntry *entry, gpointer pUserData)
 {
 	static_cast<CEnumerationSettingView *>(pUserData)->onChange();
 }
 
-CEnumerationSettingView::CEnumerationSettingView(OpenViBE::Kernel::IBox &rBox, OpenViBE::uint32 ui32Index,
+CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox &rBox, uint32 ui32Index,
 												 CString &rBuilderName, const Kernel::IKernelContext &rKernelContext,
-												 const OpenViBE::CIdentifier &rTypeIdentifier):
+												 const CIdentifier &rTypeIdentifier):
 	CAbstractSettingView(rBox, ui32Index, rBuilderName, "settings_collection-comboboxentry_setting_enumeration"),
 	m_oTypeIdentifier(rTypeIdentifier),
 	m_rKernelContext(rKernelContext),
 	m_bOnValueSetting(false)
 {
 	p=false;
-	::GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
+	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 
 	m_pComboBox = GTK_COMBO_BOX(l_pSettingWidget);
 
@@ -41,8 +41,8 @@ CEnumerationSettingView::CEnumerationSettingView(OpenViBE::Kernel::IBox &rBox, O
 
 	std::sort(l_vEntries.begin(), l_vEntries.end());
 
-	::GtkTreeIter l_oListIter;
-	::GtkListStore* l_pList=GTK_LIST_STORE(gtk_combo_box_get_model(m_pComboBox));
+	GtkTreeIter l_oListIter;
+	GtkListStore* l_pList=GTK_LIST_STORE(gtk_combo_box_get_model(m_pComboBox));
 	gtk_combo_box_set_wrap_width(m_pComboBox, 0);
 	gtk_list_store_clear(l_pList);
 
@@ -68,22 +68,22 @@ CEnumerationSettingView::CEnumerationSettingView(OpenViBE::Kernel::IBox &rBox, O
 }
 
 
-void CEnumerationSettingView::getValue(OpenViBE::CString &rValue) const
+void CEnumerationSettingView::getValue(CString &rValue) const
 {
 	rValue = CString(gtk_combo_box_get_active_text(m_pComboBox));
 }
 
 
-void CEnumerationSettingView::setValue(const OpenViBE::CString &rValue)
+void CEnumerationSettingView::setValue(const CString &rValue)
 {
 	m_bOnValueSetting = true;
 
 	// If the current value of the setting is not in the enumeration list, we will add or replace the last value in the list, so it can be set to this value
 	if (m_mEntriesIndex.count(rValue) == 0)
 	{
-		::GtkTreeIter l_oListIter;
-		::GtkListStore* l_pList = GTK_LIST_STORE(gtk_combo_box_get_model(m_pComboBox));
-		int valuesInModel = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(l_pList), NULL);
+		GtkTreeIter l_oListIter;
+		GtkListStore* l_pList = GTK_LIST_STORE(gtk_combo_box_get_model(m_pComboBox));
+		int valuesInModel = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(l_pList), nullptr);
 		if (valuesInModel == static_cast<int>(m_mEntriesIndex.size()))
 		{
 			gtk_list_store_append(l_pList, &l_oListIter);

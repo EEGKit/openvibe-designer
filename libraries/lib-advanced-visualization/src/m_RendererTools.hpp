@@ -26,39 +26,39 @@ namespace
 {
 	inline void cube(const float fSize=1)
 	{
-		::glBegin(GL_QUADS);
+		glBegin(GL_QUADS);
 
-		::glVertex3f( fSize,-fSize, fSize);
-		::glVertex3f( fSize, fSize, fSize);
-		::glVertex3f( fSize, fSize,-fSize);
-		::glVertex3f( fSize,-fSize,-fSize);
+		glVertex3f( fSize,-fSize, fSize);
+		glVertex3f( fSize, fSize, fSize);
+		glVertex3f( fSize, fSize,-fSize);
+		glVertex3f( fSize,-fSize,-fSize);
 
-		::glVertex3f(-fSize,-fSize, fSize);
-		::glVertex3f(-fSize,-fSize,-fSize);
-		::glVertex3f(-fSize, fSize,-fSize);
-		::glVertex3f(-fSize, fSize, fSize);
+		glVertex3f(-fSize,-fSize, fSize);
+		glVertex3f(-fSize,-fSize,-fSize);
+		glVertex3f(-fSize, fSize,-fSize);
+		glVertex3f(-fSize, fSize, fSize);
 
-		::glVertex3f(-fSize, fSize, fSize);
-		::glVertex3f( fSize, fSize, fSize);
-		::glVertex3f( fSize, fSize,-fSize);
-		::glVertex3f(-fSize, fSize,-fSize);
+		glVertex3f(-fSize, fSize, fSize);
+		glVertex3f( fSize, fSize, fSize);
+		glVertex3f( fSize, fSize,-fSize);
+		glVertex3f(-fSize, fSize,-fSize);
 
-		::glVertex3f(-fSize,-fSize, fSize);
-		::glVertex3f(-fSize,-fSize,-fSize);
-		::glVertex3f( fSize,-fSize,-fSize);
-		::glVertex3f( fSize,-fSize, fSize);
+		glVertex3f(-fSize,-fSize, fSize);
+		glVertex3f(-fSize,-fSize,-fSize);
+		glVertex3f( fSize,-fSize,-fSize);
+		glVertex3f( fSize,-fSize, fSize);
 
-		::glVertex3f(-fSize, fSize, fSize);
-		::glVertex3f(-fSize,-fSize, fSize);
-		::glVertex3f( fSize,-fSize, fSize);
-		::glVertex3f( fSize, fSize, fSize);
+		glVertex3f(-fSize, fSize, fSize);
+		glVertex3f(-fSize,-fSize, fSize);
+		glVertex3f( fSize,-fSize, fSize);
+		glVertex3f( fSize, fSize, fSize);
 
-		::glVertex3f(-fSize, fSize,-fSize);
-		::glVertex3f(-fSize,-fSize,-fSize);
-		::glVertex3f( fSize,-fSize,-fSize);
-		::glVertex3f( fSize, fSize,-fSize);
+		glVertex3f(-fSize, fSize,-fSize);
+		glVertex3f(-fSize,-fSize,-fSize);
+		glVertex3f( fSize,-fSize,-fSize);
+		glVertex3f( fSize, fSize,-fSize);
 
-		::glEnd();
+		glEnd();
 	}
 }
 

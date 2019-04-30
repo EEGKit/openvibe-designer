@@ -9,19 +9,20 @@
 #include <cstring>
 
 using namespace OpenViBE;
-using namespace OpenViBE::Kernel;
-using namespace OpenViBE::Plugins;
+using namespace Kernel;
+using namespace Plugins;
 
 using namespace OpenViBEPlugins;
-using namespace OpenViBEPlugins::Test;
+using namespace Test;
 
-boolean CAlgorithmSphericalSplineInterpolation::initialize(void)
+boolean CAlgorithmSphericalSplineInterpolation::initialize()
+
 {
 	m_bFirstProcess = true;
-	m_pDoubleCoords = NULL;
-	m_pInsermCoords = NULL;
-	m_pSplineCoefs = NULL;
-	m_pLaplacianSplineCoefs = NULL;
+	m_pDoubleCoords = nullptr;
+	m_pInsermCoords = nullptr;
+	m_pSplineCoefs = nullptr;
+	m_pLaplacianSplineCoefs = nullptr;
 
 	ip_i64SplineOrder.initialize(getInputParameter(OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_SplineOrder));
 	ip_i64ControlPointsCount.initialize(getInputParameter(OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_ControlPointsCount));
@@ -37,7 +38,8 @@ boolean CAlgorithmSphericalSplineInterpolation::initialize(void)
 	return true;
 }
 
-boolean CAlgorithmSphericalSplineInterpolation::uninitialize(void)
+boolean CAlgorithmSphericalSplineInterpolation::uninitialize()
+
 {
 	ip_i64SplineOrder.uninitialize();
 	ip_i64ControlPointsCount.uninitialize();
@@ -49,22 +51,22 @@ boolean CAlgorithmSphericalSplineInterpolation::uninitialize(void)
 	op_f64MinSamplePointValue.uninitialize();
 	op_f64MaxSamplePointValue.uninitialize();
 
-	if(m_pDoubleCoords != NULL)
+	if(m_pDoubleCoords != nullptr)
 	{
 		delete[] m_pDoubleCoords;
 	}
 
-	if(m_pInsermCoords != NULL)
+	if(m_pInsermCoords != nullptr)
 	{
 		delete[] m_pInsermCoords;
 	}
 
-	if(m_pSplineCoefs != NULL)
+	if(m_pSplineCoefs != nullptr)
 	{
 		delete[] m_pSplineCoefs;
 	}
 
-	if(m_pLaplacianSplineCoefs != NULL)
+	if(m_pLaplacianSplineCoefs != nullptr)
 	{
 		delete[] m_pLaplacianSplineCoefs;
 	}
@@ -72,7 +74,8 @@ boolean CAlgorithmSphericalSplineInterpolation::uninitialize(void)
 	return true;
 }
 
-boolean CAlgorithmSphericalSplineInterpolation::process(void)
+boolean CAlgorithmSphericalSplineInterpolation::process()
+
 {
 	if(m_bFirstProcess == true)
 	{
@@ -106,7 +109,7 @@ boolean CAlgorithmSphericalSplineInterpolation::process(void)
 
 	if(isInputTriggerActive(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_ComputeSplineCoefs))
 	{
-		if(m_pSplineCoefs == NULL && (int)ip_i64ControlPointsCount != 0)
+		if(m_pSplineCoefs == nullptr && (int)ip_i64ControlPointsCount != 0)
 		{
 			m_pSplineCoefs = new double[(int)ip_i64ControlPointsCount+1];
 		}
@@ -167,7 +170,7 @@ boolean CAlgorithmSphericalSplineInterpolation::process(void)
 
 	if(isInputTriggerActive(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_ComputeLaplacianCoefs))
 	{
-		if(m_pLaplacianSplineCoefs == NULL && (int)ip_i64ControlPointsCount != 0)
+		if(m_pLaplacianSplineCoefs == nullptr && (int)ip_i64ControlPointsCount != 0)
 		{
 			m_pLaplacianSplineCoefs = new double[(int)ip_i64ControlPointsCount+1];
 		}

@@ -28,11 +28,12 @@
 #include <algorithm>    // std::min_element, std::max_element
 
 using namespace Mensia;
-using namespace Mensia::AdvancedVisualization;
+using namespace AdvancedVisualization;
 
 static int iCount=0;
 
-CRenderer::CRenderer(void)
+CRenderer::CRenderer()
+
 	:m_ui32HistoryIndex(0)
 	,m_ui32HistoryCount(0)
 	,m_ui32ChannelCount(0)
@@ -48,7 +49,8 @@ CRenderer::CRenderer(void)
 	iCount++;
 }
 
-CRenderer::~CRenderer(void)
+CRenderer::~CRenderer()
+
 {
 	iCount--;
 //	::printf("CRenderer::~CRenderer - %i instances left\n", iCount);
@@ -177,22 +179,22 @@ void CRenderer::clear(uint32_t ui32SampleCountToKeep = 0)
 	m_ui32HistoryIndex=0;
 }
 
-uint32_t CRenderer::getChannelCount(void) const
+uint32_t CRenderer::getChannelCount() const
 {
 	return m_ui32ChannelCount;
 }
 
-uint32_t CRenderer::getSampleCount(void) const
+uint32_t CRenderer::getSampleCount() const
 {
 	return m_ui32SampleCount;
 }
 
-uint32_t CRenderer::getHistoryCount(void) const
+uint32_t CRenderer::getHistoryCount() const
 {
 	return m_ui32HistoryCount;
 }
 
-uint32_t CRenderer::getHistoryIndex(void) const
+uint32_t CRenderer::getHistoryIndex() const
 {
 	return m_ui32HistoryIndex;
 }
@@ -223,9 +225,7 @@ bool CRenderer::getSampleAtERPFraction(float fERPFraction, std::vector < float >
 	return true;
 }
 
-void CRenderer::rebuild(const IRendererContext& rContext)
-{
-}
+void CRenderer::rebuild(const IRendererContext& rContext) { }
 
 void CRenderer::refresh(const IRendererContext& rContext)
 {
@@ -261,93 +261,95 @@ bool CRenderer::render(const IRendererContext& rContext)
 }
 #endif
 
-void CRenderer::draw3DCoordinateSystem(void)
-{
-	::glPushAttrib(GL_ALL_ATTRIB_BITS);
-	::glEnable(GL_DEPTH_TEST);
-	::glEnable(GL_BLEND);
-	::glDisable(GL_TEXTURE_1D);
-	::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	::glLineWidth(2);
+void CRenderer::draw3DCoordinateSystem()
 
-	::glPushMatrix();
-	::glColor3f(.2f, .2f, .2f);
-	::glScalef(.2f, .2f, .2f);
-	::glBegin(GL_LINES);
+{
+	glPushAttrib(GL_ALL_ATTRIB_BITS);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glDisable(GL_TEXTURE_1D);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glLineWidth(2);
+
+	glPushMatrix();
+	glColor3f(.2f, .2f, .2f);
+	glScalef(.2f, .2f, .2f);
+	glBegin(GL_LINES);
 	for(int x=-10; x<=10; x++)
 	{
 		for(int z=-10; z<=10; z++)
 		{
 			if(x!=0)
 			{
-				::glVertex3f(float(x), 0,  10.f);
-				::glVertex3f(float(x), 0, -10.f);
+				glVertex3f(float(x), 0,  10.f);
+				glVertex3f(float(x), 0, -10.f);
 			}
 			if(z!=0)
 			{
-				::glVertex3f( 10.f, 0, float(z));
-				::glVertex3f(-10.f, 0, float(z));
+				glVertex3f( 10.f, 0, float(z));
+				glVertex3f(-10.f, 0, float(z));
 			}
 		}
 	}
-	::glEnd();
-	::glPopMatrix();
+	glEnd();
+	glPopMatrix();
 
-	::glBegin(GL_LINES);
-		::glColor3f(0, 0, 1);
-		::glVertex3f(0, 0,  2.f);
-		::glVertex3f(0, 0, -3.f);
-		::glColor3f(0, 1, 0);
-		::glVertex3f(0,  1.25f, 0);
-		::glVertex3f(0, -1.25f, 0);
-		::glColor3f(1, 0, 0);
-		::glVertex3f( 2.f, 0, 0);
-		::glVertex3f(-2.f, 0, 0);
-	::glEnd();
+	glBegin(GL_LINES);
+		glColor3f(0, 0, 1);
+		glVertex3f(0, 0,  2.f);
+		glVertex3f(0, 0, -3.f);
+		glColor3f(0, 1, 0);
+		glVertex3f(0,  1.25f, 0);
+		glVertex3f(0, -1.25f, 0);
+		glColor3f(1, 0, 0);
+		glVertex3f( 2.f, 0, 0);
+		glVertex3f(-2.f, 0, 0);
+	glEnd();
 
-	::glPopAttrib();
+	glPopAttrib();
 }
 
-void CRenderer::draw2DCoordinateSystem(void)
-{
-	::glPushAttrib(GL_ALL_ATTRIB_BITS);
-	::glEnable(GL_DEPTH_TEST);
-	::glEnable(GL_BLEND);
-	::glDisable(GL_TEXTURE_1D);
-	::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	::glLineWidth(2);
+void CRenderer::draw2DCoordinateSystem()
 
-	::glPushMatrix();
-	::glColor3f(.2f, .2f, .2f);
-	::glScalef(.2f, .2f, .2f);
-	::glBegin(GL_LINES);
+{
+	glPushAttrib(GL_ALL_ATTRIB_BITS);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glDisable(GL_TEXTURE_1D);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glLineWidth(2);
+
+	glPushMatrix();
+	glColor3f(.2f, .2f, .2f);
+	glScalef(.2f, .2f, .2f);
+	glBegin(GL_LINES);
 	for (int x = -10; x <= 10; x++)
 	{
 		for (int y = -10; y <= 10; y++)
 		{
 			if (x != 0)
 			{
-				::glVertex2f(float(x), 10.f);
-				::glVertex2f(float(x), -10.f);
+				glVertex2f(float(x), 10.f);
+				glVertex2f(float(x), -10.f);
 			}
 			if (y != 0)
 			{
-				::glVertex2f(10.f, float(y));
-				::glVertex2f(-10.f, float(y));
+				glVertex2f(10.f, float(y));
+				glVertex2f(-10.f, float(y));
 			}
 		}
 	}
-	::glEnd();
-	::glPopMatrix();
+	glEnd();
+	glPopMatrix();
 
-	::glBegin(GL_LINES);
-	::glColor3f(0, 1, 0);
-	::glVertex2f(0, 2.0f);
-	::glVertex2f(0, -2.0f);
-	::glColor3f(1, 0, 0);
-	::glVertex2f(2.f, 0);
-	::glVertex2f(-2.f, 0);
-	::glEnd();
+	glBegin(GL_LINES);
+	glColor3f(0, 1, 0);
+	glVertex2f(0, 2.0f);
+	glVertex2f(0, -2.0f);
+	glColor3f(1, 0, 0);
+	glVertex2f(2.f, 0);
+	glVertex2f(-2.f, 0);
+	glEnd();
 
-	::glPopAttrib();
+	glPopAttrib();
 }

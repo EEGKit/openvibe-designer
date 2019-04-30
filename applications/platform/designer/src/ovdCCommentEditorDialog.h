@@ -10,15 +10,15 @@ namespace OpenViBEDesigner
 	public:
 
 		CCommentEditorDialog(const OpenViBE::Kernel::IKernelContext& rKernelContext, OpenViBE::Kernel::IComment& rComment, const char* sGUIFilename);
-		virtual ~CCommentEditorDialog(void);
+		virtual ~CCommentEditorDialog();
 
-		OpenViBE::boolean run(void);
+		OpenViBE::boolean run();
 
 		// Callback for text formatting
 		void applyTagCB(const char* sTagIn, const char* sTagOut);
 
 		// help formatting pango
-		void infoCB(void);
+		void infoCB();
 	protected:
 
 		const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
@@ -27,7 +27,7 @@ namespace OpenViBEDesigner
 
 	private:
 
-		CCommentEditorDialog(void);
+		CCommentEditorDialog();
 
 		::GtkBuilder* m_pInterface;
 		::GtkWidget* m_pDialog;

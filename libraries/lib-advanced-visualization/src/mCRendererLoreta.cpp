@@ -33,7 +33,7 @@
 #include <cstdio>
 
 using namespace Mensia;
-using namespace Mensia::AdvancedVisualization;
+using namespace AdvancedVisualization;
 
 using namespace LoretaRegions;
 
@@ -104,7 +104,8 @@ namespace
 	}
 };
 
-CRendererLoreta::CRendererLoreta(void)
+CRendererLoreta::CRendererLoreta()
+
 {
 	uint32_t i;
 
@@ -139,16 +140,12 @@ CRendererLoreta::CRendererLoreta(void)
 		char l_sLookup2[1024];
 		char l_sLookup3[1024];
 		char l_sLine[1024];
-		if(::fscanf(l_pFile, "%s\n", l_sLine)==0) // Avoids warning
-		{
-		}
+		if(::fscanf(l_pFile, "%s\n", l_sLine)==0) // Avoids warning { }
 
 		while(!::feof(l_pFile))
 		{
 			::strcpy(l_sLine, "");
-			if(::fscanf(l_pFile, "%[^\n]\n\r", l_sLine)==0) // Avoids warning
-			{
-			}
+			if(::fscanf(l_pFile, "%[^\n]\n\r", l_sLine)==0) // Avoids warning { }
 
 			int n=::sscanf(l_sLine, "%i,%i,%i,%i,%i,%i,%i,%[^,],%[^,],%[^,]", &x, &y, &z, &dx, &dy, &dz, &d, l_sLookup1, l_sLookup2, l_sLookup3);
 			if(n==10)
@@ -356,27 +353,27 @@ bool CRendererLoreta::render(const IRendererContext& rContext)
 
 //	::glDisable(GL_TEXTURE_1D);
 
-	::glEnable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST);
 
-	::glMatrixMode(GL_PROJECTION);
-	::glPushMatrix();
-	::glLoadIdentity();
-	::gluPerspective(60, rContext.getAspect(), .01, 100);
-	::glTranslatef(0, 0, -d);
-	::glRotatef(rContext.getRotationX()*10, 1, 0, 0);
-	::glRotatef(rContext.getRotationY()*10, 0, 1, 0);
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	gluPerspective(60, rContext.getAspect(), .01, 100);
+	glTranslatef(0, 0, -d);
+	glRotatef(rContext.getRotationX()*10, 1, 0, 0);
+	glRotatef(rContext.getRotationY()*10, 0, 1, 0);
 
-	::glMatrixMode(GL_MODELVIEW);
-	::glPushMatrix();
-	::glLoadIdentity();
-	::glScalef(rContext.getZoom(), rContext.getZoom(), rContext.getZoom());
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+	glScalef(rContext.getZoom(), rContext.getZoom(), rContext.getZoom());
 
-	::glPushMatrix();
-	::glTranslatef(0, .5, 0);
-	::glScalef(.00944f, .00944f, .00944f);
-	::glRotatef(19, 1, 0, 0);
-	::glTranslatef(0, -10, 15);
-	::glDisable(GL_DEPTH_TEST);
+	glPushMatrix();
+	glTranslatef(0, .5, 0);
+	glScalef(.00944f, .00944f, .00944f);
+	glRotatef(19, 1, 0, 0);
+	glTranslatef(0, -10, 15);
+	glDisable(GL_DEPTH_TEST);
 
 	if(m_ui32HistoryCount && m_vHistory.size()==2394)
 	{
@@ -450,73 +447,74 @@ bool CRendererLoreta::render(const IRendererContext& rContext)
 	}
 
 #if defined __Rendering_VertexBuffer__
-	::glEnable(GL_TEXTURE_1D);
-	::glDisable(GL_LIGHTING);
-	::glColor4f(.1f, .1f, .1f, rContext.getTranslucency());
-	::glEnableClientState(GL_VERTEX_ARRAY);
-	::glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	::glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_oBrain.m_vVertex[0].x);
-	::glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_oBrain.m_vVertex[0].u);
+	glEnable(GL_TEXTURE_1D);
+	glDisable(GL_LIGHTING);
+	glColor4f(.1f, .1f, .1f, rContext.getTranslucency());
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_oBrain.m_vVertex[0].x);
+	glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_oBrain.m_vVertex[0].u);
 	// ::glDrawElements(GL_TRIANGLES, m_oBrain.m_vTriangle.size(), GL_UNSIGNED_INT, &m_oBrain.m_vTriangle[0]);
 	if(!m_vBrainSubsetTriangle.empty())
 	{
-		::glDrawElements(GL_TRIANGLES, m_vBrainSubsetTriangle.size(), GL_UNSIGNED_INT, &m_vBrainSubsetTriangle[0]);
+		glDrawElements(GL_TRIANGLES, m_vBrainSubsetTriangle.size(), GL_UNSIGNED_INT, &m_vBrainSubsetTriangle[0]);
 	}
-	::glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	::glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState(GL_VERTEX_ARRAY);
 #endif
 
-	::glPopMatrix();
+	glPopMatrix();
 
-	::glEnable(GL_LIGHTING);
-	::glDisable(GL_TEXTURE_1D);
-	::glPushMatrix();
-	::glTranslatef(0, .5f, 0);
-	::glRotatef(19, 1, 0, 0);
-	::glTranslatef(0, -.2f, .35f);
+	glEnable(GL_LIGHTING);
+	glDisable(GL_TEXTURE_1D);
+	glPushMatrix();
+	glTranslatef(0, .5f, 0);
+	glRotatef(19, 1, 0, 0);
+	glTranslatef(0, -.2f, .35f);
 //	::glScalef(1.8f, 1.8f, 1.8f);
 	
 	if(rContext.isScalpMeshVisible())
 	{
-		::glColor4f(.8f, .6f, .5f, .1f);
-		::glEnableClientState(GL_VERTEX_ARRAY);
-		::glEnableClientState(GL_NORMAL_ARRAY);
-		::glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_oScalp.m_vVertex[0].x);
-		::glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_oScalp.m_vNormal[0].x);
-		::glDrawElements(GL_TRIANGLES, m_oScalp.m_vTriangle.size(), GL_UNSIGNED_INT, &m_oScalp.m_vTriangle[0]);
-		::glDisableClientState(GL_NORMAL_ARRAY);
-		::glDisableClientState(GL_VERTEX_ARRAY);
+		glColor4f(.8f, .6f, .5f, .1f);
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glEnableClientState(GL_NORMAL_ARRAY);
+		glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_oScalp.m_vVertex[0].x);
+		glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_oScalp.m_vNormal[0].x);
+		glDrawElements(GL_TRIANGLES, m_oScalp.m_vTriangle.size(), GL_UNSIGNED_INT, &m_oScalp.m_vTriangle[0]);
+		glDisableClientState(GL_NORMAL_ARRAY);
+		glDisableClientState(GL_VERTEX_ARRAY);
 	}
 	if(rContext.isFaceMeshVisible())
 	{
-		::glColor4f(.8f, .6f, .5f, .1f);
-		::glDisable(GL_TEXTURE_1D);
-		::glEnableClientState(GL_VERTEX_ARRAY);
-		::glEnableClientState(GL_NORMAL_ARRAY);
-		::glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_oFace.m_vVertex[0].x);
-		::glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_oFace.m_vNormal[0].x);
-		::glDrawElements(GL_TRIANGLES, m_oFace.m_vTriangle.size(), GL_UNSIGNED_INT, &m_oFace.m_vTriangle[0]);
-		::glDisableClientState(GL_NORMAL_ARRAY);
-		::glDisableClientState(GL_VERTEX_ARRAY);
+		glColor4f(.8f, .6f, .5f, .1f);
+		glDisable(GL_TEXTURE_1D);
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glEnableClientState(GL_NORMAL_ARRAY);
+		glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_oFace.m_vVertex[0].x);
+		glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_oFace.m_vNormal[0].x);
+		glDrawElements(GL_TRIANGLES, m_oFace.m_vTriangle.size(), GL_UNSIGNED_INT, &m_oFace.m_vTriangle[0]);
+		glDisableClientState(GL_NORMAL_ARRAY);
+		glDisableClientState(GL_VERTEX_ARRAY);
 	}
 
-	::glDisable(GL_LIGHTING);
-	::glPopMatrix();
+	glDisable(GL_LIGHTING);
+	glPopMatrix();
 
 	if(rContext.getCheckBoardVisibility()) this->drawCoordinateSystem();
 
-	::glMatrixMode(GL_MODELVIEW);
-	::glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
 
-	::glMatrixMode(GL_PROJECTION);
-	::glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
 
-	::glMatrixMode(GL_MODELVIEW);
+	glMatrixMode(GL_MODELVIEW);
 
 	return true;
 }
 
-void CRendererLoreta::clearRegionSelection(void)
+void CRendererLoreta::clearRegionSelection()
+
 {
 	std::vector < bool >::iterator it;
 	for(it=m_vSelected.begin(); it!=m_vSelected.end(); it++)
@@ -527,7 +525,8 @@ void CRendererLoreta::clearRegionSelection(void)
 	this->refreshBrainSubset();
 }
 
-uint32_t CRendererLoreta::getRegionCategoryCount(void)
+uint32_t CRendererLoreta::getRegionCategoryCount()
+
 {
 	return m_vLookup.size();
 }
@@ -547,13 +546,13 @@ const char* CRendererLoreta::getRegionCategoryName(uint32_t ui32RegionCategory)
 		case 1: return "Anatomic";
 		case 2: return "Lobe";
 		case 3: return "Function";
-		default: return NULL;
+		default: return nullptr;
 	}
 }
 
 const char* CRendererLoreta::getRegionName(uint32_t ui32RegionCategory, uint32_t ui32RegionIndex)
 {
-	if(ui32RegionCategory>=m_vLookup.size()) return NULL;
+	if(ui32RegionCategory>=m_vLookup.size()) return nullptr;
 
 	std::map < std::string, std::vector < uint32_t > >& l_vLookup=m_vLookup[ui32RegionCategory];
 	std::map < std::string, std::vector < uint32_t > >::iterator it=l_vLookup.begin();
@@ -568,7 +567,7 @@ const char* CRendererLoreta::getRegionName(uint32_t ui32RegionCategory, uint32_t
 		return it->first.c_str();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void CRendererLoreta::selectRegion(uint32_t ui32RegionCategory, const char* sRegionName)
@@ -615,7 +614,8 @@ void CRendererLoreta::selectRegion(uint32_t ui32RegionCategory, uint32_t ui32Reg
 	this->refreshBrainSubset();
 }
 
-void CRendererLoreta::refreshBrainSubset(void)
+void CRendererLoreta::refreshBrainSubset()
+
 {
 	// Initializes look up to its maximum size
 

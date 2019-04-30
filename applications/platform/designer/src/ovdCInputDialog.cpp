@@ -2,7 +2,7 @@
 #include <gdk/gdkkeysyms.h>
 
 using namespace OpenViBE;
-using namespace OpenViBE::Kernel;
+using namespace Kernel;
 using namespace OpenViBEDesigner;
 
 CInputDialog::CInputDialog(const char* sGtkBuilder, fpButtonCB fpOKButtonCB, void* pUserData, const char* sTitle, const char* sLabel, const char* sEntry)
@@ -11,9 +11,9 @@ CInputDialog::CInputDialog(const char* sGtkBuilder, fpButtonCB fpOKButtonCB, voi
 	m_pUserData = pUserData;
 
 	//retrieve input dialog
-	::GtkBuilder* l_pInputDialogInterface = gtk_builder_new(); // glade_xml_new(sGtkBuilder, "input", NULL);
-	gtk_builder_add_from_file(l_pInputDialogInterface, sGtkBuilder, NULL);
-	gtk_builder_connect_signals(l_pInputDialogInterface, NULL);
+	GtkBuilder* l_pInputDialogInterface = gtk_builder_new(); // glade_xml_new(sGtkBuilder, "input", nullptr);
+	gtk_builder_add_from_file(l_pInputDialogInterface, sGtkBuilder, nullptr);
+	gtk_builder_connect_signals(l_pInputDialogInterface, nullptr);
 
 	m_pInputDialog = GTK_DIALOG(gtk_builder_get_object(l_pInputDialogInterface, "input"));
 	m_pInputDialogLabel = GTK_LABEL(gtk_builder_get_object(l_pInputDialogInterface, "input-label"));
@@ -24,11 +24,11 @@ CInputDialog::CInputDialog(const char* sGtkBuilder, fpButtonCB fpOKButtonCB, voi
 	GTK_WIDGET_SET_FLAGS(GTK_WIDGET(m_pInputDialogEntry), GDK_KEY_PRESS_MASK);
 	g_signal_connect(G_OBJECT(m_pInputDialogEntry), "key-press-event", G_CALLBACK(key_press_event_cb), m_pInputDialog);
 
-	if(sLabel != NULL)
+	if(sLabel != nullptr)
 	{
 		gtk_label_set(m_pInputDialogLabel, sLabel);
 	}
-	if(sEntry != NULL)
+	if(sEntry != nullptr)
 	{
 		gtk_entry_set_text(m_pInputDialogEntry, sEntry);
 	}
@@ -51,7 +51,7 @@ void CInputDialog::run()
 
 	if(l_iResult == GTK_RESPONSE_ACCEPT)
 	{
-		if(m_fpOKButtonCB != NULL)
+		if(m_fpOKButtonCB != nullptr)
 		{
 			m_fpOKButtonCB(GTK_WIDGET(m_pInputDialogOKButton), this);
 		}
@@ -70,14 +70,14 @@ const char* CInputDialog::getEntry()
 	return (const char*)gtk_entry_get_text(m_pInputDialogEntry);
 }
 
-gboolean CInputDialog::key_press_event_cb(::GtkWidget* pWidget, GdkEventKey* pEventKey, gpointer pUserData)
+gboolean CInputDialog::key_press_event_cb(GtkWidget* pWidget, GdkEventKey* pEventKey, gpointer pUserData)
 {
 	if(pEventKey->keyval==GDK_Return || pEventKey->keyval==GDK_KP_Enter)
 	{
 		gtk_dialog_response(GTK_DIALOG(pUserData), GTK_RESPONSE_ACCEPT);
 		return TRUE;
 	}
-	else if(pEventKey->keyval==GDK_Escape)
+	if(pEventKey->keyval==GDK_Escape)
 	{
 		gtk_dialog_response(GTK_DIALOG(pUserData), GTK_RESPONSE_REJECT);
 		return TRUE;
@@ -86,12 +86,12 @@ gboolean CInputDialog::key_press_event_cb(::GtkWidget* pWidget, GdkEventKey* pEv
 	return FALSE;
 }
 
-void CInputDialog::button_clicked_cb(::GtkButton* pButton, gpointer pUserData)
+void CInputDialog::button_clicked_cb(GtkButton* pButton, gpointer pUserData)
 {
 	static_cast<CInputDialog*>(pUserData)->buttonClickedCB(pButton);
 }
 
-void CInputDialog::buttonClickedCB(::GtkButton* pButton)
+void CInputDialog::buttonClickedCB(GtkButton* pButton)
 {
 	if(pButton == m_pInputDialogOKButton)
 	{
