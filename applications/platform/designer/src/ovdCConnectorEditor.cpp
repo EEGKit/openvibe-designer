@@ -20,7 +20,7 @@ namespace {
 	}
 }
 
-CConnectorEditor::CConnectorEditor(const IKernelContext& rKernelContext, IBox& rBox, uint32 ui32ConnectorType, uint32 ui32ConnectorIndex, const char* sTitle, const char* sGUIFilename)
+CConnectorEditor::CConnectorEditor(const IKernelContext& rKernelContext, IBox& rBox, uint32_t ui32ConnectorType, uint32_t ui32ConnectorIndex, const char* sTitle, const char* sGUIFilename)
 	:m_rKernelContext(rKernelContext)
 	,m_rBox(rBox)
 	,m_ui32ConnectorType(ui32ConnectorType)
@@ -31,7 +31,7 @@ CConnectorEditor::CConnectorEditor(const IKernelContext& rKernelContext, IBox& r
 
 CConnectorEditor::~CConnectorEditor() { }
 
-boolean CConnectorEditor::run()
+bool CConnectorEditor::run()
 
 {
 //	t_getConnectorIdentifier getConnectorIdentifier = nullptr;
@@ -115,8 +115,8 @@ boolean CConnectorEditor::run()
 	gtk_entry_set_text(l_pConnectorNameEntry, l_oConnectorName.toASCIIString());
 	gtk_entry_set_text(m_ConnectorIdentifierEntry, connectorIdentifier.toString().toASCIIString());
 
-	boolean l_bFinished=false;
-	boolean l_bResult=false;
+	bool l_bFinished=false;
+	bool l_bResult=false;
 	while(!l_bFinished)
 	{
 		gint l_iResult=gtk_dialog_run(GTK_DIALOG(l_pConnectorDialog));

@@ -52,18 +52,18 @@ CTopographicMapDatabase::CTopographicMapDatabase(TBoxAlgorithm<IBoxAlgorithm>& o
 
 CTopographicMapDatabase::~CTopographicMapDatabase() { }
 
-void CTopographicMapDatabase::setMatrixDimensionSize(const uint32 ui32DimensionIndex, const uint32 ui32DimensionSize)
+void CTopographicMapDatabase::setMatrixDimensionSize(const uint32_t ui32DimensionIndex, const uint32_t ui32DimensionSize)
 {
 	CBufferDatabase::setMatrixDimensionSize(ui32DimensionIndex, ui32DimensionSize);
 
 	if(ui32DimensionIndex == 0)
 	{
 		m_oElectrodePotentials.setDimensionCount(1);
-		m_oElectrodePotentials.setDimensionSize(0, (uint32)m_i64NbElectrodes);
+		m_oElectrodePotentials.setDimensionSize(0, (uint32_t)m_i64NbElectrodes);
 	}
 }
 
-boolean CTopographicMapDatabase::onChannelLocalisationBufferReceived(uint32 ui32ChannelLocalisationBufferIndex)
+bool CTopographicMapDatabase::onChannelLocalisationBufferReceived(uint32_t ui32ChannelLocalisationBufferIndex)
 {
 	CBufferDatabase::onChannelLocalisationBufferReceived(ui32ChannelLocalisationBufferIndex);
 
@@ -81,10 +81,10 @@ boolean CTopographicMapDatabase::onChannelLocalisationBufferReceived(uint32 ui32
 		{
 			//fill electrode coordinates matrix
 			m_oElectrodeCoords.setDimensionCount(1);
-			m_oElectrodeCoords.setDimensionSize(0, (uint32)(3*m_i64NbElectrodes));
-			const float64* l_pCoords = m_oChannelLocalisationStreamedCoords[0].first->getBuffer();
-			uint32 l_ui32LookupIndex;
-			for(uint32 i=0; i<(uint32)m_i64NbElectrodes; i++)
+			m_oElectrodeCoords.setDimensionSize(0, (uint32_t)(3*m_i64NbElectrodes));
+			const double* l_pCoords = m_oChannelLocalisationStreamedCoords[0].first->getBuffer();
+			uint32_t l_ui32LookupIndex;
+			for(uint32_t i=0; i<(uint32_t)m_i64NbElectrodes; i++)
 			{
 				l_ui32LookupIndex = m_oChannelLookupIndices[i];
 				m_oElectrodeCoords[3*i] = *(l_pCoords + 3 * l_ui32LookupIndex);
@@ -100,13 +100,13 @@ boolean CTopographicMapDatabase::onChannelLocalisationBufferReceived(uint32 ui32
 	return true;
 }
 
-void CTopographicMapDatabase::getLastBufferInterpolatedMinMaxValue(float64& f64Min, float64& f64Max)
+void CTopographicMapDatabase::getLastBufferInterpolatedMinMaxValue(double& f64Min, double& f64Max)
 {
 	f64Min = m_oMinSamplePointValue;
 	f64Max = m_oMaxSamplePointValue;
 }
 
-boolean CTopographicMapDatabase::processValues()
+bool CTopographicMapDatabase::processValues()
 {
 	//wait for electrode coordinates
 	if(m_bElectrodeCoordsInitialized == false)
@@ -133,13 +133,13 @@ boolean CTopographicMapDatabase::processValues()
 
 	//retrieve electrode values
 	//determine what buffer to use from delay
-	uint32 l_ui32BufferIndex;
-	uint64 l_ui64CurrentTime = m_oParentPlugin.getPlayerContext().getCurrentTime();
-	uint64 l_ui64DisplayTime = l_ui64CurrentTime - m_ui64Delay;
+	uint32_t l_ui32BufferIndex;
+	uint64_t l_ui64CurrentTime = m_oParentPlugin.getPlayerContext().getCurrentTime();
+	uint64_t l_ui64DisplayTime = l_ui64CurrentTime - m_ui64Delay;
 	getBufferIndexFromTime(l_ui64DisplayTime, l_ui32BufferIndex);
 
 	//determine what sample to use
-	uint64 l_ui64SampleIndex;
+	uint64_t l_ui64SampleIndex;
 	if(l_ui64DisplayTime <= m_oStartTime[l_ui32BufferIndex])
 	{
 		l_ui64SampleIndex = 0;
@@ -150,7 +150,7 @@ boolean CTopographicMapDatabase::processValues()
 	}
 	else
 	{
-		l_ui64SampleIndex = (uint64)((float64)(l_ui64DisplayTime - m_oStartTime[l_ui32BufferIndex])/(float64)m_ui64BufferDuration * m_pDimensionSizes[1]);
+		l_ui64SampleIndex = (uint64_t)((double)(l_ui64DisplayTime - m_oStartTime[l_ui32BufferIndex])/(double)m_ui64BufferDuration * m_pDimensionSizes[1]);
 	}
 
 	for(int i=0; i<m_i64NbElectrodes; i++)
@@ -187,7 +187,7 @@ boolean CTopographicMapDatabase::processValues()
 	}
 
 	m_rSphericalSplineInterpolation.process();
-	boolean l_bProcess = true;
+	bool l_bProcess = true;
 	if(m_rSphericalSplineInterpolation.isOutputTriggerActive(OVP_Algorithm_SphericalSplineInterpolation_OutputTriggerId_Error) == true)
 	{
 		m_oParentPlugin.getLogManager() << LogLevel_Warning	<< "An error occurred while interpolating potentials!\n";
@@ -210,7 +210,7 @@ boolean CTopographicMapDatabase::processValues()
 	return l_bProcess;
 }
 
-boolean CTopographicMapDatabase::setDelay(float64 f64Delay)
+bool CTopographicMapDatabase::setDelay(double f64Delay)
 {
 	if(f64Delay > m_f64TotalDuration)
 	{
@@ -218,17 +218,17 @@ boolean CTopographicMapDatabase::setDelay(float64 f64Delay)
 	}
 
 	//convert delay to 32:32 format
-	m_ui64Delay = (int64)(f64Delay*(1LL<<32)); // $$$ Casted in (int64) because of Ubuntu 7.10 crash !
+	m_ui64Delay = (int64_t)(f64Delay*(1LL<<32)); // $$$ Casted in (int64_t) because of Ubuntu 7.10 crash !
 	return true;
 }
 
-boolean CTopographicMapDatabase::setInterpolationType(uint64 ui64InterpolationType)
+bool CTopographicMapDatabase::setInterpolationType(uint64_t ui64InterpolationType)
 {
 	m_ui64InterpolationType = ui64InterpolationType;
 	return true;
 }
 
-boolean CTopographicMapDatabase::interpolateValues()
+bool CTopographicMapDatabase::interpolateValues()
 {
 	//can't interpolate before first buffer has been received
 	if(m_bFirstProcess == true)
@@ -275,7 +275,7 @@ boolean CTopographicMapDatabase::interpolateValues()
 	return true;
 }
 
-boolean CTopographicMapDatabase::getBufferIndexFromTime(uint64 ui64Time, uint32& rBufferIndex)
+bool CTopographicMapDatabase::getBufferIndexFromTime(uint64_t ui64Time, uint32_t& rBufferIndex)
 {
 	if(m_oSampleBuffers.empty())
 	{
@@ -292,7 +292,7 @@ boolean CTopographicMapDatabase::getBufferIndexFromTime(uint64 ui64Time, uint32&
 		rBufferIndex = m_oSampleBuffers.size() - 1;
 		return false;
 	}
-	for(uint32 i=0; i<m_oSampleBuffers.size(); i++)
+	for(uint32_t i=0; i<m_oSampleBuffers.size(); i++)
 	{
 		if(ui64Time <= m_oEndTime[i])
 		{
@@ -304,13 +304,13 @@ boolean CTopographicMapDatabase::getBufferIndexFromTime(uint64 ui64Time, uint32&
 	return true;
 }
 
-boolean CTopographicMapDatabase::checkElectrodeCoordinates()
+bool CTopographicMapDatabase::checkElectrodeCoordinates()
 {
-	uint64 l_ui64ChannelCount = getChannelCount();
+	uint64_t l_ui64ChannelCount = getChannelCount();
 
-	for(uint32 i=0; i<l_ui64ChannelCount; i++)
+	for(uint32_t i=0; i<l_ui64ChannelCount; i++)
 	{
-		float64* l_pNormalizedChannelCoords = nullptr;
+		double* l_pNormalizedChannelCoords = nullptr;
 		if(getChannelPosition(i, l_pNormalizedChannelCoords) == false)
 		{
 			CString l_sChannelLabel;

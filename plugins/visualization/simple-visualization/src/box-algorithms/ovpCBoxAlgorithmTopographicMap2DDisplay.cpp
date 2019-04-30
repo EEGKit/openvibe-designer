@@ -16,13 +16,13 @@ CBoxAlgorithmTopographicMap2DDisplay::CBoxAlgorithmTopographicMap2DDisplay() :
 	m_pTopographicMapDatabase(nullptr),
 	m_pTopographicMap2DView(nullptr) { }
 
-uint64 CBoxAlgorithmTopographicMap2DDisplay::getClockFrequency()
+uint64_t CBoxAlgorithmTopographicMap2DDisplay::getClockFrequency()
 
 {
-	return ((uint64)1LL)<<37;
+	return ((uint64_t)1LL)<<37;
 }
 
-boolean CBoxAlgorithmTopographicMap2DDisplay::initialize()
+bool CBoxAlgorithmTopographicMap2DDisplay::initialize()
 
 {
 	m_bFirstBufferReceived=false;
@@ -70,7 +70,7 @@ boolean CBoxAlgorithmTopographicMap2DDisplay::initialize()
 	return true;
 }
 
-boolean CBoxAlgorithmTopographicMap2DDisplay::uninitialize()
+bool CBoxAlgorithmTopographicMap2DDisplay::uninitialize()
 
 {
 	if(m_pDecoder)
@@ -91,23 +91,23 @@ boolean CBoxAlgorithmTopographicMap2DDisplay::uninitialize()
 	return true;
 }
 
-boolean CBoxAlgorithmTopographicMap2DDisplay::processInput(uint32 ui32InputIndex)
+bool CBoxAlgorithmTopographicMap2DDisplay::processInput(uint32_t ui32InputIndex)
 {
 	getBoxAlgorithmContext()->markAlgorithmAsReadyToProcess();
 	return true;
 }
 
-boolean CBoxAlgorithmTopographicMap2DDisplay::processClock(IMessageClock& rMessageClock)
+bool CBoxAlgorithmTopographicMap2DDisplay::processClock(IMessageClock& rMessageClock)
 {
 	getBoxAlgorithmContext()->markAlgorithmAsReadyToProcess();
 	return true;
 }
 
-boolean CBoxAlgorithmTopographicMap2DDisplay::process()
+bool CBoxAlgorithmTopographicMap2DDisplay::process()
 
 {
 	IDynamicBoxContext* l_pDynamicBoxContext=getBoxAlgorithmContext()->getDynamicBoxContext();
-	uint32 i;
+	uint32_t i;
 
 	//decode signal data
 	for(i=0; i<l_pDynamicBoxContext->getInputChunkCount(0); i++)
@@ -121,10 +121,10 @@ boolean CBoxAlgorithmTopographicMap2DDisplay::process()
 			if(!m_bFirstBufferReceived)
 			{
 				m_pTopographicMapDatabase->setMatrixDimensionCount(l_pInputMatrix->getDimensionCount());
-				for(uint32 dimension=0; dimension<l_pInputMatrix->getDimensionCount(); dimension++)
+				for(uint32_t dimension=0; dimension<l_pInputMatrix->getDimensionCount(); dimension++)
 				{
 					m_pTopographicMapDatabase->setMatrixDimensionSize(dimension, l_pInputMatrix->getDimensionSize(dimension));
-					for(uint32 entryIndex=0; entryIndex<l_pInputMatrix->getDimensionSize(dimension); entryIndex++)
+					for(uint32_t entryIndex=0; entryIndex<l_pInputMatrix->getDimensionSize(dimension); entryIndex++)
 					{
 						m_pTopographicMapDatabase->setMatrixDimensionLabel(dimension, entryIndex, l_pInputMatrix->getDimensionLabel(dimension, entryIndex));
 					}
@@ -152,7 +152,7 @@ boolean CBoxAlgorithmTopographicMap2DDisplay::process()
 		l_pDynamicBoxContext->markInputAsDeprecated(1, i);
 	}
 
-	boolean l_bProcessValues = m_pTopographicMapDatabase->processValues();
+	bool l_bProcessValues = m_pTopographicMapDatabase->processValues();
 
 	//disable plugin upon errors
 	return l_bProcessValues;

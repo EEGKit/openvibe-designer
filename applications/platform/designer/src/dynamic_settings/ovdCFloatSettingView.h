@@ -12,14 +12,14 @@ namespace OpenViBEDesigner
 		{
 		public:
 			CFloatSettingView(OpenViBE::Kernel::IBox& rBox,
-								OpenViBE::uint32 ui32Index,
+								uint32_t ui32Index,
 								OpenViBE::CString &rBuilderName,
 								const OpenViBE::Kernel::IKernelContext& rKernelContext);
 
 			virtual void getValue(OpenViBE::CString &rValue) const;
 			virtual void setValue(const OpenViBE::CString &rValue);
 
-			void adjustValue(OpenViBE::float64 amount);
+			void adjustValue(double amount);
 			void onChange();
 
 
@@ -29,7 +29,7 @@ namespace OpenViBEDesigner
 			::GtkEntry* m_pEntry;
 
 			const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
-			OpenViBE::boolean m_bOnValueSetting;
+			bool m_bOnValueSetting;
 		};
 	}
 

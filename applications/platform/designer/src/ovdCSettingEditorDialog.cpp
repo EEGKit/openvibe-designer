@@ -10,7 +10,7 @@ static void type_changed_cb(GtkComboBox* pWidget, gpointer pUserData)
 	static_cast<CSettingEditorDialog*>(pUserData)->typeChangedCB();
 }
 
-CSettingEditorDialog::CSettingEditorDialog(const IKernelContext& rKernelContext, IBox& rBox, uint32 ui32SettingIndex, const char* sTitle, const char* sGUIFilename, const char* sGUISettingsFilename)
+CSettingEditorDialog::CSettingEditorDialog(const IKernelContext& rKernelContext, IBox& rBox, uint32_t ui32SettingIndex, const char* sTitle, const char* sGUIFilename, const char* sGUISettingsFilename)
 	:m_rKernelContext(rKernelContext)
 	,m_rBox(rBox)
 	,m_oHelper(rKernelContext, sGUIFilename)

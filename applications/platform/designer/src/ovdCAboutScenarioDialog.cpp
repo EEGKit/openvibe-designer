@@ -20,7 +20,7 @@ namespace
 	}
 }
 
-boolean CAboutScenarioDialog::run()
+bool CAboutScenarioDialog::run()
 
 {
 	GtkBuilder* l_pInterface=gtk_builder_new(); // glade_xml_new(m_sGUIFilename.toASCIIString(), "scenario_about", nullptr);

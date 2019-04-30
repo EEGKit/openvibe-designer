@@ -23,10 +23,10 @@ namespace OpenViBEPlugins
 
 			virtual void release() { delete this; }
 
-			virtual OpenViBE::boolean initialize();
-			virtual OpenViBE::boolean uninitialize();
-			virtual OpenViBE::boolean processInput(OpenViBE::uint32 ui32InputIndex);
-			virtual OpenViBE::boolean process();
+			virtual bool initialize();
+			virtual bool uninitialize();
+			virtual bool processInput(uint32_t ui32InputIndex);
+			virtual bool process();
 
 			_IsDerivedFromClass_Final_(OpenViBEToolkit::TBoxAlgorithm < OpenViBE::Plugins::IBoxAlgorithm >, OVP_ClassId_BoxAlgorithm_MatrixDisplay);
 
@@ -54,19 +54,19 @@ namespace OpenViBEPlugins
 
 			OpenViBE::CMatrix m_MatrixInterpolatedColorGardient;
 			OpenViBE::CMatrix m_MatrixColorGradient;
-			OpenViBE::uint32  m_GradientSteps;
-			OpenViBE::float64 m_f64MaxValue;
-			OpenViBE::float64 m_f64MinValue;
+			uint32_t  m_GradientSteps;
+			double m_f64MaxValue;
+			double m_f64MinValue;
 
-			OpenViBE::boolean m_bSymetricMinMax;
-			OpenViBE::boolean m_bRealTimeMinMax;
+			bool m_bSymetricMinMax;
+			bool m_bRealTimeMinMax;
 
 		public:
 
-			OpenViBE::boolean m_bShowValues;
-			OpenViBE::boolean m_bShowColors;
+			bool m_bShowValues;
+			bool m_bShowColors;
 
-			virtual OpenViBE::boolean resetColors();
+			virtual bool resetColors();
 		private:
 			OpenViBEVisualizationToolkit::IVisualizationContext* m_visualizationContext;
 		};
@@ -92,12 +92,12 @@ namespace OpenViBEPlugins
 			virtual OpenViBE::CIdentifier getCreatedClass() const    { return OVP_ClassId_BoxAlgorithm_MatrixDisplay; }
 			virtual OpenViBE::Plugins::IPluginObject* create()       { return new CBoxAlgorithmMatrixDisplay; }
 
-			virtual OpenViBE::boolean hasFunctionality(OpenViBE::CIdentifier functionalityIdentifier) const
+			virtual bool hasFunctionality(OpenViBE::CIdentifier functionalityIdentifier) const
 			{
 				return functionalityIdentifier == OVD_Functionality_Visualization;
 			}
 
-			virtual OpenViBE::boolean getBoxPrototype(
+			virtual bool getBoxPrototype(
 				OpenViBE::Kernel::IBoxProto& rBoxAlgorithmPrototype) const
 			{
 				rBoxAlgorithmPrototype.addSetting("Color gradient",    OV_TypeId_ColorGradient, "0:2,36,58; 50:100,100,100; 100:83,17,20");

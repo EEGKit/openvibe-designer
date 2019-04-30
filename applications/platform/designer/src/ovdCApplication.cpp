@@ -92,7 +92,7 @@ namespace
 			,m_TypeManager(typeManager) { }
 		virtual bool addInput(const CString& sName, const CIdentifier& rTypeIdentifier, const CIdentifier& rIdentifier, const bool bNotify)
 		{
-			uint64 v=rTypeIdentifier.toUInteger();
+			uint64_t v=rTypeIdentifier.toUInteger();
 			swap_byte(v, m_ui64InputCountHash);
 			swap_byte(m_ui64InputCountHash, 0x7936A0F3BD12D936LL);
 			m_oHash=m_oHash.toUInteger()^v;
@@ -107,7 +107,7 @@ namespace
 		//
 		virtual bool addOutput(const CString& sName, const CIdentifier& rTypeIdentifier,const CIdentifier& rIdentifier, const bool bNotify)
 		{
-			uint64 v=rTypeIdentifier.toUInteger();
+			uint64_t v=rTypeIdentifier.toUInteger();
 			swap_byte(v, m_ui64OutputCountHash);
 			swap_byte(m_ui64OutputCountHash, 0xCBB66A5B893AA4E9LL);
 			m_oHash=m_oHash.toUInteger()^v;
@@ -121,7 +121,7 @@ namespace
 		}
 		virtual bool addSetting(const CString& sName, const CIdentifier& rTypeIdentifier, const CString& sDefaultValue, const bool bModifiable, const CIdentifier& rIdentifier, const bool bNotify)
 		{
-			uint64 v=rTypeIdentifier.toUInteger();
+			uint64_t v=rTypeIdentifier.toUInteger();
 			swap_byte(v, m_ui64SettingCountHash);
 			swap_byte(m_ui64SettingCountHash, 0x3C87F3AAE9F8303BLL);
 			m_oHash=m_oHash.toUInteger()^v;
@@ -186,17 +186,17 @@ namespace
 			return true;
 		}
 
-		void swap_byte(uint64& v, const uint64 s)
+		void swap_byte(uint64_t& v, const uint64_t s)
 		{
-			uint8 t;
-			uint8 V[sizeof(v)];
-			uint8 S[sizeof(s)];
+			uint8_t t;
+			uint8_t V[sizeof(v)];
+			uint8_t S[sizeof(s)];
 			System::Memory::hostToLittleEndian(v, V);
 			System::Memory::hostToLittleEndian(s, S);
-			for(uint32 i=0; i<sizeof(s); i+=2)
+			for(uint32_t i=0; i<sizeof(s); i+=2)
 			{
-				uint32 j=S[i  ]%sizeof(v);
-				uint32 k=S[i+1]%sizeof(v);
+				uint32_t j=S[i  ]%sizeof(v);
+				uint32_t k=S[i+1]%sizeof(v);
 				t=V[j];
 				V[j]=V[k];
 				V[k]=t;
@@ -208,9 +208,9 @@ namespace
 
 		CIdentifier m_oHash;
 		bool m_bIsDeprecated;
-		uint64 m_ui64InputCountHash;
-		uint64 m_ui64OutputCountHash;
-		uint64 m_ui64SettingCountHash;
+		uint64_t m_ui64InputCountHash;
+		uint64_t m_ui64OutputCountHash;
+		uint64_t m_ui64SettingCountHash;
 		ITypeManager& m_TypeManager;
 	};
 }
@@ -484,13 +484,13 @@ namespace
 
 	gboolean change_current_scenario_cb(GtkNotebook* pNotebook, GtkNotebookPage* pNotebookPage, guint uiPageNumber, gpointer pUserData)
 	{
-		static_cast<CApplication*>(pUserData)->changeCurrentScenario((int32)uiPageNumber);
+		static_cast<CApplication*>(pUserData)->changeCurrentScenario((int32_t)uiPageNumber);
 		return TRUE;
 	}
 
 	gboolean reorder_scenario_cb(GtkNotebook* pNotebook, GtkNotebookPage* pNotebookPage, guint uiPageNumber, gpointer pUserData)
 	{
-		static_cast<CApplication*>(pUserData)->reorderCurrentScenario((int32)uiPageNumber);
+		static_cast<CApplication*>(pUserData)->reorderCurrentScenario((int32_t)uiPageNumber);
 		return TRUE;
 	}
 
@@ -722,17 +722,17 @@ namespace
 			}
 			else
 			{
-				float64 l_f64Time=(l_pCurrentInterfacedScenario->m_pPlayer? ITimeArithmetics::timeToSeconds(l_pCurrentInterfacedScenario->m_pPlayer->getCurrentSimulatedTime()) : 0);
+				double l_f64Time=(l_pCurrentInterfacedScenario->m_pPlayer? ITimeArithmetics::timeToSeconds(l_pCurrentInterfacedScenario->m_pPlayer->getCurrentSimulatedTime()) : 0);
 				if(l_pApplication->m_ui64LastTimeRefresh!=l_f64Time)
 				{
-					l_pApplication->m_ui64LastTimeRefresh=static_cast<uint64>(l_f64Time);
+					l_pApplication->m_ui64LastTimeRefresh=static_cast<uint64_t>(l_f64Time);
 
-					uint32 l_ui32Milli  = ((uint32)(l_f64Time*1000)%1000);
-					uint32 l_ui32Seconds=  ((uint32)l_f64Time)%60;
-					uint32 l_ui32Minutes= (((uint32)l_f64Time)/60)%60;
-					uint32 l_ui32Hours  =((((uint32)l_f64Time)/60)/60);
+					uint32_t l_ui32Milli  = ((uint32_t)(l_f64Time*1000)%1000);
+					uint32_t l_ui32Seconds=  ((uint32_t)l_f64Time)%60;
+					uint32_t l_ui32Minutes= (((uint32_t)l_f64Time)/60)%60;
+					uint32_t l_ui32Hours  =((((uint32_t)l_f64Time)/60)/60);
 
-					float64 l_f64CPUUsage=(l_pCurrentInterfacedScenario->m_pPlayer?l_pCurrentInterfacedScenario->m_pPlayer->getCPUUsage():0);
+					double l_f64CPUUsage=(l_pCurrentInterfacedScenario->m_pPlayer?l_pCurrentInterfacedScenario->m_pPlayer->getCPUUsage():0);
 
 					char l_sTime[1024];
 					if(l_ui32Hours)				sprintf(l_sTime, "Time : %02dh %02dm %02ds %03dms", l_ui32Hours, l_ui32Minutes, l_ui32Seconds, l_ui32Milli);
@@ -773,8 +773,8 @@ namespace
 	gboolean idle_scenario_loop(gpointer pUserData)
 	{
 		CInterfacedScenario* l_pInterfacedScenario=static_cast<CInterfacedScenario*>(pUserData);
-		uint64 l_ui64CurrentTime=System::Time::zgetTime();
-		if(l_pInterfacedScenario->m_ui64LastLoopTime == uint64(-1))
+		uint64_t l_ui64CurrentTime=System::Time::zgetTime();
+		if(l_pInterfacedScenario->m_ui64LastLoopTime == uint64_t(-1))
 		{
 			l_pInterfacedScenario->m_ui64LastLoopTime = l_ui64CurrentTime;
 		}
@@ -825,7 +825,7 @@ namespace
 				{
 					boost::interprocess::message_queue::remove(MESSAGE_NAME);
 
-					int32 l_iMode = 0;
+					int32_t l_iMode = 0;
 					char l_sScenarioPath[2048];
 					char* l_sMessage = strtok(l_pBuffer, ";");
 					while(l_sMessage != nullptr)
@@ -1093,7 +1093,7 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 	m_pArchwayHandlerGUI->m_ButtonOpenEngineConfigurationDialog = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration"));
 #endif
 	// Prepares fast forward feature
-	float64 l_f64FastForwardFactor=m_KernelContext.getConfigurationManager().expandAsFloat("${Designer_FastForwardFactor}", -1);
+	double l_f64FastForwardFactor=m_KernelContext.getConfigurationManager().expandAsFloat("${Designer_FastForwardFactor}", -1);
 	m_pFastForwardFactor=GTK_SPIN_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-spinbutton_fast-forward-factor"));
 	if(l_f64FastForwardFactor==-1)
 	{
@@ -1483,7 +1483,7 @@ bool CApplication::displayChangelogWhenAvailable()
 bool CApplication::openScenario(const char* sFileName)
 {
 	// Prevent opening twice the same scenario
-	for(uint32 i = 0; i < m_vInterfacedScenario.size(); i++)
+	for(uint32_t i = 0; i < m_vInterfacedScenario.size(); i++)
 	{
 		auto l_vInterfacedScenario = m_vInterfacedScenario[i];
 		if(l_vInterfacedScenario->m_sFileName == std::string(sFileName))
@@ -2033,7 +2033,7 @@ void CApplication::saveScenarioCB(CInterfacedScenario* pScenario)
 			SBoxProto l_oMetaboxProto(m_KernelContext.getTypeManager());
 
 			IScenario& l_rScenario = l_pCurrentInterfacedScenario->m_rScenario;
-			for (uint32 l_ui32ScenarioInputIndex = 0; l_ui32ScenarioInputIndex < l_rScenario.getInputCount(); l_ui32ScenarioInputIndex++)
+			for (uint32_t l_ui32ScenarioInputIndex = 0; l_ui32ScenarioInputIndex < l_rScenario.getInputCount(); l_ui32ScenarioInputIndex++)
 			{
 				CString l_sInputName;
 				CIdentifier l_oInputTypeIdentifier;
@@ -2046,7 +2046,7 @@ void CApplication::saveScenarioCB(CInterfacedScenario* pScenario)
 				l_oMetaboxProto.addInput(l_sInputName, l_oInputTypeIdentifier,l_oInputIdentifier, true);
 			}
 
-			for (uint32 l_ui32ScenarioOutputIndex = 0; l_ui32ScenarioOutputIndex < l_rScenario.getOutputCount(); l_ui32ScenarioOutputIndex++)
+			for (uint32_t l_ui32ScenarioOutputIndex = 0; l_ui32ScenarioOutputIndex < l_rScenario.getOutputCount(); l_ui32ScenarioOutputIndex++)
 			{
 				CString l_sOutputName;
 				CIdentifier l_oOutputTypeIdentifier;
@@ -2059,7 +2059,7 @@ void CApplication::saveScenarioCB(CInterfacedScenario* pScenario)
 				l_oMetaboxProto.addOutput(l_sOutputName, l_oOutputTypeIdentifier,l_oOutputIdentifier, true);
 			}
 
-			for (uint32 l_ui32ScenarioSettingIndex = 0; l_ui32ScenarioSettingIndex < l_rScenario.getSettingCount(); l_ui32ScenarioSettingIndex++)
+			for (uint32_t l_ui32ScenarioSettingIndex = 0; l_ui32ScenarioSettingIndex < l_rScenario.getSettingCount(); l_ui32ScenarioSettingIndex++)
 			{
 				CString l_sSettingName;
 				CIdentifier l_oSettingTypeIdentifier;
@@ -2560,7 +2560,7 @@ void CApplication::toggleDesignerVisualizationCB()
 	CInterfacedScenario* l_pCurrentInterfacedScenario = getCurrentInterfacedScenario();
 	if(l_pCurrentInterfacedScenario != nullptr && l_pCurrentInterfacedScenario->isLocked() == false)
 	{
-		uint32 l_ui32Index=(uint32)gtk_notebook_get_current_page(m_pScenarioNotebook);
+		uint32_t l_ui32Index=(uint32_t)gtk_notebook_get_current_page(m_pScenarioNotebook);
 		if(l_ui32Index<m_vInterfacedScenario.size())
 		{
 			m_vInterfacedScenario[l_ui32Index]->toggleDesignerVisualization();
@@ -2770,7 +2770,7 @@ bool CApplication::createPlayer()
 			m_KernelContext.getPlayerManager().releasePlayer(l_oPlayerIdentifier);
 			return false;
 		}
-		l_pCurrentInterfacedScenario->m_ui64LastLoopTime = uint64(-1);
+		l_pCurrentInterfacedScenario->m_ui64LastLoopTime = uint64_t(-1);
 
 		//set up idle function
 		__g_idle_add__(idle_scenario_loop, l_pCurrentInterfacedScenario);
@@ -3159,7 +3159,7 @@ void CApplication::CPUUsageCB()
 	}
 }
 
-void CApplication::changeCurrentScenario(int32 i32PageIndex)
+void CApplication::changeCurrentScenario(int32_t i32PageIndex)
 {
 	if(m_bIsQuitting) return;
 
@@ -3215,7 +3215,7 @@ void CApplication::changeCurrentScenario(int32 i32PageIndex)
 		m_ui32CurrentInterfacedScenarioIndex = i;
 	}
 	//switching to an existing scenario
-	else if(i32PageIndex<(int32)m_vInterfacedScenario.size())
+	else if(i32PageIndex<(int32_t)m_vInterfacedScenario.size())
 	{
 		CInterfacedScenario* l_pCurrentInterfacedScenario=m_vInterfacedScenario[i32PageIndex];
 		EPlayerStatus l_ePlayerStatus=(l_pCurrentInterfacedScenario->m_pPlayer?l_pCurrentInterfacedScenario->m_pPlayer->getStatus():PlayerStatus_Stop);
@@ -3302,7 +3302,7 @@ void CApplication::changeCurrentScenario(int32 i32PageIndex)
 	}
 
 	// updates the trimming if need be
-	for(uint32 i = 0; i < (uint32)m_vInterfacedScenario.size(); i++)
+	for(uint32_t i = 0; i < (uint32_t)m_vInterfacedScenario.size(); i++)
 	{
 		m_vInterfacedScenario[i]->updateScenarioLabel();
 	}
@@ -3318,7 +3318,7 @@ void CApplication::changeCurrentScenario(int32 i32PageIndex)
 	}
 }
 
-void CApplication::reorderCurrentScenario(uint32 i32NewPageIndex)
+void CApplication::reorderCurrentScenario(uint32_t i32NewPageIndex)
 {
 	CInterfacedScenario* l_pCurrentInterfacedScenario = m_vInterfacedScenario[m_ui32CurrentInterfacedScenarioIndex];
 	m_vInterfacedScenario.erase(m_vInterfacedScenario.begin() + m_ui32CurrentInterfacedScenarioIndex);
@@ -3347,7 +3347,7 @@ void CApplication::spinnerZoomChangedCB(uint32_t scalePercentage)
 {
 	if(getCurrentInterfacedScenario() != nullptr)
 	{
-		getCurrentInterfacedScenario()->setScale(static_cast<float64>(scalePercentage)/100.0);
+		getCurrentInterfacedScenario()->setScale(static_cast<double>(scalePercentage)/100.0);
 	}
 }
 

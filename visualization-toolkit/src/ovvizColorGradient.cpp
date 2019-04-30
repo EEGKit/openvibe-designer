@@ -11,10 +11,10 @@ namespace
 {
 	typedef struct
 	{
-		float64 percent;
-		float64 red;
-		float64 green;
-		float64 blue;
+		double percent;
+		double red;
+		double green;
+		double blue;
 	} SColor;
 };
 
@@ -24,7 +24,7 @@ bool Tools::ColorGradient::parse(IMatrix& colorGradientMatrix, const CString& st
 	std::string::size_type startPosition = 0;
 	std::string::size_type endPosition;
 
-	std::map < float64, SColor > colorGradientVector;
+	std::map < double, SColor > colorGradientVector;
 
 	do
 	{
@@ -54,9 +54,9 @@ bool Tools::ColorGradient::parse(IMatrix& colorGradientMatrix, const CString& st
 
 	colorGradientMatrix.setDimensionCount(2);
 	colorGradientMatrix.setDimensionSize(0, 4);
-	colorGradientMatrix.setDimensionSize(1, static_cast<uint32>(colorGradientVector.size()));
+	colorGradientMatrix.setDimensionSize(1, static_cast<uint32_t>(colorGradientVector.size()));
 
-	uint32 i = 0;
+	uint32_t i = 0;
 	for (auto it = colorGradientVector.begin(); it != colorGradientVector.end(); it++, i++)
 	{
 		colorGradientMatrix[i*4  ]=it->second.percent;
@@ -84,7 +84,7 @@ bool Tools::ColorGradient::format(CString& string, const IMatrix& colorGradient)
 	separator[0] = OV_Value_EnumeratedStringSeparator;
 
 	std::string result;
-	for (uint32 i = 0; i < colorGradient.getDimensionSize(1); i++)
+	for (uint32_t i = 0; i < colorGradient.getDimensionSize(1); i++)
 	{
 		char buffer[1024];
 		sprintf(
@@ -102,9 +102,9 @@ bool Tools::ColorGradient::format(CString& string, const IMatrix& colorGradient)
 	return true;
 }
 
-bool Tools::ColorGradient::interpolate(IMatrix& interpolatedColorGradient, const IMatrix& colorGradient, const uint32 steps)
+bool Tools::ColorGradient::interpolate(IMatrix& interpolatedColorGradient, const IMatrix& colorGradient, const uint32_t steps)
 {
-	uint32 i;
+	uint32_t i;
 
 	if (colorGradient.getDimensionCount() != 2)
 	{
@@ -125,7 +125,7 @@ bool Tools::ColorGradient::interpolate(IMatrix& interpolatedColorGradient, const
 	interpolatedColorGradient.setDimensionSize(0, 4);
 	interpolatedColorGradient.setDimensionSize(1, steps);
 
-	std::map<float64, SColor> colors;
+	std::map<double, SColor> colors;
 
 	for (i = 0; i < colorGradient.getDimensionSize(1); i++)
 	{
@@ -159,16 +159,16 @@ bool Tools::ColorGradient::interpolate(IMatrix& interpolatedColorGradient, const
 
 	for (i = 0; i < steps; i++)
 	{
-		float64 t = i * 100 / (steps - 1);
+		double t = i * 100 / (steps - 1);
 		while (it2->first < t)
 		{
 			it1++;
 			it2++;
 		}
 
-		float64 a = it2->first - t;
-		float64 b = t - it1->first;
-		float64 d = it2->first - it1->first;
+		double a = it2->first - t;
+		double b = t - it1->first;
+		double d = it2->first - it1->first;
 
 		interpolatedColorGradient[i*4  ] = t;
 		interpolatedColorGradient[i*4+1] = (it1->second.red   * a + it2->second.red   * b) / d;

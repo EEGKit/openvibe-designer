@@ -151,7 +151,7 @@ void CColorGradientSettingView::initializeGradient()
 
 	gtk_container_foreach(GTK_CONTAINER(pContainer), on_gtk_widget_destroy_cb, nullptr);
 
-	uint32 i=0;
+	uint32_t i=0;
 	uint32_t count = static_cast<uint32_t>(vColorGradient.size());
 	vColorButtonMap.clear();
 	vSpinButtonMap.clear();

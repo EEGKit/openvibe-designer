@@ -26,7 +26,7 @@ CAbstractSettingView::~CAbstractSettingView()
 	}
 }
 
-CAbstractSettingView::CAbstractSettingView(Kernel::IBox& rBox, uint32 ui32Index,
+CAbstractSettingView::CAbstractSettingView(Kernel::IBox& rBox, uint32_t ui32Index,
 										   const char* sBuilderName, const char* sWidgetName):
 	m_rBox(rBox),
 	m_ui32Index(ui32Index),
@@ -57,7 +57,7 @@ Kernel::IBox& CAbstractSettingView::getBox()
 	return m_rBox;
 }
 
-uint32 CAbstractSettingView::getSettingIndex()
+uint32_t CAbstractSettingView::getSettingIndex()
 {
 	return m_ui32Index;
 }
@@ -141,7 +141,7 @@ GtkWidget* CAbstractSettingView::getEntryWidget()
 }
 
 
-void CAbstractSettingView::setSettingIndex(uint32 m_ui32NewIndex)
+void CAbstractSettingView::setSettingIndex(uint32_t m_ui32NewIndex)
 {
 	m_ui32Index = m_ui32NewIndex;
 }

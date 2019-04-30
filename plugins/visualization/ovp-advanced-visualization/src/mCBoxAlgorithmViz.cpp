@@ -251,20 +251,20 @@ bool CBoxAlgorithmViz::initialize()
 			m_bIsPositive = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
 			break;
 		case S_TemporalCoherence:
-			m_ui64TemporalCoherence = static_cast<OpenViBE::uint64>(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex));
+			m_ui64TemporalCoherence = static_cast<uint64_t>(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex));
 			break;
 		case S_TimeScale:
 			l_fValue = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
 			m_ui64TimeScale = uint64_t(l_fValue*(1LL << 32));
 			break;
 		case S_ElementCount:
-			m_ui64ElementCount = static_cast<OpenViBE::uint64>(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex));
+			m_ui64ElementCount = static_cast<uint64_t>(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex));
 			break;
 		case S_DataScale:
 			m_f64DataScale = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
 			break;
 		case S_FlowerRingCount:
-			m_ui64FlowerRingCount = static_cast<OpenViBE::uint64>(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex));
+			m_ui64FlowerRingCount = static_cast<uint64_t>(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex));
 			break;
 		case S_Translucency:
 			m_f64Translucency = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
@@ -299,7 +299,7 @@ bool CBoxAlgorithmViz::initialize()
 	m_vColor.push_back(m_oColor);
 
 	// Parses color string - special for instant oscilloscope which can have several inputs
-	for(OpenViBE::uint32 i=l_ui32SettingIndex; i<this->getStaticBoxContext().getSettingCount(); i++)
+	for(uint32_t i=l_ui32SettingIndex; i<this->getStaticBoxContext().getSettingCount(); i++)
 	{
 		m_sColor=FSettingValueAutoCast(*this->getBoxAlgorithmContext(), i);
 		this->parseColor(m_oColor, m_sColor.toASCIIString());

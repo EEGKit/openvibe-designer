@@ -27,7 +27,7 @@ CSettingViewFactory::~CSettingViewFactory()
 }
 
 CAbstractSettingView *CSettingViewFactory::getSettingView(Kernel::IBox &rBox,
-														  uint32 ui32Index)
+														  uint32_t ui32Index)
 {
 	CIdentifier l_oSettingType;
 	rBox.getSettingType(ui32Index, l_oSettingType);

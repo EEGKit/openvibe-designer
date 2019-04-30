@@ -12,7 +12,7 @@ static void on_checkbutton__pressed(GtkToggleButton* pButton, gpointer pUserData
 	static_cast<CBitMaskSettingView *>(pUserData)->onChange();
 }
 
-CBitMaskSettingView::CBitMaskSettingView(Kernel::IBox &rBox, uint32 ui32Index,
+CBitMaskSettingView::CBitMaskSettingView(Kernel::IBox &rBox, uint32_t ui32Index,
 										 CString &rBuilderName, const Kernel::IKernelContext &rKernelContext,
 										 const CIdentifier &rTypeIdentifier):
 	CAbstractSettingView(rBox, ui32Index, rBuilderName, "settings_collection-table_setting_bitmask"), m_oTypeIdentifier(rTypeIdentifier), m_rKernelContext(rKernelContext), m_bOnValueSetting(false)
@@ -23,10 +23,10 @@ CBitMaskSettingView::CBitMaskSettingView(Kernel::IBox &rBox, uint32 ui32Index,
 	GtkTable* l_pBitMaskTable=GTK_TABLE(l_pSettingWidget);
 	gtk_table_resize(l_pBitMaskTable, 2, l_iTableSize);;
 
-	for(uint64 i=0; i<m_rKernelContext.getTypeManager().getBitMaskEntryCount(m_oTypeIdentifier); i++)
+	for(uint64_t i=0; i<m_rKernelContext.getTypeManager().getBitMaskEntryCount(m_oTypeIdentifier); i++)
 	{
 		CString l_sEntryName;
-		uint64 l_ui64EntryValue;
+		uint64_t l_ui64EntryValue;
 		if(m_rKernelContext.getTypeManager().getBitMaskEntry(m_oTypeIdentifier, i, l_sEntryName, l_ui64EntryValue))
 		{
 			GtkWidget* l_pSettingButton=gtk_check_button_new();

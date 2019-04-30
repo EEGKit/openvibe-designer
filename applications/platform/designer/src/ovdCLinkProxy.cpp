@@ -82,37 +82,37 @@ CLinkProxy::operator const ILink* ()
 	return m_pConstLink;
 }
 
-int32 CLinkProxy::getXSource()
+int32_t CLinkProxy::getXSource()
 
 {
 	return m_iXSource;
 }
 
-int32 CLinkProxy::getYSource()
+int32_t CLinkProxy::getYSource()
 
 {
 	return m_iYSource;
 }
 
-int32 CLinkProxy::getXTarget()
+int32_t CLinkProxy::getXTarget()
 
 {
 	return m_iXTarget;
 }
 
-int32 CLinkProxy::getYTarget()
+int32_t CLinkProxy::getYTarget()
 
 {
 	return m_iYTarget;
 }
 
-void CLinkProxy::setSource(int32 i32XSource, int32 i32YSource)
+void CLinkProxy::setSource(int32_t i32XSource, int32_t i32YSource)
 {
 	m_iXSource=i32XSource;
 	m_iYSource=i32YSource;
 }
 
-void CLinkProxy::setTarget(int32 i32XTarget, int32 i32YTarget)
+void CLinkProxy::setTarget(int32_t i32XTarget, int32_t i32YTarget)
 {
 	m_iXTarget=i32XTarget;
 	m_iYTarget=i32YTarget;

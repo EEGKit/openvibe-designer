@@ -14,7 +14,7 @@ namespace OpenViBEDesigner
 	{
 		typedef struct
 		{
-			OpenViBE::float64 fPercent;
+			double fPercent;
 			::GdkColor oColor;
 			::GtkColorButton* pColorButton;
 			::GtkSpinButton* pSpinButton;

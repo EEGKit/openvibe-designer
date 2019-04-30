@@ -14,7 +14,7 @@ static void on_change(GtkEntry *entry, gpointer pUserData)
 	static_cast<CEnumerationSettingView *>(pUserData)->onChange();
 }
 
-CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox &rBox, uint32 ui32Index,
+CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox &rBox, uint32_t ui32Index,
 												 CString &rBuilderName, const Kernel::IKernelContext &rKernelContext,
 												 const CIdentifier &rTypeIdentifier):
 	CAbstractSettingView(rBox, ui32Index, rBuilderName, "settings_collection-comboboxentry_setting_enumeration"),
@@ -29,10 +29,10 @@ CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox &rBox, uint32 ui32
 
 	std::vector<std::string> l_vEntries;
 
-	for(uint64 i=0; i<m_rKernelContext.getTypeManager().getEnumerationEntryCount(m_oTypeIdentifier); i++)
+	for(uint64_t i=0; i<m_rKernelContext.getTypeManager().getEnumerationEntryCount(m_oTypeIdentifier); i++)
 	{
 		CString l_sEntryName;
-		uint64 l_ui64EntryValue;
+		uint64_t l_ui64EntryValue;
 		if(m_rKernelContext.getTypeManager().getEnumerationEntry(m_oTypeIdentifier, i, l_sEntryName, l_ui64EntryValue))
 		{
 			l_vEntries.push_back(l_sEntryName.toASCIIString());
@@ -51,7 +51,7 @@ CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox &rBox, uint32 ui32
 		gtk_list_store_append(l_pList, &l_oListIter);
 		gtk_list_store_set(l_pList, &l_oListIter, 0, l_vEntries[i].c_str(), -1);
 
-		m_mEntriesIndex[CString(l_vEntries[i].c_str())] = static_cast<uint64>(i);
+		m_mEntriesIndex[CString(l_vEntries[i].c_str())] = static_cast<uint64_t>(i);
 	}
 
 	CString settingValue;

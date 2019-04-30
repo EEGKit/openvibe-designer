@@ -19,7 +19,7 @@ CAboutPluginDialog::CAboutPluginDialog(const IKernelContext& rKernelContext, con
 
 CAboutPluginDialog::~CAboutPluginDialog() { }
 
-boolean CAboutPluginDialog::run()
+bool CAboutPluginDialog::run()
 
 {
 	if (m_pPluginObjectDescriptor == nullptr)

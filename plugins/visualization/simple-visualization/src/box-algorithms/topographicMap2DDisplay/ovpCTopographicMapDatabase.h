@@ -23,7 +23,7 @@ namespace OpenViBEPlugins
 		public:
 			virtual ~CTopographicMapDrawable(){ }
 			virtual OpenViBE::CMatrix* getSampleCoordinatesMatrix() = 0;
-			virtual OpenViBE::boolean setSampleValuesMatrix(OpenViBE::IMatrix* pSampleValuesMatrix) = 0;
+			virtual bool setSampleValuesMatrix(OpenViBE::IMatrix* pSampleValuesMatrix) = 0;
 		};
 
 		/**
@@ -39,19 +39,19 @@ namespace OpenViBEPlugins
 			~CTopographicMapDatabase();
 
 			void setMatrixDimensionSize(
-				const OpenViBE::uint32 ui32DimensionIndex,
-				const OpenViBE::uint32 ui32DimensionSize);
+				const uint32_t ui32DimensionIndex,
+				const uint32_t ui32DimensionSize);
 
 			/**
 			 * \brief Callback called upon channel localisation buffer reception
-			 * \param uint32 Index of newly received channel localisation buffer
+			 * \param uint32_t Index of newly received channel localisation buffer
 			 * \return True if buffer data was correctly processed, false otherwise
 			 */
-			virtual OpenViBE::boolean onChannelLocalisationBufferReceived(
-				OpenViBE::uint32 ui32ChannelLocalisationBufferIndex);
+			virtual bool onChannelLocalisationBufferReceived(
+				uint32_t ui32ChannelLocalisationBufferIndex);
 
-			OpenViBE::boolean setDelay(
-				OpenViBE::float64 f64Delay);
+			bool setDelay(
+				double f64Delay);
 
 			/**
 			 * \brief Set interpolation type
@@ -60,17 +60,17 @@ namespace OpenViBEPlugins
 			 * \sa OVP_TypeId_SphericalLinearInterpolationType enumeration
 			 * \return True if interpolation type could be set, false otherwise
 			 */
-			OpenViBE::boolean setInterpolationType(
-				OpenViBE::uint64 ui64InterpolationType);
+			bool setInterpolationType(
+				uint64_t ui64InterpolationType);
 
-			OpenViBE::boolean processValues();
+			bool processValues();
 
-			OpenViBE::boolean interpolateValues();
+			bool interpolateValues();
 
 			//! Returns min/max interpolated values using the last buffer arrived (all channels taken into account)
 			void getLastBufferInterpolatedMinMaxValue(
-				OpenViBE::float64& f64Min,
-				OpenViBE::float64& f64Max);
+				double& f64Min,
+				double& f64Max);
 
 		private:
 			/**
@@ -79,32 +79,32 @@ namespace OpenViBEPlugins
 			 * \param rBufferIndex [out] Index of buffer closest to time passed as parameter
 			 * \return True if time passed as parameter lies within a buffer's timeframe, false otherwise
 			 */
-			OpenViBE::boolean getBufferIndexFromTime(
-				OpenViBE::uint64 ui64Time,
-				OpenViBE::uint32& rBufferIndex);
+			bool getBufferIndexFromTime(
+				uint64_t ui64Time,
+				uint32_t& rBufferIndex);
 
 			/**
 			 * \brief Ensure electrode coordinates are normalized
 			 * \return True if all electrode coordinates are normalized, false otherwise
 			 */
-			OpenViBE::boolean checkElectrodeCoordinates();
+			bool checkElectrodeCoordinates();
 
 		private:
 			//true until process() is called for the first time
-			OpenViBE::boolean m_bFirstProcess;
+			bool m_bFirstProcess;
 			//spherical spline interpolation
 			OpenViBE::Kernel::IAlgorithmProxy& m_rSphericalSplineInterpolation;
 			//order of spherical spline used for interpolation - mapped to OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_SplineOrder
-			OpenViBE::int64 m_i64SplineOrder;
+			int64_t m_i64SplineOrder;
 			/**
 			 * \brief Type of interpolation
 			 * \sa OVP_TypeId_SphericalLinearInterpolationType enumeration
 			 */
-			OpenViBE::uint64 m_ui64InterpolationType;
+			uint64_t m_ui64InterpolationType;
 			//number of electrodes (see CBufferDatabase) - mapped to OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_ControlPointsCount
-			//OpenViBE::int64 m_i64NbElectrodes;
+			//int64_t m_i64NbElectrodes;
 			//flag set to true once electrode coordinates have been initialized
-			OpenViBE::boolean m_bElectrodeCoordsInitialized;
+			bool m_bElectrodeCoordsInitialized;
 			//electrode cartesian coordinates, in normalized space (X right Y front Z up)
 			OpenViBE::CMatrix m_oElectrodeCoords;
 			//pointer to electrode coordinates matrix - mapped to OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_ControlPointsCoordinates
@@ -116,11 +116,11 @@ namespace OpenViBEPlugins
 			//pointer to sample points coordinates matrix - mapped to OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_SamplePointsCoordinates
 			OpenViBE::IMatrix* m_pSamplePointCoords;
 			//minimum interpolated value
-			OpenViBE::Kernel::TParameterHandler < OpenViBE::float64 > m_oMinSamplePointValue;
+			OpenViBE::Kernel::TParameterHandler < double > m_oMinSamplePointValue;
 			//maximum interpolated value
-			OpenViBE::Kernel::TParameterHandler < OpenViBE::float64 > m_oMaxSamplePointValue;
+			OpenViBE::Kernel::TParameterHandler < double > m_oMaxSamplePointValue;
 			//delay to apply to interpolated values
-			OpenViBE::uint64 m_ui64Delay;
+			uint64_t m_ui64Delay;
 		};
 	}
 }

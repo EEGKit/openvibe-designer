@@ -12,7 +12,7 @@ static void on_change(GtkEntry *entry, gpointer pUserData)
 	static_cast<CStringSettingView *>(pUserData)->onChange();
 }
 
-CStringSettingView::CStringSettingView(Kernel::IBox &rBox, uint32 ui32Index, CString &rBuilderName):
+CStringSettingView::CStringSettingView(Kernel::IBox &rBox, uint32_t ui32Index, CString &rBuilderName):
 	CAbstractSettingView(rBox, ui32Index, rBuilderName, "settings_collection-entry_setting_string"), m_bOnValueSetting(false)
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();

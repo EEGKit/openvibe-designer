@@ -11,7 +11,7 @@ namespace OpenViBEDesigner
 		class CStringSettingView : public CAbstractSettingView
 		{
 		public:
-			CStringSettingView(OpenViBE::Kernel::IBox& rBox, OpenViBE::uint32 ui32Index, OpenViBE::CString &rBuilderName);
+			CStringSettingView(OpenViBE::Kernel::IBox& rBox, uint32_t ui32Index, OpenViBE::CString &rBuilderName);
 
 			virtual void getValue(OpenViBE::CString &rValue) const;
 			virtual void setValue(const OpenViBE::CString &rValue);
@@ -20,7 +20,7 @@ namespace OpenViBEDesigner
 
 		private:
 			::GtkEntry* m_pEntry;
-			OpenViBE::boolean m_bOnValueSetting;
+			bool m_bOnValueSetting;
 		};
 	}
 

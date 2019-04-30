@@ -20,20 +20,20 @@ namespace OpenViBEPlugins
 
 			virtual void release() { delete this; }
 
-			virtual OpenViBE::uint64 getClockFrequency();
-			virtual OpenViBE::boolean initialize();
-			virtual OpenViBE::boolean uninitialize();
-			virtual OpenViBE::boolean processInput(
-				OpenViBE::uint32 ui32InputIndex);
-			virtual OpenViBE::boolean processClock(
+			virtual uint64_t getClockFrequency();
+			virtual bool initialize();
+			virtual bool uninitialize();
+			virtual bool processInput(
+				uint32_t ui32InputIndex);
+			virtual bool processClock(
 				OpenViBE::Kernel::IMessageClock& rMessageClock);
-			virtual OpenViBE::boolean process();
+			virtual bool process();
 
 			_IsDerivedFromClass_Final_(OpenViBEToolkit::TBoxAlgorithm < OpenViBE::Plugins::IBoxAlgorithm >, OVP_ClassId_TopographicMap2DDisplay)
 
 		protected:
 			OpenViBEToolkit::TStreamedMatrixDecoder < CBoxAlgorithmTopographicMap2DDisplay >* m_pDecoder;
-			OpenViBE::boolean m_bFirstBufferReceived;
+			bool m_bFirstBufferReceived;
 
 			OpenViBE::Kernel::IAlgorithmProxy* m_pSphericalSplineInterpolation;
 			CTopographicMapDatabase* m_pTopographicMapDatabase;
@@ -63,12 +63,12 @@ namespace OpenViBEPlugins
 			virtual OpenViBE::CIdentifier getCreatedClass() const    { return OVP_ClassId_TopographicMap2DDisplay; }
 			virtual OpenViBE::Plugins::IPluginObject* create()       { return new CBoxAlgorithmTopographicMap2DDisplay(); }
 
-			virtual OpenViBE::boolean hasFunctionality(OpenViBE::CIdentifier functionalityIdentifier) const
+			virtual bool hasFunctionality(OpenViBE::CIdentifier functionalityIdentifier) const
 			{
 				return functionalityIdentifier == OVD_Functionality_Visualization;
 			}
 
-			virtual OpenViBE::boolean getBoxPrototype(
+			virtual bool getBoxPrototype(
 				OpenViBE::Kernel::IBoxProto& rPrototype) const
 			{
 				rPrototype.addSetting("Interpolation type", OVP_TypeId_SphericalLinearInterpolationType, "1");

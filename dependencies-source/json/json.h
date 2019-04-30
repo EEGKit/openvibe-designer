@@ -117,7 +117,7 @@
  
 	1/4/2014
 	--------
-	* Fixed bug where booleans were being parsed as doubles (Gerry Beauregard).
+	* Fixed bug where bools were being parsed as doubles (Gerry Beauregard).
 
 	1/2/2014 v3
 	------------

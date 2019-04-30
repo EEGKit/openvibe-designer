@@ -93,27 +93,27 @@ namespace OpenViBEDesigner
 
 			CLogListenerDesigner(const OpenViBE::Kernel::IKernelContext& rKernelContext, ::GtkBuilder* pBuilderInterface);
 
-			virtual OpenViBE::boolean isActive(OpenViBE::Kernel::ELogLevel eLogLevel);
-			virtual OpenViBE::boolean activate(OpenViBE::Kernel::ELogLevel eLogLevel, OpenViBE::boolean bActive);
-			virtual OpenViBE::boolean activate(OpenViBE::Kernel::ELogLevel eStartLogLevel, OpenViBE::Kernel::ELogLevel eEndLogLevel, OpenViBE::boolean bActive);
-			virtual OpenViBE::boolean activate(OpenViBE::boolean bActive);
+			virtual bool isActive(OpenViBE::Kernel::ELogLevel eLogLevel);
+			virtual bool activate(OpenViBE::Kernel::ELogLevel eLogLevel, bool bActive);
+			virtual bool activate(OpenViBE::Kernel::ELogLevel eStartLogLevel, OpenViBE::Kernel::ELogLevel eEndLogLevel, bool bActive);
+			virtual bool activate(bool bActive);
 
 			virtual void log(const OpenViBE::time64 time64Value);
 
-			virtual void log(const OpenViBE::uint64 ui64Value);
-			virtual void log(const OpenViBE::uint32 ui32Value);
-			virtual void log(const OpenViBE::uint16 ui16Value);
-			virtual void log(const OpenViBE::uint8 ui8Value);
+			virtual void log(const uint64_t ui64Value);
+			virtual void log(const uint32_t ui32Value);
+			virtual void log(const uint16_t ui16Value);
+			virtual void log(const uint8_t ui8Value);
 
-			virtual void log(const OpenViBE::int64 i64Value);
-			virtual void log(const OpenViBE::int32 i32Value);
-			virtual void log(const OpenViBE::int16 i16Value);
-			virtual void log(const OpenViBE::int8 i8Value);
+			virtual void log(const int64_t i64Value);
+			virtual void log(const int32_t i32Value);
+			virtual void log(const int16_t i16Value);
+			virtual void log(const int8_t i8Value);
 
-			virtual void log(const OpenViBE::float64 f64Value);
-			virtual void log(const OpenViBE::float32 f32Value);
+			virtual void log(const double f64Value);
+			virtual void log(const float f32Value);
 
-			virtual void log(const OpenViBE::boolean bValue);
+			virtual void log(const bool bValue);
 
 			virtual void log(const OpenViBE::CIdentifier& rValue);
 			virtual void log(const OpenViBE::CString& rValue);
@@ -139,7 +139,7 @@ namespace OpenViBEDesigner
 
 		protected:
 
-			std::map<OpenViBE::Kernel::ELogLevel, OpenViBE::boolean> m_vActiveLevel;
+			std::map<OpenViBE::Kernel::ELogLevel, bool> m_vActiveLevel;
 
 			//logs
 			std::vector<CLogObject*> m_vStoredLog;
@@ -175,9 +175,9 @@ namespace OpenViBEDesigner
 
 			bool m_bIngnoreMessages;
 
-			OpenViBE::uint32 m_ui32CountMessages;
-			OpenViBE::uint32 m_ui32CountWarnings;
-			OpenViBE::uint32 m_ui32CountErrors;
+			uint32_t m_ui32CountMessages;
+			uint32_t m_ui32CountWarnings;
+			uint32_t m_ui32CountErrors;
 
 			void updateMessageCounts();
 			void checkAppendFilterCurrentLog(const char *textColor, const char *logMessage, bool bIsLink = false);
@@ -185,7 +185,7 @@ namespace OpenViBEDesigner
 
 			bool m_bConsoleLogWithHexa;
 			bool m_bConsoleLogTimeInSecond;
-			OpenViBE::uint32 m_ui32ConsoleLogTimePrecision;
+			uint32_t m_ui32ConsoleLogTimePrecision;
 
 			CLogObject* m_pCurrentLog;
 

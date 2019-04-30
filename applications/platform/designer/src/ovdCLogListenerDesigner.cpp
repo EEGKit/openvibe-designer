@@ -139,7 +139,7 @@ CLogListenerDesigner::CLogListenerDesigner(const IKernelContext& rKernelContext,
 	m_pToggleButtonActive_Fatal = GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_fatal"));
 
 	// set the popup-on-error checkbox according to the configuration token
-	gtk_toggle_button_set_active(m_pToggleButtonPopup, (boolean)(rKernelContext.getConfigurationManager().expandAsBoolean("${Designer_PopUpOnError}")));
+	gtk_toggle_button_set_active(m_pToggleButtonPopup, (bool)(rKernelContext.getConfigurationManager().expandAsBoolean("${Designer_PopUpOnError}")));
 
 	g_signal_connect(G_OBJECT(m_pAlertWindow), "delete_event", G_CALLBACK(::gtk_widget_hide), nullptr);
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "dialog_error_popup-button_view")), "clicked", G_CALLBACK(::focus_message_window_cb), this);
@@ -166,12 +166,12 @@ CLogListenerDesigner::CLogListenerDesigner(const IKernelContext& rKernelContext,
 
 	m_bConsoleLogWithHexa = rKernelContext.getConfigurationManager().expandAsBoolean("${Designer_ConsoleLogWithHexa}",false);
 	m_bConsoleLogTimeInSecond = rKernelContext.getConfigurationManager().expandAsBoolean("${Kernel_ConsoleLogTimeInSecond}",false);
-	m_ui32ConsoleLogTimePrecision = (uint32) rKernelContext.getConfigurationManager().expandAsUInteger("${Designer_ConsoleLogTimePrecision}",3);
+	m_ui32ConsoleLogTimePrecision = (uint32_t) rKernelContext.getConfigurationManager().expandAsUInteger("${Designer_ConsoleLogTimePrecision}",3);
 }
 
-boolean CLogListenerDesigner::isActive(ELogLevel eLogLevel)
+bool CLogListenerDesigner::isActive(ELogLevel eLogLevel)
 {
-	map<ELogLevel, boolean>::iterator itLogLevel=m_vActiveLevel.find(eLogLevel);
+	map<ELogLevel, bool>::iterator itLogLevel=m_vActiveLevel.find(eLogLevel);
 	if(itLogLevel==m_vActiveLevel.end())
 	{
 		return true;
@@ -179,13 +179,13 @@ boolean CLogListenerDesigner::isActive(ELogLevel eLogLevel)
 	return itLogLevel->second;
 }
 
-boolean CLogListenerDesigner::activate(ELogLevel eLogLevel, boolean bActive)
+bool CLogListenerDesigner::activate(ELogLevel eLogLevel, bool bActive)
 {
 	m_vActiveLevel[eLogLevel]=bActive;
 	return true;
 }
 
-boolean CLogListenerDesigner::activate(ELogLevel eStartLogLevel, ELogLevel eEndLogLevel, boolean bActive)
+bool CLogListenerDesigner::activate(ELogLevel eStartLogLevel, ELogLevel eEndLogLevel, bool bActive)
 {
 	for(int i=eStartLogLevel; i<=eEndLogLevel; i++)
 	{
@@ -194,7 +194,7 @@ boolean CLogListenerDesigner::activate(ELogLevel eStartLogLevel, ELogLevel eEndL
 	return true;
 }
 
-boolean CLogListenerDesigner::activate(boolean bActive)
+bool CLogListenerDesigner::activate(bool bActive)
 {
 	return activate(LogLevel_First, LogLevel_Last, bActive);
 }
@@ -206,7 +206,7 @@ void CLogListenerDesigner::log(const time64 time64Value)
 	stringstream l_sText;
 	if(m_bConsoleLogTimeInSecond)
 	{
-		float64 l_f64Time=ITimeArithmetics::timeToSeconds(time64Value.m_ui64TimeValue);
+		double l_f64Time=ITimeArithmetics::timeToSeconds(time64Value.m_ui64TimeValue);
 		std::stringstream ss;
 		ss.precision(m_ui32ConsoleLogTimePrecision);
 		ss.setf(std::ios::fixed,std::ios::floatfield);
@@ -231,7 +231,7 @@ void CLogListenerDesigner::log(const time64 time64Value)
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
 }
 
-void CLogListenerDesigner::log(const uint64 ui64Value)
+void CLogListenerDesigner::log(const uint64_t ui64Value)
 {
 	if(m_bIngnoreMessages) return;
 
@@ -245,7 +245,7 @@ void CLogListenerDesigner::log(const uint64 ui64Value)
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
 }
 
-void CLogListenerDesigner::log(const uint32 ui32Value)
+void CLogListenerDesigner::log(const uint32_t ui32Value)
 {
 	if(m_bIngnoreMessages) return;
 
@@ -259,7 +259,7 @@ void CLogListenerDesigner::log(const uint32 ui32Value)
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
 }
 
-void CLogListenerDesigner::log(const uint16 ui16Value)
+void CLogListenerDesigner::log(const uint16_t ui16Value)
 {
 	if(m_bIngnoreMessages) return;
 
@@ -273,7 +273,7 @@ void CLogListenerDesigner::log(const uint16 ui16Value)
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
 }
 
-void CLogListenerDesigner::log(const uint8 ui8Value)
+void CLogListenerDesigner::log(const uint8_t ui8Value)
 {
 	if(m_bIngnoreMessages) return;
 
@@ -287,7 +287,7 @@ void CLogListenerDesigner::log(const uint8 ui8Value)
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
 }
 
-void CLogListenerDesigner::log(const int64 i64Value)
+void CLogListenerDesigner::log(const int64_t i64Value)
 {
 	if(m_bIngnoreMessages) return;
 
@@ -301,7 +301,7 @@ void CLogListenerDesigner::log(const int64 i64Value)
 	checkAppendFilterCurrentLog("c_watercourse",l_sText.str().c_str());
 }
 
-void CLogListenerDesigner::log(const int32 i32Value)
+void CLogListenerDesigner::log(const int32_t i32Value)
 {
 	if(m_bIngnoreMessages) return;
 
@@ -315,7 +315,7 @@ void CLogListenerDesigner::log(const int32 i32Value)
 	checkAppendFilterCurrentLog("c_watercourse",l_sText.str().c_str());
 }
 
-void CLogListenerDesigner::log(const int16 i16Value)
+void CLogListenerDesigner::log(const int16_t i16Value)
 {
 	if(m_bIngnoreMessages) return;
 
@@ -329,7 +329,7 @@ void CLogListenerDesigner::log(const int16 i16Value)
 	checkAppendFilterCurrentLog("c_watercourse",l_sText.str().c_str());
 }
 
-void CLogListenerDesigner::log(const int8 i8Value)
+void CLogListenerDesigner::log(const int8_t i8Value)
 {
 	if(m_bIngnoreMessages) return;
 
@@ -343,7 +343,7 @@ void CLogListenerDesigner::log(const int8 i8Value)
 	checkAppendFilterCurrentLog("c_watercourse",l_sText.str().c_str());
 }
 
-void CLogListenerDesigner::log(const float32 f32Value)
+void CLogListenerDesigner::log(const float f32Value)
 {
 	if(m_bIngnoreMessages) return;
 
@@ -353,7 +353,7 @@ void CLogListenerDesigner::log(const float32 f32Value)
 	checkAppendFilterCurrentLog("c_watercourse",l_sText.str().c_str());
 }
 
-void CLogListenerDesigner::log(const float64 f64Value)
+void CLogListenerDesigner::log(const double f64Value)
 {
 	if(m_bIngnoreMessages) return;
 
@@ -363,7 +363,7 @@ void CLogListenerDesigner::log(const float64 f64Value)
 	checkAppendFilterCurrentLog("c_watercourse",l_sText.str().c_str());
 }
 
-void CLogListenerDesigner::log(const boolean bValue)
+void CLogListenerDesigner::log(const bool bValue)
 {
 	if(m_bIngnoreMessages) return;
 
@@ -406,7 +406,7 @@ void CLogListenerDesigner::log(const ELogLevel eLogLevel)
 	GtkTextIter l_oEndLogIter;
 	gtk_text_buffer_get_end_iter(m_pCurrentLog->getTextBuffer(), &l_oEndLogIter);
 
-	auto addTagName = [this, &l_oEndLogIter](GtkToggleToolButton* activeButton, uint32& countVariable, const char* state, const char* color)
+	auto addTagName = [this, &l_oEndLogIter](GtkToggleToolButton* activeButton, uint32_t& countVariable, const char* state, const char* color)
 	{
 		m_bIngnoreMessages = !gtk_toggle_tool_button_get_active(activeButton);
 		if(m_bIngnoreMessages) return;
@@ -468,7 +468,7 @@ void CLogListenerDesigner::log(const ELogLevel eLogLevel)
 	m_vStoredLog.push_back(m_pCurrentLog);
 
 	//see if the log passes the filter
-	boolean l_bPassFilter = m_pCurrentLog->Filter(m_sSearchTerm);
+	bool l_bPassFilter = m_pCurrentLog->Filter(m_sSearchTerm);
 	//if it does mark this position and insert the log in the text buffer displayed
 	GtkTextIter l_oEndDisplayedTextIter;
 	gtk_text_buffer_get_end_iter(m_pBuffer, &l_oEndDisplayedTextIter);

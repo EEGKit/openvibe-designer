@@ -29,7 +29,7 @@ using namespace Plugins;
 using namespace OpenViBEDesigner;
 using namespace std;
 
-map<uint32, GdkColor> g_vColors;
+map<uint32_t, GdkColor> g_vColors;
 
 class CPluginObjectDescEnum
 {
@@ -39,7 +39,7 @@ public:
 
 	virtual ~CPluginObjectDescEnum() { }
 
-	virtual boolean enumeratePluginObjectDesc()
+	virtual bool enumeratePluginObjectDesc()
 
 	{
 		CIdentifier l_oIdentifier;
@@ -50,7 +50,7 @@ public:
 		return true;
 	}
 
-	virtual boolean enumeratePluginObjectDesc(
+	virtual bool enumeratePluginObjectDesc(
 		const CIdentifier& rParentClassIdentifier)
 	{
 		CIdentifier l_oIdentifier;
@@ -61,7 +61,7 @@ public:
 		return true;
 	}
 
-	virtual boolean callback(
+	virtual bool callback(
 		const IPluginObjectDesc& rPluginObjectDesc) = 0;
 
 protected:
@@ -79,7 +79,7 @@ public:
 
 	CPluginObjectDescCollector(const IKernelContext& rKernelContext) : CPluginObjectDescEnum(rKernelContext) { }
 
-	virtual boolean callback(
+	virtual bool callback(
 		const IPluginObjectDesc& rPluginObjectDesc)
 	{
 		string l_sFullName = string(rPluginObjectDesc.getCategory()) + "/" + string(rPluginObjectDesc.getName());
@@ -114,7 +114,7 @@ public:
 	CPluginObjectDescLogger(const IKernelContext& rKernelContext)
 		:CPluginObjectDescEnum(rKernelContext) { }
 
-	virtual boolean callback(
+	virtual bool callback(
 		const IPluginObjectDesc& rPluginObjectDesc)
 	{
 		// Outputs plugin info to console
@@ -183,7 +183,7 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 			l_sStockItemName = l_pBoxAlgorithmDesc->getStockItemName();
 		}
 
-		boolean l_bShouldShow = true;
+		bool l_bShouldShow = true;
 
 		if (rKernelContext.getPluginManager().isPluginObjectFlaggedAsDeprecated(l_pPluginObjectDesc->getCreatedClass())
 			&& !rKernelContext.getConfigurationManager().expandAsBoolean("${Designer_ShowDeprecated}", false))
@@ -232,8 +232,8 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 			GtkTreeIter* l_pGtkIterChild = &l_oGtkIter1;
 			for (string l_sCategory : l_vCategory)
 			{
-				boolean l_bFound = false;
-				boolean l_bValid = gtk_tree_model_iter_children(
+				bool l_bFound = false;
+				bool l_bValid = gtk_tree_model_iter_children(
 					GTK_TREE_MODEL(pTreeStore),
 					l_pGtkIterChild,
 					l_pGtkIterParent) ? true : false;
@@ -492,7 +492,7 @@ static bool ensureOneInstanceOfDesigner(SConfiguration& configuration, ILogManag
 #endif
 }
 
-boolean parse_arguments(int argc, char** argv, SConfiguration& rConfiguration)
+bool parse_arguments(int argc, char** argv, SConfiguration& rConfiguration)
 {
 	SConfiguration l_oConfiguration;
 
@@ -795,7 +795,7 @@ int go(int argc, char** argv)
 				else if (it->first == CommandLineFlag_RandomSeed)
 				{
 					const int64_t l_i32Seed = atol(it->second.c_str());
-					System::Math::initializeRandomMachine(static_cast<const uint32>(l_i32Seed));
+					System::Math::initializeRandomMachine(static_cast<const uint32_t>(l_i32Seed));
 				}
 				it++;
 			}
@@ -873,7 +873,7 @@ int go(int argc, char** argv)
 						app.initialize(l_oConfiguration.getFlags());
 
 						// FIXME is it necessary to keep next line uncomment ?
-						//boolean l_bIsScreenValid=true;
+						//bool l_bIsScreenValid=true;
 						if (!l_oConfiguration.m_eNoCheckColorDepth)
 						{
 							if (GDK_IS_DRAWABLE(GTK_WIDGET(app.m_pMainWindow)->window))

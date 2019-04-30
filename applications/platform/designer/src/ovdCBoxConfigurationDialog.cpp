@@ -299,7 +299,7 @@ void CBoxConfigurationDialog::generateSettingsTable()
 
 	// Iterate over box settings, generate corresponding gtk widgets. If the scenario is running, we are making a
 	// 'modifiable settings' dialog and use a subset of widgets with a slightly different layout and buttons.
-	for(uint32 settingIndex = 0, tableIndex = 0; settingIndex < m_rBox.getInterfacorCountIncludingDeprecated(BoxInterfacorType::Setting); settingIndex++)
+	for(uint32_t settingIndex = 0, tableIndex = 0; settingIndex < m_rBox.getInterfacorCountIncludingDeprecated(BoxInterfacorType::Setting); settingIndex++)
 	{
 		if(addSettingsToView(settingIndex, tableIndex))
 		{
@@ -342,7 +342,7 @@ bool CBoxConfigurationDialog::addSettingsToView(uint32_t ui32SettingIndex, uint3
 void CBoxConfigurationDialog::settingChange(uint32_t ui32SettingIndex)
 {
 	//We remeber the place to add the new setting at the same place
-	uint32 l_ui32IndexTable = getTableIndex(ui32SettingIndex);
+	uint32_t l_ui32IndexTable = getTableIndex(ui32SettingIndex);
 
 	removeSetting(ui32SettingIndex, false);
 	addSettingsToView(ui32SettingIndex, l_ui32IndexTable);
@@ -350,17 +350,17 @@ void CBoxConfigurationDialog::settingChange(uint32_t ui32SettingIndex)
 
 void CBoxConfigurationDialog::addSetting(uint32_t ui32SettingIndex)
 {
-	boolean l_bSettingModifiable;
+	bool l_bSettingModifiable;
 	m_rBox.getSettingMod(ui32SettingIndex, l_bSettingModifiable);
 
 	if( (!m_bIsScenarioRunning) || (m_bIsScenarioRunning && l_bSettingModifiable) )
 	{
-		uint32 l_ui32TableSize = m_vSettingViewVector.size();
+		uint32_t l_ui32TableSize = m_vSettingViewVector.size();
 		/*There is two case.
 		1) we just add at the end of the setting box
 		2) we add it in the middle end we need to shift
 		*/
-		uint32 l_ui32TableIndex;
+		uint32_t l_ui32TableIndex;
 		if(ui32SettingIndex > m_vSettingViewVector[l_ui32TableSize-1]->getSettingIndex()){
 			l_ui32TableIndex = l_ui32TableSize;
 		}
@@ -405,7 +405,7 @@ void CBoxConfigurationDialog::addSetting(uint32_t ui32SettingIndex)
 
 void CBoxConfigurationDialog::removeSetting(uint32_t ui32SettingIndex, bool bShift)
 {
-	int32 i32TableIndex = getTableIndex(ui32SettingIndex);
+	int32_t i32TableIndex = getTableIndex(ui32SettingIndex);
 
 	if(i32TableIndex != -1)
 	{
@@ -453,7 +453,7 @@ void CBoxConfigurationDialog::removeSetting(uint32_t ui32SettingIndex, bool bShi
 
 int32_t CBoxConfigurationDialog::getTableIndex(uint32_t ui32SettingIndex)
 {
-	uint32 ui32TableIndex=0;
+	uint32_t ui32TableIndex=0;
 	for (auto it = m_vSettingViewVector.begin() ; it != m_vSettingViewVector.end(); ++it, ++ui32TableIndex)
 	{
 		Setting::CAbstractSettingView *l_pView = *it;
@@ -473,13 +473,13 @@ void CBoxConfigurationDialog::updateSize()
 	// The ui file at the moment does not allow resize of this window because the result
 	// looked ugly if the window was made overly large, and no satisfying solution at the time was
 	// found by the limited intellectual resources available.
-	const uint32 l_ui32MaxWidth = std::min(800,gdk_screen_get_width(gdk_screen_get_default()));
-	const uint32 l_ui32MaxHeight = std::min(600,gdk_screen_get_height(gdk_screen_get_default()));
+	const uint32_t l_ui32MaxWidth = std::min(800,gdk_screen_get_width(gdk_screen_get_default()));
+	const uint32_t l_ui32MaxHeight = std::min(600,gdk_screen_get_height(gdk_screen_get_default()));
 	GtkRequisition l_oSize;
 	gtk_widget_size_request(GTK_WIDGET(m_pViewPort), &l_oSize);
 	gtk_widget_set_size_request(GTK_WIDGET(m_pScrolledWindow),
-		std::min(l_ui32MaxWidth,(uint32)l_oSize.width),
-								std::min(l_ui32MaxHeight,(uint32)l_oSize.height));
+		std::min(l_ui32MaxWidth,(uint32_t)l_oSize.width),
+								std::min(l_ui32MaxHeight,(uint32_t)l_oSize.height));
 }
 
 void CBoxConfigurationDialog::saveConfiguration()

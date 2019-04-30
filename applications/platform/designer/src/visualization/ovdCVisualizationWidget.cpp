@@ -32,7 +32,7 @@ CVisualizationWidget::CVisualizationWidget(const IKernelContext& kernelContext)
 CVisualizationWidget::~CVisualizationWidget() { }
 
 bool CVisualizationWidget::initialize(const CIdentifier& identifier, const CString& name, EVisualizationWidgetType type,
-	const CIdentifier& parentIdentifier, const CIdentifier& boxIdentifier, uint32 childCount)
+	const CIdentifier& parentIdentifier, const CIdentifier& boxIdentifier, uint32_t childCount)
 {
 	m_Identifier = identifier;
 	m_Name = name;
@@ -78,12 +78,12 @@ CIdentifier CVisualizationWidget::getBoxIdentifier() const
 	return m_BoxIdentifier;
 }
 
-uint32 CVisualizationWidget::getNbChildren() const
+uint32_t CVisualizationWidget::getNbChildren() const
 {
-	return static_cast<uint32>(m_Children.size());
+	return static_cast<uint32_t>(m_Children.size());
 }
 
-bool CVisualizationWidget::getChildIndex(const CIdentifier& identifier, uint32& index) const
+bool CVisualizationWidget::getChildIndex(const CIdentifier& identifier, uint32_t& index) const
 {
 	for (index = 0; index < m_Children.size(); index++)
 	{
@@ -124,7 +124,7 @@ bool CVisualizationWidget::removeChild(const CIdentifier& identifier)
 	             ErrorType::ResourceNotFound);
 }
 
-bool CVisualizationWidget::getChildIdentifier(uint32 childIndex, CIdentifier& identifier) const
+bool CVisualizationWidget::getChildIdentifier(uint32_t childIndex, CIdentifier& identifier) const
 {
 	if (childIndex >= m_Children.size())
 	{
@@ -136,7 +136,7 @@ bool CVisualizationWidget::getChildIdentifier(uint32 childIndex, CIdentifier& id
 	return true;
 }
 
-bool CVisualizationWidget::setChildIdentifier(uint32 childIndex, const CIdentifier& identifier)
+bool CVisualizationWidget::setChildIdentifier(uint32_t childIndex, const CIdentifier& identifier)
 {
 	if (childIndex >= m_Children.size())
 	{

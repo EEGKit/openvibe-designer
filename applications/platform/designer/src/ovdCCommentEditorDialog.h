@@ -12,7 +12,7 @@ namespace OpenViBEDesigner
 		CCommentEditorDialog(const OpenViBE::Kernel::IKernelContext& rKernelContext, OpenViBE::Kernel::IComment& rComment, const char* sGUIFilename);
 		virtual ~CCommentEditorDialog();
 
-		OpenViBE::boolean run();
+		bool run();
 
 		// Callback for text formatting
 		void applyTagCB(const char* sTagIn, const char* sTagOut);

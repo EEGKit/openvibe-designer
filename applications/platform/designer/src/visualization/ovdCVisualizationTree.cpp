@@ -136,7 +136,7 @@ IVisualizationWidget* CVisualizationTree::getVisualizationWidgetFromBoxIdentifie
 }
 
 bool CVisualizationTree::addVisualizationWidget(CIdentifier& identifier, const CString& name, EVisualizationWidgetType type,
-	const CIdentifier& parentIdentifier, uint32 parentIndex, const CIdentifier& boxIdentifier, uint32 childCount, const CIdentifier& suggestedIdentifier)
+	const CIdentifier& parentIdentifier, uint32_t parentIndex, const CIdentifier& boxIdentifier, uint32_t childCount, const CIdentifier& suggestedIdentifier)
 {
 	m_KernelContext.getLogManager() << LogLevel_Debug << "Adding new visualization widget\n";
 
@@ -189,7 +189,7 @@ bool CVisualizationTree::addVisualizationWidget(CIdentifier& identifier, const C
 	return true;
 }
 
-bool CVisualizationTree::getVisualizationWidgetIndex(const CIdentifier& identifier, uint32& index) const
+bool CVisualizationTree::getVisualizationWidgetIndex(const CIdentifier& identifier, uint32_t& index) const
 {
 	IVisualizationWidget* visualizationWidget = getVisualizationWidget(identifier);
 	if (!visualizationWidget)
@@ -227,7 +227,7 @@ bool CVisualizationTree::destroyHierarchy(const CIdentifier& identifier, bool de
 	if (visualizationWidget->getType() == EVisualizationWidget_VisualizationWindow)
 	{
 		CIdentifier childIdentifier;
-		for (uint32 i = 0; i < visualizationWidget->getNbChildren(); i++)
+		for (uint32_t i = 0; i < visualizationWidget->getNbChildren(); i++)
 		{
 			visualizationWidget->getChildIdentifier(i, childIdentifier);
 			res &=_destroyHierarchy(childIdentifier, destroyVisualizationBoxes);
@@ -240,7 +240,7 @@ bool CVisualizationTree::destroyHierarchy(const CIdentifier& identifier, bool de
 	}
 	else //top item is a widget
 	{
-		uint32 index;
+		uint32_t index;
 		unparentVisualizationWidget(identifier, index);
 		_destroyHierarchy(identifier, destroyVisualizationBoxes);
 	}
@@ -258,8 +258,8 @@ bool CVisualizationTree::_destroyHierarchy(const CIdentifier& identifier, bool d
 
 	//remove children
 	CIdentifier l_oChildIdentifier;
-	uint32 nbChildren = visualizationWidget->getNbChildren();
-	for (uint32 i = 0; i < nbChildren; i++)
+	uint32_t nbChildren = visualizationWidget->getNbChildren();
+	for (uint32_t i = 0; i < nbChildren; i++)
 	{
 		visualizationWidget->getChildIdentifier(i, l_oChildIdentifier);
 		_destroyHierarchy(l_oChildIdentifier, destroyVisualizationBoxes);
@@ -278,7 +278,7 @@ bool CVisualizationTree::_destroyHierarchy(const CIdentifier& identifier, bool d
 	//if this widget is a visualization box and they are to be unaffected
 	if (visualizationWidget->getType() == EVisualizationWidget_VisualizationBox && destroyVisualizationBoxes == false)
 	{
-		uint32 index;
+		uint32_t index;
 		unparentVisualizationWidget(identifier, index);
 	}
 	else
@@ -292,7 +292,7 @@ bool CVisualizationTree::_destroyHierarchy(const CIdentifier& identifier, bool d
 	return true;
 }
 
-bool CVisualizationTree::unparentVisualizationWidget(const CIdentifier& identifier, uint32& index)
+bool CVisualizationTree::unparentVisualizationWidget(const CIdentifier& identifier, uint32_t& index)
 {
 	//retrieve widget to be unparented
 	IVisualizationWidget* visualizationWidget = getVisualizationWidget(identifier);
@@ -322,7 +322,7 @@ bool CVisualizationTree::unparentVisualizationWidget(const CIdentifier& identifi
 	return true;
 }
 
-bool CVisualizationTree::parentVisualizationWidget(const CIdentifier& identifier, const CIdentifier& rParentIdentifier, uint32 index)
+bool CVisualizationTree::parentVisualizationWidget(const CIdentifier& identifier, const CIdentifier& rParentIdentifier, uint32_t index)
 {
 	if (rParentIdentifier == OV_UndefinedIdentifier)
 	{
@@ -353,7 +353,7 @@ bool CVisualizationTree::parentVisualizationWidget(const CIdentifier& identifier
 
 CIdentifier CVisualizationTree::getUnusedIdentifier(const CIdentifier& suggestedIdentifier) const
 {
-	uint64 proposedIdentifier=(((uint64)rand())<<32)+((uint64)rand());
+	uint64_t proposedIdentifier=(((uint64_t)rand())<<32)+((uint64_t)rand());
 	if(suggestedIdentifier != OV_UndefinedIdentifier)
 	{
 		proposedIdentifier = suggestedIdentifier.toUInteger()-1;
@@ -727,11 +727,11 @@ bool CVisualizationTree::dragDataReceivedOutsideWidgetCB(const CIdentifier& sour
 	CIdentifier destinationParentIdentifier = destinationVisualizationWidget->getParentIdentifier();
 
 	//unparent source widget
-	uint32 sourceIndex = 0;
+	uint32_t sourceIndex = 0;
 	unparentVisualizationWidget(sourceWidgetIdentifierr, sourceIndex);
 
 	//unparent dest widget
-	uint32 destinationIndex = 0;
+	uint32_t destinationIndex = 0;
 	unparentVisualizationWidget(destinationWidgetIdentifier, destinationIndex);
 
 	//create paned widget
@@ -755,7 +755,7 @@ bool CVisualizationTree::dragDataReceivedOutsideWidgetCB(const CIdentifier& sour
 	}
 
 	//reparent widgets
-	uint32 newSourceIndex = (location == EDragData_Top || location == EDragData_Left) ? 0 : 1;
+	uint32_t newSourceIndex = (location == EDragData_Top || location == EDragData_Left) ? 0 : 1;
 	parentVisualizationWidget(sourceWidgetIdentifierr, panedIdentifier, newSourceIndex);
 	parentVisualizationWidget(destinationWidgetIdentifier, panedIdentifier, 1-newSourceIndex);
 
@@ -793,11 +793,11 @@ bool CVisualizationTree::dragDataReceivedInWidgetCB(const CIdentifier& sourceWid
 	CIdentifier destinationParentIdentifier = destinationVisualizationWidget->getParentIdentifier();
 
 	//unparent source widget
-	uint32 sourceIndex;
+	uint32_t sourceIndex;
 	unparentVisualizationWidget(sourceWidgetIdentifier, sourceIndex);
 
 	//destroy, unparent or reparent dest widget
-	uint32 destinationIndex;
+	uint32_t destinationIndex;
 
 	//if source widget was unaffected
 	if (sourceParentIdentifier == OV_UndefinedIdentifier)
@@ -911,7 +911,7 @@ bool CVisualizationTree::loadVisualizationWidget(IVisualizationWidget* visualiza
 		}
 	}
 
-	for (uint32 i = 0;  i < visualizationWidget->getNbChildren(); i++)
+	for (uint32_t i = 0;  i < visualizationWidget->getNbChildren(); i++)
 	{
 		CIdentifier childIdentifier;
 		visualizationWidget->getChildIdentifier(i, childIdentifier);
@@ -964,7 +964,7 @@ json::Object CVisualizationTree::serializeWidget(IVisualizationWidget& widget) c
 	IVisualizationWidget* parentVisualizationWidget = this->getVisualizationWidget(widget.getParentIdentifier());
 	if (parentVisualizationWidget)
 	{
-		uint32 childIndex = 0;
+		uint32_t childIndex = 0;
 		parentVisualizationWidget->getChildIndex(widget.getIdentifier(), childIndex);
 		jsonRepresentation["index"] = static_cast<int>(childIndex);
 	}
@@ -1009,7 +1009,7 @@ CString CVisualizationTree::serialize() const
 
 		jsonRepresentation.push_back(this->serializeWidget(*widget));
 
-		for (uint32 j = 0; j < widget->getNbChildren(); ++j)
+		for (uint32_t j = 0; j < widget->getNbChildren(); ++j)
 		{
 			if (widget->getChildIdentifier(j, visualizationWidgetIdentifier))
 			{

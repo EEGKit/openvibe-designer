@@ -14,7 +14,7 @@ CRenameDialog::CRenameDialog(const IKernelContext& rKernelContext, const CString
 
 CRenameDialog::~CRenameDialog() { }
 
-boolean CRenameDialog::run()
+bool CRenameDialog::run()
 
 {
 	GtkBuilder* l_pInterface=gtk_builder_new(); // glade_xml_new(m_sGUIFilename.toASCIIString(), "rename", nullptr);
@@ -27,8 +27,8 @@ boolean CRenameDialog::run()
 
 	gtk_entry_set_text(GTK_ENTRY(l_pName), m_sInitialName.toASCIIString());
 
-	boolean l_bFinished=false;
-	boolean l_bResult;
+	bool l_bFinished=false;
+	bool l_bResult;
 	while(!l_bFinished)
 	{
 		gint l_iResult=gtk_dialog_run(GTK_DIALOG(l_pDialog));

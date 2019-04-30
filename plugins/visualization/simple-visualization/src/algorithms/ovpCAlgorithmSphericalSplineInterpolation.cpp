@@ -15,7 +15,7 @@ using namespace Plugins;
 using namespace OpenViBEPlugins;
 using namespace Test;
 
-boolean CAlgorithmSphericalSplineInterpolation::initialize()
+bool CAlgorithmSphericalSplineInterpolation::initialize()
 
 {
 	m_bFirstProcess = true;
@@ -38,7 +38,7 @@ boolean CAlgorithmSphericalSplineInterpolation::initialize()
 	return true;
 }
 
-boolean CAlgorithmSphericalSplineInterpolation::uninitialize()
+bool CAlgorithmSphericalSplineInterpolation::uninitialize()
 
 {
 	ip_i64SplineOrder.uninitialize();
@@ -74,7 +74,7 @@ boolean CAlgorithmSphericalSplineInterpolation::uninitialize()
 	return true;
 }
 
-boolean CAlgorithmSphericalSplineInterpolation::process()
+bool CAlgorithmSphericalSplineInterpolation::process()
 
 {
 	if(m_bFirstProcess == true)
@@ -128,7 +128,7 @@ boolean CAlgorithmSphericalSplineInterpolation::process()
 
 			char buf[1024];
 			sprintf(buf, "CtrlPointsCoords= ");
-			for(uint32 i=0; i<ip_i64ControlPointsCount; i++)
+			for(uint32_t i=0; i<ip_i64ControlPointsCount; i++)
 			{
 				sprintf(buf+strlen(buf), "[%.1f %.1f %.1f] ", (float)(m_pInsermCoords[i][0]), (float)(m_pInsermCoords[i][1]), (float)(m_pInsermCoords[i][2]));
 			}
@@ -136,7 +136,7 @@ boolean CAlgorithmSphericalSplineInterpolation::process()
 			getLogManager() << l_eLogLevel << buf;
 
 			sprintf(buf, "CtrlPointsValues= ");
-			for(uint32 i=0; i<ip_i64ControlPointsCount; i++)
+			for(uint32_t i=0; i<ip_i64ControlPointsCount; i++)
 			{
 				sprintf(buf+strlen(buf), "%.1f ", (float)*((double*)ip_pControlPointsValues->getBuffer() + i));
 			}
@@ -144,7 +144,7 @@ boolean CAlgorithmSphericalSplineInterpolation::process()
 			getLogManager() << l_eLogLevel << buf;
 
 			sprintf(buf, "Spline Coeffs   = ");
-			for(uint32 i=0; i<=ip_i64ControlPointsCount; i++)
+			for(uint32_t i=0; i<=ip_i64ControlPointsCount; i++)
 			{
 				sprintf(buf+strlen(buf), "%.1f ", (float)m_pSplineCoefs[i]);
 			}
@@ -152,12 +152,12 @@ boolean CAlgorithmSphericalSplineInterpolation::process()
 			getLogManager() << l_eLogLevel << buf;
 
 			sprintf(buf, "PotTable coeffs = ");
-			for(uint32 i=0; i<10; i++)
+			for(uint32_t i=0; i<10; i++)
 			{
 				sprintf(buf+strlen(buf), "%.1f ", (float)m_PotTable[i]);
 			}
 			sprintf(buf+strlen(buf), " ... ");
-			for(uint32 i=2001; i<2004; i++)
+			for(uint32_t i=2001; i<2004; i++)
 			{
 				sprintf(buf+strlen(buf), "%.1f ", (float)m_PotTable[i]);
 			}
@@ -189,7 +189,7 @@ boolean CAlgorithmSphericalSplineInterpolation::process()
 
 	if(isInputTriggerActive(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_InterpolateSpline))
 	{
-		boolean l_bOK = true;
+		bool l_bOK = true;
 
 		//ensure we got enough storage space for interpolated values
 		if(op_pSamplePointsValues->getDimensionSize(0) != ip_pSamplePointsCoords->getDimensionSize(0))
@@ -203,7 +203,7 @@ boolean CAlgorithmSphericalSplineInterpolation::process()
 		op_f64MinSamplePointValue = +DBL_MAX;
 		op_f64MaxSamplePointValue = -DBL_MAX;
 
-		for(uint32 i=0; i<ip_pSamplePointsCoords->getDimensionSize(0); i++, l_pSampleValue++)
+		for(uint32_t i=0; i<ip_pSamplePointsCoords->getDimensionSize(0); i++, l_pSampleValue++)
 		{
 #if defined TARGET_OS_Windows
 #ifndef NDEBUG
@@ -261,7 +261,7 @@ boolean CAlgorithmSphericalSplineInterpolation::process()
 	}
 	else if(isInputTriggerActive(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_InterpolateLaplacian))
 	{
-		boolean l_bOK = true;
+		bool l_bOK = true;
 
 		//ensure we got enough storage space for interpolated values
 		if(op_pSamplePointsValues->getDimensionSize(0) != ip_pSamplePointsCoords->getDimensionSize(0))
@@ -275,7 +275,7 @@ boolean CAlgorithmSphericalSplineInterpolation::process()
 		op_f64MinSamplePointValue = +DBL_MAX;
 		op_f64MaxSamplePointValue = -DBL_MAX;
 
-		for(uint32 i=0; i<ip_pSamplePointsCoords->getDimensionSize(0); i++, l_pSampleValue++)
+		for(uint32_t i=0; i<ip_pSamplePointsCoords->getDimensionSize(0); i++, l_pSampleValue++)
 		{
 			*l_pSampleValue = spline_interp(
 				(int)ip_i64ControlPointsCount, //number of fixed values

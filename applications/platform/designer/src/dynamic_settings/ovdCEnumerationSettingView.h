@@ -14,7 +14,7 @@ namespace OpenViBEDesigner
 		{
 		public:
 			CEnumerationSettingView(OpenViBE::Kernel::IBox& rBox,
-								OpenViBE::uint32 ui32Index,
+								uint32_t ui32Index,
 								OpenViBE::CString &rBuilderName,
 								const OpenViBE::Kernel::IKernelContext& rKernelContext,
 									const OpenViBE::CIdentifier &rTypeIdentifier);
@@ -28,12 +28,12 @@ namespace OpenViBEDesigner
 		private:
 			::GtkComboBox* m_pComboBox;
 			OpenViBE::CIdentifier m_oTypeIdentifier;
-			OpenViBE::boolean p;
+			bool p;
 
-			std::map < OpenViBE::CString, OpenViBE::uint64 > m_mEntriesIndex;
+			std::map < OpenViBE::CString, uint64_t > m_mEntriesIndex;
 
 			const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
-			OpenViBE::boolean m_bOnValueSetting;
+			bool m_bOnValueSetting;
 		};
 	}
 

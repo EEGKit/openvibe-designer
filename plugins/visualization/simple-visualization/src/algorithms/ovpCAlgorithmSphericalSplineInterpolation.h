@@ -17,9 +17,9 @@ namespace OpenViBEPlugins
 
 			virtual void release() { delete this; }
 
-			virtual OpenViBE::boolean initialize();
-			virtual OpenViBE::boolean uninitialize();
-			virtual OpenViBE::boolean process();
+			virtual bool initialize();
+			virtual bool uninitialize();
+			virtual bool process();
 
 			_IsDerivedFromClass_Final_(OpenViBEToolkit::TAlgorithm < OpenViBE::Plugins::IAlgorithm >, OVP_ClassId_Algorithm_SphericalSplineInterpolation);
 
@@ -27,8 +27,8 @@ namespace OpenViBEPlugins
 
 			//input parameters
 			//----------------
-			OpenViBE::Kernel::TParameterHandler < OpenViBE::int64 > ip_i64SplineOrder;
-			OpenViBE::Kernel::TParameterHandler < OpenViBE::int64 > ip_i64ControlPointsCount;
+			OpenViBE::Kernel::TParameterHandler < int64_t > ip_i64SplineOrder;
+			OpenViBE::Kernel::TParameterHandler < int64_t > ip_i64ControlPointsCount;
 			OpenViBE::Kernel::TParameterHandler < OpenViBE::IMatrix* > ip_pControlPointsCoords;
 			OpenViBE::Kernel::TParameterHandler < OpenViBE::IMatrix* > ip_pControlPointsValues;
 			OpenViBE::Kernel::TParameterHandler < OpenViBE::IMatrix* > ip_pSamplePointsCoords;
@@ -36,12 +36,12 @@ namespace OpenViBEPlugins
 			//output parameters
 			//-----------------
 			OpenViBE::Kernel::TParameterHandler < OpenViBE::IMatrix* > op_pSamplePointsValues;
-			OpenViBE::Kernel::TParameterHandler < OpenViBE::float64 > op_f64MinSamplePointValue;
-			OpenViBE::Kernel::TParameterHandler < OpenViBE::float64 > op_f64MaxSamplePointValue;
+			OpenViBE::Kernel::TParameterHandler < double > op_f64MinSamplePointValue;
+			OpenViBE::Kernel::TParameterHandler < double > op_f64MaxSamplePointValue;
 
 			//internal data
 			//-------------
-			OpenViBE::boolean m_bFirstProcess;
+			bool m_bFirstProcess;
 			double* m_pDoubleCoords;
 			double** m_pInsermCoords;
 			double m_ScdTable[2004];
@@ -70,7 +70,7 @@ namespace OpenViBEPlugins
 			virtual OpenViBE::CIdentifier getCreatedClass() const    { return OVP_ClassId_Algorithm_SphericalSplineInterpolation; }
 			virtual OpenViBE::Plugins::IPluginObject* create()       { return new CAlgorithmSphericalSplineInterpolation(); }
 
-			virtual OpenViBE::boolean getAlgorithmPrototype(
+			virtual bool getAlgorithmPrototype(
 				OpenViBE::Kernel::IAlgorithmProto& rAlgorithmPrototype) const
 			{
 				//input parameters

@@ -14,7 +14,7 @@ TAttributeHandler::TAttributeHandler(const IAttributable& rAttributable)
 	:m_pConstAttributable(&rAttributable)
 	,m_pAttributable(nullptr) { }
 
-boolean TAttributeHandler::removeAttribute(
+bool TAttributeHandler::removeAttribute(
 	const CIdentifier& rAttributeIdentifier)
 {
 	if(!m_pAttributable)
@@ -24,7 +24,7 @@ boolean TAttributeHandler::removeAttribute(
 	return m_pAttributable->removeAttribute(rAttributeIdentifier);
 }
 
-boolean TAttributeHandler::removeAllAttributes()
+bool TAttributeHandler::removeAllAttributes()
 
 {
 	if(!m_pAttributable)
@@ -34,13 +34,13 @@ boolean TAttributeHandler::removeAllAttributes()
 	return m_pAttributable->removeAllAttributes();
 }
 
-boolean TAttributeHandler::hasAttribute(
+bool TAttributeHandler::hasAttribute(
 	const CIdentifier& rAttributeIdentifier) const
 {
 	return m_pConstAttributable->hasAttribute(rAttributeIdentifier);
 }
 
-boolean TAttributeHandler::hasAttributes() const
+bool TAttributeHandler::hasAttributes() const
 {
 	return m_pConstAttributable->hasAttributes();
 }
@@ -48,7 +48,7 @@ boolean TAttributeHandler::hasAttributes() const
 namespace OpenViBEDesigner
 {
 	template <>
-	boolean TAttributeHandler::addAttribute(
+	bool TAttributeHandler::addAttribute(
 		const CIdentifier& rAttributeIdentifier,
 		const int& rValue) const
 	{
@@ -62,7 +62,7 @@ namespace OpenViBEDesigner
 	}
 
 	template <>
-	boolean TAttributeHandler::addAttribute(
+	bool TAttributeHandler::addAttribute(
 		const CIdentifier& rAttributeIdentifier,
 		const bool& rValue) const
 	{
@@ -96,7 +96,7 @@ namespace OpenViBEDesigner
 	}
 
 	template <>
-	boolean TAttributeHandler::setAttributeValue(
+	bool TAttributeHandler::setAttributeValue(
 		const CIdentifier& rAttributeIdentifier,
 		const int& rValue)
 	{
@@ -110,7 +110,7 @@ namespace OpenViBEDesigner
 	}
 
 	template <>
-	boolean TAttributeHandler::setAttributeValue(
+	bool TAttributeHandler::setAttributeValue(
 		const CIdentifier& rAttributeIdentifier,
 		const bool& rValue)
 	{

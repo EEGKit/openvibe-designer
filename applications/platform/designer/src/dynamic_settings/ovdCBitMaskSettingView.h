@@ -14,7 +14,7 @@ namespace OpenViBEDesigner
 		{
 		public:
 			CBitMaskSettingView(OpenViBE::Kernel::IBox& rBox,
-								OpenViBE::uint32 ui32Index,
+								uint32_t ui32Index,
 								OpenViBE::CString &rBuilderName,
 								const OpenViBE::Kernel::IKernelContext& rKernelContext,
 								const OpenViBE::CIdentifier &rTypeIdentifier);
@@ -29,7 +29,7 @@ namespace OpenViBEDesigner
 			const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
 
 			std::vector < ::GtkToggleButton *> m_vToggleButton;
-			OpenViBE::boolean m_bOnValueSetting;
+			bool m_bOnValueSetting;
 		};
 	}
 

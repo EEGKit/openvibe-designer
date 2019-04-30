@@ -23,7 +23,7 @@ static void on_change(GtkEntry *entry, gpointer pUserData)
 }
 
 
-CColorSettingView::CColorSettingView(Kernel::IBox &rBox, uint32 ui32Index, CString &rBuilderName, const Kernel::IKernelContext &rKernelContext):
+CColorSettingView::CColorSettingView(Kernel::IBox &rBox, uint32_t ui32Index, CString &rBuilderName, const Kernel::IKernelContext &rKernelContext):
 	CAbstractSettingView(rBox, ui32Index, rBuilderName, "settings_collection-hbox_setting_color"), m_rKernelContext(rKernelContext), m_bOnValueSetting(false)
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();

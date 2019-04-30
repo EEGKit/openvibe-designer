@@ -24,7 +24,7 @@ static void on_change(GtkEntry *entry, gpointer pUserData)
 }
 
 
-CFloatSettingView::CFloatSettingView(Kernel::IBox &rBox, uint32 ui32Index, CString &rBuilderName, const Kernel::IKernelContext &rKernelContext):
+CFloatSettingView::CFloatSettingView(Kernel::IBox &rBox, uint32_t ui32Index, CString &rBuilderName, const Kernel::IKernelContext &rKernelContext):
 	CAbstractSettingView(rBox, ui32Index, rBuilderName, "settings_collection-hbox_setting_float"), m_rKernelContext(rKernelContext), m_bOnValueSetting(false)
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
@@ -55,10 +55,10 @@ void CFloatSettingView::setValue(const CString &rValue)
 	m_bOnValueSetting = false;
 }
 
-void CFloatSettingView::adjustValue(float64 amount)
+void CFloatSettingView::adjustValue(double amount)
 {
 	char l_sValue[1024];
-	float64 l_f64lValue=m_rKernelContext.getConfigurationManager().expandAsFloat(gtk_entry_get_text(m_pEntry), 0);
+	double l_f64lValue=m_rKernelContext.getConfigurationManager().expandAsFloat(gtk_entry_get_text(m_pEntry), 0);
 	l_f64lValue+=amount;
 	sprintf(l_sValue, "%lf", l_f64lValue);
 

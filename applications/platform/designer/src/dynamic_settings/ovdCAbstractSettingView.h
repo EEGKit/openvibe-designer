@@ -23,15 +23,15 @@ namespace OpenViBEDesigner
 			virtual ::GtkWidget* getEntryWidget();
 
 			//This function is use to update the setting index when a setting is suppressed or inserted
-			virtual void setSettingIndex(OpenViBE::uint32 m_ui32NewIndex);
+			virtual void setSettingIndex(uint32_t m_ui32NewIndex);
 			//Get the index of the setting
-			virtual OpenViBE::uint32 getSettingIndex();
+			virtual uint32_t getSettingIndex();
 
 		protected:
 			//Initialize the common part of all view. If sBuilderName and sWidgetName are not nullptr, the entryTable and the label
 			//will be set according to these informations.
 			//If there are nullptr, name and entry widget will have to be set after with corresponding setter.
-			CAbstractSettingView(OpenViBE::Kernel::IBox& rBox, OpenViBE::uint32 ui32Index,
+			CAbstractSettingView(OpenViBE::Kernel::IBox& rBox, uint32_t ui32Index,
 								 const char* sBuilderName, const char* sWidgetName);
 
 			//Return the box which contains the setting
@@ -59,7 +59,7 @@ namespace OpenViBEDesigner
 
 
 			OpenViBE::Kernel::IBox& m_rBox;
-			OpenViBE::uint32 m_ui32Index;
+			uint32_t m_ui32Index;
 			OpenViBE::CString m_sSettingWidgetName;
 			::GtkWidget* m_pNameWidget;
 			::GtkWidget* m_pEntryNameWidget;
@@ -67,7 +67,7 @@ namespace OpenViBEDesigner
 
 			//If we don't store the builder, the setting name will be free when we'll unref the builder
 			::GtkBuilder *m_pBuilder;
-			OpenViBE::boolean m_bOnValueSetting;
+			bool m_bOnValueSetting;
 		};
 	}
 

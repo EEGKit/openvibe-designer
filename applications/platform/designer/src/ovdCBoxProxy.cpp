@@ -64,31 +64,31 @@ CBoxProxy::operator const IBox* ()
 	return m_pConstBox;
 }
 
-int32 CBoxProxy::getWidth(GtkWidget* pWidget) const
+int32_t CBoxProxy::getWidth(GtkWidget* pWidget) const
 {
 	int x, y;
 	updateSize(pWidget, getLabel(), getStatusLabel(), &x, &y);
 	return x;
 }
 
-int32 CBoxProxy::getHeight(GtkWidget* pWidget) const
+int32_t CBoxProxy::getHeight(GtkWidget* pWidget) const
 {
 	int x, y;
 	updateSize(pWidget, getLabel(), getStatusLabel(), &x, &y);
 	return y;
 }
 
-int32 CBoxProxy::getXCenter() const
+int32_t CBoxProxy::getXCenter() const
 {
 	return m_iXCenter;
 }
 
-int32 CBoxProxy::getYCenter() const
+int32_t CBoxProxy::getYCenter() const
 {
 	return m_iYCenter;
 }
 
-void CBoxProxy::setCenter(int32 i32XCenter, int32 i32YCenter)
+void CBoxProxy::setCenter(int32_t i32XCenter, int32_t i32YCenter)
 {
 	m_iXCenter=i32XCenter;
 	m_iYCenter=i32YCenter;
@@ -152,7 +152,7 @@ const char* CBoxProxy::getLabel() const
 		// we sanitize the markup tag overture '<'
 		// markup should not be used in the box name anyway (hidden feature),
 		// but the character '<' may actually be useful in a valid name
-		for (uint32 c = 0; c<l_sBoxName.size(); c++)
+		for (uint32_t c = 0; c<l_sBoxName.size(); c++)
 		{
 			if (l_sBoxName[c] == '<')
 			{

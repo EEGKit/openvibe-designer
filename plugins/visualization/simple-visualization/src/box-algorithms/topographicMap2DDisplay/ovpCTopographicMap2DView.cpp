@@ -32,7 +32,7 @@ namespace OpenViBEPlugins
 	{
 		static const int s_nbColors = 13;
 		static GdkColor s_palette[13];
-		static uint8 s_palette8[13*3];
+		static uint8_t s_palette8[13*3];
 
 		static gboolean redrawCallback(GtkWidget* pWidget, GdkEventExpose* pEvent, gpointer data);
 		static gboolean resizeCallback(GtkWidget* pWidget, GtkAllocation* pAllocation, gpointer data);
@@ -43,7 +43,7 @@ namespace OpenViBEPlugins
 		static void setDelayCallback(GtkRange *range, gpointer data);
 
 		CTopographicMap2DView::CTopographicMap2DView(CTopographicMapDatabase& rTopographicMapDatabase,
-			uint64 ui64DefaultInterpolation, float64 f64Delay)
+			uint64_t ui64DefaultInterpolation, double f64Delay)
 			:m_rTopographicMapDatabase(rTopographicMapDatabase)
 			,m_f64MaxDelay(2.0) //maximum delay : 2s
 			,m_pBuilderInterface(nullptr)
@@ -310,7 +310,7 @@ namespace OpenViBEPlugins
 			return &m_oSampleCoordinatesMatrix;
 		}
 
-		boolean CTopographicMap2DView::setSampleValuesMatrix(IMatrix* pSampleValuesMatrix)
+		bool CTopographicMap2DView::setSampleValuesMatrix(IMatrix* pSampleValuesMatrix)
 		{
 			//ensure matrix has the right size
 			if(pSampleValuesMatrix == nullptr || pSampleValuesMatrix->getBufferElementCount() < m_oSampleValues.size())
@@ -319,13 +319,13 @@ namespace OpenViBEPlugins
 			}
 
 			//retrieve min/max potentials
-			float64 l_f64MinPotential, l_f64MaxPotential;
+			double l_f64MinPotential, l_f64MaxPotential;
 			m_rTopographicMapDatabase.getLastBufferInterpolatedMinMaxValue(l_f64MinPotential, l_f64MaxPotential);
 
-			int32 l_colorStartIndex = 0;
-			int32 l_colorEndIndex = s_nbColors-1;
+			int32_t l_colorStartIndex = 0;
+			int32_t l_colorEndIndex = s_nbColors-1;
 
-			float64 l_f64InvPotentialStep = 0;
+			double l_f64InvPotentialStep = 0;
 
 			if(l_f64MinPotential < l_f64MaxPotential)
 			{
@@ -333,10 +333,10 @@ namespace OpenViBEPlugins
 			}
 
 			//determine color index of each sample
-			for(uint32 i=0; i<m_oSampleValues.size(); i++)
+			for(uint32_t i=0; i<m_oSampleValues.size(); i++)
 			{
-				float64 l_f64Value = *(pSampleValuesMatrix->getBuffer() + i);
-				int32 l_iColorIndex;
+				double l_f64Value = *(pSampleValuesMatrix->getBuffer() + i);
+				int32_t l_iColorIndex;
 
 				if(l_f64Value < l_f64MinPotential)
 				{
@@ -348,7 +348,7 @@ namespace OpenViBEPlugins
 				}
 				else //linear itp
 				{
-					l_iColorIndex = l_colorStartIndex + (int32)((l_f64Value - l_f64MinPotential) * l_f64InvPotentialStep);
+					l_iColorIndex = l_colorStartIndex + (int32_t)((l_f64Value - l_f64MinPotential) * l_f64InvPotentialStep);
 					if(l_iColorIndex > s_nbColors-1)
 					{
 						l_iColorIndex = s_nbColors-1;
@@ -364,7 +364,7 @@ namespace OpenViBEPlugins
 			return true;
 		}
 
-		void CTopographicMap2DView::resizeCB(uint32 ui32Width, uint32 ui32Height)
+		void CTopographicMap2DView::resizeCB(uint32_t ui32Width, uint32_t ui32Height)
 		{
 			m_bNeedResize = true;
 		}
@@ -456,12 +456,12 @@ namespace OpenViBEPlugins
 			m_bNeedResize = true;
 		}
 
-		void CTopographicMap2DView::setDelayCB(float64 f64Value)
+		void CTopographicMap2DView::setDelayCB(double f64Value)
 		{
 			m_rTopographicMapDatabase.setDelay(f64Value);
 		}
 
-		void CTopographicMap2DView::drawPalette(uint32 ui32X, uint32 ui32Y, uint32 ui32Width, uint32 ui32Height)
+		void CTopographicMap2DView::drawPalette(uint32_t ui32X, uint32_t ui32Y, uint32_t ui32Width, uint32_t ui32Height)
 		{
 			if(ui32Width == 0 || ui32Height == 0)
 			{
@@ -469,7 +469,7 @@ namespace OpenViBEPlugins
 			}
 
 			// FIXME is it necessary to keep next line uncomment ?
-			//boolean l_bDrawText = true;
+			//bool l_bDrawText = true;
 
 			//retrieve text size
 			PangoLayout* l_pText = gtk_widget_create_pango_layout(GTK_WIDGET(m_pDrawingArea), "0");
@@ -563,13 +563,13 @@ namespace OpenViBEPlugins
 			g_object_unref(l_pText);
 		}
 
-		void CTopographicMap2DView::drawFace(uint32 ui32X, uint32 ui32Y, uint32 ui32Width, uint32 ui32Height)
+		void CTopographicMap2DView::drawFace(uint32_t ui32X, uint32_t ui32Y, uint32_t ui32Width, uint32_t ui32Height)
 		{
 			gdk_gc_set_line_attributes(m_pDrawingArea->style->fg_gc[GTK_WIDGET_STATE (m_pDrawingArea)], 2, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
 
 			//head center
-			uint32 l_ui32SkullCenterX = m_ui32SkullX + m_ui32SkullDiameter/2;
-			uint32 l_ui32SkullCenterY = m_ui32SkullY + m_ui32SkullDiameter/2;
+			uint32_t l_ui32SkullCenterX = m_ui32SkullX + m_ui32SkullDiameter/2;
+			uint32_t l_ui32SkullCenterY = m_ui32SkullY + m_ui32SkullDiameter/2;
 
 #ifndef M_PI
 #define M_PI 3.1415926535897932384626433832795
@@ -578,15 +578,15 @@ namespace OpenViBEPlugins
 
 			if(m_ui32CurrentView == TopographicMap2DView_Top)
 			{
-				const float32 l_f32NoseHalfAngle = 6;
+				const float l_f32NoseHalfAngle = 6;
 
 				//nose lower left anchor
-				uint32 l_ui32NoseLowerLeftX = (uint32)(l_ui32SkullCenterX + m_ui32SkullDiameter/2*cos(DEG2RAD(90+l_f32NoseHalfAngle)));
-				uint32 l_ui32NoseLowerLeftY = (uint32)(l_ui32SkullCenterY - m_ui32SkullDiameter/2*sin(DEG2RAD(90+l_f32NoseHalfAngle)));
+				uint32_t l_ui32NoseLowerLeftX = (uint32_t)(l_ui32SkullCenterX + m_ui32SkullDiameter/2*cos(DEG2RAD(90+l_f32NoseHalfAngle)));
+				uint32_t l_ui32NoseLowerLeftY = (uint32_t)(l_ui32SkullCenterY - m_ui32SkullDiameter/2*sin(DEG2RAD(90+l_f32NoseHalfAngle)));
 
 				//nose lower right anchor
-				uint32 l_ui32NoseLowerRightX = (uint32)(l_ui32SkullCenterX + m_ui32SkullDiameter/2*cos(DEG2RAD(90-l_f32NoseHalfAngle)));
-				uint32 l_ui32NoseLowerRightY = (uint32)(l_ui32SkullCenterY - m_ui32SkullDiameter/2*sin(DEG2RAD(90-l_f32NoseHalfAngle)));
+				uint32_t l_ui32NoseLowerRightX = (uint32_t)(l_ui32SkullCenterX + m_ui32SkullDiameter/2*cos(DEG2RAD(90-l_f32NoseHalfAngle)));
+				uint32_t l_ui32NoseLowerRightY = (uint32_t)(l_ui32SkullCenterY - m_ui32SkullDiameter/2*sin(DEG2RAD(90-l_f32NoseHalfAngle)));
 
 				gdk_draw_line(m_pDrawingArea->window,
 					m_pDrawingArea->style->fg_gc[GTK_WIDGET_STATE(m_pDrawingArea)],
@@ -681,8 +681,8 @@ namespace OpenViBEPlugins
 		void CTopographicMap2DView::resizeData()
 		{
 			//window size
-			uint32 l_iWindowWidth = m_pDrawingArea->allocation.width;
-			uint32 l_iWindowHeight = m_pDrawingArea->allocation.height;
+			uint32_t l_iWindowWidth = m_pDrawingArea->allocation.width;
+			uint32_t l_iWindowHeight = m_pDrawingArea->allocation.height;
 
 			//retrieve text size
 			PangoLayout* l_pText = gtk_widget_create_pango_layout(GTK_WIDGET(m_pDrawingArea), "0");
@@ -693,14 +693,14 @@ namespace OpenViBEPlugins
 
 			//palette sub-window dims
 			m_ui32PaletteWindowWidth = l_iWindowWidth;
-			m_ui32PaletteWindowHeight = (uint32)(0.1 * l_iWindowHeight);
-			if(m_ui32PaletteWindowHeight > (uint32)(m_ui32MaxPaletteBarHeight + l_iTextHeight + 4))
+			m_ui32PaletteWindowHeight = (uint32_t)(0.1 * l_iWindowHeight);
+			if(m_ui32PaletteWindowHeight > (uint32_t)(m_ui32MaxPaletteBarHeight + l_iTextHeight + 4))
 			{
 				m_ui32PaletteWindowHeight = m_ui32MaxPaletteBarHeight + l_iTextHeight + 4;
 			}
-			else if(m_ui32PaletteWindowHeight < (uint32)(m_ui32MinPaletteBarHeight + l_iTextHeight))
+			else if(m_ui32PaletteWindowHeight < (uint32_t)(m_ui32MinPaletteBarHeight + l_iTextHeight))
 			{
-				m_ui32PaletteWindowHeight = (uint32)(m_ui32MinPaletteBarHeight + l_iTextHeight);
+				m_ui32PaletteWindowHeight = (uint32_t)(m_ui32MinPaletteBarHeight + l_iTextHeight);
 			}
 
 			//return if not enough room available
@@ -713,22 +713,22 @@ namespace OpenViBEPlugins
 			m_ui32HeadWindowWidth = l_iWindowWidth;
 			m_ui32HeadWindowHeight = l_iWindowHeight - m_ui32PaletteWindowHeight;
 
-			uint32 l_ui32HeadMaxSize;
+			uint32_t l_ui32HeadMaxSize;
 			if(m_ui32HeadWindowWidth < m_ui32HeadWindowHeight)
 			{
-				l_ui32HeadMaxSize = (uint32)(0.9 * m_ui32HeadWindowWidth);
+				l_ui32HeadMaxSize = (uint32_t)(0.9 * m_ui32HeadWindowWidth);
 			}
 			else
 			{
-				l_ui32HeadMaxSize = (uint32)(0.9 * m_ui32HeadWindowHeight);
+				l_ui32HeadMaxSize = (uint32_t)(0.9 * m_ui32HeadWindowHeight);
 			}
 
 			if(m_ui32CurrentView == TopographicMap2DView_Top)
 			{
 				//height used up by nose
-				uint32 l_ui32NoseProtrudingHeight = (uint32)(0.1 * l_ui32HeadMaxSize);
+				uint32_t l_ui32NoseProtrudingHeight = (uint32_t)(0.1 * l_ui32HeadMaxSize);
 				//Y coordinate where nose starts
-				m_ui32NoseY = (uint32)((m_ui32HeadWindowHeight - l_ui32HeadMaxSize)/2);
+				m_ui32NoseY = (uint32_t)((m_ui32HeadWindowHeight - l_ui32HeadMaxSize)/2);
 				//skull diameter
 				m_ui32SkullDiameter = l_ui32HeadMaxSize - l_ui32NoseProtrudingHeight;
 				//skull upper left corner
@@ -750,7 +750,7 @@ namespace OpenViBEPlugins
 				//FIXME take into account width used up by ears
 
 				//height used up by neck
-				uint32 l_ui32NeckProtrudingHeight = (uint32)(0.072 * l_ui32HeadMaxSize);
+				uint32_t l_ui32NeckProtrudingHeight = (uint32_t)(0.072 * l_ui32HeadMaxSize);
 
 				//skull diameter
 				m_ui32SkullDiameter = l_ui32HeadMaxSize - l_ui32NeckProtrudingHeight;
@@ -764,25 +764,25 @@ namespace OpenViBEPlugins
 				m_f32SkullFillStartAngle = -30;
 				m_f32SkullFillEndAngle = 180 - m_f32SkullFillStartAngle;
 
-				uint32 l_ui32SkullCenterX = m_ui32SkullX + m_ui32SkullDiameter / 2;
-				uint32 l_ui32SkullCenterY = m_ui32SkullY + m_ui32SkullDiameter / 2;
+				uint32_t l_ui32SkullCenterX = m_ui32SkullX + m_ui32SkullDiameter / 2;
+				uint32_t l_ui32SkullCenterY = m_ui32SkullY + m_ui32SkullDiameter / 2;
 
-				m_ui32SkullOutlineLeftPointX = l_ui32SkullCenterX + (uint32)(m_ui32SkullDiameter/2 * cosf((float)DEG2RAD(m_f32SkullOutlineEndAngle)));
-				m_ui32SkullOutlineLeftPointY = l_ui32SkullCenterY - (uint32)(m_ui32SkullDiameter/2 * sinf((float)DEG2RAD(m_f32SkullOutlineEndAngle)));
-				m_ui32SkullOutlineRightPointX = l_ui32SkullCenterX + (uint32)(m_ui32SkullDiameter/2 * cosf((float)DEG2RAD(m_f32SkullOutlineStartAngle)));
-				m_ui32SkullOutlineRightPointY = l_ui32SkullCenterY - (uint32)(m_ui32SkullDiameter/2 * sinf((float)DEG2RAD(m_f32SkullOutlineStartAngle)));
+				m_ui32SkullOutlineLeftPointX = l_ui32SkullCenterX + (uint32_t)(m_ui32SkullDiameter/2 * cosf((float)DEG2RAD(m_f32SkullOutlineEndAngle)));
+				m_ui32SkullOutlineLeftPointY = l_ui32SkullCenterY - (uint32_t)(m_ui32SkullDiameter/2 * sinf((float)DEG2RAD(m_f32SkullOutlineEndAngle)));
+				m_ui32SkullOutlineRightPointX = l_ui32SkullCenterX + (uint32_t)(m_ui32SkullDiameter/2 * cosf((float)DEG2RAD(m_f32SkullOutlineStartAngle)));
+				m_ui32SkullOutlineRightPointY = l_ui32SkullCenterY - (uint32_t)(m_ui32SkullDiameter/2 * sinf((float)DEG2RAD(m_f32SkullOutlineStartAngle)));
 
-				m_ui32SkullFillLeftPointX = l_ui32SkullCenterX + (uint32)(m_ui32SkullDiameter/2 * cosf((float)DEG2RAD(m_f32SkullFillEndAngle)));
-				m_ui32SkullFillLeftPointY = l_ui32SkullCenterY - (uint32)(m_ui32SkullDiameter/2 * sinf((float)DEG2RAD(m_f32SkullFillEndAngle)));
-				m_ui32SkullFillRightPointX = l_ui32SkullCenterX + (uint32)(m_ui32SkullDiameter/2 * cosf((float)DEG2RAD(m_f32SkullFillStartAngle)));
-				m_ui32SkullFillRightPointY = l_ui32SkullCenterY - (uint32)(m_ui32SkullDiameter/2 * sinf((float)DEG2RAD(m_f32SkullFillStartAngle)));
+				m_ui32SkullFillLeftPointX = l_ui32SkullCenterX + (uint32_t)(m_ui32SkullDiameter/2 * cosf((float)DEG2RAD(m_f32SkullFillEndAngle)));
+				m_ui32SkullFillLeftPointY = l_ui32SkullCenterY - (uint32_t)(m_ui32SkullDiameter/2 * sinf((float)DEG2RAD(m_f32SkullFillEndAngle)));
+				m_ui32SkullFillRightPointX = l_ui32SkullCenterX + (uint32_t)(m_ui32SkullDiameter/2 * cosf((float)DEG2RAD(m_f32SkullFillStartAngle)));
+				m_ui32SkullFillRightPointY = l_ui32SkullCenterY - (uint32_t)(m_ui32SkullDiameter/2 * sinf((float)DEG2RAD(m_f32SkullFillStartAngle)));
 				m_ui32SkullFillBottomPointX = m_ui32SkullX + m_ui32SkullDiameter / 2;
 				m_ui32SkullFillBottomPointY = m_ui32SkullFillRightPointY;
 
 				//neck extremities
-				m_ui32LeftNeckX = m_ui32SkullOutlineLeftPointX + (uint32)(0.025f * m_ui32SkullDiameter);
+				m_ui32LeftNeckX = m_ui32SkullOutlineLeftPointX + (uint32_t)(0.025f * m_ui32SkullDiameter);
 				m_ui32LeftNeckY = m_ui32SkullOutlineLeftPointY + l_ui32NeckProtrudingHeight;
-				m_ui32RightNeckX = m_ui32SkullOutlineRightPointX - (uint32)(0.025f * m_ui32SkullDiameter);
+				m_ui32RightNeckX = m_ui32SkullOutlineRightPointX - (uint32_t)(0.025f * m_ui32SkullDiameter);
 				m_ui32RightNeckY = m_ui32LeftNeckY;
 
 				//clip mask
@@ -792,7 +792,7 @@ namespace OpenViBEPlugins
 			else if(m_ui32CurrentView == TopographicMap2DView_Left || m_ui32CurrentView == TopographicMap2DView_Right)
 			{
 				//width used up by nose
-				uint32 l_ui32NoseProtrudingWidth = (uint32)(0.06 * m_ui32SkullDiameter);//(uint32)(0.047 * m_ui32SkullDiameter);
+				uint32_t l_ui32NoseProtrudingWidth = (uint32_t)(0.06 * m_ui32SkullDiameter);//(uint32_t)(0.047 * m_ui32SkullDiameter);
 
 				//skull diameter
 				m_ui32SkullDiameter = l_ui32HeadMaxSize - l_ui32NoseProtrudingWidth;
@@ -812,24 +812,24 @@ namespace OpenViBEPlugins
 					m_f32SkullFillStartAngle = -22;
 					m_f32SkullFillEndAngle = 188;
 
-					uint32 l_ui32SkullCenterX = m_ui32SkullX + m_ui32SkullDiameter / 2;
-					uint32 l_ui32SkullCenterY = m_ui32SkullY + m_ui32SkullDiameter / 2;
+					uint32_t l_ui32SkullCenterX = m_ui32SkullX + m_ui32SkullDiameter / 2;
+					uint32_t l_ui32SkullCenterY = m_ui32SkullY + m_ui32SkullDiameter / 2;
 
 					//nose top = head outline left boundary
-					m_ui32NoseTopX = l_ui32SkullCenterX + (uint32)(m_ui32SkullDiameter/2*cosf((float)DEG2RAD(m_f32SkullOutlineEndAngle)));
-					m_ui32NoseTopY = l_ui32SkullCenterY - (uint32)(m_ui32SkullDiameter/2*sinf((float)DEG2RAD(m_f32SkullOutlineEndAngle)));
+					m_ui32NoseTopX = l_ui32SkullCenterX + (uint32_t)(m_ui32SkullDiameter/2*cosf((float)DEG2RAD(m_f32SkullOutlineEndAngle)));
+					m_ui32NoseTopY = l_ui32SkullCenterY - (uint32_t)(m_ui32SkullDiameter/2*sinf((float)DEG2RAD(m_f32SkullOutlineEndAngle)));
 					//nose bump
 					m_ui32NoseBumpX = m_ui32NoseTipX;
-					m_ui32NoseBumpY = m_ui32NoseTopY + (uint32)(0.15f * m_ui32SkullDiameter);//(uint32)(0.179f * m_ui32SkullDiameter);
+					m_ui32NoseBumpY = m_ui32NoseTopY + (uint32_t)(0.15f * m_ui32SkullDiameter);//(uint32_t)(0.179f * m_ui32SkullDiameter);
 					//nose tip
 					//m_ui32NoseTipX = m_ui32NoseBumpX;
-					m_ui32NoseTipY = m_ui32NoseBumpY + (uint32)(0.03f * m_ui32SkullDiameter);//(uint32)(0.021f * m_ui32SkullDiameter);
+					m_ui32NoseTipY = m_ui32NoseBumpY + (uint32_t)(0.03f * m_ui32SkullDiameter);//(uint32_t)(0.021f * m_ui32SkullDiameter);
 					//nose base
-					m_ui32NoseBaseX = m_ui32NoseTipX + (uint32)(0.1f * m_ui32SkullDiameter);
+					m_ui32NoseBaseX = m_ui32NoseTipX + (uint32_t)(0.1f * m_ui32SkullDiameter);
 					m_ui32NoseBaseY = m_ui32NoseTipY;
 					//nose bottom
 					m_ui32NoseBottomX = m_ui32NoseBaseX;
-					m_ui32NoseBottomY = m_ui32NoseBaseY + (uint32)(0.02f * m_ui32SkullDiameter);//(uint32)(0.016f * m_ui32SkullDiameter);
+					m_ui32NoseBottomY = m_ui32NoseBaseY + (uint32_t)(0.02f * m_ui32SkullDiameter);//(uint32_t)(0.016f * m_ui32SkullDiameter);
 				}
 				else
 				{
@@ -843,35 +843,35 @@ namespace OpenViBEPlugins
 					m_f32SkullFillStartAngle = -8;
 					m_f32SkullFillEndAngle = 202;
 
-					uint32 l_ui32SkullCenterX = m_ui32SkullX + m_ui32SkullDiameter / 2;
-					uint32 l_ui32SkullCenterY = m_ui32SkullY + m_ui32SkullDiameter / 2;
+					uint32_t l_ui32SkullCenterX = m_ui32SkullX + m_ui32SkullDiameter / 2;
+					uint32_t l_ui32SkullCenterY = m_ui32SkullY + m_ui32SkullDiameter / 2;
 
 					//nose top = head outline right boundary
-					m_ui32NoseTopX = l_ui32SkullCenterX + (uint32)(m_ui32SkullDiameter/2*cosf((float)DEG2RAD(m_f32SkullOutlineStartAngle)));
-					m_ui32NoseTopY = l_ui32SkullCenterY - (uint32)(m_ui32SkullDiameter/2*sinf((float)DEG2RAD(m_f32SkullOutlineStartAngle)));
+					m_ui32NoseTopX = l_ui32SkullCenterX + (uint32_t)(m_ui32SkullDiameter/2*cosf((float)DEG2RAD(m_f32SkullOutlineStartAngle)));
+					m_ui32NoseTopY = l_ui32SkullCenterY - (uint32_t)(m_ui32SkullDiameter/2*sinf((float)DEG2RAD(m_f32SkullOutlineStartAngle)));
 					//nose bump
 					m_ui32NoseBumpX = m_ui32NoseTipX;
-					m_ui32NoseBumpY = m_ui32NoseTopY + (uint32)(0.15f * m_ui32SkullDiameter);//(uint32)(0.179f * m_ui32SkullDiameter);
+					m_ui32NoseBumpY = m_ui32NoseTopY + (uint32_t)(0.15f * m_ui32SkullDiameter);//(uint32_t)(0.179f * m_ui32SkullDiameter);
 					//nose tip
 					//m_ui32NoseTipX = m_ui32NoseBumpX;
-					m_ui32NoseTipY = m_ui32NoseBumpY + (uint32)(0.03f * m_ui32SkullDiameter);//(uint32)(0.021f * m_ui32SkullDiameter);
+					m_ui32NoseTipY = m_ui32NoseBumpY + (uint32_t)(0.03f * m_ui32SkullDiameter);//(uint32_t)(0.021f * m_ui32SkullDiameter);
 					//nose base
-					m_ui32NoseBaseX = m_ui32NoseTipX - (uint32)(0.1f * m_ui32SkullDiameter);
+					m_ui32NoseBaseX = m_ui32NoseTipX - (uint32_t)(0.1f * m_ui32SkullDiameter);
 					m_ui32NoseBaseY = m_ui32NoseTipY;
 					//nose bottom
 					m_ui32NoseBottomX = m_ui32NoseBaseX;
-					m_ui32NoseBottomY = m_ui32NoseBaseY + (uint32)(0.02f * m_ui32SkullDiameter);//(uint32)(0.016f * m_ui32SkullDiameter);
+					m_ui32NoseBottomY = m_ui32NoseBaseY + (uint32_t)(0.02f * m_ui32SkullDiameter);//(uint32_t)(0.016f * m_ui32SkullDiameter);
 				}
 
-				uint32 l_ui32SkullCenterX = m_ui32SkullX + m_ui32SkullDiameter / 2;
-				uint32 l_ui32SkullCenterY = m_ui32SkullY + m_ui32SkullDiameter / 2;
-				m_ui32SkullFillLeftPointX = l_ui32SkullCenterX + (uint32)(m_ui32SkullDiameter/2 * cosf((float)DEG2RAD(m_f32SkullFillEndAngle)));
-				m_ui32SkullFillLeftPointY = l_ui32SkullCenterY - (uint32)(m_ui32SkullDiameter/2 * sinf((float)DEG2RAD(m_f32SkullFillEndAngle)));
-				m_ui32SkullFillRightPointX = l_ui32SkullCenterX + (uint32)(m_ui32SkullDiameter/2 * cosf((float)DEG2RAD(m_f32SkullFillStartAngle)));
-				m_ui32SkullFillRightPointY = l_ui32SkullCenterY - (uint32)(m_ui32SkullDiameter/2 * sinf((float)DEG2RAD(m_f32SkullFillStartAngle)));
+				uint32_t l_ui32SkullCenterX = m_ui32SkullX + m_ui32SkullDiameter / 2;
+				uint32_t l_ui32SkullCenterY = m_ui32SkullY + m_ui32SkullDiameter / 2;
+				m_ui32SkullFillLeftPointX = l_ui32SkullCenterX + (uint32_t)(m_ui32SkullDiameter/2 * cosf((float)DEG2RAD(m_f32SkullFillEndAngle)));
+				m_ui32SkullFillLeftPointY = l_ui32SkullCenterY - (uint32_t)(m_ui32SkullDiameter/2 * sinf((float)DEG2RAD(m_f32SkullFillEndAngle)));
+				m_ui32SkullFillRightPointX = l_ui32SkullCenterX + (uint32_t)(m_ui32SkullDiameter/2 * cosf((float)DEG2RAD(m_f32SkullFillStartAngle)));
+				m_ui32SkullFillRightPointY = l_ui32SkullCenterY - (uint32_t)(m_ui32SkullDiameter/2 * sinf((float)DEG2RAD(m_f32SkullFillStartAngle)));
 
 				m_ui32SkullFillBottomPointX = m_ui32SkullX + m_ui32SkullDiameter / 2;
-				m_ui32SkullFillBottomPointY = m_ui32SkullY + (uint32)(0.684f * m_ui32SkullDiameter);
+				m_ui32SkullFillBottomPointY = m_ui32SkullY + (uint32_t)(0.684f * m_ui32SkullDiameter);
 
 				//clip mask
 				m_ui32ClipmaskWidth = m_ui32SkullDiameter;
@@ -910,10 +910,10 @@ namespace OpenViBEPlugins
 
 			//determine size of colored cells
 #if 1
-			uint32 l_ui32CellMinSize = 6;
-			uint32 l_ui32CellMaxSize = 6;
-			float64 l_f64CellOverSkullSizeRatio = 0.02;
-			m_ui32CellSize = (uint32)(m_ui32SkullDiameter * l_f64CellOverSkullSizeRatio);
+			uint32_t l_ui32CellMinSize = 6;
+			uint32_t l_ui32CellMaxSize = 6;
+			double l_f64CellOverSkullSizeRatio = 0.02;
+			m_ui32CellSize = (uint32_t)(m_ui32SkullDiameter * l_f64CellOverSkullSizeRatio);
 
 			if(m_ui32CellSize < l_ui32CellMinSize)
 			{
@@ -932,10 +932,10 @@ namespace OpenViBEPlugins
 			}
 
 			//number of samples in a row or column
-			m_ui32GridSize = (uint32)ceil(m_ui32SkullDiameter / (double)m_ui32CellSize);
+			m_ui32GridSize = (uint32_t)ceil(m_ui32SkullDiameter / (double)m_ui32CellSize);
 
 			//determine number of samples lying within skull
-			uint32 l_ui32NbSamples = computeSamplesNormalizedCoordinates(false);
+			uint32_t l_ui32NbSamples = computeSamplesNormalizedCoordinates(false);
 
 			//resize sample grids accordingly
 			m_oSample2DCoordinates.resize(l_ui32NbSamples);
@@ -1007,12 +1007,12 @@ namespace OpenViBEPlugins
 
 		void CTopographicMap2DView::refreshPotentials()
 		{
-			uint32 w, h;
+			uint32_t w, h;
 
 #ifdef INTERPOLATE_AT_CHANNEL_LOCATION
-			for(uint32 i=(uint32)m_rTopographicMapDatabase.getChannelCount(); i<m_oSampleValues.size(); i++)
+			for(uint32_t i=(uint32_t)m_rTopographicMapDatabase.getChannelCount(); i<m_oSampleValues.size(); i++)
 #else
-			for(uint32 i=0; i<m_oSampleValues.size(); i++)
+			for(uint32_t i=0; i<m_oSampleValues.size(); i++)
 #endif
 			{
 				//cells of last row and last column may be smaller than other ones
@@ -1034,7 +1034,7 @@ namespace OpenViBEPlugins
 					h = m_ui32CellSize;
 				}
 
-				uint32 l_ui32Index=m_oSampleValues[i];
+				uint32_t l_ui32Index=m_oSampleValues[i];
 				if(l_ui32Index>12)
 				{
 					l_ui32Index=12;
@@ -1071,7 +1071,7 @@ namespace OpenViBEPlugins
 			}
 
 			//determine size of electrode rings
-			float64 l_f64ElectrodeRingOverSkullSizeRatio = 0.05;
+			double l_f64ElectrodeRingOverSkullSizeRatio = 0.05;
 			gint l_i32ElectrodeRingSize = (gint)(m_ui32SkullDiameter * l_f64ElectrodeRingOverSkullSizeRatio);
 
 #if 0
@@ -1112,11 +1112,11 @@ namespace OpenViBEPlugins
 			pango_layout_get_pixel_size(l_pElectrodeLabelLayout, nullptr, &l_iTextHeight);
 
 			//draw rings
-			uint32 l_ui32ChannelCount = (uint32)m_rTopographicMapDatabase.getChannelCount();
+			uint32_t l_ui32ChannelCount = (uint32_t)m_rTopographicMapDatabase.getChannelCount();
 			gint l_i32ChannelX;
 			gint l_i32ChannelY;
 
-			for(uint32 i=0; i<l_ui32ChannelCount; i++)
+			for(uint32_t i=0; i<l_ui32ChannelCount; i++)
 			{
 				if(getChannel2DPosition(i, l_i32ChannelX, l_i32ChannelY) == false)
 				{
@@ -1175,12 +1175,12 @@ namespace OpenViBEPlugins
 			g_object_unref(l_pElectrodeLabelLayout);
 		}
 
-		boolean CTopographicMap2DView::getChannel2DPosition(uint32 ui32ChannelIndex, gint& l_i32ChannelX, gint& l_i32ChannelY)
+		bool CTopographicMap2DView::getChannel2DPosition(uint32_t ui32ChannelIndex, gint& l_i32ChannelX, gint& l_i32ChannelY)
 		{
-			uint32 l_ui32SkullCenterX = m_ui32SkullX + m_ui32SkullDiameter/2;
-			uint32 l_ui32SkullCenterY = m_ui32SkullY + m_ui32SkullDiameter/2;
+			uint32_t l_ui32SkullCenterX = m_ui32SkullX + m_ui32SkullDiameter/2;
+			uint32_t l_ui32SkullCenterY = m_ui32SkullY + m_ui32SkullDiameter/2;
 			//get normalized coordinates
-			float64* l_pOriginalElectrodePosition;
+			double* l_pOriginalElectrodePosition;
 			m_rTopographicMapDatabase.getChannelPosition(ui32ChannelIndex, l_pOriginalElectrodePosition);
 
 			/* flip the eletrode positions in order to use the mensia coordinate system */
@@ -1200,8 +1200,8 @@ namespace OpenViBEPlugins
 				else //radial
 				{
 					//compute back frame 2D coordinates
-					float64 l_f64Theta = getThetaFromCartesianCoordinates(l_pElectrodePosition);
-					float64 l_f64Phi = getPhiFromCartesianCoordinates(l_pElectrodePosition);
+					double l_f64Theta = getThetaFromCartesianCoordinates(l_pElectrodePosition);
+					double l_f64Phi = getPhiFromCartesianCoordinates(l_pElectrodePosition);
 					compute2DCoordinates(l_f64Theta, l_f64Phi, l_ui32SkullCenterX, l_ui32SkullCenterY, l_i32ChannelX, l_i32ChannelY);
 				}
 			}
@@ -1221,13 +1221,13 @@ namespace OpenViBEPlugins
 				else //radial
 				{
 					//transform coordinates from top frame to back frame
-					float64 l_pBackElectrodePosition[3];
+					double l_pBackElectrodePosition[3];
 					l_pBackElectrodePosition[0] = l_pElectrodePosition[0];
 					l_pBackElectrodePosition[1] = l_pElectrodePosition[2];
 					l_pBackElectrodePosition[2] = -l_pElectrodePosition[1];
 					//compute back frame 2D coordinates
-					float64 l_f64Theta = getThetaFromCartesianCoordinates(l_pBackElectrodePosition);
-					float64 l_f64Phi = getPhiFromCartesianCoordinates(l_pBackElectrodePosition);
+					double l_f64Theta = getThetaFromCartesianCoordinates(l_pBackElectrodePosition);
+					double l_f64Phi = getPhiFromCartesianCoordinates(l_pBackElectrodePosition);
 					compute2DCoordinates(l_f64Theta, l_f64Phi, l_ui32SkullCenterX, l_ui32SkullCenterY, l_i32ChannelX, l_i32ChannelY);
 				}
 			}
@@ -1247,13 +1247,13 @@ namespace OpenViBEPlugins
 				else //radial
 				{
 					//transform coordinates from top frame to left frame
-					float64 l_pBackElectrodePosition[3];
+					double l_pBackElectrodePosition[3];
 					l_pBackElectrodePosition[0] = -l_pElectrodePosition[1];
 					l_pBackElectrodePosition[1] = l_pElectrodePosition[2];
 					l_pBackElectrodePosition[2] = -l_pElectrodePosition[0];
 					//compute back frame 2D coordinates
-					float64 l_f64Theta = getThetaFromCartesianCoordinates(l_pBackElectrodePosition);
-					float64 l_f64Phi = getPhiFromCartesianCoordinates(l_pBackElectrodePosition);
+					double l_f64Theta = getThetaFromCartesianCoordinates(l_pBackElectrodePosition);
+					double l_f64Phi = getPhiFromCartesianCoordinates(l_pBackElectrodePosition);
 					compute2DCoordinates(l_f64Theta, l_f64Phi, l_ui32SkullCenterX, l_ui32SkullCenterY, l_i32ChannelX, l_i32ChannelY);
 				}
 			}
@@ -1273,13 +1273,13 @@ namespace OpenViBEPlugins
 				else //radial
 				{
 					//transform coordinates from top frame to left frame
-					float64 l_pBackElectrodePosition[3];
+					double l_pBackElectrodePosition[3];
 					l_pBackElectrodePosition[0] = l_pElectrodePosition[1];
 					l_pBackElectrodePosition[1] = l_pElectrodePosition[2];
 					l_pBackElectrodePosition[2] = l_pElectrodePosition[0];
 					//compute back frame 2D coordinates
-					float64 l_f64Theta = getThetaFromCartesianCoordinates(l_pBackElectrodePosition);
-					float64 l_f64Phi = getPhiFromCartesianCoordinates(l_pBackElectrodePosition);
+					double l_f64Theta = getThetaFromCartesianCoordinates(l_pBackElectrodePosition);
+					double l_f64Phi = getPhiFromCartesianCoordinates(l_pBackElectrodePosition);
 					compute2DCoordinates(l_f64Theta, l_f64Phi, l_ui32SkullCenterX, l_ui32SkullCenterY, l_i32ChannelX, l_i32ChannelY);
 				}
 			}
@@ -1289,7 +1289,7 @@ namespace OpenViBEPlugins
 			return gdk_region_point_in(m_pVisibleRegion, l_i32ChannelX-m_ui32SkullX, l_i32ChannelY-m_ui32SkullY) != 0;
 		}
 
-		void CTopographicMap2DView::drawBoxToBuffer(uint32 ui32X, uint32 ui32Y, uint32 ui32Width, uint32 ui32Height, uint8 ui8Red, uint8 ui8Green, uint8 ui8Blue)
+		void CTopographicMap2DView::drawBoxToBuffer(uint32_t ui32X, uint32_t ui32Y, uint32_t ui32Width, uint32_t ui32Height, uint8_t ui8Red, uint8_t ui8Green, uint8_t ui8Blue)
 		{
 #ifdef TARGET_OS_Windows
 #ifndef NDEBUG
@@ -1301,9 +1301,9 @@ namespace OpenViBEPlugins
 #endif
 			guchar* l_pLineBase = m_pSkullRGBBuffer + (m_ui32RowStride*ui32Y) + (ui32X*3);
 
-			for(uint32 j=0 ; j<ui32Height ; j++)
+			for(uint32_t j=0 ; j<ui32Height ; j++)
 			{
-				for(uint32 i=0 ; i<(ui32Width*3) ; i+=3)
+				for(uint32_t i=0 ; i<(ui32Width*3) ; i+=3)
 				{
 					*(l_pLineBase + i) =  ui8Red;
 					*(l_pLineBase + i + 1) =  ui8Green;
@@ -1314,13 +1314,13 @@ namespace OpenViBEPlugins
 			}
 		}
 
-		uint32 CTopographicMap2DView::computeSamplesNormalizedCoordinates(boolean bComputeCoordinates)
+		uint32_t CTopographicMap2DView::computeSamplesNormalizedCoordinates(bool bComputeCoordinates)
 		{
-			uint32 l_ui32CurSample = 0;
+			uint32_t l_ui32CurSample = 0;
 
 #ifdef INTERPOLATE_AT_CHANNEL_LOCATION
-			uint32 l_ui32ChannelCount = (uint32)m_rTopographicMapDatabase.getChannelCount();
-			float64* l_pElectrodePosition=nullptr;
+			uint32_t l_ui32ChannelCount = (uint32_t)m_rTopographicMapDatabase.getChannelCount();
+			double* l_pElectrodePosition=nullptr;
 
 			//sampling at electrode locations
 			for(l_ui32CurSample=0; l_ui32CurSample<l_ui32ChannelCount; l_ui32CurSample++)
@@ -1338,19 +1338,19 @@ namespace OpenViBEPlugins
 #endif
 
 			//sampling over skull area
-			float32 l_f32CurX, l_f32CurY;
-			uint32 i, j;
-			float32 l_f32SkullCenterX = m_ui32SkullX + m_ui32SkullDiameter/2.f;
-			float32 l_f32SkullCenterY = m_ui32SkullY + m_ui32SkullDiameter/2.F;
-			float32 l_f32ClosestX, l_f32ClosestY;
-			float32 l_f32X, l_f32Y;
-			float64* l_pBuffer = m_oSampleCoordinatesMatrix.getBuffer();
+			float l_f32CurX, l_f32CurY;
+			uint32_t i, j;
+			float l_f32SkullCenterX = m_ui32SkullX + m_ui32SkullDiameter/2.f;
+			float l_f32SkullCenterY = m_ui32SkullY + m_ui32SkullDiameter/2.F;
+			float l_f32ClosestX, l_f32ClosestY;
+			float l_f32X, l_f32Y;
+			double* l_pBuffer = m_oSampleCoordinatesMatrix.getBuffer();
 
 			//for each row
-			for(i=0, l_f32CurY=(float32)m_ui32SkullY; i<m_ui32GridSize; i++, l_f32CurY+=m_ui32CellSize)
+			for(i=0, l_f32CurY=(float)m_ui32SkullY; i<m_ui32GridSize; i++, l_f32CurY+=m_ui32CellSize)
 			{
 				//for each column
-				for(j=0, l_f32CurX=(float32)m_ui32SkullX; j<m_ui32GridSize; j++, l_f32CurX+=m_ui32CellSize)
+				for(j=0, l_f32CurX=(float)m_ui32SkullX; j<m_ui32GridSize; j++, l_f32CurX+=m_ui32CellSize)
 				{
 					//find corner closest to skull center
 					l_f32ClosestX = fabs(l_f32CurX - l_f32SkullCenterX) < fabs(l_f32CurX + m_ui32CellSize - l_f32SkullCenterX) ? l_f32CurX : (l_f32CurX + m_ui32CellSize);
@@ -1373,7 +1373,7 @@ namespace OpenViBEPlugins
 
 								//compute normalized coordinates to be fed to spherical spline algorithm
 								//----------------------------------------------------------------------
-								uint32 l_ui32BaseIndex = 3* l_ui32CurSample;
+								uint32_t l_ui32BaseIndex = 3* l_ui32CurSample;
 
 								//normalized X, Y coords in (X, Y) projection plane
 								l_f32X = (l_f32ClosestX - l_f32SkullCenterX) / (m_ui32SkullDiameter/2.f);
@@ -1386,7 +1386,7 @@ namespace OpenViBEPlugins
 										*(l_pBuffer + l_ui32BaseIndex) = l_f32X;
 										*(l_pBuffer + l_ui32BaseIndex+1) = l_f32Y;
 										//z = sqrt(1-x*x-y*y)
-										float32 l_f32SquareXYSum = l_f32X * l_f32X + l_f32Y * l_f32Y;
+										float l_f32SquareXYSum = l_f32X * l_f32X + l_f32Y * l_f32Y;
 										*(l_pBuffer + l_ui32BaseIndex+2) = (l_f32SquareXYSum >= 1) ? 0 : sqrt(1 - l_f32SquareXYSum);
 									}
 									else if(m_ui32CurrentView == TopographicMap2DView_Back)
@@ -1394,7 +1394,7 @@ namespace OpenViBEPlugins
 										*(l_pBuffer + l_ui32BaseIndex) = l_f32X;
 										*(l_pBuffer + l_ui32BaseIndex+2) = l_f32Y;
 										//y = sqrt(1-x*x-z*z)
-										float32 l_f32SquareXYSum = l_f32X * l_f32X + l_f32Y * l_f32Y;
+										float l_f32SquareXYSum = l_f32X * l_f32X + l_f32Y * l_f32Y;
 										*(l_pBuffer + l_ui32BaseIndex+1) = (l_f32SquareXYSum >= 1) ? 0 : sqrt(1 - l_f32SquareXYSum);
 									}
 									else if(m_ui32CurrentView == TopographicMap2DView_Left)
@@ -1402,7 +1402,7 @@ namespace OpenViBEPlugins
 										*(l_pBuffer + l_ui32BaseIndex+1) = -l_f32X;
 										*(l_pBuffer + l_ui32BaseIndex+2) = l_f32Y;
 										//x = sqrt(1-y*y-z*z)
-										float32 l_f32SquareXYSum = l_f32X * l_f32X + l_f32Y * l_f32Y;
+										float l_f32SquareXYSum = l_f32X * l_f32X + l_f32Y * l_f32Y;
 										*(l_pBuffer + l_ui32BaseIndex) = (l_f32SquareXYSum >= 1) ? 0 : sqrt(1 - l_f32SquareXYSum);
 									}
 									else if(m_ui32CurrentView == TopographicMap2DView_Right)
@@ -1410,20 +1410,20 @@ namespace OpenViBEPlugins
 										*(l_pBuffer + l_ui32BaseIndex+1) = l_f32X;
 										*(l_pBuffer + l_ui32BaseIndex+2) = l_f32Y;
 										//x = sqrt(1-y*y-z*z)
-										float32 l_f32SquareXYSum = l_f32X * l_f32X + l_f32Y * l_f32Y;
+										float l_f32SquareXYSum = l_f32X * l_f32X + l_f32Y * l_f32Y;
 										*(l_pBuffer + l_ui32BaseIndex) = (l_f32SquareXYSum >= 1) ? 0 : sqrt(1 - l_f32SquareXYSum);
 									}
 								}
 								else //radial
 								{
 									//theta = (X,Y) arc length
-									float32 l_f32Theta = float32(M_PI/2 * sqrtf(l_f32X*l_f32X + l_f32Y*l_f32Y));
-									float32 l_f32ScalingFactor = (l_f32Theta <= 1e-3) ? 0 : (sinf(l_f32Theta) / l_f32Theta);
-									float32 l_f32SampleLocalCoordinates[3];
+									float l_f32Theta = float(M_PI/2 * sqrtf(l_f32X*l_f32X + l_f32Y*l_f32Y));
+									float l_f32ScalingFactor = (l_f32Theta <= 1e-3) ? 0 : (sinf(l_f32Theta) / l_f32Theta);
+									float l_f32SampleLocalCoordinates[3];
 									//x = sin(theta) / theta * X
-									l_f32SampleLocalCoordinates[0] = float32(l_f32ScalingFactor * l_f32X * (M_PI/2));
+									l_f32SampleLocalCoordinates[0] = float(l_f32ScalingFactor * l_f32X * (M_PI/2));
 									//y = sin(theta) / theta * Y
-									l_f32SampleLocalCoordinates[1] = float32(l_f32ScalingFactor * l_f32Y * (M_PI/2));
+									l_f32SampleLocalCoordinates[1] = float(l_f32ScalingFactor * l_f32Y * (M_PI/2));
 									//z = cos(theta)
 									l_f32SampleLocalCoordinates[2] = cosf(l_f32Theta);
 
@@ -1463,7 +1463,7 @@ namespace OpenViBEPlugins
 			return l_ui32CurSample;
 		}
 
-		void CTopographicMap2DView::enableElectrodeButtonSignals(boolean enable)
+		void CTopographicMap2DView::enableElectrodeButtonSignals(bool enable)
 		{
 			if(enable == true)
 			{
@@ -1475,7 +1475,7 @@ namespace OpenViBEPlugins
 			}
 		}
 
-		void CTopographicMap2DView::enableProjectionButtonSignals(boolean enable)
+		void CTopographicMap2DView::enableProjectionButtonSignals(bool enable)
 		{
 			if(enable == true)
 			{
@@ -1489,7 +1489,7 @@ namespace OpenViBEPlugins
 			}
 		}
 
-		void CTopographicMap2DView::enableViewButtonSignals(boolean enable)
+		void CTopographicMap2DView::enableViewButtonSignals(bool enable)
 		{
 			if(enable == true)
 			{
@@ -1507,7 +1507,7 @@ namespace OpenViBEPlugins
 			}
 		}
 
-		void CTopographicMap2DView::enableInterpolationButtonSignals(boolean enable)
+		void CTopographicMap2DView::enableInterpolationButtonSignals(bool enable)
 		{
 			if(enable == true)
 			{
@@ -1521,14 +1521,14 @@ namespace OpenViBEPlugins
 			}
 		}
 
-		float64 CTopographicMap2DView::getThetaFromCartesianCoordinates(const float64* pCartesianCoords) const
+		double CTopographicMap2DView::getThetaFromCartesianCoordinates(const double* pCartesianCoords) const
 		{
 			return acos(pCartesianCoords[2]);
 		}
 
-		float64 CTopographicMap2DView::getPhiFromCartesianCoordinates(const float64* pCartesianCoords) const
+		double CTopographicMap2DView::getPhiFromCartesianCoordinates(const double* pCartesianCoords) const
 		{
-			float64 l_f64Phi;
+			double l_f64Phi;
 			if(pCartesianCoords[0] > 0.001)
 			{
 				l_f64Phi = atan(pCartesianCoords[1] / pCartesianCoords[0]);
@@ -1550,14 +1550,14 @@ namespace OpenViBEPlugins
 			return l_f64Phi;
 		}
 
-		boolean CTopographicMap2DView::compute2DCoordinates(float64 f64Theta, float64 f64Phi,
-			uint32 ui32SkullCenterX, uint32 ui32SkullCenterY, gint& rX, gint& rY) const
+		bool CTopographicMap2DView::compute2DCoordinates(double f64Theta, double f64Phi,
+			uint32_t ui32SkullCenterX, uint32_t ui32SkullCenterY, gint& rX, gint& rY) const
 		{
 			//linear plotting along radius
-			float64 l_f64Length = f64Theta/(M_PI/2) * m_ui32SkullDiameter/2;
+			double l_f64Length = f64Theta/(M_PI/2) * m_ui32SkullDiameter/2;
 			//determine coordinates on unit circle
-			float64 l_f64X = cos(f64Phi);
-			float64 l_f64Y = sin(f64Phi);
+			double l_f64X = cos(f64Phi);
+			double l_f64Y = sin(f64Phi);
 			//scale vector so that it is l_f64Length long
 			rX = (gint)(ui32SkullCenterX + l_f64Length * l_f64X);
 			rY = (gint)(ui32SkullCenterY - l_f64Length * l_f64Y);

@@ -46,8 +46,8 @@ namespace OpenViBEPlugins
 			 */
 			CTopographicMap2DView(
 				CTopographicMapDatabase& rTopographicMapDatabase,
-				OpenViBE::uint64 ui64DefaultInterpolation,
-				OpenViBE::float64 f64Delay);
+				uint64_t ui64DefaultInterpolation,
+				double f64Delay);
 
 			/**
 			 * \brief Destructor
@@ -83,7 +83,7 @@ namespace OpenViBEPlugins
 			 * \param [in] pSampleValuesMatrix Pointer to matrix of sample points values
 			 * \return True if values were successfully set, false otherwise
 			 */
-			virtual OpenViBE::boolean setSampleValuesMatrix(
+			virtual bool setSampleValuesMatrix(
 				OpenViBE::IMatrix* pSampleValuesMatrix);
 
 			//@}
@@ -106,29 +106,29 @@ namespace OpenViBEPlugins
 			/** \name Callbacks */
 			//@{
 
-			void resizeCB(OpenViBE::uint32 ui32Width, OpenViBE::uint32 ui32Height);
+			void resizeCB(uint32_t ui32Width, uint32_t ui32Height);
 			void toggleElectrodesCB();
 			void setProjectionCB(GtkWidget* pWidget);
 			void setViewCB(GtkWidget* pWidget);
 			void setInterpolationCB(GtkWidget* pWidget);
-			void setDelayCB(OpenViBE::float64 f64Delay);
+			void setDelayCB(double f64Delay);
 
 			//@}
 
 		private:
 			//draw color palette
 			void drawPalette(
-				OpenViBE::uint32 ui32X,
-				OpenViBE::uint32 ui32Y,
-				OpenViBE::uint32 ui32Width,
-				OpenViBE::uint32 ui32Height);
+				uint32_t ui32X,
+				uint32_t ui32Y,
+				uint32_t ui32Width,
+				uint32_t ui32Height);
 
 			//draw face (ears, nose, neck)
 			void drawFace(
-				OpenViBE::uint32 ui32X,
-				OpenViBE::uint32 ui32Y,
-				OpenViBE::uint32 ui32Width,
-				OpenViBE::uint32 ui32Height);
+				uint32_t ui32X,
+				uint32_t ui32Y,
+				uint32_t ui32Width,
+				uint32_t ui32Height);
 
 			//draw head
 			void drawHead();
@@ -146,8 +146,8 @@ namespace OpenViBEPlugins
 					 * \param l_i32ChannelY[out] Y coordinate of channel location, if channel is visible
 					 * \return True if channel is visible in current view, false otherwise
 					 */
-					OpenViBE::boolean getChannel2DPosition(
-						OpenViBE::uint32 ui32ChannelIndex,
+					bool getChannel2DPosition(
+						uint32_t ui32ChannelIndex,
 						gint& l_i32ChannelX,
 						gint& l_i32ChannelY);
 
@@ -156,25 +156,25 @@ namespace OpenViBEPlugins
 
 			//draw a box in RGB buffer
 			void drawBoxToBuffer(
-				OpenViBE::uint32 ui32X,
-				OpenViBE::uint32 ui32Y,
-				OpenViBE::uint32 ui32Width,
-				OpenViBE::uint32 ui32Height,
-				OpenViBE::uint8 ui8Red,
-				OpenViBE::uint8 ui8Green,
-				OpenViBE::uint8 ui8Blue);
+				uint32_t ui32X,
+				uint32_t ui32Y,
+				uint32_t ui32Width,
+				uint32_t ui32Height,
+				uint8_t ui8Red,
+				uint8_t ui8Green,
+				uint8_t ui8Blue);
 
 			void enableElectrodeButtonSignals(
-				OpenViBE::boolean bEnable);
+				bool bEnable);
 
 			void enableProjectionButtonSignals(
-				OpenViBE::boolean bEnable);
+				bool bEnable);
 
 			void enableViewButtonSignals(
-				OpenViBE::boolean bEnable);
+				bool bEnable);
 
 			void enableInterpolationButtonSignals(
-				OpenViBE::boolean bEnable);
+				bool bEnable);
 
 			/**
 			 * \brief Compute normalized coordinates of 2D samples
@@ -183,24 +183,24 @@ namespace OpenViBEPlugins
 			 * \param bComputeCoordinates If false, this method only computes the number of visible samples
 			 * \return Number of visible samples (samples lying within the actual skull area)
 			 */
-			OpenViBE::uint32 computeSamplesNormalizedCoordinates(
-				OpenViBE::boolean bComputeCoordinates);
+			uint32_t computeSamplesNormalizedCoordinates(
+				bool bComputeCoordinates);
 
 			void resizeData();
 
 			void redrawClipmask();
 
-			OpenViBE::float64 getThetaFromCartesianCoordinates(
-				const OpenViBE::float64* l_pCartesianCoords) const;
+			double getThetaFromCartesianCoordinates(
+				const double* l_pCartesianCoords) const;
 
-			OpenViBE::float64 getPhiFromCartesianCoordinates(
-				const OpenViBE::float64* l_pCartesianCoords) const;
+			double getPhiFromCartesianCoordinates(
+				const double* l_pCartesianCoords) const;
 
-			OpenViBE::boolean compute2DCoordinates(
-				OpenViBE::float64 f64Theta,
-				OpenViBE::float64 f64Phi,
-				OpenViBE::uint32 ui32SkullCenterX,
-				OpenViBE::uint32 ui32SkullCenterY,
+			bool compute2DCoordinates(
+				double f64Theta,
+				double f64Phi,
+				uint32_t ui32SkullCenterX,
+				uint32_t ui32SkullCenterY,
 				gint& rX,
 				gint& rY) const;
 
@@ -209,14 +209,14 @@ namespace OpenViBEPlugins
 			CTopographicMapDatabase& m_rTopographicMapDatabase;
 
 			//Maximum delay that can be applied to displayed data
-			OpenViBE::float64 m_f64MaxDelay;
+			double m_f64MaxDelay;
 
 			GtkBuilder* m_pBuilderInterface;
 
 			GtkWidget* m_pDrawingArea;
 			GdkBitmap* m_pClipmask; //origin (m_ui32SkullX, m_ui32SkullY)
-			OpenViBE::uint32 m_ui32ClipmaskWidth;
-			OpenViBE::uint32 m_ui32ClipmaskHeight;
+			uint32_t m_ui32ClipmaskWidth;
+			uint32_t m_ui32ClipmaskHeight;
 			GdkGC* m_pClipmaskGC;
 			GdkRegion* m_pVisibleRegion; //reallocated whenever clipmask changes
 
@@ -237,72 +237,72 @@ namespace OpenViBEPlugins
 			GtkRadioToolButton* m_pBackViewButton;
 
 			//! Interpolation type
-			OpenViBE::uint64 m_ui64CurrentInterpolation;
+			uint64_t m_ui64CurrentInterpolation;
 			GtkRadioToolButton* m_pMapPotentials;
 			GtkRadioToolButton* m_pMapCurrents;
 
 			//! Electrodes toggle button
 			GtkToggleToolButton* m_pElectrodesToggleButton;
 			//! Electrodes toggle state
-			OpenViBE::boolean m_bElectrodesToggledOn;
+			bool m_bElectrodesToggledOn;
 
-			OpenViBE::boolean m_bNeedResize;
+			bool m_bNeedResize;
 
-			OpenViBE::uint32 m_ui32GridSize;
-			OpenViBE::uint32 m_ui32CellSize;
+			uint32_t m_ui32GridSize;
+			uint32_t m_ui32CellSize;
 
 			OpenViBE::CMatrix m_oSampleCoordinatesMatrix;
 
-			std::vector<OpenViBE::uint32> m_oSampleValues;
-			std::vector<std::pair<OpenViBE::uint32, OpenViBE::uint32> > m_oSample2DCoordinates; //in skull coords
+			std::vector<uint32_t> m_oSampleValues;
+			std::vector<std::pair<uint32_t, uint32_t> > m_oSample2DCoordinates; //in skull coords
 
-			OpenViBE::uint32 m_ui32MinPaletteBarHeight;
-			OpenViBE::uint32 m_ui32MaxPaletteBarHeight;
+			uint32_t m_ui32MinPaletteBarHeight;
+			uint32_t m_ui32MaxPaletteBarHeight;
 
-			OpenViBE::uint32 m_ui32HeadWindowWidth;
-			OpenViBE::uint32 m_ui32HeadWindowHeight;
+			uint32_t m_ui32HeadWindowWidth;
+			uint32_t m_ui32HeadWindowHeight;
 
-			OpenViBE::uint32 m_ui32PaletteWindowWidth;
-			OpenViBE::uint32 m_ui32PaletteWindowHeight;
+			uint32_t m_ui32PaletteWindowWidth;
+			uint32_t m_ui32PaletteWindowHeight;
 
-			OpenViBE::uint32 m_ui32SkullX;
-			OpenViBE::uint32 m_ui32SkullY;
-			OpenViBE::uint32 m_ui32SkullDiameter;
+			uint32_t m_ui32SkullX;
+			uint32_t m_ui32SkullY;
+			uint32_t m_ui32SkullDiameter;
 			//angles relative to 3 o'clock position, CCW, in degrees
-			OpenViBE::float32 m_f32SkullOutlineStartAngle;
-			OpenViBE::float32 m_f32SkullOutlineEndAngle;
-			OpenViBE::float32 m_f32SkullFillStartAngle;
-			OpenViBE::float32 m_f32SkullFillEndAngle;
+			float m_f32SkullOutlineStartAngle;
+			float m_f32SkullOutlineEndAngle;
+			float m_f32SkullFillStartAngle;
+			float m_f32SkullFillEndAngle;
 
 			//determined from m_ui32SkullOutlineEndAngle
-			OpenViBE::uint32 m_ui32SkullOutlineLeftPointX;
-			OpenViBE::uint32 m_ui32SkullOutlineLeftPointY;
+			uint32_t m_ui32SkullOutlineLeftPointX;
+			uint32_t m_ui32SkullOutlineLeftPointY;
 			//determined from m_ui32SkullOutlineStartAngle
-			OpenViBE::uint32 m_ui32SkullOutlineRightPointX;
-			OpenViBE::uint32 m_ui32SkullOutlineRightPointY;
+			uint32_t m_ui32SkullOutlineRightPointX;
+			uint32_t m_ui32SkullOutlineRightPointY;
 
 			//determined from m_ui32SkullFillEndAngle
-			OpenViBE::uint32 m_ui32SkullFillLeftPointX;
-			OpenViBE::uint32 m_ui32SkullFillLeftPointY;
+			uint32_t m_ui32SkullFillLeftPointX;
+			uint32_t m_ui32SkullFillLeftPointY;
 			//determined from m_ui32SkullFillStartAngle
-			OpenViBE::uint32 m_ui32SkullFillRightPointX;
-			OpenViBE::uint32 m_ui32SkullFillRightPointY;
+			uint32_t m_ui32SkullFillRightPointX;
+			uint32_t m_ui32SkullFillRightPointY;
 
-			OpenViBE::uint32 m_ui32SkullFillBottomPointX;
-			OpenViBE::uint32 m_ui32SkullFillBottomPointY;
+			uint32_t m_ui32SkullFillBottomPointX;
+			uint32_t m_ui32SkullFillBottomPointY;
 
 			/////////////////////////////
 			// TOP VIEW
 			/////////////////////////////
-			OpenViBE::uint32 m_ui32NoseY;
+			uint32_t m_ui32NoseY;
 
 			/////////////////////////////
 			// BOTTOM VIEW
 			/////////////////////////////
-			OpenViBE::uint32 m_ui32LeftNeckX;
-			OpenViBE::uint32 m_ui32LeftNeckY;
-			OpenViBE::uint32 m_ui32RightNeckX;
-			OpenViBE::uint32 m_ui32RightNeckY;
+			uint32_t m_ui32LeftNeckX;
+			uint32_t m_ui32LeftNeckY;
+			uint32_t m_ui32RightNeckX;
+			uint32_t m_ui32RightNeckY;
 
 			//////////////////////////////////
 			// LEFT/RIGHT VIEWS
@@ -318,16 +318,16 @@ namespace OpenViBEPlugins
 			     |
 			     + E
 			*/
-			OpenViBE::uint32 m_ui32NoseTopX; //A
-			OpenViBE::uint32 m_ui32NoseTopY;
-			OpenViBE::uint32 m_ui32NoseBumpX; //B
-			OpenViBE::uint32 m_ui32NoseBumpY;
-			OpenViBE::uint32 m_ui32NoseTipX; //C
-			OpenViBE::uint32 m_ui32NoseTipY;
-			OpenViBE::uint32 m_ui32NoseBaseX; //D
-			OpenViBE::uint32 m_ui32NoseBaseY;
-			OpenViBE::uint32 m_ui32NoseBottomX; //E
-			OpenViBE::uint32 m_ui32NoseBottomY;
+			uint32_t m_ui32NoseTopX; //A
+			uint32_t m_ui32NoseTopY;
+			uint32_t m_ui32NoseBumpX; //B
+			uint32_t m_ui32NoseBumpY;
+			uint32_t m_ui32NoseTipX; //C
+			uint32_t m_ui32NoseTipY;
+			uint32_t m_ui32NoseBaseX; //D
+			uint32_t m_ui32NoseBaseY;
+			uint32_t m_ui32NoseBottomX; //E
+			uint32_t m_ui32NoseBottomY;
 
 			/**
 			 * \brief Main pixmap
@@ -343,7 +343,7 @@ namespace OpenViBEPlugins
 			 * It is pasted into the main pixmap everytime changes happen (window resizing, display options toggled on/off, etc)
 			 */
 			guchar* m_pSkullRGBBuffer;
-			OpenViBE::uint32 m_ui32RowStride;
+			uint32_t m_ui32RowStride;
 		};
 	};
 };

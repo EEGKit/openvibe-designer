@@ -74,10 +74,10 @@ CCommentEditorDialog::CCommentEditorDialog(const IKernelContext& rKernelContext,
 
 CCommentEditorDialog::~CCommentEditorDialog() { }
 
-boolean CCommentEditorDialog::run()
+bool CCommentEditorDialog::run()
 
 {
-	boolean l_bResult=false;
+	bool l_bResult=false;
 
 	m_pInterface=gtk_builder_new(); // glade_xml_new(m_sGUIFilename.toASCIIString(), "comment", nullptr);
 	gtk_builder_add_from_file(m_pInterface, m_sGUIFilename.toASCIIString(), nullptr);

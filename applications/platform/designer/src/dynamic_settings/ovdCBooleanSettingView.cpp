@@ -7,7 +7,7 @@ using namespace OpenViBE;
 using namespace OpenViBEDesigner;
 using namespace Setting;
 
-static void on_checkbutton_setting_boolean_pressed(GtkToggleButton* pButton, gpointer pUserData)
+static void on_checkbutton_setting_bool_pressed(GtkToggleButton* pButton, gpointer pUserData)
 {
 	static_cast<CBooleanSettingView *>(pUserData)->toggleButtonClick();
 }
@@ -17,8 +17,8 @@ static void on_insertion(GtkEntry *entry, gpointer pUserData)
 	static_cast<CBooleanSettingView *>(pUserData)->onChange();
 }
 
-CBooleanSettingView::CBooleanSettingView(Kernel::IBox &rBox, uint32 ui32Index, CString &rBuilderName):
-	CAbstractSettingView(rBox, ui32Index, rBuilderName, "settings_collection-hbox_setting_boolean"), m_bOnValueSetting(false)
+CBooleanSettingView::CBooleanSettingView(Kernel::IBox &rBox, uint32_t ui32Index, CString &rBuilderName):
+	CAbstractSettingView(rBox, ui32Index, rBuilderName, "settings_collection-hbox_setting_bool"), m_bOnValueSetting(false)
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 
@@ -29,7 +29,7 @@ CBooleanSettingView::CBooleanSettingView(Kernel::IBox &rBox, uint32 ui32Index, C
 
 	g_signal_connect(G_OBJECT(m_pEntry), "changed", G_CALLBACK(on_insertion), this);
 
-	g_signal_connect(G_OBJECT(m_pToggle), "toggled", G_CALLBACK(on_checkbutton_setting_boolean_pressed), this);
+	g_signal_connect(G_OBJECT(m_pToggle), "toggled", G_CALLBACK(on_checkbutton_setting_bool_pressed), this);
 
 	initializeValue();
 }

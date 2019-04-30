@@ -211,10 +211,10 @@ namespace Mensia
 
 			virtual void release() { delete this; }
 
-			virtual OpenViBE::uint64 getClockFrequency() { return (32LL<<32); }
+			virtual uint64_t getClockFrequency() { return (32LL<<32); }
 			virtual bool initialize();
 			virtual bool uninitialize();
-			virtual bool processInput(OpenViBE::uint32 ui32InputIndex) { return true; };
+			virtual bool processInput(uint32_t ui32InputIndex) { return true; };
 			virtual bool processClock(OpenViBE::Kernel::IMessageClock& rClock);
 
 		public:

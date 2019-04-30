@@ -298,9 +298,9 @@ namespace OpenViBEVisualizationToolkit
 		        const OpenViBE::CString& name,
 		        EVisualizationWidgetType type,
 		        const OpenViBE::CIdentifier& parentIdentifier,
-		        OpenViBE::uint32 parentIndex,
+		        uint32_t parentIndex,
 		        const OpenViBE::CIdentifier& boxIdentifier,
-		        OpenViBE::uint32 childCount,
+		        uint32_t childCount,
 		        const OpenViBE::CIdentifier& suggestedIdentifier) = 0;
 
 		/**
@@ -310,7 +310,7 @@ namespace OpenViBEVisualizationToolkit
 		 * \param index [out] index where the widget is parented
 		 * \return true if widget index could be determined, false otherwise
 		 */
-		virtual bool getVisualizationWidgetIndex(const OpenViBE::CIdentifier& identifier, OpenViBE::uint32& index) const = 0;
+		virtual bool getVisualizationWidgetIndex(const OpenViBE::CIdentifier& identifier, uint32_t& index) const = 0;
 
 		/**
 		 * \brief Unparents a widget from its parent, if any
@@ -318,7 +318,7 @@ namespace OpenViBEVisualizationToolkit
 		 * \param index [out] index where this widget was parented
 		 * \return true if widget could be removed from its parent, false otherwise
 		 */
-		virtual bool unparentVisualizationWidget(const OpenViBE::CIdentifier& identifier, OpenViBE::uint32& index) = 0;
+		virtual bool unparentVisualizationWidget(const OpenViBE::CIdentifier& identifier, uint32_t& index) = 0;
 
 		/**
 		 * \brief Parents a widget to a parent widget
@@ -327,7 +327,7 @@ namespace OpenViBEVisualizationToolkit
 		 * \param index index where widget is to be parented
 		 * \return true if widget could be parented as desired, false otherwise
 		 */
-		virtual bool parentVisualizationWidget(const OpenViBE::CIdentifier& identifier, const OpenViBE::CIdentifier& parentIdentifier, OpenViBE::uint32 index) = 0;
+		virtual bool parentVisualizationWidget(const OpenViBE::CIdentifier& identifier, const OpenViBE::CIdentifier& parentIdentifier, uint32_t index) = 0;
 
 		/**
 		 * \brief Destroys a widget hierarchy

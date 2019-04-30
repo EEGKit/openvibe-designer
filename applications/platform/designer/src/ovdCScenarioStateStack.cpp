@@ -17,7 +17,7 @@ CScenarioStateStack::CScenarioStateStack(const IKernelContext& rKernelContext, C
 	,m_MaximumStateCount(0)
 {
 	m_CurrentState = m_States.begin();
-	m_MaximumStateCount = static_cast<uint32>(m_KernelContext.getConfigurationManager().expandAsUInteger("${Designer_UndoRedoStackSize}", 64));
+	m_MaximumStateCount = static_cast<uint32_t>(m_KernelContext.getConfigurationManager().expandAsUInteger("${Designer_UndoRedoStackSize}", 64));
 }
 
 CScenarioStateStack::~CScenarioStateStack()
@@ -266,7 +266,7 @@ bool CScenarioStateStack::dumpState(IMemoryBuffer& state)
 	uLongf sourceSize  =(uLongf)uncompressedMemoryBuffer.getSize();
 	Bytef* sourceBuffer =(Bytef*)uncompressedMemoryBuffer.getDirectPointer();
 
-	compressedMemoryBuffer.setSize(12+(uint64)(sourceSize*1.1), true);
+	compressedMemoryBuffer.setSize(12+(uint64_t)(sourceSize*1.1), true);
 
 	uLongf destinationSize =(uLongf)compressedMemoryBuffer.getSize();
 	Bytef* destinationBuffer=(Bytef*)compressedMemoryBuffer.getDirectPointer();
@@ -278,7 +278,7 @@ bool CScenarioStateStack::dumpState(IMemoryBuffer& state)
 
 	state.setSize(0, true);
 	state.append(compressedMemoryBuffer.getDirectPointer(), destinationSize);
-	state.append((const uint8*)&sourceSize, sizeof(uLongf));
+	state.append((const uint8_t*)&sourceSize, sizeof(uLongf));
 
 	return true;
 }

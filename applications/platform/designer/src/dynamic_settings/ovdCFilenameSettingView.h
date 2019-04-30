@@ -11,7 +11,7 @@ namespace OpenViBEDesigner
 		{
 		public:
 			CFilenameSettingView(OpenViBE::Kernel::IBox& rBox,
-								 OpenViBE::uint32 ui32Index,
+								 uint32_t ui32Index,
 								 OpenViBE::CString &rBuilderName,
 								 const OpenViBE::Kernel::IKernelContext& rKernelContext);
 
@@ -29,7 +29,7 @@ namespace OpenViBEDesigner
 			::GtkEntry* m_pEntry;
 
 			const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
-			OpenViBE::boolean m_bOnValueSetting;
+			bool m_bOnValueSetting;
 		};
 	}
 }

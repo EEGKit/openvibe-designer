@@ -58,31 +58,31 @@ CCommentProxy::operator const IComment* ()
 	return m_pConstComment;
 }
 
-int32 CCommentProxy::getWidth(GtkWidget* pWidget) const
+int32_t CCommentProxy::getWidth(GtkWidget* pWidget) const
 {
 	int x, y;
 	updateSize(pWidget, getLabel(), &x, &y);
 	return x;
 }
 
-int32 CCommentProxy::getHeight(GtkWidget* pWidget) const
+int32_t CCommentProxy::getHeight(GtkWidget* pWidget) const
 {
 	int x, y;
 	updateSize(pWidget, getLabel(), &x, &y);
 	return y;
 }
 
-int32 CCommentProxy::getXCenter() const
+int32_t CCommentProxy::getXCenter() const
 {
 	return m_iXCenter;
 }
 
-int32 CCommentProxy::getYCenter() const
+int32_t CCommentProxy::getYCenter() const
 {
 	return m_iYCenter;
 }
 
-void CCommentProxy::setCenter(int32 i32XCenter, int32 i32YCenter)
+void CCommentProxy::setCenter(int32_t i32XCenter, int32_t i32YCenter)
 {
 	m_iXCenter=i32XCenter;
 	m_iYCenter=i32YCenter;
