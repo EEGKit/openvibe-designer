@@ -145,7 +145,7 @@ float CRenderer::getSuggestedScale()
 
 void CRenderer::clear(uint32_t ui32SampleCountToKeep = 0)
 {
-	if( m_vHistory.size() > 0 )
+	if(!m_vHistory.empty())
 	{
 		if( ui32SampleCountToKeep == 0 )
 		{

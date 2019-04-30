@@ -527,7 +527,7 @@ OpenViBE::boolean parse_arguments(int argc, char** argv, SConfiguration& rConfig
 
 	for(auto it = l_vArgValue.cbegin(); it != l_vArgValue.cend(); ++it)
 	{
-		if(*it == "")
+		if(*it.empty())
 		{
 		}
 		else if(*it == "-h" || *it == "--help")
@@ -576,12 +576,12 @@ OpenViBE::boolean parse_arguments(int argc, char** argv, SConfiguration& rConfig
 		}
 		else if(*it=="-c" || *it=="--config")
 		{
-			if(*++it=="") { std::cout << "Error: Switch --config needs an argument\n"; return false; }
+			if(*++it.empty()) { std::cout << "Error: Switch --config needs an argument\n"; return false; }
 			l_oConfiguration.m_vFlag.push_back(std::make_pair(CommandLineFlag_Config, *it));
 		}
 		else if(*it=="-d" || *it=="--define")
 		{
-			if(*++it=="") 
+			if(*++it.empty()) 
 			{
 				std::cout << "Error: Need two arguments after -d / --define.\n";
 				return false;
@@ -590,7 +590,7 @@ OpenViBE::boolean parse_arguments(int argc, char** argv, SConfiguration& rConfig
 			// Were not using = as a separator for token/value, as on Windows its a problem passing = to the cmd interpreter
 			// which is used to launch the actual designer exe.
 			const std::string& l_rToken = *it;
-			if(*++it=="") 
+			if(*++it.empty()) 
 			{
 				std::cout << "Error: Need two arguments after -d / --define.\n";
 				return false;
@@ -603,7 +603,7 @@ OpenViBE::boolean parse_arguments(int argc, char** argv, SConfiguration& rConfig
 		}
 		else if(*it=="--random-seed")
 		{
-			if(*++it=="") { std::cout << "Error: Switch --random-seed needs an argument\n"; return false; }
+			if(*++it.empty()) { std::cout << "Error: Switch --random-seed needs an argument\n"; return false; }
 			l_oConfiguration.m_vFlag.push_back(std::make_pair(CommandLineFlag_RandomSeed, *it));
 		}
 		else if (*it == "--g-fatal-warnings")

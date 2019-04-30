@@ -156,7 +156,7 @@ void CRendererConnectivity::refresh(const IRendererContext& rContext)
 bool CRendererConnectivity::render(const IRendererContext& rContext)
 {
 	if(!rContext.getSelectedCount()) return false;
-	if(!m_vVertex.size()) return false;
+	if(m_vVertex.empty()) return false;
 	if(!m_ui32HistoryCount) return false;
 
 	std::map < std::string, std::pair < float, float > >::const_iterator it;

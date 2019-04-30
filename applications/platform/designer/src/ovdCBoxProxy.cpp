@@ -165,7 +165,7 @@ const char* CBoxProxy::getLabel(void) const
 
 	m_sLabel = l_sBoxName;
 
-	if (l_sBoxName == "")
+	if (l_sBoxName.empty())
 	{
 		m_sLabel = "Unnamed Box";
 	}

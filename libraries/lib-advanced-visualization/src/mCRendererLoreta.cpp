@@ -458,7 +458,7 @@ bool CRendererLoreta::render(const IRendererContext& rContext)
 	::glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_oBrain.m_vVertex[0].x);
 	::glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_oBrain.m_vVertex[0].u);
 	// ::glDrawElements(GL_TRIANGLES, m_oBrain.m_vTriangle.size(), GL_UNSIGNED_INT, &m_oBrain.m_vTriangle[0]);
-	if( m_vBrainSubsetTriangle.size() > 0)
+	if(!m_vBrainSubsetTriangle.empty())
 	{
 		::glDrawElements(GL_TRIANGLES, m_vBrainSubsetTriangle.size(), GL_UNSIGNED_INT, &m_vBrainSubsetTriangle[0]);
 	}

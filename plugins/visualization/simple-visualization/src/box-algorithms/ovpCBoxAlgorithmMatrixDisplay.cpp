@@ -360,7 +360,7 @@ boolean CBoxAlgorithmMatrixDisplay::process(void)
 				//first line : labels
 				for(uint32 c=0; c<l_ui32ColumnCount; c++)
 				{
-					if(m_vColumnLabelCache[c].second != op_pMatrix->getDimensionLabel(1,c) && string(op_pMatrix->getDimensionLabel(1,c)) != "")
+					if(m_vColumnLabelCache[c].second != op_pMatrix->getDimensionLabel(1,c) && !string(op_pMatrix->getDimensionLabel(1, c)).empty())
 					{
 						gtk_label_set_label(GTK_LABEL(m_vColumnLabelCache[c].first),op_pMatrix->getDimensionLabel(1,c));
 						m_vColumnLabelCache[c].second = op_pMatrix->getDimensionLabel(1,c);
@@ -370,7 +370,7 @@ boolean CBoxAlgorithmMatrixDisplay::process(void)
 				//first column : labels
 				for(uint32 r=0; r<l_ui32RowCount; r++)
 				{
-					if(m_vRowLabelCache[r].second != op_pMatrix->getDimensionLabel(0,r) && string(op_pMatrix->getDimensionLabel(0,r)) != "")
+					if(m_vRowLabelCache[r].second != op_pMatrix->getDimensionLabel(0,r) && !string(op_pMatrix->getDimensionLabel(0, r)).empty())
 					{
 						gtk_label_set_label(GTK_LABEL(m_vRowLabelCache[r].first),op_pMatrix->getDimensionLabel(0,r));
 						m_vRowLabelCache[r].second = op_pMatrix->getDimensionLabel(0,r);
@@ -382,7 +382,7 @@ boolean CBoxAlgorithmMatrixDisplay::process(void)
 				//first line : labels
 				for(uint32 c=0; c<l_ui32ColumnCount; c++)
 				{
-					if(m_vColumnLabelCache[c].second != op_pMatrix->getDimensionLabel(0,c) && string(op_pMatrix->getDimensionLabel(0,c)) != "")
+					if(m_vColumnLabelCache[c].second != op_pMatrix->getDimensionLabel(0,c) && !string(op_pMatrix->getDimensionLabel(0, c)).empty())
 					{
 						gtk_label_set_label(GTK_LABEL(m_vColumnLabelCache[c].first),op_pMatrix->getDimensionLabel(0,c));
 						m_vColumnLabelCache[c].second = op_pMatrix->getDimensionLabel(0,c);

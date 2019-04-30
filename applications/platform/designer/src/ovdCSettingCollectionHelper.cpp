@@ -670,7 +670,7 @@ CString CSettingCollectionHelper::getValueBitMask(const CIdentifier& rTypeIdenti
 		if(!GTK_IS_TOGGLE_BUTTON(l_vWidget[i])) return "";
 		if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(l_vWidget[i])))
 		{
-			if(l_sResult!="")
+			if(!l_sResult.empty())
 			{
 				l_sResult+=string(1, OV_Value_EnumeratedStringSeparator);
 			}

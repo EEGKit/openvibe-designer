@@ -1688,7 +1688,7 @@ void CApplication::saveOpenedScenarios(void)
 
 			for (CInterfacedScenario* scenario : m_vInterfacedScenario)
 			{
-				if (scenario->m_sFileName != "")
+				if (!scenario->m_sFileName.empty())
 				{
 					::fprintf(l_pFile, "Designer_LastScenarioFilename_%03u = %s\n", i, scenario->m_sFileName.c_str());
 					i++;

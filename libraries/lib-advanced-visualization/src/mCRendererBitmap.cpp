@@ -94,7 +94,7 @@ void CRendererBitmap::refresh(const IRendererContext& rContext)
 bool CRendererBitmap::render(const IRendererContext& rContext)
 {
 	if(!rContext.getSelectedCount()) return false;
-	if(!m_vVertex.size()) return false;
+	if(m_vVertex.empty()) return false;
 	if(!m_ui32HistoryCount) return false;
 
 	uint32_t i;

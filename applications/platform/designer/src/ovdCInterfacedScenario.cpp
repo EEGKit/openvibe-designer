@@ -3863,7 +3863,7 @@ void CInterfacedScenario::contextMenuBoxRenameAllCB()
 		}
 	}
 
-	if(l_vSelectedBox.size())
+	if(!l_vSelectedBox.empty())
 	{
 		bool l_bDialogOk = true;
 		bool l_bFirstBox = true;
@@ -4445,7 +4445,7 @@ void CInterfacedScenario::releasePlayerVisualization(void)
 
 bool CInterfacedScenario::hasSelection(void)
 {
-	return m_SelectedObjects.size() != 0;
+	return !m_SelectedObjects.empty();
 }
 
 

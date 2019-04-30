@@ -201,7 +201,7 @@ namespace Mensia
 
 				if(m_ui32TextureId==0)
 				{
-					std::string l_sValue=(sValue==""?"0:0,0,100; 25:0,100,100; 50:0,49,0; 75:100,100,0; 100:100,0,0":sValue);
+					std::string l_sValue=(sValue.empty() ?"0:0,0,100; 25:0,100,100; 50:0,49,0; 75:100,100,0; 100:100,0,0":sValue);
 
 					uint32_t i;
 

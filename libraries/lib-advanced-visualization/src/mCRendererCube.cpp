@@ -66,7 +66,7 @@ bool CRendererCube::render(const IRendererContext& rContext)
 	std::map < std::string, CVertex >::const_iterator it;
 
 	if(!rContext.getSelectedCount()) return false;
-	if(!m_vVertex.size()) return false;
+	if(m_vVertex.empty()) return false;
 	if(!m_ui32HistoryCount) return false;
 
 	uint32_t j, k;

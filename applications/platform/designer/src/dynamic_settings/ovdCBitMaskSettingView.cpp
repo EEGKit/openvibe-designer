@@ -50,7 +50,7 @@ void CBitMaskSettingView::getValue(OpenViBE::CString &rValue) const
 	{
 		if(gtk_toggle_button_get_active(m_vToggleButton[i]))
 		{
-			if(l_sResult != "")
+			if(!l_sResult.empty())
 			{
 				l_sResult += ':';
 			}

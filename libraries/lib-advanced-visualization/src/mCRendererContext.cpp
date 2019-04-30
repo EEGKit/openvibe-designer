@@ -175,8 +175,8 @@ void CRendererContext::unselectChannel(uint32_t ui32Index)
 
 void CRendererContext::sortSelectedChannel(uint32_t ui32SortMode)
 {
-	if(m_vLeftRightScore.size() == 0) getLeftRightScore(m_vLeftRightScore, m_vChannelName, m_vChannelLocalisation);
-	if(m_vFrontBackScore.size() == 0) getFrontBackScore(m_vFrontBackScore, m_vChannelName, m_vChannelLocalisation);
+	if(m_vLeftRightScore.empty()) getLeftRightScore(m_vLeftRightScore, m_vChannelName, m_vChannelLocalisation);
+	if(m_vFrontBackScore.empty()) getFrontBackScore(m_vFrontBackScore, m_vChannelName, m_vChannelLocalisation);
 
 	switch(ui32SortMode)
 	{

@@ -227,7 +227,7 @@ namespace Mensia
 						std::transform(l_sName.begin(), l_sName.end(), l_sSubname.begin(), ::tolower);
 						CVertex v=m_vChannelLocalisation[l_sSubname];
 
-						if(l_sName == "")
+						if(l_sName.empty())
 						{
 							char l_sIndexedChannelName[1024];
 							::sprintf(l_sIndexedChannelName, "Channel %u", j+1);

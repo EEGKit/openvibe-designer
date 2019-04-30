@@ -123,7 +123,7 @@ void CRendererFlower::refresh(const IRendererContext& rContext)
 bool CRendererFlower::render(const IRendererContext& rContext)
 {
 	if(!rContext.getSelectedCount()) return false;
-	if(!m_vMuliVertex.size()) return false;
+	if(m_vMuliVertex.empty()) return false;
 	if(!m_ui32HistoryCount) return false;
 
 	uint32_t i, z;
@@ -145,7 +145,7 @@ bool CRendererFlower::render(const IRendererContext& rContext)
 		::glScalef(rContext.getScale(), rContext.getScale(), rContext.getScale());
 		for(z=0; z<m_vMuliVertex.size(); z++)
 		{
-			if(m_vMuliVertex[z].size())
+			if(!m_vMuliVertex[z].empty())
 			{
 				std::vector < CVertex >& l_vVertex=m_vMuliVertex[z][rContext.getSelected(i)];
 

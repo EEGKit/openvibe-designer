@@ -302,7 +302,7 @@ bool CRendererTopo::render(const IRendererContext& rContext)
 	std::map < std::string, CVertex >::const_iterator it;
 
 	if(!rContext.getSelectedCount()) return false;
-	if(!m_oScalp.m_vVertex.size()) return false;
+	if(m_oScalp.m_vVertex.empty()) return false;
 	if(!m_ui32HistoryCount) return false;
 
 	uint32_t j;
@@ -347,9 +347,9 @@ bool CRendererTopo::render(const IRendererContext& rContext)
 		::glEnable(GL_DEPTH_TEST);
 		::glDisable(GL_BLEND);
 		::glDisable(GL_TEXTURE_1D);
-		if(m_oFace.m_vTriangle.size())
+		if(!m_oFace.m_vTriangle.empty())
 		{
-			if(m_oFace.m_vNormal.size())
+			if(!m_oFace.m_vNormal.empty())
 			{
 				::glEnable(GL_LIGHTING);
 				::glEnableClientState(GL_NORMAL_ARRAY);
@@ -357,7 +357,7 @@ bool CRendererTopo::render(const IRendererContext& rContext)
 			::glColor3f(m_oFace.m_vColor[0], m_oFace.m_vColor[1], m_oFace.m_vColor[2]);
 			::glEnableClientState(GL_VERTEX_ARRAY);
 			::glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_oFace.m_vVertex[0].x);
-			if(m_oFace.m_vNormal.size())
+			if(!m_oFace.m_vNormal.empty())
 			{
 				::glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_oFace.m_vNormal[0].x);
 			}
@@ -371,9 +371,9 @@ bool CRendererTopo::render(const IRendererContext& rContext)
 	if(rContext.isScalpMeshVisible())
 	{
 		::glEnable(GL_TEXTURE_1D);
-		if(m_oScalp.m_vTriangle.size())
+		if(!m_oScalp.m_vTriangle.empty())
 		{
-			if(m_oScalp.m_vNormal.size())
+			if(!m_oScalp.m_vNormal.empty())
 			{
 				::glEnable(GL_LIGHTING);
 				::glEnableClientState(GL_NORMAL_ARRAY);
@@ -382,7 +382,7 @@ bool CRendererTopo::render(const IRendererContext& rContext)
 			::glEnableClientState(GL_VERTEX_ARRAY);
 			::glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 			::glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_oScalp.m_vVertex[0].x);
-			if(m_oScalp.m_vNormal.size())
+			if(!m_oScalp.m_vNormal.empty())
 			{
 				::glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_oScalp.m_vNormal[0].x);
 			}

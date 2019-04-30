@@ -98,7 +98,7 @@ void CRendererMountain::refresh(const IRendererContext& rContext)
 
 bool CRendererMountain::render(const IRendererContext& rContext)
 {
-	if(!m_oMountain.m_vVertex.size()) return false;
+	if(m_oMountain.m_vVertex.empty()) return false;
 	if(!m_ui32HistoryCount) return false;
 
 	float d=2.5f;

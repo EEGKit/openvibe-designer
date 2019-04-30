@@ -57,14 +57,14 @@ CBufferDatabase::~CBufferDatabase()
 	m_oParentPlugin.getAlgorithmManager().releaseAlgorithm(*m_pChannelLocalisationStreamDecoder);
 
 	//delete all the remaining buffers
-	while(m_oSampleBuffers.size() > 0)
+	while(!m_oSampleBuffers.empty())
 	{
 		delete[] m_oSampleBuffers.front();
 		m_oSampleBuffers.pop_front();
 	}
 
 	//delete channel localisation matrices
-	while(m_oChannelLocalisationStreamedCoords.size() > 0)
+	while(!m_oChannelLocalisationStreamedCoords.empty())
 	{
 		delete m_oChannelLocalisationStreamedCoords.front().first;
 		m_oChannelLocalisationStreamedCoords.pop_front();
@@ -220,7 +220,7 @@ boolean CBufferDatabase::isFirstBufferReceived()
 boolean CBufferDatabase::isFirstChannelLocalisationBufferProcessed()
 {
 	//at least one chanloc buffer must have been received and processed
-	return (m_oChannelLocalisationStreamedCoords.size() > 0) && (m_oChannelLocalisationStreamedCoords[0].second == false);
+	return (!m_oChannelLocalisationStreamedCoords.empty()) && (m_oChannelLocalisationStreamedCoords[0].second == false);
 }
 
 boolean CBufferDatabase::adjustNumberOfDisplayedBuffers(float64 f64NumberOfSecondsToDisplay)
@@ -550,7 +550,7 @@ void CBufferDatabase::getDisplayedChannelLocalMinMaxValue(uint32 ui32Channel, fl
 
 boolean CBufferDatabase::isTimeInDisplayedInterval(const uint64& ui64Time) const
 {
-	if(m_oStartTime.size() == 0)
+	if(m_oStartTime.empty())
 	{
 		return false;
 	}
@@ -562,7 +562,7 @@ boolean CBufferDatabase::getIndexOfBufferStartingAtTime(const OpenViBE::uint64& 
 {
 	rIndex = 0;
 
-	if(m_oSampleBuffers.size() == 0 || ui64Time < m_oStartTime.front() || ui64Time > m_oStartTime.back())
+	if(m_oSampleBuffers.empty() || ui64Time < m_oStartTime.front() || ui64Time > m_oStartTime.back())
 	{
 		return false;
 	}
@@ -719,7 +719,7 @@ void CBufferDatabase::setStimulation(const uint32 ui32StimulationIndex, const ui
 
 	m_oStimulations.push_back(std::pair<uint64, uint64>(ui64StimulationDate, ui64StimulationIdentifier));
 
-	if(m_oStartTime.size()!=0)
+	if(!m_oStartTime.empty())
 	{
 		std::deque<std::pair<uint64, uint64> >::iterator i;
 		while(m_oStimulations.begin() != m_oStimulations.end() && m_oStimulations.begin()->first < m_oStartTime.front())
@@ -771,7 +771,7 @@ boolean CBufferDatabase::fillChannelLookupTable()
 
 		//trim trailing spaces
 		uint32 lastNonWhitespaceChar = 0;
-		if(m_pDimensionLabels[0][i].size() > 0)
+		if(!m_pDimensionLabels[0][i].empty())
 		{
 			for(lastNonWhitespaceChar = m_pDimensionLabels[0][i].size()-1; lastNonWhitespaceChar >= 0; lastNonWhitespaceChar--)
 			{

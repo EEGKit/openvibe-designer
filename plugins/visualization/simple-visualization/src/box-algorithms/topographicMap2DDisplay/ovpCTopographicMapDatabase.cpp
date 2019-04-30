@@ -69,7 +69,7 @@ boolean CTopographicMapDatabase::onChannelLocalisationBufferReceived(uint32 ui32
 {
 	CBufferDatabase::onChannelLocalisationBufferReceived(ui32ChannelLocalisationBufferIndex);
 
-	if(m_bChannelLookupTableInitialized == false || m_oChannelLocalisationStreamedCoords.size() == 0 || m_i64NbElectrodes == 0)
+	if(m_bChannelLookupTableInitialized == false || m_oChannelLocalisationStreamedCoords.empty() || m_i64NbElectrodes == 0)
 	{
 		m_oParentPlugin.getLogManager() << LogLevel_Warning
 			<< "Channel localisation buffer received before channel lookup table was initialized! Can't process buffer!\n";
@@ -279,7 +279,7 @@ boolean CTopographicMapDatabase::interpolateValues()
 
 boolean CTopographicMapDatabase::getBufferIndexFromTime(uint64 ui64Time, uint32& rBufferIndex)
 {
-	if(m_oSampleBuffers.size() == 0)
+	if(m_oSampleBuffers.empty())
 	{
 		return false;
 	}
