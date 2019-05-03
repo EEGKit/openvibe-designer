@@ -25,7 +25,7 @@ CVisualizationManager::CVisualizationManager(const IKernelContext& kernelContext
 	: m_KernelContext(kernelContext) { }
 
 CVisualizationManager::~CVisualizationManager() { }
-	
+
 bool CVisualizationManager::createVisualizationTree(CIdentifier& visualizationTreeIdentifier)
 {
 	IVisualizationTree* newVisualizationTree = new CVisualizationTree(m_KernelContext);
@@ -87,8 +87,7 @@ CIdentifier CVisualizationManager::getUnusedIdentifier() const
 	{
 		finalIdentifier = CIdentifier(possibleIdentifier++);
 		it = m_VisualizationTrees.find(finalIdentifier);
-	}
-	while (it != m_VisualizationTrees.end() || finalIdentifier == OV_UndefinedIdentifier);
+	} while (it != m_VisualizationTrees.end() || finalIdentifier == OV_UndefinedIdentifier);
 	return finalIdentifier;
 }
 

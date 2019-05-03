@@ -18,7 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #ifndef __autoconvert__Scalp_obj__
 #define __autoconvert__Scalp_obj__
 

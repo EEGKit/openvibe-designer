@@ -40,7 +40,7 @@
 #include <map>
 #include <string>
 
-// #define __DIRECT_RENDER__
+ // #define __DIRECT_RENDER__
 
 namespace Mensia
 {
@@ -54,25 +54,25 @@ namespace Mensia
 			TGtkGLWidget()
 
 				:m_pWidget(nullptr)
-				,m_pLeft(nullptr)
-				,m_pRight(nullptr)
-				,m_pBottom(nullptr)
-				,m_pTimeoutSource(nullptr)
-				,m_pBox(nullptr)
-				,m_ui32TextureId(0) { }
+				, m_pLeft(nullptr)
+				, m_pRight(nullptr)
+				, m_pBottom(nullptr)
+				, m_pTimeoutSource(nullptr)
+				, m_pBox(nullptr)
+				, m_ui32TextureId(0) { }
 
 			virtual ~TGtkGLWidget()
 
 			{
-				if(m_pWidget)
+				if (m_pWidget)
 				{
-					if(m_ui32TextureId)
+					if (m_ui32TextureId)
 					{
 						GtkGL::preRender(m_pWidget);
 						glDeleteTextures(1, &m_ui32TextureId);
 						GtkGL::postRender(m_pWidget);
 					}
-					if(m_pTimeoutSource)
+					if (m_pTimeoutSource)
 					{
 						g_source_destroy(m_pTimeoutSource);
 					}
@@ -84,11 +84,11 @@ namespace Mensia
 			{
 				GtkGL::initialize(pWidget);
 				{
-					m_pBox=&rBox;
-					m_pWidget=pWidget;
-					m_pLeft=pLeft;
-					m_pRight=pRight;
-					m_pBottom=pBottom;
+					m_pBox = &rBox;
+					m_pWidget = pWidget;
+					m_pLeft = pLeft;
+					m_pRight = pRight;
+					m_pBottom = pBottom;
 
 					::g_signal_connect(pWidget, "configure-event", G_CALLBACK(TGtkGLWidget<TBox>::__configure_cb), m_pBox);
 					::g_signal_connect(pWidget, "expose-event", G_CALLBACK(TGtkGLWidget<TBox>::__expose_cb), m_pBox);
@@ -103,7 +103,7 @@ namespace Mensia
 					::g_signal_connect_after(pRight, "expose-event", G_CALLBACK(TGtkGLWidget<TBox>::__expose_right_cb), m_pBox);
 					::g_signal_connect_after(pBottom, "expose-event", G_CALLBACK(TGtkGLWidget<TBox>::__expose_bottom_cb), m_pBox);
 
-					m_pTimeoutSource=g_timeout_source_new(250); // timeouts every 50 ms
+					m_pTimeoutSource = g_timeout_source_new(250); // timeouts every 50 ms
 					g_source_set_priority(m_pTimeoutSource, G_PRIORITY_LOW);
 					g_source_set_callback(m_pTimeoutSource, GSourceFunc(__timeout_redraw), m_pBox, nullptr);
 					g_source_attach(m_pTimeoutSource, nullptr);
@@ -112,12 +112,12 @@ namespace Mensia
 				}
 			}
 
-			virtual void redrawTopLevelWindow(bool bImmediate=false)
+			virtual void redrawTopLevelWindow(bool bImmediate = false)
 			{
-				GtkWidget* l_pTopLevelWidget=gtk_widget_get_toplevel(m_pWidget);
-				if(l_pTopLevelWidget != nullptr)
+				GtkWidget* l_pTopLevelWidget = gtk_widget_get_toplevel(m_pWidget);
+				if (l_pTopLevelWidget != nullptr)
 				{
-					if(bImmediate)
+					if (bImmediate)
 					{
 						gdk_window_process_updates(l_pTopLevelWidget->window, false);
 						gtk_widget_queue_draw(l_pTopLevelWidget);
@@ -129,9 +129,9 @@ namespace Mensia
 				}
 			}
 
-			virtual void redraw(bool bImmediate=false)
+			virtual void redraw(bool bImmediate = false)
 			{
-				if(bImmediate)
+				if (bImmediate)
 				{
 					gdk_window_process_updates(m_pWidget->window, false);
 					gtk_widget_queue_draw(m_pWidget);
@@ -142,9 +142,9 @@ namespace Mensia
 				}
 			}
 
-			virtual void redrawLeft(bool bImmediate=false)
+			virtual void redrawLeft(bool bImmediate = false)
 			{
-				if(bImmediate)
+				if (bImmediate)
 				{
 					gdk_window_process_updates(m_pLeft->window, false);
 					gtk_widget_queue_draw(m_pLeft);
@@ -155,9 +155,9 @@ namespace Mensia
 				}
 			}
 
-			virtual void redrawRight(bool bImmediate=false)
+			virtual void redrawRight(bool bImmediate = false)
 			{
-				if(bImmediate)
+				if (bImmediate)
 				{
 					gdk_window_process_updates(m_pRight->window, false);
 					gtk_widget_queue_draw(m_pRight);
@@ -168,9 +168,9 @@ namespace Mensia
 				}
 			}
 
-			virtual void redrawBottom(bool bImmediate=false)
+			virtual void redrawBottom(bool bImmediate = false)
 			{
-				if(bImmediate)
+				if (bImmediate)
 				{
 					gdk_window_process_updates(m_pBottom->window, false);
 					gtk_widget_queue_draw(m_pBottom);
@@ -183,9 +183,9 @@ namespace Mensia
 
 		public:
 
-			virtual void setPointSmoothingActive(bool bActive=false)
+			virtual void setPointSmoothingActive(bool bActive = false)
 			{
-				if(bActive)
+				if (bActive)
 				{
 					glEnable(GL_POINT_SMOOTH);
 				}
@@ -199,9 +199,9 @@ namespace Mensia
 			{
 #define M_GRADIENT_SIZE 128
 
-				if(m_ui32TextureId==0)
+				if (m_ui32TextureId == 0)
 				{
-					std::string l_sValue=(sValue.empty() ?"0:0,0,100; 25:0,100,100; 50:0,49,0; 75:100,100,0; 100:100,0,0":sValue);
+					std::string l_sValue = (sValue.empty() ? "0:0,0,100; 25:0,100,100; 50:0,49,0; 75:100,100,0; 100:100,0,0" : sValue);
 
 					uint32_t i;
 
@@ -211,11 +211,11 @@ namespace Mensia
 					OpenViBEVisualizationToolkit::Tools::ColorGradient::interpolate(m_oGradient, m_oGradientBase, M_GRADIENT_SIZE);
 
 					float l_vTexture[M_GRADIENT_SIZE][3];
-					for(i=0; i<M_GRADIENT_SIZE; i++)
+					for (i = 0; i < M_GRADIENT_SIZE; i++)
 					{
-						l_vTexture[i][0]=float(m_oGradient[i*4+1]*.01);
-						l_vTexture[i][1]=float(m_oGradient[i*4+2]*.01);
-						l_vTexture[i][2]=float(m_oGradient[i*4+3]*.01);
+						l_vTexture[i][0] = float(m_oGradient[i * 4 + 1] * .01);
+						l_vTexture[i][1] = float(m_oGradient[i * 4 + 2] * .01);
+						l_vTexture[i][2] = float(m_oGradient[i * 4 + 3] * .01);
 					}
 
 					glGenTextures(1, &m_ui32TextureId);
@@ -224,8 +224,8 @@ namespace Mensia
 					glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); // LINEAR_MIPMAP_LINEAR);
 					glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 					glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-//					::glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-//					::glTexImage1D(GL_TEXTURE_1D, 0, GL_RGB, __SIZE__, 0, GL_RGB, GL_UNSIGNED_BYTE, l_vTexture);
+					//					::glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+					//					::glTexImage1D(GL_TEXTURE_1D, 0, GL_RGB, __SIZE__, 0, GL_RGB, GL_UNSIGNED_BYTE, l_vTexture);
 					gluBuild1DMipmaps(GL_TEXTURE_1D, GL_RGB, M_GRADIENT_SIZE, GL_RGB, GL_FLOAT, l_vTexture);
 				}
 
@@ -236,7 +236,7 @@ namespace Mensia
 
 		protected:
 
-			GtkWidget* m_pWidget;
+			GtkWidget * m_pWidget;
 			GtkWidget* m_pLeft;
 			GtkWidget* m_pRight;
 			GtkWidget* m_pBottom;
@@ -249,13 +249,13 @@ namespace Mensia
 		private:
 
 
-			static gboolean __timeout_redraw(TBox* pBox)
+			static gboolean __timeout_redraw(TBox * pBox)
 			{
 				pBox->redraw();
 				return TRUE;
 			}
 
-			static gboolean __configure_cb(GtkWidget* pWidget, GdkEventConfigure* pEvent, TBox* pBox)
+			static gboolean __configure_cb(GtkWidget * pWidget, GdkEventConfigure * pEvent, TBox * pBox)
 			{
 				GtkGL::preRender(pWidget);
 
@@ -268,11 +268,11 @@ namespace Mensia
 				return TRUE;
 			}
 
-			static gboolean __expose_cb(GtkWidget* pWidget, GdkEventExpose* pEvent, TBox* pBox)
+			static gboolean __expose_cb(GtkWidget * pWidget, GdkEventExpose * pEvent, TBox * pBox)
 			{
-				float d=1.f;
-				float dx=d/(pWidget->allocation.width-d);
-				float dy=d/(pWidget->allocation.height-d);
+				float d = 1.f;
+				float dx = d / (pWidget->allocation.width - d);
+				float dy = d / (pWidget->allocation.height - d);
 
 				GtkGL::preRender(pWidget);
 
@@ -282,7 +282,7 @@ namespace Mensia
 
 				glMatrixMode(GL_PROJECTION);
 				glLoadIdentity();
-				gluOrtho2D(0-dx, 1+dx, 0-dy, 1+dy);
+				gluOrtho2D(0 - dx, 1 + dx, 0 - dy, 1 + dy);
 
 				glMatrixMode(GL_MODELVIEW);
 				glLoadIdentity();
@@ -302,7 +302,7 @@ namespace Mensia
 				glDisable(GL_DEPTH_TEST);
 				glClearDepth(100);
 				glClearColor(0, 0, 0, 0);
-				glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 				glColor3f(1, 1, 1);
 
 				// Lighting
@@ -335,60 +335,60 @@ namespace Mensia
 				return TRUE;
 			}
 
-			static gboolean __enter_notify_cb(GtkWidget* pWidget, GdkEventCrossing* pEvent, TBox* pBox)
+			static gboolean __enter_notify_cb(GtkWidget * pWidget, GdkEventCrossing * pEvent, TBox * pBox)
 			{
 				pBox->redraw();
-//				pBox->request();
-//				pBox->m_bRedrawNeeded=true;
+				//				pBox->request();
+				//				pBox->m_bRedrawNeeded=true;
 				return TRUE;
 			}
 
-			static gboolean __expose_left_cb(GtkWidget* pWidget, GdkEventExpose* pEvent, TBox* pBox)
+			static gboolean __expose_left_cb(GtkWidget * pWidget, GdkEventExpose * pEvent, TBox * pBox)
 			{
 				pBox->drawLeft();
 				return TRUE;
 			}
 
-			static gboolean __expose_right_cb(GtkWidget* pWidget, GdkEventExpose* pEvent, TBox* pBox)
+			static gboolean __expose_right_cb(GtkWidget * pWidget, GdkEventExpose * pEvent, TBox * pBox)
 			{
 				pBox->drawRight();
 				return TRUE;
 			}
 
-			static gboolean __expose_bottom_cb(GtkWidget* pWidget, GdkEventExpose* pEvent, TBox* pBox)
+			static gboolean __expose_bottom_cb(GtkWidget * pWidget, GdkEventExpose * pEvent, TBox * pBox)
 			{
 				pBox->drawBottom();
 				return TRUE;
 			}
 
-			static gboolean __mouse_button_cb(GtkWidget* pWidget, GdkEventButton* pEvent, TBox* pBox)
+			static gboolean __mouse_button_cb(GtkWidget * pWidget, GdkEventButton * pEvent, TBox * pBox)
 			{
-				int l_iStatus=0;
-				switch(pEvent->type)
+				int l_iStatus = 0;
+				switch (pEvent->type)
 				{
-					case GDK_BUTTON_PRESS: l_iStatus=1; break;
-					case GDK_2BUTTON_PRESS: l_iStatus=2; break;
-					case GDK_3BUTTON_PRESS: l_iStatus=3; break;
-					default: break;
+				case GDK_BUTTON_PRESS: l_iStatus = 1; break;
+				case GDK_2BUTTON_PRESS: l_iStatus = 2; break;
+				case GDK_3BUTTON_PRESS: l_iStatus = 3; break;
+				default: break;
 				}
 				pBox->mouseButton(int32_t(pEvent->x), int32_t(pEvent->y), pEvent->button, l_iStatus);
 				pBox->draw();
 				return TRUE;
 			}
 
-			static gboolean __motion_notify_cb(GtkWidget* pWidget, GdkEventMotion* pEvent, TBox* pBox)
+			static gboolean __motion_notify_cb(GtkWidget * pWidget, GdkEventMotion * pEvent, TBox * pBox)
 			{
 				pBox->mouseMotion(int32_t(pEvent->x), int32_t(pEvent->y));
 				return TRUE;
 			}
 
-			static gboolean __key_press_cb(GtkWidget* pWidget, GdkEventKey* pEvent, TBox* pBox)
+			static gboolean __key_press_cb(GtkWidget * pWidget, GdkEventKey * pEvent, TBox * pBox)
 			{
 				pBox->keyboard(0, 0, /*pEvent->x, pEvent->y,*/ pEvent->keyval, true);
 				return TRUE;
 			}
 
-			static gboolean __key_release_cb(GtkWidget* pWidget, GdkEventKey* pEvent, TBox* pBox)
+			static gboolean __key_release_cb(GtkWidget * pWidget, GdkEventKey * pEvent, TBox * pBox)
 			{
 				pBox->keyboard(0, 0, /*pEvent->x, pEvent->y,*/ pEvent->keyval, false);
 				return TRUE;

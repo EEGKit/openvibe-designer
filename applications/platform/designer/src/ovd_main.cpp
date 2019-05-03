@@ -93,10 +93,7 @@ public:
 	}
 
 	map<string, const IPluginObjectDesc*>& getPluginObjectDescMap()
-
-	{
-		return m_vPluginObjectDesc;
-	}
+ { return m_vPluginObjectDesc; }
 
 private:
 
@@ -438,10 +435,7 @@ typedef struct _SConfiguration
 
 } SConfiguration;
 
-static char backslash_to_slash(char c)
-{
-	return c == '\\' ? '/' : c;
-}
+static char backslash_to_slash(char c) { return c == '\\' ? '/' : c; }
 
 /** ------------------------------------------------------------------------------------------------------------------------------------
 * Use Mutex to ensure that only one instance with GUI of Designer runs at the same time
@@ -519,7 +513,7 @@ bool parse_arguments(int argc, char** argv, SConfiguration& rConfiguration)
 
 	for (auto it = l_vArgValue.cbegin(); it != l_vArgValue.cend(); ++it)
 	{
-		if (*it == "") { }
+		if (*it == "") {}
 		else if (*it == "-h" || *it == "--help")
 		{
 			l_oConfiguration.m_help = true;
@@ -1056,8 +1050,5 @@ int main(int argc, char** argv)
 
 #if defined TARGET_OS_Windows
 // Should be used once we get rid of the .cmd launchers
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int windowStyle)
-{
-	return main(__argc, __argv);
-}
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int windowStyle) { return main(__argc, __argv); }
 #endif //defined TARGET_OS_Windows

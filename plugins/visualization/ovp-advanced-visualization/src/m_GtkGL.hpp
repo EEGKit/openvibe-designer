@@ -33,7 +33,7 @@ namespace Mensia
 			void initialize(GtkWidget* pWidget);
 			void uninitialize(GtkWidget* pWidget);
 
-			void preRender(GtkWidget* pWidget, bool bVerticalSync=false);
+			void preRender(GtkWidget* pWidget, bool bVerticalSync = false);
 			void postRender(GtkWidget* pWidget);
 		};
 	};

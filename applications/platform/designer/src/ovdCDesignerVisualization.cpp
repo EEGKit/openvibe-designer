@@ -13,7 +13,7 @@ using namespace Kernel;
 using namespace OpenViBEDesigner;
 using namespace OpenViBEVisualizationToolkit;
 
-static GtkTargetEntry targets [] =
+static GtkTargetEntry targets[] =
 {
 	{ (gchar*)"STRING", 0, 0 },
 	{ (gchar*)"text/plain", 0, 0 },
@@ -29,12 +29,12 @@ namespace OpenViBEDesigner
 	void displayErrorDialog(const char* pText, const char* pSecondaryText)
 	{
 		GtkWidget* l_pErrorDialog = gtk_message_dialog_new(
-						nullptr,
-						GTK_DIALOG_MODAL,
-						GTK_MESSAGE_WARNING,
-						GTK_BUTTONS_OK,
-						"%s",
-						pText);
+			nullptr,
+			GTK_DIALOG_MODAL,
+			GTK_MESSAGE_WARNING,
+			GTK_BUTTONS_OK,
+			"%s",
+			pText);
 
 		gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(l_pErrorDialog), "%s", pSecondaryText);
 
@@ -51,36 +51,36 @@ namespace OpenViBEDesigner
 	 * \param[in] pSecondaryText additional text to display in the dialog
 	 * \return identifier of the button pressed
 	 */
-	/*
-	gint displayQuestionDialog(const char* pText, const char* pSecondaryText)
-	{
-		::GtkWidget* l_pQuestionDialog = gtk_message_dialog_new(
-						nullptr,
-						GTK_DIALOG_MODAL,
-						GTK_MESSAGE_QUESTION,
-						GTK_BUTTONS_YES_NO,
-						pText);
+	 /*
+	 gint displayQuestionDialog(const char* pText, const char* pSecondaryText)
+	 {
+		 ::GtkWidget* l_pQuestionDialog = gtk_message_dialog_new(
+						 nullptr,
+						 GTK_DIALOG_MODAL,
+						 GTK_MESSAGE_QUESTION,
+						 GTK_BUTTONS_YES_NO,
+						 pText);
 
-		gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(l_pQuestionDialog),	pSecondaryText);
+		 gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(l_pQuestionDialog),	pSecondaryText);
 
-		gtk_window_set_position(GTK_WINDOW(l_pQuestionDialog), GTK_WIN_POS_MOUSE);
+		 gtk_window_set_position(GTK_WINDOW(l_pQuestionDialog), GTK_WIN_POS_MOUSE);
 
-		gint ret = gtk_dialog_run(GTK_DIALOG(l_pQuestionDialog));
+		 gint ret = gtk_dialog_run(GTK_DIALOG(l_pQuestionDialog));
 
-		gtk_widget_destroy(l_pQuestionDialog);
+		 gtk_widget_destroy(l_pQuestionDialog);
 
-		return ret;
-	}*/
+		 return ret;
+	 }*/
 
-	/**
-	 * \brief Helper function retrieving a child in a table from its attach indices
-	 * \param pTable Table parent to the child to be retrieved
-	 * \param left_attach Left attach index
-	 * \param right_attach Right attach index
-	 * \param top_attach Top attach index
-	 * \param bottom_attach Bottom attach index
-	 * \return Pointer to table child if one was found, nullptr otherwise
-	 */
+	 /**
+	  * \brief Helper function retrieving a child in a table from its attach indices
+	  * \param pTable Table parent to the child to be retrieved
+	  * \param left_attach Left attach index
+	  * \param right_attach Right attach index
+	  * \param top_attach Top attach index
+	  * \param bottom_attach Bottom attach index
+	  * \return Pointer to table child if one was found, nullptr otherwise
+	  */
 	GtkTableChild* getTableChild(GtkTable* pTable, int leftAttach, int rightAttach, int topAttach, int bottomAttach)
 	{
 		GList* pList = pTable->children;
@@ -89,13 +89,10 @@ namespace OpenViBEDesigner
 		do
 		{
 			pTC = (GtkTableChild*)pList->data;
-			if(pTC->left_attach == leftAttach && pTC->right_attach == rightAttach &&
-			   pTC->top_attach == topAttach && pTC->bottom_attach == bottomAttach)
-			{
-				return pTC;
-			}
+			if (pTC->left_attach == leftAttach && pTC->right_attach == rightAttach &&
+				pTC->top_attach == topAttach && pTC->bottom_attach == bottomAttach) { return pTC; }
 			pList = pList->next;
-		}while(pList);
+		} while (pList);
 
 		return nullptr;
 	}
@@ -108,7 +105,7 @@ static GtkItemFactoryEntry unaffected_menu_items[] = {
 	{ (gchar*)"/New window", (gchar*)"", (GtkItemFactoryCallback)CDesignerVisualization::ask_new_visualization_window_cb, 1, (gchar*)"<StockItem>", GTK_STOCK_DND_MULTIPLE }
 };
 
-static GtkItemFactoryEntry visualization_window_menu_items[] ={
+static GtkItemFactoryEntry visualization_window_menu_items[] = {
 	{ (gchar*)"/New tab", (gchar*)"", (GtkItemFactoryCallback)CDesignerVisualization::ask_new_visualization_panel_cb, 1, (gchar*)"<StockItem>", GTK_STOCK_DND },
 	{ (gchar*)"/Rename", (gchar*)"", (GtkItemFactoryCallback)CDesignerVisualization::ask_rename_visualization_window_cb, 1, (gchar*)"<StockItem>", GTK_STOCK_BOLD },
 	{ (gchar*)"/Remove", (gchar*)"", (GtkItemFactoryCallback)CDesignerVisualization::remove_visualization_window_cb, 1, (gchar*)"<StockItem>", GTK_STOCK_DELETE }
@@ -131,12 +128,12 @@ static GtkItemFactoryEntry split_widget_menu_items[] = {
 	{ (gchar*)"/Remove", (gchar*)"", (GtkItemFactoryCallback)CDesignerVisualization::remove_visualization_widget_cb, 1, (gchar*)"<StockItem>", GTK_STOCK_DELETE }
 };
 
-static gint num_unaffected_menu_items           = sizeof (unaffected_menu_items) / sizeof (unaffected_menu_items[0]);
-static gint num_visualization_window_menu_items = sizeof (visualization_window_menu_items) / sizeof (visualization_window_menu_items[0]);
-static gint num_visualization_panel_menu_items  = sizeof (visualization_panel_menu_items) / sizeof (visualization_panel_menu_items[0]);
-static gint num_visualization_box_menu_items    = sizeof (visualization_box_menu_items) / sizeof (visualization_box_menu_items[0]);
-static gint num_undefined_widget_menu_items     = sizeof (undefined_widget_menu_items) / sizeof (undefined_widget_menu_items[0]);
-static gint num_split_widget_menu_items         = sizeof (split_widget_menu_items) / sizeof (split_widget_menu_items[0]);
+static gint num_unaffected_menu_items = sizeof(unaffected_menu_items) / sizeof(unaffected_menu_items[0]);
+static gint num_visualization_window_menu_items = sizeof(visualization_window_menu_items) / sizeof(visualization_window_menu_items[0]);
+static gint num_visualization_panel_menu_items = sizeof(visualization_panel_menu_items) / sizeof(visualization_panel_menu_items[0]);
+static gint num_visualization_box_menu_items = sizeof(visualization_box_menu_items) / sizeof(visualization_box_menu_items[0]);
+static gint num_undefined_widget_menu_items = sizeof(undefined_widget_menu_items) / sizeof(undefined_widget_menu_items[0]);
+static gint num_split_widget_menu_items = sizeof(split_widget_menu_items) / sizeof(split_widget_menu_items[0]);
 
 CDesignerVisualization::CDesignerVisualization(const IKernelContext& rKernelContext, IVisualizationTree& rVisualizationTree, CInterfacedScenario& rInterfacedScenario) :
 	m_rKernelContext(rKernelContext),
@@ -181,9 +178,9 @@ void CDesignerVisualization::init(std::string guiFile)
 
 	m_pTreeView = m_rVisualizationTree.createTreeViewWithModel();
 
-	GtkTreeViewColumn* l_pTreeViewColumnName=gtk_tree_view_column_new();
-	GtkCellRenderer* l_pCellRendererIcon=gtk_cell_renderer_pixbuf_new();
-	GtkCellRenderer* l_pCellRendererName=gtk_cell_renderer_text_new();
+	GtkTreeViewColumn* l_pTreeViewColumnName = gtk_tree_view_column_new();
+	GtkCellRenderer* l_pCellRendererIcon = gtk_cell_renderer_pixbuf_new();
+	GtkCellRenderer* l_pCellRendererName = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_set_title(l_pTreeViewColumnName, "Windows for current scenario");
 	gtk_tree_view_column_pack_start(l_pTreeViewColumnName, l_pCellRendererIcon, FALSE);
 	gtk_tree_view_column_pack_start(l_pTreeViewColumnName, l_pCellRendererName, TRUE);
@@ -195,14 +192,14 @@ void CDesignerVisualization::init(std::string guiFile)
 	gtk_tree_view_column_set_min_width(l_pTreeViewColumnName, 64);
 	gtk_tree_view_append_column(m_pTreeView, l_pTreeViewColumnName);
 
-	GtkTreeViewColumn* l_pTreeViewColumnDesc=gtk_tree_view_column_new();
+	GtkTreeViewColumn* l_pTreeViewColumnDesc = gtk_tree_view_column_new();
 	gtk_tree_view_append_column(m_pTreeView, l_pTreeViewColumnDesc);
 
 	gtk_tree_view_column_set_visible(l_pTreeViewColumnDesc, 0);
 	gtk_tree_view_columns_autosize(GTK_TREE_VIEW(m_pTreeView));
 
 	//allow tree items to be dragged
-	gtk_drag_source_set(GTK_WIDGET(m_pTreeView), GDK_BUTTON1_MASK, targets, sizeof(targets)/sizeof(GtkTargetEntry), GDK_ACTION_COPY);
+	gtk_drag_source_set(GTK_WIDGET(m_pTreeView), GDK_BUTTON1_MASK, targets, sizeof(targets) / sizeof(GtkTargetEntry), GDK_ACTION_COPY);
 
 	//require notifications upon tree item dragging, mouse button release, active item change
 	g_signal_connect(G_OBJECT(m_pTreeView), "drag_data_get", G_CALLBACK(drag_data_get_from_tree_cb), this);
@@ -222,7 +219,7 @@ void CDesignerVisualization::init(std::string guiFile)
 	m_ui32PreviewWindowHeight = (uint32_t)m_rKernelContext.getConfigurationManager().expandAsUInteger("${Designer_UnaffectedVisualizationWindowHeight}", 400);
 	CIdentifier l_oVisualizationWindowIdentifier;
 	//if at least one window was created, retrieve its dimensions
-	if(m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowIdentifier, EVisualizationWidget_VisualizationWindow) == true)
+	if (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowIdentifier, EVisualizationWidget_VisualizationWindow) == true)
 	{
 		IVisualizationWidget* l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowIdentifier);
 		m_ui32PreviewWindowWidth = l_pVisualizationWindow->getWidth();
@@ -249,7 +246,7 @@ void CDesignerVisualization::init(std::string guiFile)
 
 	// Add a scrollview to above the treeview
 
-	GtkWidget* l_pScrolledWindow = gtk_scrolled_window_new(nullptr, nullptr);
+	GtkWidget * l_pScrolledWindow = gtk_scrolled_window_new(nullptr, nullptr);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(l_pScrolledWindow), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
 	gtk_container_add(GTK_CONTAINER(l_pScrolledWindow), GTK_WIDGET(m_pTreeView));
 
@@ -261,22 +258,22 @@ void CDesignerVisualization::init(std::string guiFile)
 
 	//create popup menus
 	//------------------
-	m_pUnaffectedItemFactory = gtk_item_factory_new (GTK_TYPE_MENU, "<unaffected_main>", nullptr);
+	m_pUnaffectedItemFactory = gtk_item_factory_new(GTK_TYPE_MENU, "<unaffected_main>", nullptr);
 	gtk_item_factory_create_items(m_pUnaffectedItemFactory, num_unaffected_menu_items, unaffected_menu_items, this);
 
-	m_pVisualizationWindowItemFactory = gtk_item_factory_new (GTK_TYPE_MENU, "<visualization_window_main>", nullptr);
+	m_pVisualizationWindowItemFactory = gtk_item_factory_new(GTK_TYPE_MENU, "<visualization_window_main>", nullptr);
 	gtk_item_factory_create_items(m_pVisualizationWindowItemFactory, num_visualization_window_menu_items, visualization_window_menu_items, this);
 
-	m_pVisualizationPanelItemFactory = gtk_item_factory_new (GTK_TYPE_MENU, "<visualization_panel_main>", nullptr);
+	m_pVisualizationPanelItemFactory = gtk_item_factory_new(GTK_TYPE_MENU, "<visualization_panel_main>", nullptr);
 	gtk_item_factory_create_items(m_pVisualizationPanelItemFactory, num_visualization_panel_menu_items, visualization_panel_menu_items, this);
 
-	m_pVisualizationBoxItemFactory = gtk_item_factory_new (GTK_TYPE_MENU, "<visualization_box_main>", nullptr);
+	m_pVisualizationBoxItemFactory = gtk_item_factory_new(GTK_TYPE_MENU, "<visualization_box_main>", nullptr);
 	gtk_item_factory_create_items(m_pVisualizationBoxItemFactory, num_visualization_box_menu_items, visualization_box_menu_items, this);
 
-	m_pUndefinedItemFactory = gtk_item_factory_new (GTK_TYPE_MENU, "<undefined_widget_main>", nullptr);
+	m_pUndefinedItemFactory = gtk_item_factory_new(GTK_TYPE_MENU, "<undefined_widget_main>", nullptr);
 	gtk_item_factory_create_items(m_pUndefinedItemFactory, num_undefined_widget_menu_items, undefined_widget_menu_items, this);
 
-	m_pSplitItemFactory = gtk_item_factory_new (GTK_TYPE_MENU, "<split_widget_main>", nullptr);
+	m_pSplitItemFactory = gtk_item_factory_new(GTK_TYPE_MENU, "<split_widget_main>", nullptr);
 	gtk_item_factory_create_items(m_pSplitItemFactory, num_split_widget_menu_items, split_widget_menu_items, this);
 }
 
@@ -289,7 +286,7 @@ void CDesignerVisualization::load()
 
 	//if at least one window was created, retrieve its dimensions
 	CIdentifier l_oVisualizationWindowIdentifier;
-	if(m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowIdentifier, EVisualizationWidget_VisualizationWindow) == true)
+	if (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowIdentifier, EVisualizationWidget_VisualizationWindow) == true)
 	{
 		IVisualizationWidget* l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowIdentifier);
 		m_ui32PreviewWindowWidth = l_pVisualizationWindow->getWidth();
@@ -325,7 +322,7 @@ void CDesignerVisualization::setDeleteEventCB(fpDesignerVisualizationDeleteEvent
 	m_pDeleteEventUserData = user_data;
 }
 
-void CDesignerVisualization::onVisualizationBoxAdded(const IBox* pBox)
+void CDesignerVisualization::onVisualizationBoxAdded(const IBox * pBox)
 {
 	CIdentifier l_oVisualizationWidgetIdentifier;
 	m_rVisualizationTree.addVisualizationWidget(
@@ -346,13 +343,13 @@ void CDesignerVisualization::onVisualizationBoxAdded(const IBox* pBox)
 	refreshActiveVisualization(m_rVisualizationTree.getTreePath(&l_oIter));
 }
 
-void CDesignerVisualization::onVisualizationBoxRemoved(const CIdentifier& rBoxIdentifier)
+void CDesignerVisualization::onVisualizationBoxRemoved(const CIdentifier & rBoxIdentifier)
 {
 	IVisualizationWidget* l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidgetFromBoxIdentifier(rBoxIdentifier);
-	if(l_pVisualizationWidget != nullptr)
+	if (l_pVisualizationWidget != nullptr)
 	{
 		//unaffected widget : delete it
-		if(l_pVisualizationWidget->getParentIdentifier() == OV_UndefinedIdentifier)
+		if (l_pVisualizationWidget->getParentIdentifier() == OV_UndefinedIdentifier)
 		{
 			m_rVisualizationTree.destroyHierarchy(l_pVisualizationWidget->getIdentifier());
 		}
@@ -368,15 +365,15 @@ void CDesignerVisualization::onVisualizationBoxRemoved(const CIdentifier& rBoxId
 	}
 }
 
-void CDesignerVisualization::onVisualizationBoxRenamed(const CIdentifier& rBoxIdentifier)
+void CDesignerVisualization::onVisualizationBoxRenamed(const CIdentifier & rBoxIdentifier)
 {
 	//retrieve visualization widget
 	IVisualizationWidget* l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidgetFromBoxIdentifier(rBoxIdentifier);
-	if(l_pVisualizationWidget != nullptr)
+	if (l_pVisualizationWidget != nullptr)
 	{
 		//retrieve box name
 		const IBox* l_pBox = m_rInterfacedScenario.m_rScenario.getBoxDetails(rBoxIdentifier);
-		if(l_pBox != nullptr)
+		if (l_pBox != nullptr)
 		{
 			//set new visualization widget name
 			l_pVisualizationWidget->setName(l_pBox->getName());
@@ -390,9 +387,9 @@ void CDesignerVisualization::onVisualizationBoxRenamed(const CIdentifier& rBoxId
 	}
 }
 
-void CDesignerVisualization::createTreeWidget(IVisualizationWidget* pWidget)
+void CDesignerVisualization::createTreeWidget(IVisualizationWidget * pWidget)
 {
-	if(pWidget->getType() == EVisualizationWidget_HorizontalSplit || pWidget->getType() == EVisualizationWidget_VerticalSplit)
+	if (pWidget->getType() == EVisualizationWidget_HorizontalSplit || pWidget->getType() == EVisualizationWidget_VerticalSplit)
 	{
 		/* TODO_JL: Find a way to store divider position and max divider position
 		TAttributeHandler l_oAttributeHandler(*pWidget);
@@ -411,23 +408,23 @@ static gboolean s_labelFill = TRUE;
 static gboolean s_iconExpand = TRUE;
 static gboolean s_iconFill = TRUE;
 
-GtkWidget* CDesignerVisualization::loadTreeWidget(IVisualizationWidget* pVisualizationWidget)
+GtkWidget* CDesignerVisualization::loadTreeWidget(IVisualizationWidget * pVisualizationWidget)
 {
 	GtkWidget* l_pTreeWidget = nullptr;
 
 	//create widget
 	//-------------
-	if(pVisualizationWidget->getType() == EVisualizationWidget_VisualizationPanel)
+	if (pVisualizationWidget->getType() == EVisualizationWidget_VisualizationPanel)
 	{
 		//retrieve panel index
 		IVisualizationWidget* l_pWindow = m_rVisualizationTree.getVisualizationWidget(pVisualizationWidget->getParentIdentifier());
-		if(l_pWindow != nullptr)
+		if (l_pWindow != nullptr)
 		{
 			uint32_t l_ui32PanelIndex;
 			l_pWindow->getChildIndex(pVisualizationWidget->getIdentifier(), l_ui32PanelIndex);
 
 			//create notebook if this is the first panel
-			if(l_ui32PanelIndex == 0)
+			if (l_ui32PanelIndex == 0)
 			{
 				l_pTreeWidget = gtk_notebook_new();
 			}
@@ -437,26 +434,26 @@ GtkWidget* CDesignerVisualization::loadTreeWidget(IVisualizationWidget* pVisuali
 				l_pWindow->getChildIdentifier(0, l_oFirstPanelIdentifier);
 				GtkTreeIter l_oFirstPanelIter;
 				m_rVisualizationTree.findChildNodeFromRoot(&l_oFirstPanelIter, l_oFirstPanelIdentifier);
-				void* l_pNotebookWidget=nullptr;
+				void* l_pNotebookWidget = nullptr;
 				m_rVisualizationTree.getPointerValueFromTreeIter(&l_oFirstPanelIter, l_pNotebookWidget, EVisualizationTreeColumn_PointerWidget);
 				l_pTreeWidget = (GtkWidget*)l_pNotebookWidget;
 			}
 		}
 	}
-	else if(pVisualizationWidget->getType() == EVisualizationWidget_VerticalSplit || pVisualizationWidget->getType() == EVisualizationWidget_HorizontalSplit ||
-	        pVisualizationWidget->getType() == EVisualizationWidget_Undefined || pVisualizationWidget->getType() == EVisualizationWidget_VisualizationBox)
+	else if (pVisualizationWidget->getType() == EVisualizationWidget_VerticalSplit || pVisualizationWidget->getType() == EVisualizationWidget_HorizontalSplit ||
+		pVisualizationWidget->getType() == EVisualizationWidget_Undefined || pVisualizationWidget->getType() == EVisualizationWidget_VisualizationBox)
 	{
 		//tree widget = table containing event boxes + visualization widget in the center
 		l_pTreeWidget = GTK_WIDGET(newWidgetsTable());
 		GtkWidget* l_pCurrentVisualizationWidget = getVisualizationWidget(l_pTreeWidget);
-		if(l_pCurrentVisualizationWidget != nullptr)
+		if (l_pCurrentVisualizationWidget != nullptr)
 		{
 			gtk_container_remove(GTK_CONTAINER(l_pTreeWidget), l_pCurrentVisualizationWidget);
 		}
 
-		if(pVisualizationWidget->getType() == EVisualizationWidget_VerticalSplit || pVisualizationWidget->getType() == EVisualizationWidget_HorizontalSplit)
+		if (pVisualizationWidget->getType() == EVisualizationWidget_VerticalSplit || pVisualizationWidget->getType() == EVisualizationWidget_HorizontalSplit)
 		{
-			if(gtk_widget_get_parent(l_pTreeWidget) != nullptr)
+			if (gtk_widget_get_parent(l_pTreeWidget) != nullptr)
 			{
 				gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(l_pTreeWidget)), l_pTreeWidget);
 			}
@@ -464,12 +461,12 @@ GtkWidget* CDesignerVisualization::loadTreeWidget(IVisualizationWidget* pVisuali
 			//create a paned and insert it in table
 			GtkWidget* l_pPaned = (pVisualizationWidget->getType() == EVisualizationWidget_HorizontalSplit) ? gtk_hpaned_new() : gtk_vpaned_new();
 			gtk_table_attach(GTK_TABLE(l_pTreeWidget), l_pPaned, 1, 2, 1, 2,
-				GtkAttachOptions(GTK_EXPAND|GTK_SHRINK|GTK_FILL),
-				GtkAttachOptions(GTK_EXPAND|GTK_SHRINK|GTK_FILL), 0, 0);
+				GtkAttachOptions(GTK_EXPAND | GTK_SHRINK | GTK_FILL),
+				GtkAttachOptions(GTK_EXPAND | GTK_SHRINK | GTK_FILL), 0, 0);
 		}
 		else //undefined or visualization box : visualization widget is a GtkButton (left : icon, right : label)
 		{
-			if(gtk_widget_get_parent(l_pTreeWidget) != nullptr)
+			if (gtk_widget_get_parent(l_pTreeWidget) != nullptr)
 			{
 				gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(l_pTreeWidget)), l_pTreeWidget);
 			}
@@ -478,16 +475,16 @@ GtkWidget* CDesignerVisualization::loadTreeWidget(IVisualizationWidget* pVisuali
 			GtkWidget* l_pButton = gtk_button_new();
 			gtk_widget_set_size_request(l_pButton, 0, 0);
 			gtk_table_attach(GTK_TABLE(l_pTreeWidget), l_pButton, 1, 2, 1, 2,
-				GtkAttachOptions(GTK_EXPAND|GTK_SHRINK|GTK_FILL),
-				GtkAttachOptions(GTK_EXPAND|GTK_SHRINK|GTK_FILL), 0, 0);
+				GtkAttachOptions(GTK_EXPAND | GTK_SHRINK | GTK_FILL),
+				GtkAttachOptions(GTK_EXPAND | GTK_SHRINK | GTK_FILL), 0, 0);
 
 			//box inserted in button
-			GtkBox* l_pBox = GTK_BOX(gtk_vbox_new(FALSE, 0));
+			GtkBox * l_pBox = GTK_BOX(gtk_vbox_new(FALSE, 0));
 			gtk_widget_set_size_request(GTK_WIDGET(l_pBox), 0, 0);
 
 			//icon - actual icon will be loaded in endLoadTreeWidget
-			GtkWidget* l_pIcon = gtk_image_new_from_stock(getTreeWidgetIcon(EVisualizationTreeNode_Undefined), GTK_ICON_SIZE_BUTTON);
-			if(s_iconWidthRequest == 0)
+			GtkWidget * l_pIcon = gtk_image_new_from_stock(getTreeWidgetIcon(EVisualizationTreeNode_Undefined), GTK_ICON_SIZE_BUTTON);
+			if (s_iconWidthRequest == 0)
 			{
 				gtk_widget_set_size_request(l_pIcon, 0, 0);
 			}
@@ -495,7 +492,7 @@ GtkWidget* CDesignerVisualization::loadTreeWidget(IVisualizationWidget* pVisuali
 
 			//label
 			GtkWidget* l_pLabel = gtk_label_new((const char*)pVisualizationWidget->getName());
-			if(s_labelWidthRequest == 0)
+			if (s_labelWidthRequest == 0)
 			{
 				gtk_widget_set_size_request(l_pLabel, 0, 0);
 			}
@@ -505,17 +502,17 @@ GtkWidget* CDesignerVisualization::loadTreeWidget(IVisualizationWidget* pVisuali
 			gtk_container_add(GTK_CONTAINER(l_pButton), GTK_WIDGET(l_pBox));
 
 			//set up button as drag destination
-			gtk_drag_dest_set(l_pButton, GTK_DEST_DEFAULT_ALL, targets, sizeof(targets)/sizeof(GtkTargetEntry), GDK_ACTION_COPY);
+			gtk_drag_dest_set(l_pButton, GTK_DEST_DEFAULT_ALL, targets, sizeof(targets) / sizeof(GtkTargetEntry), GDK_ACTION_COPY);
 			g_signal_connect(G_OBJECT(l_pButton), "drag_data_received", G_CALLBACK(drag_data_received_in_widget_cb), this);
 
 			//set up button as drag source as well
-			gtk_drag_source_set(l_pButton, GDK_BUTTON1_MASK, targets, sizeof(targets)/sizeof(GtkTargetEntry), GDK_ACTION_COPY);
+			gtk_drag_source_set(l_pButton, GDK_BUTTON1_MASK, targets, sizeof(targets) / sizeof(GtkTargetEntry), GDK_ACTION_COPY);
 			g_signal_connect(G_OBJECT(l_pButton), "drag_data_get", G_CALLBACK(drag_data_get_from_widget_cb), this);
 
 			//ask for notification of some events
-			if(pVisualizationWidget->getType() == EVisualizationWidget_VisualizationBox)
+			if (pVisualizationWidget->getType() == EVisualizationWidget_VisualizationBox)
 			{
-				GTK_WIDGET_SET_FLAGS(l_pButton, GDK_KEY_PRESS_MASK|GDK_ENTER_NOTIFY_MASK|GDK_LEAVE_NOTIFY_MASK);
+				GTK_WIDGET_SET_FLAGS(l_pButton, GDK_KEY_PRESS_MASK | GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK);
 				g_signal_connect(G_OBJECT(l_pButton), "key-press-event", G_CALLBACK(visualization_widget_key_press_event_cb), this);
 				g_signal_connect(G_OBJECT(l_pButton), "enter-notify-event", G_CALLBACK(visualization_widget_enter_notify_event_cb), this);
 				g_signal_connect(G_OBJECT(l_pButton), "leave-notify-event", G_CALLBACK(visualization_widget_leave_notify_event_cb), this);
@@ -525,12 +522,12 @@ GtkWidget* CDesignerVisualization::loadTreeWidget(IVisualizationWidget* pVisuali
 		//parent widget to its parent, if any
 		//-----------------------------------
 		IVisualizationWidget* l_pParentVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(pVisualizationWidget->getParentIdentifier());
-		if(l_pParentVisualizationWidget != nullptr) //visualization boxes may be unparented
+		if (l_pParentVisualizationWidget != nullptr) //visualization boxes may be unparented
 		{
 			GtkTreeIter l_oParentIter;
 			m_rVisualizationTree.findChildNodeFromRoot(&l_oParentIter, l_pParentVisualizationWidget->getIdentifier());
 
-			if(l_pParentVisualizationWidget->getType() == EVisualizationWidget_VisualizationPanel)
+			if (l_pParentVisualizationWidget->getType() == EVisualizationWidget_VisualizationPanel)
 			{
 				//parent widget to notebook as a new page
 				void* l_pNotebook = nullptr;
@@ -539,22 +536,22 @@ GtkWidget* CDesignerVisualization::loadTreeWidget(IVisualizationWidget* pVisuali
 				m_rVisualizationTree.getStringValueFromTreeIter(&l_oParentIter, l_pVisualizationPanelName, EVisualizationTreeColumn_StringName);
 				gtk_notebook_append_page(GTK_NOTEBOOK(l_pNotebook), l_pTreeWidget, gtk_label_new(l_pVisualizationPanelName));
 			}
-			else if(l_pParentVisualizationWidget->getType() == EVisualizationWidget_VerticalSplit || l_pParentVisualizationWidget->getType() == EVisualizationWidget_HorizontalSplit)
+			else if (l_pParentVisualizationWidget->getType() == EVisualizationWidget_VerticalSplit || l_pParentVisualizationWidget->getType() == EVisualizationWidget_HorizontalSplit)
 			{
 				//insert widget in parent paned
 				void* l_pParentTreeWidget = nullptr;
 				m_rVisualizationTree.getPointerValueFromTreeIter(&l_oParentIter, l_pParentTreeWidget, EVisualizationTreeColumn_PointerWidget);
 
 
-				if(l_pParentTreeWidget != nullptr && GTK_IS_WIDGET(l_pParentTreeWidget))
+				if (l_pParentTreeWidget != nullptr && GTK_IS_WIDGET(l_pParentTreeWidget))
 				{
 					GtkWidget* l_pParentWidget = getVisualizationWidget(GTK_WIDGET(l_pParentTreeWidget));
-					if(l_pParentWidget != nullptr && GTK_IS_PANED(l_pParentWidget))
+					if (l_pParentWidget != nullptr && GTK_IS_PANED(l_pParentWidget))
 					{
 						uint32_t l_ui32ChildIndex;
-						if(l_pParentVisualizationWidget->getChildIndex(pVisualizationWidget->getIdentifier(), l_ui32ChildIndex))
+						if (l_pParentVisualizationWidget->getChildIndex(pVisualizationWidget->getIdentifier(), l_ui32ChildIndex))
 						{
-							if(l_ui32ChildIndex == 0)
+							if (l_ui32ChildIndex == 0)
 							{
 								gtk_paned_pack1(GTK_PANED(l_pParentWidget), l_pTreeWidget, TRUE, TRUE);
 							}
@@ -571,7 +568,7 @@ GtkWidget* CDesignerVisualization::loadTreeWidget(IVisualizationWidget* pVisuali
 
 	//resize widgets once they are allocated : this is the case when they are shown on an expose event
 	//FIXME : perform resizing only once (when it is done as many times as there are widgets in the tree here)
-	if(l_pTreeWidget != nullptr)
+	if (l_pTreeWidget != nullptr)
 	{
 		gtk_signal_connect(GTK_OBJECT(getVisualizationWidget(l_pTreeWidget)), "expose-event", G_CALLBACK(widget_expose_event_cb), this);
 	}
@@ -579,7 +576,7 @@ GtkWidget* CDesignerVisualization::loadTreeWidget(IVisualizationWidget* pVisuali
 	return l_pTreeWidget;
 }
 
-void CDesignerVisualization::endLoadTreeWidget(IVisualizationWidget* pVisualizationWidget)
+void CDesignerVisualization::endLoadTreeWidget(IVisualizationWidget * pVisualizationWidget)
 {
 	//retrieve tree widget
 	GtkTreeIter l_oIter;
@@ -590,14 +587,14 @@ void CDesignerVisualization::endLoadTreeWidget(IVisualizationWidget* pVisualizat
 	//get actual visualization widget
 	GtkWidget* l_pWidget = getVisualizationWidget((GtkWidget*)l_pTreeWidget);
 
-	if(pVisualizationWidget->getType() == EVisualizationWidget_VisualizationPanel)
+	if (pVisualizationWidget->getType() == EVisualizationWidget_VisualizationPanel)
 	{
 		//reposition paned widget handles
 		resizeCB(nullptr);
 	}
-	else if(pVisualizationWidget->getType() == EVisualizationWidget_Undefined || pVisualizationWidget->getType() == EVisualizationWidget_VisualizationBox)
+	else if (pVisualizationWidget->getType() == EVisualizationWidget_Undefined || pVisualizationWidget->getType() == EVisualizationWidget_VisualizationBox)
 	{
-		if(GTK_IS_BUTTON(l_pWidget) != FALSE)
+		if (GTK_IS_BUTTON(l_pWidget) != FALSE)
 		{
 			//replace dummy icon with correct one
 			//-----------------------------------
@@ -612,7 +609,7 @@ void CDesignerVisualization::endLoadTreeWidget(IVisualizationWidget* pVisualizat
 			gtk_container_remove(l_pBox, GTK_WIDGET(l_pBoxChildren->data));
 			//create new icon
 			GtkWidget* l_pIcon = gtk_image_new_from_stock(l_pIconString, GTK_ICON_SIZE_BUTTON);
-			if(s_iconWidthRequest == 0)
+			if (s_iconWidthRequest == 0)
 			{
 				gtk_widget_set_size_request(l_pIcon, 0, 0);
 			}
@@ -623,50 +620,41 @@ void CDesignerVisualization::endLoadTreeWidget(IVisualizationWidget* pVisualizat
 	}
 }
 
-GtkWidget* CDesignerVisualization::getTreeWidget(GtkWidget* visualizationWidget)
-{
-	return gtk_widget_get_parent(visualizationWidget);
-}
+GtkWidget* CDesignerVisualization::getTreeWidget(GtkWidget * visualizationWidget) { return gtk_widget_get_parent(visualizationWidget); }
 
-GtkWidget* CDesignerVisualization::getVisualizationWidget(GtkWidget* pWidget)
+GtkWidget* CDesignerVisualization::getVisualizationWidget(GtkWidget * pWidget)
 {
-	if(GTK_IS_TABLE(pWidget))
-	{
-		return getTableChild(GTK_TABLE(pWidget), 1, 2, 1, 2)->widget;
-	}
+	if (GTK_IS_TABLE(pWidget)) { return getTableChild(GTK_TABLE(pWidget), 1, 2, 1, 2)->widget; }
 	return pWidget;
 }
 
 const char* CDesignerVisualization::getTreeWidgetIcon(EVisualizationTreeNode type)
 {
-	switch(type)
+	switch (type)
 	{
-		case EVisualizationTreeNode_Unaffected:
-			return GTK_STOCK_DIALOG_QUESTION;
-		case EVisualizationTreeNode_Undefined:
-			return GTK_STOCK_CANCEL;
-		case EVisualizationTreeNode_VisualizationWindow:
-			return GTK_STOCK_DND_MULTIPLE;
-		case EVisualizationTreeNode_VisualizationPanel:
-			return GTK_STOCK_DND;
-		case EVisualizationTreeNode_VisualizationBox:
-			return GTK_STOCK_EXECUTE; //default (actual icon name may be retrieved from box descriptor)
-		case EVisualizationTreeNode_HorizontalSplit:
-		case EVisualizationTreeNode_VerticalSplit:
-			return GTK_STOCK_ADD;
-		default:
-			return "";
+	case EVisualizationTreeNode_Unaffected:
+		return GTK_STOCK_DIALOG_QUESTION;
+	case EVisualizationTreeNode_Undefined:
+		return GTK_STOCK_CANCEL;
+	case EVisualizationTreeNode_VisualizationWindow:
+		return GTK_STOCK_DND_MULTIPLE;
+	case EVisualizationTreeNode_VisualizationPanel:
+		return GTK_STOCK_DND;
+	case EVisualizationTreeNode_VisualizationBox:
+		return GTK_STOCK_EXECUTE; //default (actual icon name may be retrieved from box descriptor)
+	case EVisualizationTreeNode_HorizontalSplit:
+	case EVisualizationTreeNode_VerticalSplit:
+		return GTK_STOCK_ADD;
+	default:
+		return "";
 	}
 }
 
-gboolean CDesignerVisualization::delete_event_cb(GtkWidget* widget, GdkEvent* event, gpointer user_data)
-{
-	return static_cast<CDesignerVisualization*>(user_data)->deleteEventCB() == true ? TRUE : FALSE;
-}
+gboolean CDesignerVisualization::delete_event_cb(GtkWidget * widget, GdkEvent * event, gpointer user_data) { return static_cast<CDesignerVisualization*>(user_data)->deleteEventCB() == true ? TRUE : FALSE; }
 
 bool CDesignerVisualization::deleteEventCB()
 {
-	if(m_fpDeleteEventCB != nullptr)
+	if (m_fpDeleteEventCB != nullptr)
 	{
 		m_fpDeleteEventCB(m_pDeleteEventUserData);
 		return true;
@@ -676,10 +664,10 @@ bool CDesignerVisualization::deleteEventCB()
 }
 
 #ifdef HANDLE_MIN_MAX_EVENTS
-gboolean CDesignerVisualization::window_state_event_cb(::GtkWidget* widget,GdkEventWindowState* event, gpointer user_data)
+gboolean CDesignerVisualization::window_state_event_cb(::GtkWidget * widget, GdkEventWindowState * event, gpointer user_data)
 {
 	//refresh widgets if window was maximized or minimized
-	if(event->changed_mask & GDK_WINDOW_STATE_MAXIMIZED ||
+	if (event->changed_mask & GDK_WINDOW_STATE_MAXIMIZED ||
 		event->changed_mask & GDK_WINDOW_STATE_ICONIFIED)
 	{
 		//widgets haven't been reallocated yet, perform resizing only when this happens
@@ -692,7 +680,7 @@ gboolean CDesignerVisualization::window_state_event_cb(::GtkWidget* widget,GdkEv
 #endif
 
 //event generated whenever window size changes, including when it is first created
-gboolean CDesignerVisualization::configure_event_cb(GtkWidget* widget, GdkEventConfigure* event, gpointer user_data)
+gboolean CDesignerVisualization::configure_event_cb(GtkWidget * widget, GdkEventConfigure * event, gpointer user_data)
 {
 	static_cast<CDesignerVisualization*>(user_data)->m_bPreviewWindowVisible = true;
 	/*
@@ -711,7 +699,7 @@ gboolean CDesignerVisualization::configure_event_cb(GtkWidget* widget, GdkEventC
 	return FALSE;
 }
 
-gboolean CDesignerVisualization::widget_expose_event_cb(GtkWidget* widget, GdkEventExpose* event, gpointer user_data)
+gboolean CDesignerVisualization::widget_expose_event_cb(GtkWidget * widget, GdkEventExpose * event, gpointer user_data)
 {
 	static_cast<CDesignerVisualization*>(user_data)->m_bPreviewWindowVisible = true;
 
@@ -722,20 +710,20 @@ gboolean CDesignerVisualization::widget_expose_event_cb(GtkWidget* widget, GdkEv
 	return FALSE;
 }
 
-void CDesignerVisualization::resizeCB(IVisualizationWidget* pVisualizationWidget)
+void CDesignerVisualization::resizeCB(IVisualizationWidget * pVisualizationWidget)
 {
-	if(pVisualizationWidget == nullptr)
+	if (pVisualizationWidget == nullptr)
 	{
 		//assign current window size to each window
 		GtkWidget* l_pNotebook = gtk_paned_get_child2(GTK_PANED(m_pPane));
-		if(l_pNotebook != nullptr)
+		if (l_pNotebook != nullptr)
 		{
 			CIdentifier l_oVisualizationWindowIdentifier = OV_UndefinedIdentifier;
 			//retrieve current preview window size, if window is visible
-			if(m_bPreviewWindowVisible == true)
+			if (m_bPreviewWindowVisible == true)
 			{
 				GtkWidget* l_pNotebook = gtk_paned_get_child2(GTK_PANED(m_pPane));
-				if(l_pNotebook != nullptr)
+				if (l_pNotebook != nullptr)
 				{
 					//update preview window dims
 					m_ui32PreviewWindowWidth = l_pNotebook->allocation.width;
@@ -743,7 +731,7 @@ void CDesignerVisualization::resizeCB(IVisualizationWidget* pVisualizationWidget
 				}
 			}
 
-			while(m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowIdentifier, EVisualizationWidget_VisualizationWindow) == true)
+			while (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowIdentifier, EVisualizationWidget_VisualizationWindow) == true)
 			{
 				IVisualizationWidget* l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowIdentifier);
 
@@ -759,38 +747,29 @@ void CDesignerVisualization::resizeCB(IVisualizationWidget* pVisualizationWidget
 
 		//retrieve active visualization panel
 		GtkTreeIter l_oWindowIter;
-		if(m_rVisualizationTree.findChildNodeFromRoot(&l_oWindowIter, m_oActiveVisualizationWindowName, EVisualizationTreeNode_VisualizationWindow) == false)
-		{
-			return;
-		}
+		if (m_rVisualizationTree.findChildNodeFromRoot(&l_oWindowIter, m_oActiveVisualizationWindowName, EVisualizationTreeNode_VisualizationWindow) == false) { return; }
 		GtkTreeIter l_oPanelIter = l_oWindowIter;
-		if(m_rVisualizationTree.findChildNodeFromParent(&l_oPanelIter, m_oActiveVisualizationPanelName, EVisualizationTreeNode_VisualizationPanel) == false)
-		{
-			return;
-		}
+		if (m_rVisualizationTree.findChildNodeFromParent(&l_oPanelIter, m_oActiveVisualizationPanelName, EVisualizationTreeNode_VisualizationPanel) == false) { return; }
 		CIdentifier l_oVisualizationPanelIdentifier;
-		if(m_rVisualizationTree.getIdentifierFromTreeIter(&l_oPanelIter, l_oVisualizationPanelIdentifier, EVisualizationTreeColumn_StringIdentifier) == false)
-		{
-			return;
-		}
+		if (m_rVisualizationTree.getIdentifierFromTreeIter(&l_oPanelIter, l_oVisualizationPanelIdentifier, EVisualizationTreeColumn_StringIdentifier) == false) { return; }
 		IVisualizationWidget* l_pVisualizationPanel = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationPanelIdentifier);
 
 		//resize visualization panel hierarchy
-		if(l_pVisualizationPanel != nullptr)
+		if (l_pVisualizationPanel != nullptr)
 		{
 			CIdentifier l_oChildIdentifier;
 			l_pVisualizationPanel->getChildIdentifier(0, l_oChildIdentifier);
 			IVisualizationWidget* l_pChildVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oChildIdentifier);
-			if(l_pChildVisualizationWidget != nullptr)
+			if (l_pChildVisualizationWidget != nullptr)
 			{
 				resizeCB(l_pChildVisualizationWidget);
 			}
 		}
 	}
-	else if(pVisualizationWidget->getType() == EVisualizationWidget_VerticalSplit || pVisualizationWidget->getType() == EVisualizationWidget_HorizontalSplit)
+	else if (pVisualizationWidget->getType() == EVisualizationWidget_VerticalSplit || pVisualizationWidget->getType() == EVisualizationWidget_HorizontalSplit)
 	{
 		GtkTreeIter l_oIter;
-		if(m_rVisualizationTree.findChildNodeFromRoot(&l_oIter, pVisualizationWidget->getIdentifier()) == TRUE)
+		if (m_rVisualizationTree.findChildNodeFromRoot(&l_oIter, pVisualizationWidget->getIdentifier()) == TRUE)
 		{
 			//retrieve paned widget
 			void* l_pTreeWidget = nullptr;
@@ -802,12 +781,12 @@ void CDesignerVisualization::resizeCB(IVisualizationWidget* pVisualizationWidget
 			int l_i32HandlePos = pVisualizationWidget->getDividerPosition();
 			int l_i32MaxHandlePos = pVisualizationWidget->getMaxDividerPosition();
 
-			if(l_i32HandlePos == std::numeric_limits<int>::min() || l_i32MaxHandlePos == std::numeric_limits<int>::min() )
+			if (l_i32HandlePos == std::numeric_limits<int>::min() || l_i32MaxHandlePos == std::numeric_limits<int>::min())
 			{
 				// these variables hadn't been initialized meaningfully before. @fixme what is the correct place to init them?
 				notifyPositionPanedCB(l_pPaned); // for now, this inits them as a side effect
 			}
-			if(l_i32MaxHandlePos > 0)
+			if (l_i32MaxHandlePos > 0)
 			{
 				//retrieve current maximum handle position
 				int l_i32CurrentMaxHandlePos = GTK_IS_VPANED(l_pPaned) ?
@@ -823,7 +802,7 @@ void CDesignerVisualization::resizeCB(IVisualizationWidget* pVisualizationWidget
 			CIdentifier l_oChildIdentifier;
 			pVisualizationWidget->getChildIdentifier(0, l_oChildIdentifier);
 			IVisualizationWidget* l_pChildVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oChildIdentifier);
-			if(l_pChildVisualizationWidget != nullptr)
+			if (l_pChildVisualizationWidget != nullptr)
 			{
 				resizeCB(l_pChildVisualizationWidget);
 			}
@@ -831,7 +810,7 @@ void CDesignerVisualization::resizeCB(IVisualizationWidget* pVisualizationWidget
 			//go down child 2
 			pVisualizationWidget->getChildIdentifier(1, l_oChildIdentifier);
 			l_pChildVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oChildIdentifier);
-			if(l_pChildVisualizationWidget != nullptr)
+			if (l_pChildVisualizationWidget != nullptr)
 			{
 				resizeCB(l_pChildVisualizationWidget);
 			}
@@ -839,12 +818,12 @@ void CDesignerVisualization::resizeCB(IVisualizationWidget* pVisualizationWidget
 	}
 }
 
-void CDesignerVisualization::notebook_page_switch_cb(GtkNotebook* notebook, GtkNotebookPage* page, guint pagenum, gpointer user_data)
+void CDesignerVisualization::notebook_page_switch_cb(GtkNotebook * notebook, GtkNotebookPage * page, guint pagenum, gpointer user_data)
 {
 	static_cast<CDesignerVisualization*>(user_data)->notebookPageSelectedCB(notebook, pagenum);
 }
 
-gboolean CDesignerVisualization::notify_position_paned_cb(GtkWidget *widget, GParamSpec* spec, gpointer user_data)
+gboolean CDesignerVisualization::notify_position_paned_cb(GtkWidget * widget, GParamSpec * spec, gpointer user_data)
 {
 	static_cast<CDesignerVisualization*>(user_data)->notifyPositionPanedCB(widget);
 	return TRUE;
@@ -854,13 +833,13 @@ gboolean CDesignerVisualization::notify_position_paned_cb(GtkWidget *widget, GPa
 //Event box table management
 //--------------------------
 
-void CDesignerVisualization::setupNewEventBoxTable(GtkBuilder* xml)
+void CDesignerVisualization::setupNewEventBoxTable(GtkBuilder * xml)
 {
 	//set up event boxes as drag targets
-	gtk_drag_dest_set(GTK_WIDGET(gtk_builder_get_object(xml, "window_manager_eventbox-eventbox2")), GTK_DEST_DEFAULT_ALL, targets, sizeof(targets)/sizeof(GtkTargetEntry), GDK_ACTION_COPY);
-	gtk_drag_dest_set(GTK_WIDGET(gtk_builder_get_object(xml, "window_manager_eventbox-eventbox4")), GTK_DEST_DEFAULT_ALL, targets, sizeof(targets)/sizeof(GtkTargetEntry), GDK_ACTION_COPY);
-	gtk_drag_dest_set(GTK_WIDGET(gtk_builder_get_object(xml, "window_manager_eventbox-eventbox6")), GTK_DEST_DEFAULT_ALL, targets, sizeof(targets)/sizeof(GtkTargetEntry), GDK_ACTION_COPY);
-	gtk_drag_dest_set(GTK_WIDGET(gtk_builder_get_object(xml, "window_manager_eventbox-eventbox8")), GTK_DEST_DEFAULT_ALL, targets, sizeof(targets)/sizeof(GtkTargetEntry), GDK_ACTION_COPY);
+	gtk_drag_dest_set(GTK_WIDGET(gtk_builder_get_object(xml, "window_manager_eventbox-eventbox2")), GTK_DEST_DEFAULT_ALL, targets, sizeof(targets) / sizeof(GtkTargetEntry), GDK_ACTION_COPY);
+	gtk_drag_dest_set(GTK_WIDGET(gtk_builder_get_object(xml, "window_manager_eventbox-eventbox4")), GTK_DEST_DEFAULT_ALL, targets, sizeof(targets) / sizeof(GtkTargetEntry), GDK_ACTION_COPY);
+	gtk_drag_dest_set(GTK_WIDGET(gtk_builder_get_object(xml, "window_manager_eventbox-eventbox6")), GTK_DEST_DEFAULT_ALL, targets, sizeof(targets) / sizeof(GtkTargetEntry), GDK_ACTION_COPY);
+	gtk_drag_dest_set(GTK_WIDGET(gtk_builder_get_object(xml, "window_manager_eventbox-eventbox8")), GTK_DEST_DEFAULT_ALL, targets, sizeof(targets) / sizeof(GtkTargetEntry), GDK_ACTION_COPY);
 
 	//set up event boxes callbacks for drag data received events
 	char buf[256];
@@ -882,13 +861,13 @@ void CDesignerVisualization::setupNewEventBoxTable(GtkBuilder* xml)
 		gpointer(m_sBottomEventBoxData.c_str()));
 }
 
-void CDesignerVisualization::refreshActiveVisualization(GtkTreePath* pSelectedItemPath)
+void CDesignerVisualization::refreshActiveVisualization(GtkTreePath * pSelectedItemPath)
 {
 	//show tree
 	gtk_tree_view_expand_all(m_pTreeView);
 
 	//select item
-	if(pSelectedItemPath != nullptr)
+	if (pSelectedItemPath != nullptr)
 	{
 		gtk_tree_view_set_cursor(m_pTreeView, pSelectedItemPath, nullptr, false);
 	}
@@ -911,7 +890,7 @@ void CDesignerVisualization::setActiveVisualization(const char* _activeWindow, c
 	//retrieve active window
 	GtkTreeIter l_oWindowIter;
 
-	if(m_rVisualizationTree.findChildNodeFromRoot(&l_oWindowIter, activeWindow, EVisualizationTreeNode_VisualizationWindow) == true)
+	if (m_rVisualizationTree.findChildNodeFromRoot(&l_oWindowIter, activeWindow, EVisualizationTreeNode_VisualizationWindow) == true)
 	{
 		m_oActiveVisualizationWindowName = activeWindow;
 	}
@@ -920,14 +899,14 @@ void CDesignerVisualization::setActiveVisualization(const char* _activeWindow, c
 		//pick first window if previously active window doesn't exist anymore
 		CIdentifier l_oIdentifier = OV_UndefinedIdentifier;
 
-		if(m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oIdentifier, EVisualizationWidget_VisualizationWindow) == true)
+		if (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oIdentifier, EVisualizationWidget_VisualizationWindow) == true)
 		{
 			m_oActiveVisualizationWindowName = m_rVisualizationTree.getVisualizationWidget(l_oIdentifier)->getName();
 			m_rVisualizationTree.findChildNodeFromRoot(&l_oWindowIter, (const char*)m_oActiveVisualizationWindowName, EVisualizationTreeNode_VisualizationWindow);
 		}
 		else //no windows left
 		{
-			if(gtk_paned_get_child2(GTK_PANED(m_pPane)) != nullptr)
+			if (gtk_paned_get_child2(GTK_PANED(m_pPane)) != nullptr)
 			{
 				gtk_container_remove(GTK_CONTAINER(m_pPane), gtk_paned_get_child2(GTK_PANED(m_pPane)));
 			}
@@ -937,7 +916,7 @@ void CDesignerVisualization::setActiveVisualization(const char* _activeWindow, c
 
 	//retrieve active panel
 	GtkTreeIter l_oPanelIter = l_oWindowIter;
-	if(m_rVisualizationTree.findChildNodeFromParent(&l_oPanelIter, activePanel, EVisualizationTreeNode_VisualizationPanel) == true)
+	if (m_rVisualizationTree.findChildNodeFromParent(&l_oPanelIter, activePanel, EVisualizationTreeNode_VisualizationPanel) == true)
 	{
 		m_oActiveVisualizationPanelName = activePanel;
 	}
@@ -947,7 +926,7 @@ void CDesignerVisualization::setActiveVisualization(const char* _activeWindow, c
 		m_rVisualizationTree.getIdentifierFromTreeIter(&l_oWindowIter, l_oWindowIdentifier, EVisualizationTreeColumn_StringIdentifier);
 		IVisualizationWidget* l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oWindowIdentifier);
 		CIdentifier l_oPanelIdentifier;
-		if(l_pVisualizationWindow->getChildIdentifier(0, l_oPanelIdentifier))
+		if (l_pVisualizationWindow->getChildIdentifier(0, l_oPanelIdentifier))
 		{
 			l_oPanelIter = l_oWindowIter;
 			m_rVisualizationTree.findChildNodeFromParent(&l_oPanelIter, l_oPanelIdentifier);
@@ -958,7 +937,7 @@ void CDesignerVisualization::setActiveVisualization(const char* _activeWindow, c
 		else //no panel in window
 		{
 			GtkWidget* l_pCurrentNotebook = gtk_paned_get_child2(GTK_PANED(m_pPane));
-			if(l_pCurrentNotebook != nullptr)
+			if (l_pCurrentNotebook != nullptr)
 			{
 				gtk_object_ref(GTK_OBJECT(l_pCurrentNotebook));
 				gtk_container_remove(GTK_CONTAINER(m_pPane), l_pCurrentNotebook);
@@ -971,9 +950,9 @@ void CDesignerVisualization::setActiveVisualization(const char* _activeWindow, c
 	void* l_pNotebook = nullptr;
 	m_rVisualizationTree.getPointerValueFromTreeIter(&l_oPanelIter, l_pNotebook, EVisualizationTreeColumn_PointerWidget);
 	GtkWidget* l_pCurrentNotebook = gtk_paned_get_child2(GTK_PANED(m_pPane));
-	if(l_pCurrentNotebook != GTK_WIDGET(l_pNotebook))
+	if (l_pCurrentNotebook != GTK_WIDGET(l_pNotebook))
 	{
-		if(l_pCurrentNotebook != nullptr)
+		if (l_pCurrentNotebook != nullptr)
 		{
 			//FIXME : don't ref previous notebook if parent window doesn't exist anymore
 			gtk_object_ref(GTK_OBJECT(l_pCurrentNotebook));
@@ -988,9 +967,9 @@ void CDesignerVisualization::setActiveVisualization(const char* _activeWindow, c
 
 	//set active panel visible
 	int i;
-	for(i=0; i<gtk_notebook_get_n_pages(GTK_NOTEBOOK(l_pNotebook)); i++)
+	for (i = 0; i < gtk_notebook_get_n_pages(GTK_NOTEBOOK(l_pNotebook)); i++)
 	{
-		if(strcmp(gtk_notebook_get_tab_label_text(GTK_NOTEBOOK(l_pNotebook),
+		if (strcmp(gtk_notebook_get_tab_label_text(GTK_NOTEBOOK(l_pNotebook),
 			gtk_notebook_get_nth_page(GTK_NOTEBOOK(l_pNotebook), i)), m_oActiveVisualizationPanelName) == 0)
 		{
 			gtk_notebook_set_current_page(GTK_NOTEBOOK(l_pNotebook), i);
@@ -999,11 +978,11 @@ void CDesignerVisualization::setActiveVisualization(const char* _activeWindow, c
 	}
 
 	//if active page couldn't be found
-	if(i == gtk_notebook_get_n_pages(GTK_NOTEBOOK(l_pNotebook)))
+	if (i == gtk_notebook_get_n_pages(GTK_NOTEBOOK(l_pNotebook)))
 	{
 		//error!
 		//pick first page if it exists
-		if(gtk_notebook_get_n_pages(GTK_NOTEBOOK(l_pNotebook)) > 0)
+		if (gtk_notebook_get_n_pages(GTK_NOTEBOOK(l_pNotebook)) > 0)
 		{
 			m_oActiveVisualizationPanelName = gtk_notebook_get_tab_label_text(GTK_NOTEBOOK(l_pNotebook),
 				gtk_notebook_get_nth_page(GTK_NOTEBOOK(l_pNotebook), 0));
@@ -1041,11 +1020,11 @@ GtkTable* CDesignerVisualization::newWidgetsTable()
 	gtk_button_set_label(pButton, "");
 
 	//set it up as drag destination
-	gtk_drag_dest_set(GTK_WIDGET(pButton), GTK_DEST_DEFAULT_ALL, targets, sizeof(targets)/sizeof(GtkTargetEntry), GDK_ACTION_COPY);
+	gtk_drag_dest_set(GTK_WIDGET(pButton), GTK_DEST_DEFAULT_ALL, targets, sizeof(targets) / sizeof(GtkTargetEntry), GDK_ACTION_COPY);
 	g_signal_connect(G_OBJECT(pButton), "drag_data_received", G_CALLBACK(drag_data_received_in_widget_cb), this);
 
 	//set it up as drag source as well
-	gtk_drag_source_set(GTK_WIDGET(pButton), GDK_BUTTON1_MASK, targets, sizeof(targets)/sizeof(GtkTargetEntry), GDK_ACTION_COPY);
+	gtk_drag_source_set(GTK_WIDGET(pButton), GDK_BUTTON1_MASK, targets, sizeof(targets) / sizeof(GtkTargetEntry), GDK_ACTION_COPY);
 	g_signal_connect(G_OBJECT(pButton), "drag_data_get", G_CALLBACK(drag_data_get_from_widget_cb), this);
 
 	return pTable;
@@ -1065,11 +1044,11 @@ bool CDesignerVisualization::newVisualizationWindow(const char* label)
 	IVisualizationWidget* l_pVisualizationWindow;
 	CIdentifier l_oVisualizationWindowIdentifier = OV_UndefinedIdentifier;
 
-	while(m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowIdentifier, EVisualizationWidget_VisualizationWindow) == true)
+	while (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowIdentifier, EVisualizationWidget_VisualizationWindow) == true)
 	{
 		l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowIdentifier);
 
-		if(strcmp((const char*)l_pVisualizationWindow->getName(), label) == 0)
+		if (strcmp((const char*)l_pVisualizationWindow->getName(), label) == 0)
 		{
 			displayErrorDialog("Window creation failed !", "An existing window already uses this name. Please choose another name.");
 			return false;
@@ -1130,7 +1109,7 @@ bool CDesignerVisualization::renameVisualizationWindow(const char* pNewVisualiza
 {
 	//retrieve visualization window
 	GtkTreeIter l_oIter;
-	if(m_rVisualizationTree.findChildNodeFromRoot(&l_oIter, m_oActiveVisualizationWindowName, EVisualizationTreeNode_VisualizationWindow) == false)
+	if (m_rVisualizationTree.findChildNodeFromRoot(&l_oIter, m_oActiveVisualizationWindowName, EVisualizationTreeNode_VisualizationWindow) == false)
 	{
 		displayErrorDialog("Window renaming failed !", "Couldn't retrieve window.");
 		return false;
@@ -1139,7 +1118,7 @@ bool CDesignerVisualization::renameVisualizationWindow(const char* pNewVisualiza
 	CIdentifier l_oWindowIdentifier;
 	m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, l_oWindowIdentifier, EVisualizationTreeColumn_StringIdentifier);
 	IVisualizationWidget* l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oWindowIdentifier);
-	if(l_pVisualizationWindow == nullptr)
+	if (l_pVisualizationWindow == nullptr)
 	{
 		displayErrorDialog("Window renaming failed !", "Couldn't retrieve window.");
 		return false;
@@ -1147,17 +1126,14 @@ bool CDesignerVisualization::renameVisualizationWindow(const char* pNewVisualiza
 
 	//if trying to set identical name, return
 	CString l_oNewWindowName = pNewVisualizationWindowName;
-	if(l_pVisualizationWindow->getName() == l_oNewWindowName)
-	{
-		return true;
-	}
+	if (l_pVisualizationWindow->getName() == l_oNewWindowName) { return true; }
 
 	//ensure name is unique
 	CIdentifier l_oVisualizationWindowIdentifier = OV_UndefinedIdentifier;
-	while(m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowIdentifier, EVisualizationWidget_VisualizationWindow) == true)
+	while (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowIdentifier, EVisualizationWidget_VisualizationWindow) == true)
 	{
 		//name already in use : warn user
-		if(m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowIdentifier)->getName() == l_oNewWindowName)
+		if (m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowIdentifier)->getName() == l_oNewWindowName)
 		{
 			displayErrorDialog("Window renaming failed !", "An existing window already uses this name. Please choose another name.");
 			return false;
@@ -1180,16 +1156,16 @@ bool CDesignerVisualization::removeVisualizationWindow()
 {
 	//retrieve visualization window
 	CIdentifier l_oVisualizationWindowIdentifier = OV_UndefinedIdentifier;
-	while(m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowIdentifier, EVisualizationWidget_VisualizationWindow) == true)
+	while (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowIdentifier, EVisualizationWidget_VisualizationWindow) == true)
 	{
-		if(m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowIdentifier)->getName() == m_oActiveVisualizationWindowName)
+		if (m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowIdentifier)->getName() == m_oActiveVisualizationWindowName)
 		{
 			break;
 		}
 	}
 
 	//return if window was not found
-	if(l_oVisualizationWindowIdentifier == OV_UndefinedIdentifier)
+	if (l_oVisualizationWindowIdentifier == OV_UndefinedIdentifier)
 	{
 		displayErrorDialog("Window removal failed !", "Couldn't retrieve window.");
 		return false;
@@ -1217,20 +1193,20 @@ void CDesignerVisualization::askNewVisualizationPanel()
 bool CDesignerVisualization::newVisualizationPanel(const char* label)
 {
 	//retrieve visualization window
-	IVisualizationWidget* l_pVisualizationWindow=nullptr;
+	IVisualizationWidget* l_pVisualizationWindow = nullptr;
 	CIdentifier l_oVisualizationWindowIdentifier = OV_UndefinedIdentifier;
 
-	while(m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowIdentifier, EVisualizationWidget_VisualizationWindow) == true)
+	while (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowIdentifier, EVisualizationWidget_VisualizationWindow) == true)
 	{
 		l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowIdentifier);
-		if(l_pVisualizationWindow->getName() == m_oActiveVisualizationWindowName)
+		if (l_pVisualizationWindow->getName() == m_oActiveVisualizationWindowName)
 		{
 			break;
 		}
 	}
 
 	//return if parent window was not found
-	if(l_oVisualizationWindowIdentifier == OV_UndefinedIdentifier || l_pVisualizationWindow==nullptr)
+	if (l_oVisualizationWindowIdentifier == OV_UndefinedIdentifier || l_pVisualizationWindow == nullptr)
 	{
 		displayErrorDialog("Tab creation failed !", "Couldn't retrieve parent window.");
 		return false;
@@ -1240,10 +1216,10 @@ bool CDesignerVisualization::newVisualizationPanel(const char* label)
 	CString l_oNewChildName = label;
 
 	//ensure visualization panel name is unique in this window
-	for(uint32_t i=0; i<l_pVisualizationWindow->getNbChildren(); i++)
+	for (uint32_t i = 0; i < l_pVisualizationWindow->getNbChildren(); i++)
 	{
 		l_pVisualizationWindow->getChildIdentifier(i, l_oChildIdentifier);
-		if(m_rVisualizationTree.getVisualizationWidget(l_oChildIdentifier)->getName() == l_oNewChildName)
+		if (m_rVisualizationTree.getVisualizationWidget(l_oChildIdentifier)->getName() == l_oNewChildName)
 		{
 			displayErrorDialog("Tab creation failed !", "An existing tab already uses this name. Please choose another name.");
 			return false;
@@ -1283,7 +1259,7 @@ bool CDesignerVisualization::renameVisualizationPanel(const char* pNewVisualizat
 {
 	//retrieve visualization window
 	GtkTreeIter l_oIter;
-	if(m_rVisualizationTree.findChildNodeFromRoot(&l_oIter, (const char*)m_oActiveVisualizationWindowName, EVisualizationTreeNode_VisualizationWindow) == false)
+	if (m_rVisualizationTree.findChildNodeFromRoot(&l_oIter, (const char*)m_oActiveVisualizationWindowName, EVisualizationTreeNode_VisualizationWindow) == false)
 	{
 		displayErrorDialog("Tab renaming failed !", "Couldn't retrieve parent window.");
 		return false;
@@ -1291,14 +1267,14 @@ bool CDesignerVisualization::renameVisualizationPanel(const char* pNewVisualizat
 	CIdentifier l_oVisualizationWindowIdentifier;
 	m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, l_oVisualizationWindowIdentifier, EVisualizationTreeColumn_StringIdentifier);
 	IVisualizationWidget* l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowIdentifier);
-	if(l_pVisualizationWindow == nullptr)
+	if (l_pVisualizationWindow == nullptr)
 	{
 		displayErrorDialog("Tab renaming failed !", "Couldn't retrieve parent window.");
 		return false;
 	}
 
 	//retrieve visualization panel
-	if(m_rVisualizationTree.findChildNodeFromParent(&l_oIter, (const char*)m_oActiveVisualizationPanelName, EVisualizationTreeNode_VisualizationPanel) == false)
+	if (m_rVisualizationTree.findChildNodeFromParent(&l_oIter, (const char*)m_oActiveVisualizationPanelName, EVisualizationTreeNode_VisualizationPanel) == false)
 	{
 		displayErrorDialog("Tab renaming failed !", "Couldn't retrieve tab.");
 		return false;
@@ -1307,7 +1283,7 @@ bool CDesignerVisualization::renameVisualizationPanel(const char* pNewVisualizat
 	CIdentifier l_oVisualizationPanelIdentifier;
 	m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, l_oVisualizationPanelIdentifier, EVisualizationTreeColumn_StringIdentifier);
 	IVisualizationWidget* l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationPanelIdentifier);
-	if(l_pVisualizationWidget == nullptr)
+	if (l_pVisualizationWidget == nullptr)
 	{
 		displayErrorDialog("tab renaming failed !", "Couldn't retrieve tab.");
 		return false;
@@ -1315,17 +1291,14 @@ bool CDesignerVisualization::renameVisualizationPanel(const char* pNewVisualizat
 
 	//if trying to set identical name, return
 	CString l_oNewPanelName = pNewVisualizationPanelName;
-	if(l_pVisualizationWidget->getName() == l_oNewPanelName)
-	{
-		return true;
-	}
+	if (l_pVisualizationWidget->getName() == l_oNewPanelName) { return true; }
 
 	//ensure visualization panel name is unique in this window
 	CIdentifier l_oChildIdentifier;
-	for(uint32_t i=0; i<l_pVisualizationWindow->getNbChildren(); i++)
+	for (uint32_t i = 0; i < l_pVisualizationWindow->getNbChildren(); i++)
 	{
 		l_pVisualizationWindow->getChildIdentifier(i, l_oChildIdentifier);
-		if(m_rVisualizationTree.getVisualizationWidget(l_oChildIdentifier)->getName() == l_oNewPanelName)
+		if (m_rVisualizationTree.getVisualizationWidget(l_oChildIdentifier)->getName() == l_oNewPanelName)
 		{
 			displayErrorDialog("Tab renaming failed !", "An existing tab already uses this name. Please choose another name.");
 			return false;
@@ -1355,7 +1328,7 @@ bool CDesignerVisualization::removeVisualizationPanel()
 	m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, l_oVisualizationPanelIdentifier, EVisualizationTreeColumn_StringIdentifier);
 
 	//destroy hierarchy but only unaffect visualization boxes (as opposed to destroying them)
-	if(m_rVisualizationTree.destroyHierarchy(m_rVisualizationTree.getVisualizationWidget(l_oVisualizationPanelIdentifier)->getIdentifier(), false) == false)
+	if (m_rVisualizationTree.destroyHierarchy(m_rVisualizationTree.getVisualizationWidget(l_oVisualizationPanelIdentifier)->getIdentifier(), false) == false)
 	{
 		displayErrorDialog("Tab removal failed !", "An error occurred while destroying widget hierarchy.");
 		return false;
@@ -1373,40 +1346,34 @@ bool CDesignerVisualization::removeVisualizationWidget()
 {
 	//retrieve widget
 	GtkTreeIter l_oIter;
-	if(m_rVisualizationTree.getTreeSelection(m_pTreeView, &l_oIter) == false)
-	{
-		return false;
-	}
+	if (m_rVisualizationTree.getTreeSelection(m_pTreeView, &l_oIter) == false) { return false; }
 	CIdentifier l_oIdentifier;
 	m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, l_oIdentifier, EVisualizationTreeColumn_StringIdentifier);
 	return removeVisualizationWidget(l_oIdentifier);
 }
 
 //TODO : move this to CVisualizationTree?
-bool CDesignerVisualization::removeVisualizationWidget(const CIdentifier& rIdentifier)
+bool CDesignerVisualization::removeVisualizationWidget(const CIdentifier & rIdentifier)
 {
 	IVisualizationWidget* l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(rIdentifier);
-	if(l_pVisualizationWidget == nullptr)
-	{
-		return false;
-	}
+	if (l_pVisualizationWidget == nullptr) { return false; }
 
 	IVisualizationWidget* l_pParentVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_pVisualizationWidget->getParentIdentifier());
 
 	//unparent or destroy widget
 	uint32_t l_ui32ChildIndex;
 	m_rVisualizationTree.unparentVisualizationWidget(rIdentifier, l_ui32ChildIndex);
-	if(l_pVisualizationWidget->getType() != EVisualizationWidget_VisualizationBox)
+	if (l_pVisualizationWidget->getType() != EVisualizationWidget_VisualizationBox)
 	{
 		m_rVisualizationTree.destroyHierarchy(rIdentifier, false);
 	}
 
 	//reparent other child widget, if any
-	if(l_pParentVisualizationWidget->getType() != EVisualizationWidget_VisualizationPanel)
+	if (l_pParentVisualizationWidget->getType() != EVisualizationWidget_VisualizationPanel)
 	{
 		//retrieve parent's other widget
 		CIdentifier l_oOtherVisualizationWidgetIdentifier;
-		l_pParentVisualizationWidget->getChildIdentifier(1-l_ui32ChildIndex, l_oOtherVisualizationWidgetIdentifier);
+		l_pParentVisualizationWidget->getChildIdentifier(1 - l_ui32ChildIndex, l_oOtherVisualizationWidgetIdentifier);
 
 		//unparent parent
 		uint32_t l_ui32ParentIndex;
@@ -1429,7 +1396,7 @@ bool CDesignerVisualization::removeVisualizationWidget(const CIdentifier& rIdent
 	return true;
 }
 
-bool CDesignerVisualization::destroyVisualizationWidget(const CIdentifier& rIdentifier)
+bool CDesignerVisualization::destroyVisualizationWidget(const CIdentifier & rIdentifier)
 {
 	bool b = removeVisualizationWidget(rIdentifier);
 	m_rVisualizationTree.destroyHierarchy(rIdentifier, true);
@@ -1439,20 +1406,20 @@ bool CDesignerVisualization::destroyVisualizationWidget(const CIdentifier& rIden
 //CALLBACKS
 //---------
 
-void CDesignerVisualization::notebookPageSelectedCB(GtkNotebook* pNotebook, guint pagenum)
+void CDesignerVisualization::notebookPageSelectedCB(GtkNotebook * pNotebook, guint pagenum)
 {
 	GtkTreeIter l_oIter;
 	m_rVisualizationTree.findChildNodeFromRoot(&l_oIter, (void*)pNotebook);
 	CIdentifier l_oIdentifier;
 	m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, l_oIdentifier, EVisualizationTreeColumn_StringIdentifier);
 	IVisualizationWidget* l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oIdentifier);
-	if(l_pVisualizationWidget != nullptr)
+	if (l_pVisualizationWidget != nullptr)
 	{
 		IVisualizationWidget* l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_pVisualizationWidget->getParentIdentifier());
-		if(l_pVisualizationWindow != nullptr)
+		if (l_pVisualizationWindow != nullptr)
 		{
 			l_pVisualizationWindow->getChildIdentifier(pagenum, l_oIdentifier);
-			if(m_rVisualizationTree.findChildNodeFromRoot(&l_oIter, l_oIdentifier) == true)
+			if (m_rVisualizationTree.findChildNodeFromRoot(&l_oIter, l_oIdentifier) == true)
 			{
 				refreshActiveVisualization(m_rVisualizationTree.getTreePath(&l_oIter));
 			}
@@ -1460,9 +1427,9 @@ void CDesignerVisualization::notebookPageSelectedCB(GtkNotebook* pNotebook, guin
 	}
 }
 
-void CDesignerVisualization::enableNotebookSignals(GtkWidget* pNotebook, bool b)
+void CDesignerVisualization::enableNotebookSignals(GtkWidget * pNotebook, bool b)
 {
-	if(b)
+	if (b)
 	{
 		g_signal_connect(G_OBJECT(pNotebook), "switch-page", G_CALLBACK(notebook_page_switch_cb), this);
 	}
@@ -1472,7 +1439,7 @@ void CDesignerVisualization::enableNotebookSignals(GtkWidget* pNotebook, bool b)
 	}
 }
 
-void CDesignerVisualization::notifyPositionPanedCB(GtkWidget* pWidget)
+void CDesignerVisualization::notifyPositionPanedCB(GtkWidget * pWidget)
 {
 	GtkPaned* l_pPaned = GTK_PANED(pWidget);
 
@@ -1481,15 +1448,12 @@ void CDesignerVisualization::notifyPositionPanedCB(GtkWidget* pWidget)
 	int l_iMaxPos = GTK_IS_VPANED(l_pPaned) ? l_pPaned->container.widget.allocation.height : l_pPaned->container.widget.allocation.width;
 	int l_iHandleThickness = GTK_IS_VPANED(l_pPaned) ? l_pPaned->handle_pos.height : l_pPaned->handle_pos.width;
 
-	if(l_iPos + l_iHandleThickness == l_iMaxPos)
-	{
-		return;
-	}
+	if (l_iPos + l_iHandleThickness == l_iMaxPos) { return; }
 
 	//look for widget in tree
 	GtkWidget* l_pTreeWidget = getTreeWidget(pWidget);
 	GtkTreeIter l_oIter;
-	if(m_rVisualizationTree.findChildNodeFromRoot(&l_oIter, l_pTreeWidget) == true)
+	if (m_rVisualizationTree.findChildNodeFromRoot(&l_oIter, l_pTreeWidget) == true)
 	{
 		CIdentifier l_oIdentifier;
 		m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, l_oIdentifier, EVisualizationTreeColumn_StringIdentifier);
@@ -1501,9 +1465,9 @@ void CDesignerVisualization::notifyPositionPanedCB(GtkWidget* pWidget)
 	}
 }
 
-void CDesignerVisualization::enablePanedSignals(GtkWidget* pPaned, bool b)
+void CDesignerVisualization::enablePanedSignals(GtkWidget * pPaned, bool b)
 {
-	if(b)
+	if (b)
 	{
 		g_signal_connect(G_OBJECT(pPaned), "notify::position", G_CALLBACK(notify_position_paned_cb), this);
 	}
@@ -1513,95 +1477,95 @@ void CDesignerVisualization::enablePanedSignals(GtkWidget* pPaned, bool b)
 	}
 }
 
-void CDesignerVisualization::ask_new_visualization_window_cb(gpointer pUserData, guint callback_action, GtkWidget* pWidget)
+void CDesignerVisualization::ask_new_visualization_window_cb(gpointer pUserData, guint callback_action, GtkWidget * pWidget)
 {
 	static_cast<CDesignerVisualization*>(pUserData)->askNewVisualizationWindow();
 }
 
-void CDesignerVisualization::new_visualization_window_cb(GtkWidget* pWidget, gpointer pUserData)
+void CDesignerVisualization::new_visualization_window_cb(GtkWidget * pWidget, gpointer pUserData)
 {
 	CInputDialog* l_pInputDialog = static_cast<CInputDialog*>(pUserData);
 
-	if(l_pInputDialog->getUserData() != nullptr)
+	if (l_pInputDialog->getUserData() != nullptr)
 	{
 		static_cast<CDesignerVisualization*>(l_pInputDialog->getUserData())->newVisualizationWindow(l_pInputDialog->getEntry());
 	}
 }
 
-void CDesignerVisualization::ask_rename_visualization_window_cb(gpointer pUserData, guint callback_action, GtkWidget* pWidget)
+void CDesignerVisualization::ask_rename_visualization_window_cb(gpointer pUserData, guint callback_action, GtkWidget * pWidget)
 {
 	static_cast<CDesignerVisualization*>(pUserData)->askRenameVisualizationWindow();
 }
 
-void CDesignerVisualization::rename_visualization_window_cb(GtkWidget* pWidget, gpointer pUserData)
+void CDesignerVisualization::rename_visualization_window_cb(GtkWidget * pWidget, gpointer pUserData)
 {
 	CInputDialog* l_pInputDialog = static_cast<CInputDialog*>(pUserData);
 
-	if(l_pInputDialog->getUserData() != nullptr)
+	if (l_pInputDialog->getUserData() != nullptr)
 	{
 		static_cast<CDesignerVisualization*>(l_pInputDialog->getUserData())->renameVisualizationWindow(l_pInputDialog->getEntry());
 	}
 }
 
-void CDesignerVisualization::remove_visualization_window_cb(gpointer pUserData, guint callback_action, GtkWidget* pWidget)
+void CDesignerVisualization::remove_visualization_window_cb(gpointer pUserData, guint callback_action, GtkWidget * pWidget)
 {
 	static_cast<CDesignerVisualization*>(pUserData)->removeVisualizationWindow();
 }
 
-void CDesignerVisualization::ask_new_visualization_panel_cb(gpointer pUserData, guint callback_action, GtkWidget* pWidget)
+void CDesignerVisualization::ask_new_visualization_panel_cb(gpointer pUserData, guint callback_action, GtkWidget * pWidget)
 {
 	static_cast<CDesignerVisualization*>(pUserData)->askNewVisualizationPanel();
 }
 
-void CDesignerVisualization::new_visualization_panel_cb(GtkWidget* pWidget, gpointer pUserData)
+void CDesignerVisualization::new_visualization_panel_cb(GtkWidget * pWidget, gpointer pUserData)
 {
 	CInputDialog* l_pInputDialog = static_cast<CInputDialog*>(pUserData);
 
-	if(l_pInputDialog->getUserData() != nullptr)
+	if (l_pInputDialog->getUserData() != nullptr)
 	{
 		static_cast<CDesignerVisualization*>(l_pInputDialog->getUserData())->newVisualizationPanel(l_pInputDialog->getEntry());
 	}
 }
 
-void CDesignerVisualization::ask_rename_visualization_panel_cb(gpointer pUserData, guint callback_action, GtkWidget* pWidget)
+void CDesignerVisualization::ask_rename_visualization_panel_cb(gpointer pUserData, guint callback_action, GtkWidget * pWidget)
 {
 	static_cast<CDesignerVisualization*>(pUserData)->askRenameVisualizationPanel();
 }
 
-void CDesignerVisualization::rename_visualization_panel_cb(GtkWidget* pWidget, gpointer pUserData)
+void CDesignerVisualization::rename_visualization_panel_cb(GtkWidget * pWidget, gpointer pUserData)
 {
 	CInputDialog* l_pInputDialog = static_cast<CInputDialog*>(pUserData);
 
-	if(l_pInputDialog->getUserData() != nullptr)
+	if (l_pInputDialog->getUserData() != nullptr)
 	{
 		static_cast<CDesignerVisualization*>(l_pInputDialog->getUserData())->renameVisualizationPanel(l_pInputDialog->getEntry());
 	}
 }
 
-void CDesignerVisualization::remove_visualization_panel_cb(gpointer pUserData, guint callback_action, GtkWidget* pWidget)
+void CDesignerVisualization::remove_visualization_panel_cb(gpointer pUserData, guint callback_action, GtkWidget * pWidget)
 {
 	static_cast<CDesignerVisualization*>(pUserData)->removeVisualizationPanel();
 }
 
-void CDesignerVisualization::remove_visualization_widget_cb(gpointer pUserData, guint callback_action, GtkWidget* pWidget)
+void CDesignerVisualization::remove_visualization_widget_cb(gpointer pUserData, guint callback_action, GtkWidget * pWidget)
 {
 	static_cast<CDesignerVisualization*>(pUserData)->removeVisualizationWidget();
 }
 
-void CDesignerVisualization::visualization_widget_key_press_event_cb(GtkWidget* pWidget, GdkEventKey* pEvent, gpointer pUserData)
+void CDesignerVisualization::visualization_widget_key_press_event_cb(GtkWidget * pWidget, GdkEventKey * pEvent, gpointer pUserData)
 {
 	static_cast<CDesignerVisualization*>(pUserData)->visualizationWidgetKeyPressEventCB(pWidget, pEvent);
 }
 
-void CDesignerVisualization::visualizationWidgetKeyPressEventCB(GtkWidget*, GdkEventKey* pEventKey)
+void CDesignerVisualization::visualizationWidgetKeyPressEventCB(GtkWidget*, GdkEventKey * pEventKey)
 {
 	//remove widget
-	if(pEventKey->keyval==GDK_Delete || pEventKey->keyval==GDK_KP_Delete)
+	if (pEventKey->keyval == GDK_Delete || pEventKey->keyval == GDK_KP_Delete)
 	{
-		if(m_pHighlightedWidget != nullptr)
+		if (m_pHighlightedWidget != nullptr)
 		{
 			GtkTreeIter l_oIter;
-			if(m_rVisualizationTree.findChildNodeFromRoot(&l_oIter, getTreeWidget(m_pHighlightedWidget)) == true)
+			if (m_rVisualizationTree.findChildNodeFromRoot(&l_oIter, getTreeWidget(m_pHighlightedWidget)) == true)
 			{
 				CIdentifier l_oIdentifier;
 				m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, l_oIdentifier, EVisualizationTreeColumn_StringIdentifier);
@@ -1611,90 +1575,87 @@ void CDesignerVisualization::visualizationWidgetKeyPressEventCB(GtkWidget*, GdkE
 	}
 }
 
-gboolean CDesignerVisualization::visualization_widget_enter_notify_event_cb(GtkWidget* pWidget, GdkEventCrossing* pEventCrossing, gpointer pUserData)
+gboolean CDesignerVisualization::visualization_widget_enter_notify_event_cb(GtkWidget * pWidget, GdkEventCrossing * pEventCrossing, gpointer pUserData)
 {
 	static_cast<CDesignerVisualization*>(pUserData)->visualizationWidgetEnterNotifyEventCB(pWidget, pEventCrossing);
 	return FALSE;
 }
 
-void CDesignerVisualization::visualizationWidgetEnterNotifyEventCB(GtkWidget* pWidget, GdkEventCrossing* pEventCrossing)
+void CDesignerVisualization::visualizationWidgetEnterNotifyEventCB(GtkWidget * pWidget, GdkEventCrossing * pEventCrossing)
 {
 	m_pHighlightedWidget = pWidget;
 }
 
-gboolean CDesignerVisualization::visualization_widget_leave_notify_event_cb(GtkWidget* pWidget, GdkEventCrossing* pEventCrossing, gpointer pUserData)
+gboolean CDesignerVisualization::visualization_widget_leave_notify_event_cb(GtkWidget * pWidget, GdkEventCrossing * pEventCrossing, gpointer pUserData)
 {
 	static_cast<CDesignerVisualization*>(pUserData)->visualizationWidgetLeaveNotifyEventCB(pWidget, pEventCrossing);
 	return FALSE;
 }
 
-void CDesignerVisualization::visualizationWidgetLeaveNotifyEventCB(GtkWidget* pWidget, GdkEventCrossing* pEventCrossing)
+void CDesignerVisualization::visualizationWidgetLeaveNotifyEventCB(GtkWidget * pWidget, GdkEventCrossing * pEventCrossing)
 {
 	m_pHighlightedWidget = nullptr;
 }
 
-gboolean CDesignerVisualization::button_release_cb(GtkWidget* pWidget, GdkEventButton *pEvent, gpointer pUserData)
+gboolean CDesignerVisualization::button_release_cb(GtkWidget * pWidget, GdkEventButton * pEvent, gpointer pUserData)
 {
 	static_cast<CDesignerVisualization*>(pUserData)->buttonReleaseCB(pWidget, pEvent);
 
 	return FALSE;
 }
 
-void CDesignerVisualization::buttonReleaseCB(GtkWidget* pWidget, GdkEventButton* pEvent)
+void CDesignerVisualization::buttonReleaseCB(GtkWidget * pWidget, GdkEventButton * pEvent)
 {
-	if(GTK_IS_TREE_VIEW(pWidget))
+	if (GTK_IS_TREE_VIEW(pWidget))
 	{
-		if(pEvent->button == 3) //right button
+		if (pEvent->button == 3) //right button
 		{
-			if(pEvent->type != GDK_BUTTON_PRESS)
+			if (pEvent->type != GDK_BUTTON_PRESS)
 			{
 				GtkTreeIter l_oIter;
 
-				if(m_rVisualizationTree.getTreeSelection(m_pTreeView, &l_oIter) == false)
-				{
-					return;
-				}
+				if (m_rVisualizationTree.getTreeSelection(m_pTreeView, &l_oIter) == false) { return; }
 
 				unsigned long l_ulType = m_rVisualizationTree.getULongValueFromTreeIter(&l_oIter, EVisualizationTreeColumn_ULongNodeType);
 
-				if(l_ulType == EVisualizationTreeNode_Unaffected)
+				if (l_ulType == EVisualizationTreeNode_Unaffected)
 				{
-					gtk_menu_popup(GTK_MENU(gtk_item_factory_get_widget(m_pUnaffectedItemFactory, "<unaffected_main>")),nullptr,nullptr,nullptr,nullptr,pEvent->button,pEvent->time);
+					gtk_menu_popup(GTK_MENU(gtk_item_factory_get_widget(m_pUnaffectedItemFactory, "<unaffected_main>")), nullptr, nullptr, nullptr, nullptr, pEvent->button, pEvent->time);
 				}
-				else if(l_ulType == EVisualizationTreeNode_VisualizationWindow)
+				else if (l_ulType == EVisualizationTreeNode_VisualizationWindow)
 				{
-					gtk_menu_popup(GTK_MENU(gtk_item_factory_get_widget(m_pVisualizationWindowItemFactory, "<visualization_window_main>")),nullptr,nullptr,nullptr,nullptr,pEvent->button,pEvent->time);
+					gtk_menu_popup(GTK_MENU(gtk_item_factory_get_widget(m_pVisualizationWindowItemFactory, "<visualization_window_main>")), nullptr, nullptr, nullptr, nullptr, pEvent->button, pEvent->time);
 				}
-				else if(l_ulType == EVisualizationTreeNode_VisualizationPanel)
+				else if (l_ulType == EVisualizationTreeNode_VisualizationPanel)
 				{
-					gtk_menu_popup(GTK_MENU(gtk_item_factory_get_widget(m_pVisualizationPanelItemFactory, "<visualization_panel_main>")),nullptr,nullptr,nullptr,nullptr,pEvent->button,pEvent->time);
+					gtk_menu_popup(GTK_MENU(gtk_item_factory_get_widget(m_pVisualizationPanelItemFactory, "<visualization_panel_main>")), nullptr, nullptr, nullptr, nullptr, pEvent->button, pEvent->time);
 				}
-				else if(l_ulType == EVisualizationTreeNode_HorizontalSplit || l_ulType == EVisualizationTreeNode_VerticalSplit)
+				else if (l_ulType == EVisualizationTreeNode_HorizontalSplit || l_ulType == EVisualizationTreeNode_VerticalSplit)
 				{
-					gtk_menu_popup(GTK_MENU(gtk_item_factory_get_widget(m_pSplitItemFactory, "<split_widget_main>")),nullptr,nullptr,nullptr,nullptr,pEvent->button,pEvent->time);
+					gtk_menu_popup(GTK_MENU(gtk_item_factory_get_widget(m_pSplitItemFactory, "<split_widget_main>")), nullptr, nullptr, nullptr, nullptr, pEvent->button, pEvent->time);
 				}
-				else if(l_ulType == EVisualizationTreeNode_VisualizationBox)
+				else if (l_ulType == EVisualizationTreeNode_VisualizationBox)
 				{
 					//ensure visualization box is parented to a tab
-					if(m_rVisualizationTree.findParentNode(&l_oIter, EVisualizationTreeNode_VisualizationPanel) == true)
+					if (m_rVisualizationTree.findParentNode(&l_oIter, EVisualizationTreeNode_VisualizationPanel) == true)
 					{
-						gtk_menu_popup(GTK_MENU(gtk_item_factory_get_widget(m_pVisualizationBoxItemFactory, "<visualization_box_main>")),nullptr,nullptr,nullptr,nullptr,pEvent->button,pEvent->time);
+						gtk_menu_popup(GTK_MENU(gtk_item_factory_get_widget(m_pVisualizationBoxItemFactory, "<visualization_box_main>")), nullptr, nullptr, nullptr, nullptr, pEvent->button, pEvent->time);
 					}
 				}
-				else if(l_ulType == EVisualizationTreeNode_Undefined)
+				else if (l_ulType == EVisualizationTreeNode_Undefined)
 				{
 					//ensure empty plugin is not parented to a panel (because an empty widget is always present in an empty panel)
 					CIdentifier l_oIdentifier;
 					m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, l_oIdentifier, EVisualizationTreeColumn_StringIdentifier);
 					IVisualizationWidget* l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oIdentifier);
-					if(l_pVisualizationWidget != nullptr)
+					if (l_pVisualizationWidget != nullptr)
 					{
 						IVisualizationWidget* l_pParentVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_pVisualizationWidget->getParentIdentifier());
-						if(l_pParentVisualizationWidget != nullptr)
+						if (l_pParentVisualizationWidget != nullptr)
 						{
-							if(l_pParentVisualizationWidget->getType() != EVisualizationWidget_VisualizationPanel)
+							if (l_pParentVisualizationWidget->getType() != EVisualizationWidget_VisualizationPanel)
 							{
-								gtk_menu_popup(GTK_MENU(gtk_item_factory_get_widget(m_pUndefinedItemFactory, "<undefined_widget_main>")),nullptr,nullptr,nullptr,nullptr,pEvent->button,pEvent->time);
+								gtk_menu_popup(GTK_MENU(gtk_item_factory_get_widget(m_pUndefinedItemFactory, "<undefined_widget_main>")), nullptr, nullptr, nullptr, nullptr, pEvent->button, pEvent->time);
 							}
 						}
 					}
@@ -1704,22 +1665,19 @@ void CDesignerVisualization::buttonReleaseCB(GtkWidget* pWidget, GdkEventButton*
 	}
 }
 
-void CDesignerVisualization::cursor_changed_cb(GtkTreeView* pTreeView, gpointer pUserData)
+void CDesignerVisualization::cursor_changed_cb(GtkTreeView * pTreeView, gpointer pUserData)
 {
 	static_cast<CDesignerVisualization*>(pUserData)->cursorChangedCB(pTreeView);
 }
 
-void CDesignerVisualization::cursorChangedCB(GtkTreeView* pTreeView)
+void CDesignerVisualization::cursorChangedCB(GtkTreeView * pTreeView)
 {
 	//retrieve selection
 	GtkTreeIter l_oSelectionIter;
-	if(m_rVisualizationTree.getTreeSelection(pTreeView, &l_oSelectionIter) == false)
-	{
-		return;
-	}
+	if (m_rVisualizationTree.getTreeSelection(pTreeView, &l_oSelectionIter) == false) { return; }
 
 	//save active item
-	if(m_rVisualizationTree.getULongValueFromTreeIter(&l_oSelectionIter, EVisualizationTreeColumn_ULongNodeType) == EVisualizationTreeNode_VisualizationBox)
+	if (m_rVisualizationTree.getULongValueFromTreeIter(&l_oSelectionIter, EVisualizationTreeColumn_ULongNodeType) == EVisualizationTreeNode_VisualizationBox)
 	{
 		m_rVisualizationTree.getIdentifierFromTreeIter(&l_oSelectionIter, m_oActiveVisualizationBoxIdentifier, EVisualizationTreeColumn_StringIdentifier);
 	}
@@ -1727,7 +1685,7 @@ void CDesignerVisualization::cursorChangedCB(GtkTreeView* pTreeView)
 	GtkTreeIter l_oVisualizationPanelIter = l_oSelectionIter;
 
 	//if selection lies in a visualization panel subtree, display this subtree
-	if(m_rVisualizationTree.findParentNode(&l_oVisualizationPanelIter, EVisualizationTreeNode_VisualizationPanel) == true)
+	if (m_rVisualizationTree.findParentNode(&l_oVisualizationPanelIter, EVisualizationTreeNode_VisualizationPanel) == true)
 	{
 		//get visualization panel name
 		char* l_pVisualizationPanelName = nullptr;
@@ -1735,7 +1693,7 @@ void CDesignerVisualization::cursorChangedCB(GtkTreeView* pTreeView)
 
 		//retrieve visualization window that contains selection
 		GtkTreeIter l_oVisualizationWindowIter = l_oVisualizationPanelIter;
-		if(m_rVisualizationTree.findParentNode(&l_oVisualizationWindowIter, EVisualizationTreeNode_VisualizationWindow) == true)
+		if (m_rVisualizationTree.findParentNode(&l_oVisualizationWindowIter, EVisualizationTreeNode_VisualizationWindow) == true)
 		{
 			//get its name
 			char* l_pVisualizationWindowName = nullptr;
@@ -1750,7 +1708,7 @@ void CDesignerVisualization::cursorChangedCB(GtkTreeView* pTreeView)
 		GtkTreeIter l_oVisualizationWindowIter = l_oSelectionIter;
 
 		//if selection is a visualization window, display it
-		if(m_rVisualizationTree.findParentNode(&l_oVisualizationWindowIter, EVisualizationTreeNode_VisualizationWindow) == true)
+		if (m_rVisualizationTree.findParentNode(&l_oVisualizationWindowIter, EVisualizationTreeNode_VisualizationWindow) == true)
 		{
 			//retrieve visualization window
 			CIdentifier l_oVisualizationWindowIdentifier;
@@ -1758,7 +1716,7 @@ void CDesignerVisualization::cursorChangedCB(GtkTreeView* pTreeView)
 			IVisualizationWidget* l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowIdentifier);
 
 			//if window has at least one panel
-			if(l_pVisualizationWindow->getNbChildren() > 0)
+			if (l_pVisualizationWindow->getNbChildren() > 0)
 			{
 				//retrieve first panel
 				CIdentifier l_oVisualizationPanelIdentifier;
@@ -1776,7 +1734,7 @@ void CDesignerVisualization::cursorChangedCB(GtkTreeView* pTreeView)
 							gtk_notebook_get_current_page(GTK_NOTEBOOK(l_pNotebook))));
 
 				//set active visualization
-				if(l_pCurrentPageLabel != nullptr)
+				if (l_pCurrentPageLabel != nullptr)
 				{
 					setActiveVisualization((const char*)l_pVisualizationWindow->getName(), gtk_label_get_text(GTK_LABEL(l_pCurrentPageLabel)));
 				}
@@ -1798,73 +1756,67 @@ void CDesignerVisualization::cursorChangedCB(GtkTreeView* pTreeView)
 	}
 }
 
-void CDesignerVisualization::drag_data_get_from_tree_cb(GtkWidget* pSrcWidget, GdkDragContext* pDragContex, GtkSelectionData* pSelectionData, guint uiInfo, guint uiT, gpointer pData)
+void CDesignerVisualization::drag_data_get_from_tree_cb(GtkWidget * pSrcWidget, GdkDragContext * pDragContex, GtkSelectionData * pSelectionData, guint uiInfo, guint uiT, gpointer pData)
 {
 	static_cast<CDesignerVisualization*>(pData)->dragDataGetFromTreeCB(pSrcWidget, pSelectionData);
 }
 
-void CDesignerVisualization::dragDataGetFromTreeCB(GtkWidget* pSrcWidget, GtkSelectionData* pSelectionData)
+void CDesignerVisualization::dragDataGetFromTreeCB(GtkWidget * pSrcWidget, GtkSelectionData * pSelectionData)
 {
 	char l_sString[1024];
 	sprintf(l_sString, "%p", pSrcWidget);
 	gtk_selection_data_set_text(pSelectionData, l_sString, strlen(l_sString));
 }
 
-void CDesignerVisualization::drag_data_get_from_widget_cb(GtkWidget* pSrcWidget, GdkDragContext* pDragContext, GtkSelectionData* pSelectionData, guint uiInfo, guint uiTime, gpointer pData)
+void CDesignerVisualization::drag_data_get_from_widget_cb(GtkWidget * pSrcWidget, GdkDragContext * pDragContext, GtkSelectionData * pSelectionData, guint uiInfo, guint uiTime, gpointer pData)
 {
 	static_cast<CDesignerVisualization*>(pData)->dragDataGetFromWidgetCB(pSrcWidget, pSelectionData);
 }
 
-void CDesignerVisualization::dragDataGetFromWidgetCB(GtkWidget* pSrcWidget, GtkSelectionData* pSelectionData)
+void CDesignerVisualization::dragDataGetFromWidgetCB(GtkWidget * pSrcWidget, GtkSelectionData * pSelectionData)
 {
 	char l_sString[1024];
 	sprintf(l_sString, "%p", pSrcWidget);
 	gtk_selection_data_set_text(pSelectionData, l_sString, strlen(l_sString));
 }
 
-void CDesignerVisualization::drag_data_received_in_widget_cb(GtkWidget* dstWidget, GdkDragContext* pDragContext,gint iX,gint iY,GtkSelectionData* pSelectionData,guint uiInfo,guint uiTime,gpointer pData)
+void CDesignerVisualization::drag_data_received_in_widget_cb(GtkWidget * dstWidget, GdkDragContext * pDragContext, gint iX, gint iY, GtkSelectionData * pSelectionData, guint uiInfo, guint uiTime, gpointer pData)
 {
 	static_cast<CDesignerVisualization*>(pData)->dragDataReceivedInWidgetCB(dstWidget, pSelectionData);
 }
 
-void CDesignerVisualization::dragDataReceivedInWidgetCB(GtkWidget* pDstWidget, GtkSelectionData* pSelectionData)
+void CDesignerVisualization::dragDataReceivedInWidgetCB(GtkWidget * pDstWidget, GtkSelectionData * pSelectionData)
 {
 	void* l_pSrcWidget = nullptr;
 	sscanf((const char*)gtk_selection_data_get_text(pSelectionData), "%p", &l_pSrcWidget);
 	GtkTreeIter l_oSrcIter;
 
 	//retrieve source widget iterator
-	if(GTK_IS_TREE_VIEW(l_pSrcWidget))
+	if (GTK_IS_TREE_VIEW(l_pSrcWidget))
 	{
 		//ensure dragged widget is a visualization box
-		if(m_rVisualizationTree.findChildNodeFromRoot(&l_oSrcIter, m_oActiveVisualizationBoxIdentifier) == false)
+		if (m_rVisualizationTree.findChildNodeFromRoot(&l_oSrcIter, m_oActiveVisualizationBoxIdentifier) == false)
 		{
 			m_rKernelContext.getLogManager() << LogLevel_Debug << "dragDataReceivedInWidgetCB couldn't retrieve iterator of active visualization box!\n";
 			return;
 		}
 	}
-	else if(GTK_IS_BUTTON(l_pSrcWidget))
+	else if (GTK_IS_BUTTON(l_pSrcWidget))
 	{
-		if(l_pSrcWidget == pDstWidget)
-		{
-			return;
-		}
-		if(m_rVisualizationTree.findChildNodeFromRoot(&l_oSrcIter, getTreeWidget(GTK_WIDGET(l_pSrcWidget))) == false)
+		if (l_pSrcWidget == pDstWidget) { return; }
+		if (m_rVisualizationTree.findChildNodeFromRoot(&l_oSrcIter, getTreeWidget(GTK_WIDGET(l_pSrcWidget))) == false)
 		{
 			m_rKernelContext.getLogManager() << LogLevel_Debug << "dragDataReceivedInWidgetCB couldn't retrieve iterator of dragged button!\n";
 			return;
 		}
 	}
-	else
-	{
-		return;
-	}
+	else { return; }
 
 	//retrieve src widget identifier and src visualization widget
 	CIdentifier l_oSrcIdentifier;
 	m_rVisualizationTree.getIdentifierFromTreeIter(&l_oSrcIter, l_oSrcIdentifier, EVisualizationTreeColumn_StringIdentifier);
 	IVisualizationWidget* l_pSrcVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oSrcIdentifier);
-	if(l_pSrcVisualizationWidget == nullptr)
+	if (l_pSrcVisualizationWidget == nullptr)
 	{
 		m_rKernelContext.getLogManager() << LogLevel_Debug << "dragDataReceivedInWidgetCB couldn't retrieve source visualization widget!\n";
 		return;
@@ -1872,14 +1824,14 @@ void CDesignerVisualization::dragDataReceivedInWidgetCB(GtkWidget* pDstWidget, G
 
 	//retrieve dest widget type
 	GtkTreeIter l_oDstIter;
-	if(m_rVisualizationTree.findChildNodeFromRoot(&l_oDstIter, getTreeWidget(pDstWidget)) == false)
+	if (m_rVisualizationTree.findChildNodeFromRoot(&l_oDstIter, getTreeWidget(pDstWidget)) == false)
 	{
 		m_rKernelContext.getLogManager() << LogLevel_Debug << "dragDataReceivedInWidgetCB couldn't retrieve iterator of destination widget!\n";
 		return;
 	}
 
 	//if src widget is unaffected or if dest widget is a visualization box, perform the drop operation directly
-	if(l_pSrcVisualizationWidget->getParentIdentifier() == OV_UndefinedIdentifier ||
+	if (l_pSrcVisualizationWidget->getParentIdentifier() == OV_UndefinedIdentifier ||
 		m_rVisualizationTree.getULongValueFromTreeIter(&l_oDstIter, EVisualizationTreeColumn_ULongNodeType) == EVisualizationTreeNode_VisualizationBox)
 	{
 		m_rVisualizationTree.dragDataReceivedInWidgetCB(l_oSrcIdentifier, pDstWidget);
@@ -1891,14 +1843,14 @@ void CDesignerVisualization::dragDataReceivedInWidgetCB(GtkWidget* pDstWidget, G
 		m_rVisualizationTree.getIdentifierFromTreeIter(&l_oDstIter, l_oDstIdentifier, EVisualizationTreeColumn_StringIdentifier);
 
 		//unaffect src widget, so that tree is simplified
-		if(removeVisualizationWidget(l_oSrcIdentifier) == false)
+		if (removeVisualizationWidget(l_oSrcIdentifier) == false)
 		{
 			m_rKernelContext.getLogManager() << LogLevel_Debug << "dragDataReceivedInWidgetCB couldn't remove source widget from its parent!\n";
 			return;
 		}
 
 		//then drop it
-		if(m_rVisualizationTree.findChildNodeFromRoot(&l_oDstIter, l_oDstIdentifier) == false)
+		if (m_rVisualizationTree.findChildNodeFromRoot(&l_oDstIter, l_oDstIdentifier) == false)
 		{
 			m_rKernelContext.getLogManager() << LogLevel_Debug << "dragDataReceivedInWidgetCB couldn't retrieve iterator of dummy destination widget to delete!\n";
 			return;
@@ -1914,22 +1866,22 @@ void CDesignerVisualization::dragDataReceivedInWidgetCB(GtkWidget* pDstWidget, G
 	refreshActiveVisualization(m_rVisualizationTree.getTreePath(&l_oDraggedIter));
 }
 
-void CDesignerVisualization::drag_data_received_in_event_box_cb(GtkWidget* pDstWidget,GdkDragContext*,gint,gint,GtkSelectionData* pSelectionData,guint,guint,gpointer pData)
+void CDesignerVisualization::drag_data_received_in_event_box_cb(GtkWidget * pDstWidget, GdkDragContext*, gint, gint, GtkSelectionData * pSelectionData, guint, guint, gpointer pData)
 {
 	char buf[1024];
 	void* pDesignerVisualization = nullptr;
 	sscanf((const char*)pData, "%p %s", &pDesignerVisualization, buf);
 
 	EDragDataLocation l_oLocation;
-	if(strcmp(buf, "left") == 0)
+	if (strcmp(buf, "left") == 0)
 	{
 		l_oLocation = EDragData_Left;
 	}
-	else if(strcmp(buf, "right")==0)
+	else if (strcmp(buf, "right") == 0)
 	{
 		l_oLocation = EDragData_Right;
 	}
-	else if(strcmp(buf, "top")==0)
+	else if (strcmp(buf, "top") == 0)
 	{
 		l_oLocation = EDragData_Top;
 	}
@@ -1941,45 +1893,30 @@ void CDesignerVisualization::drag_data_received_in_event_box_cb(GtkWidget* pDstW
 	((CDesignerVisualization*)pDesignerVisualization)->dragDataReceivedInEventBoxCB(pDstWidget, pSelectionData, l_oLocation);
 }
 
-void CDesignerVisualization::dragDataReceivedInEventBoxCB(GtkWidget* pDstWidget, GtkSelectionData* pSelectionData, EDragDataLocation l_oLocation)
+void CDesignerVisualization::dragDataReceivedInEventBoxCB(GtkWidget * pDstWidget, GtkSelectionData * pSelectionData, EDragDataLocation l_oLocation)
 {
 	void* l_pSrcWidget = nullptr;
 	sscanf((const char*)gtk_selection_data_get_text(pSelectionData), "%p", &l_pSrcWidget);
 	GtkTreeIter l_oSrcIter;
 
 	//get iterator to src widget
-	if(GTK_IS_TREE_VIEW(l_pSrcWidget))
+	if (GTK_IS_TREE_VIEW(l_pSrcWidget))
 	{
-		if(m_rVisualizationTree.findChildNodeFromRoot(&l_oSrcIter, m_oActiveVisualizationBoxIdentifier) == false)
-		{
-			return;
-		}
+		if (m_rVisualizationTree.findChildNodeFromRoot(&l_oSrcIter, m_oActiveVisualizationBoxIdentifier) == false) { return; }
 		//get actual src widget (item being dropped) and ensure it isn't being dropped in its own table
 		m_rVisualizationTree.getPointerValueFromTreeIter(&l_oSrcIter, l_pSrcWidget, EVisualizationTreeColumn_PointerWidget);
-		if(l_pSrcWidget == gtk_widget_get_parent(pDstWidget))
-		{
-			return;
-		}
+		if (l_pSrcWidget == gtk_widget_get_parent(pDstWidget)) { return; }
 	}
-	else if(GTK_IS_BUTTON(l_pSrcWidget))
+	else if (GTK_IS_BUTTON(l_pSrcWidget))
 	{
 		//ensure src widget isn't being dropped in its own table
-		if(gtk_widget_get_parent(GTK_WIDGET(l_pSrcWidget)) == gtk_widget_get_parent(pDstWidget))
-		{
-			return;
-		}
+		if (gtk_widget_get_parent(GTK_WIDGET(l_pSrcWidget)) == gtk_widget_get_parent(pDstWidget)) { return; }
 		m_rVisualizationTree.findChildNodeFromRoot(&l_oSrcIter, getTreeWidget(GTK_WIDGET(l_pSrcWidget)));
 	}
-	else
-	{
-		return;
-	}
+	else { return; }
 
 	//ensure src widget is a visualization box
-	if(m_rVisualizationTree.getULongValueFromTreeIter(&l_oSrcIter, EVisualizationTreeColumn_ULongNodeType) != EVisualizationTreeNode_VisualizationBox)
-	{
-		return;
-	}
+	if (m_rVisualizationTree.getULongValueFromTreeIter(&l_oSrcIter, EVisualizationTreeColumn_ULongNodeType) != EVisualizationTreeNode_VisualizationBox) { return; }
 
 	//retrieve src widget identifier
 	CIdentifier l_oSrcIdentifier;
@@ -1987,7 +1924,7 @@ void CDesignerVisualization::dragDataReceivedInEventBoxCB(GtkWidget* pDstWidget,
 
 	//if widget is unaffected, just drag n drop it
 	GtkTreeIter l_oUnaffectedIter = l_oSrcIter;
-	if(m_rVisualizationTree.findParentNode(&l_oUnaffectedIter, EVisualizationTreeNode_Unaffected) == true)
+	if (m_rVisualizationTree.findParentNode(&l_oUnaffectedIter, EVisualizationTreeNode_Unaffected) == true)
 	{
 		m_rVisualizationTree.dragDataReceivedOutsideWidgetCB(l_oSrcIdentifier, pDstWidget, l_oLocation);
 	}
@@ -2002,11 +1939,11 @@ void CDesignerVisualization::dragDataReceivedInEventBoxCB(GtkWidget* pDstWidget,
 		//if dest widget is src widget's parent (paned widget), drop src widget in corresponding event box of parent's other child
 		//(otherwise, DND will fail due to parent's removal during tree simplification process)
 		IVisualizationWidget* l_pSrcVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oSrcIdentifier);
-		if(l_pSrcVisualizationWidget->getParentIdentifier() == l_oDstIdentifier)
+		if (l_pSrcVisualizationWidget->getParentIdentifier() == l_oDstIdentifier)
 		{
 			IVisualizationWidget* l_pSrcParentVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_pSrcVisualizationWidget->getParentIdentifier());
 			l_pSrcParentVisualizationWidget->getChildIdentifier(0, l_oDstIdentifier);
-			if(l_oSrcIdentifier == l_oDstIdentifier)
+			if (l_oSrcIdentifier == l_oDstIdentifier)
 			{
 				l_pSrcParentVisualizationWidget->getChildIdentifier(1, l_oDstIdentifier);
 			}

@@ -7,12 +7,12 @@ using namespace OpenViBE;
 using namespace OpenViBEDesigner;
 using namespace Setting;
 
-static void on_change(GtkEntry *entry, gpointer pUserData)
+static void on_change(GtkEntry* entry, gpointer pUserData)
 {
-	static_cast<CStringSettingView *>(pUserData)->onChange();
+	static_cast<CStringSettingView*>(pUserData)->onChange();
 }
 
-CStringSettingView::CStringSettingView(Kernel::IBox &rBox, uint32_t ui32Index, CString &rBuilderName):
+CStringSettingView::CStringSettingView(Kernel::IBox& rBox, uint32_t ui32Index, CString& rBuilderName) :
 	CAbstractSettingView(rBox, ui32Index, rBuilderName, "settings_collection-entry_setting_string"), m_bOnValueSetting(false)
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
@@ -24,22 +24,22 @@ CStringSettingView::CStringSettingView(Kernel::IBox &rBox, uint32_t ui32Index, C
 }
 
 
-void CStringSettingView::getValue(CString &rValue) const
+void CStringSettingView::getValue(CString& rValue) const
 {
 	rValue = CString(gtk_entry_get_text(m_pEntry));
 }
 
 
-void CStringSettingView::setValue(const CString &rValue)
+void CStringSettingView::setValue(const CString& rValue)
 {
 	m_bOnValueSetting = true;
 	gtk_entry_set_text(m_pEntry, rValue);
-	m_bOnValueSetting =false;
+	m_bOnValueSetting = false;
 }
 
 void CStringSettingView::onChange()
 {
-	if(!m_bOnValueSetting)
+	if (!m_bOnValueSetting)
 	{
 		const gchar* l_sValue = gtk_entry_get_text(m_pEntry);
 		getBox().setSettingValue(getSettingIndex(), l_sValue);

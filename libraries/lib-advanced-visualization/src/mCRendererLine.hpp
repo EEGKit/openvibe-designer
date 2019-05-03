@@ -18,7 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #ifndef __Mensia_AdvancedVisualization_CRendererLine_H__
 #define __Mensia_AdvancedVisualization_CRendererLine_H__
 

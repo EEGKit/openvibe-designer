@@ -8,10 +8,7 @@
 #ifndef HAS_ImbuedOStreamWithCIdentifier
 namespace OpenViBE
 {
-	std::ostream& operator<<(std::ostream& os, const OpenViBE::CIdentifier& identifier)
-	{
-		return os << identifier.toString().toASCIIString();
-	}
+	std::ostream& operator<<(std::ostream& os, const OpenViBE::CIdentifier& identifier) { return os << identifier.toString().toASCIIString(); }
 }
 #endif
 
@@ -23,11 +20,11 @@ using namespace Kernel;
 using namespace OpenViBEVisualizationToolkit;
 
 CVisualizationWidget::CVisualizationWidget(const IKernelContext& kernelContext)
-    : m_KernelContext(kernelContext)
-    , m_Identifier(OV_UndefinedIdentifier)
-    , m_Type(EVisualizationWidget_Undefined)
-    , m_ParentIdentifier(OV_UndefinedIdentifier)
-    , m_BoxIdentifier(OV_UndefinedIdentifier) { }
+	: m_KernelContext(kernelContext)
+	, m_Identifier(OV_UndefinedIdentifier)
+	, m_Type(EVisualizationWidget_Undefined)
+	, m_ParentIdentifier(OV_UndefinedIdentifier)
+	, m_BoxIdentifier(OV_UndefinedIdentifier) { }
 
 CVisualizationWidget::~CVisualizationWidget() { }
 
@@ -43,54 +40,33 @@ bool CVisualizationWidget::initialize(const CIdentifier& identifier, const CStri
 	return true;
 }
 
-CIdentifier CVisualizationWidget::getIdentifier() const
-{
-	return m_Identifier;
-}
+CIdentifier CVisualizationWidget::getIdentifier() const { return m_Identifier; }
 
-const CString& CVisualizationWidget::getName() const
-{
-	return m_Name;
-}
+const CString& CVisualizationWidget::getName() const { return m_Name; }
 
 void CVisualizationWidget::setName(const CString& name)
 {
 	m_Name = name;
 }
 
-EVisualizationWidgetType CVisualizationWidget::getType() const
-{
-	return m_Type;
-}
+EVisualizationWidgetType CVisualizationWidget::getType() const { return m_Type; }
 
-CIdentifier CVisualizationWidget::getParentIdentifier() const
-{
-	return m_ParentIdentifier;
-}
+CIdentifier CVisualizationWidget::getParentIdentifier() const { return m_ParentIdentifier; }
 
 void CVisualizationWidget::setParentIdentifier(const CIdentifier& parentIdentifier)
 {
 	m_ParentIdentifier = parentIdentifier;
 }
 
-CIdentifier CVisualizationWidget::getBoxIdentifier() const
-{
-	return m_BoxIdentifier;
-}
+CIdentifier CVisualizationWidget::getBoxIdentifier() const { return m_BoxIdentifier; }
 
-uint32_t CVisualizationWidget::getNbChildren() const
-{
-	return static_cast<uint32_t>(m_Children.size());
-}
+uint32_t CVisualizationWidget::getNbChildren() const { return static_cast<uint32_t>(m_Children.size()); }
 
 bool CVisualizationWidget::getChildIndex(const CIdentifier& identifier, uint32_t& index) const
 {
 	for (index = 0; index < m_Children.size(); index++)
 	{
-		if (m_Children[index] == identifier)
-		{
-			return true;
-		}
+		if (m_Children[index] == identifier) { return true; }
 	}
 	return false;
 }
@@ -121,27 +97,27 @@ bool CVisualizationWidget::removeChild(const CIdentifier& identifier)
 	}
 
 	OV_ERROR_DRF("Trying to remove non existing visualization widget " << identifier,
-	             ErrorType::ResourceNotFound);
+		ErrorType::ResourceNotFound);
 }
 
-bool CVisualizationWidget::getChildIdentifier(uint32_t childIndex, CIdentifier& identifier) const
+bool CVisualizationWidget::getChildIdentifier(uint32_t childIndex, CIdentifier & identifier) const
 {
 	if (childIndex >= m_Children.size())
 	{
 		identifier = OV_UndefinedIdentifier;
 		OV_ERROR_DRF("Child with index " << childIndex << " not found",
-		             ErrorType::ResourceNotFound);
+			ErrorType::ResourceNotFound);
 	}
 	identifier = m_Children[childIndex];
 	return true;
 }
 
-bool CVisualizationWidget::setChildIdentifier(uint32_t childIndex, const CIdentifier& identifier)
+bool CVisualizationWidget::setChildIdentifier(uint32_t childIndex, const CIdentifier & identifier)
 {
 	if (childIndex >= m_Children.size())
 	{
 		OV_ERROR_DRF("Child with index " << childIndex << " not found",
-		             ErrorType::ResourceNotFound);
+			ErrorType::ResourceNotFound);
 	}
 	m_Children[childIndex] = identifier;
 	return true;

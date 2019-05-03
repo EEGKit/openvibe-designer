@@ -9,15 +9,15 @@ using namespace Setting;
 
 static void on_checkbutton_setting_bool_pressed(GtkToggleButton* pButton, gpointer pUserData)
 {
-	static_cast<CBooleanSettingView *>(pUserData)->toggleButtonClick();
+	static_cast<CBooleanSettingView*>(pUserData)->toggleButtonClick();
 }
 
-static void on_insertion(GtkEntry *entry, gpointer pUserData)
+static void on_insertion(GtkEntry* entry, gpointer pUserData)
 {
-	static_cast<CBooleanSettingView *>(pUserData)->onChange();
+	static_cast<CBooleanSettingView*>(pUserData)->onChange();
 }
 
-CBooleanSettingView::CBooleanSettingView(Kernel::IBox &rBox, uint32_t ui32Index, CString &rBuilderName):
+CBooleanSettingView::CBooleanSettingView(Kernel::IBox& rBox, uint32_t ui32Index, CString& rBuilderName) :
 	CAbstractSettingView(rBox, ui32Index, rBuilderName, "settings_collection-hbox_setting_bool"), m_bOnValueSetting(false)
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
@@ -35,21 +35,21 @@ CBooleanSettingView::CBooleanSettingView(Kernel::IBox &rBox, uint32_t ui32Index,
 }
 
 
-void CBooleanSettingView::getValue(CString &rValue) const
+void CBooleanSettingView::getValue(CString& rValue) const
 {
 	rValue = CString(gtk_entry_get_text(m_pEntry));
 }
 
 
-void CBooleanSettingView::setValue(const CString &rValue)
+void CBooleanSettingView::setValue(const CString& rValue)
 {
 	m_bOnValueSetting = true;
-	if(rValue==CString("true"))
+	if (rValue == CString("true"))
 	{
 		gtk_toggle_button_set_active(m_pToggle, true);
 		gtk_toggle_button_set_inconsistent(m_pToggle, false);
 	}
-	else if(rValue==CString("false"))
+	else if (rValue == CString("false"))
 	{
 		gtk_toggle_button_set_active(m_pToggle, false);
 		gtk_toggle_button_set_inconsistent(m_pToggle, false);
@@ -60,15 +60,15 @@ void CBooleanSettingView::setValue(const CString &rValue)
 	}
 
 	gtk_entry_set_text(m_pEntry, rValue);
-	m_bOnValueSetting =false;
+	m_bOnValueSetting = false;
 }
 
 
 void CBooleanSettingView::toggleButtonClick()
 {
-	if(!m_bOnValueSetting)
+	if (!m_bOnValueSetting)
 	{
-		if(gtk_toggle_button_get_active(m_pToggle))
+		if (gtk_toggle_button_get_active(m_pToggle))
 		{
 			getBox().setSettingValue(getSettingIndex(), "true");
 			setValue("true");
@@ -83,7 +83,7 @@ void CBooleanSettingView::toggleButtonClick()
 
 void CBooleanSettingView::onChange()
 {
-	if(!m_bOnValueSetting)
+	if (!m_bOnValueSetting)
 	{
 		const gchar* l_sValue = gtk_entry_get_text(m_pEntry);
 		getBox().setSettingValue(getSettingIndex(), l_sValue);

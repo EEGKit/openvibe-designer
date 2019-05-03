@@ -9,25 +9,25 @@ using namespace Setting;
 
 static void collect_widget_cb(GtkWidget* pWidget, gpointer pUserData)
 {
-	static_cast< std::vector< GtkWidget* > *>(pUserData)->push_back(pWidget);
+	static_cast<std::vector< GtkWidget* >*>(pUserData)->push_back(pWidget);
 }
 
 CAbstractSettingView::~CAbstractSettingView()
 {
-	if(GTK_IS_WIDGET(m_pNameWidget)){
+	if (GTK_IS_WIDGET(m_pNameWidget)) {
 		gtk_widget_destroy(m_pNameWidget);
 	}
-	if(GTK_IS_WIDGET(m_pEntryNameWidget)){
+	if (GTK_IS_WIDGET(m_pEntryNameWidget)) {
 		gtk_widget_destroy(m_pEntryNameWidget);
 	}
-	if(G_IS_OBJECT(m_pBuilder))
+	if (G_IS_OBJECT(m_pBuilder))
 	{
 		g_object_unref(m_pBuilder);
 	}
 }
 
 CAbstractSettingView::CAbstractSettingView(Kernel::IBox& rBox, uint32_t ui32Index,
-										   const char* sBuilderName, const char* sWidgetName):
+	const char* sBuilderName, const char* sWidgetName) :
 	m_rBox(rBox),
 	m_ui32Index(ui32Index),
 	m_sSettingWidgetName(""),
@@ -35,13 +35,13 @@ CAbstractSettingView::CAbstractSettingView(Kernel::IBox& rBox, uint32_t ui32Inde
 	m_pEntryNameWidget(nullptr),
 	m_bOnValueSetting(false)
 {
-	if(sBuilderName != nullptr)
+	if (sBuilderName != nullptr)
 	{
 		m_pBuilder = gtk_builder_new();
 		gtk_builder_add_from_file(m_pBuilder, sBuilderName, nullptr);
 		gtk_builder_connect_signals(m_pBuilder, nullptr);
 
-		if(sWidgetName != nullptr)
+		if (sWidgetName != nullptr)
 		{
 			m_sSettingWidgetName = sWidgetName;
 			generateNameWidget();
@@ -52,33 +52,24 @@ CAbstractSettingView::CAbstractSettingView(Kernel::IBox& rBox, uint32_t ui32Inde
 
 
 
-Kernel::IBox& CAbstractSettingView::getBox()
-{
-	return m_rBox;
-}
+Kernel::IBox& CAbstractSettingView::getBox() { return m_rBox; }
 
-uint32_t CAbstractSettingView::getSettingIndex()
-{
-	return m_ui32Index;
-}
+uint32_t CAbstractSettingView::getSettingIndex() { return m_ui32Index; }
 
 
 void CAbstractSettingView::setNameWidget(GtkWidget* pWidget)
 {
-	if(m_pNameWidget){
+	if (m_pNameWidget) {
 		gtk_widget_destroy(m_pNameWidget);
 	}
 	m_pNameWidget = pWidget;
 }
 
-GtkWidget* CAbstractSettingView::getNameWidget()
-{
-	return m_pNameWidget;
-}
+GtkWidget* CAbstractSettingView::getNameWidget() { return m_pNameWidget; }
 
 void CAbstractSettingView::setEntryWidget(GtkWidget* pWidget)
 {
-	if(m_pEntryNameWidget){
+	if (m_pEntryNameWidget) {
 		gtk_widget_destroy(m_pEntryNameWidget);
 	}
 	m_pEntryNameWidget = pWidget;
@@ -86,7 +77,7 @@ void CAbstractSettingView::setEntryWidget(GtkWidget* pWidget)
 
 void CAbstractSettingView::generateNameWidget()
 {
-	GtkWidget* l_pSettingName=GTK_WIDGET(gtk_builder_get_object(m_pBuilder, "settings_collection-label_setting_name"));
+	GtkWidget* l_pSettingName = GTK_WIDGET(gtk_builder_get_object(m_pBuilder, "settings_collection-label_setting_name"));
 	gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(l_pSettingName)), l_pSettingName);
 	setNameWidget(l_pSettingName);
 
@@ -95,19 +86,19 @@ void CAbstractSettingView::generateNameWidget()
 	gtk_label_set_text(GTK_LABEL(l_pSettingName), l_sSettingName);
 }
 
-GtkWidget *CAbstractSettingView::generateEntryWidget()
+GtkWidget* CAbstractSettingView::generateEntryWidget()
 {
 	GtkTable* m_pTable = GTK_TABLE(gtk_table_new(1, 3, false));
 
-	GtkWidget* l_pSettingWidget=GTK_WIDGET(gtk_builder_get_object(m_pBuilder, m_sSettingWidgetName.toASCIIString()));
-	GtkWidget* l_pSettingRevert=GTK_WIDGET(gtk_builder_get_object(m_pBuilder, "settings_collection-button_setting_revert"));
-	GtkWidget* l_pSettingDefault=GTK_WIDGET(gtk_builder_get_object(m_pBuilder, "settings_collection-button_setting_default"));
+	GtkWidget* l_pSettingWidget = GTK_WIDGET(gtk_builder_get_object(m_pBuilder, m_sSettingWidgetName.toASCIIString()));
+	GtkWidget* l_pSettingRevert = GTK_WIDGET(gtk_builder_get_object(m_pBuilder, "settings_collection-button_setting_revert"));
+	GtkWidget* l_pSettingDefault = GTK_WIDGET(gtk_builder_get_object(m_pBuilder, "settings_collection-button_setting_default"));
 
 	gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(l_pSettingWidget)), l_pSettingWidget);
 	gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(l_pSettingRevert)), l_pSettingRevert);
 	gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(l_pSettingDefault)), l_pSettingDefault);
 
-	gtk_table_attach(m_pTable, l_pSettingWidget,  0, 1, 0, 1, GtkAttachOptions(GTK_FILL|GTK_EXPAND), GtkAttachOptions(GTK_FILL|GTK_EXPAND), 0, 0);
+	gtk_table_attach(m_pTable, l_pSettingWidget, 0, 1, 0, 1, GtkAttachOptions(GTK_FILL | GTK_EXPAND), GtkAttachOptions(GTK_FILL | GTK_EXPAND), 0, 0);
 	//gtk_table_attach(m_pTable, l_pSettingDefault, 1, 2, 0, 1, ::GtkAttachOptions(GTK_SHRINK),          ::GtkAttachOptions(GTK_SHRINK),          0, 0);
 	//gtk_table_attach(m_pTable, l_pSettingRevert,  2, 3, 0, 1, ::GtkAttachOptions(GTK_SHRINK),          ::GtkAttachOptions(GTK_SHRINK),          0, 0);
 
@@ -125,20 +116,14 @@ void CAbstractSettingView::initializeValue()
 	setValue(l_sSettingValue);
 }
 
-void CAbstractSettingView::extractWidget(GtkWidget *pWidget, std::vector< GtkWidget* > &rVector)
+void CAbstractSettingView::extractWidget(GtkWidget * pWidget, std::vector< GtkWidget* > & rVector)
 {
 	gtk_container_foreach(GTK_CONTAINER(pWidget), collect_widget_cb, &rVector);
 }
 
-GtkWidget *CAbstractSettingView::getEntryFieldWidget()
-{
-	return m_pEntryFieldWidget;
-}
+GtkWidget* CAbstractSettingView::getEntryFieldWidget() { return m_pEntryFieldWidget; }
 
-GtkWidget* CAbstractSettingView::getEntryWidget()
-{
-	return m_pEntryNameWidget;
-}
+GtkWidget* CAbstractSettingView::getEntryWidget() { return m_pEntryNameWidget; }
 
 
 void CAbstractSettingView::setSettingIndex(uint32_t m_ui32NewIndex)

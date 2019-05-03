@@ -40,15 +40,15 @@ namespace Mensia
 				glLineWidth(4);
 				glColor3f(0, 0, 0);
 				glBegin(GL_LINES);
-					glVertex2f(fProgress, 0);
-					glVertex2f(fProgress, 1);
+				glVertex2f(fProgress, 0);
+				glVertex2f(fProgress, 1);
 				glEnd();
 
 				glLineWidth(2);
 				glColor3f(0.25, 1, 0.25);
 				glBegin(GL_LINES);
-					glVertex2f(fProgress, 0);
-					glVertex2f(fProgress, 1);
+				glVertex2f(fProgress, 0);
+				glVertex2f(fProgress, 1);
 				glEnd();
 			}
 		};

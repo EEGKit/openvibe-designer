@@ -7,14 +7,14 @@ using namespace Kernel;
 
 CAboutScenarioDialog::CAboutScenarioDialog(const IKernelContext& rKernelContext, IScenario& rScenario, const char* sGUIFilename)
 	:m_rKernelContext(rKernelContext)
-	,m_rScenario(rScenario)
-	,m_sGUIFilename(sGUIFilename) { }
+	, m_rScenario(rScenario)
+	, m_sGUIFilename(sGUIFilename) { }
 
 CAboutScenarioDialog::~CAboutScenarioDialog() { }
 
 namespace
 {
-	void buttonMetaboxReset_clicked(GtkWidget *widget, gpointer data)
+	void buttonMetaboxReset_clicked(GtkWidget* widget, gpointer data)
 	{
 		gtk_entry_set_text(GTK_ENTRY(data), CIdentifier::random().toString().toASCIIString());
 	}
@@ -23,23 +23,23 @@ namespace
 bool CAboutScenarioDialog::run()
 
 {
-	GtkBuilder* l_pInterface=gtk_builder_new(); // glade_xml_new(m_sGUIFilename.toASCIIString(), "scenario_about", nullptr);
+	GtkBuilder* l_pInterface = gtk_builder_new(); // glade_xml_new(m_sGUIFilename.toASCIIString(), "scenario_about", nullptr);
 	gtk_builder_add_from_file(l_pInterface, m_sGUIFilename.toASCIIString(), nullptr);
 	gtk_builder_connect_signals(l_pInterface, nullptr);
 
-	GtkWidget* l_pDialog=GTK_WIDGET(gtk_builder_get_object(l_pInterface, "scenario_about"));
-	GtkWidget* l_pName=GTK_WIDGET(gtk_builder_get_object(l_pInterface, "scenario_about-entry_name"));
-	GtkWidget* l_pAuthorName=GTK_WIDGET(gtk_builder_get_object(l_pInterface, "scenario_about-entry_author_name"));
-	GtkWidget* l_pAuthorCompanyName=GTK_WIDGET(gtk_builder_get_object(l_pInterface, "scenario_about-entry_company_name"));
-	GtkWidget* l_pCategory=GTK_WIDGET(gtk_builder_get_object(l_pInterface, "scenario_about-entry_category"));
-	GtkWidget* l_pVersion=GTK_WIDGET(gtk_builder_get_object(l_pInterface, "scenario_about-entry_version"));
-	GtkWidget* l_pDocumentationPage=GTK_WIDGET(gtk_builder_get_object(l_pInterface, "scenario_about-entry_documentation_page"));
-	GtkWidget* l_pAddedSoftwareVersion=GTK_WIDGET(gtk_builder_get_object(l_pInterface, "scenario_about-entry_added_software_version"));
-	GtkWidget* l_pUpdatedSoftwareVersion=GTK_WIDGET(gtk_builder_get_object(l_pInterface, "scenario_about-entry_update_software_version"));
+	GtkWidget* l_pDialog = GTK_WIDGET(gtk_builder_get_object(l_pInterface, "scenario_about"));
+	GtkWidget* l_pName = GTK_WIDGET(gtk_builder_get_object(l_pInterface, "scenario_about-entry_name"));
+	GtkWidget* l_pAuthorName = GTK_WIDGET(gtk_builder_get_object(l_pInterface, "scenario_about-entry_author_name"));
+	GtkWidget* l_pAuthorCompanyName = GTK_WIDGET(gtk_builder_get_object(l_pInterface, "scenario_about-entry_company_name"));
+	GtkWidget* l_pCategory = GTK_WIDGET(gtk_builder_get_object(l_pInterface, "scenario_about-entry_category"));
+	GtkWidget* l_pVersion = GTK_WIDGET(gtk_builder_get_object(l_pInterface, "scenario_about-entry_version"));
+	GtkWidget* l_pDocumentationPage = GTK_WIDGET(gtk_builder_get_object(l_pInterface, "scenario_about-entry_documentation_page"));
+	GtkWidget* l_pAddedSoftwareVersion = GTK_WIDGET(gtk_builder_get_object(l_pInterface, "scenario_about-entry_added_software_version"));
+	GtkWidget* l_pUpdatedSoftwareVersion = GTK_WIDGET(gtk_builder_get_object(l_pInterface, "scenario_about-entry_update_software_version"));
 
-	GtkWidget* l_pMetaboxId=GTK_WIDGET(gtk_builder_get_object(l_pInterface, "scenario_about-entry_metabox_id"));
+	GtkWidget* l_pMetaboxId = GTK_WIDGET(gtk_builder_get_object(l_pInterface, "scenario_about-entry_metabox_id"));
 
-	GtkWidget* l_pResetMetaboxId=GTK_WIDGET(gtk_builder_get_object(l_pInterface, "scenario_about-button_reset_metabox_id"));
+	GtkWidget* l_pResetMetaboxId = GTK_WIDGET(gtk_builder_get_object(l_pInterface, "scenario_about-button_reset_metabox_id"));
 	gulong signalHandlerId = g_signal_connect(G_OBJECT(l_pResetMetaboxId), "clicked", G_CALLBACK(buttonMetaboxReset_clicked), l_pMetaboxId);
 
 	GtkWidget* l_pShortDescription = GTK_WIDGET(gtk_builder_get_object(l_pInterface, "scenario_about-textview_short_description"));
@@ -62,18 +62,18 @@ bool CAboutScenarioDialog::run()
 	}
 	else
 	{
-		gtk_widget_set_sensitive (l_pMetaboxId, FALSE);
-		gtk_widget_set_sensitive (l_pResetMetaboxId, FALSE);
+		gtk_widget_set_sensitive(l_pMetaboxId, FALSE);
+		gtk_widget_set_sensitive(l_pResetMetaboxId, FALSE);
 	}
 
 	GtkTextBuffer* l_pShortDescriptionBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(l_pShortDescription));
 	gtk_text_buffer_set_text(l_pShortDescriptionBuffer, m_rScenario.getAttributeValue(OV_AttributeId_Scenario_ShortDescription).toASCIIString(), -1);
-	GtkTextBuffer* l_pDetailedDescriptionBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(l_pDetailedDescription));
+	GtkTextBuffer * l_pDetailedDescriptionBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(l_pDetailedDescription));
 	gtk_text_buffer_set_text(l_pDetailedDescriptionBuffer, m_rScenario.getAttributeValue(OV_AttributeId_Scenario_DetailedDescription).toASCIIString(), -1);
 
 	gtk_dialog_run(GTK_DIALOG(l_pDialog));
 
-	g_signal_handler_disconnect (G_OBJECT(l_pResetMetaboxId), signalHandlerId);
+	g_signal_handler_disconnect(G_OBJECT(l_pResetMetaboxId), signalHandlerId);
 	m_rScenario.setAttributeValue(OV_AttributeId_Scenario_Name, gtk_entry_get_text(GTK_ENTRY(l_pName)));
 	m_rScenario.setAttributeValue(OV_AttributeId_Scenario_Author, gtk_entry_get_text(GTK_ENTRY(l_pAuthorName)));
 	m_rScenario.setAttributeValue(OV_AttributeId_Scenario_Company, gtk_entry_get_text(GTK_ENTRY(l_pAuthorCompanyName)));

@@ -35,13 +35,13 @@ namespace json
 static std::string Trim(const std::string& str)
 {
 	std::string s = str;
-	
+
 	// remove white space in front
 	s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
-	
+
 	// remove trailing white space
 	s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
-	
+
 	return s;
 }
 
@@ -63,28 +63,28 @@ static size_t GetQuotePos(const std::string& str, size_t start_pos = 0)
 
 		found_slash = false;
 	}
-	
+
 	return std::string::npos;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-Value::Value(const Value& v) : mValueType(v.mValueType)
+Value::Value(const Value & v) : mValueType(v.mValueType)
 {
 	switch (mValueType)
 	{
-		case StringVal		: mStringVal = v.mStringVal; break;
-		case IntVal			: mIntVal = v.mIntVal; mFloatVal = (float)v.mIntVal; mDoubleVal = (double)v.mIntVal; break;
-		case FloatVal		: mFloatVal = v.mFloatVal; mIntVal = (int)v.mFloatVal; mDoubleVal = (double)v.mDoubleVal; break;
-		case DoubleVal		: mDoubleVal = v.mDoubleVal; mIntVal = (int)v.mDoubleVal; mFloatVal = (float)v.mDoubleVal; break;
-		case BoolVal		: mBoolVal = v.mBoolVal; break;
-		case ObjectVal		: mObjectVal = v.mObjectVal; break;
-		case ArrayVal		: mArrayVal = v.mArrayVal; break;
-		default				: break;
+	case StringVal: mStringVal = v.mStringVal; break;
+	case IntVal: mIntVal = v.mIntVal; mFloatVal = (float)v.mIntVal; mDoubleVal = (double)v.mIntVal; break;
+	case FloatVal: mFloatVal = v.mFloatVal; mIntVal = (int)v.mFloatVal; mDoubleVal = (double)v.mDoubleVal; break;
+	case DoubleVal: mDoubleVal = v.mDoubleVal; mIntVal = (int)v.mDoubleVal; mFloatVal = (float)v.mDoubleVal; break;
+	case BoolVal: mBoolVal = v.mBoolVal; break;
+	case ObjectVal: mObjectVal = v.mObjectVal; break;
+	case ArrayVal: mArrayVal = v.mArrayVal; break;
+	default: break;
 	}
 }
 
-Value& Value::operator =(const Value& v)
+Value& Value::operator =(const Value & v)
 {
 	if (&v == this)
 		return *this;
@@ -93,14 +93,14 @@ Value& Value::operator =(const Value& v)
 
 	switch (mValueType)
 	{
-		case StringVal		: mStringVal = v.mStringVal; break;
-		case IntVal			: mIntVal = v.mIntVal; mFloatVal = (float)v.mIntVal; mDoubleVal = (double)v.mIntVal; break;
-		case FloatVal		: mFloatVal = v.mFloatVal; mIntVal = (int)v.mFloatVal; mDoubleVal = (double)v.mDoubleVal; break;
-		case DoubleVal		: mDoubleVal = v.mDoubleVal; mIntVal = (int)v.mDoubleVal; mFloatVal = (float)v.mDoubleVal; break;
-		case BoolVal		: mBoolVal = v.mBoolVal; break;
-		case ObjectVal		: mObjectVal = v.mObjectVal; break;
-		case ArrayVal		: mArrayVal = v.mArrayVal; break;
-		default				: break;
+	case StringVal: mStringVal = v.mStringVal; break;
+	case IntVal: mIntVal = v.mIntVal; mFloatVal = (float)v.mIntVal; mDoubleVal = (double)v.mIntVal; break;
+	case FloatVal: mFloatVal = v.mFloatVal; mIntVal = (int)v.mFloatVal; mDoubleVal = (double)v.mDoubleVal; break;
+	case DoubleVal: mDoubleVal = v.mDoubleVal; mIntVal = (int)v.mDoubleVal; mFloatVal = (float)v.mDoubleVal; break;
+	case BoolVal: mBoolVal = v.mBoolVal; break;
+	case ObjectVal: mObjectVal = v.mObjectVal; break;
+	case ArrayVal: mArrayVal = v.mArrayVal; break;
+	default: break;
 	}
 
 	return *this;
@@ -118,7 +118,7 @@ const Value& Value::operator [](size_t idx) const
 	return mArrayVal[idx];
 }
 
-Value& Value::operator [](const std::string& key)
+Value& Value::operator [](const std::string & key)
 {
 	assert(mValueType == ObjectVal);
 	return mObjectVal[key];
@@ -136,7 +136,7 @@ const Value& Value::operator [](const char* key) const
 	return mObjectVal[key];
 }
 
-const Value& Value::operator [](const std::string& key) const
+const Value& Value::operator [](const std::string & key) const
 {
 	assert(mValueType == ObjectVal);
 	return mObjectVal[key];
@@ -155,19 +155,19 @@ size_t Value::size() const
 	return mValueType == ObjectVal ? mObjectVal.size() : mArrayVal.size();
 }
 
-bool Value::HasKey(const std::string &key) const
+bool Value::HasKey(const std::string & key) const
 {
 	assert(mValueType == ObjectVal);
 	return mObjectVal.HasKey(key);
 }
 
-int Value::HasKeys(const std::vector<std::string> &keys) const
+int Value::HasKeys(const std::vector<std::string> & keys) const
 {
 	assert(mValueType == ObjectVal);
 	return mObjectVal.HasKeys(keys);
 }
 
-int Value::HasKeys(const char **keys, int key_count) const
+int Value::HasKeys(const char** keys, int key_count) const
 {
 	assert(mValueType == ObjectVal);
 	return mObjectVal.HasKeys(keys, key_count);
@@ -177,9 +177,9 @@ int Value::HasKeys(const char **keys, int key_count) const
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Array::Array() { }
 
-Array::Array(const Array& a) : mValues(a.mValues) { }
+Array::Array(const Array & a) : mValues(a.mValues) { }
 
-Array& Array::operator =(const Array& a)
+Array& Array::operator =(const Array & a)
 {
 	if (&a == this)
 		return *this;
@@ -190,82 +190,49 @@ Array& Array::operator =(const Array& a)
 	return *this;
 }
 
-Value& Array::operator [](size_t i)
-{
-	return mValues[i];
-}
+Value& Array::operator [](size_t i) { return mValues[i]; }
 
-const Value& Array::operator [](size_t i) const
-{
-	return mValues[i];
-}
+const Value& Array::operator [](size_t i) const { return mValues[i]; }
 
 
-Array::ValueVector::const_iterator Array::begin() const
-{
-	return mValues.begin();
-}
+Array::ValueVector::const_iterator Array::begin() const { return mValues.begin(); }
 
-Array::ValueVector::const_iterator Array::end() const
-{
-	return mValues.end();
-}
+Array::ValueVector::const_iterator Array::end() const { return mValues.end(); }
 
-Array::ValueVector::iterator Array::begin()
-{
-	return mValues.begin();
-}
+Array::ValueVector::iterator Array::begin() { return mValues.begin(); }
 
-Array::ValueVector::iterator Array::end()
-{
-	return mValues.end();
-}
+Array::ValueVector::iterator Array::end() { return mValues.end(); }
 
-void Array::push_back(const Value& v)
+void Array::push_back(const Value & v)
 {
 	mValues.push_back(v);
 }
 
-void Array::insert(size_t index, const Value& v)
+void Array::insert(size_t index, const Value & v)
 {
 	mValues.insert(mValues.begin() + index, v);
 }
 
-size_t Array::size() const
-{
-	return mValues.size();
-}
+size_t Array::size() const { return mValues.size(); }
 
 void Array::Clear()
 {
 	mValues.clear();
 }
 
-Array::ValueVector::iterator Array::find(const Value& v)
-{
-	return std::find(mValues.begin(), mValues.end(), v);
-}
+Array::ValueVector::iterator Array::find(const Value & v) { return std::find(mValues.begin(), mValues.end(), v); }
 
-Array::ValueVector::const_iterator Array::find(const Value& v) const
-{
-	return std::find(mValues.begin(), mValues.end(), v);
-}
+Array::ValueVector::const_iterator Array::find(const Value & v) const { return std::find(mValues.begin(), mValues.end(), v); }
 
-bool Array::HasValue(const Value& v) const
-{
-	return find(v) != end();
-}
+bool Array::HasValue(const Value & v) const { return find(v) != end(); }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Object::Object() { }
 
-Object::Object(const Object& obj) : mValues(obj.mValues)
-{
+Object::Object(const Object & obj) : mValues(obj.mValues) {}
 
-}
-
-Object& Object::operator =(const Object& obj)
+Object& Object::operator =(const Object & obj)
 {
 	if (&obj == this)
 		return *this;
@@ -276,21 +243,15 @@ Object& Object::operator =(const Object& obj)
 	return *this;
 }
 
-Value& Object::operator [](const std::string& key)
-{
-	return mValues[key];
-}
+Value& Object::operator [](const std::string & key) { return mValues[key]; }
 
-const Value& Object::operator [](const std::string& key) const
+const Value& Object::operator [](const std::string & key) const
 {
 	ValueMap::const_iterator it = mValues.find(key);
 	return it->second;
 }
 
-Value& Object::operator [](const char* key)
-{
-	return mValues[key];
-}
+Value& Object::operator [](const char* key) { return mValues[key]; }
 
 const Value& Object::operator [](const char* key) const
 {
@@ -298,49 +259,28 @@ const Value& Object::operator [](const char* key) const
 	return it->second;
 }
 
-Object::ValueMap::const_iterator Object::begin() const
-{
-	return mValues.begin();
-}
+Object::ValueMap::const_iterator Object::begin() const { return mValues.begin(); }
 
-Object::ValueMap::const_iterator Object::end() const
-{
-	return mValues.end();
-}
+Object::ValueMap::const_iterator Object::end() const { return mValues.end(); }
 
-Object::ValueMap::iterator Object::begin()
-{
-	return mValues.begin();
-}
+Object::ValueMap::iterator Object::begin() { return mValues.begin(); }
 
-Object::ValueMap::iterator Object::end()
-{
-	return mValues.end();
-}
+Object::ValueMap::iterator Object::end() { return mValues.end(); }
 
-Object::ValueMap::iterator Object::find(const std::string& key)
-{
-	return mValues.find(key);
-}
+Object::ValueMap::iterator Object::find(const std::string & key) { return mValues.find(key); }
 
-Object::ValueMap::const_iterator Object::find(const std::string& key) const
-{
-	return mValues.find(key);
-}
+Object::ValueMap::const_iterator Object::find(const std::string & key) const { return mValues.find(key); }
 
-bool Object::HasKey(const std::string& key) const
-{
-	return find(key) != end();
-}
+bool Object::HasKey(const std::string & key) const { return find(key) != end(); }
 
-int Object::HasKeys(const std::vector<std::string>& keys) const
+int Object::HasKeys(const std::vector<std::string> & keys) const
 {
 	for (size_t i = 0; i < keys.size(); i++)
 	{
 		if (!HasKey(keys[i]))
 			return (int)i;
 	}
-	
+
 	return -1;
 }
 
@@ -349,7 +289,7 @@ int Object::HasKeys(const char** keys, int key_count) const
 	for (int i = 0; i < key_count; i++)
 		if (!HasKey(keys[i]))
 			return i;
-	
+
 	return -1;
 }
 
@@ -361,9 +301,9 @@ void Object::Clear()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-std::string SerializeArray(const Array& a);
+std::string SerializeArray(const Array & a);
 
-std::string SerializeValue(const Value& v)
+std::string SerializeValue(const Value & v)
 {
 	std::string str;
 
@@ -371,20 +311,20 @@ std::string SerializeValue(const Value& v)
 	char buff[BUFF_SZ];
 	switch (v.GetType())
 	{
-		case IntVal			: snprintf(buff, BUFF_SZ, "%d", (int)v); str = buff; break;
-		case FloatVal		: snprintf(buff, BUFF_SZ, "%f", (float)v); str = buff; break;
-		case DoubleVal		: snprintf(buff, BUFF_SZ, "%f", (double)v); str = buff; break;
-		case BoolVal		: str = v ? "true" : "false"; break;
-		case nullptrVal		: str = "null"; break;
-		case ObjectVal		: str = Serialize(v); break;
-		case ArrayVal		: str = SerializeArray(v); break;
-		case StringVal		: str = std::string("\"") + v.ToString() + std::string("\""); break;
+	case IntVal: snprintf(buff, BUFF_SZ, "%d", (int)v); str = buff; break;
+	case FloatVal: snprintf(buff, BUFF_SZ, "%f", (float)v); str = buff; break;
+	case DoubleVal: snprintf(buff, BUFF_SZ, "%f", (double)v); str = buff; break;
+	case BoolVal: str = v ? "true" : "false"; break;
+	case nullptrVal: str = "null"; break;
+	case ObjectVal: str = Serialize(v); break;
+	case ArrayVal: str = SerializeArray(v); break;
+	case StringVal: str = std::string("\"") + v.ToString() + std::string("\""); break;
 	}
 
 	return str;
 }
 
-std::string SerializeArray(const Array& a)
+std::string SerializeArray(const Array & a)
 {
 	std::string str = "[";
 
@@ -404,12 +344,12 @@ std::string SerializeArray(const Array& a)
 	return str;
 }
 
-std::string json::Serialize(const Value& v)
+std::string json::Serialize(const Value & v)
 {
 	std::string str;
 
 	bool first = true;
-	
+
 	if (v.GetType() == ObjectVal)
 	{
 		str = "{";
@@ -433,45 +373,42 @@ std::string json::Serialize(const Value& v)
 		{
 			if (!first)
 				str += std::string(",");
-			
+
 			str += SerializeValue(*it);
 			first = false;
 		}
-		
+
 		str += "]";
-			
+
 	}
 	//else error
-	
+
 	return str;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static Value DeserializeArray(std::string& str, std::stack<StackDepthType>& depth_stack);
-static Value DeserializeObj(const std::string& _str, std::stack<StackDepthType>& depth_stack);
+static Value DeserializeArray(std::string & str, std::stack<StackDepthType> & depth_stack);
+static Value DeserializeObj(const std::string & _str, std::stack<StackDepthType> & depth_stack);
 
-static Value DeserializeInternal(const std::string& _str, std::stack<StackDepthType>& depth_stack)
+static Value DeserializeInternal(const std::string & _str, std::stack<StackDepthType> & depth_stack)
 {
 	Value v;
 
-	if (_str.length() == 0)
-	{
-		return v;
-	}
-	
+	if (_str.length() == 0) { return v; }
+
 	std::string str = Trim(_str);
 	if (str[0] == '{')
 	{
 		// Error: Began with a { but doesn't end with one
 		if (str[str.length() - 1] != '}')
 			return Value();
-		
+
 		depth_stack.push(InObject);
 		v = DeserializeObj(str, depth_stack);
 		if ((v.GetType() == nullptrVal) || (depth_stack.top() != InObject))
 			return v;
-		
+
 		depth_stack.pop();
 	}
 	else if (str[0] == '[')
@@ -479,12 +416,12 @@ static Value DeserializeInternal(const std::string& _str, std::stack<StackDepthT
 		// Error: Began with a [ but doesn't end with one
 		if (str[str.length() - 1] != ']')
 			return Value();
-		
+
 		depth_stack.push(InArray);
 		v = DeserializeArray(str, depth_stack);
 		if ((v.GetType() == nullptrVal) || (depth_stack.top() != InArray))
 			return v;
-		
+
 		depth_stack.pop();
 	}
 	else
@@ -492,16 +429,16 @@ static Value DeserializeInternal(const std::string& _str, std::stack<StackDepthT
 		// Will never get here unless _str is not valid JSON
 		return Value();
 	}
-	
+
 	return v;
 }
 
-static size_t GetEndOfArrayOrObj(const std::string& str, std::stack<StackDepthType>& depth_stack)
+static size_t GetEndOfArrayOrObj(const std::string & str, std::stack<StackDepthType> & depth_stack)
 {
 	size_t i = 1;
 	bool in_quote = false;
 	size_t original_count = depth_stack.size();
-	
+
 	for (; i < str.length(); i++)
 	{
 		if (str[i] == '\"')
@@ -524,7 +461,7 @@ static size_t GetEndOfArrayOrObj(const std::string& str, std::stack<StackDepthTy
 					// Example problem: {]}
 					return std::string::npos;
 				}
-				
+
 				size_t count = depth_stack.size();
 				depth_stack.pop();
 				if (count == original_count)
@@ -539,7 +476,7 @@ static size_t GetEndOfArrayOrObj(const std::string& str, std::stack<StackDepthTy
 					// Example problem: [}]
 					return std::string::npos;
 				}
-					
+
 				size_t count = depth_stack.size();
 				depth_stack.pop();
 				if (count == original_count)
@@ -547,14 +484,14 @@ static size_t GetEndOfArrayOrObj(const std::string& str, std::stack<StackDepthTy
 			}
 		}
 	}
-	
+
 	return i;
 }
 
-static std::string UnescapeJSONString(const std::string& str)
+static std::string UnescapeJSONString(const std::string & str)
 {
 	std::string s = "";
-	
+
 	for (size_t i = 0; i < str.length(); i++)
 	{
 		char c = str[i];
@@ -563,36 +500,36 @@ static std::string UnescapeJSONString(const std::string& str)
 			int skip_ahead = 1;
 			unsigned int hex;
 			std::string hex_str;
-			
-			switch (str[i+1])
+
+			switch (str[i + 1])
 			{
-				case '"' : 	s.push_back('\"'); break;
-				case '\\': 	s.push_back('\\'); break;
-				case '/' : 	s.push_back('/'); break;
-				case 't' : 	s.push_back('\t'); break;
-				case 'n' : 	s.push_back('\n'); break;
-				case 'r' : 	s.push_back('\r'); break;
-				case 'b' :	s.push_back('\b'); break;
-				case 'f' : 	s.push_back('\f'); break;
-				case 'u' : 	skip_ahead = 5;
-					hex_str = str.substr(i + 4, 2);
-					hex = (unsigned int)std::strtoul(hex_str.c_str(), nullptr, 16);
-					s.push_back((char)hex);
-					break;
-					
-				default: break;
+			case '"': 	s.push_back('\"'); break;
+			case '\\': 	s.push_back('\\'); break;
+			case '/': 	s.push_back('/'); break;
+			case 't': 	s.push_back('\t'); break;
+			case 'n': 	s.push_back('\n'); break;
+			case 'r': 	s.push_back('\r'); break;
+			case 'b':	s.push_back('\b'); break;
+			case 'f': 	s.push_back('\f'); break;
+			case 'u': 	skip_ahead = 5;
+				hex_str = str.substr(i + 4, 2);
+				hex = (unsigned int)std::strtoul(hex_str.c_str(), nullptr, 16);
+				s.push_back((char)hex);
+				break;
+
+			default: break;
 			}
-			
+
 			i += skip_ahead;
 		}
 		else
 			s.push_back(c);
 	}
-	
+
 	return Trim(s);
 }
 
-static Value DeserializeValue(std::string& str, bool* had_error, std::stack<StackDepthType>& depth_stack)
+static Value DeserializeValue(std::string & str, bool* had_error, std::stack<StackDepthType> & depth_stack)
 {
 	Value v;
 
@@ -611,7 +548,7 @@ static Value DeserializeValue(std::string& str, bool* had_error, std::stack<Stac
 			*had_error = true;
 			return Value();
 		}
-		
+
 		std::string array_str = str.substr(0, i + 1);
 		v = Value(DeserializeArray(array_str, depth_stack));
 		str = str.substr(i + 1, str.length());
@@ -662,7 +599,7 @@ static Value DeserializeValue(std::string& str, bool* had_error, std::stack<Stac
 					*had_error = true;
 					return Value();
 				}
-				
+
 				depth_stack.pop();
 			}
 			else if (str[i] == '}')
@@ -672,7 +609,7 @@ static Value DeserializeValue(std::string& str, bool* had_error, std::stack<Stac
 					*had_error = true;
 					return Value();
 				}
-				
+
 				depth_stack.pop();
 			}
 			else if (str[i] == ',')
@@ -707,7 +644,7 @@ static Value DeserializeValue(std::string& str, bool* had_error, std::stack<Stac
 	return v;
 }
 
-static Value DeserializeArray(std::string& str, std::stack<StackDepthType>& depth_stack)
+static Value DeserializeArray(std::string & str, std::stack<StackDepthType> & depth_stack)
 {
 	Array a;
 	bool had_error = false;
@@ -732,7 +669,7 @@ static Value DeserializeArray(std::string& str, std::stack<StackDepthType>& dept
 				Value v = DeserializeValue(str, &had_error, depth_stack);
 				if (had_error)
 					return Value();
-				
+
 				if (v.GetType() != nullptrVal)
 					a.push_back(v);
 
@@ -747,7 +684,7 @@ static Value DeserializeArray(std::string& str, std::stack<StackDepthType>& dept
 			{
 				// keep grabbing chars to build up the value
 				tmp += str[i];
-				if  (i == str.length() - 1)
+				if (i == str.length() - 1)
 					terminate_parsing = true; // end of string, finish parsing
 			}
 
@@ -756,7 +693,7 @@ static Value DeserializeArray(std::string& str, std::stack<StackDepthType>& dept
 				Value v = DeserializeValue(tmp, &had_error, depth_stack);
 				if (had_error)
 					return Value();
-				
+
 				if (v.GetType() != nullptrVal)
 					a.push_back(v);
 
@@ -769,7 +706,7 @@ static Value DeserializeArray(std::string& str, std::stack<StackDepthType>& dept
 	return a;
 }
 
-static Value DeserializeObj(const std::string& _str, std::stack<StackDepthType>& depth_stack)
+static Value DeserializeObj(const std::string & _str, std::stack<StackDepthType> & depth_stack)
 {
 	Object obj;
 
@@ -788,7 +725,7 @@ static Value DeserializeObj(const std::string& _str, std::stack<StackDepthType>&
 
 		if ((start_quote_idx == std::string::npos) || (end_quote_idx == std::string::npos) || (colon_idx == std::string::npos))
 			return Value();	// can't find key name
-		
+
 		std::string key = str.substr(start_quote_idx + 1, end_quote_idx - start_quote_idx - 1);
 		if (key.length() == 0)
 			return Value();
@@ -803,7 +740,7 @@ static Value DeserializeObj(const std::string& _str, std::stack<StackDepthType>&
 	return obj;
 }
 
-Value json::Deserialize(const std::string &str)
+Value json::Deserialize(const std::string & str)
 {
 	std::stack<StackDepthType> depth_stack;
 	return DeserializeInternal(str, depth_stack);

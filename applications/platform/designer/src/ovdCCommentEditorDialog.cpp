@@ -69,17 +69,17 @@ namespace
 
 CCommentEditorDialog::CCommentEditorDialog(const IKernelContext& rKernelContext, IComment& rComment, const char* sGUIFilename)
 	:m_rKernelContext(rKernelContext)
-	,m_rComment(rComment)
-	,m_sGUIFilename(sGUIFilename) { }
+	, m_rComment(rComment)
+	, m_sGUIFilename(sGUIFilename) { }
 
 CCommentEditorDialog::~CCommentEditorDialog() { }
 
 bool CCommentEditorDialog::run()
 
 {
-	bool l_bResult=false;
+	bool l_bResult = false;
 
-	m_pInterface=gtk_builder_new(); // glade_xml_new(m_sGUIFilename.toASCIIString(), "comment", nullptr);
+	m_pInterface = gtk_builder_new(); // glade_xml_new(m_sGUIFilename.toASCIIString(), "comment", nullptr);
 	gtk_builder_add_from_file(m_pInterface, m_sGUIFilename.toASCIIString(), nullptr);
 	gtk_builder_connect_signals(m_pInterface, nullptr);
 
@@ -97,33 +97,33 @@ bool CCommentEditorDialog::run()
 	::g_signal_connect(::gtk_builder_get_object(m_pInterface, "comment_toolbutton_blue"), "clicked", G_CALLBACK(button_comment_blue_selection_cb), this);
 
 	::g_signal_connect(::gtk_builder_get_object(m_pInterface, "comment_toolbutton_info"), "clicked", G_CALLBACK(button_comment_info_cb), this);
-	
-	m_pDialog=GTK_WIDGET(gtk_builder_get_object(m_pInterface, "comment"));
-	m_pDescription=GTK_WIDGET(gtk_builder_get_object(m_pInterface, "comment-textview_description"));
-	
+
+	m_pDialog = GTK_WIDGET(gtk_builder_get_object(m_pInterface, "comment"));
+	m_pDescription = GTK_WIDGET(gtk_builder_get_object(m_pInterface, "comment-textview_description"));
+
 	m_pInfoDialog = GTK_WIDGET(gtk_builder_get_object(m_pInterface, "messagedialog_howto_comment"));
 	::g_signal_connect(m_pInfoDialog, "close", G_CALLBACK(::gtk_widget_hide), nullptr);
 	::g_signal_connect(m_pInfoDialog, "delete-event", G_CALLBACK(::gtk_widget_hide), nullptr);
-	
+
 	//::g_signal_connect(GTK_WIDGET(gtk_builder_get_object(m_pInterface, "messagedialog_howto_comment_button_close")), "clicked", G_CALLBACK(::gtk_widget_hide), nullptr);
 
 	g_object_unref(m_pInterface);
 
-	m_pDescriptionBuffer=gtk_text_buffer_new(nullptr);
+	m_pDescriptionBuffer = gtk_text_buffer_new(nullptr);
 	gtk_text_buffer_set_text(m_pDescriptionBuffer, m_rComment.getText().toASCIIString(), -1);
 	gtk_text_view_set_buffer(GTK_TEXT_VIEW(m_pDescription), m_pDescriptionBuffer);
 	g_object_unref(m_pDescriptionBuffer);
-	
+
 	gtk_widget_grab_focus(m_pDescription);
 
-	gint l_iResult=gtk_dialog_run(GTK_DIALOG(m_pDialog));
-	if(l_iResult==GTK_RESPONSE_APPLY)
+	gint l_iResult = gtk_dialog_run(GTK_DIALOG(m_pDialog));
+	if (l_iResult == GTK_RESPONSE_APPLY)
 	{
-		l_bResult=true;
+		l_bResult = true;
 
 		GtkTextIter l_oStartIter;
 		GtkTextIter l_oEndIter;
-		m_pDescriptionBuffer=gtk_text_view_get_buffer(GTK_TEXT_VIEW(m_pDescription));
+		m_pDescriptionBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(m_pDescription));
 		gtk_text_buffer_get_start_iter(m_pDescriptionBuffer, &l_oStartIter);
 		gtk_text_buffer_get_end_iter(m_pDescriptionBuffer, &l_oEndIter);
 		m_rComment.setText(gtk_text_buffer_get_text(m_pDescriptionBuffer, &l_oStartIter, &l_oEndIter, TRUE));
@@ -139,8 +139,8 @@ void CCommentEditorDialog::applyTagCB(const char* sTagIn, const char* sTagOut)
 {
 	GtkTextIter l_oStartIter;
 	GtkTextIter l_oEndIter;
-	
-	if(gtk_text_buffer_get_has_selection(m_pDescriptionBuffer))
+
+	if (gtk_text_buffer_get_has_selection(m_pDescriptionBuffer))
 	{
 		gtk_text_buffer_get_selection_bounds(m_pDescriptionBuffer, &l_oStartIter, &l_oEndIter);
 		gtk_text_buffer_insert(m_pDescriptionBuffer, &l_oStartIter, sTagIn, strlen(sTagIn));
@@ -154,14 +154,14 @@ void CCommentEditorDialog::applyTagCB(const char* sTagIn, const char* sTagOut)
 	}
 	else
 	{
-		
+
 		gtk_text_buffer_get_selection_bounds(m_pDescriptionBuffer, &l_oStartIter, &l_oEndIter);
 		gint l_iOffset = gtk_text_iter_get_offset(&l_oStartIter);
 
 		gtk_text_buffer_insert_at_cursor(m_pDescriptionBuffer, sTagIn, strlen(sTagIn));
 		gtk_text_buffer_insert_at_cursor(m_pDescriptionBuffer, sTagOut, strlen(sTagOut));
 
-		
+
 		gtk_text_buffer_get_iter_at_offset(m_pDescriptionBuffer, &l_oStartIter, l_iOffset + strlen(sTagIn));
 		gtk_text_buffer_place_cursor(m_pDescriptionBuffer, &l_oStartIter);
 	}

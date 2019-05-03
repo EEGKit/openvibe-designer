@@ -18,7 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #ifndef __OpenViBEPlugins_Tools_H__
 #define __OpenViBEPlugins_Tools_H__
 

@@ -46,24 +46,23 @@ namespace Mensia
 
 				GtkTreeIter l_oIter;
 
-				char* l_sValue=nullptr;
-				for(uint32_t i=0; i<3; i++)
+				char* l_sValue = nullptr;
+				for (uint32_t i = 0; i < 3; i++)
 				{
-					GtkTreeSelection* l_pTreeSelection=gtk_tree_view_get_selection(m_pLookupTreeView[i]);
+					GtkTreeSelection* l_pTreeSelection = gtk_tree_view_get_selection(m_pLookupTreeView[i]);
 
-					if(l_pTreeSelection==pTreeSelection)
+					if (l_pTreeSelection == pTreeSelection)
 					{
-						if(gtk_tree_model_get_iter_first(GTK_TREE_MODEL(m_pLookupListStore[i]), &l_oIter))
+						if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(m_pLookupListStore[i]), &l_oIter))
 						{
 							do
 							{
-								if(gtk_tree_selection_iter_is_selected(l_pTreeSelection, &l_oIter))
+								if (gtk_tree_selection_iter_is_selected(l_pTreeSelection, &l_oIter))
 								{
 									gtk_tree_model_get(GTK_TREE_MODEL(m_pLookupListStore[i]), &l_oIter, 0, &l_sValue, -1);
 									m_pRenderer->selectRegion(i, l_sValue);
 								}
-							}
-							while(gtk_tree_model_iter_next(GTK_TREE_MODEL(m_pLookupListStore[i]), &l_oIter));
+							} while (gtk_tree_model_iter_next(GTK_TREE_MODEL(m_pLookupListStore[i]), &l_oIter));
 						}
 					}
 					else
@@ -73,17 +72,17 @@ namespace Mensia
 				}
 			}
 
-			void fill_region(GtkListStore* pListStore, GtkTreeView* pTreeView, IRenderer* pRenderer, uint32_t ui32RegionCategory)
+			void fill_region(GtkListStore * pListStore, GtkTreeView * pTreeView, IRenderer * pRenderer, uint32_t ui32RegionCategory)
 			{
 				GtkTreeIter l_oGtkTreeIterator;
 
 				gtk_list_store_clear(pListStore);
 				gtk_tree_selection_set_mode(gtk_tree_view_get_selection(pTreeView), GTK_SELECTION_MULTIPLE);
-				for(uint32_t i=0; i<pRenderer->getRegionCount(ui32RegionCategory); i++)
+				for (uint32_t i = 0; i < pRenderer->getRegionCount(ui32RegionCategory); i++)
 				{
-					const char* l_sName=m_pRenderer->getRegionName(ui32RegionCategory, i);
+					const char* l_sName = m_pRenderer->getRegionName(ui32RegionCategory, i);
 					gtk_list_store_append((pListStore), &l_oGtkTreeIterator);
-					gtk_list_store_set(pListStore, &l_oGtkTreeIterator, 0, l_sName?l_sName:"", -1);
+					gtk_list_store_set(pListStore, &l_oGtkTreeIterator, 0, l_sName ? l_sName : "", -1);
 					gtk_tree_selection_select_iter(gtk_tree_view_get_selection(pTreeView), &l_oGtkTreeIterator);
 				}
 			}
@@ -96,19 +95,19 @@ namespace Mensia
 			{
 				TBoxAlgorithmInstantViz < TRendererFactoryClass, TRulerClass >::initialize();
 
-				m_pRenderer=m_vRenderer[0];
+				m_pRenderer = m_vRenderer[0];
 
 				gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "expander_select")));
 				gtk_widget_show(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "expander_select_sLORETA")));
 
-				m_pLookupTreeView[0]=GTK_TREE_VIEW(::gtk_builder_get_object(m_pBuilder, "expander_select_broadmann_treeview"));
-				m_pLookupTreeView[1]=GTK_TREE_VIEW(::gtk_builder_get_object(m_pBuilder, "expander_select_neuro_1_treeview"));
-				m_pLookupTreeView[2]=GTK_TREE_VIEW(::gtk_builder_get_object(m_pBuilder, "expander_select_neuro_2_treeview"));
-				m_pLookupListStore[0]=GTK_LIST_STORE(::gtk_builder_get_object(m_pBuilder, "liststore_select_broadmann"));
-				m_pLookupListStore[1]=GTK_LIST_STORE(::gtk_builder_get_object(m_pBuilder, "liststore_select_neuro_1"));
-				m_pLookupListStore[2]=GTK_LIST_STORE(::gtk_builder_get_object(m_pBuilder, "liststore_select_neuro_2"));
+				m_pLookupTreeView[0] = GTK_TREE_VIEW(::gtk_builder_get_object(m_pBuilder, "expander_select_broadmann_treeview"));
+				m_pLookupTreeView[1] = GTK_TREE_VIEW(::gtk_builder_get_object(m_pBuilder, "expander_select_neuro_1_treeview"));
+				m_pLookupTreeView[2] = GTK_TREE_VIEW(::gtk_builder_get_object(m_pBuilder, "expander_select_neuro_2_treeview"));
+				m_pLookupListStore[0] = GTK_LIST_STORE(::gtk_builder_get_object(m_pBuilder, "liststore_select_broadmann"));
+				m_pLookupListStore[1] = GTK_LIST_STORE(::gtk_builder_get_object(m_pBuilder, "liststore_select_neuro_1"));
+				m_pLookupListStore[2] = GTK_LIST_STORE(::gtk_builder_get_object(m_pBuilder, "liststore_select_neuro_2"));
 
-				for(uint32_t i=0; i<m_pRenderer->getRegionCategoryCount() && i<3; i++)
+				for (uint32_t i = 0; i < m_pRenderer->getRegionCategoryCount() && i < 3; i++)
 				{
 					this->fill_region(m_pLookupListStore[i], m_pLookupTreeView[i], m_pRenderer, i);
 				}

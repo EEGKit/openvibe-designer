@@ -34,29 +34,29 @@ namespace Mensia
 
 			virtual void renderFinal(float fProgress)
 			{
-	uint32_t l_ui32SelectedCount=m_pRendererContext->getSelectedCount();
-	uint32_t i;
+				uint32_t l_ui32SelectedCount = m_pRendererContext->getSelectedCount();
+				uint32_t i;
 				glDisable(GL_TEXTURE_1D);
 				glDisable(GL_BLEND);
 
 				glLineWidth(4);
 				glColor3f(0, 0, 0);
 				glBegin(GL_LINES);
-	for(i=0; i<l_ui32SelectedCount; i++)
-	{
-					glVertex2f(0, (i+fProgress)/l_ui32SelectedCount);
-					glVertex2f(1, (i+fProgress)/l_ui32SelectedCount);
-	}
+				for (i = 0; i < l_ui32SelectedCount; i++)
+				{
+					glVertex2f(0, (i + fProgress) / l_ui32SelectedCount);
+					glVertex2f(1, (i + fProgress) / l_ui32SelectedCount);
+				}
 				glEnd();
 
 				glLineWidth(2);
 				glColor3f(0.25, 1, 0.25);
 				glBegin(GL_LINES);
-	for(i=0; i<l_ui32SelectedCount; i++)
-	{
-					glVertex2f(0, (i+fProgress)/l_ui32SelectedCount);
-					glVertex2f(1, (i+fProgress)/l_ui32SelectedCount);
-	}
+				for (i = 0; i < l_ui32SelectedCount; i++)
+				{
+					glVertex2f(0, (i + fProgress) / l_ui32SelectedCount);
+					glVertex2f(1, (i + fProgress) / l_ui32SelectedCount);
+				}
 				glEnd();
 			}
 		};

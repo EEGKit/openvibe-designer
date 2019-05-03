@@ -40,12 +40,12 @@ namespace OpenViBEVisualizationToolkit
 		 * \return True if widget was successfully initialized, false otherwise
 		 */
 		virtual bool initialize(
-		        const OpenViBE::CIdentifier& identifier,
-		        const OpenViBE::CString& name,
-		        EVisualizationWidgetType type,
-		        const OpenViBE::CIdentifier& parentIdentifier,
-		        const OpenViBE::CIdentifier& boxIdentifier,
-		        uint32_t childCount) = 0;
+			const OpenViBE::CIdentifier& identifier,
+			const OpenViBE::CString& name,
+			EVisualizationWidgetType type,
+			const OpenViBE::CIdentifier& parentIdentifier,
+			const OpenViBE::CIdentifier& boxIdentifier,
+			uint32_t childCount) = 0;
 
 		/**
 		 * \brief Returns the identifier of the widget
@@ -149,4 +149,3 @@ namespace OpenViBEVisualizationToolkit
 		virtual int getMaxDividerPosition() = 0;
 	};
 }
-

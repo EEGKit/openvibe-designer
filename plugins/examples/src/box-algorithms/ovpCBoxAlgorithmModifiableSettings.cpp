@@ -9,17 +9,11 @@ using namespace OpenViBEPlugins;
 using namespace Examples;
 
 bool CBoxAlgorithmModifiableSettings::initialize()
-
-{	
-	return true;
-}
+ { return true; }
 /*******************************************************************************/
 
 bool CBoxAlgorithmModifiableSettings::uninitialize()
-
-{
-	return true;
-}
+ { return true; }
 /*******************************************************************************/
 
 
@@ -34,12 +28,12 @@ bool CBoxAlgorithmModifiableSettings::processClock(IMessageClock& /* rMessageClo
 {
 	updateSettings();
 	//print settings values
-	for(size_t i=0; i < m_SettingsValue.size(); ++i)
+	for (size_t i = 0; i < m_SettingsValue.size(); ++i)
 	{
 		this->getLogManager() << LogLevel_Info << "Setting " << static_cast<uint64_t>(i) << " value is " << m_SettingsValue[i] << "\n";
 	}
 	this->getLogManager() << LogLevel_Info << "\n";
-	
+
 	return true;
 }
 
@@ -49,7 +43,7 @@ bool CBoxAlgorithmModifiableSettings::updateSettings()
 {
 	m_SettingsValue.clear();
 	const IBox& l_rStaticBoxContext = this->getStaticBoxContext();
-	for(uint32_t i=0; i < l_rStaticBoxContext.getSettingCount(); ++i)
+	for (uint32_t i = 0; i < l_rStaticBoxContext.getSettingCount(); ++i)
 	{
 		CString l_sSettingValue = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), i);
 		m_SettingsValue.push_back(l_sSettingValue);
@@ -59,7 +53,4 @@ bool CBoxAlgorithmModifiableSettings::updateSettings()
 
 
 bool CBoxAlgorithmModifiableSettings::process()
-
-{
-	return true;
-}
+ { return true; }

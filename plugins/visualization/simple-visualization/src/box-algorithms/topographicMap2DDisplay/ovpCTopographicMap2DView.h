@@ -24,11 +24,11 @@ namespace OpenViBEPlugins
 		{
 		public:
 			enum ETopographicMap2DProjection
-		{
-			TopographicMap2DProjection_Axial,
-			TopographicMap2DProjection_Radial,
-			TopographicMap2DProjection_NumProjection
-		};
+			{
+				TopographicMap2DProjection_Axial,
+				TopographicMap2DProjection_Radial,
+				TopographicMap2DProjection_NumProjection
+			};
 
 			enum ETopographicMap2DView
 			{
@@ -133,23 +133,23 @@ namespace OpenViBEPlugins
 			//draw head
 			void drawHead();
 
-				//draw RGB buffer
-				void drawPotentials();
+			//draw RGB buffer
+			void drawPotentials();
 
-				//draw electrodes corresponding to visible channels as rings
-				void drawElectrodes();
+			//draw electrodes corresponding to visible channels as rings
+			void drawElectrodes();
 
-					/**
-					 * \brief Get channel position in 2D
-					 * \param ui32ChannelIndex[in] Index of channel which position is to be retrieved
-					 * \param l_i32ChannelX[out] X coordinate of channel location, if channel is visible
-					 * \param l_i32ChannelY[out] Y coordinate of channel location, if channel is visible
-					 * \return True if channel is visible in current view, false otherwise
-					 */
-					bool getChannel2DPosition(
-						uint32_t ui32ChannelIndex,
-						gint& l_i32ChannelX,
-						gint& l_i32ChannelY);
+			/**
+			 * \brief Get channel position in 2D
+			 * \param ui32ChannelIndex[in] Index of channel which position is to be retrieved
+			 * \param l_i32ChannelX[out] X coordinate of channel location, if channel is visible
+			 * \param l_i32ChannelY[out] Y coordinate of channel location, if channel is visible
+			 * \return True if channel is visible in current view, false otherwise
+			 */
+			bool getChannel2DPosition(
+				uint32_t ui32ChannelIndex,
+				gint& l_i32ChannelX,
+				gint& l_i32ChannelY);
 
 			//update RGB buffer with interpolated values
 			void refreshPotentials();
@@ -308,15 +308,15 @@ namespace OpenViBEPlugins
 			// LEFT/RIGHT VIEWS
 			//////////////////////////////////
 			/*
-			    + A
+				+ A
 			   /
 			  /
 			 /
 			+ B
 			| C
 			+----+ D
-			     |
-			     + E
+				 |
+				 + E
 			*/
 			uint32_t m_ui32NoseTopX; //A
 			uint32_t m_ui32NoseTopY;
@@ -334,14 +334,14 @@ namespace OpenViBEPlugins
 			 * \remarks This pixmap is 32-bit aligned. Each row is m_ui32RowStride wide, and the pixmap has the height of the DrawingArea's
 			 * window. It is pasted into the DrawingArea's window upon redraw
 			 */
-			//TODO
-			//GdkPixmap* m_pPixmap;
+			 //TODO
+			 //GdkPixmap* m_pPixmap;
 
-			/**
-			 * \brief Skull pixmap
-			 * \remarks This pixmap is 32-bit aligned. Each row is m_ui32RowStride wide, and the pixmap has m_ui32SkullDiameter rows.
-			 * It is pasted into the main pixmap everytime changes happen (window resizing, display options toggled on/off, etc)
-			 */
+			 /**
+			  * \brief Skull pixmap
+			  * \remarks This pixmap is 32-bit aligned. Each row is m_ui32RowStride wide, and the pixmap has m_ui32SkullDiameter rows.
+			  * It is pasted into the main pixmap everytime changes happen (window resizing, display options toggled on/off, etc)
+			  */
 			guchar* m_pSkullRGBBuffer;
 			uint32_t m_ui32RowStride;
 		};

@@ -70,7 +70,7 @@ namespace Mensia
 			{
 				OpenViBE::CIdentifier l_oTypeIdentifier;
 				rBox.getInputType(ui32Index, l_oTypeIdentifier);
-				if(!this->getTypeManager().isDerivedFromStream(l_oTypeIdentifier, OV_TypeId_TimeFrequency))
+				if (!this->getTypeManager().isDerivedFromStream(l_oTypeIdentifier, OV_TypeId_TimeFrequency))
 				{
 					rBox.setInputType(ui32Index, OV_TypeId_TimeFrequency);
 				}
@@ -79,7 +79,7 @@ namespace Mensia
 			}
 		};
 
-		template <bool bDrawBorders, class TRendererFactoryClass, class TRulerClass=IRuler>
+		template <bool bDrawBorders, class TRendererFactoryClass, class TRulerClass = IRuler>
 		class TBoxAlgorithmStackedInstantVizDesc : public CBoxAlgorithmVizDesc
 		{
 		public:
@@ -88,20 +88,11 @@ namespace Mensia
 				:CBoxAlgorithmVizDesc(sName, rDescClassId, rClassId, sAddedSoftwareVersion, sUpdatedSoftwareVersion, rParameterSet, sShortDescription, sDetailedDescription) { }
 
 			virtual OpenViBE::Plugins::IPluginObject* create()
+ { return new TBoxAlgorithmStackedInstantViz<bDrawBorders, TRendererFactoryClass, TRulerClass>(m_oClassId, m_vParameter); }
 
-			{
-				return new TBoxAlgorithmStackedInstantViz<bDrawBorders, TRendererFactoryClass, TRulerClass>(m_oClassId, m_vParameter);
-			}
+			virtual OpenViBE::Plugins::IBoxListener* createBoxListener() const { return new CBoxAlgorithmStackedInstantVizListener(m_vParameter); }
 
-			virtual OpenViBE::Plugins::IBoxListener* createBoxListener() const
-			{
-				return new CBoxAlgorithmStackedInstantVizListener(m_vParameter);
-			}
-
-			virtual OpenViBE::CString getCategory() const
-			{
-				return OpenViBE::CString("Advanced Visualization/")+m_sCategoryName;
-			}
+			virtual OpenViBE::CString getCategory() const { return OpenViBE::CString("Advanced Visualization/") + m_sCategoryName; }
 
 			_IsDerivedFromClass_Final_(OpenViBE::Plugins::IBoxAlgorithmDesc, m_oDescClassId);
 		};
@@ -115,7 +106,7 @@ namespace Mensia
 		bool TBoxAlgorithmStackedInstantViz<bDrawBorders, TRendererFactoryClass, TRulerClass>::initialize()
 
 		{
-			bool l_bResult=CBoxAlgorithmViz::initialize();
+			bool l_bResult = CBoxAlgorithmViz::initialize();
 
 			m_oMatrixDecoder.initialize(*this, 0);
 			m_oStimulationDecoder.initialize(*this, 1);
@@ -130,7 +121,7 @@ namespace Mensia
 			m_pSubRendererContext->clear();
 			m_pSubRendererContext->setParentRendererContext(m_pRendererContext);
 
-			m_pRuler=new TRulerClass;
+			m_pRuler = new TRulerClass;
 			m_pRuler->setRendererContext(m_pRendererContext);
 
 			OpenViBE::CMatrix gradientMatrix;
@@ -149,20 +140,20 @@ namespace Mensia
 		bool TBoxAlgorithmStackedInstantViz<bDrawBorders, TRendererFactoryClass, TRulerClass>::uninitialize()
 
 		{
-			for(uint32_t i=0; i<m_vRenderer.size(); i++)
+			for (uint32_t i = 0; i < m_vRenderer.size(); i++)
 			{
 				m_oRendererFactory.release(m_vRenderer[i]);
 			}
 			m_vRenderer.clear();
 
 			IRendererContext::release(m_pSubRendererContext);
-			m_pSubRendererContext=nullptr;
+			m_pSubRendererContext = nullptr;
 
 			IRendererContext::release(m_pRendererContext);
-			m_pRendererContext=nullptr;
+			m_pRendererContext = nullptr;
 
 			delete m_pRuler;
-			m_pRuler=nullptr;
+			m_pRuler = nullptr;
 
 			m_oStimulationDecoder.uninitialize();
 			m_oMatrixDecoder.uninitialize();
@@ -174,11 +165,11 @@ namespace Mensia
 		bool TBoxAlgorithmStackedInstantViz<bDrawBorders, TRendererFactoryClass, TRulerClass>::process()
 
 		{
-			const IBox& staticBoxContext=this->getStaticBoxContext();
-			IBoxIO& dynamicBoxContext=this->getDynamicBoxContext();
+			const IBox& staticBoxContext = this->getStaticBoxContext();
+			IBoxIO& dynamicBoxContext = this->getDynamicBoxContext();
 			uint32_t i, j;
 
-			for(uint32_t chunk = 0; chunk < dynamicBoxContext.getInputChunkCount(0); chunk++)
+			for (uint32_t chunk = 0; chunk < dynamicBoxContext.getInputChunkCount(0); chunk++)
 			{
 				m_oMatrixDecoder.decode(chunk);
 
@@ -236,7 +227,8 @@ namespace Mensia
 									snprintf(buffer.get(), static_cast<size_t>(stringSize), "%.2f", frequencyValue);
 									m_pRendererContext->setDimensionLabel(1, frequencyCount - frequency - 1, buffer.get());
 								}
-							} catch (...) {
+							}
+							catch (...) {
 								m_pRendererContext->setDimensionLabel(1, frequencyCount - frequency - 1, "NaN");
 							}
 							m_pSubRendererContext->addChannel("", 0, 0, 0);
@@ -272,7 +264,7 @@ namespace Mensia
 
 							m_pRendererContext->addChannel(channelName, v.x, v.y, v.z);
 							gtk_list_store_append(m_pChannelListStore, &l_oGtkTreeIterator);
-							gtk_list_store_set(m_pChannelListStore, &l_oGtkTreeIterator, 0, channel+1, 1, channelName.c_str(), -1);
+							gtk_list_store_set(m_pChannelListStore, &l_oGtkTreeIterator, 0, channel + 1, 1, channelName.c_str(), -1);
 						}
 						gtk_tree_view_set_model(m_pChannelTreeView, GTK_TREE_MODEL(m_pChannelListStore));
 						gtk_tree_selection_select_all(gtk_tree_view_get_selection(m_pChannelTreeView));
@@ -290,7 +282,7 @@ namespace Mensia
 					m_bRedrawNeeded = true;
 				}
 
-				if(m_oMatrixDecoder.isBufferReceived())
+				if (m_oMatrixDecoder.isBufferReceived())
 				{
 					if (m_oTypeIdentifier == OV_TypeId_TimeFrequency)
 					{
@@ -320,48 +312,48 @@ namespace Mensia
 							}
 						}
 
-						m_bRefreshNeeded=true;
-						m_bRedrawNeeded=true;
+						m_bRefreshNeeded = true;
+						m_bRedrawNeeded = true;
 					}
 				}
 			}
 
-			if(staticBoxContext.getInputCount() > 1)
+			if (staticBoxContext.getInputCount() > 1)
 			{
-				for(i=0; i<dynamicBoxContext.getInputChunkCount(1); i++)
+				for (i = 0; i < dynamicBoxContext.getInputChunkCount(1); i++)
 				{
 					m_oStimulationDecoder.decode(i);
-					if(m_oStimulationDecoder.isBufferReceived())
+					if (m_oStimulationDecoder.isBufferReceived())
 					{
-						OpenViBE::IStimulationSet* l_pStimulationSet=m_oStimulationDecoder.getOutputStimulationSet();
-						for(j=0; j<l_pStimulationSet->getStimulationCount(); j++)
+						OpenViBE::IStimulationSet* l_pStimulationSet = m_oStimulationDecoder.getOutputStimulationSet();
+						for (j = 0; j < l_pStimulationSet->getStimulationCount(); j++)
 						{
 							m_vRenderer[0]->feed(l_pStimulationSet->getStimulationDate(j), l_pStimulationSet->getStimulationIdentifier(j));
-							m_bRedrawNeeded=true;
+							m_bRedrawNeeded = true;
 						}
 					}
 				}
 			}
 
-			if(m_bRebuildNeeded)
+			if (m_bRebuildNeeded)
 			{
 				for (auto& renderer : m_vRenderer)
 				{
 					renderer->rebuild(*m_pSubRendererContext);
 				}
 			}
-			if(m_bRefreshNeeded)
+			if (m_bRefreshNeeded)
 			{
 				for (auto& renderer : m_vRenderer)
 				{
 					renderer->refresh(*m_pSubRendererContext);
 				}
 			}
-			if(m_bRedrawNeeded) this->redraw();
+			if (m_bRedrawNeeded) this->redraw();
 
-			m_bRebuildNeeded=false;
-			m_bRefreshNeeded=false;
-			m_bRedrawNeeded=false;
+			m_bRebuildNeeded = false;
+			m_bRefreshNeeded = false;
+			m_bRedrawNeeded = false;
 
 			return true;
 		}
@@ -374,22 +366,22 @@ namespace Mensia
 
 			uint32_t i;
 
-			if(m_pRendererContext->getSelectedCount()!=0)
+			if (m_pRendererContext->getSelectedCount() != 0)
 			{
 				glPushMatrix();
-				glScalef(1, 1.f/m_pRendererContext->getSelectedCount(), 1);
-				for(i=0; i<m_pRendererContext->getSelectedCount(); i++)
+				glScalef(1, 1.f / m_pRendererContext->getSelectedCount(), 1);
+				for (i = 0; i < m_pRendererContext->getSelectedCount(); i++)
 				{
 					glPushAttrib(GL_ALL_ATTRIB_BITS);
 					glPushMatrix();
 					glColor4f(m_oColor.r, m_oColor.g, m_oColor.b, m_pRendererContext->getTranslucency());
-					glTranslatef(0, m_pRendererContext->getSelectedCount()-i-1.f, 0);
+					glTranslatef(0, m_pRendererContext->getSelectedCount() - i - 1.f, 0);
 
 					m_pSubRendererContext->setAspect(m_pRendererContext->getAspect());
 					m_pSubRendererContext->setStackCount(m_pRendererContext->getSelectedCount());
 					m_pSubRendererContext->setStackIndex(i);
 					m_vRenderer[m_pRendererContext->getSelected(i)]->render(*m_pSubRendererContext);
-					if(bDrawBorders)
+					if (bDrawBorders)
 					{
 						glDisable(GL_TEXTURE_1D);
 						glDisable(GL_BLEND);

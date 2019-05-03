@@ -42,8 +42,8 @@ namespace Mensia
 			virtual void refresh(const IRendererContext& rContext);
 			virtual bool render(const IRendererContext& rContext);
 
-			virtual void rebuild3DMeshesPre(const IRendererContext& rContext)=0; // Called before electrode projections and spherical interpolation parameters generations and might be used to load a mesh or generate a sphere for instance
-			virtual void rebuild3DMeshesPost(const IRendererContext& rContext)=0; // Called after electrode projections and spherical interpolation parameters generations and might be used to unfold previously loaded mesh for instance
+			virtual void rebuild3DMeshesPre(const IRendererContext& rContext) = 0; // Called before electrode projections and spherical interpolation parameters generations and might be used to load a mesh or generate a sphere for instance
+			virtual void rebuild3DMeshesPost(const IRendererContext& rContext) = 0; // Called after electrode projections and spherical interpolation parameters generations and might be used to unfold previously loaded mesh for instance
 
 		private:
 

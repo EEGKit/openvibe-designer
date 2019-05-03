@@ -77,7 +77,6 @@ namespace OpenViBEVisualizationToolkit
 		 * \return True if pointer was successfully forwarded to IVisualizationTree, false otherwise
 		 */
 		virtual bool setWidget(const OpenViBE::CIdentifier& visualizationTreeIdentifier, const OpenViBE::CIdentifier& boxIdentifier, GtkWidget* topmostWidget) = 0;
-
 	};
 };
 

@@ -41,15 +41,15 @@ namespace Mensia
 				gint lw, lh;
 
 				gdk_drawable_get_size(pWidget->window, &w, &h);
-				GdkGC* l_pDrawGC=gdk_gc_new(pWidget->window);
-				for(i=0; i<=10; i+=2)
+				GdkGC* l_pDrawGC = gdk_gc_new(pWidget->window);
+				for (i = 0; i <= 10; i += 2)
 				{
-					gint x=(i*(w-1))/10;
-					sprintf(l_sLabel, "%i%%", i*10);
-					PangoLayout* l_pPangoLayout=gtk_widget_create_pango_layout(pWidget, l_sLabel);
+					gint x = (i * (w - 1)) / 10;
+					sprintf(l_sLabel, "%i%%", i * 10);
+					PangoLayout * l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, l_sLabel);
 					pango_layout_get_size(l_pPangoLayout, &lw, &lh);
-					lw/=PANGO_SCALE;
-					lh/=PANGO_SCALE;
+					lw /= PANGO_SCALE;
+					lh /= PANGO_SCALE;
 					gdk_draw_layout(
 						pWidget->window,
 						l_pDrawGC,

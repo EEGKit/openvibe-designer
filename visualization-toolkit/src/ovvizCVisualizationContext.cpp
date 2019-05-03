@@ -16,10 +16,7 @@ bool CVisualizationContext::setWidget(OpenViBEToolkit::TBoxAlgorithm<Plugins::IB
 	//
 	// What we do is that we write the visualization tree identifier into the local scenario configuration manager. This manager
 	// can be accessed as long as we have the boxAlgorithm.
-	if (!treeIdentifier.fromString(box.getConfigurationManager().lookUpConfigurationTokenValue("VisualizationContext_VisualizationTreeId")))
-	{
-		return false;
-	}
+	if (!treeIdentifier.fromString(box.getConfigurationManager().lookUpConfigurationTokenValue("VisualizationContext_VisualizationTreeId"))) { return false; }
 
 	return m_VisualizationManager->setWidget(treeIdentifier, boxIdentifier, widget);
 }
@@ -30,10 +27,7 @@ bool CVisualizationContext::setToolbar(OpenViBEToolkit::TBoxAlgorithm<Plugins::I
 
 	CIdentifier treeIdentifier = OV_UndefinedIdentifier;
 
-	if (!treeIdentifier.fromString(box.getConfigurationManager().lookUpConfigurationTokenValue("VisualizationContext_VisualizationTreeId")))
-	{
-		return false;
-	}
+	if (!treeIdentifier.fromString(box.getConfigurationManager().lookUpConfigurationTokenValue("VisualizationContext_VisualizationTreeId"))) { return false; }
 
 	return m_VisualizationManager->setToolbar(treeIdentifier, boxIdentifier, toolbarWidget);
 }

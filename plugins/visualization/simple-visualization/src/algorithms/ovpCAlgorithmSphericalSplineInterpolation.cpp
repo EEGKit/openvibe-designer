@@ -51,22 +51,22 @@ bool CAlgorithmSphericalSplineInterpolation::uninitialize()
 	op_f64MinSamplePointValue.uninitialize();
 	op_f64MaxSamplePointValue.uninitialize();
 
-	if(m_pDoubleCoords != nullptr)
+	if (m_pDoubleCoords != nullptr)
 	{
 		delete[] m_pDoubleCoords;
 	}
 
-	if(m_pInsermCoords != nullptr)
+	if (m_pInsermCoords != nullptr)
 	{
 		delete[] m_pInsermCoords;
 	}
 
-	if(m_pSplineCoefs != nullptr)
+	if (m_pSplineCoefs != nullptr)
 	{
 		delete[] m_pSplineCoefs;
 	}
 
-	if(m_pLaplacianSplineCoefs != nullptr)
+	if (m_pLaplacianSplineCoefs != nullptr)
 	{
 		delete[] m_pLaplacianSplineCoefs;
 	}
@@ -77,48 +77,48 @@ bool CAlgorithmSphericalSplineInterpolation::uninitialize()
 bool CAlgorithmSphericalSplineInterpolation::process()
 
 {
-	if(m_bFirstProcess == true)
+	if (m_bFirstProcess == true)
 	{
 		//store coords as doubles
-		m_pDoubleCoords = new double[static_cast<size_t>(3*ip_i64ControlPointsCount)];
+		m_pDoubleCoords = new double[static_cast<size_t>(3 * ip_i64ControlPointsCount)];
 		//set up matrix of pointers to double coords matrix
 		m_pInsermCoords = new double* [static_cast<size_t>(ip_i64ControlPointsCount)];
 		//fill both matrices
-		for(int i=0; i<ip_i64ControlPointsCount; i++)
+		for (int i = 0; i < ip_i64ControlPointsCount; i++)
 		{
-			m_pDoubleCoords[i*3] = (double)(*ip_pControlPointsCoords)[i*3];
-			m_pDoubleCoords[i*3+1] = (double)(*ip_pControlPointsCoords)[i*3+1];
-			m_pDoubleCoords[i*3+2] = (double)(*ip_pControlPointsCoords)[i*3+2];
-			m_pInsermCoords[i] = m_pDoubleCoords + 3*i;
+			m_pDoubleCoords[i * 3] = (double)(*ip_pControlPointsCoords)[i * 3];
+			m_pDoubleCoords[i * 3 + 1] = (double)(*ip_pControlPointsCoords)[i * 3 + 1];
+			m_pDoubleCoords[i * 3 + 2] = (double)(*ip_pControlPointsCoords)[i * 3 + 2];
+			m_pInsermCoords[i] = m_pDoubleCoords + 3 * i;
 		}
 		m_bFirstProcess = false;
 	}
 
 	//do we want to precompute tables?
-	if(isInputTriggerActive(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_PrecomputeTables))
+	if (isInputTriggerActive(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_PrecomputeTables))
 	{
 		//compute cos/sin values used in spline polynomias
 		int l_i32Result = spline_tables((int)ip_i64SplineOrder, m_PotTable, m_ScdTable);
 
-		if(l_i32Result != 0)
+		if (l_i32Result != 0)
 		{
 			getLogManager() << LogLevel_ImportantWarning << "Spline tables precomputation failed!\n";
 			activateOutputTrigger(OVP_Algorithm_SphericalSplineInterpolation_OutputTriggerId_Error, true);
 		}
 	}
 
-	if(isInputTriggerActive(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_ComputeSplineCoefs))
+	if (isInputTriggerActive(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_ComputeSplineCoefs))
 	{
-		if(m_pSplineCoefs == nullptr && (int)ip_i64ControlPointsCount != 0)
+		if (m_pSplineCoefs == nullptr && (int)ip_i64ControlPointsCount != 0)
 		{
-			m_pSplineCoefs = new double[(int)ip_i64ControlPointsCount+1];
+			m_pSplineCoefs = new double[(int)ip_i64ControlPointsCount + 1];
 		}
 
 		//compute spline ponderation coefficients using spline values
 		//FIXME : have a working copy of control points values stored as doubles?
 		int l_i32Result = spline_coef((int)ip_i64ControlPointsCount, m_pInsermCoords, (double*)ip_pControlPointsValues->getBuffer(), m_PotTable, m_pSplineCoefs);
 
-		if(l_i32Result != 0)
+		if (l_i32Result != 0)
 		{
 			getLogManager() << LogLevel_ImportantWarning << "Spline coefficients computation failed!\n";
 
@@ -128,51 +128,51 @@ bool CAlgorithmSphericalSplineInterpolation::process()
 
 			char buf[1024];
 			sprintf(buf, "CtrlPointsCoords= ");
-			for(uint32_t i=0; i<ip_i64ControlPointsCount; i++)
+			for (uint32_t i = 0; i < ip_i64ControlPointsCount; i++)
 			{
-				sprintf(buf+strlen(buf), "[%.1f %.1f %.1f] ", (float)(m_pInsermCoords[i][0]), (float)(m_pInsermCoords[i][1]), (float)(m_pInsermCoords[i][2]));
+				sprintf(buf + strlen(buf), "[%.1f %.1f %.1f] ", (float)(m_pInsermCoords[i][0]), (float)(m_pInsermCoords[i][1]), (float)(m_pInsermCoords[i][2]));
 			}
-			sprintf(buf+strlen(buf), "\n");
+			sprintf(buf + strlen(buf), "\n");
 			getLogManager() << l_eLogLevel << buf;
 
 			sprintf(buf, "CtrlPointsValues= ");
-			for(uint32_t i=0; i<ip_i64ControlPointsCount; i++)
+			for (uint32_t i = 0; i < ip_i64ControlPointsCount; i++)
 			{
-				sprintf(buf+strlen(buf), "%.1f ", (float)*((double*)ip_pControlPointsValues->getBuffer() + i));
+				sprintf(buf + strlen(buf), "%.1f ", (float) * ((double*)ip_pControlPointsValues->getBuffer() + i));
 			}
-			sprintf(buf+strlen(buf), "\n");
+			sprintf(buf + strlen(buf), "\n");
 			getLogManager() << l_eLogLevel << buf;
 
 			sprintf(buf, "Spline Coeffs   = ");
-			for(uint32_t i=0; i<=ip_i64ControlPointsCount; i++)
+			for (uint32_t i = 0; i <= ip_i64ControlPointsCount; i++)
 			{
-				sprintf(buf+strlen(buf), "%.1f ", (float)m_pSplineCoefs[i]);
+				sprintf(buf + strlen(buf), "%.1f ", (float)m_pSplineCoefs[i]);
 			}
-			sprintf(buf+strlen(buf), "\n");
+			sprintf(buf + strlen(buf), "\n");
 			getLogManager() << l_eLogLevel << buf;
 
 			sprintf(buf, "PotTable coeffs = ");
-			for(uint32_t i=0; i<10; i++)
+			for (uint32_t i = 0; i < 10; i++)
 			{
-				sprintf(buf+strlen(buf), "%.1f ", (float)m_PotTable[i]);
+				sprintf(buf + strlen(buf), "%.1f ", (float)m_PotTable[i]);
 			}
-			sprintf(buf+strlen(buf), " ... ");
-			for(uint32_t i=2001; i<2004; i++)
+			sprintf(buf + strlen(buf), " ... ");
+			for (uint32_t i = 2001; i < 2004; i++)
 			{
-				sprintf(buf+strlen(buf), "%.1f ", (float)m_PotTable[i]);
+				sprintf(buf + strlen(buf), "%.1f ", (float)m_PotTable[i]);
 			}
-			sprintf(buf+strlen(buf), "\n");
+			sprintf(buf + strlen(buf), "\n");
 			getLogManager() << l_eLogLevel << buf;
 
 			activateOutputTrigger(OVP_Algorithm_SphericalSplineInterpolation_OutputTriggerId_Error, true);
 		}
 	}
 
-	if(isInputTriggerActive(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_ComputeLaplacianCoefs))
+	if (isInputTriggerActive(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_ComputeLaplacianCoefs))
 	{
-		if(m_pLaplacianSplineCoefs == nullptr && (int)ip_i64ControlPointsCount != 0)
+		if (m_pLaplacianSplineCoefs == nullptr && (int)ip_i64ControlPointsCount != 0)
 		{
-			m_pLaplacianSplineCoefs = new double[(int)ip_i64ControlPointsCount+1];
+			m_pLaplacianSplineCoefs = new double[(int)ip_i64ControlPointsCount + 1];
 		}
 
 		//compute spline ponderation coefficients using spline values
@@ -180,19 +180,19 @@ bool CAlgorithmSphericalSplineInterpolation::process()
 		int l_i32Result = spline_coef((int)ip_i64ControlPointsCount, m_pInsermCoords, (double*)ip_pControlPointsValues->getBuffer(), m_PotTable, m_pLaplacianSplineCoefs);
 		m_pLaplacianSplineCoefs[(int)ip_i64ControlPointsCount] = 0;
 
-		if(l_i32Result != 0)
+		if (l_i32Result != 0)
 		{
 			getLogManager() << LogLevel_ImportantWarning << "Laplacian coefficients computation failed!\n";
 			activateOutputTrigger(OVP_Algorithm_SphericalSplineInterpolation_OutputTriggerId_Error, true);
 		}
 	}
 
-	if(isInputTriggerActive(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_InterpolateSpline))
+	if (isInputTriggerActive(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_InterpolateSpline))
 	{
 		bool l_bOK = true;
 
 		//ensure we got enough storage space for interpolated values
-		if(op_pSamplePointsValues->getDimensionSize(0) != ip_pSamplePointsCoords->getDimensionSize(0))
+		if (op_pSamplePointsValues->getDimensionSize(0) != ip_pSamplePointsCoords->getDimensionSize(0))
 		{
 			op_pSamplePointsValues->setDimensionSize(0, ip_pSamplePointsCoords->getDimensionSize(0));
 		}
@@ -203,68 +203,68 @@ bool CAlgorithmSphericalSplineInterpolation::process()
 		op_f64MinSamplePointValue = +DBL_MAX;
 		op_f64MaxSamplePointValue = -DBL_MAX;
 
-		for(uint32_t i=0; i<ip_pSamplePointsCoords->getDimensionSize(0); i++, l_pSampleValue++)
+		for (uint32_t i = 0; i < ip_pSamplePointsCoords->getDimensionSize(0); i++, l_pSampleValue++)
 		{
 #if defined TARGET_OS_Windows
 #ifndef NDEBUG
-			if(_finite(*(ip_pSamplePointsCoords->getBuffer()+3*i)) == 0 ||
-				_finite(*(ip_pSamplePointsCoords->getBuffer()+3*i+1)) == 0 ||
-				_finite(*(ip_pSamplePointsCoords->getBuffer()+3*i+2)) == 0) //tests whether a double is infinite or a NaN
+			if (_finite(*(ip_pSamplePointsCoords->getBuffer() + 3 * i)) == 0 ||
+				_finite(*(ip_pSamplePointsCoords->getBuffer() + 3 * i + 1)) == 0 ||
+				_finite(*(ip_pSamplePointsCoords->getBuffer() + 3 * i + 2)) == 0) //tests whether a double is infinite or a NaN
 			{
 				getLogManager() << LogLevel_ImportantWarning << "Bad interpolation point coordinates !\n";
-				getLogManager() << LogLevel_ImportantWarning << *(ip_pSamplePointsCoords->getBuffer()+3*i) << "\n";
-				getLogManager() << LogLevel_ImportantWarning << *(ip_pSamplePointsCoords->getBuffer()+3*i+1) << "\n";
-				getLogManager() << LogLevel_ImportantWarning << *(ip_pSamplePointsCoords->getBuffer()+3*i+2) << "\n";
+				getLogManager() << LogLevel_ImportantWarning << *(ip_pSamplePointsCoords->getBuffer() + 3 * i) << "\n";
+				getLogManager() << LogLevel_ImportantWarning << *(ip_pSamplePointsCoords->getBuffer() + 3 * i + 1) << "\n";
+				getLogManager() << LogLevel_ImportantWarning << *(ip_pSamplePointsCoords->getBuffer() + 3 * i + 2) << "\n";
 				l_bOK = false;
 			}
 #endif
 #endif
 
-			*l_pSampleValue = spline_interp(
+			* l_pSampleValue = spline_interp(
 				(int)ip_i64ControlPointsCount, //number of fixed values
 				m_pInsermCoords, //coordinates of fixed values
 				m_PotTable, //sin/cos table for spline
 				m_pSplineCoefs, //spline coefficients
-				*(ip_pSamplePointsCoords->getBuffer()+3*i),
-				*(ip_pSamplePointsCoords->getBuffer()+3*i+1),
-				*(ip_pSamplePointsCoords->getBuffer()+3*i+2) //coordinate where to interpolate
-				);
+				*(ip_pSamplePointsCoords->getBuffer() + 3 * i),
+				*(ip_pSamplePointsCoords->getBuffer() + 3 * i + 1),
+				*(ip_pSamplePointsCoords->getBuffer() + 3 * i + 2) //coordinate where to interpolate
+			);
 
 #if defined TARGET_OS_Windows
 #ifndef NDEBUG
-			if(_finite(*l_pSampleValue) == 0) //tests whether a double is infinite or a NaN
+			if (_finite(*l_pSampleValue) == 0) //tests whether a double is infinite or a NaN
 			{
 				getLogManager() << LogLevel_ImportantWarning << "Interpolation fails !\n";
-				getLogManager() << LogLevel_ImportantWarning << *(ip_pSamplePointsCoords->getBuffer()+3*i) << "\n";
-				getLogManager() << LogLevel_ImportantWarning << *(ip_pSamplePointsCoords->getBuffer()+3*i+1) << "\n";
-				getLogManager() << LogLevel_ImportantWarning << *(ip_pSamplePointsCoords->getBuffer()+3*i+2) << "\n";
+				getLogManager() << LogLevel_ImportantWarning << *(ip_pSamplePointsCoords->getBuffer() + 3 * i) << "\n";
+				getLogManager() << LogLevel_ImportantWarning << *(ip_pSamplePointsCoords->getBuffer() + 3 * i + 1) << "\n";
+				getLogManager() << LogLevel_ImportantWarning << *(ip_pSamplePointsCoords->getBuffer() + 3 * i + 2) << "\n";
 				l_bOK = false;
 				break;
 			}
 #endif
 #endif
 
-			if(*l_pSampleValue < op_f64MinSamplePointValue)
+			if (*l_pSampleValue < op_f64MinSamplePointValue)
 			{
 				op_f64MinSamplePointValue = *l_pSampleValue;
 			}
-			if(*l_pSampleValue > op_f64MaxSamplePointValue)
+			if (*l_pSampleValue > op_f64MaxSamplePointValue)
 			{
 				op_f64MaxSamplePointValue = *l_pSampleValue;
 			}
 		}
 
-		if(l_bOK == false)
+		if (l_bOK == false)
 		{
 			activateOutputTrigger(OVP_Algorithm_SphericalSplineInterpolation_OutputTriggerId_Error, true);
 		}
 	}
-	else if(isInputTriggerActive(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_InterpolateLaplacian))
+	else if (isInputTriggerActive(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_InterpolateLaplacian))
 	{
 		bool l_bOK = true;
 
 		//ensure we got enough storage space for interpolated values
-		if(op_pSamplePointsValues->getDimensionSize(0) != ip_pSamplePointsCoords->getDimensionSize(0))
+		if (op_pSamplePointsValues->getDimensionSize(0) != ip_pSamplePointsCoords->getDimensionSize(0))
 		{
 			op_pSamplePointsValues->setDimensionSize(0, ip_pSamplePointsCoords->getDimensionSize(0));
 		}
@@ -275,17 +275,17 @@ bool CAlgorithmSphericalSplineInterpolation::process()
 		op_f64MinSamplePointValue = +DBL_MAX;
 		op_f64MaxSamplePointValue = -DBL_MAX;
 
-		for(uint32_t i=0; i<ip_pSamplePointsCoords->getDimensionSize(0); i++, l_pSampleValue++)
+		for (uint32_t i = 0; i < ip_pSamplePointsCoords->getDimensionSize(0); i++, l_pSampleValue++)
 		{
 			*l_pSampleValue = spline_interp(
 				(int)ip_i64ControlPointsCount, //number of fixed values
 				m_pInsermCoords, //coordinates of fixed values
 				m_ScdTable, //sin/cos table for laplacian
 				m_pLaplacianSplineCoefs, //laplacian coefficients
-				*(ip_pSamplePointsCoords->getBuffer()+3*i),
-				*(ip_pSamplePointsCoords->getBuffer()+3*i+1),
-				*(ip_pSamplePointsCoords->getBuffer()+3*i+2) //coordinate where to interpolate
-				);
+				*(ip_pSamplePointsCoords->getBuffer() + 3 * i),
+				*(ip_pSamplePointsCoords->getBuffer() + 3 * i + 1),
+				*(ip_pSamplePointsCoords->getBuffer() + 3 * i + 2) //coordinate where to interpolate
+			);
 
 			/***************************************************************************/
 			/*** Units : potential values being very often expressed as micro-Volts  ***/
@@ -297,19 +297,19 @@ bool CAlgorithmSphericalSplineInterpolation::process()
 			/***         with sigma = conductivity of the scalp    = 0.45 Siemens/m  ***/
 			/***         and  R     = radius of the spherical head = 0.09 m          ***/
 			/***************************************************************************/
-			*l_pSampleValue = *l_pSampleValue * (0.001 * 0.45 / 0.09 / 0.09);
+			* l_pSampleValue = *l_pSampleValue * (0.001 * 0.45 / 0.09 / 0.09);
 
-			if(*l_pSampleValue < op_f64MinSamplePointValue)
+			if (*l_pSampleValue < op_f64MinSamplePointValue)
 			{
 				op_f64MinSamplePointValue = *l_pSampleValue;
 			}
-			if(*l_pSampleValue > op_f64MaxSamplePointValue)
+			if (*l_pSampleValue > op_f64MaxSamplePointValue)
 			{
 				op_f64MaxSamplePointValue = *l_pSampleValue;
 			}
 		}
 
-		if(l_bOK == false)
+		if (l_bOK == false)
 		{
 			activateOutputTrigger(OVP_Algorithm_SphericalSplineInterpolation_OutputTriggerId_Error, true);
 		}

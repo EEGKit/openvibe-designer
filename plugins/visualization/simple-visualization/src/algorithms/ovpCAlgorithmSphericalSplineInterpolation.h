@@ -56,35 +56,35 @@ namespace OpenViBEPlugins
 
 			virtual void release() { }
 
-			virtual OpenViBE::CString getName() const                { return OpenViBE::CString("Spherical spline interpolation"); }
-			virtual OpenViBE::CString getAuthorName() const          { return OpenViBE::CString("Vincent Delannoy"); }
-			virtual OpenViBE::CString getAuthorCompanyName() const   { return OpenViBE::CString("INRIA/IRISA"); }
-			virtual OpenViBE::CString getShortDescription() const    { return OpenViBE::CString("Interpolates potentials/laplacians using a spherical spline"); }
+			virtual OpenViBE::CString getName() const { return OpenViBE::CString("Spherical spline interpolation"); }
+			virtual OpenViBE::CString getAuthorName() const { return OpenViBE::CString("Vincent Delannoy"); }
+			virtual OpenViBE::CString getAuthorCompanyName() const { return OpenViBE::CString("INRIA/IRISA"); }
+			virtual OpenViBE::CString getShortDescription() const { return OpenViBE::CString("Interpolates potentials/laplacians using a spherical spline"); }
 			virtual OpenViBE::CString getDetailedDescription() const { return OpenViBE::CString(""); }
-			virtual OpenViBE::CString getCategory() const            { return OpenViBE::CString("Algorithm/Signal processing"); }
-			virtual OpenViBE::CString getVersion() const             { return OpenViBE::CString("1.0"); }
-			virtual OpenViBE::CString getSoftwareComponent() const   { return OpenViBE::CString("openvibe-designer"); }
-			virtual OpenViBE::CString getAddedSoftwareVersion() const   { return OpenViBE::CString("0.0.0"); }
+			virtual OpenViBE::CString getCategory() const { return OpenViBE::CString("Algorithm/Signal processing"); }
+			virtual OpenViBE::CString getVersion() const { return OpenViBE::CString("1.0"); }
+			virtual OpenViBE::CString getSoftwareComponent() const { return OpenViBE::CString("openvibe-designer"); }
+			virtual OpenViBE::CString getAddedSoftwareVersion() const { return OpenViBE::CString("0.0.0"); }
 			virtual OpenViBE::CString getUpdatedSoftwareVersion() const { return OpenViBE::CString("0.0.0"); }
 
-			virtual OpenViBE::CIdentifier getCreatedClass() const    { return OVP_ClassId_Algorithm_SphericalSplineInterpolation; }
-			virtual OpenViBE::Plugins::IPluginObject* create()       { return new CAlgorithmSphericalSplineInterpolation(); }
+			virtual OpenViBE::CIdentifier getCreatedClass() const { return OVP_ClassId_Algorithm_SphericalSplineInterpolation; }
+			virtual OpenViBE::Plugins::IPluginObject* create() { return new CAlgorithmSphericalSplineInterpolation(); }
 
 			virtual bool getAlgorithmPrototype(
 				OpenViBE::Kernel::IAlgorithmProto& rAlgorithmPrototype) const
 			{
 				//input parameters
-				rAlgorithmPrototype.addInputParameter (OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_SplineOrder, "Spline order",  OpenViBE::Kernel::ParameterType_Integer);
-				rAlgorithmPrototype.addInputParameter (OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_ControlPointsCount, "Number of values",  OpenViBE::Kernel::ParameterType_Integer);
-				rAlgorithmPrototype.addInputParameter (OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_ControlPointsCoordinates, "Values coordinates",  OpenViBE::Kernel::ParameterType_Matrix);
-				rAlgorithmPrototype.addInputParameter (OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_ControlPointsValues, "Values",  OpenViBE::Kernel::ParameterType_Matrix);
-				rAlgorithmPrototype.addInputParameter (OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_SamplePointsCoordinates,"Coordinates where to interpolate values", OpenViBE::Kernel::ParameterType_Matrix);
+				rAlgorithmPrototype.addInputParameter(OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_SplineOrder, "Spline order", OpenViBE::Kernel::ParameterType_Integer);
+				rAlgorithmPrototype.addInputParameter(OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_ControlPointsCount, "Number of values", OpenViBE::Kernel::ParameterType_Integer);
+				rAlgorithmPrototype.addInputParameter(OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_ControlPointsCoordinates, "Values coordinates", OpenViBE::Kernel::ParameterType_Matrix);
+				rAlgorithmPrototype.addInputParameter(OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_ControlPointsValues, "Values", OpenViBE::Kernel::ParameterType_Matrix);
+				rAlgorithmPrototype.addInputParameter(OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_SamplePointsCoordinates, "Coordinates where to interpolate values", OpenViBE::Kernel::ParameterType_Matrix);
 				//input triggers
-				rAlgorithmPrototype.addInputTrigger   (OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_PrecomputeTables, OpenViBE::CString("Precomputation"));
-				rAlgorithmPrototype.addInputTrigger   (OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_ComputeSplineCoefs, OpenViBE::CString("Spline coefficients computation"));
-				rAlgorithmPrototype.addInputTrigger   (OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_ComputeLaplacianCoefs, OpenViBE::CString("Laplacian coefficients computation"));
-				rAlgorithmPrototype.addInputTrigger   (OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_InterpolateSpline, OpenViBE::CString("Interpolation using spline coefficients"));
-				rAlgorithmPrototype.addInputTrigger   (OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_InterpolateLaplacian, OpenViBE::CString("Interpolation using laplacian coefficients"));
+				rAlgorithmPrototype.addInputTrigger(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_PrecomputeTables, OpenViBE::CString("Precomputation"));
+				rAlgorithmPrototype.addInputTrigger(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_ComputeSplineCoefs, OpenViBE::CString("Spline coefficients computation"));
+				rAlgorithmPrototype.addInputTrigger(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_ComputeLaplacianCoefs, OpenViBE::CString("Laplacian coefficients computation"));
+				rAlgorithmPrototype.addInputTrigger(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_InterpolateSpline, OpenViBE::CString("Interpolation using spline coefficients"));
+				rAlgorithmPrototype.addInputTrigger(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_InterpolateLaplacian, OpenViBE::CString("Interpolation using laplacian coefficients"));
 				//output parameters
 				rAlgorithmPrototype.addOutputParameter(OVP_Algorithm_SphericalSplineInterpolation_OutputParameterId_SamplePointsValues, "Interpolated values", OpenViBE::Kernel::ParameterType_Matrix);
 				rAlgorithmPrototype.addOutputParameter(OVP_Algorithm_SphericalSplineInterpolation_OutputParameterId_MinSamplePointValue, "Min interpolated value", OpenViBE::Kernel::ParameterType_Float);

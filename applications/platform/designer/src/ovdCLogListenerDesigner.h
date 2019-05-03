@@ -24,10 +24,7 @@ namespace OpenViBEDesigner
 					m_bPassedFilter = false;//by default the log does not pass the filter;
 				}
 
-				::GtkTextBuffer* getTextBuffer()
-				{
-					return m_pBuffer;
-				}
+				::GtkTextBuffer* getTextBuffer() { return m_pBuffer; }
 
 				//determine if the log contains the sSearchTerm and tag the part with the sSerachTerm in gray
 				const bool Filter(OpenViBE::CString sSearchTerm)

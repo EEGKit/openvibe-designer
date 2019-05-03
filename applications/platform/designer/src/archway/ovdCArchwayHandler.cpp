@@ -47,10 +47,7 @@ EngineInitialisationStatus CArchwayHandler::initialize()
 	m_ArchwayModule.loadFromPath("libmensia-engine.dylib", "initialize");
 #endif
 
-	if (!m_ArchwayModule.isLoaded())
-	{
-		return EngineInitialisationStatus::NotAvailable;
-	}
+	if (!m_ArchwayModule.isLoaded()) { return EngineInitialisationStatus::NotAvailable; }
 	m_Archway = new struct ArchwayAPI();
 
 	bool didLoad = true;
@@ -100,17 +97,17 @@ EngineInitialisationStatus CArchwayHandler::initialize()
 	// Now initialize the ArchwayBridge structure with closures that bridge to local Archway functions
 	// this way we do not have to expose the Archway object or the C API
 
-	m_ArchwayBridge.isStarted = [this](){
+	m_ArchwayBridge.isStarted = [this]() {
 		return this->m_Archway->isStarted();
 	};
-	m_ArchwayBridge.getAvailableValueMatrixCount = [this](unsigned int uiValueChannelId){
+	m_ArchwayBridge.getAvailableValueMatrixCount = [this](unsigned int uiValueChannelId) {
 		return this->m_Archway->getPendingValueCount(m_RunningPipelineId, uiValueChannelId);
 	};
 
 	// This function returns the last getPendingValue result as a vector
 	// Such encapsulation enables us to avoid a call to getPendingValueDimension
 	// from the client plugin.
-	m_ArchwayBridge.popValueMatrix = [this](unsigned int uiValueChannelId){
+	m_ArchwayBridge.popValueMatrix = [this](unsigned int uiValueChannelId) {
 		std::vector<float> m_vValueMatrix;
 		auto l_uiValueChannelDimension = this->m_Archway->getPendingValueDimension(m_RunningPipelineId, uiValueChannelId);
 		m_vValueMatrix.resize(l_uiValueChannelDimension);
@@ -125,7 +122,7 @@ EngineInitialisationStatus CArchwayHandler::initialize()
 	};
 
 	// As archway buffers signals we have to expose this function to the client plugins
-	m_ArchwayBridge.dropBuffers = [this](){
+	m_ArchwayBridge.dropBuffers = [this]() {
 		m_Archway->dropPendingEvents(0);
 		m_Archway->dropPendingValues(0);
 		return true;
@@ -134,13 +131,10 @@ EngineInitialisationStatus CArchwayHandler::initialize()
 	// We save the address of the structure in the heap memory as a string and save it in
 	// the ConfigurationManager, this is because a box can not communicate directly with the Designer
 	std::ostringstream l_ssArchwayBridgeAddress;
-	l_ssArchwayBridgeAddress << static_cast<void const *>(&m_ArchwayBridge);
+	l_ssArchwayBridgeAddress << static_cast<void const*>(&m_ArchwayBridge);
 	m_KernelContext.getConfigurationManager().createConfigurationToken("Designer_ArchwayBridgeAddress", l_ssArchwayBridgeAddress.str().c_str());
 
-	if (!this->loadPipelineConfigurations())
-	{
-		return EngineInitialisationStatus::Failure;
-	}
+	if (!this->loadPipelineConfigurations()) { return EngineInitialisationStatus::Failure; }
 
 	m_EngineType = EngineType::Local;
 
@@ -220,10 +214,7 @@ bool CArchwayHandler::uninitialize()
 	delete m_Archway;
 	m_Archway = nullptr;
 
-	if (!this->savePipelineConfigurations())
-	{
-		return false;
-	}
+	if (!this->savePipelineConfigurations()) { return false; }
 
 	return true;
 }
@@ -311,7 +302,7 @@ bool CArchwayHandler::startEngineWithPipeline(unsigned int uiPipelineClassId, bo
 	}
 
 	m_RunningPipelineId = m_Archway->createPipeline(uiPipelineClassId, "");
-	
+
 	if (m_RunningPipelineId == 0)
 	{
 		m_Archway->stopAllAcquisitionDevices();
@@ -321,7 +312,7 @@ bool CArchwayHandler::startEngineWithPipeline(unsigned int uiPipelineClassId, bo
 
 	if (m_PipelineSettings.count(uiPipelineClassId) != 0)
 	{
-		for (auto& parameter: m_PipelineSettings[uiPipelineClassId])
+		for (auto& parameter : m_PipelineSettings[uiPipelineClassId])
 		{
 			m_Archway->setPipelineParameterAsString(m_RunningPipelineId, parameter.first.c_str(), parameter.second.c_str());
 		}
@@ -342,12 +333,12 @@ bool CArchwayHandler::startEngineWithPipeline(unsigned int uiPipelineClassId, bo
 			m_Archway->getPendingLogMessage(m_RunningPipelineId, &logLevel, messageBuffer, sizeof(messageBuffer));
 			m_KernelContext.getLogManager() << static_cast<ELogLevel>(logLevel) << messageBuffer;
 		}
-		
+
 		if (!m_Archway->stopAllAcquisitionDevices())
 		{
 			m_KernelContext.getLogManager() << LogLevel_Error << "Failed to stop all acquisition devices " << this->getArchwayErrorString().c_str() << "\n";
 		}
-		
+
 		return false;
 	}
 
@@ -427,14 +418,11 @@ bool CArchwayHandler::loopEngine()
 	}
 
 	if (!isPipelineRunning || isPipelineInErrorState)
-	{	
-		if (!this->stopEngine())
-		{
-			return false;
-		}
+	{
+		if (!this->stopEngine()) { return false; }
 
 		m_GUIBridge.refreshStoppedEngine();
-		
+
 		return success && !isPipelineInErrorState;
 	}
 
@@ -443,10 +431,7 @@ bool CArchwayHandler::loopEngine()
 
 bool CArchwayHandler::isEngineStarted()
 {
-	if (!m_Archway)
-	{
-		return false;
-	}
+	if (!m_Archway) { return false; }
 
 	return m_Archway->isStarted();
 }
@@ -455,7 +440,7 @@ namespace
 {
 	void enumerateEnginePipelinesCallback(unsigned int pipelineId, const char* pipelineDescription, void* userData)
 	{
-		auto callbackParameters = static_cast< pair< vector<SPipeline>*, map< unsigned int, map< string, string > >* >* >(userData);
+		auto callbackParameters = static_cast<pair< vector<SPipeline>*, map< unsigned int, map< string, string > >* >*>(userData);
 		auto enginePipelines = callbackParameters->first;
 		auto pipelineSettings = callbackParameters->second;
 
@@ -463,7 +448,7 @@ namespace
 			pipelineId,
 			pipelineDescription,
 			pipelineSettings->count(pipelineId) != 0
-		});
+			});
 	}
 
 	void enumeratePipelineParametersCallback(unsigned int pipelineId, const char* parameterName, const char* parameterValue, void* userData)
@@ -474,7 +459,7 @@ namespace
 		// vector of SPipelineParameters which is passed as the first element of the pUserData input pair
 		// This callback receives the parameter's name and default value from Archway, which is why we pass
 		// it the list of the _currently set_ parameters for the pipeline
-		auto vCallbackParameters = static_cast< pair< vector<SPipelineParameter>*, map<string, string> const* >* >(userData);
+		auto vCallbackParameters = static_cast<pair< vector<SPipelineParameter>*, map<string, string> const* >*>(userData);
 
 		// Our output parameter is the list of pipeline parameters
 		auto vPipelineParameters = vCallbackParameters->first;
@@ -484,7 +469,7 @@ namespace
 
 		// Search for the currently set value of the currently handled parameter
 		std::string l_sCurrentParameterValue = "";
-		
+
 		if (vPipelineSettings && vPipelineSettings->count(parameterName) != 0)
 		{
 			l_sCurrentParameterValue = vPipelineSettings->at(parameterName);
@@ -494,7 +479,7 @@ namespace
 			parameterName,
 			parameterValue,
 			l_sCurrentParameterValue
-		});
+			});
 	}
 }
 
@@ -528,12 +513,12 @@ std::vector<SPipelineParameter> CArchwayHandler::getPipelineParameters(unsigned 
 	auto callbackParameters = std::make_pair(&pipelineParameters, pipelineSettings);
 
 	unsigned int pipelineId = m_Archway->createPipeline(pipelineClassId, "");
-	
+
 	if (!m_Archway->enumeratePipelineParameters(pipelineId, enumeratePipelineParametersCallback, &callbackParameters))
 	{
 		m_KernelContext.getLogManager() << LogLevel_Warning << "Failed enumerate the pipeline's parameters " << this->getArchwayErrorString().c_str() << "\n";
 	}
-	
+
 	if (!m_Archway->releasePipeline(pipelineId))
 	{
 		m_KernelContext.getLogManager() << LogLevel_Warning << "Failed to release pipeline " << this->getArchwayErrorString().c_str() << "\n";
@@ -549,10 +534,7 @@ std::string CArchwayHandler::getPipelineScenarioPath(uint64_t pipelineClassId) c
 	char messageBuffer[2048];
 	std::string logMessages;
 
-	if (!m_Archway->getPipelineScenarioPath(pipelineClassId, messageBuffer, sizeof(messageBuffer)))
-	{
-		return "";
-	}
+	if (!m_Archway->getPipelineScenarioPath(pipelineClassId, messageBuffer, sizeof(messageBuffer))) { return ""; }
 	return std::string(messageBuffer);
 }
 
@@ -576,7 +558,7 @@ bool CArchwayHandler::setPipelineParameterValue(unsigned int pipelineClassId, st
 			if (m_PipelineSettings[pipelineClassId].count(parameterName) != 0)
 			{
 				m_PipelineSettings[pipelineClassId].erase(m_PipelineSettings[pipelineClassId].find(parameterName));
-				
+
 				if (m_PipelineSettings[pipelineClassId].size() == 0)
 				{
 					m_PipelineSettings.erase(m_PipelineSettings.find(pipelineClassId));
@@ -585,7 +567,7 @@ bool CArchwayHandler::setPipelineParameterValue(unsigned int pipelineClassId, st
 		}
 	}
 
-//	m_rKernelContext.getLogManager() << LogLevel_Info << "Set [" << uiPipelineClassId << "/" << sParameterName.c_str() << "] to [" << sParameterValue.c_str() << "]\n";
+	//	m_rKernelContext.getLogManager() << LogLevel_Info << "Set [" << uiPipelineClassId << "/" << sParameterName.c_str() << "] to [" << sParameterValue.c_str() << "]\n";
 	return true;
 }
 
@@ -593,7 +575,7 @@ bool CArchwayHandler::writeArchwayConfigurationFile()
 {
 	std::ofstream file;
 	FS::Files::openOFStream(file, s_ArchwayConfigurationFile.c_str());
-	
+
 	if (!file.good())
 	{
 		file.close();

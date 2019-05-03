@@ -46,7 +46,7 @@ namespace OpenViBEPlugins
 			GtkWidget* m_pMainWidget;
 			GtkWidget* m_pToolbarWidget;
 
-			std::vector< std::pair <GtkWidget*,GdkColor> > m_vEventBoxCache;
+			std::vector< std::pair <GtkWidget*, GdkColor> > m_vEventBoxCache;
 			std::vector< std::pair <GtkLabel*, std::string> > m_vLabelCache;
 
 			std::vector< std::pair <GtkLabel*, std::string> > m_vRowLabelCache;
@@ -77,34 +77,31 @@ namespace OpenViBEPlugins
 
 			virtual void release() { }
 
-			virtual OpenViBE::CString getName() const                { return OpenViBE::CString("Matrix Display"); }
-			virtual OpenViBE::CString getAuthorName() const          { return OpenViBE::CString("Laurent Bonnet"); }
-			virtual OpenViBE::CString getAuthorCompanyName() const   { return OpenViBE::CString("INRIA/IRISA"); }
-			virtual OpenViBE::CString getShortDescription() const    { return OpenViBE::CString("Display a streamed matrix"); }
+			virtual OpenViBE::CString getName() const { return OpenViBE::CString("Matrix Display"); }
+			virtual OpenViBE::CString getAuthorName() const { return OpenViBE::CString("Laurent Bonnet"); }
+			virtual OpenViBE::CString getAuthorCompanyName() const { return OpenViBE::CString("INRIA/IRISA"); }
+			virtual OpenViBE::CString getShortDescription() const { return OpenViBE::CString("Display a streamed matrix"); }
 			virtual OpenViBE::CString getDetailedDescription() const { return OpenViBE::CString("The streamed matrix can be visualized using a table of values and/or a color gradient."); }
-			virtual OpenViBE::CString getCategory() const            { return OpenViBE::CString("Visualization/Basic"); }
-			virtual OpenViBE::CString getVersion() const             { return OpenViBE::CString("1.0"); }
-			virtual OpenViBE::CString getStockItemName() const       { return OpenViBE::CString("gtk-select-color"); }
-			virtual OpenViBE::CString getSoftwareComponent() const   { return OpenViBE::CString("openvibe-designer"); }
-			virtual OpenViBE::CString getAddedSoftwareVersion() const   { return OpenViBE::CString("0.0.0"); }
+			virtual OpenViBE::CString getCategory() const { return OpenViBE::CString("Visualization/Basic"); }
+			virtual OpenViBE::CString getVersion() const { return OpenViBE::CString("1.0"); }
+			virtual OpenViBE::CString getStockItemName() const { return OpenViBE::CString("gtk-select-color"); }
+			virtual OpenViBE::CString getSoftwareComponent() const { return OpenViBE::CString("openvibe-designer"); }
+			virtual OpenViBE::CString getAddedSoftwareVersion() const { return OpenViBE::CString("0.0.0"); }
 			virtual OpenViBE::CString getUpdatedSoftwareVersion() const { return OpenViBE::CString("0.0.0"); }
 
-			virtual OpenViBE::CIdentifier getCreatedClass() const    { return OVP_ClassId_BoxAlgorithm_MatrixDisplay; }
-			virtual OpenViBE::Plugins::IPluginObject* create()       { return new CBoxAlgorithmMatrixDisplay; }
+			virtual OpenViBE::CIdentifier getCreatedClass() const { return OVP_ClassId_BoxAlgorithm_MatrixDisplay; }
+			virtual OpenViBE::Plugins::IPluginObject* create() { return new CBoxAlgorithmMatrixDisplay; }
 
-			virtual bool hasFunctionality(OpenViBE::CIdentifier functionalityIdentifier) const
-			{
-				return functionalityIdentifier == OVD_Functionality_Visualization;
-			}
+			virtual bool hasFunctionality(OpenViBE::CIdentifier functionalityIdentifier) const { return functionalityIdentifier == OVD_Functionality_Visualization; }
 
 			virtual bool getBoxPrototype(
 				OpenViBE::Kernel::IBoxProto& rBoxAlgorithmPrototype) const
 			{
-				rBoxAlgorithmPrototype.addSetting("Color gradient",    OV_TypeId_ColorGradient, "0:2,36,58; 50:100,100,100; 100:83,17,20");
-				rBoxAlgorithmPrototype.addSetting("Steps",             OV_TypeId_Integer,       "100");
-				rBoxAlgorithmPrototype.addSetting("Symetric min/max",  OV_TypeId_Boolean,       "false");
-				rBoxAlgorithmPrototype.addSetting("Real time min/max", OV_TypeId_Boolean,       "false");
-				rBoxAlgorithmPrototype.addInput  ("Matrix",            OV_TypeId_StreamedMatrix);
+				rBoxAlgorithmPrototype.addSetting("Color gradient", OV_TypeId_ColorGradient, "0:2,36,58; 50:100,100,100; 100:83,17,20");
+				rBoxAlgorithmPrototype.addSetting("Steps", OV_TypeId_Integer, "100");
+				rBoxAlgorithmPrototype.addSetting("Symetric min/max", OV_TypeId_Boolean, "false");
+				rBoxAlgorithmPrototype.addSetting("Real time min/max", OV_TypeId_Boolean, "false");
+				rBoxAlgorithmPrototype.addInput("Matrix", OV_TypeId_StreamedMatrix);
 				// rBoxAlgorithmPrototype.addFlag   (OpenViBE::Kernel::BoxFlag_IsUnstable);
 
 				return true;

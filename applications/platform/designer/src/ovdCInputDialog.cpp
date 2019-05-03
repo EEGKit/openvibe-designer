@@ -24,11 +24,11 @@ CInputDialog::CInputDialog(const char* sGtkBuilder, fpButtonCB fpOKButtonCB, voi
 	GTK_WIDGET_SET_FLAGS(GTK_WIDGET(m_pInputDialogEntry), GDK_KEY_PRESS_MASK);
 	g_signal_connect(G_OBJECT(m_pInputDialogEntry), "key-press-event", G_CALLBACK(key_press_event_cb), m_pInputDialog);
 
-	if(sLabel != nullptr)
+	if (sLabel != nullptr)
 	{
 		gtk_label_set(m_pInputDialogLabel, sLabel);
 	}
-	if(sEntry != nullptr)
+	if (sEntry != nullptr)
 	{
 		gtk_entry_set_text(m_pInputDialogEntry, sEntry);
 	}
@@ -49,9 +49,9 @@ void CInputDialog::run()
 {
 	gint l_iResult = gtk_dialog_run(m_pInputDialog);
 
-	if(l_iResult == GTK_RESPONSE_ACCEPT)
+	if (l_iResult == GTK_RESPONSE_ACCEPT)
 	{
-		if(m_fpOKButtonCB != nullptr)
+		if (m_fpOKButtonCB != nullptr)
 		{
 			m_fpOKButtonCB(GTK_WIDGET(m_pInputDialogOKButton), this);
 		}
@@ -60,24 +60,18 @@ void CInputDialog::run()
 	gtk_widget_hide_all(GTK_WIDGET(m_pInputDialog));
 }
 
-void* CInputDialog::getUserData()
-{
-	return m_pUserData;
-}
+void* CInputDialog::getUserData() { return m_pUserData; }
 
-const char* CInputDialog::getEntry()
-{
-	return (const char*)gtk_entry_get_text(m_pInputDialogEntry);
-}
+const char* CInputDialog::getEntry() { return (const char*)gtk_entry_get_text(m_pInputDialogEntry); }
 
 gboolean CInputDialog::key_press_event_cb(GtkWidget* pWidget, GdkEventKey* pEventKey, gpointer pUserData)
 {
-	if(pEventKey->keyval==GDK_Return || pEventKey->keyval==GDK_KP_Enter)
+	if (pEventKey->keyval == GDK_Return || pEventKey->keyval == GDK_KP_Enter)
 	{
 		gtk_dialog_response(GTK_DIALOG(pUserData), GTK_RESPONSE_ACCEPT);
 		return TRUE;
 	}
-	if(pEventKey->keyval==GDK_Escape)
+	if (pEventKey->keyval == GDK_Escape)
 	{
 		gtk_dialog_response(GTK_DIALOG(pUserData), GTK_RESPONSE_REJECT);
 		return TRUE;
@@ -93,7 +87,7 @@ void CInputDialog::button_clicked_cb(GtkButton* pButton, gpointer pUserData)
 
 void CInputDialog::buttonClickedCB(GtkButton* pButton)
 {
-	if(pButton == m_pInputDialogOKButton)
+	if (pButton == m_pInputDialogOKButton)
 	{
 		gtk_dialog_response(m_pInputDialog, GTK_RESPONSE_ACCEPT);
 	}

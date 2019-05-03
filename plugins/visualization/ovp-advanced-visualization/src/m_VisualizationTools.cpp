@@ -26,17 +26,17 @@ using namespace AdvancedVisualization;
 
 std::string AdvancedVisualization::trim(const std::string& sValue)
 {
-	if(sValue.length()==0) return "";
-	size_t i=0;
-	size_t j=sValue.length()-1;
-	while(i<sValue.length() && sValue[i]==' ') i++;
-	while(j>i && sValue[j]==' ') j--;
-	return sValue.substr(i, j-i+1);
+	if (sValue.length() == 0) return "";
+	size_t i = 0;
+	size_t j = sValue.length() - 1;
+	while (i < sValue.length() && sValue[i] == ' ') i++;
+	while (j > i && sValue[j] == ' ') j--;
+	return sValue.substr(i, j - i + 1);
 }
 
-IRendererContext& AdvancedVisualization::getContext()
+IRendererContext & AdvancedVisualization::getContext()
 
 {
-	static IRendererContext* l_pRendererContext=IRendererContext::create();
+	static IRendererContext* l_pRendererContext = IRendererContext::create();
 	return *l_pRendererContext;
 }

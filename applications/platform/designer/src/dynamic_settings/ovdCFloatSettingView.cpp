@@ -10,21 +10,21 @@ using namespace Setting;
 
 static void on_button_setting_float_up_pressed(GtkButton* pButton, gpointer pUserData)
 {
-	static_cast<CFloatSettingView *>(pUserData)->adjustValue(1.0);
+	static_cast<CFloatSettingView*>(pUserData)->adjustValue(1.0);
 }
 
 static void on_button_setting_float_down_pressed(GtkButton* pButton, gpointer pUserData)
 {
-	static_cast<CFloatSettingView *>(pUserData)->adjustValue(-1.0);
+	static_cast<CFloatSettingView*>(pUserData)->adjustValue(-1.0);
 }
 
-static void on_change(GtkEntry *entry, gpointer pUserData)
+static void on_change(GtkEntry * entry, gpointer pUserData)
 {
-	static_cast<CFloatSettingView *>(pUserData)->onChange();
+	static_cast<CFloatSettingView*>(pUserData)->onChange();
 }
 
 
-CFloatSettingView::CFloatSettingView(Kernel::IBox &rBox, uint32_t ui32Index, CString &rBuilderName, const Kernel::IKernelContext &rKernelContext):
+CFloatSettingView::CFloatSettingView(Kernel::IBox & rBox, uint32_t ui32Index, CString & rBuilderName, const Kernel::IKernelContext & rKernelContext) :
 	CAbstractSettingView(rBox, ui32Index, rBuilderName, "settings_collection-hbox_setting_float"), m_rKernelContext(rKernelContext), m_bOnValueSetting(false)
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
@@ -42,13 +42,13 @@ CFloatSettingView::CFloatSettingView(Kernel::IBox &rBox, uint32_t ui32Index, CSt
 }
 
 
-void CFloatSettingView::getValue(CString &rValue) const
+void CFloatSettingView::getValue(CString & rValue) const
 {
 	rValue = CString(gtk_entry_get_text(m_pEntry));
 }
 
 
-void CFloatSettingView::setValue(const CString &rValue)
+void CFloatSettingView::setValue(const CString & rValue)
 {
 	m_bOnValueSetting = true;
 	gtk_entry_set_text(m_pEntry, rValue);
@@ -58,8 +58,8 @@ void CFloatSettingView::setValue(const CString &rValue)
 void CFloatSettingView::adjustValue(double amount)
 {
 	char l_sValue[1024];
-	double l_f64lValue=m_rKernelContext.getConfigurationManager().expandAsFloat(gtk_entry_get_text(m_pEntry), 0);
-	l_f64lValue+=amount;
+	double l_f64lValue = m_rKernelContext.getConfigurationManager().expandAsFloat(gtk_entry_get_text(m_pEntry), 0);
+	l_f64lValue += amount;
 	sprintf(l_sValue, "%lf", l_f64lValue);
 
 	getBox().setSettingValue(getSettingIndex(), l_sValue);
@@ -68,7 +68,7 @@ void CFloatSettingView::adjustValue(double amount)
 
 void CFloatSettingView::onChange()
 {
-	if(!m_bOnValueSetting)
+	if (!m_bOnValueSetting)
 	{
 		const gchar* l_sValue = gtk_entry_get_text(m_pEntry);
 		getBox().setSettingValue(getSettingIndex(), l_sValue);

@@ -51,7 +51,7 @@ namespace Mensia
 
 			virtual void render()
 			{
-				if(condition())
+				if (condition())
 				{
 					first.doRender();
 				}
@@ -63,7 +63,7 @@ namespace Mensia
 
 			virtual void renderLeft(GtkWidget* pWidget)
 			{
-				if(condition())
+				if (condition())
 				{
 					first.doRenderLeft(pWidget);
 				}
@@ -75,7 +75,7 @@ namespace Mensia
 
 			virtual void renderRight(GtkWidget* pWidget)
 			{
-				if(condition())
+				if (condition())
 				{
 					first.doRenderRight(pWidget);
 				}
@@ -87,7 +87,7 @@ namespace Mensia
 
 			virtual void renderBottom(GtkWidget* pWidget)
 			{
-				if(condition())
+				if (condition())
 				{
 					first.doRenderBottom(pWidget);
 				}

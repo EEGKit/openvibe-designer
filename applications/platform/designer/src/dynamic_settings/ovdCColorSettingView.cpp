@@ -8,22 +8,20 @@ using namespace OpenViBEDesigner;
 using namespace Setting;
 
 // round is defined in <cmath> on c++11
-inline int ov_round(double dbl)
-{ return dbl >= 0.0 ? (int)(dbl + 0.5) : ((dbl - (double)(int)dbl) <= -0.5 ? (int)dbl : (int)(dbl - 0.5));
-}
+inline int ov_round(double dbl) { return dbl >= 0.0 ? (int)(dbl + 0.5) : ((dbl - (double)(int)dbl) <= -0.5 ? (int)dbl : (int)(dbl - 0.5)); }
 
-static void on_button_setting_color_choose_pressed(GtkColorButton* pButton, gpointer pUserData)
+static void on_button_setting_color_choose_pressed(GtkColorButton * pButton, gpointer pUserData)
 {
-	static_cast< CColorSettingView *>(pUserData)->selectColor();
+	static_cast<CColorSettingView*>(pUserData)->selectColor();
 }
 
-static void on_change(GtkEntry *entry, gpointer pUserData)
+static void on_change(GtkEntry * entry, gpointer pUserData)
 {
-	static_cast<CColorSettingView *>(pUserData)->onChange();
+	static_cast<CColorSettingView*>(pUserData)->onChange();
 }
 
 
-CColorSettingView::CColorSettingView(Kernel::IBox &rBox, uint32_t ui32Index, CString &rBuilderName, const Kernel::IKernelContext &rKernelContext):
+CColorSettingView::CColorSettingView(Kernel::IBox & rBox, uint32_t ui32Index, CString & rBuilderName, const Kernel::IKernelContext & rKernelContext) :
 	CAbstractSettingView(rBox, ui32Index, rBuilderName, "settings_collection-hbox_setting_color"), m_rKernelContext(rKernelContext), m_bOnValueSetting(false)
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
@@ -40,26 +38,26 @@ CColorSettingView::CColorSettingView(Kernel::IBox &rBox, uint32_t ui32Index, CSt
 }
 
 
-void CColorSettingView::getValue(CString &rValue) const
+void CColorSettingView::getValue(CString & rValue) const
 {
 	rValue = CString(gtk_entry_get_text(m_pEntry));
 }
 
 
-void CColorSettingView::setValue(const CString &rValue)
+void CColorSettingView::setValue(const CString & rValue)
 {
 	m_bOnValueSetting = true;
-	int r=0, g=0, b=0;
+	int r = 0, g = 0, b = 0;
 	sscanf(m_rKernelContext.getConfigurationManager().expand(rValue).toASCIIString(), "%i,%i,%i", &r, &g, &b);
 
 	GdkColor l_oColor;
-	l_oColor.red  =(r*65535)/100;
-	l_oColor.green=(g*65535)/100;
-	l_oColor.blue =(b*65535)/100;
+	l_oColor.red = (r * 65535) / 100;
+	l_oColor.green = (g * 65535) / 100;
+	l_oColor.blue = (b * 65535) / 100;
 	gtk_color_button_set_color(m_pButton, &l_oColor);
 
 	gtk_entry_set_text(m_pEntry, rValue);
-	m_bOnValueSetting =false;
+	m_bOnValueSetting = false;
 
 }
 
@@ -69,7 +67,7 @@ void CColorSettingView::selectColor()
 	gtk_color_button_get_color(m_pButton, &l_oColor);
 
 	char l_sBuffer[1024];
-	sprintf(l_sBuffer, "%i,%i,%i", ov_round((l_oColor.red*100)/65535.), ov_round((l_oColor.green*100)/65535.), ov_round((l_oColor.blue*100)/65535.));
+	sprintf(l_sBuffer, "%i,%i,%i", ov_round((l_oColor.red * 100) / 65535.), ov_round((l_oColor.green * 100) / 65535.), ov_round((l_oColor.blue * 100) / 65535.));
 
 	getBox().setSettingValue(getSettingIndex(), l_sBuffer);
 	setValue(l_sBuffer);
@@ -77,7 +75,7 @@ void CColorSettingView::selectColor()
 
 void CColorSettingView::onChange()
 {
-	if(!m_bOnValueSetting)
+	if (!m_bOnValueSetting)
 	{
 		const gchar* l_sValue = gtk_entry_get_text(m_pEntry);
 		getBox().setSettingValue(getSettingIndex(), l_sValue);

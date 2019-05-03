@@ -53,12 +53,12 @@ namespace Mensia
 			virtual void render()
 
 			{
-				IRendererContext::EDataType l_eDataType=m_pRendererContext->getDataType();
-				if(l_eDataType==IRendererContext::DataType_Signal)
+				IRendererContext::EDataType l_eDataType = m_pRendererContext->getDataType();
+				if (l_eDataType == IRendererContext::DataType_Signal)
 				{
 					m_oRulerSignal.doRender();
 				}
-				else if(l_eDataType==IRendererContext::DataType_Spectrum)
+				else if (l_eDataType == IRendererContext::DataType_Spectrum)
 				{
 					m_oRulerSpectrum.doRender();
 				}
@@ -70,12 +70,12 @@ namespace Mensia
 
 			virtual void renderLeft(GtkWidget* pWidget)
 			{
-				IRendererContext::EDataType l_eDataType=m_pRendererContext->getDataType();
-				if(l_eDataType==IRendererContext::DataType_Signal)
+				IRendererContext::EDataType l_eDataType = m_pRendererContext->getDataType();
+				if (l_eDataType == IRendererContext::DataType_Signal)
 				{
 					m_oRulerSignal.doRenderLeft(pWidget);
 				}
-				else if(l_eDataType==IRendererContext::DataType_Spectrum)
+				else if (l_eDataType == IRendererContext::DataType_Spectrum)
 				{
 					m_oRulerSpectrum.doRenderLeft(pWidget);
 				}
@@ -87,12 +87,12 @@ namespace Mensia
 
 			virtual void renderRight(GtkWidget* pWidget)
 			{
-				IRendererContext::EDataType l_eDataType=m_pRendererContext->getDataType();
-				if(l_eDataType==IRendererContext::DataType_Signal)
+				IRendererContext::EDataType l_eDataType = m_pRendererContext->getDataType();
+				if (l_eDataType == IRendererContext::DataType_Signal)
 				{
 					m_oRulerSignal.doRenderRight(pWidget);
 				}
-				else if(l_eDataType==IRendererContext::DataType_Spectrum)
+				else if (l_eDataType == IRendererContext::DataType_Spectrum)
 				{
 					m_oRulerSpectrum.doRenderRight(pWidget);
 				}
@@ -104,13 +104,13 @@ namespace Mensia
 
 			virtual void renderBottom(GtkWidget* pWidget)
 			{
-				IRendererContext::EDataType l_eDataType=m_pRendererContext->getDataType();
+				IRendererContext::EDataType l_eDataType = m_pRendererContext->getDataType();
 
-				if(l_eDataType==IRendererContext::DataType_Signal)
+				if (l_eDataType == IRendererContext::DataType_Signal)
 				{
 					m_oRulerSignal.doRenderBottom(pWidget);
 				}
-				else if(l_eDataType==IRendererContext::DataType_Spectrum)
+				else if (l_eDataType == IRendererContext::DataType_Spectrum)
 				{
 					m_oRulerSpectrum.doRenderBottom(pWidget);
 				}

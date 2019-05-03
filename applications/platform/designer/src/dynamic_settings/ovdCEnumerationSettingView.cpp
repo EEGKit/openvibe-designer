@@ -9,31 +9,31 @@ using namespace OpenViBE;
 using namespace OpenViBEDesigner;
 using namespace Setting;
 
-static void on_change(GtkEntry *entry, gpointer pUserData)
+static void on_change(GtkEntry* entry, gpointer pUserData)
 {
-	static_cast<CEnumerationSettingView *>(pUserData)->onChange();
+	static_cast<CEnumerationSettingView*>(pUserData)->onChange();
 }
 
-CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox &rBox, uint32_t ui32Index,
-												 CString &rBuilderName, const Kernel::IKernelContext &rKernelContext,
-												 const CIdentifier &rTypeIdentifier):
+CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox& rBox, uint32_t ui32Index,
+	CString& rBuilderName, const Kernel::IKernelContext& rKernelContext,
+	const CIdentifier& rTypeIdentifier) :
 	CAbstractSettingView(rBox, ui32Index, rBuilderName, "settings_collection-comboboxentry_setting_enumeration"),
 	m_oTypeIdentifier(rTypeIdentifier),
 	m_rKernelContext(rKernelContext),
 	m_bOnValueSetting(false)
 {
-	p=false;
+	p = false;
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 
 	m_pComboBox = GTK_COMBO_BOX(l_pSettingWidget);
 
 	std::vector<std::string> l_vEntries;
 
-	for(uint64_t i=0; i<m_rKernelContext.getTypeManager().getEnumerationEntryCount(m_oTypeIdentifier); i++)
+	for (uint64_t i = 0; i < m_rKernelContext.getTypeManager().getEnumerationEntryCount(m_oTypeIdentifier); i++)
 	{
 		CString l_sEntryName;
 		uint64_t l_ui64EntryValue;
-		if(m_rKernelContext.getTypeManager().getEnumerationEntry(m_oTypeIdentifier, i, l_sEntryName, l_ui64EntryValue))
+		if (m_rKernelContext.getTypeManager().getEnumerationEntry(m_oTypeIdentifier, i, l_sEntryName, l_ui64EntryValue))
 		{
 			l_vEntries.push_back(l_sEntryName.toASCIIString());
 		}
@@ -42,7 +42,7 @@ CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox &rBox, uint32_t ui
 	std::sort(l_vEntries.begin(), l_vEntries.end());
 
 	GtkTreeIter l_oListIter;
-	GtkListStore* l_pList=GTK_LIST_STORE(gtk_combo_box_get_model(m_pComboBox));
+	GtkListStore* l_pList = GTK_LIST_STORE(gtk_combo_box_get_model(m_pComboBox));
 	gtk_combo_box_set_wrap_width(m_pComboBox, 0);
 	gtk_list_store_clear(l_pList);
 
@@ -68,13 +68,13 @@ CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox &rBox, uint32_t ui
 }
 
 
-void CEnumerationSettingView::getValue(CString &rValue) const
+void CEnumerationSettingView::getValue(CString & rValue) const
 {
 	rValue = CString(gtk_combo_box_get_active_text(m_pComboBox));
 }
 
 
-void CEnumerationSettingView::setValue(const CString &rValue)
+void CEnumerationSettingView::setValue(const CString & rValue)
 {
 	m_bOnValueSetting = true;
 
@@ -104,12 +104,12 @@ void CEnumerationSettingView::setValue(const CString &rValue)
 	{
 		gtk_combo_box_set_active(m_pComboBox, (gint)m_mEntriesIndex[rValue]);
 	}
-	m_bOnValueSetting =false;
+	m_bOnValueSetting = false;
 }
 
 void CEnumerationSettingView::onChange()
 {
-	if(!m_bOnValueSetting)
+	if (!m_bOnValueSetting)
 	{
 		gchar* l_sValue = gtk_combo_box_get_active_text(m_pComboBox);
 		getBox().setSettingValue(getSettingIndex(), l_sValue);

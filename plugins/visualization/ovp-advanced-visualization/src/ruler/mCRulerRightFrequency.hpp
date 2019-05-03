@@ -35,26 +35,26 @@ namespace Mensia
 
 			virtual void renderRight(GtkWidget* pWidget)
 			{
-				float l_fScale=(float)m_pRendererContext->getSpectrumFrequencyRange();
-				if(m_fLastScale!=l_fScale) { m_vRange=this->split_range(0, l_fScale); m_fLastScale=l_fScale; }
+				float l_fScale = (float)m_pRendererContext->getSpectrumFrequencyRange();
+				if (m_fLastScale != l_fScale) { m_vRange = this->split_range(0, l_fScale); m_fLastScale = l_fScale; }
 
 				gint w, h, y;
 				gint lw, lh;
 
-				uint32_t l_ui32ChannelCount=m_pRendererContext->getSelectedCount();
-				for(uint32_t i=0; i<l_ui32ChannelCount; i++)
+				uint32_t l_ui32ChannelCount = m_pRendererContext->getSelectedCount();
+				for (uint32_t i = 0; i < l_ui32ChannelCount; i++)
 				{
 					gdk_drawable_get_size(pWidget->window, &w, &h);
-					GdkGC* l_pDrawGC=gdk_gc_new(pWidget->window);
-					for(it=m_vRange.begin(); it!=m_vRange.end(); it++)
+					GdkGC* l_pDrawGC = gdk_gc_new(pWidget->window);
+					for (it = m_vRange.begin(); it != m_vRange.end(); it++)
 					{
-						y=gint((i+*it/l_fScale)*(h*1.f/l_ui32ChannelCount));
-						PangoLayout* l_pPangoLayout=gtk_widget_create_pango_layout(pWidget, this->getLabel(*it).c_str());
+						y = gint((i + *it / l_fScale) * (h * 1.f / l_ui32ChannelCount));
+						PangoLayout * l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, this->getLabel(*it).c_str());
 						pango_layout_get_size(l_pPangoLayout, &lw, &lh);
-						lw/=PANGO_SCALE;
-						lh/=PANGO_SCALE;
-						gdk_draw_layout(pWidget->window, l_pDrawGC, 8, h-y-lh/2, l_pPangoLayout);
-						gdk_draw_line(pWidget->window, l_pDrawGC, 0, h-y, 3, h-y);
+						lw /= PANGO_SCALE;
+						lh /= PANGO_SCALE;
+						gdk_draw_layout(pWidget->window, l_pDrawGC, 8, h - y - lh / 2, l_pPangoLayout);
+						gdk_draw_line(pWidget->window, l_pDrawGC, 0, h - y, 3, h - y);
 						g_object_unref(l_pPangoLayout);
 					}
 					g_object_unref(l_pDrawGC);

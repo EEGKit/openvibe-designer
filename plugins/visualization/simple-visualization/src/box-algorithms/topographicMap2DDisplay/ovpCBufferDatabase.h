@@ -24,11 +24,11 @@ namespace OpenViBEPlugins
 		*/
 		class CSignalDisplayDrawable
 		{
-			public:
+		public:
 
-				virtual ~CSignalDisplayDrawable(){ }
-				virtual void init() = 0;
-				virtual void redraw() = 0;
+			virtual ~CSignalDisplayDrawable() { }
+			virtual void init() = 0;
+			virtual void redraw() = 0;
 		};
 
 		/**
@@ -54,7 +54,7 @@ namespace OpenViBEPlugins
 			uint32_t m_ui32SamplingFrequency;
 
 			//! double-linked list of pointers to the samples buffers of the current time window
-			std::deque<double *> m_oSampleBuffers;
+			std::deque<double*> m_oSampleBuffers;
 
 			//! stimulations to display. pair values are <date, stimcode>
 			std::deque<std::pair<uint64_t, uint64_t> > m_oStimulations;
@@ -113,7 +113,7 @@ namespace OpenViBEPlugins
 			bool m_bWarningPrinted;
 
 			//! Pointer to the drawable object to update (if needed)
-			CSignalDisplayDrawable * m_pDrawable;
+			CSignalDisplayDrawable* m_pDrawable;
 
 			std::vector<std::deque<std::pair<double, double> > > m_oLocalMinMaxValue;
 
@@ -183,7 +183,7 @@ namespace OpenViBEPlugins
 			 * \param pDrawable drawable object to update.
 			 */
 			virtual void setDrawable(
-				CSignalDisplayDrawable * pDrawable);
+				CSignalDisplayDrawable* pDrawable);
 
 			/**
 			 * \brief Get error status
@@ -252,10 +252,10 @@ namespace OpenViBEPlugins
 				f64Min = +DBL_MAX;
 				f64Max = -DBL_MAX;
 
-				for(uint32_t c=0 ; c<m_oLocalMinMaxValue.size() ; c++)
+				for (auto& localValue : m_oLocalMinMaxValue)
 				{
-					f64Min = (m_oLocalMinMaxValue[c].back().first < f64Min) ? m_oLocalMinMaxValue[c].back().first : f64Min;
-					f64Max = (m_oLocalMinMaxValue[c].back().second > f64Max) ? m_oLocalMinMaxValue[c].back().second : f64Max;
+					f64Min = (localValue.back().first < f64Min) ? localValue.back().first : f64Min;
+					f64Max = (localValue.back().second > f64Max) ? localValue.back().second : f64Max;
 				}
 			}
 
@@ -369,8 +369,7 @@ namespace OpenViBEPlugins
 			 * \remarks Used by signal display and time ruler to determine how they should be updated
 			 * \param oDisplayMode New display mode
 			 */
-			virtual void setDisplayMode(
-				OpenViBE::CIdentifier oDisplayMode);
+			virtual void setDisplayMode(const OpenViBE::CIdentifier& oDisplayMode);
 
 			/**
 			 * \brief Get current display mode
@@ -405,6 +404,5 @@ namespace OpenViBEPlugins
 				double& rPhi);
 		};
 	}
-
 }
 

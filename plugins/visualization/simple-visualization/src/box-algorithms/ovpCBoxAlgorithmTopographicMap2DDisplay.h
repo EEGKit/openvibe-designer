@@ -48,25 +48,22 @@ namespace OpenViBEPlugins
 
 			virtual void release() { }
 
-			virtual OpenViBE::CString getName() const                { return OpenViBE::CString("2D topographic map"); }
-			virtual OpenViBE::CString getAuthorName() const          { return OpenViBE::CString("Vincent Delannoy"); }
-			virtual OpenViBE::CString getAuthorCompanyName() const   { return OpenViBE::CString("INRIA/IRISA"); }
-			virtual OpenViBE::CString getShortDescription() const    { return OpenViBE::CString("This box demonstrates how to perform spherical spline interpolation"); }
+			virtual OpenViBE::CString getName() const { return OpenViBE::CString("2D topographic map"); }
+			virtual OpenViBE::CString getAuthorName() const { return OpenViBE::CString("Vincent Delannoy"); }
+			virtual OpenViBE::CString getAuthorCompanyName() const { return OpenViBE::CString("INRIA/IRISA"); }
+			virtual OpenViBE::CString getShortDescription() const { return OpenViBE::CString("This box demonstrates how to perform spherical spline interpolation"); }
 			virtual OpenViBE::CString getDetailedDescription() const { return OpenViBE::CString(""); }
-			virtual OpenViBE::CString getCategory() const            { return OpenViBE::CString("Visualization/Topography"); }
-			virtual OpenViBE::CString getVersion() const             { return OpenViBE::CString("2.0"); }
-			virtual OpenViBE::CString getStockItemName() const       { return OpenViBE::CString(GTK_STOCK_EXECUTE); }
-			virtual OpenViBE::CString getSoftwareComponent() const   { return OpenViBE::CString("openvibe-designer"); }
-			virtual OpenViBE::CString getAddedSoftwareVersion() const   { return OpenViBE::CString("0.0.0"); }
+			virtual OpenViBE::CString getCategory() const { return OpenViBE::CString("Visualization/Topography"); }
+			virtual OpenViBE::CString getVersion() const { return OpenViBE::CString("2.0"); }
+			virtual OpenViBE::CString getStockItemName() const { return OpenViBE::CString(GTK_STOCK_EXECUTE); }
+			virtual OpenViBE::CString getSoftwareComponent() const { return OpenViBE::CString("openvibe-designer"); }
+			virtual OpenViBE::CString getAddedSoftwareVersion() const { return OpenViBE::CString("0.0.0"); }
 			virtual OpenViBE::CString getUpdatedSoftwareVersion() const { return OpenViBE::CString("0.0.0"); }
 
-			virtual OpenViBE::CIdentifier getCreatedClass() const    { return OVP_ClassId_TopographicMap2DDisplay; }
-			virtual OpenViBE::Plugins::IPluginObject* create()       { return new CBoxAlgorithmTopographicMap2DDisplay(); }
+			virtual OpenViBE::CIdentifier getCreatedClass() const { return OVP_ClassId_TopographicMap2DDisplay; }
+			virtual OpenViBE::Plugins::IPluginObject* create() { return new CBoxAlgorithmTopographicMap2DDisplay(); }
 
-			virtual bool hasFunctionality(OpenViBE::CIdentifier functionalityIdentifier) const
-			{
-				return functionalityIdentifier == OVD_Functionality_Visualization;
-			}
+			virtual bool hasFunctionality(OpenViBE::CIdentifier functionalityIdentifier) const { return functionalityIdentifier == OVD_Functionality_Visualization; }
 
 			virtual bool getBoxPrototype(
 				OpenViBE::Kernel::IBoxProto& rPrototype) const

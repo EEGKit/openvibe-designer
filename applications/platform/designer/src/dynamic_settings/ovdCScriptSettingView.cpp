@@ -11,28 +11,28 @@ using namespace Setting;
 
 static void on_button_setting_filename_browse_pressed(GtkButton* pButton, gpointer pUserData)
 {
-	static_cast< CScriptSettingView * >(pUserData)->browse();
+	static_cast<CScriptSettingView*>(pUserData)->browse();
 }
 
 static void on_button_setting_script_edit_pressed(GtkButton* pButton, gpointer pUserData)
 {
-	static_cast< CScriptSettingView * >(pUserData)->edit();
+	static_cast<CScriptSettingView*>(pUserData)->edit();
 }
 
-static void on_change(GtkEntry *entry, gpointer pUserData)
+static void on_change(GtkEntry* entry, gpointer pUserData)
 {
-	static_cast<CScriptSettingView *>(pUserData)->onChange();
+	static_cast<CScriptSettingView*>(pUserData)->onChange();
 }
 
 #if defined TARGET_OS_Windows
-static gboolean on_focus_out_event(GtkEntry *entry, GdkEvent* event, gpointer pUserData)
+static gboolean on_focus_out_event(GtkEntry* entry, GdkEvent* event, gpointer pUserData)
 {
-	static_cast<CScriptSettingView *>(pUserData)->onFocusLost();
+	static_cast<CScriptSettingView*>(pUserData)->onFocusLost();
 	return FALSE;
 }
 #endif
 
-CScriptSettingView::CScriptSettingView(Kernel::IBox &rBox, uint32_t ui32Index, CString &rBuilderName, const Kernel::IKernelContext &rKernelContext):
+CScriptSettingView::CScriptSettingView(Kernel::IBox& rBox, uint32_t ui32Index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext) :
 	CAbstractSettingView(rBox, ui32Index, rBuilderName, "settings_collection-hbox_setting_script"), m_rKernelContext(rKernelContext), m_bOnValueSetting(false)
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
@@ -53,22 +53,22 @@ CScriptSettingView::CScriptSettingView(Kernel::IBox &rBox, uint32_t ui32Index, C
 }
 
 
-void CScriptSettingView::getValue(CString &rValue) const
+void CScriptSettingView::getValue(CString& rValue) const
 {
 	rValue = CString(gtk_entry_get_text(m_pEntry));
 }
 
 
-void CScriptSettingView::setValue(const CString &rValue)
+void CScriptSettingView::setValue(const CString& rValue)
 {
 	m_bOnValueSetting = true;
 	gtk_entry_set_text(m_pEntry, rValue);
-	m_bOnValueSetting =false;
+	m_bOnValueSetting = false;
 }
 
 void CScriptSettingView::browse()
 {
-	GtkWidget* l_pWidgetDialogOpen=gtk_file_chooser_dialog_new(
+	GtkWidget* l_pWidgetDialogOpen = gtk_file_chooser_dialog_new(
 		"Select file to open...",
 		nullptr,
 		GTK_FILE_CHOOSER_ACTION_SAVE,
@@ -76,25 +76,25 @@ void CScriptSettingView::browse()
 		GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
 		nullptr);
 
-	CString l_sInitialFileName=m_rKernelContext.getConfigurationManager().expand(gtk_entry_get_text(m_pEntry));
-	if(g_path_is_absolute(l_sInitialFileName.toASCIIString()))
+	CString l_sInitialFileName = m_rKernelContext.getConfigurationManager().expand(gtk_entry_get_text(m_pEntry));
+	if (g_path_is_absolute(l_sInitialFileName.toASCIIString()))
 	{
 		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(l_pWidgetDialogOpen), l_sInitialFileName.toASCIIString());
 	}
 	else
 	{
-		char* l_sFullPath=g_build_filename(g_get_current_dir(), l_sInitialFileName.toASCIIString(), nullptr);
+		char* l_sFullPath = g_build_filename(g_get_current_dir(), l_sInitialFileName.toASCIIString(), nullptr);
 		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(l_pWidgetDialogOpen), l_sFullPath);
 		g_free(l_sFullPath);
 	}
 
 	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(l_pWidgetDialogOpen), false);
 
-	if(gtk_dialog_run(GTK_DIALOG(l_pWidgetDialogOpen))==GTK_RESPONSE_ACCEPT)
+	if (gtk_dialog_run(GTK_DIALOG(l_pWidgetDialogOpen)) == GTK_RESPONSE_ACCEPT)
 	{
-		char* l_sFileName=gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(l_pWidgetDialogOpen));
+		char* l_sFileName = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(l_pWidgetDialogOpen));
 		char* l_pBackslash = nullptr;
-		while((l_pBackslash = strchr(l_sFileName, '\\'))!=nullptr)
+		while ((l_pBackslash = strchr(l_sFileName, '\\')) != nullptr)
 		{
 			*l_pBackslash = '/';
 		}
@@ -106,19 +106,19 @@ void CScriptSettingView::browse()
 
 void CScriptSettingView::edit()
 {
-	CString l_sFileName=m_rKernelContext.getConfigurationManager().expand(gtk_entry_get_text(m_pEntry));
-	CString l_sEditorCommand=m_rKernelContext.getConfigurationManager().expand("${Designer_ScriptEditorCommand}");
+	CString l_sFileName = m_rKernelContext.getConfigurationManager().expand(gtk_entry_get_text(m_pEntry));
+	CString l_sEditorCommand = m_rKernelContext.getConfigurationManager().expand("${Designer_ScriptEditorCommand}");
 
-	if(l_sEditorCommand != CString(""))
+	if (l_sEditorCommand != CString(""))
 	{
-		CString l_sFullCommand=l_sEditorCommand + CString(" \"") + l_sFileName + CString("\"");
+		CString l_sFullCommand = l_sEditorCommand + CString(" \"") + l_sFileName + CString("\"");
 #if defined TARGET_OS_Windows
 		l_sFullCommand = "START " + l_sFullCommand;
 #elif defined TARGET_OS_Linux
 		l_sFullCommand = l_sFullCommand + " &";
 #else
 #endif
-		if(system(l_sFullCommand.toASCIIString())<0)
+		if (system(l_sFullCommand.toASCIIString()) < 0)
 		{
 			m_rKernelContext.getLogManager() << Kernel::LogLevel_Warning << "Could not run command " << l_sFullCommand << "\n";
 		}
@@ -127,7 +127,7 @@ void CScriptSettingView::edit()
 
 void CScriptSettingView::onChange()
 {
-	if(!m_bOnValueSetting)
+	if (!m_bOnValueSetting)
 	{
 		const gchar* l_sValue = gtk_entry_get_text(m_pEntry);
 		getBox().setSettingValue(getSettingIndex(), l_sValue);

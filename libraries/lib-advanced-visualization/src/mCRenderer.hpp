@@ -75,7 +75,7 @@ namespace Mensia
 
 			virtual void rebuild(const IRendererContext& rContext);
 			virtual void refresh(const IRendererContext& rContext);
-//			virtual bool render(const IRendererContext& rContext);
+			//			virtual bool render(const IRendererContext& rContext);
 
 			virtual void clearRegionSelection() { }
 			virtual uint32_t getRegionCategoryCount() { return 0; }
@@ -84,7 +84,7 @@ namespace Mensia
 			virtual const char* getRegionName(uint32_t ui32RegionCategory, uint32_t ui32RegionIndex) { return nullptr; }
 			virtual void selectRegion(uint32_t ui32RegionCategory, const char* sRegionName) { }
 			virtual void selectRegion(uint32_t ui32RegionCategory, uint32_t ui32RegionIndex) { }
-			
+
 			virtual void SetFaceMeshVisible(bool bVisible = true) { }
 
 			virtual void draw3DCoordinateSystem();
@@ -113,7 +113,7 @@ namespace Mensia
 
 			uint64_t m_ui64TimeOffset;
 
-//			std::map < std::string, CVertex > m_vChannelLocalisation;
+			//			std::map < std::string, CVertex > m_vChannelLocalisation;
 			std::vector < std::pair < double, uint64_t > > m_vStimulationHistory;
 			std::vector < std::vector < float > > m_vHistory;
 			std::vector < std::vector < CVertex > > m_vVertex;

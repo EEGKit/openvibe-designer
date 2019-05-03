@@ -44,20 +44,20 @@ namespace Mensia
 				uint32_t i, l_ui32Index;
 
 				gdk_drawable_get_size(pWidget->window, &w, &h);
-				GdkGC* l_pDrawGC=gdk_gc_new(pWidget->window);
-				for(i=0; i<m_pRendererContext->getSelectedCount(); i++)
+				GdkGC* l_pDrawGC = gdk_gc_new(pWidget->window);
+				for (i = 0; i < m_pRendererContext->getSelectedCount(); i++)
 				{
-					l_ui32Index=m_pRendererContext->getSelected(i);
-					sprintf(l_sLabel, "%s (%i)", m_pRendererContext->getChannelName(l_ui32Index).c_str(), l_ui32Index+1);
-					PangoLayout* l_pPangoLayout=gtk_widget_create_pango_layout(pWidget, l_sLabel);
+					l_ui32Index = m_pRendererContext->getSelected(i);
+					sprintf(l_sLabel, "%s (%i)", m_pRendererContext->getChannelName(l_ui32Index).c_str(), l_ui32Index + 1);
+					PangoLayout * l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, l_sLabel);
 					pango_layout_get_size(l_pPangoLayout, &lw, &lh);
-					lw/=PANGO_SCALE;
-					lh/=PANGO_SCALE;
+					lw /= PANGO_SCALE;
+					lh /= PANGO_SCALE;
 					gdk_draw_layout(
 						pWidget->window,
 						l_pDrawGC,
-						w-lw,
-						gint(((i+.5)*h)/m_pRendererContext->getSelectedCount()-lh/2),
+						w - lw,
+						gint(((i + 0.5) * h) / m_pRendererContext->getSelectedCount() - lh / 2),
 						l_pPangoLayout);
 					g_object_unref(l_pPangoLayout);
 				}

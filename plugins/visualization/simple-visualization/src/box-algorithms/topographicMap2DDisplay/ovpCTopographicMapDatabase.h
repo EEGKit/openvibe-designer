@@ -21,7 +21,7 @@ namespace OpenViBEPlugins
 		class CTopographicMapDrawable : public CSignalDisplayDrawable
 		{
 		public:
-			virtual ~CTopographicMapDrawable(){ }
+			virtual ~CTopographicMapDrawable() { }
 			virtual OpenViBE::CMatrix* getSampleCoordinatesMatrix() = 0;
 			virtual bool setSampleValuesMatrix(OpenViBE::IMatrix* pSampleValuesMatrix) = 0;
 		};

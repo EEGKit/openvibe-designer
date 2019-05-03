@@ -33,7 +33,7 @@ namespace Mensia
 		{
 		public:
 
-			virtual void renderFinal(float fProgress)=0;
+			virtual void renderFinal(float fProgress) = 0;
 
 			virtual void render()
 
@@ -41,16 +41,16 @@ namespace Mensia
 #if 0
 				::printf("%p = %p\n", this, m_pRenderer);
 #endif
-				if(m_pRenderer == nullptr) return;
-				if(m_pRenderer->getSampleCount() == 0) return;
-				if(m_pRenderer->getHistoryCount() == 0) return;
-				if(m_pRenderer->getHistoryIndex() == 0) return;
+				if (m_pRenderer == nullptr) return;
+				if (m_pRenderer->getSampleCount() == 0) return;
+				if (m_pRenderer->getHistoryCount() == 0) return;
+				if (m_pRenderer->getHistoryIndex() == 0) return;
 
-				uint32_t l_ui32SampleCount=m_pRenderer->getSampleCount();
-				uint32_t l_ui32HistoryIndex=m_pRenderer->getHistoryIndex();
+				uint32_t l_ui32SampleCount = m_pRenderer->getSampleCount();
+				uint32_t l_ui32HistoryIndex = m_pRenderer->getHistoryIndex();
 
-				float l_fProgress=(l_ui32HistoryIndex-(l_ui32HistoryIndex/l_ui32SampleCount)*l_ui32SampleCount)/float(l_ui32SampleCount);
-				if(l_fProgress!=0 && l_fProgress!=1)
+				float l_fProgress = float(l_ui32HistoryIndex - (float(l_ui32HistoryIndex) / l_ui32SampleCount) * l_ui32SampleCount) / l_ui32SampleCount;
+				if (l_fProgress != 0 && l_fProgress != 1)
 				{
 					this->renderFinal(l_fProgress);
 				}
