@@ -32,9 +32,9 @@ namespace Mensia
 		{
 		public:
 
-			virtual bool render(const IRendererContext& rContext);
+			bool render(const IRendererContext& rContext) override;
 		};
-	};
-};
+	} // namespace AdvancedVisualization
+}  // namespace Mensia
 
 #endif // __Mensia_AdvancedVisualization_CRendererMultiLine_H__

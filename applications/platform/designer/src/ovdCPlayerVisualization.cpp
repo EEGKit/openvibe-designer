@@ -50,7 +50,7 @@ CPlayerVisualization::~CPlayerVisualization()
 
 	m_pActiveToolbarButton = nullptr;
 
-	for (unsigned int i = 0; i < m_vWindows.size(); i++)
+	for (unsigned int i = 0; i < m_vWindows.size(); ++i)
 	{
 		g_signal_handlers_disconnect_by_func(G_OBJECT(m_vWindows[i]), G_CALLBACK2(CPlayerVisualization::configure_event_cb), this);
 		gtk_widget_destroy(GTK_WIDGET(m_vWindows[i]));
@@ -176,7 +176,7 @@ GtkWidget* CPlayerVisualization::loadTreeWidget(IVisualizationWidget* pVisualiza
 				if (l_pPaned != nullptr && GTK_IS_PANED(l_pPaned))
 				{
 					uint32_t l_ui32ChildIndex;
-					if (l_pParentVisualizationWidget->getChildIndex(pVisualizationWidget->getIdentifier(), l_ui32ChildIndex) == true)
+					if (l_pParentVisualizationWidget->getChildIndex(pVisualizationWidget->getIdentifier(), l_ui32ChildIndex))
 					{
 						if (l_ui32ChildIndex == 0)
 						{
@@ -198,7 +198,7 @@ GtkWidget* CPlayerVisualization::loadTreeWidget(IVisualizationWidget* pVisualiza
 		bool l_bCreateWindow = false;
 
 		//for all visualization boxes
-		while (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oIdentifier, EVisualizationWidget_VisualizationBox) == true)
+		while (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oIdentifier, EVisualizationWidget_VisualizationBox))
 		{
 			//retrieve window containing current visualization box
 			CIdentifier l_oParentIdentifier;
@@ -217,17 +217,14 @@ GtkWidget* CPlayerVisualization::loadTreeWidget(IVisualizationWidget* pVisualiza
 			}
 		}
 
-		if (l_bCreateWindow == true)
+		if (l_bCreateWindow)
 		{
 			//create new top level window
 			l_pTreeWidget = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 			m_vWindows.push_back(GTK_WINDOW(l_pTreeWidget));
 
 			//retrieve its size
-			gtk_window_set_default_size(
-				GTK_WINDOW(l_pTreeWidget),
-				static_cast<int>(pVisualizationWidget->getWidth()),
-				static_cast<int>(pVisualizationWidget->getHeight()));
+			gtk_window_set_default_size(GTK_WINDOW(l_pTreeWidget), int(pVisualizationWidget->getWidth()), int(pVisualizationWidget->getHeight()));
 			//set its title
 			gtk_window_set_title(GTK_WINDOW(l_pTreeWidget), (const char*)pVisualizationWidget->getName());
 
@@ -369,7 +366,7 @@ bool CPlayerVisualization::setWidget(const CIdentifier & rBoxIdentifier, GtkWidg
 		//retrieve icon name
 		GtkTreeIter l_oIter;
 		char* l_pIconString = nullptr;
-		if (m_rVisualizationTree.findChildNodeFromRoot(&l_oIter, (const char*)l_pVisualizationWidget->getName(), EVisualizationTreeNode_VisualizationBox) == true)
+		if (m_rVisualizationTree.findChildNodeFromRoot(&l_oIter, (const char*)l_pVisualizationWidget->getName(), EVisualizationTreeNode_VisualizationBox))
 		{
 			m_rVisualizationTree.getStringValueFromTreeIter(&l_oIter, l_pIconString, EVisualizationTreeColumn_StringStockIcon);
 		}
@@ -463,7 +460,7 @@ bool CPlayerVisualization::parentWidgetBox(IVisualizationWidget * pWidget, GtkBo
 	else //retrieve parent widget in which to insert current widget
 	{
 		GtkTreeIter l_oParentIter;
-		if (m_rVisualizationTree.findChildNodeFromRoot(&l_oParentIter, pWidget->getParentIdentifier()) == true)
+		if (m_rVisualizationTree.findChildNodeFromRoot(&l_oParentIter, pWidget->getParentIdentifier()))
 		{
 			void* l_pParentWidget = nullptr;
 			m_rVisualizationTree.getPointerValueFromTreeIter(&l_oParentIter, l_pParentWidget, EVisualizationTreeColumn_PointerWidget);
@@ -519,7 +516,7 @@ bool CPlayerVisualization::parentWidgetBox(IVisualizationWidget * pWidget, GtkBo
 			//--------------------------------------------------------
 			//get panel containing widget
 			GtkTreeIter l_oPanelIter = l_oParentIter;
-			if (m_rVisualizationTree.findParentNode(&l_oPanelIter, EVisualizationTreeNode_VisualizationPanel) == true)
+			if (m_rVisualizationTree.findParentNode(&l_oPanelIter, EVisualizationTreeNode_VisualizationPanel))
 			{
 				//get panel identifier
 				CIdentifier l_oPanelIdentifier;
@@ -535,7 +532,7 @@ bool CPlayerVisualization::parentWidgetBox(IVisualizationWidget * pWidget, GtkBo
 
 				//get parent window
 				GtkTreeIter l_oWindowIter = l_oPanelIter;
-				if (m_rVisualizationTree.findParentNode(&l_oWindowIter, EVisualizationTreeNode_VisualizationWindow) == true)
+				if (m_rVisualizationTree.findParentNode(&l_oWindowIter, EVisualizationTreeNode_VisualizationWindow))
 				{
 					//get parent window pointer
 					void* l_pWindowWidget = nullptr;
@@ -563,7 +560,7 @@ bool CPlayerVisualization::parentWidgetBox(IVisualizationWidget * pWidget, GtkBo
 void CPlayerVisualization::showTopLevelWindows()
 
 {
-	for (unsigned int i = 0; i < m_vWindows.size(); i++)
+	for (unsigned int i = 0; i < m_vWindows.size(); ++i)
 	{
 		gtk_widget_show(GTK_WIDGET(m_vWindows[i]));
 	}
@@ -572,7 +569,7 @@ void CPlayerVisualization::showTopLevelWindows()
 		//show active toolbar
 		gtk_widget_show(m_mToolbars[m_pActiveToolbarButton]);
 	}
-	std::map < CIdentifier, CPluginWidgets >::iterator it = m_mPlugins.begin();
+	auto it = m_mPlugins.begin();
 	while (it != m_mPlugins.end())
 	{
 		if (GTK_IS_WIDGET(it->second.m_pWidget))
@@ -587,7 +584,7 @@ void CPlayerVisualization::showTopLevelWindows()
 void CPlayerVisualization::hideTopLevelWindows()
 
 {
-	std::map < CIdentifier, CPluginWidgets >::iterator it = m_mPlugins.begin();
+	auto it = m_mPlugins.begin();
 	while (it != m_mPlugins.end())
 	{
 		if (GTK_IS_WIDGET(it->second.m_pWidget))
@@ -596,7 +593,7 @@ void CPlayerVisualization::hideTopLevelWindows()
 		}
 		it++;
 	}
-	for (unsigned int i = 0; i < m_vWindows.size(); i++)
+	for (unsigned int i = 0; i < m_vWindows.size(); ++i)
 	{
 		gtk_widget_hide(GTK_WIDGET(m_vWindows[i]));
 	}
@@ -652,7 +649,7 @@ void CPlayerVisualization::resizeCB(GtkContainer * container)
 	{
 		GtkNotebook* l_pNotebook = GTK_NOTEBOOK(container);
 
-		for (int i = 0; i < gtk_notebook_get_n_pages(l_pNotebook); i++)
+		for (int i = 0; i < gtk_notebook_get_n_pages(l_pNotebook); ++i)
 		{
 			GtkWidget* l_pWidget = gtk_notebook_get_nth_page(l_pNotebook, i);
 			if (GTK_IS_CONTAINER(l_pWidget))
@@ -885,7 +882,9 @@ bool CPlayerVisualization::toggleToolbarCB(GtkToggleButton * pToolbarButton)
 gboolean CPlayerVisualization::toolbar_delete_event_cb(GtkWidget * widget, GdkEvent * event, gpointer user_data)
 {
 	if (user_data != nullptr)
+	{
 		static_cast<CPlayerVisualization*>(user_data)->deleteToolbarCB(widget);
+	}
 
 	return TRUE;
 }

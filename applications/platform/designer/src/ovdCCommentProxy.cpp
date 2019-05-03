@@ -7,12 +7,12 @@ using namespace OpenViBEDesigner;
 using namespace std;
 
 CCommentProxy::CCommentProxy(const IKernelContext& rKernelContext, const IComment& rComment)
-	:m_rKernelContext(rKernelContext)
-	, m_pConstComment(&rComment)
-	, m_pComment(nullptr)
-	, m_bApplied(false)
-	, m_iXCenter(0)
-	, m_iYCenter(0)
+	: m_rKernelContext(rKernelContext)
+	  , m_pConstComment(&rComment)
+	  , m_pComment(nullptr)
+	  , m_bApplied(false)
+	  , m_iXCenter(0)
+	  , m_iYCenter(0)
 {
 	if (m_pConstComment)
 	{
@@ -23,11 +23,11 @@ CCommentProxy::CCommentProxy(const IKernelContext& rKernelContext, const ICommen
 }
 
 CCommentProxy::CCommentProxy(const IKernelContext& rKernelContext, IScenario& rScenario, const CIdentifier& rCommentIdentifier)
-	:m_rKernelContext(rKernelContext)
-	, m_pConstComment(rScenario.getCommentDetails(rCommentIdentifier))
-	, m_pComment(rScenario.getCommentDetails(rCommentIdentifier))
-	, m_iXCenter(0)
-	, m_iYCenter(0)
+	: m_rKernelContext(rKernelContext)
+	  , m_pConstComment(rScenario.getCommentDetails(rCommentIdentifier))
+	  , m_pComment(rScenario.getCommentDetails(rCommentIdentifier))
+	  , m_iXCenter(0)
+	  , m_iYCenter(0)
 {
 	if (m_pConstComment)
 	{
@@ -46,11 +46,15 @@ CCommentProxy::~CCommentProxy()
 	}
 }
 
-CCommentProxy::operator IComment* ()
- { return m_pComment; }
+CCommentProxy::operator IComment*()
+{
+	return m_pComment;
+}
 
-CCommentProxy::operator const IComment* ()
- { return m_pConstComment; }
+CCommentProxy::operator const IComment*()
+{
+	return m_pConstComment;
+}
 
 int32_t CCommentProxy::getWidth(GtkWidget* pWidget) const
 {
@@ -85,14 +89,22 @@ void CCommentProxy::apply()
 		TAttributeHandler l_oAttributeHandler(*m_pComment);
 
 		if (l_oAttributeHandler.hasAttribute(OV_AttributeId_Comment_XCenterPosition))
+		{
 			l_oAttributeHandler.setAttributeValue<int>(OV_AttributeId_Comment_XCenterPosition, m_iXCenter);
+		}
 		else
+		{
 			l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Comment_XCenterPosition, m_iXCenter);
+		}
 
 		if (l_oAttributeHandler.hasAttribute(OV_AttributeId_Comment_YCenterPosition))
+		{
 			l_oAttributeHandler.setAttributeValue<int>(OV_AttributeId_Comment_YCenterPosition, m_iYCenter);
+		}
 		else
+		{
 			l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Comment_YCenterPosition, m_iYCenter);
+		}
 		m_bApplied = true;
 	}
 }

@@ -16,14 +16,13 @@ CBoxAlgorithmTopographicMap2DDisplay::CBoxAlgorithmTopographicMap2DDisplay() :
 	m_pTopographicMapDatabase(nullptr),
 	m_pTopographicMap2DView(nullptr) { }
 
-uint64_t CBoxAlgorithmTopographicMap2DDisplay::getClockFrequency()
- { return ((uint64_t)1LL) << 37; }
+uint64_t CBoxAlgorithmTopographicMap2DDisplay::getClockFrequency() { return uint64_t(1LL) << 37; }
 
 bool CBoxAlgorithmTopographicMap2DDisplay::initialize()
 
 {
 	m_bFirstBufferReceived = false;
-	m_pDecoder = new OpenViBEToolkit::TStreamedMatrixDecoder < CBoxAlgorithmTopographicMap2DDisplay >;
+	m_pDecoder = new OpenViBEToolkit::TStreamedMatrixDecoder<CBoxAlgorithmTopographicMap2DDisplay>;
 	m_pDecoder->initialize(*this, 0);
 
 	m_pSphericalSplineInterpolation = &getAlgorithmManager().getAlgorithm(getAlgorithmManager().createAlgorithm(OVP_ClassId_Algorithm_SphericalSplineInterpolation));
@@ -88,13 +87,13 @@ bool CBoxAlgorithmTopographicMap2DDisplay::uninitialize()
 	return true;
 }
 
-bool CBoxAlgorithmTopographicMap2DDisplay::processInput(uint32_t ui32InputIndex)
+bool CBoxAlgorithmTopographicMap2DDisplay::processInput(uint32_t /*ui32InputIndex*/)
 {
 	getBoxAlgorithmContext()->markAlgorithmAsReadyToProcess();
 	return true;
 }
 
-bool CBoxAlgorithmTopographicMap2DDisplay::processClock(IMessageClock& rMessageClock)
+bool CBoxAlgorithmTopographicMap2DDisplay::processClock(IMessageClock& /*rMessageClock*/)
 {
 	getBoxAlgorithmContext()->markAlgorithmAsReadyToProcess();
 	return true;
@@ -107,7 +106,7 @@ bool CBoxAlgorithmTopographicMap2DDisplay::process()
 	uint32_t i;
 
 	//decode signal data
-	for (i = 0; i < l_pDynamicBoxContext->getInputChunkCount(0); i++)
+	for (i = 0; i < l_pDynamicBoxContext->getInputChunkCount(0); ++i)
 	{
 		m_pDecoder->decode(i);
 		if (m_pDecoder->isBufferReceived())
@@ -135,7 +134,7 @@ bool CBoxAlgorithmTopographicMap2DDisplay::process()
 	}
 
 	//decode channel localisation data
-	for (i = 0; i < l_pDynamicBoxContext->getInputChunkCount(1); i++)
+	for (i = 0; i < l_pDynamicBoxContext->getInputChunkCount(1); ++i)
 	{
 		const IMemoryBuffer* l_pBuf = l_pDynamicBoxContext->getInputChunk(1, i);
 		m_pTopographicMapDatabase->decodeChannelLocalisationMemoryBuffer(

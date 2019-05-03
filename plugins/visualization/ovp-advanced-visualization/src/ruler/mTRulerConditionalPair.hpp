@@ -33,7 +33,7 @@ namespace Mensia
 		{
 		public:
 
-			virtual void setRendererContext(const IRendererContext* pRendererContext)
+			void setRendererContext(const IRendererContext* pRendererContext) override
 			{
 				IRuler::setRendererContext(pRendererContext);
 				condition.setRendererContext(pRendererContext);
@@ -41,7 +41,7 @@ namespace Mensia
 				second.setRendererContext(pRendererContext);
 			}
 
-			virtual void setRenderer(const IRenderer* pRenderer)
+			void setRenderer(const IRenderer* pRenderer) override
 			{
 				IRuler::setRenderer(pRenderer);
 				condition.setRenderer(pRenderer);
@@ -49,7 +49,7 @@ namespace Mensia
 				second.setRenderer(pRenderer);
 			}
 
-			virtual void render()
+			void render() override
 			{
 				if (condition())
 				{
@@ -61,7 +61,7 @@ namespace Mensia
 				}
 			}
 
-			virtual void renderLeft(GtkWidget* pWidget)
+			void renderLeft(GtkWidget* pWidget) override
 			{
 				if (condition())
 				{
@@ -73,7 +73,7 @@ namespace Mensia
 				}
 			}
 
-			virtual void renderRight(GtkWidget* pWidget)
+			void renderRight(GtkWidget* pWidget) override
 			{
 				if (condition())
 				{
@@ -85,7 +85,7 @@ namespace Mensia
 				}
 			}
 
-			virtual void renderBottom(GtkWidget* pWidget)
+			void renderBottom(GtkWidget* pWidget) override
 			{
 				if (condition())
 				{
@@ -101,7 +101,7 @@ namespace Mensia
 			T1 first;
 			T2 second;
 		};
-	};
-};
+	}  // namespace AdvancedVisualization
+} // namespace Mensia
 
 #endif // __OpenViBEPlugins_TRulerConditionalPair_H__

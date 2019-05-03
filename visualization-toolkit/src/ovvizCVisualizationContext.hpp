@@ -47,7 +47,7 @@ namespace OpenViBEVisualizationToolkit
 
 		OpenViBE::CIdentifier getClassIdentifier() const override { return OVP_ClassId_Plugin_VisualizationContext; }
 
-		CVisualizationContext() { }
+		CVisualizationContext() = default;
 
 	private:
 		IVisualizationManager* m_VisualizationManager;
@@ -92,5 +92,4 @@ namespace OpenViBEVisualizationToolkit
 	private:
 		std::unique_ptr<CVisualizationContext> m_VisualizationContext;
 	};
-}
-
+}  // namespace OpenViBEVisualizationToolkit

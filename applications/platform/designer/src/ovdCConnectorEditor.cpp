@@ -8,8 +8,8 @@ using namespace Kernel;
 using namespace OpenViBEDesigner;
 using namespace std;
 
-namespace {
-
+namespace
+{
 	void reset_scenario_connector_identifier(GtkWidget*, CConnectorEditor* self)
 	{
 		CIdentifier newIdentifier = self->m_rBox.getUnusedInputIdentifier(OV_UndefinedIdentifier);
@@ -18,18 +18,18 @@ namespace {
 			gtk_entry_set_text(self->m_ConnectorIdentifierEntry, newIdentifier.toString().toASCIIString());
 		}
 	}
-}
+}  // namespace
 
 CConnectorEditor::CConnectorEditor(const IKernelContext& rKernelContext, IBox& rBox, uint32_t ui32ConnectorType, uint32_t ui32ConnectorIndex, const char* sTitle, const char* sGUIFilename)
-	:m_rKernelContext(rKernelContext)
-	, m_rBox(rBox)
-	, m_ui32ConnectorType(ui32ConnectorType)
-	, m_ui32ConnectorIndex(ui32ConnectorIndex)
-	, m_sGUIFilename(sGUIFilename)
-	, m_sTitle(sTitle ? sTitle : "")
-	, m_ConnectorIdentifierEntry(nullptr) { }
+	: m_rKernelContext(rKernelContext)
+	  , m_rBox(rBox)
+	  , m_ui32ConnectorType(ui32ConnectorType)
+	  , m_ui32ConnectorIndex(ui32ConnectorIndex)
+	  , m_sGUIFilename(sGUIFilename)
+	  , m_sTitle(sTitle ? sTitle : "")
+	  , m_ConnectorIdentifierEntry(nullptr) { }
 
-CConnectorEditor::~CConnectorEditor() { }
+CConnectorEditor::~CConnectorEditor() = default;
 
 bool CConnectorEditor::run()
 
@@ -43,22 +43,22 @@ bool CConnectorEditor::run()
 	BoxInterfacorType interfacorType;
 	switch (m_ui32ConnectorType)
 	{
-	case Box_Input:
-		setConnectorName = &IBox::setInputName;
-		setConnectorType = &IBox::setInputType;
-		isTypeSupported = &IBox::hasInputSupport;
-		interfacorType = Input;
-		break;
+		case Box_Input:
+			setConnectorName = &IBox::setInputName;
+			setConnectorType = &IBox::setInputType;
+			isTypeSupported = &IBox::hasInputSupport;
+			interfacorType = Input;
+			break;
 
-	case Box_Output:
-		setConnectorName = &IBox::setOutputName;
-		setConnectorType = &IBox::setOutputType;
-		isTypeSupported = &IBox::hasOutputSupport;
-		interfacorType = Output;
-		break;
+		case Box_Output:
+			setConnectorName = &IBox::setOutputName;
+			setConnectorType = &IBox::setOutputType;
+			isTypeSupported = &IBox::hasOutputSupport;
+			interfacorType = Output;
+			break;
 
-	default:
-		return false;
+		default:
+			return false;
 	}
 
 	CString l_oConnectorName;
@@ -92,7 +92,7 @@ bool CConnectorEditor::run()
 	map<string, CIdentifier> l_vStreamTypes;
 	gint l_iActive = -1;
 
-	for (auto l_oCurrentTypeIdentifier : m_rKernelContext.getTypeManager().getSortedTypes())
+	for (const auto& l_oCurrentTypeIdentifier : m_rKernelContext.getTypeManager().getSortedTypes())
 	{
 		//First check if the type is support by the connector
 		if ((m_rBox.*isTypeSupported)(l_oCurrentTypeIdentifier.first))

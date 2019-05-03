@@ -25,7 +25,7 @@
 using namespace Mensia;
 using namespace AdvancedVisualization;
 
-CRendererLine::CRendererLine() { }
+CRendererLine::CRendererLine() = default;
 
 void CRendererLine::rebuild(const IRendererContext& rContext)
 {
@@ -50,7 +50,7 @@ void CRendererLine::refresh(const IRendererContext& rContext)
 {
 	CRenderer::refresh(rContext);
 
-	if (!m_ui32HistoryCount) return;
+	if (!m_ui32HistoryCount) { return; }
 
 	uint32_t l_ui32HistoryIndexMax;
 
@@ -91,10 +91,10 @@ void CRendererLine::refresh(const IRendererContext& rContext)
 
 bool CRendererLine::render(const IRendererContext& rContext)
 {
-	if (!rContext.getSelectedCount()) return false;
-	if (!m_ui32HistoryCount) return false;
+	if (!rContext.getSelectedCount()) { return false; }
+	if (!m_ui32HistoryCount) { return false; }
 
-	int32_t sampleCount = static_cast<int32_t>(m_ui32SampleCount);
+	auto sampleCount = static_cast<int32_t>(m_ui32SampleCount);
 
 
 	// When the display is in continuous mode, there will be n1 samples
@@ -109,10 +109,10 @@ bool CRendererLine::render(const IRendererContext& rContext)
 	// |              |___/                                     |
 	// Time          25s              10s                      20s
 
-	int32_t n1 = static_cast<int32_t>(m_ui32HistoryIndex % m_ui32SampleCount);
-	int32_t n2 = static_cast<int32_t>(sampleCount - n1);
+	auto n1 = static_cast<int32_t>(m_ui32HistoryIndex % m_ui32SampleCount);
+	auto n2 = static_cast<int32_t>(sampleCount - n1);
 
-	if (!sampleCount) return false;
+	if (!sampleCount) { return false; }
 
 	float t1 = n2 * 1.f / sampleCount;
 	float t2 = -n1 * 1.f / sampleCount;

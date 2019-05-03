@@ -24,7 +24,7 @@ using namespace OpenViBEVisualizationToolkit;
 CVisualizationManager::CVisualizationManager(const IKernelContext& kernelContext)
 	: m_KernelContext(kernelContext) { }
 
-CVisualizationManager::~CVisualizationManager() { }
+CVisualizationManager::~CVisualizationManager() = default;
 
 bool CVisualizationManager::createVisualizationTree(CIdentifier& visualizationTreeIdentifier)
 {
@@ -90,4 +90,3 @@ CIdentifier CVisualizationManager::getUnusedIdentifier() const
 	} while (it != m_VisualizationTrees.end() || finalIdentifier == OV_UndefinedIdentifier);
 	return finalIdentifier;
 }
-

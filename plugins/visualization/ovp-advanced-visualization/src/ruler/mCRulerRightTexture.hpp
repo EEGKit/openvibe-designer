@@ -34,9 +34,9 @@ namespace Mensia
 
 			CRulerRightTexture()
 
-				:m_fLastScale(-1) { }
+				: m_fLastScale(-1) { }
 
-			virtual void render()
+			void render() override
 
 			{
 				this->preRender();
@@ -64,10 +64,14 @@ namespace Mensia
 				this->postRender();
 			}
 
-			virtual void renderRight(GtkWidget* pWidget)
+			void renderRight(GtkWidget* pWidget) override
 			{
 				float l_fScale = 1.f / m_pRendererContext->getScale();
-				if (m_fLastScale != l_fScale) { m_vRange = this->split_range(-l_fScale * .5, l_fScale * .5); m_fLastScale = l_fScale; }
+				if (m_fLastScale != l_fScale)
+				{
+					m_vRange = this->split_range(-l_fScale * .5, l_fScale * .5);
+					m_fLastScale = l_fScale;
+				}
 
 				gint w, h;
 				gint lw, lh;
@@ -92,10 +96,10 @@ namespace Mensia
 			}
 
 			float m_fLastScale;
-			std::vector < double > m_vRange;
-			std::vector < double >::iterator it;
+			std::vector<double> m_vRange;
+			std::vector<double>::iterator it;
 		};
-	};
-};
+	}  // namespace AdvancedVisualization
+}  // namespace Mensia
 
 #endif // __OpenViBEPlugins_CRulerRightTexture_H__

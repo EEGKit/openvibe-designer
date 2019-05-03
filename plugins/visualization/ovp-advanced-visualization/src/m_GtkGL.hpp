@@ -35,8 +35,8 @@ namespace Mensia
 
 			void preRender(GtkWidget* pWidget, bool bVerticalSync = false);
 			void postRender(GtkWidget* pWidget);
-		};
-	};
-};
+		} // namespace GtkGL
+	}  // namespace AdvancedVisualization
+}  // namespace Mensia
 
 #endif // __OpenViBEPlugins_GtkGL_H__

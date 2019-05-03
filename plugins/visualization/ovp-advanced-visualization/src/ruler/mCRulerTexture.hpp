@@ -61,7 +61,7 @@ namespace Mensia
 				glMatrixMode(GL_MODELVIEW);
 			}
 		};
-	};
-};
+	}  // namespace AdvancedVisualization
+}  // namespace Mensia
 
 #endif // __OpenViBEPlugins_CRulerTexture_H__

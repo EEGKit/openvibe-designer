@@ -1,4 +1,3 @@
-
 #include "ovdCFilenameSettingView.h"
 #include "../ovd_base.h"
 
@@ -33,7 +32,7 @@ CFilenameSettingView::CFilenameSettingView(Kernel::IBox& rBox, uint32_t ui32Inde
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 
-	std::vector< GtkWidget* > l_vWidget;
+	std::vector<GtkWidget*> l_vWidget;
 	extractWidget(l_pSettingWidget, l_vWidget);
 	m_pEntry = GTK_ENTRY(l_vWidget[0]);
 
@@ -61,13 +60,8 @@ void CFilenameSettingView::setValue(const CString& rValue)
 
 void CFilenameSettingView::browse()
 {
-	GtkWidget* l_pWidgetDialogOpen = gtk_file_chooser_dialog_new(
-		"Select file to open...",
-		nullptr,
-		GTK_FILE_CHOOSER_ACTION_SAVE,
-		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-		GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
-		nullptr);
+	GtkWidget* l_pWidgetDialogOpen = gtk_file_chooser_dialog_new("Select file to open...", nullptr, GTK_FILE_CHOOSER_ACTION_SAVE,
+																 GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, nullptr);
 
 	CString l_sInitialFileName = m_rKernelContext.getConfigurationManager().expand(gtk_entry_get_text(m_pEntry));
 	if (g_path_is_absolute(l_sInitialFileName.toASCIIString()))

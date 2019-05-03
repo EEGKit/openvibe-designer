@@ -6,11 +6,11 @@ using namespace Plugins;
 using namespace Kernel;
 
 CAboutScenarioDialog::CAboutScenarioDialog(const IKernelContext& rKernelContext, IScenario& rScenario, const char* sGUIFilename)
-	:m_rKernelContext(rKernelContext)
-	, m_rScenario(rScenario)
-	, m_sGUIFilename(sGUIFilename) { }
+	: m_rKernelContext(rKernelContext)
+	  , m_rScenario(rScenario)
+	  , m_sGUIFilename(sGUIFilename) { }
 
-CAboutScenarioDialog::~CAboutScenarioDialog() { }
+CAboutScenarioDialog::~CAboutScenarioDialog() = default;
 
 namespace
 {
@@ -18,7 +18,7 @@ namespace
 	{
 		gtk_entry_set_text(GTK_ENTRY(data), CIdentifier::random().toString().toASCIIString());
 	}
-}
+} // namespace
 
 bool CAboutScenarioDialog::run()
 
@@ -68,7 +68,7 @@ bool CAboutScenarioDialog::run()
 
 	GtkTextBuffer* l_pShortDescriptionBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(l_pShortDescription));
 	gtk_text_buffer_set_text(l_pShortDescriptionBuffer, m_rScenario.getAttributeValue(OV_AttributeId_Scenario_ShortDescription).toASCIIString(), -1);
-	GtkTextBuffer * l_pDetailedDescriptionBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(l_pDetailedDescription));
+	GtkTextBuffer* l_pDetailedDescriptionBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(l_pDetailedDescription));
 	gtk_text_buffer_set_text(l_pDetailedDescriptionBuffer, m_rScenario.getAttributeValue(OV_AttributeId_Scenario_DetailedDescription).toASCIIString(), -1);
 
 	gtk_dialog_run(GTK_DIALOG(l_pDialog));

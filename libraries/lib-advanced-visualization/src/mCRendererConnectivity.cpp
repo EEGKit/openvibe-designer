@@ -77,7 +77,7 @@ void CRendererConnectivity::rebuild(const IRendererContext& rContext)
 	std::vector < CVertex > l_vProjectedChannelCoordinate;
 	std::vector < CVertex > l_vChannelCoordinate;
 	l_vChannelCoordinate.resize(rContext.getChannelCount());
-	for (i = 0; i < rContext.getChannelCount(); i++)
+	for (i = 0; i < rContext.getChannelCount(); ++i)
 	{
 		rContext.getChannelLocalisation(i, l_vChannelCoordinate[i].x, l_vChannelCoordinate[i].y, l_vChannelCoordinate[i].z);
 	}
@@ -87,7 +87,7 @@ void CRendererConnectivity::rebuild(const IRendererContext& rContext)
 
 	m_vVertex.clear();
 	m_vVertex.resize(m_ui32ChannelCount * (m_ui32ChannelCount - 1) / 2);
-	for (i = 0; i < m_ui32ChannelCount; i++)
+	for (i = 0; i < m_ui32ChannelCount; ++i)
 	{
 		for (j = 0; j < i; j++)
 		{
@@ -108,7 +108,7 @@ void CRendererConnectivity::rebuild(const IRendererContext& rContext)
 			for (k = 0; k < __Count__; k++)
 			{
 				float t = float(k * 1. / (__Count__ - 1));
-				float s = float((t - .5) * 2);
+				auto s = float((t - .5) * 2);
 				s = float(1 + .5 * (1 - s * s) * dot);
 
 				q = q_id.slerp(t, q_diff);
@@ -133,12 +133,12 @@ void CRendererConnectivity::refresh(const IRendererContext & rContext)
 {
 	CRenderer::refresh(rContext);
 
-	if (!m_ui32HistoryCount) return;
-	if (m_ui32HistoryCount < m_ui32ChannelCount) return;
+	if (!m_ui32HistoryCount) { return; }
+	if (m_ui32HistoryCount < m_ui32ChannelCount) { return; }
 
 	uint32_t i, j, k, l = 0;
 
-	for (i = 0; i < m_ui32ChannelCount; i++)
+	for (i = 0; i < m_ui32ChannelCount; ++i)
 	{
 		for (j = 0; j < i; j++)
 		{
@@ -155,9 +155,9 @@ void CRendererConnectivity::refresh(const IRendererContext & rContext)
 
 bool CRendererConnectivity::render(const IRendererContext & rContext)
 {
-	if (!rContext.getSelectedCount()) return false;
-	if (m_vVertex.empty()) return false;
-	if (!m_ui32HistoryCount) return false;
+	if (!rContext.getSelectedCount()) { return false; }
+	if (m_vVertex.empty()) { return false; }
+	if (!m_ui32HistoryCount) { return false; }
 
 	std::map < std::string, std::pair < float, float > >::const_iterator it;
 	uint32_t i;
@@ -197,7 +197,7 @@ bool CRendererConnectivity::render(const IRendererContext & rContext)
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	for (i = 0; i < m_ui32ChannelCount * (m_ui32ChannelCount - 1) / 2; i++)
+	for (i = 0; i < m_ui32ChannelCount * (m_ui32ChannelCount - 1) / 2; ++i)
 	{
 		glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_vVertex[i][0].x);
 		glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_vVertex[i][0].u);
@@ -208,7 +208,7 @@ bool CRendererConnectivity::render(const IRendererContext & rContext)
 
 	glPopMatrix();
 
-	if (rContext.getCheckBoardVisibility()) this->drawCoordinateSystem();
+	if (rContext.getCheckBoardVisibility()) { this->drawCoordinateSystem(); }
 
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();

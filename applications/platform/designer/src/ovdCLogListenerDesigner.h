@@ -144,7 +144,7 @@ namespace OpenViBEDesigner
 		private:
 
 			::GtkBuilder* m_pBuilderInterface;
-			::GtkBuilder* m_pAlertBuilder;
+			::GtkBuilder* m_pAlertBuilder{};
 			::GtkTextView* m_pTextView;
 			::GtkTextBuffer* m_pBuffer;
 
@@ -184,7 +184,7 @@ namespace OpenViBEDesigner
 			bool m_bConsoleLogTimeInSecond;
 			uint32_t m_ui32ConsoleLogTimePrecision;
 
-			CLogObject* m_pCurrentLog;
+			CLogObject* m_pCurrentLog{};
 
 	};
 };

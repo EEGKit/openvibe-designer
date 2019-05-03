@@ -21,7 +21,7 @@ namespace OpenViBEPlugins
 		class CTopographicMapDrawable : public CSignalDisplayDrawable
 		{
 		public:
-			virtual ~CTopographicMapDrawable() { }
+			~CTopographicMapDrawable() override = default;
 			virtual OpenViBE::CMatrix* getSampleCoordinatesMatrix() = 0;
 			virtual bool setSampleValuesMatrix(OpenViBE::IMatrix* pSampleValuesMatrix) = 0;
 		};
@@ -36,19 +36,18 @@ namespace OpenViBEPlugins
 			CTopographicMapDatabase(
 				OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>& oPlugin,
 				OpenViBE::Kernel::IAlgorithmProxy& rSphericalSplineInterpolation);
-			~CTopographicMapDatabase();
+			~CTopographicMapDatabase() override;
 
 			void setMatrixDimensionSize(
 				uint32_t ui32DimensionIndex,
-				uint32_t ui32DimensionSize);
+				uint32_t ui32DimensionSize) override;
 
 			/**
 			 * \brief Callback called upon channel localisation buffer reception
 			 * \param uint32_t Index of newly received channel localisation buffer
 			 * \return True if buffer data was correctly processed, false otherwise
 			 */
-			virtual bool onChannelLocalisationBufferReceived(
-				uint32_t ui32ChannelLocalisationBufferIndex);
+			bool onChannelLocalisationBufferReceived(uint32_t ui32ChannelLocalisationBufferIndex) override;
 
 			bool setDelay(
 				double f64Delay);
@@ -89,7 +88,6 @@ namespace OpenViBEPlugins
 			 */
 			bool checkElectrodeCoordinates();
 
-		private:
 			//true until process() is called for the first time
 			bool m_bFirstProcess;
 			//spherical spline interpolation
@@ -116,12 +114,11 @@ namespace OpenViBEPlugins
 			//pointer to sample points coordinates matrix - mapped to OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_SamplePointsCoordinates
 			OpenViBE::IMatrix* m_pSamplePointCoords;
 			//minimum interpolated value
-			OpenViBE::Kernel::TParameterHandler < double > m_oMinSamplePointValue;
+			OpenViBE::Kernel::TParameterHandler<double> m_oMinSamplePointValue;
 			//maximum interpolated value
-			OpenViBE::Kernel::TParameterHandler < double > m_oMaxSamplePointValue;
+			OpenViBE::Kernel::TParameterHandler<double> m_oMaxSamplePointValue;
 			//delay to apply to interpolated values
 			uint64_t m_ui64Delay;
 		};
-	}
-}
-
+	}  // namespace SimpleVisualization
+}  // namespace OpenViBEPlugins

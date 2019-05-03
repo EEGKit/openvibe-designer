@@ -32,7 +32,7 @@ namespace Mensia
 		{
 		public:
 
-			virtual void renderFinal(float fProgress)
+			void renderFinal(float fProgress) override
 			{
 				uint32_t l_ui32SelectedCount = m_pRendererContext->getSelectedCount();
 				uint32_t i;
@@ -42,7 +42,7 @@ namespace Mensia
 				glLineWidth(4);
 				glColor3f(0, 0, 0);
 				glBegin(GL_LINES);
-				for (i = 0; i < l_ui32SelectedCount; i++)
+				for (i = 0; i < l_ui32SelectedCount; ++i)
 				{
 					glVertex2f(0, (i + fProgress) / l_ui32SelectedCount);
 					glVertex2f(1, (i + fProgress) / l_ui32SelectedCount);
@@ -52,7 +52,7 @@ namespace Mensia
 				glLineWidth(2);
 				glColor3f(0.25, 1, 0.25);
 				glBegin(GL_LINES);
-				for (i = 0; i < l_ui32SelectedCount; i++)
+				for (i = 0; i < l_ui32SelectedCount; ++i)
 				{
 					glVertex2f(0, (i + fProgress) / l_ui32SelectedCount);
 					glVertex2f(1, (i + fProgress) / l_ui32SelectedCount);
@@ -60,7 +60,7 @@ namespace Mensia
 				glEnd();
 			}
 		};
-	};
-};
+	}  // namespace AdvancedVisualization
+}  // namespace Mensia
 
 #endif // __OpenViBEPlugins_CRulerProgressH_H__

@@ -34,26 +34,28 @@ namespace Mensia
 
 			CRulerConditionIsTimeLocked()
 
-				:m_pRendererContext(nullptr)
-				, m_pRenderer(nullptr) { }
+				: m_pRendererContext(nullptr)
+				  , m_pRenderer(nullptr) { }
 
-			virtual void setRendererContext(const IRendererContext* pRendererContext)
+			void setRendererContext(const IRendererContext* pRendererContext) override
 			{
 				m_pRendererContext = pRendererContext;
 			}
 
-			virtual void setRenderer(const IRenderer* pRenderer)
+			void setRenderer(const IRenderer* pRenderer) override
 			{
 				m_pRenderer = pRenderer;
 			}
 
 			bool operator()()
- { return m_pRendererContext->isTimeLocked(); }
+			{
+				return m_pRendererContext->isTimeLocked();
+			}
 
 			const IRendererContext* m_pRendererContext;
 			const IRenderer* m_pRenderer;
 		};
-	};
-};
+	}  // namespace AdvancedVisualization
+}  // namespace Mensia
 
 #endif // __OpenViBEPlugins_TRulerConditionIsTimeLocked_H__

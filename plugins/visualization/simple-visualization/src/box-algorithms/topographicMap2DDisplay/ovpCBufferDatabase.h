@@ -26,7 +26,7 @@ namespace OpenViBEPlugins
 		{
 		public:
 
-			virtual ~CSignalDisplayDrawable() { }
+			virtual ~CSignalDisplayDrawable() = default;
 			virtual void init() = 0;
 			virtual void redraw() = 0;
 		};
@@ -57,7 +57,7 @@ namespace OpenViBEPlugins
 			std::deque<double*> m_oSampleBuffers;
 
 			//! stimulations to display. pair values are <date, stimcode>
-			std::deque<std::pair<uint64_t, uint64_t> > m_oStimulations;
+			std::deque<std::pair<uint64_t, uint64_t>> m_oStimulations;
 
 			//electrode spherical coordinates (in degrees)
 			//OpenViBE::CMatrix m_oElectrodesSphericalCoords;
@@ -115,7 +115,7 @@ namespace OpenViBEPlugins
 			//! Pointer to the drawable object to update (if needed)
 			CSignalDisplayDrawable* m_pDrawable;
 
-			std::vector<std::deque<std::pair<double, double> > > m_oLocalMinMaxValue;
+			std::vector<std::deque<std::pair<double, double>>> m_oLocalMinMaxValue;
 
 			OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>& m_oParentPlugin;
 
@@ -138,7 +138,7 @@ namespace OpenViBEPlugins
 			//flag stating whether streamed coordinates are cartesian (as opposed to spherical)
 			bool m_bCartesianStreamedCoords;
 			//! double-linked list of streamed channel coordinates (if cartesian, expressed in normalized space (X right Y front Z up))
-			std::deque< std::pair<OpenViBE::CMatrix*, bool> > m_oChannelLocalisationStreamedCoords;
+			std::deque<std::pair<OpenViBE::CMatrix*, bool>> m_oChannelLocalisationStreamedCoords;
 			//! double-linked list of channel coordinates (spherical if streamed coords aere cartesian and vice versa)
 			//std::deque<  std::pair<OpenViBE::CMatrix*, bool> > m_oChannelLocalisationAlternateCoords;
 			//pointer to double linked list of cartesian coordinates
@@ -146,15 +146,14 @@ namespace OpenViBEPlugins
 			//pointer to double linked list of spherical coordinates
 			//std::deque< std::pair<OpenViBE::CMatrix*, bool> > * m_pChannelLocalisationSphericalCoords;
 			//! double-linked list of start/end times of channel coordinates
-			std::deque< std::pair<uint64_t, uint64_t> > m_oChannelLocalisationTimes;
+			std::deque<std::pair<uint64_t, uint64_t>> m_oChannelLocalisationTimes;
 			//@}
 
 			//! Redraw mode (shift or scan)
 			OpenViBE::CIdentifier m_oDisplayMode;
 
 		public:
-			CBufferDatabase(
-				OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>& oPlugin);
+			CBufferDatabase(OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>& oPlugin);
 
 			virtual ~CBufferDatabase();
 
@@ -403,6 +402,5 @@ namespace OpenViBEPlugins
 				double& rTheta,
 				double& rPhi);
 		};
-	}
-}
-
+	}  // namespace SimpleVisualization
+} // namespace OpenViBEPlugins

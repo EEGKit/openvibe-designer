@@ -22,7 +22,7 @@ CBooleanSettingView::CBooleanSettingView(Kernel::IBox& rBox, uint32_t ui32Index,
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 
-	std::vector< GtkWidget* > l_vWidget;
+	std::vector<GtkWidget*> l_vWidget;
 	extractWidget(l_pSettingWidget, l_vWidget);
 	m_pToggle = GTK_TOGGLE_BUTTON(l_vWidget[1]);
 	m_pEntry = GTK_ENTRY(l_vWidget[0]);

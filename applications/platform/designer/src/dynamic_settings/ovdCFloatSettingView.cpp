@@ -1,4 +1,3 @@
-
 #include "ovdCFloatSettingView.h"
 #include "../ovd_base.h"
 
@@ -18,18 +17,18 @@ static void on_button_setting_float_down_pressed(GtkButton* pButton, gpointer pU
 	static_cast<CFloatSettingView*>(pUserData)->adjustValue(-1.0);
 }
 
-static void on_change(GtkEntry * entry, gpointer pUserData)
+static void on_change(GtkEntry* entry, gpointer pUserData)
 {
 	static_cast<CFloatSettingView*>(pUserData)->onChange();
 }
 
 
-CFloatSettingView::CFloatSettingView(Kernel::IBox & rBox, uint32_t ui32Index, CString & rBuilderName, const Kernel::IKernelContext & rKernelContext) :
+CFloatSettingView::CFloatSettingView(Kernel::IBox& rBox, uint32_t ui32Index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext) :
 	CAbstractSettingView(rBox, ui32Index, rBuilderName, "settings_collection-hbox_setting_float"), m_rKernelContext(rKernelContext), m_bOnValueSetting(false)
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 
-	std::vector< GtkWidget* > l_vWidget;
+	std::vector<GtkWidget*> l_vWidget;
 	extractWidget(l_pSettingWidget, l_vWidget);
 	m_pEntry = GTK_ENTRY(l_vWidget[0]);
 
@@ -42,13 +41,13 @@ CFloatSettingView::CFloatSettingView(Kernel::IBox & rBox, uint32_t ui32Index, CS
 }
 
 
-void CFloatSettingView::getValue(CString & rValue) const
+void CFloatSettingView::getValue(CString& rValue) const
 {
 	rValue = CString(gtk_entry_get_text(m_pEntry));
 }
 
 
-void CFloatSettingView::setValue(const CString & rValue)
+void CFloatSettingView::setValue(const CString& rValue)
 {
 	m_bOnValueSetting = true;
 	gtk_entry_set_text(m_pEntry, rValue);
@@ -73,5 +72,4 @@ void CFloatSettingView::onChange()
 		const gchar* l_sValue = gtk_entry_get_text(m_pEntry);
 		getBox().setSettingValue(getSettingIndex(), l_sValue);
 	}
-
 }

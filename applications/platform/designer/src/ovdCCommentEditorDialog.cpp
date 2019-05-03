@@ -15,46 +15,57 @@ namespace
 	{
 		static_cast<CCommentEditorDialog*>(pUserData)->applyTagCB("<b>", "</b>");
 	}
+
 	void button_comment_italic_selection_cb(GtkButton* pButton, gpointer pUserData)
 	{
 		static_cast<CCommentEditorDialog*>(pUserData)->applyTagCB("<i>", "</i>");
 	}
+
 	void button_comment_underline_selection_cb(GtkButton* pButton, gpointer pUserData)
 	{
 		static_cast<CCommentEditorDialog*>(pUserData)->applyTagCB("<u>", "</u>");
 	}
+
 	void button_comment_strikethrough_selection_cb(GtkButton* pButton, gpointer pUserData)
 	{
 		static_cast<CCommentEditorDialog*>(pUserData)->applyTagCB("<s>", "</s>");
 	}
+
 	void button_comment_mono_selection_cb(GtkButton* pButton, gpointer pUserData)
 	{
 		static_cast<CCommentEditorDialog*>(pUserData)->applyTagCB("<tt>", "</tt>");
 	}
+
 	void button_comment_subscript_selection_cb(GtkButton* pButton, gpointer pUserData)
 	{
 		static_cast<CCommentEditorDialog*>(pUserData)->applyTagCB("<sub>", "</sub>");
 	}
+
 	void button_comment_superscript_selection_cb(GtkButton* pButton, gpointer pUserData)
 	{
 		static_cast<CCommentEditorDialog*>(pUserData)->applyTagCB("<sup>", "</sup>");
 	}
+
 	void button_comment_big_selection_cb(GtkButton* pButton, gpointer pUserData)
 	{
 		static_cast<CCommentEditorDialog*>(pUserData)->applyTagCB("<big>", "</big>");
 	}
+
 	void button_comment_small_selection_cb(GtkButton* pButton, gpointer pUserData)
 	{
 		static_cast<CCommentEditorDialog*>(pUserData)->applyTagCB("<small>", "</small>");
 	}
+
 	void button_comment_red_selection_cb(GtkButton* pButton, gpointer pUserData)
 	{
 		static_cast<CCommentEditorDialog*>(pUserData)->applyTagCB("<span color=\"red\">", "</span>");
 	}
+
 	void button_comment_green_selection_cb(GtkButton* pButton, gpointer pUserData)
 	{
 		static_cast<CCommentEditorDialog*>(pUserData)->applyTagCB("<span color=\"green\">", "</span>");
 	}
+
 	void button_comment_blue_selection_cb(GtkButton* pButton, gpointer pUserData)
 	{
 		static_cast<CCommentEditorDialog*>(pUserData)->applyTagCB("<span color=\"blue\">", "</span>");
@@ -64,15 +75,14 @@ namespace
 	{
 		static_cast<CCommentEditorDialog*>(pUserData)->infoCB();
 	}
-
-}
+} // namespace
 
 CCommentEditorDialog::CCommentEditorDialog(const IKernelContext& rKernelContext, IComment& rComment, const char* sGUIFilename)
-	:m_rKernelContext(rKernelContext)
-	, m_rComment(rComment)
-	, m_sGUIFilename(sGUIFilename) { }
+	: m_rKernelContext(rKernelContext)
+	  , m_rComment(rComment)
+	  , m_sGUIFilename(sGUIFilename) { }
 
-CCommentEditorDialog::~CCommentEditorDialog() { }
+CCommentEditorDialog::~CCommentEditorDialog() = default;
 
 bool CCommentEditorDialog::run()
 
@@ -154,7 +164,6 @@ void CCommentEditorDialog::applyTagCB(const char* sTagIn, const char* sTagOut)
 	}
 	else
 	{
-
 		gtk_text_buffer_get_selection_bounds(m_pDescriptionBuffer, &l_oStartIter, &l_oEndIter);
 		gint l_iOffset = gtk_text_iter_get_offset(&l_oStartIter);
 

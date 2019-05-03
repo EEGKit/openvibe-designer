@@ -41,32 +41,32 @@ namespace Mensia
 		{
 		public:
 
-			TBoxAlgorithmStackedInstantViz(const OpenViBE::CIdentifier& rClassId, const std::vector < int >& vParameter);
-			virtual bool initialize();
-			virtual bool uninitialize();
-			virtual bool process();
+			TBoxAlgorithmStackedInstantViz(const OpenViBE::CIdentifier& rClassId, const std::vector<int>& vParameter);
+			bool initialize() override;
+			bool uninitialize() override;
+			bool process() override;
 
 			_IsDerivedFromClass_Final_(CBoxAlgorithmViz, m_oClassId);
 
-			OpenViBEToolkit::TStimulationDecoder < TBoxAlgorithmStackedInstantViz < bDrawBorders, TRendererFactoryClass, TRulerClass > > m_oStimulationDecoder;
-			OpenViBEToolkit::TStreamedMatrixDecoder < TBoxAlgorithmStackedInstantViz < bDrawBorders, TRendererFactoryClass, TRulerClass > > m_oMatrixDecoder;
+			OpenViBEToolkit::TStimulationDecoder<TBoxAlgorithmStackedInstantViz<bDrawBorders, TRendererFactoryClass, TRulerClass>> m_oStimulationDecoder;
+			OpenViBEToolkit::TStreamedMatrixDecoder<TBoxAlgorithmStackedInstantViz<bDrawBorders, TRendererFactoryClass, TRulerClass>> m_oMatrixDecoder;
 
 			TRendererFactoryClass m_oRendererFactory;
-			std::vector < IRenderer* > m_vRenderer;
+			std::vector<IRenderer*> m_vRenderer;
 
 		protected:
 
-			virtual void draw();
+			void draw() override;
 		};
 
 		class CBoxAlgorithmStackedInstantVizListener : public CBoxAlgorithmVizListener
 		{
 		public:
 
-			CBoxAlgorithmStackedInstantVizListener(const std::vector < int >& vParameter)
-				:CBoxAlgorithmVizListener(vParameter) { }
+			CBoxAlgorithmStackedInstantVizListener(const std::vector<int>& vParameter)
+				: CBoxAlgorithmVizListener(vParameter) { }
 
-			virtual bool onInputTypeChanged(IBox& rBox, const uint32_t ui32Index)
+			bool onInputTypeChanged(IBox& rBox, const uint32_t ui32Index) override
 			{
 				OpenViBE::CIdentifier l_oTypeIdentifier;
 				rBox.getInputType(ui32Index, l_oTypeIdentifier);
@@ -85,24 +85,26 @@ namespace Mensia
 		public:
 
 			TBoxAlgorithmStackedInstantVizDesc(const OpenViBE::CString& sName, const OpenViBE::CIdentifier& rDescClassId, const OpenViBE::CIdentifier& rClassId, const OpenViBE::CString& sAddedSoftwareVersion, const OpenViBE::CString& sUpdatedSoftwareVersion, const CParameterSet& rParameterSet, const OpenViBE::CString& sShortDescription, const OpenViBE::CString& sDetailedDescription)
-				:CBoxAlgorithmVizDesc(sName, rDescClassId, rClassId, sAddedSoftwareVersion, sUpdatedSoftwareVersion, rParameterSet, sShortDescription, sDetailedDescription) { }
+				: CBoxAlgorithmVizDesc(sName, rDescClassId, rClassId, sAddedSoftwareVersion, sUpdatedSoftwareVersion, rParameterSet, sShortDescription, sDetailedDescription) { }
 
-			virtual OpenViBE::Plugins::IPluginObject* create()
- { return new TBoxAlgorithmStackedInstantViz<bDrawBorders, TRendererFactoryClass, TRulerClass>(m_oClassId, m_vParameter); }
+			OpenViBE::Plugins::IPluginObject* create() override
+			{
+				return new TBoxAlgorithmStackedInstantViz<bDrawBorders, TRendererFactoryClass, TRulerClass>(m_oClassId, m_vParameter);
+			}
 
-			virtual OpenViBE::Plugins::IBoxListener* createBoxListener() const { return new CBoxAlgorithmStackedInstantVizListener(m_vParameter); }
+			OpenViBE::Plugins::IBoxListener* createBoxListener() const override { return new CBoxAlgorithmStackedInstantVizListener(m_vParameter); }
 
-			virtual OpenViBE::CString getCategory() const { return OpenViBE::CString("Advanced Visualization/") + m_sCategoryName; }
+			OpenViBE::CString getCategory() const override { return OpenViBE::CString("Advanced Visualization/") + m_sCategoryName; }
 
 			_IsDerivedFromClass_Final_(OpenViBE::Plugins::IBoxAlgorithmDesc, m_oDescClassId);
 		};
 
 
 		template <bool bDrawBorders, class TRendererFactoryClass, class TRulerClass>
-		TBoxAlgorithmStackedInstantViz<bDrawBorders, TRendererFactoryClass, TRulerClass>::TBoxAlgorithmStackedInstantViz(const OpenViBE::CIdentifier& rClassId, const std::vector < int >& vParameter)
-			:CBoxAlgorithmViz(rClassId, vParameter) { }
+		TBoxAlgorithmStackedInstantViz<bDrawBorders, TRendererFactoryClass, TRulerClass>::TBoxAlgorithmStackedInstantViz(const OpenViBE::CIdentifier& rClassId, const std::vector<int>& vParameter)
+			: CBoxAlgorithmViz(rClassId, vParameter) { }
 
-		template < bool bDrawBorders, class TRendererFactoryClass, class TRulerClass>
+		template <bool bDrawBorders, class TRendererFactoryClass, class TRulerClass>
 		bool TBoxAlgorithmStackedInstantViz<bDrawBorders, TRendererFactoryClass, TRulerClass>::initialize()
 
 		{
@@ -140,7 +142,7 @@ namespace Mensia
 		bool TBoxAlgorithmStackedInstantViz<bDrawBorders, TRendererFactoryClass, TRulerClass>::uninitialize()
 
 		{
-			for (uint32_t i = 0; i < m_vRenderer.size(); i++)
+			for (uint32_t i = 0; i < m_vRenderer.size(); ++i)
 			{
 				m_oRendererFactory.release(m_vRenderer[i]);
 			}
@@ -218,7 +220,8 @@ namespace Mensia
 						// I do not know what this is for...
 						for (uint32_t frequency = 0; frequency < frequencyCount; frequency++)
 						{
-							try {
+							try
+							{
 								double frequencyValue = std::stod(inputMatrix->getDimensionLabel(1, frequency), nullptr);
 								int stringSize = snprintf(nullptr, 0, "%.2f", frequencyValue) + 1;
 								if (stringSize > 0)
@@ -228,7 +231,8 @@ namespace Mensia
 									m_pRendererContext->setDimensionLabel(1, frequencyCount - frequency - 1, buffer.get());
 								}
 							}
-							catch (...) {
+							catch (...)
+							{
 								m_pRendererContext->setDimensionLabel(1, frequencyCount - frequency - 1, "NaN");
 							}
 							m_pSubRendererContext->addChannel("", 0, 0, 0);
@@ -320,7 +324,7 @@ namespace Mensia
 
 			if (staticBoxContext.getInputCount() > 1)
 			{
-				for (i = 0; i < dynamicBoxContext.getInputChunkCount(1); i++)
+				for (i = 0; i < dynamicBoxContext.getInputChunkCount(1); ++i)
 				{
 					m_oStimulationDecoder.decode(i);
 					if (m_oStimulationDecoder.isBufferReceived())
@@ -349,7 +353,7 @@ namespace Mensia
 					renderer->refresh(*m_pSubRendererContext);
 				}
 			}
-			if (m_bRedrawNeeded) this->redraw();
+			if (m_bRedrawNeeded) { this->redraw(); }
 
 			m_bRebuildNeeded = false;
 			m_bRefreshNeeded = false;
@@ -370,7 +374,7 @@ namespace Mensia
 			{
 				glPushMatrix();
 				glScalef(1, 1.f / m_pRendererContext->getSelectedCount(), 1);
-				for (i = 0; i < m_pRendererContext->getSelectedCount(); i++)
+				for (i = 0; i < m_pRendererContext->getSelectedCount(); ++i)
 				{
 					glPushAttrib(GL_ALL_ATTRIB_BITS);
 					glPushMatrix();
@@ -401,7 +405,5 @@ namespace Mensia
 
 			CBoxAlgorithmViz::postDraw();
 		}
-
-	}
-}
-
+	} // namespace AdvancedVisualization
+} // namespace Mensia

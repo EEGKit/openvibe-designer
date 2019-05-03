@@ -42,7 +42,7 @@ namespace
 		vLegendre.resize(n + 1);
 		vLegendre[0] = 1;
 		vLegendre[1] = x;
-		for (unsigned int i = 2; i <= n; i++)
+		for (unsigned int i = 2; i <= n; ++i)
 		{
 			const double invi = 1. / i;
 			vLegendre[i] = (2 - invi) * x * vLegendre[i - 1] - (1 - invi) * vLegendre[i - 2];
@@ -56,7 +56,7 @@ namespace
 	double g(unsigned int n, unsigned int m, const std::vector < double > & vLegendre)
 	{
 		double result = 0;
-		for (unsigned int i = 1; i <= n; i++)
+		for (unsigned int i = 1; i <= n; ++i)
 		{
 			result += (2 * i + 1) / pow(double(i * (i + 1)), int(m)) * vLegendre[i];
 		}
@@ -70,7 +70,7 @@ namespace
 	double h(unsigned int n, unsigned int m, const std::vector < double > & vLegendre)
 	{
 		double result = 0;
-		for (unsigned int i = 1; i <= n; i++)
+		for (unsigned int i = 1; i <= n; ++i)
 		{
 			result += (2 * i + 1) / pow(double(i * (i + 1)), int(m - 1)) * vLegendre[i];
 		}
@@ -83,7 +83,7 @@ namespace
 	{
 		rGCache.resize(2 * S + 1);
 		rHCache.resize(2 * S + 1);
-		for (unsigned int i = 0; i <= 2 * S; i++)
+		for (unsigned int i = 0; i <= 2 * S; ++i)
 		{
 			std::vector < double > l_vLegendre;
 			double cosine = (double(i) - S) / S;
@@ -98,15 +98,15 @@ namespace
 
 	double cache(double x, std::vector < double > & rCache)
 	{
-		if (x < -1) return rCache[0];
-		if (x > 1) return rCache[2 * S];
+		if (x < -1) { return rCache[0]; }
+		if (x > 1) { return rCache[2 * S]; }
 		double t = (x + 1) * S;
 		int i1 = int(t);
 		int i2 = int(t + 1);
 		t -= i1;
 		return rCache[i1] * (1 - t) + rCache[i2] * t;
 	}
-};
+}  // namespace
 
 void CRendererTopo::rebuild(const IRendererContext & rContext)
 {
@@ -121,7 +121,7 @@ void CRendererTopo::rebuild(const IRendererContext & rContext)
 	std::vector < CVertex > l_vProjectedChannelCoordinate;
 	std::vector < CVertex > l_vChannelCoordinate;
 	l_vChannelCoordinate.resize(rContext.getChannelCount());
-	for (i = 0; i < rContext.getChannelCount(); i++)
+	for (i = 0; i < rContext.getChannelCount(); ++i)
 	{
 		rContext.getChannelLocalisation(i, l_vChannelCoordinate[i].x, l_vChannelCoordinate[i].y, l_vChannelCoordinate[i].z);
 	}
@@ -131,7 +131,7 @@ void CRendererTopo::rebuild(const IRendererContext & rContext)
 #if 0
 
 	m_vProjectedChannelCoordinate.resize(rContext.getChannelCount());
-	for (i = 0; i < rContext.getChannelCount(); i++)
+	for (i = 0; i < rContext.getChannelCount(); ++i)
 	{
 		CVertex p, q;
 		rContext.getChannelLocalisation(i, p.x, p.y, p.z);
@@ -174,7 +174,7 @@ void CRendererTopo::rebuild(const IRendererContext & rContext)
 	// Generates transformation matrices based spherical spline interpolations
 
 	unsigned int M = 3;
-	unsigned int N = (unsigned int)pow(10., 10. / (2 * M - 2));
+	auto N = (unsigned int)pow(10., 10. / (2 * M - 2));
 
 	std::vector < double > l_vLegendre;
 	std::vector < double > l_vGCache;
@@ -186,7 +186,7 @@ void CRendererTopo::rebuild(const IRendererContext & rContext)
 
 	A = Eigen::MatrixXd(nc + 1, nc + 1);
 	A(nc, nc) = 0;
-	for (i = 0; i < nc; i++)
+	for (i = 0; i < nc; ++i)
 	{
 		A(i, nc) = 1;
 		A(nc, i) = 1;
@@ -206,7 +206,7 @@ void CRendererTopo::rebuild(const IRendererContext & rContext)
 	D = Eigen::MatrixXd(vc + 1, nc + 1);
 	B(vc, nc) = 0;
 	D(vc, nc) = 0;
-	for (i = 0; i < vc; i++)
+	for (i = 0; i < vc; ++i)
 	{
 		B(i, nc) = 1;
 		D(i, nc) = 1;
@@ -262,7 +262,7 @@ void CRendererTopo::refresh(const IRendererContext & rContext)
 {
 	CRenderer::refresh(rContext);
 
-	if (!m_ui32HistoryCount) return;
+	if (!m_ui32HistoryCount) { return; }
 
 	uint32_t i, j, k;
 
@@ -277,9 +277,9 @@ void CRendererTopo::refresh(const IRendererContext & rContext)
 	if (!m_bMultiSlice)
 	{
 		this->getSampleAtERPFraction(m_f32ERPFraction, l_vSample);
-		for (i = 0; i < nc; i++) V(i) = l_vSample[i];
+		for (i = 0; i < nc; ++i) { V(i) = l_vSample[i]; }
 		this->interpolate(V, W, Z);
-		for (j = 0; j < vc; j++) m_oScalp.m_vVertex[j].u = float(W(j));
+		for (j = 0; j < vc; j++) { m_oScalp.m_vVertex[j].u = float(W(j)); }
 	}
 	else
 	{
@@ -287,7 +287,7 @@ void CRendererTopo::refresh(const IRendererContext & rContext)
 		{
 			for (k = 0; k < m_ui32SampleCount; k++)
 			{
-				for (i = 0; i < nc; i++) V(i) = m_vHistory[i][m_ui32HistoryCount - m_ui32SampleCount + k];
+				for (i = 0; i < nc; ++i) { V(i) = m_vHistory[i][m_ui32HistoryCount - m_ui32SampleCount + k]; }
 				this->interpolate(V, W, Z);
 				m_vInterpolatedSample[k] = W;
 			}
@@ -301,9 +301,9 @@ bool CRendererTopo::render(const IRendererContext & rContext)
 {
 	std::map < std::string, CVertex >::const_iterator it;
 
-	if (!rContext.getSelectedCount()) return false;
-	if (m_oScalp.m_vVertex.empty()) return false;
-	if (!m_ui32HistoryCount) return false;
+	if (!rContext.getSelectedCount()) { return false; }
+	if (m_oScalp.m_vVertex.empty()) { return false; }
+	if (!m_ui32HistoryCount) { return false; }
 
 	uint32_t j;
 	float d = 3.5;
@@ -399,7 +399,7 @@ bool CRendererTopo::render(const IRendererContext & rContext)
 				glColor4f(1.f, 1.f, 1.f, 4.f / m_ui32SampleCount);
 				glDisable(GL_DEPTH_TEST);
 				glEnable(GL_BLEND);
-				for (uint32_t i = 0; i < m_ui32SampleCount; i++)
+				for (uint32_t i = 0; i < m_ui32SampleCount; ++i)
 				{
 					float l_f32Scale = 1.f + i * 0.25f / m_ui32SampleCount;
 					glPushMatrix();
@@ -448,7 +448,7 @@ bool CRendererTopo::render(const IRendererContext & rContext)
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-	if (rContext.getCheckBoardVisibility()) this->drawCoordinateSystem();
+	if (rContext.getCheckBoardVisibility()) { this->drawCoordinateSystem(); }
 
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();

@@ -36,7 +36,7 @@ namespace Mensia
 		{
 		public:
 
-			virtual void renderRight(GtkWidget* widget)
+			void renderRight(GtkWidget* widget) override
 			{
 				gint w, h, y;
 				gint lw, lh;
@@ -47,7 +47,7 @@ namespace Mensia
 					gdk_drawable_get_size(widget->window, &w, &h);
 					GdkGC* drawGC = gdk_gc_new(widget->window);
 
-					float labelCount = static_cast<float>(m_pRendererContext->getDimensionLabelCount(dimension));
+					auto labelCount = static_cast<float>(m_pRendererContext->getDimensionLabelCount(dimension));
 
 					gint last_y = gint((channel + (-1 + 0.5f) / labelCount) * (h * 1.f / channelCount));;
 
@@ -70,5 +70,5 @@ namespace Mensia
 				}
 			}
 		};
-	}
-}
+	} // namespace AdvancedVisualization
+} // namespace Mensia

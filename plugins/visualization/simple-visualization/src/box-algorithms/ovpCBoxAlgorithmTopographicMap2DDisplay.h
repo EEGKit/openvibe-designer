@@ -13,26 +13,26 @@ namespace OpenViBEPlugins
 {
 	namespace SimpleVisualization
 	{
-		class CBoxAlgorithmTopographicMap2DDisplay : public OpenViBEToolkit::TBoxAlgorithm < OpenViBE::Plugins::IBoxAlgorithm >
+		class CBoxAlgorithmTopographicMap2DDisplay : public OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>
 		{
 		public:
 			CBoxAlgorithmTopographicMap2DDisplay();
 
-			virtual void release() { delete this; }
+			void release() override { delete this; }
 
-			virtual uint64_t getClockFrequency();
-			virtual bool initialize();
-			virtual bool uninitialize();
-			virtual bool processInput(
-				uint32_t ui32InputIndex);
-			virtual bool processClock(
-				OpenViBE::Kernel::IMessageClock& rMessageClock);
-			virtual bool process();
+			uint64_t getClockFrequency() override;
+			bool initialize() override;
+			bool uninitialize() override;
+			bool processInput(
+				uint32_t ui32InputIndex) override;
+			bool processClock(
+				OpenViBE::Kernel::IMessageClock& rMessageClock) override;
+			bool process() override;
 
 			_IsDerivedFromClass_Final_(OpenViBEToolkit::TBoxAlgorithm < OpenViBE::Plugins::IBoxAlgorithm >, OVP_ClassId_TopographicMap2DDisplay)
 
 		protected:
-			OpenViBEToolkit::TStreamedMatrixDecoder < CBoxAlgorithmTopographicMap2DDisplay >* m_pDecoder;
+			OpenViBEToolkit::TStreamedMatrixDecoder<CBoxAlgorithmTopographicMap2DDisplay>* m_pDecoder;
 			bool m_bFirstBufferReceived;
 
 			OpenViBE::Kernel::IAlgorithmProxy* m_pSphericalSplineInterpolation;
@@ -46,27 +46,27 @@ namespace OpenViBEPlugins
 		{
 		public:
 
-			virtual void release() { }
+			void release() override { }
 
-			virtual OpenViBE::CString getName() const { return OpenViBE::CString("2D topographic map"); }
-			virtual OpenViBE::CString getAuthorName() const { return OpenViBE::CString("Vincent Delannoy"); }
-			virtual OpenViBE::CString getAuthorCompanyName() const { return OpenViBE::CString("INRIA/IRISA"); }
-			virtual OpenViBE::CString getShortDescription() const { return OpenViBE::CString("This box demonstrates how to perform spherical spline interpolation"); }
-			virtual OpenViBE::CString getDetailedDescription() const { return OpenViBE::CString(""); }
-			virtual OpenViBE::CString getCategory() const { return OpenViBE::CString("Visualization/Topography"); }
-			virtual OpenViBE::CString getVersion() const { return OpenViBE::CString("2.0"); }
-			virtual OpenViBE::CString getStockItemName() const { return OpenViBE::CString(GTK_STOCK_EXECUTE); }
-			virtual OpenViBE::CString getSoftwareComponent() const { return OpenViBE::CString("openvibe-designer"); }
-			virtual OpenViBE::CString getAddedSoftwareVersion() const { return OpenViBE::CString("0.0.0"); }
-			virtual OpenViBE::CString getUpdatedSoftwareVersion() const { return OpenViBE::CString("0.0.0"); }
+			OpenViBE::CString getName() const override { return OpenViBE::CString("2D topographic map"); }
+			OpenViBE::CString getAuthorName() const override { return OpenViBE::CString("Vincent Delannoy"); }
+			OpenViBE::CString getAuthorCompanyName() const override { return OpenViBE::CString("INRIA/IRISA"); }
+			OpenViBE::CString getShortDescription() const override { return OpenViBE::CString("This box demonstrates how to perform spherical spline interpolation"); }
+			OpenViBE::CString getDetailedDescription() const override { return OpenViBE::CString(""); }
+			OpenViBE::CString getCategory() const override { return OpenViBE::CString("Visualization/Topography"); }
+			OpenViBE::CString getVersion() const override { return OpenViBE::CString("2.0"); }
+			OpenViBE::CString getStockItemName() const override { return OpenViBE::CString(GTK_STOCK_EXECUTE); }
+			OpenViBE::CString getSoftwareComponent() const override { return OpenViBE::CString("openvibe-designer"); }
+			OpenViBE::CString getAddedSoftwareVersion() const override { return OpenViBE::CString("0.0.0"); }
+			OpenViBE::CString getUpdatedSoftwareVersion() const override { return OpenViBE::CString("0.0.0"); }
 
-			virtual OpenViBE::CIdentifier getCreatedClass() const { return OVP_ClassId_TopographicMap2DDisplay; }
-			virtual OpenViBE::Plugins::IPluginObject* create() { return new CBoxAlgorithmTopographicMap2DDisplay(); }
+			OpenViBE::CIdentifier getCreatedClass() const override { return OVP_ClassId_TopographicMap2DDisplay; }
+			OpenViBE::Plugins::IPluginObject* create() override { return new CBoxAlgorithmTopographicMap2DDisplay(); }
 
-			virtual bool hasFunctionality(OpenViBE::CIdentifier functionalityIdentifier) const { return functionalityIdentifier == OVD_Functionality_Visualization; }
+			bool hasFunctionality(OpenViBE::CIdentifier functionalityIdentifier) const override { return functionalityIdentifier == OVD_Functionality_Visualization; }
 
-			virtual bool getBoxPrototype(
-				OpenViBE::Kernel::IBoxProto& rPrototype) const
+			bool getBoxPrototype(
+				OpenViBE::Kernel::IBoxProto& rPrototype) const override
 			{
 				rPrototype.addSetting("Interpolation type", OVP_TypeId_SphericalLinearInterpolationType, "1");
 				rPrototype.addSetting("Delay (in s)", OV_TypeId_Float, "0");
@@ -77,6 +77,5 @@ namespace OpenViBEPlugins
 
 			_IsDerivedFromClass_Final_(OpenViBE::Plugins::IBoxAlgorithmDesc, OVP_ClassId_TopographicMap2DDisplayDesc);
 		};
-	};
-};
-
+	} // namespace SimpleVisualization;
+} // namespace OpenViBEPlugins;

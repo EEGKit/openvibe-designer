@@ -35,9 +35,9 @@ class CPluginObjectDescEnum
 {
 public:
 
-	CPluginObjectDescEnum(const IKernelContext& rKernelContext) : m_rKernelContext(rKernelContext) { }
+	explicit CPluginObjectDescEnum(const IKernelContext& rKernelContext) : m_rKernelContext(rKernelContext) { }
 
-	virtual ~CPluginObjectDescEnum() { }
+	virtual ~CPluginObjectDescEnum() = default;
 
 	virtual bool enumeratePluginObjectDesc()
 
@@ -50,8 +50,7 @@ public:
 		return true;
 	}
 
-	virtual bool enumeratePluginObjectDesc(
-		const CIdentifier& rParentClassIdentifier)
+	virtual bool enumeratePluginObjectDesc(const CIdentifier& rParentClassIdentifier)
 	{
 		CIdentifier l_oIdentifier;
 		while ((l_oIdentifier = m_rKernelContext.getPluginManager().getNextPluginObjectDescIdentifier(l_oIdentifier, rParentClassIdentifier)) != OV_UndefinedIdentifier)
@@ -61,8 +60,7 @@ public:
 		return true;
 	}
 
-	virtual bool callback(
-		const IPluginObjectDesc& rPluginObjectDesc) = 0;
+	virtual bool callback(const IPluginObjectDesc& rPluginObjectDesc) = 0;
 
 protected:
 
@@ -79,11 +77,10 @@ public:
 
 	CPluginObjectDescCollector(const IKernelContext& rKernelContext) : CPluginObjectDescEnum(rKernelContext) { }
 
-	virtual bool callback(
-		const IPluginObjectDesc& rPluginObjectDesc)
+	bool callback(const IPluginObjectDesc& rPluginObjectDesc) override
 	{
 		string l_sFullName = string(rPluginObjectDesc.getCategory()) + "/" + string(rPluginObjectDesc.getName());
-		map<string, const IPluginObjectDesc* >::iterator itPluginObjectDesc = m_vPluginObjectDesc.find(l_sFullName);
+		auto itPluginObjectDesc = m_vPluginObjectDesc.find(l_sFullName);
 		if (itPluginObjectDesc != m_vPluginObjectDesc.end())
 		{
 			m_rKernelContext.getLogManager() << LogLevel_ImportantWarning << "Duplicate plugin object name " << CString(l_sFullName.c_str()) << " " << itPluginObjectDesc->second->getCreatedClass() << " and " << rPluginObjectDesc.getCreatedClass() << "\n";
@@ -93,7 +90,9 @@ public:
 	}
 
 	map<string, const IPluginObjectDesc*>& getPluginObjectDescMap()
- { return m_vPluginObjectDesc; }
+	{
+		return m_vPluginObjectDesc;
+	}
 
 private:
 
@@ -108,11 +107,10 @@ class CPluginObjectDescLogger : public CPluginObjectDescEnum
 {
 public:
 
-	CPluginObjectDescLogger(const IKernelContext& rKernelContext)
-		:CPluginObjectDescEnum(rKernelContext) { }
+	explicit CPluginObjectDescLogger(const IKernelContext& rKernelContext)
+		: CPluginObjectDescEnum(rKernelContext) { }
 
-	virtual bool callback(
-		const IPluginObjectDesc& rPluginObjectDesc)
+	bool callback(const IPluginObjectDesc& rPluginObjectDesc) override
 	{
 		// Outputs plugin info to console
 		m_rKernelContext.getLogManager() << LogLevel_Trace << "Plugin <" << rPluginObjectDesc.getName() << ">\n";
@@ -131,7 +129,8 @@ public:
 // ------------------------------------------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------------------------------------------
 
-namespace {
+namespace
+{
 	typedef std::map<std::string, std::tuple<int, int, int>> componentsMap;
 	// Parses a JSON encoded list of components with their versions
 	// We use an output variable because we want to be able to "enhance" an already existing list if necessary
@@ -148,7 +147,7 @@ namespace {
 			{
 				componentVersionsObject = json::Deserialize(componentVersionsJSON.toASCIIString());
 			}
-			for (auto component : componentVersionsObject)
+			for (const auto& component : componentVersionsObject)
 			{
 				int versionMajor, versionMinor, versionPatch;
 				sscanf(component.second, "%d.%d.%d", &versionMajor, &versionMinor, &versionPatch);
@@ -156,7 +155,7 @@ namespace {
 			}
 		}
 	}
-}
+} // namespace
 
 static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernelContext, map<string, const IPluginObjectDesc*>& vPluginObjectDesc, GtkTreeStore* pTreeStore,
 	std::vector<const IPluginObjectDesc*>& vNewBoxes, std::vector<const IPluginObjectDesc*>& vUpdatedBoxes, bool bIsNewVersion = false)
@@ -168,13 +167,13 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 	componentsMap lastUsedVersions = currentVersions;
 	getVersionComponentsFromConfigurationToken(rKernelContext, "Designer_LastComponentVersionsUsed", lastUsedVersions);
 
-	for (auto pPluginObjectDesc : vPluginObjectDesc)
+	for (const auto& pPluginObjectDesc : vPluginObjectDesc)
 	{
 		const IPluginObjectDesc* l_pPluginObjectDesc = pPluginObjectDesc.second;
 
 		CString l_sStockItemName;
 
-		const IBoxAlgorithmDesc* l_pBoxAlgorithmDesc = dynamic_cast<const IBoxAlgorithmDesc*>(l_pPluginObjectDesc);
+		const auto* l_pBoxAlgorithmDesc = dynamic_cast<const IBoxAlgorithmDesc*>(l_pPluginObjectDesc);
 		if (l_pBoxAlgorithmDesc)
 		{
 			l_sStockItemName = l_pBoxAlgorithmDesc->getStockItemName();
@@ -219,7 +218,7 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 			}
 			if (i + 1 != l_sCategory.length())
 			{
-				l_vCategory.push_back(string(l_sCategory, i + 1, l_sCategory.length() - i - 1));
+				l_vCategory.emplace_back(l_sCategory, i + 1, l_sCategory.length() - i - 1);
 			}
 
 			// Fills plugin in the tree
@@ -227,50 +226,30 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 			GtkTreeIter l_oGtkIter2;
 			GtkTreeIter* l_pGtkIterParent = nullptr;
 			GtkTreeIter* l_pGtkIterChild = &l_oGtkIter1;
-			for (string l_sCategory : l_vCategory)
+			for (const string& l_sCategory : l_vCategory)
 			{
 				bool l_bFound = false;
-				bool l_bValid = gtk_tree_model_iter_children(
-					GTK_TREE_MODEL(pTreeStore),
-					l_pGtkIterChild,
-					l_pGtkIterParent) ? true : false;
+				bool l_bValid = gtk_tree_model_iter_children(GTK_TREE_MODEL(pTreeStore), l_pGtkIterChild, l_pGtkIterParent) != 0;
 				while (l_bValid && !l_bFound)
 				{
 					gchar* l_sName = nullptr;
 					gboolean l_bIsPlugin;
-					gtk_tree_model_get(
-						GTK_TREE_MODEL(pTreeStore),
-						l_pGtkIterChild,
-						Resource_StringName, &l_sName,
-						Resource_BooleanIsPlugin, &l_bIsPlugin,
-						-1);
+					gtk_tree_model_get(GTK_TREE_MODEL(pTreeStore), l_pGtkIterChild, Resource_StringName, &l_sName, Resource_BooleanIsPlugin, &l_bIsPlugin, -1);
 					if (!l_bIsPlugin && l_sName == l_sCategory)
 					{
 						l_bFound = true;
 					}
 					else
 					{
-						l_bValid = gtk_tree_model_iter_next(
-							GTK_TREE_MODEL(pTreeStore),
-							l_pGtkIterChild) ? true : false;
+						l_bValid = gtk_tree_model_iter_next(GTK_TREE_MODEL(pTreeStore), l_pGtkIterChild) != 0;
 					}
 				}
 				if (!l_bFound)
 				{
-					gtk_tree_store_append(
-						GTK_TREE_STORE(pTreeStore),
-						l_pGtkIterChild,
-						l_pGtkIterParent);
-					gtk_tree_store_set(
-						GTK_TREE_STORE(pTreeStore),
-						l_pGtkIterChild,
-						Resource_StringName, l_sCategory.c_str(),
-						Resource_StringShortDescription, "",
-						Resource_StringStockIcon, "gtk-directory",
-						Resource_StringColor, "#000000",
-						Resource_StringFont, "",
-						Resource_BooleanIsPlugin, (gboolean)FALSE,
-						-1);
+					gtk_tree_store_append(GTK_TREE_STORE(pTreeStore), l_pGtkIterChild, l_pGtkIterParent);
+					gtk_tree_store_set(GTK_TREE_STORE(pTreeStore), l_pGtkIterChild, Resource_StringName, l_sCategory.c_str(),
+						Resource_StringShortDescription, "", Resource_StringStockIcon, "gtk-directory", Resource_StringColor, "#000000",
+						Resource_StringFont, "", Resource_BooleanIsPlugin, (gboolean)FALSE, -1);
 				}
 				if (!l_pGtkIterParent)
 				{
@@ -280,10 +259,7 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 				l_pGtkIterChild = l_pGtkIterParent;
 				l_pGtkIterParent = l_pGtkIterSwap;
 			}
-			gtk_tree_store_append(
-				GTK_TREE_STORE(pTreeStore),
-				l_pGtkIterChild,
-				l_pGtkIterParent);
+			gtk_tree_store_append(GTK_TREE_STORE(pTreeStore), l_pGtkIterChild, l_pGtkIterParent);
 
 			// define color of the text of the box
 			std::string l_sTextColor = "black";
@@ -366,25 +342,16 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 			}
 			else
 			{
-				if (l_pPluginObjectDesc->hasFunctionality(M_Functionality_IsMensia))
-				{
-					l_sTextColor = "#00b090";
-				}
+				if (l_pPluginObjectDesc->hasFunctionality(M_Functionality_IsMensia)) { l_sTextColor = "#00b090"; }
 			}
 
 
-			gtk_tree_store_set(
-				GTK_TREE_STORE(pTreeStore),
-				l_pGtkIterChild,
-				Resource_StringName, l_sName.c_str(),
-				Resource_StringShortDescription, (const char*)l_pPluginObjectDesc->getShortDescription(),
-				Resource_StringIdentifier, (const char*)l_sBoxAlgorithmDescriptor.c_str(),
-				Resource_StringStockIcon, (const char*)l_sStockItemName,
-				Resource_StringColor, l_sTextColor.c_str(),
-				Resource_StringFont, l_sTextFont.c_str(),
-				Resource_BooleanIsPlugin, (gboolean)TRUE,
-				Resource_BackGroundColor, (const char*)l_sBackGroundColor.c_str(),
-				-1);
+			gtk_tree_store_set(GTK_TREE_STORE(pTreeStore), l_pGtkIterChild, Resource_StringName, l_sName.c_str(),
+				Resource_StringShortDescription, static_cast<const char*>(l_pPluginObjectDesc->getShortDescription()),
+				Resource_StringIdentifier, static_cast<const char*>(l_sBoxAlgorithmDescriptor.c_str()),
+				Resource_StringStockIcon, static_cast<const char*>(l_sStockItemName), Resource_StringColor, l_sTextColor.c_str(),
+				Resource_StringFont, l_sTextFont.c_str(), Resource_BooleanIsPlugin, (gboolean)TRUE,
+				Resource_BackGroundColor, static_cast<const char*>(l_sBackGroundColor.c_str()), -1);
 		};
 	}
 }
@@ -395,44 +362,25 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 
 typedef struct _SConfiguration
 {
-	_SConfiguration()
-
-		:m_eNoGui(CommandLineFlag_None)
-		, m_eNoCheckColorDepth(CommandLineFlag_None)
-		, m_eNoManageSession(CommandLineFlag_None)
-		, m_eNoVisualization(CommandLineFlag_None)
-		, m_eDefine(CommandLineFlag_None)
-		, m_eRandomSeed(CommandLineFlag_None)
-		, m_eConfig(CommandLineFlag_None)
-		, m_help(false) { }
+	_SConfiguration() = default;
 
 	ECommandLineFlag getFlags()
-
 	{
-		return ECommandLineFlag(
-			m_eNoGui
-			| m_eNoCheckColorDepth
-			| m_eNoManageSession
-			| m_eNoVisualization
-			| m_eDefine
-			| m_eRandomSeed
-			| m_eConfig
-		);
+		return ECommandLineFlag(m_eNoGui | m_eNoCheckColorDepth | m_eNoManageSession | m_eNoVisualization | m_eDefine | m_eRandomSeed | m_eConfig);
 	}
 
-	std::vector < std::pair < ECommandLineFlag, std::string > > m_vFlag;
-	ECommandLineFlag m_eNoGui;
-	ECommandLineFlag m_eNoCheckColorDepth;
-	ECommandLineFlag m_eNoManageSession;
-	ECommandLineFlag m_eNoVisualization;
-	ECommandLineFlag m_eDefine;
-	ECommandLineFlag m_eRandomSeed;
-	ECommandLineFlag m_eConfig;
-	bool                               m_help;
+	std::vector<std::pair<ECommandLineFlag, std::string>> m_vFlag;
+	ECommandLineFlag m_eNoGui = CommandLineFlag_None;
+	ECommandLineFlag m_eNoCheckColorDepth = CommandLineFlag_None;
+	ECommandLineFlag m_eNoManageSession = CommandLineFlag_None;
+	ECommandLineFlag m_eNoVisualization = CommandLineFlag_None;
+	ECommandLineFlag m_eDefine = CommandLineFlag_None;
+	ECommandLineFlag m_eRandomSeed = CommandLineFlag_None;
+	ECommandLineFlag m_eConfig = CommandLineFlag_None;
+	bool m_help = false;
 	// to resolve warning: padding struct '_SConfiguration' with 4 bytes to align 'm_oTokenMap
-	int32_t	                           m_i32StructPadding;
-	std::map < std::string, std::string > m_oTokenMap;
-
+	int32_t m_i32StructPadding;
+	std::map<std::string, std::string> m_oTokenMap;
 } SConfiguration;
 
 static char backslash_to_slash(char c) { return c == '\\' ? '/' : c; }
@@ -457,7 +405,7 @@ static bool ensureOneInstanceOfDesigner(SConfiguration& configuration, ILogManag
 		std::string l_sMessage = "";
 		if (configuration.m_vFlag.empty())
 		{
-			l_sMessage = std::to_string(static_cast<int>(CommandLineFlag_None)) + ": ;";
+			l_sMessage = std::to_string(int(CommandLineFlag_None)) + ": ;";
 		}
 
 		for (auto& flag : configuration.m_vFlag)
@@ -465,7 +413,7 @@ static bool ensureOneInstanceOfDesigner(SConfiguration& configuration, ILogManag
 			std::string l_sFileName = flag.second;
 			std::transform(l_sFileName.begin(), l_sFileName.end(), l_sFileName.begin(), backslash_to_slash);
 
-			l_sMessage = l_sMessage + std::to_string(static_cast<int>(flag.first)) + ": <" + l_sFileName + "> ; ";
+			l_sMessage = l_sMessage + std::to_string(int(flag.first)) + ": <" + l_sFileName + "> ; ";
 		}
 
 		size_t l_sizeMessage = (strlen(l_sMessage.c_str()) * sizeof(char));
@@ -490,16 +438,16 @@ bool parse_arguments(int argc, char** argv, SConfiguration& rConfiguration)
 {
 	SConfiguration l_oConfiguration;
 
-	std::vector < std::string > l_vArgValue;
+	std::vector<std::string> l_vArgValue;
 #if defined TARGET_OS_Windows
 	int argCount;
 	LPWSTR* argListUtf16 = CommandLineToArgvW(GetCommandLineW(), &argCount);
-	for (int i = 1; i < argCount; i++)
+	for (int i = 1; i < argCount; ++i)
 	{
 		GError* error = nullptr;
 		glong itemsRead, itemsWritten;
 		char* argUtf8 = g_utf16_to_utf8(reinterpret_cast<gunichar2*>(argListUtf16[i]), static_cast<size_t>(wcslen(argListUtf16[i])), &itemsRead, &itemsWritten, &error);
-		l_vArgValue.push_back(argUtf8);
+		l_vArgValue.emplace_back(argUtf8);
 		if (error)
 		{
 			g_error_free(error);
@@ -509,7 +457,7 @@ bool parse_arguments(int argc, char** argv, SConfiguration& rConfiguration)
 #else
 	l_vArgValue = std::vector<std::string>(argv + 1, argv + argc);
 #endif
-	l_vArgValue.push_back("");
+	l_vArgValue.emplace_back("");
 
 	for (auto it = l_vArgValue.cbegin(); it != l_vArgValue.cend(); ++it)
 	{
@@ -522,15 +470,15 @@ bool parse_arguments(int argc, char** argv, SConfiguration& rConfiguration)
 		}
 		else if (*it == "-o" || *it == "--open")
 		{
-			l_oConfiguration.m_vFlag.push_back(std::make_pair(CommandLineFlag_Open, *++it));
+			l_oConfiguration.m_vFlag.emplace_back(CommandLineFlag_Open, *++it);
 		}
 		else if (*it == "-p" || *it == "--play")
 		{
-			l_oConfiguration.m_vFlag.push_back(std::make_pair(CommandLineFlag_Play, *++it));
+			l_oConfiguration.m_vFlag.emplace_back(CommandLineFlag_Play, *++it);
 		}
 		else if (*it == "-pf" || *it == "--play-fast")
 		{
-			l_oConfiguration.m_vFlag.push_back(std::make_pair(CommandLineFlag_PlayFast, *++it));
+			l_oConfiguration.m_vFlag.emplace_back(CommandLineFlag_PlayFast, *++it);
 		}
 		else if (*it == "--no-gui")
 		{
@@ -560,8 +508,12 @@ bool parse_arguments(int argc, char** argv, SConfiguration& rConfiguration)
 		}
 		else if (*it == "-c" || *it == "--config")
 		{
-			if (*++it == "") { std::cout << "Error: Switch --config needs an argument\n"; return false; }
-			l_oConfiguration.m_vFlag.push_back(std::make_pair(CommandLineFlag_Config, *it));
+			if (*++it == "")
+			{
+				std::cout << "Error: Switch --config needs an argument\n";
+				return false;
+			}
+			l_oConfiguration.m_vFlag.emplace_back(CommandLineFlag_Config, *it);
 		}
 		else if (*it == "-d" || *it == "--define")
 		{
@@ -583,12 +535,15 @@ bool parse_arguments(int argc, char** argv, SConfiguration& rConfiguration)
 			const std::string& l_rValue = *it;	// iterator will increment later
 
 			l_oConfiguration.m_oTokenMap[l_rToken] = l_rValue;
-
 		}
 		else if (*it == "--random-seed")
 		{
-			if (*++it == "") { std::cout << "Error: Switch --random-seed needs an argument\n"; return false; }
-			l_oConfiguration.m_vFlag.push_back(std::make_pair(CommandLineFlag_RandomSeed, *it));
+			if (*++it == "")
+			{
+				std::cout << "Error: Switch --random-seed needs an argument\n";
+				return false;
+			}
+			l_oConfiguration.m_vFlag.emplace_back(CommandLineFlag_RandomSeed, *it);
 		}
 		else if (*it == "--g-fatal-warnings")
 		{
@@ -631,12 +586,8 @@ gboolean cb_remove_splashscreen(gpointer data)
 
 void message(const char* sTitle, const char* sMessage, GtkMessageType eType)
 {
-	GtkWidget* l_pDialog = gtk_message_dialog_new(
-		nullptr,
-		GtkDialogFlags(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
-		eType,
-		GTK_BUTTONS_OK,
-		"%s", sTitle);
+	GtkWidget* l_pDialog = gtk_message_dialog_new(nullptr, GtkDialogFlags(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
+		eType, GTK_BUTTONS_OK, "%s", sTitle);
 	gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(l_pDialog), "%s", sMessage);
 	::gtk_window_set_icon_from_file(GTK_WINDOW(l_pDialog), (Directories::getDataDir() + CString("/applications/designer/designer.ico")).toASCIIString(), nullptr);
 	gtk_window_set_title(GTK_WINDOW(l_pDialog), sTitle);
@@ -666,17 +617,11 @@ void user_info(char** argv, ILogManager * l_rLogManager)
 
 	if (l_rLogManager)
 	{
-		for (const auto& m : messages)
-		{
-			(*l_rLogManager) << LogLevel_Info << m.c_str();
-		}
+		for (const auto& m : messages) { (*l_rLogManager) << LogLevel_Info << m.c_str(); }
 	}
 	else
 	{
-		for (const auto& m : messages)
-		{
-			cout << m;
-		}
+		for (const auto& m : messages) { cout << m; }
 	}
 }
 
@@ -690,7 +635,7 @@ int go(int argc, char** argv)
 	{ 0, 49151, 49151, 49151 },
 	{ 0, 65535, 65535, 65535 },
 	*/
-#define gdk_color_set(c, r, g, b) { c.pixel=0; c.red=r; c.green=g; c.blue=b; }
+#define gdk_color_set(c, r, g, b) { (c).pixel=0; (c).red=r; (c).green=g; (c).blue=b; }
 	gdk_color_set(g_vColors[Color_BackgroundPlayerStarted], 32767, 32767, 32767);
 	gdk_color_set(g_vColors[Color_BoxBackgroundSelected], 65535, 65535, 49151);
 	gdk_color_set(g_vColors[Color_BoxBackgroundMissing], 49151, 32767, 32767);
@@ -774,7 +719,7 @@ int go(int argc, char** argv)
 			CString l_sAppConfigFile = l_pKernelContext->getConfigurationManager().expand("${Designer_CustomConfigurationFile}");
 			l_pKernelContext->getConfigurationManager().addConfigurationFromFile(l_sAppConfigFile);
 			// add other configuration file if --config option
-			std::vector < std::pair < ECommandLineFlag, std::string > >::iterator it = l_oConfiguration.m_vFlag.begin();
+			std::vector<std::pair<ECommandLineFlag, std::string>>::iterator it = l_oConfiguration.m_vFlag.begin();
 
 			// initialize random number generator with nullptr by default
 			System::Math::initializeRandomMachine(time(nullptr));
@@ -848,7 +793,7 @@ int go(int argc, char** argv)
 				}
 				else
 				{
-					if ((l_rConfigurationManager.expandAsBoolean("${Kernel_WithGUI}", true) == false) && ((l_oConfiguration.getFlags() & CommandLineFlag_NoGui) == 0))
+					if ((!l_rConfigurationManager.expandAsBoolean("${Kernel_WithGUI}", true)) && ((l_oConfiguration.getFlags() & CommandLineFlag_NoGui) == 0))
 					{
 						l_rLogManager << LogLevel_ImportantWarning << "${Kernel_WithGUI} is set to false and --no-gui flag not set. Forcing the --no-gui flag\n";
 						l_oConfiguration.m_eNoGui = CommandLineFlag_NoGui;
@@ -896,7 +841,7 @@ int go(int argc, char** argv)
 							l_rConfigurationManager.addOrReplaceConfigurationToken(token.first.c_str(), token.second.c_str());
 						}
 
-						for (size_t i = 0; i < l_oConfiguration.m_vFlag.size(); i++)
+						for (size_t i = 0; i < l_oConfiguration.m_vFlag.size(); ++i)
 						{
 							std::string l_sFileName = l_oConfiguration.m_vFlag[i].second;
 							std::transform(l_sFileName.begin(), l_sFileName.end(), l_sFileName.begin(), backslash_to_slash);
@@ -989,14 +934,7 @@ int go(int argc, char** argv)
 							catch (DesignerException ex)
 							{
 								std::cerr << "Caught designer exception" << std::endl;
-								GtkWidget* errorDialog = gtk_message_dialog_new(
-									nullptr,
-									GTK_DIALOG_MODAL,
-									GTK_MESSAGE_ERROR,
-									GTK_BUTTONS_CLOSE,
-									"%s",
-									ex.getErrorString().c_str()
-								);
+								GtkWidget* errorDialog = gtk_message_dialog_new(nullptr, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, "%s", ex.getErrorString().c_str());
 								gtk_window_set_title(GTK_WINDOW(errorDialog), (std::string(BRAND_NAME) + " has stopped functioning").c_str());
 								gtk_dialog_run(GTK_DIALOG(errorDialog));
 							}

@@ -26,16 +26,17 @@ namespace
 
 	void refresh_search_log_entry(GtkEntry* pTextfield, gpointer pUserData)
 	{
-		CLogListenerDesigner* designerLog_ptr = static_cast<CLogListenerDesigner*>(pUserData);
+		auto* designerLog_ptr = static_cast<CLogListenerDesigner*>(pUserData);
 		designerLog_ptr->m_sSearchTerm = gtk_entry_get_text(pTextfield);
 		designerLog_ptr->searchMessages(designerLog_ptr->m_sSearchTerm);
 	}
+
 	void focus_on_box_cidentifier_clicked(GtkWidget* pWidget, GdkEventButton* pEvent, gpointer pData)
 	{
 		//log text view grab the focus so isLogAreaClicked() return true and CTRL+F will focus on the log searchEntry
 		gtk_widget_grab_focus(pWidget);
 
-		CLogListenerDesigner* designerLog_ptr = static_cast<CLogListenerDesigner*>(pData);
+		auto* designerLog_ptr = static_cast<CLogListenerDesigner*>(pData);
 
 		//if left click
 		if (pEvent->button == 1)
@@ -44,7 +45,7 @@ namespace
 			GtkTextWindowType l_oWindowType = gtk_text_view_get_window_type(l_pTextView, pEvent->window);
 			gint l_iBufferX, l_iBufferY;
 			//convert event coord (mouse position) in buffer coord (character in buffer)
-			gtk_text_view_window_to_buffer_coords(l_pTextView, l_oWindowType, static_cast<gint>(round(pEvent->x)), static_cast<gint>(round(pEvent->y)), &l_iBufferX, &l_iBufferY);
+			gtk_text_view_window_to_buffer_coords(l_pTextView, l_oWindowType, gint(round(pEvent->x)), gint(round(pEvent->y)), &l_iBufferX, &l_iBufferY);
 			//get the text iter corresponding to that position
 			GtkTextIter l_oIter;
 			gtk_text_view_get_iter_at_location(l_pTextView, &l_oIter, l_iBufferX, l_iBufferY);
@@ -73,7 +74,7 @@ namespace
 			designerLog_ptr->m_CenterOnBoxFun(l_oId);
 		}
 	}
-}
+}  // namespace
 
 
 void CLogListenerDesigner::searchMessages(CString l_sSearchTerm)
@@ -103,14 +104,14 @@ void CLogListenerDesigner::appendLog(CLogObject* oLog)
 }
 
 CLogListenerDesigner::CLogListenerDesigner(const IKernelContext& rKernelContext, GtkBuilder* pBuilderInterface)
-	:m_pBuilderInterface(pBuilderInterface)
-	, m_pAlertWindow(nullptr)
-	, m_bIngnoreMessages(false)
-	, m_ui32CountMessages(0)
-	, m_ui32CountWarnings(0)
-	, m_ui32CountErrors(0)
-	, m_sSearchTerm("")
-	, m_CenterOnBoxFun([](CIdentifier& id) {})
+	: m_pBuilderInterface(pBuilderInterface)
+	  , m_pAlertWindow(nullptr)
+	  , m_bIngnoreMessages(false)
+	  , m_ui32CountMessages(0)
+	  , m_ui32CountWarnings(0)
+	  , m_ui32CountErrors(0)
+	  , m_sSearchTerm("")
+	  , m_CenterOnBoxFun([](CIdentifier& id) {})
 {
 	m_pTextView = GTK_TEXT_VIEW(gtk_builder_get_object(m_pBuilderInterface, "openvibe-textview_messages"));
 	m_pAlertWindow = GTK_WINDOW(gtk_builder_get_object(m_pBuilderInterface, "dialog_error_popup"));
@@ -168,7 +169,7 @@ CLogListenerDesigner::CLogListenerDesigner(const IKernelContext& rKernelContext,
 
 bool CLogListenerDesigner::isActive(ELogLevel eLogLevel)
 {
-	map<ELogLevel, bool>::iterator itLogLevel = m_vActiveLevel.find(eLogLevel);
+	auto itLogLevel = m_vActiveLevel.find(eLogLevel);
 	if (itLogLevel == m_vActiveLevel.end()) { return true; }
 	return itLogLevel->second;
 }
@@ -181,7 +182,7 @@ bool CLogListenerDesigner::activate(ELogLevel eLogLevel, bool bActive)
 
 bool CLogListenerDesigner::activate(ELogLevel eStartLogLevel, ELogLevel eEndLogLevel, bool bActive)
 {
-	for (int i = eStartLogLevel; i <= eEndLogLevel; i++)
+	for (int i = eStartLogLevel; i <= eEndLogLevel; ++i)
 	{
 		m_vActiveLevel[ELogLevel(i)] = bActive;
 	}
@@ -192,7 +193,7 @@ bool CLogListenerDesigner::activate(bool bActive) { return activate(LogLevel_Fir
 
 void CLogListenerDesigner::log(const time64 time64Value)
 {
-	if (m_bIngnoreMessages) return;
+	if (m_bIngnoreMessages) { return; }
 
 	stringstream l_sText;
 	if (m_bConsoleLogTimeInSecond)
@@ -224,7 +225,7 @@ void CLogListenerDesigner::log(const time64 time64Value)
 
 void CLogListenerDesigner::log(const uint64_t ui64Value)
 {
-	if (m_bIngnoreMessages) return;
+	if (m_bIngnoreMessages) { return; }
 
 	stringstream l_sText;
 	l_sText << dec << ui64Value;
@@ -238,7 +239,7 @@ void CLogListenerDesigner::log(const uint64_t ui64Value)
 
 void CLogListenerDesigner::log(const uint32_t ui32Value)
 {
-	if (m_bIngnoreMessages) return;
+	if (m_bIngnoreMessages) { return; }
 
 	stringstream l_sText;
 	l_sText << dec << ui32Value;
@@ -252,7 +253,7 @@ void CLogListenerDesigner::log(const uint32_t ui32Value)
 
 void CLogListenerDesigner::log(const uint16_t ui16Value)
 {
-	if (m_bIngnoreMessages) return;
+	if (m_bIngnoreMessages) { return; }
 
 	stringstream l_sText;
 	l_sText << dec << ui16Value;
@@ -266,7 +267,7 @@ void CLogListenerDesigner::log(const uint16_t ui16Value)
 
 void CLogListenerDesigner::log(const uint8_t ui8Value)
 {
-	if (m_bIngnoreMessages) return;
+	if (m_bIngnoreMessages) { return; }
 
 	stringstream l_sText;
 	l_sText << dec << ui8Value;
@@ -280,7 +281,7 @@ void CLogListenerDesigner::log(const uint8_t ui8Value)
 
 void CLogListenerDesigner::log(const int64_t i64Value)
 {
-	if (m_bIngnoreMessages) return;
+	if (m_bIngnoreMessages) { return; }
 
 	stringstream l_sText;
 	l_sText << dec << i64Value;
@@ -294,7 +295,7 @@ void CLogListenerDesigner::log(const int64_t i64Value)
 
 void CLogListenerDesigner::log(const int32_t i32Value)
 {
-	if (m_bIngnoreMessages) return;
+	if (m_bIngnoreMessages) { return; }
 
 	stringstream l_sText;
 	l_sText << dec << i32Value;
@@ -308,7 +309,7 @@ void CLogListenerDesigner::log(const int32_t i32Value)
 
 void CLogListenerDesigner::log(const int16_t i16Value)
 {
-	if (m_bIngnoreMessages) return;
+	if (m_bIngnoreMessages) { return; }
 
 	stringstream l_sText;
 	l_sText << dec << i16Value;
@@ -322,7 +323,7 @@ void CLogListenerDesigner::log(const int16_t i16Value)
 
 void CLogListenerDesigner::log(const int8_t i8Value)
 {
-	if (m_bIngnoreMessages) return;
+	if (m_bIngnoreMessages) { return; }
 
 	stringstream l_sText;
 	l_sText << dec << i8Value;
@@ -336,7 +337,7 @@ void CLogListenerDesigner::log(const int8_t i8Value)
 
 void CLogListenerDesigner::log(const float f32Value)
 {
-	if (m_bIngnoreMessages) return;
+	if (m_bIngnoreMessages) { return; }
 
 	stringstream l_sText;
 	l_sText << f32Value;
@@ -356,7 +357,7 @@ void CLogListenerDesigner::log(const double f64Value)
 
 void CLogListenerDesigner::log(const bool bValue)
 {
-	if (m_bIngnoreMessages) return;
+	if (m_bIngnoreMessages) { return; }
 
 	stringstream l_sText;
 	l_sText << (bValue ? "true" : "false");
@@ -364,23 +365,23 @@ void CLogListenerDesigner::log(const bool bValue)
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
 }
 
-void CLogListenerDesigner::log(const CIdentifier & rValue)
+void CLogListenerDesigner::log(const CIdentifier& rValue)
 {
-	if (m_bIngnoreMessages) return;
+	if (m_bIngnoreMessages) { return; }
 
 	checkAppendFilterCurrentLog("c_blueChill", rValue.toString(), true);
 }
 
-void CLogListenerDesigner::log(const CString & rValue)
+void CLogListenerDesigner::log(const CString& rValue)
 {
-	if (m_bIngnoreMessages) return;
+	if (m_bIngnoreMessages) { return; }
 
 	checkAppendFilterCurrentLog("c_blueChill", rValue);
 }
 
 void CLogListenerDesigner::log(const char* pValue)
 {
-	if (m_bIngnoreMessages) return;
+	if (m_bIngnoreMessages) { return; }
 
 	checkAppendFilterCurrentLog(nullptr, pValue);
 }
@@ -390,17 +391,17 @@ void CLogListenerDesigner::log(const ELogLevel eLogLevel)
 	//	GtkTextIter l_oTextIter;
 	//	gtk_text_buffer_get_end_iter(m_pBuffer, &l_oTextIter);
 
-		//new log, will be deleted when m_vStoredLog is cleared
+	//new log, will be deleted when m_vStoredLog is cleared
 	m_pCurrentLog = new CLogObject(m_pBuffer);//m_pNonFilteredBuffer);
 
 	//copy this newly added content in the current log
 	GtkTextIter l_oEndLogIter;
 	gtk_text_buffer_get_end_iter(m_pCurrentLog->getTextBuffer(), &l_oEndLogIter);
 
-	auto addTagName = [this, &l_oEndLogIter](GtkToggleToolButton * activeButton, uint32_t & countVariable, const char* state, const char* color)
+	auto addTagName = [this, &l_oEndLogIter](GtkToggleToolButton* activeButton, uint32_t& countVariable, const char* state, const char* color)
 	{
 		m_bIngnoreMessages = !gtk_toggle_tool_button_get_active(activeButton);
-		if (m_bIngnoreMessages) return;
+		if (m_bIngnoreMessages) { return; }
 
 		countVariable++;
 		gtk_text_buffer_insert_with_tags_by_name(m_pCurrentLog->getTextBuffer(), &l_oEndLogIter, "[ ", -1, "w_bold", "f_mono", nullptr);
@@ -410,41 +411,41 @@ void CLogListenerDesigner::log(const ELogLevel eLogLevel)
 
 	switch (eLogLevel)
 	{
-	case LogLevel_Debug:
-		addTagName(m_pToggleButtonActive_Debug, m_ui32CountMessages, "DEBUG", "c_blue");
-		break;
+		case LogLevel_Debug:
+			addTagName(m_pToggleButtonActive_Debug, m_ui32CountMessages, "DEBUG", "c_blue");
+			break;
 
-	case LogLevel_Benchmark:
-		addTagName(m_pToggleButtonActive_Benchmark, m_ui32CountMessages, "BENCH", "c_magenta");
-		break;
+		case LogLevel_Benchmark:
+			addTagName(m_pToggleButtonActive_Benchmark, m_ui32CountMessages, "BENCH", "c_magenta");
+			break;
 
-	case LogLevel_Trace:
-		addTagName(m_pToggleButtonActive_Trace, m_ui32CountMessages, "TRACE", "c_watercourse");
-		break;
+		case LogLevel_Trace:
+			addTagName(m_pToggleButtonActive_Trace, m_ui32CountMessages, "TRACE", "c_watercourse");
+			break;
 
-	case LogLevel_Info:
-		addTagName(m_pToggleButtonActive_Info, m_ui32CountMessages, "INF", "c_blueChill");
-		break;
+		case LogLevel_Info:
+			addTagName(m_pToggleButtonActive_Info, m_ui32CountMessages, "INF", "c_blueChill");
+			break;
 
-	case LogLevel_Warning:
-		addTagName(m_pToggleButtonActive_Warning, m_ui32CountWarnings, "WARNING", "c_darkViolet");
-		break;
+		case LogLevel_Warning:
+			addTagName(m_pToggleButtonActive_Warning, m_ui32CountWarnings, "WARNING", "c_darkViolet");
+			break;
 
-	case LogLevel_ImportantWarning:
-		addTagName(m_pToggleButtonActive_ImportantWarning, m_ui32CountWarnings, "WARNING", "c_darkOrange");
-		break;
+		case LogLevel_ImportantWarning:
+			addTagName(m_pToggleButtonActive_ImportantWarning, m_ui32CountWarnings, "WARNING", "c_darkOrange");
+			break;
 
-	case LogLevel_Error:
-		addTagName(m_pToggleButtonActive_Error, m_ui32CountErrors, "ERROR", "c_red");
-		break;
+		case LogLevel_Error:
+			addTagName(m_pToggleButtonActive_Error, m_ui32CountErrors, "ERROR", "c_red");
+			break;
 
-	case LogLevel_Fatal:
-		addTagName(m_pToggleButtonActive_Fatal, m_ui32CountErrors, "FATAL", "c_red");
-		break;
+		case LogLevel_Fatal:
+			addTagName(m_pToggleButtonActive_Fatal, m_ui32CountErrors, "FATAL", "c_red");
+			break;
 
-	default:
-		addTagName(nullptr, m_ui32CountMessages, "UNKNOWN", nullptr);
-		break;
+		default:
+			addTagName(nullptr, m_ui32CountMessages, "UNKNOWN", nullptr);
+			break;
 	}
 
 	if (gtk_toggle_button_get_active(m_pToggleButtonPopup) && (eLogLevel == LogLevel_Warning || eLogLevel == LogLevel_ImportantWarning || eLogLevel == LogLevel_Error || eLogLevel == LogLevel_Fatal))
@@ -478,7 +479,7 @@ void CLogListenerDesigner::log(const ELogLevel eLogLevel)
 
 void CLogListenerDesigner::log(const ELogColor eLogColor)
 {
-	if (m_bIngnoreMessages) return;
+	if (m_bIngnoreMessages) { return; }
 }
 
 void CLogListenerDesigner::updateMessageCounts()
@@ -546,7 +547,7 @@ void CLogListenerDesigner::clearMessages()
 
 	gtk_text_buffer_set_text(m_pBuffer, "", -1);
 
-	std::for_each(m_vStoredLog.begin(), m_vStoredLog.end(), [](CLogObject * elem) { delete elem; });
+	std::for_each(m_vStoredLog.begin(), m_vStoredLog.end(), [](CLogObject* elem) { delete elem; });
 	m_vStoredLog.clear();
 
 	m_pCurrentLog = nullptr;
@@ -561,7 +562,8 @@ void CLogListenerDesigner::focusMessageWindow()
 
 void CLogListenerDesigner::checkAppendFilterCurrentLog(const char* textColor, const char* logMessage, bool bIsLink)
 {
-	if (!m_pCurrentLog) {
+	if (!m_pCurrentLog)
+	{
 		std::cout << "Ouch, current log had been deleted before creating new, this shouldn't happen...\n";
 		return;
 	}
@@ -573,7 +575,7 @@ void CLogListenerDesigner::checkAppendFilterCurrentLog(const char* textColor, co
 	}
 }
 
-void CLogListenerDesigner::displayLog(CLogObject * oLog)
+void CLogListenerDesigner::displayLog(CLogObject* oLog)
 {
 	GtkTextMark* l_oMark = gtk_text_buffer_get_mark(m_pBuffer, "current_log");
 	GtkTextIter l_oIter, l_oEndter, l_oLogBegin, l_oLogEnd;

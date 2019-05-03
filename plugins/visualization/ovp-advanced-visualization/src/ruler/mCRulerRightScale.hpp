@@ -34,12 +34,12 @@ namespace Mensia
 
 			CRulerRightScale()
 
-				:m_fLastScale(-1) { }
+				: m_fLastScale(-1) { }
 
-			virtual void renderRight(GtkWidget* pWidget)
+			void renderRight(GtkWidget* pWidget) override
 			{
 				uint32_t l_ui32SelectedCount = m_pRendererContext->getSelectedCount();
-				if (!l_ui32SelectedCount) return;
+				if (!l_ui32SelectedCount) { return; }
 
 				float l_fScale = 1.f / m_pRendererContext->getScale();
 				if (m_fLastScale != l_fScale)
@@ -62,7 +62,7 @@ namespace Mensia
 
 				gdk_drawable_get_size(pWidget->window, &w, &h);
 				GdkGC* l_pDrawGC = gdk_gc_new(pWidget->window);
-				for (unsigned int i = 0; i < m_pRendererContext->getSelectedCount(); i++)
+				for (unsigned int i = 0; i < m_pRendererContext->getSelectedCount(); ++i)
 				{
 					for (it = m_vRange.begin(); it != m_vRange.end(); it++)
 					{
@@ -80,10 +80,10 @@ namespace Mensia
 			}
 
 			float m_fLastScale;
-			std::vector < double > m_vRange;
-			std::vector < double >::iterator it;
+			std::vector<double> m_vRange;
+			std::vector<double>::iterator it;
 		};
-	};
-};
+	} // namespace AdvancedVisualization
+}  // namespace Mensia
 
 #endif // __OpenViBEPlugins_CRulerRightScale_H__

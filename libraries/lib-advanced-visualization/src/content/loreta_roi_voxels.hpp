@@ -117,5 +117,5 @@ namespace LoretaRegions
 		{"Perception.Vision.Motion", 960, g_pROIVoxels_35},
 		{"Perception.Vision.Shape", 806, g_pROIVoxels_36}
 	};
-}
+} // namespace LoretaRegions
 #endif

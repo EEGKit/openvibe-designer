@@ -27,36 +27,36 @@ namespace Mensia
 {
 	namespace AdvancedVisualization
 	{
-		template <class TRendererFactoryClass, class TRulerClass >
+		template <class TRendererFactoryClass, class TRulerClass>
 		class TBoxAlgorithmContinuousViz : public CBoxAlgorithmViz
 		{
 		public:
 
-			TBoxAlgorithmContinuousViz(const OpenViBE::CIdentifier& rClassId, const std::vector < int >& vParameter);
-			virtual bool initialize();
-			virtual bool uninitialize();
-			virtual bool process();
+			TBoxAlgorithmContinuousViz(const OpenViBE::CIdentifier& rClassId, const std::vector<int>& vParameter);
+			bool initialize() override;
+			bool uninitialize() override;
+			bool process() override;
 
 			_IsDerivedFromClass_Final_(CBoxAlgorithmViz, m_oClassId);
 
-			OpenViBEToolkit::TStreamedMatrixDecoder < TBoxAlgorithmContinuousViz < TRendererFactoryClass, TRulerClass > > m_oMatrixDecoder;
-			OpenViBEToolkit::TStimulationDecoder < TBoxAlgorithmContinuousViz < TRendererFactoryClass, TRulerClass > > m_oStimulationDecoder;
+			OpenViBEToolkit::TStreamedMatrixDecoder<TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>> m_oMatrixDecoder;
+			OpenViBEToolkit::TStimulationDecoder<TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>> m_oStimulationDecoder;
 			TRendererFactoryClass m_oRendererFactory;
 			IRenderer* m_pRenderer;
 
 		protected:
 
-			virtual void draw();
+			void draw() override;
 		};
 
 		class CBoxAlgorithmContinuousVizListener : public CBoxAlgorithmVizListener
 		{
 		public:
 
-			CBoxAlgorithmContinuousVizListener(const std::vector < int >& vParameter)
-				:CBoxAlgorithmVizListener(vParameter) { }
+			explicit CBoxAlgorithmContinuousVizListener(const std::vector<int>& vParameter)
+				: CBoxAlgorithmVizListener(vParameter) { }
 
-			virtual bool onInputTypeChanged(IBox& rBox, const uint32_t ui32Index)
+			bool onInputTypeChanged(IBox& rBox, const uint32_t ui32Index) override
 			{
 				OpenViBE::CIdentifier l_oTypeIdentifier;
 				rBox.getInputType(ui32Index, l_oTypeIdentifier);
@@ -75,21 +75,23 @@ namespace Mensia
 		public:
 
 			TBoxAlgorithmContinuousVizDesc(const OpenViBE::CString& sName, const OpenViBE::CIdentifier& rDescClassId, const OpenViBE::CIdentifier& rClassId, const OpenViBE::CString& sAddedSoftwareVersion, const OpenViBE::CString& sUpdatedSoftwareVersion, CParameterSet rParameterSet, const OpenViBE::CString& sShortDescription, const OpenViBE::CString& sDetailedDescription)
-				:CBoxAlgorithmVizDesc(sName, rDescClassId, rClassId, sAddedSoftwareVersion, sUpdatedSoftwareVersion, rParameterSet, sShortDescription, sDetailedDescription) { }
+				: CBoxAlgorithmVizDesc(sName, rDescClassId, rClassId, sAddedSoftwareVersion, sUpdatedSoftwareVersion, rParameterSet, sShortDescription, sDetailedDescription) { }
 
-			virtual OpenViBE::Plugins::IPluginObject* create()
- { return new TBoxAlgorithmContinuousViz < TRendererFactoryClass, TRulerClass >(m_oClassId, m_vParameter); }
+			OpenViBE::Plugins::IPluginObject* create() override
+			{
+				return new TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>(m_oClassId, m_vParameter);
+			}
 
-			virtual OpenViBE::Plugins::IBoxListener* createBoxListener() const { return new CBoxAlgorithmContinuousVizListener(m_vParameter); }
+			OpenViBE::Plugins::IBoxListener* createBoxListener() const override { return new CBoxAlgorithmContinuousVizListener(m_vParameter); }
 
-			virtual OpenViBE::CString getCategory() const { return OpenViBE::CString("Advanced Visualization/") + m_sCategoryName; }
+			OpenViBE::CString getCategory() const override { return OpenViBE::CString("Advanced Visualization/") + m_sCategoryName; }
 
 			_IsDerivedFromClass_Final_(OpenViBE::Plugins::IBoxAlgorithmDesc, m_oDescClassId);
 		};
 
 		template <class TRendererFactoryClass, class TRulerClass>
-		TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>::TBoxAlgorithmContinuousViz(const OpenViBE::CIdentifier& rClassId, const std::vector < int >& vParameter)
-			:CBoxAlgorithmViz(rClassId, vParameter) { }
+		TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>::TBoxAlgorithmContinuousViz(const OpenViBE::CIdentifier& rClassId, const std::vector<int>& vParameter)
+			: CBoxAlgorithmViz(rClassId, vParameter) { }
 
 		template <class TRendererFactoryClass, class TRulerClass>
 		bool TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>::initialize()
@@ -133,7 +135,7 @@ namespace Mensia
 			IBoxIO& l_rDynamicBoxContext = this->getDynamicBoxContext();
 			uint32_t i, j, k;
 
-			for (i = 0; i < l_rDynamicBoxContext.getInputChunkCount(0); i++)
+			for (i = 0; i < l_rDynamicBoxContext.getInputChunkCount(0); ++i)
 			{
 				m_oMatrixDecoder.decode(i);
 
@@ -233,7 +235,6 @@ namespace Mensia
 								this->getLogManager() << LogLevel_Warning << "Please double check your scenario and box settings\n";
 							}
 						}
-
 					}
 
 					m_bRebuildNeeded = true;
@@ -266,7 +267,7 @@ namespace Mensia
 					// Adjust feeding depending on theoretical dates
 					if (m_pRendererContext->isTimeLocked() && m_pRendererContext->getSampleDuration())
 					{
-						uint32_t l_ui32TheoreticalSampleCount = uint32_t(m_ui64Time2 / m_pRendererContext->getSampleDuration());
+						auto l_ui32TheoreticalSampleCount = uint32_t(m_ui64Time2 / m_pRendererContext->getSampleDuration());
 						if (l_ui32TheoreticalSampleCount > m_pRenderer->getHistoryCount())
 						{
 							m_pRenderer->prefeed(l_ui32TheoreticalSampleCount - m_pRenderer->getHistoryCount());
@@ -280,7 +281,7 @@ namespace Mensia
 
 			if (l_rStaticBoxContext.getInputCount() > 1)
 			{
-				for (i = 0; i < l_rDynamicBoxContext.getInputChunkCount(1); i++)
+				for (i = 0; i < l_rDynamicBoxContext.getInputChunkCount(1); ++i)
 				{
 					m_oStimulationDecoder.decode(i);
 					if (m_oStimulationDecoder.isBufferReceived())
@@ -318,7 +319,7 @@ namespace Mensia
 
 			if (m_bRebuildNeeded) m_pRenderer->rebuild(*m_pRendererContext);
 			if (m_bRefreshNeeded) m_pRenderer->refresh(*m_pRendererContext);
-			if (m_bRedrawNeeded) this->redraw();
+			if (m_bRedrawNeeded) { this->redraw(); }
 
 			m_bRebuildNeeded = false;
 			m_bRefreshNeeded = false;
@@ -340,8 +341,5 @@ namespace Mensia
 
 			CBoxAlgorithmViz::postDraw();
 		}
-
-
-	};
-};
-
+	}  // namespace AdvancedVisualization
+} // namespace Mensia

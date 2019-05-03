@@ -32,7 +32,7 @@ namespace Mensia
 		{
 		public:
 
-			virtual void renderFinal(float fProgress)
+			void renderFinal(float fProgress) override
 			{
 				glDisable(GL_TEXTURE_1D);
 				glDisable(GL_BLEND);
@@ -52,7 +52,7 @@ namespace Mensia
 				glEnd();
 			}
 		};
-	};
-};
+	}  // namespace AdvancedVisualization
+}  // namespace Mensia
 
 #endif // __OpenViBEPlugins_CRulerProgressV_H__

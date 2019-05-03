@@ -26,11 +26,11 @@
 #include "mCVertex.hpp"
 
 #if defined TARGET_OS_Windows
-#include <windows.h>
+#include <Windows.h>
 #endif // TARGET_OS_Windows
 
-#include <GL/gl.h>
-#include <GL/glu.h>
+#include <gl/GL.h>
+#include <gl/GLU.h>
 
 #include <string>
 #include <map>
@@ -44,46 +44,46 @@ namespace Mensia
 		{
 		private:
 
-			CRenderer(const CRenderer&);
+			CRenderer(const CRenderer&) = delete;
 
 		public:
 
 			CRenderer();
-			virtual ~CRenderer();
+			~CRenderer() override;
 
-			virtual void setChannelLocalisation(const char* sFilename);
-			virtual void setChannelCount(uint32_t ui32ChannelCount);
-			virtual void setSampleCount(uint32_t ui32SampleCount);
-			virtual void setHistoryDrawIndex(uint32_t ui32HistoryDrawIndex);
-			virtual void feed(const float* pDataVector);
-			virtual void feed(const float* pDataVector, uint32_t ui32SampleCount);
-			virtual void feed(uint64_t ui64StimulationDate, uint64_t ui64StimulationId);
-			virtual void prefeed(uint32_t ui32PreFeedSampleCount);
+			void setChannelLocalisation(const char* sFilename) override;
+			void setChannelCount(uint32_t ui32ChannelCount) override;
+			void setSampleCount(uint32_t ui32SampleCount) override;
+			void setHistoryDrawIndex(uint32_t ui32HistoryDrawIndex) override;
+			void feed(const float* pDataVector) override;
+			void feed(const float* pDataVector, uint32_t ui32SampleCount) override;
+			void feed(uint64_t ui64StimulationDate, uint64_t ui64StimulationId) override;
+			void prefeed(uint32_t ui32PreFeedSampleCount) override;
 
-			virtual float getSuggestedScale();
+			float getSuggestedScale() override;
 
-			virtual void clear(uint32_t ui32SampleCountToKeep);
+			void clear(uint32_t ui32SampleCountToKeep) override;
 
-			virtual uint32_t getChannelCount() const;
-			virtual uint32_t getSampleCount() const;
-			virtual uint32_t getHistoryCount() const;
-			virtual uint32_t getHistoryIndex() const;
+			uint32_t getChannelCount() const override;
+			uint32_t getSampleCount() const override;
+			uint32_t getHistoryCount() const override;
+			uint32_t getHistoryIndex() const override;
 			virtual bool getSampleAtERPFraction(float f32Alpha, std::vector < float >& vSample) const;
 
-			virtual void setTimeOffset(uint64_t offset) { m_ui64TimeOffset = offset; };
-			virtual uint64_t getTimeOffset() const { return m_ui64TimeOffset; }
+			void setTimeOffset(uint64_t offset) override { m_ui64TimeOffset = offset; };
+			uint64_t getTimeOffset() const override { return m_ui64TimeOffset; }
 
-			virtual void rebuild(const IRendererContext& rContext);
-			virtual void refresh(const IRendererContext& rContext);
+			void rebuild(const IRendererContext& rContext) override;
+			void refresh(const IRendererContext& rContext) override;
 			//			virtual bool render(const IRendererContext& rContext);
 
-			virtual void clearRegionSelection() { }
-			virtual uint32_t getRegionCategoryCount() { return 0; }
-			virtual uint32_t getRegionCount(uint32_t ui32RegionCategory) { return 0; }
-			virtual const char* getRegionCategoryName(uint32_t ui32RegionCategory) { return nullptr; }
-			virtual const char* getRegionName(uint32_t ui32RegionCategory, uint32_t ui32RegionIndex) { return nullptr; }
-			virtual void selectRegion(uint32_t ui32RegionCategory, const char* sRegionName) { }
-			virtual void selectRegion(uint32_t ui32RegionCategory, uint32_t ui32RegionIndex) { }
+			void clearRegionSelection() override { }
+			uint32_t getRegionCategoryCount() override { return 0; }
+			uint32_t getRegionCount(uint32_t ui32RegionCategory) override { return 0; }
+			const char* getRegionCategoryName(uint32_t ui32RegionCategory) override { return nullptr; }
+			const char* getRegionName(uint32_t ui32RegionCategory, uint32_t ui32RegionIndex) override { return nullptr; }
+			void selectRegion(uint32_t ui32RegionCategory, const char* sRegionName) override { }
+			void selectRegion(uint32_t ui32RegionCategory, uint32_t ui32RegionIndex) override { }
 
 			virtual void SetFaceMeshVisible(bool bVisible = true) { }
 
@@ -119,7 +119,7 @@ namespace Mensia
 			std::vector < std::vector < CVertex > > m_vVertex;
 			std::vector < uint32_t > m_vMesh;
 		};
-	};
-};
+	} // namespace AdvancedVisualization
+} // namespace Mensia
 
 #endif // __Mensia_AdvancedVisualization_CRenderer_H__

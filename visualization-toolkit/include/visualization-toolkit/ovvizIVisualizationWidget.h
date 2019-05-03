@@ -28,7 +28,7 @@ namespace OpenViBEVisualizationToolkit
 	class IVisualizationWidget
 	{
 	public:
-		virtual ~IVisualizationWidget() { }
+		virtual ~IVisualizationWidget() = default;
 		/**
 		 * \brief Initializes the widget
 		 * \param identifier identifier of the widget
@@ -39,13 +39,9 @@ namespace OpenViBEVisualizationToolkit
 		 * \param childCount number of children of this widget (none for a visualization box, 1 for a visualization panel, 2 for split widgets, variable number for windows)
 		 * \return True if widget was successfully initialized, false otherwise
 		 */
-		virtual bool initialize(
-			const OpenViBE::CIdentifier& identifier,
-			const OpenViBE::CString& name,
-			EVisualizationWidgetType type,
-			const OpenViBE::CIdentifier& parentIdentifier,
-			const OpenViBE::CIdentifier& boxIdentifier,
-			uint32_t childCount) = 0;
+		virtual bool initialize(const OpenViBE::CIdentifier& identifier, const OpenViBE::CString& name,
+								EVisualizationWidgetType type, const OpenViBE::CIdentifier& parentIdentifier,
+								const OpenViBE::CIdentifier& boxIdentifier, uint32_t childCount) = 0;
 
 		/**
 		 * \brief Returns the identifier of the widget
@@ -148,4 +144,4 @@ namespace OpenViBEVisualizationToolkit
 		virtual int getDividerPosition() = 0;
 		virtual int getMaxDividerPosition() = 0;
 	};
-}
+}  // namespace OpenViBEVisualizationToolkit

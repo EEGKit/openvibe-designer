@@ -27,14 +27,14 @@ using namespace AdvancedVisualization;
 
 bool CRendererMultiLine::render(const IRendererContext& rContext)
 {
-	if (!rContext.getSelectedCount()) return false;
-	if (!m_ui32HistoryCount) return false;
+	if (!rContext.getSelectedCount()) { return false; }
+	if (!m_ui32HistoryCount) { return false; }
 
-	int32_t sampleCount = static_cast<int32_t>(m_ui32SampleCount);
-	int32_t n1 = static_cast<int32_t>(m_ui32HistoryIndex % m_ui32SampleCount);
-	int32_t n2 = static_cast<int32_t>(sampleCount - n1);
+	auto sampleCount = static_cast<int32_t>(m_ui32SampleCount);
+	auto n1 = static_cast<int32_t>(m_ui32HistoryIndex % m_ui32SampleCount);
+	auto n2 = static_cast<int32_t>(sampleCount - n1);
 
-	if (!sampleCount) return false;
+	if (!sampleCount) { return false; }
 
 	float t1 = n2 * 1.f / sampleCount;
 	float t2 = -n1 * 1.f / sampleCount;
@@ -48,7 +48,7 @@ bool CRendererMultiLine::render(const IRendererContext& rContext)
 	glTranslatef(0, rContext.isPositiveOnly() ? 0 : 0.5f, 0);
 	glScalef(1, rContext.getScale(), 1);
 	glEnableClientState(GL_VERTEX_ARRAY);
-	for (uint32_t i = 0; i < rContext.getSelectedCount(); i++)
+	for (uint32_t i = 0; i < rContext.getSelectedCount(); ++i)
 	{
 		std::vector < CVertex >& l_rVertex = m_Vertices[rContext.getSelected(i)];
 		glTexCoord1f(1 - (i + .5f) / rContext.getSelectedCount());

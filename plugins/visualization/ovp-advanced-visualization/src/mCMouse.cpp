@@ -28,9 +28,9 @@ using namespace Mensia;
 using namespace AdvancedVisualization;
 
 CMouse::CMouse(CBoxAlgorithmViz& rBoxAlgorithmViz)
-	:m_rBoxAlgorithmViz(rBoxAlgorithmViz)
-	, m_i32MouseX(0)
-	, m_i32MouseY(0) { }
+	: m_rBoxAlgorithmViz(rBoxAlgorithmViz)
+	  , m_i32MouseX(0)
+	  , m_i32MouseY(0) { }
 
 void CMouse::mouseButton(IRendererContext& rContext, int32_t x, int32_t y, int32_t button, int status)
 {
@@ -69,10 +69,10 @@ void CMouse::mouseMotion(IRendererContext& rContext, int32_t x, int32_t y)
 bool CMouse::hasButtonPressed()
 
 {
-	std::map < int32_t, int >::const_iterator it;
+	std::map<int32_t, int>::const_iterator it;
 	for (it = m_vButton.begin(); it != m_vButton.end(); it++)
 	{
-		if (it->second) return true;
+		if (it->second) { return true; }
 	}
 	return false;
 }

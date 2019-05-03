@@ -41,10 +41,9 @@ namespace Mensia
 			bool hasButtonPressed();
 
 			CBoxAlgorithmViz& m_rBoxAlgorithmViz;
-			std::map < int32_t, int > m_vButton;
+			std::map<int32_t, int> m_vButton;
 			int32_t m_i32MouseX;
 			int32_t m_i32MouseY;
 		};
-	};
-};
-
+	}  // namespace AdvancedVisualization
+}  // namespace Mensia

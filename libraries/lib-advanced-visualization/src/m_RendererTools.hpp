@@ -60,6 +60,6 @@ namespace
 
 		glEnd();
 	}
-}
+}  // namespace
 
 #endif // __Mensia_AdvancedVisualization_Renderer_Tools_H__

@@ -11,10 +11,10 @@ namespace Mensia
 		{
 		public:
 
-			virtual void rebuild3DMeshesPre(const IRendererContext& rContext);
-			virtual void rebuild3DMeshesPost(const IRendererContext& rContext);
+			void rebuild3DMeshesPre(const IRendererContext& rContext) override;
+			void rebuild3DMeshesPost(const IRendererContext& rContext) override;
 		};
-	};
-};
+	} // namespace AdvancedVisualization
+}  // namespace Mensia
 
 #endif // __Mensia_AdvancedVisualization_CRendererTopo2D_H__

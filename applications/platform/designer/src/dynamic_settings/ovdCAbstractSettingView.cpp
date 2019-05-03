@@ -9,15 +9,17 @@ using namespace Setting;
 
 static void collect_widget_cb(GtkWidget* pWidget, gpointer pUserData)
 {
-	static_cast<std::vector< GtkWidget* >*>(pUserData)->push_back(pWidget);
+	static_cast<std::vector<GtkWidget*>*>(pUserData)->push_back(pWidget);
 }
 
 CAbstractSettingView::~CAbstractSettingView()
 {
-	if (GTK_IS_WIDGET(m_pNameWidget)) {
+	if (GTK_IS_WIDGET(m_pNameWidget))
+	{
 		gtk_widget_destroy(m_pNameWidget);
 	}
-	if (GTK_IS_WIDGET(m_pEntryNameWidget)) {
+	if (GTK_IS_WIDGET(m_pEntryNameWidget))
+	{
 		gtk_widget_destroy(m_pEntryNameWidget);
 	}
 	if (G_IS_OBJECT(m_pBuilder))
@@ -27,7 +29,7 @@ CAbstractSettingView::~CAbstractSettingView()
 }
 
 CAbstractSettingView::CAbstractSettingView(Kernel::IBox& rBox, uint32_t ui32Index,
-	const char* sBuilderName, const char* sWidgetName) :
+										   const char* sBuilderName, const char* sWidgetName) :
 	m_rBox(rBox),
 	m_ui32Index(ui32Index),
 	m_sSettingWidgetName(""),
@@ -51,7 +53,6 @@ CAbstractSettingView::CAbstractSettingView(Kernel::IBox& rBox, uint32_t ui32Inde
 }
 
 
-
 Kernel::IBox& CAbstractSettingView::getBox() { return m_rBox; }
 
 uint32_t CAbstractSettingView::getSettingIndex() { return m_ui32Index; }
@@ -59,7 +60,8 @@ uint32_t CAbstractSettingView::getSettingIndex() { return m_ui32Index; }
 
 void CAbstractSettingView::setNameWidget(GtkWidget* pWidget)
 {
-	if (m_pNameWidget) {
+	if (m_pNameWidget)
+	{
 		gtk_widget_destroy(m_pNameWidget);
 	}
 	m_pNameWidget = pWidget;
@@ -69,7 +71,8 @@ GtkWidget* CAbstractSettingView::getNameWidget() { return m_pNameWidget; }
 
 void CAbstractSettingView::setEntryWidget(GtkWidget* pWidget)
 {
-	if (m_pEntryNameWidget) {
+	if (m_pEntryNameWidget)
+	{
 		gtk_widget_destroy(m_pEntryNameWidget);
 	}
 	m_pEntryNameWidget = pWidget;
@@ -116,7 +119,7 @@ void CAbstractSettingView::initializeValue()
 	setValue(l_sSettingValue);
 }
 
-void CAbstractSettingView::extractWidget(GtkWidget * pWidget, std::vector< GtkWidget* > & rVector)
+void CAbstractSettingView::extractWidget(GtkWidget* pWidget, std::vector<GtkWidget*>& rVector)
 {
 	gtk_container_foreach(GTK_CONTAINER(pWidget), collect_widget_cb, &rVector);
 }

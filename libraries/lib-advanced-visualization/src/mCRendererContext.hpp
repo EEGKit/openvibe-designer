@@ -37,92 +37,93 @@ namespace Mensia
 		{
 		public:
 
-			CRendererContext(IRendererContext* pParentRendererContext);
+			explicit CRendererContext(IRendererContext* pParentRendererContext);
 
-			virtual void clear();
+			void clear() override;
 
-			virtual void setParentRendererContext(IRendererContext* pParentRendererContext);
+			void setParentRendererContext(IRendererContext* pParentRendererContext) override;
 
-			virtual void clearChannelInfo();
-			virtual void addChannel(const std::string& sChannelName, float x, float y, float z);
-			virtual void selectChannel(uint32_t ui32Index);
-			virtual void unselectChannel(uint32_t ui32Index);
-			virtual void sortSelectedChannel(uint32_t ui32SortMode);
+			void clearChannelInfo() override;
+			void addChannel(const std::string& sChannelName, float x, float y, float z) override;
+			void selectChannel(uint32_t ui32Index) override;
+			void unselectChannel(uint32_t ui32Index) override;
+			void sortSelectedChannel(uint32_t ui32SortMode) override;
 
-			virtual void setDimensionLabel(size_t dimensionIndex, size_t labelIndex, const char* label);
-			virtual size_t getDimensionLabelCount(size_t dimensionIndex) const;
-			virtual const char* getDimensionLabel(size_t dimensionIndex, size_t labelIndex) const;
+			void setDimensionLabel(size_t dimensionIndex, size_t labelIndex, const char* label) override;
+			size_t getDimensionLabelCount(size_t dimensionIndex) const override;
+			const char* getDimensionLabel(size_t dimensionIndex, size_t labelIndex) const override;
 
-			virtual void clearTransformInfo();
-			virtual void scaleBy(float f32Scale);
-			virtual void setScale(float f32Scale);
-			virtual void zoomBy(float f32Zoom);
-			virtual void rotateByX(float f32Rotation);
-			virtual void rotateByY(float f32Rotation);
+			void clearTransformInfo() override;
+			void scaleBy(float f32Scale) override;
+			void setScale(float f32Scale) override;
+			void zoomBy(float f32Zoom) override;
+			void rotateByX(float f32Rotation) override;
+			void rotateByY(float f32Rotation) override;
 
-			virtual void setTranslucency(float f32Translucency);
-			virtual void setAspect(float f32Aspect);
-			virtual void setSampleDuration(uint64_t ui64SampleDuration);
-			virtual void setTimeScale(uint64_t ui64TimeScale);
-			virtual void setElementCount(uint64_t ui64ElementCount);
-			virtual void setFlowerRingCount(uint64_t ui64FlowerRingCount);
-			virtual void setXYZPlotDepth(bool bHasDepth);
-			virtual void setAxisDisplay(bool bIsAxisDisplayed);
-			virtual void setPositiveOnly(bool bPositiveOnly);
-			virtual void setTimeLocked(bool bTimeLocked);
-			virtual void setScrollModeActive(bool bScrollModeActive);
-			virtual void setScaleVisibility(bool bVisibility);
-			virtual void setCheckBoardVisibility(bool bVisibility);
-			virtual void setDataType(EDataType eDataType);
-			virtual void setSpectrumFrequencyRange(uint32_t ui32SpectrumFrequencyRange);
-			virtual void setMinimumSpectrumFrequency(uint32_t ui32MinSpectrumFrequency);
-			virtual void setMaximumSpectrumFrequency(uint32_t ui32MaxSpectrumFrequency);
-			virtual void setStackCount(uint32_t ui32StackCount);
-			virtual void setStackIndex(uint32_t ui32StackIndex);
-			virtual void setFaceMeshVisible(bool bVisible);
-			virtual void setScalpMeshVisible(bool bVisible);
+			void setTranslucency(float f32Translucency) override;
+			void setAspect(float f32Aspect) override;
+			void setSampleDuration(uint64_t ui64SampleDuration) override;
+			void setTimeScale(uint64_t ui64TimeScale) override;
+			void setElementCount(uint64_t ui64ElementCount) override;
+			void setFlowerRingCount(uint64_t ui64FlowerRingCount) override;
+			void setXYZPlotDepth(bool bHasDepth) override;
+			void setAxisDisplay(bool bIsAxisDisplayed) override;
+			void setPositiveOnly(bool bPositiveOnly) override;
+			void setTimeLocked(bool bTimeLocked) override;
+			void setScrollModeActive(bool bScrollModeActive) override;
+			void setScaleVisibility(bool bVisibility) override;
+			void setCheckBoardVisibility(bool bVisibility) override;
+			void setDataType(EDataType eDataType) override;
+			void setSpectrumFrequencyRange(uint32_t ui32SpectrumFrequencyRange) override;
+			void setMinimumSpectrumFrequency(uint32_t ui32MinSpectrumFrequency) override;
+			void setMaximumSpectrumFrequency(uint32_t ui32MaxSpectrumFrequency) override;
+			void setStackCount(uint32_t ui32StackCount) override;
+			void setStackIndex(uint32_t ui32StackIndex) override;
+			void setFaceMeshVisible(bool bVisible) override;
+			void setScalpMeshVisible(bool bVisible) override;
 
-			virtual void setERPPlayerActive(bool bActive);
-			virtual void stepERPFractionBy(float f32ERPFraction);
+			void setERPPlayerActive(bool bActive) override;
+			void stepERPFractionBy(float f32ERPFraction) override;
 
-			virtual std::string getChannelName(uint32_t ui32Index) const;
-			virtual bool getChannelLocalisation(uint32_t ui32Index, float& x, float& y, float& z) const;
-			virtual uint32_t getChannelCount() const;
-			virtual uint32_t getSelectedCount() const;
-			virtual uint32_t getSelected(uint32_t ui32Index) const;
-			virtual bool isSelected(uint32_t ui32Index) const;
+			std::string getChannelName(uint32_t ui32Index) const override;
+			bool getChannelLocalisation(uint32_t ui32Index, float& x, float& y, float& z) const override;
+			uint32_t getChannelCount() const override;
+			uint32_t getSelectedCount() const override;
+			uint32_t getSelected(uint32_t ui32Index) const override;
+			bool isSelected(uint32_t ui32Index) const override;
 
-			virtual float getScale() const;
-			virtual float getZoom() const;
-			virtual float getRotationX() const;
-			virtual float getRotationY() const;
+			float getScale() const override;
+			float getZoom() const override;
+			float getRotationX() const override;
+			float getRotationY() const override;
 
-			virtual float getTranslucency() const;
-			virtual float getAspect() const;
-			virtual uint64_t getSampleDuration() const;
-			virtual uint64_t getTimeScale() const;
-			virtual uint64_t getElementCount() const;
-			virtual uint64_t getFlowerRingCount() const;
-			virtual bool hasXYZPlotDepth() const;
-			virtual bool isAxisDisplayed() const;
-			virtual bool isPositiveOnly() const;
-			virtual bool isTimeLocked() const;
-			virtual bool isScrollModeActive() const;
-			virtual bool getScaleVisibility() const;
-			virtual bool getCheckBoardVisibility() const;
-			virtual EDataType getDataType() const;
-			virtual uint32_t getSpectrumFrequencyRange() const;
-			virtual uint32_t getMinSpectrumFrequency() const;
-			virtual uint32_t getMaxSpectrumFrequency() const;
-			virtual uint32_t getStackCount() const;
-			virtual uint32_t getStackIndex() const;
-			virtual bool isFaceMeshVisible() const;
-			virtual bool isScalpMeshVisible() const;
+			float getTranslucency() const override;
+			float getAspect() const override;
+			uint64_t getSampleDuration() const override;
+			uint64_t getTimeScale() const override;
+			uint64_t getElementCount() const override;
+			uint64_t getFlowerRingCount() const override;
+			bool hasXYZPlotDepth() const override;
+			bool isAxisDisplayed() const override;
+			bool isPositiveOnly() const override;
+			bool isTimeLocked() const override;
+			bool isScrollModeActive() const override;
+			bool getScaleVisibility() const override;
+			bool getCheckBoardVisibility() const override;
+			EDataType getDataType() const override;
+			uint32_t getSpectrumFrequencyRange() const override;
+			uint32_t getMinSpectrumFrequency() const override;
+			uint32_t getMaxSpectrumFrequency() const override;
+			uint32_t getStackCount() const override;
+			uint32_t getStackIndex() const override;
+			bool isFaceMeshVisible() const override;
+			bool isScalpMeshVisible() const override;
 
-			virtual bool isERPPlayerActive() const;
-			virtual float getERPFraction() const;
+			bool isERPPlayerActive() const override;
+			float getERPFraction() const override;
 
-			uint32_t getMaximumSampleCountPerDisplay() const { return 1000; /*500;*/ /*128*/ }
+			uint32_t getMaximumSampleCountPerDisplay() const override
+			{ return 1000; /*500;*/ /*128*/ }
 
 		protected:
 
@@ -166,7 +167,7 @@ namespace Mensia
 			bool m_bERPPlayerActive;
 			float m_f32ERPFraction;
 		};
-	};
-};
+	} // namespace AdvancedVisualization
+}  // namespace Mensia
 
 #endif // __Mensia_AdvancedVisualization_CRendererContext_H__

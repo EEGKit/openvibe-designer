@@ -7,17 +7,17 @@ using namespace Kernel;
 
 CAboutPluginDialog::CAboutPluginDialog(const IKernelContext& rKernelContext, const CIdentifier& rPluginClassIdentifier, const char* sGUIFilename)
 	: m_rKernelContext(rKernelContext),
-	m_oPluginClassIdentifier(rPluginClassIdentifier),
-	m_sGUIFilename(sGUIFilename),
-	m_pPluginObjectDescriptor(nullptr) { }
+	  m_oPluginClassIdentifier(rPluginClassIdentifier),
+	  m_sGUIFilename(sGUIFilename),
+	  m_pPluginObjectDescriptor(nullptr) { }
 
 CAboutPluginDialog::CAboutPluginDialog(const IKernelContext& rKernelContext, const IPluginObjectDesc* pPluginObjectDescriptor, const char* sGUIFilename)
 	: m_rKernelContext(rKernelContext),
-	m_oPluginClassIdentifier(OV_UndefinedIdentifier),
-	m_sGUIFilename(sGUIFilename),
-	m_pPluginObjectDescriptor(pPluginObjectDescriptor) { }
+	  m_oPluginClassIdentifier(OV_UndefinedIdentifier),
+	  m_sGUIFilename(sGUIFilename),
+	  m_pPluginObjectDescriptor(pPluginObjectDescriptor) { }
 
-CAboutPluginDialog::~CAboutPluginDialog() { }
+CAboutPluginDialog::~CAboutPluginDialog() = default;
 
 bool CAboutPluginDialog::run()
 
@@ -27,7 +27,7 @@ bool CAboutPluginDialog::run()
 		m_pPluginObjectDescriptor = m_rKernelContext.getPluginManager().getPluginObjectDescCreating(m_oPluginClassIdentifier);
 	}
 
-	if (!m_pPluginObjectDescriptor) return false;
+	if (!m_pPluginObjectDescriptor) { return false; }
 
 	GtkBuilder* l_pInterface = gtk_builder_new(); // glade_xml_new(m_sGUIFilename.toASCIIString(), "plugin_about", nullptr);
 	gtk_builder_add_from_file(l_pInterface, m_sGUIFilename.toASCIIString(), nullptr);

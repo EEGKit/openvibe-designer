@@ -24,17 +24,17 @@ namespace
 {
 	void show_values_toggle_button_cb(GtkToggleToolButton* pButton, gpointer pUserData)
 	{
-		CBoxAlgorithmMatrixDisplay* l_pMatrixDisplay = reinterpret_cast<CBoxAlgorithmMatrixDisplay*>(pUserData);
-		l_pMatrixDisplay->m_bShowValues = (gtk_toggle_tool_button_get_active(pButton) ? true : false);
+		auto* l_pMatrixDisplay = reinterpret_cast<CBoxAlgorithmMatrixDisplay*>(pUserData);
+		l_pMatrixDisplay->m_bShowValues = (gtk_toggle_tool_button_get_active(pButton) != 0);
 	}
 
-	void show_colors_toggle_button_cb(GtkToggleToolButton * pButton, gpointer pUserData)
+	void show_colors_toggle_button_cb(GtkToggleToolButton* pButton, gpointer pUserData)
 	{
-		CBoxAlgorithmMatrixDisplay* l_pMatrixDisplay = reinterpret_cast<CBoxAlgorithmMatrixDisplay*>(pUserData);
-		l_pMatrixDisplay->m_bShowColors = (gtk_toggle_tool_button_get_active(pButton) ? true : false);
+		auto* l_pMatrixDisplay = reinterpret_cast<CBoxAlgorithmMatrixDisplay*>(pUserData);
+		l_pMatrixDisplay->m_bShowColors = (gtk_toggle_tool_button_get_active(pButton) != 0);
 		l_pMatrixDisplay->resetColors();
 	}
-};
+}  // namespace;
 
 bool CBoxAlgorithmMatrixDisplay::resetColors()
 
@@ -42,7 +42,7 @@ bool CBoxAlgorithmMatrixDisplay::resetColors()
 	if (m_bShowColors)
 	{
 		//we take colors from cache and re-put it in the table
-		vector <pair <GtkWidget*, GdkColor> >::iterator it = m_vEventBoxCache.begin();
+		auto it = m_vEventBoxCache.begin();
 
 		for (; it != m_vEventBoxCache.end(); it++)
 		{
@@ -51,11 +51,11 @@ bool CBoxAlgorithmMatrixDisplay::resetColors()
 	}
 	else
 	{
-		vector <pair <GtkWidget*, GdkColor> >::iterator it = m_vEventBoxCache.begin();
+		vector<pair<GtkWidget*, GdkColor>>::iterator it = m_vEventBoxCache.begin();
 
 		for (; it != m_vEventBoxCache.end(); it++)
 		{
-			GdkColor   l_ColorWhite;
+			GdkColor l_ColorWhite;
 			l_ColorWhite.red = 65535;
 			l_ColorWhite.green = 65535;
 			l_ColorWhite.blue = 65535;
@@ -105,8 +105,8 @@ bool CBoxAlgorithmMatrixDisplay::initialize()
 	m_visualizationContext->setWidget(*this, m_pMainWidget);
 	m_visualizationContext->setToolbar(*this, m_pToolbarWidget);
 
-	m_bShowValues = (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pToolbarWidgetInterface, "show-values-toggle-button"))) ? true : false);
-	m_bShowColors = (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pToolbarWidgetInterface, "show-colors-toggle-button"))) ? true : false);
+	m_bShowValues = (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pToolbarWidgetInterface, "show-values-toggle-button"))) != 0);
+	m_bShowColors = (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pToolbarWidgetInterface, "show-colors-toggle-button"))) != 0);
 
 	CString l_sColorGradientSetting;
 	getBoxAlgorithmContext()->getStaticBoxContext()->getSettingValue(0, l_sColorGradientSetting);
@@ -152,7 +152,7 @@ bool CBoxAlgorithmMatrixDisplay::uninitialize()
 	return true;
 }
 
-bool CBoxAlgorithmMatrixDisplay::processInput(uint32_t ui32InputIndex)
+bool CBoxAlgorithmMatrixDisplay::processInput(uint32_t /*ui32InputIndex*/)
 {
 	getBoxAlgorithmContext()->markAlgorithmAsReadyToProcess();
 
@@ -164,7 +164,7 @@ bool CBoxAlgorithmMatrixDisplay::process()
 {
 	IBoxIO& l_rDynamicBoxContext = this->getDynamicBoxContext();
 
-	for (uint32_t i = 0; i < l_rDynamicBoxContext.getInputChunkCount(0); i++)
+	for (uint32_t i = 0; i < l_rDynamicBoxContext.getInputChunkCount(0); ++i)
 	{
 		ip_pMemoryBuffer = l_rDynamicBoxContext.getInputChunk(0, i);
 		m_pMatrixDecoder->process();
@@ -212,7 +212,7 @@ bool CBoxAlgorithmMatrixDisplay::process()
 				stringstream ss;
 				ss << c;
 				gtk_label_set_label(GTK_LABEL(l_pWidgetLabel), ss.str().c_str());
-				m_vColumnLabelCache.push_back(make_pair(GTK_LABEL(l_pWidgetLabel), ss.str().c_str()));
+				m_vColumnLabelCache.emplace_back(GTK_LABEL(l_pWidgetLabel), ss.str().c_str());
 			}
 
 			//first column : labels
@@ -237,7 +237,7 @@ bool CBoxAlgorithmMatrixDisplay::process()
 				stringstream ss;
 				ss << (char)(r - 1 + (int)'A');
 				gtk_label_set_label(GTK_LABEL(l_pWidgetLabel), ss.str().c_str());
-				m_vRowLabelCache.push_back(make_pair(GTK_LABEL(l_pWidgetLabel), ss.str().c_str()));
+				m_vRowLabelCache.emplace_back(GTK_LABEL(l_pWidgetLabel), ss.str().c_str());
 			}
 
 			for (uint32_t r = 1; r < l_ui32RowCount + 1; r++)
@@ -263,15 +263,15 @@ bool CBoxAlgorithmMatrixDisplay::process()
 						0, 0);
 					//g_object_unref(l_pGtkBuilderEventBox);
 
-					GdkColor   l_ColorWhite;
+					GdkColor l_ColorWhite;
 					l_ColorWhite.red = 65535;
 					l_ColorWhite.green = 65535;
 					l_ColorWhite.blue = 65535;
 					gtk_widget_modify_bg(l_pWidgetEventBox, GTK_STATE_NORMAL, &l_ColorWhite);
-					m_vEventBoxCache.push_back(make_pair(l_pWidgetEventBox, l_ColorWhite));
+					m_vEventBoxCache.emplace_back(l_pWidgetEventBox, l_ColorWhite);
 
 					gtk_label_set_label(GTK_LABEL(l_pWidgetLabel), "X");
-					m_vLabelCache.push_back(make_pair(GTK_LABEL(l_pWidgetLabel), "X"));
+					m_vLabelCache.emplace_back(GTK_LABEL(l_pWidgetLabel), "X");
 				}
 			}
 		}
@@ -328,10 +328,10 @@ bool CBoxAlgorithmMatrixDisplay::process()
 					if (m_f64MaxValue != 0 || m_f64MinValue != 0) // if the first value ever sent is 0, both are 0, and we dont want to divide by 0 :)
 					{
 						double l_f64Step = ((l_f64Value - m_f64MinValue) / (m_f64MaxValue - m_f64MinValue)) * (m_GradientSteps - 1);
-						uint32_t  l_ui32Step = (uint32_t)l_f64Step;
+						uint32_t l_ui32Step = (uint32_t)l_f64Step;
 
 						// gtk_widget_modify_bg uses 16bit colors, the interpolated gradients gives 8bits colors.
-						GdkColor  l_ColorEventBox;
+						GdkColor l_ColorEventBox;
 						l_ColorEventBox.red = (uint16_t)(m_MatrixInterpolatedColorGardient[l_ui32Step * 4 + 1] * 65535. / 100.);
 						l_ColorEventBox.green = (uint16_t)(m_MatrixInterpolatedColorGardient[l_ui32Step * 4 + 2] * 65535. / 100.);
 						l_ColorEventBox.blue = (uint16_t)(m_MatrixInterpolatedColorGardient[l_ui32Step * 4 + 3] * 65535. / 100.);

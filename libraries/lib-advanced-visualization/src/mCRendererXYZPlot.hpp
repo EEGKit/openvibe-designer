@@ -32,16 +32,16 @@ namespace Mensia
 		{
 		public:
 
-			virtual void rebuild(const IRendererContext& rContext);
-			virtual void refresh(const IRendererContext& rContext);
-			virtual bool render(const IRendererContext& rContext);
+			void rebuild(const IRendererContext& rContext) override;
+			void refresh(const IRendererContext& rContext) override;
+			bool render(const IRendererContext& rContext) override;
 
 			bool m_bHasDepth;
 			uint32_t m_ui32PlotDimension;
 			uint32_t m_ui32PlotCount;
 			std::vector < std::vector < CVertex > > m_vVertex;
 		};
-	};
-};
+	}  // namespace AdvancedVisualization
+}  // namespace Mensia
 
 #endif // __Mensia_AdvancedVisualization_CRendererXYZPlot_H__

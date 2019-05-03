@@ -32,34 +32,34 @@ namespace Mensia
 		{
 		public:
 
-			TBoxAlgorithmInstantViz(const OpenViBE::CIdentifier& rClassId, const std::vector < int >& vParameter);
-			virtual bool initialize();
-			virtual bool uninitialize();
-			virtual bool process();
+			TBoxAlgorithmInstantViz(const OpenViBE::CIdentifier& rClassId, const std::vector<int>& vParameter);
+			bool initialize() override;
+			bool uninitialize() override;
+			bool process() override;
 
 			_IsDerivedFromClass_Final_(CBoxAlgorithmViz, m_oClassId);
 
 			TRendererFactoryClass m_oRendererFactory;
 
-			uint32_t m_ui32InputCount;
-			std::vector < IRenderer* > m_vRenderer;
-			std::vector < OpenViBEToolkit::TStreamedMatrixDecoder < TBoxAlgorithmInstantViz <TRendererFactoryClass, TRulerClass> > > m_vMatrixDecoder;
+			uint32_t m_ui32InputCount{};
+			std::vector<IRenderer*> m_vRenderer;
+			std::vector<OpenViBEToolkit::TStreamedMatrixDecoder<TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>>> m_vMatrixDecoder;
 
-			double m_dLastERPFraction;
+			double m_dLastERPFraction{};
 
 		protected:
 
-			virtual void draw();
+			void draw() override;
 		};
 
 		class CBoxAlgorithmInstantVizListener : public CBoxAlgorithmVizListener
 		{
 		public:
 
-			CBoxAlgorithmInstantVizListener(const std::vector < int >& vParameter)
-				:CBoxAlgorithmVizListener(vParameter) { }
+			explicit CBoxAlgorithmInstantVizListener(const std::vector<int>& vParameter)
+				: CBoxAlgorithmVizListener(vParameter) { }
 
-			virtual bool onInputTypeChanged(IBox& rBox, const uint32_t ui32Index)
+			bool onInputTypeChanged(IBox& rBox, const uint32_t ui32Index) override
 			{
 				OpenViBE::CIdentifier l_oTypeIdentifier;
 				rBox.getInputType(ui32Index, l_oTypeIdentifier);
@@ -69,7 +69,7 @@ namespace Mensia
 				}
 				else
 				{
-					for (uint32_t i = 0; i < rBox.getInputCount(); i++)
+					for (uint32_t i = 0; i < rBox.getInputCount(); ++i)
 					{
 						rBox.setInputType(i, l_oTypeIdentifier);
 					}
@@ -77,7 +77,7 @@ namespace Mensia
 				return true;
 			}
 
-			virtual bool onInputAdded(IBox& rBox, const uint32_t ui32Index)
+			bool onInputAdded(IBox& rBox, const uint32_t ui32Index) override
 			{
 				OpenViBE::CIdentifier l_oTypeIdentifier;
 				rBox.getInputType(0, l_oTypeIdentifier);
@@ -87,7 +87,7 @@ namespace Mensia
 				return true;
 			}
 
-			virtual bool onInputRemoved(IBox& rBox, const uint32_t ui32Index)
+			bool onInputRemoved(IBox& rBox, const uint32_t ui32Index) override
 			{
 				rBox.removeSetting(this->getBaseSettingCount() + ui32Index - 1);
 				return true;
@@ -100,22 +100,24 @@ namespace Mensia
 		public:
 
 			TBoxAlgorithmInstantVizDesc(const OpenViBE::CString& sName, const OpenViBE::CIdentifier& rDescClassId, const OpenViBE::CIdentifier& rClassId, const OpenViBE::CString& sAddedSoftwareVersion, const OpenViBE::CString& sUpdatedSoftwareVersion, const CParameterSet& rParameterSet, const OpenViBE::CString& sShortDescription, const OpenViBE::CString& sDetailedDescription)
-				:CBoxAlgorithmVizDesc(sName, rDescClassId, rClassId, sAddedSoftwareVersion, sUpdatedSoftwareVersion, rParameterSet, sShortDescription, sDetailedDescription) { }
+				: CBoxAlgorithmVizDesc(sName, rDescClassId, rClassId, sAddedSoftwareVersion, sUpdatedSoftwareVersion, rParameterSet, sShortDescription, sDetailedDescription) { }
 
-			virtual OpenViBE::Plugins::IPluginObject* create()
- { return new TBoxAlgorithm<TRendererFactoryClass, TRulerClass>(m_oClassId, m_vParameter); }
+			OpenViBE::Plugins::IPluginObject* create() override
+			{
+				return new TBoxAlgorithm<TRendererFactoryClass, TRulerClass>(m_oClassId, m_vParameter);
+			}
 
-			virtual OpenViBE::Plugins::IBoxListener* createBoxListener() const { return new CBoxAlgorithmInstantVizListener(m_vParameter); }
+			OpenViBE::Plugins::IBoxListener* createBoxListener() const override { return new CBoxAlgorithmInstantVizListener(m_vParameter); }
 
-			virtual OpenViBE::CString getCategory() const { return OpenViBE::CString("Advanced Visualization/") + m_sCategoryName; }
+			OpenViBE::CString getCategory() const override { return OpenViBE::CString("Advanced Visualization/") + m_sCategoryName; }
 
 			_IsDerivedFromClass_Final_(OpenViBE::Plugins::IBoxAlgorithmDesc, m_oDescClassId);
 		};
 
 
 		template <class TRendererFactoryClass, class TRulerClass>
-		TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::TBoxAlgorithmInstantViz(const OpenViBE::CIdentifier& rClassId, const std::vector < int >& vParameter)
-			:CBoxAlgorithmViz(rClassId, vParameter) { }
+		TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::TBoxAlgorithmInstantViz(const OpenViBE::CIdentifier& rClassId, const std::vector<int>& vParameter)
+			: CBoxAlgorithmViz(rClassId, vParameter) { }
 
 		template <class TRendererFactoryClass, class TRulerClass>
 		bool TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::initialize()
@@ -129,7 +131,7 @@ namespace Mensia
 			m_ui32InputCount = l_rStaticBoxContext.getInputCount();
 			m_vRenderer.resize(m_ui32InputCount);
 			m_vMatrixDecoder.resize(m_ui32InputCount);
-			for (uint32_t i = 0; i < m_ui32InputCount; i++)
+			for (uint32_t i = 0; i < m_ui32InputCount; ++i)
 			{
 				m_vRenderer[i] = m_oRendererFactory.create();
 				m_vMatrixDecoder[i].initialize(*this, i);
@@ -153,7 +155,7 @@ namespace Mensia
 		bool TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::uninitialize()
 
 		{
-			for (uint32_t i = 0; i < m_ui32InputCount; i++)
+			for (uint32_t i = 0; i < m_ui32InputCount; ++i)
 			{
 				m_oRendererFactory.release(m_vRenderer[i]);
 				m_vMatrixDecoder[i].uninitialize();
@@ -173,7 +175,7 @@ namespace Mensia
 			IBoxIO& l_rDynamicBoxContext = this->getDynamicBoxContext();
 			uint32_t i, j, k, l;
 
-			for (i = 0; i < l_rStaticBoxContext.getInputCount(); i++)
+			for (i = 0; i < l_rStaticBoxContext.getInputCount(); ++i)
 			{
 				for (j = 0; j < l_rDynamicBoxContext.getInputChunkCount(i); j++)
 				{
@@ -295,7 +297,7 @@ namespace Mensia
 			if (m_pRendererContext->isERPPlayerActive())
 			{
 				l_dERPFraction += .0025;
-				if (l_dERPFraction > 1) l_dERPFraction = 0;
+				if (l_dERPFraction > 1) { l_dERPFraction = 0; }
 			}
 			if (m_dLastERPFraction != l_dERPFraction)
 			{
@@ -319,7 +321,7 @@ namespace Mensia
 					renderer->refresh(*m_pRendererContext);
 				}
 			}
-			if (m_bRedrawNeeded) this->redraw();
+			if (m_bRedrawNeeded) { this->redraw(); }
 
 			m_bRebuildNeeded = false;
 			m_bRefreshNeeded = false;
@@ -343,16 +345,19 @@ namespace Mensia
 		{
 			CBoxAlgorithmViz::preDraw();
 
-			for (uint32_t i = 0; i < m_ui32InputCount; i++)
+			for (uint32_t i = 0; i < m_ui32InputCount; ++i)
 			{
 				glPushAttrib(GL_ALL_ATTRIB_BITS);
-				if (i < m_vColor.size()) glColor4f(m_vColor[i].r, m_vColor[i].g, m_vColor[i].b, m_pRendererContext->getTranslucency());
-				else                  glColor4f(m_oColor.r, m_oColor.g, m_oColor.b, m_pRendererContext->getTranslucency());
-				if (m_vRenderer[i]) m_vRenderer[i]->render(*m_pRendererContext);
+				if (i < m_vColor.size())
+				{
+					glColor4f(m_vColor[i].r, m_vColor[i].g, m_vColor[i].b, m_pRendererContext->getTranslucency());
+				}
+				else { glColor4f(m_oColor.r, m_oColor.g, m_oColor.b, m_pRendererContext->getTranslucency()); }
+				if (m_vRenderer[i]) { m_vRenderer[i]->render(*m_pRendererContext); }
 				glPopAttrib();
 			}
 
 			CBoxAlgorithmViz::postDraw();
 		}
-	};
-};
+	}  // namespace AdvancedVisualization
+} // namespace Mensia

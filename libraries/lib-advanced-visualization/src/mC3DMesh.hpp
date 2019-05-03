@@ -54,8 +54,8 @@ namespace Mensia
 			std::vector < uint32_t > m_vTriangle;
 			float m_vColor[3];
 		};
-	};
-};
+	}  // namespace AdvancedVisualization
+}  // namespace Mensia
 
 
 #endif // TARGET_HAS_ThirdPartyOpenGL

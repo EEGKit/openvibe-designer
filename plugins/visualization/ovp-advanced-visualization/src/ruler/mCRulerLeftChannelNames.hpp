@@ -35,7 +35,7 @@ namespace Mensia
 		{
 		public:
 
-			virtual void renderLeft(GtkWidget* pWidget)
+			void renderLeft(GtkWidget* pWidget) override
 			{
 				gint w, h;
 				gint lw, lh;
@@ -45,11 +45,11 @@ namespace Mensia
 
 				gdk_drawable_get_size(pWidget->window, &w, &h);
 				GdkGC* l_pDrawGC = gdk_gc_new(pWidget->window);
-				for (i = 0; i < m_pRendererContext->getSelectedCount(); i++)
+				for (i = 0; i < m_pRendererContext->getSelectedCount(); ++i)
 				{
 					l_ui32Index = m_pRendererContext->getSelected(i);
 					sprintf(l_sLabel, "%s (%i)", m_pRendererContext->getChannelName(l_ui32Index).c_str(), l_ui32Index + 1);
-					PangoLayout * l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, l_sLabel);
+					PangoLayout* l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, l_sLabel);
 					pango_layout_get_size(l_pPangoLayout, &lw, &lh);
 					lw /= PANGO_SCALE;
 					lh /= PANGO_SCALE;
@@ -64,7 +64,7 @@ namespace Mensia
 				g_object_unref(l_pDrawGC);
 			}
 		};
-	};
-};
+	}  // namespace AdvancedVisualization
+}  // namespace Mensia
 
 #endif // __OpenViBEPlugins_CRulerLeftChannelNames_H__

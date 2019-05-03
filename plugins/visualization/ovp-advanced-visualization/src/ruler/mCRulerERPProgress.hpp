@@ -33,13 +33,13 @@ namespace Mensia
 		{
 		public:
 
-			virtual void render()
+			void render() override
 
 			{
-				if (m_pRenderer == nullptr) return;
-				if (m_pRenderer->getSampleCount() == 0) return;
-				if (m_pRenderer->getHistoryCount() == 0) return;
-				if (m_pRenderer->getHistoryIndex() == 0) return;
+				if (m_pRenderer == nullptr) { return; }
+				if (m_pRenderer->getSampleCount() == 0) { return; }
+				if (m_pRenderer->getHistoryCount() == 0) { return; }
+				if (m_pRenderer->getHistoryIndex() == 0) { return; }
 
 				float l_fProgress = m_pRendererContext->getERPFraction();
 				if (l_fProgress != 0 && l_fProgress != 1)
@@ -62,7 +62,7 @@ namespace Mensia
 				}
 			}
 		};
-	};
-};
+	}  // namespace AdvancedVisualization
+}  // namespace Mensia
 
 #endif // __OpenViBEPlugins_CRulerERPProgress_H__

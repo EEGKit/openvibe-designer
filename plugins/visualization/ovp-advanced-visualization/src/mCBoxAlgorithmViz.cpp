@@ -21,7 +21,7 @@
 
 #include "mCBoxAlgorithmViz.hpp"
 
- // OpenGL 1.2
+// OpenGL 1.2
 #ifndef GL_BGRA
 #define GL_BGRA 0x80E1
 #endif // GL_BGRA
@@ -39,7 +39,7 @@ namespace
 	class toolbar_sort_changed_
 	{
 	public:
-		static void callback(GtkButton* pButton, CBoxAlgorithmViz* pThis)
+		static void callback(GtkButton* /*pButton*/, CBoxAlgorithmViz* pThis)
 		{
 			pThis->m_pRendererContext->sortSelectedChannel(i);
 			pThis->m_bRedrawNeeded = true;
@@ -77,28 +77,28 @@ namespace
 		pRendererContext->setTimeScale(uint64_t(gtk_spin_button_get_value(pSpinButton) * (1LL << 32)));
 	}
 
-	void spinbutton_element_count_change_value_callback(GtkSpinButton * pSpinButton, IRendererContext * pRendererContext)
+	void spinbutton_element_count_change_value_callback(GtkSpinButton* pSpinButton, IRendererContext* pRendererContext)
 	{
 		pRendererContext->setElementCount(uint64_t(gtk_spin_button_get_value(pSpinButton)));
 	}
 
-	void checkbutton_positive_toggled_callback(GtkToggleButton * pButton, IRendererContext * pRendererContext)
+	void checkbutton_positive_toggled_callback(GtkToggleButton* pButton, IRendererContext* pRendererContext)
 	{
-		pRendererContext->setPositiveOnly(gtk_toggle_button_get_active(pButton) ? true : false);
+		pRendererContext->setPositiveOnly(gtk_toggle_button_get_active(pButton) != 0);
 	}
 
-	void checkbutton_show_scale_toggled_callback(GtkToggleButton * pButton, IRendererContext * pRendererContext)
+	void checkbutton_show_scale_toggled_callback(GtkToggleButton* pButton, IRendererContext* pRendererContext)
 	{
-		pRendererContext->setScaleVisibility(gtk_toggle_button_get_active(pButton) ? true : false);
+		pRendererContext->setScaleVisibility(gtk_toggle_button_get_active(pButton) != 0);
 	}
 
-	void button_video_recording_pressed_callback(GtkButton * pButton, CBoxAlgorithmViz * pBox)
+	void button_video_recording_pressed_callback(GtkButton* pButton, CBoxAlgorithmViz* pBox)
 	{
 		pBox->m_bIsVideoOutputWorking = !pBox->m_bIsVideoOutputWorking;
 		gtk_button_set_label(pButton, pBox->m_bIsVideoOutputWorking ? GTK_STOCK_MEDIA_PAUSE : GTK_STOCK_MEDIA_RECORD);
 	}
 
-	void range_erp_value_changed_callback(GtkRange * pRange, GtkLabel * pLabel)
+	void range_erp_value_changed_callback(GtkRange* pRange, GtkLabel* pLabel)
 	{
 		char l_sLabel[1024];
 		sprintf(l_sLabel, "%.02f%%", gtk_range_get_value(pRange) * 100);
@@ -106,21 +106,21 @@ namespace
 		getContext().stepERPFractionBy(static_cast<float>(gtk_range_get_value(pRange)) - getContext().getERPFraction());
 	}
 
-	void button_erp_play_pause_pressed_callback(GtkButton * pButton, IRendererContext * pRendererContext)
+	void button_erp_play_pause_pressed_callback(GtkButton* pButton, IRendererContext* pRendererContext)
 	{
 		pRendererContext->setERPPlayerActive(!pRendererContext->isERPPlayerActive());
 	}
 
-	void spinbutton_freq_band_min_change_value_callback(GtkSpinButton * pSpinButton, IRendererContext * pRendererContext)
+	void spinbutton_freq_band_min_change_value_callback(GtkSpinButton* pSpinButton, IRendererContext* pRendererContext)
 	{
 		pRendererContext->setMinimumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(pSpinButton)));
 	}
 
-	void spinbutton_freq_band_max_change_value_callback(GtkSpinButton * pSpinButton, IRendererContext * pRendererContext)
+	void spinbutton_freq_band_max_change_value_callback(GtkSpinButton* pSpinButton, IRendererContext* pRendererContext)
 	{
 		pRendererContext->setMaximumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(pSpinButton)));
 	}
-}
+}  // namespace
 
 bool CBoxAlgorithmViz::initialize()
 
@@ -158,8 +158,8 @@ bool CBoxAlgorithmViz::initialize()
 	m_pBuilder = gtk_builder_new();
 	gtk_builder_add_from_file(m_pBuilder, std::string(OpenViBE::Directories::getDataDir() + "/plugins/advanced-visualization.ui").c_str(), nullptr);
 
-	GtkWidget * l_pMain = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "table"));
-	GtkWidget * l_pToolbar = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "toolbar-window"));
+	GtkWidget* l_pMain = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "table"));
+	GtkWidget* l_pToolbar = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "toolbar-window"));
 	m_pViewport = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "viewport"));
 	m_pTop = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "label_top"));
 	m_pLeft = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "drawingarea_left"));
@@ -207,9 +207,9 @@ bool CBoxAlgorithmViz::initialize()
 	g_signal_connect(::gtk_tree_view_get_selection(m_pChannelTreeView), "changed", G_CALLBACK(channel_selection_changed_), m_pRendererContext);
 
 	// Hides unnecessary widgets
-	if (std::find(m_vParameter.begin(), m_vParameter.end(), S_DataScale) == m_vParameter.end()) gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "checkbutton_positive")));
-	if (std::find(m_vParameter.begin(), m_vParameter.end(), S_ChannelLocalisation) == m_vParameter.end()) gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "expander_sort")));
-	if (m_oTypeIdentifier != OV_TypeId_Spectrum) gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "expander_freq_band")));
+	if (std::find(m_vParameter.begin(), m_vParameter.end(), S_DataScale) == m_vParameter.end()) { gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "checkbutton_positive"))); }
+	if (std::find(m_vParameter.begin(), m_vParameter.end(), S_ChannelLocalisation) == m_vParameter.end()) { gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "expander_sort"))); }
+	if (m_oTypeIdentifier != OV_TypeId_Spectrum) { gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "expander_freq_band"))); }
 	gtk_widget_hide(m_pERPPlayer);
 
 	// Prepares 3D View
@@ -234,58 +234,58 @@ bool CBoxAlgorithmViz::initialize()
 		double l_fValue;
 		switch (iParameter)
 		{
-		case S_ChannelLocalisation:
-			m_sLocalisation = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
-			break;
-		case S_Caption:
-			m_sCaption = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
-			break;
-		case S_Color:
-			m_sColor = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
-			break;
-		case S_ColorGradient:
-			m_sColorGradient = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
-			break;
-		case S_DataPositive:
-			m_bIsPositive = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
-			break;
-		case S_TemporalCoherence:
-			m_ui64TemporalCoherence = static_cast<uint64_t>(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex));
-			break;
-		case S_TimeScale:
-			l_fValue = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
-			m_ui64TimeScale = uint64_t(l_fValue * (1LL << 32));
-			break;
-		case S_ElementCount:
-			m_ui64ElementCount = static_cast<uint64_t>(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex));
-			break;
-		case S_DataScale:
-			m_f64DataScale = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
-			break;
-		case S_FlowerRingCount:
-			m_ui64FlowerRingCount = static_cast<uint64_t>(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex));
-			break;
-		case S_Translucency:
-			m_f64Translucency = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
-			break;
-		case S_ShowAxis:
-			m_bShowAxis = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
-			break;
-		case S_XYZPlotHasDepth:
-			m_bXYZPlotHasDepth = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
-			break;
+			case S_ChannelLocalisation:
+				m_sLocalisation = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
+				break;
+			case S_Caption:
+				m_sCaption = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
+				break;
+			case S_Color:
+				m_sColor = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
+				break;
+			case S_ColorGradient:
+				m_sColorGradient = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
+				break;
+			case S_DataPositive:
+				m_bIsPositive = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
+				break;
+			case S_TemporalCoherence:
+				m_ui64TemporalCoherence = static_cast<uint64_t>(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex));
+				break;
+			case S_TimeScale:
+				l_fValue = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
+				m_ui64TimeScale = uint64_t(l_fValue * (1LL << 32));
+				break;
+			case S_ElementCount:
+				m_ui64ElementCount = static_cast<uint64_t>(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex));
+				break;
+			case S_DataScale:
+				m_f64DataScale = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
+				break;
+			case S_FlowerRingCount:
+				m_ui64FlowerRingCount = static_cast<uint64_t>(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex));
+				break;
+			case S_Translucency:
+				m_f64Translucency = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
+				break;
+			case S_ShowAxis:
+				m_bShowAxis = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
+				break;
+			case S_XYZPlotHasDepth:
+				m_bXYZPlotHasDepth = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
+				break;
 
-		case F_FixedChannelOrder:
-			l_ui32SettingIndex--;
-			gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "expander_sort")));
-			break;
-		case F_FixedChannelSelection:
-			l_ui32SettingIndex--;
-			gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "expander_select")));
-			break;
-		default:
-			l_ui32SettingIndex--;
-			break;
+			case F_FixedChannelOrder:
+				l_ui32SettingIndex--;
+				gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "expander_sort")));
+				break;
+			case F_FixedChannelSelection:
+				l_ui32SettingIndex--;
+				gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "expander_select")));
+				break;
+			default:
+				l_ui32SettingIndex--;
+				break;
 		}
 
 		l_ui32SettingIndex++;
@@ -298,7 +298,7 @@ bool CBoxAlgorithmViz::initialize()
 	m_vColor.push_back(m_oColor);
 
 	// Parses color string - special for instant oscilloscope which can have several inputs
-	for (uint32_t i = l_ui32SettingIndex; i < this->getStaticBoxContext().getSettingCount(); i++)
+	for (uint32_t i = l_ui32SettingIndex; i < this->getStaticBoxContext().getSettingCount(); ++i)
 	{
 		m_sColor = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), i);
 		this->parseColor(m_oColor, m_sColor.toASCIIString());
@@ -342,8 +342,8 @@ bool CBoxAlgorithmViz::initialize()
 		IAlgorithmProxy* l_pChannelLocalisationReader = &this->getAlgorithmManager().getAlgorithm(this->getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_OVMatrixFileReader));
 		l_pChannelLocalisationReader->initialize();
 
-		TParameterHandler < OpenViBE::CString* > ip_sFilename(l_pChannelLocalisationReader->getInputParameter(OVP_GD_Algorithm_OVMatrixFileReader_InputParameterId_Filename));
-		TParameterHandler < OpenViBE::IMatrix* > op_pMatrix(l_pChannelLocalisationReader->getOutputParameter(OVP_GD_Algorithm_OVMatrixFileReader_OutputParameterId_Matrix));
+		TParameterHandler<OpenViBE::CString*> ip_sFilename(l_pChannelLocalisationReader->getInputParameter(OVP_GD_Algorithm_OVMatrixFileReader_InputParameterId_Filename));
+		TParameterHandler<OpenViBE::IMatrix*> op_pMatrix(l_pChannelLocalisationReader->getOutputParameter(OVP_GD_Algorithm_OVMatrixFileReader_OutputParameterId_Matrix));
 
 		*ip_sFilename = m_sLocalisation;
 
@@ -357,7 +357,7 @@ bool CBoxAlgorithmViz::initialize()
 		{
 			uint32_t l_ui32ChannelCount = op_pMatrix->getDimensionSize(0);
 			double* l_pBuffer = op_pMatrix->getBuffer();
-			for (uint32_t i = 0; i < l_ui32ChannelCount; i++)
+			for (uint32_t i = 0; i < l_ui32ChannelCount; ++i)
 			{
 				std::string l_sName = trim(op_pMatrix->getDimensionLabel(0, i));
 				std::transform(l_sName.begin(), l_sName.end(), l_sName.begin(), tolower);
@@ -408,7 +408,7 @@ bool CBoxAlgorithmViz::uninitialize()
 	return true;
 }
 
-bool CBoxAlgorithmViz::processClock(IMessageClock & rClock)
+bool CBoxAlgorithmViz::processClock(IMessageClock& rClock)
 {
 	uint64_t l_ui64CurrentTime = this->getPlayerContext().getCurrentTime();
 	uint64_t l_ui64MinDeltaTime = 0;
@@ -422,7 +422,7 @@ bool CBoxAlgorithmViz::processClock(IMessageClock & rClock)
 	}
 	else
 	{
-		float l_f32CurrentFastForwardMaximumFactor = static_cast<float>(this->getPlayerContext().getCurrentFastForwardMaximumFactor());
+		auto l_f32CurrentFastForwardMaximumFactor = static_cast<float>(this->getPlayerContext().getCurrentFastForwardMaximumFactor());
 		if (l_f32CurrentFastForwardMaximumFactor <= m_f32FastForwardMaximumFactorHighDefinition)
 		{
 			l_ui64MinDeltaTime = l_ui64MinDeltaTimeHighDefinition;
@@ -456,7 +456,7 @@ void CBoxAlgorithmViz::updateRulerVisibility()
 	{
 		m_bIsScaleVisible = m_pRendererContext->getScaleVisibility();
 
-		if ((gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(m_pScaleVisible)) ? true : false) != m_bIsScaleVisible)
+		if ((gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(m_pScaleVisible)) != 0) != m_bIsScaleVisible)
 		{
 			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_pScaleVisible), m_bIsScaleVisible);
 		}
@@ -496,7 +496,7 @@ void CBoxAlgorithmViz::postDraw()
 
 {
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
-	if (m_pRuler) m_pRuler->doRender();
+	if (m_pRuler) { m_pRuler->doRender(); }
 	glPopAttrib();
 
 	if (m_bIsVideoOutputEnabled && m_bIsVideoOutputWorking && m_ui32Width > 0 && m_ui32Height > 0)
@@ -511,11 +511,11 @@ void CBoxAlgorithmViz::postDraw()
 
 		// OpenGL buffers are defined bottom to top while PNG are defined top to bottom, this flips the acquired image
 		const unsigned int l_ui32BytesInPixel = 4; // should be 3
-		std::vector < unsigned char > l_vSwap(m_ui32Width * l_ui32BytesInPixel);
+		std::vector<unsigned char> l_vSwap(m_ui32Width * l_ui32BytesInPixel);
 		unsigned char* l_pSwap = &l_vSwap[0];
 		unsigned char* l_pSource1 = cairo_image_surface_get_data(l_pCairoSurface);
 		unsigned char* l_pSource2 = cairo_image_surface_get_data(l_pCairoSurface) + m_ui32Width * (m_ui32Height - 1) * l_ui32BytesInPixel;
-		for (uint32_t i = 0; i < m_ui32Height / 2; i++)
+		for (uint32_t i = 0; i < m_ui32Height / 2; ++i)
 		{
 			System::Memory::copy(l_pSwap, l_pSource1, m_ui32Width * l_ui32BytesInPixel);
 			System::Memory::copy(l_pSource1, l_pSource2, m_ui32Width * l_ui32BytesInPixel);
@@ -535,19 +535,19 @@ void CBoxAlgorithmViz::draw() { }
 void CBoxAlgorithmViz::drawLeft()
 
 {
-	if (m_pRuler) m_pRuler->doRenderLeft(m_pLeft);
+	if (m_pRuler) { m_pRuler->doRenderLeft(m_pLeft); }
 }
 
 void CBoxAlgorithmViz::drawRight()
 
 {
-	if (m_pRuler) m_pRuler->doRenderRight(m_pRight);
+	if (m_pRuler) { m_pRuler->doRenderRight(m_pRight); }
 }
 
 void CBoxAlgorithmViz::drawBottom()
 
 {
-	if (m_pRuler) m_pRuler->doRenderBottom(m_pBottom);
+	if (m_pRuler) { m_pRuler->doRenderBottom(m_pBottom); }
 }
 
 void CBoxAlgorithmViz::mouseButton(int32_t x, int32_t y, int32_t button, int32_t status)
@@ -584,7 +584,7 @@ void CBoxAlgorithmViz::keyboard(int32_t x, int32_t y, uint32_t key, bool status)
 	printf("keyboard : x=%i y=%i key=%u status=%s", x, y, key, status ? "pressed" : "released");
 }
 
-void CBoxAlgorithmViz::parseColor(TColor & rColor, const std::string & sColor)
+void CBoxAlgorithmViz::parseColor(TColor& rColor, const std::string& sColor)
 {
 	float r, g, b;
 	if (sscanf(sColor.c_str(), "%f,%f,%f", &r, &g, &b) == 3)
@@ -600,4 +600,3 @@ void CBoxAlgorithmViz::parseColor(TColor & rColor, const std::string & sColor)
 		rColor.b = 1;
 	}
 }
-

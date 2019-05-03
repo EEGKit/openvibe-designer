@@ -560,5 +560,5 @@ namespace LoretaRegions
 		{"Temporal Lobe L", 255, g_pLobesVoxels_6L}
 	};
 
-}
+}  // namespace LoretaRegions
 #endif

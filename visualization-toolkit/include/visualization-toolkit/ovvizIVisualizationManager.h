@@ -27,7 +27,7 @@ namespace OpenViBEVisualizationToolkit
 		class IVisualizationTreeEnum
 		{
 		public:
-			virtual ~IVisualizationTreeEnum() { }
+			virtual ~IVisualizationTreeEnum() = default;
 			/**
 				 * \brief Callback method called iteratively as the IVisualizationManager goes through a set of IVisualizationTree objects
 				 * \param visualizationTreeIdentifier identifier of an IVisualizationTree object
@@ -78,5 +78,4 @@ namespace OpenViBEVisualizationToolkit
 		 */
 		virtual bool setWidget(const OpenViBE::CIdentifier& visualizationTreeIdentifier, const OpenViBE::CIdentifier& boxIdentifier, GtkWidget* topmostWidget) = 0;
 	};
-};
-
+}  // namespace OpenViBEVisualizationToolkit;

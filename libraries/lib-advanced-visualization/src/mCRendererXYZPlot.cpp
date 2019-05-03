@@ -33,7 +33,7 @@ void CRendererXYZPlot::rebuild(const IRendererContext& rContext)
 	m_ui32PlotCount = (rContext.getChannelCount() + m_ui32PlotDimension - 1) / m_ui32PlotDimension;
 	m_vVertex.resize(m_ui32PlotCount);
 	float l_f32InverseSampleCount = 1.f / (m_ui32SampleCount < 2 ? 1 : (m_ui32SampleCount - 1));
-	for (uint32_t i = 0; i < m_ui32PlotCount; i++)
+	for (uint32_t i = 0; i < m_ui32PlotCount; ++i)
 	{
 		m_vVertex[i].resize(this->m_ui32SampleCount);
 		for (uint32_t j = 0; j < this->m_ui32SampleCount; j++)
@@ -49,12 +49,12 @@ void CRendererXYZPlot::refresh(const IRendererContext& rContext)
 {
 	CRenderer::refresh(rContext);
 
-	if (!m_ui32HistoryCount) return;
+	if (!m_ui32HistoryCount) { return; }
 
 	while (m_ui32HistoryIndex < m_ui32HistoryCount)
 	{
 		uint32_t i, i3, j = m_ui32HistoryIndex % this->m_ui32SampleCount;
-		for (i = 0; i < m_ui32PlotCount; i++)
+		for (i = 0; i < m_ui32PlotCount; ++i)
 		{
 
 			if (m_bHasDepth)
@@ -77,9 +77,9 @@ void CRendererXYZPlot::refresh(const IRendererContext& rContext)
 
 bool CRendererXYZPlot::render(const IRendererContext & rContext)
 {
-	if (!rContext.getSelectedCount()) return false;
-	if (m_vVertex.empty()) return false;
-	if (!m_ui32HistoryCount) return false;
+	if (!rContext.getSelectedCount()) { return false; }
+	if (m_vVertex.empty()) { return false; }
+	if (!m_ui32HistoryCount) { return false; }
 
 	glPointSize(5);
 
@@ -121,7 +121,7 @@ bool CRendererXYZPlot::render(const IRendererContext & rContext)
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	for (uint32_t i = 0; i < m_ui32PlotCount; i++)
+	for (uint32_t i = 0; i < m_ui32PlotCount; ++i)
 	{
 		glPushMatrix();
 		glScalef(rContext.getScale(), rContext.getScale(), rContext.getScale());

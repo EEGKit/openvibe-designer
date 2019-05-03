@@ -17,18 +17,18 @@ static void on_button_setting_integer_down_pressed(GtkButton* pButton, gpointer 
 	static_cast<CIntegerSettingView*>(pUserData)->adjustValue(-1);
 }
 
-static void on_insertion(GtkEntry * entry, gpointer pUserData)
+static void on_insertion(GtkEntry* entry, gpointer pUserData)
 {
 	static_cast<CIntegerSettingView*>(pUserData)->onChange();
 }
 
 
-CIntegerSettingView::CIntegerSettingView(Kernel::IBox & rBox, uint32_t ui32Index, CString & rBuilderName, const Kernel::IKernelContext & rKernelContext) :
+CIntegerSettingView::CIntegerSettingView(Kernel::IBox& rBox, uint32_t ui32Index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext) :
 	CAbstractSettingView(rBox, ui32Index, rBuilderName, "settings_collection-hbox_setting_integer"), m_rKernelContext(rKernelContext), m_bOnValueSetting(false)
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 
-	std::vector< GtkWidget* > l_vWidget;
+	std::vector<GtkWidget*> l_vWidget;
 	extractWidget(l_pSettingWidget, l_vWidget);
 	m_pEntry = GTK_ENTRY(l_vWidget[0]);
 
@@ -41,13 +41,13 @@ CIntegerSettingView::CIntegerSettingView(Kernel::IBox & rBox, uint32_t ui32Index
 }
 
 
-void CIntegerSettingView::getValue(CString & rValue) const
+void CIntegerSettingView::getValue(CString& rValue) const
 {
 	rValue = CString(gtk_entry_get_text(m_pEntry));
 }
 
 
-void CIntegerSettingView::setValue(const CString & rValue)
+void CIntegerSettingView::setValue(const CString& rValue)
 {
 	m_bOnValueSetting = true;
 	gtk_entry_set_text(m_pEntry, rValue);

@@ -9,7 +9,7 @@ using namespace Kernel;
 namespace
 {
 	OpenViBEVisualizationToolkit::CVisualizationContextDesc visualizationContextDesc;
-}
+} // namespace
 
 bool OpenViBEVisualizationToolkit::initialize(const IKernelContext& kernelContext)
 {

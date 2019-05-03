@@ -35,7 +35,7 @@ void CRendererMountain::rebuild(const IRendererContext& rContext)
 
 	m_oMountain.m_vVertex.clear();
 	m_oMountain.m_vVertex.resize(m_ui32ChannelCount * m_ui32SampleCount);
-	for (i = 0, k = 0; i < m_ui32ChannelCount; i++)
+	for (i = 0, k = 0; i < m_ui32ChannelCount; ++i)
 	{
 		for (j = 0; j < m_ui32SampleCount; j++)
 		{
@@ -51,7 +51,7 @@ void CRendererMountain::rebuild(const IRendererContext& rContext)
 
 	m_oMountain.m_vTriangle.clear();
 	m_oMountain.m_vTriangle.resize((m_ui32ChannelCount - 1) * (m_ui32SampleCount - 1) * 6);
-	for (i = 0, k = 0; i < m_ui32ChannelCount - 1; i++)
+	for (i = 0, k = 0; i < m_ui32ChannelCount - 1; ++i)
 	{
 		for (j = 0; j < m_ui32SampleCount - 1; j++)
 		{
@@ -72,11 +72,11 @@ void CRendererMountain::refresh(const IRendererContext & rContext)
 {
 	CRenderer::refresh(rContext);
 
-	if (!m_ui32HistoryCount) return;
+	if (!m_ui32HistoryCount) { return; }
 
 	uint32_t i, j, k;
 
-	for (i = 0, k = 0; i < rContext.getSelectedCount(); i++)
+	for (i = 0, k = 0; i < rContext.getSelectedCount(); ++i)
 	{
 		k = ((m_ui32HistoryCount - 1) / m_ui32SampleCount) * m_ui32SampleCount;
 		std::vector < float > & l_vHistory = m_vHistory[rContext.getSelected(i)];
@@ -98,8 +98,8 @@ void CRendererMountain::refresh(const IRendererContext & rContext)
 
 bool CRendererMountain::render(const IRendererContext & rContext)
 {
-	if (m_oMountain.m_vVertex.empty()) return false;
-	if (!m_ui32HistoryCount) return false;
+	if (m_oMountain.m_vVertex.empty()) { return false; }
+	if (!m_ui32HistoryCount) { return false; }
 
 	float d = 2.5f;
 

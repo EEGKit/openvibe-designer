@@ -44,15 +44,12 @@ namespace OpenViBEPlugins
 			 * \param ui64DefaultInterpolation Interpolation mode
 			 * \param ui64Delay Delay to apply to displayed data
 			 */
-			CTopographicMap2DView(
-				CTopographicMapDatabase& rTopographicMapDatabase,
-				uint64_t ui64DefaultInterpolation,
-				double f64Delay);
+			CTopographicMap2DView(CTopographicMapDatabase& rTopographicMapDatabase, uint64_t ui64DefaultInterpolation, double f64Delay);
 
 			/**
 			 * \brief Destructor
 			 */
-			virtual ~CTopographicMap2DView();
+			~CTopographicMap2DView() override;
 
 			/** \name CSignalDisplayDrawable implementation */
 			//@{
@@ -60,12 +57,12 @@ namespace OpenViBEPlugins
 			/**
 			 * \brief Initialize widgets
 			 */
-			virtual void init();
+			void init() override;
 
 			/**
 			 * \brief Redraw map
 			 */
-			virtual void redraw();
+			void redraw() override;
 
 			//@}
 
@@ -76,15 +73,14 @@ namespace OpenViBEPlugins
 			 * \brief Get matrix of sample points coordinates (places where to interpolate values)
 			 * \return Pointer to matrix of sample points coordinates
 			 */
-			virtual OpenViBE::CMatrix* getSampleCoordinatesMatrix();
+			OpenViBE::CMatrix* getSampleCoordinatesMatrix() override;
 
 			/**
 			 * \brief Set matrix of sample points values (values interpolated at places specified in sample coordinates matrix)
 			 * \param [in] pSampleValuesMatrix Pointer to matrix of sample points values
 			 * \return True if values were successfully set, false otherwise
 			 */
-			virtual bool setSampleValuesMatrix(
-				OpenViBE::IMatrix* pSampleValuesMatrix);
+			bool setSampleValuesMatrix(OpenViBE::IMatrix* pSampleValuesMatrix) override;
 
 			//@}
 
@@ -93,9 +89,7 @@ namespace OpenViBEPlugins
 			 * \param [out] pWidget Pointer to main widget
 			 * \param [out] pToolbarWidget Pointer to (optional) toolbar widget
 			 */
-			void getWidgets(
-				GtkWidget*& pWidget,
-				GtkWidget*& pToolbarWidget);
+			void getWidgets(GtkWidget*& pWidget, GtkWidget*& pToolbarWidget);
 
 			/**
 			 * \brief Get ID of current view
@@ -117,18 +111,10 @@ namespace OpenViBEPlugins
 
 		private:
 			//draw color palette
-			void drawPalette(
-				uint32_t ui32X,
-				uint32_t ui32Y,
-				uint32_t ui32Width,
-				uint32_t ui32Height);
+			void drawPalette(uint32_t ui32X, uint32_t ui32Y, uint32_t ui32Width, uint32_t ui32Height);
 
 			//draw face (ears, nose, neck)
-			void drawFace(
-				uint32_t ui32X,
-				uint32_t ui32Y,
-				uint32_t ui32Width,
-				uint32_t ui32Height);
+			void drawFace(uint32_t ui32X, uint32_t ui32Y, uint32_t ui32Width, uint32_t ui32Height);
 
 			//draw head
 			void drawHead();
@@ -146,35 +132,21 @@ namespace OpenViBEPlugins
 			 * \param l_i32ChannelY[out] Y coordinate of channel location, if channel is visible
 			 * \return True if channel is visible in current view, false otherwise
 			 */
-			bool getChannel2DPosition(
-				uint32_t ui32ChannelIndex,
-				gint& l_i32ChannelX,
-				gint& l_i32ChannelY);
+			bool getChannel2DPosition(uint32_t ui32ChannelIndex, gint& l_i32ChannelX, gint& l_i32ChannelY);
 
 			//update RGB buffer with interpolated values
 			void refreshPotentials();
 
 			//draw a box in RGB buffer
-			void drawBoxToBuffer(
-				uint32_t ui32X,
-				uint32_t ui32Y,
-				uint32_t ui32Width,
-				uint32_t ui32Height,
-				uint8_t ui8Red,
-				uint8_t ui8Green,
-				uint8_t ui8Blue);
+			void drawBoxToBuffer(uint32_t ui32X, uint32_t ui32Y, uint32_t ui32Width, uint32_t ui32Height, uint8_t ui8Red, uint8_t ui8Green, uint8_t ui8Blue);
 
-			void enableElectrodeButtonSignals(
-				bool bEnable);
+			void enableElectrodeButtonSignals(bool bEnable);
 
-			void enableProjectionButtonSignals(
-				bool bEnable);
+			void enableProjectionButtonSignals(bool bEnable);
 
-			void enableViewButtonSignals(
-				bool bEnable);
+			void enableViewButtonSignals(bool bEnable);
 
-			void enableInterpolationButtonSignals(
-				bool bEnable);
+			void enableInterpolationButtonSignals(bool bEnable);
 
 			/**
 			 * \brief Compute normalized coordinates of 2D samples
@@ -183,28 +155,18 @@ namespace OpenViBEPlugins
 			 * \param bComputeCoordinates If false, this method only computes the number of visible samples
 			 * \return Number of visible samples (samples lying within the actual skull area)
 			 */
-			uint32_t computeSamplesNormalizedCoordinates(
-				bool bComputeCoordinates);
+			uint32_t computeSamplesNormalizedCoordinates(bool bComputeCoordinates);
 
 			void resizeData();
 
 			void redrawClipmask();
 
-			double getThetaFromCartesianCoordinates(
-				const double* l_pCartesianCoords) const;
+			double getThetaFromCartesianCoordinates(const double* l_pCartesianCoords) const;
 
-			double getPhiFromCartesianCoordinates(
-				const double* l_pCartesianCoords) const;
+			double getPhiFromCartesianCoordinates(const double* l_pCartesianCoords) const;
 
-			bool compute2DCoordinates(
-				double f64Theta,
-				double f64Phi,
-				uint32_t ui32SkullCenterX,
-				uint32_t ui32SkullCenterY,
-				gint& rX,
-				gint& rY) const;
+			bool compute2DCoordinates(double f64Theta, double f64Phi, uint32_t ui32SkullCenterX, uint32_t ui32SkullCenterY, gint& rX, gint& rY) const;
 
-		private:
 			//! The database that contains the information to use to draw the signals
 			CTopographicMapDatabase& m_rTopographicMapDatabase;
 
@@ -254,7 +216,7 @@ namespace OpenViBEPlugins
 			OpenViBE::CMatrix m_oSampleCoordinatesMatrix;
 
 			std::vector<uint32_t> m_oSampleValues;
-			std::vector<std::pair<uint32_t, uint32_t> > m_oSample2DCoordinates; //in skull coords
+			std::vector<std::pair<uint32_t, uint32_t>> m_oSample2DCoordinates; //in skull coords
 
 			uint32_t m_ui32MinPaletteBarHeight;
 			uint32_t m_ui32MaxPaletteBarHeight;
@@ -334,17 +296,16 @@ namespace OpenViBEPlugins
 			 * \remarks This pixmap is 32-bit aligned. Each row is m_ui32RowStride wide, and the pixmap has the height of the DrawingArea's
 			 * window. It is pasted into the DrawingArea's window upon redraw
 			 */
-			 //TODO
-			 //GdkPixmap* m_pPixmap;
+			//TODO
+			//GdkPixmap* m_pPixmap;
 
-			 /**
-			  * \brief Skull pixmap
-			  * \remarks This pixmap is 32-bit aligned. Each row is m_ui32RowStride wide, and the pixmap has m_ui32SkullDiameter rows.
-			  * It is pasted into the main pixmap everytime changes happen (window resizing, display options toggled on/off, etc)
-			  */
+			/**
+			 * \brief Skull pixmap
+			 * \remarks This pixmap is 32-bit aligned. Each row is m_ui32RowStride wide, and the pixmap has m_ui32SkullDiameter rows.
+			 * It is pasted into the main pixmap everytime changes happen (window resizing, display options toggled on/off, etc)
+			 */
 			guchar* m_pSkullRGBBuffer;
 			uint32_t m_ui32RowStride;
 		};
-	};
-};
-
+	} // namespace SimpleVisualization;
+}  // namespace OpenViBEPlugins;

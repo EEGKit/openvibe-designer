@@ -32,7 +32,7 @@ namespace Mensia
 		{
 		public:
 
-			virtual void render()
+			void render() override
 
 			{
 				this->preRender();
@@ -60,7 +60,7 @@ namespace Mensia
 				this->postRender();
 			}
 		};
-	};
-};
+	}  // namespace AdvancedVisualization
+}  // namespace Mensia
 
 #endif // __OpenViBEPlugins_CRulerLeftTexture_H__

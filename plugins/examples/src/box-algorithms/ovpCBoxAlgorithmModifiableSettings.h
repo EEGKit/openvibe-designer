@@ -22,16 +22,16 @@ namespace OpenViBEPlugins
 		 * \brief The class CBoxAlgorithmModifiableSettings describes the box ModifiableSettings.
 		 *
 		 */
-		class CBoxAlgorithmModifiableSettings : virtual public OpenViBEToolkit::TBoxAlgorithm < OpenViBE::Plugins::IBoxAlgorithm >
+		class CBoxAlgorithmModifiableSettings : virtual public OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>
 		{
 		public:
-			virtual void release() { delete this; }
-			virtual bool initialize();
-			virtual bool uninitialize();
-			virtual bool processClock(OpenViBE::CMessageClock& rMessageClock);
-			virtual uint64_t getClockFrequency();
+			void release() override { delete this; }
+			bool initialize() override;
+			bool uninitialize() override;
+			bool processClock(OpenViBE::CMessageClock& rMessageClock) override;
+			uint64_t getClockFrequency() override;
 
-			virtual bool process();
+			bool process() override;
 			_IsDerivedFromClass_Final_(OpenViBEToolkit::TBoxAlgorithm < OpenViBE::Plugins::IBoxAlgorithm >, OVP_ClassId_BoxAlgorithm_ModifiableSettings);
 
 		protected:
@@ -51,24 +51,24 @@ namespace OpenViBEPlugins
 		{
 		public:
 
-			virtual void release() { }
+			void release() override { }
 
-			virtual OpenViBE::CString getName() const { return OpenViBE::CString("Modifiable Settings example"); }
-			virtual OpenViBE::CString getAuthorName() const { return OpenViBE::CString("lmahe"); }
-			virtual OpenViBE::CString getAuthorCompanyName() const { return OpenViBE::CString("Inria"); }
-			virtual OpenViBE::CString getShortDescription() const { return OpenViBE::CString("Settings of this box are modifiable during playback. Values are displayed in log every 5 seconds"); }
-			virtual OpenViBE::CString getDetailedDescription() const { return OpenViBE::CString("This box purpose is to test and demonstrate the modifiable settings feature.\n It has a setting of each type and all are modifiable during scenario playback.\n"); }
-			virtual OpenViBE::CString getCategory() const { return OpenViBE::CString("Examples/Basic"); }
-			virtual OpenViBE::CString getVersion() const { return OpenViBE::CString("1.0"); }
-			virtual OpenViBE::CString getStockItemName() const { return OpenViBE::CString(""); }
+			OpenViBE::CString getName() const override { return OpenViBE::CString("Modifiable Settings example"); }
+			OpenViBE::CString getAuthorName() const override { return OpenViBE::CString("lmahe"); }
+			OpenViBE::CString getAuthorCompanyName() const override { return OpenViBE::CString("Inria"); }
+			OpenViBE::CString getShortDescription() const override { return OpenViBE::CString("Settings of this box are modifiable during playback. Values are displayed in log every 5 seconds"); }
+			OpenViBE::CString getDetailedDescription() const override { return OpenViBE::CString("This box purpose is to test and demonstrate the modifiable settings feature.\n It has a setting of each type and all are modifiable during scenario playback.\n"); }
+			OpenViBE::CString getCategory() const override { return OpenViBE::CString("Examples/Basic"); }
+			OpenViBE::CString getVersion() const override { return OpenViBE::CString("1.0"); }
+			OpenViBE::CString getStockItemName() const override { return OpenViBE::CString(""); }
 
-			virtual OpenViBE::CIdentifier getCreatedClass() const { return OVP_ClassId_BoxAlgorithm_ModifiableSettings; }
-			virtual OpenViBE::Plugins::IPluginObject* create() { return new CBoxAlgorithmModifiableSettings; }
+			OpenViBE::CIdentifier getCreatedClass() const override { return OVP_ClassId_BoxAlgorithm_ModifiableSettings; }
+			OpenViBE::Plugins::IPluginObject* create() override { return new CBoxAlgorithmModifiableSettings; }
 
-			virtual bool hasFunctionality(OpenViBE::CIdentifier functionalityIdentifier) const { return functionalityIdentifier == OVD_Functionality_Visualization; }
+			bool hasFunctionality(OpenViBE::CIdentifier functionalityIdentifier) const override { return functionalityIdentifier == OVD_Functionality_Visualization; }
 
 
-			virtual bool getBoxPrototype(OpenViBE::Kernel::IBoxProto& rBoxAlgorithmPrototype) const
+			bool getBoxPrototype(OpenViBE::Kernel::IBoxProto& rBoxAlgorithmPrototype) const override
 			{
 				rBoxAlgorithmPrototype.addSetting("Int", OV_TypeId_Integer, "1", true);
 				rBoxAlgorithmPrototype.addSetting("Float", OV_TypeId_Float, "1.3", true);
@@ -88,5 +88,5 @@ namespace OpenViBEPlugins
 
 			_IsDerivedFromClass_Final_(OpenViBE::Plugins::IBoxAlgorithmDesc, OVP_ClassId_BoxAlgorithm_ModifiableSettingsDesc);
 		};
-	};
-};
+	} // namespace Examples;
+} // namespace OpenViBEPlugins;

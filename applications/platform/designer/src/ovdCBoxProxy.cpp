@@ -9,15 +9,15 @@ using namespace OpenViBEDesigner;
 using namespace std;
 
 CBoxProxy::CBoxProxy(const IKernelContext& rKernelContext, IScenario& rScenario, const CIdentifier& rBoxIdentifier)
-	:m_rKernelContext(rKernelContext)
-	, m_pBoxAlgorithmDescriptorOverride(nullptr)
-	, m_pConstBox(rScenario.getBoxDetails(rBoxIdentifier))
-	, m_pBox(rScenario.getBoxDetails(rBoxIdentifier))
-	, m_bApplied(false)
-	, m_bShowOriginalNameWhenModified(false)
-	, m_iXCenter(0)
-	, m_iYCenter(0)
-	, m_IsDeprecated(m_rKernelContext.getPluginManager().isPluginObjectFlaggedAsDeprecated(m_pConstBox->getAlgorithmClassIdentifier()))
+	: m_rKernelContext(rKernelContext)
+	  , m_pBoxAlgorithmDescriptorOverride(nullptr)
+	  , m_pConstBox(rScenario.getBoxDetails(rBoxIdentifier))
+	  , m_pBox(rScenario.getBoxDetails(rBoxIdentifier))
+	  , m_bApplied(false)
+	  , m_bShowOriginalNameWhenModified(false)
+	  , m_iXCenter(0)
+	  , m_iYCenter(0)
+	  , m_IsDeprecated(m_rKernelContext.getPluginManager().isPluginObjectFlaggedAsDeprecated(m_pConstBox->getAlgorithmClassIdentifier()))
 {
 	m_IsBoxAlgorithmPresent = false;
 
@@ -52,11 +52,15 @@ CBoxProxy::~CBoxProxy()
 	}
 }
 
-CBoxProxy::operator IBox* ()
- { return m_pBox; }
+CBoxProxy::operator IBox*()
+{
+	return m_pBox;
+}
 
-CBoxProxy::operator const IBox* ()
- { return m_pConstBox; }
+CBoxProxy::operator const IBox*()
+{
+	return m_pConstBox;
+}
 
 int32_t CBoxProxy::getWidth(GtkWidget* pWidget) const
 {
@@ -96,14 +100,22 @@ void CBoxProxy::apply()
 		TAttributeHandler l_oAttributeHandler(*m_pBox);
 
 		if (l_oAttributeHandler.hasAttribute(OV_AttributeId_Box_XCenterPosition))
+		{
 			l_oAttributeHandler.setAttributeValue<int>(OV_AttributeId_Box_XCenterPosition, m_iXCenter);
+		}
 		else
+		{
 			l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Box_XCenterPosition, m_iXCenter);
+		}
 
 		if (l_oAttributeHandler.hasAttribute(OV_AttributeId_Box_YCenterPosition))
+		{
 			l_oAttributeHandler.setAttributeValue<int>(OV_AttributeId_Box_YCenterPosition, m_iYCenter);
+		}
 		else
+		{
 			l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Box_YCenterPosition, m_iYCenter);
+		}
 
 		m_bApplied = true;
 	}
@@ -115,7 +127,7 @@ const char* CBoxProxy::getLabel() const
 	bool l_bBoxCanChangeOutput(m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanModifyOutput) || m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanAddOutput));
 	bool l_bBoxCanChangeSetting(m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanModifySetting) || m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanAddSetting));
 
-	const IPluginObjectDesc * l_pDesc = nullptr;
+	const IPluginObjectDesc* l_pDesc = nullptr;
 
 	if (m_pBoxAlgorithmDescriptorOverride == nullptr)
 	{
@@ -206,10 +218,10 @@ const char* CBoxProxy::getStatusLabel() const
 	if (l_bBoxIsDeprecated || l_bBoxToBeUpdated || l_bBoxIsDisabled || l_bBoxPendingDeprecatedInterfacors)
 	{
 		m_sStatus += "<span size=\"smaller\" foreground=\"" + l_sBlue + "\">";
-		if (l_bBoxIsDeprecated) m_sStatus += " <span style=\"italic\">deprecated</span>";
-		if (l_bBoxToBeUpdated)  m_sStatus += " <span style=\"italic\">update</span>";
-		if (l_bBoxIsDisabled)   m_sStatus += " <span style=\"italic\">disabled</span>";
-		if (l_bBoxPendingDeprecatedInterfacors)   m_sStatus += " <span style=\"italic\">deprecated I/O/S</span>";
+		if (l_bBoxIsDeprecated) { m_sStatus += " <span style=\"italic\">deprecated</span>"; }
+		if (l_bBoxToBeUpdated) { m_sStatus += " <span style=\"italic\">update</span>"; }
+		if (l_bBoxIsDisabled) { m_sStatus += " <span style=\"italic\">disabled</span>"; }
+		if (l_bBoxPendingDeprecatedInterfacors) { m_sStatus += " <span style=\"italic\">deprecated I/O/S</span>"; }
 		m_sStatus += " </span>";
 	}
 	return m_sStatus.c_str();
@@ -231,7 +243,7 @@ bool CBoxProxy::isDisabled() const
 	return l_oAttributeHandler.hasAttribute(OV_AttributeId_Box_Disabled);
 }
 
-void CBoxProxy::updateSize(GtkWidget * pWidget, const char* sLabel, const char* sStatus, int* pXSize, int* pYSize) const
+void CBoxProxy::updateSize(GtkWidget* pWidget, const char* sLabel, const char* sStatus, int* pXSize, int* pYSize) const
 {
 	PangoContext* l_pPangoContext = nullptr;
 	PangoLayout* l_pPangoLayout = nullptr;
@@ -256,4 +268,3 @@ void CBoxProxy::updateSize(GtkWidget * pWidget, const char* sLabel, const char* 
 	g_object_unref(l_pPangoLayout);
 	g_object_unref(l_pPangoContext);
 }
-

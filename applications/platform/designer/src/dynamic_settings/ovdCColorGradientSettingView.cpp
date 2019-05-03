@@ -1,4 +1,3 @@
-
 #include "ovdCColorGradientSettingView.h"
 #include "../ovd_base.h"
 #include <visualization-toolkit/ovvizColorGradient.h>
@@ -58,13 +57,13 @@ static void on_change(GtkEntry* entry, gpointer pUserData)
 
 CColorGradientSettingView::CColorGradientSettingView(Kernel::IBox& rBox, uint32_t ui32Index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext)
 	: CAbstractSettingView(rBox, ui32Index, rBuilderName, "settings_collection-hbox_setting_color_gradient")
-	, m_rKernelContext(rKernelContext)
-	, m_sBuilderName(rBuilderName)
-	, m_bOnValueSetting(false)
+	  , m_rKernelContext(rKernelContext)
+	  , m_sBuilderName(rBuilderName)
+	  , m_bOnValueSetting(false)
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 
-	std::vector< GtkWidget* > l_vWidget;
+	std::vector<GtkWidget*> l_vWidget;
 	extractWidget(l_pSettingWidget, l_vWidget);
 	m_pEntry = GTK_ENTRY(l_vWidget[0]);
 
@@ -103,7 +102,7 @@ void CColorGradientSettingView::configurePressed()
 	vColorGradient.resize(std::max<size_t>(l_oInitialGradient.getDimensionSize(1), 2));
 	for (size_t i = 0; i < l_oInitialGradient.getDimensionSize(1); ++i)
 	{
-		uint32_t ovIndex = static_cast<uint32_t>(i);
+		uint32_t ovIndex = uint32_t(i);
 		vColorGradient[i].fPercent = l_oInitialGradient[ovIndex * 4];
 		vColorGradient[i].oColor.red = static_cast<guint>(l_oInitialGradient[ovIndex * 4 + 1] * .01 * 65535.);
 		vColorGradient[i].oColor.green = static_cast<guint>(l_oInitialGradient[ovIndex * 4 + 2] * .01 * 65535.);
@@ -124,8 +123,8 @@ void CColorGradientSettingView::configurePressed()
 		CMatrix l_oFinalGradient;
 		l_oFinalGradient.setDimensionCount(2);
 		l_oFinalGradient.setDimensionSize(0, 4);
-		l_oFinalGradient.setDimensionSize(1, static_cast<uint32_t>(vColorGradient.size()));
-		for (uint32_t i = 0; i < static_cast<uint32_t>(vColorGradient.size()); i++)
+		l_oFinalGradient.setDimensionSize(1, uint32_t(vColorGradient.size()));
+		for (uint32_t i = 0; i < uint32_t(vColorGradient.size()); ++i)
 		{
 			l_oFinalGradient[i * 4] = vColorGradient[i].fPercent;
 			l_oFinalGradient[i * 4 + 1] = round(vColorGradient[i].oColor.red * 100. / 65535.);
@@ -152,7 +151,7 @@ void CColorGradientSettingView::initializeGradient()
 	gtk_container_foreach(GTK_CONTAINER(pContainer), on_gtk_widget_destroy_cb, nullptr);
 
 	uint32_t i = 0;
-	uint32_t count = static_cast<uint32_t>(vColorGradient.size());
+	auto count = uint32_t(vColorGradient.size());
 	vColorButtonMap.clear();
 	vSpinButtonMap.clear();
 	for (auto it = vColorGradient.begin(); it != vColorGradient.end(); it++, i++)
@@ -199,7 +198,7 @@ void CColorGradientSettingView::refreshColorGradient()
 	CMatrix l_oGradientMatrix;
 	l_oGradientMatrix.setDimensionCount(2);
 	l_oGradientMatrix.setDimensionSize(0, 4);
-	l_oGradientMatrix.setDimensionSize(1, static_cast<uint32_t>(vColorGradient.size()));
+	l_oGradientMatrix.setDimensionSize(1, uint32_t(vColorGradient.size()));
 	for (uint32_t i = 0; i < vColorGradient.size(); ++i)
 	{
 		l_oGradientMatrix[i * 4] = vColorGradient[i].fPercent;
@@ -220,14 +219,7 @@ void CColorGradientSettingView::refreshColorGradient()
 		l_oColor.green = (guint)(l_oInterpolatedMatrix[i * 4 + 2] * 65535 * .01);
 		l_oColor.blue = (guint)(l_oInterpolatedMatrix[i * 4 + 3] * 65535 * .01);
 		gdk_gc_set_rgb_fg_color(l_pGC, &l_oColor);
-		gdk_draw_rectangle(
-			pDrawingArea->window,
-			l_pGC,
-			TRUE,
-			(sizex * i) / ui32Steps,
-			0,
-			(sizex * (i + 1)) / ui32Steps,
-			sizey);
+		gdk_draw_rectangle(pDrawingArea->window, l_pGC, TRUE, (sizex * i) / ui32Steps, 0, (sizex * (i + 1)) / ui32Steps, sizey);
 	}
 	g_object_unref(l_pGC);
 }
@@ -251,7 +243,7 @@ void CColorGradientSettingView::removeColor()
 	}
 }
 
-void CColorGradientSettingView::spinChange(GtkSpinButton * pButton)
+void CColorGradientSettingView::spinChange(GtkSpinButton* pButton)
 {
 	gtk_spin_button_update(pButton);
 
@@ -280,7 +272,7 @@ void CColorGradientSettingView::spinChange(GtkSpinButton * pButton)
 	refreshColorGradient();
 }
 
-void CColorGradientSettingView::colorChange(GtkColorButton * pButton)
+void CColorGradientSettingView::colorChange(GtkColorButton* pButton)
 {
 	GdkColor l_oColor;
 	gtk_color_button_get_color(pButton, &l_oColor);
@@ -298,4 +290,3 @@ void CColorGradientSettingView::onChange()
 		getBox().setSettingValue(getSettingIndex(), l_sValue);
 	}
 }
-

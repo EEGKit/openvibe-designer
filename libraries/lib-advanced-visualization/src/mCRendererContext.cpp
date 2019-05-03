@@ -32,7 +32,7 @@ namespace
 {
 	void getLeftRightScore(std::map < std::string, float >& vScore, const std::vector < std::string >& vChannelName, const std::vector < CVertex >& vChannelLocalisation)
 	{
-		for (uint32_t i = 0; i < vChannelName.size() && i < vChannelLocalisation.size(); i++)
+		for (uint32_t i = 0; i < vChannelName.size() && i < vChannelLocalisation.size(); ++i)
 		{
 			std::string l_sChannelName = std::string(",") + vChannelName[i] + std::string(",");
 			std::transform(l_sChannelName.begin(), l_sChannelName.end(), l_sChannelName.begin(), tolower);
@@ -42,7 +42,7 @@ namespace
 
 	void getFrontBackScore(std::map < std::string, float > & vScore, const std::vector < std::string > & vChannelName, const std::vector < CVertex > & vChannelLocalisation)
 	{
-		for (uint32_t i = 0; i < vChannelName.size() && i < vChannelLocalisation.size(); i++)
+		for (uint32_t i = 0; i < vChannelName.size() && i < vChannelLocalisation.size(); ++i)
 		{
 			std::string l_sChannelName = std::string(",") + vChannelName[i] + std::string(",");
 			std::transform(l_sChannelName.begin(), l_sChannelName.end(), l_sChannelName.begin(), tolower);
@@ -88,8 +88,8 @@ namespace
 
 			for (it = m_vScore.begin(); it != m_vScore.end(); it++)
 			{
-				if (it->first == l_sChannelName_i) l_f32Score_i = it->second;
-				if (it->first == l_sChannelName_j) l_f32Score_j = it->second;
+				if (it->first == l_sChannelName_i) { l_f32Score_i = it->second; }
+				if (it->first == l_sChannelName_j) { l_f32Score_j = it->second; }
 			}
 
 			return l_f32Score_i < l_f32Score_j;
@@ -98,7 +98,7 @@ namespace
 		const std::vector < std::string >& m_vChannelName;
 		const std::map < std::string, float >& m_vScore;
 	};
-}
+}  // namespace
 
 // ____________________________________________________________________________________________________________________________________________________________________________________
 //
@@ -139,7 +139,7 @@ void CRendererContext::clearChannelInfo()
 
 void CRendererContext::addChannel(const std::string& sChannelName, float x, float y, float z)
 {
-	float l_fNorm = float(sqrt(x * x + y * y + z * z));
+	auto l_fNorm = float(sqrt(x * x + y * y + z * z));
 	float l_fInvNorm = (l_fNorm != 0 ? 1.f / l_fNorm : 0);
 	CVertex l_oChannelLocalisation;
 	l_oChannelLocalisation.x = x * l_fInvNorm;
@@ -152,16 +152,16 @@ void CRendererContext::addChannel(const std::string& sChannelName, float x, floa
 
 void CRendererContext::selectChannel(uint32_t ui32Index)
 {
-	for (uint32_t i = 0; i < m_vChannelLookup.size(); i++)
+	for (uint32_t i = 0; i < m_vChannelLookup.size(); ++i)
 	{
-		if (m_vChannelLookup[i] == ui32Index) return;
+		if (m_vChannelLookup[i] == ui32Index) { return; }
 	}
 	m_vChannelLookup.push_back(ui32Index);
 }
 
 void CRendererContext::unselectChannel(uint32_t ui32Index)
 {
-	for (uint32_t i = 0; i < m_vChannelLookup.size(); i++)
+	for (uint32_t i = 0; i < m_vChannelLookup.size(); ++i)
 	{
 		if (m_vChannelLookup[i] == ui32Index)
 		{
@@ -173,8 +173,8 @@ void CRendererContext::unselectChannel(uint32_t ui32Index)
 
 void CRendererContext::sortSelectedChannel(uint32_t ui32SortMode)
 {
-	if (m_vLeftRightScore.empty()) getLeftRightScore(m_vLeftRightScore, m_vChannelName, m_vChannelLocalisation);
-	if (m_vFrontBackScore.empty()) getFrontBackScore(m_vFrontBackScore, m_vChannelName, m_vChannelLocalisation);
+	if (m_vLeftRightScore.empty()) { getLeftRightScore(m_vLeftRightScore, m_vChannelName, m_vChannelLocalisation); }
+	if (m_vFrontBackScore.empty()) { getFrontBackScore(m_vFrontBackScore, m_vChannelName, m_vChannelLocalisation); }
 
 	switch (ui32SortMode)
 	{
@@ -438,7 +438,7 @@ uint32_t CRendererContext::getSelected(uint32_t ui32Index) const { return m_vCha
 
 bool CRendererContext::isSelected(uint32_t ui32Index) const
 {
-	for (uint32_t i = 0; i < m_vChannelLookup.size(); i++)
+	for (uint32_t i = 0; i < m_vChannelLookup.size(); ++i)
 	{
 		if (m_vChannelLookup[i] == ui32Index) { return true; }
 	}

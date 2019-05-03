@@ -32,7 +32,7 @@ namespace Mensia
 		{
 		public:
 
-			virtual void render()
+			void render() override
 
 			{
 				this->preRender();
@@ -60,10 +60,14 @@ namespace Mensia
 				this->postRender();
 			}
 
-			virtual void renderBottom(GtkWidget* pWidget)
+			void renderBottom(GtkWidget* pWidget) override
 			{
 				float l_fScale = 1.f / m_pRendererContext->getScale();
-				if (m_fLastScale != l_fScale) { m_vRange = this->split_range(-l_fScale * .5, l_fScale * .5); m_fLastScale = l_fScale; }
+				if (m_fLastScale != l_fScale)
+				{
+					m_vRange = this->split_range(-l_fScale * .5, l_fScale * .5);
+					m_fLastScale = l_fScale;
+				}
 
 				gint w, h;
 				gint lw, lh;
@@ -87,11 +91,11 @@ namespace Mensia
 				g_object_unref(l_pDrawGC);
 			}
 
-			float m_fLastScale;
-			std::vector < double > m_vRange;
-			std::vector < double >::iterator it;
+			float m_fLastScale{};
+			std::vector<double> m_vRange;
+			std::vector<double>::iterator it;
 		};
-	};
-};
+	}  // namespace AdvancedVisualization
+} // namespace Mensia
 
 #endif // __OpenViBEPlugins_CRulerBottomTexture_H__

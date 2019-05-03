@@ -34,12 +34,12 @@ namespace Mensia
 		{
 		public:
 
-			virtual void rebuild(const IRendererContext& rContext);
-			virtual void refresh(const IRendererContext& rContext);
-			virtual bool render(const IRendererContext& rContext);
+			void rebuild(const IRendererContext& rContext) override;
+			void refresh(const IRendererContext& rContext) override;
+			bool render(const IRendererContext& rContext) override;
 		};
-	};
-};
+	}  // namespace AdvancedVisualization
+}  // namespace Mensia
 
 // #endif // TARGET_HAS_ThirdPartyVRPN
 

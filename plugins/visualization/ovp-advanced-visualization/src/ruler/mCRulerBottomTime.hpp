@@ -33,20 +33,20 @@ namespace Mensia
 		{
 		public:
 
-			virtual void renderBottom(GtkWidget* pWidget)
+			void renderBottom(GtkWidget* pWidget) override
 			{
-				if (m_pRenderer == nullptr) return;
-				if (m_pRenderer->getSampleCount() == 0) return;
-				if (m_pRenderer->getHistoryCount() == 0) return;
-				if (m_pRenderer->getHistoryIndex() == 0) return;
+				if (m_pRenderer == nullptr) { return; }
+				if (m_pRenderer->getSampleCount() == 0) { return; }
+				if (m_pRenderer->getHistoryCount() == 0) { return; }
+				if (m_pRenderer->getHistoryIndex() == 0) { return; }
 
 				uint32_t l_ui32SampleCount = m_pRenderer->getSampleCount();
 				uint32_t l_ui32HistoryIndex = m_pRenderer->getHistoryIndex();
 				uint64_t l_ui64SampleDuration = m_pRendererContext->getSampleDuration();
 
-				std::vector < double > l_vRange1;
-				std::vector < double > l_vRange2;
-				std::vector < double >::iterator it;
+				std::vector<double> l_vRange1;
+				std::vector<double> l_vRange2;
+				std::vector<double>::iterator it;
 
 				uint32_t l_ui32LeftIndex = l_ui32HistoryIndex - l_ui32HistoryIndex % l_ui32SampleCount;
 				uint32_t l_ui32MidIndex = l_ui32HistoryIndex;
@@ -64,13 +64,13 @@ namespace Mensia
 				gint w, h, x;
 
 				gdk_drawable_get_size(pWidget->window, &w, &h);
-				GdkGC * l_pDrawGC = gdk_gc_new(pWidget->window);
+				GdkGC* l_pDrawGC = gdk_gc_new(pWidget->window);
 				for (it = l_vRange1.begin(); it != l_vRange1.end(); it++)
 				{
 					if (*it >= 0 && *it + l_f64Duration > l_f64MidTime)
 					{
 						x = gint(((*it + l_f64Duration - l_f64StartTime) / l_f64Duration) * w);
-						PangoLayout * l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, this->getLabel(*it).c_str());
+						PangoLayout* l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, this->getLabel(*it).c_str());
 						gdk_draw_layout(pWidget->window, l_pDrawGC, x, 5, l_pPangoLayout);
 						gdk_draw_line(pWidget->window, l_pDrawGC, x, 0, x, 3);
 						g_object_unref(l_pPangoLayout);
@@ -81,7 +81,7 @@ namespace Mensia
 					if (*it >= 0 && *it < l_f64MidTime)
 					{
 						x = gint(((*it - l_f64StartTime) / l_f64Duration) * w);
-						PangoLayout * l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, this->getLabel(*it).c_str());
+						PangoLayout* l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, this->getLabel(*it).c_str());
 						gdk_draw_layout(pWidget->window, l_pDrawGC, x, 5, l_pPangoLayout);
 						gdk_draw_line(pWidget->window, l_pDrawGC, x, 0, x, 3);
 						g_object_unref(l_pPangoLayout);
@@ -90,7 +90,7 @@ namespace Mensia
 				g_object_unref(l_pDrawGC);
 			}
 		};
-	};
-};
+	}  // namespace AdvancedVisualization
+} // namespace Mensia
 
 #endif // __OpenViBEPlugins_CRulerBottomTime_H__

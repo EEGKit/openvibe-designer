@@ -27,7 +27,7 @@
 using namespace Mensia;
 using namespace AdvancedVisualization;
 
-CRendererCube::CRendererCube() { }
+CRendererCube::CRendererCube() = default;
 
 void CRendererCube::rebuild(const IRendererContext& rContext)
 {
@@ -43,14 +43,14 @@ void CRendererCube::refresh(const IRendererContext& rContext)
 {
 	CRenderer::refresh(rContext);
 
-	if (!m_ui32HistoryCount) return;
+	if (!m_ui32HistoryCount) { return; }
 
 	float l_f32SampleIndexERP = (m_f32ERPFraction * (m_ui32SampleCount - 1));
 	float l_f32Alpha = l_f32SampleIndexERP - std::floor(l_f32SampleIndexERP);
 	uint32_t l_ui32SampleIndexERP1 = uint32_t(l_f32SampleIndexERP) % m_ui32SampleCount;
 	uint32_t l_ui32SampleIndexERP2 = uint32_t(l_f32SampleIndexERP + 1) % m_ui32SampleCount;
 
-	for (uint32_t i = 0; i < m_vVertex.size(); i++)
+	for (uint32_t i = 0; i < m_vVertex.size(); ++i)
 	{
 		m_vVertex[i].u = m_vHistory[i][m_ui32HistoryCount - m_ui32SampleCount + l_ui32SampleIndexERP1] * (1 - l_f32Alpha)
 			+ m_vHistory[i][m_ui32HistoryCount - m_ui32SampleCount + l_ui32SampleIndexERP2] * (l_f32Alpha);
@@ -63,9 +63,9 @@ bool CRendererCube::render(const IRendererContext & rContext)
 {
 	std::map < std::string, CVertex >::const_iterator it;
 
-	if (!rContext.getSelectedCount()) return false;
-	if (m_vVertex.empty()) return false;
-	if (!m_ui32HistoryCount) return false;
+	if (!rContext.getSelectedCount()) { return false; }
+	if (m_vVertex.empty()) { return false; }
+	if (!m_ui32HistoryCount) { return false; }
 
 	uint32_t j, k;
 	float d = 3.5;
@@ -128,7 +128,7 @@ bool CRendererCube::render(const IRendererContext & rContext)
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-	if (rContext.getCheckBoardVisibility()) this->drawCoordinateSystem();
+	if (rContext.getCheckBoardVisibility()) { this->drawCoordinateSystem(); }
 
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();

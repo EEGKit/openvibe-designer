@@ -45,7 +45,7 @@ namespace Mensia
 			static IRendererContext* create(IRendererContext* pParentRendererContext = nullptr);
 			static void release(IRendererContext* pRendererContext);
 
-			virtual ~IRendererContext() { }
+			virtual ~IRendererContext() = default;
 
 			virtual void clear() = 0;
 
@@ -132,6 +132,6 @@ namespace Mensia
 
 			virtual uint32_t getMaximumSampleCountPerDisplay() const = 0;
 		};
-	};
-};
+	}  // namespace AdvancedVisualization
+}  // namespace Mensia
 

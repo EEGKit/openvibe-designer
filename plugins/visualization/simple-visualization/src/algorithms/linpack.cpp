@@ -18,7 +18,7 @@
 #include <cstdio>
 #include <cstdlib>
 
-#define dmax(x,y) ((x > y) ? x : y)
+#define dmax(x,y) (((x) > (y)) ? (x) : (y))
 
 void saxpy(int* n, double* sa, double* sx, int* incx, double* sy, int* incy);
 double sdot(int* n, double* sx, int* incx, double* sy, int* incy);
@@ -60,11 +60,11 @@ void sspfa(double* ap, int* n, int* kpvt, int* info)
 {
 	double alpha, ak, bk, denom, t, tulk, tulkm1, absakk;
 	double akm1, bkm1, colmax, rowmax;
-	int    ij, ik, ikm1, im = 0, imj, imk, imax, imaxp1, imim;
-	int    j, jj, jk, jkm1, jmax, jmim;
-	int    k, kk, km1, km2, km1k, km1km1;
-	int    kstep, swap;
-	int    one, itmp;
+	int ij, ik, ikm1, im = 0, imj, imk, imax, imaxp1, imim;
+	int j, jj, jk, jkm1, jmax, jmim;
+	int k, kk, km1, km2, km1k, km1km1;
+	int kstep, swap;
+	int one, itmp;
 
 	one = 1;
 	alpha = 0.6404;
@@ -73,11 +73,11 @@ void sspfa(double* ap, int* n, int* kpvt, int* info)
 	ik = (*n * (*n - 1)) / 2;
 
 begin_dspfa:;
-	if (k == 0) goto end_dspfa;
+	if (k == 0) { goto end_dspfa; }
 	if (k <= 1)
 	{
 		*kpvt = 1;
-		if (*ap == 0.0) * info = 1;
+		if (*ap == 0.0) { * info = 1; }
 		goto end_dspfa;
 	}
 	km1 = k - 1;
@@ -254,9 +254,9 @@ end_dspfa:;
 void sspsl(double* ap, int* n, int* kpvt, double* b)
 {
 	double temp, ak, bk, akm1, bkm1, denom;
-	int    ik, ikm1, ikp1;
-	int    k, kk, km1k, km1km1, kp;
-	int    one, oneb, itmp;
+	int ik, ikm1, ikp1;
+	int k, kk, km1k, km1km1, kp;
+	int one, oneb, itmp;
 
 	one = 1;
 	oneb = 1;
@@ -390,10 +390,11 @@ void saxpy(int* n, double* sa, double* sx, int* incx, double* sy, int* incy)
 		{
 			if ((*incx != 1) || (*incy != 1))
 			{
-				ix = 1; iy = 1;
-				if (*incx < 0) ix = (1 - *n) * (*incx) + 1;
-				if (*incy < 0) iy = (1 - *n) * (*incy) + 1;
-				for (i = 1; i <= *n; i++)
+				ix = 1;
+				iy = 1;
+				if (*incx < 0) { ix = (1 - *n) * (*incx) + 1; }
+				if (*incy < 0) { iy = (1 - *n) * (*incy) + 1; }
+				for (i = 1; i <= *n; ++i)
 				{
 					*(sy + iy - 1) += *sa * (*(sx + ix - 1));
 					ix += *incx;
@@ -406,11 +407,11 @@ void saxpy(int* n, double* sa, double* sx, int* incx, double* sy, int* incy)
 				m = (int)fmod((double)* n, 4.0);
 				if (m != 0)
 				{
-					for (i = 1; i <= m; i++)
+					for (i = 1; i <= m; ++i)
 					{
 						*(sy + i - 1) += *sa * (*(sx + i - 1));
 					}
-					if (*n < 4) ok = 0;
+					if (*n < 4) { ok = 0; }
 				}
 				if (ok == 1)
 				{
@@ -448,18 +449,19 @@ void saxpy(int* n, double* sa, double* sx, int* incx, double* sy, int* incy)
 
 double sdot(int* n, double* sx, int* incx, double* sy, int* incy)
 {
-	int    i, m, ok;
-	int    ix, iy;
+	int i, m, ok;
+	int ix, iy;
 	double stemp = 0.0;
 
 	if (*n > 0)
 	{
 		if ((*incx != 1) || (*incy != 1))
 		{
-			ix = 1; iy = 1;
+			ix = 1;
+			iy = 1;
 			if (*incx < 0) ix = (1 - *n) * (*incx) + 1;
-			if (*incy < 0) iy = (1 - *n) * (*incy) + 1;
-			for (i = 1; i <= *n; i++)
+			if (*incy < 0) { iy = (1 - *n) * (*incy) + 1; }
+			for (i = 1; i <= *n; ++i)
 			{
 				stemp += *(sx + ix - 1) * (*(sy + iy - 1));
 				ix += *incx;
@@ -472,7 +474,7 @@ double sdot(int* n, double* sx, int* incx, double* sy, int* incy)
 			m = (int)fmod((double)* n, 5.0);
 			if (m != 0)
 			{
-				for (i = 1; i <= m; i++)
+				for (i = 1; i <= m; ++i)
 				{
 					stemp += *(sx + i - 1) * (*(sy + i - 1));
 				}
@@ -514,17 +516,18 @@ double sdot(int* n, double* sx, int* incx, double* sy, int* incy)
 void sswap(int* n, double* sx, int* incx, double* sy, int* incy)
 {
 	double stemp;
-	int    i, m, ok;
-	int    ix, iy;
+	int i, m, ok;
+	int ix, iy;
 
 	if (*n > 0)
 	{
 		if ((*incx != 1) || (*incy != 1))
 		{
-			ix = 1; iy = 1;
-			if (*incx < 0) ix = (1 - *n) * (*incx) + 1;
-			if (*incy < 0) iy = (1 - *n) * (*incy) + 1;
-			for (i = 1; i <= *n; i++)
+			ix = 1;
+			iy = 1;
+			if (*incx < 0) { ix = (1 - *n) * (*incx) + 1; }
+			if (*incy < 0) { iy = (1 - *n) * (*incy) + 1; }
+			for (i = 1; i <= *n; ++i)
 			{
 				stemp = *(sx + ix - 1);
 				*(sx + ix - 1) = *(sy + iy - 1);
@@ -539,13 +542,13 @@ void sswap(int* n, double* sx, int* incx, double* sy, int* incy)
 			m = (int)fmod((double)* n, 3.0);
 			if (m != 0)
 			{
-				for (i = 1; i <= m; i++)
+				for (i = 1; i <= m; ++i)
 				{
 					stemp = *(sx + i - 1);
 					*(sx + i - 1) = *(sy + i - 1);
 					*(sy + i - 1) = stemp;
 				}
-				if (*n < 3) ok = 0;
+				if (*n < 3) { ok = 0; }
 			}
 			if (ok == 1)
 			{
@@ -584,7 +587,7 @@ void sswap(int* n, double* sx, int* incx, double* sy, int* incy)
 int isamax(int* n, double* sx, int* incx)
 {
 	double smax;
-	int    i, ix, ida;
+	int i, ix, ida;
 
 	ida = 0;
 	if (*n < 1) { return ida; }
@@ -595,7 +598,7 @@ int isamax(int* n, double* sx, int* incx)
 		ix = 1;
 		smax = fabs(*sx);
 		ix += *incx;
-		for (i = 2; i <= *n; i++)
+		for (i = 2; i <= *n; ++i)
 		{
 			if (fabs(*(sx + ix - 1)) > smax)
 			{
@@ -608,7 +611,7 @@ int isamax(int* n, double* sx, int* incx)
 	else
 	{
 		smax = fabs(*sx);
-		for (i = 2; i <= *n; i++)
+		for (i = 2; i <= *n; ++i)
 		{
 			if (fabs(*(sx + i - 1)) > smax)
 			{

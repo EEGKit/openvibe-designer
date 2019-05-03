@@ -34,14 +34,14 @@ namespace Mensia
 
 			CRendererFlower(uint32_t ui32MultiCount = 1);
 
-			virtual void rebuild(const IRendererContext& rContext);
-			virtual void refresh(const IRendererContext& rContext);
-			virtual bool render(const IRendererContext& rContext);
+			void rebuild(const IRendererContext& rContext) override;
+			void refresh(const IRendererContext& rContext) override;
+			bool render(const IRendererContext& rContext) override;
 
 			std::vector < std::vector < std::vector < CVertex > > > m_vMuliVertex;
 			std::vector < CVertex > m_vCircle;
 		};
-	};
-};
+	}  // namespace AdvancedVisualization
+}  // namespace Mensia
 
 #endif // __Mensia_AdvancedVisualization_CRendererFlower_H__

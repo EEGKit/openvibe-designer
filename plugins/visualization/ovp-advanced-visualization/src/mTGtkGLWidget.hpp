@@ -30,7 +30,7 @@
 #include <visualization-toolkit/ovviz_all.h>
 
 #if defined TARGET_OS_Windows
-#include <windows.h>
+#include <Windows.h>
 #endif
 
 #include <gtk/gtk.h>
@@ -40,7 +40,7 @@
 #include <map>
 #include <string>
 
- // #define __DIRECT_RENDER__
+// #define __DIRECT_RENDER__
 
 namespace Mensia
 {
@@ -53,13 +53,13 @@ namespace Mensia
 
 			TGtkGLWidget()
 
-				:m_pWidget(nullptr)
-				, m_pLeft(nullptr)
-				, m_pRight(nullptr)
-				, m_pBottom(nullptr)
-				, m_pTimeoutSource(nullptr)
-				, m_pBox(nullptr)
-				, m_ui32TextureId(0) { }
+				: m_pWidget(nullptr)
+				  , m_pLeft(nullptr)
+				  , m_pRight(nullptr)
+				  , m_pBottom(nullptr)
+				  , m_pTimeoutSource(nullptr)
+				  , m_pBox(nullptr)
+				  , m_ui32TextureId(0) { }
 
 			virtual ~TGtkGLWidget()
 
@@ -211,7 +211,7 @@ namespace Mensia
 					OpenViBEVisualizationToolkit::Tools::ColorGradient::interpolate(m_oGradient, m_oGradientBase, M_GRADIENT_SIZE);
 
 					float l_vTexture[M_GRADIENT_SIZE][3];
-					for (i = 0; i < M_GRADIENT_SIZE; i++)
+					for (i = 0; i < M_GRADIENT_SIZE; ++i)
 					{
 						l_vTexture[i][0] = float(m_oGradient[i * 4 + 1] * .01);
 						l_vTexture[i][1] = float(m_oGradient[i * 4 + 2] * .01);
@@ -236,7 +236,7 @@ namespace Mensia
 
 		protected:
 
-			GtkWidget * m_pWidget;
+			GtkWidget* m_pWidget;
 			GtkWidget* m_pLeft;
 			GtkWidget* m_pRight;
 			GtkWidget* m_pBottom;
@@ -249,13 +249,13 @@ namespace Mensia
 		private:
 
 
-			static gboolean __timeout_redraw(TBox * pBox)
+			static gboolean __timeout_redraw(TBox* pBox)
 			{
 				pBox->redraw();
 				return TRUE;
 			}
 
-			static gboolean __configure_cb(GtkWidget * pWidget, GdkEventConfigure * pEvent, TBox * pBox)
+			static gboolean __configure_cb(GtkWidget* pWidget, GdkEventConfigure* pEvent, TBox* pBox)
 			{
 				GtkGL::preRender(pWidget);
 
@@ -268,7 +268,7 @@ namespace Mensia
 				return TRUE;
 			}
 
-			static gboolean __expose_cb(GtkWidget * pWidget, GdkEventExpose * pEvent, TBox * pBox)
+			static gboolean __expose_cb(GtkWidget* pWidget, GdkEventExpose* pEvent, TBox* pBox)
 			{
 				float d = 1.f;
 				float dx = d / (pWidget->allocation.width - d);
@@ -335,7 +335,7 @@ namespace Mensia
 				return TRUE;
 			}
 
-			static gboolean __enter_notify_cb(GtkWidget * pWidget, GdkEventCrossing * pEvent, TBox * pBox)
+			static gboolean __enter_notify_cb(GtkWidget* pWidget, GdkEventCrossing* pEvent, TBox* pBox)
 			{
 				pBox->redraw();
 				//				pBox->request();
@@ -343,58 +343,61 @@ namespace Mensia
 				return TRUE;
 			}
 
-			static gboolean __expose_left_cb(GtkWidget * pWidget, GdkEventExpose * pEvent, TBox * pBox)
+			static gboolean __expose_left_cb(GtkWidget* pWidget, GdkEventExpose* pEvent, TBox* pBox)
 			{
 				pBox->drawLeft();
 				return TRUE;
 			}
 
-			static gboolean __expose_right_cb(GtkWidget * pWidget, GdkEventExpose * pEvent, TBox * pBox)
+			static gboolean __expose_right_cb(GtkWidget* pWidget, GdkEventExpose* pEvent, TBox* pBox)
 			{
 				pBox->drawRight();
 				return TRUE;
 			}
 
-			static gboolean __expose_bottom_cb(GtkWidget * pWidget, GdkEventExpose * pEvent, TBox * pBox)
+			static gboolean __expose_bottom_cb(GtkWidget* pWidget, GdkEventExpose* pEvent, TBox* pBox)
 			{
 				pBox->drawBottom();
 				return TRUE;
 			}
 
-			static gboolean __mouse_button_cb(GtkWidget * pWidget, GdkEventButton * pEvent, TBox * pBox)
+			static gboolean __mouse_button_cb(GtkWidget* pWidget, GdkEventButton* pEvent, TBox* pBox)
 			{
 				int l_iStatus = 0;
 				switch (pEvent->type)
 				{
-				case GDK_BUTTON_PRESS: l_iStatus = 1; break;
-				case GDK_2BUTTON_PRESS: l_iStatus = 2; break;
-				case GDK_3BUTTON_PRESS: l_iStatus = 3; break;
-				default: break;
+					case GDK_BUTTON_PRESS: l_iStatus = 1;
+						break;
+					case GDK_2BUTTON_PRESS: l_iStatus = 2;
+						break;
+					case GDK_3BUTTON_PRESS: l_iStatus = 3;
+						break;
+					default: break;
 				}
 				pBox->mouseButton(int32_t(pEvent->x), int32_t(pEvent->y), pEvent->button, l_iStatus);
 				pBox->draw();
 				return TRUE;
 			}
 
-			static gboolean __motion_notify_cb(GtkWidget * pWidget, GdkEventMotion * pEvent, TBox * pBox)
+			static gboolean __motion_notify_cb(GtkWidget* pWidget, GdkEventMotion* pEvent, TBox* pBox)
 			{
 				pBox->mouseMotion(int32_t(pEvent->x), int32_t(pEvent->y));
 				return TRUE;
 			}
 
-			static gboolean __key_press_cb(GtkWidget * pWidget, GdkEventKey * pEvent, TBox * pBox)
+			static gboolean __key_press_cb(GtkWidget* pWidget, GdkEventKey* pEvent, TBox* pBox)
 			{
 				pBox->keyboard(0, 0, /*pEvent->x, pEvent->y,*/ pEvent->keyval, true);
 				return TRUE;
 			}
 
-			static gboolean __key_release_cb(GtkWidget * pWidget, GdkEventKey * pEvent, TBox * pBox)
+			static gboolean __key_release_cb(GtkWidget* pWidget, GdkEventKey* pEvent, TBox* pBox)
 			{
 				pBox->keyboard(0, 0, /*pEvent->x, pEvent->y,*/ pEvent->keyval, false);
 				return TRUE;
 			}
 		};
-	};
-};
+	}  // namespace AdvancedVisualization
+}  // namespace Mensia
 
 #endif // __OpenViBEPlugins_TGtkGLWidget_H__

@@ -32,8 +32,8 @@ namespace Mensia
 		{
 		public:
 
-			TBoxAlgorithmInstantLoretaViz(const OpenViBE::CIdentifier& rClassId, const std::vector < int >& vParameter)
-				:TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>(rClassId, vParameter) { }
+			TBoxAlgorithmInstantLoretaViz(const OpenViBE::CIdentifier& rClassId, const std::vector<int>& vParameter)
+				: TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>(rClassId, vParameter) { }
 
 			static void callback(GtkTreeSelection* pTreeSelection, TBoxAlgorithmInstantLoretaViz<TRendererFactoryClass, TRulerClass>* pBox)
 			{
@@ -47,7 +47,7 @@ namespace Mensia
 				GtkTreeIter l_oIter;
 
 				char* l_sValue = nullptr;
-				for (uint32_t i = 0; i < 3; i++)
+				for (uint32_t i = 0; i < 3; ++i)
 				{
 					GtkTreeSelection* l_pTreeSelection = gtk_tree_view_get_selection(m_pLookupTreeView[i]);
 
@@ -72,13 +72,13 @@ namespace Mensia
 				}
 			}
 
-			void fill_region(GtkListStore * pListStore, GtkTreeView * pTreeView, IRenderer * pRenderer, uint32_t ui32RegionCategory)
+			void fill_region(GtkListStore* pListStore, GtkTreeView* pTreeView, IRenderer* pRenderer, uint32_t ui32RegionCategory)
 			{
 				GtkTreeIter l_oGtkTreeIterator;
 
 				gtk_list_store_clear(pListStore);
 				gtk_tree_selection_set_mode(gtk_tree_view_get_selection(pTreeView), GTK_SELECTION_MULTIPLE);
-				for (uint32_t i = 0; i < pRenderer->getRegionCount(ui32RegionCategory); i++)
+				for (uint32_t i = 0; i < pRenderer->getRegionCount(ui32RegionCategory); ++i)
 				{
 					const char* l_sName = m_pRenderer->getRegionName(ui32RegionCategory, i);
 					gtk_list_store_append((pListStore), &l_oGtkTreeIterator);
@@ -90,10 +90,10 @@ namespace Mensia
 			using TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::m_vRenderer;
 			using TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::m_pBuilder;
 
-			bool initialize()
+			bool initialize() override
 
 			{
-				TBoxAlgorithmInstantViz < TRendererFactoryClass, TRulerClass >::initialize();
+				TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::initialize();
 
 				m_pRenderer = m_vRenderer[0];
 
@@ -107,7 +107,7 @@ namespace Mensia
 				m_pLookupListStore[1] = GTK_LIST_STORE(::gtk_builder_get_object(m_pBuilder, "liststore_select_neuro_1"));
 				m_pLookupListStore[2] = GTK_LIST_STORE(::gtk_builder_get_object(m_pBuilder, "liststore_select_neuro_2"));
 
-				for (uint32_t i = 0; i < m_pRenderer->getRegionCategoryCount() && i < 3; i++)
+				for (uint32_t i = 0; i < m_pRenderer->getRegionCategoryCount() && i < 3; ++i)
 				{
 					this->fill_region(m_pLookupListStore[i], m_pLookupTreeView[i], m_pRenderer, i);
 				}
@@ -119,10 +119,9 @@ namespace Mensia
 				return true;
 			}
 
-			IRenderer* m_pRenderer;
-			GtkTreeView* m_pLookupTreeView[3];
-			GtkListStore* m_pLookupListStore[3];
+			IRenderer* m_pRenderer{};
+			GtkTreeView* m_pLookupTreeView[3]{};
+			GtkListStore* m_pLookupListStore[3]{};
 		};
-	};
-};
-
+	} // namespace AdvancedVisualization
+} // namespace Mensia

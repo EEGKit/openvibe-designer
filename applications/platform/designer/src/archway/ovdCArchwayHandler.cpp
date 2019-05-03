@@ -105,7 +105,7 @@ EngineInitialisationStatus CArchwayHandler::initialize()
 	};
 
 	// This function returns the last getPendingValue result as a vector
-	// Such encapsulation enables us to avoid a call to getPendingValueDimension
+// Such encapsulation enables us to avoid a call to getPendingValueDimension
 	// from the client plugin.
 	m_ArchwayBridge.popValueMatrix = [this](unsigned int uiValueChannelId) {
 		std::vector<float> m_vValueMatrix;
@@ -324,7 +324,7 @@ bool CArchwayHandler::startEngineWithPipeline(unsigned int uiPipelineClassId, bo
 
 		unsigned int pendingLogMessageCount = m_Archway->getPendingLogMessageCount(m_RunningPipelineId);
 
-		for (unsigned int i = 0; i < pendingLogMessageCount; i++)
+		for (unsigned int i = 0; i < pendingLogMessageCount; ++i)
 		{
 			unsigned int logLevel;
 			char messageBuffer[2048];
@@ -407,7 +407,7 @@ bool CArchwayHandler::loopEngine()
 
 	unsigned int pendingLogMessageCount = m_Archway->getPendingLogMessageCount(m_RunningPipelineId);
 
-	for (unsigned int i = 0; i < pendingLogMessageCount; i++)
+	for (unsigned int i = 0; i < pendingLogMessageCount; ++i)
 	{
 		unsigned int logLevel;
 		char messageBuffer[2048];
@@ -456,8 +456,8 @@ namespace
 		(void)pipelineId;
 
 		// This callback will go through the pipeline parameters one by one and push them into the
-		// vector of SPipelineParameters which is passed as the first element of the pUserData input pair
-		// This callback receives the parameter's name and default value from Archway, which is why we pass
+// vector of SPipelineParameters which is passed as the first element of the pUserData input pair
+// This callback receives the parameter's name and default value from Archway, which is why we pass
 		// it the list of the _currently set_ parameters for the pipeline
 		auto vCallbackParameters = static_cast<pair< vector<SPipelineParameter>*, map<string, string> const* >*>(userData);
 

@@ -41,4 +41,4 @@ namespace OpenViBEVisualizationToolkit
 
 		_IsDerivedFromClass_(OpenViBE::Plugins::IPluginObject, OV_ClassId_VisualizationContext)
 	};
-}
+}  // namespace OpenViBEVisualizationToolkit

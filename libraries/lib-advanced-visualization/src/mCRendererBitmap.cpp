@@ -34,7 +34,7 @@ void CRendererBitmap::rebuild(const IRendererContext& rContext)
 
 	m_vVertex.clear();
 	m_vVertex.resize(m_ui32ChannelCount);
-	for (i = 0; i < m_ui32ChannelCount; i++)
+	for (i = 0; i < m_ui32ChannelCount; ++i)
 	{
 		m_vVertex[i].resize((m_ui32SampleCount / m_ui32AutoDecimationFactor) * 4);
 		for (j = 0; j < m_ui32SampleCount - m_ui32AutoDecimationFactor + 1; j += m_ui32AutoDecimationFactor)
@@ -62,12 +62,12 @@ void CRendererBitmap::refresh(const IRendererContext & rContext)
 {
 	CRenderer::refresh(rContext);
 
-	if (!m_ui32HistoryCount) return;
+	if (!m_ui32HistoryCount) { return; }
 	if (m_vVertex.empty()) {
 		return;
 	}
 
-	for (uint32_t i = 0; i < m_ui32ChannelCount; i++)
+	for (uint32_t i = 0; i < m_ui32ChannelCount; ++i)
 	{
 		uint32_t k = ((m_ui32HistoryCount - 1) / m_ui32SampleCount) * m_ui32SampleCount;
 		std::vector < float > & l_vHistory = m_vHistory[i];
@@ -93,9 +93,9 @@ void CRendererBitmap::refresh(const IRendererContext & rContext)
 
 bool CRendererBitmap::render(const IRendererContext & rContext)
 {
-	if (!rContext.getSelectedCount()) return false;
-	if (m_vVertex.empty()) return false;
-	if (!m_ui32HistoryCount) return false;
+	if (!rContext.getSelectedCount()) { return false; }
+	if (m_vVertex.empty()) { return false; }
+	if (!m_ui32HistoryCount) { return false; }
 
 	uint32_t i;
 
@@ -108,7 +108,7 @@ bool CRendererBitmap::render(const IRendererContext & rContext)
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	glScalef(1, 1.f / rContext.getSelectedCount(), 1);
-	for (i = 0; i < rContext.getSelectedCount(); i++)
+	for (i = 0; i < rContext.getSelectedCount(); ++i)
 	{
 		glPushMatrix();
 		glTranslatef(0, rContext.getSelectedCount() - i - 1.f, 0);

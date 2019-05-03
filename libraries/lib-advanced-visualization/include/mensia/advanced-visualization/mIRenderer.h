@@ -62,7 +62,7 @@ namespace Mensia
 
 		public:
 
-			virtual ~IRenderer() { }
+			virtual ~IRenderer() = default;
 
 			virtual void setChannelLocalisation(const char* sFilename) = 0;
 			virtual void setChannelCount(uint32_t ui32ChannelCount) = 0;
@@ -97,6 +97,6 @@ namespace Mensia
 			virtual void selectRegion(uint32_t ui32RegionCategory, const char* sRegionName) = 0;
 			virtual void selectRegion(uint32_t ui32RegionCategory, uint32_t ui32RegionIndex) = 0;
 		};
-	};
-};
+	}  // namespace AdvancedVisualization
+}  // namespace Mensia
 

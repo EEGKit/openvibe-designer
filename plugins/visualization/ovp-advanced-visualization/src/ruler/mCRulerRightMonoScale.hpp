@@ -34,9 +34,9 @@ namespace Mensia
 
 			CRulerRightMonoScale()
 
-				:m_fLastScale(-1) { }
+				: m_fLastScale(-1) { }
 
-			virtual void renderRight(GtkWidget* pWidget)
+			void renderRight(GtkWidget* pWidget) override
 			{
 				float l_fScale = 1.f / m_pRendererContext->getScale();
 				if (m_fLastScale != l_fScale)
@@ -74,10 +74,10 @@ namespace Mensia
 			}
 
 			float m_fLastScale;
-			std::vector < double > m_vRange;
-			std::vector < double >::iterator it;
+			std::vector<double> m_vRange;
+			std::vector<double>::iterator it;
 		};
-	};
-};
+	}  // namespace AdvancedVisualization
+}  // namespace Mensia
 
 #endif // __OpenViBEPlugins_CRulerRightMonoScale_H__

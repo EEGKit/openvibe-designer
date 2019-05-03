@@ -35,16 +35,16 @@ namespace Mensia
 
 			virtual void renderFinal(float fProgress) = 0;
 
-			virtual void render()
+			void render() override
 
 			{
 #if 0
 				::printf("%p = %p\n", this, m_pRenderer);
 #endif
-				if (m_pRenderer == nullptr) return;
-				if (m_pRenderer->getSampleCount() == 0) return;
-				if (m_pRenderer->getHistoryCount() == 0) return;
-				if (m_pRenderer->getHistoryIndex() == 0) return;
+				if (m_pRenderer == nullptr) { return; }
+				if (m_pRenderer->getSampleCount() == 0) { return; }
+				if (m_pRenderer->getHistoryCount() == 0) { return; }
+				if (m_pRenderer->getHistoryIndex() == 0) { return; }
 
 				uint32_t l_ui32SampleCount = m_pRenderer->getSampleCount();
 				uint32_t l_ui32HistoryIndex = m_pRenderer->getHistoryIndex();
@@ -56,7 +56,7 @@ namespace Mensia
 				}
 			}
 		};
-	};
-};
+	}  // namespace AdvancedVisualization
+}  // namespace Mensia
 
 #endif // __OpenViBEPlugins_CRulerProgress_H__

@@ -11,16 +11,16 @@ static void type_changed_cb(GtkComboBox* pWidget, gpointer pUserData)
 }
 
 CSettingEditorDialog::CSettingEditorDialog(const IKernelContext& rKernelContext, IBox& rBox, uint32_t ui32SettingIndex, const char* sTitle, const char* sGUIFilename, const char* sGUISettingsFilename)
-	:m_rKernelContext(rKernelContext)
-	, m_rBox(rBox)
-	, m_oHelper(rKernelContext, sGUIFilename)
-	, m_ui32SettingIndex(ui32SettingIndex)
-	, m_sGUIFilename(sGUIFilename)
-	, m_sGUISettingsFilename(sGUISettingsFilename)
-	, m_sTitle(sTitle)
-	, m_pDefaultValue(nullptr) { }
+	: m_rKernelContext(rKernelContext)
+	  , m_rBox(rBox)
+	  , m_oHelper(rKernelContext, sGUIFilename)
+	  , m_ui32SettingIndex(ui32SettingIndex)
+	  , m_sGUIFilename(sGUIFilename)
+	  , m_sGUISettingsFilename(sGUISettingsFilename)
+	  , m_sTitle(sTitle)
+	  , m_pDefaultValue(nullptr) { }
 
-CSettingEditorDialog::~CSettingEditorDialog() { }
+CSettingEditorDialog::~CSettingEditorDialog() = default;
 
 bool CSettingEditorDialog::run()
 
@@ -50,7 +50,7 @@ bool CSettingEditorDialog::run()
 	gint l_iActive = -1;
 	uint32_t numSettings = 0; // Cannot rely on m_vSettingTypes.size() -- if there are any duplicates, it wont increment properly (and should be an error anyway) ...
 
-	for (auto l_oCurrentTypeIdentifier : m_rKernelContext.getTypeManager().getSortedTypes())
+	for (const auto& l_oCurrentTypeIdentifier : m_rKernelContext.getTypeManager().getSortedTypes())
 	{
 		if (!m_rKernelContext.getTypeManager().isStream(l_oCurrentTypeIdentifier.first))
 		{
@@ -119,7 +119,7 @@ void CSettingEditorDialog::typeChangedCB()
 	gtk_builder_add_from_file(l_pBuilderInterfaceDefaultValueDummy, m_sGUISettingsFilename.toASCIIString(), nullptr);
 	gtk_builder_connect_signals(l_pBuilderInterfaceDefaultValueDummy, nullptr);
 
-	if (m_pDefaultValue) gtk_container_remove(GTK_CONTAINER(m_pTable), m_pDefaultValue);
+	if (m_pDefaultValue) { gtk_container_remove(GTK_CONTAINER(m_pTable), m_pDefaultValue); }
 	m_pDefaultValue = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceDefaultValueDummy, l_sWidgetName.toASCIIString()));
 	gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(m_pDefaultValue)), m_pDefaultValue);
 	gtk_table_attach(GTK_TABLE(m_pTable), m_pDefaultValue, 1, 2, 2, 3, GtkAttachOptions(GTK_FILL | GTK_EXPAND), GtkAttachOptions(GTK_FILL | GTK_EXPAND), 0, 0);

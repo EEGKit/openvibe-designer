@@ -16,19 +16,18 @@ namespace
 		double green;
 		double blue;
 	} SColor;
-};
+} // namespace;
 
 bool Tools::ColorGradient::parse(IMatrix& colorGradientMatrix, const CString& string)
 {
 	std::string colorString(string.toASCIIString());
 	std::string::size_type startPosition = 0;
-	std::string::size_type endPosition;
 
-	std::map < double, SColor > colorGradientVector;
+	std::map<double, SColor> colorGradientVector;
 
 	do
 	{
-		endPosition = colorString.find(OV_Value_EnumeratedStringSeparator, startPosition);
+		std::string::size_type endPosition = colorString.find(OV_Value_EnumeratedStringSeparator, startPosition);
 		if (endPosition == std::string::npos)
 		{
 			endPosition = colorString.length();
@@ -77,16 +76,10 @@ bool Tools::ColorGradient::format(CString& string, const IMatrix& colorGradient)
 	separator[0] = OV_Value_EnumeratedStringSeparator;
 
 	std::string result;
-	for (uint32_t i = 0; i < colorGradient.getDimensionSize(1); i++)
+	for (uint32_t i = 0; i < colorGradient.getDimensionSize(1); ++i)
 	{
 		char buffer[1024];
-		sprintf(
-			buffer,
-			"%.0lf:%i,%i,%i",
-			colorGradient[i * 4],
-			static_cast<int>(colorGradient[i * 4 + 1]),
-			static_cast<int>(colorGradient[i * 4 + 2]),
-			static_cast<int>(colorGradient[i * 4 + 3]));
+		sprintf(buffer, "%.0lf:%i,%i,%i", colorGradient[i * 4], int(colorGradient[i * 4 + 1]), int(colorGradient[i * 4 + 2]), int(colorGradient[i * 4 + 3]));
 		result += (i == 0 ? "" : separator);
 		result += buffer;
 	}
@@ -95,7 +88,7 @@ bool Tools::ColorGradient::format(CString& string, const IMatrix& colorGradient)
 	return true;
 }
 
-bool Tools::ColorGradient::interpolate(IMatrix & interpolatedColorGradient, const IMatrix & colorGradient, const uint32_t steps)
+bool Tools::ColorGradient::interpolate(IMatrix& interpolatedColorGradient, const IMatrix& colorGradient, const uint32_t steps)
 {
 	uint32_t i;
 
@@ -111,7 +104,7 @@ bool Tools::ColorGradient::interpolate(IMatrix & interpolatedColorGradient, cons
 
 	std::map<double, SColor> colors;
 
-	for (i = 0; i < colorGradient.getDimensionSize(1); i++)
+	for (i = 0; i < colorGradient.getDimensionSize(1); ++i)
 	{
 		SColor color;
 		color.percent = colorGradient[i * 4];
@@ -123,16 +116,14 @@ bool Tools::ColorGradient::interpolate(IMatrix & interpolatedColorGradient, cons
 
 	if (colors.find(0) == colors.end())
 	{
-		SColor color;
-		color = colors.begin()->second;
+		SColor color = colors.begin()->second;
 		color.percent = 0;
 		colors[0] = color;
 	}
 
 	if (colors.find(100) == colors.end())
 	{
-		SColor color;
-		color = colors.rbegin()->second;
+		SColor color = colors.rbegin()->second;
 		color.percent = 100;
 		colors[100] = color;
 	}
@@ -141,7 +132,7 @@ bool Tools::ColorGradient::interpolate(IMatrix & interpolatedColorGradient, cons
 	auto it2 = colors.begin();
 	it2++;
 
-	for (i = 0; i < steps; i++)
+	for (i = 0; i < steps; ++i)
 	{
 		double t = double(100 * i) / (steps - 1);
 		while (it2->first < t)

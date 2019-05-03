@@ -26,7 +26,7 @@
 /*& Define                                                                  &*/
 /*&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&*/
 
-#define imin(x,y) ((x < y) ? x : y)
+#define imin(x,y) (((x) < (y)) ? (x) : (y))
 
 /**********************************************************************************/
 /*                               spline_tables                                    */
@@ -53,44 +53,42 @@
 
 int spline_tables(int order, double* pot_table, double* scd_table)
 {
-	double* c, * p;
-	double p0, p1, pn, usfn, gamma;
-	double fs, fsv, fsc;
-	double dexp, s1, s2, cn, cx, cnpn, fn;
-	int    j, kc, kv, n, ig;
-
 	if (order <= 2)
 	{
 		printf("spline_table error : spline order <= 2\n");
-		return (-1);
+		return -1;
 	}
+
+	double cnpn, fn;
+	int j, n;
+
 	/*===========================================================*/
 	/* Estimate the number of terms for the Legendre series      */
 	/* to have an error lower than 1e-10                         */
 	/*===========================================================*/
-	dexp = 10. / (float)(2 * order - 2);
-	kv = imin(400, (int)(pow(10.0, dexp) - 1.0));
-	fsv = 1.0;
-	if ((int)fmod((double)kv, 2.0) == 1) fsv = -1.0;
+	double dexp = 10. / float(2 * order - 2);
+	const int kv = imin(400, int(pow(10.0, dexp) - 1.0));
+	double fsv = 1.0;
+	if (int(fmod(double(kv), 2.0)) == 1) { fsv = -1.0; }
 
-	dexp = 10. / (float)(2 * order - 4);
-	kc = imin(400, (int)(pow(10.0, dexp) - 1.0));
-	fsc = 1.0;
-	if ((int)fmod((double)kc, 2.0) == 1) fsc = -1.0;
+	dexp = 10. / float(2 * order - 4);
+	const int kc = imin(400, int(pow(10.0, dexp) - 1.0));
+	double fsc = 1.0;
+	if (int(fmod(double(kc), 2.0)) == 1) { fsc = -1.0; }
 
-	c = (double*)malloc(sizeof(double) * kc);
-	p = (double*)malloc(sizeof(double) * kc);
+	double* c = static_cast<double*>(malloc(sizeof(double) * kc));
+	double* p = static_cast<double*>(malloc(sizeof(double) * kc));
 
 	/*=========================*/
 	/* Coefficient computation */
 	/*=========================*/
-	cn = 1.0;
+	double cn = 1.0;
 	for (j = 1; j < order; j++) { cn /= 2.0; }
 	c[0] = cn * 3.0;
 	for (n = 2; n <= kc; n++)
 	{
-		fn = (double)n;
-		cx = (fn - 1.0) / (fn + 1.0);
+		fn = double(n);
+		const double cx = (fn - 1.0) / (fn + 1.0);
 		for (j = 1; j < order; j++) { cn *= cx; }
 		c[n - 1] = (2.0 * fn + 1.0) * cn;
 	}
@@ -98,21 +96,21 @@ int spline_tables(int order, double* pot_table, double* scd_table)
 	/*========================*/
 	/* Table generation       */
 	/*========================*/
-	for (ig = 0; ig <= 1000; ig++)
+	for (int ig = 0; ig <= 1000; ig++)
 	{
 		/*-------------------------*/
 		/* Pn polynomial           */
 		/*-------------------------*/
-		gamma = (double)ig / 1000.0;
+		double gamma = double(ig) / 1000.0;
 		gamma = 1.0 - gamma;
-		p0 = 1.0;
-		p1 = gamma;
+		double p0 = 1.0;
+		double p1 = gamma;
 		p[0] = p1;
 		for (n = 2; n <= kc; n++)
 		{
-			fn = (double)n;
-			usfn = 1.0 / fn;
-			pn = (2.0 - usfn) * gamma * p1 - (1.0 - usfn) * p0;
+			fn = double(n);
+			const double usfn = 1.0 / fn;
+			const double pn = (2.0 - usfn) * gamma * p1 - (1.0 - usfn) * p0;
 			p0 = p1;
 			p1 = pn;
 			p[n - 1] = pn;
@@ -121,11 +119,12 @@ int spline_tables(int order, double* pot_table, double* scd_table)
 		/*-----------------------*/
 		/* pot_table computation */
 		/*-----------------------*/
-		s1 = 0.0; s2 = 0.0;
-		fs = fsv;
+		double s1 = 0.0;
+		double s2 = 0.0;
+		double fs = fsv;
 		for (n = kv; n >= 1; n--)
 		{
-			fn = (double)n;
+			fn = double(n);
 			cnpn = c[n - 1] * p[n - 1] / (fn * (fn + 1.0));
 			s1 += cnpn;
 			s2 += fs * cnpn;
@@ -137,7 +136,8 @@ int spline_tables(int order, double* pot_table, double* scd_table)
 		/*-----------------------*/
 		/* scd_table computation */
 		/*-----------------------*/
-		s1 = 0.0; s2 = 0.0;
+		s1 = 0.0;
+		s2 = 0.0;
 		fs = fsc;
 		for (n = kc; n >= 1; n--)
 		{
@@ -159,7 +159,7 @@ int spline_tables(int order, double* pot_table, double* scd_table)
 
 	free(c);
 	free(p);
-	return (0);
+	return 0;
 }
 
 /**********************************************************************************/
@@ -191,9 +191,7 @@ int spline_tables(int order, double* pot_table, double* scd_table)
 
 int spline_coef(int nb_value, double** xyz, double* values, double* table, double* coef)
 {
-	int    i, j, l0, ih, igam, info, itmp;
-	double t1, t2, t3, tp, v1, v2, fgam;
-	double xj, yj, zj;
+	int i, info, itmp;
 
 	double* p_mat_a = nullptr;
 	int* p_iwork = nullptr;
@@ -201,13 +199,13 @@ int spline_coef(int nb_value, double** xyz, double* values, double* table, doubl
 	/*=========================================*/
 	/* allocation of temporary arrays          */
 	/*=========================================*/
-	p_mat_a = (double*)malloc(sizeof(double) * ((nb_value + 1) * (nb_value + 2)) / 2);
+	p_mat_a = static_cast<double*>(malloc(sizeof(double) * ((nb_value + 1) * (nb_value + 2)) / 2));
 	if (p_mat_a == nullptr)
 	{
 		printf("spline_coef error : allocation p_mat_a\n");
 		return (-1);
 	}
-	p_iwork = (int*)malloc(sizeof(int) * (nb_value + 1));
+	p_iwork = static_cast<int*>(malloc(sizeof(int) * (nb_value + 1)));
 	if (p_iwork == nullptr)
 	{
 		printf("spline_coef error : allocation p_iwork\n");
@@ -217,8 +215,8 @@ int spline_coef(int nb_value, double** xyz, double* values, double* table, doubl
 	/*================================*/
 	/* Initialization of matrix A     */
 	/*================================*/
-	l0 = ((nb_value + 1) * (nb_value)) / 2;
-	for (i = l0; i < l0 + nb_value; i++)
+	const int l0 = ((nb_value + 1) * (nb_value)) / 2;
+	for (i = l0; i < l0 + nb_value; ++i)
 	{
 		*(p_mat_a + i) = 1.0;
 	}
@@ -227,23 +225,23 @@ int spline_coef(int nb_value, double** xyz, double* values, double* table, doubl
 	/*=========================*/
 	/* computation of matrix A */
 	/*=========================*/
-	ih = 0;
-	for (j = 0; j < nb_value; j++)
+	int ih = 0;
+	for (int j = 0; j < nb_value; j++)
 	{
-		xj = xyz[j][0];
-		yj = xyz[j][1];
-		zj = xyz[j][2];
-		for (i = 0; i < j; i++)
+		const double xj = xyz[j][0];
+		const double yj = xyz[j][1];
+		const double zj = xyz[j][2];
+		for (i = 0; i < j; ++i)
 		{
-			t1 = xyz[i][0] - xj;
-			t2 = xyz[i][1] - yj;
-			t3 = xyz[i][2] - zj;
-			tp = (t1 * t1 + t2 * t2 + t3 * t3) / 2.0;
-			fgam = (1.0 - tp) * 1000.0 + 1002.0;
-			igam = (int)fgam;
-			fgam -= (float)igam;
-			v1 = *(table + igam - 1);
-			v2 = *(table + igam) - v1;
+			const double t1 = xyz[i][0] - xj;
+			const double t2 = xyz[i][1] - yj;
+			const double t3 = xyz[i][2] - zj;
+			const double tp = (t1 * t1 + t2 * t2 + t3 * t3) / 2.0;
+			double fgam = (1.0 - tp) * 1000.0 + 1002.0;
+			const int igam = int(fgam);
+			fgam -= float(igam);
+			const double v1 = *(table + igam - 1);
+			const double v2 = *(table + igam) - v1;
 			*(p_mat_a + ih++) = v2 * fgam + v1;
 		}
 		*(p_mat_a + ih++) = *(table + 2001);
@@ -263,15 +261,12 @@ int spline_coef(int nb_value, double** xyz, double* values, double* table, doubl
 	/*=======================================================*/
 	/* Coefficient computation (solving a triangular system) */
 	/*=======================================================*/
-	for (i = 0; i < nb_value; i++)
-	{
-		coef[i] = values[i];
-	}
+	for (i = 0; i < nb_value; ++i) { coef[i] = values[i]; }
 	coef[nb_value] = 0.0;
 	sspsl(p_mat_a, &itmp, p_iwork, coef);
 	free(p_mat_a);
 	free(p_iwork);
-	return (0);
+	return 0;
 }
 
 /**********************************************************************************/
@@ -307,26 +302,21 @@ int spline_coef(int nb_value, double** xyz, double* values, double* table, doubl
 
 double spline_interp(int nb_value, double** xyz, double* table, double* coef, double xx, double yy, double zz)
 {
-	double t1, t2, t3;
-	double t123, fgam, v1, v2;
-	double ffn;
-	int    i, k, igam;
-
-	ffn = coef[nb_value];
-	k = 0;
-	for (i = 0; i < nb_value; i++)
+	double ffn = coef[nb_value];
+	int k = 0;
+	for (int i = 0; i < nb_value; ++i)
 	{
-		t1 = xx - xyz[i][0];
-		t2 = yy - xyz[i][1];
-		t3 = zz - xyz[i][2];
-		t123 = (t1 * t1 + t2 * t2 + t3 * t3) / 2.;
-		fgam = (1.0 - t123) * 1000. + 1002.;
-		igam = (int)fgam;
-		fgam -= (double)igam;
-		v1 = table[igam - 1];
-		v2 = table[igam] - v1;
+		const double t1 = xx - xyz[i][0];
+		const double t2 = yy - xyz[i][1];
+		const double t3 = zz - xyz[i][2];
+		const double t123 = (t1 * t1 + t2 * t2 + t3 * t3) / 2.;
+		double fgam = (1.0 - t123) * 1000. + 1002.;
+		const int igam = int(fgam);
+		fgam -= double(igam);
+		const double v1 = table[igam - 1];
+		const double v2 = table[igam] - v1;
 		ffn += coef[k] * (v2 * fgam + v1);
 		k++;
 	}
-	return (ffn);
+	return ffn;
 }

@@ -6,13 +6,13 @@ using namespace Plugins;
 using namespace Kernel;
 
 CRenameDialog::CRenameDialog(const IKernelContext& rKernelContext, const CString& rInitialName, const CString& rDefaultName, const char* sGUIFilename)
-	:m_rKernelContext(rKernelContext)
-	, m_sInitialName(rInitialName)
-	, m_sDefaultName(rDefaultName)
-	, m_sResult(rInitialName)
-	, m_sGUIFilename(sGUIFilename) { }
+	: m_rKernelContext(rKernelContext)
+	  , m_sInitialName(rInitialName)
+	  , m_sDefaultName(rDefaultName)
+	  , m_sResult(rInitialName)
+	  , m_sGUIFilename(sGUIFilename) { }
 
-CRenameDialog::~CRenameDialog() { }
+CRenameDialog::~CRenameDialog() = default;
 
 bool CRenameDialog::run()
 
@@ -59,4 +59,6 @@ bool CRenameDialog::run()
 }
 
 CString CRenameDialog::getResult()
- { return m_sResult; }
+{
+	return m_sResult;
+}

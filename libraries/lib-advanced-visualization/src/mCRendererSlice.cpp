@@ -37,7 +37,7 @@ void CRendererSlice::rebuild(const IRendererContext& rContext)
 	m_vQuad.clear();
 	m_vQuad.resize(m_ui32SampleCount * m_ui32ChannelCount * 6 * 4);
 
-	for (i = 0; i < m_ui32SampleCount; i++)
+	for (i = 0; i < m_ui32SampleCount; ++i)
 	{
 		for (j = 0; j < m_ui32ChannelCount; j++)
 		{
@@ -127,7 +127,7 @@ void CRendererSlice::refresh(const IRendererContext & rContext)
 
 	uint32_t i, j, k, l;
 
-	for (i = m_ui32HistoryIndex; i < m_ui32HistoryCount; i++)
+	for (i = m_ui32HistoryIndex; i < m_ui32HistoryCount; ++i)
 	{
 		k = (i % m_ui32SampleCount) * m_ui32ChannelCount * 8;
 		for (j = 0; j < m_ui32ChannelCount; j++)
@@ -147,8 +147,8 @@ bool CRendererSlice::render(const IRendererContext & rContext)
 	// uint32_t i, j;
 	float d = 3.5;
 
-	if (!rContext.getSelectedCount()) return false;
-	if (!m_ui32HistoryCount) return false;
+	if (!rContext.getSelectedCount()) { return false; }
+	if (!m_ui32HistoryCount) { return false; }
 
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_LIGHTING);

@@ -76,7 +76,7 @@ void CRenderer::setChannelCount(uint32_t ui32ChannelCount)
 
 void CRenderer::setSampleCount(uint32_t ui32SampleCount)
 {
-	if (ui32SampleCount == 0) ui32SampleCount = 1;
+	if (ui32SampleCount == 0) { ui32SampleCount = 1; }
 	m_ui32SampleCount = ui32SampleCount;
 	m_f32InverseSampleCount = (ui32SampleCount ? 1.f / ui32SampleCount : 1);
 	m_vVertex.clear();
@@ -85,7 +85,7 @@ void CRenderer::setSampleCount(uint32_t ui32SampleCount)
 
 void CRenderer::feed(const float* pDataVector)
 {
-	for (uint32_t i = 0; i < m_ui32ChannelCount; i++)
+	for (uint32_t i = 0; i < m_ui32ChannelCount; ++i)
 	{
 		m_vHistory[i].push_back(pDataVector[i]);
 	}
@@ -94,7 +94,7 @@ void CRenderer::feed(const float* pDataVector)
 
 void CRenderer::feed(const float* pDataVector, uint32_t ui32SampleCount)
 {
-	for (uint32_t i = 0; i < m_ui32ChannelCount; i++)
+	for (uint32_t i = 0; i < m_ui32ChannelCount; ++i)
 	{
 		for (uint32_t j = 0; j < ui32SampleCount; j++)
 		{
@@ -107,12 +107,12 @@ void CRenderer::feed(const float* pDataVector, uint32_t ui32SampleCount)
 
 void CRenderer::feed(uint64_t ui64StimulationDate, uint64_t ui64StimulationId)
 {
-	m_vStimulationHistory.push_back(std::make_pair((ui64StimulationDate >> 16) / 65536., ui64StimulationId));
+	m_vStimulationHistory.emplace_back((ui64StimulationDate >> 16) / 65536., ui64StimulationId);
 }
 
 void CRenderer::prefeed(uint32_t ui32PreFeedSampleCount)
 {
-	for (uint32_t i = 0; i < m_ui32ChannelCount; i++)
+	for (uint32_t i = 0; i < m_ui32ChannelCount; ++i)
 	{
 		m_vHistory[i].insert(m_vHistory[i].begin(), ui32PreFeedSampleCount, 0.f);
 	}
@@ -126,7 +126,7 @@ float CRenderer::getSuggestedScale()
 	{
 		std::vector<float> l_vf32Average;
 
-		for (uint32_t i = 0; i < m_ui32ChannelCount; i++)
+		for (uint32_t i = 0; i < m_ui32ChannelCount; ++i)
 		{
 			l_vf32Average.push_back(0);
 
@@ -164,7 +164,7 @@ void CRenderer::clear(uint32_t ui32SampleCountToKeep = 0)
 
 			if (l_ui32SampleToDelete > 1)
 			{
-				for (uint32_t i = 0; i < m_vHistory.size(); i++)
+				for (uint32_t i = 0; i < m_vHistory.size(); ++i)
 				{
 					std::vector<float>(m_vHistory[i].begin() + l_ui32SampleToDelete, m_vHistory[i].end()).swap(m_vHistory[i]);
 				}
@@ -197,14 +197,14 @@ bool CRenderer::getSampleAtERPFraction(float fERPFraction, std::vector < float >
 {
 	vSample.resize(m_ui32ChannelCount);
 
-	if (m_ui32SampleCount > m_ui32HistoryCount) return false;
+	if (m_ui32SampleCount > m_ui32HistoryCount) { return false; }
 
 	float l_f32SampleIndexERP = (fERPFraction * (m_ui32SampleCount - 1));
 	float l_f32Alpha = l_f32SampleIndexERP - std::floor(l_f32SampleIndexERP);
 	uint32_t l_ui32SampleIndexERP1 = uint32_t(l_f32SampleIndexERP) % m_ui32SampleCount;
 	uint32_t l_ui32SampleIndexERP2 = uint32_t(l_f32SampleIndexERP + 1) % m_ui32SampleCount;
 
-	for (uint32_t i = 0; i < m_ui32ChannelCount; i++)
+	for (uint32_t i = 0; i < m_ui32ChannelCount; ++i)
 	{
 		vSample[i] = m_vHistory[i][m_ui32HistoryCount - m_ui32SampleCount + l_ui32SampleIndexERP1] * (1 - l_f32Alpha)
 			+ m_vHistory[i][m_ui32HistoryCount - m_ui32SampleCount + l_ui32SampleIndexERP2] * (l_f32Alpha);

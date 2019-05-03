@@ -6,12 +6,12 @@ using namespace Kernel;
 using namespace OpenViBEDesigner;
 
 CLinkProxy::CLinkProxy(const ILink& rLink)
-	:m_pConstLink(&rLink)
-	, m_pLink(nullptr)
-	, m_iXSource(0)
-	, m_iYSource(0)
-	, m_iXTarget(0)
-	, m_iYTarget(0)
+	: m_pConstLink(&rLink)
+	  , m_pLink(nullptr)
+	  , m_iXSource(0)
+	  , m_iYSource(0)
+	  , m_iXTarget(0)
+	  , m_iYTarget(0)
 {
 	if (m_pConstLink)
 	{
@@ -24,12 +24,12 @@ CLinkProxy::CLinkProxy(const ILink& rLink)
 }
 
 CLinkProxy::CLinkProxy(IScenario& rScenario, const CIdentifier& rLinkIdentifier)
-	:m_pConstLink(rScenario.getLinkDetails(rLinkIdentifier))
-	, m_pLink(rScenario.getLinkDetails(rLinkIdentifier))
-	, m_iXSource(0)
-	, m_iYSource(0)
-	, m_iXTarget(0)
-	, m_iYTarget(0)
+	: m_pConstLink(rScenario.getLinkDetails(rLinkIdentifier))
+	  , m_pLink(rScenario.getLinkDetails(rLinkIdentifier))
+	  , m_iXSource(0)
+	  , m_iYSource(0)
+	  , m_iXTarget(0)
+	  , m_iYTarget(0)
 {
 	if (m_pConstLink)
 	{
@@ -49,44 +49,72 @@ CLinkProxy::~CLinkProxy()
 		TAttributeHandler l_oAttributeHandler(*m_pLink);
 
 		if (l_oAttributeHandler.hasAttribute(OV_AttributeId_Link_XSourcePosition))
+		{
 			l_oAttributeHandler.setAttributeValue<int>(OV_AttributeId_Link_XSourcePosition, m_iXSource);
+		}
 		else
+		{
 			l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Link_XSourcePosition, m_iXSource);
+		}
 
 		if (l_oAttributeHandler.hasAttribute(OV_AttributeId_Link_YSourcePosition))
+		{
 			l_oAttributeHandler.setAttributeValue<int>(OV_AttributeId_Link_YSourcePosition, m_iYSource);
+		}
 		else
+		{
 			l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Link_YSourcePosition, m_iYSource);
+		}
 
 		if (l_oAttributeHandler.hasAttribute(OV_AttributeId_Link_XTargetPosition))
+		{
 			l_oAttributeHandler.setAttributeValue<int>(OV_AttributeId_Link_XTargetPosition, m_iXTarget);
+		}
 		else
+		{
 			l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Link_XTargetPosition, m_iXTarget);
+		}
 
 		if (l_oAttributeHandler.hasAttribute(OV_AttributeId_Link_YTargetPosition))
+		{
 			l_oAttributeHandler.setAttributeValue<int>(OV_AttributeId_Link_YTargetPosition, m_iYTarget);
+		}
 		else
+		{
 			l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Link_YTargetPosition, m_iYTarget);
+		}
 	}
 }
 
-CLinkProxy::operator ILink* ()
- { return m_pLink; }
+CLinkProxy::operator ILink*()
+{
+	return m_pLink;
+}
 
-CLinkProxy::operator const ILink* ()
- { return m_pConstLink; }
+CLinkProxy::operator const ILink*()
+{
+	return m_pConstLink;
+}
 
 int32_t CLinkProxy::getXSource()
- { return m_iXSource; }
+{
+	return m_iXSource;
+}
 
 int32_t CLinkProxy::getYSource()
- { return m_iYSource; }
+{
+	return m_iYSource;
+}
 
 int32_t CLinkProxy::getXTarget()
- { return m_iXTarget; }
+{
+	return m_iXTarget;
+}
 
 int32_t CLinkProxy::getYTarget()
- { return m_iYTarget; }
+{
+	return m_iYTarget;
+}
 
 void CLinkProxy::setSource(int32_t i32XSource, int32_t i32YSource)
 {

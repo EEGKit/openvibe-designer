@@ -33,16 +33,16 @@ namespace
 {
 	template <typename T> bool littleEndianToHost(const uint8_t* pBuffer, T* pValue)
 	{
-		if (!pBuffer) return false;
-		if (!pValue) return false;
+		if (!pBuffer) { return false; }
+		if (!pValue) { return false; }
 		memset(pValue, 0, sizeof(T));
-		for (unsigned int i = 0; i < sizeof(T); i++)
+		for (unsigned int i = 0; i < sizeof(T); ++i)
 		{
 			((uint8_t*)pValue)[i] = pBuffer[i];
 		}
 		return true;
 	}
-}
+}  // namespace
 
 C3DMesh::C3DMesh()
 
@@ -52,7 +52,7 @@ C3DMesh::C3DMesh()
 	m_vColor[2] = 1;
 }
 
-C3DMesh::~C3DMesh() { }
+C3DMesh::~C3DMesh() = default;
 
 void C3DMesh::clear()
 
@@ -68,7 +68,7 @@ void C3DMesh::clear()
 
 bool C3DMesh::load(const void* pBuffer, unsigned int uiBufferSize)
 {
-	const uint32_t* l_pBuffer = reinterpret_cast<const uint32_t*>(pBuffer);
+	const auto* l_pBuffer = reinterpret_cast<const uint32_t*>(pBuffer);
 
 	uint32_t l_ui32VertexCount;
 	uint32_t l_ui32TriangleCount;
@@ -81,14 +81,14 @@ bool C3DMesh::load(const void* pBuffer, unsigned int uiBufferSize)
 
 	uint32_t i, j = 2;
 
-	for (i = 0; i < l_ui32VertexCount; i++)
+	for (i = 0; i < l_ui32VertexCount; ++i)
 	{
 		littleEndianToHost<float>(reinterpret_cast<const uint8_t*>(&l_pBuffer[j++]), &m_vVertex[i].x);
 		littleEndianToHost<float>(reinterpret_cast<const uint8_t*>(&l_pBuffer[j++]), &m_vVertex[i].y);
 		littleEndianToHost<float>(reinterpret_cast<const uint8_t*>(&l_pBuffer[j++]), &m_vVertex[i].z);
 	}
 
-	for (i = 0; i < l_ui32TriangleCount * 3; i++)
+	for (i = 0; i < l_ui32TriangleCount * 3; ++i)
 	{
 		littleEndianToHost<uint32_t>(reinterpret_cast<const uint8_t*>(&l_pBuffer[j++]), &m_vTriangle[i]);
 	}
@@ -130,7 +130,7 @@ bool C3DMesh::compile()
 		m_vNormal[i3].y += v1.y;
 		m_vNormal[i3].z += v1.z;
 	}
-	for (i = 0; i < m_vNormal.size(); i++)
+	for (i = 0; i < m_vNormal.size(); ++i)
 	{
 		m_vNormal[i].normalize();
 	}
@@ -142,7 +142,7 @@ bool C3DMesh::project(std::vector < CVertex >& vProjectedChannelCoordinate, cons
 	size_t i, j;
 
 	vProjectedChannelCoordinate.resize(vChannelCoordinate.size());
-	for (i = 0; i < vChannelCoordinate.size(); i++)
+	for (i = 0; i < vChannelCoordinate.size(); ++i)
 	{
 		CVertex p, q;
 		p = vChannelCoordinate[i];

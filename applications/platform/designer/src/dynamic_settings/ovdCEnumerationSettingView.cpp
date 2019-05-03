@@ -15,8 +15,8 @@ static void on_change(GtkEntry* entry, gpointer pUserData)
 }
 
 CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox& rBox, uint32_t ui32Index,
-	CString& rBuilderName, const Kernel::IKernelContext& rKernelContext,
-	const CIdentifier& rTypeIdentifier) :
+												 CString& rBuilderName, const Kernel::IKernelContext& rKernelContext,
+												 const CIdentifier& rTypeIdentifier) :
 	CAbstractSettingView(rBox, ui32Index, rBuilderName, "settings_collection-comboboxentry_setting_enumeration"),
 	m_oTypeIdentifier(rTypeIdentifier),
 	m_rKernelContext(rKernelContext),
@@ -29,7 +29,7 @@ CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox& rBox, uint32_t ui
 
 	std::vector<std::string> l_vEntries;
 
-	for (uint64_t i = 0; i < m_rKernelContext.getTypeManager().getEnumerationEntryCount(m_oTypeIdentifier); i++)
+	for (uint64_t i = 0; i < m_rKernelContext.getTypeManager().getEnumerationEntryCount(m_oTypeIdentifier); ++i)
 	{
 		CString l_sEntryName;
 		uint64_t l_ui64EntryValue;
@@ -46,7 +46,7 @@ CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox& rBox, uint32_t ui
 	gtk_combo_box_set_wrap_width(m_pComboBox, 0);
 	gtk_list_store_clear(l_pList);
 
-	for (size_t i = 0; i < l_vEntries.size(); i++)
+	for (size_t i = 0; i < l_vEntries.size(); ++i)
 	{
 		gtk_list_store_append(l_pList, &l_oListIter);
 		gtk_list_store_set(l_pList, &l_oListIter, 0, l_vEntries[i].c_str(), -1);
@@ -68,13 +68,13 @@ CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox& rBox, uint32_t ui
 }
 
 
-void CEnumerationSettingView::getValue(CString & rValue) const
+void CEnumerationSettingView::getValue(CString& rValue) const
 {
 	rValue = CString(gtk_combo_box_get_active_text(m_pComboBox));
 }
 
 
-void CEnumerationSettingView::setValue(const CString & rValue)
+void CEnumerationSettingView::setValue(const CString& rValue)
 {
 	m_bOnValueSetting = true;
 
@@ -84,7 +84,7 @@ void CEnumerationSettingView::setValue(const CString & rValue)
 		GtkTreeIter l_oListIter;
 		GtkListStore* l_pList = GTK_LIST_STORE(gtk_combo_box_get_model(m_pComboBox));
 		int valuesInModel = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(l_pList), nullptr);
-		if (valuesInModel == static_cast<int>(m_mEntriesIndex.size()))
+		if (valuesInModel == int(m_mEntriesIndex.size()))
 		{
 			gtk_list_store_append(l_pList, &l_oListIter);
 			valuesInModel += 1;
@@ -95,7 +95,6 @@ void CEnumerationSettingView::setValue(const CString & rValue)
 			GtkTreePath* treePath = gtk_tree_path_new_from_indices(valuesInModel - 1, -1);
 			gtk_tree_model_get_iter(GTK_TREE_MODEL(l_pList), &l_oListIter, treePath);
 			gtk_tree_path_free(treePath);
-
 		}
 		gtk_list_store_set(l_pList, &l_oListIter, 0, rValue.toASCIIString(), -1);
 		gtk_combo_box_set_active(m_pComboBox, valuesInModel - 1);
@@ -116,4 +115,3 @@ void CEnumerationSettingView::onChange()
 		g_free(l_sValue);
 	}
 }
-

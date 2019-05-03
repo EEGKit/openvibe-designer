@@ -27,11 +27,11 @@
 #include <gtk/gtk.h>
 
 #if defined TARGET_OS_Windows
-#include <windows.h>
+#include <Windows.h>
 #endif
 
-#include <GL/gl.h>
-#include <GL/glu.h>
+#include <gl/GL.h>
+#include <gl/GLU.h>
 
 #include <cmath>
 #include <vector>
@@ -48,18 +48,18 @@ namespace Mensia
 		{
 		private:
 
-			IRuler(const IRuler&);
+			IRuler(const IRuler&) = delete;
 
 		public:
 
 			IRuler()
 
-				:m_pRendererContext(nullptr)
-				, m_pRenderer(nullptr)
-				, m_fBlackAlpha(.9f)
-				, m_fWhiteAlpha(1.f) { }
+				: m_pRendererContext(nullptr)
+				  , m_pRenderer(nullptr)
+				  , m_fBlackAlpha(.9f)
+				  , m_fWhiteAlpha(1.f) { }
 
-			virtual ~IRuler() { }
+			virtual ~IRuler() = default;
 
 			virtual void setRendererContext(const IRendererContext* pRendererContext)
 			{
@@ -111,24 +111,32 @@ namespace Mensia
 
 			virtual void render() { }
 
-			virtual void renderLeft(GtkWidget* pWidget) { }
+			virtual void renderLeft(GtkWidget* /*pWidget*/) { }
 
-			virtual void renderRight(GtkWidget* pWidget) { }
+			virtual void renderRight(GtkWidget* /*pWidget*/) { }
 
-			virtual void renderBottom(GtkWidget* pWidget) { }
+			virtual void renderBottom(GtkWidget* /*pWidget*/) { }
 
 		protected:
 
-			std::vector < double > split_range(double fStart, double fStop, unsigned int uiCount = 10)
+			std::vector<double> split_range(double fStart, double fStop, unsigned int uiCount = 10)
 			{
-				std::vector < double > l_vResult;
+				std::vector<double> l_vResult;
 				double l_fRange = fStop - fStart;
 				double l_fOrder = floor(log(l_fRange) / log(10.) - .1f);
 				double l_fStep = pow(10, l_fOrder);
 				double l_fStepCount = trunc(l_fRange / l_fStep);
 
-				while (l_fStepCount < uiCount) { l_fStepCount *= 2; l_fStep /= 2; }
-				while (l_fStepCount > uiCount) { l_fStepCount /= 2; l_fStep *= 2; }
+				while (l_fStepCount < uiCount)
+				{
+					l_fStepCount *= 2;
+					l_fStep /= 2;
+				}
+				while (l_fStepCount > uiCount)
+				{
+					l_fStepCount /= 2;
+					l_fStep *= 2;
+				}
 
 				double l_fValue = trunc(fStart / l_fStep) * l_fStep;
 				while (l_fValue < fStart)
@@ -173,7 +181,7 @@ namespace Mensia
 			float m_fBlackAlpha;
 			float m_fWhiteAlpha;
 		};
-	};
-};
+	}  // namespace AdvancedVisualization
+}  // namespace Mensia
 
 #endif // __OpenViBEPlugins_IRuler_H__

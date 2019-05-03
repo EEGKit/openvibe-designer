@@ -32,7 +32,7 @@ namespace Mensia
 		{
 		public:
 
-			CVertex(double _x = 0, double _y = 0, double _z = 0, double _u = 0, double _v = 0)
+			explicit CVertex(double _x = 0, double _y = 0, double _z = 0, double _u = 0, double _v = 0)
 				:x(float(_x))
 				, y(float(_y))
 				, z(float(_z))
@@ -97,6 +97,6 @@ namespace Mensia
 
 			static bool isInTriangle(const CVertex& p, const CVertex& a, const CVertex& b, const CVertex& c) { return isOnSameSide(p, a, b, c) && isOnSameSide(p, b, c, a) && isOnSameSide(p, c, a, b); }
 		};
-	};
-};
+	} // namespace AdvancedVisualization
+} // namespace Mensia
 #pragma pack()

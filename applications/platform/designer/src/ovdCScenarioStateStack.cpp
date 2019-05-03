@@ -11,13 +11,13 @@ using namespace OpenViBEDesigner;
 using namespace OpenViBEToolkit;
 
 CScenarioStateStack::CScenarioStateStack(const IKernelContext& rKernelContext, CInterfacedScenario& interfacedScenario, IScenario& scenario)
-	:m_KernelContext(rKernelContext)
-	, m_InterfacedScenario(interfacedScenario)
-	, m_Scenario(scenario)
-	, m_MaximumStateCount(0)
+	: m_KernelContext(rKernelContext)
+	  , m_InterfacedScenario(interfacedScenario)
+	  , m_Scenario(scenario)
+	  , m_MaximumStateCount(0)
 {
 	m_CurrentState = m_States.begin();
-	m_MaximumStateCount = static_cast<uint32_t>(m_KernelContext.getConfigurationManager().expandAsUInteger("${Designer_UndoRedoStackSize}", 64));
+	m_MaximumStateCount = uint32_t(m_KernelContext.getConfigurationManager().expandAsUInteger("${Designer_UndoRedoStackSize}", 64));
 }
 
 CScenarioStateStack::~CScenarioStateStack()
@@ -32,9 +32,7 @@ CScenarioStateStack::~CScenarioStateStack()
 bool CScenarioStateStack::isUndoPossible()
 {
 	auto itState = m_CurrentState;
-	if (itState == m_States.begin()) { return false; }
-
-	return true;
+	return itState != m_States.begin();
 }
 
 bool CScenarioStateStack::undo()
@@ -47,9 +45,7 @@ bool CScenarioStateStack::undo()
 
 	m_CurrentState = itState;
 
-	if (!this->restoreState(**m_CurrentState)) { return false; }
-
-	return true;
+	return this->restoreState(**m_CurrentState);
 }
 
 void CScenarioStateStack::dropLastState()
@@ -63,8 +59,7 @@ bool CScenarioStateStack::isRedoPossible()
 	if (itState == m_States.end()) { return false; }
 
 	itState++;
-	if (itState == m_States.end()) { return false; }
-	return true;
+	return itState != m_States.end();
 }
 
 bool CScenarioStateStack::redo()
@@ -78,15 +73,13 @@ bool CScenarioStateStack::redo()
 
 	m_CurrentState = itState;
 
-	if (!this->restoreState(**m_CurrentState)) { return false; }
-
-	return true;
+	return this->restoreState(**m_CurrentState);
 }
 
 bool CScenarioStateStack::snapshot()
 
 {
-	CMemoryBuffer* newState = new CMemoryBuffer();
+	auto* newState = new CMemoryBuffer();
 
 	if (!this->dumpState(*newState))
 	{
@@ -134,11 +127,11 @@ bool CScenarioStateStack::restoreState(const IMemoryBuffer& state)
 	if (!importer) { return false; }
 
 	uLongf sourceSize = (uLongf)state.getSize() - sizeof(uLongf);
-	Bytef* sourceBuffer = (Bytef*)state.getDirectPointer();
+	auto* sourceBuffer = (Bytef*)state.getDirectPointer();
 
 	uLongf destinationSize = *(uLongf*)(state.getDirectPointer() + state.getSize() - sizeof(uLongf));
 	uncompressedMemoryBuffer.setSize(destinationSize, true);
-	Bytef * destinationBuffer = (Bytef*)uncompressedMemoryBuffer.getDirectPointer();
+	auto* destinationBuffer = (Bytef*)uncompressedMemoryBuffer.getDirectPointer();
 
 	if (uncompress(destinationBuffer, &destinationSize, sourceBuffer, sourceSize) != Z_OK) { return false; }
 
@@ -221,13 +214,13 @@ bool CScenarioStateStack::dumpState(IMemoryBuffer& state)
 	exporter->uninitialize();
 	m_KernelContext.getAlgorithmManager().releaseAlgorithm(*exporter);
 
-	uLongf sourceSize = (uLongf)uncompressedMemoryBuffer.getSize();
-	Bytef* sourceBuffer = (Bytef*)uncompressedMemoryBuffer.getDirectPointer();
+	auto sourceSize = (uLongf)uncompressedMemoryBuffer.getSize();
+	auto* sourceBuffer = (Bytef*)uncompressedMemoryBuffer.getDirectPointer();
 
 	compressedMemoryBuffer.setSize(12 + (uint64_t)(sourceSize * 1.1), true);
 
-	uLongf destinationSize = (uLongf)compressedMemoryBuffer.getSize();
-	Bytef* destinationBuffer = (Bytef*)compressedMemoryBuffer.getDirectPointer();
+	auto destinationSize = (uLongf)compressedMemoryBuffer.getSize();
+	auto* destinationBuffer = (Bytef*)compressedMemoryBuffer.getDirectPointer();
 
 	if (compress(destinationBuffer, &destinationSize, sourceBuffer, sourceSize) != Z_OK) { return false; }
 

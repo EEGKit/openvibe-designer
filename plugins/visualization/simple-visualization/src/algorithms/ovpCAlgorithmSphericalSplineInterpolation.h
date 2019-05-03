@@ -11,15 +11,15 @@ namespace OpenViBEPlugins
 {
 	namespace Test
 	{
-		class CAlgorithmSphericalSplineInterpolation : public OpenViBEToolkit::TAlgorithm < OpenViBE::Plugins::IAlgorithm >
+		class CAlgorithmSphericalSplineInterpolation : public OpenViBEToolkit::TAlgorithm<OpenViBE::Plugins::IAlgorithm>
 		{
 		public:
 
-			virtual void release() { delete this; }
+			void release() override { delete this; }
 
-			virtual bool initialize();
-			virtual bool uninitialize();
-			virtual bool process();
+			bool initialize() override;
+			bool uninitialize() override;
+			bool process() override;
 
 			_IsDerivedFromClass_Final_(OpenViBEToolkit::TAlgorithm < OpenViBE::Plugins::IAlgorithm >, OVP_ClassId_Algorithm_SphericalSplineInterpolation);
 
@@ -27,51 +27,51 @@ namespace OpenViBEPlugins
 
 			//input parameters
 			//----------------
-			OpenViBE::Kernel::TParameterHandler < int64_t > ip_i64SplineOrder;
-			OpenViBE::Kernel::TParameterHandler < int64_t > ip_i64ControlPointsCount;
-			OpenViBE::Kernel::TParameterHandler < OpenViBE::IMatrix* > ip_pControlPointsCoords;
-			OpenViBE::Kernel::TParameterHandler < OpenViBE::IMatrix* > ip_pControlPointsValues;
-			OpenViBE::Kernel::TParameterHandler < OpenViBE::IMatrix* > ip_pSamplePointsCoords;
+			OpenViBE::Kernel::TParameterHandler<int64_t> ip_i64SplineOrder;
+			OpenViBE::Kernel::TParameterHandler<int64_t> ip_i64ControlPointsCount;
+			OpenViBE::Kernel::TParameterHandler<OpenViBE::IMatrix*> ip_pControlPointsCoords;
+			OpenViBE::Kernel::TParameterHandler<OpenViBE::IMatrix*> ip_pControlPointsValues;
+			OpenViBE::Kernel::TParameterHandler<OpenViBE::IMatrix*> ip_pSamplePointsCoords;
 
 			//output parameters
 			//-----------------
-			OpenViBE::Kernel::TParameterHandler < OpenViBE::IMatrix* > op_pSamplePointsValues;
-			OpenViBE::Kernel::TParameterHandler < double > op_f64MinSamplePointValue;
-			OpenViBE::Kernel::TParameterHandler < double > op_f64MaxSamplePointValue;
+			OpenViBE::Kernel::TParameterHandler<OpenViBE::IMatrix*> op_pSamplePointsValues;
+			OpenViBE::Kernel::TParameterHandler<double> op_f64MinSamplePointValue;
+			OpenViBE::Kernel::TParameterHandler<double> op_f64MaxSamplePointValue;
 
 			//internal data
 			//-------------
-			bool m_bFirstProcess;
-			double* m_pDoubleCoords;
-			double** m_pInsermCoords;
-			double m_ScdTable[2004];
-			double m_PotTable[2004];
-			double* m_pSplineCoefs;
-			double* m_pLaplacianSplineCoefs;
+			bool m_bFirstProcess{};
+			double* m_pDoubleCoords{};
+			double** m_pInsermCoords{};
+			double m_ScdTable[2004]{};
+			double m_PotTable[2004]{};
+			double* m_pSplineCoefs{};
+			double* m_pLaplacianSplineCoefs{};
 		};
 
 		class CAlgorithmSphericalSplineInterpolationDesc : public OpenViBE::Plugins::IAlgorithmDesc
 		{
 		public:
 
-			virtual void release() { }
+			void release() override { }
 
-			virtual OpenViBE::CString getName() const { return OpenViBE::CString("Spherical spline interpolation"); }
-			virtual OpenViBE::CString getAuthorName() const { return OpenViBE::CString("Vincent Delannoy"); }
-			virtual OpenViBE::CString getAuthorCompanyName() const { return OpenViBE::CString("INRIA/IRISA"); }
-			virtual OpenViBE::CString getShortDescription() const { return OpenViBE::CString("Interpolates potentials/laplacians using a spherical spline"); }
-			virtual OpenViBE::CString getDetailedDescription() const { return OpenViBE::CString(""); }
-			virtual OpenViBE::CString getCategory() const { return OpenViBE::CString("Algorithm/Signal processing"); }
-			virtual OpenViBE::CString getVersion() const { return OpenViBE::CString("1.0"); }
-			virtual OpenViBE::CString getSoftwareComponent() const { return OpenViBE::CString("openvibe-designer"); }
-			virtual OpenViBE::CString getAddedSoftwareVersion() const { return OpenViBE::CString("0.0.0"); }
-			virtual OpenViBE::CString getUpdatedSoftwareVersion() const { return OpenViBE::CString("0.0.0"); }
+			OpenViBE::CString getName() const override { return OpenViBE::CString("Spherical spline interpolation"); }
+			OpenViBE::CString getAuthorName() const override { return OpenViBE::CString("Vincent Delannoy"); }
+			OpenViBE::CString getAuthorCompanyName() const override { return OpenViBE::CString("INRIA/IRISA"); }
+			OpenViBE::CString getShortDescription() const override { return OpenViBE::CString("Interpolates potentials/laplacians using a spherical spline"); }
+			OpenViBE::CString getDetailedDescription() const override { return OpenViBE::CString(""); }
+			OpenViBE::CString getCategory() const override { return OpenViBE::CString("Algorithm/Signal processing"); }
+			OpenViBE::CString getVersion() const override { return OpenViBE::CString("1.0"); }
+			OpenViBE::CString getSoftwareComponent() const override { return OpenViBE::CString("openvibe-designer"); }
+			OpenViBE::CString getAddedSoftwareVersion() const override { return OpenViBE::CString("0.0.0"); }
+			OpenViBE::CString getUpdatedSoftwareVersion() const override { return OpenViBE::CString("0.0.0"); }
 
-			virtual OpenViBE::CIdentifier getCreatedClass() const { return OVP_ClassId_Algorithm_SphericalSplineInterpolation; }
-			virtual OpenViBE::Plugins::IPluginObject* create() { return new CAlgorithmSphericalSplineInterpolation(); }
+			OpenViBE::CIdentifier getCreatedClass() const override { return OVP_ClassId_Algorithm_SphericalSplineInterpolation; }
+			OpenViBE::Plugins::IPluginObject* create() override { return new CAlgorithmSphericalSplineInterpolation(); }
 
-			virtual bool getAlgorithmPrototype(
-				OpenViBE::Kernel::IAlgorithmProto& rAlgorithmPrototype) const
+			bool getAlgorithmPrototype(
+				OpenViBE::Kernel::IAlgorithmProto& rAlgorithmPrototype) const override
 			{
 				//input parameters
 				rAlgorithmPrototype.addInputParameter(OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_SplineOrder, "Spline order", OpenViBE::Kernel::ParameterType_Integer);
@@ -95,7 +95,7 @@ namespace OpenViBEPlugins
 
 			_IsDerivedFromClass_Final_(OpenViBE::Plugins::IAlgorithmDesc, OVP_ClassId_Algorithm_SphericalSplineInterpolationDesc);
 		};
-	};
-};
+	}  // namespace Test;
+} // namespace OpenViBEPlugins;
 
 #endif // __OpenViBEPlugins_Algorithm_SphericalSplineInterpolation_H__

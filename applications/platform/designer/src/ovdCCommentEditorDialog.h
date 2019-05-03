@@ -29,11 +29,11 @@ namespace OpenViBEDesigner
 
 		CCommentEditorDialog();
 
-		::GtkBuilder* m_pInterface;
-		::GtkWidget* m_pDialog;
-		::GtkWidget* m_pInfoDialog;
-		::GtkWidget* m_pDescription;
-		::GtkTextBuffer* m_pDescriptionBuffer;
+		::GtkBuilder* m_pInterface{};
+		::GtkWidget* m_pDialog{};
+		::GtkWidget* m_pInfoDialog{};
+		::GtkWidget* m_pDescription{};
+		::GtkTextBuffer* m_pDescriptionBuffer{};
 	};
 };
 

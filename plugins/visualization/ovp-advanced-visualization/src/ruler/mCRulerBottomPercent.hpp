@@ -32,7 +32,7 @@ namespace Mensia
 		{
 		public:
 
-			virtual void renderBottom(GtkWidget* pWidget)
+			void renderBottom(GtkWidget* pWidget) override
 			{
 				char l_sLabel[1024];
 				int i;
@@ -46,7 +46,7 @@ namespace Mensia
 				{
 					gint x = (i * (w - 1)) / 10;
 					sprintf(l_sLabel, "%i%%", i * 10);
-					PangoLayout * l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, l_sLabel);
+					PangoLayout* l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, l_sLabel);
 					pango_layout_get_size(l_pPangoLayout, &lw, &lh);
 					lw /= PANGO_SCALE;
 					lh /= PANGO_SCALE;
@@ -62,7 +62,7 @@ namespace Mensia
 				g_object_unref(l_pDrawGC);
 			}
 		};
-	};
-};
+	}  // namespace AdvancedVisualization
+}  // namespace Mensia
 
 #endif // __OpenViBEPlugins_CRulerBottomPercent_H__

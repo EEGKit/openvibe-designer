@@ -21,12 +21,12 @@ void CRendererTopo2D::rebuild3DMeshesPre(const IRendererContext& rContext)
 		std::vector < uint32_t >& l_vTriangle = m_oScalp.m_vTriangle;
 
 		l_vVertex.resize(l_ui32VertexCount1 * l_ui32VertexCount2);
-		for (i = 0, k = 0; i < l_ui32VertexCount1; i++)
+		for (i = 0, k = 0; i < l_ui32VertexCount1; ++i)
 		{
 			for (j = 0; j < l_ui32VertexCount2; j++, k++)
 			{
-				float a = float(i * M_PI / (l_ui32VertexCount1 - 1));
-				float b = float(j * 1.25 * M_PI / (l_ui32VertexCount2 - 1) - M_PI * .2);
+				auto a = float(i * M_PI / (l_ui32VertexCount1 - 1));
+				auto b = float(j * 1.25 * M_PI / (l_ui32VertexCount2 - 1) - M_PI * .2);
 				l_vVertex[k].x = cosf(a);
 				l_vVertex[k].y = sinf(a) * sinf(b) - OFFSET;
 				l_vVertex[k].z = sinf(a) * cosf(b);
@@ -35,7 +35,7 @@ void CRendererTopo2D::rebuild3DMeshesPre(const IRendererContext& rContext)
 		}
 
 		l_vTriangle.resize((l_ui32VertexCount1 - 1) * (l_ui32VertexCount2 - 1) * 6);
-		for (i = 0, k = 0; i < l_ui32VertexCount1 - 1; i++)
+		for (i = 0, k = 0; i < l_ui32VertexCount1 - 1; ++i)
 		{
 			for (j = 0; j < l_ui32VertexCount2 - 1; j++, k += 6)
 			{
@@ -67,7 +67,7 @@ void CRendererTopo2D::rebuild3DMeshesPre(const IRendererContext& rContext)
 		l_vVertex.resize(l_ui32CircleVertexCount * 2/*+6*/);
 		for (i = 0, k = 0; i < l_ui32CircleVertexCount; i++, k += 2)
 		{
-			float a = float(i * 4 * M_PI / l_ui32CircleVertexCount);
+			auto a = float(i * 4 * M_PI / l_ui32CircleVertexCount);
 
 			l_vVertex[k].x = cosf(a);
 			l_vVertex[k].y = .01f;
@@ -161,7 +161,7 @@ namespace
 			p.z = phi * sin(psi);
 		}
 	}
-}
+}  // namespace
 
 void CRendererTopo2D::rebuild3DMeshesPost(const IRendererContext & rContext)
 {

@@ -48,7 +48,7 @@ namespace Mensia
 			{
 				// Render a circle into a buffer so we don't have to do this each time
 
-				for (int i = 0; i < s_iStimulationIndicatorSmoothness; i++)
+				for (int i = 0; i < s_iStimulationIndicatorSmoothness; ++i)
 				{
 					m_vCircle.push_back(std::make_pair(
 						s_fStimulationIndicatorRadius * cosf(i / float(s_iStimulationIndicatorSmoothness - 1) * 2 * float(M_PI)),
@@ -58,7 +58,7 @@ namespace Mensia
 				}
 			}
 
-			virtual bool render(const IRendererContext & rContext)
+			bool render(const IRendererContext & rContext) override
 			{
 				bool l_bResult = true;
 
@@ -105,8 +105,11 @@ namespace Mensia
 						if (l_f64MidTime - l_f64Duration < it->first && it->first < l_f64MidTime)
 						{
 							float l_fProgress;
-							if (it->first > l_f64StartTime) l_fProgress = float((it->first - l_f64StartTime) / l_f64Duration);
-							else                         l_fProgress = float((it->first + l_f64Duration - l_f64StartTime) / l_f64Duration);
+							if (it->first > l_f64StartTime)
+							{
+								l_fProgress = float((it->first - l_f64StartTime) / l_f64Duration);
+							}
+							else { l_fProgress = float((it->first + l_f64Duration - l_f64StartTime) / l_f64Duration); }
 
 							/*
 							::glLineWidth(3);
@@ -174,7 +177,7 @@ namespace Mensia
 			{
 				static float color[4];
 				float alpha = reverse<>(uint8_t(ui64Identifier & 255)) * 3.f / 255.f;
-				int32_t alphai = int32_t(alpha);
+				auto alphai = int32_t(alpha);
 				color[(alphai + 0) % 3] = 1 - alpha / 3.f;
 				color[(alphai + 1) % 3] = alpha / 3.f;
 				color[(alphai + 2) % 3] = 0;
@@ -186,7 +189,7 @@ namespace Mensia
 			V reverse(V v)
 			{
 				V l_uiResult = 0;
-				for (V i = 0; i < sizeof(V) * 8; i++)
+				for (V i = 0; i < sizeof(V) * 8; ++i)
 				{
 					l_uiResult <<= 1;
 					l_uiResult |= ((v & (1 << i)) ? 1 : 0);
@@ -194,7 +197,7 @@ namespace Mensia
 				return l_uiResult;
 			}
 		};
-	};
-};
+	}  // namespace AdvancedVisualization
+}  // namespace Mensia
 
 #endif // __Mensia_AdvancedVisualization_TRendererStimulation_H__

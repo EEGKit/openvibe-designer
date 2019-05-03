@@ -101,8 +101,8 @@ namespace OpenViBEPlugins
 			DisplayMode_GlobalBestFit,
 			//DisplayMode_Normal,
 		};
-	};
-};
+	}  // namespace SimpleVisualization;
+}  // namespace OpenViBEPlugins;
 
 
 #endif // __OpenViBEPlugins_Defines_H__

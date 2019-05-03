@@ -34,13 +34,13 @@
 #error unsupported platform
 #endif
 
- // ###########################################################################################################################################################
- // ###########################################################################################################################################################
- //
- // GtkGL implementation
- //
- // ###########################################################################################################################################################
- // ###########################################################################################################################################################
+// ###########################################################################################################################################################
+// ###########################################################################################################################################################
+//
+// GtkGL implementation
+//
+// ###########################################################################################################################################################
+// ###########################################################################################################################################################
 
 #define GtkGL_RenderingContextName "GL Rendering Context"
 #define GtkGL_DeviceContextName "Device Context"
@@ -53,7 +53,7 @@ namespace
 {
 	typedef bool (*wglSwapIntervalEXT_t)(int);
 	wglSwapIntervalEXT_t wglSwapIntervalEXT = nullptr;
-}
+} // namespace
 
 #elif defined TARGET_OS_Linux || defined TARGET_OS_MacOS
 
@@ -77,8 +77,8 @@ namespace
 
 		gdk_window_ensure_native(gtk_widget_get_window(pWidget));
 
-		HWND l_pWindow = (HWND)GDK_WINDOW_HWND(::gtk_widget_get_window(pWidget));
-		HDC  l_pDrawingContext = GetDC(l_pWindow);
+		HWND l_pWindow = HWND(GDK_WINDOW_HWND(::gtk_widget_get_window(pWidget)));
+		HDC l_pDrawingContext = GetDC(l_pWindow);
 
 		PIXELFORMATDESCRIPTOR l_oPixelFormatDescriptor;
 		l_oPixelFormatDescriptor.nSize = sizeof(l_oPixelFormatDescriptor);
@@ -124,7 +124,7 @@ namespace
 
 		GtkGL_Debug("realize-callback::success");
 	}
-}
+}  // namespace
 
 void Mensia::AdvancedVisualization::GtkGL::initialize(GtkWidget* pWidget)
 {
@@ -141,7 +141,7 @@ void Mensia::AdvancedVisualization::GtkGL::uninitialize(GtkWidget* pWidget)
 
 	HWND l_pWindow = (HWND)GDK_WINDOW_HWND(::gtk_widget_get_window(pWidget));
 
-	HGLRC l_pGLRenderingContext = (HGLRC)g_object_get_data(G_OBJECT(pWidget), GtkGL_RenderingContextName);
+	auto l_pGLRenderingContext = (HGLRC)g_object_get_data(G_OBJECT(pWidget), GtkGL_RenderingContextName);
 	wglDeleteContext(l_pGLRenderingContext);
 
 	HDC l_pDrawingContext = (HDC)g_object_get_data(G_OBJECT(pWidget), GtkGL_DeviceContextName);
@@ -156,7 +156,7 @@ void Mensia::AdvancedVisualization::GtkGL::preRender(GtkWidget* pWidget, bool bV
 
 	HWND l_pWindow = (HWND)GDK_WINDOW_HWND(::gtk_widget_get_window(pWidget));
 	HDC l_pDrawingContext = (HDC)g_object_get_data(G_OBJECT(pWidget), GtkGL_DeviceContextName);
-	HGLRC l_pGLRenderingContext = (HGLRC)g_object_get_data(G_OBJECT(pWidget), GtkGL_RenderingContextName);
+	auto l_pGLRenderingContext = (HGLRC)g_object_get_data(G_OBJECT(pWidget), GtkGL_RenderingContextName);
 
 	if (!l_pGLRenderingContext)
 	{
@@ -181,7 +181,7 @@ void Mensia::AdvancedVisualization::GtkGL::preRender(GtkWidget* pWidget, bool bV
 	GtkGL_Debug("pre-render::success");
 }
 
-void Mensia::AdvancedVisualization::GtkGL::postRender(GtkWidget * pWidget)
+void Mensia::AdvancedVisualization::GtkGL::postRender(GtkWidget* pWidget)
 {
 	GtkGL_Debug("post-render");
 

@@ -93,7 +93,7 @@ namespace Mensia
 		{
 		public:
 
-			CParameterSet(int p, ...)
+			explicit CParameterSet(int p, ...)
 			{
 				va_list l_oArguments;
 				va_start(l_oArguments, p);
@@ -105,25 +105,23 @@ namespace Mensia
 				va_end(l_oArguments);
 			}
 
-			operator const std::vector < int >& () const { return m_vParameter; }
+			operator const std::vector<int>& () const { return m_vParameter; }
 
 		protected:
 
-			std::vector < int > m_vParameter;
+			std::vector<int> m_vParameter;
 		};
 
-		class CBoxAlgorithmVizListener : public OpenViBEToolkit::TBoxListener < OpenViBE::Plugins::IBoxListener >
+		class CBoxAlgorithmVizListener : public OpenViBEToolkit::TBoxListener<OpenViBE::Plugins::IBoxListener>
 		{
 		public:
 
-			CBoxAlgorithmVizListener(const std::vector < int >& vParameter)
-				:m_vParameter(vParameter) { }
+			explicit CBoxAlgorithmVizListener(const std::vector<int>& vParameter) : m_vParameter(vParameter) { }
 
 			uint32_t getBaseSettingCount()
-
 			{
 				uint32_t l_ui32Result = 0;
-				std::vector < int >::const_iterator it;
+				std::vector<int>::const_iterator it;
 				for (it = m_vParameter.begin(); it != m_vParameter.end(); it++)
 				{
 					// if(*it==I_Matrix)              l_ui32Result++;
@@ -131,19 +129,19 @@ namespace Mensia
 					// if(*it==I_Spectrum)            l_ui32Result++;
 					// if(*it==I_Covariance)          l_ui32Result++;
 					// if(*it==I_Stimulations)        l_ui32Result++;
-					if (*it == S_ChannelLocalisation) l_ui32Result++;
-					if (*it == S_TemporalCoherence)   l_ui32Result++;
-					if (*it == S_TimeScale)           l_ui32Result++;
-					if (*it == S_ElementCount)        l_ui32Result++;
-					if (*it == S_DataScale)           l_ui32Result++;
-					if (*it == S_Caption)             l_ui32Result++;
-					if (*it == S_DataPositive)        l_ui32Result++;
-					if (*it == S_Translucency)        l_ui32Result++;
-					if (*it == S_FlowerRingCount)     l_ui32Result++;
-					if (*it == S_Color)               l_ui32Result++;
-					if (*it == S_ColorGradient)       l_ui32Result++;
-					if (*it == S_ShowAxis)            l_ui32Result++;
-					if (*it == S_XYZPlotHasDepth)     l_ui32Result++;
+					if (*it == S_ChannelLocalisation) { l_ui32Result++; }
+					if (*it == S_TemporalCoherence) { l_ui32Result++; }
+					if (*it == S_TimeScale) { l_ui32Result++; }
+					if (*it == S_ElementCount) { l_ui32Result++; }
+					if (*it == S_DataScale) { l_ui32Result++; }
+					if (*it == S_Caption) { l_ui32Result++; }
+					if (*it == S_DataPositive) { l_ui32Result++; }
+					if (*it == S_Translucency) l_ui32Result++;
+					if (*it == S_FlowerRingCount) l_ui32Result++;
+					if (*it == S_Color) l_ui32Result++;
+					if (*it == S_ColorGradient) l_ui32Result++;
+					if (*it == S_ShowAxis) { l_ui32Result++; }
+					if (*it == S_XYZPlotHasDepth) { l_ui32Result++; }
 					// if(*it==F_CanAddInput)         l_ui32Result++;
 					// if(*it==F_FixedChannelOrder)   l_ui32Result++;
 					// if(*it==F_FixedChannelSelection)l_ui32Result++;
@@ -151,7 +149,7 @@ namespace Mensia
 				return l_ui32Result;
 			}
 
-			virtual bool onInitialized(OpenViBE::Kernel::IBox & rBox)
+			bool onInitialized(OpenViBE::Kernel::IBox& rBox) override
 			{
 #ifdef TARGET_OS_Windows
 				//rBox.addAttribute(OV_AttributeId_Box_DocumentationURLBase, OpenViBE::CString("${Path_Root}/doc/Mensia Advanced Visualization Toolkit/Mensia Advanced Visualization Toolkit.chm::"));
@@ -159,21 +157,21 @@ namespace Mensia
 				return true;
 			}
 
-			virtual bool onDefaultInitialized(OpenViBE::Kernel::IBox & rBox)
+			bool onDefaultInitialized(OpenViBE::Kernel::IBox& rBox) override
 			{
 				bool l_bIsSignal = (std::find(m_vParameter.begin(), m_vParameter.end(), I_Signal) != m_vParameter.end());
 				bool l_bIsSpectrum = (std::find(m_vParameter.begin(), m_vParameter.end(), I_Spectrum) != m_vParameter.end());
 				bool l_bIsCovariance = (std::find(m_vParameter.begin(), m_vParameter.end(), I_Covariance) != m_vParameter.end());
 				OpenViBE::CIdentifier l_oTypeIdentifier;
 
-				for (uint32_t i = 0; i < rBox.getInputCount(); i++)
+				for (uint32_t i = 0; i < rBox.getInputCount(); ++i)
 				{
 					rBox.getInputType(i, l_oTypeIdentifier);
 					if (l_oTypeIdentifier == OV_TypeId_StreamedMatrix)
 					{
-						if (l_bIsSignal) rBox.setInputType(i, OV_TypeId_Signal);
-						if (l_bIsSpectrum) rBox.setInputType(i, OV_TypeId_Spectrum);
-						if (l_bIsCovariance) rBox.setInputType(i, OV_TypeId_CovarianceMatrix);
+						if (l_bIsSignal) { rBox.setInputType(i, OV_TypeId_Signal); }
+						if (l_bIsSpectrum) { rBox.setInputType(i, OV_TypeId_Spectrum); }
+						if (l_bIsCovariance) { rBox.setInputType(i, OV_TypeId_CovarianceMatrix); }
 					}
 				}
 				return true;
@@ -181,10 +179,10 @@ namespace Mensia
 
 			_IsDerivedFromClass_Final_(OpenViBEToolkit::TBoxListener < OpenViBE::Plugins::IBoxListener >, OV_UndefinedIdentifier);
 
-			std::vector < int > m_vParameter;
+			std::vector<int> m_vParameter;
 		};
 
-		class CBoxAlgorithmViz : public OpenViBEToolkit::TBoxAlgorithm < OpenViBE::Plugins::IBoxAlgorithm >
+		class CBoxAlgorithmViz : public OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>
 		{
 		public:
 
@@ -195,8 +193,8 @@ namespace Mensia
 				float b;
 			} TColor;
 
-			CBoxAlgorithmViz(const OpenViBE::CIdentifier& rClassId, const std::vector < int >& vParameter)
-				:m_oClassId(rClassId)
+			CBoxAlgorithmViz(const OpenViBE::CIdentifier& rClassId, const std::vector<int>& vParameter)
+				: m_oClassId(rClassId)
 				, m_vParameter(vParameter)
 				, m_pRuler(nullptr)
 				, m_oMouseHandler(*this)
@@ -206,13 +204,13 @@ namespace Mensia
 				m_oColor.b = 1;
 			}
 
-			virtual void release() { delete this; }
+			void release() override { delete this; }
 
-			virtual uint64_t getClockFrequency() { return (32LL << 32); }
-			virtual bool initialize();
-			virtual bool uninitialize();
-			virtual bool processInput(uint32_t ui32InputIndex) { return true; };
-			virtual bool processClock(OpenViBE::Kernel::IMessageClock & rClock);
+			uint64_t getClockFrequency() override { return (32LL << 32); }
+			bool initialize() override;
+			bool uninitialize() override;
+			bool processInput(uint32_t ui32InputIndex) override { return true; };
+			bool processClock(OpenViBE::Kernel::IMessageClock & rClock) override;
 
 		public:
 
@@ -256,11 +254,11 @@ namespace Mensia
 		public:
 
 			OpenViBE::CIdentifier m_oClassId;
-			std::vector < int > m_vParameter;
+			std::vector<int> m_vParameter;
 			uint64_t m_ui64LastProcessTime;
 
-			TGtkGLWidget < CBoxAlgorithmViz > m_oGtkGLWidget;
-			std::map < std::string, CVertex > m_vChannelLocalisation;
+			TGtkGLWidget<CBoxAlgorithmViz> m_oGtkGLWidget;
+			std::map<std::string, CVertex> m_vChannelLocalisation;
 
 			IRendererContext* m_pRendererContext;
 			IRendererContext* m_pSubRendererContext;
@@ -283,54 +281,54 @@ namespace Mensia
 			bool m_bIsPositive;
 			bool m_bIsTimeLocked;
 			bool m_bIsScaleVisible;
-			std::vector < TColor > m_vColor;
-			TColor m_oColor;
+			std::vector<TColor> m_vColor;
+			TColor m_oColor{};
 
 			OpenViBE::CIdentifier m_oTypeIdentifier;
-			uint64_t m_ui64Time1;
-			uint64_t m_ui64Time2;
+			uint64_t m_ui64Time1{};
+			uint64_t m_ui64Time2{};
 
-			float m_f32FastForwardMaximumFactorHighDefinition;
-			float m_f32FastForwardMaximumFactorLowDefinition;
+			float m_f32FastForwardMaximumFactorHighDefinition{};
+			float m_f32FastForwardMaximumFactorLowDefinition{};
 
-			std::vector < float > m_vSwap;
+			std::vector<float> m_vSwap;
 
-			GtkBuilder* m_pBuilder;
+			GtkBuilder* m_pBuilder{};
 
-			GtkWidget* m_pViewport;
-			GtkWidget* m_pTop;
-			GtkWidget* m_pLeft;
-			GtkWidget* m_pRight;
-			GtkWidget* m_pBottom;
-			GtkWidget* m_pCornerLeft;
-			GtkWidget* m_pCornerRight;
+			GtkWidget* m_pViewport{};
+			GtkWidget* m_pTop{};
+			GtkWidget* m_pLeft{};
+			GtkWidget* m_pRight{};
+			GtkWidget* m_pBottom{};
+			GtkWidget* m_pCornerLeft{};
+			GtkWidget* m_pCornerRight{};
 
-			GtkWidget* m_pTimeScale;
-			GtkWidget* m_pElementCount;
-			GtkWidget* m_pERPRange;
-			GtkWidget* m_pERPPlayerButton;
-			GtkWidget* m_pERPPlayer;
-			GtkWidget* m_pScaleVisible;
-			GtkWidget* m_pFrequencyBandMin;
-			GtkWidget* m_pFrequencyBandMax;
+			GtkWidget* m_pTimeScale{};
+			GtkWidget* m_pElementCount{};
+			GtkWidget* m_pERPRange{};
+			GtkWidget* m_pERPPlayerButton{};
+			GtkWidget* m_pERPPlayer{};
+			GtkWidget* m_pScaleVisible{};
+			GtkWidget* m_pFrequencyBandMin{};
+			GtkWidget* m_pFrequencyBandMax{};
 
-			GtkTreeView* m_pChannelTreeView;
-			GtkListStore* m_pChannelListStore;
+			GtkTreeView* m_pChannelTreeView{};
+			GtkListStore* m_pChannelListStore{};
 
-			uint32_t m_ui32Width;
-			uint32_t m_ui32Height;
+			uint32_t m_ui32Width{};
+			uint32_t m_ui32Height{};
 
-			bool m_bRebuildNeeded;
-			bool m_bRefreshNeeded;
-			bool m_bRedrawNeeded;
-			uint64_t m_ui64LastRenderTime;
+			bool m_bRebuildNeeded{};
+			bool m_bRefreshNeeded{};
+			bool m_bRedrawNeeded{};
+			uint64_t m_ui64LastRenderTime{};
 
-			bool m_bIsVideoOutputEnabled; // for video output
-			bool m_bIsVideoOutputWorking;
-			uint32_t m_ui32FrameId;
+			bool m_bIsVideoOutputEnabled{}; // for video output
+			bool m_bIsVideoOutputWorking{};
+			uint32_t m_ui32FrameId{};
 			OpenViBE::CString m_sFrameFilenameFormat;
 		private:
-			OpenViBEVisualizationToolkit::IVisualizationContext* m_visualizationContext;
+			OpenViBEVisualizationToolkit::IVisualizationContext* m_visualizationContext{};
 		};
 
 		class CBoxAlgorithmVizDesc : public OpenViBE::Plugins::IBoxAlgorithmDesc
@@ -345,10 +343,10 @@ namespace Mensia
 			OpenViBE::CIdentifier m_oClassId;
 			OpenViBE::CString m_sAddedSoftwareVersion;
 			OpenViBE::CString m_sUpdatedSoftwareVersion;
-			std::vector < int > m_vParameter;
+			std::vector<int> m_vParameter;
 
 			CBoxAlgorithmVizDesc(const OpenViBE::CString& sFullName, const OpenViBE::CIdentifier& rDescClassId, const OpenViBE::CIdentifier& rClassId, const OpenViBE::CString& sAddedSoftwareVersion, const OpenViBE::CString& sUpdatedSoftwareVersion, const CParameterSet& rParameterSet, const OpenViBE::CString& sShortDescription, const OpenViBE::CString& sDetailedDescription)
-				:m_sShortDescription(sShortDescription)
+				: m_sShortDescription(sShortDescription)
 				, m_sDetailedDescription(sDetailedDescription)
 				, m_oDescClassId(rDescClassId)
 				, m_oClassId(rClassId)
@@ -370,54 +368,53 @@ namespace Mensia
 				}
 			}
 
-			virtual void release() { }
+			void release() override { }
 
-			virtual OpenViBE::CString getName() const { return m_sName; }
-			virtual OpenViBE::CString getAuthorName() const { return OpenViBE::CString("Yann Renard"); }
-			virtual OpenViBE::CString getAuthorCompanyName() const { return OpenViBE::CString("Mensia Technologies SA"); }
-			virtual OpenViBE::CString getShortDescription() const { return m_sShortDescription; }
-			virtual OpenViBE::CString getDetailedDescription() const { return m_sDetailedDescription; }
+			OpenViBE::CString getName() const override { return m_sName; }
+			OpenViBE::CString getAuthorName() const override { return OpenViBE::CString("Yann Renard"); }
+			OpenViBE::CString getAuthorCompanyName() const override { return OpenViBE::CString("Mensia Technologies SA"); }
+			OpenViBE::CString getShortDescription() const override { return m_sShortDescription; }
+			OpenViBE::CString getDetailedDescription() const override { return m_sDetailedDescription; }
 			//			virtual OpenViBE::CString getCategory() const            { return OpenViBE::CString(""); }
-			virtual OpenViBE::CString getVersion() const { return OpenViBE::CString("1.0"); }
-			virtual OpenViBE::CString getSoftwareComponent() const { return "openvibe-designer"; }
-			virtual OpenViBE::CString getAddedSoftwareVersion() const { return m_sAddedSoftwareVersion; }
-			virtual OpenViBE::CString getUpdatedSoftwareVersion() const { return m_sUpdatedSoftwareVersion; }
-			virtual OpenViBE::CString getStockItemName() const { return OpenViBE::CString("gtk-find"); }
-			virtual OpenViBE::CIdentifier getCreatedClass() const { return m_oClassId; }
+			OpenViBE::CString getVersion() const override { return OpenViBE::CString("1.0"); }
+			OpenViBE::CString getSoftwareComponent() const override { return "openvibe-designer"; }
+			OpenViBE::CString getAddedSoftwareVersion() const override { return m_sAddedSoftwareVersion; }
+			OpenViBE::CString getUpdatedSoftwareVersion() const override { return m_sUpdatedSoftwareVersion; }
+			OpenViBE::CString getStockItemName() const override { return OpenViBE::CString("gtk-find"); }
+			OpenViBE::CIdentifier getCreatedClass() const override { return m_oClassId; }
 
-			virtual void releaseBoxListener(OpenViBE::Plugins::IBoxListener * pBoxListener) const
+			void releaseBoxListener(OpenViBE::Plugins::IBoxListener * pBoxListener) const override
 			{
 				delete pBoxListener;
 			}
 
-			virtual bool hasFunctionality(OpenViBE::CIdentifier functionalityIdentifier) const { return functionalityIdentifier == OVD_Functionality_Visualization; }
+			bool hasFunctionality(OpenViBE::CIdentifier functionalityIdentifier) const override { return functionalityIdentifier == OVD_Functionality_Visualization; }
 
-			virtual bool getBoxPrototype(
-				OpenViBE::Kernel::IBoxProto & rBoxAlgorithmPrototype) const
+			bool getBoxPrototype(OpenViBE::Kernel::IBoxProto & rBoxAlgorithmPrototype) const override
 			{
-				std::vector < int >::const_iterator it;
+				std::vector<int>::const_iterator it;
 				for (it = m_vParameter.begin(); it != m_vParameter.end(); it++)
 				{
-					if (*it == I_Matrix)                  rBoxAlgorithmPrototype.addInput("Matrix", OV_TypeId_StreamedMatrix);
-					if (*it == I_Signal)                  rBoxAlgorithmPrototype.addInput("Matrix", OV_TypeId_StreamedMatrix); // This is later changed in the listener
-					if (*it == I_Spectrum)                rBoxAlgorithmPrototype.addInput("Matrix", OV_TypeId_StreamedMatrix); // This is later changed in the listener
-					if (*it == I_TimeFrequency)           rBoxAlgorithmPrototype.addInput("Matrix", OV_TypeId_TimeFrequency); // This is later changed in the listener
-					if (*it == I_Covariance)              rBoxAlgorithmPrototype.addInput("Matrix", OV_TypeId_StreamedMatrix); // This is later changed in the listener
-					if (*it == I_Stimulations)            rBoxAlgorithmPrototype.addInput("Markers", OV_TypeId_Stimulations);
-					if (*it == S_ChannelLocalisation)     rBoxAlgorithmPrototype.addSetting("Channel Localisation", OV_TypeId_Filename, "${AdvancedViz_ChannelLocalisation}"); // "../share/electrode_sets/electrode_set_standard_cartesian.txt"
-					if (*it == S_DataPositive)            rBoxAlgorithmPrototype.addSetting("Positive Data Only ?", OV_TypeId_Boolean, "false");
-					if (*it == S_TemporalCoherence)       rBoxAlgorithmPrototype.addSetting("Temporal Coherence", OVP_TypeId_TemporalCoherence, OVP_TypeId_TemporalCoherence_TimeLocked.toString());
-					if (*it == S_TimeScale)               rBoxAlgorithmPrototype.addSetting("Time Scale", OV_TypeId_Float, "20");
-					if (*it == S_ElementCount)            rBoxAlgorithmPrototype.addSetting("Matrix Count", OV_TypeId_Integer, "50");
-					if (*it == S_DataScale)               rBoxAlgorithmPrototype.addSetting("Gain", OV_TypeId_Float, "1");
-					if (*it == S_Caption)                 rBoxAlgorithmPrototype.addSetting("Caption", OV_TypeId_String, "");
-					if (*it == S_FlowerRingCount)         rBoxAlgorithmPrototype.addSetting("Flower Ring Count", OV_TypeId_Integer, "1");
-					if (*it == S_Translucency)            rBoxAlgorithmPrototype.addSetting("Translucency", OV_TypeId_Float, "1");
-					if (*it == S_ShowAxis)                rBoxAlgorithmPrototype.addSetting("Show Axis", OV_TypeId_Boolean, "true");
-					if (*it == S_XYZPlotHasDepth)         rBoxAlgorithmPrototype.addSetting("Use third channel as depth", OV_TypeId_Boolean, "false"); // XYZ Plot
-					if (*it == S_Color)                   rBoxAlgorithmPrototype.addSetting("Color", OV_TypeId_Color, "${AdvancedViz_DefaultColor}");
-					if (*it == S_ColorGradient)           rBoxAlgorithmPrototype.addSetting("Color", OV_TypeId_ColorGradient, "${AdvancedViz_DefaultColorGradient}");
-					if (*it == F_CanAddInput)             rBoxAlgorithmPrototype.addFlag(OpenViBE::Kernel::BoxFlag_CanAddInput);
+					if (*it == I_Matrix) { rBoxAlgorithmPrototype.addInput("Matrix", OV_TypeId_StreamedMatrix); }
+					if (*it == I_Signal) { rBoxAlgorithmPrototype.addInput("Matrix", OV_TypeId_StreamedMatrix); }// This is later changed in the listener 
+					if (*it == I_Spectrum) { rBoxAlgorithmPrototype.addInput("Matrix", OV_TypeId_StreamedMatrix); } // This is later changed in the listener 
+					if (*it == I_TimeFrequency) rBoxAlgorithmPrototype.addInput("Matrix", OV_TypeId_TimeFrequency); // This is later changed in the listener
+					if (*it == I_Covariance) { rBoxAlgorithmPrototype.addInput("Matrix", OV_TypeId_StreamedMatrix); }// This is later changed in the listener 
+					if (*it == I_Stimulations) { rBoxAlgorithmPrototype.addInput("Markers", OV_TypeId_Stimulations); }
+					if (*it == S_ChannelLocalisation) { rBoxAlgorithmPrototype.addSetting("Channel Localisation", OV_TypeId_Filename, "${AdvancedViz_ChannelLocalisation}"); } // "../share/electrode_sets/electrode_set_standard_cartesian.txt" 
+					if (*it == S_DataPositive) { rBoxAlgorithmPrototype.addSetting("Positive Data Only ?", OV_TypeId_Boolean, "false"); }
+					if (*it == S_TemporalCoherence) { rBoxAlgorithmPrototype.addSetting("Temporal Coherence", OVP_TypeId_TemporalCoherence, OVP_TypeId_TemporalCoherence_TimeLocked.toString()); }
+					if (*it == S_TimeScale) { rBoxAlgorithmPrototype.addSetting("Time Scale", OV_TypeId_Float, "20"); }
+					if (*it == S_ElementCount) { rBoxAlgorithmPrototype.addSetting("Matrix Count", OV_TypeId_Integer, "50"); }
+					if (*it == S_DataScale) { rBoxAlgorithmPrototype.addSetting("Gain", OV_TypeId_Float, "1"); }
+					if (*it == S_Caption) { rBoxAlgorithmPrototype.addSetting("Caption", OV_TypeId_String, ""); }
+					if (*it == S_FlowerRingCount) { rBoxAlgorithmPrototype.addSetting("Flower Ring Count", OV_TypeId_Integer, "1"); }
+					if (*it == S_Translucency) { rBoxAlgorithmPrototype.addSetting("Translucency", OV_TypeId_Float, "1"); }
+					if (*it == S_ShowAxis) { rBoxAlgorithmPrototype.addSetting("Show Axis", OV_TypeId_Boolean, "true"); }
+					if (*it == S_XYZPlotHasDepth) rBoxAlgorithmPrototype.addSetting("Use third channel as depth", OV_TypeId_Boolean, "false"); // XYZ Plot
+					if (*it == S_Color) { rBoxAlgorithmPrototype.addSetting("Color", OV_TypeId_Color, "${AdvancedViz_DefaultColor}"); }
+					if (*it == S_ColorGradient) { rBoxAlgorithmPrototype.addSetting("Color", OV_TypeId_ColorGradient, "${AdvancedViz_DefaultColorGradient}"); }
+					if (*it == F_CanAddInput) { rBoxAlgorithmPrototype.addFlag(OpenViBE::Kernel::BoxFlag_CanAddInput); }
 					if (*it == F_FixedChannelOrder) {} // rBoxAlgorithmPrototype.addFlag(OpenViBE::Kernel::BoxFlag_);
 					if (*it == F_FixedChannelSelection) {} // rBoxAlgorithmPrototype.addFlag(OpenViBE::Kernel::BoxFlag_);
 				}
@@ -425,6 +422,6 @@ namespace Mensia
 				return true;
 			}
 		};
-	};
-};
+	} // namespace AdvancedVisualization;
+}  // namespace Mensia;
 

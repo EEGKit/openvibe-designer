@@ -341,7 +341,7 @@ namespace
 	}
 }
 
-CArchwayHandlerGUI::CArchwayHandlerGUI(CArchwayHandler & controller, OpenViBEDesigner::CApplication * application)
+CArchwayHandlerGUI::CArchwayHandlerGUI(CArchwayHandler& controller, OpenViBEDesigner::CApplication * application)
 	: m_Controller(controller),
 	m_Application(application)
 {

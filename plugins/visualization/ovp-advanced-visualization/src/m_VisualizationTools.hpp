@@ -34,7 +34,7 @@ namespace Mensia
 	{
 		std::string trim(const std::string& sValue);
 		IRendererContext& getContext();
-	};
-};
+	} // namespace AdvancedVisualization
+} // namespace Mensia
 
 #endif // __OpenViBEPlugins_Tools_H__
