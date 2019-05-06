@@ -35,27 +35,21 @@ namespace Mensia
 			void renderBottom(GtkWidget* pWidget) override
 			{
 				char l_sLabel[1024];
-				int i;
 
 				gint w, h;
 				gint lw, lh;
 
 				gdk_drawable_get_size(pWidget->window, &w, &h);
 				GdkGC* l_pDrawGC = gdk_gc_new(pWidget->window);
-				for (i = 0; i <= 10; i += 2)
+				for (int i = 0; i <= 10; i += 2)
 				{
-					gint x = (i * (w - 1)) / 10;
+					const gint x = (i * (w - 1)) / 10;
 					sprintf(l_sLabel, "%i%%", i * 10);
 					PangoLayout* l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, l_sLabel);
 					pango_layout_get_size(l_pPangoLayout, &lw, &lh);
 					lw /= PANGO_SCALE;
 					lh /= PANGO_SCALE;
-					gdk_draw_layout(
-						pWidget->window,
-						l_pDrawGC,
-						x,
-						4,
-						l_pPangoLayout);
+					gdk_draw_layout(pWidget->window, l_pDrawGC, x, 4, l_pPangoLayout);
 					gdk_draw_line(pWidget->window, l_pDrawGC, x, 0, x, 3);
 					g_object_unref(l_pPangoLayout);
 				}

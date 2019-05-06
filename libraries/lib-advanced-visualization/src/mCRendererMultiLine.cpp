@@ -50,7 +50,7 @@ bool CRendererMultiLine::render(const IRendererContext& rContext)
 	glEnableClientState(GL_VERTEX_ARRAY);
 	for (uint32_t i = 0; i < rContext.getSelectedCount(); ++i)
 	{
-		std::vector < CVertex >& l_rVertex = m_Vertices[rContext.getSelected(i)];
+		std::vector<CVertex>& l_rVertex = m_Vertices[rContext.getSelected(i)];
 		glTexCoord1f(1 - (i + .5f) / rContext.getSelectedCount());
 		if (rContext.isScrollModeActive())
 		{

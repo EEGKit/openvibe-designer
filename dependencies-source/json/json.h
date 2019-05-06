@@ -506,7 +506,9 @@ namespace json
 	inline bool operator ==(const Value& lhs, const Value& rhs)
 	{
 		if ((lhs.mValueType != rhs.mValueType) && !lhs.IsNumeric() && !rhs.IsNumeric())
+		{
 			return false;
+		}
 
 		switch (lhs.mValueType)
 		{
@@ -515,22 +517,34 @@ namespace json
 			case IntVal:
 				{
 					if (rhs.GetType() == FloatVal)
+					{
 						return lhs.mIntVal == rhs.mFloatVal;
+					}
 					if (rhs.GetType() == DoubleVal)
+					{
 						return lhs.mIntVal == rhs.mDoubleVal;
+					}
 					if (rhs.GetType() == IntVal)
+					{
 						return lhs.mIntVal == rhs.mIntVal;
+					}
 					return false;
 				}
 
 			case FloatVal:
 				{
 					if (rhs.GetType() == FloatVal)
+					{
 						return lhs.mFloatVal == rhs.mFloatVal;
+					}
 					if (rhs.GetType() == DoubleVal)
+					{
 						return lhs.mFloatVal == rhs.mDoubleVal;
+					}
 					if (rhs.GetType() == IntVal)
+					{
 						return lhs.mFloatVal == rhs.mIntVal;
+					}
 					return false;
 				}
 
@@ -538,11 +552,17 @@ namespace json
 			case DoubleVal:
 				{
 					if (rhs.GetType() == FloatVal)
+					{
 						return lhs.mDoubleVal == rhs.mFloatVal;
+					}
 					if (rhs.GetType() == DoubleVal)
+					{
 						return lhs.mDoubleVal == rhs.mDoubleVal;
+					}
 					if (rhs.GetType() == IntVal)
+					{
 						return lhs.mDoubleVal == rhs.mIntVal;
+					}
 					return false;
 				}
 
@@ -560,7 +580,9 @@ namespace json
 	inline bool operator <(const Value& lhs, const Value& rhs)
 	{
 		if ((lhs.mValueType != rhs.mValueType) && !lhs.IsNumeric() && !rhs.IsNumeric())
+		{
 			return false;
+		}
 
 		switch (lhs.mValueType)
 		{
@@ -569,37 +591,55 @@ namespace json
 			case IntVal:
 				{
 					if (rhs.GetType() == FloatVal)
+					{
 						return lhs.mIntVal < rhs.mFloatVal;
+					}
 					if (rhs.GetType() == DoubleVal)
+					{
 						return lhs.mIntVal < rhs.mDoubleVal;
+					}
 					if (rhs.GetType() == IntVal)
+					{
 						return lhs.mIntVal < rhs.mIntVal;
+					}
 					return false;
 				}
 
 			case FloatVal:
 				{
 					if (rhs.GetType() == FloatVal)
+					{
 						return lhs.mFloatVal < rhs.mFloatVal;
+					}
 					if (rhs.GetType() == DoubleVal)
+					{
 						return lhs.mFloatVal < rhs.mDoubleVal;
+					}
 					if (rhs.GetType() == IntVal)
+					{
 						return lhs.mFloatVal < rhs.mIntVal;
+					}
 					return false;
 				}
 
 			case DoubleVal:
 				{
 					if (rhs.GetType() == FloatVal)
+					{
 						return lhs.mDoubleVal < rhs.mFloatVal;
+					}
 					if (rhs.GetType() == DoubleVal)
+					{
 						return lhs.mDoubleVal < rhs.mDoubleVal;
+					}
 					if (rhs.GetType() == IntVal)
+					{
 						return lhs.mDoubleVal < rhs.mIntVal;
+					}
 					return false;
 				}
 
-			case BoolVal: return lhs.mBoolVal < rhs.mBoolVal;
+			case BoolVal: return static_cast<int>(lhs.mBoolVal) < static_cast<int>(rhs.mBoolVal);
 
 			case ObjectVal: return lhs.mObjectVal < rhs.mObjectVal;
 

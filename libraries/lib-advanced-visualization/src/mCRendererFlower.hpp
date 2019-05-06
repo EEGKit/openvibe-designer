@@ -38,8 +38,8 @@ namespace Mensia
 			void refresh(const IRendererContext& rContext) override;
 			bool render(const IRendererContext& rContext) override;
 
-			std::vector < std::vector < std::vector < CVertex > > > m_vMuliVertex;
-			std::vector < CVertex > m_vCircle;
+			std::vector<std::vector<std::vector<CVertex>>> m_vMuliVertex;
+			std::vector<CVertex> m_vCircle;
 		};
 	}  // namespace AdvancedVisualization
 }  // namespace Mensia

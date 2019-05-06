@@ -22,7 +22,7 @@
 #include "mCRendererConnectivity.hpp"
 #include "mC3DMesh.hpp"
 
- // #include "content/Face.obj.hpp"
+// #include "content/Face.obj.hpp"
 #include "content/Scalp.obj.hpp"
 
 #include <Eigen/Geometry>
@@ -57,8 +57,8 @@ void CRendererConnectivity::rebuild(const IRendererContext& rContext)
 {
 	CRenderer::rebuild(rContext);
 
-	std::map < std::string, CVertex >::const_iterator it1;
-	std::map < std::string, CVertex >::const_iterator it2;
+	std::map<std::string, CVertex>::const_iterator it1;
+	std::map<std::string, CVertex>::const_iterator it2;
 
 	uint32_t i, j, k, l = 0;
 
@@ -74,8 +74,8 @@ void CRendererConnectivity::rebuild(const IRendererContext& rContext)
 
 	// Projects electrode coordinates to 3D mesh
 
-	std::vector < CVertex > l_vProjectedChannelCoordinate;
-	std::vector < CVertex > l_vChannelCoordinate;
+	std::vector<CVertex> l_vProjectedChannelCoordinate;
+	std::vector<CVertex> l_vChannelCoordinate;
 	l_vChannelCoordinate.resize(rContext.getChannelCount());
 	for (i = 0; i < rContext.getChannelCount(); ++i)
 	{
@@ -129,7 +129,7 @@ void CRendererConnectivity::rebuild(const IRendererContext& rContext)
 	m_ui32HistoryIndex = 0;
 }
 
-void CRendererConnectivity::refresh(const IRendererContext & rContext)
+void CRendererConnectivity::refresh(const IRendererContext& rContext)
 {
 	CRenderer::refresh(rContext);
 
@@ -153,13 +153,13 @@ void CRendererConnectivity::refresh(const IRendererContext & rContext)
 	m_ui32HistoryIndex = m_ui32HistoryCount;
 }
 
-bool CRendererConnectivity::render(const IRendererContext & rContext)
+bool CRendererConnectivity::render(const IRendererContext& rContext)
 {
 	if (!rContext.getSelectedCount()) { return false; }
 	if (m_vVertex.empty()) { return false; }
 	if (!m_ui32HistoryCount) { return false; }
 
-	std::map < std::string, std::pair < float, float > >::const_iterator it;
+	std::map<std::string, std::pair<float, float>>::const_iterator it;
 	uint32_t i;
 	float d = 3.5;
 

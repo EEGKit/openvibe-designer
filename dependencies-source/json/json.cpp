@@ -59,7 +59,9 @@ static size_t GetQuotePos(const std::string& str, size_t start_pos = 0)
 			continue;
 		}
 		if ((c == '\"') && !found_slash)
+		{
 			return i;
+		}
 
 		found_slash = false;
 	}
@@ -100,7 +102,9 @@ Value::Value(const Value& v) : mValueType(v.mValueType)
 Value& Value::operator =(const Value& v)
 {
 	if (&v == this)
+	{
 		return *this;
+	}
 
 	mValueType = v.mValueType;
 
@@ -176,7 +180,9 @@ void Value::Clear()
 size_t Value::size() const
 {
 	if ((mValueType != ObjectVal) && (mValueType != ArrayVal))
+	{
 		return 1;
+	}
 
 	return mValueType == ObjectVal ? mObjectVal.size() : mArrayVal.size();
 }
@@ -208,7 +214,9 @@ Array::Array(const Array& a) : mValues(a.mValues) { }
 Array& Array::operator =(const Array& a)
 {
 	if (&a == this)
+	{
 		return *this;
+	}
 
 	Clear();
 	mValues = a.mValues;
@@ -261,7 +269,9 @@ Object::Object(const Object& obj) : mValues(obj.mValues) {}
 Object& Object::operator =(const Object& obj)
 {
 	if (&obj == this)
+	{
 		return *this;
+	}
 
 	Clear();
 	mValues = obj.mValues;
@@ -304,7 +314,9 @@ int Object::HasKeys(const std::vector<std::string>& keys) const
 	for (size_t i = 0; i < keys.size(); i++)
 	{
 		if (!HasKey(keys[i]))
+		{
 			return (int)i;
+		}
 	}
 
 	return -1;
@@ -313,8 +325,12 @@ int Object::HasKeys(const std::vector<std::string>& keys) const
 int Object::HasKeys(const char** keys, int key_count) const
 {
 	for (int i = 0; i < key_count; i++)
+	{
 		if (!HasKey(keys[i]))
+		{
 			return i;
+		}
+	}
 
 	return -1;
 }
@@ -370,7 +386,9 @@ std::string SerializeArray(const Array& a)
 	{
 		const Value& v = a[i];
 		if (!first)
+		{
 			str += std::string(",");
+		}
 
 		str += SerializeValue(v);
 
@@ -394,7 +412,9 @@ std::string json::Serialize(const Value& v)
 		for (Object::ValueMap::const_iterator it = obj.begin(); it != obj.end(); it++)
 		{
 			if (!first)
+			{
 				str += std::string(",");
+			}
 
 			str += std::string("\"") + it->first + std::string("\":") + SerializeValue(it->second);
 			first = false;
@@ -409,7 +429,9 @@ std::string json::Serialize(const Value& v)
 		for (Array::ValueVector::const_iterator it = a.begin(); it != a.end(); it++)
 		{
 			if (!first)
+			{
 				str += std::string(",");
+			}
 
 			str += SerializeValue(*it);
 			first = false;
@@ -438,12 +460,16 @@ static Value DeserializeInternal(const std::string& _str, std::stack<StackDepthT
 	{
 		// Error: Began with a { but doesn't end with one
 		if (str[str.length() - 1] != '}')
+		{
 			return Value();
+		}
 
 		depth_stack.push(InObject);
 		v = DeserializeObj(str, depth_stack);
 		if ((v.GetType() == nullptrVal) || (depth_stack.top() != InObject))
+		{
 			return v;
+		}
 
 		depth_stack.pop();
 	}
@@ -451,12 +477,16 @@ static Value DeserializeInternal(const std::string& _str, std::stack<StackDepthT
 	{
 		// Error: Began with a [ but doesn't end with one
 		if (str[str.length() - 1] != ']')
+		{
 			return Value();
+		}
 
 		depth_stack.push(InArray);
 		v = DeserializeArray(str, depth_stack);
 		if ((v.GetType() == nullptrVal) || (depth_stack.top() != InArray))
+		{
 			return v;
+		}
 
 		depth_stack.pop();
 	}
@@ -480,14 +510,20 @@ static size_t GetEndOfArrayOrObj(const std::string& str, std::stack<StackDepthTy
 		if (str[i] == '\"')
 		{
 			if (str[i - 1] != '\\')
+			{
 				in_quote = !in_quote;
+			}
 		}
 		else if (!in_quote)
 		{
 			if (str[i] == '[')
+			{
 				depth_stack.push(InArray);
+			}
 			else if (str[i] == '{')
+			{
 				depth_stack.push(InObject);
+			}
 			else if (str[i] == ']')
 			{
 				StackDepthType t = depth_stack.top();
@@ -501,7 +537,9 @@ static size_t GetEndOfArrayOrObj(const std::string& str, std::stack<StackDepthTy
 				size_t count = depth_stack.size();
 				depth_stack.pop();
 				if (count == original_count)
+				{
 					break;
+				}
 			}
 			else if (str[i] == '}')
 			{
@@ -516,7 +554,9 @@ static size_t GetEndOfArrayOrObj(const std::string& str, std::stack<StackDepthTy
 				size_t count = depth_stack.size();
 				depth_stack.pop();
 				if (count == original_count)
+				{
 					break;
+				}
 			}
 		}
 	}
@@ -526,7 +566,7 @@ static size_t GetEndOfArrayOrObj(const std::string& str, std::stack<StackDepthTy
 
 static std::string UnescapeJSONString(const std::string& str)
 {
-	std::string s = "";
+	std::string s;
 
 	for (size_t i = 0; i < str.length(); i++)
 	{
@@ -567,7 +607,9 @@ static std::string UnescapeJSONString(const std::string& str)
 			i += skip_ahead;
 		}
 		else
+		{
 			s.push_back(c);
+		}
 	}
 
 	return Trim(s);
@@ -581,7 +623,9 @@ static Value DeserializeValue(std::string& str, bool* had_error, std::stack<Stac
 	str = Trim(str);
 
 	if (str.length() == 0)
+	{
 		return v;
+	}
 
 	if (str[0] == '[')
 	{
@@ -633,9 +677,13 @@ static Value DeserializeValue(std::string& str, bool* had_error, std::stack<Stac
 		for (; i < str.length(); i++)
 		{
 			if (str[i] == '.')
+			{
 				has_dot = true;
+			}
 			else if (str[i] == 'e')
+			{
 				has_e = true;
+			}
 			else if (str[i] == ']')
 			{
 				if (depth_stack.top() != InArray)
@@ -657,29 +705,45 @@ static Value DeserializeValue(std::string& str, bool* had_error, std::stack<Stac
 				depth_stack.pop();
 			}
 			else if (str[i] == ',')
+			{
 				break;
+			}
 
-			if (!std::isspace(str[i]))
+			if (std::isspace(str[i]) == 0)
+			{
 				temp_val += str[i];
+			}
 		}
 
 		// store all floating point as doubles. This will also set the float and int values as well.
 		if (_stricmp(temp_val.c_str(), "true") == 0)
+		{
 			v = Value(true);
+		}
 		else if (_stricmp(temp_val.c_str(), "false") == 0)
+		{
 			v = Value(false);
+		}
 		else if (has_e || has_dot)
+		{
 			v = Value(atof(temp_val.c_str()));
+		}
 		else if (_stricmp(temp_val.c_str(), "null") == 0)
+		{
 			v = Value();
+		}
 		else
 		{
 			// Check if the value is beyond the size of an int and if so, store it as a double
 			double tmp_val = atof(temp_val.c_str());
 			if ((tmp_val >= (double)INT_MIN) && (tmp_val <= (double)INT_MAX))
+			{
 				v = Value(atoi(temp_val.c_str()));
+			}
 			else
+			{
 				v = Value(tmp_val);
+			}
 		}
 
 		str = str.substr(i, str.length());
@@ -696,9 +760,13 @@ static Value DeserializeArray(std::string& str, std::stack<StackDepthType>& dept
 	str = Trim(str);
 
 	if ((str[0] == '[') && (str[str.length() - 1] == ']'))
+	{
 		str = str.substr(1, str.length() - 2);
+	}
 	else
+	{
 		return Value();
+	}
 
 	while (str.length() > 0)
 	{
@@ -712,10 +780,14 @@ static Value DeserializeArray(std::string& str, std::stack<StackDepthType>& dept
 			{
 				Value v = DeserializeValue(str, &had_error, depth_stack);
 				if (had_error)
+				{
 					return Value();
+				}
 
 				if (v.GetType() != nullptrVal)
+				{
 					a.push_back(v);
+				}
 
 				break;
 			}
@@ -723,23 +795,30 @@ static Value DeserializeArray(std::string& str, std::stack<StackDepthType>& dept
 			bool terminate_parsing = false;
 
 			if ((str[i] == ',') || (str[i] == ']'))
+			{
 				terminate_parsing = true;			// hit the end of a value, parse it in the next block
+			}
 			else
 			{
 				// keep grabbing chars to build up the value
 				tmp += str[i];
 				if (i == str.length() - 1)
-					terminate_parsing = true; // end of string, finish parsing
+				{
+					terminate_parsing = true; // end of string, finish parsing }
+				}
 			}
-
 			if (terminate_parsing)
 			{
 				Value v = DeserializeValue(tmp, &had_error, depth_stack);
 				if (had_error)
+				{
 					return Value();
+				}
 
 				if (v.GetType() != nullptrVal)
+				{
 					a.push_back(v);
+				}
 
 				str = str.substr(i + 1, str.length());
 				break;
@@ -757,7 +836,9 @@ static Value DeserializeObj(const std::string& _str, std::stack<StackDepthType>&
 	std::string str = Trim(_str);
 
 	if ((str[0] != '{') && (str[str.length() - 1] != '}'))
+	{
 		return Value();
+	}
 	str = str.substr(1, str.length() - 2);
 
 	while (str.length() > 0)
@@ -768,17 +849,23 @@ static Value DeserializeObj(const std::string& _str, std::stack<StackDepthType>&
 		size_t colon_idx = str.find(':', end_quote_idx);
 
 		if ((start_quote_idx == std::string::npos) || (end_quote_idx == std::string::npos) || (colon_idx == std::string::npos))
-			return Value();	// can't find key name
+		{
+			return Value();	// can't find key name 
+		}
 
 		std::string key = str.substr(start_quote_idx + 1, end_quote_idx - start_quote_idx - 1);
 		if (key.length() == 0)
+		{
 			return Value();
+		}
 
 		bool had_error = false;
 		str = str.substr(colon_idx + 1, str.length());
 		obj[key] = DeserializeValue(str, &had_error, depth_stack);
 		if (had_error)
+		{
 			return Value();
+		}
 	}
 
 	return obj;

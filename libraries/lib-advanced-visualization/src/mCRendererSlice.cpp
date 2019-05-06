@@ -121,7 +121,7 @@ void CRendererSlice::rebuild(const IRendererContext& rContext)
 	m_ui32HistoryIndex = 0;
 }
 
-void CRendererSlice::refresh(const IRendererContext & rContext)
+void CRendererSlice::refresh(const IRendererContext& rContext)
 {
 	CRenderer::refresh(rContext);
 
@@ -142,7 +142,7 @@ void CRendererSlice::refresh(const IRendererContext & rContext)
 	m_ui32HistoryIndex = m_ui32HistoryCount;
 }
 
-bool CRendererSlice::render(const IRendererContext & rContext)
+bool CRendererSlice::render(const IRendererContext& rContext)
 {
 	// uint32_t i, j;
 	float d = 3.5;

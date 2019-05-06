@@ -18,7 +18,7 @@ namespace
 	} SColor;
 } // namespace;
 
-bool Tools::ColorGradient::parse(IMatrix& colorGradientMatrix, const CString& string)
+bool Tools::ColorGradient::parse(IMatrix& colorGradient, const CString& string)
 {
 	std::string colorString(string.toASCIIString());
 	std::string::size_type startPosition = 0;
@@ -50,17 +50,17 @@ bool Tools::ColorGradient::parse(IMatrix& colorGradientMatrix, const CString& st
 		startPosition = endPosition + 1;
 	} while (startPosition < colorString.length());
 
-	colorGradientMatrix.setDimensionCount(2);
-	colorGradientMatrix.setDimensionSize(0, 4);
-	colorGradientMatrix.setDimensionSize(1, static_cast<uint32_t>(colorGradientVector.size()));
+	colorGradient.setDimensionCount(2);
+	colorGradient.setDimensionSize(0, 4);
+	colorGradient.setDimensionSize(1, static_cast<uint32_t>(colorGradientVector.size()));
 
 	uint32_t i = 0;
 	for (auto it = colorGradientVector.begin(); it != colorGradientVector.end(); it++, i++)
 	{
-		colorGradientMatrix[i * 4] = it->second.percent;
-		colorGradientMatrix[i * 4 + 1] = it->second.red;
-		colorGradientMatrix[i * 4 + 2] = it->second.green;
-		colorGradientMatrix[i * 4 + 3] = it->second.blue;
+		colorGradient[i * 4] = it->second.percent;
+		colorGradient[i * 4 + 1] = it->second.red;
+		colorGradient[i * 4 + 2] = it->second.green;
+		colorGradient[i * 4 + 3] = it->second.blue;
 	}
 
 	return true;

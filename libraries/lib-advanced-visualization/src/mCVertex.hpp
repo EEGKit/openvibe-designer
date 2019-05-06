@@ -33,18 +33,18 @@ namespace Mensia
 		public:
 
 			explicit CVertex(double _x = 0, double _y = 0, double _z = 0, double _u = 0, double _v = 0)
-				:x(float(_x))
-				, y(float(_y))
-				, z(float(_z))
-				, u(float(_u))
-				, v(float(_v)) { }
+				: x(float(_x))
+				  , y(float(_y))
+				  , z(float(_z))
+				  , u(float(_u))
+				  , v(float(_v)) { }
 
 			CVertex(const CVertex& a, const CVertex& b)
-				:x(b.x - a.x)
-				, y(b.y - a.y)
-				, z(b.z - a.z)
-				, u(b.u - a.u)
-				, v(b.v - a.v) { }
+				: x(b.x - a.x)
+				  , y(b.y - a.y)
+				  , z(b.z - a.z)
+				  , u(b.u - a.u)
+				  , v(b.v - a.v) { }
 
 			float x;
 			float y;
@@ -70,7 +70,7 @@ namespace Mensia
 
 			float sqr_length() const { return dot(*this, *this); }
 
-			static float dot(const CVertex& v1, const CVertex& v2) { return v1.x* v2.x + v1.y * v2.y + v1.z * v2.z; }
+			static float dot(const CVertex& v1, const CVertex& v2) { return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z; }
 
 			static CVertex cross(const CVertex& v1, const CVertex& v2)
 			{

@@ -30,7 +30,7 @@ CBitMaskSettingView::CBitMaskSettingView(Kernel::IBox& rBox, uint32_t ui32Index,
 		if (m_rKernelContext.getTypeManager().getBitMaskEntry(m_oTypeIdentifier, i, l_sEntryName, l_ui64EntryValue))
 		{
 			GtkWidget* l_pSettingButton = gtk_check_button_new();
-			gtk_table_attach_defaults(l_pBitMaskTable, l_pSettingButton, (guint)(i& 1), (guint)((i& 1) + 1), (guint)(i >> 1), (guint)((i >> 1) + 1));
+			gtk_table_attach_defaults(l_pBitMaskTable, l_pSettingButton, (guint)(i & 1), (guint)((i & 1) + 1), (guint)(i >> 1), (guint)((i >> 1) + 1));
 			gtk_button_set_label(GTK_BUTTON(l_pSettingButton), (const char*)l_sEntryName);
 			m_vToggleButton.push_back(GTK_TOGGLE_BUTTON(l_pSettingButton));
 			g_signal_connect(G_OBJECT(l_pSettingButton), "toggled", G_CALLBACK(on_checkbutton__pressed), this);

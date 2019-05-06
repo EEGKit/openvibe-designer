@@ -99,7 +99,7 @@ namespace
 			return;
 		}
 
-		if (!SetPixelFormat(l_pDrawingContext, l_iPixelFormatIdentifier, &l_oPixelFormatDescriptor))
+		if (SetPixelFormat(l_pDrawingContext, l_iPixelFormatIdentifier, &l_oPixelFormatDescriptor) == 0)
 		{
 			GtkGL_Warning("SetPixelFormat failed");
 			GtkGL_Debug("realize-callback::failed");
@@ -158,14 +158,14 @@ void Mensia::AdvancedVisualization::GtkGL::preRender(GtkWidget* pWidget, bool bV
 	HDC l_pDrawingContext = (HDC)g_object_get_data(G_OBJECT(pWidget), GtkGL_DeviceContextName);
 	auto l_pGLRenderingContext = (HGLRC)g_object_get_data(G_OBJECT(pWidget), GtkGL_RenderingContextName);
 
-	if (!l_pGLRenderingContext)
+	if (l_pGLRenderingContext == nullptr)
 	{
 		GtkGL_Debug("Rendering context not ready");
 		GtkGL_Debug("pre-render::failed");
 		return;
 	}
 
-	if (!wglMakeCurrent(l_pDrawingContext, l_pGLRenderingContext))
+	if (wglMakeCurrent(l_pDrawingContext, l_pGLRenderingContext) == 0)
 	{
 		GtkGL_Warning("wglMakeCurrent failed");
 		GtkGL_Debug("pre-render::failed");
@@ -173,7 +173,7 @@ void Mensia::AdvancedVisualization::GtkGL::preRender(GtkWidget* pWidget, bool bV
 	}
 
 	// Enable / Disable vsync
-	if (wglSwapIntervalEXT)
+	if (wglSwapIntervalEXT != nullptr)
 	{
 		wglSwapIntervalEXT(bVerticalSync ? 1 : 0);
 	}
@@ -188,21 +188,21 @@ void Mensia::AdvancedVisualization::GtkGL::postRender(GtkWidget* pWidget)
 	HDC l_pDrawingContext = (HDC)g_object_get_data(G_OBJECT(pWidget), GtkGL_DeviceContextName);
 	HGLRC l_pGLRenderingContext = (HGLRC)g_object_get_data(G_OBJECT(pWidget), GtkGL_RenderingContextName);
 
-	if (!l_pDrawingContext)
+	if (l_pDrawingContext == nullptr)
 	{
 		GtkGL_Debug("Rendering context not ready");
 		GtkGL_Debug("post-render::failed");
 		return;
 	}
 
-	if (!SwapBuffers(l_pDrawingContext))
+	if (SwapBuffers(l_pDrawingContext) == 0)
 	{
 		GtkGL_Warning("SwapBuffers failed");
 		GtkGL_Debug("post-render::failed");
 		return;
 	}
 
-	if (!wglMakeCurrent(l_pDrawingContext, nullptr))
+	if (wglMakeCurrent(l_pDrawingContext, nullptr) == 0)
 	{
 		GtkGL_Warning("wglMakeCurrent failed");
 		GtkGL_Debug("post-render::failed");

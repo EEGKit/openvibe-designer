@@ -105,7 +105,7 @@ namespace Mensia
 				va_end(l_oArguments);
 			}
 
-			operator const std::vector<int>& () const { return m_vParameter; }
+			operator const std::vector<int>&() const { return m_vParameter; }
 
 		protected:
 
@@ -195,9 +195,9 @@ namespace Mensia
 
 			CBoxAlgorithmViz(const OpenViBE::CIdentifier& rClassId, const std::vector<int>& vParameter)
 				: m_oClassId(rClassId)
-				, m_vParameter(vParameter)
-				, m_pRuler(nullptr)
-				, m_oMouseHandler(*this)
+				  , m_vParameter(vParameter)
+				  , m_pRuler(nullptr)
+				  , m_oMouseHandler(*this)
 			{
 				m_oColor.r = 1;
 				m_oColor.g = 1;
@@ -210,7 +210,7 @@ namespace Mensia
 			bool initialize() override;
 			bool uninitialize() override;
 			bool processInput(uint32_t ui32InputIndex) override { return true; };
-			bool processClock(OpenViBE::Kernel::IMessageClock & rClock) override;
+			bool processClock(OpenViBE::Kernel::IMessageClock& rClock) override;
 
 		public:
 
@@ -249,7 +249,7 @@ namespace Mensia
 
 		protected:
 
-			void parseColor(TColor & rColor, const std::string & sColor);
+			void parseColor(TColor& rColor, const std::string& sColor);
 
 		public:
 
@@ -347,12 +347,12 @@ namespace Mensia
 
 			CBoxAlgorithmVizDesc(const OpenViBE::CString& sFullName, const OpenViBE::CIdentifier& rDescClassId, const OpenViBE::CIdentifier& rClassId, const OpenViBE::CString& sAddedSoftwareVersion, const OpenViBE::CString& sUpdatedSoftwareVersion, const CParameterSet& rParameterSet, const OpenViBE::CString& sShortDescription, const OpenViBE::CString& sDetailedDescription)
 				: m_sShortDescription(sShortDescription)
-				, m_sDetailedDescription(sDetailedDescription)
-				, m_oDescClassId(rDescClassId)
-				, m_oClassId(rClassId)
-				, m_sAddedSoftwareVersion(sAddedSoftwareVersion)
-				, m_sUpdatedSoftwareVersion(sUpdatedSoftwareVersion)
-				, m_vParameter(rParameterSet)
+				  , m_sDetailedDescription(sDetailedDescription)
+				  , m_oDescClassId(rDescClassId)
+				  , m_oClassId(rClassId)
+				  , m_sAddedSoftwareVersion(sAddedSoftwareVersion)
+				  , m_sUpdatedSoftwareVersion(sUpdatedSoftwareVersion)
+				  , m_vParameter(rParameterSet)
 			{
 				std::string l_sFullname(sFullName.toASCIIString());
 				size_t i = l_sFullname.rfind('/');
@@ -383,14 +383,14 @@ namespace Mensia
 			OpenViBE::CString getStockItemName() const override { return OpenViBE::CString("gtk-find"); }
 			OpenViBE::CIdentifier getCreatedClass() const override { return m_oClassId; }
 
-			void releaseBoxListener(OpenViBE::Plugins::IBoxListener * pBoxListener) const override
+			void releaseBoxListener(OpenViBE::Plugins::IBoxListener* pBoxListener) const override
 			{
 				delete pBoxListener;
 			}
 
 			bool hasFunctionality(OpenViBE::CIdentifier functionalityIdentifier) const override { return functionalityIdentifier == OVD_Functionality_Visualization; }
 
-			bool getBoxPrototype(OpenViBE::Kernel::IBoxProto & rBoxAlgorithmPrototype) const override
+			bool getBoxPrototype(OpenViBE::Kernel::IBoxProto& rBoxAlgorithmPrototype) const override
 			{
 				std::vector<int>::const_iterator it;
 				for (it = m_vParameter.begin(); it != m_vParameter.end(); it++)
@@ -424,4 +424,3 @@ namespace Mensia
 		};
 	} // namespace AdvancedVisualization;
 }  // namespace Mensia;
-

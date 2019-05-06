@@ -171,100 +171,100 @@ namespace OpenViBEPlugins
 			CTopographicMapDatabase& m_rTopographicMapDatabase;
 
 			//Maximum delay that can be applied to displayed data
-			double m_f64MaxDelay;
+			double m_f64MaxDelay = 2.0;
 
-			GtkBuilder* m_pBuilderInterface;
+			GtkBuilder* m_pBuilderInterface = nullptr;
 
-			GtkWidget* m_pDrawingArea;
-			GdkBitmap* m_pClipmask; //origin (m_ui32SkullX, m_ui32SkullY)
-			uint32_t m_ui32ClipmaskWidth;
-			uint32_t m_ui32ClipmaskHeight;
-			GdkGC* m_pClipmaskGC;
-			GdkRegion* m_pVisibleRegion; //reallocated whenever clipmask changes
+			GtkWidget* m_pDrawingArea = nullptr;
+			GdkBitmap* m_pClipmask = nullptr; //origin (m_ui32SkullX, m_ui32SkullY)
+			uint32_t m_ui32ClipmaskWidth = 0;
+			uint32_t m_ui32ClipmaskHeight = 0;
+			GdkGC* m_pClipmaskGC = nullptr;
+			GdkRegion* m_pVisibleRegion = nullptr; //reallocated whenever clipmask changes
 
 			GdkColor m_oBackgroundColor;
 
 			//! Active projection
-			ETopographicMap2DProjection m_ui32CurrentProjection;
+			ETopographicMap2DProjection m_ui32CurrentProjection = TopographicMap2DProjection_Radial;
 			//! Projection radio buttons
-			GtkRadioToolButton* m_pAxialProjectionButton;
-			GtkRadioToolButton* m_pRadialProjectionButton;
+			GtkRadioToolButton* m_pAxialProjectionButton = nullptr;
+			GtkRadioToolButton* m_pRadialProjectionButton = nullptr;
 
 			//! Active view
-			ETopographicMap2DView m_ui32CurrentView;
+			ETopographicMap2DView m_ui32CurrentView = TopographicMap2DView_Top;
 			//! View radio buttons
-			GtkRadioToolButton* m_pTopViewButton;
-			GtkRadioToolButton* m_pLeftViewButton;
-			GtkRadioToolButton* m_pRightViewButton;
-			GtkRadioToolButton* m_pBackViewButton;
+			GtkRadioToolButton* m_pTopViewButton = nullptr;
+			GtkRadioToolButton* m_pLeftViewButton = nullptr;
+			GtkRadioToolButton* m_pRightViewButton = nullptr;
+			GtkRadioToolButton* m_pBackViewButton = nullptr;
 
 			//! Interpolation type
-			uint64_t m_ui64CurrentInterpolation;
-			GtkRadioToolButton* m_pMapPotentials;
-			GtkRadioToolButton* m_pMapCurrents;
+			uint64_t m_ui64CurrentInterpolation = 0;
+			GtkRadioToolButton* m_pMapPotentials = nullptr;
+			GtkRadioToolButton* m_pMapCurrents = nullptr;
 
 			//! Electrodes toggle button
-			GtkToggleToolButton* m_pElectrodesToggleButton;
+			GtkToggleToolButton* m_pElectrodesToggleButton = nullptr;
 			//! Electrodes toggle state
-			bool m_bElectrodesToggledOn;
+			bool m_bElectrodesToggledOn = true;
 
-			bool m_bNeedResize;
+			bool m_bNeedResize = true;
 
-			uint32_t m_ui32GridSize;
-			uint32_t m_ui32CellSize;
+			uint32_t m_ui32GridSize = 0;
+			uint32_t m_ui32CellSize = 0;
 
 			OpenViBE::CMatrix m_oSampleCoordinatesMatrix;
 
 			std::vector<uint32_t> m_oSampleValues;
 			std::vector<std::pair<uint32_t, uint32_t>> m_oSample2DCoordinates; //in skull coords
 
-			uint32_t m_ui32MinPaletteBarHeight;
-			uint32_t m_ui32MaxPaletteBarHeight;
+			uint32_t m_ui32MinPaletteBarHeight = 10;
+			uint32_t m_ui32MaxPaletteBarHeight = 30;
 
-			uint32_t m_ui32HeadWindowWidth;
-			uint32_t m_ui32HeadWindowHeight;
+			uint32_t m_ui32HeadWindowWidth = 0;
+			uint32_t m_ui32HeadWindowHeight = 0;
 
-			uint32_t m_ui32PaletteWindowWidth;
-			uint32_t m_ui32PaletteWindowHeight;
+			uint32_t m_ui32PaletteWindowWidth = 0;
+			uint32_t m_ui32PaletteWindowHeight = 0;
 
-			uint32_t m_ui32SkullX;
-			uint32_t m_ui32SkullY;
-			uint32_t m_ui32SkullDiameter;
+			uint32_t m_ui32SkullX = 0;
+			uint32_t m_ui32SkullY = 0;
+			uint32_t m_ui32SkullDiameter = 0;
 			//angles relative to 3 o'clock position, CCW, in degrees
-			float m_f32SkullOutlineStartAngle;
-			float m_f32SkullOutlineEndAngle;
-			float m_f32SkullFillStartAngle;
-			float m_f32SkullFillEndAngle;
+			float m_f32SkullOutlineStartAngle = 0.0;
+			float m_f32SkullOutlineEndAngle = 0.0;
+			float m_f32SkullFillStartAngle = 0.0;
+			float m_f32SkullFillEndAngle = 0.0;
 
 			//determined from m_ui32SkullOutlineEndAngle
-			uint32_t m_ui32SkullOutlineLeftPointX;
-			uint32_t m_ui32SkullOutlineLeftPointY;
+			uint32_t m_ui32SkullOutlineLeftPointX = 0;
+			uint32_t m_ui32SkullOutlineLeftPointY = 0;
 			//determined from m_ui32SkullOutlineStartAngle
-			uint32_t m_ui32SkullOutlineRightPointX;
-			uint32_t m_ui32SkullOutlineRightPointY;
+			uint32_t m_ui32SkullOutlineRightPointX = 0;
+			uint32_t m_ui32SkullOutlineRightPointY = 0;
 
 			//determined from m_ui32SkullFillEndAngle
-			uint32_t m_ui32SkullFillLeftPointX;
-			uint32_t m_ui32SkullFillLeftPointY;
+			uint32_t m_ui32SkullFillLeftPointX = 0;
+			uint32_t m_ui32SkullFillLeftPointY = 0;
 			//determined from m_ui32SkullFillStartAngle
-			uint32_t m_ui32SkullFillRightPointX;
-			uint32_t m_ui32SkullFillRightPointY;
+			uint32_t m_ui32SkullFillRightPointX = 0;
+			uint32_t m_ui32SkullFillRightPointY = 0;
 
-			uint32_t m_ui32SkullFillBottomPointX;
-			uint32_t m_ui32SkullFillBottomPointY;
+			uint32_t m_ui32SkullFillBottomPointX = 0;
+			uint32_t m_ui32SkullFillBottomPointY = 0;
 
 			/////////////////////////////
 			// TOP VIEW
 			/////////////////////////////
-			uint32_t m_ui32NoseY;
+			uint32_t m_ui32NoseY = 0;
 
 			/////////////////////////////
 			// BOTTOM VIEW
 			/////////////////////////////
-			uint32_t m_ui32LeftNeckX;
-			uint32_t m_ui32LeftNeckY;
-			uint32_t m_ui32RightNeckX;
-			uint32_t m_ui32RightNeckY;
+			uint32_t m_ui32LeftNeckX = 0;
+			uint32_t m_ui32LeftNeckY = 0;
+			uint32_t m_ui32RightNeckX = 0;
+			uint32_t m_ui32RightNeckY = 0;
 
 			//////////////////////////////////
 			// LEFT/RIGHT VIEWS
@@ -280,16 +280,16 @@ namespace OpenViBEPlugins
 				 |
 				 + E
 			*/
-			uint32_t m_ui32NoseTopX; //A
-			uint32_t m_ui32NoseTopY;
-			uint32_t m_ui32NoseBumpX; //B
-			uint32_t m_ui32NoseBumpY;
-			uint32_t m_ui32NoseTipX; //C
-			uint32_t m_ui32NoseTipY;
-			uint32_t m_ui32NoseBaseX; //D
-			uint32_t m_ui32NoseBaseY;
-			uint32_t m_ui32NoseBottomX; //E
-			uint32_t m_ui32NoseBottomY;
+			uint32_t m_ui32NoseTopX = 0; //A
+			uint32_t m_ui32NoseTopY = 0;
+			uint32_t m_ui32NoseBumpX = 0; //B
+			uint32_t m_ui32NoseBumpY = 0;
+			uint32_t m_ui32NoseTipX = 0; //C
+			uint32_t m_ui32NoseTipY = 0;
+			uint32_t m_ui32NoseBaseX = 0; //D
+			uint32_t m_ui32NoseBaseY = 0;
+			uint32_t m_ui32NoseBottomX = 0; //E
+			uint32_t m_ui32NoseBottomY = 0;
 
 			/**
 			 * \brief Main pixmap
@@ -304,8 +304,8 @@ namespace OpenViBEPlugins
 			 * \remarks This pixmap is 32-bit aligned. Each row is m_ui32RowStride wide, and the pixmap has m_ui32SkullDiameter rows.
 			 * It is pasted into the main pixmap everytime changes happen (window resizing, display options toggled on/off, etc)
 			 */
-			guchar* m_pSkullRGBBuffer;
-			uint32_t m_ui32RowStride;
+			guchar* m_pSkullRGBBuffer = nullptr;
+			uint32_t m_ui32RowStride = 0;
 		};
 	} // namespace SimpleVisualization;
 }  // namespace OpenViBEPlugins;

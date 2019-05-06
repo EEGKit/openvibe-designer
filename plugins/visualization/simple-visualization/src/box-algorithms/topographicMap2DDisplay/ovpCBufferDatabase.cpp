@@ -182,7 +182,7 @@ bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer*
 			m_oChannelLocalisationTimes.pop_front();
 		}
 
-		if (l_pChannelLocalisation)
+		if (l_pChannelLocalisation != nullptr)
 		{
 			//copy coordinates and times
 			Tools::Matrix::copyContent(*l_pChannelLocalisation, *l_oMatrix);
@@ -354,7 +354,7 @@ bool CBufferDatabase::setMatrixBuffer(const double* pBuffer, uint64_t ui64StartT
 
 		//computes the sampling frequency for sanity checking or if the setter has not been called
 		const uint64_t l_ui64SampleDuration = ((uint64_t)1 << 32) * m_pDimensionSizes[1];
-		uint32_t l_ui32EstimatedFrequency = (uint32_t)(l_ui64SampleDuration / m_ui64BufferDuration);
+		uint32_t l_ui32EstimatedFrequency = uint32_t(l_ui64SampleDuration / m_ui64BufferDuration);
 		if (l_ui32EstimatedFrequency == 0)
 		{
 			// Complain if estimate is bad
@@ -691,7 +691,7 @@ bool CBufferDatabase::fillChannelLookupTable()
 		uint32_t firstNonWhitespaceChar = 0;
 		for (; firstNonWhitespaceChar < m_pDimensionLabels[0][i].size(); firstNonWhitespaceChar++)
 		{
-			if (!isspace(m_pDimensionLabels[0][i][firstNonWhitespaceChar]))
+			if (isspace(m_pDimensionLabels[0][i][firstNonWhitespaceChar]) == 0)
 			{
 				break;
 			}
@@ -703,7 +703,7 @@ bool CBufferDatabase::fillChannelLookupTable()
 		{
 			for (lastNonWhitespaceChar = m_pDimensionLabels[0][i].size() - 1; lastNonWhitespaceChar >= 0; lastNonWhitespaceChar--)
 			{
-				if (!isspace(m_pDimensionLabels[0][i][lastNonWhitespaceChar]))
+				if (isspace(m_pDimensionLabels[0][i][lastNonWhitespaceChar]) == 0)
 				{
 					break;
 				}

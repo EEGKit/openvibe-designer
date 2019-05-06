@@ -32,12 +32,11 @@ namespace Mensia
 {
 	namespace AdvancedVisualization
 	{
-
 		static const int s_iStimulationIndicatorSmoothness = 10;
 		static const float s_fStimulationIndicatorRadius = 0.01f;
 		static const float s_fStimulationIndicatorSpacing = 0.03f;
 
-		template < bool bPreRender, class T >
+		template <bool bPreRender, class T>
 		class TRendererStimulation : public T
 		{
 		public:
@@ -54,11 +53,10 @@ namespace Mensia
 						s_fStimulationIndicatorRadius * cosf(i / float(s_iStimulationIndicatorSmoothness - 1) * 2 * float(M_PI)),
 						s_fStimulationIndicatorRadius * sinf(i / float(s_iStimulationIndicatorSmoothness - 1) * 2 * float(M_PI))
 					));
-
 				}
 			}
 
-			bool render(const IRendererContext & rContext) override
+			bool render(const IRendererContext& rContext) override
 			{
 				bool l_bResult = true;
 

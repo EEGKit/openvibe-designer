@@ -56,14 +56,14 @@ namespace Mensia
 
 		protected:
 
-			std::vector < std::map < std::string, std::vector < uint32_t > > > m_vLookup;
-			std::vector < bool > m_vSelected;
+			std::vector<std::map<std::string, std::vector<uint32_t>>> m_vLookup;
+			std::vector<bool> m_vSelected;
 
 			C3DMesh m_oFace;
 			C3DMesh m_oScalp;
 			C3DMesh m_oBrain;
 
-			std::vector < uint32_t > m_vBrainSubsetTriangle;
+			std::vector<uint32_t> m_vBrainSubsetTriangle;
 		};
 	}  // namespace AdvancedVisualization
 }  // namespace Mensia

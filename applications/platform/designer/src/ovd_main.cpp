@@ -158,7 +158,7 @@ namespace
 } // namespace
 
 static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernelContext, map<string, const IPluginObjectDesc*>& vPluginObjectDesc, GtkTreeStore* pTreeStore,
-	std::vector<const IPluginObjectDesc*>& vNewBoxes, std::vector<const IPluginObjectDesc*>& vUpdatedBoxes, bool bIsNewVersion = false)
+												   std::vector<const IPluginObjectDesc*>& vNewBoxes, std::vector<const IPluginObjectDesc*>& vUpdatedBoxes, bool bIsNewVersion = false)
 {
 	typedef std::map<std::string, std::tuple<int, int, int>> componentsMap;
 	componentsMap currentVersions;
@@ -174,7 +174,7 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 		CString l_sStockItemName;
 
 		const auto* l_pBoxAlgorithmDesc = dynamic_cast<const IBoxAlgorithmDesc*>(l_pPluginObjectDesc);
-		if (l_pBoxAlgorithmDesc)
+		if (l_pBoxAlgorithmDesc != nullptr)
 		{
 			l_sStockItemName = l_pBoxAlgorithmDesc->getStockItemName();
 		}
@@ -198,7 +198,7 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 		if (l_bShouldShow)
 		{
 			GtkStockItem l_oStockItem;
-			if (!gtk_stock_lookup(l_sStockItemName, &l_oStockItem))
+			if (gtk_stock_lookup(l_sStockItemName, &l_oStockItem) == 0)
 			{
 				l_sStockItemName = GTK_STOCK_NEW;
 			}
@@ -235,7 +235,7 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 					gchar* l_sName = nullptr;
 					gboolean l_bIsPlugin;
 					gtk_tree_model_get(GTK_TREE_MODEL(pTreeStore), l_pGtkIterChild, Resource_StringName, &l_sName, Resource_BooleanIsPlugin, &l_bIsPlugin, -1);
-					if (!l_bIsPlugin && l_sName == l_sCategory)
+					if ((l_bIsPlugin == 0) && l_sName == l_sCategory)
 					{
 						l_bFound = true;
 					}
@@ -248,10 +248,10 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 				{
 					gtk_tree_store_append(GTK_TREE_STORE(pTreeStore), l_pGtkIterChild, l_pGtkIterParent);
 					gtk_tree_store_set(GTK_TREE_STORE(pTreeStore), l_pGtkIterChild, Resource_StringName, l_sCategory.c_str(),
-						Resource_StringShortDescription, "", Resource_StringStockIcon, "gtk-directory", Resource_StringColor, "#000000",
-						Resource_StringFont, "", Resource_BooleanIsPlugin, (gboolean)FALSE, -1);
+									   Resource_StringShortDescription, "", Resource_StringStockIcon, "gtk-directory", Resource_StringColor, "#000000",
+									   Resource_StringFont, "", Resource_BooleanIsPlugin, (gboolean)FALSE, -1);
 				}
-				if (!l_pGtkIterParent)
+				if (l_pGtkIterParent == nullptr)
 				{
 					l_pGtkIterParent = &l_oGtkIter2;
 				}
@@ -264,7 +264,7 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 			// define color of the text of the box
 			std::string l_sTextColor = "black";
 			std::string l_sBackGroundColor = "white";
-			std::string l_sTextFont = "";
+			std::string l_sTextFont;
 			std::string l_sName(l_pPluginObjectDesc->getName().toASCIIString());
 
 			if (rKernelContext.getPluginManager().isPluginObjectFlaggedAsDeprecated(l_pPluginObjectDesc->getCreatedClass()))
@@ -301,7 +301,7 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 					l_sBackGroundColor = "#FFFFC4";
 					vNewBoxes.push_back(l_pPluginObjectDesc);
 				}
-				// Otherwise
+					// Otherwise
 				else if (boxComponentVersionMajor == currentVersionMajor && boxComponentVersionMinor == currentVersionMinor && boxComponentVersionPatch == currentVersionPatch)
 				{
 					vNewBoxes.push_back(l_pPluginObjectDesc);
@@ -324,7 +324,7 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 						l_sBackGroundColor = "#FFFFC4";
 						vUpdatedBoxes.push_back(l_pPluginObjectDesc);
 					}
-					// Otherwise
+						// Otherwise
 					else if (!bIsNewVersion && (boxComponentUpdatedVersionMajor == currentVersionMajor && boxComponentUpdatedVersionMinor == currentVersionMinor && boxComponentUpdatedVersionPatch == currentVersionPatch))
 					{
 						vUpdatedBoxes.push_back(l_pPluginObjectDesc);
@@ -347,11 +347,11 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 
 
 			gtk_tree_store_set(GTK_TREE_STORE(pTreeStore), l_pGtkIterChild, Resource_StringName, l_sName.c_str(),
-				Resource_StringShortDescription, static_cast<const char*>(l_pPluginObjectDesc->getShortDescription()),
-				Resource_StringIdentifier, static_cast<const char*>(l_sBoxAlgorithmDescriptor.c_str()),
-				Resource_StringStockIcon, static_cast<const char*>(l_sStockItemName), Resource_StringColor, l_sTextColor.c_str(),
-				Resource_StringFont, l_sTextFont.c_str(), Resource_BooleanIsPlugin, (gboolean)TRUE,
-				Resource_BackGroundColor, static_cast<const char*>(l_sBackGroundColor.c_str()), -1);
+							   Resource_StringShortDescription, static_cast<const char*>(l_pPluginObjectDesc->getShortDescription()),
+							   Resource_StringIdentifier, static_cast<const char*>(l_sBoxAlgorithmDescriptor.c_str()),
+							   Resource_StringStockIcon, static_cast<const char*>(l_sStockItemName), Resource_StringColor, l_sTextColor.c_str(),
+							   Resource_StringFont, l_sTextFont.c_str(), Resource_BooleanIsPlugin, (gboolean)TRUE,
+							   Resource_BackGroundColor, static_cast<const char*>(l_sBackGroundColor.c_str()), -1);
 		};
 	}
 }
@@ -448,7 +448,7 @@ bool parse_arguments(int argc, char** argv, SConfiguration& rConfiguration)
 		glong itemsRead, itemsWritten;
 		char* argUtf8 = g_utf16_to_utf8(reinterpret_cast<gunichar2*>(argListUtf16[i]), static_cast<size_t>(wcslen(argListUtf16[i])), &itemsRead, &itemsWritten, &error);
 		l_vArgValue.emplace_back(argUtf8);
-		if (error)
+		if (error != nullptr)
 		{
 			g_error_free(error);
 			return false;
@@ -587,7 +587,7 @@ gboolean cb_remove_splashscreen(gpointer data)
 void message(const char* sTitle, const char* sMessage, GtkMessageType eType)
 {
 	GtkWidget* l_pDialog = gtk_message_dialog_new(nullptr, GtkDialogFlags(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
-		eType, GTK_BUTTONS_OK, "%s", sTitle);
+												  eType, GTK_BUTTONS_OK, "%s", sTitle);
 	gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(l_pDialog), "%s", sMessage);
 	::gtk_window_set_icon_from_file(GTK_WINDOW(l_pDialog), (Directories::getDataDir() + CString("/applications/designer/designer.ico")).toASCIIString(), nullptr);
 	gtk_window_set_title(GTK_WINDOW(l_pDialog), sTitle);
@@ -595,7 +595,7 @@ void message(const char* sTitle, const char* sMessage, GtkMessageType eType)
 	gtk_widget_destroy(l_pDialog);
 }
 
-void user_info(char** argv, ILogManager * l_rLogManager)
+void user_info(char** argv, ILogManager* l_rLogManager)
 {
 	const std::vector<std::string> messages =
 	{
@@ -615,7 +615,7 @@ void user_info(char** argv, ILogManager * l_rLogManager)
 		"  --random-seed uint      : initialize random number generator with value, default=time(nullptr)\n"
 	};
 
-	if (l_rLogManager)
+	if (l_rLogManager != nullptr)
 	{
 		for (const auto& m : messages) { (*l_rLogManager) << LogLevel_Info << m.c_str(); }
 	}
@@ -705,7 +705,7 @@ int go(int argc, char** argv)
 		IKernelContext* l_pKernelContext = nullptr;
 		l_oKernelLoader.initialize();
 		l_oKernelLoader.getKernelDesc(l_pKernelDesc);
-		if (!l_pKernelDesc)
+		if (l_pKernelDesc == nullptr)
 		{
 			cout << "[ FAILED ] No kernel descriptor" << "\n";
 		}
@@ -740,7 +740,7 @@ int go(int argc, char** argv)
 			}
 
 
-			if (!l_pKernelContext)
+			if (l_pKernelContext == nullptr)
 			{
 				cout << "[ FAILED ] No kernel created by kernel descriptor" << "\n";
 			}
@@ -813,7 +813,7 @@ int go(int argc, char** argv)
 
 						// FIXME is it necessary to keep next line uncomment ?
 						//bool l_bIsScreenValid=true;
-						if (!l_oConfiguration.m_eNoCheckColorDepth)
+						if (l_oConfiguration.m_eNoCheckColorDepth == 0)
 						{
 							if (GDK_IS_DRAWABLE(GTK_WIDGET(app.m_pMainWindow)->window))
 							{
@@ -821,15 +821,15 @@ int go(int argc, char** argv)
 								//l_bIsScreenValid=false;
 								switch (gdk_drawable_get_depth(GTK_WIDGET(app.m_pMainWindow)->window))
 								{
-								case 24:
-								case 32:
-									// FIXME is it necessary to keep next line uncomment ?
-									//l_bIsScreenValid=true;
-									break;
-								default:
-									l_rLogManager << LogLevel_Error << "Please change the color depth of your screen to either 24 or 32 bits\n";
-									// TODO find a way to break
-									break;
+									case 24:
+									case 32:
+										// FIXME is it necessary to keep next line uncomment ?
+										//l_bIsScreenValid=true;
+										break;
+									default:
+										l_rLogManager << LogLevel_Error << "Please change the color depth of your screen to either 24 or 32 bits\n";
+										// TODO find a way to break
+										break;
 								}
 							}
 						}
@@ -848,47 +848,47 @@ int go(int argc, char** argv)
 							bool error;
 							switch (l_oConfiguration.m_vFlag[i].first)
 							{
-							case CommandLineFlag_Open:
-								l_rLogManager << LogLevel_Info << "Opening scenario [" << CString(l_sFileName.c_str()) << "]\n";
-								if (!app.openScenario(l_sFileName.c_str()))
-								{
-									l_rLogManager << LogLevel_Error << "Could not open scenario " << l_sFileName.c_str() << "\n";
-									errorWhileLoadingScenario = l_oConfiguration.m_eNoGui == CommandLineFlag_NoGui;
-								}
-								break;
-							case CommandLineFlag_Play:
-								l_rLogManager << LogLevel_Info << "Opening and playing scenario [" << CString(l_sFileName.c_str()) << "]\n";
-								error = !app.openScenario(l_sFileName.c_str());
-								if (!error)
-								{
-									app.playScenarioCB();
-									error = app.getCurrentInterfacedScenario()->m_ePlayerStatus != PlayerStatus_Play;
-								}
-								if (error)
-								{
-									l_rLogManager << LogLevel_Error << "Scenario open or load error with --play.\n";
-									errorWhileLoadingScenario = l_oConfiguration.m_eNoGui == CommandLineFlag_NoGui;
-								}
-								break;
-							case CommandLineFlag_PlayFast:
-								l_rLogManager << LogLevel_Info << "Opening and fast playing scenario [" << CString(l_sFileName.c_str()) << "]\n";
-								error = !app.openScenario(l_sFileName.c_str());
-								if (!error)
-								{
-									app.forwardScenarioCB();
-									error = app.getCurrentInterfacedScenario()->m_ePlayerStatus != PlayerStatus_Forward;
-								}
-								if (error)
-								{
-									l_rLogManager << LogLevel_Error << "Scenario open or load error with --play-fast.\n";
-									errorWhileLoadingScenario = l_oConfiguration.m_eNoGui == CommandLineFlag_NoGui;
-								}
-								playRequested = true;
-								break;
-								//								case CommandLineFlag_Define:
-								//									break;
-							default:
-								break;
+								case CommandLineFlag_Open:
+									l_rLogManager << LogLevel_Info << "Opening scenario [" << CString(l_sFileName.c_str()) << "]\n";
+									if (!app.openScenario(l_sFileName.c_str()))
+									{
+										l_rLogManager << LogLevel_Error << "Could not open scenario " << l_sFileName.c_str() << "\n";
+										errorWhileLoadingScenario = l_oConfiguration.m_eNoGui == CommandLineFlag_NoGui;
+									}
+									break;
+								case CommandLineFlag_Play:
+									l_rLogManager << LogLevel_Info << "Opening and playing scenario [" << CString(l_sFileName.c_str()) << "]\n";
+									error = !app.openScenario(l_sFileName.c_str());
+									if (!error)
+									{
+										app.playScenarioCB();
+										error = app.getCurrentInterfacedScenario()->m_ePlayerStatus != PlayerStatus_Play;
+									}
+									if (error)
+									{
+										l_rLogManager << LogLevel_Error << "Scenario open or load error with --play.\n";
+										errorWhileLoadingScenario = l_oConfiguration.m_eNoGui == CommandLineFlag_NoGui;
+									}
+									break;
+								case CommandLineFlag_PlayFast:
+									l_rLogManager << LogLevel_Info << "Opening and fast playing scenario [" << CString(l_sFileName.c_str()) << "]\n";
+									error = !app.openScenario(l_sFileName.c_str());
+									if (!error)
+									{
+										app.forwardScenarioCB();
+										error = app.getCurrentInterfacedScenario()->m_ePlayerStatus != PlayerStatus_Forward;
+									}
+									if (error)
+									{
+										l_rLogManager << LogLevel_Error << "Scenario open or load error with --play-fast.\n";
+										errorWhileLoadingScenario = l_oConfiguration.m_eNoGui == CommandLineFlag_NoGui;
+									}
+									playRequested = true;
+									break;
+									//								case CommandLineFlag_Define:
+									//									break;
+								default:
+									break;
 							}
 						}
 

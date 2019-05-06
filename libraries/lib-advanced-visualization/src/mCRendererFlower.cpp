@@ -68,7 +68,7 @@ void CRendererFlower::rebuild(const IRendererContext& rContext)
 	m_ui32HistoryIndex = 0;
 }
 
-void CRendererFlower::refresh(const IRendererContext & rContext)
+void CRendererFlower::refresh(const IRendererContext& rContext)
 {
 	CRenderer::refresh(rContext);
 
@@ -82,9 +82,9 @@ void CRendererFlower::refresh(const IRendererContext & rContext)
 		for (i = 0; i < m_ui32ChannelCount; ++i)
 		{
 			k = ((m_ui32HistoryCount - 1 - z * m_vMuliVertex[z][i].size()) / m_ui32SampleCount) * m_ui32SampleCount;
-			std::vector < float > & l_vHistory = m_vHistory[i];
-			CVertex * l_pVertex = &m_vMuliVertex[z][i][0];
-			CVertex * l_pCircleVertex = &m_vCircle[0];
+			std::vector<float>& l_vHistory = m_vHistory[i];
+			CVertex* l_pVertex = &m_vMuliVertex[z][i][0];
+			CVertex* l_pCircleVertex = &m_vCircle[0];
 			for (j = 0; j < m_ui32SampleCount - m_ui32AutoDecimationFactor + 1; j += m_ui32AutoDecimationFactor, k += m_ui32AutoDecimationFactor)
 			{
 				sum = 0;
@@ -120,7 +120,7 @@ void CRendererFlower::refresh(const IRendererContext & rContext)
 	m_ui32HistoryIndex = m_ui32HistoryCount;
 }
 
-bool CRendererFlower::render(const IRendererContext & rContext)
+bool CRendererFlower::render(const IRendererContext& rContext)
 {
 	if (!rContext.getSelectedCount()) { return false; }
 	if (m_vMuliVertex.empty()) { return false; }
@@ -147,7 +147,7 @@ bool CRendererFlower::render(const IRendererContext & rContext)
 		{
 			if (!m_vMuliVertex[z].empty())
 			{
-				std::vector < CVertex >& l_vVertex = m_vMuliVertex[z][rContext.getSelected(i)];
+				std::vector<CVertex>& l_vVertex = m_vMuliVertex[z][rContext.getSelected(i)];
 
 				glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &l_vVertex[0].x);
 				glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &l_vVertex[n - d].u);

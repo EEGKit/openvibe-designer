@@ -78,11 +78,10 @@ namespace OpenViBEDesigner
 	GtkTableChild* getTableChild(GtkTable* pTable, int leftAttach, int rightAttach, int topAttach, int bottomAttach)
 	{
 		GList* pList = pTable->children;
-		GtkTableChild* pTC;
 
 		do
 		{
-			pTC = (GtkTableChild*)pList->data;
+			GtkTableChild* pTC = (GtkTableChild*)pList->data;
 			if (pTC->left_attach == leftAttach && pTC->right_attach == rightAttach &&
 				pTC->top_attach == topAttach && pTC->bottom_attach == bottomAttach) { return pTC; }
 			pList = pList->next;
@@ -286,8 +285,7 @@ void CDesignerVisualization::load()
 		m_ui32PreviewWindowWidth = l_pVisualizationWindow->getWidth();
 		m_ui32PreviewWindowHeight = l_pVisualizationWindow->getHeight();
 	}
-	uint32_t l_ui32TreeViewWidth;
-	l_ui32TreeViewWidth = gtk_paned_get_position(GTK_PANED(m_pPane));
+	uint32_t l_ui32TreeViewWidth = gtk_paned_get_position(GTK_PANED(m_pPane));
 	gtk_widget_set_size_request(GTK_WIDGET(m_pDialog), (gint)(l_ui32TreeViewWidth + m_ui32PreviewWindowWidth), (gint)m_ui32PreviewWindowHeight);
 
 	gtk_tree_view_expand_all(m_pTreeView);
@@ -319,7 +317,7 @@ void CDesignerVisualization::setDeleteEventCB(fpDesignerVisualizationDeleteEvent
 void CDesignerVisualization::onVisualizationBoxAdded(const IBox* pBox)
 {
 	CIdentifier l_oVisualizationWidgetIdentifier;
-	m_rVisualizationTree.addVisualizationWidget(l_oVisualizationWidgetIdentifier, pBox->getName(), EVisualizationWidget_VisualizationBox, 
+	m_rVisualizationTree.addVisualizationWidget(l_oVisualizationWidgetIdentifier, pBox->getName(), EVisualizationWidget_VisualizationBox,
 												OV_UndefinedIdentifier, 0, pBox->getIdentifier(), 0, OV_UndefinedIdentifier);
 
 	m_rVisualizationTree.reloadTree();
@@ -1043,7 +1041,7 @@ bool CDesignerVisualization::newVisualizationWindow(const char* label)
 
 	//proceed with window creation
 	//m_rVisualizationTree.addVisualizationWindow(l_oVisualizationWindowIdentifier, CString(label));
-	m_rVisualizationTree.addVisualizationWidget(l_oVisualizationWindowIdentifier, CString(label), EVisualizationWidget_VisualizationWindow, 
+	m_rVisualizationTree.addVisualizationWidget(l_oVisualizationWindowIdentifier, CString(label), EVisualizationWidget_VisualizationWindow,
 												OV_UndefinedIdentifier, 0, OV_UndefinedIdentifier, 0, OV_UndefinedIdentifier);
 
 	l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowIdentifier);
@@ -1056,7 +1054,7 @@ bool CDesignerVisualization::newVisualizationWindow(const char* label)
 	CIdentifier l_oChildIdentifier;
 	CString l_oChildName = "Default tab";
 
-	m_rVisualizationTree.addVisualizationWidget(l_oChildIdentifier, l_oChildName, EVisualizationWidget_VisualizationPanel, 
+	m_rVisualizationTree.addVisualizationWidget(l_oChildIdentifier, l_oChildName, EVisualizationWidget_VisualizationPanel,
 												l_oVisualizationWindowIdentifier, 0, OV_UndefinedIdentifier, 1, OV_UndefinedIdentifier);
 
 	m_rVisualizationTree.reloadTree();
@@ -1199,7 +1197,7 @@ bool CDesignerVisualization::newVisualizationPanel(const char* label)
 	}
 
 	//proceed with panel creation
-	m_rVisualizationTree.addVisualizationWidget(l_oChildIdentifier, l_oNewChildName, EVisualizationWidget_VisualizationPanel, 
+	m_rVisualizationTree.addVisualizationWidget(l_oChildIdentifier, l_oNewChildName, EVisualizationWidget_VisualizationPanel,
 												l_oVisualizationWindowIdentifier, l_pVisualizationWindow->getNbChildren(), OV_UndefinedIdentifier, 1, OV_UndefinedIdentifier);
 
 	m_rVisualizationTree.reloadTree();

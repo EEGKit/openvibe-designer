@@ -360,13 +360,11 @@ namespace
 
 		gtk_container_foreach(GTK_CONTAINER(l_pUserData->pContainer), on_gtk_widget_destroy_cb, nullptr);
 
-		vector<SColorGradientDataNode>::iterator it;
-
 		uint32_t i = 0;
 		uint32_t count = l_pUserData->vColorGradient.size();
 		l_pUserData->vColorButtonMap.clear();
 		l_pUserData->vSpinButtonMap.clear();
-		for (it = l_pUserData->vColorGradient.begin(); it != l_pUserData->vColorGradient.end(); it++, i++)
+		for (vector<SColorGradientDataNode>::iterator it = l_pUserData->vColorGradient.begin(); it != l_pUserData->vColorGradient.end(); it++, i++)
 		{
 			GtkBuilder* l_pBuilderInterface = gtk_builder_new(); // glade_xml_new(l_pUserData->sGUIFilename.c_str(), "setting_editor-color_gradient-hbox", nullptr);
 			gtk_builder_add_from_file(l_pBuilderInterface, l_pUserData->sGUIFilename.c_str(), nullptr);
@@ -885,7 +883,7 @@ void CSettingCollectionHelper::setValueBitMask(const CIdentifier& rTypeIdentifie
 		if (m_rKernelContext.getTypeManager().getBitMaskEntry(rTypeIdentifier, i, l_sEntryName, l_ui64EntryValue))
 		{
 			GtkWidget* l_pSettingButton = gtk_check_button_new();
-			gtk_table_attach_defaults(l_pBitMaskTable, l_pSettingButton, (guint)(i& 1), (guint)((i& 1) + 1), (guint)(i >> 1), (guint)((i >> 1) + 1));
+			gtk_table_attach_defaults(l_pBitMaskTable, l_pSettingButton, (guint)(i & 1), (guint)((i & 1) + 1), (guint)(i >> 1), (guint)((i >> 1) + 1));
 			gtk_button_set_label(GTK_BUTTON(l_pSettingButton), (const char*)l_sEntryName);
 
 			if (l_sValue.find((const char*)l_sEntryName) != string::npos)

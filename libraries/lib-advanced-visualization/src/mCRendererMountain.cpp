@@ -55,12 +55,12 @@ void CRendererMountain::rebuild(const IRendererContext& rContext)
 	{
 		for (j = 0; j < m_ui32SampleCount - 1; j++)
 		{
-			m_oMountain.m_vTriangle[k * 6] = (i)* m_ui32SampleCount + (j);
+			m_oMountain.m_vTriangle[k * 6] = (i) * m_ui32SampleCount + (j);
 			m_oMountain.m_vTriangle[k * 6 + 1] = (i + 1) * m_ui32SampleCount + (j);
 			m_oMountain.m_vTriangle[k * 6 + 2] = (i + 1) * m_ui32SampleCount + (j + 1);
-			m_oMountain.m_vTriangle[k * 6 + 3] = (i)* m_ui32SampleCount + (j);
+			m_oMountain.m_vTriangle[k * 6 + 3] = (i) * m_ui32SampleCount + (j);
 			m_oMountain.m_vTriangle[k * 6 + 4] = (i + 1) * m_ui32SampleCount + (j + 1);
-			m_oMountain.m_vTriangle[k * 6 + 5] = (i)* m_ui32SampleCount + (j + 1);
+			m_oMountain.m_vTriangle[k * 6 + 5] = (i) * m_ui32SampleCount + (j + 1);
 			k++;
 		}
 	}
@@ -68,7 +68,7 @@ void CRendererMountain::rebuild(const IRendererContext& rContext)
 	m_ui32HistoryIndex = 0;
 }
 
-void CRendererMountain::refresh(const IRendererContext & rContext)
+void CRendererMountain::refresh(const IRendererContext& rContext)
 {
 	CRenderer::refresh(rContext);
 
@@ -79,8 +79,8 @@ void CRendererMountain::refresh(const IRendererContext & rContext)
 	for (i = 0, k = 0; i < rContext.getSelectedCount(); ++i)
 	{
 		k = ((m_ui32HistoryCount - 1) / m_ui32SampleCount) * m_ui32SampleCount;
-		std::vector < float > & l_vHistory = m_vHistory[rContext.getSelected(i)];
-		CVertex * l_pVertex = &m_oMountain.m_vVertex[i * m_ui32SampleCount];
+		std::vector<float>& l_vHistory = m_vHistory[rContext.getSelected(i)];
+		CVertex* l_pVertex = &m_oMountain.m_vVertex[i * m_ui32SampleCount];
 		for (j = 0; j < m_ui32SampleCount; j++, k++)
 		{
 			if (/*k>=m_ui32HistoryIndex && */k < m_ui32HistoryCount)
@@ -96,7 +96,7 @@ void CRendererMountain::refresh(const IRendererContext & rContext)
 	m_ui32HistoryIndex = m_ui32HistoryCount;
 }
 
-bool CRendererMountain::render(const IRendererContext & rContext)
+bool CRendererMountain::render(const IRendererContext& rContext)
 {
 	if (m_oMountain.m_vVertex.empty()) { return false; }
 	if (!m_ui32HistoryCount) { return false; }

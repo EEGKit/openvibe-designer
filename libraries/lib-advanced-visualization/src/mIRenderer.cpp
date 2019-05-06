@@ -43,27 +43,27 @@ IRenderer* IRenderer::create(int eRendererType, bool bStimulation)
 {
 	switch (eRendererType)
 	{
-	case RendererType_2DTopography: return (bStimulation ? nullptr : new CRendererTopo2D);
-	case RendererType_3DTopography: return (bStimulation ? nullptr : new CRendererTopo3D);
-	case RendererType_Bars:         return (bStimulation ? new TRendererStimulation < true, CRendererBars > : new CRendererBars);
-	case RendererType_Bitmap:       return (bStimulation ? new TRendererStimulation < true, CRendererBitmap > : new CRendererBitmap);
-	case RendererType_Connectivity: return (bStimulation ? nullptr : new CRendererConnectivity);
-	case RendererType_Cube:         return (bStimulation ? nullptr : new CRendererCube);
-	case RendererType_Flower:       return (bStimulation ? nullptr : new CRendererFlower);
-	case RendererType_Line:         return (bStimulation ? new TRendererStimulation < false, CRendererLine > : new CRendererLine);
-	case RendererType_Loreta:       return (bStimulation ? nullptr : new CRendererLoreta);
-	case RendererType_Mountain:     return (bStimulation ? nullptr : new CRendererMountain);
-	case RendererType_MultiLine:    return (bStimulation ? new TRendererStimulation < false, CRendererMultiLine > : new CRendererMultiLine);
-	case RendererType_Slice:        return (bStimulation ? nullptr : new CRendererSlice);
-	case RendererType_XYZPlot:      return (bStimulation ? nullptr : new CRendererXYZPlot);
-		//		case RendererType_:             return (bStimulation?new TRendererStimulation < false, CRenderer >:new CRenderer);
-	default:
-		return nullptr;
+		case RendererType_2DTopography: return (bStimulation ? nullptr : new CRendererTopo2D);
+		case RendererType_3DTopography: return (bStimulation ? nullptr : new CRendererTopo3D);
+		case RendererType_Bars: return (bStimulation ? new TRendererStimulation<true, CRendererBars> : new CRendererBars);
+		case RendererType_Bitmap: return (bStimulation ? new TRendererStimulation<true, CRendererBitmap> : new CRendererBitmap);
+		case RendererType_Connectivity: return (bStimulation ? nullptr : new CRendererConnectivity);
+		case RendererType_Cube: return (bStimulation ? nullptr : new CRendererCube);
+		case RendererType_Flower: return (bStimulation ? nullptr : new CRendererFlower);
+		case RendererType_Line: return (bStimulation ? new TRendererStimulation<false, CRendererLine> : new CRendererLine);
+		case RendererType_Loreta: return (bStimulation ? nullptr : new CRendererLoreta);
+		case RendererType_Mountain: return (bStimulation ? nullptr : new CRendererMountain);
+		case RendererType_MultiLine: return (bStimulation ? new TRendererStimulation<false, CRendererMultiLine> : new CRendererMultiLine);
+		case RendererType_Slice: return (bStimulation ? nullptr : new CRendererSlice);
+		case RendererType_XYZPlot: return (bStimulation ? nullptr : new CRendererXYZPlot);
+			//		case RendererType_:             return (bStimulation?new TRendererStimulation < false, CRenderer >:new CRenderer);
+		default:
+			return nullptr;
 	}
 	return nullptr;
 }
 
-void IRenderer::release(IRenderer * pRenderer)
+void IRenderer::release(IRenderer* pRenderer)
 {
 	delete pRenderer;
 }

@@ -59,9 +59,9 @@ void CRendererCube::refresh(const IRendererContext& rContext)
 	m_ui32HistoryIndex = m_ui32HistoryCount;
 }
 
-bool CRendererCube::render(const IRendererContext & rContext)
+bool CRendererCube::render(const IRendererContext& rContext)
 {
-	std::map < std::string, CVertex >::const_iterator it;
+	std::map<std::string, CVertex>::const_iterator it;
 
 	if (!rContext.getSelectedCount()) { return false; }
 	if (m_vVertex.empty()) { return false; }

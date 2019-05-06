@@ -528,7 +528,7 @@ void CBoxConfigurationDialog::saveConfiguration()
 
 void CBoxConfigurationDialog::loadConfiguration()
 {
-	GtkWidget* l_pWidgetDialogOpen = gtk_file_chooser_dialog_new("Select file to load settings from...", nullptr, GTK_FILE_CHOOSER_ACTION_SAVE, 
+	GtkWidget* l_pWidgetDialogOpen = gtk_file_chooser_dialog_new("Select file to load settings from...", nullptr, GTK_FILE_CHOOSER_ACTION_SAVE,
 																 GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, nullptr);
 
 	const gchar* l_sInitialFileNameToExpand = gtk_entry_get_text(GTK_ENTRY(m_pOverrideEntryContainer));
@@ -567,7 +567,7 @@ void CBoxConfigurationDialog::loadConfiguration()
 
 void CBoxConfigurationDialog::onOverrideBrowse()
 {
-	GtkWidget* l_pWidgetDialogOpen = gtk_file_chooser_dialog_new("Select file to open...", nullptr, GTK_FILE_CHOOSER_ACTION_SAVE, 
+	GtkWidget* l_pWidgetDialogOpen = gtk_file_chooser_dialog_new("Select file to open...", nullptr, GTK_FILE_CHOOSER_ACTION_SAVE,
 																 GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, nullptr);
 
 	CString l_sInitialFileName = m_rKernelContext.getConfigurationManager().expand(gtk_entry_get_text(GTK_ENTRY(m_pOverrideEntry)));

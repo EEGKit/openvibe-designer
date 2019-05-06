@@ -56,7 +56,6 @@ void CRendererXYZPlot::refresh(const IRendererContext& rContext)
 		uint32_t i, i3, j = m_ui32HistoryIndex % this->m_ui32SampleCount;
 		for (i = 0; i < m_ui32PlotCount; ++i)
 		{
-
 			if (m_bHasDepth)
 			{
 				i3 = i * 3;
@@ -75,7 +74,7 @@ void CRendererXYZPlot::refresh(const IRendererContext& rContext)
 	}
 }
 
-bool CRendererXYZPlot::render(const IRendererContext & rContext)
+bool CRendererXYZPlot::render(const IRendererContext& rContext)
 {
 	if (!rContext.getSelectedCount()) { return false; }
 	if (m_vVertex.empty()) { return false; }

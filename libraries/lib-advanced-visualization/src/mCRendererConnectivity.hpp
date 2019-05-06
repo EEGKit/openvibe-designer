@@ -22,7 +22,7 @@
 #ifndef __Mensia_AdvancedVisualization_CRendererConnectivity_H__
 #define __Mensia_AdvancedVisualization_CRendererConnectivity_H__
 
- // #if defined TARGET_HAS_ThirdPartyVRPN
+// #if defined TARGET_HAS_ThirdPartyVRPN
 
 #include "mCRenderer.hpp"
 

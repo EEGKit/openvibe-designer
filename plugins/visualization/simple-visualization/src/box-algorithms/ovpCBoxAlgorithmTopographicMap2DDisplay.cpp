@@ -69,7 +69,7 @@ bool CBoxAlgorithmTopographicMap2DDisplay::initialize()
 bool CBoxAlgorithmTopographicMap2DDisplay::uninitialize()
 
 {
-	if (m_pDecoder)
+	if (m_pDecoder != nullptr)
 	{
 		m_pDecoder->uninitialize();
 		delete m_pDecoder;

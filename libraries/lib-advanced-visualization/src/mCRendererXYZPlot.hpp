@@ -39,7 +39,7 @@ namespace Mensia
 			bool m_bHasDepth;
 			uint32_t m_ui32PlotDimension;
 			uint32_t m_ui32PlotCount;
-			std::vector < std::vector < CVertex > > m_vVertex;
+			std::vector<std::vector<CVertex>> m_vVertex;
 		};
 	}  // namespace AdvancedVisualization
 }  // namespace Mensia

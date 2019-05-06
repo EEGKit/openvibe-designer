@@ -36,22 +36,22 @@ void CRendererBars::rebuild(const IRendererContext& rContext)
 		m_vVertex[i].resize(m_ui32SampleCount * 4);
 		for (j = 0; j < m_ui32SampleCount; j++)
 		{
-			m_vVertex[i][j * 4].x = (j)* m_f32InverseSampleCount;
+			m_vVertex[i][j * 4].x = (j) * m_f32InverseSampleCount;
 			m_vVertex[i][j * 4 + 1].x = (j + 1) * m_f32InverseSampleCount;
 			m_vVertex[i][j * 4 + 2].x = (j + 1) * m_f32InverseSampleCount;
-			m_vVertex[i][j * 4 + 3].x = (j)* m_f32InverseSampleCount;
+			m_vVertex[i][j * 4 + 3].x = (j) * m_f32InverseSampleCount;
 
-			m_vVertex[i][j * 4].u = (j)* m_f32InverseSampleCount;
-			m_vVertex[i][j * 4 + 1].u = (j)* m_f32InverseSampleCount;
-			m_vVertex[i][j * 4 + 2].u = (j)* m_f32InverseSampleCount;
-			m_vVertex[i][j * 4 + 3].u = (j)* m_f32InverseSampleCount;
+			m_vVertex[i][j * 4].u = (j) * m_f32InverseSampleCount;
+			m_vVertex[i][j * 4 + 1].u = (j) * m_f32InverseSampleCount;
+			m_vVertex[i][j * 4 + 2].u = (j) * m_f32InverseSampleCount;
+			m_vVertex[i][j * 4 + 3].u = (j) * m_f32InverseSampleCount;
 		}
 	}
 
 	m_ui32HistoryIndex = 0;
 }
 
-void CRendererBars::refresh(const IRendererContext & rContext)
+void CRendererBars::refresh(const IRendererContext& rContext)
 {
 	CRenderer::refresh(rContext);
 
@@ -62,8 +62,8 @@ void CRendererBars::refresh(const IRendererContext & rContext)
 	for (i = 0; i < m_ui32ChannelCount; ++i)
 	{
 		k = ((m_ui32HistoryCount - 1) / m_ui32SampleCount) * m_ui32SampleCount;
-		std::vector < float > & l_vHistory = m_vHistory[i];
-		CVertex * l_pVertex = &m_vVertex[i][0];
+		std::vector<float>& l_vHistory = m_vHistory[i];
+		CVertex* l_pVertex = &m_vVertex[i][0];
 		for (j = 0; j < m_ui32SampleCount; j++, k++)
 		{
 			if (k >= m_ui32HistoryIndex && k < m_ui32HistoryCount)
@@ -83,7 +83,7 @@ void CRendererBars::refresh(const IRendererContext & rContext)
 	m_ui32HistoryIndex = m_ui32HistoryCount;
 }
 
-bool CRendererBars::render(const IRendererContext & rContext)
+bool CRendererBars::render(const IRendererContext& rContext)
 {
 	if (!rContext.getSelectedCount()) { return false; }
 	if (m_vVertex.empty()) { return false; }

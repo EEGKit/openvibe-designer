@@ -315,7 +315,6 @@ CRendererLoreta::CRendererLoreta()
 		{
 			m_vLookup[l_uiCategoryIndex_Lobes][g_pLobes[i]._sName].insert(m_vLookup[l_uiCategoryIndex_Lobes][g_pLobes[i]._sName].begin(), g_pLobes[i]._pVoxels, g_pLobes[i]._pVoxels + g_pLobes[i]._uiVoxelCount);
 		}
-
 	}
 
 	// Loading ROI data
@@ -330,19 +329,19 @@ CRendererLoreta::CRendererLoreta()
 	this->refreshBrainSubset();
 }
 
-void CRendererLoreta::rebuild(const IRendererContext & rContext)
+void CRendererLoreta::rebuild(const IRendererContext& rContext)
 {
 	CRenderer::rebuild(rContext);
 }
 
-void CRendererLoreta::refresh(const IRendererContext & rContext)
+void CRendererLoreta::refresh(const IRendererContext& rContext)
 {
 	CRenderer::refresh(rContext);
 }
 
 #define __Rendering_VertexBuffer__
 
-bool CRendererLoreta::render(const IRendererContext & rContext)
+bool CRendererLoreta::render(const IRendererContext& rContext)
 {
 	uint32_t i, j;
 
@@ -377,7 +376,7 @@ bool CRendererLoreta::render(const IRendererContext & rContext)
 
 	if (m_ui32HistoryCount && m_vHistory.size() == 2394)
 	{
-		std::vector < float > l_vSample;
+		std::vector<float> l_vSample;
 		this->getSampleAtERPFraction(m_f32ERPFraction, l_vSample);
 
 #if defined __Rendering_VertexBuffer__
@@ -516,7 +515,7 @@ bool CRendererLoreta::render(const IRendererContext & rContext)
 void CRendererLoreta::clearRegionSelection()
 
 {
-	std::vector < bool >::iterator it;
+	std::vector<bool>::iterator it;
 	for (it = m_vSelected.begin(); it != m_vSelected.end(); it++)
 	{
 		*it = false;
@@ -526,7 +525,9 @@ void CRendererLoreta::clearRegionSelection()
 }
 
 uint32_t CRendererLoreta::getRegionCategoryCount()
- { return m_vLookup.size(); }
+{
+	return m_vLookup.size();
+}
 
 uint32_t CRendererLoreta::getRegionCount(uint32_t ui32RegionCategory)
 {
@@ -539,11 +540,11 @@ const char* CRendererLoreta::getRegionCategoryName(uint32_t ui32RegionCategory)
 {
 	switch (ui32RegionCategory)
 	{
-	case 0: return "Brodmann";
-	case 1: return "Anatomic";
-	case 2: return "Lobe";
-	case 3: return "Function";
-	default: return nullptr;
+		case 0: return "Brodmann";
+		case 1: return "Anatomic";
+		case 2: return "Lobe";
+		case 3: return "Function";
+		default: return nullptr;
 	}
 }
 
@@ -551,7 +552,7 @@ const char* CRendererLoreta::getRegionName(uint32_t ui32RegionCategory, uint32_t
 {
 	if (ui32RegionCategory >= m_vLookup.size()) { return nullptr; }
 
-	std::map < std::string, std::vector < uint32_t > > & l_vLookup = m_vLookup[ui32RegionCategory];
+	std::map<std::string, std::vector<uint32_t>>& l_vLookup = m_vLookup[ui32RegionCategory];
 	auto it = l_vLookup.begin();
 
 	for (uint32_t j = 0; j < ui32RegionIndex && it != l_vLookup.end(); j++)
@@ -568,13 +569,13 @@ void CRendererLoreta::selectRegion(uint32_t ui32RegionCategory, const char* sReg
 {
 	if (ui32RegionCategory >= m_vLookup.size()) { return; }
 
-	std::map < std::string, std::vector < uint32_t > > & l_vLookup = m_vLookup[ui32RegionCategory];
-	std::map < std::string, std::vector < uint32_t > >::iterator it;
+	std::map<std::string, std::vector<uint32_t>>& l_vLookup = m_vLookup[ui32RegionCategory];
+	std::map<std::string, std::vector<uint32_t>>::iterator it;
 
 	it = l_vLookup.find(sRegionName);
 	if (it != l_vLookup.end())
 	{
-		std::vector < uint32_t >& l_rList = it->second;
+		std::vector<uint32_t>& l_rList = it->second;
 		for (uint32_t i = 0; i < l_rList.size(); ++i)
 		{
 			m_vSelected[l_rList[i]] = true;
@@ -588,8 +589,8 @@ void CRendererLoreta::selectRegion(uint32_t ui32RegionCategory, uint32_t ui32Reg
 {
 	if (ui32RegionCategory >= m_vLookup.size()) { return; }
 
-	std::map < std::string, std::vector < uint32_t > > & l_vLookup = m_vLookup[ui32RegionCategory];
-	std::map < std::string, std::vector < uint32_t > >::iterator it = l_vLookup.begin();
+	std::map<std::string, std::vector<uint32_t>>& l_vLookup = m_vLookup[ui32RegionCategory];
+	std::map<std::string, std::vector<uint32_t>>::iterator it = l_vLookup.begin();
 
 	for (uint32_t j = 0; j < ui32RegionIndex && it != l_vLookup.end(); j++)
 	{
@@ -598,7 +599,7 @@ void CRendererLoreta::selectRegion(uint32_t ui32RegionCategory, uint32_t ui32Reg
 
 	if (it != l_vLookup.end())
 	{
-		std::vector < uint32_t >& l_rList = it->second;
+		std::vector<uint32_t>& l_rList = it->second;
 		for (uint32_t i = 0; i < l_rList.size(); ++i)
 		{
 			m_vSelected[l_rList[i]] = true;

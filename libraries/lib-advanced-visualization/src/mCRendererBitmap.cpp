@@ -41,7 +41,7 @@ void CRendererBitmap::rebuild(const IRendererContext& rContext)
 		{
 			uint32_t l = j / m_ui32AutoDecimationFactor;
 
-			m_vVertex[i][l * 4].x = (l)* m_ui32AutoDecimationFactor * m_f32InverseSampleCount;
+			m_vVertex[i][l * 4].x = (l) * m_ui32AutoDecimationFactor * m_f32InverseSampleCount;
 			m_vVertex[i][l * 4].y = 0;
 
 			m_vVertex[i][l * 4 + 1].x = (l + 1) * m_ui32AutoDecimationFactor * m_f32InverseSampleCount;
@@ -50,7 +50,7 @@ void CRendererBitmap::rebuild(const IRendererContext& rContext)
 			m_vVertex[i][l * 4 + 2].x = (l + 1) * m_ui32AutoDecimationFactor * m_f32InverseSampleCount;
 			m_vVertex[i][l * 4 + 2].y = 1;
 
-			m_vVertex[i][l * 4 + 3].x = (l)* m_ui32AutoDecimationFactor * m_f32InverseSampleCount;
+			m_vVertex[i][l * 4 + 3].x = (l) * m_ui32AutoDecimationFactor * m_f32InverseSampleCount;
 			m_vVertex[i][l * 4 + 3].y = 1;
 		}
 	}
@@ -58,20 +58,21 @@ void CRendererBitmap::rebuild(const IRendererContext& rContext)
 	m_ui32HistoryIndex = 0;
 }
 
-void CRendererBitmap::refresh(const IRendererContext & rContext)
+void CRendererBitmap::refresh(const IRendererContext& rContext)
 {
 	CRenderer::refresh(rContext);
 
 	if (!m_ui32HistoryCount) { return; }
-	if (m_vVertex.empty()) {
+	if (m_vVertex.empty())
+	{
 		return;
 	}
 
 	for (uint32_t i = 0; i < m_ui32ChannelCount; ++i)
 	{
 		uint32_t k = ((m_ui32HistoryCount - 1) / m_ui32SampleCount) * m_ui32SampleCount;
-		std::vector < float > & l_vHistory = m_vHistory[i];
-		CVertex * l_pVertex = &m_vVertex[i][0];
+		std::vector<float>& l_vHistory = m_vHistory[i];
+		CVertex* l_pVertex = &m_vVertex[i][0];
 		for (uint32_t j = 0; j < m_ui32SampleCount - m_ui32AutoDecimationFactor + 1; j += m_ui32AutoDecimationFactor, k += m_ui32AutoDecimationFactor)
 		{
 			if (k >= m_ui32HistoryIndex && k < m_ui32HistoryCount)
@@ -91,7 +92,7 @@ void CRendererBitmap::refresh(const IRendererContext & rContext)
 	m_ui32HistoryIndex = m_ui32HistoryCount;
 }
 
-bool CRendererBitmap::render(const IRendererContext & rContext)
+bool CRendererBitmap::render(const IRendererContext& rContext)
 {
 	if (!rContext.getSelectedCount()) { return false; }
 	if (m_vVertex.empty()) { return false; }

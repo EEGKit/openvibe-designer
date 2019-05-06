@@ -30,7 +30,7 @@ using namespace AdvancedVisualization;
 
 namespace
 {
-	void getLeftRightScore(std::map < std::string, float >& vScore, const std::vector < std::string >& vChannelName, const std::vector < CVertex >& vChannelLocalisation)
+	void getLeftRightScore(std::map<std::string, float>& vScore, const std::vector<std::string>& vChannelName, const std::vector<CVertex>& vChannelLocalisation)
 	{
 		for (uint32_t i = 0; i < vChannelName.size() && i < vChannelLocalisation.size(); ++i)
 		{
@@ -40,7 +40,7 @@ namespace
 		}
 	}
 
-	void getFrontBackScore(std::map < std::string, float > & vScore, const std::vector < std::string > & vChannelName, const std::vector < CVertex > & vChannelLocalisation)
+	void getFrontBackScore(std::map<std::string, float>& vScore, const std::vector<std::string>& vChannelName, const std::vector<CVertex>& vChannelLocalisation)
 	{
 		for (uint32_t i = 0; i < vChannelName.size() && i < vChannelLocalisation.size(); ++i)
 		{
@@ -52,8 +52,8 @@ namespace
 
 	struct sort_alpha
 	{
-		sort_alpha(const std::vector < std::string >& vChannelName)
-			:m_vChannelName(vChannelName) { }
+		sort_alpha(const std::vector<std::string>& vChannelName)
+			: m_vChannelName(vChannelName) { }
 
 		bool operator()(uint32_t i, uint32_t j)
 		{
@@ -65,18 +65,18 @@ namespace
 			return l_sChannelName_i < l_sChannelName_j;
 		}
 
-		const std::vector < std::string >& m_vChannelName;
+		const std::vector<std::string>& m_vChannelName;
 	};
 
 	struct sort_special
 	{
-		sort_special(const std::vector < std::string >& vChannelName, const std::map < std::string, float >& vScore)
-			:m_vChannelName(vChannelName)
-			, m_vScore(vScore) { }
+		sort_special(const std::vector<std::string>& vChannelName, const std::map<std::string, float>& vScore)
+			: m_vChannelName(vChannelName)
+			  , m_vScore(vScore) { }
 
 		bool operator()(uint32_t i, uint32_t j)
 		{
-			std::map < std::string, float >::const_iterator it;
+			std::map<std::string, float>::const_iterator it;
 
 			float l_f32Score_i = 0;
 			float l_f32Score_j = 0;
@@ -95,8 +95,8 @@ namespace
 			return l_f32Score_i < l_f32Score_j;
 		}
 
-		const std::vector < std::string >& m_vChannelName;
-		const std::map < std::string, float >& m_vScore;
+		const std::vector<std::string>& m_vChannelName;
+		const std::map<std::string, float>& m_vScore;
 	};
 }  // namespace
 
@@ -104,7 +104,7 @@ namespace
 //
 
 CRendererContext::CRendererContext(IRendererContext* pParentRendererContext)
-	:m_pParentRendererContext(nullptr)
+	: m_pParentRendererContext(nullptr)
 {
 	this->clear();
 	this->setParentRendererContext(pParentRendererContext);
@@ -178,31 +178,31 @@ void CRendererContext::sortSelectedChannel(uint32_t ui32SortMode)
 
 	switch (ui32SortMode)
 	{
-	case 0:
-		break;
+		case 0:
+			break;
 
-	case 1:
-		std::stable_sort(m_vChannelLookup.begin(), m_vChannelLookup.end());
-		break;
+		case 1:
+			std::stable_sort(m_vChannelLookup.begin(), m_vChannelLookup.end());
+			break;
 
-	case 2:
-		std::stable_sort(m_vChannelLookup.begin(), m_vChannelLookup.end(), sort_alpha(m_vChannelName));
-		break;
+		case 2:
+			std::stable_sort(m_vChannelLookup.begin(), m_vChannelLookup.end(), sort_alpha(m_vChannelName));
+			break;
 
-	case 3:
-		std::reverse(m_vChannelLookup.begin(), m_vChannelLookup.end());
-		break;
+		case 3:
+			std::reverse(m_vChannelLookup.begin(), m_vChannelLookup.end());
+			break;
 
-	case 4:
-		std::stable_sort(m_vChannelLookup.begin(), m_vChannelLookup.end(), sort_special(m_vChannelName, m_vLeftRightScore));
-		break;
+		case 4:
+			std::stable_sort(m_vChannelLookup.begin(), m_vChannelLookup.end(), sort_special(m_vChannelName, m_vLeftRightScore));
+			break;
 
-	case 5:
-		std::stable_sort(m_vChannelLookup.begin(), m_vChannelLookup.end(), sort_special(m_vChannelName, m_vFrontBackScore));
-		break;
+		case 5:
+			std::stable_sort(m_vChannelLookup.begin(), m_vChannelLookup.end(), sort_special(m_vChannelName, m_vFrontBackScore));
+			break;
 
-	default:
-		break;
+		default:
+			break;
 	}
 }
 

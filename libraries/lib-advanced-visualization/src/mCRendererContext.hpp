@@ -123,19 +123,21 @@ namespace Mensia
 			float getERPFraction() const override;
 
 			uint32_t getMaximumSampleCountPerDisplay() const override
-			{ return 1000; /*500;*/ /*128*/ }
+			{
+				return 1000; /*500;*/ /*128*/
+			}
 
 		protected:
 
 			IRendererContext* m_pParentRendererContext;
 
-			std::vector < uint32_t > m_vChannelLookup;
-			std::vector < std::string > m_vChannelName;
-			std::vector < CVertex > m_vChannelLocalisation;
+			std::vector<uint32_t> m_vChannelLookup;
+			std::vector<std::string> m_vChannelName;
+			std::vector<CVertex> m_vChannelLocalisation;
 			std::map<size_t, std::vector<std::string>> m_DimensionLabels;
 
-			std::map < std::string, float > m_vLeftRightScore;
-			std::map < std::string, float > m_vFrontBackScore;
+			std::map<std::string, float> m_vLeftRightScore;
+			std::map<std::string, float> m_vFrontBackScore;
 
 			float m_f32Scale;
 			float m_f32Zoom;

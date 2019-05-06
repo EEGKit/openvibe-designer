@@ -51,14 +51,14 @@ namespace
 		uint32_t i = 0;
 		GtkTreeView* l_pTreeView = gtk_tree_selection_get_tree_view(pTreeSelection);
 		GtkTreeModel* l_pTreeModel = gtk_tree_view_get_model(l_pTreeView);
-		if (l_pTreeModel)
+		if (l_pTreeModel != nullptr)
 		{
 			GtkTreeIter l_oIter;
-			if (gtk_tree_model_get_iter_first(l_pTreeModel, &l_oIter))
+			if (gtk_tree_model_get_iter_first(l_pTreeModel, &l_oIter) != 0)
 			{
 				do
 				{
-					if (gtk_tree_selection_iter_is_selected(pTreeSelection, &l_oIter))
+					if (gtk_tree_selection_iter_is_selected(pTreeSelection, &l_oIter) != 0)
 					{
 						pRendererContext->selectChannel(i);
 					}
@@ -67,7 +67,7 @@ namespace
 						pRendererContext->unselectChannel(i);
 					}
 					i++;
-				} while (gtk_tree_model_iter_next(l_pTreeModel, &l_oIter));
+				} while (gtk_tree_model_iter_next(l_pTreeModel, &l_oIter) != 0);
 			}
 		}
 	}
@@ -291,7 +291,7 @@ bool CBoxAlgorithmViz::initialize()
 		l_ui32SettingIndex++;
 	}
 
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(::gtk_builder_get_object(m_pBuilder, "checkbutton_positive")), m_bIsPositive);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(::gtk_builder_get_object(m_pBuilder, "checkbutton_positive")), static_cast<gboolean>(m_bIsPositive));
 
 	// Parses color string
 	this->parseColor(m_oColor, m_sColor.toASCIIString());
@@ -334,7 +334,7 @@ bool CBoxAlgorithmViz::initialize()
 	}
 
 	// Shows / hides scale
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_pScaleVisible), m_pRendererContext->getScaleVisibility());
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_pScaleVisible), static_cast<gboolean>(m_pRendererContext->getScaleVisibility()));
 
 	// Reads channel localisation
 	if (m_sLocalisation != OpenViBE::CString(""))
@@ -458,7 +458,7 @@ void CBoxAlgorithmViz::updateRulerVisibility()
 
 		if ((gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(m_pScaleVisible)) != 0) != m_bIsScaleVisible)
 		{
-			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_pScaleVisible), m_bIsScaleVisible);
+			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_pScaleVisible), static_cast<gboolean>(m_bIsScaleVisible));
 		}
 
 		void (*l_fpAction)(GtkWidget*) = m_bIsScaleVisible ? gtk_widget_show : gtk_widget_hide;
@@ -483,7 +483,7 @@ void CBoxAlgorithmViz::preDraw()
 {
 	this->updateRulerVisibility();
 
-	if (!m_ui32TextureId)
+	if (m_ui32TextureId == 0u)
 	{
 		m_ui32TextureId = m_oGtkGLWidget.createTexture(m_sColorGradient.toASCIIString());
 	}
@@ -496,7 +496,7 @@ void CBoxAlgorithmViz::postDraw()
 
 {
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
-	if (m_pRuler) { m_pRuler->doRender(); }
+	if (m_pRuler != nullptr) { m_pRuler->doRender(); }
 	glPopAttrib();
 
 	if (m_bIsVideoOutputEnabled && m_bIsVideoOutputWorking && m_ui32Width > 0 && m_ui32Height > 0)
@@ -535,19 +535,19 @@ void CBoxAlgorithmViz::draw() { }
 void CBoxAlgorithmViz::drawLeft()
 
 {
-	if (m_pRuler) { m_pRuler->doRenderLeft(m_pLeft); }
+	if (m_pRuler != nullptr) { m_pRuler->doRenderLeft(m_pLeft); }
 }
 
 void CBoxAlgorithmViz::drawRight()
 
 {
-	if (m_pRuler) { m_pRuler->doRenderRight(m_pRight); }
+	if (m_pRuler != nullptr) { m_pRuler->doRenderRight(m_pRight); }
 }
 
 void CBoxAlgorithmViz::drawBottom()
 
 {
-	if (m_pRuler) { m_pRuler->doRenderBottom(m_pBottom); }
+	if (m_pRuler != nullptr) { m_pRuler->doRenderBottom(m_pBottom); }
 }
 
 void CBoxAlgorithmViz::mouseButton(int32_t x, int32_t y, int32_t button, int32_t status)

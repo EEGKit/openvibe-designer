@@ -66,8 +66,8 @@ void CRendererLine::refresh(const IRendererContext& rContext)
 	for (size_t channel = 0; channel < m_ui32ChannelCount; channel++)
 	{
 		uint32_t firstSampleIndex = ((l_ui32HistoryIndexMax - 1) / m_ui32SampleCount) * m_ui32SampleCount;
-		std::vector<float> & l_vHistory = m_vHistory[channel];
-		CVertex * l_pVertex = &m_Vertices[channel][0];
+		std::vector<float>& l_vHistory = m_vHistory[channel];
+		CVertex* l_pVertex = &m_Vertices[channel][0];
 
 		for (uint32_t sample = 0; sample < m_ui32SampleCount; sample++)
 		{
@@ -141,7 +141,7 @@ bool CRendererLine::render(const IRendererContext& rContext)
 		glTranslatef(0, rContext.getSelectedCount() - selectedChannel - 1.f, 0);
 		glScalef(1, rContext.getScale(), 1);
 
-		std::vector < CVertex >& l_rVertex = m_Vertices[rContext.getSelected(selectedChannel)];
+		std::vector<CVertex>& l_rVertex = m_Vertices[rContext.getSelected(selectedChannel)];
 		if (rContext.isScrollModeActive())
 		{
 			glPushMatrix();

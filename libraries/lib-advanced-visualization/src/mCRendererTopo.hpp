@@ -51,14 +51,13 @@ namespace Mensia
 
 		protected:
 
-			std::vector < CVertex > m_vProjectedChannelCoordinate;
+			std::vector<CVertex> m_vProjectedChannelCoordinate;
 
 			C3DMesh m_oFace;
 			C3DMesh m_oScalp;
-			std::vector < Eigen::VectorXd > m_vInterpolatedSample;
+			std::vector<Eigen::VectorXd> m_vInterpolatedSample;
 
 			Eigen::MatrixXd A, B, D, Ai;
 		};
 	}  // namespace AdvancedVisualization
 }  // namespace Mensia
-

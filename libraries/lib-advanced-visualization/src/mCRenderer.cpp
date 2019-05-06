@@ -34,17 +34,17 @@ static int iCount = 0;
 
 CRenderer::CRenderer()
 
-	:m_ui32HistoryIndex(0)
-	, m_ui32HistoryCount(0)
-	, m_ui32ChannelCount(0)
-	, m_ui32SampleCount(1)
-	, m_ui32HistoryDrawIndex(0)
-	, m_f32InverseChannelCount(1)
-	, m_f32InverseSampleCount(1)
-	, m_ui32AutoDecimationFactor(1)
-	, m_f32ERPFraction(0)
-	, m_ui32SampleIndexERP(0)
-	, m_ui64TimeOffset(0)
+	: m_ui32HistoryIndex(0)
+	  , m_ui32HistoryCount(0)
+	  , m_ui32ChannelCount(0)
+	  , m_ui32SampleCount(1)
+	  , m_ui32HistoryDrawIndex(0)
+	  , m_f32InverseChannelCount(1)
+	  , m_f32InverseSampleCount(1)
+	  , m_ui32AutoDecimationFactor(1)
+	  , m_f32ERPFraction(0)
+	  , m_ui32SampleIndexERP(0)
+	  , m_ui64TimeOffset(0)
 {
 	iCount++;
 }
@@ -193,7 +193,7 @@ void CRenderer::setHistoryDrawIndex(uint32_t ui32Index)
 	m_ui32HistoryIndex = 0;
 }
 
-bool CRenderer::getSampleAtERPFraction(float fERPFraction, std::vector < float > & vSample) const
+bool CRenderer::getSampleAtERPFraction(float fERPFraction, std::vector<float>& vSample) const
 {
 	vSample.resize(m_ui32ChannelCount);
 
@@ -213,9 +213,9 @@ bool CRenderer::getSampleAtERPFraction(float fERPFraction, std::vector < float >
 	return true;
 }
 
-void CRenderer::rebuild(const IRendererContext & rContext) { }
+void CRenderer::rebuild(const IRendererContext& rContext) { }
 
-void CRenderer::refresh(const IRendererContext & rContext)
+void CRenderer::refresh(const IRendererContext& rContext)
 {
 	if (!m_ui32SampleCount)
 	{

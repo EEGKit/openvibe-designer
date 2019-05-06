@@ -34,53 +34,18 @@ namespace OpenViBEPlugins
 		static GdkColor s_palette[13];
 		static uint8_t s_palette8[13 * 3];
 
-		static gboolean redrawCallback(GtkWidget* pWidget, GdkEventExpose* pEvent, gpointer data);
-		static gboolean resizeCallback(GtkWidget* pWidget, GtkAllocation* pAllocation, gpointer data);
-		static void toggleElectrodesCallback(GtkWidget* pWidget, gpointer data);
-		static void setProjectionCallback(GtkWidget* pWidget, gpointer data);
-		static void setViewCallback(GtkWidget* pWidget, gpointer data);
-		static void setInterpolationCallback(GtkWidget* pWidget, gpointer data);
+		static gboolean redrawCallback(GtkWidget* widget, GdkEventExpose* event, gpointer data);
+		static gboolean resizeCallback(GtkWidget* widget, GtkAllocation* allocation, gpointer data);
+		static void toggleElectrodesCallback(GtkWidget* widget, gpointer data);
+		static void setProjectionCallback(GtkWidget* widget, gpointer data);
+		static void setViewCallback(GtkWidget* widget, gpointer data);
+		static void setInterpolationCallback(GtkWidget* widget, gpointer data);
 		static void setDelayCallback(GtkRange* range, gpointer data);
 
 		CTopographicMap2DView::CTopographicMap2DView(CTopographicMapDatabase& rTopographicMapDatabase,
 													 uint64_t ui64DefaultInterpolation, double f64Delay)
 			: m_rTopographicMapDatabase(rTopographicMapDatabase)
-			  , m_f64MaxDelay(2.0) //maximum delay : 2s
-			  , m_pBuilderInterface(nullptr)
-			  , m_pDrawingArea(nullptr)
-			  , m_pClipmask(nullptr)
-			  , m_ui32ClipmaskWidth(0)
-			  , m_ui32ClipmaskHeight(0)
-			  , m_pClipmaskGC(nullptr)
-			  , m_pVisibleRegion(nullptr)
-			  , m_ui32CurrentProjection(TopographicMap2DProjection_Radial)
-			  , m_pAxialProjectionButton(nullptr)
-			  , m_pRadialProjectionButton(nullptr)
-			  , m_ui32CurrentView(TopographicMap2DView_Top)
-			  , m_pTopViewButton(nullptr)
-			  , m_pLeftViewButton(nullptr)
-			  , m_pRightViewButton(nullptr)
-			  , m_pBackViewButton(nullptr)
 			  , m_ui64CurrentInterpolation(ui64DefaultInterpolation)
-			  , m_pMapPotentials(nullptr)
-			  , m_pMapCurrents(nullptr)
-			  , m_pElectrodesToggleButton(nullptr)
-			  , m_bElectrodesToggledOn(true)
-			  , m_bNeedResize(true)
-			  , m_ui32GridSize(0)
-			  , m_ui32CellSize(0)
-			  , m_ui32MinPaletteBarHeight(10)
-			  , m_ui32MaxPaletteBarHeight(30)
-			  , m_ui32HeadWindowWidth(0)
-			  , m_ui32HeadWindowHeight(0)
-			  , m_ui32PaletteWindowWidth(0)
-			  , m_ui32PaletteWindowHeight(0)
-			  , m_ui32SkullX(0)
-			  , m_ui32SkullY(0)
-			  , m_ui32SkullDiameter(0)
-			  , m_ui32NoseY(0)
-			  , m_pSkullRGBBuffer(nullptr)
-			  , m_ui32RowStride(0)
 		{
 			m_oSampleCoordinatesMatrix.setDimensionCount(2);
 
@@ -88,7 +53,7 @@ namespace OpenViBEPlugins
 			m_pBuilderInterface = gtk_builder_new();
 			gtk_builder_add_from_file(m_pBuilderInterface, Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-TopographicMap2D.ui", nullptr);
 
-			if (!m_pBuilderInterface)
+			if (m_pBuilderInterface == nullptr)
 			{
 				g_warning("Couldn't load the interface!");
 				return;
@@ -250,24 +215,24 @@ namespace OpenViBEPlugins
 		CTopographicMap2DView::~CTopographicMap2DView()
 		{
 			//destroy clip mask
-			if (m_pClipmask)
+			if (m_pClipmask != nullptr)
 			{
 				g_object_unref(m_pClipmask);
 				m_pClipmask = nullptr;
 			}
-			if (m_pClipmaskGC)
+			if (m_pClipmaskGC != nullptr)
 			{
 				g_object_unref(m_pClipmaskGC);
 				m_pClipmaskGC = nullptr;
 			}
 			//destroy visible region
-			if (m_pVisibleRegion)
+			if (m_pVisibleRegion != nullptr)
 			{
 				gdk_region_destroy(m_pVisibleRegion);
 				m_pVisibleRegion = nullptr;
 			}
 			//destroy pixmap
-			if (m_pSkullRGBBuffer)
+			if (m_pSkullRGBBuffer != nullptr)
 			{
 				delete m_pSkullRGBBuffer;
 				m_pSkullRGBBuffer = nullptr;
@@ -304,14 +269,14 @@ namespace OpenViBEPlugins
 			//reflect default interpolation type
 			m_rTopographicMapDatabase.setInterpolationType(m_ui64CurrentInterpolation);
 			enableInterpolationButtonSignals(false);
-			gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(m_pMapPotentials), m_ui64CurrentInterpolation == OVP_TypeId_SphericalLinearInterpolationType_Spline);
-			gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(m_pMapCurrents), m_ui64CurrentInterpolation == OVP_TypeId_SphericalLinearInterpolationType_Laplacian);
+			gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(m_pMapPotentials), static_cast<gboolean>(m_ui64CurrentInterpolation == OVP_TypeId_SphericalLinearInterpolationType_Spline));
+			gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(m_pMapCurrents), static_cast<gboolean>(m_ui64CurrentInterpolation == OVP_TypeId_SphericalLinearInterpolationType_Laplacian));
 			enableInterpolationButtonSignals(true);
 
 			//hide electrodes by default
 			m_bElectrodesToggledOn = false;
 			enableElectrodeButtonSignals(false);
-			gtk_toggle_tool_button_set_active(m_pElectrodesToggleButton, m_bElectrodesToggledOn);
+			gtk_toggle_tool_button_set_active(m_pElectrodesToggleButton, static_cast<gboolean>(m_bElectrodesToggledOn));
 			enableElectrodeButtonSignals(true);
 
 			//recompute sample points coordinates
@@ -387,7 +352,7 @@ namespace OpenViBEPlugins
 				}
 				else //linear itp
 				{
-					l_iColorIndex = l_colorStartIndex + (int32_t)((l_f64Value - l_f64MinPotential) * l_f64InvPotentialStep);
+					l_iColorIndex = l_colorStartIndex + int32_t((l_f64Value - l_f64MinPotential) * l_f64InvPotentialStep);
 					if (l_iColorIndex > s_nbColors - 1)
 					{
 						l_iColorIndex = s_nbColors - 1;
@@ -412,7 +377,7 @@ namespace OpenViBEPlugins
 			if (!m_bElectrodesToggledOn)
 			{
 				//clear screen so that electrode labels are hidden
-				if (m_pDrawingArea->window) gdk_window_invalidate_rect(m_pDrawingArea->window, nullptr, true);
+				if (m_pDrawingArea->window != nullptr) { gdk_window_invalidate_rect(m_pDrawingArea->window, nullptr, 1); }
 			}
 		}
 
@@ -433,7 +398,7 @@ namespace OpenViBEPlugins
 			m_bNeedResize = true;
 
 			//clear screen
-			if (m_pDrawingArea->window) { gdk_window_invalidate_rect(m_pDrawingArea->window, nullptr, true); }
+			if (m_pDrawingArea->window != nullptr) { gdk_window_invalidate_rect(m_pDrawingArea->window, nullptr, 1); }
 		}
 
 		void CTopographicMap2DView::setViewCB(GtkWidget* pWidget)
@@ -461,7 +426,7 @@ namespace OpenViBEPlugins
 			m_bNeedResize = true;
 
 			//clear screen
-			if (m_pDrawingArea->window) { gdk_window_invalidate_rect(m_pDrawingArea->window, nullptr, true); }
+			if (m_pDrawingArea->window != nullptr) { gdk_window_invalidate_rect(m_pDrawingArea->window, nullptr, 1); }
 		}
 
 		void CTopographicMap2DView::setInterpolationCB(GtkWidget* pWidget)
@@ -589,8 +554,8 @@ namespace OpenViBEPlugins
 				const float l_f32NoseHalfAngle = 6;
 
 				//nose lower left anchor
-				uint32_t l_ui32NoseLowerLeftX = (uint32_t)(l_ui32SkullCenterX + m_ui32SkullDiameter / 2 * cos(DEG2RAD(90 + l_f32NoseHalfAngle)));
-				uint32_t l_ui32NoseLowerLeftY = (uint32_t)(l_ui32SkullCenterY - m_ui32SkullDiameter / 2 * sin(DEG2RAD(90 + l_f32NoseHalfAngle)));
+				uint32_t l_ui32NoseLowerLeftX = uint32_t(l_ui32SkullCenterX + m_ui32SkullDiameter / 2 * cos(DEG2RAD(90 + l_f32NoseHalfAngle)));
+				const uint32_t l_ui32NoseLowerLeftY = uint32_t(l_ui32SkullCenterY - m_ui32SkullDiameter / 2 * sin(DEG2RAD(90 + l_f32NoseHalfAngle)));
 
 				//nose lower right anchor
 				const auto l_ui32NoseLowerRightX = uint32_t(l_ui32SkullCenterX + m_ui32SkullDiameter / 2 * cos(DEG2RAD(90 - l_f32NoseHalfAngle)));
@@ -1334,8 +1299,6 @@ namespace OpenViBEPlugins
 			uint32_t i, j;
 			float l_f32SkullCenterX = m_ui32SkullX + m_ui32SkullDiameter / 2.f;
 			float l_f32SkullCenterY = m_ui32SkullY + m_ui32SkullDiameter / 2.F;
-			float l_f32ClosestX, l_f32ClosestY;
-			float l_f32X, l_f32Y;
 			double* l_pBuffer = m_oSampleCoordinatesMatrix.getBuffer();
 
 			//for each row
@@ -1345,8 +1308,8 @@ namespace OpenViBEPlugins
 				for (j = 0, l_f32CurX = float(m_ui32SkullX); j < m_ui32GridSize; j++, l_f32CurX += m_ui32CellSize)
 				{
 					//find corner closest to skull center
-					l_f32ClosestX = fabs(l_f32CurX - l_f32SkullCenterX) < fabs(l_f32CurX + m_ui32CellSize - l_f32SkullCenterX) ? l_f32CurX : (l_f32CurX + m_ui32CellSize);
-					l_f32ClosestY = fabs(l_f32CurY - l_f32SkullCenterY) < fabs(l_f32CurY + m_ui32CellSize - l_f32SkullCenterY) ? l_f32CurY : (l_f32CurY + m_ui32CellSize);
+					float l_f32ClosestX = fabs(l_f32CurX - l_f32SkullCenterX) < fabs(l_f32CurX + m_ui32CellSize - l_f32SkullCenterX) ? l_f32CurX : (l_f32CurX + m_ui32CellSize);
+					float l_f32ClosestY = fabs(l_f32CurY - l_f32SkullCenterY) < fabs(l_f32CurY + m_ui32CellSize - l_f32SkullCenterY) ? l_f32CurY : (l_f32CurY + m_ui32CellSize);
 
 					//make sure electrode is in the non clipped area of the display
 					//TODO : perform this test once per view only!
@@ -1368,8 +1331,8 @@ namespace OpenViBEPlugins
 								uint32_t l_ui32BaseIndex = 3 * l_ui32CurSample;
 
 								//normalized X, Y coords in (X, Y) projection plane
-								l_f32X = (l_f32ClosestX - l_f32SkullCenterX) / (m_ui32SkullDiameter / 2.f);
-								l_f32Y = -(l_f32ClosestY - l_f32SkullCenterY) / (m_ui32SkullDiameter / 2.f); //y axis down in 2D but up in 3D convention
+								float l_f32X = (l_f32ClosestX - l_f32SkullCenterX) / (m_ui32SkullDiameter / 2.f);
+								float l_f32Y = -(l_f32ClosestY - l_f32SkullCenterY) / (m_ui32SkullDiameter / 2.f); //y axis down in 2D but up in 3D convention
 
 								if (m_ui32CurrentProjection == TopographicMap2DProjection_Axial)
 								{
@@ -1561,40 +1524,40 @@ namespace OpenViBEPlugins
 			return TRUE;
 		}
 
-		gboolean resizeCallback(GtkWidget* /*pWidget*/, GtkAllocation* pAllocation, gpointer data)
+		gboolean resizeCallback(GtkWidget* /*pWidget*/, GtkAllocation* allocation, gpointer data)
 		{
-			reinterpret_cast<CTopographicMap2DView*>(data)->resizeCB(pAllocation->width, pAllocation->height);
+			reinterpret_cast<CTopographicMap2DView*>(data)->resizeCB(allocation->width, allocation->height);
 			return FALSE;
 		}
 
-		void toggleElectrodesCallback(GtkWidget* pWidget, gpointer data)
+		void toggleElectrodesCallback(GtkWidget* /*pWidget*/, gpointer data)
 		{
 			auto* l_pTopographicMap2DView = reinterpret_cast<CTopographicMap2DView*>(data);
 			l_pTopographicMap2DView->toggleElectrodesCB();
 		}
 
-		void setProjectionCallback(GtkWidget* pWidget, gpointer data)
+		void setProjectionCallback(GtkWidget* widget, gpointer data)
 		{
 			auto* l_pTopographicMap2DView = reinterpret_cast<CTopographicMap2DView*>(data);
-			l_pTopographicMap2DView->setProjectionCB(pWidget);
+			l_pTopographicMap2DView->setProjectionCB(widget);
 		}
 
-		void setViewCallback(GtkWidget* pWidget, gpointer data)
+		void setViewCallback(GtkWidget* widget, gpointer data)
 		{
 			auto* l_pTopographicMap2DView = reinterpret_cast<CTopographicMap2DView*>(data);
-			l_pTopographicMap2DView->setViewCB(pWidget);
+			l_pTopographicMap2DView->setViewCB(widget);
 		}
 
-		void setInterpolationCallback(GtkWidget* pWidget, gpointer data)
+		void setInterpolationCallback(GtkWidget* widget, gpointer data)
 		{
 			auto* l_pTopographicMap2DView = reinterpret_cast<CTopographicMap2DView*>(data);
-			l_pTopographicMap2DView->setInterpolationCB(pWidget);
+			l_pTopographicMap2DView->setInterpolationCB(widget);
 		}
 
-		void setDelayCallback(GtkRange* pRange, gpointer data)
+		void setDelayCallback(GtkRange* range, gpointer data)
 		{
 			auto* l_pTopographicMap2DView = reinterpret_cast<CTopographicMap2DView*>(data);
-			l_pTopographicMap2DView->setDelayCB(gtk_range_get_value(pRange));
+			l_pTopographicMap2DView->setDelayCB(gtk_range_get_value(range));
 		}
 	}  // namespace SimpleVisualization;
 } // namespace OpenViBEPlugins;

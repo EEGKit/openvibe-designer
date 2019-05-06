@@ -22,15 +22,15 @@
 #ifndef __Mensia_AdvancedVisualization_Defines_H__
 #define __Mensia_AdvancedVisualization_Defines_H__
 
- //___________________________________________________________________//
- //                                                                   //
- // API Definition                                                    //
- //___________________________________________________________________//
- //                                                                   //
+//___________________________________________________________________//
+//                                                                   //
+// API Definition                                                    //
+//___________________________________________________________________//
+//                                                                   //
 
- // Taken from
- // - http://people.redhat.com/drepper/dsohowto.pdf
- // - http://www.nedprod.com/programs/gccvisibility.html
+// Taken from
+// - http://people.redhat.com/drepper/dsohowto.pdf
+// - http://www.nedprod.com/programs/gccvisibility.html
 #if defined LMAV_Shared
 #if defined TARGET_OS_Windows
 #define LMAV_API_Export __declspec(dllexport)

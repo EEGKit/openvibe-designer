@@ -31,7 +31,8 @@ using namespace AdvancedVisualization;
 
 namespace
 {
-	template <typename T> bool littleEndianToHost(const uint8_t* pBuffer, T* pValue)
+	template <typename T>
+	bool littleEndianToHost(const uint8_t* pBuffer, T* pValue)
 	{
 		if (!pBuffer) { return false; }
 		if (!pValue) { return false; }
@@ -137,7 +138,7 @@ bool C3DMesh::compile()
 	return true;
 }
 
-bool C3DMesh::project(std::vector < CVertex >& vProjectedChannelCoordinate, const std::vector < CVertex >& vChannelCoordinate)
+bool C3DMesh::project(std::vector<CVertex>& vProjectedChannelCoordinate, const std::vector<CVertex>& vChannelCoordinate)
 {
 	size_t i, j;
 

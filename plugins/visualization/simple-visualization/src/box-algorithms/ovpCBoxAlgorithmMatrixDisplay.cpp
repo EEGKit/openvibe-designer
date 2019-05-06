@@ -200,7 +200,7 @@ bool CBoxAlgorithmMatrixDisplay::process()
 			for (uint32_t c = 1; c < l_ui32ColumnCount + 1; c++)
 			{
 				GtkWidget* l_pWidgetLabel = gtk_label_new("");
-				gtk_widget_set_visible(l_pWidgetLabel, true);
+				gtk_widget_set_visible(l_pWidgetLabel, 1);
 				gtk_table_attach(
 					l_pTable, l_pWidgetLabel,
 					c, c + 1, row, row + 1,
@@ -224,7 +224,7 @@ bool CBoxAlgorithmMatrixDisplay::process()
 
 				//::GtkWidget* l_pWidgetLabel=GTK_WIDGET(gtk_builder_get_object(m_pMainWidgetInterface, "matrix-value-label"));
 				GtkWidget* l_pWidgetLabel = gtk_label_new("");
-				gtk_widget_set_visible(l_pWidgetLabel, true);
+				gtk_widget_set_visible(l_pWidgetLabel, 1);
 				//gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(l_pWidgetLabel)), l_pWidgetLabel);
 				gtk_table_attach(
 					l_pTable, l_pWidgetLabel,
@@ -249,10 +249,10 @@ bool CBoxAlgorithmMatrixDisplay::process()
 
 					//::GtkWidget* l_pWidgetEventBox=GTK_WIDGET(gtk_builder_get_object(m_pMainWidgetInterface, "matrix-value-eventbox"));
 					GtkWidget* l_pWidgetEventBox = gtk_event_box_new();
-					gtk_widget_set_visible(l_pWidgetEventBox, true);
+					gtk_widget_set_visible(l_pWidgetEventBox, 1);
 					//::GtkWidget* l_pWidgetLabel=GTK_WIDGET(gtk_builder_get_object(m_pMainWidgetInterface, "matrix-value-label"));
 					GtkWidget* l_pWidgetLabel = gtk_label_new("");
-					gtk_widget_set_visible(l_pWidgetLabel, true);
+					gtk_widget_set_visible(l_pWidgetLabel, 1);
 					gtk_container_add(GTK_CONTAINER(l_pWidgetEventBox), l_pWidgetLabel);
 					//gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(l_pWidgetEventBox)), l_pWidgetEventBox);
 					gtk_table_attach(

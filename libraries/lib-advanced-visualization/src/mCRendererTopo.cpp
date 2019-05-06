@@ -37,7 +37,7 @@ namespace
 	// Legendre polynomials
 	// http://en.wikipedia.org/wiki/Legendre_polynomials
 
-	void legendre(unsigned int n, double x, std::vector < double >& vLegendre)
+	void legendre(unsigned int n, double x, std::vector<double>& vLegendre)
 	{
 		vLegendre.resize(n + 1);
 		vLegendre[0] = 1;
@@ -53,7 +53,7 @@ namespace
 	// Spherical splines for scalp potential and current density mapping
 	// http://www.sciencedirect.com/science/article/pii/0013469489901806
 
-	double g(unsigned int n, unsigned int m, const std::vector < double > & vLegendre)
+	double g(unsigned int n, unsigned int m, const std::vector<double>& vLegendre)
 	{
 		double result = 0;
 		for (unsigned int i = 1; i <= n; ++i)
@@ -67,7 +67,7 @@ namespace
 	// Spherical splines for scalp potential and current density mapping
 	// http://www.sciencedirect.com/science/article/pii/0013469489901806
 
-	double h(unsigned int n, unsigned int m, const std::vector < double > & vLegendre)
+	double h(unsigned int n, unsigned int m, const std::vector<double>& vLegendre)
 	{
 		double result = 0;
 		for (unsigned int i = 1; i <= n; ++i)
@@ -79,13 +79,13 @@ namespace
 
 	// Caching system
 
-	void build(unsigned int n, unsigned int m, std::vector < double > & rGCache, std::vector < double > & rHCache)
+	void build(unsigned int n, unsigned int m, std::vector<double>& rGCache, std::vector<double>& rHCache)
 	{
 		rGCache.resize(2 * S + 1);
 		rHCache.resize(2 * S + 1);
 		for (unsigned int i = 0; i <= 2 * S; ++i)
 		{
-			std::vector < double > l_vLegendre;
+			std::vector<double> l_vLegendre;
 			double cosine = (double(i) - S) / S;
 
 			legendre(n, cosine, l_vLegendre);
@@ -96,7 +96,7 @@ namespace
 		rHCache.push_back(rHCache.back());
 	}
 
-	double cache(double x, std::vector < double > & rCache)
+	double cache(double x, std::vector<double>& rCache)
 	{
 		if (x < -1) { return rCache[0]; }
 		if (x > 1) { return rCache[2 * S]; }
@@ -108,7 +108,7 @@ namespace
 	}
 }  // namespace
 
-void CRendererTopo::rebuild(const IRendererContext & rContext)
+void CRendererTopo::rebuild(const IRendererContext& rContext)
 {
 	CRenderer::rebuild(rContext);
 
@@ -118,8 +118,8 @@ void CRendererTopo::rebuild(const IRendererContext & rContext)
 
 	// Projects electrode coordinates to 3D mesh
 
-	std::vector < CVertex > l_vProjectedChannelCoordinate;
-	std::vector < CVertex > l_vChannelCoordinate;
+	std::vector<CVertex> l_vProjectedChannelCoordinate;
+	std::vector<CVertex> l_vChannelCoordinate;
 	l_vChannelCoordinate.resize(rContext.getChannelCount());
 	for (i = 0; i < rContext.getChannelCount(); ++i)
 	{
@@ -176,9 +176,9 @@ void CRendererTopo::rebuild(const IRendererContext & rContext)
 	unsigned int M = 3;
 	auto N = (unsigned int)pow(10., 10. / (2 * M - 2));
 
-	std::vector < double > l_vLegendre;
-	std::vector < double > l_vGCache;
-	std::vector < double > l_vHCache;
+	std::vector<double> l_vLegendre;
+	std::vector<double> l_vGCache;
+	std::vector<double> l_vHCache;
 	build(N, M, l_vGCache, l_vHCache);
 
 	uint32_t nc = rContext.getChannelCount();
@@ -247,7 +247,7 @@ void CRendererTopo::rebuild(const IRendererContext & rContext)
 // V has sensor potentials
 // W has interpolated potentials
 // Z has interpolated current densities
-void CRendererTopo::interpolate(const Eigen::VectorXd & V, Eigen::VectorXd & W, Eigen::VectorXd & Z)
+void CRendererTopo::interpolate(const Eigen::VectorXd& V, Eigen::VectorXd& W, Eigen::VectorXd& Z)
 {
 	Eigen::VectorXd C = Ai * V;
 
@@ -258,7 +258,7 @@ void CRendererTopo::interpolate(const Eigen::VectorXd & V, Eigen::VectorXd & W, 
 	Z = D * C;
 }
 
-void CRendererTopo::refresh(const IRendererContext & rContext)
+void CRendererTopo::refresh(const IRendererContext& rContext)
 {
 	CRenderer::refresh(rContext);
 
@@ -269,7 +269,7 @@ void CRendererTopo::refresh(const IRendererContext & rContext)
 	uint32_t nc = rContext.getChannelCount();
 	uint32_t vc = m_oScalp.m_vVertex.size();
 
-	std::vector < float > l_vSample;
+	std::vector<float> l_vSample;
 	Eigen::VectorXd V = Eigen::VectorXd::Zero(nc + 1);
 	Eigen::VectorXd W;
 	Eigen::VectorXd Z;
@@ -297,9 +297,9 @@ void CRendererTopo::refresh(const IRendererContext & rContext)
 	m_ui32HistoryIndex = m_ui32HistoryCount;
 }
 
-bool CRendererTopo::render(const IRendererContext & rContext)
+bool CRendererTopo::render(const IRendererContext& rContext)
 {
-	std::map < std::string, CVertex >::const_iterator it;
+	std::map<std::string, CVertex>::const_iterator it;
 
 	if (!rContext.getSelectedCount()) { return false; }
 	if (m_oScalp.m_vVertex.empty()) { return false; }

@@ -68,7 +68,7 @@ namespace Mensia
 			uint32_t getSampleCount() const override;
 			uint32_t getHistoryCount() const override;
 			uint32_t getHistoryIndex() const override;
-			virtual bool getSampleAtERPFraction(float f32Alpha, std::vector < float >& vSample) const;
+			virtual bool getSampleAtERPFraction(float f32Alpha, std::vector<float>& vSample) const;
 
 			void setTimeOffset(uint64_t offset) override { m_ui64TimeOffset = offset; };
 			uint64_t getTimeOffset() const override { return m_ui64TimeOffset; }
@@ -114,10 +114,10 @@ namespace Mensia
 			uint64_t m_ui64TimeOffset;
 
 			//			std::map < std::string, CVertex > m_vChannelLocalisation;
-			std::vector < std::pair < double, uint64_t > > m_vStimulationHistory;
-			std::vector < std::vector < float > > m_vHistory;
-			std::vector < std::vector < CVertex > > m_vVertex;
-			std::vector < uint32_t > m_vMesh;
+			std::vector<std::pair<double, uint64_t>> m_vStimulationHistory;
+			std::vector<std::vector<float>> m_vHistory;
+			std::vector<std::vector<CVertex>> m_vVertex;
+			std::vector<uint32_t> m_vMesh;
 		};
 	} // namespace AdvancedVisualization
 } // namespace Mensia
