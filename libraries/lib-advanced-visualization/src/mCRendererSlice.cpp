@@ -29,17 +29,17 @@ void CRendererSlice::rebuild(const IRendererContext& rContext)
 {
 	CRenderer::rebuild(rContext);
 
-	uint32_t i, j, k = 0, l = 0;
+	uint32_t k = 0, l = 0;
 
 	m_vVertex.clear();
-	m_vVertex.resize(m_ui32SampleCount * m_ui32ChannelCount * 8);
+	m_vVertex.resize(m_sampleCount * m_channelCount * 8);
 
 	m_vQuad.clear();
-	m_vQuad.resize(m_ui32SampleCount * m_ui32ChannelCount * 6 * 4);
+	m_vQuad.resize(m_sampleCount * m_channelCount * 6 * 4);
 
-	for (i = 0; i < m_ui32SampleCount; ++i)
+	for (uint32_t i = 0; i < m_sampleCount; ++i)
 	{
-		for (j = 0; j < m_ui32ChannelCount; j++)
+		for (uint32_t j = 0; j < m_channelCount; j++)
 		{
 			const float f32Size = .5;
 
@@ -74,8 +74,8 @@ void CRendererSlice::rebuild(const IRendererContext& rContext)
 			m_vQuad[l++] = k + 2;
 
 			float ox = 0;
-			float oy = ((m_ui32ChannelCount - 1) * .5f - j);
-			float oz = ((m_ui32SampleCount - 1) * .5f - i);
+			float oy = ((m_channelCount - 1) * .5f - j);
+			float oz = ((m_sampleCount - 1) * .5f - i);
 
 			m_vVertex[k].x = ox + f32Size;
 			m_vVertex[k].y = oy - f32Size; // v0
@@ -118,28 +118,26 @@ void CRendererSlice::rebuild(const IRendererContext& rContext)
 			k++;
 		}
 	}
-	m_ui32HistoryIndex = 0;
+	m_historyIndex = 0;
 }
 
 void CRendererSlice::refresh(const IRendererContext& rContext)
 {
 	CRenderer::refresh(rContext);
 
-	uint32_t i, j, k, l;
-
-	for (i = m_ui32HistoryIndex; i < m_ui32HistoryCount; ++i)
+	for (uint32_t i = m_historyIndex; i < m_historyCount; ++i)
 	{
-		k = (i % m_ui32SampleCount) * m_ui32ChannelCount * 8;
-		for (j = 0; j < m_ui32ChannelCount; j++)
+		uint32_t k = (i % m_sampleCount) * m_channelCount * 8;
+		for (uint32_t j = 0; j < m_channelCount; j++)
 		{
-			for (l = 0; l < 8; l++)
+			for (uint32_t l = 0; l < 8; l++)
 			{
-				m_vVertex[k++].u = m_vHistory[j][i];
+				m_vVertex[k++].u = m_history[j][i];
 			}
 		}
 	}
 
-	m_ui32HistoryIndex = m_ui32HistoryCount;
+	m_historyIndex = m_historyCount;
 }
 
 bool CRendererSlice::render(const IRendererContext& rContext)
@@ -148,7 +146,7 @@ bool CRendererSlice::render(const IRendererContext& rContext)
 	float d = 3.5;
 
 	if (!rContext.getSelectedCount()) { return false; }
-	if (!m_ui32HistoryCount) { return false; }
+	if (!m_historyCount) { return false; }
 
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_LIGHTING);
@@ -173,7 +171,7 @@ bool CRendererSlice::render(const IRendererContext& rContext)
 	glScalef(1., 1., 3.);
 
 	glPushMatrix();
-	glScalef(1.f / rContext.getStackCount(), 1.f / m_ui32ChannelCount, 1.f / m_ui32SampleCount);
+	glScalef(1.f / rContext.getStackCount(), 1.f / m_channelCount, 1.f / m_sampleCount);
 	glTranslatef(rContext.getStackIndex() - (rContext.getStackCount() - 1) * .5f, 0, 0);
 	glColor4f(.1f, .1f, .1f, rContext.getTranslucency());
 
@@ -190,7 +188,7 @@ bool CRendererSlice::render(const IRendererContext& rContext)
 
 	glDisable(GL_TEXTURE_1D);
 
-	float l_f32Progress = 1 - (m_ui32HistoryIndex % m_ui32SampleCount) * 2.f / m_ui32SampleCount;
+	float l_f32Progress = 1 - (m_historyIndex % m_sampleCount) * 2.f / m_sampleCount;
 	glScalef(.5, .5, .5);
 	glBegin(GL_LINE_LOOP);
 	glColor3f(1, 1, 1);

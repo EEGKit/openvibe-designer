@@ -18,9 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef __OpenViBEPlugins_CRulerProgress_H__
-#define __OpenViBEPlugins_CRulerProgress_H__
+#pragma once
 
 #include "../mIRuler.hpp"
 #include "../m_VisualizationTools.hpp"
@@ -46,10 +44,10 @@ namespace Mensia
 				if (m_pRenderer->getHistoryCount() == 0) { return; }
 				if (m_pRenderer->getHistoryIndex() == 0) { return; }
 
-				uint32_t l_ui32SampleCount = m_pRenderer->getSampleCount();
-				uint32_t l_ui32HistoryIndex = m_pRenderer->getHistoryIndex();
+				const uint32_t l_ui32SampleCount = m_pRenderer->getSampleCount();
+				const uint32_t l_ui32HistoryIndex = m_pRenderer->getHistoryIndex();
 
-				float l_fProgress = float(l_ui32HistoryIndex - (float(l_ui32HistoryIndex) / l_ui32SampleCount) * l_ui32SampleCount) / l_ui32SampleCount;
+				const float l_fProgress = float(l_ui32HistoryIndex - (float(l_ui32HistoryIndex) / l_ui32SampleCount) * l_ui32SampleCount) / l_ui32SampleCount;
 				if (l_fProgress != 0 && l_fProgress != 1)
 				{
 					this->renderFinal(l_fProgress);
@@ -58,5 +56,3 @@ namespace Mensia
 		};
 	}  // namespace AdvancedVisualization
 }  // namespace Mensia
-
-#endif // __OpenViBEPlugins_CRulerProgress_H__

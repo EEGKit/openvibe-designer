@@ -74,12 +74,12 @@ namespace Mensia
 		{
 		public:
 
-			IRenderer* create()
+			static IRenderer* create()
 			{
 				return IRenderer::create(iType, bStimulation);
 			}
 
-			void release(IRenderer* pRenderer) { return IRenderer::release(pRenderer); }
+			static void release(IRenderer* pRenderer) { return IRenderer::release(pRenderer); }
 		};
 
 		// Type definitions of our OpenViBE boxes

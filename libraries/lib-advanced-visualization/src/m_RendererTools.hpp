@@ -18,9 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef __Mensia_AdvancedVisualization_Renderer_Tools_H__
-#define __Mensia_AdvancedVisualization_Renderer_Tools_H__
+#pragma once
 
 namespace
 {
@@ -61,5 +59,3 @@ namespace
 		glEnd();
 	}
 }  // namespace
-
-#endif // __Mensia_AdvancedVisualization_Renderer_Tools_H__

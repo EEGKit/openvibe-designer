@@ -18,9 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef __Mensia_AdvancedVisualization_CRendererMountain_H__
-#define __Mensia_AdvancedVisualization_CRendererMountain_H__
+#pragma once
 
 #include "mCRenderer.hpp"
 #include "mC3DMesh.hpp"
@@ -44,5 +42,3 @@ namespace Mensia
 		};
 	}  // namespace AdvancedVisualization
 }  // namespace Mensia
-
-#endif // __Mensia_AdvancedVisualization_CRendererMountain_H__

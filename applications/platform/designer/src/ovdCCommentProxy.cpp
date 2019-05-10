@@ -7,12 +7,7 @@ using namespace OpenViBEDesigner;
 using namespace std;
 
 CCommentProxy::CCommentProxy(const IKernelContext& rKernelContext, const IComment& rComment)
-	: m_rKernelContext(rKernelContext)
-	  , m_pConstComment(&rComment)
-	  , m_pComment(nullptr)
-	  , m_bApplied(false)
-	  , m_iXCenter(0)
-	  , m_iYCenter(0)
+	: m_rKernelContext(rKernelContext), m_pConstComment(&rComment)
 {
 	if (m_pConstComment)
 	{
@@ -23,11 +18,7 @@ CCommentProxy::CCommentProxy(const IKernelContext& rKernelContext, const ICommen
 }
 
 CCommentProxy::CCommentProxy(const IKernelContext& rKernelContext, IScenario& rScenario, const CIdentifier& rCommentIdentifier)
-	: m_rKernelContext(rKernelContext)
-	  , m_pConstComment(rScenario.getCommentDetails(rCommentIdentifier))
-	  , m_pComment(rScenario.getCommentDetails(rCommentIdentifier))
-	  , m_iXCenter(0)
-	  , m_iYCenter(0)
+	: m_rKernelContext(rKernelContext), m_pConstComment(rScenario.getCommentDetails(rCommentIdentifier)), m_pComment(rScenario.getCommentDetails(rCommentIdentifier))
 {
 	if (m_pConstComment)
 	{
@@ -38,23 +29,13 @@ CCommentProxy::CCommentProxy(const IKernelContext& rKernelContext, IScenario& rS
 }
 
 CCommentProxy::~CCommentProxy()
-
 {
-	if (!m_bApplied)
-	{
-		this->apply();
-	}
+	if (!m_bApplied) { this->apply(); }
 }
 
-CCommentProxy::operator IComment*()
-{
-	return m_pComment;
-}
+CCommentProxy::operator IComment*() { return m_pComment; }
 
-CCommentProxy::operator const IComment*()
-{
-	return m_pConstComment;
-}
+CCommentProxy::operator const IComment*() { return m_pConstComment; }
 
 int32_t CCommentProxy::getWidth(GtkWidget* pWidget) const
 {

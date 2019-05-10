@@ -173,19 +173,18 @@ namespace Mensia
 		{
 			const IBox& l_rStaticBoxContext = this->getStaticBoxContext();
 			IBoxIO& l_rDynamicBoxContext = this->getDynamicBoxContext();
-			uint32_t i, j, k, l;
 
-			for (i = 0; i < l_rStaticBoxContext.getInputCount(); ++i)
+			for (uint32_t i = 0; i < l_rStaticBoxContext.getInputCount(); ++i)
 			{
-				for (j = 0; j < l_rDynamicBoxContext.getInputChunkCount(i); j++)
+				for (uint32_t j = 0; j < l_rDynamicBoxContext.getInputChunkCount(i); j++)
 				{
 					m_vMatrixDecoder[i].decode(j);
 
 					OpenViBE::IMatrix* l_pMatrix = m_vMatrixDecoder[i].getOutputMatrix();
-					uint32_t l_ui32ChannelCount = l_pMatrix->getDimensionSize(0);
-					uint32_t l_ui32SampleCount = l_pMatrix->getDimensionSize(1);
+					uint32_t channelCount = l_pMatrix->getDimensionSize(0);
+					uint32_t sampleCount = l_pMatrix->getDimensionSize(1);
 
-					if (l_ui32ChannelCount == 0)
+					if (channelCount == 0)
 					{
 						this->getLogManager() << LogLevel_Error << "Input stream " << static_cast<uint32_t>(i) << " has 0 channels\n";
 						return false;
@@ -193,8 +192,8 @@ namespace Mensia
 
 					if (l_pMatrix->getDimensionCount() == 1)
 					{
-						l_ui32ChannelCount = 1;
-						l_ui32SampleCount = l_pMatrix->getDimensionSize(0);
+						channelCount = 1;
+						sampleCount = l_pMatrix->getDimensionSize(0);
 					}
 
 					if (m_vMatrixDecoder[i].isHeaderReceived())
@@ -206,7 +205,7 @@ namespace Mensia
 						GtkTreeIter l_oGtkTreeIterator;
 						gtk_list_store_clear(m_pChannelListStore);
 
-						m_vSwap.resize(l_ui32ChannelCount);
+						m_vSwap.resize(channelCount);
 
 						m_pRendererContext->clear();
 						m_pRendererContext->setTranslucency(float(m_f64Translucency));
@@ -219,12 +218,12 @@ namespace Mensia
 						m_pRendererContext->setXYZPlotDepth(m_bXYZPlotHasDepth);
 
 						gtk_tree_view_set_model(m_pChannelTreeView, nullptr);
-						for (j = 0; j < l_ui32ChannelCount; j++)
+						for (j = 0; j < channelCount; j++)
 						{
 							std::string l_sName = trim(l_pMatrix->getDimensionLabel(0, j));
 							std::string l_sSubname = l_sName;
 							std::transform(l_sName.begin(), l_sName.end(), l_sSubname.begin(), tolower);
-							CVertex v = m_vChannelLocalisation[l_sSubname];
+							const CVertex v = m_vChannelLocalisation[l_sSubname];
 
 							if (l_sName.empty())
 							{
@@ -240,10 +239,10 @@ namespace Mensia
 						gtk_tree_view_set_model(m_pChannelTreeView, GTK_TREE_MODEL(m_pChannelListStore));
 						gtk_tree_selection_select_all(gtk_tree_view_get_selection(m_pChannelTreeView));
 
-						m_vRenderer[i]->setChannelCount(l_ui32ChannelCount);
-						m_vRenderer[i]->setSampleCount(l_ui32SampleCount);
+						m_vRenderer[i]->setChannelCount(channelCount);
+						m_vRenderer[i]->setSampleCount(sampleCount);
 
-						if (l_ui32SampleCount > 1 && m_oTypeIdentifier != OV_TypeId_Spectrum)
+						if (sampleCount > 1 && m_oTypeIdentifier != OV_TypeId_Spectrum)
 						{
 							gtk_widget_show(m_pERPPlayer);
 						}
@@ -267,22 +266,22 @@ namespace Mensia
 					}
 					if (m_vMatrixDecoder[i].isBufferReceived())
 					{
-						uint64_t l_ui64ChunkDuration = (l_rDynamicBoxContext.getInputChunkEndTime(i, j) - l_rDynamicBoxContext.getInputChunkStartTime(i, j));
+						const uint64_t chunkDuration = (l_rDynamicBoxContext.getInputChunkEndTime(i, j) - l_rDynamicBoxContext.getInputChunkStartTime(i, j));
 
-						m_pRendererContext->setSampleDuration(l_ui64ChunkDuration / l_ui32SampleCount);
-						m_pRendererContext->setSpectrumFrequencyRange(uint32_t((uint64_t(l_ui32SampleCount) << 32) / l_ui64ChunkDuration));
+						m_pRendererContext->setSampleDuration(chunkDuration / sampleCount);
+						m_pRendererContext->setSpectrumFrequencyRange(uint32_t((uint64_t(sampleCount) << 32) / chunkDuration));
 						m_pRendererContext->setMinimumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_pFrequencyBandMin))));
 						m_pRendererContext->setMaximumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_pFrequencyBandMax))));
 
 						// Sets time scale
-						gtk_spin_button_set_value(GTK_SPIN_BUTTON(::gtk_builder_get_object(m_pBuilder, "spinbutton_time_scale")), (l_ui64ChunkDuration >> 22) / 1024.);
+						gtk_spin_button_set_value(GTK_SPIN_BUTTON(::gtk_builder_get_object(m_pBuilder, "spinbutton_time_scale")), (chunkDuration >> 22) / 1024.);
 
 						m_vRenderer[i]->clear(0); // Drop last samples as they will be fed again
-						for (k = 0; k < l_ui32SampleCount; k++)
+						for (uint32_t k = 0; k < sampleCount; k++)
 						{
-							for (l = 0; l < l_ui32ChannelCount; l++)
+							for (uint32_t l = 0; l < channelCount; l++)
 							{
-								m_vSwap[l] = float(l_pMatrix->getBuffer()[l * l_ui32SampleCount + k]);
+								m_vSwap[l] = float(l_pMatrix->getBuffer()[l * sampleCount + k]);
 							}
 							m_vRenderer[i]->feed(&m_vSwap[0]);
 						}

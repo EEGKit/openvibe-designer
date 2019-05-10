@@ -14,7 +14,6 @@
 
 namespace OpenViBEDesigner
 {
-
 	class CInterfacedScenario;
 
 	class CLogListenerDesigner;
@@ -23,77 +22,68 @@ namespace OpenViBEDesigner
 	{
 	public:
 		CApplication(const OpenViBE::Kernel::IKernelContext& rKernelContext);
-		~CApplication(void);
+		~CApplication();
 
-		void initialize(OpenViBEDesigner::ECommandLineFlag eCommandLineFlags);
+		void initialize(ECommandLineFlag eCommandLineFlags);
 
 		bool openScenario(const char* sFileName);
 
 		/** \name Drag and drop management */
 		//@{
 
-		void dragDataGetCB(
-			::GtkWidget* pWidget,
-			::GdkDragContext* pDragContex,
-			::GtkSelectionData* pSelectionData,
-			guint uiInfo,
-			guint uiT);
+		void dragDataGetCB(GtkWidget* pWidget, GdkDragContext* pDragContex, GtkSelectionData* pSelectionData, guint uiInfo, guint uiT);
 
 		//@}
 
 		/** \name Selection management */
 		//@{
 
-		void undoCB(void);
-		void redoCB(void);
+		void undoCB();
+		void redoCB();
 
-		void copySelectionCB(void);
-		void cutSelectionCB(void);
-		void pasteSelectionCB(void);
-		void deleteSelectionCB(void);
-		void preferencesCB(void);
+		void copySelectionCB();
+		void cutSelectionCB();
+		void pasteSelectionCB();
+		void deleteSelectionCB();
+		void preferencesCB();
 
 		//@}
 
 		/** \name Scenario management */
 		//@{
 
-		OpenViBE::CString getWorkingDirectory(void);
+		OpenViBE::CString getWorkingDirectory();
 
-		bool hasRunningScenario(void);
-		bool hasUnsavedScenario(void);
+		bool hasRunningScenario();
+		bool hasUnsavedScenario();
 
-		OpenViBEDesigner::CInterfacedScenario* getCurrentInterfacedScenario(void);
-		void saveOpenedScenarios(void);
+		CInterfacedScenario* getCurrentInterfacedScenario();
+		void saveOpenedScenarios();
 
-		void testCB(void);
-		void newScenarioCB(void);
-		void openScenarioCB(void);
-		void saveScenarioCB(OpenViBEDesigner::CInterfacedScenario* pInterfacedScenario=NULL); // defaults to current scenario if NULL
-		void saveScenarioAsCB(OpenViBEDesigner::CInterfacedScenario* pInterfacedScenario=NULL); // defaults to current scenario if NULL
-		void closeScenarioCB(
-			OpenViBEDesigner::CInterfacedScenario* pInterfacedScenario);
+		void testCB();
+		void newScenarioCB();
+		void openScenarioCB();
+		void saveScenarioCB(CInterfacedScenario* interfacedScenario = nullptr); // defaults to current scenario if NULL
+		void saveScenarioAsCB(CInterfacedScenario* interfacedScenario = nullptr); // defaults to current scenario if NULL
+		void closeScenarioCB(CInterfacedScenario* interfacedScenario);
 		void restoreDefaultScenariosCB();
 
-		void stopScenarioCB(void);
-		void pauseScenarioCB(void);
-		void nextScenarioCB(void);
-		void playScenarioCB(void);
-		void forwardScenarioCB(void);
+		void stopScenarioCB();
+		void pauseScenarioCB();
+		void nextScenarioCB();
+		void playScenarioCB();
+		void forwardScenarioCB();
 
-		void configureScenarioSettingsCB(OpenViBEDesigner::CInterfacedScenario* pScenario);
+		void configureScenarioSettingsCB(CInterfacedScenario* pScenario);
 
-		void addCommentCB(
-			OpenViBEDesigner::CInterfacedScenario* pScenario);
+		void addCommentCB(CInterfacedScenario* pScenario);
 
-		void changeCurrentScenario(
-			OpenViBE::int32 i32PageIndex);
-		void reorderCurrentScenario(
-			OpenViBE::uint32 i32NewPageIndex);
+		void changeCurrentScenario(int i32PageIndex);
+		void reorderCurrentScenario(uint32_t i32NewPageIndex);
 
 		void addRecentScenario(const std::string& scenarioPath);
-		
-		void cannotSaveScenarioBeforeUpdate(void);
+
+		void cannotSaveScenarioBeforeUpdate();
 
 		//@}
 
@@ -109,25 +99,25 @@ namespace OpenViBEDesigner
 		/** \name Player management */
 		//@{
 
-		OpenViBE::Kernel::IPlayer* getPlayer(void);
+		OpenViBE::Kernel::IPlayer* getPlayer();
 
-		bool createPlayer(void);
+		bool createPlayer();
 
-		void stopInterfacedScenarioAndReleasePlayer(OpenViBEDesigner::CInterfacedScenario* interfacedScenario);
+		void stopInterfacedScenarioAndReleasePlayer(CInterfacedScenario* interfacedScenario);
 
 		//@}
 
 		/** \name Application management */
 		//@{
 
-		bool quitApplicationCB(void);
-		void aboutOpenViBECB(void);
-		void aboutScenarioCB(OpenViBEDesigner::CInterfacedScenario* pScenario);
-		void aboutLinkClickedCB(const gchar *url);
+		bool quitApplicationCB();
+		void aboutOpenViBECB();
+		void aboutScenarioCB(CInterfacedScenario* pScenario);
+		void aboutLinkClickedCB(const gchar* url);
 
-		void browseDocumentationCB(void);
-		void registerLicenseCB(void);
-		void reportIssueCB(void);
+		void browseDocumentationCB();
+		void registerLicenseCB();
+		void reportIssueCB();
 		void windowStateChangedCB(bool bIsMaximized);
 		bool displayChangelogWhenAvailable();
 
@@ -136,75 +126,72 @@ namespace OpenViBEDesigner
 		/** \name Log management */
 		//@{
 
-		void logLevelCB(void);
-		void logLevelMessagesCB(void);
+		void logLevelCB();
+		void logLevelMessagesCB();
 
 		//@}
 
 		/** \name CPU usage */
 		//@{
 
-		void CPUUsageCB(void);
+		void CPUUsageCB();
 
 		//@}
-		void zoomInCB(void);//Call when a zoom in is required
-		void zoomOutCB(void);//Call when a zoom out is required
+		void zoomInCB();//Call when a zoom in is required
+		void zoomOutCB();//Call when a zoom out is required
 		void spinnerZoomChangedCB(uint32_t scaleDelta);
 
-	public:
-
 		const OpenViBE::Kernel::IKernelContext& m_KernelContext;
-		OpenViBE::Kernel::IPluginManager* m_pPluginManager;
-		OpenViBE::Kernel::IScenarioManager* m_pScenarioManager;
-		OpenViBEVisualizationToolkit::IVisualizationManager* m_pVisualizationManager;
-		OpenViBEVisualizationToolkit::IVisualizationContext* m_visualizationContext;
-		OpenViBE::Kernel::IScenario* m_pClipboardScenario;
+		OpenViBE::Kernel::IPluginManager* m_pPluginManager = nullptr;
+		OpenViBE::Kernel::IScenarioManager* m_pScenarioManager = nullptr;
+		OpenViBEVisualizationToolkit::IVisualizationManager* m_pVisualizationManager = nullptr;
+		OpenViBEVisualizationToolkit::IVisualizationContext* m_visualizationContext = nullptr;
+		OpenViBE::Kernel::IScenario* m_pClipboardScenario = nullptr;
 
-		OpenViBEDesigner::CLogListenerDesigner* m_pLogListenerDesigner;
+		CLogListenerDesigner* m_pLogListenerDesigner = nullptr;
 
-		OpenViBEDesigner::ECommandLineFlag m_eCommandLineFlags;
+		ECommandLineFlag m_eCommandLineFlags = CommandLineFlag_None;
 
-		::GtkBuilder* m_pBuilderInterface;
-		::GtkWidget* m_pMainWindow;
-		::GtkWidget* m_pSplashScreen;
-		::GtkNotebook* m_pScenarioNotebook;
-		::GtkNotebook* m_pResourceNotebook;
-		::GtkTreeStore* m_pBoxAlgorithmTreeModel;
-		::GtkTreeModel* m_pBoxAlgorithmTreeModelFilter;
-		::GtkTreeModel* m_pBoxAlgorithmTreeModelFilter2;
-		::GtkTreeModel* m_pBoxAlgorithmTreeModelFilter3;
-		::GtkTreeModel* m_pBoxAlgorithmTreeModelFilter4;
-		::GtkTreeView* m_pBoxAlgorithmTreeView;
-		::GtkTreeStore* m_pAlgorithmTreeModel;
-		::GtkTreeView* m_pAlgorithmTreeView;
-		::GtkSpinButton* m_pFastForwardFactor;
-		::GtkWidget* m_pConfigureSettingsAddSettingButton;
-		::GtkContainer* m_MenuOpenRecent;
-		std::vector <const GtkWidget*> m_RecentScenarios;
+		GtkBuilder* m_pBuilderInterface = nullptr;
+		GtkWidget* m_pMainWindow = nullptr;
+		GtkWidget* m_pSplashScreen = nullptr;
+		GtkNotebook* m_pScenarioNotebook = nullptr;
+		GtkNotebook* m_pResourceNotebook = nullptr;
+		GtkTreeStore* m_pBoxAlgorithmTreeModel = nullptr;
+		GtkTreeModel* m_pBoxAlgorithmTreeModelFilter = nullptr;
+		GtkTreeModel* m_pBoxAlgorithmTreeModelFilter2 = nullptr;
+		GtkTreeModel* m_pBoxAlgorithmTreeModelFilter3 = nullptr;
+		GtkTreeModel* m_pBoxAlgorithmTreeModelFilter4 = nullptr;
+		GtkTreeView* m_pBoxAlgorithmTreeView = nullptr;
+		GtkTreeStore* m_pAlgorithmTreeModel = nullptr;
+		GtkTreeView* m_pAlgorithmTreeView = nullptr;
+		GtkSpinButton* m_pFastForwardFactor = nullptr;
+		GtkWidget* m_pConfigureSettingsAddSettingButton = nullptr;
+		GtkContainer* m_MenuOpenRecent = nullptr;
+		std::vector<const GtkWidget*> m_RecentScenarios;
 
 		// UI for adding inputs and outputs to a scenario
-		GtkWidget* m_pTableInputs;
-		GtkWidget* m_pTableOutputs;
+		GtkWidget* m_pTableInputs = nullptr;
+		GtkWidget* m_pTableOutputs = nullptr;
 
-		gint m_giFilterTimeout;
+		gint m_giFilterTimeout = 0;
 
-		OpenViBE::boolean m_bIsMaximized;
+		bool m_bIsMaximized = false;
 
-		const gchar* m_sSearchTerm;
+		const gchar* m_sSearchTerm = nullptr;
 
-		OpenViBE::uint64 m_ui64LastTimeRefresh;
-		bool m_bIsQuitting;
-		bool m_bIsNewVersion;
+		uint64_t m_ui64LastTimeRefresh = 0;
+		bool m_bIsQuitting = false;
+		bool m_bIsNewVersion = false;
 
-		std::vector < OpenViBEDesigner::CInterfacedScenario* > m_vInterfacedScenario;
-		OpenViBE::uint32 m_ui32CurrentInterfacedScenarioIndex;
-		std::vector <const OpenViBE::Plugins::IPluginObjectDesc*> m_vNewBoxes;
-		std::vector <const OpenViBE::Plugins::IPluginObjectDesc*> m_vUpdatedBoxes;
-		std::vector <std::string> m_vDocumentedBoxes;
+		std::vector<CInterfacedScenario*> m_vInterfacedScenario;
+		uint32_t m_ui32CurrentInterfacedScenarioIndex = 0;
+		std::vector<const OpenViBE::Plugins::IPluginObjectDesc*> m_vNewBoxes;
+		std::vector<const OpenViBE::Plugins::IPluginObjectDesc*> m_vUpdatedBoxes;
+		std::vector<std::string> m_vDocumentedBoxes;
 #ifdef MENSIA_DISTRIBUTION
 		Mensia::CArchwayHandler* m_pArchwayHandler;
 		Mensia::CArchwayHandlerGUI* m_pArchwayHandlerGUI;
 #endif
 	};
 }
-

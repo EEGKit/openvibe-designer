@@ -9,7 +9,7 @@ using namespace OpenViBE;
 using namespace OpenViBEDesigner;
 using namespace Setting;
 
-static void on_change(GtkEntry* entry, gpointer pUserData)
+static void on_change(GtkEntry* /*entry*/, gpointer pUserData)
 {
 	static_cast<CEnumerationSettingView*>(pUserData)->onChange();
 }
@@ -23,7 +23,7 @@ CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox& rBox, uint32_t ui
 	m_bOnValueSetting(false)
 {
 	p = false;
-	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
+	GtkWidget* l_pSettingWidget = this->CAbstractSettingView::getEntryFieldWidget();
 
 	m_pComboBox = GTK_COMBO_BOX(l_pSettingWidget);
 
@@ -62,7 +62,7 @@ CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox& rBox, uint32_t ui
 		gtk_list_store_set(l_pList, &l_oListIter, 0, settingValue.toASCIIString(), -1);
 	}
 
-	initializeValue();
+	CAbstractSettingView::initializeValue();
 
 	g_signal_connect(G_OBJECT(m_pComboBox), "changed", G_CALLBACK(on_change), this);
 }
@@ -101,7 +101,7 @@ void CEnumerationSettingView::setValue(const CString& rValue)
 	}
 	else
 	{
-		gtk_combo_box_set_active(m_pComboBox, (gint)m_mEntriesIndex[rValue]);
+		gtk_combo_box_set_active(m_pComboBox, gint(m_mEntriesIndex[rValue]));
 	}
 	m_bOnValueSetting = false;
 }

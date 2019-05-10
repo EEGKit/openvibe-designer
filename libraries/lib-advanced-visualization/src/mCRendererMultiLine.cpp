@@ -28,10 +28,10 @@ using namespace AdvancedVisualization;
 bool CRendererMultiLine::render(const IRendererContext& rContext)
 {
 	if (!rContext.getSelectedCount()) { return false; }
-	if (!m_ui32HistoryCount) { return false; }
+	if (!m_historyCount) { return false; }
 
-	auto sampleCount = static_cast<int32_t>(m_ui32SampleCount);
-	auto n1 = static_cast<int32_t>(m_ui32HistoryIndex % m_ui32SampleCount);
+	auto sampleCount = static_cast<int32_t>(m_sampleCount);
+	auto n1 = static_cast<int32_t>(m_historyIndex % m_sampleCount);
 	auto n2 = static_cast<int32_t>(sampleCount - n1);
 
 	if (!sampleCount) { return false; }

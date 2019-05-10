@@ -18,9 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef __autoconvert__LoretaROI_csv__
-#define __autoconvert__LoretaROI_csv__
+#pragma once
 
 namespace LoretaRegions
 {
@@ -118,4 +116,3 @@ namespace LoretaRegions
 		{ "Perception.Vision.Shape", 806, g_pROIVoxels_36 }
 	};
 } // namespace LoretaRegions
-#endif

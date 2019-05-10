@@ -1,5 +1,4 @@
-#ifndef __OpenViBEPlugins_Defines_H__
-#define __OpenViBEPlugins_Defines_H__
+#pragma once
 
 #define OVP_TypeId_SphericalLinearInterpolationType                   OpenViBE::CIdentifier(0x44B76D9E, 0x618229BC)
 #define OVP_TypeId_SphericalLinearInterpolationType_Spline            1
@@ -103,6 +102,3 @@ namespace OpenViBEPlugins
 		};
 	}  // namespace SimpleVisualization;
 }  // namespace OpenViBEPlugins;
-
-
-#endif // __OpenViBEPlugins_Defines_H__

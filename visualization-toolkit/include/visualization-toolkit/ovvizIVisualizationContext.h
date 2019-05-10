@@ -33,7 +33,7 @@ namespace OpenViBEVisualizationToolkit
 		/**
 		 * @brief Forward a GtkWidget which displays the box toolbar to the visualization manager
 		 * @param box The current box.
-		 * @param widget The Gtk widget used to display the controls of the visualization.
+		 * @param toolbarWidget The Gtk widget used to display the controls of the visualization.
 		 * @retval true In case of success.
 		 * @retval false In case of error.
 		 */

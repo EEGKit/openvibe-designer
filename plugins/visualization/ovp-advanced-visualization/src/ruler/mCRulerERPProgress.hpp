@@ -18,9 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef __OpenViBEPlugins_CRulerERPProgress_H__
-#define __OpenViBEPlugins_CRulerERPProgress_H__
+#pragma once
 
 #include "../mIRuler.hpp"
 #include "../m_VisualizationTools.hpp"
@@ -41,7 +39,7 @@ namespace Mensia
 				if (m_pRenderer->getHistoryCount() == 0) { return; }
 				if (m_pRenderer->getHistoryIndex() == 0) { return; }
 
-				float l_fProgress = m_pRendererContext->getERPFraction();
+				const float l_fProgress = m_pRendererContext->getERPFraction();
 				if (l_fProgress != 0 && l_fProgress != 1)
 				{
 					glDisable(GL_TEXTURE_1D);
@@ -64,5 +62,3 @@ namespace Mensia
 		};
 	}  // namespace AdvancedVisualization
 }  // namespace Mensia
-
-#endif // __OpenViBEPlugins_CRulerERPProgress_H__

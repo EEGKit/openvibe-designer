@@ -18,9 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef __OpenViBEPlugins_CRulerBottomERPCount_H__
-#define __OpenViBEPlugins_CRulerBottomERPCount_H__
+#pragma once
 
 #include "../mIRuler.hpp"
 #include "../m_VisualizationTools.hpp"
@@ -40,20 +38,18 @@ namespace Mensia
 				if (m_pRenderer->getHistoryCount() == 0) { return; }
 				if (m_pRenderer->getHistoryIndex() == 0) { return; }
 
-				uint32_t l_ui32SampleCount = m_pRenderer->getSampleCount();
-				double l_fDuration = l_ui32SampleCount * 1.;
-				std::vector<double> l_vRange;
-				std::vector<double>::iterator it;
+				const uint32_t l_ui32SampleCount = m_pRenderer->getSampleCount();
+				const double l_fDuration = l_ui32SampleCount * 1.;
 
-				l_vRange = this->split_range(0, l_fDuration, 10);
+				std::vector<double> l_vRange = this->split_range(0, l_fDuration, 10);
 
-				gint w, h, x;
+				gint w, h;
 
 				gdk_drawable_get_size(pWidget->window, &w, &h);
 				GdkGC* l_pDrawGC = gdk_gc_new(pWidget->window);
-				for (it = l_vRange.begin(); it != l_vRange.end(); it++)
+				for (std::vector<double>::iterator it = l_vRange.begin(); it != l_vRange.end(); ++it)
 				{
-					x = gint((*it / l_fDuration) * w);
+					const gint x = gint((*it / l_fDuration) * w);
 					PangoLayout* l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, this->getLabel(*it).c_str());
 					gdk_draw_layout(pWidget->window, l_pDrawGC, x, 5, l_pPangoLayout);
 					gdk_draw_line(pWidget->window, l_pDrawGC, x, 0, x, 3);
@@ -64,5 +60,3 @@ namespace Mensia
 		};
 	}  // namespace AdvancedVisualization
 }  // namespace Mensia
-
-#endif // __OpenViBEPlugins_CRulerBottomERPCount_H__

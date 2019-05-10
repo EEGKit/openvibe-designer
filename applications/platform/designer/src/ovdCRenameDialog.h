@@ -1,5 +1,4 @@
-#ifndef __OpenViBEDesigner_CRenameDialog_H__
-#define __OpenViBEDesigner_CRenameDialog_H__
+#pragma once
 
 #include "ovd_base.h"
 
@@ -10,10 +9,10 @@ namespace OpenViBEDesigner
 	public:
 
 		CRenameDialog(const OpenViBE::Kernel::IKernelContext& rKernelContext, const OpenViBE::CString& rInitialName, const OpenViBE::CString& rDefaultName, const char* sGUIFilename);
-		virtual ~CRenameDialog(void);
+		virtual ~CRenameDialog();
 
-		OpenViBE::boolean run(void);
-		OpenViBE::CString getResult(void);
+		bool run();
+		OpenViBE::CString getResult() { return m_sResult; }
 
 	protected:
 
@@ -25,8 +24,6 @@ namespace OpenViBEDesigner
 
 	private:
 
-		CRenameDialog(void);
+		CRenameDialog();
 	};
 };
-
-#endif // __OpenViBEDesigner_CRenameDialog_H__

@@ -10,38 +10,29 @@ using namespace Plugins;
 using namespace OpenViBEDesigner;
 using namespace OpenViBEToolkit;
 
-CScenarioStateStack::CScenarioStateStack(const IKernelContext& rKernelContext, CInterfacedScenario& interfacedScenario, IScenario& scenario)
-	: m_KernelContext(rKernelContext)
-	  , m_InterfacedScenario(interfacedScenario)
-	  , m_Scenario(scenario)
-	  , m_MaximumStateCount(0)
+CScenarioStateStack::CScenarioStateStack(const IKernelContext& kernelContext, CInterfacedScenario& interfacedScenario, IScenario& scenario)
+	: m_KernelContext(kernelContext), m_InterfacedScenario(interfacedScenario), m_Scenario(scenario)
 {
 	m_CurrentState = m_States.begin();
 	m_MaximumStateCount = uint32_t(m_KernelContext.getConfigurationManager().expandAsUInteger("${Designer_UndoRedoStackSize}", 64));
 }
 
 CScenarioStateStack::~CScenarioStateStack()
-
 {
-	for (auto& state : m_States)
-	{
-		delete state;
-	}
+	for (auto& state : m_States) { delete state; }
 }
 
 bool CScenarioStateStack::isUndoPossible()
 {
-	auto itState = m_CurrentState;
-	return itState != m_States.begin();
+	return m_CurrentState != m_States.begin();
 }
 
 bool CScenarioStateStack::undo()
-
 {
 	auto itState = m_CurrentState;
 	if (itState == m_States.begin()) { return false; }
 
-	itState--;
+	--itState;
 
 	m_CurrentState = itState;
 
@@ -58,17 +49,16 @@ bool CScenarioStateStack::isRedoPossible()
 	auto itState = m_CurrentState;
 	if (itState == m_States.end()) { return false; }
 
-	itState++;
+	++itState;
 	return itState != m_States.end();
 }
 
 bool CScenarioStateStack::redo()
-
 {
 	auto itState = m_CurrentState;
 	if (itState == m_States.end()) { return false; }
 
-	itState++;
+	++itState;
 	if (itState == m_States.end()) { return false; }
 
 	m_CurrentState = itState;
@@ -77,7 +67,6 @@ bool CScenarioStateStack::redo()
 }
 
 bool CScenarioStateStack::snapshot()
-
 {
 	auto* newState = new CMemoryBuffer();
 
@@ -87,10 +76,7 @@ bool CScenarioStateStack::snapshot()
 		return false;
 	}
 
-	if (m_CurrentState != m_States.end())
-	{
-		m_CurrentState++;
-	}
+	if (m_CurrentState != m_States.end()) { ++m_CurrentState; }
 
 	while (m_CurrentState != m_States.end())
 	{
@@ -109,7 +95,7 @@ bool CScenarioStateStack::snapshot()
 	m_States.push_back(newState);
 
 	m_CurrentState = m_States.end();
-	m_CurrentState--;
+	--m_CurrentState;
 
 	return true;
 }
@@ -120,18 +106,18 @@ bool CScenarioStateStack::restoreState(const IMemoryBuffer& state)
 
 	if (state.getSize() == 0) { return false; }
 
-	CIdentifier importerIdentifier = m_KernelContext.getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_XMLScenarioImporter);
+	const CIdentifier importerIdentifier = m_KernelContext.getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_XMLScenarioImporter);
 	if (importerIdentifier == OV_UndefinedIdentifier) { return false; }
 
 	IAlgorithmProxy* importer = &m_KernelContext.getAlgorithmManager().getAlgorithm(importerIdentifier);
 	if (!importer) { return false; }
 
-	uLongf sourceSize = (uLongf)state.getSize() - sizeof(uLongf);
-	auto* sourceBuffer = (Bytef*)state.getDirectPointer();
+	const uLongf sourceSize = uLongf(state.getSize()) - sizeof(uLongf);
+	auto* sourceBuffer = const_cast<Bytef*>(state.getDirectPointer());
 
 	uLongf destinationSize = *(uLongf*)(state.getDirectPointer() + state.getSize() - sizeof(uLongf));
 	uncompressedMemoryBuffer.setSize(destinationSize, true);
-	auto* destinationBuffer = (Bytef*)uncompressedMemoryBuffer.getDirectPointer();
+	auto* destinationBuffer = static_cast<Bytef*>(uncompressedMemoryBuffer.getDirectPointer());
 
 	if (uncompress(destinationBuffer, &destinationSize, sourceBuffer, sourceSize) != Z_OK) { return false; }
 
@@ -195,7 +181,7 @@ bool CScenarioStateStack::dumpState(IMemoryBuffer& state)
 	m_Scenario.getMetadataDetails(metadataIdentifier)->setType(OVVIZ_MetadataIdentifier_VisualizationTree);
 	m_Scenario.getMetadataDetails(metadataIdentifier)->setData(m_InterfacedScenario.m_pVisualizationTree->serialize());
 
-	CIdentifier exporterIdentifier = m_KernelContext.getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_XMLScenarioExporter);
+	const CIdentifier exporterIdentifier = m_KernelContext.getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_XMLScenarioExporter);
 
 	if (exporterIdentifier == OV_UndefinedIdentifier) { return false; }
 
@@ -214,19 +200,19 @@ bool CScenarioStateStack::dumpState(IMemoryBuffer& state)
 	exporter->uninitialize();
 	m_KernelContext.getAlgorithmManager().releaseAlgorithm(*exporter);
 
-	auto sourceSize = (uLongf)uncompressedMemoryBuffer.getSize();
-	auto* sourceBuffer = (Bytef*)uncompressedMemoryBuffer.getDirectPointer();
+	auto sourceSize = uLongf(uncompressedMemoryBuffer.getSize());
+	auto* sourceBuffer = static_cast<Bytef*>(uncompressedMemoryBuffer.getDirectPointer());
 
-	compressedMemoryBuffer.setSize(12 + (uint64_t)(sourceSize * 1.1), true);
+	compressedMemoryBuffer.setSize(12 + uint64_t(sourceSize * 1.1), true);
 
-	auto destinationSize = (uLongf)compressedMemoryBuffer.getSize();
-	auto* destinationBuffer = (Bytef*)compressedMemoryBuffer.getDirectPointer();
+	auto destinationSize = uLongf(compressedMemoryBuffer.getSize());
+	auto* destinationBuffer = static_cast<Bytef*>(compressedMemoryBuffer.getDirectPointer());
 
 	if (compress(destinationBuffer, &destinationSize, sourceBuffer, sourceSize) != Z_OK) { return false; }
 
 	state.setSize(0, true);
 	state.append(compressedMemoryBuffer.getDirectPointer(), destinationSize);
-	state.append((const uint8_t*)& sourceSize, sizeof(uLongf));
+	state.append(reinterpret_cast<const uint8_t*>(& sourceSize), sizeof(uLongf));
 
 	return true;
 }

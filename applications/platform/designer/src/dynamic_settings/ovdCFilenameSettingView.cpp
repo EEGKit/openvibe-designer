@@ -9,18 +9,18 @@ using namespace OpenViBE;
 using namespace OpenViBEDesigner;
 using namespace Setting;
 
-static void on_button_setting_filename_browse_pressed(GtkButton* pButton, gpointer pUserData)
+static void on_button_setting_filename_browse_pressed(GtkButton* /*pButton*/, gpointer pUserData)
 {
 	static_cast<CFilenameSettingView*>(pUserData)->browse();
 }
 
-static void on_change(GtkEntry* entry, gpointer pUserData)
+static void on_change(GtkEntry* /*entry*/, gpointer pUserData)
 {
 	static_cast<CFilenameSettingView*>(pUserData)->onChange();
 }
 
 #if defined TARGET_OS_Windows
-static gboolean on_focus_out_event(GtkEntry* entry, GdkEvent* event, gpointer pUserData)
+static gboolean on_focus_out_event(GtkEntry* /*entry*/, GdkEvent* /*event*/, gpointer pUserData)
 {
 	static_cast<CFilenameSettingView*>(pUserData)->onFocusLost();
 	return FALSE;
@@ -30,10 +30,10 @@ static gboolean on_focus_out_event(GtkEntry* entry, GdkEvent* event, gpointer pU
 CFilenameSettingView::CFilenameSettingView(Kernel::IBox& rBox, uint32_t ui32Index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext) :
 	CAbstractSettingView(rBox, ui32Index, rBuilderName, "settings_collection-hbox_setting_filename"), m_rKernelContext(rKernelContext), m_bOnValueSetting(false)
 {
-	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
+	GtkWidget* l_pSettingWidget = this->CAbstractSettingView::getEntryFieldWidget();
 
 	std::vector<GtkWidget*> l_vWidget;
-	extractWidget(l_pSettingWidget, l_vWidget);
+	CAbstractSettingView::extractWidget(l_pSettingWidget, l_vWidget);
 	m_pEntry = GTK_ENTRY(l_vWidget[0]);
 
 	g_signal_connect(G_OBJECT(m_pEntry), "changed", G_CALLBACK(on_change), this);
@@ -43,7 +43,7 @@ CFilenameSettingView::CFilenameSettingView(Kernel::IBox& rBox, uint32_t ui32Inde
 #endif
 	g_signal_connect(G_OBJECT(l_vWidget[1]), "clicked", G_CALLBACK(on_button_setting_filename_browse_pressed), this);
 
-	initializeValue();
+	CAbstractSettingView::initializeValue();
 }
 
 void CFilenameSettingView::getValue(CString& rValue) const

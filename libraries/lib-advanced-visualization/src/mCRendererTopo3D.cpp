@@ -6,7 +6,7 @@
 using namespace Mensia;
 using namespace AdvancedVisualization;
 
-void CRendererTopo3D::rebuild3DMeshesPre(const IRendererContext& rContext)
+void CRendererTopo3D::rebuild3DMeshesPre(const IRendererContext& /*rContext*/)
 {
 	m_oFace.clear();
 	m_oScalp.clear();
@@ -24,4 +24,4 @@ void CRendererTopo3D::rebuild3DMeshesPre(const IRendererContext& rContext)
 	m_oFace.m_vColor[2] = .5f;
 }
 
-void CRendererTopo3D::rebuild3DMeshesPost(const IRendererContext& rContext) { }
+void CRendererTopo3D::rebuild3DMeshesPost(const IRendererContext& /*context*/) { }

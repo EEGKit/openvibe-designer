@@ -1,5 +1,4 @@
-#ifndef __OpenViBEDesigner_CBoxProxy_H__
-#define __OpenViBEDesigner_CBoxProxy_H__
+#pragma once
 
 #include "ovd_base.h"
 
@@ -11,66 +10,50 @@ namespace OpenViBEDesigner
 	{
 	public:
 
-		CBoxProxy(
-			const OpenViBE::Kernel::IKernelContext& rKernelContext,
-			OpenViBE::Kernel::IScenario& rScenario,
-			const OpenViBE::CIdentifier& rBoxIdentifier);
-		virtual ~CBoxProxy(void);
+		CBoxProxy(const OpenViBE::Kernel::IKernelContext& rKernelContext, OpenViBE::Kernel::IScenario& rScenario, const OpenViBE::CIdentifier& rBoxIdentifier);
+		virtual ~CBoxProxy();
 
-		operator OpenViBE::Kernel::IBox* (void);
-		operator const OpenViBE::Kernel::IBox* (void);
+		operator OpenViBE::Kernel::IBox*();
+		operator const OpenViBE::Kernel::IBox*();
 
-		OpenViBE::int32 getWidth(
-			::GtkWidget* pWidget) const;
-		OpenViBE::int32 getHeight(
-			::GtkWidget* pWidget) const;
+		int getWidth(GtkWidget* pWidget) const;
+		int getHeight(GtkWidget* pWidget) const;
 
-		OpenViBE::int32 getXCenter(void) const;
-		OpenViBE::int32 getYCenter(void) const;
+		int getXCenter() const;
+		int getYCenter() const;
 
-		void setCenter(
-			OpenViBE::int32 i32XCenter,
-			OpenViBE::int32 i32YCenter);
+		void setCenter(int i32XCenter, int i32YCenter);
 
 		void setBoxAlgorithmDescriptorOverride(const OpenViBE::Plugins::IBoxAlgorithmDesc* pBoxAlgorithmDescriptor);
 
-		void apply(void);
+		void apply();
 
-		virtual const char* getLabel(void) const;
-		virtual const char* getStatusLabel(void) const;
+		virtual const char* getLabel() const;
+		virtual const char* getStatusLabel() const;
 
-		bool isBoxAlgorithmPluginPresent(void) const;
-		bool isUpToDate(void) const;
-		bool hasPendingDeprecatedInterfacors(void) const;
-		bool isDeprecated(void) const;
-		bool isUnstable(void) const;
-		bool isDisabled(void) const;
-		bool isMetabox(void) const;
-
-	protected:
-
-		virtual void updateSize(
-			::GtkWidget* pWidget,
-			const char* sLabel,
-			const char* sStatus,
-			int* pXSize,
-			int* pYSize) const;
+		bool isBoxAlgorithmPluginPresent() const;
+		bool isUpToDate() const;
+		bool hasPendingDeprecatedInterfacors() const;
+		bool isDeprecated() const;
+		bool isUnstable() const;
+		bool isDisabled() const;
+		bool isMetabox() const;
 
 	protected:
+
+		virtual void updateSize(GtkWidget* pWidget, const char* sLabel, const char* sStatus, int* pXSize, int* pYSize) const;
 
 		const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
-		const OpenViBE::Plugins::IBoxAlgorithmDesc* m_pBoxAlgorithmDescriptorOverride;
-		const OpenViBE::Kernel::IBox* m_pConstBox;
-		OpenViBE::Kernel::IBox* m_pBox;
-		bool m_bApplied;
-		bool m_bShowOriginalNameWhenModified;
-		int m_iXCenter;
-		int m_iYCenter;
+		const OpenViBE::Plugins::IBoxAlgorithmDesc* m_pBoxAlgorithmDescriptorOverride = nullptr;
+		const OpenViBE::Kernel::IBox* m_pConstBox = nullptr;
+		OpenViBE::Kernel::IBox* m_pBox = nullptr;
+		bool m_bApplied = false;
+		bool m_bShowOriginalNameWhenModified = false;
+		int m_iXCenter = 0;
+		int m_iYCenter = 0;
 		mutable std::string m_sLabel;
 		mutable std::string m_sStatus;
-		bool m_IsBoxAlgorithmPresent;
-		bool m_IsDeprecated;
+		bool m_IsBoxAlgorithmPresent = false;
+		bool m_IsDeprecated = false;
 	};
 };
-
-#endif // __OpenViBEDesigner_CBoxProxy_H__

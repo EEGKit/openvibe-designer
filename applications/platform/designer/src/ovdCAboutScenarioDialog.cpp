@@ -14,7 +14,7 @@ CAboutScenarioDialog::~CAboutScenarioDialog() = default;
 
 namespace
 {
-	void buttonMetaboxReset_clicked(GtkWidget* widget, gpointer data)
+	void buttonMetaboxReset_clicked(GtkWidget* /*widget*/, gpointer data)
 	{
 		gtk_entry_set_text(GTK_ENTRY(data), CIdentifier::random().toString().toASCIIString());
 	}

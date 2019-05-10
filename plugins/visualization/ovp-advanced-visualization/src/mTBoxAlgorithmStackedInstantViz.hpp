@@ -108,7 +108,7 @@ namespace Mensia
 		bool TBoxAlgorithmStackedInstantViz<bDrawBorders, TRendererFactoryClass, TRulerClass>::initialize()
 
 		{
-			bool l_bResult = CBoxAlgorithmViz::initialize();
+			const bool l_bResult = CBoxAlgorithmViz::initialize();
 
 			m_oMatrixDecoder.initialize(*this, 0);
 			m_oStimulationDecoder.initialize(*this, 1);
@@ -130,7 +130,7 @@ namespace Mensia
 			OpenViBEVisualizationToolkit::Tools::ColorGradient::parse(gradientMatrix, m_sColorGradient);
 			for (unsigned int step = 0; step < gradientMatrix.getDimensionSize(1); ++step)
 			{
-				double currentStepValue = gradientMatrix.getBuffer()[4 * step + 0];
+				const double currentStepValue = gradientMatrix.getBuffer()[4 * step + 0];
 				gradientMatrix.getBuffer()[4 * step + 0] = (currentStepValue / 100.0) * 50.0 + 50.0;
 			}
 			OpenViBEVisualizationToolkit::Tools::ColorGradient::format(m_sColorGradient, gradientMatrix);
@@ -169,14 +169,13 @@ namespace Mensia
 		{
 			const IBox& staticBoxContext = this->getStaticBoxContext();
 			IBoxIO& dynamicBoxContext = this->getDynamicBoxContext();
-			uint32_t i, j;
 
 			for (uint32_t chunk = 0; chunk < dynamicBoxContext.getInputChunkCount(0); chunk++)
 			{
 				m_oMatrixDecoder.decode(chunk);
 
 				OpenViBE::IMatrix* inputMatrix = m_oMatrixDecoder.getOutputMatrix();
-				uint32_t channelCount = inputMatrix->getDimensionSize(0);
+				const uint32_t channelCount = inputMatrix->getDimensionSize(0);
 
 				if (channelCount == 0)
 				{
@@ -214,16 +213,16 @@ namespace Mensia
 						GtkTreeIter l_oGtkTreeIterator;
 						gtk_list_store_clear(m_pChannelListStore);
 
-						uint32_t frequencyCount = inputMatrix->getDimensionSize(1);
-						uint32_t sampleCount = inputMatrix->getDimensionSize(2);
+						const uint32_t frequencyCount = inputMatrix->getDimensionSize(1);
+						const uint32_t sampleCount = inputMatrix->getDimensionSize(2);
 
 						// I do not know what this is for...
 						for (uint32_t frequency = 0; frequency < frequencyCount; frequency++)
 						{
 							try
 							{
-								double frequencyValue = std::stod(inputMatrix->getDimensionLabel(1, frequency), nullptr);
-								int stringSize = snprintf(nullptr, 0, "%.2f", frequencyValue) + 1;
+								const double frequencyValue = std::stod(inputMatrix->getDimensionLabel(1, frequency), nullptr);
+								const int stringSize = snprintf(nullptr, 0, "%.2f", frequencyValue) + 1;
 								if (stringSize > 0)
 								{
 									std::unique_ptr<char[]> buffer(new char[stringSize]);
@@ -251,7 +250,7 @@ namespace Mensia
 							std::string channelName = trim(inputMatrix->getDimensionLabel(0, channel));
 							std::string lowercaseChannelName = channelName;
 							std::transform(channelName.begin(), channelName.end(), lowercaseChannelName.begin(), tolower);
-							CVertex v = m_vChannelLocalisation[lowercaseChannelName];
+							const CVertex v = m_vChannelLocalisation[lowercaseChannelName];
 
 							if (channelName.empty())
 							{
@@ -293,11 +292,11 @@ namespace Mensia
 						m_ui64Time1 = m_ui64Time2;
 						m_ui64Time2 = dynamicBoxContext.getInputChunkEndTime(0, chunk);
 
-						uint32_t frequencyCount = inputMatrix->getDimensionSize(1);
-						uint32_t sampleCount = inputMatrix->getDimensionSize(2);
+						const uint32_t frequencyCount = inputMatrix->getDimensionSize(1);
+						const uint32_t sampleCount = inputMatrix->getDimensionSize(2);
 
-						uint64_t chunkDuration = dynamicBoxContext.getInputChunkEndTime(0, chunk) - dynamicBoxContext.getInputChunkStartTime(0, chunk);
-						uint64_t sampleDuration = chunkDuration / sampleCount;
+						const uint64_t chunkDuration = dynamicBoxContext.getInputChunkEndTime(0, chunk) - dynamicBoxContext.getInputChunkStartTime(0, chunk);
+						const uint64_t sampleDuration = chunkDuration / sampleCount;
 
 						m_pSubRendererContext->setSampleDuration(sampleDuration);
 						m_pRendererContext->setSampleDuration(sampleDuration);
@@ -324,13 +323,13 @@ namespace Mensia
 
 			if (staticBoxContext.getInputCount() > 1)
 			{
-				for (i = 0; i < dynamicBoxContext.getInputChunkCount(1); ++i)
+				for (uint32_t i = 0; i < dynamicBoxContext.getInputChunkCount(1); ++i)
 				{
 					m_oStimulationDecoder.decode(i);
 					if (m_oStimulationDecoder.isBufferReceived())
 					{
 						OpenViBE::IStimulationSet* l_pStimulationSet = m_oStimulationDecoder.getOutputStimulationSet();
-						for (j = 0; j < l_pStimulationSet->getStimulationCount(); j++)
+						for (uint32_t j = 0; j < l_pStimulationSet->getStimulationCount(); j++)
 						{
 							m_vRenderer[0]->feed(l_pStimulationSet->getStimulationDate(j), l_pStimulationSet->getStimulationIdentifier(j));
 							m_bRedrawNeeded = true;
@@ -368,13 +367,11 @@ namespace Mensia
 		{
 			CBoxAlgorithmViz::preDraw();
 
-			uint32_t i;
-
 			if (m_pRendererContext->getSelectedCount() != 0)
 			{
 				glPushMatrix();
 				glScalef(1, 1.f / m_pRendererContext->getSelectedCount(), 1);
-				for (i = 0; i < m_pRendererContext->getSelectedCount(); ++i)
+				for (uint32_t i = 0; i < m_pRendererContext->getSelectedCount(); ++i)
 				{
 					glPushAttrib(GL_ALL_ATTRIB_BITS);
 					glPushMatrix();

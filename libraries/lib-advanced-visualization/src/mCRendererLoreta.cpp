@@ -44,7 +44,7 @@ namespace
 
 	void insertLoretaVoxelInMesh(C3DMesh& rMesh, float x, float y, float z, float s)
 	{
-		int i = rMesh.m_vVertex.size();
+		const int i = rMesh.m_vVertex.size();
 
 		// Insert the 8 vertices of the cube
 
@@ -107,8 +107,6 @@ namespace
 CRendererLoreta::CRendererLoreta()
 
 {
-	uint32_t i;
-
 #if 0
 	m_oFace.load(Mensia::Directories::getDataDir() + "/content/Face.obj");
 	m_oScalp.load(Mensia::Directories::getDataDir() + "/content/Scalp.obj");
@@ -118,16 +116,16 @@ CRendererLoreta::CRendererLoreta()
 #endif
 
 	m_oBrain.clear();
-	for (i = 0; i < 2394; ++i)
+	for (auto& voxel : g_iLoretaVoxel)
 	{
-		insertLoretaVoxelInMesh(m_oBrain, float(-g_iLoretaVoxel[i][0]), float(g_iLoretaVoxel[i][1]), float(-g_iLoretaVoxel[i][2]), 3.5);
+		insertLoretaVoxelInMesh(m_oBrain, float(-voxel[0]), float(voxel[1]), float(-voxel[2]), 3.5);
 	}
 
 	m_vLookup.clear();
-	unsigned int l_uiCategoryIndex_BrodmannAreas = 0;
-	unsigned int l_uiCategoryIndex_AnatomicalAreas = 1;
-	unsigned int l_uiCategoryIndex_Lobes = 2;
-	unsigned int l_uiCategoryIndex_ROI = 3;
+	const unsigned int l_uiCategoryIndex_BrodmannAreas = 0;
+	const unsigned int l_uiCategoryIndex_AnatomicalAreas = 1;
+	const unsigned int l_uiCategoryIndex_Lobes = 2;
+	const unsigned int l_uiCategoryIndex_ROI = 3;
 	m_vLookup.resize(4);
 
 #if 0 /* SAVING DATA INTO C FILE */
@@ -326,7 +324,7 @@ CRendererLoreta::CRendererLoreta()
 
 	m_vSelected.resize(2394, true);
 
-	this->refreshBrainSubset();
+	this->CRendererLoreta::refreshBrainSubset();
 }
 
 void CRendererLoreta::rebuild(const IRendererContext& rContext)
@@ -345,8 +343,8 @@ bool CRendererLoreta::render(const IRendererContext& rContext)
 {
 	uint32_t i, j;
 
-	//	if(!m_ui32HistoryCount) return false;
-	//	if(m_vHistory.size()!=2394) return false;
+	//	if(!m_historyCount) return false;
+	//	if(m_history.size()!=2394) return false;
 
 	float d = 3.5;
 
@@ -374,10 +372,10 @@ bool CRendererLoreta::render(const IRendererContext& rContext)
 	glTranslatef(0, -10, 15);
 	glDisable(GL_DEPTH_TEST);
 
-	if (m_ui32HistoryCount && m_vHistory.size() == 2394)
+	if (m_historyCount && m_history.size() == 2394)
 	{
 		std::vector<float> l_vSample;
-		this->getSampleAtERPFraction(m_f32ERPFraction, l_vSample);
+		this->getSampleAtERPFraction(m_ERPFraction, l_vSample);
 
 #if defined __Rendering_VertexBuffer__
 		for (i = 0, j = 0; i < 2394; ++i)
@@ -399,7 +397,7 @@ bool CRendererLoreta::render(const IRendererContext& rContext)
 			if (m_vSelected[i])
 			{
 				float l_fPower = l_vSample[i] * rContext.getScale();
-				// m_vHistory[i][m_ui32HistoryCount-m_ui32SampleCount+m_ui32SampleIndexERP]*rContext.getScale();
+				// m_history[i][m_historyCount-m_sampleCount+m_sampleIndexERP]*rContext.getScale();
 				::glColor4f(.1f, .1f, .1f, rContext.getTranslucency());
 				::glPushMatrix();
 				::glTexCoord1f(l_fPower);
@@ -432,7 +430,7 @@ bool CRendererLoreta::render(const IRendererContext& rContext)
 		{
 			if (m_vSelected[i])
 			{
-				// float l_fPower=m_vHistory[i][m_ui32HistoryCount-m_ui32SampleCount+m_ui32SampleIndexERP]*rContext.getScale();
+				// float l_fPower=m_history[i][m_historyCount-m_sampleCount+m_sampleIndexERP]*rContext.getScale();
 				::glColor4f(.1f, .1f, .1f, rContext.getTranslucency());
 				::glPushMatrix();
 				::glTexCoord1f(0);
@@ -515,8 +513,7 @@ bool CRendererLoreta::render(const IRendererContext& rContext)
 void CRendererLoreta::clearRegionSelection()
 
 {
-	std::vector<bool>::iterator it;
-	for (it = m_vSelected.begin(); it != m_vSelected.end(); it++)
+	for (std::vector<bool>::iterator it = m_vSelected.begin(); it != m_vSelected.end(); ++it)
 	{
 		*it = false;
 	}
@@ -557,7 +554,7 @@ const char* CRendererLoreta::getRegionName(uint32_t ui32RegionCategory, uint32_t
 
 	for (uint32_t j = 0; j < ui32RegionIndex && it != l_vLookup.end(); j++)
 	{
-		it++;
+		++it;
 	}
 
 	if (it != l_vLookup.end()) { return it->first.c_str(); }
@@ -570,15 +567,14 @@ void CRendererLoreta::selectRegion(uint32_t ui32RegionCategory, const char* sReg
 	if (ui32RegionCategory >= m_vLookup.size()) { return; }
 
 	std::map<std::string, std::vector<uint32_t>>& l_vLookup = m_vLookup[ui32RegionCategory];
-	std::map<std::string, std::vector<uint32_t>>::iterator it;
 
-	it = l_vLookup.find(sRegionName);
+	std::map<std::string, std::vector<uint32_t>>::iterator it = l_vLookup.find(sRegionName);
 	if (it != l_vLookup.end())
 	{
 		std::vector<uint32_t>& l_rList = it->second;
-		for (uint32_t i = 0; i < l_rList.size(); ++i)
+		for (auto& i : l_rList)
 		{
-			m_vSelected[l_rList[i]] = true;
+			m_vSelected[i] = true;
 		}
 	}
 
@@ -594,15 +590,15 @@ void CRendererLoreta::selectRegion(uint32_t ui32RegionCategory, uint32_t ui32Reg
 
 	for (uint32_t j = 0; j < ui32RegionIndex && it != l_vLookup.end(); j++)
 	{
-		it++;
+		++it;
 	}
 
 	if (it != l_vLookup.end())
 	{
 		std::vector<uint32_t>& l_rList = it->second;
-		for (uint32_t i = 0; i < l_rList.size(); ++i)
+		for (auto& i : l_rList)
 		{
-			m_vSelected[l_rList[i]] = true;
+			m_vSelected[i] = true;
 		}
 	}
 
@@ -620,12 +616,12 @@ void CRendererLoreta::refreshBrainSubset()
 
 	const uint32_t l_ui32TrianglePerRenderedVoxel = 12;
 	const uint32_t l_ui32VertexPerRenderedVoxel = l_ui32TrianglePerRenderedVoxel * 3;
-	uint32_t i, j, k, l;
+	uint32_t i, j, k;
 	for (i = 0, j = 0, k = 0; i < 2394; i++, k += l_ui32VertexPerRenderedVoxel)
 	{
 		if (m_vSelected[i] == true)
 		{
-			for (l = 0; l < l_ui32VertexPerRenderedVoxel; l++)
+			for (uint32_t l = 0; l < l_ui32VertexPerRenderedVoxel; l++)
 			{
 				m_vBrainSubsetTriangle[j++] = m_oBrain.m_vTriangle[k + l];
 			}

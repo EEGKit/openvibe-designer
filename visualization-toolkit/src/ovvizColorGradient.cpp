@@ -20,7 +20,7 @@ namespace
 
 bool Tools::ColorGradient::parse(IMatrix& colorGradient, const CString& string)
 {
-	std::string colorString(string.toASCIIString());
+	const std::string colorString(string.toASCIIString());
 	std::string::size_type startPosition = 0;
 
 	std::map<double, SColor> colorGradientVector;
@@ -55,7 +55,7 @@ bool Tools::ColorGradient::parse(IMatrix& colorGradient, const CString& string)
 	colorGradient.setDimensionSize(1, static_cast<uint32_t>(colorGradientVector.size()));
 
 	uint32_t i = 0;
-	for (auto it = colorGradientVector.begin(); it != colorGradientVector.end(); it++, i++)
+	for (auto it = colorGradientVector.begin(); it != colorGradientVector.end(); ++it, i++)
 	{
 		colorGradient[i * 4] = it->second.percent;
 		colorGradient[i * 4 + 1] = it->second.red;
@@ -130,20 +130,20 @@ bool Tools::ColorGradient::interpolate(IMatrix& interpolatedColorGradient, const
 
 	auto it1 = colors.begin();
 	auto it2 = colors.begin();
-	it2++;
+	++it2;
 
 	for (i = 0; i < steps; ++i)
 	{
-		double t = double(100 * i) / (steps - 1);
+		const double t = double(100 * i) / (steps - 1);
 		while (it2->first < t)
 		{
-			it1++;
-			it2++;
+			++it1;
+			++it2;
 		}
 
-		double a = it2->first - t;
-		double b = t - it1->first;
-		double d = it2->first - it1->first;
+		const double a = it2->first - t;
+		const double b = t - it1->first;
+		const double d = it2->first - it1->first;
 
 		interpolatedColorGradient[i * 4] = t;
 		interpolatedColorGradient[i * 4 + 1] = (it1->second.red * a + it2->second.red * b) / d;

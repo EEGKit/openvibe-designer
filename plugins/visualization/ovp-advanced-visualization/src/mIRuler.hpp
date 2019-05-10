@@ -18,9 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef __OpenViBEPlugins_IRuler_H__
-#define __OpenViBEPlugins_IRuler_H__
+#pragma once
 
 #include <mensia/advanced-visualization.h>
 
@@ -30,8 +28,8 @@
 #include <Windows.h>
 #endif
 
-#include <gl/GL.h>
-#include <gl/GLU.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
 
 #include <cmath>
 #include <vector>
@@ -46,8 +44,6 @@ namespace Mensia
 	{
 		class IRuler
 		{
-		private:
-
 			IRuler(const IRuler&) = delete;
 
 		public:
@@ -117,13 +113,11 @@ namespace Mensia
 
 			virtual void renderBottom(GtkWidget* /*pWidget*/) { }
 
-		protected:
-
-			std::vector<double> split_range(double fStart, double fStop, unsigned int uiCount = 10)
+			std::vector<double> split_range(const double fStart, const double fStop, const unsigned int uiCount = 10)
 			{
 				std::vector<double> l_vResult;
-				double l_fRange = fStop - fStart;
-				double l_fOrder = floor(log(l_fRange) / log(10.) - .1f);
+				const double l_fRange = fStop - fStart;
+				const double l_fOrder = floor(log(l_fRange) / log(10.) - .1f);
 				double l_fStep = pow(10, l_fOrder);
 				double l_fStepCount = trunc(l_fRange / l_fStep);
 
@@ -151,7 +145,7 @@ namespace Mensia
 				return l_vResult;
 			}
 
-			std::string getLabel(double v)
+			std::string getLabel(const double v)
 			{
 				char l_sLabel[1024];
 #if 0
@@ -176,12 +170,10 @@ namespace Mensia
 				return l_sLabel;
 			}
 
-			const IRendererContext* m_pRendererContext;
-			const IRenderer* m_pRenderer;
-			float m_fBlackAlpha;
-			float m_fWhiteAlpha;
+			const IRendererContext* m_pRendererContext = nullptr;
+			const IRenderer* m_pRenderer = nullptr;
+			float m_fBlackAlpha = 1;
+			float m_fWhiteAlpha = 1;
 		};
 	}  // namespace AdvancedVisualization
 }  // namespace Mensia
-
-#endif // __OpenViBEPlugins_IRuler_H__

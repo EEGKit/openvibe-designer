@@ -18,11 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef __Mensia_AdvancedVisualization_H__
-#define __Mensia_AdvancedVisualization_H__
+#pragma once
 
 #include "advanced-visualization/mIRenderer.h"
 #include "advanced-visualization/mIRendererContext.h"
-
-#endif // __Mensia_AdvancedVisualization_H__

@@ -46,28 +46,26 @@ namespace
 }  // namespace
 
 C3DMesh::C3DMesh()
-
 {
-	m_vColor[0] = 1;
-	m_vColor[1] = 1;
-	m_vColor[2] = 1;
+	m_vColor[0] = 1.0;
+	m_vColor[1] = 1.0;
+	m_vColor[2] = 1.0;
 }
 
 C3DMesh::~C3DMesh() = default;
 
 void C3DMesh::clear()
-
 {
-	m_vColor[0] = 1;
-	m_vColor[1] = 1;
-	m_vColor[2] = 1;
+	m_vColor[0] = 1.0;
+	m_vColor[1] = 1.0;
+	m_vColor[2] = 1.0;
 
 	m_vVertex.clear();
 	m_vNormal.clear();
 	m_vTriangle.clear();
 }
 
-bool C3DMesh::load(const void* pBuffer, unsigned int uiBufferSize)
+bool C3DMesh::load(const void* pBuffer, unsigned int /*uiBufferSize*/)
 {
 	const auto* l_pBuffer = reinterpret_cast<const uint32_t*>(pBuffer);
 
@@ -78,7 +76,7 @@ bool C3DMesh::load(const void* pBuffer, unsigned int uiBufferSize)
 	littleEndianToHost<uint32_t>(reinterpret_cast<const uint8_t*>(&l_pBuffer[1]), &l_ui32TriangleCount);
 
 	m_vVertex.resize(l_ui32VertexCount);
-	m_vTriangle.resize(l_ui32TriangleCount * 3);
+	m_vTriangle.resize(size_t(l_ui32TriangleCount) * 3);
 
 	uint32_t i, j = 2;
 
@@ -100,16 +98,14 @@ bool C3DMesh::load(const void* pBuffer, unsigned int uiBufferSize)
 }
 
 bool C3DMesh::compile()
-
 {
-	uint32_t i, i1, i2, i3;
 	m_vNormal.clear();
 	m_vNormal.resize(m_vVertex.size());
-	for (i = 0; i < m_vTriangle.size(); i += 3)
+	for (size_t i = 0; i < m_vTriangle.size(); i += 3)
 	{
-		i1 = m_vTriangle[i];
-		i2 = m_vTriangle[i + 1];
-		i3 = m_vTriangle[i + 2];
+		const uint32_t i1 = m_vTriangle[i];
+		const uint32_t i2 = m_vTriangle[i + 1];
+		const uint32_t i3 = m_vTriangle[i + 2];
 		CVertex v1 = m_vVertex[i1];
 		CVertex v2 = m_vVertex[i2];
 		CVertex v3 = m_vVertex[i3];
@@ -131,29 +127,27 @@ bool C3DMesh::compile()
 		m_vNormal[i3].y += v1.y;
 		m_vNormal[i3].z += v1.z;
 	}
-	for (i = 0; i < m_vNormal.size(); ++i)
+
+	for (auto& normal : m_vNormal)
 	{
-		m_vNormal[i].normalize();
+		normal.normalize();
 	}
 	return true;
 }
 
 bool C3DMesh::project(std::vector<CVertex>& vProjectedChannelCoordinate, const std::vector<CVertex>& vChannelCoordinate)
 {
-	size_t i, j;
-
 	vProjectedChannelCoordinate.resize(vChannelCoordinate.size());
-	for (i = 0; i < vChannelCoordinate.size(); ++i)
+	for (size_t i = 0; i < vChannelCoordinate.size(); ++i)
 	{
 		CVertex p, q;
 		p = vChannelCoordinate[i];
 		//		q = vChannelCoordinate[i];
-		for (j = 0; j < this->m_vTriangle.size(); j += 3)
+		for (size_t j = 0; j < this->m_vTriangle.size(); j += 3)
 		{
-			uint32_t i1, i2, i3;
-			i1 = this->m_vTriangle[j];
-			i2 = this->m_vTriangle[j + 1];
-			i3 = this->m_vTriangle[j + 2];
+			const uint32_t i1 = this->m_vTriangle[j];
+			const uint32_t i2 = this->m_vTriangle[j + 1];
+			const uint32_t i3 = this->m_vTriangle[j + 2];
 
 			CVertex v1, v2, v3;
 			v1 = this->m_vVertex[i1];

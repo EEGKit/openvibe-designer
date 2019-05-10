@@ -18,9 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef __Mensia_AdvancedVisualization_CRendererConnectivity_H__
-#define __Mensia_AdvancedVisualization_CRendererConnectivity_H__
+#pragma once
 
 // #if defined TARGET_HAS_ThirdPartyVRPN
 
@@ -42,5 +40,3 @@ namespace Mensia
 }  // namespace Mensia
 
 // #endif // TARGET_HAS_ThirdPartyVRPN
-
-#endif // __Mensia_AdvancedVisualization_CRendererConnectivity_H__

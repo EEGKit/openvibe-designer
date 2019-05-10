@@ -18,11 +18,10 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+#pragma once
 
 #if defined TARGET_HAS_ThirdPartyOpenGL
 
-#ifndef __Mensia_AdvancedVisualization_CRendererLoreta_H__
-#define __Mensia_AdvancedVisualization_CRendererLoreta_H__
 
 #include "mCRenderer.hpp"
 #include "mC3DMesh.hpp"
@@ -67,7 +66,5 @@ namespace Mensia
 		};
 	}  // namespace AdvancedVisualization
 }  // namespace Mensia
-
-#endif // __Mensia_AdvancedVisualization_CRendererLoreta_H__
 
 #endif // TARGET_HAS_ThirdPartyOpenGL

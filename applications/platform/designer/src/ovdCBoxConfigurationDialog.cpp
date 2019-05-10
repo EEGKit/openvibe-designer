@@ -27,7 +27,7 @@ namespace
 
 static void on_file_override_check_toggled(GtkToggleButton* pToggleButton, gpointer pUserData)
 {
-	gtk_widget_set_sensitive((GtkWidget*)pUserData, !gtk_toggle_button_get_active(pToggleButton));
+	gtk_widget_set_sensitive(static_cast<GtkWidget*>(pUserData), !gtk_toggle_button_get_active(pToggleButton));
 }
 
 static void on_button_load_clicked(GtkButton*, gpointer pUserData)
@@ -40,7 +40,7 @@ static void on_button_save_clicked(GtkButton*, gpointer pUserData)
 	static_cast<CBoxConfigurationDialog*>(pUserData)->saveConfiguration();
 }
 
-static void on_override_browse_clicked(GtkButton* pButton, gpointer pUserData)
+static void on_override_browse_clicked(GtkButton* /*pButton*/, gpointer pUserData)
 {
 	static_cast<CBoxConfigurationDialog*>(pUserData)->onOverrideBrowse();
 }
@@ -51,18 +51,8 @@ static void collect_widget_cb(GtkWidget* pWidget, gpointer pUserData)
 }
 
 CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& rKernelContext, IBox& rBox, const char* sGUIFilename, const char* sGUISettingsFilename, bool isScenarioRunning)
-	: m_rKernelContext(rKernelContext)
-	  , m_rBox(rBox)
-	  , m_sGUIFilename(sGUIFilename)
-	  , m_sGUISettingsFilename(sGUISettingsFilename)
-	  , m_oSettingFactory(m_sGUISettingsFilename.toASCIIString(), rKernelContext)
-	  , m_pSettingsTable(nullptr)
-	  , m_pViewPort(nullptr)
-	  , m_pScrolledWindow(nullptr)
-	  , m_pOverrideEntryContainer(nullptr)
-	  , m_pSettingDialog(nullptr)
-	  , m_pFileOverrideCheck(nullptr)
-	  , m_bIsScenarioRunning(isScenarioRunning)
+	: m_rKernelContext(rKernelContext), m_rBox(rBox), m_sGUIFilename(sGUIFilename), m_sGUISettingsFilename(sGUISettingsFilename)
+	  , m_oSettingFactory(m_sGUISettingsFilename.toASCIIString(), rKernelContext), m_bIsScenarioRunning(isScenarioRunning)
 {
 	m_rBox.addObserver(this);
 
@@ -93,7 +83,7 @@ CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& rKernelCo
 
 		generateSettingsTable();
 
-		CSettingCollectionHelper l_oHelper(m_rKernelContext, m_sGUISettingsFilename.toASCIIString());
+		const CSettingCollectionHelper l_oHelper(m_rKernelContext, m_sGUISettingsFilename.toASCIIString());
 
 		if (!m_bIsScenarioRunning)
 		{
@@ -102,7 +92,7 @@ CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& rKernelCo
 			GtkButton* l_pButtonLoad = GTK_BUTTON(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration-button_load_current_from_file"));
 			GtkButton* l_pButtonSave = GTK_BUTTON(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration-button_save_current_to_file"));
 
-			string l_sSettingOverrideWidgetName = l_oHelper.getSettingWidgetName(OV_TypeId_Filename).toASCIIString();
+			const string l_sSettingOverrideWidgetName = l_oHelper.getSettingWidgetName(OV_TypeId_Filename).toASCIIString();
 			GtkBuilder* l_pBuilderInterfaceSettingCollection = gtk_builder_new(); // glade_xml_new(m_sGUIFilename.toASCIIString(), l_sSettingOverrideWidgetName.c_str(), nullptr);
 			gtk_builder_add_from_file(l_pBuilderInterfaceSettingCollection, m_sGUISettingsFilename.toASCIIString(), nullptr);
 			//			gtk_builder_connect_signals(l_pBuilderInterfaceSettingCollection, nullptr);
@@ -157,7 +147,7 @@ bool CBoxConfigurationDialog::run()
 		bool l_bFinished = false;
 		while (!l_bFinished)
 		{
-			gint l_iResult = gtk_dialog_run(GTK_DIALOG(m_pSettingDialog));
+			const gint l_iResult = gtk_dialog_run(GTK_DIALOG(m_pSettingDialog));
 			if (l_iResult == GTK_RESPONSE_APPLY)
 			{
 				if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(m_pFileOverrideCheck)))
@@ -228,7 +218,7 @@ bool CBoxConfigurationDialog::run()
 	return l_bModified;
 }
 
-void CBoxConfigurationDialog::update(CObservable& o, void* data)
+void CBoxConfigurationDialog::update(CObservable& /*o*/, void* data)
 {
 	const BoxEventMessage* l_pEvent = static_cast<BoxEventMessage*>(data);
 
@@ -424,7 +414,7 @@ void CBoxConfigurationDialog::removeSetting(uint32_t ui32SettingIndex, bool bShi
 		{
 			for (size_t i = i32TableIndex; i < m_vSettingViewVector.size(); ++i)
 			{
-				Setting::CAbstractSettingView* l_oView = m_vSettingViewVector[i];
+				l_oView = m_vSettingViewVector[i];
 				l_oView->setSettingIndex(l_oView->getSettingIndex() - 1);
 
 				gtk_container_remove(GTK_CONTAINER(m_pSettingsTable), l_oView->getNameWidget());
@@ -478,9 +468,7 @@ void CBoxConfigurationDialog::updateSize()
 	const uint32_t l_ui32MaxHeight = std::min(600, gdk_screen_get_height(gdk_screen_get_default()));
 	GtkRequisition l_oSize;
 	gtk_widget_size_request(GTK_WIDGET(m_pViewPort), &l_oSize);
-	gtk_widget_set_size_request(GTK_WIDGET(m_pScrolledWindow),
-								std::min(l_ui32MaxWidth, (uint32_t)l_oSize.width),
-								std::min(l_ui32MaxHeight, (uint32_t)l_oSize.height));
+	gtk_widget_set_size_request(GTK_WIDGET(m_pScrolledWindow), std::min(l_ui32MaxWidth, uint32_t(l_oSize.width)), std::min(l_ui32MaxHeight, uint32_t(l_oSize.height)));
 }
 
 void CBoxConfigurationDialog::saveConfiguration()
@@ -511,7 +499,7 @@ void CBoxConfigurationDialog::saveConfiguration()
 		{
 			XML::IXMLNode* l_pTempNode = XML::createNode(c_sSettingName);
 			CString l_sValue;
-			m_rBox.getSettingValue(i, l_sValue);
+			m_rBox.getSettingValue(uint32_t(i), l_sValue);
 			l_pTempNode->setPCData(l_sValue.toASCIIString());
 
 			l_pRootNode->addChild(l_pTempNode);

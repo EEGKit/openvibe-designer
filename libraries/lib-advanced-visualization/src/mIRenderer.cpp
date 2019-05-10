@@ -60,10 +60,6 @@ IRenderer* IRenderer::create(int eRendererType, bool bStimulation)
 		default:
 			return nullptr;
 	}
-	return nullptr;
 }
 
-void IRenderer::release(IRenderer* pRenderer)
-{
-	delete pRenderer;
-}
+void IRenderer::release(IRenderer* pRenderer) { delete pRenderer; }

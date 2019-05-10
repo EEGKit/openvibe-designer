@@ -50,7 +50,7 @@ namespace OpenViBEVisualizationToolkit
 		CVisualizationContext() = default;
 
 	private:
-		IVisualizationManager* m_VisualizationManager;
+		IVisualizationManager* m_VisualizationManager = nullptr;
 	};
 
 	class CVisualizationContextDesc final : public OpenViBE::Plugins::IPluginObjectDesc

@@ -18,9 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef __autoconvert__LoretaAnatomic_csv__
-#define __autoconvert__LoretaAnatomic_csv__
+#pragma once
 
 namespace LoretaRegions
 {
@@ -561,4 +559,3 @@ namespace LoretaRegions
 		{ "Temporal Lobe L", 255, g_pLobesVoxels_6L }
 	};
 }  // namespace LoretaRegions
-#endif

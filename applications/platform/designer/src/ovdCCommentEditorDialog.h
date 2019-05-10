@@ -1,5 +1,4 @@
-#ifndef __OpenViBEDesigner_CCommentEditorDialog_H__
-#define __OpenViBEDesigner_CCommentEditorDialog_H__
+#pragma once
 
 #include "ovd_base.h"
 
@@ -29,12 +28,10 @@ namespace OpenViBEDesigner
 
 		CCommentEditorDialog();
 
-		::GtkBuilder* m_pInterface{};
-		::GtkWidget* m_pDialog{};
-		::GtkWidget* m_pInfoDialog{};
-		::GtkWidget* m_pDescription{};
-		::GtkTextBuffer* m_pDescriptionBuffer{};
+		GtkBuilder* m_pInterface{};
+		GtkWidget* m_pDialog{};
+		GtkWidget* m_pInfoDialog{};
+		GtkWidget* m_pDescription{};
+		GtkTextBuffer* m_pDescriptionBuffer{};
 	};
 };
-
-#endif // __OpenViBEDesigner_CCommentEditorDialog_H__

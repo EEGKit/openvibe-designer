@@ -44,7 +44,7 @@ bool CBoxAlgorithmMatrixDisplay::resetColors()
 		//we take colors from cache and re-put it in the table
 		auto it = m_vEventBoxCache.begin();
 
-		for (; it != m_vEventBoxCache.end(); it++)
+		for (; it != m_vEventBoxCache.end(); ++it)
 		{
 			gtk_widget_modify_bg((*it).first, GTK_STATE_NORMAL, &(*it).second);
 		}
@@ -53,7 +53,7 @@ bool CBoxAlgorithmMatrixDisplay::resetColors()
 	{
 		vector<pair<GtkWidget*, GdkColor>>::iterator it = m_vEventBoxCache.begin();
 
-		for (; it != m_vEventBoxCache.end(); it++)
+		for (; it != m_vEventBoxCache.end(); ++it)
 		{
 			GdkColor l_ColorWhite;
 			l_ColorWhite.red = 65535;
@@ -114,7 +114,7 @@ bool CBoxAlgorithmMatrixDisplay::initialize()
 
 	CString l_sGradientStepsSetting;
 	getBoxAlgorithmContext()->getStaticBoxContext()->getSettingValue(1, l_sGradientStepsSetting);
-	m_GradientSteps = atoi(l_sGradientStepsSetting);
+	m_GradientSteps = strtol(l_sGradientStepsSetting, nullptr, 10);
 	OpenViBEVisualizationToolkit::Tools::ColorGradient::interpolate(m_MatrixInterpolatedColorGardient, m_MatrixColorGradient, m_GradientSteps);
 	m_f64MaxValue = 0;
 	m_f64MinValue = 0;
@@ -201,12 +201,7 @@ bool CBoxAlgorithmMatrixDisplay::process()
 			{
 				GtkWidget* l_pWidgetLabel = gtk_label_new("");
 				gtk_widget_set_visible(l_pWidgetLabel, 1);
-				gtk_table_attach(
-					l_pTable, l_pWidgetLabel,
-					c, c + 1, row, row + 1,
-					(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
-					(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
-					0, 0);
+				gtk_table_attach(l_pTable, l_pWidgetLabel, c, c + 1, row, row + 1, GtkAttachOptions(GTK_EXPAND | GTK_FILL), GtkAttachOptions(GTK_EXPAND | GTK_FILL), 0, 0);
 				//g_object_unref(l_pGtkBuilderLabel);
 
 				stringstream ss;
@@ -229,13 +224,13 @@ bool CBoxAlgorithmMatrixDisplay::process()
 				gtk_table_attach(
 					l_pTable, l_pWidgetLabel,
 					col, col + 1, r, r + 1,
-					(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
-					(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
+					GtkAttachOptions(GTK_EXPAND | GTK_FILL),
+					GtkAttachOptions(GTK_EXPAND | GTK_FILL),
 					0, 0);
 				//g_object_unref(l_pGtkBuilderLabel);
 
 				stringstream ss;
-				ss << (char)(r - 1 + (int)'A');
+				ss << char(r - 1 + int('A'));
 				gtk_label_set_label(GTK_LABEL(l_pWidgetLabel), ss.str().c_str());
 				m_vRowLabelCache.emplace_back(GTK_LABEL(l_pWidgetLabel), ss.str().c_str());
 			}
@@ -258,8 +253,8 @@ bool CBoxAlgorithmMatrixDisplay::process()
 					gtk_table_attach(
 						l_pTable, l_pWidgetEventBox,
 						c, c + 1, r, r + 1,
-						(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
-						(GtkAttachOptions)(GTK_EXPAND | GTK_FILL),
+						GtkAttachOptions(GTK_EXPAND | GTK_FILL),
+						GtkAttachOptions(GTK_EXPAND | GTK_FILL),
 						0, 0);
 					//g_object_unref(l_pGtkBuilderEventBox);
 
@@ -328,13 +323,13 @@ bool CBoxAlgorithmMatrixDisplay::process()
 					if (m_f64MaxValue != 0 || m_f64MinValue != 0) // if the first value ever sent is 0, both are 0, and we dont want to divide by 0 :)
 					{
 						double l_f64Step = ((l_f64Value - m_f64MinValue) / (m_f64MaxValue - m_f64MinValue)) * (m_GradientSteps - 1);
-						uint32_t l_ui32Step = (uint32_t)l_f64Step;
+						uint32_t l_ui32Step = uint32_t(l_f64Step);
 
 						// gtk_widget_modify_bg uses 16bit colors, the interpolated gradients gives 8bits colors.
 						GdkColor l_ColorEventBox;
-						l_ColorEventBox.red = (uint16_t)(m_MatrixInterpolatedColorGardient[l_ui32Step * 4 + 1] * 65535. / 100.);
-						l_ColorEventBox.green = (uint16_t)(m_MatrixInterpolatedColorGardient[l_ui32Step * 4 + 2] * 65535. / 100.);
-						l_ColorEventBox.blue = (uint16_t)(m_MatrixInterpolatedColorGardient[l_ui32Step * 4 + 3] * 65535. / 100.);
+						l_ColorEventBox.red = uint16_t(m_MatrixInterpolatedColorGardient[l_ui32Step * 4 + 1] * 65535. / 100.);
+						l_ColorEventBox.green = uint16_t(m_MatrixInterpolatedColorGardient[l_ui32Step * 4 + 2] * 65535. / 100.);
+						l_ColorEventBox.blue = uint16_t(m_MatrixInterpolatedColorGardient[l_ui32Step * 4 + 3] * 65535. / 100.);
 
 						if (!System::Memory::compare(&(m_vEventBoxCache[r * l_ui32ColumnCount + c].second), &l_ColorEventBox, sizeof(GdkColor)) && m_bShowColors)
 						{

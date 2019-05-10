@@ -1,5 +1,4 @@
-#ifndef __OpenViBEDesigner_TAttributeHandler_H__
-#define __OpenViBEDesigner_TAttributeHandler_H__
+#pragma once
 
 #include "ovd_base.h"
 
@@ -13,28 +12,21 @@ namespace OpenViBEDesigner
 		TAttributeHandler(const OpenViBE::Kernel::IAttributable& rAttributable);
 
 		template <class T>
-		OpenViBE::boolean addAttribute(
-			const OpenViBE::CIdentifier& rAttributeIdentifier,
-			const T& rValue) const;
+		bool addAttribute(const OpenViBE::CIdentifier& rAttributeIdentifier, const T& rValue) const;
 
-		OpenViBE::boolean removeAttribute(
-			const OpenViBE::CIdentifier& rAttributeIdentifier);
+		bool removeAttribute(const OpenViBE::CIdentifier& rAttributeIdentifier);
 
-		OpenViBE::boolean removeAllAttributes(void);
-
-		template<class T>
-		T getAttributeValue(
-			const OpenViBE::CIdentifier& rAttributeIdentifier) const;
+		bool removeAllAttributes();
 
 		template <class T>
-		OpenViBE::boolean setAttributeValue(
-			const OpenViBE::CIdentifier& rAttributeIdentifier,
-			const T& rValue);
+		T getAttributeValue(const OpenViBE::CIdentifier& rAttributeIdentifier) const;
 
-		OpenViBE::boolean hasAttribute(
-			const OpenViBE::CIdentifier& rAttributeIdentifier) const;
+		template <class T>
+		bool setAttributeValue(const OpenViBE::CIdentifier& rAttributeIdentifier, const T& rValue);
 
-		OpenViBE::boolean hasAttributes(void) const;
+		bool hasAttribute(const OpenViBE::CIdentifier& rAttributeIdentifier) const;
+
+		bool hasAttributes() const;
 
 	protected:
 
@@ -42,5 +34,3 @@ namespace OpenViBEDesigner
 		OpenViBE::Kernel::IAttributable* m_pAttributable;
 	};
 };
-
-#endif // __OpenViBEDesigner_TAttributeHandler_H__

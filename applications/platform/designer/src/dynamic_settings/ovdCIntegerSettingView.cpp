@@ -7,17 +7,17 @@ using namespace OpenViBE;
 using namespace OpenViBEDesigner;
 using namespace Setting;
 
-static void on_button_setting_integer_up_pressed(GtkButton* pButton, gpointer pUserData)
+static void on_button_setting_integer_up_pressed(GtkButton* /*pButton*/, gpointer pUserData)
 {
 	static_cast<CIntegerSettingView*>(pUserData)->adjustValue(1);
 }
 
-static void on_button_setting_integer_down_pressed(GtkButton* pButton, gpointer pUserData)
+static void on_button_setting_integer_down_pressed(GtkButton* /*pButton*/, gpointer pUserData)
 {
 	static_cast<CIntegerSettingView*>(pUserData)->adjustValue(-1);
 }
 
-static void on_insertion(GtkEntry* entry, gpointer pUserData)
+static void on_insertion(GtkEntry* /*entry*/, gpointer pUserData)
 {
 	static_cast<CIntegerSettingView*>(pUserData)->onChange();
 }
@@ -26,10 +26,10 @@ static void on_insertion(GtkEntry* entry, gpointer pUserData)
 CIntegerSettingView::CIntegerSettingView(Kernel::IBox& rBox, uint32_t ui32Index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext) :
 	CAbstractSettingView(rBox, ui32Index, rBuilderName, "settings_collection-hbox_setting_integer"), m_rKernelContext(rKernelContext), m_bOnValueSetting(false)
 {
-	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
+	GtkWidget* l_pSettingWidget = this->CAbstractSettingView::getEntryFieldWidget();
 
 	std::vector<GtkWidget*> l_vWidget;
-	extractWidget(l_pSettingWidget, l_vWidget);
+	CAbstractSettingView::extractWidget(l_pSettingWidget, l_vWidget);
 	m_pEntry = GTK_ENTRY(l_vWidget[0]);
 
 	g_signal_connect(G_OBJECT(m_pEntry), "changed", G_CALLBACK(on_insertion), this);
@@ -37,7 +37,7 @@ CIntegerSettingView::CIntegerSettingView(Kernel::IBox& rBox, uint32_t ui32Index,
 	g_signal_connect(G_OBJECT(l_vWidget[1]), "clicked", G_CALLBACK(on_button_setting_integer_up_pressed), this);
 	g_signal_connect(G_OBJECT(l_vWidget[2]), "clicked", G_CALLBACK(on_button_setting_integer_down_pressed), this);
 
-	initializeValue();
+	CAbstractSettingView::initializeValue();
 }
 
 

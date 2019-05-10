@@ -18,9 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef __OpenViBEPlugins_CRulerRightTexture_H__
-#define __OpenViBEPlugins_CRulerRightTexture_H__
+#pragma once
 
 #include "mCRulerTexture.hpp"
 
@@ -66,7 +64,7 @@ namespace Mensia
 
 			void renderRight(GtkWidget* pWidget) override
 			{
-				float l_fScale = 1.f / m_pRendererContext->getScale();
+				const float l_fScale = 1.f / m_pRendererContext->getScale();
 				if (m_fLastScale != l_fScale)
 				{
 					m_vRange = this->split_range(-l_fScale * .5, l_fScale * .5);
@@ -78,7 +76,7 @@ namespace Mensia
 
 				gdk_drawable_get_size(pWidget->window, &w, &h);
 				GdkGC* l_pDrawGC = gdk_gc_new(pWidget->window);
-				for (it = m_vRange.begin(); it != m_vRange.end(); it++)
+				for (it = m_vRange.begin(); it != m_vRange.end(); ++it)
 				{
 					PangoLayout* l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, this->getLabel(*it).c_str());
 					pango_layout_get_size(l_pPangoLayout, &lw, &lh);
@@ -101,5 +99,3 @@ namespace Mensia
 		};
 	}  // namespace AdvancedVisualization
 }  // namespace Mensia
-
-#endif // __OpenViBEPlugins_CRulerRightTexture_H__

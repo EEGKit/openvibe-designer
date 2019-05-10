@@ -18,9 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef __OpenViBEPlugins_CRulerAutoType_H__
-#define __OpenViBEPlugins_CRulerAutoType_H__
+#pragma once
 
 #include "../mIRuler.hpp"
 #include "../m_VisualizationTools.hpp"
@@ -53,7 +51,7 @@ namespace Mensia
 			void render() override
 
 			{
-				IRendererContext::EDataType l_eDataType = m_pRendererContext->getDataType();
+				const IRendererContext::EDataType l_eDataType = m_pRendererContext->getDataType();
 				if (l_eDataType == IRendererContext::DataType_Signal)
 				{
 					m_oRulerSignal.doRender();
@@ -70,7 +68,7 @@ namespace Mensia
 
 			void renderLeft(GtkWidget* pWidget) override
 			{
-				IRendererContext::EDataType l_eDataType = m_pRendererContext->getDataType();
+				const IRendererContext::EDataType l_eDataType = m_pRendererContext->getDataType();
 				if (l_eDataType == IRendererContext::DataType_Signal)
 				{
 					m_oRulerSignal.doRenderLeft(pWidget);
@@ -87,7 +85,7 @@ namespace Mensia
 
 			void renderRight(GtkWidget* pWidget) override
 			{
-				IRendererContext::EDataType l_eDataType = m_pRendererContext->getDataType();
+				const IRendererContext::EDataType l_eDataType = m_pRendererContext->getDataType();
 				if (l_eDataType == IRendererContext::DataType_Signal)
 				{
 					m_oRulerSignal.doRenderRight(pWidget);
@@ -104,7 +102,7 @@ namespace Mensia
 
 			void renderBottom(GtkWidget* pWidget) override
 			{
-				IRendererContext::EDataType l_eDataType = m_pRendererContext->getDataType();
+				const IRendererContext::EDataType l_eDataType = m_pRendererContext->getDataType();
 
 				if (l_eDataType == IRendererContext::DataType_Signal)
 				{
@@ -128,5 +126,3 @@ namespace Mensia
 		};
 	}  // namespace AdvancedVisualization
 }  // namespace Mensia
-
-#endif // __OpenViBEPlugins_CRulerAutoType_H__

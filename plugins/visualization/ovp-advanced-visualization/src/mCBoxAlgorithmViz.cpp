@@ -29,12 +29,11 @@
 using namespace Mensia;
 using namespace AdvancedVisualization;
 
-using namespace OpenViBE::Kernel;
+using namespace OpenViBE;
+using namespace Kernel;
 
 namespace
 {
-	typedef OpenViBE::CString CString;
-
 	template <int i>
 	class toolbar_sort_changed_
 	{
@@ -106,7 +105,7 @@ namespace
 		getContext().stepERPFractionBy(static_cast<float>(gtk_range_get_value(pRange)) - getContext().getERPFraction());
 	}
 
-	void button_erp_play_pause_pressed_callback(GtkButton* pButton, IRendererContext* pRendererContext)
+	void button_erp_play_pause_pressed_callback(GtkButton* /*pButton*/, IRendererContext* pRendererContext)
 	{
 		pRendererContext->setERPPlayerActive(!pRendererContext->isERPPlayerActive());
 	}
@@ -129,7 +128,7 @@ bool CBoxAlgorithmViz::initialize()
 	m_pSubRendererContext = IRendererContext::create();
 
 	// Sets default setting values
-	m_sLocalisation = OpenViBE::CString("");
+	m_sLocalisation = CString("");
 	m_ui64TemporalCoherence = OVP_TypeId_TemporalCoherence_TimeLocked.toUInteger();
 	m_ui64ElementCount = 50;
 	m_ui64TimeScale = 10LL << 32;
@@ -148,15 +147,15 @@ bool CBoxAlgorithmViz::initialize()
 	m_vColor.clear();
 
 	// Initializes fast forward behavior
-	m_f32FastForwardMaximumFactorHighDefinition = (float)this->getConfigurationManager().expandAsFloat("${AdvancedViz_HighDefinition_FastForwardFactor}", 5.f);
-	m_f32FastForwardMaximumFactorLowDefinition = (float)this->getConfigurationManager().expandAsFloat("${AdvancedViz_LowDefinition_FastForwardFactor}", 20.f);
+	m_f32FastForwardMaximumFactorHighDefinition = float(this->getConfigurationManager().expandAsFloat("${AdvancedViz_HighDefinition_FastForwardFactor}", 5.f));
+	m_f32FastForwardMaximumFactorLowDefinition = float(this->getConfigurationManager().expandAsFloat("${AdvancedViz_LowDefinition_FastForwardFactor}", 20.f));
 
 	// Gets data stream type
 	this->getStaticBoxContext().getInputType(0, m_oTypeIdentifier);
 
 	// Prepares GUI
 	m_pBuilder = gtk_builder_new();
-	gtk_builder_add_from_file(m_pBuilder, std::string(OpenViBE::Directories::getDataDir() + "/plugins/advanced-visualization.ui").c_str(), nullptr);
+	gtk_builder_add_from_file(m_pBuilder, std::string(Directories::getDataDir() + "/plugins/advanced-visualization.ui").c_str(), nullptr);
 
 	GtkWidget* l_pMain = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "table"));
 	GtkWidget* l_pToolbar = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "toolbar-window"));
@@ -337,13 +336,13 @@ bool CBoxAlgorithmViz::initialize()
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_pScaleVisible), static_cast<gboolean>(m_pRendererContext->getScaleVisibility()));
 
 	// Reads channel localisation
-	if (m_sLocalisation != OpenViBE::CString(""))
+	if (m_sLocalisation != CString(""))
 	{
 		IAlgorithmProxy* l_pChannelLocalisationReader = &this->getAlgorithmManager().getAlgorithm(this->getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_OVMatrixFileReader));
 		l_pChannelLocalisationReader->initialize();
 
-		TParameterHandler<OpenViBE::CString*> ip_sFilename(l_pChannelLocalisationReader->getInputParameter(OVP_GD_Algorithm_OVMatrixFileReader_InputParameterId_Filename));
-		TParameterHandler<OpenViBE::IMatrix*> op_pMatrix(l_pChannelLocalisationReader->getOutputParameter(OVP_GD_Algorithm_OVMatrixFileReader_OutputParameterId_Matrix));
+		const TParameterHandler<CString*> ip_sFilename(l_pChannelLocalisationReader->getInputParameter(OVP_GD_Algorithm_OVMatrixFileReader_InputParameterId_Filename));
+		TParameterHandler<IMatrix*> op_pMatrix(l_pChannelLocalisationReader->getOutputParameter(OVP_GD_Algorithm_OVMatrixFileReader_OutputParameterId_Matrix));
 
 		*ip_sFilename = m_sLocalisation;
 
@@ -355,7 +354,7 @@ bool CBoxAlgorithmViz::initialize()
 		}
 		else
 		{
-			uint32_t l_ui32ChannelCount = op_pMatrix->getDimensionSize(0);
+			const uint32_t l_ui32ChannelCount = op_pMatrix->getDimensionSize(0);
 			double* l_pBuffer = op_pMatrix->getBuffer();
 			for (uint32_t i = 0; i < l_ui32ChannelCount; ++i)
 			{
@@ -372,15 +371,15 @@ bool CBoxAlgorithmViz::initialize()
 	}
 
 	// Gets frame base path for video output, if the variable is not defined, no video output is performed
-	OpenViBE::CString l_sFrameBasePath = this->getConfigurationManager().expand("${AdvancedVisualization_VideoOutputPath}");
-	OpenViBE::CString l_sFrameSessionId = this->getConfigurationManager().expand("[$core{date}-$core{time}]");
-	OpenViBE::CString l_sFrameWidgetName = this->getStaticBoxContext().getName();
-	m_sFrameFilenameFormat = l_sFrameBasePath + l_sFrameSessionId + l_sFrameWidgetName + OpenViBE::CString("-%06i.png");
+	const CString l_sFrameBasePath = this->getConfigurationManager().expand("${AdvancedVisualization_VideoOutputPath}");
+	const CString l_sFrameSessionId = this->getConfigurationManager().expand("[$core{date}-$core{time}]");
+	const CString l_sFrameWidgetName = this->getStaticBoxContext().getName();
+	m_sFrameFilenameFormat = l_sFrameBasePath + l_sFrameSessionId + l_sFrameWidgetName + CString("-%06i.png");
 	m_bIsVideoOutputEnabled = (l_sFrameBasePath != CString(""));
 	m_bIsVideoOutputWorking = false;
 	m_ui32FrameId = 0;
 	gtk_widget_set_visible(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "hbox_video_recording")), m_bIsVideoOutputEnabled ? TRUE : FALSE);
-	gtk_label_set_markup(GTK_LABEL(::gtk_builder_get_object(m_pBuilder, "label_video_recording_filename")), (OpenViBE::CString("<span foreground=\"darkblue\"><small>") + m_sFrameFilenameFormat + OpenViBE::CString("</small></span>")).toASCIIString());
+	gtk_label_set_markup(GTK_LABEL(::gtk_builder_get_object(m_pBuilder, "label_video_recording_filename")), (CString("<span foreground=\"darkblue\"><small>") + m_sFrameFilenameFormat + CString("</small></span>")).toASCIIString());
 
 	m_ui32Width = 0;
 	m_ui32Height = 0;
@@ -408,9 +407,9 @@ bool CBoxAlgorithmViz::uninitialize()
 	return true;
 }
 
-bool CBoxAlgorithmViz::processClock(IMessageClock& rClock)
+bool CBoxAlgorithmViz::processClock(IMessageClock& /*rClock*/)
 {
-	uint64_t l_ui64CurrentTime = this->getPlayerContext().getCurrentTime();
+	const uint64_t l_ui64CurrentTime = this->getPlayerContext().getCurrentTime();
 	uint64_t l_ui64MinDeltaTime = 0;
 
 	const uint64_t l_ui64MinDeltaTimeHighDefinition = (1LL << 32) / 16;
@@ -422,14 +421,14 @@ bool CBoxAlgorithmViz::processClock(IMessageClock& rClock)
 	}
 	else
 	{
-		auto l_f32CurrentFastForwardMaximumFactor = static_cast<float>(this->getPlayerContext().getCurrentFastForwardMaximumFactor());
+		const auto l_f32CurrentFastForwardMaximumFactor = static_cast<float>(this->getPlayerContext().getCurrentFastForwardMaximumFactor());
 		if (l_f32CurrentFastForwardMaximumFactor <= m_f32FastForwardMaximumFactorHighDefinition)
 		{
 			l_ui64MinDeltaTime = l_ui64MinDeltaTimeHighDefinition;
 		}
 		else if (l_f32CurrentFastForwardMaximumFactor <= m_f32FastForwardMaximumFactorLowDefinition)
 		{
-			float alpha = (l_f32CurrentFastForwardMaximumFactor - m_f32FastForwardMaximumFactorHighDefinition) / (m_f32FastForwardMaximumFactorLowDefinition - m_f32FastForwardMaximumFactorHighDefinition);
+			const float alpha = (l_f32CurrentFastForwardMaximumFactor - m_f32FastForwardMaximumFactorHighDefinition) / (m_f32FastForwardMaximumFactorLowDefinition - m_f32FastForwardMaximumFactorHighDefinition);
 			l_ui64MinDeltaTime = uint64_t((l_ui64MinDeltaTimeLowDefinition * alpha) + l_ui64MinDeltaTimeHighDefinition * (1.f - alpha));
 		}
 		else
@@ -471,7 +470,7 @@ void CBoxAlgorithmViz::updateRulerVisibility()
 	}
 }
 
-void CBoxAlgorithmViz::reshape(int32_t width, int32_t height)
+void CBoxAlgorithmViz::reshape(const int32_t width, const int32_t height)
 {
 	m_ui32Width = uint32_t(width);
 	m_ui32Height = uint32_t(height);
@@ -550,7 +549,7 @@ void CBoxAlgorithmViz::drawBottom()
 	if (m_pRuler != nullptr) { m_pRuler->doRenderBottom(m_pBottom); }
 }
 
-void CBoxAlgorithmViz::mouseButton(int32_t x, int32_t y, int32_t button, int32_t status)
+void CBoxAlgorithmViz::mouseButton(const int32_t x, const int32_t y, const int32_t button, const int32_t status)
 {
 #if 0
 	// Mouse interacts with local renderer context
@@ -563,7 +562,7 @@ void CBoxAlgorithmViz::mouseButton(int32_t x, int32_t y, int32_t button, int32_t
 	this->redraw();
 }
 
-void CBoxAlgorithmViz::mouseMotion(int32_t x, int32_t y)
+void CBoxAlgorithmViz::mouseMotion(const int32_t x, const int32_t y)
 {
 #if 0
 	// Mouse interacts with local renderer context
@@ -579,7 +578,7 @@ void CBoxAlgorithmViz::mouseMotion(int32_t x, int32_t y)
 	}
 }
 
-void CBoxAlgorithmViz::keyboard(int32_t x, int32_t y, uint32_t key, bool status)
+void CBoxAlgorithmViz::keyboard(const int32_t x, const int32_t y, const uint32_t key, const bool status)
 {
 	printf("keyboard : x=%i y=%i key=%u status=%s", x, y, key, status ? "pressed" : "released");
 }

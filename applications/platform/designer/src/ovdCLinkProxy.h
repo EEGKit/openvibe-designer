@@ -1,5 +1,4 @@
-#ifndef __OpenViBEDesigner_CLinkProxy_H__
-#define __OpenViBEDesigner_CLinkProxy_H__
+#pragma once
 
 #include "ovd_base.h"
 
@@ -11,28 +10,26 @@ namespace OpenViBEDesigner
 
 		CLinkProxy(const OpenViBE::Kernel::ILink& rLink);
 		CLinkProxy(OpenViBE::Kernel::IScenario& rScenario, const OpenViBE::CIdentifier& rLinkIdentifier);
-		virtual ~CLinkProxy(void);
+		virtual ~CLinkProxy();
 
-		operator OpenViBE::Kernel::ILink* (void);
-		operator const OpenViBE::Kernel::ILink* (void);
+		operator OpenViBE::Kernel::ILink*() { return m_pLink; }
+		operator const OpenViBE::Kernel::ILink*() { return m_pConstLink; }
 
-		OpenViBE::int32 getXSource(void);
-		OpenViBE::int32 getYSource(void);
-		OpenViBE::int32 getXTarget(void);
-		OpenViBE::int32 getYTarget(void);
+		int getXSource() { return m_iXSource; }
+		int getYSource() { return m_iYSource; }
+		int getXTarget() { return m_iXTarget; }
+		int getYTarget() { return m_iYTarget; }
 
-		void setSource(OpenViBE::int32 i32XSource, OpenViBE::int32 i32YSource);
-		void setTarget(OpenViBE::int32 i32XTarget, OpenViBE::int32 i32YTarget);
+		void setSource(int i32XSource, int i32YSource);
+		void setTarget(int i32XTarget, int i32YTarget);
 
 	protected:
 
 		const OpenViBE::Kernel::ILink* m_pConstLink;
-		OpenViBE::Kernel::ILink* m_pLink;
-		int m_iXSource;
-		int m_iYSource;
-		int m_iXTarget;
-		int m_iYTarget;
+		OpenViBE::Kernel::ILink* m_pLink = nullptr;
+		int m_iXSource = 0;
+		int m_iYSource = 0;
+		int m_iXTarget = 0;
+		int m_iYTarget = 0;
 	};
 };
-
-#endif // __OpenViBEDesigner_CLinkProxy_H__

@@ -32,44 +32,44 @@ void CRendererLine::rebuild(const IRendererContext& rContext)
 	CRenderer::rebuild(rContext);
 
 	m_Vertices.clear();
-	m_Vertices.resize(m_ui32ChannelCount);
+	m_Vertices.resize(m_channelCount);
 
-	for (size_t channel = 0; channel < m_ui32ChannelCount; channel++)
+	for (size_t channel = 0; channel < m_channelCount; channel++)
 	{
-		m_Vertices[channel].resize(m_ui32SampleCount);
-		for (size_t sample = 0; sample < m_ui32SampleCount; sample++)
+		m_Vertices[channel].resize(m_sampleCount);
+		for (size_t sample = 0; sample < m_sampleCount; sample++)
 		{
-			m_Vertices[channel][sample].x = sample * m_f32InverseSampleCount;
+			m_Vertices[channel][sample].x = sample * m_inverseSampleCount;
 		}
 	}
 
-	m_ui32HistoryIndex = 0;
+	m_historyIndex = 0;
 }
 
 void CRendererLine::refresh(const IRendererContext& rContext)
 {
 	CRenderer::refresh(rContext);
 
-	if (!m_ui32HistoryCount) { return; }
+	if (!m_historyCount) { return; }
 
 	uint32_t l_ui32HistoryIndexMax;
 
-	if (m_ui32HistoryDrawIndex == 0) // Draw real-time
+	if (m_historyDrawIndex == 0) // Draw real-time
 	{
-		l_ui32HistoryIndexMax = m_ui32HistoryCount;
+		l_ui32HistoryIndexMax = m_historyCount;
 	}
-	else // stay at the m_ui32HistoryDrawIndex
+	else // stay at the m_historyDrawIndex
 	{
-		l_ui32HistoryIndexMax = m_ui32HistoryDrawIndex;
+		l_ui32HistoryIndexMax = m_historyDrawIndex;
 	}
 
-	for (size_t channel = 0; channel < m_ui32ChannelCount; channel++)
+	for (size_t channel = 0; channel < m_channelCount; channel++)
 	{
-		uint32_t firstSampleIndex = ((l_ui32HistoryIndexMax - 1) / m_ui32SampleCount) * m_ui32SampleCount;
-		std::vector<float>& l_vHistory = m_vHistory[channel];
+		uint32_t firstSampleIndex = ((l_ui32HistoryIndexMax - 1) / m_sampleCount) * m_sampleCount;
+		std::vector<float>& l_vHistory = m_history[channel];
 		CVertex* l_pVertex = &m_Vertices[channel][0];
 
-		for (uint32_t sample = 0; sample < m_ui32SampleCount; sample++)
+		for (uint32_t sample = 0; sample < m_sampleCount; sample++)
 		{
 			uint32_t currentSampleIndex = firstSampleIndex + sample;
 
@@ -77,24 +77,24 @@ void CRendererLine::refresh(const IRendererContext& rContext)
 			{
 				l_pVertex->y = l_vHistory[currentSampleIndex];
 			}
-			else if (currentSampleIndex >= m_ui32SampleCount)
+			else if (currentSampleIndex >= m_sampleCount)
 			{
-				l_pVertex->y = l_vHistory[currentSampleIndex - m_ui32SampleCount];
+				l_pVertex->y = l_vHistory[currentSampleIndex - m_sampleCount];
 			}
 
 			l_pVertex++;
 		}
 	}
 
-	m_ui32HistoryIndex = l_ui32HistoryIndexMax;
+	m_historyIndex = l_ui32HistoryIndexMax;
 }
 
 bool CRendererLine::render(const IRendererContext& rContext)
 {
 	if (!rContext.getSelectedCount()) { return false; }
-	if (!m_ui32HistoryCount) { return false; }
+	if (!m_historyCount) { return false; }
 
-	auto sampleCount = static_cast<int32_t>(m_ui32SampleCount);
+	auto sampleCount = static_cast<int32_t>(m_sampleCount);
 
 
 	// When the display is in continuous mode, there will be n1 samples
@@ -109,7 +109,7 @@ bool CRendererLine::render(const IRendererContext& rContext)
 	// |              |___/                                     |
 	// Time          25s              10s                      20s
 
-	auto n1 = static_cast<int32_t>(m_ui32HistoryIndex % m_ui32SampleCount);
+	auto n1 = static_cast<int32_t>(m_historyIndex % m_sampleCount);
 	auto n2 = static_cast<int32_t>(sampleCount - n1);
 
 	if (!sampleCount) { return false; }

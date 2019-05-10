@@ -7,20 +7,20 @@ using namespace OpenViBE;
 using namespace OpenViBEDesigner;
 using namespace Setting;
 
-static void on_change(GtkEntry* entry, gpointer pUserData)
+static void on_change(GtkEntry* /*entry*/, gpointer pUserData)
 {
 	static_cast<CStringSettingView*>(pUserData)->onChange();
 }
 
 CStringSettingView::CStringSettingView(Kernel::IBox& rBox, uint32_t ui32Index, CString& rBuilderName) :
-	CAbstractSettingView(rBox, ui32Index, rBuilderName, "settings_collection-entry_setting_string"), m_bOnValueSetting(false)
+	CAbstractSettingView(rBox, ui32Index, rBuilderName, "settings_collection-entry_setting_string")
 {
-	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
+	GtkWidget* l_pSettingWidget = this->CAbstractSettingView::getEntryFieldWidget();
 
 	m_pEntry = GTK_ENTRY(l_pSettingWidget);
 	g_signal_connect(G_OBJECT(m_pEntry), "changed", G_CALLBACK(on_change), this);
 
-	initializeValue();
+	CAbstractSettingView::initializeValue();
 }
 
 

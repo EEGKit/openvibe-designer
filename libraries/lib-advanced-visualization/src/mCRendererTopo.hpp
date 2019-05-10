@@ -47,7 +47,7 @@ namespace Mensia
 
 		private:
 
-			void interpolate(const Eigen::VectorXd& V, Eigen::VectorXd& W, Eigen::VectorXd& Z);
+			void interpolate(const Eigen::VectorXd& V, Eigen::VectorXd& W, Eigen::VectorXd& Z) const;
 
 		protected:
 

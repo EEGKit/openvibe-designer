@@ -90,7 +90,7 @@ namespace
 		l_oPixelFormatDescriptor.cDepthBits = 32;
 		l_oPixelFormatDescriptor.iLayerType = PFD_MAIN_PLANE;
 
-		int l_iPixelFormatIdentifier = ChoosePixelFormat(l_pDrawingContext, &l_oPixelFormatDescriptor);
+		const int l_iPixelFormatIdentifier = ChoosePixelFormat(l_pDrawingContext, &l_oPixelFormatDescriptor);
 
 		if (l_iPixelFormatIdentifier == 0)
 		{
@@ -120,7 +120,7 @@ namespace
 		gtk_widget_queue_resize(pWidget);
 		gtk_widget_set_double_buffered(pWidget, FALSE);
 
-		wglSwapIntervalEXT = (wglSwapIntervalEXT_t)wglGetProcAddress("wglSwapIntervalEXT");
+		wglSwapIntervalEXT = wglSwapIntervalEXT_t(wglGetProcAddress("wglSwapIntervalEXT"));
 
 		GtkGL_Debug("realize-callback::success");
 	}
@@ -139,24 +139,24 @@ void Mensia::AdvancedVisualization::GtkGL::uninitialize(GtkWidget* pWidget)
 {
 	GtkGL_Debug("uninitialize");
 
-	HWND l_pWindow = (HWND)GDK_WINDOW_HWND(::gtk_widget_get_window(pWidget));
+	HWND l_pWindow = HWND(GDK_WINDOW_HWND(::gtk_widget_get_window(pWidget)));
 
-	auto l_pGLRenderingContext = (HGLRC)g_object_get_data(G_OBJECT(pWidget), GtkGL_RenderingContextName);
+	const auto l_pGLRenderingContext = HGLRC(g_object_get_data(G_OBJECT(pWidget), GtkGL_RenderingContextName));
 	wglDeleteContext(l_pGLRenderingContext);
 
-	HDC l_pDrawingContext = (HDC)g_object_get_data(G_OBJECT(pWidget), GtkGL_DeviceContextName);
+	HDC l_pDrawingContext = HDC(g_object_get_data(G_OBJECT(pWidget), GtkGL_DeviceContextName));
 	ReleaseDC(l_pWindow, l_pDrawingContext);
 
 	GtkGL_Debug("uninitialize::success");
 }
 
-void Mensia::AdvancedVisualization::GtkGL::preRender(GtkWidget* pWidget, bool bVerticalSync)
+void Mensia::AdvancedVisualization::GtkGL::preRender(GtkWidget* pWidget, const bool bVerticalSync)
 {
 	GtkGL_Debug("pre-render");
 
-	HWND l_pWindow = (HWND)GDK_WINDOW_HWND(::gtk_widget_get_window(pWidget));
-	HDC l_pDrawingContext = (HDC)g_object_get_data(G_OBJECT(pWidget), GtkGL_DeviceContextName);
-	auto l_pGLRenderingContext = (HGLRC)g_object_get_data(G_OBJECT(pWidget), GtkGL_RenderingContextName);
+	HWND l_pWindow = HWND(GDK_WINDOW_HWND(::gtk_widget_get_window(pWidget)));
+	const HDC l_pDrawingContext = HDC(g_object_get_data(G_OBJECT(pWidget), GtkGL_DeviceContextName));
+	const auto l_pGLRenderingContext = HGLRC(g_object_get_data(G_OBJECT(pWidget), GtkGL_RenderingContextName));
 
 	if (l_pGLRenderingContext == nullptr)
 	{
@@ -185,31 +185,25 @@ void Mensia::AdvancedVisualization::GtkGL::postRender(GtkWidget* pWidget)
 {
 	GtkGL_Debug("post-render");
 
-	HDC l_pDrawingContext = (HDC)g_object_get_data(G_OBJECT(pWidget), GtkGL_DeviceContextName);
-	HGLRC l_pGLRenderingContext = (HGLRC)g_object_get_data(G_OBJECT(pWidget), GtkGL_RenderingContextName);
+	HDC l_pDrawingContext = HDC(g_object_get_data(G_OBJECT(pWidget), GtkGL_DeviceContextName));
+	HGLRC l_pGLRenderingContext = HGLRC(g_object_get_data(G_OBJECT(pWidget), GtkGL_RenderingContextName));
 
 	if (l_pDrawingContext == nullptr)
 	{
 		GtkGL_Debug("Rendering context not ready");
 		GtkGL_Debug("post-render::failed");
-		return;
 	}
-
-	if (SwapBuffers(l_pDrawingContext) == 0)
+	else if (SwapBuffers(l_pDrawingContext) == 0)
 	{
 		GtkGL_Warning("SwapBuffers failed");
 		GtkGL_Debug("post-render::failed");
-		return;
 	}
-
-	if (wglMakeCurrent(l_pDrawingContext, nullptr) == 0)
+	else if (wglMakeCurrent(l_pDrawingContext, nullptr) == 0)
 	{
 		GtkGL_Warning("wglMakeCurrent failed");
 		GtkGL_Debug("post-render::failed");
-		return;
 	}
-
-	GtkGL_Debug("post-render::success");
+	else { GtkGL_Debug("post-render::success"); }
 }
 
 // ##  WINDOWS  ##############################################################################################################################################

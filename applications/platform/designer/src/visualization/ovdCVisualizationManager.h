@@ -22,16 +22,15 @@ namespace OpenViBEDesigner
 		bool releaseVisualizationTree(const OpenViBE::CIdentifier& visualizationTreeIdentifier);
 		OpenViBEVisualizationToolkit::IVisualizationTree& getVisualizationTree(const OpenViBE::CIdentifier& visualizationTreeIdentifier);
 
-		bool setToolbar(const OpenViBE::CIdentifier& visualizationTreeIdentifier, const OpenViBE::CIdentifier& boxIdentifier, ::GtkWidget* toolbar);
-		bool setWidget(const OpenViBE::CIdentifier& visualizationTreeIdentifier, const OpenViBE::CIdentifier& boxIdentifier, ::GtkWidget* topmostWidget);
+		bool setToolbar(const OpenViBE::CIdentifier& visualizationTreeIdentifier, const OpenViBE::CIdentifier& boxIdentifier, GtkWidget* toolbar);
+		bool setWidget(const OpenViBE::CIdentifier& visualizationTreeIdentifier, const OpenViBE::CIdentifier& boxIdentifier, GtkWidget* topmostWidget);
 
 	private:
 
-		OpenViBE::CIdentifier getUnusedIdentifier(void) const;
+		OpenViBE::CIdentifier getUnusedIdentifier() const;
 
 		/// Map of visualization trees (one per scenario, storing visualization widgets arrangement in space)
 		std::map<OpenViBE::CIdentifier, OpenViBEVisualizationToolkit::IVisualizationTree*> m_VisualizationTrees;
 		const OpenViBE::Kernel::IKernelContext& m_KernelContext;
 	};
 }
-

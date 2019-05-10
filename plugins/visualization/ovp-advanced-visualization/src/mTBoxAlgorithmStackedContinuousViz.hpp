@@ -106,14 +106,14 @@ namespace Mensia
 		bool TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>::initialize()
 
 		{
-			bool l_bResult = CBoxAlgorithmViz::initialize();
+			const bool l_bResult = CBoxAlgorithmViz::initialize();
 
 			m_oMatrixDecoder.initialize(*this, 0);
 			m_oStimulationDecoder.initialize(*this, 1);
 
 			m_pRendererContext->clear();
 			m_pRendererContext->setTranslucency(float(m_f64Translucency));
-			// m_pRendererContext->setTranslucency(m_ui64FlowerRingCount);
+			// m_pRendererContext->setTranslucency(m_flowerRingCount);
 			m_pRendererContext->scaleBy(float(m_f64DataScale));
 			m_pRendererContext->setPositiveOnly(m_bIsPositive);
 			m_pRendererContext->setAxisDisplay(m_bShowAxis);
@@ -159,7 +159,7 @@ namespace Mensia
 		{
 			const OpenViBE::Kernel::IBox& l_rStaticBoxContext = this->getStaticBoxContext();
 			OpenViBE::Kernel::IBoxIO& l_rDynamicBoxContext = this->getDynamicBoxContext();
-			uint32_t i, j, k;
+			size_t i, j;
 
 			for (i = 0; i < l_rDynamicBoxContext.getInputChunkCount(0); ++i)
 			{
@@ -223,12 +223,12 @@ namespace Mensia
 						std::string l_sName = trim(l_pMatrix->getDimensionLabel(0, j));
 						std::string l_sSubname = l_sName;
 						std::transform(l_sName.begin(), l_sName.end(), l_sSubname.begin(), tolower);
-						CVertex v = m_vChannelLocalisation[l_sSubname];
+						const CVertex v = m_vChannelLocalisation[l_sSubname];
 
 						if (l_sName.empty())
 						{
 							char l_sIndexedChannelName[1024];
-							sprintf(l_sIndexedChannelName, "Channel %u", j + 1);
+							sprintf(l_sIndexedChannelName, "Channel %llu", j + 1);
 							l_sName = l_sIndexedChannelName;
 						}
 
@@ -271,9 +271,9 @@ namespace Mensia
 				{
 					m_ui64Time1 = m_ui64Time2;
 					m_ui64Time2 = l_rDynamicBoxContext.getInputChunkEndTime(0, i);
-					uint64_t l_ui64InterChunkDuration = m_ui64Time2 - m_ui64Time1;
-					uint64_t l_ui64ChunkDuration = (l_rDynamicBoxContext.getInputChunkEndTime(0, i) - l_rDynamicBoxContext.getInputChunkStartTime(0, i));
-					uint64_t l_ui64SampleDuration = l_ui64ChunkDuration / m_ui64ElementCount;
+					const uint64_t l_ui64InterChunkDuration = m_ui64Time2 - m_ui64Time1;
+					const uint64_t l_ui64ChunkDuration = (l_rDynamicBoxContext.getInputChunkEndTime(0, i) - l_rDynamicBoxContext.getInputChunkStartTime(0, i));
+					const uint64_t l_ui64SampleDuration = l_ui64ChunkDuration / m_ui64ElementCount;
 					if (m_pRendererContext->isTimeLocked())
 					{
 						if ((l_ui64InterChunkDuration & ~0xf) != (m_pRendererContext->getSampleDuration() & ~0xf) && l_ui64InterChunkDuration != 0) // 0xf mask avoids rounding errors
@@ -295,7 +295,7 @@ namespace Mensia
 					for (j = 0; j < l_ui32ChannelCount; j++)
 					{
 						// Feed renderer with actual samples
-						for (k = 0; k < l_ui32SampleCount; k++)
+						for (size_t k = 0; k < l_ui32SampleCount; k++)
 						{
 							m_vSwap[l_ui32SampleCount - k - 1] = float(l_pMatrix->getBuffer()[j * l_ui32SampleCount + k]);
 						}
@@ -304,7 +304,7 @@ namespace Mensia
 						// Adjust feeding depending on theoretical dates
 						if (m_pRendererContext->isTimeLocked() && m_pRendererContext->getSampleDuration())
 						{
-							auto l_ui32TheoreticalSampleCount = uint32_t(m_ui64Time2 / m_pRendererContext->getSampleDuration());
+							const auto l_ui32TheoreticalSampleCount = uint32_t(m_ui64Time2 / m_pRendererContext->getSampleDuration());
 							if (l_ui32TheoreticalSampleCount > m_vRenderer[j]->getHistoryCount())
 							{
 								m_vRenderer[j]->prefeed(l_ui32TheoreticalSampleCount - m_vRenderer[j]->getHistoryCount());
@@ -390,13 +390,11 @@ namespace Mensia
 		{
 			CBoxAlgorithmViz::preDraw();
 
-			uint32_t i;
-
 			if (m_pRendererContext->getSelectedCount() != 0)
 			{
 				glPushMatrix();
 				glScalef(1, 1.f / m_pRendererContext->getSelectedCount(), 1);
-				for (i = 0; i < m_pRendererContext->getSelectedCount(); ++i)
+				for (uint32_t i = 0; i < m_pRendererContext->getSelectedCount(); ++i)
 				{
 					glPushAttrib(GL_ALL_ATTRIB_BITS);
 					glPushMatrix();

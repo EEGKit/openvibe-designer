@@ -21,18 +21,12 @@ namespace
 }  // namespace
 
 CConnectorEditor::CConnectorEditor(const IKernelContext& rKernelContext, IBox& rBox, uint32_t ui32ConnectorType, uint32_t ui32ConnectorIndex, const char* sTitle, const char* sGUIFilename)
-	: m_rKernelContext(rKernelContext)
-	  , m_rBox(rBox)
-	  , m_ui32ConnectorType(ui32ConnectorType)
-	  , m_ui32ConnectorIndex(ui32ConnectorIndex)
-	  , m_sGUIFilename(sGUIFilename)
-	  , m_sTitle(sTitle ? sTitle : "")
-	  , m_ConnectorIdentifierEntry(nullptr) { }
+	: m_rKernelContext(rKernelContext), m_rBox(rBox), m_ui32ConnectorType(ui32ConnectorType), 
+	  m_ui32ConnectorIndex(ui32ConnectorIndex), m_sGUIFilename(sGUIFilename), m_sTitle(sTitle ? sTitle : "") { }
 
 CConnectorEditor::~CConnectorEditor() = default;
 
 bool CConnectorEditor::run()
-
 {
 	//	t_getConnectorIdentifier getConnectorIdentifier = nullptr;
 	t_setConnectorName setConnectorName = nullptr;

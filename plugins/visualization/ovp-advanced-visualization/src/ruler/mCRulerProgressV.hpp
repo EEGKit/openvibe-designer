@@ -18,9 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef __OpenViBEPlugins_CRulerProgressV_H__
-#define __OpenViBEPlugins_CRulerProgressV_H__
+#pragma once
 
 #include "mCRulerProgress.hpp"
 
@@ -32,7 +30,7 @@ namespace Mensia
 		{
 		public:
 
-			void renderFinal(float fProgress) override
+			void renderFinal(const float fProgress) override
 			{
 				glDisable(GL_TEXTURE_1D);
 				glDisable(GL_BLEND);
@@ -54,5 +52,3 @@ namespace Mensia
 		};
 	}  // namespace AdvancedVisualization
 }  // namespace Mensia
-
-#endif // __OpenViBEPlugins_CRulerProgressV_H__

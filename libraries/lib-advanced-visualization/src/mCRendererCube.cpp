@@ -36,27 +36,27 @@ void CRendererCube::rebuild(const IRendererContext& rContext)
 	m_vVertex.clear();
 	m_vVertex.resize(rContext.getChannelCount());
 
-	m_ui32HistoryIndex = 0;
+	m_historyIndex = 0;
 }
 
 void CRendererCube::refresh(const IRendererContext& rContext)
 {
 	CRenderer::refresh(rContext);
 
-	if (!m_ui32HistoryCount) { return; }
+	if (!m_historyCount) { return; }
 
-	float l_f32SampleIndexERP = (m_f32ERPFraction * (m_ui32SampleCount - 1));
+	float l_f32SampleIndexERP = (m_ERPFraction * (m_sampleCount - 1));
 	float l_f32Alpha = l_f32SampleIndexERP - std::floor(l_f32SampleIndexERP);
-	uint32_t l_ui32SampleIndexERP1 = uint32_t(l_f32SampleIndexERP) % m_ui32SampleCount;
-	uint32_t l_ui32SampleIndexERP2 = uint32_t(l_f32SampleIndexERP + 1) % m_ui32SampleCount;
+	uint32_t l_ui32SampleIndexERP1 = uint32_t(l_f32SampleIndexERP) % m_sampleCount;
+	uint32_t l_ui32SampleIndexERP2 = uint32_t(l_f32SampleIndexERP + 1) % m_sampleCount;
 
 	for (uint32_t i = 0; i < m_vVertex.size(); ++i)
 	{
-		m_vVertex[i].u = m_vHistory[i][m_ui32HistoryCount - m_ui32SampleCount + l_ui32SampleIndexERP1] * (1 - l_f32Alpha)
-			+ m_vHistory[i][m_ui32HistoryCount - m_ui32SampleCount + l_ui32SampleIndexERP2] * (l_f32Alpha);
+		m_vVertex[i].u = m_history[i][m_historyCount - m_sampleCount + l_ui32SampleIndexERP1] * (1 - l_f32Alpha)
+			+ m_history[i][m_historyCount - m_sampleCount + l_ui32SampleIndexERP2] * (l_f32Alpha);
 	}
 
-	m_ui32HistoryIndex = m_ui32HistoryCount;
+	m_historyIndex = m_historyCount;
 }
 
 bool CRendererCube::render(const IRendererContext& rContext)
@@ -65,9 +65,8 @@ bool CRendererCube::render(const IRendererContext& rContext)
 
 	if (!rContext.getSelectedCount()) { return false; }
 	if (m_vVertex.empty()) { return false; }
-	if (!m_ui32HistoryCount) { return false; }
+	if (!m_historyCount) { return false; }
 
-	uint32_t j, k;
 	float d = 3.5;
 
 	glEnable(GL_DEPTH_TEST);
@@ -92,17 +91,17 @@ bool CRendererCube::render(const IRendererContext& rContext)
 
 	glPushMatrix();
 	glRotatef(19, 1, 0, 0);
-	for (j = 0; j < rContext.getSelectedCount(); j++)
+	for (uint32_t j = 0; j < rContext.getSelectedCount(); j++)
 	{
 		CVertex v;
-		k = rContext.getSelected(j);
+		uint32_t k = rContext.getSelected(j);
 		rContext.getChannelLocalisation(k, v.x, v.y, v.z);
 		/*
 				std::string l_sName=rContext.getChannelName(k);
 				std::transform(l_sName.begin(), l_sName.end(), l_sName.begin(), ::tolower);
 
-				it=m_vChannelLocalisation.find(l_sName);
-				if(it!=m_vChannelLocalisation.end())
+				it=m_channelLocalisation.find(l_sName);
+				if(it!=m_channelLocalisation.end())
 				{
 		*/
 		float l_fCubeScale = .1f * (.25f + fabs(m_vVertex[k].u * rContext.getScale()));

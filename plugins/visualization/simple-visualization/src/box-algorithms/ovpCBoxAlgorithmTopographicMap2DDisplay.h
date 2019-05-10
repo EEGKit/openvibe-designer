@@ -23,23 +23,21 @@ namespace OpenViBEPlugins
 			uint64_t getClockFrequency() override;
 			bool initialize() override;
 			bool uninitialize() override;
-			bool processInput(
-				uint32_t ui32InputIndex) override;
-			bool processClock(
-				OpenViBE::Kernel::IMessageClock& rMessageClock) override;
+			bool processInput(uint32_t ui32InputIndex) override;
+			bool processClock(OpenViBE::Kernel::IMessageClock& rMessageClock) override;
 			bool process() override;
 
 			_IsDerivedFromClass_Final_(OpenViBEToolkit::TBoxAlgorithm < OpenViBE::Plugins::IBoxAlgorithm >, OVP_ClassId_TopographicMap2DDisplay)
 
 		protected:
-			OpenViBEToolkit::TStreamedMatrixDecoder<CBoxAlgorithmTopographicMap2DDisplay>* m_pDecoder;
-			bool m_bFirstBufferReceived;
+			OpenViBEToolkit::TStreamedMatrixDecoder<CBoxAlgorithmTopographicMap2DDisplay>* m_pDecoder = nullptr;
+			bool m_bFirstBufferReceived = false;
 
-			OpenViBE::Kernel::IAlgorithmProxy* m_pSphericalSplineInterpolation;
-			CTopographicMapDatabase* m_pTopographicMapDatabase;
-			CSignalDisplayDrawable* m_pTopographicMap2DView; //main object used for the display (contains all the GUI code)
+			OpenViBE::Kernel::IAlgorithmProxy* m_pSphericalSplineInterpolation = nullptr;
+			CTopographicMapDatabase* m_pTopographicMapDatabase = nullptr;
+			CSignalDisplayDrawable* m_pTopographicMap2DView = nullptr; //main object used for the display (contains all the GUI code)
 		private:
-			OpenViBEVisualizationToolkit::IVisualizationContext* m_visualizationContext;
+			OpenViBEVisualizationToolkit::IVisualizationContext* m_visualizationContext = nullptr;
 		};
 
 		class CBoxAlgorithmTopographicMap2DDisplayDesc : public OpenViBE::Plugins::IBoxAlgorithmDesc

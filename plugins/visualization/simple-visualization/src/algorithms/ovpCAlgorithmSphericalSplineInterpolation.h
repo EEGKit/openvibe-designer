@@ -1,5 +1,4 @@
-#ifndef __OpenViBEPlugins_Algorithm_SphericalSplineInterpolation_H__
-#define __OpenViBEPlugins_Algorithm_SphericalSplineInterpolation_H__
+#pragma once
 
 #include "../ovp_defines.h"
 
@@ -27,27 +26,27 @@ namespace OpenViBEPlugins
 
 			//input parameters
 			//----------------
-			OpenViBE::Kernel::TParameterHandler<int64_t> ip_i64SplineOrder;
-			OpenViBE::Kernel::TParameterHandler<int64_t> ip_i64ControlPointsCount;
-			OpenViBE::Kernel::TParameterHandler<OpenViBE::IMatrix*> ip_pControlPointsCoords;
-			OpenViBE::Kernel::TParameterHandler<OpenViBE::IMatrix*> ip_pControlPointsValues;
-			OpenViBE::Kernel::TParameterHandler<OpenViBE::IMatrix*> ip_pSamplePointsCoords;
+			OpenViBE::Kernel::TParameterHandler<int64_t> ip_splineOrder;
+			OpenViBE::Kernel::TParameterHandler<int64_t> ip_controlPointsCount;
+			OpenViBE::Kernel::TParameterHandler<OpenViBE::IMatrix*> ip_controlPointsCoords;
+			OpenViBE::Kernel::TParameterHandler<OpenViBE::IMatrix*> ip_controlPointsValues;
+			OpenViBE::Kernel::TParameterHandler<OpenViBE::IMatrix*> ip_samplePointsCoords;
 
 			//output parameters
 			//-----------------
-			OpenViBE::Kernel::TParameterHandler<OpenViBE::IMatrix*> op_pSamplePointsValues;
-			OpenViBE::Kernel::TParameterHandler<double> op_f64MinSamplePointValue;
-			OpenViBE::Kernel::TParameterHandler<double> op_f64MaxSamplePointValue;
+			OpenViBE::Kernel::TParameterHandler<OpenViBE::IMatrix*> op_samplePointsValues;
+			OpenViBE::Kernel::TParameterHandler<double> op_minSamplePointValue;
+			OpenViBE::Kernel::TParameterHandler<double> op_maxSamplePointValue;
 
 			//internal data
 			//-------------
-			bool m_bFirstProcess{};
-			double* m_pDoubleCoords{};
+			bool m_bFirstProcess = true;
+			double* m_pDoubleCoords = nullptr;
 			double** m_pInsermCoords{};
 			double m_ScdTable[2004]{};
 			double m_PotTable[2004]{};
-			double* m_pSplineCoefs{};
-			double* m_pLaplacianSplineCoefs{};
+			double* m_pSplineCoefs = nullptr;
+			double* m_pLaplacianSplineCoefs = nullptr;
 		};
 
 		class CAlgorithmSphericalSplineInterpolationDesc : public OpenViBE::Plugins::IAlgorithmDesc
@@ -97,5 +96,3 @@ namespace OpenViBEPlugins
 		};
 	}  // namespace Test;
 } // namespace OpenViBEPlugins;
-
-#endif // __OpenViBEPlugins_Algorithm_SphericalSplineInterpolation_H__

@@ -18,9 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef __OpenViBEPlugins_GtkGL_H__
-#define __OpenViBEPlugins_GtkGL_H__
+#pragma once
 
 #include <gtk/gtk.h>
 
@@ -38,5 +36,3 @@ namespace Mensia
 		} // namespace GtkGL
 	}  // namespace AdvancedVisualization
 }  // namespace Mensia
-
-#endif // __OpenViBEPlugins_GtkGL_H__

@@ -484,6 +484,7 @@ namespace OpenViBEVisualizationToolkit
 		 * simplified to avoid placeholders creation.
 		 * \param sourceWidgetIdentifier identifier of widget being dropped
 		 * \param destinationWidget pointer to widget on which the drop operation is performed
+		 * \param location
 		 * \return true if drop operation was successfully completed, false otherwise
 		 */
 		virtual bool dragDataReceivedOutsideWidgetCB(const OpenViBE::CIdentifier& sourceWidgetIdentifier, GtkWidget* destinationWidget, EDragDataLocation location) = 0;

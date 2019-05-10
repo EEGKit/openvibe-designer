@@ -9,15 +9,8 @@ using namespace OpenViBEDesigner;
 using namespace std;
 
 CBoxProxy::CBoxProxy(const IKernelContext& rKernelContext, IScenario& rScenario, const CIdentifier& rBoxIdentifier)
-	: m_rKernelContext(rKernelContext)
-	  , m_pBoxAlgorithmDescriptorOverride(nullptr)
-	  , m_pConstBox(rScenario.getBoxDetails(rBoxIdentifier))
-	  , m_pBox(rScenario.getBoxDetails(rBoxIdentifier))
-	  , m_bApplied(false)
-	  , m_bShowOriginalNameWhenModified(false)
-	  , m_iXCenter(0)
-	  , m_iYCenter(0)
-	  , m_IsDeprecated(m_rKernelContext.getPluginManager().isPluginObjectFlaggedAsDeprecated(m_pConstBox->getAlgorithmClassIdentifier()))
+	: m_rKernelContext(rKernelContext), m_pConstBox(rScenario.getBoxDetails(rBoxIdentifier)), m_pBox(rScenario.getBoxDetails(rBoxIdentifier)), 
+	  m_IsDeprecated(m_rKernelContext.getPluginManager().isPluginObjectFlaggedAsDeprecated(m_pConstBox->getAlgorithmClassIdentifier()))
 {
 	m_IsBoxAlgorithmPresent = false;
 
@@ -27,7 +20,7 @@ CBoxProxy::CBoxProxy(const IKernelContext& rKernelContext, IScenario& rScenario,
 		{
 			CIdentifier metaboxId;
 			metaboxId.fromString(m_pConstBox->getAttributeValue(OVP_AttributeId_Metabox_Identifier));
-			CString l_sMetaboxScenarioPath(m_rKernelContext.getMetaboxManager().getMetaboxFilePath(metaboxId));
+			const CString l_sMetaboxScenarioPath(m_rKernelContext.getMetaboxManager().getMetaboxFilePath(metaboxId));
 
 			m_IsBoxAlgorithmPresent = FS::Files::fileExists(l_sMetaboxScenarioPath.toASCIIString());
 		}
@@ -36,7 +29,7 @@ CBoxProxy::CBoxProxy(const IKernelContext& rKernelContext, IScenario& rScenario,
 			m_IsBoxAlgorithmPresent = m_rKernelContext.getPluginManager().canCreatePluginObject(m_pConstBox->getAlgorithmClassIdentifier());
 		}
 
-		TAttributeHandler l_oAttributeHandler(*m_pConstBox);
+		const TAttributeHandler l_oAttributeHandler(*m_pConstBox);
 		m_iXCenter = l_oAttributeHandler.getAttributeValue<int>(OV_AttributeId_Box_XCenterPosition);
 		m_iYCenter = l_oAttributeHandler.getAttributeValue<int>(OV_AttributeId_Box_YCenterPosition);
 	}
@@ -44,23 +37,13 @@ CBoxProxy::CBoxProxy(const IKernelContext& rKernelContext, IScenario& rScenario,
 }
 
 CBoxProxy::~CBoxProxy()
-
 {
-	if (!m_bApplied)
-	{
-		this->apply();
-	}
+	if (!m_bApplied) { this->apply(); }
 }
 
-CBoxProxy::operator IBox*()
-{
-	return m_pBox;
-}
+CBoxProxy::operator IBox*() { return m_pBox; }
 
-CBoxProxy::operator const IBox*()
-{
-	return m_pConstBox;
-}
+CBoxProxy::operator const IBox*() { return m_pConstBox; }
 
 int32_t CBoxProxy::getWidth(GtkWidget* pWidget) const
 {
@@ -80,7 +63,7 @@ int32_t CBoxProxy::getXCenter() const { return m_iXCenter; }
 
 int32_t CBoxProxy::getYCenter() const { return m_iYCenter; }
 
-void CBoxProxy::setCenter(int32_t i32XCenter, int32_t i32YCenter)
+void CBoxProxy::setCenter(const int32_t i32XCenter, const int32_t i32YCenter)
 {
 	m_iXCenter = i32XCenter;
 	m_iYCenter = i32YCenter;
@@ -123,9 +106,9 @@ void CBoxProxy::apply()
 
 const char* CBoxProxy::getLabel() const
 {
-	bool l_bBoxCanChangeInput(m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanModifyInput) || m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanAddInput));
-	bool l_bBoxCanChangeOutput(m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanModifyOutput) || m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanAddOutput));
-	bool l_bBoxCanChangeSetting(m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanModifySetting) || m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanAddSetting));
+	const bool l_bBoxCanChangeInput(m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanModifyInput) || m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanAddInput));
+	const bool l_bBoxCanChangeOutput(m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanModifyOutput) || m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanAddOutput));
+	const bool l_bBoxCanChangeSetting(m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanModifySetting) || m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanAddSetting));
 
 	const IPluginObjectDesc* l_pDesc = nullptr;
 
@@ -174,16 +157,16 @@ const char* CBoxProxy::getLabel() const
 		m_sLabel = "Unnamed Box";
 	}
 
-	std::string l_sBoxNameColor = "#000000";
+	const std::string l_sBoxNameColor = "#000000";
 
 	if (m_pConstBox->getSettingCount() != 0)
 	{
-		m_sLabel = "<span color=\"" + l_sBoxNameColor + "\" weight=\"bold\">" + m_sLabel + "</span>";
+		m_sLabel = "<span color=\"" + l_sBoxNameColor + R"(" weight="bold">)" + m_sLabel + "</span>";
 	}
 
 	if (m_bShowOriginalNameWhenModified)
 	{
-		string l_sBoxOriginalName(l_pDesc ? string(l_pDesc->getName()) : l_sBoxName);
+		const string l_sBoxOriginalName(l_pDesc ? string(l_pDesc->getName()) : l_sBoxName);
 		if (l_sBoxOriginalName != l_sBoxName)
 		{
 			m_sLabel = "<small><i><span foreground=\"" + l_sGrey + "\">" + l_sBoxOriginalName + "</span></i></small>\n" + m_sLabel;
@@ -207,17 +190,17 @@ const char* CBoxProxy::getLabel() const
 
 const char* CBoxProxy::getStatusLabel() const
 {
-	bool l_bBoxToBeUpdated(m_pBox->hasAttribute(OV_AttributeId_Box_ToBeUpdated));
-	bool l_bBoxPendingDeprecatedInterfacors(m_pBox->hasAttribute(OV_AttributeId_Box_PendingDeprecatedInterfacors));
-	bool l_bBoxIsDeprecated(this->isBoxAlgorithmPluginPresent() && this->isDeprecated());
-	bool l_bBoxIsDisabled(this->isDisabled());
+	const bool l_bBoxToBeUpdated(m_pBox->hasAttribute(OV_AttributeId_Box_ToBeUpdated));
+	const bool l_bBoxPendingDeprecatedInterfacors(m_pBox->hasAttribute(OV_AttributeId_Box_PendingDeprecatedInterfacors));
+	const bool l_bBoxIsDeprecated(this->isBoxAlgorithmPluginPresent() && this->isDeprecated());
+	const bool l_bBoxIsDisabled(this->isDisabled());
 
 	const string l_sBlue("#202060");
 
 	m_sStatus = "";
 	if (l_bBoxIsDeprecated || l_bBoxToBeUpdated || l_bBoxIsDisabled || l_bBoxPendingDeprecatedInterfacors)
 	{
-		m_sStatus += "<span size=\"smaller\" foreground=\"" + l_sBlue + "\">";
+		m_sStatus += R"(<span size="smaller" foreground=")" + l_sBlue + "\">";
 		if (l_bBoxIsDeprecated) { m_sStatus += " <span style=\"italic\">deprecated</span>"; }
 		if (l_bBoxToBeUpdated) { m_sStatus += " <span style=\"italic\">update</span>"; }
 		if (l_bBoxIsDisabled) { m_sStatus += " <span style=\"italic\">disabled</span>"; }
@@ -239,7 +222,7 @@ bool CBoxProxy::isMetabox() const { return m_pConstBox->getAlgorithmClassIdentif
 
 bool CBoxProxy::isDisabled() const
 {
-	TAttributeHandler l_oAttributeHandler(*m_pConstBox);
+	const TAttributeHandler l_oAttributeHandler(*m_pConstBox);
 	return l_oAttributeHandler.hasAttribute(OV_AttributeId_Box_Disabled);
 }
 

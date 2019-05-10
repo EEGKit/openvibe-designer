@@ -1,5 +1,4 @@
-#ifndef __OpenViBEDesigner_base_H__
-#define __OpenViBEDesigner_base_H__
+#pragma once
 
 #include <openvibe/ov_all.h>
 #include <toolkit/ovtk_all.h>
@@ -38,12 +37,10 @@ public:
 	G_CALLBACK_AUTOCAST(gpointer p) { m_pData.p = p; }
 	G_CALLBACK_AUTOCAST(GCallback fp) { m_pData.fp = fp; }
 
-	operator gpointer () { return m_pData.p; }
-	operator GCallback () { return m_pData.fp; }
+	operator gpointer() { return m_pData.p; }
+	operator GCallback() { return m_pData.fp; }
 
 private:
 
 	G_CALLBACK_AUTOCAST();
 };
-
-#endif // __OpenViBEDesigner_base_H__

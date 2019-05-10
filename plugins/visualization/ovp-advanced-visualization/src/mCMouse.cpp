@@ -27,12 +27,9 @@
 using namespace Mensia;
 using namespace AdvancedVisualization;
 
-CMouse::CMouse(CBoxAlgorithmViz& rBoxAlgorithmViz)
-	: m_rBoxAlgorithmViz(rBoxAlgorithmViz)
-	  , m_i32MouseX(0)
-	  , m_i32MouseY(0) { }
+CMouse::CMouse(CBoxAlgorithmViz& rBoxAlgorithmViz) : m_rBoxAlgorithmViz(rBoxAlgorithmViz) { }
 
-void CMouse::mouseButton(IRendererContext& rContext, int32_t x, int32_t y, int32_t button, int status)
+void CMouse::mouseButton(IRendererContext& rContext, const int32_t x, const int32_t y, const int32_t button, const int status)
 {
 	m_vButton[button] = status;
 
@@ -46,7 +43,7 @@ void CMouse::mouseButton(IRendererContext& rContext, int32_t x, int32_t y, int32
 	m_i32MouseY = y;
 }
 
-void CMouse::mouseMotion(IRendererContext& rContext, int32_t x, int32_t y)
+void CMouse::mouseMotion(IRendererContext& rContext, const int32_t x, const int32_t y)
 {
 	if (m_vButton[3])
 	{
@@ -58,8 +55,8 @@ void CMouse::mouseMotion(IRendererContext& rContext, int32_t x, int32_t y)
 	}
 	if (m_vButton[1])
 	{
-		rContext.rotateByY((x - m_i32MouseX) * .1f);
-		rContext.rotateByX((y - m_i32MouseY) * .1f);
+		rContext.rotateByY(float(x - m_i32MouseX) * .1f);
+		rContext.rotateByX(float(y - m_i32MouseY) * .1f);
 	}
 
 	m_i32MouseX = x;
@@ -69,8 +66,7 @@ void CMouse::mouseMotion(IRendererContext& rContext, int32_t x, int32_t y)
 bool CMouse::hasButtonPressed()
 
 {
-	std::map<int32_t, int>::const_iterator it;
-	for (it = m_vButton.begin(); it != m_vButton.end(); it++)
+	for (std::map<int32_t, int>::const_iterator it = m_vButton.begin(); it != m_vButton.end(); ++it)
 	{
 		if (it->second) { return true; }
 	}

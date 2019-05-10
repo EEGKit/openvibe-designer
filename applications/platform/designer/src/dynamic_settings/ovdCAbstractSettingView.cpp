@@ -14,28 +14,13 @@ static void collect_widget_cb(GtkWidget* pWidget, gpointer pUserData)
 
 CAbstractSettingView::~CAbstractSettingView()
 {
-	if (GTK_IS_WIDGET(m_pNameWidget))
-	{
-		gtk_widget_destroy(m_pNameWidget);
-	}
-	if (GTK_IS_WIDGET(m_pEntryNameWidget))
-	{
-		gtk_widget_destroy(m_pEntryNameWidget);
-	}
-	if (G_IS_OBJECT(m_pBuilder))
-	{
-		g_object_unref(m_pBuilder);
-	}
+	if (GTK_IS_WIDGET(m_pNameWidget)) { gtk_widget_destroy(m_pNameWidget); }
+	if (GTK_IS_WIDGET(m_pEntryNameWidget)) { gtk_widget_destroy(m_pEntryNameWidget); }
+	if (G_IS_OBJECT(m_pBuilder)) { g_object_unref(m_pBuilder); }
 }
 
-CAbstractSettingView::CAbstractSettingView(Kernel::IBox& rBox, uint32_t ui32Index,
-										   const char* sBuilderName, const char* sWidgetName) :
-	m_rBox(rBox),
-	m_ui32Index(ui32Index),
-	m_sSettingWidgetName(""),
-	m_pNameWidget(nullptr),
-	m_pEntryNameWidget(nullptr),
-	m_bOnValueSetting(false)
+CAbstractSettingView::CAbstractSettingView(Kernel::IBox& rBox, const uint32_t ui32Index, const char* sBuilderName, const char* sWidgetName)
+	: m_rBox(rBox), m_ui32Index(ui32Index), m_sSettingWidgetName("")
 {
 	if (sBuilderName != nullptr)
 	{
@@ -46,8 +31,8 @@ CAbstractSettingView::CAbstractSettingView(Kernel::IBox& rBox, uint32_t ui32Inde
 		if (sWidgetName != nullptr)
 		{
 			m_sSettingWidgetName = sWidgetName;
-			generateNameWidget();
-			m_pEntryFieldWidget = generateEntryWidget();
+			CAbstractSettingView::generateNameWidget();
+			m_pEntryFieldWidget = CAbstractSettingView::generateEntryWidget();
 		}
 	}
 }
@@ -71,10 +56,7 @@ GtkWidget* CAbstractSettingView::getNameWidget() { return m_pNameWidget; }
 
 void CAbstractSettingView::setEntryWidget(GtkWidget* pWidget)
 {
-	if (m_pEntryNameWidget)
-	{
-		gtk_widget_destroy(m_pEntryNameWidget);
-	}
+	if (m_pEntryNameWidget) { gtk_widget_destroy(m_pEntryNameWidget); }
 	m_pEntryNameWidget = pWidget;
 }
 
@@ -129,7 +111,4 @@ GtkWidget* CAbstractSettingView::getEntryFieldWidget() { return m_pEntryFieldWid
 GtkWidget* CAbstractSettingView::getEntryWidget() { return m_pEntryNameWidget; }
 
 
-void CAbstractSettingView::setSettingIndex(uint32_t m_ui32NewIndex)
-{
-	m_ui32Index = m_ui32NewIndex;
-}
+void CAbstractSettingView::setSettingIndex(const uint32_t m_ui32NewIndex) { m_ui32Index = m_ui32NewIndex; }

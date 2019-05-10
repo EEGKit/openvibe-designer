@@ -38,7 +38,7 @@ namespace Mensia
 		public:
 
 			C3DMesh();
-			C3DMesh(const char* sFilename);
+			//C3DMesh(const char* sFilename);
 			virtual ~C3DMesh();
 
 			virtual void clear();
@@ -46,8 +46,6 @@ namespace Mensia
 			virtual bool compile();
 
 			virtual bool project(std::vector<CVertex>& vProjectedChannelCoordinate, const std::vector<CVertex>& vChannelCoordinate);
-
-		public:
 
 			std::vector<CVertex> m_vVertex;
 			std::vector<CVertex> m_vNormal;

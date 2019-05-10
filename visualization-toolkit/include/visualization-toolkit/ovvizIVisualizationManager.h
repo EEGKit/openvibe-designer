@@ -20,6 +20,7 @@ namespace OpenViBEVisualizationToolkit
 	class IVisualizationManager
 	{
 	public:
+		virtual ~IVisualizationManager() = default;
 
 		/**
 			 * \brief An interface used to iteratively notify its creator of the existence of IVisualizationTree objects
@@ -61,8 +62,8 @@ namespace OpenViBEVisualizationToolkit
 			 * This method is to be called by visualization plugins as they are being initialized. It lets them send
 			 * a pointer to their toolbar (if they have one) to the scenario's IVisualizationTree.
 			 * \param visualizationTreeIdentifier identifier of IVisualizationTree to which the toolbar pointer is to be forwarded
-			 * \param rBoxIdentifier Identifier of IBox whose toolbar pointer is being set
-			 * \param pToolbarWidget pointer to the toolbar of the widget
+			 * \param boxIdentifier Identifier of IBox whose toolbar pointer is being set
+			 * \param toolbar pointer to the toolbar of the widget
 			 * \return True if pointer was successfully forwarded to IVisualizationTree, false otherwise
 			 */
 		virtual bool setToolbar(const OpenViBE::CIdentifier& visualizationTreeIdentifier, const OpenViBE::CIdentifier& boxIdentifier, GtkWidget* toolbar) = 0;
@@ -72,10 +73,10 @@ namespace OpenViBEVisualizationToolkit
 		 * This method is to be called by visualization plugins as they are being initialized. It lets them send
 		 * a pointer to their topmost widget to the scenario's IVisualizationTree.
 		 * \param visualizationTreeIdentifier identifier of IVisualizationTree to which the toolbar pointer is to be forwarded
-		 * \param rBoxIdentifier Identifier of IBox whose topmost widget pointer is being set
-		 * \param pWidget pointer to the main window of the widget
+		 * \param boxIdentifier Identifier of IBox whose topmost widget pointer is being set
+		 * \param widget pointer to the main window of the widget
 		 * \return True if pointer was successfully forwarded to IVisualizationTree, false otherwise
 		 */
-		virtual bool setWidget(const OpenViBE::CIdentifier& visualizationTreeIdentifier, const OpenViBE::CIdentifier& boxIdentifier, GtkWidget* topmostWidget) = 0;
+		virtual bool setWidget(const OpenViBE::CIdentifier& visualizationTreeIdentifier, const OpenViBE::CIdentifier& boxIdentifier, GtkWidget* widget) = 0;
 	};
 }  // namespace OpenViBEVisualizationToolkit;

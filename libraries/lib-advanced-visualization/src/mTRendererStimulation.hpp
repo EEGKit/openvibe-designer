@@ -18,9 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef __Mensia_AdvancedVisualization_TRendererStimulation_H__
-#define __Mensia_AdvancedVisualization_TRendererStimulation_H__
+#pragma once
 
 #include "mCRenderer.hpp"
 
@@ -50,8 +48,8 @@ namespace Mensia
 				for (int i = 0; i < s_iStimulationIndicatorSmoothness; ++i)
 				{
 					m_vCircle.push_back(std::make_pair(
-						s_fStimulationIndicatorRadius * cosf(i / float(s_iStimulationIndicatorSmoothness - 1) * 2 * float(M_PI)),
-						s_fStimulationIndicatorRadius * sinf(i / float(s_iStimulationIndicatorSmoothness - 1) * 2 * float(M_PI))
+						s_fStimulationIndicatorRadius * cosf(float(i) / float(s_iStimulationIndicatorSmoothness - 1) * 2 * float(M_PI)),
+						s_fStimulationIndicatorRadius * sinf(float(i) / float(s_iStimulationIndicatorSmoothness - 1) * 2 * float(M_PI))
 					));
 				}
 			}
@@ -84,14 +82,14 @@ namespace Mensia
 					glDisable(GL_BLEND);
 					glDisable(GL_LINE_SMOOTH);
 
-					uint32_t l_ui32LeftIndex = l_ui32HistoryIndex - l_ui32HistoryIndex % l_ui32SampleCount;
-					uint32_t l_ui32MidIndex = l_ui32HistoryIndex;
+					const uint32_t l_ui32LeftIndex = l_ui32HistoryIndex - l_ui32HistoryIndex % l_ui32SampleCount;
+					const uint32_t l_ui32MidIndex = l_ui32HistoryIndex;
 					double l_f64StartTime = ((l_ui32LeftIndex * l_ui64SampleDuration) >> 16) / 65536.;
-					double l_f64MidTime = ((l_ui32MidIndex * l_ui64SampleDuration) >> 16) / 65536.;
-					double l_f64Duration = ((l_ui32SampleCount * l_ui64SampleDuration) >> 16) / 65536.;
+					const double l_f64MidTime = ((l_ui32MidIndex * l_ui64SampleDuration) >> 16) / 65536.;
+					const double l_f64Duration = ((l_ui32SampleCount * l_ui64SampleDuration) >> 16) / 65536.;
 
 					m_mEncounteredStimulations.clear();
-					for (auto it = CRenderer::m_vStimulationHistory.begin(); it != CRenderer::m_vStimulationHistory.end(); it++)
+					for (auto it = CRenderer::m_stimulationHistory.begin(); it != CRenderer::m_stimulationHistory.end(); ++it)
 					{
 						if (m_mEncounteredStimulations.count(it->second) == 0)
 						{
@@ -129,7 +127,7 @@ namespace Mensia
 
 							// draw a (ugly) disc representing a stimulation
 							glBegin(GL_TRIANGLE_FAN);
-							for (auto l_oVertex = m_vCircle.cbegin(); l_oVertex != m_vCircle.cend(); l_oVertex++)
+							for (auto l_oVertex = m_vCircle.cbegin(); l_oVertex != m_vCircle.cend(); ++l_oVertex)
 							{
 								glVertex2f(float(l_oVertex->first / rContext.getAspect() + l_fProgress), float(l_oVertex->second + 0.95f - m_mEncounteredStimulations[it->second] * s_fStimulationIndicatorSpacing));
 							}
@@ -143,7 +141,7 @@ namespace Mensia
 							glEnable(GL_LINE_SMOOTH);
 							glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 							glBegin(GL_LINE_LOOP);
-							for (auto l_oVertex = m_vCircle.cbegin(); l_oVertex != m_vCircle.cend(); l_oVertex++)
+							for (auto l_oVertex = m_vCircle.cbegin(); l_oVertex != m_vCircle.cend(); ++l_oVertex)
 							{
 								glVertex2f(float(l_oVertex->first / rContext.getAspect() + l_fProgress), float(l_oVertex->second + 0.95f - m_mEncounteredStimulations[it->second] * s_fStimulationIndicatorSpacing));
 							}
@@ -197,5 +195,3 @@ namespace Mensia
 		};
 	}  // namespace AdvancedVisualization
 }  // namespace Mensia
-
-#endif // __Mensia_AdvancedVisualization_TRendererStimulation_H__

@@ -74,7 +74,9 @@ namespace Mensia
 		{
 		public:
 
-			TBoxAlgorithmContinuousVizDesc(const OpenViBE::CString& sName, const OpenViBE::CIdentifier& rDescClassId, const OpenViBE::CIdentifier& rClassId, const OpenViBE::CString& sAddedSoftwareVersion, const OpenViBE::CString& sUpdatedSoftwareVersion, CParameterSet rParameterSet, const OpenViBE::CString& sShortDescription, const OpenViBE::CString& sDetailedDescription)
+			TBoxAlgorithmContinuousVizDesc(const OpenViBE::CString& sName, const OpenViBE::CIdentifier& rDescClassId, const OpenViBE::CIdentifier& rClassId, 
+										   const OpenViBE::CString& sAddedSoftwareVersion, const OpenViBE::CString& sUpdatedSoftwareVersion,
+										   const CParameterSet rParameterSet, const OpenViBE::CString& sShortDescription, const OpenViBE::CString& sDetailedDescription)
 				: CBoxAlgorithmVizDesc(sName, rDescClassId, rClassId, sAddedSoftwareVersion, sUpdatedSoftwareVersion, rParameterSet, sShortDescription, sDetailedDescription) { }
 
 			OpenViBE::Plugins::IPluginObject* create() override
@@ -91,13 +93,13 @@ namespace Mensia
 
 		template <class TRendererFactoryClass, class TRulerClass>
 		TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>::TBoxAlgorithmContinuousViz(const OpenViBE::CIdentifier& rClassId, const std::vector<int>& vParameter)
-			: CBoxAlgorithmViz(rClassId, vParameter) { }
+			: CBoxAlgorithmViz(rClassId, vParameter), m_pRenderer(nullptr) { }
 
 		template <class TRendererFactoryClass, class TRulerClass>
 		bool TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>::initialize()
 
 		{
-			bool l_bResult = CBoxAlgorithmViz::initialize();
+			const bool l_bResult = CBoxAlgorithmViz::initialize();
 
 			m_oMatrixDecoder.initialize(*this, 0);
 			m_oStimulationDecoder.initialize(*this, 1);
@@ -133,7 +135,7 @@ namespace Mensia
 		{
 			const IBox& l_rStaticBoxContext = this->getStaticBoxContext();
 			IBoxIO& l_rDynamicBoxContext = this->getDynamicBoxContext();
-			uint32_t i, j, k;
+			uint32_t i, j;
 
 			for (i = 0; i < l_rDynamicBoxContext.getInputChunkCount(0); ++i)
 			{
@@ -245,7 +247,7 @@ namespace Mensia
 				{
 					m_ui64Time1 = m_ui64Time2;
 					m_ui64Time2 = l_rDynamicBoxContext.getInputChunkEndTime(0, i);
-					uint64_t l_ui64SampleDuration = (m_ui64Time2 - m_ui64Time1) / l_ui32SampleCount;
+					const uint64_t l_ui64SampleDuration = (m_ui64Time2 - m_ui64Time1) / l_ui32SampleCount;
 					if ((l_ui64SampleDuration & ~0xf) != (m_pRendererContext->getSampleDuration() & ~0xf) && l_ui64SampleDuration != 0) // 0xf mask avoids rounding errors
 					{
 						m_pRendererContext->setSampleDuration(l_ui64SampleDuration);
@@ -257,7 +259,7 @@ namespace Mensia
 					// Feed renderer with actual samples
 					for (j = 0; j < l_ui32SampleCount; j++)
 					{
-						for (k = 0; k < l_ui32ChannelCount; k++)
+						for (uint32_t k = 0; k < l_ui32ChannelCount; k++)
 						{
 							m_vSwap[k] = float(l_pMatrix->getBuffer()[k * l_ui32SampleCount + j]);
 						}

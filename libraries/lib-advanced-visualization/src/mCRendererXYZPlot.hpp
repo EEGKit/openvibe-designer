@@ -18,9 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef __Mensia_AdvancedVisualization_CRendererXYZPlot_H__
-#define __Mensia_AdvancedVisualization_CRendererXYZPlot_H__
+#pragma once
 
 #include "mCRenderer.hpp"
 
@@ -36,12 +34,10 @@ namespace Mensia
 			void refresh(const IRendererContext& rContext) override;
 			bool render(const IRendererContext& rContext) override;
 
-			bool m_bHasDepth;
-			uint32_t m_ui32PlotDimension;
-			uint32_t m_ui32PlotCount;
-			std::vector<std::vector<CVertex>> m_vVertex;
+			bool m_hasDepth;
+			uint32_t m_plotDimension;
+			uint32_t m_plotCount;
+			std::vector<std::vector<CVertex>> m_vertex;
 		};
 	}  // namespace AdvancedVisualization
 }  // namespace Mensia
-
-#endif // __Mensia_AdvancedVisualization_CRendererXYZPlot_H__

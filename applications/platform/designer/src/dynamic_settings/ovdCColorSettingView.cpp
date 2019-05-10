@@ -8,14 +8,14 @@ using namespace OpenViBEDesigner;
 using namespace Setting;
 
 // round is defined in <cmath> on c++11
-inline int ov_round(double dbl) { return dbl >= 0.0 ? (int)(dbl + 0.5) : ((dbl - (double)(int)dbl) <= -0.5 ? (int)dbl : (int)(dbl - 0.5)); }
+inline int ov_round(const double dbl) { return dbl >= 0.0 ? int(dbl + 0.5) : ((dbl - double(int(dbl))) <= -0.5 ? int(dbl) : int(dbl - 0.5)); }
 
-static void on_button_setting_color_choose_pressed(GtkColorButton* pButton, gpointer pUserData)
+static void on_button_setting_color_choose_pressed(GtkColorButton* /*pButton*/, gpointer pUserData)
 {
 	static_cast<CColorSettingView*>(pUserData)->selectColor();
 }
 
-static void on_change(GtkEntry* entry, gpointer pUserData)
+static void on_change(GtkEntry* /*entry*/, gpointer pUserData)
 {
 	static_cast<CColorSettingView*>(pUserData)->onChange();
 }

@@ -1,5 +1,4 @@
-#ifndef __OpenViBEDesigner_CSettingEditorDialog_H__
-#define __OpenViBEDesigner_CSettingEditorDialog_H__
+#pragma once
 
 #include "ovdCSettingCollectionHelper.h"
 
@@ -12,26 +11,24 @@ namespace OpenViBEDesigner
 	{
 	public:
 
-		CSettingEditorDialog(const OpenViBE::Kernel::IKernelContext& rKernelContext, OpenViBE::Kernel::IBox& rBox, OpenViBE::uint32 ui32SettingIndex, const char* sTitle, const char* sGUIFilename, const char* sGUISettingsFilename);
-		virtual ~CSettingEditorDialog(void);
-		virtual bool run(void);
+		CSettingEditorDialog(const OpenViBE::Kernel::IKernelContext& rKernelContext, OpenViBE::Kernel::IBox& rBox, uint32_t ui32SettingIndex, const char* sTitle, const char* sGUIFilename, const char* sGUISettingsFilename);
+		virtual ~CSettingEditorDialog();
+		virtual bool run();
 
-		virtual void typeChangedCB(void);
+		virtual void typeChangedCB();
 
 	protected:
 
 		const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
 		OpenViBE::Kernel::IBox& m_rBox;
-		OpenViBEDesigner::CSettingCollectionHelper m_oHelper;
-		uint32_t m_ui32SettingIndex;
+		CSettingCollectionHelper m_oHelper;
+		uint32_t m_ui32SettingIndex = 0;
 		OpenViBE::CString m_sGUIFilename;
 		OpenViBE::CString m_sGUISettingsFilename;
 		std::string m_sTitle;
-		::GtkWidget* m_pTable;
-		::GtkWidget* m_pType;
-		::GtkWidget* m_pDefaultValue;
+		GtkWidget* m_pTable = nullptr;
+		GtkWidget* m_pType = nullptr;
+		GtkWidget* m_pDefaultValue = nullptr;
 		std::map<std::string, OpenViBE::CIdentifier> m_vSettingTypes;
 	};
 };
-
-#endif // __OpenViBEDesigner_CSettingEditorDialog_H__

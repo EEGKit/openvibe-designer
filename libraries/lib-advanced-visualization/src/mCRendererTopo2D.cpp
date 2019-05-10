@@ -6,7 +6,7 @@ using namespace AdvancedVisualization;
 
 #define OFFSET .0001f
 
-void CRendererTopo2D::rebuild3DMeshesPre(const IRendererContext& rContext)
+void CRendererTopo2D::rebuild3DMeshesPre(const IRendererContext& /*rContext*/)
 {
 	uint32_t i, j, k;
 
@@ -148,8 +148,7 @@ namespace
 {
 	void unfold(std::vector<CVertex>& rVertex, float fLayer = 0)
 	{
-		std::vector<CVertex>::iterator it;
-		for (it = rVertex.begin(); it != rVertex.end(); it++)
+		for (std::vector<CVertex>::iterator it = rVertex.begin(); it != rVertex.end(); ++it)
 		{
 			CVertex& p = (*it);
 			p.y += OFFSET;
@@ -163,7 +162,7 @@ namespace
 	}
 }  // namespace
 
-void CRendererTopo2D::rebuild3DMeshesPost(const IRendererContext& rContext)
+void CRendererTopo2D::rebuild3DMeshesPost(const IRendererContext& /*rContext*/)
 {
 	const float l_f32Layer = 1E-3f;
 

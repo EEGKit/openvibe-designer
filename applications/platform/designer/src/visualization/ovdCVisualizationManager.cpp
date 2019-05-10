@@ -22,9 +22,9 @@ using namespace OpenViBEVisualizationToolkit;
 //using namespace OpenViBE::Tools;
 
 CVisualizationManager::CVisualizationManager(const IKernelContext& kernelContext)
-	: m_KernelContext(kernelContext) { }
+	: m_KernelContext(kernelContext) {}
 
-CVisualizationManager::~CVisualizationManager() = default;
+CVisualizationManager::~CVisualizationManager() {}
 
 bool CVisualizationManager::createVisualizationTree(CIdentifier& visualizationTreeIdentifier)
 {
@@ -69,9 +69,9 @@ bool CVisualizationManager::setToolbar(const CIdentifier& visualizationTreeIdent
 	return true;
 }
 
-bool CVisualizationManager::setWidget(const CIdentifier& rVisualizationTreeIdentifier, const CIdentifier& boxIdentifier, GtkWidget* topmostWidget)
+bool CVisualizationManager::setWidget(const CIdentifier& visualizationTreeIdentifier, const CIdentifier& boxIdentifier, GtkWidget* topmostWidget)
 {
-	IVisualizationTree& visualizationTree = getVisualizationTree(rVisualizationTreeIdentifier);
+	IVisualizationTree& visualizationTree = getVisualizationTree(visualizationTreeIdentifier);
 
 	visualizationTree.setWidget(boxIdentifier, topmostWidget);
 

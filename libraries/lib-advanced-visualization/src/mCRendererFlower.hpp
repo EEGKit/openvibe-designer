@@ -18,9 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef __Mensia_AdvancedVisualization_CRendererFlower_H__
-#define __Mensia_AdvancedVisualization_CRendererFlower_H__
+#pragma once
 
 #include "mCRenderer.hpp"
 
@@ -32,7 +30,7 @@ namespace Mensia
 		{
 		public:
 
-			CRendererFlower(uint32_t ui32MultiCount = 1);
+			explicit CRendererFlower(uint32_t ui32MultiCount = 1);
 
 			void rebuild(const IRendererContext& rContext) override;
 			void refresh(const IRendererContext& rContext) override;
@@ -43,5 +41,3 @@ namespace Mensia
 		};
 	}  // namespace AdvancedVisualization
 }  // namespace Mensia
-
-#endif // __Mensia_AdvancedVisualization_CRendererFlower_H__

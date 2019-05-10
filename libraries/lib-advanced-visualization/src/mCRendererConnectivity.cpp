@@ -85,13 +85,13 @@ void CRendererConnectivity::rebuild(const IRendererContext& rContext)
 
 	// Generates arcs
 
-	m_vVertex.clear();
-	m_vVertex.resize(m_ui32ChannelCount * (m_ui32ChannelCount - 1) / 2);
-	for (i = 0; i < m_ui32ChannelCount; ++i)
+	m_vertex.clear();
+	m_vertex.resize(m_channelCount * (m_channelCount - 1) / 2);
+	for (i = 0; i < m_channelCount; ++i)
 	{
 		for (j = 0; j < i; j++)
 		{
-			m_vVertex[l].resize(__Count__);
+			m_vertex[l].resize(__Count__);
 
 			CVertex vi, vj;
 			vi = l_vChannelCoordinate[i];
@@ -116,51 +116,50 @@ void CRendererConnectivity::rebuild(const IRendererContext& rContext)
 				q_rotate(v, v1, q);
 
 				float len = (vi_len * (1 - t) + vj_len * t);
-				m_vVertex[l][k].x = float(s * v[0] * len);
-				m_vVertex[l][k].y = float(s * v[1] * len);
-				m_vVertex[l][k].z = float(s * v[2] * len);
-				m_vVertex[l][k].u = float(alpha);
+				m_vertex[l][k].x = float(s * v[0] * len);
+				m_vertex[l][k].y = float(s * v[1] * len);
+				m_vertex[l][k].z = float(s * v[2] * len);
+				m_vertex[l][k].u = float(alpha);
 			}
 
 			l++;
 		}
 	}
 
-	m_ui32HistoryIndex = 0;
+	m_historyIndex = 0;
 }
 
 void CRendererConnectivity::refresh(const IRendererContext& rContext)
 {
 	CRenderer::refresh(rContext);
 
-	if (!m_ui32HistoryCount) { return; }
-	if (m_ui32HistoryCount < m_ui32ChannelCount) { return; }
+	if (!m_historyCount) { return; }
+	if (m_historyCount < m_channelCount) { return; }
 
-	uint32_t i, j, k, l = 0;
+	uint32_t l = 0;
 
-	for (i = 0; i < m_ui32ChannelCount; ++i)
+	for (uint32_t i = 0; i < m_channelCount; ++i)
 	{
-		for (j = 0; j < i; j++)
+		for (uint32_t j = 0; j < i; j++)
 		{
-			for (k = 0; k < __Count__; k++)
+			for (uint32_t k = 0; k < __Count__; k++)
 			{
-				m_vVertex[l][k].u = m_vHistory[i][m_ui32HistoryCount - 1 - j];
+				m_vertex[l][k].u = m_history[i][m_historyCount - 1 - j];
 			}
 			l++;
 		}
 	}
 
-	m_ui32HistoryIndex = m_ui32HistoryCount;
+	m_historyIndex = m_historyCount;
 }
 
 bool CRendererConnectivity::render(const IRendererContext& rContext)
 {
 	if (!rContext.getSelectedCount()) { return false; }
-	if (m_vVertex.empty()) { return false; }
-	if (!m_ui32HistoryCount) { return false; }
+	if (m_vertex.empty()) { return false; }
+	if (!m_historyCount) { return false; }
 
 	std::map<std::string, std::pair<float, float>>::const_iterator it;
-	uint32_t i;
 	float d = 3.5;
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
@@ -182,7 +181,7 @@ bool CRendererConnectivity::render(const IRendererContext& rContext)
 	glLoadIdentity();
 	glScalef(rContext.getZoom(), rContext.getZoom(), rContext.getZoom());
 
-	//	uint32_t l_ui32ChannelCountSquare=m_ui32ChannelCount*m_ui32ChannelCount;
+	//	uint32_t l_ui32ChannelCountSquare=m_channelCount*m_channelCount;
 	float rgb = 1.f;
 	glColor4f(rgb, rgb, rgb, rContext.getTranslucency());
 	glPushMatrix();
@@ -197,10 +196,10 @@ bool CRendererConnectivity::render(const IRendererContext& rContext)
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	for (i = 0; i < m_ui32ChannelCount * (m_ui32ChannelCount - 1) / 2; ++i)
+	for (uint32_t i = 0; i < m_channelCount * (m_channelCount - 1) / 2; ++i)
 	{
-		glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_vVertex[i][0].x);
-		glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_vVertex[i][0].u);
+		glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_vertex[i][0].x);
+		glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_vertex[i][0].u);
 		glDrawArrays(GL_LINE_STRIP, 0, __Count__);
 	}
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);

@@ -9,23 +9,23 @@ using namespace OpenViBE;
 using namespace OpenViBEDesigner;
 using namespace Setting;
 
-static void on_button_setting_filename_browse_pressed(GtkButton* pButton, gpointer pUserData)
+static void on_button_setting_filename_browse_pressed(GtkButton* /*pButton*/, gpointer pUserData)
 {
 	static_cast<CScriptSettingView*>(pUserData)->browse();
 }
 
-static void on_button_setting_script_edit_pressed(GtkButton* pButton, gpointer pUserData)
+static void on_button_setting_script_edit_pressed(GtkButton* /*pButton*/, gpointer pUserData)
 {
 	static_cast<CScriptSettingView*>(pUserData)->edit();
 }
 
-static void on_change(GtkEntry* entry, gpointer pUserData)
+static void on_change(GtkEntry* /*entry*/, gpointer pUserData)
 {
 	static_cast<CScriptSettingView*>(pUserData)->onChange();
 }
 
 #if defined TARGET_OS_Windows
-static gboolean on_focus_out_event(GtkEntry* entry, GdkEvent* event, gpointer pUserData)
+static gboolean on_focus_out_event(GtkEntry* /*entry*/, GdkEvent* /*event*/, gpointer pUserData)
 {
 	static_cast<CScriptSettingView*>(pUserData)->onFocusLost();
 	return FALSE;
@@ -76,7 +76,7 @@ void CScriptSettingView::browse()
 		GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
 		nullptr);
 
-	CString l_sInitialFileName = m_rKernelContext.getConfigurationManager().expand(gtk_entry_get_text(m_pEntry));
+	const CString l_sInitialFileName = m_rKernelContext.getConfigurationManager().expand(gtk_entry_get_text(m_pEntry));
 	if (g_path_is_absolute(l_sInitialFileName.toASCIIString()))
 	{
 		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(l_pWidgetDialogOpen), l_sInitialFileName.toASCIIString());
@@ -106,8 +106,8 @@ void CScriptSettingView::browse()
 
 void CScriptSettingView::edit()
 {
-	CString l_sFileName = m_rKernelContext.getConfigurationManager().expand(gtk_entry_get_text(m_pEntry));
-	CString l_sEditorCommand = m_rKernelContext.getConfigurationManager().expand("${Designer_ScriptEditorCommand}");
+	const CString l_sFileName = m_rKernelContext.getConfigurationManager().expand(gtk_entry_get_text(m_pEntry));
+	const CString l_sEditorCommand = m_rKernelContext.getConfigurationManager().expand("${Designer_ScriptEditorCommand}");
 
 	if (l_sEditorCommand != CString(""))
 	{

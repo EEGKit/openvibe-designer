@@ -36,22 +36,22 @@ void CRendererFlower::rebuild(const IRendererContext& rContext)
 {
 	CRenderer::rebuild(rContext);
 
-	uint32_t i, j, z;
+	uint32_t i;
 
-	m_ui32AutoDecimationFactor = 1 + uint32_t((m_ui32SampleCount - 1) / rContext.getMaximumSampleCountPerDisplay());
+	m_autoDecimationFactor = 1 + uint32_t((m_sampleCount - 1) / rContext.getMaximumSampleCountPerDisplay());
 
-	uint32_t n = m_ui32SampleCount / m_ui32AutoDecimationFactor;
+	uint32_t n = m_sampleCount / m_autoDecimationFactor;
 
-	for (z = 0; z < m_vMuliVertex.size(); z++)
+	for (uint32_t z = 0; z < m_vMuliVertex.size(); z++)
 	{
 		m_vMuliVertex[z].clear();
-		m_vMuliVertex[z].resize(m_ui32ChannelCount);
-		for (i = 0; i < m_ui32ChannelCount; ++i)
+		m_vMuliVertex[z].resize(m_channelCount);
+		for (i = 0; i < m_channelCount; ++i)
 		{
 			m_vMuliVertex[z][i].resize(n);
-			for (j = 0; j < m_ui32SampleCount - m_ui32AutoDecimationFactor + 1; j += m_ui32AutoDecimationFactor)
+			for (uint32_t j = 0; j < m_sampleCount - m_autoDecimationFactor + 1; j += m_autoDecimationFactor)
 			{
-				m_vMuliVertex[z][i][j / m_ui32AutoDecimationFactor].u = j * m_f32InverseSampleCount;
+				m_vMuliVertex[z][i][j / m_autoDecimationFactor].u = j * m_inverseSampleCount;
 			}
 		}
 	}
@@ -65,34 +65,31 @@ void CRendererFlower::rebuild(const IRendererContext& rContext)
 		m_vCircle[i].z = 0;
 	}
 
-	m_ui32HistoryIndex = 0;
+	m_historyIndex = 0;
 }
 
 void CRendererFlower::refresh(const IRendererContext& rContext)
 {
 	CRenderer::refresh(rContext);
 
-	if (!m_ui32HistoryCount) { return; }
+	if (!m_historyCount) { return; }
 
-	uint32_t i, j, k, l, z, count;
-	float sum;
-
-	for (z = 0; z < m_vMuliVertex.size(); z++)
+	for (uint32_t z = 0; z < m_vMuliVertex.size(); z++)
 	{
-		for (i = 0; i < m_ui32ChannelCount; ++i)
+		for (uint32_t i = 0; i < m_channelCount; ++i)
 		{
-			k = ((m_ui32HistoryCount - 1 - z * m_vMuliVertex[z][i].size()) / m_ui32SampleCount) * m_ui32SampleCount;
-			std::vector<float>& l_vHistory = m_vHistory[i];
+			uint32_t k = ((m_historyCount - 1 - z * m_vMuliVertex[z][i].size()) / m_sampleCount) * m_sampleCount;
+			std::vector<float>& l_vHistory = m_history[i];
 			CVertex* l_pVertex = &m_vMuliVertex[z][i][0];
 			CVertex* l_pCircleVertex = &m_vCircle[0];
-			for (j = 0; j < m_ui32SampleCount - m_ui32AutoDecimationFactor + 1; j += m_ui32AutoDecimationFactor, k += m_ui32AutoDecimationFactor)
+			for (uint32_t j = 0; j < m_sampleCount - m_autoDecimationFactor + 1; j += m_autoDecimationFactor, k += m_autoDecimationFactor)
 			{
-				sum = 0;
-				count = 0;
+				float sum = 0;
+				uint32_t count = 0;
 
-				for (l = 0; l < m_ui32AutoDecimationFactor; l++)
+				for (uint32_t l = 0; l < m_autoDecimationFactor; l++)
 				{
-					if (/*k+l>=m_ui32HistoryIndex && */k + l < m_ui32HistoryCount)
+					if (/*k+l>=m_historyIndex && */k + l < m_historyCount)
 					{
 						sum += l_vHistory[k + l];
 						count++;
@@ -117,18 +114,17 @@ void CRendererFlower::refresh(const IRendererContext& rContext)
 		}
 	}
 
-	m_ui32HistoryIndex = m_ui32HistoryCount;
+	m_historyIndex = m_historyCount;
 }
 
 bool CRendererFlower::render(const IRendererContext& rContext)
 {
 	if (!rContext.getSelectedCount()) { return false; }
 	if (m_vMuliVertex.empty()) { return false; }
-	if (!m_ui32HistoryCount) { return false; }
+	if (!m_historyCount) { return false; }
 
-	uint32_t i, z;
-	uint32_t n = m_ui32SampleCount / m_ui32AutoDecimationFactor;
-	uint32_t d = (m_ui32HistoryIndex % m_ui32SampleCount) / m_ui32AutoDecimationFactor;
+	uint32_t n = m_sampleCount / m_autoDecimationFactor;
+	uint32_t d = (m_historyIndex % m_sampleCount) / m_autoDecimationFactor;
 
 	glMatrixMode(GL_TEXTURE);
 	glPushMatrix();
@@ -138,12 +134,12 @@ bool CRendererFlower::render(const IRendererContext& rContext)
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	for (i = 0; i < rContext.getSelectedCount(); ++i)
+	for (uint32_t i = 0; i < rContext.getSelectedCount(); ++i)
 	{
 		glPushMatrix();
 		glTranslatef(.5f, .5f, 0);
 		glScalef(rContext.getScale(), rContext.getScale(), rContext.getScale());
-		for (z = 0; z < m_vMuliVertex.size(); z++)
+		for (uint32_t z = 0; z < m_vMuliVertex.size(); z++)
 		{
 			if (!m_vMuliVertex[z].empty())
 			{

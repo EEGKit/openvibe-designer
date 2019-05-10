@@ -31,16 +31,16 @@ void CRendererMountain::rebuild(const IRendererContext& rContext)
 {
 	CRenderer::rebuild(rContext);
 
-	uint32_t i, j, k;
+	size_t i, j, k;
 
 	m_oMountain.m_vVertex.clear();
-	m_oMountain.m_vVertex.resize(m_ui32ChannelCount * m_ui32SampleCount);
-	for (i = 0, k = 0; i < m_ui32ChannelCount; ++i)
+	m_oMountain.m_vVertex.resize(m_channelCount * m_sampleCount);
+	for (i = 0, k = 0; i < m_channelCount; ++i)
 	{
-		for (j = 0; j < m_ui32SampleCount; j++)
+		for (j = 0; j < m_sampleCount; ++j)
 		{
-			float a = i * 1.f / (m_ui32ChannelCount - 1);
-			float b = 1 - j * 1.f / (m_ui32SampleCount - 1);
+			const float a = i * 1.f / (m_channelCount - 1);
+			const float b = 1 - j * 1.f / (m_sampleCount - 1);
 			m_oMountain.m_vVertex[k].x = a;
 			m_oMountain.m_vVertex[k].y = 0;
 			m_oMountain.m_vVertex[k].z = b;
@@ -50,40 +50,43 @@ void CRendererMountain::rebuild(const IRendererContext& rContext)
 	}
 
 	m_oMountain.m_vTriangle.clear();
-	m_oMountain.m_vTriangle.resize((m_ui32ChannelCount - 1) * (m_ui32SampleCount - 1) * 6);
-	for (i = 0, k = 0; i < m_ui32ChannelCount - 1; ++i)
+	m_oMountain.m_vTriangle.resize((m_channelCount - 1) * (m_sampleCount - 1) * 6);
+	for (i = 0, k = 0; i < m_channelCount - 1; ++i)
 	{
-		for (j = 0; j < m_ui32SampleCount - 1; j++)
+		for (j = 0; j < m_sampleCount - 1; ++j)
 		{
-			m_oMountain.m_vTriangle[k * 6] = (i) * m_ui32SampleCount + (j);
-			m_oMountain.m_vTriangle[k * 6 + 1] = (i + 1) * m_ui32SampleCount + (j);
-			m_oMountain.m_vTriangle[k * 6 + 2] = (i + 1) * m_ui32SampleCount + (j + 1);
-			m_oMountain.m_vTriangle[k * 6 + 3] = (i) * m_ui32SampleCount + (j);
-			m_oMountain.m_vTriangle[k * 6 + 4] = (i + 1) * m_ui32SampleCount + (j + 1);
-			m_oMountain.m_vTriangle[k * 6 + 5] = (i) * m_ui32SampleCount + (j + 1);
+			const size_t id = k * 6;
+			const uint32_t v1 = i * m_sampleCount + j;
+			const uint32_t v2 = v1 + m_sampleCount;
+			m_oMountain.m_vTriangle[id] = v1;
+			m_oMountain.m_vTriangle[id + 1] = v2;
+			m_oMountain.m_vTriangle[id + 2] = v2 + 1;
+			m_oMountain.m_vTriangle[id + 3] = v1;
+			m_oMountain.m_vTriangle[id + 4] = v2 + 1;
+			m_oMountain.m_vTriangle[id + 5] = v1 + 1;
 			k++;
 		}
 	}
 
-	m_ui32HistoryIndex = 0;
+	m_historyIndex = 0;
 }
 
 void CRendererMountain::refresh(const IRendererContext& rContext)
 {
 	CRenderer::refresh(rContext);
 
-	if (!m_ui32HistoryCount) { return; }
+	if (!m_historyCount) { return; }
 
-	uint32_t i, j, k;
+	size_t i, k;
 
 	for (i = 0, k = 0; i < rContext.getSelectedCount(); ++i)
 	{
-		k = ((m_ui32HistoryCount - 1) / m_ui32SampleCount) * m_ui32SampleCount;
-		std::vector<float>& l_vHistory = m_vHistory[rContext.getSelected(i)];
-		CVertex* l_pVertex = &m_oMountain.m_vVertex[i * m_ui32SampleCount];
-		for (j = 0; j < m_ui32SampleCount; j++, k++)
+		k = ((m_historyCount - 1) / m_sampleCount) * m_sampleCount;
+		std::vector<float>& l_vHistory = m_history[rContext.getSelected(i)];
+		CVertex* l_pVertex = &m_oMountain.m_vVertex[i * m_sampleCount];
+		for (size_t j = 0; j < m_sampleCount; j++, k++)
 		{
-			if (/*k>=m_ui32HistoryIndex && */k < m_ui32HistoryCount)
+			if (/*k>=m_historyIndex && */k < m_historyCount)
 			{
 				l_pVertex[j].u = l_vHistory[k];
 				l_pVertex[j].y = l_vHistory[k] / 2;
@@ -93,15 +96,15 @@ void CRendererMountain::refresh(const IRendererContext& rContext)
 
 	m_oMountain.compile();
 
-	m_ui32HistoryIndex = m_ui32HistoryCount;
+	m_historyIndex = m_historyCount;
 }
 
 bool CRendererMountain::render(const IRendererContext& rContext)
 {
 	if (m_oMountain.m_vVertex.empty()) { return false; }
-	if (!m_ui32HistoryCount) { return false; }
+	if (!m_historyCount) { return false; }
 
-	float d = 2.5f;
+	const float d = 2.5f;
 
 	glEnable(GL_LIGHTING);
 
@@ -125,7 +128,7 @@ bool CRendererMountain::render(const IRendererContext& rContext)
 	glLoadIdentity();
 	glScalef(3 * rContext.getZoom(), 3 * rContext.getZoom(), 3 * rContext.getZoom());
 	glTranslatef(-.5f, 0, -.5f);
-	glScalef(m_ui32ChannelCount * 1.f / rContext.getSelectedCount(), rContext.getScale(), 1);
+	glScalef(m_channelCount * 1.f / rContext.getSelectedCount(), rContext.getScale(), 1);
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);
@@ -135,7 +138,7 @@ bool CRendererMountain::render(const IRendererContext& rContext)
 	glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_oMountain.m_vVertex[0].u);
 
 	glColor3f(rContext.getTranslucency(), rContext.getTranslucency(), rContext.getTranslucency());
-	glDrawElements(GL_TRIANGLES, (rContext.getSelectedCount() - 1) * (m_ui32SampleCount - 1) * 6, GL_UNSIGNED_INT, &m_oMountain.m_vTriangle[0]);
+	glDrawElements(GL_TRIANGLES, (rContext.getSelectedCount() - 1) * (m_sampleCount - 1) * 6, GL_UNSIGNED_INT, &m_oMountain.m_vTriangle[0]);
 	/*
 		::glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		::glColor3f(0, 0, 0);

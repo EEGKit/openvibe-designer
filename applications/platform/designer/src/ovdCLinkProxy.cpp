@@ -7,15 +7,10 @@ using namespace OpenViBEDesigner;
 
 CLinkProxy::CLinkProxy(const ILink& rLink)
 	: m_pConstLink(&rLink)
-	  , m_pLink(nullptr)
-	  , m_iXSource(0)
-	  , m_iYSource(0)
-	  , m_iXTarget(0)
-	  , m_iYTarget(0)
 {
 	if (m_pConstLink)
 	{
-		TAttributeHandler l_oAttributeHandler(*m_pConstLink);
+		const TAttributeHandler l_oAttributeHandler(*m_pConstLink);
 		m_iXSource = l_oAttributeHandler.getAttributeValue<int>(OV_AttributeId_Link_XSourcePosition);
 		m_iYSource = l_oAttributeHandler.getAttributeValue<int>(OV_AttributeId_Link_YSourcePosition);
 		m_iXTarget = l_oAttributeHandler.getAttributeValue<int>(OV_AttributeId_Link_XTargetPosition);
@@ -26,14 +21,10 @@ CLinkProxy::CLinkProxy(const ILink& rLink)
 CLinkProxy::CLinkProxy(IScenario& rScenario, const CIdentifier& rLinkIdentifier)
 	: m_pConstLink(rScenario.getLinkDetails(rLinkIdentifier))
 	  , m_pLink(rScenario.getLinkDetails(rLinkIdentifier))
-	  , m_iXSource(0)
-	  , m_iYSource(0)
-	  , m_iXTarget(0)
-	  , m_iYTarget(0)
 {
 	if (m_pConstLink)
 	{
-		TAttributeHandler l_oAttributeHandler(*m_pConstLink);
+		const TAttributeHandler l_oAttributeHandler(*m_pConstLink);
 		m_iXSource = l_oAttributeHandler.getAttributeValue<int>(OV_AttributeId_Link_XSourcePosition);
 		m_iYSource = l_oAttributeHandler.getAttributeValue<int>(OV_AttributeId_Link_YSourcePosition);
 		m_iXTarget = l_oAttributeHandler.getAttributeValue<int>(OV_AttributeId_Link_XTargetPosition);
@@ -86,43 +77,13 @@ CLinkProxy::~CLinkProxy()
 	}
 }
 
-CLinkProxy::operator ILink*()
-{
-	return m_pLink;
-}
-
-CLinkProxy::operator const ILink*()
-{
-	return m_pConstLink;
-}
-
-int32_t CLinkProxy::getXSource()
-{
-	return m_iXSource;
-}
-
-int32_t CLinkProxy::getYSource()
-{
-	return m_iYSource;
-}
-
-int32_t CLinkProxy::getXTarget()
-{
-	return m_iXTarget;
-}
-
-int32_t CLinkProxy::getYTarget()
-{
-	return m_iYTarget;
-}
-
-void CLinkProxy::setSource(int32_t i32XSource, int32_t i32YSource)
+void CLinkProxy::setSource(const int i32XSource, const int i32YSource)
 {
 	m_iXSource = i32XSource;
 	m_iYSource = i32YSource;
 }
 
-void CLinkProxy::setTarget(int32_t i32XTarget, int32_t i32YTarget)
+void CLinkProxy::setTarget(const int i32XTarget, const int i32YTarget)
 {
 	m_iXTarget = i32XTarget;
 	m_iYTarget = i32YTarget;

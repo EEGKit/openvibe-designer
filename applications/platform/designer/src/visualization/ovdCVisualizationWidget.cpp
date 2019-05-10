@@ -8,7 +8,10 @@
 #ifndef HAS_ImbuedOStreamWithCIdentifier
 namespace OpenViBE
 {
-	std::ostream& operator<<(std::ostream& os, const OpenViBE::CIdentifier& identifier) { return os << identifier.toString().toASCIIString(); }
+	std::ostream& operator<<(std::ostream& os, const OpenViBE::CIdentifier& identifier)
+	{
+		return os << identifier.toString().toASCIIString();
+	}
 }
 #endif
 
@@ -20,16 +23,13 @@ using namespace Kernel;
 using namespace OpenViBEVisualizationToolkit;
 
 CVisualizationWidget::CVisualizationWidget(const IKernelContext& kernelContext)
-	: m_KernelContext(kernelContext)
-	  , m_Identifier(OV_UndefinedIdentifier)
-	  , m_Type(EVisualizationWidget_Undefined)
-	  , m_ParentIdentifier(OV_UndefinedIdentifier)
-	  , m_BoxIdentifier(OV_UndefinedIdentifier) { }
+	: m_KernelContext(kernelContext), m_Identifier(OV_UndefinedIdentifier), m_Type(EVisualizationWidget_Undefined)
+	  , m_ParentIdentifier(OV_UndefinedIdentifier), m_BoxIdentifier(OV_UndefinedIdentifier) {}
 
-CVisualizationWidget::~CVisualizationWidget() = default;
+CVisualizationWidget::~CVisualizationWidget() {}
 
-bool CVisualizationWidget::initialize(const CIdentifier& identifier, const CString& name, EVisualizationWidgetType type,
-									  const CIdentifier& parentIdentifier, const CIdentifier& boxIdentifier, uint32_t childCount)
+bool CVisualizationWidget::initialize(const CIdentifier& identifier, const CString& name, const EVisualizationWidgetType type,
+									  const CIdentifier& parentIdentifier, const CIdentifier& boxIdentifier, const uint32 childCount)
 {
 	m_Identifier = identifier;
 	m_Name = name;
@@ -44,25 +44,19 @@ CIdentifier CVisualizationWidget::getIdentifier() const { return m_Identifier; }
 
 const CString& CVisualizationWidget::getName() const { return m_Name; }
 
-void CVisualizationWidget::setName(const CString& name)
-{
-	m_Name = name;
-}
+void CVisualizationWidget::setName(const CString& name) { m_Name = name; }
 
 EVisualizationWidgetType CVisualizationWidget::getType() const { return m_Type; }
 
 CIdentifier CVisualizationWidget::getParentIdentifier() const { return m_ParentIdentifier; }
 
-void CVisualizationWidget::setParentIdentifier(const CIdentifier& parentIdentifier)
-{
-	m_ParentIdentifier = parentIdentifier;
-}
+void CVisualizationWidget::setParentIdentifier(const CIdentifier& parentIdentifier) { m_ParentIdentifier = parentIdentifier; }
 
 CIdentifier CVisualizationWidget::getBoxIdentifier() const { return m_BoxIdentifier; }
 
 uint32_t CVisualizationWidget::getNbChildren() const { return uint32_t(m_Children.size()); }
 
-bool CVisualizationWidget::getChildIndex(const CIdentifier& identifier, uint32_t& index) const
+bool CVisualizationWidget::getChildIndex(const CIdentifier& identifier, uint32& index) const
 {
 	for (index = 0; index < m_Children.size(); index++)
 	{
@@ -79,7 +73,7 @@ bool CVisualizationWidget::addChild(const CIdentifier& childIdentifier)
 
 bool CVisualizationWidget::removeChild(const CIdentifier& identifier)
 {
-	for (unsigned int i = 0; i < m_Children.size(); ++i)
+	for (unsigned int i = 0; i < m_Children.size(); i++)
 	{
 		if (m_Children[i] == identifier)
 		{
@@ -96,28 +90,25 @@ bool CVisualizationWidget::removeChild(const CIdentifier& identifier)
 		}
 	}
 
-	OV_ERROR_DRF("Trying to remove non existing visualization widget " << identifier,
-				 ErrorType::ResourceNotFound);
+	OV_ERROR_DRF("Trying to remove non existing visualization widget " << identifier, ErrorType::ResourceNotFound);
 }
 
-bool CVisualizationWidget::getChildIdentifier(uint32_t childIndex, CIdentifier& identifier) const
+bool CVisualizationWidget::getChildIdentifier(const uint32_t childIndex, CIdentifier& identifier) const
 {
 	if (childIndex >= m_Children.size())
 	{
 		identifier = OV_UndefinedIdentifier;
-		OV_ERROR_DRF("Child with index " << childIndex << " not found",
-					 ErrorType::ResourceNotFound);
+		OV_ERROR_DRF("Child with index " << childIndex << " not found", ErrorType::ResourceNotFound);
 	}
 	identifier = m_Children[childIndex];
 	return true;
 }
 
-bool CVisualizationWidget::setChildIdentifier(uint32_t childIndex, const CIdentifier& identifier)
+bool CVisualizationWidget::setChildIdentifier(const uint32_t childIndex, const CIdentifier& identifier)
 {
 	if (childIndex >= m_Children.size())
 	{
-		OV_ERROR_DRF("Child with index " << childIndex << " not found",
-					 ErrorType::ResourceNotFound);
+		OV_ERROR_DRF("Child with index " << childIndex << " not found", ErrorType::ResourceNotFound);
 	}
 	m_Children[childIndex] = identifier;
 	return true;

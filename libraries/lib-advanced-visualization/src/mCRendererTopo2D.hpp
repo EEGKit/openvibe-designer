@@ -1,5 +1,4 @@
-#ifndef __Mensia_AdvancedVisualization_CRendererTopo2D_H__
-#define __Mensia_AdvancedVisualization_CRendererTopo2D_H__
+#pragma once
 
 #include "mCRendererTopo.hpp"
 
@@ -16,5 +15,3 @@ namespace Mensia
 		};
 	} // namespace AdvancedVisualization
 }  // namespace Mensia
-
-#endif // __Mensia_AdvancedVisualization_CRendererTopo2D_H__

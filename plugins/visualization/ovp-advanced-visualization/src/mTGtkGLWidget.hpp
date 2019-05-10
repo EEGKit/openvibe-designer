@@ -18,9 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef __OpenViBEPlugins_TGtkGLWidget_H__
-#define __OpenViBEPlugins_TGtkGLWidget_H__
+#pragma once
 
 #include "m_defines.hpp"
 #include "m_VisualizationTools.hpp"
@@ -51,15 +49,7 @@ namespace Mensia
 		{
 		public:
 
-			TGtkGLWidget()
-
-				: m_pWidget(nullptr)
-				  , m_pLeft(nullptr)
-				  , m_pRight(nullptr)
-				  , m_pBottom(nullptr)
-				  , m_pTimeoutSource(nullptr)
-				  , m_pBox(nullptr)
-				  , m_ui32TextureId(0) { }
+			TGtkGLWidget() : m_pBox(nullptr) { }
 
 			virtual ~TGtkGLWidget()
 
@@ -168,7 +158,7 @@ namespace Mensia
 				}
 			}
 
-			virtual void redrawBottom(bool bImmediate = false)
+			virtual void redrawBottom(const bool bImmediate = false)
 			{
 				if (bImmediate)
 				{
@@ -181,18 +171,10 @@ namespace Mensia
 				}
 			}
 
-		public:
-
-			virtual void setPointSmoothingActive(bool bActive = false)
+			virtual void setPointSmoothingActive(const bool bActive = false)
 			{
-				if (bActive)
-				{
-					glEnable(GL_POINT_SMOOTH);
-				}
-				else
-				{
-					glDisable(GL_POINT_SMOOTH);
-				}
+				if (bActive) { glEnable(GL_POINT_SMOOTH); }
+				else { glDisable(GL_POINT_SMOOTH); }
 			}
 
 			virtual uint32_t createTexture(const std::string& sValue)
@@ -201,9 +183,7 @@ namespace Mensia
 
 				if (m_ui32TextureId == 0)
 				{
-					std::string l_sValue = (sValue.empty() ? "0:0,0,100; 25:0,100,100; 50:0,49,0; 75:100,100,0; 100:100,0,0" : sValue);
-
-					uint32_t i;
+					const std::string l_sValue = (sValue.empty() ? "0:0,0,100; 25:0,100,100; 50:0,49,0; 75:100,100,0; 100:100,0,0" : sValue);
 
 					OpenViBE::CMatrix m_oGradientBase;
 					OpenViBE::CMatrix m_oGradient;
@@ -211,7 +191,7 @@ namespace Mensia
 					OpenViBEVisualizationToolkit::Tools::ColorGradient::interpolate(m_oGradient, m_oGradientBase, M_GRADIENT_SIZE);
 
 					float l_vTexture[M_GRADIENT_SIZE][3];
-					for (i = 0; i < M_GRADIENT_SIZE; ++i)
+					for (uint32_t i = 0; i < M_GRADIENT_SIZE; ++i)
 					{
 						l_vTexture[i][0] = float(m_oGradient[i * 4 + 1] * .01);
 						l_vTexture[i][1] = float(m_oGradient[i * 4 + 2] * .01);
@@ -236,15 +216,15 @@ namespace Mensia
 
 		protected:
 
-			GtkWidget* m_pWidget;
-			GtkWidget* m_pLeft;
-			GtkWidget* m_pRight;
-			GtkWidget* m_pBottom;
-			GSource* m_pTimeoutSource;
+			GtkWidget* m_pWidget = nullptr;
+			GtkWidget* m_pLeft = nullptr;
+			GtkWidget* m_pRight = nullptr;
+			GtkWidget* m_pBottom = nullptr;
+			GSource* m_pTimeoutSource = nullptr;
 
-			TBox* m_pBox;
+			TBox* m_pBox = nullptr;
 
-			uint32_t m_ui32TextureId;
+			uint32_t m_ui32TextureId = 0;
 
 		private:
 
@@ -255,7 +235,7 @@ namespace Mensia
 				return TRUE;
 			}
 
-			static gboolean __configure_cb(GtkWidget* pWidget, GdkEventConfigure* pEvent, TBox* pBox)
+			static gboolean __configure_cb(GtkWidget* pWidget, GdkEventConfigure* /*pEvent*/, TBox* pBox)
 			{
 				GtkGL::preRender(pWidget);
 
@@ -268,11 +248,11 @@ namespace Mensia
 				return TRUE;
 			}
 
-			static gboolean __expose_cb(GtkWidget* pWidget, GdkEventExpose* pEvent, TBox* pBox)
+			static gboolean __expose_cb(GtkWidget* pWidget, GdkEventExpose* /*pEvent*/, TBox* pBox)
 			{
-				float d = 1.f;
-				float dx = d / (pWidget->allocation.width - d);
-				float dy = d / (pWidget->allocation.height - d);
+				const float d = 1.f;
+				const float dx = d / (pWidget->allocation.width - d);
+				const float dy = d / (pWidget->allocation.height - d);
 
 				GtkGL::preRender(pWidget);
 
@@ -306,9 +286,9 @@ namespace Mensia
 				glColor3f(1, 1, 1);
 
 				// Lighting
-				float fAmbient = 0.0f;
-				float fDiffuse = 1.0f;
-				float fSpecular = 1.0f;
+				const float fAmbient = 0.0f;
+				const float fDiffuse = 1.0f;
+				const float fSpecular = 1.0f;
 				GLfloat l_vAmbient[] = { fAmbient, fAmbient, fAmbient, 1 };
 				GLfloat l_vDiffuse[] = { fDiffuse, fDiffuse, fDiffuse, 1 };
 				GLfloat l_vSpecular[] = { fSpecular, fSpecular, fSpecular, 1 };
@@ -335,7 +315,7 @@ namespace Mensia
 				return TRUE;
 			}
 
-			static gboolean __enter_notify_cb(GtkWidget* pWidget, GdkEventCrossing* pEvent, TBox* pBox)
+			static gboolean __enter_notify_cb(GtkWidget* /*pWidget*/, GdkEventCrossing* /*pEvent*/, TBox* pBox)
 			{
 				pBox->redraw();
 				//				pBox->request();
@@ -343,25 +323,25 @@ namespace Mensia
 				return TRUE;
 			}
 
-			static gboolean __expose_left_cb(GtkWidget* pWidget, GdkEventExpose* pEvent, TBox* pBox)
+			static gboolean __expose_left_cb(GtkWidget* /*pWidget*/, GdkEventExpose* /*pEvent*/, TBox* pBox)
 			{
 				pBox->drawLeft();
 				return TRUE;
 			}
 
-			static gboolean __expose_right_cb(GtkWidget* pWidget, GdkEventExpose* pEvent, TBox* pBox)
+			static gboolean __expose_right_cb(GtkWidget* /*pWidget*/, GdkEventExpose* /*pEvent*/, TBox* pBox)
 			{
 				pBox->drawRight();
 				return TRUE;
 			}
 
-			static gboolean __expose_bottom_cb(GtkWidget* pWidget, GdkEventExpose* pEvent, TBox* pBox)
+			static gboolean __expose_bottom_cb(GtkWidget* /*pWidget*/, GdkEventExpose* /*pEvent*/, TBox* pBox)
 			{
 				pBox->drawBottom();
 				return TRUE;
 			}
 
-			static gboolean __mouse_button_cb(GtkWidget* pWidget, GdkEventButton* pEvent, TBox* pBox)
+			static gboolean __mouse_button_cb(GtkWidget* /*pWidget*/, GdkEventButton* pEvent, TBox* pBox)
 			{
 				int l_iStatus = 0;
 				switch (pEvent->type)
@@ -379,19 +359,19 @@ namespace Mensia
 				return TRUE;
 			}
 
-			static gboolean __motion_notify_cb(GtkWidget* pWidget, GdkEventMotion* pEvent, TBox* pBox)
+			static gboolean __motion_notify_cb(GtkWidget* /*pWidget*/, GdkEventMotion* pEvent, TBox* pBox)
 			{
 				pBox->mouseMotion(int32_t(pEvent->x), int32_t(pEvent->y));
 				return TRUE;
 			}
 
-			static gboolean __key_press_cb(GtkWidget* pWidget, GdkEventKey* pEvent, TBox* pBox)
+			static gboolean __key_press_cb(GtkWidget* /*pWidget*/, GdkEventKey* pEvent, TBox* pBox)
 			{
 				pBox->keyboard(0, 0, /*pEvent->x, pEvent->y,*/ pEvent->keyval, true);
 				return TRUE;
 			}
 
-			static gboolean __key_release_cb(GtkWidget* pWidget, GdkEventKey* pEvent, TBox* pBox)
+			static gboolean __key_release_cb(GtkWidget* /*pWidget*/, GdkEventKey* pEvent, TBox* pBox)
 			{
 				pBox->keyboard(0, 0, /*pEvent->x, pEvent->y,*/ pEvent->keyval, false);
 				return TRUE;
@@ -399,5 +379,3 @@ namespace Mensia
 		};
 	}  // namespace AdvancedVisualization
 }  // namespace Mensia
-
-#endif // __OpenViBEPlugins_TGtkGLWidget_H__

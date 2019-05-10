@@ -18,8 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __Mensia_AdvancedVisualization_CRendererBitmap_H__
-#define __Mensia_AdvancedVisualization_CRendererBitmap_H__
+#pragma once
 
 #include "mCRenderer.hpp"
 
@@ -37,5 +36,3 @@ namespace Mensia
 		};
 	}  // namespace AdvancedVisualization
 }  // namespace Mensia
-
-#endif // __Mensia_AdvancedVisualization_CRendererBitmap_H__

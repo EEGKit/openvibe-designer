@@ -18,9 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef __Mensia_AdvancedVisualization_Defines_H__
-#define __Mensia_AdvancedVisualization_Defines_H__
+#pragma once
 
 //___________________________________________________________________//
 //                                                                   //
@@ -52,5 +50,3 @@
 #else
 #define LMAV_API LMAV_API_Import
 #endif
-
-#endif // __Mensia_AdvancedVisualization_Defines_H__

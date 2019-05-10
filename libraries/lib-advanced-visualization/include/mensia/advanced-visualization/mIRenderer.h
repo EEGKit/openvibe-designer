@@ -18,8 +18,6 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
-
 #pragma once
 
 #include "m_defines.h"
@@ -59,8 +57,6 @@ namespace Mensia
 
 			static IRenderer* create(int eRendererType, bool bStimulation);
 			static void release(IRenderer* pRenderer);
-
-		public:
 
 			virtual ~IRenderer() = default;
 

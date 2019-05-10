@@ -5,7 +5,7 @@ using namespace OpenViBE;
 using namespace Kernel;
 using namespace OpenViBEDesigner;
 
-CInputDialog::CInputDialog(const char* sGtkBuilder, fpButtonCB fpOKButtonCB, void* pUserData, const char* sTitle, const char* sLabel, const char* sEntry)
+CInputDialog::CInputDialog(const char* sGtkBuilder, const fpButtonCB fpOKButtonCB, void* pUserData, const char* sTitle, const char* sLabel, const char* sEntry)
 {
 	m_fpOKButtonCB = fpOKButtonCB;
 	m_pUserData = pUserData;
@@ -24,14 +24,8 @@ CInputDialog::CInputDialog(const char* sGtkBuilder, fpButtonCB fpOKButtonCB, voi
 	GTK_WIDGET_SET_FLAGS(GTK_WIDGET(m_pInputDialogEntry), GDK_KEY_PRESS_MASK);
 	g_signal_connect(G_OBJECT(m_pInputDialogEntry), "key-press-event", G_CALLBACK(key_press_event_cb), m_pInputDialog);
 
-	if (sLabel != nullptr)
-	{
-		gtk_label_set(m_pInputDialogLabel, sLabel);
-	}
-	if (sEntry != nullptr)
-	{
-		gtk_entry_set_text(m_pInputDialogEntry, sEntry);
-	}
+	if (sLabel != nullptr) { gtk_label_set(m_pInputDialogLabel, sLabel); }
+	if (sEntry != nullptr) { gtk_entry_set_text(m_pInputDialogEntry, sEntry); }
 
 	g_signal_connect(G_OBJECT(m_pInputDialogOKButton), "clicked", G_CALLBACK(button_clicked_cb), this);
 	g_signal_connect(G_OBJECT(m_pInputDialogCancelButton), "clicked", G_CALLBACK(button_clicked_cb), this);
@@ -47,24 +41,17 @@ CInputDialog::~CInputDialog()
 
 void CInputDialog::run()
 {
-	gint l_iResult = gtk_dialog_run(m_pInputDialog);
+	const gint l_iResult = gtk_dialog_run(m_pInputDialog);
 
 	if (l_iResult == GTK_RESPONSE_ACCEPT)
 	{
-		if (m_fpOKButtonCB != nullptr)
-		{
-			m_fpOKButtonCB(GTK_WIDGET(m_pInputDialogOKButton), this);
-		}
+		if (m_fpOKButtonCB != nullptr) { m_fpOKButtonCB(GTK_WIDGET(m_pInputDialogOKButton), this); }
 	}
 
 	gtk_widget_hide_all(GTK_WIDGET(m_pInputDialog));
 }
 
-void* CInputDialog::getUserData() { return m_pUserData; }
-
-const char* CInputDialog::getEntry() { return (const char*)gtk_entry_get_text(m_pInputDialogEntry); }
-
-gboolean CInputDialog::key_press_event_cb(GtkWidget* pWidget, GdkEventKey* pEventKey, gpointer pUserData)
+gboolean CInputDialog::key_press_event_cb(GtkWidget* /*pWidget*/, GdkEventKey* pEventKey, gpointer pUserData)
 {
 	if (pEventKey->keyval == GDK_Return || pEventKey->keyval == GDK_KP_Enter)
 	{

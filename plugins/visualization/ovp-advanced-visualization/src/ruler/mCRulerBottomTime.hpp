@@ -18,9 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef __OpenViBEPlugins_CRulerBottomTime_H__
-#define __OpenViBEPlugins_CRulerBottomTime_H__
+#pragma once
 
 #include "../mIRuler.hpp"
 #include "../m_VisualizationTools.hpp"
@@ -40,32 +38,30 @@ namespace Mensia
 				if (m_pRenderer->getHistoryCount() == 0) { return; }
 				if (m_pRenderer->getHistoryIndex() == 0) { return; }
 
-				uint32_t l_ui32SampleCount = m_pRenderer->getSampleCount();
-				uint32_t l_ui32HistoryIndex = m_pRenderer->getHistoryIndex();
-				uint64_t l_ui64SampleDuration = m_pRendererContext->getSampleDuration();
+				const uint32_t l_ui32SampleCount = m_pRenderer->getSampleCount();
+				const uint32_t l_ui32HistoryIndex = m_pRenderer->getHistoryIndex();
+				const uint64_t l_ui64SampleDuration = m_pRendererContext->getSampleDuration();
 
-				std::vector<double> l_vRange1;
-				std::vector<double> l_vRange2;
 				std::vector<double>::iterator it;
 
-				uint32_t l_ui32LeftIndex = l_ui32HistoryIndex - l_ui32HistoryIndex % l_ui32SampleCount;
-				uint32_t l_ui32MidIndex = l_ui32HistoryIndex;
+				const uint32_t l_ui32LeftIndex = l_ui32HistoryIndex - l_ui32HistoryIndex % l_ui32SampleCount;
+				const uint32_t l_ui32MidIndex = l_ui32HistoryIndex;
 				double l_f64StartTime = ((l_ui32LeftIndex * l_ui64SampleDuration) >> 16) / 65536.;
 				double l_f64MidTime = ((l_ui32MidIndex * l_ui64SampleDuration) >> 16) / 65536.;
-				double l_f64Duration = ((l_ui32SampleCount * l_ui64SampleDuration) >> 16) / 65536.;
+				const double l_f64Duration = ((l_ui32SampleCount * l_ui64SampleDuration) >> 16) / 65536.;
 
-				double l_f64Offset = (m_pRenderer->getTimeOffset() >> 16) / 65536.;
+				const double l_f64Offset = (m_pRenderer->getTimeOffset() >> 16) / 65536.;
 				l_f64StartTime += l_f64Offset;
 				l_f64MidTime += l_f64Offset;
 
-				l_vRange1 = this->split_range(l_f64StartTime - l_f64Duration, l_f64StartTime, 10);
-				l_vRange2 = this->split_range(l_f64StartTime, l_f64StartTime + l_f64Duration, 10);
+				std::vector<double> l_vRange1 = this->split_range(l_f64StartTime - l_f64Duration, l_f64StartTime, 10);
+				std::vector<double> l_vRange2 = this->split_range(l_f64StartTime, l_f64StartTime + l_f64Duration, 10);
 
 				gint w, h, x;
 
 				gdk_drawable_get_size(pWidget->window, &w, &h);
 				GdkGC* l_pDrawGC = gdk_gc_new(pWidget->window);
-				for (it = l_vRange1.begin(); it != l_vRange1.end(); it++)
+				for (it = l_vRange1.begin(); it != l_vRange1.end(); ++it)
 				{
 					if (*it >= 0 && *it + l_f64Duration > l_f64MidTime)
 					{
@@ -76,7 +72,7 @@ namespace Mensia
 						g_object_unref(l_pPangoLayout);
 					}
 				}
-				for (it = l_vRange2.begin(); it != l_vRange2.end(); it++)
+				for (it = l_vRange2.begin(); it != l_vRange2.end(); ++it)
 				{
 					if (*it >= 0 && *it < l_f64MidTime)
 					{
@@ -92,5 +88,3 @@ namespace Mensia
 		};
 	}  // namespace AdvancedVisualization
 } // namespace Mensia
-
-#endif // __OpenViBEPlugins_CRulerBottomTime_H__

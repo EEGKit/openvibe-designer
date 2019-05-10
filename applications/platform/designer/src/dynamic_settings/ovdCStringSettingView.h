@@ -1,5 +1,4 @@
-#ifndef __OpenViBE_Designer_Setting_CStringSettingView_H__
-#define __OpenViBE_Designer_Setting_CStringSettingView_H__
+#pragma once
 
 #include "../ovd_base.h"
 #include "ovdCAbstractSettingView.h"
@@ -13,17 +12,14 @@ namespace OpenViBEDesigner
 		public:
 			CStringSettingView(OpenViBE::Kernel::IBox& rBox, uint32_t ui32Index, OpenViBE::CString &rBuilderName);
 
-			virtual void getValue(OpenViBE::CString &rValue) const;
-			virtual void setValue(const OpenViBE::CString &rValue);
+			void getValue(OpenViBE::CString& rValue) const override;
+			void setValue(const OpenViBE::CString& rValue) override;
 
 			void onChange();
 
 		private:
-			::GtkEntry* m_pEntry;
-			bool m_bOnValueSetting;
+			::GtkEntry* m_pEntry = nullptr;
+			bool m_bOnValueSetting = false;
 		};
 	}
-
 }
-
-#endif // __OpenViBE_Designer_Setting_CStringSettingView_H__

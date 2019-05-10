@@ -18,9 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef __OpenViBEPlugins_CRulerTexture_H__
-#define __OpenViBEPlugins_CRulerTexture_H__
+#pragma once
 
 #include "../mIRuler.hpp"
 
@@ -63,5 +61,3 @@ namespace Mensia
 		};
 	}  // namespace AdvancedVisualization
 }  // namespace Mensia
-
-#endif // __OpenViBEPlugins_CRulerTexture_H__

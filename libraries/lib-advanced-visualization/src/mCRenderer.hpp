@@ -18,19 +18,18 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __Mensia_AdvancedVisualization_CRenderer_H__
-#define __Mensia_AdvancedVisualization_CRenderer_H__
+#pragma once
 
 #include "mIRenderer.h"
 #include "mIRendererContext.h"
 #include "mCVertex.hpp"
 
 #if defined TARGET_OS_Windows
-#include <Windows.h>
+#include <windows.h>
 #endif // TARGET_OS_Windows
 
-#include <gl/GL.h>
-#include <gl/GLU.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
 
 #include <string>
 #include <map>
@@ -42,8 +41,6 @@ namespace Mensia
 	{
 		class CRenderer : public IRenderer
 		{
-		private:
-
 			CRenderer(const CRenderer&) = delete;
 
 		public:
@@ -54,7 +51,7 @@ namespace Mensia
 			void setChannelLocalisation(const char* sFilename) override;
 			void setChannelCount(uint32_t ui32ChannelCount) override;
 			void setSampleCount(uint32_t ui32SampleCount) override;
-			void setHistoryDrawIndex(uint32_t ui32HistoryDrawIndex) override;
+			void setHistoryDrawIndex(uint32_t ui32Index) override;
 			void feed(const float* pDataVector) override;
 			void feed(const float* pDataVector, uint32_t ui32SampleCount) override;
 			void feed(uint64_t ui64StimulationDate, uint64_t ui64StimulationId) override;
@@ -62,16 +59,16 @@ namespace Mensia
 
 			float getSuggestedScale() override;
 
-			void clear(uint32_t ui32SampleCountToKeep) override;
+			void clear(uint32_t sampleCountToKeep) override;
 
 			uint32_t getChannelCount() const override;
 			uint32_t getSampleCount() const override;
 			uint32_t getHistoryCount() const override;
 			uint32_t getHistoryIndex() const override;
-			virtual bool getSampleAtERPFraction(float f32Alpha, std::vector<float>& vSample) const;
+			virtual bool getSampleAtERPFraction(float fERPFraction, std::vector<float>& vSample) const;
 
-			void setTimeOffset(uint64_t offset) override { m_ui64TimeOffset = offset; };
-			uint64_t getTimeOffset() const override { return m_ui64TimeOffset; }
+			void setTimeOffset(uint64_t offset) override { m_timeOffset = offset; };
+			uint64_t getTimeOffset() const override { return m_timeOffset; }
 
 			void rebuild(const IRendererContext& rContext) override;
 			void refresh(const IRendererContext& rContext) override;
@@ -79,13 +76,13 @@ namespace Mensia
 
 			void clearRegionSelection() override { }
 			uint32_t getRegionCategoryCount() override { return 0; }
-			uint32_t getRegionCount(uint32_t ui32RegionCategory) override { return 0; }
-			const char* getRegionCategoryName(uint32_t ui32RegionCategory) override { return nullptr; }
-			const char* getRegionName(uint32_t ui32RegionCategory, uint32_t ui32RegionIndex) override { return nullptr; }
-			void selectRegion(uint32_t ui32RegionCategory, const char* sRegionName) override { }
-			void selectRegion(uint32_t ui32RegionCategory, uint32_t ui32RegionIndex) override { }
+			uint32_t getRegionCount(uint32_t /*ui32RegionCategory*/) override { return 0; }
+			const char* getRegionCategoryName(uint32_t /*ui32RegionCategory*/) override { return nullptr; }
+			const char* getRegionName(uint32_t /*ui32RegionCategory*/, uint32_t /*ui32RegionIndex*/) override { return nullptr; }
+			void selectRegion(uint32_t /*ui32RegionCategory*/, const char* /*sRegionName*/) override { }
+			void selectRegion(uint32_t /*ui32RegionCategory*/, uint32_t /*ui32RegionIndex*/) override { }
 
-			virtual void SetFaceMeshVisible(bool bVisible = true) { }
+			virtual void SetFaceMeshVisible(bool /*bVisible = true*/) { }
 
 			virtual void draw3DCoordinateSystem();
 			virtual void draw2DCoordinateSystem();
@@ -97,29 +94,27 @@ namespace Mensia
 
 		protected:
 
-			std::string m_sChannelLocalisationFilename;
-			uint32_t m_ui32HistoryIndex;
-			uint32_t m_ui32HistoryDrawIndex;
-			uint32_t m_ui32HistoryCount;
-			uint32_t m_ui32ChannelCount;
-			uint32_t m_ui32SampleCount;
+			std::string m_channelLocalisationFilename;
+			uint32_t m_historyIndex = 0;
+			uint32_t m_historyDrawIndex = 0;
+			uint32_t m_historyCount = 0;
+			uint32_t m_channelCount = 0;
+			uint32_t m_sampleCount = 1;
 
-			float m_f32InverseChannelCount;
-			float m_f32InverseSampleCount;
-			uint32_t m_ui32AutoDecimationFactor;
+			float m_inverseChannelCount = 1.0;
+			float m_inverseSampleCount = 1.0;
+			uint32_t m_autoDecimationFactor = 1;
 
-			float m_f32ERPFraction;
-			uint32_t m_ui32SampleIndexERP;
+			float m_ERPFraction = 0.0;
+			uint32_t m_sampleIndexERP = 0;
 
-			uint64_t m_ui64TimeOffset;
+			uint64_t m_timeOffset = 0;
 
-			//			std::map < std::string, CVertex > m_vChannelLocalisation;
-			std::vector<std::pair<double, uint64_t>> m_vStimulationHistory;
-			std::vector<std::vector<float>> m_vHistory;
-			std::vector<std::vector<CVertex>> m_vVertex;
-			std::vector<uint32_t> m_vMesh;
+			//			std::map < std::string, CVertex > m_channelLocalisation;
+			std::vector<std::pair<double, uint64_t>> m_stimulationHistory;
+			std::vector<std::vector<float>> m_history;
+			std::vector<std::vector<CVertex>> m_vertex;
+			std::vector<uint32_t> m_mesh;
 		};
 	} // namespace AdvancedVisualization
 } // namespace Mensia
-
-#endif // __Mensia_AdvancedVisualization_CRenderer_H__

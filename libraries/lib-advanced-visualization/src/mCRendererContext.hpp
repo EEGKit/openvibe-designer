@@ -18,9 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef __Mensia_AdvancedVisualization_CRendererContext_H__
-#define __Mensia_AdvancedVisualization_CRendererContext_H__
+#pragma once
 
 #include "mIRendererContext.h"
 #include "mCVertex.hpp"
@@ -45,7 +43,7 @@ namespace Mensia
 
 			void clearChannelInfo() override;
 			void addChannel(const std::string& sChannelName, float x, float y, float z) override;
-			void selectChannel(uint32_t ui32Index) override;
+			void selectChannel(uint32_t index) override;
 			void unselectChannel(uint32_t ui32Index) override;
 			void sortSelectedChannel(uint32_t ui32SortMode) override;
 
@@ -69,7 +67,7 @@ namespace Mensia
 			void setXYZPlotDepth(bool bHasDepth) override;
 			void setAxisDisplay(bool bIsAxisDisplayed) override;
 			void setPositiveOnly(bool bPositiveOnly) override;
-			void setTimeLocked(bool bTimeLocked) override;
+			void setTimeLocked(bool timeLocked) override;
 			void setScrollModeActive(bool bScrollModeActive) override;
 			void setScaleVisibility(bool bVisibility) override;
 			void setCheckBoardVisibility(bool bVisibility) override;
@@ -89,8 +87,8 @@ namespace Mensia
 			bool getChannelLocalisation(uint32_t ui32Index, float& x, float& y, float& z) const override;
 			uint32_t getChannelCount() const override;
 			uint32_t getSelectedCount() const override;
-			uint32_t getSelected(uint32_t ui32Index) const override;
-			bool isSelected(uint32_t ui32Index) const override;
+			uint32_t getSelected(uint32_t index) const override;
+			bool isSelected(uint32_t index) const override;
 
 			float getScale() const override;
 			float getZoom() const override;
@@ -129,47 +127,45 @@ namespace Mensia
 
 		protected:
 
-			IRendererContext* m_pParentRendererContext;
+			IRendererContext* m_parentRendererContext = nullptr;
 
-			std::vector<uint32_t> m_vChannelLookup;
-			std::vector<std::string> m_vChannelName;
-			std::vector<CVertex> m_vChannelLocalisation;
+			std::vector<uint32_t> m_channelLookup;
+			std::vector<std::string> m_channelName;
+			std::vector<CVertex> m_channelLocalisation;
 			std::map<size_t, std::vector<std::string>> m_DimensionLabels;
 
-			std::map<std::string, float> m_vLeftRightScore;
-			std::map<std::string, float> m_vFrontBackScore;
+			std::map<std::string, float> m_leftRightScore;
+			std::map<std::string, float> m_frontBackScore;
 
-			float m_f32Scale;
-			float m_f32Zoom;
-			float m_f32RotationX;
-			float m_f32RotationY;
+			float m_scale = 1;
+			float m_zoom = 1;
+			float m_rotationX = 2;
+			float m_rotationY = 1;
 
-			float m_f32Translucency;
-			float m_f32Aspect;
-			uint64_t m_ui64SampleDuration;
-			uint64_t m_ui64TimeScale;
-			uint64_t m_ui64ElementCount;
-			uint64_t m_ui64FlowerRingCount;
-			bool m_bHasXYZPlotDepth;
-			bool m_bIsAxisDisplayed;
-			bool m_bIsPositiveOnly;
-			bool m_bIsTimeLocked;
-			bool m_bIsScrollModeActive;
-			bool m_bScaleVisiblity;
-			bool m_bCheckBoardVisiblity;
-			EDataType m_eDataType;
-			uint32_t m_ui32SpectrumFrequencyRange;
-			uint32_t m_ui32MinSpectrumFrequency;
-			uint32_t m_ui32MaxSpectrumFrequency;
-			uint32_t m_ui32StackCount;
-			uint32_t m_ui32StackIndex;
-			bool m_bFaceMeshVisible;
-			bool m_bScalpMeshVisible;
+			float m_translucency = 1;
+			float m_aspect = 1;
+			uint64_t m_sampleDuration = 0;
+			uint64_t m_timeScale = 1;
+			uint64_t m_elementCount = 1;
+			uint64_t m_flowerRingCount = 1;
+			bool m_hasXYZPlotDepth = false;
+			bool m_isAxisDisplayed = false;
+			bool m_isPositiveOnly = false;
+			bool m_isTimeLocked = true;
+			bool m_isScrollModeActive = false;
+			bool m_scaleVisiblity = true;
+			bool m_checkBoardVisiblity = false;
+			EDataType m_dataType = DataType_Matrix;
+			uint32_t m_spectrumFrequencyRange = 0;
+			uint32_t m_minSpectrumFrequency = 0;
+			uint32_t m_maxSpectrumFrequency = 0;
+			uint32_t m_stackCount = 1;
+			uint32_t m_stackIndex = 1;
+			bool m_faceMeshVisible = true;
+			bool m_scalpMeshVisible = true;
 
-			bool m_bERPPlayerActive;
-			float m_f32ERPFraction;
+			bool m_ERPPlayerActive = false;
+			float m_ERPFraction = 0;
 		};
 	} // namespace AdvancedVisualization
 }  // namespace Mensia
-
-#endif // __Mensia_AdvancedVisualization_CRendererContext_H__

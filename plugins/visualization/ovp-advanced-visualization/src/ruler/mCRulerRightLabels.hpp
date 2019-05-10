@@ -18,7 +18,6 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
 #pragma once
 
 #include "../mIRuler.hpp"
@@ -49,7 +48,7 @@ namespace Mensia
 
 					const auto labelCount = float(m_pRendererContext->getDimensionLabelCount(dimension));
 
-					gint last_y = gint((channel + (-1 + 0.5f) / labelCount) * (h * 1.f / channelCount));;
+					gint last_y = gint((channel + (-1 + 0.5f) / labelCount) * (h * 1.f / channelCount));
 
 					for (uint32_t label = 0; label < m_pRendererContext->getDimensionLabelCount(dimension); ++label)
 					{

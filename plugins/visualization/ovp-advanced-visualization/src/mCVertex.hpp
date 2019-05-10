@@ -18,8 +18,8 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
 #pragma once
+
 #include <cmath>
 
 #pragma pack(1)
@@ -31,33 +31,25 @@ namespace Mensia
 		{
 		public:
 
-			explicit CVertex(double _x = 0, double _y = 0, double _z = 0, double _u = 0, double _v = 0)
-				: x(float(_x))
-				  , y(float(_y))
-				  , z(float(_z))
-				  , u(float(_u))
-				  , v(float(_v)) { }
+			explicit CVertex(const double _x = 0, const double _y = 0, const double _z = 0, const double _u = 0, const double _v = 0)
+				: x(float(_x)), y(float(_y)), z(float(_z)), u(float(_u)), v(float(_v)) { }
 
 			CVertex(const CVertex& a, const CVertex& b)
-				: x(b.x - a.x)
-				  , y(b.y - a.y)
-				  , z(b.z - a.z)
-				  , u(b.u - a.u)
-				  , v(b.v - a.v) { }
+				: x(b.x - a.x), y(b.y - a.y), z(b.z - a.z), u(b.u - a.u), v(b.v - a.v) { }
 
-			float x;
-			float y;
-			float z;
-			float u;
-			float v;
+			float x = 0;
+			float y = 0;
+			float z = 0;
+			float u = 0;
+			float v = 0;
 
 			CVertex& normalize()
 
 			{
-				float n = this->length();
+				const float n = this->length();
 				if (n != 0)
 				{
-					float in = 1.f / n;
+					const float in = 1.f / n;
 					this->x *= in;
 					this->y *= in;
 					this->z *= in;
@@ -82,15 +74,15 @@ namespace Mensia
 
 			static CVertex cross(const CVertex& v1a, const CVertex& v1b, const CVertex& v2a, const CVertex& v2b)
 			{
-				CVertex v1(v1a, v1b);
-				CVertex v2(v2a, v2b);
+				const CVertex v1(v1a, v1b);
+				const CVertex v2(v2a, v2b);
 				return cross(v1, v2);
 			}
 
 			static bool isOnSameSide(const CVertex& p1, const CVertex& p2, const CVertex& a, const CVertex& b)
 			{
-				CVertex cp1 = cross(a, b, a, p1);
-				CVertex cp2 = cross(a, b, a, p2);
+				const CVertex cp1 = cross(a, b, a, p1);
+				const CVertex cp2 = cross(a, b, a, p2);
 				return dot(cp1, cp2) >= 0;
 			}
 

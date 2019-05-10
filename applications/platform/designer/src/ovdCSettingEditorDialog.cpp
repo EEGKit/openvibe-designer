@@ -5,20 +5,14 @@ using namespace Kernel;
 using namespace OpenViBEDesigner;
 using namespace std;
 
-static void type_changed_cb(GtkComboBox* pWidget, gpointer pUserData)
+static void type_changed_cb(GtkComboBox* /*pWidget*/, gpointer pUserData)
 {
 	static_cast<CSettingEditorDialog*>(pUserData)->typeChangedCB();
 }
 
-CSettingEditorDialog::CSettingEditorDialog(const IKernelContext& rKernelContext, IBox& rBox, uint32_t ui32SettingIndex, const char* sTitle, const char* sGUIFilename, const char* sGUISettingsFilename)
-	: m_rKernelContext(rKernelContext)
-	  , m_rBox(rBox)
-	  , m_oHelper(rKernelContext, sGUIFilename)
-	  , m_ui32SettingIndex(ui32SettingIndex)
-	  , m_sGUIFilename(sGUIFilename)
-	  , m_sGUISettingsFilename(sGUISettingsFilename)
-	  , m_sTitle(sTitle)
-	  , m_pDefaultValue(nullptr) { }
+CSettingEditorDialog::CSettingEditorDialog(const IKernelContext& rKernelContext, IBox& rBox, const uint32_t ui32SettingIndex, const char* sTitle, const char* sGUIFilename, const char* sGUISettingsFilename)
+	: m_rKernelContext(rKernelContext), m_rBox(rBox), m_oHelper(rKernelContext, sGUIFilename), m_ui32SettingIndex(ui32SettingIndex), 
+	  m_sGUIFilename(sGUIFilename), m_sGUISettingsFilename(sGUISettingsFilename), m_sTitle(sTitle) { }
 
 CSettingEditorDialog::~CSettingEditorDialog() = default;
 
@@ -73,13 +67,13 @@ bool CSettingEditorDialog::run()
 	bool l_bResult = false;
 	while (!l_bFinished)
 	{
-		gint l_iResult = gtk_dialog_run(GTK_DIALOG(l_pDialog));
+		const gint l_iResult = gtk_dialog_run(GTK_DIALOG(l_pDialog));
 		if (l_iResult == GTK_RESPONSE_APPLY)
 		{
 			char* l_sActiveText = gtk_combo_box_get_active_text(GTK_COMBO_BOX(m_pType));
 			if (l_sActiveText)
 			{
-				CIdentifier l_oSettingType = m_vSettingTypes[l_sActiveText];
+				l_oSettingType = m_vSettingTypes[l_sActiveText];
 				m_rBox.setSettingName(m_ui32SettingIndex, gtk_entry_get_text(GTK_ENTRY(l_pName)));
 				m_rBox.setSettingType(m_ui32SettingIndex, l_oSettingType);
 				m_rBox.setSettingValue(m_ui32SettingIndex, m_oHelper.getValue(l_oSettingType, m_pDefaultValue));
@@ -112,9 +106,9 @@ bool CSettingEditorDialog::run()
 void CSettingEditorDialog::typeChangedCB()
 
 {
-	CIdentifier l_oSettingType = m_vSettingTypes[gtk_combo_box_get_active_text(GTK_COMBO_BOX(m_pType))];
+	const CIdentifier l_oSettingType = m_vSettingTypes[gtk_combo_box_get_active_text(GTK_COMBO_BOX(m_pType))];
 
-	CString l_sWidgetName = m_oHelper.getSettingWidgetName(l_oSettingType).toASCIIString();
+	const CString l_sWidgetName = m_oHelper.getSettingWidgetName(l_oSettingType).toASCIIString();
 	GtkBuilder* l_pBuilderInterfaceDefaultValueDummy = gtk_builder_new(); // glade_xml_new(m_sGUIFilename.toASCIIString(), l_sWidgetName.toASCIIString(), nullptr);
 	gtk_builder_add_from_file(l_pBuilderInterfaceDefaultValueDummy, m_sGUISettingsFilename.toASCIIString(), nullptr);
 	gtk_builder_connect_signals(l_pBuilderInterfaceDefaultValueDummy, nullptr);

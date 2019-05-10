@@ -46,18 +46,18 @@ namespace OpenViBEDesigner
 
 
 		private:
-			::GtkEntry* m_pEntry;
+			::GtkEntry* m_pEntry = nullptr;
 			const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
 			OpenViBE::CString m_sBuilderName;
 
-			::GtkWidget* pDialog;
-			::GtkWidget* pContainer;
-			::GtkWidget* pDrawingArea;
+			::GtkWidget* pDialog = nullptr;
+			::GtkWidget* pContainer = nullptr;
+			::GtkWidget* pDrawingArea = nullptr;
 			std::vector < SColorGradientDataNode > vColorGradient;
 			std::map < ::GtkColorButton*, uint32_t > vColorButtonMap;
 			std::map < ::GtkSpinButton*, uint32_t > vSpinButtonMap;
 
-			bool m_bOnValueSetting;
+			bool m_bOnValueSetting = false;
 		};
 	}
 

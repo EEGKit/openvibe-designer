@@ -11,10 +11,7 @@ using namespace Plugins;
 using namespace OpenViBEPlugins;
 using namespace SimpleVisualization;
 
-CBoxAlgorithmTopographicMap2DDisplay::CBoxAlgorithmTopographicMap2DDisplay() :
-	m_pSphericalSplineInterpolation(nullptr),
-	m_pTopographicMapDatabase(nullptr),
-	m_pTopographicMap2DView(nullptr) { }
+CBoxAlgorithmTopographicMap2DDisplay::CBoxAlgorithmTopographicMap2DDisplay() = default;
 
 uint64_t CBoxAlgorithmTopographicMap2DDisplay::getClockFrequency() { return uint64_t(1LL) << 37; }
 
@@ -41,7 +38,7 @@ bool CBoxAlgorithmTopographicMap2DDisplay::initialize()
 	m_pTopographicMap2DView = new CTopographicMap2DView(
 		*m_pTopographicMapDatabase,
 		getTypeManager().getEnumerationEntryValueFromName(OVP_TypeId_SphericalLinearInterpolationType, l_sInterpolationModeSettingValue),
-		atof(l_sDelaySettingValue));
+		strtod(l_sDelaySettingValue, nullptr));
 
 	//have database notify us when new data is available
 	m_pTopographicMapDatabase->setDrawable(m_pTopographicMap2DView);
@@ -144,7 +141,7 @@ bool CBoxAlgorithmTopographicMap2DDisplay::process()
 		l_pDynamicBoxContext->markInputAsDeprecated(1, i);
 	}
 
-	bool l_bProcessValues = m_pTopographicMapDatabase->processValues();
+	const bool l_bProcessValues = m_pTopographicMapDatabase->processValues();
 
 	//disable plugin upon errors
 	return l_bProcessValues;

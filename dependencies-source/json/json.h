@@ -180,14 +180,12 @@
 
 	* Added license to header file for easyness (totally valid word).
  */
-
-#ifndef __SUPER_EASY_JSON_H__
-#define __SUPER_EASY_JSON_H__
+#pragma once
 
 #include <vector>
 #include <map>
 #include <string>
-#include <assert.h>
+#include <cassert>
 
 namespace json
 {
@@ -217,7 +215,7 @@ namespace json
 
 	public:
 
-		Object();
+		Object() = default;
 		Object(const Object& obj);
 
 		Object& operator =(const Object& obj);
@@ -269,8 +267,8 @@ namespace json
 
 	public:
 
-		Array();
-		Array(const Array& a);
+		Array() = default;
+		Array(const Array& a) : mValues(a.mValues) { }
 
 		Array& operator =(const Array& a);
 
@@ -308,22 +306,22 @@ namespace json
 	{
 	protected:
 
-		ValueType mValueType;
-		int mIntVal;
-		float mFloatVal;
-		double mDoubleVal;
+		ValueType mValueType = nullptrVal;
+		int mIntVal = 0;
+		float mFloatVal = 0;
+		double mDoubleVal = 0;
 		std::string mStringVal;
 		Object mObjectVal;
 		Array mArrayVal;
-		bool mBoolVal;
+		bool mBoolVal = false;
 
 	public:
 		const std::string& getStringImplementation() const { return mStringVal; }
 
-		Value() : mValueType(nullptrVal), mIntVal(0), mFloatVal(0), mDoubleVal(0), mBoolVal(false) { }
-		Value(int v) : mValueType(IntVal), mIntVal(v), mFloatVal((float)v), mDoubleVal((double)v) { }
-		Value(float v) : mValueType(FloatVal), mIntVal((int)v), mFloatVal(v), mDoubleVal((double)v) { }
-		Value(double v) : mValueType(DoubleVal), mIntVal((int)v), mFloatVal((float)v), mDoubleVal(v) { }
+		Value() {};
+		Value(int v) : mValueType(IntVal), mIntVal(v), mFloatVal(float(v)), mDoubleVal(double(v)) { }
+		Value(float v) : mValueType(FloatVal), mIntVal(int(v)), mFloatVal(v), mDoubleVal(double(v)) { }
+		Value(double v) : mValueType(DoubleVal), mIntVal(int(v)), mFloatVal(float(v)), mDoubleVal(v) { }
 		Value(const std::string& v) : mValueType(StringVal), mStringVal(v) { }
 		Value(const char* v) : mValueType(StringVal), mStringVal(v) { }
 		Value(const Object& v) : mValueType(ObjectVal), mObjectVal(v) { }
@@ -479,7 +477,7 @@ namespace json
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Converts a JSON Object or Array instance into a JSON string representing it.
-	std::string Serialize(const Value& obj);
+	std::string Serialize(const Value& v);
 
 	// If there is an error, Value will be nullptrType
 	Value Deserialize(const std::string& str);
@@ -505,66 +503,30 @@ namespace json
 	 */
 	inline bool operator ==(const Value& lhs, const Value& rhs)
 	{
-		if ((lhs.mValueType != rhs.mValueType) && !lhs.IsNumeric() && !rhs.IsNumeric())
-		{
-			return false;
-		}
+		if ((lhs.mValueType != rhs.mValueType) && !lhs.IsNumeric() && !rhs.IsNumeric()) { return false; }
 
 		switch (lhs.mValueType)
 		{
 			case StringVal: return lhs.mStringVal == rhs.mStringVal;
 
 			case IntVal:
-				{
-					if (rhs.GetType() == FloatVal)
-					{
-						return lhs.mIntVal == rhs.mFloatVal;
-					}
-					if (rhs.GetType() == DoubleVal)
-					{
-						return lhs.mIntVal == rhs.mDoubleVal;
-					}
-					if (rhs.GetType() == IntVal)
-					{
-						return lhs.mIntVal == rhs.mIntVal;
-					}
-					return false;
-				}
+				if (rhs.GetType() == FloatVal) { return float(lhs.mIntVal) == rhs.mFloatVal; }
+				if (rhs.GetType() == DoubleVal) { return double(lhs.mIntVal) == rhs.mDoubleVal; }
+				if (rhs.GetType() == IntVal) { return lhs.mIntVal == rhs.mIntVal; }
+				return false;
 
 			case FloatVal:
-				{
-					if (rhs.GetType() == FloatVal)
-					{
-						return lhs.mFloatVal == rhs.mFloatVal;
-					}
-					if (rhs.GetType() == DoubleVal)
-					{
-						return lhs.mFloatVal == rhs.mDoubleVal;
-					}
-					if (rhs.GetType() == IntVal)
-					{
-						return lhs.mFloatVal == rhs.mIntVal;
-					}
-					return false;
-				}
+				if (rhs.GetType() == FloatVal) { return lhs.mFloatVal == rhs.mFloatVal; }
+				if (rhs.GetType() == DoubleVal) { return double(lhs.mFloatVal) == rhs.mDoubleVal; }
+				if (rhs.GetType() == IntVal) { return lhs.mFloatVal == float(rhs.mIntVal); }
+				return false;
 
 
 			case DoubleVal:
-				{
-					if (rhs.GetType() == FloatVal)
-					{
-						return lhs.mDoubleVal == rhs.mFloatVal;
-					}
-					if (rhs.GetType() == DoubleVal)
-					{
-						return lhs.mDoubleVal == rhs.mDoubleVal;
-					}
-					if (rhs.GetType() == IntVal)
-					{
-						return lhs.mDoubleVal == rhs.mIntVal;
-					}
-					return false;
-				}
+				if (rhs.GetType() == FloatVal) { return lhs.mDoubleVal == double(rhs.mFloatVal); }
+				if (rhs.GetType() == DoubleVal) { return lhs.mDoubleVal == rhs.mDoubleVal; }
+				if (rhs.GetType() == IntVal) { return lhs.mDoubleVal == double(rhs.mIntVal); }
+				return false;
 
 			case BoolVal: return lhs.mBoolVal == rhs.mBoolVal;
 
@@ -572,72 +534,35 @@ namespace json
 
 			case ArrayVal: return lhs.mArrayVal == rhs.mArrayVal;
 
-			default:
-				return true;
+			default: return true;
 		}
 	}
 
 	inline bool operator <(const Value& lhs, const Value& rhs)
 	{
-		if ((lhs.mValueType != rhs.mValueType) && !lhs.IsNumeric() && !rhs.IsNumeric())
-		{
-			return false;
-		}
+		if ((lhs.mValueType != rhs.mValueType) && !lhs.IsNumeric() && !rhs.IsNumeric()) { return false; }
 
 		switch (lhs.mValueType)
 		{
 			case StringVal: return lhs.mStringVal < rhs.mStringVal;
 
 			case IntVal:
-				{
-					if (rhs.GetType() == FloatVal)
-					{
-						return lhs.mIntVal < rhs.mFloatVal;
-					}
-					if (rhs.GetType() == DoubleVal)
-					{
-						return lhs.mIntVal < rhs.mDoubleVal;
-					}
-					if (rhs.GetType() == IntVal)
-					{
-						return lhs.mIntVal < rhs.mIntVal;
-					}
-					return false;
-				}
+				if (rhs.GetType() == FloatVal) { return float(lhs.mIntVal) < rhs.mFloatVal; }
+				if (rhs.GetType() == DoubleVal) { return double(lhs.mIntVal) < rhs.mDoubleVal; }
+				if (rhs.GetType() == IntVal) { return lhs.mIntVal < rhs.mIntVal; }
+				return false;
 
 			case FloatVal:
-				{
-					if (rhs.GetType() == FloatVal)
-					{
-						return lhs.mFloatVal < rhs.mFloatVal;
-					}
-					if (rhs.GetType() == DoubleVal)
-					{
-						return lhs.mFloatVal < rhs.mDoubleVal;
-					}
-					if (rhs.GetType() == IntVal)
-					{
-						return lhs.mFloatVal < rhs.mIntVal;
-					}
-					return false;
-				}
+				if (rhs.GetType() == FloatVal) { return lhs.mFloatVal < rhs.mFloatVal; }
+				if (rhs.GetType() == DoubleVal) { return double(lhs.mFloatVal) < rhs.mDoubleVal; }
+				if (rhs.GetType() == IntVal) { return lhs.mFloatVal < float(rhs.mIntVal); }
+				return false;
 
 			case DoubleVal:
-				{
-					if (rhs.GetType() == FloatVal)
-					{
-						return lhs.mDoubleVal < rhs.mFloatVal;
-					}
-					if (rhs.GetType() == DoubleVal)
-					{
-						return lhs.mDoubleVal < rhs.mDoubleVal;
-					}
-					if (rhs.GetType() == IntVal)
-					{
-						return lhs.mDoubleVal < rhs.mIntVal;
-					}
-					return false;
-				}
+				if (rhs.GetType() == FloatVal) { return lhs.mDoubleVal < double(rhs.mFloatVal); }
+				if (rhs.GetType() == DoubleVal) { return lhs.mDoubleVal < rhs.mDoubleVal; }
+				if (rhs.GetType() == IntVal) { return lhs.mDoubleVal < double(rhs.mIntVal); }
+				return false;
 
 			case BoolVal: return static_cast<int>(lhs.mBoolVal) < static_cast<int>(rhs.mBoolVal);
 
@@ -645,10 +570,7 @@ namespace json
 
 			case ArrayVal: return lhs.mArrayVal < rhs.mArrayVal;
 
-			default:
-				return true;
+			default: return true;
 		}
 	}
 }
-
-#endif //__SUPER_EASY_JSON_H__

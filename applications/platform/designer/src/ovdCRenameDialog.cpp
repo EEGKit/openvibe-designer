@@ -6,16 +6,11 @@ using namespace Plugins;
 using namespace Kernel;
 
 CRenameDialog::CRenameDialog(const IKernelContext& rKernelContext, const CString& rInitialName, const CString& rDefaultName, const char* sGUIFilename)
-	: m_rKernelContext(rKernelContext)
-	  , m_sInitialName(rInitialName)
-	  , m_sDefaultName(rDefaultName)
-	  , m_sResult(rInitialName)
-	  , m_sGUIFilename(sGUIFilename) { }
+	: m_rKernelContext(rKernelContext), m_sInitialName(rInitialName), m_sDefaultName(rDefaultName), m_sResult(rInitialName), m_sGUIFilename(sGUIFilename) { }
 
 CRenameDialog::~CRenameDialog() = default;
 
 bool CRenameDialog::run()
-
 {
 	GtkBuilder* l_pInterface = gtk_builder_new(); // glade_xml_new(m_sGUIFilename.toASCIIString(), "rename", nullptr);
 	gtk_builder_add_from_file(l_pInterface, m_sGUIFilename.toASCIIString(), nullptr);
@@ -28,10 +23,10 @@ bool CRenameDialog::run()
 	gtk_entry_set_text(GTK_ENTRY(l_pName), m_sInitialName.toASCIIString());
 
 	bool l_bFinished = false;
-	bool l_bResult;
+	bool l_bResult = false;
 	while (!l_bFinished)
 	{
-		gint l_iResult = gtk_dialog_run(GTK_DIALOG(l_pDialog));
+		const gint l_iResult = gtk_dialog_run(GTK_DIALOG(l_pDialog));
 		if (l_iResult == GTK_RESPONSE_APPLY)
 		{
 			m_sResult = gtk_entry_get_text(GTK_ENTRY(l_pName));
@@ -56,9 +51,4 @@ bool CRenameDialog::run()
 	gtk_widget_destroy(l_pDialog);
 
 	return l_bResult;
-}
-
-CString CRenameDialog::getResult()
-{
-	return m_sResult;
 }

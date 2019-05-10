@@ -32,33 +32,25 @@ namespace Mensia
 		{
 		public:
 
-			explicit CVertex(double _x = 0, double _y = 0, double _z = 0, double _u = 0, double _v = 0)
-				: x(float(_x))
-				  , y(float(_y))
-				  , z(float(_z))
-				  , u(float(_u))
-				  , v(float(_v)) { }
+			explicit CVertex(const double _x = 0, const double _y = 0, const double _z = 0, const double _u = 0, const double _v = 0)
+				: x(float(_x)), y(float(_y)), z(float(_z)), u(float(_u)), v(float(_v)) { }
 
 			CVertex(const CVertex& a, const CVertex& b)
-				: x(b.x - a.x)
-				  , y(b.y - a.y)
-				  , z(b.z - a.z)
-				  , u(b.u - a.u)
-				  , v(b.v - a.v) { }
+				: x(b.x - a.x), y(b.y - a.y), z(b.z - a.z), u(b.u - a.u), v(b.v - a.v) { }
 
-			float x;
-			float y;
-			float z;
-			float u;
-			float v;
+			float x = 0;
+			float y = 0;
+			float z = 0;
+			float u = 0;
+			float v = 0;
 
 			CVertex& normalize()
 
 			{
-				float n = this->length();
+				const float n = this->length();
 				if (n != 0)
 				{
-					float in = 1.f / n;
+					const float in = 1.f / n;
 					this->x *= in;
 					this->y *= in;
 					this->z *= in;

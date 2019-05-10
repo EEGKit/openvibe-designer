@@ -28,47 +28,45 @@ void CRendererBars::rebuild(const IRendererContext& rContext)
 {
 	CRenderer::rebuild(rContext);
 
-	uint32_t i, j;
-
-	m_vVertex.resize(m_ui32ChannelCount);
-	for (i = 0; i < m_ui32ChannelCount; ++i)
+	m_vertex.resize(m_channelCount);
+	for (size_t i = 0; i < m_channelCount; ++i)
 	{
-		m_vVertex[i].resize(m_ui32SampleCount * 4);
-		for (j = 0; j < m_ui32SampleCount; j++)
+		m_vertex[i].resize(size_t(m_sampleCount) * 4);
+		for (size_t j = 0; j < m_sampleCount; j++)
 		{
-			m_vVertex[i][j * 4].x = (j) * m_f32InverseSampleCount;
-			m_vVertex[i][j * 4 + 1].x = (j + 1) * m_f32InverseSampleCount;
-			m_vVertex[i][j * 4 + 2].x = (j + 1) * m_f32InverseSampleCount;
-			m_vVertex[i][j * 4 + 3].x = (j) * m_f32InverseSampleCount;
+			const size_t id = j * 4;
+			const float value = j * m_inverseSampleCount;
+			m_vertex[i][id].x = value;
+			m_vertex[i][id + 1].x = value + m_inverseSampleCount;
+			m_vertex[i][id + 2].x = value + m_inverseSampleCount;
+			m_vertex[i][id + 3].x = value;
 
-			m_vVertex[i][j * 4].u = (j) * m_f32InverseSampleCount;
-			m_vVertex[i][j * 4 + 1].u = (j) * m_f32InverseSampleCount;
-			m_vVertex[i][j * 4 + 2].u = (j) * m_f32InverseSampleCount;
-			m_vVertex[i][j * 4 + 3].u = (j) * m_f32InverseSampleCount;
+			m_vertex[i][id].u = value;
+			m_vertex[i][id + 1].u = value;
+			m_vertex[i][id + 2].u = value;
+			m_vertex[i][id + 3].u = value;
 		}
 	}
 
-	m_ui32HistoryIndex = 0;
+	m_historyIndex = 0;
 }
 
 void CRendererBars::refresh(const IRendererContext& rContext)
 {
 	CRenderer::refresh(rContext);
 
-	if (!m_ui32HistoryCount) { return; }
+	if (!m_historyCount) { return; }
 
-	uint32_t i, j, k;
-
-	for (i = 0; i < m_ui32ChannelCount; ++i)
+	for (size_t i = 0; i < m_channelCount; ++i)
 	{
-		k = ((m_ui32HistoryCount - 1) / m_ui32SampleCount) * m_ui32SampleCount;
-		std::vector<float>& l_vHistory = m_vHistory[i];
-		CVertex* l_pVertex = &m_vVertex[i][0];
-		for (j = 0; j < m_ui32SampleCount; j++, k++)
+		size_t k = ((m_historyCount - 1) / m_sampleCount) * m_sampleCount;
+		std::vector<float>& l_vHistory = m_history[i];
+		CVertex* l_pVertex = &m_vertex[i][0];
+		for (size_t j = 0; j < m_sampleCount; j++, k++)
 		{
-			if (k >= m_ui32HistoryIndex && k < m_ui32HistoryCount)
+			if (k >= m_historyIndex && k < m_historyCount)
 			{
-				float l_f32Value = l_vHistory[k];
+				const float l_f32Value = l_vHistory[k];
 				l_pVertex++->y = 0;
 				l_pVertex++->y = 0;
 				l_pVertex++->y = l_f32Value;
@@ -80,14 +78,14 @@ void CRendererBars::refresh(const IRendererContext& rContext)
 			}
 		}
 	}
-	m_ui32HistoryIndex = m_ui32HistoryCount;
+	m_historyIndex = m_historyCount;
 }
 
 bool CRendererBars::render(const IRendererContext& rContext)
 {
 	if (!rContext.getSelectedCount()) { return false; }
-	if (m_vVertex.empty()) { return false; }
-	if (!m_ui32HistoryCount) { return false; }
+	if (m_vertex.empty()) { return false; }
+	if (!m_historyCount) { return false; }
 
 	uint32_t i;
 
@@ -118,11 +116,11 @@ bool CRendererBars::render(const IRendererContext& rContext)
 	for (i = 0; i < rContext.getSelectedCount(); ++i)
 	{
 		glPushMatrix();
-		glTranslatef(0, rContext.getSelectedCount() - i - 1.f, 0);
+		glTranslatef(0, float(rContext.getSelectedCount()) - i - 1.f, 0);
 		glScalef(1, rContext.getScale(), 1);
-		glVertexPointer(2, GL_FLOAT, sizeof(CVertex), &m_vVertex[rContext.getSelected(i)][0].x);
-		glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_vVertex[rContext.getSelected(i)][0].u);
-		glDrawArrays(GL_QUADS, 0, m_ui32SampleCount * 4);
+		glVertexPointer(2, GL_FLOAT, sizeof(CVertex), &m_vertex[rContext.getSelected(i)][0].x);
+		glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_vertex[rContext.getSelected(i)][0].u);
+		glDrawArrays(GL_QUADS, 0, m_sampleCount * 4);
 		glPopMatrix();
 	}
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
