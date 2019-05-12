@@ -97,7 +97,7 @@ bool CConnectorEditor::run()
 				gtk_combo_box_append_text(l_pConnectorTypeComboBox, l_oCurrentTypeIdentifier.second.toASCIIString());
 				if (l_oCurrentTypeIdentifier.first == l_oConnectorType)
 				{
-					l_iActive = l_vStreamTypes.size();
+					l_iActive = gint(l_vStreamTypes.size());
 					gtk_combo_box_set_active(l_pConnectorTypeComboBox, l_iActive);
 				}
 				l_vStreamTypes[l_oCurrentTypeIdentifier.second.toASCIIString()] = l_oCurrentTypeIdentifier.first;
@@ -113,15 +113,15 @@ bool CConnectorEditor::run()
 	bool l_bResult = false;
 	while (!l_bFinished)
 	{
-		gint l_iResult = gtk_dialog_run(GTK_DIALOG(l_pConnectorDialog));
+		const gint l_iResult = gtk_dialog_run(GTK_DIALOG(l_pConnectorDialog));
 		if (l_iResult == GTK_RESPONSE_APPLY)
 		{
 			char* l_sActiveText = gtk_combo_box_get_active_text(l_pConnectorTypeComboBox);
 			if (l_sActiveText)
 			{
-				auto newName = gtk_entry_get_text(l_pConnectorNameEntry);
+				const auto newName = gtk_entry_get_text(l_pConnectorNameEntry);
 				auto newType = l_vStreamTypes[l_sActiveText];
-				auto newIdentifierString = gtk_entry_get_text(m_ConnectorIdentifierEntry);
+				const auto newIdentifierString = gtk_entry_get_text(m_ConnectorIdentifierEntry);
 
 				(m_rBox.*setConnectorType)(m_ui32ConnectorIndex, newType);
 				(m_rBox.*setConnectorName)(m_ui32ConnectorIndex, newName);

@@ -337,33 +337,26 @@ void CBoxConfigurationDialog::settingChange(uint32_t ui32SettingIndex)
 	addSettingsToView(ui32SettingIndex, l_ui32IndexTable);
 }
 
-void CBoxConfigurationDialog::addSetting(uint32_t ui32SettingIndex)
+void CBoxConfigurationDialog::addSetting(uint32_t settingIndex)
 {
 	bool l_bSettingModifiable;
-	m_rBox.getSettingMod(ui32SettingIndex, l_bSettingModifiable);
+	m_rBox.getSettingMod(settingIndex, l_bSettingModifiable);
 
 	if ((!m_bIsScenarioRunning) || (m_bIsScenarioRunning && l_bSettingModifiable))
 	{
-		uint32_t l_ui32TableSize = m_vSettingViewVector.size();
+		const size_t tableSize = m_vSettingViewVector.size();
 		/*There is two case.
 		1) we just add at the end of the setting box
 		2) we add it in the middle end we need to shift
 		*/
-		uint32_t l_ui32TableIndex;
-		if (ui32SettingIndex > m_vSettingViewVector[l_ui32TableSize - 1]->getSettingIndex())
-		{
-			l_ui32TableIndex = l_ui32TableSize;
-		}
-		else
-		{
-			l_ui32TableIndex = getTableIndex(ui32SettingIndex);
-		}
+		const size_t tableIndex = (settingIndex > m_vSettingViewVector[tableSize - 1]->getSettingIndex()) 
+									? tableSize : getTableIndex(settingIndex);
 
-		gtk_table_resize(m_pSettingsTable, l_ui32TableSize + 2, 4);
+		gtk_table_resize(m_pSettingsTable, guint(tableSize + 2), 4);
 
-		if (ui32SettingIndex <= m_vSettingViewVector[l_ui32TableSize - 1]->getSettingIndex())
+		if (settingIndex <= m_vSettingViewVector[tableSize - 1]->getSettingIndex())
 		{
-			for (size_t i = l_ui32TableSize - 1; i >= l_ui32TableIndex; --i)
+			for (size_t i = tableSize - 1; i >= tableIndex; --i)
 			{
 				Setting::CAbstractSettingView* l_oView = m_vSettingViewVector[i];
 
@@ -371,13 +364,13 @@ void CBoxConfigurationDialog::addSetting(uint32_t ui32SettingIndex)
 				l_oView->setSettingIndex(l_oView->getSettingIndex() + 1);
 
 				gtk_container_remove(GTK_CONTAINER(m_pSettingsTable), l_oView->getNameWidget());
-				gtk_table_attach(m_pSettingsTable, l_oView->getNameWidget(), 0, 1, i + 1, i + 2, GtkAttachOptions(GTK_FILL), GtkAttachOptions(GTK_FILL), 0, 0);
+				gtk_table_attach(m_pSettingsTable, l_oView->getNameWidget(), 0, 1, guint(i + 1), guint(i + 2), GtkAttachOptions(GTK_FILL), GtkAttachOptions(GTK_FILL), 0, 0);
 
 				gtk_container_remove(GTK_CONTAINER(m_pSettingsTable), l_oView->getEntryWidget());
-				gtk_table_attach(m_pSettingsTable, l_oView->getEntryWidget(), 1, 4, i + 1, i + 2, GtkAttachOptions(GTK_SHRINK | GTK_FILL | GTK_EXPAND), GtkAttachOptions(GTK_SHRINK), 0, 0);
+				gtk_table_attach(m_pSettingsTable, l_oView->getEntryWidget(), 1, 4, guint(i + 1), guint(i + 2), GtkAttachOptions(GTK_SHRINK | GTK_FILL | GTK_EXPAND), GtkAttachOptions(GTK_SHRINK), 0, 0);
 			}
 		}
-		addSettingsToView(l_ui32TableIndex, ui32SettingIndex);
+		addSettingsToView(uint32_t(tableIndex), settingIndex);
 		updateSize();
 	}
 		//Even if nothing is add to the interface, we still need to update index
@@ -385,7 +378,7 @@ void CBoxConfigurationDialog::addSetting(uint32_t ui32SettingIndex)
 	{
 		for (Setting::CAbstractSettingView* l_oView : m_vSettingViewVector)
 		{
-			if (l_oView->getSettingIndex() >= ui32SettingIndex)
+			if (l_oView->getSettingIndex() >= settingIndex)
 			{
 				l_oView->setSettingIndex(l_oView->getSettingIndex() + 1);
 			}
@@ -395,11 +388,11 @@ void CBoxConfigurationDialog::addSetting(uint32_t ui32SettingIndex)
 
 void CBoxConfigurationDialog::removeSetting(uint32_t ui32SettingIndex, bool bShift)
 {
-	int32_t i32TableIndex = getTableIndex(ui32SettingIndex);
+	const int32_t tableIndex = getTableIndex(ui32SettingIndex);
 
-	if (i32TableIndex != -1)
+	if (tableIndex != -1)
 	{
-		Setting::CAbstractSettingView* l_oView = m_vSettingViewVector[i32TableIndex];
+		Setting::CAbstractSettingView* l_oView = m_vSettingViewVector[tableIndex];
 		GtkWidget* l_pName = l_oView->getNameWidget();
 		GtkWidget* l_pEntry = l_oView->getEntryWidget();
 
@@ -407,24 +400,24 @@ void CBoxConfigurationDialog::removeSetting(uint32_t ui32SettingIndex, bool bShi
 		gtk_container_remove(GTK_CONTAINER(m_pSettingsTable), l_pEntry);
 
 		delete l_oView;
-		m_vSettingViewVector.erase(m_vSettingViewVector.begin() + i32TableIndex);
+		m_vSettingViewVector.erase(m_vSettingViewVector.begin() + tableIndex);
 
 		//Now if we need to do it we shift everything to avoid an empty row in the table
 		if (bShift)
 		{
-			for (size_t i = i32TableIndex; i < m_vSettingViewVector.size(); ++i)
+			for (size_t i = tableIndex; i < m_vSettingViewVector.size(); ++i)
 			{
 				l_oView = m_vSettingViewVector[i];
 				l_oView->setSettingIndex(l_oView->getSettingIndex() - 1);
 
 				gtk_container_remove(GTK_CONTAINER(m_pSettingsTable), l_oView->getNameWidget());
-				gtk_table_attach(m_pSettingsTable, l_oView->getNameWidget(), 0, 1, i, i + 1, GtkAttachOptions(GTK_FILL), GtkAttachOptions(GTK_FILL), 0, 0);
+				gtk_table_attach(m_pSettingsTable, l_oView->getNameWidget(), 0, 1, guint(i), guint(i + 1), GtkAttachOptions(GTK_FILL), GtkAttachOptions(GTK_FILL), 0, 0);
 
 				gtk_container_remove(GTK_CONTAINER(m_pSettingsTable), l_oView->getEntryWidget());
-				gtk_table_attach(m_pSettingsTable, l_oView->getEntryWidget(), 1, 4, i, i + 1, GtkAttachOptions(GTK_SHRINK | GTK_FILL | GTK_EXPAND), GtkAttachOptions(GTK_SHRINK), 0, 0);
+				gtk_table_attach(m_pSettingsTable, l_oView->getEntryWidget(), 1, 4, guint(i), guint(i + 1), GtkAttachOptions(GTK_SHRINK | GTK_FILL | GTK_EXPAND), GtkAttachOptions(GTK_SHRINK), 0, 0);
 			}
 			//Now let's resize everything
-			gtk_table_resize(m_pSettingsTable, m_vSettingViewVector.size() + 2, 4);
+			gtk_table_resize(m_pSettingsTable, guint(m_vSettingViewVector.size() + 2), 4);
 			updateSize();
 		}
 	}
@@ -543,7 +536,7 @@ void CBoxConfigurationDialog::loadConfiguration()
 		for (size_t i = 0; i < l_pRootNode->getChildCount(); ++i)
 		{
 			//Hope everything will fit in the right place
-			m_rBox.setSettingValue(i, l_pRootNode->getChild(i)->getPCData());
+			m_rBox.setSettingValue(uint32_t(i), l_pRootNode->getChild(i)->getPCData());
 		}
 
 		l_pRootNode->release();

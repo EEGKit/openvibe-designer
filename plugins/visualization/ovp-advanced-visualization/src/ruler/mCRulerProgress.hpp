@@ -31,7 +31,7 @@ namespace Mensia
 		{
 		public:
 
-			virtual void renderFinal(float fProgress) = 0;
+			virtual void renderFinal(const float fProgress) = 0;
 
 			void render() override
 

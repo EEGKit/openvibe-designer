@@ -65,9 +65,9 @@ bool CAlgorithmSphericalSplineInterpolation::process()
 	if (m_bFirstProcess)
 	{
 		//store coords as doubles
-		m_pDoubleCoords = new double[static_cast<size_t>(3 * ip_controlPointsCount)];
+		m_pDoubleCoords = new double[size_t(3 * ip_controlPointsCount)];
 		//set up matrix of pointers to double coords matrix
-		m_pInsermCoords = new double* [static_cast<size_t>(ip_controlPointsCount)];
+		m_pInsermCoords = new double* [size_t(ip_controlPointsCount)];
 		//fill both matrices
 		for (int i = 0; i < int(ip_controlPointsCount); ++i)
 		{

@@ -74,20 +74,20 @@ void CRendererFlower::refresh(const IRendererContext& rContext)
 
 	if (!m_historyCount) { return; }
 
-	for (uint32_t z = 0; z < m_vMuliVertex.size(); z++)
+	for (size_t z = 0; z < m_vMuliVertex.size(); z++)
 	{
-		for (uint32_t i = 0; i < m_channelCount; ++i)
+		for (size_t i = 0; i < m_channelCount; ++i)
 		{
-			uint32_t k = ((m_historyCount - 1 - z * m_vMuliVertex[z][i].size()) / m_sampleCount) * m_sampleCount;
+			size_t k = ((m_historyCount - 1 - z * m_vMuliVertex[z][i].size()) / m_sampleCount) * m_sampleCount;
 			std::vector<float>& l_vHistory = m_history[i];
 			CVertex* l_pVertex = &m_vMuliVertex[z][i][0];
 			CVertex* l_pCircleVertex = &m_vCircle[0];
-			for (uint32_t j = 0; j < m_sampleCount - m_autoDecimationFactor + 1; j += m_autoDecimationFactor, k += m_autoDecimationFactor)
+			for (size_t j = 0; j < m_sampleCount - m_autoDecimationFactor + 1; j += m_autoDecimationFactor, k += m_autoDecimationFactor)
 			{
 				float sum = 0;
-				uint32_t count = 0;
+				size_t count = 0;
 
-				for (uint32_t l = 0; l < m_autoDecimationFactor; l++)
+				for (size_t l = 0; l < m_autoDecimationFactor; l++)
 				{
 					if (/*k+l>=m_historyIndex && */k + l < m_historyCount)
 					{
@@ -98,7 +98,7 @@ void CRendererFlower::refresh(const IRendererContext& rContext)
 
 				if (count)
 				{
-					float v = sum / count;
+					const float v = sum / count;
 					l_pVertex->x = l_pCircleVertex->x * v;
 					l_pVertex->y = l_pCircleVertex->y * v;
 					l_pVertex->z = l_pCircleVertex->z * v;
@@ -123,8 +123,8 @@ bool CRendererFlower::render(const IRendererContext& rContext)
 	if (m_vMuliVertex.empty()) { return false; }
 	if (!m_historyCount) { return false; }
 
-	uint32_t n = m_sampleCount / m_autoDecimationFactor;
-	uint32_t d = (m_historyIndex % m_sampleCount) / m_autoDecimationFactor;
+	const uint32_t n = m_sampleCount / m_autoDecimationFactor;
+	const uint32_t d = (m_historyIndex % m_sampleCount) / m_autoDecimationFactor;
 
 	glMatrixMode(GL_TEXTURE);
 	glPushMatrix();
@@ -134,16 +134,17 @@ bool CRendererFlower::render(const IRendererContext& rContext)
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	for (uint32_t i = 0; i < rContext.getSelectedCount(); ++i)
+	for (size_t i = 0; i < rContext.getSelectedCount(); ++i)
 	{
 		glPushMatrix();
 		glTranslatef(.5f, .5f, 0);
 		glScalef(rContext.getScale(), rContext.getScale(), rContext.getScale());
-		for (uint32_t z = 0; z < m_vMuliVertex.size(); z++)
+
+		for (auto& multi : m_vMuliVertex)
 		{
-			if (!m_vMuliVertex[z].empty())
+			if (!multi.empty())
 			{
-				std::vector<CVertex>& l_vVertex = m_vMuliVertex[z][rContext.getSelected(i)];
+				std::vector<CVertex>& l_vVertex = multi[rContext.getSelected(i)];
 
 				glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &l_vVertex[0].x);
 				glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &l_vVertex[n - d].u);

@@ -44,22 +44,20 @@ namespace
 
 	void insertLoretaVoxelInMesh(C3DMesh& rMesh, float x, float y, float z, float s)
 	{
-		const int i = rMesh.m_vVertex.size();
+		const size_t i = rMesh.m_vVertex.size();
 
 		// Insert the 8 vertices of the cube
+		rMesh.m_vVertex.emplace_back(x - s, y - s, z - s);	// i+0
+		rMesh.m_vVertex.emplace_back(x + s, y - s, z - s);	// i+1
+		rMesh.m_vVertex.emplace_back(x + s, y + s, z - s);	// i+2
+		rMesh.m_vVertex.emplace_back(x - s, y + s, z - s);	// i+3
 
-		rMesh.m_vVertex.emplace_back(x - s, y - s, z - s); // i+0
-		rMesh.m_vVertex.emplace_back(x + s, y - s, z - s); // i+1
-		rMesh.m_vVertex.push_back(CVertex(x + s, y + s, z - s)); // i+2
-		rMesh.m_vVertex.emplace_back(x - s, y + s, z - s); // i+3
-
-		rMesh.m_vVertex.emplace_back(x - s, y - s, z + s); // i+4
-		rMesh.m_vVertex.emplace_back(x + s, y - s, z + s); // i+5
-		rMesh.m_vVertex.emplace_back(x + s, y + s, z + s); // i+6
-		rMesh.m_vVertex.emplace_back(x - s, y + s, z + s); // i+7
+		rMesh.m_vVertex.emplace_back(x - s, y - s, z + s);	// i+4
+		rMesh.m_vVertex.emplace_back(x + s, y - s, z + s);	// i+5
+		rMesh.m_vVertex.emplace_back(x + s, y + s, z + s);	// i+6
+		rMesh.m_vVertex.emplace_back(x - s, y + s, z + s);	// i+7
 
 		// Insert the 12 triangles of the cube
-
 		rMesh.m_vTriangle.push_back(i + 0);
 		rMesh.m_vTriangle.push_back(i + 1);
 		rMesh.m_vTriangle.push_back(i + 2);
@@ -454,7 +452,7 @@ bool CRendererLoreta::render(const IRendererContext& rContext)
 	// ::glDrawElements(GL_TRIANGLES, m_oBrain.m_vTriangle.size(), GL_UNSIGNED_INT, &m_oBrain.m_vTriangle[0]);
 	if (!m_vBrainSubsetTriangle.empty())
 	{
-		glDrawElements(GL_TRIANGLES, m_vBrainSubsetTriangle.size(), GL_UNSIGNED_INT, &m_vBrainSubsetTriangle[0]);
+		glDrawElements(GL_TRIANGLES, GLsizei(m_vBrainSubsetTriangle.size()), GL_UNSIGNED_INT, &m_vBrainSubsetTriangle[0]);
 	}
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);
@@ -477,7 +475,7 @@ bool CRendererLoreta::render(const IRendererContext& rContext)
 		glEnableClientState(GL_NORMAL_ARRAY);
 		glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_oScalp.m_vVertex[0].x);
 		glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_oScalp.m_vNormal[0].x);
-		glDrawElements(GL_TRIANGLES, m_oScalp.m_vTriangle.size(), GL_UNSIGNED_INT, &m_oScalp.m_vTriangle[0]);
+		glDrawElements(GL_TRIANGLES, GLsizei(m_oScalp.m_vTriangle.size()), GL_UNSIGNED_INT, &m_oScalp.m_vTriangle[0]);
 		glDisableClientState(GL_NORMAL_ARRAY);
 		glDisableClientState(GL_VERTEX_ARRAY);
 	}
@@ -489,7 +487,7 @@ bool CRendererLoreta::render(const IRendererContext& rContext)
 		glEnableClientState(GL_NORMAL_ARRAY);
 		glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_oFace.m_vVertex[0].x);
 		glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_oFace.m_vNormal[0].x);
-		glDrawElements(GL_TRIANGLES, m_oFace.m_vTriangle.size(), GL_UNSIGNED_INT, &m_oFace.m_vTriangle[0]);
+		glDrawElements(GL_TRIANGLES, GLsizei(m_oFace.m_vTriangle.size()), GL_UNSIGNED_INT, &m_oFace.m_vTriangle[0]);
 		glDisableClientState(GL_NORMAL_ARRAY);
 		glDisableClientState(GL_VERTEX_ARRAY);
 	}
@@ -511,26 +509,20 @@ bool CRendererLoreta::render(const IRendererContext& rContext)
 }
 
 void CRendererLoreta::clearRegionSelection()
-
 {
 	for (std::vector<bool>::iterator it = m_vSelected.begin(); it != m_vSelected.end(); ++it)
 	{
 		*it = false;
 	}
-
 	this->refreshBrainSubset();
 }
 
-uint32_t CRendererLoreta::getRegionCategoryCount()
-{
-	return m_vLookup.size();
-}
+uint32_t CRendererLoreta::getRegionCategoryCount() { return uint32_t(m_vLookup.size()); }
 
 uint32_t CRendererLoreta::getRegionCount(uint32_t ui32RegionCategory)
 {
 	if (ui32RegionCategory >= m_vLookup.size()) { return 0; }
-
-	return m_vLookup[ui32RegionCategory].size();
+	return uint32_t(m_vLookup[ui32RegionCategory].size());
 }
 
 const char* CRendererLoreta::getRegionCategoryName(uint32_t ui32RegionCategory)

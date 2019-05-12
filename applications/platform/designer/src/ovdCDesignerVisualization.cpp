@@ -1695,7 +1695,7 @@ void CDesignerVisualization::dragDataGetFromTreeCB(GtkWidget* pSrcWidget, GtkSel
 {
 	char l_sString[1024];
 	sprintf(l_sString, "%p", pSrcWidget);
-	gtk_selection_data_set_text(pSelectionData, l_sString, strlen(l_sString));
+	gtk_selection_data_set_text(pSelectionData, l_sString, gint(strlen(l_sString)));
 }
 
 void CDesignerVisualization::drag_data_get_from_widget_cb(GtkWidget* pSrcWidget, GdkDragContext* /*pDC*/, GtkSelectionData* pSelectionData, guint /*uiInfo*/, guint /*uiTime*/, gpointer pData)
@@ -1707,7 +1707,7 @@ void CDesignerVisualization::dragDataGetFromWidgetCB(GtkWidget* pSrcWidget, GtkS
 {
 	char l_sString[1024];
 	sprintf(l_sString, "%p", pSrcWidget);
-	gtk_selection_data_set_text(pSelectionData, l_sString, strlen(l_sString));
+	gtk_selection_data_set_text(pSelectionData, l_sString, gint(strlen(l_sString)));
 }
 
 void CDesignerVisualization::drag_data_received_in_widget_cb(GtkWidget* dstWidget, GdkDragContext* /*pDragContext*/, gint /*iX*/, gint /*iY*/, GtkSelectionData* pSelectionData, guint /*uiInfo*/, guint /*uiTime*/, gpointer pData)

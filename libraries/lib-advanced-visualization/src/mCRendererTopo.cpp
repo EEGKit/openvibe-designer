@@ -181,8 +181,8 @@ void CRendererTopo::rebuild(const IRendererContext& rContext)
 	std::vector<double> l_vHCache;
 	build(N, M, l_vGCache, l_vHCache);
 
-	const uint32_t nc = rContext.getChannelCount();
-	const uint32_t vc = m_oScalp.m_vVertex.size();
+	const size_t nc = rContext.getChannelCount();
+	const size_t vc = m_oScalp.m_vVertex.size();
 
 	A = Eigen::MatrixXd(nc + 1, nc + 1);
 	A(nc, nc) = 0;
@@ -264,10 +264,10 @@ void CRendererTopo::refresh(const IRendererContext& rContext)
 
 	if (!m_historyCount) { return; }
 
-	uint32_t i, k;
+	size_t i, k;
 
-	uint32_t nc = rContext.getChannelCount();
-	const uint32_t vc = m_oScalp.m_vVertex.size();
+	size_t nc = rContext.getChannelCount();
+	const size_t vc = m_oScalp.m_vVertex.size();
 
 	std::vector<float> l_vSample;
 	Eigen::VectorXd V = Eigen::VectorXd::Zero(nc + 1);
@@ -279,7 +279,7 @@ void CRendererTopo::refresh(const IRendererContext& rContext)
 		this->getSampleAtERPFraction(m_ERPFraction, l_vSample);
 		for (i = 0; i < nc; ++i) { V(i) = l_vSample[i]; }
 		this->interpolate(V, W, Z);
-		for (uint32_t j = 0; j < vc; j++) { m_oScalp.m_vVertex[j].u = float(W(j)); }
+		for (size_t j = 0; j < vc; j++) { m_oScalp.m_vVertex[j].u = float(W(j)); }
 	}
 	else
 	{
@@ -360,7 +360,7 @@ bool CRendererTopo::render(const IRendererContext& rContext)
 			{
 				glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_oFace.m_vNormal[0].x);
 			}
-			glDrawElements(GL_TRIANGLES, m_oFace.m_vTriangle.size(), GL_UNSIGNED_INT, &m_oFace.m_vTriangle[0]);
+			glDrawElements(GL_TRIANGLES, GLsizei(m_oFace.m_vTriangle.size()), GL_UNSIGNED_INT, &m_oFace.m_vTriangle[0]);
 			glDisableClientState(GL_NORMAL_ARRAY);
 			glDisableClientState(GL_VERTEX_ARRAY);
 			glDisable(GL_LIGHTING);
@@ -391,7 +391,7 @@ bool CRendererTopo::render(const IRendererContext& rContext)
 				glEnable(GL_DEPTH_TEST);
 				glDisable(GL_BLEND);
 				glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_oScalp.m_vVertex[0].u);
-				glDrawElements(GL_TRIANGLES, m_oScalp.m_vTriangle.size(), GL_UNSIGNED_INT, &m_oScalp.m_vTriangle[0]);
+				glDrawElements(GL_TRIANGLES, GLsizei(m_oScalp.m_vTriangle.size()), GL_UNSIGNED_INT, &m_oScalp.m_vTriangle[0]);
 			}
 			else
 			{
@@ -404,7 +404,7 @@ bool CRendererTopo::render(const IRendererContext& rContext)
 					glPushMatrix();
 					glScalef(l_f32Scale, l_f32Scale, l_f32Scale);
 					glTexCoordPointer(1, GL_DOUBLE, 0, &m_vInterpolatedSample[i][0]);
-					glDrawElements(GL_TRIANGLES, m_oScalp.m_vTriangle.size(), GL_UNSIGNED_INT, &m_oScalp.m_vTriangle[0]);
+					glDrawElements(GL_TRIANGLES, GLsizei(m_oScalp.m_vTriangle.size()), GL_UNSIGNED_INT, &m_oScalp.m_vTriangle[0]);
 					glPopMatrix();
 				}
 			}

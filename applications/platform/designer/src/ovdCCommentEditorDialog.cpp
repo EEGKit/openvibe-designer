@@ -153,25 +153,25 @@ void CCommentEditorDialog::applyTagCB(const char* sTagIn, const char* sTagOut)
 	if (gtk_text_buffer_get_has_selection(m_pDescriptionBuffer))
 	{
 		gtk_text_buffer_get_selection_bounds(m_pDescriptionBuffer, &l_oStartIter, &l_oEndIter);
-		gtk_text_buffer_insert(m_pDescriptionBuffer, &l_oStartIter, sTagIn, strlen(sTagIn));
+		gtk_text_buffer_insert(m_pDescriptionBuffer, &l_oStartIter, sTagIn, gint(strlen(sTagIn)));
 		gtk_text_buffer_get_selection_bounds(m_pDescriptionBuffer, &l_oStartIter, &l_oEndIter);
-		gtk_text_buffer_insert(m_pDescriptionBuffer, &l_oEndIter, sTagOut, strlen(sTagOut));
+		gtk_text_buffer_insert(m_pDescriptionBuffer, &l_oEndIter, sTagOut, gint(strlen(sTagOut)));
 
 		// reset selection to the selected text, as the tagOut is now selected
 		gtk_text_buffer_get_selection_bounds(m_pDescriptionBuffer, &l_oStartIter, &l_oEndIter);
-		gtk_text_iter_backward_chars(&l_oEndIter, strlen(sTagOut));
+		gtk_text_iter_backward_chars(&l_oEndIter, gint(strlen(sTagOut)));
 		gtk_text_buffer_select_range(m_pDescriptionBuffer, &l_oStartIter, &l_oEndIter);
 	}
 	else
 	{
 		gtk_text_buffer_get_selection_bounds(m_pDescriptionBuffer, &l_oStartIter, &l_oEndIter);
-		gint l_iOffset = gtk_text_iter_get_offset(&l_oStartIter);
+		const gint l_iOffset = gtk_text_iter_get_offset(&l_oStartIter);
 
-		gtk_text_buffer_insert_at_cursor(m_pDescriptionBuffer, sTagIn, strlen(sTagIn));
-		gtk_text_buffer_insert_at_cursor(m_pDescriptionBuffer, sTagOut, strlen(sTagOut));
+		gtk_text_buffer_insert_at_cursor(m_pDescriptionBuffer, sTagIn, gint(strlen(sTagIn)));
+		gtk_text_buffer_insert_at_cursor(m_pDescriptionBuffer, sTagOut, gint(strlen(sTagOut)));
 
 
-		gtk_text_buffer_get_iter_at_offset(m_pDescriptionBuffer, &l_oStartIter, l_iOffset + strlen(sTagIn));
+		gtk_text_buffer_get_iter_at_offset(m_pDescriptionBuffer, &l_oStartIter, gint(l_iOffset + strlen(sTagIn)));
 		gtk_text_buffer_place_cursor(m_pDescriptionBuffer, &l_oStartIter);
 	}
 
@@ -179,8 +179,4 @@ void CCommentEditorDialog::applyTagCB(const char* sTagIn, const char* sTagOut)
 	gtk_widget_grab_focus(m_pDescription);
 }
 
-void CCommentEditorDialog::infoCB()
-
-{
-	gtk_widget_show(m_pInfoDialog);
-}
+void CCommentEditorDialog::infoCB() { gtk_widget_show(m_pInfoDialog); }

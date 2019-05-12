@@ -471,7 +471,7 @@ namespace
 		if (pEvent->changed_mask & GDK_WINDOW_STATE_MAXIMIZED)
 		{
 			// window has changed from maximized to not maximized or the other way around
-			static_cast<CApplication*>(pUserData)->windowStateChangedCB(pEvent->new_window_state & GDK_WINDOW_STATE_MAXIMIZED);
+			static_cast<CApplication*>(pUserData)->windowStateChangedCB((pEvent->new_window_state & GDK_WINDOW_STATE_MAXIMIZED) != 0);
 		}
 		return TRUE;
 	}
@@ -1696,7 +1696,7 @@ void CApplication::dragDataGetCB(GtkWidget* /*pWidget*/, GdkDragContext* /*pDrag
 		gtk_tree_model_get(l_pTreeModel, &l_oTreeIter, Resource_StringIdentifier, &l_sBoxAlgorithmIdentifier, -1);
 		if (l_sBoxAlgorithmIdentifier)
 		{
-			gtk_selection_data_set(pSelectionData, GDK_SELECTION_TYPE_STRING, 8, reinterpret_cast<const guchar*>(l_sBoxAlgorithmIdentifier), strlen(l_sBoxAlgorithmIdentifier) + 1);
+			gtk_selection_data_set(pSelectionData, GDK_SELECTION_TYPE_STRING, 8, reinterpret_cast<const guchar*>(l_sBoxAlgorithmIdentifier), gint(strlen(l_sBoxAlgorithmIdentifier) + 1));
 		}
 	}
 }

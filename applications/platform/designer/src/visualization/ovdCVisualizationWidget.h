@@ -40,18 +40,18 @@ namespace OpenViBEDesigner
 
 		bool removeChild(const OpenViBE::CIdentifier& identifier) override;
 
-		bool getChildIdentifier(const uint32_t childIndex, OpenViBE::CIdentifier& identifier) const override;
+		bool getChildIdentifier(uint32_t childIndex, OpenViBE::CIdentifier& identifier) const override;
 
-		bool setChildIdentifier(const uint32_t childIndex, const OpenViBE::CIdentifier& identifier) override;
+		bool setChildIdentifier(uint32_t childIndex, const OpenViBE::CIdentifier& identifier) override;
 
-		void setWidth(const unsigned int width) override { m_Width = width; }
-		void setHeight(const unsigned int height) override { m_Height = height; }
+		void setWidth(unsigned int width) override { m_Width = width; }
+		void setHeight(unsigned int height) override { m_Height = height; }
 
 		unsigned int getWidth() override { return m_Width; }
 		unsigned int getHeight() override { return m_Height; }
 
-		void setDividerPosition(const int dividerPosition) override { m_DividerPosition = dividerPosition; }
-		void setMaxDividerPosition(const int maxDividerPosition) override { m_MaxDividerPosition = maxDividerPosition; }
+		void setDividerPosition(int dividerPosition) override { m_DividerPosition = dividerPosition; }
+		void setMaxDividerPosition(int maxDividerPosition) override { m_MaxDividerPosition = maxDividerPosition; }
 
 		int getDividerPosition() override { return m_DividerPosition; }
 		int getMaxDividerPosition() override { return m_MaxDividerPosition; }

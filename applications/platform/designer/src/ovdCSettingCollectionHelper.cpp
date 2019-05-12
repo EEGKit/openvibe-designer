@@ -283,7 +283,7 @@ namespace
 		CMatrix l_oGradientMatrix;
 		l_oGradientMatrix.setDimensionCount(2);
 		l_oGradientMatrix.setDimensionSize(0, 4);
-		l_oGradientMatrix.setDimensionSize(1, l_pUserData->vColorGradient.size());
+		l_oGradientMatrix.setDimensionSize(1, uint32_t(l_pUserData->vColorGradient.size()));
 		for (i = 0; i < l_pUserData->vColorGradient.size(); ++i)
 		{
 			l_oGradientMatrix[i * 4] = l_pUserData->vColorGradient[i].fPercent;
@@ -361,10 +361,10 @@ namespace
 		gtk_container_foreach(GTK_CONTAINER(l_pUserData->pContainer), on_gtk_widget_destroy_cb, nullptr);
 
 		uint32_t i = 0;
-		const uint32_t count = l_pUserData->vColorGradient.size();
+		const size_t count = l_pUserData->vColorGradient.size();
 		l_pUserData->vColorButtonMap.clear();
 		l_pUserData->vSpinButtonMap.clear();
-		for (vector<SColorGradientDataNode>::iterator it = l_pUserData->vColorGradient.begin(); it != l_pUserData->vColorGradient.end(); ++it, i++)
+		for (vector<SColorGradientDataNode>::iterator it = l_pUserData->vColorGradient.begin(); it != l_pUserData->vColorGradient.end(); ++it, ++i)
 		{
 			GtkBuilder* l_pBuilderInterface = gtk_builder_new(); // glade_xml_new(l_pUserData->sGUIFilename.c_str(), "setting_editor-color_gradient-hbox", nullptr);
 			gtk_builder_add_from_file(l_pBuilderInterface, l_pUserData->sGUIFilename.c_str(), nullptr);
@@ -463,7 +463,7 @@ namespace
 			CMatrix l_oFinalGradient;
 			l_oFinalGradient.setDimensionCount(2);
 			l_oFinalGradient.setDimensionSize(0, 4);
-			l_oFinalGradient.setDimensionSize(1, l_oUserData.vColorGradient.size());
+			l_oFinalGradient.setDimensionSize(1, size_t(l_oUserData.vColorGradient.size()));
 			for (uint32_t i = 0; i < l_oUserData.vColorGradient.size(); ++i)
 			{
 				l_oFinalGradient[i * 4] = l_oUserData.vColorGradient[i].fPercent;

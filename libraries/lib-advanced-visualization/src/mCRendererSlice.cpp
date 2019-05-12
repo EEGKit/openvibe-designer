@@ -180,7 +180,7 @@ bool CRendererSlice::render(const IRendererContext& rContext)
 
 	glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_vVertex[0].x);
 	glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_vVertex[0].u);
-	glDrawElements(GL_QUADS, m_vQuad.size(), GL_UNSIGNED_INT, &m_vQuad[0]);
+	glDrawElements(GL_QUADS, GLsizei(m_vQuad.size()), GL_UNSIGNED_INT, &m_vQuad[0]);
 
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);

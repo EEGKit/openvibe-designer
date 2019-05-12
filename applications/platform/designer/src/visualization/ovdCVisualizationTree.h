@@ -80,7 +80,7 @@ namespace OpenViBEDesigner
 		const OpenViBE::Kernel::IKernelContext& m_KernelContext;
 		const OpenViBE::Kernel::IScenario* m_Scenario = nullptr;
 		GtkTreeStore* m_TreeStore = nullptr;
-		GtkTreeIter m_InternalTreeNode{};
+		GtkTreeIter m_InternalTreeNode;
 		OpenViBEVisualizationToolkit::ITreeViewCB* m_TreeViewCB = nullptr;
 	};
 }

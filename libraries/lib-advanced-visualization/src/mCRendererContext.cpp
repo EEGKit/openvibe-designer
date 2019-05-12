@@ -141,7 +141,7 @@ void CRendererContext::addChannel(const std::string& sChannelName, const float x
 	l_oChannelLocalisation.x = x * l_fInvNorm;
 	l_oChannelLocalisation.y = y * l_fInvNorm;
 	l_oChannelLocalisation.z = z * l_fInvNorm;
-	m_channelLookup.push_back(m_channelName.size());
+	m_channelLookup.push_back(uint32_t(m_channelName.size()));
 	m_channelName.push_back(sChannelName);
 	m_channelLocalisation.push_back(l_oChannelLocalisation);
 }
@@ -351,9 +351,9 @@ bool CRendererContext::getChannelLocalisation(uint32_t ui32Index, float& x, floa
 	return true;
 }
 
-uint32_t CRendererContext::getChannelCount() const { return m_channelName.size(); }
+uint32_t CRendererContext::getChannelCount() const { return uint32_t(m_channelName.size()); }
 
-uint32_t CRendererContext::getSelectedCount() const { return m_channelLookup.size(); }
+uint32_t CRendererContext::getSelectedCount() const { return uint32_t(m_channelLookup.size()); }
 
 uint32_t CRendererContext::getSelected(const uint32_t index) const { return m_channelLookup[index]; }
 

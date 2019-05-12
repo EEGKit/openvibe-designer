@@ -434,7 +434,7 @@ bool CVisualizationTree::findChildNodeFromRoot(GtkTreeIter* iter, const char* la
 	if (!label) { return false; }
 
 	//if tree is empty return false
-	if (!static_cast<bool>(gtk_tree_model_get_iter_first(GTK_TREE_MODEL(m_TreeStore), iter))) { return false; }
+	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(m_TreeStore), iter) == 0) { return false; }
 
 	//look for node in the whole tree
 	do
@@ -498,7 +498,7 @@ bool CVisualizationTree::_findChildNodeFromParent(GtkTreeIter* iter, const char*
 bool CVisualizationTree::findChildNodeFromRoot(GtkTreeIter* iter, void* widget)
 {
 	// if tree is empty
-	if (!bool(gtk_tree_model_get_iter_first(GTK_TREE_MODEL(m_TreeStore), iter))) { return false; }
+	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(m_TreeStore), iter) == 0) { return false; }
 
 	//look for node in the whole tree
 	do
@@ -552,7 +552,7 @@ bool CVisualizationTree::_findChildNodeFromParent(GtkTreeIter* iter, void* widge
 bool CVisualizationTree::findChildNodeFromRoot(GtkTreeIter* iter, const CIdentifier identifier)
 {
 	//if tree is empty return false
-	if (!static_cast<bool>(gtk_tree_model_get_iter_first(GTK_TREE_MODEL(m_TreeStore), iter))) { return false; }
+	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(m_TreeStore), iter) == 0) { return false; }
 
 	//look for node in the whole tree
 	do

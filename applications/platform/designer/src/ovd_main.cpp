@@ -446,7 +446,7 @@ bool parse_arguments(int argc, char** argv, SConfiguration& rConfiguration)
 	{
 		GError* error = nullptr;
 		glong itemsRead, itemsWritten;
-		char* argUtf8 = g_utf16_to_utf8(reinterpret_cast<gunichar2*>(argListUtf16[i]), static_cast<size_t>(wcslen(argListUtf16[i])), &itemsRead, &itemsWritten, &error);
+		char* argUtf8 = g_utf16_to_utf8(reinterpret_cast<gunichar2*>(argListUtf16[i]), glong(wcslen(argListUtf16[i])), &itemsRead, &itemsWritten, &error);
 		l_vArgValue.emplace_back(argUtf8);
 		if (error != nullptr)
 		{

@@ -75,7 +75,7 @@ bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer*
 		m_oChannelLocalisationLabels.resize(l_oMatrix->getDimensionSize(0));
 		for (vector<CString>::size_type i = 0; i < m_oChannelLocalisationLabels.size(); ++i)
 		{
-			m_oChannelLocalisationLabels[i] = l_oMatrix->getDimensionLabel(0, i);
+			m_oChannelLocalisationLabels[i] = l_oMatrix->getDimensionLabel(0, size_t(i));
 		}
 
 		//retrieve dynamic flag
@@ -657,7 +657,7 @@ bool CBufferDatabase::fillChannelLookupTable()
 	for (size_t i = 0; i < size_t(m_pDimensionSizes[0]); ++i)
 	{
 		//trim leading spaces
-		uint32_t firstNonWhitespaceChar = 0;
+		size_t firstNonWhitespaceChar = 0;
 		for (; firstNonWhitespaceChar < m_pDimensionLabels[0][i].size(); firstNonWhitespaceChar++)
 		{
 			if (isspace(m_pDimensionLabels[0][i][firstNonWhitespaceChar]) == 0)
@@ -667,7 +667,7 @@ bool CBufferDatabase::fillChannelLookupTable()
 		}
 
 		//trim trailing spaces
-		uint32_t lastNonWhitespaceChar = 0;
+		size_t lastNonWhitespaceChar = 0;
 		if (!m_pDimensionLabels[0][i].empty())
 		{
 			for (lastNonWhitespaceChar = m_pDimensionLabels[0][i].size() - 1; lastNonWhitespaceChar >= 0; lastNonWhitespaceChar--)
@@ -713,20 +713,11 @@ bool CBufferDatabase::fillChannelLookupTable()
 	for (size_t i = 0; i < size_t(m_pDimensionSizes[0]); ++i)
 	{
 		m_oParentPlugin.getLogManager() << CString(m_pDimensionLabels[0][i].c_str());
-		if (i < m_pDimensionSizes[0] - 1)
-		{
-			m_oParentPlugin.getLogManager() << ", ";
-		}
-		else
-		{
-			m_oParentPlugin.getLogManager() << "\n";
-		}
+		if (i < m_pDimensionSizes[0] - 1) { m_oParentPlugin.getLogManager() << ", "; }
+		else { m_oParentPlugin.getLogManager() << "\n"; }
 	}
 
-	if (res)
-	{
-		m_bChannelLookupTableInitialized = true;
-	}
+	if (res) { m_bChannelLookupTableInitialized = true; }
 
 	return res;
 }

@@ -1009,7 +1009,7 @@ namespace OpenViBEPlugins
 				gdk_gc_set_rgb_fg_color(m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], &l_oBlack/*&l_oWhite*/);
 
 				m_topographicMapDatabase.getChannelLabel(i, electrodeLabel);
-				pango_layout_set_text(l_pElectrodeLabelLayout, electrodeLabel, strlen(electrodeLabel));
+				pango_layout_set_text(l_pElectrodeLabelLayout, electrodeLabel, int(strlen(electrodeLabel)));
 				pango_layout_get_pixel_size(l_pElectrodeLabelLayout, &textWidth, nullptr);
 				gdk_draw_layout(m_drawingArea->window, m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)],
 								channelX - textWidth / 2,
@@ -1209,8 +1209,8 @@ namespace OpenViBEPlugins
 						{
 							if (bComputeCoordinates)
 							{
-								m_sample2DCoordinates[curSample].first = j * m_cellSize;
-								m_sample2DCoordinates[curSample].second = i * m_cellSize;
+								m_sample2DCoordinates[curSample].first = uint32_t(j * m_cellSize);
+								m_sample2DCoordinates[curSample].second = uint32_t(i * m_cellSize);
 
 								//compute normalized coordinates to be fed to spherical spline algorithm
 								//----------------------------------------------------------------------

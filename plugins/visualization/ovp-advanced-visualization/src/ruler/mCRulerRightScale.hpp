@@ -51,7 +51,7 @@ namespace Mensia
 					m_fLastScale = l_fScale;
 				}
 
-				const float l_fOffset = m_pRendererContext->isPositiveOnly() ? 0 : 0.5;
+				const float l_fOffset = m_pRendererContext->isPositiveOnly() ? 0.0f : 0.5f;
 
 				gint w, h, lw, lh;
 

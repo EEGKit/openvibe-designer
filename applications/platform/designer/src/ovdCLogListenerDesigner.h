@@ -91,29 +91,29 @@ namespace OpenViBEDesigner
 		bool activate(OpenViBE::Kernel::ELogLevel eStartLogLevel, OpenViBE::Kernel::ELogLevel eEndLogLevel, bool bActive) override;
 		bool activate(bool bActive) override;
 
-		void log(OpenViBE::time64 time64Value) override;
+		void log(const OpenViBE::time64 time64Value) override;
 
-		void log(uint64_t ui64Value) override;
-		void log(uint32_t ui32Value) override;
-		void log(uint16_t ui16Value) override;
-		void log(uint8_t ui8Value) override;
+		void log(const uint64_t ui64Value) override;
+		void log(const uint32_t ui32Value) override;
+		void log(const uint16_t ui16Value) override;
+		void log(const uint8_t ui8Value) override;
 
-		void log(int64_t i64Value) override;
-		void log(int32_t i32Value) override;
-		void log(int16_t i16Value) override;
-		void log(int8_t i8Value) override;
+		void log(const int64_t i64Value) override;
+		void log(const int32_t i32Value) override;
+		void log(const int16_t i16Value) override;
+		void log(const int8_t i8Value) override;
 
-		void log(double f64Value) override;
-		void log(float f32Value) override;
+		void log(const double f64Value) override;
+		void log(const float f32Value) override;
 
-		void log(bool bValue) override;
+		void log(const bool bValue) override;
 
 		void log(const OpenViBE::CIdentifier& rValue) override;
 		void log(const OpenViBE::CString& rValue) override;
 		void log(const char* pValue) override;
 
-		void log(OpenViBE::Kernel::ELogLevel eLogLevel) override;
-		void log(OpenViBE::Kernel::ELogColor eLogColor) override;
+		void log(const OpenViBE::Kernel::ELogLevel eLogLevel) override;
+		void log(const OpenViBE::Kernel::ELogColor eLogColor) override;
 
 		void clearMessages();
 		void focusMessageWindow();

@@ -32,13 +32,13 @@ void CRendererXYZPlot::rebuild(const IRendererContext& rContext)
 	m_plotDimension = (m_hasDepth ? 3 : 2);
 	m_plotCount = (rContext.getChannelCount() + m_plotDimension - 1) / m_plotDimension;
 	m_vertex.resize(m_plotCount);
-	const float l_f32InverseSampleCount = 1.0 / float(m_sampleCount < 2 ? 1 : (m_sampleCount - 1));
+	const float inverseSampleCount = 1.0f / float(m_sampleCount < 2 ? 1 : (m_sampleCount - 1));
 	for (uint32_t i = 0; i < m_plotCount; ++i)
 	{
 		m_vertex[i].resize(this->m_sampleCount);
 		for (uint32_t j = 0; j < this->m_sampleCount; j++)
 		{
-			m_vertex[i][j].u = j * l_f32InverseSampleCount;
+			m_vertex[i][j].u = j * inverseSampleCount;
 		}
 	}
 

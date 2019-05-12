@@ -111,13 +111,13 @@ float CRenderer::getSuggestedScale()
 	{
 		std::vector<float> l_vf32Average;
 
-		for (uint32_t i = 0; i < m_channelCount; ++i)
+		for (size_t i = 0; i < m_channelCount; ++i)
 		{
 			l_vf32Average.push_back(0);
 
 			const size_t samplesToAverage = (m_history[i].size() < m_sampleCount) ? m_history[i].size() : m_sampleCount;
 
-			for (uint32_t j = m_history[i].size(); j > (m_history[i].size() - samplesToAverage); --j)
+			for (size_t j = m_history[i].size(); j > (m_history[i].size() - samplesToAverage); --j)
 			{
 				l_vf32Average.back() += m_history[i][j - 1];
 			}
@@ -146,7 +146,7 @@ void CRenderer::clear(const uint32_t sampleCountToKeep = 0)
 			if (sampleToDelete > 1)
 			{
 				for (auto& vec : m_history) { std::vector<float>(vec.begin() + sampleToDelete, vec.end()).swap(vec); }
-				m_historyCount -= sampleToDelete;
+				m_historyCount -= uint32_t(sampleToDelete);
 			}
 		}
 	}

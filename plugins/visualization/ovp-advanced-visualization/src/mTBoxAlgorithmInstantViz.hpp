@@ -208,8 +208,8 @@ namespace Mensia
 						m_vSwap.resize(channelCount);
 
 						m_pRendererContext->clear();
-						m_pRendererContext->setTranslucency(float(m_f64Translucency));
-						m_pRendererContext->setFlowerRingCount(m_ui64FlowerRingCount);
+						m_pRendererContext->setTranslucency(float(m_translucency));
+						m_pRendererContext->setFlowerRingCount(m_flowerRingCount);
 						//				m_pRendererContext->setTimeScale(1); // Won't be used
 						m_pRendererContext->scaleBy(float(m_f64DataScale));
 						m_pRendererContext->setPositiveOnly(m_bIsPositive);

@@ -33,7 +33,7 @@ namespace OpenViBEDesigner
 		bool addSettingsToView(uint32_t ui32SettingIndex, uint32_t ui32TableIndex);
 		void updateSize();
 		void settingChange(uint32_t ui32SettingIndex);
-		void addSetting(uint32_t ui32SettingIndex);
+		void addSetting(uint32_t settingIndex);
 
 		void clearSettingWrappersVector();
 		void removeSetting(uint32_t ui32SettingIndex, bool bShift = true);

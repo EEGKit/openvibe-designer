@@ -264,7 +264,7 @@ bool CTopographicMapDatabase::getBufferIndexFromTime(const uint64_t ui64Time, ui
 	}
 	if (ui64Time > m_oEndTime.back())
 	{
-		rBufferIndex = m_oSampleBuffers.size() - 1;
+		rBufferIndex =uint32_t(m_oSampleBuffers.size() - 1);
 		return false;
 	}
 	for (uint32_t i = 0; i < m_oSampleBuffers.size(); ++i)

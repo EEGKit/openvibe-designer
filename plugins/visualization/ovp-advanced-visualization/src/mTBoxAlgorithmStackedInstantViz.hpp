@@ -114,7 +114,7 @@ namespace Mensia
 			m_oStimulationDecoder.initialize(*this, 1);
 
 			m_pRendererContext->clear();
-			m_pRendererContext->setTranslucency(float(m_f64Translucency));
+			m_pRendererContext->setTranslucency(float(m_translucency));
 			m_pRendererContext->scaleBy(float(m_f64DataScale));
 			m_pRendererContext->setPositiveOnly(true);
 			m_pRendererContext->setAxisDisplay(m_bShowAxis);
@@ -200,7 +200,7 @@ namespace Mensia
 
 
 					m_pRendererContext->clear();
-					m_pRendererContext->setTranslucency(float(m_f64Translucency));
+					m_pRendererContext->setTranslucency(float(m_translucency));
 					m_pRendererContext->setTimeScale(1);
 					m_pRendererContext->scaleBy(float(m_f64DataScale));
 					m_pRendererContext->setParentRendererContext(&getContext());
@@ -289,8 +289,8 @@ namespace Mensia
 				{
 					if (m_oTypeIdentifier == OV_TypeId_TimeFrequency)
 					{
-						m_ui64Time1 = m_ui64Time2;
-						m_ui64Time2 = dynamicBoxContext.getInputChunkEndTime(0, chunk);
+						m_time1 = m_time2;
+						m_time2 = dynamicBoxContext.getInputChunkEndTime(0, chunk);
 
 						const uint32_t frequencyCount = inputMatrix->getDimensionSize(1);
 						const uint32_t sampleCount = inputMatrix->getDimensionSize(2);

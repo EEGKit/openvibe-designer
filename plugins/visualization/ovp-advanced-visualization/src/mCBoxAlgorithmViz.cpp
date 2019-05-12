@@ -129,26 +129,26 @@ bool CBoxAlgorithmViz::initialize()
 
 	// Sets default setting values
 	m_sLocalisation = CString("");
-	m_ui64TemporalCoherence = OVP_TypeId_TemporalCoherence_TimeLocked.toUInteger();
-	m_ui64ElementCount = 50;
-	m_ui64TimeScale = 10LL << 32;
+	m_temporalCoherence = OVP_TypeId_TemporalCoherence_TimeLocked.toUInteger();
+	m_elementCount = 50;
+	m_timeScale = 10LL << 32;
 	m_bIsPositive = false;
 	m_bIsTimeLocked = true;
 	m_bIsScaleVisible = true;
-	m_ui32TextureId = 0;
+	m_textureId = 0;
 	m_ui64LastProcessTime = 0;
-	m_ui64Time1 = 0;
-	m_ui64Time2 = 0;
+	m_time1 = 0;
+	m_time2 = 0;
 	m_sColor = CString("100,100,100");
 	m_sColorGradient = CString("0:0,0,0; 100:100,100,100");
 	m_bXYZPlotHasDepth = false;
 	m_f64DataScale = 1;
-	m_f64Translucency = 1;
+	m_translucency = 1;
 	m_vColor.clear();
 
 	// Initializes fast forward behavior
-	m_f32FastForwardMaximumFactorHighDefinition = float(this->getConfigurationManager().expandAsFloat("${AdvancedViz_HighDefinition_FastForwardFactor}", 5.f));
-	m_f32FastForwardMaximumFactorLowDefinition = float(this->getConfigurationManager().expandAsFloat("${AdvancedViz_LowDefinition_FastForwardFactor}", 20.f));
+	m_fastForwardMaximumFactorHighDefinition = float(this->getConfigurationManager().expandAsFloat("${AdvancedViz_HighDefinition_FastForwardFactor}", 5.f));
+	m_fastForwardMaximumFactorLowDefinition = float(this->getConfigurationManager().expandAsFloat("${AdvancedViz_LowDefinition_FastForwardFactor}", 20.f));
 
 	// Gets data stream type
 	this->getStaticBoxContext().getInputType(0, m_oTypeIdentifier);
@@ -249,23 +249,23 @@ bool CBoxAlgorithmViz::initialize()
 				m_bIsPositive = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
 				break;
 			case S_TemporalCoherence:
-				m_ui64TemporalCoherence = static_cast<uint64_t>(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex));
+				m_temporalCoherence = static_cast<uint64_t>(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex));
 				break;
 			case S_TimeScale:
 				l_fValue = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
-				m_ui64TimeScale = uint64_t(l_fValue * (1LL << 32));
+				m_timeScale = uint64_t(l_fValue * (1LL << 32));
 				break;
 			case S_ElementCount:
-				m_ui64ElementCount = static_cast<uint64_t>(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex));
+				m_elementCount = static_cast<uint64_t>(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex));
 				break;
 			case S_DataScale:
 				m_f64DataScale = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
 				break;
 			case S_FlowerRingCount:
-				m_ui64FlowerRingCount = static_cast<uint64_t>(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex));
+				m_flowerRingCount = static_cast<uint64_t>(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex));
 				break;
 			case S_Translucency:
-				m_f64Translucency = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
+				m_translucency = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
 				break;
 			case S_ShowAxis:
 				m_bShowAxis = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
@@ -311,9 +311,9 @@ bool CBoxAlgorithmViz::initialize()
 	}
 
 	// Sets time scale
-	if (m_ui64TemporalCoherence == OVP_TypeId_TemporalCoherence_TimeLocked.toUInteger())
+	if (m_temporalCoherence == OVP_TypeId_TemporalCoherence_TimeLocked.toUInteger())
 	{
-		gtk_spin_button_set_value(GTK_SPIN_BUTTON(::gtk_builder_get_object(m_pBuilder, "spinbutton_time_scale")), (m_ui64TimeScale >> 22) / 1024.);
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(::gtk_builder_get_object(m_pBuilder, "spinbutton_time_scale")), (m_timeScale >> 22) / 1024.);
 		m_bIsTimeLocked = true;
 	}
 	else
@@ -322,9 +322,9 @@ bool CBoxAlgorithmViz::initialize()
 	}
 
 	// Sets matrix count
-	if (m_ui64TemporalCoherence == OVP_TypeId_TemporalCoherence_Independant.toUInteger())
+	if (m_temporalCoherence == OVP_TypeId_TemporalCoherence_Independant.toUInteger())
 	{
-		gtk_spin_button_set_value(GTK_SPIN_BUTTON(::gtk_builder_get_object(m_pBuilder, "spinbutton_element_count")), double(m_ui64ElementCount));
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(::gtk_builder_get_object(m_pBuilder, "spinbutton_element_count")), double(m_elementCount));
 		m_bIsTimeLocked = false;
 	}
 	else
@@ -422,13 +422,13 @@ bool CBoxAlgorithmViz::processClock(IMessageClock& /*rClock*/)
 	else
 	{
 		const auto l_f32CurrentFastForwardMaximumFactor = static_cast<float>(this->getPlayerContext().getCurrentFastForwardMaximumFactor());
-		if (l_f32CurrentFastForwardMaximumFactor <= m_f32FastForwardMaximumFactorHighDefinition)
+		if (l_f32CurrentFastForwardMaximumFactor <= m_fastForwardMaximumFactorHighDefinition)
 		{
 			l_ui64MinDeltaTime = l_ui64MinDeltaTimeHighDefinition;
 		}
-		else if (l_f32CurrentFastForwardMaximumFactor <= m_f32FastForwardMaximumFactorLowDefinition)
+		else if (l_f32CurrentFastForwardMaximumFactor <= m_fastForwardMaximumFactorLowDefinition)
 		{
-			const float alpha = (l_f32CurrentFastForwardMaximumFactor - m_f32FastForwardMaximumFactorHighDefinition) / (m_f32FastForwardMaximumFactorLowDefinition - m_f32FastForwardMaximumFactorHighDefinition);
+			const float alpha = (l_f32CurrentFastForwardMaximumFactor - m_fastForwardMaximumFactorHighDefinition) / (m_fastForwardMaximumFactorLowDefinition - m_fastForwardMaximumFactorHighDefinition);
 			l_ui64MinDeltaTime = uint64_t((l_ui64MinDeltaTimeLowDefinition * alpha) + l_ui64MinDeltaTimeHighDefinition * (1.f - alpha));
 		}
 		else
@@ -482,11 +482,11 @@ void CBoxAlgorithmViz::preDraw()
 {
 	this->updateRulerVisibility();
 
-	if (m_ui32TextureId == 0u)
+	if (m_textureId == 0u)
 	{
-		m_ui32TextureId = m_oGtkGLWidget.createTexture(m_sColorGradient.toASCIIString());
+		m_textureId = m_oGtkGLWidget.createTexture(m_sColorGradient.toASCIIString());
 	}
-	glBindTexture(GL_TEXTURE_1D, m_ui32TextureId);
+	glBindTexture(GL_TEXTURE_1D, m_textureId);
 
 	m_pRendererContext->setAspect(m_pViewport->allocation.width * 1.f / m_pViewport->allocation.height);
 }

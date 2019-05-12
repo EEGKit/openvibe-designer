@@ -260,14 +260,14 @@ namespace Mensia
 			CMouse m_oMouseHandler;
 
 			OpenViBE::CString m_sLocalisation;
-			uint64_t m_ui64TemporalCoherence = 0;
-			uint64_t m_ui64TimeScale = 0;
-			uint64_t m_ui64ElementCount = 0;
+			uint64_t m_temporalCoherence = 0;
+			uint64_t m_timeScale = 0;
+			uint64_t m_elementCount = 0;
 			double m_f64DataScale = 0.0;
 			OpenViBE::CString m_sCaption;
-			uint32_t m_ui32TextureId = 0;
-			uint64_t m_ui64FlowerRingCount = 0;
-			double m_f64Translucency = 0.0;
+			uint32_t m_textureId = 0;
+			uint64_t m_flowerRingCount = 0;
+			double m_translucency = 0.0;
 			OpenViBE::CString m_sColor;
 			OpenViBE::CString m_sColorGradient;
 			bool m_bShowAxis = false;
@@ -276,14 +276,14 @@ namespace Mensia
 			bool m_bIsTimeLocked = false;
 			bool m_bIsScaleVisible = false;
 			std::vector<TColor> m_vColor;
-			TColor m_oColor{};
+			TColor m_oColor;
 
 			OpenViBE::CIdentifier m_oTypeIdentifier;
-			uint64_t m_ui64Time1 = 0;
-			uint64_t m_ui64Time2 = 0;
+			uint64_t m_time1 = 0;
+			uint64_t m_time2 = 0;
 
-			float m_f32FastForwardMaximumFactorHighDefinition = 0.0;
-			float m_f32FastForwardMaximumFactorLowDefinition = 0.0;
+			float m_fastForwardMaximumFactorHighDefinition = 0.0;
+			float m_fastForwardMaximumFactorLowDefinition = 0.0;
 
 			std::vector<float> m_vSwap;
 

@@ -119,9 +119,9 @@ namespace Mensia
 				return true;
 			}
 
-			IRenderer* m_pRenderer{};
-			GtkTreeView* m_pLookupTreeView[3]{};
-			GtkListStore* m_pLookupListStore[3]{};
+			IRenderer* m_pRenderer = nullptr;
+			GtkTreeView* m_pLookupTreeView[3];
+			GtkListStore* m_pLookupListStore[3];
 		};
 	} // namespace AdvancedVisualization
 } // namespace Mensia
