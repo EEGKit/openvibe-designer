@@ -9,25 +9,25 @@ using namespace OpenViBE;
 using namespace OpenViBEDesigner;
 using namespace Setting;
 
-static void on_button_setting_filename_browse_pressed(GtkButton* /*pButton*/, gpointer pUserData)
+static void on_button_setting_filename_browse_pressed(GtkButton* /*pButton*/, gpointer data)
 {
-	static_cast<CScriptSettingView*>(pUserData)->browse();
+	static_cast<CScriptSettingView*>(data)->browse();
 }
 
-static void on_button_setting_script_edit_pressed(GtkButton* /*pButton*/, gpointer pUserData)
+static void on_button_setting_script_edit_pressed(GtkButton* /*pButton*/, gpointer data)
 {
-	static_cast<CScriptSettingView*>(pUserData)->edit();
+	static_cast<CScriptSettingView*>(data)->edit();
 }
 
-static void on_change(GtkEntry* /*entry*/, gpointer pUserData)
+static void on_change(GtkEntry* /*entry*/, gpointer data)
 {
-	static_cast<CScriptSettingView*>(pUserData)->onChange();
+	static_cast<CScriptSettingView*>(data)->onChange();
 }
 
 #if defined TARGET_OS_Windows
-static gboolean on_focus_out_event(GtkEntry* /*entry*/, GdkEvent* /*event*/, gpointer pUserData)
+static gboolean on_focus_out_event(GtkEntry* /*entry*/, GdkEvent* /*event*/, gpointer data)
 {
-	static_cast<CScriptSettingView*>(pUserData)->onFocusLost();
+	static_cast<CScriptSettingView*>(data)->onFocusLost();
 	return FALSE;
 }
 #endif

@@ -10,49 +10,49 @@ using namespace OpenViBE;
 using namespace OpenViBEDesigner;
 using namespace Setting;
 
-static void on_color_gradient_color_button_pressed(GtkColorButton* pButton, gpointer pUserData)
+static void on_color_gradient_color_button_pressed(GtkColorButton* pButton, gpointer data)
 {
-	static_cast<CColorGradientSettingView*>(pUserData)->colorChange(pButton);
+	static_cast<CColorGradientSettingView*>(data)->colorChange(pButton);
 }
 
-static void on_button_setting_color_gradient_configure_pressed(GtkButton* /*pButton*/, gpointer pUserData)
+static void on_button_setting_color_gradient_configure_pressed(GtkButton* /*pButton*/, gpointer data)
 {
-	static_cast<CColorGradientSettingView*>(pUserData)->configurePressed();
+	static_cast<CColorGradientSettingView*>(data)->configurePressed();
 }
 
-static void on_refresh_color_gradient(GtkWidget* /*pWidget*/, GdkEventExpose* /*event*/, gpointer pUserData)
+static void on_refresh_color_gradient(GtkWidget* /*pWidget*/, GdkEventExpose* /*event*/, gpointer data)
 {
-	static_cast<CColorGradientSettingView*>(pUserData)->refreshColorGradient();
+	static_cast<CColorGradientSettingView*>(data)->refreshColorGradient();
 }
 
-static void on_gtk_widget_destroy_cb(GtkWidget* pWidget, gpointer /*pUserData*/)
+static void on_gtk_widget_destroy_cb(GtkWidget* pWidget, gpointer /*data*/)
 {
 	gtk_widget_destroy(pWidget);
 }
 
-static void on_initialize_color_gradient(GtkWidget* /*pWidget*/, gpointer pUserData)
+static void on_initialize_color_gradient(GtkWidget* /*pWidget*/, gpointer data)
 {
-	static_cast<CColorGradientSettingView*>(pUserData)->initializeGradient();
+	static_cast<CColorGradientSettingView*>(data)->initializeGradient();
 }
 
-static void on_button_color_gradient_add_pressed(GtkButton* /*pButton*/, gpointer pUserData)
+static void on_button_color_gradient_add_pressed(GtkButton* /*pButton*/, gpointer data)
 {
-	static_cast<CColorGradientSettingView*>(pUserData)->addColor();
+	static_cast<CColorGradientSettingView*>(data)->addColor();
 }
 
-static void on_button_color_gradient_remove_pressed(GtkButton* /*pButton*/, gpointer pUserData)
+static void on_button_color_gradient_remove_pressed(GtkButton* /*pButton*/, gpointer data)
 {
-	static_cast<CColorGradientSettingView*>(pUserData)->removeColor();
+	static_cast<CColorGradientSettingView*>(data)->removeColor();
 }
 
-static void on_color_gradient_spin_button_value_changed(GtkSpinButton* pButton, gpointer pUserData)
+static void on_color_gradient_spin_button_value_changed(GtkSpinButton* pButton, gpointer data)
 {
-	static_cast<CColorGradientSettingView*>(pUserData)->spinChange(pButton);
+	static_cast<CColorGradientSettingView*>(data)->spinChange(pButton);
 }
 
-static void on_change(GtkEntry* /*entry*/, gpointer pUserData)
+static void on_change(GtkEntry* /*entry*/, gpointer data)
 {
-	static_cast<CColorGradientSettingView*>(pUserData)->onChange();
+	static_cast<CColorGradientSettingView*>(data)->onChange();
 }
 
 CColorGradientSettingView::CColorGradientSettingView(Kernel::IBox& rBox, uint32_t ui32Index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext)

@@ -109,9 +109,9 @@ namespace
 		return l_sOutput;
 	}
 
-	void count_widget_cb(GtkWidget* /*pWidget*/, gpointer pUserData)
+	void count_widget_cb(GtkWidget* /*pWidget*/, gpointer data)
 	{
-		int* i = reinterpret_cast<int*>(pUserData);
+		int* i = reinterpret_cast<int*>(data);
 		if (i)
 		{
 			(*i)++;
@@ -144,45 +144,45 @@ namespace
 		return FALSE;
 	}
 
-	void scenario_drawing_area_expose_cb(GtkWidget* /*pWidget*/, GdkEventExpose* pEvent, gpointer pUserData)
+	void scenario_drawing_area_expose_cb(GtkWidget* /*pWidget*/, GdkEventExpose* pEvent, gpointer data)
 	{
-		static_cast<CInterfacedScenario*>(pUserData)->scenarioDrawingAreaExposeCB(pEvent);
+		static_cast<CInterfacedScenario*>(data)->scenarioDrawingAreaExposeCB(pEvent);
 	}
 
-	void scenario_drawing_area_drag_data_received_cb(GtkWidget* /*pWidget*/, GdkDragContext* pDragContext, const gint iX, const gint iY, GtkSelectionData* pSelectionData, const guint uiInfo, const guint uiT, gpointer pUserData)
+	void scenario_drawing_area_drag_data_received_cb(GtkWidget* /*pWidget*/, GdkDragContext* pDragContext, const gint iX, const gint iY, GtkSelectionData* pSelectionData, const guint uiInfo, const guint uiT, gpointer data)
 	{
-		static_cast<CInterfacedScenario*>(pUserData)->scenarioDrawingAreaDragDataReceivedCB(pDragContext, iX, iY, pSelectionData, uiInfo, uiT);
+		static_cast<CInterfacedScenario*>(data)->scenarioDrawingAreaDragDataReceivedCB(pDragContext, iX, iY, pSelectionData, uiInfo, uiT);
 	}
 
-	gboolean scenario_drawing_area_motion_notify_cb(GtkWidget* pWidget, GdkEventMotion* pEvent, gpointer pUserData)
+	gboolean scenario_drawing_area_motion_notify_cb(GtkWidget* pWidget, GdkEventMotion* pEvent, gpointer data)
 	{
-		static_cast<CInterfacedScenario*>(pUserData)->scenarioDrawingAreaMotionNotifyCB(pWidget, pEvent);
+		static_cast<CInterfacedScenario*>(data)->scenarioDrawingAreaMotionNotifyCB(pWidget, pEvent);
 		return FALSE;
 	}
 
-	void scenario_drawing_area_button_pressed_cb(GtkWidget* pWidget, GdkEventButton* pEvent, gpointer pUserData)
+	void scenario_drawing_area_button_pressed_cb(GtkWidget* pWidget, GdkEventButton* pEvent, gpointer data)
 	{
-		static_cast<CInterfacedScenario*>(pUserData)->scenarioDrawingAreaButtonPressedCB(pWidget, pEvent);
+		static_cast<CInterfacedScenario*>(data)->scenarioDrawingAreaButtonPressedCB(pWidget, pEvent);
 	}
 
-	void scenario_drawing_area_button_released_cb(GtkWidget* pWidget, GdkEventButton* pEvent, gpointer pUserData)
+	void scenario_drawing_area_button_released_cb(GtkWidget* pWidget, GdkEventButton* pEvent, gpointer data)
 	{
-		static_cast<CInterfacedScenario*>(pUserData)->scenarioDrawingAreaButtonReleasedCB(pWidget, pEvent);
+		static_cast<CInterfacedScenario*>(data)->scenarioDrawingAreaButtonReleasedCB(pWidget, pEvent);
 	}
 
-	void scenario_drawing_area_key_press_event_cb(GtkWidget* pWidget, GdkEventKey* pEvent, gpointer pUserData)
+	void scenario_drawing_area_key_press_event_cb(GtkWidget* pWidget, GdkEventKey* pEvent, gpointer data)
 	{
-		static_cast<CInterfacedScenario*>(pUserData)->scenarioDrawingAreaKeyPressEventCB(pWidget, pEvent);
+		static_cast<CInterfacedScenario*>(data)->scenarioDrawingAreaKeyPressEventCB(pWidget, pEvent);
 	}
 
-	void scenario_drawing_area_key_release_event_cb(GtkWidget* pWidget, GdkEventKey* pEvent, gpointer pUserData)
+	void scenario_drawing_area_key_release_event_cb(GtkWidget* pWidget, GdkEventKey* pEvent, gpointer data)
 	{
-		static_cast<CInterfacedScenario*>(pUserData)->scenarioDrawingAreaKeyReleaseEventCB(pWidget, pEvent);
+		static_cast<CInterfacedScenario*>(data)->scenarioDrawingAreaKeyReleaseEventCB(pWidget, pEvent);
 	}
 
 	void context_menu_cb(GtkMenuItem* /*pMenuItem*/, CInterfacedScenario::BoxContextMenuCB* pContextMenuCB)
 	{
-		//CInterfacedScenario::BoxContextMenuCB* pContextMenuCB=static_cast < CInterfacedScenario::BoxContextMenuCB* >(pUserData);
+		//CInterfacedScenario::BoxContextMenuCB* pContextMenuCB=static_cast < CInterfacedScenario::BoxContextMenuCB* >(data);
 		switch (pContextMenuCB->ui32Command)
 		{
 			case ContextMenu_SelectionCopy: pContextMenuCB->pInterfacedScenario->copySelection();
@@ -333,9 +333,9 @@ namespace
 #endif
 	}
 
-	void scenario_title_button_close_cb(GtkButton* /*pButton*/, gpointer pUserData)
+	void scenario_title_button_close_cb(GtkButton* /*pButton*/, gpointer data)
 	{
-		static_cast<CInterfacedScenario*>(pUserData)->m_rApplication.closeScenarioCB(static_cast<CInterfacedScenario*>(pUserData));
+		static_cast<CInterfacedScenario*>(data)->m_rApplication.closeScenarioCB(static_cast<CInterfacedScenario*>(data));
 	}
 
 	gboolean editable_widget_focus_in_cb(GtkWidget*, GdkEvent*, CApplication* pApplication)

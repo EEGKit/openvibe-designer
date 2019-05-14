@@ -7,14 +7,14 @@ using namespace OpenViBE;
 using namespace OpenViBEDesigner;
 using namespace Setting;
 
-static void on_checkbutton_setting_bool_pressed(GtkToggleButton* /*pButton*/, gpointer pUserData)
+static void on_checkbutton_setting_bool_pressed(GtkToggleButton* /*pButton*/, gpointer data)
 {
-	static_cast<CBooleanSettingView*>(pUserData)->toggleButtonClick();
+	static_cast<CBooleanSettingView*>(data)->toggleButtonClick();
 }
 
-static void on_insertion(GtkEntry* /*entry*/, gpointer pUserData)
+static void on_insertion(GtkEntry* /*entry*/, gpointer data)
 {
-	static_cast<CBooleanSettingView*>(pUserData)->onChange();
+	static_cast<CBooleanSettingView*>(data)->onChange();
 }
 
 CBooleanSettingView::CBooleanSettingView(Kernel::IBox& rBox, uint32_t ui32Index, CString& rBuilderName) :

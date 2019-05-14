@@ -5,9 +5,9 @@ using namespace Kernel;
 using namespace OpenViBEDesigner;
 using namespace std;
 
-static void type_changed_cb(GtkComboBox* /*pWidget*/, gpointer pUserData)
+static void type_changed_cb(GtkComboBox* /*pWidget*/, gpointer data)
 {
-	static_cast<CSettingEditorDialog*>(pUserData)->typeChangedCB();
+	static_cast<CSettingEditorDialog*>(data)->typeChangedCB();
 }
 
 CSettingEditorDialog::CSettingEditorDialog(const IKernelContext& rKernelContext, IBox& rBox, const uint32_t ui32SettingIndex, const char* sTitle, const char* sGUIFilename, const char* sGUISettingsFilename)

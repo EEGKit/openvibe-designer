@@ -39,7 +39,7 @@ namespace
 		memset(pValue, 0, sizeof(T));
 		for (unsigned int i = 0; i < sizeof(T); ++i)
 		{
-			((uint8_t*)pValue)[i] = pBuffer[i];
+			reinterpret_cast<uint8_t*>(pValue)[i] = pBuffer[i];
 		}
 		return true;
 	}
@@ -158,7 +158,7 @@ bool C3DMesh::project(std::vector<CVertex>& vProjectedChannelCoordinate, const s
 			CVertex e2(v1, v3);
 			CVertex n = CVertex::cross(e1, e2).normalize();
 
-			float t = CVertex::dot(v1, n) / CVertex::dot(p, n);
+			const float t = CVertex::dot(v1, n) / CVertex::dot(p, n);
 			q.x = t * p.x;
 			q.y = t * p.y;
 			q.z = t * p.z;

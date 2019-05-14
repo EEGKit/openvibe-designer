@@ -7,9 +7,9 @@ using namespace OpenViBE;
 using namespace OpenViBEDesigner;
 using namespace Setting;
 
-static void on_change(GtkEntry* /*entry*/, gpointer pUserData)
+static void on_change(GtkEntry* /*entry*/, gpointer data)
 {
-	static_cast<CStringSettingView*>(pUserData)->onChange();
+	static_cast<CStringSettingView*>(data)->onChange();
 }
 
 CStringSettingView::CStringSettingView(Kernel::IBox& rBox, uint32_t ui32Index, CString& rBuilderName) :

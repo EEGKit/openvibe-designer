@@ -27,10 +27,7 @@
 using namespace Mensia;
 using namespace AdvancedVisualization;
 
-CRendererFlower::CRendererFlower(uint32_t ui32MultiCount)
-{
-	m_vMuliVertex.resize(ui32MultiCount);
-}
+CRendererFlower::CRendererFlower(const uint32_t multiCount) { m_vMuliVertex.resize(multiCount); }
 
 void CRendererFlower::rebuild(const IRendererContext& rContext)
 {
@@ -40,18 +37,18 @@ void CRendererFlower::rebuild(const IRendererContext& rContext)
 
 	m_autoDecimationFactor = 1 + uint32_t((m_sampleCount - 1) / rContext.getMaximumSampleCountPerDisplay());
 
-	uint32_t n = m_sampleCount / m_autoDecimationFactor;
+	const uint32_t n = m_sampleCount / m_autoDecimationFactor;
 
-	for (uint32_t z = 0; z < m_vMuliVertex.size(); z++)
+	for (auto& multivertex : m_vMuliVertex)
 	{
-		m_vMuliVertex[z].clear();
-		m_vMuliVertex[z].resize(m_channelCount);
+		multivertex.clear();
+		multivertex.resize(m_channelCount);
 		for (i = 0; i < m_channelCount; ++i)
 		{
-			m_vMuliVertex[z][i].resize(n);
+			multivertex[i].resize(n);
 			for (uint32_t j = 0; j < m_sampleCount - m_autoDecimationFactor + 1; j += m_autoDecimationFactor)
 			{
-				m_vMuliVertex[z][i][j / m_autoDecimationFactor].u = j * m_inverseSampleCount;
+				multivertex[i][j / m_autoDecimationFactor].u = j * m_inverseSampleCount;
 			}
 		}
 	}
@@ -60,8 +57,8 @@ void CRendererFlower::rebuild(const IRendererContext& rContext)
 	m_vCircle.resize(n);
 	for (i = 0; i < n; ++i)
 	{
-		m_vCircle[i].x = cosf(rContext.getFlowerRingCount() * i * static_cast<float>(M_PI) * 2.f / n);
-		m_vCircle[i].y = sinf(rContext.getFlowerRingCount() * i * static_cast<float>(M_PI) * 2.f / n);
+		m_vCircle[i].x = cosf(float(rContext.getFlowerRingCount()) * i * float(M_PI) * 2.f / n);
+		m_vCircle[i].y = sinf(float(rContext.getFlowerRingCount()) * i * float(M_PI) * 2.f / n);
 		m_vCircle[i].z = 0;
 	}
 

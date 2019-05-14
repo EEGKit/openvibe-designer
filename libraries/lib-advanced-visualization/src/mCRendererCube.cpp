@@ -45,15 +45,15 @@ void CRendererCube::refresh(const IRendererContext& rContext)
 
 	if (!m_historyCount) { return; }
 
-	float l_f32SampleIndexERP = (m_ERPFraction * (m_sampleCount - 1));
-	float l_f32Alpha = l_f32SampleIndexERP - std::floor(l_f32SampleIndexERP);
-	uint32_t l_ui32SampleIndexERP1 = uint32_t(l_f32SampleIndexERP) % m_sampleCount;
-	uint32_t l_ui32SampleIndexERP2 = uint32_t(l_f32SampleIndexERP + 1) % m_sampleCount;
+	const float sampleIndexERP = (m_ERPFraction * float(m_sampleCount - 1));
+	const float alpha = sampleIndexERP - std::floor(sampleIndexERP);
+	const uint32_t sampleIndexERP1 = uint32_t(sampleIndexERP) % m_sampleCount;
+	const uint32_t sampleIndexERP2 = uint32_t(sampleIndexERP + 1) % m_sampleCount;
 
 	for (uint32_t i = 0; i < m_vVertex.size(); ++i)
 	{
-		m_vVertex[i].u = m_history[i][m_historyCount - m_sampleCount + l_ui32SampleIndexERP1] * (1 - l_f32Alpha)
-			+ m_history[i][m_historyCount - m_sampleCount + l_ui32SampleIndexERP2] * (l_f32Alpha);
+		m_vVertex[i].u = m_history[i][m_historyCount - m_sampleCount + sampleIndexERP1] * (1 - alpha)
+			+ m_history[i][m_historyCount - m_sampleCount + sampleIndexERP2] * (alpha);
 	}
 
 	m_historyIndex = m_historyCount;
@@ -67,7 +67,7 @@ bool CRendererCube::render(const IRendererContext& rContext)
 	if (m_vVertex.empty()) { return false; }
 	if (!m_historyCount) { return false; }
 
-	float d = 3.5;
+	const float d = 3.5;
 
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
@@ -94,7 +94,7 @@ bool CRendererCube::render(const IRendererContext& rContext)
 	for (uint32_t j = 0; j < rContext.getSelectedCount(); j++)
 	{
 		CVertex v;
-		uint32_t k = rContext.getSelected(j);
+		const uint32_t k = rContext.getSelected(j);
 		rContext.getChannelLocalisation(k, v.x, v.y, v.z);
 		/*
 				std::string l_sName=rContext.getChannelName(k);
@@ -104,7 +104,7 @@ bool CRendererCube::render(const IRendererContext& rContext)
 				if(it!=m_channelLocalisation.end())
 				{
 		*/
-		float l_fCubeScale = .1f * (.25f + fabs(m_vVertex[k].u * rContext.getScale()));
+		const float l_fCubeScale = .1f * (.25f + fabs(m_vVertex[k].u * rContext.getScale()));
 
 		glPushMatrix();
 		//			::glTranslatef(it->second.x, it->second.y, it->second.z);

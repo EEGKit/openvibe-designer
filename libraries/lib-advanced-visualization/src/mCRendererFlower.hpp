@@ -30,7 +30,7 @@ namespace Mensia
 		{
 		public:
 
-			explicit CRendererFlower(uint32_t ui32MultiCount = 1);
+			explicit CRendererFlower(uint32_t multiCount = 1);
 
 			void rebuild(const IRendererContext& rContext) override;
 			void refresh(const IRendererContext& rContext) override;

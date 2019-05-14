@@ -73,9 +73,9 @@ void CRendererSlice::rebuild(const IRendererContext& rContext)
 			m_vQuad[l++] = k + 3;
 			m_vQuad[l++] = k + 2;
 
-			float ox = 0;
-			float oy = ((m_channelCount - 1) * .5f - j);
-			float oz = ((m_sampleCount - 1) * .5f - i);
+			const float ox = 0;
+			const float oy = 0.5f * float(m_channelCount - 1) - j;
+			const float oz = 0.5f * float(m_sampleCount - 1) - i;
 
 			m_vVertex[k].x = ox + f32Size;
 			m_vVertex[k].y = oy - f32Size; // v0
@@ -143,7 +143,7 @@ void CRendererSlice::refresh(const IRendererContext& rContext)
 bool CRendererSlice::render(const IRendererContext& rContext)
 {
 	// uint32_t i, j;
-	float d = 3.5;
+	const float d = 3.5;
 
 	if (!rContext.getSelectedCount()) { return false; }
 	if (!m_historyCount) { return false; }
@@ -172,7 +172,7 @@ bool CRendererSlice::render(const IRendererContext& rContext)
 
 	glPushMatrix();
 	glScalef(1.f / rContext.getStackCount(), 1.f / m_channelCount, 1.f / m_sampleCount);
-	glTranslatef(rContext.getStackIndex() - (rContext.getStackCount() - 1) * .5f, 0, 0);
+	glTranslatef(rContext.getStackIndex() - 0.5f * float(rContext.getStackCount() - 1), 0, 0);
 	glColor4f(.1f, .1f, .1f, rContext.getTranslucency());
 
 	glEnableClientState(GL_VERTEX_ARRAY);
@@ -188,7 +188,7 @@ bool CRendererSlice::render(const IRendererContext& rContext)
 
 	glDisable(GL_TEXTURE_1D);
 
-	float l_f32Progress = 1 - (m_historyIndex % m_sampleCount) * 2.f / m_sampleCount;
+	const float progress = 1 - 2.0f * float(m_historyIndex % m_sampleCount) / m_sampleCount;
 	glScalef(.5, .5, .5);
 	glBegin(GL_LINE_LOOP);
 	glColor3f(1, 1, 1);
@@ -220,17 +220,17 @@ bool CRendererSlice::render(const IRendererContext& rContext)
 	glEnd();
 	glBegin(GL_LINE_LOOP);
 	glColor4f(0.25f, 1, 0.25f, .9f / rContext.getStackCount());
-	glVertex3f(-1, -1, l_f32Progress);
-	glVertex3f(-1, 1, l_f32Progress);
-	glVertex3f(1, 1, l_f32Progress);
-	glVertex3f(1, -1, l_f32Progress);
+	glVertex3f(-1, -1, progress);
+	glVertex3f(-1, 1, progress);
+	glVertex3f(1, 1, progress);
+	glVertex3f(1, -1, progress);
 	glEnd();
 	glBegin(GL_QUADS);
 	glColor4f(0.25f, 1, 0.25f, .1f / rContext.getStackCount());
-	glVertex3f(-1, -1, l_f32Progress);
-	glVertex3f(-1, 1, l_f32Progress);
-	glVertex3f(1, 1, l_f32Progress);
-	glVertex3f(1, -1, l_f32Progress);
+	glVertex3f(-1, -1, progress);
+	glVertex3f(-1, 1, progress);
+	glVertex3f(1, 1, progress);
+	glVertex3f(1, -1, progress);
 	glEnd();
 
 	glEnable(GL_TEXTURE_1D);

@@ -44,17 +44,10 @@ namespace Mensia
 	{
 		class IRuler
 		{
-			IRuler(const IRuler&) = delete;
-
 		public:
 
-			IRuler()
-
-				: m_pRendererContext(nullptr)
-				  , m_pRenderer(nullptr)
-				  , m_fBlackAlpha(.9f)
-				  , m_fWhiteAlpha(1.f) { }
-
+			IRuler() : m_pRendererContext(nullptr), m_pRenderer(nullptr){ }
+			IRuler(const IRuler&) = delete;
 			virtual ~IRuler() = default;
 
 			virtual void setRendererContext(const IRendererContext* pRendererContext)
@@ -71,36 +64,24 @@ namespace Mensia
 			}
 
 			virtual void doRender()
-
 			{
-				// if(m_pRendererContext->getScaleVisibility())
-				{
-					this->render();
-				}
+				// if(m_pRendererContext->getScaleVisibility()) { this->render(); }
+				this->render();
 			}
 
 			virtual void doRenderLeft(GtkWidget* pWidget)
 			{
-				if (m_pRendererContext->getScaleVisibility())
-				{
-					this->renderLeft(pWidget);
-				}
+				if (m_pRendererContext->getScaleVisibility()) { this->renderLeft(pWidget); }
 			}
 
 			virtual void doRenderRight(GtkWidget* pWidget)
 			{
-				if (m_pRendererContext->getScaleVisibility())
-				{
-					this->renderRight(pWidget);
-				}
+				if (m_pRendererContext->getScaleVisibility()) { this->renderRight(pWidget); }
 			}
 
 			virtual void doRenderBottom(GtkWidget* pWidget)
 			{
-				if (m_pRendererContext->getScaleVisibility())
-				{
-					this->renderBottom(pWidget);
-				}
+				if (m_pRendererContext->getScaleVisibility()) { this->renderBottom(pWidget); }
 			}
 
 		protected:
@@ -113,7 +94,7 @@ namespace Mensia
 
 			virtual void renderBottom(GtkWidget* /*pWidget*/) { }
 
-			std::vector<double> split_range(const double fStart, const double fStop, const unsigned int uiCount = 10)
+			std::vector<double> split_range(const double fStart, const double fStop, const unsigned int uiCount = 10) const
 			{
 				std::vector<double> l_vResult;
 				const double l_fRange = fStop - fStart;
@@ -145,7 +126,7 @@ namespace Mensia
 				return l_vResult;
 			}
 
-			std::string getLabel(const double v)
+			static std::string getLabel(const double v)
 			{
 				char l_sLabel[1024];
 #if 0
@@ -172,8 +153,8 @@ namespace Mensia
 
 			const IRendererContext* m_pRendererContext = nullptr;
 			const IRenderer* m_pRenderer = nullptr;
-			float m_fBlackAlpha = 1;
-			float m_fWhiteAlpha = 1;
+			float m_fBlackAlpha = 0.9f;
+			float m_fWhiteAlpha = 1.0f;
 		};
 	}  // namespace AdvancedVisualization
 }  // namespace Mensia

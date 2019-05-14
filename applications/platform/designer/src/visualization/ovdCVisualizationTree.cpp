@@ -199,7 +199,7 @@ bool CVisualizationTree::getVisualizationWidgetIndex(const CIdentifier& identifi
 	return true;
 }
 
-bool CVisualizationTree::destroyHierarchy(const CIdentifier& identifier, bool destroyVisualizationBoxes)
+bool CVisualizationTree::destroyHierarchy(const CIdentifier& identifier, const bool destroyVisualizationBoxes)
 {
 	bool res = true;
 
@@ -230,7 +230,7 @@ bool CVisualizationTree::destroyHierarchy(const CIdentifier& identifier, bool de
 	return res;
 }
 
-bool CVisualizationTree::_destroyHierarchy(const CIdentifier& identifier, bool destroyVisualizationBoxes)
+bool CVisualizationTree::_destroyHierarchy(const CIdentifier& identifier, const bool destroyVisualizationBoxes)
 {
 	IVisualizationWidget* visualizationWidget = getVisualizationWidget(identifier);
 	if (!visualizationWidget) { return false; }
@@ -450,7 +450,7 @@ bool CVisualizationTree::findChildNodeFromRoot(GtkTreeIter* iter, const char* la
 }
 
 //looks for a tree node named 'label' of class 'type' from parent passed as parameter
-bool CVisualizationTree::findChildNodeFromParent(GtkTreeIter* iter, const char* label, EVisualizationTreeNode type)
+bool CVisualizationTree::findChildNodeFromParent(GtkTreeIter* iter, const char* label, const EVisualizationTreeNode type)
 {
 	if (_findChildNodeFromParent(iter, label, type))
 	{
@@ -605,7 +605,7 @@ bool CVisualizationTree::_findChildNodeFromParent(GtkTreeIter* iter, const CIden
 	return false;
 }
 
-bool CVisualizationTree::findParentNode(GtkTreeIter* iter, EVisualizationTreeNode type)
+bool CVisualizationTree::findParentNode(GtkTreeIter* iter, const EVisualizationTreeNode type)
 {
 	unsigned long typeAsInt;
 	GtkTreeIter currentIter;
@@ -623,7 +623,7 @@ bool CVisualizationTree::findParentNode(GtkTreeIter* iter, EVisualizationTreeNod
 	return false;
 }
 
-bool CVisualizationTree::dragDataReceivedOutsideWidgetCB(const CIdentifier& sourceWidgetIdentifier, GtkWidget* destinationWidget, EDragDataLocation location)
+bool CVisualizationTree::dragDataReceivedOutsideWidgetCB(const CIdentifier& sourceWidgetIdentifier, GtkWidget* destinationWidget, const EDragDataLocation location)
 {
 	//retrieve source widget parent
 	//-----------------------------

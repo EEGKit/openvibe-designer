@@ -56,10 +56,10 @@ namespace Mensia
 			{
 				if (m_pWidget)
 				{
-					if (m_ui32TextureId)
+					if (m_textureId)
 					{
 						GtkGL::preRender(m_pWidget);
-						glDeleteTextures(1, &m_ui32TextureId);
+						glDeleteTextures(1, &m_textureId);
 						GtkGL::postRender(m_pWidget);
 					}
 					if (m_pTimeoutSource)
@@ -102,12 +102,12 @@ namespace Mensia
 				}
 			}
 
-			virtual void redrawTopLevelWindow(bool bImmediate = false)
+			virtual void redrawTopLevelWindow(const bool immediate = false)
 			{
 				GtkWidget* l_pTopLevelWidget = gtk_widget_get_toplevel(m_pWidget);
 				if (l_pTopLevelWidget != nullptr)
 				{
-					if (bImmediate)
+					if (immediate)
 					{
 						gdk_window_process_updates(l_pTopLevelWidget->window, false);
 						gtk_widget_queue_draw(l_pTopLevelWidget);
@@ -119,9 +119,9 @@ namespace Mensia
 				}
 			}
 
-			virtual void redraw(bool bImmediate = false)
+			virtual void redraw(const bool immediate = false)
 			{
-				if (bImmediate)
+				if (immediate)
 				{
 					gdk_window_process_updates(m_pWidget->window, false);
 					gtk_widget_queue_draw(m_pWidget);
@@ -132,9 +132,9 @@ namespace Mensia
 				}
 			}
 
-			virtual void redrawLeft(bool bImmediate = false)
+			virtual void redrawLeft(const bool immediate = false)
 			{
-				if (bImmediate)
+				if (immediate)
 				{
 					gdk_window_process_updates(m_pLeft->window, false);
 					gtk_widget_queue_draw(m_pLeft);
@@ -145,9 +145,9 @@ namespace Mensia
 				}
 			}
 
-			virtual void redrawRight(bool bImmediate = false)
+			virtual void redrawRight(const bool immediate = false)
 			{
-				if (bImmediate)
+				if (immediate)
 				{
 					gdk_window_process_updates(m_pRight->window, false);
 					gtk_widget_queue_draw(m_pRight);
@@ -158,9 +158,9 @@ namespace Mensia
 				}
 			}
 
-			virtual void redrawBottom(const bool bImmediate = false)
+			virtual void redrawBottom(const bool immediate = false)
 			{
-				if (bImmediate)
+				if (immediate)
 				{
 					gdk_window_process_updates(m_pBottom->window, false);
 					gtk_widget_queue_draw(m_pBottom);
@@ -181,7 +181,7 @@ namespace Mensia
 			{
 #define M_GRADIENT_SIZE 128
 
-				if (m_ui32TextureId == 0)
+				if (m_textureId == 0)
 				{
 					const std::string l_sValue = (sValue.empty() ? "0:0,0,100; 25:0,100,100; 50:0,49,0; 75:100,100,0; 100:100,0,0" : sValue);
 
@@ -198,20 +198,20 @@ namespace Mensia
 						l_vTexture[i][2] = float(m_oGradient[i * 4 + 3] * .01);
 					}
 
-					glGenTextures(1, &m_ui32TextureId);
-					glBindTexture(GL_TEXTURE_1D, m_ui32TextureId);
+					glGenTextures(1, &m_textureId);
+					glBindTexture(GL_TEXTURE_1D, m_textureId);
 					glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); // GL_LINEAR);
 					glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); // LINEAR_MIPMAP_LINEAR);
 					glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 					glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-					//					::glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-					//					::glTexImage1D(GL_TEXTURE_1D, 0, GL_RGB, __SIZE__, 0, GL_RGB, GL_UNSIGNED_BYTE, l_vTexture);
+					//glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+					//glTexImage1D(GL_TEXTURE_1D, 0, GL_RGB, __SIZE__, 0, GL_RGB, GL_UNSIGNED_BYTE, l_vTexture);
 					gluBuild1DMipmaps(GL_TEXTURE_1D, GL_RGB, M_GRADIENT_SIZE, GL_RGB, GL_FLOAT, l_vTexture);
 				}
 
 #undef M_GRADIENT_SIZE
 
-				return m_ui32TextureId;
+				return m_textureId;
 			}
 
 		protected:
@@ -224,7 +224,7 @@ namespace Mensia
 
 			TBox* m_pBox = nullptr;
 
-			uint32_t m_ui32TextureId = 0;
+			uint32_t m_textureId = 0;
 
 		private:
 
@@ -318,8 +318,8 @@ namespace Mensia
 			static gboolean __enter_notify_cb(GtkWidget* /*pWidget*/, GdkEventCrossing* /*pEvent*/, TBox* pBox)
 			{
 				pBox->redraw();
-				//				pBox->request();
-				//				pBox->m_bRedrawNeeded=true;
+				//pBox->request();
+				//pBox->m_bRedrawNeeded=true;
 				return TRUE;
 			}
 

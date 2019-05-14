@@ -209,148 +209,148 @@ namespace
 #endif
 	}
 
-	guint __g_idle_add__(GSourceFunc fpCallback, gpointer pUserData, gint /*iPriority*/ = G_PRIORITY_DEFAULT_IDLE)
+	guint __g_idle_add__(GSourceFunc fpCallback, gpointer data, gint /*iPriority*/ = G_PRIORITY_DEFAULT_IDLE)
 	{
 		GSource* l_pSource = g_idle_source_new();
 		g_source_set_priority(l_pSource, G_PRIORITY_LOW);
-		g_source_set_callback(l_pSource, fpCallback, pUserData, nullptr);
+		g_source_set_callback(l_pSource, fpCallback, data, nullptr);
 		return g_source_attach(l_pSource, nullptr);
 	}
 
-	guint __g_timeout_add__(guint uiInterval, GSourceFunc fpCallback, gpointer pUserData, gint /*iPriority*/ = G_PRIORITY_DEFAULT)
+	guint __g_timeout_add__(guint uiInterval, GSourceFunc fpCallback, gpointer data, gint /*iPriority*/ = G_PRIORITY_DEFAULT)
 	{
 		GSource* l_pSource = g_timeout_source_new(uiInterval);
 		g_source_set_priority(l_pSource, G_PRIORITY_LOW);
-		g_source_set_callback(l_pSource, fpCallback, pUserData, nullptr);
+		g_source_set_callback(l_pSource, fpCallback, data, nullptr);
 		return g_source_attach(l_pSource, nullptr);
 	}
 
-	void drag_data_get_cb(GtkWidget* pWidget, GdkDragContext* pDragContex, GtkSelectionData* pSelectionData, guint uiInfo, guint uiT, gpointer pUserData)
+	void drag_data_get_cb(GtkWidget* pWidget, GdkDragContext* pDragContex, GtkSelectionData* pSelectionData, guint uiInfo, guint uiT, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->dragDataGetCB(pWidget, pDragContex, pSelectionData, uiInfo, uiT);
+		static_cast<CApplication*>(data)->dragDataGetCB(pWidget, pDragContex, pSelectionData, uiInfo, uiT);
 	}
 
-	void menu_undo_cb(GtkMenuItem* /*pMenuItem*/, gpointer pUserData)
+	void menu_undo_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->undoCB();
+		static_cast<CApplication*>(data)->undoCB();
 	}
 
-	void menu_redo_cb(GtkMenuItem* /*pMenuItem*/, gpointer pUserData)
+	void menu_redo_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->redoCB();
+		static_cast<CApplication*>(data)->redoCB();
 	}
 
-	void menu_focus_search_cb(GtkMenuItem* /*pMenuItem*/, gpointer pUserData)
+	void menu_focus_search_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		gtk_widget_grab_focus(GTK_WIDGET(gtk_builder_get_object(static_cast<CApplication*>(pUserData)->m_pBuilderInterface, "openvibe-box_algorithm_searchbox")));
+		gtk_widget_grab_focus(GTK_WIDGET(gtk_builder_get_object(static_cast<CApplication*>(data)->m_pBuilderInterface, "openvibe-box_algorithm_searchbox")));
 	}
 
-	void menu_copy_selection_cb(GtkMenuItem* /*pMenuItem*/, gpointer pUserData)
+	void menu_copy_selection_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->copySelectionCB();
+		static_cast<CApplication*>(data)->copySelectionCB();
 	}
 
-	void menu_cut_selection_cb(GtkMenuItem* /*pMenuItem*/, gpointer pUserData)
+	void menu_cut_selection_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->cutSelectionCB();
+		static_cast<CApplication*>(data)->cutSelectionCB();
 	}
 
-	void menu_paste_selection_cb(GtkMenuItem* /*pMenuItem*/, gpointer pUserData)
+	void menu_paste_selection_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->pasteSelectionCB();
+		static_cast<CApplication*>(data)->pasteSelectionCB();
 	}
 
-	void menu_delete_selection_cb(GtkMenuItem* /*pMenuItem*/, gpointer pUserData)
+	void menu_delete_selection_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->deleteSelectionCB();
+		static_cast<CApplication*>(data)->deleteSelectionCB();
 	}
 
-	void menu_preferences_cb(GtkMenuItem* /*pMenuItem*/, gpointer pUserData)
+	void menu_preferences_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->preferencesCB();
+		static_cast<CApplication*>(data)->preferencesCB();
 	}
 
-	void menu_new_scenario_cb(GtkMenuItem* /*pMenuItem*/, gpointer pUserData)
+	void menu_new_scenario_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->newScenarioCB();
+		static_cast<CApplication*>(data)->newScenarioCB();
 	}
 
-	void menu_open_scenario_cb(GtkMenuItem* /*pMenuItem*/, gpointer pUserData)
+	void menu_open_scenario_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->openScenarioCB();
+		static_cast<CApplication*>(data)->openScenarioCB();
 	}
 
-	void menu_open_recent_scenario_cb(GtkMenuItem* pMenuItem, gpointer pUserData)
+	void menu_open_recent_scenario_cb(GtkMenuItem* pMenuItem, gpointer data)
 	{
 		const gchar* fileName = gtk_menu_item_get_label(pMenuItem);
-		static_cast<CApplication*>(pUserData)->openScenario(fileName);
+		static_cast<CApplication*>(data)->openScenario(fileName);
 	}
 
-	void menu_save_scenario_cb(GtkMenuItem* /*pMenuItem*/, gpointer pUserData)
+	void menu_save_scenario_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->saveScenarioCB();
+		static_cast<CApplication*>(data)->saveScenarioCB();
 	}
 
-	void menu_save_scenario_as_cb(GtkMenuItem* /*pMenuItem*/, gpointer pUserData)
+	void menu_save_scenario_as_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->saveScenarioAsCB();
+		static_cast<CApplication*>(data)->saveScenarioAsCB();
 	}
 
-	void menu_restore_default_scenarios_cb(GtkMenuItem* /*pMenuItem*/, gpointer pUserData)
+	void menu_restore_default_scenarios_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->restoreDefaultScenariosCB();
+		static_cast<CApplication*>(data)->restoreDefaultScenariosCB();
 	}
 
-	void menu_close_scenario_cb(GtkMenuItem* /*pMenuItem*/, gpointer pUserData)
+	void menu_close_scenario_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->closeScenarioCB(static_cast<CApplication*>(pUserData)->getCurrentInterfacedScenario());
+		static_cast<CApplication*>(data)->closeScenarioCB(static_cast<CApplication*>(data)->getCurrentInterfacedScenario());
 	}
 
-	void menu_quit_application_cb(GtkMenuItem* /*pMenuItem*/, gpointer pUserData)
+	void menu_quit_application_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		if (static_cast<CApplication*>(pUserData)->quitApplicationCB())
+		if (static_cast<CApplication*>(data)->quitApplicationCB())
 		{
 			gtk_main_quit();
 		}
 	}
 
-	void menu_about_scenario_cb(GtkMenuItem* /*pMenuItem*/, gpointer pUserData)
+	void menu_about_scenario_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->aboutScenarioCB(static_cast<CApplication*>(pUserData)->getCurrentInterfacedScenario());
+		static_cast<CApplication*>(data)->aboutScenarioCB(static_cast<CApplication*>(data)->getCurrentInterfacedScenario());
 	}
 
-	void menu_about_openvibe_cb(GtkMenuItem* /*pMenuItem*/, gpointer pUserData)
+	void menu_about_openvibe_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->aboutOpenViBECB();
+		static_cast<CApplication*>(data)->aboutOpenViBECB();
 	}
 
-	void menu_about_link_clicked_cb(GtkAboutDialog* /*pAboutDialog*/, const gchar* linkPtr, gpointer pUserData)
+	void menu_about_link_clicked_cb(GtkAboutDialog* /*pAboutDialog*/, const gchar* linkPtr, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->aboutLinkClickedCB(linkPtr);
+		static_cast<CApplication*>(data)->aboutLinkClickedCB(linkPtr);
 	}
 
-	void menu_browse_documentation_cb(GtkMenuItem* /*pMenuItem*/, gpointer pUserData)
+	void menu_browse_documentation_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->browseDocumentationCB();
+		static_cast<CApplication*>(data)->browseDocumentationCB();
 	}
 
 #ifdef MENSIA_DISTRIBUTION
-	void menu_register_license_cb(::GtkMenuItem* /*pMenuItem*/, gpointer pUserData)
+	void menu_register_license_cb(::GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->registerLicenseCB();
+		static_cast<CApplication*>(data)->registerLicenseCB();
 	}
 #endif
 
-	void menu_report_issue_cb(GtkMenuItem* /*pMenuItem*/, gpointer pUserData)
+	void menu_report_issue_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->reportIssueCB();
+		static_cast<CApplication*>(data)->reportIssueCB();
 	}
 
-	void menu_display_changelog_cb(GtkMenuItem* /*pMenuItem*/, gpointer pUserData)
+	void menu_display_changelog_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		if (!static_cast<CApplication*>(pUserData)->displayChangelogWhenAvailable())
+		if (!static_cast<CApplication*>(data)->displayChangelogWhenAvailable())
 		{
-			const std::string applicationVersion = static_cast<CApplication*>(pUserData)->m_KernelContext.getConfigurationManager().expand("${Application_Version}").toASCIIString();
+			const std::string applicationVersion = static_cast<CApplication*>(data)->m_KernelContext.getConfigurationManager().expand("${Application_Version}").toASCIIString();
 			GtkWidget* l_pInfoDialog = gtk_message_dialog_new(nullptr, GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK,
 															  "No boxes were added or updated in version %s of " DESIGNER_NAME ".",
 															  applicationVersion != "${Application_Version}" ? applicationVersion.c_str() : ProjectVersion);
@@ -360,45 +360,45 @@ namespace
 		}
 	}
 
-	void button_new_scenario_cb(GtkButton* /*pButton*/, gpointer pUserData)
+	void button_new_scenario_cb(GtkButton* /*pButton*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->newScenarioCB();
+		static_cast<CApplication*>(data)->newScenarioCB();
 	}
 
-	void button_open_scenario_cb(GtkButton* /*pButton*/, gpointer pUserData)
+	void button_open_scenario_cb(GtkButton* /*pButton*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->openScenarioCB();
+		static_cast<CApplication*>(data)->openScenarioCB();
 	}
 
-	void button_save_scenario_cb(GtkButton* /*pButton*/, gpointer pUserData)
+	void button_save_scenario_cb(GtkButton* /*pButton*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->saveScenarioCB();
+		static_cast<CApplication*>(data)->saveScenarioCB();
 	}
 
-	void button_save_scenario_as_cb(GtkButton* /*pButton*/, gpointer pUserData)
+	void button_save_scenario_as_cb(GtkButton* /*pButton*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->saveScenarioAsCB();
+		static_cast<CApplication*>(data)->saveScenarioAsCB();
 	}
 
-	void button_close_scenario_cb(GtkButton* /*pButton*/, gpointer pUserData)
+	void button_close_scenario_cb(GtkButton* /*pButton*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->closeScenarioCB(static_cast<CApplication*>(pUserData)->getCurrentInterfacedScenario());
+		static_cast<CApplication*>(data)->closeScenarioCB(static_cast<CApplication*>(data)->getCurrentInterfacedScenario());
 	}
 
-	void button_undo_cb(GtkButton* /*pButton*/, gpointer pUserData)
+	void button_undo_cb(GtkButton* /*pButton*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->undoCB();
+		static_cast<CApplication*>(data)->undoCB();
 	}
 
-	void button_redo_cb(GtkButton* /*pButton*/, gpointer pUserData)
+	void button_redo_cb(GtkButton* /*pButton*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->redoCB();
+		static_cast<CApplication*>(data)->redoCB();
 	}
 
 #ifdef MENSIA_DISTRIBUTION
-	void button_toggle_neurort_engine_configuration_cb(::GtkMenuItem * pMenuItem, gpointer pUserData)
+	void button_toggle_neurort_engine_configuration_cb(::GtkMenuItem * pMenuItem, gpointer data)
 	{
-		auto l_pApplication = static_cast<CApplication*>(pUserData);
+		auto l_pApplication = static_cast<CApplication*>(data);
 
 		l_pApplication->m_pArchwayHandlerGUI->toggleNeuroRTEngineConfigurationDialog(static_cast<bool>(gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(pMenuItem)) == TRUE));
 	}
@@ -409,9 +409,9 @@ namespace
 		static_cast<CApplication*>(user_data)->deleteDesignerVisualizationCB();
 	}
 
-	void button_toggle_window_manager_cb(GtkToggleToolButton* /*pButton*/, gpointer pUserData)
+	void button_toggle_window_manager_cb(GtkToggleToolButton* /*pButton*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->toggleDesignerVisualizationCB();
+		static_cast<CApplication*>(data)->toggleDesignerVisualizationCB();
 	}
 
 	void button_comment_cb(GtkButton* /*pButton*/, CApplication* pApplication)
@@ -419,36 +419,36 @@ namespace
 		pApplication->addCommentCB(pApplication->getCurrentInterfacedScenario());
 	}
 
-	void button_about_scenario_cb(GtkButton* /*pButton*/, gpointer pUserData)
+	void button_about_scenario_cb(GtkButton* /*pButton*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->aboutScenarioCB(static_cast<CApplication*>(pUserData)->getCurrentInterfacedScenario());
+		static_cast<CApplication*>(data)->aboutScenarioCB(static_cast<CApplication*>(data)->getCurrentInterfacedScenario());
 	}
 
-	void stop_scenario_cb(GtkButton* /*pButton*/, gpointer pUserData)
+	void stop_scenario_cb(GtkButton* /*pButton*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->stopScenarioCB();
+		static_cast<CApplication*>(data)->stopScenarioCB();
 	}
 
-	void play_pause_scenario_cb(GtkButton* pButton, gpointer pUserData)
+	void play_pause_scenario_cb(GtkButton* pButton, gpointer data)
 	{
 		if (std::string(gtk_tool_button_get_stock_id(GTK_TOOL_BUTTON(pButton))) == GTK_STOCK_MEDIA_PLAY)
 		{
-			static_cast<CApplication*>(pUserData)->playScenarioCB();
+			static_cast<CApplication*>(data)->playScenarioCB();
 		}
 		else
 		{
-			static_cast<CApplication*>(pUserData)->pauseScenarioCB();
+			static_cast<CApplication*>(data)->pauseScenarioCB();
 		}
 	}
 
-	void next_scenario_cb(GtkButton* /*pButton*/, gpointer pUserData)
+	void next_scenario_cb(GtkButton* /*pButton*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->nextScenarioCB();
+		static_cast<CApplication*>(data)->nextScenarioCB();
 	}
 
-	void forward_scenario_cb(GtkButton* /*pButton*/, gpointer pUserData)
+	void forward_scenario_cb(GtkButton* /*pButton*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->forwardScenarioCB();
+		static_cast<CApplication*>(data)->forwardScenarioCB();
 	}
 
 	void button_configure_current_scenario_settings_cb(GtkButton* /*pButton*/, CApplication* pApplication)
@@ -456,9 +456,9 @@ namespace
 		pApplication->configureScenarioSettingsCB(pApplication->getCurrentInterfacedScenario());
 	}
 
-	gboolean button_quit_application_cb(GtkWidget* /*pWidget*/, GdkEvent* /*pEvent*/, gpointer pUserData)
+	gboolean button_quit_application_cb(GtkWidget* /*pWidget*/, GdkEvent* /*pEvent*/, gpointer data)
 	{
-		if (static_cast<CApplication*>(pUserData)->quitApplicationCB())
+		if (static_cast<CApplication*>(data)->quitApplicationCB())
 		{
 			gtk_main_quit();
 			return FALSE;
@@ -466,65 +466,65 @@ namespace
 		return TRUE;
 	}
 
-	gboolean window_state_changed_cb(GtkWidget* /*pWidget*/, GdkEventWindowState* pEvent, gpointer pUserData)
+	gboolean window_state_changed_cb(GtkWidget* /*pWidget*/, GdkEventWindowState* pEvent, gpointer data)
 	{
 		if (pEvent->changed_mask & GDK_WINDOW_STATE_MAXIMIZED)
 		{
 			// window has changed from maximized to not maximized or the other way around
-			static_cast<CApplication*>(pUserData)->windowStateChangedCB((pEvent->new_window_state & GDK_WINDOW_STATE_MAXIMIZED) != 0);
+			static_cast<CApplication*>(data)->windowStateChangedCB((pEvent->new_window_state & GDK_WINDOW_STATE_MAXIMIZED) != 0);
 		}
 		return TRUE;
 	}
 
-	void log_level_cb(GtkButton* /*pButton*/, gpointer pUserData)
+	void log_level_cb(GtkButton* /*pButton*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->logLevelCB();
+		static_cast<CApplication*>(data)->logLevelCB();
 	}
 
-	void cpu_usage_cb(GtkToggleButton* /*pButton*/, gpointer pUserData)
+	void cpu_usage_cb(GtkToggleButton* /*pButton*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->CPUUsageCB();
+		static_cast<CApplication*>(data)->CPUUsageCB();
 	}
 
-	gboolean change_current_scenario_cb(GtkNotebook* /*pNotebook*/, GtkNotebookPage* /*pNotebookPage*/, guint uiPageNumber, gpointer pUserData)
+	gboolean change_current_scenario_cb(GtkNotebook* /*pNotebook*/, GtkNotebookPage* /*pNotebookPage*/, guint uiPageNumber, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->changeCurrentScenario(int32_t(uiPageNumber));
+		static_cast<CApplication*>(data)->changeCurrentScenario(int32_t(uiPageNumber));
 		return TRUE;
 	}
 
-	gboolean reorder_scenario_cb(GtkNotebook* /*pNotebook*/, GtkNotebookPage* /*pNotebookPage*/, guint uiPageNumber, gpointer pUserData)
+	gboolean reorder_scenario_cb(GtkNotebook* /*pNotebook*/, GtkNotebookPage* /*pNotebookPage*/, guint uiPageNumber, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->reorderCurrentScenario(int32_t(uiPageNumber));
+		static_cast<CApplication*>(data)->reorderCurrentScenario(int32_t(uiPageNumber));
 		return TRUE;
 	}
 
-	void box_algorithm_title_button_expand_cb(GtkButton* /*pButton*/, gpointer pUserData)
+	void box_algorithm_title_button_expand_cb(GtkButton* /*pButton*/, gpointer data)
 	{
-		gtk_tree_view_expand_all(GTK_TREE_VIEW(gtk_builder_get_object(static_cast<CApplication*>(pUserData)->m_pBuilderInterface, "openvibe-box_algorithm_tree")));
-		gtk_notebook_set_current_page(GTK_NOTEBOOK(gtk_builder_get_object(static_cast<CApplication*>(pUserData)->m_pBuilderInterface, "openvibe-resource_notebook")), 0);
+		gtk_tree_view_expand_all(GTK_TREE_VIEW(gtk_builder_get_object(static_cast<CApplication*>(data)->m_pBuilderInterface, "openvibe-box_algorithm_tree")));
+		gtk_notebook_set_current_page(GTK_NOTEBOOK(gtk_builder_get_object(static_cast<CApplication*>(data)->m_pBuilderInterface, "openvibe-resource_notebook")), 0);
 	}
 
-	void box_algorithm_title_button_collapse_cb(GtkButton* /*pButton*/, gpointer pUserData)
+	void box_algorithm_title_button_collapse_cb(GtkButton* /*pButton*/, gpointer data)
 	{
-		gtk_tree_view_collapse_all(GTK_TREE_VIEW(gtk_builder_get_object(static_cast<CApplication*>(pUserData)->m_pBuilderInterface, "openvibe-box_algorithm_tree")));
-		gtk_notebook_set_current_page(GTK_NOTEBOOK(gtk_builder_get_object(static_cast<CApplication*>(pUserData)->m_pBuilderInterface, "openvibe-resource_notebook")), 0);
+		gtk_tree_view_collapse_all(GTK_TREE_VIEW(gtk_builder_get_object(static_cast<CApplication*>(data)->m_pBuilderInterface, "openvibe-box_algorithm_tree")));
+		gtk_notebook_set_current_page(GTK_NOTEBOOK(gtk_builder_get_object(static_cast<CApplication*>(data)->m_pBuilderInterface, "openvibe-resource_notebook")), 0);
 	}
 
-	void algorithm_title_button_expand_cb(GtkButton* /*pButton*/, gpointer pUserData)
+	void algorithm_title_button_expand_cb(GtkButton* /*pButton*/, gpointer data)
 	{
-		gtk_tree_view_expand_all(GTK_TREE_VIEW(gtk_builder_get_object(static_cast<CApplication*>(pUserData)->m_pBuilderInterface, "openvibe-algorithm_tree")));
-		gtk_notebook_set_current_page(GTK_NOTEBOOK(gtk_builder_get_object(static_cast<CApplication*>(pUserData)->m_pBuilderInterface, "openvibe-resource_notebook")), 1);
+		gtk_tree_view_expand_all(GTK_TREE_VIEW(gtk_builder_get_object(static_cast<CApplication*>(data)->m_pBuilderInterface, "openvibe-algorithm_tree")));
+		gtk_notebook_set_current_page(GTK_NOTEBOOK(gtk_builder_get_object(static_cast<CApplication*>(data)->m_pBuilderInterface, "openvibe-resource_notebook")), 1);
 	}
 
-	void algorithm_title_button_collapse_cb(GtkButton* /*pButton*/, gpointer pUserData)
+	void algorithm_title_button_collapse_cb(GtkButton* /*pButton*/, gpointer data)
 	{
-		gtk_tree_view_collapse_all(GTK_TREE_VIEW(gtk_builder_get_object(static_cast<CApplication*>(pUserData)->m_pBuilderInterface, "openvibe-algorithm_tree")));
-		gtk_notebook_set_current_page(GTK_NOTEBOOK(gtk_builder_get_object(static_cast<CApplication*>(pUserData)->m_pBuilderInterface, "openvibe-resource_notebook")), 1);
+		gtk_tree_view_collapse_all(GTK_TREE_VIEW(gtk_builder_get_object(static_cast<CApplication*>(data)->m_pBuilderInterface, "openvibe-algorithm_tree")));
+		gtk_notebook_set_current_page(GTK_NOTEBOOK(gtk_builder_get_object(static_cast<CApplication*>(data)->m_pBuilderInterface, "openvibe-resource_notebook")), 1);
 	}
 
-	void clear_messages_cb(GtkButton* /*pButton*/, gpointer pUserData)
+	void clear_messages_cb(GtkButton* /*pButton*/, gpointer data)
 	{
-		static_cast<CLogListenerDesigner*>(pUserData)->clearMessages();
+		static_cast<CLogListenerDesigner*>(data)->clearMessages();
 	}
 
 	void add_scenario_input_cb(GtkButton* /*pButton*/, CApplication* pApplication)
@@ -548,9 +548,9 @@ namespace
 		return str;
 	}
 
-	gboolean box_algorithm_search_func(GtkTreeModel* model, GtkTreeIter* iter, gpointer pUserData)
+	gboolean box_algorithm_search_func(GtkTreeModel* model, GtkTreeIter* iter, gpointer data)
 	{
-		auto* l_pApplication = static_cast<CApplication*>(pUserData);
+		auto* l_pApplication = static_cast<CApplication*>(data);
 		/* Visible if row is non-empty and first column is "HI" */
 
 
@@ -584,7 +584,7 @@ namespace
 		return l_bVisible;
 	}
 
-	gboolean box_algorithm_prune_empty_folders(GtkTreeModel* model, GtkTreeIter* iter, gpointer /*pUserData*/)
+	gboolean box_algorithm_prune_empty_folders(GtkTreeModel* model, GtkTreeIter* iter, gpointer /*data*/)
 	{
 		gboolean l_bIsPlugin;
 		gtk_tree_model_get(model, iter, Resource_BooleanIsPlugin, &l_bIsPlugin, -1);
@@ -683,16 +683,16 @@ namespace
 		return false;
 	}
 
-	void about_newversion_button_display_changelog_cb(GtkButton* /*pButton*/, gpointer /*pUserData*/)
+	void about_newversion_button_display_changelog_cb(GtkButton* /*pButton*/, gpointer /*data*/)
 	{
 #if defined TARGET_OS_Windows
 		System::WindowsUtilities::utf16CompliantShellExecute(nullptr, "open", (OVD_README_File).toASCIIString(), nullptr, nullptr, SHOW_OPENWINDOW);
 #endif
 	}
 
-	gboolean idle_application_loop(gpointer pUserData)
+	gboolean idle_application_loop(gpointer data)
 	{
-		auto* l_pApplication = static_cast<CApplication*>(pUserData);
+		auto* l_pApplication = static_cast<CApplication*>(data);
 #ifdef MENSIA_DISTRIBUTION
 		if (l_pApplication->m_pArchwayHandler->isEngineStarted())
 		{
@@ -784,9 +784,9 @@ namespace
 		return TRUE;
 	}
 
-	gboolean idle_scenario_loop(gpointer pUserData)
+	gboolean idle_scenario_loop(gpointer data)
 	{
-		auto* l_pInterfacedScenario = static_cast<CInterfacedScenario*>(pUserData);
+		auto* l_pInterfacedScenario = static_cast<CInterfacedScenario*>(data);
 		uint64_t l_ui64CurrentTime = System::Time::zgetTime();
 		if (l_pInterfacedScenario->m_ui64LastLoopTime == uint64_t(-1))
 		{
@@ -801,9 +801,9 @@ namespace
 		return TRUE;
 	}
 
-	gboolean timeout_application_loop(gpointer pUserData)
+	gboolean timeout_application_loop(gpointer data)
 	{
-		auto* l_pApplication = static_cast<CApplication*>(pUserData);
+		auto* l_pApplication = static_cast<CApplication*>(data);
 		if (!l_pApplication->hasRunningScenario() && l_pApplication->m_eCommandLineFlags & CommandLineFlag_NoGui)
 		{
 			l_pApplication->quitApplicationCB();
@@ -818,14 +818,14 @@ namespace
 	* Function called in gtk loop: to check each 0.1second if a message was sent by a second instance of Designer
 	* (Meaning that someone tried to reopen Designer and this instance has to do something)
 	**/
-	gboolean receiveSecondInstanceMessage(gpointer pUserData)
+	gboolean receiveSecondInstanceMessage(gpointer data)
 	{
 		try
 		{	// Open or create ensures that
 			boost::interprocess::named_mutex l_oMutex(boost::interprocess::open_or_create, MUTEX_NAME);
 			{
 				boost::interprocess::scoped_lock<boost::interprocess::named_mutex> lock(l_oMutex);
-				CApplication* l_pApplication = static_cast<CApplication*>(pUserData);
+				CApplication* l_pApplication = static_cast<CApplication*>(data);
 				//Tries to open a message, if fails, go to catch
 				boost::interprocess::message_queue l_oMessage(boost::interprocess::open_only, MESSAGE_NAME);
 				l_pApplication->m_KernelContext.getLogManager() << LogLevel_Trace << "ovdCApplication::receiveSecondInstanceMessage- A message was detected \n";
@@ -880,20 +880,20 @@ namespace
 	}
 #endif
 
-	void zoom_in_scenario_cb(GtkButton* /*pButton*/, gpointer pUserData)
+	void zoom_in_scenario_cb(GtkButton* /*pButton*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->zoomInCB();
+		static_cast<CApplication*>(data)->zoomInCB();
 	}
 
-	void zoom_out_scenario_cb(GtkButton* /*pButton*/, gpointer pUserData)
+	void zoom_out_scenario_cb(GtkButton* /*pButton*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->zoomOutCB();
+		static_cast<CApplication*>(data)->zoomOutCB();
 	}
 
 
-	void spinner_zoom_changed_cb(GtkSpinButton* pButton, gpointer pUserData)
+	void spinner_zoom_changed_cb(GtkSpinButton* pButton, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->spinnerZoomChangedCB(uint32_t(gtk_spin_button_get_value(pButton)));
+		static_cast<CApplication*>(data)->spinnerZoomChangedCB(uint32_t(gtk_spin_button_get_value(pButton)));
 	}
 }  // namespace
 

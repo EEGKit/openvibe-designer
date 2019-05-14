@@ -285,7 +285,7 @@ void sspsl(double* ap, const int* n, const int* kpvt, double* b)
 		}
 		else
 		{
-			int ikm1 = ik - (k - 1);
+			const int ikm1 = ik - (k - 1);
 			if (ik != 2)
 			{
 				kp = abs(*(kpvt + k - 1));
@@ -299,14 +299,14 @@ void sspsl(double* ap, const int* n, const int* kpvt, double* b)
 				saxpy(&itmp, (b + k - 1), (ap + ik), &one, b, &oneb);
 				saxpy(&itmp, (b + k - 2), (ap + ikm1), &one, b, &oneb);
 			}
-			int km1k = ik + k - 1;
+			const int km1k = ik + k - 1;
 			kk = ik + k;
-			double ak = *(ap + kk - 1) / (*(ap + km1k - 1));
-			int km1km1 = ikm1 + k - 1;
-			double akm1 = *(ap + km1km1 - 1) / (*(ap + km1k - 1));
-			double bk = *(b + k - 1) / (*(ap + km1k - 1));
-			double bkm1 = *(b + k - 2) / (*(ap + km1k - 1));
-			double denom = ak * akm1 - 1.0;
+			const double ak = *(ap + kk - 1) / (*(ap + km1k - 1));
+			const int km1km1 = ikm1 + k - 1;
+			const double akm1 = *(ap + km1km1 - 1) / (*(ap + km1k - 1));
+			const double bk = *(b + k - 1) / (*(ap + km1k - 1));
+			const double bkm1 = *(b + k - 2) / (*(ap + km1k - 1));
+			const double denom = ak * akm1 - 1.0;
 			*(b + k - 1) = (akm1 * bk - bkm1) / denom;
 			*(b + k - 2) = (ak * bkm1 - bk) / denom;
 			k -= 2;
@@ -341,7 +341,7 @@ void sspsl(double* ap, const int* n, const int* kpvt, double* b)
 				{
 					itmp = k - 1;
 					*(b + k - 1) += sdot(&itmp, (ap + ik), &one, b, &oneb);
-					int ikp1 = ik + k;
+					const int ikp1 = ik + k;
 					*(b + k) += sdot(&itmp, (ap + ikp1), &one, b, &oneb);
 					kp = abs(*(kpvt + k - 1));
 					if (kp != k)

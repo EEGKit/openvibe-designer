@@ -39,8 +39,8 @@ void CRendererMountain::rebuild(const IRendererContext& rContext)
 	{
 		for (j = 0; j < m_sampleCount; ++j)
 		{
-			const float a = i * 1.f / (m_channelCount - 1);
-			const float b = 1 - j * 1.f / (m_sampleCount - 1);
+			const float a = i * 1.f / float(m_channelCount - 1);
+			const float b = 1 - j * 1.f / float(m_sampleCount - 1);
 			m_oMountain.m_vVertex[k].x = a;
 			m_oMountain.m_vVertex[k].y = 0;
 			m_oMountain.m_vVertex[k].z = b;

@@ -110,7 +110,7 @@ bool CRendererBitmap::render(const IRendererContext& rContext)
 	for (uint32_t i = 0; i < rContext.getSelectedCount(); ++i)
 	{
 		glPushMatrix();
-		glTranslatef(0, rContext.getSelectedCount() - i - 1.f, 0);
+		glTranslatef(0, float(rContext.getSelectedCount() - i) - 1.f, 0);
 		glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_vertex[rContext.getSelected(i)][0].x);
 		glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_vertex[rContext.getSelected(i)][0].u);
 		glDrawArrays(GL_QUADS, 0, (m_sampleCount / m_autoDecimationFactor) * 4);

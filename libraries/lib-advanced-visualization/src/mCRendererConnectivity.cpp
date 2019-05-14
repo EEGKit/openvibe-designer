@@ -30,7 +30,8 @@
 #include <cmath>
 #include <algorithm>
 
-#define __Count__ 16
+//	constexpr size_t COUNT = 16; //Macro modernization, Not yet with jenkins (not the last visual 2013 which it works)
+#define COUNT 16
 
 using namespace Mensia;
 using namespace AdvancedVisualization;
@@ -60,10 +61,10 @@ void CRendererConnectivity::rebuild(const IRendererContext& rContext)
 	std::map<std::string, CVertex>::const_iterator it1;
 	std::map<std::string, CVertex>::const_iterator it2;
 
-	uint32_t i, j, k, l = 0;
+	uint32_t i, l = 0;
 
 	Eigen::Quaterniond q = Eigen::Quaterniond::Identity();
-	Eigen::Quaterniond q_id = Eigen::Quaterniond::Identity();
+	const Eigen::Quaterniond q_id = Eigen::Quaterniond::Identity();
 	Eigen::Quaterniond q_diff = Eigen::Quaterniond::Identity();
 	Eigen::VectorXd v(3);
 	Eigen::VectorXd v1(3);
@@ -89,25 +90,25 @@ void CRendererConnectivity::rebuild(const IRendererContext& rContext)
 	m_vertex.resize(m_channelCount * (m_channelCount - 1) / 2);
 	for (i = 0; i < m_channelCount; ++i)
 	{
-		for (j = 0; j < i; j++)
+		for (uint32_t j = 0; j < i; j++)
 		{
-			m_vertex[l].resize(__Count__);
+			m_vertex[l].resize(COUNT);
 
 			CVertex vi, vj;
 			vi = l_vChannelCoordinate[i];
 			vj = l_vChannelCoordinate[j];
 
-			float vi_len = l_vProjectedChannelCoordinate[i].length();
-			float vj_len = l_vProjectedChannelCoordinate[j].length();
+			const float vi_len = l_vProjectedChannelCoordinate[i].length();
+			const float vj_len = l_vProjectedChannelCoordinate[j].length();
 
 			q_from_polar(q_diff, v1, v2, vi, vj);
 
 			const double alpha = 0;
 			const double dot = (1 - CVertex::dot(vi, vj)) * .5;
 
-			for (k = 0; k < __Count__; k++)
+			for (uint32_t k = 0; k < COUNT; k++)
 			{
-				float t = float(k * 1. / (__Count__ - 1));
+				const float t = float(k * 1. / (COUNT - 1));
 				auto s = float((t - .5) * 2);
 				s = float(1 + .5 * (1 - s * s) * dot);
 
@@ -115,7 +116,7 @@ void CRendererConnectivity::rebuild(const IRendererContext& rContext)
 
 				q_rotate(v, v1, q);
 
-				float len = (vi_len * (1 - t) + vj_len * t);
+				const float len = (vi_len * (1 - t) + vj_len * t);
 				m_vertex[l][k].x = float(s * v[0] * len);
 				m_vertex[l][k].y = float(s * v[1] * len);
 				m_vertex[l][k].z = float(s * v[2] * len);
@@ -137,12 +138,11 @@ void CRendererConnectivity::refresh(const IRendererContext& rContext)
 	if (m_historyCount < m_channelCount) { return; }
 
 	uint32_t l = 0;
-
 	for (uint32_t i = 0; i < m_channelCount; ++i)
 	{
 		for (uint32_t j = 0; j < i; j++)
 		{
-			for (uint32_t k = 0; k < __Count__; k++)
+			for (uint32_t k = 0; k < COUNT; k++)
 			{
 				m_vertex[l][k].u = m_history[i][m_historyCount - 1 - j];
 			}
@@ -160,7 +160,7 @@ bool CRendererConnectivity::render(const IRendererContext& rContext)
 	if (!m_historyCount) { return false; }
 
 	std::map<std::string, std::pair<float, float>>::const_iterator it;
-	float d = 3.5;
+	const float d = 3.5;
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
@@ -182,7 +182,7 @@ bool CRendererConnectivity::render(const IRendererContext& rContext)
 	glScalef(rContext.getZoom(), rContext.getZoom(), rContext.getZoom());
 
 	//	uint32_t l_ui32ChannelCountSquare=m_channelCount*m_channelCount;
-	float rgb = 1.f;
+	const float rgb = 1.f;
 	glColor4f(rgb, rgb, rgb, rContext.getTranslucency());
 	glPushMatrix();
 #if 1
@@ -200,7 +200,7 @@ bool CRendererConnectivity::render(const IRendererContext& rContext)
 	{
 		glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_vertex[i][0].x);
 		glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_vertex[i][0].u);
-		glDrawArrays(GL_LINE_STRIP, 0, __Count__);
+		glDrawArrays(GL_LINE_STRIP, 0, COUNT);
 	}
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);

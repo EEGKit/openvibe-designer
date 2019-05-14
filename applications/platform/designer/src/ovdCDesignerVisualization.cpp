@@ -1407,14 +1407,14 @@ void CDesignerVisualization::enablePanedSignals(GtkWidget* pPaned, bool b)
 	}
 }
 
-void CDesignerVisualization::ask_new_visualization_window_cb(gpointer pUserData, guint /*callback_action*/, GtkWidget* /*pWidget*/)
+void CDesignerVisualization::ask_new_visualization_window_cb(gpointer data, guint /*callback_action*/, GtkWidget* /*pWidget*/)
 {
-	static_cast<CDesignerVisualization*>(pUserData)->askNewVisualizationWindow();
+	static_cast<CDesignerVisualization*>(data)->askNewVisualizationWindow();
 }
 
-void CDesignerVisualization::new_visualization_window_cb(GtkWidget* /*pWidget*/, gpointer pUserData)
+void CDesignerVisualization::new_visualization_window_cb(GtkWidget* /*pWidget*/, gpointer data)
 {
-	CInputDialog* l_pInputDialog = static_cast<CInputDialog*>(pUserData);
+	CInputDialog* l_pInputDialog = static_cast<CInputDialog*>(data);
 
 	if (l_pInputDialog->getUserData() != nullptr)
 	{
@@ -1422,14 +1422,14 @@ void CDesignerVisualization::new_visualization_window_cb(GtkWidget* /*pWidget*/,
 	}
 }
 
-void CDesignerVisualization::ask_rename_visualization_window_cb(gpointer pUserData, guint /*callback_action*/, GtkWidget* /*pWidget*/)
+void CDesignerVisualization::ask_rename_visualization_window_cb(gpointer data, guint /*callback_action*/, GtkWidget* /*pWidget*/)
 {
-	static_cast<CDesignerVisualization*>(pUserData)->askRenameVisualizationWindow();
+	static_cast<CDesignerVisualization*>(data)->askRenameVisualizationWindow();
 }
 
-void CDesignerVisualization::rename_visualization_window_cb(GtkWidget* /*pWidget*/, gpointer pUserData)
+void CDesignerVisualization::rename_visualization_window_cb(GtkWidget* /*pWidget*/, gpointer data)
 {
-	CInputDialog* l_pInputDialog = static_cast<CInputDialog*>(pUserData);
+	CInputDialog* l_pInputDialog = static_cast<CInputDialog*>(data);
 
 	if (l_pInputDialog->getUserData() != nullptr)
 	{
@@ -1437,19 +1437,19 @@ void CDesignerVisualization::rename_visualization_window_cb(GtkWidget* /*pWidget
 	}
 }
 
-void CDesignerVisualization::remove_visualization_window_cb(gpointer pUserData, guint /*callback_action*/, GtkWidget* /*pWidget*/)
+void CDesignerVisualization::remove_visualization_window_cb(gpointer data, guint /*callback_action*/, GtkWidget* /*pWidget*/)
 {
-	static_cast<CDesignerVisualization*>(pUserData)->removeVisualizationWindow();
+	static_cast<CDesignerVisualization*>(data)->removeVisualizationWindow();
 }
 
-void CDesignerVisualization::ask_new_visualization_panel_cb(gpointer pUserData, guint /*callback_action*/, GtkWidget* /*pWidget*/)
+void CDesignerVisualization::ask_new_visualization_panel_cb(gpointer data, guint /*callback_action*/, GtkWidget* /*pWidget*/)
 {
-	static_cast<CDesignerVisualization*>(pUserData)->askNewVisualizationPanel();
+	static_cast<CDesignerVisualization*>(data)->askNewVisualizationPanel();
 }
 
-void CDesignerVisualization::new_visualization_panel_cb(GtkWidget* /*pWidget*/, gpointer pUserData)
+void CDesignerVisualization::new_visualization_panel_cb(GtkWidget* /*pWidget*/, gpointer data)
 {
-	auto* l_pInputDialog = static_cast<CInputDialog*>(pUserData);
+	auto* l_pInputDialog = static_cast<CInputDialog*>(data);
 
 	if (l_pInputDialog->getUserData() != nullptr)
 	{
@@ -1457,14 +1457,14 @@ void CDesignerVisualization::new_visualization_panel_cb(GtkWidget* /*pWidget*/, 
 	}
 }
 
-void CDesignerVisualization::ask_rename_visualization_panel_cb(gpointer pUserData, guint /*callback_action*/, GtkWidget* /*pWidget*/)
+void CDesignerVisualization::ask_rename_visualization_panel_cb(gpointer data, guint /*callback_action*/, GtkWidget* /*pWidget*/)
 {
-	static_cast<CDesignerVisualization*>(pUserData)->askRenameVisualizationPanel();
+	static_cast<CDesignerVisualization*>(data)->askRenameVisualizationPanel();
 }
 
-void CDesignerVisualization::rename_visualization_panel_cb(GtkWidget* /*pWidget*/, gpointer pUserData)
+void CDesignerVisualization::rename_visualization_panel_cb(GtkWidget* /*pWidget*/, gpointer data)
 {
-	auto* l_pInputDialog = static_cast<CInputDialog*>(pUserData);
+	auto* l_pInputDialog = static_cast<CInputDialog*>(data);
 
 	if (l_pInputDialog->getUserData() != nullptr)
 	{
@@ -1472,19 +1472,19 @@ void CDesignerVisualization::rename_visualization_panel_cb(GtkWidget* /*pWidget*
 	}
 }
 
-void CDesignerVisualization::remove_visualization_panel_cb(gpointer pUserData, guint /*callback_action*/, GtkWidget* /*pWidget*/)
+void CDesignerVisualization::remove_visualization_panel_cb(gpointer data, guint /*callback_action*/, GtkWidget* /*pWidget*/)
 {
-	static_cast<CDesignerVisualization*>(pUserData)->removeVisualizationPanel();
+	static_cast<CDesignerVisualization*>(data)->removeVisualizationPanel();
 }
 
-void CDesignerVisualization::remove_visualization_widget_cb(gpointer pUserData, guint /*callback_action*/, GtkWidget* /*pWidget*/)
+void CDesignerVisualization::remove_visualization_widget_cb(gpointer data, guint /*callback_action*/, GtkWidget* /*pWidget*/)
 {
-	static_cast<CDesignerVisualization*>(pUserData)->removeVisualizationWidget();
+	static_cast<CDesignerVisualization*>(data)->removeVisualizationWidget();
 }
 
-void CDesignerVisualization::visualization_widget_key_press_event_cb(GtkWidget* pWidget, GdkEventKey* pEvent, gpointer pUserData)
+void CDesignerVisualization::visualization_widget_key_press_event_cb(GtkWidget* pWidget, GdkEventKey* pEvent, gpointer data)
 {
-	static_cast<CDesignerVisualization*>(pUserData)->visualizationWidgetKeyPressEventCB(pWidget, pEvent);
+	static_cast<CDesignerVisualization*>(data)->visualizationWidgetKeyPressEventCB(pWidget, pEvent);
 }
 
 void CDesignerVisualization::visualizationWidgetKeyPressEventCB(GtkWidget*, GdkEventKey* pEventKey)
@@ -1505,9 +1505,9 @@ void CDesignerVisualization::visualizationWidgetKeyPressEventCB(GtkWidget*, GdkE
 	}
 }
 
-gboolean CDesignerVisualization::visualization_widget_enter_notify_event_cb(GtkWidget* pWidget, GdkEventCrossing* pEventCrossing, gpointer pUserData)
+gboolean CDesignerVisualization::visualization_widget_enter_notify_event_cb(GtkWidget* pWidget, GdkEventCrossing* pEventCrossing, gpointer data)
 {
-	static_cast<CDesignerVisualization*>(pUserData)->visualizationWidgetEnterNotifyEventCB(pWidget, pEventCrossing);
+	static_cast<CDesignerVisualization*>(data)->visualizationWidgetEnterNotifyEventCB(pWidget, pEventCrossing);
 	return FALSE;
 }
 
@@ -1516,9 +1516,9 @@ void CDesignerVisualization::visualizationWidgetEnterNotifyEventCB(GtkWidget* pW
 	m_pHighlightedWidget = pWidget;
 }
 
-gboolean CDesignerVisualization::visualization_widget_leave_notify_event_cb(GtkWidget* pWidget, GdkEventCrossing* pEventCrossing, gpointer pUserData)
+gboolean CDesignerVisualization::visualization_widget_leave_notify_event_cb(GtkWidget* pWidget, GdkEventCrossing* pEventCrossing, gpointer data)
 {
-	static_cast<CDesignerVisualization*>(pUserData)->visualizationWidgetLeaveNotifyEventCB(pWidget, pEventCrossing);
+	static_cast<CDesignerVisualization*>(data)->visualizationWidgetLeaveNotifyEventCB(pWidget, pEventCrossing);
 	return FALSE;
 }
 
@@ -1527,9 +1527,9 @@ void CDesignerVisualization::visualizationWidgetLeaveNotifyEventCB(GtkWidget* /*
 	m_pHighlightedWidget = nullptr;
 }
 
-gboolean CDesignerVisualization::button_release_cb(GtkWidget* pWidget, GdkEventButton* pEvent, gpointer pUserData)
+gboolean CDesignerVisualization::button_release_cb(GtkWidget* pWidget, GdkEventButton* pEvent, gpointer data)
 {
-	static_cast<CDesignerVisualization*>(pUserData)->buttonReleaseCB(pWidget, pEvent);
+	static_cast<CDesignerVisualization*>(data)->buttonReleaseCB(pWidget, pEvent);
 
 	return FALSE;
 }
@@ -1595,9 +1595,9 @@ void CDesignerVisualization::buttonReleaseCB(GtkWidget* pWidget, GdkEventButton*
 	}
 }
 
-void CDesignerVisualization::cursor_changed_cb(GtkTreeView* pTreeView, gpointer pUserData)
+void CDesignerVisualization::cursor_changed_cb(GtkTreeView* pTreeView, gpointer data)
 {
-	static_cast<CDesignerVisualization*>(pUserData)->cursorChangedCB(pTreeView);
+	static_cast<CDesignerVisualization*>(data)->cursorChangedCB(pTreeView);
 }
 
 void CDesignerVisualization::cursorChangedCB(GtkTreeView* pTreeView)

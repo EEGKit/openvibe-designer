@@ -44,7 +44,7 @@ namespace Mensia
 			void clearChannelInfo() override;
 			void addChannel(const std::string& sChannelName, float x, float y, float z) override;
 			void selectChannel(uint32_t index) override;
-			void unselectChannel(uint32_t ui32Index) override;
+			void unselectChannel(uint32_t index) override;
 			void sortSelectedChannel(uint32_t ui32SortMode) override;
 
 			void setDimensionLabel(size_t dimensionIndex, size_t labelIndex, const char* label) override;
@@ -83,8 +83,8 @@ namespace Mensia
 			void setERPPlayerActive(bool bActive) override;
 			void stepERPFractionBy(float f32ERPFraction) override;
 
-			std::string getChannelName(uint32_t ui32Index) const override;
-			bool getChannelLocalisation(uint32_t ui32Index, float& x, float& y, float& z) const override;
+			std::string getChannelName(uint32_t index) const override;
+			bool getChannelLocalisation(uint32_t index, float& x, float& y, float& z) const override;
 			uint32_t getChannelCount() const override;
 			uint32_t getSelectedCount() const override;
 			uint32_t getSelected(uint32_t index) const override;

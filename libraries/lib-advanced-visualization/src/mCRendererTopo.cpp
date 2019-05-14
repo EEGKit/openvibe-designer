@@ -53,7 +53,7 @@ namespace
 	// Spherical splines for scalp potential and current density mapping
 	// http://www.sciencedirect.com/science/article/pii/0013469489901806
 
-	double g(unsigned int n, unsigned int m, const std::vector<double>& vLegendre)
+	double g(const unsigned int n, const unsigned int m, const std::vector<double>& vLegendre)
 	{
 		double result = 0;
 		for (unsigned int i = 1; i <= n; ++i)
@@ -423,7 +423,7 @@ bool CRendererTopo::render(const IRendererContext& rContext)
 	for (uint32_t j = 0; j < rContext.getChannelCount(); j++)
 	{
 		const float l_fCubeScale = .025f;
-		CVertex v = m_vProjectedChannelCoordinate[j];
+		const CVertex v = m_vProjectedChannelCoordinate[j];
 		//rContext.getChannelLocalisation(j, v.x, v.y, v.z);
 
 		glPushMatrix();

@@ -42,9 +42,9 @@ namespace OpenViBEPlugins
 			 * \brief Constructor
 			 * \param rTopographicMapDatabase Datastore
 			 * \param ui64DefaultInterpolation Interpolation mode
-			 * \param f64Delay Delay to apply to displayed data
+			 * \param delay Delay to apply to displayed data
 			 */
-			CTopographicMap2DView(CTopographicMapDatabase& rTopographicMapDatabase, uint64_t ui64DefaultInterpolation, double f64Delay);
+			CTopographicMap2DView(CTopographicMapDatabase& rTopographicMapDatabase, uint64_t ui64DefaultInterpolation, double delay);
 
 			/**
 			 * \brief Destructor
@@ -95,7 +95,7 @@ namespace OpenViBEPlugins
 			 * \brief Get ID of current view
 			 * \return ID of current view
 			 */
-			ETopographicMap2DView getCurrentView();
+			ETopographicMap2DView getCurrentView() const;
 
 			/** \name Callbacks */
 			//@{
@@ -117,13 +117,13 @@ namespace OpenViBEPlugins
 			void drawFace(uint32_t ui32X, uint32_t ui32Y, uint32_t ui32Width, uint32_t ui32Height) const;
 
 			//draw head
-			void drawHead();
+			void drawHead() const;
 
 			//draw RGB buffer
 			void drawPotentials() const;
 
 			//draw electrodes corresponding to visible channels as rings
-			void drawElectrodes();
+			void drawElectrodes() const;
 
 			/**
 			 * \brief Get channel position in 2D
@@ -163,7 +163,7 @@ namespace OpenViBEPlugins
 
 			double getThetaFromCartesianCoordinates(const double* pCartesianCoords) const;
 
-			double getPhiFromCartesianCoordinates(const double* pCartesianCoords) const;
+			double getPhiFromCartesianCoordinates(const double* cartesianCoords) const;
 
 			bool compute2DCoordinates(double f64Theta, double f64Phi, uint32_t ui32SkullCenterX, uint32_t ui32SkullCenterY, gint& rX, gint& rY) const;
 

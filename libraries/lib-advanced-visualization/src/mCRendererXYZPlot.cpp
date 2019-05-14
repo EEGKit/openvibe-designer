@@ -53,19 +53,19 @@ void CRendererXYZPlot::refresh(const IRendererContext& rContext)
 
 	while (m_historyIndex < m_historyCount)
 	{
-		uint32_t i3, j = m_historyIndex % this->m_sampleCount;
+		const uint32_t j = m_historyIndex % this->m_sampleCount;
 		for (uint32_t i = 0; i < m_plotCount; ++i)
 		{
 			if (m_hasDepth)
 			{
-				i3 = i * 3;
+				const uint32_t i3 = i * 3;
 				m_vertex[i][j].x = (i3 < m_history.size() ? m_history[i3][m_historyIndex] : 0);
 				m_vertex[i][j].y = (i3 + 1 < m_history.size() ? m_history[i3 + 1][m_historyIndex] : 0);
 				m_vertex[i][j].z = (i3 + 2 < m_history.size() ? m_history[i3 + 2][m_historyIndex] : 0);
 			}
 			else
 			{
-				i3 = i * 2;
+				const uint32_t i3 = i * 2;
 				m_vertex[i][j].x = (i3 < m_history.size() ? m_history[i3][m_historyIndex] : 0);
 				m_vertex[i][j].y = (i3 + 1 < m_history.size() ? m_history[i3 + 1][m_historyIndex] : 0);
 			}
@@ -84,7 +84,7 @@ bool CRendererXYZPlot::render(const IRendererContext& rContext)
 
 	if (m_hasDepth)
 	{
-		float d = 3.5;
+		const float d = 3.5;
 
 		glMatrixMode(GL_PROJECTION);
 		glPushMatrix();
@@ -116,7 +116,7 @@ bool CRendererXYZPlot::render(const IRendererContext& rContext)
 	}
 
 	uint32_t n = m_sampleCount;
-	uint32_t d = (m_historyIndex % m_sampleCount);
+	const uint32_t d = (m_historyIndex % m_sampleCount);
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);

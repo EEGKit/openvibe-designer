@@ -9,9 +9,9 @@ using namespace OpenViBE;
 using namespace OpenViBEDesigner;
 using namespace Setting;
 
-static void on_change(GtkEntry* /*entry*/, gpointer pUserData)
+static void on_change(GtkEntry* /*entry*/, gpointer data)
 {
-	static_cast<CEnumerationSettingView*>(pUserData)->onChange();
+	static_cast<CEnumerationSettingView*>(data)->onChange();
 }
 
 CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox& rBox, uint32_t ui32Index,

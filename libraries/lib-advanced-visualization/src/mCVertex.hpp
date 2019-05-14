@@ -75,15 +75,15 @@ namespace Mensia
 
 			static CVertex cross(const CVertex& v1a, const CVertex& v1b, const CVertex& v2a, const CVertex& v2b)
 			{
-				CVertex v1(v1a, v1b);
-				CVertex v2(v2a, v2b);
+				const CVertex v1(v1a, v1b);
+				const CVertex v2(v2a, v2b);
 				return cross(v1, v2);
 			}
 
 			static bool isOnSameSide(const CVertex& p1, const CVertex& p2, const CVertex& a, const CVertex& b)
 			{
-				CVertex cp1 = cross(a, b, a, p1);
-				CVertex cp2 = cross(a, b, a, p2);
+				const CVertex cp1 = cross(a, b, a, p1);
+				const CVertex cp2 = cross(a, b, a, p2);
 				return dot(cp1, cp2) >= 0;
 			}
 

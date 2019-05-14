@@ -7,9 +7,9 @@ using namespace OpenViBEDesigner;
 using namespace Setting;
 
 
-static void collect_widget_cb(GtkWidget* pWidget, gpointer pUserData)
+static void collect_widget_cb(GtkWidget* pWidget, gpointer data)
 {
-	static_cast<std::vector<GtkWidget*>*>(pUserData)->push_back(pWidget);
+	static_cast<std::vector<GtkWidget*>*>(data)->push_back(pWidget);
 }
 
 CAbstractSettingView::~CAbstractSettingView()

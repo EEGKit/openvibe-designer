@@ -41,21 +41,19 @@ namespace Mensia
 	{
 		class CRenderer : public IRenderer
 		{
-			CRenderer(const CRenderer&) = delete;
-
 		public:
-
 			CRenderer();
+			CRenderer(const CRenderer&) = delete;
 			~CRenderer() override;
 
 			void setChannelLocalisation(const char* sFilename) override;
-			void setChannelCount(uint32_t ui32ChannelCount) override;
-			void setSampleCount(uint32_t ui32SampleCount) override;
-			void setHistoryDrawIndex(uint32_t ui32Index) override;
+			void setChannelCount(uint32_t channelCount) override;
+			void setSampleCount(uint32_t sampleCount) override;
+			void setHistoryDrawIndex(uint32_t index) override;
 			void feed(const float* pDataVector) override;
-			void feed(const float* pDataVector, uint32_t ui32SampleCount) override;
-			void feed(uint64_t ui64StimulationDate, uint64_t ui64StimulationId) override;
-			void prefeed(uint32_t ui32PreFeedSampleCount) override;
+			void feed(const float* pDataVector, uint32_t sampleCount) override;
+			void feed(uint64_t stimulationDate, uint64_t stimulationId) override;
+			void prefeed(uint32_t preFeedSampleCount) override;
 
 			float getSuggestedScale() override;
 
@@ -67,7 +65,7 @@ namespace Mensia
 			uint32_t getHistoryIndex() const override;
 			virtual bool getSampleAtERPFraction(float fERPFraction, std::vector<float>& vSample) const;
 
-			void setTimeOffset(uint64_t offset) override { m_timeOffset = offset; };
+			void setTimeOffset(const uint64_t offset) override { m_timeOffset = offset; };
 			uint64_t getTimeOffset() const override { return m_timeOffset; }
 
 			void rebuild(const IRendererContext& rContext) override;
@@ -76,11 +74,11 @@ namespace Mensia
 
 			void clearRegionSelection() override { }
 			uint32_t getRegionCategoryCount() override { return 0; }
-			uint32_t getRegionCount(uint32_t /*ui32RegionCategory*/) override { return 0; }
-			const char* getRegionCategoryName(uint32_t /*ui32RegionCategory*/) override { return nullptr; }
-			const char* getRegionName(uint32_t /*ui32RegionCategory*/, uint32_t /*ui32RegionIndex*/) override { return nullptr; }
-			void selectRegion(uint32_t /*ui32RegionCategory*/, const char* /*sRegionName*/) override { }
-			void selectRegion(uint32_t /*ui32RegionCategory*/, uint32_t /*ui32RegionIndex*/) override { }
+			uint32_t getRegionCount(uint32_t /*regionCategory*/) override { return 0; }
+			const char* getRegionCategoryName(uint32_t /*regionCategory*/) override { return nullptr; }
+			const char* getRegionName(uint32_t /*regionCategory*/, uint32_t /*regionIndex*/) override { return nullptr; }
+			void selectRegion(uint32_t /*regionCategory*/, const char* /*sRegionName*/) override { }
+			void selectRegion(uint32_t /*regionCategory*/, uint32_t /*regionIndex*/) override { }
 
 			virtual void SetFaceMeshVisible(bool /*bVisible = true*/) { }
 

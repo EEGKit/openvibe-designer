@@ -52,7 +52,7 @@ namespace
 
 	struct sort_alpha
 	{
-		sort_alpha(const std::vector<std::string>& vChannelName) : m_vChannelName(vChannelName) { }
+		explicit sort_alpha(const std::vector<std::string>& vChannelName) : m_vChannelName(vChannelName) { }
 
 		bool operator()(const size_t i, const size_t j) const
 		{
@@ -146,7 +146,7 @@ void CRendererContext::addChannel(const std::string& sChannelName, const float x
 	m_channelLocalisation.push_back(l_oChannelLocalisation);
 }
 
-void CRendererContext::selectChannel(uint32_t index)
+void CRendererContext::selectChannel(const uint32_t index)
 {
 	for (auto& i : m_channelLookup)
 	{
@@ -155,11 +155,11 @@ void CRendererContext::selectChannel(uint32_t index)
 	m_channelLookup.push_back(index);
 }
 
-void CRendererContext::unselectChannel(uint32_t ui32Index)
+void CRendererContext::unselectChannel(const uint32_t index)
 {
 	for (uint32_t i = 0; i < m_channelLookup.size(); ++i)
 	{
-		if (m_channelLookup[i] == ui32Index)
+		if (m_channelLookup[i] == index)
 		{
 			m_channelLookup.erase(m_channelLookup.begin() + i);
 			return;
@@ -167,7 +167,7 @@ void CRendererContext::unselectChannel(uint32_t ui32Index)
 	}
 }
 
-void CRendererContext::sortSelectedChannel(uint32_t ui32SortMode)
+void CRendererContext::sortSelectedChannel(const uint32_t ui32SortMode)
 {
 	if (m_leftRightScore.empty()) { getLeftRightScore(m_leftRightScore, m_channelName, m_channelLocalisation); }
 	if (m_frontBackScore.empty()) { getFrontBackScore(m_frontBackScore, m_channelName, m_channelLocalisation); }
@@ -204,7 +204,7 @@ void CRendererContext::sortSelectedChannel(uint32_t ui32SortMode)
 
 // ____________________________________________________________________________________________________________________________________________________________________________________
 
-void CRendererContext::setDimensionLabel(size_t dimensionIndex, size_t labelIndex, const char* label)
+void CRendererContext::setDimensionLabel(const size_t dimensionIndex, const size_t labelIndex, const char* label)
 {
 	if (m_DimensionLabels[dimensionIndex].size() <= labelIndex)
 	{
@@ -213,13 +213,13 @@ void CRendererContext::setDimensionLabel(size_t dimensionIndex, size_t labelInde
 	m_DimensionLabels[dimensionIndex][labelIndex] = label;
 }
 
-size_t CRendererContext::getDimensionLabelCount(size_t dimensionIndex) const
+size_t CRendererContext::getDimensionLabelCount(const size_t dimensionIndex) const
 {
 	if (m_DimensionLabels.count(dimensionIndex) == 0) { return 0; }
 	return m_DimensionLabels.at(dimensionIndex).size();
 }
 
-const char* CRendererContext::getDimensionLabel(size_t dimensionIndex, size_t labelIndex) const
+const char* CRendererContext::getDimensionLabel(const size_t dimensionIndex, const size_t labelIndex) const
 {
 	if (m_DimensionLabels.count(dimensionIndex) == 0 || m_DimensionLabels.at(dimensionIndex).size() <= labelIndex) { return nullptr; }
 	return m_DimensionLabels.at(dimensionIndex)[labelIndex].c_str();
@@ -322,12 +322,12 @@ void CRendererContext::setScalpMeshVisible(const bool bVisible) { m_scalpMeshVis
 // ____________________________________________________________________________________________________________________________________________________________________________________
 //
 
-void CRendererContext::setERPPlayerActive(bool bActive)
+void CRendererContext::setERPPlayerActive(const bool bActive)
 {
 	m_ERPPlayerActive = bActive;
 }
 
-void CRendererContext::stepERPFractionBy(float f32ERPFraction)
+void CRendererContext::stepERPFractionBy(const float f32ERPFraction)
 {
 	m_ERPFraction += f32ERPFraction;
 }
@@ -335,16 +335,16 @@ void CRendererContext::stepERPFractionBy(float f32ERPFraction)
 // ____________________________________________________________________________________________________________________________________________________________________________________
 //
 
-std::string CRendererContext::getChannelName(uint32_t ui32Index) const
+std::string CRendererContext::getChannelName(const uint32_t index) const
 {
-	if (ui32Index < m_channelName.size()) { return m_channelName[ui32Index]; }
-	printf("No name for channel %u\n", ui32Index);
+	if (index < m_channelName.size()) { return m_channelName[index]; }
+	printf("No name for channel %u\n", index);
 	return "";
 }
 
-bool CRendererContext::getChannelLocalisation(uint32_t ui32Index, float& x, float& y, float& z) const
+bool CRendererContext::getChannelLocalisation(const uint32_t index, float& x, float& y, float& z) const
 {
-	const CVertex& l_rChannelLocalisation = m_channelLocalisation[ui32Index];
+	const CVertex& l_rChannelLocalisation = m_channelLocalisation[index];
 	x = l_rChannelLocalisation.x;
 	y = l_rChannelLocalisation.y;
 	z = l_rChannelLocalisation.z;
@@ -429,6 +429,6 @@ bool CRendererContext::isERPPlayerActive() const { return m_ERPPlayerActive || (
 
 float CRendererContext::getERPFraction() const
 {
-	float l_fERPFraction = m_ERPFraction + (m_parentRendererContext ? m_parentRendererContext->getERPFraction() : 0);
+	const float l_fERPFraction = m_ERPFraction + (m_parentRendererContext ? m_parentRendererContext->getERPFraction() : 0);
 	return l_fERPFraction - floorf(l_fERPFraction);
 }

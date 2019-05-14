@@ -208,38 +208,37 @@ namespace Mensia
 			uint64_t getClockFrequency() override { return (32LL << 32); }
 			bool initialize() override;
 			bool uninitialize() override;
-			bool processInput(uint32_t /*ui32InputIndex*/) override { return true; };
+			bool processInput(uint32_t /*inputIndex*/) override { return true; };
 			bool processClock(OpenViBE::Kernel::IMessageClock& rClock) override;
 
-			virtual void redrawTopLevelWindow(bool bImmediate = false) { m_oGtkGLWidget.redrawTopLevelWindow(bImmediate); }
+			virtual void redrawTopLevelWindow(const bool immediate = false) { m_oGtkGLWidget.redrawTopLevelWindow(immediate); }
 
-			virtual void redraw(bool bImmediate = false)
+			virtual void redraw(const bool immediate = false)
 			{
-				bool l_bImmediate = bImmediate;
-				uint64_t l_ui64CurrentTime = System::Time::zgetTime();
-				if (m_bRedrawNeeded || l_ui64CurrentTime - m_ui64LastRenderTime > ((1LL << 32) / 16))
+				const uint64_t currentTime = System::Time::zgetTime();
+				if (m_bRedrawNeeded || currentTime - m_ui64LastRenderTime > ((1LL << 32) / 16))
 				{
-					//					l_bImmediate |= (l_ui64CurrentTime - m_ui64LastRenderTime > ((1LL<<32)/4));
-					m_oGtkGLWidget.redraw(l_bImmediate);
-					m_oGtkGLWidget.redrawLeft(l_bImmediate);
-					m_oGtkGLWidget.redrawRight(l_bImmediate);
-					m_oGtkGLWidget.redrawBottom(l_bImmediate);
-					m_ui64LastRenderTime = l_ui64CurrentTime;
+					// immediate |= (l_ui64CurrentTime - m_ui64LastRenderTime > ((1LL<<32)/4));
+					m_oGtkGLWidget.redraw(immediate);
+					m_oGtkGLWidget.redrawLeft(immediate);
+					m_oGtkGLWidget.redrawRight(immediate);
+					m_oGtkGLWidget.redrawBottom(immediate);
+					m_ui64LastRenderTime = currentTime;
 					m_bRedrawNeeded = false;
 				}
 			}
 
 			virtual void updateRulerVisibility();
-			virtual void reshape(int32_t width, int32_t height);
+			virtual void reshape(int width, int height);
 			virtual void preDraw();
 			virtual void postDraw();
 			virtual void draw();
 			virtual void drawLeft();
 			virtual void drawRight();
 			virtual void drawBottom();
-			virtual void mouseButton(int32_t x, int32_t y, int32_t button, int32_t status);
-			virtual void mouseMotion(int32_t x, int32_t y);
-			virtual void keyboard(int32_t x, int32_t y, uint32_t key, bool status);
+			virtual void mouseButton(int x, int y, int button, int status);
+			virtual void mouseMotion(int x, int y);
+			virtual void keyboard(int x, int y, uint32_t key, bool status);
 
 		protected:
 

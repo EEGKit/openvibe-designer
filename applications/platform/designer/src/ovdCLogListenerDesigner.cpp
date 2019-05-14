@@ -14,19 +14,19 @@ using namespace std;
 
 namespace
 {
-	void close_messages_alert_window_cb(GtkButton* /*pButton*/, gpointer pUserData)
+	void close_messages_alert_window_cb(GtkButton* /*pButton*/, gpointer data)
 	{
-		gtk_widget_hide(GTK_WIDGET(pUserData));
+		gtk_widget_hide(GTK_WIDGET(data));
 	}
 
-	void focus_message_window_cb(GtkButton* /*pButton*/, gpointer pUserData)
+	void focus_message_window_cb(GtkButton* /*pButton*/, gpointer data)
 	{
-		static_cast<CLogListenerDesigner*>(pUserData)->focusMessageWindow();
+		static_cast<CLogListenerDesigner*>(data)->focusMessageWindow();
 	}
 
-	void refresh_search_log_entry(GtkEntry* pTextfield, gpointer pUserData)
+	void refresh_search_log_entry(GtkEntry* pTextfield, gpointer data)
 	{
-		auto* designerLog_ptr = static_cast<CLogListenerDesigner*>(pUserData);
+		auto* designerLog_ptr = static_cast<CLogListenerDesigner*>(data);
 		designerLog_ptr->m_sSearchTerm = gtk_entry_get_text(pTextfield);
 		designerLog_ptr->searchMessages(designerLog_ptr->m_sSearchTerm);
 	}

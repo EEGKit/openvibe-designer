@@ -65,13 +65,13 @@ void CRendererLine::refresh(const IRendererContext& rContext)
 
 	for (size_t channel = 0; channel < m_channelCount; channel++)
 	{
-		uint32_t firstSampleIndex = ((l_ui32HistoryIndexMax - 1) / m_sampleCount) * m_sampleCount;
+		const uint32_t firstSampleIndex = ((l_ui32HistoryIndexMax - 1) / m_sampleCount) * m_sampleCount;
 		std::vector<float>& l_vHistory = m_history[channel];
 		CVertex* l_pVertex = &m_Vertices[channel][0];
 
 		for (uint32_t sample = 0; sample < m_sampleCount; sample++)
 		{
-			uint32_t currentSampleIndex = firstSampleIndex + sample;
+			const uint32_t currentSampleIndex = firstSampleIndex + sample;
 
 			if (currentSampleIndex < l_ui32HistoryIndexMax)
 			{
@@ -94,7 +94,7 @@ bool CRendererLine::render(const IRendererContext& rContext)
 	if (!rContext.getSelectedCount()) { return false; }
 	if (!m_historyCount) { return false; }
 
-	auto sampleCount = static_cast<int32_t>(m_sampleCount);
+	const auto sampleCount = int(m_sampleCount);
 
 
 	// When the display is in continuous mode, there will be n1 samples
@@ -109,13 +109,13 @@ bool CRendererLine::render(const IRendererContext& rContext)
 	// |              |___/                                     |
 	// Time          25s              10s                      20s
 
-	auto n1 = static_cast<int32_t>(m_historyIndex % m_sampleCount);
-	auto n2 = static_cast<int32_t>(sampleCount - n1);
+	const auto n1 = int(m_historyIndex % m_sampleCount);
+	const auto n2 = int(sampleCount - n1);
 
 	if (!sampleCount) { return false; }
 
-	float t1 = n2 * 1.f / sampleCount;
-	float t2 = -n1 * 1.f / sampleCount;
+	const float t1 = n2 * 1.f / sampleCount;
+	const float t2 = -n1 * 1.f / sampleCount;
 
 	glDisable(GL_TEXTURE_1D);
 
@@ -128,8 +128,8 @@ bool CRendererLine::render(const IRendererContext& rContext)
 	glBegin(GL_LINES);
 	for (uint32_t selectedChannel = 0; selectedChannel < rContext.getSelectedCount(); selectedChannel++)
 	{
-		glVertex2f(0, static_cast<float>(selectedChannel));
-		glVertex2f(1, static_cast<float>(selectedChannel));
+		glVertex2f(0, float(selectedChannel));
+		glVertex2f(1, float(selectedChannel));
 	}
 	glEnd();
 	glPopAttrib();
@@ -138,7 +138,7 @@ bool CRendererLine::render(const IRendererContext& rContext)
 	for (uint32_t selectedChannel = 0; selectedChannel < rContext.getSelectedCount(); selectedChannel++)
 	{
 		glPushMatrix();
-		glTranslatef(0, rContext.getSelectedCount() - selectedChannel - 1.f, 0);
+		glTranslatef(0, float(rContext.getSelectedCount() - selectedChannel) - 1.f, 0);
 		glScalef(1, rContext.getScale(), 1);
 
 		std::vector<CVertex>& l_rVertex = m_Vertices[rContext.getSelected(selectedChannel)];

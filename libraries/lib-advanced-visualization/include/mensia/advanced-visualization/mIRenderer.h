@@ -55,7 +55,7 @@ namespace Mensia
 				RendererType_Last,
 			} ERendererType;
 
-			static IRenderer* create(int eRendererType, bool bStimulation);
+			static IRenderer* create(int eRendererType, bool stimulation);
 			static void release(IRenderer* pRenderer);
 
 			virtual ~IRenderer() = default;
@@ -87,11 +87,11 @@ namespace Mensia
 			// For regions of interest
 			virtual void clearRegionSelection() = 0;
 			virtual uint32_t getRegionCategoryCount() = 0;
-			virtual uint32_t getRegionCount(uint32_t ui32RegionCategory) = 0;
-			virtual const char* getRegionCategoryName(uint32_t ui32RegionCategory) = 0;
-			virtual const char* getRegionName(uint32_t ui32RegionCategory, uint32_t ui32RegionIndex) = 0;
-			virtual void selectRegion(uint32_t ui32RegionCategory, const char* sRegionName) = 0;
-			virtual void selectRegion(uint32_t ui32RegionCategory, uint32_t ui32RegionIndex) = 0;
+			virtual uint32_t getRegionCount(uint32_t regionCategory) = 0;
+			virtual const char* getRegionCategoryName(uint32_t regionCategory) = 0;
+			virtual const char* getRegionName(uint32_t regionCategory, uint32_t regionIndex) = 0;
+			virtual void selectRegion(uint32_t regionCategory, const char* sRegionName) = 0;
+			virtual void selectRegion(uint32_t regionCategory, uint32_t regionIndex) = 0;
 		};
 	}  // namespace AdvancedVisualization
 }  // namespace Mensia

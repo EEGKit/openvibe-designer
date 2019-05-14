@@ -23,7 +23,7 @@
 
 // OpenGL 1.2
 #ifndef GL_BGRA
-#define GL_BGRA 0x80E1
+#	define GL_BGRA 0x80E1
 #endif // GL_BGRA
 
 using namespace Mensia;
@@ -293,14 +293,14 @@ bool CBoxAlgorithmViz::initialize()
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(::gtk_builder_get_object(m_pBuilder, "checkbutton_positive")), static_cast<gboolean>(m_bIsPositive));
 
 	// Parses color string
-	this->parseColor(m_oColor, m_sColor.toASCIIString());
+	parseColor(m_oColor, m_sColor.toASCIIString());
 	m_vColor.push_back(m_oColor);
 
 	// Parses color string - special for instant oscilloscope which can have several inputs
 	for (uint32_t i = l_ui32SettingIndex; i < this->getStaticBoxContext().getSettingCount(); ++i)
 	{
 		m_sColor = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), i);
-		this->parseColor(m_oColor, m_sColor.toASCIIString());
+		parseColor(m_oColor, m_sColor.toASCIIString());
 		m_vColor.push_back(m_oColor);
 	}
 
@@ -470,7 +470,7 @@ void CBoxAlgorithmViz::updateRulerVisibility()
 	}
 }
 
-void CBoxAlgorithmViz::reshape(const int32_t width, const int32_t height)
+void CBoxAlgorithmViz::reshape(const int width, const int height)
 {
 	m_ui32Width = uint32_t(width);
 	m_ui32Height = uint32_t(height);
@@ -549,7 +549,7 @@ void CBoxAlgorithmViz::drawBottom()
 	if (m_pRuler != nullptr) { m_pRuler->doRenderBottom(m_pBottom); }
 }
 
-void CBoxAlgorithmViz::mouseButton(const int32_t x, const int32_t y, const int32_t button, const int32_t status)
+void CBoxAlgorithmViz::mouseButton(const int x, const int y, const int button, const int status)
 {
 #if 0
 	// Mouse interacts with local renderer context
@@ -562,7 +562,7 @@ void CBoxAlgorithmViz::mouseButton(const int32_t x, const int32_t y, const int32
 	this->redraw();
 }
 
-void CBoxAlgorithmViz::mouseMotion(const int32_t x, const int32_t y)
+void CBoxAlgorithmViz::mouseMotion(const int x, const int y)
 {
 #if 0
 	// Mouse interacts with local renderer context
@@ -578,7 +578,7 @@ void CBoxAlgorithmViz::mouseMotion(const int32_t x, const int32_t y)
 	}
 }
 
-void CBoxAlgorithmViz::keyboard(const int32_t x, const int32_t y, const uint32_t key, const bool status)
+void CBoxAlgorithmViz::keyboard(const int x, const int y, const uint32_t key, const bool status)
 {
 	printf("keyboard : x=%i y=%i key=%u status=%s", x, y, key, status ? "pressed" : "released");
 }

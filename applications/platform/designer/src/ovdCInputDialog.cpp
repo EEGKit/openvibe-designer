@@ -5,10 +5,10 @@ using namespace OpenViBE;
 using namespace Kernel;
 using namespace OpenViBEDesigner;
 
-CInputDialog::CInputDialog(const char* sGtkBuilder, const fpButtonCB fpOKButtonCB, void* pUserData, const char* sTitle, const char* sLabel, const char* sEntry)
+CInputDialog::CInputDialog(const char* sGtkBuilder, const fpButtonCB fpOKButtonCB, void* data, const char* sTitle, const char* sLabel, const char* sEntry)
 {
 	m_fpOKButtonCB = fpOKButtonCB;
-	m_pUserData = pUserData;
+	m_pUserData = data;
 
 	//retrieve input dialog
 	GtkBuilder* l_pInputDialogInterface = gtk_builder_new(); // glade_xml_new(sGtkBuilder, "input", nullptr);
@@ -51,25 +51,25 @@ void CInputDialog::run()
 	gtk_widget_hide_all(GTK_WIDGET(m_pInputDialog));
 }
 
-gboolean CInputDialog::key_press_event_cb(GtkWidget* /*pWidget*/, GdkEventKey* pEventKey, gpointer pUserData)
+gboolean CInputDialog::key_press_event_cb(GtkWidget* /*pWidget*/, GdkEventKey* pEventKey, gpointer data)
 {
 	if (pEventKey->keyval == GDK_Return || pEventKey->keyval == GDK_KP_Enter)
 	{
-		gtk_dialog_response(GTK_DIALOG(pUserData), GTK_RESPONSE_ACCEPT);
+		gtk_dialog_response(GTK_DIALOG(data), GTK_RESPONSE_ACCEPT);
 		return TRUE;
 	}
 	if (pEventKey->keyval == GDK_Escape)
 	{
-		gtk_dialog_response(GTK_DIALOG(pUserData), GTK_RESPONSE_REJECT);
+		gtk_dialog_response(GTK_DIALOG(data), GTK_RESPONSE_REJECT);
 		return TRUE;
 	}
 
 	return FALSE;
 }
 
-void CInputDialog::button_clicked_cb(GtkButton* pButton, gpointer pUserData)
+void CInputDialog::button_clicked_cb(GtkButton* pButton, gpointer data)
 {
-	static_cast<CInputDialog*>(pUserData)->buttonClickedCB(pButton);
+	static_cast<CInputDialog*>(data)->buttonClickedCB(pButton);
 }
 
 void CInputDialog::buttonClickedCB(GtkButton* pButton)

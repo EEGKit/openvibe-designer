@@ -42,7 +42,7 @@ namespace OpenViBEPlugins
 		static void setInterpolationCallback(GtkWidget* widget, gpointer data);
 		static void setDelayCallback(GtkRange* range, gpointer data);
 
-		CTopographicMap2DView::CTopographicMap2DView(CTopographicMapDatabase& rTopographicMapDatabase, const uint64_t ui64DefaultInterpolation, double f64Delay)
+		CTopographicMap2DView::CTopographicMap2DView(CTopographicMapDatabase& rTopographicMapDatabase, const uint64_t ui64DefaultInterpolation, double delay)
 			: m_topographicMapDatabase(rTopographicMapDatabase), m_currentInterpolation(ui64DefaultInterpolation)
 		{
 			m_sampleCoordinatesMatrix.setDimensionCount(2);
@@ -100,12 +100,12 @@ namespace OpenViBEPlugins
 			//tell database about maximum delay
 			m_topographicMapDatabase.adjustNumberOfDisplayedBuffers(m_maxDelay);
 			//ensure default delay lies in [0, m_maxDelay]
-			if (f64Delay > m_maxDelay) { f64Delay = m_maxDelay; }
+			if (delay > m_maxDelay) { delay = m_maxDelay; }
 			//set default delay
-			setDelayCB(f64Delay);
+			setDelayCB(delay);
 			//configure delay slider
 			GtkWidget* l_pDelayScale = gtk_hscale_new_with_range(0.0, m_maxDelay, 0.1);
-			gtk_range_set_value(GTK_RANGE(l_pDelayScale), f64Delay);
+			gtk_range_set_value(GTK_RANGE(l_pDelayScale), delay);
 			gtk_scale_set_value_pos(GTK_SCALE(l_pDelayScale), GTK_POS_TOP);
 			gtk_range_set_update_policy(GTK_RANGE(l_pDelayScale), GTK_UPDATE_CONTINUOUS);
 			gtk_widget_set_size_request(l_pDelayScale, 100, -1);
@@ -304,7 +304,7 @@ namespace OpenViBEPlugins
 			pToolbarWidget = GTK_WIDGET(gtk_builder_get_object(m_builderInterface, "Toolbar"));
 		}
 
-		CTopographicMap2DView::ETopographicMap2DView CTopographicMap2DView::getCurrentView() { return m_currentView; }
+		CTopographicMap2DView::ETopographicMap2DView CTopographicMap2DView::getCurrentView() const { return m_currentView; }
 
 		CMatrix* CTopographicMap2DView::getSampleCoordinatesMatrix()
 		{
@@ -334,24 +334,15 @@ namespace OpenViBEPlugins
 			//determine color index of each sample
 			for (uint32_t i = 0; i < m_sampleValues.size(); ++i)
 			{
-				const double l_f64Value = *(pSampleValuesMatrix->getBuffer() + i);
+				const double value = *(pSampleValuesMatrix->getBuffer() + i);
 				int32_t l_iColorIndex;
 
-				if (l_f64Value < l_f64MinPotential)
-				{
-					l_iColorIndex = 0;
-				}
-				else if (l_f64Value > l_f64MaxPotential)
-				{
-					l_iColorIndex = s_nbColors - 1;
-				}
+				if (value < l_f64MinPotential) { l_iColorIndex = 0; }
+				else if (value > l_f64MaxPotential) { l_iColorIndex = s_nbColors - 1; }
 				else //linear itp
 				{
-					l_iColorIndex = l_colorStartIndex + int32_t((l_f64Value - l_f64MinPotential) * l_f64InvPotentialStep);
-					if (l_iColorIndex > s_nbColors - 1)
-					{
-						l_iColorIndex = s_nbColors - 1;
-					}
+					l_iColorIndex = l_colorStartIndex + int32_t((value - l_f64MinPotential) * l_f64InvPotentialStep);
+					if (l_iColorIndex > s_nbColors - 1) { l_iColorIndex = s_nbColors - 1; }
 				}
 				m_sampleValues[i] = l_iColorIndex;
 			}
@@ -400,22 +391,10 @@ namespace OpenViBEPlugins
 		{
 			if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(pWidget)) == FALSE) { return; }
 
-			if (pWidget == GTK_WIDGET(m_topViewButton))
-			{
-				m_currentView = TopographicMap2DView_Top;
-			}
-			else if (pWidget == GTK_WIDGET(m_leftViewButton))
-			{
-				m_currentView = TopographicMap2DView_Left;
-			}
-			else if (pWidget == GTK_WIDGET(m_rightViewButton))
-			{
-				m_currentView = TopographicMap2DView_Right;
-			}
-			else if (pWidget == GTK_WIDGET(m_backViewButton))
-			{
-				m_currentView = TopographicMap2DView_Back;
-			}
+			if (pWidget == GTK_WIDGET(m_topViewButton)) { m_currentView = TopographicMap2DView_Top; }
+			else if (pWidget == GTK_WIDGET(m_leftViewButton)) { m_currentView = TopographicMap2DView_Left; }
+			else if (pWidget == GTK_WIDGET(m_rightViewButton)) { m_currentView = TopographicMap2DView_Right; }
+			else if (pWidget == GTK_WIDGET(m_backViewButton)) { m_currentView = TopographicMap2DView_Back; }
 
 			//recompute sample points coordinates, update clipmask
 			m_needResize = true;
@@ -505,9 +484,7 @@ namespace OpenViBEPlugins
 				l_iLabelX = ui32Width - textWidth;
 			}
 			gdk_draw_layout(m_drawingArea->window, m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)],
-							l_iLabelX,
-							l_iLabelY,
-							l_pText);
+							l_iLabelX, l_iLabelY, l_pText);
 
 			//draw palette bar (typically reversed : high potentials to the left; low potentials to the right)
 			gint l_iCurrentX = l_iPaletteBarStartX;
@@ -540,7 +517,7 @@ namespace OpenViBEPlugins
 			const uint32_t skullCenterY = m_skullY + m_skullDiameter / 2;
 
 #ifndef M_PI
-#define M_PI 3.1415926535897932384626433832795
+#	define M_PI 3.1415926535897932384626433832795
 #endif
 #define DEG2RAD(x) ((x)*M_PI/180.0)
 
@@ -586,7 +563,7 @@ namespace OpenViBEPlugins
 			}
 		}
 
-		void CTopographicMap2DView::drawHead()
+		void CTopographicMap2DView::drawHead() const
 		{
 			//draw head outline
 			gdk_gc_set_line_attributes(m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], 2, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
@@ -874,8 +851,7 @@ namespace OpenViBEPlugins
 			GdkColor l_oWhite;
 			l_oWhite.red = l_oWhite.green = l_oWhite.blue = 65535;
 			gdk_gc_set_rgb_fg_color(m_clipmaskGC, &l_oWhite);
-			gdk_draw_arc(m_clipmask, m_clipmaskGC, TRUE, 0, 0,
-						 gint(m_skullDiameter), gint(m_skullDiameter),
+			gdk_draw_arc(m_clipmask, m_clipmaskGC, TRUE, 0, 0, gint(m_skullDiameter), gint(m_skullDiameter),
 						 gint(64 * m_skullFillStartAngle), gint(64 * (m_skullFillEndAngle - m_skullFillStartAngle)));
 
 			//views other than top have an extra non-clipped area
@@ -907,7 +883,7 @@ namespace OpenViBEPlugins
 			uint32_t w, h;
 
 #ifdef INTERPOLATE_AT_CHANNEL_LOCATION
-			for (uint32_t i = (uint32_t)m_topographicMapDatabase.getChannelCount(); i < m_sampleValues.size(); ++i)
+			for (uint32_t i = uint32_t(m_topographicMapDatabase.getChannelCount()); i < uint32_t(m_sampleValues.size()); ++i)
 #else
 			for (uint32_t i = 0; i < m_sampleValues.size(); ++i)
 #endif
@@ -941,7 +917,7 @@ namespace OpenViBEPlugins
 							   m_skullDiameter, m_skullDiameter, GDK_RGB_DITHER_NONE, m_skullRGBBuffer, m_rowStride);
 		}
 
-		void CTopographicMap2DView::drawElectrodes()
+		void CTopographicMap2DView::drawElectrodes() const
 		{
 			if (!m_electrodesToggledOn) { return; }
 
@@ -1325,8 +1301,8 @@ namespace OpenViBEPlugins
 			}
 			else
 			{
-				g_signal_handlers_disconnect_by_func(G_OBJECT(m_axialProjectionButton), (void*)(G_CALLBACK(setProjectionCallback)), this);
-				g_signal_handlers_disconnect_by_func(G_OBJECT(m_radialProjectionButton), (void*)(G_CALLBACK(setProjectionCallback)), this);
+				g_signal_handlers_disconnect_by_func(G_OBJECT(m_axialProjectionButton), reinterpret_cast<void*>(G_CALLBACK(setProjectionCallback)), this);
+				g_signal_handlers_disconnect_by_func(G_OBJECT(m_radialProjectionButton), reinterpret_cast<void*>(G_CALLBACK(setProjectionCallback)), this);
 			}
 		}
 
@@ -1341,10 +1317,10 @@ namespace OpenViBEPlugins
 			}
 			else
 			{
-				g_signal_handlers_disconnect_by_func(G_OBJECT(m_topViewButton), (void*)(G_CALLBACK(setViewCallback)), this);
-				g_signal_handlers_disconnect_by_func(G_OBJECT(m_leftViewButton), (void*)(G_CALLBACK(setViewCallback)), this);
-				g_signal_handlers_disconnect_by_func(G_OBJECT(m_rightViewButton), (void*)(G_CALLBACK(setViewCallback)), this);
-				g_signal_handlers_disconnect_by_func(G_OBJECT(m_backViewButton), (void*)(G_CALLBACK(setViewCallback)), this);
+				g_signal_handlers_disconnect_by_func(G_OBJECT(m_topViewButton), reinterpret_cast<void*>(G_CALLBACK(setViewCallback)), this);
+				g_signal_handlers_disconnect_by_func(G_OBJECT(m_leftViewButton), reinterpret_cast<void*>(G_CALLBACK(setViewCallback)), this);
+				g_signal_handlers_disconnect_by_func(G_OBJECT(m_rightViewButton), reinterpret_cast<void*>(G_CALLBACK(setViewCallback)), this);
+				g_signal_handlers_disconnect_by_func(G_OBJECT(m_backViewButton), reinterpret_cast<void*>(G_CALLBACK(setViewCallback)), this);
 			}
 		}
 
@@ -1357,47 +1333,43 @@ namespace OpenViBEPlugins
 			}
 			else
 			{
-				g_signal_handlers_disconnect_by_func(G_OBJECT(m_mapPotentials), (void*)(G_CALLBACK(setInterpolationCallback)), this);
-				g_signal_handlers_disconnect_by_func(G_OBJECT(m_mapCurrents), (void*)(G_CALLBACK(setInterpolationCallback)), this);
+				g_signal_handlers_disconnect_by_func(G_OBJECT(m_mapPotentials), reinterpret_cast<void*>(G_CALLBACK(setInterpolationCallback)), this);
+				g_signal_handlers_disconnect_by_func(G_OBJECT(m_mapCurrents), reinterpret_cast<void*>(G_CALLBACK(setInterpolationCallback)), this);
 			}
 		}
 
 		double CTopographicMap2DView::getThetaFromCartesianCoordinates(const double* pCartesianCoords) const { return acos(pCartesianCoords[2]); }
 
-		double CTopographicMap2DView::getPhiFromCartesianCoordinates(const double* pCartesianCoords) const
+		double CTopographicMap2DView::getPhiFromCartesianCoordinates(const double* cartesianCoords) const
 		{
-			double l_f64Phi;
-			if (pCartesianCoords[0] > 0.001)
+			double phi;
+			if (cartesianCoords[0] > 0.001)
 			{
-				l_f64Phi = atan(pCartesianCoords[1] / pCartesianCoords[0]);
-
-				if (l_f64Phi < 0)
-				{
-					l_f64Phi += 2 * M_PI;
-				}
+				phi = atan(cartesianCoords[1] / cartesianCoords[0]);
+				if (phi < 0) { phi += 2 * M_PI; }
 			}
-			else if (pCartesianCoords[0] < -0.001)
+			else if (cartesianCoords[0] < -0.001)
 			{
-				l_f64Phi = atan(pCartesianCoords[1] / pCartesianCoords[0]) + M_PI;
+				phi = atan(cartesianCoords[1] / cartesianCoords[0]) + M_PI;
 			}
 			else
 			{
-				l_f64Phi = pCartesianCoords[1] > 0 ? (M_PI / 2) : (3 * M_PI / 2);
+				phi = cartesianCoords[1] > 0 ? (M_PI / 2) : (3 * M_PI / 2);
 			}
 
-			return l_f64Phi;
+			return phi;
 		}
 
 		bool CTopographicMap2DView::compute2DCoordinates(const double f64Theta, const double f64Phi, const uint32_t ui32SkullCenterX, const uint32_t ui32SkullCenterY, gint& rX, gint& rY) const
 		{
 			//linear plotting along radius
-			const double l_f64Length = f64Theta / (M_PI / 2) * m_skullDiameter / 2;
+			const double length = f64Theta / (M_PI / 2) * m_skullDiameter / 2;
 			//determine coordinates on unit circle
-			const double l_f64X = cos(f64Phi);
-			const double l_f64Y = sin(f64Phi);
+			const double X = cos(f64Phi);
+			const double Y = sin(f64Phi);
 			//scale vector so that it is l_f64Length long
-			rX = gint(ui32SkullCenterX + l_f64Length * l_f64X);
-			rY = gint(ui32SkullCenterY - l_f64Length * l_f64Y);
+			rX = gint(ui32SkullCenterX + length * X);
+			rY = gint(ui32SkullCenterY - length * Y);
 			return true;
 		}
 

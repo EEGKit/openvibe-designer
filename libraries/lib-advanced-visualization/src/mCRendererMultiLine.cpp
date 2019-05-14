@@ -30,14 +30,14 @@ bool CRendererMultiLine::render(const IRendererContext& rContext)
 	if (!rContext.getSelectedCount()) { return false; }
 	if (!m_historyCount) { return false; }
 
-	auto sampleCount = static_cast<int32_t>(m_sampleCount);
-	auto n1 = static_cast<int32_t>(m_historyIndex % m_sampleCount);
-	auto n2 = static_cast<int32_t>(sampleCount - n1);
+	const auto sampleCount = int(m_sampleCount);
+	const auto n1 = int(m_historyIndex % m_sampleCount);
+	const auto n2 = int(sampleCount - n1);
 
 	if (!sampleCount) { return false; }
 
-	float t1 = n2 * 1.f / sampleCount;
-	float t2 = -n1 * 1.f / sampleCount;
+	const float t1 = n2 * 1.f / sampleCount;
+	const float t2 = -n1 * 1.f / sampleCount;
 
 	glMatrixMode(GL_TEXTURE);
 	glPushMatrix();

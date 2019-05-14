@@ -74,19 +74,19 @@ namespace Mensia
 				{
 					glPushAttrib(GL_ALL_ATTRIB_BITS);
 
-					uint32_t l_ui32SampleCount = CRenderer::getSampleCount();
-					uint32_t l_ui32HistoryIndex = CRenderer::getHistoryIndex();
-					uint64_t l_ui64SampleDuration = rContext.getSampleDuration();
+					const uint32_t sampleCount = CRenderer::getSampleCount();
+					const uint32_t historyIndex = CRenderer::getHistoryIndex();
+					const uint64_t sampleDuration = rContext.getSampleDuration();
 
 					glDisable(GL_TEXTURE_1D);
 					glDisable(GL_BLEND);
 					glDisable(GL_LINE_SMOOTH);
 
-					const uint32_t l_ui32LeftIndex = l_ui32HistoryIndex - l_ui32HistoryIndex % l_ui32SampleCount;
-					const uint32_t l_ui32MidIndex = l_ui32HistoryIndex;
-					double l_f64StartTime = ((l_ui32LeftIndex * l_ui64SampleDuration) >> 16) / 65536.;
-					const double l_f64MidTime = ((l_ui32MidIndex * l_ui64SampleDuration) >> 16) / 65536.;
-					const double l_f64Duration = ((l_ui32SampleCount * l_ui64SampleDuration) >> 16) / 65536.;
+					const uint32_t leftIndex = historyIndex - historyIndex % sampleCount;
+					const uint32_t midIndex = historyIndex;
+					const double startTime = ((leftIndex * sampleDuration) >> 16) / 65536.;
+					const double midTime = ((midIndex * sampleDuration) >> 16) / 65536.;
+					const double duration = ((sampleCount * sampleDuration) >> 16) / 65536.;
 
 					m_mEncounteredStimulations.clear();
 					for (auto it = CRenderer::m_stimulationHistory.begin(); it != CRenderer::m_stimulationHistory.end(); ++it)
@@ -98,14 +98,14 @@ namespace Mensia
 							m_mEncounteredStimulations[it->second] = m_mEncounteredStimulations.size() % int(1.0f / s_fStimulationIndicatorSpacing);
 						}
 
-						if (l_f64MidTime - l_f64Duration < it->first && it->first < l_f64MidTime)
+						if (midTime - duration < it->first && it->first < midTime)
 						{
 							float l_fProgress;
-							if (it->first > l_f64StartTime)
+							if (it->first > startTime)
 							{
-								l_fProgress = float((it->first - l_f64StartTime) / l_f64Duration);
+								l_fProgress = float((it->first - startTime) / duration);
 							}
-							else { l_fProgress = float((it->first + l_f64Duration - l_f64StartTime) / l_f64Duration); }
+							else { l_fProgress = float((it->first + duration - startTime) / duration); }
 
 							/*
 							::glLineWidth(3);
@@ -169,11 +169,11 @@ namespace Mensia
 				return l_bResult && ok;
 			}
 
-			float* getMarkerColor(uint64_t ui64Identifier)
+			float* getMarkerColor(const uint64_t ui64Identifier)
 			{
 				static float color[4];
-				float alpha = reverse<>(uint8_t(ui64Identifier & 255)) * 3.f / 255.f;
-				auto alphai = int32_t(alpha);
+				const float alpha = reverse<>(uint8_t(ui64Identifier & 255)) * 3.f / 255.f;
+				const auto alphai = int32_t(alpha);
 				color[(alphai + 0) % 3] = 1 - alpha / 3.f;
 				color[(alphai + 1) % 3] = alpha / 3.f;
 				color[(alphai + 2) % 3] = 0;

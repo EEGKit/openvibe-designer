@@ -23,7 +23,7 @@
 namespace LoretaRegions
 {
 #ifndef LoretaRegions_VoxelRegionStruct
-#define LoretaRegions_VoxelRegionStruct
+#	define LoretaRegions_VoxelRegionStruct
 
 	typedef struct
 	{
@@ -34,7 +34,7 @@ namespace LoretaRegions
 #endif
 
 #ifndef LoretaRegions_VoxelCount
-#define LoretaRegions_VoxelCount 2394
+#	define LoretaRegions_VoxelCount  2394
 #endif
 
 	static unsigned int g_pBrodmannAreasVoxels_0[15] = { 155, 156, 159, 160, 291, 292, 294, 295, 296, 304, 486, 489, 497, 498, 502 };

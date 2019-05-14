@@ -7,19 +7,19 @@ using namespace OpenViBE;
 using namespace OpenViBEDesigner;
 using namespace Setting;
 
-static void on_button_setting_integer_up_pressed(GtkButton* /*pButton*/, gpointer pUserData)
+static void on_button_setting_integer_up_pressed(GtkButton* /*pButton*/, gpointer data)
 {
-	static_cast<CIntegerSettingView*>(pUserData)->adjustValue(1);
+	static_cast<CIntegerSettingView*>(data)->adjustValue(1);
 }
 
-static void on_button_setting_integer_down_pressed(GtkButton* /*pButton*/, gpointer pUserData)
+static void on_button_setting_integer_down_pressed(GtkButton* /*pButton*/, gpointer data)
 {
-	static_cast<CIntegerSettingView*>(pUserData)->adjustValue(-1);
+	static_cast<CIntegerSettingView*>(data)->adjustValue(-1);
 }
 
-static void on_insertion(GtkEntry* /*entry*/, gpointer pUserData)
+static void on_insertion(GtkEntry* /*entry*/, gpointer data)
 {
-	static_cast<CIntegerSettingView*>(pUserData)->onChange();
+	static_cast<CIntegerSettingView*>(data)->onChange();
 }
 
 

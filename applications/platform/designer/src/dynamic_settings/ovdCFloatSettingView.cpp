@@ -7,19 +7,19 @@ using namespace OpenViBE;
 using namespace OpenViBEDesigner;
 using namespace Setting;
 
-static void on_button_setting_float_up_pressed(GtkButton* /*pButton*/, gpointer pUserData)
+static void on_button_setting_float_up_pressed(GtkButton* /*pButton*/, gpointer data)
 {
-	static_cast<CFloatSettingView*>(pUserData)->adjustValue(1.0);
+	static_cast<CFloatSettingView*>(data)->adjustValue(1.0);
 }
 
-static void on_button_setting_float_down_pressed(GtkButton* /*pButton*/, gpointer pUserData)
+static void on_button_setting_float_down_pressed(GtkButton* /*pButton*/, gpointer data)
 {
-	static_cast<CFloatSettingView*>(pUserData)->adjustValue(-1.0);
+	static_cast<CFloatSettingView*>(data)->adjustValue(-1.0);
 }
 
-static void on_change(GtkEntry* /*entry*/, gpointer pUserData)
+static void on_change(GtkEntry* /*entry*/, gpointer data)
 {
-	static_cast<CFloatSettingView*>(pUserData)->onChange();
+	static_cast<CFloatSettingView*>(data)->onChange();
 }
 
 

@@ -25,29 +25,29 @@ namespace
 	const char* const c_sSettingName = "SettingValue";
 } // namespace
 
-static void on_file_override_check_toggled(GtkToggleButton* pToggleButton, gpointer pUserData)
+static void on_file_override_check_toggled(GtkToggleButton* pToggleButton, gpointer data)
 {
-	gtk_widget_set_sensitive(static_cast<GtkWidget*>(pUserData), !gtk_toggle_button_get_active(pToggleButton));
+	gtk_widget_set_sensitive(static_cast<GtkWidget*>(data), !gtk_toggle_button_get_active(pToggleButton));
 }
 
-static void on_button_load_clicked(GtkButton*, gpointer pUserData)
+static void on_button_load_clicked(GtkButton*, gpointer data)
 {
-	static_cast<CBoxConfigurationDialog*>(pUserData)->loadConfiguration();
+	static_cast<CBoxConfigurationDialog*>(data)->loadConfiguration();
 }
 
-static void on_button_save_clicked(GtkButton*, gpointer pUserData)
+static void on_button_save_clicked(GtkButton*, gpointer data)
 {
-	static_cast<CBoxConfigurationDialog*>(pUserData)->saveConfiguration();
+	static_cast<CBoxConfigurationDialog*>(data)->saveConfiguration();
 }
 
-static void on_override_browse_clicked(GtkButton* /*pButton*/, gpointer pUserData)
+static void on_override_browse_clicked(GtkButton* /*pButton*/, gpointer data)
 {
-	static_cast<CBoxConfigurationDialog*>(pUserData)->onOverrideBrowse();
+	static_cast<CBoxConfigurationDialog*>(data)->onOverrideBrowse();
 }
 
-static void collect_widget_cb(GtkWidget* pWidget, gpointer pUserData)
+static void collect_widget_cb(GtkWidget* pWidget, gpointer data)
 {
-	static_cast<std::vector<GtkWidget*>*>(pUserData)->push_back(pWidget);
+	static_cast<std::vector<GtkWidget*>*>(data)->push_back(pWidget);
 }
 
 CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& rKernelContext, IBox& rBox, const char* sGUIFilename, const char* sGUISettingsFilename, bool isScenarioRunning)
