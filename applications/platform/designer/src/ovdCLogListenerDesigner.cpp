@@ -14,12 +14,12 @@ using namespace std;
 
 namespace
 {
-	void close_messages_alert_window_cb(GtkButton* /*pButton*/, gpointer data)
+	void close_messages_alert_window_cb(GtkButton* /*button*/, gpointer data)
 	{
 		gtk_widget_hide(GTK_WIDGET(data));
 	}
 
-	void focus_message_window_cb(GtkButton* /*pButton*/, gpointer data)
+	void focus_message_window_cb(GtkButton* /*button*/, gpointer data)
 	{
 		static_cast<CLogListenerDesigner*>(data)->focusMessageWindow();
 	}
@@ -31,17 +31,17 @@ namespace
 		designerLog_ptr->searchMessages(designerLog_ptr->m_sSearchTerm);
 	}
 
-	void focus_on_box_cidentifier_clicked(GtkWidget* pWidget, GdkEventButton* pEvent, const gpointer pData)
+	void focus_on_box_cidentifier_clicked(GtkWidget* widget, GdkEventButton* pEvent, gpointer data)
 	{
 		//log text view grab the focus so isLogAreaClicked() return true and CTRL+F will focus on the log searchEntry
-		gtk_widget_grab_focus(pWidget);
+		gtk_widget_grab_focus(widget);
 
-		auto* designerLog_ptr = static_cast<CLogListenerDesigner*>(pData);
+		auto* designerLog_ptr = static_cast<CLogListenerDesigner*>(data);
 
 		//if left click
 		if (pEvent->button == 1)
 		{
-			GtkTextView* l_pTextView = GTK_TEXT_VIEW(pWidget);
+			GtkTextView* l_pTextView = GTK_TEXT_VIEW(widget);
 			const GtkTextWindowType l_oWindowType = gtk_text_view_get_window_type(l_pTextView, pEvent->window);
 			gint l_iBufferX, l_iBufferY;
 			//convert event coord (mouse position) in buffer coord (character in buffer)
@@ -92,7 +92,7 @@ void CLogListenerDesigner::searchMessages(const CString& l_sSearchTerm)
 	}
 }
 
-void CLogListenerDesigner::appendLog(CLogObject* oLog)
+void CLogListenerDesigner::appendLog(CLogObject* oLog) const
 {
 	GtkTextIter l_oEndter, l_oLogBegin, l_oLogEnd;
 	gtk_text_buffer_get_end_iter(m_pBuffer, &l_oEndter);
@@ -216,167 +216,167 @@ void CLogListenerDesigner::log(const time64 time64Value)
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
 }
 
-void CLogListenerDesigner::log(const uint64_t ui64Value)
+void CLogListenerDesigner::log(const uint64_t value)
 {
 	if (m_bIngnoreMessages) { return; }
 
 	stringstream l_sText;
-	l_sText << dec << ui64Value;
+	l_sText << dec << value;
 	if (m_bConsoleLogWithHexa)
 	{
-		l_sText << " (0x" << hex << ui64Value << ")";
+		l_sText << " (0x" << hex << value << ")";
 	}
 
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
 }
 
-void CLogListenerDesigner::log(const uint32_t ui32Value)
+void CLogListenerDesigner::log(const uint32_t value)
 {
 	if (m_bIngnoreMessages) { return; }
 
 	stringstream l_sText;
-	l_sText << dec << ui32Value;
+	l_sText << dec << value;
 	if (m_bConsoleLogWithHexa)
 	{
-		l_sText << " (0x" << hex << ui32Value << ")";
+		l_sText << " (0x" << hex << value << ")";
 	}
 
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
 }
 
-void CLogListenerDesigner::log(const uint16_t ui16Value)
+void CLogListenerDesigner::log(const uint16_t value)
 {
 	if (m_bIngnoreMessages) { return; }
 
 	stringstream l_sText;
-	l_sText << dec << ui16Value;
+	l_sText << dec << value;
 	if (m_bConsoleLogWithHexa)
 	{
-		l_sText << " (0x" << hex << ui16Value << ")";
+		l_sText << " (0x" << hex << value << ")";
 	}
 
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
 }
 
-void CLogListenerDesigner::log(const uint8_t ui8Value)
+void CLogListenerDesigner::log(const uint8_t value)
 {
 	if (m_bIngnoreMessages) { return; }
 
 	stringstream l_sText;
-	l_sText << dec << ui8Value;
+	l_sText << dec << value;
 	if (m_bConsoleLogWithHexa)
 	{
-		l_sText << " (0x" << hex << ui8Value << ")";
+		l_sText << " (0x" << hex << value << ")";
 	}
 
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
 }
 
-void CLogListenerDesigner::log(const int64_t i64Value)
+void CLogListenerDesigner::log(const int64_t value)
 {
 	if (m_bIngnoreMessages) { return; }
 
 	stringstream l_sText;
-	l_sText << dec << i64Value;
+	l_sText << dec << value;
 	if (m_bConsoleLogWithHexa)
 	{
-		l_sText << " (0x" << hex << i64Value << ")";
+		l_sText << " (0x" << hex << value << ")";
 	}
 
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
 }
 
-void CLogListenerDesigner::log(const int32_t i32Value)
+void CLogListenerDesigner::log(const int32_t value)
 {
 	if (m_bIngnoreMessages) { return; }
 
 	stringstream l_sText;
-	l_sText << dec << i32Value;
+	l_sText << dec << value;
 	if (m_bConsoleLogWithHexa)
 	{
-		l_sText << " (0x" << hex << i32Value << ")";
+		l_sText << " (0x" << hex << value << ")";
 	}
 
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
 }
 
-void CLogListenerDesigner::log(const int16_t i16Value)
+void CLogListenerDesigner::log(const int16_t value)
 {
 	if (m_bIngnoreMessages) { return; }
 
 	stringstream l_sText;
-	l_sText << dec << i16Value;
+	l_sText << dec << value;
 	if (m_bConsoleLogWithHexa)
 	{
-		l_sText << " (0x" << hex << i16Value << ")";
+		l_sText << " (0x" << hex << value << ")";
 	}
 
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
 }
 
-void CLogListenerDesigner::log(const int8_t i8Value)
+void CLogListenerDesigner::log(const int8_t value)
 {
 	if (m_bIngnoreMessages) { return; }
 
 	stringstream l_sText;
-	l_sText << dec << i8Value;
+	l_sText << dec << value;
 	if (m_bConsoleLogWithHexa)
 	{
-		l_sText << " (0x" << hex << i8Value << ")";
+		l_sText << " (0x" << hex << value << ")";
 	}
 
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
 }
 
-void CLogListenerDesigner::log(const float f32Value)
+void CLogListenerDesigner::log(const float value)
 {
 	if (m_bIngnoreMessages) { return; }
 
 	stringstream l_sText;
-	l_sText << f32Value;
+	l_sText << value;
 
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
 }
 
-void CLogListenerDesigner::log(const double f64Value)
+void CLogListenerDesigner::log(const double value)
 {
 	if (m_bIngnoreMessages) return;
 
 	stringstream l_sText;
-	l_sText << f64Value;
+	l_sText << value;
 
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
 }
 
-void CLogListenerDesigner::log(const bool bValue)
+void CLogListenerDesigner::log(const bool value)
 {
 	if (m_bIngnoreMessages) { return; }
 
 	stringstream l_sText;
-	l_sText << (bValue ? "true" : "false");
+	l_sText << (value ? "true" : "false");
 
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
 }
 
-void CLogListenerDesigner::log(const CIdentifier& rValue)
+void CLogListenerDesigner::log(const CIdentifier& value)
 {
 	if (m_bIngnoreMessages) { return; }
 
-	checkAppendFilterCurrentLog("c_blueChill", rValue.toString(), true);
+	checkAppendFilterCurrentLog("c_blueChill", value.toString(), true);
 }
 
-void CLogListenerDesigner::log(const CString& rValue)
+void CLogListenerDesigner::log(const CString& value)
 {
 	if (m_bIngnoreMessages) { return; }
 
-	checkAppendFilterCurrentLog("c_blueChill", rValue);
+	checkAppendFilterCurrentLog("c_blueChill", value);
 }
 
-void CLogListenerDesigner::log(const char* pValue)
+void CLogListenerDesigner::log(const char* value)
 {
 	if (m_bIngnoreMessages) { return; }
 
-	checkAppendFilterCurrentLog(nullptr, pValue);
+	checkAppendFilterCurrentLog(nullptr, value);
 }
 
 void CLogListenerDesigner::log(const ELogLevel eLogLevel)
@@ -405,27 +405,27 @@ void CLogListenerDesigner::log(const ELogLevel eLogLevel)
 	switch (eLogLevel)
 	{
 		case LogLevel_Debug:
-			addTagName(m_pToggleButtonActive_Debug, m_ui32CountMessages, "DEBUG", "c_blue");
+			addTagName(m_pToggleButtonActive_Debug, m_countMessages, "DEBUG", "c_blue");
 			break;
 
 		case LogLevel_Benchmark:
-			addTagName(m_pToggleButtonActive_Benchmark, m_ui32CountMessages, "BENCH", "c_magenta");
+			addTagName(m_pToggleButtonActive_Benchmark, m_countMessages, "BENCH", "c_magenta");
 			break;
 
 		case LogLevel_Trace:
-			addTagName(m_pToggleButtonActive_Trace, m_ui32CountMessages, "TRACE", "c_watercourse");
+			addTagName(m_pToggleButtonActive_Trace, m_countMessages, "TRACE", "c_watercourse");
 			break;
 
 		case LogLevel_Info:
-			addTagName(m_pToggleButtonActive_Info, m_ui32CountMessages, "INF", "c_blueChill");
+			addTagName(m_pToggleButtonActive_Info, m_countMessages, "INF", "c_blueChill");
 			break;
 
 		case LogLevel_Warning:
-			addTagName(m_pToggleButtonActive_Warning, m_ui32CountWarnings, "WARNING", "c_darkViolet");
+			addTagName(m_pToggleButtonActive_Warning, m_countWarnings, "WARNING", "c_darkViolet");
 			break;
 
 		case LogLevel_ImportantWarning:
-			addTagName(m_pToggleButtonActive_ImportantWarning, m_ui32CountWarnings, "WARNING", "c_darkOrange");
+			addTagName(m_pToggleButtonActive_ImportantWarning, m_countWarnings, "WARNING", "c_darkOrange");
 			break;
 
 		case LogLevel_Error:
@@ -437,7 +437,7 @@ void CLogListenerDesigner::log(const ELogLevel eLogLevel)
 			break;
 
 		default:
-			addTagName(nullptr, m_ui32CountMessages, "UNKNOWN", nullptr);
+			addTagName(nullptr, m_countMessages, "UNKNOWN", nullptr);
 			break;
 	}
 
@@ -462,50 +462,44 @@ void CLogListenerDesigner::log(const ELogLevel eLogLevel)
 
 	this->updateMessageCounts();
 
-	GtkTextMark l_oMark;
-	l_oMark = *(gtk_text_buffer_get_mark(gtk_text_view_get_buffer(m_pTextView), "insert"));
-	gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(m_pTextView), &l_oMark, 0.0, FALSE, 0.0, 0.0);
+	GtkTextMark mark;
+	mark = *(gtk_text_buffer_get_mark(gtk_text_view_get_buffer(m_pTextView), "insert"));
+	gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(m_pTextView), &mark, 0.0, FALSE, 0.0, 0.0);
 }
 
 void CLogListenerDesigner::log(const ELogColor /*eLogColor*/) { if (m_bIngnoreMessages) {} }
 
-void CLogListenerDesigner::updateMessageCounts()
+void CLogListenerDesigner::updateMessageCounts() const
 {
 	stringstream l_sCountMessages;
-	l_sCountMessages << "<b>" << m_ui32CountMessages << "</b> Message";
+	l_sCountMessages << "<b>" << m_countMessages << "</b> Message";
 
-	if (m_ui32CountMessages > 1) { l_sCountMessages << "s"; }
+	if (m_countMessages > 1) { l_sCountMessages << "s"; }
 
 	gtk_label_set_markup(m_pLabelCountMessages, l_sCountMessages.str().data());
 
-	if (m_ui32CountWarnings > 0)
+	if (m_countWarnings > 0)
 	{
-		stringstream l_sCountWarnings;
-		l_sCountWarnings << "<b>" << m_ui32CountWarnings << "</b> Warning";
+		stringstream countWarnings;
+		countWarnings << "<b>" << m_countWarnings << "</b> Warning";
 
-		if (m_ui32CountWarnings > 1)
-		{
-			l_sCountWarnings << "s";
-		}
+		if (m_countWarnings > 1) { countWarnings << "s"; }
 
-		gtk_label_set_markup(m_pLabelCountWarnings, l_sCountWarnings.str().data());
-		gtk_label_set_markup(m_pLabelDialogCountWarnings, l_sCountWarnings.str().data());
+		gtk_label_set_markup(m_pLabelCountWarnings, countWarnings.str().data());
+		gtk_label_set_markup(m_pLabelDialogCountWarnings, countWarnings.str().data());
 		gtk_widget_set_visible(GTK_WIDGET(m_pLabelCountWarnings), true);
 		gtk_widget_set_visible(GTK_WIDGET(m_pImageWarnings), true);
 	}
 
 	if (m_ui32CountErrors > 0)
 	{
-		stringstream l_sCountErrors;
-		l_sCountErrors << "<b>" << m_ui32CountErrors << "</b> Error";
+		stringstream countErrors;
+		countErrors << "<b>" << m_ui32CountErrors << "</b> Error";
 
-		if (m_ui32CountErrors > 1)
-		{
-			l_sCountErrors << "s";
-		}
+		if (m_ui32CountErrors > 1) { countErrors << "s"; }
 
-		gtk_label_set_markup(m_pLabelCountErrors, l_sCountErrors.str().data());
-		gtk_label_set_markup(m_pLabelDialogCountErrors, l_sCountErrors.str().data());
+		gtk_label_set_markup(m_pLabelCountErrors, countErrors.str().data());
+		gtk_label_set_markup(m_pLabelDialogCountErrors, countErrors.str().data());
 
 		gtk_widget_set_visible(GTK_WIDGET(m_pLabelCountErrors), true);
 		gtk_widget_set_visible(GTK_WIDGET(m_pImageErrors), true);
@@ -514,8 +508,8 @@ void CLogListenerDesigner::updateMessageCounts()
 
 void CLogListenerDesigner::clearMessages()
 {
-	m_ui32CountMessages = 0;
-	m_ui32CountWarnings = 0;
+	m_countMessages = 0;
+	m_countWarnings = 0;
 	m_ui32CountErrors = 0;
 
 	gtk_label_set_markup(m_pLabelCountMessages, "<b>0</b> Messages");
@@ -537,14 +531,14 @@ void CLogListenerDesigner::clearMessages()
 	m_pCurrentLog = nullptr;
 }
 
-void CLogListenerDesigner::focusMessageWindow()
+void CLogListenerDesigner::focusMessageWindow() const
 {
 	gtk_widget_hide(GTK_WIDGET(m_pAlertWindow));
 	gtk_expander_set_expanded(GTK_EXPANDER(gtk_builder_get_object(m_pBuilderInterface, "openvibe-expander_messages")), true);
 }
 
 
-void CLogListenerDesigner::checkAppendFilterCurrentLog(const char* textColor, const char* logMessage, const bool bIsLink)
+void CLogListenerDesigner::checkAppendFilterCurrentLog(const char* textColor, const char* logMessage, const bool bIsLink) const
 {
 	if (!m_pCurrentLog)
 	{
@@ -559,17 +553,17 @@ void CLogListenerDesigner::checkAppendFilterCurrentLog(const char* textColor, co
 	}
 }
 
-void CLogListenerDesigner::displayLog(CLogObject* oLog)
+void CLogListenerDesigner::displayLog(CLogObject* oLog) const
 {
-	GtkTextMark* l_oMark = gtk_text_buffer_get_mark(m_pBuffer, "current_log");
+	GtkTextMark* mark = gtk_text_buffer_get_mark(m_pBuffer, "current_log");
 	GtkTextIter l_oIter, l_oEndter, l_oLogBegin, l_oLogEnd;
-	gtk_text_buffer_get_iter_at_mark(m_pBuffer, &l_oIter, l_oMark);
+	gtk_text_buffer_get_iter_at_mark(m_pBuffer, &l_oIter, mark);
 	gtk_text_buffer_get_end_iter(m_pBuffer, &l_oEndter);
 
 	//delete what after the mark
 	gtk_text_buffer_delete(m_pBuffer, &l_oIter, &l_oEndter);
 	//get iter
-	gtk_text_buffer_get_iter_at_mark(m_pBuffer, &l_oIter, l_oMark);
+	gtk_text_buffer_get_iter_at_mark(m_pBuffer, &l_oIter, mark);
 	//rewrite the log
 	gtk_text_buffer_get_start_iter(oLog->getTextBuffer(), &l_oLogBegin);
 	gtk_text_buffer_get_end_iter(oLog->getTextBuffer(), &l_oLogEnd);

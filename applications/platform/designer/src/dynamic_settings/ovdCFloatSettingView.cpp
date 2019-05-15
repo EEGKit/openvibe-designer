@@ -7,12 +7,12 @@ using namespace OpenViBE;
 using namespace OpenViBEDesigner;
 using namespace Setting;
 
-static void on_button_setting_float_up_pressed(GtkButton* /*pButton*/, gpointer data)
+static void on_button_setting_float_up_pressed(GtkButton* /*button*/, gpointer data)
 {
 	static_cast<CFloatSettingView*>(data)->adjustValue(1.0);
 }
 
-static void on_button_setting_float_down_pressed(GtkButton* /*pButton*/, gpointer data)
+static void on_button_setting_float_down_pressed(GtkButton* /*button*/, gpointer data)
 {
 	static_cast<CFloatSettingView*>(data)->adjustValue(-1.0);
 }
@@ -23,8 +23,8 @@ static void on_change(GtkEntry* /*entry*/, gpointer data)
 }
 
 
-CFloatSettingView::CFloatSettingView(Kernel::IBox& rBox, uint32_t ui32Index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext) :
-	CAbstractSettingView(rBox, ui32Index, rBuilderName, "settings_collection-hbox_setting_float"), m_rKernelContext(rKernelContext), m_bOnValueSetting(false)
+CFloatSettingView::CFloatSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext) :
+	CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-hbox_setting_float"), m_rKernelContext(rKernelContext), m_bOnValueSetting(false)
 {
 	GtkWidget* l_pSettingWidget = this->CAbstractSettingView::getEntryFieldWidget();
 
@@ -54,7 +54,7 @@ void CFloatSettingView::setValue(const CString& rValue)
 	m_bOnValueSetting = false;
 }
 
-void CFloatSettingView::adjustValue(double amount)
+void CFloatSettingView::adjustValue(const double amount)
 {
 	char l_sValue[1024];
 	double l_f64lValue = m_rKernelContext.getConfigurationManager().expandAsFloat(gtk_entry_get_text(m_pEntry), 0);

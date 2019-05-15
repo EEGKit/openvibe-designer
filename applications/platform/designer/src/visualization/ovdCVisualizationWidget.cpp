@@ -15,7 +15,6 @@ namespace OpenViBE
 }
 #endif
 
-
 using namespace std;
 using namespace OpenViBE;
 using namespace OpenViBEDesigner;
@@ -23,10 +22,9 @@ using namespace Kernel;
 using namespace OpenViBEVisualizationToolkit;
 
 CVisualizationWidget::CVisualizationWidget(const IKernelContext& kernelContext)
-	: m_KernelContext(kernelContext), m_Identifier(OV_UndefinedIdentifier), m_Type(EVisualizationWidget_Undefined)
-	  , m_ParentIdentifier(OV_UndefinedIdentifier), m_BoxIdentifier(OV_UndefinedIdentifier) {}
+	: m_KernelContext(kernelContext), m_Identifier(OV_UndefinedIdentifier), m_Type(EVisualizationWidget_Undefined), 
+	  m_ParentIdentifier(OV_UndefinedIdentifier), m_BoxIdentifier(OV_UndefinedIdentifier) {}
 
-CVisualizationWidget::~CVisualizationWidget() {}
 
 bool CVisualizationWidget::initialize(const CIdentifier& identifier, const CString& name, const EVisualizationWidgetType type,
 									  const CIdentifier& parentIdentifier, const CIdentifier& boxIdentifier, const uint32 childCount)
@@ -39,22 +37,6 @@ bool CVisualizationWidget::initialize(const CIdentifier& identifier, const CStri
 	m_Children.resize(childCount, OV_UndefinedIdentifier);
 	return true;
 }
-
-CIdentifier CVisualizationWidget::getIdentifier() const { return m_Identifier; }
-
-const CString& CVisualizationWidget::getName() const { return m_Name; }
-
-void CVisualizationWidget::setName(const CString& name) { m_Name = name; }
-
-EVisualizationWidgetType CVisualizationWidget::getType() const { return m_Type; }
-
-CIdentifier CVisualizationWidget::getParentIdentifier() const { return m_ParentIdentifier; }
-
-void CVisualizationWidget::setParentIdentifier(const CIdentifier& parentIdentifier) { m_ParentIdentifier = parentIdentifier; }
-
-CIdentifier CVisualizationWidget::getBoxIdentifier() const { return m_BoxIdentifier; }
-
-uint32_t CVisualizationWidget::getNbChildren() const { return uint32_t(m_Children.size()); }
 
 bool CVisualizationWidget::getChildIndex(const CIdentifier& identifier, uint32& index) const
 {

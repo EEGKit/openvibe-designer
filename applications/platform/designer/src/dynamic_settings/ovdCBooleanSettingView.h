@@ -1,5 +1,4 @@
-#ifndef __OpenViBE_Designer_Setting_CBooleanSettingView_H__
-#define __OpenViBE_Designer_Setting_CBooleanSettingView_H__
+#pragma once
 
 #include "../ovd_base.h"
 #include "ovdCAbstractSettingView.h"
@@ -11,10 +10,10 @@ namespace OpenViBEDesigner
 		class CBooleanSettingView : public CAbstractSettingView
 		{
 		public:
-			CBooleanSettingView(OpenViBE::Kernel::IBox& rBox, uint32_t ui32Index, OpenViBE::CString &rBuilderName);
+			CBooleanSettingView(OpenViBE::Kernel::IBox& rBox, uint32_t index, OpenViBE::CString &rBuilderName);
 
-			virtual void getValue(OpenViBE::CString &rValue) const;
-			virtual void setValue(const OpenViBE::CString &rValue);
+			void getValue(OpenViBE::CString& rValue) const override;
+			void setValue(const OpenViBE::CString& rValue) override;
 
 			void toggleButtonClick();
 			void onChange();
@@ -29,5 +28,3 @@ namespace OpenViBEDesigner
 
 }
 
-
-#endif // __OpenViBE_Designer_Setting_CBooleanSettingView_H__

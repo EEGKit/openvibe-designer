@@ -14,10 +14,10 @@ static void on_change(GtkEntry* /*entry*/, gpointer data)
 	static_cast<CEnumerationSettingView*>(data)->onChange();
 }
 
-CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox& rBox, uint32_t ui32Index,
+CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox& rBox, uint32_t index,
 												 CString& rBuilderName, const Kernel::IKernelContext& rKernelContext,
 												 const CIdentifier& rTypeIdentifier) :
-	CAbstractSettingView(rBox, ui32Index, rBuilderName, "settings_collection-comboboxentry_setting_enumeration"),
+	CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-comboboxentry_setting_enumeration"),
 	m_oTypeIdentifier(rTypeIdentifier),
 	m_rKernelContext(rKernelContext),
 	m_bOnValueSetting(false)
@@ -35,7 +35,7 @@ CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox& rBox, uint32_t ui
 		uint64_t l_ui64EntryValue;
 		if (m_rKernelContext.getTypeManager().getEnumerationEntry(m_oTypeIdentifier, i, l_sEntryName, l_ui64EntryValue))
 		{
-			l_vEntries.push_back(l_sEntryName.toASCIIString());
+			l_vEntries.emplace_back(l_sEntryName.toASCIIString());
 		}
 	}
 
@@ -51,11 +51,11 @@ CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox& rBox, uint32_t ui
 		gtk_list_store_append(l_pList, &l_oListIter);
 		gtk_list_store_set(l_pList, &l_oListIter, 0, l_vEntries[i].c_str(), -1);
 
-		m_mEntriesIndex[CString(l_vEntries[i].c_str())] = static_cast<uint64_t>(i);
+		m_mEntriesIndex[CString(l_vEntries[i].c_str())] = uint64_t(i);
 	}
 
 	CString settingValue;
-	rBox.getSettingValue(ui32Index, settingValue);
+	rBox.getSettingValue(index, settingValue);
 	if (m_mEntriesIndex.count(settingValue.toASCIIString()) == 0)
 	{
 		gtk_list_store_append(l_pList, &l_oListIter);

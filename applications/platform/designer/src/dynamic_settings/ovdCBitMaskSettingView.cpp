@@ -7,14 +7,14 @@ using namespace OpenViBE;
 using namespace OpenViBEDesigner;
 using namespace Setting;
 
-static void on_checkbutton__pressed(GtkToggleButton* /*pButton*/, gpointer data)
+static void on_checkbutton__pressed(GtkToggleButton* /*button*/, gpointer data)
 {
 	static_cast<CBitMaskSettingView*>(data)->onChange();
 }
 
-CBitMaskSettingView::CBitMaskSettingView(Kernel::IBox& rBox, const uint32_t ui32Index, CString& rBuilderName,
+CBitMaskSettingView::CBitMaskSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName,
 										 const Kernel::IKernelContext& rKernelContext, const CIdentifier& rTypeIdentifier)
-	: CAbstractSettingView(rBox, ui32Index, rBuilderName, "settings_collection-table_setting_bitmask"),
+	: CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-table_setting_bitmask"),
 	  m_oTypeIdentifier(rTypeIdentifier), m_rKernelContext(rKernelContext)
 {
 	GtkWidget* l_pSettingWidget = this->CAbstractSettingView::getEntryFieldWidget();
@@ -38,7 +38,7 @@ CBitMaskSettingView::CBitMaskSettingView(Kernel::IBox& rBox, const uint32_t ui32
 	}
 	gtk_widget_show_all(GTK_WIDGET(l_pBitMaskTable));
 
-	initializeValue();
+	CAbstractSettingView::initializeValue();
 }
 
 

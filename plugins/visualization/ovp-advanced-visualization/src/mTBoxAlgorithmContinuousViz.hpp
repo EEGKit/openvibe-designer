@@ -56,13 +56,13 @@ namespace Mensia
 			explicit CBoxAlgorithmContinuousVizListener(const std::vector<int>& vParameter)
 				: CBoxAlgorithmVizListener(vParameter) { }
 
-			bool onInputTypeChanged(IBox& rBox, const uint32_t ui32Index) override
+			bool onInputTypeChanged(IBox& rBox, const uint32_t index) override
 			{
 				OpenViBE::CIdentifier l_oTypeIdentifier;
-				rBox.getInputType(ui32Index, l_oTypeIdentifier);
+				rBox.getInputType(index, l_oTypeIdentifier);
 				if (!this->getTypeManager().isDerivedFromStream(l_oTypeIdentifier, OV_TypeId_StreamedMatrix))
 				{
-					rBox.setInputType(ui32Index, OV_TypeId_StreamedMatrix);
+					rBox.setInputType(index, OV_TypeId_StreamedMatrix);
 				}
 				rBox.setInputType(1, OV_TypeId_Stimulations);
 				return true;
@@ -229,10 +229,10 @@ namespace Mensia
 							if (!m_pRendererContext->isTimeLocked())
 							{
 								l_bWarned = true;
-								this->getLogManager() << LogLevel_Warning << "Input matrix has " << static_cast<uint32_t>(sampleCount) << " elements and the box settings say the elements are independant with " << static_cast<uint64_t>(m_elementCount) << " elements to render\n";
+								this->getLogManager() << LogLevel_Warning << "Input matrix has " << static_cast<uint32_t>(sampleCount) << " elements and the box settings say the elements are independant with " << uint64_t(m_elementCount) << " elements to render\n";
 								this->getLogManager() << LogLevel_Warning << "Such configuration is uncommon for a 'continous' kind of visualization !\n";
 								this->getLogManager() << LogLevel_Warning << "You might want either of the following alternative :\n";
-								this->getLogManager() << LogLevel_Warning << " - an 'instant' kind of visualization to highlight the " << static_cast<uint64_t>(m_elementCount) << " elements of the matrix\n";
+								this->getLogManager() << LogLevel_Warning << " - an 'instant' kind of visualization to highlight the " << uint64_t(m_elementCount) << " elements of the matrix\n";
 								this->getLogManager() << LogLevel_Warning << " - a 'time locked' kind of elements (thus the scenario must refresh the matrix on a regular basis)\n";
 								this->getLogManager() << LogLevel_Warning << "Please double check your scenario and box settings\n";
 							}

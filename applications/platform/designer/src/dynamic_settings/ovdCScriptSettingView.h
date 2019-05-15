@@ -11,15 +11,15 @@ namespace OpenViBEDesigner
 		{
 		public:
 			CScriptSettingView(OpenViBE::Kernel::IBox& rBox,
-								 uint32_t ui32Index,
+								 uint32_t index,
 								 OpenViBE::CString &rBuilderName,
 								 const OpenViBE::Kernel::IKernelContext& rKernelContext);
 
-			virtual void getValue(OpenViBE::CString &rValue) const;
-			virtual void setValue(const OpenViBE::CString &rValue);
+			void getValue(OpenViBE::CString &rValue) const override;
+			void setValue(const OpenViBE::CString &rValue) override;
 
-			void browse();
-			void edit();
+			void browse() const;
+			void edit() const;
 
 			void onChange();
 #if defined TARGET_OS_Windows

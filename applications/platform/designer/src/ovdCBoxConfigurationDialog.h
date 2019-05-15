@@ -16,29 +16,29 @@ namespace OpenViBEDesigner
 		CBoxConfigurationDialog(const OpenViBE::Kernel::IKernelContext& rKernelContext, OpenViBE::Kernel::IBox& rBox, const char* sGUIFilename, const char* sGUISettingsFilename, bool isScenarioRunning = false);
 		virtual ~CBoxConfigurationDialog();
 		virtual bool run();
-		virtual void update(OpenViBE::CObservable& o, void* data);
+		void update(OpenViBE::CObservable& o, void* data) override;
 
-		void saveConfiguration();
-		void loadConfiguration();
+		void saveConfiguration() const;
+		void loadConfiguration() const;
 		void onOverrideBrowse();
 
 		void storeState();
 		void restoreState();
 
-		virtual const OpenViBE::CIdentifier getBoxID() const;
-		virtual GtkWidget* getWidget();
+		virtual OpenViBE::CIdentifier getBoxID() const { return m_rBox.getIdentifier(); }
+		virtual GtkWidget* getWidget() { return m_pSettingDialog; }
 	protected:
 
 		void generateSettingsTable();
-		bool addSettingsToView(uint32_t ui32SettingIndex, uint32_t ui32TableIndex);
-		void updateSize();
-		void settingChange(uint32_t ui32SettingIndex);
+		bool addSettingsToView(uint32_t settingIndex, uint32_t tableIndex);
+		void updateSize() const;
+		void settingChange(uint32_t settingIndex);
 		void addSetting(uint32_t settingIndex);
 
 		void clearSettingWrappersVector();
-		void removeSetting(uint32_t ui32SettingIndex, bool bShift = true);
+		void removeSetting(uint32_t settingIndex, bool bShift = true);
 
-		int32_t getTableIndex(uint32_t ui32SettingIndex);
+		int32_t getTableIndex(uint32_t settingIndex);
 
 		const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
 		OpenViBE::Kernel::IBox& m_rBox;

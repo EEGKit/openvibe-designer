@@ -7,12 +7,12 @@ using namespace OpenViBE;
 using namespace OpenViBEDesigner;
 using namespace Setting;
 
-static void on_button_setting_integer_up_pressed(GtkButton* /*pButton*/, gpointer data)
+static void on_button_setting_integer_up_pressed(GtkButton* /*button*/, gpointer data)
 {
 	static_cast<CIntegerSettingView*>(data)->adjustValue(1);
 }
 
-static void on_button_setting_integer_down_pressed(GtkButton* /*pButton*/, gpointer data)
+static void on_button_setting_integer_down_pressed(GtkButton* /*button*/, gpointer data)
 {
 	static_cast<CIntegerSettingView*>(data)->adjustValue(-1);
 }
@@ -23,8 +23,8 @@ static void on_insertion(GtkEntry* /*entry*/, gpointer data)
 }
 
 
-CIntegerSettingView::CIntegerSettingView(Kernel::IBox& rBox, uint32_t ui32Index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext) :
-	CAbstractSettingView(rBox, ui32Index, rBuilderName, "settings_collection-hbox_setting_integer"), m_rKernelContext(rKernelContext), m_bOnValueSetting(false)
+CIntegerSettingView::CIntegerSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext) :
+	CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-hbox_setting_integer"), m_rKernelContext(rKernelContext), m_bOnValueSetting(false)
 {
 	GtkWidget* l_pSettingWidget = this->CAbstractSettingView::getEntryFieldWidget();
 
@@ -54,7 +54,7 @@ void CIntegerSettingView::setValue(const CString& rValue)
 	m_bOnValueSetting = false;
 }
 
-void CIntegerSettingView::adjustValue(int amount)
+void CIntegerSettingView::adjustValue(const int amount)
 {
 	char l_sValue[1024];
 	int64_t l_i64lValue = m_rKernelContext.getConfigurationManager().expandAsInteger(gtk_entry_get_text(m_pEntry), 0);

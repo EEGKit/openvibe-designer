@@ -10,7 +10,7 @@ namespace OpenViBEDesigner
 		class CStringSettingView : public CAbstractSettingView
 		{
 		public:
-			CStringSettingView(OpenViBE::Kernel::IBox& rBox, uint32_t ui32Index, OpenViBE::CString &rBuilderName);
+			CStringSettingView(OpenViBE::Kernel::IBox& rBox, uint32_t index, OpenViBE::CString& rBuilderName);
 
 			void getValue(OpenViBE::CString& rValue) const override;
 			void setValue(const OpenViBE::CString& rValue) override;

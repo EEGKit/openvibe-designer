@@ -23,10 +23,10 @@ namespace OpenViBEDesigner
 				m_bPassedFilter = false;//by default the log does not pass the filter;
 			}
 
-			GtkTextBuffer* getTextBuffer() { return m_pBuffer; }
+			GtkTextBuffer* getTextBuffer() const { return m_pBuffer; }
 
 			//determine if the log contains the sSearchTerm and tag the part with the sSerachTerm in gray
-			const bool Filter(const OpenViBE::CString sSearchTerm)
+			bool Filter(const OpenViBE::CString& sSearchTerm)
 			{
 				m_bPassedFilter = false;
 				GtkTextIter start_find, end_find;
@@ -57,7 +57,7 @@ namespace OpenViBEDesigner
 				{
 					gtk_text_buffer_apply_tag_by_name(m_pBuffer, "gray_bg", &start_match, &end_match);
 					//offset to end_match
-					int offset = gtk_text_iter_get_offset(&end_match);
+					const int offset = gtk_text_iter_get_offset(&end_match);
 					//begin next search at end match
 					gtk_text_buffer_get_iter_at_offset(m_pBuffer, &start_find, offset);
 					m_bPassedFilter = true;
@@ -65,7 +65,7 @@ namespace OpenViBEDesigner
 				return m_bPassedFilter;
 			}
 
-			void appendToCurrentLog(const char* textColor, const char* logMessage, bool bIsLink /* = false */)
+			void appendToCurrentLog(const char* textColor, const char* logMessage, bool bIsLink /* = false */) const
 			{
 				GtkTextIter l_oEndLogIter;
 				gtk_text_buffer_get_end_iter(m_pBuffer, &l_oEndLogIter);
@@ -93,35 +93,35 @@ namespace OpenViBEDesigner
 
 		void log(const OpenViBE::time64 time64Value) override;
 
-		void log(const uint64_t ui64Value) override;
-		void log(const uint32_t ui32Value) override;
-		void log(const uint16_t ui16Value) override;
-		void log(const uint8_t ui8Value) override;
+		void log(const uint64_t value) override;
+		void log(const uint32_t value) override;
+		void log(const uint16_t value) override;
+		void log(const uint8_t value) override;
 
-		void log(const int64_t i64Value) override;
-		void log(const int32_t i32Value) override;
-		void log(const int16_t i16Value) override;
-		void log(const int8_t i8Value) override;
+		void log(const int64_t value) override;
+		void log(const int32_t value) override;
+		void log(const int16_t value) override;
+		void log(const int8_t value) override;
 
-		void log(const double f64Value) override;
-		void log(const float f32Value) override;
+		void log(const double value) override;
+		void log(const float value) override;
 
-		void log(const bool bValue) override;
+		void log(const bool value) override;
 
-		void log(const OpenViBE::CIdentifier& rValue) override;
-		void log(const OpenViBE::CString& rValue) override;
-		void log(const char* pValue) override;
+		void log(const OpenViBE::CIdentifier& value) override;
+		void log(const OpenViBE::CString& value) override;
+		void log(const char* value) override;
 
 		void log(const OpenViBE::Kernel::ELogLevel eLogLevel) override;
 		void log(const OpenViBE::Kernel::ELogColor eLogColor) override;
 
 		void clearMessages();
-		void focusMessageWindow();
+		void focusMessageWindow() const;
 
 		// TODO
 		void searchMessages(const OpenViBE::CString& l_sSearchTerm);
-		void displayLog(CLogObject* oLog);
-		void appendLog(CLogObject* oLog);
+		void displayLog(CLogObject* oLog) const;
+		void appendLog(CLogObject* oLog) const;
 		void scrollToBottom();
 
 		_IsDerivedFromClass_Final_(OpenViBE::Kernel::ILogListener, OV_UndefinedIdentifier);
@@ -168,8 +168,8 @@ namespace OpenViBEDesigner
 
 		bool m_bIngnoreMessages = false;
 
-		uint32_t m_ui32CountMessages = 0;
-		uint32_t m_ui32CountWarnings = 0;
+		uint32_t m_countMessages = 0;
+		uint32_t m_countWarnings = 0;
 		uint32_t m_ui32CountErrors = 0;
 
 		bool m_bConsoleLogWithHexa = false;
@@ -178,7 +178,7 @@ namespace OpenViBEDesigner
 
 		CLogObject* m_pCurrentLog = nullptr;
 
-		void updateMessageCounts();
-		void checkAppendFilterCurrentLog(const char* textColor, const char* logMessage, bool bIsLink = false);
+		void updateMessageCounts() const;
+		void checkAppendFilterCurrentLog(const char* textColor, const char* logMessage, bool bIsLink = false) const;
 	};
 };

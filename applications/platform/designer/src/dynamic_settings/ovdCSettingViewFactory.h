@@ -15,7 +15,7 @@ namespace OpenViBEDesigner
 			virtual ~CSettingViewFactory();
 
 			CAbstractSettingView* getSettingView(OpenViBE::Kernel::IBox &rBox,
-												 uint32_t ui32Index);
+												 uint32_t index);
 
 		private:
 			OpenViBE::CString m_sBuilderName;

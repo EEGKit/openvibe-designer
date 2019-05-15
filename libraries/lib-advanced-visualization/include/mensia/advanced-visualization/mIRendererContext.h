@@ -52,8 +52,8 @@ namespace Mensia
 
 			virtual void clearChannelInfo() = 0;
 			virtual void addChannel(const std::string& sChannelName, float x = 0, float y = 0, float z = 0) = 0;
-			virtual void selectChannel(uint32_t ui32Index) = 0;
-			virtual void unselectChannel(uint32_t ui32Index) = 0;
+			virtual void selectChannel(uint32_t index) = 0;
+			virtual void unselectChannel(uint32_t index) = 0;
 			virtual void sortSelectedChannel(uint32_t ui32SortMode) = 0;
 
 			virtual void setDimensionLabel(size_t dimensionIndex, size_t labelIndex, const char* label) = 0;
@@ -92,12 +92,12 @@ namespace Mensia
 			virtual void setERPPlayerActive(bool bActive) = 0;
 			virtual void stepERPFractionBy(float f32ERPFraction) = 0;
 
-			virtual std::string getChannelName(uint32_t ui32Index) const = 0;
-			virtual bool getChannelLocalisation(uint32_t ui32Index, float& x, float& y, float& z) const = 0;
+			virtual std::string getChannelName(uint32_t index) const = 0;
+			virtual bool getChannelLocalisation(uint32_t index, float& x, float& y, float& z) const = 0;
 			virtual uint32_t getChannelCount() const = 0;
 			virtual uint32_t getSelectedCount() const = 0;
-			virtual uint32_t getSelected(uint32_t ui32Index) const = 0;
-			virtual bool isSelected(uint32_t ui32Index) const = 0;
+			virtual uint32_t getSelected(uint32_t index) const = 0;
+			virtual bool isSelected(uint32_t index) const = 0;
 
 			virtual float getScale() const = 0;
 			virtual float getZoom() const = 0;

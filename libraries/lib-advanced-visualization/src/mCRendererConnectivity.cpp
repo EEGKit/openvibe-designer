@@ -30,7 +30,7 @@
 #include <cmath>
 #include <algorithm>
 
-//	constexpr size_t COUNT = 16; //Macro modernization, Not yet with jenkins (not the last visual 2013 which it works)
+//constexpr size_t COUNT = 16; //Macro modernization, Not yet with jenkins (not the last visual 2013 which it works)
 #define COUNT 16
 
 using namespace Mensia;

@@ -6,14 +6,6 @@ using namespace OpenViBE;
 using namespace Kernel;
 using namespace OpenViBEDesigner;
 
-TAttributeHandler::TAttributeHandler(IAttributable& rAttributable)
-	: m_pConstAttributable(&rAttributable)
-	  , m_pAttributable(&rAttributable) { }
-
-TAttributeHandler::TAttributeHandler(const IAttributable& rAttributable)
-	: m_pConstAttributable(&rAttributable)
-	  , m_pAttributable(nullptr) { }
-
 bool TAttributeHandler::removeAttribute(const CIdentifier& rAttributeIdentifier)
 {
 	if (!m_pAttributable) { return false; }
@@ -26,10 +18,6 @@ bool TAttributeHandler::removeAllAttributes()
 	if (!m_pAttributable) { return false; }
 	return m_pAttributable->removeAllAttributes();
 }
-
-bool TAttributeHandler::hasAttribute(const CIdentifier& rAttributeIdentifier) const { return m_pConstAttributable->hasAttribute(rAttributeIdentifier); }
-
-bool TAttributeHandler::hasAttributes() const { return m_pConstAttributable->hasAttributes(); }
 
 namespace OpenViBEDesigner
 {

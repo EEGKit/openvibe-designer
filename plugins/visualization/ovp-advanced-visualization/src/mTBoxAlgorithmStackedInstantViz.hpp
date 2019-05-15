@@ -66,13 +66,13 @@ namespace Mensia
 			CBoxAlgorithmStackedInstantVizListener(const std::vector<int>& vParameter)
 				: CBoxAlgorithmVizListener(vParameter) { }
 
-			bool onInputTypeChanged(IBox& rBox, const uint32_t ui32Index) override
+			bool onInputTypeChanged(IBox& rBox, const uint32_t index) override
 			{
 				OpenViBE::CIdentifier l_oTypeIdentifier;
-				rBox.getInputType(ui32Index, l_oTypeIdentifier);
+				rBox.getInputType(index, l_oTypeIdentifier);
 				if (!this->getTypeManager().isDerivedFromStream(l_oTypeIdentifier, OV_TypeId_TimeFrequency))
 				{
-					rBox.setInputType(ui32Index, OV_TypeId_TimeFrequency);
+					rBox.setInputType(index, OV_TypeId_TimeFrequency);
 				}
 				rBox.setInputType(1, OV_TypeId_Stimulations);
 				return true;
@@ -309,7 +309,7 @@ namespace Mensia
 								m_vSwap.resize(frequencyCount);
 								for (uint32_t frequency = 0; frequency < frequencyCount; frequency++)
 								{
-									m_vSwap[frequencyCount - frequency - 1] = static_cast<float>(inputMatrix->getBuffer()[sample + frequency * sampleCount + channel * sampleCount * frequencyCount]);
+									m_vSwap[frequencyCount - frequency - 1] = float(inputMatrix->getBuffer()[sample + frequency * sampleCount + channel * sampleCount * frequencyCount]);
 								}
 								m_vRenderer[channel]->feed(&m_vSwap[0]);
 							}

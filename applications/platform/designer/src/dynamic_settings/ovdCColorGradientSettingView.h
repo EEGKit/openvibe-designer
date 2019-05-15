@@ -1,5 +1,4 @@
-#ifndef __OpenViBE_Designer_Setting_CColorGradientSettingView_H__
-#define __OpenViBE_Designer_Setting_CColorGradientSettingView_H__
+#pragma once
 
 #include "../ovd_base.h"
 #include "ovdCAbstractSettingView.h"
@@ -15,22 +14,20 @@ namespace OpenViBEDesigner
 		typedef struct
 		{
 			double fPercent;
-			::GdkColor oColor;
-			::GtkColorButton* pColorButton;
-			::GtkSpinButton* pSpinButton;
+			GdkColor oColor;
+			GtkColorButton* pColorButton;
+			GtkSpinButton* pSpinButton;
 		} SColorGradientDataNode;
 
 
 		class CColorGradientSettingView : public CAbstractSettingView
 		{
 		public:
-			CColorGradientSettingView(OpenViBE::Kernel::IBox& rBox,
-									  uint32_t ui32Index,
-									  OpenViBE::CString &rBuilderName,
+			CColorGradientSettingView(OpenViBE::Kernel::IBox& rBox, uint32_t index, OpenViBE::CString& rBuilderName,
 									  const OpenViBE::Kernel::IKernelContext& rKernelContext);
 
-			virtual void getValue(OpenViBE::CString &rValue) const;
-			virtual void setValue(const OpenViBE::CString &rValue);
+			void getValue(OpenViBE::CString& rValue) const override;
+			void setValue(const OpenViBE::CString& rValue) override;
 
 			void configurePressed();
 
@@ -39,28 +36,25 @@ namespace OpenViBEDesigner
 			void addColor();
 			void removeColor();
 
-			void spinChange(::GtkSpinButton *pButton);
-			void colorChange(::GtkColorButton *pButton);
+			void spinChange(GtkSpinButton* button);
+			void colorChange(GtkColorButton* button);
 
 			void onChange();
 
 
 		private:
-			::GtkEntry* m_pEntry = nullptr;
+			GtkEntry* m_pEntry = nullptr;
 			const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
 			OpenViBE::CString m_sBuilderName;
 
-			::GtkWidget* pDialog = nullptr;
-			::GtkWidget* pContainer = nullptr;
-			::GtkWidget* pDrawingArea = nullptr;
-			std::vector < SColorGradientDataNode > vColorGradient;
-			std::map < ::GtkColorButton*, uint32_t > vColorButtonMap;
-			std::map < ::GtkSpinButton*, uint32_t > vSpinButtonMap;
+			GtkWidget* pDialog = nullptr;
+			GtkWidget* pContainer = nullptr;
+			GtkWidget* pDrawingArea = nullptr;
+			std::vector<SColorGradientDataNode> vColorGradient;
+			std::map<GtkColorButton*, uint32_t> vColorButtonMap;
+			std::map<GtkSpinButton*, uint32_t> vSpinButtonMap;
 
 			bool m_bOnValueSetting = false;
 		};
 	}
-
 }
-
-#endif // __OpenViBE_Designer_Setting_CColorGradientSettingView_H__

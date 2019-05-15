@@ -7,9 +7,9 @@ using namespace OpenViBEDesigner;
 using namespace Setting;
 
 
-static void collect_widget_cb(GtkWidget* pWidget, gpointer data)
+static void collect_widget_cb(GtkWidget* widget, gpointer data)
 {
-	static_cast<std::vector<GtkWidget*>*>(data)->push_back(pWidget);
+	static_cast<std::vector<GtkWidget*>*>(data)->push_back(widget);
 }
 
 CAbstractSettingView::~CAbstractSettingView()
@@ -19,8 +19,8 @@ CAbstractSettingView::~CAbstractSettingView()
 	if (G_IS_OBJECT(m_pBuilder)) { g_object_unref(m_pBuilder); }
 }
 
-CAbstractSettingView::CAbstractSettingView(Kernel::IBox& rBox, const uint32_t ui32Index, const char* sBuilderName, const char* sWidgetName)
-	: m_rBox(rBox), m_ui32Index(ui32Index), m_sSettingWidgetName("")
+CAbstractSettingView::CAbstractSettingView(Kernel::IBox& rBox, const uint32_t index, const char* sBuilderName, const char* sWidgetName)
+	: m_rBox(rBox), m_index(index), m_sSettingWidgetName("")
 {
 	if (sBuilderName != nullptr)
 	{
@@ -37,27 +37,19 @@ CAbstractSettingView::CAbstractSettingView(Kernel::IBox& rBox, const uint32_t ui
 	}
 }
 
-
-Kernel::IBox& CAbstractSettingView::getBox() { return m_rBox; }
-
-uint32_t CAbstractSettingView::getSettingIndex() { return m_ui32Index; }
-
-
-void CAbstractSettingView::setNameWidget(GtkWidget* pWidget)
+void CAbstractSettingView::setNameWidget(GtkWidget* widget)
 {
 	if (m_pNameWidget)
 	{
 		gtk_widget_destroy(m_pNameWidget);
 	}
-	m_pNameWidget = pWidget;
+	m_pNameWidget = widget;
 }
 
-GtkWidget* CAbstractSettingView::getNameWidget() { return m_pNameWidget; }
-
-void CAbstractSettingView::setEntryWidget(GtkWidget* pWidget)
+void CAbstractSettingView::setEntryWidget(GtkWidget* widget)
 {
 	if (m_pEntryNameWidget) { gtk_widget_destroy(m_pEntryNameWidget); }
-	m_pEntryNameWidget = pWidget;
+	m_pEntryNameWidget = widget;
 }
 
 void CAbstractSettingView::generateNameWidget()
@@ -67,7 +59,7 @@ void CAbstractSettingView::generateNameWidget()
 	setNameWidget(l_pSettingName);
 
 	CString l_sSettingName;
-	getBox().getSettingName(m_ui32Index, l_sSettingName);
+	getBox().getSettingName(m_index, l_sSettingName);
 	gtk_label_set_text(GTK_LABEL(l_pSettingName), l_sSettingName);
 }
 
@@ -97,18 +89,11 @@ GtkWidget* CAbstractSettingView::generateEntryWidget()
 void CAbstractSettingView::initializeValue()
 {
 	CString l_sSettingValue;
-	getBox().getSettingValue(m_ui32Index, l_sSettingValue);
+	getBox().getSettingValue(m_index, l_sSettingValue);
 	setValue(l_sSettingValue);
 }
 
-void CAbstractSettingView::extractWidget(GtkWidget* pWidget, std::vector<GtkWidget*>& rVector)
+void CAbstractSettingView::extractWidget(GtkWidget* widget, std::vector<GtkWidget*>& rVector)
 {
-	gtk_container_foreach(GTK_CONTAINER(pWidget), collect_widget_cb, &rVector);
+	gtk_container_foreach(GTK_CONTAINER(widget), collect_widget_cb, &rVector);
 }
-
-GtkWidget* CAbstractSettingView::getEntryFieldWidget() { return m_pEntryFieldWidget; }
-
-GtkWidget* CAbstractSettingView::getEntryWidget() { return m_pEntryNameWidget; }
-
-
-void CAbstractSettingView::setSettingIndex(const uint32_t m_ui32NewIndex) { m_ui32Index = m_ui32NewIndex; }

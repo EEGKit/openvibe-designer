@@ -12,7 +12,7 @@ namespace
 {
 	void reset_scenario_connector_identifier(GtkWidget*, CConnectorEditor* self)
 	{
-		CIdentifier newIdentifier = self->m_rBox.getUnusedInputIdentifier(OV_UndefinedIdentifier);
+		const CIdentifier newIdentifier = self->m_rBox.getUnusedInputIdentifier(OV_UndefinedIdentifier);
 		if (self->m_ConnectorIdentifierEntry && newIdentifier != OV_UndefinedIdentifier)
 		{
 			gtk_entry_set_text(self->m_ConnectorIdentifierEntry, newIdentifier.toString().toASCIIString());
@@ -20,9 +20,9 @@ namespace
 	}
 }  // namespace
 
-CConnectorEditor::CConnectorEditor(const IKernelContext& rKernelContext, IBox& rBox, uint32_t ui32ConnectorType, uint32_t ui32ConnectorIndex, const char* sTitle, const char* sGUIFilename)
-	: m_rKernelContext(rKernelContext), m_rBox(rBox), m_ui32ConnectorType(ui32ConnectorType), 
-	  m_ui32ConnectorIndex(ui32ConnectorIndex), m_sGUIFilename(sGUIFilename), m_sTitle(sTitle ? sTitle : "") { }
+CConnectorEditor::CConnectorEditor(const IKernelContext& rKernelContext, IBox& rBox, const uint32_t connectorType, const uint32_t connectorIndex, const char* sTitle, const char* sGUIFilename)
+	: m_rKernelContext(rKernelContext), m_rBox(rBox), m_connectorType(connectorType), 
+	  m_connectorIndex(connectorIndex), m_sGUIFilename(sGUIFilename), m_sTitle(sTitle ? sTitle : "") { }
 
 CConnectorEditor::~CConnectorEditor() = default;
 
@@ -35,7 +35,7 @@ bool CConnectorEditor::run()
 	//	t_updateConnectorIdentifier updateConnectorIdentifier = nullptr;
 
 	BoxInterfacorType interfacorType;
-	switch (m_ui32ConnectorType)
+	switch (m_connectorType)
 	{
 		case Box_Input:
 			setConnectorName = &IBox::setInputName;
@@ -58,9 +58,9 @@ bool CConnectorEditor::run()
 	CString l_oConnectorName;
 	CIdentifier l_oConnectorType;
 	CIdentifier connectorIdentifier;
-	m_rBox.getInterfacorIdentifier(interfacorType, m_ui32ConnectorIndex, connectorIdentifier);
-	m_rBox.getInterfacorName(interfacorType, m_ui32ConnectorIndex, l_oConnectorName);
-	m_rBox.getInterfacorType(interfacorType, m_ui32ConnectorIndex, l_oConnectorType);
+	m_rBox.getInterfacorIdentifier(interfacorType, m_connectorIndex, connectorIdentifier);
+	m_rBox.getInterfacorName(interfacorType, m_connectorIndex, l_oConnectorName);
+	m_rBox.getInterfacorType(interfacorType, m_connectorIndex, l_oConnectorType);
 
 	GtkBuilder* l_pBuilderInterfaceConnector = gtk_builder_new();
 	gtk_builder_add_from_file(l_pBuilderInterfaceConnector, m_sGUIFilename.c_str(), nullptr);
@@ -123,15 +123,15 @@ bool CConnectorEditor::run()
 				auto newType = l_vStreamTypes[l_sActiveText];
 				const auto newIdentifierString = gtk_entry_get_text(m_ConnectorIdentifierEntry);
 
-				(m_rBox.*setConnectorType)(m_ui32ConnectorIndex, newType);
-				(m_rBox.*setConnectorName)(m_ui32ConnectorIndex, newName);
+				(m_rBox.*setConnectorType)(m_connectorIndex, newType);
+				(m_rBox.*setConnectorName)(m_connectorIndex, newName);
 
 				// If the connector identifier is valid then create a new one and swap it with the edited one
 				// this is because we can not change the identifier of a setting
 				CIdentifier newIdentifier;
 				if (newIdentifier.fromString(newIdentifierString) && (newIdentifier != connectorIdentifier))
 				{
-					m_rBox.updateInterfacorIdentifier(interfacorType, m_ui32ConnectorIndex, newIdentifier);
+					m_rBox.updateInterfacorIdentifier(interfacorType, m_connectorIndex, newIdentifier);
 				}
 				//				(m_rBox.*addConnector)(newName, newType);
 				l_bFinished = true;
@@ -140,8 +140,8 @@ bool CConnectorEditor::run()
 		}
 		else if (l_iResult == 2) // revert
 		{
-			m_rBox.getInterfacorName(interfacorType, m_ui32ConnectorIndex, l_oConnectorName);
-			m_rBox.getInterfacorType(interfacorType, m_ui32ConnectorIndex, l_oConnectorType);
+			m_rBox.getInterfacorName(interfacorType, m_connectorIndex, l_oConnectorName);
+			m_rBox.getInterfacorType(interfacorType, m_connectorIndex, l_oConnectorType);
 
 			gtk_entry_set_text(l_pConnectorNameEntry, l_oConnectorName.toASCIIString());
 			gtk_combo_box_set_active(l_pConnectorTypeComboBox, l_iActive);

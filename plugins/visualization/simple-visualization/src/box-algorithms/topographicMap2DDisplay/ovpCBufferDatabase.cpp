@@ -75,7 +75,7 @@ bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer*
 		m_oChannelLocalisationLabels.resize(l_oMatrix->getDimensionSize(0));
 		for (vector<CString>::size_type i = 0; i < m_oChannelLocalisationLabels.size(); ++i)
 		{
-			m_oChannelLocalisationLabels[i] = l_oMatrix->getDimensionLabel(0, size_t(i));
+			m_oChannelLocalisationLabels[i] = l_oMatrix->getDimensionLabel(0, uint32_t(i));
 		}
 
 		//retrieve dynamic flag
@@ -118,7 +118,7 @@ bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer*
 			const uint64_t l_ui64BufferDuration = ui64EndTime - ui64StartTime;
 			if (l_ui64BufferDuration != 0)
 			{
-				l_ui64MaxBufferCount = static_cast<uint64_t>(ceil(m_totalDuration / l_ui64BufferDuration));
+				l_ui64MaxBufferCount = uint64_t(ceil(m_totalDuration / l_ui64BufferDuration));
 				if (l_ui64MaxBufferCount == 0)
 				{
 					l_ui64MaxBufferCount = 1;
@@ -206,7 +206,7 @@ bool CBufferDatabase::adjustNumberOfDisplayedBuffers(const double f64NumberOfSec
 	//return if buffer length is not known yet
 	if (m_pDimensionSizes[1] == 0) { return false; }
 
-	uint64_t l_ui64NewNumberOfBufferToDisplay = static_cast<uint64_t>(ceil((m_totalDuration * m_ui32SamplingFrequency) / m_pDimensionSizes[1]));
+	uint64_t l_ui64NewNumberOfBufferToDisplay = uint64_t(ceil((m_totalDuration * m_ui32SamplingFrequency) / m_pDimensionSizes[1]));
 
 	//displays at least one buffer
 	l_ui64NewNumberOfBufferToDisplay = (l_ui64NewNumberOfBufferToDisplay == 0) ? 1 : l_ui64NewNumberOfBufferToDisplay;

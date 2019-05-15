@@ -31,7 +31,7 @@ namespace OpenViBEDesigner
 		/** \name Drag and drop management */
 		//@{
 
-		void dragDataGetCB(GtkWidget* pWidget, GdkDragContext* pDragContex, GtkSelectionData* pSelectionData, guint uiInfo, guint uiT);
+		void dragDataGetCB(GtkWidget* pWidget, GdkDragContext* pDragContex, GtkSelectionData* pSelectionData, guint uiInfo, guint uiT) const;
 
 		//@}
 
@@ -45,7 +45,7 @@ namespace OpenViBEDesigner
 		void cutSelectionCB();
 		void pasteSelectionCB();
 		void deleteSelectionCB();
-		void preferencesCB();
+		void preferencesCB() const;
 
 		//@}
 
@@ -60,13 +60,13 @@ namespace OpenViBEDesigner
 		CInterfacedScenario* getCurrentInterfacedScenario();
 		void saveOpenedScenarios();
 
-		void testCB();
+		void testCB() const;
 		void newScenarioCB();
 		void openScenarioCB();
 		void saveScenarioCB(CInterfacedScenario* interfacedScenario = nullptr); // defaults to current scenario if NULL
 		void saveScenarioAsCB(CInterfacedScenario* interfacedScenario = nullptr); // defaults to current scenario if NULL
 		void closeScenarioCB(CInterfacedScenario* interfacedScenario);
-		void restoreDefaultScenariosCB();
+		void restoreDefaultScenariosCB() const;
 
 		void stopScenarioCB();
 		void pauseScenarioCB();
@@ -74,16 +74,16 @@ namespace OpenViBEDesigner
 		void playScenarioCB();
 		void forwardScenarioCB();
 
-		void configureScenarioSettingsCB(CInterfacedScenario* pScenario);
+		void configureScenarioSettingsCB(CInterfacedScenario* pScenario) const;
 
-		void addCommentCB(CInterfacedScenario* pScenario);
+		void addCommentCB(CInterfacedScenario* pScenario) const;
 
-		void changeCurrentScenario(int i32PageIndex);
-		void reorderCurrentScenario(uint32_t i32NewPageIndex);
+		void changeCurrentScenario(int pageIndex);
+		void reorderCurrentScenario(uint32_t newPageIndex);
 
 		void addRecentScenario(const std::string& scenarioPath);
 
-		void cannotSaveScenarioBeforeUpdate();
+		static void cannotSaveScenarioBeforeUpdate();
 
 		//@}
 
@@ -112,12 +112,12 @@ namespace OpenViBEDesigner
 
 		bool quitApplicationCB();
 		void aboutOpenViBECB();
-		void aboutScenarioCB(CInterfacedScenario* pScenario);
-		void aboutLinkClickedCB(const gchar* url);
+		void aboutScenarioCB(CInterfacedScenario* pScenario) const;
+		void aboutLinkClickedCB(const gchar* url) const;
 
-		void browseDocumentationCB();
-		void registerLicenseCB();
-		void reportIssueCB();
+		void browseDocumentationCB() const;
+		void registerLicenseCB() const;
+		void reportIssueCB() const;
 		void windowStateChangedCB(bool bIsMaximized);
 		bool displayChangelogWhenAvailable();
 
@@ -126,7 +126,7 @@ namespace OpenViBEDesigner
 		/** \name Log management */
 		//@{
 
-		void logLevelCB();
+		void logLevelCB() const;
 		void logLevelMessagesCB();
 
 		//@}

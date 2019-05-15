@@ -8,8 +8,8 @@ namespace OpenViBEDesigner
 	{
 	public:
 
-		TAttributeHandler(OpenViBE::Kernel::IAttributable& rAttributable);
-		TAttributeHandler(const OpenViBE::Kernel::IAttributable& rAttributable);
+		TAttributeHandler(OpenViBE::Kernel::IAttributable& attributable) : m_pConstAttributable(&attributable), m_pAttributable(&attributable) { }
+		TAttributeHandler(const OpenViBE::Kernel::IAttributable& attributable) : m_pConstAttributable(&attributable) { }
 
 		template <class T>
 		bool addAttribute(const OpenViBE::CIdentifier& rAttributeIdentifier, const T& rValue) const;
@@ -24,13 +24,12 @@ namespace OpenViBEDesigner
 		template <class T>
 		bool setAttributeValue(const OpenViBE::CIdentifier& rAttributeIdentifier, const T& rValue);
 
-		bool hasAttribute(const OpenViBE::CIdentifier& rAttributeIdentifier) const;
-
-		bool hasAttributes() const;
+		bool hasAttribute(const OpenViBE::CIdentifier& identifier) const { return m_pConstAttributable->hasAttribute(identifier); }
+		bool hasAttributes() const { return m_pConstAttributable->hasAttributes(); }
 
 	protected:
 
 		const OpenViBE::Kernel::IAttributable* m_pConstAttributable;
-		OpenViBE::Kernel::IAttributable* m_pAttributable;
+		OpenViBE::Kernel::IAttributable* m_pAttributable = nullptr;
 	};
 };

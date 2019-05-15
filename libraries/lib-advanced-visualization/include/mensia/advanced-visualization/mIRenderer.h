@@ -77,7 +77,7 @@ namespace Mensia
 			virtual uint32_t getHistoryCount() const = 0;
 			virtual uint32_t getHistoryIndex() const = 0;
 
-			virtual void setTimeOffset(uint64_t offset) = 0;
+			virtual void setTimeOffset(const uint64_t offset) = 0;
 			virtual uint64_t getTimeOffset() const = 0;
 
 			virtual void rebuild(const IRendererContext& rContext) = 0;

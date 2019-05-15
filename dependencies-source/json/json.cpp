@@ -11,11 +11,11 @@
 #include <stack>
 
 #ifndef WIN32
-#define _stricmp strcasecmp
+#	define _stricmp strcasecmp
 #endif
 
 #ifdef _MSC_VER
-#define snprintf sprintf_s
+#	define snprintf sprintf_s
 #endif
 
 using namespace json;
@@ -166,8 +166,6 @@ const Value& Value::operator [](const std::string& key) const
 	return mObjectVal[key];
 }
 
-void Value::Clear() { mValueType = nullptrVal; }
-
 size_t Value::size() const
 {
 	if ((mValueType != ObjectVal) && (mValueType != ArrayVal)) { return 1; }
@@ -205,36 +203,19 @@ Array& Array::operator =(const Array& a)
 }
 
 Value& Array::operator [](const size_t i) { return mValues[i]; }
-
 const Value& Array::operator [](const size_t i) const { return mValues[i]; }
-
 Array::ValueVector::const_iterator Array::begin() const { return mValues.begin(); }
-
 Array::ValueVector::const_iterator Array::end() const { return mValues.end(); }
-
 Array::ValueVector::iterator Array::begin() { return mValues.begin(); }
-
 Array::ValueVector::iterator Array::end() { return mValues.end(); }
-
 void Array::push_back(const Value& v) { mValues.push_back(v); }
-
 void Array::insert(const size_t index, const Value& v) { mValues.insert(mValues.begin() + index, v); }
-
-size_t Array::size() const { return mValues.size(); }
-
-void Array::Clear() { mValues.clear(); }
-
 Array::ValueVector::iterator Array::find(const Value& v) { return std::find(mValues.begin(), mValues.end(), v); }
-
 Array::ValueVector::const_iterator Array::find(const Value& v) const { return std::find(mValues.begin(), mValues.end(), v); }
-
 bool Array::HasValue(const Value& v) const { return find(v) != end(); }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-Object::Object(const Object& obj) : mValues(obj.mValues) {}
-
 Object& Object::operator =(const Object& obj)
 {
 	if (&obj == this) { return *this; }
@@ -246,25 +227,15 @@ Object& Object::operator =(const Object& obj)
 }
 
 Value& Object::operator [](const std::string& key) { return mValues[key]; }
-
 const Value& Object::operator [](const std::string& key) const { return mValues.find(key)->second; }
-
 Value& Object::operator [](const char* key) { return mValues[key]; }
-
 const Value& Object::operator [](const char* key) const { return mValues.find(key)->second; }
-
 Object::ValueMap::const_iterator Object::begin() const { return mValues.begin(); }
-
 Object::ValueMap::const_iterator Object::end() const { return mValues.end(); }
-
 Object::ValueMap::iterator Object::begin() { return mValues.begin(); }
-
 Object::ValueMap::iterator Object::end() { return mValues.end(); }
-
 Object::ValueMap::iterator Object::find(const std::string& key) { return mValues.find(key); }
-
 Object::ValueMap::const_iterator Object::find(const std::string& key) const { return mValues.find(key); }
-
 bool Object::HasKey(const std::string& key) const { return find(key) != end(); }
 
 int Object::HasKeys(const std::vector<std::string>& keys) const
@@ -286,8 +257,6 @@ int Object::HasKeys(const char** keys, const int key_count) const
 
 	return -1;
 }
-
-void Object::Clear() { mValues.clear(); }
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

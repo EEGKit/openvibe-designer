@@ -57,13 +57,13 @@ namespace Mensia
 			explicit CBoxAlgorithmStackedContinuousVizListener(const std::vector<int>& vParameter)
 				: CBoxAlgorithmVizListener(vParameter) { }
 
-			bool onInputTypeChanged(OpenViBE::Kernel::IBox& rBox, const uint32_t ui32Index) override
+			bool onInputTypeChanged(OpenViBE::Kernel::IBox& rBox, const uint32_t index) override
 			{
 				OpenViBE::CIdentifier l_oTypeIdentifier;
-				rBox.getInputType(ui32Index, l_oTypeIdentifier);
+				rBox.getInputType(index, l_oTypeIdentifier);
 				if (!this->getTypeManager().isDerivedFromStream(l_oTypeIdentifier, OV_TypeId_StreamedMatrix))
 				{
-					rBox.setInputType(ui32Index, OV_TypeId_StreamedMatrix);
+					rBox.setInputType(index, OV_TypeId_StreamedMatrix);
 				}
 				rBox.setInputType(1, OV_TypeId_Stimulations);
 				return true;

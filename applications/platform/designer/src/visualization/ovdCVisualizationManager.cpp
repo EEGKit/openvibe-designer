@@ -21,11 +21,6 @@ using namespace Plugins;
 using namespace OpenViBEVisualizationToolkit;
 //using namespace OpenViBE::Tools;
 
-CVisualizationManager::CVisualizationManager(const IKernelContext& kernelContext)
-	: m_KernelContext(kernelContext) {}
-
-CVisualizationManager::~CVisualizationManager() {}
-
 bool CVisualizationManager::createVisualizationTree(CIdentifier& visualizationTreeIdentifier)
 {
 	IVisualizationTree* newVisualizationTree = new CVisualizationTree(m_KernelContext);

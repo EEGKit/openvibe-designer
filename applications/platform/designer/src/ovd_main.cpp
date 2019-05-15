@@ -42,20 +42,20 @@ public:
 	virtual bool enumeratePluginObjectDesc()
 
 	{
-		CIdentifier l_oIdentifier;
-		while ((l_oIdentifier = m_rKernelContext.getPluginManager().getNextPluginObjectDescIdentifier(l_oIdentifier)) != OV_UndefinedIdentifier)
+		CIdentifier identifier;
+		while ((identifier = m_rKernelContext.getPluginManager().getNextPluginObjectDescIdentifier(identifier)) != OV_UndefinedIdentifier)
 		{
-			this->callback(*m_rKernelContext.getPluginManager().getPluginObjectDesc(l_oIdentifier));
+			this->callback(*m_rKernelContext.getPluginManager().getPluginObjectDesc(identifier));
 		}
 		return true;
 	}
 
 	virtual bool enumeratePluginObjectDesc(const CIdentifier& rParentClassIdentifier)
 	{
-		CIdentifier l_oIdentifier;
-		while ((l_oIdentifier = m_rKernelContext.getPluginManager().getNextPluginObjectDescIdentifier(l_oIdentifier, rParentClassIdentifier)) != OV_UndefinedIdentifier)
+		CIdentifier identifier;
+		while ((identifier = m_rKernelContext.getPluginManager().getNextPluginObjectDescIdentifier(identifier, rParentClassIdentifier)) != OV_UndefinedIdentifier)
 		{
-			this->callback(*m_rKernelContext.getPluginManager().getPluginObjectDesc(l_oIdentifier));
+			this->callback(*m_rKernelContext.getPluginManager().getPluginObjectDesc(identifier));
 		}
 		return true;
 	}
@@ -383,7 +383,7 @@ typedef struct _SConfiguration
 	std::map<std::string, std::string> m_oTokenMap;
 } SConfiguration;
 
-static char backslash_to_slash(char c) { return c == '\\' ? '/' : c; }
+static char backslash_to_slash(const char c) { return c == '\\' ? '/' : c; }
 
 /** ------------------------------------------------------------------------------------------------------------------------------------
 * Use Mutex to ensure that only one instance with GUI of Designer runs at the same time
@@ -397,11 +397,11 @@ static bool ensureOneInstanceOfDesigner(SConfiguration& configuration, ILogManag
 	try
 	{
 		// If the mutex cannot be opened, it's the first instance of Designer, go to catch
-		boost::interprocess::named_mutex l_oMutex(boost::interprocess::open_only, MUTEX_NAME);
+		boost::interprocess::named_mutex mutex(boost::interprocess::open_only, MUTEX_NAME);
 
 		// If the mutex was opened, then an instance of designer is already running, we send it a message before dying
 		// The message contains the command to send: sMode: open, play, play-fast a scenario, sScenarioPath: path of the scenario
-		boost::interprocess::scoped_lock<boost::interprocess::named_mutex> lock(l_oMutex);
+		boost::interprocess::scoped_lock<boost::interprocess::named_mutex> lock(mutex);
 		std::string l_sMessage;
 		if (configuration.m_vFlag.empty())
 		{
@@ -410,23 +410,23 @@ static bool ensureOneInstanceOfDesigner(SConfiguration& configuration, ILogManag
 
 		for (auto& flag : configuration.m_vFlag)
 		{
-			std::string l_sFileName = flag.second;
-			std::transform(l_sFileName.begin(), l_sFileName.end(), l_sFileName.begin(), backslash_to_slash);
+			std::string fileName = flag.second;
+			std::transform(fileName.begin(), fileName.end(), fileName.begin(), backslash_to_slash);
 
-			l_sMessage += std::to_string(int(flag.first)) + ": <" + l_sFileName + "> ; ";
+			l_sMessage += std::to_string(int(flag.first)) + ": <" + fileName + "> ; ";
 		}
 
 		const size_t l_sizeMessage = strlen(l_sMessage.c_str()) * sizeof(char);
 
-		boost::interprocess::message_queue l_oMessageToFirstInstance(boost::interprocess::open_or_create, MESSAGE_NAME, l_sizeMessage, l_sizeMessage);
-		l_oMessageToFirstInstance.send(l_sMessage.c_str(), l_sizeMessage, 0);
+		boost::interprocess::message_queue messageToFirstInstance(boost::interprocess::open_or_create, MESSAGE_NAME, l_sizeMessage, l_sizeMessage);
+		messageToFirstInstance.send(l_sMessage.c_str(), l_sizeMessage, 0);
 
 		return false;
 	}
 	catch (boost::interprocess::interprocess_exception&)
 	{
 		//Create the named mutex to catch the potential next instance of Designer that could open
-		boost::interprocess::named_mutex l_oMutex(boost::interprocess::create_only, MUTEX_NAME);
+		boost::interprocess::named_mutex mutex(boost::interprocess::create_only, MUTEX_NAME);
 		return true;
 	}
 #else
@@ -584,7 +584,7 @@ gboolean cb_remove_splashscreen(gpointer data)
 // ------------------------------------------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------------------------------------------
 
-void message(const char* sTitle, const char* sMessage, GtkMessageType eType)
+void message(const char* sTitle, const char* sMessage, const GtkMessageType eType)
 {
 	GtkWidget* l_pDialog = gtk_message_dialog_new(nullptr, GtkDialogFlags(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
 												  eType, GTK_BUTTONS_OK, "%s", sTitle);
@@ -842,22 +842,22 @@ int go(int argc, char** argv)
 
 						for (size_t i = 0; i < l_oConfiguration.m_vFlag.size(); ++i)
 						{
-							std::string l_sFileName = l_oConfiguration.m_vFlag[i].second;
-							std::transform(l_sFileName.begin(), l_sFileName.end(), l_sFileName.begin(), backslash_to_slash);
+							std::string fileName = l_oConfiguration.m_vFlag[i].second;
+							std::transform(fileName.begin(), fileName.end(), fileName.begin(), backslash_to_slash);
 							bool error;
 							switch (l_oConfiguration.m_vFlag[i].first)
 							{
 								case CommandLineFlag_Open:
-									l_rLogManager << LogLevel_Info << "Opening scenario [" << CString(l_sFileName.c_str()) << "]\n";
-									if (!app.openScenario(l_sFileName.c_str()))
+									l_rLogManager << LogLevel_Info << "Opening scenario [" << CString(fileName.c_str()) << "]\n";
+									if (!app.openScenario(fileName.c_str()))
 									{
-										l_rLogManager << LogLevel_Error << "Could not open scenario " << l_sFileName.c_str() << "\n";
+										l_rLogManager << LogLevel_Error << "Could not open scenario " << fileName.c_str() << "\n";
 										errorWhileLoadingScenario = l_oConfiguration.m_eNoGui == CommandLineFlag_NoGui;
 									}
 									break;
 								case CommandLineFlag_Play:
-									l_rLogManager << LogLevel_Info << "Opening and playing scenario [" << CString(l_sFileName.c_str()) << "]\n";
-									error = !app.openScenario(l_sFileName.c_str());
+									l_rLogManager << LogLevel_Info << "Opening and playing scenario [" << CString(fileName.c_str()) << "]\n";
+									error = !app.openScenario(fileName.c_str());
 									if (!error)
 									{
 										app.playScenarioCB();
@@ -870,8 +870,8 @@ int go(int argc, char** argv)
 									}
 									break;
 								case CommandLineFlag_PlayFast:
-									l_rLogManager << LogLevel_Info << "Opening and fast playing scenario [" << CString(l_sFileName.c_str()) << "]\n";
-									error = !app.openScenario(l_sFileName.c_str());
+									l_rLogManager << LogLevel_Info << "Opening and fast playing scenario [" << CString(fileName.c_str()) << "]\n";
+									error = !app.openScenario(fileName.c_str());
 									if (!error)
 									{
 										app.forwardScenarioCB();
@@ -913,10 +913,10 @@ int go(int argc, char** argv)
 							insertPluginObjectDesc_to_GtkTreeStore(*l_pKernelContext, cb_collector2.getPluginObjectDescMap(), app.m_pAlgorithmTreeModel, app.m_vNewBoxes, app.m_vUpdatedBoxes);
 
 							std::map<std::string, const IPluginObjectDesc*> metaboxDescMap;
-							CIdentifier l_oIdentifier;
-							while ((l_oIdentifier = l_pKernelContext->getMetaboxManager().getNextMetaboxObjectDescIdentifier(l_oIdentifier)) != OV_UndefinedIdentifier)
+							CIdentifier identifier;
+							while ((identifier = l_pKernelContext->getMetaboxManager().getNextMetaboxObjectDescIdentifier(identifier)) != OV_UndefinedIdentifier)
 							{
-								metaboxDescMap[std::string(l_oIdentifier.toString())] = l_pKernelContext->getMetaboxManager().getMetaboxObjectDesc(l_oIdentifier);
+								metaboxDescMap[std::string(identifier.toString())] = l_pKernelContext->getMetaboxManager().getMetaboxObjectDesc(identifier);
 							}
 							insertPluginObjectDesc_to_GtkTreeStore(*l_pKernelContext, metaboxDescMap, app.m_pBoxAlgorithmTreeModel, app.m_vNewBoxes, app.m_vUpdatedBoxes, app.m_bIsNewVersion);
 
@@ -930,7 +930,7 @@ int go(int argc, char** argv)
 							{
 								gtk_main();
 							}
-							catch (DesignerException ex)
+							catch (DesignerException& ex)
 							{
 								std::cerr << "Caught designer exception" << std::endl;
 								GtkWidget* errorDialog = gtk_message_dialog_new(nullptr, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, "%s", ex.getErrorString().c_str());
@@ -971,18 +971,11 @@ int main(int argc, char** argv)
 	// if another instance is running, it should have the time to regenerate it
 	// Avoids that after crashing, a mutex stays blocking
 	boost::interprocess::named_mutex::remove(MUTEX_NAME);
-	int l_iRet = -1;
-	//	try
-	{
-		l_iRet = go(argc, argv);
-	}
-	/*
-	catch (...)
-	{
-		std::cout << "Caught an exception at the very top...\nLeaving application!\n";
-	}
-	*/
-	return l_iRet;
+	int ret = -1;
+	// try{ l_iRet = go(argc, argv); }
+	// catch (...) { std::cout << "Caught an exception at the very top...\nLeaving application!\n"; }
+	ret = go(argc, argv);
+	return ret;
 }
 
 #if defined TARGET_OS_Windows

@@ -11,9 +11,9 @@ CCommentProxy::CCommentProxy(const IKernelContext& rKernelContext, const ICommen
 {
 	if (m_pConstComment)
 	{
-		TAttributeHandler l_oAttributeHandler(*m_pConstComment);
-		m_iXCenter = l_oAttributeHandler.getAttributeValue<int>(OV_AttributeId_Comment_XCenterPosition);
-		m_iYCenter = l_oAttributeHandler.getAttributeValue<int>(OV_AttributeId_Comment_YCenterPosition);
+		const TAttributeHandler l_oAttributeHandler(*m_pConstComment);
+		m_centerX = l_oAttributeHandler.getAttributeValue<int>(OV_AttributeId_Comment_XCenterPosition);
+		m_centerY = l_oAttributeHandler.getAttributeValue<int>(OV_AttributeId_Comment_YCenterPosition);
 	}
 }
 
@@ -22,9 +22,9 @@ CCommentProxy::CCommentProxy(const IKernelContext& rKernelContext, IScenario& rS
 {
 	if (m_pConstComment)
 	{
-		TAttributeHandler l_oAttributeHandler(*m_pConstComment);
-		m_iXCenter = l_oAttributeHandler.getAttributeValue<int>(OV_AttributeId_Comment_XCenterPosition);
-		m_iYCenter = l_oAttributeHandler.getAttributeValue<int>(OV_AttributeId_Comment_YCenterPosition);
+		const TAttributeHandler l_oAttributeHandler(*m_pConstComment);
+		m_centerX = l_oAttributeHandler.getAttributeValue<int>(OV_AttributeId_Comment_XCenterPosition);
+		m_centerY = l_oAttributeHandler.getAttributeValue<int>(OV_AttributeId_Comment_YCenterPosition);
 	}
 }
 
@@ -33,32 +33,24 @@ CCommentProxy::~CCommentProxy()
 	if (!m_bApplied) { this->apply(); }
 }
 
-CCommentProxy::operator IComment*() { return m_pComment; }
-
-CCommentProxy::operator const IComment*() { return m_pConstComment; }
-
-int32_t CCommentProxy::getWidth(GtkWidget* pWidget) const
+int CCommentProxy::getWidth(GtkWidget* widget) const
 {
 	int x, y;
-	updateSize(pWidget, getLabel(), &x, &y);
+	updateSize(widget, getLabel(), &x, &y);
 	return x;
 }
 
-int32_t CCommentProxy::getHeight(GtkWidget* pWidget) const
+int CCommentProxy::getHeight(GtkWidget* widget) const
 {
 	int x, y;
-	updateSize(pWidget, getLabel(), &x, &y);
+	updateSize(widget, getLabel(), &x, &y);
 	return y;
 }
 
-int32_t CCommentProxy::getXCenter() const { return m_iXCenter; }
-
-int32_t CCommentProxy::getYCenter() const { return m_iYCenter; }
-
-void CCommentProxy::setCenter(int32_t i32XCenter, int32_t i32YCenter)
+void CCommentProxy::setCenter(const int centerX, const int centerY)
 {
-	m_iXCenter = i32XCenter;
-	m_iYCenter = i32YCenter;
+	m_centerX = centerX;
+	m_centerY = centerY;
 	m_bApplied = false;
 }
 
@@ -71,20 +63,20 @@ void CCommentProxy::apply()
 
 		if (l_oAttributeHandler.hasAttribute(OV_AttributeId_Comment_XCenterPosition))
 		{
-			l_oAttributeHandler.setAttributeValue<int>(OV_AttributeId_Comment_XCenterPosition, m_iXCenter);
+			l_oAttributeHandler.setAttributeValue<int>(OV_AttributeId_Comment_XCenterPosition, m_centerX);
 		}
 		else
 		{
-			l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Comment_XCenterPosition, m_iXCenter);
+			l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Comment_XCenterPosition, m_centerX);
 		}
 
 		if (l_oAttributeHandler.hasAttribute(OV_AttributeId_Comment_YCenterPosition))
 		{
-			l_oAttributeHandler.setAttributeValue<int>(OV_AttributeId_Comment_YCenterPosition, m_iYCenter);
+			l_oAttributeHandler.setAttributeValue<int>(OV_AttributeId_Comment_YCenterPosition, m_centerY);
 		}
 		else
 		{
-			l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Comment_YCenterPosition, m_iYCenter);
+			l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Comment_YCenterPosition, m_centerY);
 		}
 		m_bApplied = true;
 	}
@@ -96,12 +88,12 @@ const char* CCommentProxy::getLabel() const
 	return m_sLabel.c_str();
 }
 
-void CCommentProxy::updateSize(GtkWidget* pWidget, const char* sText, int* pXSize, int* pYSize) const
+void CCommentProxy::updateSize(GtkWidget* widget, const char* sText, int* pXSize, int* pYSize) const
 {
 	PangoContext* l_pPangoContext = nullptr;
 	PangoLayout* l_pPangoLayout = nullptr;
 	PangoRectangle l_oPangoRectangle;
-	l_pPangoContext = gtk_widget_create_pango_context(pWidget);
+	l_pPangoContext = gtk_widget_create_pango_context(widget);
 	l_pPangoLayout = pango_layout_new(l_pPangoContext);
 	pango_layout_set_alignment(l_pPangoLayout, PANGO_ALIGN_CENTER);
 	if (pango_parse_markup(sText, -1, 0, nullptr, nullptr, nullptr, nullptr))

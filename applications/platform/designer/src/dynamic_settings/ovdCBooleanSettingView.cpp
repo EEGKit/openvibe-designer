@@ -7,7 +7,7 @@ using namespace OpenViBE;
 using namespace OpenViBEDesigner;
 using namespace Setting;
 
-static void on_checkbutton_setting_bool_pressed(GtkToggleButton* /*pButton*/, gpointer data)
+static void on_checkbutton_setting_bool_pressed(GtkToggleButton* /*button*/, gpointer data)
 {
 	static_cast<CBooleanSettingView*>(data)->toggleButtonClick();
 }
@@ -17,8 +17,8 @@ static void on_insertion(GtkEntry* /*entry*/, gpointer data)
 	static_cast<CBooleanSettingView*>(data)->onChange();
 }
 
-CBooleanSettingView::CBooleanSettingView(Kernel::IBox& rBox, uint32_t ui32Index, CString& rBuilderName) :
-	CAbstractSettingView(rBox, ui32Index, rBuilderName, "settings_collection-hbox_setting_bool"), m_bOnValueSetting(false)
+CBooleanSettingView::CBooleanSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName) :
+	CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-hbox_setting_bool"), m_bOnValueSetting(false)
 {
 	GtkWidget* l_pSettingWidget = this->CAbstractSettingView::getEntryFieldWidget();
 

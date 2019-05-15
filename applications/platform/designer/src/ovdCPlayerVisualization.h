@@ -23,8 +23,8 @@ namespace OpenViBEDesigner
 		//@{
 		GtkWidget* loadTreeWidget(OpenViBEVisualizationToolkit::IVisualizationWidget* pVisualizationWidget);
 		void endLoadTreeWidget(OpenViBEVisualizationToolkit::IVisualizationWidget* pVisualizationWidget);
-		bool setToolbar(const OpenViBE::CIdentifier& rBoxIdentifier, GtkWidget* pToolbarWidget);
-		bool setWidget(const OpenViBE::CIdentifier& rBoxIdentifier, GtkWidget* pWidget);
+		bool setToolbar(const OpenViBE::CIdentifier& boxIdentifier, GtkWidget* pToolbarWidget);
+		bool setWidget(const OpenViBE::CIdentifier& boxIdentifier, GtkWidget* widget);
 		//@}
 
 		void showTopLevelWindows();
@@ -32,21 +32,21 @@ namespace OpenViBEDesigner
 		CInterfacedScenario& getInterfacedScenario() { return m_rInterfacedScenario; }
 
 	protected:
-		bool parentWidgetBox(OpenViBEVisualizationToolkit::IVisualizationWidget* pWidget, GtkBox* pWidgetBox);
+		bool parentWidgetBox(OpenViBEVisualizationToolkit::IVisualizationWidget* widget, GtkBox* widgetBox);
 
-		static gboolean configure_event_cb(GtkWidget* widget, GdkEventConfigure* event, gpointer user_data);
-		static gboolean widget_expose_event_cb(GtkWidget* widget, GdkEventExpose* event, gpointer user_data);
+		static gboolean configure_event_cb(GtkWidget* widget, GdkEventConfigure* event, gpointer data);
+		static gboolean widget_expose_event_cb(GtkWidget* widget, GdkEventExpose* event, gpointer data);
 		void resizeCB(GtkContainer* container);
 
 		//callbacks for DND
-		static void drag_data_get_from_widget_cb(GtkWidget* pSrcWidget, GdkDragContext* pDC, GtkSelectionData* pSelectionData, guint uiInfo, guint uiTime, gpointer pData);
-		static void drag_data_received_in_widget_cb(GtkWidget* pDstWidget, GdkDragContext*, gint, gint, GtkSelectionData* pSelectionData, guint, guint, gpointer pData);
+		static void drag_data_get_from_widget_cb(GtkWidget* pSrcWidget, GdkDragContext* pDC, GtkSelectionData* pSelectionData, guint uiInfo, guint uiTime, gpointer data);
+		static void drag_data_received_in_widget_cb(GtkWidget* pDstWidget, GdkDragContext*, gint, gint, GtkSelectionData* pSelectionData, guint, guint, gpointer data);
 
 		//callback for toolbar
-		static void toolbar_button_toggled_cb(GtkToggleButton* pButton, gpointer user_data);
-		bool toggleToolbarCB(GtkToggleButton* pButton);
-		static gboolean toolbar_delete_event_cb(GtkWidget* widget, GdkEvent* event, gpointer user_data);
-		bool deleteToolbarCB(GtkWidget* pWidget);
+		static void toolbar_button_toggled_cb(GtkToggleButton* button, gpointer data);
+		bool toggleToolbarCB(GtkToggleButton* button);
+		static gboolean toolbar_delete_event_cb(GtkWidget* widget, GdkEvent* event, gpointer data);
+		bool deleteToolbarCB(GtkWidget* widget);
 
 	private:
 
@@ -80,7 +80,7 @@ namespace OpenViBEDesigner
 		{
 		public:
 			CPluginWidgets() {}
-			GtkWidget* m_pWidget = nullptr;
+			GtkWidget* m_widget = nullptr;
 			GtkToggleButton* m_pToolbarButton = nullptr;
 			GtkWidget* m_pToolbar = nullptr;
 		};

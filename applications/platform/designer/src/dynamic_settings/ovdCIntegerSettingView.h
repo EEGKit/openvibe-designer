@@ -12,12 +12,12 @@ namespace OpenViBEDesigner
 		{
 		public:
 			CIntegerSettingView(OpenViBE::Kernel::IBox& rBox,
-								uint32_t ui32Index,
+								uint32_t index,
 								OpenViBE::CString &rBuilderName,
 								const OpenViBE::Kernel::IKernelContext& rKernelContext);
 
-			virtual void getValue(OpenViBE::CString &rValue) const;
-			virtual void setValue(const OpenViBE::CString &rValue);
+			void getValue(OpenViBE::CString &rValue) const override;
+			void setValue(const OpenViBE::CString &rValue) override;
 
 			void adjustValue(int amount);
 			void onChange();

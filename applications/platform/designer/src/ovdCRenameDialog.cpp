@@ -12,13 +12,13 @@ CRenameDialog::~CRenameDialog() = default;
 
 bool CRenameDialog::run()
 {
-	GtkBuilder* l_pInterface = gtk_builder_new(); // glade_xml_new(m_sGUIFilename.toASCIIString(), "rename", nullptr);
-	gtk_builder_add_from_file(l_pInterface, m_sGUIFilename.toASCIIString(), nullptr);
-	gtk_builder_connect_signals(l_pInterface, nullptr);
+	GtkBuilder* interface = gtk_builder_new(); // glade_xml_new(m_sGUIFilename.toASCIIString(), "rename", nullptr);
+	gtk_builder_add_from_file(interface, m_sGUIFilename.toASCIIString(), nullptr);
+	gtk_builder_connect_signals(interface, nullptr);
 
-	GtkWidget* l_pDialog = GTK_WIDGET(gtk_builder_get_object(l_pInterface, "rename"));
-	GtkWidget* l_pName = GTK_WIDGET(gtk_builder_get_object(l_pInterface, "rename-entry"));
-	g_object_unref(l_pInterface);
+	GtkWidget* l_pDialog = GTK_WIDGET(gtk_builder_get_object(interface, "rename"));
+	GtkWidget* l_pName = GTK_WIDGET(gtk_builder_get_object(interface, "rename-entry"));
+	g_object_unref(interface);
 
 	gtk_entry_set_text(GTK_ENTRY(l_pName), m_sInitialName.toASCIIString());
 

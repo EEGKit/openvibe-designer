@@ -8,12 +8,12 @@ namespace OpenViBEDesigner
 	{
 	public:
 
-		CInterfacedObject();
-		CInterfacedObject(const OpenViBE::CIdentifier& rIdentifier);
-		CInterfacedObject(const OpenViBE::CIdentifier& rIdentifier, uint32_t ui32ConnectorType, uint32_t ui32ConnectorIndex);
+		CInterfacedObject() = default;
+		CInterfacedObject(const OpenViBE::CIdentifier& identifier);
+		CInterfacedObject(const OpenViBE::CIdentifier& identifier, uint32_t connectorType, uint32_t connectorIndex);
 
 		OpenViBE::CIdentifier m_oIdentifier;
-		uint32_t m_ui32ConnectorType = 0;
-		uint32_t m_ui32ConnectorIndex = 0;
+		uint32_t m_connectorType = 0;
+		uint32_t m_connectorIndex = 0;
 	};
 };

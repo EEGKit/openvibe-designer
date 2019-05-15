@@ -71,7 +71,7 @@ bool CAlgorithmSphericalSplineInterpolation::process()
 		//fill both matrices
 		for (int i = 0; i < int(ip_controlPointsCount); ++i)
 		{
-			const size_t id = 3 * i;
+			const uint32_t id = 3 * i;
 			m_pDoubleCoords[id] = double((*ip_controlPointsCoords)[id]);
 			m_pDoubleCoords[id + 1] = double((*ip_controlPointsCoords)[id + 1]);
 			m_pDoubleCoords[id + 2] = double((*ip_controlPointsCoords)[id + 2]);

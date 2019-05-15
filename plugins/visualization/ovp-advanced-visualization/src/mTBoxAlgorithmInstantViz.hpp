@@ -59,13 +59,13 @@ namespace Mensia
 			explicit CBoxAlgorithmInstantVizListener(const std::vector<int>& vParameter)
 				: CBoxAlgorithmVizListener(vParameter) { }
 
-			bool onInputTypeChanged(IBox& rBox, const uint32_t ui32Index) override
+			bool onInputTypeChanged(IBox& rBox, const uint32_t index) override
 			{
 				OpenViBE::CIdentifier l_oTypeIdentifier;
-				rBox.getInputType(ui32Index, l_oTypeIdentifier);
+				rBox.getInputType(index, l_oTypeIdentifier);
 				if (!this->getTypeManager().isDerivedFromStream(l_oTypeIdentifier, OV_TypeId_StreamedMatrix))
 				{
-					rBox.setInputType(ui32Index, OV_TypeId_StreamedMatrix);
+					rBox.setInputType(index, OV_TypeId_StreamedMatrix);
 				}
 				else
 				{
@@ -77,19 +77,19 @@ namespace Mensia
 				return true;
 			}
 
-			bool onInputAdded(IBox& rBox, const uint32_t ui32Index) override
+			bool onInputAdded(IBox& rBox, const uint32_t index) override
 			{
 				OpenViBE::CIdentifier l_oTypeIdentifier;
 				rBox.getInputType(0, l_oTypeIdentifier);
-				rBox.setInputType(ui32Index, l_oTypeIdentifier);
-				rBox.setInputName(ui32Index, "Matrix");
+				rBox.setInputType(index, l_oTypeIdentifier);
+				rBox.setInputName(index, "Matrix");
 				rBox.addSetting("Color", OV_TypeId_Color, "${AdvancedViz_DefaultColor}");
 				return true;
 			}
 
-			bool onInputRemoved(IBox& rBox, const uint32_t ui32Index) override
+			bool onInputRemoved(IBox& rBox, const uint32_t index) override
 			{
-				rBox.removeSetting(this->getBaseSettingCount() + ui32Index - 1);
+				rBox.removeSetting(this->getBaseSettingCount() + index - 1);
 				return true;
 			}
 		};

@@ -102,7 +102,7 @@ namespace
 		char l_sLabel[1024];
 		sprintf(l_sLabel, "%.02f%%", gtk_range_get_value(pRange) * 100);
 		gtk_label_set_text(pLabel, l_sLabel);
-		getContext().stepERPFractionBy(static_cast<float>(gtk_range_get_value(pRange)) - getContext().getERPFraction());
+		getContext().stepERPFractionBy(float(gtk_range_get_value(pRange)) - getContext().getERPFraction());
 	}
 
 	void button_erp_play_pause_pressed_callback(GtkButton* /*pButton*/, IRendererContext* pRendererContext)
@@ -249,20 +249,20 @@ bool CBoxAlgorithmViz::initialize()
 				m_bIsPositive = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
 				break;
 			case S_TemporalCoherence:
-				m_temporalCoherence = static_cast<uint64_t>(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex));
+				m_temporalCoherence = uint64_t(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex));
 				break;
 			case S_TimeScale:
 				l_fValue = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
 				m_timeScale = uint64_t(l_fValue * (1LL << 32));
 				break;
 			case S_ElementCount:
-				m_elementCount = static_cast<uint64_t>(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex));
+				m_elementCount = uint64_t(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex));
 				break;
 			case S_DataScale:
 				m_f64DataScale = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
 				break;
 			case S_FlowerRingCount:
-				m_flowerRingCount = static_cast<uint64_t>(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex));
+				m_flowerRingCount = uint64_t(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex));
 				break;
 			case S_Translucency:
 				m_translucency = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
@@ -421,7 +421,7 @@ bool CBoxAlgorithmViz::processClock(IMessageClock& /*rClock*/)
 	}
 	else
 	{
-		const auto l_f32CurrentFastForwardMaximumFactor = static_cast<float>(this->getPlayerContext().getCurrentFastForwardMaximumFactor());
+		const auto l_f32CurrentFastForwardMaximumFactor = float(this->getPlayerContext().getCurrentFastForwardMaximumFactor());
 		if (l_f32CurrentFastForwardMaximumFactor <= m_fastForwardMaximumFactorHighDefinition)
 		{
 			l_ui64MinDeltaTime = l_ui64MinDeltaTimeHighDefinition;

@@ -868,16 +868,16 @@ json::Object CVisualizationTree::serializeWidget(IVisualizationWidget& widget) c
 	{
 		uint32_t childIndex = 0;
 		parentVisualizationWidget->getChildIndex(widget.getIdentifier(), childIndex);
-		jsonRepresentation["index"] = static_cast<int>(childIndex);
+		jsonRepresentation["index"] = int(childIndex);
 	}
 
 	jsonRepresentation["boxIdentifier"] = widget.getBoxIdentifier().toString().toASCIIString();
-	jsonRepresentation["childCount"] = static_cast<int>(widget.getNbChildren());
+	jsonRepresentation["childCount"] = int(widget.getNbChildren());
 
 	if (widget.getType() == EVisualizationWidget_VisualizationWindow)
 	{
-		jsonRepresentation["width"] = static_cast<int>(widget.getWidth());
-		jsonRepresentation["height"] = static_cast<int>(widget.getHeight());
+		jsonRepresentation["width"] = int(widget.getWidth());
+		jsonRepresentation["height"] = int(widget.getHeight());
 	}
 	if (widget.getType() == EVisualizationWidget_HorizontalSplit || widget.getType() == EVisualizationWidget_VerticalSplit)
 	{

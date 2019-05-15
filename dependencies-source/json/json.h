@@ -216,7 +216,7 @@ namespace json
 	public:
 
 		Object() = default;
-		Object(const Object& obj);
+		Object(const Object& obj) : mValues(obj.mValues) {}
 
 		Object& operator =(const Object& obj);
 
@@ -247,10 +247,10 @@ namespace json
 		// Checks if the object contains all the keys in the array. If it does, returns -1.
 		// If it doesn't, returns the index of the first key it couldn't find.
 		int HasKeys(const std::vector<std::string>& keys) const;
-		int HasKeys(const char* keys[], int key_count) const;
+		int HasKeys(const char** keys, int key_count) const;
 
 		// Removes all values and resets the state back to default
-		void Clear();
+		void Clear() { mValues.clear(); }
 
 		size_t size() const { return mValues.size(); }
 	};
@@ -279,8 +279,8 @@ namespace json
 		friend bool operator <=(const Array& lhs, const Array& rhs) { return !operator>(lhs, rhs); }
 		friend bool operator >=(const Array& lhs, const Array& rhs) { return !operator<(lhs, rhs); }
 
-		Value& operator[](size_t i);
-		const Value& operator[](size_t i) const;
+		Value& operator[](const size_t i);
+		const Value& operator[](const size_t i) const;
 
 		ValueVector::const_iterator begin() const;
 		ValueVector::const_iterator end() const;
@@ -295,11 +295,11 @@ namespace json
 		bool HasValue(const Value& v) const;
 
 		// Removes all values and resets the state back to default
-		void Clear();
+		void Clear() { mValues.clear(); }
 
 		void push_back(const Value& v);
-		void insert(size_t index, const Value& v);
-		size_t size() const;
+		void insert(const size_t index, const Value& v);
+		size_t size() const { return mValues.size(); }
 	};
 
 	class Value
@@ -318,10 +318,10 @@ namespace json
 	public:
 		const std::string& getStringImplementation() const { return mStringVal; }
 
-		Value() {};
-		Value(int v) : mValueType(IntVal), mIntVal(v), mFloatVal(float(v)), mDoubleVal(double(v)) { }
-		Value(float v) : mValueType(FloatVal), mIntVal(int(v)), mFloatVal(v), mDoubleVal(double(v)) { }
-		Value(double v) : mValueType(DoubleVal), mIntVal(int(v)), mFloatVal(float(v)), mDoubleVal(v) { }
+		Value() = default;
+		Value(const int v) : mValueType(IntVal), mIntVal(v), mFloatVal(float(v)), mDoubleVal(double(v)) { }
+		Value(const float v) : mValueType(FloatVal), mIntVal(int(v)), mFloatVal(v), mDoubleVal(double(v)) { }
+		Value(const double v) : mValueType(DoubleVal), mIntVal(int(v)), mFloatVal(float(v)), mDoubleVal(v) { }
 		Value(const std::string& v) : mValueType(StringVal), mStringVal(v) { }
 		Value(const char* v) : mValueType(StringVal), mStringVal(v) { }
 		Value(const Object& v) : mValueType(ObjectVal), mObjectVal(v) { }
@@ -351,7 +351,7 @@ namespace json
 
 		bool HasKey(const std::string& key) const;
 		int HasKeys(const std::vector<std::string>& keys) const;
-		int HasKeys(const char* keys[], int key_count) const;
+		int HasKeys(const char** keys, int key_count) const;
 
 
 		// non-operator versions
@@ -471,7 +471,7 @@ namespace json
 		size_t size() const;
 
 		// Resets the state back to default, aka nullptrVal
-		void Clear();
+		void Clear() { mValueType = nullptrVal; }
 	};
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -564,7 +564,7 @@ namespace json
 				if (rhs.GetType() == IntVal) { return lhs.mDoubleVal < double(rhs.mIntVal); }
 				return false;
 
-			case BoolVal: return static_cast<int>(lhs.mBoolVal) < static_cast<int>(rhs.mBoolVal);
+			case BoolVal: return int(lhs.mBoolVal) < int(rhs.mBoolVal);
 
 			case ObjectVal: return lhs.mObjectVal < rhs.mObjectVal;
 

@@ -141,7 +141,7 @@ bool CRendererFlower::render(const IRendererContext& rContext)
 		{
 			if (!multi.empty())
 			{
-				std::vector<CVertex>& l_vVertex = multi[rContext.getSelected(i)];
+				std::vector<CVertex>& l_vVertex = multi[rContext.getSelected(uint32_t(i))];
 
 				glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &l_vVertex[0].x);
 				glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &l_vVertex[n - d].u);

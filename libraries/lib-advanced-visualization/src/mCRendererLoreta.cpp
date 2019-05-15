@@ -44,7 +44,7 @@ namespace
 
 	void insertLoretaVoxelInMesh(C3DMesh& rMesh, const float x, const float y, const float z, const float s)
 	{
-		const size_t i = rMesh.m_vVertex.size();
+		const unsigned int i = static_cast<unsigned int>(rMesh.m_vVertex.size());
 
 		// Insert the 8 vertices of the cube
 		rMesh.m_vVertex.emplace_back(x - s, y - s, z - s);	// i+0

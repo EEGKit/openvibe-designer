@@ -12,26 +12,26 @@ namespace OpenViBEDesigner
 	public:
 		CVisualizationWidget(const OpenViBE::Kernel::IKernelContext& kernelContext);
 
-		~CVisualizationWidget();
+		~CVisualizationWidget() = default;
 
 		bool initialize(const OpenViBE::CIdentifier& identifier, const OpenViBE::CString& name, OpenViBEVisualizationToolkit::EVisualizationWidgetType type,
 						const OpenViBE::CIdentifier& parentIdentifier, const OpenViBE::CIdentifier& boxIdentifier, uint32_t childCount) override;
 
-		OpenViBE::CIdentifier getIdentifier() const override;
+		OpenViBE::CIdentifier getIdentifier() const override { return m_Identifier; }
 
-		const OpenViBE::CString& getName() const override;
+		const OpenViBE::CString& getName() const override { return m_Name; }
 
-		void setName(const OpenViBE::CString& name) override;
+		void setName(const OpenViBE::CString& name) override { m_Name = name; }
 
-		OpenViBEVisualizationToolkit::EVisualizationWidgetType getType() const override;
+		OpenViBEVisualizationToolkit::EVisualizationWidgetType getType() const override { return m_Type; }
 
-		OpenViBE::CIdentifier getParentIdentifier() const override;
+		OpenViBE::CIdentifier getParentIdentifier() const override { return m_ParentIdentifier; }
 
-		void setParentIdentifier(const OpenViBE::CIdentifier& parentIdentifier) override;
+		void setParentIdentifier(const OpenViBE::CIdentifier& parentIdentifier) override { m_ParentIdentifier = parentIdentifier; }
 
-		OpenViBE::CIdentifier getBoxIdentifier() const override;
+		OpenViBE::CIdentifier getBoxIdentifier() const override { return m_BoxIdentifier; }
 
-		uint32_t getNbChildren() const override;
+		uint32_t getNbChildren() const override { return uint32_t(m_Children.size()); }
 
 		bool getChildIndex(const OpenViBE::CIdentifier& identifier, uint32_t& index) const override;
 

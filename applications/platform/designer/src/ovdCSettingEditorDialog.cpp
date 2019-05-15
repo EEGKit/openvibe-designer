@@ -5,13 +5,13 @@ using namespace Kernel;
 using namespace OpenViBEDesigner;
 using namespace std;
 
-static void type_changed_cb(GtkComboBox* /*pWidget*/, gpointer data)
+static void type_changed_cb(GtkComboBox* /*widget*/, gpointer data)
 {
 	static_cast<CSettingEditorDialog*>(data)->typeChangedCB();
 }
 
-CSettingEditorDialog::CSettingEditorDialog(const IKernelContext& rKernelContext, IBox& rBox, const uint32_t ui32SettingIndex, const char* sTitle, const char* sGUIFilename, const char* sGUISettingsFilename)
-	: m_rKernelContext(rKernelContext), m_rBox(rBox), m_oHelper(rKernelContext, sGUIFilename), m_ui32SettingIndex(ui32SettingIndex), 
+CSettingEditorDialog::CSettingEditorDialog(const IKernelContext& rKernelContext, IBox& rBox, const uint32_t settingIndex, const char* sTitle, const char* sGUIFilename, const char* sGUISettingsFilename)
+	: m_rKernelContext(rKernelContext), m_rBox(rBox), m_oHelper(rKernelContext, sGUIFilename), m_ui32SettingIndex(settingIndex), 
 	  m_sGUIFilename(sGUIFilename), m_sGUISettingsFilename(sGUISettingsFilename), m_sTitle(sTitle) { }
 
 CSettingEditorDialog::~CSettingEditorDialog() = default;
@@ -119,7 +119,7 @@ void CSettingEditorDialog::typeChangedCB()
 	gtk_table_attach(GTK_TABLE(m_pTable), m_pDefaultValue, 1, 2, 2, 3, GtkAttachOptions(GTK_FILL | GTK_EXPAND), GtkAttachOptions(GTK_FILL | GTK_EXPAND), 0, 0);
 	g_object_unref(l_pBuilderInterfaceDefaultValueDummy);
 
-	CString l_sDefaultValue;
-	m_rBox.getSettingDefaultValue(m_ui32SettingIndex, l_sDefaultValue);
-	m_oHelper.setValue(l_oSettingType, m_pDefaultValue, l_sDefaultValue);
+	CString defaultValue;
+	m_rBox.getSettingDefaultValue(m_ui32SettingIndex, defaultValue);
+	m_oHelper.setValue(l_oSettingType, m_pDefaultValue, defaultValue);
 }

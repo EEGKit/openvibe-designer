@@ -8,8 +8,8 @@ using namespace Plugins;
 using namespace OpenViBEDesigner;
 using namespace std;
 
-CBoxProxy::CBoxProxy(const IKernelContext& rKernelContext, IScenario& rScenario, const CIdentifier& rBoxIdentifier)
-	: m_rKernelContext(rKernelContext), m_pConstBox(rScenario.getBoxDetails(rBoxIdentifier)), m_pBox(rScenario.getBoxDetails(rBoxIdentifier)), 
+CBoxProxy::CBoxProxy(const IKernelContext& rKernelContext, IScenario& rScenario, const CIdentifier& boxIdentifier)
+	: m_rKernelContext(rKernelContext), m_pConstBox(rScenario.getBoxDetails(boxIdentifier)), m_pBox(rScenario.getBoxDetails(boxIdentifier)), 
 	  m_IsDeprecated(m_rKernelContext.getPluginManager().isPluginObjectFlaggedAsDeprecated(m_pConstBox->getAlgorithmClassIdentifier()))
 {
 	m_IsBoxAlgorithmPresent = false;
@@ -30,43 +30,30 @@ CBoxProxy::CBoxProxy(const IKernelContext& rKernelContext, IScenario& rScenario,
 		}
 
 		const TAttributeHandler l_oAttributeHandler(*m_pConstBox);
-		m_iXCenter = l_oAttributeHandler.getAttributeValue<int>(OV_AttributeId_Box_XCenterPosition);
-		m_iYCenter = l_oAttributeHandler.getAttributeValue<int>(OV_AttributeId_Box_YCenterPosition);
+		m_centerX = l_oAttributeHandler.getAttributeValue<int>(OV_AttributeId_Box_XCenterPosition);
+		m_centerY = l_oAttributeHandler.getAttributeValue<int>(OV_AttributeId_Box_YCenterPosition);
 	}
 	m_bShowOriginalNameWhenModified = m_rKernelContext.getConfigurationManager().expandAsBoolean("${Designer_ShowOriginalBoxName}", true);
 }
 
-CBoxProxy::~CBoxProxy()
-{
-	if (!m_bApplied) { this->apply(); }
-}
-
-CBoxProxy::operator IBox*() { return m_pBox; }
-
-CBoxProxy::operator const IBox*() { return m_pConstBox; }
-
-int32_t CBoxProxy::getWidth(GtkWidget* pWidget) const
+int CBoxProxy::getWidth(GtkWidget* widget) const
 {
 	int x, y;
-	updateSize(pWidget, getLabel(), getStatusLabel(), &x, &y);
+	updateSize(widget, getLabel(), getStatusLabel(), &x, &y);
 	return x;
 }
 
-int32_t CBoxProxy::getHeight(GtkWidget* pWidget) const
+int CBoxProxy::getHeight(GtkWidget* widget) const
 {
 	int x, y;
-	updateSize(pWidget, getLabel(), getStatusLabel(), &x, &y);
+	updateSize(widget, getLabel(), getStatusLabel(), &x, &y);
 	return y;
 }
 
-int32_t CBoxProxy::getXCenter() const { return m_iXCenter; }
-
-int32_t CBoxProxy::getYCenter() const { return m_iYCenter; }
-
-void CBoxProxy::setCenter(const int32_t i32XCenter, const int32_t i32YCenter)
+void CBoxProxy::setCenter(const int centerX, const int centerY)
 {
-	m_iXCenter = i32XCenter;
-	m_iYCenter = i32YCenter;
+	m_centerX = centerX;
+	m_centerY = centerY;
 	m_bApplied = false;
 }
 
@@ -84,20 +71,20 @@ void CBoxProxy::apply()
 
 		if (l_oAttributeHandler.hasAttribute(OV_AttributeId_Box_XCenterPosition))
 		{
-			l_oAttributeHandler.setAttributeValue<int>(OV_AttributeId_Box_XCenterPosition, m_iXCenter);
+			l_oAttributeHandler.setAttributeValue<int>(OV_AttributeId_Box_XCenterPosition, m_centerX);
 		}
 		else
 		{
-			l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Box_XCenterPosition, m_iXCenter);
+			l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Box_XCenterPosition, m_centerX);
 		}
 
 		if (l_oAttributeHandler.hasAttribute(OV_AttributeId_Box_YCenterPosition))
 		{
-			l_oAttributeHandler.setAttributeValue<int>(OV_AttributeId_Box_YCenterPosition, m_iYCenter);
+			l_oAttributeHandler.setAttributeValue<int>(OV_AttributeId_Box_YCenterPosition, m_centerY);
 		}
 		else
 		{
-			l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Box_YCenterPosition, m_iYCenter);
+			l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Box_YCenterPosition, m_centerY);
 		}
 
 		m_bApplied = true;
@@ -135,7 +122,7 @@ const char* CBoxProxy::getLabel() const
 		// we sanitize the markup tag overture '<'
 		// markup should not be used in the box name anyway (hidden feature),
 		// but the character '<' may actually be useful in a valid name
-		for (uint32_t c = 0; c < l_sBoxName.size(); c++)
+		for (size_t c = 0; c < l_sBoxName.size(); c++)
 		{
 			if (l_sBoxName[c] == '<')
 			{
@@ -152,10 +139,7 @@ const char* CBoxProxy::getLabel() const
 
 	m_sLabel = l_sBoxName;
 
-	if (l_sBoxName.empty())
-	{
-		m_sLabel = "Unnamed Box";
-	}
+	if (l_sBoxName.empty()) { m_sLabel = "Unnamed Box"; }
 
 	const std::string l_sBoxNameColor = "#000000";
 
@@ -210,29 +194,19 @@ const char* CBoxProxy::getStatusLabel() const
 	return m_sStatus.c_str();
 }
 
-bool CBoxProxy::isBoxAlgorithmPluginPresent() const { return m_IsBoxAlgorithmPresent; }
-
-bool CBoxProxy::isUpToDate() const { return !m_pBox->hasAttribute(OV_AttributeId_Box_ToBeUpdated); }
-
-bool CBoxProxy::hasPendingDeprecatedInterfacors() const { return m_pBox->hasAttribute(OV_AttributeId_Box_PendingDeprecatedInterfacors); }
-
-bool CBoxProxy::isDeprecated() const { return m_IsDeprecated; }
-
-bool CBoxProxy::isMetabox() const { return m_pConstBox->getAlgorithmClassIdentifier() == OVP_ClassId_BoxAlgorithm_Metabox; }
-
 bool CBoxProxy::isDisabled() const
 {
 	const TAttributeHandler l_oAttributeHandler(*m_pConstBox);
 	return l_oAttributeHandler.hasAttribute(OV_AttributeId_Box_Disabled);
 }
 
-void CBoxProxy::updateSize(GtkWidget* pWidget, const char* sLabel, const char* sStatus, int* pXSize, int* pYSize) const
+void CBoxProxy::updateSize(GtkWidget* widget, const char* sLabel, const char* sStatus, int* pXSize, int* pYSize) const
 {
 	PangoContext* l_pPangoContext = nullptr;
 	PangoLayout* l_pPangoLayout = nullptr;
 	PangoRectangle l_oPangoLabelRect;
 	PangoRectangle l_oPangoStatusRect;
-	l_pPangoContext = gtk_widget_create_pango_context(pWidget);
+	l_pPangoContext = gtk_widget_create_pango_context(widget);
 	l_pPangoLayout = pango_layout_new(l_pPangoContext);
 	pango_layout_set_markup(l_pPangoLayout, sLabel, -1);
 	pango_layout_get_pixel_extents(l_pPangoLayout, nullptr, &l_oPangoLabelRect);

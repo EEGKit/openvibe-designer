@@ -34,7 +34,7 @@ bool CBoxAlgorithmModifiableSettings::processClock(IMessageClock& /* rMessageClo
 	//print settings values
 	for (size_t i = 0; i < m_SettingsValue.size(); ++i)
 	{
-		this->getLogManager() << LogLevel_Info << "Setting " << static_cast<uint64_t>(i) << " value is " << m_SettingsValue[i] << "\n";
+		this->getLogManager() << LogLevel_Info << "Setting " << uint64_t(i) << " value is " << m_SettingsValue[i] << "\n";
 	}
 	this->getLogManager() << LogLevel_Info << "\n";
 

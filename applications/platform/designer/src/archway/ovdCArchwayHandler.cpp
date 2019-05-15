@@ -32,10 +32,7 @@ std::string CArchwayHandler::getArchwayErrorString() const
 }
 
 CArchwayHandler::CArchwayHandler(const OpenViBE::Kernel::IKernelContext& kernelContext)
-	: m_DeviceURL("simulator://")
-	, m_Archway(nullptr)
-	, m_KernelContext(kernelContext)
-	, m_RunningPipelineId(0) { }
+	: m_DeviceURL("simulator://"), m_Archway(nullptr), m_KernelContext(kernelContext), m_RunningPipelineId(0) { }
 
 EngineInitialisationStatus CArchwayHandler::initialize()
 {
@@ -176,9 +173,9 @@ EngineInitialisationStatus CArchwayHandler::initialize()
 		return EngineInitialisationStatus::Failure;
 	}
 
-	char l_sDeviceURL[2048];
-	m_Archway->getConfigurationParameterAsString("config.device[1]", l_sDeviceURL, sizeof(l_sDeviceURL));
-	m_DeviceURL = l_sDeviceURL;
+	char deviceURL[2048];
+	m_Archway->getConfigurationParameterAsString("config.device[1]", deviceURL, sizeof(deviceURL));
+	m_DeviceURL = deviceURL;
 
 	return EngineInitialisationStatus::Success;
 }

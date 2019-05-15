@@ -54,19 +54,19 @@ namespace Mensia
 			virtual ~TGtkGLWidget()
 
 			{
-				if (m_pWidget)
+				if (m_widget)
 				{
 					if (m_textureId)
 					{
-						GtkGL::preRender(m_pWidget);
+						GtkGL::preRender(m_widget);
 						glDeleteTextures(1, &m_textureId);
-						GtkGL::postRender(m_pWidget);
+						GtkGL::postRender(m_widget);
 					}
 					if (m_pTimeoutSource)
 					{
 						g_source_destroy(m_pTimeoutSource);
 					}
-					GtkGL::uninitialize(m_pWidget);
+					GtkGL::uninitialize(m_widget);
 				}
 			}
 
@@ -75,7 +75,7 @@ namespace Mensia
 				GtkGL::initialize(pWidget);
 				{
 					m_pBox = &rBox;
-					m_pWidget = pWidget;
+					m_widget = pWidget;
 					m_pLeft = pLeft;
 					m_pRight = pRight;
 					m_pBottom = pBottom;
@@ -104,7 +104,7 @@ namespace Mensia
 
 			virtual void redrawTopLevelWindow(const bool immediate = false)
 			{
-				GtkWidget* l_pTopLevelWidget = gtk_widget_get_toplevel(m_pWidget);
+				GtkWidget* l_pTopLevelWidget = gtk_widget_get_toplevel(m_widget);
 				if (l_pTopLevelWidget != nullptr)
 				{
 					if (immediate)
@@ -123,12 +123,12 @@ namespace Mensia
 			{
 				if (immediate)
 				{
-					gdk_window_process_updates(m_pWidget->window, false);
-					gtk_widget_queue_draw(m_pWidget);
+					gdk_window_process_updates(m_widget->window, false);
+					gtk_widget_queue_draw(m_widget);
 				}
 				else
 				{
-					gdk_window_invalidate_rect(m_pWidget->window, nullptr, true);
+					gdk_window_invalidate_rect(m_widget->window, nullptr, true);
 				}
 			}
 
@@ -216,7 +216,7 @@ namespace Mensia
 
 		protected:
 
-			GtkWidget* m_pWidget = nullptr;
+			GtkWidget* m_widget = nullptr;
 			GtkWidget* m_pLeft = nullptr;
 			GtkWidget* m_pRight = nullptr;
 			GtkWidget* m_pBottom = nullptr;

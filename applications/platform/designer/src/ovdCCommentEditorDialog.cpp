@@ -11,78 +11,74 @@ using namespace Kernel;
 
 namespace
 {
-	void button_comment_bold_selection_cb(GtkButton* /*pButton*/, gpointer data)
+	void button_comment_bold_selection_cb(GtkButton* /*button*/, gpointer data)
 	{
 		static_cast<CCommentEditorDialog*>(data)->applyTagCB("<b>", "</b>");
 	}
 
-	void button_comment_italic_selection_cb(GtkButton* /*pButton*/, gpointer data)
+	void button_comment_italic_selection_cb(GtkButton* /*button*/, gpointer data)
 	{
 		static_cast<CCommentEditorDialog*>(data)->applyTagCB("<i>", "</i>");
 	}
 
-	void button_comment_underline_selection_cb(GtkButton* /*pButton*/, gpointer data)
+	void button_comment_underline_selection_cb(GtkButton* /*button*/, gpointer data)
 	{
 		static_cast<CCommentEditorDialog*>(data)->applyTagCB("<u>", "</u>");
 	}
 
-	void button_comment_strikethrough_selection_cb(GtkButton* /*pButton*/, gpointer data)
+	void button_comment_strikethrough_selection_cb(GtkButton* /*button*/, gpointer data)
 	{
 		static_cast<CCommentEditorDialog*>(data)->applyTagCB("<s>", "</s>");
 	}
 
-	void button_comment_mono_selection_cb(GtkButton* /*pButton*/, gpointer data)
+	void button_comment_mono_selection_cb(GtkButton* /*button*/, gpointer data)
 	{
 		static_cast<CCommentEditorDialog*>(data)->applyTagCB("<tt>", "</tt>");
 	}
 
-	void button_comment_subscript_selection_cb(GtkButton* /*pButton*/, gpointer data)
+	void button_comment_subscript_selection_cb(GtkButton* /*button*/, gpointer data)
 	{
 		static_cast<CCommentEditorDialog*>(data)->applyTagCB("<sub>", "</sub>");
 	}
 
-	void button_comment_superscript_selection_cb(GtkButton* /*pButton*/, gpointer data)
+	void button_comment_superscript_selection_cb(GtkButton* /*button*/, gpointer data)
 	{
 		static_cast<CCommentEditorDialog*>(data)->applyTagCB("<sup>", "</sup>");
 	}
 
-	void button_comment_big_selection_cb(GtkButton* /*pButton*/, gpointer data)
+	void button_comment_big_selection_cb(GtkButton* /*button*/, gpointer data)
 	{
 		static_cast<CCommentEditorDialog*>(data)->applyTagCB("<big>", "</big>");
 	}
 
-	void button_comment_small_selection_cb(GtkButton* /*pButton*/, gpointer data)
+	void button_comment_small_selection_cb(GtkButton* /*button*/, gpointer data)
 	{
 		static_cast<CCommentEditorDialog*>(data)->applyTagCB("<small>", "</small>");
 	}
 
-	void button_comment_red_selection_cb(GtkButton* /*pButton*/, gpointer data)
+	void button_comment_red_selection_cb(GtkButton* /*button*/, gpointer data)
 	{
 		static_cast<CCommentEditorDialog*>(data)->applyTagCB("<span color=\"red\">", "</span>");
 	}
 
-	void button_comment_green_selection_cb(GtkButton* /*pButton*/, gpointer data)
+	void button_comment_green_selection_cb(GtkButton* /*button*/, gpointer data)
 	{
 		static_cast<CCommentEditorDialog*>(data)->applyTagCB("<span color=\"green\">", "</span>");
 	}
 
-	void button_comment_blue_selection_cb(GtkButton* /*pButton*/, gpointer data)
+	void button_comment_blue_selection_cb(GtkButton* /*button*/, gpointer data)
 	{
 		static_cast<CCommentEditorDialog*>(data)->applyTagCB("<span color=\"blue\">", "</span>");
 	}
 
-	void button_comment_info_cb(GtkButton* /*pButton*/, gpointer data)
+	void button_comment_info_cb(GtkButton* /*button*/, gpointer data)
 	{
 		static_cast<CCommentEditorDialog*>(data)->infoCB();
 	}
 } // namespace
 
 CCommentEditorDialog::CCommentEditorDialog(const IKernelContext& rKernelContext, IComment& rComment, const char* sGUIFilename)
-	: m_rKernelContext(rKernelContext)
-	  , m_rComment(rComment)
-	  , m_sGUIFilename(sGUIFilename) { }
-
-CCommentEditorDialog::~CCommentEditorDialog() = default;
+	: m_rKernelContext(rKernelContext), m_rComment(rComment), m_sGUIFilename(sGUIFilename) { }
 
 bool CCommentEditorDialog::run()
 
@@ -126,7 +122,7 @@ bool CCommentEditorDialog::run()
 
 	gtk_widget_grab_focus(m_pDescription);
 
-	gint l_iResult = gtk_dialog_run(GTK_DIALOG(m_pDialog));
+	const gint l_iResult = gtk_dialog_run(GTK_DIALOG(m_pDialog));
 	if (l_iResult == GTK_RESPONSE_APPLY)
 	{
 		l_bResult = true;
@@ -145,7 +141,7 @@ bool CCommentEditorDialog::run()
 }
 
 //-----------------------------------------------------------------------------------
-void CCommentEditorDialog::applyTagCB(const char* sTagIn, const char* sTagOut)
+void CCommentEditorDialog::applyTagCB(const char* sTagIn, const char* sTagOut) const
 {
 	GtkTextIter l_oStartIter;
 	GtkTextIter l_oEndIter;
@@ -179,4 +175,3 @@ void CCommentEditorDialog::applyTagCB(const char* sTagIn, const char* sTagOut)
 	gtk_widget_grab_focus(m_pDescription);
 }
 
-void CCommentEditorDialog::infoCB() { gtk_widget_show(m_pInfoDialog); }

@@ -8,7 +8,7 @@
 
 namespace OpenViBEDesigner
 {
-	typedef void (*fpDesignerVisualizationDeleteEventCB)(gpointer user_data);
+	typedef void (*fpDesignerVisualizationDeleteEventCB)(gpointer data);
 
 	class CInterfacedScenario;
 
@@ -19,16 +19,16 @@ namespace OpenViBEDesigner
 
 		virtual ~CDesignerVisualization();
 
-		void init(std::string guiFile);
+		void init(const std::string& guiFile);
 		void load();
-		void show();
+		void show() const;
 		void hide();
 
-		void setDeleteEventCB(fpDesignerVisualizationDeleteEventCB fpDeleteEventCB, gpointer user_data);
+		void setDeleteEventCB(fpDesignerVisualizationDeleteEventCB fpDeleteEventCB, gpointer data);
 
 		void onVisualizationBoxAdded(const OpenViBE::Kernel::IBox* pBox);
-		void onVisualizationBoxRemoved(const OpenViBE::CIdentifier& rBoxIdentifier);
-		void onVisualizationBoxRenamed(const OpenViBE::CIdentifier& rBoxIdentifier);
+		void onVisualizationBoxRemoved(const OpenViBE::CIdentifier& boxIdentifier);
+		void onVisualizationBoxRenamed(const OpenViBE::CIdentifier& boxIdentifier);
 
 		//ITreeViewCB callbacks overloading
 		void createTreeWidget(OpenViBEVisualizationToolkit::IVisualizationWidget* widget);
@@ -40,34 +40,34 @@ namespace OpenViBEDesigner
 
 		//callbacks for dialog
 #ifdef HANDLE_MIN_MAX_EVENTS
-		static gboolean window_state_event_cb(GtkWidget* widget, GdkEventWindowState* event, gpointer user_data);
+		static gboolean window_state_event_cb(GtkWidget* widget, GdkEventWindowState* event, gpointer data);
 #endif
-		static gboolean configure_event_cb(GtkWidget* widget, GdkEventConfigure* event, gpointer user_data);
-		static gboolean widget_expose_event_cb(GtkWidget* widget, GdkEventExpose* event, gpointer user_data);
+		static gboolean configure_event_cb(GtkWidget* widget, GdkEventConfigure* event, gpointer data);
+		static gboolean widget_expose_event_cb(GtkWidget* widget, GdkEventExpose* event, gpointer data);
 		void resizeCB(OpenViBEVisualizationToolkit::IVisualizationWidget* pVisualizationWidget);
 
-		static void notebook_page_switch_cb(GtkNotebook* notebook, GtkNotebookPage* page, guint pagenum, gpointer user_data);
+		static void notebook_page_switch_cb(GtkNotebook* notebook, GtkNotebookPage* page, guint pagenum, gpointer data);
 
 		//callback for paned handle position changes
-		static gboolean notify_position_paned_cb(GtkWidget* widget, GParamSpec* spec, gpointer user_data);
+		static gboolean notify_position_paned_cb(GtkWidget* widget, GParamSpec* spec, gpointer data);
 
-		static void ask_new_visualization_window_cb(gpointer pUserData, guint callback_action, GtkWidget* pWidget);
-		static void new_visualization_window_cb(GtkWidget* pWidget, gpointer pUserData);
-		static void ask_rename_visualization_window_cb(gpointer pUserData, guint callback_action, GtkWidget* pWidget);
-		static void rename_visualization_window_cb(GtkWidget* pWidget, gpointer pUserData);
-		static void remove_visualization_window_cb(gpointer pUserData, guint callback_action, GtkWidget* pWidget);
+		static void ask_new_visualization_window_cb(gpointer data, guint callback_action, GtkWidget* widget);
+		static void new_visualization_window_cb(GtkWidget* widget, gpointer data);
+		static void ask_rename_visualization_window_cb(gpointer data, guint callback_action, GtkWidget* widget);
+		static void rename_visualization_window_cb(GtkWidget* widget, gpointer data);
+		static void remove_visualization_window_cb(gpointer data, guint callback_action, GtkWidget* widget);
 
-		static void ask_new_visualization_panel_cb(gpointer pUserData, guint callback_action, GtkWidget* pWidget);
-		static void new_visualization_panel_cb(GtkWidget* pWidget, gpointer pUserData);
-		static void ask_rename_visualization_panel_cb(gpointer pUserData, guint callback_action, GtkWidget* pWidget);
-		static void rename_visualization_panel_cb(GtkWidget* pWidget, gpointer pUserData);
-		static void remove_visualization_panel_cb(gpointer pUserData, guint callback_action, GtkWidget* pWidget);
+		static void ask_new_visualization_panel_cb(gpointer data, guint callback_action, GtkWidget* widget);
+		static void new_visualization_panel_cb(GtkWidget* widget, gpointer data);
+		static void ask_rename_visualization_panel_cb(gpointer data, guint callback_action, GtkWidget* widget);
+		static void rename_visualization_panel_cb(GtkWidget* widget, gpointer data);
+		static void remove_visualization_panel_cb(gpointer data, guint callback_action, GtkWidget* widget);
 
-		static void remove_visualization_widget_cb(gpointer pUserData, guint callback_action, GtkWidget* pWidget);
+		static void remove_visualization_widget_cb(gpointer data, guint callback_action, GtkWidget* widget);
 
 	private:
-		static gboolean delete_event_cb(GtkWidget* widget, GdkEvent* event, gpointer user_data);
-		bool deleteEventCB();
+		static gboolean delete_event_cb(GtkWidget* widget, GdkEvent* event, gpointer data);
+		bool deleteEventCB() const;
 
 		void refreshActiveVisualization(GtkTreePath* pSelectedItemPath);
 
@@ -97,42 +97,42 @@ namespace OpenViBEDesigner
 		bool removeVisualizationWidget(const OpenViBE::CIdentifier& rIdentifier);
 		bool destroyVisualizationWidget(const OpenViBE::CIdentifier& rIdentifier);
 
-		void enableNotebookSignals(GtkWidget* pNotebook, bool b);
+		void enableNotebookSignals(GtkWidget* notebook, bool b);
 		void notebookPageSelectedCB(GtkNotebook* notebook, guint pagenum);
 
 		virtual void enablePanedSignals(GtkWidget* pPaned, bool b);
 		void notifyPositionPanedCB(GtkWidget* widget);
 
 		//Mouse/Key event callbacks
-		static void visualization_widget_key_press_event_cb(GtkWidget* pWidget, GdkEventKey* pEvent, gpointer pUserData);
-		void visualizationWidgetKeyPressEventCB(GtkWidget* pWidget, GdkEventKey* pEventKey);
-		static gboolean visualization_widget_enter_notify_event_cb(GtkWidget* pWidget, GdkEventCrossing* pEventCrossing, gpointer pUserData);
-		void visualizationWidgetEnterNotifyEventCB(GtkWidget* pWidget, GdkEventCrossing* pEventCrossing);
-		static gboolean visualization_widget_leave_notify_event_cb(GtkWidget* pWidget, GdkEventCrossing* pEventCrossing, gpointer pUserData);
-		void visualizationWidgetLeaveNotifyEventCB(GtkWidget* pWidget, GdkEventCrossing* pEventCrossing);
+		static void visualization_widget_key_press_event_cb(GtkWidget* widget, GdkEventKey* event, gpointer data);
+		void visualizationWidgetKeyPressEventCB(GtkWidget* widget, GdkEventKey* eventKey);
+		static gboolean visualization_widget_enter_notify_event_cb(GtkWidget* widget, GdkEventCrossing* eventCrossing, gpointer data);
+		void visualizationWidgetEnterNotifyEventCB(GtkWidget* widget, GdkEventCrossing* eventCrossing);
+		static gboolean visualization_widget_leave_notify_event_cb(GtkWidget* widget, GdkEventCrossing* eventCrossing, gpointer data);
+		void visualizationWidgetLeaveNotifyEventCB(GtkWidget* widget, GdkEventCrossing* eventCrossing);
 
 		//Tree management callbacks
-		static gboolean button_release_cb(GtkWidget* pWidget, GdkEventButton* pEvent, gpointer pUserData);
-		static void cursor_changed_cb(GtkTreeView* pTreeView, gpointer pUserData);
+		static gboolean button_release_cb(GtkWidget* widget, GdkEventButton* event, gpointer data);
+		static void cursor_changed_cb(GtkTreeView* pTreeView, gpointer data);
 
 		//Tree management methods
-		void buttonReleaseCB(GtkWidget* pWidget, GdkEventButton* pEvent);
+		void buttonReleaseCB(GtkWidget* widget, GdkEventButton* event) const;
 		void cursorChangedCB(GtkTreeView* pTreeView);
 
 		//Drag methods
 		static void drag_data_get_from_tree_cb(GtkWidget* pSrcWidget, GdkDragContext* pDragContex,
-											   GtkSelectionData* pSelectionData, guint uiInfo, guint uiT, gpointer pData);
-		void dragDataGetFromTreeCB(GtkWidget* pSrcWidget, GtkSelectionData* pSelectionData);
+											   GtkSelectionData* pSelectionData, guint uiInfo, guint uiT, gpointer data);
+		static void dragDataGetFromTreeCB(GtkWidget* pSrcWidget, GtkSelectionData* pSelectionData);
 		static void drag_data_get_from_widget_cb(GtkWidget* pSrcWidget, GdkDragContext* pDC,
-												 GtkSelectionData* pSelectionData, guint uiInfo, guint uiTime, gpointer pData);
-		void dragDataGetFromWidgetCB(GtkWidget* pSrcWidget, GtkSelectionData* pSelectionData);
+												 GtkSelectionData* pSelectionData, guint uiInfo, guint uiTime, gpointer data);
+		static void dragDataGetFromWidgetCB(GtkWidget* pSrcWidget, GtkSelectionData* pSelectionData);
 
 		//Drop methods
-		static void drag_data_received_in_widget_cb(GtkWidget* pDstWidget, GdkDragContext*, gint, gint, GtkSelectionData* pSelectionData, guint, guint, gpointer pData);
-		void dragDataReceivedInWidgetCB(GtkWidget* pDstWidget, GtkSelectionData* pSelectionData);
-		static void drag_data_received_in_event_box_cb(GtkWidget* pDstWidget, GdkDragContext* pDC, gint iX, gint iY,
-													   GtkSelectionData* pSelectionData, guint uiInfo, guint uiTime, gpointer pData);
-		void dragDataReceivedInEventBoxCB(GtkWidget* pDstWidget, GtkSelectionData* pSelectionData, OpenViBEVisualizationToolkit::EDragDataLocation oLocation);
+		static void drag_data_received_in_widget_cb(GtkWidget* dstWidget, GdkDragContext*, gint, gint, GtkSelectionData* pSelectionData, guint, guint, gpointer data);
+		void dragDataReceivedInWidgetCB(GtkWidget* dstWidget, GtkSelectionData* pSelectionData);
+		static void drag_data_received_in_event_box_cb(GtkWidget* dstWidget, GdkDragContext* pDC, gint iX, gint iY,
+													   GtkSelectionData* pSelectionData, guint uiInfo, guint uiTime, gpointer data);
+		void dragDataReceivedInEventBoxCB(GtkWidget* dstWidget, GtkSelectionData* pSelectionData, OpenViBEVisualizationToolkit::EDragDataLocation oLocation);
 
 		const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
 		OpenViBEVisualizationToolkit::IVisualizationTree& m_rVisualizationTree;
@@ -150,8 +150,8 @@ namespace OpenViBEDesigner
 		OpenViBE::CIdentifier m_oActiveVisualizationBoxIdentifier;
 		//preview window visibility flag
 		bool m_bPreviewWindowVisible = false;
-		uint32_t m_ui32PreviewWindowWidth = 0;
-		uint32_t m_ui32PreviewWindowHeight = 0;
+		uint32_t m_previewWindowW = 0;
+		uint32_t m_previewWindowH = 0;
 		//factories used to build contextual menus
 		GtkItemFactory *m_pUnaffectedItemFactory = nullptr, *m_pVisualizationWindowItemFactory = nullptr, *m_pVisualizationPanelItemFactory = nullptr;
 		GtkItemFactory *m_pVisualizationBoxItemFactory = nullptr, *m_pUndefinedItemFactory = nullptr, *m_pSplitItemFactory = nullptr;
