@@ -1,9 +1,7 @@
 #pragma once
 
 #include "../ovp_defines.h"
-
 #include <openvibe/ov_all.h>
-
 #include <toolkit/ovtk_all.h>
 
 namespace OpenViBEPlugins

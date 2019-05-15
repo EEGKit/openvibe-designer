@@ -41,8 +41,6 @@ CTopographicMapDatabase::CTopographicMapDatabase(TBoxAlgorithm<IBoxAlgorithm>& o
 	m_oMaxSamplePointValue.initialize(m_rSphericalSplineInterpolation.getOutputParameter(OVP_Algorithm_SphericalSplineInterpolation_OutputParameterId_MaxSamplePointValue));
 }
 
-CTopographicMapDatabase::~CTopographicMapDatabase() = default;
-
 void CTopographicMapDatabase::setMatrixDimensionSize(const uint32_t ui32DimensionIndex, const uint32_t ui32DimensionSize)
 {
 	CBufferDatabase::setMatrixDimensionSize(ui32DimensionIndex, ui32DimensionSize);
@@ -264,7 +262,7 @@ bool CTopographicMapDatabase::getBufferIndexFromTime(const uint64_t ui64Time, ui
 	}
 	if (ui64Time > m_oEndTime.back())
 	{
-		rBufferIndex =uint32_t(m_oSampleBuffers.size() - 1);
+		rBufferIndex = uint32_t(m_oSampleBuffers.size() - 1);
 		return false;
 	}
 	for (uint32_t i = 0; i < m_oSampleBuffers.size(); ++i)

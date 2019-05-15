@@ -24,8 +24,4 @@ bool OpenViBEVisualizationToolkit::initialize(const IKernelContext& kernelContex
 	return true;
 }
 
-bool OpenViBEVisualizationToolkit::uninitialize(const IKernelContext& kernelContext)
-{
-	(void)kernelContext;
-	return true;
-}
+bool OpenViBEVisualizationToolkit::uninitialize(const IKernelContext& /*kernelContext*/) { return true; }

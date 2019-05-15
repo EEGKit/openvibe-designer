@@ -227,67 +227,67 @@ bool CBoxAlgorithmViz::initialize()
 	m_visualizationContext->setToolbar(*this, l_pToolbar);
 
 	// Parses box settings
-	uint32_t l_ui32SettingIndex = 0;
+	uint32_t settingIndex = 0;
 	for (int iParameter : m_vParameter)
 	{
 		double l_fValue;
 		switch (iParameter)
 		{
 			case S_ChannelLocalisation:
-				m_sLocalisation = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
+				m_sLocalisation = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), settingIndex);
 				break;
 			case S_Caption:
-				m_sCaption = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
+				m_sCaption = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), settingIndex);
 				break;
 			case S_Color:
-				m_sColor = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
+				m_sColor = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), settingIndex);
 				break;
 			case S_ColorGradient:
-				m_sColorGradient = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
+				m_sColorGradient = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), settingIndex);
 				break;
 			case S_DataPositive:
-				m_bIsPositive = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
+				m_bIsPositive = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), settingIndex);
 				break;
 			case S_TemporalCoherence:
-				m_temporalCoherence = uint64_t(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex));
+				m_temporalCoherence = uint64_t(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), settingIndex));
 				break;
 			case S_TimeScale:
-				l_fValue = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
+				l_fValue = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), settingIndex);
 				m_timeScale = uint64_t(l_fValue * (1LL << 32));
 				break;
 			case S_ElementCount:
-				m_elementCount = uint64_t(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex));
+				m_elementCount = uint64_t(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), settingIndex));
 				break;
 			case S_DataScale:
-				m_f64DataScale = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
+				m_f64DataScale = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), settingIndex);
 				break;
 			case S_FlowerRingCount:
-				m_flowerRingCount = uint64_t(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex));
+				m_flowerRingCount = uint64_t(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), settingIndex));
 				break;
 			case S_Translucency:
-				m_translucency = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
+				m_translucency = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), settingIndex);
 				break;
 			case S_ShowAxis:
-				m_bShowAxis = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
+				m_bShowAxis = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), settingIndex);
 				break;
 			case S_XYZPlotHasDepth:
-				m_bXYZPlotHasDepth = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), l_ui32SettingIndex);
+				m_bXYZPlotHasDepth = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), settingIndex);
 				break;
 
 			case F_FixedChannelOrder:
-				l_ui32SettingIndex--;
+				settingIndex--;
 				gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "expander_sort")));
 				break;
 			case F_FixedChannelSelection:
-				l_ui32SettingIndex--;
+				settingIndex--;
 				gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "expander_select")));
 				break;
 			default:
-				l_ui32SettingIndex--;
+				settingIndex--;
 				break;
 		}
 
-		l_ui32SettingIndex++;
+		settingIndex++;
 	}
 
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(::gtk_builder_get_object(m_pBuilder, "checkbutton_positive")), static_cast<gboolean>(m_bIsPositive));
@@ -297,7 +297,7 @@ bool CBoxAlgorithmViz::initialize()
 	m_vColor.push_back(m_oColor);
 
 	// Parses color string - special for instant oscilloscope which can have several inputs
-	for (uint32_t i = l_ui32SettingIndex; i < this->getStaticBoxContext().getSettingCount(); ++i)
+	for (uint32_t i = settingIndex; i < this->getStaticBoxContext().getSettingCount(); ++i)
 	{
 		m_sColor = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), i);
 		parseColor(m_oColor, m_sColor.toASCIIString());
@@ -381,8 +381,8 @@ bool CBoxAlgorithmViz::initialize()
 	gtk_widget_set_visible(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "hbox_video_recording")), m_bIsVideoOutputEnabled ? TRUE : FALSE);
 	gtk_label_set_markup(GTK_LABEL(::gtk_builder_get_object(m_pBuilder, "label_video_recording_filename")), (CString("<span foreground=\"darkblue\"><small>") + m_sFrameFilenameFormat + CString("</small></span>")).toASCIIString());
 
-	m_ui32Width = 0;
-	m_ui32Height = 0;
+	m_width = 0;
+	m_height = 0;
 
 	return true;
 }
@@ -472,9 +472,9 @@ void CBoxAlgorithmViz::updateRulerVisibility()
 
 void CBoxAlgorithmViz::reshape(const int width, const int height)
 {
-	m_ui32Width = uint32_t(width);
-	m_ui32Height = uint32_t(height);
-	m_pRendererContext->setAspect(width * 1.f / height);
+	m_width = uint32_t(width);
+	m_height = uint32_t(height);
+	m_pRendererContext->setAspect(float(width) / float(height));
 }
 
 void CBoxAlgorithmViz::preDraw()
@@ -498,29 +498,29 @@ void CBoxAlgorithmViz::postDraw()
 	if (m_pRuler != nullptr) { m_pRuler->doRender(); }
 	glPopAttrib();
 
-	if (m_bIsVideoOutputEnabled && m_bIsVideoOutputWorking && m_ui32Width > 0 && m_ui32Height > 0)
+	if (m_bIsVideoOutputEnabled && m_bIsVideoOutputWorking && m_width > 0 && m_height > 0)
 	{
 		// Builds up filename to save PNG to
 		char l_sFilename[1024];
 		sprintf(l_sFilename, m_sFrameFilenameFormat.toASCIIString(), ++m_ui32FrameId);
 
 		// Reads OpenGL buffer and stores it to a cairo surface
-		cairo_surface_t* l_pCairoSurface = cairo_image_surface_create(CAIRO_FORMAT_RGB24, m_ui32Width, m_ui32Height);
-		glReadPixels(0, 0, m_ui32Width, m_ui32Height, GL_BGRA, GL_UNSIGNED_BYTE, cairo_image_surface_get_data(l_pCairoSurface));
+		cairo_surface_t* l_pCairoSurface = cairo_image_surface_create(CAIRO_FORMAT_RGB24, m_width, m_height);
+		glReadPixels(0, 0, m_width, m_height, GL_BGRA, GL_UNSIGNED_BYTE, cairo_image_surface_get_data(l_pCairoSurface));
 
 		// OpenGL buffers are defined bottom to top while PNG are defined top to bottom, this flips the acquired image
 		const unsigned int l_ui32BytesInPixel = 4; // should be 3
-		std::vector<unsigned char> l_vSwap(m_ui32Width * l_ui32BytesInPixel);
+		std::vector<unsigned char> l_vSwap(m_width * l_ui32BytesInPixel);
 		unsigned char* l_pSwap = &l_vSwap[0];
 		unsigned char* l_pSource1 = cairo_image_surface_get_data(l_pCairoSurface);
-		unsigned char* l_pSource2 = cairo_image_surface_get_data(l_pCairoSurface) + m_ui32Width * (m_ui32Height - 1) * l_ui32BytesInPixel;
-		for (uint32_t i = 0; i < m_ui32Height / 2; ++i)
+		unsigned char* l_pSource2 = cairo_image_surface_get_data(l_pCairoSurface) + m_width * (m_height - 1) * l_ui32BytesInPixel;
+		for (uint32_t i = 0; i < m_height / 2; ++i)
 		{
-			System::Memory::copy(l_pSwap, l_pSource1, m_ui32Width * l_ui32BytesInPixel);
-			System::Memory::copy(l_pSource1, l_pSource2, m_ui32Width * l_ui32BytesInPixel);
-			System::Memory::copy(l_pSource2, l_pSwap, m_ui32Width * l_ui32BytesInPixel);
-			l_pSource1 += m_ui32Width * l_ui32BytesInPixel;
-			l_pSource2 -= m_ui32Width * l_ui32BytesInPixel;
+			System::Memory::copy(l_pSwap, l_pSource1, m_width * l_ui32BytesInPixel);
+			System::Memory::copy(l_pSource1, l_pSource2, m_width * l_ui32BytesInPixel);
+			System::Memory::copy(l_pSource2, l_pSwap, m_width * l_ui32BytesInPixel);
+			l_pSource1 += m_width * l_ui32BytesInPixel;
+			l_pSource2 -= m_width * l_ui32BytesInPixel;
 		}
 
 		// Pixels are ready to save

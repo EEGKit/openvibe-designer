@@ -38,18 +38,18 @@ namespace Mensia
 				if (m_pRenderer->getHistoryCount() == 0) { return; }
 				if (m_pRenderer->getHistoryIndex() == 0) { return; }
 
-				const uint32_t l_ui32SampleCount = m_pRenderer->getSampleCount();
-				const uint32_t l_ui32HistoryIndex = m_pRenderer->getHistoryIndex();
+				const uint32_t sampleCount = m_pRenderer->getSampleCount();
+				const uint32_t historyIndex = m_pRenderer->getHistoryIndex();
 
 				std::vector<double>::iterator it;
 
-				const uint32_t l_ui32LeftIndex1 = l_ui32HistoryIndex - l_ui32HistoryIndex % l_ui32SampleCount;
-				const uint32_t l_ui32LeftIndex2 = l_ui32HistoryIndex;
-				const uint32_t l_ui32RightIndex1 = l_ui32LeftIndex2 - l_ui32SampleCount;
-				const uint32_t l_ui32RightIndex2 = l_ui32LeftIndex1;
+				const uint32_t leftIndex1 = historyIndex - historyIndex % sampleCount;
+				const uint32_t leftIndex2 = historyIndex;
+				const uint32_t rightIndex1 = leftIndex2 - sampleCount;
+				const uint32_t rightIndex2 = leftIndex1;
 
-				std::vector<double> l_vRange1 = this->split_range(l_ui32LeftIndex1, l_ui32LeftIndex1 + l_ui32SampleCount, 10);
-				std::vector<double> l_vRange2 = this->split_range(l_ui32RightIndex1, l_ui32RightIndex1 + l_ui32SampleCount, 10);
+				std::vector<double> l_vRange1 = split_range(leftIndex1, leftIndex1 + sampleCount, 10);
+				std::vector<double> l_vRange2 = split_range(rightIndex1, rightIndex1 + sampleCount, 10);
 
 				gint w, h, y;
 
@@ -57,10 +57,10 @@ namespace Mensia
 				GdkGC* l_pDrawGC = gdk_gc_new(pWidget->window);
 				for (it = l_vRange1.begin(); it != l_vRange1.end(); ++it)
 				{
-					if (*it >= l_ui32LeftIndex1 && *it < l_ui32LeftIndex2)
+					if (*it >= leftIndex1 && *it < leftIndex2)
 					{
-						y = gint(((*it - l_ui32LeftIndex1) / l_ui32SampleCount) * h);
-						PangoLayout* l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, this->getLabel(*it).c_str());
+						y = gint(((*it - leftIndex1) / sampleCount) * h);
+						PangoLayout* l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, getLabel(*it).c_str());
 						gdk_draw_layout(pWidget->window, l_pDrawGC, 5, y, l_pPangoLayout);
 						gdk_draw_line(pWidget->window, l_pDrawGC, 0, y, 3, y);
 						g_object_unref(l_pPangoLayout);
@@ -68,10 +68,10 @@ namespace Mensia
 				}
 				for (it = l_vRange2.begin(); it != l_vRange2.end(); ++it)
 				{
-					if (*it >= l_ui32RightIndex1 && *it < l_ui32RightIndex2)
+					if (*it >= rightIndex1 && *it < rightIndex2)
 					{
-						y = gint(((*it + l_ui32SampleCount - l_ui32LeftIndex1) / l_ui32SampleCount) * h);
-						PangoLayout* l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, this->getLabel(*it).c_str());
+						y = gint(((*it + sampleCount - leftIndex1) / sampleCount) * h);
+						PangoLayout* l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, getLabel(*it).c_str());
 						gdk_draw_layout(pWidget->window, l_pDrawGC, 5, y, l_pPangoLayout);
 						gdk_draw_line(pWidget->window, l_pDrawGC, 0, y, 3, y);
 						g_object_unref(l_pPangoLayout);

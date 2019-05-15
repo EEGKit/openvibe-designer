@@ -63,8 +63,7 @@ namespace Mensia
 		{
 		public:
 
-			CBoxAlgorithmStackedInstantVizListener(const std::vector<int>& vParameter)
-				: CBoxAlgorithmVizListener(vParameter) { }
+			CBoxAlgorithmStackedInstantVizListener(const std::vector<int>& vParameter) : CBoxAlgorithmVizListener(vParameter) { }
 
 			bool onInputTypeChanged(IBox& rBox, const uint32_t index) override
 			{
@@ -179,7 +178,7 @@ namespace Mensia
 
 				if (channelCount == 0)
 				{
-					this->getLogManager() << LogLevel_Error << "Input stream " << static_cast<uint32_t>(chunk) << " has 0 channels\n";
+					this->getLogManager() << LogLevel_Error << "Input stream " << uint32_t(chunk) << " has 0 channels\n";
 					return false;
 				}
 
@@ -329,7 +328,7 @@ namespace Mensia
 					if (m_oStimulationDecoder.isBufferReceived())
 					{
 						OpenViBE::IStimulationSet* l_pStimulationSet = m_oStimulationDecoder.getOutputStimulationSet();
-						for (uint32_t j = 0; j < l_pStimulationSet->getStimulationCount(); j++)
+						for (uint64_t j = 0; j < l_pStimulationSet->getStimulationCount(); ++j)
 						{
 							m_vRenderer[0]->feed(l_pStimulationSet->getStimulationDate(j), l_pStimulationSet->getStimulationIdentifier(j));
 							m_bRedrawNeeded = true;

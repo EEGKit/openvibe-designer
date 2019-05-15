@@ -36,7 +36,7 @@ namespace Mensia
 				const auto l_fScale = float(m_pRendererContext->getSpectrumFrequencyRange());
 				if (m_fLastScale != l_fScale)
 				{
-					m_vRange = this->split_range(0, l_fScale);
+					m_vRange = split_range(0, l_fScale);
 					m_fLastScale = l_fScale;
 				}
 
@@ -47,7 +47,7 @@ namespace Mensia
 				for (it = m_vRange.begin(); it != m_vRange.end(); ++it)
 				{
 					const gint x = gint((*it / l_fScale) * w);
-					PangoLayout* l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, this->getLabel(*it).c_str());
+					PangoLayout* l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, getLabel(*it).c_str());
 					gdk_draw_layout(pWidget->window, l_pDrawGC, x, 5, l_pPangoLayout);
 					gdk_draw_line(pWidget->window, l_pDrawGC, x, 0, x, 3);
 					g_object_unref(l_pPangoLayout);

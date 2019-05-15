@@ -135,9 +135,8 @@ namespace Mensia
 		{
 			const IBox& l_rStaticBoxContext = this->getStaticBoxContext();
 			IBoxIO& l_rDynamicBoxContext = this->getDynamicBoxContext();
-			uint32_t i, j;
 
-			for (i = 0; i < l_rDynamicBoxContext.getInputChunkCount(0); ++i)
+			for (uint32_t i = 0; i < l_rDynamicBoxContext.getInputChunkCount(0); ++i)
 			{
 				m_oMatrixDecoder.decode(i);
 
@@ -147,7 +146,7 @@ namespace Mensia
 
 				if (channelCount == 0)
 				{
-					this->getLogManager() << LogLevel_Error << "Input stream " << static_cast<uint32_t>(i) << " has 0 channels\n";
+					this->getLogManager() << LogLevel_Error << "Input stream " << uint32_t(i) << " has 0 channels\n";
 					return false;
 				}
 
@@ -177,7 +176,7 @@ namespace Mensia
 					m_pRendererContext->setXYZPlotDepth(m_bXYZPlotHasDepth);
 
 					gtk_tree_view_set_model(m_pChannelTreeView, nullptr);
-					for (j = 0; j < channelCount; j++)
+					for (uint32_t j = 0; j < channelCount; ++j)
 					{
 						std::string l_sName = trim(l_pMatrix->getDimensionLabel(0, j));
 						std::string l_sSubname = l_sName;
@@ -215,10 +214,10 @@ namespace Mensia
 
 					if (sampleCount != 1)
 					{
-						bool l_bWarned = false;
+						//bool warned = false;
 						if (m_oTypeIdentifier == OV_TypeId_Spectrum)
 						{
-							l_bWarned = true;
+							//warned = true;
 							this->getLogManager() << LogLevel_Warning << "Input matrix has 'spectrum' type\n";
 							this->getLogManager() << LogLevel_Warning << "Such configuration is uncommon for a 'continous' kind of visualization !\n";
 							this->getLogManager() << LogLevel_Warning << "You might want to consider the 'stacked' kind of visualization for time/frequency analysis for instance\n";
@@ -228,11 +227,11 @@ namespace Mensia
 						{
 							if (!m_pRendererContext->isTimeLocked())
 							{
-								l_bWarned = true;
-								this->getLogManager() << LogLevel_Warning << "Input matrix has " << static_cast<uint32_t>(sampleCount) << " elements and the box settings say the elements are independant with " << uint64_t(m_elementCount) << " elements to render\n";
+								//warned = true;
+								this->getLogManager() << LogLevel_Warning << "Input matrix has " << sampleCount << " elements and the box settings say the elements are independant with " << uint64_t(m_elementCount) << " elements to render\n";
 								this->getLogManager() << LogLevel_Warning << "Such configuration is uncommon for a 'continous' kind of visualization !\n";
 								this->getLogManager() << LogLevel_Warning << "You might want either of the following alternative :\n";
-								this->getLogManager() << LogLevel_Warning << " - an 'instant' kind of visualization to highlight the " << uint64_t(m_elementCount) << " elements of the matrix\n";
+								this->getLogManager() << LogLevel_Warning << " - an 'instant' kind of visualization to highlight the " << m_elementCount << " elements of the matrix\n";
 								this->getLogManager() << LogLevel_Warning << " - a 'time locked' kind of elements (thus the scenario must refresh the matrix on a regular basis)\n";
 								this->getLogManager() << LogLevel_Warning << "Please double check your scenario and box settings\n";
 							}
@@ -257,9 +256,9 @@ namespace Mensia
 					m_pRendererContext->setMaximumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_pFrequencyBandMax))));
 
 					// Feed renderer with actual samples
-					for (j = 0; j < sampleCount; j++)
+					for (uint32_t j = 0; j < sampleCount; ++j)
 					{
-						for (uint32_t k = 0; k < channelCount; k++)
+						for (uint32_t k = 0; k < channelCount; ++k)
 						{
 							m_vSwap[k] = float(l_pMatrix->getBuffer()[k * sampleCount + j]);
 						}
@@ -283,13 +282,13 @@ namespace Mensia
 
 			if (l_rStaticBoxContext.getInputCount() > 1)
 			{
-				for (i = 0; i < l_rDynamicBoxContext.getInputChunkCount(1); ++i)
+				for (uint32_t i = 0; i < l_rDynamicBoxContext.getInputChunkCount(1); ++i)
 				{
 					m_oStimulationDecoder.decode(i);
 					if (m_oStimulationDecoder.isBufferReceived())
 					{
 						OpenViBE::IStimulationSet* l_pStimulationSet = m_oStimulationDecoder.getOutputStimulationSet();
-						for (j = 0; j < l_pStimulationSet->getStimulationCount(); j++)
+						for (uint32_t j = 0; j < l_pStimulationSet->getStimulationCount(); j++)
 						{
 							m_pRenderer->feed(l_pStimulationSet->getStimulationDate(j), l_pStimulationSet->getStimulationIdentifier(j));
 							m_bRedrawNeeded = true;
@@ -298,22 +297,22 @@ namespace Mensia
 				}
 			}
 
-			uint32_t l_ui32RendererSampleCount = 0;
+			uint32_t rendererSampleCount = 0;
 			if (m_pRendererContext->isTimeLocked())
 			{
 				if (0 != m_pRendererContext->getSampleDuration())
 				{
-					l_ui32RendererSampleCount = uint32_t(m_pRendererContext->getTimeScale() / m_pRendererContext->getSampleDuration());
+					rendererSampleCount = uint32_t(m_pRendererContext->getTimeScale() / m_pRendererContext->getSampleDuration());
 				}
 			}
 			else
 			{
-				l_ui32RendererSampleCount = static_cast<uint32_t>(m_pRendererContext->getElementCount()); // *l_ui32SampleCount;
+				rendererSampleCount = uint32_t(m_pRendererContext->getElementCount()); // *sampleCount;
 			}
 
-			if (l_ui32RendererSampleCount != 0 && l_ui32RendererSampleCount != m_pRenderer->getSampleCount())
+			if (rendererSampleCount != 0 && rendererSampleCount != m_pRenderer->getSampleCount())
 			{
-				m_pRenderer->setSampleCount(l_ui32RendererSampleCount);
+				m_pRenderer->setSampleCount(rendererSampleCount);
 				m_bRebuildNeeded = true;
 				m_bRefreshNeeded = true;
 				m_bRedrawNeeded = true;

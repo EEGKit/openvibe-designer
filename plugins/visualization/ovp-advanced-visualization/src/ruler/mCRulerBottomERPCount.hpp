@@ -38,24 +38,24 @@ namespace Mensia
 				if (m_pRenderer->getHistoryCount() == 0) { return; }
 				if (m_pRenderer->getHistoryIndex() == 0) { return; }
 
-				const uint32_t l_ui32SampleCount = m_pRenderer->getSampleCount();
-				const double l_fDuration = l_ui32SampleCount * 1.;
+				const uint32_t sampleCount = m_pRenderer->getSampleCount();
+				const double duration = sampleCount * 1.;
 
-				std::vector<double> l_vRange = this->split_range(0, l_fDuration, 10);
+				std::vector<double> range = split_range(0, duration, 10);
 
 				gint w, h;
 
 				gdk_drawable_get_size(pWidget->window, &w, &h);
-				GdkGC* l_pDrawGC = gdk_gc_new(pWidget->window);
-				for (std::vector<double>::iterator it = l_vRange.begin(); it != l_vRange.end(); ++it)
+				GdkGC* drawGC = gdk_gc_new(pWidget->window);
+				for (auto r : range)
 				{
-					const gint x = gint((*it / l_fDuration) * w);
-					PangoLayout* l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, this->getLabel(*it).c_str());
-					gdk_draw_layout(pWidget->window, l_pDrawGC, x, 5, l_pPangoLayout);
-					gdk_draw_line(pWidget->window, l_pDrawGC, x, 0, x, 3);
+					const gint x = gint((r / duration) * w);
+					PangoLayout* l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, getLabel(r).c_str());
+					gdk_draw_layout(pWidget->window, drawGC, x, 5, l_pPangoLayout);
+					gdk_draw_line(pWidget->window, drawGC, x, 0, x, 3);
 					g_object_unref(l_pPangoLayout);
 				}
-				g_object_unref(l_pDrawGC);
+				g_object_unref(drawGC);
 			}
 		};
 	}  // namespace AdvancedVisualization

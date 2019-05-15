@@ -153,7 +153,7 @@ namespace OpenViBEPlugins
 			OpenViBE::CIdentifier m_oDisplayMode = OVP_TypeId_SignalDisplayMode_Scan;
 
 		public:
-			CBufferDatabase(OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>& oPlugin);
+			explicit CBufferDatabase(OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>& oPlugin);
 
 			virtual ~CBufferDatabase();
 

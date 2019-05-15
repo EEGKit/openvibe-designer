@@ -186,7 +186,7 @@ namespace Mensia
 
 					if (channelCount == 0)
 					{
-						this->getLogManager() << LogLevel_Error << "Input stream " << static_cast<uint32_t>(i) << " has 0 channels\n";
+						this->getLogManager() << LogLevel_Error << "Input stream " << uint32_t(i) << " has 0 channels\n";
 						return false;
 					}
 

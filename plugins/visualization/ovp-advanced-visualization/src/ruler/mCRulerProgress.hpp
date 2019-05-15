@@ -44,10 +44,10 @@ namespace Mensia
 				if (m_pRenderer->getHistoryCount() == 0) { return; }
 				if (m_pRenderer->getHistoryIndex() == 0) { return; }
 
-				const uint32_t l_ui32SampleCount = m_pRenderer->getSampleCount();
-				const uint32_t l_ui32HistoryIndex = m_pRenderer->getHistoryIndex();
+				const uint32_t sampleCount = m_pRenderer->getSampleCount();
+				const uint32_t historyIndex = m_pRenderer->getHistoryIndex();
 
-				const float l_fProgress = float(l_ui32HistoryIndex - (float(l_ui32HistoryIndex) / l_ui32SampleCount) * l_ui32SampleCount) / l_ui32SampleCount;
+				const float l_fProgress = float(historyIndex - (float(historyIndex) / sampleCount) * sampleCount) / sampleCount;
 				if (l_fProgress != 0 && l_fProgress != 1)
 				{
 					this->renderFinal(l_fProgress);

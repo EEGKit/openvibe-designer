@@ -1003,13 +1003,13 @@ namespace OpenViBEPlugins
 			g_object_unref(l_pElectrodeLabelLayout);
 		}
 
-		bool CTopographicMap2DView::getChannel2DPosition(const uint32_t ui32ChannelIndex, gint& channelX, gint& channelY) const
+		bool CTopographicMap2DView::getChannel2DPosition(const uint32_t channelIndex, gint& channelX, gint& channelY) const
 		{
 			const uint32_t skullCenterX = m_skullX + m_skullDiameter / 2;
 			const uint32_t skullCenterY = m_skullY + m_skullDiameter / 2;
 			//get normalized coordinates
 			double* l_pOriginalElectrodePosition;
-			m_topographicMapDatabase.getChannelPosition(ui32ChannelIndex, l_pOriginalElectrodePosition);
+			m_topographicMapDatabase.getChannelPosition(channelIndex, l_pOriginalElectrodePosition);
 
 			/* flip the eletrode positions in order to use the mensia coordinate system */
 			const double x = l_pOriginalElectrodePosition[0];
@@ -1163,11 +1163,11 @@ namespace OpenViBEPlugins
 
 			//for each row
 			float curY = float(m_skullY);
-			for (size_t i = 0; i < m_gridSize; ++i, curY += m_cellSize)
+			for (size_t i = 0; i < m_gridSize; ++i)
 			{
 				//for each column
 				float curX = float(m_skullX);
-				for (size_t j = 0; j < m_gridSize; j++, curX += m_cellSize)
+				for (size_t j = 0; j < m_gridSize; j++)
 				{
 					//find corner closest to skull center
 					const float closestX = fabs(curX - skullCenterX) < fabs(curX + m_cellSize - skullCenterX) ? curX : (curX + m_cellSize);
@@ -1274,7 +1274,9 @@ namespace OpenViBEPlugins
 							curSample++;
 						} //point in non clipped area
 					} //point in "skull sphere"
+					curX += m_cellSize;
 				}
+				curY += m_cellSize;
 			}
 
 			return curSample;

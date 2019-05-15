@@ -46,7 +46,7 @@ namespace Mensia
 		{
 		public:
 
-			IRuler() : m_pRendererContext(nullptr), m_pRenderer(nullptr){ }
+			IRuler() : m_pRendererContext(nullptr), m_pRenderer(nullptr) { }
 			IRuler(const IRuler&) = delete;
 			virtual ~IRuler() = default;
 

@@ -105,7 +105,7 @@ namespace Mensia
 				va_end(l_oArguments);
 			}
 
-			operator const std::vector<int>&() const { return m_vParameter; }
+			explicit operator const std::vector<int>&() const { return m_vParameter; }
 
 		protected:
 
@@ -120,32 +120,32 @@ namespace Mensia
 
 			uint32_t getBaseSettingCount()
 			{
-				uint32_t l_ui32Result = 0;
+				uint32_t result = 0;
 				for (std::vector<int>::const_iterator it = m_vParameter.begin(); it != m_vParameter.end(); ++it)
 				{
-					// if(*it==I_Matrix)              l_ui32Result++;
-					// if(*it==I_Signal)              l_ui32Result++;
-					// if(*it==I_Spectrum)            l_ui32Result++;
-					// if(*it==I_Covariance)          l_ui32Result++;
-					// if(*it==I_Stimulations)        l_ui32Result++;
-					if (*it == S_ChannelLocalisation) { l_ui32Result++; }
-					if (*it == S_TemporalCoherence) { l_ui32Result++; }
-					if (*it == S_TimeScale) { l_ui32Result++; }
-					if (*it == S_ElementCount) { l_ui32Result++; }
-					if (*it == S_DataScale) { l_ui32Result++; }
-					if (*it == S_Caption) { l_ui32Result++; }
-					if (*it == S_DataPositive) { l_ui32Result++; }
-					if (*it == S_Translucency) l_ui32Result++;
-					if (*it == S_FlowerRingCount) l_ui32Result++;
-					if (*it == S_Color) l_ui32Result++;
-					if (*it == S_ColorGradient) l_ui32Result++;
-					if (*it == S_ShowAxis) { l_ui32Result++; }
-					if (*it == S_XYZPlotHasDepth) { l_ui32Result++; }
-					// if(*it==F_CanAddInput)         l_ui32Result++;
-					// if(*it==F_FixedChannelOrder)   l_ui32Result++;
-					// if(*it==F_FixedChannelSelection)l_ui32Result++;
+					// if(*it==I_Matrix)              result++;
+					// if(*it==I_Signal)              result++;
+					// if(*it==I_Spectrum)            result++;
+					// if(*it==I_Covariance)          result++;
+					// if(*it==I_Stimulations)        result++;
+					if (*it == S_ChannelLocalisation) { result++; }
+					if (*it == S_TemporalCoherence) { result++; }
+					if (*it == S_TimeScale) { result++; }
+					if (*it == S_ElementCount) { result++; }
+					if (*it == S_DataScale) { result++; }
+					if (*it == S_Caption) { result++; }
+					if (*it == S_DataPositive) { result++; }
+					if (*it == S_Translucency) result++;
+					if (*it == S_FlowerRingCount) result++;
+					if (*it == S_Color) result++;
+					if (*it == S_ColorGradient) result++;
+					if (*it == S_ShowAxis) { result++; }
+					if (*it == S_XYZPlotHasDepth) { result++; }
+					// if(*it==F_CanAddInput)         result++;
+					// if(*it==F_FixedChannelOrder)   result++;
+					// if(*it==F_FixedChannelSelection)result++;
 				}
-				return l_ui32Result;
+				return result;
 			}
 
 			bool onInitialized(OpenViBE::Kernel::IBox& /*rBox*/) override
@@ -187,16 +187,11 @@ namespace Mensia
 
 			typedef struct
 			{
-				float r;
-				float g;
-				float b;
+				float r, g, b;
 			} TColor;
 
 			CBoxAlgorithmViz(const OpenViBE::CIdentifier& rClassId, const std::vector<int>& vParameter)
-				: m_oClassId(rClassId)
-				  , m_vParameter(vParameter)
-				  , m_pRuler(nullptr)
-				  , m_oMouseHandler(*this)
+				: m_oClassId(rClassId), m_vParameter(vParameter), m_oMouseHandler(*this)
 			{
 				m_oColor.r = 1;
 				m_oColor.g = 1;
@@ -308,8 +303,8 @@ namespace Mensia
 			GtkTreeView* m_pChannelTreeView = nullptr;
 			GtkListStore* m_pChannelListStore = nullptr;
 
-			uint32_t m_ui32Width = 0;
-			uint32_t m_ui32Height = 0;
+			uint32_t m_width = 0;
+			uint32_t m_height = 0;
 
 			bool m_bRebuildNeeded = false;
 			bool m_bRefreshNeeded = false;
@@ -380,30 +375,30 @@ namespace Mensia
 
 			bool getBoxPrototype(OpenViBE::Kernel::IBoxProto& rBoxAlgorithmPrototype) const override
 			{
-				for (std::vector<int>::const_iterator it = m_vParameter.begin(); it != m_vParameter.end(); ++it)
+				for (auto p : m_vParameter)
 				{
-					if (*it == I_Matrix) { rBoxAlgorithmPrototype.addInput("Matrix", OV_TypeId_StreamedMatrix); }
-					if (*it == I_Signal) { rBoxAlgorithmPrototype.addInput("Matrix", OV_TypeId_StreamedMatrix); }// This is later changed in the listener 
-					if (*it == I_Spectrum) { rBoxAlgorithmPrototype.addInput("Matrix", OV_TypeId_StreamedMatrix); } // This is later changed in the listener 
-					if (*it == I_TimeFrequency) rBoxAlgorithmPrototype.addInput("Matrix", OV_TypeId_TimeFrequency); // This is later changed in the listener
-					if (*it == I_Covariance) { rBoxAlgorithmPrototype.addInput("Matrix", OV_TypeId_StreamedMatrix); }// This is later changed in the listener 
-					if (*it == I_Stimulations) { rBoxAlgorithmPrototype.addInput("Markers", OV_TypeId_Stimulations); }
-					if (*it == S_ChannelLocalisation) { rBoxAlgorithmPrototype.addSetting("Channel Localisation", OV_TypeId_Filename, "${AdvancedViz_ChannelLocalisation}"); } // "../share/electrode_sets/electrode_set_standard_cartesian.txt" 
-					if (*it == S_DataPositive) { rBoxAlgorithmPrototype.addSetting("Positive Data Only ?", OV_TypeId_Boolean, "false"); }
-					if (*it == S_TemporalCoherence) { rBoxAlgorithmPrototype.addSetting("Temporal Coherence", OVP_TypeId_TemporalCoherence, OVP_TypeId_TemporalCoherence_TimeLocked.toString()); }
-					if (*it == S_TimeScale) { rBoxAlgorithmPrototype.addSetting("Time Scale", OV_TypeId_Float, "20"); }
-					if (*it == S_ElementCount) { rBoxAlgorithmPrototype.addSetting("Matrix Count", OV_TypeId_Integer, "50"); }
-					if (*it == S_DataScale) { rBoxAlgorithmPrototype.addSetting("Gain", OV_TypeId_Float, "1"); }
-					if (*it == S_Caption) { rBoxAlgorithmPrototype.addSetting("Caption", OV_TypeId_String, ""); }
-					if (*it == S_FlowerRingCount) { rBoxAlgorithmPrototype.addSetting("Flower Ring Count", OV_TypeId_Integer, "1"); }
-					if (*it == S_Translucency) { rBoxAlgorithmPrototype.addSetting("Translucency", OV_TypeId_Float, "1"); }
-					if (*it == S_ShowAxis) { rBoxAlgorithmPrototype.addSetting("Show Axis", OV_TypeId_Boolean, "true"); }
-					if (*it == S_XYZPlotHasDepth) rBoxAlgorithmPrototype.addSetting("Use third channel as depth", OV_TypeId_Boolean, "false"); // XYZ Plot
-					if (*it == S_Color) { rBoxAlgorithmPrototype.addSetting("Color", OV_TypeId_Color, "${AdvancedViz_DefaultColor}"); }
-					if (*it == S_ColorGradient) { rBoxAlgorithmPrototype.addSetting("Color", OV_TypeId_ColorGradient, "${AdvancedViz_DefaultColorGradient}"); }
-					if (*it == F_CanAddInput) { rBoxAlgorithmPrototype.addFlag(OpenViBE::Kernel::BoxFlag_CanAddInput); }
-					if (*it == F_FixedChannelOrder) {} // rBoxAlgorithmPrototype.addFlag(OpenViBE::Kernel::BoxFlag_);
-					if (*it == F_FixedChannelSelection) {} // rBoxAlgorithmPrototype.addFlag(OpenViBE::Kernel::BoxFlag_);
+					if (p == I_Matrix) { rBoxAlgorithmPrototype.addInput("Matrix", OV_TypeId_StreamedMatrix); }
+					if (p == I_Signal) { rBoxAlgorithmPrototype.addInput("Matrix", OV_TypeId_StreamedMatrix); }		// This is later changed in the listener 
+					if (p == I_Spectrum) { rBoxAlgorithmPrototype.addInput("Matrix", OV_TypeId_StreamedMatrix); }	// This is later changed in the listener 
+					if (p == I_TimeFrequency) rBoxAlgorithmPrototype.addInput("Matrix", OV_TypeId_TimeFrequency);	// This is later changed in the listener
+					if (p == I_Covariance) { rBoxAlgorithmPrototype.addInput("Matrix", OV_TypeId_StreamedMatrix); }	// This is later changed in the listener 
+					if (p == I_Stimulations) { rBoxAlgorithmPrototype.addInput("Markers", OV_TypeId_Stimulations); }
+					if (p == S_ChannelLocalisation) { rBoxAlgorithmPrototype.addSetting("Channel Localisation", OV_TypeId_Filename, "${AdvancedViz_ChannelLocalisation}"); } // "../share/electrode_sets/electrode_set_standard_cartesian.txt" 
+					if (p == S_DataPositive) { rBoxAlgorithmPrototype.addSetting("Positive Data Only ?", OV_TypeId_Boolean, "false"); }
+					if (p == S_TemporalCoherence) { rBoxAlgorithmPrototype.addSetting("Temporal Coherence", OVP_TypeId_TemporalCoherence, OVP_TypeId_TemporalCoherence_TimeLocked.toString()); }
+					if (p == S_TimeScale) { rBoxAlgorithmPrototype.addSetting("Time Scale", OV_TypeId_Float, "20"); }
+					if (p == S_ElementCount) { rBoxAlgorithmPrototype.addSetting("Matrix Count", OV_TypeId_Integer, "50"); }
+					if (p == S_DataScale) { rBoxAlgorithmPrototype.addSetting("Gain", OV_TypeId_Float, "1"); }
+					if (p == S_Caption) { rBoxAlgorithmPrototype.addSetting("Caption", OV_TypeId_String, ""); }
+					if (p == S_FlowerRingCount) { rBoxAlgorithmPrototype.addSetting("Flower Ring Count", OV_TypeId_Integer, "1"); }
+					if (p == S_Translucency) { rBoxAlgorithmPrototype.addSetting("Translucency", OV_TypeId_Float, "1"); }
+					if (p == S_ShowAxis) { rBoxAlgorithmPrototype.addSetting("Show Axis", OV_TypeId_Boolean, "true"); }
+					if (p == S_XYZPlotHasDepth) rBoxAlgorithmPrototype.addSetting("Use third channel as depth", OV_TypeId_Boolean, "false"); // XYZ Plot
+					if (p == S_Color) { rBoxAlgorithmPrototype.addSetting("Color", OV_TypeId_Color, "${AdvancedViz_DefaultColor}"); }
+					if (p == S_ColorGradient) { rBoxAlgorithmPrototype.addSetting("Color", OV_TypeId_ColorGradient, "${AdvancedViz_DefaultColorGradient}"); }
+					if (p == F_CanAddInput) { rBoxAlgorithmPrototype.addFlag(OpenViBE::Kernel::BoxFlag_CanAddInput); }
+					if (p == F_FixedChannelOrder) {} // rBoxAlgorithmPrototype.addFlag(OpenViBE::Kernel::BoxFlag_);
+					if (p == F_FixedChannelSelection) {} // rBoxAlgorithmPrototype.addFlag(OpenViBE::Kernel::BoxFlag_);
 				}
 				rBoxAlgorithmPrototype.addFlag(OpenViBE::Kernel::BoxFlag_CanModifyInput);
 				return true;

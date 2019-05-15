@@ -127,12 +127,12 @@ namespace OpenViBEPlugins
 
 			/**
 			 * \brief Get channel position in 2D
-			 * \param ui32ChannelIndex[in] Index of channel which position is to be retrieved
-			 * \param l_i32ChannelX[out] X coordinate of channel location, if channel is visible
-			 * \param l_i32ChannelY[out] Y coordinate of channel location, if channel is visible
+			 * \param channelIndex[in] Index of channel which position is to be retrieved
+			 * \param channelX[out] X coordinate of channel location, if channel is visible
+			 * \param channelY[out] Y coordinate of channel location, if channel is visible
 			 * \return True if channel is visible in current view, false otherwise
 			 */
-			bool getChannel2DPosition(uint32_t ui32ChannelIndex, gint& l_i32ChannelX, gint& l_i32ChannelY) const;
+			bool getChannel2DPosition(uint32_t channelIndex, gint& channelX, gint& channelY) const;
 
 			//update RGB buffer with interpolated values
 			void refreshPotentials();

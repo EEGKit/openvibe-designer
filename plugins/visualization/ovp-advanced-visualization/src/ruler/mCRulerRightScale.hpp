@@ -40,14 +40,8 @@ namespace Mensia
 				const float l_fScale = 1.f / m_pRendererContext->getScale();
 				if (m_fLastScale != l_fScale)
 				{
-					if (m_pRendererContext->isPositiveOnly())
-					{
-						m_vRange = this->split_range(0, l_fScale, IRuler_SplitCount);
-					}
-					else
-					{
-						m_vRange = this->split_range(-l_fScale * .5, l_fScale * .5, IRuler_SplitCount);
-					}
+					if (m_pRendererContext->isPositiveOnly()) { m_vRange = split_range(0, l_fScale, IRuler_SplitCount); }
+					else { m_vRange = split_range(-l_fScale * .5, l_fScale * .5, IRuler_SplitCount); }
 					m_fLastScale = l_fScale;
 				}
 
@@ -61,7 +55,7 @@ namespace Mensia
 				{
 					for (it = m_vRange.begin(); it != m_vRange.end(); ++it)
 					{
-						PangoLayout* l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, this->getLabel(*it).c_str());
+						PangoLayout* l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, getLabel(*it).c_str());
 						pango_layout_get_size(l_pPangoLayout, &lw, &lh);
 						lw /= PANGO_SCALE;
 						lh /= PANGO_SCALE;

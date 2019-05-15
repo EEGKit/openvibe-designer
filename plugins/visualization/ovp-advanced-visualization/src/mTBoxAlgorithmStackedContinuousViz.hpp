@@ -166,18 +166,18 @@ namespace Mensia
 
 				OpenViBE::IMatrix* l_pMatrix = m_oMatrixDecoder.getOutputMatrix();
 				uint32_t l_ui32ChannelCount = l_pMatrix->getDimensionSize(0);
-				uint32_t l_ui32SampleCount = l_pMatrix->getDimensionSize(1);
+				uint32_t sampleCount = l_pMatrix->getDimensionSize(1);
 
 				if (l_ui32ChannelCount == 0)
 				{
-					this->getLogManager() << OpenViBE::Kernel::LogLevel_Error << "Input stream " << static_cast<uint32_t>(i) << " has 0 channels\n";
+					this->getLogManager() << OpenViBE::Kernel::LogLevel_Error << "Input stream " << uint32_t(i) << " has 0 channels\n";
 					return false;
 				}
 
 				if (l_pMatrix->getDimensionCount() == 1)
 				{
 					l_ui32ChannelCount = l_pMatrix->getDimensionSize(0);
-					l_ui32SampleCount = 1;
+					sampleCount = 1;
 				}
 
 				if (m_oMatrixDecoder.isHeaderReceived())
@@ -185,7 +185,7 @@ namespace Mensia
 					GtkTreeIter l_oGtkTreeIterator;
 					gtk_list_store_clear(m_pChannelListStore);
 
-					m_vSwap.resize(l_ui32SampleCount);
+					m_vSwap.resize(sampleCount);
 
 					for (j = 0; j < m_vRenderer.size(); j++)
 					{
@@ -198,7 +198,7 @@ namespace Mensia
 					m_pSubRendererContext->setParentRendererContext(m_pRendererContext);
 					m_pSubRendererContext->setTimeLocked(m_bIsTimeLocked);
 					m_pSubRendererContext->setStackCount(l_ui32ChannelCount);
-					for (j = 0; j < l_ui32SampleCount; j++)
+					for (j = 0; j < sampleCount; j++)
 					{
 						std::string l_sName = trim(l_pMatrix->getDimensionLabel(1, uint32_t(j)));
 						std::string l_sSubname = l_sName;
@@ -232,8 +232,8 @@ namespace Mensia
 						}
 
 						m_vRenderer[j] = m_oRendererFactory.create();
-						m_vRenderer[j]->setChannelCount(l_ui32SampleCount);
-						m_vRenderer[j]->setSampleCount(static_cast<uint32_t>(m_elementCount)); // $$$
+						m_vRenderer[j]->setChannelCount(sampleCount);
+						m_vRenderer[j]->setSampleCount(uint32_t(m_elementCount)); // $$$
 						//				m_vRenderer[j]->setSampleCount(uint32_t(m_f64TimeScale)); // $$$
 
 						m_pRendererContext->addChannel(l_sName, v.x, v.y, v.z);
@@ -287,16 +287,16 @@ namespace Mensia
 						m_pRendererContext->setSampleDuration(l_ui64SampleDuration);
 					}
 
-					m_pRendererContext->setSpectrumFrequencyRange(uint32_t((uint64_t(l_ui32SampleCount) << 32) / l_ui64ChunkDuration));
+					m_pRendererContext->setSpectrumFrequencyRange(uint32_t((uint64_t(sampleCount) << 32) / l_ui64ChunkDuration));
 					m_pRendererContext->setMinimumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_pFrequencyBandMin))));
 					m_pRendererContext->setMaximumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_pFrequencyBandMax))));
 
 					for (j = 0; j < l_ui32ChannelCount; j++)
 					{
 						// Feed renderer with actual samples
-						for (size_t k = 0; k < l_ui32SampleCount; k++)
+						for (size_t k = 0; k < sampleCount; k++)
 						{
-							m_vSwap[l_ui32SampleCount - k - 1] = float(l_pMatrix->getBuffer()[j * l_ui32SampleCount + k]);
+							m_vSwap[sampleCount - k - 1] = float(l_pMatrix->getBuffer()[j * sampleCount + k]);
 						}
 						m_vRenderer[j]->feed(&m_vSwap[0]);
 
@@ -333,26 +333,26 @@ namespace Mensia
 				}
 			}
 
-			uint32_t l_ui32RendererSampleCount = 0;
+			uint32_t rendererSampleCount = 0;
 			if (m_pRendererContext->isTimeLocked())
 			{
 				if (0 != m_pRendererContext->getSampleDuration())
 				{
-					l_ui32RendererSampleCount = uint32_t(m_pRendererContext->getTimeScale() / m_pRendererContext->getSampleDuration());
+					rendererSampleCount = uint32_t(m_pRendererContext->getTimeScale() / m_pRendererContext->getSampleDuration());
 				}
 			}
 			else
 			{
-				l_ui32RendererSampleCount = static_cast<uint32_t>(m_pRendererContext->getElementCount());
+				rendererSampleCount = uint32_t(m_pRendererContext->getElementCount());
 			}
 
-			if (l_ui32RendererSampleCount != 0)
+			if (rendererSampleCount != 0)
 			{
 				for (j = 0; j < m_vRenderer.size(); j++)
 				{
-					if (l_ui32RendererSampleCount != m_vRenderer[j]->getSampleCount())
+					if (rendererSampleCount != m_vRenderer[j]->getSampleCount())
 					{
-						m_vRenderer[j]->setSampleCount(l_ui32RendererSampleCount);
+						m_vRenderer[j]->setSampleCount(rendererSampleCount);
 						m_bRebuildNeeded = true;
 						m_bRefreshNeeded = true;
 						m_bRedrawNeeded = true;

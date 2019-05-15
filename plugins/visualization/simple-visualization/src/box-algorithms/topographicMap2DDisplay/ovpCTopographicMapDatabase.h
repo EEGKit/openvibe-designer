@@ -35,7 +35,7 @@ namespace OpenViBEPlugins
 		public:
 			CTopographicMapDatabase(OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>& oPlugin,
 									OpenViBE::Kernel::IAlgorithmProxy& rSphericalSplineInterpolation);
-			~CTopographicMapDatabase() override;
+			~CTopographicMapDatabase() override = default;
 
 			void setMatrixDimensionSize(uint32_t ui32DimensionIndex, uint32_t ui32DimensionSize) override;
 

@@ -38,24 +38,24 @@ namespace Mensia
 				if (m_pRenderer->getHistoryCount() == 0) { return; }
 				if (m_pRenderer->getHistoryIndex() == 0) { return; }
 
-				const uint32_t l_ui32SampleCount = m_pRenderer->getSampleCount();
-				const uint32_t l_ui32HistoryIndex = m_pRenderer->getHistoryIndex();
+				const uint32_t sampleCount = m_pRenderer->getSampleCount();
+				const uint32_t historyIndex = m_pRenderer->getHistoryIndex();
 				const uint64_t l_ui64SampleDuration = m_pRendererContext->getSampleDuration();
 
 				std::vector<double>::iterator it;
 
-				const uint32_t l_ui32LeftIndex = l_ui32HistoryIndex - l_ui32HistoryIndex % l_ui32SampleCount;
-				const uint32_t l_ui32MidIndex = l_ui32HistoryIndex;
-				double l_f64StartTime = ((l_ui32LeftIndex * l_ui64SampleDuration) >> 16) / 65536.;
-				double l_f64MidTime = ((l_ui32MidIndex * l_ui64SampleDuration) >> 16) / 65536.;
-				const double l_f64Duration = ((l_ui32SampleCount * l_ui64SampleDuration) >> 16) / 65536.;
+				const uint32_t leftIndex = historyIndex - historyIndex % sampleCount;
+				const uint32_t midIndex = historyIndex;
+				double startTime = double((leftIndex * l_ui64SampleDuration) >> 16) / 65536.;
+				double midTime = double((midIndex * l_ui64SampleDuration) >> 16) / 65536.;
+				const double duration = double((sampleCount * l_ui64SampleDuration) >> 16) / 65536.;
 
-				const double l_f64Offset = (m_pRenderer->getTimeOffset() >> 16) / 65536.;
-				l_f64StartTime += l_f64Offset;
-				l_f64MidTime += l_f64Offset;
+				const double offset = (m_pRenderer->getTimeOffset() >> 16) / 65536.;
+				startTime += offset;
+				midTime += offset;
 
-				std::vector<double> l_vRange1 = this->split_range(l_f64StartTime - l_f64Duration, l_f64StartTime, 10);
-				std::vector<double> l_vRange2 = this->split_range(l_f64StartTime, l_f64StartTime + l_f64Duration, 10);
+				std::vector<double> l_vRange1 = this->split_range(startTime - duration, startTime, 10);
+				std::vector<double> l_vRange2 = this->split_range(startTime, startTime + duration, 10);
 
 				gint w, h, x;
 
@@ -63,10 +63,10 @@ namespace Mensia
 				GdkGC* l_pDrawGC = gdk_gc_new(pWidget->window);
 				for (it = l_vRange1.begin(); it != l_vRange1.end(); ++it)
 				{
-					if (*it >= 0 && *it + l_f64Duration > l_f64MidTime)
+					if (*it >= 0 && *it + duration > midTime)
 					{
-						x = gint(((*it + l_f64Duration - l_f64StartTime) / l_f64Duration) * w);
-						PangoLayout* l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, this->getLabel(*it).c_str());
+						x = gint(((*it + duration - startTime) / duration) * w);
+						PangoLayout* l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, getLabel(*it).c_str());
 						gdk_draw_layout(pWidget->window, l_pDrawGC, x, 5, l_pPangoLayout);
 						gdk_draw_line(pWidget->window, l_pDrawGC, x, 0, x, 3);
 						g_object_unref(l_pPangoLayout);
@@ -74,10 +74,10 @@ namespace Mensia
 				}
 				for (it = l_vRange2.begin(); it != l_vRange2.end(); ++it)
 				{
-					if (*it >= 0 && *it < l_f64MidTime)
+					if (*it >= 0 && *it < midTime)
 					{
-						x = gint(((*it - l_f64StartTime) / l_f64Duration) * w);
-						PangoLayout* l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, this->getLabel(*it).c_str());
+						x = gint(((*it - startTime) / duration) * w);
+						PangoLayout* l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, getLabel(*it).c_str());
 						gdk_draw_layout(pWidget->window, l_pDrawGC, x, 5, l_pPangoLayout);
 						gdk_draw_line(pWidget->window, l_pDrawGC, x, 0, x, 3);
 						g_object_unref(l_pPangoLayout);

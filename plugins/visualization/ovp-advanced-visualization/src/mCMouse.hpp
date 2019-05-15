@@ -35,15 +35,16 @@ namespace Mensia
 		{
 		public:
 
-			CMouse(CBoxAlgorithmViz& rBoxAlgorithmViz);
+			explicit CMouse(CBoxAlgorithmViz& rBoxAlgorithmViz);
 			void mouseButton(IRendererContext& rContext, const int32_t x, const int32_t y, const int32_t button, const int status);
 			void mouseMotion(IRendererContext& rContext, const int32_t x, const int32_t y);
 			bool hasButtonPressed();
 
+
 			CBoxAlgorithmViz& m_rBoxAlgorithmViz;
 			std::map<int32_t, int> m_vButton;
-			int32_t m_i32MouseX = 0;
-			int32_t m_i32MouseY = 0;
+			int32_t m_mouseX = 0;
+			int32_t m_mouseY = 0;
 		};
 	}  // namespace AdvancedVisualization
 }  // namespace Mensia
