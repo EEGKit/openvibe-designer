@@ -1,5 +1,4 @@
-#ifndef __OpenViBE_Designer_Setting_CBitMaskSettingView_H__
-#define __OpenViBE_Designer_Setting_CBitMaskSettingView_H__
+#pragma once
 
 #include "../ovd_base.h"
 #include "ovdCAbstractSettingView.h"
@@ -13,11 +12,11 @@ namespace OpenViBEDesigner
 		class CBitMaskSettingView : public CAbstractSettingView
 		{
 		public:
-			CBitMaskSettingView(OpenViBE::Kernel::IBox& rBox, uint32_t index, OpenViBE::CString &rBuilderName,
-								const OpenViBE::Kernel::IKernelContext& rKernelContext, const OpenViBE::CIdentifier &rTypeIdentifier);
+			CBitMaskSettingView(OpenViBE::Kernel::IBox& rBox, uint32_t index, OpenViBE::CString& rBuilderName,
+								const OpenViBE::Kernel::IKernelContext& rKernelContext, const OpenViBE::CIdentifier& rTypeIdentifier);
 
-			void getValue(OpenViBE::CString &rValue) const override;
-			void setValue(const OpenViBE::CString &rValue) override;
+			void getValue(OpenViBE::CString& value) const override;
+			void setValue(const OpenViBE::CString& value) override;
 
 			void onChange();
 
@@ -25,11 +24,8 @@ namespace OpenViBEDesigner
 			OpenViBE::CIdentifier m_oTypeIdentifier;
 			const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
 
-			std::vector < ::GtkToggleButton *> m_vToggleButton;
-			bool m_bOnValueSetting = false;
+			std::vector<GtkToggleButton *> m_toggleButton;
+			bool m_onValueSetting = false;
 		};
 	}
-
 }
-
-#endif // __OpenViBE_Designer_Setting_CBitMaskSettingView_H__

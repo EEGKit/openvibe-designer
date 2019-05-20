@@ -11,107 +11,102 @@ using namespace Setting;
 
 static void on_button_setting_filename_browse_pressed(GtkButton* /*button*/, gpointer data)
 {
-	static_cast<CScriptSettingView*>(data)->browse();
+	static_cast<CScriptSettingView *>(data)->browse();
 }
 
 static void on_button_setting_script_edit_pressed(GtkButton* /*button*/, gpointer data)
 {
-	static_cast<CScriptSettingView*>(data)->edit();
+	static_cast<CScriptSettingView *>(data)->edit();
 }
 
 static void on_change(GtkEntry* /*entry*/, gpointer data)
 {
-	static_cast<CScriptSettingView*>(data)->onChange();
+	static_cast<CScriptSettingView *>(data)->onChange();
 }
 
 #if defined TARGET_OS_Windows
 static gboolean on_focus_out_event(GtkEntry* /*entry*/, GdkEvent* /*event*/, gpointer data)
 {
-	static_cast<CScriptSettingView*>(data)->onFocusLost();
+	static_cast<CScriptSettingView *>(data)->onFocusLost();
 	return FALSE;
 }
 #endif
 
-CScriptSettingView::CScriptSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext) :
-	CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-hbox_setting_script"), m_rKernelContext(rKernelContext), m_bOnValueSetting(false)
+CScriptSettingView::CScriptSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext):
+	CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-hbox_setting_script"), m_rKernelContext(rKernelContext)
 {
-	GtkWidget* settingWidget = CAbstractSettingView::getEntryFieldWidget();
+	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 
 	std::vector<GtkWidget*> l_vWidget;
-	CAbstractSettingView::extractWidget(settingWidget, l_vWidget);
-	m_pEntry = GTK_ENTRY(l_vWidget[0]);
+	extractWidget(l_pSettingWidget, l_vWidget);
+	m_entry = GTK_ENTRY(l_vWidget[0]);
 
-	g_signal_connect(G_OBJECT(m_pEntry), "changed", G_CALLBACK(on_change), this);
+	g_signal_connect(G_OBJECT(m_entry), "changed", G_CALLBACK(on_change), this);
 #if defined TARGET_OS_Windows
 	// Only called for Windows path
-	g_signal_connect(G_OBJECT(m_pEntry), "focus_out_event", G_CALLBACK(on_focus_out_event), this);
+	g_signal_connect(G_OBJECT(m_entry), "focus_out_event", G_CALLBACK(on_focus_out_event), this);
 #endif
 	g_signal_connect(G_OBJECT(l_vWidget[1]), "clicked", G_CALLBACK(on_button_setting_script_edit_pressed), this);
 	g_signal_connect(G_OBJECT(l_vWidget[2]), "clicked", G_CALLBACK(on_button_setting_filename_browse_pressed), this);
 
-	CAbstractSettingView::initializeValue();
+	initializeValue();
 }
 
 
-void CScriptSettingView::getValue(CString& rValue) const
+void CScriptSettingView::getValue(CString& value) const
 {
-	rValue = CString(gtk_entry_get_text(m_pEntry));
+	value = CString(gtk_entry_get_text(m_entry));
 }
 
 
-void CScriptSettingView::setValue(const CString& rValue)
+void CScriptSettingView::setValue(const CString& value)
 {
-	m_bOnValueSetting = true;
-	gtk_entry_set_text(m_pEntry, rValue);
-	m_bOnValueSetting = false;
+	m_onValueSetting = true;
+	gtk_entry_set_text(m_entry, value);
+	m_onValueSetting = false;
 }
 
 void CScriptSettingView::browse() const
 {
-	GtkWidget* widgetDialogOpen = gtk_file_chooser_dialog_new(
-		"Select file to open...",
-		nullptr,
-		GTK_FILE_CHOOSER_ACTION_SAVE,
-		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-		GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
-		nullptr);
+	GtkWidget* l_pWidgetDialogOpen = gtk_file_chooser_dialog_new("Select file to open...", nullptr, GTK_FILE_CHOOSER_ACTION_SAVE,
+																 GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
 
-	const CString initialFileName = m_rKernelContext.getConfigurationManager().expand(gtk_entry_get_text(m_pEntry));
+	const CString initialFileName = m_rKernelContext.getConfigurationManager().expand(gtk_entry_get_text(m_entry));
 	if (g_path_is_absolute(initialFileName.toASCIIString()))
 	{
-		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(widgetDialogOpen), initialFileName.toASCIIString());
+		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(l_pWidgetDialogOpen), initialFileName.toASCIIString());
 	}
 	else
 	{
-		char* fullPath = g_build_filename(g_get_current_dir(), initialFileName.toASCIIString(), nullptr);
-		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(widgetDialogOpen), fullPath);
-		g_free(fullPath);
+		char* l_sFullPath = g_build_filename(g_get_current_dir(), initialFileName.toASCIIString(), NULL);
+		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(l_pWidgetDialogOpen), l_sFullPath);
+		g_free(l_sFullPath);
 	}
 
-	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(widgetDialogOpen), false);
+	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(l_pWidgetDialogOpen), false);
 
-	if (gtk_dialog_run(GTK_DIALOG(widgetDialogOpen)) == GTK_RESPONSE_ACCEPT)
+	if (gtk_dialog_run(GTK_DIALOG(l_pWidgetDialogOpen)) == GTK_RESPONSE_ACCEPT)
 	{
-		char* fileName = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widgetDialogOpen));
+		char* l_sFileName = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(l_pWidgetDialogOpen));
 		char* l_pBackslash = nullptr;
-		while ((l_pBackslash = strchr(fileName, '\\')) != nullptr)
+		while ((l_pBackslash = strchr(l_sFileName, '\\')) != nullptr)
 		{
 			*l_pBackslash = '/';
 		}
-		gtk_entry_set_text(m_pEntry, fileName);
-		g_free(fileName);
+		gtk_entry_set_text(m_entry, l_sFileName);
+		g_free(l_sFileName);
 	}
-	gtk_widget_destroy(widgetDialogOpen);
+	gtk_widget_destroy(l_pWidgetDialogOpen);
 }
 
 void CScriptSettingView::edit() const
 {
-	const CString fileName = m_rKernelContext.getConfigurationManager().expand(gtk_entry_get_text(m_pEntry));
-	const CString l_sEditorCommand = m_rKernelContext.getConfigurationManager().expand("${Designer_ScriptEditorCommand}");
+	const CString fileName = m_rKernelContext.getConfigurationManager().expand(gtk_entry_get_text(m_entry));
+	const CString editorCommand = m_rKernelContext.getConfigurationManager().expand("${Designer_ScriptEditorCommand}");
 
-	if (l_sEditorCommand != CString(""))
+	if (editorCommand != CString(""))
 	{
-		CString l_sFullCommand = l_sEditorCommand + CString(" \"") + fileName + CString("\"");
+		CString l_sFullCommand = editorCommand + CString(" \"") + fileName + CString("\"");
 #if defined TARGET_OS_Windows
 		l_sFullCommand = "START " + l_sFullCommand;
 #elif defined TARGET_OS_Linux
@@ -127,9 +122,9 @@ void CScriptSettingView::edit() const
 
 void CScriptSettingView::onChange()
 {
-	if (!m_bOnValueSetting)
+	if (!m_onValueSetting)
 	{
-		const gchar* l_sValue = gtk_entry_get_text(m_pEntry);
+		const gchar* l_sValue = gtk_entry_get_text(m_entry);
 		getBox().setSettingValue(getSettingIndex(), l_sValue);
 	}
 }
@@ -138,9 +133,9 @@ void CScriptSettingView::onChange()
 void CScriptSettingView::onFocusLost()
 {
 	// We replace antislash, interpreted as escape, by slash in Windows path
-	if (!m_bOnValueSetting)
+	if (!m_onValueSetting)
 	{
-		std::string fileName = gtk_entry_get_text(m_pEntry);
+		std::string fileName = gtk_entry_get_text(m_entry);
 		std::string::iterator iter = fileName.begin();
 
 		while ((iter = std::find(iter, fileName.end(), '\\')) != fileName.end())
@@ -158,7 +153,7 @@ void CScriptSettingView::onFocusLost()
 			std::advance(iter, 1);
 		}
 
-		gtk_entry_set_text(m_pEntry, fileName.c_str());
+		gtk_entry_set_text(m_entry, fileName.c_str());
 		getBox().setSettingValue(this->getSettingIndex(), fileName.c_str());
 	}
 }

@@ -20,7 +20,7 @@ namespace OpenViBEDesigner
 
 		void saveConfiguration() const;
 		void loadConfiguration() const;
-		void onOverrideBrowse();
+		void onOverrideBrowse() const;
 
 		void storeState();
 		void restoreState();
@@ -36,7 +36,7 @@ namespace OpenViBEDesigner
 		void addSetting(uint32_t settingIndex);
 
 		void clearSettingWrappersVector();
-		void removeSetting(uint32_t settingIndex, bool bShift = true);
+		void removeSetting(uint32_t settingIndex, bool shift = true);
 
 		int32_t getTableIndex(uint32_t settingIndex);
 

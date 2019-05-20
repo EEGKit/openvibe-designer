@@ -40,7 +40,7 @@ namespace OpenViBEDesigner
 		void setValueColor(GtkWidget* widget, const OpenViBE::CString& rValue);
 		void setValueColorGradient(GtkWidget* widget, const OpenViBE::CString& rValue);
 		void setValueEnumeration(const OpenViBE::CIdentifier& rTypeIdentifier, GtkWidget* widget, const OpenViBE::CString& rValue) const;
-		void setValueBitMask(const OpenViBE::CIdentifier& rTypeIdentifier, GtkWidget* widget, const OpenViBE::CString& rValue);
+		void setValueBitMask(const OpenViBE::CIdentifier& rTypeIdentifier, GtkWidget* widget, const OpenViBE::CString& rValue) const;
 
 		const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
 		OpenViBE::CString m_sGUIFilename;

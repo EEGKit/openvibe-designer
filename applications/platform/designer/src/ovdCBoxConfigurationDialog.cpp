@@ -130,25 +130,23 @@ CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& rKernelCo
 }
 
 CBoxConfigurationDialog::~CBoxConfigurationDialog()
-
 {
 	m_rBox.deleteObserver(this);
 	if (m_pSettingDialog) { gtk_widget_destroy(m_pSettingDialog); }
 }
 
 bool CBoxConfigurationDialog::run()
-
 {
-	bool l_bModified = false;
+	bool modified = false;
 	if (m_rBox.getInterfacorCountIncludingDeprecated(BoxInterfacorType::Setting))
 	{
 		CSettingCollectionHelper l_oHelper(m_rKernelContext, m_sGUISettingsFilename.toASCIIString());
 		storeState();
-		bool l_bFinished = false;
-		while (!l_bFinished)
+		bool finished = false;
+		while (!finished)
 		{
-			const gint l_iResult = gtk_dialog_run(GTK_DIALOG(m_pSettingDialog));
-			if (l_iResult == GTK_RESPONSE_APPLY)
+			const gint result = gtk_dialog_run(GTK_DIALOG(m_pSettingDialog));
+			if (result == GTK_RESPONSE_APPLY)
 			{
 				if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(m_pFileOverrideCheck)))
 				{
@@ -170,15 +168,15 @@ bool CBoxConfigurationDialog::run()
 					}
 				}
 
-				l_bFinished = true;
-				l_bModified = true;
+				finished = true;
+				modified = true;
 			}
-			else if (l_iResult == GTK_RESPONSE_CANCEL)
+			else if (result == GTK_RESPONSE_CANCEL)
 			{
 				restoreState();
-				l_bFinished = true;
+				finished = true;
 			}
-			else if (l_iResult == 1) // default
+			else if (result == 1) // default
 			{
 				// Some settings will add/remove other settings;
 				// by evaluating m_rBox.getSettingCount() each time we ensure not ending somewhere in the oblivion
@@ -193,9 +191,9 @@ bool CBoxConfigurationDialog::run()
 				gtk_entry_set_text(GTK_ENTRY(m_pOverrideEntryContainer), "");
 				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_pFileOverrideCheck), false);
 				//				gtk_widget_set_sensitive(GTK_WIDGET(m_pSettingsTable), true);
-				l_bModified = false;
+				modified = false;
 			}
-			else if (l_iResult == 2) // revert
+			else if (result == 2) // revert
 			{
 				restoreState();
 
@@ -210,12 +208,12 @@ bool CBoxConfigurationDialog::run()
 					gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_pFileOverrideCheck), false);
 				}
 			}
-			else if (l_iResult == 3) { l_bModified = true; }	// load
-			else if (l_iResult == 4) {}					// save 
-			else { l_bFinished = true; }
+			else if (result == 3) { modified = true; }	// load
+			else if (result == 4) {}					// save 
+			else { finished = true; }
 		}
 	}
-	return l_bModified;
+	return modified;
 }
 
 void CBoxConfigurationDialog::update(CObservable& /*o*/, void* data)
@@ -272,12 +270,9 @@ void CBoxConfigurationDialog::generateSettingsTable()
 	{
 		for (uint32_t i = 0; i < m_rBox.getInterfacorCountIncludingDeprecated(BoxInterfacorType::Setting); ++i)
 		{
-			bool l_IsMod = false;
-			m_rBox.getSettingMod(i, l_IsMod);
-			if (l_IsMod)
-			{
-				l_ui32TableSize++;
-			}
+			bool mod = false;
+			m_rBox.getSettingMod(i, mod);
+			if (mod) { l_ui32TableSize++; }
 		}
 	}
 	else
@@ -288,17 +283,14 @@ void CBoxConfigurationDialog::generateSettingsTable()
 
 	// Iterate over box settings, generate corresponding gtk widgets. If the scenario is running, we are making a
 	// 'modifiable settings' dialog and use a subset of widgets with a slightly different layout and buttons.
-	for (uint32_t settingIndex = 0, tableIndex = 0; settingIndex < m_rBox.getInterfacorCountIncludingDeprecated(BoxInterfacorType::Setting); settingIndex++)
+	for (uint32_t settingIndex = 0, tableIndex = 0; settingIndex < m_rBox.getInterfacorCountIncludingDeprecated(BoxInterfacorType::Setting); ++settingIndex)
 	{
-		if (addSettingsToView(settingIndex, tableIndex))
-		{
-			++tableIndex;
-		}
+		if (addSettingsToView(settingIndex, tableIndex)) { ++tableIndex; }
 	}
 	updateSize();
 }
 
-bool CBoxConfigurationDialog::addSettingsToView(uint32_t settingIndex, const uint32_t tableIndex)
+bool CBoxConfigurationDialog::addSettingsToView(const uint32_t settingIndex, const uint32_t tableIndex)
 {
 	bool l_bSettingModifiable;
 	m_rBox.getSettingMod(settingIndex, l_bSettingModifiable);
@@ -337,7 +329,7 @@ void CBoxConfigurationDialog::settingChange(const uint32_t settingIndex)
 	addSettingsToView(settingIndex, indexTable);
 }
 
-void CBoxConfigurationDialog::addSetting(uint32_t settingIndex)
+void CBoxConfigurationDialog::addSetting(const uint32_t settingIndex)
 {
 	bool l_bSettingModifiable;
 	m_rBox.getSettingMod(settingIndex, l_bSettingModifiable);
@@ -350,7 +342,7 @@ void CBoxConfigurationDialog::addSetting(uint32_t settingIndex)
 		2) we add it in the middle end we need to shift
 		*/
 		const size_t tableIndex = (settingIndex > m_vSettingViewVector[tableSize - 1]->getSettingIndex()) 
-									? tableSize : getTableIndex(settingIndex);
+									  ? tableSize : getTableIndex(settingIndex);
 
 		gtk_table_resize(m_pSettingsTable, guint(tableSize + 2), 4);
 
@@ -386,7 +378,7 @@ void CBoxConfigurationDialog::addSetting(uint32_t settingIndex)
 	}
 }
 
-void CBoxConfigurationDialog::removeSetting(const uint32_t settingIndex, const bool bShift)
+void CBoxConfigurationDialog::removeSetting(const uint32_t settingIndex, const bool shift)
 {
 	const int32_t tableIndex = getTableIndex(settingIndex);
 
@@ -403,7 +395,7 @@ void CBoxConfigurationDialog::removeSetting(const uint32_t settingIndex, const b
 		m_vSettingViewVector.erase(m_vSettingViewVector.begin() + tableIndex);
 
 		//Now if we need to do it we shift everything to avoid an empty row in the table
-		if (bShift)
+		if (shift)
 		{
 			for (size_t i = tableIndex; i < m_vSettingViewVector.size(); ++i)
 			{
@@ -440,10 +432,7 @@ int32_t CBoxConfigurationDialog::getTableIndex(const uint32_t settingIndex)
 	for (auto it = m_vSettingViewVector.begin(); it != m_vSettingViewVector.end(); ++it, ++ui32TableIndex)
 	{
 		Setting::CAbstractSettingView* l_pView = *it;
-		if (l_pView->getSettingIndex() == settingIndex)
-		{
-			return settingIndex;
-		}
+		if (l_pView->getSettingIndex() == settingIndex) { return settingIndex; }
 	}
 
 	return -1;
@@ -467,7 +456,7 @@ void CBoxConfigurationDialog::updateSize() const
 void CBoxConfigurationDialog::saveConfiguration() const
 {
 	GtkWidget* widgetDialogOpen = gtk_file_chooser_dialog_new("Select file to save settings to...", nullptr, GTK_FILE_CHOOSER_ACTION_SAVE,
-																 GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, nullptr);
+															  GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, nullptr);
 
 	const gchar* initialFileNameToExpand = gtk_entry_get_text(GTK_ENTRY(m_pOverrideEntryContainer));
 	const CString initialFileName = m_rKernelContext.getConfigurationManager().expand(initialFileNameToExpand);
@@ -546,7 +535,7 @@ void CBoxConfigurationDialog::loadConfiguration() const
 	gtk_widget_destroy(widgetDialogOpen);
 }
 
-void CBoxConfigurationDialog::onOverrideBrowse()
+void CBoxConfigurationDialog::onOverrideBrowse() const
 {
 	GtkWidget* widgetDialogOpen = gtk_file_chooser_dialog_new("Select file to open...", nullptr, GTK_FILE_CHOOSER_ACTION_SAVE,
 															  GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, nullptr);
@@ -578,7 +567,6 @@ void CBoxConfigurationDialog::onOverrideBrowse()
 
 
 void CBoxConfigurationDialog::storeState()
-
 {
 	m_SettingsMemory.clear();
 	for (uint32_t i = 0; i < m_rBox.getInterfacorCountIncludingDeprecated(BoxInterfacorType::Setting); ++i)
@@ -590,7 +578,6 @@ void CBoxConfigurationDialog::storeState()
 }
 
 void CBoxConfigurationDialog::restoreState()
-
 {
 	for (uint32_t i = 0; i < m_SettingsMemory.size(); ++i)
 	{

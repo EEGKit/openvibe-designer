@@ -12,14 +12,14 @@ namespace OpenViBEDesigner
 		public:
 			CStringSettingView(OpenViBE::Kernel::IBox& rBox, uint32_t index, OpenViBE::CString& rBuilderName);
 
-			void getValue(OpenViBE::CString& rValue) const override;
-			void setValue(const OpenViBE::CString& rValue) override;
+			void getValue(OpenViBE::CString& value) const override;
+			void setValue(const OpenViBE::CString& value) override;
 
 			void onChange();
 
 		private:
-			::GtkEntry* m_pEntry = nullptr;
-			bool m_bOnValueSetting = false;
+			GtkEntry* m_entry = nullptr;
+			bool m_onValueSetting = false;
 		};
 	}
 }

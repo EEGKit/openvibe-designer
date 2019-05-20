@@ -1090,19 +1090,19 @@ void CInterfacedScenario::updateScenarioLabel()
 	{
 		l_sTitleLabelUntrimmed = l_sTempFileName;
 		l_sTempFileName = l_sTempFileName.substr(l_sTempFileName.rfind('/') + 1);
-		uint32_t l_ui32TrimLimit = uint32_t(m_rKernelContext.getConfigurationManager().expandAsUInteger("${Designer_ScenarioFileNameTrimmingLimit}", 25));
-		if (l_ui32TrimLimit > 3) l_ui32TrimLimit -= 3; // limit should include the '...'
+		uint32_t trimLimit = uint32_t(m_rKernelContext.getConfigurationManager().expandAsUInteger("${Designer_ScenarioFileNameTrimmingLimit}", 25));
+		if (trimLimit > 3) trimLimit -= 3; // limit should include the '...'
 		// default = we trim everything but the current scenario filename
 		// if  {we are stacking horizontally the scenarios, we trim also } current filename to avoid losing too much of the edition panel.
-		if (l_sTempFileName.size() > l_ui32TrimLimit)
+		if (l_sTempFileName.size() > trimLimit)
 		{
 			if (m_rApplication.getCurrentInterfacedScenario() == this && m_rKernelContext.getConfigurationManager().expandAsBoolean("${Designer_ScenarioTabsVerticalStack}", false))
 			{
-				l_sTempFileName = "..." + l_sTempFileName.substr(l_sTempFileName.size() - l_ui32TrimLimit, l_ui32TrimLimit);
+				l_sTempFileName = "..." + l_sTempFileName.substr(l_sTempFileName.size() - trimLimit, trimLimit);
 			}
 			if (m_rApplication.getCurrentInterfacedScenario() != this)
 			{
-				l_sTempFileName = l_sTempFileName.substr(0, l_ui32TrimLimit);
+				l_sTempFileName = l_sTempFileName.substr(0, trimLimit);
 				l_sTempFileName += "...";
 			}
 		}

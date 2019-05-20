@@ -10,13 +10,10 @@ namespace OpenViBEDesigner
 		class CFilenameSettingView : public CAbstractSettingView
 		{
 		public:
-			CFilenameSettingView(OpenViBE::Kernel::IBox& rBox,
-								 uint32_t index,
-								 OpenViBE::CString &rBuilderName,
-								 const OpenViBE::Kernel::IKernelContext& rKernelContext);
+			CFilenameSettingView(OpenViBE::Kernel::IBox& rBox, uint32_t index, OpenViBE::CString& rBuilderName, const OpenViBE::Kernel::IKernelContext& rKernelContext);
 
-			void getValue(OpenViBE::CString &rValue) const override;
-			void setValue(const OpenViBE::CString &rValue) override;
+			void getValue(OpenViBE::CString& value) const override;
+			void setValue(const OpenViBE::CString& value) override;
 
 			void browse() const;
 			void onChange();
@@ -26,10 +23,10 @@ namespace OpenViBEDesigner
 #endif
 
 		private:
-			::GtkEntry* m_pEntry = nullptr;
+			GtkEntry* m_entry = nullptr;
 
 			const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
-			bool m_bOnValueSetting = false;
+			bool m_onValueSetting = false;
 		};
 	}
 }

@@ -128,8 +128,8 @@ namespace
 		GtkEntry* l_widget = GTK_ENTRY(l_vWidget[0]);
 
 		GtkWidget* widgetDialogOpen = gtk_file_chooser_dialog_new("Select file to open...", nullptr,
-																	 GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-																	 GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, nullptr);
+																  GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+																  GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, nullptr);
 
 		const CString initialFileName = l_rKernelContext.getConfigurationManager().expand(gtk_entry_get_text(l_widget));
 		if (g_path_is_absolute(initialFileName.toASCIIString()))
@@ -168,7 +168,7 @@ namespace
 		GtkEntry* l_widget = GTK_ENTRY(l_vWidget[0]);
 
 		GtkWidget* widgetDialogOpen = gtk_file_chooser_dialog_new("Select folder to open...", nullptr, GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
-																	 GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, nullptr);
+																  GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, nullptr);
 
 		const CString initialFileName = l_rKernelContext.getConfigurationManager().expand(gtk_entry_get_text(l_widget));
 		if (g_path_is_absolute(initialFileName.toASCIIString()))
@@ -865,7 +865,7 @@ void CSettingCollectionHelper::setValueEnumeration(const CIdentifier& rTypeIdent
 	}
 }
 
-void CSettingCollectionHelper::setValueBitMask(const CIdentifier& rTypeIdentifier, GtkWidget* widget, const CString& rValue)
+void CSettingCollectionHelper::setValueBitMask(const CIdentifier& rTypeIdentifier, GtkWidget* widget, const CString& rValue) const
 {
 	gtk_container_foreach(GTK_CONTAINER(widget), remove_widget_cb, widget);
 

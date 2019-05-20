@@ -1,5 +1,4 @@
-#ifndef __OpenViBE_Designer_Setting_CAbstractSettingView_H__
-#define __OpenViBE_Designer_Setting_CAbstractSettingView_H__
+#pragma once
 
 #include "../ovd_base.h"
 
@@ -12,29 +11,31 @@ namespace OpenViBEDesigner
 		public:
 			virtual ~CAbstractSettingView();
 
-			//Store the value of the setting in rValue
-			virtual void getValue(OpenViBE::CString& rValue) const = 0;
-			//Set the view with the value contains in rValue
-			virtual void setValue(const OpenViBE::CString& rValue) = 0;
+			//Store the value of the setting in value
+			virtual void getValue(OpenViBE::CString& value) const = 0;
+			//Set the view with the value contains in value
+			virtual void setValue(const OpenViBE::CString& value) = 0;
 
 			//Get the label which contains the name of the setting
-			virtual GtkWidget* getNameWidget() { return m_pNameWidget; }
+			virtual GtkWidget* getNameWidget() { return m_nameWidget; }
 			//Get the table of widget which display the value of the setting (the entry and all interaction buttons)
-			virtual GtkWidget* getEntryWidget() { return m_pEntryNameWidget; }
+			virtual GtkWidget* getEntryWidget() { return m_entryNameWidget; }
 
 			//This function is use to update the setting index when a setting is suppressed or inserted
-			virtual void setSettingIndex(uint32_t newIndex) { m_index = newIndex; }
+			virtual void setSettingIndex(const uint32_t index) { m_index = index; }
+
 			//Get the index of the setting
 			virtual uint32_t getSettingIndex() { return m_index; }
 
 		protected:
-			//Initialize the common part of all view. If sBuilderName and sWidgetName are not nullptr, the entryTable and the label
+			//Initialize the common part of all view. If sBuilderName and sWidgetName are not NULL, the entryTable and the label
 			//will be set according to these informations.
-			//If there are nullptr, name and entry widget will have to be set after with corresponding setter.
+			//If there are NULL, name and entry widget will have to be set after with corresponding setter.
 			CAbstractSettingView(OpenViBE::Kernel::IBox& rBox, uint32_t index, const char* sBuilderName, const char* sWidgetName);
 
 			//Return the box which contains the setting
 			virtual OpenViBE::Kernel::IBox& getBox() { return m_rBox; }
+
 
 			//Set the widget as the new widget name
 			virtual void setNameWidget(GtkWidget* widget);
@@ -48,7 +49,7 @@ namespace OpenViBEDesigner
 			virtual void extractWidget(GtkWidget* widget, std::vector<GtkWidget *>& rVector);
 
 			//Return the part of the entry table which is not revert or default button
-			virtual GtkWidget* getEntryFieldWidget() { return m_pEntryFieldWidget; }
+			virtual GtkWidget* getEntryFieldWidget() { return m_entryFieldWidget; }
 
 		private:
 			//Generate the label of the setting
@@ -59,16 +60,13 @@ namespace OpenViBEDesigner
 
 			OpenViBE::Kernel::IBox& m_rBox;
 			uint32_t m_index = 0;
-			OpenViBE::CString m_sSettingWidgetName;
-			GtkWidget* m_pNameWidget = nullptr;
-			GtkWidget* m_pEntryNameWidget = nullptr;
-			GtkWidget* m_pEntryFieldWidget = nullptr;
+			OpenViBE::CString m_settingWidgetName;
+			GtkWidget* m_nameWidget = nullptr;
+			GtkWidget* m_entryNameWidget = nullptr;
+			GtkWidget* m_entryFieldWidget = nullptr;
 
 			//If we don't store the builder, the setting name will be free when we'll unref the builder
 			GtkBuilder* m_pBuilder = nullptr;
-			bool m_bOnValueSetting = false;
 		};
 	}
 }
-
-#endif // __OpenViBE_Designer_Setting_CAbstractSettingView_H__

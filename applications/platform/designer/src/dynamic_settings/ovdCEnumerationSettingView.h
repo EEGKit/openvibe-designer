@@ -1,5 +1,4 @@
-#ifndef __OpenViBE_Designer_Setting_CEnumerationSettingView_H__
-#define __OpenViBE_Designer_Setting_CEnumerationSettingView_H__
+#pragma once
 
 #include "../ovd_base.h"
 #include "ovdCAbstractSettingView.h"
@@ -13,30 +12,24 @@ namespace OpenViBEDesigner
 		class CEnumerationSettingView : public CAbstractSettingView
 		{
 		public:
-			CEnumerationSettingView(OpenViBE::Kernel::IBox& rBox,
-								uint32_t index,
-								OpenViBE::CString &rBuilderName,
-								const OpenViBE::Kernel::IKernelContext& rKernelContext,
-									const OpenViBE::CIdentifier &rTypeIdentifier);
+			CEnumerationSettingView(OpenViBE::Kernel::IBox& rBox, uint32_t index, OpenViBE::CString& rBuilderName,
+									const OpenViBE::Kernel::IKernelContext& rKernelContext, const OpenViBE::CIdentifier& rTypeIdentifier);
 
-			void getValue(OpenViBE::CString &rValue) const override;
-			void setValue(const OpenViBE::CString &rValue) override;
+			void getValue(OpenViBE::CString& value) const override;
+			void setValue(const OpenViBE::CString& value) override;
 
 			void onChange();
 
 
 		private:
-			::GtkComboBox* m_pComboBox;
+			GtkComboBox* m_comboBox = nullptr;
 			OpenViBE::CIdentifier m_oTypeIdentifier;
-			bool p;
+			bool p = false;
 
-			std::map < OpenViBE::CString, uint64_t > m_mEntriesIndex;
+			std::map<OpenViBE::CString, uint64_t> m_entriesIndex;
 
 			const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
-			bool m_bOnValueSetting;
+			bool m_onValueSetting = false;
 		};
 	}
-
 }
-
-#endif // __OpenViBE_Designer_Setting_CEnumerationSettingView_H__

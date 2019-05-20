@@ -13,21 +13,20 @@ namespace OpenViBEDesigner
 	{
 		typedef struct
 		{
-			double fPercent;
-			GdkColor oColor;
-			GtkColorButton* pColorButton;
-			GtkSpinButton* pSpinButton;
+			double percent;
+			GdkColor color;
+			GtkColorButton* colorButton;
+			GtkSpinButton* spinButton;
 		} SColorGradientDataNode;
 
 
 		class CColorGradientSettingView : public CAbstractSettingView
 		{
 		public:
-			CColorGradientSettingView(OpenViBE::Kernel::IBox& rBox, uint32_t index, OpenViBE::CString& rBuilderName,
-									  const OpenViBE::Kernel::IKernelContext& rKernelContext);
+			CColorGradientSettingView(OpenViBE::Kernel::IBox& rBox, uint32_t index, OpenViBE::CString& rBuilderName, const OpenViBE::Kernel::IKernelContext& rKernelContext);
 
-			void getValue(OpenViBE::CString& rValue) const override;
-			void setValue(const OpenViBE::CString& rValue) override;
+			void getValue(OpenViBE::CString& value) const override;
+			void setValue(const OpenViBE::CString& value) override;
 
 			void configurePressed();
 
@@ -43,9 +42,9 @@ namespace OpenViBEDesigner
 
 
 		private:
-			GtkEntry* m_pEntry = nullptr;
+			GtkEntry* m_entry = nullptr;
 			const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
-			OpenViBE::CString m_sBuilderName;
+			OpenViBE::CString m_builderName;
 
 			GtkWidget* pDialog = nullptr;
 			GtkWidget* pContainer = nullptr;
@@ -54,7 +53,7 @@ namespace OpenViBEDesigner
 			std::map<GtkColorButton*, uint32_t> vColorButtonMap;
 			std::map<GtkSpinButton*, uint32_t> vSpinButtonMap;
 
-			bool m_bOnValueSetting = false;
+			bool m_onValueSetting = false;
 		};
 	}
 }

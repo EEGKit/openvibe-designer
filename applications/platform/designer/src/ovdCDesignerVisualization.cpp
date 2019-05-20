@@ -181,7 +181,7 @@ void CDesignerVisualization::init(const std::string& guiFile)
 	m_pDialog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
 	//retrieve default window size
-	const uint32_t l_ui32TreeViewWidth = 200;
+	const uint32_t treeViewWidth = 200;
 	m_previewWindowW = uint32_t(m_rKernelContext.getConfigurationManager().expandAsUInteger("${Designer_UnaffectedVisualizationWindowWidth}", 400));
 	m_previewWindowH = uint32_t(m_rKernelContext.getConfigurationManager().expandAsUInteger("${Designer_UnaffectedVisualizationWindowHeight}", 400));
 	CIdentifier l_oVisualizationWindowIdentifier;
@@ -197,7 +197,7 @@ void CDesignerVisualization::init(const std::string& guiFile)
 		m_previewWindowH = l_oAttributeHandler.getAttributeValue<int>(OVD_AttributeId_VisualizationWindow_Height);
 		*/
 	}
-	gtk_window_set_default_size(GTK_WINDOW(m_pDialog), gint(l_ui32TreeViewWidth + m_previewWindowW), gint(m_previewWindowH));
+	gtk_window_set_default_size(GTK_WINDOW(m_pDialog), gint(treeViewWidth + m_previewWindowW), gint(m_previewWindowH));
 	//set window title
 	gtk_window_set_title(GTK_WINDOW(m_pDialog), " Window Manager");
 	// gtk_window_set_transient_for(GTK_WINDOW(m_pDialog), GTK_WINDOW(m_rInterfacedScenario.m_rApplication.m_pMainWindow));
@@ -221,7 +221,7 @@ void CDesignerVisualization::init(const std::string& guiFile)
 	gtk_paned_add1(GTK_PANED(m_pPane), GTK_WIDGET(l_pScrolledWindow));
 
 	//set initial divider position
-	gtk_paned_set_position(GTK_PANED(m_pPane), gint(l_ui32TreeViewWidth));
+	gtk_paned_set_position(GTK_PANED(m_pPane), gint(treeViewWidth));
 
 	//create popup menus
 	//------------------

@@ -9,21 +9,19 @@ using namespace Setting;
 
 static void on_checkbutton__pressed(GtkToggleButton* /*button*/, gpointer data)
 {
-	static_cast<CBitMaskSettingView*>(data)->onChange();
+	static_cast<CBitMaskSettingView *>(data)->onChange();
 }
 
-CBitMaskSettingView::CBitMaskSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName,
-										 const Kernel::IKernelContext& rKernelContext, const CIdentifier& rTypeIdentifier)
-	: CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-table_setting_bitmask"),
-	  m_oTypeIdentifier(rTypeIdentifier), m_rKernelContext(rKernelContext)
+CBitMaskSettingView::CBitMaskSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext, const CIdentifier& rTypeIdentifier):
+	CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-table_setting_bitmask"), m_oTypeIdentifier(rTypeIdentifier), m_rKernelContext(rKernelContext)
 {
-	GtkWidget* l_pSettingWidget = this->CAbstractSettingView::getEntryFieldWidget();
+	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 
-	const gint l_iTableSize = guint((m_rKernelContext.getTypeManager().getBitMaskEntryCount(m_oTypeIdentifier) + 1) >> 1);
+	const gint tableSize = guint((m_rKernelContext.getTypeManager().getBitMaskEntryCount(m_oTypeIdentifier) + 1) >> 1);
 	GtkTable* l_pBitMaskTable = GTK_TABLE(l_pSettingWidget);
-	gtk_table_resize(l_pBitMaskTable, 2, l_iTableSize);
+	gtk_table_resize(l_pBitMaskTable, 2, tableSize);
 
-	for (uint64_t i = 0; i < m_rKernelContext.getTypeManager().getBitMaskEntryCount(m_oTypeIdentifier); ++i)
+	for (uint64_t i = 0; i < m_rKernelContext.getTypeManager().getBitMaskEntryCount(m_oTypeIdentifier); i++)
 	{
 		CString l_sEntryName;
 		uint64_t l_ui64EntryValue;
@@ -32,42 +30,40 @@ CBitMaskSettingView::CBitMaskSettingView(Kernel::IBox& rBox, const uint32_t inde
 			GtkWidget* l_pSettingButton = gtk_check_button_new();
 			gtk_table_attach_defaults(l_pBitMaskTable, l_pSettingButton, guint(i & 1), guint((i & 1) + 1), guint(i >> 1), guint((i >> 1) + 1));
 			gtk_button_set_label(GTK_BUTTON(l_pSettingButton), static_cast<const char*>(l_sEntryName));
-			m_vToggleButton.push_back(GTK_TOGGLE_BUTTON(l_pSettingButton));
+			m_toggleButton.push_back(GTK_TOGGLE_BUTTON(l_pSettingButton));
 			g_signal_connect(G_OBJECT(l_pSettingButton), "toggled", G_CALLBACK(on_checkbutton__pressed), this);
 		}
 	}
 	gtk_widget_show_all(GTK_WIDGET(l_pBitMaskTable));
 
-	CAbstractSettingView::initializeValue();
+	initializeValue();
 }
 
 
-void CBitMaskSettingView::getValue(CString& rValue) const
+void CBitMaskSettingView::getValue(CString& value) const
 {
-	std::string l_sResult;
-
-	for (auto& toggle : m_vToggleButton)
+	std::string res;
+	for (auto& toggle : m_toggleButton)
 	{
 		if (gtk_toggle_button_get_active(toggle))
 		{
-			if (!l_sResult.empty()) { l_sResult += ':'; }
-			l_sResult += gtk_button_get_label(GTK_BUTTON(toggle));
+			if (!res.empty()) { res += ':'; }
+			res += gtk_button_get_label(GTK_BUTTON(toggle));
 		}
 	}
-
-	rValue = CString(l_sResult.c_str());
+	value = CString(res.c_str());
 }
 
 
-void CBitMaskSettingView::setValue(const CString& rValue)
+void CBitMaskSettingView::setValue(const CString& value)
 {
-	m_bOnValueSetting = true;
-	const std::string l_sValue(rValue);
+	m_onValueSetting = true;
+	const std::string sValue(value);
 
-	for (auto& toggle : m_vToggleButton)
+	for (auto& toggle : m_toggleButton)
 	{
 		const gchar* l_sLabel = gtk_button_get_label(GTK_BUTTON(toggle));
-		if (l_sValue.find(l_sLabel) != std::string::npos)
+		if (sValue.find(l_sLabel) != std::string::npos)
 		{
 			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), true);
 		}
@@ -77,12 +73,12 @@ void CBitMaskSettingView::setValue(const CString& rValue)
 		}
 	}
 
-	m_bOnValueSetting = false;
+	m_onValueSetting = false;
 }
 
 void CBitMaskSettingView::onChange()
 {
-	if (!m_bOnValueSetting)
+	if (!m_onValueSetting)
 	{
 		CString l_sValue;
 		this->getValue(l_sValue);
