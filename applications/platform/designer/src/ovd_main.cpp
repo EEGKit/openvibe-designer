@@ -940,6 +940,7 @@ int go(int argc, char ** argv)
 									l_rLogManager << LogLevel_Error << "Scenario open or load error with --play.\n";
 									errorWhileLoadingScenario = l_oConfiguration.m_eNoGui == CommandLineFlag_NoGui;
 								}
+								playRequested = true;
 								break;
 							case CommandLineFlag_PlayFast:
 								l_rLogManager << LogLevel_Info << "Opening and fast playing scenario [" << CString(l_sFileName.c_str()) << "]\n";
