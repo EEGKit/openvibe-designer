@@ -18,9 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef __OpenViBEPlugins_CRulerLeftTexture_H__
-#define __OpenViBEPlugins_CRulerLeftTexture_H__
+#pragma once
 
 #include "mCRulerTexture.hpp"
 
@@ -32,34 +30,33 @@ namespace Mensia
 		{
 		public:
 
-			virtual void render(void)
+			void render() override
+
 			{
 				this->preRender();
 
-				::glColor4f(0, 0, 0, m_fBlackAlpha);
-				::glBegin(GL_QUADS);
-					::glTexCoord1f(0);
-					::glVertex2f(0.00f, 0);
-					::glVertex2f(0.05f, 0);
-					::glTexCoord1f(1);
-					::glVertex2f(0.05f, 1);
-					::glVertex2f(0.00f, 1);
-				::glEnd();
+				glColor4f(0, 0, 0, m_fBlackAlpha);
+				glBegin(GL_QUADS);
+				glTexCoord1f(0);
+				glVertex2f(0.00f, 0);
+				glVertex2f(0.05f, 0);
+				glTexCoord1f(1);
+				glVertex2f(0.05f, 1);
+				glVertex2f(0.00f, 1);
+				glEnd();
 
-				::glColor4f(1, 1, 1, m_fWhiteAlpha);
-				::glBegin(GL_QUADS);
-					::glTexCoord1f(0);
-					::glVertex2f(0.00f, 0);
-					::glVertex2f(0.04f, 0);
-					::glTexCoord1f(1);
-					::glVertex2f(0.04f, 1);
-					::glVertex2f(0.00f, 1);
-				::glEnd();
+				glColor4f(1, 1, 1, m_fWhiteAlpha);
+				glBegin(GL_QUADS);
+				glTexCoord1f(0);
+				glVertex2f(0.00f, 0);
+				glVertex2f(0.04f, 0);
+				glTexCoord1f(1);
+				glVertex2f(0.04f, 1);
+				glVertex2f(0.00f, 1);
+				glEnd();
 
 				this->postRender();
 			}
 		};
-	};
-};
-
-#endif // __OpenViBEPlugins_CRulerLeftTexture_H__
+	}  // namespace AdvancedVisualization
+}  // namespace Mensia

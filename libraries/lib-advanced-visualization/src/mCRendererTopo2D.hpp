@@ -1,5 +1,4 @@
-#ifndef __Mensia_AdvancedVisualization_CRendererTopo2D_H__
-#define __Mensia_AdvancedVisualization_CRendererTopo2D_H__
+#pragma once
 
 #include "mCRendererTopo.hpp"
 
@@ -11,10 +10,8 @@ namespace Mensia
 		{
 		public:
 
-			virtual void rebuild3DMeshesPre(const IRendererContext& rContext);
-			virtual void rebuild3DMeshesPost(const IRendererContext& rContext);
+			void rebuild3DMeshesPre(const IRendererContext& rContext) override;
+			void rebuild3DMeshesPost(const IRendererContext& rContext) override;
 		};
-	};
-};
-
-#endif // __Mensia_AdvancedVisualization_CRendererTopo2D_H__
+	} // namespace AdvancedVisualization
+}  // namespace Mensia

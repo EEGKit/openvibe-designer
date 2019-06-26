@@ -1,5 +1,4 @@
-#ifndef __OpenViBEPlugins_Defines_H__
-#define __OpenViBEPlugins_Defines_H__
+#pragma once
 
 #define OVP_TypeId_SphericalLinearInterpolationType                   OpenViBE::CIdentifier(0x44B76D9E, 0x618229BC)
 #define OVP_TypeId_SphericalLinearInterpolationType_Spline            1
@@ -79,7 +78,7 @@
 //                                                                   //
 
 #ifdef TARGET_HAS_ThirdPartyOpenViBEPluginsGlobalDefines
- #include "ovp_global_defines.h"
+#include "ovp_global_defines.h"
 #endif // TARGET_HAS_ThirdPartyOpenViBEPluginsGlobalDefines
 
 //___________________________________________________________________//
@@ -101,8 +100,5 @@ namespace OpenViBEPlugins
 			DisplayMode_GlobalBestFit,
 			//DisplayMode_Normal,
 		};
-	};
-};
-
-
-#endif // __OpenViBEPlugins_Defines_H__
+	}  // namespace SimpleVisualization;
+}  // namespace OpenViBEPlugins;

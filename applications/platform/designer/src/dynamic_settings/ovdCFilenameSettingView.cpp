@@ -1,4 +1,3 @@
-
 #include "ovdCFilenameSettingView.h"
 #include "../ovd_base.h"
 
@@ -8,90 +7,85 @@
 
 using namespace OpenViBE;
 using namespace OpenViBEDesigner;
-using namespace OpenViBEDesigner::Setting;
+using namespace Setting;
 
-static void on_button_setting_filename_browse_pressed(::GtkButton* pButton, gpointer pUserData)
+static void on_button_setting_filename_browse_pressed(GtkButton* /*button*/, gpointer data)
 {
-	static_cast< CFilenameSettingView * >(pUserData)->browse();
+	static_cast<CFilenameSettingView *>(data)->browse();
 }
 
-static void on_change(::GtkEntry *entry, gpointer pUserData)
+static void on_change(GtkEntry* /*entry*/, gpointer data)
 {
-	static_cast<CFilenameSettingView *>(pUserData)->onChange();
+	static_cast<CFilenameSettingView *>(data)->onChange();
 }
 
 #if defined TARGET_OS_Windows
-static gboolean on_focus_out_event(::GtkEntry *entry, GdkEvent* event, gpointer pUserData)
+static gboolean on_focus_out_event(GtkEntry* /*entry*/, GdkEvent* /*event*/, gpointer data)
 {
-	static_cast<CFilenameSettingView *>(pUserData)->onFocusLost();
+	static_cast<CFilenameSettingView *>(data)->onFocusLost();
 	return FALSE;
 }
 #endif
 
-CFilenameSettingView::CFilenameSettingView(OpenViBE::Kernel::IBox &rBox, OpenViBE::uint32 ui32Index, CString &rBuilderName, const Kernel::IKernelContext &rKernelContext):
-	CAbstractSettingView(rBox, ui32Index, rBuilderName, "settings_collection-hbox_setting_filename"), m_rKernelContext(rKernelContext), m_bOnValueSetting(false)
+CFilenameSettingView::CFilenameSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext):
+	CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-hbox_setting_filename"), m_rKernelContext(rKernelContext)
 {
-	::GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
+	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 
-	std::vector< ::GtkWidget* > l_vWidget;
+	std::vector<GtkWidget*> l_vWidget;
 	extractWidget(l_pSettingWidget, l_vWidget);
-	m_pEntry = GTK_ENTRY(l_vWidget[0]);
+	m_entry = GTK_ENTRY(l_vWidget[0]);
 
-	g_signal_connect(G_OBJECT(m_pEntry), "changed", G_CALLBACK(on_change), this);
+	g_signal_connect(G_OBJECT(m_entry), "changed", G_CALLBACK(on_change), this);
 #if defined TARGET_OS_Windows
 	// Only called for Windows path
-	g_signal_connect(G_OBJECT(m_pEntry), "focus_out_event", G_CALLBACK(on_focus_out_event), this);
+	g_signal_connect(G_OBJECT(m_entry), "focus_out_event", G_CALLBACK(on_focus_out_event), this);
 #endif
 	g_signal_connect(G_OBJECT(l_vWidget[1]), "clicked", G_CALLBACK(on_button_setting_filename_browse_pressed), this);
 
 	initializeValue();
 }
 
-void CFilenameSettingView::getValue(OpenViBE::CString &rValue) const
+void CFilenameSettingView::getValue(CString& value) const
 {
-	rValue = CString(gtk_entry_get_text(m_pEntry));
+	value = CString(gtk_entry_get_text(m_entry));
 }
 
-void CFilenameSettingView::setValue(const OpenViBE::CString &rValue)
+void CFilenameSettingView::setValue(const CString& value)
 {
-	m_bOnValueSetting = true;
-	gtk_entry_set_text(m_pEntry, rValue);
-	m_bOnValueSetting =false;
+	m_onValueSetting = true;
+	gtk_entry_set_text(m_entry, value);
+	m_onValueSetting = false;
 }
 
-void CFilenameSettingView::browse()
+void CFilenameSettingView::browse() const
 {
-	::GtkWidget* l_pWidgetDialogOpen=gtk_file_chooser_dialog_new(
-		"Select file to open...",
-		NULL,
-		GTK_FILE_CHOOSER_ACTION_SAVE,
-		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-		GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
-		NULL);
+	GtkWidget* l_pWidgetDialogOpen = gtk_file_chooser_dialog_new("Select file to open...", nullptr, GTK_FILE_CHOOSER_ACTION_SAVE, 
+																 GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
 
-	CString l_sInitialFileName=m_rKernelContext.getConfigurationManager().expand(gtk_entry_get_text(m_pEntry));
-	if(g_path_is_absolute(l_sInitialFileName.toASCIIString()))
+	const CString initialFileName = m_rKernelContext.getConfigurationManager().expand(gtk_entry_get_text(m_entry));
+	if (g_path_is_absolute(initialFileName.toASCIIString()))
 	{
-		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(l_pWidgetDialogOpen), l_sInitialFileName.toASCIIString());
+		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(l_pWidgetDialogOpen), initialFileName.toASCIIString());
 	}
 	else
 	{
-		char* l_sFullPath=g_build_filename(g_get_current_dir(), l_sInitialFileName.toASCIIString(), NULL);
+		char* l_sFullPath = g_build_filename(g_get_current_dir(), initialFileName.toASCIIString(), NULL);
 		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(l_pWidgetDialogOpen), l_sFullPath);
 		g_free(l_sFullPath);
 	}
 
 	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(l_pWidgetDialogOpen), false);
 
-	if(gtk_dialog_run(GTK_DIALOG(l_pWidgetDialogOpen))==GTK_RESPONSE_ACCEPT)
+	if (gtk_dialog_run(GTK_DIALOG(l_pWidgetDialogOpen)) == GTK_RESPONSE_ACCEPT)
 	{
-		char* l_sFileName=gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(l_pWidgetDialogOpen));
-		char* l_pBackslash = NULL;
-		while((l_pBackslash = ::strchr(l_sFileName, '\\'))!=NULL)
+		char* l_sFileName = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(l_pWidgetDialogOpen));
+		char* l_pBackslash = nullptr;
+		while ((l_pBackslash = strchr(l_sFileName, '\\')) != nullptr)
 		{
 			*l_pBackslash = '/';
 		}
-		gtk_entry_set_text(m_pEntry, l_sFileName);
+		gtk_entry_set_text(m_entry, l_sFileName);
 		g_free(l_sFileName);
 	}
 	gtk_widget_destroy(l_pWidgetDialogOpen);
@@ -99,9 +93,9 @@ void CFilenameSettingView::browse()
 
 void CFilenameSettingView::onChange()
 {
-	if(!m_bOnValueSetting)
+	if (!m_onValueSetting)
 	{
-		const gchar* l_sValue = gtk_entry_get_text(m_pEntry);
+		const gchar* l_sValue = gtk_entry_get_text(m_entry);
 		getBox().setSettingValue(getSettingIndex(), l_sValue);
 	}
 }
@@ -110,9 +104,9 @@ void CFilenameSettingView::onChange()
 void CFilenameSettingView::onFocusLost()
 {
 	// We replace antislash, interpreted as escape, by slash in Windows path
-	if (!m_bOnValueSetting)
+	if (!m_onValueSetting)
 	{
-		std::string fileName = gtk_entry_get_text(m_pEntry);
+		std::string fileName = gtk_entry_get_text(m_entry);
 		std::string::iterator iter = fileName.begin();
 
 		while ((iter = std::find(iter, fileName.end(), '\\')) != fileName.end())
@@ -122,7 +116,7 @@ void CFilenameSettingView::onFocusLost()
 				*iter = '/';
 				break;
 			}
-			else if (*std::next(iter) != '{' && *std::next(iter) != '$' && *std::next(iter) != '}')
+			if (*std::next(iter) != '{' && *std::next(iter) != '$' && *std::next(iter) != '}')
 			{
 				*iter = '/';
 			}
@@ -130,7 +124,7 @@ void CFilenameSettingView::onFocusLost()
 			std::advance(iter, 1);
 		}
 
-		gtk_entry_set_text(m_pEntry, fileName.c_str());
+		gtk_entry_set_text(m_entry, fileName.c_str());
 		getBox().setSettingValue(this->getSettingIndex(), fileName.c_str());
 	}
 }

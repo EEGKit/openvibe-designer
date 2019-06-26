@@ -32,86 +32,63 @@ namespace Mensia
 		{
 		public:
 
-			CVertex(double _x=0, double _y=0, double _z=0, double _u=0, double _v=0)
-				:x(float(_x))
-				,y(float(_y))
-				,z(float(_z))
-				,u(float(_u))
-				,v(float(_v))
-			{
-			}
+			explicit CVertex(const double _x = 0, const double _y = 0, const double _z = 0, const double _u = 0, const double _v = 0)
+				: x(float(_x)), y(float(_y)), z(float(_z)), u(float(_u)), v(float(_v)) { }
 
 			CVertex(const CVertex& a, const CVertex& b)
-				:x(b.x - a.x)
-				,y(b.y - a.y)
-				,z(b.z - a.z)
-				,u(b.u - a.u)
-				,v(b.v - a.v)
-			{
-			}
+				: x(b.x - a.x), y(b.y - a.y), z(b.z - a.z), u(b.u - a.u), v(b.v - a.v) { }
 
-			float x;
-			float y;
-			float z;
-			float u;
-			float v;
+			float x = 0;
+			float y = 0;
+			float z = 0;
+			float u = 0;
+			float v = 0;
 
-			CVertex& normalize(void)
+			CVertex& normalize()
+
 			{
-				float n=this->length();
-				if(n!=0)
+				const float n = this->length();
+				if (n != 0)
 				{
-					float in=1.f/n;
-					this->x*=in;
-					this->y*=in;
-					this->z*=in;
+					const float in = 1.f / n;
+					this->x *= in;
+					this->y *= in;
+					this->z *= in;
 				}
 				return *this;
 			}
 
-			float length(void) const
-			{
-				return ::sqrt(this->sqr_length());
-			}
+			float length() const { return sqrt(this->sqr_length()); }
 
-			float sqr_length(void) const
-			{
-				return CVertex::dot(*this, *this);
-			}
+			float sqr_length() const { return dot(*this, *this); }
 
-			static float dot(const CVertex& v1, const CVertex& v2)
-			{
-				return v1.x*v2.x + v1.y*v2.y + v1.z*v2.z;
-			}
+			static float dot(const CVertex& v1, const CVertex& v2) { return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z; }
 
 			static CVertex cross(const CVertex& v1, const CVertex& v2)
 			{
 				CVertex r;
-				r.x = v1.y*v2.z - v1.z*v2.y;
-				r.y = v1.z*v2.x - v1.x*v2.z;
-				r.z = v1.x*v2.y - v1.y*v2.x;
+				r.x = v1.y * v2.z - v1.z * v2.y;
+				r.y = v1.z * v2.x - v1.x * v2.z;
+				r.z = v1.x * v2.y - v1.y * v2.x;
 				return r;
 			}
 
 			static CVertex cross(const CVertex& v1a, const CVertex& v1b, const CVertex& v2a, const CVertex& v2b)
 			{
-				CVertex v1(v1a, v1b);
-				CVertex v2(v2a, v2b);
-				return CVertex::cross(v1, v2);
+				const CVertex v1(v1a, v1b);
+				const CVertex v2(v2a, v2b);
+				return cross(v1, v2);
 			}
 
 			static bool isOnSameSide(const CVertex& p1, const CVertex& p2, const CVertex& a, const CVertex& b)
 			{
-				CVertex cp1=CVertex::cross(a, b, a, p1);
-				CVertex cp2=CVertex::cross(a, b, a, p2);
-				return CVertex::dot(cp1, cp2) >= 0;
+				const CVertex cp1 = cross(a, b, a, p1);
+				const CVertex cp2 = cross(a, b, a, p2);
+				return dot(cp1, cp2) >= 0;
 			}
 
-			static bool isInTriangle(const CVertex& p, const CVertex& a, const CVertex& b, const CVertex& c)
-			{
-				return CVertex::isOnSameSide(p, a, b, c) && CVertex::isOnSameSide(p, b, c, a) && CVertex::isOnSameSide(p, c, a, b);
-			}
+			static bool isInTriangle(const CVertex& p, const CVertex& a, const CVertex& b, const CVertex& c) { return isOnSameSide(p, a, b, c) && isOnSameSide(p, b, c, a) && isOnSameSide(p, c, a, b); }
 		};
-	};
-};
+	} // namespace AdvancedVisualization
+} // namespace Mensia
 #pragma pack()

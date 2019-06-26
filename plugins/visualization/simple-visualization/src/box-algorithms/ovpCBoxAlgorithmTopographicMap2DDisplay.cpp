@@ -5,29 +5,22 @@
 #include <memory.h>
 
 using namespace OpenViBE;
-using namespace OpenViBE::Kernel;
-using namespace OpenViBE::Plugins;
+using namespace Kernel;
+using namespace Plugins;
 
 using namespace OpenViBEPlugins;
-using namespace OpenViBEPlugins::SimpleVisualization;
+using namespace SimpleVisualization;
 
-CBoxAlgorithmTopographicMap2DDisplay::CBoxAlgorithmTopographicMap2DDisplay(void) :
-	m_pSphericalSplineInterpolation(NULL),
-	m_pTopographicMapDatabase(NULL),
-	m_pTopographicMap2DView(NULL)
-{
-}
+CBoxAlgorithmTopographicMap2DDisplay::CBoxAlgorithmTopographicMap2DDisplay() = default;
 
-uint64 CBoxAlgorithmTopographicMap2DDisplay::getClockFrequency(void)
-{
-	return ((uint64)1LL)<<37;
-}
+uint64_t CBoxAlgorithmTopographicMap2DDisplay::getClockFrequency() { return uint64_t(1LL) << 37; }
 
-boolean CBoxAlgorithmTopographicMap2DDisplay::initialize(void)
+bool CBoxAlgorithmTopographicMap2DDisplay::initialize()
+
 {
-	m_bFirstBufferReceived=false;
-	m_pDecoder = new OpenViBEToolkit::TStreamedMatrixDecoder < CBoxAlgorithmTopographicMap2DDisplay >;
-	m_pDecoder->initialize(*this,0);
+	m_bFirstBufferReceived = false;
+	m_pDecoder = new OpenViBEToolkit::TStreamedMatrixDecoder<CBoxAlgorithmTopographicMap2DDisplay>;
+	m_pDecoder->initialize(*this, 0);
 
 	m_pSphericalSplineInterpolation = &getAlgorithmManager().getAlgorithm(getAlgorithmManager().createAlgorithm(OVP_ClassId_Algorithm_SphericalSplineInterpolation));
 	m_pSphericalSplineInterpolation->initialize();
@@ -45,7 +38,7 @@ boolean CBoxAlgorithmTopographicMap2DDisplay::initialize(void)
 	m_pTopographicMap2DView = new CTopographicMap2DView(
 		*m_pTopographicMapDatabase,
 		getTypeManager().getEnumerationEntryValueFromName(OVP_TypeId_SphericalLinearInterpolationType, l_sInterpolationModeSettingValue),
-		atof(l_sDelaySettingValue));
+		strtod(l_sDelaySettingValue, nullptr));
 
 	//have database notify us when new data is available
 	m_pTopographicMapDatabase->setDrawable(m_pTopographicMap2DView);
@@ -53,8 +46,8 @@ boolean CBoxAlgorithmTopographicMap2DDisplay::initialize(void)
 	m_pTopographicMapDatabase->setRedrawOnNewData(false);
 
 	//send widget pointers to visualisation context for parenting
-	::GtkWidget* l_pWidget=NULL;
-	::GtkWidget* l_pToolbarWidget=NULL;
+	GtkWidget* l_pWidget = nullptr;
+	GtkWidget* l_pToolbarWidget = nullptr;
 	dynamic_cast<CTopographicMap2DView*>(m_pTopographicMap2DView)->getWidgets(l_pWidget, l_pToolbarWidget);
 
 	if (!this->canCreatePluginObject(OVP_ClassId_Plugin_VisualizationContext))
@@ -70,18 +63,19 @@ boolean CBoxAlgorithmTopographicMap2DDisplay::initialize(void)
 	return true;
 }
 
-boolean CBoxAlgorithmTopographicMap2DDisplay::uninitialize(void)
+bool CBoxAlgorithmTopographicMap2DDisplay::uninitialize()
+
 {
-	if(m_pDecoder)
+	if (m_pDecoder != nullptr)
 	{
 		m_pDecoder->uninitialize();
 		delete m_pDecoder;
 	}
 
 	delete m_pTopographicMap2DView;
-	m_pTopographicMap2DView = NULL;
+	m_pTopographicMap2DView = nullptr;
 	delete m_pTopographicMapDatabase;
-	m_pTopographicMapDatabase = NULL;
+	m_pTopographicMapDatabase = nullptr;
 
 	m_pSphericalSplineInterpolation->uninitialize();
 
@@ -90,57 +84,54 @@ boolean CBoxAlgorithmTopographicMap2DDisplay::uninitialize(void)
 	return true;
 }
 
-boolean CBoxAlgorithmTopographicMap2DDisplay::processInput(OpenViBE::uint32 ui32InputIndex)
+bool CBoxAlgorithmTopographicMap2DDisplay::processInput(uint32_t /*ui32InputIndex*/)
 {
 	getBoxAlgorithmContext()->markAlgorithmAsReadyToProcess();
 	return true;
 }
 
-boolean CBoxAlgorithmTopographicMap2DDisplay::processClock(IMessageClock& rMessageClock)
+bool CBoxAlgorithmTopographicMap2DDisplay::processClock(IMessageClock& /*rMessageClock*/)
 {
 	getBoxAlgorithmContext()->markAlgorithmAsReadyToProcess();
 	return true;
 }
 
-boolean CBoxAlgorithmTopographicMap2DDisplay::process(void)
+bool CBoxAlgorithmTopographicMap2DDisplay::process()
+
 {
-	IDynamicBoxContext* l_pDynamicBoxContext=getBoxAlgorithmContext()->getDynamicBoxContext();
-	uint32 i;
+	IDynamicBoxContext* l_pDynamicBoxContext = getBoxAlgorithmContext()->getDynamicBoxContext();
+	uint32_t i;
 
 	//decode signal data
-	for(i=0; i<l_pDynamicBoxContext->getInputChunkCount(0); i++)
+	for (i = 0; i < l_pDynamicBoxContext->getInputChunkCount(0); ++i)
 	{
 		m_pDecoder->decode(i);
-		if(m_pDecoder->isBufferReceived())
+		if (m_pDecoder->isBufferReceived())
 		{
-			IMatrix* l_pInputMatrix=m_pDecoder->getOutputMatrix();
+			IMatrix* l_pInputMatrix = m_pDecoder->getOutputMatrix();
 
 			//do we need to recopy this for each chunk?
-			if(!m_bFirstBufferReceived)
+			if (!m_bFirstBufferReceived)
 			{
 				m_pTopographicMapDatabase->setMatrixDimensionCount(l_pInputMatrix->getDimensionCount());
-				for(uint32 dimension=0; dimension<l_pInputMatrix->getDimensionCount(); dimension++)
+				for (uint32_t dimension = 0; dimension < l_pInputMatrix->getDimensionCount(); dimension++)
 				{
 					m_pTopographicMapDatabase->setMatrixDimensionSize(dimension, l_pInputMatrix->getDimensionSize(dimension));
-					for(uint32 entryIndex=0; entryIndex<l_pInputMatrix->getDimensionSize(dimension); entryIndex++)
+					for (uint32_t entryIndex = 0; entryIndex < l_pInputMatrix->getDimensionSize(dimension); entryIndex++)
 					{
 						m_pTopographicMapDatabase->setMatrixDimensionLabel(dimension, entryIndex, l_pInputMatrix->getDimensionLabel(dimension, entryIndex));
 					}
 				}
-				m_bFirstBufferReceived=true;
+				m_bFirstBufferReceived = true;
 			}
 			//
 
-			if(!m_pTopographicMapDatabase->setMatrixBuffer(l_pInputMatrix->getBuffer(), l_pDynamicBoxContext->getInputChunkStartTime(0,i), l_pDynamicBoxContext->getInputChunkEndTime(0,i)))
-			{
-				return false;
-			}
-
+			if (!m_pTopographicMapDatabase->setMatrixBuffer(l_pInputMatrix->getBuffer(), l_pDynamicBoxContext->getInputChunkStartTime(0, i), l_pDynamicBoxContext->getInputChunkEndTime(0, i))) { return false; }
 		}
 	}
 
 	//decode channel localisation data
-	for(i=0; i<l_pDynamicBoxContext->getInputChunkCount(1); i++)
+	for (i = 0; i < l_pDynamicBoxContext->getInputChunkCount(1); ++i)
 	{
 		const IMemoryBuffer* l_pBuf = l_pDynamicBoxContext->getInputChunk(1, i);
 		m_pTopographicMapDatabase->decodeChannelLocalisationMemoryBuffer(
@@ -150,7 +141,7 @@ boolean CBoxAlgorithmTopographicMap2DDisplay::process(void)
 		l_pDynamicBoxContext->markInputAsDeprecated(1, i);
 	}
 
-	boolean l_bProcessValues = m_pTopographicMapDatabase->processValues();
+	const bool l_bProcessValues = m_pTopographicMapDatabase->processValues();
 
 	//disable plugin upon errors
 	return l_bProcessValues;

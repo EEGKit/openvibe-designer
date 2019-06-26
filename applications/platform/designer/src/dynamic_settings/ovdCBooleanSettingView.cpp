@@ -5,70 +5,70 @@
 
 using namespace OpenViBE;
 using namespace OpenViBEDesigner;
-using namespace OpenViBEDesigner::Setting;
+using namespace Setting;
 
-static void on_checkbutton_setting_boolean_pressed(::GtkToggleButton* pButton, gpointer pUserData)
+static void on_checkbutton_setting_boolean_pressed(GtkToggleButton* /*button*/, gpointer data)
 {
-	static_cast<CBooleanSettingView *>(pUserData)->toggleButtonClick();
+	static_cast<CBooleanSettingView *>(data)->toggleButtonClick();
 }
 
-static void on_insertion(::GtkEntry *entry, gpointer pUserData)
+static void on_insertion(GtkEntry* /*entry*/, gpointer data)
 {
-	static_cast<CBooleanSettingView *>(pUserData)->onChange();
+	static_cast<CBooleanSettingView *>(data)->onChange();
 }
 
-CBooleanSettingView::CBooleanSettingView(OpenViBE::Kernel::IBox &rBox, OpenViBE::uint32 ui32Index, CString &rBuilderName):
-	CAbstractSettingView(rBox, ui32Index, rBuilderName, "settings_collection-hbox_setting_boolean"), m_bOnValueSetting(false)
+CBooleanSettingView::CBooleanSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName):
+	CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-hbox_setting_boolean")
 {
-	::GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
+	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 
-	std::vector< ::GtkWidget* > l_vWidget;
+	std::vector<GtkWidget*> l_vWidget;
 	extractWidget(l_pSettingWidget, l_vWidget);
-	m_pToggle = GTK_TOGGLE_BUTTON(l_vWidget[1]);
-	m_pEntry = GTK_ENTRY(l_vWidget[0]);
+	m_toggle = GTK_TOGGLE_BUTTON(l_vWidget[1]);
+	m_entry = GTK_ENTRY(l_vWidget[0]);
 
-	g_signal_connect(G_OBJECT(m_pEntry), "changed", G_CALLBACK(on_insertion), this);
+	g_signal_connect(G_OBJECT(m_entry), "changed", G_CALLBACK(on_insertion), this);
 
-	g_signal_connect(G_OBJECT(m_pToggle), "toggled", G_CALLBACK(on_checkbutton_setting_boolean_pressed), this);
+	g_signal_connect(G_OBJECT(m_toggle), "toggled", G_CALLBACK(on_checkbutton_setting_boolean_pressed), this);
 
 	initializeValue();
 }
 
 
-void CBooleanSettingView::getValue(OpenViBE::CString &rValue) const
+void CBooleanSettingView::getValue(CString& value) const
 {
-	rValue = CString(gtk_entry_get_text(m_pEntry));
+	value = CString(gtk_entry_get_text(m_entry));
 }
 
 
-void CBooleanSettingView::setValue(const OpenViBE::CString &rValue)
+void CBooleanSettingView::setValue(const CString& value)
 {
-	m_bOnValueSetting = true;
-	if(rValue==CString("true"))
+	m_onValueSetting = true;
+	if (value == CString("true"))
 	{
-		gtk_toggle_button_set_active(m_pToggle, true);
-		gtk_toggle_button_set_inconsistent(m_pToggle, false);
+		gtk_toggle_button_set_active(m_toggle, true);
+		gtk_toggle_button_set_inconsistent(m_toggle, false);
 	}
-	else if(rValue==CString("false"))
+	else if (value == CString("false"))
 	{
-		gtk_toggle_button_set_active(m_pToggle, false);
-		gtk_toggle_button_set_inconsistent(m_pToggle, false);
+		gtk_toggle_button_set_active(m_toggle, false);
+		gtk_toggle_button_set_inconsistent(m_toggle, false);
 	}
 	else
 	{
-		gtk_toggle_button_set_inconsistent(m_pToggle, true);
+		gtk_toggle_button_set_inconsistent(m_toggle, true);
 	}
 
-	gtk_entry_set_text(m_pEntry, rValue);
-	m_bOnValueSetting =false;
+	gtk_entry_set_text(m_entry, value);
+	m_onValueSetting = false;
 }
 
 
 void CBooleanSettingView::toggleButtonClick()
 {
-	if(!m_bOnValueSetting)
+	if (!m_onValueSetting)
 	{
-		if(::gtk_toggle_button_get_active(m_pToggle))
+		if (gtk_toggle_button_get_active(m_toggle))
 		{
 			getBox().setSettingValue(getSettingIndex(), "true");
 			setValue("true");
@@ -83,9 +83,9 @@ void CBooleanSettingView::toggleButtonClick()
 
 void CBooleanSettingView::onChange()
 {
-	if(!m_bOnValueSetting)
+	if (!m_onValueSetting)
 	{
-		const gchar* l_sValue = gtk_entry_get_text(m_pEntry);
+		const gchar* l_sValue = gtk_entry_get_text(m_entry);
 		getBox().setSettingValue(getSettingIndex(), l_sValue);
 	}
 }

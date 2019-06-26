@@ -18,9 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef __OpenViBEPlugins_CRulerBottomFrequency_H__
-#define __OpenViBEPlugins_CRulerBottomFrequency_H__
+#pragma once
 
 #include "../mIRuler.hpp"
 #include "../m_VisualizationTools.hpp"
@@ -33,31 +31,33 @@ namespace Mensia
 		{
 		public:
 
-			virtual void renderBottom(::GtkWidget* pWidget)
+			void renderBottom(GtkWidget* pWidget) override
 			{
-				float l_fScale=(float)m_pRendererContext->getSpectrumFrequencyRange();
-				if(m_fLastScale!=l_fScale) { m_vRange=this->split_range(0, l_fScale); m_fLastScale=l_fScale; }
-
-				gint w, h, x;
-
-				::gdk_drawable_get_size(pWidget->window, &w, &h);
-				::GdkGC* l_pDrawGC=gdk_gc_new(pWidget->window);
-				for(it=m_vRange.begin(); it!=m_vRange.end(); it++)
+				const auto l_fScale = float(m_pRendererContext->getSpectrumFrequencyRange());
+				if (m_fLastScale != l_fScale)
 				{
-					x=gint((*it/l_fScale)*w);
-					::PangoLayout* l_pPangoLayout=::gtk_widget_create_pango_layout(pWidget, this->getLabel(*it).c_str());
-					::gdk_draw_layout(pWidget->window, l_pDrawGC, x, 5, l_pPangoLayout);
-					::gdk_draw_line(pWidget->window, l_pDrawGC, x, 0, x, 3);
+					m_vRange = split_range(0, l_fScale);
+					m_fLastScale = l_fScale;
+				}
+
+				gint w, h;
+
+				gdk_drawable_get_size(pWidget->window, &w, &h);
+				GdkGC* l_pDrawGC = gdk_gc_new(pWidget->window);
+				for (it = m_vRange.begin(); it != m_vRange.end(); ++it)
+				{
+					const gint x = gint((*it / l_fScale) * w);
+					PangoLayout* l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, getLabel(*it).c_str());
+					gdk_draw_layout(pWidget->window, l_pDrawGC, x, 5, l_pPangoLayout);
+					gdk_draw_line(pWidget->window, l_pDrawGC, x, 0, x, 3);
 					g_object_unref(l_pPangoLayout);
 				}
 				g_object_unref(l_pDrawGC);
 			}
 
-			float m_fLastScale;
-			std::vector < double > m_vRange;
-			std::vector < double >::iterator it;
+			float m_fLastScale = 0;
+			std::vector<double> m_vRange;
+			std::vector<double>::iterator it;
 		};
-	};
-};
-
-#endif // __OpenViBEPlugins_CRulerBottomFrequency_H__
+	}  // namespace AdvancedVisualization
+}  // namespace Mensia

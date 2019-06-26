@@ -1,5 +1,4 @@
-#ifndef __OpenViBEDesigner_CInterfacedObject_H__
-#define __OpenViBEDesigner_CInterfacedObject_H__
+#pragma once
 
 #include "ovd_base.h"
 
@@ -9,14 +8,12 @@ namespace OpenViBEDesigner
 	{
 	public:
 
-		CInterfacedObject(void);
-		CInterfacedObject(const OpenViBE::CIdentifier& rIdentifier);
-		CInterfacedObject(const OpenViBE::CIdentifier& rIdentifier, const OpenViBE::uint32 ui32ConnectorType, const OpenViBE::uint32 ui32ConnectorIndex);
+		CInterfacedObject() = default;
+		CInterfacedObject(const OpenViBE::CIdentifier& identifier);
+		CInterfacedObject(const OpenViBE::CIdentifier& identifier, uint32_t connectorType, uint32_t connectorIndex);
 
 		OpenViBE::CIdentifier m_oIdentifier;
-		OpenViBE::uint32 m_ui32ConnectorType;
-		OpenViBE::uint32 m_ui32ConnectorIndex;
+		uint32_t m_connectorType = 0;
+		uint32_t m_connectorIndex = 0;
 	};
 };
-
-#endif // __OpenViBEDesigner_CInterfacedObject_H__

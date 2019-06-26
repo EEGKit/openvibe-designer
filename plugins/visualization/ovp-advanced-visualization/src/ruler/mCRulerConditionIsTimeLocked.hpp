@@ -18,9 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef __OpenViBEPlugins_TRulerConditionIsTimeLocked_H__
-#define __OpenViBEPlugins_TRulerConditionIsTimeLocked_H__
+#pragma once
 
 #include "../mIRuler.hpp"
 
@@ -32,31 +30,16 @@ namespace Mensia
 		{
 		public:
 
-			CRulerConditionIsTimeLocked(void)
-				:m_pRendererContext(NULL)
-				,m_pRenderer(NULL)
-			{
-			}
+			CRulerConditionIsTimeLocked() : m_pRendererContext(nullptr), m_pRenderer(nullptr) { }
 
-			virtual void setRendererContext(const IRendererContext* pRendererContext)
-			{
-				m_pRendererContext=pRendererContext;
-			}
+			void setRendererContext(const IRendererContext* pRendererContext) override { m_pRendererContext = pRendererContext; }
 
-			virtual void setRenderer(const IRenderer* pRenderer)
-			{
-				m_pRenderer=pRenderer;
-			}
+			void setRenderer(const IRenderer* pRenderer) override { m_pRenderer = pRenderer; }
 
-			bool operator()(void)
-			{
-				return m_pRendererContext->isTimeLocked();
-			}
+			bool operator()() { return m_pRendererContext->isTimeLocked(); }
 
 			const IRendererContext* m_pRendererContext;
 			const IRenderer* m_pRenderer;
 		};
-	};
-};
-
-#endif // __OpenViBEPlugins_TRulerConditionIsTimeLocked_H__
+	}  // namespace AdvancedVisualization
+}  // namespace Mensia

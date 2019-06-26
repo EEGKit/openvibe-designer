@@ -18,9 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef __OpenViBEPlugins_CRulerProgressH_H__
-#define __OpenViBEPlugins_CRulerProgressH_H__
+#pragma once
 
 #include "mCRulerProgress.hpp"
 
@@ -32,35 +30,33 @@ namespace Mensia
 		{
 		public:
 
-			virtual void renderFinal(float fProgress)
+			void renderFinal(const float fProgress) override
 			{
-	uint32_t l_ui32SelectedCount=m_pRendererContext->getSelectedCount();
-	uint32_t i;
-				::glDisable(GL_TEXTURE_1D);
-				::glDisable(GL_BLEND);
+				const uint32_t selectedCount = m_pRendererContext->getSelectedCount();
+				uint32_t i;
+				glDisable(GL_TEXTURE_1D);
+				glDisable(GL_BLEND);
 
-				::glLineWidth(4);
-				::glColor3f(0, 0, 0);
-				::glBegin(GL_LINES);
-	for(i=0; i<l_ui32SelectedCount; i++)
-	{
-					::glVertex2f(0, (i+fProgress)/l_ui32SelectedCount);
-					::glVertex2f(1, (i+fProgress)/l_ui32SelectedCount);
-	}
-				::glEnd();
+				glLineWidth(4);
+				glColor3f(0, 0, 0);
+				glBegin(GL_LINES);
+				for (i = 0; i < selectedCount; ++i)
+				{
+					glVertex2f(0, (i + fProgress) / selectedCount);
+					glVertex2f(1, (i + fProgress) / selectedCount);
+				}
+				glEnd();
 
-				::glLineWidth(2);
-				::glColor3f(0.25, 1, 0.25);
-				::glBegin(GL_LINES);
-	for(i=0; i<l_ui32SelectedCount; i++)
-	{
-					::glVertex2f(0, (i+fProgress)/l_ui32SelectedCount);
-					::glVertex2f(1, (i+fProgress)/l_ui32SelectedCount);
-	}
-				::glEnd();
+				glLineWidth(2);
+				glColor3f(0.25, 1, 0.25);
+				glBegin(GL_LINES);
+				for (i = 0; i < selectedCount; ++i)
+				{
+					glVertex2f(0, (i + fProgress) / selectedCount);
+					glVertex2f(1, (i + fProgress) / selectedCount);
+				}
+				glEnd();
 			}
 		};
-	};
-};
-
-#endif // __OpenViBEPlugins_CRulerProgressH_H__
+	}  // namespace AdvancedVisualization
+}  // namespace Mensia

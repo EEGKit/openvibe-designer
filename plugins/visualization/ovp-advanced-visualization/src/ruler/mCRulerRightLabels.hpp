@@ -18,7 +18,6 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
 #pragma once
 
 #include "../mIRuler.hpp"
@@ -31,38 +30,37 @@ namespace Mensia
 {
 	namespace AdvancedVisualization
 	{
-		template<size_t dimension>
+		template <size_t dimension>
 		class CRulerRightLabels : public IRuler
 		{
 		public:
 
-			virtual void renderRight(::GtkWidget* widget)
+			void renderRight(GtkWidget* widget) override
 			{
-
-				gint w, h, y;
+				gint w, h;
 				gint lw, lh;
 
-				uint32_t channelCount = m_pRendererContext->getSelectedCount();
+				const uint32_t channelCount = m_pRendererContext->getSelectedCount();
 				for (uint32_t channel = 0; channel < channelCount; ++channel)
 				{
-					::gdk_drawable_get_size(widget->window, &w, &h);
-					::GdkGC* drawGC = gdk_gc_new(widget->window);
+					gdk_drawable_get_size(widget->window, &w, &h);
+					GdkGC* drawGC = gdk_gc_new(widget->window);
 
-					float labelCount = static_cast<float>(m_pRendererContext->getDimensionLabelCount(dimension));
+					const auto labelCount = float(m_pRendererContext->getDimensionLabelCount(dimension));
 
-					gint last_y = gint((channel + (-1 + 0.5f)/labelCount) * (h * 1.f / channelCount));;
+					gint last_y = gint((channel + (-1 + 0.5f) / labelCount) * (h * 1.f / channelCount));
 
 					for (uint32_t label = 0; label < m_pRendererContext->getDimensionLabelCount(dimension); ++label)
 					{
-						y = gint((channel + (label + 0.5f)/labelCount) * (h * 1.f / channelCount));
+						const gint y = gint((channel + (label + 0.5f) / labelCount) * (h * 1.f / channelCount));
 						if (y >= last_y + 10)
 						{
-							::PangoLayout* l_pPangoLayout = ::gtk_widget_create_pango_layout(widget, m_pRendererContext->getDimensionLabel(dimension, label));
-							::pango_layout_get_size(l_pPangoLayout, &lw, &lh);
-							lw/=PANGO_SCALE;
-							lh/=PANGO_SCALE;
-							::gdk_draw_layout(widget->window, drawGC, 8, h-y-lh/2, l_pPangoLayout);
-							::gdk_draw_line(widget->window, drawGC, 0, h-y, 3, h-y);
+							PangoLayout* l_pPangoLayout = gtk_widget_create_pango_layout(widget, m_pRendererContext->getDimensionLabel(dimension, label));
+							pango_layout_get_size(l_pPangoLayout, &lw, &lh);
+							lw /= PANGO_SCALE;
+							lh /= PANGO_SCALE;
+							gdk_draw_layout(widget->window, drawGC, 8, h - y - lh / 2, l_pPangoLayout);
+							gdk_draw_line(widget->window, drawGC, 0, h - y, 3, h - y);
 							g_object_unref(l_pPangoLayout);
 							last_y = y;
 						}
@@ -71,6 +69,5 @@ namespace Mensia
 				}
 			}
 		};
-	}
-}
-
+	} // namespace AdvancedVisualization
+} // namespace Mensia

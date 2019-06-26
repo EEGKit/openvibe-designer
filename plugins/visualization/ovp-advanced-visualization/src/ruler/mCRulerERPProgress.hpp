@@ -18,9 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
- 
-#ifndef __OpenViBEPlugins_CRulerERPProgress_H__
-#define __OpenViBEPlugins_CRulerERPProgress_H__
+#pragma once
 
 #include "../mIRuler.hpp"
 #include "../m_VisualizationTools.hpp"
@@ -33,35 +31,34 @@ namespace Mensia
 		{
 		public:
 
-			virtual void render(void)
+			void render() override
+
 			{
-				if(m_pRenderer == NULL) return;
-				if(m_pRenderer->getSampleCount() == 0) return;
-				if(m_pRenderer->getHistoryCount() == 0) return;
-				if(m_pRenderer->getHistoryIndex() == 0) return;
+				if (m_pRenderer == nullptr) { return; }
+				if (m_pRenderer->getSampleCount() == 0) { return; }
+				if (m_pRenderer->getHistoryCount() == 0) { return; }
+				if (m_pRenderer->getHistoryIndex() == 0) { return; }
 
-				float l_fProgress=m_pRendererContext->getERPFraction();
-				if(l_fProgress!=0 && l_fProgress!=1)
+				const float l_fProgress = m_pRendererContext->getERPFraction();
+				if (l_fProgress != 0 && l_fProgress != 1)
 				{
-					::glDisable(GL_TEXTURE_1D);
+					glDisable(GL_TEXTURE_1D);
 
-					::glLineWidth(4);
-					::glColor3f(0, 0, 0);
-					::glBegin(GL_LINES);
-						::glVertex2f(l_fProgress, 0);
-						::glVertex2f(l_fProgress, 1);
-					::glEnd();
+					glLineWidth(4);
+					glColor3f(0, 0, 0);
+					glBegin(GL_LINES);
+					glVertex2f(l_fProgress, 0);
+					glVertex2f(l_fProgress, 1);
+					glEnd();
 
-					::glLineWidth(2);
-					::glColor3f(0.25, 1, 0.25);
-					::glBegin(GL_LINES);
-						::glVertex2f(l_fProgress, 0);
-						::glVertex2f(l_fProgress, 1);
-					::glEnd();
+					glLineWidth(2);
+					glColor3f(0.25, 1, 0.25);
+					glBegin(GL_LINES);
+					glVertex2f(l_fProgress, 0);
+					glVertex2f(l_fProgress, 1);
+					glEnd();
 				}
 			}
 		};
-	};
-};
-
-#endif // __OpenViBEPlugins_CRulerERPProgress_H__
+	}  // namespace AdvancedVisualization
+}  // namespace Mensia

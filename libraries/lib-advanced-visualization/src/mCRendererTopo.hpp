@@ -38,27 +38,26 @@ namespace Mensia
 		{
 		public:
 
-			virtual void rebuild(const IRendererContext& rContext);
-			virtual void refresh(const IRendererContext& rContext);
-			virtual bool render(const IRendererContext& rContext);
+			void rebuild(const IRendererContext& rContext) override;
+			void refresh(const IRendererContext& rContext) override;
+			bool render(const IRendererContext& rContext) override;
 
-			virtual void rebuild3DMeshesPre(const IRendererContext& rContext)=0; // Called before electrode projections and spherical interpolation parameters generations and might be used to load a mesh or generate a sphere for instance
-			virtual void rebuild3DMeshesPost(const IRendererContext& rContext)=0; // Called after electrode projections and spherical interpolation parameters generations and might be used to unfold previously loaded mesh for instance
+			virtual void rebuild3DMeshesPre(const IRendererContext& rContext) = 0; // Called before electrode projections and spherical interpolation parameters generations and might be used to load a mesh or generate a sphere for instance
+			virtual void rebuild3DMeshesPost(const IRendererContext& rContext) = 0; // Called after electrode projections and spherical interpolation parameters generations and might be used to unfold previously loaded mesh for instance
 
 		private:
 
-			void interpolate(const Eigen::VectorXd& V, Eigen::VectorXd& W, Eigen::VectorXd& Z);
+			void interpolate(const Eigen::VectorXd& V, Eigen::VectorXd& W, Eigen::VectorXd& Z) const;
 
 		protected:
 
-			std::vector < CVertex > m_vProjectedChannelCoordinate;
+			std::vector<CVertex> m_vProjectedChannelCoordinate;
 
 			C3DMesh m_oFace;
 			C3DMesh m_oScalp;
-			std::vector < Eigen::VectorXd > m_vInterpolatedSample;
+			std::vector<Eigen::VectorXd> m_vInterpolatedSample;
 
 			Eigen::MatrixXd A, B, D, Ai;
 		};
-	};
-};
-
+	}  // namespace AdvancedVisualization
+}  // namespace Mensia

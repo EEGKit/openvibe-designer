@@ -18,48 +18,44 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef __Mensia_AdvancedVisualization_Renderer_Tools_H__
-#define __Mensia_AdvancedVisualization_Renderer_Tools_H__
+#pragma once
 
 namespace
 {
-	inline void cube(const float fSize=1)
+	void cube(const float fSize = 1)
 	{
-		::glBegin(GL_QUADS);
+		glBegin(GL_QUADS);
 
-		::glVertex3f( fSize,-fSize, fSize);
-		::glVertex3f( fSize, fSize, fSize);
-		::glVertex3f( fSize, fSize,-fSize);
-		::glVertex3f( fSize,-fSize,-fSize);
+		glVertex3f(fSize, -fSize, fSize);
+		glVertex3f(fSize, fSize, fSize);
+		glVertex3f(fSize, fSize, -fSize);
+		glVertex3f(fSize, -fSize, -fSize);
 
-		::glVertex3f(-fSize,-fSize, fSize);
-		::glVertex3f(-fSize,-fSize,-fSize);
-		::glVertex3f(-fSize, fSize,-fSize);
-		::glVertex3f(-fSize, fSize, fSize);
+		glVertex3f(-fSize, -fSize, fSize);
+		glVertex3f(-fSize, -fSize, -fSize);
+		glVertex3f(-fSize, fSize, -fSize);
+		glVertex3f(-fSize, fSize, fSize);
 
-		::glVertex3f(-fSize, fSize, fSize);
-		::glVertex3f( fSize, fSize, fSize);
-		::glVertex3f( fSize, fSize,-fSize);
-		::glVertex3f(-fSize, fSize,-fSize);
+		glVertex3f(-fSize, fSize, fSize);
+		glVertex3f(fSize, fSize, fSize);
+		glVertex3f(fSize, fSize, -fSize);
+		glVertex3f(-fSize, fSize, -fSize);
 
-		::glVertex3f(-fSize,-fSize, fSize);
-		::glVertex3f(-fSize,-fSize,-fSize);
-		::glVertex3f( fSize,-fSize,-fSize);
-		::glVertex3f( fSize,-fSize, fSize);
+		glVertex3f(-fSize, -fSize, fSize);
+		glVertex3f(-fSize, -fSize, -fSize);
+		glVertex3f(fSize, -fSize, -fSize);
+		glVertex3f(fSize, -fSize, fSize);
 
-		::glVertex3f(-fSize, fSize, fSize);
-		::glVertex3f(-fSize,-fSize, fSize);
-		::glVertex3f( fSize,-fSize, fSize);
-		::glVertex3f( fSize, fSize, fSize);
+		glVertex3f(-fSize, fSize, fSize);
+		glVertex3f(-fSize, -fSize, fSize);
+		glVertex3f(fSize, -fSize, fSize);
+		glVertex3f(fSize, fSize, fSize);
 
-		::glVertex3f(-fSize, fSize,-fSize);
-		::glVertex3f(-fSize,-fSize,-fSize);
-		::glVertex3f( fSize,-fSize,-fSize);
-		::glVertex3f( fSize, fSize,-fSize);
+		glVertex3f(-fSize, fSize, -fSize);
+		glVertex3f(-fSize, -fSize, -fSize);
+		glVertex3f(fSize, -fSize, -fSize);
+		glVertex3f(fSize, fSize, -fSize);
 
-		::glEnd();
+		glEnd();
 	}
-}
-
-#endif // __Mensia_AdvancedVisualization_Renderer_Tools_H__
+}  // namespace

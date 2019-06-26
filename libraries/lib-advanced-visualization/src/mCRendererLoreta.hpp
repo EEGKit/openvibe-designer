@@ -18,11 +18,10 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+#pragma once
 
 #if defined TARGET_HAS_ThirdPartyOpenGL
 
-#ifndef __Mensia_AdvancedVisualization_CRendererLoreta_H__
-#define __Mensia_AdvancedVisualization_CRendererLoreta_H__
 
 #include "mCRenderer.hpp"
 #include "mC3DMesh.hpp"
@@ -38,36 +37,34 @@ namespace Mensia
 		{
 		public:
 
-			CRendererLoreta(void);
+			CRendererLoreta();
 
-			virtual void rebuild(const IRendererContext& rContext);
-			virtual void refresh(const IRendererContext& rContext);
-			virtual bool render(const IRendererContext& rContext);
+			void rebuild(const IRendererContext& rContext) override;
+			void refresh(const IRendererContext& rContext) override;
+			bool render(const IRendererContext& rContext) override;
 
-			virtual void clearRegionSelection(void);
-			virtual uint32_t getRegionCategoryCount(void);
-			virtual uint32_t getRegionCount(uint32_t ui32RegionCategory);
-			virtual const char* getRegionCategoryName(uint32_t ui32RegionCategory);
-			virtual const char* getRegionName(uint32_t ui32RegionCategory, uint32_t ui32RegionIndex);
-			virtual void selectRegion(uint32_t ui32RegionCategory, const char* sRegionName);
-			virtual void selectRegion(uint32_t ui32RegionCategory, uint32_t ui32RegionIndex);
+			void clearRegionSelection() override;
+			uint32_t getRegionCategoryCount() override;
+			uint32_t getRegionCount(uint32_t regionCategory) override;
+			const char* getRegionCategoryName(uint32_t regionCategory) override;
+			const char* getRegionName(uint32_t regionCategory, uint32_t regionIndex) override;
+			void selectRegion(uint32_t regionCategory, const char* sRegionName) override;
+			void selectRegion(uint32_t regionCategory, uint32_t regionIndex) override;
 
-			virtual void refreshBrainSubset(void);
+			virtual void refreshBrainSubset();
 
 		protected:
 
-			std::vector < std::map < std::string, std::vector < uint32_t > > > m_vLookup;
-			std::vector < bool > m_vSelected;
+			std::vector<std::map<std::string, std::vector<uint32_t>>> m_vLookup;
+			std::vector<bool> m_vSelected;
 
 			C3DMesh m_oFace;
 			C3DMesh m_oScalp;
 			C3DMesh m_oBrain;
 
-			std::vector < uint32_t > m_vBrainSubsetTriangle;
+			std::vector<uint32_t> m_vBrainSubsetTriangle;
 		};
-	};
-};
-
-#endif // __Mensia_AdvancedVisualization_CRendererLoreta_H__
+	}  // namespace AdvancedVisualization
+}  // namespace Mensia
 
 #endif // TARGET_HAS_ThirdPartyOpenGL

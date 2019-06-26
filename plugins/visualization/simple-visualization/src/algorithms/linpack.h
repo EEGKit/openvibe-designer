@@ -5,6 +5,7 @@
 /*************************************************************************************/
 /* Linpack  subroutines                                                              */
 /*************************************************************************************/
+#pragma once
 
-void sspfa(double* ap, int* n, int* kpvt, int* info);
-void sspsl(double* ap, int* n, int* kpvt, double* b);
+void sspfa(double* ap, const int* n, int* kpvt, int* info);
+void sspsl(double* ap, const int* n, const int* kpvt, double* b);

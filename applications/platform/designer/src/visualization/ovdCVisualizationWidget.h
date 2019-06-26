@@ -7,96 +7,63 @@
 
 namespace OpenViBEDesigner
 {
-	class CVisualizationWidget final: public OpenViBEVisualizationToolkit::IVisualizationWidget
+	class CVisualizationWidget final : public OpenViBEVisualizationToolkit::IVisualizationWidget
 	{
 	public:
 		CVisualizationWidget(const OpenViBE::Kernel::IKernelContext& kernelContext);
 
-		~CVisualizationWidget(void);
+		~CVisualizationWidget() = default;
 
-		bool initialize(
-		        const OpenViBE::CIdentifier& identifier,
-		        const OpenViBE::CString& name,
-		        OpenViBEVisualizationToolkit::EVisualizationWidgetType type,
-		        const OpenViBE::CIdentifier& parentIdentifier,
-		        const OpenViBE::CIdentifier& boxIdentifier,
-		        OpenViBE::uint32 childCount);
+		bool initialize(const OpenViBE::CIdentifier& identifier, const OpenViBE::CString& name, OpenViBEVisualizationToolkit::EVisualizationWidgetType type,
+						const OpenViBE::CIdentifier& parentIdentifier, const OpenViBE::CIdentifier& boxIdentifier, uint32_t childCount) override;
 
-		OpenViBE::CIdentifier getIdentifier(void) const;
+		OpenViBE::CIdentifier getIdentifier() const override { return m_Identifier; }
 
-		const OpenViBE::CString& getName(void) const;
+		const OpenViBE::CString& getName() const override { return m_Name; }
 
-		void setName(const OpenViBE::CString& name);
+		void setName(const OpenViBE::CString& name) override { m_Name = name; }
 
-		OpenViBEVisualizationToolkit::EVisualizationWidgetType getType(void) const;
+		OpenViBEVisualizationToolkit::EVisualizationWidgetType getType() const override { return m_Type; }
 
-		OpenViBE::CIdentifier getParentIdentifier(void) const;
+		OpenViBE::CIdentifier getParentIdentifier() const override { return m_ParentIdentifier; }
 
-		void setParentIdentifier(const OpenViBE::CIdentifier& parentIdentifier);
+		void setParentIdentifier(const OpenViBE::CIdentifier& parentIdentifier) override { m_ParentIdentifier = parentIdentifier; }
 
-		OpenViBE::CIdentifier getBoxIdentifier(void) const;
+		OpenViBE::CIdentifier getBoxIdentifier() const override { return m_BoxIdentifier; }
 
-		OpenViBE::uint32 getNbChildren(void) const;
+		uint32_t getNbChildren() const override { return uint32_t(m_Children.size()); }
 
-		bool getChildIndex(const OpenViBE::CIdentifier& identifier, OpenViBE::uint32& index) const;
+		bool getChildIndex(const OpenViBE::CIdentifier& identifier, uint32_t& index) const override;
 
 		//for windows, the number of children is unknown a priori
-		bool addChild(const OpenViBE::CIdentifier& childIdentifier);
+		bool addChild(const OpenViBE::CIdentifier& childIdentifier) override;
 
-		bool removeChild(const OpenViBE::CIdentifier& identifier);
+		bool removeChild(const OpenViBE::CIdentifier& identifier) override;
 
-		bool getChildIdentifier(OpenViBE::uint32 childIndex, OpenViBE::CIdentifier& identifier) const;
+		bool getChildIdentifier(uint32_t childIndex, OpenViBE::CIdentifier& identifier) const override;
 
-		bool setChildIdentifier(OpenViBE::uint32 childIndex, const OpenViBE::CIdentifier& identifier);
+		bool setChildIdentifier(uint32_t childIndex, const OpenViBE::CIdentifier& identifier) override;
 
-		void setWidth(unsigned int width)
-		{
-			m_Width = width;
-		}
+		void setWidth(unsigned int width) override { m_Width = width; }
+		void setHeight(unsigned int height) override { m_Height = height; }
 
-		void setHeight(unsigned int height)
-		{
-			m_Height = height;
-		}
+		unsigned int getWidth() override { return m_Width; }
+		unsigned int getHeight() override { return m_Height; }
 
-		unsigned int getWidth()
-		{
-			return m_Width;
-		}
+		void setDividerPosition(int dividerPosition) override { m_DividerPosition = dividerPosition; }
+		void setMaxDividerPosition(int maxDividerPosition) override { m_MaxDividerPosition = maxDividerPosition; }
 
-		unsigned int getHeight()
-		{
-			return m_Height;
-		}
-
-		void setDividerPosition(int dividerPosition)
-		{
-			m_DividerPosition = dividerPosition;
-		}
-
-		void setMaxDividerPosition(int maxDividerPosition)
-		{
-			m_MaxDividerPosition = maxDividerPosition;
-		}
-
-		int getDividerPosition()
-		{
-			return m_DividerPosition;
-		}
-
-		int getMaxDividerPosition()
-		{
-			return m_MaxDividerPosition;
-		}
+		int getDividerPosition() override { return m_DividerPosition; }
+		int getMaxDividerPosition() override { return m_MaxDividerPosition; }
 
 	private:
 
 		const OpenViBE::Kernel::IKernelContext& m_KernelContext;
-		OpenViBE::CIdentifier m_Identifier;
+		OpenViBE::CIdentifier m_Identifier = OV_UndefinedIdentifier;
 		OpenViBE::CString m_Name;
 		OpenViBEVisualizationToolkit::EVisualizationWidgetType m_Type;
-		OpenViBE::CIdentifier m_ParentIdentifier;
-		OpenViBE::CIdentifier m_BoxIdentifier;
+		OpenViBE::CIdentifier m_ParentIdentifier = OV_UndefinedIdentifier;
+		OpenViBE::CIdentifier m_BoxIdentifier = OV_UndefinedIdentifier;
 		std::vector<OpenViBE::CIdentifier> m_Children;
 
 		// @fixme should initialize meaningfully in constructor or initialize()?

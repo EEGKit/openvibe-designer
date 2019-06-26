@@ -10,16 +10,13 @@ namespace OpenViBEDesigner
 		class CScriptSettingView : public CAbstractSettingView
 		{
 		public:
-			CScriptSettingView(OpenViBE::Kernel::IBox& rBox,
-								 OpenViBE::uint32 ui32Index,
-								 OpenViBE::CString &rBuilderName,
-								 const OpenViBE::Kernel::IKernelContext& rKernelContext);
+			CScriptSettingView(OpenViBE::Kernel::IBox& rBox, uint32_t index, OpenViBE::CString& rBuilderName, const OpenViBE::Kernel::IKernelContext& rKernelContext);
 
-			virtual void getValue(OpenViBE::CString &rValue) const;
-			virtual void setValue(const OpenViBE::CString &rValue);
+			void getValue(OpenViBE::CString& value) const override;
+			void setValue(const OpenViBE::CString& value) override;
 
-			void browse();
-			void edit();
+			void browse() const;
+			void edit() const;
 
 			void onChange();
 #if defined TARGET_OS_Windows
@@ -27,10 +24,10 @@ namespace OpenViBEDesigner
 #endif
 
 		private:
-			::GtkEntry* m_pEntry;
+			GtkEntry* m_entry = nullptr;
 
 			const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
-			OpenViBE::boolean m_bOnValueSetting;
+			bool m_onValueSetting = false;
 		};
 	}
 }

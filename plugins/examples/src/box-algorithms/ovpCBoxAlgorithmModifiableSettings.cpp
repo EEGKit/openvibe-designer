@@ -2,41 +2,42 @@
 #include <openvibe/ovITimeArithmetics.h>
 
 using namespace OpenViBE;
-using namespace OpenViBE::Kernel;
-using namespace OpenViBE::Plugins;
+using namespace Kernel;
+using namespace Plugins;
 
 using namespace OpenViBEPlugins;
-using namespace OpenViBEPlugins::Examples;
+using namespace Examples;
 
-bool CBoxAlgorithmModifiableSettings::initialize(void)
-{	
+bool CBoxAlgorithmModifiableSettings::initialize()
+{
 	return true;
 }
 /*******************************************************************************/
 
-bool CBoxAlgorithmModifiableSettings::uninitialize(void)
+bool CBoxAlgorithmModifiableSettings::uninitialize()
 {
 	return true;
 }
 /*******************************************************************************/
 
 
-uint64_t CBoxAlgorithmModifiableSettings::getClockFrequency(void)
+uint64_t CBoxAlgorithmModifiableSettings::getClockFrequency()
+
 {
 	// 4Hz
 	return 0x1ULL << 30;
 }
 
-bool CBoxAlgorithmModifiableSettings::processClock(OpenViBE::Kernel::IMessageClock& /* rMessageClock */)
+bool CBoxAlgorithmModifiableSettings::processClock(IMessageClock& /* rMessageClock */)
 {
 	updateSettings();
 	//print settings values
-	for(size_t i=0; i < m_SettingsValue.size(); ++i)
+	for (size_t i = 0; i < m_SettingsValue.size(); ++i)
 	{
-		this->getLogManager() << LogLevel_Info << "Setting " << static_cast<uint64_t>(i) << " value is " << m_SettingsValue[i] << "\n";
+		this->getLogManager() << LogLevel_Info << "Setting " << uint64_t(i) << " value is " << m_SettingsValue[i] << "\n";
 	}
 	this->getLogManager() << LogLevel_Info << "\n";
-	
+
 	return true;
 }
 
@@ -46,7 +47,7 @@ bool CBoxAlgorithmModifiableSettings::updateSettings()
 {
 	m_SettingsValue.clear();
 	const IBox& l_rStaticBoxContext = this->getStaticBoxContext();
-	for(uint32_t i=0; i < l_rStaticBoxContext.getSettingCount(); ++i)
+	for (uint32_t i = 0; i < l_rStaticBoxContext.getSettingCount(); ++i)
 	{
 		CString l_sSettingValue = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), i);
 		m_SettingsValue.push_back(l_sSettingValue);
@@ -55,7 +56,7 @@ bool CBoxAlgorithmModifiableSettings::updateSettings()
 }
 
 
-bool CBoxAlgorithmModifiableSettings::process(void)
+bool CBoxAlgorithmModifiableSettings::process()
 {
 	return true;
 }

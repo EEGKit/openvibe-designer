@@ -4,9 +4,9 @@
 using namespace OpenViBE;
 using namespace OpenViBEVisualizationToolkit;
 
-bool CVisualizationContext::setWidget(OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>& box, GtkWidget* widget)
+bool CVisualizationContext::setWidget(OpenViBEToolkit::TBoxAlgorithm<Plugins::IBoxAlgorithm>& box, GtkWidget* widget)
 {
-	CIdentifier boxIdentifier = box.getStaticBoxContext().getIdentifier();
+	const CIdentifier boxIdentifier = box.getStaticBoxContext().getIdentifier();
 
 	CIdentifier treeIdentifier = OV_UndefinedIdentifier;
 
@@ -16,24 +16,18 @@ bool CVisualizationContext::setWidget(OpenViBEToolkit::TBoxAlgorithm<OpenViBE::P
 	//
 	// What we do is that we write the visualization tree identifier into the local scenario configuration manager. This manager
 	// can be accessed as long as we have the boxAlgorithm.
-	if (!treeIdentifier.fromString(box.getConfigurationManager().lookUpConfigurationTokenValue("VisualizationContext_VisualizationTreeId")))
-	{
-		return false;
-	}
+	if (!treeIdentifier.fromString(box.getConfigurationManager().lookUpConfigurationTokenValue("VisualizationContext_VisualizationTreeId"))) { return false; }
 
 	return m_VisualizationManager->setWidget(treeIdentifier, boxIdentifier, widget);
 }
 
-bool CVisualizationContext::setToolbar(OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>& box, GtkWidget* toolbarWidget)
+bool CVisualizationContext::setToolbar(OpenViBEToolkit::TBoxAlgorithm<Plugins::IBoxAlgorithm>& box, GtkWidget* toolbarWidget)
 {
-	CIdentifier boxIdentifier = box.getStaticBoxContext().getIdentifier();
+	const CIdentifier boxIdentifier = box.getStaticBoxContext().getIdentifier();
 
 	CIdentifier treeIdentifier = OV_UndefinedIdentifier;
 
-	if (!treeIdentifier.fromString(box.getConfigurationManager().lookUpConfigurationTokenValue("VisualizationContext_VisualizationTreeId")))
-	{
-		return false;
-	}
+	if (!treeIdentifier.fromString(box.getConfigurationManager().lookUpConfigurationTokenValue("VisualizationContext_VisualizationTreeId"))) { return false; }
 
 	return m_VisualizationManager->setToolbar(treeIdentifier, boxIdentifier, toolbarWidget);
 }

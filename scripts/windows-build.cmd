@@ -215,7 +215,7 @@ if !builder! == None (
 	) else (
 		set msplatform=%PlatformTarget%
 	)
-	msbuild Designer.sln /p:Configuration=%BuildType% /p:Platform="!msplatform!"
+	msbuild Designer.sln /verbosity:quiet /p:Configuration=%BuildType% /p:Platform="!msplatform!"
 
 	if not "!ERRORLEVEL!" == "0" goto terminate_error
 	

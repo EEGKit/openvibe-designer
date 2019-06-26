@@ -1,5 +1,4 @@
-#ifndef __OpenViBEDesigner_CAboutPluginDialog_H__
-#define __OpenViBEDesigner_CAboutPluginDialog_H__
+#pragma once
 
 #include "ovd_base.h"
 
@@ -11,21 +10,19 @@ namespace OpenViBEDesigner
 
 		CAboutPluginDialog(const OpenViBE::Kernel::IKernelContext& rKernelContext, const OpenViBE::CIdentifier& rPluginClassIdentifier, const char* sGUIFilename);
 		CAboutPluginDialog(const OpenViBE::Kernel::IKernelContext& rKernelContext, const OpenViBE::Plugins::IPluginObjectDesc* pPluginObjectDesc, const char* sGUIFilename);
-		virtual ~CAboutPluginDialog(void);
+		virtual ~CAboutPluginDialog();
 
-		OpenViBE::boolean run(void);
+		bool run();
 
 	protected:
 
 		const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
-		OpenViBE::CIdentifier m_oPluginClassIdentifier;
+		OpenViBE::CIdentifier m_oPluginClassIdentifier = OV_UndefinedIdentifier;
 		OpenViBE::CString m_sGUIFilename;
 
 	private:
-		const OpenViBE::Plugins::IPluginObjectDesc* m_pPluginObjectDescriptor;
+		const OpenViBE::Plugins::IPluginObjectDesc* m_pPluginObjectDescriptor = nullptr;
 
-		CAboutPluginDialog(void);
+		CAboutPluginDialog();
 	};
 };
-
-#endif // __OpenViBEDesigner_CAboutPluginDialog_H__

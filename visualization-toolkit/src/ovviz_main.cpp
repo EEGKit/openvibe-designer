@@ -4,12 +4,12 @@
 #include "ovvizCVisualizationContext.hpp"
 
 using namespace OpenViBE;
-using namespace OpenViBE::Kernel;
+using namespace Kernel;
 
 namespace
 {
 	OpenViBEVisualizationToolkit::CVisualizationContextDesc visualizationContextDesc;
-}
+} // namespace
 
 bool OpenViBEVisualizationToolkit::initialize(const IKernelContext& kernelContext)
 {
@@ -24,8 +24,4 @@ bool OpenViBEVisualizationToolkit::initialize(const IKernelContext& kernelContex
 	return true;
 }
 
-bool OpenViBEVisualizationToolkit::uninitialize(const IKernelContext& kernelContext)
-{
-	(void)kernelContext;
-	return true;
-}
+bool OpenViBEVisualizationToolkit::uninitialize(const IKernelContext& /*kernelContext*/) { return true; }

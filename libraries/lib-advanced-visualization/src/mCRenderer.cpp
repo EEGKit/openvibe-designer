@@ -28,114 +28,101 @@
 #include <algorithm>    // std::min_element, std::max_element
 
 using namespace Mensia;
-using namespace Mensia::AdvancedVisualization;
+using namespace AdvancedVisualization;
 
-static int iCount=0;
+static int iCount = 0;
 
-CRenderer::CRenderer(void)
-	:m_ui32HistoryIndex(0)
-	,m_ui32HistoryCount(0)
-	,m_ui32ChannelCount(0)
-	,m_ui32SampleCount(1)
-	,m_ui32HistoryDrawIndex(0)
-	,m_f32InverseChannelCount(1)
-	,m_f32InverseSampleCount(1)
-	,m_ui32AutoDecimationFactor(1)
-	,m_f32ERPFraction(0)
-	,m_ui32SampleIndexERP(0)
-	, m_ui64TimeOffset(0)
-{
-	iCount++;
-}
+CRenderer::CRenderer() { iCount++; }
 
-CRenderer::~CRenderer(void)
+CRenderer::~CRenderer()
+
 {
 	iCount--;
-//	::printf("CRenderer::~CRenderer - %i instances left\n", iCount);
+	//	::printf("CRenderer::~CRenderer - %i instances left\n", iCount);
 }
 
 void CRenderer::setChannelLocalisation(const char* sFilename)
 {
-	m_sChannelLocalisationFilename=sFilename;
+	m_channelLocalisationFilename = sFilename;
 }
 
-void CRenderer::setChannelCount(uint32_t ui32ChannelCount)
+void CRenderer::setChannelCount(const uint32_t channelCount)
 {
-	m_ui32ChannelCount=ui32ChannelCount;
-	m_f32InverseChannelCount=(ui32ChannelCount?1.f/ui32ChannelCount:1);
-	m_vVertex.clear();
-	m_vMesh.clear();
+	m_channelCount = channelCount;
+	m_inverseChannelCount = (channelCount ? 1.f / channelCount : 1);
+	m_vertex.clear();
+	m_mesh.clear();
 
-	m_ui32HistoryIndex=0;
-	m_ui32HistoryCount=0;
-	m_vHistory.clear();
-	m_vHistory.resize(ui32ChannelCount);
+	m_historyIndex = 0;
+	m_historyCount = 0;
+	m_history.clear();
+	m_history.resize(channelCount);
 }
 
-void CRenderer::setSampleCount(uint32_t ui32SampleCount)
+void CRenderer::setSampleCount(uint32_t sampleCount)
 {
-	if(ui32SampleCount==0) ui32SampleCount=1;
-	m_ui32SampleCount=ui32SampleCount;
-	m_f32InverseSampleCount=(ui32SampleCount?1.f/ui32SampleCount:1);
-	m_vVertex.clear();
-	m_vMesh.clear();
+	if (sampleCount == 0) { sampleCount = 1; }
+	m_sampleCount = sampleCount;
+	m_inverseSampleCount = (sampleCount ? 1.f / sampleCount : 1);
+	m_vertex.clear();
+	m_mesh.clear();
 }
 
 void CRenderer::feed(const float* pDataVector)
 {
-	for(uint32_t i=0; i<m_ui32ChannelCount; i++)
+	for (uint32_t i = 0; i < m_channelCount; ++i)
 	{
-		m_vHistory[i].push_back(pDataVector[i]);
+		m_history[i].push_back(pDataVector[i]);
 	}
-	m_ui32HistoryCount++;
+	m_historyCount++;
 }
 
-void CRenderer::feed(const float* pDataVector, uint32_t ui32SampleCount)
+void CRenderer::feed(const float* pDataVector, const uint32_t sampleCount)
 {
-	for(uint32_t i=0; i<m_ui32ChannelCount; i++)
+	for (uint32_t i = 0; i < m_channelCount; ++i)
 	{
-		for(uint32_t j=0; j<ui32SampleCount; j++)
+		for (uint32_t j = 0; j < sampleCount; j++)
 		{
-			m_vHistory[i].push_back(pDataVector[j]);
+			m_history[i].push_back(pDataVector[j]);
 		}
-		pDataVector+=ui32SampleCount;
+		pDataVector += sampleCount;
 	}
-	m_ui32HistoryCount+=ui32SampleCount;
+	m_historyCount += sampleCount;
 }
 
-void CRenderer::feed(uint64_t ui64StimulationDate, uint64_t ui64StimulationId)
+void CRenderer::feed(const uint64_t stimulationDate, uint64_t stimulationId)
 {
-	m_vStimulationHistory.push_back(std::make_pair((ui64StimulationDate>>16)/65536., ui64StimulationId));
+	m_stimulationHistory.emplace_back((stimulationDate >> 16) / 65536., stimulationId);
 }
 
-void CRenderer::prefeed(uint32_t ui32PreFeedSampleCount)
+void CRenderer::prefeed(const uint32_t preFeedSampleCount)
 {
-	for(uint32_t i=0; i<m_ui32ChannelCount; i++)
+	for (uint32_t i = 0; i < m_channelCount; ++i)
 	{
-		m_vHistory[i].insert(m_vHistory[i].begin(), ui32PreFeedSampleCount, 0.f);
+		m_history[i].insert(m_history[i].begin(), preFeedSampleCount, 0.f);
 	}
-	m_ui32HistoryCount+=ui32PreFeedSampleCount;
-	m_ui32HistoryIndex=0;
+	m_historyCount += preFeedSampleCount;
+	m_historyIndex = 0;
 }
 
 float CRenderer::getSuggestedScale()
 {
-	if (m_ui32ChannelCount != 0)
+	if (m_channelCount != 0)
 	{
 		std::vector<float> l_vf32Average;
 
-		for (uint32_t i = 0; i < m_ui32ChannelCount; i++)
+		for (size_t i = 0; i < m_channelCount; ++i)
 		{
 			l_vf32Average.push_back(0);
 
-			unsigned int l_ui32SamplesToAverage = (m_vHistory[i].size() < m_ui32SampleCount) ? m_vHistory[i].size() : m_ui32SampleCount;
+			const size_t samplesToAverage = (m_history[i].size() < m_sampleCount) ? m_history[i].size() : m_sampleCount;
 
-			for (uint32_t j = m_vHistory[i].size(); j > (m_vHistory[i].size() - l_ui32SamplesToAverage) ; j--)
+			for (size_t j = m_history[i].size(); j > (m_history[i].size() - samplesToAverage); --j)
 			{
-				l_vf32Average.back() += m_vHistory[i][j - 1];
+				l_vf32Average.back() += m_history[i][j - 1];
 			}
 
-			l_vf32Average.back() /= l_ui32SamplesToAverage;
+			l_vf32Average.back() /= float(samplesToAverage);
 		}
 
 		return (1 / *std::max_element(l_vf32Average.begin(), l_vf32Average.end()));
@@ -143,211 +130,191 @@ float CRenderer::getSuggestedScale()
 	return 0;
 }
 
-void CRenderer::clear(uint32_t ui32SampleCountToKeep = 0)
+void CRenderer::clear(const uint32_t sampleCountToKeep = 0)
 {
-	if( m_vHistory.size() > 0 )
+	if (!m_history.empty())
 	{
-		if( ui32SampleCountToKeep == 0 )
+		if (sampleCountToKeep == 0)
 		{
-			for (std::vector<float>& vec : m_vHistory)
-			{
-				vec.clear();
-			}
-			
-			m_ui32HistoryCount = 0;
-		}  
-		else if( ui32SampleCountToKeep < m_vHistory[0].size() )
+			for (auto& vec : m_history) { vec.clear(); }
+			m_historyCount = 0;
+		}
+		else if (sampleCountToKeep < m_history[0].size())
 		{
-			uint32_t l_ui32SampleToDelete = m_vHistory[0].size() - ui32SampleCountToKeep;
+			const size_t sampleToDelete = m_history[0].size() - sampleCountToKeep;
 
-			if( l_ui32SampleToDelete > 1 )
+			if (sampleToDelete > 1)
 			{
-				for( uint32_t i = 0; i < m_vHistory.size(); i++ )
-				{
-					std::vector<float>(m_vHistory[i].begin() + l_ui32SampleToDelete, m_vHistory[i].end()).swap(m_vHistory[i]);
-				}
-
-				m_ui32HistoryCount -= l_ui32SampleToDelete;
+				for (auto& vec : m_history) { std::vector<float>(vec.begin() + sampleToDelete, vec.end()).swap(vec); }
+				m_historyCount -= uint32_t(sampleToDelete);
 			}
 		}
 	}
 	// We always delete all of the stimulations, ideally we would know the time
 	// scale so we can keep the stimulations according to the kept samples
-	m_vStimulationHistory.clear();
-	m_ui32HistoryIndex=0;
+	m_stimulationHistory.clear();
+	m_historyIndex = 0;
 }
 
-uint32_t CRenderer::getChannelCount(void) const
+uint32_t CRenderer::getChannelCount() const { return m_channelCount; }
+
+uint32_t CRenderer::getSampleCount() const { return m_sampleCount; }
+
+uint32_t CRenderer::getHistoryCount() const { return m_historyCount; }
+
+uint32_t CRenderer::getHistoryIndex() const { return m_historyIndex; }
+
+void CRenderer::setHistoryDrawIndex(const uint32_t index)
 {
-	return m_ui32ChannelCount;
+	m_historyDrawIndex = index;
+	m_historyIndex = 0;
 }
 
-uint32_t CRenderer::getSampleCount(void) const
+bool CRenderer::getSampleAtERPFraction(const float fERPFraction, std::vector<float>& vSample) const
 {
-	return m_ui32SampleCount;
-}
+	vSample.resize(m_channelCount);
 
-uint32_t CRenderer::getHistoryCount(void) const
-{
-	return m_ui32HistoryCount;
-}
+	if (m_sampleCount > m_historyCount) { return false; }
 
-uint32_t CRenderer::getHistoryIndex(void) const
-{
-	return m_ui32HistoryIndex;
-}
+	const float sampleIndexERP = (fERPFraction * float(m_sampleCount - 1));
+	const float alpha = sampleIndexERP - std::floor(sampleIndexERP);
+	const uint32_t sampleIndexERP1 = uint32_t(sampleIndexERP) % m_sampleCount;
+	const uint32_t sampleIndexERP2 = uint32_t(sampleIndexERP + 1) % m_sampleCount;
 
-void CRenderer::setHistoryDrawIndex(uint32_t ui32Index)
-{
-	m_ui32HistoryDrawIndex = ui32Index;
-	m_ui32HistoryIndex = 0;
-}
-
-bool CRenderer::getSampleAtERPFraction(float fERPFraction, std::vector < float >& vSample) const
-{
-	vSample.resize(m_ui32ChannelCount);
-
-	if (m_ui32SampleCount > m_ui32HistoryCount) return false;
-
-	float l_f32SampleIndexERP=(fERPFraction*(m_ui32SampleCount-1));
-	float l_f32Alpha=l_f32SampleIndexERP-std::floor(l_f32SampleIndexERP);
-	uint32_t l_ui32SampleIndexERP1=uint32_t(l_f32SampleIndexERP  )%m_ui32SampleCount;
-	uint32_t l_ui32SampleIndexERP2=uint32_t(l_f32SampleIndexERP+1)%m_ui32SampleCount;
-
-	for(uint32_t i=0; i<m_ui32ChannelCount; i++)
+	for (uint32_t i = 0; i < m_channelCount; ++i)
 	{
-		vSample[i]=m_vHistory[i][m_ui32HistoryCount-m_ui32SampleCount+l_ui32SampleIndexERP1]*(1-l_f32Alpha)
-		          +m_vHistory[i][m_ui32HistoryCount-m_ui32SampleCount+l_ui32SampleIndexERP2]*(  l_f32Alpha);
+		vSample[i] = m_history[i][m_historyCount - m_sampleCount + sampleIndexERP1] * (1 - alpha)
+			+ m_history[i][m_historyCount - m_sampleCount + sampleIndexERP2] * (alpha);
 	}
 
 	return true;
 }
 
-void CRenderer::rebuild(const IRendererContext& rContext)
-{
-}
+void CRenderer::rebuild(const IRendererContext& /*rContext*/) { }
 
 void CRenderer::refresh(const IRendererContext& rContext)
 {
-	if(!m_ui32SampleCount)
+	if (!m_sampleCount)
 	{
-		m_f32ERPFraction=0;
-		m_ui32SampleIndexERP=0;
+		m_ERPFraction = 0;
+		m_sampleIndexERP = 0;
 		return;
 	}
 
-	m_f32ERPFraction=rContext.getERPFraction();
-	m_ui32SampleIndexERP=uint32_t(m_f32ERPFraction*(m_ui32SampleCount-1))%m_ui32SampleCount;
+	m_ERPFraction = rContext.getERPFraction();
+	m_sampleIndexERP = uint32_t(m_ERPFraction * float(m_sampleCount - 1)) % m_sampleCount;
 }
 
 #if 0
-bool CRenderer::render(const IRendererContext& rContext)
+bool CRenderer::render(const IRendererContext & rContext)
 {
 	::glLineWidth(7);
 	::glColor3f(1.f, 0.9f, 0.1f);
 	::glDisable(GL_TEXTURE_1D);
 	::glBegin(GL_LINES);
-		::glVertex2f(0, 0);
-		::glVertex2f(1, 1);
-		::glVertex2f(0, 1);
-		::glVertex2f(1, 0);
+	::glVertex2f(0, 0);
+	::glVertex2f(1, 1);
+	::glVertex2f(0, 1);
+	::glVertex2f(1, 0);
 	::glEnd();
 	::glBegin(GL_LINE_LOOP);
-		::glVertex2f(0, 0);
-		::glVertex2f(0, 1);
-		::glVertex2f(1, 1);
-		::glVertex2f(1, 0);
+	::glVertex2f(0, 0);
+	::glVertex2f(0, 1);
+	::glVertex2f(1, 1);
+	::glVertex2f(1, 0);
 	::glEnd();
 }
 #endif
 
-void CRenderer::draw3DCoordinateSystem(void)
-{
-	::glPushAttrib(GL_ALL_ATTRIB_BITS);
-	::glEnable(GL_DEPTH_TEST);
-	::glEnable(GL_BLEND);
-	::glDisable(GL_TEXTURE_1D);
-	::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	::glLineWidth(2);
+void CRenderer::draw3DCoordinateSystem()
 
-	::glPushMatrix();
-	::glColor3f(.2f, .2f, .2f);
-	::glScalef(.2f, .2f, .2f);
-	::glBegin(GL_LINES);
-	for(int x=-10; x<=10; x++)
+{
+	glPushAttrib(GL_ALL_ATTRIB_BITS);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glDisable(GL_TEXTURE_1D);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glLineWidth(2);
+
+	glPushMatrix();
+	glColor3f(.2f, .2f, .2f);
+	glScalef(.2f, .2f, .2f);
+	glBegin(GL_LINES);
+	for (int x = -10; x <= 10; x++)
 	{
-		for(int z=-10; z<=10; z++)
+		for (int z = -10; z <= 10; z++)
 		{
-			if(x!=0)
+			if (x != 0)
 			{
-				::glVertex3f(float(x), 0,  10.f);
-				::glVertex3f(float(x), 0, -10.f);
+				glVertex3f(float(x), 0, 10.f);
+				glVertex3f(float(x), 0, -10.f);
 			}
-			if(z!=0)
+			if (z != 0)
 			{
-				::glVertex3f( 10.f, 0, float(z));
-				::glVertex3f(-10.f, 0, float(z));
+				glVertex3f(10.f, 0, float(z));
+				glVertex3f(-10.f, 0, float(z));
 			}
 		}
 	}
-	::glEnd();
-	::glPopMatrix();
+	glEnd();
+	glPopMatrix();
 
-	::glBegin(GL_LINES);
-		::glColor3f(0, 0, 1);
-		::glVertex3f(0, 0,  2.f);
-		::glVertex3f(0, 0, -3.f);
-		::glColor3f(0, 1, 0);
-		::glVertex3f(0,  1.25f, 0);
-		::glVertex3f(0, -1.25f, 0);
-		::glColor3f(1, 0, 0);
-		::glVertex3f( 2.f, 0, 0);
-		::glVertex3f(-2.f, 0, 0);
-	::glEnd();
+	glBegin(GL_LINES);
+	glColor3f(0, 0, 1);
+	glVertex3f(0, 0, 2.f);
+	glVertex3f(0, 0, -3.f);
+	glColor3f(0, 1, 0);
+	glVertex3f(0, 1.25f, 0);
+	glVertex3f(0, -1.25f, 0);
+	glColor3f(1, 0, 0);
+	glVertex3f(2.f, 0, 0);
+	glVertex3f(-2.f, 0, 0);
+	glEnd();
 
-	::glPopAttrib();
+	glPopAttrib();
 }
 
-void CRenderer::draw2DCoordinateSystem(void)
-{
-	::glPushAttrib(GL_ALL_ATTRIB_BITS);
-	::glEnable(GL_DEPTH_TEST);
-	::glEnable(GL_BLEND);
-	::glDisable(GL_TEXTURE_1D);
-	::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	::glLineWidth(2);
+void CRenderer::draw2DCoordinateSystem()
 
-	::glPushMatrix();
-	::glColor3f(.2f, .2f, .2f);
-	::glScalef(.2f, .2f, .2f);
-	::glBegin(GL_LINES);
+{
+	glPushAttrib(GL_ALL_ATTRIB_BITS);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glDisable(GL_TEXTURE_1D);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glLineWidth(2);
+
+	glPushMatrix();
+	glColor3f(.2f, .2f, .2f);
+	glScalef(.2f, .2f, .2f);
+	glBegin(GL_LINES);
 	for (int x = -10; x <= 10; x++)
 	{
 		for (int y = -10; y <= 10; y++)
 		{
 			if (x != 0)
 			{
-				::glVertex2f(float(x), 10.f);
-				::glVertex2f(float(x), -10.f);
+				glVertex2f(float(x), 10.f);
+				glVertex2f(float(x), -10.f);
 			}
 			if (y != 0)
 			{
-				::glVertex2f(10.f, float(y));
-				::glVertex2f(-10.f, float(y));
+				glVertex2f(10.f, float(y));
+				glVertex2f(-10.f, float(y));
 			}
 		}
 	}
-	::glEnd();
-	::glPopMatrix();
+	glEnd();
+	glPopMatrix();
 
-	::glBegin(GL_LINES);
-	::glColor3f(0, 1, 0);
-	::glVertex2f(0, 2.0f);
-	::glVertex2f(0, -2.0f);
-	::glColor3f(1, 0, 0);
-	::glVertex2f(2.f, 0);
-	::glVertex2f(-2.f, 0);
-	::glEnd();
+	glBegin(GL_LINES);
+	glColor3f(0, 1, 0);
+	glVertex2f(0, 2.0f);
+	glVertex2f(0, -2.0f);
+	glColor3f(1, 0, 0);
+	glVertex2f(2.f, 0);
+	glVertex2f(-2.f, 0);
+	glEnd();
 
-	::glPopAttrib();
+	glPopAttrib();
 }

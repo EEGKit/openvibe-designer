@@ -1,5 +1,4 @@
-#ifndef __OpenViBEDesigner_CCommentEditorDialog_H__
-#define __OpenViBEDesigner_CCommentEditorDialog_H__
+#pragma once
 
 #include "ovd_base.h"
 
@@ -10,15 +9,15 @@ namespace OpenViBEDesigner
 	public:
 
 		CCommentEditorDialog(const OpenViBE::Kernel::IKernelContext& rKernelContext, OpenViBE::Kernel::IComment& rComment, const char* sGUIFilename);
-		virtual ~CCommentEditorDialog(void);
+		virtual ~CCommentEditorDialog() = default;
 
-		OpenViBE::boolean run(void);
+		bool run();
 
 		// Callback for text formatting
-		void applyTagCB(const char* sTagIn, const char* sTagOut);
+		void applyTagCB(const char* sTagIn, const char* sTagOut) const;
 
 		// help formatting pango
-		void infoCB(void);
+		void infoCB() const { gtk_widget_show(m_pInfoDialog); }
 	protected:
 
 		const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
@@ -27,14 +26,12 @@ namespace OpenViBEDesigner
 
 	private:
 
-		CCommentEditorDialog(void);
+		CCommentEditorDialog();
 
-		::GtkBuilder* m_pInterface;
-		::GtkWidget* m_pDialog;
-		::GtkWidget* m_pInfoDialog;
-		::GtkWidget* m_pDescription;
-		::GtkTextBuffer* m_pDescriptionBuffer;
+		GtkBuilder* m_pInterface{};
+		GtkWidget* m_pDialog{};
+		GtkWidget* m_pInfoDialog{};
+		GtkWidget* m_pDescription{};
+		GtkTextBuffer* m_pDescriptionBuffer{};
 	};
 };
-
-#endif // __OpenViBEDesigner_CCommentEditorDialog_H__

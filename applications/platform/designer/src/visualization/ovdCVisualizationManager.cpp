@@ -16,20 +16,11 @@
 using namespace std;
 using namespace OpenViBEDesigner;
 using namespace OpenViBE;
-using namespace OpenViBE::Kernel;
-using namespace OpenViBE::Plugins;
+using namespace Kernel;
+using namespace Plugins;
 using namespace OpenViBEVisualizationToolkit;
 //using namespace OpenViBE::Tools;
 
-CVisualizationManager::CVisualizationManager(const IKernelContext& kernelContext)
-	: m_KernelContext(kernelContext)
-{
-}
-
-CVisualizationManager::~CVisualizationManager()
-{
-}
-	
 bool CVisualizationManager::createVisualizationTree(CIdentifier& visualizationTreeIdentifier)
 {
 	IVisualizationTree* newVisualizationTree = new CVisualizationTree(m_KernelContext);
@@ -64,7 +55,7 @@ IVisualizationTree& CVisualizationManager::getVisualizationTree(const CIdentifie
 	return *it->second;
 }
 
-bool CVisualizationManager::setToolbar(const CIdentifier& visualizationTreeIdentifier, const CIdentifier& boxIdentifier, ::GtkWidget* toolbar)
+bool CVisualizationManager::setToolbar(const CIdentifier& visualizationTreeIdentifier, const CIdentifier& boxIdentifier, GtkWidget* toolbar)
 {
 	IVisualizationTree& l_rVisualizationTree = getVisualizationTree(visualizationTreeIdentifier);
 
@@ -73,16 +64,16 @@ bool CVisualizationManager::setToolbar(const CIdentifier& visualizationTreeIdent
 	return true;
 }
 
-bool CVisualizationManager::setWidget(const CIdentifier& rVisualizationTreeIdentifier, const CIdentifier& boxIdentifier, ::GtkWidget* topmostWidget)
+bool CVisualizationManager::setWidget(const CIdentifier& visualizationTreeIdentifier, const CIdentifier& boxIdentifier, GtkWidget* topmostWidget)
 {
-	IVisualizationTree& visualizationTree = getVisualizationTree(rVisualizationTreeIdentifier);
+	IVisualizationTree& visualizationTree = getVisualizationTree(visualizationTreeIdentifier);
 
 	visualizationTree.setWidget(boxIdentifier, topmostWidget);
 
 	return true;
 }
 
-CIdentifier CVisualizationManager::getUnusedIdentifier(void) const
+CIdentifier CVisualizationManager::getUnusedIdentifier() const
 {
 	uint64_t possibleIdentifier = CIdentifier::random().toUInteger();
 	CIdentifier finalIdentifier;
@@ -91,8 +82,6 @@ CIdentifier CVisualizationManager::getUnusedIdentifier(void) const
 	{
 		finalIdentifier = CIdentifier(possibleIdentifier++);
 		it = m_VisualizationTrees.find(finalIdentifier);
-	}
-	while (it != m_VisualizationTrees.end() || finalIdentifier == OV_UndefinedIdentifier);
+	} while (it != m_VisualizationTrees.end() || finalIdentifier == OV_UndefinedIdentifier);
 	return finalIdentifier;
 }
-

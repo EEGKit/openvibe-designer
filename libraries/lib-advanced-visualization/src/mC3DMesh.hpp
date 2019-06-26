@@ -37,25 +37,23 @@ namespace Mensia
 		{
 		public:
 
-			C3DMesh(void);
-			C3DMesh(const char* sFilename);
-			virtual ~C3DMesh(void);
+			C3DMesh();
+			//C3DMesh(const char* sFilename);
+			virtual ~C3DMesh();
 
-			virtual void clear(void);
+			virtual void clear();
 			virtual bool load(const void* pBuffer, unsigned int uiBufferSize);
-			virtual bool compile(void);
+			virtual bool compile();
 
-			virtual bool project(std::vector < CVertex >& vProjectedChannelCoordinate, const std::vector < CVertex >& vChannelCoordinate);
+			virtual bool project(std::vector<CVertex>& vProjectedChannelCoordinate, const std::vector<CVertex>& vChannelCoordinate);
 
-		public:
-
-			std::vector < CVertex > m_vVertex;
-			std::vector < CVertex > m_vNormal;
-			std::vector < uint32_t > m_vTriangle;
+			std::vector<CVertex> m_vVertex;
+			std::vector<CVertex> m_vNormal;
+			std::vector<uint32_t> m_vTriangle;
 			float m_vColor[3];
 		};
-	};
-};
+	}  // namespace AdvancedVisualization
+}  // namespace Mensia
 
 
 #endif // TARGET_HAS_ThirdPartyOpenGL

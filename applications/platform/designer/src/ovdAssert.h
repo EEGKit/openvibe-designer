@@ -31,13 +31,12 @@
 #define NOEXCEPT
 #endif
 
-class DesignerException final: public std::runtime_error
+class DesignerException final : public std::runtime_error
 {
 public:
 	DesignerException(OpenViBE::Kernel::IErrorManager& errorManager)
-	    : std::runtime_error("Designer caused an exception")
-	    , m_ErrorManager(errorManager)
-	{}
+		: std::runtime_error("Designer caused an exception")
+		  , m_ErrorManager(errorManager) {}
 
 	const char* what() const NOEXCEPT override
 	{
@@ -53,7 +52,7 @@ public:
 			char location[1024];
 			FS::Files::getFilename(error->getErrorLocation(), location);
 			errorMessage += "Message: " + std::string(error->getErrorString()) +
-			        "\nFile: " + location + "\n";
+				"\nFile: " + location + "\n";
 			error = error->getNestedError();
 		}
 		m_ErrorManager.releaseErrors();

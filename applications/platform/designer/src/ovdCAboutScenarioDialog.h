@@ -1,5 +1,4 @@
-#ifndef __OpenViBEDesigner_CAboutScenarioDialog_H__
-#define __OpenViBEDesigner_CAboutScenarioDialog_H__
+#pragma once
 
 #include "ovd_base.h"
 
@@ -10,9 +9,9 @@ namespace OpenViBEDesigner
 	public:
 
 		CAboutScenarioDialog(const OpenViBE::Kernel::IKernelContext& rKernelContext, OpenViBE::Kernel::IScenario& rScenario, const char* sGUIFilename);
-		virtual ~CAboutScenarioDialog(void);
+		virtual ~CAboutScenarioDialog();
 
-		OpenViBE::boolean run(void);
+		bool run();
 
 	protected:
 
@@ -22,8 +21,6 @@ namespace OpenViBEDesigner
 
 	private:
 
-		CAboutScenarioDialog(void);
+		CAboutScenarioDialog();
 	};
 };
-
-#endif // __OpenViBEDesigner_CAboutScenarioDialog_H__

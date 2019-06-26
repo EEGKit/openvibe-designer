@@ -18,9 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef __OpenViBEPlugins_CRulerAutoType_H__
-#define __OpenViBEPlugins_CRulerAutoType_H__
+#pragma once
 
 #include "../mIRuler.hpp"
 #include "../m_VisualizationTools.hpp"
@@ -34,7 +32,7 @@ namespace Mensia
 		{
 		public:
 
-			virtual void setRendererContext(const IRendererContext* pRendererContext)
+			void setRendererContext(const IRendererContext* pRendererContext) override
 			{
 				IRuler::setRendererContext(pRendererContext);
 				m_oRulerSignal.setRendererContext(pRendererContext);
@@ -42,7 +40,7 @@ namespace Mensia
 				m_oRulerMatrix.setRendererContext(pRendererContext);
 			}
 
-			virtual void setRenderer(const IRenderer* pRenderer)
+			void setRenderer(const IRenderer* pRenderer) override
 			{
 				IRuler::setRenderer(pRenderer);
 				m_oRulerSignal.setRenderer(pRenderer);
@@ -50,14 +48,15 @@ namespace Mensia
 				m_oRulerMatrix.setRenderer(pRenderer);
 			}
 
-			virtual void render(void)
+			void render() override
+
 			{
-				IRendererContext::EDataType l_eDataType=m_pRendererContext->getDataType();
-				if(l_eDataType==IRendererContext::DataType_Signal)
+				const IRendererContext::EDataType l_eDataType = m_pRendererContext->getDataType();
+				if (l_eDataType == IRendererContext::DataType_Signal)
 				{
 					m_oRulerSignal.doRender();
 				}
-				else if(l_eDataType==IRendererContext::DataType_Spectrum)
+				else if (l_eDataType == IRendererContext::DataType_Spectrum)
 				{
 					m_oRulerSpectrum.doRender();
 				}
@@ -67,14 +66,14 @@ namespace Mensia
 				}
 			}
 
-			virtual void renderLeft(::GtkWidget* pWidget)
+			void renderLeft(GtkWidget* pWidget) override
 			{
-				IRendererContext::EDataType l_eDataType=m_pRendererContext->getDataType();
-				if(l_eDataType==IRendererContext::DataType_Signal)
+				const IRendererContext::EDataType l_eDataType = m_pRendererContext->getDataType();
+				if (l_eDataType == IRendererContext::DataType_Signal)
 				{
 					m_oRulerSignal.doRenderLeft(pWidget);
 				}
-				else if(l_eDataType==IRendererContext::DataType_Spectrum)
+				else if (l_eDataType == IRendererContext::DataType_Spectrum)
 				{
 					m_oRulerSpectrum.doRenderLeft(pWidget);
 				}
@@ -84,14 +83,14 @@ namespace Mensia
 				}
 			}
 
-			virtual void renderRight(::GtkWidget* pWidget)
+			void renderRight(GtkWidget* pWidget) override
 			{
-				IRendererContext::EDataType l_eDataType=m_pRendererContext->getDataType();
-				if(l_eDataType==IRendererContext::DataType_Signal)
+				const IRendererContext::EDataType l_eDataType = m_pRendererContext->getDataType();
+				if (l_eDataType == IRendererContext::DataType_Signal)
 				{
 					m_oRulerSignal.doRenderRight(pWidget);
 				}
-				else if(l_eDataType==IRendererContext::DataType_Spectrum)
+				else if (l_eDataType == IRendererContext::DataType_Spectrum)
 				{
 					m_oRulerSpectrum.doRenderRight(pWidget);
 				}
@@ -101,15 +100,15 @@ namespace Mensia
 				}
 			}
 
-			virtual void renderBottom(::GtkWidget* pWidget)
+			void renderBottom(GtkWidget* pWidget) override
 			{
-				IRendererContext::EDataType l_eDataType=m_pRendererContext->getDataType();
+				const IRendererContext::EDataType l_eDataType = m_pRendererContext->getDataType();
 
-				if(l_eDataType==IRendererContext::DataType_Signal)
+				if (l_eDataType == IRendererContext::DataType_Signal)
 				{
 					m_oRulerSignal.doRenderBottom(pWidget);
 				}
-				else if(l_eDataType==IRendererContext::DataType_Spectrum)
+				else if (l_eDataType == IRendererContext::DataType_Spectrum)
 				{
 					m_oRulerSpectrum.doRenderBottom(pWidget);
 				}
@@ -125,7 +124,5 @@ namespace Mensia
 			TRulerSignal m_oRulerSignal;
 			TRulerSpectrum m_oRulerSpectrum;
 		};
-	};
-};
-
-#endif // __OpenViBEPlugins_CRulerAutoType_H__
+	}  // namespace AdvancedVisualization
+}  // namespace Mensia

@@ -18,9 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef __OpenViBEPlugins_TRulerPair_H__
-#define __OpenViBEPlugins_TRulerPair_H__
+#pragma once
 
 #include "../mIRuler.hpp"
 
@@ -33,39 +31,39 @@ namespace Mensia
 		{
 		public:
 
-			virtual void setRendererContext(const IRendererContext* pRendererContext)
+			void setRendererContext(const IRendererContext* pRendererContext) override
 			{
 				IRuler::setRendererContext(pRendererContext);
 				first.setRendererContext(pRendererContext);
 				second.setRendererContext(pRendererContext);
 			}
 
-			virtual void setRenderer(const IRenderer* pRenderer)
+			void setRenderer(const IRenderer* pRenderer) override
 			{
 				IRuler::setRenderer(pRenderer);
 				first.setRenderer(pRenderer);
 				second.setRenderer(pRenderer);
 			}
 
-			virtual void render()
+			void render() override
 			{
 				first.doRender();
 				second.doRender();
 			}
 
-			virtual void renderLeft(::GtkWidget* pWidget)
+			void renderLeft(GtkWidget* pWidget) override
 			{
 				first.doRenderLeft(pWidget);
 				second.doRenderLeft(pWidget);
 			}
 
-			virtual void renderRight(::GtkWidget* pWidget)
+			void renderRight(GtkWidget* pWidget) override
 			{
 				first.doRenderRight(pWidget);
 				second.doRenderRight(pWidget);
 			}
 
-			virtual void renderBottom(::GtkWidget* pWidget)
+			void renderBottom(GtkWidget* pWidget) override
 			{
 				first.doRenderBottom(pWidget);
 				second.doRenderBottom(pWidget);
@@ -74,7 +72,5 @@ namespace Mensia
 			T1 first;
 			T2 second;
 		};
-	};
-};
-
-#endif // __OpenViBEPlugins_TRulerPair_H__
+	}  // namespace AdvancedVisualization
+}  // namespace Mensia

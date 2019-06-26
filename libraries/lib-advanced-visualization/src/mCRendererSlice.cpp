@@ -18,30 +18,30 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #include "mCRendererSlice.hpp"
 #include "m_RendererTools.hpp"
 
 using namespace Mensia;
-using namespace Mensia::AdvancedVisualization;
+using namespace AdvancedVisualization;
 
 void CRendererSlice::rebuild(const IRendererContext& rContext)
 {
 	CRenderer::rebuild(rContext);
 
-	uint32_t i, j, k=0, l=0;
+	uint32_t k = 0, l = 0;
 
 	m_vVertex.clear();
-	m_vVertex.resize(m_ui32SampleCount*m_ui32ChannelCount*8);
+	m_vVertex.resize(m_sampleCount * m_channelCount * 8);
 
 	m_vQuad.clear();
-	m_vQuad.resize(m_ui32SampleCount*m_ui32ChannelCount*6*4);
+	m_vQuad.resize(m_sampleCount * m_channelCount * 6 * 4);
 
-	for(i=0; i<m_ui32SampleCount; i++)
+	for (uint32_t i = 0; i < m_sampleCount; ++i)
 	{
-		for(j=0; j<m_ui32ChannelCount; j++)
+		for (uint32_t j = 0; j < m_channelCount; j++)
 		{
-			const float f32Size=.5;
+			const float f32Size = .5;
 
 			m_vQuad[l++] = k + 0;
 			m_vQuad[l++] = k + 1; // q0
@@ -73,9 +73,9 @@ void CRendererSlice::rebuild(const IRendererContext& rContext)
 			m_vQuad[l++] = k + 3;
 			m_vQuad[l++] = k + 2;
 
-			float ox = 0;
-			float oy = ((m_ui32ChannelCount-1)*.5f-j);
-			float oz = ((m_ui32SampleCount-1)*.5f-i);
+			const float ox = 0;
+			const float oy = 0.5f * float(m_channelCount - 1) - j;
+			const float oz = 0.5f * float(m_sampleCount - 1) - i;
 
 			m_vVertex[k].x = ox + f32Size;
 			m_vVertex[k].y = oy - f32Size; // v0
@@ -118,137 +118,135 @@ void CRendererSlice::rebuild(const IRendererContext& rContext)
 			k++;
 		}
 	}
-	m_ui32HistoryIndex=0;
+	m_historyIndex = 0;
 }
 
 void CRendererSlice::refresh(const IRendererContext& rContext)
 {
 	CRenderer::refresh(rContext);
 
-	uint32_t i, j, k, l;
-
-	for(i=m_ui32HistoryIndex; i<m_ui32HistoryCount; i++)
+	for (uint32_t i = m_historyIndex; i < m_historyCount; ++i)
 	{
-		k = (i % m_ui32SampleCount) * m_ui32ChannelCount * 8;
-		for(j=0; j<m_ui32ChannelCount; j++)
+		uint32_t k = (i % m_sampleCount) * m_channelCount * 8;
+		for (uint32_t j = 0; j < m_channelCount; j++)
 		{
-			for(l=0; l<8; l++)
+			for (uint32_t l = 0; l < 8; l++)
 			{
-				m_vVertex[k++].u = m_vHistory[j][i];
+				m_vVertex[k++].u = m_history[j][i];
 			}
 		}
 	}
 
-	m_ui32HistoryIndex=m_ui32HistoryCount;
+	m_historyIndex = m_historyCount;
 }
 
 bool CRendererSlice::render(const IRendererContext& rContext)
 {
 	// uint32_t i, j;
-	float d=3.5;
+	const float d = 3.5;
 
-	if(!rContext.getSelectedCount()) return false;
-	if(!m_ui32HistoryCount) return false;
+	if (!rContext.getSelectedCount()) { return false; }
+	if (!m_historyCount) { return false; }
 
-	::glDisable(GL_DEPTH_TEST);
-	::glDisable(GL_LIGHTING);
-//	::glEnable(GL_CULL_FACE);
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_LIGHTING);
+	//	::glEnable(GL_CULL_FACE);
 
-	::glMatrixMode(GL_PROJECTION);
-	::glPushMatrix();
-	::glLoadIdentity();
-	::gluPerspective(60, rContext.getAspect(), .01, 100);
-	::glTranslatef(0, 0, -d);
-	::glRotatef(rContext.getRotationX()*10, 1, 0, 0);
-	::glRotatef(rContext.getRotationY()*10, 0, 1, 0);
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	gluPerspective(60, rContext.getAspect(), .01, 100);
+	glTranslatef(0, 0, -d);
+	glRotatef(rContext.getRotationX() * 10, 1, 0, 0);
+	glRotatef(rContext.getRotationY() * 10, 0, 1, 0);
 
-	::glMatrixMode(GL_TEXTURE);
-	::glPushMatrix();
-	::glScalef(rContext.getScale(), 1, 1);
+	glMatrixMode(GL_TEXTURE);
+	glPushMatrix();
+	glScalef(rContext.getScale(), 1, 1);
 
-	::glMatrixMode(GL_MODELVIEW);
-	::glPushMatrix();
-	::glLoadIdentity();
-	::glScalef(rContext.getZoom(), rContext.getZoom(), rContext.getZoom());
-	::glScalef(1., 1., 3.);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+	glScalef(rContext.getZoom(), rContext.getZoom(), rContext.getZoom());
+	glScalef(1., 1., 3.);
 
-	::glPushMatrix();
-	::glScalef(1.f/rContext.getStackCount(), 1.f/m_ui32ChannelCount, 1.f/m_ui32SampleCount);
-	::glTranslatef(rContext.getStackIndex()-(rContext.getStackCount()-1)*.5f, 0, 0);
-	::glColor4f(.1f, .1f, .1f, rContext.getTranslucency());
+	glPushMatrix();
+	glScalef(1.f / rContext.getStackCount(), 1.f / m_channelCount, 1.f / m_sampleCount);
+	glTranslatef(rContext.getStackIndex() - 0.5f * float(rContext.getStackCount() - 1), 0, 0);
+	glColor4f(.1f, .1f, .1f, rContext.getTranslucency());
 
-	::glEnableClientState(GL_VERTEX_ARRAY);
-	::glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	::glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_vVertex[0].x);
-	::glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_vVertex[0].u);
-	::glDrawElements(GL_QUADS, m_vQuad.size(), GL_UNSIGNED_INT, &m_vQuad[0]);
+	glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_vVertex[0].x);
+	glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_vVertex[0].u);
+	glDrawElements(GL_QUADS, GLsizei(m_vQuad.size()), GL_UNSIGNED_INT, &m_vQuad[0]);
 
-	::glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	::glDisableClientState(GL_VERTEX_ARRAY);
-	::glPopMatrix();
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glPopMatrix();
 
-	::glDisable(GL_TEXTURE_1D);
+	glDisable(GL_TEXTURE_1D);
 
-	float l_f32Progress = 1 - (m_ui32HistoryIndex%m_ui32SampleCount)*2.f/m_ui32SampleCount;
-	::glScalef(.5, .5, .5);
-	::glBegin(GL_LINE_LOOP);
-		::glColor3f(1, 1, 1);
-		::glVertex3f(-1, -1, -1);
-		::glVertex3f(-1,  1, -1);
-		::glVertex3f( 1,  1, -1);
-		::glVertex3f( 1, -1, -1);
-	::glEnd();
-	::glBegin(GL_LINE_LOOP);
-		::glColor3f(1, 1, 1);
-		::glVertex3f(-1, -1,  1);
-		::glVertex3f(-1,  1,  1);
-		::glVertex3f( 1,  1,  1);
-		::glVertex3f( 1, -1,  1);
-	::glEnd();
-	::glBegin(GL_LINE_LOOP);
-		::glColor3f(1, 1, 1);
-		::glVertex3f(-1, -1, -1);
-		::glVertex3f(-1,  1, -1);
-		::glVertex3f(-1,  1,  1);
-		::glVertex3f(-1, -1,  1);
-	::glEnd();
-	::glBegin(GL_LINE_LOOP);
-		::glColor3f(1, 1, 1);
-		::glVertex3f( 1, -1, -1);
-		::glVertex3f( 1,  1, -1);
-		::glVertex3f( 1,  1,  1);
-		::glVertex3f( 1, -1,  1);
-	::glEnd();
-	::glBegin(GL_LINE_LOOP);
-		::glColor4f(0.25f, 1, 0.25f, .9f/rContext.getStackCount());
-		::glVertex3f(-1, -1,  l_f32Progress);
-		::glVertex3f(-1,  1,  l_f32Progress);
-		::glVertex3f( 1,  1,  l_f32Progress);
-		::glVertex3f( 1, -1,  l_f32Progress);
-	::glEnd();
-	::glBegin(GL_QUADS);
-		::glColor4f(0.25f, 1, 0.25f, .1f/rContext.getStackCount());
-		::glVertex3f(-1, -1,  l_f32Progress);
-		::glVertex3f(-1,  1,  l_f32Progress);
-		::glVertex3f( 1,  1,  l_f32Progress);
-		::glVertex3f( 1, -1,  l_f32Progress);
-	::glEnd();
+	const float progress = 1 - 2.0f * float(m_historyIndex % m_sampleCount) / m_sampleCount;
+	glScalef(.5, .5, .5);
+	glBegin(GL_LINE_LOOP);
+	glColor3f(1, 1, 1);
+	glVertex3f(-1, -1, -1);
+	glVertex3f(-1, 1, -1);
+	glVertex3f(1, 1, -1);
+	glVertex3f(1, -1, -1);
+	glEnd();
+	glBegin(GL_LINE_LOOP);
+	glColor3f(1, 1, 1);
+	glVertex3f(-1, -1, 1);
+	glVertex3f(-1, 1, 1);
+	glVertex3f(1, 1, 1);
+	glVertex3f(1, -1, 1);
+	glEnd();
+	glBegin(GL_LINE_LOOP);
+	glColor3f(1, 1, 1);
+	glVertex3f(-1, -1, -1);
+	glVertex3f(-1, 1, -1);
+	glVertex3f(-1, 1, 1);
+	glVertex3f(-1, -1, 1);
+	glEnd();
+	glBegin(GL_LINE_LOOP);
+	glColor3f(1, 1, 1);
+	glVertex3f(1, -1, -1);
+	glVertex3f(1, 1, -1);
+	glVertex3f(1, 1, 1);
+	glVertex3f(1, -1, 1);
+	glEnd();
+	glBegin(GL_LINE_LOOP);
+	glColor4f(0.25f, 1, 0.25f, .9f / rContext.getStackCount());
+	glVertex3f(-1, -1, progress);
+	glVertex3f(-1, 1, progress);
+	glVertex3f(1, 1, progress);
+	glVertex3f(1, -1, progress);
+	glEnd();
+	glBegin(GL_QUADS);
+	glColor4f(0.25f, 1, 0.25f, .1f / rContext.getStackCount());
+	glVertex3f(-1, -1, progress);
+	glVertex3f(-1, 1, progress);
+	glVertex3f(1, 1, progress);
+	glVertex3f(1, -1, progress);
+	glEnd();
 
-	::glEnable(GL_TEXTURE_1D);
+	glEnable(GL_TEXTURE_1D);
 
-	if(rContext.getCheckBoardVisibility()) this->drawCoordinateSystem();
+	if (rContext.getCheckBoardVisibility()) this->drawCoordinateSystem();
 
-	::glMatrixMode(GL_MODELVIEW);
-	::glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
 
-	::glMatrixMode(GL_TEXTURE);
-	::glPopMatrix();
+	glMatrixMode(GL_TEXTURE);
+	glPopMatrix();
 
-	::glMatrixMode(GL_PROJECTION);
-	::glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
 
-	::glMatrixMode(GL_MODELVIEW);
+	glMatrixMode(GL_MODELVIEW);
 
 	return true;
 }

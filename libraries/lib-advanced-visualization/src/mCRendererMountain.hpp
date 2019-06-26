@@ -18,9 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef __Mensia_AdvancedVisualization_CRendererMountain_H__
-#define __Mensia_AdvancedVisualization_CRendererMountain_H__
+#pragma once
 
 #include "mCRenderer.hpp"
 #include "mC3DMesh.hpp"
@@ -36,13 +34,11 @@ namespace Mensia
 		{
 		public:
 
-			virtual void rebuild(const IRendererContext& rContext);
-			virtual void refresh(const IRendererContext& rContext);
-			virtual bool render(const IRendererContext& rContext);
+			void rebuild(const IRendererContext& rContext) override;
+			void refresh(const IRendererContext& rContext) override;
+			bool render(const IRendererContext& rContext) override;
 
 			C3DMesh m_oMountain;
 		};
-	};
-};
-
-#endif // __Mensia_AdvancedVisualization_CRendererMountain_H__
+	}  // namespace AdvancedVisualization
+}  // namespace Mensia

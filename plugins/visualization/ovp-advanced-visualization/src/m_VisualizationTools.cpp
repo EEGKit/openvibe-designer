@@ -22,20 +22,21 @@
 #include "m_VisualizationTools.hpp"
 
 using namespace Mensia;
-using namespace Mensia::AdvancedVisualization;
+using namespace AdvancedVisualization;
 
-std::string Mensia::AdvancedVisualization::trim(const std::string& sValue)
+std::string AdvancedVisualization::trim(const std::string& sValue)
 {
-	if(sValue.length()==0) return "";
-	size_t i=0;
-	size_t j=sValue.length()-1;
-	while(i<sValue.length() && sValue[i]==' ') i++;
-	while(j>i && sValue[j]==' ') j--;
-	return sValue.substr(i, j-i+1);
+	if (sValue.length() == 0) { return ""; }
+	size_t i = 0;
+	size_t j = sValue.length() - 1;
+	while (i < sValue.length() && sValue[i] == ' ') { i++; }
+	while (j > i && sValue[j] == ' ') { j--; }
+	return sValue.substr(i, j - i + 1);
 }
 
-IRendererContext& Mensia::AdvancedVisualization::getContext(void)
+IRendererContext& AdvancedVisualization::getContext()
+
 {
-	static IRendererContext* l_pRendererContext=IRendererContext::create();
+	static IRendererContext* l_pRendererContext = IRendererContext::create();
 	return *l_pRendererContext;
 }

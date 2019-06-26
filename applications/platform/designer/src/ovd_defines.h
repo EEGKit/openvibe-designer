@@ -1,5 +1,4 @@
-#ifndef __OpenViBEDesigner_defines_H__
-#define __OpenViBEDesigner_defines_H__
+#pragma once
 
 //Attributes of visualisation window :
 #define OVD_AttributeId_VisualisationWindow_Width           OpenViBE::CIdentifier(0x7B814CCA, 0x271DF6DD)
@@ -13,20 +12,19 @@
 
 namespace OpenViBEDesigner
 {
-
 	typedef enum
 	{
-		CommandLineFlag_None             =0x00000000,
-		CommandLineFlag_Open             =0x00000001,
-		CommandLineFlag_Play             =0x00000002,
-		CommandLineFlag_PlayFast         =0x00000004,
-		CommandLineFlag_NoGui            =0x00000008,
+		CommandLineFlag_None =0x00000000,
+		CommandLineFlag_Open =0x00000001,
+		CommandLineFlag_Play =0x00000002,
+		CommandLineFlag_PlayFast =0x00000004,
+		CommandLineFlag_NoGui =0x00000008,
 		CommandLineFlag_NoCheckColorDepth=0x00000010,
-		CommandLineFlag_NoManageSession  =0x00000020,
-		CommandLineFlag_Define           =0x00000040,
-		CommandLineFlag_Config           =0x00000080,
-		CommandLineFlag_RandomSeed       =0x00000100,
-		CommandLineFlag_NoVisualization  =0x00000200  /** flag to hide visualisation widget */
+		CommandLineFlag_NoManageSession =0x00000020,
+		CommandLineFlag_Define =0x00000040,
+		CommandLineFlag_Config =0x00000080,
+		CommandLineFlag_RandomSeed =0x00000100,
+		CommandLineFlag_NoVisualization =0x00000200  /** flag to hide visualisation widget */
 	} ECommandLineFlag;
 
 	enum
@@ -157,7 +155,5 @@ namespace OpenViBEDesigner
 //                                                                   //
 
 #ifdef TARGET_HAS_ThirdPartyOpenViBEPluginsGlobalDefines
- #include "ovp_global_defines.h"
+#include "ovp_global_defines.h"
 #endif // TARGET_HAS_ThirdPartyOpenViBEPluginsGlobalDefines
-
-#endif // __OpenViBEDesigner_defines_H__

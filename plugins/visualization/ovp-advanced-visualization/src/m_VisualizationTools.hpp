@@ -18,9 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
- 
-#ifndef __OpenViBEPlugins_Tools_H__
-#define __OpenViBEPlugins_Tools_H__
+#pragma once
 
 #include "m_defines.hpp"
 
@@ -33,8 +31,6 @@ namespace Mensia
 	namespace AdvancedVisualization
 	{
 		std::string trim(const std::string& sValue);
-		IRendererContext& getContext(void);
-	};
-};
-
-#endif // __OpenViBEPlugins_Tools_H__
+		IRendererContext& getContext();
+	} // namespace AdvancedVisualization
+} // namespace Mensia

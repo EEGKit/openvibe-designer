@@ -19,7 +19,7 @@ namespace OpenViBEVisualizationToolkit
 		 * @retval true In case of success.
 		 * @retval false In case of error.
 		 */
-		virtual bool setManager(OpenViBEVisualizationToolkit::IVisualizationManager* visualizationManager) = 0;
+		virtual bool setManager(IVisualizationManager* visualizationManager) = 0;
 
 		/**
 		 * @brief Forward a GtkWidget which displays content to the visualization manager
@@ -33,7 +33,7 @@ namespace OpenViBEVisualizationToolkit
 		/**
 		 * @brief Forward a GtkWidget which displays the box toolbar to the visualization manager
 		 * @param box The current box.
-		 * @param widget The Gtk widget used to display the controls of the visualization.
+		 * @param toolbarWidget The Gtk widget used to display the controls of the visualization.
 		 * @retval true In case of success.
 		 * @retval false In case of error.
 		 */
@@ -41,4 +41,4 @@ namespace OpenViBEVisualizationToolkit
 
 		_IsDerivedFromClass_(OpenViBE::Plugins::IPluginObject, OV_ClassId_VisualizationContext)
 	};
-}
+}  // namespace OpenViBEVisualizationToolkit

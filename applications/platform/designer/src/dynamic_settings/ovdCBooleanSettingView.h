@@ -1,5 +1,4 @@
-#ifndef __OpenViBE_Designer_Setting_CBooleanSettingView_H__
-#define __OpenViBE_Designer_Setting_CBooleanSettingView_H__
+#pragma once
 
 #include "../ovd_base.h"
 #include "ovdCAbstractSettingView.h"
@@ -11,23 +10,19 @@ namespace OpenViBEDesigner
 		class CBooleanSettingView : public CAbstractSettingView
 		{
 		public:
-			CBooleanSettingView(OpenViBE::Kernel::IBox& rBox, OpenViBE::uint32 ui32Index, OpenViBE::CString &rBuilderName);
+			CBooleanSettingView(OpenViBE::Kernel::IBox& rBox, uint32_t index, OpenViBE::CString& rBuilderName);
 
-			virtual void getValue(OpenViBE::CString &rValue) const;
-			virtual void setValue(const OpenViBE::CString &rValue);
+			void getValue(OpenViBE::CString& value) const override;
+			void setValue(const OpenViBE::CString& value) override;
 
 			void toggleButtonClick();
 			void onChange();
 
 
 		private:
-			::GtkToggleButton* m_pToggle;
-			::GtkEntry* m_pEntry;
-			OpenViBE::boolean m_bOnValueSetting;
+			GtkToggleButton* m_toggle = nullptr;
+			GtkEntry* m_entry = nullptr;
+			bool m_onValueSetting = false;
 		};
 	}
-
 }
-
-
-#endif // __OpenViBE_Designer_Setting_CBooleanSettingView_H__

@@ -37,33 +37,29 @@
 #include "mTRendererStimulation.hpp"
 
 using namespace Mensia;
-using namespace Mensia::AdvancedVisualization;
+using namespace AdvancedVisualization;
 
-IRenderer* IRenderer::create(int eRendererType, bool bStimulation)
+IRenderer* IRenderer::create(const int eRendererType, const bool stimulation)
 {
-	switch(eRendererType)
+	switch (eRendererType)
 	{
-		case RendererType_2DTopography: return (bStimulation?NULL:new CRendererTopo2D);
-		case RendererType_3DTopography: return (bStimulation?NULL:new CRendererTopo3D);
-		case RendererType_Bars:         return (bStimulation?new TRendererStimulation < true, CRendererBars >:new CRendererBars);
-		case RendererType_Bitmap:       return (bStimulation?new TRendererStimulation < true, CRendererBitmap >:new CRendererBitmap);
-		case RendererType_Connectivity: return (bStimulation?NULL:new CRendererConnectivity);
-		case RendererType_Cube:         return (bStimulation?NULL:new CRendererCube);
-		case RendererType_Flower:       return (bStimulation?NULL:new CRendererFlower);
-		case RendererType_Line:         return (bStimulation?new TRendererStimulation < false, CRendererLine >:new CRendererLine);
-		case RendererType_Loreta:       return (bStimulation?NULL:new CRendererLoreta);
-		case RendererType_Mountain:     return (bStimulation?NULL:new CRendererMountain);
-		case RendererType_MultiLine:    return (bStimulation?new TRendererStimulation < false, CRendererMultiLine >:new CRendererMultiLine);
-		case RendererType_Slice:        return (bStimulation?NULL:new CRendererSlice);
-		case RendererType_XYZPlot:      return (bStimulation?NULL:new CRendererXYZPlot);
-//		case RendererType_:             return (bStimulation?new TRendererStimulation < false, CRenderer >:new CRenderer);
+		case RendererType_2DTopography: return (stimulation ? nullptr : new CRendererTopo2D);
+		case RendererType_3DTopography: return (stimulation ? nullptr : new CRendererTopo3D);
+		case RendererType_Bars: return (stimulation ? new TRendererStimulation<true, CRendererBars> : new CRendererBars);
+		case RendererType_Bitmap: return (stimulation ? new TRendererStimulation<true, CRendererBitmap> : new CRendererBitmap);
+		case RendererType_Connectivity: return (stimulation ? nullptr : new CRendererConnectivity);
+		case RendererType_Cube: return (stimulation ? nullptr : new CRendererCube);
+		case RendererType_Flower: return (stimulation ? nullptr : new CRendererFlower);
+		case RendererType_Line: return (stimulation ? new TRendererStimulation<false, CRendererLine> : new CRendererLine);
+		case RendererType_Loreta: return (stimulation ? nullptr : new CRendererLoreta);
+		case RendererType_Mountain: return (stimulation ? nullptr : new CRendererMountain);
+		case RendererType_MultiLine: return (stimulation ? new TRendererStimulation<false, CRendererMultiLine> : new CRendererMultiLine);
+		case RendererType_Slice: return (stimulation ? nullptr : new CRendererSlice);
+		case RendererType_XYZPlot: return (stimulation ? nullptr : new CRendererXYZPlot);
+			//		case RendererType_:             return (stimulation?new TRendererStimulation < false, CRenderer >:new CRenderer);
 		default:
-			return NULL;
+			return nullptr;
 	}
-	return NULL;
 }
 
-void IRenderer::release(IRenderer* pRenderer)
-{
-	delete pRenderer;
-}
+void IRenderer::release(IRenderer* pRenderer) { delete pRenderer; }

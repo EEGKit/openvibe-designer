@@ -1,5 +1,4 @@
-#ifndef __OpenViBEDesigner_CSettingCollectionHelper_H__
-#define __OpenViBEDesigner_CSettingCollectionHelper_H__
+#pragma once
 
 #include "ovd_base.h"
 
@@ -12,46 +11,42 @@ namespace OpenViBEDesigner
 	public:
 
 		CSettingCollectionHelper(const OpenViBE::Kernel::IKernelContext& rKernelContext, const char* sGUIFilename);
-		virtual ~CSettingCollectionHelper(void);
+		virtual ~CSettingCollectionHelper();
 
-		OpenViBE::CString getSettingWidgetName(const OpenViBE::CIdentifier& rTypeIdentifier);
-		OpenViBE::CString getSettingEntryWidgetName(const OpenViBE::CIdentifier& rTypeIdentifier);
+		OpenViBE::CString getSettingWidgetName(const OpenViBE::CIdentifier& rTypeIdentifier) const;
+		OpenViBE::CString getSettingEntryWidgetName(const OpenViBE::CIdentifier& rTypeIdentifier) const;
 
-		OpenViBE::CString getValue(const OpenViBE::CIdentifier& rTypeIdentifier, ::GtkWidget* pWidget);
-		OpenViBE::CString getValueBoolean(::GtkWidget* pWidget);
-		OpenViBE::CString getValueInteger(::GtkWidget* pWidget);
-		OpenViBE::CString getValueFloat(::GtkWidget* pWidget);
-		OpenViBE::CString getValueString(::GtkWidget* pWidget);
-		OpenViBE::CString getValueFilename(::GtkWidget* pWidget);
-		OpenViBE::CString getValueFoldername(::GtkWidget* pWidget);
-		OpenViBE::CString getValueScript(::GtkWidget* pWidget);
-		OpenViBE::CString getValueColor(::GtkWidget* pWidget);
-		OpenViBE::CString getValueColorGradient(::GtkWidget* pWidget);
-		OpenViBE::CString getValueEnumeration(const OpenViBE::CIdentifier& rTypeIdentifier, ::GtkWidget* pWidget);
-		OpenViBE::CString getValueBitMask(const OpenViBE::CIdentifier& rTypeIdentifier, ::GtkWidget* pWidget);
+		OpenViBE::CString getValue(const OpenViBE::CIdentifier& rTypeIdentifier, GtkWidget* widget) const;
+		static OpenViBE::CString getValueBoolean(GtkWidget* widget);
+		static OpenViBE::CString getValueInteger(GtkWidget* widget);
+		static OpenViBE::CString getValueFloat(GtkWidget* widget);
+		static OpenViBE::CString getValueString(GtkWidget* widget);
+		static OpenViBE::CString getValueFilename(GtkWidget* widget);
+		static OpenViBE::CString getValueFoldername(GtkWidget* widget);
+		static OpenViBE::CString getValueScript(GtkWidget* widget);
+		static OpenViBE::CString getValueColor(GtkWidget* widget);
+		static OpenViBE::CString getValueColorGradient(GtkWidget* widget);
+		static OpenViBE::CString getValueEnumeration(const OpenViBE::CIdentifier& rTypeIdentifier, GtkWidget* widget);
+		static OpenViBE::CString getValueBitMask(const OpenViBE::CIdentifier& rTypeIdentifier, GtkWidget* widget);
 
-		void setValue(const OpenViBE::CIdentifier& rTypeIdentifier, ::GtkWidget* pWidget, const OpenViBE::CString& rValue);
-		void setValueBoolean(::GtkWidget* pWidget, const OpenViBE::CString& rValue);
-		void setValueInteger(::GtkWidget* pWidget, const OpenViBE::CString& rValue);
-		void setValueFloat(::GtkWidget* pWidget, const OpenViBE::CString& rValue);
-		void setValueString(::GtkWidget* pWidget, const OpenViBE::CString& rValue);
-		void setValueFilename(::GtkWidget* pWidget, const OpenViBE::CString& rValue);
-		void setValueFoldername(::GtkWidget* pWidget, const OpenViBE::CString& rValue);
-		void setValueScript(::GtkWidget* pWidget, const OpenViBE::CString& rValue);
-		void setValueColor(::GtkWidget* pWidget, const OpenViBE::CString& rValue);
-		void setValueColorGradient(::GtkWidget* pWidget, const OpenViBE::CString& rValue);
-		void setValueEnumeration(const OpenViBE::CIdentifier& rTypeIdentifier, ::GtkWidget* pWidget, const OpenViBE::CString& rValue);
-		void setValueBitMask(const OpenViBE::CIdentifier& rTypeIdentifier, ::GtkWidget* pWidget, const OpenViBE::CString& rValue);
-
-	public:
+		void setValue(const OpenViBE::CIdentifier& rTypeIdentifier, GtkWidget* widget, const OpenViBE::CString& rValue);
+		void setValueBoolean(GtkWidget* widget, const OpenViBE::CString& rValue);
+		void setValueInteger(GtkWidget* widget, const OpenViBE::CString& rValue);
+		void setValueFloat(GtkWidget* widget, const OpenViBE::CString& rValue);
+		static void setValueString(GtkWidget* widget, const OpenViBE::CString& rValue);
+		void setValueFilename(GtkWidget* widget, const OpenViBE::CString& rValue);
+		void setValueFoldername(GtkWidget* widget, const OpenViBE::CString& rValue);
+		void setValueScript(GtkWidget* widget, const OpenViBE::CString& rValue);
+		void setValueColor(GtkWidget* widget, const OpenViBE::CString& rValue);
+		void setValueColorGradient(GtkWidget* widget, const OpenViBE::CString& rValue);
+		void setValueEnumeration(const OpenViBE::CIdentifier& rTypeIdentifier, GtkWidget* widget, const OpenViBE::CString& rValue) const;
+		void setValueBitMask(const OpenViBE::CIdentifier& rTypeIdentifier, GtkWidget* widget, const OpenViBE::CString& rValue) const;
 
 		const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
 		OpenViBE::CString m_sGUIFilename;
 
 	private:
 
-		CSettingCollectionHelper(void);
+		CSettingCollectionHelper();
 	};
 };
-
-#endif // __OpenViBEDesigner_CSettingCollectionHelper_H__

@@ -18,9 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef __OpenViBEPlugins_TRulerConditionalPair_H__
-#define __OpenViBEPlugins_TRulerConditionalPair_H__
+#pragma once
 
 #include "../mIRuler.hpp"
 
@@ -33,7 +31,7 @@ namespace Mensia
 		{
 		public:
 
-			virtual void setRendererContext(const IRendererContext* pRendererContext)
+			void setRendererContext(const IRendererContext* pRendererContext) override
 			{
 				IRuler::setRendererContext(pRendererContext);
 				condition.setRendererContext(pRendererContext);
@@ -41,7 +39,7 @@ namespace Mensia
 				second.setRendererContext(pRendererContext);
 			}
 
-			virtual void setRenderer(const IRenderer* pRenderer)
+			void setRenderer(const IRenderer* pRenderer) override
 			{
 				IRuler::setRenderer(pRenderer);
 				condition.setRenderer(pRenderer);
@@ -49,9 +47,9 @@ namespace Mensia
 				second.setRenderer(pRenderer);
 			}
 
-			virtual void render()
+			void render() override
 			{
-				if(condition())
+				if (condition())
 				{
 					first.doRender();
 				}
@@ -61,9 +59,9 @@ namespace Mensia
 				}
 			}
 
-			virtual void renderLeft(::GtkWidget* pWidget)
+			void renderLeft(GtkWidget* pWidget) override
 			{
-				if(condition())
+				if (condition())
 				{
 					first.doRenderLeft(pWidget);
 				}
@@ -73,9 +71,9 @@ namespace Mensia
 				}
 			}
 
-			virtual void renderRight(::GtkWidget* pWidget)
+			void renderRight(GtkWidget* pWidget) override
 			{
-				if(condition())
+				if (condition())
 				{
 					first.doRenderRight(pWidget);
 				}
@@ -85,9 +83,9 @@ namespace Mensia
 				}
 			}
 
-			virtual void renderBottom(::GtkWidget* pWidget)
+			void renderBottom(GtkWidget* pWidget) override
 			{
-				if(condition())
+				if (condition())
 				{
 					first.doRenderBottom(pWidget);
 				}
@@ -101,7 +99,5 @@ namespace Mensia
 			T1 first;
 			T2 second;
 		};
-	};
-};
-
-#endif // __OpenViBEPlugins_TRulerConditionalPair_H__
+	}  // namespace AdvancedVisualization
+} // namespace Mensia

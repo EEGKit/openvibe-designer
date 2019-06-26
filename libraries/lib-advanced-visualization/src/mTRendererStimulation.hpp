@@ -18,9 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef __Mensia_AdvancedVisualization_TRendererStimulation_H__
-#define __Mensia_AdvancedVisualization_TRendererStimulation_H__
+#pragma once
 
 #include "mCRenderer.hpp"
 
@@ -32,12 +30,11 @@ namespace Mensia
 {
 	namespace AdvancedVisualization
 	{
-
 		static const int s_iStimulationIndicatorSmoothness = 10;
 		static const float s_fStimulationIndicatorRadius = 0.01f;
 		static const float s_fStimulationIndicatorSpacing = 0.03f;
 
-		template < bool bPreRender, class T >
+		template <bool bPreRender, class T>
 		class TRendererStimulation : public T
 		{
 		public:
@@ -48,52 +45,51 @@ namespace Mensia
 			{
 				// Render a circle into a buffer so we don't have to do this each time
 
-				for (int i = 0; i < s_iStimulationIndicatorSmoothness; i++)
+				for (int i = 0; i < s_iStimulationIndicatorSmoothness; ++i)
 				{
 					m_vCircle.push_back(std::make_pair(
-					                        s_fStimulationIndicatorRadius * cosf(i / float(s_iStimulationIndicatorSmoothness - 1) * 2 * float(M_PI)),
-					                        s_fStimulationIndicatorRadius * sinf(i / float(s_iStimulationIndicatorSmoothness - 1) * 2 * float(M_PI))
-					                        ));
-
+						s_fStimulationIndicatorRadius * cosf(float(i) / float(s_iStimulationIndicatorSmoothness - 1) * 2 * float(M_PI)),
+						s_fStimulationIndicatorRadius * sinf(float(i) / float(s_iStimulationIndicatorSmoothness - 1) * 2 * float(M_PI))
+					));
 				}
 			}
 
-			virtual bool render(const IRendererContext& rContext)
+			bool render(const IRendererContext& rContext) override
 			{
-				bool l_bResult=true;
+				bool l_bResult = true;
 
-				if(bPreRender)
+				if (bPreRender)
 				{
-					::glPushAttrib(GL_ALL_ATTRIB_BITS);
+					glPushAttrib(GL_ALL_ATTRIB_BITS);
 					l_bResult = T::render(rContext);
-					::glPopAttrib();
+					glPopAttrib();
 				}
 
-				bool ok=true;
-				ok&=(CRenderer::getSampleCount() != 0);
-				ok&=(CRenderer::getHistoryCount() != 0);
-				ok&=(CRenderer::getHistoryIndex() != 0);
+				bool ok = true;
+				ok &= (CRenderer::getSampleCount() != 0);
+				ok &= (CRenderer::getHistoryCount() != 0);
+				ok &= (CRenderer::getHistoryIndex() != 0);
 
-				if(ok)
+				if (ok)
 				{
-					::glPushAttrib(GL_ALL_ATTRIB_BITS);
+					glPushAttrib(GL_ALL_ATTRIB_BITS);
 
-					uint32_t l_ui32SampleCount=CRenderer::getSampleCount();
-					uint32_t l_ui32HistoryIndex=CRenderer::getHistoryIndex();
-					uint64_t l_ui64SampleDuration=rContext.getSampleDuration();
+					const uint32_t sampleCount = CRenderer::getSampleCount();
+					const uint32_t historyIndex = CRenderer::getHistoryIndex();
+					const uint64_t sampleDuration = rContext.getSampleDuration();
 
-					::glDisable(GL_TEXTURE_1D);
-					::glDisable(GL_BLEND);
-					::glDisable(GL_LINE_SMOOTH);
+					glDisable(GL_TEXTURE_1D);
+					glDisable(GL_BLEND);
+					glDisable(GL_LINE_SMOOTH);
 
-					uint32_t l_ui32LeftIndex=l_ui32HistoryIndex-l_ui32HistoryIndex%l_ui32SampleCount;
-					uint32_t l_ui32MidIndex =l_ui32HistoryIndex;
-					double l_f64StartTime=((l_ui32LeftIndex  *l_ui64SampleDuration)>>16)/65536.;
-					double l_f64MidTime  =((l_ui32MidIndex   *l_ui64SampleDuration)>>16)/65536.;
-					double l_f64Duration =((l_ui32SampleCount*l_ui64SampleDuration)>>16)/65536.;
+					const uint32_t leftIndex = historyIndex - historyIndex % sampleCount;
+					const uint32_t midIndex = historyIndex;
+					const double startTime = ((leftIndex * sampleDuration) >> 16) / 65536.;
+					const double midTime = ((midIndex * sampleDuration) >> 16) / 65536.;
+					const double duration = ((sampleCount * sampleDuration) >> 16) / 65536.;
 
 					m_mEncounteredStimulations.clear();
-					for(auto it=CRenderer::m_vStimulationHistory.begin(); it!=CRenderer::m_vStimulationHistory.end(); it++)
+					for (auto it = CRenderer::m_stimulationHistory.begin(); it != CRenderer::m_stimulationHistory.end(); ++it)
 					{
 						if (m_mEncounteredStimulations.count(it->second) == 0)
 						{
@@ -102,11 +98,14 @@ namespace Mensia
 							m_mEncounteredStimulations[it->second] = m_mEncounteredStimulations.size() % int(1.0f / s_fStimulationIndicatorSpacing);
 						}
 
-						if(l_f64MidTime - l_f64Duration < it->first && it->first < l_f64MidTime)
+						if (midTime - duration < it->first && it->first < midTime)
 						{
 							float l_fProgress;
-							if(it->first>l_f64StartTime) l_fProgress=float((it->first-l_f64StartTime)/l_f64Duration);
-							else                         l_fProgress=float((it->first+l_f64Duration-l_f64StartTime)/l_f64Duration);
+							if (it->first > startTime)
+							{
+								l_fProgress = float((it->first - startTime) / duration);
+							}
+							else { l_fProgress = float((it->first + duration - startTime) / duration); }
 
 							/*
 							::glLineWidth(3);
@@ -118,83 +117,81 @@ namespace Mensia
 							*/
 
 							// draw a vertical line representing the stimulation
-							::glLineWidth(1);
-							::glColor3fv(getMarkerColor(it->second));
-							::glBegin(GL_LINES);
-								::glVertex2f(l_fProgress, 0);
-								::glVertex2f(l_fProgress, 1);
-							::glEnd();
+							glLineWidth(1);
+							glColor3fv(getMarkerColor(it->second));
+							glBegin(GL_LINES);
+							glVertex2f(l_fProgress, 0);
+							glVertex2f(l_fProgress, 1);
+							glEnd();
 
 
 							// draw a (ugly) disc representing a stimulation
-							::glBegin(GL_TRIANGLE_FAN);
-							for (auto l_oVertex = m_vCircle.cbegin(); l_oVertex != m_vCircle.cend(); l_oVertex++)
+							glBegin(GL_TRIANGLE_FAN);
+							for (auto l_oVertex = m_vCircle.cbegin(); l_oVertex != m_vCircle.cend(); ++l_oVertex)
 							{
-								::glVertex2f(float(l_oVertex->first / rContext.getAspect() + l_fProgress), float(l_oVertex->second + 0.95f - m_mEncounteredStimulations[it->second] * s_fStimulationIndicatorSpacing));
+								glVertex2f(float(l_oVertex->first / rContext.getAspect() + l_fProgress), float(l_oVertex->second + 0.95f - m_mEncounteredStimulations[it->second] * s_fStimulationIndicatorSpacing));
 							}
-							::glEnd();
+							glEnd();
 
 
 							// now draw
-							::glLineWidth(2);
-							::glEnable(GL_BLEND);
-							::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-							::glEnable(GL_LINE_SMOOTH);
-							::glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-							::glBegin(GL_LINE_LOOP);
-							for (auto l_oVertex = m_vCircle.cbegin(); l_oVertex != m_vCircle.cend(); l_oVertex++)
+							glLineWidth(2);
+							glEnable(GL_BLEND);
+							glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+							glEnable(GL_LINE_SMOOTH);
+							glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+							glBegin(GL_LINE_LOOP);
+							for (auto l_oVertex = m_vCircle.cbegin(); l_oVertex != m_vCircle.cend(); ++l_oVertex)
 							{
-								::glVertex2f(float(l_oVertex->first / rContext.getAspect() + l_fProgress), float(l_oVertex->second + 0.95f - m_mEncounteredStimulations[it->second] * s_fStimulationIndicatorSpacing));
+								glVertex2f(float(l_oVertex->first / rContext.getAspect() + l_fProgress), float(l_oVertex->second + 0.95f - m_mEncounteredStimulations[it->second] * s_fStimulationIndicatorSpacing));
 							}
-							::glEnd();
-							::glDisable(GL_LINE_SMOOTH);
+							glEnd();
+							glDisable(GL_LINE_SMOOTH);
 
-							::glDisable(GL_BLEND);
+							glDisable(GL_BLEND);
 						}
 					}
 
-					::glEnable(GL_LINE_SMOOTH);
-					::glEnable(GL_BLEND);
-					::glEnable(GL_TEXTURE_1D);
+					glEnable(GL_LINE_SMOOTH);
+					glEnable(GL_BLEND);
+					glEnable(GL_TEXTURE_1D);
 
-					::glPopAttrib();
+					glPopAttrib();
 				}
 
-				if(!bPreRender)
+				if (!bPreRender)
 				{
-					::glPushAttrib(GL_ALL_ATTRIB_BITS);
+					glPushAttrib(GL_ALL_ATTRIB_BITS);
 					l_bResult = T::render(rContext);
-					::glPopAttrib();
+					glPopAttrib();
 				}
 
 				return l_bResult && ok;
 			}
 
-			float* getMarkerColor(uint64_t ui64Identifier)
+			float* getMarkerColor(const uint64_t ui64Identifier)
 			{
 				static float color[4];
-				float alpha=reverse<>(uint8_t(ui64Identifier&255))*3.f/255.f;
-				int32_t alphai=int32_t(alpha);
-				color[(alphai+0)%3]=1-alpha/3.f;
-				color[(alphai+1)%3]=alpha/3.f;
-				color[(alphai+2)%3]=0;
-				color[3]=.75f;
+				const float alpha = reverse<>(uint8_t(ui64Identifier & 255)) * 3.f / 255.f;
+				const auto alphai = int32_t(alpha);
+				color[(alphai + 0) % 3] = 1 - alpha / 3.f;
+				color[(alphai + 1) % 3] = alpha / 3.f;
+				color[(alphai + 2) % 3] = 0;
+				color[3] = .75f;
 				return color;
 			}
 
 			template <typename V>
 			V reverse(V v)
 			{
-				V l_uiResult=0;
-				for(V i=0; i<sizeof(V)*8; i++)
+				V l_uiResult = 0;
+				for (V i = 0; i < sizeof(V) * 8; ++i)
 				{
-					l_uiResult<<=1;
-					l_uiResult|=((v&(1<<i))?1:0);
+					l_uiResult <<= 1;
+					l_uiResult |= ((v & (1 << i)) ? 1 : 0);
 				}
 				return l_uiResult;
 			}
 		};
-	};
-};
-
-#endif // __Mensia_AdvancedVisualization_TRendererStimulation_H__
+	}  // namespace AdvancedVisualization
+}  // namespace Mensia

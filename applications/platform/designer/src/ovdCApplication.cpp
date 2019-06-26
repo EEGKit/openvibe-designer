@@ -20,7 +20,7 @@
 
 #if defined TARGET_OS_Windows
 #include "system/WindowsUtilities.h"
-#include "windows.h"
+#include "Windows.h"
 #endif
 
 #include <openvibe/ovITimeArithmetics.h>
@@ -52,16 +52,16 @@ static const unsigned int s_RecentFileNumber = 10;
 #include "ovdCInterfacedObject.h"
 #include "ovdCInterfacedScenario.h"
 #include "ovdCApplication.h"
-#include "ovdCLogListenerDesigner.h"
 #include "ovdAssert.h"
+#include "ovdCLogListenerDesigner.h"
 
 #include "visualization/ovdCVisualizationManager.h"
 
 #define OV_ClassId_Selected OpenViBE::CIdentifier(0xC67A01DC, 0x28CE06C1)
 
 using namespace OpenViBE;
-using namespace OpenViBE::Kernel;
-using namespace OpenViBE::Plugins;
+using namespace Kernel;
+using namespace Plugins;
 using namespace OpenViBEDesigner;
 using namespace std;
 
@@ -71,137 +71,113 @@ namespace
 	// it can not be easily used in std::transform
 	// this workaround is taken from http://www.gcek.net/ref/books/sw/cpp/ticppv2/
 	template <class charT>
-	charT to_lower(charT c)
-	{
-		return tolower(c);
-	}
-
-};
+	charT to_lower(charT c) { return tolower(c); }
+} // namespace
 
 namespace
 {
 	struct SBoxProto : public IBoxProto
 	{
-	public:
+		SBoxProto(ITypeManager& typeManager) : m_TypeManager(typeManager) { }
 
-		SBoxProto(OpenViBE::Kernel::ITypeManager& typeManager)
-			:m_bIsDeprecated(false)
-			,m_ui64InputCountHash  (0x64AC3CB54A35888CLL)
-			,m_ui64OutputCountHash (0x21E0FAAFE5CAF1E1LL)
-			,m_ui64SettingCountHash(0x6BDFB15B54B09F63LL)
-			,m_TypeManager(typeManager)
+		bool addInput(const CString& /*sName*/, const CIdentifier& rTypeIdentifier, const CIdentifier& rIdentifier, const bool /*bNotify*/) override
 		{
-		}
-		virtual bool addInput(const CString& sName, const CIdentifier& rTypeIdentifier, const CIdentifier& rIdentifier, const bool bNotify)
-		{
-			uint64 v=rTypeIdentifier.toUInteger();
-			swap_byte(v, m_ui64InputCountHash);
-			swap_byte(m_ui64InputCountHash, 0x7936A0F3BD12D936LL);
-			m_oHash=m_oHash.toUInteger()^v;
+			uint64_t v = rTypeIdentifier.toUInteger();
+			swap_byte(v, m_inputCountHash);
+			swap_byte(m_inputCountHash, 0x7936A0F3BD12D936LL);
+			m_oHash = m_oHash.toUInteger() ^ v;
 			if (rIdentifier != OV_UndefinedIdentifier)
 			{
-				v=rIdentifier.toUInteger();
+				v = rIdentifier.toUInteger();
 				swap_byte(v, 0x2BD1D158F340014D);
-				m_oHash=m_oHash.toUInteger()^v;
+				m_oHash = m_oHash.toUInteger() ^ v;
 			}
 			return true;
 		}
 		//
-		virtual bool addOutput(const CString& sName, const CIdentifier& rTypeIdentifier,const CIdentifier& rIdentifier, const bool bNotify)
+		bool addOutput(const CString& /*sName*/, const CIdentifier& rTypeIdentifier, const CIdentifier& rIdentifier, const bool /*bNotify*/) override
 		{
-			uint64 v=rTypeIdentifier.toUInteger();
-			swap_byte(v, m_ui64OutputCountHash);
-			swap_byte(m_ui64OutputCountHash, 0xCBB66A5B893AA4E9LL);
-			m_oHash=m_oHash.toUInteger()^v;
+			uint64_t v = rTypeIdentifier.toUInteger();
+			swap_byte(v, m_outputCountHash);
+			swap_byte(m_outputCountHash, 0xCBB66A5B893AA4E9LL);
+			m_oHash = m_oHash.toUInteger() ^ v;
 			if (rIdentifier != OV_UndefinedIdentifier)
 			{
-				v=rIdentifier.toUInteger();
+				v = rIdentifier.toUInteger();
 				swap_byte(v, 0x87CA0F5EFC4FAC68);
-				m_oHash=m_oHash.toUInteger()^v;
+				m_oHash = m_oHash.toUInteger() ^ v;
 			}
 			return true;
 		}
-		virtual bool addSetting(const CString& sName, const CIdentifier& rTypeIdentifier, const CString& sDefaultValue, const bool bModifiable, const CIdentifier& rIdentifier, const bool bNotify)
+
+		bool addSetting(const CString& /*sName*/, const CIdentifier& rTypeIdentifier, const CString& /*sDefaultValue*/, const bool /*bModifiable*/, const CIdentifier& rIdentifier, const bool /*bNotify*/) override
 		{
-			uint64 v=rTypeIdentifier.toUInteger();
-			swap_byte(v, m_ui64SettingCountHash);
-			swap_byte(m_ui64SettingCountHash, 0x3C87F3AAE9F8303BLL);
-			m_oHash=m_oHash.toUInteger()^v;
+			uint64_t v = rTypeIdentifier.toUInteger();
+			swap_byte(v, m_settingCountHash);
+			swap_byte(m_settingCountHash, 0x3C87F3AAE9F8303BLL);
+			m_oHash = m_oHash.toUInteger() ^ v;
 			if (rIdentifier != OV_UndefinedIdentifier)
 			{
-				v=rIdentifier.toUInteger();
+				v = rIdentifier.toUInteger();
 				swap_byte(v, 0x17185F7CDA63A9FA);
-				m_oHash=m_oHash.toUInteger()^v;
+				m_oHash = m_oHash.toUInteger() ^ v;
 			}
 			return true;
 		}
-		virtual bool addInputSupport(const OpenViBE::CIdentifier &rTypeIdentifier)
-		{
-			return true;
-		}
 
-		virtual bool addOutputSupport(const OpenViBE::CIdentifier &rTypeIdentifier)
-		{
-			return true;
-		}
+		bool addInputSupport(const CIdentifier& /*rTypeIdentifier*/) override { return true; }
 
-		virtual bool addFlag(const EBoxFlag eBoxFlag)
+		bool addOutputSupport(const CIdentifier& /*rTypeIdentifier*/) override { return true; }
+
+		bool addFlag(const EBoxFlag eBoxFlag) override
 		{
-			switch(eBoxFlag)
+			switch (eBoxFlag)
 			{
 				case BoxFlag_CanAddInput:
-					m_oHash=m_oHash.toUInteger()^OpenViBE::CIdentifier(0x07507AC8, 0xEB643ACE).toUInteger();
+					m_oHash = m_oHash.toUInteger() ^ CIdentifier(0x07507AC8, 0xEB643ACE).toUInteger();
 					break;
 				case BoxFlag_CanModifyInput:
-					m_oHash=m_oHash.toUInteger()^OpenViBE::CIdentifier(0x5C985376, 0x8D74CDB8).toUInteger();
+					m_oHash = m_oHash.toUInteger() ^ CIdentifier(0x5C985376, 0x8D74CDB8).toUInteger();
 					break;
 				case BoxFlag_CanAddOutput:
-					m_oHash=m_oHash.toUInteger()^OpenViBE::CIdentifier(0x58DEA69B, 0x12411365).toUInteger();
+					m_oHash = m_oHash.toUInteger() ^ CIdentifier(0x58DEA69B, 0x12411365).toUInteger();
 					break;
 				case BoxFlag_CanModifyOutput:
-					m_oHash=m_oHash.toUInteger()^OpenViBE::CIdentifier(0x6E162C01, 0xAC979F22).toUInteger();
+					m_oHash = m_oHash.toUInteger() ^ CIdentifier(0x6E162C01, 0xAC979F22).toUInteger();
 					break;
 				case BoxFlag_CanAddSetting:
-					m_oHash=m_oHash.toUInteger()^OpenViBE::CIdentifier(0xFA7A50DC, 0x2140C013).toUInteger();
+					m_oHash = m_oHash.toUInteger() ^ CIdentifier(0xFA7A50DC, 0x2140C013).toUInteger();
 					break;
 				case BoxFlag_CanModifySetting:
-					m_oHash=m_oHash.toUInteger()^OpenViBE::CIdentifier(0x624D7661, 0xD8DDEA0A).toUInteger();
+					m_oHash = m_oHash.toUInteger() ^ CIdentifier(0x624D7661, 0xD8DDEA0A).toUInteger();
 					break;
 				case BoxFlag_IsDeprecated:
-					m_bIsDeprecated=true;
+					m_bIsDeprecated = true;
 					break;
-				default:
-					return false;
-					break;
+				default: return false;
 			}
 			return true;
 		}
 
-		virtual bool addFlag(const OpenViBE::CIdentifier& cIdentifierFlag)
+		bool addFlag(const CIdentifier& cIdentifierFlag) override
 		{
-			uint64_t flagValue = m_TypeManager.getEnumerationEntryValueFromName(OV_TypeId_BoxAlgorithmFlag, cIdentifierFlag.toString());
-			if (flagValue == OV_UndefinedIdentifier)
-			{
-				return false;
-			}
-			//m_oHash=m_oHash.toUInteger()^flagValue;
-			return true;
+			const uint64_t flagValue = m_TypeManager.getEnumerationEntryValueFromName(OV_TypeId_BoxAlgorithmFlag, cIdentifierFlag.toString());
+			return flagValue != OV_UndefinedIdentifier;
 		}
 
-		void swap_byte(uint64& v, const uint64 s)
+		void swap_byte(uint64_t& v, const uint64_t s)
 		{
-			uint8 t;
-			uint8 V[sizeof(v)];
-			uint8 S[sizeof(s)];
+			uint8_t V[sizeof(v)];
+			uint8_t S[sizeof(s)];
 			System::Memory::hostToLittleEndian(v, V);
 			System::Memory::hostToLittleEndian(s, S);
-			for(uint32 i=0; i<sizeof(s); i+=2)
+			for (uint32_t i = 0; i < sizeof(s); i += 2)
 			{
-				uint32 j=S[i  ]%sizeof(v);
-				uint32 k=S[i+1]%sizeof(v);
-				t=V[j];
-				V[j]=V[k];
-				V[k]=t;
+				const uint32_t j = S[i] % sizeof(v);
+				const uint32_t k = S[i + 1] % sizeof(v);
+				const uint8_t t = V[j];
+				V[j] = V[k];
+				V[k] = t;
 			}
 			System::Memory::littleEndianToHost(V, &v);
 		}
@@ -209,254 +185,273 @@ namespace
 		_IsDerivedFromClass_Final_(IBoxProto, OV_UndefinedIdentifier)
 
 		CIdentifier m_oHash;
-		bool m_bIsDeprecated;
-		uint64 m_ui64InputCountHash;
-		uint64 m_ui64OutputCountHash;
-		uint64 m_ui64SettingCountHash;
-		OpenViBE::Kernel::ITypeManager& m_TypeManager;
+		bool m_bIsDeprecated = false;
+		uint64_t m_inputCountHash = 0x64AC3CB54A35888CLL;
+		uint64_t m_outputCountHash = 0x21E0FAAFE5CAF1E1LL;
+		uint64_t m_settingCountHash = 0x6BDFB15B54B09F63LL;
+		ITypeManager& m_TypeManager;
 	};
-}
+} // namespace
 
 namespace
 {
-	extern "C" G_MODULE_EXPORT void open_url_mensia_cb(GtkWidget* pWidget, gpointer data)
+	extern "C" G_MODULE_EXPORT void open_url_mensia_cb(GtkWidget* /*widget*/, gpointer /*data*/)
 	{
-	#if defined(TARGET_OS_Windows) && defined(MENSIA_DISTRIBUTION)
+#if defined(TARGET_OS_Windows) && defined(MENSIA_DISTRIBUTION)
 		system("start http://mensiatech.com");
-	#endif
+#endif
 	}
 
-	::guint __g_idle_add__(::GSourceFunc fpCallback, ::gpointer pUserData, ::gint iPriority=G_PRIORITY_DEFAULT_IDLE)
+	guint __g_idle_add__(GSourceFunc fpCallback, gpointer data, gint /*iPriority*/ = G_PRIORITY_DEFAULT_IDLE)
 	{
-		::GSource* l_pSource=g_idle_source_new();
+		GSource* l_pSource = g_idle_source_new();
 		g_source_set_priority(l_pSource, G_PRIORITY_LOW);
-		g_source_set_callback(l_pSource, fpCallback, pUserData, NULL);
-		return g_source_attach(l_pSource, NULL);
+		g_source_set_callback(l_pSource, fpCallback, data, nullptr);
+		return g_source_attach(l_pSource, nullptr);
 	}
 
-	::guint __g_timeout_add__(::guint uiInterval, ::GSourceFunc fpCallback, ::gpointer pUserData, ::gint iPriority=G_PRIORITY_DEFAULT)
+	guint __g_timeout_add__(const guint uiInterval, GSourceFunc fpCallback, gpointer data, gint /*iPriority*/ = G_PRIORITY_DEFAULT)
 	{
-		::GSource* l_pSource=g_timeout_source_new(uiInterval);
+		GSource* l_pSource = g_timeout_source_new(uiInterval);
 		g_source_set_priority(l_pSource, G_PRIORITY_LOW);
-		g_source_set_callback(l_pSource, fpCallback, pUserData, NULL);
-		return g_source_attach(l_pSource, NULL);
+		g_source_set_callback(l_pSource, fpCallback, data, nullptr);
+		return g_source_attach(l_pSource, nullptr);
 	}
 
-	void drag_data_get_cb(::GtkWidget* pWidget, ::GdkDragContext* pDragContex, ::GtkSelectionData* pSelectionData, guint uiInfo, guint uiT, gpointer pUserData)
+	void drag_data_get_cb(GtkWidget* widget, GdkDragContext* pDragContex, GtkSelectionData* pSelectionData, const guint uiInfo, const guint uiT, const gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->dragDataGetCB(pWidget, pDragContex, pSelectionData, uiInfo, uiT);
+		static_cast<CApplication*>(data)->dragDataGetCB(widget, pDragContex, pSelectionData, uiInfo, uiT);
 	}
-	void menu_undo_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
+
+	void menu_undo_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->undoCB();
+		static_cast<CApplication*>(data)->undoCB();
 	}
-	void menu_redo_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
+
+	void menu_redo_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->redoCB();
+		static_cast<CApplication*>(data)->redoCB();
 	}
-	void menu_focus_search_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
+
+	void menu_focus_search_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		gtk_widget_grab_focus(GTK_WIDGET(gtk_builder_get_object(static_cast<CApplication*>(pUserData)->m_pBuilderInterface, "openvibe-box_algorithm_searchbox")));
+		gtk_widget_grab_focus(GTK_WIDGET(gtk_builder_get_object(static_cast<CApplication*>(data)->m_pBuilderInterface, "openvibe-box_algorithm_searchbox")));
 	}
-	void menu_copy_selection_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
+
+	void menu_copy_selection_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->copySelectionCB();
+		static_cast<CApplication*>(data)->copySelectionCB();
 	}
-	void menu_cut_selection_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
+
+	void menu_cut_selection_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->cutSelectionCB();
+		static_cast<CApplication*>(data)->cutSelectionCB();
 	}
-	void menu_paste_selection_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
+
+	void menu_paste_selection_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->pasteSelectionCB();
+		static_cast<CApplication*>(data)->pasteSelectionCB();
 	}
-	void menu_delete_selection_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
+
+	void menu_delete_selection_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->deleteSelectionCB();
+		static_cast<CApplication*>(data)->deleteSelectionCB();
 	}
-	void menu_preferences_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
+
+	void menu_preferences_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->preferencesCB();
+		static_cast<CApplication*>(data)->preferencesCB();
 	}
-	void menu_new_scenario_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
+
+	void menu_new_scenario_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->newScenarioCB();
+		static_cast<CApplication*>(data)->newScenarioCB();
 	}
-	void menu_open_scenario_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
+
+	void menu_open_scenario_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->openScenarioCB();
+		static_cast<CApplication*>(data)->openScenarioCB();
 	}
-	void menu_open_recent_scenario_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
+
+	void menu_open_recent_scenario_cb(GtkMenuItem* pMenuItem, gpointer data)
 	{
 		const gchar* fileName = gtk_menu_item_get_label(pMenuItem);
-		static_cast<CApplication*>(pUserData)->openScenario(fileName);
+		static_cast<CApplication*>(data)->openScenario(fileName);
 	}
-	void menu_save_scenario_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
+
+	void menu_save_scenario_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->saveScenarioCB();
+		static_cast<CApplication*>(data)->saveScenarioCB();
 	}
-	void menu_save_scenario_as_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
+
+	void menu_save_scenario_as_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->saveScenarioAsCB();
+		static_cast<CApplication*>(data)->saveScenarioAsCB();
 	}
-	void menu_restore_default_scenarios_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
+
+	void menu_restore_default_scenarios_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->restoreDefaultScenariosCB();
+		static_cast<CApplication*>(data)->restoreDefaultScenariosCB();
 	}
-	void menu_close_scenario_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
+
+	void menu_close_scenario_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->closeScenarioCB(static_cast<CApplication*>(pUserData)->getCurrentInterfacedScenario());
+		static_cast<CApplication*>(data)->closeScenarioCB(static_cast<CApplication*>(data)->getCurrentInterfacedScenario());
 	}
-	void menu_quit_application_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
+
+	void menu_quit_application_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		if(static_cast<CApplication*>(pUserData)->quitApplicationCB())
+		if (static_cast<CApplication*>(data)->quitApplicationCB())
 		{
 			gtk_main_quit();
 		}
 	}
 
-	void menu_about_scenario_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
+	void menu_about_scenario_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->aboutScenarioCB(static_cast<CApplication*>(pUserData)->getCurrentInterfacedScenario());
-	}
-	void menu_about_openvibe_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
-	{
-		static_cast<CApplication*>(pUserData)->aboutOpenViBECB();
-	}
-	void menu_about_link_clicked_cb(::GtkAboutDialog* pAboutDialog, const gchar *linkPtr, gpointer pUserData)
-	{
-		static_cast<CApplication*>(pUserData)->aboutLinkClickedCB(linkPtr);
+		static_cast<CApplication*>(data)->aboutScenarioCB(static_cast<CApplication*>(data)->getCurrentInterfacedScenario());
 	}
 
-	void menu_browse_documentation_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
+	void menu_about_openvibe_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->browseDocumentationCB();
+		static_cast<CApplication*>(data)->aboutOpenViBECB();
+	}
+
+	void menu_about_link_clicked_cb(GtkAboutDialog* /*pAboutDialog*/, const gchar* linkPtr, gpointer data)
+	{
+		static_cast<CApplication*>(data)->aboutLinkClickedCB(linkPtr);
+	}
+
+	void menu_browse_documentation_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
+	{
+		static_cast<CApplication*>(data)->browseDocumentationCB();
 	}
 
 #ifdef MENSIA_DISTRIBUTION
-	void menu_register_license_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
+	void menu_register_license_cb(::GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->registerLicenseCB();
+		static_cast<CApplication*>(data)->registerLicenseCB();
 	}
 #endif
 
-	void menu_report_issue_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
+	void menu_report_issue_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->reportIssueCB();
+		static_cast<CApplication*>(data)->reportIssueCB();
 	}
 
-	void menu_display_changelog_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
+	void menu_display_changelog_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		if(!static_cast<CApplication*>(pUserData)->displayChangelogWhenAvailable())
+		if (!static_cast<CApplication*>(data)->displayChangelogWhenAvailable())
 		{
-			const std::string applicationVersion = static_cast<CApplication*>(pUserData)->m_KernelContext.getConfigurationManager().expand("${Application_Version}").toASCIIString();
-			::GtkWidget* l_pInfoDialog = gtk_message_dialog_new(
-				NULL,
-				GTK_DIALOG_MODAL,
-				GTK_MESSAGE_INFO,
-				GTK_BUTTONS_OK,
-				"No boxes were added or updated in version %s of " DESIGNER_NAME ".",
-				applicationVersion != "${Application_Version}" ? applicationVersion.c_str() : ProjectVersion
-				);
-			gtk_window_set_title(GTK_WINDOW(l_pInfoDialog), "No new boxes");
-			gtk_dialog_run(GTK_DIALOG(l_pInfoDialog));
-			gtk_widget_destroy(l_pInfoDialog);
+			const std::string applicationVersion = static_cast<CApplication*>(data)->m_KernelContext.getConfigurationManager().expand("${Application_Version}").toASCIIString();
+			GtkWidget* infoDialog = gtk_message_dialog_new(nullptr, GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK,
+															  "No boxes were added or updated in version %s of " DESIGNER_NAME ".",
+															  applicationVersion != "${Application_Version}" ? applicationVersion.c_str() : ProjectVersion);
+			gtk_window_set_title(GTK_WINDOW(infoDialog), "No new boxes");
+			gtk_dialog_run(GTK_DIALOG(infoDialog));
+			gtk_widget_destroy(infoDialog);
 		}
 	}
 
-	void button_new_scenario_cb(::GtkButton* pButton, gpointer pUserData)
+	void button_new_scenario_cb(GtkButton* /*button*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->newScenarioCB();
-	}
-	void button_open_scenario_cb(::GtkButton* pButton, gpointer pUserData)
-	{
-		static_cast<CApplication*>(pUserData)->openScenarioCB();
-	}
-	void button_save_scenario_cb(::GtkButton* pButton, gpointer pUserData)
-	{
-		static_cast<CApplication*>(pUserData)->saveScenarioCB();
-	}
-	void button_save_scenario_as_cb(::GtkButton* pButton, gpointer pUserData)
-	{
-		static_cast<CApplication*>(pUserData)->saveScenarioAsCB();
-	}
-	void button_close_scenario_cb(::GtkButton* pButton, gpointer pUserData)
-	{
-		static_cast<CApplication*>(pUserData)->closeScenarioCB(static_cast<CApplication*>(pUserData)->getCurrentInterfacedScenario());
+		static_cast<CApplication*>(data)->newScenarioCB();
 	}
 
-	void button_undo_cb(::GtkButton* pButton, gpointer pUserData)
+	void button_open_scenario_cb(GtkButton* /*button*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->undoCB();
+		static_cast<CApplication*>(data)->openScenarioCB();
 	}
 
-	void button_redo_cb(::GtkButton* pButton, gpointer pUserData)
+	void button_save_scenario_cb(GtkButton* /*button*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->redoCB();
+		static_cast<CApplication*>(data)->saveScenarioCB();
+	}
+
+	void button_save_scenario_as_cb(GtkButton* /*button*/, gpointer data)
+	{
+		static_cast<CApplication*>(data)->saveScenarioAsCB();
+	}
+
+	void button_close_scenario_cb(GtkButton* /*button*/, gpointer data)
+	{
+		static_cast<CApplication*>(data)->closeScenarioCB(static_cast<CApplication*>(data)->getCurrentInterfacedScenario());
+	}
+
+	void button_undo_cb(GtkButton* /*button*/, gpointer data)
+	{
+		static_cast<CApplication*>(data)->undoCB();
+	}
+
+	void button_redo_cb(GtkButton* /*button*/, gpointer data)
+	{
+		static_cast<CApplication*>(data)->redoCB();
 	}
 
 #ifdef MENSIA_DISTRIBUTION
-	void button_toggle_neurort_engine_configuration_cb(::GtkMenuItem* pMenuItem, gpointer pUserData)
+	void button_toggle_neurort_engine_configuration_cb(::GtkMenuItem * pMenuItem, gpointer data)
 	{
-		auto l_pApplication = static_cast<CApplication*>(pUserData);
+		auto l_pApplication = static_cast<CApplication*>(data);
 
-		l_pApplication->m_pArchwayHandlerGUI->toggleNeuroRTEngineConfigurationDialog(static_cast<bool>(gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(pMenuItem))==TRUE));
+		l_pApplication->m_pArchwayHandlerGUI->toggleNeuroRTEngineConfigurationDialog(bool(gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(pMenuItem)) == TRUE));
 	}
 #endif
 
-	void delete_designer_visualisation_cb(gpointer user_data)
+	void delete_designer_visualisation_cb(gpointer data)
 	{
-		static_cast<CApplication*>(user_data)->deleteDesignerVisualizationCB();
-	}
-	void button_toggle_window_manager_cb(::GtkToggleToolButton* pButton, gpointer pUserData)
-	{
-		static_cast<CApplication*>(pUserData)->toggleDesignerVisualizationCB();
+		static_cast<CApplication*>(data)->deleteDesignerVisualizationCB();
 	}
 
-	void button_comment_cb(::GtkButton* pButton, CApplication* pApplication)
+	void button_toggle_window_manager_cb(GtkToggleToolButton* /*button*/, gpointer data)
+	{
+		static_cast<CApplication*>(data)->toggleDesignerVisualizationCB();
+	}
+
+	void button_comment_cb(GtkButton* /*button*/, CApplication* pApplication)
 	{
 		pApplication->addCommentCB(pApplication->getCurrentInterfacedScenario());
 	}
-	void button_about_scenario_cb(::GtkButton* pButton, gpointer pUserData)
+
+	void button_about_scenario_cb(GtkButton* /*button*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->aboutScenarioCB(static_cast<CApplication*>(pUserData)->getCurrentInterfacedScenario());
+		static_cast<CApplication*>(data)->aboutScenarioCB(static_cast<CApplication*>(data)->getCurrentInterfacedScenario());
 	}
 
-	void stop_scenario_cb(::GtkButton* pButton, gpointer pUserData)
+	void stop_scenario_cb(GtkButton* /*button*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->stopScenarioCB();
+		static_cast<CApplication*>(data)->stopScenarioCB();
 	}
 
-	void play_pause_scenario_cb(::GtkButton* pButton, gpointer pUserData)
+	void play_pause_scenario_cb(GtkButton* button, gpointer data)
 	{
-		if(std::string(gtk_tool_button_get_stock_id(GTK_TOOL_BUTTON(pButton)))==GTK_STOCK_MEDIA_PLAY)
+		if (std::string(gtk_tool_button_get_stock_id(GTK_TOOL_BUTTON(button))) == GTK_STOCK_MEDIA_PLAY)
 		{
-			static_cast<CApplication*>(pUserData)->playScenarioCB();
+			static_cast<CApplication*>(data)->playScenarioCB();
 		}
 		else
 		{
-			static_cast<CApplication*>(pUserData)->pauseScenarioCB();
+			static_cast<CApplication*>(data)->pauseScenarioCB();
 		}
 	}
 
-	void next_scenario_cb(::GtkButton* pButton, gpointer pUserData)
+	void next_scenario_cb(GtkButton* /*button*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->nextScenarioCB();
+		static_cast<CApplication*>(data)->nextScenarioCB();
 	}
 
-	void forward_scenario_cb(::GtkButton* pButton, gpointer pUserData)
+	void forward_scenario_cb(GtkButton* /*button*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->forwardScenarioCB();
+		static_cast<CApplication*>(data)->forwardScenarioCB();
 	}
 
-	void button_configure_current_scenario_settings_cb(::GtkButton* pButton, CApplication* pApplication)
+	void button_configure_current_scenario_settings_cb(GtkButton* /*button*/, CApplication* pApplication)
 	{
 		pApplication->configureScenarioSettingsCB(pApplication->getCurrentInterfacedScenario());
 	}
 
-	gboolean button_quit_application_cb(::GtkWidget* pWidget, ::GdkEvent* pEvent, gpointer pUserData)
+	gboolean button_quit_application_cb(GtkWidget* /*widget*/, GdkEvent* /*pEvent*/, gpointer data)
 	{
-		if(static_cast<CApplication*>(pUserData)->quitApplicationCB())
+		if (static_cast<CApplication*>(data)->quitApplicationCB())
 		{
 			gtk_main_quit();
 			return FALSE;
@@ -464,74 +459,78 @@ namespace
 		return TRUE;
 	}
 
-	gboolean window_state_changed_cb(GtkWidget* pWidget, GdkEventWindowState* pEvent, gpointer pUserData)
+	gboolean window_state_changed_cb(GtkWidget* /*widget*/, GdkEventWindowState* pEvent, gpointer data)
 	{
-		if(pEvent->changed_mask && GDK_WINDOW_STATE_MAXIMIZED)
+		if (pEvent->changed_mask & GDK_WINDOW_STATE_MAXIMIZED)
 		{
 			// window has changed from maximized to not maximized or the other way around
-			static_cast<CApplication*>(pUserData)->windowStateChangedCB(pEvent->new_window_state && GDK_WINDOW_STATE_MAXIMIZED);
+			static_cast<CApplication*>(data)->windowStateChangedCB((pEvent->new_window_state & GDK_WINDOW_STATE_MAXIMIZED) != 0);
 		}
 		return TRUE;
 	}
 
-	void log_level_cb(::GtkButton* pButton, gpointer pUserData)
+	void log_level_cb(GtkButton* /*button*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->logLevelCB();
+		static_cast<CApplication*>(data)->logLevelCB();
 	}
 
-	void cpu_usage_cb(::GtkToggleButton* pButton, gpointer pUserData)
+	void cpu_usage_cb(GtkToggleButton* /*button*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->CPUUsageCB();
+		static_cast<CApplication*>(data)->CPUUsageCB();
 	}
 
-	gboolean change_current_scenario_cb(::GtkNotebook* pNotebook, ::GtkNotebookPage* pNotebookPage, guint uiPageNumber, gpointer pUserData)
+	gboolean change_current_scenario_cb(GtkNotebook* /*notebook*/, GtkNotebookPage* /*notebookPage*/, const guint pageNumber, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->changeCurrentScenario((int32)uiPageNumber);
+		static_cast<CApplication*>(data)->changeCurrentScenario(int(pageNumber));
 		return TRUE;
 	}
 
-	gboolean reorder_scenario_cb(::GtkNotebook* pNotebook, ::GtkNotebookPage* pNotebookPage, guint uiPageNumber, gpointer pUserData)
+	gboolean reorder_scenario_cb(GtkNotebook* /*notebook*/, GtkNotebookPage* /*notebookPage*/, const guint pageNumber, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->reorderCurrentScenario((int32)uiPageNumber);
+		static_cast<CApplication*>(data)->reorderCurrentScenario(int(pageNumber));
 		return TRUE;
 	}
 
-	void box_algorithm_title_button_expand_cb(::GtkButton* pButton, gpointer pUserData)
+	void box_algorithm_title_button_expand_cb(GtkButton* /*button*/, gpointer data)
 	{
-		gtk_tree_view_expand_all(GTK_TREE_VIEW(gtk_builder_get_object(static_cast<CApplication*>(pUserData)->m_pBuilderInterface, "openvibe-box_algorithm_tree")));
-		gtk_notebook_set_current_page(GTK_NOTEBOOK(gtk_builder_get_object(static_cast<CApplication*>(pUserData)->m_pBuilderInterface, "openvibe-resource_notebook")), 0);
-	}
-	void box_algorithm_title_button_collapse_cb(::GtkButton* pButton, gpointer pUserData)
-	{
-		gtk_tree_view_collapse_all(GTK_TREE_VIEW(gtk_builder_get_object(static_cast<CApplication*>(pUserData)->m_pBuilderInterface, "openvibe-box_algorithm_tree")));
-		gtk_notebook_set_current_page(GTK_NOTEBOOK(gtk_builder_get_object(static_cast<CApplication*>(pUserData)->m_pBuilderInterface, "openvibe-resource_notebook")), 0);
+		gtk_tree_view_expand_all(GTK_TREE_VIEW(gtk_builder_get_object(static_cast<CApplication*>(data)->m_pBuilderInterface, "openvibe-box_algorithm_tree")));
+		gtk_notebook_set_current_page(GTK_NOTEBOOK(gtk_builder_get_object(static_cast<CApplication*>(data)->m_pBuilderInterface, "openvibe-resource_notebook")), 0);
 	}
 
-	void algorithm_title_button_expand_cb(::GtkButton* pButton, gpointer pUserData)
+	void box_algorithm_title_button_collapse_cb(GtkButton* /*button*/, gpointer data)
 	{
-		gtk_tree_view_expand_all(GTK_TREE_VIEW(gtk_builder_get_object(static_cast<CApplication*>(pUserData)->m_pBuilderInterface, "openvibe-algorithm_tree")));
-		gtk_notebook_set_current_page(GTK_NOTEBOOK(gtk_builder_get_object(static_cast<CApplication*>(pUserData)->m_pBuilderInterface, "openvibe-resource_notebook")), 1);
-	}
-	void algorithm_title_button_collapse_cb(::GtkButton* pButton, gpointer pUserData)
-	{
-		gtk_tree_view_collapse_all(GTK_TREE_VIEW(gtk_builder_get_object(static_cast<CApplication*>(pUserData)->m_pBuilderInterface, "openvibe-algorithm_tree")));
-		gtk_notebook_set_current_page(GTK_NOTEBOOK(gtk_builder_get_object(static_cast<CApplication*>(pUserData)->m_pBuilderInterface, "openvibe-resource_notebook")), 1);
+		gtk_tree_view_collapse_all(GTK_TREE_VIEW(gtk_builder_get_object(static_cast<CApplication*>(data)->m_pBuilderInterface, "openvibe-box_algorithm_tree")));
+		gtk_notebook_set_current_page(GTK_NOTEBOOK(gtk_builder_get_object(static_cast<CApplication*>(data)->m_pBuilderInterface, "openvibe-resource_notebook")), 0);
 	}
 
-	void clear_messages_cb(::GtkButton* pButton, gpointer pUserData)
+	void algorithm_title_button_expand_cb(GtkButton* /*button*/, gpointer data)
 	{
-		static_cast<CLogListenerDesigner*>(pUserData)->clearMessages();
+		gtk_tree_view_expand_all(GTK_TREE_VIEW(gtk_builder_get_object(static_cast<CApplication*>(data)->m_pBuilderInterface, "openvibe-algorithm_tree")));
+		gtk_notebook_set_current_page(GTK_NOTEBOOK(gtk_builder_get_object(static_cast<CApplication*>(data)->m_pBuilderInterface, "openvibe-resource_notebook")), 1);
 	}
 
-	void add_scenario_input_cb(GtkButton*, CApplication* pApplication)
+	void algorithm_title_button_collapse_cb(GtkButton* /*button*/, gpointer data)
+	{
+		gtk_tree_view_collapse_all(GTK_TREE_VIEW(gtk_builder_get_object(static_cast<CApplication*>(data)->m_pBuilderInterface, "openvibe-algorithm_tree")));
+		gtk_notebook_set_current_page(GTK_NOTEBOOK(gtk_builder_get_object(static_cast<CApplication*>(data)->m_pBuilderInterface, "openvibe-resource_notebook")), 1);
+	}
+
+	void clear_messages_cb(GtkButton* /*button*/, gpointer data)
+	{
+		static_cast<CLogListenerDesigner*>(data)->clearMessages();
+	}
+
+	void add_scenario_input_cb(GtkButton* /*button*/, CApplication* pApplication)
 	{
 		pApplication->getCurrentInterfacedScenario()->addScenarioInputCB();
 	}
-	void add_scenario_output_cb(GtkButton*, CApplication* pApplication)
+
+	void add_scenario_output_cb(GtkButton* /*button*/, CApplication* pApplication)
 	{
 		pApplication->getCurrentInterfacedScenario()->addScenarioOutputCB();
 	}
-	void add_scenario_setting_cb(GtkButton*, CApplication* pApplication)
+
+	void add_scenario_setting_cb(GtkButton* /*button*/, CApplication* pApplication)
 	{
 		pApplication->getCurrentInterfacedScenario()->addScenarioSettingCB();
 	}
@@ -541,9 +540,10 @@ namespace
 		std::transform(str.begin(), str.end(), str.begin(), std::ptr_fun<int, int>(std::toupper));
 		return str;
 	}
-	static gboolean box_algorithm_search_func(GtkTreeModel *model, GtkTreeIter *iter, gpointer pUserData)
+
+	gboolean box_algorithm_search_func(GtkTreeModel* model, GtkTreeIter* iter, gpointer data)
 	{
-		CApplication* l_pApplication=static_cast<CApplication*>(pUserData);
+		auto* l_pApplication = static_cast<CApplication*>(data);
 		/* Visible if row is non-empty and first column is "HI" */
 
 
@@ -555,7 +555,7 @@ namespace
 		gtk_tree_model_get(model, iter, Resource_StringName, &l_sHaystackName, Resource_StringShortDescription, &l_sHaystackDescription, Resource_BooleanIsUnstable, &l_bHaystackUnstable, -1);
 
 		// consider only leaf nodes which match the search term
-		if (l_sHaystackName!=NULL && l_sHaystackDescription!=NULL)
+		if (l_sHaystackName != nullptr && l_sHaystackDescription != nullptr)
 		{
 			if (!l_bHaystackUnstable
 				&& (string::npos != strtoupper(l_sHaystackName).find(strtoupper(l_pApplication->m_sSearchTerm))
@@ -577,20 +577,17 @@ namespace
 		return l_bVisible;
 	}
 
-	static gboolean box_algorithm_prune_empty_folders(GtkTreeModel *model, GtkTreeIter *iter, gpointer pUserData)
+	gboolean box_algorithm_prune_empty_folders(GtkTreeModel* model, GtkTreeIter* iter, gpointer /*data*/)
 	{
 		gboolean l_bIsPlugin;
 		gtk_tree_model_get(model, iter, Resource_BooleanIsPlugin, &l_bIsPlugin, -1);
 
-		if (gtk_tree_model_iter_has_child(model, iter) || l_bIsPlugin)
-		{
-			return true;
-		}
+		if (gtk_tree_model_iter_has_child(model, iter) || l_bIsPlugin) { return true; }
 
 		return false;
 	}
 
-	static gboolean	do_refilter( CApplication *pApplication )
+	gboolean do_refilter(CApplication* pApplication)
 	{
 		/*
 		if (0 == strcmp(pApplication->m_sSearchTerm, ""))
@@ -601,20 +598,20 @@ namespace
 		else
 		*/
 		{
-			pApplication->m_pBoxAlgorithmTreeModelFilter = gtk_tree_model_filter_new(GTK_TREE_MODEL(pApplication->m_pBoxAlgorithmTreeModel), NULL);
-			pApplication->m_pBoxAlgorithmTreeModelFilter2 = gtk_tree_model_filter_new(GTK_TREE_MODEL(pApplication->m_pBoxAlgorithmTreeModelFilter), NULL);
-			pApplication->m_pBoxAlgorithmTreeModelFilter3 = gtk_tree_model_filter_new(GTK_TREE_MODEL(pApplication->m_pBoxAlgorithmTreeModelFilter2), NULL);
-			pApplication->m_pBoxAlgorithmTreeModelFilter4 = gtk_tree_model_filter_new(GTK_TREE_MODEL(pApplication->m_pBoxAlgorithmTreeModelFilter3), NULL);
+			pApplication->m_pBoxAlgorithmTreeModelFilter = gtk_tree_model_filter_new(GTK_TREE_MODEL(pApplication->m_pBoxAlgorithmTreeModel), nullptr);
+			pApplication->m_pBoxAlgorithmTreeModelFilter2 = gtk_tree_model_filter_new(GTK_TREE_MODEL(pApplication->m_pBoxAlgorithmTreeModelFilter), nullptr);
+			pApplication->m_pBoxAlgorithmTreeModelFilter3 = gtk_tree_model_filter_new(GTK_TREE_MODEL(pApplication->m_pBoxAlgorithmTreeModelFilter2), nullptr);
+			pApplication->m_pBoxAlgorithmTreeModelFilter4 = gtk_tree_model_filter_new(GTK_TREE_MODEL(pApplication->m_pBoxAlgorithmTreeModelFilter3), nullptr);
 			// detach the normal model from the treeview
-			gtk_tree_view_set_model(pApplication->m_pBoxAlgorithmTreeView, NULL);
+			gtk_tree_view_set_model(pApplication->m_pBoxAlgorithmTreeView, nullptr);
 
 			// clear the model
 
 			// add a filtering function to the model
-			gtk_tree_model_filter_set_visible_func(GTK_TREE_MODEL_FILTER(pApplication->m_pBoxAlgorithmTreeModelFilter), box_algorithm_search_func, pApplication, NULL );
-			gtk_tree_model_filter_set_visible_func(GTK_TREE_MODEL_FILTER(pApplication->m_pBoxAlgorithmTreeModelFilter2), box_algorithm_prune_empty_folders, pApplication, NULL );
-			gtk_tree_model_filter_set_visible_func(GTK_TREE_MODEL_FILTER(pApplication->m_pBoxAlgorithmTreeModelFilter3), box_algorithm_prune_empty_folders, pApplication, NULL );
-			gtk_tree_model_filter_set_visible_func(GTK_TREE_MODEL_FILTER(pApplication->m_pBoxAlgorithmTreeModelFilter4), box_algorithm_prune_empty_folders, pApplication, NULL );
+			gtk_tree_model_filter_set_visible_func(GTK_TREE_MODEL_FILTER(pApplication->m_pBoxAlgorithmTreeModelFilter), box_algorithm_search_func, pApplication, nullptr);
+			gtk_tree_model_filter_set_visible_func(GTK_TREE_MODEL_FILTER(pApplication->m_pBoxAlgorithmTreeModelFilter2), box_algorithm_prune_empty_folders, pApplication, nullptr);
+			gtk_tree_model_filter_set_visible_func(GTK_TREE_MODEL_FILTER(pApplication->m_pBoxAlgorithmTreeModelFilter3), box_algorithm_prune_empty_folders, pApplication, nullptr);
+			gtk_tree_model_filter_set_visible_func(GTK_TREE_MODEL_FILTER(pApplication->m_pBoxAlgorithmTreeModelFilter4), box_algorithm_prune_empty_folders, pApplication, nullptr);
 
 			// attach the model to the treeview
 			gtk_tree_view_set_model(pApplication->m_pBoxAlgorithmTreeView, GTK_TREE_MODEL(pApplication->m_pBoxAlgorithmTreeModelFilter4));
@@ -634,59 +631,61 @@ namespace
 		return false;
 	}
 
-	static void	queue_refilter( CApplication* pApplication )
+	void queue_refilter(CApplication* pApplication)
 	{
-		if( pApplication->m_giFilterTimeout )
-			g_source_remove( pApplication->m_giFilterTimeout );
+		if (pApplication->m_giFilterTimeout)
+		{
+			g_source_remove(pApplication->m_giFilterTimeout);
+		}
 
-		pApplication->m_giFilterTimeout = g_timeout_add( 300, (GSourceFunc)do_refilter, pApplication );
+		pApplication->m_giFilterTimeout = g_timeout_add(300, GSourceFunc(do_refilter), pApplication);
 	}
 
-	void refresh_search_cb(::GtkEntry* pTextfield, CApplication* pApplication)
+	void refresh_search_cb(GtkEntry* pTextfield, CApplication* pApplication)
 	{
 		pApplication->m_sSearchTerm = gtk_entry_get_text(pTextfield);
 
 		queue_refilter(pApplication);
 	}
 
-	void refresh_search_no_data_cb(::GtkToggleButton* pToggleButton, CApplication* pApplication)
+	void refresh_search_no_data_cb(GtkToggleButton* /*pToggleButton*/, CApplication* pApplication)
 	{
 		pApplication->m_sSearchTerm = gtk_entry_get_text(GTK_ENTRY(gtk_builder_get_object(pApplication->m_pBuilderInterface, "openvibe-box_algorithm_searchbox")));
 
 		queue_refilter(pApplication);
 	}
 
-	static gboolean searchbox_select_all_cb(::GtkWidget* pWidget, ::GdkEvent* pEvent, CApplication* pApplication)
+	gboolean searchbox_select_all_cb(GtkWidget* widget, GdkEvent* /*pEvent*/, CApplication* /*pApplication*/)
 	{
 		// we select the current search
-		gtk_widget_grab_focus(pWidget); // we must grab or selection wont work. It also triggers the other CBs.
-		gtk_editable_select_region(GTK_EDITABLE(pWidget), 0, -1);
+		gtk_widget_grab_focus(widget); // we must grab or selection wont work. It also triggers the other CBs.
+		gtk_editable_select_region(GTK_EDITABLE(widget), 0, -1);
 		return false;
 	}
 
-	static gboolean searchbox_focus_in_cb(::GtkWidget* pWidget, ::GdkEvent* pEvent, CApplication* pApplication)
+	gboolean searchbox_focus_in_cb(GtkWidget* /*widget*/, GdkEvent* /*pEvent*/, CApplication* pApplication)
 	{
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(pApplication->m_pBuilderInterface, "openvibe-menu_edit")), false);
 		return false;
 	}
 
-	static gboolean searchbox_focus_out_cb(::GtkWidget* pWidget, ::GdkEvent* pEvent, CApplication* pApplication)
+	gboolean searchbox_focus_out_cb(GtkWidget* widget, GdkEvent* /*pEvent*/, CApplication* pApplication)
 	{
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(pApplication->m_pBuilderInterface, "openvibe-menu_edit")), true);
-		gtk_editable_select_region(GTK_EDITABLE(pWidget), 0, 0);
+		gtk_editable_select_region(GTK_EDITABLE(widget), 0, 0);
 		return false;
 	}
 
-	static void about_newversion_button_display_changelog_cb(::GtkButton* pButton, gpointer pUserData)
+	void about_newversion_button_display_changelog_cb(GtkButton* /*button*/, gpointer /*data*/)
 	{
 #if defined TARGET_OS_Windows
-		System::WindowsUtilities::utf16CompliantShellExecute(NULL, "open", (OVD_README_File).toASCIIString(), NULL, NULL, SHOW_OPENWINDOW);
+		System::WindowsUtilities::utf16CompliantShellExecute(nullptr, "open", (OVD_README_File).toASCIIString(), nullptr, nullptr, SHOW_OPENWINDOW);
 #endif
 	}
 
-	gboolean idle_application_loop(gpointer pUserData)
+	gboolean idle_application_loop(gpointer data)
 	{
-		CApplication* l_pApplication=static_cast<CApplication*>(pUserData);
+		auto* l_pApplication = static_cast<CApplication*>(data);
 #ifdef MENSIA_DISTRIBUTION
 		if (l_pApplication->m_pArchwayHandler->isEngineStarted())
 		{
@@ -694,24 +693,24 @@ namespace
 		}
 #endif
 
-		CInterfacedScenario* l_pCurrentInterfacedScenario=l_pApplication->getCurrentInterfacedScenario();
-		if(l_pCurrentInterfacedScenario)
+		CInterfacedScenario* currentInterfacedScenario = l_pApplication->getCurrentInterfacedScenario();
+		if (currentInterfacedScenario)
 		{
-			if(l_pApplication->getPlayer() && l_pCurrentInterfacedScenario->m_ePlayerStatus != l_pApplication->getPlayer()->getStatus())
+			if (l_pApplication->getPlayer() && currentInterfacedScenario->m_ePlayerStatus != l_pApplication->getPlayer()->getStatus())
 			{
-				switch(l_pApplication->getPlayer()->getStatus())
+				switch (l_pApplication->getPlayer()->getStatus())
 				{
 					case PlayerStatus_Stop:
 						gtk_signal_emit_by_name(GTK_OBJECT(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-button_stop")), "clicked");
 						break;
 					case PlayerStatus_Pause:
-						while(l_pCurrentInterfacedScenario->m_ePlayerStatus != PlayerStatus_Pause)
+						while (currentInterfacedScenario->m_ePlayerStatus != PlayerStatus_Pause)
 							gtk_signal_emit_by_name(GTK_OBJECT(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-button_play_pause")), "clicked");
 						break;
 					case PlayerStatus_Step:
 						break;
 					case PlayerStatus_Play:
-						while(l_pCurrentInterfacedScenario->m_ePlayerStatus != PlayerStatus_Play)
+						while (currentInterfacedScenario->m_ePlayerStatus != PlayerStatus_Play)
 							gtk_signal_emit_by_name(GTK_OBJECT(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-button_play_pause")), "clicked");
 						break;
 					case PlayerStatus_Forward:
@@ -724,35 +723,41 @@ namespace
 			}
 			else
 			{
-				float64 l_f64Time=(l_pCurrentInterfacedScenario->m_pPlayer? ITimeArithmetics::timeToSeconds(l_pCurrentInterfacedScenario->m_pPlayer->getCurrentSimulatedTime()) : 0);
-				if(l_pApplication->m_ui64LastTimeRefresh!=l_f64Time)
+				const double time = (currentInterfacedScenario->m_pPlayer ? ITimeArithmetics::timeToSeconds(currentInterfacedScenario->m_pPlayer->getCurrentSimulatedTime()) : 0);
+				if (l_pApplication->m_ui64LastTimeRefresh != time)
 				{
-					l_pApplication->m_ui64LastTimeRefresh=static_cast<uint64>(l_f64Time);
+					l_pApplication->m_ui64LastTimeRefresh = uint64_t(time);
 
-					uint32 l_ui32Milli  = ((uint32)(l_f64Time*1000)%1000);
-					uint32 l_ui32Seconds=  ((uint32)l_f64Time)%60;
-					uint32 l_ui32Minutes= (((uint32)l_f64Time)/60)%60;
-					uint32 l_ui32Hours  =((((uint32)l_f64Time)/60)/60);
+					const uint32_t milli = (uint32_t(time * 1000) % 1000);
+					const uint32_t seconds = uint32_t(time) % 60;
+					const uint32_t minutes = (uint32_t(time) / 60) % 60;
+					const uint32_t hours = ((uint32_t(time) / 60) / 60);
 
-					float64 l_f64CPUUsage=(l_pCurrentInterfacedScenario->m_pPlayer?l_pCurrentInterfacedScenario->m_pPlayer->getCPUUsage():0);
+					const double CPUUsage = (currentInterfacedScenario->m_pPlayer ? currentInterfacedScenario->m_pPlayer->getCPUUsage() : 0);
 
 					char l_sTime[1024];
-					if(l_ui32Hours)				sprintf(l_sTime, "Time : %02dh %02dm %02ds %03dms", l_ui32Hours, l_ui32Minutes, l_ui32Seconds, l_ui32Milli);
-					else if(l_ui32Minutes)		sprintf(l_sTime, "Time : %02dm %02ds %03dms", l_ui32Minutes, l_ui32Seconds, l_ui32Milli);
-					else if(l_ui32Seconds)		sprintf(l_sTime, "Time : %02ds %03dms", l_ui32Seconds, l_ui32Milli);
-					else						sprintf(l_sTime, "Time : %03dms", l_ui32Milli);
+					if (hours)
+					{
+						sprintf(l_sTime, "Time : %02dh %02dm %02ds %03dms", hours, minutes, seconds, milli);
+					}
+					else if (minutes)
+					{
+						sprintf(l_sTime, "Time : %02dm %02ds %03dms", minutes, seconds, milli);
+					}
+					else if (seconds) sprintf(l_sTime, "Time : %02ds %03dms", seconds, milli);
+					else { sprintf(l_sTime, "Time : %03dms", milli); }
 
 					gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-label_current_time")), l_sTime);
 
 					char l_sCPU[1024];
-					sprintf(l_sCPU, "%3.01f%%", l_f64CPUUsage);
+					sprintf(l_sCPU, "%3.01f%%", CPUUsage);
 
-					gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-progressbar_cpu_usage")), l_f64CPUUsage*.01);
+					gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-progressbar_cpu_usage")), CPUUsage * .01);
 					gtk_progress_bar_set_text(GTK_PROGRESS_BAR(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-progressbar_cpu_usage")), l_sCPU);
-					if(l_pCurrentInterfacedScenario->m_pPlayer&&l_pCurrentInterfacedScenario->m_bDebugCPUUsage)
+					if (currentInterfacedScenario->m_pPlayer && currentInterfacedScenario->m_debugCPUUsage)
 					{
 						// redraws scenario
-						l_pCurrentInterfacedScenario->redraw();
+						currentInterfacedScenario->redraw();
 					}
 				}
 			}
@@ -764,7 +769,7 @@ namespace
 			gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-progressbar_cpu_usage")), 0);
 		}
 
-		if(!l_pApplication->hasRunningScenario())
+		if (!l_pApplication->hasRunningScenario())
 		{
 			System::Time::sleep(50);
 		}
@@ -772,27 +777,27 @@ namespace
 		return TRUE;
 	}
 
-	gboolean idle_scenario_loop(gpointer pUserData)
+	gboolean idle_scenario_loop(gpointer data)
 	{
-		CInterfacedScenario* l_pInterfacedScenario=static_cast<CInterfacedScenario*>(pUserData);
-		uint64 l_ui64CurrentTime=System::Time::zgetTime();
-		if(l_pInterfacedScenario->m_ui64LastLoopTime == uint64(-1))
+		auto* interfacedScenario = static_cast<CInterfacedScenario*>(data);
+		uint64_t l_ui64CurrentTime = System::Time::zgetTime();
+		if (interfacedScenario->m_ui64LastLoopTime == uint64_t(-1))
 		{
-			l_pInterfacedScenario->m_ui64LastLoopTime = l_ui64CurrentTime;
+			interfacedScenario->m_ui64LastLoopTime = l_ui64CurrentTime;
 		}
-		l_pInterfacedScenario->m_pPlayer->setFastForwardMaximumFactor(::gtk_spin_button_get_value(l_pInterfacedScenario->m_rApplication.m_pFastForwardFactor));
-		if (!l_pInterfacedScenario->m_pPlayer->loop(l_ui64CurrentTime-l_pInterfacedScenario->m_ui64LastLoopTime))
+		interfacedScenario->m_pPlayer->setFastForwardMaximumFactor(gtk_spin_button_get_value(interfacedScenario->m_rApplication.m_pFastForwardFactor));
+		if (!interfacedScenario->m_pPlayer->loop(l_ui64CurrentTime - interfacedScenario->m_ui64LastLoopTime))
 		{
-			l_pInterfacedScenario->m_rApplication.stopInterfacedScenarioAndReleasePlayer(l_pInterfacedScenario);
+			interfacedScenario->m_rApplication.stopInterfacedScenarioAndReleasePlayer(interfacedScenario);
 		}
-		l_pInterfacedScenario->m_ui64LastLoopTime=l_ui64CurrentTime;
+		interfacedScenario->m_ui64LastLoopTime = l_ui64CurrentTime;
 		return TRUE;
 	}
 
-	gboolean timeout_application_loop(gpointer pUserData)
+	gboolean timeout_application_loop(gpointer data)
 	{
-		CApplication* l_pApplication=static_cast<CApplication*>(pUserData);
-		if(!l_pApplication->hasRunningScenario() && l_pApplication->m_eCommandLineFlags&CommandLineFlag_NoGui)
+		auto* l_pApplication = static_cast<CApplication*>(data);
+		if (!l_pApplication->hasRunningScenario() && l_pApplication->m_eCommandLineFlags & CommandLineFlag_NoGui)
 		{
 			l_pApplication->quitApplicationCB();
 			gtk_main_quit();
@@ -806,16 +811,16 @@ namespace
 	* Function called in gtk loop: to check each 0.1second if a message was sent by a second instance of Designer
 	* (Meaning that someone tried to reopen Designer and this instance has to do something)
 	**/
-	gboolean receiveSecondInstanceMessage(gpointer pUserData)
+	gboolean receiveSecondInstanceMessage(gpointer data)
 	{
 		try
 		{	// Open or create ensures that
-			boost::interprocess::named_mutex l_oMutex(boost::interprocess::open_or_create, MUTEX_NAME);
+			boost::interprocess::named_mutex mutex(boost::interprocess::open_or_create, MUTEX_NAME);
 			{
-				boost::interprocess::scoped_lock<boost::interprocess::named_mutex> lock(l_oMutex);
-				CApplication* l_pApplication = static_cast<CApplication*>(pUserData);
+				boost::interprocess::scoped_lock<boost::interprocess::named_mutex> lock(mutex);
+				CApplication* l_pApplication = static_cast<CApplication*>(data);
 				//Tries to open a message, if fails, go to catch
-				boost::interprocess::message_queue l_oMessage(boost::interprocess::open_only, MESSAGE_NAME);
+				boost::interprocess::message_queue message(boost::interprocess::open_only, MESSAGE_NAME);
 				l_pApplication->m_KernelContext.getLogManager() << LogLevel_Trace << "ovdCApplication::receiveSecondInstanceMessage- A message was detected \n";
 
 				// Whatever contains the message the first instance should try to take the focus
@@ -823,36 +828,37 @@ namespace
 				size_t recvd_size;
 				unsigned int priority = 0;
 				char l_pBuffer[2048];
-				if ( l_oMessage.try_receive(&l_pBuffer, sizeof(l_pBuffer), recvd_size, priority))
+				if (message.try_receive(&l_pBuffer, sizeof(l_pBuffer), recvd_size, priority))
 				{
 					boost::interprocess::message_queue::remove(MESSAGE_NAME);
 
-					int32 l_iMode = 0;
+					int l_iMode = 0;
 					char l_sScenarioPath[2048];
 					char* l_sMessage = strtok(l_pBuffer, ";");
-					while(l_sMessage != NULL)
+					while (l_sMessage != nullptr)
 					{
 						sscanf(l_sMessage, "%1d : <%2048[^>]> ", &l_iMode, &l_sScenarioPath);
-						switch(l_iMode)
+						switch (l_iMode)
 						{
 						case CommandLineFlag_Open:
 							l_pApplication->openScenario(l_sScenarioPath);
 							break;
 						case CommandLineFlag_Play:
-							if(l_pApplication->openScenario(l_sScenarioPath))
+							if (l_pApplication->openScenario(l_sScenarioPath))
 							{
 								l_pApplication->playScenarioCB();
 							}
 							break;
 						case CommandLineFlag_PlayFast:
-							if(l_pApplication->openScenario(l_sScenarioPath))
+							if (l_pApplication->openScenario(l_sScenarioPath))
 							{
 								l_pApplication->forwardScenarioCB();
 							}
 							break;
+						default: break;
 						}
 						l_iMode = 0;
-						l_sMessage = strtok(NULL, ";");
+						l_sMessage = strtok(nullptr, ";");
 					}
 				}
 				else
@@ -862,67 +868,37 @@ namespace
 			}
 		}
 		// An interprocess_exception is throwed if no messages could be found, in this case we do nothing
-		catch(boost::interprocess::interprocess_exception) {}
+		catch (boost::interprocess::interprocess_exception) {}
 		return TRUE;
 	}
 #endif
 
-	void zoom_in_scenario_cb(::GtkButton* pButton, gpointer pUserData)
+	void zoom_in_scenario_cb(GtkButton* /*button*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->zoomInCB();
+		static_cast<CApplication*>(data)->zoomInCB();
 	}
 
-	void zoom_out_scenario_cb(::GtkButton* pButton, gpointer pUserData)
+	void zoom_out_scenario_cb(GtkButton* /*button*/, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->zoomOutCB();
+		static_cast<CApplication*>(data)->zoomOutCB();
 	}
 
 
-	void spinner_zoom_changed_cb(::GtkSpinButton* pButton, gpointer pUserData)
+	void spinner_zoom_changed_cb(GtkSpinButton* button, gpointer data)
 	{
-		static_cast<CApplication*>(pUserData)->spinnerZoomChangedCB(static_cast<uint32_t>(gtk_spin_button_get_value(pButton)));
+		static_cast<CApplication*>(data)->spinnerZoomChangedCB(uint32_t(gtk_spin_button_get_value(button)));
 	}
+}  // namespace
 
-}
+static GtkTargetEntry g_vTargetEntry[] = {
+	{ static_cast<gchar*>("STRING"), 0, 0 },
+	{ static_cast<gchar*>("text/plain"), 0, 0 }
+};
 
-static ::GtkTargetEntry g_vTargetEntry[]= {
-	{ (gchar*)"STRING", 0, 0 },
-	{ (gchar*)"text/plain", 0, 0 } };
-
-CApplication::CApplication(const IKernelContext& rKernelContext)
-	:m_KernelContext(rKernelContext)
-	,m_pPluginManager(NULL)
-	,m_pScenarioManager(NULL)
-	,m_pVisualizationManager(NULL)
-	,m_pClipboardScenario(NULL)
-	,m_eCommandLineFlags(CommandLineFlag_None)
-	,m_pBuilderInterface(NULL)
-	,m_pMainWindow(NULL)
-	,m_pSplashScreen(NULL)
-	,m_pScenarioNotebook(NULL)
-	,m_pResourceNotebook(NULL)
-	,m_pBoxAlgorithmTreeModel(NULL)
-	,m_pBoxAlgorithmTreeModelFilter(NULL)
-	,m_pBoxAlgorithmTreeModelFilter2(NULL)
-	,m_pBoxAlgorithmTreeModelFilter3(NULL)
-	,m_pBoxAlgorithmTreeModelFilter4(NULL)
-	,m_pBoxAlgorithmTreeView(NULL)
-	,m_pAlgorithmTreeModel(NULL)
-	,m_pAlgorithmTreeView(NULL)
-	,m_pFastForwardFactor(NULL)
-	,m_pConfigureSettingsAddSettingButton(NULL)
-	,m_MenuOpenRecent(NULL)
-	,m_pTableInputs(NULL)
-	,m_pTableOutputs(NULL)
-	,m_giFilterTimeout(0)
-	,m_bIsMaximized(false)
-	,m_ui64LastTimeRefresh(0)
-	,m_bIsQuitting(false)
-	,m_bIsNewVersion(false)
-	,m_ui32CurrentInterfacedScenarioIndex(0)
+CApplication::CApplication(const IKernelContext& rKernelContext) : m_KernelContext(rKernelContext)
 {
-	m_pPluginManager=&m_KernelContext.getPluginManager();
-	m_pScenarioManager=&m_KernelContext.getScenarioManager();
+	m_pPluginManager = &m_KernelContext.getPluginManager();
+	m_pScenarioManager = &m_KernelContext.getScenarioManager();
 	m_pScenarioManager->registerScenarioImporter(OVD_ScenarioImportContext_OpenScenario, ".xml", OVP_GD_ClassId_Algorithm_XMLScenarioImporter);
 	m_pScenarioManager->registerScenarioImporter(OVD_ScenarioImportContext_OpenScenario, ".mxs", OVP_GD_ClassId_Algorithm_XMLScenarioImporter);
 	m_pScenarioManager->registerScenarioImporter(OVD_ScenarioImportContext_OpenScenario, ".mxb", OVP_GD_ClassId_Algorithm_XMLScenarioImporter);
@@ -933,7 +909,7 @@ CApplication::CApplication(const IKernelContext& rKernelContext)
 	m_pVisualizationManager = new CVisualizationManager(m_KernelContext);
 	m_visualizationContext = dynamic_cast<OpenViBEVisualizationToolkit::IVisualizationContext*>(m_KernelContext.getPluginManager().createPluginObject(OVP_ClassId_Plugin_VisualizationContext));
 	m_visualizationContext->setManager(m_pVisualizationManager);
-	m_pLogListenerDesigner = NULL;
+	m_pLogListenerDesigner = nullptr;
 
 	m_KernelContext.getConfigurationManager().createConfigurationToken("Player_ScenarioDirectory", "");
 	m_KernelContext.getConfigurationManager().createConfigurationToken("__volatile_ScenarioDir", "");
@@ -944,14 +920,14 @@ CApplication::CApplication(const IKernelContext& rKernelContext)
 #endif
 }
 
-CApplication::~CApplication(void)
+CApplication::~CApplication()
 {
-	if(m_pBuilderInterface)
+	if (m_pBuilderInterface)
 	{
 		m_KernelContext.getLogManager().removeListener(m_pLogListenerDesigner);
 		// @FIXME this likely still does not deallocate the actual widgets allocated by add_from_file
 		g_object_unref(G_OBJECT(m_pBuilderInterface));
-		m_pBuilderInterface = NULL;
+		m_pBuilderInterface = nullptr;
 	}
 
 	m_KernelContext.getPluginManager().releasePluginObject(m_visualizationContext);
@@ -962,23 +938,23 @@ CApplication::~CApplication(void)
 #endif
 }
 
-void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
+void CApplication::initialize(const ECommandLineFlag eCommandLineFlags)
 {
-	m_eCommandLineFlags=eCommandLineFlags;
+	m_eCommandLineFlags = eCommandLineFlags;
 	m_sSearchTerm = "";
 
 	// Load metaboxes from metabox path
 	m_KernelContext.getMetaboxManager().addMetaboxesFromFiles(m_KernelContext.getConfigurationManager().expand("${Kernel_Metabox}"));
 
 	// Copy recursively default scenario directory to the default working directory if not exists
-	CString l_sDefaultWorkingDirectory = m_KernelContext.getConfigurationManager().expand(OVD_WORKING_SCENARIOS_PATH);
-	CString l_sDefaultScenariosDirectory=m_KernelContext.getConfigurationManager().expand(OVD_SCENARIOS_PATH);
-	if ( !FS::Files::directoryExists(l_sDefaultWorkingDirectory) && FS::Files::directoryExists(l_sDefaultScenariosDirectory))
+	const CString defaultWorkingDirectory = m_KernelContext.getConfigurationManager().expand(OVD_WORKING_SCENARIOS_PATH);
+	const CString defaultScenariosDirectory = m_KernelContext.getConfigurationManager().expand(OVD_SCENARIOS_PATH);
+	if (!FS::Files::directoryExists(defaultWorkingDirectory) && FS::Files::directoryExists(defaultScenariosDirectory))
 	{
-		if(!FS::Files::copyDirectory(l_sDefaultScenariosDirectory, l_sDefaultWorkingDirectory))
+		if (!FS::Files::copyDirectory(defaultScenariosDirectory, defaultWorkingDirectory))
 		{
 			m_KernelContext.getLogManager() << LogLevel_Error << "Could not create "
-			                                 << l_sDefaultWorkingDirectory << " folder\n";
+				<< defaultWorkingDirectory << " folder\n";
 		}
 	}
 
@@ -987,14 +963,14 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 
 	// Prepares scenario clipboard
 	CIdentifier l_oClipboardScenarioIdentifier;
-	if(m_pScenarioManager->createScenario(l_oClipboardScenarioIdentifier))
+	if (m_pScenarioManager->createScenario(l_oClipboardScenarioIdentifier))
 	{
-		m_pClipboardScenario=&m_pScenarioManager->getScenario(l_oClipboardScenarioIdentifier);
+		m_pClipboardScenario = &m_pScenarioManager->getScenario(l_oClipboardScenarioIdentifier);
 	}
 
-	m_pBuilderInterface=gtk_builder_new(); // glade_xml_new(OVD_GUI_File, "openvibe", NULL);
-	gtk_builder_add_from_file(m_pBuilderInterface, OVD_GUI_File, NULL);
-	gtk_builder_connect_signals(m_pBuilderInterface, NULL);
+	m_pBuilderInterface = gtk_builder_new(); // glade_xml_new(OVD_GUI_File, "openvibe", nullptr);
+	gtk_builder_add_from_file(m_pBuilderInterface, OVD_GUI_File, nullptr);
+	gtk_builder_connect_signals(m_pBuilderInterface, nullptr);
 
 	std::string applicationVersion = m_KernelContext.getConfigurationManager().expand("${Application_Version}").toASCIIString();
 	if (applicationVersion == "${Application_Version}")
@@ -1003,7 +979,7 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 	}
 	const std::string defaultWindowTitle = BRAND_NAME " " DESIGNER_NAME " " + applicationVersion;
 
-	m_pMainWindow=GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe"));
+	m_pMainWindow = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe"));
 	gtk_window_set_title(GTK_WINDOW(m_pMainWindow), defaultWindowTitle.c_str());
 	gtk_menu_item_set_label(GTK_MENU_ITEM(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_display_changelog")), ("What's new in " + applicationVersion + " version of " + BRAND_NAME " " DESIGNER_NAME).c_str());
 
@@ -1013,70 +989,70 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 	g_signal_connect(m_pMainWindow, "window-state-event", G_CALLBACK(window_state_changed_cb), this);
 
 	// Connects menu actions
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_undo")),        "activate", G_CALLBACK(menu_undo_cb),               this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_redo")),        "activate", G_CALLBACK(menu_redo_cb),               this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_undo")), "activate", G_CALLBACK(menu_undo_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_redo")), "activate", G_CALLBACK(menu_redo_cb), this);
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_focus_search")),"activate", G_CALLBACK(menu_focus_search_cb),     this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_copy")),        "activate", G_CALLBACK(menu_copy_selection_cb),     this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_cut")),         "activate", G_CALLBACK(menu_cut_selection_cb),      this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_paste")),       "activate", G_CALLBACK(menu_paste_selection_cb),    this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_delete")),      "activate", G_CALLBACK(menu_delete_selection_cb),   this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_preferences")), "activate", G_CALLBACK(menu_preferences_cb),        this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_focus_search")), "activate", G_CALLBACK(menu_focus_search_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_copy")), "activate", G_CALLBACK(menu_copy_selection_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_cut")), "activate", G_CALLBACK(menu_cut_selection_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_paste")), "activate", G_CALLBACK(menu_paste_selection_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_delete")), "activate", G_CALLBACK(menu_delete_selection_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_preferences")), "activate", G_CALLBACK(menu_preferences_cb), this);
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_new")),         "activate", G_CALLBACK(menu_new_scenario_cb),       this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_open")),        "activate", G_CALLBACK(menu_open_scenario_cb),      this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_save")),        "activate", G_CALLBACK(menu_save_scenario_cb),      this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_save_as")),     "activate", G_CALLBACK(menu_save_scenario_as_cb),   this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_close")),       "activate", G_CALLBACK(menu_close_scenario_cb),     this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_quit")),        "activate", G_CALLBACK(menu_quit_application_cb),   this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_new")), "activate", G_CALLBACK(menu_new_scenario_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_open")), "activate", G_CALLBACK(menu_open_scenario_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_save")), "activate", G_CALLBACK(menu_save_scenario_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_save_as")), "activate", G_CALLBACK(menu_save_scenario_as_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_close")), "activate", G_CALLBACK(menu_close_scenario_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_quit")), "activate", G_CALLBACK(menu_quit_application_cb), this);
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_restore_default_scenarios")),     "activate", G_CALLBACK(menu_restore_default_scenarios_cb),   this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_restore_default_scenarios")), "activate", G_CALLBACK(menu_restore_default_scenarios_cb), this);
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_about")),          "activate", G_CALLBACK(menu_about_openvibe_cb),  this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_scenario_about")), "activate", G_CALLBACK(menu_about_scenario_cb),  this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_about")), "activate", G_CALLBACK(menu_about_openvibe_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_scenario_about")), "activate", G_CALLBACK(menu_about_scenario_cb), this);
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_documentation")), "activate", G_CALLBACK(menu_browse_documentation_cb), this);
 #ifdef MENSIA_DISTRIBUTION
 	if (FS::Files::fileExists(Directories::getBinDir() + "/mensia-flexnet-activation.exe"))
 	{
-		g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_register_license")), "activate", G_CALLBACK(menu_register_license_cb), this);
+		g_signal_connect(G_OBJECT(gtk_builder_get_object(m_builderInterface, "openvibe-menu_register_license")), "activate", G_CALLBACK(menu_register_license_cb), this);
 	}
 	else
 	{
-		gtk_widget_hide(GTK_WIDGET((gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_register_license"))));
+		gtk_widget_hide(GTK_WIDGET((gtk_builder_get_object(m_builderInterface, "openvibe-menu_register_license"))));
 	}
 #else
 	gtk_widget_hide(GTK_WIDGET((gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_register_license"))));
 #endif
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_issue_report")),  "activate", G_CALLBACK(menu_report_issue_cb),   this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_display_changelog")),  "activate", G_CALLBACK(menu_display_changelog_cb),   this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_issue_report")), "activate", G_CALLBACK(menu_report_issue_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_display_changelog")), "activate", G_CALLBACK(menu_display_changelog_cb), this);
 
-	// g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_test")),        "activate", G_CALLBACK(menu_test_cb),               this);
+	// g_signal_connect(G_OBJECT(gtk_builder_get_object(m_builderInterface, "openvibe-menu_test")),        "activate", G_CALLBACK(menu_test_cb),               this);
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_new")),       "clicked",  G_CALLBACK(button_new_scenario_cb),     this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_open")),      "clicked",  G_CALLBACK(button_open_scenario_cb),    this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_save")),      "clicked",  G_CALLBACK(button_save_scenario_cb),    this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_save_as")),   "clicked",  G_CALLBACK(button_save_scenario_as_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_new")), "clicked", G_CALLBACK(button_new_scenario_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_open")), "clicked", G_CALLBACK(button_open_scenario_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_save")), "clicked", G_CALLBACK(button_save_scenario_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_save_as")), "clicked", G_CALLBACK(button_save_scenario_as_cb), this);
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_close")), "clicked", G_CALLBACK(button_close_scenario_cb), this);
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_undo")), "clicked", G_CALLBACK(button_undo_cb), this);
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_redo")), "clicked", G_CALLBACK(button_redo_cb), this);
 
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_log_level")),     "clicked",  G_CALLBACK(log_level_cb),                    this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager")), "toggled",  G_CALLBACK(button_toggle_window_manager_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_log_level")), "clicked", G_CALLBACK(log_level_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager")), "toggled", G_CALLBACK(button_toggle_window_manager_cb), this);
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_comment")),       "clicked", G_CALLBACK(button_comment_cb),        this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_comment")), "clicked", G_CALLBACK(button_comment_cb), this);
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_aboutscenario")), "clicked", G_CALLBACK(button_about_scenario_cb), this);
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")),       "clicked",  G_CALLBACK(stop_scenario_cb),          this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), "clicked",  G_CALLBACK(play_pause_scenario_cb),    this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_next")),       "clicked",  G_CALLBACK(next_scenario_cb),          this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_forward")),    "clicked",  G_CALLBACK(forward_scenario_cb),       this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")), "clicked", G_CALLBACK(stop_scenario_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), "clicked", G_CALLBACK(play_pause_scenario_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_next")), "clicked", G_CALLBACK(next_scenario_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_forward")), "clicked", G_CALLBACK(forward_scenario_cb), this);
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-box_algorithm_title_button_expand")),   "clicked", G_CALLBACK(box_algorithm_title_button_expand_cb),   this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-box_algorithm_title_button_expand")), "clicked", G_CALLBACK(box_algorithm_title_button_expand_cb), this);
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-box_algorithm_title_button_collapse")), "clicked", G_CALLBACK(box_algorithm_title_button_collapse_cb), this);
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-algorithm_title_button_expand")),   "clicked", G_CALLBACK(algorithm_title_button_expand_cb),   this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-algorithm_title_button_expand")), "clicked", G_CALLBACK(algorithm_title_button_expand_cb), this);
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-algorithm_title_button_collapse")), "clicked", G_CALLBACK(algorithm_title_button_collapse_cb), this);
 
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-box_algorithm_searchbox")), "icon-press", G_CALLBACK(searchbox_select_all_cb), this);
@@ -1086,30 +1062,30 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-scenario_configuration_button_configure")), "clicked", G_CALLBACK(button_configure_current_scenario_settings_cb), this);
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_zoomin")), "clicked",  G_CALLBACK(zoom_in_scenario_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_zoomout")), "clicked",  G_CALLBACK(zoom_out_scenario_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-zoom_spinner")), "value-changed",  G_CALLBACK(spinner_zoom_changed_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_zoomin")), "clicked", G_CALLBACK(zoom_in_scenario_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_zoomout")), "clicked", G_CALLBACK(zoom_out_scenario_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-zoom_spinner")), "value-changed", G_CALLBACK(spinner_zoom_changed_cb), this);
 #ifdef MENSIA_DISTRIBUTION
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration")),       "clicked", G_CALLBACK(button_toggle_neurort_engine_configuration_cb),   this);
-	m_pArchwayHandlerGUI->m_ButtonOpenEngineConfigurationDialog = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration"));
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_builderInterface, "neurort-toggle_engine_configuration")), "clicked", G_CALLBACK(button_toggle_neurort_engine_configuration_cb), this);
+	m_pArchwayHandlerGUI->m_ButtonOpenEngineConfigurationDialog = GTK_WIDGET(gtk_builder_get_object(m_builderInterface, "neurort-toggle_engine_configuration"));
 #endif
 	// Prepares fast forward feature
-	float64 l_f64FastForwardFactor=m_KernelContext.getConfigurationManager().expandAsFloat("${Designer_FastForwardFactor}", -1);
-	m_pFastForwardFactor=GTK_SPIN_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-spinbutton_fast-forward-factor"));
-	if(l_f64FastForwardFactor==-1)
+	const double fastForwardFactor = m_KernelContext.getConfigurationManager().expandAsFloat("${Designer_FastForwardFactor}", -1);
+	m_pFastForwardFactor = GTK_SPIN_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-spinbutton_fast-forward-factor"));
+	if (fastForwardFactor == -1)
 	{
-		::gtk_spin_button_set_value(m_pFastForwardFactor, 100);
+		gtk_spin_button_set_value(m_pFastForwardFactor, 100);
 	}
 	else
 	{
-		::gtk_spin_button_set_value(m_pFastForwardFactor, l_f64FastForwardFactor);
+		gtk_spin_button_set_value(m_pFastForwardFactor, fastForwardFactor);
 	}
 
 #if defined(TARGET_OS_Windows)
-#if GTK_CHECK_VERSION(2,24,0)
+#if GTK_CHECK_VERSION(2, 24, 0)
 	// expect it to work */
 #else
-	gtk_about_dialog_set_url_hook ((GtkAboutDialogActivateLinkFunc)menu_about_link_clicked_cb, this, NULL);
+	gtk_about_dialog_set_url_hook((GtkAboutDialogActivateLinkFunc)menu_about_link_clicked_cb, this, nullptr);
 #endif
 #endif
 
@@ -1120,16 +1096,16 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 #endif
 
 	// Prepares main notebooks
-	m_pScenarioNotebook=GTK_NOTEBOOK(gtk_builder_get_object(m_pBuilderInterface, "openvibe-scenario_notebook"));
+	m_pScenarioNotebook = GTK_NOTEBOOK(gtk_builder_get_object(m_pBuilderInterface, "openvibe-scenario_notebook"));
 	// optional behavior: vertically stacked scenarios (filename trimming mandatory in that case).
-	if(m_KernelContext.getConfigurationManager().expandAsBoolean("${Designer_ScenarioTabsVerticalStack}", false))
+	if (m_KernelContext.getConfigurationManager().expandAsBoolean("${Designer_ScenarioTabsVerticalStack}", false))
 	{
 		gtk_notebook_set_tab_pos(m_pScenarioNotebook, GTK_POS_LEFT);
 	}
 
 	g_signal_connect(G_OBJECT(m_pScenarioNotebook), "switch-page", G_CALLBACK(change_current_scenario_cb), this);
 	g_signal_connect(G_OBJECT(m_pScenarioNotebook), "page-reordered", G_CALLBACK(reorder_scenario_cb), this);
-	m_pResourceNotebook=GTK_NOTEBOOK(gtk_builder_get_object(m_pBuilderInterface, "openvibe-resource_notebook"));
+	m_pResourceNotebook = GTK_NOTEBOOK(gtk_builder_get_object(m_pBuilderInterface, "openvibe-resource_notebook"));
 
 	// Creates an empty scnenario
 	gtk_notebook_remove_page(m_pScenarioNotebook, 0);
@@ -1140,20 +1116,20 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 	//newScenarioCB();
 	{
 		// Prepares box algorithm view
-		m_pBoxAlgorithmTreeView=GTK_TREE_VIEW(gtk_builder_get_object(m_pBuilderInterface, "openvibe-box_algorithm_tree"));
-		::GtkTreeViewColumn* l_pTreeViewColumnName=gtk_tree_view_column_new();
-		::GtkTreeViewColumn* l_pTreeViewColumnDesc=gtk_tree_view_column_new();
-		::GtkCellRenderer* l_pCellRendererIcon=gtk_cell_renderer_pixbuf_new();
-		::GtkCellRenderer* l_pCellRendererName=gtk_cell_renderer_text_new();
-		::GtkCellRenderer* l_pCellRendererDesc=gtk_cell_renderer_text_new();
+		m_pBoxAlgorithmTreeView = GTK_TREE_VIEW(gtk_builder_get_object(m_pBuilderInterface, "openvibe-box_algorithm_tree"));
+		GtkTreeViewColumn* l_pTreeViewColumnName = gtk_tree_view_column_new();
+		GtkTreeViewColumn* l_pTreeViewColumnDesc = gtk_tree_view_column_new();
+		GtkCellRenderer* l_pCellRendererIcon = gtk_cell_renderer_pixbuf_new();
+		GtkCellRenderer* l_pCellRendererName = gtk_cell_renderer_text_new();
+		GtkCellRenderer* l_pCellRendererDesc = gtk_cell_renderer_text_new();
 		gtk_tree_view_column_set_title(l_pTreeViewColumnName, "Name");
 		gtk_tree_view_column_set_title(l_pTreeViewColumnDesc, "Description");
 		gtk_tree_view_column_pack_start(l_pTreeViewColumnName, l_pCellRendererIcon, FALSE);
 		gtk_tree_view_column_pack_start(l_pTreeViewColumnName, l_pCellRendererName, TRUE);
 		gtk_tree_view_column_pack_start(l_pTreeViewColumnDesc, l_pCellRendererDesc, TRUE);
-		gtk_tree_view_column_set_attributes(l_pTreeViewColumnName, l_pCellRendererIcon, "stock-id", Resource_StringStockIcon, NULL);
-		gtk_tree_view_column_set_attributes(l_pTreeViewColumnName, l_pCellRendererName, "text", Resource_StringName, "foreground", Resource_StringColor, "font", Resource_StringFont, "background", Resource_BackGroundColor, NULL);
-		gtk_tree_view_column_set_attributes(l_pTreeViewColumnDesc, l_pCellRendererDesc, "text", Resource_StringShortDescription, "foreground", Resource_StringColor, "background", Resource_BackGroundColor, NULL);
+		gtk_tree_view_column_set_attributes(l_pTreeViewColumnName, l_pCellRendererIcon, "stock-id", Resource_StringStockIcon, nullptr);
+		gtk_tree_view_column_set_attributes(l_pTreeViewColumnName, l_pCellRendererName, "text", Resource_StringName, "foreground", Resource_StringColor, "font", Resource_StringFont, "background", Resource_BackGroundColor, nullptr);
+		gtk_tree_view_column_set_attributes(l_pTreeViewColumnDesc, l_pCellRendererDesc, "text", Resource_StringShortDescription, "foreground", Resource_StringColor, "background", Resource_BackGroundColor, nullptr);
 		gtk_tree_view_column_set_sizing(l_pTreeViewColumnName, GTK_TREE_VIEW_COLUMN_FIXED);
 		gtk_tree_view_column_set_sizing(l_pTreeViewColumnDesc, GTK_TREE_VIEW_COLUMN_FIXED);
 		gtk_tree_view_column_set_expand(l_pTreeViewColumnName, FALSE);
@@ -1168,28 +1144,28 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 		gtk_tree_view_append_column(m_pBoxAlgorithmTreeView, l_pTreeViewColumnDesc);
 
 		// Prepares box algorithm model
-		m_pBoxAlgorithmTreeModel=gtk_tree_store_new(9, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN, G_TYPE_STRING);
+		m_pBoxAlgorithmTreeModel = gtk_tree_store_new(9, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN, G_TYPE_STRING);
 
 		// Tree Storage for the searches
-		gtk_tree_view_set_model(m_pBoxAlgorithmTreeView, GTK_TREE_MODEL(m_pBoxAlgorithmTreeModel) );
+		gtk_tree_view_set_model(m_pBoxAlgorithmTreeView, GTK_TREE_MODEL(m_pBoxAlgorithmTreeModel));
 	}
 
 	{
 		// Prepares algorithm view
-		m_pAlgorithmTreeView=GTK_TREE_VIEW(gtk_builder_get_object(m_pBuilderInterface, "openvibe-algorithm_tree"));
-		::GtkTreeViewColumn* l_pTreeViewColumnName=gtk_tree_view_column_new();
-		::GtkTreeViewColumn* l_pTreeViewColumnDesc=gtk_tree_view_column_new();
-		::GtkCellRenderer* l_pCellRendererIcon=gtk_cell_renderer_pixbuf_new();
-		::GtkCellRenderer* l_pCellRendererName=gtk_cell_renderer_text_new();
-		::GtkCellRenderer* l_pCellRendererDesc=gtk_cell_renderer_text_new();
+		m_pAlgorithmTreeView = GTK_TREE_VIEW(gtk_builder_get_object(m_pBuilderInterface, "openvibe-algorithm_tree"));
+		GtkTreeViewColumn* l_pTreeViewColumnName = gtk_tree_view_column_new();
+		GtkTreeViewColumn* l_pTreeViewColumnDesc = gtk_tree_view_column_new();
+		GtkCellRenderer* l_pCellRendererIcon = gtk_cell_renderer_pixbuf_new();
+		GtkCellRenderer* l_pCellRendererName = gtk_cell_renderer_text_new();
+		GtkCellRenderer* l_pCellRendererDesc = gtk_cell_renderer_text_new();
 		gtk_tree_view_column_set_title(l_pTreeViewColumnName, "Name");
 		gtk_tree_view_column_set_title(l_pTreeViewColumnDesc, "Description");
 		gtk_tree_view_column_pack_start(l_pTreeViewColumnName, l_pCellRendererIcon, FALSE);
 		gtk_tree_view_column_pack_start(l_pTreeViewColumnName, l_pCellRendererName, TRUE);
 		gtk_tree_view_column_pack_start(l_pTreeViewColumnDesc, l_pCellRendererDesc, TRUE);
-		gtk_tree_view_column_set_attributes(l_pTreeViewColumnName, l_pCellRendererIcon, "stock-id", Resource_StringStockIcon, NULL);
-		gtk_tree_view_column_set_attributes(l_pTreeViewColumnName, l_pCellRendererName, "text", Resource_StringName, "foreground", Resource_StringColor, NULL);
-		gtk_tree_view_column_set_attributes(l_pTreeViewColumnDesc, l_pCellRendererDesc, "text", Resource_StringShortDescription, "foreground", Resource_StringColor, NULL);
+		gtk_tree_view_column_set_attributes(l_pTreeViewColumnName, l_pCellRendererIcon, "stock-id", Resource_StringStockIcon, nullptr);
+		gtk_tree_view_column_set_attributes(l_pTreeViewColumnName, l_pCellRendererName, "text", Resource_StringName, "foreground", Resource_StringColor, nullptr);
+		gtk_tree_view_column_set_attributes(l_pTreeViewColumnDesc, l_pCellRendererDesc, "text", Resource_StringShortDescription, "foreground", Resource_StringColor, nullptr);
 
 		gtk_tree_view_column_set_sizing(l_pTreeViewColumnName, GTK_TREE_VIEW_COLUMN_FIXED);
 		gtk_tree_view_column_set_sizing(l_pTreeViewColumnDesc, GTK_TREE_VIEW_COLUMN_FIXED);
@@ -1205,10 +1181,8 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 		gtk_tree_view_append_column(m_pAlgorithmTreeView, l_pTreeViewColumnDesc);
 
 		// Prepares algorithm model
-		m_pAlgorithmTreeModel=gtk_tree_store_new(9, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN, G_TYPE_STRING);
+		m_pAlgorithmTreeModel = gtk_tree_store_new(9, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN, G_TYPE_STRING);
 		gtk_tree_view_set_model(m_pAlgorithmTreeView, GTK_TREE_MODEL(m_pAlgorithmTreeModel));
-
-
 	}
 
 	m_pConfigureSettingsAddSettingButton = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "dialog_scenario_configuration-button_add_setting"));
@@ -1220,11 +1194,11 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 	m_pTableInputs = gtk_table_new(1, 3, FALSE);
 	m_pTableOutputs = gtk_table_new(1, 3, FALSE);
 
-	GtkWidget* l_pScrolledWindowInputs = gtk_scrolled_window_new(NULL, NULL);
+	GtkWidget* l_pScrolledWindowInputs = gtk_scrolled_window_new(nullptr, nullptr);
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(l_pScrolledWindowInputs), GTK_WIDGET(m_pTableInputs));
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(l_pScrolledWindowInputs), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
 
-	GtkWidget* l_pScrolledWindowOutputs = gtk_scrolled_window_new(NULL, NULL);
+	GtkWidget* l_pScrolledWindowOutputs = gtk_scrolled_window_new(nullptr, nullptr);
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(l_pScrolledWindowOutputs), GTK_WIDGET(m_pTableOutputs));
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(l_pScrolledWindowOutputs), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
 
@@ -1243,92 +1217,88 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 
 	gtk_widget_show_all(l_pScenarioLinksVBox);
 
-	// Prepares drag & drop for box creation
-	gtk_drag_source_set(GTK_WIDGET(m_pBoxAlgorithmTreeView), GDK_BUTTON1_MASK, g_vTargetEntry, sizeof(g_vTargetEntry)/sizeof(::GtkTargetEntry), GDK_ACTION_COPY);
-	g_signal_connect(
-		G_OBJECT(m_pBoxAlgorithmTreeView),
-		"drag_data_get",
-		G_CALLBACK(drag_data_get_cb),
-		this);
+	// Prepares drag& drop for box creation
+	gtk_drag_source_set(GTK_WIDGET(m_pBoxAlgorithmTreeView), GDK_BUTTON1_MASK, g_vTargetEntry, sizeof(g_vTargetEntry) / sizeof(GtkTargetEntry), GDK_ACTION_COPY);
+	g_signal_connect(G_OBJECT(m_pBoxAlgorithmTreeView), "drag_data_get", G_CALLBACK(drag_data_get_cb), this);
 
 	// Shows main window
-	gtk_builder_connect_signals(m_pBuilderInterface, NULL);
+	gtk_builder_connect_signals(m_pBuilderInterface, nullptr);
 	m_bIsMaximized = false;
 
-	int l_iHeight = static_cast<int>(m_KernelContext.getConfigurationManager().expandAsInteger("${Designer_EditorSizeHeight}"));
-	int l_iWidth = static_cast<int>(m_KernelContext.getConfigurationManager().expandAsInteger("${Designer_EditorSizeWidth}"));
-	if(l_iHeight > 0 && l_iWidth > 0)
+	const int height = int(m_KernelContext.getConfigurationManager().expandAsInteger("${Designer_EditorSizeHeight}"));
+	const int width = int(m_KernelContext.getConfigurationManager().expandAsInteger("${Designer_EditorSizeWidth}"));
+	if (height > 0 && width > 0)
 	{
-		gtk_window_resize(GTK_WINDOW(m_pMainWindow), l_iWidth, l_iHeight);
+		gtk_window_resize(GTK_WINDOW(m_pMainWindow), width, height);
 	}
 
-	if(m_KernelContext.getConfigurationManager().expandAsBoolean("${Designer_FullscreenEditor}"))
+	if (m_KernelContext.getConfigurationManager().expandAsBoolean("${Designer_FullscreenEditor}"))
 	{
 		gtk_window_maximize(GTK_WINDOW(m_pMainWindow));
 	}
 
-	int l_iPanedPosition = static_cast<int>(m_KernelContext.getConfigurationManager().expandAsInteger("${Designer_EditorPanedPosition}"));
-	if(l_iPanedPosition > 0)
+	const int panedPosition = int(m_KernelContext.getConfigurationManager().expandAsInteger("${Designer_EditorPanedPosition}"));
+	if (panedPosition > 0)
 	{
-		gtk_paned_set_position(GTK_PANED(gtk_builder_get_object(m_pBuilderInterface, "openvibe-horizontal_container")), l_iPanedPosition);
+		gtk_paned_set_position(GTK_PANED(gtk_builder_get_object(m_pBuilderInterface, "openvibe-horizontal_container")), panedPosition);
 	}
 
-	GtkNotebook* l_pSidebar = GTK_NOTEBOOK(gtk_builder_get_object(m_pBuilderInterface, "openvibe-resource_notebook"));
+	GtkNotebook* sidebar = GTK_NOTEBOOK(gtk_builder_get_object(m_pBuilderInterface, "openvibe-resource_notebook"));
 
 
 	// List the notebook pages, cycle through them in reverse so we can remove pages without modifying indexes
-	for (int l_iNotebookIndex = gtk_notebook_get_n_pages(l_pSidebar) - 1; l_iNotebookIndex >= 0 ; l_iNotebookIndex--)
+	for (int notebookIndex = gtk_notebook_get_n_pages(sidebar) - 1; notebookIndex >= 0; notebookIndex--)
 	{
-		GtkWidget* l_pTabWidget = gtk_notebook_get_nth_page(l_pSidebar, l_iNotebookIndex);
-		GtkWidget* l_sTabLabel = gtk_notebook_get_tab_label(l_pSidebar, l_pTabWidget);
-		if(!m_KernelContext.getConfigurationManager().expandAsBoolean("${Designer_ShowAlgorithms}"))
+		GtkWidget* tabWidget = gtk_notebook_get_nth_page(sidebar, notebookIndex);
+		GtkWidget* tabLabel = gtk_notebook_get_tab_label(sidebar, tabWidget);
+		if (!m_KernelContext.getConfigurationManager().expandAsBoolean("${Designer_ShowAlgorithms}"))
 		{
-			if (l_sTabLabel == GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-algorithm_title_container"))) {
-				gtk_notebook_remove_page(l_pSidebar, l_iNotebookIndex);
+			if (tabLabel == GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-algorithm_title_container")))
+			{
+				gtk_notebook_remove_page(sidebar, notebookIndex);
 			}
 		}
 	}
 
 	// gtk_window_set_icon_name(GTK_WINDOW(m_pMainWindow), "ov-logo");
-	gtk_window_set_icon_from_file(GTK_WINDOW(m_pMainWindow), Directories::getDataDir() + "/applications/designer/designer.ico", NULL);
-	gtk_window_set_default_icon_from_file(Directories::getDataDir() + "/applications/designer/designer.ico", NULL);
+	gtk_window_set_icon_from_file(GTK_WINDOW(m_pMainWindow), Directories::getDataDir() + "/applications/designer/designer.ico", nullptr);
+	gtk_window_set_default_icon_from_file(Directories::getDataDir() + "/applications/designer/designer.ico", nullptr);
 
-	if(!(m_eCommandLineFlags&CommandLineFlag_NoManageSession))
+	if (!(m_eCommandLineFlags & CommandLineFlag_NoManageSession))
 	{
 		CIdentifier l_oTokenIdentifier;
-		char l_sVarName[1024];
-		unsigned i=0;
+		char varName[1024];
+		unsigned i = 0;
 		do
 		{
-			::sprintf(l_sVarName, "Designer_LastScenarioFilename_%03u", ++i);
-			if((l_oTokenIdentifier=m_KernelContext.getConfigurationManager().lookUpConfigurationTokenIdentifier(l_sVarName))!=OV_UndefinedIdentifier)
+			sprintf(varName, "Designer_LastScenarioFilename_%03u", ++i);
+			if ((l_oTokenIdentifier = m_KernelContext.getConfigurationManager().lookUpConfigurationTokenIdentifier(varName)) != OV_UndefinedIdentifier)
 			{
-				CString l_sFilename;
-				l_sFilename=m_KernelContext.getConfigurationManager().getConfigurationTokenValue(l_oTokenIdentifier);
-				l_sFilename=m_KernelContext.getConfigurationManager().expand(l_sFilename);
-				m_KernelContext.getLogManager() << LogLevel_Trace << "Restoring scenario [" << l_sFilename << "]\n";
-				if(!this->openScenario(l_sFilename.toASCIIString()))
+				CString fileName;
+				fileName = m_KernelContext.getConfigurationManager().getConfigurationTokenValue(l_oTokenIdentifier);
+				fileName = m_KernelContext.getConfigurationManager().expand(fileName);
+				m_KernelContext.getLogManager() << LogLevel_Trace << "Restoring scenario [" << fileName << "]\n";
+				if (!this->openScenario(fileName.toASCIIString()))
 				{
-					m_KernelContext.getLogManager() << LogLevel_ImportantWarning << "Failed to restore scenario [" << l_sFilename << "]\n";
+					m_KernelContext.getLogManager() << LogLevel_ImportantWarning << "Failed to restore scenario [" << fileName << "]\n";
 				}
 			}
-		}
-		while(l_oTokenIdentifier!=OV_UndefinedIdentifier);
+		} while (l_oTokenIdentifier != OV_UndefinedIdentifier);
 	}
 
 	CIdentifier l_oTokenIdentifier;
-	char l_sVarName[1024];
+	char varName[1024];
 	unsigned i = 0;
 	do
 	{
-		::sprintf(l_sVarName, "Designer_RecentScenario_%03u", ++i);
-		if ((l_oTokenIdentifier = m_KernelContext.getConfigurationManager().lookUpConfigurationTokenIdentifier(l_sVarName)) != OV_UndefinedIdentifier)
+		sprintf(varName, "Designer_RecentScenario_%03u", ++i);
+		if ((l_oTokenIdentifier = m_KernelContext.getConfigurationManager().lookUpConfigurationTokenIdentifier(varName)) != OV_UndefinedIdentifier)
 		{
-			CString l_sFilename;
-			l_sFilename = m_KernelContext.getConfigurationManager().getConfigurationTokenValue(l_oTokenIdentifier);
-			l_sFilename = m_KernelContext.getConfigurationManager().expand(l_sFilename);
+			CString fileName;
+			fileName = m_KernelContext.getConfigurationManager().getConfigurationTokenValue(l_oTokenIdentifier);
+			fileName = m_KernelContext.getConfigurationManager().expand(fileName);
 
-			GtkWidget* newRecentItem = gtk_image_menu_item_new_with_label(l_sFilename.toASCIIString());
+			GtkWidget* newRecentItem = gtk_image_menu_item_new_with_label(fileName.toASCIIString());
 			g_signal_connect(G_OBJECT(newRecentItem), "activate", G_CALLBACK(menu_open_recent_scenario_cb), this);
 			gtk_menu_shell_append(GTK_MENU_SHELL(m_MenuOpenRecent), newRecentItem);
 			gtk_widget_show(newRecentItem);
@@ -1336,22 +1306,22 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 		}
 	} while (l_oTokenIdentifier != OV_UndefinedIdentifier);
 
-	refresh_search_no_data_cb(NULL, this);
+	refresh_search_no_data_cb(nullptr, this);
 	// Add the designer log listener
-	CString l_sLogLevel = m_KernelContext.getConfigurationManager().expand("${Kernel_ConsoleLogLevel}");
-	string l_sValue(l_sLogLevel.toASCIIString());
-	transform(l_sValue.begin(), l_sValue.end(), l_sValue.begin(), ::to_lower<std::string::value_type>);
+	const CString logLevel = m_KernelContext.getConfigurationManager().expand("${Kernel_ConsoleLogLevel}");
+	string value(logLevel.toASCIIString());
+	transform(value.begin(), value.end(), value.begin(), ::to_lower<std::string::value_type>);
 	ELogLevel l_eLogLevel = LogLevel_Debug;
-	if(l_sValue=="debug")                    l_eLogLevel = LogLevel_Debug;
-	if(l_sValue=="benchmarking / profiling") l_eLogLevel = LogLevel_Benchmark;
-	if(l_sValue=="trace")                    l_eLogLevel = LogLevel_Trace;
-	if(l_sValue=="information")              l_eLogLevel = LogLevel_Info;
-	if(l_sValue=="warning")                  l_eLogLevel = LogLevel_Warning;
-	if(l_sValue=="important warning")        l_eLogLevel = LogLevel_ImportantWarning;
-	if(l_sValue=="error")                    l_eLogLevel = LogLevel_Error;
-	if(l_sValue=="fatal error")              l_eLogLevel = LogLevel_Fatal;
+	if (value == "debug") l_eLogLevel = LogLevel_Debug;
+	if (value == "benchmarking / profiling") { l_eLogLevel = LogLevel_Benchmark; }
+	if (value == "trace") { l_eLogLevel = LogLevel_Trace; }
+	if (value == "information") { l_eLogLevel = LogLevel_Info; }
+	if (value == "warning") { l_eLogLevel = LogLevel_Warning; }
+	if (value == "important warning") { l_eLogLevel = LogLevel_ImportantWarning; }
+	if (value == "error") { l_eLogLevel = LogLevel_Error; }
+	if (value == "fatal error") { l_eLogLevel = LogLevel_Fatal; }
 
-	switch(l_eLogLevel)
+	switch (l_eLogLevel)
 	{
 		case LogLevel_Debug:
 			gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_debug")), true);
@@ -1382,25 +1352,25 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_error")), m_KernelContext.getLogManager().isActive(LogLevel_Error));
 	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_fatal")), m_KernelContext.getLogManager().isActive(LogLevel_Fatal));
 
-	if(!(m_eCommandLineFlags&CommandLineFlag_NoGui))
+	if (!(m_eCommandLineFlags & CommandLineFlag_NoGui))
 	{
 		m_pLogListenerDesigner = new CLogListenerDesigner(m_KernelContext, m_pBuilderInterface);
 		m_pLogListenerDesigner->m_CenterOnBoxFun = [this](CIdentifier& id) { this->getCurrentInterfacedScenario()->centerOnBox(id); };
 		m_KernelContext.getLogManager().addListener(m_pLogListenerDesigner);
-		g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_clear")),       "clicked",  G_CALLBACK(clear_messages_cb), m_pLogListenerDesigner);
+		g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_clear")), "clicked", G_CALLBACK(clear_messages_cb), m_pLogListenerDesigner);
 		gtk_widget_show(m_pMainWindow);
 	}
 	// If last version of Designer used is anterior or null, then consider it as a new version
-	CString l_sLastUsedVersion = m_KernelContext.getConfigurationManager().expand("${Designer_LastVersionUsed}");
+	const CString lastUsedVersion = m_KernelContext.getConfigurationManager().expand("${Designer_LastVersionUsed}");
 	int lastUsedVersionMajor = 0;
 	int lastUsedVersionMinor = 0;
 	int lastUsedVersionPatch = 0;
-	int currentVersionMajor = static_cast<int>(m_KernelContext.getConfigurationManager().expandAsInteger("${ProjectVersion_Major}"));
-	int currentVersionMinor = static_cast<int>(m_KernelContext.getConfigurationManager().expandAsInteger("${ProjectVersion_Minor}"));
-	int currentVersionPatch = static_cast<int>(m_KernelContext.getConfigurationManager().expandAsInteger("${ProjectVersion_Patch}"));
+	const int currentVersionMajor = int(m_KernelContext.getConfigurationManager().expandAsInteger("${ProjectVersion_Major}"));
+	const int currentVersionMinor = int(m_KernelContext.getConfigurationManager().expandAsInteger("${ProjectVersion_Minor}"));
+	const int currentVersionPatch = int(m_KernelContext.getConfigurationManager().expandAsInteger("${ProjectVersion_Patch}"));
 
-	sscanf(l_sLastUsedVersion.toASCIIString(), "%d.%d.%d", &lastUsedVersionMajor, &lastUsedVersionMinor, &lastUsedVersionPatch);
-	if(lastUsedVersionMajor < currentVersionMajor
+	sscanf(lastUsedVersion.toASCIIString(), "%d.%d.%d", &lastUsedVersionMajor, &lastUsedVersionMinor, &lastUsedVersionPatch);
+	if (lastUsedVersionMajor < currentVersionMajor
 		|| (lastUsedVersionMajor == currentVersionMajor && lastUsedVersionMinor < currentVersionMinor)
 		|| (lastUsedVersionMinor == currentVersionMinor && lastUsedVersionPatch < currentVersionPatch)
 		|| (lastUsedVersionMajor == 0 && lastUsedVersionMinor == 0 && lastUsedVersionPatch == 0))
@@ -1408,11 +1378,11 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 		m_bIsNewVersion = true;
 	}
 
-	std::string l_sDefaultURLBaseString = std::string(m_KernelContext.getConfigurationManager().expand("${Designer_HelpBrowserURLBase}"));
+	std::string defaultURLBaseString = std::string(m_KernelContext.getConfigurationManager().expand("${Designer_HelpBrowserURLBase}"));
 #ifdef MENSIA_DISTRIBUTION
 	if (m_pArchwayHandler->initialize() == Mensia::EngineInitialisationStatus::NotAvailable)
 	{
-		gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration")));
+		gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_builderInterface, "neurort-toggle_engine_configuration")));
 	}
 #else
 	gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration")));
@@ -1422,12 +1392,12 @@ void CApplication::initialize(ECommandLineFlag eCommandLineFlags)
 bool CApplication::displayChangelogWhenAvailable()
 {
 	// If last version used is ulterior as current version, and at least one box was added/updated, show the list
-	if(!m_vNewBoxes.empty() || !m_vUpdatedBoxes.empty())
+	if (!m_vNewBoxes.empty() || !m_vUpdatedBoxes.empty())
 	{
-		::GtkBuilder* l_pInterface = gtk_builder_new();
-		gtk_builder_add_from_file(l_pInterface, OVD_GUI_File, NULL);
+		GtkBuilder* interface = gtk_builder_new();
+		gtk_builder_add_from_file(interface, OVD_GUI_File, nullptr);
 
-		::GtkWidget* l_pDialog=GTK_WIDGET(gtk_builder_get_object(l_pInterface, "aboutdialog-newversion"));
+		GtkWidget* l_pDialog = GTK_WIDGET(gtk_builder_get_object(interface, "aboutdialog-newversion"));
 		gtk_window_set_title(GTK_WINDOW(l_pDialog), "Changelog");
 
 
@@ -1436,101 +1406,98 @@ bool CApplication::displayChangelogWhenAvailable()
 
 		gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(l_pDialog), projectVersion.c_str());
 
-		std::string l_sLabelNewBoxesList = "<big><b>Changes in version " + projectVersion + " of the software:</b></big>";
-		if(!m_vNewBoxes.empty())
+		std::string labelNewBoxesList = "<big><b>Changes in version " + projectVersion + " of the software:</b></big>";
+		if (!m_vNewBoxes.empty())
 		{
-			l_sLabelNewBoxesList += "\n<big>The following boxes were added:</big>\n";
-			for(auto pNewBoxDesc : m_vNewBoxes)
+			labelNewBoxesList += "\n<big>The following boxes were added:</big>\n";
+			for (auto pNewBoxDesc : m_vNewBoxes)
 			{
-				l_sLabelNewBoxesList += "    <b>" + pNewBoxDesc->getName() + ":</b> " + pNewBoxDesc->getShortDescription()+"\n";
+				labelNewBoxesList += "    <b>" + pNewBoxDesc->getName() + ":</b> " + pNewBoxDesc->getShortDescription() + "\n";
 			}
 		}
-		if(!m_vUpdatedBoxes.empty())
+		if (!m_vUpdatedBoxes.empty())
 		{
-			l_sLabelNewBoxesList += "\n<big>The following boxes were updated:</big>\n";
-			for(auto pUpdatedBoxDesc : m_vUpdatedBoxes)
+			labelNewBoxesList += "\n<big>The following boxes were updated:</big>\n";
+			for (auto pUpdatedBoxDesc : m_vUpdatedBoxes)
 			{
-				l_sLabelNewBoxesList += "    <b>" + pUpdatedBoxDesc->getName() + ":</b> " + pUpdatedBoxDesc->getShortDescription()+"\n";
+				labelNewBoxesList += "    <b>" + pUpdatedBoxDesc->getName() + ":</b> " + pUpdatedBoxDesc->getShortDescription() + "\n";
 			}
 		}
 #if defined TARGET_OS_Windows // This function makes Windows calls only, hide button on other OSs
-		g_signal_connect(G_OBJECT(gtk_builder_get_object(l_pInterface, "button-display_changelog")), "clicked", G_CALLBACK(about_newversion_button_display_changelog_cb),  this);
+		g_signal_connect(G_OBJECT(gtk_builder_get_object(interface, "button-display_changelog")), "clicked", G_CALLBACK(about_newversion_button_display_changelog_cb), this);
 #else
-		gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(l_pInterface, "button-display_changelog")));
+		gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(interface, "button-display_changelog")));
 #endif
-		if(!FS::Files::fileExists((OVD_README_File).toASCIIString()))
+		if (!FS::Files::fileExists((OVD_README_File).toASCIIString()))
 		{
-			gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(l_pInterface, "button-display_changelog")));
+			gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(interface, "button-display_changelog")));
 		}
-		GtkLabel* l_pLabel = GTK_LABEL(gtk_builder_get_object(l_pInterface, "label-newversion"));
-		gtk_label_set_markup(l_pLabel, l_sLabelNewBoxesList.c_str());
+		GtkLabel* l_pLabel = GTK_LABEL(gtk_builder_get_object(interface, "label-newversion"));
+		gtk_label_set_markup(l_pLabel, labelNewBoxesList.c_str());
 		gtk_dialog_run(GTK_DIALOG(l_pDialog));
-		if(m_bIsNewVersion)
+		if (m_bIsNewVersion)
 		{
 			gtk_entry_set_text(GTK_ENTRY(gtk_builder_get_object(m_pBuilderInterface, "openvibe-box_algorithm_searchbox")), "(New)");
 			gtk_window_set_focus(GTK_WINDOW(m_pMainWindow), GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-box_algorithm_searchbox")));
 		}
 
 		gtk_widget_destroy(l_pDialog);
-		g_object_unref(l_pInterface);
+		g_object_unref(interface);
 	}
-	else
-	{
-		return false;
-	}
+	else { return false; }
 	return true;
 }
 
 bool CApplication::openScenario(const char* sFileName)
 {
 	// Prevent opening twice the same scenario
-	for(uint32 i = 0; i < m_vInterfacedScenario.size(); i++)
+	for (uint32_t i = 0; i < m_vInterfacedScenario.size(); ++i)
 	{
-		auto l_vInterfacedScenario = m_vInterfacedScenario[i];
-		if(l_vInterfacedScenario->m_sFileName == std::string(sFileName))
+		const auto interfacedScenario = m_vInterfacedScenario[i];
+		if (interfacedScenario->m_sFileName == std::string(sFileName))
 		{
 			gtk_notebook_set_current_page(m_pScenarioNotebook, i);
 			return true;
 		}
 	}
 
-	CIdentifier l_oScenarioIdentifier;
-	if (m_pScenarioManager->importScenarioFromFile(l_oScenarioIdentifier, OVD_ScenarioImportContext_OpenScenario, sFileName))
+	CIdentifier scenarioIdentifier;
+	if (m_pScenarioManager->importScenarioFromFile(scenarioIdentifier, OVD_ScenarioImportContext_OpenScenario, sFileName))
 	{
 		// Closes first unnamed scenario
-		if(m_vInterfacedScenario.size()==1)
+		if (m_vInterfacedScenario.size() == 1)
 		{
-			if(m_vInterfacedScenario[0]->m_bHasBeenModified==false && !m_vInterfacedScenario[0]->m_bHasFileName)
+			if (!m_vInterfacedScenario[0]->m_hasBeenModified && !m_vInterfacedScenario[0]->m_hasFileName)
 			{
-				CIdentifier l_oScenarioIdentifierTmp=m_vInterfacedScenario[0]->m_oScenarioIdentifier;
+				const CIdentifier scenarioIdentifier = m_vInterfacedScenario[0]->m_oScenarioIdentifier;
 				delete m_vInterfacedScenario[0];
-				m_pScenarioManager->releaseScenario(l_oScenarioIdentifierTmp);
+				m_pScenarioManager->releaseScenario(scenarioIdentifier);
 				m_vInterfacedScenario.clear();
 			}
 		}
 
-		IScenario& l_rScenario = m_pScenarioManager->getScenario(l_oScenarioIdentifier);
+		IScenario& scenario = m_pScenarioManager->getScenario(scenarioIdentifier);
 
 		// Creates interfaced scenario
-		CInterfacedScenario* l_pInterfacedScenario=new CInterfacedScenario(m_KernelContext, *this, l_rScenario, l_oScenarioIdentifier, *m_pScenarioNotebook, OVD_GUI_File, OVD_GUI_Settings_File);
+		CInterfacedScenario* interfacedScenario = new CInterfacedScenario(m_KernelContext, *this, scenario, scenarioIdentifier, *m_pScenarioNotebook, OVD_GUI_File, OVD_GUI_Settings_File);
 
 		// Deserialize the visualization tree from the scenario metadata, if it exists
 
 		// Find the VisualizationTree metadata
-		IMetadata* visualizationTreeMetadata = nullptr;
+		IMetadata* vizTreeMetadata = nullptr;
 		CIdentifier metadataIdentifier = OV_UndefinedIdentifier;
-		while ((metadataIdentifier = l_rScenario.getNextMetadataIdentifier(metadataIdentifier)) != OV_UndefinedIdentifier)
+		while ((metadataIdentifier = scenario.getNextMetadataIdentifier(metadataIdentifier)) != OV_UndefinedIdentifier)
 		{
-			visualizationTreeMetadata = l_rScenario.getMetadataDetails(metadataIdentifier);
-			if (visualizationTreeMetadata && visualizationTreeMetadata->getType() == OVVIZ_MetadataIdentifier_VisualizationTree)
+			vizTreeMetadata = scenario.getMetadataDetails(metadataIdentifier);
+			if (vizTreeMetadata && vizTreeMetadata->getType() == OVVIZ_MetadataIdentifier_VisualizationTree)
 			{
 				break;
 			}
 		}
-		OpenViBEVisualizationToolkit::IVisualizationTree* visualizationTree = l_pInterfacedScenario->m_pVisualizationTree;
-		if (visualizationTreeMetadata && visualizationTree)
+		OpenViBEVisualizationToolkit::IVisualizationTree* vizTree = interfacedScenario->m_pVisualizationTree;
+		if (vizTreeMetadata && vizTree)
 		{
-			visualizationTree->deserialize(visualizationTreeMetadata->getData());
+			vizTree->deserialize(vizTreeMetadata->getData());
 		}
 
 		CIdentifier l_oVisualizationWidgetIdentifier;
@@ -1540,282 +1507,236 @@ bool CApplication::openScenario(const char* sFileName)
 
 		// no visualization widget was added to visualization tree : ensure there aren't any in scenario
 		CIdentifier boxIdentifier;
-		while ((boxIdentifier = l_rScenario.getNextBoxIdentifier(boxIdentifier)) != OV_UndefinedIdentifier)
+		while ((boxIdentifier = scenario.getNextBoxIdentifier(boxIdentifier)) != OV_UndefinedIdentifier)
 		{
-			if (!visualizationTree->getVisualizationWidgetFromBoxIdentifier(boxIdentifier))
+			if (!vizTree->getVisualizationWidgetFromBoxIdentifier(boxIdentifier))
 			{
-				const IBox* box = l_rScenario.getBoxDetails(boxIdentifier);
+				const IBox* box = scenario.getBoxDetails(boxIdentifier);
 				const IPluginObjectDesc* boxAlgorithmDesc = m_KernelContext.getPluginManager().getPluginObjectDescCreating(box->getAlgorithmClassIdentifier());
 				if (boxAlgorithmDesc && boxAlgorithmDesc->hasFunctionality(OVD_Functionality_Visualization))
 				{
 					//a visualization widget was found in scenario : manually add it to visualization tree
-					visualizationTree->addVisualizationWidget(
-					            l_oVisualizationWidgetIdentifier,
-					            box->getName(),
-					            OpenViBEVisualizationToolkit::EVisualizationWidget_VisualizationBox,
-					            OV_UndefinedIdentifier,
-					            0,
-					            box->getIdentifier(),
-					            0,
-					            OV_UndefinedIdentifier);
+					vizTree->addVisualizationWidget(l_oVisualizationWidgetIdentifier, box->getName(),
+													OpenViBEVisualizationToolkit::EVisualizationWidget_VisualizationBox, OV_UndefinedIdentifier,
+													0, box->getIdentifier(), 0, OV_UndefinedIdentifier);
 				}
 			}
 		}
 
-		if(l_pInterfacedScenario->m_pDesignerVisualization != NULL)
+		if (interfacedScenario->m_pDesignerVisualization != nullptr)
 		{
-			l_pInterfacedScenario->m_pDesignerVisualization->setDeleteEventCB(&::delete_designer_visualisation_cb, this);
-			l_pInterfacedScenario->m_pDesignerVisualization->load();
+			interfacedScenario->m_pDesignerVisualization->setDeleteEventCB(&delete_designer_visualisation_cb, this);
+			interfacedScenario->m_pDesignerVisualization->load();
 		}
-		//l_pInterfacedScenario->snapshotCB(); --> a snapshot is already created in CInterfacedScenario builder !
-		l_pInterfacedScenario->m_sFileName=sFileName;
-		l_pInterfacedScenario->m_bHasFileName=true;
-		l_pInterfacedScenario->m_bHasBeenModified=false;
-		l_pInterfacedScenario->snapshotCB(false);
+		//interfacedScenario->snapshotCB(); --> a snapshot is already created in CInterfacedScenario builder !
+		interfacedScenario->m_sFileName = sFileName;
+		interfacedScenario->m_hasFileName = true;
+		interfacedScenario->m_hasBeenModified = false;
+		interfacedScenario->snapshotCB(false);
 
-		m_vInterfacedScenario.push_back(l_pInterfacedScenario);
+		m_vInterfacedScenario.push_back(interfacedScenario);
 
-		l_pInterfacedScenario->redrawScenarioSettings();
+		interfacedScenario->redrawScenarioSettings();
 
-		gtk_notebook_set_current_page(m_pScenarioNotebook, gtk_notebook_get_n_pages(m_pScenarioNotebook)-1);
+		gtk_notebook_set_current_page(m_pScenarioNotebook, gtk_notebook_get_n_pages(m_pScenarioNotebook) - 1);
 		//this->changeCurrentScenario(gtk_notebook_get_n_pages(m_pScenarioNotebook)-1);
 
-		l_pInterfacedScenario->updateScenarioLabel();
+		interfacedScenario->updateScenarioLabel();
 
 		this->saveOpenedScenarios();
 		return true;
 	}
-	else
-	{
-		m_KernelContext.getLogManager() << LogLevel_Error << "Importing scenario from file [" << sFileName << "] failed... "
-			<< " Current file either is corrupted or is not compatible with the selected scenario importer (ie not an OpenViBE scenario file)\n";
+	m_KernelContext.getLogManager() << LogLevel_Error << "Importing scenario from file [" << sFileName << "] failed... "
+		<< " Current file either is corrupted or is not compatible with the selected scenario importer (ie not an OpenViBE scenario file)\n";
 
-		if (!(m_eCommandLineFlags & CommandLineFlag_NoGui))
-		{
-			std::stringstream l_oStringStream;
-			l_oStringStream << "The requested file: " << sFileName << "\n";
-			l_oStringStream << "may either not be an OpenViBE scenario file, \n";
-			l_oStringStream << "a " + std::string(BRAND_NAME) + " scenario file, \n";
-			l_oStringStream << "be corrupted or not compatible with \n";
-			l_oStringStream << "the selected scenario importer...";
-			::GtkWidget* l_pErrorDialog=gtk_message_dialog_new(
-						NULL,
-						GTK_DIALOG_MODAL,
-						GTK_MESSAGE_ERROR,
-						GTK_BUTTONS_OK,
-						"Scenario importation process failed !");
-			gtk_message_dialog_format_secondary_text(
-						GTK_MESSAGE_DIALOG(l_pErrorDialog), "%s", l_oStringStream.str().c_str());
-			gtk_dialog_run(GTK_DIALOG(l_pErrorDialog));
-			gtk_widget_destroy(l_pErrorDialog);
-		}
+	if (!(m_eCommandLineFlags & CommandLineFlag_NoGui))
+	{
+		std::stringstream l_oStringStream;
+		l_oStringStream << "The requested file: " << sFileName << "\n";
+		l_oStringStream << "may either not be an OpenViBE scenario file, \n";
+		l_oStringStream << "a " + std::string(BRAND_NAME) + " scenario file, \n";
+		l_oStringStream << "be corrupted or not compatible with \n";
+		l_oStringStream << "the selected scenario importer...";
+		GtkWidget* l_pErrorDialog = gtk_message_dialog_new(nullptr, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "Scenario importation process failed !");
+		gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(l_pErrorDialog), "%s", l_oStringStream.str().c_str());
+		gtk_dialog_run(GTK_DIALOG(l_pErrorDialog));
+		gtk_widget_destroy(l_pErrorDialog);
 	}
 	return false;
 }
 
-CString CApplication::getWorkingDirectory(void)
+CString CApplication::getWorkingDirectory()
 {
-	CString l_sWorkingDirectory=m_KernelContext.getConfigurationManager().expand("${Designer_DefaultWorkingDirectory}/scenarios");
+	CString l_sWorkingDirectory = m_KernelContext.getConfigurationManager().expand("${Designer_DefaultWorkingDirectory}/scenarios");
 
-	CInterfacedScenario* l_pCurrentScenario=this->getCurrentInterfacedScenario();
-	if(l_pCurrentScenario)
+	CInterfacedScenario* l_pCurrentScenario = this->getCurrentInterfacedScenario();
+	if (l_pCurrentScenario)
 	{
-		if(l_pCurrentScenario->m_bHasFileName)
+		if (l_pCurrentScenario->m_hasFileName)
 		{
-			std::string l_sCurrentDirectory=std::string(g_path_get_dirname(l_pCurrentScenario->m_sFileName.c_str()));
+			std::string l_sCurrentDirectory = std::string(g_path_get_dirname(l_pCurrentScenario->m_sFileName.c_str()));
 #if defined TARGET_OS_Windows
 			std::replace(l_sCurrentDirectory.begin(), l_sCurrentDirectory.end(), '\\', '/');
 #endif
-			l_sWorkingDirectory=l_sCurrentDirectory.c_str();
+			l_sWorkingDirectory = l_sCurrentDirectory.c_str();
 		}
 	}
 
-	if(!g_path_is_absolute(l_sWorkingDirectory.toASCIIString()))
+	if (!g_path_is_absolute(l_sWorkingDirectory.toASCIIString()))
 	{
-		std::string l_sCurrentDirectory=g_get_current_dir();
+		std::string l_sCurrentDirectory = g_get_current_dir();
 #if defined TARGET_OS_Windows
 		std::replace(l_sCurrentDirectory.begin(), l_sCurrentDirectory.end(), '\\', '/');
 #endif
-		l_sWorkingDirectory=l_sCurrentDirectory.c_str()+CString("/")+l_sWorkingDirectory;
+		l_sWorkingDirectory = l_sCurrentDirectory.c_str() + CString("/") + l_sWorkingDirectory;
 	}
 
 	return l_sWorkingDirectory;
 }
 
-bool CApplication::hasRunningScenario(void)
+bool CApplication::hasRunningScenario()
 {
-	return std::any_of(m_vInterfacedScenario.begin(), m_vInterfacedScenario.end(), [](CInterfacedScenario* elem){ return elem->m_pPlayer != nullptr; });
+	return std::any_of(m_vInterfacedScenario.begin(), m_vInterfacedScenario.end(), [](CInterfacedScenario* elem) { return elem->m_pPlayer != nullptr; });
 }
 
-bool CApplication::hasUnsavedScenario(void)
+bool CApplication::hasUnsavedScenario()
 {
-	return std::any_of(m_vInterfacedScenario.begin(), m_vInterfacedScenario.end(), [](CInterfacedScenario* elem){ return elem->m_bHasBeenModified; });
+	return std::any_of(m_vInterfacedScenario.begin(), m_vInterfacedScenario.end(), [](CInterfacedScenario* elem) { return elem->m_hasBeenModified; });
 }
 
-CInterfacedScenario* CApplication::getCurrentInterfacedScenario(void)
+CInterfacedScenario* CApplication::getCurrentInterfacedScenario()
 {
-
-	if(m_ui32CurrentInterfacedScenarioIndex<m_vInterfacedScenario.size())
-	{
-		return m_vInterfacedScenario[m_ui32CurrentInterfacedScenarioIndex];
-	}
+	if (m_ui32CurrentInterfacedScenarioIndex < m_vInterfacedScenario.size()) { return m_vInterfacedScenario[m_ui32CurrentInterfacedScenarioIndex]; }
 	return nullptr;
 }
 
-void CApplication::saveOpenedScenarios(void)
+void CApplication::saveOpenedScenarios()
 {
 	// Saves opened scenarios
-	if(!(m_eCommandLineFlags&CommandLineFlag_NoManageSession))
+	if (!(m_eCommandLineFlags & CommandLineFlag_NoManageSession))
 	{
-		OpenViBE::CString l_sAppConfigFile = m_KernelContext.getConfigurationManager().expand("${Designer_CustomConfigurationFile}");
+		const CString appConfigFile = m_KernelContext.getConfigurationManager().expand("${Designer_CustomConfigurationFile}");
 
-		FILE* l_pFile = FS::Files::open(l_sAppConfigFile.toASCIIString(), "wt");
-		if(l_pFile)
+		FILE* l_pFile = FS::Files::open(appConfigFile.toASCIIString(), "wt");
+		if (l_pFile)
 		{
-			unsigned int i=1;
-			::fprintf(l_pFile, "# This file is generated\n");
-			::fprintf(l_pFile, "# Do not modify\n");
-			::fprintf(l_pFile, "\n");
+			unsigned int i = 1;
+			fprintf(l_pFile, "# This file is generated\n");
+			fprintf(l_pFile, "# Do not modify\n");
+			fprintf(l_pFile, "\n");
 
-			int l_iWidth, l_iHeight;
-			gtk_window_get_size(GTK_WINDOW(m_pMainWindow), &l_iWidth, & l_iHeight);
-			::fprintf(l_pFile, "Designer_EditorSizeWidth = %i\n", l_iWidth);
-			::fprintf(l_pFile, "Designer_EditorSizeHeight = %i\n", l_iHeight);
-			::fprintf(l_pFile, "Designer_EditorPanedPosition = %i\n", gtk_paned_get_position(GTK_PANED(gtk_builder_get_object(m_pBuilderInterface, "openvibe-horizontal_container"))));
-			::fprintf(l_pFile, "Designer_FullscreenEditor = %s\n", m_bIsMaximized ? "True":"False");
+			int width, height;
+			gtk_window_get_size(GTK_WINDOW(m_pMainWindow), &width, &height);
+			fprintf(l_pFile, "Designer_EditorSizeWidth = %i\n", width);
+			fprintf(l_pFile, "Designer_EditorSizeHeight = %i\n", height);
+			fprintf(l_pFile, "Designer_EditorPanedPosition = %i\n", gtk_paned_get_position(GTK_PANED(gtk_builder_get_object(m_pBuilderInterface, "openvibe-horizontal_container"))));
+			fprintf(l_pFile, "Designer_FullscreenEditor = %s\n", m_bIsMaximized ? "True" : "False");
 
-			::fprintf(l_pFile, "# Last files opened in %s\n", std::string(DESIGNER_NAME).c_str());
+			fprintf(l_pFile, "# Last files opened in %s\n", std::string(DESIGNER_NAME).c_str());
 
 			for (CInterfacedScenario* scenario : m_vInterfacedScenario)
 			{
-				if (scenario->m_sFileName != "")
+				if (!scenario->m_sFileName.empty())
 				{
-					::fprintf(l_pFile, "Designer_LastScenarioFilename_%03u = %s\n", i, scenario->m_sFileName.c_str());
+					fprintf(l_pFile, "Designer_LastScenarioFilename_%03u = %s\n", i, scenario->m_sFileName.c_str());
 					i++;
 				}
 			}
-			::fprintf(l_pFile, "\n");
+			fprintf(l_pFile, "\n");
 
-			CString projectVersion = m_KernelContext.getConfigurationManager().expand("${ProjectVersion_Major}.${ProjectVersion_Minor}.${ProjectVersion_Patch}");
-			CString componentVersions = m_KernelContext.getConfigurationManager().lookUpConfigurationTokenValue("ProjectVersion_Components");
-			::fprintf(l_pFile, "# Last version of " DESIGNER_NAME " used:\n");
-			::fprintf(l_pFile, "Designer_LastVersionUsed = %s\n", projectVersion.toASCIIString());
-			::fprintf(l_pFile, "Designer_LastComponentVersionsUsed = %s\n", componentVersions.toASCIIString());
-			::fprintf(l_pFile, "\n");
+			const CString projectVersion = m_KernelContext.getConfigurationManager().expand("${ProjectVersion_Major}.${ProjectVersion_Minor}.${ProjectVersion_Patch}");
+			const CString componentVersions = m_KernelContext.getConfigurationManager().lookUpConfigurationTokenValue("ProjectVersion_Components");
+			fprintf(l_pFile, "# Last version of " DESIGNER_NAME " used:\n");
+			fprintf(l_pFile, "Designer_LastVersionUsed = %s\n", projectVersion.toASCIIString());
+			fprintf(l_pFile, "Designer_LastComponentVersionsUsed = %s\n", componentVersions.toASCIIString());
+			fprintf(l_pFile, "\n");
 
-			::fprintf(l_pFile, "# Recently opened scenario\n");
+			fprintf(l_pFile, "# Recently opened scenario\n");
 			unsigned int scenarioID = 1;
 			for (const GtkWidget* recentScenario : m_RecentScenarios)
 			{
 				const gchar* recentScenarioPath = gtk_menu_item_get_label(GTK_MENU_ITEM(recentScenario));
-				::fprintf(l_pFile, "Designer_RecentScenario_%03u = %s\n", scenarioID, recentScenarioPath);
+				fprintf(l_pFile, "Designer_RecentScenario_%03u = %s\n", scenarioID, recentScenarioPath);
 				++scenarioID;
 			}
-			::fprintf(l_pFile, "\n");
+			fprintf(l_pFile, "\n");
 
-			::fclose(l_pFile);
+			fclose(l_pFile);
 		}
 		else
 		{
-			m_KernelContext.getLogManager() << LogLevel_Error << "Error writing to '" << l_sAppConfigFile << "'\n";
+			m_KernelContext.getLogManager() << LogLevel_Error << "Error writing to '" << appConfigFile << "'\n";
 		}
 	}
 }
 
-void CApplication::dragDataGetCB(::GtkWidget* pWidget, ::GdkDragContext* pDragContex, ::GtkSelectionData* pSelectionData, guint uiInfo, guint uiT)
+void CApplication::dragDataGetCB(GtkWidget* /*widget*/, GdkDragContext* /*pDragContex*/, GtkSelectionData* pSelectionData, guint /*uiInfo*/, guint /*uiT*/) const
 {
 	m_KernelContext.getLogManager() << LogLevel_Debug << "dragDataGetCB\n";
 
-	::GtkTreeView* l_pTreeView=GTK_TREE_VIEW(gtk_builder_get_object(m_pBuilderInterface, "openvibe-box_algorithm_tree"));
-	::GtkTreeSelection* l_pTreeSelection=gtk_tree_view_get_selection(l_pTreeView);
-	::GtkTreeModel* l_pTreeModel=NULL;
-	::GtkTreeIter l_oTreeIter;
-	if(gtk_tree_selection_get_selected(l_pTreeSelection, &l_pTreeModel, &l_oTreeIter))
+	GtkTreeView* l_pTreeView = GTK_TREE_VIEW(gtk_builder_get_object(m_pBuilderInterface, "openvibe-box_algorithm_tree"));
+	GtkTreeSelection* l_pTreeSelection = gtk_tree_view_get_selection(l_pTreeView);
+	GtkTreeModel* l_pTreeModel = nullptr;
+	GtkTreeIter l_oTreeIter;
+	if (gtk_tree_selection_get_selected(l_pTreeSelection, &l_pTreeModel, &l_oTreeIter))
 	{
-		const char* l_sBoxAlgorithmIdentifier=NULL;
-		gtk_tree_model_get(
-				l_pTreeModel, &l_oTreeIter,
-				Resource_StringIdentifier, &l_sBoxAlgorithmIdentifier,
-				-1);
-		if(l_sBoxAlgorithmIdentifier)
+		const char* l_sBoxAlgorithmIdentifier = nullptr;
+		gtk_tree_model_get(l_pTreeModel, &l_oTreeIter, Resource_StringIdentifier, &l_sBoxAlgorithmIdentifier, -1);
+		if (l_sBoxAlgorithmIdentifier)
 		{
-			gtk_selection_data_set(
-					pSelectionData,
-					GDK_SELECTION_TYPE_STRING,
-					8,
-					(const guchar*)l_sBoxAlgorithmIdentifier,
-					strlen(l_sBoxAlgorithmIdentifier)+1);
+			gtk_selection_data_set(pSelectionData, GDK_SELECTION_TYPE_STRING, 8, reinterpret_cast<const guchar*>(l_sBoxAlgorithmIdentifier), gint(strlen(l_sBoxAlgorithmIdentifier) + 1));
 		}
 	}
 }
 
-void CApplication::undoCB(void)
+void CApplication::undoCB()
 {
 	m_KernelContext.getLogManager() << LogLevel_Debug << "undoCB\n";
 
-	CInterfacedScenario* l_pCurrentInterfacedScenario=this->getCurrentInterfacedScenario();
-	if(l_pCurrentInterfacedScenario)
+	CInterfacedScenario* currentInterfacedScenario = this->getCurrentInterfacedScenario();
+	if (currentInterfacedScenario)
 	{
-		l_pCurrentInterfacedScenario->undoCB();
+		currentInterfacedScenario->undoCB();
 	}
 }
 
-void CApplication::redoCB(void)
+void CApplication::redoCB()
 {
 	m_KernelContext.getLogManager() << LogLevel_Debug << "redoCB\n";
 
-	CInterfacedScenario* l_pCurrentInterfacedScenario=this->getCurrentInterfacedScenario();
-	if(l_pCurrentInterfacedScenario)
-	{
-		l_pCurrentInterfacedScenario->redoCB();
-	}
+	CInterfacedScenario* currentInterfacedScenario = this->getCurrentInterfacedScenario();
+	if (currentInterfacedScenario) { currentInterfacedScenario->redoCB(); }
 }
 
-void CApplication::copySelectionCB(void)
+void CApplication::copySelectionCB()
 {
 	m_KernelContext.getLogManager() << LogLevel_Debug << "copySelectionCB\n";
-
-	CInterfacedScenario* l_pCurrentInterfacedScenario=this->getCurrentInterfacedScenario();
-	if(l_pCurrentInterfacedScenario)
-	{
-		l_pCurrentInterfacedScenario->copySelection();
-	}
+	CInterfacedScenario* currentInterfacedScenario = this->getCurrentInterfacedScenario();
+	if (currentInterfacedScenario) { currentInterfacedScenario->copySelection(); }
 }
 
-void CApplication::cutSelectionCB(void)
+void CApplication::cutSelectionCB()
 {
 	m_KernelContext.getLogManager() << LogLevel_Debug << "cutSelectionCB\n";
-
-	CInterfacedScenario* l_pCurrentInterfacedScenario=this->getCurrentInterfacedScenario();
-	if(l_pCurrentInterfacedScenario)
-	{
-		l_pCurrentInterfacedScenario->cutSelection();
-	}
+	CInterfacedScenario* currentInterfacedScenario = this->getCurrentInterfacedScenario();
+	if (currentInterfacedScenario) { currentInterfacedScenario->cutSelection(); }
 }
 
-void CApplication::pasteSelectionCB(void)
+void CApplication::pasteSelectionCB()
 {
 	m_KernelContext.getLogManager() << LogLevel_Debug << "pasteSelectionCB\n";
-
-	CInterfacedScenario* l_pCurrentInterfacedScenario=this->getCurrentInterfacedScenario();
-	if(l_pCurrentInterfacedScenario)
-	{
-		l_pCurrentInterfacedScenario->pasteSelection();
-	}
+	CInterfacedScenario* currentInterfacedScenario = this->getCurrentInterfacedScenario();
+	if (currentInterfacedScenario) { currentInterfacedScenario->pasteSelection(); }
 }
 
-void CApplication::deleteSelectionCB(void)
+void CApplication::deleteSelectionCB()
 {
 	m_KernelContext.getLogManager() << LogLevel_Debug << "deleteSelectionCB\n";
-
-	CInterfacedScenario* l_pCurrentInterfacedScenario=this->getCurrentInterfacedScenario();
-	if(l_pCurrentInterfacedScenario)
-	{
-		l_pCurrentInterfacedScenario->deleteSelection();
-	}
+	CInterfacedScenario* currentInterfacedScenario = this->getCurrentInterfacedScenario();
+	if (currentInterfacedScenario) { currentInterfacedScenario->deleteSelection(); }
 }
 
-void CApplication::preferencesCB(void)
+void CApplication::preferencesCB() const
 {
 	enum
 	{
@@ -1825,29 +1746,29 @@ void CApplication::preferencesCB(void)
 	};
 
 	m_KernelContext.getLogManager() << LogLevel_Debug << "preferencesCB\n";
-	::GtkBuilder* l_pBuilderInterface=gtk_builder_new(); // glade_xml_new(OVD_GUI_File, "configuration_manager", NULL);
-	gtk_builder_add_from_file(l_pBuilderInterface, OVD_GUI_File, NULL);
-	gtk_builder_connect_signals(l_pBuilderInterface, NULL);
+	GtkBuilder* l_pBuilderInterface = gtk_builder_new(); // glade_xml_new(OVD_GUI_File, "configuration_manager", nullptr);
+	gtk_builder_add_from_file(l_pBuilderInterface, OVD_GUI_File, nullptr);
+	gtk_builder_connect_signals(l_pBuilderInterface, nullptr);
 
-	::GtkWidget* l_pConfigurationManager=GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterface, "configuration_manager"));
-	::GtkTreeView* l_pConfigurationManagerTreeView=GTK_TREE_VIEW(gtk_builder_get_object(l_pBuilderInterface, "configuration_manager-treeview"));
+	GtkWidget* l_pConfigurationManager = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterface, "configuration_manager"));
+	GtkTreeView* l_pConfigurationManagerTreeView = GTK_TREE_VIEW(gtk_builder_get_object(l_pBuilderInterface, "configuration_manager-treeview"));
 
 	// Prepares tree view
-	::GtkTreeViewColumn* l_pTreeViewColumnTokenName=gtk_tree_view_column_new();
-	::GtkTreeViewColumn* l_pTreeViewColumnTokenValue=gtk_tree_view_column_new();
-	::GtkTreeViewColumn* l_pTreeViewColumnTokenExpand=gtk_tree_view_column_new();
-	::GtkCellRenderer* l_pCellRendererTokenName=gtk_cell_renderer_text_new();
-	::GtkCellRenderer* l_pCellRendererTokenValue=gtk_cell_renderer_text_new();
-	::GtkCellRenderer* l_pCellRendererTokenExpand=gtk_cell_renderer_text_new();
+	GtkTreeViewColumn* l_pTreeViewColumnTokenName = gtk_tree_view_column_new();
+	GtkTreeViewColumn* l_pTreeViewColumnTokenValue = gtk_tree_view_column_new();
+	GtkTreeViewColumn* l_pTreeViewColumnTokenExpand = gtk_tree_view_column_new();
+	GtkCellRenderer* l_pCellRendererTokenName = gtk_cell_renderer_text_new();
+	GtkCellRenderer* l_pCellRendererTokenValue = gtk_cell_renderer_text_new();
+	GtkCellRenderer* l_pCellRendererTokenExpand = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_set_title(l_pTreeViewColumnTokenName, "Token name");
 	gtk_tree_view_column_set_title(l_pTreeViewColumnTokenValue, "Token value");
 	gtk_tree_view_column_set_title(l_pTreeViewColumnTokenExpand, "Expanded token value");
 	gtk_tree_view_column_pack_start(l_pTreeViewColumnTokenName, l_pCellRendererTokenName, TRUE);
 	gtk_tree_view_column_pack_start(l_pTreeViewColumnTokenValue, l_pCellRendererTokenValue, TRUE);
 	gtk_tree_view_column_pack_start(l_pTreeViewColumnTokenExpand, l_pCellRendererTokenExpand, TRUE);
-	gtk_tree_view_column_set_attributes(l_pTreeViewColumnTokenName, l_pCellRendererTokenName, "text", Resource_TokenName, NULL);
-	gtk_tree_view_column_set_attributes(l_pTreeViewColumnTokenValue, l_pCellRendererTokenValue, "text", Resource_TokenValue, NULL);
-	gtk_tree_view_column_set_attributes(l_pTreeViewColumnTokenExpand, l_pCellRendererTokenExpand, "text", Resource_TokenExpand, NULL);
+	gtk_tree_view_column_set_attributes(l_pTreeViewColumnTokenName, l_pCellRendererTokenName, "text", Resource_TokenName, nullptr);
+	gtk_tree_view_column_set_attributes(l_pTreeViewColumnTokenValue, l_pCellRendererTokenValue, "text", Resource_TokenValue, nullptr);
+	gtk_tree_view_column_set_attributes(l_pTreeViewColumnTokenExpand, l_pCellRendererTokenExpand, "text", Resource_TokenExpand, nullptr);
 	gtk_tree_view_column_set_sort_column_id(l_pTreeViewColumnTokenName, Resource_TokenName);
 	gtk_tree_view_column_set_sort_column_id(l_pTreeViewColumnTokenValue, Resource_TokenValue);
 	gtk_tree_view_column_set_sort_column_id(l_pTreeViewColumnTokenExpand, Resource_TokenExpand);
@@ -1870,24 +1791,17 @@ void CApplication::preferencesCB(void)
 
 	// Prepares tree model
 	CIdentifier l_oTokenIdentifier;
-	::GtkTreeStore* l_pConfigurationManagerTreeModel=gtk_tree_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
-	while((l_oTokenIdentifier=m_KernelContext.getConfigurationManager().getNextConfigurationTokenIdentifier(l_oTokenIdentifier))!=OV_UndefinedIdentifier)
+	GtkTreeStore* l_pConfigurationManagerTreeModel = gtk_tree_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+	while ((l_oTokenIdentifier = m_KernelContext.getConfigurationManager().getNextConfigurationTokenIdentifier(l_oTokenIdentifier)) != OV_UndefinedIdentifier)
 	{
-		::GtkTreeIter l_oGtkIterChild;
-		CString l_sTokenName=m_KernelContext.getConfigurationManager().getConfigurationTokenName(l_oTokenIdentifier);
-		CString l_sTokenValue=m_KernelContext.getConfigurationManager().getConfigurationTokenValue(l_oTokenIdentifier);
-		CString l_sTokenExpand=m_KernelContext.getConfigurationManager().expand(l_sTokenValue);
-		gtk_tree_store_append(
-				l_pConfigurationManagerTreeModel,
-				&l_oGtkIterChild,
-				NULL);
-		gtk_tree_store_set(
-				l_pConfigurationManagerTreeModel,
-				&l_oGtkIterChild,
-				Resource_TokenName, l_sTokenName.toASCIIString(),
-				Resource_TokenValue, l_sTokenValue.toASCIIString(),
-				Resource_TokenExpand, l_sTokenExpand.toASCIIString(),
-				-1);
+		GtkTreeIter l_oGtkIterChild;
+		CString l_sTokenName = m_KernelContext.getConfigurationManager().getConfigurationTokenName(l_oTokenIdentifier);
+		CString l_sTokenValue = m_KernelContext.getConfigurationManager().getConfigurationTokenValue(l_oTokenIdentifier);
+		CString l_sTokenExpand = m_KernelContext.getConfigurationManager().expand(l_sTokenValue);
+		gtk_tree_store_append(l_pConfigurationManagerTreeModel, &l_oGtkIterChild, nullptr);
+		gtk_tree_store_set(l_pConfigurationManagerTreeModel, &l_oGtkIterChild,
+						   Resource_TokenName, l_sTokenName.toASCIIString(), Resource_TokenValue, l_sTokenValue.toASCIIString(),
+						   Resource_TokenExpand, l_sTokenExpand.toASCIIString(), -1);
 	}
 	gtk_tree_view_set_model(l_pConfigurationManagerTreeView, GTK_TREE_MODEL(l_pConfigurationManagerTreeModel));
 	g_signal_emit_by_name(l_pTreeViewColumnTokenName, "clicked");
@@ -1899,38 +1813,35 @@ void CApplication::preferencesCB(void)
 	g_object_unref(l_pBuilderInterface);
 }
 
-void CApplication::testCB(void)
-{
-	m_KernelContext.getLogManager() << LogLevel_Debug << "testCB\n";
-}
+void CApplication::testCB() const { m_KernelContext.getLogManager() << LogLevel_Debug << "testCB\n"; }
 
-void CApplication::newScenarioCB(void)
+void CApplication::newScenarioCB()
 {
 	m_KernelContext.getLogManager() << LogLevel_Debug << "newScenarioCB\n";
 
-	CIdentifier l_oScenarioIdentifier;
-	if(m_pScenarioManager->createScenario(l_oScenarioIdentifier))
+	CIdentifier scenarioIdentifier;
+	if (m_pScenarioManager->createScenario(scenarioIdentifier))
 	{
-		IScenario& l_rScenario=m_pScenarioManager->getScenario(l_oScenarioIdentifier);
-		CInterfacedScenario* l_pInterfacedScenario=new CInterfacedScenario(m_KernelContext, *this, l_rScenario, l_oScenarioIdentifier, *m_pScenarioNotebook, OVD_GUI_File, OVD_GUI_Settings_File);
-		if(l_pInterfacedScenario->m_pDesignerVisualization != NULL)
+		IScenario& scenario = m_pScenarioManager->getScenario(scenarioIdentifier);
+		CInterfacedScenario* interfacedScenario = new CInterfacedScenario(m_KernelContext, *this, scenario, scenarioIdentifier, *m_pScenarioNotebook, OVD_GUI_File, OVD_GUI_Settings_File);
+		if (interfacedScenario->m_pDesignerVisualization != nullptr)
 		{
-			l_pInterfacedScenario->m_pDesignerVisualization->setDeleteEventCB(&::delete_designer_visualisation_cb, this);
-			l_pInterfacedScenario->m_pDesignerVisualization->newVisualizationWindow("Default window");
+			interfacedScenario->m_pDesignerVisualization->setDeleteEventCB(&delete_designer_visualisation_cb, this);
+			interfacedScenario->m_pDesignerVisualization->newVisualizationWindow("Default window");
 		}
-		l_pInterfacedScenario->updateScenarioLabel();
-		m_vInterfacedScenario.push_back(l_pInterfacedScenario);
-		gtk_notebook_set_current_page(m_pScenarioNotebook, gtk_notebook_get_n_pages(m_pScenarioNotebook)-1);
+		interfacedScenario->updateScenarioLabel();
+		m_vInterfacedScenario.push_back(interfacedScenario);
+		gtk_notebook_set_current_page(m_pScenarioNotebook, gtk_notebook_get_n_pages(m_pScenarioNotebook) - 1);
 		//this->changeCurrentScenario(gtk_notebook_get_n_pages(m_pScenarioNotebook)-1);
 	}
 }
 
-void CApplication::openScenarioCB(void)
+void CApplication::openScenarioCB()
 {
 	m_KernelContext.getLogManager() << LogLevel_Debug << "openScenarioCB\n";
 
-	::GtkFileFilter* l_pFileFilterSpecific=gtk_file_filter_new();
-	::GtkFileFilter* l_pFileFilterAll=gtk_file_filter_new();
+	GtkFileFilter* l_pFileFilterSpecific = gtk_file_filter_new();
+	GtkFileFilter* l_pFileFilterAll = gtk_file_filter_new();
 
 	std::string allFileFormatsString = "All available formats (";
 	CString fileNameExtension = "";
@@ -1949,145 +1860,131 @@ void CApplication::openScenarioCB(void)
 	gtk_file_filter_set_name(l_pFileFilterAll, "All files");
 	gtk_file_filter_add_pattern(l_pFileFilterAll, "*");
 
-	::GtkWidget* l_pWidgetDialogOpen=gtk_file_chooser_dialog_new(
-			"Select scenario to open...",
-			NULL,
-			GTK_FILE_CHOOSER_ACTION_OPEN,
-			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-			GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
-			NULL);
-	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(l_pWidgetDialogOpen), l_pFileFilterSpecific);
-	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(l_pWidgetDialogOpen), l_pFileFilterAll);
-	gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(l_pWidgetDialogOpen), l_pFileFilterSpecific);
+	GtkWidget* widgetDialogOpen = gtk_file_chooser_dialog_new("Select scenario to open...", nullptr,
+															  GTK_FILE_CHOOSER_ACTION_OPEN,
+															  GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+															  GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, nullptr);
+	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(widgetDialogOpen), l_pFileFilterSpecific);
+	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(widgetDialogOpen), l_pFileFilterAll);
+	gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(widgetDialogOpen), l_pFileFilterSpecific);
 
 	// GTK 2 known bug: this won't work if  setCurrentFolder is also used on the dialog.
-	gtk_file_chooser_set_show_hidden(GTK_FILE_CHOOSER(l_pWidgetDialogOpen),true);
+	gtk_file_chooser_set_show_hidden(GTK_FILE_CHOOSER(widgetDialogOpen), true);
 
-	gtk_file_chooser_set_current_folder(
-			GTK_FILE_CHOOSER(l_pWidgetDialogOpen),
-			this->getWorkingDirectory().toASCIIString());
+	gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(widgetDialogOpen), this->getWorkingDirectory().toASCIIString());
 
-	gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(l_pWidgetDialogOpen),true);
+	gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(widgetDialogOpen), true);
 
-	if(gtk_dialog_run(GTK_DIALOG(l_pWidgetDialogOpen))==GTK_RESPONSE_ACCEPT)
+	if (gtk_dialog_run(GTK_DIALOG(widgetDialogOpen)) == GTK_RESPONSE_ACCEPT)
 	{
-		//char* l_sFileName=gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(l_pWidgetDialogOpen));
-		GSList * l_pFile, *l_pList;
-		l_pFile = l_pList = gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(l_pWidgetDialogOpen));
-		while(l_pFile)
+		//char* fileName=gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widgetDialogOpen));
+		GSList* l_pList;
+		GSList* l_pFile = l_pList = gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(widgetDialogOpen));
+		while (l_pFile)
 		{
-			char* l_sFileName = (char*)l_pFile->data;
-			char* l_pBackslash = NULL;
-			while((l_pBackslash = ::strchr(l_sFileName, '\\'))!=NULL)
-			{
-				*l_pBackslash = '/';
-			}
-			this->openScenario(l_sFileName);
+			char* fileName = static_cast<char*>(l_pFile->data);
+			char* l_pBackslash = nullptr;
+			while ((l_pBackslash = strchr(fileName, '\\')) != nullptr) { *l_pBackslash = '/'; }
+			this->openScenario(fileName);
 			g_free(l_pFile->data);
-			l_pFile=l_pFile->next;
+			l_pFile = l_pFile->next;
 		}
 		g_slist_free(l_pList);
 	}
-	gtk_widget_destroy(l_pWidgetDialogOpen);
-//	g_object_unref(l_pFileFilterSpecific);
-//	g_object_unref(l_pFileFilterAll);
+	gtk_widget_destroy(widgetDialogOpen);
+	//	g_object_unref(l_pFileFilterSpecific);
+	//	g_object_unref(l_pFileFilterAll);
 }
 
-void CApplication::saveScenarioCB(CInterfacedScenario* pScenario)
+void CApplication::saveScenarioCB(CInterfacedScenario* interfacedScenario)
 {
 	m_KernelContext.getLogManager() << LogLevel_Debug << "saveScenarioCB\n";
 
-	CInterfacedScenario* l_pCurrentInterfacedScenario=pScenario?pScenario:getCurrentInterfacedScenario();
-	if(!l_pCurrentInterfacedScenario)
-	{
-		return;
-	}
+	CInterfacedScenario* currentInterfacedScenario = interfacedScenario ? interfacedScenario : getCurrentInterfacedScenario();
+	if (!currentInterfacedScenario) { return; }
 
-	if (l_pCurrentInterfacedScenario->m_rScenario.containsBoxWithDeprecatedInterfacors())
+	if (currentInterfacedScenario->m_rScenario.containsBoxWithDeprecatedInterfacors())
 	{
 		cannotSaveScenarioBeforeUpdate();
 		return;
 	}
 
-	if(!l_pCurrentInterfacedScenario->m_bHasFileName)
-	{
-		saveScenarioAsCB(pScenario);
-	}
+	if (!currentInterfacedScenario->m_hasFileName) { saveScenarioAsCB(interfacedScenario); }
 	else
 	{
 		// If the current scenario is a metabox, we will save its prototype hash into an attribute of the scenario
 		// that way the standalone scheduler can check whether metaboxes included inside need updating.
-		if (l_pCurrentInterfacedScenario->m_rScenario.isMetabox())
+		if (currentInterfacedScenario->m_rScenario.isMetabox())
 		{
-			SBoxProto l_oMetaboxProto(m_KernelContext.getTypeManager());
+			SBoxProto metaboxProto(m_KernelContext.getTypeManager());
 
-			IScenario& l_rScenario = l_pCurrentInterfacedScenario->m_rScenario;
-			for (uint32 l_ui32ScenarioInputIndex = 0; l_ui32ScenarioInputIndex < l_rScenario.getInputCount(); l_ui32ScenarioInputIndex++)
+			IScenario& scenario = currentInterfacedScenario->m_rScenario;
+			for (uint32_t l_ui32ScenarioInputIndex = 0; l_ui32ScenarioInputIndex < scenario.getInputCount(); l_ui32ScenarioInputIndex++)
 			{
 				CString l_sInputName;
 				CIdentifier l_oInputTypeIdentifier;
 				CIdentifier l_oInputIdentifier;
 
-				l_rScenario.getInputType(l_ui32ScenarioInputIndex, l_oInputTypeIdentifier);
-				l_rScenario.getInputName(l_ui32ScenarioInputIndex, l_sInputName);
-				l_rScenario.getInterfacorIdentifier(Input, l_ui32ScenarioInputIndex, l_oInputIdentifier);
+				scenario.getInputType(l_ui32ScenarioInputIndex, l_oInputTypeIdentifier);
+				scenario.getInputName(l_ui32ScenarioInputIndex, l_sInputName);
+				scenario.getInterfacorIdentifier(Input, l_ui32ScenarioInputIndex, l_oInputIdentifier);
 
-				l_oMetaboxProto.addInput(l_sInputName, l_oInputTypeIdentifier,l_oInputIdentifier, true);
+				metaboxProto.addInput(l_sInputName, l_oInputTypeIdentifier, l_oInputIdentifier, true);
 			}
 
-			for (uint32 l_ui32ScenarioOutputIndex = 0; l_ui32ScenarioOutputIndex < l_rScenario.getOutputCount(); l_ui32ScenarioOutputIndex++)
+			for (uint32_t l_ui32ScenarioOutputIndex = 0; l_ui32ScenarioOutputIndex < scenario.getOutputCount(); l_ui32ScenarioOutputIndex++)
 			{
 				CString l_sOutputName;
 				CIdentifier l_oOutputTypeIdentifier;
 				CIdentifier l_oOutputIdentifier;
 
-				l_rScenario.getOutputType(l_ui32ScenarioOutputIndex, l_oOutputTypeIdentifier);
-				l_rScenario.getOutputName(l_ui32ScenarioOutputIndex, l_sOutputName);
-				l_rScenario.getInterfacorIdentifier(Output, l_ui32ScenarioOutputIndex, l_oOutputIdentifier);
+				scenario.getOutputType(l_ui32ScenarioOutputIndex, l_oOutputTypeIdentifier);
+				scenario.getOutputName(l_ui32ScenarioOutputIndex, l_sOutputName);
+				scenario.getInterfacorIdentifier(Output, l_ui32ScenarioOutputIndex, l_oOutputIdentifier);
 
-				l_oMetaboxProto.addOutput(l_sOutputName, l_oOutputTypeIdentifier,l_oOutputIdentifier, true);
+				metaboxProto.addOutput(l_sOutputName, l_oOutputTypeIdentifier, l_oOutputIdentifier, true);
 			}
 
-			for (uint32 l_ui32ScenarioSettingIndex = 0; l_ui32ScenarioSettingIndex < l_rScenario.getSettingCount(); l_ui32ScenarioSettingIndex++)
+			for (uint32_t l_ui32ScenarioSettingIndex = 0; l_ui32ScenarioSettingIndex < scenario.getSettingCount(); l_ui32ScenarioSettingIndex++)
 			{
 				CString l_sSettingName;
 				CIdentifier l_oSettingTypeIdentifier;
 				CString l_sSettingDefaultValue;
 
-				l_rScenario.getSettingName(l_ui32ScenarioSettingIndex, l_sSettingName);
-				l_rScenario.getSettingType(l_ui32ScenarioSettingIndex, l_oSettingTypeIdentifier);
-				l_rScenario.getSettingDefaultValue(l_ui32ScenarioSettingIndex, l_sSettingDefaultValue);
+				scenario.getSettingName(l_ui32ScenarioSettingIndex, l_sSettingName);
+				scenario.getSettingType(l_ui32ScenarioSettingIndex, l_oSettingTypeIdentifier);
+				scenario.getSettingDefaultValue(l_ui32ScenarioSettingIndex, l_sSettingDefaultValue);
 
-				l_oMetaboxProto.addSetting(l_sSettingName, l_oSettingTypeIdentifier, l_sSettingDefaultValue, false, OV_UndefinedIdentifier, true);
+				metaboxProto.addSetting(l_sSettingName, l_oSettingTypeIdentifier, l_sSettingDefaultValue, false, OV_UndefinedIdentifier, true);
 			}
 
-			if (l_rScenario.hasAttribute(OV_AttributeId_Scenario_MetaboxHash))
+			if (scenario.hasAttribute(OV_AttributeId_Scenario_MetaboxHash))
 			{
-				l_rScenario.setAttributeValue(OV_AttributeId_Scenario_MetaboxHash, l_oMetaboxProto.m_oHash.toString());
+				scenario.setAttributeValue(OV_AttributeId_Scenario_MetaboxHash, metaboxProto.m_oHash.toString());
 			}
 			else
 			{
-				l_rScenario.addAttribute(OV_AttributeId_Scenario_MetaboxHash, l_oMetaboxProto.m_oHash.toString());
+				scenario.addAttribute(OV_AttributeId_Scenario_MetaboxHash, metaboxProto.m_oHash.toString());
 			}
 
-			if (!l_rScenario.hasAttribute(OVP_AttributeId_Metabox_Identifier))
+			if (!scenario.hasAttribute(OVP_AttributeId_Metabox_Identifier))
 			{
-				l_rScenario.setAttributeValue(OVP_AttributeId_Metabox_Identifier, CIdentifier::random().toString().toASCIIString());
+				scenario.setAttributeValue(OVP_AttributeId_Metabox_Identifier, CIdentifier::random().toString().toASCIIString());
 			}
 
-			m_KernelContext.getLogManager() << LogLevel_Trace << "This metaboxes Hash : " << l_oMetaboxProto.m_oHash << "\n";
+			m_KernelContext.getLogManager() << LogLevel_Trace << "This metaboxes Hash : " << metaboxProto.m_oHash << "\n";
 		}
 
-		const char* l_sScenarioFileName = l_pCurrentInterfacedScenario->m_sFileName.c_str();
+		const char* scenarioFileName = currentInterfacedScenario->m_sFileName.c_str();
 
 		// Remove attributes that were added to links and boxes by the designer and which are used only for interal functionality.
 		// This way the scenarios do not change if, for example somebody opens them on a system with different font metrics.
-		l_pCurrentInterfacedScenario->m_rScenario.removeAttribute(OV_AttributeId_ScenarioFilename);
+		currentInterfacedScenario->m_rScenario.removeAttribute(OV_AttributeId_ScenarioFilename);
 
 		CIdentifier linkIdentifier;
-		while ((linkIdentifier = l_pCurrentInterfacedScenario->m_rScenario.getNextLinkIdentifier(linkIdentifier)) != OV_UndefinedIdentifier)
+		while ((linkIdentifier = currentInterfacedScenario->m_rScenario.getNextLinkIdentifier(linkIdentifier)) != OV_UndefinedIdentifier)
 		{
-			auto link = l_pCurrentInterfacedScenario->m_rScenario.getLinkDetails(linkIdentifier);
+			auto link = currentInterfacedScenario->m_rScenario.getLinkDetails(linkIdentifier);
 			link->removeAttribute(OV_AttributeId_Link_XSourcePosition);
 			link->removeAttribute(OV_AttributeId_Link_YSourcePosition);
 			link->removeAttribute(OV_AttributeId_Link_XTargetPosition);
@@ -2096,18 +1993,18 @@ void CApplication::saveScenarioCB(CInterfacedScenario* pScenario)
 		}
 
 		CIdentifier boxIdentifier;
-		while ((boxIdentifier = l_pCurrentInterfacedScenario->m_rScenario.getNextBoxIdentifier(boxIdentifier)) != OV_UndefinedIdentifier)
+		while ((boxIdentifier = currentInterfacedScenario->m_rScenario.getNextBoxIdentifier(boxIdentifier)) != OV_UndefinedIdentifier)
 		{
-			auto box = l_pCurrentInterfacedScenario->m_rScenario.getBoxDetails(boxIdentifier);
+			auto box = currentInterfacedScenario->m_rScenario.getBoxDetails(boxIdentifier);
 			box->removeAttribute(OV_AttributeId_Box_XSize);
 			box->removeAttribute(OV_AttributeId_Box_YSize);
 			box->removeAttribute(OV_ClassId_Selected);
 		}
 
 		CIdentifier commentIdentifier;
-		while ((commentIdentifier = l_pCurrentInterfacedScenario->m_rScenario.getNextCommentIdentifier(commentIdentifier)) != OV_UndefinedIdentifier)
+		while ((commentIdentifier = currentInterfacedScenario->m_rScenario.getNextCommentIdentifier(commentIdentifier)) != OV_UndefinedIdentifier)
 		{
-			auto comment = l_pCurrentInterfacedScenario->m_rScenario.getCommentDetails(commentIdentifier);
+			auto comment = currentInterfacedScenario->m_rScenario.getCommentDetails(commentIdentifier);
 			comment->removeAttribute(OV_ClassId_Selected);
 		}
 
@@ -2115,148 +2012,138 @@ void CApplication::saveScenarioCB(CInterfacedScenario* pScenario)
 		// We save the last found identifier if there was one, this allows us to not modify it on subsequent saves
 		CIdentifier metadataIdentifier = OV_UndefinedIdentifier;
 		CIdentifier lastFoundTreeIdentifier = OV_UndefinedIdentifier;
-		while ((metadataIdentifier = l_pCurrentInterfacedScenario->m_rScenario.getNextMetadataIdentifier(metadataIdentifier)) != OV_UndefinedIdentifier)
+		while ((metadataIdentifier = currentInterfacedScenario->m_rScenario.getNextMetadataIdentifier(metadataIdentifier)) != OV_UndefinedIdentifier)
 		{
-			if (l_pCurrentInterfacedScenario->m_rScenario.getMetadataDetails(metadataIdentifier)->getType() == OVVIZ_MetadataIdentifier_VisualizationTree)
+			if (currentInterfacedScenario->m_rScenario.getMetadataDetails(metadataIdentifier)->getType() == OVVIZ_MetadataIdentifier_VisualizationTree)
 			{
-				l_pCurrentInterfacedScenario->m_rScenario.removeMetadata(metadataIdentifier);
+				currentInterfacedScenario->m_rScenario.removeMetadata(metadataIdentifier);
 				lastFoundTreeIdentifier = metadataIdentifier;
 				metadataIdentifier = OV_UndefinedIdentifier;
 			}
 		}
 
 		// Insert new metadata
-		l_pCurrentInterfacedScenario->m_rScenario.addMetadata(metadataIdentifier, lastFoundTreeIdentifier);
-		l_pCurrentInterfacedScenario->m_rScenario.getMetadataDetails(metadataIdentifier)->setType(OVVIZ_MetadataIdentifier_VisualizationTree);
-		l_pCurrentInterfacedScenario->m_rScenario.getMetadataDetails(metadataIdentifier)->setData(l_pCurrentInterfacedScenario->m_pVisualizationTree->serialize());
+		currentInterfacedScenario->m_rScenario.addMetadata(metadataIdentifier, lastFoundTreeIdentifier);
+		currentInterfacedScenario->m_rScenario.getMetadataDetails(metadataIdentifier)->setType(OVVIZ_MetadataIdentifier_VisualizationTree);
+		currentInterfacedScenario->m_rScenario.getMetadataDetails(metadataIdentifier)->setData(currentInterfacedScenario->m_pVisualizationTree->serialize());
 
 		CIdentifier scenarioExportContext = OVD_ScenarioExportContext_SaveScenario;
-		if (l_pCurrentInterfacedScenario->m_rScenario.isMetabox())
+		if (currentInterfacedScenario->m_rScenario.isMetabox())
 		{
 			scenarioExportContext = OVD_ScenarioExportContext_SaveMetabox;
 		}
 
 		m_KernelContext.getErrorManager().releaseErrors();
-		if (m_pScenarioManager->exportScenarioToFile(scenarioExportContext, l_sScenarioFileName, l_pCurrentInterfacedScenario->m_oScenarioIdentifier))
+		if (m_pScenarioManager->exportScenarioToFile(scenarioExportContext, scenarioFileName, currentInterfacedScenario->m_oScenarioIdentifier))
 		{
-			l_pCurrentInterfacedScenario->snapshotCB();
-			l_pCurrentInterfacedScenario->m_bHasFileName=true;
-			l_pCurrentInterfacedScenario->m_bHasBeenModified=false;
-			l_pCurrentInterfacedScenario->updateScenarioLabel();
+			currentInterfacedScenario->snapshotCB();
+			currentInterfacedScenario->m_hasFileName = true;
+			currentInterfacedScenario->m_hasBeenModified = false;
+			currentInterfacedScenario->updateScenarioLabel();
 			this->saveOpenedScenarios();
 		}
 		else
 		{
 			m_KernelContext.getLogManager() << LogLevel_Warning << "Exporting scenario failed...\n";
-			gint l_iResponseId;
-			::GtkBuilder* l_pBuilder = gtk_builder_new(); // glade_xml_new(OVD_GUI_File, "about", NULL);
-			gtk_builder_add_from_file(l_pBuilder, OVD_GUI_File, NULL);
-			gtk_builder_connect_signals(l_pBuilder, NULL);
-			::GtkWidget* l_pDialog = GTK_WIDGET(gtk_builder_get_object(l_pBuilder, "dialog_error_popup_saving"));
+			GtkBuilder* l_pBuilder = gtk_builder_new(); // glade_xml_new(OVD_GUI_File, "about", nullptr);
+			gtk_builder_add_from_file(l_pBuilder, OVD_GUI_File, nullptr);
+			gtk_builder_connect_signals(l_pBuilder, nullptr);
+			GtkWidget* l_pDialog = GTK_WIDGET(gtk_builder_get_object(l_pBuilder, "dialog_error_popup_saving"));
 			// Reset the labels
 			gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(l_pBuilder, "dialog_error_popup_saving-label1")), "");
 			gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(l_pBuilder, "dialog_error_popup_saving-label2")), "");
-			if (m_KernelContext.getErrorManager().hasError()) {
+			if (m_KernelContext.getErrorManager().hasError())
+			{
 				gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(l_pBuilder, "dialog_error_popup_saving-label1")), m_KernelContext.getErrorManager().getLastErrorString());
 			}
-			gtk_builder_connect_signals(l_pBuilder, NULL);
-			l_iResponseId = gtk_dialog_run(GTK_DIALOG(l_pDialog));
+			gtk_builder_connect_signals(l_pBuilder, nullptr);
+			const gint l_iResponseId = gtk_dialog_run(GTK_DIALOG(l_pDialog));
 			gtk_widget_destroy(l_pDialog);
 			g_object_unref(l_pBuilder);
 
 			switch (l_iResponseId)
 			{
-			case GTK_RESPONSE_OK:
-				this->saveScenarioCB(pScenario);
-				break;
-			case GTK_RESPONSE_DELETE_EVENT:
-			case GTK_RESPONSE_CANCEL:
-				return;
-			default:
-				break;
+				case GTK_RESPONSE_OK:
+					this->saveScenarioCB(interfacedScenario);
+					break;
+				case GTK_RESPONSE_DELETE_EVENT:
+				case GTK_RESPONSE_CANCEL:			//return; //useless no loop and default make nothing
+				default: break;
 			}
 		}
 	}
 }
 
-void CApplication::restoreDefaultScenariosCB()
+void CApplication::restoreDefaultScenariosCB() const
 {
-	CString l_sDefaultScenariosDirectory = m_KernelContext.getConfigurationManager().expand(OVD_SCENARIOS_PATH);
-	CString l_sDefaultWorkingDirectory   = m_KernelContext.getConfigurationManager().expand(OVD_WORKING_SCENARIOS_PATH);
-	CString message = "Default scenarios will be restored in '" + l_sDefaultWorkingDirectory + "' folder.\n"
-	        + "All previous scenarios in this folder will be removed.\n"
-	        + "Do you want to continue ?\n";
+	const CString defaultScenariosDirectory = m_KernelContext.getConfigurationManager().expand(OVD_SCENARIOS_PATH);
+	const CString defaultWorkingDirectory = m_KernelContext.getConfigurationManager().expand(OVD_WORKING_SCENARIOS_PATH);
+	const CString message = "Default scenarios will be restored in '" + defaultWorkingDirectory + "' folder.\n"
+		+ "All previous scenarios in this folder will be removed.\n"
+		+ "Do you want to continue ?\n";
 
-	::GtkWidget* l_pWidgetDialogRestoreScenarios = gtk_message_dialog_new(
-	            NULL, GTK_DIALOG_DESTROY_WITH_PARENT,
-            GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
-             "%s", message.toASCIIString());
+	GtkWidget* widgetDialogRestoreScenarios = gtk_message_dialog_new(nullptr, GTK_DIALOG_DESTROY_WITH_PARENT,
+																	 GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
+																	 "%s", message.toASCIIString());
 
 
-	CString backupFolder = l_sDefaultWorkingDirectory + m_KernelContext.getConfigurationManager().expand("-$core{date}-$core{time}");
+	const CString backupFolder = defaultWorkingDirectory + m_KernelContext.getConfigurationManager().expand("-$core{date}-$core{time}");
 
-	if(gtk_dialog_run(GTK_DIALOG(l_pWidgetDialogRestoreScenarios))==GTK_RESPONSE_YES)
+	if (gtk_dialog_run(GTK_DIALOG(widgetDialogRestoreScenarios)) == GTK_RESPONSE_YES)
 	{
 		// to avoid to loose old data, make a backup
 		FS::Files::removeAll(backupFolder);
-		if(FS::Files::copyDirectory(l_sDefaultWorkingDirectory, backupFolder))
+		if (FS::Files::copyDirectory(defaultWorkingDirectory, backupFolder))
 		{
 			m_KernelContext.getLogManager() << LogLevel_Info << "Old scenario folder backed up into "
-			                                 << backupFolder << " folder\n";
+				<< backupFolder << " folder\n";
 			// make the copy
-			FS::Files::removeAll(l_sDefaultWorkingDirectory);
-			if (FS::Files::copyDirectory(l_sDefaultScenariosDirectory, l_sDefaultWorkingDirectory))
+			FS::Files::removeAll(defaultWorkingDirectory);
+			if (FS::Files::copyDirectory(defaultScenariosDirectory, defaultWorkingDirectory))
 			{
-				m_KernelContext.getLogManager() << LogLevel_Info << "Default scenarios restored into "
-				                                 << l_sDefaultWorkingDirectory <<" folder\n";
+				m_KernelContext.getLogManager() << LogLevel_Info << "Default scenarios restored into " << defaultWorkingDirectory << " folder\n";
 			}
 			else
 			{
-				m_KernelContext.getLogManager() << LogLevel_Error << "Could not copy "
-				                                 << l_sDefaultWorkingDirectory << " folder\n";
+				m_KernelContext.getLogManager() << LogLevel_Error << "Could not copy " << defaultWorkingDirectory << " folder\n";
 			}
 		}
 		else
 		{
-			m_KernelContext.getLogManager() << LogLevel_Error << "Could not back up "
-			                                 << l_sDefaultWorkingDirectory << " folder. Copy has aborted.\n";
+			m_KernelContext.getLogManager() << LogLevel_Error << "Could not back up " << defaultWorkingDirectory << " folder. Copy has aborted.\n";
 		}
-
 	}
 
-	gtk_widget_destroy(l_pWidgetDialogRestoreScenarios);
+	gtk_widget_destroy(widgetDialogRestoreScenarios);
 }
 
-void CApplication::saveScenarioAsCB(CInterfacedScenario* pScenario)
+void CApplication::saveScenarioAsCB(CInterfacedScenario* interfacedScenario)
 {
 	m_KernelContext.getLogManager() << LogLevel_Debug << "saveScenarioAsCB\n";
 
-	CInterfacedScenario* l_pCurrentInterfacedScenario=pScenario?pScenario:getCurrentInterfacedScenario();
-	if(!l_pCurrentInterfacedScenario)
-	{
-		return;
-	}
+	CInterfacedScenario* currentInterfacedScenario = interfacedScenario ? interfacedScenario : getCurrentInterfacedScenario();
+	if (!currentInterfacedScenario) { return; }
 
-	if (l_pCurrentInterfacedScenario->m_rScenario.containsBoxWithDeprecatedInterfacors())
+	if (currentInterfacedScenario->m_rScenario.containsBoxWithDeprecatedInterfacors())
 	{
 		cannotSaveScenarioBeforeUpdate();
 		return;
 	}
 
-	bool l_bIsCurrentScenarioAMetabox = l_pCurrentInterfacedScenario->m_rScenario.isMetabox();
+	const bool isCurrentScenarioAMetabox = currentInterfacedScenario->m_rScenario.isMetabox();
 
-	::GtkFileFilter* l_pFileFilterAll = gtk_file_filter_new(); // All files
+	GtkFileFilter* l_pFileFilterAll = gtk_file_filter_new(); // All files
 	gtk_file_filter_set_name(l_pFileFilterAll, "All files");
 	gtk_file_filter_add_pattern(l_pFileFilterAll, "*");
 
-	::GtkFileFilter* allCompatibleFormatsFileFilter = gtk_file_filter_new(); // All compatible files
+	GtkFileFilter* allCompatibleFormatsFileFilter = gtk_file_filter_new(); // All compatible files
 
 	std::map<GtkFileFilter*, std::string> fileFilters;
 
 
 	std::set<std::string> compatibleExtensions;
 	CString fileNameExtension;
-	if (!l_bIsCurrentScenarioAMetabox)
+	if (!isCurrentScenarioAMetabox)
 	{
 		while ((fileNameExtension = m_KernelContext.getScenarioManager().getNextScenarioExporter(OVD_ScenarioExportContext_SaveScenario, fileNameExtension)) != CString(""))
 		{
@@ -2270,14 +2157,14 @@ void CApplication::saveScenarioAsCB(CInterfacedScenario* pScenario)
 
 	std::string allCompatibleFormatsFilterName = "All compatible formats (";
 
-	for (auto& fileNameExtension : compatibleExtensions)
+	for (auto& extension : compatibleExtensions)
 	{
 		GtkFileFilter* fileFilter = gtk_file_filter_new();
-		std::string fileFilterName = m_KernelContext.getConfigurationManager().expand(std::string("${ScenarioFileNameExtension" + fileNameExtension + "}").c_str()).toASCIIString() + std::string(" (*") + fileNameExtension + ")";
+		std::string fileFilterName = m_KernelContext.getConfigurationManager().expand(std::string("${ScenarioFileNameExtension" + extension + "}").c_str()).toASCIIString() + std::string(" (*") + extension + ")";
 		gtk_file_filter_set_name(fileFilter, fileFilterName.c_str());
-		std::string fileFilterWildcard = "*" + fileNameExtension;
+		std::string fileFilterWildcard = "*" + extension;
 		gtk_file_filter_add_pattern(fileFilter, fileFilterWildcard.c_str());
-		fileFilters[fileFilter] = fileNameExtension;
+		fileFilters[fileFilter] = extension;
 
 		allCompatibleFormatsFilterName += fileFilterWildcard + ", ";
 		gtk_file_filter_add_pattern(allCompatibleFormatsFileFilter, fileFilterWildcard.c_str());
@@ -2291,127 +2178,112 @@ void CApplication::saveScenarioAsCB(CInterfacedScenario* pScenario)
 	// gtk_file_filter_set_name(l_pFileFilterSVG, "SVG image");
 	// gtk_file_filter_add_pattern(l_pFileFilterSVG, "*.svg");
 
-	::GtkWidget* l_pWidgetDialogSaveAs=gtk_file_chooser_dialog_new(
-		"Select scenario to save...",
-		NULL,
-		GTK_FILE_CHOOSER_ACTION_SAVE,
-		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-		GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
-		NULL);
+	GtkWidget* widgetDialogSaveAs = gtk_file_chooser_dialog_new("Select scenario to save...", nullptr,
+																GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+																GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, nullptr);
 
-	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(l_pWidgetDialogSaveAs), allCompatibleFormatsFileFilter);
-	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(l_pWidgetDialogSaveAs), l_pFileFilterAll);
+	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(widgetDialogSaveAs), allCompatibleFormatsFileFilter);
+	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(widgetDialogSaveAs), l_pFileFilterAll);
 
-	for (auto fileFilter : fileFilters)
+	for (const auto& fileFilter : fileFilters)
 	{
-		gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(l_pWidgetDialogSaveAs), fileFilter.first);
+		gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(widgetDialogSaveAs), fileFilter.first);
 	}
 
-	gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(l_pWidgetDialogSaveAs), allCompatibleFormatsFileFilter);
-	// gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(l_pWidgetDialogSaveAs), true);
-	if(l_pCurrentInterfacedScenario->m_bHasFileName)
+	gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(widgetDialogSaveAs), allCompatibleFormatsFileFilter);
+	// gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(l_widgetDialogSaveAs), true);
+	if (currentInterfacedScenario->m_hasFileName)
 	{
-		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(l_pWidgetDialogSaveAs), l_pCurrentInterfacedScenario->m_sFileName.c_str());
+		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(widgetDialogSaveAs), currentInterfacedScenario->m_sFileName.c_str());
 	}
 	else
 	{
 		// Put metaboxes to the User metabox folder by default
-		if (l_bIsCurrentScenarioAMetabox)
+		if (isCurrentScenarioAMetabox)
 		{
-			gtk_file_chooser_set_current_folder(
-				GTK_FILE_CHOOSER(l_pWidgetDialogSaveAs),
-				m_KernelContext.getConfigurationManager().expand("${Path_UserData}/metaboxes").toASCIIString());
+			gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(widgetDialogSaveAs), m_KernelContext.getConfigurationManager().expand("${Path_UserData}/metaboxes").toASCIIString());
 		}
 		else
 		{
-			gtk_file_chooser_set_current_folder(
-				GTK_FILE_CHOOSER(l_pWidgetDialogSaveAs),
-				this->getWorkingDirectory().toASCIIString());
+			gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(widgetDialogSaveAs), this->getWorkingDirectory().toASCIIString());
 		}
 	}
 
-	if(gtk_dialog_run(GTK_DIALOG(l_pWidgetDialogSaveAs))==GTK_RESPONSE_ACCEPT)
+	if (gtk_dialog_run(GTK_DIALOG(widgetDialogSaveAs)) == GTK_RESPONSE_ACCEPT)
 	{
-		char* l_sTempFilename=gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(l_pWidgetDialogSaveAs));
+		char* l_sTempFilename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widgetDialogSaveAs));
 
 		// replaces \ with / on windows
-		char* l_pBackslash = NULL;
-		while((l_pBackslash = ::strchr(l_sTempFilename, '\\'))!=NULL)
+		char* l_pBackslash = nullptr;
+		while ((l_pBackslash = strchr(l_sTempFilename, '\\')) != nullptr)
 		{
 			*l_pBackslash = '/';
 		}
 
 		// stores filename in a local variable
-		char l_sFilename[1024];
-		int l_iFilenameLength=::sprintf(l_sFilename, "%s", l_sTempFilename);
+		char filename[1024];
+		int filenameLength = sprintf(filename, "%s", l_sTempFilename);
 		g_free(l_sTempFilename);
 
-		::GtkFileFilter* l_pFileFilter=gtk_file_chooser_get_filter(GTK_FILE_CHOOSER(l_pWidgetDialogSaveAs));
+		GtkFileFilter* l_pFileFilter = gtk_file_chooser_get_filter(GTK_FILE_CHOOSER(widgetDialogSaveAs));
 		if (fileFilters.count(l_pFileFilter) != 0)
 		{
 			// User chose a specific filter
-			std::string l_sExpectedExtension = fileFilters[l_pFileFilter];
-			if(_strcmpi(l_sFilename + l_iFilenameLength - 4, (std::string(".") + l_sExpectedExtension).c_str()) != 0)
+			const std::string l_sExpectedExtension = fileFilters[l_pFileFilter];
+			if (_strcmpi(filename + filenameLength - 4, (std::string(".") + l_sExpectedExtension).c_str()) != 0)
 			{
 				// If filename already has an extension, remove it
-				if(l_sFilename[l_iFilenameLength-4] == '.')
+				if (filename[filenameLength - 4] == '.')
 				{
-					l_iFilenameLength-=4;
-					l_sFilename[l_iFilenameLength] = '\0';
+					filenameLength -= 4;
+					filename[filenameLength] = '\0';
 				}
 
 				// When user did not put appropriate extension, append it
-				strcat(l_sFilename, l_sExpectedExtension.c_str());
-				l_iFilenameLength += 1+l_sExpectedExtension.length();
+				strcat(filename, l_sExpectedExtension.c_str());
+				//filenameLength += int(1 + l_sExpectedExtension.length());
 			}
 		}
 
 		// Set a default extension in case the current one is not compatible or there is none
-		std::string scenarioFilenameExtension = boost::filesystem::extension(l_sFilename);
+		const std::string scenarioFilenameExtension = boost::filesystem::extension(filename);
 		if (!compatibleExtensions.count(scenarioFilenameExtension))
 		{
-			if(l_bIsCurrentScenarioAMetabox)
-			{
-				strcat(l_sFilename, ".mxb");
-				l_iFilenameLength+=4;
-			}
-			else
-			{
-				strcat(l_sFilename, ".mxs");
-				l_iFilenameLength+=4;
-			}
+			if (isCurrentScenarioAMetabox) { strcat(filename, ".mxb"); }
+			else { strcat(filename, ".mxs"); }
+			//filenameLength += 4;
 		}
 
 		// We ensure the file does not exist
-		bool l_bIsSaveActionValid=true;
-		FILE* l_pFile=FS::Files::open(l_sFilename, "r");
-		if(l_pFile)
+		bool l_bIsSaveActionValid = true;
+		FILE* l_pFile = FS::Files::open(filename, "r");
+		if (l_pFile)
 		{
-			::fclose(l_pFile);
-			::GtkDialog* l_pConfirmationDialog=GTK_DIALOG(::gtk_message_dialog_new(NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_OK_CANCEL, "The file already exists"));
-			::gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(l_pConfirmationDialog), "%s\n\nThe file you are trying to save-as already exists, confirming this action will overwrite the existing file. Please confirm you want to overwrite the existing file.", l_sFilename);
-			l_bIsSaveActionValid=(::gtk_dialog_run(GTK_DIALOG(l_pConfirmationDialog)) == GTK_RESPONSE_OK);
-			::gtk_widget_destroy(GTK_WIDGET(l_pConfirmationDialog));
+			fclose(l_pFile);
+			GtkDialog* l_pConfirmationDialog = GTK_DIALOG(::gtk_message_dialog_new(nullptr, GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_OK_CANCEL, "The file already exists"));
+			gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(l_pConfirmationDialog), "%s\n\nThe file you are trying to save-as already exists, confirming this action will overwrite the existing file. Please confirm you want to overwrite the existing file.", filename);
+			l_bIsSaveActionValid = (gtk_dialog_run(GTK_DIALOG(l_pConfirmationDialog)) == GTK_RESPONSE_OK);
+			gtk_widget_destroy(GTK_WIDGET(l_pConfirmationDialog));
 		}
 
 		// Finally save the scenario
-		if(l_bIsSaveActionValid)
+		if (l_bIsSaveActionValid)
 		{
-			l_pCurrentInterfacedScenario->m_sFileName=l_sFilename;
-			l_pCurrentInterfacedScenario->m_bHasFileName=true;
-			l_pCurrentInterfacedScenario->m_bHasBeenModified=false;
-			l_pCurrentInterfacedScenario->updateScenarioLabel();
-			saveScenarioCB(l_pCurrentInterfacedScenario);
+			currentInterfacedScenario->m_sFileName = filename;
+			currentInterfacedScenario->m_hasFileName = true;
+			currentInterfacedScenario->m_hasBeenModified = false;
+			currentInterfacedScenario->updateScenarioLabel();
+			saveScenarioCB(currentInterfacedScenario);
 		}
 		else
 		{
-			m_KernelContext.getLogManager() << LogLevel_Trace << "Canceled 'save-as' action for filename [" << CString(l_sFilename) << "]\n";
+			m_KernelContext.getLogManager() << LogLevel_Trace << "Canceled 'save-as' action for filename [" << CString(filename) << "]\n";
 		}
 	}
 
-	gtk_widget_destroy(l_pWidgetDialogSaveAs);
-//	g_object_unref(l_pFileFilterSpecific);
-//	g_object_unref(l_pFileFilterAll);
+	gtk_widget_destroy(widgetDialogSaveAs);
+	//	g_object_unref(l_pFileFilterSpecific);
+	//	g_object_unref(l_pFileFilterAll);
 }
 
 void CApplication::addRecentScenario(const std::string& scenarioPath)
@@ -2427,7 +2299,7 @@ void CApplication::addRecentScenario(const std::string& scenarioPath)
 			gtk_menu_shell_prepend(GTK_MENU_SHELL(m_MenuOpenRecent), GTK_WIDGET(m_RecentScenarios[i]));
 			scenarioFound = true;
 			m_RecentScenarios.insert(m_RecentScenarios.begin(), m_RecentScenarios[i]);
-			m_RecentScenarios.erase(m_RecentScenarios.begin() + i+1);
+			m_RecentScenarios.erase(m_RecentScenarios.begin() + i + 1);
 			break;
 		}
 	}
@@ -2444,7 +2316,7 @@ void CApplication::addRecentScenario(const std::string& scenarioPath)
 
 	if (m_RecentScenarios.size() > s_RecentFileNumber)
 	{
-		for (auto it = m_RecentScenarios.begin() + s_RecentFileNumber ; it != m_RecentScenarios.end(); ++it)
+		for (auto it = m_RecentScenarios.begin() + s_RecentFileNumber; it != m_RecentScenarios.end(); ++it)
 		{
 			gtk_container_remove(m_MenuOpenRecent, GTK_WIDGET(*it));
 			gtk_widget_destroy(GTK_WIDGET(*it));
@@ -2453,51 +2325,43 @@ void CApplication::addRecentScenario(const std::string& scenarioPath)
 	}
 }
 
-void CApplication::closeScenarioCB(CInterfacedScenario* pInterfacedScenario)
+void CApplication::closeScenarioCB(CInterfacedScenario* interfacedScenario)
 {
 	m_KernelContext.getLogManager() << LogLevel_Debug << "closeScenarioCB\n";
 
-	if(!pInterfacedScenario)
+	if (!interfacedScenario) { return; }
+	if (interfacedScenario->isLocked())
 	{
-		return;
-	}
-	if(pInterfacedScenario->isLocked())
-	{
-		::GtkBuilder* l_pBuilder=gtk_builder_new(); // glade_xml_new(OVD_GUI_File, "about", NULL);
-		gtk_builder_add_from_file(l_pBuilder, OVD_GUI_File, NULL);
-		gtk_builder_connect_signals(l_pBuilder, NULL);
+		GtkBuilder* l_pBuilder = gtk_builder_new(); // glade_xml_new(OVD_GUI_File, "about", nullptr);
+		gtk_builder_add_from_file(l_pBuilder, OVD_GUI_File, nullptr);
+		gtk_builder_connect_signals(l_pBuilder, nullptr);
 
-		::GtkWidget* l_pDialog=GTK_WIDGET(gtk_builder_get_object(l_pBuilder, "dialog_running_scenario"));
-		gtk_builder_connect_signals(l_pBuilder, NULL);
+		GtkWidget* l_pDialog = GTK_WIDGET(gtk_builder_get_object(l_pBuilder, "dialog_running_scenario"));
+		gtk_builder_connect_signals(l_pBuilder, nullptr);
 		// gtk_dialog_set_response_sensitive(GTK_DIALOG(l_pDialog), GTK_RESPONSE_CLOSE, true);
 		gtk_dialog_run(GTK_DIALOG(l_pDialog));
 		gtk_widget_destroy(l_pDialog);
 		g_object_unref(l_pBuilder);
 		return;
 	}
-	if(pInterfacedScenario->m_bHasBeenModified)
+	if (interfacedScenario->m_hasBeenModified)
 	{
-		gint l_iResponseId;
+		GtkBuilder* l_pBuilder = gtk_builder_new(); // glade_xml_new(OVD_GUI_File, "about", nullptr);
+		gtk_builder_add_from_file(l_pBuilder, OVD_GUI_File, nullptr);
+		gtk_builder_connect_signals(l_pBuilder, nullptr);
 
-		::GtkBuilder* l_pBuilder=gtk_builder_new(); // glade_xml_new(OVD_GUI_File, "about", NULL);
-		gtk_builder_add_from_file(l_pBuilder, OVD_GUI_File, NULL);
-		gtk_builder_connect_signals(l_pBuilder, NULL);
-
-		::GtkWidget* l_pDialog=GTK_WIDGET(gtk_builder_get_object(l_pBuilder, "dialog_unsaved_scenario"));
-		gtk_builder_connect_signals(l_pBuilder, NULL);
+		GtkWidget* l_pDialog = GTK_WIDGET(gtk_builder_get_object(l_pBuilder, "dialog_unsaved_scenario"));
+		gtk_builder_connect_signals(l_pBuilder, nullptr);
 		// gtk_dialog_set_response_sensitive(GTK_DIALOG(l_pDialog), GTK_RESPONSE_CLOSE, true);
-		l_iResponseId=gtk_dialog_run(GTK_DIALOG(l_pDialog));
+		const gint l_iResponseId = gtk_dialog_run(GTK_DIALOG(l_pDialog));
 		gtk_widget_destroy(l_pDialog);
 		g_object_unref(l_pBuilder);
 
-		switch(l_iResponseId)
+		switch (l_iResponseId)
 		{
 			case GTK_RESPONSE_OK:
-				this->saveScenarioCB(pInterfacedScenario);
-				if(pInterfacedScenario->m_bHasBeenModified)
-				{
-					return;
-				}
+				this->saveScenarioCB(interfacedScenario);
+				if (interfacedScenario->m_hasBeenModified) { return; }
 				break;
 			case GTK_RESPONSE_DELETE_EVENT:
 			case GTK_RESPONSE_CANCEL:
@@ -2507,19 +2371,19 @@ void CApplication::closeScenarioCB(CInterfacedScenario* pInterfacedScenario)
 		}
 	}
 	// Add scenario to recently opened:
-	this->addRecentScenario(pInterfacedScenario->m_sFileName.c_str());
+	this->addRecentScenario(interfacedScenario->m_sFileName);
 
-	auto it = std::find(m_vInterfacedScenario.begin(), m_vInterfacedScenario.end(), pInterfacedScenario);
-	if(it != m_vInterfacedScenario.end())
+	const auto it = std::find(m_vInterfacedScenario.begin(), m_vInterfacedScenario.end(), interfacedScenario);
+	if (it != m_vInterfacedScenario.end())
 	{
 		// We need to erase the scenario from the list first, because deleting the scenario will launch a "switch-page"
 		// callback accessing this array with the identifier of the deleted scenario (if its not the last one) -> boom.
 		m_vInterfacedScenario.erase(it);
-		CIdentifier l_oScenarioIdentifier=pInterfacedScenario->m_oScenarioIdentifier;
-		delete pInterfacedScenario;
-		m_pScenarioManager->releaseScenario(l_oScenarioIdentifier);
+		const CIdentifier scenarioIdentifier = interfacedScenario->m_oScenarioIdentifier;
+		delete interfacedScenario;
+		m_pScenarioManager->releaseScenario(scenarioIdentifier);
 		//when closing last open scenario, no "switch-page" event is triggered so we manually handle this case
-		if(m_vInterfacedScenario.empty() == true)
+		if (m_vInterfacedScenario.empty())
 		{
 			newScenarioCB();
 		}
@@ -2537,53 +2401,53 @@ void CApplication::deleteDesignerVisualizationCB()
 	//untoggle window manager button when its associated dialog is closed
 	gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager")), FALSE);
 
-	CInterfacedScenario* l_pCurrentInterfacedScenario = getCurrentInterfacedScenario();
-	if(l_pCurrentInterfacedScenario)
+	CInterfacedScenario* currentInterfacedScenario = getCurrentInterfacedScenario();
+	if (currentInterfacedScenario)
 	{
-		l_pCurrentInterfacedScenario->snapshotCB();
+		currentInterfacedScenario->snapshotCB();
 	}
 }
 
 void CApplication::toggleDesignerVisualizationCB()
 {
-	CInterfacedScenario* l_pCurrentInterfacedScenario = getCurrentInterfacedScenario();
-	if(l_pCurrentInterfacedScenario != NULL && l_pCurrentInterfacedScenario->isLocked() == false)
+	CInterfacedScenario* currentInterfacedScenario = getCurrentInterfacedScenario();
+	if (currentInterfacedScenario != nullptr && !currentInterfacedScenario->isLocked())
 	{
-		uint32 l_ui32Index=(uint32)gtk_notebook_get_current_page(m_pScenarioNotebook);
-		if(l_ui32Index<m_vInterfacedScenario.size())
+		const auto index = size_t(gtk_notebook_get_current_page(m_pScenarioNotebook));
+		if (index < m_vInterfacedScenario.size())
 		{
-			m_vInterfacedScenario[l_ui32Index]->toggleDesignerVisualization();
+			m_vInterfacedScenario[index]->toggleDesignerVisualization();
 		}
 	}
 }
 
-void CApplication::aboutOpenViBECB(void)
+void CApplication::aboutOpenViBECB()
+
 {
 	m_KernelContext.getLogManager() << LogLevel_Debug << "CApplication::aboutOpenViBECB\n";
-	::GtkBuilder* l_pBuilder=gtk_builder_new(); // glade_xml_new(OVD_GUI_File, "about", NULL);
-	gtk_builder_add_from_file(l_pBuilder, OVD_GUI_AboutDialog_File, NULL);
-	gtk_builder_connect_signals(l_pBuilder, NULL);
-	//gtk_builder_connect_signals(l_pBuilder, NULL);
-	::GtkWidget* l_pDialog=GTK_WIDGET(gtk_builder_get_object(l_pBuilder, "about"));
-	if (l_pDialog == NULL)
+	GtkBuilder* l_pBuilder = gtk_builder_new(); // glade_xml_new(OVD_GUI_File, "about", nullptr);
+	gtk_builder_add_from_file(l_pBuilder, OVD_GUI_AboutDialog_File, nullptr);
+	gtk_builder_connect_signals(l_pBuilder, nullptr);
+	//gtk_builder_connect_signals(l_pBuilder, nullptr);
+	GtkWidget* l_pDialog = GTK_WIDGET(gtk_builder_get_object(l_pBuilder, "about"));
+	if (l_pDialog == nullptr)
 	{
 		m_KernelContext.getLogManager() << LogLevel_Warning << "Dialog could not be opened\n";
 		return;
-
 	}
 
 	if (m_KernelContext.getConfigurationManager().expand("${Application_Name}").length() > 0)
 	{
 		gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(l_pDialog), m_KernelContext.getConfigurationManager().expand("${Application_Name}").toASCIIString());
 	}
-	if (m_KernelContext.getConfigurationManager().expand("${Application_Version}").length()>0)
+	if (m_KernelContext.getConfigurationManager().expand("${Application_Version}").length() > 0)
 	{
 		gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(l_pDialog), m_KernelContext.getConfigurationManager().expand("${Application_Version}").toASCIIString());
 	}
 
-	gchar *strval;
-	g_object_get(l_pDialog, "comments", &strval, NULL);
-	// We use a lookup instead of expansion as JSON can contain {} characters
+	gchar* strval;
+	g_object_get(l_pDialog, "comments", &strval, nullptr);
+	// We use a lookup instead of expansion as JSON can contain { } characters
 	const std::string componentVersionsJSON = m_KernelContext.getConfigurationManager().expand("${ProjectVersion_Components}").toASCIIString();
 	if (!componentVersionsJSON.empty())
 	{
@@ -2591,13 +2455,9 @@ void CApplication::aboutOpenViBECB(void)
 		if (json::Deserialize(componentVersionsJSON).GetType() == json::ObjectVal)
 		{
 			json::Object components = json::Deserialize(componentVersionsJSON);
-			std::string updatedComment = std::accumulate(components.begin(), components.end(),
-				std::string(strval) + "\nComponents :\n",
-				[](std::string a, std::pair<std::string, json::Value> b)
-				{
-					return a + b.first + " version " + b.second.ToString() + "\n";
-				});
-			g_object_set(l_pDialog, "comments", updatedComment.c_str(), NULL);
+			const std::string update = std::accumulate(components.begin(), components.end(), std::string(strval) + "\nComponents :\n",
+													   [](const std::string& a, const std::pair<std::string, json::Value>& b) { return a + b.first + " version " + b.second.ToString() + "\n"; });
+			g_object_set(l_pDialog, "comments", update.c_str(), nullptr);
 		}
 	}
 	g_free(strval);
@@ -2607,44 +2467,31 @@ void CApplication::aboutOpenViBECB(void)
 	g_object_unref(l_pBuilder);
 }
 
-void CApplication::aboutScenarioCB(CInterfacedScenario* pScenario)
+void CApplication::aboutScenarioCB(CInterfacedScenario* pScenario) const
 {
 	m_KernelContext.getLogManager() << LogLevel_Debug << "CApplication::aboutScenarioCB\n";
-	if(pScenario && !pScenario->isLocked())
-	{
-		pScenario->contextMenuScenarioAboutCB();
-	}
+	if (pScenario && !pScenario->isLocked()) { pScenario->contextMenuScenarioAboutCB(); }
 }
 
-void CApplication::aboutLinkClickedCB(const gchar *url)
+void CApplication::aboutLinkClickedCB(const gchar* url) const
 {
-	if(!url)
-	{
-		return;
-	}
+	if (!url) { return; }
 	m_KernelContext.getLogManager() << LogLevel_Debug << "CApplication::aboutLinkClickedCB\n";
-	CString l_sCommand = m_KernelContext.getConfigurationManager().expand("${Designer_WebBrowserCommand} " + OpenViBE::CString(url));
-	int l_iResult = system(l_sCommand.toASCIIString());
-	if(l_iResult<0)
-	{
-		m_KernelContext.getLogManager() << LogLevel_Warning << "Could not launch command " << l_sCommand << "\n";
-	}
+	const CString command = m_KernelContext.getConfigurationManager().expand("${Designer_WebBrowserCommand} " + CString(url));
+	const int result = system(command.toASCIIString());
+	if (result < 0) { m_KernelContext.getLogManager() << LogLevel_Warning << "Could not launch command " << command << "\n"; }
 }
 
-void CApplication::browseDocumentationCB(void)
+void CApplication::browseDocumentationCB() const
 {
 	m_KernelContext.getLogManager() << LogLevel_Debug << "CApplication::browseDocumentationCB\n";
-	CString l_Command = m_KernelContext.getConfigurationManager().expand("${Designer_HelpBrowserCommand} \"${Designer_HelpBrowserDocumentationIndex}\" ${Designer_HelpBrowserCommandPostfix}");
+	const CString command = m_KernelContext.getConfigurationManager().expand("${Designer_HelpBrowserCommand} \"${Designer_HelpBrowserDocumentationIndex}\" ${Designer_HelpBrowserCommandPostfix}");
 
-	int l_Result = system(l_Command.toASCIIString());
-	OV_WARNING_UNLESS(
-		(l_Result == 0),
-		"Could not launch command " << l_Command << "\n",
-		m_KernelContext.getLogManager()
-		);
+	const int result = system(command.toASCIIString());
+	OV_WARNING_UNLESS((result == 0), "Could not launch command " << command << "\n", m_KernelContext.getLogManager());
 }
 
-void CApplication::registerLicenseCB(void)
+void CApplication::registerLicenseCB() const
 {
 #if defined TARGET_OS_Windows && defined(MENSIA_DISTRIBUTION)
 	m_KernelContext.getLogManager() << LogLevel_Debug << "CApplication::registerLicenseCB\n";
@@ -2652,7 +2499,7 @@ void CApplication::registerLicenseCB(void)
 	STARTUPINFO startupInfo;
 	PROCESS_INFORMATION processInfo;
 	GetStartupInfo(&startupInfo);
-	if (!System::WindowsUtilities::utf16CompliantCreateProcess(NULL, const_cast<char*>(command.c_str()), NULL, NULL, NULL, NULL, NULL, NULL, &startupInfo, &processInfo))
+	if (!System::WindowsUtilities::utf16CompliantCreateProcess(nullptr, const_cast<char*>(command.c_str()), nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, &startupInfo, &processInfo))
 	{
 		exit(1);
 	}
@@ -2662,104 +2509,94 @@ void CApplication::registerLicenseCB(void)
 #endif
 }
 
-void CApplication::reportIssueCB(void)
+void CApplication::reportIssueCB() const
+
 {
 	m_KernelContext.getLogManager() << LogLevel_Debug << "CApplication::reportIssueCB\n";
-	CString l_Command = m_KernelContext.getConfigurationManager().expand("${Designer_WebBrowserCommand} ${Designer_WebBrowserSupportURL} ${Designer_WebBrowserCommandPostfix}");
-	int l_Result = system(l_Command.toASCIIString());
+	const CString command = m_KernelContext.getConfigurationManager().expand("${Designer_WebBrowserCommand} ${Designer_WebBrowserSupportURL} ${Designer_WebBrowserCommandPostfix}");
+	const int result = system(command.toASCIIString());
 
-	OV_WARNING_UNLESS(
-		(l_Result == 0),
-		"Could not launch command " << l_Command << "\n",
-		m_KernelContext.getLogManager()
-		);
+	OV_WARNING_UNLESS((result == 0), "Could not launch command " << command << "\n", m_KernelContext.getLogManager());
 }
 
-void CApplication::addCommentCB(
-		CInterfacedScenario* pScenario)
+void CApplication::addCommentCB(CInterfacedScenario* pScenario) const
 {
 	m_KernelContext.getLogManager() << LogLevel_Debug << "CApplication::addCommentCB\n";
-	if(pScenario && !pScenario->isLocked())
-	{
-		pScenario->addCommentCB();
-	}
+	if (pScenario && !pScenario->isLocked()) { pScenario->addCommentCB(); }
 }
 
-void CApplication::configureScenarioSettingsCB(CInterfacedScenario* pScenario)
+void CApplication::configureScenarioSettingsCB(CInterfacedScenario* pScenario) const
 {
-
 	m_KernelContext.getLogManager() << LogLevel_Debug << "CApplication::configureScenarioSettingsCB " << m_ui32CurrentInterfacedScenarioIndex << "\n";
 
-	if(pScenario && !pScenario->isLocked())
-	{
-		pScenario->configureScenarioSettingsCB();
-	}
+	if (pScenario && !pScenario->isLocked()) { pScenario->configureScenarioSettingsCB(); }
 }
 
-IPlayer* CApplication::getPlayer(void)
+IPlayer* CApplication::getPlayer()
+
 {
-	CInterfacedScenario* l_pCurrentInterfacedScenario=getCurrentInterfacedScenario();
-	return (l_pCurrentInterfacedScenario?l_pCurrentInterfacedScenario->m_pPlayer:NULL);
+	CInterfacedScenario* currentInterfacedScenario = getCurrentInterfacedScenario();
+	return (currentInterfacedScenario ? currentInterfacedScenario->m_pPlayer : nullptr);
 }
 
-bool CApplication::createPlayer(void)
+bool CApplication::createPlayer()
+
 {
-	CInterfacedScenario* l_pCurrentInterfacedScenario = getCurrentInterfacedScenario();
-	if(l_pCurrentInterfacedScenario && !l_pCurrentInterfacedScenario->m_pPlayer)
+	CInterfacedScenario* currentInterfacedScenario = getCurrentInterfacedScenario();
+	if (currentInterfacedScenario && !currentInterfacedScenario->m_pPlayer)
 	{
 		// create a snapshot so settings override does not modify the scenario !
-		l_pCurrentInterfacedScenario->snapshotCB(false);
+		currentInterfacedScenario->snapshotCB(false);
 
 		// set filename attribute to scenario so delayed configuration can be used
-		if(l_pCurrentInterfacedScenario->m_bHasFileName)
+		if (currentInterfacedScenario->m_hasFileName)
 		{
-			if(l_pCurrentInterfacedScenario->m_rScenario.hasAttribute(OV_AttributeId_ScenarioFilename))
+			if (currentInterfacedScenario->m_rScenario.hasAttribute(OV_AttributeId_ScenarioFilename))
 			{
-				l_pCurrentInterfacedScenario->m_rScenario.setAttributeValue(OV_AttributeId_ScenarioFilename, l_pCurrentInterfacedScenario->m_sFileName.c_str());
+				currentInterfacedScenario->m_rScenario.setAttributeValue(OV_AttributeId_ScenarioFilename, currentInterfacedScenario->m_sFileName.c_str());
 			}
 			else
 			{
-				l_pCurrentInterfacedScenario->m_rScenario.addAttribute(OV_AttributeId_ScenarioFilename, l_pCurrentInterfacedScenario->m_sFileName.c_str());
+				currentInterfacedScenario->m_rScenario.addAttribute(OV_AttributeId_ScenarioFilename, currentInterfacedScenario->m_sFileName.c_str());
 			}
 		}
 
-		m_KernelContext.getPlayerManager().createPlayer(l_pCurrentInterfacedScenario->m_oPlayerIdentifier);
-		CIdentifier l_oScenarioIdentifier=l_pCurrentInterfacedScenario->m_oScenarioIdentifier;
-		CIdentifier l_oPlayerIdentifier=l_pCurrentInterfacedScenario->m_oPlayerIdentifier;
-		l_pCurrentInterfacedScenario->m_pPlayer=&m_KernelContext.getPlayerManager().getPlayer(l_oPlayerIdentifier);
-		if(!l_pCurrentInterfacedScenario->m_pPlayer->setScenario(l_oScenarioIdentifier))
+		m_KernelContext.getPlayerManager().createPlayer(currentInterfacedScenario->m_oPlayerIdentifier);
+		const CIdentifier scenarioIdentifier = currentInterfacedScenario->m_oScenarioIdentifier;
+		const CIdentifier playerIdentifier = currentInterfacedScenario->m_oPlayerIdentifier;
+		currentInterfacedScenario->m_pPlayer = &m_KernelContext.getPlayerManager().getPlayer(playerIdentifier);
+		if (!currentInterfacedScenario->m_pPlayer->setScenario(scenarioIdentifier))
 		{
-			l_pCurrentInterfacedScenario->m_oPlayerIdentifier = OV_UndefinedIdentifier;
-			l_pCurrentInterfacedScenario->m_pPlayer=NULL;
-			m_KernelContext.getPlayerManager().releasePlayer(l_oPlayerIdentifier);
+			currentInterfacedScenario->m_oPlayerIdentifier = OV_UndefinedIdentifier;
+			currentInterfacedScenario->m_pPlayer = nullptr;
+			m_KernelContext.getPlayerManager().releasePlayer(playerIdentifier);
 			OV_ERROR_DRF("The current scenario could not be loaded by the player.\n",
-			               ErrorType::BadCall);
+						 ErrorType::BadCall);
 		}
 
 		// The visualization manager needs to know the visualization tree in which the widgets should be inserted
-		l_pCurrentInterfacedScenario->m_pPlayer->getRuntimeConfigurationManager().createConfigurationToken("VisualizationContext_VisualizationTreeId", l_pCurrentInterfacedScenario->m_oVisualizationTreeIdentifier.toString());
+		currentInterfacedScenario->m_pPlayer->getRuntimeConfigurationManager().createConfigurationToken("VisualizationContext_VisualizationTreeId", currentInterfacedScenario->m_oVisualizationTreeIdentifier.toString());
 
 		// TODO_JL: This should be a copy of the tree containing visualizations from the metaboxes
-		l_pCurrentInterfacedScenario->createPlayerVisualization(l_pCurrentInterfacedScenario->m_pVisualizationTree);
+		currentInterfacedScenario->createPlayerVisualization(currentInterfacedScenario->m_pVisualizationTree);
 
 
-
-		if(l_pCurrentInterfacedScenario->m_pPlayer->initialize() != EPlayerReturnCode::PlayerReturnCode_Sucess)
+		if (currentInterfacedScenario->m_pPlayer->initialize() != PlayerReturnCode_Sucess)
 		{
-			l_pCurrentInterfacedScenario->releasePlayerVisualization();
+			currentInterfacedScenario->releasePlayerVisualization();
 			m_KernelContext.getLogManager() << LogLevel_Error << "The player could not be initialized.\n";
-			l_pCurrentInterfacedScenario->m_oPlayerIdentifier = OV_UndefinedIdentifier;
-			l_pCurrentInterfacedScenario->m_pPlayer=NULL;
-			m_KernelContext.getPlayerManager().releasePlayer(l_oPlayerIdentifier);
+			currentInterfacedScenario->m_oPlayerIdentifier = OV_UndefinedIdentifier;
+			currentInterfacedScenario->m_pPlayer = nullptr;
+			m_KernelContext.getPlayerManager().releasePlayer(playerIdentifier);
 			return false;
 		}
-		l_pCurrentInterfacedScenario->m_ui64LastLoopTime = uint64(-1);
+		currentInterfacedScenario->m_ui64LastLoopTime = uint64_t(-1);
 
 		//set up idle function
-		__g_idle_add__(idle_scenario_loop, l_pCurrentInterfacedScenario);
+		__g_idle_add__(idle_scenario_loop, currentInterfacedScenario);
 
 		// redraws scenario
-		l_pCurrentInterfacedScenario->redraw();
+		currentInterfacedScenario->redraw();
 	}
 	return true;
 }
@@ -2776,129 +2613,119 @@ void CApplication::stopInterfacedScenarioAndReleasePlayer(CInterfacedScenario* i
 
 	if (interfacedScenario == this->getCurrentInterfacedScenario())
 	{
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")),          false);
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")),    true);
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_next")),          true);
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_forward")),       true);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")), false);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), true);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_next")), true);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_forward")), true);
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager")), true);
 		gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), GTK_STOCK_MEDIA_PLAY);
 	}
 }
 
-void CApplication::stopScenarioCB(void)
+void CApplication::stopScenarioCB()
+
 {
 	m_KernelContext.getLogManager() << LogLevel_Debug << "stopScenarioCB\n";
 
-	OpenViBE::Kernel::EPlayerStatus currentState = this->getCurrentInterfacedScenario()->m_ePlayerStatus;
+	const EPlayerStatus currentState = this->getCurrentInterfacedScenario()->m_ePlayerStatus;
 	if (currentState == PlayerStatus_Play || currentState == PlayerStatus_Pause || currentState == PlayerStatus_Forward)
 	{
 		this->stopInterfacedScenarioAndReleasePlayer(this->getCurrentInterfacedScenario());
 
-		if(gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-toggle_button_loop"))))
+		if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-toggle_button_loop"))))
 		{
-			switch(currentState)
+			switch (currentState)
 			{
-			case PlayerStatus_Play:
-				playScenarioCB();
-				break;
-			case PlayerStatus_Forward:
-				forwardScenarioCB();
-				break;
-			default:
-				break;
+				case PlayerStatus_Play:
+					playScenarioCB();
+					break;
+				case PlayerStatus_Forward:
+					forwardScenarioCB();
+					break;
+				default:
+					break;
 			}
 		}
 	}
 }
 
-void CApplication::pauseScenarioCB(void)
+void CApplication::pauseScenarioCB()
+
 {
 	m_KernelContext.getLogManager() << LogLevel_Debug << "pauseScenarioCB\n";
 
 	this->createPlayer();
 	this->getPlayer()->pause();
-	this->getCurrentInterfacedScenario()->m_ePlayerStatus=this->getPlayer()->getStatus();
+	this->getCurrentInterfacedScenario()->m_ePlayerStatus = this->getPlayer()->getStatus();
 
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")),          true);
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")),    true);
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_next")),          true);
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_forward")),       true);
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")), true);
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), true);
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_next")), true);
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_forward")), true);
 	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager")), false);
 	gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), GTK_STOCK_MEDIA_PLAY);
 }
 
-void CApplication::nextScenarioCB(void)
+void CApplication::nextScenarioCB()
+
 {
 	m_KernelContext.getLogManager() << LogLevel_Debug << "nextScenarioCB\n";
 
 	this->createPlayer();
 	auto player = this->getPlayer();
-	OV_ERROR_UNLESS_DRV(
-	            player,
-	            "Player did not initialize correctly",
-	            ErrorType::BadCall
-	            );
+	OV_ERROR_UNLESS_DRV(player, "Player did not initialize correctly", ErrorType::BadCall);
 	player->step();
-	this->getCurrentInterfacedScenario()->m_ePlayerStatus=this->getPlayer()->getStatus();
+	this->getCurrentInterfacedScenario()->m_ePlayerStatus = this->getPlayer()->getStatus();
 
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")),          true);
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")),    true);
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_next")),          true);
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_forward")),       true);
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")), true);
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), true);
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_next")), true);
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_forward")), true);
 	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager")), false);
 	gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), GTK_STOCK_MEDIA_PLAY);
 }
 
-void CApplication::playScenarioCB(void)
+void CApplication::playScenarioCB()
+
 {
-	if(this->getCurrentInterfacedScenario() != NULL)
+	if (this->getCurrentInterfacedScenario() != nullptr)
 	{
-		OpenViBE::Kernel::IScenario& l_oCurrentScenario = this->getCurrentInterfacedScenario()->m_rScenario;
+		IScenario& l_oCurrentScenario = this->getCurrentInterfacedScenario()->m_rScenario;
 		m_KernelContext.getLogManager() << LogLevel_Debug << "playScenarioCB\n";
 		if (l_oCurrentScenario.hasOutdatedBox())
 		{
-			if(m_KernelContext.getConfigurationManager().expandAsBoolean("${Kernel_AbortPlayerWhenBoxIsOutdated}", false))
+			if (m_KernelContext.getConfigurationManager().expandAsBoolean("${Kernel_AbortPlayerWhenBoxIsOutdated}", false))
 			{
 				std::string l_sOutdatedBoxesList = "You can not start the scenario because following boxes need to be updated: \n";
 				CIdentifier l_oBoxIdentifier;
-				while((l_oBoxIdentifier = l_oCurrentScenario.getNextOutdatedBoxIdentifier(l_oBoxIdentifier)) != OV_UndefinedIdentifier)
+				while ((l_oBoxIdentifier = l_oCurrentScenario.getNextOutdatedBoxIdentifier(l_oBoxIdentifier)) != OV_UndefinedIdentifier)
 				{
 					const IBox* l_pBox = l_oCurrentScenario.getBoxDetails(l_oBoxIdentifier);
 					l_sOutdatedBoxesList += "\t[" + l_pBox->getName() + "]\n";
 				}
 				l_sOutdatedBoxesList += "To update a box you need to delete it from scenario, and add it again.";
-				::GtkWidget* l_pDialog=::gtk_message_dialog_new(
-				            NULL,
-				            ::GtkDialogFlags(GTK_DIALOG_MODAL|GTK_DIALOG_DESTROY_WITH_PARENT),
-				            GtkMessageType::GTK_MESSAGE_INFO,
-				            GTK_BUTTONS_OK,
-				            "%s",
-				            l_sOutdatedBoxesList.c_str());
-				gint l_iResponse = ::gtk_dialog_run(GTK_DIALOG(l_pDialog));
-				::gtk_widget_destroy(l_pDialog);
+				GtkWidget* l_pDialog = gtk_message_dialog_new(nullptr, GtkDialogFlags(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
+															  GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "%s", l_sOutdatedBoxesList.c_str());
+				const gint response = gtk_dialog_run(GTK_DIALOG(l_pDialog));
+				gtk_widget_destroy(l_pDialog);
 				return;
 			}
-			else if(m_KernelContext.getConfigurationManager().expandAsBoolean("${Designer_ThrowPopUpWhenBoxIsOutdated}", false))
+			if (m_KernelContext.getConfigurationManager().expandAsBoolean("${Designer_ThrowPopUpWhenBoxIsOutdated}", false))
 			{
 				std::string l_sOutdatedBoxesList = "The following boxes need to be updated: \n";
 				CIdentifier l_oBoxIdentifier;
-				while((l_oBoxIdentifier = l_oCurrentScenario.getNextOutdatedBoxIdentifier(l_oBoxIdentifier)) != OV_UndefinedIdentifier)
+				while ((l_oBoxIdentifier = l_oCurrentScenario.getNextOutdatedBoxIdentifier(l_oBoxIdentifier)) != OV_UndefinedIdentifier)
 				{
 					const IBox* l_pBox = l_oCurrentScenario.getBoxDetails(l_oBoxIdentifier);
 					l_sOutdatedBoxesList += "\t[" + l_pBox->getName() + "]\n";
 				}
 				l_sOutdatedBoxesList += "Do you still want to play the scenario ?";
-				::GtkWidget* l_pDialog=::gtk_message_dialog_new(
-				            NULL,
-				            ::GtkDialogFlags(GTK_DIALOG_MODAL|GTK_DIALOG_DESTROY_WITH_PARENT),
-				            GtkMessageType::GTK_MESSAGE_QUESTION,
-				            GTK_BUTTONS_YES_NO,
-				            "%s",
-				            l_sOutdatedBoxesList.c_str());
-				gint l_iResponse = ::gtk_dialog_run(GTK_DIALOG(l_pDialog));
-				::gtk_widget_destroy(l_pDialog);
+				GtkWidget* l_pDialog = gtk_message_dialog_new(nullptr, GtkDialogFlags(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
+															  GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO, "%s", l_sOutdatedBoxesList.c_str());
+				const gint l_iResponse = gtk_dialog_run(GTK_DIALOG(l_pDialog));
+				gtk_widget_destroy(l_pDialog);
 
-				if(l_iResponse == GTK_RESPONSE_YES)
+				if (l_iResponse == GTK_RESPONSE_YES)
 				{
 					m_KernelContext.getLogManager() << LogLevel_Trace << "CApplication::playScenarioCB - GTK_RESPONSE_YES: the scenario will be played. \n";
 				}
@@ -2911,7 +2738,7 @@ void CApplication::playScenarioCB(void)
 		}
 	}
 
-	if(!this->createPlayer())
+	if (!this->createPlayer())
 	{
 		m_KernelContext.getLogManager() << LogLevel_Error << "The initialization of player failed. Check the above log messages to get the issue.\n";
 		return;
@@ -2921,30 +2748,27 @@ void CApplication::playScenarioCB(void)
 		this->stopInterfacedScenarioAndReleasePlayer(this->getCurrentInterfacedScenario());
 		return;
 	}
-	this->getCurrentInterfacedScenario()->m_ePlayerStatus=this->getPlayer()->getStatus();
+	this->getCurrentInterfacedScenario()->m_ePlayerStatus = this->getPlayer()->getStatus();
 
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")),          true);
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")),    true);
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_next")),          true);
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_forward")),       true);
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")), true);
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), true);
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_next")), true);
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_forward")), true);
 	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager")), false);
 	gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), GTK_STOCK_MEDIA_PAUSE);
 
-	if(m_eCommandLineFlags&CommandLineFlag_NoVisualization)
+	if (m_eCommandLineFlags & CommandLineFlag_NoVisualization)
 	{
-		for (auto &iScenario : m_vInterfacedScenario)
-		{
-			iScenario->hideCurrentVisualization();
-		}
+		for (auto& iScenario : m_vInterfacedScenario) { iScenario->hideCurrentVisualization(); }
 	}
-
 }
 
-void CApplication::forwardScenarioCB(void)
+void CApplication::forwardScenarioCB()
+
 {
 	m_KernelContext.getLogManager() << LogLevel_Trace << "forwardScenarioCB\n";
 
-	if(!this->createPlayer())
+	if (!this->createPlayer())
 	{
 		m_KernelContext.getLogManager() << LogLevel_Error << "CreatePlayer failed\n";
 		return;
@@ -2956,40 +2780,39 @@ void CApplication::forwardScenarioCB(void)
 		return;
 	}
 
-	this->getCurrentInterfacedScenario()->m_ePlayerStatus=this->getPlayer()->getStatus();
+	this->getCurrentInterfacedScenario()->m_ePlayerStatus = this->getPlayer()->getStatus();
 
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")),          true);
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")),    true);
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_next")),          true);
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_forward")),       false);
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")), true);
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), true);
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_next")), true);
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_forward")), false);
 	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager")), false);
 	gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), GTK_STOCK_MEDIA_PLAY);
 
-	if(m_eCommandLineFlags&CommandLineFlag_NoVisualization)
+	if (m_eCommandLineFlags & CommandLineFlag_NoVisualization)
 	{
-		for (auto &iScenario : m_vInterfacedScenario)
+		for (auto& iScenario : m_vInterfacedScenario)
 		{
 			iScenario->hideCurrentVisualization();
 		}
 	}
 }
 
-bool CApplication::quitApplicationCB(void)
-{
-	std::vector < CInterfacedScenario* >::iterator it;
+bool CApplication::quitApplicationCB()
 
-	CIdentifier l_oIdentifier;
+{
+	CIdentifier identifier;
 	m_KernelContext.getLogManager() << LogLevel_Debug << "quitApplicationCB\n";
 
 	// can't quit while scenarios are running
-	if(this->hasRunningScenario() == true)
+	if (this->hasRunningScenario())
 	{
-		::GtkBuilder* l_pBuilder=gtk_builder_new(); // glade_xml_new(OVD_GUI_File, "about", NULL);
-		gtk_builder_add_from_file(l_pBuilder, OVD_GUI_File, NULL);
-		gtk_builder_connect_signals(l_pBuilder, NULL);
+		GtkBuilder* l_pBuilder = gtk_builder_new(); // glade_xml_new(OVD_GUI_File, "about", nullptr);
+		gtk_builder_add_from_file(l_pBuilder, OVD_GUI_File, nullptr);
+		gtk_builder_connect_signals(l_pBuilder, nullptr);
 
-		::GtkWidget* l_pDialog=GTK_WIDGET(gtk_builder_get_object(l_pBuilder, "dialog_running_scenario_global"));
-		gtk_builder_connect_signals(l_pBuilder, NULL);
+		GtkWidget* l_pDialog = GTK_WIDGET(gtk_builder_get_object(l_pBuilder, "dialog_running_scenario_global"));
+		gtk_builder_connect_signals(l_pBuilder, nullptr);
 		// gtk_dialog_set_response_sensitive(GTK_DIALOG(l_pDialog), GTK_RESPONSE_CLOSE, true);
 		gtk_dialog_run(GTK_DIALOG(l_pDialog));
 		gtk_widget_destroy(l_pDialog);
@@ -3000,28 +2823,26 @@ bool CApplication::quitApplicationCB(void)
 	}
 
 	// can't quit while scenarios are unsaved
-	if(this->hasUnsavedScenario() == true)
+	if (this->hasUnsavedScenario())
 	{
-		gint l_iResponseId;
+		GtkBuilder* l_pBuilder = gtk_builder_new(); // glade_xml_new(OVD_GUI_File, "about", nullptr);
+		gtk_builder_add_from_file(l_pBuilder, OVD_GUI_File, nullptr);
+		gtk_builder_connect_signals(l_pBuilder, nullptr);
 
-		::GtkBuilder* l_pBuilder=gtk_builder_new(); // glade_xml_new(OVD_GUI_File, "about", NULL);
-		gtk_builder_add_from_file(l_pBuilder, OVD_GUI_File, NULL);
-		gtk_builder_connect_signals(l_pBuilder, NULL);
-
-		::GtkWidget* l_pDialog=GTK_WIDGET(gtk_builder_get_object(l_pBuilder, "dialog_unsaved_scenario_global"));
-		gtk_builder_connect_signals(l_pBuilder, NULL);
-		l_iResponseId=gtk_dialog_run(GTK_DIALOG(l_pDialog));
+		GtkWidget* l_pDialog = GTK_WIDGET(gtk_builder_get_object(l_pBuilder, "dialog_unsaved_scenario_global"));
+		gtk_builder_connect_signals(l_pBuilder, nullptr);
+		const gint responseId = gtk_dialog_run(GTK_DIALOG(l_pDialog));
 		gtk_widget_destroy(l_pDialog);
 		g_object_unref(l_pBuilder);
 
-		switch(l_iResponseId)
+		switch (responseId)
 		{
 			case GTK_RESPONSE_OK:
-				for(std::vector < CInterfacedScenario* >::iterator i=m_vInterfacedScenario.begin(); i!=m_vInterfacedScenario.end(); i++)
+				for (auto i = m_vInterfacedScenario.begin(); i != m_vInterfacedScenario.end(); ++i)
 				{
 					this->saveScenarioCB(*i);
 				}
-				if(this->hasUnsavedScenario())
+				if (this->hasUnsavedScenario())
 				{
 					// prevent Gtk from handling delete_event and killing app
 					return false;
@@ -3037,78 +2858,73 @@ bool CApplication::quitApplicationCB(void)
 	}
 
 	// Switch to quitting mode
-	m_bIsQuitting=true;
+	m_bIsQuitting = true;
 
 	// Saves opened scenarios
 	this->saveOpenedScenarios();
 
 	// Clears all existing interfaced scenarios
-	for(it=m_vInterfacedScenario.begin(); it!=m_vInterfacedScenario.end(); it++)
-	{
-		delete *it;
-	}
+	for (auto interfacedScenario : m_vInterfacedScenario) { delete interfacedScenario; }
 
 	// Clears all existing scenarios
-	vector < CIdentifier > l_vScenarioIdentifiers;
-	while((l_oIdentifier=m_KernelContext.getScenarioManager().getNextScenarioIdentifier(l_oIdentifier))!=OV_UndefinedIdentifier)
+	vector<CIdentifier> l_vScenarioIdentifiers;
+	while ((identifier = m_KernelContext.getScenarioManager().getNextScenarioIdentifier(identifier)) != OV_UndefinedIdentifier)
 	{
-		l_vScenarioIdentifiers.push_back(l_oIdentifier);
-	}
-	for(vector < CIdentifier > ::iterator i=l_vScenarioIdentifiers.begin(); i!=l_vScenarioIdentifiers.end(); i++)
-	{
-		m_KernelContext.getScenarioManager().releaseScenario(*i);
+		l_vScenarioIdentifiers.push_back(identifier);
 	}
 
+	for (auto& scenario : l_vScenarioIdentifiers) { m_KernelContext.getScenarioManager().releaseScenario(scenario); }
+
 	// release the log manager and free the memory
-	if(m_pLogListenerDesigner)
+	if (m_pLogListenerDesigner)
 	{
-		m_KernelContext.getLogManager().removeListener( m_pLogListenerDesigner );
+		m_KernelContext.getLogManager().removeListener(m_pLogListenerDesigner);
 		delete m_pLogListenerDesigner;
-		m_pLogListenerDesigner = NULL;
+		m_pLogListenerDesigner = nullptr;
 	}
 
 	// OK to kill app
 	return true;
 }
 
-void CApplication::windowStateChangedCB(bool bIsMaximized)
+void CApplication::windowStateChangedCB(const bool bIsMaximized)
 {
-	if(m_bIsMaximized != bIsMaximized && !bIsMaximized) // we switched to not maximized
+	if (m_bIsMaximized != bIsMaximized && !bIsMaximized) // we switched to not maximized
 	{
-		//gtk_paned_set_position(GTK_PANED(gtk_builder_get_object(m_pBuilderInterface, "openvibe-horizontal_container")), 640);
+		//gtk_paned_set_position(GTK_PANED(gtk_builder_get_object(m_builderInterface, "openvibe-horizontal_container")), 640);
 		gtk_window_resize(GTK_WINDOW(m_pMainWindow), 1024, 768);
 	}
 	m_bIsMaximized = bIsMaximized;
 }
 
-void CApplication::logLevelCB(void)
+void CApplication::logLevelCB() const
 {
 	// Loads log level dialog
-	::GtkBuilder* l_pBuilderInterface=gtk_builder_new(); // glade_xml_new(OVD_GUI_File, "loglevel", NULL);
-	gtk_builder_add_from_file(l_pBuilderInterface, OVD_GUI_File, NULL);
-	gtk_builder_connect_signals(l_pBuilderInterface, NULL);
+	GtkBuilder* l_pBuilderInterface = gtk_builder_new(); // glade_xml_new(OVD_GUI_File, "loglevel", nullptr);
+	gtk_builder_add_from_file(l_pBuilderInterface, OVD_GUI_File, nullptr);
+	gtk_builder_connect_signals(l_pBuilderInterface, nullptr);
 
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "loglevel-checkbutton_loglevel_fatal")),             m_KernelContext.getLogManager().isActive(LogLevel_Fatal));
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "loglevel-checkbutton_loglevel_error")),             m_KernelContext.getLogManager().isActive(LogLevel_Error));
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "loglevel-checkbutton_loglevel_fatal")), m_KernelContext.getLogManager().isActive(LogLevel_Fatal));
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "loglevel-checkbutton_loglevel_error")), m_KernelContext.getLogManager().isActive(LogLevel_Error));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "loglevel-checkbutton_loglevel_important_warning")), m_KernelContext.getLogManager().isActive(LogLevel_ImportantWarning));
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "loglevel-checkbutton_loglevel_warning")),           m_KernelContext.getLogManager().isActive(LogLevel_Warning));
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "loglevel-checkbutton_loglevel_info")),              m_KernelContext.getLogManager().isActive(LogLevel_Info));
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "loglevel-checkbutton_loglevel_trace")),             m_KernelContext.getLogManager().isActive(LogLevel_Trace));
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "loglevel-checkbutton_loglevel_benchmark")),         m_KernelContext.getLogManager().isActive(LogLevel_Benchmark));
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "loglevel-checkbutton_loglevel_debug")),             m_KernelContext.getLogManager().isActive(LogLevel_Debug));
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "loglevel-checkbutton_loglevel_warning")), m_KernelContext.getLogManager().isActive(LogLevel_Warning));
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "loglevel-checkbutton_loglevel_info")), m_KernelContext.getLogManager().isActive(LogLevel_Info));
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "loglevel-checkbutton_loglevel_trace")), m_KernelContext.getLogManager().isActive(LogLevel_Trace));
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "loglevel-checkbutton_loglevel_benchmark")), m_KernelContext.getLogManager().isActive(LogLevel_Benchmark));
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "loglevel-checkbutton_loglevel_debug")), m_KernelContext.getLogManager().isActive(LogLevel_Debug));
 
-	::GtkDialog* l_pLogLevelDialog=GTK_DIALOG(gtk_builder_get_object(l_pBuilderInterface, "loglevel"));
-	gint l_iResult=gtk_dialog_run(l_pLogLevelDialog);
-	if(l_iResult==GTK_RESPONSE_APPLY)
+	GtkDialog* l_pLogLevelDialog = GTK_DIALOG(gtk_builder_get_object(l_pBuilderInterface, "loglevel"));
+	const gint result = gtk_dialog_run(l_pLogLevelDialog);
+	if (result == GTK_RESPONSE_APPLY)
 	{
-		m_KernelContext.getLogManager().activate(LogLevel_Fatal,            gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "loglevel-checkbutton_loglevel_fatal")))?true:false);
-		m_KernelContext.getLogManager().activate(LogLevel_Error,            gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "loglevel-checkbutton_loglevel_error")))?true:false);
-		m_KernelContext.getLogManager().activate(LogLevel_ImportantWarning, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "loglevel-checkbutton_loglevel_important_warning")))?true:false);
-		m_KernelContext.getLogManager().activate(LogLevel_Warning,          gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "loglevel-checkbutton_loglevel_warning")))?true:false);
-		m_KernelContext.getLogManager().activate(LogLevel_Info,             gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "loglevel-checkbutton_loglevel_info")))?true:false);
-		m_KernelContext.getLogManager().activate(LogLevel_Trace,            gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "loglevel-checkbutton_loglevel_trace")))?true:false);
-		m_KernelContext.getLogManager().activate(LogLevel_Benchmark,        gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "loglevel-checkbutton_loglevel_benchmark")))?true:false);
-		m_KernelContext.getLogManager().activate(LogLevel_Debug,            gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "loglevel-checkbutton_loglevel_debug")))?true:false);
+		m_KernelContext.getLogManager().activate(LogLevel_Fatal, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "loglevel-checkbutton_loglevel_fatal"))) != 0);
+		m_KernelContext.getLogManager().activate(LogLevel_Error, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "loglevel-checkbutton_loglevel_error"))) != 0);
+		m_KernelContext.getLogManager().activate(LogLevel_ImportantWarning, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "loglevel-checkbutton_loglevel_important_warning"))) != 0);
+		m_KernelContext.getLogManager().activate(LogLevel_Warning, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "loglevel-checkbutton_loglevel_warning"))) != 0);
+		m_KernelContext.getLogManager().activate(LogLevel_Info, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "loglevel-checkbutton_loglevel_info"))) != 0);
+		m_KernelContext.getLogManager().activate(LogLevel_Trace, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "loglevel-checkbutton_loglevel_trace"))) != 0);
+		m_KernelContext.getLogManager().activate(LogLevel_Benchmark, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "loglevel-checkbutton_loglevel_benchmark"))) != 0);
+		m_KernelContext.getLogManager().activate(LogLevel_Debug, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "loglevel-checkbutton_loglevel_debug"))) != 0);
 
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_debug")), m_KernelContext.getLogManager().isActive(LogLevel_Debug));
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_bench")), m_KernelContext.getLogManager().isActive(LogLevel_Benchmark));
@@ -3124,34 +2940,35 @@ void CApplication::logLevelCB(void)
 	g_object_unref(l_pBuilderInterface);
 }
 
-void CApplication::CPUUsageCB(void)
+void CApplication::CPUUsageCB()
+
 {
-	CInterfacedScenario* l_pCurrentInterfacedScenario=getCurrentInterfacedScenario();
-	if(l_pCurrentInterfacedScenario)
+	CInterfacedScenario* currentInterfacedScenario = getCurrentInterfacedScenario();
+	if (currentInterfacedScenario)
 	{
-		l_pCurrentInterfacedScenario->m_bDebugCPUUsage=(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-togglebutton_cpu_usage")))?true:false);
-		l_pCurrentInterfacedScenario->redraw();
+		currentInterfacedScenario->m_debugCPUUsage = (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-togglebutton_cpu_usage"))) != 0);
+		currentInterfacedScenario->redraw();
 	}
 }
 
-void CApplication::changeCurrentScenario(int32 i32PageIndex)
+void CApplication::changeCurrentScenario(const int32_t pageIndex)
 {
-	if(m_bIsQuitting) return;
+	if (m_bIsQuitting) { return; }
 
 	//hide window manager of previously active scenario, if any
-	int i = gtk_notebook_get_current_page(m_pScenarioNotebook);
-	if(i >= 0 && i < (int)m_vInterfacedScenario.size())
+	const int i = gtk_notebook_get_current_page(m_pScenarioNotebook);
+	if (i >= 0 && i < int(m_vInterfacedScenario.size()))
 	{
 		m_vInterfacedScenario[i]->hideCurrentVisualization();
 	}
 
 	//closing last open scenario
-	if(i32PageIndex == -1)
+	if (pageIndex == -1)
 	{
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")),       false);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")), false);
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), false);
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_next")),       false);
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_forward")),    false);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_next")), false);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_forward")), false);
 		gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), GTK_STOCK_MEDIA_PLAY);
 
 		g_signal_handlers_disconnect_by_func(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-togglebutton_cpu_usage")), G_CALLBACK2(cpu_usage_cb), this);
@@ -3160,7 +2977,7 @@ void CApplication::changeCurrentScenario(int32 i32PageIndex)
 		g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-togglebutton_cpu_usage")), "toggled", G_CALLBACK(cpu_usage_cb), this);
 
 		//toggle off window manager button
-		GtkWidget* l_pWindowManagerButton=GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager"));
+		GtkWidget* l_pWindowManagerButton = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager"));
 		g_signal_handlers_disconnect_by_func(l_pWindowManagerButton, G_CALLBACK2(button_toggle_window_manager_cb), this);
 		gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(l_pWindowManagerButton), false);
 		g_signal_connect(l_pWindowManagerButton, "toggled", G_CALLBACK(button_toggle_window_manager_cb), this);
@@ -3171,11 +2988,8 @@ void CApplication::changeCurrentScenario(int32 i32PageIndex)
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-scenario_configuration_button_configure")), false);
 
 
-		GList* l_pSettingWidgets;
-		GList* l_pSettingIterator;
-
-		l_pSettingWidgets = gtk_container_get_children(GTK_CONTAINER(gtk_builder_get_object(m_pBuilderInterface, "openvibe-scenario_configuration_vbox")));
-		for (l_pSettingIterator = l_pSettingWidgets; l_pSettingIterator != NULL; l_pSettingIterator = g_list_next(l_pSettingIterator))
+		GList* l_pSettingWidgets = gtk_container_get_children(GTK_CONTAINER(gtk_builder_get_object(m_pBuilderInterface, "openvibe-scenario_configuration_vbox")));
+		for (GList* l_pSettingIterator = l_pSettingWidgets; l_pSettingIterator != nullptr; l_pSettingIterator = g_list_next(l_pSettingIterator))
 		{
 			gtk_widget_destroy(GTK_WIDGET(l_pSettingIterator->data));
 		}
@@ -3189,67 +3003,67 @@ void CApplication::changeCurrentScenario(int32 i32PageIndex)
 		// current scenario is the current notebook page.
 		m_ui32CurrentInterfacedScenarioIndex = i;
 	}
-	//switching to an existing scenario
-	else if(i32PageIndex<(int32)m_vInterfacedScenario.size())
+		//switching to an existing scenario
+	else if (pageIndex < int(m_vInterfacedScenario.size()))
 	{
-		CInterfacedScenario* l_pCurrentInterfacedScenario=m_vInterfacedScenario[i32PageIndex];
-		EPlayerStatus l_ePlayerStatus=(l_pCurrentInterfacedScenario->m_pPlayer?l_pCurrentInterfacedScenario->m_pPlayer->getStatus():PlayerStatus_Stop);
+		CInterfacedScenario* currentInterfacedScenario = m_vInterfacedScenario[pageIndex];
+		const EPlayerStatus playerStatus = (currentInterfacedScenario->m_pPlayer ? currentInterfacedScenario->m_pPlayer->getStatus() : PlayerStatus_Stop);
 
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")),       l_ePlayerStatus!=PlayerStatus_Stop);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")), playerStatus != PlayerStatus_Stop);
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), true);
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_next")),       true);
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_forward")),    l_ePlayerStatus!=PlayerStatus_Forward);
-		gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), (l_ePlayerStatus==PlayerStatus_Stop || l_ePlayerStatus==PlayerStatus_Pause) ? GTK_STOCK_MEDIA_PLAY : GTK_STOCK_MEDIA_PAUSE);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_next")), true);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_forward")), playerStatus != PlayerStatus_Forward);
+		gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), (playerStatus == PlayerStatus_Stop || playerStatus == PlayerStatus_Pause) ? GTK_STOCK_MEDIA_PLAY : GTK_STOCK_MEDIA_PAUSE);
 
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_undo")), l_pCurrentInterfacedScenario->m_oStateStack->isUndoPossible());
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_redo")), l_pCurrentInterfacedScenario->m_oStateStack->isRedoPossible());
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_undo")), currentInterfacedScenario->m_oStateStack->isUndoPossible());
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_redo")), currentInterfacedScenario->m_oStateStack->isRedoPossible());
 
 		g_signal_handlers_disconnect_by_func(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-togglebutton_cpu_usage")), G_CALLBACK2(cpu_usage_cb), this);
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager")), l_ePlayerStatus==PlayerStatus_Stop);
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-togglebutton_cpu_usage")), l_pCurrentInterfacedScenario->m_bDebugCPUUsage);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager")), playerStatus == PlayerStatus_Stop);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-togglebutton_cpu_usage")), currentInterfacedScenario->m_debugCPUUsage);
 		g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-togglebutton_cpu_usage")), "toggled", G_CALLBACK(cpu_usage_cb), this);
 
-		// gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_save")), l_pCurrentInterfacedScenario->m_bHasFileName && l_pCurrentInterfacedScenario->m_bHasBeenModified);
-		// gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_save")),   l_pCurrentInterfacedScenario->m_bHasFileName && l_pCurrentInterfacedScenario->m_bHasBeenModified);
+		// gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_builderInterface, "openvibe-button_save")), currentInterfacedScenario->m_hasFileName && currentInterfacedScenario->m_hasBeenModified);
+		// gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_builderInterface, "openvibe-menu_save")),   currentInterfacedScenario->m_hasFileName && currentInterfacedScenario->m_hasBeenModified);
 
 		//don't show window manager if in offline mode and it is toggled off
-		if(l_ePlayerStatus==PlayerStatus_Stop && m_vInterfacedScenario[i32PageIndex]->isDesignerVisualizationToggled() == false)
+		if (playerStatus == PlayerStatus_Stop && !m_vInterfacedScenario[pageIndex]->isDesignerVisualizationToggled())
 		{
-			m_vInterfacedScenario[i32PageIndex]->hideCurrentVisualization();
+			m_vInterfacedScenario[pageIndex]->hideCurrentVisualization();
 
 			// we are in edition mode, updating internal configuration token
-			std::string l_sPath = m_vInterfacedScenario[i32PageIndex]->m_sFileName;
+			std::string l_sPath = m_vInterfacedScenario[pageIndex]->m_sFileName;
 			l_sPath = l_sPath.substr(0, l_sPath.rfind('/'));
 			m_KernelContext.getConfigurationManager().setConfigurationTokenValue(m_KernelContext.getConfigurationManager().lookUpConfigurationTokenIdentifier("Player_ScenarioDirectory"), l_sPath.c_str());
 			m_KernelContext.getConfigurationManager().setConfigurationTokenValue(m_KernelContext.getConfigurationManager().lookUpConfigurationTokenIdentifier("__volatile_ScenarioDir"), l_sPath.c_str());
 		}
 		else
 		{
-			m_vInterfacedScenario[i32PageIndex]->showCurrentVisualization();
+			m_vInterfacedScenario[pageIndex]->showCurrentVisualization();
 		}
 
 		//update window manager button state
-		GtkWidget* l_pWindowManagerButton=GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager"));
+		GtkWidget* l_pWindowManagerButton = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager"));
 		g_signal_handlers_disconnect_by_func(l_pWindowManagerButton, G_CALLBACK2(button_toggle_window_manager_cb), this);
-		gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(l_pWindowManagerButton), m_vInterfacedScenario[i32PageIndex]->isDesignerVisualizationToggled() ? true : false);
+		gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(l_pWindowManagerButton), m_vInterfacedScenario[pageIndex]->isDesignerVisualizationToggled());
 		g_signal_connect(l_pWindowManagerButton, "toggled", G_CALLBACK(button_toggle_window_manager_cb), this);
 
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-scenario_configuration_button_configure")), true);
-		m_vInterfacedScenario[i32PageIndex]->redrawScenarioSettings();
-		m_vInterfacedScenario[i32PageIndex]->redrawScenarioInputSettings();
-		m_vInterfacedScenario[i32PageIndex]->redrawScenarioOutputSettings();
+		m_vInterfacedScenario[pageIndex]->redrawScenarioSettings();
+		m_vInterfacedScenario[pageIndex]->redrawScenarioInputSettings();
+		m_vInterfacedScenario[pageIndex]->redrawScenarioOutputSettings();
 
 
 		// current scenario is the selected one
-		m_ui32CurrentInterfacedScenarioIndex = i32PageIndex;
+		m_ui32CurrentInterfacedScenarioIndex = pageIndex;
 	}
-	//first scenario is created (or a scenario is opened and replaces first unnamed unmodified scenario)
+		//first scenario is created (or a scenario is opened and replaces first unnamed unmodified scenario)
 	else
 	{
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")),       false);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")), false);
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), true);
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_next")),       true);
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_forward")),    true);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_next")), true);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_forward")), true);
 		gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), GTK_STOCK_MEDIA_PLAY);
 
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_undo")), false);
@@ -3261,7 +3075,7 @@ void CApplication::changeCurrentScenario(int32 i32PageIndex)
 		g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-togglebutton_cpu_usage")), "toggled", G_CALLBACK(cpu_usage_cb), this);
 
 		//toggle off window manager button
-		GtkWidget* l_pWindowManagerButton=GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager"));
+		GtkWidget* l_pWindowManagerButton = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager"));
 		g_signal_handlers_disconnect_by_func(l_pWindowManagerButton, G_CALLBACK2(button_toggle_window_manager_cb), this);
 		gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(l_pWindowManagerButton), false);
 		g_signal_connect(l_pWindowManagerButton, "toggled", G_CALLBACK(button_toggle_window_manager_cb), this);
@@ -3269,7 +3083,7 @@ void CApplication::changeCurrentScenario(int32 i32PageIndex)
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-scenario_configuration_button_configure")), true);
 
 		// we have a new notebook page
-		m_ui32CurrentInterfacedScenarioIndex = i32PageIndex;
+		m_ui32CurrentInterfacedScenarioIndex = pageIndex;
 
 		// we are in edition mode, updating internal configuration token
 		m_KernelContext.getConfigurationManager().setConfigurationTokenValue(m_KernelContext.getConfigurationManager().lookUpConfigurationTokenIdentifier("Player_ScenarioDirectory"), "");
@@ -3277,15 +3091,15 @@ void CApplication::changeCurrentScenario(int32 i32PageIndex)
 	}
 
 	// updates the trimming if need be
-	for(uint32 i = 0; i < (uint32)m_vInterfacedScenario.size(); i++)
+	for (auto& scenario : m_vInterfacedScenario)
 	{
-		m_vInterfacedScenario[i]->updateScenarioLabel();
+		scenario->updateScenarioLabel();
 	}
 	// Reset zoom
 	if (getCurrentInterfacedScenario())
 	{
 		gtk_spin_button_set_value(GTK_SPIN_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-zoom_spinner")),
-								  round(getCurrentInterfacedScenario()->getScale()*100.0));
+								  round(getCurrentInterfacedScenario()->getScale() * 100.0));
 	}
 	else
 	{
@@ -3293,48 +3107,44 @@ void CApplication::changeCurrentScenario(int32 i32PageIndex)
 	}
 }
 
-void CApplication::reorderCurrentScenario(OpenViBE::uint32 i32NewPageIndex)
+void CApplication::reorderCurrentScenario(const uint32_t newPageIndex)
 {
-	CInterfacedScenario* l_pCurrentInterfacedScenario = m_vInterfacedScenario[m_ui32CurrentInterfacedScenarioIndex];
+	CInterfacedScenario* currentInterfacedScenario = m_vInterfacedScenario[m_ui32CurrentInterfacedScenarioIndex];
 	m_vInterfacedScenario.erase(m_vInterfacedScenario.begin() + m_ui32CurrentInterfacedScenarioIndex);
-	m_vInterfacedScenario.insert(m_vInterfacedScenario.begin() + i32NewPageIndex, l_pCurrentInterfacedScenario);
+	m_vInterfacedScenario.insert(m_vInterfacedScenario.begin() + newPageIndex, currentInterfacedScenario);
 
-	this->changeCurrentScenario(i32NewPageIndex);
+	this->changeCurrentScenario(newPageIndex);
 }
 
 //Increase the zoom of the current scenario
-void CApplication::zoomInCB(void)
+void CApplication::zoomInCB()
 {
 	gtk_spin_button_set_value(GTK_SPIN_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-zoom_spinner")),
-							  round(getCurrentInterfacedScenario()->getScale()*100.0) + 5);
+							  round(getCurrentInterfacedScenario()->getScale() * 100.0) + 5);
 }
 
 //Decrease the zoom of the current scenario
-void CApplication::zoomOutCB(void)
+void CApplication::zoomOutCB()
 {
 	gtk_spin_button_set_value(GTK_SPIN_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-zoom_spinner")),
-							  round(getCurrentInterfacedScenario()->getScale()*100.0) - 5);
+							  round(getCurrentInterfacedScenario()->getScale() * 100.0) - 5);
 }
 
-void CApplication::spinnerZoomChangedCB(uint32_t scalePercentage)
+void CApplication::spinnerZoomChangedCB(const uint32_t scaleDelta)
 {
-	if(getCurrentInterfacedScenario() != nullptr)
+	if (getCurrentInterfacedScenario() != nullptr)
 	{
-		getCurrentInterfacedScenario()->setScale(static_cast<float64>(scalePercentage)/100.0);
+		getCurrentInterfacedScenario()->setScale(double(scaleDelta) / 100.0);
 	}
 }
 
-void CApplication::cannotSaveScenarioBeforeUpdate(void)
+void CApplication::cannotSaveScenarioBeforeUpdate()
+
 {
-	CString message = "Cannot save a scenario if deprecated I/O or Settings are still pending.\n"
-	                  "Please handle or delete all pending deprecated I/O before saving scenario.";
-	::GtkWidget* l_pDialog=::gtk_message_dialog_new(
-	            NULL,
-	            ::GtkDialogFlags(GTK_DIALOG_MODAL|GTK_DIALOG_DESTROY_WITH_PARENT),
-	            GtkMessageType::GTK_MESSAGE_INFO,
-	            GTK_BUTTONS_OK,
-	            "%s",
-	            message.toASCIIString());
-	::gtk_dialog_run(GTK_DIALOG(l_pDialog));
-	::gtk_widget_destroy(l_pDialog);
+	const CString message = "Cannot save a scenario if deprecated I/O or Settings are still pending.\n"
+		"Please handle or delete all pending deprecated I/O before saving scenario.";
+	GtkWidget* l_pDialog = gtk_message_dialog_new(nullptr, GtkDialogFlags(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
+												  GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "%s", message.toASCIIString());
+	gtk_dialog_run(GTK_DIALOG(l_pDialog));
+	gtk_widget_destroy(l_pDialog);
 }

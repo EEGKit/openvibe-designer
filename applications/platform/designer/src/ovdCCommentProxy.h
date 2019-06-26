@@ -1,5 +1,4 @@
-#ifndef __OpenViBEDesigner_CCommentProxy_H__
-#define __OpenViBEDesigner_CCommentProxy_H__
+#pragma once
 
 #include "ovd_base.h"
 
@@ -11,52 +10,36 @@ namespace OpenViBEDesigner
 	{
 	public:
 
-		CCommentProxy(
-			const OpenViBE::Kernel::IKernelContext& rKernelContext,
-			const OpenViBE::Kernel::IComment& rComment);
-		CCommentProxy(
-			const OpenViBE::Kernel::IKernelContext& rKernelContext,
-			OpenViBE::Kernel::IScenario& rScenario,
-			const OpenViBE::CIdentifier& rCommentIdentifier);
-		virtual ~CCommentProxy(void);
+		CCommentProxy(const OpenViBE::Kernel::IKernelContext& rKernelContext, const OpenViBE::Kernel::IComment& rComment);
+		CCommentProxy(const OpenViBE::Kernel::IKernelContext& rKernelContext, OpenViBE::Kernel::IScenario& rScenario, const OpenViBE::CIdentifier& rCommentIdentifier);
+		virtual ~CCommentProxy();
 
-		operator OpenViBE::Kernel::IComment* (void);
-		operator const OpenViBE::Kernel::IComment* (void);
+		operator OpenViBE::Kernel::IComment*() const { return m_pComment; }
+		operator const OpenViBE::Kernel::IComment*() const { return m_pConstComment; }
 
-		OpenViBE::int32 getWidth(
-			::GtkWidget* pWidget) const;
-		OpenViBE::int32 getHeight(
-			::GtkWidget* pWidget) const;
+		int getWidth(GtkWidget* widget) const;
+		int getHeight(GtkWidget* widget) const;
 
-		OpenViBE::int32 getXCenter(void) const;
-		OpenViBE::int32 getYCenter(void) const;
+		int getXCenter() const { return m_centerX; }
+		int getYCenter() const { return m_centerY; }
 
-		void setCenter(
-			OpenViBE::int32 i32XCenter,
-			OpenViBE::int32 i32YCenter);
+		void setCenter(int centerX, int centerY);
 
-		void apply(void);
+		void apply();
 
-		virtual const char* getLabel(void) const;
+		virtual const char* getLabel() const;
 
 	protected:
 
-		virtual void updateSize(
-			::GtkWidget* pWidget,
-			const char* sText,
-			int* pXSize,
-			int* pYSize) const;
-
-	protected:
+		virtual void updateSize(GtkWidget* widget, const char* sText, int* pXSize, int* pYSize) const;
 
 		const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
-		const OpenViBE::Kernel::IComment* m_pConstComment;
-		OpenViBE::Kernel::IComment* m_pComment;
-		OpenViBE::boolean m_bApplied;
-		int m_iXCenter;
-		int m_iYCenter;
+		const OpenViBE::Kernel::IComment* m_pConstComment = nullptr;
+		OpenViBE::Kernel::IComment* m_pComment = nullptr;
+		bool m_bApplied = false;
+		int m_centerX = 0;
+		int m_centerY = 0;
 		mutable std::string m_sLabel;
 	};
 };
 
-#endif // __OpenViBEDesigner_CCommentProxy_H__

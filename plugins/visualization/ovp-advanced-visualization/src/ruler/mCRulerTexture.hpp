@@ -18,9 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef __OpenViBEPlugins_CRulerTexture_H__
-#define __OpenViBEPlugins_CRulerTexture_H__
+#pragma once
 
 #include "../mIRuler.hpp"
 
@@ -32,34 +30,34 @@ namespace Mensia
 		{
 		protected:
 
-			virtual void preRender(void)
+			virtual void preRender()
+
 			{
-				::glDisable(GL_BLEND);
-				::glDisable(GL_DEPTH_TEST);
-				::glEnable(GL_TEXTURE_1D);
-				::glColor3f(1, 1, 1);
+				glDisable(GL_BLEND);
+				glDisable(GL_DEPTH_TEST);
+				glEnable(GL_TEXTURE_1D);
+				glColor3f(1, 1, 1);
 
-				::glMatrixMode(GL_TEXTURE);
-				::glPushMatrix();
-				::glLoadIdentity();
+				glMatrixMode(GL_TEXTURE);
+				glPushMatrix();
+				glLoadIdentity();
 
-				::glMatrixMode(GL_MODELVIEW);
-				::glPushMatrix();
-				::glLoadIdentity();
+				glMatrixMode(GL_MODELVIEW);
+				glPushMatrix();
+				glLoadIdentity();
 			}
 
-			virtual void postRender(void)
+			virtual void postRender()
+
 			{
-				::glMatrixMode(GL_MODELVIEW);
-				::glPopMatrix();
+				glMatrixMode(GL_MODELVIEW);
+				glPopMatrix();
 
-				::glMatrixMode(GL_TEXTURE);
-				::glPopMatrix();
+				glMatrixMode(GL_TEXTURE);
+				glPopMatrix();
 
-				::glMatrixMode(GL_MODELVIEW);
+				glMatrixMode(GL_MODELVIEW);
 			}
 		};
-	};
-};
-
-#endif // __OpenViBEPlugins_CRulerTexture_H__
+	}  // namespace AdvancedVisualization
+}  // namespace Mensia
