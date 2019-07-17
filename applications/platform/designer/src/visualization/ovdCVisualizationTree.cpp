@@ -687,18 +687,12 @@ bool CVisualizationTree::dragDataReceivedInWidgetCB(const CIdentifier& sourceWid
 
 	//retrieve dest widget and dest widget parent identifiers
 	GtkTreeIter destinationIterator;
-	if (!findChildNodeFromRoot(&destinationIterator, m_TreeViewCB->getTreeWidget(destinationWidget)))
-	{
-		return false;
-	}
+	if (!findChildNodeFromRoot(&destinationIterator, m_TreeViewCB->getTreeWidget(destinationWidget))) { return false; }
 
 	CIdentifier destinationWidgetIdentifier;
 	getIdentifierFromTreeIter(&destinationIterator, destinationWidgetIdentifier, EVisualizationTreeColumn_StringIdentifier);
 	IVisualizationWidget* destinationVisualizationWidget = getVisualizationWidget(destinationWidgetIdentifier);
-	if (!destinationVisualizationWidget)
-	{
-		return false;
-	}
+	if (!destinationVisualizationWidget) { return false; }
 
 	const CIdentifier destinationParentIdentifier = destinationVisualizationWidget->getParentIdentifier();
 

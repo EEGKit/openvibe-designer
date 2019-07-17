@@ -136,12 +136,12 @@ CRendererLoreta::CRendererLoreta()
 		char l_sLookup2[1024];
 		char l_sLookup3[1024];
 		char l_sLine[1024];
-		if (::fscanf(l_pFile, "%s\n", l_sLine) == 0) // Avoids warning { }
+		if (::fscanf(l_pFile, "%s\n", l_sLine) == 0) {} // Avoids warning 
 
 			while (!::feof(l_pFile))
 			{
 				::strcpy(l_sLine, "");
-				if (::fscanf(l_pFile, "%[^\n]\n\r", l_sLine) == 0) // Avoids warning { }
+				if (::fscanf(l_pFile, "%[^\n]\n\r", l_sLine) == 0) {} // Avoids warning 
 
 					int n = ::sscanf(l_sLine, "%i,%i,%i,%i,%i,%i,%i,%[^,],%[^,],%[^,]", &x, &y, &z, &dx, &dy, &dz, &d, l_sLookup1, l_sLookup2, l_sLookup3);
 				if (n == 10)
