@@ -184,10 +184,7 @@ CRendererLoreta::CRendererLoreta()
 						::printf("Not found voxel %i %i %i - %s - %s - %s\n", x, y, z, l_sLookup1, l_sLookup2, l_sLookup3);
 					}
 				}
-				else
-				{
-					break;
-				}
+				else { break; }
 			}
 		//		::printf("Sucessfully read voxel groups from [%s] - %lu,%lu,%lu group(s)\n", l_sVoxelGroupFilename, m_vLookup[l_uiCategoryIndex_BrodmannAreas].size(), m_vLookup[l_uiCategoryIndex_AnatomicalAreas].size(), m_vLookup[l_uiCategoryIndex_Lobes].size());
 		::fclose(l_pFile);

@@ -141,10 +141,7 @@ bool CScenarioStateStack::restoreState(const IMemoryBuffer& state)
 	while ((metadataIdentifier = m_Scenario.getNextMetadataIdentifier(metadataIdentifier)) != OV_UndefinedIdentifier)
 	{
 		visualizationTreeMetadata = m_Scenario.getMetadataDetails(metadataIdentifier);
-		if (visualizationTreeMetadata && visualizationTreeMetadata->getType() == OVVIZ_MetadataIdentifier_VisualizationTree)
-		{
-			break;
-		}
+		if (visualizationTreeMetadata && visualizationTreeMetadata->getType() == OVVIZ_MetadataIdentifier_VisualizationTree) { break; }
 	}
 
 	OpenViBEVisualizationToolkit::IVisualizationTree* visualizationTree = m_InterfacedScenario.m_pVisualizationTree;

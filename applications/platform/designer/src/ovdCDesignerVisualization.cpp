@@ -1095,10 +1095,7 @@ bool CDesignerVisualization::removeVisualizationWindow()
 	CIdentifier l_oVisualizationWindowIdentifier = OV_UndefinedIdentifier;
 	while (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowIdentifier, EVisualizationWidget_VisualizationWindow))
 	{
-		if (m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowIdentifier)->getName() == m_oActiveVisualizationWindowName)
-		{
-			break;
-		}
+		if (m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowIdentifier)->getName() == m_oActiveVisualizationWindowName) { break; }
 	}
 
 	//return if window was not found
@@ -1136,10 +1133,7 @@ bool CDesignerVisualization::newVisualizationPanel(const char* label)
 	while (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowIdentifier, EVisualizationWidget_VisualizationWindow))
 	{
 		l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowIdentifier);
-		if (l_pVisualizationWindow->getName() == m_oActiveVisualizationWindowName)
-		{
-			break;
-		}
+		if (l_pVisualizationWindow->getName() == m_oActiveVisualizationWindowName) { break; }
 	}
 
 	//return if parent window was not found

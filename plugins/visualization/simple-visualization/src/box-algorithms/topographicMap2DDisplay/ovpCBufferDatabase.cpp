@@ -660,10 +660,7 @@ bool CBufferDatabase::fillChannelLookupTable()
 		size_t firstNonWhitespaceChar = 0;
 		for (; firstNonWhitespaceChar < m_pDimensionLabels[0][i].size(); firstNonWhitespaceChar++)
 		{
-			if (isspace(m_pDimensionLabels[0][i][firstNonWhitespaceChar]) == 0)
-			{
-				break;
-			}
+			if (isspace(m_pDimensionLabels[0][i][firstNonWhitespaceChar]) == 0) { break; }
 		}
 
 		//trim trailing spaces
@@ -672,10 +669,7 @@ bool CBufferDatabase::fillChannelLookupTable()
 		{
 			for (lastNonWhitespaceChar = m_pDimensionLabels[0][i].size() - 1; lastNonWhitespaceChar >= 0; lastNonWhitespaceChar--)
 			{
-				if (isspace(m_pDimensionLabels[0][i][lastNonWhitespaceChar]) == 0)
-				{
-					break;
-				}
+				if (isspace(m_pDimensionLabels[0][i][lastNonWhitespaceChar]) == 0) { break; }
 			}
 		}
 

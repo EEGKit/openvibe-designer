@@ -1489,10 +1489,7 @@ bool CApplication::openScenario(const char* sFileName)
 		while ((metadataIdentifier = scenario.getNextMetadataIdentifier(metadataIdentifier)) != OV_UndefinedIdentifier)
 		{
 			vizTreeMetadata = scenario.getMetadataDetails(metadataIdentifier);
-			if (vizTreeMetadata && vizTreeMetadata->getType() == OVVIZ_MetadataIdentifier_VisualizationTree)
-			{
-				break;
-			}
+			if (vizTreeMetadata && vizTreeMetadata->getType() == OVVIZ_MetadataIdentifier_VisualizationTree) { break; }
 		}
 		OpenViBEVisualizationToolkit::IVisualizationTree* vizTree = interfacedScenario->m_pVisualizationTree;
 		if (vizTreeMetadata && vizTree)
