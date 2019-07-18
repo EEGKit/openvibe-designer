@@ -279,8 +279,8 @@ namespace json
 		friend bool operator <=(const Array& lhs, const Array& rhs) { return !operator>(lhs, rhs); }
 		friend bool operator >=(const Array& lhs, const Array& rhs) { return !operator<(lhs, rhs); }
 
-		Value& operator[](const size_t i);
-		const Value& operator[](const size_t i) const;
+		Value& operator[](size_t i);
+		const Value& operator[](size_t i) const;
 
 		ValueVector::const_iterator begin() const;
 		ValueVector::const_iterator end() const;
@@ -298,7 +298,7 @@ namespace json
 		void Clear() { mValues.clear(); }
 
 		void push_back(const Value& v);
-		void insert(const size_t index, const Value& v);
+		void insert(size_t index, const Value& v);
 		size_t size() const { return mValues.size(); }
 	};
 
