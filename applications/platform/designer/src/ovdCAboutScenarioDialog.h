@@ -15,7 +15,7 @@ namespace OpenViBEDesigner
 
 	protected:
 
-		const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
+		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
 		OpenViBE::Kernel::IScenario& m_rScenario;
 		OpenViBE::CString m_sGUIFilename;
 

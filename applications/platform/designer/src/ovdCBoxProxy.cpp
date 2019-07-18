@@ -9,8 +9,8 @@ using namespace OpenViBEDesigner;
 using namespace std;
 
 CBoxProxy::CBoxProxy(const IKernelContext& rKernelContext, IScenario& rScenario, const CIdentifier& boxIdentifier)
-	: m_rKernelContext(rKernelContext), m_pConstBox(rScenario.getBoxDetails(boxIdentifier)), m_pBox(rScenario.getBoxDetails(boxIdentifier)), 
-	  m_IsDeprecated(m_rKernelContext.getPluginManager().isPluginObjectFlaggedAsDeprecated(m_pConstBox->getAlgorithmClassIdentifier()))
+	: m_kernelContext(rKernelContext), m_pConstBox(rScenario.getBoxDetails(boxIdentifier)), m_pBox(rScenario.getBoxDetails(boxIdentifier)), 
+	  m_IsDeprecated(m_kernelContext.getPluginManager().isPluginObjectFlaggedAsDeprecated(m_pConstBox->getAlgorithmClassIdentifier()))
 {
 	m_IsBoxAlgorithmPresent = false;
 
@@ -20,20 +20,20 @@ CBoxProxy::CBoxProxy(const IKernelContext& rKernelContext, IScenario& rScenario,
 		{
 			CIdentifier metaboxId;
 			metaboxId.fromString(m_pConstBox->getAttributeValue(OVP_AttributeId_Metabox_Identifier));
-			const CString l_sMetaboxScenarioPath(m_rKernelContext.getMetaboxManager().getMetaboxFilePath(metaboxId));
+			const CString l_sMetaboxScenarioPath(m_kernelContext.getMetaboxManager().getMetaboxFilePath(metaboxId));
 
 			m_IsBoxAlgorithmPresent = FS::Files::fileExists(l_sMetaboxScenarioPath.toASCIIString());
 		}
 		else
 		{
-			m_IsBoxAlgorithmPresent = m_rKernelContext.getPluginManager().canCreatePluginObject(m_pConstBox->getAlgorithmClassIdentifier());
+			m_IsBoxAlgorithmPresent = m_kernelContext.getPluginManager().canCreatePluginObject(m_pConstBox->getAlgorithmClassIdentifier());
 		}
 
 		const TAttributeHandler l_oAttributeHandler(*m_pConstBox);
 		m_centerX = l_oAttributeHandler.getAttributeValue<int>(OV_AttributeId_Box_XCenterPosition);
 		m_centerY = l_oAttributeHandler.getAttributeValue<int>(OV_AttributeId_Box_YCenterPosition);
 	}
-	m_bShowOriginalNameWhenModified = m_rKernelContext.getConfigurationManager().expandAsBoolean("${Designer_ShowOriginalBoxName}", true);
+	m_bShowOriginalNameWhenModified = m_kernelContext.getConfigurationManager().expandAsBoolean("${Designer_ShowOriginalBoxName}", true);
 }
 
 int CBoxProxy::getWidth(GtkWidget* widget) const
@@ -101,7 +101,7 @@ const char* CBoxProxy::getLabel() const
 
 	if (m_pBoxAlgorithmDescriptorOverride == nullptr)
 	{
-		l_pDesc = m_rKernelContext.getPluginManager().getPluginObjectDescCreating(m_pConstBox->getAlgorithmClassIdentifier());
+		l_pDesc = m_kernelContext.getPluginManager().getPluginObjectDescCreating(m_pConstBox->getAlgorithmClassIdentifier());
 	}
 	else
 	{

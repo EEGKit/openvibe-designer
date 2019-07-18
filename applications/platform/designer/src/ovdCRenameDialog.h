@@ -16,7 +16,7 @@ namespace OpenViBEDesigner
 
 	protected:
 
-		const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
+		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
 		OpenViBE::CString m_sInitialName;
 		OpenViBE::CString m_sDefaultName;
 		OpenViBE::CString m_sResult;

@@ -22,7 +22,7 @@ static void on_change(GtkEntry* /*entry*/, gpointer data) { static_cast<CColorSe
 
 
 CColorSettingView::CColorSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext):
-	CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-hbox_setting_color"), m_rKernelContext(rKernelContext)
+	CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-hbox_setting_color"), m_kernelContext(rKernelContext)
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 
@@ -44,7 +44,7 @@ void CColorSettingView::setValue(const CString& value)
 {
 	m_onValueSetting = true;
 	int r = 0, g = 0, b = 0;
-	sscanf(m_rKernelContext.getConfigurationManager().expand(value).toASCIIString(), "%i,%i,%i", &r, &g, &b);
+	sscanf(m_kernelContext.getConfigurationManager().expand(value).toASCIIString(), "%i,%i,%i", &r, &g, &b);
 
 	GdkColor l_oColor;
 	l_oColor.red = (r * 65535) / 100;

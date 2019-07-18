@@ -28,7 +28,7 @@ static gboolean on_focus_out_event(GtkEntry* /*entry*/, GdkEvent* /*event*/, gpo
 #endif
 
 CFilenameSettingView::CFilenameSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext):
-	CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-hbox_setting_filename"), m_rKernelContext(rKernelContext)
+	CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-hbox_setting_filename"), m_kernelContext(rKernelContext)
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 
@@ -63,7 +63,7 @@ void CFilenameSettingView::browse() const
 	GtkWidget* l_pWidgetDialogOpen = gtk_file_chooser_dialog_new("Select file to open...", nullptr, GTK_FILE_CHOOSER_ACTION_SAVE, 
 																 GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
 
-	const CString initialFileName = m_rKernelContext.getConfigurationManager().expand(gtk_entry_get_text(m_entry));
+	const CString initialFileName = m_kernelContext.getConfigurationManager().expand(gtk_entry_get_text(m_entry));
 	if (g_path_is_absolute(initialFileName.toASCIIString()))
 	{
 		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(l_pWidgetDialogOpen), initialFileName.toASCIIString());

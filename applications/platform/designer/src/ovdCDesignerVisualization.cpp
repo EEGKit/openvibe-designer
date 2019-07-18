@@ -119,7 +119,7 @@ static gint num_undefined_widget_menu_items = sizeof(undefined_widget_menu_items
 static gint num_split_widget_menu_items = sizeof(split_widget_menu_items) / sizeof(split_widget_menu_items[0]);
 
 CDesignerVisualization::CDesignerVisualization(const IKernelContext& rKernelContext, IVisualizationTree& rVisualizationTree, CInterfacedScenario& rInterfacedScenario) 
-	: m_rKernelContext(rKernelContext), m_rVisualizationTree(rVisualizationTree), m_rInterfacedScenario(rInterfacedScenario), 
+	: m_kernelContext(rKernelContext), m_rVisualizationTree(rVisualizationTree), m_rInterfacedScenario(rInterfacedScenario), 
 	  m_fpDeleteEventCB(nullptr), m_pDeleteEventUserData(nullptr) { }
 
 CDesignerVisualization::~CDesignerVisualization()
@@ -182,8 +182,8 @@ void CDesignerVisualization::init(const std::string& guiFile)
 
 	//retrieve default window size
 	const uint32_t treeViewWidth = 200;
-	m_previewWindowW = uint32_t(m_rKernelContext.getConfigurationManager().expandAsUInteger("${Designer_UnaffectedVisualizationWindowWidth}", 400));
-	m_previewWindowH = uint32_t(m_rKernelContext.getConfigurationManager().expandAsUInteger("${Designer_UnaffectedVisualizationWindowHeight}", 400));
+	m_previewWindowW = uint32_t(m_kernelContext.getConfigurationManager().expandAsUInteger("${Designer_UnaffectedVisualizationWindowWidth}", 400));
+	m_previewWindowH = uint32_t(m_kernelContext.getConfigurationManager().expandAsUInteger("${Designer_UnaffectedVisualizationWindowHeight}", 400));
 	CIdentifier l_oVisualizationWindowIdentifier;
 	//if at least one window was created, retrieve its dimensions
 	if (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowIdentifier, EVisualizationWidget_VisualizationWindow))
@@ -1724,7 +1724,7 @@ void CDesignerVisualization::dragDataReceivedInWidgetCB(GtkWidget* dstWidget, Gt
 		//ensure dragged widget is a visualization box
 		if (!m_rVisualizationTree.findChildNodeFromRoot(&l_oSrcIter, m_oActiveVisualizationBoxIdentifier))
 		{
-			m_rKernelContext.getLogManager() << LogLevel_Debug << "dragDataReceivedInWidgetCB couldn't retrieve iterator of active visualization box!\n";
+			m_kernelContext.getLogManager() << LogLevel_Debug << "dragDataReceivedInWidgetCB couldn't retrieve iterator of active visualization box!\n";
 			return;
 		}
 	}
@@ -1733,7 +1733,7 @@ void CDesignerVisualization::dragDataReceivedInWidgetCB(GtkWidget* dstWidget, Gt
 		if (l_pSrcWidget == dstWidget) { return; }
 		if (!m_rVisualizationTree.findChildNodeFromRoot(&l_oSrcIter, getTreeWidget(GTK_WIDGET(l_pSrcWidget))))
 		{
-			m_rKernelContext.getLogManager() << LogLevel_Debug << "dragDataReceivedInWidgetCB couldn't retrieve iterator of dragged button!\n";
+			m_kernelContext.getLogManager() << LogLevel_Debug << "dragDataReceivedInWidgetCB couldn't retrieve iterator of dragged button!\n";
 			return;
 		}
 	}
@@ -1745,7 +1745,7 @@ void CDesignerVisualization::dragDataReceivedInWidgetCB(GtkWidget* dstWidget, Gt
 	IVisualizationWidget* l_pSrcVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oSrcIdentifier);
 	if (l_pSrcVisualizationWidget == nullptr)
 	{
-		m_rKernelContext.getLogManager() << LogLevel_Debug << "dragDataReceivedInWidgetCB couldn't retrieve source visualization widget!\n";
+		m_kernelContext.getLogManager() << LogLevel_Debug << "dragDataReceivedInWidgetCB couldn't retrieve source visualization widget!\n";
 		return;
 	}
 
@@ -1753,7 +1753,7 @@ void CDesignerVisualization::dragDataReceivedInWidgetCB(GtkWidget* dstWidget, Gt
 	GtkTreeIter l_oDstIter;
 	if (!m_rVisualizationTree.findChildNodeFromRoot(&l_oDstIter, getTreeWidget(dstWidget)))
 	{
-		m_rKernelContext.getLogManager() << LogLevel_Debug << "dragDataReceivedInWidgetCB couldn't retrieve iterator of destination widget!\n";
+		m_kernelContext.getLogManager() << LogLevel_Debug << "dragDataReceivedInWidgetCB couldn't retrieve iterator of destination widget!\n";
 		return;
 	}
 
@@ -1772,14 +1772,14 @@ void CDesignerVisualization::dragDataReceivedInWidgetCB(GtkWidget* dstWidget, Gt
 		//unaffect src widget, so that tree is simplified
 		if (!removeVisualizationWidget(l_oSrcIdentifier))
 		{
-			m_rKernelContext.getLogManager() << LogLevel_Debug << "dragDataReceivedInWidgetCB couldn't remove source widget from its parent!\n";
+			m_kernelContext.getLogManager() << LogLevel_Debug << "dragDataReceivedInWidgetCB couldn't remove source widget from its parent!\n";
 			return;
 		}
 
 		//then drop it
 		if (!m_rVisualizationTree.findChildNodeFromRoot(&l_oDstIter, l_oDstIdentifier))
 		{
-			m_rKernelContext.getLogManager() << LogLevel_Debug << "dragDataReceivedInWidgetCB couldn't retrieve iterator of dummy destination widget to delete!\n";
+			m_kernelContext.getLogManager() << LogLevel_Debug << "dragDataReceivedInWidgetCB couldn't retrieve iterator of dummy destination widget to delete!\n";
 			return;
 		}
 		void* l_pNewDstTreeWidget = nullptr;

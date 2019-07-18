@@ -99,11 +99,11 @@ bool CBoxAlgorithmTopographicMap2DDisplay::processClock(IMessageClock& /*rMessag
 bool CBoxAlgorithmTopographicMap2DDisplay::process()
 
 {
-	IDynamicBoxContext* l_pDynamicBoxContext = getBoxAlgorithmContext()->getDynamicBoxContext();
+	IDynamicBoxContext* context = getBoxAlgorithmContext()->getDynamicBoxContext();
 	uint32_t i;
 
 	//decode signal data
-	for (i = 0; i < l_pDynamicBoxContext->getInputChunkCount(0); ++i)
+	for (i = 0; i < context->getInputChunkCount(0); ++i)
 	{
 		m_pDecoder->decode(i);
 		if (m_pDecoder->isBufferReceived())
@@ -126,19 +126,16 @@ bool CBoxAlgorithmTopographicMap2DDisplay::process()
 			}
 			//
 
-			if (!m_pTopographicMapDatabase->setMatrixBuffer(l_pInputMatrix->getBuffer(), l_pDynamicBoxContext->getInputChunkStartTime(0, i), l_pDynamicBoxContext->getInputChunkEndTime(0, i))) { return false; }
+			if (!m_pTopographicMapDatabase->setMatrixBuffer(l_pInputMatrix->getBuffer(), context->getInputChunkStartTime(0, i), context->getInputChunkEndTime(0, i))) { return false; }
 		}
 	}
 
 	//decode channel localisation data
-	for (i = 0; i < l_pDynamicBoxContext->getInputChunkCount(1); ++i)
+	for (i = 0; i < context->getInputChunkCount(1); ++i)
 	{
-		const IMemoryBuffer* l_pBuf = l_pDynamicBoxContext->getInputChunk(1, i);
-		m_pTopographicMapDatabase->decodeChannelLocalisationMemoryBuffer(
-			l_pBuf,
-			l_pDynamicBoxContext->getInputChunkStartTime(1, i),
-			l_pDynamicBoxContext->getInputChunkEndTime(1, i));
-		l_pDynamicBoxContext->markInputAsDeprecated(1, i);
+		const IMemoryBuffer* l_pBuf = context->getInputChunk(1, i);
+		m_pTopographicMapDatabase->decodeChannelLocalisationMemoryBuffer(l_pBuf, context->getInputChunkStartTime(1, i), context->getInputChunkEndTime(1, i));
+		context->markInputAsDeprecated(1, i);
 	}
 
 	const bool l_bProcessValues = m_pTopographicMapDatabase->processValues();

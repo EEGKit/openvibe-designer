@@ -63,8 +63,7 @@ namespace OpenViBEPlugins
 
 			bool hasFunctionality(OpenViBE::CIdentifier functionalityIdentifier) const override { return functionalityIdentifier == OVD_Functionality_Visualization; }
 
-			bool getBoxPrototype(
-				OpenViBE::Kernel::IBoxProto& rPrototype) const override
+			bool getBoxPrototype(OpenViBE::Kernel::IBoxProto& rPrototype) const override
 			{
 				rPrototype.addSetting("Interpolation type", OVP_TypeId_SphericalLinearInterpolationType, "1");
 				rPrototype.addSetting("Delay (in s)", OV_TypeId_Float, "0");

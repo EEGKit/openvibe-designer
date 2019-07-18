@@ -33,7 +33,7 @@ static gboolean on_focus_out_event(GtkEntry* /*entry*/, GdkEvent* /*event*/, gpo
 #endif
 
 CScriptSettingView::CScriptSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext):
-	CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-hbox_setting_script"), m_rKernelContext(rKernelContext)
+	CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-hbox_setting_script"), m_kernelContext(rKernelContext)
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 
@@ -71,7 +71,7 @@ void CScriptSettingView::browse() const
 	GtkWidget* l_pWidgetDialogOpen = gtk_file_chooser_dialog_new("Select file to open...", nullptr, GTK_FILE_CHOOSER_ACTION_SAVE,
 																 GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
 
-	const CString initialFileName = m_rKernelContext.getConfigurationManager().expand(gtk_entry_get_text(m_entry));
+	const CString initialFileName = m_kernelContext.getConfigurationManager().expand(gtk_entry_get_text(m_entry));
 	if (g_path_is_absolute(initialFileName.toASCIIString()))
 	{
 		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(l_pWidgetDialogOpen), initialFileName.toASCIIString());
@@ -101,8 +101,8 @@ void CScriptSettingView::browse() const
 
 void CScriptSettingView::edit() const
 {
-	const CString fileName = m_rKernelContext.getConfigurationManager().expand(gtk_entry_get_text(m_entry));
-	const CString editorCommand = m_rKernelContext.getConfigurationManager().expand("${Designer_ScriptEditorCommand}");
+	const CString fileName = m_kernelContext.getConfigurationManager().expand(gtk_entry_get_text(m_entry));
+	const CString editorCommand = m_kernelContext.getConfigurationManager().expand("${Designer_ScriptEditorCommand}");
 
 	if (editorCommand != CString(""))
 	{
@@ -115,7 +115,7 @@ void CScriptSettingView::edit() const
 #endif
 		if (system(l_sFullCommand.toASCIIString()) < 0)
 		{
-			m_rKernelContext.getLogManager() << Kernel::LogLevel_Warning << "Could not run command " << l_sFullCommand << "\n";
+			m_kernelContext.getLogManager() << Kernel::LogLevel_Warning << "Could not run command " << l_sFullCommand << "\n";
 		}
 	}
 }

@@ -58,7 +58,7 @@ namespace OpenViBEDesigner
 
 	private:
 
-		const OpenViBE::Kernel::IKernelContext& m_KernelContext;
+		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
 		OpenViBE::CIdentifier m_Identifier = OV_UndefinedIdentifier;
 		OpenViBE::CString m_Name;
 		OpenViBEVisualizationToolkit::EVisualizationWidgetType m_Type;

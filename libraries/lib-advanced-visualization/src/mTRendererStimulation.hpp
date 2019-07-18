@@ -47,9 +47,8 @@ namespace Mensia
 
 				for (int i = 0; i < s_iStimulationIndicatorSmoothness; ++i)
 				{
-					m_vCircle.push_back(std::make_pair(
-						s_fStimulationIndicatorRadius * cosf(float(i) / float(s_iStimulationIndicatorSmoothness - 1) * 2 * float(M_PI)),
-						s_fStimulationIndicatorRadius * sinf(float(i) / float(s_iStimulationIndicatorSmoothness - 1) * 2 * float(M_PI))
+					m_vCircle.push_back(std::make_pair(s_fStimulationIndicatorRadius * cosf(float(i) / float(s_iStimulationIndicatorSmoothness - 1) * 2 * float(M_PI)),
+													   s_fStimulationIndicatorRadius * sinf(float(i) / float(s_iStimulationIndicatorSmoothness - 1) * 2 * float(M_PI))
 					));
 				}
 			}

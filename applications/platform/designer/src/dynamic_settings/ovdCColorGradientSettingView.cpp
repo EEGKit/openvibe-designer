@@ -56,7 +56,7 @@ static void on_change(GtkEntry* /*entry*/, gpointer data)
 }
 
 CColorGradientSettingView::CColorGradientSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext)
-	: CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-hbox_setting_color_gradient"), m_rKernelContext(rKernelContext), m_builderName(rBuilderName)
+	: CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-hbox_setting_color_gradient"), m_kernelContext(rKernelContext), m_builderName(rBuilderName)
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 
@@ -92,7 +92,7 @@ void CColorGradientSettingView::configurePressed()
 
 	pDialog = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-dialog"));
 
-	const CString initialGradient = m_rKernelContext.getConfigurationManager().expand(gtk_entry_get_text(m_entry));
+	const CString initialGradient = m_kernelContext.getConfigurationManager().expand(gtk_entry_get_text(m_entry));
 	CMatrix colorGradient;
 
 	OpenViBEVisualizationToolkit::Tools::ColorGradient::parse(colorGradient, initialGradient);
@@ -215,14 +215,7 @@ void CColorGradientSettingView::refreshColorGradient()
 		l_oColor.green = guint(l_oInterpolatedMatrix[i * 4 + 2] * 65535 * .01);
 		l_oColor.blue = guint(l_oInterpolatedMatrix[i * 4 + 3] * 65535 * .01);
 		gdk_gc_set_rgb_fg_color(l_pGC, &l_oColor);
-		gdk_draw_rectangle(
-			pDrawingArea->window,
-			l_pGC,
-			TRUE,
-			(sizex * i) / steps,
-			0,
-			(sizex * (i + 1)) / steps,
-			sizey);
+		gdk_draw_rectangle(pDrawingArea->window, l_pGC, TRUE, (sizex * i) / steps, 0, (sizex * (i + 1)) / steps, sizey);
 	}
 	g_object_unref(l_pGC);
 }

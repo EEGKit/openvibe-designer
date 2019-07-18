@@ -11,10 +11,10 @@ using namespace OpenViBEDesigner;
 using namespace OpenViBEToolkit;
 
 CScenarioStateStack::CScenarioStateStack(const IKernelContext& kernelContext, CInterfacedScenario& interfacedScenario, IScenario& scenario)
-	: m_KernelContext(kernelContext), m_InterfacedScenario(interfacedScenario), m_Scenario(scenario)
+	: m_kernelContext(kernelContext), m_InterfacedScenario(interfacedScenario), m_Scenario(scenario)
 {
 	m_CurrentState = m_States.begin();
-	m_MaximumStateCount = uint32_t(m_KernelContext.getConfigurationManager().expandAsUInteger("${Designer_UndoRedoStackSize}", 64));
+	m_MaximumStateCount = uint32_t(m_kernelContext.getConfigurationManager().expandAsUInteger("${Designer_UndoRedoStackSize}", 64));
 }
 
 CScenarioStateStack::~CScenarioStateStack()
@@ -106,10 +106,10 @@ bool CScenarioStateStack::restoreState(const IMemoryBuffer& state)
 
 	if (state.getSize() == 0) { return false; }
 
-	const CIdentifier importerIdentifier = m_KernelContext.getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_XMLScenarioImporter);
+	const CIdentifier importerIdentifier = m_kernelContext.getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_XMLScenarioImporter);
 	if (importerIdentifier == OV_UndefinedIdentifier) { return false; }
 
-	IAlgorithmProxy* importer = &m_KernelContext.getAlgorithmManager().getAlgorithm(importerIdentifier);
+	IAlgorithmProxy* importer = &m_kernelContext.getAlgorithmManager().getAlgorithm(importerIdentifier);
 	if (!importer) { return false; }
 
 	const uLongf sourceSize = uLongf(state.getSize()) - sizeof(uLongf);
@@ -133,7 +133,7 @@ bool CScenarioStateStack::restoreState(const IMemoryBuffer& state)
 
 	importer->process();
 	importer->uninitialize();
-	m_KernelContext.getAlgorithmManager().releaseAlgorithm(*importer);
+	m_kernelContext.getAlgorithmManager().releaseAlgorithm(*importer);
 
 	// Find the VisualizationTree metadata
 	IMetadata* visualizationTreeMetadata = nullptr;
@@ -178,11 +178,11 @@ bool CScenarioStateStack::dumpState(IMemoryBuffer& state)
 	m_Scenario.getMetadataDetails(metadataIdentifier)->setType(OVVIZ_MetadataIdentifier_VisualizationTree);
 	m_Scenario.getMetadataDetails(metadataIdentifier)->setData(m_InterfacedScenario.m_pVisualizationTree->serialize());
 
-	const CIdentifier exporterIdentifier = m_KernelContext.getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_XMLScenarioExporter);
+	const CIdentifier exporterIdentifier = m_kernelContext.getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_XMLScenarioExporter);
 
 	if (exporterIdentifier == OV_UndefinedIdentifier) { return false; }
 
-	IAlgorithmProxy* exporter = &m_KernelContext.getAlgorithmManager().getAlgorithm(exporterIdentifier);
+	IAlgorithmProxy* exporter = &m_kernelContext.getAlgorithmManager().getAlgorithm(exporterIdentifier);
 	if (!exporter) { return false; }
 
 	exporter->initialize();
@@ -195,7 +195,7 @@ bool CScenarioStateStack::dumpState(IMemoryBuffer& state)
 
 	exporter->process();
 	exporter->uninitialize();
-	m_KernelContext.getAlgorithmManager().releaseAlgorithm(*exporter);
+	m_kernelContext.getAlgorithmManager().releaseAlgorithm(*exporter);
 
 	auto sourceSize = uLongf(uncompressedMemoryBuffer.getSize());
 	auto* sourceBuffer = static_cast<Bytef*>(uncompressedMemoryBuffer.getDirectPointer());

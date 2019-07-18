@@ -40,7 +40,7 @@ namespace OpenViBEDesigner
 
 		int32_t getTableIndex(uint32_t settingIndex);
 
-		const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
+		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
 		OpenViBE::Kernel::IBox& m_rBox;
 		OpenViBE::CString m_sGUIFilename;
 		OpenViBE::CString m_sGUISettingsFilename;

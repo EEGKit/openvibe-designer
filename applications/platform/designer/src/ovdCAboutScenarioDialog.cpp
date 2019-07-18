@@ -6,7 +6,7 @@ using namespace Plugins;
 using namespace Kernel;
 
 CAboutScenarioDialog::CAboutScenarioDialog(const IKernelContext& rKernelContext, IScenario& rScenario, const char* sGUIFilename)
-	: m_rKernelContext(rKernelContext), m_rScenario(rScenario), m_sGUIFilename(sGUIFilename) { }
+	: m_kernelContext(rKernelContext), m_rScenario(rScenario), m_sGUIFilename(sGUIFilename) { }
 
 CAboutScenarioDialog::~CAboutScenarioDialog() = default;
 
@@ -87,8 +87,8 @@ bool CAboutScenarioDialog::run()
 		CIdentifier cid;
 		if (!cid.fromString(textId))
 		{
-			m_rKernelContext.getLogManager() << LogLevel_Error << "Invalid identifier " << textId << " is not in the \"(0x[0-9a-f]{1-8}, 0x[0-9a-f]{1-8})\" format. ";
-			m_rKernelContext.getLogManager() << "Reverting to " << m_rScenario.getAttributeValue(OVP_AttributeId_Metabox_Identifier).toASCIIString() << ".\n";
+			m_kernelContext.getLogManager() << LogLevel_Error << "Invalid identifier " << textId << " is not in the \"(0x[0-9a-f]{1-8}, 0x[0-9a-f]{1-8})\" format. ";
+			m_kernelContext.getLogManager() << "Reverting to " << m_rScenario.getAttributeValue(OVP_AttributeId_Metabox_Identifier).toASCIIString() << ".\n";
 		}
 		else
 		{

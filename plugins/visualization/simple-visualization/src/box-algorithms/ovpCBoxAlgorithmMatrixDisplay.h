@@ -93,8 +93,7 @@ namespace OpenViBEPlugins
 
 			bool hasFunctionality(OpenViBE::CIdentifier functionalityIdentifier) const override { return functionalityIdentifier == OVD_Functionality_Visualization; }
 
-			bool getBoxPrototype(
-				OpenViBE::Kernel::IBoxProto& rBoxAlgorithmPrototype) const override
+			bool getBoxPrototype(OpenViBE::Kernel::IBoxProto& rBoxAlgorithmPrototype) const override
 			{
 				rBoxAlgorithmPrototype.addSetting("Color gradient", OV_TypeId_ColorGradient, "0:2,36,58; 50:100,100,100; 100:83,17,20");
 				rBoxAlgorithmPrototype.addSetting("Steps", OV_TypeId_Integer, "100");

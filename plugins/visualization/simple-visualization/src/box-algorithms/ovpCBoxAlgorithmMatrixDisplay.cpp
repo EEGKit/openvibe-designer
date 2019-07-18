@@ -221,12 +221,7 @@ bool CBoxAlgorithmMatrixDisplay::process()
 				GtkWidget* l_pWidgetLabel = gtk_label_new("");
 				gtk_widget_set_visible(l_pWidgetLabel, 1);
 				//gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(l_pWidgetLabel)), l_pWidgetLabel);
-				gtk_table_attach(
-					l_pTable, l_pWidgetLabel,
-					col, col + 1, r, r + 1,
-					GtkAttachOptions(GTK_EXPAND | GTK_FILL),
-					GtkAttachOptions(GTK_EXPAND | GTK_FILL),
-					0, 0);
+				gtk_table_attach(l_pTable, l_pWidgetLabel, col, col + 1, r, r + 1, GtkAttachOptions(GTK_EXPAND | GTK_FILL), GtkAttachOptions(GTK_EXPAND | GTK_FILL), 0, 0);
 				//g_object_unref(l_pGtkBuilderLabel);
 
 				stringstream ss;
@@ -250,12 +245,7 @@ bool CBoxAlgorithmMatrixDisplay::process()
 					gtk_widget_set_visible(l_pWidgetLabel, 1);
 					gtk_container_add(GTK_CONTAINER(l_pWidgetEventBox), l_pWidgetLabel);
 					//gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(l_pWidgetEventBox)), l_pWidgetEventBox);
-					gtk_table_attach(
-						l_pTable, l_pWidgetEventBox,
-						c, c + 1, r, r + 1,
-						GtkAttachOptions(GTK_EXPAND | GTK_FILL),
-						GtkAttachOptions(GTK_EXPAND | GTK_FILL),
-						0, 0);
+					gtk_table_attach(l_pTable, l_pWidgetEventBox, c, c + 1, r, r + 1, GtkAttachOptions(GTK_EXPAND | GTK_FILL), GtkAttachOptions(GTK_EXPAND | GTK_FILL), 0, 0);
 					//g_object_unref(l_pGtkBuilderEventBox);
 
 					GdkColor l_ColorWhite;

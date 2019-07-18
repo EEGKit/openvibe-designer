@@ -35,7 +35,7 @@ class CPluginObjectDescEnum
 {
 public:
 
-	explicit CPluginObjectDescEnum(const IKernelContext& rKernelContext) : m_rKernelContext(rKernelContext) { }
+	explicit CPluginObjectDescEnum(const IKernelContext& rKernelContext) : m_kernelContext(rKernelContext) { }
 
 	virtual ~CPluginObjectDescEnum() = default;
 
@@ -43,9 +43,9 @@ public:
 
 	{
 		CIdentifier identifier;
-		while ((identifier = m_rKernelContext.getPluginManager().getNextPluginObjectDescIdentifier(identifier)) != OV_UndefinedIdentifier)
+		while ((identifier = m_kernelContext.getPluginManager().getNextPluginObjectDescIdentifier(identifier)) != OV_UndefinedIdentifier)
 		{
-			this->callback(*m_rKernelContext.getPluginManager().getPluginObjectDesc(identifier));
+			this->callback(*m_kernelContext.getPluginManager().getPluginObjectDesc(identifier));
 		}
 		return true;
 	}
@@ -53,9 +53,9 @@ public:
 	virtual bool enumeratePluginObjectDesc(const CIdentifier& rParentClassIdentifier)
 	{
 		CIdentifier identifier;
-		while ((identifier = m_rKernelContext.getPluginManager().getNextPluginObjectDescIdentifier(identifier, rParentClassIdentifier)) != OV_UndefinedIdentifier)
+		while ((identifier = m_kernelContext.getPluginManager().getNextPluginObjectDescIdentifier(identifier, rParentClassIdentifier)) != OV_UndefinedIdentifier)
 		{
-			this->callback(*m_rKernelContext.getPluginManager().getPluginObjectDesc(identifier));
+			this->callback(*m_kernelContext.getPluginManager().getPluginObjectDesc(identifier));
 		}
 		return true;
 	}
@@ -64,7 +64,7 @@ public:
 
 protected:
 
-	const IKernelContext& m_rKernelContext;
+	const IKernelContext& m_kernelContext;
 };
 
 // ------------------------------------------------------------------------------------------------------------------------------------
@@ -83,7 +83,7 @@ public:
 		const auto itPluginObjectDesc = m_vPluginObjectDesc.find(l_sFullName);
 		if (itPluginObjectDesc != m_vPluginObjectDesc.end())
 		{
-			m_rKernelContext.getLogManager() << LogLevel_ImportantWarning << "Duplicate plugin object name " << CString(l_sFullName.c_str()) << " " << itPluginObjectDesc->second->getCreatedClass() << " and " << rPluginObjectDesc.getCreatedClass() << "\n";
+			m_kernelContext.getLogManager() << LogLevel_ImportantWarning << "Duplicate plugin object name " << CString(l_sFullName.c_str()) << " " << itPluginObjectDesc->second->getCreatedClass() << " and " << rPluginObjectDesc.getCreatedClass() << "\n";
 		}
 		m_vPluginObjectDesc[l_sFullName] = &rPluginObjectDesc;
 		return true;
@@ -113,13 +113,13 @@ public:
 	bool callback(const IPluginObjectDesc& rPluginObjectDesc) override
 	{
 		// Outputs plugin info to console
-		m_rKernelContext.getLogManager() << LogLevel_Trace << "Plugin <" << rPluginObjectDesc.getName() << ">\n";
-		m_rKernelContext.getLogManager() << LogLevel_Debug << " | Plugin category        : " << rPluginObjectDesc.getCategory() << "\n";
-		m_rKernelContext.getLogManager() << LogLevel_Debug << " | Class identifier       : " << rPluginObjectDesc.getCreatedClass() << "\n";
-		m_rKernelContext.getLogManager() << LogLevel_Debug << " | Author name            : " << rPluginObjectDesc.getAuthorName() << "\n";
-		m_rKernelContext.getLogManager() << LogLevel_Debug << " | Author company name    : " << rPluginObjectDesc.getAuthorCompanyName() << "\n";
-		m_rKernelContext.getLogManager() << LogLevel_Debug << " | Short description      : " << rPluginObjectDesc.getShortDescription() << "\n";
-		m_rKernelContext.getLogManager() << LogLevel_Debug << " | Detailed description   : " << rPluginObjectDesc.getDetailedDescription() << "\n";
+		m_kernelContext.getLogManager() << LogLevel_Trace << "Plugin <" << rPluginObjectDesc.getName() << ">\n";
+		m_kernelContext.getLogManager() << LogLevel_Debug << " | Plugin category        : " << rPluginObjectDesc.getCategory() << "\n";
+		m_kernelContext.getLogManager() << LogLevel_Debug << " | Class identifier       : " << rPluginObjectDesc.getCreatedClass() << "\n";
+		m_kernelContext.getLogManager() << LogLevel_Debug << " | Author name            : " << rPluginObjectDesc.getAuthorName() << "\n";
+		m_kernelContext.getLogManager() << LogLevel_Debug << " | Author company name    : " << rPluginObjectDesc.getAuthorCompanyName() << "\n";
+		m_kernelContext.getLogManager() << LogLevel_Debug << " | Short description      : " << rPluginObjectDesc.getShortDescription() << "\n";
+		m_kernelContext.getLogManager() << LogLevel_Debug << " | Detailed description   : " << rPluginObjectDesc.getDetailedDescription() << "\n";
 
 		return true;
 	}

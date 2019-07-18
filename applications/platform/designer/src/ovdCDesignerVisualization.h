@@ -134,7 +134,7 @@ namespace OpenViBEDesigner
 													   GtkSelectionData* pSelectionData, guint uiInfo, guint uiTime, gpointer data);
 		void dragDataReceivedInEventBoxCB(GtkWidget* dstWidget, GtkSelectionData* pSelectionData, OpenViBEVisualizationToolkit::EDragDataLocation oLocation);
 
-		const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
+		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
 		OpenViBEVisualizationToolkit::IVisualizationTree& m_rVisualizationTree;
 		CInterfacedScenario& m_rInterfacedScenario;
 		fpDesignerVisualizationDeleteEventCB m_fpDeleteEventCB;

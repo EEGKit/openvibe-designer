@@ -143,10 +143,10 @@ namespace OpenViBEDesigner
 		OpenViBE::CIdentifier m_oPlayerIdentifier;
 		OpenViBE::CIdentifier m_oVisualizationTreeIdentifier;
 		CApplication& m_rApplication;
-		const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
+		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
 		OpenViBE::Kernel::IScenario& m_rScenario;
 		OpenViBE::Kernel::IPlayer* m_pPlayer = nullptr;
-		OpenViBE::uint64 m_ui64LastLoopTime = 0;
+		uint64_t m_ui64LastLoopTime = 0;
 		GtkNotebook& m_rNotebook;
 		OpenViBEVisualizationToolkit::IVisualizationTree* m_pVisualizationTree = nullptr;
 		bool m_designerVisualizationToggled = false;

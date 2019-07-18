@@ -51,7 +51,7 @@ static void collect_widget_cb(GtkWidget* widget, gpointer data)
 }
 
 CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& rKernelContext, IBox& rBox, const char* sGUIFilename, const char* sGUISettingsFilename, const bool isScenarioRunning)
-	: m_rKernelContext(rKernelContext), m_rBox(rBox), m_sGUIFilename(sGUIFilename), m_sGUISettingsFilename(sGUISettingsFilename)
+	: m_kernelContext(rKernelContext), m_rBox(rBox), m_sGUIFilename(sGUIFilename), m_sGUISettingsFilename(sGUISettingsFilename)
 	  , m_oSettingFactory(m_sGUISettingsFilename.toASCIIString(), rKernelContext), m_bIsScenarioRunning(isScenarioRunning)
 {
 	m_rBox.addObserver(this);
@@ -83,7 +83,7 @@ CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& rKernelCo
 
 		generateSettingsTable();
 
-		const CSettingCollectionHelper l_oHelper(m_rKernelContext, m_sGUISettingsFilename.toASCIIString());
+		const CSettingCollectionHelper l_oHelper(m_kernelContext, m_sGUISettingsFilename.toASCIIString());
 
 		if (!m_bIsScenarioRunning)
 		{
@@ -140,7 +140,7 @@ bool CBoxConfigurationDialog::run()
 	bool modified = false;
 	if (m_rBox.getInterfacorCountIncludingDeprecated(BoxInterfacorType::Setting))
 	{
-		CSettingCollectionHelper l_oHelper(m_rKernelContext, m_sGUISettingsFilename.toASCIIString());
+		CSettingCollectionHelper l_oHelper(m_kernelContext, m_sGUISettingsFilename.toASCIIString());
 		storeState();
 		bool finished = false;
 		while (!finished)
@@ -459,7 +459,7 @@ void CBoxConfigurationDialog::saveConfiguration() const
 															  GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, nullptr);
 
 	const gchar* initialFileNameToExpand = gtk_entry_get_text(GTK_ENTRY(m_pOverrideEntryContainer));
-	const CString initialFileName = m_rKernelContext.getConfigurationManager().expand(initialFileNameToExpand);
+	const CString initialFileName = m_kernelContext.getConfigurationManager().expand(initialFileNameToExpand);
 	if (g_path_is_absolute(initialFileName.toASCIIString()))
 	{
 		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(widgetDialogOpen), initialFileName.toASCIIString());
@@ -503,7 +503,7 @@ void CBoxConfigurationDialog::loadConfiguration() const
 
 	const gchar* initialFileNameToExpand = gtk_entry_get_text(GTK_ENTRY(m_pOverrideEntryContainer));
 
-	const CString initialFileName = m_rKernelContext.getConfigurationManager().expand(initialFileNameToExpand);
+	const CString initialFileName = m_kernelContext.getConfigurationManager().expand(initialFileNameToExpand);
 	if (g_path_is_absolute(initialFileName.toASCIIString()))
 	{
 		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(widgetDialogOpen), initialFileName.toASCIIString());
@@ -540,7 +540,7 @@ void CBoxConfigurationDialog::onOverrideBrowse() const
 	GtkWidget* widgetDialogOpen = gtk_file_chooser_dialog_new("Select file to open...", nullptr, GTK_FILE_CHOOSER_ACTION_SAVE,
 															  GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, nullptr);
 
-	const CString initialFileName = m_rKernelContext.getConfigurationManager().expand(gtk_entry_get_text(GTK_ENTRY(m_pOverrideEntry)));
+	const CString initialFileName = m_kernelContext.getConfigurationManager().expand(gtk_entry_get_text(GTK_ENTRY(m_pOverrideEntry)));
 	if (g_path_is_absolute(initialFileName.toASCIIString()))
 	{
 		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(widgetDialogOpen), initialFileName.toASCIIString());

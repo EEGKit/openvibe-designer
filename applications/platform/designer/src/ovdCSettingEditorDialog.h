@@ -19,7 +19,7 @@ namespace OpenViBEDesigner
 
 	protected:
 
-		const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
+		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
 		OpenViBE::Kernel::IBox& m_rBox;
 		CSettingCollectionHelper m_oHelper;
 		uint32_t m_ui32SettingIndex = 0;

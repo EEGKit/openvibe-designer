@@ -26,7 +26,7 @@ namespace OpenViBEDesigner
 		private:
 			GtkEntry* m_entry = nullptr;
 
-			const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
+			const OpenViBE::Kernel::IKernelContext& m_kernelContext;
 			bool m_onValueSetting = false;
 		};
 	}

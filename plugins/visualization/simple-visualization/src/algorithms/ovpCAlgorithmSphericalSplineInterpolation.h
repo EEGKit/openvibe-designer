@@ -67,8 +67,7 @@ namespace OpenViBEPlugins
 			OpenViBE::CIdentifier getCreatedClass() const override { return OVP_ClassId_Algorithm_SphericalSplineInterpolation; }
 			OpenViBE::Plugins::IPluginObject* create() override { return new CAlgorithmSphericalSplineInterpolation(); }
 
-			bool getAlgorithmPrototype(
-				OpenViBE::Kernel::IAlgorithmProto& rAlgorithmPrototype) const override
+			bool getAlgorithmPrototype(OpenViBE::Kernel::IAlgorithmProto& rAlgorithmPrototype) const override
 			{
 				//input parameters
 				rAlgorithmPrototype.addInputParameter(OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_SplineOrder, "Spline order", OpenViBE::Kernel::ParameterType_Integer);

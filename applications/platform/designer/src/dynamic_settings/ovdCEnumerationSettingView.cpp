@@ -17,7 +17,7 @@ static void on_change(GtkEntry* /*entry*/, gpointer data)
 CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName, 
 												 const Kernel::IKernelContext& rKernelContext, const CIdentifier& rTypeIdentifier):
 	CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-comboboxentry_setting_enumeration"),
-	m_oTypeIdentifier(rTypeIdentifier), m_rKernelContext(rKernelContext)
+	m_oTypeIdentifier(rTypeIdentifier), m_kernelContext(rKernelContext)
 {
 	p = false;
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
@@ -26,11 +26,11 @@ CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox& rBox, const uint3
 
 	std::vector<std::string> l_vEntries;
 
-	for (uint64_t i = 0; i < m_rKernelContext.getTypeManager().getEnumerationEntryCount(m_oTypeIdentifier); i++)
+	for (uint64_t i = 0; i < m_kernelContext.getTypeManager().getEnumerationEntryCount(m_oTypeIdentifier); i++)
 	{
 		CString l_sEntryName;
 		uint64_t l_ui64EntryValue;
-		if (m_rKernelContext.getTypeManager().getEnumerationEntry(m_oTypeIdentifier, i, l_sEntryName, l_ui64EntryValue))
+		if (m_kernelContext.getTypeManager().getEnumerationEntry(m_oTypeIdentifier, i, l_sEntryName, l_ui64EntryValue))
 		{
 			l_vEntries.push_back(l_sEntryName.toASCIIString());
 		}

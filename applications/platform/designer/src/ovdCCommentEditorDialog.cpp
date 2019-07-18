@@ -78,7 +78,7 @@ namespace
 } // namespace
 
 CCommentEditorDialog::CCommentEditorDialog(const IKernelContext& rKernelContext, IComment& rComment, const char* sGUIFilename)
-	: m_rKernelContext(rKernelContext), m_rComment(rComment), m_sGUIFilename(sGUIFilename) { }
+	: m_kernelContext(rKernelContext), m_rComment(rComment), m_sGUIFilename(sGUIFilename) { }
 
 bool CCommentEditorDialog::run()
 

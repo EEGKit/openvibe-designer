@@ -71,7 +71,7 @@ namespace
 
 	void on_button_setting_integer_pressed(GtkButton* button, gpointer data, const gint iOffset)
 	{
-		const IKernelContext& l_rKernelContext = static_cast<CSettingCollectionHelper*>(data)->m_rKernelContext;
+		const IKernelContext& l_rKernelContext = static_cast<CSettingCollectionHelper*>(data)->m_kernelContext;
 
 		vector<GtkWidget*> l_vWidget;
 		gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), collect_widget_cb, &l_vWidget);
@@ -96,7 +96,7 @@ namespace
 
 	void on_button_setting_float_pressed(GtkButton* button, gpointer data, const gdouble offset)
 	{
-		const IKernelContext& l_rKernelContext = static_cast<CSettingCollectionHelper*>(data)->m_rKernelContext;
+		const IKernelContext& l_rKernelContext = static_cast<CSettingCollectionHelper*>(data)->m_kernelContext;
 
 		vector<GtkWidget*> l_vWidget;
 		gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), collect_widget_cb, &l_vWidget);
@@ -121,7 +121,7 @@ namespace
 
 	void on_button_setting_filename_browse_pressed(GtkButton* button, gpointer data)
 	{
-		const IKernelContext& l_rKernelContext = static_cast<CSettingCollectionHelper*>(data)->m_rKernelContext;
+		const IKernelContext& l_rKernelContext = static_cast<CSettingCollectionHelper*>(data)->m_kernelContext;
 
 		vector<GtkWidget*> l_vWidget;
 		gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), collect_widget_cb, &l_vWidget);
@@ -161,7 +161,7 @@ namespace
 
 	void on_button_setting_foldername_browse_pressed(GtkButton* button, gpointer data)
 	{
-		const IKernelContext& l_rKernelContext = static_cast<CSettingCollectionHelper*>(data)->m_rKernelContext;
+		const IKernelContext& l_rKernelContext = static_cast<CSettingCollectionHelper*>(data)->m_kernelContext;
 
 		vector<GtkWidget*> l_vWidget;
 		gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), collect_widget_cb, &l_vWidget);
@@ -201,7 +201,7 @@ namespace
 
 	void on_button_setting_script_edit_pressed(GtkButton* button, gpointer data)
 	{
-		const IKernelContext& l_rKernelContext = static_cast<CSettingCollectionHelper*>(data)->m_rKernelContext;
+		const IKernelContext& l_rKernelContext = static_cast<CSettingCollectionHelper*>(data)->m_kernelContext;
 
 		vector<GtkWidget*> l_vWidget;
 		gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), collect_widget_cb, &l_vWidget);
@@ -435,7 +435,7 @@ namespace
 
 		l_oUserData.pDialog = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-dialog"));
 
-		const CString l_sInitialGradient = static_cast<CSettingCollectionHelper*>(data)->m_rKernelContext.getConfigurationManager().expand(gtk_entry_get_text(l_widget));
+		const CString l_sInitialGradient = static_cast<CSettingCollectionHelper*>(data)->m_kernelContext.getConfigurationManager().expand(gtk_entry_get_text(l_widget));
 		CMatrix l_oInitialGradient;
 
 		OpenViBEVisualizationToolkit::Tools::ColorGradient::parse(l_oInitialGradient, l_sInitialGradient);
@@ -483,7 +483,7 @@ namespace
 // ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- -----------
 
 CSettingCollectionHelper::CSettingCollectionHelper(const IKernelContext& rKernelContext, const char* sGUIFilename)
-	: m_rKernelContext(rKernelContext), m_sGUIFilename(sGUIFilename) { }
+	: m_kernelContext(rKernelContext), m_sGUIFilename(sGUIFilename) { }
 
 CSettingCollectionHelper::~CSettingCollectionHelper() = default;
 
@@ -500,8 +500,8 @@ CString CSettingCollectionHelper::getSettingWidgetName(const CIdentifier& rTypeI
 	if (rTypeIdentifier == OV_TypeId_Script) { return "settings_collection-hbox_setting_script"; }
 	if (rTypeIdentifier == OV_TypeId_Color) { return "settings_collection-hbox_setting_color"; }
 	if (rTypeIdentifier == OV_TypeId_ColorGradient) { return "settings_collection-hbox_setting_color_gradient"; }
-	if (m_rKernelContext.getTypeManager().isEnumeration(rTypeIdentifier)) { return "settings_collection-comboboxentry_setting_enumeration"; }
-	if (m_rKernelContext.getTypeManager().isBitMask(rTypeIdentifier)) { return "settings_collection-table_setting_bitmask"; }
+	if (m_kernelContext.getTypeManager().isEnumeration(rTypeIdentifier)) { return "settings_collection-comboboxentry_setting_enumeration"; }
+	if (m_kernelContext.getTypeManager().isBitMask(rTypeIdentifier)) { return "settings_collection-table_setting_bitmask"; }
 	return "settings_collection-entry_setting_string";
 }
 
@@ -518,8 +518,8 @@ CString CSettingCollectionHelper::getSettingEntryWidgetName(const CIdentifier& r
 	if (rTypeIdentifier == OV_TypeId_Script) { return "settings_collection-entry_setting_script_string"; }
 	if (rTypeIdentifier == OV_TypeId_Color) { return "settings_collection-hbox_setting_color_string"; }
 	if (rTypeIdentifier == OV_TypeId_ColorGradient) return "settings_collection-hbox_setting_color_gradient_string";
-	if (m_rKernelContext.getTypeManager().isEnumeration(rTypeIdentifier)) return "settings_collection-comboboxentry_setting_enumeration";
-	if (m_rKernelContext.getTypeManager().isBitMask(rTypeIdentifier)) { return "settings_collection-table_setting_bitmask"; }
+	if (m_kernelContext.getTypeManager().isEnumeration(rTypeIdentifier)) return "settings_collection-comboboxentry_setting_enumeration";
+	if (m_kernelContext.getTypeManager().isBitMask(rTypeIdentifier)) { return "settings_collection-table_setting_bitmask"; }
 	return "settings_collection-entry_setting_string";
 }
 
@@ -537,8 +537,8 @@ CString CSettingCollectionHelper::getValue(const CIdentifier& rTypeIdentifier, G
 	if (rTypeIdentifier == OV_TypeId_Script) { return getValueScript(widget); }
 	if (rTypeIdentifier == OV_TypeId_Color) { return getValueColor(widget); }
 	if (rTypeIdentifier == OV_TypeId_ColorGradient) { return getValueColorGradient(widget); }
-	if (m_rKernelContext.getTypeManager().isEnumeration(rTypeIdentifier)) { return getValueEnumeration(rTypeIdentifier, widget); }
-	if (m_rKernelContext.getTypeManager().isBitMask(rTypeIdentifier)) { return getValueBitMask(rTypeIdentifier, widget); }
+	if (m_kernelContext.getTypeManager().isEnumeration(rTypeIdentifier)) { return getValueEnumeration(rTypeIdentifier, widget); }
+	if (m_kernelContext.getTypeManager().isBitMask(rTypeIdentifier)) { return getValueBitMask(rTypeIdentifier, widget); }
 	return getValueString(widget);
 }
 
@@ -672,8 +672,8 @@ void CSettingCollectionHelper::setValue(const CIdentifier& rTypeIdentifier, GtkW
 	if (rTypeIdentifier == OV_TypeId_Script) { return setValueScript(widget, rValue); }
 	if (rTypeIdentifier == OV_TypeId_Color) { return setValueColor(widget, rValue); }
 	if (rTypeIdentifier == OV_TypeId_ColorGradient) { return setValueColorGradient(widget, rValue); }
-	if (m_rKernelContext.getTypeManager().isEnumeration(rTypeIdentifier)) { return setValueEnumeration(rTypeIdentifier, widget, rValue); }
-	if (m_rKernelContext.getTypeManager().isBitMask(rTypeIdentifier)) { return setValueBitMask(rTypeIdentifier, widget, rValue); }
+	if (m_kernelContext.getTypeManager().isEnumeration(rTypeIdentifier)) { return setValueEnumeration(rTypeIdentifier, widget, rValue); }
+	if (m_kernelContext.getTypeManager().isBitMask(rTypeIdentifier)) { return setValueBitMask(rTypeIdentifier, widget, rValue); }
 	return setValueString(widget, rValue);
 }
 
@@ -776,7 +776,7 @@ void CSettingCollectionHelper::setValueColor(GtkWidget* widget, const CString& r
 	g_signal_connect(G_OBJECT(l_vWidget[1]), "color-set", G_CALLBACK(on_button_setting_color_choose_pressed), this);
 
 	int r = 0, g = 0, b = 0;
-	sscanf(m_rKernelContext.getConfigurationManager().expand(rValue).toASCIIString(), "%i,%i,%i", &r, &g, &b);
+	sscanf(m_kernelContext.getConfigurationManager().expand(rValue).toASCIIString(), "%i,%i,%i", &r, &g, &b);
 
 	GdkColor l_oColor;
 	l_oColor.red = (r * 65535) / 100;
@@ -803,7 +803,7 @@ void CSettingCollectionHelper::setValueEnumeration(const CIdentifier& rTypeIdent
 	GtkTreeIter l_oListIter;
 	GtkComboBox* l_widget = GTK_COMBO_BOX(widget);
 	GtkListStore* l_pList = GTK_LIST_STORE(gtk_combo_box_get_model(l_widget));
-	const uint64_t l_ui64Value = m_rKernelContext.getTypeManager().getEnumerationEntryValueFromName(rTypeIdentifier, rValue);
+	const uint64_t l_ui64Value = m_kernelContext.getTypeManager().getEnumerationEntryValueFromName(rTypeIdentifier, rValue);
 	uint64_t i;
 
 #if 0
@@ -813,11 +813,11 @@ void CSettingCollectionHelper::setValueEnumeration(const CIdentifier& rTypeIdent
 	std::map<CString, uint64_t> m_vListEntries;
 	std::map<CString, uint64_t>::const_iterator it;
 
-	for (i = 0; i < m_rKernelContext.getTypeManager().getEnumerationEntryCount(rTypeIdentifier); ++i)
+	for (i = 0; i < m_kernelContext.getTypeManager().getEnumerationEntryCount(rTypeIdentifier); ++i)
 	{
 		CString l_sEntryName;
 		uint64_t l_ui64EntryValue;
-		if (m_rKernelContext.getTypeManager().getEnumerationEntry(rTypeIdentifier, i, l_sEntryName, l_ui64EntryValue))
+		if (m_kernelContext.getTypeManager().getEnumerationEntry(rTypeIdentifier, i, l_sEntryName, l_ui64EntryValue))
 		{
 			m_vListEntries[l_sEntryName] = l_ui64EntryValue;
 		}
@@ -840,11 +840,11 @@ void CSettingCollectionHelper::setValueEnumeration(const CIdentifier& rTypeIdent
 	else
 	{
 		gtk_list_store_clear(l_pList);
-		for (i = 0; i < m_rKernelContext.getTypeManager().getEnumerationEntryCount(rTypeIdentifier); ++i)
+		for (i = 0; i < m_kernelContext.getTypeManager().getEnumerationEntryCount(rTypeIdentifier); ++i)
 		{
 			CString l_sEntryName;
 			uint64_t l_ui64EntryValue;
-			if (m_rKernelContext.getTypeManager().getEnumerationEntry(rTypeIdentifier, i, l_sEntryName, l_ui64EntryValue))
+			if (m_kernelContext.getTypeManager().getEnumerationEntry(rTypeIdentifier, i, l_sEntryName, l_ui64EntryValue))
 			{
 				gtk_list_store_append(l_pList, &l_oListIter);
 				gtk_list_store_set(l_pList, &l_oListIter, 0, l_sEntryName.toASCIIString(), -1);
@@ -871,15 +871,15 @@ void CSettingCollectionHelper::setValueBitMask(const CIdentifier& rTypeIdentifie
 
 	const string l_sValue(rValue);
 
-	const gint l_iTableSize = guint((m_rKernelContext.getTypeManager().getBitMaskEntryCount(rTypeIdentifier) + 1) >> 1);
+	const gint l_iTableSize = guint((m_kernelContext.getTypeManager().getBitMaskEntryCount(rTypeIdentifier) + 1) >> 1);
 	GtkTable* l_pBitMaskTable = GTK_TABLE(widget);
 	gtk_table_resize(l_pBitMaskTable, 2, l_iTableSize);
 
-	for (uint64_t i = 0; i < m_rKernelContext.getTypeManager().getBitMaskEntryCount(rTypeIdentifier); ++i)
+	for (uint64_t i = 0; i < m_kernelContext.getTypeManager().getBitMaskEntryCount(rTypeIdentifier); ++i)
 	{
 		CString l_sEntryName;
 		uint64_t l_ui64EntryValue;
-		if (m_rKernelContext.getTypeManager().getBitMaskEntry(rTypeIdentifier, i, l_sEntryName, l_ui64EntryValue))
+		if (m_kernelContext.getTypeManager().getBitMaskEntry(rTypeIdentifier, i, l_sEntryName, l_ui64EntryValue))
 		{
 			GtkWidget* l_pSettingButton = gtk_check_button_new();
 			gtk_table_attach_defaults(l_pBitMaskTable, l_pSettingButton, guint(i & 1), guint((i & 1) + 1), guint(i >> 1), guint((i >> 1) + 1));

@@ -141,7 +141,7 @@ namespace OpenViBEDesigner
 		void zoomOutCB();//Call when a zoom out is required
 		void spinnerZoomChangedCB(uint32_t scaleDelta);
 
-		const OpenViBE::Kernel::IKernelContext& m_KernelContext;
+		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
 		OpenViBE::Kernel::IPluginManager* m_pPluginManager = nullptr;
 		OpenViBE::Kernel::IScenarioManager* m_pScenarioManager = nullptr;
 		OpenViBEVisualizationToolkit::IVisualizationManager* m_pVisualizationManager = nullptr;

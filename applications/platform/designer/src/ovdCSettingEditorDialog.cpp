@@ -11,7 +11,7 @@ static void type_changed_cb(GtkComboBox* /*widget*/, gpointer data)
 }
 
 CSettingEditorDialog::CSettingEditorDialog(const IKernelContext& rKernelContext, IBox& rBox, const uint32_t settingIndex, const char* sTitle, const char* sGUIFilename, const char* sGUISettingsFilename)
-	: m_rKernelContext(rKernelContext), m_rBox(rBox), m_oHelper(rKernelContext, sGUIFilename), m_ui32SettingIndex(settingIndex), 
+	: m_kernelContext(rKernelContext), m_rBox(rBox), m_oHelper(rKernelContext, sGUIFilename), m_ui32SettingIndex(settingIndex), 
 	  m_sGUIFilename(sGUIFilename), m_sGUISettingsFilename(sGUISettingsFilename), m_sTitle(sTitle) { }
 
 CSettingEditorDialog::~CSettingEditorDialog() = default;
@@ -44,9 +44,9 @@ bool CSettingEditorDialog::run()
 	gint l_iActive = -1;
 	uint32_t numSettings = 0; // Cannot rely on m_vSettingTypes.size() -- if there are any duplicates, it wont increment properly (and should be an error anyway) ...
 
-	for (const auto& l_oCurrentTypeIdentifier : m_rKernelContext.getTypeManager().getSortedTypes())
+	for (const auto& l_oCurrentTypeIdentifier : m_kernelContext.getTypeManager().getSortedTypes())
 	{
-		if (!m_rKernelContext.getTypeManager().isStream(l_oCurrentTypeIdentifier.first))
+		if (!m_kernelContext.getTypeManager().isStream(l_oCurrentTypeIdentifier.first))
 		{
 			gtk_combo_box_append_text(GTK_COMBO_BOX(m_pType), l_oCurrentTypeIdentifier.second.toASCIIString());
 			if (l_oCurrentTypeIdentifier.first == l_oSettingType)
