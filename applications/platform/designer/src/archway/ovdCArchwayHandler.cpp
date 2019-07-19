@@ -441,17 +441,11 @@ namespace
 		auto enginePipelines = callbackParameters->first;
 		auto pipelineSettings = callbackParameters->second;
 
-		enginePipelines->push_back({
-			pipelineId,
-			pipelineDescription,
-			pipelineSettings->count(pipelineId) != 0
-			});
+		enginePipelines->push_back({ pipelineId, pipelineDescription, pipelineSettings->count(pipelineId) != 0 });
 	}
 
-	void enumeratePipelineParametersCallback(unsigned int pipelineId, const char* parameterName, const char* parameterValue, void* userData)
+	void enumeratePipelineParametersCallback(unsigned int/*pipelineId*/, const char* parameterName, const char* parameterValue, void* userData)
 	{
-		(void)pipelineId;
-
 		// This callback will go through the pipeline parameters one by one and push them into the
 // vector of SPipelineParameters which is passed as the first element of the data input pair
 // This callback receives the parameter's name and default value from Archway, which is why we pass

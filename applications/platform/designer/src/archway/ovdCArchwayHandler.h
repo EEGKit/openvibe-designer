@@ -97,22 +97,22 @@ namespace Mensia {
 		typedef void (*FPEnumerateAvailablePipelinesCallback)(unsigned int pipelineClassId, const char* pipelineDescription, void* userData);
 		typedef void (*FPEnumeratePipelineParametersCallback)(unsigned int pipelineId, const char* parameterName, const char* parameterValue, void* userData) ;
 		struct ArchwayAPI {
-			unsigned int (*getLastError)(void);
+			unsigned int (*getLastError)();
 			const char* (*getErrorString)(unsigned int errorCode);
 
-			const char* (*getVersionDescription)(void);
+			const char* (*getVersionDescription)();
 
 			void (*getConfigurationParameterAsString)(const char* configurationParameter, char* outputBuffer, unsigned int bufferLength);
 			bool (*getPipelineScenarioPath)(uint64_t pipelineId, char* messageBuffer, unsigned int bufferLength);
 
 			bool (*initialize)(const char* login, const char* password, const char* applicationName, const char* configurationFilename);
-			bool (*startAllAcquisitionDevices)(void);
-			bool (*startImpedanceCheckOnAllAcquisitionDevices)(void);
-			bool (*startEngine)(void);
-			bool (*startEngineInFastForward)(void);
-			bool (*stopEngine)(void);
-			bool (*stopAllAcquisitionDevices)(void);
-			bool (*uninitialize)(void);
+			bool (*startAllAcquisitionDevices)();
+			bool (*startImpedanceCheckOnAllAcquisitionDevices)();
+			bool (*startEngine)();
+			bool (*startEngineInFastForward)();
+			bool (*stopEngine)();
+			bool (*stopAllAcquisitionDevices)();
+			bool (*uninitialize)();
 
 			bool (*enumerateAvailablePipelines)(FPEnumerateAvailablePipelinesCallback callback, void* userData);
 			unsigned int (*createPipeline)(unsigned int pipelineClassId, const char* profileName);
@@ -123,7 +123,7 @@ namespace Mensia {
 			bool (*enumeratePipelineParameters)(unsigned int pipelineId, FPEnumeratePipelineParametersCallback callback, void* userData);
 			bool (*setPipelineParameterAsString)(unsigned int pipelineId, const char* parameterName, const char* value);
 
-			bool (*mainloop)(void);
+			bool (*mainloop)();
 			unsigned int (*getPendingValueCount)(unsigned int pipelineId, unsigned int matrixOutputIndex);
 			unsigned int (*getPendingValueDimension)(unsigned int pipelineId, unsigned int matrixOutputIndex);
 			bool (*getPendingValue)(unsigned int pipelineId, unsigned int matrixOutputIndex, float* value);
@@ -133,9 +133,9 @@ namespace Mensia {
 			bool (*dropPendingValues)(unsigned int pipelineId);
 			bool (*dropPendingEvents)(unsigned int pipelineId);
 
-			bool (*isInitialized)(void);
-			bool (*isAcquiring)(void);
-			bool (*isStarted)(void);
+			bool (*isInitialized)();
+			bool (*isAcquiring)();
+			bool (*isStarted)();
 		};
 
 		struct ArchwayAPI* m_Archway;
