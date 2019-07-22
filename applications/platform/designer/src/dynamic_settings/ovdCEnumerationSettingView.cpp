@@ -14,12 +14,11 @@ static void on_change(GtkEntry* /*entry*/, gpointer data)
 	static_cast<CEnumerationSettingView *>(data)->onChange();
 }
 
-CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName, 
-												 const Kernel::IKernelContext& rKernelContext, const CIdentifier& rTypeIdentifier):
-	CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-comboboxentry_setting_enumeration"),
-	m_oTypeIdentifier(rTypeIdentifier), m_kernelContext(rKernelContext)
+CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName,
+												 const Kernel::IKernelContext& rKernelContext, const CIdentifier& rTypeIdentifier): CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-comboboxentry_setting_enumeration"),
+																																	m_oTypeIdentifier(rTypeIdentifier), m_kernelContext(rKernelContext)
 {
-	p = false;
+	p                           = false;
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 
 	m_comboBox = GTK_COMBO_BOX(l_pSettingWidget);
@@ -80,7 +79,7 @@ void CEnumerationSettingView::setValue(const CString& value)
 	{
 		GtkTreeIter l_oListIter;
 		GtkListStore* l_pList = GTK_LIST_STORE(gtk_combo_box_get_model(m_comboBox));
-		int valuesInModel = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(l_pList), nullptr);
+		int valuesInModel     = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(l_pList), nullptr);
 		if (valuesInModel == int(m_entriesIndex.size()))
 		{
 			gtk_list_store_append(l_pList, &l_oListIter);

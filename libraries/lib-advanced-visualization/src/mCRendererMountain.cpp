@@ -39,8 +39,8 @@ void CRendererMountain::rebuild(const IRendererContext& rContext)
 	{
 		for (j = 0; j < m_sampleCount; ++j)
 		{
-			const float a = i * 1.f / float(m_channelCount - 1);
-			const float b = 1 - j * 1.f / float(m_sampleCount - 1);
+			const float a              = i * 1.f / float(m_channelCount - 1);
+			const float b              = 1 - j * 1.f / float(m_sampleCount - 1);
 			m_oMountain.m_vVertex[k].x = a;
 			m_oMountain.m_vVertex[k].y = 0;
 			m_oMountain.m_vVertex[k].z = b;
@@ -55,10 +55,10 @@ void CRendererMountain::rebuild(const IRendererContext& rContext)
 	{
 		for (j = 0; j < m_sampleCount - 1; ++j)
 		{
-			const size_t id = k * 6;
-			const uint32_t v1 = uint32_t(i * m_sampleCount + j);
-			const uint32_t v2 = v1 + m_sampleCount;
-			m_oMountain.m_vTriangle[id] = v1;
+			const size_t id                 = k * 6;
+			const uint32_t v1               = uint32_t(i * m_sampleCount + j);
+			const uint32_t v2               = v1 + m_sampleCount;
+			m_oMountain.m_vTriangle[id]     = v1;
 			m_oMountain.m_vTriangle[id + 1] = v2;
 			m_oMountain.m_vTriangle[id + 2] = v2 + 1;
 			m_oMountain.m_vTriangle[id + 3] = v1;
@@ -81,9 +81,9 @@ void CRendererMountain::refresh(const IRendererContext& rContext)
 
 	for (i = 0, k = 0; i < rContext.getSelectedCount(); ++i)
 	{
-		k = ((m_historyCount - 1) / m_sampleCount) * m_sampleCount;
+		k                              = ((m_historyCount - 1) / m_sampleCount) * m_sampleCount;
 		std::vector<float>& l_vHistory = m_history[rContext.getSelected(uint32_t(i))];
-		CVertex* l_pVertex = &m_oMountain.m_vVertex[i * m_sampleCount];
+		CVertex* l_pVertex             = &m_oMountain.m_vVertex[i * m_sampleCount];
 		for (size_t j = 0; j < m_sampleCount; j++, k++)
 		{
 			if (/*k>=m_historyIndex && */k < m_historyCount)

@@ -44,7 +44,7 @@ namespace Mensia
 				if (m_pRenderer->getHistoryCount() == 0) { return; }
 				if (m_pRenderer->getHistoryIndex() == 0) { return; }
 
-				const uint32_t sampleCount = m_pRenderer->getSampleCount();
+				const uint32_t sampleCount  = m_pRenderer->getSampleCount();
 				const uint32_t historyIndex = m_pRenderer->getHistoryIndex();
 
 				const float l_fProgress = float(historyIndex - (float(historyIndex) / sampleCount) * sampleCount) / sampleCount;

@@ -47,14 +47,14 @@ namespace OpenViBEDesigner
 
 		Setting::CSettingViewFactory m_oSettingFactory;
 		std::vector<Setting::CAbstractSettingView*> m_vSettingViewVector;
-		GtkTable* m_pSettingsTable = nullptr;
-		GtkViewport* m_pViewPort = nullptr;
+		GtkTable* m_pSettingsTable           = nullptr;
+		GtkViewport* m_pViewPort             = nullptr;
 		GtkScrolledWindow* m_pScrolledWindow = nullptr;
-		GtkEntry* m_pOverrideEntry = nullptr;
+		GtkEntry* m_pOverrideEntry           = nullptr;
 		GtkWidget* m_pOverrideEntryContainer = nullptr;
-		GtkWidget* m_pSettingDialog = nullptr;
+		GtkWidget* m_pSettingDialog          = nullptr;
 		GtkCheckButton* m_pFileOverrideCheck = nullptr;
-		bool m_bIsScenarioRunning = false;
+		bool m_bIsScenarioRunning            = false;
 
 		std::vector<OpenViBE::CString> m_SettingsMemory;
 	};

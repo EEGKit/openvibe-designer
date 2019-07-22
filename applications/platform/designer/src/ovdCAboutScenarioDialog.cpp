@@ -25,14 +25,14 @@ bool CAboutScenarioDialog::run()
 	gtk_builder_add_from_file(interface, m_sGUIFilename.toASCIIString(), nullptr);
 	gtk_builder_connect_signals(interface, nullptr);
 
-	GtkWidget* l_pDialog = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about"));
-	GtkWidget* l_pName = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_name"));
-	GtkWidget* l_pAuthorName = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_author_name"));
-	GtkWidget* l_pAuthorCompanyName = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_company_name"));
-	GtkWidget* l_pCategory = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_category"));
-	GtkWidget* l_pVersion = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_version"));
-	GtkWidget* l_pDocumentationPage = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_documentation_page"));
-	GtkWidget* l_pAddedSoftwareVersion = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_added_software_version"));
+	GtkWidget* l_pDialog                 = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about"));
+	GtkWidget* l_pName                   = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_name"));
+	GtkWidget* l_pAuthorName             = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_author_name"));
+	GtkWidget* l_pAuthorCompanyName      = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_company_name"));
+	GtkWidget* l_pCategory               = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_category"));
+	GtkWidget* l_pVersion                = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_version"));
+	GtkWidget* l_pDocumentationPage      = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_documentation_page"));
+	GtkWidget* l_pAddedSoftwareVersion   = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_added_software_version"));
 	GtkWidget* l_pUpdatedSoftwareVersion = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_update_software_version"));
 
 	GtkWidget* l_pMetaboxId = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_metabox_id"));
@@ -40,7 +40,7 @@ bool CAboutScenarioDialog::run()
 	GtkWidget* l_pResetMetaboxId = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-button_reset_metabox_id"));
 	const gulong signalHandlerId = g_signal_connect(G_OBJECT(l_pResetMetaboxId), "clicked", G_CALLBACK(buttonMetaboxReset_clicked), l_pMetaboxId);
 
-	GtkWidget* l_pShortDescription = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-textview_short_description"));
+	GtkWidget* l_pShortDescription    = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-textview_short_description"));
 	GtkWidget* l_pDetailedDescription = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-textview_detailed_description"));
 
 	g_object_unref(interface);

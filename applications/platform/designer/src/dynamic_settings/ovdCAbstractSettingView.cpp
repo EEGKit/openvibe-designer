@@ -19,8 +19,7 @@ CAbstractSettingView::~CAbstractSettingView()
 	if (G_IS_OBJECT(m_pBuilder)) { g_object_unref(m_pBuilder); }
 }
 
-CAbstractSettingView::CAbstractSettingView(Kernel::IBox& rBox, const uint32_t index, const char* sBuilderName, const char* sWidgetName):
-	m_rBox(rBox), m_index(index), m_settingWidgetName("")
+CAbstractSettingView::CAbstractSettingView(Kernel::IBox& rBox, const uint32_t index, const char* sBuilderName, const char* sWidgetName): m_rBox(rBox), m_index(index), m_settingWidgetName("")
 {
 	if (sBuilderName != nullptr)
 	{
@@ -64,8 +63,8 @@ GtkWidget* CAbstractSettingView::generateEntryWidget()
 {
 	GtkTable* m_pTable = GTK_TABLE(gtk_table_new(1, 3, false));
 
-	GtkWidget* l_pSettingWidget = GTK_WIDGET(gtk_builder_get_object(m_pBuilder, m_settingWidgetName.toASCIIString()));
-	GtkWidget* l_pSettingRevert = GTK_WIDGET(gtk_builder_get_object(m_pBuilder, "settings_collection-button_setting_revert"));
+	GtkWidget* l_pSettingWidget  = GTK_WIDGET(gtk_builder_get_object(m_pBuilder, m_settingWidgetName.toASCIIString()));
+	GtkWidget* l_pSettingRevert  = GTK_WIDGET(gtk_builder_get_object(m_pBuilder, "settings_collection-button_setting_revert"));
 	GtkWidget* l_pSettingDefault = GTK_WIDGET(gtk_builder_get_object(m_pBuilder, "settings_collection-button_setting_default"));
 
 	gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(l_pSettingWidget)), l_pSettingWidget);

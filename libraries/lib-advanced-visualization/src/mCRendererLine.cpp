@@ -66,8 +66,8 @@ void CRendererLine::refresh(const IRendererContext& rContext)
 	for (size_t channel = 0; channel < m_channelCount; channel++)
 	{
 		const uint32_t firstSampleIndex = ((l_ui32HistoryIndexMax - 1) / m_sampleCount) * m_sampleCount;
-		std::vector<float>& l_vHistory = m_history[channel];
-		CVertex* l_pVertex = &m_Vertices[channel][0];
+		std::vector<float>& l_vHistory  = m_history[channel];
+		CVertex* l_pVertex              = &m_Vertices[channel][0];
 
 		for (uint32_t sample = 0; sample < m_sampleCount; sample++)
 		{

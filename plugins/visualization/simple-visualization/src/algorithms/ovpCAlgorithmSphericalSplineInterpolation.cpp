@@ -18,10 +18,10 @@ using namespace Test;
 bool CAlgorithmSphericalSplineInterpolation::initialize()
 
 {
-	m_bFirstProcess = true;
-	m_pDoubleCoords = nullptr;
-	m_pInsermCoords = nullptr;
-	m_pSplineCoefs = nullptr;
+	m_bFirstProcess         = true;
+	m_pDoubleCoords         = nullptr;
+	m_pInsermCoords         = nullptr;
+	m_pSplineCoefs          = nullptr;
 	m_pLaplacianSplineCoefs = nullptr;
 
 	ip_splineOrder.initialize(getInputParameter(OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_SplineOrder));
@@ -71,11 +71,11 @@ bool CAlgorithmSphericalSplineInterpolation::process()
 		//fill both matrices
 		for (int i = 0; i < int(ip_controlPointsCount); ++i)
 		{
-			const uint32_t id = 3 * i;
-			m_pDoubleCoords[id] = double((*ip_controlPointsCoords)[id]);
+			const uint32_t id       = 3 * i;
+			m_pDoubleCoords[id]     = double((*ip_controlPointsCoords)[id]);
 			m_pDoubleCoords[id + 1] = double((*ip_controlPointsCoords)[id + 1]);
 			m_pDoubleCoords[id + 2] = double((*ip_controlPointsCoords)[id + 2]);
-			m_pInsermCoords[i] = id + m_pDoubleCoords;
+			m_pInsermCoords[i]      = id + m_pDoubleCoords;
 		}
 		m_bFirstProcess = false;
 	}
@@ -163,7 +163,7 @@ bool CAlgorithmSphericalSplineInterpolation::process()
 
 		//compute spline ponderation coefficients using spline values
 		//FIXME : have a working copy of control points values stored as doubles?
-		const int result = spline_coef(int(ip_controlPointsCount), m_pInsermCoords, static_cast<double*>(ip_controlPointsValues->getBuffer()), m_PotTable, m_pLaplacianSplineCoefs);
+		const int result                                    = spline_coef(int(ip_controlPointsCount), m_pInsermCoords, static_cast<double*>(ip_controlPointsValues->getBuffer()), m_PotTable, m_pLaplacianSplineCoefs);
 		m_pLaplacianSplineCoefs[int(ip_controlPointsCount)] = 0;
 
 		if (result != 0)
@@ -254,12 +254,12 @@ bool CAlgorithmSphericalSplineInterpolation::process()
 		for (uint32_t i = 0; i < ip_samplePointsCoords->getDimensionSize(0); i++, sampleValue++)
 		{
 			*sampleValue = spline_interp(int(ip_controlPointsCount), //number of fixed values
-											m_pInsermCoords, //coordinates of fixed values
-											m_ScdTable, //sin/cos table for laplacian
-											m_pLaplacianSplineCoefs, //laplacian coefficients
-											*(ip_samplePointsCoords->getBuffer() + 3 * i),
-											*(ip_samplePointsCoords->getBuffer() + 3 * i + 1),
-											*(ip_samplePointsCoords->getBuffer() + 3 * i + 2)); //coordinate where to interpolate
+										 m_pInsermCoords, //coordinates of fixed values
+										 m_ScdTable, //sin/cos table for laplacian
+										 m_pLaplacianSplineCoefs, //laplacian coefficients
+										 *(ip_samplePointsCoords->getBuffer() + 3 * i),
+										 *(ip_samplePointsCoords->getBuffer() + 3 * i + 1),
+										 *(ip_samplePointsCoords->getBuffer() + 3 * i + 2)); //coordinate where to interpolate
 
 			/***************************************************************************/
 			/*** Units : potential values being very often expressed as micro-Volts  ***/

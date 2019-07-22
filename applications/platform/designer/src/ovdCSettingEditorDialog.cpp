@@ -11,7 +11,7 @@ static void type_changed_cb(GtkComboBox* /*widget*/, gpointer data)
 }
 
 CSettingEditorDialog::CSettingEditorDialog(const IKernelContext& rKernelContext, IBox& rBox, const uint32_t settingIndex, const char* sTitle, const char* sGUIFilename, const char* sGUISettingsFilename)
-	: m_kernelContext(rKernelContext), m_rBox(rBox), m_oHelper(rKernelContext, sGUIFilename), m_ui32SettingIndex(settingIndex), 
+	: m_kernelContext(rKernelContext), m_rBox(rBox), m_oHelper(rKernelContext, sGUIFilename), m_ui32SettingIndex(settingIndex),
 	  m_sGUIFilename(sGUIFilename), m_sGUISettingsFilename(sGUISettingsFilename), m_sTitle(sTitle) { }
 
 CSettingEditorDialog::~CSettingEditorDialog() = default;
@@ -24,9 +24,9 @@ bool CSettingEditorDialog::run()
 	gtk_builder_connect_signals(l_pBuilderInterfaceSetting, nullptr);
 
 	GtkWidget* l_pDialog = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceSetting, "setting_editor"));
-	GtkWidget* l_pName = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceSetting, "setting_editor-setting_name_entry"));
-	m_pTable = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceSetting, "setting_editor-table"));
-	m_pType = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceSetting, "setting_editor-setting_type_combobox"));
+	GtkWidget* l_pName   = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceSetting, "setting_editor-setting_name_entry"));
+	m_pTable             = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceSetting, "setting_editor-table"));
+	m_pType              = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceSetting, "setting_editor-setting_type_combobox"));
 	gtk_list_store_clear(GTK_LIST_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(m_pType))));
 	g_object_unref(l_pBuilderInterfaceSetting);
 
@@ -41,7 +41,7 @@ bool CSettingEditorDialog::run()
 
 	gtk_entry_set_text(GTK_ENTRY(l_pName), l_sSettingName.toASCIIString());
 
-	gint l_iActive = -1;
+	gint l_iActive       = -1;
 	uint32_t numSettings = 0; // Cannot rely on m_vSettingTypes.size() -- if there are any duplicates, it wont increment properly (and should be an error anyway) ...
 
 	for (const auto& l_oCurrentTypeIdentifier : m_kernelContext.getTypeManager().getSortedTypes())
@@ -64,7 +64,7 @@ bool CSettingEditorDialog::run()
 	}
 
 	bool l_bFinished = false;
-	bool l_bResult = false;
+	bool l_bResult   = false;
 	while (!l_bFinished)
 	{
 		const gint l_iResult = gtk_dialog_run(GTK_DIALOG(l_pDialog));
@@ -79,7 +79,7 @@ bool CSettingEditorDialog::run()
 				m_rBox.setSettingValue(m_ui32SettingIndex, m_oHelper.getValue(l_oSettingType, m_pDefaultValue));
 				m_rBox.setSettingDefaultValue(m_ui32SettingIndex, m_oHelper.getValue(l_oSettingType, m_pDefaultValue));
 				l_bFinished = true;
-				l_bResult = true;
+				l_bResult   = true;
 			}
 		}
 		else if (l_iResult == 2) // revert
@@ -94,7 +94,7 @@ bool CSettingEditorDialog::run()
 		else
 		{
 			l_bFinished = true;
-			l_bResult = false;
+			l_bResult   = false;
 		}
 	}
 
@@ -108,7 +108,7 @@ void CSettingEditorDialog::typeChangedCB()
 {
 	const CIdentifier l_oSettingType = m_vSettingTypes[gtk_combo_box_get_active_text(GTK_COMBO_BOX(m_pType))];
 
-	const CString l_sWidgetName = m_oHelper.getSettingWidgetName(l_oSettingType).toASCIIString();
+	const CString l_sWidgetName                      = m_oHelper.getSettingWidgetName(l_oSettingType).toASCIIString();
 	GtkBuilder* l_pBuilderInterfaceDefaultValueDummy = gtk_builder_new(); // glade_xml_new(m_sGUIFilename.toASCIIString(), l_sWidgetName.toASCIIString(), nullptr);
 	gtk_builder_add_from_file(l_pBuilderInterfaceDefaultValueDummy, m_sGUISettingsFilename.toASCIIString(), nullptr);
 	gtk_builder_connect_signals(l_pBuilderInterfaceDefaultValueDummy, nullptr);

@@ -8,17 +8,17 @@ using namespace OpenViBEDesigner;
 CInputDialog::CInputDialog(const char* sGtkBuilder, const fpButtonCB fpOKButtonCB, void* data, const char* sTitle, const char* sLabel, const char* sEntry)
 {
 	m_fpOKButtonCB = fpOKButtonCB;
-	m_pUserData = data;
+	m_pUserData    = data;
 
 	//retrieve input dialog
 	GtkBuilder* inputDialogInterface = gtk_builder_new(); // glade_xml_new(sGtkBuilder, "input", nullptr);
 	gtk_builder_add_from_file(inputDialogInterface, sGtkBuilder, nullptr);
 	gtk_builder_connect_signals(inputDialogInterface, nullptr);
 
-	m_pInputDialog = GTK_DIALOG(gtk_builder_get_object(inputDialogInterface, "input"));
-	m_pInputDialogLabel = GTK_LABEL(gtk_builder_get_object(inputDialogInterface, "input-label"));
-	m_pInputDialogEntry = GTK_ENTRY(gtk_builder_get_object(inputDialogInterface, "input-entry"));
-	m_pInputDialogOKButton = GTK_BUTTON(gtk_builder_get_object(inputDialogInterface, "input-button_ok"));
+	m_pInputDialog             = GTK_DIALOG(gtk_builder_get_object(inputDialogInterface, "input"));
+	m_pInputDialogLabel        = GTK_LABEL(gtk_builder_get_object(inputDialogInterface, "input-label"));
+	m_pInputDialogEntry        = GTK_ENTRY(gtk_builder_get_object(inputDialogInterface, "input-entry"));
+	m_pInputDialogOKButton     = GTK_BUTTON(gtk_builder_get_object(inputDialogInterface, "input-button_ok"));
 	m_pInputDialogCancelButton = GTK_BUTTON(gtk_builder_get_object(inputDialogInterface, "input-button_cancel"));
 
 	GTK_WIDGET_SET_FLAGS(GTK_WIDGET(m_pInputDialogEntry), GDK_KEY_PRESS_MASK);

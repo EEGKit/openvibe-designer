@@ -31,11 +31,11 @@ namespace OpenViBEPlugins
 
 		protected:
 			OpenViBEToolkit::TStreamedMatrixDecoder<CBoxAlgorithmTopographicMap2DDisplay>* m_pDecoder = nullptr;
-			bool m_bFirstBufferReceived = false;
+			bool m_bFirstBufferReceived                                                               = false;
 
 			OpenViBE::Kernel::IAlgorithmProxy* m_pSphericalSplineInterpolation = nullptr;
-			CTopographicMapDatabase* m_pTopographicMapDatabase = nullptr;
-			CSignalDisplayDrawable* m_pTopographicMap2DView = nullptr; //main object used for the display (contains all the GUI code)
+			CTopographicMapDatabase* m_pTopographicMapDatabase                 = nullptr;
+			CSignalDisplayDrawable* m_pTopographicMap2DView                    = nullptr; //main object used for the display (contains all the GUI code)
 		private:
 			OpenViBEVisualizationToolkit::IVisualizationContext* m_visualizationContext = nullptr;
 		};

@@ -307,9 +307,9 @@ namespace json
 	protected:
 
 		ValueType mValueType = nullptrVal;
-		int mIntVal = 0;
-		float mFloatVal = 0;
-		double mDoubleVal = 0;
+		int mIntVal          = 0;
+		float mFloatVal      = 0;
+		double mDoubleVal    = 0;
 		std::string mStringVal;
 		Object mObjectVal;
 		Array mArrayVal;

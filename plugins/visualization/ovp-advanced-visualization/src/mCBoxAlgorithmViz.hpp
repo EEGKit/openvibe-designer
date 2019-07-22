@@ -158,8 +158,8 @@ namespace Mensia
 
 			bool onDefaultInitialized(OpenViBE::Kernel::IBox& rBox) override
 			{
-				const bool l_bIsSignal = (std::find(m_vParameter.begin(), m_vParameter.end(), I_Signal) != m_vParameter.end());
-				const bool l_bIsSpectrum = (std::find(m_vParameter.begin(), m_vParameter.end(), I_Spectrum) != m_vParameter.end());
+				const bool l_bIsSignal     = (std::find(m_vParameter.begin(), m_vParameter.end(), I_Signal) != m_vParameter.end());
+				const bool l_bIsSpectrum   = (std::find(m_vParameter.begin(), m_vParameter.end(), I_Spectrum) != m_vParameter.end());
 				const bool l_bIsCovariance = (std::find(m_vParameter.begin(), m_vParameter.end(), I_Covariance) != m_vParameter.end());
 				OpenViBE::CIdentifier l_oTypeIdentifier;
 
@@ -219,7 +219,7 @@ namespace Mensia
 					m_oGtkGLWidget.redrawRight(immediate);
 					m_oGtkGLWidget.redrawBottom(immediate);
 					m_ui64LastRenderTime = currentTime;
-					m_bRedrawNeeded = false;
+					m_bRedrawNeeded      = false;
 				}
 			}
 
@@ -248,27 +248,27 @@ namespace Mensia
 			TGtkGLWidget<CBoxAlgorithmViz> m_oGtkGLWidget;
 			std::map<std::string, CVertex> m_vChannelLocalisation;
 
-			IRendererContext* m_pRendererContext = nullptr;
+			IRendererContext* m_pRendererContext    = nullptr;
 			IRendererContext* m_pSubRendererContext = nullptr;
-			IRuler* m_pRuler = nullptr;
+			IRuler* m_pRuler                        = nullptr;
 			CMouse m_oMouseHandler;
 
 			OpenViBE::CString m_sLocalisation;
 			uint64_t m_temporalCoherence = 0;
-			uint64_t m_timeScale = 0;
-			uint64_t m_elementCount = 0;
-			double m_f64DataScale = 0.0;
+			uint64_t m_timeScale         = 0;
+			uint64_t m_elementCount      = 0;
+			double m_f64DataScale        = 0.0;
 			OpenViBE::CString m_sCaption;
-			uint32_t m_textureId = 0;
+			uint32_t m_textureId       = 0;
 			uint64_t m_flowerRingCount = 0;
-			double m_translucency = 0.0;
+			double m_translucency      = 0.0;
 			OpenViBE::CString m_sColor;
 			OpenViBE::CString m_sColorGradient;
-			bool m_bShowAxis = false;
+			bool m_bShowAxis        = false;
 			bool m_bXYZPlotHasDepth = false;
-			bool m_bIsPositive = false;
-			bool m_bIsTimeLocked = false;
-			bool m_bIsScaleVisible = false;
+			bool m_bIsPositive      = false;
+			bool m_bIsTimeLocked    = false;
+			bool m_bIsScaleVisible  = false;
 			std::vector<TColor> m_vColor;
 			TColor m_oColor;
 
@@ -277,43 +277,43 @@ namespace Mensia
 			uint64_t m_time2 = 0;
 
 			float m_fastForwardMaximumFactorHighDefinition = 0.0;
-			float m_fastForwardMaximumFactorLowDefinition = 0.0;
+			float m_fastForwardMaximumFactorLowDefinition  = 0.0;
 
 			std::vector<float> m_vSwap;
 
 			GtkBuilder* m_pBuilder = nullptr;
 
-			GtkWidget* m_pViewport = nullptr;
-			GtkWidget* m_pTop = nullptr;
-			GtkWidget* m_pLeft = nullptr;
-			GtkWidget* m_pRight = nullptr;
-			GtkWidget* m_pBottom = nullptr;
-			GtkWidget* m_pCornerLeft = nullptr;
+			GtkWidget* m_pViewport    = nullptr;
+			GtkWidget* m_pTop         = nullptr;
+			GtkWidget* m_pLeft        = nullptr;
+			GtkWidget* m_pRight       = nullptr;
+			GtkWidget* m_pBottom      = nullptr;
+			GtkWidget* m_pCornerLeft  = nullptr;
 			GtkWidget* m_pCornerRight = nullptr;
 
-			GtkWidget* m_pTimeScale = nullptr;
-			GtkWidget* m_pElementCount = nullptr;
-			GtkWidget* m_pERPRange = nullptr;
-			GtkWidget* m_pERPPlayerButton = nullptr;
-			GtkWidget* m_pERPPlayer = nullptr;
-			GtkWidget* m_pScaleVisible = nullptr;
+			GtkWidget* m_pTimeScale        = nullptr;
+			GtkWidget* m_pElementCount     = nullptr;
+			GtkWidget* m_pERPRange         = nullptr;
+			GtkWidget* m_pERPPlayerButton  = nullptr;
+			GtkWidget* m_pERPPlayer        = nullptr;
+			GtkWidget* m_pScaleVisible     = nullptr;
 			GtkWidget* m_pFrequencyBandMin = nullptr;
 			GtkWidget* m_pFrequencyBandMax = nullptr;
 
-			GtkTreeView* m_pChannelTreeView = nullptr;
+			GtkTreeView* m_pChannelTreeView   = nullptr;
 			GtkListStore* m_pChannelListStore = nullptr;
 
-			uint32_t m_width = 0;
+			uint32_t m_width  = 0;
 			uint32_t m_height = 0;
 
-			bool m_bRebuildNeeded = false;
-			bool m_bRefreshNeeded = false;
-			bool m_bRedrawNeeded = false;
+			bool m_bRebuildNeeded         = false;
+			bool m_bRefreshNeeded         = false;
+			bool m_bRedrawNeeded          = false;
 			uint64_t m_ui64LastRenderTime = 0;
 
 			bool m_bIsVideoOutputEnabled = false; // for video output
 			bool m_bIsVideoOutputWorking = false;
-			uint32_t m_ui32FrameId = 0;
+			uint32_t m_ui32FrameId       = 0;
 			OpenViBE::CString m_sFrameFilenameFormat;
 		private:
 			OpenViBEVisualizationToolkit::IVisualizationContext* m_visualizationContext{};
@@ -341,12 +341,12 @@ namespace Mensia
 				const size_t i = l_sFullname.rfind('/');
 				if (i != std::string::npos)
 				{
-					m_sName = OpenViBE::CString(l_sFullname.substr(i + 1).c_str());
+					m_sName         = OpenViBE::CString(l_sFullname.substr(i + 1).c_str());
 					m_sCategoryName = OpenViBE::CString(l_sFullname.substr(0, i).c_str());
 				}
 				else
 				{
-					m_sName = OpenViBE::CString(sFullName);
+					m_sName         = OpenViBE::CString(sFullName);
 					m_sCategoryName = OpenViBE::CString("");
 				}
 			}

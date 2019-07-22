@@ -21,14 +21,13 @@ static void on_button_setting_color_choose_pressed(GtkColorButton* /*button*/, g
 static void on_change(GtkEntry* /*entry*/, gpointer data) { static_cast<CColorSettingView*>(data)->onChange(); }
 
 
-CColorSettingView::CColorSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext):
-	CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-hbox_setting_color"), m_kernelContext(rKernelContext)
+CColorSettingView::CColorSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext): CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-hbox_setting_color"), m_kernelContext(rKernelContext)
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 
 	std::vector<GtkWidget*> l_vWidget;
 	extractWidget(l_pSettingWidget, l_vWidget);
-	m_entry = GTK_ENTRY(l_vWidget[0]);
+	m_entry  = GTK_ENTRY(l_vWidget[0]);
 	m_button = GTK_COLOR_BUTTON(l_vWidget[1]);
 
 	g_signal_connect(G_OBJECT(m_entry), "changed", G_CALLBACK(on_change), this);
@@ -43,13 +42,13 @@ void CColorSettingView::getValue(CString& value) const { value = CString(gtk_ent
 void CColorSettingView::setValue(const CString& value)
 {
 	m_onValueSetting = true;
-	int r = 0, g = 0, b = 0;
+	int r            = 0, g = 0, b = 0;
 	sscanf(m_kernelContext.getConfigurationManager().expand(value).toASCIIString(), "%i,%i,%i", &r, &g, &b);
 
 	GdkColor l_oColor;
-	l_oColor.red = (r * 65535) / 100;
+	l_oColor.red   = (r * 65535) / 100;
 	l_oColor.green = (g * 65535) / 100;
-	l_oColor.blue = (b * 65535) / 100;
+	l_oColor.blue  = (b * 65535) / 100;
 	gtk_color_button_set_color(m_button, &l_oColor);
 
 	gtk_entry_set_text(m_entry, value);

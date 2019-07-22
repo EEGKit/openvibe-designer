@@ -26,7 +26,7 @@ namespace
 
 	void refresh_search_log_entry(GtkEntry* pTextfield, gpointer data)
 	{
-		auto* designerLog_ptr = static_cast<CLogListenerDesigner*>(data);
+		auto* designerLog_ptr          = static_cast<CLogListenerDesigner*>(data);
 		designerLog_ptr->m_sSearchTerm = gtk_entry_get_text(pTextfield);
 		designerLog_ptr->searchMessages(designerLog_ptr->m_sSearchTerm);
 	}
@@ -41,7 +41,7 @@ namespace
 		//if left click
 		if (pEvent->button == 1)
 		{
-			GtkTextView* l_pTextView = GTK_TEXT_VIEW(widget);
+			GtkTextView* l_pTextView              = GTK_TEXT_VIEW(widget);
 			const GtkTextWindowType l_oWindowType = gtk_text_view_get_window_type(l_pTextView, pEvent->window);
 			gint l_iBufferX, l_iBufferY;
 			//convert event coord (mouse position) in buffer coord (character in buffer)
@@ -54,7 +54,7 @@ namespace
 			if (!gtk_text_iter_has_tag(&l_oIter, designerLog_ptr->m_pCIdentifierTag)) { return; }
 			//the position is tagged, we are on a CIdentifier
 			GtkTextIter l_oStart = l_oIter;
-			GtkTextIter l_oEnd = l_oIter;
+			GtkTextIter l_oEnd   = l_oIter;
 
 			while (gtk_text_iter_has_tag(&l_oEnd, designerLog_ptr->m_pCIdentifierTag))
 			{
@@ -106,28 +106,28 @@ void CLogListenerDesigner::appendLog(CLogObject* oLog) const
 CLogListenerDesigner::CLogListenerDesigner(const IKernelContext& rKernelContext, GtkBuilder* pBuilderInterface)
 	: m_sSearchTerm(""), m_CenterOnBoxFun([](CIdentifier& /*id*/) {}), m_pBuilderInterface(pBuilderInterface)
 {
-	m_pTextView = GTK_TEXT_VIEW(gtk_builder_get_object(m_pBuilderInterface, "openvibe-textview_messages"));
+	m_pTextView    = GTK_TEXT_VIEW(gtk_builder_get_object(m_pBuilderInterface, "openvibe-textview_messages"));
 	m_pAlertWindow = GTK_WINDOW(gtk_builder_get_object(m_pBuilderInterface, "dialog_error_popup"));
 
 	m_pToggleButtonPopup = GTK_TOGGLE_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_alert_on_error"));
 
-	m_pLabelCountMessages = GTK_LABEL(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_count_message_label"));
-	m_pLabelCountWarnings = GTK_LABEL(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_count_warning_label"));
-	m_pLabelCountErrors = GTK_LABEL(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_count_error_label"));
+	m_pLabelCountMessages       = GTK_LABEL(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_count_message_label"));
+	m_pLabelCountWarnings       = GTK_LABEL(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_count_warning_label"));
+	m_pLabelCountErrors         = GTK_LABEL(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_count_error_label"));
 	m_pLabelDialogCountWarnings = GTK_LABEL(gtk_builder_get_object(m_pBuilderInterface, "dialog_error_popup-warning_count"));
-	m_pLabelDialogCountErrors = GTK_LABEL(gtk_builder_get_object(m_pBuilderInterface, "dialog_error_popup-error_count"));
+	m_pLabelDialogCountErrors   = GTK_LABEL(gtk_builder_get_object(m_pBuilderInterface, "dialog_error_popup-error_count"));
 
 	m_pImageWarnings = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_count_warning_image"));
-	m_pImageErrors = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_count_error_image"));
+	m_pImageErrors   = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_count_error_image"));
 
-	m_pToggleButtonActive_Debug = GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_debug"));
-	m_pToggleButtonActive_Benchmark = GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_bench"));
-	m_pToggleButtonActive_Trace = GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_trace"));
-	m_pToggleButtonActive_Info = GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_info"));
-	m_pToggleButtonActive_Warning = GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_warning"));
+	m_pToggleButtonActive_Debug            = GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_debug"));
+	m_pToggleButtonActive_Benchmark        = GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_bench"));
+	m_pToggleButtonActive_Trace            = GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_trace"));
+	m_pToggleButtonActive_Info             = GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_info"));
+	m_pToggleButtonActive_Warning          = GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_warning"));
 	m_pToggleButtonActive_ImportantWarning = GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_impwarning"));
-	m_pToggleButtonActive_Error = GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_error"));
-	m_pToggleButtonActive_Fatal = GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_fatal"));
+	m_pToggleButtonActive_Error            = GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_error"));
+	m_pToggleButtonActive_Fatal            = GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_fatal"));
 
 	// set the popup-on-error checkbox according to the configuration token
 	gtk_toggle_button_set_active(m_pToggleButtonPopup, bool(rKernelContext.getConfigurationManager().expandAsBoolean("${Designer_PopUpOnError}")));
@@ -153,10 +153,10 @@ CLogListenerDesigner::CLogListenerDesigner(const IKernelContext& rKernelContext,
 	gtk_text_buffer_create_tag(m_pBuffer, "link", "underline", PANGO_UNDERLINE_SINGLE, nullptr);	// link for CIdentifier
 
 	GtkTextTagTable* l_pTagtable = gtk_text_buffer_get_tag_table(m_pBuffer);
-	m_pCIdentifierTag = gtk_text_tag_table_lookup(l_pTagtable, "link");
+	m_pCIdentifierTag            = gtk_text_tag_table_lookup(l_pTagtable, "link");
 
-	m_bConsoleLogWithHexa = rKernelContext.getConfigurationManager().expandAsBoolean("${Designer_ConsoleLogWithHexa}", false);
-	m_bConsoleLogTimeInSecond = rKernelContext.getConfigurationManager().expandAsBoolean("${Kernel_ConsoleLogTimeInSecond}", false);
+	m_bConsoleLogWithHexa         = rKernelContext.getConfigurationManager().expandAsBoolean("${Designer_ConsoleLogWithHexa}", false);
+	m_bConsoleLogTimeInSecond     = rKernelContext.getConfigurationManager().expandAsBoolean("${Kernel_ConsoleLogTimeInSecond}", false);
 	m_ui32ConsoleLogTimePrecision = uint32_t(rKernelContext.getConfigurationManager().expandAsUInteger("${Designer_ConsoleLogTimePrecision}", 3));
 }
 
@@ -508,8 +508,8 @@ void CLogListenerDesigner::updateMessageCounts() const
 
 void CLogListenerDesigner::clearMessages()
 {
-	m_countMessages = 0;
-	m_countWarnings = 0;
+	m_countMessages   = 0;
+	m_countWarnings   = 0;
 	m_ui32CountErrors = 0;
 
 	gtk_label_set_markup(m_pLabelCountMessages, "<b>0</b> Messages");

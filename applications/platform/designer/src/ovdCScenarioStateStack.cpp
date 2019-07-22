@@ -13,7 +13,7 @@ using namespace OpenViBEToolkit;
 CScenarioStateStack::CScenarioStateStack(const IKernelContext& kernelContext, CInterfacedScenario& interfacedScenario, IScenario& scenario)
 	: m_kernelContext(kernelContext), m_InterfacedScenario(interfacedScenario), m_Scenario(scenario)
 {
-	m_CurrentState = m_States.begin();
+	m_CurrentState      = m_States.begin();
 	m_MaximumStateCount = uint32_t(m_kernelContext.getConfigurationManager().expandAsUInteger("${Designer_UndoRedoStackSize}", 64));
 }
 
@@ -113,7 +113,7 @@ bool CScenarioStateStack::restoreState(const IMemoryBuffer& state)
 	if (!importer) { return false; }
 
 	const uLongf sourceSize = uLongf(state.getSize()) - sizeof(uLongf);
-	auto* sourceBuffer = const_cast<Bytef*>(state.getDirectPointer());
+	auto* sourceBuffer      = const_cast<Bytef*>(state.getDirectPointer());
 
 	uLongf destinationSize = *(uLongf*)(state.getDirectPointer() + state.getSize() - sizeof(uLongf));
 	uncompressedMemoryBuffer.setSize(destinationSize, true);
@@ -129,7 +129,7 @@ bool CScenarioStateStack::restoreState(const IMemoryBuffer& state)
 	m_Scenario.clear();
 
 	ip_MemoryBuffer = &uncompressedMemoryBuffer;
-	op_Scenario = &m_Scenario;
+	op_Scenario     = &m_Scenario;
 
 	importer->process();
 	importer->uninitialize();
@@ -137,7 +137,7 @@ bool CScenarioStateStack::restoreState(const IMemoryBuffer& state)
 
 	// Find the VisualizationTree metadata
 	IMetadata* visualizationTreeMetadata = nullptr;
-	CIdentifier metadataIdentifier = OV_UndefinedIdentifier;
+	CIdentifier metadataIdentifier       = OV_UndefinedIdentifier;
 	while ((metadataIdentifier = m_Scenario.getNextMetadataIdentifier(metadataIdentifier)) != OV_UndefinedIdentifier)
 	{
 		visualizationTreeMetadata = m_Scenario.getMetadataDetails(metadataIdentifier);
@@ -162,7 +162,7 @@ bool CScenarioStateStack::dumpState(IMemoryBuffer& state)
 
 	// Remove all VisualizationTree type metadata
 	CIdentifier oldVisualizationTreeMetadataIdentifier = OV_UndefinedIdentifier;
-	CIdentifier metadataIdentifier = OV_UndefinedIdentifier;
+	CIdentifier metadataIdentifier                     = OV_UndefinedIdentifier;
 	while ((metadataIdentifier = m_Scenario.getNextMetadataIdentifier(metadataIdentifier)) != OV_UndefinedIdentifier)
 	{
 		if (m_Scenario.getMetadataDetails(metadataIdentifier)->getType() == OVVIZ_MetadataIdentifier_VisualizationTree)
@@ -190,19 +190,19 @@ bool CScenarioStateStack::dumpState(IMemoryBuffer& state)
 	TParameterHandler<const IScenario*> ip_Scenario(exporter->getInputParameter(OV_Algorithm_ScenarioExporter_InputParameterId_Scenario));
 	TParameterHandler<IMemoryBuffer*> op_MemoryBuffer(exporter->getOutputParameter(OV_Algorithm_ScenarioExporter_OutputParameterId_MemoryBuffer));
 
-	ip_Scenario = &m_Scenario;
+	ip_Scenario     = &m_Scenario;
 	op_MemoryBuffer = &uncompressedMemoryBuffer;
 
 	exporter->process();
 	exporter->uninitialize();
 	m_kernelContext.getAlgorithmManager().releaseAlgorithm(*exporter);
 
-	auto sourceSize = uLongf(uncompressedMemoryBuffer.getSize());
+	auto sourceSize    = uLongf(uncompressedMemoryBuffer.getSize());
 	auto* sourceBuffer = static_cast<Bytef*>(uncompressedMemoryBuffer.getDirectPointer());
 
 	compressedMemoryBuffer.setSize(12 + uint64_t(sourceSize * 1.1), true);
 
-	auto destinationSize = uLongf(compressedMemoryBuffer.getSize());
+	auto destinationSize    = uLongf(compressedMemoryBuffer.getSize());
 	auto* destinationBuffer = static_cast<Bytef*>(compressedMemoryBuffer.getDirectPointer());
 
 	if (compress(destinationBuffer, &destinationSize, sourceBuffer, sourceSize) != Z_OK) { return false; }

@@ -93,17 +93,17 @@ namespace Mensia
 		protected:
 
 			std::string m_channelLocalisationFilename;
-			uint32_t m_historyIndex = 0;
+			uint32_t m_historyIndex     = 0;
 			uint32_t m_historyDrawIndex = 0;
-			uint32_t m_historyCount = 0;
-			uint32_t m_channelCount = 0;
-			uint32_t m_sampleCount = 1;
+			uint32_t m_historyCount     = 0;
+			uint32_t m_channelCount     = 0;
+			uint32_t m_sampleCount      = 1;
 
-			float m_inverseChannelCount = 1.0;
-			float m_inverseSampleCount = 1.0;
+			float m_inverseChannelCount     = 1.0;
+			float m_inverseSampleCount      = 1.0;
 			uint32_t m_autoDecimationFactor = 1;
 
-			float m_ERPFraction = 0.0;
+			float m_ERPFraction       = 0.0;
 			uint32_t m_sampleIndexERP = 0;
 
 			uint64_t m_timeOffset = 0;

@@ -38,12 +38,12 @@ namespace OpenViBEPlugins
 
 			//internal data
 			//-------------
-			bool m_bFirstProcess = true;
+			bool m_bFirstProcess    = true;
 			double* m_pDoubleCoords = nullptr;
 			double** m_pInsermCoords;
 			double m_ScdTable[2004];
 			double m_PotTable[2004];
-			double* m_pSplineCoefs = nullptr;
+			double* m_pSplineCoefs          = nullptr;
 			double* m_pLaplacianSplineCoefs = nullptr;
 		};
 

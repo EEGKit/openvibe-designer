@@ -11,14 +11,14 @@ void CRendererTopo2D::rebuild3DMeshesPre(const IRendererContext& /*rContext*/)
 {
 	uint32_t i, j, k;
 
-	const uint32_t vertexCount1 = 32;
-	const uint32_t vertexCount2 = 32;
+	const uint32_t vertexCount1      = 32;
+	const uint32_t vertexCount2      = 32;
 	const uint32_t circleVertexCount = 128;
 
 	{
 		m_oScalp.clear();
 
-		std::vector<CVertex>& l_vVertex = m_oScalp.m_vVertex;
+		std::vector<CVertex>& l_vVertex    = m_oScalp.m_vVertex;
 		std::vector<uint32_t>& l_vTriangle = m_oScalp.m_vTriangle;
 
 		l_vVertex.resize(vertexCount1 * vertexCount2);
@@ -26,8 +26,8 @@ void CRendererTopo2D::rebuild3DMeshesPre(const IRendererContext& /*rContext*/)
 		{
 			for (j = 0; j < vertexCount2; j++, k++)
 			{
-				const auto a = float(i * M_PI / (vertexCount1 - 1));
-				const auto b = float(j * 1.25 * M_PI / (vertexCount2 - 1) - M_PI * .2);
+				const auto a   = float(i * M_PI / (vertexCount1 - 1));
+				const auto b   = float(j * 1.25 * M_PI / (vertexCount2 - 1) - M_PI * .2);
 				l_vVertex[k].x = cosf(a);
 				l_vVertex[k].y = sinf(a) * sinf(b) - OFFSET;
 				l_vVertex[k].z = sinf(a) * cosf(b);
@@ -40,7 +40,7 @@ void CRendererTopo2D::rebuild3DMeshesPre(const IRendererContext& /*rContext*/)
 		{
 			for (j = 0; j < vertexCount2 - 1; j++, k += 6)
 			{
-				l_vTriangle[k] = (i) * vertexCount2 + (j);
+				l_vTriangle[k]     = (i) * vertexCount2 + (j);
 				l_vTriangle[k + 1] = (i + 1) * vertexCount2 + (j);
 				l_vTriangle[k + 2] = (i + 1) * vertexCount2 + (j + 1);
 
@@ -60,7 +60,7 @@ void CRendererTopo2D::rebuild3DMeshesPre(const IRendererContext& /*rContext*/)
 	{
 		m_oFace.clear();
 
-		std::vector<CVertex>& l_vVertex = m_oFace.m_vVertex;
+		std::vector<CVertex>& l_vVertex    = m_oFace.m_vVertex;
 		std::vector<uint32_t>& l_vTriangle = m_oFace.m_vTriangle;
 
 		// Ribbon mesh
@@ -110,7 +110,7 @@ void CRendererTopo2D::rebuild3DMeshesPre(const IRendererContext& /*rContext*/)
 		l_vTriangle.resize(circleVertexCount * 6/*+12*/);
 		for (i = 0, k = 0; i < circleVertexCount; i++, k += 6)
 		{
-			l_vTriangle[k] = (i) % (circleVertexCount * 2);
+			l_vTriangle[k]     = (i) % (circleVertexCount * 2);
 			l_vTriangle[k + 1] = (i + 1) % (circleVertexCount * 2);
 			l_vTriangle[k + 2] = (i + 2) % (circleVertexCount * 2);
 

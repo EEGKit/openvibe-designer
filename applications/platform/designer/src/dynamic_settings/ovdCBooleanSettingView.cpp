@@ -17,15 +17,14 @@ static void on_insertion(GtkEntry* /*entry*/, gpointer data)
 	static_cast<CBooleanSettingView *>(data)->onChange();
 }
 
-CBooleanSettingView::CBooleanSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName):
-	CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-hbox_setting_boolean")
+CBooleanSettingView::CBooleanSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName): CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-hbox_setting_boolean")
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 
 	std::vector<GtkWidget*> l_vWidget;
 	extractWidget(l_pSettingWidget, l_vWidget);
 	m_toggle = GTK_TOGGLE_BUTTON(l_vWidget[1]);
-	m_entry = GTK_ENTRY(l_vWidget[0]);
+	m_entry  = GTK_ENTRY(l_vWidget[0]);
 
 	g_signal_connect(G_OBJECT(m_entry), "changed", G_CALLBACK(on_insertion), this);
 

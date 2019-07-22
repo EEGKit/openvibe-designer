@@ -19,7 +19,7 @@ namespace OpenViBEDesigner
 			void onChange();
 
 		private:
-			GtkEntry* m_entry = nullptr;
+			GtkEntry* m_entry        = nullptr;
 			GtkColorButton* m_button = nullptr;
 
 			const OpenViBE::Kernel::IKernelContext& m_kernelContext;

@@ -32,17 +32,17 @@ bool CAboutPluginDialog::run()
 	gtk_builder_add_from_file(interface, m_sGUIFilename.toASCIIString(), nullptr);
 	gtk_builder_connect_signals(interface, nullptr);
 
-	GtkWidget* l_pDialog = GTK_WIDGET(gtk_builder_get_object(interface, "plugin_about"));
-	GtkWidget* l_pType = GTK_WIDGET(gtk_builder_get_object(interface, "plugin_about-entry_type"));
-	GtkWidget* l_pName = GTK_WIDGET(gtk_builder_get_object(interface, "plugin_about-entry_name"));
-	GtkWidget* l_pAuthorName = GTK_WIDGET(gtk_builder_get_object(interface, "plugin_about-entry_author_name"));
-	GtkWidget* l_pAuthorCompanyName = GTK_WIDGET(gtk_builder_get_object(interface, "plugin_about-entry_company_name"));
-	GtkWidget* l_pCategory = GTK_WIDGET(gtk_builder_get_object(interface, "plugin_about-entry_category"));
-	GtkWidget* l_pVersion = GTK_WIDGET(gtk_builder_get_object(interface, "plugin_about-entry_version"));
-	GtkWidget* l_pAddedSoftwareVersion = GTK_WIDGET(gtk_builder_get_object(interface, "plugin_about-entry_added_software_version"));
+	GtkWidget* l_pDialog                 = GTK_WIDGET(gtk_builder_get_object(interface, "plugin_about"));
+	GtkWidget* l_pType                   = GTK_WIDGET(gtk_builder_get_object(interface, "plugin_about-entry_type"));
+	GtkWidget* l_pName                   = GTK_WIDGET(gtk_builder_get_object(interface, "plugin_about-entry_name"));
+	GtkWidget* l_pAuthorName             = GTK_WIDGET(gtk_builder_get_object(interface, "plugin_about-entry_author_name"));
+	GtkWidget* l_pAuthorCompanyName      = GTK_WIDGET(gtk_builder_get_object(interface, "plugin_about-entry_company_name"));
+	GtkWidget* l_pCategory               = GTK_WIDGET(gtk_builder_get_object(interface, "plugin_about-entry_category"));
+	GtkWidget* l_pVersion                = GTK_WIDGET(gtk_builder_get_object(interface, "plugin_about-entry_version"));
+	GtkWidget* l_pAddedSoftwareVersion   = GTK_WIDGET(gtk_builder_get_object(interface, "plugin_about-entry_added_software_version"));
 	GtkWidget* l_pUpdatedSoftwareVersion = GTK_WIDGET(gtk_builder_get_object(interface, "plugin_about-entry_update_software_version"));
-	GtkWidget* l_pShortDescription = GTK_WIDGET(gtk_builder_get_object(interface, "plugin_about-textview_short_description"));
-	GtkWidget* l_pDetailedDescription = GTK_WIDGET(gtk_builder_get_object(interface, "plugin_about-textview_detailed_description"));
+	GtkWidget* l_pShortDescription       = GTK_WIDGET(gtk_builder_get_object(interface, "plugin_about-textview_short_description"));
+	GtkWidget* l_pDetailedDescription    = GTK_WIDGET(gtk_builder_get_object(interface, "plugin_about-textview_detailed_description"));
 	g_object_unref(interface);
 
 	if (m_pPluginObjectDescriptor->isDerivedFromClass(OV_ClassId_Plugins_AlgorithmDesc))
@@ -62,7 +62,7 @@ bool CAboutPluginDialog::run()
 		gtk_entry_set_text(GTK_ENTRY(l_pType), "Scenario exporter");
 	}
 
-	GtkTextBuffer* l_pShortDescriptionBuffer = gtk_text_buffer_new(nullptr);
+	GtkTextBuffer* l_pShortDescriptionBuffer    = gtk_text_buffer_new(nullptr);
 	GtkTextBuffer* l_pDetailedDescriptionBuffer = gtk_text_buffer_new(nullptr);
 	gtk_text_buffer_set_text(l_pShortDescriptionBuffer, m_pPluginObjectDescriptor->getShortDescription(), -1);
 	gtk_text_buffer_set_text(l_pDetailedDescriptionBuffer, m_pPluginObjectDescriptor->getDetailedDescription(), -1);

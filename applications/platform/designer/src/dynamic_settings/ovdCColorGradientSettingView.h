@@ -46,8 +46,8 @@ namespace OpenViBEDesigner
 			const OpenViBE::Kernel::IKernelContext& m_kernelContext;
 			OpenViBE::CString m_builderName;
 
-			GtkWidget* pDialog = nullptr;
-			GtkWidget* pContainer = nullptr;
+			GtkWidget* pDialog      = nullptr;
+			GtkWidget* pContainer   = nullptr;
 			GtkWidget* pDrawingArea = nullptr;
 			std::vector<SColorGradientDataNode> vColorGradient;
 			std::map<GtkColorButton*, uint32_t> vColorButtonMap;

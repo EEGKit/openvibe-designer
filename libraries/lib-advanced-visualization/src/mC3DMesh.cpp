@@ -106,9 +106,9 @@ bool C3DMesh::compile()
 		const uint32_t i1 = m_vTriangle[i];
 		const uint32_t i2 = m_vTriangle[i + 1];
 		const uint32_t i3 = m_vTriangle[i + 2];
-		CVertex v1 = m_vVertex[i1];
-		CVertex v2 = m_vVertex[i2];
-		CVertex v3 = m_vVertex[i3];
+		CVertex v1        = m_vVertex[i1];
+		CVertex v2        = m_vVertex[i2];
+		CVertex v3        = m_vVertex[i3];
 		v2.x -= v1.x;
 		v2.y -= v1.y;
 		v2.z -= v1.z;
@@ -159,9 +159,9 @@ bool C3DMesh::project(std::vector<CVertex>& vProjectedChannelCoordinate, const s
 			CVertex n = CVertex::cross(e1, e2).normalize();
 
 			const float t = CVertex::dot(v1, n) / CVertex::dot(p, n);
-			q.x = t * p.x;
-			q.y = t * p.y;
-			q.z = t * p.z;
+			q.x           = t * p.x;
+			q.y           = t * p.y;
+			q.z           = t * p.z;
 
 			if (CVertex::isInTriangle(q, v1, v2, v3) && t >= 0)
 			{

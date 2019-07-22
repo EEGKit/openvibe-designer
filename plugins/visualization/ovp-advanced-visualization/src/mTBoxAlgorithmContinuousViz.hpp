@@ -74,7 +74,7 @@ namespace Mensia
 		{
 		public:
 
-			TBoxAlgorithmContinuousVizDesc(const OpenViBE::CString& sName, const OpenViBE::CIdentifier& rDescClassId, const OpenViBE::CIdentifier& rClassId, 
+			TBoxAlgorithmContinuousVizDesc(const OpenViBE::CString& sName, const OpenViBE::CIdentifier& rDescClassId, const OpenViBE::CIdentifier& rClassId,
 										   const OpenViBE::CString& sAddedSoftwareVersion, const OpenViBE::CString& sUpdatedSoftwareVersion,
 										   const CParameterSet& rParameterSet, const OpenViBE::CString& sShortDescription, const OpenViBE::CString& sDetailedDescription)
 				: CBoxAlgorithmVizDesc(sName, rDescClassId, rClassId, sAddedSoftwareVersion, sUpdatedSoftwareVersion, rParameterSet, sShortDescription, sDetailedDescription) { }
@@ -134,15 +134,15 @@ namespace Mensia
 
 		{
 			const IBox& l_rStaticBoxContext = this->getStaticBoxContext();
-			IBoxIO& l_rDynamicBoxContext = this->getDynamicBoxContext();
+			IBoxIO& l_rDynamicBoxContext    = this->getDynamicBoxContext();
 
 			for (uint32_t i = 0; i < l_rDynamicBoxContext.getInputChunkCount(0); ++i)
 			{
 				m_oMatrixDecoder.decode(i);
 
 				OpenViBE::IMatrix* l_pMatrix = m_oMatrixDecoder.getOutputMatrix();
-				uint32_t channelCount = l_pMatrix->getDimensionSize(0);
-				uint32_t sampleCount = l_pMatrix->getDimensionSize(1);
+				uint32_t channelCount        = l_pMatrix->getDimensionSize(0);
+				uint32_t sampleCount         = l_pMatrix->getDimensionSize(1);
 
 				if (channelCount == 0)
 				{
@@ -153,7 +153,7 @@ namespace Mensia
 				if (l_pMatrix->getDimensionCount() == 1)
 				{
 					channelCount = l_pMatrix->getDimensionSize(0);
-					sampleCount = 1;
+					sampleCount  = 1;
 				}
 
 				if (m_oMatrixDecoder.isHeaderReceived())
@@ -178,7 +178,7 @@ namespace Mensia
 					gtk_tree_view_set_model(m_pChannelTreeView, nullptr);
 					for (uint32_t j = 0; j < channelCount; ++j)
 					{
-						std::string l_sName = trim(l_pMatrix->getDimensionLabel(0, j));
+						std::string l_sName    = trim(l_pMatrix->getDimensionLabel(0, j));
 						std::string l_sSubname = l_sName;
 						std::transform(l_sName.begin(), l_sName.end(), l_sSubname.begin(), tolower);
 						const CVertex v = m_vChannelLocalisation[l_sSubname];
@@ -240,12 +240,12 @@ namespace Mensia
 
 					m_bRebuildNeeded = true;
 					m_bRefreshNeeded = true;
-					m_bRedrawNeeded = true;
+					m_bRedrawNeeded  = true;
 				}
 				if (m_oMatrixDecoder.isBufferReceived())
 				{
-					m_time1 = m_time2;
-					m_time2 = l_rDynamicBoxContext.getInputChunkEndTime(0, i);
+					m_time1                             = m_time2;
+					m_time2                             = l_rDynamicBoxContext.getInputChunkEndTime(0, i);
 					const uint64_t l_ui64SampleDuration = (m_time2 - m_time1) / sampleCount;
 					if ((l_ui64SampleDuration & ~0xf) != (m_pRendererContext->getSampleDuration() & ~0xf) && l_ui64SampleDuration != 0) // 0xf mask avoids rounding errors
 					{
@@ -276,7 +276,7 @@ namespace Mensia
 					}
 
 					m_bRefreshNeeded = true;
-					m_bRedrawNeeded = true;
+					m_bRedrawNeeded  = true;
 				}
 			}
 
@@ -315,7 +315,7 @@ namespace Mensia
 				m_pRenderer->setSampleCount(rendererSampleCount);
 				m_bRebuildNeeded = true;
 				m_bRefreshNeeded = true;
-				m_bRedrawNeeded = true;
+				m_bRedrawNeeded  = true;
 			}
 
 			if (m_bRebuildNeeded) m_pRenderer->rebuild(*m_pRendererContext);
@@ -324,7 +324,7 @@ namespace Mensia
 
 			m_bRebuildNeeded = false;
 			m_bRefreshNeeded = false;
-			m_bRedrawNeeded = false;
+			m_bRedrawNeeded  = false;
 
 			return true;
 		}

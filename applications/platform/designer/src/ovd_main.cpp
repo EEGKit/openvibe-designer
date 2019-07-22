@@ -79,7 +79,7 @@ public:
 
 	bool callback(const IPluginObjectDesc& rPluginObjectDesc) override
 	{
-		const string l_sFullName = string(rPluginObjectDesc.getCategory()) + "/" + string(rPluginObjectDesc.getName());
+		const string l_sFullName      = string(rPluginObjectDesc.getCategory()) + "/" + string(rPluginObjectDesc.getName());
 		const auto itPluginObjectDesc = m_vPluginObjectDesc.find(l_sFullName);
 		if (itPluginObjectDesc != m_vPluginObjectDesc.end())
 		{
@@ -206,7 +206,7 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 			// Splits the plugin category
 			vector<string> l_vCategory;
 			string l_sCategory = string(l_pPluginObjectDesc->getCategory());
-			size_t j, i = size_t(-1);
+			size_t j, i        = size_t(-1);
 			while ((j = l_sCategory.find('/', i + 1)) != string::npos)
 			{
 				string l_sSubCategory = string(l_sCategory, i + 1, j - i - 1);
@@ -225,7 +225,7 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 			GtkTreeIter l_oGtkIter1;
 			GtkTreeIter l_oGtkIter2;
 			GtkTreeIter* l_pGtkIterParent = nullptr;
-			GtkTreeIter* l_pGtkIterChild = &l_oGtkIter1;
+			GtkTreeIter* l_pGtkIterChild  = &l_oGtkIter1;
 			for (const string& category : l_vCategory)
 			{
 				bool l_bFound = false;
@@ -256,13 +256,13 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 					l_pGtkIterParent = &l_oGtkIter2;
 				}
 				GtkTreeIter* l_pGtkIterSwap = l_pGtkIterChild;
-				l_pGtkIterChild = l_pGtkIterParent;
-				l_pGtkIterParent = l_pGtkIterSwap;
+				l_pGtkIterChild             = l_pGtkIterParent;
+				l_pGtkIterParent            = l_pGtkIterSwap;
 			}
 			gtk_tree_store_append(GTK_TREE_STORE(pTreeStore), l_pGtkIterChild, l_pGtkIterParent);
 
 			// define color of the text of the box
-			std::string l_sTextColor = "black";
+			std::string l_sTextColor       = "black";
 			std::string l_sBackGroundColor = "white";
 			std::string l_sTextFont;
 			std::string l_sName(l_pPluginObjectDesc->getName().toASCIIString());
@@ -279,23 +279,23 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 
 			if (boxSoftwareComponent != "unknown")
 			{
-				int currentVersionMajor = std::get<0>(currentVersions[boxSoftwareComponent]);
-				int currentVersionMinor = std::get<1>(currentVersions[boxSoftwareComponent]);
-				int currentVersionPatch = std::get<2>(currentVersions[boxSoftwareComponent]);
-				int lastUsedVersionMajor = std::get<0>(lastUsedVersions[boxSoftwareComponent]);
-				int lastUsedVersionMinor = std::get<1>(lastUsedVersions[boxSoftwareComponent]);
-				int lastUsedVersionPatch = std::get<2>(lastUsedVersions[boxSoftwareComponent]);
+				int currentVersionMajor      = std::get<0>(currentVersions[boxSoftwareComponent]);
+				int currentVersionMinor      = std::get<1>(currentVersions[boxSoftwareComponent]);
+				int currentVersionPatch      = std::get<2>(currentVersions[boxSoftwareComponent]);
+				int lastUsedVersionMajor     = std::get<0>(lastUsedVersions[boxSoftwareComponent]);
+				int lastUsedVersionMinor     = std::get<1>(lastUsedVersions[boxSoftwareComponent]);
+				int lastUsedVersionPatch     = std::get<2>(lastUsedVersions[boxSoftwareComponent]);
 				int boxComponentVersionMajor = 0;
 				int boxComponentVersionMinor = 0;
 				int boxComponentVersionPatch = 0;
 				sscanf(l_pPluginObjectDesc->getAddedSoftwareVersion().toASCIIString(), "%d.%d.%d", &boxComponentVersionMajor, &boxComponentVersionMinor, &boxComponentVersionPatch);
 				// If this is a new version, then add in list all the updated/new boxes since last version opened
 				if (bIsNewVersion && (
-					(lastUsedVersionMajor < boxComponentVersionMajor && boxComponentVersionMajor <= currentVersionMajor)
-					|| (boxComponentVersionMajor == currentVersionMajor && lastUsedVersionMinor < boxComponentVersionMinor && boxComponentVersionMinor <= currentVersionMinor)
-					|| (boxComponentVersionMinor == currentVersionMinor && lastUsedVersionPatch < boxComponentVersionPatch && boxComponentVersionPatch <= currentVersionPatch)
-					// As default value for l_uiMinorLastVersionOpened and l_uiMajorLastVersionOpened are the current software version
-					|| (boxComponentVersionMajor == currentVersionMajor && boxComponentVersionMinor == currentVersionMinor && boxComponentVersionPatch == currentVersionPatch)))
+						(lastUsedVersionMajor < boxComponentVersionMajor && boxComponentVersionMajor <= currentVersionMajor)
+						|| (boxComponentVersionMajor == currentVersionMajor && lastUsedVersionMinor < boxComponentVersionMinor && boxComponentVersionMinor <= currentVersionMinor)
+						|| (boxComponentVersionMinor == currentVersionMinor && lastUsedVersionPatch < boxComponentVersionPatch && boxComponentVersionPatch <= currentVersionPatch)
+						// As default value for l_uiMinorLastVersionOpened and l_uiMajorLastVersionOpened are the current software version
+						|| (boxComponentVersionMajor == currentVersionMajor && boxComponentVersionMinor == currentVersionMinor && boxComponentVersionPatch == currentVersionPatch)))
 				{
 					l_sName += " (New)";
 					l_sBackGroundColor = "#FFFFC4";
@@ -314,11 +314,11 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 					sscanf(l_pPluginObjectDesc->getUpdatedSoftwareVersion().toASCIIString(), "%d.%d.%d", &boxComponentUpdatedVersionMajor, &boxComponentUpdatedVersionMinor, &boxComponentUpdatedVersionPatch);
 					// If this is a new version, then add in list all the updated/new boxes since last version opened
 					if (bIsNewVersion && (
-						(lastUsedVersionMajor < boxComponentUpdatedVersionMajor && boxComponentUpdatedVersionMajor <= currentVersionMajor)
-						|| (boxComponentUpdatedVersionMajor == currentVersionMajor && lastUsedVersionMinor < boxComponentUpdatedVersionMinor && boxComponentUpdatedVersionMinor <= currentVersionMinor)
-						|| (boxComponentUpdatedVersionMinor == currentVersionMinor && lastUsedVersionPatch < boxComponentUpdatedVersionPatch && boxComponentUpdatedVersionPatch <= currentVersionPatch)
-						// If this is a new version Designer, and last version opened was set to default value i.e. version of current software
-						|| (boxComponentUpdatedVersionMajor == currentVersionMajor && boxComponentUpdatedVersionMinor == currentVersionMinor && boxComponentUpdatedVersionPatch == currentVersionPatch)))
+							(lastUsedVersionMajor < boxComponentUpdatedVersionMajor && boxComponentUpdatedVersionMajor <= currentVersionMajor)
+							|| (boxComponentUpdatedVersionMajor == currentVersionMajor && lastUsedVersionMinor < boxComponentUpdatedVersionMinor && boxComponentUpdatedVersionMinor <= currentVersionMinor)
+							|| (boxComponentUpdatedVersionMinor == currentVersionMinor && lastUsedVersionPatch < boxComponentUpdatedVersionPatch && boxComponentUpdatedVersionPatch <= currentVersionPatch)
+							// If this is a new version Designer, and last version opened was set to default value i.e. version of current software
+							|| (boxComponentUpdatedVersionMajor == currentVersionMajor && boxComponentUpdatedVersionMinor == currentVersionMinor && boxComponentUpdatedVersionPatch == currentVersionPatch)))
 					{
 						l_sName += " (New)";
 						l_sBackGroundColor = "#FFFFC4";
@@ -370,14 +370,14 @@ typedef struct _SConfiguration
 	}
 
 	std::vector<std::pair<ECommandLineFlag, std::string>> m_vFlag;
-	ECommandLineFlag m_eNoGui = CommandLineFlag_None;
+	ECommandLineFlag m_eNoGui             = CommandLineFlag_None;
 	ECommandLineFlag m_eNoCheckColorDepth = CommandLineFlag_None;
-	ECommandLineFlag m_eNoManageSession = CommandLineFlag_None;
-	ECommandLineFlag m_eNoVisualization = CommandLineFlag_None;
-	ECommandLineFlag m_eDefine = CommandLineFlag_None;
-	ECommandLineFlag m_eRandomSeed = CommandLineFlag_None;
-	ECommandLineFlag m_eConfig = CommandLineFlag_None;
-	bool m_help = false;
+	ECommandLineFlag m_eNoManageSession   = CommandLineFlag_None;
+	ECommandLineFlag m_eNoVisualization   = CommandLineFlag_None;
+	ECommandLineFlag m_eDefine            = CommandLineFlag_None;
+	ECommandLineFlag m_eRandomSeed        = CommandLineFlag_None;
+	ECommandLineFlag m_eConfig            = CommandLineFlag_None;
+	bool m_help                           = false;
 	// to resolve warning: padding struct '_SConfiguration' with 4 bytes to align 'm_oTokenMap
 	int32_t m_i32StructPadding = 0;
 	std::map<std::string, std::string> m_oTokenMap;
@@ -465,7 +465,7 @@ bool parse_arguments(int argc, char** argv, SConfiguration& rConfiguration)
 		else if (*it == "-h" || *it == "--help")
 		{
 			l_oConfiguration.m_help = true;
-			rConfiguration = l_oConfiguration;
+			rConfiguration          = l_oConfiguration;
 			return false;
 		}
 		else if (*it == "-o" || *it == "--open")
@@ -482,9 +482,9 @@ bool parse_arguments(int argc, char** argv, SConfiguration& rConfiguration)
 		}
 		else if (*it == "--no-gui")
 		{
-			l_oConfiguration.m_eNoGui = CommandLineFlag_NoGui;
+			l_oConfiguration.m_eNoGui             = CommandLineFlag_NoGui;
 			l_oConfiguration.m_eNoCheckColorDepth = CommandLineFlag_NoCheckColorDepth;
-			l_oConfiguration.m_eNoManageSession = CommandLineFlag_NoManageSession;
+			l_oConfiguration.m_eNoManageSession   = CommandLineFlag_NoManageSession;
 		}
 		else if (*it == "--no-visualization")
 		{
@@ -493,10 +493,10 @@ bool parse_arguments(int argc, char** argv, SConfiguration& rConfiguration)
 		else if (*it == "--invisible")
 		{
 			// no-gui + no-visualization
-			l_oConfiguration.m_eNoVisualization = CommandLineFlag_NoVisualization;
-			l_oConfiguration.m_eNoGui = CommandLineFlag_NoGui;
+			l_oConfiguration.m_eNoVisualization   = CommandLineFlag_NoVisualization;
+			l_oConfiguration.m_eNoGui             = CommandLineFlag_NoGui;
 			l_oConfiguration.m_eNoCheckColorDepth = CommandLineFlag_NoCheckColorDepth;
-			l_oConfiguration.m_eNoManageSession = CommandLineFlag_NoManageSession;
+			l_oConfiguration.m_eNoManageSession   = CommandLineFlag_NoManageSession;
 		}
 		else if (*it == "--no-check-color-depth")
 		{
@@ -701,7 +701,7 @@ int go(int argc, char** argv)
 	else
 	{
 		cout << "[  INF  ] Kernel module loaded, trying to get kernel descriptor" << "\n";
-		IKernelDesc* l_pKernelDesc = nullptr;
+		IKernelDesc* l_pKernelDesc       = nullptr;
 		IKernelContext* l_pKernelContext = nullptr;
 		l_oKernelLoader.initialize();
 		l_oKernelLoader.getKernelDesc(l_pKernelDesc);
@@ -772,7 +772,7 @@ int go(int argc, char** argv)
 #endif
 
 				IConfigurationManager& l_rConfigurationManager = l_pKernelContext->getConfigurationManager();
-				ILogManager& l_rLogManager = l_pKernelContext->getLogManager();
+				ILogManager& l_rLogManager                     = l_pKernelContext->getLogManager();
 
 				bArgParseResult = parse_arguments(argc, argv, l_oConfiguration);
 
@@ -795,9 +795,9 @@ int go(int argc, char** argv)
 					if ((!l_rConfigurationManager.expandAsBoolean("${Kernel_WithGUI}", true)) && ((l_oConfiguration.getFlags() & CommandLineFlag_NoGui) == 0))
 					{
 						l_rLogManager << LogLevel_ImportantWarning << "${Kernel_WithGUI} is set to false and --no-gui flag not set. Forcing the --no-gui flag\n";
-						l_oConfiguration.m_eNoGui = CommandLineFlag_NoGui;
+						l_oConfiguration.m_eNoGui             = CommandLineFlag_NoGui;
 						l_oConfiguration.m_eNoCheckColorDepth = CommandLineFlag_NoCheckColorDepth;
-						l_oConfiguration.m_eNoManageSession = CommandLineFlag_NoManageSession;
+						l_oConfiguration.m_eNoManageSession   = CommandLineFlag_NoManageSession;
 					}
 
 					if (l_oConfiguration.m_eNoGui != CommandLineFlag_NoGui && !ensureOneInstanceOfDesigner(l_oConfiguration, l_rLogManager))

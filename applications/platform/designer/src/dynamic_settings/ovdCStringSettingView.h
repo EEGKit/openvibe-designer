@@ -18,7 +18,7 @@ namespace OpenViBEDesigner
 			void onChange();
 
 		private:
-			GtkEntry* m_entry = nullptr;
+			GtkEntry* m_entry     = nullptr;
 			bool m_onValueSetting = false;
 		};
 	}

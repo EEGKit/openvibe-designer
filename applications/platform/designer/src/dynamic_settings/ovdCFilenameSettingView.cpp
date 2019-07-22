@@ -27,8 +27,7 @@ static gboolean on_focus_out_event(GtkEntry* /*entry*/, GdkEvent* /*event*/, gpo
 }
 #endif
 
-CFilenameSettingView::CFilenameSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext):
-	CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-hbox_setting_filename"), m_kernelContext(rKernelContext)
+CFilenameSettingView::CFilenameSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext): CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-hbox_setting_filename"), m_kernelContext(rKernelContext)
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 
@@ -60,7 +59,7 @@ void CFilenameSettingView::setValue(const CString& value)
 
 void CFilenameSettingView::browse() const
 {
-	GtkWidget* l_pWidgetDialogOpen = gtk_file_chooser_dialog_new("Select file to open...", nullptr, GTK_FILE_CHOOSER_ACTION_SAVE, 
+	GtkWidget* l_pWidgetDialogOpen = gtk_file_chooser_dialog_new("Select file to open...", nullptr, GTK_FILE_CHOOSER_ACTION_SAVE,
 																 GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
 
 	const CString initialFileName = m_kernelContext.getConfigurationManager().expand(gtk_entry_get_text(m_entry));
@@ -79,7 +78,7 @@ void CFilenameSettingView::browse() const
 
 	if (gtk_dialog_run(GTK_DIALOG(l_pWidgetDialogOpen)) == GTK_RESPONSE_ACCEPT)
 	{
-		char* l_sFileName = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(l_pWidgetDialogOpen));
+		char* l_sFileName  = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(l_pWidgetDialogOpen));
 		char* l_pBackslash = nullptr;
 		while ((l_pBackslash = strchr(l_sFileName, '\\')) != nullptr)
 		{
@@ -106,7 +105,7 @@ void CFilenameSettingView::onFocusLost()
 	// We replace antislash, interpreted as escape, by slash in Windows path
 	if (!m_onValueSetting)
 	{
-		std::string fileName = gtk_entry_get_text(m_entry);
+		std::string fileName       = gtk_entry_get_text(m_entry);
 		std::string::iterator iter = fileName.begin();
 
 		while ((iter = std::find(iter, fileName.end(), '\\')) != fileName.end())

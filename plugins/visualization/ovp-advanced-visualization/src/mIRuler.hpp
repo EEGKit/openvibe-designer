@@ -48,7 +48,7 @@ namespace Mensia
 
 			IRuler() { }
 			IRuler(const IRuler&) = delete;
-			virtual ~IRuler() = default;
+			virtual ~IRuler()     = default;
 
 			virtual void setRendererContext(const IRendererContext* pRendererContext)
 			{
@@ -99,8 +99,8 @@ namespace Mensia
 				std::vector<double> l_vResult;
 				const double l_fRange = fStop - fStart;
 				const double l_fOrder = floor(log(l_fRange) / log(10.) - .1f);
-				double l_fStep = pow(10, l_fOrder);
-				double l_fStepCount = trunc(l_fRange / l_fStep);
+				double l_fStep        = pow(10, l_fOrder);
+				double l_fStepCount   = trunc(l_fRange / l_fStep);
 
 				while (l_fStepCount < uiCount)
 				{
@@ -152,9 +152,9 @@ namespace Mensia
 			}
 
 			const IRendererContext* m_pRendererContext = nullptr;
-			const IRenderer* m_pRenderer = nullptr;
-			float m_fBlackAlpha = 0.9f;
-			float m_fWhiteAlpha = 1.0f;
+			const IRenderer* m_pRenderer               = nullptr;
+			float m_fBlackAlpha                        = 0.9f;
+			float m_fWhiteAlpha                        = 1.0f;
 		};
 	}  // namespace AdvancedVisualization
 }  // namespace Mensia

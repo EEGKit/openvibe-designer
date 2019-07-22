@@ -74,10 +74,10 @@ namespace Mensia
 			{
 				GtkGL::initialize(pWidget);
 				{
-					m_pBox = &rBox;
-					m_widget = pWidget;
-					m_pLeft = pLeft;
-					m_pRight = pRight;
+					m_pBox    = &rBox;
+					m_widget  = pWidget;
+					m_pLeft   = pLeft;
+					m_pRight  = pRight;
 					m_pBottom = pBottom;
 
 					::g_signal_connect(pWidget, "configure-event", G_CALLBACK(TGtkGLWidget<TBox>::__configure_cb), m_pBox);
@@ -216,10 +216,10 @@ namespace Mensia
 
 		protected:
 
-			GtkWidget* m_widget = nullptr;
-			GtkWidget* m_pLeft = nullptr;
-			GtkWidget* m_pRight = nullptr;
-			GtkWidget* m_pBottom = nullptr;
+			GtkWidget* m_widget       = nullptr;
+			GtkWidget* m_pLeft        = nullptr;
+			GtkWidget* m_pRight       = nullptr;
+			GtkWidget* m_pBottom      = nullptr;
 			GSource* m_pTimeoutSource = nullptr;
 
 			TBox* m_pBox = nullptr;
@@ -250,7 +250,7 @@ namespace Mensia
 
 			static gboolean __expose_cb(GtkWidget* pWidget, GdkEventExpose* /*pEvent*/, TBox* pBox)
 			{
-				const float d = 1.f;
+				const float d  = 1.f;
 				const float dx = d / (pWidget->allocation.width - d);
 				const float dy = d / (pWidget->allocation.height - d);
 
@@ -286,12 +286,12 @@ namespace Mensia
 				glColor3f(1, 1, 1);
 
 				// Lighting
-				const float fAmbient = 0.0f;
-				const float fDiffuse = 1.0f;
-				const float fSpecular = 1.0f;
-				GLfloat l_vAmbient[] = { fAmbient, fAmbient, fAmbient, 1 };
-				GLfloat l_vDiffuse[] = { fDiffuse, fDiffuse, fDiffuse, 1 };
-				GLfloat l_vSpecular[] = { fSpecular, fSpecular, fSpecular, 1 };
+				const float fAmbient   = 0.0f;
+				const float fDiffuse   = 1.0f;
+				const float fSpecular  = 1.0f;
+				GLfloat l_vAmbient[]   = { fAmbient, fAmbient, fAmbient, 1 };
+				GLfloat l_vDiffuse[]   = { fDiffuse, fDiffuse, fDiffuse, 1 };
+				GLfloat l_vSpecular[]  = { fSpecular, fSpecular, fSpecular, 1 };
 				GLfloat l_vPosition0[] = { 3, 1, 2, 1 };
 				GLfloat l_vPosition1[] = { -3, 0, -2, 1 };
 				glLightfv(GL_LIGHT0, GL_AMBIENT, l_vAmbient);

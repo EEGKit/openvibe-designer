@@ -20,10 +20,10 @@ static GtkTargetEntry targets[] =
 
 static void delete_window_manager_window_cb(GtkWidget* widget, GdkEvent*, gpointer data)
 {
-	CPlayerVisualization* visualization = reinterpret_cast<CPlayerVisualization*>(data);
+	CPlayerVisualization* visualization     = reinterpret_cast<CPlayerVisualization*>(data);
 	CInterfacedScenario& interfacedScenario = visualization->getInterfacedScenario();
-	GtkWidget* confirmationDialog = gtk_message_dialog_new(GTK_WINDOW(widget), GTK_DIALOG_MODAL, GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO, "Would you like to stop the scenario execution?");
-	const gint returnValue = gtk_dialog_run(GTK_DIALOG(confirmationDialog));
+	GtkWidget* confirmationDialog           = gtk_message_dialog_new(GTK_WINDOW(widget), GTK_DIALOG_MODAL, GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO, "Would you like to stop the scenario execution?");
+	const gint returnValue                  = gtk_dialog_run(GTK_DIALOG(confirmationDialog));
 
 	if (returnValue == GTK_RESPONSE_YES)
 	{
@@ -111,7 +111,7 @@ GtkWidget* CPlayerVisualization::loadTreeWidget(IVisualizationWidget* pVisualiza
 		}
 	}
 	else if (pVisualizationWidget->getType() == EVisualizationWidget_VerticalSplit || pVisualizationWidget->getType() == EVisualizationWidget_HorizontalSplit ||
-		pVisualizationWidget->getType() == EVisualizationWidget_Undefined || pVisualizationWidget->getType() == EVisualizationWidget_VisualizationBox)
+			 pVisualizationWidget->getType() == EVisualizationWidget_Undefined || pVisualizationWidget->getType() == EVisualizationWidget_VisualizationBox)
 	{
 		if (pVisualizationWidget->getType() == EVisualizationWidget_VisualizationBox)
 		{
@@ -189,7 +189,7 @@ GtkWidget* CPlayerVisualization::loadTreeWidget(IVisualizationWidget* pVisualiza
 	{
 		//create this window only if it contains at least one visualization box
 		CIdentifier identifier = OV_UndefinedIdentifier;
-		bool l_bCreateWindow = false;
+		bool l_bCreateWindow   = false;
 
 		//for all visualization boxes
 		while (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(identifier, EVisualizationWidget_VisualizationBox))
@@ -199,7 +199,7 @@ GtkWidget* CPlayerVisualization::loadTreeWidget(IVisualizationWidget* pVisualiza
 			IVisualizationWidget* l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(identifier);
 			while (l_pVisualizationWidget->getParentIdentifier() != OV_UndefinedIdentifier)
 			{
-				l_oParentIdentifier = l_pVisualizationWidget->getParentIdentifier();
+				l_oParentIdentifier    = l_pVisualizationWidget->getParentIdentifier();
 				l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oParentIdentifier);
 			}
 
@@ -391,8 +391,8 @@ bool CPlayerVisualization::setWidget(const CIdentifier& boxIdentifier, GtkWidget
 	g_signal_connect(G_OBJECT(l_pButton), "drag_data_get", G_CALLBACK(drag_data_get_from_widget_cb), this);
 
 	//store plugin widget and toolbar button
-	const CIdentifier identifier = l_pVisualizationWidget->getIdentifier();
-	m_mPlugins[identifier].m_widget = widget;
+	const CIdentifier identifier            = l_pVisualizationWidget->getIdentifier();
+	m_mPlugins[identifier].m_widget         = widget;
 	m_mPlugins[identifier].m_pToolbarButton = l_pButton;
 
 	//if a toolbar was registered for this widget, set its button sensitive
@@ -429,7 +429,7 @@ bool CPlayerVisualization::parentWidgetBox(IVisualizationWidget* widget, GtkBox*
 		//create a top level window
 		GtkWidget* l_pWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 		m_vWindows.push_back(GTK_WINDOW(l_pWindow));
-		const uint64_t l_ui64DefaultWidth = m_kernelContext.getConfigurationManager().expandAsUInteger("${Designer_UnaffectedVisualizationWindowWidth}", 400);
+		const uint64_t l_ui64DefaultWidth  = m_kernelContext.getConfigurationManager().expandAsUInteger("${Designer_UnaffectedVisualizationWindowWidth}", 400);
 		const uint64_t l_ui64DefaultHeight = m_kernelContext.getConfigurationManager().expandAsUInteger("${Designer_UnaffectedVisualizationWindowHeight}", 400);
 
 		gtk_window_set_default_size(GTK_WINDOW(l_pWindow), gint(l_ui64DefaultWidth), gint(l_ui64DefaultHeight));
@@ -647,8 +647,8 @@ void CPlayerVisualization::resizeCB(GtkContainer* container)
 
 		//retrieve its attributes
 		IVisualizationWidget* l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oPanedIdentifier);
-		const int l_i32HandlePos = l_pVisualizationWidget->getDividerPosition();
-		const int l_i32MaxHandlePos = l_pVisualizationWidget->getMaxDividerPosition();
+		const int l_i32HandlePos                     = l_pVisualizationWidget->getDividerPosition();
+		const int l_i32MaxHandlePos                  = l_pVisualizationWidget->getMaxDividerPosition();
 
 		if (l_i32MaxHandlePos > 0)
 		{
@@ -725,7 +725,7 @@ void CPlayerVisualization::drag_data_received_in_widget_cb(GtkWidget* pDstWidget
 	}
 	else if (GTK_IS_NOTEBOOK(srcParentWidget))
 	{
-		srcIndex = gtk_notebook_page_num(GTK_NOTEBOOK(srcParentWidget), srcBoxWidget);
+		srcIndex    = gtk_notebook_page_num(GTK_NOTEBOOK(srcParentWidget), srcBoxWidget);
 		srcTabLabel = gtk_label_new(gtk_notebook_get_tab_label_text(GTK_NOTEBOOK(srcParentWidget), srcBoxWidget));
 	}
 	else if (GTK_IS_PANED(srcParentWidget))
@@ -743,7 +743,7 @@ void CPlayerVisualization::drag_data_received_in_widget_cb(GtkWidget* pDstWidget
 	}
 	else if (GTK_IS_NOTEBOOK(dstParentWidget))
 	{
-		dstIndex = gtk_notebook_page_num(GTK_NOTEBOOK(dstParentWidget), dstBoxWidget);
+		dstIndex       = gtk_notebook_page_num(GTK_NOTEBOOK(dstParentWidget), dstBoxWidget);
 		l_pDstTabLabel = gtk_label_new(gtk_notebook_get_tab_label_text(GTK_NOTEBOOK(dstParentWidget), dstBoxWidget));
 	}
 	else if (GTK_IS_PANED(dstParentWidget))

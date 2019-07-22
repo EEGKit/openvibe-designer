@@ -49,8 +49,8 @@ int CCommentProxy::getHeight(GtkWidget* widget) const
 
 void CCommentProxy::setCenter(const int centerX, const int centerY)
 {
-	m_centerX = centerX;
-	m_centerY = centerY;
+	m_centerX  = centerX;
+	m_centerY  = centerY;
 	m_bApplied = false;
 }
 
@@ -91,10 +91,10 @@ const char* CCommentProxy::getLabel() const
 void CCommentProxy::updateSize(GtkWidget* widget, const char* sText, int* pXSize, int* pYSize) const
 {
 	PangoContext* l_pPangoContext = nullptr;
-	PangoLayout* l_pPangoLayout = nullptr;
+	PangoLayout* l_pPangoLayout   = nullptr;
 	PangoRectangle l_oPangoRectangle;
 	l_pPangoContext = gtk_widget_create_pango_context(widget);
-	l_pPangoLayout = pango_layout_new(l_pPangoContext);
+	l_pPangoLayout  = pango_layout_new(l_pPangoContext);
 	pango_layout_set_alignment(l_pPangoLayout, PANGO_ALIGN_CENTER);
 	if (pango_parse_markup(sText, -1, 0, nullptr, nullptr, nullptr, nullptr))
 	{

@@ -32,8 +32,7 @@ static gboolean on_focus_out_event(GtkEntry* /*entry*/, GdkEvent* /*event*/, gpo
 }
 #endif
 
-CScriptSettingView::CScriptSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext):
-	CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-hbox_setting_script"), m_kernelContext(rKernelContext)
+CScriptSettingView::CScriptSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext): CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-hbox_setting_script"), m_kernelContext(rKernelContext)
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 
@@ -87,7 +86,7 @@ void CScriptSettingView::browse() const
 
 	if (gtk_dialog_run(GTK_DIALOG(l_pWidgetDialogOpen)) == GTK_RESPONSE_ACCEPT)
 	{
-		char* l_sFileName = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(l_pWidgetDialogOpen));
+		char* l_sFileName  = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(l_pWidgetDialogOpen));
 		char* l_pBackslash = nullptr;
 		while ((l_pBackslash = strchr(l_sFileName, '\\')) != nullptr)
 		{
@@ -101,7 +100,7 @@ void CScriptSettingView::browse() const
 
 void CScriptSettingView::edit() const
 {
-	const CString fileName = m_kernelContext.getConfigurationManager().expand(gtk_entry_get_text(m_entry));
+	const CString fileName      = m_kernelContext.getConfigurationManager().expand(gtk_entry_get_text(m_entry));
 	const CString editorCommand = m_kernelContext.getConfigurationManager().expand("${Designer_ScriptEditorCommand}");
 
 	if (editorCommand != CString(""))
@@ -135,7 +134,7 @@ void CScriptSettingView::onFocusLost()
 	// We replace antislash, interpreted as escape, by slash in Windows path
 	if (!m_onValueSetting)
 	{
-		std::string fileName = gtk_entry_get_text(m_entry);
+		std::string fileName       = gtk_entry_get_text(m_entry);
 		std::string::iterator iter = fileName.begin();
 
 		while ((iter = std::find(iter, fileName.end(), '\\')) != fileName.end())

@@ -71,7 +71,7 @@ namespace
 	{
 		sort_special(const std::vector<std::string>& vChannelName, const std::map<std::string, float>& vScore)
 			: m_vChannelName(vChannelName)
-			, m_vScore(vScore) { }
+			  , m_vScore(vScore) { }
 
 		bool operator()(const size_t i, const size_t j) const
 		{
@@ -135,7 +135,7 @@ void CRendererContext::clearChannelInfo()
 
 void CRendererContext::addChannel(const std::string& sChannelName, const float x, const float y, const float z)
 {
-	const auto l_fNorm = float(sqrt(x * x + y * y + z * z));
+	const auto l_fNorm     = float(sqrt(x * x + y * y + z * z));
 	const float l_fInvNorm = (l_fNorm != 0 ? 1.f / l_fNorm : 0);
 	CVertex l_oChannelLocalisation;
 	l_oChannelLocalisation.x = x * l_fInvNorm;
@@ -231,34 +231,34 @@ const char* CRendererContext::getDimensionLabel(const size_t dimensionIndex, con
 void CRendererContext::clearTransformInfo()
 
 {
-	m_parentRendererContext = nullptr;
-	m_scale = 1;
-	m_zoom = 1;
-	m_rotationX = 2;
-	m_rotationY = 1;
-	m_translucency = 1;
-	m_aspect = 1;
-	m_sampleDuration = 0;
-	m_timeScale = 1;
-	m_elementCount = 1;
-	m_flowerRingCount = 1;
-	m_hasXYZPlotDepth = false;
-	m_isAxisDisplayed = false;
-	m_isPositiveOnly = false;
-	m_isTimeLocked = true;
-	m_isScrollModeActive = false;
-	m_checkBoardVisiblity = false;
-	m_scaleVisiblity = true;
-	m_dataType = DataType_Matrix;
+	m_parentRendererContext  = nullptr;
+	m_scale                  = 1;
+	m_zoom                   = 1;
+	m_rotationX              = 2;
+	m_rotationY              = 1;
+	m_translucency           = 1;
+	m_aspect                 = 1;
+	m_sampleDuration         = 0;
+	m_timeScale              = 1;
+	m_elementCount           = 1;
+	m_flowerRingCount        = 1;
+	m_hasXYZPlotDepth        = false;
+	m_isAxisDisplayed        = false;
+	m_isPositiveOnly         = false;
+	m_isTimeLocked           = true;
+	m_isScrollModeActive     = false;
+	m_checkBoardVisiblity    = false;
+	m_scaleVisiblity         = true;
+	m_dataType               = DataType_Matrix;
 	m_spectrumFrequencyRange = 0;
-	m_minSpectrumFrequency = 0;
-	m_maxSpectrumFrequency = 0;
-	m_ERPPlayerActive = false;
-	m_ERPFraction = 0;
-	m_stackCount = 1;
-	m_stackIndex = 1;
-	m_faceMeshVisible = true;
-	m_scalpMeshVisible = true;
+	m_minSpectrumFrequency   = 0;
+	m_maxSpectrumFrequency   = 0;
+	m_ERPPlayerActive        = false;
+	m_ERPFraction            = 0;
+	m_stackCount             = 1;
+	m_stackIndex             = 1;
+	m_faceMeshVisible        = true;
+	m_scalpMeshVisible       = true;
 }
 
 void CRendererContext::scaleBy(const float f32Scale) { m_scale *= f32Scale; }
@@ -345,9 +345,9 @@ std::string CRendererContext::getChannelName(const uint32_t index) const
 bool CRendererContext::getChannelLocalisation(const uint32_t index, float& x, float& y, float& z) const
 {
 	const CVertex& l_rChannelLocalisation = m_channelLocalisation[index];
-	x = l_rChannelLocalisation.x;
-	y = l_rChannelLocalisation.y;
-	z = l_rChannelLocalisation.z;
+	x                                     = l_rChannelLocalisation.x;
+	y                                     = l_rChannelLocalisation.y;
+	z                                     = l_rChannelLocalisation.z;
 	return true;
 }
 

@@ -67,7 +67,7 @@ namespace Mensia
 				const float l_fScale = 1.f / m_pRendererContext->getScale();
 				if (m_fLastScale != l_fScale)
 				{
-					m_vRange = this->split_range(-l_fScale * .5, l_fScale * .5);
+					m_vRange     = this->split_range(-l_fScale * .5, l_fScale * .5);
 					m_fLastScale = l_fScale;
 				}
 

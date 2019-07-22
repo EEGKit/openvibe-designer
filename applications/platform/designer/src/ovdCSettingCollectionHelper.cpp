@@ -147,7 +147,7 @@ namespace
 
 		if (gtk_dialog_run(GTK_DIALOG(widgetDialogOpen)) == GTK_RESPONSE_ACCEPT)
 		{
-			char* fileName = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widgetDialogOpen));
+			char* fileName     = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widgetDialogOpen));
 			char* l_pBackslash = nullptr;
 			while ((l_pBackslash = strchr(fileName, '\\')) != nullptr)
 			{
@@ -186,7 +186,7 @@ namespace
 
 		if (gtk_dialog_run(GTK_DIALOG(widgetDialogOpen)) == GTK_RESPONSE_ACCEPT)
 		{
-			char* fileName = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widgetDialogOpen));
+			char* fileName     = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widgetDialogOpen));
 			char* l_pBackslash = nullptr;
 			while ((l_pBackslash = strchr(fileName, '\\')) != nullptr)
 			{
@@ -207,7 +207,7 @@ namespace
 		gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), collect_widget_cb, &l_vWidget);
 		GtkEntry* l_widget = GTK_ENTRY(l_vWidget[0]);
 
-		const CString fileName = l_rKernelContext.getConfigurationManager().expand(gtk_entry_get_text(l_widget));
+		const CString fileName         = l_rKernelContext.getConfigurationManager().expand(gtk_entry_get_text(l_widget));
 		const CString l_sEditorCommand = l_rKernelContext.getConfigurationManager().expand("${Designer_ScriptEditorCommand}");
 
 		if (l_sEditorCommand != CString(""))
@@ -276,8 +276,8 @@ namespace
 
 		uint32_t i;
 		const uint32_t ui32Steps = 100;
-		gint sizex = 0;
-		gint sizey = 0;
+		gint sizex               = 0;
+		gint sizey               = 0;
 		gdk_drawable_get_size(l_pUserData->pDrawingArea->window, &sizex, &sizey);
 
 		CMatrix l_oGradientMatrix;
@@ -286,7 +286,7 @@ namespace
 		l_oGradientMatrix.setDimensionSize(1, uint32_t(l_pUserData->vColorGradient.size()));
 		for (i = 0; i < l_pUserData->vColorGradient.size(); ++i)
 		{
-			l_oGradientMatrix[i * 4] = l_pUserData->vColorGradient[i].fPercent;
+			l_oGradientMatrix[i * 4]     = l_pUserData->vColorGradient[i].fPercent;
 			l_oGradientMatrix[i * 4 + 1] = l_pUserData->vColorGradient[i].oColor.red * 100. / 65535.;
 			l_oGradientMatrix[i * 4 + 2] = l_pUserData->vColorGradient[i].oColor.green * 100. / 65535.;
 			l_oGradientMatrix[i * 4 + 3] = l_pUserData->vColorGradient[i].oColor.blue * 100. / 65535.;
@@ -300,9 +300,9 @@ namespace
 
 		for (i = 0; i < ui32Steps; ++i)
 		{
-			l_oColor.red = guint(l_oInterpolatedMatrix[i * 4 + 1] * 65535 * .01);
+			l_oColor.red   = guint(l_oInterpolatedMatrix[i * 4 + 1] * 65535 * .01);
 			l_oColor.green = guint(l_oInterpolatedMatrix[i * 4 + 2] * 65535 * .01);
-			l_oColor.blue = guint(l_oInterpolatedMatrix[i * 4 + 3] * 65535 * .01);
+			l_oColor.blue  = guint(l_oInterpolatedMatrix[i * 4 + 3] * 65535 * .01);
 			gdk_gc_set_rgb_fg_color(l_pGC, &l_oColor);
 			gdk_draw_rectangle(l_pUserData->pDrawingArea->window, l_pGC, TRUE, (sizex * i) / ui32Steps, 0, (sizex * (i + 1)) / ui32Steps, sizey);
 		}
@@ -315,7 +315,7 @@ namespace
 
 		gtk_spin_button_update(button);
 
-		const uint32_t i = l_pUserData->vSpinButtonMap[button];
+		const uint32_t i                 = l_pUserData->vSpinButtonMap[button];
 		GtkSpinButton* l_pPrevSpinButton = (i > 0 ? l_pUserData->vColorGradient[i - 1].pSpinButton : nullptr);
 		GtkSpinButton* l_pNextSpinButton = (i < l_pUserData->vColorGradient.size() - 1 ? l_pUserData->vColorGradient[i + 1].pSpinButton : nullptr);
 		if (!l_pPrevSpinButton)
@@ -360,7 +360,7 @@ namespace
 
 		gtk_container_foreach(GTK_CONTAINER(l_pUserData->pContainer), on_gtk_widget_destroy_cb, nullptr);
 
-		uint32_t i = 0;
+		uint32_t i         = 0;
 		const size_t count = l_pUserData->vColorGradient.size();
 		l_pUserData->vColorButtonMap.clear();
 		l_pUserData->vSpinButtonMap.clear();
@@ -373,7 +373,7 @@ namespace
 			GtkWidget* l_widget = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-hbox"));
 
 			it->pColorButton = GTK_COLOR_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-colorbutton"));
-			it->pSpinButton = GTK_SPIN_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-spinbutton"));
+			it->pSpinButton  = GTK_SPIN_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-spinbutton"));
 
 			gtk_color_button_set_color(it->pColorButton, &it->oColor);
 			gtk_spin_button_set_value(it->pSpinButton, it->fPercent);
@@ -389,7 +389,7 @@ namespace
 			g_object_unref(l_pBuilderInterface);
 
 			l_pUserData->vColorButtonMap[it->pColorButton] = i;
-			l_pUserData->vSpinButtonMap[it->pSpinButton] = i;
+			l_pUserData->vSpinButtonMap[it->pSpinButton]   = i;
 		}
 
 		gtk_spin_button_set_value(l_pUserData->vColorGradient[0].pSpinButton, 0);
@@ -443,13 +443,13 @@ namespace
 		l_oUserData.vColorGradient.resize(l_oInitialGradient.getDimensionSize(1) > 2 ? l_oInitialGradient.getDimensionSize(1) : 2);
 		for (uint32_t i = 0; i < l_oInitialGradient.getDimensionSize(1); ++i)
 		{
-			l_oUserData.vColorGradient[i].fPercent = l_oInitialGradient[i * 4];
-			l_oUserData.vColorGradient[i].oColor.red = guint(l_oInitialGradient[i * 4 + 1] * .01 * 65535.);
+			l_oUserData.vColorGradient[i].fPercent     = l_oInitialGradient[i * 4];
+			l_oUserData.vColorGradient[i].oColor.red   = guint(l_oInitialGradient[i * 4 + 1] * .01 * 65535.);
 			l_oUserData.vColorGradient[i].oColor.green = guint(l_oInitialGradient[i * 4 + 2] * .01 * 65535.);
-			l_oUserData.vColorGradient[i].oColor.blue = guint(l_oInitialGradient[i * 4 + 3] * .01 * 65535.);
+			l_oUserData.vColorGradient[i].oColor.blue  = guint(l_oInitialGradient[i * 4 + 3] * .01 * 65535.);
 		}
 
-		l_oUserData.pContainer = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-vbox"));
+		l_oUserData.pContainer   = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-vbox"));
 		l_oUserData.pDrawingArea = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-drawingarea"));
 
 		g_signal_connect(G_OBJECT(l_oUserData.pDialog), "show", G_CALLBACK(on_initialize_color_gradient), &l_oUserData);
@@ -466,7 +466,7 @@ namespace
 			l_oFinalGradient.setDimensionSize(1, size_t(l_oUserData.vColorGradient.size()));
 			for (uint32_t i = 0; i < l_oUserData.vColorGradient.size(); ++i)
 			{
-				l_oFinalGradient[i * 4] = l_oUserData.vColorGradient[i].fPercent;
+				l_oFinalGradient[i * 4]     = l_oUserData.vColorGradient[i].fPercent;
 				l_oFinalGradient[i * 4 + 1] = l_oUserData.vColorGradient[i].oColor.red * 100. / 65535.;
 				l_oFinalGradient[i * 4 + 2] = l_oUserData.vColorGradient[i].oColor.green * 100. / 65535.;
 				l_oFinalGradient[i * 4 + 3] = l_oUserData.vColorGradient[i].oColor.blue * 100. / 65535.;
@@ -681,7 +681,7 @@ void CSettingCollectionHelper::setValueBoolean(GtkWidget* widget, const CString&
 {
 	vector<GtkWidget*> l_vWidget;
 	gtk_container_foreach(GTK_CONTAINER(widget), collect_widget_cb, &l_vWidget);
-	GtkEntry* l_pEntryWidget = GTK_ENTRY(l_vWidget[0]);
+	GtkEntry* l_pEntryWidget               = GTK_ENTRY(l_vWidget[0]);
 	GtkToggleButton* l_pToggleButtonWidget = GTK_TOGGLE_BUTTON(l_vWidget[1]);
 
 	if (rValue == CString("true"))
@@ -779,9 +779,9 @@ void CSettingCollectionHelper::setValueColor(GtkWidget* widget, const CString& r
 	sscanf(m_kernelContext.getConfigurationManager().expand(rValue).toASCIIString(), "%i,%i,%i", &r, &g, &b);
 
 	GdkColor l_oColor;
-	l_oColor.red = (r * 65535) / 100;
+	l_oColor.red   = (r * 65535) / 100;
 	l_oColor.green = (g * 65535) / 100;
-	l_oColor.blue = (b * 65535) / 100;
+	l_oColor.blue  = (b * 65535) / 100;
 	gtk_color_button_set_color(GTK_COLOR_BUTTON(l_vWidget[1]), &l_oColor);
 
 	gtk_entry_set_text(l_widget, rValue);
@@ -801,8 +801,8 @@ void CSettingCollectionHelper::setValueColorGradient(GtkWidget* widget, const CS
 void CSettingCollectionHelper::setValueEnumeration(const CIdentifier& rTypeIdentifier, GtkWidget* widget, const CString& rValue) const
 {
 	GtkTreeIter l_oListIter;
-	GtkComboBox* l_widget = GTK_COMBO_BOX(widget);
-	GtkListStore* l_pList = GTK_LIST_STORE(gtk_combo_box_get_model(l_widget));
+	GtkComboBox* l_widget      = GTK_COMBO_BOX(widget);
+	GtkListStore* l_pList      = GTK_LIST_STORE(gtk_combo_box_get_model(l_widget));
 	const uint64_t l_ui64Value = m_kernelContext.getTypeManager().getEnumerationEntryValueFromName(rTypeIdentifier, rValue);
 	uint64_t i;
 
@@ -871,7 +871,7 @@ void CSettingCollectionHelper::setValueBitMask(const CIdentifier& rTypeIdentifie
 
 	const string l_sValue(rValue);
 
-	const gint l_iTableSize = guint((m_kernelContext.getTypeManager().getBitMaskEntryCount(rTypeIdentifier) + 1) >> 1);
+	const gint l_iTableSize   = guint((m_kernelContext.getTypeManager().getBitMaskEntryCount(rTypeIdentifier) + 1) >> 1);
 	GtkTable* l_pBitMaskTable = GTK_TABLE(widget);
 	gtk_table_resize(l_pBitMaskTable, 2, l_iTableSize);
 

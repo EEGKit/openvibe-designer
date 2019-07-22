@@ -40,10 +40,10 @@ bool Tools::ColorGradient::parse(IMatrix& colorGradient, const CString& string)
 		if (sscanf(colorSubString.c_str(), "%i:%i,%i,%i", &p, &r, &g, &b) == 4)
 		{
 			SColor color;
-			color.percent = p;
-			color.red = r;
-			color.green = g;
-			color.blue = b;
+			color.percent                      = p;
+			color.red                          = r;
+			color.green                        = g;
+			color.blue                         = b;
 			colorGradientVector[color.percent] = color;
 		}
 
@@ -57,7 +57,7 @@ bool Tools::ColorGradient::parse(IMatrix& colorGradient, const CString& string)
 	uint32_t i = 0;
 	for (auto it = colorGradientVector.begin(); it != colorGradientVector.end(); ++it, i++)
 	{
-		colorGradient[i * 4] = it->second.percent;
+		colorGradient[i * 4]     = it->second.percent;
 		colorGradient[i * 4 + 1] = it->second.red;
 		colorGradient[i * 4 + 2] = it->second.green;
 		colorGradient[i * 4 + 3] = it->second.blue;
@@ -107,25 +107,25 @@ bool Tools::ColorGradient::interpolate(IMatrix& interpolatedColorGradient, const
 	for (i = 0; i < colorGradient.getDimensionSize(1); ++i)
 	{
 		SColor color;
-		color.percent = colorGradient[i * 4];
-		color.red = colorGradient[i * 4 + 1];
-		color.green = colorGradient[i * 4 + 2];
-		color.blue = colorGradient[i * 4 + 3];
+		color.percent         = colorGradient[i * 4];
+		color.red             = colorGradient[i * 4 + 1];
+		color.green           = colorGradient[i * 4 + 2];
+		color.blue            = colorGradient[i * 4 + 3];
 		colors[color.percent] = color;
 	}
 
 	if (colors.find(0) == colors.end())
 	{
-		SColor color = colors.begin()->second;
+		SColor color  = colors.begin()->second;
 		color.percent = 0;
-		colors[0] = color;
+		colors[0]     = color;
 	}
 
 	if (colors.find(100) == colors.end())
 	{
-		SColor color = colors.rbegin()->second;
+		SColor color  = colors.rbegin()->second;
 		color.percent = 100;
-		colors[100] = color;
+		colors[100]   = color;
 	}
 
 	auto it1 = colors.begin();
@@ -145,7 +145,7 @@ bool Tools::ColorGradient::interpolate(IMatrix& interpolatedColorGradient, const
 		const double b = t - it1->first;
 		const double d = it2->first - it1->first;
 
-		interpolatedColorGradient[i * 4] = t;
+		interpolatedColorGradient[i * 4]     = t;
 		interpolatedColorGradient[i * 4 + 1] = (it1->second.red * a + it2->second.red * b) / d;
 		interpolatedColorGradient[i * 4 + 2] = (it1->second.green * a + it2->second.green * b) / d;
 		interpolatedColorGradient[i * 4 + 3] = (it1->second.blue * a + it2->second.blue * b) / d;

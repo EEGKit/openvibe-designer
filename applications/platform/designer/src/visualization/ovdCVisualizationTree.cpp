@@ -86,13 +86,13 @@ bool CVisualizationTree::init(const IScenario* scenario)
 bool CVisualizationTree::getNextVisualizationWidgetIdentifier(CIdentifier& identifier) const
 {
 	return getNextTIdentifier<IVisualizationWidget, TTestTrue<IVisualizationWidget>>
-		(m_VisualizationWidgets, identifier, TTestTrue<IVisualizationWidget>());
+			(m_VisualizationWidgets, identifier, TTestTrue<IVisualizationWidget>());
 }
 
 bool CVisualizationTree::getNextVisualizationWidgetIdentifier(CIdentifier& identifier, const EVisualizationWidgetType type) const
 {
 	return getNextTIdentifier<IVisualizationWidget, TTestEqVisualizationWidgetType>
-		(m_VisualizationWidgets, identifier, TTestEqVisualizationWidgetType(type));
+			(m_VisualizationWidgets, identifier, TTestEqVisualizationWidgetType(type));
 }
 
 bool CVisualizationTree::isVisualizationWidget(const CIdentifier& identifier) const
@@ -124,7 +124,7 @@ bool CVisualizationTree::addVisualizationWidget(CIdentifier& identifier, const C
 
 	//create new widget
 	IVisualizationWidget* visualizationWidget = new CVisualizationWidget(m_kernelContext);
-	identifier = getUnusedIdentifier(suggestedIdentifier);
+	identifier                                = getUnusedIdentifier(suggestedIdentifier);
 
 	if (!visualizationWidget->initialize(identifier, name, type, parentIdentifier, boxIdentifier, childCount))
 	{
@@ -329,7 +329,7 @@ CIdentifier CVisualizationTree::getUnusedIdentifier(const CIdentifier& suggested
 	{
 		proposedIdentifier++;
 		result = CIdentifier(proposedIdentifier);
-		i = m_VisualizationWidgets.find(result);
+		i      = m_VisualizationWidgets.find(result);
 	} while (i != m_VisualizationWidgets.end() || result == OV_UndefinedIdentifier);
 	return result;
 }
@@ -392,7 +392,7 @@ bool CVisualizationTree::reloadTree()
 bool CVisualizationTree::getTreeSelection(GtkTreeView* preeView, GtkTreeIter* iter)
 {
 	GtkTreeSelection* treeSelection = gtk_tree_view_get_selection(preeView);
-	GtkTreeModel* treeModel = GTK_TREE_MODEL(m_TreeStore);
+	GtkTreeModel* treeModel         = GTK_TREE_MODEL(m_TreeStore);
 	return gtk_tree_selection_get_selected(treeSelection, &treeModel, iter) != 0;
 }
 
@@ -652,12 +652,12 @@ bool CVisualizationTree::dragDataReceivedOutsideWidgetCB(const CIdentifier& sour
 	//create paned widget
 	const EVisualizationWidgetType panedType = (location == EDragData_Top || location == EDragData_Bottom) ? EVisualizationWidget_VerticalSplit : EVisualizationWidget_HorizontalSplit;
 	CIdentifier panedIdentifier;
-	addVisualizationWidget(panedIdentifier, CString(panedType == EVisualizationWidget_VerticalSplit ? "Vertical split" : "Horizontal split"), panedType, 
-		destinationParentIdentifier, //parent paned to dest widget parent
-		destinationIndex, //put it at the index occupied by dest widget
-		OV_UndefinedIdentifier, //no box algorithm for a paned
-		2, //2 children
-		OV_UndefinedIdentifier); //no prefered visualization identifier
+	addVisualizationWidget(panedIdentifier, CString(panedType == EVisualizationWidget_VerticalSplit ? "Vertical split" : "Horizontal split"), panedType,
+						   destinationParentIdentifier, //parent paned to dest widget parent
+						   destinationIndex, //put it at the index occupied by dest widget
+						   OV_UndefinedIdentifier, //no box algorithm for a paned
+						   2, //2 children
+						   OV_UndefinedIdentifier); //no prefered visualization identifier
 	IVisualizationWidget* panedVisualizationWidget = getVisualizationWidget(panedIdentifier);
 
 	//add attributes
@@ -850,7 +850,7 @@ json::Object CVisualizationTree::serializeWidget(IVisualizationWidget& widget) c
 		jsonRepresentation["name"] = widget.getName().toASCIIString();
 	}
 
-	jsonRepresentation["type"] = widget.getType();
+	jsonRepresentation["type"]             = widget.getType();
 	jsonRepresentation["parentIdentifier"] = widget.getParentIdentifier().toString().toASCIIString();
 
 	// visualization widget index
@@ -863,16 +863,16 @@ json::Object CVisualizationTree::serializeWidget(IVisualizationWidget& widget) c
 	}
 
 	jsonRepresentation["boxIdentifier"] = widget.getBoxIdentifier().toString().toASCIIString();
-	jsonRepresentation["childCount"] = int(widget.getNbChildren());
+	jsonRepresentation["childCount"]    = int(widget.getNbChildren());
 
 	if (widget.getType() == EVisualizationWidget_VisualizationWindow)
 	{
-		jsonRepresentation["width"] = int(widget.getWidth());
+		jsonRepresentation["width"]  = int(widget.getWidth());
 		jsonRepresentation["height"] = int(widget.getHeight());
 	}
 	if (widget.getType() == EVisualizationWidget_HorizontalSplit || widget.getType() == EVisualizationWidget_VerticalSplit)
 	{
-		jsonRepresentation["dividerPosition"] = widget.getDividerPosition();
+		jsonRepresentation["dividerPosition"]    = widget.getDividerPosition();
 		jsonRepresentation["maxDividerPosition"] = widget.getMaxDividerPosition();
 	}
 

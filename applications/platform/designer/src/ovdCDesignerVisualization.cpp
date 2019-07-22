@@ -69,16 +69,16 @@ namespace OpenViBEDesigner
 	 * \param[in] pSecondaryText additional text to display in the dialog
 	 * \return identifier of the button pressed
 	 */
-	 /*
-	 gint displayQuestionDialog(const char* pText, const char* pSecondaryText)
-	 {
-		 ::GtkWidget* l_pQuestionDialog = gtk_message_dialog_new(nullptr, GTK_DIALOG_MODAL, GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO, pText);
-		 gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(l_pQuestionDialog),	pSecondaryText);
-		 gtk_window_set_position(GTK_WINDOW(l_pQuestionDialog), GTK_WIN_POS_MOUSE);
-		 gint ret = gtk_dialog_run(GTK_DIALOG(l_pQuestionDialog));
-		 gtk_widget_destroy(l_pQuestionDialog);
-		 return ret;
-	 }*/
+	/*
+	gint displayQuestionDialog(const char* pText, const char* pSecondaryText)
+	{
+		::GtkWidget* l_pQuestionDialog = gtk_message_dialog_new(nullptr, GTK_DIALOG_MODAL, GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO, pText);
+		gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(l_pQuestionDialog),	pSecondaryText);
+		gtk_window_set_position(GTK_WINDOW(l_pQuestionDialog), GTK_WIN_POS_MOUSE);
+		gint ret = gtk_dialog_run(GTK_DIALOG(l_pQuestionDialog));
+		gtk_widget_destroy(l_pQuestionDialog);
+		return ret;
+	}*/
 } // namespace OpenViBEDesigner
 
 //Menus
@@ -111,15 +111,15 @@ static GtkItemFactoryEntry split_widget_menu_items[] = {
 	{ static_cast<gchar*>("/Remove"), static_cast<gchar*>(""), GtkItemFactoryCallback(CDesignerVisualization::remove_visualization_widget_cb), 1, static_cast<gchar*>("<StockItem>"), GTK_STOCK_DELETE }
 };
 
-static gint num_unaffected_menu_items = sizeof(unaffected_menu_items) / sizeof(unaffected_menu_items[0]);
+static gint num_unaffected_menu_items           = sizeof(unaffected_menu_items) / sizeof(unaffected_menu_items[0]);
 static gint num_visualization_window_menu_items = sizeof(visualization_window_menu_items) / sizeof(visualization_window_menu_items[0]);
-static gint num_visualization_panel_menu_items = sizeof(visualization_panel_menu_items) / sizeof(visualization_panel_menu_items[0]);
-static gint num_visualization_box_menu_items = sizeof(visualization_box_menu_items) / sizeof(visualization_box_menu_items[0]);
-static gint num_undefined_widget_menu_items = sizeof(undefined_widget_menu_items) / sizeof(undefined_widget_menu_items[0]);
-static gint num_split_widget_menu_items = sizeof(split_widget_menu_items) / sizeof(split_widget_menu_items[0]);
+static gint num_visualization_panel_menu_items  = sizeof(visualization_panel_menu_items) / sizeof(visualization_panel_menu_items[0]);
+static gint num_visualization_box_menu_items    = sizeof(visualization_box_menu_items) / sizeof(visualization_box_menu_items[0]);
+static gint num_undefined_widget_menu_items     = sizeof(undefined_widget_menu_items) / sizeof(undefined_widget_menu_items[0]);
+static gint num_split_widget_menu_items         = sizeof(split_widget_menu_items) / sizeof(split_widget_menu_items[0]);
 
-CDesignerVisualization::CDesignerVisualization(const IKernelContext& rKernelContext, IVisualizationTree& rVisualizationTree, CInterfacedScenario& rInterfacedScenario) 
-	: m_kernelContext(rKernelContext), m_rVisualizationTree(rVisualizationTree), m_rInterfacedScenario(rInterfacedScenario), 
+CDesignerVisualization::CDesignerVisualization(const IKernelContext& rKernelContext, IVisualizationTree& rVisualizationTree, CInterfacedScenario& rInterfacedScenario)
+	: m_kernelContext(rKernelContext), m_rVisualizationTree(rVisualizationTree), m_rInterfacedScenario(rInterfacedScenario),
 	  m_fpDeleteEventCB(nullptr), m_pDeleteEventUserData(nullptr) { }
 
 CDesignerVisualization::~CDesignerVisualization()
@@ -146,8 +146,8 @@ void CDesignerVisualization::init(const std::string& guiFile)
 	m_pTreeView = m_rVisualizationTree.createTreeViewWithModel();
 
 	GtkTreeViewColumn* l_pTreeViewColumnName = gtk_tree_view_column_new();
-	GtkCellRenderer* l_pCellRendererIcon = gtk_cell_renderer_pixbuf_new();
-	GtkCellRenderer* l_pCellRendererName = gtk_cell_renderer_text_new();
+	GtkCellRenderer* l_pCellRendererIcon     = gtk_cell_renderer_pixbuf_new();
+	GtkCellRenderer* l_pCellRendererName     = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_set_title(l_pTreeViewColumnName, "Windows for current scenario");
 	gtk_tree_view_column_pack_start(l_pTreeViewColumnName, l_pCellRendererIcon, FALSE);
 	gtk_tree_view_column_pack_start(l_pTreeViewColumnName, l_pCellRendererName, TRUE);
@@ -182,15 +182,15 @@ void CDesignerVisualization::init(const std::string& guiFile)
 
 	//retrieve default window size
 	const uint32_t treeViewWidth = 200;
-	m_previewWindowW = uint32_t(m_kernelContext.getConfigurationManager().expandAsUInteger("${Designer_UnaffectedVisualizationWindowWidth}", 400));
-	m_previewWindowH = uint32_t(m_kernelContext.getConfigurationManager().expandAsUInteger("${Designer_UnaffectedVisualizationWindowHeight}", 400));
+	m_previewWindowW             = uint32_t(m_kernelContext.getConfigurationManager().expandAsUInteger("${Designer_UnaffectedVisualizationWindowWidth}", 400));
+	m_previewWindowH             = uint32_t(m_kernelContext.getConfigurationManager().expandAsUInteger("${Designer_UnaffectedVisualizationWindowHeight}", 400));
 	CIdentifier l_oVisualizationWindowIdentifier;
 	//if at least one window was created, retrieve its dimensions
 	if (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowIdentifier, EVisualizationWidget_VisualizationWindow))
 	{
 		IVisualizationWidget* l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowIdentifier);
-		m_previewWindowW = l_pVisualizationWindow->getWidth();
-		m_previewWindowH = l_pVisualizationWindow->getHeight();
+		m_previewWindowW                             = l_pVisualizationWindow->getWidth();
+		m_previewWindowH                             = l_pVisualizationWindow->getHeight();
 		/* Change the way window sizes are stored in the widget
 		TAttributeHandler l_oAttributeHandler(*l_pVisualizationWindow);
 		m_previewWindowW = l_oAttributeHandler.getAttributeValue<int>(OVD_AttributeId_VisualizationWindow_Width);
@@ -256,8 +256,8 @@ void CDesignerVisualization::load()
 	if (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowIdentifier, EVisualizationWidget_VisualizationWindow))
 	{
 		IVisualizationWidget* l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowIdentifier);
-		m_previewWindowW = l_pVisualizationWindow->getWidth();
-		m_previewWindowH = l_pVisualizationWindow->getHeight();
+		m_previewWindowW                             = l_pVisualizationWindow->getWidth();
+		m_previewWindowH                             = l_pVisualizationWindow->getHeight();
 	}
 	const uint32_t treeViewWidth = gtk_paned_get_position(GTK_PANED(m_pPane));
 	gtk_widget_set_size_request(GTK_WIDGET(m_pDialog), gint(treeViewWidth + m_previewWindowW), gint(m_previewWindowH));
@@ -284,7 +284,7 @@ void CDesignerVisualization::hide()
 
 void CDesignerVisualization::setDeleteEventCB(fpDesignerVisualizationDeleteEventCB fpDeleteEventCB, gpointer data)
 {
-	m_fpDeleteEventCB = fpDeleteEventCB;
+	m_fpDeleteEventCB      = fpDeleteEventCB;
 	m_pDeleteEventUserData = data;
 }
 
@@ -360,12 +360,12 @@ void CDesignerVisualization::createTreeWidget(IVisualizationWidget* widget)
 
 //need width request of 0 to avoid graphical bugs (label/icon overlapping other widgets) when shrinking buttons
 static gint s_labelWidthRequest = 0;
-static gint s_iconWidthRequest = 0;
+static gint s_iconWidthRequest  = 0;
 //need expand and fill flags to TRUE to see 0-size-requesting widgets
 static gboolean s_labelExpand = TRUE;
-static gboolean s_labelFill = TRUE;
-static gboolean s_iconExpand = TRUE;
-static gboolean s_iconFill = TRUE;
+static gboolean s_labelFill   = TRUE;
+static gboolean s_iconExpand  = TRUE;
+static gboolean s_iconFill    = TRUE;
 
 GtkWidget* CDesignerVisualization::loadTreeWidget(IVisualizationWidget* widget)
 {
@@ -400,10 +400,10 @@ GtkWidget* CDesignerVisualization::loadTreeWidget(IVisualizationWidget* widget)
 		}
 	}
 	else if (widget->getType() == EVisualizationWidget_VerticalSplit || widget->getType() == EVisualizationWidget_HorizontalSplit ||
-		widget->getType() == EVisualizationWidget_Undefined || widget->getType() == EVisualizationWidget_VisualizationBox)
+			 widget->getType() == EVisualizationWidget_Undefined || widget->getType() == EVisualizationWidget_VisualizationBox)
 	{
 		//tree widget = table containing event boxes + visualization widget in the center
-		l_pTreeWidget = GTK_WIDGET(newWidgetsTable());
+		l_pTreeWidget                            = GTK_WIDGET(newWidgetsTable());
 		GtkWidget* l_pCurrentVisualizationWidget = getVisualizationWidget(l_pTreeWidget);
 		if (l_pCurrentVisualizationWidget != nullptr)
 		{
@@ -562,7 +562,7 @@ void CDesignerVisualization::endLoadTreeWidget(IVisualizationWidget* widget)
 			m_rVisualizationTree.getStringValueFromTreeIter(&l_oIter, iconString, EVisualizationTreeColumn_StringStockIcon);
 			//retrieve hbox
 			GList* l_pButtonChildren = gtk_container_get_children(GTK_CONTAINER(l_widget));
-			GtkContainer* l_pBox = GTK_CONTAINER(l_pButtonChildren->data);
+			GtkContainer* l_pBox     = GTK_CONTAINER(l_pButtonChildren->data);
 			//remove first widget
 			GList* l_pBoxChildren = gtk_container_get_children(l_pBox);
 			gtk_container_remove(l_pBox, GTK_WIDGET(l_pBoxChildren->data));
@@ -737,7 +737,7 @@ void CDesignerVisualization::resizeCB(IVisualizationWidget* pVisualizationWidget
 			enablePanedSignals(paned, false);
 
 			//retrieve paned attributes
-			const int handlePos = pVisualizationWidget->getDividerPosition();
+			const int handlePos    = pVisualizationWidget->getDividerPosition();
 			const int maxHandlePos = pVisualizationWidget->getMaxDividerPosition();
 
 			if (handlePos == std::numeric_limits<int>::min() || maxHandlePos == std::numeric_limits<int>::min())
@@ -832,11 +832,11 @@ void CDesignerVisualization::setActiveVisualization(const char* activeWindow, co
 {
 	//ensures correct behavior when _active[Window/Panel] point to m_oActiveVisualization[Window/Panel]Name.m_pSecretImplementation
 	const CString window = activeWindow;
-	const CString panel = activePanel;
+	const CString panel  = activePanel;
 
 	//clear active window/panel names
 	m_oActiveVisualizationWindowName = "";
-	m_oActiveVisualizationPanelName = "";
+	m_oActiveVisualizationPanelName  = "";
 
 	//retrieve active window
 	GtkTreeIter l_oWindowIter;
@@ -967,7 +967,7 @@ GtkTable* CDesignerVisualization::newWidgetsTable()
 
 	//clear central button label
 	GtkTableChild* pTC = getTableChild(pTable, 1, 2, 1, 2);
-	GtkButton* button = GTK_BUTTON(pTC->widget);
+	GtkButton* button  = GTK_BUTTON(pTC->widget);
 	gtk_button_set_label(button, "");
 
 	//set it up as drag destination
@@ -1368,8 +1368,8 @@ void CDesignerVisualization::notifyPositionPanedCB(GtkWidget* widget)
 	GtkPaned* l_pPaned = GTK_PANED(widget);
 
 	//return if handle pos was changed because parent window was resized
-	const int l_iPos = gtk_paned_get_position(l_pPaned);
-	const int l_iMaxPos = GTK_IS_VPANED(l_pPaned) ? l_pPaned->container.widget.allocation.height : l_pPaned->container.widget.allocation.width;
+	const int l_iPos             = gtk_paned_get_position(l_pPaned);
+	const int l_iMaxPos          = GTK_IS_VPANED(l_pPaned) ? l_pPaned->container.widget.allocation.height : l_pPaned->container.widget.allocation.width;
 	const int l_iHandleThickness = GTK_IS_VPANED(l_pPaned) ? l_pPaned->handle_pos.height : l_pPaned->handle_pos.width;
 
 	if (l_iPos + l_iHandleThickness == l_iMaxPos) { return; }
@@ -1653,9 +1653,9 @@ void CDesignerVisualization::cursorChangedCB(GtkTreeView* pTreeView)
 
 				//get label of its active tab
 				GtkWidget* l_pCurrentPageLabel =
-					gtk_notebook_get_tab_label(GTK_NOTEBOOK(l_pNotebook),
-											   gtk_notebook_get_nth_page(GTK_NOTEBOOK(l_pNotebook),
-																		 gtk_notebook_get_current_page(GTK_NOTEBOOK(l_pNotebook))));
+						gtk_notebook_get_tab_label(GTK_NOTEBOOK(l_pNotebook),
+												   gtk_notebook_get_nth_page(GTK_NOTEBOOK(l_pNotebook),
+																			 gtk_notebook_get_current_page(GTK_NOTEBOOK(l_pNotebook))));
 
 				//set active visualization
 				if (l_pCurrentPageLabel != nullptr)
@@ -1680,7 +1680,7 @@ void CDesignerVisualization::cursorChangedCB(GtkTreeView* pTreeView)
 	}
 }
 
-void CDesignerVisualization::drag_data_get_from_tree_cb(GtkWidget* pSrcWidget, GdkDragContext* /*pDragContex*/, GtkSelectionData* pSelectionData, 
+void CDesignerVisualization::drag_data_get_from_tree_cb(GtkWidget* pSrcWidget, GdkDragContext* /*pDragContex*/, GtkSelectionData* pSelectionData,
 														guint /*uiInfo*/, guint /*uiT*/, gpointer /*data*/)
 {
 	dragDataGetFromTreeCB(pSrcWidget, pSelectionData);
@@ -1693,7 +1693,7 @@ void CDesignerVisualization::dragDataGetFromTreeCB(GtkWidget* pSrcWidget, GtkSel
 	gtk_selection_data_set_text(pSelectionData, l_sString, gint(strlen(l_sString)));
 }
 
-void CDesignerVisualization::drag_data_get_from_widget_cb(GtkWidget* pSrcWidget, GdkDragContext* /*pDC*/, GtkSelectionData* pSelectionData, 
+void CDesignerVisualization::drag_data_get_from_widget_cb(GtkWidget* pSrcWidget, GdkDragContext* /*pDC*/, GtkSelectionData* pSelectionData,
 														  guint /*uiInfo*/, guint /*uiTime*/, gpointer /*data*/)
 {
 	dragDataGetFromWidgetCB(pSrcWidget, pSelectionData);
@@ -1706,7 +1706,7 @@ void CDesignerVisualization::dragDataGetFromWidgetCB(GtkWidget* pSrcWidget, GtkS
 	gtk_selection_data_set_text(pSelectionData, l_sString, gint(strlen(l_sString)));
 }
 
-void CDesignerVisualization::drag_data_received_in_widget_cb(GtkWidget* dstWidget, GdkDragContext* /*pDragContext*/, gint /*iX*/, gint /*iY*/, 
+void CDesignerVisualization::drag_data_received_in_widget_cb(GtkWidget* dstWidget, GdkDragContext* /*pDragContext*/, gint /*iX*/, gint /*iY*/,
 															 GtkSelectionData* pSelectionData, guint /*uiInfo*/, guint /*uiTime*/, gpointer data)
 {
 	static_cast<CDesignerVisualization*>(data)->dragDataReceivedInWidgetCB(dstWidget, pSelectionData);

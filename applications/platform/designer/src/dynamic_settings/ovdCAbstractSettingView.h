@@ -61,8 +61,8 @@ namespace OpenViBEDesigner
 			OpenViBE::Kernel::IBox& m_rBox;
 			uint32_t m_index = 0;
 			OpenViBE::CString m_settingWidgetName;
-			GtkWidget* m_nameWidget = nullptr;
-			GtkWidget* m_entryNameWidget = nullptr;
+			GtkWidget* m_nameWidget       = nullptr;
+			GtkWidget* m_entryNameWidget  = nullptr;
 			GtkWidget* m_entryFieldWidget = nullptr;
 
 			//If we don't store the builder, the setting name will be free when we'll unref the builder

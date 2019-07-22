@@ -9,7 +9,7 @@ using namespace OpenViBEDesigner;
 using namespace std;
 
 CBoxProxy::CBoxProxy(const IKernelContext& rKernelContext, IScenario& rScenario, const CIdentifier& boxIdentifier)
-	: m_kernelContext(rKernelContext), m_pConstBox(rScenario.getBoxDetails(boxIdentifier)), m_pBox(rScenario.getBoxDetails(boxIdentifier)), 
+	: m_kernelContext(rKernelContext), m_pConstBox(rScenario.getBoxDetails(boxIdentifier)), m_pBox(rScenario.getBoxDetails(boxIdentifier)),
 	  m_IsDeprecated(m_kernelContext.getPluginManager().isPluginObjectFlaggedAsDeprecated(m_pConstBox->getAlgorithmClassIdentifier()))
 {
 	m_IsBoxAlgorithmPresent = false;
@@ -52,8 +52,8 @@ int CBoxProxy::getHeight(GtkWidget* widget) const
 
 void CBoxProxy::setCenter(const int centerX, const int centerY)
 {
-	m_centerX = centerX;
-	m_centerY = centerY;
+	m_centerX  = centerX;
+	m_centerY  = centerY;
 	m_bApplied = false;
 }
 
@@ -203,11 +203,11 @@ bool CBoxProxy::isDisabled() const
 void CBoxProxy::updateSize(GtkWidget* widget, const char* sLabel, const char* sStatus, int* pXSize, int* pYSize) const
 {
 	PangoContext* l_pPangoContext = nullptr;
-	PangoLayout* l_pPangoLayout = nullptr;
+	PangoLayout* l_pPangoLayout   = nullptr;
 	PangoRectangle l_oPangoLabelRect;
 	PangoRectangle l_oPangoStatusRect;
 	l_pPangoContext = gtk_widget_create_pango_context(widget);
-	l_pPangoLayout = pango_layout_new(l_pPangoContext);
+	l_pPangoLayout  = pango_layout_new(l_pPangoContext);
 	pango_layout_set_markup(l_pPangoLayout, sLabel, -1);
 	pango_layout_get_pixel_extents(l_pPangoLayout, nullptr, &l_oPangoLabelRect);
 	pango_layout_set_markup(l_pPangoLayout, sStatus, -1);
@@ -215,7 +215,7 @@ void CBoxProxy::updateSize(GtkWidget* widget, const char* sLabel, const char* sS
 
 	if (!strlen(sStatus))
 	{
-		l_oPangoStatusRect.width = 0;
+		l_oPangoStatusRect.width  = 0;
 		l_oPangoStatusRect.height = 0;
 	}
 

@@ -81,7 +81,7 @@ CIdentifier CVisualizationManager::getUnusedIdentifier() const
 	do
 	{
 		finalIdentifier = CIdentifier(possibleIdentifier++);
-		it = m_VisualizationTrees.find(finalIdentifier);
+		it              = m_VisualizationTrees.find(finalIdentifier);
 	} while (it != m_VisualizationTrees.end() || finalIdentifier == OV_UndefinedIdentifier);
 	return finalIdentifier;
 }

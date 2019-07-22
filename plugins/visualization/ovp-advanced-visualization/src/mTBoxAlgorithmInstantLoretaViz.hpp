@@ -100,9 +100,9 @@ namespace Mensia
 				gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "expander_select")));
 				gtk_widget_show(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "expander_select_sLORETA")));
 
-				m_pLookupTreeView[0] = GTK_TREE_VIEW(::gtk_builder_get_object(m_pBuilder, "expander_select_broadmann_treeview"));
-				m_pLookupTreeView[1] = GTK_TREE_VIEW(::gtk_builder_get_object(m_pBuilder, "expander_select_neuro_1_treeview"));
-				m_pLookupTreeView[2] = GTK_TREE_VIEW(::gtk_builder_get_object(m_pBuilder, "expander_select_neuro_2_treeview"));
+				m_pLookupTreeView[0]  = GTK_TREE_VIEW(::gtk_builder_get_object(m_pBuilder, "expander_select_broadmann_treeview"));
+				m_pLookupTreeView[1]  = GTK_TREE_VIEW(::gtk_builder_get_object(m_pBuilder, "expander_select_neuro_1_treeview"));
+				m_pLookupTreeView[2]  = GTK_TREE_VIEW(::gtk_builder_get_object(m_pBuilder, "expander_select_neuro_2_treeview"));
 				m_pLookupListStore[0] = GTK_LIST_STORE(::gtk_builder_get_object(m_pBuilder, "liststore_select_broadmann"));
 				m_pLookupListStore[1] = GTK_LIST_STORE(::gtk_builder_get_object(m_pBuilder, "liststore_select_neuro_1"));
 				m_pLookupListStore[2] = GTK_LIST_STORE(::gtk_builder_get_object(m_pBuilder, "liststore_select_neuro_2"));

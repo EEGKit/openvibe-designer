@@ -120,10 +120,10 @@ CRendererLoreta::CRendererLoreta()
 	}
 
 	m_vLookup.clear();
-	const unsigned int l_uiCategoryIndex_BrodmannAreas = 0;
+	const unsigned int l_uiCategoryIndex_BrodmannAreas   = 0;
 	const unsigned int l_uiCategoryIndex_AnatomicalAreas = 1;
-	const unsigned int l_uiCategoryIndex_Lobes = 2;
-	const unsigned int l_uiCategoryIndex_ROI = 3;
+	const unsigned int l_uiCategoryIndex_Lobes           = 2;
+	const unsigned int l_uiCategoryIndex_ROI             = 3;
 	m_vLookup.resize(4);
 
 #if 0 /* SAVING DATA INTO C FILE */
@@ -376,7 +376,7 @@ bool CRendererLoreta::render(const IRendererContext& rContext)
 		for (i = 0, j = 0; i < 2394; ++i)
 		{
 			// Apply texture coordinate to each of the 8 vertices of this voxel
-			const float l_fPower = l_vSample[i] * rContext.getScale();
+			const float l_fPower      = l_vSample[i] * rContext.getScale();
 			m_oBrain.m_vVertex[j++].u = l_fPower;
 			m_oBrain.m_vVertex[j++].u = l_fPower;
 			m_oBrain.m_vVertex[j++].u = l_fPower;
@@ -410,7 +410,7 @@ bool CRendererLoreta::render(const IRendererContext& rContext)
 		for (i = 0, j = 0; i < 2394; ++i)
 		{
 			// Apply texture coordinate to each of the 8 vertices of this voxel
-			const float l_fPower = 0;
+			const float l_fPower      = 0;
 			m_oBrain.m_vVertex[j++].u = l_fPower;
 			m_oBrain.m_vVertex[j++].u = l_fPower;
 			m_oBrain.m_vVertex[j++].u = l_fPower;
@@ -539,7 +539,7 @@ const char* CRendererLoreta::getRegionName(const uint32_t regionCategory, const 
 	if (regionCategory >= m_vLookup.size()) { return nullptr; }
 
 	std::map<std::string, std::vector<uint32_t>>& l_vLookup = m_vLookup[regionCategory];
-	auto it = l_vLookup.begin();
+	auto it                                                 = l_vLookup.begin();
 
 	for (uint32_t j = 0; j < regionIndex && it != l_vLookup.end(); j++)
 	{
@@ -574,7 +574,7 @@ void CRendererLoreta::selectRegion(const uint32_t regionCategory, const uint32_t
 {
 	if (regionCategory >= m_vLookup.size()) { return; }
 
-	std::map<std::string, std::vector<uint32_t>>& l_vLookup = m_vLookup[regionCategory];
+	std::map<std::string, std::vector<uint32_t>>& l_vLookup   = m_vLookup[regionCategory];
 	std::map<std::string, std::vector<uint32_t>>::iterator it = l_vLookup.begin();
 
 	for (uint32_t j = 0; j < regionIndex && it != l_vLookup.end(); j++)
@@ -604,7 +604,7 @@ void CRendererLoreta::refreshBrainSubset()
 	// Inserts selected voxels in look up
 
 	const uint32_t l_ui32TrianglePerRenderedVoxel = 12;
-	const uint32_t l_ui32VertexPerRenderedVoxel = l_ui32TrianglePerRenderedVoxel * 3;
+	const uint32_t l_ui32VertexPerRenderedVoxel   = l_ui32TrianglePerRenderedVoxel * 3;
 	uint32_t i, j, k;
 	for (i = 0, j = 0, k = 0; i < 2394; i++, k += l_ui32VertexPerRenderedVoxel)
 	{

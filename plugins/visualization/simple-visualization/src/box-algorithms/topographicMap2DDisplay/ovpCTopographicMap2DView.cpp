@@ -60,25 +60,25 @@ namespace OpenViBEPlugins
 			gtk_builder_connect_signals(m_builderInterface, nullptr);
 
 			m_backgroundColor.pixel = 0;
-			m_backgroundColor.red = 0xFFFF;
+			m_backgroundColor.red   = 0xFFFF;
 			m_backgroundColor.green = 0;//0xFFFF;
-			m_backgroundColor.blue = 0;//0xFFFF;
+			m_backgroundColor.blue  = 0;//0xFFFF;
 
 			//toolbar
 			//-------
 
 			//get pointers to projection mode buttons
-			m_axialProjectionButton = GTK_RADIO_TOOL_BUTTON(gtk_builder_get_object(m_builderInterface, "AxialProjection"));
+			m_axialProjectionButton  = GTK_RADIO_TOOL_BUTTON(gtk_builder_get_object(m_builderInterface, "AxialProjection"));
 			m_radialProjectionButton = GTK_RADIO_TOOL_BUTTON(gtk_builder_get_object(m_builderInterface, "RadialProjection"));
 
 			g_signal_connect(G_OBJECT(m_axialProjectionButton), "toggled", G_CALLBACK(setProjectionCallback), this);
 			g_signal_connect(G_OBJECT(m_radialProjectionButton), "toggled", G_CALLBACK(setProjectionCallback), this);
 
 			//get pointers to view buttons
-			m_topViewButton = GTK_RADIO_TOOL_BUTTON(gtk_builder_get_object(m_builderInterface, "TopView"));
-			m_leftViewButton = GTK_RADIO_TOOL_BUTTON(gtk_builder_get_object(m_builderInterface, "LeftView"));
+			m_topViewButton   = GTK_RADIO_TOOL_BUTTON(gtk_builder_get_object(m_builderInterface, "TopView"));
+			m_leftViewButton  = GTK_RADIO_TOOL_BUTTON(gtk_builder_get_object(m_builderInterface, "LeftView"));
 			m_rightViewButton = GTK_RADIO_TOOL_BUTTON(gtk_builder_get_object(m_builderInterface, "RightView"));
-			m_backViewButton = GTK_RADIO_TOOL_BUTTON(gtk_builder_get_object(m_builderInterface, "BackView"));
+			m_backViewButton  = GTK_RADIO_TOOL_BUTTON(gtk_builder_get_object(m_builderInterface, "BackView"));
 
 			g_signal_connect(G_OBJECT(m_topViewButton), "toggled", G_CALLBACK(setViewCallback), this);
 			g_signal_connect(G_OBJECT(m_leftViewButton), "toggled", G_CALLBACK(setViewCallback), this);
@@ -87,7 +87,7 @@ namespace OpenViBEPlugins
 
 			//get pointers to interpolation type buttons
 			m_mapPotentials = GTK_RADIO_TOOL_BUTTON(gtk_builder_get_object(m_builderInterface, "MapPotentials"));
-			m_mapCurrents = GTK_RADIO_TOOL_BUTTON(gtk_builder_get_object(m_builderInterface, "MapCurrents"));
+			m_mapCurrents   = GTK_RADIO_TOOL_BUTTON(gtk_builder_get_object(m_builderInterface, "MapCurrents"));
 
 			g_signal_connect(G_OBJECT(m_mapPotentials), "toggled", G_CALLBACK(setInterpolationCallback), this);
 			g_signal_connect(G_OBJECT(m_mapCurrents), "toggled", G_CALLBACK(setInterpolationCallback), this);
@@ -113,7 +113,7 @@ namespace OpenViBEPlugins
 			g_signal_connect(G_OBJECT(l_pDelayScale), "value_changed", G_CALLBACK(setDelayCallback), this);
 
 			//replace existing scale (which somehow can't be used) with the newly created one
-			GtkWidget* l_pOldScale = GTK_WIDGET(gtk_builder_get_object(m_builderInterface, "DelayScale"));
+			GtkWidget* l_pOldScale    = GTK_WIDGET(gtk_builder_get_object(m_builderInterface, "DelayScale"));
 			GtkWidget* l_pScaleParent = gtk_widget_get_parent(l_pOldScale);
 			if (l_pScaleParent != nullptr && GTK_IS_CONTAINER(l_pScaleParent))
 			{
@@ -126,56 +126,56 @@ namespace OpenViBEPlugins
 			}
 
 			//color palettes
-			s_palette[0].red = 255 * 65535 / 255;
-			s_palette[0].green = 0 * 65535 / 255;
-			s_palette[0].blue = 0 * 65535 / 255;
-			s_palette[1].red = 234 * 65535 / 255;
-			s_palette[1].green = 1 * 65535 / 255;
-			s_palette[1].blue = 0 * 65535 / 255;
-			s_palette[2].red = 205 * 65535 / 255;
-			s_palette[2].green = 0 * 65535 / 255;
-			s_palette[2].blue = 101 * 65535 / 255;
-			s_palette[3].red = 153 * 65535 / 255;
-			s_palette[3].green = 0 * 65535 / 255;
-			s_palette[3].blue = 178 * 65535 / 255;
-			s_palette[4].red = 115 * 65535 / 255;
-			s_palette[4].green = 1 * 65535 / 255;
-			s_palette[4].blue = 177 * 65535 / 255;
-			s_palette[5].red = 77 * 65535 / 255;
-			s_palette[5].green = 0 * 65535 / 255;
-			s_palette[5].blue = 178 * 65535 / 255;
-			s_palette[6].red = 0 * 65535 / 255;
-			s_palette[6].green = 0 * 65535 / 255;
-			s_palette[6].blue = 152 * 65535 / 255;
-			s_palette[7].red = 0 * 65535 / 255;
-			s_palette[7].green = 97 * 65535 / 255;
-			s_palette[7].blue = 121 * 65535 / 255;
-			s_palette[8].red = 0 * 65535 / 255;
-			s_palette[8].green = 164 * 65535 / 255;
-			s_palette[8].blue = 100 * 65535 / 255;
-			s_palette[9].red = 0 * 65535 / 255;
-			s_palette[9].green = 225 * 65535 / 255;
-			s_palette[9].blue = 25 * 65535 / 255;
-			s_palette[10].red = 150 * 65535 / 255;
+			s_palette[0].red    = 255 * 65535 / 255;
+			s_palette[0].green  = 0 * 65535 / 255;
+			s_palette[0].blue   = 0 * 65535 / 255;
+			s_palette[1].red    = 234 * 65535 / 255;
+			s_palette[1].green  = 1 * 65535 / 255;
+			s_palette[1].blue   = 0 * 65535 / 255;
+			s_palette[2].red    = 205 * 65535 / 255;
+			s_palette[2].green  = 0 * 65535 / 255;
+			s_palette[2].blue   = 101 * 65535 / 255;
+			s_palette[3].red    = 153 * 65535 / 255;
+			s_palette[3].green  = 0 * 65535 / 255;
+			s_palette[3].blue   = 178 * 65535 / 255;
+			s_palette[4].red    = 115 * 65535 / 255;
+			s_palette[4].green  = 1 * 65535 / 255;
+			s_palette[4].blue   = 177 * 65535 / 255;
+			s_palette[5].red    = 77 * 65535 / 255;
+			s_palette[5].green  = 0 * 65535 / 255;
+			s_palette[5].blue   = 178 * 65535 / 255;
+			s_palette[6].red    = 0 * 65535 / 255;
+			s_palette[6].green  = 0 * 65535 / 255;
+			s_palette[6].blue   = 152 * 65535 / 255;
+			s_palette[7].red    = 0 * 65535 / 255;
+			s_palette[7].green  = 97 * 65535 / 255;
+			s_palette[7].blue   = 121 * 65535 / 255;
+			s_palette[8].red    = 0 * 65535 / 255;
+			s_palette[8].green  = 164 * 65535 / 255;
+			s_palette[8].blue   = 100 * 65535 / 255;
+			s_palette[9].red    = 0 * 65535 / 255;
+			s_palette[9].green  = 225 * 65535 / 255;
+			s_palette[9].blue   = 25 * 65535 / 255;
+			s_palette[10].red   = 150 * 65535 / 255;
 			s_palette[10].green = 255 * 65535 / 255;
-			s_palette[10].blue = 0 * 65535 / 255;
-			s_palette[11].red = 200 * 65535 / 255;
+			s_palette[10].blue  = 0 * 65535 / 255;
+			s_palette[11].red   = 200 * 65535 / 255;
 			s_palette[11].green = 255 * 65535 / 255;
-			s_palette[11].blue = 0 * 65535 / 255;
-			s_palette[12].red = 255 * 65535 / 255;
+			s_palette[11].blue  = 0 * 65535 / 255;
+			s_palette[12].red   = 255 * 65535 / 255;
 			s_palette[12].green = 255 * 65535 / 255;
-			s_palette[12].blue = 0 * 65535 / 255;
+			s_palette[12].blue  = 0 * 65535 / 255;
 
-			s_palette8[0] = 255;
-			s_palette8[1] = 0;
-			s_palette8[2] = 0;
-			s_palette8[3] = 234;
-			s_palette8[4] = 1;
-			s_palette8[5] = 0;
-			s_palette8[6] = 205;
-			s_palette8[7] = 0;
-			s_palette8[8] = 101;
-			s_palette8[9] = 153;
+			s_palette8[0]  = 255;
+			s_palette8[1]  = 0;
+			s_palette8[2]  = 0;
+			s_palette8[3]  = 234;
+			s_palette8[4]  = 1;
+			s_palette8[5]  = 0;
+			s_palette8[6]  = 205;
+			s_palette8[7]  = 0;
+			s_palette8[8]  = 101;
+			s_palette8[9]  = 153;
 			s_palette8[10] = 0;
 			s_palette8[11] = 178;
 			s_palette8[12] = 115;
@@ -300,7 +300,7 @@ namespace OpenViBEPlugins
 
 		void CTopographicMap2DView::getWidgets(GtkWidget* & pWidget, GtkWidget* & pToolbarWidget) const
 		{
-			pWidget = GTK_WIDGET(gtk_builder_get_object(m_builderInterface, "TopographicMap2DDrawingArea"));
+			pWidget        = GTK_WIDGET(gtk_builder_get_object(m_builderInterface, "TopographicMap2DDrawingArea"));
 			pToolbarWidget = GTK_WIDGET(gtk_builder_get_object(m_builderInterface, "Toolbar"));
 		}
 
@@ -322,7 +322,7 @@ namespace OpenViBEPlugins
 			m_topographicMapDatabase.getLastBufferInterpolatedMinMaxValue(l_f64MinPotential, l_f64MaxPotential);
 
 			const int32_t l_colorStartIndex = 0;
-			const int32_t l_colorEndIndex = s_nbColors - 1;
+			const int32_t l_colorEndIndex   = s_nbColors - 1;
 
 			double l_f64InvPotentialStep = 0;
 
@@ -444,7 +444,7 @@ namespace OpenViBEPlugins
 			}
 			//determine palette bar dims
 			const gint l_iPaletteBarWidth = gint(0.9 * ui32Width);
-			gint l_iPaletteBarHeight = gint(ui32Height - textHeight);
+			gint l_iPaletteBarHeight      = gint(ui32Height - textHeight);
 			if (l_iPaletteBarHeight < gint(m_minPaletteBarHeight))
 			{
 				l_iPaletteBarHeight = gint(m_minPaletteBarHeight);
@@ -588,7 +588,7 @@ namespace OpenViBEPlugins
 		void CTopographicMap2DView::resizeData()
 		{
 			//window size
-			const uint32_t l_iWindowWidth = m_drawingArea->allocation.width;
+			const uint32_t l_iWindowWidth  = m_drawingArea->allocation.width;
 			const uint32_t l_iWindowHeight = m_drawingArea->allocation.height;
 
 			//retrieve text size
@@ -599,7 +599,7 @@ namespace OpenViBEPlugins
 			l_pText = nullptr;
 
 			//palette sub-window dims
-			m_paletteWindowWidth = l_iWindowWidth;
+			m_paletteWindowWidth  = l_iWindowWidth;
 			m_paletteWindowHeight = uint32_t(0.1 * l_iWindowHeight);
 			if (m_paletteWindowHeight > uint32_t(m_maxPaletteBarHeight + textHeight + 4))
 			{
@@ -614,7 +614,7 @@ namespace OpenViBEPlugins
 			if (m_paletteWindowHeight > l_iWindowHeight) { return; }
 
 			//head sub-window dims
-			m_headWindowWidth = l_iWindowWidth;
+			m_headWindowWidth  = l_iWindowWidth;
 			m_headWindowHeight = l_iWindowHeight - m_paletteWindowHeight;
 
 			uint32_t l_ui32HeadMaxSize;
@@ -641,12 +641,12 @@ namespace OpenViBEPlugins
 
 				//skull outline and filled area start/end angles
 				m_skullOutlineStartAngle = 0;
-				m_skullOutlineEndAngle = 360;
-				m_skullFillStartAngle = 0;
-				m_skullFillEndAngle = 360;
+				m_skullOutlineEndAngle   = 360;
+				m_skullFillStartAngle    = 0;
+				m_skullFillEndAngle      = 360;
 
 				//clip mask
-				m_clipmaskWidth = m_skullDiameter;
+				m_clipmaskWidth  = m_skullDiameter;
 				m_clipmaskHeight = m_skullDiameter;
 			}
 			else if (m_currentView == TopographicMap2DView_Back)
@@ -664,33 +664,33 @@ namespace OpenViBEPlugins
 
 				//skull outline and filled area start/end angles
 				m_skullOutlineStartAngle = -38;
-				m_skullOutlineEndAngle = 180 - m_skullOutlineStartAngle;
-				m_skullFillStartAngle = -30;
-				m_skullFillEndAngle = 180 - m_skullFillStartAngle;
+				m_skullOutlineEndAngle   = 180 - m_skullOutlineStartAngle;
+				m_skullFillStartAngle    = -30;
+				m_skullFillEndAngle      = 180 - m_skullFillStartAngle;
 
 				const uint32_t skullCenterX = m_skullX + m_skullDiameter / 2;
 				const uint32_t skullCenterY = m_skullY + m_skullDiameter / 2;
 
-				m_skullOutlineLeftPointX = skullCenterX + uint32_t(1.0 * m_skullDiameter / 2 * cosf(float(DEG2RAD(m_skullOutlineEndAngle))));
-				m_skullOutlineLeftPointY = skullCenterY - uint32_t(1.0 * m_skullDiameter / 2 * sinf(float(DEG2RAD(m_skullOutlineEndAngle))));
+				m_skullOutlineLeftPointX  = skullCenterX + uint32_t(1.0 * m_skullDiameter / 2 * cosf(float(DEG2RAD(m_skullOutlineEndAngle))));
+				m_skullOutlineLeftPointY  = skullCenterY - uint32_t(1.0 * m_skullDiameter / 2 * sinf(float(DEG2RAD(m_skullOutlineEndAngle))));
 				m_skullOutlineRightPointX = skullCenterX + uint32_t(1.0 * m_skullDiameter / 2 * cosf(float(DEG2RAD(m_skullOutlineStartAngle))));
 				m_skullOutlineRightPointY = skullCenterY - uint32_t(1.0 * m_skullDiameter / 2 * sinf(float(DEG2RAD(m_skullOutlineStartAngle))));
 
-				m_skullFillLeftPointX = skullCenterX + uint32_t(1.0 * m_skullDiameter / 2 * cosf(float(DEG2RAD(m_skullFillEndAngle))));
-				m_skullFillLeftPointY = skullCenterY - uint32_t(1.0 * m_skullDiameter / 2 * sinf(float(DEG2RAD(m_skullFillEndAngle))));
-				m_skullFillRightPointX = skullCenterX + uint32_t(1.0 * m_skullDiameter / 2 * cosf(float(DEG2RAD(m_skullFillStartAngle))));
-				m_skullFillRightPointY = skullCenterY - uint32_t(1.0 * m_skullDiameter / 2 * sinf(float(DEG2RAD(m_skullFillStartAngle))));
+				m_skullFillLeftPointX   = skullCenterX + uint32_t(1.0 * m_skullDiameter / 2 * cosf(float(DEG2RAD(m_skullFillEndAngle))));
+				m_skullFillLeftPointY   = skullCenterY - uint32_t(1.0 * m_skullDiameter / 2 * sinf(float(DEG2RAD(m_skullFillEndAngle))));
+				m_skullFillRightPointX  = skullCenterX + uint32_t(1.0 * m_skullDiameter / 2 * cosf(float(DEG2RAD(m_skullFillStartAngle))));
+				m_skullFillRightPointY  = skullCenterY - uint32_t(1.0 * m_skullDiameter / 2 * sinf(float(DEG2RAD(m_skullFillStartAngle))));
 				m_skullFillBottomPointX = m_skullX + m_skullDiameter / 2;
 				m_skullFillBottomPointY = m_skullFillRightPointY;
 
 				//neck extremities
-				m_leftNeckX = m_skullOutlineLeftPointX + uint32_t(0.025f * m_skullDiameter);
-				m_leftNeckY = m_skullOutlineLeftPointY + l_ui32NeckProtrudingHeight;
+				m_leftNeckX  = m_skullOutlineLeftPointX + uint32_t(0.025f * m_skullDiameter);
+				m_leftNeckY  = m_skullOutlineLeftPointY + l_ui32NeckProtrudingHeight;
 				m_rightNeckX = m_skullOutlineRightPointX - uint32_t(0.025f * m_skullDiameter);
 				m_rightNeckY = m_leftNeckY;
 
 				//clip mask
-				m_clipmaskWidth = m_skullDiameter;
+				m_clipmaskWidth  = m_skullDiameter;
 				m_clipmaskHeight = m_skullFillBottomPointY - m_skullY + 1;
 			}
 			else if (m_currentView == TopographicMap2DView_Left || m_currentView == TopographicMap2DView_Right)
@@ -712,9 +712,9 @@ namespace OpenViBEPlugins
 					m_skullX = m_noseTipX + l_ui32NoseProtrudingWidth;
 					//skull outline and filled area start/end angles
 					m_skullOutlineStartAngle = -41;
-					m_skullOutlineEndAngle = 193;//194;
-					m_skullFillStartAngle = -22;
-					m_skullFillEndAngle = 188;
+					m_skullOutlineEndAngle   = 193;//194;
+					m_skullFillStartAngle    = -22;
+					m_skullFillEndAngle      = 188;
 
 					const uint32_t skullCenterX = m_skullX + m_skullDiameter / 2;
 					const uint32_t skullCenterY = m_skullY + m_skullDiameter / 2;
@@ -743,9 +743,9 @@ namespace OpenViBEPlugins
 					m_skullX = (m_headWindowWidth - l_ui32HeadMaxSize) / 2;
 					//skull outline and filled area start/end angles
 					m_skullOutlineStartAngle = -13; //-14;
-					m_skullOutlineEndAngle = 221;
-					m_skullFillStartAngle = -8;
-					m_skullFillEndAngle = 202;
+					m_skullOutlineEndAngle   = 221;
+					m_skullFillStartAngle    = -8;
+					m_skullFillEndAngle      = 202;
 
 					const uint32_t skullCenterX = m_skullX + m_skullDiameter / 2;
 					const uint32_t skullCenterY = m_skullY + m_skullDiameter / 2;
@@ -769,16 +769,16 @@ namespace OpenViBEPlugins
 
 				const uint32_t skullCenterX = m_skullX + m_skullDiameter / 2;
 				const uint32_t skullCenterY = m_skullY + m_skullDiameter / 2;
-				m_skullFillLeftPointX = skullCenterX + uint32_t(float(m_skullDiameter) / 2 * cosf(float(DEG2RAD(m_skullFillEndAngle))));
-				m_skullFillLeftPointY = skullCenterY - uint32_t(float(m_skullDiameter) / 2 * sinf(float(DEG2RAD(m_skullFillEndAngle))));
-				m_skullFillRightPointX = skullCenterX + uint32_t(float(m_skullDiameter) / 2 * cosf(float(DEG2RAD(m_skullFillStartAngle))));
-				m_skullFillRightPointY = skullCenterY - uint32_t(float(m_skullDiameter) / 2 * sinf(float(DEG2RAD(m_skullFillStartAngle))));
+				m_skullFillLeftPointX       = skullCenterX + uint32_t(float(m_skullDiameter) / 2 * cosf(float(DEG2RAD(m_skullFillEndAngle))));
+				m_skullFillLeftPointY       = skullCenterY - uint32_t(float(m_skullDiameter) / 2 * sinf(float(DEG2RAD(m_skullFillEndAngle))));
+				m_skullFillRightPointX      = skullCenterX + uint32_t(float(m_skullDiameter) / 2 * cosf(float(DEG2RAD(m_skullFillStartAngle))));
+				m_skullFillRightPointY      = skullCenterY - uint32_t(float(m_skullDiameter) / 2 * sinf(float(DEG2RAD(m_skullFillStartAngle))));
 
 				m_skullFillBottomPointX = m_skullX + m_skullDiameter / 2;
 				m_skullFillBottomPointY = m_skullY + uint32_t(0.684f * m_skullDiameter);
 
 				//clip mask
-				m_clipmaskWidth = m_skullDiameter;
+				m_clipmaskWidth  = m_skullDiameter;
 				m_clipmaskHeight = m_skullFillBottomPointY - m_skullY + 1;
 			}
 
@@ -787,7 +787,7 @@ namespace OpenViBEPlugins
 			if (m_clipmask != nullptr) { g_object_unref(m_clipmask); }
 
 			//allocate clipmask
-			m_clipmask = gdk_pixmap_new(m_drawingArea->window, m_clipmaskWidth, m_clipmaskHeight, 1);
+			m_clipmask   = gdk_pixmap_new(m_drawingArea->window, m_clipmaskWidth, m_clipmaskHeight, 1);
 			m_clipmaskGC = gdk_gc_new(GDK_DRAWABLE(m_clipmask));
 			gdk_gc_set_colormap(m_clipmaskGC, gdk_gc_get_colormap(m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)]));
 
@@ -803,15 +803,15 @@ namespace OpenViBEPlugins
 			delete[] m_skullRGBBuffer;
 
 			//align lines on 32bit boundaries
-			m_rowStride = ((m_skullDiameter * 3) % 4 == 0) ? (m_skullDiameter * 3) : ((((m_skullDiameter * 3) >> 2) + 1) << 2);
+			m_rowStride      = ((m_skullDiameter * 3) % 4 == 0) ? (m_skullDiameter * 3) : ((((m_skullDiameter * 3) >> 2) + 1) << 2);
 			m_skullRGBBuffer = new guchar[m_rowStride * m_skullDiameter];
 
 			//determine size of colored cells
 #if 1
-			const uint32_t l_ui32CellMinSize = 6;
-			const uint32_t l_ui32CellMaxSize = 6;
+			const uint32_t l_ui32CellMinSize         = 6;
+			const uint32_t l_ui32CellMaxSize         = 6;
 			const double l_f64CellOverSkullSizeRatio = 0.02;
-			m_cellSize = uint32_t(m_skullDiameter * l_f64CellOverSkullSizeRatio);
+			m_cellSize                               = uint32_t(m_skullDiameter * l_f64CellOverSkullSizeRatio);
 
 			if (m_cellSize < l_ui32CellMinSize) { m_cellSize = l_ui32CellMinSize; }
 			else if (m_cellSize > l_ui32CellMaxSize) { m_cellSize = l_ui32CellMaxSize; }
@@ -913,7 +913,7 @@ namespace OpenViBEPlugins
 
 		void CTopographicMap2DView::drawPotentials() const
 		{
-			gdk_draw_rgb_image(m_drawingArea->window, m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], m_skullX, m_skullY, 
+			gdk_draw_rgb_image(m_drawingArea->window, m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], m_skullX, m_skullY,
 							   m_skullDiameter, m_skullDiameter, GDK_RGB_DITHER_NONE, m_skullRGBBuffer, m_rowStride);
 		}
 
@@ -923,7 +923,7 @@ namespace OpenViBEPlugins
 
 			//determine size of electrode rings
 			const double l_f64ElectrodeRingOverSkullSizeRatio = 0.05;
-			gint electrodeRingSize = gint(m_skullDiameter * l_f64ElectrodeRingOverSkullSizeRatio);
+			gint electrodeRingSize                            = gint(m_skullDiameter * l_f64ElectrodeRingOverSkullSizeRatio);
 
 #if 0
 			if (electrodeRingSize < (gint)electrodeRingMinSize) { electrodeRingSize = (gint)electrodeRingMinSize; }
@@ -935,14 +935,14 @@ namespace OpenViBEPlugins
 			if (electrodeRingSize == 0) { return; }
 
 			GdkColor l_oWhite;
-			l_oWhite.red = 65535;
+			l_oWhite.red   = 65535;
 			l_oWhite.green = 65535;
-			l_oWhite.blue = 65535;
+			l_oWhite.blue  = 65535;
 
 			GdkColor l_oBlack;
-			l_oBlack.red = 0;
+			l_oBlack.red   = 0;
 			l_oBlack.green = 0;
-			l_oBlack.blue = 0;
+			l_oBlack.blue  = 0;
 
 			//set electrode ring thickness
 			const gint electrodeRingThickness = 1;
@@ -1029,7 +1029,7 @@ namespace OpenViBEPlugins
 				{
 					//compute back frame 2D coordinates
 					const double l_f64Theta = getThetaFromCartesianCoordinates(electrodePosition);
-					const double l_f64Phi = getPhiFromCartesianCoordinates(electrodePosition);
+					const double l_f64Phi   = getPhiFromCartesianCoordinates(electrodePosition);
 					compute2DCoordinates(l_f64Theta, l_f64Phi, skullCenterX, skullCenterY, channelX, channelY);
 				}
 			}
@@ -1052,7 +1052,7 @@ namespace OpenViBEPlugins
 					l_pBackElectrodePosition[2] = -electrodePosition[1];
 					//compute back frame 2D coordinates
 					const double l_f64Theta = getThetaFromCartesianCoordinates(l_pBackElectrodePosition);
-					const double l_f64Phi = getPhiFromCartesianCoordinates(l_pBackElectrodePosition);
+					const double l_f64Phi   = getPhiFromCartesianCoordinates(l_pBackElectrodePosition);
 					compute2DCoordinates(l_f64Theta, l_f64Phi, skullCenterX, skullCenterY, channelX, channelY);
 				}
 			}
@@ -1075,7 +1075,7 @@ namespace OpenViBEPlugins
 					l_pBackElectrodePosition[2] = -electrodePosition[0];
 					//compute back frame 2D coordinates
 					const double l_f64Theta = getThetaFromCartesianCoordinates(l_pBackElectrodePosition);
-					const double l_f64Phi = getPhiFromCartesianCoordinates(l_pBackElectrodePosition);
+					const double l_f64Phi   = getPhiFromCartesianCoordinates(l_pBackElectrodePosition);
 					compute2DCoordinates(l_f64Theta, l_f64Phi, skullCenterX, skullCenterY, channelX, channelY);
 				}
 			}
@@ -1098,7 +1098,7 @@ namespace OpenViBEPlugins
 					l_pBackElectrodePosition[2] = electrodePosition[0];
 					//compute back frame 2D coordinates
 					const double l_f64Theta = getThetaFromCartesianCoordinates(l_pBackElectrodePosition);
-					const double l_f64Phi = getPhiFromCartesianCoordinates(l_pBackElectrodePosition);
+					const double l_f64Phi   = getPhiFromCartesianCoordinates(l_pBackElectrodePosition);
 					compute2DCoordinates(l_f64Theta, l_f64Phi, skullCenterX, skullCenterY, channelX, channelY);
 				}
 			}
@@ -1124,7 +1124,7 @@ namespace OpenViBEPlugins
 			{
 				for (uint32_t i = 0; i < (ui32Width * 3); i += 3)
 				{
-					*(lineBase + i) = ui8Red;
+					*(lineBase + i)     = ui8Red;
 					*(lineBase + i + 1) = ui8Green;
 					*(lineBase + i + 2) = ui8Blue;
 				}
@@ -1159,7 +1159,7 @@ namespace OpenViBEPlugins
 			//sampling over skull area
 			const float skullCenterX = m_skullX + m_skullDiameter / 2.f;
 			const float skullCenterY = m_skullY + m_skullDiameter / 2.F;
-			double* buffer = m_sampleCoordinatesMatrix.getBuffer();
+			double* buffer           = m_sampleCoordinatesMatrix.getBuffer();
 
 			//for each row
 			float curY = float(m_skullY);
@@ -1185,7 +1185,7 @@ namespace OpenViBEPlugins
 						{
 							if (bComputeCoordinates)
 							{
-								m_sample2DCoordinates[curSample].first = uint32_t(j * m_cellSize);
+								m_sample2DCoordinates[curSample].first  = uint32_t(j * m_cellSize);
 								m_sample2DCoordinates[curSample].second = uint32_t(i * m_cellSize);
 
 								//compute normalized coordinates to be fed to spherical spline algorithm
@@ -1200,18 +1200,18 @@ namespace OpenViBEPlugins
 								{
 									if (m_currentView == TopographicMap2DView_Top)
 									{
-										*(buffer + baseIndex) = x;
+										*(buffer + baseIndex)     = x;
 										*(buffer + baseIndex + 1) = y;
 										//z = sqrt(1-x*x-y*y)
-										const float squareXYSum = x * x + y * y;
+										const float squareXYSum   = x * x + y * y;
 										*(buffer + baseIndex + 2) = (squareXYSum >= 1) ? 0 : sqrt(1 - squareXYSum);
 									}
 									else if (m_currentView == TopographicMap2DView_Back)
 									{
-										*(buffer + baseIndex) = x;
+										*(buffer + baseIndex)     = x;
 										*(buffer + baseIndex + 2) = y;
 										//y = sqrt(1-x*x-z*z)
-										const float squareXYSum = x * x + y * y;
+										const float squareXYSum   = x * x + y * y;
 										*(buffer + baseIndex + 1) = (squareXYSum >= 1) ? 0 : sqrt(1 - squareXYSum);
 									}
 									else if (m_currentView == TopographicMap2DView_Left)
@@ -1220,7 +1220,7 @@ namespace OpenViBEPlugins
 										*(buffer + baseIndex + 2) = y;
 										//x = sqrt(1-y*y-z*z)
 										const float squareXYSum = x * x + y * y;
-										*(buffer + baseIndex) = (squareXYSum >= 1) ? 0 : sqrt(1 - squareXYSum);
+										*(buffer + baseIndex)   = (squareXYSum >= 1) ? 0 : sqrt(1 - squareXYSum);
 									}
 									else if (m_currentView == TopographicMap2DView_Right)
 									{
@@ -1228,13 +1228,13 @@ namespace OpenViBEPlugins
 										*(buffer + baseIndex + 2) = y;
 										//x = sqrt(1-y*y-z*z)
 										const float squareXYSum = x * x + y * y;
-										*(buffer + baseIndex) = (squareXYSum >= 1) ? 0 : sqrt(1 - squareXYSum);
+										*(buffer + baseIndex)   = (squareXYSum >= 1) ? 0 : sqrt(1 - squareXYSum);
 									}
 								}
 								else //radial
 								{
 									//theta = (X,Y) arc length
-									const float l_f32Theta = float(M_PI / 2 * sqrtf(x * x + y * y));
+									const float l_f32Theta    = float(M_PI / 2 * sqrtf(x * x + y * y));
 									const float scalingFactor = (l_f32Theta <= 1e-3) ? 0 : (sinf(l_f32Theta) / l_f32Theta);
 									float sampleLocalCoordinates[3];
 									//x = sin(theta) / theta * X
@@ -1246,25 +1246,25 @@ namespace OpenViBEPlugins
 
 									if (m_currentView == TopographicMap2DView_Top)
 									{
-										*(buffer + baseIndex) = sampleLocalCoordinates[0];
+										*(buffer + baseIndex)     = sampleLocalCoordinates[0];
 										*(buffer + baseIndex + 1) = sampleLocalCoordinates[1];
 										*(buffer + baseIndex + 2) = sampleLocalCoordinates[2];
 									}
 									else if (m_currentView == TopographicMap2DView_Back)
 									{
-										*(buffer + baseIndex) = sampleLocalCoordinates[0];
+										*(buffer + baseIndex)     = sampleLocalCoordinates[0];
 										*(buffer + baseIndex + 1) = -sampleLocalCoordinates[2];
 										*(buffer + baseIndex + 2) = sampleLocalCoordinates[1];
 									}
 									else if (m_currentView == TopographicMap2DView_Left)
 									{
-										*(buffer + baseIndex) = -sampleLocalCoordinates[2];
+										*(buffer + baseIndex)     = -sampleLocalCoordinates[2];
 										*(buffer + baseIndex + 1) = -sampleLocalCoordinates[0];
 										*(buffer + baseIndex + 2) = sampleLocalCoordinates[1];
 									}
 									else if (m_currentView == TopographicMap2DView_Right)
 									{
-										*(buffer + baseIndex) = sampleLocalCoordinates[2];
+										*(buffer + baseIndex)     = sampleLocalCoordinates[2];
 										*(buffer + baseIndex + 1) = sampleLocalCoordinates[0];
 										*(buffer + baseIndex + 2) = sampleLocalCoordinates[1];
 									}

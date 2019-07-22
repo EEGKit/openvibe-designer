@@ -19,7 +19,7 @@ bool CBoxAlgorithmTopographicMap2DDisplay::initialize()
 
 {
 	m_bFirstBufferReceived = false;
-	m_pDecoder = new OpenViBEToolkit::TStreamedMatrixDecoder<CBoxAlgorithmTopographicMap2DDisplay>;
+	m_pDecoder             = new OpenViBEToolkit::TStreamedMatrixDecoder<CBoxAlgorithmTopographicMap2DDisplay>;
 	m_pDecoder->initialize(*this, 0);
 
 	m_pSphericalSplineInterpolation = &getAlgorithmManager().getAlgorithm(getAlgorithmManager().createAlgorithm(OVP_ClassId_Algorithm_SphericalSplineInterpolation));
@@ -35,10 +35,7 @@ bool CBoxAlgorithmTopographicMap2DDisplay::initialize()
 	getStaticBoxContext().getSettingValue(1, l_sDelaySettingValue);
 
 	//create topographic map view (handling GUI interaction)
-	m_pTopographicMap2DView = new CTopographicMap2DView(
-		*m_pTopographicMapDatabase,
-		getTypeManager().getEnumerationEntryValueFromName(OVP_TypeId_SphericalLinearInterpolationType, l_sInterpolationModeSettingValue),
-		strtod(l_sDelaySettingValue, nullptr));
+	m_pTopographicMap2DView = new CTopographicMap2DView(*m_pTopographicMapDatabase, getTypeManager().getEnumerationEntryValueFromName(OVP_TypeId_SphericalLinearInterpolationType, l_sInterpolationModeSettingValue), strtod(l_sDelaySettingValue, nullptr));
 
 	//have database notify us when new data is available
 	m_pTopographicMapDatabase->setDrawable(m_pTopographicMap2DView);
@@ -46,7 +43,7 @@ bool CBoxAlgorithmTopographicMap2DDisplay::initialize()
 	m_pTopographicMapDatabase->setRedrawOnNewData(false);
 
 	//send widget pointers to visualisation context for parenting
-	GtkWidget* l_pWidget = nullptr;
+	GtkWidget* l_pWidget        = nullptr;
 	GtkWidget* l_pToolbarWidget = nullptr;
 	dynamic_cast<CTopographicMap2DView*>(m_pTopographicMap2DView)->getWidgets(l_pWidget, l_pToolbarWidget);
 

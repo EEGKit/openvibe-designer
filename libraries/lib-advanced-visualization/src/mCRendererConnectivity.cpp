@@ -63,9 +63,9 @@ void CRendererConnectivity::rebuild(const IRendererContext& rContext)
 
 	uint32_t i, l = 0;
 
-	Eigen::Quaterniond q = Eigen::Quaterniond::Identity();
+	Eigen::Quaterniond q          = Eigen::Quaterniond::Identity();
 	const Eigen::Quaterniond q_id = Eigen::Quaterniond::Identity();
-	Eigen::Quaterniond q_diff = Eigen::Quaterniond::Identity();
+	Eigen::Quaterniond q_diff     = Eigen::Quaterniond::Identity();
 	Eigen::VectorXd v(3);
 	Eigen::VectorXd v1(3);
 	Eigen::VectorXd v2(3);
@@ -104,19 +104,19 @@ void CRendererConnectivity::rebuild(const IRendererContext& rContext)
 			q_from_polar(q_diff, v1, v2, vi, vj);
 
 			const double alpha = 0;
-			const double dot = (1 - CVertex::dot(vi, vj)) * .5;
+			const double dot   = (1 - CVertex::dot(vi, vj)) * .5;
 
 			for (uint32_t k = 0; k < COUNT; k++)
 			{
 				const float t = float(k * 1. / (COUNT - 1));
-				auto s = float((t - .5) * 2);
-				s = float(1 + .5 * (1 - s * s) * dot);
+				auto s        = float((t - .5) * 2);
+				s             = float(1 + .5 * (1 - s * s) * dot);
 
 				q = q_id.slerp(t, q_diff);
 
 				q_rotate(v, v1, q);
 
-				const float len = (vi_len * (1 - t) + vj_len * t);
+				const float len  = (vi_len * (1 - t) + vj_len * t);
 				m_vertex[l][k].x = float(s * v[0] * len);
 				m_vertex[l][k].y = float(s * v[1] * len);
 				m_vertex[l][k].z = float(s * v[2] * len);

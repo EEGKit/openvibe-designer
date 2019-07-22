@@ -13,7 +13,7 @@ namespace
 
 bool OpenViBEVisualizationToolkit::initialize(const IKernelContext& kernelContext)
 {
-	ITypeManager& typeManager = kernelContext.getTypeManager();
+	ITypeManager& typeManager     = kernelContext.getTypeManager();
 	IPluginManager& pluginManager = kernelContext.getPluginManager();
 
 	typeManager.registerType(OV_TypeId_Color, "Color");

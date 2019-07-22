@@ -28,9 +28,9 @@ void CRendererXYZPlot::rebuild(const IRendererContext& rContext)
 {
 	CRenderer::rebuild(rContext);
 
-	m_hasDepth = rContext.hasXYZPlotDepth();
+	m_hasDepth      = rContext.hasXYZPlotDepth();
 	m_plotDimension = (m_hasDepth ? 3 : 2);
-	m_plotCount = (rContext.getChannelCount() + m_plotDimension - 1) / m_plotDimension;
+	m_plotCount     = (rContext.getChannelCount() + m_plotDimension - 1) / m_plotDimension;
 	m_vertex.resize(m_plotCount);
 	const float inverseSampleCount = 1.0f / float(m_sampleCount < 2 ? 1 : (m_sampleCount - 1));
 	for (uint32_t i = 0; i < m_plotCount; ++i)
@@ -59,15 +59,15 @@ void CRendererXYZPlot::refresh(const IRendererContext& rContext)
 			if (m_hasDepth)
 			{
 				const uint32_t i3 = i * 3;
-				m_vertex[i][j].x = (i3 < m_history.size() ? m_history[i3][m_historyIndex] : 0);
-				m_vertex[i][j].y = (i3 + 1 < m_history.size() ? m_history[i3 + 1][m_historyIndex] : 0);
-				m_vertex[i][j].z = (i3 + 2 < m_history.size() ? m_history[i3 + 2][m_historyIndex] : 0);
+				m_vertex[i][j].x  = (i3 < m_history.size() ? m_history[i3][m_historyIndex] : 0);
+				m_vertex[i][j].y  = (i3 + 1 < m_history.size() ? m_history[i3 + 1][m_historyIndex] : 0);
+				m_vertex[i][j].z  = (i3 + 2 < m_history.size() ? m_history[i3 + 2][m_historyIndex] : 0);
 			}
 			else
 			{
 				const uint32_t i3 = i * 2;
-				m_vertex[i][j].x = (i3 < m_history.size() ? m_history[i3][m_historyIndex] : 0);
-				m_vertex[i][j].y = (i3 + 1 < m_history.size() ? m_history[i3 + 1][m_historyIndex] : 0);
+				m_vertex[i][j].x  = (i3 < m_history.size() ? m_history[i3][m_historyIndex] : 0);
+				m_vertex[i][j].y  = (i3 + 1 < m_history.size() ? m_history[i3 + 1][m_historyIndex] : 0);
 			}
 		}
 		m_historyIndex++;
@@ -115,7 +115,7 @@ bool CRendererXYZPlot::render(const IRendererContext& rContext)
 		}
 	}
 
-	uint32_t n = m_sampleCount;
+	uint32_t n       = m_sampleCount;
 	const uint32_t d = (m_historyIndex % m_sampleCount);
 
 	glEnableClientState(GL_VERTEX_ARRAY);

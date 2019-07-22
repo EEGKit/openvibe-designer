@@ -99,14 +99,14 @@ void CColorGradientSettingView::configurePressed()
 	vColorGradient.resize(std::max<size_t>(colorGradient.getDimensionSize(1), 2));
 	for (size_t i = 0; i < colorGradient.getDimensionSize(1); ++i)
 	{
-		const uint32_t idx = uint32_t(i * 4);
-		vColorGradient[i].percent = colorGradient[idx];
-		vColorGradient[i].color.red = guint(colorGradient[idx + 1] * .01 * 65535.);
+		const uint32_t idx            = uint32_t(i * 4);
+		vColorGradient[i].percent     = colorGradient[idx];
+		vColorGradient[i].color.red   = guint(colorGradient[idx + 1] * .01 * 65535.);
 		vColorGradient[i].color.green = guint(colorGradient[idx + 2] * .01 * 65535.);
-		vColorGradient[i].color.blue = guint(colorGradient[idx + 3] * .01 * 65535.);
+		vColorGradient[i].color.blue  = guint(colorGradient[idx + 3] * .01 * 65535.);
 	}
 
-	pContainer = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-vbox"));
+	pContainer   = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-vbox"));
 	pDrawingArea = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-drawingarea"));
 
 	g_signal_connect(G_OBJECT(pDialog), "show", G_CALLBACK(on_initialize_color_gradient), this);
@@ -123,8 +123,8 @@ void CColorGradientSettingView::configurePressed()
 		finalColorGradient.setDimensionSize(1, uint32_t(vColorGradient.size()));
 		for (uint32_t i = 0; i < uint32_t(vColorGradient.size()); i++)
 		{
-			const uint32_t idx = i * 4;
-			finalColorGradient[idx] = vColorGradient[i].percent;
+			const uint32_t idx          = i * 4;
+			finalColorGradient[idx]     = vColorGradient[i].percent;
 			finalColorGradient[idx + 1] = round(vColorGradient[i].color.red * 100. / 65535.);
 			finalColorGradient[idx + 2] = round(vColorGradient[i].color.green * 100. / 65535.);
 			finalColorGradient[idx + 3] = round(vColorGradient[i].color.blue * 100. / 65535.);
@@ -145,7 +145,7 @@ void CColorGradientSettingView::initializeGradient()
 
 	gtk_container_foreach(GTK_CONTAINER(pContainer), on_gtk_widget_destroy_cb, nullptr);
 
-	uint32_t i = 0;
+	uint32_t i           = 0;
 	const uint32_t count = uint32_t(vColorGradient.size());
 	vColorButtonMap.clear();
 	vSpinButtonMap.clear();
@@ -158,7 +158,7 @@ void CColorGradientSettingView::initializeGradient()
 		GtkWidget* l_pWidget = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-hbox"));
 
 		it->colorButton = GTK_COLOR_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-colorbutton"));
-		it->spinButton = GTK_SPIN_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-spinbutton"));
+		it->spinButton  = GTK_SPIN_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-spinbutton"));
 
 		gtk_color_button_set_color(it->colorButton, &it->color);
 		gtk_spin_button_set_value(it->spinButton, it->percent);
@@ -174,7 +174,7 @@ void CColorGradientSettingView::initializeGradient()
 		g_object_unref(l_pBuilderInterface);
 
 		vColorButtonMap[it->colorButton] = i;
-		vSpinButtonMap[it->spinButton] = i;
+		vSpinButtonMap[it->spinButton]   = i;
 	}
 
 	gtk_spin_button_set_value(vColorGradient[0].spinButton, 0);
@@ -186,8 +186,8 @@ void CColorGradientSettingView::initializeGradient()
 void CColorGradientSettingView::refreshColorGradient()
 {
 	const uint32_t steps = 100;
-	gint sizex = 0;
-	gint sizey = 0;
+	gint sizex           = 0;
+	gint sizey           = 0;
 	gdk_drawable_get_size(pDrawingArea->window, &sizex, &sizey);
 
 	CMatrix l_oGradientMatrix;
@@ -196,8 +196,8 @@ void CColorGradientSettingView::refreshColorGradient()
 	l_oGradientMatrix.setDimensionSize(1, uint32_t(vColorGradient.size()));
 	for (uint32_t i = 0; i < vColorGradient.size(); ++i)
 	{
-		const uint32_t idx = i * 4;
-		l_oGradientMatrix[idx] = vColorGradient[i].percent;
+		const uint32_t idx         = i * 4;
+		l_oGradientMatrix[idx]     = vColorGradient[i].percent;
 		l_oGradientMatrix[idx + 1] = vColorGradient[i].color.red * 100. / 65535.;
 		l_oGradientMatrix[idx + 2] = vColorGradient[i].color.green * 100. / 65535.;
 		l_oGradientMatrix[idx + 3] = vColorGradient[i].color.blue * 100. / 65535.;
@@ -211,9 +211,9 @@ void CColorGradientSettingView::refreshColorGradient()
 
 	for (uint32_t i = 0; i < steps; ++i)
 	{
-		l_oColor.red = guint(l_oInterpolatedMatrix[i * 4 + 1] * 65535 * .01);
+		l_oColor.red   = guint(l_oInterpolatedMatrix[i * 4 + 1] * 65535 * .01);
 		l_oColor.green = guint(l_oInterpolatedMatrix[i * 4 + 2] * 65535 * .01);
-		l_oColor.blue = guint(l_oInterpolatedMatrix[i * 4 + 3] * 65535 * .01);
+		l_oColor.blue  = guint(l_oInterpolatedMatrix[i * 4 + 3] * 65535 * .01);
 		gdk_gc_set_rgb_fg_color(l_pGC, &l_oColor);
 		gdk_draw_rectangle(pDrawingArea->window, l_pGC, TRUE, (sizex * i) / steps, 0, (sizex * (i + 1)) / steps, sizey);
 	}
@@ -243,7 +243,7 @@ void CColorGradientSettingView::spinChange(GtkSpinButton* button)
 {
 	gtk_spin_button_update(button);
 
-	const uint32_t i = vSpinButtonMap[button];
+	const uint32_t i                 = vSpinButtonMap[button];
 	GtkSpinButton* l_pPrevSpinButton = i > 0 ? vColorGradient[i - 1].spinButton : nullptr;
 	GtkSpinButton* l_pNextSpinButton = i < vColorGradient.size() - 1 ? vColorGradient[i + 1].spinButton : nullptr;
 	if (!l_pPrevSpinButton) { gtk_spin_button_set_value(button, 0); }

@@ -35,13 +35,9 @@ class DesignerException final : public std::runtime_error
 {
 public:
 	DesignerException(OpenViBE::Kernel::IErrorManager& errorManager)
-		: std::runtime_error("Designer caused an exception")
-		  , m_ErrorManager(errorManager) {}
+		: std::runtime_error("Designer caused an exception"), m_ErrorManager(errorManager) {}
 
-	const char* what() const NOEXCEPT override
-	{
-		return m_ErrorManager.getLastErrorString();
-	}
+	const char* what() const NOEXCEPT override { return m_ErrorManager.getLastErrorString(); }
 
 	std::string getErrorString() const
 	{
@@ -51,44 +47,26 @@ public:
 		{
 			char location[1024];
 			FS::Files::getFilename(error->getErrorLocation(), location);
-			errorMessage += "Message: " + std::string(error->getErrorString()) +
-				"\nFile: " + location + "\n";
+			errorMessage += "Message: " + std::string(error->getErrorString()) + "\nFile: " + location + "\n";
 			error = error->getNestedError();
 		}
 		m_ErrorManager.releaseErrors();
 		return errorMessage;
 	}
 
-	void releaseErrors() NOEXCEPT
-	{
-		m_ErrorManager.releaseErrors();
-	}
+	void releaseErrors() NOEXCEPT { m_ErrorManager.releaseErrors(); }
 
 	OpenViBE::Kernel::IErrorManager& m_ErrorManager;
 };
 
 #define OV_EXCEPTION_D(description, type) \
 do { \
-	m_kernelContext.getErrorManager().pushErrorAtLocation( \
-		type, \
-		static_cast<const OpenViBE::ErrorStream&>(OpenViBE::ErrorStream() << description).str().c_str(), \
-		__FILE__, __LINE__ \
-	); \
-	m_kernelContext.getLogManager() << OpenViBE::Kernel::LogLevel_Fatal \
-			   << "[Error description] = " \
-			   << description \
-			   << "; [Error code] = " \
-			   << static_cast<unsigned int>((type)) \
-			   << "\n"; \
+	m_kernelContext.getErrorManager().pushErrorAtLocation(type, static_cast<const OpenViBE::ErrorStream&>(OpenViBE::ErrorStream() << description).str().c_str(), __FILE__, __LINE__ ); \
+	m_kernelContext.getLogManager() << OpenViBE::Kernel::LogLevel_Fatal << "[Error description] = " << description << "; [Error code] = " << static_cast<unsigned int>((type)) << "\n"; \
 	throw DesignerException(m_kernelContext.getErrorManager()); \
-} \
-while (0)
+} while(0)
 
 #define OV_EXCEPTION_UNLESS_D(expression, description, type) \
 do { \
-   if (!(expression)) \
-   { \
-	   OV_EXCEPTION_D(description, type); \
-   } \
-} \
-while (0)
+   if (!(expression)) { OV_EXCEPTION_D(description, type); } \
+} while(0)

@@ -21,8 +21,8 @@ namespace OpenViBEDesigner
 
 		private:
 			GtkToggleButton* m_toggle = nullptr;
-			GtkEntry* m_entry = nullptr;
-			bool m_onValueSetting = false;
+			GtkEntry* m_entry         = nullptr;
+			bool m_onValueSetting     = false;
 		};
 	}
 }

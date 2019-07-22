@@ -137,35 +137,35 @@ namespace Mensia
 			std::map<std::string, float> m_leftRightScore;
 			std::map<std::string, float> m_frontBackScore;
 
-			float m_scale = 1;
-			float m_zoom = 1;
+			float m_scale     = 1;
+			float m_zoom      = 1;
 			float m_rotationX = 2;
 			float m_rotationY = 1;
 
-			float m_translucency = 1;
-			float m_aspect = 1;
-			uint64_t m_sampleDuration = 0;
-			uint64_t m_timeScale = 1;
-			uint64_t m_elementCount = 1;
-			uint64_t m_flowerRingCount = 1;
-			bool m_hasXYZPlotDepth = false;
-			bool m_isAxisDisplayed = false;
-			bool m_isPositiveOnly = false;
-			bool m_isTimeLocked = true;
-			bool m_isScrollModeActive = false;
-			bool m_scaleVisiblity = true;
-			bool m_checkBoardVisiblity = false;
-			EDataType m_dataType = DataType_Matrix;
+			float m_translucency              = 1;
+			float m_aspect                    = 1;
+			uint64_t m_sampleDuration         = 0;
+			uint64_t m_timeScale              = 1;
+			uint64_t m_elementCount           = 1;
+			uint64_t m_flowerRingCount        = 1;
+			bool m_hasXYZPlotDepth            = false;
+			bool m_isAxisDisplayed            = false;
+			bool m_isPositiveOnly             = false;
+			bool m_isTimeLocked               = true;
+			bool m_isScrollModeActive         = false;
+			bool m_scaleVisiblity             = true;
+			bool m_checkBoardVisiblity        = false;
+			EDataType m_dataType              = DataType_Matrix;
 			uint32_t m_spectrumFrequencyRange = 0;
-			uint32_t m_minSpectrumFrequency = 0;
-			uint32_t m_maxSpectrumFrequency = 0;
-			uint32_t m_stackCount = 1;
-			uint32_t m_stackIndex = 1;
-			bool m_faceMeshVisible = true;
-			bool m_scalpMeshVisible = true;
+			uint32_t m_minSpectrumFrequency   = 0;
+			uint32_t m_maxSpectrumFrequency   = 0;
+			uint32_t m_stackCount             = 1;
+			uint32_t m_stackIndex             = 1;
+			bool m_faceMeshVisible            = true;
+			bool m_scalpMeshVisible           = true;
 
 			bool m_ERPPlayerActive = false;
-			float m_ERPFraction = 0;
+			float m_ERPFraction    = 0;
 		};
 	} // namespace AdvancedVisualization
 }  // namespace Mensia

@@ -128,7 +128,7 @@ namespace Mensia
 			m_dLastERPFraction = 0;
 
 			const IBox& l_rStaticBoxContext = this->getStaticBoxContext();
-			m_ui32InputCount = l_rStaticBoxContext.getInputCount();
+			m_ui32InputCount                = l_rStaticBoxContext.getInputCount();
 			m_vRenderer.resize(m_ui32InputCount);
 			m_vMatrixDecoder.resize(m_ui32InputCount);
 			for (uint32_t i = 0; i < m_ui32InputCount; ++i)
@@ -172,7 +172,7 @@ namespace Mensia
 
 		{
 			const IBox& l_rStaticBoxContext = this->getStaticBoxContext();
-			IBoxIO& l_rDynamicBoxContext = this->getDynamicBoxContext();
+			IBoxIO& l_rDynamicBoxContext    = this->getDynamicBoxContext();
 
 			for (uint32_t i = 0; i < l_rStaticBoxContext.getInputCount(); ++i)
 			{
@@ -181,8 +181,8 @@ namespace Mensia
 					m_vMatrixDecoder[i].decode(j);
 
 					OpenViBE::IMatrix* l_pMatrix = m_vMatrixDecoder[i].getOutputMatrix();
-					uint32_t channelCount = l_pMatrix->getDimensionSize(0);
-					uint32_t sampleCount = l_pMatrix->getDimensionSize(1);
+					uint32_t channelCount        = l_pMatrix->getDimensionSize(0);
+					uint32_t sampleCount         = l_pMatrix->getDimensionSize(1);
 
 					if (channelCount == 0)
 					{
@@ -193,7 +193,7 @@ namespace Mensia
 					if (l_pMatrix->getDimensionCount() == 1)
 					{
 						channelCount = 1;
-						sampleCount = l_pMatrix->getDimensionSize(0);
+						sampleCount  = l_pMatrix->getDimensionSize(0);
 					}
 
 					if (m_vMatrixDecoder[i].isHeaderReceived())
@@ -220,7 +220,7 @@ namespace Mensia
 						gtk_tree_view_set_model(m_pChannelTreeView, nullptr);
 						for (j = 0; j < channelCount; j++)
 						{
-							std::string l_sName = trim(l_pMatrix->getDimensionLabel(0, j));
+							std::string l_sName    = trim(l_pMatrix->getDimensionLabel(0, j));
 							std::string l_sSubname = l_sName;
 							std::transform(l_sName.begin(), l_sName.end(), l_sSubname.begin(), tolower);
 							const CVertex v = m_vChannelLocalisation[l_sSubname];
@@ -262,7 +262,7 @@ namespace Mensia
 
 						m_bRebuildNeeded = true;
 						m_bRefreshNeeded = true;
-						m_bRedrawNeeded = true;
+						m_bRedrawNeeded  = true;
 					}
 					if (m_vMatrixDecoder[i].isBufferReceived())
 					{
@@ -287,7 +287,7 @@ namespace Mensia
 						}
 
 						m_bRefreshNeeded = true;
-						m_bRedrawNeeded = true;
+						m_bRedrawNeeded  = true;
 					}
 				}
 			}
@@ -302,8 +302,8 @@ namespace Mensia
 			{
 				gtk_range_set_value(GTK_RANGE(m_pERPRange), l_dERPFraction);
 				m_dLastERPFraction = l_dERPFraction;
-				m_bRefreshNeeded = true;
-				m_bRedrawNeeded = true;
+				m_bRefreshNeeded   = true;
+				m_bRedrawNeeded    = true;
 			}
 
 			if (m_bRebuildNeeded)
@@ -324,7 +324,7 @@ namespace Mensia
 
 			m_bRebuildNeeded = false;
 			m_bRefreshNeeded = false;
-			m_bRedrawNeeded = false;
+			m_bRedrawNeeded  = false;
 
 			if (m_pRendererContext->isERPPlayerActive())
 			{

@@ -157,7 +157,7 @@ namespace Mensia
 		bool TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>::process()
 		{
 			const OpenViBE::Kernel::IBox& l_rStaticBoxContext = this->getStaticBoxContext();
-			OpenViBE::Kernel::IBoxIO& l_rDynamicBoxContext = this->getDynamicBoxContext();
+			OpenViBE::Kernel::IBoxIO& l_rDynamicBoxContext    = this->getDynamicBoxContext();
 			size_t i, j;
 
 			for (i = 0; i < l_rDynamicBoxContext.getInputChunkCount(0); ++i)
@@ -165,8 +165,8 @@ namespace Mensia
 				m_oMatrixDecoder.decode(uint32_t(i));
 
 				OpenViBE::IMatrix* l_pMatrix = m_oMatrixDecoder.getOutputMatrix();
-				uint32_t l_ui32ChannelCount = l_pMatrix->getDimensionSize(0);
-				uint32_t sampleCount = l_pMatrix->getDimensionSize(1);
+				uint32_t l_ui32ChannelCount  = l_pMatrix->getDimensionSize(0);
+				uint32_t sampleCount         = l_pMatrix->getDimensionSize(1);
 
 				if (l_ui32ChannelCount == 0)
 				{
@@ -177,7 +177,7 @@ namespace Mensia
 				if (l_pMatrix->getDimensionCount() == 1)
 				{
 					l_ui32ChannelCount = l_pMatrix->getDimensionSize(0);
-					sampleCount = 1;
+					sampleCount        = 1;
 				}
 
 				if (m_oMatrixDecoder.isHeaderReceived())
@@ -200,7 +200,7 @@ namespace Mensia
 					m_pSubRendererContext->setStackCount(l_ui32ChannelCount);
 					for (j = 0; j < sampleCount; j++)
 					{
-						std::string l_sName = trim(l_pMatrix->getDimensionLabel(1, uint32_t(j)));
+						std::string l_sName    = trim(l_pMatrix->getDimensionLabel(1, uint32_t(j)));
 						std::string l_sSubname = l_sName;
 						std::transform(l_sName.begin(), l_sName.end(), l_sSubname.begin(), tolower);
 						CVertex v = m_vChannelLocalisation[l_sSubname];
@@ -219,7 +219,7 @@ namespace Mensia
 					gtk_tree_view_set_model(m_pChannelTreeView, nullptr);
 					for (j = 0; j < l_ui32ChannelCount; j++)
 					{
-						std::string l_sName = trim(l_pMatrix->getDimensionLabel(0, uint32_t(j)));
+						std::string l_sName    = trim(l_pMatrix->getDimensionLabel(0, uint32_t(j)));
 						std::string l_sSubname = l_sName;
 						std::transform(l_sName.begin(), l_sName.end(), l_sSubname.begin(), tolower);
 						const CVertex v = m_vChannelLocalisation[l_sSubname];
@@ -264,15 +264,15 @@ namespace Mensia
 
 					m_bRebuildNeeded = true;
 					m_bRefreshNeeded = true;
-					m_bRedrawNeeded = true;
+					m_bRedrawNeeded  = true;
 				}
 				if (m_oMatrixDecoder.isBufferReceived())
 				{
-					m_time1 = m_time2;
-					m_time2 = l_rDynamicBoxContext.getInputChunkEndTime(0, uint32_t(i));
+					m_time1                                 = m_time2;
+					m_time2                                 = l_rDynamicBoxContext.getInputChunkEndTime(0, uint32_t(i));
 					const uint64_t l_ui64InterChunkDuration = m_time2 - m_time1;
-					const uint64_t l_ui64ChunkDuration = (l_rDynamicBoxContext.getInputChunkEndTime(0, uint32_t(i)) - l_rDynamicBoxContext.getInputChunkStartTime(0, uint32_t(i)));
-					const uint64_t l_ui64SampleDuration = l_ui64ChunkDuration / m_elementCount;
+					const uint64_t l_ui64ChunkDuration      = (l_rDynamicBoxContext.getInputChunkEndTime(0, uint32_t(i)) - l_rDynamicBoxContext.getInputChunkStartTime(0, uint32_t(i)));
+					const uint64_t l_ui64SampleDuration     = l_ui64ChunkDuration / m_elementCount;
 					if (m_pRendererContext->isTimeLocked())
 					{
 						if ((l_ui64InterChunkDuration & ~0xf) != (m_pRendererContext->getSampleDuration() & ~0xf) && l_ui64InterChunkDuration != 0) // 0xf mask avoids rounding errors
@@ -312,7 +312,7 @@ namespace Mensia
 					}
 
 					m_bRefreshNeeded = true;
-					m_bRedrawNeeded = true;
+					m_bRedrawNeeded  = true;
 				}
 			}
 
@@ -355,7 +355,7 @@ namespace Mensia
 						m_vRenderer[j]->setSampleCount(rendererSampleCount);
 						m_bRebuildNeeded = true;
 						m_bRefreshNeeded = true;
-						m_bRedrawNeeded = true;
+						m_bRedrawNeeded  = true;
 					}
 				}
 			}
@@ -378,7 +378,7 @@ namespace Mensia
 
 			m_bRebuildNeeded = false;
 			m_bRefreshNeeded = false;
-			m_bRedrawNeeded = false;
+			m_bRedrawNeeded  = false;
 
 			return true;
 		}
