@@ -18,7 +18,7 @@ namespace OpenViBEPlugins
 			bool uninitialize() override;
 			bool process() override;
 
-			_IsDerivedFromClass_Final_(OpenViBEToolkit::TAlgorithm < OpenViBE::Plugins::IAlgorithm >, OVP_ClassId_Algorithm_SphericalSplineInterpolation);
+			_IsDerivedFromClass_Final_(OpenViBEToolkit::TAlgorithm < OpenViBE::Plugins::IAlgorithm >, OVP_ClassId_Algorithm_SphericalSplineInterpolation)
 
 		protected:
 
@@ -89,7 +89,7 @@ namespace OpenViBEPlugins
 				return true;
 			}
 
-			_IsDerivedFromClass_Final_(OpenViBE::Plugins::IAlgorithmDesc, OVP_ClassId_Algorithm_SphericalSplineInterpolationDesc);
+			_IsDerivedFromClass_Final_(OpenViBE::Plugins::IAlgorithmDesc, OVP_ClassId_Algorithm_SphericalSplineInterpolationDesc)
 		};
 	}  // namespace Test;
 } // namespace OpenViBEPlugins;

@@ -35,15 +35,15 @@
 #define _strcmpi strcasecmp
 #endif
 
-#define OVD_GUI_File          OpenViBE::Directories::getDataDir() + "/applications/designer/interface.ui"
-#define OVD_GUI_AboutDialog_File OpenViBE::Directories::getDataDir() + "/applications/designer/about-dialog.ui"
-#define OVD_GUI_Settings_File OpenViBE::Directories::getDataDir() + "/applications/designer/interface-settings.ui"
-#define OVD_AttributeId_ScenarioFilename OpenViBE::CIdentifier(0x4C536D0A, 0xB23DC545)
-#define OVD_README_File                  OpenViBE::Directories::getDistRootDir() + "/ReadMe.txt"
+#define OVD_GUI_File						OpenViBE::Directories::getDataDir() + "/applications/designer/interface.ui"
+#define OVD_GUI_AboutDialog_File			OpenViBE::Directories::getDataDir() + "/applications/designer/about-dialog.ui"
+#define OVD_GUI_Settings_File				OpenViBE::Directories::getDataDir() + "/applications/designer/interface-settings.ui"
+#define OVD_AttributeId_ScenarioFilename	OpenViBE::CIdentifier(0x4C536D0A, 0xB23DC545)
+#define OVD_README_File						OpenViBE::Directories::getDistRootDir() + "/ReadMe.txt"
 
 
-#define OVD_SCENARIOS_PATH		"${Path_Data}/scenarios"
-#define OVD_WORKING_SCENARIOS_PATH	"${Designer_DefaultWorkingDirectory}/scenarios"
+#define OVD_SCENARIOS_PATH					"${Path_Data}/scenarios"
+#define OVD_WORKING_SCENARIOS_PATH			"${Designer_DefaultWorkingDirectory}/scenarios"
 
 static const unsigned int s_RecentFileNumber = 10;
 

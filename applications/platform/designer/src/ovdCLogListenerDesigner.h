@@ -124,7 +124,7 @@ namespace OpenViBEDesigner
 		void appendLog(CLogObject* oLog) const;
 		void scrollToBottom();
 
-		_IsDerivedFromClass_Final_(OpenViBE::Kernel::ILogListener, OV_UndefinedIdentifier);
+		_IsDerivedFromClass_Final_(OpenViBE::Kernel::ILogListener, OV_UndefinedIdentifier)
 
 		OpenViBE::CString m_sSearchTerm;
 		GtkTextTag* m_pCIdentifierTag;

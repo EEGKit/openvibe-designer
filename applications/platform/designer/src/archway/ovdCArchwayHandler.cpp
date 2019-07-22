@@ -94,9 +94,7 @@ EngineInitialisationStatus CArchwayHandler::initialize()
 	// Now initialize the ArchwayBridge structure with closures that bridge to local Archway functions
 	// this way we do not have to expose the Archway object or the C API
 
-	m_ArchwayBridge.isStarted = [this]() {
-		return this->m_Archway->isStarted();
-	};
+	m_ArchwayBridge.isStarted = [this]() { return this->m_Archway->isStarted(); };
 	m_ArchwayBridge.getAvailableValueMatrixCount = [this](unsigned int uiValueChannelId) {
 		return this->m_Archway->getPendingValueCount(m_RunningPipelineId, uiValueChannelId);
 	};

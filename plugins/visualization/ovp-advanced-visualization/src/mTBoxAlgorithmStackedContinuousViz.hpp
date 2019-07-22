@@ -37,7 +37,7 @@ namespace Mensia
 			bool uninitialize() override;
 			bool process() override;
 
-			_IsDerivedFromClass_Final_(CBoxAlgorithmViz, m_oClassId);
+			_IsDerivedFromClass_Final_(CBoxAlgorithmViz, m_oClassId)
 
 			OpenViBEToolkit::TStimulationDecoder<TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>> m_oStimulationDecoder;
 			OpenViBEToolkit::TStreamedMatrixDecoder<TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>> m_oMatrixDecoder;
@@ -94,7 +94,7 @@ namespace Mensia
 				return OpenViBE::CString("Advanced Visualization/") + m_sCategoryName;
 			}
 
-			_IsDerivedFromClass_Final_(OpenViBE::Plugins::IBoxAlgorithmDesc, m_oDescClassId);
+			_IsDerivedFromClass_Final_(OpenViBE::Plugins::IBoxAlgorithmDesc, m_oDescClassId)
 		};
 
 
