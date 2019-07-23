@@ -34,7 +34,7 @@ namespace
 		l_pMatrixDisplay->m_bShowColors = (gtk_toggle_tool_button_get_active(pButton) != 0);
 		l_pMatrixDisplay->resetColors();
 	}
-}  // namespace;
+}  // namespace
 
 bool CBoxAlgorithmMatrixDisplay::resetColors()
 

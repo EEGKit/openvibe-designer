@@ -307,5 +307,5 @@ namespace OpenViBEPlugins
 			guchar* m_skullRGBBuffer = nullptr;
 			uint32_t m_rowStride     = 0;
 		};
-	} // namespace SimpleVisualization;
-}  // namespace OpenViBEPlugins;
+	} // namespace SimpleVisualization
+}  // namespace OpenViBEPlugins

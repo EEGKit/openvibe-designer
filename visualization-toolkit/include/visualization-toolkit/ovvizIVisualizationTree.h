@@ -519,4 +519,4 @@ namespace OpenViBEVisualizationToolkit
 		 */
 		virtual bool deserialize(const OpenViBE::CString& serializedVisualizationTree) = 0;
 	};
-} // namespace OpenViBEVisualizationToolkit;
+} // namespace OpenViBEVisualizationToolkit

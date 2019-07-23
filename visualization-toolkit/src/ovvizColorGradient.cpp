@@ -16,7 +16,7 @@ namespace
 		double green;
 		double blue;
 	} SColor;
-} // namespace;
+} // namespace
 
 bool Tools::ColorGradient::parse(IMatrix& colorGradient, const CString& string)
 {

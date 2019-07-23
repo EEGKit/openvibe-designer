@@ -88,5 +88,5 @@ namespace OpenViBEPlugins
 
 			_IsDerivedFromClass_Final_(OpenViBE::Plugins::IBoxAlgorithmDesc, OVP_ClassId_BoxAlgorithm_ModifiableSettingsDesc)
 		};
-	} // namespace Examples;
-} // namespace OpenViBEPlugins;
+	} // namespace Examples
+} // namespace OpenViBEPlugins

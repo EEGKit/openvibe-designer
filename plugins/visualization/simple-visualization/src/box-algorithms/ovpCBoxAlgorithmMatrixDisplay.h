@@ -107,5 +107,5 @@ namespace OpenViBEPlugins
 
 			_IsDerivedFromClass_Final_(OpenViBE::Plugins::IBoxAlgorithmDesc, OVP_ClassId_BoxAlgorithm_MatrixDisplayDesc)
 		};
-	} // namespace SimpleVisualization;
-}  // namespace OpenViBEPlugins;
+	} // namespace SimpleVisualization
+}  // namespace OpenViBEPlugins

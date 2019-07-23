@@ -404,5 +404,5 @@ namespace Mensia
 				return true;
 			}
 		};
-	} // namespace AdvancedVisualization;
-}  // namespace Mensia;
+	} // namespace AdvancedVisualization
+}  // namespace Mensia

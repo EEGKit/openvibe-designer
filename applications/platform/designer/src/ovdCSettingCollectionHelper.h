@@ -49,4 +49,4 @@ namespace OpenViBEDesigner
 
 		CSettingCollectionHelper();
 	};
-};
+}  // namespace OpenViBEDesigner

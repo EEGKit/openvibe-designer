@@ -21,5 +21,5 @@ namespace OpenViBEDesigner
 			GtkEntry* m_entry     = nullptr;
 			bool m_onValueSetting = false;
 		};
-	}
-}
+	}  // namespace Setting
+}  // namespace OpenViBEDesigner

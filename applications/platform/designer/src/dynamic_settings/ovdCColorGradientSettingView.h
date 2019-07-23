@@ -55,5 +55,5 @@ namespace OpenViBEDesigner
 
 			bool m_onValueSetting = false;
 		};
-	}
-}
+	}  // namespace Setting
+}  // namespace OpenViBEDesigner

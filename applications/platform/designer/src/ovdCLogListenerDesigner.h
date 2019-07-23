@@ -181,4 +181,4 @@ namespace OpenViBEDesigner
 		void updateMessageCounts() const;
 		void checkAppendFilterCurrentLog(const char* textColor, const char* logMessage, bool bIsLink = false) const;
 	};
-};
+}  // namespace OpenViBEDesigner
