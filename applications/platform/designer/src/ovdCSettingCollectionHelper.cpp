@@ -263,10 +263,7 @@ namespace
 		map<GtkSpinButton*, uint32_t> vSpinButtonMap;
 	} SColorGradientData;
 
-	void on_gtk_widget_destroy_cb(GtkWidget* widget, gpointer /*data*/)
-	{
-		gtk_widget_destroy(widget);
-	}
+	void on_gtk_widget_destroy_cb(GtkWidget* widget, gpointer /*data*/) { gtk_widget_destroy(widget); }
 
 	void on_initialize_color_gradient(GtkWidget* widget, gpointer data);
 

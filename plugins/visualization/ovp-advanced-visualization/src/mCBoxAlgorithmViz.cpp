@@ -572,10 +572,7 @@ void CBoxAlgorithmViz::mouseMotion(const int x, const int y)
 	m_oMouseHandler.mouseMotion(getContext(), x, y);
 #endif
 
-	if (m_oMouseHandler.hasButtonPressed())
-	{
-		this->redraw();
-	}
+	if (m_oMouseHandler.hasButtonPressed()) { this->redraw(); }
 }
 
 void CBoxAlgorithmViz::keyboard(const int x, const int y, const uint32_t key, const bool status)

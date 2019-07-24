@@ -89,10 +89,7 @@ public:
 		return true;
 	}
 
-	map<string, const IPluginObjectDesc*>& getPluginObjectDescMap()
-	{
-		return m_vPluginObjectDesc;
-	}
+	map<string, const IPluginObjectDesc*>& getPluginObjectDescMap() { return m_vPluginObjectDesc; }
 
 private:
 

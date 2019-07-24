@@ -867,10 +867,7 @@ void CDesignerVisualization::setActiveVisualization(const char* activeWindow, co
 
 	//retrieve active panel
 	GtkTreeIter l_oPanelIter = l_oWindowIter;
-	if (m_rVisualizationTree.findChildNodeFromParent(&l_oPanelIter, panel, EVisualizationTreeNode_VisualizationPanel))
-	{
-		m_oActiveVisualizationPanelName = panel;
-	}
+	if (m_rVisualizationTree.findChildNodeFromParent(&l_oPanelIter, panel, EVisualizationTreeNode_VisualizationPanel)) { m_oActiveVisualizationPanelName = panel; }
 	else //couldn't find panel : select first one
 	{
 		CIdentifier l_oWindowIdentifier;
@@ -1800,22 +1797,10 @@ void CDesignerVisualization::drag_data_received_in_event_box_cb(GtkWidget* dstWi
 	sscanf(static_cast<const char*>(data), "%p %s", &pDesignerVisualization, buf);
 
 	EDragDataLocation l_oLocation;
-	if (strcmp(buf, "left") == 0)
-	{
-		l_oLocation = EDragData_Left;
-	}
-	else if (strcmp(buf, "right") == 0)
-	{
-		l_oLocation = EDragData_Right;
-	}
-	else if (strcmp(buf, "top") == 0)
-	{
-		l_oLocation = EDragData_Top;
-	}
-	else
-	{
-		l_oLocation = EDragData_Bottom;
-	}
+	if (strcmp(buf, "left") == 0) { l_oLocation = EDragData_Left; }
+	else if (strcmp(buf, "right") == 0) { l_oLocation = EDragData_Right; }
+	else if (strcmp(buf, "top") == 0) { l_oLocation = EDragData_Top; }
+	else { l_oLocation = EDragData_Bottom; }
 
 	static_cast<CDesignerVisualization*>(pDesignerVisualization)->dragDataReceivedInEventBoxCB(dstWidget, pSelectionData, l_oLocation);
 }

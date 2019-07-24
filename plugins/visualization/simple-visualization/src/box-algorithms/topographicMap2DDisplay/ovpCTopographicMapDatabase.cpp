@@ -122,10 +122,7 @@ bool CTopographicMapDatabase::processValues()
 
 	//determine what sample to use
 	uint64_t l_ui64SampleIndex;
-	if (l_ui64DisplayTime <= m_oStartTime[l_ui32BufferIndex])
-	{
-		l_ui64SampleIndex = 0;
-	}
+	if (l_ui64DisplayTime <= m_oStartTime[l_ui32BufferIndex]) { l_ui64SampleIndex = 0; }
 	else if (l_ui64DisplayTime >= m_oEndTime[l_ui32BufferIndex])
 	{
 		l_ui64SampleIndex = m_pDimensionSizes[1] - 1;

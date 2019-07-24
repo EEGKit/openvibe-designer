@@ -1373,10 +1373,7 @@ void CApplication::initialize(const ECommandLineFlag eCommandLineFlags)
 	if (lastUsedVersionMajor < currentVersionMajor
 		|| (lastUsedVersionMajor == currentVersionMajor && lastUsedVersionMinor < currentVersionMinor)
 		|| (lastUsedVersionMinor == currentVersionMinor && lastUsedVersionPatch < currentVersionPatch)
-		|| (lastUsedVersionMajor == 0 && lastUsedVersionMinor == 0 && lastUsedVersionPatch == 0))
-	{
-		m_bIsNewVersion = true;
-	}
+		|| (lastUsedVersionMajor == 0 && lastUsedVersionMinor == 0 && lastUsedVersionPatch == 0)) { m_bIsNewVersion = true; }
 
 	std::string defaultURLBaseString = std::string(m_kernelContext.getConfigurationManager().expand("${Designer_HelpBrowserURLBase}"));
 #ifdef MENSIA_DISTRIBUTION
@@ -1691,10 +1688,7 @@ void CApplication::undoCB()
 	m_kernelContext.getLogManager() << LogLevel_Debug << "undoCB\n";
 
 	CInterfacedScenario* currentInterfacedScenario = this->getCurrentInterfacedScenario();
-	if (currentInterfacedScenario)
-	{
-		currentInterfacedScenario->undoCB();
-	}
+	if (currentInterfacedScenario) { currentInterfacedScenario->undoCB(); }
 }
 
 void CApplication::redoCB()
@@ -2399,10 +2393,7 @@ void CApplication::deleteDesignerVisualizationCB()
 	gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager")), FALSE);
 
 	CInterfacedScenario* currentInterfacedScenario = getCurrentInterfacedScenario();
-	if (currentInterfacedScenario)
-	{
-		currentInterfacedScenario->snapshotCB();
-	}
+	if (currentInterfacedScenario) { currentInterfacedScenario->snapshotCB(); }
 }
 
 void CApplication::toggleDesignerVisualizationCB()
@@ -2496,10 +2487,7 @@ void CApplication::registerLicenseCB() const
 	STARTUPINFO startupInfo;
 	PROCESS_INFORMATION processInfo;
 	GetStartupInfo(&startupInfo);
-	if (!System::WindowsUtilities::utf16CompliantCreateProcess(nullptr, const_cast<char*>(command.c_str()), nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, &startupInfo, &processInfo))
-	{
-		exit(1);
-	}
+	if (!System::WindowsUtilities::utf16CompliantCreateProcess(nullptr, const_cast<char*>(command.c_str()), nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, &startupInfo, &processInfo)) { exit(1); }
 #elif defined TARGET_OS_Linux && defined(MENSIA_DISTRIBUTION)
 	m_kernelContext.getLogManager() << LogLevel_Info << "Register License application's GUI cannot run on Linux. In order to activate your license,"
 		<< " you can use the tool 'mensia-flexnet-activation' in command line.\n";
@@ -3087,10 +3075,7 @@ void CApplication::changeCurrentScenario(const int32_t pageIndex)
 	}
 
 	// updates the trimming if need be
-	for (auto& scenario : m_vInterfacedScenario)
-	{
-		scenario->updateScenarioLabel();
-	}
+	for (auto& scenario : m_vInterfacedScenario) { scenario->updateScenarioLabel(); }
 	// Reset zoom
 	if (getCurrentInterfacedScenario())
 	{

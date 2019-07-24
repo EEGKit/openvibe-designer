@@ -591,10 +591,7 @@ static Value DeserializeArray(std::string& str, std::stack<StackDepthType>& dept
 
 	str = Trim(str);
 
-	if ((str[0] == '[') && (str[str.length() - 1] == ']'))
-	{
-		str = str.substr(1, str.length() - 2);
-	}
+	if ((str[0] == '[') && (str[str.length() - 1] == ']')) { str = str.substr(1, str.length() - 2); }
 	else { return Value(); }
 
 	while (str.length() > 0)

@@ -54,10 +54,7 @@ void CRendererLine::refresh(const IRendererContext& rContext)
 
 	uint32_t l_ui32HistoryIndexMax;
 
-	if (m_historyDrawIndex == 0) // Draw real-time
-	{
-		l_ui32HistoryIndexMax = m_historyCount;
-	}
+	if (m_historyDrawIndex == 0) { l_ui32HistoryIndexMax = m_historyCount; } // Draw real-time 
 	else // stay at the m_historyDrawIndex
 	{
 		l_ui32HistoryIndexMax = m_historyDrawIndex;

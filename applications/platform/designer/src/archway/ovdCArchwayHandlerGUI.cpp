@@ -245,10 +245,7 @@ namespace
 		}
 	}
 
-	void on_button_start_engine_clicked(GtkWidget * widget, gpointer userData)
-	{
-		startEngine(widget, userData, false);
-	}
+	void on_button_start_engine_clicked(GtkWidget * widget, gpointer userData) { startEngine(widget, userData, false); }
 
 	void on_button_start_engine_fast_forward_clicked(GtkWidget * widget, gpointer userData)
 	{

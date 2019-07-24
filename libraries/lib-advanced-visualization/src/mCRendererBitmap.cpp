@@ -63,10 +63,7 @@ void CRendererBitmap::refresh(const IRendererContext& rContext)
 	CRenderer::refresh(rContext);
 
 	if (!m_historyCount) { return; }
-	if (m_vertex.empty())
-	{
-		return;
-	}
+	if (m_vertex.empty()) { return; }
 
 	for (uint32_t i = 0; i < m_channelCount; ++i)
 	{

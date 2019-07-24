@@ -70,10 +70,7 @@ void CRenderer::setSampleCount(uint32_t sampleCount)
 
 void CRenderer::feed(const float* pDataVector)
 {
-	for (uint32_t i = 0; i < m_channelCount; ++i)
-	{
-		m_history[i].push_back(pDataVector[i]);
-	}
+	for (uint32_t i = 0; i < m_channelCount; ++i) { m_history[i].push_back(pDataVector[i]); }
 	m_historyCount++;
 }
 

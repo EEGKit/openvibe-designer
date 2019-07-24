@@ -128,10 +128,7 @@ bool C3DMesh::compile()
 		m_vNormal[i3].z += v1.z;
 	}
 
-	for (auto& normal : m_vNormal)
-	{
-		normal.normalize();
-	}
+	for (auto& normal : m_vNormal) { normal.normalize(); }
 	return true;
 }
 

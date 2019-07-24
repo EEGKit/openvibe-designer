@@ -704,10 +704,7 @@ CInterfacedScenario::~CInterfacedScenario()
 	delete m_pDesignerVisualization;
 
 
-	if (m_pStencilBuffer != nullptr)
-	{
-		g_object_unref(m_pStencilBuffer);
-	}
+	if (m_pStencilBuffer != nullptr) { g_object_unref(m_pStencilBuffer); }
 
 	g_object_unref(m_pGUIBuilder);
 	/*
@@ -1076,10 +1073,7 @@ void CInterfacedScenario::updateScenarioLabel()
 	string l_sTempFileName        = m_sFileName;
 	string l_sTitleLabelUntrimmed = "unsaved document";
 	string::size_type l_iBackSlashIndex;
-	while ((l_iBackSlashIndex = l_sTempFileName.find('\\')) != string::npos)
-	{
-		l_sTempFileName[l_iBackSlashIndex] = '/';
-	}
+	while ((l_iBackSlashIndex = l_sTempFileName.find('\\')) != string::npos) { l_sTempFileName[l_iBackSlashIndex] = '/'; }
 
 	l_sLabel += m_hasBeenModified ? "*" : "";
 	l_sLabel += " ";
@@ -1108,10 +1102,7 @@ void CInterfacedScenario::updateScenarioLabel()
 		}
 		l_sLabel += l_sTempFileName;
 	}
-	else
-	{
-		l_sLabel += "(untitled)";
-	}
+	else { l_sLabel += "(untitled)"; }
 
 	l_sLabel += " ";
 	l_sLabel += m_hasBeenModified ? "*" : "";
@@ -1260,10 +1251,7 @@ void CInterfacedScenario::redraw(IBox& box)
 	}
 
 	int l_iBorderColor = Color_BoxBorder;
-	if (l_bMensia)
-	{
-		l_iBorderColor = Color_BoxBorderMensia;
-	}
+	if (l_bMensia) { l_iBorderColor = Color_BoxBorderMensia; }
 	gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[l_iBorderColor]);
 	gdk_gc_set_line_attributes(l_pDrawGC, 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_ROUND);
 	gdk_draw_rounded_rectangle(l_widget->window, l_pDrawGC, FALSE, xStart, yStart, xSize, ySize, gint(round(8.0 * m_currentScale)));
@@ -1804,10 +1792,7 @@ void CInterfacedScenario::undoCB(const bool bManageModifiedStatusFlag)
 	// This will result in two indentical undo states, in order to avoid weird Redo, we drop the
 	// reduntant state at this moment
 	bool shouldDropLastState = false;
-	if (m_rScenario.containsBoxWithDeprecatedInterfacors())
-	{
-		shouldDropLastState = true;
-	}
+	if (m_rScenario.containsBoxWithDeprecatedInterfacors()) { shouldDropLastState = true; }
 
 	if (m_oStateStack->undo())
 	{
@@ -1969,10 +1954,7 @@ void CInterfacedScenario::addCommentCB(int x, int y)
 	l_oCommentProxy.apply();
 
 	CCommentEditorDialog l_oCommentEditorDialog(m_kernelContext, *m_rScenario.getCommentDetails(identifier), m_sGUIFilename.c_str());
-	if (!l_oCommentEditorDialog.run())
-	{
-		m_rScenario.removeComment(identifier);
-	}
+	if (!l_oCommentEditorDialog.run()) { m_rScenario.removeComment(identifier); }
 	else
 	{
 		m_SelectedObjects.clear();
@@ -2023,10 +2005,7 @@ void CInterfacedScenario::addScenarioInputCB()
 	m_rScenario.addInput(l_sName, OVTK_TypeId_StreamedMatrix, m_rScenario.getUnusedInputIdentifier(OV_UndefinedIdentifier));
 
 	CConnectorEditor l_oConnectorEditor(m_kernelContext, m_rScenario, Box_Input, m_rScenario.getInputCount() - 1, "Add Input", m_sGUIFilename.c_str());
-	if (l_oConnectorEditor.run())
-	{
-		this->snapshotCB();
-	}
+	if (l_oConnectorEditor.run()) { this->snapshotCB(); }
 	else
 	{
 		m_rScenario.removeInput(m_rScenario.getInputCount() - 1);
@@ -2481,10 +2460,7 @@ void CInterfacedScenario::scenarioDrawingAreaMotionNotifyCB(GtkWidget* /*widget*
 			gtk_widget_show(l_pTooltip);
 		}
 	}
-	else
-	{
-		gtk_widget_hide(l_pTooltip);
-	}
+	else { gtk_widget_hide(l_pTooltip); }
 
 	if (m_currentMode != Mode_None)
 	{
@@ -3086,7 +3062,6 @@ void CInterfacedScenario::scenarioDrawingAreaButtonReleasedCB(GtkWidget* /*widge
 				this->snapshotCB();
 			}
 		}
-
 		this->redraw();
 	}
 
@@ -3198,10 +3173,7 @@ void CInterfacedScenario::scenarioDrawingAreaKeyPressEventCB(GtkWidget* /*widget
 	}
 
 	// F2 : rename all selected box(es)
-	if (event->keyval == GDK_F2)
-	{
-		contextMenuBoxRenameAllCB();
-	}
+	if (event->keyval == GDK_F2) { contextMenuBoxRenameAllCB(); }
 
 	// F8 : toggle enable/disable on all selected box(es)
 	if (event->keyval == GDK_F3)
@@ -3215,39 +3187,19 @@ void CInterfacedScenario::scenarioDrawingAreaKeyPressEventCB(GtkWidget* /*widget
 	// F7 :play/pause
 	if (event->keyval == GDK_F7)
 	{
-		if (m_rApplication.getCurrentInterfacedScenario()->m_ePlayerStatus == PlayerStatus_Play)
-		{
-			m_rApplication.pauseScenarioCB();
-		}
-		else
-		{
-			m_rApplication.playScenarioCB();
-		}
+		if (m_rApplication.getCurrentInterfacedScenario()->m_ePlayerStatus == PlayerStatus_Play) { m_rApplication.pauseScenarioCB(); }
+		else { m_rApplication.playScenarioCB(); }
 	}
 	// F6 : step
-	if (event->keyval == GDK_F6)
-	{
-		m_rApplication.nextScenarioCB();
-	}
+	if (event->keyval == GDK_F6) { m_rApplication.nextScenarioCB(); }
 	// F8 :fastforward
-	if (event->keyval == GDK_F8)
-	{
-		m_rApplication.forwardScenarioCB();
-	}
+	if (event->keyval == GDK_F8) { m_rApplication.forwardScenarioCB(); }
 	// F5 : stop
-	if (event->keyval == GDK_F5)
-	{
-		m_rApplication.stopScenarioCB();
-	}
+	if (event->keyval == GDK_F5) { m_rApplication.stopScenarioCB(); }
 
-	m_kernelContext.getLogManager() << LogLevel_Debug
-			<< "scenarioDrawingAreaKeyPressEventCB ("
-			<< (m_shiftPressed ? "true" : "false") << "|"
-			<< (m_controlPressed ? "true" : "false") << "|"
-			<< (m_altPressed ? "true" : "false") << "|"
-			<< (m_aPressed ? "true" : "false") << "|"
-			<< (m_wPressed ? "true" : "false") << "|"
-			<< ")\n";
+	m_kernelContext.getLogManager() << LogLevel_Debug << "scenarioDrawingAreaKeyPressEventCB (" << (m_shiftPressed ? "true" : "false") << "|"
+			<< (m_controlPressed ? "true" : "false") << "|" << (m_altPressed ? "true" : "false") << "|" << (m_aPressed ? "true" : "false") << "|"
+			<< (m_wPressed ? "true" : "false") << "|" << ")\n";
 
 	if (this->isLocked()) { return; }
 
@@ -3255,9 +3207,9 @@ void CInterfacedScenario::scenarioDrawingAreaKeyPressEventCB(GtkWidget* /*widget
 	if (event->keyval == GDK_Delete || event->keyval == GDK_KP_Delete)
 #elif defined TARGET_OS_MacOS
 	if (event->keyval == GDK_BackSpace)
-#endif
+#endif 
 	{
-		this->deleteSelection();
+		this->deleteSelection(); 
 	}
 }
 
@@ -3698,10 +3650,7 @@ void CInterfacedScenario::contextMenuBoxAddInputCB(IBox& box)
 			box.removeInput(box.getInputCount() - 1);
 		}
 	}
-	else
-	{
-		this->snapshotCB();
-	}
+	else { this->snapshotCB(); }
 }
 
 void CInterfacedScenario::contextMenuBoxEditInputCB(IBox& box, const uint32_t index)
@@ -3709,10 +3658,7 @@ void CInterfacedScenario::contextMenuBoxEditInputCB(IBox& box, const uint32_t in
 	m_kernelContext.getLogManager() << LogLevel_Debug << "contextMenuBoxEditInputCB\n";
 
 	CConnectorEditor l_oConnectorEditor(m_kernelContext, box, Box_Input, index, "Edit Input", m_sGUIFilename.c_str());
-	if (l_oConnectorEditor.run())
-	{
-		this->snapshotCB();
-	}
+	if (l_oConnectorEditor.run()) { this->snapshotCB(); }
 }
 
 void CInterfacedScenario::contextMenuBoxRemoveInputCB(IBox& box, const uint32_t index)
@@ -3738,10 +3684,7 @@ void CInterfacedScenario::contextMenuBoxAddOutputCB(IBox& box)
 			box.removeOutput(box.getOutputCount() - 1);
 		}
 	}
-	else
-	{
-		this->snapshotCB();
-	}
+	else { this->snapshotCB(); }
 }
 
 void CInterfacedScenario::contextMenuBoxEditOutputCB(IBox& box, const uint32_t index)
@@ -3749,10 +3692,7 @@ void CInterfacedScenario::contextMenuBoxEditOutputCB(IBox& box, const uint32_t i
 	m_kernelContext.getLogManager() << LogLevel_Debug << "contextMenuBoxEditOutputCB\n";
 
 	CConnectorEditor l_oConnectorEditor(m_kernelContext, box, Box_Output, index, "Edit Output", m_sGUIFilename.c_str());
-	if (l_oConnectorEditor.run())
-	{
-		this->snapshotCB();
-	}
+	if (l_oConnectorEditor.run()) { this->snapshotCB(); }
 }
 
 void CInterfacedScenario::contextMenuBoxRemoveOutputCB(IBox& box, const uint32_t index)
@@ -3803,24 +3743,15 @@ void CInterfacedScenario::contextMenuBoxAddSettingCB(IBox& box)
 	if (newSettingsCount > oldSettingsCount && box.hasAttribute(OV_AttributeId_Box_FlagCanModifySetting))
 	{
 		CSettingEditorDialog l_oSettingEditorDialog(m_kernelContext, box, oldSettingsCount, "Add Setting", m_sGUIFilename.c_str(), m_sGUISettingsFilename.c_str());
-		if (l_oSettingEditorDialog.run())
-		{
-			this->snapshotCB();
-		}
+		if (l_oSettingEditorDialog.run()) { this->snapshotCB(); }
 		else
 		{
-			for (uint32_t i = oldSettingsCount; i < newSettingsCount; ++i)
-			{
-				box.removeSetting(i);
-			}
+			for (uint32_t i = oldSettingsCount; i < newSettingsCount; ++i) { box.removeSetting(i); }
 		}
 	}
 	else
 	{
-		if (newSettingsCount > oldSettingsCount)
-		{
-			this->snapshotCB();
-		}
+		if (newSettingsCount > oldSettingsCount) { this->snapshotCB(); }
 		else
 		{
 			m_kernelContext.getLogManager() << LogLevel_Error << "No setting could be added to the box.\n";
@@ -3846,10 +3777,7 @@ void CInterfacedScenario::contextMenuBoxEditSettingCB(IBox& box, const uint32_t 
 {
 	m_kernelContext.getLogManager() << LogLevel_Debug << "contextMenuBoxEditSettingCB\n";
 	CSettingEditorDialog l_oSettingEditorDialog(m_kernelContext, box, index, "Edit Setting", m_sGUIFilename.c_str(), m_sGUISettingsFilename.c_str());
-	if (l_oSettingEditorDialog.run())
-	{
-		this->snapshotCB();
-	}
+	if (l_oSettingEditorDialog.run()) { this->snapshotCB(); }
 }
 
 void CInterfacedScenario::contextMenuBoxRemoveSettingCB(IBox& box, const uint32_t index)
@@ -4104,10 +4032,7 @@ void CInterfacedScenario::releasePlayerVisualization()
 	{
 		m_pDesignerVisualization->load();
 		//show it if it was toggled on
-		if (m_designerVisualizationToggled)
-		{
-			m_pDesignerVisualization->show();
-		}
+		if (m_designerVisualizationToggled) { m_pDesignerVisualization->show(); }
 	}
 }
 

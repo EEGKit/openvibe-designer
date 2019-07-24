@@ -206,15 +206,14 @@ bool CAlgorithmSphericalSplineInterpolation::process()
 #endif
 #endif
 
-			* sampleValue = spline_interp(
-				int(ip_controlPointsCount), //number of fixed values
-				m_pInsermCoords, //coordinates of fixed values
-				m_PotTable, //sin/cos table for spline
-				m_pSplineCoefs, //spline coefficients
-				*(ip_samplePointsCoords->getBuffer() + 3 * i),
-				*(ip_samplePointsCoords->getBuffer() + 3 * i + 1),
-				*(ip_samplePointsCoords->getBuffer() + 3 * i + 2) //coordinate where to interpolate
-			);
+			* sampleValue = spline_interp(int(ip_controlPointsCount), //number of fixed values
+										  m_pInsermCoords, //coordinates of fixed values
+										  m_PotTable, //sin/cos table for spline
+										  m_pSplineCoefs, //spline coefficients
+										  *(ip_samplePointsCoords->getBuffer() + 3 * i),
+										  *(ip_samplePointsCoords->getBuffer() + 3 * i + 1),
+										  *(ip_samplePointsCoords->getBuffer() + 3 * i + 2) //coordinate where to interpolate
+										 );
 
 #if defined TARGET_OS_Windows
 #ifndef NDEBUG

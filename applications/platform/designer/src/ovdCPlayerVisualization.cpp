@@ -239,10 +239,7 @@ GtkWidget* CPlayerVisualization::loadTreeWidget(IVisualizationWidget* pVisualiza
 	}
 
 	//show newly created widget
-	if (treeWidget != nullptr && pVisualizationWidget->getType() != EVisualizationWidget_VisualizationWindow)
-	{
-		gtk_widget_show(treeWidget);
-	}
+	if (treeWidget != nullptr && pVisualizationWidget->getType() != EVisualizationWidget_VisualizationWindow) { gtk_widget_show(treeWidget); }
 
 	return treeWidget;
 }
@@ -719,10 +716,7 @@ void CPlayerVisualization::drag_data_received_in_widget_cb(GtkWidget* pDstWidget
 	int srcIndex;
 	GtkWidget* srcTabLabel = nullptr;
 
-	if (GTK_IS_WINDOW(srcParentWidget))
-	{
-		srcIndex = 0;
-	}
+	if (GTK_IS_WINDOW(srcParentWidget)) { srcIndex = 0; }
 	else if (GTK_IS_NOTEBOOK(srcParentWidget))
 	{
 		srcIndex    = gtk_notebook_page_num(GTK_NOTEBOOK(srcParentWidget), srcBoxWidget);
@@ -737,10 +731,7 @@ void CPlayerVisualization::drag_data_received_in_widget_cb(GtkWidget* pDstWidget
 	//remove dst box from parent
 	int dstIndex;
 	GtkWidget* l_pDstTabLabel = nullptr;
-	if (GTK_IS_WINDOW(dstParentWidget))
-	{
-		dstIndex = 0;
-	}
+	if (GTK_IS_WINDOW(dstParentWidget)) { dstIndex = 0; }
 	else if (GTK_IS_NOTEBOOK(dstParentWidget))
 	{
 		dstIndex       = gtk_notebook_page_num(GTK_NOTEBOOK(dstParentWidget), dstBoxWidget);

@@ -14,10 +14,7 @@ using namespace std;
 
 namespace
 {
-	void close_messages_alert_window_cb(GtkButton* /*button*/, gpointer data)
-	{
-		gtk_widget_hide(GTK_WIDGET(data));
-	}
+	void close_messages_alert_window_cb(GtkButton* /*button*/, gpointer data) { gtk_widget_hide(GTK_WIDGET(data)); }
 
 	void focus_message_window_cb(GtkButton* /*button*/, gpointer data)
 	{
@@ -175,10 +172,7 @@ bool CLogListenerDesigner::activate(const ELogLevel eLogLevel, const bool bActiv
 
 bool CLogListenerDesigner::activate(const ELogLevel eStartLogLevel, const ELogLevel eEndLogLevel, const bool bActive)
 {
-	for (int i = eStartLogLevel; i <= eEndLogLevel; ++i)
-	{
-		m_vActiveLevel[ELogLevel(i)] = bActive;
-	}
+	for (int i = eStartLogLevel; i <= eEndLogLevel; ++i) { m_vActiveLevel[ELogLevel(i)] = bActive; }
 	return true;
 }
 
@@ -222,10 +216,7 @@ void CLogListenerDesigner::log(const uint64_t value)
 
 	stringstream l_sText;
 	l_sText << dec << value;
-	if (m_bConsoleLogWithHexa)
-	{
-		l_sText << " (0x" << hex << value << ")";
-	}
+	if (m_bConsoleLogWithHexa) { l_sText << " (0x" << hex << value << ")"; }
 
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
 }
@@ -236,10 +227,7 @@ void CLogListenerDesigner::log(const uint32_t value)
 
 	stringstream l_sText;
 	l_sText << dec << value;
-	if (m_bConsoleLogWithHexa)
-	{
-		l_sText << " (0x" << hex << value << ")";
-	}
+	if (m_bConsoleLogWithHexa) { l_sText << " (0x" << hex << value << ")"; }
 
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
 }
@@ -250,10 +238,7 @@ void CLogListenerDesigner::log(const uint16_t value)
 
 	stringstream l_sText;
 	l_sText << dec << value;
-	if (m_bConsoleLogWithHexa)
-	{
-		l_sText << " (0x" << hex << value << ")";
-	}
+	if (m_bConsoleLogWithHexa) { l_sText << " (0x" << hex << value << ")"; }
 
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
 }
@@ -264,10 +249,7 @@ void CLogListenerDesigner::log(const uint8_t value)
 
 	stringstream l_sText;
 	l_sText << dec << value;
-	if (m_bConsoleLogWithHexa)
-	{
-		l_sText << " (0x" << hex << value << ")";
-	}
+	if (m_bConsoleLogWithHexa) { l_sText << " (0x" << hex << value << ")"; }
 
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
 }
@@ -278,10 +260,7 @@ void CLogListenerDesigner::log(const int64_t value)
 
 	stringstream l_sText;
 	l_sText << dec << value;
-	if (m_bConsoleLogWithHexa)
-	{
-		l_sText << " (0x" << hex << value << ")";
-	}
+	if (m_bConsoleLogWithHexa) { l_sText << " (0x" << hex << value << ")"; }
 
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
 }
@@ -292,10 +271,7 @@ void CLogListenerDesigner::log(const int32_t value)
 
 	stringstream l_sText;
 	l_sText << dec << value;
-	if (m_bConsoleLogWithHexa)
-	{
-		l_sText << " (0x" << hex << value << ")";
-	}
+	if (m_bConsoleLogWithHexa) { l_sText << " (0x" << hex << value << ")"; }
 
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
 }
@@ -306,10 +282,7 @@ void CLogListenerDesigner::log(const int16_t value)
 
 	stringstream l_sText;
 	l_sText << dec << value;
-	if (m_bConsoleLogWithHexa)
-	{
-		l_sText << " (0x" << hex << value << ")";
-	}
+	if (m_bConsoleLogWithHexa) { l_sText << " (0x" << hex << value << ")"; }
 
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
 }
@@ -320,10 +293,7 @@ void CLogListenerDesigner::log(const int8_t value)
 
 	stringstream l_sText;
 	l_sText << dec << value;
-	if (m_bConsoleLogWithHexa)
-	{
-		l_sText << " (0x" << hex << value << ")";
-	}
+	if (m_bConsoleLogWithHexa) { l_sText << " (0x" << hex << value << ")"; }
 
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
 }
@@ -547,10 +517,7 @@ void CLogListenerDesigner::checkAppendFilterCurrentLog(const char* textColor, co
 	}
 	m_pCurrentLog->appendToCurrentLog(textColor, logMessage, bIsLink);
 
-	if (m_pCurrentLog->Filter(m_sSearchTerm))
-	{
-		displayLog(m_pCurrentLog);
-	}
+	if (m_pCurrentLog->Filter(m_sSearchTerm)) { displayLog(m_pCurrentLog); }
 }
 
 void CLogListenerDesigner::displayLog(CLogObject* oLog) const

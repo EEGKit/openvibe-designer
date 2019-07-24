@@ -216,10 +216,7 @@ int spline_coef(const int nb_value, double** xyz, const double* values, const do
 	/* Initialization of matrix A     */
 	/*================================*/
 	const int l0 = ((nb_value + 1) * (nb_value)) / 2;
-	for (i = l0; i < l0 + nb_value; ++i)
-	{
-		*(p_mat_a + i) = 1.0;
-	}
+	for (i = l0; i < l0 + nb_value; ++i) { *(p_mat_a + i) = 1.0; }
 	*(p_mat_a + i) = 0.0;
 
 	/*=========================*/
