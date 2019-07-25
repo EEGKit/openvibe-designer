@@ -744,7 +744,10 @@ namespace
 					{
 						sprintf(l_sTime, "Time : %02dm %02ds %03dms", minutes, seconds, milli);
 					}
-					else if (seconds) sprintf(l_sTime, "Time : %02ds %03dms", seconds, milli);
+					else if (seconds)
+					{
+						sprintf(l_sTime, "Time : %02ds %03dms", seconds, milli);
+					}
 					else { sprintf(l_sTime, "Time : %03dms", milli); }
 
 					gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-label_current_time")), l_sTime);
@@ -1312,7 +1315,7 @@ void CApplication::initialize(const ECommandLineFlag eCommandLineFlags)
 	string value(logLevel.toASCIIString());
 	transform(value.begin(), value.end(), value.begin(), ::to_lower<std::string::value_type>);
 	ELogLevel l_eLogLevel = LogLevel_Debug;
-	if (value == "debug") l_eLogLevel = LogLevel_Debug;
+	if (value == "debug") { l_eLogLevel = LogLevel_Debug; }
 	if (value == "benchmarking / profiling") { l_eLogLevel = LogLevel_Benchmark; }
 	if (value == "trace") { l_eLogLevel = LogLevel_Trace; }
 	if (value == "information") { l_eLogLevel = LogLevel_Info; }

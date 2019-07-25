@@ -488,11 +488,11 @@ CSettingCollectionHelper::~CSettingCollectionHelper() = default;
 
 CString CSettingCollectionHelper::getSettingWidgetName(const CIdentifier& rTypeIdentifier) const
 {
-	if (rTypeIdentifier == OV_TypeId_Boolean) return "settings_collection-hbox_setting_bool";
-	if (rTypeIdentifier == OV_TypeId_Integer) return "settings_collection-hbox_setting_integer";
+	if (rTypeIdentifier == OV_TypeId_Boolean) { return "settings_collection-hbox_setting_bool"; }
+	if (rTypeIdentifier == OV_TypeId_Integer) { return "settings_collection-hbox_setting_integer"; }
 	if (rTypeIdentifier == OV_TypeId_Float) { return "settings_collection-hbox_setting_float"; }
 	if (rTypeIdentifier == OV_TypeId_String) { return "settings_collection-entry_setting_string"; }
-	if (rTypeIdentifier == OV_TypeId_Filename) return "settings_collection-hbox_setting_filename";
+	if (rTypeIdentifier == OV_TypeId_Filename) { return "settings_collection-hbox_setting_filename"; }
 	if (rTypeIdentifier == OV_TypeId_Foldername) { return "settings_collection-hbox_setting_foldername"; }
 	if (rTypeIdentifier == OV_TypeId_Script) { return "settings_collection-hbox_setting_script"; }
 	if (rTypeIdentifier == OV_TypeId_Color) { return "settings_collection-hbox_setting_color"; }
@@ -514,8 +514,8 @@ CString CSettingCollectionHelper::getSettingEntryWidgetName(const CIdentifier& r
 	if (rTypeIdentifier == OV_TypeId_Foldername) { return "settings_collection-entry_setting_foldername_string"; }
 	if (rTypeIdentifier == OV_TypeId_Script) { return "settings_collection-entry_setting_script_string"; }
 	if (rTypeIdentifier == OV_TypeId_Color) { return "settings_collection-hbox_setting_color_string"; }
-	if (rTypeIdentifier == OV_TypeId_ColorGradient) return "settings_collection-hbox_setting_color_gradient_string";
-	if (m_kernelContext.getTypeManager().isEnumeration(rTypeIdentifier)) return "settings_collection-comboboxentry_setting_enumeration";
+	if (rTypeIdentifier == OV_TypeId_ColorGradient) { return "settings_collection-hbox_setting_color_gradient_string"; }
+	if (m_kernelContext.getTypeManager().isEnumeration(rTypeIdentifier)) { return "settings_collection-comboboxentry_setting_enumeration"; }
 	if (m_kernelContext.getTypeManager().isBitMask(rTypeIdentifier)) { return "settings_collection-table_setting_bitmask"; }
 	return "settings_collection-entry_setting_string";
 }
@@ -524,12 +524,12 @@ CString CSettingCollectionHelper::getSettingEntryWidgetName(const CIdentifier& r
 
 CString CSettingCollectionHelper::getValue(const CIdentifier& rTypeIdentifier, GtkWidget* widget) const
 {
-	if (!widget) return "";
+	if (!widget) { return ""; }
 	if (rTypeIdentifier == OV_TypeId_Boolean) { return getValueBoolean(widget); }
 	if (rTypeIdentifier == OV_TypeId_Integer) { return getValueInteger(widget); }
 	if (rTypeIdentifier == OV_TypeId_Float) { return getValueFloat(widget); }
 	if (rTypeIdentifier == OV_TypeId_String) { return getValueString(widget); }
-	if (rTypeIdentifier == OV_TypeId_Filename) return getValueFilename(widget);
+	if (rTypeIdentifier == OV_TypeId_Filename) { return getValueFilename(widget); }
 	if (rTypeIdentifier == OV_TypeId_Foldername) { return getValueFoldername(widget); }
 	if (rTypeIdentifier == OV_TypeId_Script) { return getValueScript(widget); }
 	if (rTypeIdentifier == OV_TypeId_Color) { return getValueColor(widget); }
@@ -552,7 +552,7 @@ CString CSettingCollectionHelper::getValueBoolean(GtkWidget* widget)
 CString CSettingCollectionHelper::getValueInteger(GtkWidget* widget)
 {
 	vector<GtkWidget*> l_vWidget;
-	if (!GTK_IS_CONTAINER(widget)) return "0";
+	if (!GTK_IS_CONTAINER(widget)) { return "0"; }
 	gtk_container_foreach(GTK_CONTAINER(widget), collect_widget_cb, &l_vWidget);
 	if (!GTK_IS_ENTRY(l_vWidget[0])) { return "O"; }
 	GtkEntry* l_widget = GTK_ENTRY(l_vWidget[0]);
@@ -571,7 +571,7 @@ CString CSettingCollectionHelper::getValueFloat(GtkWidget* widget)
 
 CString CSettingCollectionHelper::getValueString(GtkWidget* widget)
 {
-	if (!GTK_IS_ENTRY(widget)) return "";
+	if (!GTK_IS_ENTRY(widget)) { return ""; }
 	GtkEntry* l_widget = GTK_ENTRY(widget);
 	return CString(gtk_entry_get_text(l_widget));
 }
@@ -628,7 +628,7 @@ CString CSettingCollectionHelper::getValueColorGradient(GtkWidget* widget)
 
 CString CSettingCollectionHelper::getValueEnumeration(const CIdentifier& /*rTypeIdentifier*/, GtkWidget* widget)
 {
-	if (!GTK_IS_COMBO_BOX(widget)) return "";
+	if (!GTK_IS_COMBO_BOX(widget)) { return ""; }
 	GtkComboBox* l_widget = GTK_COMBO_BOX(widget);
 	return CString(gtk_combo_box_get_active_text(l_widget));
 }
@@ -636,7 +636,7 @@ CString CSettingCollectionHelper::getValueEnumeration(const CIdentifier& /*rType
 CString CSettingCollectionHelper::getValueBitMask(const CIdentifier& /*rTypeIdentifier*/, GtkWidget* widget)
 {
 	vector<GtkWidget*> l_vWidget;
-	if (!GTK_IS_CONTAINER(widget)) return "";
+	if (!GTK_IS_CONTAINER(widget)) { return ""; }
 	gtk_container_foreach(GTK_CONTAINER(widget), collect_widget_cb, &l_vWidget);
 	string l_sResult;
 

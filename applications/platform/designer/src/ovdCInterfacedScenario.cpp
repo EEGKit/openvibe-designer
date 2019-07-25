@@ -1736,8 +1736,8 @@ bool CInterfacedScenario::pickInterfacedObject(const int x, const int y, int iSi
 	int iEndY   = y + iSizeY;
 
 	// crops according to drawing area boundings
-	if (iStartX < 0) iStartX = 0;
-	if (iStartY < 0) iStartY = 0;
+	if (iStartX < 0) { iStartX = 0; }
+	if (iStartY < 0) { iStartY = 0; }
 	if (iEndX < 0) { iEndX = 0; }
 	if (iEndY < 0) { iEndY = 0; }
 	if (iStartX >= l_iMaxX - 1) { iStartX = l_iMaxX - 1; }
@@ -2254,7 +2254,7 @@ void CInterfacedScenario::scenarioDrawingAreaExposeCB(GdkEventExpose* /*event*/)
 void CInterfacedScenario::scenarioDrawingAreaDragDataReceivedCB(GdkDragContext* pDragContext, const gint iX, const gint iY,
 																GtkSelectionData* pSelectionData, guint /*info*/, guint /*t*/)
 {
-	if (this->isLocked()) return;
+	if (this->isLocked()) { return; }
 
 	// two cases: dragged from inside the program = a box ...
 	if (pDragContext->protocol == GDK_DRAG_PROTO_LOCAL || pDragContext->protocol == GDK_DRAG_PROTO_XDND)

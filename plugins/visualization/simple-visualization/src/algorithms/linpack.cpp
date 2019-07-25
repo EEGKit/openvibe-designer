@@ -167,7 +167,7 @@ begin_dspfa:;
 				ij -= j - 1;
 			}
 			*(kpvt + k - 1) = k;
-			if (swap) * (kpvt + k - 1) = imax;
+			if (swap) { * (kpvt + k - 1) = imax; }
 		}
 		else
 		{
@@ -219,12 +219,12 @@ begin_dspfa:;
 				}
 			}
 			*(kpvt + k - 1) = 1 - k;
-			if (swap) * (kpvt + k - 1) = -imax;
+			if (swap) { * (kpvt + k - 1) = -imax; }
 			*(kpvt + k - 2) = *(kpvt + k - 1);
 		}
 	}
 	ik -= k - 1;
-	if (kstep == 2) ik -= k - 2;
+	if (kstep == 2) { ik -= k - 2; }
 	k -= kstep;
 	goto begin_dspfa;
 end_dspfa:;
@@ -456,7 +456,7 @@ double sdot(const int* n, const double* sx, const int* incx, const double* sy, c
 		{
 			int ix = 1;
 			int iy = 1;
-			if (*incx < 0) ix = (1 - *n) * (*incx) + 1;
+			if (*incx < 0) { ix = (1 - *n) * (*incx) + 1; }
 			if (*incy < 0) { iy = (1 - *n) * (*incy) + 1; }
 			for (i = 1; i <= *n; ++i)
 			{
@@ -475,7 +475,7 @@ double sdot(const int* n, const double* sx, const int* incx, const double* sy, c
 				{
 					stemp += *(sx + i - 1) * (*(sy + i - 1));
 				}
-				if (*n < 5) ok = 0;
+				if (*n < 5) { ok = 0; }
 			}
 			if (ok == 1)
 			{

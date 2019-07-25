@@ -374,7 +374,7 @@ namespace Mensia
 					renderer->refresh(*m_pSubRendererContext);
 				}
 			}
-			if (m_bRedrawNeeded) this->redraw();
+			if (m_bRedrawNeeded) { this->redraw(); }
 
 			m_bRebuildNeeded = false;
 			m_bRefreshNeeded = false;

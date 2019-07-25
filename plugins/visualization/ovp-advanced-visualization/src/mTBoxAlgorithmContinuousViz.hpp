@@ -318,8 +318,8 @@ namespace Mensia
 				m_bRedrawNeeded  = true;
 			}
 
-			if (m_bRebuildNeeded) m_pRenderer->rebuild(*m_pRendererContext);
-			if (m_bRefreshNeeded) m_pRenderer->refresh(*m_pRendererContext);
+			if (m_bRebuildNeeded) { m_pRenderer->rebuild(*m_pRendererContext); }
+			if (m_bRefreshNeeded) { m_pRenderer->refresh(*m_pRendererContext); }
 			if (m_bRedrawNeeded) { this->redraw(); }
 
 			m_bRebuildNeeded = false;

@@ -33,7 +33,7 @@ namespace Mensia
 
 			void renderRight(GtkWidget* pWidget) override
 			{
-				if (m_pRenderer == nullptr) return;
+				if (m_pRenderer == nullptr) { return; }
 				if (m_pRenderer->getSampleCount() == 0) { return; }
 				if (m_pRenderer->getHistoryCount() == 0) { return; }
 				if (m_pRenderer->getHistoryIndex() == 0) { return; }

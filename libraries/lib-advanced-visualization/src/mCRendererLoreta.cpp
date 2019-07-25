@@ -507,10 +507,7 @@ bool CRendererLoreta::render(const IRendererContext& rContext)
 
 void CRendererLoreta::clearRegionSelection()
 {
-	for (std::vector<bool>::iterator it = m_vSelected.begin(); it != m_vSelected.end(); ++it)
-	{
-		*it = false;
-	}
+	for (std::vector<bool>::iterator it = m_vSelected.begin(); it != m_vSelected.end(); ++it) { *it = false; }
 	this->refreshBrainSubset();
 }
 
@@ -541,10 +538,7 @@ const char* CRendererLoreta::getRegionName(const uint32_t regionCategory, const 
 	std::map<std::string, std::vector<uint32_t>>& l_vLookup = m_vLookup[regionCategory];
 	auto it                                                 = l_vLookup.begin();
 
-	for (uint32_t j = 0; j < regionIndex && it != l_vLookup.end(); j++)
-	{
-		++it;
-	}
+	for (uint32_t j = 0; j < regionIndex && it != l_vLookup.end(); j++) { ++it; }
 
 	if (it != l_vLookup.end()) { return it->first.c_str(); }
 
@@ -577,10 +571,7 @@ void CRendererLoreta::selectRegion(const uint32_t regionCategory, const uint32_t
 	std::map<std::string, std::vector<uint32_t>>& l_vLookup   = m_vLookup[regionCategory];
 	std::map<std::string, std::vector<uint32_t>>::iterator it = l_vLookup.begin();
 
-	for (uint32_t j = 0; j < regionIndex && it != l_vLookup.end(); j++)
-	{
-		++it;
-	}
+	for (uint32_t j = 0; j < regionIndex && it != l_vLookup.end(); j++) { ++it; }
 
 	if (it != l_vLookup.end())
 	{

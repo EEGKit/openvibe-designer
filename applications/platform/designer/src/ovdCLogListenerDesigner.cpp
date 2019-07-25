@@ -310,7 +310,7 @@ void CLogListenerDesigner::log(const float value)
 
 void CLogListenerDesigner::log(const double value)
 {
-	if (m_bIngnoreMessages) return;
+	if (m_bIngnoreMessages) { return; }
 
 	stringstream l_sText;
 	l_sText << value;

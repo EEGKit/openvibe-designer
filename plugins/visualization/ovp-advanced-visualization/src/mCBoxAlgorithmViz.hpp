@@ -135,10 +135,10 @@ namespace Mensia
 					if (*it == S_DataScale) { result++; }
 					if (*it == S_Caption) { result++; }
 					if (*it == S_DataPositive) { result++; }
-					if (*it == S_Translucency) result++;
-					if (*it == S_FlowerRingCount) result++;
-					if (*it == S_Color) result++;
-					if (*it == S_ColorGradient) result++;
+					if (*it == S_Translucency) { result++; }
+					if (*it == S_FlowerRingCount) { result++; }
+					if (*it == S_Color) { result++; }
+					if (*it == S_ColorGradient) { result++; }
 					if (*it == S_ShowAxis) { result++; }
 					if (*it == S_XYZPlotHasDepth) { result++; }
 					// if(*it==F_CanAddInput)         result++;
