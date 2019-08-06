@@ -178,14 +178,14 @@ bool CLogListenerDesigner::activate(const ELogLevel eStartLogLevel, const ELogLe
 
 bool CLogListenerDesigner::activate(const bool bActive) { return activate(LogLevel_First, LogLevel_Last, bActive); }
 
-void CLogListenerDesigner::log(const time64 time64Value)
+void CLogListenerDesigner::log(const time64 value)
 {
 	if (m_bIngnoreMessages) { return; }
 
 	stringstream l_sText;
 	if (m_bConsoleLogTimeInSecond)
 	{
-		const double l_f64Time = ITimeArithmetics::timeToSeconds(time64Value.m_ui64TimeValue);
+		const double l_f64Time = ITimeArithmetics::timeToSeconds(value.m_ui64TimeValue);
 		std::stringstream ss;
 		ss.precision(m_ui32ConsoleLogTimePrecision);
 		ss.setf(std::ios::fixed, std::ios::floatfield);
@@ -193,17 +193,17 @@ void CLogListenerDesigner::log(const time64 time64Value)
 		ss << " sec";
 		if (m_bConsoleLogWithHexa)
 		{
-			ss << " (0x" << hex << time64Value.m_ui64TimeValue << ")";
+			ss << " (0x" << hex << value.m_ui64TimeValue << ")";
 		}
 
 		l_sText << ss.str().c_str();
 	}
 	else
 	{
-		l_sText << dec << time64Value.m_ui64TimeValue;
+		l_sText << dec << value.m_ui64TimeValue;
 		if (m_bConsoleLogWithHexa)
 		{
-			l_sText << " (0x" << hex << time64Value.m_ui64TimeValue << ")";
+			l_sText << " (0x" << hex << value.m_ui64TimeValue << ")";
 		}
 	}
 

@@ -17,8 +17,8 @@ namespace Mensia {
 		~CArchwayHandlerGUI();
 
 		void refreshEnginePipelines();
-		void toggleNeuroRTEngineConfigurationDialog(bool shouldDisplay);
-		void displayPipelineConfigurationDialog(unsigned int pipelineId);
+		void toggleNeuroRTEngineConfigurationDialog(const bool shouldDisplay);
+		void displayPipelineConfigurationDialog(const unsigned int pipelineId);
 
 		bool setPipelineParameterValueAtPath(gchar const* path, gchar const* newValue);
 
