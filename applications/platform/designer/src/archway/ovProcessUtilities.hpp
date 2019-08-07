@@ -126,7 +126,7 @@ namespace OpenViBE
 
 			PROCESS_INFORMATION lpProcessInfo;
 			// Create the process
-			if (!CreateProcess(NULL,szCmdline, NULL, NULL, NULL, NULL, NULL, NULL, &lpStartupInfo, &lpProcessInfo))
+			if (!CreateProcess(nullptr,szCmdline, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, &lpStartupInfo, &lpProcessInfo))
 			{
 				exit(1);
 			}

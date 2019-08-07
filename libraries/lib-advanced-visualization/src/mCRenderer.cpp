@@ -59,11 +59,10 @@ void CRenderer::setChannelCount(const uint32_t channelCount)
 	m_history.resize(channelCount);
 }
 
-void CRenderer::setSampleCount(uint32_t sampleCount)
+void CRenderer::setSampleCount(const uint32_t sampleCount)
 {
-	if (sampleCount == 0) { sampleCount = 1; }
-	m_sampleCount        = sampleCount;
-	m_inverseSampleCount = (sampleCount ? 1.f / sampleCount : 1);
+	m_sampleCount        = sampleCount == 0 ? 1 : sampleCount;
+	m_inverseSampleCount = (m_sampleCount ? 1.f / m_sampleCount : 1);
 	m_vertex.clear();
 	m_mesh.clear();
 }
@@ -87,7 +86,7 @@ void CRenderer::feed(const float* pDataVector, const uint32_t sampleCount)
 	m_historyCount += sampleCount;
 }
 
-void CRenderer::feed(const uint64_t stimulationDate, uint64_t stimulationId)
+void CRenderer::feed(const uint64_t stimulationDate, const uint64_t stimulationId)
 {
 	m_stimulationHistory.emplace_back((stimulationDate >> 16) / 65536., stimulationId);
 }

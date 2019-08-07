@@ -31,7 +31,7 @@ namespace OpenViBEDesigner
 									uint32_t childCount, const OpenViBE::CIdentifier& suggestedIdentifier);
 		bool getVisualizationWidgetIndex(const OpenViBE::CIdentifier& identifier, uint32_t& index) const;
 		bool unparentVisualizationWidget(const OpenViBE::CIdentifier& identifier, uint32_t& index);
-		bool parentVisualizationWidget(const OpenViBE::CIdentifier& identifier, const OpenViBE::CIdentifier& parentIdentifier, uint32_t index);
+		bool parentVisualizationWidget(const OpenViBE::CIdentifier& identifier, const OpenViBE::CIdentifier& parentIdentifier, const uint32_t index);
 		bool destroyHierarchy(const OpenViBE::CIdentifier& identifier, bool destroyVisualizationBoxes);
 
 		GtkTreeView* createTreeViewWithModel();

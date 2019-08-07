@@ -460,7 +460,7 @@ namespace
 			CMatrix l_oFinalGradient;
 			l_oFinalGradient.setDimensionCount(2);
 			l_oFinalGradient.setDimensionSize(0, 4);
-			l_oFinalGradient.setDimensionSize(1, size_t(l_oUserData.vColorGradient.size()));
+			l_oFinalGradient.setDimensionSize(1, uint32_t(l_oUserData.vColorGradient.size()));
 			for (uint32_t i = 0; i < l_oUserData.vColorGradient.size(); ++i)
 			{
 				l_oFinalGradient[i * 4]     = l_oUserData.vColorGradient[i].fPercent;

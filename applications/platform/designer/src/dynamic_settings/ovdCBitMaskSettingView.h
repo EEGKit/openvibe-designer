@@ -12,7 +12,7 @@ namespace OpenViBEDesigner
 		class CBitMaskSettingView : public CAbstractSettingView
 		{
 		public:
-			CBitMaskSettingView(OpenViBE::Kernel::IBox& rBox, uint32_t index, OpenViBE::CString& rBuilderName,
+			CBitMaskSettingView(OpenViBE::Kernel::IBox& rBox, const uint32_t index, OpenViBE::CString& rBuilderName,
 								const OpenViBE::Kernel::IKernelContext& rKernelContext, const OpenViBE::CIdentifier& rTypeIdentifier);
 
 			void getValue(OpenViBE::CString& value) const override;

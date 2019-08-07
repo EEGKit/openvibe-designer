@@ -371,7 +371,7 @@ namespace Mensia
 				delete pBoxListener;
 			}
 
-			bool hasFunctionality(OpenViBE::CIdentifier functionalityIdentifier) const override { return functionalityIdentifier == OVD_Functionality_Visualization; }
+			bool hasFunctionality(const OpenViBE::CIdentifier functionalityIdentifier) const override { return functionalityIdentifier == OVD_Functionality_Visualization; }
 
 			bool getBoxPrototype(OpenViBE::Kernel::IBoxProto& rBoxAlgorithmPrototype) const override
 			{

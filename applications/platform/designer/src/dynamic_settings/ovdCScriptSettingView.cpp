@@ -68,7 +68,7 @@ void CScriptSettingView::setValue(const CString& value)
 void CScriptSettingView::browse() const
 {
 	GtkWidget* l_pWidgetDialogOpen = gtk_file_chooser_dialog_new("Select file to open...", nullptr, GTK_FILE_CHOOSER_ACTION_SAVE,
-																 GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
+																 GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, nullptr);
 
 	const CString initialFileName = m_kernelContext.getConfigurationManager().expand(gtk_entry_get_text(m_entry));
 	if (g_path_is_absolute(initialFileName.toASCIIString()))
@@ -77,7 +77,7 @@ void CScriptSettingView::browse() const
 	}
 	else
 	{
-		char* l_sFullPath = g_build_filename(g_get_current_dir(), initialFileName.toASCIIString(), NULL);
+		char* l_sFullPath = g_build_filename(g_get_current_dir(), initialFileName.toASCIIString(), nullptr);
 		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(l_pWidgetDialogOpen), l_sFullPath);
 		g_free(l_sFullPath);
 	}

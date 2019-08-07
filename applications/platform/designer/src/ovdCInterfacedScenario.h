@@ -85,11 +85,11 @@ namespace OpenViBEDesigner
 		void contextMenuBoxRenameAllCB();
 		void contextMenuBoxToggleEnableAllCB();
 		void contextMenuBoxAddInputCB(OpenViBE::Kernel::IBox& box);
-		void contextMenuBoxEditInputCB(OpenViBE::Kernel::IBox& box, uint32_t index);
-		void contextMenuBoxRemoveInputCB(OpenViBE::Kernel::IBox& box, uint32_t index);
+		void contextMenuBoxEditInputCB(OpenViBE::Kernel::IBox& box, const uint32_t index);
+		void contextMenuBoxRemoveInputCB(OpenViBE::Kernel::IBox& box, const uint32_t index);
 		void contextMenuBoxAddOutputCB(OpenViBE::Kernel::IBox& box);
-		void contextMenuBoxEditOutputCB(OpenViBE::Kernel::IBox& box, uint32_t index);
-		void contextMenuBoxRemoveOutputCB(OpenViBE::Kernel::IBox& box, uint32_t index);
+		void contextMenuBoxEditOutputCB(OpenViBE::Kernel::IBox& box, const uint32_t index);
+		void contextMenuBoxRemoveOutputCB(OpenViBE::Kernel::IBox& box, const uint32_t index);
 
 		void contextMenuBoxConnectScenarioInputCB(OpenViBE::Kernel::IBox& box, uint32_t boxInputIndex, uint32_t scenarioInputIndex);
 		void contextMenuBoxConnectScenarioOutputCB(OpenViBE::Kernel::IBox& box, uint32_t boxOutputIndex, uint32_t scenarioOutputIndex);
@@ -97,8 +97,8 @@ namespace OpenViBEDesigner
 		void contextMenuBoxDisconnectScenarioOutputCB(OpenViBE::Kernel::IBox& box, uint32_t boxOutputIndex, uint32_t scenarioOutputIndex);
 
 		void contextMenuBoxAddSettingCB(OpenViBE::Kernel::IBox& box);
-		void contextMenuBoxEditSettingCB(OpenViBE::Kernel::IBox& box, uint32_t index);
-		void contextMenuBoxRemoveSettingCB(OpenViBE::Kernel::IBox& box, uint32_t index);
+		void contextMenuBoxEditSettingCB(OpenViBE::Kernel::IBox& box, const uint32_t index);
+		void contextMenuBoxRemoveSettingCB(OpenViBE::Kernel::IBox& box, const uint32_t index);
 		void contextMenuBoxConfigureCB(OpenViBE::Kernel::IBox& box);
 		void contextMenuBoxAboutCB(OpenViBE::Kernel::IBox& box) const;
 		void contextMenuBoxEditMetaboxCB(OpenViBE::Kernel::IBox& box) const;
@@ -251,11 +251,11 @@ namespace OpenViBEDesigner
 		typedef void (*menu_callback_function)(GtkMenuItem*, BoxContextMenuCB*);
 		GtkImageMenuItem* gtk_menu_add_new_image_menu_item_with_cb_generic(GtkMenu* menu, const char* icon, const char* label, 
 																		   menu_callback_function cb, OpenViBE::Kernel::IBox* box, 
-																		   uint32_t command, uint32_t index, uint32_t index2);
+																		   uint32_t command, const uint32_t index, const uint32_t index2);
 
 		GtkImageMenuItem* gtk_menu_add_new_image_menu_item_with_cb(GtkMenu* menu, const char* icon, const char* label, 
 																   menu_callback_function cb, OpenViBE::Kernel::IBox* box, 
-																   uint32_t command, uint32_t index)
+																   uint32_t command, const uint32_t index)
 		{
 			return gtk_menu_add_new_image_menu_item_with_cb_generic(menu, icon, label, cb, box, command, index, 0);
 		}

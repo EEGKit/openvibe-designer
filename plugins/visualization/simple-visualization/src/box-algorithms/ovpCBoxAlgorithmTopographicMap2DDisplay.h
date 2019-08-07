@@ -61,7 +61,7 @@ namespace OpenViBEPlugins
 			OpenViBE::CIdentifier getCreatedClass() const override { return OVP_ClassId_TopographicMap2DDisplay; }
 			OpenViBE::Plugins::IPluginObject* create() override { return new CBoxAlgorithmTopographicMap2DDisplay(); }
 
-			bool hasFunctionality(OpenViBE::CIdentifier functionalityIdentifier) const override { return functionalityIdentifier == OVD_Functionality_Visualization; }
+			bool hasFunctionality(const OpenViBE::CIdentifier functionalityIdentifier) const override { return functionalityIdentifier == OVD_Functionality_Visualization; }
 
 			bool getBoxPrototype(OpenViBE::Kernel::IBoxProto& rPrototype) const override
 			{

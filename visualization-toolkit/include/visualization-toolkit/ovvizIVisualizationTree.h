@@ -301,7 +301,7 @@ namespace OpenViBEVisualizationToolkit
 		 * \param index index where widget is to be parented
 		 * \return true if widget could be parented as desired, false otherwise
 		 */
-		virtual bool parentVisualizationWidget(const OpenViBE::CIdentifier& identifier, const OpenViBE::CIdentifier& parentIdentifier, uint32_t index) = 0;
+		virtual bool parentVisualizationWidget(const OpenViBE::CIdentifier& identifier, const OpenViBE::CIdentifier& parentIdentifier, const uint32_t index) = 0;
 
 		/**
 		 * \brief Destroys a widget hierarchy
