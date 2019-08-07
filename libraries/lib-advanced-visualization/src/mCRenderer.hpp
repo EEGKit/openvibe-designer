@@ -65,7 +65,7 @@ namespace Mensia
 			uint32_t getHistoryIndex() const override;
 			virtual bool getSampleAtERPFraction(const float fERPFraction, std::vector<float>& vSample) const;
 
-			void setTimeOffset(const uint64_t offset) override { m_timeOffset = offset; };
+			void setTimeOffset(const uint64_t offset) override { m_timeOffset = offset; }
 			uint64_t getTimeOffset() const override { return m_timeOffset; }
 
 			void rebuild(const IRendererContext& rContext) override;
