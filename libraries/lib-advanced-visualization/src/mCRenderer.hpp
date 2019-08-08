@@ -76,9 +76,9 @@ namespace Mensia
 			uint32_t getRegionCategoryCount() override { return 0; }
 			uint32_t getRegionCount(const uint32_t /*regionCategory*/) override { return 0; }
 			const char* getRegionCategoryName(const uint32_t /*regionCategory*/) override { return nullptr; }
-			const char* getRegionName(const uint32_t /*regionCategory*/, uint32_t /*regionIndex*/) override { return nullptr; }
+			const char* getRegionName(const uint32_t /*regionCategory*/, const uint32_t /*regionIndex*/) override { return nullptr; }
 			void selectRegion(const uint32_t /*regionCategory*/, const char* /*sRegionName*/) override { }
-			void selectRegion(const uint32_t /*regionCategory*/, uint32_t /*regionIndex*/) override { }
+			void selectRegion(const uint32_t /*regionCategory*/, const uint32_t /*regionIndex*/) override { }
 
 			virtual void SetFaceMeshVisible(bool /*bVisible = true*/) { }
 

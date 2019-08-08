@@ -61,7 +61,7 @@ namespace Mensia
 
 			bool onInputTypeChanged(IBox& rBox, const uint32_t index) override
 			{
-				OpenViBE::CIdentifier l_oTypeIdentifier;
+				OpenViBE::CIdentifier l_oTypeIdentifier = OV_UndefinedIdentifier;
 				rBox.getInputType(index, l_oTypeIdentifier);
 				if (!this->getTypeManager().isDerivedFromStream(l_oTypeIdentifier, OV_TypeId_StreamedMatrix))
 				{
@@ -79,7 +79,7 @@ namespace Mensia
 
 			bool onInputAdded(IBox& rBox, const uint32_t index) override
 			{
-				OpenViBE::CIdentifier l_oTypeIdentifier;
+				OpenViBE::CIdentifier l_oTypeIdentifier = OV_UndefinedIdentifier;
 				rBox.getInputType(0, l_oTypeIdentifier);
 				rBox.setInputType(index, l_oTypeIdentifier);
 				rBox.setInputName(index, "Matrix");

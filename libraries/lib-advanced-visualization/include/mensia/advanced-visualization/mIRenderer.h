@@ -66,7 +66,7 @@ namespace Mensia
 			virtual void setHistoryDrawIndex(const uint32_t ui32HistoryDrawIndex) = 0;
 			virtual void feed(const float* pDataVector) = 0;
 			virtual void feed(const float* pDataVector, const uint32_t ui32SampleCount) = 0;
-			virtual void feed(uint64_t ui64StimulationDate, const uint64_t ui64StimulationId) = 0;
+			virtual void feed(const uint64_t ui64StimulationDate, const uint64_t ui64StimulationId) = 0;
 			virtual void clear(const uint32_t ui32SampleCountToKeep) = 0;
 			virtual void prefeed(const uint32_t ui32PreFeedSampleCount) = 0;
 

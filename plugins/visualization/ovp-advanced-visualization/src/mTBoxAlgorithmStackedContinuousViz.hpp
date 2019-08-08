@@ -59,7 +59,7 @@ namespace Mensia
 
 			bool onInputTypeChanged(OpenViBE::Kernel::IBox& rBox, const uint32_t index) override
 			{
-				OpenViBE::CIdentifier l_oTypeIdentifier;
+				OpenViBE::CIdentifier l_oTypeIdentifier = OV_UndefinedIdentifier;
 				rBox.getInputType(index, l_oTypeIdentifier);
 				if (!this->getTypeManager().isDerivedFromStream(l_oTypeIdentifier, OV_TypeId_StreamedMatrix))
 				{

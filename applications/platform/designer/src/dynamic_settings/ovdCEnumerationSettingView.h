@@ -23,7 +23,7 @@ namespace OpenViBEDesigner
 
 		private:
 			GtkComboBox* m_comboBox = nullptr;
-			OpenViBE::CIdentifier m_oTypeIdentifier;
+			OpenViBE::CIdentifier m_oTypeIdentifier = OV_UndefinedIdentifier;
 			bool p = false;
 
 			std::map<OpenViBE::CString, uint64_t> m_entriesIndex;
