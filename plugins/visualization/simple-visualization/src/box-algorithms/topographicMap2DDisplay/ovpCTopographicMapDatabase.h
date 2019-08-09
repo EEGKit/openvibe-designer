@@ -91,7 +91,7 @@ namespace OpenViBEPlugins
 			 */
 			uint64_t m_interpolationType = OVP_TypeId_SphericalLinearInterpolationType_Spline;
 			//number of electrodes (see CBufferDatabase) - mapped to OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_ControlPointsCount
-			//int64_t m_i64NbElectrodes;
+			//int64_t m_i64NbElectrodes = 0;
 			//flag set to true once electrode coordinates have been initialized
 			bool m_electrodeCoordsInitialized = false;
 			//electrode cartesian coordinates, in normalized space (X right Y front Z up)

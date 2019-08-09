@@ -80,8 +80,8 @@ namespace OpenViBEDesigner
 				}
 			}
 
-			GtkTextBuffer* m_pBuffer;
-			bool m_bPassedFilter;
+			GtkTextBuffer* m_pBuffer = nullptr;
+			bool m_bPassedFilter = false;
 		};
 
 		CLogListenerDesigner(const OpenViBE::Kernel::IKernelContext& rKernelContext, GtkBuilder* pBuilderInterface);
@@ -127,7 +127,7 @@ namespace OpenViBEDesigner
 		_IsDerivedFromClass_Final_(OpenViBE::Kernel::ILogListener, OV_UndefinedIdentifier)
 
 		OpenViBE::CString m_sSearchTerm;
-		GtkTextTag* m_pCIdentifierTag;
+		GtkTextTag* m_pCIdentifierTag = nullptr;
 		std::function<void(OpenViBE::CIdentifier&)> m_CenterOnBoxFun;
 
 	protected:

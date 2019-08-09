@@ -23,33 +23,33 @@ namespace Mensia {
 		bool setPipelineParameterValueAtPath(gchar const* path, gchar const* newValue);
 
 	public:
-		GtkBuilder* m_Builder;
-		GtkBuilder* m_ApplicationBuilder;
+		GtkBuilder* m_Builder = nullptr;
+		GtkBuilder* m_ApplicationBuilder = nullptr;
 		CArchwayHandler& m_Controller;
-		OpenViBEDesigner::CApplication* m_Application;
+		OpenViBEDesigner::CApplication* m_Application = nullptr;
 
 		// This variable is used to store the path of an edited cell
 		// while editing the PipelineParameters.
 		std::string m_CurrentlyEditedCellPath;
 
-		GtkWidget* m_ButtonOpenEngineConfigurationDialog;
+		GtkWidget* m_ButtonOpenEngineConfigurationDialog = nullptr;
 
-		GtkWidget* m_ButtonConfigureAcquisition;
-		GtkToggleToolButton* m_ToggleAcquireImpedance;
+		GtkWidget* m_ButtonConfigureAcquisition = nullptr;
+		GtkToggleToolButton* m_ToggleAcquireImpedance = nullptr;
 
-		GtkComboBox* m_ComboBoxEngineType;
-		GtkWidget* m_ButtonReinitializeArchway;
-		GtkWidget* m_ButtonLaunchEngine;
+		GtkComboBox* m_ComboBoxEngineType = nullptr;
+		GtkWidget* m_ButtonReinitializeArchway = nullptr;
+		GtkWidget* m_ButtonLaunchEngine = nullptr;
 
-		GtkWidget* m_ButtonStartEngine;
-		GtkWidget* m_ButtonStartEngineFastFoward;
-		GtkWidget* m_ButtonStopEngine;
+		GtkWidget* m_ButtonStartEngine = nullptr;
+		GtkWidget* m_ButtonStartEngineFastFoward = nullptr;
+		GtkWidget* m_ButtonStopEngine = nullptr;
 
-		GtkWidget* m_TreeViewEnginePipelines;
+		GtkWidget* m_TreeViewEnginePipelines = nullptr;
 
-		GtkSpinner* m_SpinnerEngineActivity;
+		GtkSpinner* m_SpinnerEngineActivity = nullptr;
 
-		GtkTreeModel* m_TreeModelEnginePipelines;
+		GtkTreeModel* m_TreeModelEnginePipelines = nullptr;
 		GtkTreeIter m_SelectedPipelineIter;
 
 	};

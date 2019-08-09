@@ -148,7 +148,7 @@ namespace Mensia {
 		static const std::string s_ArchwayConfigurationFile;
 		static const std::string s_ArchwayPipelinesConfigurationFile;
 
-		unsigned int m_RunningPipelineId;
+		unsigned int m_RunningPipelineId = 0;
 	};
 }
 

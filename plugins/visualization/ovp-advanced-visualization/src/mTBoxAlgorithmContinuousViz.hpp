@@ -42,7 +42,7 @@ namespace Mensia
 			OpenViBEToolkit::TStreamedMatrixDecoder<TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>> m_oMatrixDecoder;
 			OpenViBEToolkit::TStimulationDecoder<TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>> m_oStimulationDecoder;
 			TRendererFactoryClass m_oRendererFactory;
-			IRenderer* m_pRenderer;
+			IRenderer* m_pRenderer = nullptr;
 
 		protected:
 

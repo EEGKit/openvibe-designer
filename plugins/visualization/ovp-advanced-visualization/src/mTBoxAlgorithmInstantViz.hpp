@@ -41,11 +41,11 @@ namespace Mensia
 
 			TRendererFactoryClass m_oRendererFactory;
 
-			uint32_t m_ui32InputCount{};
+			uint32_t m_ui32InputCount = 0;
 			std::vector<IRenderer*> m_vRenderer;
 			std::vector<OpenViBEToolkit::TStreamedMatrixDecoder<TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>>> m_vMatrixDecoder;
 
-			double m_dLastERPFraction{};
+			double m_dLastERPFraction = 0;
 
 		protected:
 
