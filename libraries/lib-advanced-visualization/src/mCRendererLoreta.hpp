@@ -49,7 +49,7 @@ namespace Mensia
 			const char* getRegionCategoryName(const uint32_t regionCategory) override;
 			const char* getRegionName(const uint32_t regionCategory, const uint32_t regionIndex) override;
 			void selectRegion(const uint32_t regionCategory, const char* sRegionName) override;
-			void selectRegion(const uint32_t regionCategory, uint32_t regionIndex) override;
+			void selectRegion(const uint32_t regionCategory, const uint32_t regionIndex) override;
 
 			virtual void refreshBrainSubset();
 

@@ -13,7 +13,7 @@ namespace OpenViBEDesigner
 	{
 	public:
 
-		CBoxConfigurationDialog(const OpenViBE::Kernel::IKernelContext& rKernelContext, OpenViBE::Kernel::IBox& rBox, const char* sGUIFilename, const char* sGUISettingsFilename, bool isScenarioRunning = false);
+		CBoxConfigurationDialog(const OpenViBE::Kernel::IKernelContext& rKernelContext, OpenViBE::Kernel::IBox& rBox, const char* sGUIFilename, const char* sGUISettingsFilename, const bool isScenarioRunning = false);
 		virtual ~CBoxConfigurationDialog();
 		virtual bool run();
 		void update(OpenViBE::CObservable& o, void* data) override;
@@ -30,15 +30,15 @@ namespace OpenViBEDesigner
 	protected:
 
 		void generateSettingsTable();
-		bool addSettingsToView(uint32_t settingIndex, uint32_t tableIndex);
+		bool addSettingsToView(const uint32_t settingIndex, const uint32_t tableIndex);
 		void updateSize() const;
-		void settingChange(uint32_t settingIndex);
-		void addSetting(uint32_t settingIndex);
+		void settingChange(const uint32_t settingIndex);
+		void addSetting(const uint32_t settingIndex);
 
 		void clearSettingWrappersVector();
-		void removeSetting(uint32_t settingIndex, bool shift = true);
+		void removeSetting(const uint32_t settingIndex, bool shift = true);
 
-		int32_t getTableIndex(uint32_t settingIndex);
+		int32_t getTableIndex(const uint32_t settingIndex);
 
 		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
 		OpenViBE::Kernel::IBox& m_rBox;

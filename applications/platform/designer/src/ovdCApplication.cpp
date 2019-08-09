@@ -317,10 +317,12 @@ namespace
 		static_cast<CApplication*>(data)->aboutOpenViBECB();
 	}
 
+#if defined(TARGET_OS_Windows)
 	void menu_about_link_clicked_cb(GtkAboutDialog* /*pAboutDialog*/, const gchar* linkPtr, gpointer data)
 	{
 		static_cast<CApplication*>(data)->aboutLinkClickedCB(linkPtr);
 	}
+#endif
 
 	void menu_browse_documentation_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
@@ -676,12 +678,12 @@ namespace
 		return false;
 	}
 
+#if defined TARGET_OS_Windows
 	void about_newversion_button_display_changelog_cb(GtkButton* /*button*/, gpointer /*data*/)
 	{
-#if defined TARGET_OS_Windows
 		System::WindowsUtilities::utf16CompliantShellExecute(nullptr, "open", (OVD_README_File).toASCIIString(), nullptr, nullptr, SHOW_OPENWINDOW);
-#endif
 	}
+#endif
 
 	gboolean idle_application_loop(gpointer data)
 	{
@@ -2693,7 +2695,7 @@ void CApplication::playScenarioCB()
 				l_sOutdatedBoxesList += "To update a box you need to delete it from scenario, and add it again.";
 				GtkWidget* l_pDialog = gtk_message_dialog_new(nullptr, GtkDialogFlags(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
 															  GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "%s", l_sOutdatedBoxesList.c_str());
-				const gint response = gtk_dialog_run(GTK_DIALOG(l_pDialog));
+				gtk_dialog_run(GTK_DIALOG(l_pDialog));
 				gtk_widget_destroy(l_pDialog);
 				return;
 			}

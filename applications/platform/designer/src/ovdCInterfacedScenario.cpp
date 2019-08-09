@@ -351,10 +351,7 @@ namespace
 		return 0;
 	}
 
-	void scenario_configuration_add_setting_cb(GtkWidget*, CInterfacedScenario* pInterfacedScenario)
-	{
-		pInterfacedScenario->addScenarioSettingCB();
-	}
+	//void scenario_configuration_add_setting_cb(GtkWidget*, CInterfacedScenario* pInterfacedScenario) { pInterfacedScenario->addScenarioSettingCB(); }
 
 	void modify_scenario_setting_value_cb(GtkWidget*, CInterfacedScenario::SSettingCallbackData* data)
 	{
@@ -543,33 +540,21 @@ namespace
 		data->m_pInterfacedScenario->redraw();
 	}
 
+	/*
 	void modify_scenario_link_name_cb(GtkWidget* pEntry, CInterfacedScenario::SLinkCallbackData* data)
 	{
-		if (data->m_bIsInput)
-		{
-			data->m_pInterfacedScenario->m_rScenario.setInputName(data->m_uiLinkIndex, gtk_entry_get_text(GTK_ENTRY(pEntry)));
-		}
-		else
-		{
-			data->m_pInterfacedScenario->m_rScenario.setOutputName(data->m_uiLinkIndex, gtk_entry_get_text(GTK_ENTRY(pEntry)));
-		}
+		if (data->m_bIsInput) { data->m_pInterfacedScenario->m_rScenario.setInputName(data->m_uiLinkIndex, gtk_entry_get_text(GTK_ENTRY(pEntry))); }
+		else { data->m_pInterfacedScenario->m_rScenario.setOutputName(data->m_uiLinkIndex, gtk_entry_get_text(GTK_ENTRY(pEntry))); }
 	}
 
 	void modify_scenario_link_type_cb(GtkWidget* pComboBox, CInterfacedScenario::SLinkCallbackData* data)
 	{
 		const CIdentifier l_oStreamType = data->m_pInterfacedScenario->m_mStreamType[gtk_combo_box_get_active_text(GTK_COMBO_BOX(pComboBox))];
-
-		if (data->m_bIsInput)
-		{
-			data->m_pInterfacedScenario->m_rScenario.setInputType(data->m_uiLinkIndex, l_oStreamType);
-		}
-		else
-		{
-			data->m_pInterfacedScenario->m_rScenario.setOutputType(data->m_uiLinkIndex, l_oStreamType);
-		}
-
+		if (data->m_bIsInput) { data->m_pInterfacedScenario->m_rScenario.setInputType(data->m_uiLinkIndex, l_oStreamType); }
+		else { data->m_pInterfacedScenario->m_rScenario.setOutputType(data->m_uiLinkIndex, l_oStreamType); }
 		data->m_pInterfacedScenario->redraw();
 	}
+	//*/
 }  // namespace
 
 CInterfacedScenario::CInterfacedScenario(const IKernelContext& rKernelContext, CApplication& rApplication, IScenario& rScenario, CIdentifier& rScenarioIdentifier, GtkNotebook& rNotebook, const char* sGUIFilename, const char* sGUISettingsFilename)
