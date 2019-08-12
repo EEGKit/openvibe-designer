@@ -24,10 +24,10 @@ namespace OpenViBEPlugins
 
 			bool initialize() override;
 			bool uninitialize() override;
-			bool processInput(uint32_t ui32InputIndex) override;
+			bool processInput(const uint32_t ui32InputIndex) override;
 			bool process() override;
 
-			_IsDerivedFromClass_Final_(OpenViBEToolkit::TBoxAlgorithm < OpenViBE::Plugins::IBoxAlgorithm >, OVP_ClassId_BoxAlgorithm_MatrixDisplay);
+			_IsDerivedFromClass_Final_(OpenViBEToolkit::TBoxAlgorithm < OpenViBE::Plugins::IBoxAlgorithm >, OVP_ClassId_BoxAlgorithm_MatrixDisplay)
 
 		protected:
 
@@ -53,17 +53,17 @@ namespace OpenViBEPlugins
 
 			OpenViBE::CMatrix m_MatrixInterpolatedColorGardient;
 			OpenViBE::CMatrix m_MatrixColorGradient;
-			uint32_t m_GradientSteps{};
-			double m_f64MaxValue{};
-			double m_f64MinValue{};
+			uint32_t m_GradientSteps = 0;
+			double m_f64MaxValue = 0;
+			double m_f64MinValue = 0;
 
-			bool m_bSymetricMinMax{};
-			bool m_bRealTimeMinMax{};
+			bool m_bSymetricMinMax = false;
+			bool m_bRealTimeMinMax = false;
 
 		public:
 
-			bool m_bShowValues{};
-			bool m_bShowColors{};
+			bool m_bShowValues = false;
+			bool m_bShowColors = false;
 
 			virtual bool resetColors();
 		private:
@@ -91,10 +91,9 @@ namespace OpenViBEPlugins
 			OpenViBE::CIdentifier getCreatedClass() const override { return OVP_ClassId_BoxAlgorithm_MatrixDisplay; }
 			OpenViBE::Plugins::IPluginObject* create() override { return new CBoxAlgorithmMatrixDisplay; }
 
-			bool hasFunctionality(OpenViBE::CIdentifier functionalityIdentifier) const override { return functionalityIdentifier == OVD_Functionality_Visualization; }
+			bool hasFunctionality(const OpenViBE::CIdentifier functionalityIdentifier) const override { return functionalityIdentifier == OVD_Functionality_Visualization; }
 
-			bool getBoxPrototype(
-				OpenViBE::Kernel::IBoxProto& rBoxAlgorithmPrototype) const override
+			bool getBoxPrototype(OpenViBE::Kernel::IBoxProto& rBoxAlgorithmPrototype) const override
 			{
 				rBoxAlgorithmPrototype.addSetting("Color gradient", OV_TypeId_ColorGradient, "0:2,36,58; 50:100,100,100; 100:83,17,20");
 				rBoxAlgorithmPrototype.addSetting("Steps", OV_TypeId_Integer, "100");
@@ -106,7 +105,7 @@ namespace OpenViBEPlugins
 				return true;
 			}
 
-			_IsDerivedFromClass_Final_(OpenViBE::Plugins::IBoxAlgorithmDesc, OVP_ClassId_BoxAlgorithm_MatrixDisplayDesc);
+			_IsDerivedFromClass_Final_(OpenViBE::Plugins::IBoxAlgorithmDesc, OVP_ClassId_BoxAlgorithm_MatrixDisplayDesc)
 		};
-	} // namespace SimpleVisualization;
-}  // namespace OpenViBEPlugins;
+	} // namespace SimpleVisualization
+}  // namespace OpenViBEPlugins

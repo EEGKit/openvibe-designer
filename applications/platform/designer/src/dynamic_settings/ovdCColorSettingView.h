@@ -10,7 +10,7 @@ namespace OpenViBEDesigner
 		class CColorSettingView : public CAbstractSettingView
 		{
 		public:
-			CColorSettingView(OpenViBE::Kernel::IBox& rBox, uint32_t index, OpenViBE::CString& rBuilderName, const OpenViBE::Kernel::IKernelContext& rKernelContext);
+			CColorSettingView(OpenViBE::Kernel::IBox& rBox, const uint32_t index, OpenViBE::CString& rBuilderName, const OpenViBE::Kernel::IKernelContext& rKernelContext);
 
 			void getValue(OpenViBE::CString& value) const override;
 			void setValue(const OpenViBE::CString& value) override;
@@ -19,11 +19,11 @@ namespace OpenViBEDesigner
 			void onChange();
 
 		private:
-			GtkEntry* m_entry = nullptr;
+			GtkEntry* m_entry        = nullptr;
 			GtkColorButton* m_button = nullptr;
 
-			const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
+			const OpenViBE::Kernel::IKernelContext& m_kernelContext;
 			bool m_onValueSetting = false;
 		};
-	}
-}
+	}  // namespace Setting
+}  // namespace OpenViBEDesigner

@@ -19,7 +19,7 @@ namespace OpenViBEDesigner
 		public:
 			CLogObject(GtkTextBuffer* pBuffer)
 			{
-				m_pBuffer = gtk_text_buffer_new(gtk_text_buffer_get_tag_table(pBuffer));
+				m_pBuffer       = gtk_text_buffer_new(gtk_text_buffer_get_tag_table(pBuffer));
 				m_bPassedFilter = false;//by default the log does not pass the filter;
 			}
 
@@ -80,8 +80,8 @@ namespace OpenViBEDesigner
 				}
 			}
 
-			GtkTextBuffer* m_pBuffer;
-			bool m_bPassedFilter;
+			GtkTextBuffer* m_pBuffer = nullptr;
+			bool m_bPassedFilter = false;
 		};
 
 		CLogListenerDesigner(const OpenViBE::Kernel::IKernelContext& rKernelContext, GtkBuilder* pBuilderInterface);
@@ -91,7 +91,7 @@ namespace OpenViBEDesigner
 		bool activate(OpenViBE::Kernel::ELogLevel eStartLogLevel, OpenViBE::Kernel::ELogLevel eEndLogLevel, bool bActive) override;
 		bool activate(bool bActive) override;
 
-		void log(const OpenViBE::time64 time64Value) override;
+		void log(const OpenViBE::time64 value) override;
 
 		void log(const uint64_t value) override;
 		void log(const uint32_t value) override;
@@ -124,10 +124,10 @@ namespace OpenViBEDesigner
 		void appendLog(CLogObject* oLog) const;
 		void scrollToBottom();
 
-		_IsDerivedFromClass_Final_(OpenViBE::Kernel::ILogListener, OV_UndefinedIdentifier);
+		_IsDerivedFromClass_Final_(OpenViBE::Kernel::ILogListener, OV_UndefinedIdentifier)
 
 		OpenViBE::CString m_sSearchTerm;
-		GtkTextTag* m_pCIdentifierTag;
+		GtkTextTag* m_pCIdentifierTag = nullptr;
 		std::function<void(OpenViBE::CIdentifier&)> m_CenterOnBoxFun;
 
 	protected:
@@ -140,40 +140,40 @@ namespace OpenViBEDesigner
 	private:
 
 		GtkBuilder* m_pBuilderInterface = nullptr;
-		GtkBuilder* m_pAlertBuilder = nullptr;
-		GtkTextView* m_pTextView = nullptr;
-		GtkTextBuffer* m_pBuffer = nullptr;
+		GtkBuilder* m_pAlertBuilder     = nullptr;
+		GtkTextView* m_pTextView        = nullptr;
+		GtkTextBuffer* m_pBuffer        = nullptr;
 
 		GtkToggleButton* m_pToggleButtonPopup = nullptr;
 
-		GtkToggleToolButton* m_pToggleButtonActive_Debug = nullptr;
-		GtkToggleToolButton* m_pToggleButtonActive_Benchmark = nullptr;
-		GtkToggleToolButton* m_pToggleButtonActive_Trace = nullptr;
-		GtkToggleToolButton* m_pToggleButtonActive_Info = nullptr;
-		GtkToggleToolButton* m_pToggleButtonActive_Warning = nullptr;
+		GtkToggleToolButton* m_pToggleButtonActive_Debug            = nullptr;
+		GtkToggleToolButton* m_pToggleButtonActive_Benchmark        = nullptr;
+		GtkToggleToolButton* m_pToggleButtonActive_Trace            = nullptr;
+		GtkToggleToolButton* m_pToggleButtonActive_Info             = nullptr;
+		GtkToggleToolButton* m_pToggleButtonActive_Warning          = nullptr;
 		GtkToggleToolButton* m_pToggleButtonActive_ImportantWarning = nullptr;
-		GtkToggleToolButton* m_pToggleButtonActive_Error = nullptr;
-		GtkToggleToolButton* m_pToggleButtonActive_Fatal = nullptr;
+		GtkToggleToolButton* m_pToggleButtonActive_Error            = nullptr;
+		GtkToggleToolButton* m_pToggleButtonActive_Fatal            = nullptr;
 
-		GtkLabel* m_pLabelCountMessages = nullptr;
-		GtkLabel* m_pLabelCountWarnings = nullptr;
-		GtkLabel* m_pLabelCountErrors = nullptr;
+		GtkLabel* m_pLabelCountMessages       = nullptr;
+		GtkLabel* m_pLabelCountWarnings       = nullptr;
+		GtkLabel* m_pLabelCountErrors         = nullptr;
 		GtkLabel* m_pLabelDialogCountWarnings = nullptr;
-		GtkLabel* m_pLabelDialogCountErrors = nullptr;
+		GtkLabel* m_pLabelDialogCountErrors   = nullptr;
 
 		GtkWidget* m_pImageWarnings = nullptr;
-		GtkWidget* m_pImageErrors = nullptr;
+		GtkWidget* m_pImageErrors   = nullptr;
 
 		GtkWindow* m_pAlertWindow = nullptr;
 
 		bool m_bIngnoreMessages = false;
 
-		uint32_t m_countMessages = 0;
-		uint32_t m_countWarnings = 0;
+		uint32_t m_countMessages   = 0;
+		uint32_t m_countWarnings   = 0;
 		uint32_t m_ui32CountErrors = 0;
 
-		bool m_bConsoleLogWithHexa = false;
-		bool m_bConsoleLogTimeInSecond = false;
+		bool m_bConsoleLogWithHexa             = false;
+		bool m_bConsoleLogTimeInSecond         = false;
 		uint32_t m_ui32ConsoleLogTimePrecision = 0;
 
 		CLogObject* m_pCurrentLog = nullptr;
@@ -181,4 +181,4 @@ namespace OpenViBEDesigner
 		void updateMessageCounts() const;
 		void checkAppendFilterCurrentLog(const char* textColor, const char* logMessage, bool bIsLink = false) const;
 	};
-};
+}  // namespace OpenViBEDesigner

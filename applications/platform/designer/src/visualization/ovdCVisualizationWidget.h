@@ -40,9 +40,9 @@ namespace OpenViBEDesigner
 
 		bool removeChild(const OpenViBE::CIdentifier& identifier) override;
 
-		bool getChildIdentifier(uint32_t childIndex, OpenViBE::CIdentifier& identifier) const override;
+		bool getChildIdentifier(const uint32_t childIndex, OpenViBE::CIdentifier& identifier) const override;
 
-		bool setChildIdentifier(uint32_t childIndex, const OpenViBE::CIdentifier& identifier) override;
+		bool setChildIdentifier(const uint32_t childIndex, const OpenViBE::CIdentifier& identifier) override;
 
 		void setWidth(unsigned int width) override { m_Width = width; }
 		void setHeight(unsigned int height) override { m_Height = height; }
@@ -58,7 +58,7 @@ namespace OpenViBEDesigner
 
 	private:
 
-		const OpenViBE::Kernel::IKernelContext& m_KernelContext;
+		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
 		OpenViBE::CIdentifier m_Identifier = OV_UndefinedIdentifier;
 		OpenViBE::CString m_Name;
 		OpenViBEVisualizationToolkit::EVisualizationWidgetType m_Type;

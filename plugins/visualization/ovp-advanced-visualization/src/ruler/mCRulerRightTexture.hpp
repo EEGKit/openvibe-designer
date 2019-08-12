@@ -67,7 +67,7 @@ namespace Mensia
 				const float l_fScale = 1.f / m_pRendererContext->getScale();
 				if (m_fLastScale != l_fScale)
 				{
-					m_vRange = this->split_range(-l_fScale * .5, l_fScale * .5);
+					m_vRange     = this->split_range(-l_fScale * .5, l_fScale * .5);
 					m_fLastScale = l_fScale;
 				}
 
@@ -82,12 +82,7 @@ namespace Mensia
 					pango_layout_get_size(l_pPangoLayout, &lw, &lh);
 					lw /= PANGO_SCALE;
 					lh /= PANGO_SCALE;
-					gdk_draw_layout(
-						pWidget->window,
-						l_pDrawGC,
-						0,
-						gint((.5 - *it / l_fScale) * h - lh * .5),
-						l_pPangoLayout);
+					gdk_draw_layout(pWidget->window, l_pDrawGC, 0, gint((.5 - *it / l_fScale) * h - lh * .5), l_pPangoLayout);
 					g_object_unref(l_pPangoLayout);
 				}
 				g_object_unref(l_pDrawGC);

@@ -20,7 +20,7 @@ namespace OpenViBEDesigner
 		void infoCB() const { gtk_widget_show(m_pInfoDialog); }
 	protected:
 
-		const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
+		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
 		OpenViBE::Kernel::IComment& m_rComment;
 		OpenViBE::CString m_sGUIFilename;
 
@@ -34,4 +34,4 @@ namespace OpenViBEDesigner
 		GtkWidget* m_pDescription{};
 		GtkTextBuffer* m_pDescriptionBuffer{};
 	};
-};
+}  // namespace OpenViBEDesigner

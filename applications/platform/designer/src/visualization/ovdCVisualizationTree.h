@@ -31,7 +31,7 @@ namespace OpenViBEDesigner
 									uint32_t childCount, const OpenViBE::CIdentifier& suggestedIdentifier);
 		bool getVisualizationWidgetIndex(const OpenViBE::CIdentifier& identifier, uint32_t& index) const;
 		bool unparentVisualizationWidget(const OpenViBE::CIdentifier& identifier, uint32_t& index);
-		bool parentVisualizationWidget(const OpenViBE::CIdentifier& identifier, const OpenViBE::CIdentifier& parentIdentifier, uint32_t index);
+		bool parentVisualizationWidget(const OpenViBE::CIdentifier& identifier, const OpenViBE::CIdentifier& parentIdentifier, const uint32_t index);
 		bool destroyHierarchy(const OpenViBE::CIdentifier& identifier, bool destroyVisualizationBoxes);
 
 		GtkTreeView* createTreeViewWithModel();
@@ -76,8 +76,8 @@ namespace OpenViBEDesigner
 		bool loadVisualizationWidget(OpenViBEVisualizationToolkit::IVisualizationWidget* visualizationWidget, GtkTreeIter* parentIter);
 
 		std::map<OpenViBE::CIdentifier, OpenViBEVisualizationToolkit::IVisualizationWidget*> m_VisualizationWidgets;
-		OpenViBE::CIdentifier m_ScenarioIdentifier;
-		const OpenViBE::Kernel::IKernelContext& m_KernelContext;
+		OpenViBE::CIdentifier m_ScenarioIdentifier = OV_UndefinedIdentifier;
+		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
 		const OpenViBE::Kernel::IScenario* m_Scenario = nullptr;
 		GtkTreeStore* m_TreeStore = nullptr;
 		GtkTreeIter m_InternalTreeNode;

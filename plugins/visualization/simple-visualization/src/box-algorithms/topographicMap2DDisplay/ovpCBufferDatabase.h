@@ -171,7 +171,7 @@ namespace OpenViBEPlugins
 			 * \param ui32ChannelLocalisationBufferIndex Index of newly received channel localisation buffer
 			 * \return True if buffer data was correctly processed, false otherwise
 			 */
-			virtual bool onChannelLocalisationBufferReceived(uint32_t ui32ChannelLocalisationBufferIndex);
+			virtual bool onChannelLocalisationBufferReceived(const uint32_t ui32ChannelLocalisationBufferIndex);
 
 			/**
 			 * \brief Sets the drawable object to update.
@@ -203,7 +203,7 @@ namespace OpenViBEPlugins
 			 * Compute the number of buffers needed to display the signal for a certain time period.
 			 * \param f64NumberOfSecondsToDisplay the time window's width in seconds.
 			 */
-			virtual bool adjustNumberOfDisplayedBuffers(double f64NumberOfSecondsToDisplay);
+			virtual bool adjustNumberOfDisplayedBuffers(const double f64NumberOfSecondsToDisplay);
 
 			/**
 			 * \brief Get time interval covered by data held in this object
@@ -227,11 +227,11 @@ namespace OpenViBEPlugins
 			virtual bool getIndexOfBufferStartingAtTime(const uint64_t& ui64Time, uint32_t& rIndex) const;
 
 			//! Returns the min/max values currently displayed for the given channel
-			virtual void getDisplayedChannelLocalMinMaxValue(uint32_t ui32Channel, double& f64Min, double& f64Max);
+			virtual void getDisplayedChannelLocalMinMaxValue(const uint32_t ui32Channel, double& f64Min, double& f64Max);
 			//! Returns the min/max values currently displayed (all channels taken into account)
 			virtual void getDisplayedGlobalMinMaxValue(double& f64Min, double& f64Max);
 
-			virtual void getDisplayedChannelLocalMeanValue(uint32_t ui32Channel, double& f64Mean);
+			virtual void getDisplayedChannelLocalMeanValue(const uint32_t ui32Channel, double& f64Mean);
 
 			//! Returns the min/max values of the last buffer arrived for the given channel
 			virtual void getLastBufferChannelLocalMinMaxValue(const uint32_t ui32Channel, double& f64Min, double& f64Max)
@@ -266,7 +266,7 @@ namespace OpenViBEPlugins
 			 * \param[out] pElectrodePosition Pointer to an array of 3 floats where to store coordinates
 			 * \return True if electrode position could be retrieved
 			 */
-			virtual bool getElectrodePosition(uint32_t ui32ElectrodeIndex, double* pElectrodePosition);
+			virtual bool getElectrodePosition(const uint32_t ui32ElectrodeIndex, double* pElectrodePosition);
 
 			/**
 			 * \brief Get electrode normalized position
@@ -283,7 +283,7 @@ namespace OpenViBEPlugins
 			 * \param[out] rElectrodeLabel Electrode label
 			 * \return True if electrode label could be retrieved
 			 */
-			virtual bool getElectrodeLabel(uint32_t ui32ElectrodeIndex, OpenViBE::CString& rElectrodeLabel);
+			virtual bool getElectrodeLabel(const uint32_t ui32ElectrodeIndex, OpenViBE::CString& rElectrodeLabel);
 
 			/**
 			 * \brief Get number of channels
@@ -298,7 +298,7 @@ namespace OpenViBEPlugins
 			 * \param[out] rChannelPosition Reference on a double pointer
 			 * \return True if channel position could be retrieved (rChannelPosition then points to an array of 3 floats)
 			 */
-			virtual bool getChannelPosition(uint32_t ui32ChannelIndex, double*& rChannelPosition);
+			virtual bool getChannelPosition(const uint32_t ui32ChannelIndex, double*& rChannelPosition);
 
 			/**
 			 * \brief Get channel spherical coordinates in degrees
@@ -307,7 +307,7 @@ namespace OpenViBEPlugins
 			 * \param[out] rPhi Reference on a float to be set with phi angle
 			 * \return True if channel coordinates could be retrieved
 			 */
-			virtual bool getChannelSphericalCoordinates(uint32_t ui32ChannelIndex, double& rTheta, double& rPhi);
+			virtual bool getChannelSphericalCoordinates(const uint32_t ui32ChannelIndex, double& rTheta, double& rPhi);
 
 			/**
 			 * \brief Get channel label
@@ -315,21 +315,21 @@ namespace OpenViBEPlugins
 			 * \param[out] rChannelLabel Channel label
 			 * \return True if channel label could be retrieved
 			 */
-			virtual bool getChannelLabel(uint32_t ui32ChannelIndex, OpenViBE::CString& rChannelLabel);
+			virtual bool getChannelLabel(const uint32_t ui32ChannelIndex, OpenViBE::CString& rChannelLabel);
 
-			virtual void setMatrixDimensionCount(uint32_t ui32DimensionCount);
-			virtual void setMatrixDimensionSize(uint32_t ui32DimensionIndex, uint32_t ui32DimensionSize);
-			virtual void setMatrixDimensionLabel(uint32_t ui32DimensionIndex, uint32_t ui32DimensionEntryIndex, const char* sDimensionLabel);
+			virtual void setMatrixDimensionCount(const uint32_t ui32DimensionCount);
+			virtual void setMatrixDimensionSize(const uint32_t ui32DimensionIndex, const uint32_t ui32DimensionSize);
+			virtual void setMatrixDimensionLabel(const uint32_t ui32DimensionIndex, const uint32_t ui32DimensionEntryIndex, const char* sDimensionLabel);
 
 			// Returns false on failure
-			virtual bool setMatrixBuffer(const double* pBuffer, uint64_t ui64StartTime, uint64_t ui64EndTime);
+			virtual bool setMatrixBuffer(const double* pBuffer, const uint64_t ui64StartTime, const uint64_t ui64EndTime);
 
 			// Sets the sampling frequency. If this is not called, the frequency is estimated from the stream chunk properties.
 			// Mainly used to force a warning if stream-specified rate differs from the chunk-estimated rate.
-			virtual bool setSamplingFrequency(uint32_t ui32SamplingFrequency);
+			virtual bool setSamplingFrequency(const uint32_t ui32SamplingFrequency);
 
-			virtual void setStimulationCount(uint32_t ui32StimulationCount);
-			virtual void setStimulation(uint32_t ui32StimulationIndex, uint64_t ui64StimulationIdentifier, uint64_t ui64StimulationDate);
+			virtual void setStimulationCount(const uint32_t ui32StimulationCount);
+			virtual void setStimulation(const uint32_t ui32StimulationIndex, const uint64_t ui64StimulationIdentifier, const uint64_t ui64StimulationDate);
 
 			/**
 			 * \brief Set display mode
@@ -348,7 +348,7 @@ namespace OpenViBEPlugins
 			 * \brief Set flag stating whether to redraw associated SignalDisplayDrawable objet when new data is available
 			 * \param bSet Value to set flag with
 			 */
-			virtual void setRedrawOnNewData(bool bSet);
+			virtual void setRedrawOnNewData(const bool bSet);
 
 		protected:
 			/**

@@ -245,10 +245,7 @@ namespace
 		}
 	}
 
-	void on_button_start_engine_clicked(GtkWidget * widget, gpointer userData)
-	{
-		startEngine(widget, userData, false);
-	}
+	void on_button_start_engine_clicked(GtkWidget * widget, gpointer userData) { startEngine(widget, userData, false); }
 
 	void on_button_start_engine_fast_forward_clicked(GtkWidget * widget, gpointer userData)
 	{
@@ -450,7 +447,7 @@ void CArchwayHandlerGUI::refreshEnginePipelines()
 
 }
 
-void CArchwayHandlerGUI::toggleNeuroRTEngineConfigurationDialog(bool shouldDisplay)
+void CArchwayHandlerGUI::toggleNeuroRTEngineConfigurationDialog(const bool shouldDisplay)
 {
 	auto engineConfigurationWidget = GTK_WIDGET(gtk_builder_get_object(m_Builder, "dialog-engine-configuration"));
 
@@ -466,7 +463,7 @@ void CArchwayHandlerGUI::toggleNeuroRTEngineConfigurationDialog(bool shouldDispl
 	}
 }
 
-void CArchwayHandlerGUI::displayPipelineConfigurationDialog(unsigned int pipelineId)
+void CArchwayHandlerGUI::displayPipelineConfigurationDialog(const unsigned int pipelineId)
 {
 	auto pipelineConfigurationWidget = GTK_WIDGET(gtk_builder_get_object(m_Builder, "dialog-pipeline-configuration"));
 	auto pipelineConfigurationListStore = GTK_LIST_STORE(gtk_builder_get_object(m_Builder, "liststore-pipeline-configuration"));

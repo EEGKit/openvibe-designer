@@ -61,14 +61,14 @@ namespace Mensia
 			virtual ~IRenderer() = default;
 
 			virtual void setChannelLocalisation(const char* sFilename) = 0;
-			virtual void setChannelCount(uint32_t ui32ChannelCount) = 0;
-			virtual void setSampleCount(uint32_t ui32SampleCount) = 0;
-			virtual void setHistoryDrawIndex(uint32_t ui32HistoryDrawIndex) = 0;
+			virtual void setChannelCount(const uint32_t ui32ChannelCount) = 0;
+			virtual void setSampleCount(const uint32_t ui32SampleCount) = 0;
+			virtual void setHistoryDrawIndex(const uint32_t ui32HistoryDrawIndex) = 0;
 			virtual void feed(const float* pDataVector) = 0;
-			virtual void feed(const float* pDataVector, uint32_t ui32SampleCount) = 0;
-			virtual void feed(uint64_t ui64StimulationDate, uint64_t ui64StimulationId) = 0;
-			virtual void clear(uint32_t ui32SampleCountToKeep) = 0;
-			virtual void prefeed(uint32_t ui32PreFeedSampleCount) = 0;
+			virtual void feed(const float* pDataVector, const uint32_t ui32SampleCount) = 0;
+			virtual void feed(const uint64_t ui64StimulationDate, const uint64_t ui64StimulationId) = 0;
+			virtual void clear(const uint32_t ui32SampleCountToKeep) = 0;
+			virtual void prefeed(const uint32_t ui32PreFeedSampleCount) = 0;
 
 			virtual float getSuggestedScale() = 0;
 
@@ -87,11 +87,11 @@ namespace Mensia
 			// For regions of interest
 			virtual void clearRegionSelection() = 0;
 			virtual uint32_t getRegionCategoryCount() = 0;
-			virtual uint32_t getRegionCount(uint32_t regionCategory) = 0;
-			virtual const char* getRegionCategoryName(uint32_t regionCategory) = 0;
-			virtual const char* getRegionName(uint32_t regionCategory, uint32_t regionIndex) = 0;
-			virtual void selectRegion(uint32_t regionCategory, const char* sRegionName) = 0;
-			virtual void selectRegion(uint32_t regionCategory, uint32_t regionIndex) = 0;
+			virtual uint32_t getRegionCount(const uint32_t regionCategory) = 0;
+			virtual const char* getRegionCategoryName(const uint32_t regionCategory) = 0;
+			virtual const char* getRegionName(const uint32_t regionCategory, const uint32_t regionIndex) = 0;
+			virtual void selectRegion(const uint32_t regionCategory, const char* sRegionName) = 0;
+			virtual void selectRegion(const uint32_t regionCategory, const uint32_t regionIndex) = 0;
 		};
 	}  // namespace AdvancedVisualization
 }  // namespace Mensia

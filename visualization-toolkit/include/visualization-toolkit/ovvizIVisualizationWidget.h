@@ -123,7 +123,7 @@ namespace OpenViBEVisualizationToolkit
 		 * \param childIdentifier [out] identifier of child
 		 * \return True if child identifier was successfully returned, false otherwise
 		 */
-		virtual bool getChildIdentifier(uint32_t childIndex, OpenViBE::CIdentifier& childIdentifier) const = 0;
+		virtual bool getChildIdentifier(const uint32_t childIndex, OpenViBE::CIdentifier& childIdentifier) const = 0;
 
 		/**
 		 * \brief Sets the identifier of a child
@@ -131,7 +131,7 @@ namespace OpenViBEVisualizationToolkit
 		 * \param childIdentifier identifier of the child to be added to the widget
 		 * \return True if the child was successfully set
 		 */
-		virtual bool setChildIdentifier(uint32_t childIndex, const OpenViBE::CIdentifier& childIdentifier) = 0;
+		virtual bool setChildIdentifier(const uint32_t childIndex, const OpenViBE::CIdentifier& childIdentifier) = 0;
 
 
 		virtual void setWidth(unsigned int width) = 0;

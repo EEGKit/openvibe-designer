@@ -77,13 +77,13 @@ namespace
 
 		gdk_window_ensure_native(gtk_widget_get_window(pWidget));
 
-		HWND window = HWND(GDK_WINDOW_HWND(::gtk_widget_get_window(pWidget)));
+		HWND window        = HWND(GDK_WINDOW_HWND(::gtk_widget_get_window(pWidget)));
 		HDC drawingContext = GetDC(window);
 
 		PIXELFORMATDESCRIPTOR pixelFormatDescriptor;
-		pixelFormatDescriptor.nSize = sizeof(pixelFormatDescriptor);
-		pixelFormatDescriptor.nVersion = 1;
-		pixelFormatDescriptor.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+		pixelFormatDescriptor.nSize      = sizeof(pixelFormatDescriptor);
+		pixelFormatDescriptor.nVersion   = 1;
+		pixelFormatDescriptor.dwFlags    = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
 		pixelFormatDescriptor.iPixelType = PFD_TYPE_RGBA;
 		pixelFormatDescriptor.cColorBits = 24;
 		pixelFormatDescriptor.cAlphaBits = 8;
@@ -154,7 +154,7 @@ void Mensia::AdvancedVisualization::GtkGL::preRender(GtkWidget* pWidget, const b
 {
 	GtkGL_Debug("pre-render");
 
-	HDC drawingContext = HDC(g_object_get_data(G_OBJECT(pWidget), GtkGL_DeviceContextName));
+	HDC drawingContext      = HDC(g_object_get_data(G_OBJECT(pWidget), GtkGL_DeviceContextName));
 	auto GLRenderingContext = HGLRC(g_object_get_data(G_OBJECT(pWidget), GtkGL_RenderingContextName));
 
 	if (GLRenderingContext == nullptr)

@@ -37,14 +37,14 @@ namespace OpenViBEPlugins
 									OpenViBE::Kernel::IAlgorithmProxy& rSphericalSplineInterpolation);
 			~CTopographicMapDatabase() override = default;
 
-			void setMatrixDimensionSize(uint32_t ui32DimensionIndex, uint32_t ui32DimensionSize) override;
+			void setMatrixDimensionSize(const uint32_t ui32DimensionIndex, const uint32_t ui32DimensionSize) override;
 
 			/**
 			 * \brief Callback called upon channel localisation buffer reception
 			 * \param ui32ChannelLocalisationBufferIndex Index of newly received channel localisation buffer
 			 * \return True if buffer data was correctly processed, false otherwise
 			 */
-			bool onChannelLocalisationBufferReceived(uint32_t ui32ChannelLocalisationBufferIndex) override;
+			bool onChannelLocalisationBufferReceived(const uint32_t ui32ChannelLocalisationBufferIndex) override;
 
 			bool setDelay(double delay);
 
@@ -91,7 +91,7 @@ namespace OpenViBEPlugins
 			 */
 			uint64_t m_interpolationType = OVP_TypeId_SphericalLinearInterpolationType_Spline;
 			//number of electrodes (see CBufferDatabase) - mapped to OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_ControlPointsCount
-			//int64_t m_i64NbElectrodes;
+			//int64_t m_i64NbElectrodes = 0;
 			//flag set to true once electrode coordinates have been initialized
 			bool m_electrodeCoordsInitialized = false;
 			//electrode cartesian coordinates, in normalized space (X right Y front Z up)

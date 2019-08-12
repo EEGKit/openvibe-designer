@@ -94,9 +94,7 @@ EngineInitialisationStatus CArchwayHandler::initialize()
 	// Now initialize the ArchwayBridge structure with closures that bridge to local Archway functions
 	// this way we do not have to expose the Archway object or the C API
 
-	m_ArchwayBridge.isStarted = [this]() {
-		return this->m_Archway->isStarted();
-	};
+	m_ArchwayBridge.isStarted = [this]() { return this->m_Archway->isStarted(); };
 	m_ArchwayBridge.getAvailableValueMatrixCount = [this](unsigned int uiValueChannelId) {
 		return this->m_Archway->getPendingValueCount(m_RunningPipelineId, uiValueChannelId);
 	};
@@ -441,17 +439,11 @@ namespace
 		auto enginePipelines = callbackParameters->first;
 		auto pipelineSettings = callbackParameters->second;
 
-		enginePipelines->push_back({
-			pipelineId,
-			pipelineDescription,
-			pipelineSettings->count(pipelineId) != 0
-			});
+		enginePipelines->push_back({ pipelineId, pipelineDescription, pipelineSettings->count(pipelineId) != 0 });
 	}
 
-	void enumeratePipelineParametersCallback(unsigned int pipelineId, const char* parameterName, const char* parameterValue, void* userData)
+	void enumeratePipelineParametersCallback(unsigned int/*pipelineId*/, const char* parameterName, const char* parameterValue, void* userData)
 	{
-		(void)pipelineId;
-
 		// This callback will go through the pipeline parameters one by one and push them into the
 // vector of SPipelineParameters which is passed as the first element of the data input pair
 // This callback receives the parameter's name and default value from Archway, which is why we pass
@@ -564,7 +556,7 @@ bool CArchwayHandler::setPipelineParameterValue(unsigned int pipelineClassId, st
 		}
 	}
 
-	//	m_rKernelContext.getLogManager() << LogLevel_Info << "Set [" << uiPipelineClassId << "/" << sParameterName.c_str() << "] to [" << sParameterValue.c_str() << "]\n";
+	//	m_kernelContext.getLogManager() << LogLevel_Info << "Set [" << uiPipelineClassId << "/" << sParameterName.c_str() << "] to [" << sParameterValue.c_str() << "]\n";
 	return true;
 }
 

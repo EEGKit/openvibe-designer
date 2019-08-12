@@ -13,11 +13,11 @@ namespace OpenViBEDesigner
 			CSettingViewFactory(const OpenViBE::CString& rBuilderName, const OpenViBE::Kernel::IKernelContext& rKernelContext);
 			virtual ~CSettingViewFactory() = default;
 
-			CAbstractSettingView* getSettingView(OpenViBE::Kernel::IBox& rBox, uint32_t index);
+			CAbstractSettingView* getSettingView(OpenViBE::Kernel::IBox& rBox, const uint32_t index);
 
 		private:
 			OpenViBE::CString m_builderName;
-			const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
+			const OpenViBE::Kernel::IKernelContext& m_kernelContext;
 		};
-	}
-}
+	}  // namespace Setting
+}  // namespace OpenViBEDesigner

@@ -33,7 +33,7 @@ namespace OpenViBEDesigner
 
 		virtual void updateSize(GtkWidget* widget, const char* sText, int* pXSize, int* pYSize) const;
 
-		const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
+		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
 		const OpenViBE::Kernel::IComment* m_pConstComment = nullptr;
 		OpenViBE::Kernel::IComment* m_pComment = nullptr;
 		bool m_bApplied = false;

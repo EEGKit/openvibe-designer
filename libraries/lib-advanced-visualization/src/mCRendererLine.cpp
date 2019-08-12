@@ -54,10 +54,7 @@ void CRendererLine::refresh(const IRendererContext& rContext)
 
 	uint32_t l_ui32HistoryIndexMax;
 
-	if (m_historyDrawIndex == 0) // Draw real-time
-	{
-		l_ui32HistoryIndexMax = m_historyCount;
-	}
+	if (m_historyDrawIndex == 0) { l_ui32HistoryIndexMax = m_historyCount; } // Draw real-time 
 	else // stay at the m_historyDrawIndex
 	{
 		l_ui32HistoryIndexMax = m_historyDrawIndex;
@@ -66,8 +63,8 @@ void CRendererLine::refresh(const IRendererContext& rContext)
 	for (size_t channel = 0; channel < m_channelCount; channel++)
 	{
 		const uint32_t firstSampleIndex = ((l_ui32HistoryIndexMax - 1) / m_sampleCount) * m_sampleCount;
-		std::vector<float>& l_vHistory = m_history[channel];
-		CVertex* l_pVertex = &m_Vertices[channel][0];
+		std::vector<float>& l_vHistory  = m_history[channel];
+		CVertex* l_pVertex              = &m_Vertices[channel][0];
 
 		for (uint32_t sample = 0; sample < m_sampleCount; sample++)
 		{

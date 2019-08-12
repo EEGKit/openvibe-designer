@@ -45,11 +45,11 @@ namespace Mensia
 
 			void clearRegionSelection() override;
 			uint32_t getRegionCategoryCount() override;
-			uint32_t getRegionCount(uint32_t regionCategory) override;
-			const char* getRegionCategoryName(uint32_t regionCategory) override;
-			const char* getRegionName(uint32_t regionCategory, uint32_t regionIndex) override;
-			void selectRegion(uint32_t regionCategory, const char* sRegionName) override;
-			void selectRegion(uint32_t regionCategory, uint32_t regionIndex) override;
+			uint32_t getRegionCount(const uint32_t regionCategory) override;
+			const char* getRegionCategoryName(const uint32_t regionCategory) override;
+			const char* getRegionName(const uint32_t regionCategory, const uint32_t regionIndex) override;
+			void selectRegion(const uint32_t regionCategory, const char* sRegionName) override;
+			void selectRegion(const uint32_t regionCategory, const uint32_t regionIndex) override;
 
 			virtual void refreshBrainSubset();
 

@@ -42,11 +42,11 @@ namespace OpenViBEDesigner
 		void setValueEnumeration(const OpenViBE::CIdentifier& rTypeIdentifier, GtkWidget* widget, const OpenViBE::CString& rValue) const;
 		void setValueBitMask(const OpenViBE::CIdentifier& rTypeIdentifier, GtkWidget* widget, const OpenViBE::CString& rValue) const;
 
-		const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
+		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
 		OpenViBE::CString m_sGUIFilename;
 
 	private:
 
 		CSettingCollectionHelper();
 	};
-};
+}  // namespace OpenViBEDesigner

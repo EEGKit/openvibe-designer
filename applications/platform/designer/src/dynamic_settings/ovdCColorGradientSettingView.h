@@ -23,7 +23,7 @@ namespace OpenViBEDesigner
 		class CColorGradientSettingView : public CAbstractSettingView
 		{
 		public:
-			CColorGradientSettingView(OpenViBE::Kernel::IBox& rBox, uint32_t index, OpenViBE::CString& rBuilderName, const OpenViBE::Kernel::IKernelContext& rKernelContext);
+			CColorGradientSettingView(OpenViBE::Kernel::IBox& rBox, const uint32_t index, OpenViBE::CString& rBuilderName, const OpenViBE::Kernel::IKernelContext& rKernelContext);
 
 			void getValue(OpenViBE::CString& value) const override;
 			void setValue(const OpenViBE::CString& value) override;
@@ -43,11 +43,11 @@ namespace OpenViBEDesigner
 
 		private:
 			GtkEntry* m_entry = nullptr;
-			const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
+			const OpenViBE::Kernel::IKernelContext& m_kernelContext;
 			OpenViBE::CString m_builderName;
 
-			GtkWidget* pDialog = nullptr;
-			GtkWidget* pContainer = nullptr;
+			GtkWidget* pDialog      = nullptr;
+			GtkWidget* pContainer   = nullptr;
 			GtkWidget* pDrawingArea = nullptr;
 			std::vector<SColorGradientDataNode> vColorGradient;
 			std::map<GtkColorButton*, uint32_t> vColorButtonMap;
@@ -55,5 +55,5 @@ namespace OpenViBEDesigner
 
 			bool m_onValueSetting = false;
 		};
-	}
-}
+	}  // namespace Setting
+}  // namespace OpenViBEDesigner

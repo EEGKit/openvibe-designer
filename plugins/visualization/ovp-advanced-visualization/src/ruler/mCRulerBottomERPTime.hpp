@@ -38,9 +38,9 @@ namespace Mensia
 				if (m_pRenderer->getHistoryCount() == 0) { return; }
 				if (m_pRenderer->getHistoryIndex() == 0) { return; }
 
-				const uint32_t sampleCount = m_pRenderer->getSampleCount();
+				const uint32_t sampleCount    = m_pRenderer->getSampleCount();
 				const uint64_t sampleDuration = m_pRendererContext->getSampleDuration();
-				const double duration = double((sampleCount * sampleDuration) >> 16) / 65536.;
+				const double duration         = double((sampleCount * sampleDuration) >> 16) / 65536.;
 
 				std::vector<double> range = split_range(0, duration, 10);
 
@@ -50,7 +50,7 @@ namespace Mensia
 				GdkGC* drawGC = gdk_gc_new(pWidget->window);
 				for (auto r : range)
 				{
-					const gint x = gint((r / duration) * w);
+					const gint x                = gint((r / duration) * w);
 					PangoLayout* l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, getLabel(r).c_str());
 					gdk_draw_layout(pWidget->window, drawGC, x, 5, l_pPangoLayout);
 					gdk_draw_line(pWidget->window, drawGC, x, 0, x, 3);

@@ -45,7 +45,7 @@ namespace
 		for (unsigned int i = 2; i <= n; ++i)
 		{
 			const double invi = 1. / i;
-			vLegendre[i] = (2 - invi) * x * vLegendre[i - 1] - (1 - invi) * vLegendre[i - 2];
+			vLegendre[i]      = (2 - invi) * x * vLegendre[i - 1] - (1 - invi) * vLegendre[i - 2];
 		}
 	}
 
@@ -100,7 +100,7 @@ namespace
 	{
 		if (x < -1) { return rCache[0]; }
 		if (x > 1) { return rCache[2 * S]; }
-		double t = (x + 1) * S;
+		double t     = (x + 1) * S;
 		const int i1 = int(t);
 		const int i2 = int(t + 1);
 		t -= i1;
@@ -174,7 +174,7 @@ void CRendererTopo::rebuild(const IRendererContext& rContext)
 	// Generates transformation matrices based spherical spline interpolations
 
 	const unsigned int M = 3;
-	const auto N = static_cast<unsigned int>(pow(10., 10. / (2 * M - 2)));
+	const auto N         = static_cast<unsigned int>(pow(10., 10. / (2 * M - 2)));
 
 	std::vector<double> l_vLegendre;
 	std::vector<double> l_vGCache;
@@ -184,7 +184,7 @@ void CRendererTopo::rebuild(const IRendererContext& rContext)
 	const size_t nc = rContext.getChannelCount();
 	const size_t vc = m_oScalp.m_vVertex.size();
 
-	A = Eigen::MatrixXd(nc + 1, nc + 1);
+	A         = Eigen::MatrixXd(nc + 1, nc + 1);
 	A(nc, nc) = 0;
 	for (i = 0; i < nc; ++i)
 	{
@@ -197,13 +197,13 @@ void CRendererTopo::rebuild(const IRendererContext& rContext)
 			rContext.getChannelLocalisation(j, v2.x, v2.y, v2.z);
 
 			const double cosine = CVertex::dot(v1, v2);
-			A(i, j) = cache(cosine, l_vGCache);
-			A(j, i) = cache(cosine, l_vGCache);
+			A(i, j)             = cache(cosine, l_vGCache);
+			A(j, i)             = cache(cosine, l_vGCache);
 		}
 	}
 
-	B = Eigen::MatrixXd(vc + 1, nc + 1);
-	D = Eigen::MatrixXd(vc + 1, nc + 1);
+	B         = Eigen::MatrixXd(vc + 1, nc + 1);
+	D         = Eigen::MatrixXd(vc + 1, nc + 1);
 	B(vc, nc) = 0;
 	D(vc, nc) = 0;
 	for (i = 0; i < vc; ++i)
@@ -220,8 +220,8 @@ void CRendererTopo::rebuild(const IRendererContext& rContext)
 			rContext.getChannelLocalisation(j, v2.x, v2.y, v2.z);
 
 			const double cosine = CVertex::dot(v1, v2);
-			B(i, j) = cache(cosine, l_vGCache);
-			D(i, j) = cache(cosine, l_vHCache);
+			B(i, j)             = cache(cosine, l_vGCache);
+			D(i, j)             = cache(cosine, l_vHCache);
 		}
 	}
 
@@ -266,7 +266,7 @@ void CRendererTopo::refresh(const IRendererContext& rContext)
 
 	size_t i, k;
 
-	size_t nc = rContext.getChannelCount();
+	size_t nc       = rContext.getChannelCount();
 	const size_t vc = m_oScalp.m_vVertex.size();
 
 	std::vector<float> l_vSample;
@@ -423,14 +423,14 @@ bool CRendererTopo::render(const IRendererContext& rContext)
 	for (uint32_t j = 0; j < rContext.getChannelCount(); j++)
 	{
 		const float l_fCubeScale = .025f;
-		const CVertex v = m_vProjectedChannelCoordinate[j];
+		const CVertex v          = m_vProjectedChannelCoordinate[j];
 		//rContext.getChannelLocalisation(j, v.x, v.y, v.z);
 
 		glPushMatrix();
 		glTranslatef(v.x, v.y, v.z);
 		glScalef(l_fCubeScale, l_fCubeScale, l_fCubeScale);
 
-		float l_vSelected[] = { 1, 1, 1 };
+		float l_vSelected[]   = { 1, 1, 1 };
 		float l_vUnselected[] = { .2f, .2f, .2f };
 		glColor3fv(rContext.isSelected(j) ? l_vSelected : l_vUnselected);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);

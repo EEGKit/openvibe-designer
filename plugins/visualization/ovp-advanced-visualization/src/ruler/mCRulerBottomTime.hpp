@@ -38,17 +38,17 @@ namespace Mensia
 				if (m_pRenderer->getHistoryCount() == 0) { return; }
 				if (m_pRenderer->getHistoryIndex() == 0) { return; }
 
-				const uint32_t sampleCount = m_pRenderer->getSampleCount();
-				const uint32_t historyIndex = m_pRenderer->getHistoryIndex();
+				const uint32_t sampleCount          = m_pRenderer->getSampleCount();
+				const uint32_t historyIndex         = m_pRenderer->getHistoryIndex();
 				const uint64_t l_ui64SampleDuration = m_pRendererContext->getSampleDuration();
 
 				std::vector<double>::iterator it;
 
 				const uint32_t leftIndex = historyIndex - historyIndex % sampleCount;
-				const uint32_t midIndex = historyIndex;
-				double startTime = double((leftIndex * l_ui64SampleDuration) >> 16) / 65536.;
-				double midTime = double((midIndex * l_ui64SampleDuration) >> 16) / 65536.;
-				const double duration = double((sampleCount * l_ui64SampleDuration) >> 16) / 65536.;
+				const uint32_t midIndex  = historyIndex;
+				double startTime         = double((leftIndex * l_ui64SampleDuration) >> 16) / 65536.;
+				double midTime           = double((midIndex * l_ui64SampleDuration) >> 16) / 65536.;
+				const double duration    = double((sampleCount * l_ui64SampleDuration) >> 16) / 65536.;
 
 				const double offset = (m_pRenderer->getTimeOffset() >> 16) / 65536.;
 				startTime += offset;
@@ -65,7 +65,7 @@ namespace Mensia
 				{
 					if (*it >= 0 && *it + duration > midTime)
 					{
-						x = gint(((*it + duration - startTime) / duration) * w);
+						x                           = gint(((*it + duration - startTime) / duration) * w);
 						PangoLayout* l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, getLabel(*it).c_str());
 						gdk_draw_layout(pWidget->window, l_pDrawGC, x, 5, l_pPangoLayout);
 						gdk_draw_line(pWidget->window, l_pDrawGC, x, 0, x, 3);
@@ -76,7 +76,7 @@ namespace Mensia
 				{
 					if (*it >= 0 && *it < midTime)
 					{
-						x = gint(((*it - startTime) / duration) * w);
+						x                           = gint(((*it - startTime) / duration) * w);
 						PangoLayout* l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, getLabel(*it).c_str());
 						gdk_draw_layout(pWidget->window, l_pDrawGC, x, 5, l_pPangoLayout);
 						gdk_draw_line(pWidget->window, l_pDrawGC, x, 0, x, 3);

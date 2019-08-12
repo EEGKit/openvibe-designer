@@ -37,12 +37,12 @@ void CRendererBitmap::rebuild(const IRendererContext& rContext)
 		m_vertex[i].resize((m_sampleCount / m_autoDecimationFactor) * 4);
 		for (size_t j = 0; j < m_sampleCount - m_autoDecimationFactor + 1; j += m_autoDecimationFactor)
 		{
-			const size_t l = j / m_autoDecimationFactor;
-			const size_t id = l * 4;
+			const size_t l     = j / m_autoDecimationFactor;
+			const size_t id    = l * 4;
 			const float factor = m_autoDecimationFactor * m_inverseSampleCount;
-			const float value = l * factor;
-			m_vertex[i][id].x = value;
-			m_vertex[i][id].y = 0;
+			const float value  = l * factor;
+			m_vertex[i][id].x  = value;
+			m_vertex[i][id].y  = 0;
 
 			m_vertex[i][id + 1].x = value + factor;
 			m_vertex[i][id + 1].y = 0;
@@ -63,25 +63,22 @@ void CRendererBitmap::refresh(const IRendererContext& rContext)
 	CRenderer::refresh(rContext);
 
 	if (!m_historyCount) { return; }
-	if (m_vertex.empty())
-	{
-		return;
-	}
+	if (m_vertex.empty()) { return; }
 
 	for (uint32_t i = 0; i < m_channelCount; ++i)
 	{
-		uint32_t k = ((m_historyCount - 1) / m_sampleCount) * m_sampleCount;
+		uint32_t k                     = ((m_historyCount - 1) / m_sampleCount) * m_sampleCount;
 		std::vector<float>& l_vHistory = m_history[i];
-		CVertex* l_pVertex = &m_vertex[i][0];
+		CVertex* l_pVertex             = &m_vertex[i][0];
 		for (uint32_t j = 0; j < m_sampleCount - m_autoDecimationFactor + 1; j += m_autoDecimationFactor, k += m_autoDecimationFactor)
 		{
 			if (k >= m_historyIndex && k < m_historyCount)
 			{
 				const float value = l_vHistory[k];
-				l_pVertex++->u = value;
-				l_pVertex++->u = value;
-				l_pVertex++->u = value;
-				l_pVertex++->u = value;
+				l_pVertex++->u    = value;
+				l_pVertex++->u    = value;
+				l_pVertex++->u    = value;
+				l_pVertex++->u    = value;
 			}
 			else
 			{

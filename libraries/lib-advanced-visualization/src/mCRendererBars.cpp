@@ -34,14 +34,14 @@ void CRendererBars::rebuild(const IRendererContext& rContext)
 		m_vertex[i].resize(size_t(m_sampleCount) * 4);
 		for (size_t j = 0; j < m_sampleCount; j++)
 		{
-			const size_t id = j * 4;
-			const float value = j * m_inverseSampleCount;
-			m_vertex[i][id].x = value;
+			const size_t id       = j * 4;
+			const float value     = j * m_inverseSampleCount;
+			m_vertex[i][id].x     = value;
 			m_vertex[i][id + 1].x = value + m_inverseSampleCount;
 			m_vertex[i][id + 2].x = value + m_inverseSampleCount;
 			m_vertex[i][id + 3].x = value;
 
-			m_vertex[i][id].u = value;
+			m_vertex[i][id].u     = value;
 			m_vertex[i][id + 1].u = value;
 			m_vertex[i][id + 2].u = value;
 			m_vertex[i][id + 3].u = value;
@@ -59,18 +59,18 @@ void CRendererBars::refresh(const IRendererContext& rContext)
 
 	for (size_t i = 0; i < m_channelCount; ++i)
 	{
-		size_t k = ((m_historyCount - 1) / m_sampleCount) * m_sampleCount;
+		size_t k                       = ((m_historyCount - 1) / m_sampleCount) * m_sampleCount;
 		std::vector<float>& l_vHistory = m_history[i];
-		CVertex* l_pVertex = &m_vertex[i][0];
+		CVertex* l_pVertex             = &m_vertex[i][0];
 		for (size_t j = 0; j < m_sampleCount; j++, k++)
 		{
 			if (k >= m_historyIndex && k < m_historyCount)
 			{
 				const float l_f32Value = l_vHistory[k];
-				l_pVertex++->y = 0;
-				l_pVertex++->y = 0;
-				l_pVertex++->y = l_f32Value;
-				l_pVertex++->y = l_f32Value;
+				l_pVertex++->y         = 0;
+				l_pVertex++->y         = 0;
+				l_pVertex++->y         = l_f32Value;
+				l_pVertex++->y         = l_f32Value;
 			}
 			else
 			{

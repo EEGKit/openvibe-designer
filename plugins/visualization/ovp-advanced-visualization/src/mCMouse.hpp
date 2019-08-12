@@ -36,8 +36,8 @@ namespace Mensia
 		public:
 
 			explicit CMouse(CBoxAlgorithmViz& rBoxAlgorithmViz);
-			void mouseButton(IRendererContext& rContext, const int32_t x, const int32_t y, const int32_t button, const int status);
-			void mouseMotion(IRendererContext& rContext, const int32_t x, const int32_t y);
+			void mouseButton(IRendererContext& rContext, int32_t x, int32_t y, int32_t button, int status);
+			void mouseMotion(IRendererContext& rContext, int32_t x, int32_t y);
 			bool hasButtonPressed();
 
 

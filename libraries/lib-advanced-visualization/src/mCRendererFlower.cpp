@@ -75,13 +75,13 @@ void CRendererFlower::refresh(const IRendererContext& rContext)
 	{
 		for (size_t i = 0; i < m_channelCount; ++i)
 		{
-			size_t k = ((m_historyCount - 1 - z * m_vMuliVertex[z][i].size()) / m_sampleCount) * m_sampleCount;
+			size_t k                       = ((m_historyCount - 1 - z * m_vMuliVertex[z][i].size()) / m_sampleCount) * m_sampleCount;
 			std::vector<float>& l_vHistory = m_history[i];
-			CVertex* l_pVertex = &m_vMuliVertex[z][i][0];
-			CVertex* l_pCircleVertex = &m_vCircle[0];
+			CVertex* l_pVertex             = &m_vMuliVertex[z][i][0];
+			CVertex* l_pCircleVertex       = &m_vCircle[0];
 			for (size_t j = 0; j < m_sampleCount - m_autoDecimationFactor + 1; j += m_autoDecimationFactor, k += m_autoDecimationFactor)
 			{
-				float sum = 0;
+				float sum    = 0;
 				size_t count = 0;
 
 				for (size_t l = 0; l < m_autoDecimationFactor; l++)
@@ -96,9 +96,9 @@ void CRendererFlower::refresh(const IRendererContext& rContext)
 				if (count)
 				{
 					const float v = sum / count;
-					l_pVertex->x = l_pCircleVertex->x * v;
-					l_pVertex->y = l_pCircleVertex->y * v;
-					l_pVertex->z = l_pCircleVertex->z * v;
+					l_pVertex->x  = l_pCircleVertex->x * v;
+					l_pVertex->y  = l_pCircleVertex->y * v;
+					l_pVertex->z  = l_pCircleVertex->z * v;
 					l_pVertex++;
 					l_pCircleVertex++;
 				}

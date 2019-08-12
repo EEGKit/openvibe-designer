@@ -75,15 +75,15 @@ Value::Value(const Value& v) : mValueType(v.mValueType)
 		case StringVal: mStringVal = v.mStringVal;
 			break;
 		case IntVal: mIntVal = v.mIntVal;
-			mFloatVal = float(v.mIntVal);
+			mFloatVal  = float(v.mIntVal);
 			mDoubleVal = double(v.mIntVal);
 			break;
 		case FloatVal: mFloatVal = v.mFloatVal;
-			mIntVal = int(v.mFloatVal);
+			mIntVal    = int(v.mFloatVal);
 			mDoubleVal = double(v.mDoubleVal);
 			break;
 		case DoubleVal: mDoubleVal = v.mDoubleVal;
-			mIntVal = int(v.mDoubleVal);
+			mIntVal   = int(v.mDoubleVal);
 			mFloatVal = float(v.mDoubleVal);
 			break;
 		case BoolVal: mBoolVal = v.mBoolVal;
@@ -107,15 +107,15 @@ Value& Value::operator =(const Value& v)
 		case StringVal: mStringVal = v.mStringVal;
 			break;
 		case IntVal: mIntVal = v.mIntVal;
-			mFloatVal = float(v.mIntVal);
+			mFloatVal  = float(v.mIntVal);
 			mDoubleVal = double(v.mIntVal);
 			break;
 		case FloatVal: mFloatVal = v.mFloatVal;
-			mIntVal = int(v.mFloatVal);
+			mIntVal    = int(v.mFloatVal);
 			mDoubleVal = double(v.mDoubleVal);
 			break;
 		case DoubleVal: mDoubleVal = v.mDoubleVal;
-			mIntVal = int(v.mDoubleVal);
+			mIntVal   = int(v.mDoubleVal);
 			mFloatVal = float(v.mDoubleVal);
 			break;
 		case BoolVal: mBoolVal = v.mBoolVal;
@@ -319,7 +319,7 @@ std::string json::Serialize(const Value& v)
 
 	if (v.GetType() == ObjectVal)
 	{
-		str = "{";
+		str        = "{";
 		Object obj = v.ToObject();
 		for (Object::ValueMap::const_iterator it = obj.begin(); it != obj.end(); ++it)
 		{
@@ -332,7 +332,7 @@ std::string json::Serialize(const Value& v)
 	}
 	else if (v.GetType() == ArrayVal)
 	{
-		str = "[";
+		str     = "[";
 		Array a = v.ToArray();
 		for (Array::ValueVector::const_iterator it = a.begin(); it != a.end(); ++it)
 		{
@@ -389,8 +389,8 @@ static Value DeserializeInternal(const std::string& _str, std::stack<StackDepthT
 
 static size_t GetEndOfArrayOrObj(const std::string& str, std::stack<StackDepthType>& depth_stack)
 {
-	size_t i = 1;
-	bool in_quote = false;
+	size_t i                    = 1;
+	bool in_quote               = false;
 	const size_t original_count = depth_stack.size();
 
 	for (; i < str.length(); i++)
@@ -464,7 +464,7 @@ static std::string UnescapeJSONString(const std::string& str)
 					break;
 				case 'u': skip_ahead = 5;
 					hex_str = str.substr(i + 4, 2);
-					hex = static_cast<unsigned int>(std::strtoul(hex_str.c_str(), nullptr, 16));
+					hex     = static_cast<unsigned int>(std::strtoul(hex_str.c_str(), nullptr, 16));
 					s.push_back(char(hex));
 					break;
 
@@ -484,7 +484,7 @@ static Value DeserializeValue(std::string& str, bool* had_error, std::stack<Stac
 	Value v;
 
 	*had_error = false;
-	str = Trim(str);
+	str        = Trim(str);
 
 	if (str.length() == 0) { return v; }
 
@@ -499,8 +499,8 @@ static Value DeserializeValue(std::string& str, bool* had_error, std::stack<Stac
 		}
 
 		std::string array_str = str.substr(0, i + 1);
-		v = Value(DeserializeArray(array_str, depth_stack));
-		str = str.substr(i + 1, str.length());
+		v                     = Value(DeserializeArray(array_str, depth_stack));
+		str                   = str.substr(i + 1, str.length());
 	}
 	else if (str[0] == '{')
 	{
@@ -514,8 +514,8 @@ static Value DeserializeValue(std::string& str, bool* had_error, std::stack<Stac
 		}
 
 		std::string obj_str = str.substr(0, i + 1);
-		v = Value(DeserializeInternal(obj_str, depth_stack));
-		str = str.substr(i + 1, str.length());
+		v                   = Value(DeserializeInternal(obj_str, depth_stack));
+		str                 = str.substr(i + 1, str.length());
 	}
 	else if (str[0] == '\"')
 	{
@@ -526,13 +526,13 @@ static Value DeserializeValue(std::string& str, bool* had_error, std::stack<Stac
 			return Value();
 		}
 
-		v = Value(UnescapeJSONString(str.substr(1, end_quote - 1)));
+		v   = Value(UnescapeJSONString(str.substr(1, end_quote - 1)));
 		str = str.substr(end_quote + 1, str.length());
 	}
 	else
 	{
 		bool has_dot = false;
-		bool has_e = false;
+		bool has_e   = false;
 		std::string temp_val;
 		size_t i = 0;
 		for (; i < str.length(); i++)
@@ -591,10 +591,7 @@ static Value DeserializeArray(std::string& str, std::stack<StackDepthType>& dept
 
 	str = Trim(str);
 
-	if ((str[0] == '[') && (str[str.length() - 1] == ']'))
-	{
-		str = str.substr(1, str.length() - 2);
-	}
+	if ((str[0] == '[') && (str[str.length() - 1] == ']')) { str = str.substr(1, str.length() - 2); }
 	else { return Value(); }
 
 	while (str.length() > 0)
@@ -654,8 +651,8 @@ static Value DeserializeObj(const std::string& _str, std::stack<StackDepthType>&
 	{
 		// Get the key name
 		const size_t start_quote_idx = GetQuotePos(str);
-		const size_t end_quote_idx = GetQuotePos(str, start_quote_idx + 1);
-		const size_t colon_idx = str.find(':', end_quote_idx);
+		const size_t end_quote_idx   = GetQuotePos(str, start_quote_idx + 1);
+		const size_t colon_idx       = str.find(':', end_quote_idx);
 
 		if ((start_quote_idx == std::string::npos) || (end_quote_idx == std::string::npos) || (colon_idx == std::string::npos))
 		{
@@ -666,8 +663,8 @@ static Value DeserializeObj(const std::string& _str, std::stack<StackDepthType>&
 		if (key.length() == 0) { return Value(); }
 
 		bool had_error = false;
-		str = str.substr(colon_idx + 1, str.length());
-		obj[key] = DeserializeValue(str, &had_error, depth_stack);
+		str            = str.substr(colon_idx + 1, str.length());
+		obj[key]       = DeserializeValue(str, &had_error, depth_stack);
 		if (had_error) { return Value(); }
 	}
 

@@ -31,8 +31,8 @@ namespace Mensia
 	namespace AdvancedVisualization
 	{
 		static const int s_iStimulationIndicatorSmoothness = 10;
-		static const float s_fStimulationIndicatorRadius = 0.01f;
-		static const float s_fStimulationIndicatorSpacing = 0.03f;
+		static const float s_fStimulationIndicatorRadius   = 0.01f;
+		static const float s_fStimulationIndicatorSpacing  = 0.03f;
 
 		template <bool bPreRender, class T>
 		class TRendererStimulation : public T
@@ -47,9 +47,8 @@ namespace Mensia
 
 				for (int i = 0; i < s_iStimulationIndicatorSmoothness; ++i)
 				{
-					m_vCircle.push_back(std::make_pair(
-						s_fStimulationIndicatorRadius * cosf(float(i) / float(s_iStimulationIndicatorSmoothness - 1) * 2 * float(M_PI)),
-						s_fStimulationIndicatorRadius * sinf(float(i) / float(s_iStimulationIndicatorSmoothness - 1) * 2 * float(M_PI))
+					m_vCircle.push_back(std::make_pair(s_fStimulationIndicatorRadius * cosf(float(i) / float(s_iStimulationIndicatorSmoothness - 1) * 2 * float(M_PI)),
+													   s_fStimulationIndicatorRadius * sinf(float(i) / float(s_iStimulationIndicatorSmoothness - 1) * 2 * float(M_PI))
 					));
 				}
 			}
@@ -74,8 +73,8 @@ namespace Mensia
 				{
 					glPushAttrib(GL_ALL_ATTRIB_BITS);
 
-					const uint32_t sampleCount = CRenderer::getSampleCount();
-					const uint32_t historyIndex = CRenderer::getHistoryIndex();
+					const uint32_t sampleCount    = CRenderer::getSampleCount();
+					const uint32_t historyIndex   = CRenderer::getHistoryIndex();
 					const uint64_t sampleDuration = rContext.getSampleDuration();
 
 					glDisable(GL_TEXTURE_1D);
@@ -83,10 +82,10 @@ namespace Mensia
 					glDisable(GL_LINE_SMOOTH);
 
 					const uint32_t leftIndex = historyIndex - historyIndex % sampleCount;
-					const uint32_t midIndex = historyIndex;
-					const double startTime = ((leftIndex * sampleDuration) >> 16) / 65536.;
-					const double midTime = ((midIndex * sampleDuration) >> 16) / 65536.;
-					const double duration = ((sampleCount * sampleDuration) >> 16) / 65536.;
+					const uint32_t midIndex  = historyIndex;
+					const double startTime   = ((leftIndex * sampleDuration) >> 16) / 65536.;
+					const double midTime     = ((midIndex * sampleDuration) >> 16) / 65536.;
+					const double duration    = ((sampleCount * sampleDuration) >> 16) / 65536.;
 
 					m_mEncounteredStimulations.clear();
 					for (auto it = CRenderer::m_stimulationHistory.begin(); it != CRenderer::m_stimulationHistory.end(); ++it)
@@ -172,12 +171,12 @@ namespace Mensia
 			float* getMarkerColor(const uint64_t ui64Identifier)
 			{
 				static float color[4];
-				const float alpha = reverse<>(uint8_t(ui64Identifier & 255)) * 3.f / 255.f;
-				const auto alphai = int32_t(alpha);
+				const float alpha       = reverse<>(uint8_t(ui64Identifier & 255)) * 3.f / 255.f;
+				const auto alphai       = int32_t(alpha);
 				color[(alphai + 0) % 3] = 1 - alpha / 3.f;
 				color[(alphai + 1) % 3] = alpha / 3.f;
 				color[(alphai + 2) % 3] = 0;
-				color[3] = .75f;
+				color[3]                = .75f;
 				return color;
 			}
 

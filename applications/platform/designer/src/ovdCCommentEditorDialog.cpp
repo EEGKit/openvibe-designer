@@ -78,7 +78,7 @@ namespace
 } // namespace
 
 CCommentEditorDialog::CCommentEditorDialog(const IKernelContext& rKernelContext, IComment& rComment, const char* sGUIFilename)
-	: m_rKernelContext(rKernelContext), m_rComment(rComment), m_sGUIFilename(sGUIFilename) { }
+	: m_kernelContext(rKernelContext), m_rComment(rComment), m_sGUIFilename(sGUIFilename) { }
 
 bool CCommentEditorDialog::run()
 
@@ -104,7 +104,7 @@ bool CCommentEditorDialog::run()
 
 	::g_signal_connect(::gtk_builder_get_object(m_pInterface, "comment_toolbutton_info"), "clicked", G_CALLBACK(button_comment_info_cb), this);
 
-	m_pDialog = GTK_WIDGET(gtk_builder_get_object(m_pInterface, "comment"));
+	m_pDialog      = GTK_WIDGET(gtk_builder_get_object(m_pInterface, "comment"));
 	m_pDescription = GTK_WIDGET(gtk_builder_get_object(m_pInterface, "comment-textview_description"));
 
 	m_pInfoDialog = GTK_WIDGET(gtk_builder_get_object(m_pInterface, "messagedialog_howto_comment"));
@@ -174,4 +174,3 @@ void CCommentEditorDialog::applyTagCB(const char* sTagIn, const char* sTagOut) c
 	// set focus on the text, to get back in edition mode directly
 	gtk_widget_grab_focus(m_pDescription);
 }
-

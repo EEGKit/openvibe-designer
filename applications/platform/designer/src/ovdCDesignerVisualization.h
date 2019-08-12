@@ -134,7 +134,7 @@ namespace OpenViBEDesigner
 													   GtkSelectionData* pSelectionData, guint uiInfo, guint uiTime, gpointer data);
 		void dragDataReceivedInEventBoxCB(GtkWidget* dstWidget, GtkSelectionData* pSelectionData, OpenViBEVisualizationToolkit::EDragDataLocation oLocation);
 
-		const OpenViBE::Kernel::IKernelContext& m_rKernelContext;
+		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
 		OpenViBEVisualizationToolkit::IVisualizationTree& m_rVisualizationTree;
 		CInterfacedScenario& m_rInterfacedScenario;
 		fpDesignerVisualizationDeleteEventCB m_fpDeleteEventCB;
@@ -147,7 +147,7 @@ namespace OpenViBEDesigner
 		GtkWidget* m_pHighlightedWidget = nullptr;
 		//active items
 		OpenViBE::CString m_oActiveVisualizationWindowName, m_oActiveVisualizationPanelName;
-		OpenViBE::CIdentifier m_oActiveVisualizationBoxIdentifier;
+		OpenViBE::CIdentifier m_oActiveVisualizationBoxIdentifier = OV_UndefinedIdentifier;
 		//preview window visibility flag
 		bool m_bPreviewWindowVisible = false;
 		uint32_t m_previewWindowW = 0;

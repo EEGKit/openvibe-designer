@@ -47,8 +47,8 @@ namespace
 
 	void channel_selection_changed_(GtkTreeSelection* pTreeSelection, IRendererContext* pRendererContext)
 	{
-		uint32_t i = 0;
-		GtkTreeView* l_pTreeView = gtk_tree_selection_get_tree_view(pTreeSelection);
+		uint32_t i                 = 0;
+		GtkTreeView* l_pTreeView   = gtk_tree_selection_get_tree_view(pTreeSelection);
 		GtkTreeModel* l_pTreeModel = gtk_tree_view_get_model(l_pTreeView);
 		if (l_pTreeModel != nullptr)
 		{
@@ -124,31 +124,31 @@ namespace
 bool CBoxAlgorithmViz::initialize()
 
 {
-	m_pRendererContext = IRendererContext::create();
+	m_pRendererContext    = IRendererContext::create();
 	m_pSubRendererContext = IRendererContext::create();
 
 	// Sets default setting values
-	m_sLocalisation = CString("");
-	m_temporalCoherence = OVP_TypeId_TemporalCoherence_TimeLocked.toUInteger();
-	m_elementCount = 50;
-	m_timeScale = 10LL << 32;
-	m_bIsPositive = false;
-	m_bIsTimeLocked = true;
-	m_bIsScaleVisible = true;
-	m_textureId = 0;
+	m_sLocalisation       = CString("");
+	m_temporalCoherence   = OVP_TypeId_TemporalCoherence_TimeLocked.toUInteger();
+	m_elementCount        = 50;
+	m_timeScale           = 10LL << 32;
+	m_bIsPositive         = false;
+	m_bIsTimeLocked       = true;
+	m_bIsScaleVisible     = true;
+	m_textureId           = 0;
 	m_ui64LastProcessTime = 0;
-	m_time1 = 0;
-	m_time2 = 0;
-	m_sColor = CString("100,100,100");
-	m_sColorGradient = CString("0:0,0,0; 100:100,100,100");
-	m_bXYZPlotHasDepth = false;
-	m_f64DataScale = 1;
-	m_translucency = 1;
+	m_time1               = 0;
+	m_time2               = 0;
+	m_sColor              = CString("100,100,100");
+	m_sColorGradient      = CString("0:0,0,0; 100:100,100,100");
+	m_bXYZPlotHasDepth    = false;
+	m_f64DataScale        = 1;
+	m_translucency        = 1;
 	m_vColor.clear();
 
 	// Initializes fast forward behavior
 	m_fastForwardMaximumFactorHighDefinition = float(this->getConfigurationManager().expandAsFloat("${AdvancedViz_HighDefinition_FastForwardFactor}", 5.f));
-	m_fastForwardMaximumFactorLowDefinition = float(this->getConfigurationManager().expandAsFloat("${AdvancedViz_LowDefinition_FastForwardFactor}", 20.f));
+	m_fastForwardMaximumFactorLowDefinition  = float(this->getConfigurationManager().expandAsFloat("${AdvancedViz_LowDefinition_FastForwardFactor}", 20.f));
 
 	// Gets data stream type
 	this->getStaticBoxContext().getInputType(0, m_oTypeIdentifier);
@@ -157,27 +157,27 @@ bool CBoxAlgorithmViz::initialize()
 	m_pBuilder = gtk_builder_new();
 	gtk_builder_add_from_file(m_pBuilder, std::string(Directories::getDataDir() + "/plugins/advanced-visualization.ui").c_str(), nullptr);
 
-	GtkWidget* l_pMain = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "table"));
+	GtkWidget* l_pMain    = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "table"));
 	GtkWidget* l_pToolbar = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "toolbar-window"));
-	m_pViewport = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "viewport"));
-	m_pTop = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "label_top"));
-	m_pLeft = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "drawingarea_left"));
-	m_pRight = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "drawingarea_right"));
-	m_pBottom = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "drawingarea_bottom"));
-	m_pCornerLeft = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "label_corner_left"));
-	m_pCornerRight = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "label_corner_right"));
+	m_pViewport           = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "viewport"));
+	m_pTop                = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "label_top"));
+	m_pLeft               = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "drawingarea_left"));
+	m_pRight              = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "drawingarea_right"));
+	m_pBottom             = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "drawingarea_bottom"));
+	m_pCornerLeft         = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "label_corner_left"));
+	m_pCornerRight        = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "label_corner_right"));
 
 	// Gets important widgets
-	m_pTimeScale = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "spinbutton_time_scale"));
-	m_pElementCount = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "spinbutton_element_count"));
-	m_pERPRange = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "range_erp"));
-	m_pERPPlayerButton = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "button_erp_play_pause"));
-	m_pERPPlayer = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "table_erp"));
-	m_pScaleVisible = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "checkbutton_show_scale"));
+	m_pTimeScale        = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "spinbutton_time_scale"));
+	m_pElementCount     = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "spinbutton_element_count"));
+	m_pERPRange         = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "range_erp"));
+	m_pERPPlayerButton  = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "button_erp_play_pause"));
+	m_pERPPlayer        = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "table_erp"));
+	m_pScaleVisible     = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "checkbutton_show_scale"));
 	m_pFrequencyBandMin = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "spinbutton_freq_band_min"));
 	m_pFrequencyBandMax = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "spinbutton_freq_band_max"));
 
-	m_pChannelTreeView = GTK_TREE_VIEW(::gtk_builder_get_object(m_pBuilder, "expander_select_treeview"));
+	m_pChannelTreeView  = GTK_TREE_VIEW(::gtk_builder_get_object(m_pBuilder, "expander_select_treeview"));
 	m_pChannelListStore = GTK_LIST_STORE(::gtk_builder_get_object(m_pBuilder, "liststore_select"));
 
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(m_pChannelTreeView), GTK_SELECTION_MULTIPLE);
@@ -355,7 +355,7 @@ bool CBoxAlgorithmViz::initialize()
 		else
 		{
 			const uint32_t l_ui32ChannelCount = op_pMatrix->getDimensionSize(0);
-			double* l_pBuffer = op_pMatrix->getBuffer();
+			double* l_pBuffer                 = op_pMatrix->getBuffer();
 			for (uint32_t i = 0; i < l_ui32ChannelCount; ++i)
 			{
 				std::string l_sName = trim(op_pMatrix->getDimensionLabel(0, i));
@@ -371,17 +371,17 @@ bool CBoxAlgorithmViz::initialize()
 	}
 
 	// Gets frame base path for video output, if the variable is not defined, no video output is performed
-	const CString l_sFrameBasePath = this->getConfigurationManager().expand("${AdvancedVisualization_VideoOutputPath}");
-	const CString l_sFrameSessionId = this->getConfigurationManager().expand("[$core{date}-$core{time}]");
+	const CString l_sFrameBasePath   = this->getConfigurationManager().expand("${AdvancedVisualization_VideoOutputPath}");
+	const CString l_sFrameSessionId  = this->getConfigurationManager().expand("[$core{date}-$core{time}]");
 	const CString l_sFrameWidgetName = this->getStaticBoxContext().getName();
-	m_sFrameFilenameFormat = l_sFrameBasePath + l_sFrameSessionId + l_sFrameWidgetName + CString("-%06i.png");
-	m_bIsVideoOutputEnabled = (l_sFrameBasePath != CString(""));
-	m_bIsVideoOutputWorking = false;
-	m_ui32FrameId = 0;
+	m_sFrameFilenameFormat           = l_sFrameBasePath + l_sFrameSessionId + l_sFrameWidgetName + CString("-%06i.png");
+	m_bIsVideoOutputEnabled          = (l_sFrameBasePath != CString(""));
+	m_bIsVideoOutputWorking          = false;
+	m_ui32FrameId                    = 0;
 	gtk_widget_set_visible(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "hbox_video_recording")), m_bIsVideoOutputEnabled ? TRUE : FALSE);
 	gtk_label_set_markup(GTK_LABEL(::gtk_builder_get_object(m_pBuilder, "label_video_recording_filename")), (CString("<span foreground=\"darkblue\"><small>") + m_sFrameFilenameFormat + CString("</small></span>")).toASCIIString());
 
-	m_width = 0;
+	m_width  = 0;
 	m_height = 0;
 
 	return true;
@@ -410,10 +410,10 @@ bool CBoxAlgorithmViz::uninitialize()
 bool CBoxAlgorithmViz::processClock(IMessageClock& /*rClock*/)
 {
 	const uint64_t l_ui64CurrentTime = this->getPlayerContext().getCurrentTime();
-	uint64_t l_ui64MinDeltaTime = 0;
+	uint64_t l_ui64MinDeltaTime      = 0;
 
 	const uint64_t l_ui64MinDeltaTimeHighDefinition = (1LL << 32) / 16;
-	const uint64_t l_ui64MinDeltaTimeLowDefinition = (1LL << 32);
+	const uint64_t l_ui64MinDeltaTimeLowDefinition  = (1LL << 32);
 	const uint64_t l_ui64MinDeltaTimeLowDefinition2 = (1LL << 32) * 5;
 	if (this->getPlayerContext().getStatus() == PlayerStatus_Play)
 	{
@@ -428,7 +428,7 @@ bool CBoxAlgorithmViz::processClock(IMessageClock& /*rClock*/)
 		}
 		else if (l_f32CurrentFastForwardMaximumFactor <= m_fastForwardMaximumFactorLowDefinition)
 		{
-			const float alpha = (l_f32CurrentFastForwardMaximumFactor - m_fastForwardMaximumFactorHighDefinition) / (m_fastForwardMaximumFactorLowDefinition - m_fastForwardMaximumFactorHighDefinition);
+			const float alpha  = (l_f32CurrentFastForwardMaximumFactor - m_fastForwardMaximumFactorHighDefinition) / (m_fastForwardMaximumFactorLowDefinition - m_fastForwardMaximumFactorHighDefinition);
 			l_ui64MinDeltaTime = uint64_t((l_ui64MinDeltaTimeLowDefinition * alpha) + l_ui64MinDeltaTimeHighDefinition * (1.f - alpha));
 		}
 		else
@@ -472,7 +472,7 @@ void CBoxAlgorithmViz::updateRulerVisibility()
 
 void CBoxAlgorithmViz::reshape(const int width, const int height)
 {
-	m_width = uint32_t(width);
+	m_width  = uint32_t(width);
 	m_height = uint32_t(height);
 	m_pRendererContext->setAspect(float(width) / float(height));
 }
@@ -511,7 +511,7 @@ void CBoxAlgorithmViz::postDraw()
 		// OpenGL buffers are defined bottom to top while PNG are defined top to bottom, this flips the acquired image
 		const unsigned int l_ui32BytesInPixel = 4; // should be 3
 		std::vector<unsigned char> l_vSwap(m_width * l_ui32BytesInPixel);
-		unsigned char* l_pSwap = &l_vSwap[0];
+		unsigned char* l_pSwap    = &l_vSwap[0];
 		unsigned char* l_pSource1 = cairo_image_surface_get_data(l_pCairoSurface);
 		unsigned char* l_pSource2 = cairo_image_surface_get_data(l_pCairoSurface) + m_width * (m_height - 1) * l_ui32BytesInPixel;
 		for (uint32_t i = 0; i < m_height / 2; ++i)
@@ -572,10 +572,7 @@ void CBoxAlgorithmViz::mouseMotion(const int x, const int y)
 	m_oMouseHandler.mouseMotion(getContext(), x, y);
 #endif
 
-	if (m_oMouseHandler.hasButtonPressed())
-	{
-		this->redraw();
-	}
+	if (m_oMouseHandler.hasButtonPressed()) { this->redraw(); }
 }
 
 void CBoxAlgorithmViz::keyboard(const int x, const int y, const uint32_t key, const bool status)

@@ -28,7 +28,7 @@ public:
 
 	typedef union
 	{
-		GCallback fp;;
+		GCallback fp;
 		gpointer p;
 	} _data;
 

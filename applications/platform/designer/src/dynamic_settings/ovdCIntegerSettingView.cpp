@@ -23,8 +23,7 @@ static void on_insertion(GtkEntry* /*entry*/, gpointer data)
 }
 
 
-CIntegerSettingView::CIntegerSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext):
-	CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-hbox_setting_integer"), m_rKernelContext(rKernelContext)
+CIntegerSettingView::CIntegerSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext): CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-hbox_setting_integer"), m_kernelContext(rKernelContext)
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 
@@ -57,7 +56,7 @@ void CIntegerSettingView::setValue(const CString& value)
 void CIntegerSettingView::adjustValue(const int amount)
 {
 	char l_sValue[1024];
-	int64 l_i64lValue = m_rKernelContext.getConfigurationManager().expandAsInteger(gtk_entry_get_text(m_entry), 0);
+	int64_t l_i64lValue = m_kernelContext.getConfigurationManager().expandAsInteger(gtk_entry_get_text(m_entry), 0);
 	l_i64lValue += amount;
 	sprintf(l_sValue, "%lli", l_i64lValue);
 

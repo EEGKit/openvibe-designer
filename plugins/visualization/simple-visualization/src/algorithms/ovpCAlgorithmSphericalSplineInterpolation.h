@@ -18,7 +18,7 @@ namespace OpenViBEPlugins
 			bool uninitialize() override;
 			bool process() override;
 
-			_IsDerivedFromClass_Final_(OpenViBEToolkit::TAlgorithm < OpenViBE::Plugins::IAlgorithm >, OVP_ClassId_Algorithm_SphericalSplineInterpolation);
+			_IsDerivedFromClass_Final_(OpenViBEToolkit::TAlgorithm < OpenViBE::Plugins::IAlgorithm >, OVP_ClassId_Algorithm_SphericalSplineInterpolation)
 
 		protected:
 
@@ -38,12 +38,12 @@ namespace OpenViBEPlugins
 
 			//internal data
 			//-------------
-			bool m_bFirstProcess = true;
+			bool m_bFirstProcess    = true;
 			double* m_pDoubleCoords = nullptr;
 			double** m_pInsermCoords;
 			double m_ScdTable[2004];
 			double m_PotTable[2004];
-			double* m_pSplineCoefs = nullptr;
+			double* m_pSplineCoefs          = nullptr;
 			double* m_pLaplacianSplineCoefs = nullptr;
 		};
 
@@ -67,8 +67,7 @@ namespace OpenViBEPlugins
 			OpenViBE::CIdentifier getCreatedClass() const override { return OVP_ClassId_Algorithm_SphericalSplineInterpolation; }
 			OpenViBE::Plugins::IPluginObject* create() override { return new CAlgorithmSphericalSplineInterpolation(); }
 
-			bool getAlgorithmPrototype(
-				OpenViBE::Kernel::IAlgorithmProto& rAlgorithmPrototype) const override
+			bool getAlgorithmPrototype(OpenViBE::Kernel::IAlgorithmProto& rAlgorithmPrototype) const override
 			{
 				//input parameters
 				rAlgorithmPrototype.addInputParameter(OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_SplineOrder, "Spline order", OpenViBE::Kernel::ParameterType_Integer);
@@ -90,7 +89,7 @@ namespace OpenViBEPlugins
 				return true;
 			}
 
-			_IsDerivedFromClass_Final_(OpenViBE::Plugins::IAlgorithmDesc, OVP_ClassId_Algorithm_SphericalSplineInterpolationDesc);
+			_IsDerivedFromClass_Final_(OpenViBE::Plugins::IAlgorithmDesc, OVP_ClassId_Algorithm_SphericalSplineInterpolationDesc)
 		};
-	}  // namespace Test;
-} // namespace OpenViBEPlugins;
+	}  // namespace Test
+} // namespace OpenViBEPlugins

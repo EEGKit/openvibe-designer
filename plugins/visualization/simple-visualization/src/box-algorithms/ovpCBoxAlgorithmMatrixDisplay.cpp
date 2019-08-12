@@ -24,17 +24,17 @@ namespace
 {
 	void show_values_toggle_button_cb(GtkToggleToolButton* pButton, gpointer data)
 	{
-		auto* l_pMatrixDisplay = reinterpret_cast<CBoxAlgorithmMatrixDisplay*>(data);
+		auto* l_pMatrixDisplay          = reinterpret_cast<CBoxAlgorithmMatrixDisplay*>(data);
 		l_pMatrixDisplay->m_bShowValues = (gtk_toggle_tool_button_get_active(pButton) != 0);
 	}
 
 	void show_colors_toggle_button_cb(GtkToggleToolButton* pButton, gpointer data)
 	{
-		auto* l_pMatrixDisplay = reinterpret_cast<CBoxAlgorithmMatrixDisplay*>(data);
+		auto* l_pMatrixDisplay          = reinterpret_cast<CBoxAlgorithmMatrixDisplay*>(data);
 		l_pMatrixDisplay->m_bShowColors = (gtk_toggle_tool_button_get_active(pButton) != 0);
 		l_pMatrixDisplay->resetColors();
 	}
-}  // namespace;
+}  // namespace
 
 bool CBoxAlgorithmMatrixDisplay::resetColors()
 
@@ -56,9 +56,9 @@ bool CBoxAlgorithmMatrixDisplay::resetColors()
 		for (; it != m_vEventBoxCache.end(); ++it)
 		{
 			GdkColor l_ColorWhite;
-			l_ColorWhite.red = 65535;
+			l_ColorWhite.red   = 65535;
 			l_ColorWhite.green = 65535;
-			l_ColorWhite.blue = 65535;
+			l_ColorWhite.blue  = 65535;
 			gtk_widget_modify_bg((*it).first, GTK_STATE_NORMAL, &l_ColorWhite);
 		}
 	}
@@ -80,7 +80,7 @@ bool CBoxAlgorithmMatrixDisplay::initialize()
 	op_pMatrix.initialize(m_pMatrixDecoder->getOutputParameter(OVP_GD_Algorithm_StreamedMatrixStreamDecoder_OutputParameterId_Matrix));
 
 	//widgets
-	m_pMainWidgetInterface = gtk_builder_new(); // glade_xml_new(OpenViBE::Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-MatrixDisplay.ui", "matrix-display-table", nullptr);
+	m_pMainWidgetInterface    = gtk_builder_new(); // glade_xml_new(OpenViBE::Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-MatrixDisplay.ui", "matrix-display-table", nullptr);
 	m_pToolbarWidgetInterface = gtk_builder_new(); // glade_xml_new(OpenViBE::Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-MatrixDisplay.ui", "matrix-display-toolbar", nullptr);
 	gtk_builder_add_from_file(m_pMainWidgetInterface, Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-MatrixDisplay.ui", nullptr);
 	gtk_builder_add_from_file(m_pToolbarWidgetInterface, Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-MatrixDisplay.ui", nullptr);
@@ -92,7 +92,7 @@ bool CBoxAlgorithmMatrixDisplay::initialize()
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pToolbarWidgetInterface, "show-colors-toggle-button")), "toggled", G_CALLBACK(::show_colors_toggle_button_cb), this);
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pToolbarWidgetInterface, "matrix-display-toolbar")), "delete_event", G_CALLBACK(gtk_widget_hide), nullptr);
 
-	m_pMainWidget = GTK_WIDGET(gtk_builder_get_object(m_pMainWidgetInterface, "matrix-display-table"));
+	m_pMainWidget    = GTK_WIDGET(gtk_builder_get_object(m_pMainWidgetInterface, "matrix-display-table"));
 	m_pToolbarWidget = GTK_WIDGET(gtk_builder_get_object(m_pToolbarWidgetInterface, "matrix-display-toolbar"));
 
 	if (!this->canCreatePluginObject(OVP_ClassId_Plugin_VisualizationContext))
@@ -152,7 +152,7 @@ bool CBoxAlgorithmMatrixDisplay::uninitialize()
 	return true;
 }
 
-bool CBoxAlgorithmMatrixDisplay::processInput(uint32_t /*ui32InputIndex*/)
+bool CBoxAlgorithmMatrixDisplay::processInput(const uint32_t /*index*/)
 {
 	getBoxAlgorithmContext()->markAlgorithmAsReadyToProcess();
 
@@ -178,7 +178,7 @@ bool CBoxAlgorithmMatrixDisplay::process()
 			if (op_pMatrix->getDimensionCount() == 1)
 			{
 				//getLogManager() << LogLevel_Warning<< "The streamed matrix received has 1 dimensions (found "<< op_pMatrix->getDimensionCount() <<" dimensions)\n";
-				l_ui32RowCount = 1;
+				l_ui32RowCount    = 1;
 				l_ui32ColumnCount = op_pMatrix->getDimensionSize(0);
 				//return false;
 			}
@@ -189,7 +189,7 @@ bool CBoxAlgorithmMatrixDisplay::process()
 			}
 			else
 			{
-				l_ui32RowCount = op_pMatrix->getDimensionSize(0);
+				l_ui32RowCount    = op_pMatrix->getDimensionSize(0);
 				l_ui32ColumnCount = op_pMatrix->getDimensionSize(1);
 			}
 
@@ -221,12 +221,7 @@ bool CBoxAlgorithmMatrixDisplay::process()
 				GtkWidget* l_pWidgetLabel = gtk_label_new("");
 				gtk_widget_set_visible(l_pWidgetLabel, 1);
 				//gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(l_pWidgetLabel)), l_pWidgetLabel);
-				gtk_table_attach(
-					l_pTable, l_pWidgetLabel,
-					col, col + 1, r, r + 1,
-					GtkAttachOptions(GTK_EXPAND | GTK_FILL),
-					GtkAttachOptions(GTK_EXPAND | GTK_FILL),
-					0, 0);
+				gtk_table_attach(l_pTable, l_pWidgetLabel, col, col + 1, r, r + 1, GtkAttachOptions(GTK_EXPAND | GTK_FILL), GtkAttachOptions(GTK_EXPAND | GTK_FILL), 0, 0);
 				//g_object_unref(l_pGtkBuilderLabel);
 
 				stringstream ss;
@@ -250,18 +245,13 @@ bool CBoxAlgorithmMatrixDisplay::process()
 					gtk_widget_set_visible(l_pWidgetLabel, 1);
 					gtk_container_add(GTK_CONTAINER(l_pWidgetEventBox), l_pWidgetLabel);
 					//gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(l_pWidgetEventBox)), l_pWidgetEventBox);
-					gtk_table_attach(
-						l_pTable, l_pWidgetEventBox,
-						c, c + 1, r, r + 1,
-						GtkAttachOptions(GTK_EXPAND | GTK_FILL),
-						GtkAttachOptions(GTK_EXPAND | GTK_FILL),
-						0, 0);
+					gtk_table_attach(l_pTable, l_pWidgetEventBox, c, c + 1, r, r + 1, GtkAttachOptions(GTK_EXPAND | GTK_FILL), GtkAttachOptions(GTK_EXPAND | GTK_FILL), 0, 0);
 					//g_object_unref(l_pGtkBuilderEventBox);
 
 					GdkColor l_ColorWhite;
-					l_ColorWhite.red = 65535;
+					l_ColorWhite.red   = 65535;
 					l_ColorWhite.green = 65535;
-					l_ColorWhite.blue = 65535;
+					l_ColorWhite.blue  = 65535;
 					gtk_widget_modify_bg(l_pWidgetEventBox, GTK_STATE_NORMAL, &l_ColorWhite);
 					m_vEventBoxCache.emplace_back(l_pWidgetEventBox, l_ColorWhite);
 
@@ -278,12 +268,12 @@ bool CBoxAlgorithmMatrixDisplay::process()
 			uint32_t l_ui32RowCount, l_ui32ColumnCount;
 			if (op_pMatrix->getDimensionCount() == 1)
 			{
-				l_ui32RowCount = 1;
+				l_ui32RowCount    = 1;
 				l_ui32ColumnCount = op_pMatrix->getDimensionSize(0);
 			}
 			else
 			{
-				l_ui32RowCount = op_pMatrix->getDimensionSize(0);
+				l_ui32RowCount    = op_pMatrix->getDimensionSize(0);
 				l_ui32ColumnCount = op_pMatrix->getDimensionSize(1);
 			}
 
@@ -303,14 +293,14 @@ bool CBoxAlgorithmMatrixDisplay::process()
 				for (uint32_t c = 0; c < l_ui32ColumnCount; c++)
 				{
 					double l_f64Value = op_pMatrix->getBuffer()[r * l_ui32ColumnCount + c];
-					m_f64MaxValue = (l_f64Value > m_f64MaxValue ? l_f64Value : m_f64MaxValue);
-					m_f64MinValue = (l_f64Value < m_f64MinValue ? l_f64Value : m_f64MinValue);
+					m_f64MaxValue     = (l_f64Value > m_f64MaxValue ? l_f64Value : m_f64MaxValue);
+					m_f64MinValue     = (l_f64Value < m_f64MinValue ? l_f64Value : m_f64MinValue);
 
 					if (m_bSymetricMinMax)
 					{
 						double l_f64MaxAbsValue = (fabs(m_f64MaxValue) > fabs(m_f64MinValue) ? fabs(m_f64MaxValue) : fabs(m_f64MinValue));
-						m_f64MaxValue = l_f64MaxAbsValue;
-						m_f64MinValue = -l_f64MaxAbsValue;
+						m_f64MaxValue           = l_f64MaxAbsValue;
+						m_f64MinValue           = -l_f64MaxAbsValue;
 					}
 				}
 			}
@@ -322,14 +312,14 @@ bool CBoxAlgorithmMatrixDisplay::process()
 					double l_f64Value = op_pMatrix->getBuffer()[r * l_ui32ColumnCount + c];
 					if (m_f64MaxValue != 0 || m_f64MinValue != 0) // if the first value ever sent is 0, both are 0, and we dont want to divide by 0 :)
 					{
-						double l_f64Step = ((l_f64Value - m_f64MinValue) / (m_f64MaxValue - m_f64MinValue)) * (m_GradientSteps - 1);
+						double l_f64Step    = ((l_f64Value - m_f64MinValue) / (m_f64MaxValue - m_f64MinValue)) * (m_GradientSteps - 1);
 						uint32_t l_ui32Step = uint32_t(l_f64Step);
 
 						// gtk_widget_modify_bg uses 16bit colors, the interpolated gradients gives 8bits colors.
 						GdkColor l_ColorEventBox;
-						l_ColorEventBox.red = uint16_t(m_MatrixInterpolatedColorGardient[l_ui32Step * 4 + 1] * 65535. / 100.);
+						l_ColorEventBox.red   = uint16_t(m_MatrixInterpolatedColorGardient[l_ui32Step * 4 + 1] * 65535. / 100.);
 						l_ColorEventBox.green = uint16_t(m_MatrixInterpolatedColorGardient[l_ui32Step * 4 + 2] * 65535. / 100.);
-						l_ColorEventBox.blue = uint16_t(m_MatrixInterpolatedColorGardient[l_ui32Step * 4 + 3] * 65535. / 100.);
+						l_ColorEventBox.blue  = uint16_t(m_MatrixInterpolatedColorGardient[l_ui32Step * 4 + 3] * 65535. / 100.);
 
 						if (!System::Memory::compare(&(m_vEventBoxCache[r * l_ui32ColumnCount + c].second), &l_ColorEventBox, sizeof(GdkColor)) && m_bShowColors)
 						{

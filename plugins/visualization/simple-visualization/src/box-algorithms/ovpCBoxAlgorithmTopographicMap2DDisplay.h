@@ -23,7 +23,7 @@ namespace OpenViBEPlugins
 			uint64_t getClockFrequency() override;
 			bool initialize() override;
 			bool uninitialize() override;
-			bool processInput(uint32_t ui32InputIndex) override;
+			bool processInput(const uint32_t ui32InputIndex) override;
 			bool processClock(OpenViBE::Kernel::IMessageClock& rMessageClock) override;
 			bool process() override;
 
@@ -31,11 +31,11 @@ namespace OpenViBEPlugins
 
 		protected:
 			OpenViBEToolkit::TStreamedMatrixDecoder<CBoxAlgorithmTopographicMap2DDisplay>* m_pDecoder = nullptr;
-			bool m_bFirstBufferReceived = false;
+			bool m_bFirstBufferReceived                                                               = false;
 
 			OpenViBE::Kernel::IAlgorithmProxy* m_pSphericalSplineInterpolation = nullptr;
-			CTopographicMapDatabase* m_pTopographicMapDatabase = nullptr;
-			CSignalDisplayDrawable* m_pTopographicMap2DView = nullptr; //main object used for the display (contains all the GUI code)
+			CTopographicMapDatabase* m_pTopographicMapDatabase                 = nullptr;
+			CSignalDisplayDrawable* m_pTopographicMap2DView                    = nullptr; //main object used for the display (contains all the GUI code)
 		private:
 			OpenViBEVisualizationToolkit::IVisualizationContext* m_visualizationContext = nullptr;
 		};
@@ -61,10 +61,9 @@ namespace OpenViBEPlugins
 			OpenViBE::CIdentifier getCreatedClass() const override { return OVP_ClassId_TopographicMap2DDisplay; }
 			OpenViBE::Plugins::IPluginObject* create() override { return new CBoxAlgorithmTopographicMap2DDisplay(); }
 
-			bool hasFunctionality(OpenViBE::CIdentifier functionalityIdentifier) const override { return functionalityIdentifier == OVD_Functionality_Visualization; }
+			bool hasFunctionality(const OpenViBE::CIdentifier functionalityIdentifier) const override { return functionalityIdentifier == OVD_Functionality_Visualization; }
 
-			bool getBoxPrototype(
-				OpenViBE::Kernel::IBoxProto& rPrototype) const override
+			bool getBoxPrototype(OpenViBE::Kernel::IBoxProto& rPrototype) const override
 			{
 				rPrototype.addSetting("Interpolation type", OVP_TypeId_SphericalLinearInterpolationType, "1");
 				rPrototype.addSetting("Delay (in s)", OV_TypeId_Float, "0");
@@ -73,7 +72,7 @@ namespace OpenViBEPlugins
 				return true;
 			}
 
-			_IsDerivedFromClass_Final_(OpenViBE::Plugins::IBoxAlgorithmDesc, OVP_ClassId_TopographicMap2DDisplayDesc);
+			_IsDerivedFromClass_Final_(OpenViBE::Plugins::IBoxAlgorithmDesc, OVP_ClassId_TopographicMap2DDisplayDesc)
 		};
-	} // namespace SimpleVisualization;
-} // namespace OpenViBEPlugins;
+	} // namespace SimpleVisualization
+} // namespace OpenViBEPlugins

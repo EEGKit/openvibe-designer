@@ -71,7 +71,7 @@ namespace
 
 	void on_button_setting_integer_pressed(GtkButton* button, gpointer data, const gint iOffset)
 	{
-		const IKernelContext& l_rKernelContext = static_cast<CSettingCollectionHelper*>(data)->m_rKernelContext;
+		const IKernelContext& l_rKernelContext = static_cast<CSettingCollectionHelper*>(data)->m_kernelContext;
 
 		vector<GtkWidget*> l_vWidget;
 		gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), collect_widget_cb, &l_vWidget);
@@ -96,7 +96,7 @@ namespace
 
 	void on_button_setting_float_pressed(GtkButton* button, gpointer data, const gdouble offset)
 	{
-		const IKernelContext& l_rKernelContext = static_cast<CSettingCollectionHelper*>(data)->m_rKernelContext;
+		const IKernelContext& l_rKernelContext = static_cast<CSettingCollectionHelper*>(data)->m_kernelContext;
 
 		vector<GtkWidget*> l_vWidget;
 		gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), collect_widget_cb, &l_vWidget);
@@ -121,7 +121,7 @@ namespace
 
 	void on_button_setting_filename_browse_pressed(GtkButton* button, gpointer data)
 	{
-		const IKernelContext& l_rKernelContext = static_cast<CSettingCollectionHelper*>(data)->m_rKernelContext;
+		const IKernelContext& l_rKernelContext = static_cast<CSettingCollectionHelper*>(data)->m_kernelContext;
 
 		vector<GtkWidget*> l_vWidget;
 		gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), collect_widget_cb, &l_vWidget);
@@ -147,7 +147,7 @@ namespace
 
 		if (gtk_dialog_run(GTK_DIALOG(widgetDialogOpen)) == GTK_RESPONSE_ACCEPT)
 		{
-			char* fileName = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widgetDialogOpen));
+			char* fileName     = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widgetDialogOpen));
 			char* l_pBackslash = nullptr;
 			while ((l_pBackslash = strchr(fileName, '\\')) != nullptr)
 			{
@@ -161,7 +161,7 @@ namespace
 
 	void on_button_setting_foldername_browse_pressed(GtkButton* button, gpointer data)
 	{
-		const IKernelContext& l_rKernelContext = static_cast<CSettingCollectionHelper*>(data)->m_rKernelContext;
+		const IKernelContext& l_rKernelContext = static_cast<CSettingCollectionHelper*>(data)->m_kernelContext;
 
 		vector<GtkWidget*> l_vWidget;
 		gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), collect_widget_cb, &l_vWidget);
@@ -186,7 +186,7 @@ namespace
 
 		if (gtk_dialog_run(GTK_DIALOG(widgetDialogOpen)) == GTK_RESPONSE_ACCEPT)
 		{
-			char* fileName = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widgetDialogOpen));
+			char* fileName     = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widgetDialogOpen));
 			char* l_pBackslash = nullptr;
 			while ((l_pBackslash = strchr(fileName, '\\')) != nullptr)
 			{
@@ -201,13 +201,13 @@ namespace
 
 	void on_button_setting_script_edit_pressed(GtkButton* button, gpointer data)
 	{
-		const IKernelContext& l_rKernelContext = static_cast<CSettingCollectionHelper*>(data)->m_rKernelContext;
+		const IKernelContext& l_rKernelContext = static_cast<CSettingCollectionHelper*>(data)->m_kernelContext;
 
 		vector<GtkWidget*> l_vWidget;
 		gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), collect_widget_cb, &l_vWidget);
 		GtkEntry* l_widget = GTK_ENTRY(l_vWidget[0]);
 
-		const CString fileName = l_rKernelContext.getConfigurationManager().expand(gtk_entry_get_text(l_widget));
+		const CString fileName         = l_rKernelContext.getConfigurationManager().expand(gtk_entry_get_text(l_widget));
 		const CString l_sEditorCommand = l_rKernelContext.getConfigurationManager().expand("${Designer_ScriptEditorCommand}");
 
 		if (l_sEditorCommand != CString(""))
@@ -263,10 +263,7 @@ namespace
 		map<GtkSpinButton*, uint32_t> vSpinButtonMap;
 	} SColorGradientData;
 
-	void on_gtk_widget_destroy_cb(GtkWidget* widget, gpointer /*data*/)
-	{
-		gtk_widget_destroy(widget);
-	}
+	void on_gtk_widget_destroy_cb(GtkWidget* widget, gpointer /*data*/) { gtk_widget_destroy(widget); }
 
 	void on_initialize_color_gradient(GtkWidget* widget, gpointer data);
 
@@ -276,8 +273,8 @@ namespace
 
 		uint32_t i;
 		const uint32_t ui32Steps = 100;
-		gint sizex = 0;
-		gint sizey = 0;
+		gint sizex               = 0;
+		gint sizey               = 0;
 		gdk_drawable_get_size(l_pUserData->pDrawingArea->window, &sizex, &sizey);
 
 		CMatrix l_oGradientMatrix;
@@ -286,7 +283,7 @@ namespace
 		l_oGradientMatrix.setDimensionSize(1, uint32_t(l_pUserData->vColorGradient.size()));
 		for (i = 0; i < l_pUserData->vColorGradient.size(); ++i)
 		{
-			l_oGradientMatrix[i * 4] = l_pUserData->vColorGradient[i].fPercent;
+			l_oGradientMatrix[i * 4]     = l_pUserData->vColorGradient[i].fPercent;
 			l_oGradientMatrix[i * 4 + 1] = l_pUserData->vColorGradient[i].oColor.red * 100. / 65535.;
 			l_oGradientMatrix[i * 4 + 2] = l_pUserData->vColorGradient[i].oColor.green * 100. / 65535.;
 			l_oGradientMatrix[i * 4 + 3] = l_pUserData->vColorGradient[i].oColor.blue * 100. / 65535.;
@@ -300,9 +297,9 @@ namespace
 
 		for (i = 0; i < ui32Steps; ++i)
 		{
-			l_oColor.red = guint(l_oInterpolatedMatrix[i * 4 + 1] * 65535 * .01);
+			l_oColor.red   = guint(l_oInterpolatedMatrix[i * 4 + 1] * 65535 * .01);
 			l_oColor.green = guint(l_oInterpolatedMatrix[i * 4 + 2] * 65535 * .01);
-			l_oColor.blue = guint(l_oInterpolatedMatrix[i * 4 + 3] * 65535 * .01);
+			l_oColor.blue  = guint(l_oInterpolatedMatrix[i * 4 + 3] * 65535 * .01);
 			gdk_gc_set_rgb_fg_color(l_pGC, &l_oColor);
 			gdk_draw_rectangle(l_pUserData->pDrawingArea->window, l_pGC, TRUE, (sizex * i) / ui32Steps, 0, (sizex * (i + 1)) / ui32Steps, sizey);
 		}
@@ -315,7 +312,7 @@ namespace
 
 		gtk_spin_button_update(button);
 
-		const uint32_t i = l_pUserData->vSpinButtonMap[button];
+		const uint32_t i                 = l_pUserData->vSpinButtonMap[button];
 		GtkSpinButton* l_pPrevSpinButton = (i > 0 ? l_pUserData->vColorGradient[i - 1].pSpinButton : nullptr);
 		GtkSpinButton* l_pNextSpinButton = (i < l_pUserData->vColorGradient.size() - 1 ? l_pUserData->vColorGradient[i + 1].pSpinButton : nullptr);
 		if (!l_pPrevSpinButton)
@@ -360,7 +357,7 @@ namespace
 
 		gtk_container_foreach(GTK_CONTAINER(l_pUserData->pContainer), on_gtk_widget_destroy_cb, nullptr);
 
-		uint32_t i = 0;
+		uint32_t i         = 0;
 		const size_t count = l_pUserData->vColorGradient.size();
 		l_pUserData->vColorButtonMap.clear();
 		l_pUserData->vSpinButtonMap.clear();
@@ -373,7 +370,7 @@ namespace
 			GtkWidget* l_widget = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-hbox"));
 
 			it->pColorButton = GTK_COLOR_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-colorbutton"));
-			it->pSpinButton = GTK_SPIN_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-spinbutton"));
+			it->pSpinButton  = GTK_SPIN_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-spinbutton"));
 
 			gtk_color_button_set_color(it->pColorButton, &it->oColor);
 			gtk_spin_button_set_value(it->pSpinButton, it->fPercent);
@@ -389,7 +386,7 @@ namespace
 			g_object_unref(l_pBuilderInterface);
 
 			l_pUserData->vColorButtonMap[it->pColorButton] = i;
-			l_pUserData->vSpinButtonMap[it->pSpinButton] = i;
+			l_pUserData->vSpinButtonMap[it->pSpinButton]   = i;
 		}
 
 		gtk_spin_button_set_value(l_pUserData->vColorGradient[0].pSpinButton, 0);
@@ -435,7 +432,7 @@ namespace
 
 		l_oUserData.pDialog = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-dialog"));
 
-		const CString l_sInitialGradient = static_cast<CSettingCollectionHelper*>(data)->m_rKernelContext.getConfigurationManager().expand(gtk_entry_get_text(l_widget));
+		const CString l_sInitialGradient = static_cast<CSettingCollectionHelper*>(data)->m_kernelContext.getConfigurationManager().expand(gtk_entry_get_text(l_widget));
 		CMatrix l_oInitialGradient;
 
 		OpenViBEVisualizationToolkit::Tools::ColorGradient::parse(l_oInitialGradient, l_sInitialGradient);
@@ -443,13 +440,13 @@ namespace
 		l_oUserData.vColorGradient.resize(l_oInitialGradient.getDimensionSize(1) > 2 ? l_oInitialGradient.getDimensionSize(1) : 2);
 		for (uint32_t i = 0; i < l_oInitialGradient.getDimensionSize(1); ++i)
 		{
-			l_oUserData.vColorGradient[i].fPercent = l_oInitialGradient[i * 4];
-			l_oUserData.vColorGradient[i].oColor.red = guint(l_oInitialGradient[i * 4 + 1] * .01 * 65535.);
+			l_oUserData.vColorGradient[i].fPercent     = l_oInitialGradient[i * 4];
+			l_oUserData.vColorGradient[i].oColor.red   = guint(l_oInitialGradient[i * 4 + 1] * .01 * 65535.);
 			l_oUserData.vColorGradient[i].oColor.green = guint(l_oInitialGradient[i * 4 + 2] * .01 * 65535.);
-			l_oUserData.vColorGradient[i].oColor.blue = guint(l_oInitialGradient[i * 4 + 3] * .01 * 65535.);
+			l_oUserData.vColorGradient[i].oColor.blue  = guint(l_oInitialGradient[i * 4 + 3] * .01 * 65535.);
 		}
 
-		l_oUserData.pContainer = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-vbox"));
+		l_oUserData.pContainer   = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-vbox"));
 		l_oUserData.pDrawingArea = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-drawingarea"));
 
 		g_signal_connect(G_OBJECT(l_oUserData.pDialog), "show", G_CALLBACK(on_initialize_color_gradient), &l_oUserData);
@@ -463,10 +460,10 @@ namespace
 			CMatrix l_oFinalGradient;
 			l_oFinalGradient.setDimensionCount(2);
 			l_oFinalGradient.setDimensionSize(0, 4);
-			l_oFinalGradient.setDimensionSize(1, size_t(l_oUserData.vColorGradient.size()));
+			l_oFinalGradient.setDimensionSize(1, uint32_t(l_oUserData.vColorGradient.size()));
 			for (uint32_t i = 0; i < l_oUserData.vColorGradient.size(); ++i)
 			{
-				l_oFinalGradient[i * 4] = l_oUserData.vColorGradient[i].fPercent;
+				l_oFinalGradient[i * 4]     = l_oUserData.vColorGradient[i].fPercent;
 				l_oFinalGradient[i * 4 + 1] = l_oUserData.vColorGradient[i].oColor.red * 100. / 65535.;
 				l_oFinalGradient[i * 4 + 2] = l_oUserData.vColorGradient[i].oColor.green * 100. / 65535.;
 				l_oFinalGradient[i * 4 + 3] = l_oUserData.vColorGradient[i].oColor.blue * 100. / 65535.;
@@ -483,7 +480,7 @@ namespace
 // ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- -----------
 
 CSettingCollectionHelper::CSettingCollectionHelper(const IKernelContext& rKernelContext, const char* sGUIFilename)
-	: m_rKernelContext(rKernelContext), m_sGUIFilename(sGUIFilename) { }
+	: m_kernelContext(rKernelContext), m_sGUIFilename(sGUIFilename) { }
 
 CSettingCollectionHelper::~CSettingCollectionHelper() = default;
 
@@ -491,17 +488,17 @@ CSettingCollectionHelper::~CSettingCollectionHelper() = default;
 
 CString CSettingCollectionHelper::getSettingWidgetName(const CIdentifier& rTypeIdentifier) const
 {
-	if (rTypeIdentifier == OV_TypeId_Boolean) return "settings_collection-hbox_setting_bool";
-	if (rTypeIdentifier == OV_TypeId_Integer) return "settings_collection-hbox_setting_integer";
+	if (rTypeIdentifier == OV_TypeId_Boolean) { return "settings_collection-hbox_setting_bool"; }
+	if (rTypeIdentifier == OV_TypeId_Integer) { return "settings_collection-hbox_setting_integer"; }
 	if (rTypeIdentifier == OV_TypeId_Float) { return "settings_collection-hbox_setting_float"; }
 	if (rTypeIdentifier == OV_TypeId_String) { return "settings_collection-entry_setting_string"; }
-	if (rTypeIdentifier == OV_TypeId_Filename) return "settings_collection-hbox_setting_filename";
+	if (rTypeIdentifier == OV_TypeId_Filename) { return "settings_collection-hbox_setting_filename"; }
 	if (rTypeIdentifier == OV_TypeId_Foldername) { return "settings_collection-hbox_setting_foldername"; }
 	if (rTypeIdentifier == OV_TypeId_Script) { return "settings_collection-hbox_setting_script"; }
 	if (rTypeIdentifier == OV_TypeId_Color) { return "settings_collection-hbox_setting_color"; }
 	if (rTypeIdentifier == OV_TypeId_ColorGradient) { return "settings_collection-hbox_setting_color_gradient"; }
-	if (m_rKernelContext.getTypeManager().isEnumeration(rTypeIdentifier)) { return "settings_collection-comboboxentry_setting_enumeration"; }
-	if (m_rKernelContext.getTypeManager().isBitMask(rTypeIdentifier)) { return "settings_collection-table_setting_bitmask"; }
+	if (m_kernelContext.getTypeManager().isEnumeration(rTypeIdentifier)) { return "settings_collection-comboboxentry_setting_enumeration"; }
+	if (m_kernelContext.getTypeManager().isBitMask(rTypeIdentifier)) { return "settings_collection-table_setting_bitmask"; }
 	return "settings_collection-entry_setting_string";
 }
 
@@ -517,9 +514,9 @@ CString CSettingCollectionHelper::getSettingEntryWidgetName(const CIdentifier& r
 	if (rTypeIdentifier == OV_TypeId_Foldername) { return "settings_collection-entry_setting_foldername_string"; }
 	if (rTypeIdentifier == OV_TypeId_Script) { return "settings_collection-entry_setting_script_string"; }
 	if (rTypeIdentifier == OV_TypeId_Color) { return "settings_collection-hbox_setting_color_string"; }
-	if (rTypeIdentifier == OV_TypeId_ColorGradient) return "settings_collection-hbox_setting_color_gradient_string";
-	if (m_rKernelContext.getTypeManager().isEnumeration(rTypeIdentifier)) return "settings_collection-comboboxentry_setting_enumeration";
-	if (m_rKernelContext.getTypeManager().isBitMask(rTypeIdentifier)) { return "settings_collection-table_setting_bitmask"; }
+	if (rTypeIdentifier == OV_TypeId_ColorGradient) { return "settings_collection-hbox_setting_color_gradient_string"; }
+	if (m_kernelContext.getTypeManager().isEnumeration(rTypeIdentifier)) { return "settings_collection-comboboxentry_setting_enumeration"; }
+	if (m_kernelContext.getTypeManager().isBitMask(rTypeIdentifier)) { return "settings_collection-table_setting_bitmask"; }
 	return "settings_collection-entry_setting_string";
 }
 
@@ -527,18 +524,18 @@ CString CSettingCollectionHelper::getSettingEntryWidgetName(const CIdentifier& r
 
 CString CSettingCollectionHelper::getValue(const CIdentifier& rTypeIdentifier, GtkWidget* widget) const
 {
-	if (!widget) return "";
+	if (!widget) { return ""; }
 	if (rTypeIdentifier == OV_TypeId_Boolean) { return getValueBoolean(widget); }
 	if (rTypeIdentifier == OV_TypeId_Integer) { return getValueInteger(widget); }
 	if (rTypeIdentifier == OV_TypeId_Float) { return getValueFloat(widget); }
 	if (rTypeIdentifier == OV_TypeId_String) { return getValueString(widget); }
-	if (rTypeIdentifier == OV_TypeId_Filename) return getValueFilename(widget);
+	if (rTypeIdentifier == OV_TypeId_Filename) { return getValueFilename(widget); }
 	if (rTypeIdentifier == OV_TypeId_Foldername) { return getValueFoldername(widget); }
 	if (rTypeIdentifier == OV_TypeId_Script) { return getValueScript(widget); }
 	if (rTypeIdentifier == OV_TypeId_Color) { return getValueColor(widget); }
 	if (rTypeIdentifier == OV_TypeId_ColorGradient) { return getValueColorGradient(widget); }
-	if (m_rKernelContext.getTypeManager().isEnumeration(rTypeIdentifier)) { return getValueEnumeration(rTypeIdentifier, widget); }
-	if (m_rKernelContext.getTypeManager().isBitMask(rTypeIdentifier)) { return getValueBitMask(rTypeIdentifier, widget); }
+	if (m_kernelContext.getTypeManager().isEnumeration(rTypeIdentifier)) { return getValueEnumeration(rTypeIdentifier, widget); }
+	if (m_kernelContext.getTypeManager().isBitMask(rTypeIdentifier)) { return getValueBitMask(rTypeIdentifier, widget); }
 	return getValueString(widget);
 }
 
@@ -555,7 +552,7 @@ CString CSettingCollectionHelper::getValueBoolean(GtkWidget* widget)
 CString CSettingCollectionHelper::getValueInteger(GtkWidget* widget)
 {
 	vector<GtkWidget*> l_vWidget;
-	if (!GTK_IS_CONTAINER(widget)) return "0";
+	if (!GTK_IS_CONTAINER(widget)) { return "0"; }
 	gtk_container_foreach(GTK_CONTAINER(widget), collect_widget_cb, &l_vWidget);
 	if (!GTK_IS_ENTRY(l_vWidget[0])) { return "O"; }
 	GtkEntry* l_widget = GTK_ENTRY(l_vWidget[0]);
@@ -574,7 +571,7 @@ CString CSettingCollectionHelper::getValueFloat(GtkWidget* widget)
 
 CString CSettingCollectionHelper::getValueString(GtkWidget* widget)
 {
-	if (!GTK_IS_ENTRY(widget)) return "";
+	if (!GTK_IS_ENTRY(widget)) { return ""; }
 	GtkEntry* l_widget = GTK_ENTRY(widget);
 	return CString(gtk_entry_get_text(l_widget));
 }
@@ -631,7 +628,7 @@ CString CSettingCollectionHelper::getValueColorGradient(GtkWidget* widget)
 
 CString CSettingCollectionHelper::getValueEnumeration(const CIdentifier& /*rTypeIdentifier*/, GtkWidget* widget)
 {
-	if (!GTK_IS_COMBO_BOX(widget)) return "";
+	if (!GTK_IS_COMBO_BOX(widget)) { return ""; }
 	GtkComboBox* l_widget = GTK_COMBO_BOX(widget);
 	return CString(gtk_combo_box_get_active_text(l_widget));
 }
@@ -639,7 +636,7 @@ CString CSettingCollectionHelper::getValueEnumeration(const CIdentifier& /*rType
 CString CSettingCollectionHelper::getValueBitMask(const CIdentifier& /*rTypeIdentifier*/, GtkWidget* widget)
 {
 	vector<GtkWidget*> l_vWidget;
-	if (!GTK_IS_CONTAINER(widget)) return "";
+	if (!GTK_IS_CONTAINER(widget)) { return ""; }
 	gtk_container_foreach(GTK_CONTAINER(widget), collect_widget_cb, &l_vWidget);
 	string l_sResult;
 
@@ -672,8 +669,8 @@ void CSettingCollectionHelper::setValue(const CIdentifier& rTypeIdentifier, GtkW
 	if (rTypeIdentifier == OV_TypeId_Script) { return setValueScript(widget, rValue); }
 	if (rTypeIdentifier == OV_TypeId_Color) { return setValueColor(widget, rValue); }
 	if (rTypeIdentifier == OV_TypeId_ColorGradient) { return setValueColorGradient(widget, rValue); }
-	if (m_rKernelContext.getTypeManager().isEnumeration(rTypeIdentifier)) { return setValueEnumeration(rTypeIdentifier, widget, rValue); }
-	if (m_rKernelContext.getTypeManager().isBitMask(rTypeIdentifier)) { return setValueBitMask(rTypeIdentifier, widget, rValue); }
+	if (m_kernelContext.getTypeManager().isEnumeration(rTypeIdentifier)) { return setValueEnumeration(rTypeIdentifier, widget, rValue); }
+	if (m_kernelContext.getTypeManager().isBitMask(rTypeIdentifier)) { return setValueBitMask(rTypeIdentifier, widget, rValue); }
 	return setValueString(widget, rValue);
 }
 
@@ -681,7 +678,7 @@ void CSettingCollectionHelper::setValueBoolean(GtkWidget* widget, const CString&
 {
 	vector<GtkWidget*> l_vWidget;
 	gtk_container_foreach(GTK_CONTAINER(widget), collect_widget_cb, &l_vWidget);
-	GtkEntry* l_pEntryWidget = GTK_ENTRY(l_vWidget[0]);
+	GtkEntry* l_pEntryWidget               = GTK_ENTRY(l_vWidget[0]);
 	GtkToggleButton* l_pToggleButtonWidget = GTK_TOGGLE_BUTTON(l_vWidget[1]);
 
 	if (rValue == CString("true"))
@@ -776,12 +773,12 @@ void CSettingCollectionHelper::setValueColor(GtkWidget* widget, const CString& r
 	g_signal_connect(G_OBJECT(l_vWidget[1]), "color-set", G_CALLBACK(on_button_setting_color_choose_pressed), this);
 
 	int r = 0, g = 0, b = 0;
-	sscanf(m_rKernelContext.getConfigurationManager().expand(rValue).toASCIIString(), "%i,%i,%i", &r, &g, &b);
+	sscanf(m_kernelContext.getConfigurationManager().expand(rValue).toASCIIString(), "%i,%i,%i", &r, &g, &b);
 
 	GdkColor l_oColor;
-	l_oColor.red = (r * 65535) / 100;
+	l_oColor.red   = (r * 65535) / 100;
 	l_oColor.green = (g * 65535) / 100;
-	l_oColor.blue = (b * 65535) / 100;
+	l_oColor.blue  = (b * 65535) / 100;
 	gtk_color_button_set_color(GTK_COLOR_BUTTON(l_vWidget[1]), &l_oColor);
 
 	gtk_entry_set_text(l_widget, rValue);
@@ -801,9 +798,9 @@ void CSettingCollectionHelper::setValueColorGradient(GtkWidget* widget, const CS
 void CSettingCollectionHelper::setValueEnumeration(const CIdentifier& rTypeIdentifier, GtkWidget* widget, const CString& rValue) const
 {
 	GtkTreeIter l_oListIter;
-	GtkComboBox* l_widget = GTK_COMBO_BOX(widget);
-	GtkListStore* l_pList = GTK_LIST_STORE(gtk_combo_box_get_model(l_widget));
-	const uint64_t l_ui64Value = m_rKernelContext.getTypeManager().getEnumerationEntryValueFromName(rTypeIdentifier, rValue);
+	GtkComboBox* l_widget      = GTK_COMBO_BOX(widget);
+	GtkListStore* l_pList      = GTK_LIST_STORE(gtk_combo_box_get_model(l_widget));
+	const uint64_t l_ui64Value = m_kernelContext.getTypeManager().getEnumerationEntryValueFromName(rTypeIdentifier, rValue);
 	uint64_t i;
 
 #if 0
@@ -813,11 +810,11 @@ void CSettingCollectionHelper::setValueEnumeration(const CIdentifier& rTypeIdent
 	std::map<CString, uint64_t> m_vListEntries;
 	std::map<CString, uint64_t>::const_iterator it;
 
-	for (i = 0; i < m_rKernelContext.getTypeManager().getEnumerationEntryCount(rTypeIdentifier); ++i)
+	for (i = 0; i < m_kernelContext.getTypeManager().getEnumerationEntryCount(rTypeIdentifier); ++i)
 	{
 		CString l_sEntryName;
 		uint64_t l_ui64EntryValue;
-		if (m_rKernelContext.getTypeManager().getEnumerationEntry(rTypeIdentifier, i, l_sEntryName, l_ui64EntryValue))
+		if (m_kernelContext.getTypeManager().getEnumerationEntry(rTypeIdentifier, i, l_sEntryName, l_ui64EntryValue))
 		{
 			m_vListEntries[l_sEntryName] = l_ui64EntryValue;
 		}
@@ -840,11 +837,11 @@ void CSettingCollectionHelper::setValueEnumeration(const CIdentifier& rTypeIdent
 	else
 	{
 		gtk_list_store_clear(l_pList);
-		for (i = 0; i < m_rKernelContext.getTypeManager().getEnumerationEntryCount(rTypeIdentifier); ++i)
+		for (i = 0; i < m_kernelContext.getTypeManager().getEnumerationEntryCount(rTypeIdentifier); ++i)
 		{
 			CString l_sEntryName;
 			uint64_t l_ui64EntryValue;
-			if (m_rKernelContext.getTypeManager().getEnumerationEntry(rTypeIdentifier, i, l_sEntryName, l_ui64EntryValue))
+			if (m_kernelContext.getTypeManager().getEnumerationEntry(rTypeIdentifier, i, l_sEntryName, l_ui64EntryValue))
 			{
 				gtk_list_store_append(l_pList, &l_oListIter);
 				gtk_list_store_set(l_pList, &l_oListIter, 0, l_sEntryName.toASCIIString(), -1);
@@ -871,15 +868,15 @@ void CSettingCollectionHelper::setValueBitMask(const CIdentifier& rTypeIdentifie
 
 	const string l_sValue(rValue);
 
-	const gint l_iTableSize = guint((m_rKernelContext.getTypeManager().getBitMaskEntryCount(rTypeIdentifier) + 1) >> 1);
+	const gint l_iTableSize   = guint((m_kernelContext.getTypeManager().getBitMaskEntryCount(rTypeIdentifier) + 1) >> 1);
 	GtkTable* l_pBitMaskTable = GTK_TABLE(widget);
 	gtk_table_resize(l_pBitMaskTable, 2, l_iTableSize);
 
-	for (uint64_t i = 0; i < m_rKernelContext.getTypeManager().getBitMaskEntryCount(rTypeIdentifier); ++i)
+	for (uint64_t i = 0; i < m_kernelContext.getTypeManager().getBitMaskEntryCount(rTypeIdentifier); ++i)
 	{
 		CString l_sEntryName;
 		uint64_t l_ui64EntryValue;
-		if (m_rKernelContext.getTypeManager().getBitMaskEntry(rTypeIdentifier, i, l_sEntryName, l_ui64EntryValue))
+		if (m_kernelContext.getTypeManager().getBitMaskEntry(rTypeIdentifier, i, l_sEntryName, l_ui64EntryValue))
 		{
 			GtkWidget* l_pSettingButton = gtk_check_button_new();
 			gtk_table_attach_defaults(l_pBitMaskTable, l_pSettingButton, guint(i & 1), guint((i & 1) + 1), guint(i >> 1), guint((i >> 1) + 1));

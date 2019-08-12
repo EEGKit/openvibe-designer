@@ -48,7 +48,7 @@ void CRenderer::setChannelLocalisation(const char* sFilename)
 
 void CRenderer::setChannelCount(const uint32_t channelCount)
 {
-	m_channelCount = channelCount;
+	m_channelCount        = channelCount;
 	m_inverseChannelCount = (channelCount ? 1.f / channelCount : 1);
 	m_vertex.clear();
 	m_mesh.clear();
@@ -59,21 +59,17 @@ void CRenderer::setChannelCount(const uint32_t channelCount)
 	m_history.resize(channelCount);
 }
 
-void CRenderer::setSampleCount(uint32_t sampleCount)
+void CRenderer::setSampleCount(const uint32_t sampleCount)
 {
-	if (sampleCount == 0) { sampleCount = 1; }
-	m_sampleCount = sampleCount;
-	m_inverseSampleCount = (sampleCount ? 1.f / sampleCount : 1);
+	m_sampleCount        = sampleCount == 0 ? 1 : sampleCount;
+	m_inverseSampleCount = (m_sampleCount ? 1.f / m_sampleCount : 1);
 	m_vertex.clear();
 	m_mesh.clear();
 }
 
 void CRenderer::feed(const float* pDataVector)
 {
-	for (uint32_t i = 0; i < m_channelCount; ++i)
-	{
-		m_history[i].push_back(pDataVector[i]);
-	}
+	for (uint32_t i = 0; i < m_channelCount; ++i) { m_history[i].push_back(pDataVector[i]); }
 	m_historyCount++;
 }
 
@@ -90,7 +86,7 @@ void CRenderer::feed(const float* pDataVector, const uint32_t sampleCount)
 	m_historyCount += sampleCount;
 }
 
-void CRenderer::feed(const uint64_t stimulationDate, uint64_t stimulationId)
+void CRenderer::feed(const uint64_t stimulationDate, const uint64_t stimulationId)
 {
 	m_stimulationHistory.emplace_back((stimulationDate >> 16) / 65536., stimulationId);
 }
@@ -167,7 +163,7 @@ uint32_t CRenderer::getHistoryIndex() const { return m_historyIndex; }
 void CRenderer::setHistoryDrawIndex(const uint32_t index)
 {
 	m_historyDrawIndex = index;
-	m_historyIndex = 0;
+	m_historyIndex     = 0;
 }
 
 bool CRenderer::getSampleAtERPFraction(const float fERPFraction, std::vector<float>& vSample) const
@@ -176,15 +172,15 @@ bool CRenderer::getSampleAtERPFraction(const float fERPFraction, std::vector<flo
 
 	if (m_sampleCount > m_historyCount) { return false; }
 
-	const float sampleIndexERP = (fERPFraction * float(m_sampleCount - 1));
-	const float alpha = sampleIndexERP - std::floor(sampleIndexERP);
+	const float sampleIndexERP     = (fERPFraction * float(m_sampleCount - 1));
+	const float alpha              = sampleIndexERP - std::floor(sampleIndexERP);
 	const uint32_t sampleIndexERP1 = uint32_t(sampleIndexERP) % m_sampleCount;
 	const uint32_t sampleIndexERP2 = uint32_t(sampleIndexERP + 1) % m_sampleCount;
 
 	for (uint32_t i = 0; i < m_channelCount; ++i)
 	{
 		vSample[i] = m_history[i][m_historyCount - m_sampleCount + sampleIndexERP1] * (1 - alpha)
-			+ m_history[i][m_historyCount - m_sampleCount + sampleIndexERP2] * (alpha);
+					 + m_history[i][m_historyCount - m_sampleCount + sampleIndexERP2] * (alpha);
 	}
 
 	return true;
@@ -196,12 +192,12 @@ void CRenderer::refresh(const IRendererContext& rContext)
 {
 	if (!m_sampleCount)
 	{
-		m_ERPFraction = 0;
+		m_ERPFraction    = 0;
 		m_sampleIndexERP = 0;
 		return;
 	}
 
-	m_ERPFraction = rContext.getERPFraction();
+	m_ERPFraction    = rContext.getERPFraction();
 	m_sampleIndexERP = uint32_t(m_ERPFraction * float(m_sampleCount - 1)) % m_sampleCount;
 }
 

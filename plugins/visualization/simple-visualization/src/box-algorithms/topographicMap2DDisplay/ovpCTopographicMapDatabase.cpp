@@ -59,7 +59,7 @@ bool CTopographicMapDatabase::onChannelLocalisationBufferReceived(const uint32_t
 	if (!m_bChannelLookupTableInitialized || m_oChannelLocalisationStreamedCoords.empty() || m_i64NbElectrodes == 0)
 	{
 		m_oParentPlugin.getLogManager() << LogLevel_Warning
-			<< "Channel localisation buffer received before channel lookup table was initialized! Can't process buffer!\n";
+				<< "Channel localisation buffer received before channel lookup table was initialized! Can't process buffer!\n";
 	}
 
 	//static electrode coordinates
@@ -75,9 +75,9 @@ bool CTopographicMapDatabase::onChannelLocalisationBufferReceived(const uint32_t
 			for (uint32_t i = 0; i < uint32_t(m_i64NbElectrodes); ++i)
 			{
 				const uint32_t l_ui32LookupIndex = m_oChannelLookupIndices[i];
-				m_electrodeCoords[3 * i] = *(l_pCoords + 3 * l_ui32LookupIndex);
-				m_electrodeCoords[3 * i + 1] = *(l_pCoords + 3 * l_ui32LookupIndex + 1);
-				m_electrodeCoords[3 * i + 2] = *(l_pCoords + 3 * l_ui32LookupIndex + 2);
+				m_electrodeCoords[3 * i]         = *(l_pCoords + 3 * l_ui32LookupIndex);
+				m_electrodeCoords[3 * i + 1]     = *(l_pCoords + 3 * l_ui32LookupIndex + 1);
+				m_electrodeCoords[3 * i + 2]     = *(l_pCoords + 3 * l_ui32LookupIndex + 2);
 			}
 
 			//electrode coordinates initialized : it is now possible to interpolate potentials
@@ -116,16 +116,13 @@ bool CTopographicMapDatabase::processValues()
 	//retrieve electrode values
 	//determine what buffer to use from delay
 	uint32_t l_ui32BufferIndex;
-	const uint64_t currentTime = m_oParentPlugin.getPlayerContext().getCurrentTime();
+	const uint64_t currentTime       = m_oParentPlugin.getPlayerContext().getCurrentTime();
 	const uint64_t l_ui64DisplayTime = currentTime - m_delay;
 	getBufferIndexFromTime(l_ui64DisplayTime, l_ui32BufferIndex);
 
 	//determine what sample to use
 	uint64_t l_ui64SampleIndex;
-	if (l_ui64DisplayTime <= m_oStartTime[l_ui32BufferIndex])
-	{
-		l_ui64SampleIndex = 0;
-	}
+	if (l_ui64DisplayTime <= m_oStartTime[l_ui32BufferIndex]) { l_ui64SampleIndex = 0; }
 	else if (l_ui64DisplayTime >= m_oEndTime[l_ui32BufferIndex])
 	{
 		l_ui64SampleIndex = m_pDimensionSizes[1] - 1;
@@ -289,24 +286,24 @@ bool CTopographicMapDatabase::checkElectrodeCoordinates()
 			CString l_sChannelLabel;
 			getChannelLabel(i, l_sChannelLabel);
 			m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager()
-				<< LogLevel_Error
-				<< "Couldn't retrieve coordinates of electrode #" << i
-				<< "(" << l_sChannelLabel << "), aborting model frame electrode coordinates computation\n";
+					<< LogLevel_Error
+					<< "Couldn't retrieve coordinates of electrode #" << i
+					<< "(" << l_sChannelLabel << "), aborting model frame electrode coordinates computation\n";
 			return false;
 		}
 
 #define MY_THRESHOLD 0.01
 		if (fabs(l_pNormalizedChannelCoords[0] * l_pNormalizedChannelCoords[0] +
-			l_pNormalizedChannelCoords[1] * l_pNormalizedChannelCoords[1] +
-			l_pNormalizedChannelCoords[2] * l_pNormalizedChannelCoords[2] - 1.) > MY_THRESHOLD)
+				 l_pNormalizedChannelCoords[1] * l_pNormalizedChannelCoords[1] +
+				 l_pNormalizedChannelCoords[2] * l_pNormalizedChannelCoords[2] - 1.) > MY_THRESHOLD)
 #undef MY_THRESHOLD
 		{
 			CString l_sChannelLabel;
 			getChannelLabel(i, l_sChannelLabel);
 			m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager()
-				<< LogLevel_Error
-				<< "Coordinates of electrode #" << i
-				<< "(" << l_sChannelLabel << "), are not normalized, aborting model frame electrode coordinates computation\n";
+					<< LogLevel_Error
+					<< "Coordinates of electrode #" << i
+					<< "(" << l_sChannelLabel << "), are not normalized, aborting model frame electrode coordinates computation\n";
 			return false;
 		}
 	}

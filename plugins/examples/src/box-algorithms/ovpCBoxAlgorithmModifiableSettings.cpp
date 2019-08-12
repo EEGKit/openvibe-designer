@@ -8,16 +8,10 @@ using namespace Plugins;
 using namespace OpenViBEPlugins;
 using namespace Examples;
 
-bool CBoxAlgorithmModifiableSettings::initialize()
-{
-	return true;
-}
+bool CBoxAlgorithmModifiableSettings::initialize() { return true; }
 /*******************************************************************************/
 
-bool CBoxAlgorithmModifiableSettings::uninitialize()
-{
-	return true;
-}
+bool CBoxAlgorithmModifiableSettings::uninitialize() { return true; }
 /*******************************************************************************/
 
 
@@ -56,7 +50,4 @@ bool CBoxAlgorithmModifiableSettings::updateSettings()
 }
 
 
-bool CBoxAlgorithmModifiableSettings::process()
-{
-	return true;
-}
+bool CBoxAlgorithmModifiableSettings::process() { return true; }

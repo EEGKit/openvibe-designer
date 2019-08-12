@@ -63,8 +63,8 @@ namespace OpenViBEDesigner
 		void testCB() const;
 		void newScenarioCB();
 		void openScenarioCB();
-		void saveScenarioCB(CInterfacedScenario* interfacedScenario = nullptr); // defaults to current scenario if NULL
-		void saveScenarioAsCB(CInterfacedScenario* interfacedScenario = nullptr); // defaults to current scenario if NULL
+		void saveScenarioCB(CInterfacedScenario* interfacedScenario = nullptr); // defaults to current scenario if nullptr
+		void saveScenarioAsCB(CInterfacedScenario* interfacedScenario = nullptr); // defaults to current scenario if nullptr
 		void closeScenarioCB(CInterfacedScenario* interfacedScenario);
 		void restoreDefaultScenariosCB() const;
 
@@ -141,7 +141,7 @@ namespace OpenViBEDesigner
 		void zoomOutCB();//Call when a zoom out is required
 		void spinnerZoomChangedCB(uint32_t scaleDelta);
 
-		const OpenViBE::Kernel::IKernelContext& m_KernelContext;
+		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
 		OpenViBE::Kernel::IPluginManager* m_pPluginManager = nullptr;
 		OpenViBE::Kernel::IScenarioManager* m_pScenarioManager = nullptr;
 		OpenViBEVisualizationToolkit::IVisualizationManager* m_pVisualizationManager = nullptr;
@@ -190,8 +190,8 @@ namespace OpenViBEDesigner
 		std::vector<const OpenViBE::Plugins::IPluginObjectDesc*> m_vUpdatedBoxes;
 		std::vector<std::string> m_vDocumentedBoxes;
 #ifdef MENSIA_DISTRIBUTION
-		Mensia::CArchwayHandler* m_pArchwayHandler;
-		Mensia::CArchwayHandlerGUI* m_pArchwayHandlerGUI;
+		Mensia::CArchwayHandler* m_pArchwayHandler = nullptr;
+		Mensia::CArchwayHandlerGUI* m_pArchwayHandlerGUI = nullptr;
 #endif
 	};
 }

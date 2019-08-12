@@ -21,8 +21,7 @@ using namespace std;
 CBufferDatabase::CBufferDatabase(TBoxAlgorithm<IBoxAlgorithm>& oPlugin)
 	: m_oParentPlugin(oPlugin), m_oDisplayMode(OVP_TypeId_SignalDisplayMode_Scan)
 {
-	m_pChannelLocalisationStreamDecoder = &m_oParentPlugin.getAlgorithmManager().getAlgorithm(
-		m_oParentPlugin.getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_ChannelLocalisationStreamDecoder));
+	m_pChannelLocalisationStreamDecoder = &m_oParentPlugin.getAlgorithmManager().getAlgorithm(m_oParentPlugin.getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_ChannelLocalisationStreamDecoder));
 
 	m_pChannelLocalisationStreamDecoder->initialize();
 
@@ -58,8 +57,7 @@ CBufferDatabase::~CBufferDatabase()
 bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer* pMemoryBuffer, uint64_t ui64StartTime, uint64_t ui64EndTime)
 {
 	//feed memory buffer to decoder
-	m_pChannelLocalisationStreamDecoder->getInputParameter(
-		OVP_GD_Algorithm_ChannelLocalisationStreamDecoder_InputParameterId_MemoryBufferToDecode)->setReferenceTarget(&pMemoryBuffer);
+	m_pChannelLocalisationStreamDecoder->getInputParameter(OVP_GD_Algorithm_ChannelLocalisationStreamDecoder_InputParameterId_MemoryBufferToDecode)->setReferenceTarget(&pMemoryBuffer);
 
 	//process buffer
 	m_pChannelLocalisationStreamDecoder->process();
@@ -98,7 +96,7 @@ bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer*
 		else
 		{
 			m_oParentPlugin.getLogManager() << LogLevel_Error
-				<< "Wrong size found for dimension 1 of Channel localisation header! Can't process header!\n";
+					<< "Wrong size found for dimension 1 of Channel localisation header! Can't process header!\n";
 			return false;
 		}
 
@@ -198,9 +196,9 @@ bool CBufferDatabase::adjustNumberOfDisplayedBuffers(const double f64NumberOfSec
 
 	if (f64NumberOfSecondsToDisplay > 0)
 	{
-		m_totalDuration = f64NumberOfSecondsToDisplay;
+		m_totalDuration   = f64NumberOfSecondsToDisplay;
 		m_ovTotalDuration = 0;
-		m_totalStep = 0;
+		m_totalStep       = 0;
 	}
 
 	//return if buffer length is not known yet
@@ -212,7 +210,7 @@ bool CBufferDatabase::adjustNumberOfDisplayedBuffers(const double f64NumberOfSec
 	l_ui64NewNumberOfBufferToDisplay = (l_ui64NewNumberOfBufferToDisplay == 0) ? 1 : l_ui64NewNumberOfBufferToDisplay;
 	if (l_ui64NewNumberOfBufferToDisplay != m_bufferToDisplayCount || f64NumberOfSecondsToDisplay <= 0)
 	{
-		m_bufferToDisplayCount = l_ui64NewNumberOfBufferToDisplay;
+		m_bufferToDisplayCount            = l_ui64NewNumberOfBufferToDisplay;
 		l_bNumberOfBufferToDisplayChanged = true;
 
 		//if new number of buffers decreased, resize lists and destroy useless buffers
@@ -304,9 +302,9 @@ bool CBufferDatabase::setMatrixBuffer(const double* pBuffer, const uint64_t ui64
 	if (ui64StartTime < m_ui64LastBufferEndTime && !m_bWarningPrinted)
 	{
 		m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Warning << "Your signal does not appear to be continuous in time. "
-			<< "Previously inserted buffer ended at " << ITimeArithmetics::timeToSeconds(m_ui64LastBufferEndTime)
-			<< "s, the current starts at " << ITimeArithmetics::timeToSeconds(ui64StartTime)
-			<< "s. The display may be incorrect.\n";
+				<< "Previously inserted buffer ended at " << ITimeArithmetics::timeToSeconds(m_ui64LastBufferEndTime)
+				<< "s, the current starts at " << ITimeArithmetics::timeToSeconds(ui64StartTime)
+				<< "s. The display may be incorrect.\n";
 		m_bWarningPrinted = true;
 	}
 	m_ui64LastBufferEndTime = ui64EndTime;
@@ -329,12 +327,12 @@ bool CBufferDatabase::setMatrixBuffer(const double* pBuffer, const uint64_t ui64
 
 		//computes the sampling frequency for sanity checking or if the setter has not been called
 		const uint64_t l_ui64SampleDuration = (uint64_t(1) << 32) * m_pDimensionSizes[1];
-		uint32_t l_ui32EstimatedFrequency = uint32_t(l_ui64SampleDuration / m_ui64BufferDuration);
+		uint32_t l_ui32EstimatedFrequency   = uint32_t(l_ui64SampleDuration / m_ui64BufferDuration);
 		if (l_ui32EstimatedFrequency == 0)
 		{
 			// Complain if estimate is bad
 			m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Warning << "The integer sampling frequency was estimated from the chunk size to be 0"
-				<< " (nSamples " << m_pDimensionSizes[1] << " / bufferLength " << ITimeArithmetics::timeToSeconds(m_ui64BufferDuration) << "s = 0). This is not supported. Forcing the rate to 1. This may lead to problems.\n";
+					<< " (nSamples " << m_pDimensionSizes[1] << " / bufferLength " << ITimeArithmetics::timeToSeconds(m_ui64BufferDuration) << "s = 0). This is not supported. Forcing the rate to 1. This may lead to problems.\n";
 			l_ui32EstimatedFrequency = 1;
 		}
 		if (m_ui32SamplingFrequency == 0)
@@ -345,7 +343,7 @@ bool CBufferDatabase::setMatrixBuffer(const double* pBuffer, const uint64_t ui64
 		if (m_ui32SamplingFrequency != l_ui32EstimatedFrequency)
 		{
 			m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Warning
-				<< "Sampling rate [" << l_ui32EstimatedFrequency << "] suggested by chunk properties differs from stream-specified rate [" << m_ui32SamplingFrequency << "]. There may be a problem with an upstream box. Trying to use the estimated rate.\n";
+					<< "Sampling rate [" << l_ui32EstimatedFrequency << "] suggested by chunk properties differs from stream-specified rate [" << m_ui32SamplingFrequency << "]. There may be a problem with an upstream box. Trying to use the estimated rate.\n";
 			m_ui32SamplingFrequency = l_ui32EstimatedFrequency;
 		}
 
@@ -377,7 +375,7 @@ bool CBufferDatabase::setMatrixBuffer(const double* pBuffer, const uint64_t ui64
 		}
 	}
 
-	double* l_pBufferToWrite = nullptr;
+	double* l_pBufferToWrite                      = nullptr;
 	const uint64_t l_ui64NumberOfSamplesPerBuffer = m_pDimensionSizes[0] * m_pDimensionSizes[1];
 
 	//if old buffers need to be removed
@@ -534,7 +532,7 @@ bool CBufferDatabase::getElectrodePosition(const uint32_t ui32ElectrodeIndex, do
 	{
 		//if(m_bCartesianStreamedCoords == true)
 		//{
-		*pElectrodePosition = *(m_oChannelLocalisationStreamedCoords[0].first->getBuffer() + 3 * ui32ElectrodeIndex);
+		*pElectrodePosition       = *(m_oChannelLocalisationStreamedCoords[0].first->getBuffer() + 3 * ui32ElectrodeIndex);
 		*(pElectrodePosition + 1) = *(m_oChannelLocalisationStreamedCoords[0].first->getBuffer() + 3 * ui32ElectrodeIndex + 1);
 		*(pElectrodePosition + 2) = *(m_oChannelLocalisationStreamedCoords[0].first->getBuffer() + 3 * ui32ElectrodeIndex + 2);
 		//}
@@ -552,7 +550,7 @@ bool CBufferDatabase::getElectrodePosition(const CString& rElectrodeLabel, doubl
 		{
 			//if(m_bCartesianStreamedCoords == true)
 			//{
-			*pElectrodePosition = *(m_oChannelLocalisationStreamedCoords[0].first->getBuffer() + 3 * i);
+			*pElectrodePosition       = *(m_oChannelLocalisationStreamedCoords[0].first->getBuffer() + 3 * i);
 			*(pElectrodePosition + 1) = *(m_oChannelLocalisationStreamedCoords[0].first->getBuffer() + 3 * i + 1);
 			*(pElectrodePosition + 2) = *(m_oChannelLocalisationStreamedCoords[0].first->getBuffer() + 3 * i + 2);
 			//}
@@ -660,10 +658,7 @@ bool CBufferDatabase::fillChannelLookupTable()
 		size_t firstNonWhitespaceChar = 0;
 		for (; firstNonWhitespaceChar < m_pDimensionLabels[0][i].size(); firstNonWhitespaceChar++)
 		{
-			if (isspace(m_pDimensionLabels[0][i][firstNonWhitespaceChar]) == 0)
-			{
-				break;
-			}
+			if (isspace(m_pDimensionLabels[0][i][firstNonWhitespaceChar]) == 0) { break; }
 		}
 
 		//trim trailing spaces
@@ -672,10 +667,7 @@ bool CBufferDatabase::fillChannelLookupTable()
 		{
 			for (lastNonWhitespaceChar = m_pDimensionLabels[0][i].size() - 1; lastNonWhitespaceChar >= 0; lastNonWhitespaceChar--)
 			{
-				if (isspace(m_pDimensionLabels[0][i][lastNonWhitespaceChar]) == 0)
-				{
-					break;
-				}
+				if (isspace(m_pDimensionLabels[0][i][lastNonWhitespaceChar]) == 0) { break; }
 			}
 		}
 
@@ -690,7 +682,7 @@ bool CBufferDatabase::fillChannelLookupTable()
 			{
 				if (strcmp(l_oChannelLabel.c_str(), m_oChannelLocalisationLabels[j].toASCIIString()) == 0)
 				{
-					l_bLabelRecognized = true;
+					l_bLabelRecognized         = true;
 					m_oChannelLookupIndices[i] = j;
 					break;
 				}
@@ -701,9 +693,9 @@ bool CBufferDatabase::fillChannelLookupTable()
 		if (!l_bLabelRecognized)
 		{
 			m_oParentPlugin.getLogManager() << LogLevel_Warning
-				<< "Unrecognized electrode name (index=" << uint32_t(i)
-				<< ", name=" << m_pDimensionLabels[0][i].c_str()
-				<< ")!\n";
+					<< "Unrecognized electrode name (index=" << uint32_t(i)
+					<< ", name=" << m_pDimensionLabels[0][i].c_str()
+					<< ")!\n";
 			res = false;
 		}
 	}

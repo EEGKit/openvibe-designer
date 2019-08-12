@@ -175,11 +175,11 @@ namespace OpenViBEPlugins
 
 			GtkBuilder* m_builderInterface = nullptr;
 
-			GtkWidget* m_drawingArea = nullptr;
-			GdkBitmap* m_clipmask = nullptr; //origin (m_skullX, m_skullY)
-			uint32_t m_clipmaskWidth = 0;
-			uint32_t m_clipmaskHeight = 0;
-			GdkGC* m_clipmaskGC = nullptr;
+			GtkWidget* m_drawingArea   = nullptr;
+			GdkBitmap* m_clipmask      = nullptr; //origin (m_skullX, m_skullY)
+			uint32_t m_clipmaskWidth   = 0;
+			uint32_t m_clipmaskHeight  = 0;
+			GdkGC* m_clipmaskGC        = nullptr;
 			GdkRegion* m_visibleRegion = nullptr; //reallocated whenever clipmask changes
 
 			GdkColor m_backgroundColor;
@@ -187,21 +187,21 @@ namespace OpenViBEPlugins
 			//! Active projection
 			ETopographicMap2DProjection m_currentProjection = TopographicMap2DProjection_Radial;
 			//! Projection radio buttons
-			GtkRadioToolButton* m_axialProjectionButton = nullptr;
+			GtkRadioToolButton* m_axialProjectionButton  = nullptr;
 			GtkRadioToolButton* m_radialProjectionButton = nullptr;
 
 			//! Active view
 			ETopographicMap2DView m_currentView = TopographicMap2DView_Top;
 			//! View radio buttons
-			GtkRadioToolButton* m_topViewButton = nullptr;
-			GtkRadioToolButton* m_leftViewButton = nullptr;
+			GtkRadioToolButton* m_topViewButton   = nullptr;
+			GtkRadioToolButton* m_leftViewButton  = nullptr;
 			GtkRadioToolButton* m_rightViewButton = nullptr;
-			GtkRadioToolButton* m_backViewButton = nullptr;
+			GtkRadioToolButton* m_backViewButton  = nullptr;
 
 			//! Interpolation type
-			uint64_t m_currentInterpolation = 0;
+			uint64_t m_currentInterpolation     = 0;
 			GtkRadioToolButton* m_mapPotentials = nullptr;
-			GtkRadioToolButton* m_mapCurrents = nullptr;
+			GtkRadioToolButton* m_mapCurrents   = nullptr;
 
 			//! Electrodes toggle button
 			GtkToggleToolButton* m_electrodesToggleButton = nullptr;
@@ -221,20 +221,20 @@ namespace OpenViBEPlugins
 			uint32_t m_minPaletteBarHeight = 10;
 			uint32_t m_maxPaletteBarHeight = 30;
 
-			uint32_t m_headWindowWidth = 0;
+			uint32_t m_headWindowWidth  = 0;
 			uint32_t m_headWindowHeight = 0;
 
-			uint32_t m_paletteWindowWidth = 0;
+			uint32_t m_paletteWindowWidth  = 0;
 			uint32_t m_paletteWindowHeight = 0;
 
-			uint32_t m_skullX = 0;
-			uint32_t m_skullY = 0;
+			uint32_t m_skullX        = 0;
+			uint32_t m_skullY        = 0;
 			uint32_t m_skullDiameter = 0;
 			//angles relative to 3 o'clock position, CCW, in degrees
 			float m_skullOutlineStartAngle = 0.0;
-			float m_skullOutlineEndAngle = 0.0;
-			float m_skullFillStartAngle = 0.0;
-			float m_skullFillEndAngle = 0.0;
+			float m_skullOutlineEndAngle   = 0.0;
+			float m_skullFillStartAngle    = 0.0;
+			float m_skullFillEndAngle      = 0.0;
 
 			//determined from m_ui32SkullOutlineEndAngle
 			uint32_t m_skullOutlineLeftPointX = 0;
@@ -261,8 +261,8 @@ namespace OpenViBEPlugins
 			/////////////////////////////
 			// BOTTOM VIEW
 			/////////////////////////////
-			uint32_t m_leftNeckX = 0;
-			uint32_t m_leftNeckY = 0;
+			uint32_t m_leftNeckX  = 0;
+			uint32_t m_leftNeckY  = 0;
 			uint32_t m_rightNeckX = 0;
 			uint32_t m_rightNeckY = 0;
 
@@ -280,14 +280,14 @@ namespace OpenViBEPlugins
 				 |
 				 + E
 			*/
-			uint32_t m_noseTopX = 0; //A
-			uint32_t m_noseTopY = 0;
-			uint32_t m_noseBumpX = 0; //B
-			uint32_t m_noseBumpY = 0;
-			uint32_t m_noseTipX = 0; //C
-			uint32_t m_noseTipY = 0;
-			uint32_t m_noseBaseX = 0; //D
-			uint32_t m_noseBaseY = 0;
+			uint32_t m_noseTopX    = 0; //A
+			uint32_t m_noseTopY    = 0;
+			uint32_t m_noseBumpX   = 0; //B
+			uint32_t m_noseBumpY   = 0;
+			uint32_t m_noseTipX    = 0; //C
+			uint32_t m_noseTipY    = 0;
+			uint32_t m_noseBaseX   = 0; //D
+			uint32_t m_noseBaseY   = 0;
 			uint32_t m_noseBottomX = 0; //E
 			uint32_t m_noseBottomY = 0;
 
@@ -305,7 +305,7 @@ namespace OpenViBEPlugins
 			 * It is pasted into the main pixmap everytime changes happen (window resizing, display options toggled on/off, etc)
 			 */
 			guchar* m_skullRGBBuffer = nullptr;
-			uint32_t m_rowStride = 0;
+			uint32_t m_rowStride     = 0;
 		};
-	} // namespace SimpleVisualization;
-}  // namespace OpenViBEPlugins;
+	} // namespace SimpleVisualization
+}  // namespace OpenViBEPlugins

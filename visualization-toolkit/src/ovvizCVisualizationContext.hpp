@@ -42,7 +42,7 @@ namespace OpenViBEVisualizationToolkit
 		bool isDerivedFromClass(const OpenViBE::CIdentifier& classIdentifier) const override
 		{
 			return ((classIdentifier == OVP_ClassId_Plugin_VisualizationContext)
-				|| IVisualizationContext::isDerivedFromClass(classIdentifier));
+					|| IVisualizationContext::isDerivedFromClass(classIdentifier));
 		}
 
 		OpenViBE::CIdentifier getClassIdentifier() const override { return OVP_ClassId_Plugin_VisualizationContext; }
@@ -84,7 +84,7 @@ namespace OpenViBEVisualizationToolkit
 		bool isDerivedFromClass(const OpenViBE::CIdentifier& classIdentifier) const override
 		{
 			return ((classIdentifier == OVP_ClassId_Plugin_VisualizationContextDesc)
-				|| IPluginObjectDesc::isDerivedFromClass(classIdentifier));
+					|| IPluginObjectDesc::isDerivedFromClass(classIdentifier));
 		}
 
 		OpenViBE::CIdentifier getClassIdentifier() const override { return OVP_ClassId_Plugin_VisualizationContextDesc; }
