@@ -290,7 +290,7 @@ bool CBoxAlgorithmViz::initialize()
 		settingIndex++;
 	}
 
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(::gtk_builder_get_object(m_pBuilder, "checkbutton_positive")), static_cast<gboolean>(m_bIsPositive));
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(::gtk_builder_get_object(m_pBuilder, "checkbutton_positive")), gboolean(m_bIsPositive));
 
 	// Parses color string
 	parseColor(m_oColor, m_sColor.toASCIIString());
@@ -333,7 +333,7 @@ bool CBoxAlgorithmViz::initialize()
 	}
 
 	// Shows / hides scale
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_pScaleVisible), static_cast<gboolean>(m_pRendererContext->getScaleVisibility()));
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_pScaleVisible), gboolean(m_pRendererContext->getScaleVisibility()));
 
 	// Reads channel localisation
 	if (m_sLocalisation != CString(""))
@@ -409,37 +409,38 @@ bool CBoxAlgorithmViz::uninitialize()
 
 bool CBoxAlgorithmViz::processClock(IMessageClock& /*rClock*/)
 {
-	const uint64_t l_ui64CurrentTime = this->getPlayerContext().getCurrentTime();
-	uint64_t l_ui64MinDeltaTime      = 0;
+	const uint64_t currentTime = this->getPlayerContext().getCurrentTime();
 
-	const uint64_t l_ui64MinDeltaTimeHighDefinition = (1LL << 32) / 16;
-	const uint64_t l_ui64MinDeltaTimeLowDefinition  = (1LL << 32);
-	const uint64_t l_ui64MinDeltaTimeLowDefinition2 = (1LL << 32) * 5;
+	const uint64_t minDeltaTimeHighDefinition = (1LL << 32) / 16;
+	const uint64_t minDeltaTimeLowDefinition  = (1LL << 32);
+	const uint64_t minDeltaTimeLowDefinition2 = (1LL << 32) * 5;
+
+	uint64_t minDeltaTime;
 	if (this->getPlayerContext().getStatus() == PlayerStatus_Play)
 	{
-		l_ui64MinDeltaTime = l_ui64MinDeltaTimeHighDefinition;
+		minDeltaTime = minDeltaTimeHighDefinition;
 	}
 	else
 	{
 		const auto l_f32CurrentFastForwardMaximumFactor = float(this->getPlayerContext().getCurrentFastForwardMaximumFactor());
 		if (l_f32CurrentFastForwardMaximumFactor <= m_fastForwardMaximumFactorHighDefinition)
 		{
-			l_ui64MinDeltaTime = l_ui64MinDeltaTimeHighDefinition;
+			minDeltaTime = minDeltaTimeHighDefinition;
 		}
 		else if (l_f32CurrentFastForwardMaximumFactor <= m_fastForwardMaximumFactorLowDefinition)
 		{
 			const float alpha  = (l_f32CurrentFastForwardMaximumFactor - m_fastForwardMaximumFactorHighDefinition) / (m_fastForwardMaximumFactorLowDefinition - m_fastForwardMaximumFactorHighDefinition);
-			l_ui64MinDeltaTime = uint64_t((l_ui64MinDeltaTimeLowDefinition * alpha) + l_ui64MinDeltaTimeHighDefinition * (1.f - alpha));
+			minDeltaTime = uint64_t((minDeltaTimeLowDefinition * alpha) + minDeltaTimeHighDefinition * (1.f - alpha));
 		}
 		else
 		{
-			l_ui64MinDeltaTime = l_ui64MinDeltaTimeLowDefinition2;
+			minDeltaTime = minDeltaTimeLowDefinition2;
 		}
 	}
 
-	if (l_ui64CurrentTime > m_ui64LastProcessTime + l_ui64MinDeltaTime || this->getPlayerContext().getStatus() == PlayerStatus_Step || this->getPlayerContext().getStatus() == PlayerStatus_Pause)
+	if (currentTime > m_ui64LastProcessTime + minDeltaTime || this->getPlayerContext().getStatus() == PlayerStatus_Step || this->getPlayerContext().getStatus() == PlayerStatus_Pause)
 	{
-		m_ui64LastProcessTime = l_ui64CurrentTime;
+		m_ui64LastProcessTime = currentTime;
 		this->m_bRedrawNeeded = true;
 		this->getBoxAlgorithmContext()->markAlgorithmAsReadyToProcess();
 	}
@@ -457,7 +458,7 @@ void CBoxAlgorithmViz::updateRulerVisibility()
 
 		if ((gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(m_pScaleVisible)) != 0) != m_bIsScaleVisible)
 		{
-			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_pScaleVisible), static_cast<gboolean>(m_bIsScaleVisible));
+			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_pScaleVisible), gboolean(m_bIsScaleVisible));
 		}
 
 		void (*l_fpAction)(GtkWidget*) = m_bIsScaleVisible ? gtk_widget_show : gtk_widget_hide;

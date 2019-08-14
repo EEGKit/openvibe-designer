@@ -147,8 +147,8 @@ namespace
 
 		if (gtk_dialog_run(GTK_DIALOG(widgetDialogOpen)) == GTK_RESPONSE_ACCEPT)
 		{
-			char* fileName     = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widgetDialogOpen));
-			char* l_pBackslash = nullptr;
+			char* fileName = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widgetDialogOpen));
+			char* l_pBackslash;
 			while ((l_pBackslash = strchr(fileName, '\\')) != nullptr)
 			{
 				*l_pBackslash = '/';
@@ -187,7 +187,7 @@ namespace
 		if (gtk_dialog_run(GTK_DIALOG(widgetDialogOpen)) == GTK_RESPONSE_ACCEPT)
 		{
 			char* fileName     = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widgetDialogOpen));
-			char* l_pBackslash = nullptr;
+			char* l_pBackslash;
 			while ((l_pBackslash = strchr(fileName, '\\')) != nullptr)
 			{
 				*l_pBackslash = '/';
@@ -212,16 +212,16 @@ namespace
 
 		if (l_sEditorCommand != CString(""))
 		{
-			CString l_sFullCommand = l_sEditorCommand + CString(" \"") + fileName + CString("\"");
+			CString fullCommand = l_sEditorCommand + CString(" \"") + fileName + CString("\"");
 #if defined TARGET_OS_Windows
-			l_sFullCommand = "START " + l_sFullCommand;
+			fullCommand = "START " + fullCommand;
 #elif defined TARGET_OS_Linux || defined TARGET_OS_MacOS
-			l_sFullCommand = l_sFullCommand + " &";
+			fullCommand = fullCommand + " &";
 #else
 #endif
-			if (system(l_sFullCommand.toASCIIString()) < 0)
+			if (system(fullCommand.toASCIIString()) < 0)
 			{
-				l_rKernelContext.getLogManager() << LogLevel_Warning << "Could not run command " << l_sFullCommand << "\n";
+				l_rKernelContext.getLogManager() << LogLevel_Warning << "Could not run command " << fullCommand << "\n";
 			}
 		}
 	}

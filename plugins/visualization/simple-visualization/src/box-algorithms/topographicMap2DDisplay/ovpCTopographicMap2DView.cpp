@@ -264,14 +264,14 @@ namespace OpenViBEPlugins
 			//reflect default interpolation type
 			m_topographicMapDatabase.setInterpolationType(m_currentInterpolation);
 			enableInterpolationButtonSignals(false);
-			gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(m_mapPotentials), static_cast<gboolean>(m_currentInterpolation == OVP_TypeId_SphericalLinearInterpolationType_Spline));
-			gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(m_mapCurrents), static_cast<gboolean>(m_currentInterpolation == OVP_TypeId_SphericalLinearInterpolationType_Laplacian));
+			gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(m_mapPotentials), gboolean(m_currentInterpolation == OVP_TypeId_SphericalLinearInterpolationType_Spline));
+			gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(m_mapCurrents), gboolean(m_currentInterpolation == OVP_TypeId_SphericalLinearInterpolationType_Laplacian));
 			enableInterpolationButtonSignals(true);
 
 			//hide electrodes by default
 			m_electrodesToggledOn = false;
 			enableElectrodeButtonSignals(false);
-			gtk_toggle_tool_button_set_active(m_electrodesToggleButton, static_cast<gboolean>(m_electrodesToggledOn));
+			gtk_toggle_tool_button_set_active(m_electrodesToggleButton, gboolean(m_electrodesToggledOn));
 			enableElectrodeButtonSignals(true);
 
 			//recompute sample points coordinates
@@ -923,16 +923,15 @@ namespace OpenViBEPlugins
 
 			//determine size of electrode rings
 			const double l_f64ElectrodeRingOverSkullSizeRatio = 0.05;
-			gint electrodeRingSize                            = gint(m_skullDiameter * l_f64ElectrodeRingOverSkullSizeRatio);
 
 #if 0
+			gint electrodeRingSize = gint(m_skullDiameter * l_f64ElectrodeRingOverSkullSizeRatio);
 			if (electrodeRingSize < (gint)electrodeRingMinSize) { electrodeRingSize = (gint)electrodeRingMinSize; }
 			else if (electrodeRingSize > (gint)electrodeRingMaxSize) { electrodeRingSize = (gint)electrodeRingMaxSize; }
-#else
-			electrodeRingSize = 5;
-#endif
-
 			if (electrodeRingSize == 0) { return; }
+#else
+			const gint electrodeRingSize = 5;
+#endif
 
 			GdkColor l_oWhite;
 			l_oWhite.red   = 65535;

@@ -203,7 +203,7 @@ namespace Mensia
 			uint64_t getClockFrequency() override { return (32LL << 32); }
 			bool initialize() override;
 			bool uninitialize() override;
-			bool processInput(const uint32_t /*index*/) override { return true; };
+			bool processInput(const uint32_t /*index*/) override { return true; }
 			bool processClock(OpenViBE::Kernel::IMessageClock& rClock) override;
 
 			virtual void redrawTopLevelWindow(const bool immediate = false) { m_oGtkGLWidget.redrawTopLevelWindow(immediate); }

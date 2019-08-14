@@ -52,7 +52,7 @@ bool Tools::ColorGradient::parse(IMatrix& colorGradient, const CString& string)
 
 	colorGradient.setDimensionCount(2);
 	colorGradient.setDimensionSize(0, 4);
-	colorGradient.setDimensionSize(1, static_cast<uint32_t>(colorGradientVector.size()));
+	colorGradient.setDimensionSize(1, uint32_t(colorGradientVector.size()));
 
 	uint32_t i = 0;
 	for (auto it = colorGradientVector.begin(); it != colorGradientVector.end(); ++it, i++)

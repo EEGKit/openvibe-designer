@@ -134,9 +134,9 @@ namespace Mensia
 
 		{
 			const IBox& l_rStaticBoxContext = this->getStaticBoxContext();
-			IBoxIO& l_rDynamicBoxContext    = this->getDynamicBoxContext();
+			IBoxIO& boxContext    = this->getDynamicBoxContext();
 
-			for (uint32_t i = 0; i < l_rDynamicBoxContext.getInputChunkCount(0); ++i)
+			for (uint32_t i = 0; i < boxContext.getInputChunkCount(0); ++i)
 			{
 				m_oMatrixDecoder.decode(i);
 
@@ -244,14 +244,14 @@ namespace Mensia
 				}
 				if (m_oMatrixDecoder.isBufferReceived())
 				{
-					m_time1                             = m_time2;
-					m_time2                             = l_rDynamicBoxContext.getInputChunkEndTime(0, i);
-					const uint64_t l_ui64SampleDuration = (m_time2 - m_time1) / sampleCount;
-					if ((l_ui64SampleDuration & ~0xf) != (m_pRendererContext->getSampleDuration() & ~0xf) && l_ui64SampleDuration != 0) // 0xf mask avoids rounding errors
+					m_time1                 = m_time2;
+					m_time2                 = boxContext.getInputChunkEndTime(0, i);
+					const uint64_t duration = (m_time2 - m_time1) / sampleCount;
+					if ((duration & ~0xf) != (m_pRendererContext->getSampleDuration() & ~0xf) && duration != 0) // 0xf mask avoids rounding errors
 					{
-						m_pRendererContext->setSampleDuration(l_ui64SampleDuration);
+						m_pRendererContext->setSampleDuration(duration);
 					}
-					m_pRendererContext->setSpectrumFrequencyRange(uint32_t((uint64_t(sampleCount) << 32) / (l_rDynamicBoxContext.getInputChunkEndTime(0, i) - l_rDynamicBoxContext.getInputChunkStartTime(0, i))));
+					m_pRendererContext->setSpectrumFrequencyRange(uint32_t((uint64_t(sampleCount) << 32) / (boxContext.getInputChunkEndTime(0, i) - boxContext.getInputChunkStartTime(0, i))));
 					m_pRendererContext->setMinimumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_pFrequencyBandMin))));
 					m_pRendererContext->setMaximumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_pFrequencyBandMax))));
 
@@ -268,10 +268,10 @@ namespace Mensia
 					// Adjust feeding depending on theoretical dates
 					if (m_pRendererContext->isTimeLocked() && m_pRendererContext->getSampleDuration())
 					{
-						auto l_ui32TheoreticalSampleCount = uint32_t(m_time2 / m_pRendererContext->getSampleDuration());
-						if (l_ui32TheoreticalSampleCount > m_pRenderer->getHistoryCount())
+						auto theoreticalSampleCount = uint32_t(m_time2 / m_pRendererContext->getSampleDuration());
+						if (theoreticalSampleCount > m_pRenderer->getHistoryCount())
 						{
-							m_pRenderer->prefeed(l_ui32TheoreticalSampleCount - m_pRenderer->getHistoryCount());
+							m_pRenderer->prefeed(theoreticalSampleCount - m_pRenderer->getHistoryCount());
 						}
 					}
 
@@ -282,32 +282,32 @@ namespace Mensia
 
 			if (l_rStaticBoxContext.getInputCount() > 1)
 			{
-				for (uint32_t i = 0; i < l_rDynamicBoxContext.getInputChunkCount(1); ++i)
+				for (size_t i = 0; i < boxContext.getInputChunkCount(1); ++i)
 				{
 					m_oStimulationDecoder.decode(i);
 					if (m_oStimulationDecoder.isBufferReceived())
 					{
-						OpenViBE::IStimulationSet* l_pStimulationSet = m_oStimulationDecoder.getOutputStimulationSet();
-						for (uint32_t j = 0; j < l_pStimulationSet->getStimulationCount(); j++)
+						OpenViBE::IStimulationSet* stimulationSet = m_oStimulationDecoder.getOutputStimulationSet();
+						for (size_t j = 0; j < stimulationSet->getStimulationCount(); j++)
 						{
-							m_pRenderer->feed(l_pStimulationSet->getStimulationDate(j), l_pStimulationSet->getStimulationIdentifier(j));
+							m_pRenderer->feed(stimulationSet->getStimulationDate(j), stimulationSet->getStimulationIdentifier(j));
 							m_bRedrawNeeded = true;
 						}
 					}
 				}
 			}
 
-			uint32_t rendererSampleCount = 0;
+			size_t rendererSampleCount = 0;
 			if (m_pRendererContext->isTimeLocked())
 			{
 				if (0 != m_pRendererContext->getSampleDuration())
 				{
-					rendererSampleCount = uint32_t(m_pRendererContext->getTimeScale() / m_pRendererContext->getSampleDuration());
+					rendererSampleCount = size_t(m_pRendererContext->getTimeScale() / m_pRendererContext->getSampleDuration());
 				}
 			}
 			else
 			{
-				rendererSampleCount = uint32_t(m_pRendererContext->getElementCount()); // *sampleCount;
+				rendererSampleCount = size_t(m_pRendererContext->getElementCount()); // *sampleCount;
 			}
 
 			if (rendererSampleCount != 0 && rendererSampleCount != m_pRenderer->getSampleCount())

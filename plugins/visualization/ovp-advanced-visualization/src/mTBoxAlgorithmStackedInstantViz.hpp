@@ -225,7 +225,7 @@ namespace Mensia
 								if (stringSize > 0)
 								{
 									std::unique_ptr<char[]> buffer(new char[stringSize]);
-									snprintf(buffer.get(), static_cast<size_t>(stringSize), "%.2f", frequencyValue);
+									snprintf(buffer.get(), size_t(stringSize), "%.2f", frequencyValue);
 									m_pRendererContext->setDimensionLabel(1, frequencyCount - frequency - 1, buffer.get());
 								}
 							}

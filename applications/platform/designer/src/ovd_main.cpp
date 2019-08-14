@@ -969,10 +969,9 @@ int main(int argc, char** argv)
 	// Avoids that after crashing, a mutex stays blocking
 	boost::interprocess::named_mutex::remove(MUTEX_NAME);
 	int ret = -1;
-	// try{ l_iRet = go(argc, argv); }
-	// catch (...) { std::cout << "Caught an exception at the very top...\nLeaving application!\n"; }
-	ret = go(argc, argv);
-	return ret;
+	try{ ret = go(argc, argv); }
+	catch (...) { std::cout << "Caught an exception at the very top...\nLeaving application!\n"; }
+	//return go(argc, argv);
 }
 
 #if defined TARGET_OS_Windows

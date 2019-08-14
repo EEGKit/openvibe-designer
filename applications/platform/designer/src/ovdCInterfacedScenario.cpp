@@ -957,7 +957,7 @@ void CInterfacedScenario::redrawScenarioLinkSettings(GtkWidget* pLinkTable, cons
 	}
 	g_list_free(l_pSettingWidgets);
 
-	uint32_t linkCount = (m_rScenario.*pfGetLinkCount)();
+	const uint32_t linkCount = (m_rScenario.*pfGetLinkCount)();
 
 	vLinkCallbackData.clear();
 	vLinkCallbackData.resize(linkCount);
@@ -1023,7 +1023,7 @@ void CInterfacedScenario::redrawScenarioLinkSettings(GtkWidget* pLinkTable, cons
 			gtk_misc_set_alignment(GTK_MISC(l_pEntryLinkName), 0.0, 0.5);
 			gtk_widget_set_sensitive(GTK_WIDGET(l_pEntryLinkName), GTK_SENSITIVITY_OFF);
 
-			gtk_table_attach(GTK_TABLE(pLinkTable), l_pEntryLinkName, 0, 1, linkIndex, linkIndex + 1, static_cast<GtkAttachOptions>(GTK_EXPAND | GTK_FILL), GTK_SHRINK, 4, 4);
+			gtk_table_attach(GTK_TABLE(pLinkTable), l_pEntryLinkName, 0, 1, linkIndex, linkIndex + 1, GtkAttachOptions(GTK_EXPAND | GTK_FILL), GTK_SHRINK, 4, 4);
 			gtk_table_attach(GTK_TABLE(pLinkTable), ioSettingComboboxType, 1, 2, linkIndex, linkIndex + 1, GTK_SHRINK, GTK_SHRINK, 4, 4);
 			gtk_table_attach(GTK_TABLE(pLinkTable), ioSettingButtonUp, 3, 4, linkIndex, linkIndex + 1, GTK_SHRINK, GTK_SHRINK, 4, 4);
 			gtk_table_attach(GTK_TABLE(pLinkTable), ioSettingButtonDown, 4, 5, linkIndex, linkIndex + 1, GTK_SHRINK, GTK_SHRINK, 4, 4);
@@ -1589,10 +1589,8 @@ void CInterfacedScenario::redraw(IComment& rComment)
 	gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[m_SelectedObjects.count(rComment.getIdentifier()) ? Color_CommentBorderSelected : Color_CommentBorder]);
 	gdk_draw_rounded_rectangle(l_widget->window, l_pDrawGC, FALSE, startX, startY, sizeX, sizeY, gint(round(16.0 * m_currentScale)));
 
-	PangoContext* l_pPangoContext = nullptr;
-	PangoLayout* l_pPangoLayout   = nullptr;
-	l_pPangoContext               = gtk_widget_get_pango_context(l_widget);
-	l_pPangoLayout                = pango_layout_new(l_pPangoContext);
+	PangoContext* l_pPangoContext = gtk_widget_get_pango_context(l_widget);
+	PangoLayout* l_pPangoLayout = pango_layout_new(l_pPangoContext);
 	pango_layout_set_alignment(l_pPangoLayout, PANGO_ALIGN_CENTER);
 	if (pango_parse_markup(rComment.getText().toASCIIString(), -1, 0, nullptr, nullptr, nullptr, nullptr))
 	{
@@ -1999,10 +1997,10 @@ void CInterfacedScenario::addScenarioInputCB()
 	this->redrawScenarioInputSettings();
 }
 
-void CInterfacedScenario::editScenarioInputCB(const unsigned int inputIndex)
+void CInterfacedScenario::editScenarioInputCB(const unsigned int index)
 
 {
-	CConnectorEditor l_oConnectorEditor(m_kernelContext, m_rScenario, Box_Input, inputIndex, "Edit Input", m_sGUIFilename.c_str());
+	CConnectorEditor l_oConnectorEditor(m_kernelContext, m_rScenario, Box_Input, index, "Edit Input", m_sGUIFilename.c_str());
 	if (l_oConnectorEditor.run()) { this->snapshotCB(); }
 
 	this->redrawScenarioInputSettings();

@@ -684,7 +684,7 @@ void CPlayerVisualization::drag_data_received_in_widget_cb(GtkWidget* pDstWidget
 	sscanf(reinterpret_cast<const char*>(gtk_selection_data_get_text(pSelectionData)), "%p", &srcWidget);
 
 	//retrieve source box and parent widgets
-	GtkWidget* srcBoxWidget = nullptr;
+	GtkWidget* srcBoxWidget;
 	do
 	{
 		srcBoxWidget = gtk_widget_get_parent(GTK_WIDGET(srcWidget));
@@ -697,7 +697,7 @@ void CPlayerVisualization::drag_data_received_in_widget_cb(GtkWidget* pDstWidget
 	if (srcParentWidget == nullptr) { return; }
 
 	//retrieve dest box and parent widgets
-	GtkWidget* dstBoxWidget = nullptr;
+	GtkWidget* dstBoxWidget;
 	do
 	{
 		dstBoxWidget = gtk_widget_get_parent(pDstWidget);

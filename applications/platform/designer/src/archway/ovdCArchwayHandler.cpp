@@ -326,7 +326,7 @@ bool CArchwayHandler::startEngineWithPipeline(unsigned int uiPipelineClassId, bo
 			std::string logMessages;
 
 			m_Archway->getPendingLogMessage(m_RunningPipelineId, &logLevel, messageBuffer, sizeof(messageBuffer));
-			m_KernelContext.getLogManager() << static_cast<ELogLevel>(logLevel) << messageBuffer;
+			m_KernelContext.getLogManager() << ELogLevel(logLevel) << messageBuffer;
 		}
 
 		if (!m_Archway->stopAllAcquisitionDevices())
@@ -409,7 +409,7 @@ bool CArchwayHandler::loopEngine()
 		std::string logMessages;
 
 		m_Archway->getPendingLogMessage(m_RunningPipelineId, &logLevel, messageBuffer, sizeof(messageBuffer));
-		m_KernelContext.getLogManager() << static_cast<ELogLevel>(logLevel) << messageBuffer;
+		m_KernelContext.getLogManager() << ELogLevel(logLevel) << messageBuffer;
 	}
 
 	if (!isPipelineRunning || isPipelineInErrorState)
