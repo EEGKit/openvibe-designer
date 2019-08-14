@@ -38,7 +38,7 @@ namespace OpenViBEDesigner
 		void clearSettingWrappersVector();
 		void removeSetting(const uint32_t settingIndex, bool shift = true);
 
-		int32_t getTableIndex(const uint32_t settingIndex);
+		int getTableIndex(const uint32_t settingIndex);
 
 		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
 		OpenViBE::Kernel::IBox& m_rBox;

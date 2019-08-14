@@ -381,7 +381,7 @@ void CBoxConfigurationDialog::addSetting(const uint32_t settingIndex)
 
 void CBoxConfigurationDialog::removeSetting(const uint32_t settingIndex, const bool shift)
 {
-	const int32_t tableIndex = getTableIndex(settingIndex);
+	const int tableIndex = getTableIndex(settingIndex);
 
 	if (tableIndex != -1)
 	{
@@ -427,7 +427,7 @@ void CBoxConfigurationDialog::removeSetting(const uint32_t settingIndex, const b
 	}
 }
 
-int32_t CBoxConfigurationDialog::getTableIndex(const uint32_t settingIndex)
+int CBoxConfigurationDialog::getTableIndex(const uint32_t settingIndex)
 {
 	uint32_t ui32TableIndex = 0;
 	for (auto it = m_vSettingViewVector.begin(); it != m_vSettingViewVector.end(); ++it, ++ui32TableIndex)

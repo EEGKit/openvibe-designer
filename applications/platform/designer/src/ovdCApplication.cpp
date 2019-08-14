@@ -2939,7 +2939,7 @@ void CApplication::CPUUsageCB()
 	}
 }
 
-void CApplication::changeCurrentScenario(const int32_t pageIndex)
+void CApplication::changeCurrentScenario(const int pageIndex)
 {
 	if (m_bIsQuitting) { return; }
 

@@ -376,7 +376,7 @@ typedef struct _SConfiguration
 	ECommandLineFlag m_eConfig            = CommandLineFlag_None;
 	bool m_help                           = false;
 	// to resolve warning: padding struct '_SConfiguration' with 4 bytes to align 'm_oTokenMap
-	int32_t m_i32StructPadding = 0;
+	int m_i32StructPadding = 0;
 	std::map<std::string, std::string> m_oTokenMap;
 } SConfiguration;
 

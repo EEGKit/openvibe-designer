@@ -265,7 +265,7 @@ void CLogListenerDesigner::log(const int64_t value)
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
 }
 
-void CLogListenerDesigner::log(const int32_t value)
+void CLogListenerDesigner::log(const int value)
 {
 	if (m_bIngnoreMessages) { return; }
 

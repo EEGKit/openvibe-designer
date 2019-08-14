@@ -321,8 +321,8 @@ namespace OpenViBEPlugins
 			double l_f64MinPotential, l_f64MaxPotential;
 			m_topographicMapDatabase.getLastBufferInterpolatedMinMaxValue(l_f64MinPotential, l_f64MaxPotential);
 
-			const int32_t l_colorStartIndex = 0;
-			const int32_t l_colorEndIndex   = s_nbColors - 1;
+			const int l_colorStartIndex = 0;
+			const int l_colorEndIndex   = s_nbColors - 1;
 
 			double l_f64InvPotentialStep = 0;
 
@@ -335,13 +335,13 @@ namespace OpenViBEPlugins
 			for (uint32_t i = 0; i < m_sampleValues.size(); ++i)
 			{
 				const double value = *(pSampleValuesMatrix->getBuffer() + i);
-				int32_t l_iColorIndex;
+				int l_iColorIndex;
 
 				if (value < l_f64MinPotential) { l_iColorIndex = 0; }
 				else if (value > l_f64MaxPotential) { l_iColorIndex = s_nbColors - 1; }
 				else //linear itp
 				{
-					l_iColorIndex = l_colorStartIndex + int32_t((value - l_f64MinPotential) * l_f64InvPotentialStep);
+					l_iColorIndex = l_colorStartIndex + int((value - l_f64MinPotential) * l_f64InvPotentialStep);
 					if (l_iColorIndex > s_nbColors - 1) { l_iColorIndex = s_nbColors - 1; }
 				}
 				m_sampleValues[i] = l_iColorIndex;

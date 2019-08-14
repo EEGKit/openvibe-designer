@@ -99,7 +99,7 @@ namespace OpenViBEDesigner
 		void log(const uint8_t value) override;
 
 		void log(const int64_t value) override;
-		void log(const int32_t value) override;
+		void log(const int value) override;
 		void log(const int16_t value) override;
 		void log(const int8_t value) override;
 

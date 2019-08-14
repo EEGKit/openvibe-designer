@@ -354,14 +354,14 @@ namespace Mensia
 						break;
 					default: break;
 				}
-				pBox->mouseButton(int32_t(pEvent->x), int32_t(pEvent->y), pEvent->button, l_iStatus);
+				pBox->mouseButton(int(pEvent->x), int(pEvent->y), pEvent->button, l_iStatus);
 				pBox->draw();
 				return TRUE;
 			}
 
 			static gboolean __motion_notify_cb(GtkWidget* /*pWidget*/, GdkEventMotion* pEvent, TBox* pBox)
 			{
-				pBox->mouseMotion(int32_t(pEvent->x), int32_t(pEvent->y));
+				pBox->mouseMotion(int(pEvent->x), int(pEvent->y));
 				return TRUE;
 			}
 

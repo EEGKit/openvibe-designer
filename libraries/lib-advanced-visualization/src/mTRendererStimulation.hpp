@@ -172,7 +172,7 @@ namespace Mensia
 			{
 				static float color[4];
 				const float alpha       = reverse<>(uint8_t(ui64Identifier & 255)) * 3.f / 255.f;
-				const auto alphai       = int32_t(alpha);
+				const auto alphai       = int(alpha);
 				color[(alphai + 0) % 3] = 1 - alpha / 3.f;
 				color[(alphai + 1) % 3] = alpha / 3.f;
 				color[(alphai + 2) % 3] = 0;

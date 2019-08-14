@@ -1292,8 +1292,8 @@ void CInterfacedScenario::redraw(IBox& box)
 		else { gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[l_iBoxInputBorderColor]); }
 		gdk_draw_polygon(l_widget->window, l_pDrawGC, FALSE, l_vPoint, 3);
 
-		int32_t x                     = xStart + i * (iCircleSpace + iCircleSize) + (iCircleSize >> 1) - m_viewOffsetX + l_iInputOffset;
-		int32_t y                     = yStart - (iCircleSize >> 1) - m_viewOffsetY;
+		int x                     = xStart + i * (iCircleSpace + iCircleSize) + (iCircleSize >> 1) - m_viewOffsetX + l_iInputOffset;
+		int y                     = yStart - (iCircleSize >> 1) - m_viewOffsetY;
 		CIdentifier l_oLinkIdentifier = m_rScenario.getNextLinkIdentifierToBoxInput(OV_UndefinedIdentifier, box.getIdentifier(), i);
 		while (l_oLinkIdentifier != OV_UndefinedIdentifier)
 		{
@@ -1430,8 +1430,8 @@ void CInterfacedScenario::redraw(IBox& box)
 
 		gdk_draw_polygon(l_widget->window, l_pDrawGC, FALSE, l_vPoint, 3);
 
-		int32_t x                     = xStart + i * (iCircleSpace + iCircleSize) + (iCircleSize >> 1) - m_viewOffsetX + l_iOutputOffset;
-		int32_t y                     = yStart + ySize + (iCircleSize >> 1) + 1 - m_viewOffsetY;
+		int x                     = xStart + i * (iCircleSpace + iCircleSize) + (iCircleSize >> 1) - m_viewOffsetX + l_iOutputOffset;
+		int y                     = yStart + ySize + (iCircleSize >> 1) + 1 - m_viewOffsetY;
 		CIdentifier l_oLinkIdentifier = m_rScenario.getNextLinkIdentifierFromBoxOutput(OV_UndefinedIdentifier, box.getIdentifier(), i);
 		while (l_oLinkIdentifier != OV_UndefinedIdentifier)
 		{
@@ -1931,7 +1931,7 @@ void CInterfacedScenario::addCommentCB(int x, int y)
 	l_oCommentProxy.setCenter(x - m_viewOffsetX, y - m_viewOffsetY);
 
 	// Aligns comemnts on grid
-	l_oCommentProxy.setCenter(int32_t((l_oCommentProxy.getXCenter() + 8) & 0xfffffff0L), int32_t((l_oCommentProxy.getYCenter() + 8) & 0xfffffff0L));
+	l_oCommentProxy.setCenter(int((l_oCommentProxy.getXCenter() + 8) & 0xfffffff0L), int((l_oCommentProxy.getYCenter() + 8) & 0xfffffff0L));
 
 	// Applies modifications before snapshot
 	l_oCommentProxy.apply();
@@ -2305,7 +2305,7 @@ void CInterfacedScenario::scenarioDrawingAreaDragDataReceivedCB(GdkDragContext* 
 		CBoxProxy l_oBoxProxy(m_kernelContext, m_rScenario, l_oBoxIdentifier);
 		l_oBoxProxy.setCenter(iX - m_viewOffsetX, iY - m_viewOffsetY);
 		// Aligns boxes on grid
-		l_oBoxProxy.setCenter(int32_t((l_oBoxProxy.getXCenter() + 8) & 0xfffffff0L), int32_t((l_oBoxProxy.getYCenter() + 8) & 0xfffffff0L));
+		l_oBoxProxy.setCenter(int((l_oBoxProxy.getXCenter() + 8) & 0xfffffff0L), int((l_oBoxProxy.getYCenter() + 8) & 0xfffffff0L));
 
 		// Applies modifications before snapshot
 		l_oBoxProxy.apply();
@@ -2449,8 +2449,8 @@ void CInterfacedScenario::scenarioDrawingAreaMotionNotifyCB(GtkWidget* /*widget*
 	{
 		if (m_currentMode == Mode_MoveScenario)
 		{
-			m_viewOffsetX += int32_t(event->x - m_currentMouseX);
-			m_viewOffsetY += int32_t(event->y - m_currentMouseY);
+			m_viewOffsetX += int(event->x - m_currentMouseX);
+			m_viewOffsetY += int(event->y - m_currentMouseY);
 		}
 		else if (m_currentMode == Mode_MoveSelection)
 		{
@@ -2471,14 +2471,14 @@ void CInterfacedScenario::scenarioDrawingAreaMotionNotifyCB(GtkWidget* /*widget*
 				if (m_rScenario.isBox(objectId))
 				{
 					CBoxProxy l_oBoxProxy(m_kernelContext, m_rScenario, objectId);
-					l_oBoxProxy.setCenter(l_oBoxProxy.getXCenter() + int32_t(event->x - m_currentMouseX),
-										  l_oBoxProxy.getYCenter() + int32_t(event->y - m_currentMouseY));
+					l_oBoxProxy.setCenter(l_oBoxProxy.getXCenter() + int(event->x - m_currentMouseX),
+										  l_oBoxProxy.getYCenter() + int(event->y - m_currentMouseY));
 				}
 				if (m_rScenario.isComment(objectId))
 				{
 					CCommentProxy l_oCommentProxy(m_kernelContext, m_rScenario, objectId);
-					l_oCommentProxy.setCenter(l_oCommentProxy.getXCenter() + int32_t(event->x - m_currentMouseX),
-											  l_oCommentProxy.getYCenter() + int32_t(event->y - m_currentMouseY));
+					l_oCommentProxy.setCenter(l_oCommentProxy.getXCenter() + int(event->x - m_currentMouseX),
+											  l_oCommentProxy.getYCenter() + int(event->y - m_currentMouseY));
 				}
 			}
 		}
@@ -3288,11 +3288,11 @@ void CInterfacedScenario::pasteSelection()
 	CIdentifier identifier;
 	map<CIdentifier, CIdentifier> l_vIdMapping;
 	/*
-	int32_t l_iCenterX=0;
-	int32_t l_iCenterY=0;
+	int l_iCenterX=0;
+	int l_iCenterY=0;
 	*/
-	int32_t l_iTopmostLeftmostCopiedBoxCenterX = 1 << 15;
-	int32_t l_iTopmostLeftmostCopiedBoxCenterY = 1 << 15;
+	int l_iTopmostLeftmostCopiedBoxCenterX = 1 << 15;
+	int l_iTopmostLeftmostCopiedBoxCenterY = 1 << 15;
 	// std::cout << "Mouse position : " << m_currentMouseX << "/" << m_currentMouseY << std::endl;
 
 	// Pastes boxes from clipboard
@@ -3368,24 +3368,24 @@ void CInterfacedScenario::pasteSelection()
 			{
 				// Moves boxes under cursor
 				CBoxProxy l_oBoxProxy(m_kernelContext, m_rScenario, it.second);
-				l_oBoxProxy.setCenter(int32_t(l_oBoxProxy.getXCenter() + m_currentMouseX) - l_iTopmostLeftmostCopiedBoxCenterX - m_viewOffsetX,
-									  int32_t(l_oBoxProxy.getYCenter() + m_currentMouseY) - l_iTopmostLeftmostCopiedBoxCenterY - m_viewOffsetY);
+				l_oBoxProxy.setCenter(int(l_oBoxProxy.getXCenter() + m_currentMouseX) - l_iTopmostLeftmostCopiedBoxCenterX - m_viewOffsetX,
+									  int(l_oBoxProxy.getYCenter() + m_currentMouseY) - l_iTopmostLeftmostCopiedBoxCenterY - m_viewOffsetY);
 				// Ok, why 32 would you ask, just because it is fine
 
 				// Aligns boxes on grid
-				l_oBoxProxy.setCenter(int32_t((l_oBoxProxy.getXCenter() + 8) & 0xfffffff0L), int32_t((l_oBoxProxy.getYCenter() + 8) & 0xfffffff0L));
+				l_oBoxProxy.setCenter(int((l_oBoxProxy.getXCenter() + 8) & 0xfffffff0L), int((l_oBoxProxy.getYCenter() + 8) & 0xfffffff0L));
 			}
 
 			if (m_rScenario.isComment(it.second))
 			{
 				// Moves commentes under cursor
 				CCommentProxy l_oCommentProxy(m_kernelContext, m_rScenario, it.second);
-				l_oCommentProxy.setCenter(int32_t(l_oCommentProxy.getXCenter() + m_currentMouseX) - l_iTopmostLeftmostCopiedBoxCenterX - m_viewOffsetX,
-										  int32_t(l_oCommentProxy.getYCenter() + m_currentMouseY) - l_iTopmostLeftmostCopiedBoxCenterY - m_viewOffsetY);
+				l_oCommentProxy.setCenter(int(l_oCommentProxy.getXCenter() + m_currentMouseX) - l_iTopmostLeftmostCopiedBoxCenterX - m_viewOffsetX,
+										  int(l_oCommentProxy.getYCenter() + m_currentMouseY) - l_iTopmostLeftmostCopiedBoxCenterY - m_viewOffsetY);
 				// Ok, why 32 would you ask, just because it is fine
 
 				// Aligns commentes on grid
-				l_oCommentProxy.setCenter(int32_t((l_oCommentProxy.getXCenter() + 8) & 0xfffffff0L), int32_t((l_oCommentProxy.getYCenter() + 8) & 0xfffffff0L));
+				l_oCommentProxy.setCenter(int((l_oCommentProxy.getXCenter() + 8) & 0xfffffff0L), int((l_oCommentProxy.getYCenter() + 8) & 0xfffffff0L));
 			}
 		}
 	}

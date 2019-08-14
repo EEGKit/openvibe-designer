@@ -177,8 +177,8 @@ namespace OpenViBEDesigner
 		double m_releaseMouseY = 0;
 		double m_currentMouseX = 0;
 		double m_currentMouseY = 0;
-		int32_t m_viewOffsetX = 0;
-		int32_t m_viewOffsetY = 0;
+		int m_viewOffsetX = 0;
+		int m_viewOffsetY = 0;
 		uint32_t m_currentMode = 0;
 
 		uint32_t m_boxCount = 0;
