@@ -76,7 +76,7 @@ namespace
 
 namespace
 {
-	struct SBoxProto : public IBoxProto
+	struct SBoxProto : IBoxProto
 	{
 		SBoxProto(ITypeManager& typeManager) : m_TypeManager(typeManager) { }
 
