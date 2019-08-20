@@ -322,15 +322,9 @@ CRendererLoreta::CRendererLoreta()
 	this->CRendererLoreta::refreshBrainSubset();
 }
 
-void CRendererLoreta::rebuild(const IRendererContext& rContext)
-{
-	CRenderer::rebuild(rContext);
-}
+void CRendererLoreta::rebuild(const IRendererContext& rContext) { CRenderer::rebuild(rContext); }
 
-void CRendererLoreta::refresh(const IRendererContext& rContext)
-{
-	CRenderer::refresh(rContext);
-}
+void CRendererLoreta::refresh(const IRendererContext& rContext) { CRenderer::refresh(rContext); }
 
 #define __Rendering_VertexBuffer__
 

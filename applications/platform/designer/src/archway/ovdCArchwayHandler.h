@@ -75,10 +75,7 @@ namespace Mensia {
 		bool isEngineStarted();
 		bool writeArchwayConfigurationFile();
 
-		std::map< std::string, std::string >& getPipelineSettings(unsigned int pipelineClassId)
-		{
-			return m_PipelineSettings[pipelineClassId];
-		}
+		std::map< std::string, std::string >& getPipelineSettings(unsigned int pipelineClassId) { return m_PipelineSettings[pipelineClassId]; }
 
 	public:
 		SArchwayBridge m_ArchwayBridge;

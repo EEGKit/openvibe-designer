@@ -213,7 +213,7 @@ bool CAlgorithmSphericalSplineInterpolation::process()
 										  *(ip_samplePointsCoords->getBuffer() + 3 * i),
 										  *(ip_samplePointsCoords->getBuffer() + 3 * i + 1),
 										  *(ip_samplePointsCoords->getBuffer() + 3 * i + 2) //coordinate where to interpolate
-										 );
+			);
 
 #if defined TARGET_OS_Windows
 #ifndef NDEBUG

@@ -53,14 +53,8 @@ namespace
 			GtkTextIter l_oStart = l_oIter;
 			GtkTextIter l_oEnd   = l_oIter;
 
-			while (gtk_text_iter_has_tag(&l_oEnd, designerLog_ptr->m_pCIdentifierTag))
-			{
-				gtk_text_iter_forward_char(&l_oEnd);
-			}
-			while (gtk_text_iter_has_tag(&l_oStart, designerLog_ptr->m_pCIdentifierTag))
-			{
-				gtk_text_iter_backward_char(&l_oStart);
-			}
+			while (gtk_text_iter_has_tag(&l_oEnd, designerLog_ptr->m_pCIdentifierTag)) { gtk_text_iter_forward_char(&l_oEnd); }
+			while (gtk_text_iter_has_tag(&l_oStart, designerLog_ptr->m_pCIdentifierTag)) { gtk_text_iter_backward_char(&l_oStart); }
 			//we went one char to far for start
 			gtk_text_iter_forward_char(&l_oStart);
 			//this contains the CIdentifier

@@ -48,10 +48,7 @@ namespace Mensia
 				const uint32_t historyIndex = m_pRenderer->getHistoryIndex();
 
 				const float l_fProgress = float(historyIndex - (float(historyIndex) / sampleCount) * sampleCount) / sampleCount;
-				if (l_fProgress != 0 && l_fProgress != 1)
-				{
-					this->renderFinal(l_fProgress);
-				}
+				if (l_fProgress != 0 && l_fProgress != 1) { this->renderFinal(l_fProgress); }
 			}
 		};
 	}  // namespace AdvancedVisualization

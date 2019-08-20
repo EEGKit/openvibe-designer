@@ -54,8 +54,8 @@ namespace OpenViBEPlugins
 			OpenViBE::CMatrix m_MatrixInterpolatedColorGardient;
 			OpenViBE::CMatrix m_MatrixColorGradient;
 			uint32_t m_GradientSteps = 0;
-			double m_f64MaxValue = 0;
-			double m_f64MinValue = 0;
+			double m_f64MaxValue     = 0;
+			double m_f64MinValue     = 0;
 
 			bool m_bSymetricMinMax = false;
 			bool m_bRealTimeMinMax = false;

@@ -81,7 +81,7 @@ namespace OpenViBEDesigner
 			}
 
 			GtkTextBuffer* m_pBuffer = nullptr;
-			bool m_bPassedFilter = false;
+			bool m_bPassedFilter     = false;
 		};
 
 		CLogListenerDesigner(const OpenViBE::Kernel::IKernelContext& rKernelContext, GtkBuilder* pBuilderInterface);

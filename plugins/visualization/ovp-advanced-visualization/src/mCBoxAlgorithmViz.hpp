@@ -158,9 +158,9 @@ namespace Mensia
 
 			bool onDefaultInitialized(OpenViBE::Kernel::IBox& rBox) override
 			{
-				const bool l_bIsSignal     = (std::find(m_vParameter.begin(), m_vParameter.end(), I_Signal) != m_vParameter.end());
-				const bool l_bIsSpectrum   = (std::find(m_vParameter.begin(), m_vParameter.end(), I_Spectrum) != m_vParameter.end());
-				const bool l_bIsCovariance = (std::find(m_vParameter.begin(), m_vParameter.end(), I_Covariance) != m_vParameter.end());
+				const bool l_bIsSignal                  = (std::find(m_vParameter.begin(), m_vParameter.end(), I_Signal) != m_vParameter.end());
+				const bool l_bIsSpectrum                = (std::find(m_vParameter.begin(), m_vParameter.end(), I_Spectrum) != m_vParameter.end());
+				const bool l_bIsCovariance              = (std::find(m_vParameter.begin(), m_vParameter.end(), I_Covariance) != m_vParameter.end());
 				OpenViBE::CIdentifier l_oTypeIdentifier = OV_UndefinedIdentifier;
 
 				for (uint32_t i = 0; i < rBox.getInputCount(); ++i)
@@ -273,8 +273,8 @@ namespace Mensia
 			TColor m_oColor;
 
 			OpenViBE::CIdentifier m_oTypeIdentifier = OV_UndefinedIdentifier;
-			uint64_t m_time1 = 0;
-			uint64_t m_time2 = 0;
+			uint64_t m_time1                        = 0;
+			uint64_t m_time2                        = 0;
 
 			float m_fastForwardMaximumFactorHighDefinition = 0.0;
 			float m_fastForwardMaximumFactorLowDefinition  = 0.0;
@@ -328,7 +328,7 @@ namespace Mensia
 			OpenViBE::CString m_sShortDescription;
 			OpenViBE::CString m_sDetailedDescription;
 			OpenViBE::CIdentifier m_oDescClassId = OV_UndefinedIdentifier;
-			OpenViBE::CIdentifier m_oClassId = OV_UndefinedIdentifier;
+			OpenViBE::CIdentifier m_oClassId     = OV_UndefinedIdentifier;
 			OpenViBE::CString m_sAddedSoftwareVersion;
 			OpenViBE::CString m_sUpdatedSoftwareVersion;
 			std::vector<int> m_vParameter;
@@ -366,10 +366,7 @@ namespace Mensia
 			OpenViBE::CString getStockItemName() const override { return OpenViBE::CString("gtk-find"); }
 			OpenViBE::CIdentifier getCreatedClass() const override { return m_oClassId; }
 
-			void releaseBoxListener(OpenViBE::Plugins::IBoxListener* pBoxListener) const override
-			{
-				delete pBoxListener;
-			}
+			void releaseBoxListener(OpenViBE::Plugins::IBoxListener* pBoxListener) const override { delete pBoxListener; }
 
 			bool hasFunctionality(const OpenViBE::CIdentifier functionalityIdentifier) const override { return functionalityIdentifier == OVD_Functionality_Visualization; }
 

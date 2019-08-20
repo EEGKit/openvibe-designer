@@ -43,20 +43,14 @@ public:
 
 	{
 		CIdentifier identifier;
-		while ((identifier = m_kernelContext.getPluginManager().getNextPluginObjectDescIdentifier(identifier)) != OV_UndefinedIdentifier)
-		{
-			this->callback(*m_kernelContext.getPluginManager().getPluginObjectDesc(identifier));
-		}
+		while ((identifier = m_kernelContext.getPluginManager().getNextPluginObjectDescIdentifier(identifier)) != OV_UndefinedIdentifier) { this->callback(*m_kernelContext.getPluginManager().getPluginObjectDesc(identifier)); }
 		return true;
 	}
 
 	virtual bool enumeratePluginObjectDesc(const CIdentifier& rParentClassIdentifier)
 	{
 		CIdentifier identifier;
-		while ((identifier = m_kernelContext.getPluginManager().getNextPluginObjectDescIdentifier(identifier, rParentClassIdentifier)) != OV_UndefinedIdentifier)
-		{
-			this->callback(*m_kernelContext.getPluginManager().getPluginObjectDesc(identifier));
-		}
+		while ((identifier = m_kernelContext.getPluginManager().getNextPluginObjectDescIdentifier(identifier, rParentClassIdentifier)) != OV_UndefinedIdentifier) { this->callback(*m_kernelContext.getPluginManager().getPluginObjectDesc(identifier)); }
 		return true;
 	}
 
@@ -207,10 +201,7 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 			while ((j = l_sCategory.find('/', i + 1)) != string::npos)
 			{
 				string l_sSubCategory = string(l_sCategory, i + 1, j - i - 1);
-				if (l_sSubCategory != string(""))
-				{
-					l_vCategory.push_back(l_sSubCategory);
-				}
+				if (l_sSubCategory != string("")) { l_vCategory.push_back(l_sSubCategory); }
 				i = j;
 			}
 			if (i + 1 != l_sCategory.length())
@@ -299,10 +290,7 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 					vNewBoxes.push_back(l_pPluginObjectDesc);
 				}
 					// Otherwise
-				else if (boxComponentVersionMajor == currentVersionMajor && boxComponentVersionMinor == currentVersionMinor && boxComponentVersionPatch == currentVersionPatch)
-				{
-					vNewBoxes.push_back(l_pPluginObjectDesc);
-				}
+				else if (boxComponentVersionMajor == currentVersionMajor && boxComponentVersionMinor == currentVersionMinor && boxComponentVersionPatch == currentVersionPatch) { vNewBoxes.push_back(l_pPluginObjectDesc); }
 				else
 				{
 					int boxComponentUpdatedVersionMajor = 0;
@@ -322,10 +310,7 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 						vUpdatedBoxes.push_back(l_pPluginObjectDesc);
 					}
 						// Otherwise
-					else if (!bIsNewVersion && (boxComponentUpdatedVersionMajor == currentVersionMajor && boxComponentUpdatedVersionMinor == currentVersionMinor && boxComponentUpdatedVersionPatch == currentVersionPatch))
-					{
-						vUpdatedBoxes.push_back(l_pPluginObjectDesc);
-					}
+					else if (!bIsNewVersion && (boxComponentUpdatedVersionMajor == currentVersionMajor && boxComponentUpdatedVersionMinor == currentVersionMinor && boxComponentUpdatedVersionPatch == currentVersionPatch)) { vUpdatedBoxes.push_back(l_pPluginObjectDesc); }
 				}
 			}
 
@@ -762,10 +747,7 @@ int go(int argc, char** argv)
 				gtk_widget_show(l_pSplashScreenWindow);
 				g_timeout_add(500, cb_remove_splashscreen, l_pSplashScreenWindow);
 
-				while (gtk_events_pending())
-				{
-					gtk_main_iteration();
-				}
+				while (gtk_events_pending()) { gtk_main_iteration(); }
 #endif
 
 				IConfigurationManager& l_rConfigurationManager = l_pKernelContext->getConfigurationManager();
@@ -893,10 +875,7 @@ int go(int argc, char** argv)
 							l_rLogManager << LogLevel_Info << "Switch --no-gui is enabled but no play operation was requested. Designer will exit automatically.\n";
 						}
 
-						if (app.m_vInterfacedScenario.empty() && l_oConfiguration.m_eNoGui != CommandLineFlag_NoGui)
-						{
-							app.newScenarioCB();
-						}
+						if (app.m_vInterfacedScenario.empty() && l_oConfiguration.m_eNoGui != CommandLineFlag_NoGui) { app.newScenarioCB(); }
 
 						if (!app.m_vInterfacedScenario.empty())
 						{
@@ -919,14 +898,8 @@ int go(int argc, char** argv)
 
 							l_pKernelContext->getLogManager() << LogLevel_Info << "Initialization took " << l_pKernelContext->getConfigurationManager().expand("$Core{real-time}") << " ms\n";
 							// If the application is a newly launched version, and not launched without GUI -> display changelog
-							if (app.m_bIsNewVersion && l_oConfiguration.m_eNoGui != CommandLineFlag_NoGui)
-							{
-								app.displayChangelogWhenAvailable();
-							}
-							try
-							{
-								gtk_main();
-							}
+							if (app.m_bIsNewVersion && l_oConfiguration.m_eNoGui != CommandLineFlag_NoGui) { app.displayChangelogWhenAvailable(); }
+							try { gtk_main(); }
 							catch (DesignerException& ex)
 							{
 								std::cerr << "Caught designer exception" << std::endl;
@@ -950,10 +923,7 @@ int go(int argc, char** argv)
 				l_pKernelDesc->releaseKernel(l_pKernelContext);
 
 				// Remove the mutex only if the application was run with a gui
-				if (l_oConfiguration.m_eNoGui != CommandLineFlag_NoGui)
-				{
-					boost::interprocess::named_mutex::remove(MUTEX_NAME);
-				}
+				if (l_oConfiguration.m_eNoGui != CommandLineFlag_NoGui) { boost::interprocess::named_mutex::remove(MUTEX_NAME); }
 			}
 		}
 		l_oKernelLoader.uninitialize();
@@ -969,7 +939,7 @@ int main(int argc, char** argv)
 	// Avoids that after crashing, a mutex stays blocking
 	boost::interprocess::named_mutex::remove(MUTEX_NAME);
 	int ret = -1;
-	try{ ret = go(argc, argv); }
+	try { ret = go(argc, argv); }
 	catch (...) { std::cout << "Caught an exception at the very top...\nLeaving application!\n"; }
 	//return go(argc, argv);
 }

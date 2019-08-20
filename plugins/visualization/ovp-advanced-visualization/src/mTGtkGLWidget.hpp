@@ -62,10 +62,7 @@ namespace Mensia
 						glDeleteTextures(1, &m_textureId);
 						GtkGL::postRender(m_widget);
 					}
-					if (m_pTimeoutSource)
-					{
-						g_source_destroy(m_pTimeoutSource);
-					}
+					if (m_pTimeoutSource) { g_source_destroy(m_pTimeoutSource); }
 					GtkGL::uninitialize(m_widget);
 				}
 			}

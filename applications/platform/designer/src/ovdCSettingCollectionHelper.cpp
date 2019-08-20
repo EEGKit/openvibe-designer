@@ -186,7 +186,7 @@ namespace
 
 		if (gtk_dialog_run(GTK_DIALOG(widgetDialogOpen)) == GTK_RESPONSE_ACCEPT)
 		{
-			char* fileName     = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widgetDialogOpen));
+			char* fileName = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widgetDialogOpen));
 			char* l_pBackslash;
 			while ((l_pBackslash = strchr(fileName, '\\')) != nullptr)
 			{

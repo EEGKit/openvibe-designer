@@ -84,10 +84,7 @@ namespace Mensia
 				return new TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>(m_oClassId, m_vParameter);
 			}
 
-			OpenViBE::Plugins::IBoxListener* createBoxListener() const override
-			{
-				return new CBoxAlgorithmStackedContinuousVizListener(m_vParameter);
-			}
+			OpenViBE::Plugins::IBoxListener* createBoxListener() const override { return new CBoxAlgorithmStackedContinuousVizListener(m_vParameter); }
 
 			OpenViBE::CString getCategory() const override
 			{
@@ -132,10 +129,7 @@ namespace Mensia
 		bool TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>::uninitialize()
 
 		{
-			for (uint32_t i = 0; i < m_vRenderer.size(); ++i)
-			{
-				m_oRendererFactory.release(m_vRenderer[i]);
-			}
+			for (uint32_t i = 0; i < m_vRenderer.size(); ++i) { m_oRendererFactory.release(m_vRenderer[i]); }
 			m_vRenderer.clear();
 
 			IRendererContext::release(m_pSubRendererContext);
@@ -187,10 +181,7 @@ namespace Mensia
 
 					m_vSwap.resize(sampleCount);
 
-					for (j = 0; j < m_vRenderer.size(); j++)
-					{
-						m_oRendererFactory.release(m_vRenderer[j]);
-					}
+					for (j = 0; j < m_vRenderer.size(); j++) { m_oRendererFactory.release(m_vRenderer[j]); }
 					m_vRenderer.clear();
 					m_vRenderer.resize(l_ui32ChannelCount);
 
@@ -304,10 +295,7 @@ namespace Mensia
 						if (m_pRendererContext->isTimeLocked() && m_pRendererContext->getSampleDuration())
 						{
 							const auto l_ui32TheoreticalSampleCount = uint32_t(m_time2 / m_pRendererContext->getSampleDuration());
-							if (l_ui32TheoreticalSampleCount > m_vRenderer[j]->getHistoryCount())
-							{
-								m_vRenderer[j]->prefeed(l_ui32TheoreticalSampleCount - m_vRenderer[j]->getHistoryCount());
-							}
+							if (l_ui32TheoreticalSampleCount > m_vRenderer[j]->getHistoryCount()) { m_vRenderer[j]->prefeed(l_ui32TheoreticalSampleCount - m_vRenderer[j]->getHistoryCount()); }
 						}
 					}
 
@@ -362,17 +350,11 @@ namespace Mensia
 
 			if (m_bRebuildNeeded)
 			{
-				for (auto& renderer : m_vRenderer)
-				{
-					renderer->rebuild(*m_pSubRendererContext);
-				}
+				for (auto& renderer : m_vRenderer) { renderer->rebuild(*m_pSubRendererContext); }
 			}
 			if (m_bRefreshNeeded)
 			{
-				for (auto& renderer : m_vRenderer)
-				{
-					renderer->refresh(*m_pSubRendererContext);
-				}
+				for (auto& renderer : m_vRenderer) { renderer->refresh(*m_pSubRendererContext); }
 			}
 			if (m_bRedrawNeeded) { this->redraw(); }
 

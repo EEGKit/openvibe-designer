@@ -27,7 +27,4 @@ using namespace AdvancedVisualization;
 
 IRendererContext* IRendererContext::create(IRendererContext* pParentRendererContext) { return new CRendererContext(pParentRendererContext); }
 
-void IRendererContext::release(IRendererContext* pRendererContext)
-{
-	delete pRendererContext;
-}
+void IRendererContext::release(IRendererContext* pRendererContext) { delete pRendererContext; }

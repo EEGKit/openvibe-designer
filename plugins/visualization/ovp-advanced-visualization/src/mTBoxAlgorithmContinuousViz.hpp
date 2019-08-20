@@ -134,7 +134,7 @@ namespace Mensia
 
 		{
 			const IBox& l_rStaticBoxContext = this->getStaticBoxContext();
-			IBoxIO& boxContext    = this->getDynamicBoxContext();
+			IBoxIO& boxContext              = this->getDynamicBoxContext();
 
 			for (uint32_t i = 0; i < boxContext.getInputChunkCount(0); ++i)
 			{
@@ -199,18 +199,9 @@ namespace Mensia
 
 					m_pRenderer->setChannelCount(channelCount);
 
-					if (m_oTypeIdentifier == OV_TypeId_Signal)
-					{
-						m_pRendererContext->setDataType(IRendererContext::DataType_Signal);
-					}
-					else if (m_oTypeIdentifier == OV_TypeId_Spectrum)
-					{
-						m_pRendererContext->setDataType(IRendererContext::DataType_Spectrum);
-					}
-					else
-					{
-						m_pRendererContext->setDataType(IRendererContext::DataType_Matrix);
-					}
+					if (m_oTypeIdentifier == OV_TypeId_Signal) { m_pRendererContext->setDataType(IRendererContext::DataType_Signal); }
+					else if (m_oTypeIdentifier == OV_TypeId_Spectrum) { m_pRendererContext->setDataType(IRendererContext::DataType_Spectrum); }
+					else { m_pRendererContext->setDataType(IRendererContext::DataType_Matrix); }
 
 					if (sampleCount != 1)
 					{
@@ -269,10 +260,7 @@ namespace Mensia
 					if (m_pRendererContext->isTimeLocked() && m_pRendererContext->getSampleDuration())
 					{
 						auto theoreticalSampleCount = uint32_t(m_time2 / m_pRendererContext->getSampleDuration());
-						if (theoreticalSampleCount > m_pRenderer->getHistoryCount())
-						{
-							m_pRenderer->prefeed(theoreticalSampleCount - m_pRenderer->getHistoryCount());
-						}
+						if (theoreticalSampleCount > m_pRenderer->getHistoryCount()) { m_pRenderer->prefeed(theoreticalSampleCount - m_pRenderer->getHistoryCount()); }
 					}
 
 					m_bRefreshNeeded = true;

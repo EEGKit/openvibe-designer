@@ -205,7 +205,7 @@ void CBoxProxy::updateSize(GtkWidget* widget, const char* sLabel, const char* sS
 	PangoRectangle l_oPangoLabelRect;
 	PangoRectangle l_oPangoStatusRect;
 	PangoContext* l_pPangoContext = gtk_widget_create_pango_context(widget);
-	PangoLayout* l_pPangoLayout  = pango_layout_new(l_pPangoContext);
+	PangoLayout* l_pPangoLayout   = pango_layout_new(l_pPangoContext);
 	pango_layout_set_markup(l_pPangoLayout, sLabel, -1);
 	pango_layout_get_pixel_extents(l_pPangoLayout, nullptr, &l_oPangoLabelRect);
 	pango_layout_set_markup(l_pPangoLayout, sStatus, -1);

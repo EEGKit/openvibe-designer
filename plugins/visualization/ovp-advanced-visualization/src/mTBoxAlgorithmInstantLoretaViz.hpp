@@ -35,10 +35,7 @@ namespace Mensia
 			TBoxAlgorithmInstantLoretaViz(const OpenViBE::CIdentifier& rClassId, const std::vector<int>& vParameter)
 				: TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>(rClassId, vParameter) { }
 
-			static void callback(GtkTreeSelection* pTreeSelection, TBoxAlgorithmInstantLoretaViz<TRendererFactoryClass, TRulerClass>* pBox)
-			{
-				pBox->region_selection_changed(pTreeSelection);
-			}
+			static void callback(GtkTreeSelection* pTreeSelection, TBoxAlgorithmInstantLoretaViz<TRendererFactoryClass, TRulerClass>* pBox) { pBox->region_selection_changed(pTreeSelection); }
 
 			void region_selection_changed(GtkTreeSelection* pTreeSelection)
 			{
@@ -65,10 +62,7 @@ namespace Mensia
 							} while (gtk_tree_model_iter_next(GTK_TREE_MODEL(m_pLookupListStore[i]), &l_oIter));
 						}
 					}
-					else
-					{
-						gtk_tree_selection_unselect_all(l_pTreeSelection);
-					}
+					else { gtk_tree_selection_unselect_all(l_pTreeSelection); }
 				}
 			}
 

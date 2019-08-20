@@ -131,10 +131,7 @@ namespace
 		auto enginePipelines = gui->m_Controller.getEnginePipelines();
 		for (const auto& pipeline : enginePipelines)
 		{
-			if (pipeline.id != pipelineId)
-			{
-				continue;
-			}
+			if (pipeline.id != pipelineId) { continue; }
 			gtk_list_store_set(GTK_LIST_STORE(treeModel), &gui->m_SelectedPipelineIter, Column_PipelineIsConfigured, pipeline.isConfigured, -1);
 		}
 	}
@@ -418,10 +415,7 @@ CArchwayHandlerGUI::CArchwayHandlerGUI(CArchwayHandler& controller, OpenViBEDesi
 
 CArchwayHandlerGUI::~CArchwayHandlerGUI()
 {
-	if (m_Builder)
-	{
-		g_object_unref(G_OBJECT(m_Builder));
-	}
+	if (m_Builder) { g_object_unref(G_OBJECT(m_Builder)); }
 }
 
 void CArchwayHandlerGUI::refreshEnginePipelines()
@@ -457,10 +451,7 @@ void CArchwayHandlerGUI::toggleNeuroRTEngineConfigurationDialog(const bool shoul
 		this->refreshEnginePipelines();
 		gtk_widget_show(engineConfigurationWidget);
 	}
-	else
-	{
-		gtk_widget_hide(engineConfigurationWidget);
-	}
+	else { gtk_widget_hide(engineConfigurationWidget); }
 }
 
 void CArchwayHandlerGUI::displayPipelineConfigurationDialog(const unsigned int pipelineId)

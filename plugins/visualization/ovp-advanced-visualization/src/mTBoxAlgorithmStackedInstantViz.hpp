@@ -141,10 +141,7 @@ namespace Mensia
 		bool TBoxAlgorithmStackedInstantViz<bDrawBorders, TRendererFactoryClass, TRulerClass>::uninitialize()
 
 		{
-			for (uint32_t i = 0; i < m_vRenderer.size(); ++i)
-			{
-				m_oRendererFactory.release(m_vRenderer[i]);
-			}
+			for (uint32_t i = 0; i < m_vRenderer.size(); ++i) { m_oRendererFactory.release(m_vRenderer[i]); }
 			m_vRenderer.clear();
 
 			IRendererContext::release(m_pSubRendererContext);
@@ -184,10 +181,7 @@ namespace Mensia
 
 				if (m_oMatrixDecoder.isHeaderReceived())
 				{
-					for (auto renderer : m_vRenderer)
-					{
-						m_oRendererFactory.release(renderer);
-					}
+					for (auto renderer : m_vRenderer) { m_oRendererFactory.release(renderer); }
 					m_vRenderer.clear();
 					m_vRenderer.resize(channelCount);
 
@@ -339,17 +333,11 @@ namespace Mensia
 
 			if (m_bRebuildNeeded)
 			{
-				for (auto& renderer : m_vRenderer)
-				{
-					renderer->rebuild(*m_pSubRendererContext);
-				}
+				for (auto& renderer : m_vRenderer) { renderer->rebuild(*m_pSubRendererContext); }
 			}
 			if (m_bRefreshNeeded)
 			{
-				for (auto& renderer : m_vRenderer)
-				{
-					renderer->refresh(*m_pSubRendererContext);
-				}
+				for (auto& renderer : m_vRenderer) { renderer->refresh(*m_pSubRendererContext); }
 			}
 			if (m_bRedrawNeeded) { this->redraw(); }
 

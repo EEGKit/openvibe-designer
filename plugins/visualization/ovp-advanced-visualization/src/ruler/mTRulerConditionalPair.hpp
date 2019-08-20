@@ -49,50 +49,26 @@ namespace Mensia
 
 			void render() override
 			{
-				if (condition())
-				{
-					first.doRender();
-				}
-				else
-				{
-					second.doRender();
-				}
+				if (condition()) { first.doRender(); }
+				else { second.doRender(); }
 			}
 
 			void renderLeft(GtkWidget* pWidget) override
 			{
-				if (condition())
-				{
-					first.doRenderLeft(pWidget);
-				}
-				else
-				{
-					second.doRenderLeft(pWidget);
-				}
+				if (condition()) { first.doRenderLeft(pWidget); }
+				else { second.doRenderLeft(pWidget); }
 			}
 
 			void renderRight(GtkWidget* pWidget) override
 			{
-				if (condition())
-				{
-					first.doRenderRight(pWidget);
-				}
-				else
-				{
-					second.doRenderRight(pWidget);
-				}
+				if (condition()) { first.doRenderRight(pWidget); }
+				else { second.doRenderRight(pWidget); }
 			}
 
 			void renderBottom(GtkWidget* pWidget) override
 			{
-				if (condition())
-				{
-					first.doRenderBottom(pWidget);
-				}
-				else
-				{
-					second.doRenderBottom(pWidget);
-				}
+				if (condition()) { first.doRenderBottom(pWidget); }
+				else { second.doRenderBottom(pWidget); }
 			}
 
 			TCondition condition;

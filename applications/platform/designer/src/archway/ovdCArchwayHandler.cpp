@@ -216,10 +216,7 @@ bool CArchwayHandler::uninitialize()
 
 CArchwayHandler::~CArchwayHandler()
 {
-	if (m_Archway)
-	{
-		this->uninitialize();
-	}
+	if (m_Archway) { this->uninitialize(); }
 }
 
 
@@ -548,10 +545,7 @@ bool CArchwayHandler::setPipelineParameterValue(unsigned int pipelineClassId, st
 			{
 				m_PipelineSettings[pipelineClassId].erase(m_PipelineSettings[pipelineClassId].find(parameterName));
 
-				if (m_PipelineSettings[pipelineClassId].size() == 0)
-				{
-					m_PipelineSettings.erase(m_PipelineSettings.find(pipelineClassId));
-				}
+				if (m_PipelineSettings[pipelineClassId].size() == 0) { m_PipelineSettings.erase(m_PipelineSettings.find(pipelineClassId)); }
 			}
 		}
 	}

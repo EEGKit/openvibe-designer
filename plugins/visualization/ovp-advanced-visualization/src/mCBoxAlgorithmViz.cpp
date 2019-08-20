@@ -57,14 +57,8 @@ namespace
 			{
 				do
 				{
-					if (gtk_tree_selection_iter_is_selected(pTreeSelection, &l_oIter) != 0)
-					{
-						pRendererContext->selectChannel(i);
-					}
-					else
-					{
-						pRendererContext->unselectChannel(i);
-					}
+					if (gtk_tree_selection_iter_is_selected(pTreeSelection, &l_oIter) != 0) { pRendererContext->selectChannel(i); }
+					else { pRendererContext->unselectChannel(i); }
 					i++;
 				} while (gtk_tree_model_iter_next(l_pTreeModel, &l_oIter) != 0);
 			}
@@ -76,10 +70,7 @@ namespace
 		pRendererContext->setTimeScale(uint64_t(gtk_spin_button_get_value(pSpinButton) * (1LL << 32)));
 	}
 
-	void spinbutton_element_count_change_value_callback(GtkSpinButton* pSpinButton, IRendererContext* pRendererContext)
-	{
-		pRendererContext->setElementCount(uint64_t(gtk_spin_button_get_value(pSpinButton)));
-	}
+	void spinbutton_element_count_change_value_callback(GtkSpinButton* pSpinButton, IRendererContext* pRendererContext) { pRendererContext->setElementCount(uint64_t(gtk_spin_button_get_value(pSpinButton))); }
 
 	void checkbutton_positive_toggled_callback(GtkToggleButton* pButton, IRendererContext* pRendererContext)
 	{
@@ -110,15 +101,9 @@ namespace
 		pRendererContext->setERPPlayerActive(!pRendererContext->isERPPlayerActive());
 	}
 
-	void spinbutton_freq_band_min_change_value_callback(GtkSpinButton* pSpinButton, IRendererContext* pRendererContext)
-	{
-		pRendererContext->setMinimumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(pSpinButton)));
-	}
+	void spinbutton_freq_band_min_change_value_callback(GtkSpinButton* pSpinButton, IRendererContext* pRendererContext) { pRendererContext->setMinimumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(pSpinButton))); }
 
-	void spinbutton_freq_band_max_change_value_callback(GtkSpinButton* pSpinButton, IRendererContext* pRendererContext)
-	{
-		pRendererContext->setMaximumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(pSpinButton)));
-	}
+	void spinbutton_freq_band_max_change_value_callback(GtkSpinButton* pSpinButton, IRendererContext* pRendererContext) { pRendererContext->setMaximumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(pSpinButton))); }
 }  // namespace
 
 bool CBoxAlgorithmViz::initialize()
@@ -429,8 +414,8 @@ bool CBoxAlgorithmViz::processClock(IMessageClock& /*rClock*/)
 		}
 		else if (l_f32CurrentFastForwardMaximumFactor <= m_fastForwardMaximumFactorLowDefinition)
 		{
-			const float alpha  = (l_f32CurrentFastForwardMaximumFactor - m_fastForwardMaximumFactorHighDefinition) / (m_fastForwardMaximumFactorLowDefinition - m_fastForwardMaximumFactorHighDefinition);
-			minDeltaTime = uint64_t((minDeltaTimeLowDefinition * alpha) + minDeltaTimeHighDefinition * (1.f - alpha));
+			const float alpha = (l_f32CurrentFastForwardMaximumFactor - m_fastForwardMaximumFactorHighDefinition) / (m_fastForwardMaximumFactorLowDefinition - m_fastForwardMaximumFactorHighDefinition);
+			minDeltaTime      = uint64_t((minDeltaTimeLowDefinition * alpha) + minDeltaTimeHighDefinition * (1.f - alpha));
 		}
 		else
 		{

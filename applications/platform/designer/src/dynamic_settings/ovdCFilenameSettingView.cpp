@@ -78,7 +78,7 @@ void CFilenameSettingView::browse() const
 
 	if (gtk_dialog_run(GTK_DIALOG(l_pWidgetDialogOpen)) == GTK_RESPONSE_ACCEPT)
 	{
-		char* l_sFileName  = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(l_pWidgetDialogOpen));
+		char* l_sFileName = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(l_pWidgetDialogOpen));
 		char* l_pBackslash;
 		while ((l_pBackslash = strchr(l_sFileName, '\\')) != nullptr)
 		{

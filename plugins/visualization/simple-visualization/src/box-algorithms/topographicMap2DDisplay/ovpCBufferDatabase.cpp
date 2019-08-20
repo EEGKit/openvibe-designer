@@ -224,10 +224,7 @@ bool CBufferDatabase::adjustNumberOfDisplayedBuffers(const double f64NumberOfSec
 			m_oEndTime.pop_front();
 
 			//suppress the corresponding minmax values
-			for (size_t c = 0; c < size_t(m_pDimensionSizes[0]); c++)
-			{
-				m_oLocalMinMaxValue[c].pop_front();
-			}
+			for (size_t c = 0; c < size_t(m_pDimensionSizes[0]); c++) { m_oLocalMinMaxValue[c].pop_front(); }
 		}
 	}
 
@@ -368,10 +365,7 @@ bool CBufferDatabase::setMatrixBuffer(const double* pBuffer, const uint64_t ui64
 		for (uint32_t i = 0; i < m_oChannelLocalisationStreamedCoords.size(); ++i)
 		{
 			//if a new set of coordinates was received
-			if (m_oChannelLocalisationStreamedCoords[i].second)
-			{
-				onChannelLocalisationBufferReceived(i);
-			}
+			if (m_oChannelLocalisationStreamedCoords[i].second) { onChannelLocalisationBufferReceived(i); }
 		}
 	}
 
@@ -402,10 +396,7 @@ bool CBufferDatabase::setMatrixBuffer(const double* pBuffer, const uint64_t ui64
 		m_oSampleBuffers.pop_front();
 		m_oStartTime.pop_front();
 		m_oEndTime.pop_front();
-		for (size_t c = 0; c < size_t(m_pDimensionSizes[0]); c++)
-		{
-			m_oLocalMinMaxValue[c].pop_front();
-		}
+		for (size_t c = 0; c < size_t(m_pDimensionSizes[0]); c++) { m_oLocalMinMaxValue[c].pop_front(); }
 	}
 
 	//do we need to allocate a new buffer?
@@ -629,10 +620,7 @@ void CBufferDatabase::setStimulation(const uint32_t /*ui32StimulationIndex*/, co
 	if (!m_oStartTime.empty())
 	{
 		std::deque<std::pair<uint64_t, uint64_t>>::iterator i;
-		while (m_oStimulations.begin() != m_oStimulations.end() && m_oStimulations.begin()->first < m_oStartTime.front())
-		{
-			m_oStimulations.pop_front();
-		}
+		while (m_oStimulations.begin() != m_oStimulations.end() && m_oStimulations.begin()->first < m_oStartTime.front()) { m_oStimulations.pop_front(); }
 	}
 }
 

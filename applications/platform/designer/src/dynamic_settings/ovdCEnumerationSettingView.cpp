@@ -29,10 +29,7 @@ CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox& rBox, const uint3
 	{
 		CString l_sEntryName;
 		uint64_t l_ui64EntryValue;
-		if (m_kernelContext.getTypeManager().getEnumerationEntry(m_oTypeIdentifier, i, l_sEntryName, l_ui64EntryValue))
-		{
-			l_vEntries.push_back(l_sEntryName.toASCIIString());
-		}
+		if (m_kernelContext.getTypeManager().getEnumerationEntry(m_oTypeIdentifier, i, l_sEntryName, l_ui64EntryValue)) { l_vEntries.push_back(l_sEntryName.toASCIIString()); }
 	}
 
 	std::sort(l_vEntries.begin(), l_vEntries.end());

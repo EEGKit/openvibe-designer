@@ -162,10 +162,7 @@ bool CBoxConfigurationDialog::run()
 				}
 				else
 				{
-					if (m_rBox.hasAttribute(OV_AttributeId_Box_SettingOverrideFilename))
-					{
-						m_rBox.removeAttribute(OV_AttributeId_Box_SettingOverrideFilename);
-					}
+					if (m_rBox.hasAttribute(OV_AttributeId_Box_SettingOverrideFilename)) { m_rBox.removeAttribute(OV_AttributeId_Box_SettingOverrideFilename); }
 				}
 
 				finished = true;
@@ -419,10 +416,7 @@ void CBoxConfigurationDialog::removeSetting(const uint32_t settingIndex, const b
 	{
 		for (Setting::CAbstractSettingView* l_oView : m_vSettingViewVector)
 		{
-			if (l_oView->getSettingIndex() >= settingIndex)
-			{
-				l_oView->setSettingIndex(l_oView->getSettingIndex() - 1);
-			}
+			if (l_oView->getSettingIndex() >= settingIndex) { l_oView->setSettingIndex(l_oView->getSettingIndex() - 1); }
 		}
 	}
 }
