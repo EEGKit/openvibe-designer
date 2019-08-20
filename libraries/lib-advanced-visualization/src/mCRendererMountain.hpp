@@ -40,5 +40,5 @@ namespace Mensia
 
 			C3DMesh m_oMountain;
 		};
-	}  // namespace AdvancedVisualization
-}  // namespace Mensia
+	} // namespace AdvancedVisualization
+} // namespace Mensia

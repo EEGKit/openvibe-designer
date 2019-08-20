@@ -93,7 +93,7 @@ namespace Mensia
 
 		template <class TRendererFactoryClass, class TRulerClass>
 		TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>::TBoxAlgorithmContinuousViz(const OpenViBE::CIdentifier& rClassId, const std::vector<int>& vParameter)
-			: CBoxAlgorithmViz(rClassId, vParameter), m_pRenderer(nullptr) { }
+			: CBoxAlgorithmViz(rClassId, vParameter) { }
 
 		template <class TRendererFactoryClass, class TRulerClass>
 		bool TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>::initialize()
@@ -330,5 +330,5 @@ namespace Mensia
 
 			CBoxAlgorithmViz::postDraw();
 		}
-	}  // namespace AdvancedVisualization
+	} // namespace AdvancedVisualization
 } // namespace Mensia

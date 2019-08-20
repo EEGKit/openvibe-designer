@@ -75,5 +75,5 @@ namespace Mensia
 			T1 first;
 			T2 second;
 		};
-	}  // namespace AdvancedVisualization
+	} // namespace AdvancedVisualization
 } // namespace Mensia

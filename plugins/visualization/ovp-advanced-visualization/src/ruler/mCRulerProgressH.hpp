@@ -58,5 +58,5 @@ namespace Mensia
 				glEnd();
 			}
 		};
-	}  // namespace AdvancedVisualization
-}  // namespace Mensia
+	} // namespace AdvancedVisualization
+} // namespace Mensia

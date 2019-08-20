@@ -79,4 +79,4 @@ namespace OpenViBEVisualizationToolkit
 		 */
 		virtual bool setWidget(const OpenViBE::CIdentifier& visualizationTreeIdentifier, const OpenViBE::CIdentifier& boxIdentifier, GtkWidget* widget) = 0;
 	};
-}  // namespace OpenViBEVisualizationToolkit
+} // namespace OpenViBEVisualizationToolkit

@@ -88,5 +88,5 @@ namespace Mensia
 			TRulerSignal m_oRulerSignal;
 			TRulerSpectrum m_oRulerSpectrum;
 		};
-	}  // namespace AdvancedVisualization
-}  // namespace Mensia
+	} // namespace AdvancedVisualization
+} // namespace Mensia

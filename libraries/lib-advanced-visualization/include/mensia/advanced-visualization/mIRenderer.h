@@ -93,5 +93,5 @@ namespace Mensia
 			virtual void selectRegion(const uint32_t regionCategory, const char* sRegionName) = 0;
 			virtual void selectRegion(const uint32_t regionCategory, const uint32_t regionIndex) = 0;
 		};
-	}  // namespace AdvancedVisualization
-}  // namespace Mensia
+	} // namespace AdvancedVisualization
+} // namespace Mensia

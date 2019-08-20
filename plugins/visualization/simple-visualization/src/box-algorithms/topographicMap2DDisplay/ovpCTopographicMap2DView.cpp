@@ -1417,5 +1417,5 @@ namespace OpenViBEPlugins
 			auto* l_pTopographicMap2DView = reinterpret_cast<CTopographicMap2DView*>(data);
 			l_pTopographicMap2DView->setDelayCB(gtk_range_get_value(range));
 		}
-	}  // namespace SimpleVisualization
+	} // namespace SimpleVisualization
 } // namespace OpenViBEPlugins

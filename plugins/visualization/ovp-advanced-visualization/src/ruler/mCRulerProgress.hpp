@@ -51,5 +51,5 @@ namespace Mensia
 				if (l_fProgress != 0 && l_fProgress != 1) { this->renderFinal(l_fProgress); }
 			}
 		};
-	}  // namespace AdvancedVisualization
-}  // namespace Mensia
+	} // namespace AdvancedVisualization
+} // namespace Mensia

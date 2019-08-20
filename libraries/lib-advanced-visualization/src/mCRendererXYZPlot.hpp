@@ -39,5 +39,5 @@ namespace Mensia
 			uint32_t m_plotCount     = 0;
 			std::vector<std::vector<CVertex>> m_vertex;
 		};
-	}  // namespace AdvancedVisualization
-}  // namespace Mensia
+	} // namespace AdvancedVisualization
+} // namespace Mensia

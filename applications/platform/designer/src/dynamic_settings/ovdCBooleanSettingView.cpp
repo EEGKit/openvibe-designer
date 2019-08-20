@@ -53,10 +53,7 @@ void CBooleanSettingView::setValue(const CString& value)
 		gtk_toggle_button_set_active(m_toggle, false);
 		gtk_toggle_button_set_inconsistent(m_toggle, false);
 	}
-	else
-	{
-		gtk_toggle_button_set_inconsistent(m_toggle, true);
-	}
+	else { gtk_toggle_button_set_inconsistent(m_toggle, true); }
 
 	gtk_entry_set_text(m_entry, value);
 	m_onValueSetting = false;

@@ -124,7 +124,7 @@ namespace
 
 		GtkGL_Debug("realize-callback::success");
 	}
-}  // namespace
+} // namespace
 
 void Mensia::AdvancedVisualization::GtkGL::initialize(GtkWidget* pWidget)
 {

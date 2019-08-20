@@ -123,10 +123,7 @@ namespace Mensia
 					gdk_window_process_updates(m_widget->window, false);
 					gtk_widget_queue_draw(m_widget);
 				}
-				else
-				{
-					gdk_window_invalidate_rect(m_widget->window, nullptr, true);
-				}
+				else { gdk_window_invalidate_rect(m_widget->window, nullptr, true); }
 			}
 
 			virtual void redrawLeft(const bool immediate = false)
@@ -374,5 +371,5 @@ namespace Mensia
 				return TRUE;
 			}
 		};
-	}  // namespace AdvancedVisualization
-}  // namespace Mensia
+	} // namespace AdvancedVisualization
+} // namespace Mensia

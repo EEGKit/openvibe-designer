@@ -537,7 +537,7 @@ namespace
 		data->m_pInterfacedScenario->redraw();
 	}
 	//*/
-}  // namespace
+} // namespace
 
 CInterfacedScenario::CInterfacedScenario(const IKernelContext& rKernelContext, CApplication& rApplication, IScenario& rScenario, CIdentifier& rScenarioIdentifier, GtkNotebook& rNotebook, const char* sGUIFilename, const char* sGUISettingsFilename)
 	: m_ePlayerStatus(PlayerStatus_Stop), m_oScenarioIdentifier(rScenarioIdentifier), m_rApplication(rApplication), m_kernelContext(rKernelContext),
@@ -2441,7 +2441,7 @@ namespace
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(menuitem));
 		return menuitem;
 	}
-}  // namespace
+} // namespace
 
 GtkImageMenuItem* CInterfacedScenario::gtk_menu_add_new_image_menu_item_with_cb_generic(GtkMenu* menu, const char* icon, const char* label,
 																						const menu_callback_function cb, IBox* box, const uint32_t command,

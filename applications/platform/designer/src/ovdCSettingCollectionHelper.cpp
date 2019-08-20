@@ -46,10 +46,7 @@ namespace
 			gtk_toggle_button_set_active(l_widget, false);
 			gtk_toggle_button_set_inconsistent(l_widget, false);
 		}
-		else
-		{
-			gtk_toggle_button_set_inconsistent(l_widget, true);
-		}
+		else { gtk_toggle_button_set_inconsistent(l_widget, true); }
 	}
 
 	void on_checkbutton_setting_bool_pressed(GtkToggleButton* button, gpointer /*data*/)
@@ -58,14 +55,8 @@ namespace
 		gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), collect_widget_cb, &l_vWidget);
 		GtkEntry* l_widget = GTK_ENTRY(l_vWidget[0]);
 
-		if (gtk_toggle_button_get_active(button))
-		{
-			gtk_entry_set_text(l_widget, "true");
-		}
-		else
-		{
-			gtk_entry_set_text(l_widget, "false");
-		}
+		if (gtk_toggle_button_get_active(button)) { gtk_entry_set_text(l_widget, "true"); }
+		else { gtk_entry_set_text(l_widget, "false"); }
 		gtk_toggle_button_set_inconsistent(button, false);
 	}
 
@@ -84,15 +75,9 @@ namespace
 		gtk_entry_set_text(l_widget, l_sValue);
 	}
 
-	void on_button_setting_integer_up_pressed(GtkButton* button, gpointer data)
-	{
-		on_button_setting_integer_pressed(button, data, 1);
-	}
+	void on_button_setting_integer_up_pressed(GtkButton* button, gpointer data) { on_button_setting_integer_pressed(button, data, 1); }
 
-	void on_button_setting_integer_down_pressed(GtkButton* button, gpointer data)
-	{
-		on_button_setting_integer_pressed(button, data, -1);
-	}
+	void on_button_setting_integer_down_pressed(GtkButton* button, gpointer data) { on_button_setting_integer_pressed(button, data, -1); }
 
 	void on_button_setting_float_pressed(GtkButton* button, gpointer data, const gdouble offset)
 	{
@@ -109,15 +94,9 @@ namespace
 		gtk_entry_set_text(l_widget, l_sValue);
 	}
 
-	void on_button_setting_float_up_pressed(GtkButton* button, gpointer data)
-	{
-		on_button_setting_float_pressed(button, data, 1);
-	}
+	void on_button_setting_float_up_pressed(GtkButton* button, gpointer data) { on_button_setting_float_pressed(button, data, 1); }
 
-	void on_button_setting_float_down_pressed(GtkButton* button, gpointer data)
-	{
-		on_button_setting_float_pressed(button, data, -1);
-	}
+	void on_button_setting_float_down_pressed(GtkButton* button, gpointer data) { on_button_setting_float_pressed(button, data, -1); }
 
 	void on_button_setting_filename_browse_pressed(GtkButton* button, gpointer data)
 	{
@@ -315,14 +294,8 @@ namespace
 		const uint32_t i                 = l_pUserData->vSpinButtonMap[button];
 		GtkSpinButton* l_pPrevSpinButton = (i > 0 ? l_pUserData->vColorGradient[i - 1].pSpinButton : nullptr);
 		GtkSpinButton* l_pNextSpinButton = (i < l_pUserData->vColorGradient.size() - 1 ? l_pUserData->vColorGradient[i + 1].pSpinButton : nullptr);
-		if (!l_pPrevSpinButton)
-		{
-			gtk_spin_button_set_value(button, 0);
-		}
-		if (!l_pNextSpinButton)
-		{
-			gtk_spin_button_set_value(button, 100);
-		}
+		if (!l_pPrevSpinButton) { gtk_spin_button_set_value(button, 0); }
+		if (!l_pNextSpinButton) { gtk_spin_button_set_value(button, 100); }
 		if (l_pPrevSpinButton && gtk_spin_button_get_value(button) < gtk_spin_button_get_value(l_pPrevSpinButton))
 		{
 			gtk_spin_button_set_value(button, gtk_spin_button_get_value(l_pPrevSpinButton));
@@ -475,7 +448,7 @@ namespace
 		gtk_widget_destroy(l_oUserData.pDialog);
 		g_object_unref(l_pBuilderInterface);
 	}
-}  // namespace
+} // namespace
 
 // ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- -----------
 
@@ -827,10 +800,7 @@ void CSettingCollectionHelper::setValueEnumeration(const CIdentifier& rTypeIdent
 		gtk_list_store_append(l_pList, &l_oListIter);
 		gtk_list_store_set(l_pList, &l_oListIter, 0, it->first.toASCIIString(), -1);
 
-		if (l_ui64Value == it->second)
-		{
-			gtk_combo_box_set_active(l_widget, gint(i));
-		}
+		if (l_ui64Value == it->second) { gtk_combo_box_set_active(l_widget, gint(i)); }
 	}
 #if 0
 	}
@@ -846,10 +816,7 @@ void CSettingCollectionHelper::setValueEnumeration(const CIdentifier& rTypeIdent
 				gtk_list_store_append(l_pList, &l_oListIter);
 				gtk_list_store_set(l_pList, &l_oListIter, 0, l_sEntryName.toASCIIString(), -1);
 
-				if (l_ui64Value == l_ui64EntryValue)
-				{
-					gtk_combo_box_set_active(l_widget, gint(i));
-				}
+				if (l_ui64Value == l_ui64EntryValue) { gtk_combo_box_set_active(l_widget, gint(i)); }
 			}
 		}
 	}

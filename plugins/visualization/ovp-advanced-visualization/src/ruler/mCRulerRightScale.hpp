@@ -73,4 +73,4 @@ namespace Mensia
 			std::vector<double>::iterator it;
 		};
 	} // namespace AdvancedVisualization
-}  // namespace Mensia
+} // namespace Mensia

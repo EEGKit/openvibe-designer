@@ -18,7 +18,7 @@ namespace
 			gtk_entry_set_text(self->m_ConnectorIdentifierEntry, newIdentifier.toString().toASCIIString());
 		}
 	}
-}  // namespace
+} // namespace
 
 CConnectorEditor::CConnectorEditor(const IKernelContext& rKernelContext, IBox& rBox, const uint32_t connectorType, const uint32_t connectorIndex, const char* sTitle, const char* sGUIFilename)
 	: m_kernelContext(rKernelContext), m_rBox(rBox), m_connectorType(connectorType),

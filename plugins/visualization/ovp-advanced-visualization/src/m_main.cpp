@@ -105,7 +105,7 @@ namespace Mensia
 		typedef TBoxAlgorithmInstantVizDesc<TRendererProto<IRenderer::RendererType_Loreta>, CRulerBottomTexture, TBoxAlgorithmInstantLoretaViz> SLoreta;
 		typedef TBoxAlgorithmInstantVizDesc<TRendererProto<IRenderer::RendererType_Cube>, CRulerBottomTexture> Cubes;
 	} // namespace AdvancedVisualization
-}  // namespace Mensia
+} // namespace Mensia
 
 OVP_Declare_Begin()
 	rPluginModuleContext.getTypeManager().registerEnumerationType(OVP_TypeId_TemporalCoherence, "Temporal Coherence");

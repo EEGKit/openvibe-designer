@@ -440,10 +440,7 @@ GtkWidget* CDesignerVisualization::loadTreeWidget(IVisualizationWidget* widget)
 
 			//icon - actual icon will be loaded in endLoadTreeWidget
 			GtkWidget* icon = gtk_image_new_from_stock(getTreeWidgetIcon(EVisualizationTreeNode_Undefined), GTK_ICON_SIZE_BUTTON);
-			if (s_iconWidthRequest == 0)
-			{
-				gtk_widget_set_size_request(icon, 0, 0);
-			}
+			if (s_iconWidthRequest == 0) { gtk_widget_set_size_request(icon, 0, 0); }
 			gtk_box_pack_start(l_pBox, icon, s_iconExpand, s_iconFill, 0);
 
 			//label
@@ -565,10 +562,7 @@ void CDesignerVisualization::endLoadTreeWidget(IVisualizationWidget* widget)
 			gtk_container_remove(l_pBox, GTK_WIDGET(l_pBoxChildren->data));
 			//create new icon
 			GtkWidget* icon = gtk_image_new_from_stock(iconString, GTK_ICON_SIZE_BUTTON);
-			if (s_iconWidthRequest == 0)
-			{
-				gtk_widget_set_size_request(icon, 0, 0);
-			}
+			if (s_iconWidthRequest == 0) { gtk_widget_set_size_request(icon, 0, 0); }
 			gtk_box_pack_start(GTK_BOX(l_pBox), icon, s_iconExpand, s_iconFill, 0);
 			//insert it in first position
 			gtk_box_reorder_child(GTK_BOX(l_pBox), icon, 0);

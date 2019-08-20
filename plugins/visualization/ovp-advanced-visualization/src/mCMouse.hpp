@@ -46,5 +46,5 @@ namespace Mensia
 			int m_mouseX = 0;
 			int m_mouseY = 0;
 		};
-	}  // namespace AdvancedVisualization
-}  // namespace Mensia
+	} // namespace AdvancedVisualization
+} // namespace Mensia

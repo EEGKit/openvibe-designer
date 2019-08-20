@@ -402,4 +402,4 @@ namespace Mensia
 			}
 		};
 	} // namespace AdvancedVisualization
-}  // namespace Mensia
+} // namespace Mensia

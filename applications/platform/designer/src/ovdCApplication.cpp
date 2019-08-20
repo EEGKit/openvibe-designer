@@ -846,7 +846,7 @@ namespace
 	{
 		static_cast<CApplication*>(data)->spinnerZoomChangedCB(uint32_t(gtk_spin_button_get_value(button)));
 	}
-}  // namespace
+} // namespace
 
 static GtkTargetEntry g_vTargetEntry[] = {
 	{ static_cast<gchar*>("STRING"), 0, 0 },

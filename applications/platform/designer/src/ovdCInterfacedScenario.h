@@ -255,10 +255,7 @@ namespace OpenViBEDesigner
 
 		GtkImageMenuItem* gtk_menu_add_new_image_menu_item_with_cb(GtkMenu* menu, const char* icon, const char* label, 
 																   menu_callback_function cb, OpenViBE::Kernel::IBox* box, 
-																   uint32_t command, const uint32_t index)
-		{
-			return gtk_menu_add_new_image_menu_item_with_cb_generic(menu, icon, label, cb, box, command, index, 0);
-		}
+																   uint32_t command, const uint32_t index) { return gtk_menu_add_new_image_menu_item_with_cb_generic(menu, icon, label, cb, box, command, index, 0); }
 
 		void redrawScenarioLinkSettings(GtkWidget* pLinkTable, bool bIsInput, std::vector<SLinkCallbackData>& vLinkCallbackData,
 										uint32_t (OpenViBE::Kernel::IScenario::*pfGetLinkCount)() const,

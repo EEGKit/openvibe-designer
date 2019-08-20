@@ -73,5 +73,5 @@ namespace Mensia
 			std::vector<double> m_vRange;
 			std::vector<double>::iterator it;
 		};
-	}  // namespace AdvancedVisualization
-}  // namespace Mensia
+	} // namespace AdvancedVisualization
+} // namespace Mensia

@@ -104,7 +104,7 @@ namespace
 	void spinbutton_freq_band_min_change_value_callback(GtkSpinButton* pSpinButton, IRendererContext* pRendererContext) { pRendererContext->setMinimumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(pSpinButton))); }
 
 	void spinbutton_freq_band_max_change_value_callback(GtkSpinButton* pSpinButton, IRendererContext* pRendererContext) { pRendererContext->setMaximumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(pSpinButton))); }
-}  // namespace
+} // namespace
 
 bool CBoxAlgorithmViz::initialize()
 

@@ -65,7 +65,7 @@ namespace
 			designerLog_ptr->m_CenterOnBoxFun(l_oId);
 		}
 	}
-}  // namespace
+} // namespace
 
 
 void CLogListenerDesigner::searchMessages(const CString& l_sSearchTerm)

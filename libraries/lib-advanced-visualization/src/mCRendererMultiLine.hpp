@@ -33,4 +33,4 @@ namespace Mensia
 			bool render(const IRendererContext& rContext) override;
 		};
 	} // namespace AdvancedVisualization
-}  // namespace Mensia
+} // namespace Mensia

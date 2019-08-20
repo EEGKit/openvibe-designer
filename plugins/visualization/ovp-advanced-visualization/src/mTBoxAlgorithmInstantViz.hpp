@@ -340,5 +340,5 @@ namespace Mensia
 
 			CBoxAlgorithmViz::postDraw();
 		}
-	}  // namespace AdvancedVisualization
+	} // namespace AdvancedVisualization
 } // namespace Mensia

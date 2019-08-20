@@ -43,7 +43,7 @@ namespace
 		}
 		return true;
 	}
-}  // namespace
+} // namespace
 
 C3DMesh::C3DMesh()
 {

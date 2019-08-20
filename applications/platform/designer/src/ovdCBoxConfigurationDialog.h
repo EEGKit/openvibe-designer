@@ -58,4 +58,4 @@ namespace OpenViBEDesigner
 
 		std::vector<OpenViBE::CString> m_SettingsMemory;
 	};
-}  // namespace OpenViBEDesigner
+} // namespace OpenViBEDesigner

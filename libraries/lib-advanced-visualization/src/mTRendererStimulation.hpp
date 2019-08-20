@@ -192,5 +192,5 @@ namespace Mensia
 				return l_uiResult;
 			}
 		};
-	}  // namespace AdvancedVisualization
-}  // namespace Mensia
+	} // namespace AdvancedVisualization
+} // namespace Mensia

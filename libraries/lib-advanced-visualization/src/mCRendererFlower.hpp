@@ -39,5 +39,5 @@ namespace Mensia
 			std::vector<std::vector<std::vector<CVertex>>> m_vMuliVertex;
 			std::vector<CVertex> m_vCircle;
 		};
-	}  // namespace AdvancedVisualization
-}  // namespace Mensia
+	} // namespace AdvancedVisualization
+} // namespace Mensia

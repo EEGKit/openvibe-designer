@@ -161,7 +161,7 @@ namespace
 			p.z = phi * sin(psi);
 		}
 	}
-}  // namespace
+} // namespace
 
 void CRendererTopo2D::rebuild3DMeshesPost(const IRendererContext& /*rContext*/)
 {

@@ -13,4 +13,4 @@ namespace OpenViBEVisualizationToolkit
 			OVVIZ_API bool interpolate(OpenViBE::IMatrix& interpolatedColorGradient, const OpenViBE::IMatrix& colorGradient, uint32_t steps);
 		} // namespace ColorGradient
 	} // namespace Tools
-}  // namespace OpenViBEVisualizationToolkit
+} // namespace OpenViBEVisualizationToolkit

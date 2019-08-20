@@ -41,5 +41,5 @@ namespace Mensia
 			const IRendererContext* m_pRendererContext;
 			const IRenderer* m_pRenderer;
 		};
-	}  // namespace AdvancedVisualization
-}  // namespace Mensia
+	} // namespace AdvancedVisualization
+} // namespace Mensia
