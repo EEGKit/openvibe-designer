@@ -135,7 +135,7 @@ namespace Mensia {
 			bool (*isStarted)();
 		};
 
-		struct ArchwayAPI* m_Archway;
+		struct ArchwayAPI* m_Archway = nullptr;
 		System::CDynamicModule m_ArchwayModule;
 		const OpenViBE::Kernel::IKernelContext& m_KernelContext;
 

@@ -108,9 +108,9 @@ namespace Mensia
 } // namespace Mensia
 
 OVP_Declare_Begin()
-	rPluginModuleContext.getTypeManager().registerEnumerationType(OVP_TypeId_TemporalCoherence, "Temporal Coherence");
-	rPluginModuleContext.getTypeManager().registerEnumerationEntry(OVP_TypeId_TemporalCoherence, "Time Locked", OVP_TypeId_TemporalCoherence_TimeLocked.toUInteger());
-	rPluginModuleContext.getTypeManager().registerEnumerationEntry(OVP_TypeId_TemporalCoherence, "Independant", OVP_TypeId_TemporalCoherence_Independant.toUInteger());
+	context.getTypeManager().registerEnumerationType(OVP_TypeId_TemporalCoherence, "Temporal Coherence");
+	context.getTypeManager().registerEnumerationEntry(OVP_TypeId_TemporalCoherence, "Time Locked", OVP_TypeId_TemporalCoherence_TimeLocked.toUInteger());
+	context.getTypeManager().registerEnumerationEntry(OVP_TypeId_TemporalCoherence, "Independant", OVP_TypeId_TemporalCoherence_Independant.toUInteger());
 
 	using namespace Mensia::AdvancedVisualization;
 
