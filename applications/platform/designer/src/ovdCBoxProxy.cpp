@@ -202,12 +202,10 @@ bool CBoxProxy::isDisabled() const
 
 void CBoxProxy::updateSize(GtkWidget* widget, const char* sLabel, const char* sStatus, int* pXSize, int* pYSize) const
 {
-	PangoContext* l_pPangoContext = nullptr;
-	PangoLayout* l_pPangoLayout   = nullptr;
 	PangoRectangle l_oPangoLabelRect;
 	PangoRectangle l_oPangoStatusRect;
-	l_pPangoContext = gtk_widget_create_pango_context(widget);
-	l_pPangoLayout  = pango_layout_new(l_pPangoContext);
+	PangoContext* l_pPangoContext = gtk_widget_create_pango_context(widget);
+	PangoLayout* l_pPangoLayout   = pango_layout_new(l_pPangoContext);
 	pango_layout_set_markup(l_pPangoLayout, sLabel, -1);
 	pango_layout_get_pixel_extents(l_pPangoLayout, nullptr, &l_oPangoLabelRect);
 	pango_layout_set_markup(l_pPangoLayout, sStatus, -1);

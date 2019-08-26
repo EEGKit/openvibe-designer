@@ -34,5 +34,5 @@ namespace Mensia
 			void refresh(const IRendererContext& rContext) override;
 			bool render(const IRendererContext& rContext) override;
 		};
-	}  // namespace AdvancedVisualization
-}  // namespace Mensia
+	} // namespace AdvancedVisualization
+} // namespace Mensia

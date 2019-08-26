@@ -556,10 +556,7 @@ void CPlayerVisualization::showTopLevelWindows()
 	auto it = m_mPlugins.begin();
 	while (it != m_mPlugins.end())
 	{
-		if (GTK_IS_WIDGET(it->second.m_widget))
-		{
-			gtk_widget_show(it->second.m_widget);
-		}
+		if (GTK_IS_WIDGET(it->second.m_widget)) { gtk_widget_show(it->second.m_widget); }
 		++it;
 	}
 }
@@ -571,10 +568,7 @@ void CPlayerVisualization::hideTopLevelWindows()
 	auto it = m_mPlugins.begin();
 	while (it != m_mPlugins.end())
 	{
-		if (GTK_IS_WIDGET(it->second.m_widget))
-		{
-			gtk_widget_hide(it->second.m_widget);
-		}
+		if (GTK_IS_WIDGET(it->second.m_widget)) { gtk_widget_hide(it->second.m_widget); }
 		++it;
 	}
 
@@ -658,16 +652,10 @@ void CPlayerVisualization::resizeCB(GtkContainer* container)
 
 		//go down each child
 		GtkWidget* l_pChild = gtk_paned_get_child1(l_pPaned);
-		if (GTK_IS_CONTAINER(l_pChild))
-		{
-			resizeCB(GTK_CONTAINER(l_pChild));
-		}
+		if (GTK_IS_CONTAINER(l_pChild)) { resizeCB(GTK_CONTAINER(l_pChild)); }
 
 		l_pChild = gtk_paned_get_child2(l_pPaned);
-		if (GTK_IS_CONTAINER(l_pChild))
-		{
-			resizeCB(GTK_CONTAINER(l_pChild));
-		}
+		if (GTK_IS_CONTAINER(l_pChild)) { resizeCB(GTK_CONTAINER(l_pChild)); }
 	}
 }
 
@@ -684,7 +672,7 @@ void CPlayerVisualization::drag_data_received_in_widget_cb(GtkWidget* pDstWidget
 	sscanf(reinterpret_cast<const char*>(gtk_selection_data_get_text(pSelectionData)), "%p", &srcWidget);
 
 	//retrieve source box and parent widgets
-	GtkWidget* srcBoxWidget = nullptr;
+	GtkWidget* srcBoxWidget;
 	do
 	{
 		srcBoxWidget = gtk_widget_get_parent(GTK_WIDGET(srcWidget));
@@ -697,7 +685,7 @@ void CPlayerVisualization::drag_data_received_in_widget_cb(GtkWidget* pDstWidget
 	if (srcParentWidget == nullptr) { return; }
 
 	//retrieve dest box and parent widgets
-	GtkWidget* dstBoxWidget = nullptr;
+	GtkWidget* dstBoxWidget;
 	do
 	{
 		dstBoxWidget = gtk_widget_get_parent(pDstWidget);
@@ -806,10 +794,7 @@ bool CPlayerVisualization::toggleToolbarCB(GtkToggleButton* button)
 			gtk_widget_hide(l_pToolbar);
 			m_pActiveToolbarButton = nullptr;
 		}
-		else //showing active toolbar
-		{
-			gtk_widget_show(l_pToolbar);
-		}
+		else { gtk_widget_show(l_pToolbar); } //showing active toolbar 
 	}
 	else //a new toolbar is to be shown
 	{

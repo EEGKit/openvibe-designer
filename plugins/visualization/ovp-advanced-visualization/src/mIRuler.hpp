@@ -156,5 +156,5 @@ namespace Mensia
 			float m_fBlackAlpha                        = 0.9f;
 			float m_fWhiteAlpha                        = 1.0f;
 		};
-	}  // namespace AdvancedVisualization
-}  // namespace Mensia
+	} // namespace AdvancedVisualization
+} // namespace Mensia

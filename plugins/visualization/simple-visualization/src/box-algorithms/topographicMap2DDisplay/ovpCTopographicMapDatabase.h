@@ -111,5 +111,5 @@ namespace OpenViBEPlugins
 			//delay to apply to interpolated values
 			uint64_t m_delay = 0;
 		};
-	}  // namespace SimpleVisualization
-}  // namespace OpenViBEPlugins
+	} // namespace SimpleVisualization
+} // namespace OpenViBEPlugins

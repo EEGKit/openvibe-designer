@@ -75,10 +75,7 @@ namespace Mensia {
 		bool isEngineStarted();
 		bool writeArchwayConfigurationFile();
 
-		std::map< std::string, std::string >& getPipelineSettings(unsigned int pipelineClassId)
-		{
-			return m_PipelineSettings[pipelineClassId];
-		}
+		std::map< std::string, std::string >& getPipelineSettings(unsigned int pipelineClassId) { return m_PipelineSettings[pipelineClassId]; }
 
 	public:
 		SArchwayBridge m_ArchwayBridge;
@@ -138,7 +135,7 @@ namespace Mensia {
 			bool (*isStarted)();
 		};
 
-		struct ArchwayAPI* m_Archway;
+		struct ArchwayAPI* m_Archway = nullptr;
 		System::CDynamicModule m_ArchwayModule;
 		const OpenViBE::Kernel::IKernelContext& m_KernelContext;
 

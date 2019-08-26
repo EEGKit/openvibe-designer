@@ -131,5 +131,5 @@ namespace Mensia
 
 			virtual uint32_t getMaximumSampleCountPerDisplay() const = 0;
 		};
-	}  // namespace AdvancedVisualization
-}  // namespace Mensia
+	} // namespace AdvancedVisualization
+} // namespace Mensia

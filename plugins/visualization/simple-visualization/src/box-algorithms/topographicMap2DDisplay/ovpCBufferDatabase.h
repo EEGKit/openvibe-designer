@@ -366,5 +366,5 @@ namespace OpenViBEPlugins
 			 */
 			bool convertCartesianToSpherical(const double* pCartesianCoords, double& rTheta, double& rPhi) const;
 		};
-	}  // namespace SimpleVisualization
+	} // namespace SimpleVisualization
 } // namespace OpenViBEPlugins

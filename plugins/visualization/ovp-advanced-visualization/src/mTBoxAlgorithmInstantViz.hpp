@@ -242,23 +242,11 @@ namespace Mensia
 						m_vRenderer[i]->setChannelCount(channelCount);
 						m_vRenderer[i]->setSampleCount(sampleCount);
 
-						if (sampleCount > 1 && m_oTypeIdentifier != OV_TypeId_Spectrum)
-						{
-							gtk_widget_show(m_pERPPlayer);
-						}
+						if (sampleCount > 1 && m_oTypeIdentifier != OV_TypeId_Spectrum) { gtk_widget_show(m_pERPPlayer); }
 
-						if (m_oTypeIdentifier == OV_TypeId_Signal)
-						{
-							m_pRendererContext->setDataType(IRendererContext::DataType_Signal);
-						}
-						else if (m_oTypeIdentifier == OV_TypeId_Spectrum)
-						{
-							m_pRendererContext->setDataType(IRendererContext::DataType_Spectrum);
-						}
-						else
-						{
-							m_pRendererContext->setDataType(IRendererContext::DataType_Matrix);
-						}
+						if (m_oTypeIdentifier == OV_TypeId_Signal) { m_pRendererContext->setDataType(IRendererContext::DataType_Signal); }
+						else if (m_oTypeIdentifier == OV_TypeId_Spectrum) { m_pRendererContext->setDataType(IRendererContext::DataType_Spectrum); }
+						else { m_pRendererContext->setDataType(IRendererContext::DataType_Matrix); }
 
 						m_bRebuildNeeded = true;
 						m_bRefreshNeeded = true;
@@ -308,17 +296,11 @@ namespace Mensia
 
 			if (m_bRebuildNeeded)
 			{
-				for (auto& renderer : m_vRenderer)
-				{
-					renderer->rebuild(*m_pRendererContext);
-				}
+				for (auto& renderer : m_vRenderer) { renderer->rebuild(*m_pRendererContext); }
 			}
 			if (m_bRefreshNeeded)
 			{
-				for (auto& renderer : m_vRenderer)
-				{
-					renderer->refresh(*m_pRendererContext);
-				}
+				for (auto& renderer : m_vRenderer) { renderer->refresh(*m_pRendererContext); }
 			}
 			if (m_bRedrawNeeded) { this->redraw(); }
 
@@ -358,5 +340,5 @@ namespace Mensia
 
 			CBoxAlgorithmViz::postDraw();
 		}
-	}  // namespace AdvancedVisualization
+	} // namespace AdvancedVisualization
 } // namespace Mensia

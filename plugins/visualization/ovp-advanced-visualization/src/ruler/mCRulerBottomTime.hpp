@@ -86,5 +86,5 @@ namespace Mensia
 				g_object_unref(l_pDrawGC);
 			}
 		};
-	}  // namespace AdvancedVisualization
+	} // namespace AdvancedVisualization
 } // namespace Mensia

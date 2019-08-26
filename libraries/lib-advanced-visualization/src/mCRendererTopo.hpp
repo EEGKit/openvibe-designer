@@ -59,5 +59,5 @@ namespace Mensia
 
 			Eigen::MatrixXd A, B, D, Ai;
 		};
-	}  // namespace AdvancedVisualization
-}  // namespace Mensia
+	} // namespace AdvancedVisualization
+} // namespace Mensia

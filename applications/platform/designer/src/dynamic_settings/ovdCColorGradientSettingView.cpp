@@ -25,10 +25,7 @@ static void on_refresh_color_gradient(GtkWidget* /*widget*/, GdkEventExpose* /*e
 	static_cast<CColorGradientSettingView *>(data)->refreshColorGradient();
 }
 
-static void on_gtk_widget_destroy_cb(GtkWidget* widget, gpointer /*data*/)
-{
-	gtk_widget_destroy(widget);
-}
+static void on_gtk_widget_destroy_cb(GtkWidget* widget, gpointer /*data*/) { gtk_widget_destroy(widget); }
 
 static void on_initialize_color_gradient(GtkWidget* /*widget*/, gpointer data)
 {

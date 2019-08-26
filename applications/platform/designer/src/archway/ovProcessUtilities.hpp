@@ -37,10 +37,7 @@ namespace
 
 			if (l_fsInputStream.is_open())
 			{
-				while(!l_fsInputStream.eof())
-				{
-					l_fsInputStream >> l_sFileContents;
-				}
+				while(!l_fsInputStream.eof()) { l_fsInputStream >> l_sFileContents; }
 				size_t l_stFound = l_sFileContents.rfind(m_sProcessName);
 				if (l_stFound != std::string::npos && l_stFound == l_sFileContents.length() - m_sProcessName.length() - 1 )
 				{
@@ -70,10 +67,7 @@ namespace OpenViBE
 
 			// Take a snapshot of all processes in the system.
 			hProcessSnap = CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 );
-			if( hProcessSnap == INVALID_HANDLE_VALUE )
-			{
-				return false;
-			}
+			if( hProcessSnap == INVALID_HANDLE_VALUE ) { return false; }
 
 			// Set the size of the structure before using it.
 			pe32.dwSize = sizeof( PROCESSENTRY32 );
@@ -126,10 +120,7 @@ namespace OpenViBE
 
 			PROCESS_INFORMATION lpProcessInfo;
 			// Create the process
-			if (!CreateProcess(nullptr,szCmdline, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, &lpStartupInfo, &lpProcessInfo))
-			{
-				exit(1);
-			}
+			if (!CreateProcess(nullptr,szCmdline, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, &lpStartupInfo, &lpProcessInfo)) { exit(1); }
 			*/
 			std::string l_sCommand = "start \"\" \"" + std::string(sCommandLine) + "\"";
 			system(l_sCommand.c_str());

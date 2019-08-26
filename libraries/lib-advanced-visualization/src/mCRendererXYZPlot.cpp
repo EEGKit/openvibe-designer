@@ -105,14 +105,8 @@ bool CRendererXYZPlot::render(const IRendererContext& rContext)
 
 	if (rContext.isAxisDisplayed())
 	{
-		if (m_hasDepth)
-		{
-			this->draw3DCoordinateSystem();
-		}
-		else
-		{
-			this->draw2DCoordinateSystem();
-		}
+		if (m_hasDepth) { this->draw3DCoordinateSystem(); }
+		else { this->draw2DCoordinateSystem(); }
 	}
 
 	uint32_t n       = m_sampleCount;

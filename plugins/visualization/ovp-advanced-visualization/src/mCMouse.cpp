@@ -30,7 +30,7 @@ using namespace AdvancedVisualization;
 
 CMouse::CMouse(CBoxAlgorithmViz& rBoxAlgorithmViz) : m_rBoxAlgorithmViz(rBoxAlgorithmViz) { }
 
-void CMouse::mouseButton(IRendererContext& rContext, const int32_t x, const int32_t y, const int32_t button, const int status)
+void CMouse::mouseButton(IRendererContext& rContext, const int x, const int y, const int button, const int status)
 {
 	m_vButton[button] = status;
 
@@ -44,7 +44,7 @@ void CMouse::mouseButton(IRendererContext& rContext, const int32_t x, const int3
 	m_mouseY = y;
 }
 
-void CMouse::mouseMotion(IRendererContext& rContext, const int32_t x, const int32_t y)
+void CMouse::mouseMotion(IRendererContext& rContext, const int x, const int y)
 {
 	if (m_vButton[3])
 	{
@@ -67,7 +67,7 @@ void CMouse::mouseMotion(IRendererContext& rContext, const int32_t x, const int3
 bool CMouse::hasButtonPressed()
 
 {
-	for (std::map<int32_t, int>::const_iterator it = m_vButton.begin(); it != m_vButton.end(); ++it)
+	for (std::map<int, int>::const_iterator it = m_vButton.begin(); it != m_vButton.end(); ++it)
 	{
 		if (it->second) { return true; }
 	}

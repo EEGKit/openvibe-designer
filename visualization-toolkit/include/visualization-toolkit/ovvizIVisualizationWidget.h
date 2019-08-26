@@ -144,4 +144,4 @@ namespace OpenViBEVisualizationToolkit
 		virtual int getDividerPosition() = 0;
 		virtual int getMaxDividerPosition() = 0;
 	};
-}  // namespace OpenViBEVisualizationToolkit
+} // namespace OpenViBEVisualizationToolkit

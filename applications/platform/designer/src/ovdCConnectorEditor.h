@@ -27,12 +27,12 @@ namespace OpenViBEDesigner
 	private:
 
 		//		typedef uint32_t (OpenViBE::Kernel::IBox::*t_getConnectorCount)() const;
-		typedef bool (OpenViBE::Kernel::IBox::*t_getConnectorIdentifier)(uint32_t inputIndex, OpenViBE::CIdentifier& identifier) const;
-		typedef bool (OpenViBE::Kernel::IBox::*t_getConnectorType)(uint32_t inputIndex, OpenViBE::CIdentifier& rTypeIdentifier) const;
-		typedef bool (OpenViBE::Kernel::IBox::*t_getConnectorName)(uint32_t inputIndex, OpenViBE::CString& rName) const;
-		typedef bool (OpenViBE::Kernel::IBox::*t_setConnectorType)(uint32_t inputIndex, const OpenViBE::CIdentifier& rTypeIdentifier);
-		typedef bool (OpenViBE::Kernel::IBox::*t_setConnectorName)(uint32_t inputIndex, const OpenViBE::CString& rName);
+		typedef bool (OpenViBE::Kernel::IBox::*t_getConnectorIdentifier)(uint32_t index, OpenViBE::CIdentifier& identifier) const;
+		typedef bool (OpenViBE::Kernel::IBox::*t_getConnectorType)(uint32_t index, OpenViBE::CIdentifier& rTypeIdentifier) const;
+		typedef bool (OpenViBE::Kernel::IBox::*t_getConnectorName)(uint32_t index, OpenViBE::CString& rName) const;
+		typedef bool (OpenViBE::Kernel::IBox::*t_setConnectorType)(uint32_t index, const OpenViBE::CIdentifier& rTypeIdentifier);
+		typedef bool (OpenViBE::Kernel::IBox::*t_setConnectorName)(uint32_t index, const OpenViBE::CString& rName);
 		typedef bool (OpenViBE::Kernel::IBox::*t_isTypeSupported)(const OpenViBE::CIdentifier& rTypeIdentifier) const;
-		typedef bool (OpenViBE::Kernel::IBox::*t_updateConnectorIdentifier)(uint32_t inputIndex, const OpenViBE::CIdentifier& newIdentifier);
+		typedef bool (OpenViBE::Kernel::IBox::*t_updateConnectorIdentifier)(uint32_t index, const OpenViBE::CIdentifier& newIdentifier);
 	};
 };

@@ -308,4 +308,4 @@ namespace OpenViBEPlugins
 			uint32_t m_rowStride     = 0;
 		};
 	} // namespace SimpleVisualization
-}  // namespace OpenViBEPlugins
+} // namespace OpenViBEPlugins

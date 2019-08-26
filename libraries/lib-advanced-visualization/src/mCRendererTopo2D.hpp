@@ -14,4 +14,4 @@ namespace Mensia
 			void rebuild3DMeshesPost(const IRendererContext& rContext) override;
 		};
 	} // namespace AdvancedVisualization
-}  // namespace Mensia
+} // namespace Mensia

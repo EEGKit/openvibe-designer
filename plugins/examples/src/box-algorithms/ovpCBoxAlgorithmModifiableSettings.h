@@ -65,23 +65,23 @@ namespace OpenViBEPlugins
 			OpenViBE::CIdentifier getCreatedClass() const override { return OVP_ClassId_BoxAlgorithm_ModifiableSettings; }
 			OpenViBE::Plugins::IPluginObject* create() override { return new CBoxAlgorithmModifiableSettings; }
 
-			bool hasFunctionality(const OpenViBE::CIdentifier functionalityIdentifier) const override { return functionalityIdentifier == OVD_Functionality_Visualization; }
+			bool hasFunctionality(const OpenViBE::CIdentifier functionality) const override { return functionality == OVD_Functionality_Visualization; }
 
 
-			bool getBoxPrototype(OpenViBE::Kernel::IBoxProto& rBoxAlgorithmPrototype) const override
+			bool getBoxPrototype(OpenViBE::Kernel::IBoxProto& prototype) const override
 			{
-				rBoxAlgorithmPrototype.addSetting("Int", OV_TypeId_Integer, "1", true);
-				rBoxAlgorithmPrototype.addSetting("Float", OV_TypeId_Float, "1.3", true);
-				rBoxAlgorithmPrototype.addSetting("Bool", OV_TypeId_Boolean, "false", true);
-				rBoxAlgorithmPrototype.addSetting("String", OV_TypeId_String, "string", true);
-				rBoxAlgorithmPrototype.addSetting("filename", OV_TypeId_Filename, "somefile.txt", true);
-				rBoxAlgorithmPrototype.addSetting("script", OV_TypeId_Script, "somescript.lua", true);
-				rBoxAlgorithmPrototype.addSetting("color", OV_TypeId_Color, "20,65,90", true);
-				rBoxAlgorithmPrototype.addSetting("colorgradient", OV_TypeId_ColorGradient, "0:0,0,0; 100:60,40,40", true);
-				rBoxAlgorithmPrototype.addSetting("unit", OV_TypeId_MeasurementUnit, "V", true);
-				rBoxAlgorithmPrototype.addSetting("factor", OV_TypeId_Factor, "1e-01", true);
+				prototype.addSetting("Int", OV_TypeId_Integer, "1", true);
+				prototype.addSetting("Float", OV_TypeId_Float, "1.3", true);
+				prototype.addSetting("Bool", OV_TypeId_Boolean, "false", true);
+				prototype.addSetting("String", OV_TypeId_String, "string", true);
+				prototype.addSetting("filename", OV_TypeId_Filename, "somefile.txt", true);
+				prototype.addSetting("script", OV_TypeId_Script, "somescript.lua", true);
+				prototype.addSetting("color", OV_TypeId_Color, "20,65,90", true);
+				prototype.addSetting("colorgradient", OV_TypeId_ColorGradient, "0:0,0,0; 100:60,40,40", true);
+				prototype.addSetting("unit", OV_TypeId_MeasurementUnit, "V", true);
+				prototype.addSetting("factor", OV_TypeId_Factor, "1e-01", true);
 
-				rBoxAlgorithmPrototype.addFlag(OV_AttributeId_Box_FlagIsUnstable);
+				prototype.addFlag(OV_AttributeId_Box_FlagIsUnstable);
 
 				return true;
 			}

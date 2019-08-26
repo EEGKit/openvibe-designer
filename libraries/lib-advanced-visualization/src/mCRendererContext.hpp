@@ -168,4 +168,4 @@ namespace Mensia
 			float m_ERPFraction    = 0;
 		};
 	} // namespace AdvancedVisualization
-}  // namespace Mensia
+} // namespace Mensia

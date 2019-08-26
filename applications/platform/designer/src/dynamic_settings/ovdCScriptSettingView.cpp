@@ -86,12 +86,9 @@ void CScriptSettingView::browse() const
 
 	if (gtk_dialog_run(GTK_DIALOG(l_pWidgetDialogOpen)) == GTK_RESPONSE_ACCEPT)
 	{
-		char* l_sFileName  = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(l_pWidgetDialogOpen));
-		char* l_pBackslash = nullptr;
-		while ((l_pBackslash = strchr(l_sFileName, '\\')) != nullptr)
-		{
-			*l_pBackslash = '/';
-		}
+		char* l_sFileName = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(l_pWidgetDialogOpen));
+		char* l_pBackslash;
+		while ((l_pBackslash = strchr(l_sFileName, '\\')) != nullptr) { *l_pBackslash = '/'; }
 		gtk_entry_set_text(m_entry, l_sFileName);
 		g_free(l_sFileName);
 	}
@@ -105,16 +102,16 @@ void CScriptSettingView::edit() const
 
 	if (editorCommand != CString(""))
 	{
-		CString l_sFullCommand = editorCommand + CString(" \"") + fileName + CString("\"");
+		CString fullCommand = editorCommand + CString(" \"") + fileName + CString("\"");
 #if defined TARGET_OS_Windows
-		l_sFullCommand = "START " + l_sFullCommand;
+		fullCommand = "START " + fullCommand;
 #elif defined TARGET_OS_Linux
-		l_sFullCommand = l_sFullCommand + " &";
+		fullCommand = fullCommand + " &";
 #else
 #endif
-		if (system(l_sFullCommand.toASCIIString()) < 0)
+		if (system(fullCommand.toASCIIString()) < 0)
 		{
-			m_kernelContext.getLogManager() << Kernel::LogLevel_Warning << "Could not run command " << l_sFullCommand << "\n";
+			m_kernelContext.getLogManager() << Kernel::LogLevel_Warning << "Could not run command " << fullCommand << "\n";
 		}
 	}
 }

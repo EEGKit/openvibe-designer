@@ -106,7 +106,7 @@ namespace
 		t -= i1;
 		return rCache[i1] * (1 - t) + rCache[i2] * t;
 	}
-}  // namespace
+} // namespace
 
 void CRendererTopo::rebuild(const IRendererContext& rContext)
 {

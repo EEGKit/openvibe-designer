@@ -146,10 +146,7 @@ bool CVisualizationTree::addVisualizationWidget(CIdentifier& identifier, const C
 				//extend number of children of parent window if necessary
 				if (parentVisualizationWidget->getNbChildren() <= parentIndex)
 				{
-					for (unsigned int i = parentVisualizationWidget->getNbChildren(); i <= parentIndex; i++)
-					{
-						parentVisualizationWidget->addChild(OV_UndefinedIdentifier);
-					}
+					for (unsigned int i = parentVisualizationWidget->getNbChildren(); i <= parentIndex; i++) { parentVisualizationWidget->addChild(OV_UndefinedIdentifier); }
 				}
 			}
 
@@ -334,10 +331,7 @@ CIdentifier CVisualizationTree::getUnusedIdentifier(const CIdentifier& suggested
 	return result;
 }
 
-GtkTreeView* CVisualizationTree::createTreeViewWithModel()
-{
-	return GTK_TREE_VIEW(gtk_tree_view_new_with_model(GTK_TREE_MODEL(m_TreeStore)));
-}
+GtkTreeView* CVisualizationTree::createTreeViewWithModel() { return GTK_TREE_VIEW(gtk_tree_view_new_with_model(GTK_TREE_MODEL(m_TreeStore))); }
 
 bool CVisualizationTree::setTreeViewCB(ITreeViewCB* treeViewCB)
 {
@@ -889,10 +883,7 @@ CString CVisualizationTree::serialize() const
 	while (this->getNextVisualizationWidgetIdentifier(visualizationWidgetIdentifier))
 	{
 		IVisualizationWidget* widget = this->getVisualizationWidget(visualizationWidgetIdentifier);
-		if (widget->getType() == EVisualizationWidget_VisualizationWindow || widget->getParentIdentifier() == OV_UndefinedIdentifier)
-		{
-			widgetsToExport.push_back(visualizationWidgetIdentifier);
-		}
+		if (widget->getType() == EVisualizationWidget_VisualizationWindow || widget->getParentIdentifier() == OV_UndefinedIdentifier) { widgetsToExport.push_back(visualizationWidgetIdentifier); }
 	}
 
 	for (size_t i = 0; i < widgetsToExport.size(); ++i)
@@ -903,10 +894,7 @@ CString CVisualizationTree::serialize() const
 
 		for (uint32_t j = 0; j < widget->getNbChildren(); ++j)
 		{
-			if (widget->getChildIdentifier(j, visualizationWidgetIdentifier))
-			{
-				widgetsToExport.push_back(visualizationWidgetIdentifier);
-			}
+			if (widget->getChildIdentifier(j, visualizationWidgetIdentifier)) { widgetsToExport.push_back(visualizationWidgetIdentifier); }
 		}
 	}
 

@@ -68,5 +68,5 @@ namespace OpenViBEDesigner
 			//If we don't store the builder, the setting name will be free when we'll unref the builder
 			GtkBuilder* m_pBuilder = nullptr;
 		};
-	}  // namespace Setting
-}  // namespace OpenViBEDesigner
+	} // namespace Setting
+} // namespace OpenViBEDesigner

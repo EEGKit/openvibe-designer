@@ -54,8 +54,8 @@ namespace OpenViBEPlugins
 			OpenViBE::CMatrix m_MatrixInterpolatedColorGardient;
 			OpenViBE::CMatrix m_MatrixColorGradient;
 			uint32_t m_GradientSteps = 0;
-			double m_f64MaxValue = 0;
-			double m_f64MinValue = 0;
+			double m_f64MaxValue     = 0;
+			double m_f64MinValue     = 0;
 
 			bool m_bSymetricMinMax = false;
 			bool m_bRealTimeMinMax = false;
@@ -91,16 +91,16 @@ namespace OpenViBEPlugins
 			OpenViBE::CIdentifier getCreatedClass() const override { return OVP_ClassId_BoxAlgorithm_MatrixDisplay; }
 			OpenViBE::Plugins::IPluginObject* create() override { return new CBoxAlgorithmMatrixDisplay; }
 
-			bool hasFunctionality(const OpenViBE::CIdentifier functionalityIdentifier) const override { return functionalityIdentifier == OVD_Functionality_Visualization; }
+			bool hasFunctionality(const OpenViBE::CIdentifier functionality) const override { return functionality == OVD_Functionality_Visualization; }
 
-			bool getBoxPrototype(OpenViBE::Kernel::IBoxProto& rBoxAlgorithmPrototype) const override
+			bool getBoxPrototype(OpenViBE::Kernel::IBoxProto& prototype) const override
 			{
-				rBoxAlgorithmPrototype.addSetting("Color gradient", OV_TypeId_ColorGradient, "0:2,36,58; 50:100,100,100; 100:83,17,20");
-				rBoxAlgorithmPrototype.addSetting("Steps", OV_TypeId_Integer, "100");
-				rBoxAlgorithmPrototype.addSetting("Symetric min/max", OV_TypeId_Boolean, "false");
-				rBoxAlgorithmPrototype.addSetting("Real time min/max", OV_TypeId_Boolean, "false");
-				rBoxAlgorithmPrototype.addInput("Matrix", OV_TypeId_StreamedMatrix);
-				// rBoxAlgorithmPrototype.addFlag   (OpenViBE::Kernel::BoxFlag_IsUnstable);
+				prototype.addSetting("Color gradient", OV_TypeId_ColorGradient, "0:2,36,58; 50:100,100,100; 100:83,17,20");
+				prototype.addSetting("Steps", OV_TypeId_Integer, "100");
+				prototype.addSetting("Symetric min/max", OV_TypeId_Boolean, "false");
+				prototype.addSetting("Real time min/max", OV_TypeId_Boolean, "false");
+				prototype.addInput("Matrix", OV_TypeId_StreamedMatrix);
+				// prototype.addFlag   (OpenViBE::Kernel::BoxFlag_IsUnstable);
 
 				return true;
 			}
@@ -108,4 +108,4 @@ namespace OpenViBEPlugins
 			_IsDerivedFromClass_Final_(OpenViBE::Plugins::IBoxAlgorithmDesc, OVP_ClassId_BoxAlgorithm_MatrixDisplayDesc)
 		};
 	} // namespace SimpleVisualization
-}  // namespace OpenViBEPlugins
+} // namespace OpenViBEPlugins

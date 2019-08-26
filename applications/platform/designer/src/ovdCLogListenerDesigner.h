@@ -81,7 +81,7 @@ namespace OpenViBEDesigner
 			}
 
 			GtkTextBuffer* m_pBuffer = nullptr;
-			bool m_bPassedFilter = false;
+			bool m_bPassedFilter     = false;
 		};
 
 		CLogListenerDesigner(const OpenViBE::Kernel::IKernelContext& rKernelContext, GtkBuilder* pBuilderInterface);
@@ -99,7 +99,7 @@ namespace OpenViBEDesigner
 		void log(const uint8_t value) override;
 
 		void log(const int64_t value) override;
-		void log(const int32_t value) override;
+		void log(const int value) override;
 		void log(const int16_t value) override;
 		void log(const int8_t value) override;
 
@@ -181,4 +181,4 @@ namespace OpenViBEDesigner
 		void updateMessageCounts() const;
 		void checkAppendFilterCurrentLog(const char* textColor, const char* logMessage, bool bIsLink = false) const;
 	};
-}  // namespace OpenViBEDesigner
+} // namespace OpenViBEDesigner

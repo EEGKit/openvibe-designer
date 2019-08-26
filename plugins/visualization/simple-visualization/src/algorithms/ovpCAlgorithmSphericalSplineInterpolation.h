@@ -40,7 +40,7 @@ namespace OpenViBEPlugins
 			//-------------
 			bool m_bFirstProcess    = true;
 			double* m_pDoubleCoords = nullptr;
-			double** m_pInsermCoords;
+			double** m_pInsermCoords = nullptr;
 			double m_ScdTable[2004];
 			double m_PotTable[2004];
 			double* m_pSplineCoefs          = nullptr;
@@ -91,5 +91,5 @@ namespace OpenViBEPlugins
 
 			_IsDerivedFromClass_Final_(OpenViBE::Plugins::IAlgorithmDesc, OVP_ClassId_Algorithm_SphericalSplineInterpolationDesc)
 		};
-	}  // namespace Test
+	} // namespace Test
 } // namespace OpenViBEPlugins

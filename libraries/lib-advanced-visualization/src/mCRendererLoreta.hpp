@@ -64,7 +64,7 @@ namespace Mensia
 
 			std::vector<uint32_t> m_vBrainSubsetTriangle;
 		};
-	}  // namespace AdvancedVisualization
-}  // namespace Mensia
+	} // namespace AdvancedVisualization
+} // namespace Mensia
 
 #endif // TARGET_HAS_ThirdPartyOpenGL

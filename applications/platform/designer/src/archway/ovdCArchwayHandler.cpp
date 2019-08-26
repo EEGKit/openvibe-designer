@@ -216,10 +216,7 @@ bool CArchwayHandler::uninitialize()
 
 CArchwayHandler::~CArchwayHandler()
 {
-	if (m_Archway)
-	{
-		this->uninitialize();
-	}
+	if (m_Archway) { this->uninitialize(); }
 }
 
 
@@ -326,7 +323,7 @@ bool CArchwayHandler::startEngineWithPipeline(unsigned int uiPipelineClassId, bo
 			std::string logMessages;
 
 			m_Archway->getPendingLogMessage(m_RunningPipelineId, &logLevel, messageBuffer, sizeof(messageBuffer));
-			m_KernelContext.getLogManager() << static_cast<ELogLevel>(logLevel) << messageBuffer;
+			m_KernelContext.getLogManager() << ELogLevel(logLevel) << messageBuffer;
 		}
 
 		if (!m_Archway->stopAllAcquisitionDevices())
@@ -409,7 +406,7 @@ bool CArchwayHandler::loopEngine()
 		std::string logMessages;
 
 		m_Archway->getPendingLogMessage(m_RunningPipelineId, &logLevel, messageBuffer, sizeof(messageBuffer));
-		m_KernelContext.getLogManager() << static_cast<ELogLevel>(logLevel) << messageBuffer;
+		m_KernelContext.getLogManager() << ELogLevel(logLevel) << messageBuffer;
 	}
 
 	if (!isPipelineRunning || isPipelineInErrorState)
@@ -548,10 +545,7 @@ bool CArchwayHandler::setPipelineParameterValue(unsigned int pipelineClassId, st
 			{
 				m_PipelineSettings[pipelineClassId].erase(m_PipelineSettings[pipelineClassId].find(parameterName));
 
-				if (m_PipelineSettings[pipelineClassId].size() == 0)
-				{
-					m_PipelineSettings.erase(m_PipelineSettings.find(pipelineClassId));
-				}
+				if (m_PipelineSettings[pipelineClassId].size() == 0) { m_PipelineSettings.erase(m_PipelineSettings.find(pipelineClassId)); }
 			}
 		}
 	}

@@ -49,10 +49,7 @@ bool CSettingEditorDialog::run()
 		if (!m_kernelContext.getTypeManager().isStream(l_oCurrentTypeIdentifier.first))
 		{
 			gtk_combo_box_append_text(GTK_COMBO_BOX(m_pType), l_oCurrentTypeIdentifier.second.toASCIIString());
-			if (l_oCurrentTypeIdentifier.first == l_oSettingType)
-			{
-				l_iActive = numSettings;
-			}
+			if (l_oCurrentTypeIdentifier.first == l_oSettingType) { l_iActive = numSettings; }
 			m_vSettingTypes[l_oCurrentTypeIdentifier.second.toASCIIString()] = l_oCurrentTypeIdentifier.first;
 			numSettings++;
 		}
@@ -86,10 +83,7 @@ bool CSettingEditorDialog::run()
 		{
 			gtk_entry_set_text(GTK_ENTRY(l_pName), l_sSettingName.toASCIIString());
 
-			if (l_iActive != -1)
-			{
-				gtk_combo_box_set_active(GTK_COMBO_BOX(m_pType), l_iActive);
-			}
+			if (l_iActive != -1) { gtk_combo_box_set_active(GTK_COMBO_BOX(m_pType), l_iActive); }
 		}
 		else
 		{

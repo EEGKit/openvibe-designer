@@ -21,6 +21,7 @@
 #include <cstdlib>
 
 #include "linpack.h"
+#include <iostream>
 
 /*&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&*/
 /*& Define                                                                  &*/
@@ -55,7 +56,7 @@ int spline_tables(const int order, double* pot_table, double* scd_table)
 {
 	if (order <= 2)
 	{
-		printf("spline_table error : spline order <= 2\n");
+		std::cout << "spline_table error : spline order <= 2\n";
 		return -1;
 	}
 
@@ -193,22 +194,19 @@ int spline_coef(const int nb_value, double** xyz, const double* values, const do
 {
 	int i, info, itmp;
 
-	double* p_mat_a = nullptr;
-	int* p_iwork    = nullptr;
-
 	/*=========================================*/
 	/* allocation of temporary arrays          */
 	/*=========================================*/
-	p_mat_a = static_cast<double*>(malloc(sizeof(double) * ((nb_value + 1) * (nb_value + 2)) / 2));
+	double* p_mat_a = static_cast<double*>(malloc(sizeof(double) * ((nb_value + 1) * (nb_value + 2)) / 2));
 	if (p_mat_a == nullptr)
 	{
-		printf("spline_coef error : allocation p_mat_a\n");
+		std::cout << "spline_coef error : allocation p_mat_a\n";
 		return (-1);
 	}
-	p_iwork = static_cast<int*>(malloc(sizeof(int) * (nb_value + 1)));
+	int* p_iwork = static_cast<int*>(malloc(sizeof(int) * (nb_value + 1)));
 	if (p_iwork == nullptr)
 	{
-		printf("spline_coef error : allocation p_iwork\n");
+		std::cout << "spline_coef error : allocation p_iwork\n";
 		return (-1);
 	}
 

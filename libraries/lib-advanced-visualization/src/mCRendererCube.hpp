@@ -41,5 +41,5 @@ namespace Mensia
 
 			std::vector<CVertex> m_vVertex;
 		};
-	}  // namespace AdvancedVisualization
-}  // namespace Mensia
+	} // namespace AdvancedVisualization
+} // namespace Mensia

@@ -28,5 +28,5 @@ namespace OpenViBEDesigner
 			const OpenViBE::Kernel::IKernelContext& m_kernelContext;
 			bool m_onValueSetting = false;
 		};
-	}  // namespace Setting
-}  // namespace OpenViBEDesigner
+	} // namespace Setting
+} // namespace OpenViBEDesigner

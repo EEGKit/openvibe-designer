@@ -27,5 +27,5 @@ namespace OpenViBEDesigner
 			std::vector<GtkToggleButton *> m_toggleButton;
 			bool m_onValueSetting = false;
 		};
-	}  // namespace Setting
-}  // namespace OpenViBEDesigner
+	} // namespace Setting
+} // namespace OpenViBEDesigner

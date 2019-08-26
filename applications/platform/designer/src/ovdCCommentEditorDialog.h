@@ -34,4 +34,4 @@ namespace OpenViBEDesigner
 		GtkWidget* m_pDescription{};
 		GtkTextBuffer* m_pDescriptionBuffer{};
 	};
-}  // namespace OpenViBEDesigner
+} // namespace OpenViBEDesigner

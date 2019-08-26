@@ -59,5 +59,5 @@ namespace Mensia
 				glMatrixMode(GL_MODELVIEW);
 			}
 		};
-	}  // namespace AdvancedVisualization
-}  // namespace Mensia
+	} // namespace AdvancedVisualization
+} // namespace Mensia

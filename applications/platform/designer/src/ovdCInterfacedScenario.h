@@ -49,7 +49,7 @@ namespace OpenViBEDesigner
 		void swapScenarioSettings(unsigned int settingAIndex, unsigned int settingBIndex);
 
 		void addScenarioInputCB();
-		void editScenarioInputCB(unsigned int inputIndex);
+		void editScenarioInputCB(unsigned int index);
 		void swapScenarioInputs(unsigned int inputAIndex, unsigned int inputBIndex);
 		void addScenarioOutputCB();
 		void editScenarioOutputCB(unsigned int outputIndex);
@@ -146,7 +146,7 @@ namespace OpenViBEDesigner
 		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
 		OpenViBE::Kernel::IScenario& m_rScenario;
 		OpenViBE::Kernel::IPlayer* m_pPlayer = nullptr;
-		uint64_t m_ui64LastLoopTime = 0;
+		uint64_t m_lastLoopTime = 0;
 		GtkNotebook& m_rNotebook;
 		OpenViBEVisualizationToolkit::IVisualizationTree* m_pVisualizationTree = nullptr;
 		bool m_designerVisualizationToggled = false;
@@ -177,8 +177,8 @@ namespace OpenViBEDesigner
 		double m_releaseMouseY = 0;
 		double m_currentMouseX = 0;
 		double m_currentMouseY = 0;
-		int32_t m_viewOffsetX = 0;
-		int32_t m_viewOffsetY = 0;
+		int m_viewOffsetX = 0;
+		int m_viewOffsetY = 0;
 		uint32_t m_currentMode = 0;
 
 		uint32_t m_boxCount = 0;
@@ -255,10 +255,7 @@ namespace OpenViBEDesigner
 
 		GtkImageMenuItem* gtk_menu_add_new_image_menu_item_with_cb(GtkMenu* menu, const char* icon, const char* label, 
 																   menu_callback_function cb, OpenViBE::Kernel::IBox* box, 
-																   uint32_t command, const uint32_t index)
-		{
-			return gtk_menu_add_new_image_menu_item_with_cb_generic(menu, icon, label, cb, box, command, index, 0);
-		}
+																   uint32_t command, const uint32_t index) { return gtk_menu_add_new_image_menu_item_with_cb_generic(menu, icon, label, cb, box, command, index, 0); }
 
 		void redrawScenarioLinkSettings(GtkWidget* pLinkTable, bool bIsInput, std::vector<SLinkCallbackData>& vLinkCallbackData,
 										uint32_t (OpenViBE::Kernel::IScenario::*pfGetLinkCount)() const,

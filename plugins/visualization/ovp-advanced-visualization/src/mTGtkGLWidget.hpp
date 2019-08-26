@@ -62,10 +62,7 @@ namespace Mensia
 						glDeleteTextures(1, &m_textureId);
 						GtkGL::postRender(m_widget);
 					}
-					if (m_pTimeoutSource)
-					{
-						g_source_destroy(m_pTimeoutSource);
-					}
+					if (m_pTimeoutSource) { g_source_destroy(m_pTimeoutSource); }
 					GtkGL::uninitialize(m_widget);
 				}
 			}
@@ -126,10 +123,7 @@ namespace Mensia
 					gdk_window_process_updates(m_widget->window, false);
 					gtk_widget_queue_draw(m_widget);
 				}
-				else
-				{
-					gdk_window_invalidate_rect(m_widget->window, nullptr, true);
-				}
+				else { gdk_window_invalidate_rect(m_widget->window, nullptr, true); }
 			}
 
 			virtual void redrawLeft(const bool immediate = false)
@@ -354,14 +348,14 @@ namespace Mensia
 						break;
 					default: break;
 				}
-				pBox->mouseButton(int32_t(pEvent->x), int32_t(pEvent->y), pEvent->button, l_iStatus);
+				pBox->mouseButton(int(pEvent->x), int(pEvent->y), pEvent->button, l_iStatus);
 				pBox->draw();
 				return TRUE;
 			}
 
 			static gboolean __motion_notify_cb(GtkWidget* /*pWidget*/, GdkEventMotion* pEvent, TBox* pBox)
 			{
-				pBox->mouseMotion(int32_t(pEvent->x), int32_t(pEvent->y));
+				pBox->mouseMotion(int(pEvent->x), int(pEvent->y));
 				return TRUE;
 			}
 
@@ -377,5 +371,5 @@ namespace Mensia
 				return TRUE;
 			}
 		};
-	}  // namespace AdvancedVisualization
-}  // namespace Mensia
+	} // namespace AdvancedVisualization
+} // namespace Mensia

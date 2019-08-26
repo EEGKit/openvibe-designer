@@ -92,4 +92,4 @@ namespace OpenViBEVisualizationToolkit
 	private:
 		std::unique_ptr<CVisualizationContext> m_VisualizationContext;
 	};
-}  // namespace OpenViBEVisualizationToolkit
+} // namespace OpenViBEVisualizationToolkit

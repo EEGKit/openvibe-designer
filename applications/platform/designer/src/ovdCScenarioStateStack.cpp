@@ -39,10 +39,7 @@ bool CScenarioStateStack::undo()
 	return this->restoreState(**m_CurrentState);
 }
 
-void CScenarioStateStack::dropLastState()
-{
-	m_States.pop_back();
-}
+void CScenarioStateStack::dropLastState() { m_States.pop_back(); }
 
 bool CScenarioStateStack::isRedoPossible()
 {
@@ -86,10 +83,7 @@ bool CScenarioStateStack::snapshot()
 
 	if (m_MaximumStateCount != 0)
 	{
-		while (m_States.size() >= m_MaximumStateCount)
-		{
-			m_States.erase(m_States.begin());
-		}
+		while (m_States.size() >= m_MaximumStateCount) { m_States.erase(m_States.begin()); }
 	}
 
 	m_States.push_back(newState);
@@ -145,10 +139,7 @@ bool CScenarioStateStack::restoreState(const IMemoryBuffer& state)
 	}
 
 	OpenViBEVisualizationToolkit::IVisualizationTree* visualizationTree = m_InterfacedScenario.m_pVisualizationTree;
-	if (visualizationTreeMetadata && visualizationTree)
-	{
-		visualizationTree->deserialize(visualizationTreeMetadata->getData());
-	}
+	if (visualizationTreeMetadata && visualizationTree) { visualizationTree->deserialize(visualizationTreeMetadata->getData()); }
 
 	return true;
 }

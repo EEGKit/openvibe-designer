@@ -39,5 +39,5 @@ namespace Mensia
 			std::vector<CVertex> m_vVertex;
 			std::vector<uint32_t> m_vQuad;
 		};
-	}  // namespace AdvancedVisualization
-}  // namespace Mensia
+	} // namespace AdvancedVisualization
+} // namespace Mensia

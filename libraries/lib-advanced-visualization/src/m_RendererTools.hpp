@@ -58,4 +58,4 @@ namespace
 
 		glEnd();
 	}
-}  // namespace
+} // namespace

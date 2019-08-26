@@ -53,14 +53,8 @@ namespace
 			GtkTextIter l_oStart = l_oIter;
 			GtkTextIter l_oEnd   = l_oIter;
 
-			while (gtk_text_iter_has_tag(&l_oEnd, designerLog_ptr->m_pCIdentifierTag))
-			{
-				gtk_text_iter_forward_char(&l_oEnd);
-			}
-			while (gtk_text_iter_has_tag(&l_oStart, designerLog_ptr->m_pCIdentifierTag))
-			{
-				gtk_text_iter_backward_char(&l_oStart);
-			}
+			while (gtk_text_iter_has_tag(&l_oEnd, designerLog_ptr->m_pCIdentifierTag)) { gtk_text_iter_forward_char(&l_oEnd); }
+			while (gtk_text_iter_has_tag(&l_oStart, designerLog_ptr->m_pCIdentifierTag)) { gtk_text_iter_backward_char(&l_oStart); }
 			//we went one char to far for start
 			gtk_text_iter_forward_char(&l_oStart);
 			//this contains the CIdentifier
@@ -71,7 +65,7 @@ namespace
 			designerLog_ptr->m_CenterOnBoxFun(l_oId);
 		}
 	}
-}  // namespace
+} // namespace
 
 
 void CLogListenerDesigner::searchMessages(const CString& l_sSearchTerm)
@@ -265,7 +259,7 @@ void CLogListenerDesigner::log(const int64_t value)
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
 }
 
-void CLogListenerDesigner::log(const int32_t value)
+void CLogListenerDesigner::log(const int value)
 {
 	if (m_bIngnoreMessages) { return; }
 
