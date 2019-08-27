@@ -21,8 +21,8 @@ using namespace std;
 
 namespace
 {
-	const char* const c_sRootName    = "OpenViBE-SettingsOverride";
-	const char* const c_sSettingName = "SettingValue";
+	const char* const ROOT_NAME    = "OpenViBE-SettingsOverride";
+	const char* const SETTING_NAME = "SettingValue";
 } // namespace
 
 static void on_file_override_check_toggled(GtkToggleButton* pToggleButton, gpointer data)
@@ -471,10 +471,10 @@ void CBoxConfigurationDialog::saveConfiguration() const
 		char* fileName = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widgetDialogOpen));
 
 		XML::IXMLHandler* l_pHandler = XML::createXMLHandler();
-		XML::IXMLNode* l_pRootNode   = XML::createNode(c_sRootName);
+		XML::IXMLNode* l_pRootNode   = XML::createNode(ROOT_NAME);
 		for (size_t i = 0; i < m_rBox.getInterfacorCountIncludingDeprecated(BoxInterfacorType::Setting); ++i)
 		{
-			XML::IXMLNode* l_pTempNode = XML::createNode(c_sSettingName);
+			XML::IXMLNode* l_pTempNode = XML::createNode(SETTING_NAME);
 			CString l_sValue;
 			m_rBox.getSettingValue(uint32_t(i), l_sValue);
 			l_pTempNode->setPCData(l_sValue.toASCIIString());
