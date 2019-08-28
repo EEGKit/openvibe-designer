@@ -23,8 +23,8 @@ namespace OpenViBEDesigner
 		//@{
 		GtkWidget* loadTreeWidget(OpenViBEVisualizationToolkit::IVisualizationWidget* pVisualizationWidget);
 		void endLoadTreeWidget(OpenViBEVisualizationToolkit::IVisualizationWidget* pVisualizationWidget);
-		bool setToolbar(const OpenViBE::CIdentifier& boxIdentifier, GtkWidget* pToolbarWidget);
-		bool setWidget(const OpenViBE::CIdentifier& boxIdentifier, GtkWidget* widget);
+		bool setToolbar(const OpenViBE::CIdentifier& boxID, GtkWidget* pToolbarWidget);
+		bool setWidget(const OpenViBE::CIdentifier& boxID, GtkWidget* widget);
 		//@}
 
 		void showTopLevelWindows();

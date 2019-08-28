@@ -55,20 +55,20 @@ IVisualizationTree& CVisualizationManager::getVisualizationTree(const CIdentifie
 	return *it->second;
 }
 
-bool CVisualizationManager::setToolbar(const CIdentifier& visualizationTreeIdentifier, const CIdentifier& boxIdentifier, GtkWidget* toolbar)
+bool CVisualizationManager::setToolbar(const CIdentifier& visualizationTreeIdentifier, const CIdentifier& boxID, GtkWidget* toolbar)
 {
 	IVisualizationTree& l_rVisualizationTree = getVisualizationTree(visualizationTreeIdentifier);
 
-	l_rVisualizationTree.setToolbar(boxIdentifier, toolbar);
+	l_rVisualizationTree.setToolbar(boxID, toolbar);
 
 	return true;
 }
 
-bool CVisualizationManager::setWidget(const CIdentifier& visualizationTreeIdentifier, const CIdentifier& boxIdentifier, GtkWidget* topmostWidget)
+bool CVisualizationManager::setWidget(const CIdentifier& visualizationTreeIdentifier, const CIdentifier& boxID, GtkWidget* topmostWidget)
 {
 	IVisualizationTree& visualizationTree = getVisualizationTree(visualizationTreeIdentifier);
 
-	visualizationTree.setWidget(boxIdentifier, topmostWidget);
+	visualizationTree.setWidget(boxID, topmostWidget);
 
 	return true;
 }

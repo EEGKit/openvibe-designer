@@ -1416,25 +1416,25 @@ bool CApplication::openScenario(const char* sFileName)
 		}
 	}
 
-	CIdentifier scenarioIdentifier;
-	if (m_pScenarioManager->importScenarioFromFile(scenarioIdentifier, OVD_ScenarioImportContext_OpenScenario, sFileName))
+	CIdentifier scenarioID;
+	if (m_pScenarioManager->importScenarioFromFile(scenarioID, OVD_ScenarioImportContext_OpenScenario, sFileName))
 	{
 		// Closes first unnamed scenario
 		if (m_vInterfacedScenario.size() == 1)
 		{
 			if (!m_vInterfacedScenario[0]->m_hasBeenModified && !m_vInterfacedScenario[0]->m_hasFileName)
 			{
-				const CIdentifier scenarioIdentifier = m_vInterfacedScenario[0]->m_oScenarioIdentifier;
+				const CIdentifier scenarioID = m_vInterfacedScenario[0]->m_oScenarioIdentifier;
 				delete m_vInterfacedScenario[0];
-				m_pScenarioManager->releaseScenario(scenarioIdentifier);
+				m_pScenarioManager->releaseScenario(scenarioID);
 				m_vInterfacedScenario.clear();
 			}
 		}
 
-		IScenario& scenario = m_pScenarioManager->getScenario(scenarioIdentifier);
+		IScenario& scenario = m_pScenarioManager->getScenario(scenarioID);
 
 		// Creates interfaced scenario
-		CInterfacedScenario* interfacedScenario = new CInterfacedScenario(m_kernelContext, *this, scenario, scenarioIdentifier, *m_pScenarioNotebook, OVD_GUI_File, OVD_GUI_Settings_File);
+		CInterfacedScenario* interfacedScenario = new CInterfacedScenario(m_kernelContext, *this, scenario, scenarioID, *m_pScenarioNotebook, OVD_GUI_File, OVD_GUI_Settings_File);
 
 		// Deserialize the visualization tree from the scenario metadata, if it exists
 
@@ -1455,12 +1455,12 @@ bool CApplication::openScenario(const char* sFileName)
 		//  even when the VisualizationTree section of a scenario file is missing, erroneous or deprecated
 
 		// no visualization widget was added to visualization tree : ensure there aren't any in scenario
-		CIdentifier boxIdentifier;
-		while ((boxIdentifier = scenario.getNextBoxIdentifier(boxIdentifier)) != OV_UndefinedIdentifier)
+		CIdentifier boxID;
+		while ((boxID = scenario.getNextBoxIdentifier(boxID)) != OV_UndefinedIdentifier)
 		{
-			if (!vizTree->getVisualizationWidgetFromBoxIdentifier(boxIdentifier))
+			if (!vizTree->getVisualizationWidgetFromBoxIdentifier(boxID))
 			{
-				const IBox* box                           = scenario.getBoxDetails(boxIdentifier);
+				const IBox* box                           = scenario.getBoxDetails(boxID);
 				const IPluginObjectDesc* boxAlgorithmDesc = m_kernelContext.getPluginManager().getPluginObjectDescCreating(box->getAlgorithmClassIdentifier());
 				if (boxAlgorithmDesc && boxAlgorithmDesc->hasFunctionality(OVD_Functionality_Visualization))
 				{
@@ -1765,11 +1765,11 @@ void CApplication::newScenarioCB()
 {
 	m_kernelContext.getLogManager() << LogLevel_Debug << "newScenarioCB\n";
 
-	CIdentifier scenarioIdentifier;
-	if (m_pScenarioManager->createScenario(scenarioIdentifier))
+	CIdentifier scenarioID;
+	if (m_pScenarioManager->createScenario(scenarioID))
 	{
-		IScenario& scenario                     = m_pScenarioManager->getScenario(scenarioIdentifier);
-		CInterfacedScenario* interfacedScenario = new CInterfacedScenario(m_kernelContext, *this, scenario, scenarioIdentifier, *m_pScenarioNotebook, OVD_GUI_File, OVD_GUI_Settings_File);
+		IScenario& scenario                     = m_pScenarioManager->getScenario(scenarioID);
+		CInterfacedScenario* interfacedScenario = new CInterfacedScenario(m_kernelContext, *this, scenario, scenarioID, *m_pScenarioNotebook, OVD_GUI_File, OVD_GUI_Settings_File);
 		if (interfacedScenario->m_pDesignerVisualization != nullptr)
 		{
 			interfacedScenario->m_pDesignerVisualization->setDeleteEventCB(&delete_designer_visualisation_cb, this);
@@ -1938,10 +1938,10 @@ void CApplication::saveScenarioCB(CInterfacedScenario* interfacedScenario)
 			link->removeAttribute(OV_ClassId_Selected);
 		}
 
-		CIdentifier boxIdentifier;
-		while ((boxIdentifier = currentInterfacedScenario->m_rScenario.getNextBoxIdentifier(boxIdentifier)) != OV_UndefinedIdentifier)
+		CIdentifier boxID;
+		while ((boxID = currentInterfacedScenario->m_rScenario.getNextBoxIdentifier(boxID)) != OV_UndefinedIdentifier)
 		{
-			auto box = currentInterfacedScenario->m_rScenario.getBoxDetails(boxIdentifier);
+			auto box = currentInterfacedScenario->m_rScenario.getBoxDetails(boxID);
 			box->removeAttribute(OV_AttributeId_Box_XSize);
 			box->removeAttribute(OV_AttributeId_Box_YSize);
 			box->removeAttribute(OV_ClassId_Selected);
@@ -2316,9 +2316,9 @@ void CApplication::closeScenarioCB(CInterfacedScenario* interfacedScenario)
 		// We need to erase the scenario from the list first, because deleting the scenario will launch a "switch-page"
 		// callback accessing this array with the identifier of the deleted scenario (if its not the last one) -> boom.
 		m_vInterfacedScenario.erase(it);
-		const CIdentifier scenarioIdentifier = interfacedScenario->m_oScenarioIdentifier;
+		const CIdentifier scenarioID = interfacedScenario->m_oScenarioIdentifier;
 		delete interfacedScenario;
-		m_pScenarioManager->releaseScenario(scenarioIdentifier);
+		m_pScenarioManager->releaseScenario(scenarioID);
 		//when closing last open scenario, no "switch-page" event is triggered so we manually handle this case
 		if (m_vInterfacedScenario.empty()) { newScenarioCB(); }
 		else { changeCurrentScenario(gtk_notebook_get_current_page(m_pScenarioNotebook)); }
@@ -2484,10 +2484,10 @@ bool CApplication::createPlayer()
 		}
 
 		m_kernelContext.getPlayerManager().createPlayer(currentInterfacedScenario->m_oPlayerIdentifier);
-		const CIdentifier scenarioIdentifier = currentInterfacedScenario->m_oScenarioIdentifier;
+		const CIdentifier scenarioID = currentInterfacedScenario->m_oScenarioIdentifier;
 		const CIdentifier playerIdentifier   = currentInterfacedScenario->m_oPlayerIdentifier;
 		currentInterfacedScenario->m_pPlayer = &m_kernelContext.getPlayerManager().getPlayer(playerIdentifier);
-		if (!currentInterfacedScenario->m_pPlayer->setScenario(scenarioIdentifier))
+		if (!currentInterfacedScenario->m_pPlayer->setScenario(scenarioID))
 		{
 			currentInterfacedScenario->m_oPlayerIdentifier = OV_UndefinedIdentifier;
 			currentInterfacedScenario->m_pPlayer           = nullptr;

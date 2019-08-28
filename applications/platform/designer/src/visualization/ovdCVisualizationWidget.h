@@ -15,7 +15,7 @@ namespace OpenViBEDesigner
 		~CVisualizationWidget() = default;
 
 		bool initialize(const OpenViBE::CIdentifier& identifier, const OpenViBE::CString& name, OpenViBEVisualizationToolkit::EVisualizationWidgetType type,
-						const OpenViBE::CIdentifier& parentIdentifier, const OpenViBE::CIdentifier& boxIdentifier, uint32_t childCount) override;
+						const OpenViBE::CIdentifier& parentIdentifier, const OpenViBE::CIdentifier& boxID, uint32_t childCount) override;
 
 		OpenViBE::CIdentifier getIdentifier() const override { return m_Identifier; }
 

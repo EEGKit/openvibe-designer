@@ -108,17 +108,17 @@ IVisualizationWidget* CVisualizationTree::getVisualizationWidget(const CIdentifi
 	return it->second;
 }
 
-IVisualizationWidget* CVisualizationTree::getVisualizationWidgetFromBoxIdentifier(const CIdentifier& boxIdentifier) const
+IVisualizationWidget* CVisualizationTree::getVisualizationWidgetFromBoxIdentifier(const CIdentifier& boxID) const
 {
 	for (auto& widget : m_VisualizationWidgets)
 	{
-		if (widget.second->getBoxIdentifier() == boxIdentifier) { return widget.second; }
+		if (widget.second->getBoxIdentifier() == boxID) { return widget.second; }
 	}
 	return nullptr;
 }
 
 bool CVisualizationTree::addVisualizationWidget(CIdentifier& identifier, const CString& name, const EVisualizationWidgetType type,
-												const CIdentifier& parentIdentifier, const uint32_t parentIndex, const CIdentifier& boxIdentifier, const uint32_t childCount, const CIdentifier& suggestedIdentifier)
+												const CIdentifier& parentIdentifier, const uint32_t parentIndex, const CIdentifier& boxID, const uint32_t childCount, const CIdentifier& suggestedIdentifier)
 {
 	m_kernelContext.getLogManager() << LogLevel_Debug << "Adding new visualization widget\n";
 
@@ -126,7 +126,7 @@ bool CVisualizationTree::addVisualizationWidget(CIdentifier& identifier, const C
 	IVisualizationWidget* visualizationWidget = new CVisualizationWidget(m_kernelContext);
 	identifier                                = getUnusedIdentifier(suggestedIdentifier);
 
-	if (!visualizationWidget->initialize(identifier, name, type, parentIdentifier, boxIdentifier, childCount))
+	if (!visualizationWidget->initialize(identifier, name, type, parentIdentifier, boxID, childCount))
 	{
 		m_kernelContext.getLogManager() << LogLevel_Error << "Failed to add new visualization widget (couldn't initialize it)\n";
 		delete visualizationWidget;
@@ -813,20 +813,20 @@ bool CVisualizationTree::loadVisualizationWidget(IVisualizationWidget* visualiza
 	return true;
 }
 
-bool CVisualizationTree::setToolbar(const CIdentifier& boxIdentifier, GtkWidget* toolbarWidget)
+bool CVisualizationTree::setToolbar(const CIdentifier& boxID, GtkWidget* toolbarWidget)
 {
 	if (m_TreeViewCB != nullptr)
 	{
-		return m_TreeViewCB->setToolbar(boxIdentifier, toolbarWidget);
+		return m_TreeViewCB->setToolbar(boxID, toolbarWidget);
 	}
 	return false;
 }
 
-bool CVisualizationTree::setWidget(const CIdentifier& boxIdentifier, GtkWidget* topmostWidget)
+bool CVisualizationTree::setWidget(const CIdentifier& boxID, GtkWidget* topmostWidget)
 {
 	if (m_TreeViewCB != nullptr)
 	{
-		return m_TreeViewCB->setWidget(boxIdentifier, topmostWidget);
+		return m_TreeViewCB->setWidget(boxID, topmostWidget);
 	}
 	return false;
 }
@@ -921,18 +921,18 @@ bool CVisualizationTree::deserialize(const CString& serializedVisualizationTree)
 
 		widgetIdentifier.fromString(jsonWidget["identifier"].ToString().c_str());
 
-		CIdentifier boxIdentifier;
-		boxIdentifier.fromString(jsonWidget["boxIdentifier"].ToString().c_str());
+		CIdentifier boxID;
+		boxID.fromString(jsonWidget["boxIdentifier"].ToString().c_str());
 
 		const EVisualizationWidgetType widgetType = EVisualizationWidgetType(jsonWidget["type"].ToInt());
 
 		CString widgetName;
 		if (widgetType == EVisualizationWidget_VisualizationBox)
 		{
-			const IBox* box = m_Scenario->getBoxDetails(boxIdentifier);
+			const IBox* box = m_Scenario->getBoxDetails(boxID);
 			if (!box)
 			{
-				m_kernelContext.getLogManager() << LogLevel_Error << "The box identifier [" << boxIdentifier << "] used in Window manager was not found in the scenario.\n";
+				m_kernelContext.getLogManager() << LogLevel_Error << "The box identifier [" << boxID << "] used in Window manager was not found in the scenario.\n";
 				return false;
 			}
 			widgetName = box->getName();
@@ -952,11 +952,11 @@ bool CVisualizationTree::deserialize(const CString& serializedVisualizationTree)
 		const unsigned int widgetChildCount = static_cast<unsigned int>(jsonWidget["childCount"].ToInt());
 
 		this->addVisualizationWidget(newVisualizationWidgetIdentifier, widgetName, widgetType, parentIdentifier,
-									 widgetIndex, boxIdentifier, widgetChildCount, widgetIdentifier);
+									 widgetIndex, boxID, widgetChildCount, widgetIdentifier);
 
 		if (widgetIdentifier != newVisualizationWidgetIdentifier)
 		{
-			m_kernelContext.getLogManager() << LogLevel_Error << "Visualization widget [" << widgetIdentifier << "] for box [" << boxIdentifier << "] could not be imported.\n";
+			m_kernelContext.getLogManager() << LogLevel_Error << "Visualization widget [" << widgetIdentifier << "] for box [" << boxID << "] could not be imported.\n";
 			return false;
 		}
 

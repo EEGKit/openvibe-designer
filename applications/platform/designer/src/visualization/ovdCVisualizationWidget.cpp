@@ -27,13 +27,13 @@ CVisualizationWidget::CVisualizationWidget(const IKernelContext& kernelContext)
 
 
 bool CVisualizationWidget::initialize(const CIdentifier& identifier, const CString& name, const EVisualizationWidgetType type,
-									  const CIdentifier& parentIdentifier, const CIdentifier& boxIdentifier, const uint32_t childCount)
+									  const CIdentifier& parentIdentifier, const CIdentifier& boxID, const uint32_t childCount)
 {
 	m_Identifier       = identifier;
 	m_Name             = name;
 	m_Type             = type;
 	m_ParentIdentifier = parentIdentifier;
-	m_BoxIdentifier    = boxIdentifier;
+	m_BoxIdentifier    = boxID;
 	m_Children.resize(childCount, OV_UndefinedIdentifier);
 	return true;
 }

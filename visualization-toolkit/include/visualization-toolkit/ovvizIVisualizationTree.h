@@ -173,7 +173,7 @@ namespace OpenViBEVisualizationToolkit
 		 * \paramtoolbarWidget pointer to toolbar of visualization box
 		 * \return true if widget was successfully registered, false otherwise
 		 */
-		virtual bool setToolbar(const OpenViBE::CIdentifier& /*boxIdentifier*/, GtkWidget* /*toolbarWidget*/) { return false; }
+		virtual bool setToolbar(const OpenViBE::CIdentifier& /*boxID*/, GtkWidget* /*toolbarWidget*/) { return false; }
 
 		/**
 		 * \brief Set topmost widget pointer of a visualization box
@@ -184,7 +184,7 @@ namespace OpenViBEVisualizationToolkit
 		 * \paramwidget pointer to main window of visualization box
 		 * \return true if widget was successfully registered, false otherwise
 		 */
-		virtual bool setWidget(const OpenViBE::CIdentifier& /*boxIdentifier*/, GtkWidget* /*widget*/) { return false; }
+		virtual bool setWidget(const OpenViBE::CIdentifier& /*boxID*/, GtkWidget* /*widget*/) { return false; }
 	};
 
 	/**
@@ -251,13 +251,13 @@ namespace OpenViBEVisualizationToolkit
 		virtual IVisualizationWidget* getVisualizationWidget(const OpenViBE::CIdentifier& identifier) const = 0;
 
 		/**
-		 * \brief Returns the IVisualizationWidget instance whose corresponding IBox identifier matches 'boxIdentifier'
+		 * \brief Returns the IVisualizationWidget instance whose corresponding IBox identifier matches 'boxID'
 		 * This method inherently restricts the search to nodes of type EVisualizationTreeNode_VisualizationBox
 		 * since only these nodes are associated to an IBox instance.
-		 * \param boxIdentifier identifier of IBox whose associated IVisualizationWidget is to be retrieved
-		 * \return IVisualizationWidget whose associated IBox identifier matches 'boxIdentifier' if any, nullptr otherwise
+		 * \param boxID identifier of IBox whose associated IVisualizationWidget is to be retrieved
+		 * \return IVisualizationWidget whose associated IBox identifier matches 'boxID' if any, nullptr otherwise
 		 */
-		virtual IVisualizationWidget* getVisualizationWidgetFromBoxIdentifier(const OpenViBE::CIdentifier& boxIdentifier) const = 0;
+		virtual IVisualizationWidget* getVisualizationWidgetFromBoxIdentifier(const OpenViBE::CIdentifier& boxID) const = 0;
 
 		/**
 		 * \brief Adds an IVisualizationWidget instance to the tree
@@ -267,14 +267,14 @@ namespace OpenViBEVisualizationToolkit
 		 * \param type type of the widget
 		 * \param parentIdentifier parent widget identifier (OV_UndefinedIdentifier for top-level widgets)
 		 * \param parentIndex index where this widget is to be parented (irrelevant for top-level widgets)
-		 * \param boxIdentifier identifier of associated IBox (for widgets of type EVisualizationWidget_VisualizationBox only)
+		 * \param boxID identifier of associated IBox (for widgets of type EVisualizationWidget_VisualizationBox only)
 		 * \param childCount number of children of this widget (none for a visualization box, 1 for a visualization panel, 2 for split widgets, variable number for windows)
 		 * \param suggestedIdentifier a suggestion as to the identifier to use
 		 * \return true if widget successfully added to the internal tree store, false otherwise
 		 */
 		virtual bool addVisualizationWidget(OpenViBE::CIdentifier& identifier, const OpenViBE::CString& name,
 											EVisualizationWidgetType type, const OpenViBE::CIdentifier& parentIdentifier,
-											uint32_t parentIndex, const OpenViBE::CIdentifier& boxIdentifier,
+											uint32_t parentIndex, const OpenViBE::CIdentifier& boxID,
 											uint32_t childCount, const OpenViBE::CIdentifier& suggestedIdentifier) = 0;
 
 		/**
@@ -492,19 +492,19 @@ namespace OpenViBEVisualizationToolkit
 
 		/**
 		 * \brief Forward pointer to the toolbar of a visualization plugin (if any) to the tree view
-		 * \param boxIdentifier Identifier of IBox whose toolbar pointer is being set
+		 * \param boxID Identifier of IBox whose toolbar pointer is being set
 		 * \param toolbarWidget pointer to toolbar
 		 * \return \e true in case of success, \e false otherwise.
 		 */
-		virtual bool setToolbar(const OpenViBE::CIdentifier& boxIdentifier, GtkWidget* toolbarWidget) = 0;
+		virtual bool setToolbar(const OpenViBE::CIdentifier& boxID, GtkWidget* toolbarWidget) = 0;
 
 		/**
 		 * \brief Forward pointer to the main widget of a visualization plugin to the tree view
-		 * \param boxIdentifier Identifier of IBox whose topmost widget pointer is being set
+		 * \param boxID Identifier of IBox whose topmost widget pointer is being set
 		 * \param topmostWidget pointer to main window
 		 * \return \e true in case of success, \e false otherwise.
 		 */
-		virtual bool setWidget(const OpenViBE::CIdentifier& boxIdentifier, GtkWidget* topmostWidget) = 0;
+		virtual bool setWidget(const OpenViBE::CIdentifier& boxID, GtkWidget* topmostWidget) = 0;
 
 		/**
 		 * \return String representation of the visualization tree

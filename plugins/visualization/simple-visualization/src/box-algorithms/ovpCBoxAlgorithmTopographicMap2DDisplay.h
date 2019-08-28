@@ -23,7 +23,7 @@ namespace OpenViBEPlugins
 			uint64_t getClockFrequency() override;
 			bool initialize() override;
 			bool uninitialize() override;
-			bool processInput(const uint32_t ui32InputIndex) override;
+			bool processInput(const uint32_t index) override;
 			bool processClock(OpenViBE::Kernel::IMessageClock& rMessageClock) override;
 			bool process() override;
 

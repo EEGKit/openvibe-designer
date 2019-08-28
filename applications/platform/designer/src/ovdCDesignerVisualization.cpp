@@ -302,9 +302,9 @@ void CDesignerVisualization::onVisualizationBoxAdded(const IBox* pBox)
 	refreshActiveVisualization(m_rVisualizationTree.getTreePath(&l_oIter));
 }
 
-void CDesignerVisualization::onVisualizationBoxRemoved(const CIdentifier& boxIdentifier)
+void CDesignerVisualization::onVisualizationBoxRemoved(const CIdentifier& boxID)
 {
-	IVisualizationWidget* l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidgetFromBoxIdentifier(boxIdentifier);
+	IVisualizationWidget* l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidgetFromBoxIdentifier(boxID);
 	if (l_pVisualizationWidget != nullptr)
 	{
 		//unaffected widget : delete it
@@ -321,14 +321,14 @@ void CDesignerVisualization::onVisualizationBoxRemoved(const CIdentifier& boxIde
 	}
 }
 
-void CDesignerVisualization::onVisualizationBoxRenamed(const CIdentifier& boxIdentifier)
+void CDesignerVisualization::onVisualizationBoxRenamed(const CIdentifier& boxID)
 {
 	//retrieve visualization widget
-	IVisualizationWidget* l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidgetFromBoxIdentifier(boxIdentifier);
+	IVisualizationWidget* l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidgetFromBoxIdentifier(boxID);
 	if (l_pVisualizationWidget != nullptr)
 	{
 		//retrieve box name
-		const IBox* l_pBox = m_rInterfacedScenario.m_rScenario.getBoxDetails(boxIdentifier);
+		const IBox* l_pBox = m_rInterfacedScenario.m_rScenario.getBoxDetails(boxID);
 		if (l_pBox != nullptr)
 		{
 			//set new visualization widget name

@@ -24,10 +24,10 @@ namespace OpenViBEDesigner
 		bool getNextVisualizationWidgetIdentifier(OpenViBE::CIdentifier& identifier, OpenViBEVisualizationToolkit::EVisualizationWidgetType type) const;
 		bool isVisualizationWidget(const OpenViBE::CIdentifier& identifier) const;
 		OpenViBEVisualizationToolkit::IVisualizationWidget* getVisualizationWidget(const OpenViBE::CIdentifier& identifier) const;
-		OpenViBEVisualizationToolkit::IVisualizationWidget* getVisualizationWidgetFromBoxIdentifier(const OpenViBE::CIdentifier& boxIdentifier) const;
+		OpenViBEVisualizationToolkit::IVisualizationWidget* getVisualizationWidgetFromBoxIdentifier(const OpenViBE::CIdentifier& boxID) const;
 		bool addVisualizationWidget(OpenViBE::CIdentifier& identifier, const OpenViBE::CString& name,
 									OpenViBEVisualizationToolkit::EVisualizationWidgetType type, const OpenViBE::CIdentifier& parentIdentifier,
-									uint32_t parentIndex, const OpenViBE::CIdentifier& boxIdentifier,
+									uint32_t parentIndex, const OpenViBE::CIdentifier& boxID,
 									uint32_t childCount, const OpenViBE::CIdentifier& suggestedIdentifier);
 		bool getVisualizationWidgetIndex(const OpenViBE::CIdentifier& identifier, uint32_t& index) const;
 		bool unparentVisualizationWidget(const OpenViBE::CIdentifier& identifier, uint32_t& index);
@@ -57,8 +57,8 @@ namespace OpenViBEDesigner
 		bool dragDataReceivedInWidgetCB(const OpenViBE::CIdentifier& sourceWidgetIdentifier, GtkWidget* destinationWidget);
 		bool dragDataReceivedOutsideWidgetCB(const OpenViBE::CIdentifier& sourceWidgetIdentifier, GtkWidget* destinationWidget, OpenViBEVisualizationToolkit::EDragDataLocation location);
 
-		bool setToolbar(const OpenViBE::CIdentifier& boxIdentifier, GtkWidget* toolbarWidget);
-		bool setWidget(const OpenViBE::CIdentifier& boxIdentifier, GtkWidget* topmostWidget);
+		bool setToolbar(const OpenViBE::CIdentifier& boxID, GtkWidget* toolbarWidget);
+		bool setWidget(const OpenViBE::CIdentifier& boxID, GtkWidget* topmostWidget);
 
 		OpenViBE::CString serialize() const;
 		bool deserialize(const OpenViBE::CString& serializedVisualizationTree);

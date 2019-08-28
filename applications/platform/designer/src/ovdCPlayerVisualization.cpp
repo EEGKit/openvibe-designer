@@ -270,13 +270,13 @@ void CPlayerVisualization::endLoadTreeWidget(IVisualizationWidget* pVisualizatio
 	}
 }
 
-bool CPlayerVisualization::setToolbar(const CIdentifier& boxIdentifier, GtkWidget* pToolbarWidget)
+bool CPlayerVisualization::setToolbar(const CIdentifier& boxID, GtkWidget* pToolbarWidget)
 {
 	//retrieve visualization widget
-	IVisualizationWidget* l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidgetFromBoxIdentifier(boxIdentifier);
+	IVisualizationWidget* l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidgetFromBoxIdentifier(boxID);
 	if (l_pVisualizationWidget == nullptr)
 	{
-		m_kernelContext.getLogManager() << LogLevel_Warning << "CPlayerVisualization::setToolbar FAILED : couldn't retrieve simulated box with identifier " << boxIdentifier << "\n";
+		m_kernelContext.getLogManager() << LogLevel_Warning << "CPlayerVisualization::setToolbar FAILED : couldn't retrieve simulated box with identifier " << boxID << "\n";
 		return false;
 	}
 
@@ -318,13 +318,13 @@ bool CPlayerVisualization::setToolbar(const CIdentifier& boxIdentifier, GtkWidge
 	return true;
 }
 
-bool CPlayerVisualization::setWidget(const CIdentifier& boxIdentifier, GtkWidget* widget)
+bool CPlayerVisualization::setWidget(const CIdentifier& boxID, GtkWidget* widget)
 {
 	//retrieve visualization widget
-	IVisualizationWidget* l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidgetFromBoxIdentifier(boxIdentifier);
+	IVisualizationWidget* l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidgetFromBoxIdentifier(boxID);
 	if (l_pVisualizationWidget == nullptr)
 	{
-		m_kernelContext.getLogManager() << LogLevel_Warning << "CPlayerVisualization::setWidget FAILED : couldn't retrieve simulated box with identifier " << boxIdentifier << "\n";
+		m_kernelContext.getLogManager() << LogLevel_Warning << "CPlayerVisualization::setWidget FAILED : couldn't retrieve simulated box with identifier " << boxID << "\n";
 		return false;
 	}
 

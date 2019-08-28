@@ -21,8 +21,8 @@ namespace OpenViBEDesigner
 		bool releaseVisualizationTree(const OpenViBE::CIdentifier& visualizationTreeIdentifier);
 		OpenViBEVisualizationToolkit::IVisualizationTree& getVisualizationTree(const OpenViBE::CIdentifier& visualizationTreeIdentifier);
 
-		bool setToolbar(const OpenViBE::CIdentifier& visualizationTreeIdentifier, const OpenViBE::CIdentifier& boxIdentifier, GtkWidget* toolbar);
-		bool setWidget(const OpenViBE::CIdentifier& visualizationTreeIdentifier, const OpenViBE::CIdentifier& boxIdentifier, GtkWidget* topmostWidget);
+		bool setToolbar(const OpenViBE::CIdentifier& visualizationTreeIdentifier, const OpenViBE::CIdentifier& boxID, GtkWidget* toolbar);
+		bool setWidget(const OpenViBE::CIdentifier& visualizationTreeIdentifier, const OpenViBE::CIdentifier& boxID, GtkWidget* topmostWidget);
 
 	private:
 

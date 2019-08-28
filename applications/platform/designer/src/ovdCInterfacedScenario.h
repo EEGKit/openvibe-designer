@@ -24,7 +24,7 @@ namespace OpenViBEDesigner
 	{
 	public:
 
-		CInterfacedScenario(const OpenViBE::Kernel::IKernelContext& rKernelContext, CApplication& rApplication, OpenViBE::Kernel::IScenario& rScenario, OpenViBE::CIdentifier& rScenarioIdentifier,
+		CInterfacedScenario(const OpenViBE::Kernel::IKernelContext& rKernelContext, CApplication& rApplication, OpenViBE::Kernel::IScenario& rScenario, OpenViBE::CIdentifier& scenarioID,
 							GtkNotebook& rNotebook, const char* sGUIFilename, const char* sGUISettingsFilename);
 		virtual ~CInterfacedScenario();
 
@@ -52,7 +52,7 @@ namespace OpenViBEDesigner
 		void editScenarioInputCB(unsigned int index);
 		void swapScenarioInputs(unsigned int inputAIndex, unsigned int inputBIndex);
 		void addScenarioOutputCB();
-		void editScenarioOutputCB(unsigned int outputIndex);
+		void editScenarioOutputCB(unsigned int outputIdx);
 		void swapScenarioOutputs(unsigned int outputAIndex, unsigned int outputBIndex);
 
 
@@ -78,7 +78,7 @@ namespace OpenViBEDesigner
 		void pasteSelection();
 		void deleteSelection();
 
-		void deleteBox(const OpenViBE::CIdentifier& boxIdentifier); // Utility method to remove box from scenario and visualization
+		void deleteBox(const OpenViBE::CIdentifier& boxID); // Utility method to remove box from scenario and visualization
 		void contextMenuBoxUpdateCB(OpenViBE::Kernel::IBox& box);
 		void contextMenuBoxRemoveDeprecatedInterfacorsCB(OpenViBE::Kernel::IBox& box);
 		void contextMenuBoxRenameCB(OpenViBE::Kernel::IBox& box);

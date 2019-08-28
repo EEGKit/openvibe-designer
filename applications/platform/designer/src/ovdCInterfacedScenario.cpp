@@ -539,8 +539,8 @@ namespace
 	//*/
 } // namespace
 
-CInterfacedScenario::CInterfacedScenario(const IKernelContext& rKernelContext, CApplication& rApplication, IScenario& rScenario, CIdentifier& rScenarioIdentifier, GtkNotebook& rNotebook, const char* sGUIFilename, const char* sGUISettingsFilename)
-	: m_ePlayerStatus(PlayerStatus_Stop), m_oScenarioIdentifier(rScenarioIdentifier), m_rApplication(rApplication), m_kernelContext(rKernelContext),
+CInterfacedScenario::CInterfacedScenario(const IKernelContext& rKernelContext, CApplication& rApplication, IScenario& rScenario, CIdentifier& scenarioID, GtkNotebook& rNotebook, const char* sGUIFilename, const char* sGUISettingsFilename)
+	: m_ePlayerStatus(PlayerStatus_Stop), m_oScenarioIdentifier(scenarioID), m_rApplication(rApplication), m_kernelContext(rKernelContext),
 	  m_rScenario(rScenario), m_rNotebook(rNotebook), m_sGUIFilename(sGUIFilename), m_sGUISettingsFilename(sGUISettingsFilename)
 {
 	m_pGUIBuilder = gtk_builder_new();
@@ -1968,10 +1968,10 @@ void CInterfacedScenario::addScenarioOutputCB()
 	this->redrawScenarioOutputSettings();
 }
 
-void CInterfacedScenario::editScenarioOutputCB(const unsigned int outputIndex)
+void CInterfacedScenario::editScenarioOutputCB(const unsigned int outputIdx)
 
 {
-	CConnectorEditor l_oConnectorEditor(m_kernelContext, m_rScenario, Box_Output, outputIndex, "Edit Output", m_sGUIFilename.c_str());
+	CConnectorEditor l_oConnectorEditor(m_kernelContext, m_rScenario, Box_Output, outputIdx, "Edit Output", m_sGUIFilename.c_str());
 	if (l_oConnectorEditor.run()) { this->snapshotCB(); }
 
 	this->redrawScenarioOutputSettings();
@@ -3328,13 +3328,13 @@ void CInterfacedScenario::deleteSelection()
 	this->snapshotCB();
 }
 
-void CInterfacedScenario::deleteBox(const CIdentifier& boxIdentifier)
+void CInterfacedScenario::deleteBox(const CIdentifier& boxID)
 {
 	// removes visualization box from window manager
-	if (m_pDesignerVisualization) { m_pDesignerVisualization->onVisualizationBoxRemoved(boxIdentifier); }
+	if (m_pDesignerVisualization) { m_pDesignerVisualization->onVisualizationBoxRemoved(boxID); }
 
 	// removes box from scenario
-	m_rScenario.removeBox(boxIdentifier);
+	m_rScenario.removeBox(boxID);
 }
 
 

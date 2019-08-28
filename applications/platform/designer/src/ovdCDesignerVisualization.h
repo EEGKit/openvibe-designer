@@ -27,8 +27,8 @@ namespace OpenViBEDesigner
 		void setDeleteEventCB(fpDesignerVisualizationDeleteEventCB fpDeleteEventCB, gpointer data);
 
 		void onVisualizationBoxAdded(const OpenViBE::Kernel::IBox* pBox);
-		void onVisualizationBoxRemoved(const OpenViBE::CIdentifier& boxIdentifier);
-		void onVisualizationBoxRenamed(const OpenViBE::CIdentifier& boxIdentifier);
+		void onVisualizationBoxRemoved(const OpenViBE::CIdentifier& boxID);
+		void onVisualizationBoxRenamed(const OpenViBE::CIdentifier& boxID);
 
 		//ITreeViewCB callbacks overloading
 		void createTreeWidget(OpenViBEVisualizationToolkit::IVisualizationWidget* widget);

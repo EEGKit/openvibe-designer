@@ -18,7 +18,7 @@ namespace Mensia {
 
 		void refreshEnginePipelines();
 		void toggleNeuroRTEngineConfigurationDialog(const bool shouldDisplay);
-		void displayPipelineConfigurationDialog(const unsigned int pipelineId);
+		void displayPipelineConfigurationDialog(const unsigned int pipelineID);
 
 		bool setPipelineParameterValueAtPath(gchar const* path, gchar const* newValue);
 
