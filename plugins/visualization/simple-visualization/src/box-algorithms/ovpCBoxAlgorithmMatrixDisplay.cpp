@@ -162,11 +162,11 @@ bool CBoxAlgorithmMatrixDisplay::processInput(const uint32_t /*index*/)
 bool CBoxAlgorithmMatrixDisplay::process()
 
 {
-	IBoxIO& l_rDynamicBoxContext = this->getDynamicBoxContext();
+	IBoxIO& boxContext = this->getDynamicBoxContext();
 
-	for (uint32_t i = 0; i < l_rDynamicBoxContext.getInputChunkCount(0); ++i)
+	for (uint32_t i = 0; i < boxContext.getInputChunkCount(0); ++i)
 	{
-		ip_pMemoryBuffer = l_rDynamicBoxContext.getInputChunk(0, i);
+		ip_pMemoryBuffer = boxContext.getInputChunk(0, i);
 		m_pMatrixDecoder->process();
 
 		if (m_pMatrixDecoder->isOutputTriggerActive(OVP_GD_Algorithm_StreamedMatrixStreamDecoder_OutputTriggerId_ReceivedHeader))
@@ -382,7 +382,7 @@ bool CBoxAlgorithmMatrixDisplay::process()
 
 		/*if(m_pMatrixDecoder->isOutputTriggerActive(OVP_GD_Algorithm_StreamedMatrixStreamDecoder_OutputTriggerId_ReceivedEnd)) { }*/
 
-		l_rDynamicBoxContext.markInputAsDeprecated(0, i);
+		boxContext.markInputAsDeprecated(0, i);
 	}
 
 	return true;

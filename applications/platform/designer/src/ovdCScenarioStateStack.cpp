@@ -131,10 +131,10 @@ bool CScenarioStateStack::restoreState(const IMemoryBuffer& state)
 
 	// Find the VisualizationTree metadata
 	IMetadata* visualizationTreeMetadata = nullptr;
-	CIdentifier metadataIdentifier       = OV_UndefinedIdentifier;
-	while ((metadataIdentifier = m_Scenario.getNextMetadataIdentifier(metadataIdentifier)) != OV_UndefinedIdentifier)
+	CIdentifier metadataID       = OV_UndefinedIdentifier;
+	while ((metadataID = m_Scenario.getNextMetadataIdentifier(metadataID)) != OV_UndefinedIdentifier)
 	{
-		visualizationTreeMetadata = m_Scenario.getMetadataDetails(metadataIdentifier);
+		visualizationTreeMetadata = m_Scenario.getMetadataDetails(metadataID);
 		if (visualizationTreeMetadata && visualizationTreeMetadata->getType() == OVVIZ_MetadataIdentifier_VisualizationTree) { break; }
 	}
 
@@ -153,21 +153,21 @@ bool CScenarioStateStack::dumpState(IMemoryBuffer& state)
 
 	// Remove all VisualizationTree type metadata
 	CIdentifier oldVisualizationTreeMetadataIdentifier = OV_UndefinedIdentifier;
-	CIdentifier metadataIdentifier                     = OV_UndefinedIdentifier;
-	while ((metadataIdentifier = m_Scenario.getNextMetadataIdentifier(metadataIdentifier)) != OV_UndefinedIdentifier)
+	CIdentifier metadataID                     = OV_UndefinedIdentifier;
+	while ((metadataID = m_Scenario.getNextMetadataIdentifier(metadataID)) != OV_UndefinedIdentifier)
 	{
-		if (m_Scenario.getMetadataDetails(metadataIdentifier)->getType() == OVVIZ_MetadataIdentifier_VisualizationTree)
+		if (m_Scenario.getMetadataDetails(metadataID)->getType() == OVVIZ_MetadataIdentifier_VisualizationTree)
 		{
-			oldVisualizationTreeMetadataIdentifier = metadataIdentifier;
-			m_Scenario.removeMetadata(metadataIdentifier);
-			metadataIdentifier = OV_UndefinedIdentifier;
+			oldVisualizationTreeMetadataIdentifier = metadataID;
+			m_Scenario.removeMetadata(metadataID);
+			metadataID = OV_UndefinedIdentifier;
 		}
 	}
 
 	// Insert new metadata
-	m_Scenario.addMetadata(metadataIdentifier, oldVisualizationTreeMetadataIdentifier);
-	m_Scenario.getMetadataDetails(metadataIdentifier)->setType(OVVIZ_MetadataIdentifier_VisualizationTree);
-	m_Scenario.getMetadataDetails(metadataIdentifier)->setData(m_InterfacedScenario.m_pVisualizationTree->serialize());
+	m_Scenario.addMetadata(metadataID, oldVisualizationTreeMetadataIdentifier);
+	m_Scenario.getMetadataDetails(metadataID)->setType(OVVIZ_MetadataIdentifier_VisualizationTree);
+	m_Scenario.getMetadataDetails(metadataID)->setData(m_InterfacedScenario.m_pVisualizationTree->serialize());
 
 	const CIdentifier exporterIdentifier = m_kernelContext.getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_XMLScenarioExporter);
 

@@ -16,7 +16,7 @@ namespace OpenViBEPlugins
 {
 	namespace SimpleVisualization
 	{
-		class CBoxAlgorithmMatrixDisplay : public OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>
+		class CBoxAlgorithmMatrixDisplay final : public OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>
 		{
 		public:
 
@@ -70,7 +70,7 @@ namespace OpenViBEPlugins
 			OpenViBEVisualizationToolkit::IVisualizationContext* m_visualizationContext{};
 		};
 
-		class CBoxAlgorithmMatrixDisplayDesc : public OpenViBE::Plugins::IBoxAlgorithmDesc
+		class CBoxAlgorithmMatrixDisplayDesc final : public OpenViBE::Plugins::IBoxAlgorithmDesc
 		{
 		public:
 

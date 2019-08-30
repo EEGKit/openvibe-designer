@@ -19,7 +19,7 @@ CAbstractSettingView::~CAbstractSettingView()
 	if (G_IS_OBJECT(m_pBuilder)) { g_object_unref(m_pBuilder); }
 }
 
-CAbstractSettingView::CAbstractSettingView(Kernel::IBox& rBox, const uint32_t index, const char* sBuilderName, const char* sWidgetName): m_rBox(rBox), m_index(index), m_settingWidgetName("")
+CAbstractSettingView::CAbstractSettingView(Kernel::IBox& box, const uint32_t index, const char* sBuilderName, const char* sWidgetName): m_rBox(box), m_index(index), m_settingWidgetName("")
 {
 	if (sBuilderName != nullptr)
 	{

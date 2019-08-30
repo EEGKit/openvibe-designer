@@ -14,9 +14,9 @@ static void on_change(GtkEntry* /*entry*/, gpointer data)
 	static_cast<CEnumerationSettingView *>(data)->onChange();
 }
 
-CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName,
-												 const Kernel::IKernelContext& rKernelContext, const CIdentifier& rTypeIdentifier): CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-comboboxentry_setting_enumeration"),
-																																	m_oTypeIdentifier(rTypeIdentifier), m_kernelContext(rKernelContext)
+CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName,
+												 const Kernel::IKernelContext& rKernelContext, const CIdentifier& typeID): CAbstractSettingView(box, index, rBuilderName, "settings_collection-comboboxentry_setting_enumeration"),
+																																	m_oTypeIdentifier(typeID), m_kernelContext(rKernelContext)
 {
 	p                           = false;
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
@@ -48,7 +48,7 @@ CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox& rBox, const uint3
 	}
 
 	CString settingValue;
-	rBox.getSettingValue(index, settingValue);
+	box.getSettingValue(index, settingValue);
 	if (m_entriesIndex.count(settingValue.toASCIIString()) == 0)
 	{
 		gtk_list_store_append(l_pList, &l_oListIter);

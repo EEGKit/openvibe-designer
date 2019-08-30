@@ -290,7 +290,7 @@ void CBufferDatabase::setMatrixDimensionLabel(const uint32_t ui32DimensionIndex,
 	m_pDimensionLabels[ui32DimensionIndex][ui32DimensionEntryIndex] = sDimensionLabel;
 }
 
-bool CBufferDatabase::setMatrixBuffer(const double* pBuffer, const uint64_t ui64StartTime, const uint64_t ui64EndTime)
+bool CBufferDatabase::setMatrixBuffer(const double* buffer, const uint64_t ui64StartTime, const uint64_t ui64EndTime)
 {
 	//if an error has occurred, do nothing
 	if (m_bError) { return false; }
@@ -406,7 +406,7 @@ bool CBufferDatabase::setMatrixBuffer(const double* pBuffer, const uint64_t ui64
 	}
 
 	//copy new buffer into internal buffer
-	System::Memory::copy(l_pBufferToWrite, pBuffer, l_ui64NumberOfSamplesPerBuffer * sizeof(double));
+	System::Memory::copy(l_pBufferToWrite, buffer, l_ui64NumberOfSamplesPerBuffer * sizeof(double));
 
 	//push new buffer and its timestamps
 	m_oSampleBuffers.push_back(l_pBufferToWrite);
@@ -425,13 +425,13 @@ bool CBufferDatabase::setMatrixBuffer(const double* pBuffer, const uint64_t ui64
 		for (uint64_t i = 0; i < m_pDimensionSizes[1]; i++, l_ui64CurrentSample++)
 		{
 			//get channel local min/max
-			if (pBuffer[l_ui64CurrentSample] < l_f64LocalMin)
+			if (buffer[l_ui64CurrentSample] < l_f64LocalMin)
 			{
-				l_f64LocalMin = pBuffer[l_ui64CurrentSample];
+				l_f64LocalMin = buffer[l_ui64CurrentSample];
 			}
-			if (pBuffer[l_ui64CurrentSample] > l_f64LocalMax)
+			if (buffer[l_ui64CurrentSample] > l_f64LocalMax)
 			{
-				l_f64LocalMax = pBuffer[l_ui64CurrentSample];
+				l_f64LocalMax = buffer[l_ui64CurrentSample];
 			}
 		}
 

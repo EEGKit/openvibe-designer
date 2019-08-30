@@ -22,13 +22,13 @@ namespace OpenViBEPlugins
 		 * \brief The class CBoxAlgorithmModifiableSettings describes the box ModifiableSettings.
 		 *
 		 */
-		class CBoxAlgorithmModifiableSettings : virtual public OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>
+		class CBoxAlgorithmModifiableSettings final : virtual public OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>
 		{
 		public:
 			void release() override { delete this; }
 			bool initialize() override;
 			bool uninitialize() override;
-			bool processClock(OpenViBE::CMessageClock& rMessageClock) override;
+			bool processClock(OpenViBE::CMessageClock& messageClock) override;
 			uint64_t getClockFrequency() override;
 
 			bool process() override;
@@ -47,7 +47,7 @@ namespace OpenViBEPlugins
 		 * \brief Descriptor of the box ModifiableSettings.
 		 *
 		 */
-		class CBoxAlgorithmModifiableSettingsDesc : virtual public OpenViBE::Plugins::IBoxAlgorithmDesc
+		class CBoxAlgorithmModifiableSettingsDesc final : virtual public OpenViBE::Plugins::IBoxAlgorithmDesc
 		{
 		public:
 

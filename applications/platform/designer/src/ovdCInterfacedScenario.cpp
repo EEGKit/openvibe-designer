@@ -449,20 +449,20 @@ namespace
 
 	void reset_scenario_setting_identifier_cb(GtkWidget* /*button*/, CInterfacedScenario::SSettingCallbackData* data)
 	{
-		const CIdentifier newIdentifier = data->interfacedScenario->m_rScenario.getUnusedSettingIdentifier(OV_UndefinedIdentifier);
-		if (newIdentifier != OV_UndefinedIdentifier)
+		const CIdentifier newID = data->interfacedScenario->m_rScenario.getUnusedSettingIdentifier(OV_UndefinedIdentifier);
+		if (newID != OV_UndefinedIdentifier)
 		{
-			data->interfacedScenario->m_rScenario.updateInterfacorIdentifier(BoxInterfacorType::Setting, uint32_t(data->settingIndex), newIdentifier);
+			data->interfacedScenario->m_rScenario.updateInterfacorIdentifier(BoxInterfacorType::Setting, uint32_t(data->settingIndex), newID);
 			data->interfacedScenario->redrawConfigureScenarioSettingsDialog();
 		}
 	}
 
 	void modify_scenario_setting_identifier_cb(GtkWidget* entry, CInterfacedScenario::SSettingCallbackData* data)
 	{
-		CIdentifier newIdentifier;
-		if (newIdentifier.fromString(gtk_entry_get_text(GTK_ENTRY(entry))))
+		CIdentifier newID;
+		if (newID.fromString(gtk_entry_get_text(GTK_ENTRY(entry))))
 		{
-			data->interfacedScenario->m_rScenario.updateInterfacorIdentifier(BoxInterfacorType::Setting, uint32_t(data->settingIndex), newIdentifier);
+			data->interfacedScenario->m_rScenario.updateInterfacorIdentifier(BoxInterfacorType::Setting, uint32_t(data->settingIndex), newID);
 		}
 	}
 
@@ -3562,33 +3562,33 @@ void CInterfacedScenario::contextMenuBoxRemoveOutputCB(IBox& box, const uint32_t
 	this->snapshotCB();
 }
 
-void CInterfacedScenario::contextMenuBoxConnectScenarioInputCB(IBox& box, const uint32_t boxInputIndex, const uint32_t scenarioInputIndex)
+void CInterfacedScenario::contextMenuBoxConnectScenarioInputCB(IBox& box, const uint32_t boxInputIdx, const uint32_t scenarioInputIdx)
 {
-	//	m_kernelContext.getLogManager() << LogLevel_Info << "contextMenuBoxConnectScenarioInputCB : box = " << box.getIdentifier().toString() << " box input = " << boxInputIndex << " , scenario input = " << scenarioInputIndex << "\n";
-	m_rScenario.setScenarioInputLink(scenarioInputIndex, box.getIdentifier(), boxInputIndex);
+	//	m_kernelContext.getLogManager() << LogLevel_Info << "contextMenuBoxConnectScenarioInputCB : box = " << box.getIdentifier().toString() << " box input = " << boxInputIdx << " , scenario input = " << scenarioInputIdx << "\n";
+	m_rScenario.setScenarioInputLink(scenarioInputIdx, box.getIdentifier(), boxInputIdx);
 	this->snapshotCB();
 }
 
-void CInterfacedScenario::contextMenuBoxConnectScenarioOutputCB(IBox& box, const uint32_t boxOutputIndex, const uint32_t scenarioOutputIndex)
+void CInterfacedScenario::contextMenuBoxConnectScenarioOutputCB(IBox& box, const uint32_t boxOutputIdx, const uint32_t scenarioOutputIdx)
 {
-	//	m_kernelContext.getLogManager() << LogLevel_Info << "contextMenuBoxConnectScenarioOutputCB : box = " << box.getIdentifier().toString() << " box Output = " << boxOutputIndex << " , scenario Output = " << scenarioOutputIndex << "\n";
-	m_rScenario.setScenarioOutputLink(scenarioOutputIndex, box.getIdentifier(), boxOutputIndex);
+	//	m_kernelContext.getLogManager() << LogLevel_Info << "contextMenuBoxConnectScenarioOutputCB : box = " << box.getIdentifier().toString() << " box Output = " << boxOutputIdx << " , scenario Output = " << scenarioOutputIdx << "\n";
+	m_rScenario.setScenarioOutputLink(scenarioOutputIdx, box.getIdentifier(), boxOutputIdx);
 	this->snapshotCB();
 }
 
-// Note: In current implementation only the scenarioInputIndex is necessary as it can only be connected to one input
+// Note: In current implementation only the scenarioInputIdx is necessary as it can only be connected to one input
 // but to keep things simpler we give it all the info
-void CInterfacedScenario::contextMenuBoxDisconnectScenarioInputCB(IBox& box, const uint32_t boxInputIndex, const uint32_t scenarioInputIndex)
+void CInterfacedScenario::contextMenuBoxDisconnectScenarioInputCB(IBox& box, const uint32_t boxInputIdx, const uint32_t scenarioInputIdx)
 {
-	m_rScenario.removeScenarioInputLink(scenarioInputIndex, box.getIdentifier(), boxInputIndex);
+	m_rScenario.removeScenarioInputLink(scenarioInputIdx, box.getIdentifier(), boxInputIdx);
 	this->snapshotCB();
 }
 
-// Note: In current implementation only the scenarioOutputIndex is necessary as it can only be connected to one output
+// Note: In current implementation only the scenarioOutputIdx is necessary as it can only be connected to one output
 // but to keep things simpler we give it all the info
-void CInterfacedScenario::contextMenuBoxDisconnectScenarioOutputCB(IBox& box, const uint32_t boxOutputIndex, const uint32_t scenarioOutputIndex)
+void CInterfacedScenario::contextMenuBoxDisconnectScenarioOutputCB(IBox& box, const uint32_t boxOutputIdx, const uint32_t scenarioOutputIdx)
 {
-	m_rScenario.removeScenarioOutputLink(scenarioOutputIndex, box.getIdentifier(), boxOutputIndex);
+	m_rScenario.removeScenarioOutputLink(scenarioOutputIdx, box.getIdentifier(), boxOutputIdx);
 	this->snapshotCB();
 }
 

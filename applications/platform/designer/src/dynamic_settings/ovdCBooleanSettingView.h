@@ -10,7 +10,7 @@ namespace OpenViBEDesigner
 		class CBooleanSettingView : public CAbstractSettingView
 		{
 		public:
-			CBooleanSettingView(OpenViBE::Kernel::IBox& rBox, const uint32_t index, OpenViBE::CString& rBuilderName);
+			CBooleanSettingView(OpenViBE::Kernel::IBox& box, const uint32_t index, OpenViBE::CString& rBuilderName);
 
 			void getValue(OpenViBE::CString& value) const override;
 			void setValue(const OpenViBE::CString& value) override;

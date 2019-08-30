@@ -87,7 +87,7 @@ bool CBoxAlgorithmTopographicMap2DDisplay::processInput(const uint32_t /*index*/
 	return true;
 }
 
-bool CBoxAlgorithmTopographicMap2DDisplay::processClock(IMessageClock& /*rMessageClock*/)
+bool CBoxAlgorithmTopographicMap2DDisplay::processClock(IMessageClock& /*messageClock*/)
 {
 	getBoxAlgorithmContext()->markAlgorithmAsReadyToProcess();
 	return true;

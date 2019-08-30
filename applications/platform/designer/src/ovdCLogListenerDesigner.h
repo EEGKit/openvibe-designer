@@ -17,9 +17,9 @@ namespace OpenViBEDesigner
 		class CLogObject
 		{
 		public:
-			CLogObject(GtkTextBuffer* pBuffer)
+			CLogObject(GtkTextBuffer* buffer)
 			{
-				m_pBuffer       = gtk_text_buffer_new(gtk_text_buffer_get_tag_table(pBuffer));
+				m_pBuffer       = gtk_text_buffer_new(gtk_text_buffer_get_tag_table(buffer));
 				m_bPassedFilter = false;//by default the log does not pass the filter;
 			}
 

@@ -52,8 +52,8 @@ static void on_change(GtkEntry* /*entry*/, gpointer data)
 	static_cast<CColorGradientSettingView *>(data)->onChange();
 }
 
-CColorGradientSettingView::CColorGradientSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext)
-	: CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-hbox_setting_color_gradient"), m_kernelContext(rKernelContext), m_builderName(rBuilderName)
+CColorGradientSettingView::CColorGradientSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext)
+	: CAbstractSettingView(box, index, rBuilderName, "settings_collection-hbox_setting_color_gradient"), m_kernelContext(rKernelContext), m_builderName(rBuilderName)
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 

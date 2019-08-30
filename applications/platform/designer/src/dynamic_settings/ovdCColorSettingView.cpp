@@ -16,7 +16,7 @@ static void on_button_setting_color_choose_pressed(GtkColorButton* /*button*/, g
 static void on_change(GtkEntry* /*entry*/, gpointer data) { static_cast<CColorSettingView*>(data)->onChange(); }
 
 
-CColorSettingView::CColorSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext): CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-hbox_setting_color"), m_kernelContext(rKernelContext)
+CColorSettingView::CColorSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext): CAbstractSettingView(box, index, rBuilderName, "settings_collection-hbox_setting_color"), m_kernelContext(rKernelContext)
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 

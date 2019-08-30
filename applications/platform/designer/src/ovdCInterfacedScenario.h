@@ -91,10 +91,10 @@ namespace OpenViBEDesigner
 		void contextMenuBoxEditOutputCB(OpenViBE::Kernel::IBox& box, const uint32_t index);
 		void contextMenuBoxRemoveOutputCB(OpenViBE::Kernel::IBox& box, const uint32_t index);
 
-		void contextMenuBoxConnectScenarioInputCB(OpenViBE::Kernel::IBox& box, uint32_t boxInputIndex, uint32_t scenarioInputIndex);
-		void contextMenuBoxConnectScenarioOutputCB(OpenViBE::Kernel::IBox& box, uint32_t boxOutputIndex, uint32_t scenarioOutputIndex);
-		void contextMenuBoxDisconnectScenarioInputCB(OpenViBE::Kernel::IBox& box, uint32_t boxInputIndex, uint32_t scenarioInputIndex);
-		void contextMenuBoxDisconnectScenarioOutputCB(OpenViBE::Kernel::IBox& box, uint32_t boxOutputIndex, uint32_t scenarioOutputIndex);
+		void contextMenuBoxConnectScenarioInputCB(OpenViBE::Kernel::IBox& box, uint32_t boxInputIdx, uint32_t scenarioInputIdx);
+		void contextMenuBoxConnectScenarioOutputCB(OpenViBE::Kernel::IBox& box, uint32_t boxOutputIdx, uint32_t scenarioOutputIdx);
+		void contextMenuBoxDisconnectScenarioInputCB(OpenViBE::Kernel::IBox& box, uint32_t boxInputIdx, uint32_t scenarioInputIdx);
+		void contextMenuBoxDisconnectScenarioOutputCB(OpenViBE::Kernel::IBox& box, uint32_t boxOutputIdx, uint32_t scenarioOutputIdx);
 
 		void contextMenuBoxAddSettingCB(OpenViBE::Kernel::IBox& box);
 		void contextMenuBoxEditSettingCB(OpenViBE::Kernel::IBox& box, const uint32_t index);

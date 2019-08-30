@@ -50,22 +50,22 @@ namespace Mensia
 			void draw() override;
 		};
 
-		class CBoxAlgorithmStackedContinuousVizListener : public CBoxAlgorithmVizListener
+		class CBoxAlgorithmStackedContinuousVizListener final : public CBoxAlgorithmVizListener
 		{
 		public:
 
 			explicit CBoxAlgorithmStackedContinuousVizListener(const std::vector<int>& vParameter)
 				: CBoxAlgorithmVizListener(vParameter) { }
 
-			bool onInputTypeChanged(OpenViBE::Kernel::IBox& rBox, const uint32_t index) override
+			bool onInputTypeChanged(OpenViBE::Kernel::IBox& box, const uint32_t index) override
 			{
-				OpenViBE::CIdentifier l_oTypeIdentifier = OV_UndefinedIdentifier;
-				rBox.getInputType(index, l_oTypeIdentifier);
-				if (!this->getTypeManager().isDerivedFromStream(l_oTypeIdentifier, OV_TypeId_StreamedMatrix))
+				OpenViBE::CIdentifier typeID = OV_UndefinedIdentifier;
+				box.getInputType(index, typeID);
+				if (!this->getTypeManager().isDerivedFromStream(typeID, OV_TypeId_StreamedMatrix))
 				{
-					rBox.setInputType(index, OV_TypeId_StreamedMatrix);
+					box.setInputType(index, OV_TypeId_StreamedMatrix);
 				}
-				rBox.setInputType(1, OV_TypeId_Stimulations);
+				box.setInputType(1, OV_TypeId_Stimulations);
 				return true;
 			}
 		};
@@ -150,11 +150,11 @@ namespace Mensia
 		template <bool bHorizontalStack, bool bDrawBorders, class TRendererFactoryClass, class TRulerClass>
 		bool TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>::process()
 		{
-			const OpenViBE::Kernel::IBox& l_rStaticBoxContext = this->getStaticBoxContext();
-			OpenViBE::Kernel::IBoxIO& l_rDynamicBoxContext    = this->getDynamicBoxContext();
+			OpenViBE::Kernel::IBoxIO& boxContext    = this->getDynamicBoxContext();
+			const uint32_t nInput = this->getStaticBoxContext().getInputCount();
 			size_t i, j;
 
-			for (i = 0; i < l_rDynamicBoxContext.getInputChunkCount(0); ++i)
+			for (i = 0; i < boxContext.getInputChunkCount(0); ++i)
 			{
 				m_oMatrixDecoder.decode(uint32_t(i));
 
@@ -260,9 +260,9 @@ namespace Mensia
 				if (m_oMatrixDecoder.isBufferReceived())
 				{
 					m_time1                                 = m_time2;
-					m_time2                                 = l_rDynamicBoxContext.getInputChunkEndTime(0, uint32_t(i));
+					m_time2                                 = boxContext.getInputChunkEndTime(0, uint32_t(i));
 					const uint64_t l_ui64InterChunkDuration = m_time2 - m_time1;
-					const uint64_t l_ui64ChunkDuration      = (l_rDynamicBoxContext.getInputChunkEndTime(0, uint32_t(i)) - l_rDynamicBoxContext.getInputChunkStartTime(0, uint32_t(i)));
+					const uint64_t l_ui64ChunkDuration      = (boxContext.getInputChunkEndTime(0, uint32_t(i)) - boxContext.getInputChunkStartTime(0, uint32_t(i)));
 					const uint64_t l_ui64SampleDuration     = l_ui64ChunkDuration / m_elementCount;
 					if (m_pRendererContext->isTimeLocked())
 					{
@@ -304,9 +304,9 @@ namespace Mensia
 				}
 			}
 
-			if (l_rStaticBoxContext.getInputCount() > 1)
+			if (nInput > 1)
 			{
-				for (i = 0; i < l_rDynamicBoxContext.getInputChunkCount(1); ++i)
+				for (i = 0; i < boxContext.getInputChunkCount(1); ++i)
 				{
 					m_oStimulationDecoder.decode(uint32_t(i));
 					if (m_oStimulationDecoder.isBufferReceived())

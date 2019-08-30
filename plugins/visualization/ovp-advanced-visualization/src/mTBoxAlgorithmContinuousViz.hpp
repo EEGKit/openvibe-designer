@@ -28,7 +28,7 @@ namespace Mensia
 	namespace AdvancedVisualization
 	{
 		template <class TRendererFactoryClass, class TRulerClass>
-		class TBoxAlgorithmContinuousViz : public CBoxAlgorithmViz
+		class TBoxAlgorithmContinuousViz final : public CBoxAlgorithmViz
 		{
 		public:
 
@@ -49,28 +49,28 @@ namespace Mensia
 			void draw() override;
 		};
 
-		class CBoxAlgorithmContinuousVizListener : public CBoxAlgorithmVizListener
+		class CBoxAlgorithmContinuousVizListener final : public CBoxAlgorithmVizListener
 		{
 		public:
 
 			explicit CBoxAlgorithmContinuousVizListener(const std::vector<int>& vParameter)
 				: CBoxAlgorithmVizListener(vParameter) { }
 
-			bool onInputTypeChanged(IBox& rBox, const uint32_t index) override
+			bool onInputTypeChanged(IBox& box, const uint32_t index) override
 			{
-				OpenViBE::CIdentifier l_oTypeIdentifier = OV_UndefinedIdentifier;
-				rBox.getInputType(index, l_oTypeIdentifier);
-				if (!this->getTypeManager().isDerivedFromStream(l_oTypeIdentifier, OV_TypeId_StreamedMatrix))
+				OpenViBE::CIdentifier typeID = OV_UndefinedIdentifier;
+				box.getInputType(index, typeID);
+				if (!this->getTypeManager().isDerivedFromStream(typeID, OV_TypeId_StreamedMatrix))
 				{
-					rBox.setInputType(index, OV_TypeId_StreamedMatrix);
+					box.setInputType(index, OV_TypeId_StreamedMatrix);
 				}
-				rBox.setInputType(1, OV_TypeId_Stimulations);
+				box.setInputType(1, OV_TypeId_Stimulations);
 				return true;
 			}
 		};
 
 		template <class TRendererFactoryClass, class TRulerClass = IRuler>
-		class TBoxAlgorithmContinuousVizDesc : public CBoxAlgorithmVizDesc
+		class TBoxAlgorithmContinuousVizDesc final : public CBoxAlgorithmVizDesc
 		{
 		public:
 

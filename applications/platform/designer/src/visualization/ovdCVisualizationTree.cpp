@@ -118,13 +118,13 @@ IVisualizationWidget* CVisualizationTree::getVisualizationWidgetFromBoxIdentifie
 }
 
 bool CVisualizationTree::addVisualizationWidget(CIdentifier& identifier, const CString& name, const EVisualizationWidgetType type,
-												const CIdentifier& parentIdentifier, const uint32_t parentIndex, const CIdentifier& boxID, const uint32_t childCount, const CIdentifier& suggestedIdentifier)
+												const CIdentifier& parentIdentifier, const uint32_t parentIndex, const CIdentifier& boxID, const uint32_t childCount, const CIdentifier& suggestedID)
 {
 	m_kernelContext.getLogManager() << LogLevel_Debug << "Adding new visualization widget\n";
 
 	//create new widget
 	IVisualizationWidget* visualizationWidget = new CVisualizationWidget(m_kernelContext);
-	identifier                                = getUnusedIdentifier(suggestedIdentifier);
+	identifier                                = getUnusedIdentifier(suggestedID);
 
 	if (!visualizationWidget->initialize(identifier, name, type, parentIdentifier, boxID, childCount))
 	{
@@ -312,12 +312,12 @@ bool CVisualizationTree::parentVisualizationWidget(const CIdentifier& identifier
 	return true;
 }
 
-CIdentifier CVisualizationTree::getUnusedIdentifier(const CIdentifier& suggestedIdentifier) const
+CIdentifier CVisualizationTree::getUnusedIdentifier(const CIdentifier& suggestedID) const
 {
 	uint64_t proposedIdentifier = (uint64_t(rand()) << 32) + uint64_t(rand());
-	if (suggestedIdentifier != OV_UndefinedIdentifier)
+	if (suggestedID != OV_UndefinedIdentifier)
 	{
-		proposedIdentifier = suggestedIdentifier.toUInteger() - 1;
+		proposedIdentifier = suggestedID.toUInteger() - 1;
 	}
 
 	CIdentifier result;

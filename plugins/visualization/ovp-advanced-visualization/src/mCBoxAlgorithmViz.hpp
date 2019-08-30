@@ -148,29 +148,29 @@ namespace Mensia
 				return result;
 			}
 
-			bool onInitialized(OpenViBE::Kernel::IBox& /*rBox*/) override
+			bool onInitialized(OpenViBE::Kernel::IBox& /*box*/) override
 			{
 #ifdef TARGET_OS_Windows
-				//rBox.addAttribute(OV_AttributeId_Box_DocumentationURLBase, OpenViBE::CString("${Path_Root}/doc/Mensia Advanced Visualization Toolkit/Mensia Advanced Visualization Toolkit.chm::"));
+				//box.addAttribute(OV_AttributeId_Box_DocumentationURLBase, OpenViBE::CString("${Path_Root}/doc/Mensia Advanced Visualization Toolkit/Mensia Advanced Visualization Toolkit.chm::"));
 #endif
 				return true;
 			}
 
-			bool onDefaultInitialized(OpenViBE::Kernel::IBox& rBox) override
+			bool onDefaultInitialized(OpenViBE::Kernel::IBox& box) override
 			{
 				const bool l_bIsSignal                  = (std::find(m_vParameter.begin(), m_vParameter.end(), I_Signal) != m_vParameter.end());
 				const bool l_bIsSpectrum                = (std::find(m_vParameter.begin(), m_vParameter.end(), I_Spectrum) != m_vParameter.end());
 				const bool l_bIsCovariance              = (std::find(m_vParameter.begin(), m_vParameter.end(), I_Covariance) != m_vParameter.end());
-				OpenViBE::CIdentifier l_oTypeIdentifier = OV_UndefinedIdentifier;
+				OpenViBE::CIdentifier typeID = OV_UndefinedIdentifier;
 
-				for (uint32_t i = 0; i < rBox.getInputCount(); ++i)
+				for (uint32_t i = 0; i < box.getInputCount(); ++i)
 				{
-					rBox.getInputType(i, l_oTypeIdentifier);
-					if (l_oTypeIdentifier == OV_TypeId_StreamedMatrix)
+					box.getInputType(i, typeID);
+					if (typeID == OV_TypeId_StreamedMatrix)
 					{
-						if (l_bIsSignal) { rBox.setInputType(i, OV_TypeId_Signal); }
-						if (l_bIsSpectrum) { rBox.setInputType(i, OV_TypeId_Spectrum); }
-						if (l_bIsCovariance) { rBox.setInputType(i, OV_TypeId_CovarianceMatrix); }
+						if (l_bIsSignal) { box.setInputType(i, OV_TypeId_Signal); }
+						if (l_bIsSpectrum) { box.setInputType(i, OV_TypeId_Spectrum); }
+						if (l_bIsCovariance) { box.setInputType(i, OV_TypeId_CovarianceMatrix); }
 					}
 				}
 				return true;

@@ -23,7 +23,7 @@ static void on_insertion(GtkEntry* /*entry*/, gpointer data)
 }
 
 
-CIntegerSettingView::CIntegerSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext): CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-hbox_setting_integer"), m_kernelContext(rKernelContext)
+CIntegerSettingView::CIntegerSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext): CAbstractSettingView(box, index, rBuilderName, "settings_collection-hbox_setting_integer"), m_kernelContext(rKernelContext)
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 

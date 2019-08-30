@@ -67,11 +67,11 @@ namespace Mensia
 				}
 			}
 
-			virtual void initialize(TBox& rBox, GtkWidget* pWidget, GtkWidget* pLeft, GtkWidget* pRight, GtkWidget* pBottom)
+			virtual void initialize(TBox& box, GtkWidget* pWidget, GtkWidget* pLeft, GtkWidget* pRight, GtkWidget* pBottom)
 			{
 				GtkGL::initialize(pWidget);
 				{
-					m_pBox    = &rBox;
+					m_pBox    = &box;
 					m_widget  = pWidget;
 					m_pLeft   = pLeft;
 					m_pRight  = pRight;

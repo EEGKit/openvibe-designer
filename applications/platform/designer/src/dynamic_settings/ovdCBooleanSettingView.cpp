@@ -17,7 +17,7 @@ static void on_insertion(GtkEntry* /*entry*/, gpointer data)
 	static_cast<CBooleanSettingView *>(data)->onChange();
 }
 
-CBooleanSettingView::CBooleanSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName): CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-hbox_setting_boolean")
+CBooleanSettingView::CBooleanSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName): CAbstractSettingView(box, index, rBuilderName, "settings_collection-hbox_setting_boolean")
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 

@@ -23,7 +23,7 @@ static void on_change(GtkEntry* /*entry*/, gpointer data)
 }
 
 
-CFloatSettingView::CFloatSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext): CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-hbox_setting_float"), m_kernelContext(rKernelContext)
+CFloatSettingView::CFloatSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext): CAbstractSettingView(box, index, rBuilderName, "settings_collection-hbox_setting_float"), m_kernelContext(rKernelContext)
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 

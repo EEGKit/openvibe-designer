@@ -269,13 +269,13 @@ namespace OpenViBEVisualizationToolkit
 		 * \param parentIndex index where this widget is to be parented (irrelevant for top-level widgets)
 		 * \param boxID identifier of associated IBox (for widgets of type EVisualizationWidget_VisualizationBox only)
 		 * \param childCount number of children of this widget (none for a visualization box, 1 for a visualization panel, 2 for split widgets, variable number for windows)
-		 * \param suggestedIdentifier a suggestion as to the identifier to use
+		 * \param suggestedID a suggestion as to the identifier to use
 		 * \return true if widget successfully added to the internal tree store, false otherwise
 		 */
 		virtual bool addVisualizationWidget(OpenViBE::CIdentifier& identifier, const OpenViBE::CString& name,
 											EVisualizationWidgetType type, const OpenViBE::CIdentifier& parentIdentifier,
 											uint32_t parentIndex, const OpenViBE::CIdentifier& boxID,
-											uint32_t childCount, const OpenViBE::CIdentifier& suggestedIdentifier) = 0;
+											uint32_t childCount, const OpenViBE::CIdentifier& suggestedID) = 0;
 
 		/**
 		 * \brief Returns the index where a widget is parented

@@ -121,9 +121,9 @@ namespace Mensia {
 			bool (*setPipelineParameterAsString)(unsigned int pipelineID, const char* parameterName, const char* value);
 
 			bool (*mainloop)();
-			unsigned int (*getPendingValueCount)(unsigned int pipelineID, unsigned int matrixOutputIndex);
-			unsigned int (*getPendingValueDimension)(unsigned int pipelineID, unsigned int matrixOutputIndex);
-			bool (*getPendingValue)(unsigned int pipelineID, unsigned int matrixOutputIndex, float* value);
+			unsigned int (*getPendingValueCount)(unsigned int pipelineID, unsigned int matrixOutputIdx);
+			unsigned int (*getPendingValueDimension)(unsigned int pipelineID, unsigned int matrixOutputIdx);
+			bool (*getPendingValue)(unsigned int pipelineID, unsigned int matrixOutputIdx, float* value);
 			unsigned int (*getPendingLogMessageCount)(unsigned int pipelineID);
 			bool (*getPendingLogMessage)(unsigned int pipelineID, unsigned int* logLevel, char* messageBuffer, unsigned int bufferSize);
 

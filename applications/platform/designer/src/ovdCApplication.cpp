@@ -80,9 +80,9 @@ namespace
 	{
 		SBoxProto(ITypeManager& typeManager) : m_TypeManager(typeManager) { }
 
-		bool addInput(const CString& /*sName*/, const CIdentifier& rTypeIdentifier, const CIdentifier& rIdentifier, const bool /*bNotify*/) override
+		bool addInput(const CString& /*sName*/, const CIdentifier& typeID, const CIdentifier& rIdentifier, const bool /*bNotify*/) override
 		{
-			uint64_t v = rTypeIdentifier.toUInteger();
+			uint64_t v = typeID.toUInteger();
 			swap_byte(v, m_inputCountHash);
 			swap_byte(m_inputCountHash, 0x7936A0F3BD12D936LL);
 			m_oHash = m_oHash.toUInteger() ^ v;
@@ -95,9 +95,9 @@ namespace
 			return true;
 		}
 		//
-		bool addOutput(const CString& /*sName*/, const CIdentifier& rTypeIdentifier, const CIdentifier& rIdentifier, const bool /*bNotify*/) override
+		bool addOutput(const CString& /*sName*/, const CIdentifier& typeID, const CIdentifier& rIdentifier, const bool /*bNotify*/) override
 		{
-			uint64_t v = rTypeIdentifier.toUInteger();
+			uint64_t v = typeID.toUInteger();
 			swap_byte(v, m_outputCountHash);
 			swap_byte(m_outputCountHash, 0xCBB66A5B893AA4E9LL);
 			m_oHash = m_oHash.toUInteger() ^ v;
@@ -110,9 +110,9 @@ namespace
 			return true;
 		}
 
-		bool addSetting(const CString& /*sName*/, const CIdentifier& rTypeIdentifier, const CString& /*sDefaultValue*/, const bool /*bModifiable*/, const CIdentifier& rIdentifier, const bool /*bNotify*/) override
+		bool addSetting(const CString& /*sName*/, const CIdentifier& typeID, const CString& /*sDefaultValue*/, const bool /*bModifiable*/, const CIdentifier& rIdentifier, const bool /*bNotify*/) override
 		{
-			uint64_t v = rTypeIdentifier.toUInteger();
+			uint64_t v = typeID.toUInteger();
 			swap_byte(v, m_settingCountHash);
 			swap_byte(m_settingCountHash, 0x3C87F3AAE9F8303BLL);
 			m_oHash = m_oHash.toUInteger() ^ v;
@@ -125,9 +125,9 @@ namespace
 			return true;
 		}
 
-		bool addInputSupport(const CIdentifier& /*rTypeIdentifier*/) override { return true; }
+		bool addInputSupport(const CIdentifier& /*typeID*/) override { return true; }
 
-		bool addOutputSupport(const CIdentifier& /*rTypeIdentifier*/) override { return true; }
+		bool addOutputSupport(const CIdentifier& /*typeID*/) override { return true; }
 
 		bool addFlag(const EBoxFlag eBoxFlag) override
 		{
@@ -794,14 +794,14 @@ namespace
 				gtk_window_present(GTK_WINDOW(l_pApplication->m_pMainWindow));
 				size_t recvd_size;
 				unsigned int priority = 0;
-				char l_pBuffer[2048];
-				if (message.try_receive(&l_pBuffer, sizeof(l_pBuffer), recvd_size, priority))
+				char buffer[2048];
+				if (message.try_receive(&buffer, sizeof(buffer), recvd_size, priority))
 				{
 					boost::interprocess::message_queue::remove(MESSAGE_NAME);
 
 					int l_iMode = 0;
 					char l_sScenarioPath[2048];
-					char* l_sMessage = strtok(l_pBuffer, ";");
+					char* l_sMessage = strtok(buffer, ";");
 					while (l_sMessage != nullptr)
 					{
 						sscanf(l_sMessage, "%1d : <%2048[^>]> ", &l_iMode, &l_sScenarioPath);
@@ -831,16 +831,8 @@ namespace
 	}
 #endif
 
-	void zoom_in_scenario_cb(GtkButton* /*button*/, gpointer data)
-	{
-		static_cast<CApplication*>(data)->zoomInCB();
-	}
-
-	void zoom_out_scenario_cb(GtkButton* /*button*/, gpointer data)
-	{
-		static_cast<CApplication*>(data)->zoomOutCB();
-	}
-
+	void zoom_in_scenario_cb(GtkButton* /*button*/, gpointer data) { static_cast<CApplication*>(data)->zoomInCB(); }
+	void zoom_out_scenario_cb(GtkButton* /*button*/, gpointer data) { static_cast<CApplication*>(data)->zoomOutCB(); }
 
 	void spinner_zoom_changed_cb(GtkSpinButton* button, gpointer data)
 	{
@@ -862,6 +854,7 @@ CApplication::CApplication(const IKernelContext& rKernelContext) : m_kernelConte
 	m_pScenarioManager->registerScenarioImporter(OVD_ScenarioImportContext_OpenScenario, ".mxb", OVP_GD_ClassId_Algorithm_XMLScenarioImporter);
 	m_pScenarioManager->registerScenarioExporter(OVD_ScenarioExportContext_SaveScenario, ".xml", OVP_GD_ClassId_Algorithm_XMLScenarioExporter);
 	m_pScenarioManager->registerScenarioExporter(OVD_ScenarioExportContext_SaveScenario, ".mxs", OVP_GD_ClassId_Algorithm_XMLScenarioExporter);
+	m_pScenarioManager->registerScenarioExporter(OVD_ScenarioExportContext_SaveMetabox, ".xml", OVP_GD_ClassId_Algorithm_XMLScenarioExporter);
 	m_pScenarioManager->registerScenarioExporter(OVD_ScenarioExportContext_SaveMetabox, ".mxb", OVP_GD_ClassId_Algorithm_XMLScenarioExporter);
 
 	m_pVisualizationManager = new CVisualizationManager(m_kernelContext);
@@ -911,8 +904,7 @@ void CApplication::initialize(const ECommandLineFlag eCommandLineFlags)
 	{
 		if (!FS::Files::copyDirectory(defaultScenariosDirectory, defaultWorkingDirectory))
 		{
-			m_kernelContext.getLogManager() << LogLevel_Error << "Could not create "
-					<< defaultWorkingDirectory << " folder\n";
+			m_kernelContext.getLogManager() << LogLevel_Error << "Could not create " << defaultWorkingDirectory << " folder\n";
 		}
 	}
 
@@ -1030,14 +1022,8 @@ void CApplication::initialize(const ECommandLineFlag eCommandLineFlags)
 	// Prepares fast forward feature
 	const double fastForwardFactor = m_kernelContext.getConfigurationManager().expandAsFloat("${Designer_FastForwardFactor}", -1);
 	m_pFastForwardFactor           = GTK_SPIN_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-spinbutton_fast-forward-factor"));
-	if (fastForwardFactor == -1)
-	{
-		gtk_spin_button_set_value(m_pFastForwardFactor, 100);
-	}
-	else
-	{
-		gtk_spin_button_set_value(m_pFastForwardFactor, fastForwardFactor);
-	}
+	if (fastForwardFactor == -1) { gtk_spin_button_set_value(m_pFastForwardFactor, 100); }
+	else { gtk_spin_button_set_value(m_pFastForwardFactor, fastForwardFactor); }
 
 #if defined(TARGET_OS_Windows)
 #if GTK_CHECK_VERSION(2, 24, 0)
@@ -1440,10 +1426,10 @@ bool CApplication::openScenario(const char* sFileName)
 
 		// Find the VisualizationTree metadata
 		IMetadata* vizTreeMetadata     = nullptr;
-		CIdentifier metadataIdentifier = OV_UndefinedIdentifier;
-		while ((metadataIdentifier = scenario.getNextMetadataIdentifier(metadataIdentifier)) != OV_UndefinedIdentifier)
+		CIdentifier metadataID = OV_UndefinedIdentifier;
+		while ((metadataID = scenario.getNextMetadataIdentifier(metadataID)) != OV_UndefinedIdentifier)
 		{
-			vizTreeMetadata = scenario.getMetadataDetails(metadataIdentifier);
+			vizTreeMetadata = scenario.getMetadataDetails(metadataID);
 			if (vizTreeMetadata && vizTreeMetadata->getType() == OVVIZ_MetadataIdentifier_VisualizationTree) { break; }
 		}
 		OpenViBEVisualizationToolkit::IVisualizationTree* vizTree = interfacedScenario->m_pVisualizationTree;
@@ -1865,28 +1851,28 @@ void CApplication::saveScenarioCB(CInterfacedScenario* interfacedScenario)
 			SBoxProto metaboxProto(m_kernelContext.getTypeManager());
 
 			IScenario& scenario = currentInterfacedScenario->m_rScenario;
-			for (uint32_t l_ui32ScenarioInputIndex = 0; l_ui32ScenarioInputIndex < scenario.getInputCount(); l_ui32ScenarioInputIndex++)
+			for (uint32_t l_ui32ScenarioInputIdx = 0; l_ui32ScenarioInputIdx < scenario.getInputCount(); l_ui32ScenarioInputIdx++)
 			{
 				CString l_sInputName;
 				CIdentifier l_oInputTypeIdentifier;
 				CIdentifier l_oInputIdentifier;
 
-				scenario.getInputType(l_ui32ScenarioInputIndex, l_oInputTypeIdentifier);
-				scenario.getInputName(l_ui32ScenarioInputIndex, l_sInputName);
-				scenario.getInterfacorIdentifier(Input, l_ui32ScenarioInputIndex, l_oInputIdentifier);
+				scenario.getInputType(l_ui32ScenarioInputIdx, l_oInputTypeIdentifier);
+				scenario.getInputName(l_ui32ScenarioInputIdx, l_sInputName);
+				scenario.getInterfacorIdentifier(Input, l_ui32ScenarioInputIdx, l_oInputIdentifier);
 
 				metaboxProto.addInput(l_sInputName, l_oInputTypeIdentifier, l_oInputIdentifier, true);
 			}
 
-			for (uint32_t l_ui32ScenarioOutputIndex = 0; l_ui32ScenarioOutputIndex < scenario.getOutputCount(); l_ui32ScenarioOutputIndex++)
+			for (uint32_t l_ui32ScenarioOutputIdx = 0; l_ui32ScenarioOutputIdx < scenario.getOutputCount(); l_ui32ScenarioOutputIdx++)
 			{
 				CString l_sOutputName;
 				CIdentifier l_oOutputTypeIdentifier;
 				CIdentifier l_oOutputIdentifier;
 
-				scenario.getOutputType(l_ui32ScenarioOutputIndex, l_oOutputTypeIdentifier);
-				scenario.getOutputName(l_ui32ScenarioOutputIndex, l_sOutputName);
-				scenario.getInterfacorIdentifier(Output, l_ui32ScenarioOutputIndex, l_oOutputIdentifier);
+				scenario.getOutputType(l_ui32ScenarioOutputIdx, l_oOutputTypeIdentifier);
+				scenario.getOutputName(l_ui32ScenarioOutputIdx, l_sOutputName);
+				scenario.getInterfacorIdentifier(Output, l_ui32ScenarioOutputIdx, l_oOutputIdentifier);
 
 				metaboxProto.addOutput(l_sOutputName, l_oOutputTypeIdentifier, l_oOutputIdentifier, true);
 			}
@@ -1927,10 +1913,10 @@ void CApplication::saveScenarioCB(CInterfacedScenario* interfacedScenario)
 		// This way the scenarios do not change if, for example somebody opens them on a system with different font metrics.
 		currentInterfacedScenario->m_rScenario.removeAttribute(OV_AttributeId_ScenarioFilename);
 
-		CIdentifier linkIdentifier;
-		while ((linkIdentifier = currentInterfacedScenario->m_rScenario.getNextLinkIdentifier(linkIdentifier)) != OV_UndefinedIdentifier)
+		CIdentifier linkID;
+		while ((linkID = currentInterfacedScenario->m_rScenario.getNextLinkIdentifier(linkID)) != OV_UndefinedIdentifier)
 		{
-			auto link = currentInterfacedScenario->m_rScenario.getLinkDetails(linkIdentifier);
+			auto link = currentInterfacedScenario->m_rScenario.getLinkDetails(linkID);
 			link->removeAttribute(OV_AttributeId_Link_XSourcePosition);
 			link->removeAttribute(OV_AttributeId_Link_YSourcePosition);
 			link->removeAttribute(OV_AttributeId_Link_XTargetPosition);
@@ -1947,31 +1933,31 @@ void CApplication::saveScenarioCB(CInterfacedScenario* interfacedScenario)
 			box->removeAttribute(OV_ClassId_Selected);
 		}
 
-		CIdentifier commentIdentifier;
-		while ((commentIdentifier = currentInterfacedScenario->m_rScenario.getNextCommentIdentifier(commentIdentifier)) != OV_UndefinedIdentifier)
+		CIdentifier commentID;
+		while ((commentID = currentInterfacedScenario->m_rScenario.getNextCommentIdentifier(commentID)) != OV_UndefinedIdentifier)
 		{
-			auto comment = currentInterfacedScenario->m_rScenario.getCommentDetails(commentIdentifier);
+			auto comment = currentInterfacedScenario->m_rScenario.getCommentDetails(commentID);
 			comment->removeAttribute(OV_ClassId_Selected);
 		}
 
 		// Remove all VisualizationTree type metadata
 		// We save the last found identifier if there was one, this allows us to not modify it on subsequent saves
-		CIdentifier metadataIdentifier      = OV_UndefinedIdentifier;
+		CIdentifier metadataID      = OV_UndefinedIdentifier;
 		CIdentifier lastFoundTreeIdentifier = OV_UndefinedIdentifier;
-		while ((metadataIdentifier = currentInterfacedScenario->m_rScenario.getNextMetadataIdentifier(metadataIdentifier)) != OV_UndefinedIdentifier)
+		while ((metadataID = currentInterfacedScenario->m_rScenario.getNextMetadataIdentifier(metadataID)) != OV_UndefinedIdentifier)
 		{
-			if (currentInterfacedScenario->m_rScenario.getMetadataDetails(metadataIdentifier)->getType() == OVVIZ_MetadataIdentifier_VisualizationTree)
+			if (currentInterfacedScenario->m_rScenario.getMetadataDetails(metadataID)->getType() == OVVIZ_MetadataIdentifier_VisualizationTree)
 			{
-				currentInterfacedScenario->m_rScenario.removeMetadata(metadataIdentifier);
-				lastFoundTreeIdentifier = metadataIdentifier;
-				metadataIdentifier      = OV_UndefinedIdentifier;
+				currentInterfacedScenario->m_rScenario.removeMetadata(metadataID);
+				lastFoundTreeIdentifier = metadataID;
+				metadataID      = OV_UndefinedIdentifier;
 			}
 		}
 
 		// Insert new metadata
-		currentInterfacedScenario->m_rScenario.addMetadata(metadataIdentifier, lastFoundTreeIdentifier);
-		currentInterfacedScenario->m_rScenario.getMetadataDetails(metadataIdentifier)->setType(OVVIZ_MetadataIdentifier_VisualizationTree);
-		currentInterfacedScenario->m_rScenario.getMetadataDetails(metadataIdentifier)->setData(currentInterfacedScenario->m_pVisualizationTree->serialize());
+		currentInterfacedScenario->m_rScenario.addMetadata(metadataID, lastFoundTreeIdentifier);
+		currentInterfacedScenario->m_rScenario.getMetadataDetails(metadataID)->setType(OVVIZ_MetadataIdentifier_VisualizationTree);
+		currentInterfacedScenario->m_rScenario.getMetadataDetails(metadataID)->setData(currentInterfacedScenario->m_pVisualizationTree->serialize());
 
 		CIdentifier scenarioExportContext = OVD_ScenarioExportContext_SaveScenario;
 		if (currentInterfacedScenario->m_rScenario.isMetabox())
@@ -2186,9 +2172,10 @@ void CApplication::saveScenarioAsCB(CInterfacedScenario* interfacedScenario)
 		const std::string scenarioFilenameExtension = boost::filesystem::extension(filename);
 		if (!compatibleExtensions.count(scenarioFilenameExtension))
 		{
-			if (isCurrentScenarioAMetabox) { strcat(filename, ".mxb"); }
-			else { strcat(filename, ".mxs"); }
+			//if (isCurrentScenarioAMetabox) { strcat(filename, ".mxb"); }
+			//else { strcat(filename, ".mxs"); }
 			//filenameLength += 4;
+			strcat(filename, ".xml");
 		}
 
 		// We ensure the file does not exist

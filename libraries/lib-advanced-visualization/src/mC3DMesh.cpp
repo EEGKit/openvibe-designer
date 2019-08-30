@@ -32,14 +32,14 @@ using namespace AdvancedVisualization;
 namespace
 {
 	template <typename T>
-	bool littleEndianToHost(const uint8_t* pBuffer, T* pValue)
+	bool littleEndianToHost(const uint8_t* buffer, T* pValue)
 	{
-		if (!pBuffer) { return false; }
+		if (!buffer) { return false; }
 		if (!pValue) { return false; }
 		memset(pValue, 0, sizeof(T));
 		for (unsigned int i = 0; i < sizeof(T); ++i)
 		{
-			reinterpret_cast<uint8_t*>(pValue)[i] = pBuffer[i];
+			reinterpret_cast<uint8_t*>(pValue)[i] = buffer[i];
 		}
 		return true;
 	}
@@ -65,31 +65,31 @@ void C3DMesh::clear()
 	m_vTriangle.clear();
 }
 
-bool C3DMesh::load(const void* pBuffer, unsigned int /*uiBufferSize*/)
+bool C3DMesh::load(const void* buffer, unsigned int /*size*/)
 {
-	const auto* l_pBuffer = reinterpret_cast<const uint32_t*>(pBuffer);
+	const auto* tmp = reinterpret_cast<const uint32_t*>(buffer);
 
-	uint32_t l_ui32VertexCount;
-	uint32_t l_ui32TriangleCount;
+	uint32_t nVertex;
+	uint32_t nTriangle;
 
-	littleEndianToHost<uint32_t>(reinterpret_cast<const uint8_t*>(&l_pBuffer[0]), &l_ui32VertexCount);
-	littleEndianToHost<uint32_t>(reinterpret_cast<const uint8_t*>(&l_pBuffer[1]), &l_ui32TriangleCount);
+	littleEndianToHost<uint32_t>(reinterpret_cast<const uint8_t*>(&tmp[0]), &nVertex);
+	littleEndianToHost<uint32_t>(reinterpret_cast<const uint8_t*>(&tmp[1]), &nTriangle);
 
-	m_vVertex.resize(l_ui32VertexCount);
-	m_vTriangle.resize(size_t(l_ui32TriangleCount) * 3);
+	m_vVertex.resize(nVertex);
+	m_vTriangle.resize(size_t(nTriangle) * 3);
 
 	uint32_t i, j = 2;
 
-	for (i = 0; i < l_ui32VertexCount; ++i)
+	for (i = 0; i < nVertex; ++i)
 	{
-		littleEndianToHost<float>(reinterpret_cast<const uint8_t*>(&l_pBuffer[j++]), &m_vVertex[i].x);
-		littleEndianToHost<float>(reinterpret_cast<const uint8_t*>(&l_pBuffer[j++]), &m_vVertex[i].y);
-		littleEndianToHost<float>(reinterpret_cast<const uint8_t*>(&l_pBuffer[j++]), &m_vVertex[i].z);
+		littleEndianToHost<float>(reinterpret_cast<const uint8_t*>(&tmp[j++]), &m_vVertex[i].x);
+		littleEndianToHost<float>(reinterpret_cast<const uint8_t*>(&tmp[j++]), &m_vVertex[i].y);
+		littleEndianToHost<float>(reinterpret_cast<const uint8_t*>(&tmp[j++]), &m_vVertex[i].z);
 	}
 
-	for (i = 0; i < l_ui32TriangleCount * 3; ++i)
+	for (i = 0; i < nTriangle * 3; ++i)
 	{
-		littleEndianToHost<uint32_t>(reinterpret_cast<const uint8_t*>(&l_pBuffer[j++]), &m_vTriangle[i]);
+		littleEndianToHost<uint32_t>(reinterpret_cast<const uint8_t*>(&tmp[j++]), &m_vTriangle[i]);
 	}
 
 	this->compile();

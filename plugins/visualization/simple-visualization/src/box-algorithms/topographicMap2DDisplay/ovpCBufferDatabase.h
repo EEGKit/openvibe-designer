@@ -322,7 +322,7 @@ namespace OpenViBEPlugins
 			virtual void setMatrixDimensionLabel(const uint32_t ui32DimensionIndex, const uint32_t ui32DimensionEntryIndex, const char* sDimensionLabel);
 
 			// Returns false on failure
-			virtual bool setMatrixBuffer(const double* pBuffer, const uint64_t ui64StartTime, const uint64_t ui64EndTime);
+			virtual bool setMatrixBuffer(const double* buffer, const uint64_t ui64StartTime, const uint64_t ui64EndTime);
 
 			// Sets the sampling frequency. If this is not called, the frequency is estimated from the stream chunk properties.
 			// Mainly used to force a warning if stream-specified rate differs from the chunk-estimated rate.

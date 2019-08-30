@@ -52,44 +52,44 @@ namespace Mensia
 			void draw() override;
 		};
 
-		class CBoxAlgorithmInstantVizListener : public CBoxAlgorithmVizListener
+		class CBoxAlgorithmInstantVizListener final : public CBoxAlgorithmVizListener
 		{
 		public:
 
 			explicit CBoxAlgorithmInstantVizListener(const std::vector<int>& vParameter)
 				: CBoxAlgorithmVizListener(vParameter) { }
 
-			bool onInputTypeChanged(IBox& rBox, const uint32_t index) override
+			bool onInputTypeChanged(IBox& box, const uint32_t index) override
 			{
-				OpenViBE::CIdentifier l_oTypeIdentifier = OV_UndefinedIdentifier;
-				rBox.getInputType(index, l_oTypeIdentifier);
-				if (!this->getTypeManager().isDerivedFromStream(l_oTypeIdentifier, OV_TypeId_StreamedMatrix))
+				OpenViBE::CIdentifier typeID = OV_UndefinedIdentifier;
+				box.getInputType(index, typeID);
+				if (!this->getTypeManager().isDerivedFromStream(typeID, OV_TypeId_StreamedMatrix))
 				{
-					rBox.setInputType(index, OV_TypeId_StreamedMatrix);
+					box.setInputType(index, OV_TypeId_StreamedMatrix);
 				}
 				else
 				{
-					for (uint32_t i = 0; i < rBox.getInputCount(); ++i)
+					for (uint32_t i = 0; i < box.getInputCount(); ++i)
 					{
-						rBox.setInputType(i, l_oTypeIdentifier);
+						box.setInputType(i, typeID);
 					}
 				}
 				return true;
 			}
 
-			bool onInputAdded(IBox& rBox, const uint32_t index) override
+			bool onInputAdded(IBox& box, const uint32_t index) override
 			{
-				OpenViBE::CIdentifier l_oTypeIdentifier = OV_UndefinedIdentifier;
-				rBox.getInputType(0, l_oTypeIdentifier);
-				rBox.setInputType(index, l_oTypeIdentifier);
-				rBox.setInputName(index, "Matrix");
-				rBox.addSetting("Color", OV_TypeId_Color, "${AdvancedViz_DefaultColor}");
+				OpenViBE::CIdentifier typeID = OV_UndefinedIdentifier;
+				box.getInputType(0, typeID);
+				box.setInputType(index, typeID);
+				box.setInputName(index, "Matrix");
+				box.addSetting("Color", OV_TypeId_Color, "${AdvancedViz_DefaultColor}");
 				return true;
 			}
 
-			bool onInputRemoved(IBox& rBox, const uint32_t index) override
+			bool onInputRemoved(IBox& box, const uint32_t index) override
 			{
-				rBox.removeSetting(this->getBaseSettingCount() + index - 1);
+				box.removeSetting(this->getBaseSettingCount() + index - 1);
 				return true;
 			}
 		};
@@ -121,14 +121,12 @@ namespace Mensia
 
 		template <class TRendererFactoryClass, class TRulerClass>
 		bool TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::initialize()
-
 		{
 			bool l_bResult = CBoxAlgorithmViz::initialize();
 
 			m_dLastERPFraction = 0;
 
-			const IBox& l_rStaticBoxContext = this->getStaticBoxContext();
-			m_ui32InputCount                = l_rStaticBoxContext.getInputCount();
+			m_ui32InputCount = this->getStaticBoxContext().getInputCount();
 			m_vRenderer.resize(m_ui32InputCount);
 			m_vMatrixDecoder.resize(m_ui32InputCount);
 			for (uint32_t i = 0; i < m_ui32InputCount; ++i)
@@ -153,7 +151,6 @@ namespace Mensia
 
 		template <class TRendererFactoryClass, class TRulerClass>
 		bool TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::uninitialize()
-
 		{
 			for (uint32_t i = 0; i < m_ui32InputCount; ++i)
 			{
@@ -171,12 +168,12 @@ namespace Mensia
 		bool TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::process()
 
 		{
-			const IBox& l_rStaticBoxContext = this->getStaticBoxContext();
-			IBoxIO& l_rDynamicBoxContext    = this->getDynamicBoxContext();
+			IBoxIO& boxContext    = this->getDynamicBoxContext();
+			const uint32_t nInput = this->getStaticBoxContext().getInputCount();
 
-			for (uint32_t i = 0; i < l_rStaticBoxContext.getInputCount(); ++i)
+			for (uint32_t i = 0; i < nInput; ++i)
 			{
-				for (uint32_t j = 0; j < l_rDynamicBoxContext.getInputChunkCount(i); j++)
+				for (uint32_t j = 0; j < boxContext.getInputChunkCount(i); j++)
 				{
 					m_vMatrixDecoder[i].decode(j);
 
@@ -254,7 +251,7 @@ namespace Mensia
 					}
 					if (m_vMatrixDecoder[i].isBufferReceived())
 					{
-						const uint64_t chunkDuration = (l_rDynamicBoxContext.getInputChunkEndTime(i, j) - l_rDynamicBoxContext.getInputChunkStartTime(i, j));
+						const uint64_t chunkDuration = (boxContext.getInputChunkEndTime(i, j) - boxContext.getInputChunkStartTime(i, j));
 
 						m_pRendererContext->setSampleDuration(chunkDuration / sampleCount);
 						m_pRendererContext->setSpectrumFrequencyRange(uint32_t((uint64_t(sampleCount) << 32) / chunkDuration));

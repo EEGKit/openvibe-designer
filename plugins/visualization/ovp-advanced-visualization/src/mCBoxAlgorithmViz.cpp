@@ -339,14 +339,14 @@ bool CBoxAlgorithmViz::initialize()
 		}
 		else
 		{
-			const uint32_t l_ui32ChannelCount = op_pMatrix->getDimensionSize(0);
-			double* l_pBuffer                 = op_pMatrix->getBuffer();
-			for (uint32_t i = 0; i < l_ui32ChannelCount; ++i)
+			const uint32_t nChannel = op_pMatrix->getDimensionSize(0);
+			double* buffer          = op_pMatrix->getBuffer();
+			for (uint32_t i = 0; i < nChannel; ++i)
 			{
 				std::string l_sName = trim(op_pMatrix->getDimensionLabel(0, i));
 				std::transform(l_sName.begin(), l_sName.end(), l_sName.begin(), tolower);
-				m_vChannelLocalisation[l_sName] = CVertex(-l_pBuffer[1], l_pBuffer[2], -l_pBuffer[0]);
-				l_pBuffer += 3;
+				m_vChannelLocalisation[l_sName] = CVertex(-buffer[1], buffer[2], -buffer[0]);
+				buffer += 3;
 			}
 		}
 

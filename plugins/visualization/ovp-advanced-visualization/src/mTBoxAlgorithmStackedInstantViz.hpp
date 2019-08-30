@@ -59,21 +59,21 @@ namespace Mensia
 			void draw() override;
 		};
 
-		class CBoxAlgorithmStackedInstantVizListener : public CBoxAlgorithmVizListener
+		class CBoxAlgorithmStackedInstantVizListener final : public CBoxAlgorithmVizListener
 		{
 		public:
 
 			CBoxAlgorithmStackedInstantVizListener(const std::vector<int>& vParameter) : CBoxAlgorithmVizListener(vParameter) { }
 
-			bool onInputTypeChanged(IBox& rBox, const uint32_t index) override
+			bool onInputTypeChanged(IBox& box, const uint32_t index) override
 			{
-				OpenViBE::CIdentifier l_oTypeIdentifier = OV_UndefinedIdentifier;
-				rBox.getInputType(index, l_oTypeIdentifier);
-				if (!this->getTypeManager().isDerivedFromStream(l_oTypeIdentifier, OV_TypeId_TimeFrequency))
+				OpenViBE::CIdentifier typeID = OV_UndefinedIdentifier;
+				box.getInputType(index, typeID);
+				if (!this->getTypeManager().isDerivedFromStream(typeID, OV_TypeId_TimeFrequency))
 				{
-					rBox.setInputType(index, OV_TypeId_TimeFrequency);
+					box.setInputType(index, OV_TypeId_TimeFrequency);
 				}
-				rBox.setInputType(1, OV_TypeId_Stimulations);
+				box.setInputType(1, OV_TypeId_Stimulations);
 				return true;
 			}
 		};

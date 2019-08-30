@@ -28,7 +28,7 @@ namespace OpenViBEDesigner
 		bool addVisualizationWidget(OpenViBE::CIdentifier& identifier, const OpenViBE::CString& name,
 									OpenViBEVisualizationToolkit::EVisualizationWidgetType type, const OpenViBE::CIdentifier& parentIdentifier,
 									uint32_t parentIndex, const OpenViBE::CIdentifier& boxID,
-									uint32_t childCount, const OpenViBE::CIdentifier& suggestedIdentifier);
+									uint32_t childCount, const OpenViBE::CIdentifier& suggestedID);
 		bool getVisualizationWidgetIndex(const OpenViBE::CIdentifier& identifier, uint32_t& index) const;
 		bool unparentVisualizationWidget(const OpenViBE::CIdentifier& identifier, uint32_t& index);
 		bool parentVisualizationWidget(const OpenViBE::CIdentifier& identifier, const OpenViBE::CIdentifier& parentIdentifier, const uint32_t index);
@@ -67,7 +67,7 @@ namespace OpenViBEDesigner
 		json::Object serializeWidget(OpenViBEVisualizationToolkit::IVisualizationWidget& widget) const;
 
 		bool _destroyHierarchy(const OpenViBE::CIdentifier& identifier, bool destroyVisualizationBoxes);
-		OpenViBE::CIdentifier getUnusedIdentifier(const OpenViBE::CIdentifier& suggestedIdentifier) const;
+		OpenViBE::CIdentifier getUnusedIdentifier(const OpenViBE::CIdentifier& suggestedID) const;
 
 		bool _findChildNodeFromParent(GtkTreeIter* iter, const char* label, OpenViBEVisualizationToolkit::EVisualizationTreeNode type);
 		bool _findChildNodeFromParent(GtkTreeIter* iter, void* widget);

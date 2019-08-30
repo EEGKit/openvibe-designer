@@ -28,7 +28,7 @@ namespace Mensia
 	namespace AdvancedVisualization
 	{
 		template <class TRendererFactoryClass, class TRulerClass>
-		class TBoxAlgorithmInstantLoretaViz : public TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>
+		class TBoxAlgorithmInstantLoretaViz final : public TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>
 		{
 		public:
 
