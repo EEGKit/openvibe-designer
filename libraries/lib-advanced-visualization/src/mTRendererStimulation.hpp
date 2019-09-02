@@ -47,8 +47,9 @@ namespace Mensia
 
 				for (int i = 0; i < s_iStimulationIndicatorSmoothness; ++i)
 				{
-					m_vCircle.push_back(std::make_pair(s_fStimulationIndicatorRadius * cosf(float(i) / float(s_iStimulationIndicatorSmoothness - 1) * 2 * float(M_PI)),
-													   s_fStimulationIndicatorRadius * sinf(float(i) / float(s_iStimulationIndicatorSmoothness - 1) * 2 * float(M_PI))
+					m_vCircle.push_back(std::make_pair(
+						s_fStimulationIndicatorRadius * cosf(float(i) / float(s_iStimulationIndicatorSmoothness - 1) * 2 * float(M_PI)),
+						s_fStimulationIndicatorRadius * sinf(float(i) / float(s_iStimulationIndicatorSmoothness - 1) * 2 * float(M_PI))
 					));
 				}
 			}
@@ -100,10 +101,7 @@ namespace Mensia
 						if (midTime - duration < it->first && it->first < midTime)
 						{
 							float l_fProgress;
-							if (it->first > startTime)
-							{
-								l_fProgress = float((it->first - startTime) / duration);
-							}
+							if (it->first > startTime) { l_fProgress = float((it->first - startTime) / duration); }
 							else { l_fProgress = float((it->first + duration - startTime) / duration); }
 
 							/*
@@ -128,7 +126,8 @@ namespace Mensia
 							glBegin(GL_TRIANGLE_FAN);
 							for (auto l_oVertex = m_vCircle.cbegin(); l_oVertex != m_vCircle.cend(); ++l_oVertex)
 							{
-								glVertex2f(float(l_oVertex->first / rContext.getAspect() + l_fProgress), float(l_oVertex->second + 0.95f - m_mEncounteredStimulations[it->second] * s_fStimulationIndicatorSpacing));
+								glVertex2f(float(l_oVertex->first / rContext.getAspect() + l_fProgress),
+										   float(l_oVertex->second + 0.95f - m_mEncounteredStimulations[it->second] * s_fStimulationIndicatorSpacing));
 							}
 							glEnd();
 
@@ -142,7 +141,8 @@ namespace Mensia
 							glBegin(GL_LINE_LOOP);
 							for (auto l_oVertex = m_vCircle.cbegin(); l_oVertex != m_vCircle.cend(); ++l_oVertex)
 							{
-								glVertex2f(float(l_oVertex->first / rContext.getAspect() + l_fProgress), float(l_oVertex->second + 0.95f - m_mEncounteredStimulations[it->second] * s_fStimulationIndicatorSpacing));
+								glVertex2f(float(l_oVertex->first / rContext.getAspect() + l_fProgress),
+										   float(l_oVertex->second + 0.95f - m_mEncounteredStimulations[it->second] * s_fStimulationIndicatorSpacing));
 							}
 							glEnd();
 							glDisable(GL_LINE_SMOOTH);

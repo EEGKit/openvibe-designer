@@ -77,7 +77,7 @@ begin_dspfa:;
 	if (k <= 1)
 	{
 		*kpvt = 1;
-		if (*ap == 0.0) { * info = 1; }
+		if (*ap == 0.0) { *info = 1; }
 		goto end_dspfa;
 	}
 	km1    = k - 1;
@@ -167,7 +167,7 @@ begin_dspfa:;
 				ij -= j - 1;
 			}
 			*(kpvt + k - 1) = k;
-			if (swap) { * (kpvt + k - 1) = imax; }
+			if (swap) { *(kpvt + k - 1) = imax; }
 		}
 		else
 		{
@@ -219,7 +219,7 @@ begin_dspfa:;
 				}
 			}
 			*(kpvt + k - 1) = 1 - k;
-			if (swap) { * (kpvt + k - 1) = -imax; }
+			if (swap) { *(kpvt + k - 1) = -imax; }
 			*(kpvt + k - 2) = *(kpvt + k - 1);
 		}
 	}
@@ -402,13 +402,10 @@ void saxpy(const int* n, const double* sa, const double* sx, const int* incx, do
 			else
 			{
 				int ok = 1;
-				int m  = int(fmod(double(* n), 4.0));
+				int m  = int(fmod(double(*n), 4.0));
 				if (m != 0)
 				{
-					for (i = 1; i <= m; ++i)
-					{
-						*(sy + i - 1) += *sa * (*(sx + i - 1));
-					}
+					for (i = 1; i <= m; ++i) { *(sy + i - 1) += *sa * (*(sx + i - 1)); }
 					if (*n < 4) { ok = 0; }
 				}
 				if (ok == 1)
@@ -468,13 +465,10 @@ double sdot(const int* n, const double* sx, const int* incx, const double* sy, c
 		else
 		{
 			int ok = 1;
-			int m  = int(fmod(double(* n), 5.0));
+			int m  = int(fmod(double(*n), 5.0));
 			if (m != 0)
 			{
-				for (i = 1; i <= m; ++i)
-				{
-					stemp += *(sx + i - 1) * (*(sy + i - 1));
-				}
+				for (i = 1; i <= m; ++i) { stemp += *(sx + i - 1) * (*(sy + i - 1)); }
 				if (*n < 5) { ok = 0; }
 			}
 			if (ok == 1)
@@ -535,7 +529,7 @@ void sswap(const int* n, double* sx, const int* incx, double* sy, const int* inc
 		else
 		{
 			int ok = 1;
-			int m  = int(fmod(double(* n), 3.0));
+			int m  = int(fmod(double(*n), 3.0));
 			if (m != 0)
 			{
 				for (i = 1; i <= m; ++i)

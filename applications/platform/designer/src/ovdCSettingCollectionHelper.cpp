@@ -17,15 +17,9 @@ using namespace std;
 
 namespace
 {
-	void collect_widget_cb(GtkWidget* widget, gpointer data)
-	{
-		static_cast<vector<GtkWidget*>*>(data)->push_back(widget);
-	}
+	void collect_widget_cb(GtkWidget* widget, gpointer data) { static_cast<vector<GtkWidget*>*>(data)->push_back(widget); }
 
-	void remove_widget_cb(GtkWidget* widget, gpointer data)
-	{
-		gtk_container_remove(GTK_CONTAINER(data), widget);
-	}
+	void remove_widget_cb(GtkWidget* widget, gpointer data) { gtk_container_remove(GTK_CONTAINER(data), widget); }
 
 	// ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- -----------
 
@@ -128,10 +122,7 @@ namespace
 		{
 			char* fileName = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widgetDialogOpen));
 			char* l_pBackslash;
-			while ((l_pBackslash = strchr(fileName, '\\')) != nullptr)
-			{
-				*l_pBackslash = '/';
-			}
+			while ((l_pBackslash = strchr(fileName, '\\')) != nullptr) { *l_pBackslash = '/'; }
 			gtk_entry_set_text(l_widget, fileName);
 			g_free(fileName);
 		}
@@ -167,10 +158,7 @@ namespace
 		{
 			char* fileName = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widgetDialogOpen));
 			char* l_pBackslash;
-			while ((l_pBackslash = strchr(fileName, '\\')) != nullptr)
-			{
-				*l_pBackslash = '/';
-			}
+			while ((l_pBackslash = strchr(fileName, '\\')) != nullptr) { *l_pBackslash = '/'; }
 			gtk_entry_set_text(l_widget, fileName);
 			g_free(fileName);
 		}
@@ -336,7 +324,8 @@ namespace
 		l_pUserData->vSpinButtonMap.clear();
 		for (vector<SColorGradientDataNode>::iterator it = l_pUserData->vColorGradient.begin(); it != l_pUserData->vColorGradient.end(); ++it, ++i)
 		{
-			GtkBuilder* l_pBuilderInterface = gtk_builder_new(); // glade_xml_new(l_pUserData->sGUIFilename.c_str(), "setting_editor-color_gradient-hbox", nullptr);
+			GtkBuilder* l_pBuilderInterface =
+					gtk_builder_new(); // glade_xml_new(l_pUserData->sGUIFilename.c_str(), "setting_editor-color_gradient-hbox", nullptr);
 			gtk_builder_add_from_file(l_pBuilderInterface, l_pUserData->sGUIFilename.c_str(), nullptr);
 			gtk_builder_connect_signals(l_pBuilderInterface, nullptr);
 
@@ -399,13 +388,15 @@ namespace
 		gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), collect_widget_cb, &l_vWidget);
 		GtkEntry* l_widget = GTK_ENTRY(l_vWidget[0]);
 
-		GtkBuilder* l_pBuilderInterface = gtk_builder_new(); // glade_xml_new(l_oUserData.sGUIFilename.c_str(), "setting_editor-color_gradient-dialog", nullptr);
+		GtkBuilder* l_pBuilderInterface =
+				gtk_builder_new(); // glade_xml_new(l_oUserData.sGUIFilename.c_str(), "setting_editor-color_gradient-dialog", nullptr);
 		gtk_builder_add_from_file(l_pBuilderInterface, l_oUserData.sGUIFilename.c_str(), nullptr);
 		gtk_builder_connect_signals(l_pBuilderInterface, nullptr);
 
 		l_oUserData.pDialog = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-dialog"));
 
-		const CString l_sInitialGradient = static_cast<CSettingCollectionHelper*>(data)->m_kernelContext.getConfigurationManager().expand(gtk_entry_get_text(l_widget));
+		const CString l_sInitialGradient = static_cast<CSettingCollectionHelper*>(data)
+										   ->m_kernelContext.getConfigurationManager().expand(gtk_entry_get_text(l_widget));
 		CMatrix l_oInitialGradient;
 
 		OpenViBEVisualizationToolkit::Tools::ColorGradient::parse(l_oInitialGradient, l_sInitialGradient);
@@ -424,8 +415,10 @@ namespace
 
 		g_signal_connect(G_OBJECT(l_oUserData.pDialog), "show", G_CALLBACK(on_initialize_color_gradient), &l_oUserData);
 		g_signal_connect(G_OBJECT(l_oUserData.pDrawingArea), "expose_event", G_CALLBACK(on_refresh_color_gradient), &l_oUserData);
-		g_signal_connect(G_OBJECT(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-add_button")), "pressed", G_CALLBACK(on_button_color_gradient_add_pressed), &l_oUserData);
-		g_signal_connect(G_OBJECT(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-remove_button")), "pressed", G_CALLBACK(on_button_color_gradient_remove_pressed), &l_oUserData);
+		g_signal_connect(G_OBJECT(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-add_button")), "pressed",
+						 G_CALLBACK(on_button_color_gradient_add_pressed), &l_oUserData);
+		g_signal_connect(G_OBJECT(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-remove_button")), "pressed",
+						 G_CALLBACK(on_button_color_gradient_remove_pressed), &l_oUserData);
 
 		if (gtk_dialog_run(GTK_DIALOG(l_oUserData.pDialog)) == GTK_RESPONSE_APPLY)
 		{
@@ -618,10 +611,7 @@ CString CSettingCollectionHelper::getValueBitMask(const CIdentifier& /*typeID*/,
 		if (!GTK_IS_TOGGLE_BUTTON(window)) { return ""; }
 		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(window)))
 		{
-			if (!l_sResult.empty())
-			{
-				l_sResult += string(1, OV_Value_EnumeratedStringSeparator);
-			}
+			if (!l_sResult.empty()) { l_sResult += string(1, OV_Value_EnumeratedStringSeparator); }
 			l_sResult += gtk_button_get_label(GTK_BUTTON(window));
 		}
 	}
@@ -654,18 +644,9 @@ void CSettingCollectionHelper::setValueBoolean(GtkWidget* widget, const CString&
 	GtkEntry* l_pEntryWidget               = GTK_ENTRY(l_vWidget[0]);
 	GtkToggleButton* l_pToggleButtonWidget = GTK_TOGGLE_BUTTON(l_vWidget[1]);
 
-	if (rValue == CString("true"))
-	{
-		gtk_toggle_button_set_active(l_pToggleButtonWidget, true);
-	}
-	else if (rValue == CString("false"))
-	{
-		gtk_toggle_button_set_active(l_pToggleButtonWidget, false);
-	}
-	else
-	{
-		gtk_toggle_button_set_inconsistent(l_pToggleButtonWidget, true);
-	}
+	if (rValue == CString("true")) { gtk_toggle_button_set_active(l_pToggleButtonWidget, true); }
+	else if (rValue == CString("false")) { gtk_toggle_button_set_active(l_pToggleButtonWidget, false); }
+	else { gtk_toggle_button_set_inconsistent(l_pToggleButtonWidget, true); }
 
 	gtk_entry_set_text(l_pEntryWidget, rValue);
 

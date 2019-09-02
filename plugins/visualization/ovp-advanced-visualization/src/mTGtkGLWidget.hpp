@@ -52,7 +52,6 @@ namespace Mensia
 			TGtkGLWidget() : m_pBox(nullptr) { }
 
 			virtual ~TGtkGLWidget()
-
 			{
 				if (m_widget)
 				{
@@ -109,10 +108,7 @@ namespace Mensia
 						gdk_window_process_updates(l_pTopLevelWidget->window, false);
 						gtk_widget_queue_draw(l_pTopLevelWidget);
 					}
-					else
-					{
-						gdk_window_invalidate_rect(l_pTopLevelWidget->window, nullptr, true);
-					}
+					else { gdk_window_invalidate_rect(l_pTopLevelWidget->window, nullptr, true); }
 				}
 			}
 
@@ -133,10 +129,7 @@ namespace Mensia
 					gdk_window_process_updates(m_pLeft->window, false);
 					gtk_widget_queue_draw(m_pLeft);
 				}
-				else
-				{
-					gdk_window_invalidate_rect(m_pLeft->window, nullptr, true);
-				}
+				else { gdk_window_invalidate_rect(m_pLeft->window, nullptr, true); }
 			}
 
 			virtual void redrawRight(const bool immediate = false)
@@ -146,10 +139,7 @@ namespace Mensia
 					gdk_window_process_updates(m_pRight->window, false);
 					gtk_widget_queue_draw(m_pRight);
 				}
-				else
-				{
-					gdk_window_invalidate_rect(m_pRight->window, nullptr, true);
-				}
+				else { gdk_window_invalidate_rect(m_pRight->window, nullptr, true); }
 			}
 
 			virtual void redrawBottom(const bool immediate = false)
@@ -159,10 +149,7 @@ namespace Mensia
 					gdk_window_process_updates(m_pBottom->window, false);
 					gtk_widget_queue_draw(m_pBottom);
 				}
-				else
-				{
-					gdk_window_invalidate_rect(m_pBottom->window, nullptr, true);
-				}
+				else { gdk_window_invalidate_rect(m_pBottom->window, nullptr, true); }
 			}
 
 			virtual void setPointSmoothingActive(const bool bActive = false)

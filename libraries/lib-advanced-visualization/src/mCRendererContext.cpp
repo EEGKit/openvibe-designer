@@ -114,10 +114,7 @@ void CRendererContext::clear()
 	m_DimensionLabels.clear();
 }
 
-void CRendererContext::setParentRendererContext(IRendererContext* pParentRendererContext)
-{
-	m_parentRendererContext = pParentRendererContext;
-}
+void CRendererContext::setParentRendererContext(IRendererContext* pParentRendererContext) { m_parentRendererContext = pParentRendererContext; }
 
 // ____________________________________________________________________________________________________________________________________________________________________________________
 //
@@ -148,10 +145,7 @@ void CRendererContext::addChannel(const std::string& sChannelName, const float x
 
 void CRendererContext::selectChannel(const uint32_t index)
 {
-	for (auto& i : m_channelLookup)
-	{
-		if (i == index) { return; }
-	}
+	for (auto& i : m_channelLookup) { if (i == index) { return; } }
 	m_channelLookup.push_back(index);
 }
 
@@ -206,10 +200,7 @@ void CRendererContext::sortSelectedChannel(const uint32_t ui32SortMode)
 
 void CRendererContext::setDimensionLabel(const size_t dimensionIndex, const size_t labelIndex, const char* label)
 {
-	if (m_DimensionLabels[dimensionIndex].size() <= labelIndex)
-	{
-		m_DimensionLabels[dimensionIndex].resize(labelIndex + 1);
-	}
+	if (m_DimensionLabels[dimensionIndex].size() <= labelIndex) { m_DimensionLabels[dimensionIndex].resize(labelIndex + 1); }
 	m_DimensionLabels[dimensionIndex][labelIndex] = label;
 }
 
@@ -322,15 +313,9 @@ void CRendererContext::setScalpMeshVisible(const bool bVisible) { m_scalpMeshVis
 // ____________________________________________________________________________________________________________________________________________________________________________________
 //
 
-void CRendererContext::setERPPlayerActive(const bool bActive)
-{
-	m_ERPPlayerActive = bActive;
-}
+void CRendererContext::setERPPlayerActive(const bool bActive) { m_ERPPlayerActive = bActive; }
 
-void CRendererContext::stepERPFractionBy(const float f32ERPFraction)
-{
-	m_ERPFraction += f32ERPFraction;
-}
+void CRendererContext::stepERPFractionBy(const float f32ERPFraction) { m_ERPFraction += f32ERPFraction; }
 
 // ____________________________________________________________________________________________________________________________________________________________________________________
 //
@@ -359,10 +344,7 @@ uint32_t CRendererContext::getSelected(const uint32_t index) const { return m_ch
 
 bool CRendererContext::isSelected(const uint32_t index) const
 {
-	for (auto& i : m_channelLookup)
-	{
-		if (i == index) { return true; }
-	}
+	for (auto& i : m_channelLookup) { if (i == index) { return true; } }
 	return false;
 }
 
@@ -406,7 +388,10 @@ bool CRendererContext::isTimeLocked() const { return m_isTimeLocked; }
 
 bool CRendererContext::isScrollModeActive() const { return m_isScrollModeActive; }
 
-bool CRendererContext::getCheckBoardVisibility() const { return (m_parentRendererContext ? m_parentRendererContext->getCheckBoardVisibility() : m_checkBoardVisiblity); }
+bool CRendererContext::getCheckBoardVisibility() const
+{
+	return (m_parentRendererContext ? m_parentRendererContext->getCheckBoardVisibility() : m_checkBoardVisiblity);
+}
 
 bool CRendererContext::getScaleVisibility() const { return (m_parentRendererContext ? m_parentRendererContext->getScaleVisibility() : m_scaleVisiblity); }
 
@@ -414,9 +399,15 @@ IRendererContext::EDataType CRendererContext::getDataType() const { return m_dat
 
 uint32_t CRendererContext::getSpectrumFrequencyRange() const { return m_spectrumFrequencyRange; }
 
-uint32_t CRendererContext::getMinSpectrumFrequency() const { return m_minSpectrumFrequency > m_spectrumFrequencyRange ? m_spectrumFrequencyRange : m_minSpectrumFrequency; }
+uint32_t CRendererContext::getMinSpectrumFrequency() const
+{
+	return m_minSpectrumFrequency > m_spectrumFrequencyRange ? m_spectrumFrequencyRange : m_minSpectrumFrequency;
+}
 
-uint32_t CRendererContext::getMaxSpectrumFrequency() const { return m_maxSpectrumFrequency > m_spectrumFrequencyRange ? m_spectrumFrequencyRange : m_maxSpectrumFrequency; }
+uint32_t CRendererContext::getMaxSpectrumFrequency() const
+{
+	return m_maxSpectrumFrequency > m_spectrumFrequencyRange ? m_spectrumFrequencyRange : m_maxSpectrumFrequency;
+}
 
 uint32_t CRendererContext::getStackCount() const { return m_stackCount; }
 
@@ -425,7 +416,10 @@ uint32_t CRendererContext::getStackIndex() const { return m_stackIndex; }
 // ____________________________________________________________________________________________________________________________________________________________________________________
 //
 
-bool CRendererContext::isERPPlayerActive() const { return m_ERPPlayerActive || (m_parentRendererContext ? m_parentRendererContext->isERPPlayerActive() : false); }
+bool CRendererContext::isERPPlayerActive() const
+{
+	return m_ERPPlayerActive || (m_parentRendererContext ? m_parentRendererContext->isERPPlayerActive() : false);
+}
 
 float CRendererContext::getERPFraction() const
 {

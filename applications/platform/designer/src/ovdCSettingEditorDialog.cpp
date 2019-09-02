@@ -5,12 +5,10 @@ using namespace Kernel;
 using namespace OpenViBEDesigner;
 using namespace std;
 
-static void type_changed_cb(GtkComboBox* /*widget*/, gpointer data)
-{
-	static_cast<CSettingEditorDialog*>(data)->typeChangedCB();
-}
+static void type_changed_cb(GtkComboBox* /*widget*/, gpointer data) { static_cast<CSettingEditorDialog*>(data)->typeChangedCB(); }
 
-CSettingEditorDialog::CSettingEditorDialog(const IKernelContext& rKernelContext, IBox& box, const uint32_t settingIndex, const char* sTitle, const char* sGUIFilename, const char* sGUISettingsFilename)
+CSettingEditorDialog::CSettingEditorDialog(const IKernelContext& rKernelContext, IBox& box, const uint32_t settingIndex, const char* sTitle,
+										   const char* sGUIFilename, const char* sGUISettingsFilename)
 	: m_kernelContext(rKernelContext), m_rBox(box), m_oHelper(rKernelContext, sGUIFilename), m_ui32SettingIndex(settingIndex),
 	  m_sGUIFilename(sGUIFilename), m_sGUISettingsFilename(sGUISettingsFilename), m_sTitle(sTitle) { }
 
@@ -42,7 +40,8 @@ bool CSettingEditorDialog::run()
 	gtk_entry_set_text(GTK_ENTRY(l_pName), l_sSettingName.toASCIIString());
 
 	gint l_iActive       = -1;
-	uint32_t numSettings = 0; // Cannot rely on m_vSettingTypes.size() -- if there are any duplicates, it wont increment properly (and should be an error anyway) ...
+	uint32_t numSettings =
+			0; // Cannot rely on m_vSettingTypes.size() -- if there are any duplicates, it wont increment properly (and should be an error anyway) ...
 
 	for (const auto& l_oCurrentTypeIdentifier : m_kernelContext.getTypeManager().getSortedTypes())
 	{
@@ -55,10 +54,7 @@ bool CSettingEditorDialog::run()
 		}
 	}
 
-	if (l_iActive != -1)
-	{
-		gtk_combo_box_set_active(GTK_COMBO_BOX(m_pType), l_iActive);
-	}
+	if (l_iActive != -1) { gtk_combo_box_set_active(GTK_COMBO_BOX(m_pType), l_iActive); }
 
 	bool l_bFinished = false;
 	bool l_bResult   = false;
@@ -103,7 +99,8 @@ void CSettingEditorDialog::typeChangedCB()
 	const CIdentifier l_oSettingType = m_vSettingTypes[gtk_combo_box_get_active_text(GTK_COMBO_BOX(m_pType))];
 
 	const CString l_sWidgetName                      = m_oHelper.getSettingWidgetName(l_oSettingType).toASCIIString();
-	GtkBuilder* l_pBuilderInterfaceDefaultValueDummy = gtk_builder_new(); // glade_xml_new(m_sGUIFilename.toASCIIString(), l_sWidgetName.toASCIIString(), nullptr);
+	GtkBuilder* l_pBuilderInterfaceDefaultValueDummy =
+			gtk_builder_new(); // glade_xml_new(m_sGUIFilename.toASCIIString(), l_sWidgetName.toASCIIString(), nullptr);
 	gtk_builder_add_from_file(l_pBuilderInterfaceDefaultValueDummy, m_sGUISettingsFilename.toASCIIString(), nullptr);
 	gtk_builder_connect_signals(l_pBuilderInterfaceDefaultValueDummy, nullptr);
 

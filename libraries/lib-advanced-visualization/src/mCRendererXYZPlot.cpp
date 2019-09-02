@@ -36,10 +36,7 @@ void CRendererXYZPlot::rebuild(const IRendererContext& rContext)
 	for (uint32_t i = 0; i < m_plotCount; ++i)
 	{
 		m_vertex[i].resize(this->m_sampleCount);
-		for (uint32_t j = 0; j < this->m_sampleCount; j++)
-		{
-			m_vertex[i][j].u = j * inverseSampleCount;
-		}
+		for (uint32_t j = 0; j < this->m_sampleCount; j++) { m_vertex[i][j].u = j * inverseSampleCount; }
 	}
 
 	m_historyIndex = 0;

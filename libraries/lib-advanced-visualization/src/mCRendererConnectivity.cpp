@@ -36,10 +36,7 @@
 using namespace Mensia;
 using namespace AdvancedVisualization;
 
-static void q_rotate(Eigen::VectorXd& vDest, const Eigen::VectorXd& vSrc, const Eigen::Quaterniond& q)
-{
-	vDest = q.matrix() * vSrc;
-}
+static void q_rotate(Eigen::VectorXd& vDest, const Eigen::VectorXd& vSrc, const Eigen::Quaterniond& q) { vDest = q.matrix() * vSrc; }
 
 static void q_from_polar(Eigen::Quaterniond& q, Eigen::VectorXd& v1, Eigen::VectorXd& v2, const CVertex& cv1, const CVertex& cv2)
 {
@@ -142,10 +139,7 @@ void CRendererConnectivity::refresh(const IRendererContext& rContext)
 	{
 		for (uint32_t j = 0; j < i; j++)
 		{
-			for (uint32_t k = 0; k < COUNT; k++)
-			{
-				m_vertex[l][k].u = m_history[i][m_historyCount - 1 - j];
-			}
+			for (uint32_t k = 0; k < COUNT; k++) { m_vertex[l][k].u = m_history[i][m_historyCount - 1 - j]; }
 			l++;
 		}
 	}

@@ -9,15 +9,9 @@ using namespace OpenViBE;
 using namespace OpenViBEDesigner;
 using namespace Setting;
 
-static void on_button_setting_filename_browse_pressed(GtkButton* /*button*/, gpointer data)
-{
-	static_cast<CFilenameSettingView *>(data)->browse();
-}
+static void on_button_setting_filename_browse_pressed(GtkButton* /*button*/, gpointer data) { static_cast<CFilenameSettingView *>(data)->browse(); }
 
-static void on_change(GtkEntry* /*entry*/, gpointer data)
-{
-	static_cast<CFilenameSettingView *>(data)->onChange();
-}
+static void on_change(GtkEntry* /*entry*/, gpointer data) { static_cast<CFilenameSettingView *>(data)->onChange(); }
 
 #if defined TARGET_OS_Windows
 static gboolean on_focus_out_event(GtkEntry* /*entry*/, GdkEvent* /*event*/, gpointer data)
@@ -27,7 +21,13 @@ static gboolean on_focus_out_event(GtkEntry* /*entry*/, GdkEvent* /*event*/, gpo
 }
 #endif
 
-CFilenameSettingView::CFilenameSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext): CAbstractSettingView(box, index, rBuilderName, "settings_collection-hbox_setting_filename"), m_kernelContext(rKernelContext)
+CFilenameSettingView::
+CFilenameSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext): CAbstractSettingView(
+																																		box, index,
+																																		rBuilderName,
+																																		"settings_collection-hbox_setting_filename"),
+																																	m_kernelContext(
+																																		rKernelContext)
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 
@@ -45,10 +45,7 @@ CFilenameSettingView::CFilenameSettingView(Kernel::IBox& box, const uint32_t ind
 	initializeValue();
 }
 
-void CFilenameSettingView::getValue(CString& value) const
-{
-	value = CString(gtk_entry_get_text(m_entry));
-}
+void CFilenameSettingView::getValue(CString& value) const { value = CString(gtk_entry_get_text(m_entry)); }
 
 void CFilenameSettingView::setValue(const CString& value)
 {
@@ -80,10 +77,7 @@ void CFilenameSettingView::browse() const
 	{
 		char* l_sFileName = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(l_pWidgetDialogOpen));
 		char* l_pBackslash;
-		while ((l_pBackslash = strchr(l_sFileName, '\\')) != nullptr)
-		{
-			*l_pBackslash = '/';
-		}
+		while ((l_pBackslash = strchr(l_sFileName, '\\')) != nullptr) { *l_pBackslash = '/'; }
 		gtk_entry_set_text(m_entry, l_sFileName);
 		g_free(l_sFileName);
 	}
@@ -115,10 +109,7 @@ void CFilenameSettingView::onFocusLost()
 				*iter = '/';
 				break;
 			}
-			if (*std::next(iter) != '{' && *std::next(iter) != '$' && *std::next(iter) != '}')
-			{
-				*iter = '/';
-			}
+			if (*std::next(iter) != '{' && *std::next(iter) != '$' && *std::next(iter) != '}') { *iter = '/'; }
 
 			std::advance(iter, 1);
 		}

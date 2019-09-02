@@ -45,14 +45,8 @@ bool CAboutPluginDialog::run()
 	GtkWidget* l_pDetailedDescription    = GTK_WIDGET(gtk_builder_get_object(interface, "plugin_about-textview_detailed_description"));
 	g_object_unref(interface);
 
-	if (m_pPluginObjectDescriptor->isDerivedFromClass(OV_ClassId_Plugins_AlgorithmDesc))
-	{
-		gtk_entry_set_text(GTK_ENTRY(l_pType), "Algorithm");
-	}
-	else if (m_pPluginObjectDescriptor->isDerivedFromClass(OV_ClassId_Plugins_BoxAlgorithmDesc))
-	{
-		gtk_entry_set_text(GTK_ENTRY(l_pType), "Box algorithm");
-	}
+	if (m_pPluginObjectDescriptor->isDerivedFromClass(OV_ClassId_Plugins_AlgorithmDesc)) { gtk_entry_set_text(GTK_ENTRY(l_pType), "Algorithm"); }
+	else if (m_pPluginObjectDescriptor->isDerivedFromClass(OV_ClassId_Plugins_BoxAlgorithmDesc)) { gtk_entry_set_text(GTK_ENTRY(l_pType), "Box algorithm"); }
 	else if (m_pPluginObjectDescriptor->isDerivedFromClass(OV_ClassId_Plugins_ScenarioImporterDesc))
 	{
 		gtk_entry_set_text(GTK_ENTRY(l_pType), "Scenario importer");

@@ -37,10 +37,7 @@ void CRendererLine::rebuild(const IRendererContext& rContext)
 	for (size_t channel = 0; channel < m_channelCount; channel++)
 	{
 		m_Vertices[channel].resize(m_sampleCount);
-		for (size_t sample = 0; sample < m_sampleCount; sample++)
-		{
-			m_Vertices[channel][sample].x = sample * m_inverseSampleCount;
-		}
+		for (size_t sample = 0; sample < m_sampleCount; sample++) { m_Vertices[channel][sample].x = sample * m_inverseSampleCount; }
 	}
 
 	m_historyIndex = 0;
@@ -70,14 +67,8 @@ void CRendererLine::refresh(const IRendererContext& rContext)
 		{
 			const uint32_t currentSampleIndex = firstSampleIndex + sample;
 
-			if (currentSampleIndex < l_ui32HistoryIndexMax)
-			{
-				l_pVertex->y = l_vHistory[currentSampleIndex];
-			}
-			else if (currentSampleIndex >= m_sampleCount)
-			{
-				l_pVertex->y = l_vHistory[currentSampleIndex - m_sampleCount];
-			}
+			if (currentSampleIndex < l_ui32HistoryIndexMax) { l_pVertex->y = l_vHistory[currentSampleIndex]; }
+			else if (currentSampleIndex >= m_sampleCount) { l_pVertex->y = l_vHistory[currentSampleIndex - m_sampleCount]; }
 
 			l_pVertex++;
 		}

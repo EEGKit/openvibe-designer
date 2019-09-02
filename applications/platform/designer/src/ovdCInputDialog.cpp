@@ -40,10 +40,7 @@ void CInputDialog::run()
 {
 	const gint l_iResult = gtk_dialog_run(m_pInputDialog);
 
-	if (l_iResult == GTK_RESPONSE_ACCEPT)
-	{
-		if (m_fpOKButtonCB != nullptr) { m_fpOKButtonCB(GTK_WIDGET(m_pInputDialogOKButton), this); }
-	}
+	if (l_iResult == GTK_RESPONSE_ACCEPT) { if (m_fpOKButtonCB != nullptr) { m_fpOKButtonCB(GTK_WIDGET(m_pInputDialogOKButton), this); } }
 
 	gtk_widget_hide_all(GTK_WIDGET(m_pInputDialog));
 }
@@ -64,19 +61,10 @@ gboolean CInputDialog::key_press_event_cb(GtkWidget* /*widget*/, GdkEventKey* ev
 	return FALSE;
 }
 
-void CInputDialog::button_clicked_cb(GtkButton* button, gpointer data)
-{
-	static_cast<CInputDialog*>(data)->buttonClickedCB(button);
-}
+void CInputDialog::button_clicked_cb(GtkButton* button, gpointer data) { static_cast<CInputDialog*>(data)->buttonClickedCB(button); }
 
 void CInputDialog::buttonClickedCB(GtkButton* button) const
 {
-	if (button == m_pInputDialogOKButton)
-	{
-		gtk_dialog_response(m_pInputDialog, GTK_RESPONSE_ACCEPT);
-	}
-	else
-	{
-		gtk_dialog_response(m_pInputDialog, GTK_RESPONSE_REJECT);
-	}
+	if (button == m_pInputDialogOKButton) { gtk_dialog_response(m_pInputDialog, GTK_RESPONSE_ACCEPT); }
+	else { gtk_dialog_response(m_pInputDialog, GTK_RESPONSE_REJECT); }
 }

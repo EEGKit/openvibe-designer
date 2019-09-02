@@ -301,7 +301,8 @@ namespace OpenViBEVisualizationToolkit
 		 * \param index index where widget is to be parented
 		 * \return true if widget could be parented as desired, false otherwise
 		 */
-		virtual bool parentVisualizationWidget(const OpenViBE::CIdentifier& identifier, const OpenViBE::CIdentifier& parentIdentifier, const uint32_t index) = 0;
+		virtual bool parentVisualizationWidget(const OpenViBE::CIdentifier& identifier, const OpenViBE::CIdentifier& parentIdentifier,
+											   const uint32_t index) = 0;
 
 		/**
 		 * \brief Destroys a widget hierarchy
@@ -393,7 +394,8 @@ namespace OpenViBEVisualizationToolkit
 		 * \param visualizationTreeColumn index of column where identifier is stored
 		 * \return true if identifier was successfully retrieved at the specified column of the specified node, 0 otherwise.
 		 */
-		virtual bool getIdentifierFromTreeIter(GtkTreeIter* treeIter, OpenViBE::CIdentifier& identifier, EVisualizationTreeColumn visualizationTreeColumn) const = 0;
+		virtual bool getIdentifierFromTreeIter(GtkTreeIter* treeIter, OpenViBE::CIdentifier& identifier,
+											   EVisualizationTreeColumn visualizationTreeColumn) const = 0;
 		//@}
 
 		/**
@@ -487,7 +489,8 @@ namespace OpenViBEVisualizationToolkit
 		 * \param location
 		 * \return true if drop operation was successfully completed, false otherwise
 		 */
-		virtual bool dragDataReceivedOutsideWidgetCB(const OpenViBE::CIdentifier& sourceWidgetIdentifier, GtkWidget* destinationWidget, EDragDataLocation location) = 0;
+		virtual bool dragDataReceivedOutsideWidgetCB(const OpenViBE::CIdentifier& sourceWidgetIdentifier, GtkWidget* destinationWidget,
+													 EDragDataLocation location) = 0;
 		//@}
 
 		/**

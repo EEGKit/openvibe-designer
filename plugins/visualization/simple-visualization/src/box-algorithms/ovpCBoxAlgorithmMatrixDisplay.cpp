@@ -44,10 +44,7 @@ bool CBoxAlgorithmMatrixDisplay::resetColors()
 		//we take colors from cache and re-put it in the table
 		auto it = m_vEventBoxCache.begin();
 
-		for (; it != m_vEventBoxCache.end(); ++it)
-		{
-			gtk_widget_modify_bg((*it).first, GTK_STATE_NORMAL, &(*it).second);
-		}
+		for (; it != m_vEventBoxCache.end(); ++it) { gtk_widget_modify_bg((*it).first, GTK_STATE_NORMAL, &(*it).second); }
 	}
 	else
 	{
@@ -72,7 +69,8 @@ bool CBoxAlgorithmMatrixDisplay::initialize()
 	//IBox& l_rStaticBoxContext=this->getStaticBoxContext();
 
 	//targets decoder
-	m_pMatrixDecoder = &this->getAlgorithmManager().getAlgorithm(this->getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_StreamedMatrixStreamDecoder));
+	m_pMatrixDecoder = &this->getAlgorithmManager().getAlgorithm(
+		this->getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_StreamedMatrixStreamDecoder));
 	m_pMatrixDecoder->initialize();
 
 	//IO for the targets MemoryBuffer -> StreamedMatrix
@@ -80,17 +78,24 @@ bool CBoxAlgorithmMatrixDisplay::initialize()
 	op_pMatrix.initialize(m_pMatrixDecoder->getOutputParameter(OVP_GD_Algorithm_StreamedMatrixStreamDecoder_OutputParameterId_Matrix));
 
 	//widgets
-	m_pMainWidgetInterface    = gtk_builder_new(); // glade_xml_new(OpenViBE::Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-MatrixDisplay.ui", "matrix-display-table", nullptr);
-	m_pToolbarWidgetInterface = gtk_builder_new(); // glade_xml_new(OpenViBE::Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-MatrixDisplay.ui", "matrix-display-toolbar", nullptr);
-	gtk_builder_add_from_file(m_pMainWidgetInterface, Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-MatrixDisplay.ui", nullptr);
-	gtk_builder_add_from_file(m_pToolbarWidgetInterface, Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-MatrixDisplay.ui", nullptr);
+	m_pMainWidgetInterface =
+			gtk_builder_new(); // glade_xml_new(OpenViBE::Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-MatrixDisplay.ui", "matrix-display-table", nullptr);
+	m_pToolbarWidgetInterface =
+			gtk_builder_new(); // glade_xml_new(OpenViBE::Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-MatrixDisplay.ui", "matrix-display-toolbar", nullptr);
+	gtk_builder_add_from_file(m_pMainWidgetInterface,
+							  Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-MatrixDisplay.ui", nullptr);
+	gtk_builder_add_from_file(m_pToolbarWidgetInterface,
+							  Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-MatrixDisplay.ui", nullptr);
 
 	gtk_builder_connect_signals(m_pMainWidgetInterface, nullptr);
 	gtk_builder_connect_signals(m_pToolbarWidgetInterface, nullptr);
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pToolbarWidgetInterface, "show-values-toggle-button")), "toggled", G_CALLBACK(::show_values_toggle_button_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pToolbarWidgetInterface, "show-colors-toggle-button")), "toggled", G_CALLBACK(::show_colors_toggle_button_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pToolbarWidgetInterface, "matrix-display-toolbar")), "delete_event", G_CALLBACK(gtk_widget_hide), nullptr);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pToolbarWidgetInterface, "show-values-toggle-button")), "toggled",
+					 G_CALLBACK(::show_values_toggle_button_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pToolbarWidgetInterface, "show-colors-toggle-button")), "toggled",
+					 G_CALLBACK(::show_colors_toggle_button_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pToolbarWidgetInterface, "matrix-display-toolbar")), "delete_event", G_CALLBACK(gtk_widget_hide),
+					 nullptr);
 
 	m_pMainWidget    = GTK_WIDGET(gtk_builder_get_object(m_pMainWidgetInterface, "matrix-display-table"));
 	m_pToolbarWidget = GTK_WIDGET(gtk_builder_get_object(m_pToolbarWidgetInterface, "matrix-display-toolbar"));
@@ -101,12 +106,15 @@ bool CBoxAlgorithmMatrixDisplay::initialize()
 		return false;
 	}
 
-	m_visualizationContext = dynamic_cast<OpenViBEVisualizationToolkit::IVisualizationContext*>(this->createPluginObject(OVP_ClassId_Plugin_VisualizationContext));
+	m_visualizationContext = dynamic_cast<OpenViBEVisualizationToolkit::IVisualizationContext*>(this->createPluginObject(
+		OVP_ClassId_Plugin_VisualizationContext));
 	m_visualizationContext->setWidget(*this, m_pMainWidget);
 	m_visualizationContext->setToolbar(*this, m_pToolbarWidget);
 
-	m_bShowValues = (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pToolbarWidgetInterface, "show-values-toggle-button"))) != 0);
-	m_bShowColors = (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pToolbarWidgetInterface, "show-colors-toggle-button"))) != 0);
+	m_bShowValues = (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pToolbarWidgetInterface, "show-values-toggle-button")))
+					 != 0);
+	m_bShowColors = (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pToolbarWidgetInterface, "show-colors-toggle-button")))
+					 != 0);
 
 	CString l_sColorGradientSetting;
 	getBoxAlgorithmContext()->getStaticBoxContext()->getSettingValue(0, l_sColorGradientSetting);
@@ -184,7 +192,8 @@ bool CBoxAlgorithmMatrixDisplay::process()
 			}
 			else if (op_pMatrix->getDimensionCount() != 2)
 			{
-				getLogManager() << LogLevel_Error << "The streamed matrix received has more than 2 dimensions (found " << op_pMatrix->getDimensionCount() << " dimensions)\n";
+				getLogManager() << LogLevel_Error << "The streamed matrix received has more than 2 dimensions (found " << op_pMatrix->getDimensionCount() <<
+						" dimensions)\n";
 				return false;
 			}
 			else
@@ -201,7 +210,8 @@ bool CBoxAlgorithmMatrixDisplay::process()
 			{
 				GtkWidget* l_pWidgetLabel = gtk_label_new("");
 				gtk_widget_set_visible(l_pWidgetLabel, 1);
-				gtk_table_attach(l_pTable, l_pWidgetLabel, c, c + 1, row, row + 1, GtkAttachOptions(GTK_EXPAND | GTK_FILL), GtkAttachOptions(GTK_EXPAND | GTK_FILL), 0, 0);
+				gtk_table_attach(l_pTable, l_pWidgetLabel, c, c + 1, row, row + 1, GtkAttachOptions(GTK_EXPAND | GTK_FILL),
+								 GtkAttachOptions(GTK_EXPAND | GTK_FILL), 0, 0);
 				//g_object_unref(l_pGtkBuilderLabel);
 
 				stringstream ss;
@@ -221,7 +231,8 @@ bool CBoxAlgorithmMatrixDisplay::process()
 				GtkWidget* l_pWidgetLabel = gtk_label_new("");
 				gtk_widget_set_visible(l_pWidgetLabel, 1);
 				//gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(l_pWidgetLabel)), l_pWidgetLabel);
-				gtk_table_attach(l_pTable, l_pWidgetLabel, col, col + 1, r, r + 1, GtkAttachOptions(GTK_EXPAND | GTK_FILL), GtkAttachOptions(GTK_EXPAND | GTK_FILL), 0, 0);
+				gtk_table_attach(l_pTable, l_pWidgetLabel, col, col + 1, r, r + 1, GtkAttachOptions(GTK_EXPAND | GTK_FILL),
+								 GtkAttachOptions(GTK_EXPAND | GTK_FILL), 0, 0);
 				//g_object_unref(l_pGtkBuilderLabel);
 
 				stringstream ss;
@@ -245,7 +256,8 @@ bool CBoxAlgorithmMatrixDisplay::process()
 					gtk_widget_set_visible(l_pWidgetLabel, 1);
 					gtk_container_add(GTK_CONTAINER(l_pWidgetEventBox), l_pWidgetLabel);
 					//gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(l_pWidgetEventBox)), l_pWidgetEventBox);
-					gtk_table_attach(l_pTable, l_pWidgetEventBox, c, c + 1, r, r + 1, GtkAttachOptions(GTK_EXPAND | GTK_FILL), GtkAttachOptions(GTK_EXPAND | GTK_FILL), 0, 0);
+					gtk_table_attach(l_pTable, l_pWidgetEventBox, c, c + 1, r, r + 1, GtkAttachOptions(GTK_EXPAND | GTK_FILL),
+									 GtkAttachOptions(GTK_EXPAND | GTK_FILL), 0, 0);
 					//g_object_unref(l_pGtkBuilderEventBox);
 
 					GdkColor l_ColorWhite;
@@ -321,19 +333,14 @@ bool CBoxAlgorithmMatrixDisplay::process()
 						l_ColorEventBox.green = uint16_t(m_MatrixInterpolatedColorGardient[l_ui32Step * 4 + 2] * 65535. / 100.);
 						l_ColorEventBox.blue  = uint16_t(m_MatrixInterpolatedColorGardient[l_ui32Step * 4 + 3] * 65535. / 100.);
 
-						if (!System::Memory::compare(&(m_vEventBoxCache[r * l_ui32ColumnCount + c].second), &l_ColorEventBox, sizeof(GdkColor)) && m_bShowColors)
-						{
-							gtk_widget_modify_bg(m_vEventBoxCache[r * l_ui32ColumnCount + c].first, GTK_STATE_NORMAL, &l_ColorEventBox);
-						}
+						if (!System::Memory::compare(&(m_vEventBoxCache[r * l_ui32ColumnCount + c].second), &l_ColorEventBox, sizeof(GdkColor)) && m_bShowColors
+						) { gtk_widget_modify_bg(m_vEventBoxCache[r * l_ui32ColumnCount + c].first, GTK_STATE_NORMAL, &l_ColorEventBox); }
 						m_vEventBoxCache[r * l_ui32ColumnCount + c].second = l_ColorEventBox;
 
 						std::stringstream ss;
 						ss << std::fixed;
 						ss << std::setprecision(2);
-						if (m_bShowValues)
-						{
-							ss << l_f64Value;
-						}
+						if (m_bShowValues) { ss << l_f64Value; }
 
 						if (ss.str() != m_vLabelCache[r * l_ui32ColumnCount + c].second)
 						{

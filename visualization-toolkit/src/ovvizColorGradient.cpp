@@ -28,10 +28,7 @@ bool Tools::ColorGradient::parse(IMatrix& colorGradient, const CString& string)
 	do
 	{
 		size_t endPosition = colorString.find(OV_Value_EnumeratedStringSeparator, startPosition);
-		if (endPosition == std::string::npos)
-		{
-			endPosition = colorString.length();
-		}
+		if (endPosition == std::string::npos) { endPosition = colorString.length(); }
 
 		std::string colorSubString;
 		colorSubString.assign(colorString, startPosition, endPosition - startPosition);

@@ -39,8 +39,10 @@ namespace Mensia
 
 			_IsDerivedFromClass_Final_(CBoxAlgorithmViz, m_oClassId)
 
-			OpenViBEToolkit::TStimulationDecoder<TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>> m_oStimulationDecoder;
-			OpenViBEToolkit::TStreamedMatrixDecoder<TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>> m_oMatrixDecoder;
+			OpenViBEToolkit::TStimulationDecoder<TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>>
+			m_oStimulationDecoder;
+			OpenViBEToolkit::TStreamedMatrixDecoder<TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>>
+			m_oMatrixDecoder;
 
 			TRendererFactoryClass m_oRendererFactory;
 			std::vector<IRenderer*> m_vRenderer;
@@ -61,10 +63,7 @@ namespace Mensia
 			{
 				OpenViBE::CIdentifier typeID = OV_UndefinedIdentifier;
 				box.getInputType(index, typeID);
-				if (!this->getTypeManager().isDerivedFromStream(typeID, OV_TypeId_StreamedMatrix))
-				{
-					box.setInputType(index, OV_TypeId_StreamedMatrix);
-				}
+				if (!this->getTypeManager().isDerivedFromStream(typeID, OV_TypeId_StreamedMatrix)) { box.setInputType(index, OV_TypeId_StreamedMatrix); }
 				box.setInputType(1, OV_TypeId_Stimulations);
 				return true;
 			}
@@ -75,28 +74,29 @@ namespace Mensia
 		{
 		public:
 
-			TBoxAlgorithmStackedContinuousVizDesc(const OpenViBE::CString& sName, const OpenViBE::CIdentifier& rDescClassId, const OpenViBE::CIdentifier& rClassId, const OpenViBE::CString& sAddedSoftwareVersion, const OpenViBE::CString& sUpdatedSoftwareVersion, const CParameterSet& rParameterSet, const OpenViBE::CString& sShortDescription, const OpenViBE::CString& sDetailedDescription)
-				: CBoxAlgorithmVizDesc(sName, rDescClassId, rClassId, sAddedSoftwareVersion, sUpdatedSoftwareVersion, rParameterSet, sShortDescription, sDetailedDescription) { }
+			TBoxAlgorithmStackedContinuousVizDesc(const OpenViBE::CString& sName, const OpenViBE::CIdentifier& rDescClassId,
+												  const OpenViBE::CIdentifier& rClassId, const OpenViBE::CString& sAddedSoftwareVersion,
+												  const OpenViBE::CString& sUpdatedSoftwareVersion, const CParameterSet& rParameterSet,
+												  const OpenViBE::CString& sShortDescription, const OpenViBE::CString& sDetailedDescription)
+				: CBoxAlgorithmVizDesc(sName, rDescClassId, rClassId, sAddedSoftwareVersion, sUpdatedSoftwareVersion, rParameterSet, sShortDescription,
+									   sDetailedDescription) { }
 
 			OpenViBE::Plugins::IPluginObject* create() override
-
 			{
 				return new TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>(m_oClassId, m_vParameter);
 			}
 
 			OpenViBE::Plugins::IBoxListener* createBoxListener() const override { return new CBoxAlgorithmStackedContinuousVizListener(m_vParameter); }
 
-			OpenViBE::CString getCategory() const override
-			{
-				return OpenViBE::CString("Advanced Visualization/") + m_sCategoryName;
-			}
+			OpenViBE::CString getCategory() const override { return OpenViBE::CString("Advanced Visualization/") + m_sCategoryName; }
 
 			_IsDerivedFromClass_Final_(OpenViBE::Plugins::IBoxAlgorithmDesc, m_oDescClassId)
 		};
 
 
 		template <bool bHorizontalStack, bool bDrawBorders, class TRendererFactoryClass, class TRulerClass>
-		TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>::TBoxAlgorithmStackedContinuousViz(const OpenViBE::CIdentifier& rClassId, const std::vector<int>& vParameter)
+		TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>::TBoxAlgorithmStackedContinuousViz(
+			const OpenViBE::CIdentifier& rClassId, const std::vector<int>& vParameter)
 			: CBoxAlgorithmViz(rClassId, vParameter) { }
 
 		template <bool bHorizontalStack, bool bDrawBorders, class TRendererFactoryClass, class TRulerClass>
@@ -150,8 +150,8 @@ namespace Mensia
 		template <bool bHorizontalStack, bool bDrawBorders, class TRendererFactoryClass, class TRulerClass>
 		bool TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>::process()
 		{
-			OpenViBE::Kernel::IBoxIO& boxContext    = this->getDynamicBoxContext();
-			const uint32_t nInput = this->getStaticBoxContext().getInputCount();
+			OpenViBE::Kernel::IBoxIO& boxContext = this->getDynamicBoxContext();
+			const uint32_t nInput                = this->getStaticBoxContext().getInputCount();
 			size_t i, j;
 
 			for (i = 0; i < boxContext.getInputChunkCount(0); ++i)
@@ -262,11 +262,13 @@ namespace Mensia
 					m_time1                                 = m_time2;
 					m_time2                                 = boxContext.getInputChunkEndTime(0, uint32_t(i));
 					const uint64_t l_ui64InterChunkDuration = m_time2 - m_time1;
-					const uint64_t l_ui64ChunkDuration      = (boxContext.getInputChunkEndTime(0, uint32_t(i)) - boxContext.getInputChunkStartTime(0, uint32_t(i)));
-					const uint64_t l_ui64SampleDuration     = l_ui64ChunkDuration / m_elementCount;
+					const uint64_t l_ui64ChunkDuration      = (boxContext.getInputChunkEndTime(0, uint32_t(i)) - boxContext.getInputChunkStartTime(
+																   0, uint32_t(i)));
+					const uint64_t l_ui64SampleDuration = l_ui64ChunkDuration / m_elementCount;
 					if (m_pRendererContext->isTimeLocked())
 					{
-						if ((l_ui64InterChunkDuration & ~0xf) != (m_pRendererContext->getSampleDuration() & ~0xf) && l_ui64InterChunkDuration != 0) // 0xf mask avoids rounding errors
+						if ((l_ui64InterChunkDuration & ~0xf) != (m_pRendererContext->getSampleDuration() & ~0xf) && l_ui64InterChunkDuration != 0
+						) // 0xf mask avoids rounding errors
 						{
 							m_pSubRendererContext->setSampleDuration(l_ui64InterChunkDuration);
 							m_pRendererContext->setSampleDuration(l_ui64InterChunkDuration);
@@ -285,17 +287,17 @@ namespace Mensia
 					for (j = 0; j < l_ui32ChannelCount; j++)
 					{
 						// Feed renderer with actual samples
-						for (size_t k = 0; k < sampleCount; k++)
-						{
-							m_vSwap[sampleCount - k - 1] = float(l_pMatrix->getBuffer()[j * sampleCount + k]);
-						}
+						for (size_t k = 0; k < sampleCount; k++) { m_vSwap[sampleCount - k - 1] = float(l_pMatrix->getBuffer()[j * sampleCount + k]); }
 						m_vRenderer[j]->feed(&m_vSwap[0]);
 
 						// Adjust feeding depending on theoretical dates
 						if (m_pRendererContext->isTimeLocked() && m_pRendererContext->getSampleDuration())
 						{
 							const auto l_ui32TheoreticalSampleCount = uint32_t(m_time2 / m_pRendererContext->getSampleDuration());
-							if (l_ui32TheoreticalSampleCount > m_vRenderer[j]->getHistoryCount()) { m_vRenderer[j]->prefeed(l_ui32TheoreticalSampleCount - m_vRenderer[j]->getHistoryCount()); }
+							if (l_ui32TheoreticalSampleCount > m_vRenderer[j]->getHistoryCount())
+							{
+								m_vRenderer[j]->prefeed(l_ui32TheoreticalSampleCount - m_vRenderer[j]->getHistoryCount());
+							}
 						}
 					}
 
@@ -329,10 +331,7 @@ namespace Mensia
 					rendererSampleCount = uint32_t(m_pRendererContext->getTimeScale() / m_pRendererContext->getSampleDuration());
 				}
 			}
-			else
-			{
-				rendererSampleCount = uint32_t(m_pRendererContext->getElementCount());
-			}
+			else { rendererSampleCount = uint32_t(m_pRendererContext->getElementCount()); }
 
 			if (rendererSampleCount != 0)
 			{
@@ -348,14 +347,8 @@ namespace Mensia
 				}
 			}
 
-			if (m_bRebuildNeeded)
-			{
-				for (auto& renderer : m_vRenderer) { renderer->rebuild(*m_pSubRendererContext); }
-			}
-			if (m_bRefreshNeeded)
-			{
-				for (auto& renderer : m_vRenderer) { renderer->refresh(*m_pSubRendererContext); }
-			}
+			if (m_bRebuildNeeded) { for (auto& renderer : m_vRenderer) { renderer->rebuild(*m_pSubRendererContext); } }
+			if (m_bRefreshNeeded) { for (auto& renderer : m_vRenderer) { renderer->refresh(*m_pSubRendererContext); } }
 			if (m_bRedrawNeeded) { this->redraw(); }
 
 			m_bRebuildNeeded = false;

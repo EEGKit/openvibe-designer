@@ -20,7 +20,8 @@ namespace
 	}
 } // namespace
 
-CConnectorEditor::CConnectorEditor(const IKernelContext& rKernelContext, IBox& box, const uint32_t connectorType, const uint32_t connectorIndex, const char* sTitle, const char* sGUIFilename)
+CConnectorEditor::CConnectorEditor(const IKernelContext& rKernelContext, IBox& box, const uint32_t connectorType, const uint32_t connectorIndex,
+								   const char* sTitle, const char* sGUIFilename)
 	: m_kernelContext(rKernelContext), m_rBox(box), m_connectorType(connectorType),
 	  m_connectorIndex(connectorIndex), m_sGUIFilename(sGUIFilename), m_sTitle(sTitle ? sTitle : "") { }
 
@@ -70,7 +71,8 @@ bool CConnectorEditor::run()
 	GtkEntry* l_pConnectorNameEntry           = GTK_ENTRY(gtk_builder_get_object(l_pBuilderInterfaceConnector, "connector_editor-connector_name_entry"));
 	GtkComboBox* l_pConnectorTypeComboBox     = GTK_COMBO_BOX(gtk_builder_get_object(l_pBuilderInterfaceConnector, "connector_editor-connector_type_combobox"));
 	m_ConnectorIdentifierEntry                = GTK_ENTRY(gtk_builder_get_object(l_pBuilderInterfaceConnector, "connector_editor-connector_identifier_entry"));
-	GtkButton* connectorIdentifierResetButton = GTK_BUTTON(gtk_builder_get_object(l_pBuilderInterfaceConnector, "connector_editor-connector_identifier_reset_button"));
+	GtkButton* connectorIdentifierResetButton = GTK_BUTTON(
+		gtk_builder_get_object(l_pBuilderInterfaceConnector, "connector_editor-connector_identifier_reset_button"));
 	gtk_list_store_clear(GTK_LIST_STORE(gtk_combo_box_get_model(l_pConnectorTypeComboBox)));
 	gtk_window_set_title(GTK_WINDOW(l_pConnectorDialog), m_sTitle.c_str());
 

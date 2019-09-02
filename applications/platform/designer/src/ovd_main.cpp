@@ -43,14 +43,18 @@ public:
 
 	{
 		CIdentifier identifier;
-		while ((identifier = m_kernelContext.getPluginManager().getNextPluginObjectDescIdentifier(identifier)) != OV_UndefinedIdentifier) { this->callback(*m_kernelContext.getPluginManager().getPluginObjectDesc(identifier)); }
+		while ((identifier = m_kernelContext.getPluginManager().getNextPluginObjectDescIdentifier(identifier)) != OV_UndefinedIdentifier)
+		{
+			this->callback(*m_kernelContext.getPluginManager().getPluginObjectDesc(identifier));
+		}
 		return true;
 	}
 
 	virtual bool enumeratePluginObjectDesc(const CIdentifier& rParentClassIdentifier)
 	{
 		CIdentifier identifier;
-		while ((identifier = m_kernelContext.getPluginManager().getNextPluginObjectDescIdentifier(identifier, rParentClassIdentifier)) != OV_UndefinedIdentifier) { this->callback(*m_kernelContext.getPluginManager().getPluginObjectDesc(identifier)); }
+		while ((identifier = m_kernelContext.getPluginManager().getNextPluginObjectDescIdentifier(identifier, rParentClassIdentifier)) != OV_UndefinedIdentifier
+		) { this->callback(*m_kernelContext.getPluginManager().getPluginObjectDesc(identifier)); }
 		return true;
 	}
 
@@ -77,7 +81,8 @@ public:
 		const auto itPluginObjectDesc = m_vPluginObjectDesc.find(l_sFullName);
 		if (itPluginObjectDesc != m_vPluginObjectDesc.end())
 		{
-			m_kernelContext.getLogManager() << LogLevel_ImportantWarning << "Duplicate plugin object name " << CString(l_sFullName.c_str()) << " " << itPluginObjectDesc->second->getCreatedClass() << " and " << rPluginObjectDesc.getCreatedClass() << "\n";
+			m_kernelContext.getLogManager() << LogLevel_ImportantWarning << "Duplicate plugin object name " << CString(l_sFullName.c_str()) << " " <<
+					itPluginObjectDesc->second->getCreatedClass() << " and " << rPluginObjectDesc.getCreatedClass() << "\n";
 		}
 		m_vPluginObjectDesc[l_sFullName] = &rPluginObjectDesc;
 		return true;
@@ -148,8 +153,10 @@ namespace
 	}
 } // namespace
 
-static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernelContext, map<string, const IPluginObjectDesc*>& vPluginObjectDesc, GtkTreeStore* pTreeStore,
-												   std::vector<const IPluginObjectDesc*>& vNewBoxes, std::vector<const IPluginObjectDesc*>& vUpdatedBoxes, bool bIsNewVersion = false)
+static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernelContext, map<string, const IPluginObjectDesc*>& vPluginObjectDesc,
+												   GtkTreeStore* pTreeStore,
+												   std::vector<const IPluginObjectDesc*>& vNewBoxes, std::vector<const IPluginObjectDesc*>& vUpdatedBoxes,
+												   bool bIsNewVersion = false)
 {
 	typedef std::map<std::string, std::tuple<int, int, int>> componentsMap;
 	componentsMap currentVersions;
@@ -165,18 +172,12 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 		CString l_sStockItemName;
 
 		const auto* l_pBoxAlgorithmDesc = dynamic_cast<const IBoxAlgorithmDesc*>(l_pPluginObjectDesc);
-		if (l_pBoxAlgorithmDesc != nullptr)
-		{
-			l_sStockItemName = l_pBoxAlgorithmDesc->getStockItemName();
-		}
+		if (l_pBoxAlgorithmDesc != nullptr) { l_sStockItemName = l_pBoxAlgorithmDesc->getStockItemName(); }
 
 		bool l_bShouldShow = true;
 
 		if (rKernelContext.getPluginManager().isPluginObjectFlaggedAsDeprecated(l_pPluginObjectDesc->getCreatedClass())
-			&& !rKernelContext.getConfigurationManager().expandAsBoolean("${Designer_ShowDeprecated}", false))
-		{
-			l_bShouldShow = false;
-		}
+			&& !rKernelContext.getConfigurationManager().expandAsBoolean("${Designer_ShowDeprecated}", false)) { l_bShouldShow = false; }
 
 		/*
 		if  (rKernelContext.getPluginManager().isPluginObjectFlaggedAsUnstable(l_pPluginObjectDesc->getCreatedClass())
@@ -189,10 +190,7 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 		if (l_bShouldShow)
 		{
 			GtkStockItem l_oStockItem;
-			if (gtk_stock_lookup(l_sStockItemName, &l_oStockItem) == 0)
-			{
-				l_sStockItemName = GTK_STOCK_NEW;
-			}
+			if (gtk_stock_lookup(l_sStockItemName, &l_oStockItem) == 0) { l_sStockItemName = GTK_STOCK_NEW; }
 
 			// Splits the plugin category
 			vector<string> l_vCategory;
@@ -204,10 +202,7 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 				if (l_sSubCategory != string("")) { l_vCategory.push_back(l_sSubCategory); }
 				i = j;
 			}
-			if (i + 1 != l_sCategory.length())
-			{
-				l_vCategory.emplace_back(l_sCategory, i + 1, l_sCategory.length() - i - 1);
-			}
+			if (i + 1 != l_sCategory.length()) { l_vCategory.emplace_back(l_sCategory, i + 1, l_sCategory.length() - i - 1); }
 
 			// Fills plugin in the tree
 			GtkTreeIter l_oGtkIter1;
@@ -223,14 +218,8 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 					gchar* l_sName = nullptr;
 					gboolean l_bIsPlugin;
 					gtk_tree_model_get(GTK_TREE_MODEL(pTreeStore), l_pGtkIterChild, Resource_StringName, &l_sName, Resource_BooleanIsPlugin, &l_bIsPlugin, -1);
-					if ((l_bIsPlugin == 0) && l_sName == category)
-					{
-						l_bFound = true;
-					}
-					else
-					{
-						l_bValid = gtk_tree_model_iter_next(GTK_TREE_MODEL(pTreeStore), l_pGtkIterChild) != 0;
-					}
+					if ((l_bIsPlugin == 0) && l_sName == category) { l_bFound = true; }
+					else { l_bValid = gtk_tree_model_iter_next(GTK_TREE_MODEL(pTreeStore), l_pGtkIterChild) != 0; }
 				}
 				if (!l_bFound)
 				{
@@ -239,10 +228,7 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 									   Resource_StringShortDescription, "", Resource_StringStockIcon, "gtk-directory", Resource_StringColor, "#000000",
 									   Resource_StringFont, "", Resource_BooleanIsPlugin, gboolean(FALSE), -1);
 				}
-				if (l_pGtkIterParent == nullptr)
-				{
-					l_pGtkIterParent = &l_oGtkIter2;
-				}
+				if (l_pGtkIterParent == nullptr) { l_pGtkIterParent = &l_oGtkIter2; }
 				GtkTreeIter* l_pGtkIterSwap = l_pGtkIterChild;
 				l_pGtkIterChild             = l_pGtkIterParent;
 				l_pGtkIterParent            = l_pGtkIterSwap;
@@ -255,10 +241,7 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 			std::string l_sTextFont;
 			std::string l_sName(l_pPluginObjectDesc->getName().toASCIIString());
 
-			if (rKernelContext.getPluginManager().isPluginObjectFlaggedAsDeprecated(l_pPluginObjectDesc->getCreatedClass()))
-			{
-				l_sTextColor = "#3f7f7f";
-			}
+			if (rKernelContext.getPluginManager().isPluginObjectFlaggedAsDeprecated(l_pPluginObjectDesc->getCreatedClass())) { l_sTextColor = "#3f7f7f"; }
 
 			// If the software is launched for the first time after update, highlight new/updated boxes in tree-view
 
@@ -276,41 +259,51 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 				int boxComponentVersionMajor = 0;
 				int boxComponentVersionMinor = 0;
 				int boxComponentVersionPatch = 0;
-				sscanf(l_pPluginObjectDesc->getAddedSoftwareVersion().toASCIIString(), "%d.%d.%d", &boxComponentVersionMajor, &boxComponentVersionMinor, &boxComponentVersionPatch);
+				sscanf(l_pPluginObjectDesc->getAddedSoftwareVersion().toASCIIString(), "%d.%d.%d", &boxComponentVersionMajor, &boxComponentVersionMinor,
+					   &boxComponentVersionPatch);
 				// If this is a new version, then add in list all the updated/new boxes since last version opened
 				if (bIsNewVersion && (
 						(lastUsedVersionMajor < boxComponentVersionMajor && boxComponentVersionMajor <= currentVersionMajor)
-						|| (boxComponentVersionMajor == currentVersionMajor && lastUsedVersionMinor < boxComponentVersionMinor && boxComponentVersionMinor <= currentVersionMinor)
-						|| (boxComponentVersionMinor == currentVersionMinor && lastUsedVersionPatch < boxComponentVersionPatch && boxComponentVersionPatch <= currentVersionPatch)
+						|| (boxComponentVersionMajor == currentVersionMajor && lastUsedVersionMinor < boxComponentVersionMinor && boxComponentVersionMinor <=
+							currentVersionMinor)
+						|| (boxComponentVersionMinor == currentVersionMinor && lastUsedVersionPatch < boxComponentVersionPatch && boxComponentVersionPatch <=
+							currentVersionPatch)
 						// As default value for l_uiMinorLastVersionOpened and l_uiMajorLastVersionOpened are the current software version
-						|| (boxComponentVersionMajor == currentVersionMajor && boxComponentVersionMinor == currentVersionMinor && boxComponentVersionPatch == currentVersionPatch)))
+						|| (boxComponentVersionMajor == currentVersionMajor && boxComponentVersionMinor == currentVersionMinor && boxComponentVersionPatch ==
+							currentVersionPatch)))
 				{
 					l_sName += " (New)";
 					l_sBackGroundColor = "#FFFFC4";
 					vNewBoxes.push_back(l_pPluginObjectDesc);
 				}
 					// Otherwise
-				else if (boxComponentVersionMajor == currentVersionMajor && boxComponentVersionMinor == currentVersionMinor && boxComponentVersionPatch == currentVersionPatch) { vNewBoxes.push_back(l_pPluginObjectDesc); }
+				else if (boxComponentVersionMajor == currentVersionMajor && boxComponentVersionMinor == currentVersionMinor && boxComponentVersionPatch ==
+						 currentVersionPatch) { vNewBoxes.push_back(l_pPluginObjectDesc); }
 				else
 				{
 					int boxComponentUpdatedVersionMajor = 0;
 					int boxComponentUpdatedVersionMinor = 0;
 					int boxComponentUpdatedVersionPatch = 0;
-					sscanf(l_pPluginObjectDesc->getUpdatedSoftwareVersion().toASCIIString(), "%d.%d.%d", &boxComponentUpdatedVersionMajor, &boxComponentUpdatedVersionMinor, &boxComponentUpdatedVersionPatch);
+					sscanf(l_pPluginObjectDesc->getUpdatedSoftwareVersion().toASCIIString(), "%d.%d.%d", &boxComponentUpdatedVersionMajor,
+						   &boxComponentUpdatedVersionMinor, &boxComponentUpdatedVersionPatch);
 					// If this is a new version, then add in list all the updated/new boxes since last version opened
 					if (bIsNewVersion && (
 							(lastUsedVersionMajor < boxComponentUpdatedVersionMajor && boxComponentUpdatedVersionMajor <= currentVersionMajor)
-							|| (boxComponentUpdatedVersionMajor == currentVersionMajor && lastUsedVersionMinor < boxComponentUpdatedVersionMinor && boxComponentUpdatedVersionMinor <= currentVersionMinor)
-							|| (boxComponentUpdatedVersionMinor == currentVersionMinor && lastUsedVersionPatch < boxComponentUpdatedVersionPatch && boxComponentUpdatedVersionPatch <= currentVersionPatch)
+							|| (boxComponentUpdatedVersionMajor == currentVersionMajor && lastUsedVersionMinor < boxComponentUpdatedVersionMinor &&
+								boxComponentUpdatedVersionMinor <= currentVersionMinor)
+							|| (boxComponentUpdatedVersionMinor == currentVersionMinor && lastUsedVersionPatch < boxComponentUpdatedVersionPatch &&
+								boxComponentUpdatedVersionPatch <= currentVersionPatch)
 							// If this is a new version Designer, and last version opened was set to default value i.e. version of current software
-							|| (boxComponentUpdatedVersionMajor == currentVersionMajor && boxComponentUpdatedVersionMinor == currentVersionMinor && boxComponentUpdatedVersionPatch == currentVersionPatch)))
+							|| (boxComponentUpdatedVersionMajor == currentVersionMajor && boxComponentUpdatedVersionMinor == currentVersionMinor &&
+								boxComponentUpdatedVersionPatch == currentVersionPatch)))
 					{
 						l_sName += " (New)";
 						l_sBackGroundColor = "#FFFFC4";
 						vUpdatedBoxes.push_back(l_pPluginObjectDesc);
 					}
 						// Otherwise
-					else if (!bIsNewVersion && (boxComponentUpdatedVersionMajor == currentVersionMajor && boxComponentUpdatedVersionMinor == currentVersionMinor && boxComponentUpdatedVersionPatch == currentVersionPatch)) { vUpdatedBoxes.push_back(l_pPluginObjectDesc); }
+					else if (!bIsNewVersion && (boxComponentUpdatedVersionMajor == currentVersionMajor && boxComponentUpdatedVersionMinor == currentVersionMinor
+												&& boxComponentUpdatedVersionPatch == currentVersionPatch)) { vUpdatedBoxes.push_back(l_pPluginObjectDesc); }
 				}
 			}
 
@@ -322,10 +315,7 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 				l_sBoxAlgorithmDescriptor += dynamic_cast<const Metabox::IMetaboxObjectDesc*>(l_pPluginObjectDesc)->getMetaboxDescriptor();
 				l_sTextColor = "#007020";
 			}
-			else
-			{
-				if (l_pPluginObjectDesc->hasFunctionality(M_Functionality_IsMensia)) { l_sTextColor = "#00b090"; }
-			}
+			else { if (l_pPluginObjectDesc->hasFunctionality(M_Functionality_IsMensia)) { l_sTextColor = "#00b090"; } }
 
 
 			gtk_tree_store_set(GTK_TREE_STORE(pTreeStore), l_pGtkIterChild, Resource_StringName, l_sName.c_str(),
@@ -385,10 +375,7 @@ static bool ensureOneInstanceOfDesigner(SConfiguration& configuration, ILogManag
 		// The message contains the command to send: sMode: open, play, play-fast a scenario, sScenarioPath: path of the scenario
 		boost::interprocess::scoped_lock<boost::interprocess::named_mutex> lock(mutex);
 		std::string l_sMessage;
-		if (configuration.m_vFlag.empty())
-		{
-			l_sMessage = std::to_string(int(CommandLineFlag_None)) + ": ;";
-		}
+		if (configuration.m_vFlag.empty()) { l_sMessage = std::to_string(int(CommandLineFlag_None)) + ": ;"; }
 
 		for (auto& flag : configuration.m_vFlag)
 		{
@@ -450,28 +437,16 @@ bool parse_arguments(int argc, char** argv, SConfiguration& rConfiguration)
 			rConfiguration          = l_oConfiguration;
 			return false;
 		}
-		else if (*it == "-o" || *it == "--open")
-		{
-			l_oConfiguration.m_vFlag.emplace_back(CommandLineFlag_Open, *++it);
-		}
-		else if (*it == "-p" || *it == "--play")
-		{
-			l_oConfiguration.m_vFlag.emplace_back(CommandLineFlag_Play, *++it);
-		}
-		else if (*it == "-pf" || *it == "--play-fast")
-		{
-			l_oConfiguration.m_vFlag.emplace_back(CommandLineFlag_PlayFast, *++it);
-		}
+		else if (*it == "-o" || *it == "--open") { l_oConfiguration.m_vFlag.emplace_back(CommandLineFlag_Open, *++it); }
+		else if (*it == "-p" || *it == "--play") { l_oConfiguration.m_vFlag.emplace_back(CommandLineFlag_Play, *++it); }
+		else if (*it == "-pf" || *it == "--play-fast") { l_oConfiguration.m_vFlag.emplace_back(CommandLineFlag_PlayFast, *++it); }
 		else if (*it == "--no-gui")
 		{
 			l_oConfiguration.m_eNoGui             = CommandLineFlag_NoGui;
 			l_oConfiguration.m_eNoCheckColorDepth = CommandLineFlag_NoCheckColorDepth;
 			l_oConfiguration.m_eNoManageSession   = CommandLineFlag_NoManageSession;
 		}
-		else if (*it == "--no-visualization")
-		{
-			l_oConfiguration.m_eNoVisualization = CommandLineFlag_NoVisualization;
-		}
+		else if (*it == "--no-visualization") { l_oConfiguration.m_eNoVisualization = CommandLineFlag_NoVisualization; }
 		else if (*it == "--invisible")
 		{
 			// no-gui + no-visualization
@@ -480,14 +455,8 @@ bool parse_arguments(int argc, char** argv, SConfiguration& rConfiguration)
 			l_oConfiguration.m_eNoCheckColorDepth = CommandLineFlag_NoCheckColorDepth;
 			l_oConfiguration.m_eNoManageSession   = CommandLineFlag_NoManageSession;
 		}
-		else if (*it == "--no-check-color-depth")
-		{
-			l_oConfiguration.m_eNoCheckColorDepth = CommandLineFlag_NoCheckColorDepth;
-		}
-		else if (*it == "--no-session-management")
-		{
-			l_oConfiguration.m_eNoManageSession = CommandLineFlag_NoManageSession;
-		}
+		else if (*it == "--no-check-color-depth") { l_oConfiguration.m_eNoCheckColorDepth = CommandLineFlag_NoCheckColorDepth; }
+		else if (*it == "--no-session-management") { l_oConfiguration.m_eNoManageSession = CommandLineFlag_NoManageSession; }
 		else if (*it == "-c" || *it == "--config")
 		{
 			if (*++it == "")
@@ -571,7 +540,8 @@ void message(const char* sTitle, const char* sMessage, const GtkMessageType eTyp
 	GtkWidget* l_pDialog = gtk_message_dialog_new(nullptr, GtkDialogFlags(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
 												  eType, GTK_BUTTONS_OK, "%s", sTitle);
 	gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(l_pDialog), "%s", sMessage);
-	::gtk_window_set_icon_from_file(GTK_WINDOW(l_pDialog), (Directories::getDataDir() + CString("/applications/designer/designer.ico")).toASCIIString(), nullptr);
+	::gtk_window_set_icon_from_file(GTK_WINDOW(l_pDialog), (Directories::getDataDir() + CString("/applications/designer/designer.ico")).toASCIIString(),
+									nullptr);
 	gtk_window_set_title(GTK_WINDOW(l_pDialog), sTitle);
 	gtk_dialog_run(GTK_DIALOG(l_pDialog));
 	gtk_widget_destroy(l_pDialog);
@@ -597,14 +567,8 @@ void user_info(char** argv, ILogManager* l_rLogManager)
 		"  --random-seed uint      : initialize random number generator with value, default=time(nullptr)\n"
 	};
 
-	if (l_rLogManager != nullptr)
-	{
-		for (const auto& m : messages) { (*l_rLogManager) << LogLevel_Info << m.c_str(); }
-	}
-	else
-	{
-		for (const auto& m : messages) { cout << m; }
-	}
+	if (l_rLogManager != nullptr) { for (const auto& m : messages) { (*l_rLogManager) << LogLevel_Info << m.c_str(); } }
+	else { for (const auto& m : messages) { cout << m; } }
 }
 
 int go(int argc, char** argv)
@@ -687,10 +651,7 @@ int go(int argc, char** argv)
 		IKernelContext* l_pKernelContext = nullptr;
 		l_oKernelLoader.initialize();
 		l_oKernelLoader.getKernelDesc(l_pKernelDesc);
-		if (l_pKernelDesc == nullptr)
-		{
-			cout << "[ FAILED ] No kernel descriptor" << "\n";
-		}
+		if (l_pKernelDesc == nullptr) { cout << "[ FAILED ] No kernel descriptor" << "\n"; }
 		else
 		{
 			cout << "[  INF  ] Got kernel descriptor, trying to create kernel" << "\n";
@@ -722,10 +683,7 @@ int go(int argc, char** argv)
 			}
 
 
-			if (l_pKernelContext == nullptr)
-			{
-				cout << "[ FAILED ] No kernel created by kernel descriptor" << "\n";
-			}
+			if (l_pKernelContext == nullptr) { cout << "[ FAILED ] No kernel created by kernel descriptor" << "\n"; }
 			else
 			{
 				OpenViBEToolkit::initialize(*l_pKernelContext);
@@ -759,21 +717,16 @@ int go(int argc, char** argv)
 
 				//FIXME : set locale only when needed
 				CString l_sLocale = l_rConfigurationManager.expand("${Designer_Locale}");
-				if (l_sLocale == CString(""))
-				{
-					l_sLocale = "C";
-				}
+				if (l_sLocale == CString("")) { l_sLocale = "C"; }
 				setlocale(LC_ALL, l_sLocale.toASCIIString());
 
-				if (!(bArgParseResult || l_oConfiguration.m_help))
-				{
-					user_info(argv, &l_rLogManager);
-				}
+				if (!(bArgParseResult || l_oConfiguration.m_help)) { user_info(argv, &l_rLogManager); }
 				else
 				{
 					if ((!l_rConfigurationManager.expandAsBoolean("${Kernel_WithGUI}", true)) && ((l_oConfiguration.getFlags() & CommandLineFlag_NoGui) == 0))
 					{
-						l_rLogManager << LogLevel_ImportantWarning << "${Kernel_WithGUI} is set to false and --no-gui flag not set. Forcing the --no-gui flag\n";
+						l_rLogManager << LogLevel_ImportantWarning <<
+								"${Kernel_WithGUI} is set to false and --no-gui flag not set. Forcing the --no-gui flag\n";
 						l_oConfiguration.m_eNoGui             = CommandLineFlag_NoGui;
 						l_oConfiguration.m_eNoCheckColorDepth = CommandLineFlag_NoCheckColorDepth;
 						l_oConfiguration.m_eNoManageSession   = CommandLineFlag_NoManageSession;
@@ -815,7 +768,9 @@ int go(int argc, char** argv)
 						// Add or replace a configuration token if required in command line
 						for (const auto& token : l_oConfiguration.m_oTokenMap)
 						{
-							l_rLogManager << LogLevel_Trace << "Adding command line configuration token [" << token.first.c_str() << " = " << token.second.c_str() << "]\n";
+							l_rLogManager << LogLevel_Trace << "Adding command line configuration token [" << token.first.c_str() << " = " << token
+																																			  .second.c_str() <<
+									"]\n";
 							l_rConfigurationManager.addOrReplaceConfigurationToken(token.first.c_str(), token.second.c_str());
 						}
 
@@ -872,7 +827,8 @@ int go(int argc, char** argv)
 
 						if (!playRequested && l_oConfiguration.m_eNoGui == CommandLineFlag_NoGui)
 						{
-							l_rLogManager << LogLevel_Info << "Switch --no-gui is enabled but no play operation was requested. Designer will exit automatically.\n";
+							l_rLogManager << LogLevel_Info <<
+									"Switch --no-gui is enabled but no play operation was requested. Designer will exit automatically.\n";
 						}
 
 						if (app.m_vInterfacedScenario.empty() && l_oConfiguration.m_eNoGui != CommandLineFlag_NoGui) { app.newScenarioCB(); }
@@ -885,32 +841,33 @@ int go(int argc, char** argv)
 							cb_logger.enumeratePluginObjectDesc();
 							cb_collector1.enumeratePluginObjectDesc(OV_ClassId_Plugins_BoxAlgorithmDesc);
 							cb_collector2.enumeratePluginObjectDesc(OV_ClassId_Plugins_AlgorithmDesc);
-							insertPluginObjectDesc_to_GtkTreeStore(*l_pKernelContext, cb_collector1.getPluginObjectDescMap(), app.m_pBoxAlgorithmTreeModel, app.m_vNewBoxes, app.m_vUpdatedBoxes, app.m_bIsNewVersion);
-							insertPluginObjectDesc_to_GtkTreeStore(*l_pKernelContext, cb_collector2.getPluginObjectDescMap(), app.m_pAlgorithmTreeModel, app.m_vNewBoxes, app.m_vUpdatedBoxes);
+							insertPluginObjectDesc_to_GtkTreeStore(*l_pKernelContext, cb_collector1.getPluginObjectDescMap(), app.m_pBoxAlgorithmTreeModel,
+																   app.m_vNewBoxes, app.m_vUpdatedBoxes, app.m_bIsNewVersion);
+							insertPluginObjectDesc_to_GtkTreeStore(*l_pKernelContext, cb_collector2.getPluginObjectDescMap(), app.m_pAlgorithmTreeModel,
+																   app.m_vNewBoxes, app.m_vUpdatedBoxes);
 
 							std::map<std::string, const IPluginObjectDesc*> metaboxDescMap;
 							CIdentifier identifier;
-							while ((identifier = l_pKernelContext->getMetaboxManager().getNextMetaboxObjectDescIdentifier(identifier)) != OV_UndefinedIdentifier)
-							{
-								metaboxDescMap[std::string(identifier.toString())] = l_pKernelContext->getMetaboxManager().getMetaboxObjectDesc(identifier);
-							}
-							insertPluginObjectDesc_to_GtkTreeStore(*l_pKernelContext, metaboxDescMap, app.m_pBoxAlgorithmTreeModel, app.m_vNewBoxes, app.m_vUpdatedBoxes, app.m_bIsNewVersion);
+							while ((identifier = l_pKernelContext->getMetaboxManager().getNextMetaboxObjectDescIdentifier(identifier)) != OV_UndefinedIdentifier
+							) { metaboxDescMap[std::string(identifier.toString())] = l_pKernelContext->getMetaboxManager().getMetaboxObjectDesc(identifier); }
+							insertPluginObjectDesc_to_GtkTreeStore(*l_pKernelContext, metaboxDescMap, app.m_pBoxAlgorithmTreeModel, app.m_vNewBoxes,
+																   app.m_vUpdatedBoxes, app.m_bIsNewVersion);
 
-							l_pKernelContext->getLogManager() << LogLevel_Info << "Initialization took " << l_pKernelContext->getConfigurationManager().expand("$Core{real-time}") << " ms\n";
+							l_pKernelContext->getLogManager() << LogLevel_Info << "Initialization took " << l_pKernelContext
+																											->getConfigurationManager().expand(
+																												"$Core{real-time}") << " ms\n";
 							// If the application is a newly launched version, and not launched without GUI -> display changelog
 							if (app.m_bIsNewVersion && l_oConfiguration.m_eNoGui != CommandLineFlag_NoGui) { app.displayChangelogWhenAvailable(); }
 							try { gtk_main(); }
 							catch (DesignerException& ex)
 							{
 								std::cerr << "Caught designer exception" << std::endl;
-								GtkWidget* errorDialog = gtk_message_dialog_new(nullptr, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, "%s", ex.getErrorString().c_str());
+								GtkWidget* errorDialog = gtk_message_dialog_new(nullptr, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, "%s",
+																				ex.getErrorString().c_str());
 								gtk_window_set_title(GTK_WINDOW(errorDialog), (std::string(BRAND_NAME) + " has stopped functioning").c_str());
 								gtk_dialog_run(GTK_DIALOG(errorDialog));
 							}
-							catch (...)
-							{
-								std::cerr << "Caught top level exception" << std::endl;
-							}
+							catch (...) { std::cerr << "Caught top level exception" << std::endl; }
 						}
 					}
 				}

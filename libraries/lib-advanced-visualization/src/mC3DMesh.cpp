@@ -37,10 +37,7 @@ namespace
 		if (!buffer) { return false; }
 		if (!pValue) { return false; }
 		memset(pValue, 0, sizeof(T));
-		for (unsigned int i = 0; i < sizeof(T); ++i)
-		{
-			reinterpret_cast<uint8_t*>(pValue)[i] = buffer[i];
-		}
+		for (unsigned int i = 0; i < sizeof(T); ++i) { reinterpret_cast<uint8_t*>(pValue)[i] = buffer[i]; }
 		return true;
 	}
 } // namespace
@@ -87,10 +84,7 @@ bool C3DMesh::load(const void* buffer, unsigned int /*size*/)
 		littleEndianToHost<float>(reinterpret_cast<const uint8_t*>(&tmp[j++]), &m_vVertex[i].z);
 	}
 
-	for (i = 0; i < nTriangle * 3; ++i)
-	{
-		littleEndianToHost<uint32_t>(reinterpret_cast<const uint8_t*>(&tmp[j++]), &m_vTriangle[i]);
-	}
+	for (i = 0; i < nTriangle * 3; ++i) { littleEndianToHost<uint32_t>(reinterpret_cast<const uint8_t*>(&tmp[j++]), &m_vTriangle[i]); }
 
 	this->compile();
 
@@ -160,10 +154,7 @@ bool C3DMesh::project(std::vector<CVertex>& vProjectedChannelCoordinate, const s
 			q.y           = t * p.y;
 			q.z           = t * p.z;
 
-			if (CVertex::isInTriangle(q, v1, v2, v3) && t >= 0)
-			{
-				vProjectedChannelCoordinate[i] = q;
-			}
+			if (CVertex::isInTriangle(q, v1, v2, v3) && t >= 0) { vProjectedChannelCoordinate[i] = q; }
 		}
 		if (q.x == 0 && q.y == 0 && q.z == 0)
 		{

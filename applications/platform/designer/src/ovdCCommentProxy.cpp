@@ -18,7 +18,8 @@ CCommentProxy::CCommentProxy(const IKernelContext& rKernelContext, const ICommen
 }
 
 CCommentProxy::CCommentProxy(const IKernelContext& rKernelContext, IScenario& rScenario, const CIdentifier& rCommentIdentifier)
-	: m_kernelContext(rKernelContext), m_pConstComment(rScenario.getCommentDetails(rCommentIdentifier)), m_pComment(rScenario.getCommentDetails(rCommentIdentifier))
+	: m_kernelContext(rKernelContext), m_pConstComment(rScenario.getCommentDetails(rCommentIdentifier)),
+	  m_pComment(rScenario.getCommentDetails(rCommentIdentifier))
 {
 	if (m_pConstComment)
 	{
@@ -28,10 +29,7 @@ CCommentProxy::CCommentProxy(const IKernelContext& rKernelContext, IScenario& rS
 	}
 }
 
-CCommentProxy::~CCommentProxy()
-{
-	if (!m_bApplied) { this->apply(); }
-}
+CCommentProxy::~CCommentProxy() { if (!m_bApplied) { this->apply(); } }
 
 int CCommentProxy::getWidth(GtkWidget* widget) const
 {
@@ -55,7 +53,6 @@ void CCommentProxy::setCenter(const int centerX, const int centerY)
 }
 
 void CCommentProxy::apply()
-
 {
 	if (m_pComment)
 	{
@@ -65,19 +62,13 @@ void CCommentProxy::apply()
 		{
 			l_oAttributeHandler.setAttributeValue<int>(OV_AttributeId_Comment_XCenterPosition, m_centerX);
 		}
-		else
-		{
-			l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Comment_XCenterPosition, m_centerX);
-		}
+		else { l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Comment_XCenterPosition, m_centerX); }
 
 		if (l_oAttributeHandler.hasAttribute(OV_AttributeId_Comment_YCenterPosition))
 		{
 			l_oAttributeHandler.setAttributeValue<int>(OV_AttributeId_Comment_YCenterPosition, m_centerY);
 		}
-		else
-		{
-			l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Comment_YCenterPosition, m_centerY);
-		}
+		else { l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Comment_YCenterPosition, m_centerY); }
 		m_bApplied = true;
 	}
 }
@@ -96,14 +87,8 @@ void CCommentProxy::updateSize(GtkWidget* widget, const char* sText, int* pXSize
 	l_pPangoContext = gtk_widget_create_pango_context(widget);
 	l_pPangoLayout  = pango_layout_new(l_pPangoContext);
 	pango_layout_set_alignment(l_pPangoLayout, PANGO_ALIGN_CENTER);
-	if (pango_parse_markup(sText, -1, 0, nullptr, nullptr, nullptr, nullptr))
-	{
-		pango_layout_set_markup(l_pPangoLayout, sText, -1);
-	}
-	else
-	{
-		pango_layout_set_text(l_pPangoLayout, sText, -1);
-	}
+	if (pango_parse_markup(sText, -1, 0, nullptr, nullptr, nullptr, nullptr)) { pango_layout_set_markup(l_pPangoLayout, sText, -1); }
+	else { pango_layout_set_text(l_pPangoLayout, sText, -1); }
 	pango_layout_get_pixel_extents(l_pPangoLayout, nullptr, &l_oPangoRectangle);
 	*pXSize = l_oPangoRectangle.width;
 	*pYSize = l_oPangoRectangle.height;

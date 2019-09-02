@@ -9,14 +9,14 @@ using namespace OpenViBE;
 using namespace OpenViBEDesigner;
 using namespace Setting;
 
-static void on_change(GtkEntry* /*entry*/, gpointer data)
-{
-	static_cast<CEnumerationSettingView *>(data)->onChange();
-}
+static void on_change(GtkEntry* /*entry*/, gpointer data) { static_cast<CEnumerationSettingView *>(data)->onChange(); }
 
 CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName,
-												 const Kernel::IKernelContext& rKernelContext, const CIdentifier& typeID): CAbstractSettingView(box, index, rBuilderName, "settings_collection-comboboxentry_setting_enumeration"),
-																																	m_oTypeIdentifier(typeID), m_kernelContext(rKernelContext)
+												 const Kernel::IKernelContext& rKernelContext, const CIdentifier& typeID): CAbstractSettingView(
+																															   box, index, rBuilderName,
+																															   "settings_collection-comboboxentry_setting_enumeration"),
+																														   m_oTypeIdentifier(typeID),
+																														   m_kernelContext(rKernelContext)
 {
 	p                           = false;
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
@@ -29,7 +29,10 @@ CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox& box, const uint32
 	{
 		CString l_sEntryName;
 		uint64_t l_ui64EntryValue;
-		if (m_kernelContext.getTypeManager().getEnumerationEntry(m_oTypeIdentifier, i, l_sEntryName, l_ui64EntryValue)) { l_vEntries.push_back(l_sEntryName.toASCIIString()); }
+		if (m_kernelContext.getTypeManager().getEnumerationEntry(m_oTypeIdentifier, i, l_sEntryName, l_ui64EntryValue))
+		{
+			l_vEntries.push_back(l_sEntryName.toASCIIString());
+		}
 	}
 
 	std::sort(l_vEntries.begin(), l_vEntries.end());
@@ -61,10 +64,7 @@ CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox& box, const uint32
 }
 
 
-void CEnumerationSettingView::getValue(CString& value) const
-{
-	value = CString(gtk_combo_box_get_active_text(m_comboBox));
-}
+void CEnumerationSettingView::getValue(CString& value) const { value = CString(gtk_combo_box_get_active_text(m_comboBox)); }
 
 
 void CEnumerationSettingView::setValue(const CString& value)
@@ -92,10 +92,7 @@ void CEnumerationSettingView::setValue(const CString& value)
 		gtk_list_store_set(l_pList, &l_oListIter, 0, value.toASCIIString(), -1);
 		gtk_combo_box_set_active(m_comboBox, valuesInModel - 1);
 	}
-	else
-	{
-		gtk_combo_box_set_active(m_comboBox, gint(m_entriesIndex[value]));
-	}
+	else { gtk_combo_box_set_active(m_comboBox, gint(m_entriesIndex[value])); }
 	m_onValueSetting = false;
 }
 

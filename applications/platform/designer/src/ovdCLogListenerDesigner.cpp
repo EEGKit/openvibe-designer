@@ -16,10 +16,7 @@ namespace
 {
 	void close_messages_alert_window_cb(GtkButton* /*button*/, gpointer data) { gtk_widget_hide(GTK_WIDGET(data)); }
 
-	void focus_message_window_cb(GtkButton* /*button*/, gpointer data)
-	{
-		static_cast<CLogListenerDesigner*>(data)->focusMessageWindow();
-	}
+	void focus_message_window_cb(GtkButton* /*button*/, gpointer data) { static_cast<CLogListenerDesigner*>(data)->focusMessageWindow(); }
 
 	void refresh_search_log_entry(GtkEntry* pTextfield, gpointer data)
 	{
@@ -124,8 +121,10 @@ CLogListenerDesigner::CLogListenerDesigner(const IKernelContext& rKernelContext,
 	gtk_toggle_button_set_active(m_pToggleButtonPopup, bool(rKernelContext.getConfigurationManager().expandAsBoolean("${Designer_PopUpOnError}")));
 
 	g_signal_connect(G_OBJECT(m_pAlertWindow), "delete_event", G_CALLBACK(::gtk_widget_hide), nullptr);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "dialog_error_popup-button_view")), "clicked", G_CALLBACK(::focus_message_window_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "dialog_error_popup-button_ok")), "clicked", G_CALLBACK(::close_messages_alert_window_cb), m_pAlertWindow);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "dialog_error_popup-button_view")), "clicked", G_CALLBACK(::focus_message_window_cb),
+					 this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "dialog_error_popup-button_ok")), "clicked",
+					 G_CALLBACK(::close_messages_alert_window_cb), m_pAlertWindow);
 
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "searchEntry")), "changed", G_CALLBACK(::refresh_search_log_entry), this);
 	g_signal_connect(G_OBJECT(m_pTextView), "button_press_event", G_CALLBACK(focus_on_box_cidentifier_clicked), this);
@@ -185,20 +184,14 @@ void CLogListenerDesigner::log(const time64 value)
 		ss.setf(std::ios::fixed, std::ios::floatfield);
 		ss << l_f64Time;
 		ss << " sec";
-		if (m_bConsoleLogWithHexa)
-		{
-			ss << " (0x" << hex << value.m_ui64TimeValue << ")";
-		}
+		if (m_bConsoleLogWithHexa) { ss << " (0x" << hex << value.m_ui64TimeValue << ")"; }
 
 		l_sText << ss.str().c_str();
 	}
 	else
 	{
 		l_sText << dec << value.m_ui64TimeValue;
-		if (m_bConsoleLogWithHexa)
-		{
-			l_sText << " (0x" << hex << value.m_ui64TimeValue << ")";
-		}
+		if (m_bConsoleLogWithHexa) { l_sText << " (0x" << hex << value.m_ui64TimeValue << ")"; }
 	}
 
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
@@ -405,7 +398,8 @@ void CLogListenerDesigner::log(const ELogLevel eLogLevel)
 			break;
 	}
 
-	if (gtk_toggle_button_get_active(m_pToggleButtonPopup) && (eLogLevel == LogLevel_Warning || eLogLevel == LogLevel_ImportantWarning || eLogLevel == LogLevel_Error || eLogLevel == LogLevel_Fatal))
+	if (gtk_toggle_button_get_active(m_pToggleButtonPopup) && (eLogLevel == LogLevel_Warning || eLogLevel == LogLevel_ImportantWarning || eLogLevel ==
+															   LogLevel_Error || eLogLevel == LogLevel_Fatal))
 	{
 		if (!gtk_widget_get_visible(GTK_WIDGET(m_pAlertWindow)))
 		{
@@ -421,7 +415,8 @@ void CLogListenerDesigner::log(const ELogLevel eLogLevel)
 	//if it does mark this position and insert the log in the text buffer displayed
 	GtkTextIter l_oEndDisplayedTextIter;
 	gtk_text_buffer_get_end_iter(m_pBuffer, &l_oEndDisplayedTextIter);
-	gtk_text_buffer_create_mark(m_pBuffer, "current_log", &l_oEndDisplayedTextIter, true);//creating a mark will erase the previous one with the same name so no worry here
+	gtk_text_buffer_create_mark(m_pBuffer, "current_log", &l_oEndDisplayedTextIter,
+								true);//creating a mark will erase the previous one with the same name so no worry here
 	if (l_bPassFilter) { displayLog(m_pCurrentLog); }
 
 	this->updateMessageCounts();

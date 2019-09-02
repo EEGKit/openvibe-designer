@@ -7,23 +7,19 @@ using namespace OpenViBE;
 using namespace OpenViBEDesigner;
 using namespace Setting;
 
-static void on_button_setting_integer_up_pressed(GtkButton* /*button*/, gpointer data)
-{
-	static_cast<CIntegerSettingView *>(data)->adjustValue(1);
-}
+static void on_button_setting_integer_up_pressed(GtkButton* /*button*/, gpointer data) { static_cast<CIntegerSettingView *>(data)->adjustValue(1); }
 
-static void on_button_setting_integer_down_pressed(GtkButton* /*button*/, gpointer data)
-{
-	static_cast<CIntegerSettingView *>(data)->adjustValue(-1);
-}
+static void on_button_setting_integer_down_pressed(GtkButton* /*button*/, gpointer data) { static_cast<CIntegerSettingView *>(data)->adjustValue(-1); }
 
-static void on_insertion(GtkEntry* /*entry*/, gpointer data)
-{
-	static_cast<CIntegerSettingView *>(data)->onChange();
-}
+static void on_insertion(GtkEntry* /*entry*/, gpointer data) { static_cast<CIntegerSettingView *>(data)->onChange(); }
 
 
-CIntegerSettingView::CIntegerSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext): CAbstractSettingView(box, index, rBuilderName, "settings_collection-hbox_setting_integer"), m_kernelContext(rKernelContext)
+CIntegerSettingView::
+CIntegerSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext): CAbstractSettingView(
+																																	   box, index, rBuilderName,
+																																	   "settings_collection-hbox_setting_integer"),
+																																   m_kernelContext(
+																																	   rKernelContext)
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 
@@ -40,10 +36,7 @@ CIntegerSettingView::CIntegerSettingView(Kernel::IBox& box, const uint32_t index
 }
 
 
-void CIntegerSettingView::getValue(CString& value) const
-{
-	value = CString(gtk_entry_get_text(m_entry));
-}
+void CIntegerSettingView::getValue(CString& value) const { value = CString(gtk_entry_get_text(m_entry)); }
 
 
 void CIntegerSettingView::setValue(const CString& value)

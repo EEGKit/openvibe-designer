@@ -80,7 +80,12 @@ namespace OpenViBEPlugins
 			OpenViBE::CString getAuthorName() const override { return OpenViBE::CString("Laurent Bonnet"); }
 			OpenViBE::CString getAuthorCompanyName() const override { return OpenViBE::CString("INRIA/IRISA"); }
 			OpenViBE::CString getShortDescription() const override { return OpenViBE::CString("Display a streamed matrix"); }
-			OpenViBE::CString getDetailedDescription() const override { return OpenViBE::CString("The streamed matrix can be visualized using a table of values and/or a color gradient."); }
+
+			OpenViBE::CString getDetailedDescription() const override
+			{
+				return OpenViBE::CString("The streamed matrix can be visualized using a table of values and/or a color gradient.");
+			}
+
 			OpenViBE::CString getCategory() const override { return OpenViBE::CString("Visualization/Basic"); }
 			OpenViBE::CString getVersion() const override { return OpenViBE::CString("1.0"); }
 			OpenViBE::CString getStockItemName() const override { return OpenViBE::CString("gtk-select-color"); }

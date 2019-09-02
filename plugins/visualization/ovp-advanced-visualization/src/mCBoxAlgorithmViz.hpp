@@ -158,9 +158,9 @@ namespace Mensia
 
 			bool onDefaultInitialized(OpenViBE::Kernel::IBox& box) override
 			{
-				const bool l_bIsSignal                  = (std::find(m_vParameter.begin(), m_vParameter.end(), I_Signal) != m_vParameter.end());
-				const bool l_bIsSpectrum                = (std::find(m_vParameter.begin(), m_vParameter.end(), I_Spectrum) != m_vParameter.end());
-				const bool l_bIsCovariance              = (std::find(m_vParameter.begin(), m_vParameter.end(), I_Covariance) != m_vParameter.end());
+				const bool l_bIsSignal       = (std::find(m_vParameter.begin(), m_vParameter.end(), I_Signal) != m_vParameter.end());
+				const bool l_bIsSpectrum     = (std::find(m_vParameter.begin(), m_vParameter.end(), I_Spectrum) != m_vParameter.end());
+				const bool l_bIsCovariance   = (std::find(m_vParameter.begin(), m_vParameter.end(), I_Covariance) != m_vParameter.end());
 				OpenViBE::CIdentifier typeID = OV_UndefinedIdentifier;
 
 				for (uint32_t i = 0; i < box.getInputCount(); ++i)
@@ -333,7 +333,9 @@ namespace Mensia
 			OpenViBE::CString m_sUpdatedSoftwareVersion;
 			std::vector<int> m_vParameter;
 
-			CBoxAlgorithmVizDesc(const OpenViBE::CString& sFullName, const OpenViBE::CIdentifier& rDescClassId, const OpenViBE::CIdentifier& rClassId, const OpenViBE::CString& sAddedSoftwareVersion, const OpenViBE::CString& sUpdatedSoftwareVersion, const CParameterSet& rParameterSet, const OpenViBE::CString& sShortDescription, const OpenViBE::CString& sDetailedDescription)
+			CBoxAlgorithmVizDesc(const OpenViBE::CString& sFullName, const OpenViBE::CIdentifier& rDescClassId, const OpenViBE::CIdentifier& rClassId,
+								 const OpenViBE::CString& sAddedSoftwareVersion, const OpenViBE::CString& sUpdatedSoftwareVersion,
+								 const CParameterSet& rParameterSet, const OpenViBE::CString& sShortDescription, const OpenViBE::CString& sDetailedDescription)
 				: m_sShortDescription(sShortDescription), m_sDetailedDescription(sDetailedDescription), m_oDescClassId(rDescClassId), m_oClassId(rClassId),
 				  m_sAddedSoftwareVersion(sAddedSoftwareVersion), m_sUpdatedSoftwareVersion(sUpdatedSoftwareVersion), m_vParameter(rParameterSet)
 			{
@@ -380,9 +382,16 @@ namespace Mensia
 					if (p == I_TimeFrequency) prototype.addInput("Matrix", OV_TypeId_TimeFrequency);	// This is later changed in the listener
 					if (p == I_Covariance) { prototype.addInput("Matrix", OV_TypeId_StreamedMatrix); }	// This is later changed in the listener 
 					if (p == I_Stimulations) { prototype.addInput("Markers", OV_TypeId_Stimulations); }
-					if (p == S_ChannelLocalisation) { prototype.addSetting("Channel Localisation", OV_TypeId_Filename, "${AdvancedViz_ChannelLocalisation}"); } // "../share/electrode_sets/electrode_set_standard_cartesian.txt" 
+					if (p == S_ChannelLocalisation
+					)
+					{
+						prototype.addSetting("Channel Localisation", OV_TypeId_Filename, "${AdvancedViz_ChannelLocalisation}");
+					} // "../share/electrode_sets/electrode_set_standard_cartesian.txt" 
 					if (p == S_DataPositive) { prototype.addSetting("Positive Data Only ?", OV_TypeId_Boolean, "false"); }
-					if (p == S_TemporalCoherence) { prototype.addSetting("Temporal Coherence", OVP_TypeId_TemporalCoherence, OVP_TypeId_TemporalCoherence_TimeLocked.toString()); }
+					if (p == S_TemporalCoherence)
+					{
+						prototype.addSetting("Temporal Coherence", OVP_TypeId_TemporalCoherence, OVP_TypeId_TemporalCoherence_TimeLocked.toString());
+					}
 					if (p == S_TimeScale) { prototype.addSetting("Time Scale", OV_TypeId_Float, "20"); }
 					if (p == S_ElementCount) { prototype.addSetting("Matrix Count", OV_TypeId_Integer, "50"); }
 					if (p == S_DataScale) { prototype.addSetting("Gain", OV_TypeId_Float, "1"); }

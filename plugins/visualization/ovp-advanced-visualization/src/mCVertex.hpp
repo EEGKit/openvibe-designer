@@ -86,7 +86,10 @@ namespace Mensia
 				return dot(cp1, cp2) >= 0;
 			}
 
-			static bool isInTriangle(const CVertex& p, const CVertex& a, const CVertex& b, const CVertex& c) { return isOnSameSide(p, a, b, c) && isOnSameSide(p, b, c, a) && isOnSameSide(p, c, a, b); }
+			static bool isInTriangle(const CVertex& p, const CVertex& a, const CVertex& b, const CVertex& c)
+			{
+				return isOnSameSide(p, a, b, c) && isOnSameSide(p, b, c, a) && isOnSameSide(p, c, a, b);
+			}
 		};
 	} // namespace AdvancedVisualization
 } // namespace Mensia

@@ -72,10 +72,7 @@ void CRendererBars::refresh(const IRendererContext& rContext)
 				l_pVertex++->y         = l_f32Value;
 				l_pVertex++->y         = l_f32Value;
 			}
-			else
-			{
-				l_pVertex += 4;
-			}
+			else { l_pVertex += 4; }
 		}
 	}
 	m_historyIndex = m_historyCount;

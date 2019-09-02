@@ -80,10 +80,7 @@ void CRendererBitmap::refresh(const IRendererContext& rContext)
 				l_pVertex++->u    = value;
 				l_pVertex++->u    = value;
 			}
-			else
-			{
-				l_pVertex += 4;
-			}
+			else { l_pVertex += 4; }
 		}
 	}
 	m_historyIndex = m_historyCount;

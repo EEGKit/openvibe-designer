@@ -41,10 +41,7 @@ CRenderer::~CRenderer()
 	//	::printf("CRenderer::~CRenderer - %i instances left\n", iCount);
 }
 
-void CRenderer::setChannelLocalisation(const char* sFilename)
-{
-	m_channelLocalisationFilename = sFilename;
-}
+void CRenderer::setChannelLocalisation(const char* sFilename) { m_channelLocalisationFilename = sFilename; }
 
 void CRenderer::setChannelCount(const uint32_t channelCount)
 {
@@ -90,10 +87,7 @@ void CRenderer::feed(const uint64_t stimulationDate, const uint64_t stimulationI
 
 void CRenderer::prefeed(const uint32_t preFeedSampleCount)
 {
-	for (uint32_t i = 0; i < m_channelCount; ++i)
-	{
-		m_history[i].insert(m_history[i].begin(), preFeedSampleCount, 0.f);
-	}
+	for (uint32_t i = 0; i < m_channelCount; ++i) { m_history[i].insert(m_history[i].begin(), preFeedSampleCount, 0.f); }
 	m_historyCount += preFeedSampleCount;
 	m_historyIndex = 0;
 }
@@ -110,10 +104,7 @@ float CRenderer::getSuggestedScale()
 
 			const size_t samplesToAverage = (m_history[i].size() < m_sampleCount) ? m_history[i].size() : m_sampleCount;
 
-			for (size_t j = m_history[i].size(); j > (m_history[i].size() - samplesToAverage); --j)
-			{
-				l_vf32Average.back() += m_history[i][j - 1];
-			}
+			for (size_t j = m_history[i].size(); j > (m_history[i].size() - samplesToAverage); --j) { l_vf32Average.back() += m_history[i][j - 1]; }
 
 			l_vf32Average.back() /= float(samplesToAverage);
 		}

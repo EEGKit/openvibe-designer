@@ -35,10 +35,7 @@ namespace OpenViBEDesigner
 
 				//tag for highlighting the search term
 				GtkTextTag* tag = gtk_text_tag_table_lookup(gtk_text_buffer_get_tag_table(m_pBuffer), "gray_bg");
-				if (tag == nullptr)
-				{
-					gtk_text_buffer_create_tag(m_pBuffer, "gray_bg", "background", "gray", nullptr);
-				}
+				if (tag == nullptr) { gtk_text_buffer_create_tag(m_pBuffer, "gray_bg", "background", "gray", nullptr); }
 
 				//remove previous tagging
 				gtk_text_buffer_remove_tag_by_name(m_pBuffer, "gray_bg", &start_find, &end_find);
@@ -70,14 +67,8 @@ namespace OpenViBEDesigner
 				GtkTextIter l_oEndLogIter;
 				gtk_text_buffer_get_end_iter(m_pBuffer, &l_oEndLogIter);
 
-				if (bIsLink)
-				{
-					gtk_text_buffer_insert_with_tags_by_name(m_pBuffer, &l_oEndLogIter, logMessage, -1, "f_mono", textColor, "link", nullptr);
-				}
-				else
-				{
-					gtk_text_buffer_insert_with_tags_by_name(m_pBuffer, &l_oEndLogIter, logMessage, -1, "f_mono", textColor, nullptr);
-				}
+				if (bIsLink) { gtk_text_buffer_insert_with_tags_by_name(m_pBuffer, &l_oEndLogIter, logMessage, -1, "f_mono", textColor, "link", nullptr); }
+				else { gtk_text_buffer_insert_with_tags_by_name(m_pBuffer, &l_oEndLogIter, logMessage, -1, "f_mono", textColor, nullptr); }
 			}
 
 			GtkTextBuffer* m_pBuffer = nullptr;

@@ -63,17 +63,8 @@ namespace Mensia
 			{
 				OpenViBE::CIdentifier typeID = OV_UndefinedIdentifier;
 				box.getInputType(index, typeID);
-				if (!this->getTypeManager().isDerivedFromStream(typeID, OV_TypeId_StreamedMatrix))
-				{
-					box.setInputType(index, OV_TypeId_StreamedMatrix);
-				}
-				else
-				{
-					for (uint32_t i = 0; i < box.getInputCount(); ++i)
-					{
-						box.setInputType(i, typeID);
-					}
-				}
+				if (!this->getTypeManager().isDerivedFromStream(typeID, OV_TypeId_StreamedMatrix)) { box.setInputType(index, OV_TypeId_StreamedMatrix); }
+				else { for (uint32_t i = 0; i < box.getInputCount(); ++i) { box.setInputType(i, typeID); } }
 				return true;
 			}
 
@@ -99,13 +90,14 @@ namespace Mensia
 		{
 		public:
 
-			TBoxAlgorithmInstantVizDesc(const OpenViBE::CString& sName, const OpenViBE::CIdentifier& rDescClassId, const OpenViBE::CIdentifier& rClassId, const OpenViBE::CString& sAddedSoftwareVersion, const OpenViBE::CString& sUpdatedSoftwareVersion, const CParameterSet& rParameterSet, const OpenViBE::CString& sShortDescription, const OpenViBE::CString& sDetailedDescription)
-				: CBoxAlgorithmVizDesc(sName, rDescClassId, rClassId, sAddedSoftwareVersion, sUpdatedSoftwareVersion, rParameterSet, sShortDescription, sDetailedDescription) { }
+			TBoxAlgorithmInstantVizDesc(const OpenViBE::CString& sName, const OpenViBE::CIdentifier& rDescClassId, const OpenViBE::CIdentifier& rClassId,
+										const OpenViBE::CString& sAddedSoftwareVersion, const OpenViBE::CString& sUpdatedSoftwareVersion,
+										const CParameterSet& rParameterSet, const OpenViBE::CString& sShortDescription,
+										const OpenViBE::CString& sDetailedDescription)
+				: CBoxAlgorithmVizDesc(sName, rDescClassId, rClassId, sAddedSoftwareVersion, sUpdatedSoftwareVersion, rParameterSet, sShortDescription,
+									   sDetailedDescription) { }
 
-			OpenViBE::Plugins::IPluginObject* create() override
-			{
-				return new TBoxAlgorithm<TRendererFactoryClass, TRulerClass>(m_oClassId, m_vParameter);
-			}
+			OpenViBE::Plugins::IPluginObject* create() override { return new TBoxAlgorithm<TRendererFactoryClass, TRulerClass>(m_oClassId, m_vParameter); }
 
 			OpenViBE::Plugins::IBoxListener* createBoxListener() const override { return new CBoxAlgorithmInstantVizListener(m_vParameter); }
 
@@ -116,7 +108,8 @@ namespace Mensia
 
 
 		template <class TRendererFactoryClass, class TRulerClass>
-		TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::TBoxAlgorithmInstantViz(const OpenViBE::CIdentifier& rClassId, const std::vector<int>& vParameter)
+		TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::TBoxAlgorithmInstantViz(const OpenViBE::CIdentifier& rClassId,
+																							 const std::vector<int>& vParameter)
 			: CBoxAlgorithmViz(rClassId, vParameter) { }
 
 		template <class TRendererFactoryClass, class TRulerClass>
@@ -259,15 +252,13 @@ namespace Mensia
 						m_pRendererContext->setMaximumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_pFrequencyBandMax))));
 
 						// Sets time scale
-						gtk_spin_button_set_value(GTK_SPIN_BUTTON(::gtk_builder_get_object(m_pBuilder, "spinbutton_time_scale")), (chunkDuration >> 22) / 1024.);
+						gtk_spin_button_set_value(
+							GTK_SPIN_BUTTON(::gtk_builder_get_object(m_pBuilder, "spinbutton_time_scale")), (chunkDuration >> 22) / 1024.);
 
 						m_vRenderer[i]->clear(0); // Drop last samples as they will be fed again
 						for (uint32_t k = 0; k < sampleCount; k++)
 						{
-							for (uint32_t l = 0; l < channelCount; l++)
-							{
-								m_vSwap[l] = float(l_pMatrix->getBuffer()[l * sampleCount + k]);
-							}
+							for (uint32_t l = 0; l < channelCount; l++) { m_vSwap[l] = float(l_pMatrix->getBuffer()[l * sampleCount + k]); }
 							m_vRenderer[i]->feed(&m_vSwap[0]);
 						}
 
@@ -291,28 +282,16 @@ namespace Mensia
 				m_bRedrawNeeded    = true;
 			}
 
-			if (m_bRebuildNeeded)
-			{
-				for (auto& renderer : m_vRenderer) { renderer->rebuild(*m_pRendererContext); }
-			}
-			if (m_bRefreshNeeded)
-			{
-				for (auto& renderer : m_vRenderer) { renderer->refresh(*m_pRendererContext); }
-			}
+			if (m_bRebuildNeeded) { for (auto& renderer : m_vRenderer) { renderer->rebuild(*m_pRendererContext); } }
+			if (m_bRefreshNeeded) { for (auto& renderer : m_vRenderer) { renderer->refresh(*m_pRendererContext); } }
 			if (m_bRedrawNeeded) { this->redraw(); }
 
 			m_bRebuildNeeded = false;
 			m_bRefreshNeeded = false;
 			m_bRedrawNeeded  = false;
 
-			if (m_pRendererContext->isERPPlayerActive())
-			{
-				gtk_button_set_label(GTK_BUTTON(m_pERPPlayerButton), GTK_STOCK_MEDIA_PAUSE);
-			}
-			else
-			{
-				gtk_button_set_label(GTK_BUTTON(m_pERPPlayerButton), GTK_STOCK_MEDIA_PLAY);
-			}
+			if (m_pRendererContext->isERPPlayerActive()) { gtk_button_set_label(GTK_BUTTON(m_pERPPlayerButton), GTK_STOCK_MEDIA_PAUSE); }
+			else { gtk_button_set_label(GTK_BUTTON(m_pERPPlayerButton), GTK_STOCK_MEDIA_PLAY); }
 
 			return true;
 		}
@@ -326,10 +305,7 @@ namespace Mensia
 			for (uint32_t i = 0; i < m_ui32InputCount; ++i)
 			{
 				glPushAttrib(GL_ALL_ATTRIB_BITS);
-				if (i < m_vColor.size())
-				{
-					glColor4f(m_vColor[i].r, m_vColor[i].g, m_vColor[i].b, m_pRendererContext->getTranslucency());
-				}
+				if (i < m_vColor.size()) { glColor4f(m_vColor[i].r, m_vColor[i].g, m_vColor[i].b, m_pRendererContext->getTranslucency()); }
 				else { glColor4f(m_oColor.r, m_oColor.g, m_oColor.b, m_pRendererContext->getTranslucency()); }
 				if (m_vRenderer[i]) { m_vRenderer[i]->render(*m_pRendererContext); }
 				glPopAttrib();

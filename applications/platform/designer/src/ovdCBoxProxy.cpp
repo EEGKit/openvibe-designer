@@ -24,10 +24,7 @@ CBoxProxy::CBoxProxy(const IKernelContext& rKernelContext, IScenario& rScenario,
 
 			m_IsBoxAlgorithmPresent = FS::Files::fileExists(l_sMetaboxScenarioPath.toASCIIString());
 		}
-		else
-		{
-			m_IsBoxAlgorithmPresent = m_kernelContext.getPluginManager().canCreatePluginObject(m_pConstBox->getAlgorithmClassIdentifier());
-		}
+		else { m_IsBoxAlgorithmPresent = m_kernelContext.getPluginManager().canCreatePluginObject(m_pConstBox->getAlgorithmClassIdentifier()); }
 
 		const TAttributeHandler l_oAttributeHandler(*m_pConstBox);
 		m_centerX = l_oAttributeHandler.getAttributeValue<int>(OV_AttributeId_Box_XCenterPosition);
@@ -63,7 +60,6 @@ void CBoxProxy::setBoxAlgorithmDescriptorOverride(const IBoxAlgorithmDesc* pBoxA
 }
 
 void CBoxProxy::apply()
-
 {
 	if (m_pBox)
 	{
@@ -73,19 +69,13 @@ void CBoxProxy::apply()
 		{
 			l_oAttributeHandler.setAttributeValue<int>(OV_AttributeId_Box_XCenterPosition, m_centerX);
 		}
-		else
-		{
-			l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Box_XCenterPosition, m_centerX);
-		}
+		else { l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Box_XCenterPosition, m_centerX); }
 
 		if (l_oAttributeHandler.hasAttribute(OV_AttributeId_Box_YCenterPosition))
 		{
 			l_oAttributeHandler.setAttributeValue<int>(OV_AttributeId_Box_YCenterPosition, m_centerY);
 		}
-		else
-		{
-			l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Box_YCenterPosition, m_centerY);
-		}
+		else { l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Box_YCenterPosition, m_centerY); }
 
 		m_bApplied = true;
 	}
@@ -93,9 +83,12 @@ void CBoxProxy::apply()
 
 const char* CBoxProxy::getLabel() const
 {
-	const bool l_bBoxCanChangeInput(m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanModifyInput) || m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanAddInput));
-	const bool l_bBoxCanChangeOutput(m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanModifyOutput) || m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanAddOutput));
-	const bool l_bBoxCanChangeSetting(m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanModifySetting) || m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanAddSetting));
+	const bool l_bBoxCanChangeInput(
+		m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanModifyInput) || m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanAddInput));
+	const bool l_bBoxCanChangeOutput(
+		m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanModifyOutput) || m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanAddOutput));
+	const bool l_bBoxCanChangeSetting(
+		m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanModifySetting) || m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanAddSetting));
 
 	const IPluginObjectDesc* l_pDesc = nullptr;
 
@@ -103,10 +96,7 @@ const char* CBoxProxy::getLabel() const
 	{
 		l_pDesc = m_kernelContext.getPluginManager().getPluginObjectDescCreating(m_pConstBox->getAlgorithmClassIdentifier());
 	}
-	else
-	{
-		l_pDesc = m_pBoxAlgorithmDescriptorOverride;
-	}
+	else { l_pDesc = m_pBoxAlgorithmDescriptorOverride; }
 
 	string l_sBoxName(m_pConstBox->getName());
 
@@ -143,10 +133,7 @@ const char* CBoxProxy::getLabel() const
 
 	const std::string l_sBoxNameColor = "#000000";
 
-	if (m_pConstBox->getSettingCount() != 0)
-	{
-		m_sLabel = "<span color=\"" + l_sBoxNameColor + R"(" weight="bold">)" + m_sLabel + "</span>";
-	}
+	if (m_pConstBox->getSettingCount() != 0) { m_sLabel = "<span color=\"" + l_sBoxNameColor + R"(" weight="bold">)" + m_sLabel + "</span>"; }
 
 	if (m_bShowOriginalNameWhenModified)
 	{

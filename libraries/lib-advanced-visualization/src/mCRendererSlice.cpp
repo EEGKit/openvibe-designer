@@ -128,13 +128,7 @@ void CRendererSlice::refresh(const IRendererContext& rContext)
 	for (uint32_t i = m_historyIndex; i < m_historyCount; ++i)
 	{
 		uint32_t k = (i % m_sampleCount) * m_channelCount * 8;
-		for (uint32_t j = 0; j < m_channelCount; j++)
-		{
-			for (uint32_t l = 0; l < 8; l++)
-			{
-				m_vVertex[k++].u = m_history[j][i];
-			}
-		}
+		for (uint32_t j = 0; j < m_channelCount; j++) { for (uint32_t l = 0; l < 8; l++) { m_vVertex[k++].u = m_history[j][i]; } }
 	}
 
 	m_historyIndex = m_historyCount;

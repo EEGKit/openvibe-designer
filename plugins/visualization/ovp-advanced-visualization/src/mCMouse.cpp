@@ -46,14 +46,8 @@ void CMouse::mouseButton(IRendererContext& rContext, const int x, const int y, c
 
 void CMouse::mouseMotion(IRendererContext& rContext, const int x, const int y)
 {
-	if (m_vButton[3])
-	{
-		rContext.scaleBy(powf(.99f, float(y - m_mouseY)));
-	}
-	if (m_vButton[2])
-	{
-		rContext.zoomBy(powf(.99f, float(y - m_mouseY)));
-	}
+	if (m_vButton[3]) { rContext.scaleBy(powf(.99f, float(y - m_mouseY))); }
+	if (m_vButton[2]) { rContext.zoomBy(powf(.99f, float(y - m_mouseY))); }
 	if (m_vButton[1])
 	{
 		rContext.rotateByY(float(x - m_mouseX) * .1f);
@@ -67,9 +61,6 @@ void CMouse::mouseMotion(IRendererContext& rContext, const int x, const int y)
 bool CMouse::hasButtonPressed()
 
 {
-	for (std::map<int, int>::const_iterator it = m_vButton.begin(); it != m_vButton.end(); ++it)
-	{
-		if (it->second) { return true; }
-	}
+	for (std::map<int, int>::const_iterator it = m_vButton.begin(); it != m_vButton.end(); ++it) { if (it->second) { return true; } }
 	return false;
 }

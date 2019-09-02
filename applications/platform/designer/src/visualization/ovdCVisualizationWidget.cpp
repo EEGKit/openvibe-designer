@@ -40,10 +40,7 @@ bool CVisualizationWidget::initialize(const CIdentifier& identifier, const CStri
 
 bool CVisualizationWidget::getChildIndex(const CIdentifier& identifier, uint32_t& index) const
 {
-	for (index = 0; index < m_Children.size(); index++)
-	{
-		if (m_Children[index] == identifier) { return true; }
-	}
+	for (index = 0; index < m_Children.size(); index++) { if (m_Children[index] == identifier) { return true; } }
 	return false;
 }
 
@@ -60,10 +57,7 @@ bool CVisualizationWidget::removeChild(const CIdentifier& identifier)
 		if (m_Children[i] == identifier)
 		{
 			//remove tab from a window (variable number of children)
-			if (m_Type == EVisualizationWidget_VisualizationWindow)
-			{
-				m_Children.erase(m_Children.begin() + i);
-			}
+			if (m_Type == EVisualizationWidget_VisualizationWindow) { m_Children.erase(m_Children.begin() + i); }
 			else //clear identifier if ith child for a regular widget (fixed number of children)
 			{
 				m_Children[i] = OV_UndefinedIdentifier;
@@ -88,10 +82,7 @@ bool CVisualizationWidget::getChildIdentifier(const uint32_t childIndex, CIdenti
 
 bool CVisualizationWidget::setChildIdentifier(const uint32_t childIndex, const CIdentifier& identifier)
 {
-	if (childIndex >= m_Children.size())
-	{
-		OV_ERROR_DRF("Child with index " << childIndex << " not found", ErrorType::ResourceNotFound);
-	}
+	if (childIndex >= m_Children.size()) { OV_ERROR_DRF("Child with index " << childIndex << " not found", ErrorType::ResourceNotFound); }
 	m_Children[childIndex] = identifier;
 	return true;
 }

@@ -138,7 +138,8 @@ namespace OpenViBEPlugins
 			void refreshPotentials();
 
 			//draw a box in RGB buffer
-			void drawBoxToBuffer(uint32_t ui32X, uint32_t ui32Y, uint32_t ui32Width, uint32_t ui32Height, uint8_t ui8Red, uint8_t ui8Green, uint8_t ui8Blue) const;
+			void drawBoxToBuffer(uint32_t ui32X, uint32_t ui32Y, uint32_t ui32Width, uint32_t ui32Height, uint8_t ui8Red, uint8_t ui8Green,
+								 uint8_t ui8Blue) const;
 
 			void enableElectrodeButtonSignals(bool enable);
 

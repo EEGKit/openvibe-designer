@@ -49,7 +49,12 @@ namespace OpenViBEPlugins
 			OpenViBE::CString getName() const override { return OpenViBE::CString("2D topographic map"); }
 			OpenViBE::CString getAuthorName() const override { return OpenViBE::CString("Vincent Delannoy"); }
 			OpenViBE::CString getAuthorCompanyName() const override { return OpenViBE::CString("INRIA/IRISA"); }
-			OpenViBE::CString getShortDescription() const override { return OpenViBE::CString("This box demonstrates how to perform spherical spline interpolation"); }
+
+			OpenViBE::CString getShortDescription() const override
+			{
+				return OpenViBE::CString("This box demonstrates how to perform spherical spline interpolation");
+			}
+
 			OpenViBE::CString getDetailedDescription() const override { return OpenViBE::CString(""); }
 			OpenViBE::CString getCategory() const override { return OpenViBE::CString("Visualization/Topography"); }
 			OpenViBE::CString getVersion() const override { return OpenViBE::CString("2.0"); }

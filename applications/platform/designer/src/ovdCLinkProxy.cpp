@@ -33,7 +33,6 @@ CLinkProxy::CLinkProxy(IScenario& rScenario, const CIdentifier& rLinkIdentifier)
 }
 
 CLinkProxy::~CLinkProxy()
-
 {
 	if (m_pLink)
 	{
@@ -43,37 +42,25 @@ CLinkProxy::~CLinkProxy()
 		{
 			l_oAttributeHandler.setAttributeValue<int>(OV_AttributeId_Link_XSourcePosition, m_iXSource);
 		}
-		else
-		{
-			l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Link_XSourcePosition, m_iXSource);
-		}
+		else { l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Link_XSourcePosition, m_iXSource); }
 
 		if (l_oAttributeHandler.hasAttribute(OV_AttributeId_Link_YSourcePosition))
 		{
 			l_oAttributeHandler.setAttributeValue<int>(OV_AttributeId_Link_YSourcePosition, m_iYSource);
 		}
-		else
-		{
-			l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Link_YSourcePosition, m_iYSource);
-		}
+		else { l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Link_YSourcePosition, m_iYSource); }
 
 		if (l_oAttributeHandler.hasAttribute(OV_AttributeId_Link_XTargetPosition))
 		{
 			l_oAttributeHandler.setAttributeValue<int>(OV_AttributeId_Link_XTargetPosition, m_iXTarget);
 		}
-		else
-		{
-			l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Link_XTargetPosition, m_iXTarget);
-		}
+		else { l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Link_XTargetPosition, m_iXTarget); }
 
 		if (l_oAttributeHandler.hasAttribute(OV_AttributeId_Link_YTargetPosition))
 		{
 			l_oAttributeHandler.setAttributeValue<int>(OV_AttributeId_Link_YTargetPosition, m_iYTarget);
 		}
-		else
-		{
-			l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Link_YTargetPosition, m_iYTarget);
-		}
+		else { l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Link_YTargetPosition, m_iYTarget); }
 	}
 }
 

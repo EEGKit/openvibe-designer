@@ -37,14 +37,8 @@ namespace Mensia
 				const float l_fScale = 1.f / m_pRendererContext->getScale();
 				if (m_fLastScale != l_fScale)
 				{
-					if (m_pRendererContext->isPositiveOnly())
-					{
-						m_vRange = split_range(0, l_fScale, IRuler_SplitCount);
-					}
-					else
-					{
-						m_vRange = split_range(-l_fScale * .5, l_fScale * .5, IRuler_SplitCount);
-					}
+					if (m_pRendererContext->isPositiveOnly()) { m_vRange = split_range(0, l_fScale, IRuler_SplitCount); }
+					else { m_vRange = split_range(-l_fScale * .5, l_fScale * .5, IRuler_SplitCount); }
 					m_fLastScale = l_fScale;
 				}
 
