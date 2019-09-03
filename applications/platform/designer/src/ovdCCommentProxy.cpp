@@ -6,8 +6,8 @@ using namespace Kernel;
 using namespace OpenViBEDesigner;
 using namespace std;
 
-CCommentProxy::CCommentProxy(const IKernelContext& rKernelContext, const IComment& rComment)
-	: m_kernelContext(rKernelContext), m_pConstComment(&rComment)
+CCommentProxy::CCommentProxy(const IKernelContext& ctx, const IComment& rComment)
+	: m_kernelContext(ctx), m_pConstComment(&rComment)
 {
 	if (m_pConstComment)
 	{
@@ -17,8 +17,8 @@ CCommentProxy::CCommentProxy(const IKernelContext& rKernelContext, const ICommen
 	}
 }
 
-CCommentProxy::CCommentProxy(const IKernelContext& rKernelContext, IScenario& rScenario, const CIdentifier& rCommentIdentifier)
-	: m_kernelContext(rKernelContext), m_pConstComment(rScenario.getCommentDetails(rCommentIdentifier)),
+CCommentProxy::CCommentProxy(const IKernelContext& ctx, IScenario& rScenario, const CIdentifier& rCommentIdentifier)
+	: m_kernelContext(ctx), m_pConstComment(rScenario.getCommentDetails(rCommentIdentifier)),
 	  m_pComment(rScenario.getCommentDetails(rCommentIdentifier))
 {
 	if (m_pConstComment)

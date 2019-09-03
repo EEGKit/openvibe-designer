@@ -274,9 +274,9 @@ bool CTopographicMapDatabase::getBufferIndexFromTime(const uint64_t ui64Time, ui
 
 bool CTopographicMapDatabase::checkElectrodeCoordinates()
 {
-	const uint64_t channelCount = getChannelCount();
+	const uint64_t nChannel = getChannelCount();
 
-	for (uint32_t i = 0; i < channelCount; ++i)
+	for (uint32_t i = 0; i < nChannel; ++i)
 	{
 		double* l_pNormalizedChannelCoords = nullptr;
 		if (!getChannelPosition(i, l_pNormalizedChannelCoords))

@@ -8,8 +8,8 @@ using namespace Plugins;
 using namespace OpenViBEDesigner;
 using namespace std;
 
-CBoxProxy::CBoxProxy(const IKernelContext& rKernelContext, IScenario& rScenario, const CIdentifier& boxID)
-	: m_kernelContext(rKernelContext), m_pConstBox(rScenario.getBoxDetails(boxID)), m_pBox(rScenario.getBoxDetails(boxID)),
+CBoxProxy::CBoxProxy(const IKernelContext& ctx, IScenario& rScenario, const CIdentifier& boxID)
+	: m_kernelContext(ctx), m_pConstBox(rScenario.getBoxDetails(boxID)), m_pBox(rScenario.getBoxDetails(boxID)),
 	  m_IsDeprecated(m_kernelContext.getPluginManager().isPluginObjectFlaggedAsDeprecated(m_pConstBox->getAlgorithmClassIdentifier()))
 {
 	m_IsBoxAlgorithmPresent = false;

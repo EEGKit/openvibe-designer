@@ -24,11 +24,11 @@ static gboolean on_focus_out_event(GtkEntry* /*entry*/, GdkEvent* /*event*/, gpo
 #endif
 
 CScriptSettingView::
-CScriptSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext): CAbstractSettingView(
+CScriptSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& ctx): CAbstractSettingView(
 																																	  box, index, rBuilderName,
 																																	  "settings_collection-hbox_setting_script"),
 																																  m_kernelContext(
-																																	  rKernelContext)
+																																	  ctx)
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 

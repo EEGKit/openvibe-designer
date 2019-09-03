@@ -59,8 +59,8 @@ namespace
 	void button_comment_info_cb(GtkButton* /*button*/, gpointer data) { static_cast<CCommentEditorDialog*>(data)->infoCB(); }
 } // namespace
 
-CCommentEditorDialog::CCommentEditorDialog(const IKernelContext& rKernelContext, IComment& rComment, const char* sGUIFilename)
-	: m_kernelContext(rKernelContext), m_rComment(rComment), m_sGUIFilename(sGUIFilename) { }
+CCommentEditorDialog::CCommentEditorDialog(const IKernelContext& ctx, IComment& rComment, const char* sGUIFilename)
+	: m_kernelContext(ctx), m_rComment(rComment), m_sGUIFilename(sGUIFilename) { }
 
 bool CCommentEditorDialog::run()
 

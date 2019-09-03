@@ -48,14 +48,14 @@ namespace
 		{ static_cast<gchar*>("text/plain"), 0, 0 }
 	};
 
-	GdkColor colorFromIdentifier(const CIdentifier& rIdentifier)
+	GdkColor colorFromIdentifier(const CIdentifier& identifier)
 	{
 		GdkColor l_oGdkColor;
 		unsigned int l_ui32Value1 = 0;
 		unsigned int l_ui32Value2 = 0;
 		uint64_t l_ui64Result     = 0;
 
-		sscanf(rIdentifier.toString(), "(0x%08X, 0x%08X)", &l_ui32Value1, &l_ui32Value2);
+		sscanf(identifier.toString(), "(0x%08X, 0x%08X)", &l_ui32Value1, &l_ui32Value2);
 		l_ui64Result += l_ui32Value1;
 		l_ui64Result <<= 32;
 		l_ui64Result += l_ui32Value2;
@@ -531,9 +531,9 @@ namespace
 	//*/
 } // namespace
 
-CInterfacedScenario::CInterfacedScenario(const IKernelContext& rKernelContext, CApplication& rApplication, IScenario& rScenario, CIdentifier& scenarioID,
+CInterfacedScenario::CInterfacedScenario(const IKernelContext& ctx, CApplication& rApplication, IScenario& rScenario, CIdentifier& scenarioID,
 										 GtkNotebook& rNotebook, const char* sGUIFilename, const char* sGUISettingsFilename)
-	: m_ePlayerStatus(PlayerStatus_Stop), m_oScenarioIdentifier(scenarioID), m_rApplication(rApplication), m_kernelContext(rKernelContext),
+	: m_ePlayerStatus(PlayerStatus_Stop), m_oScenarioIdentifier(scenarioID), m_rApplication(rApplication), m_kernelContext(ctx),
 	  m_rScenario(rScenario), m_rNotebook(rNotebook), m_sGUIFilename(sGUIFilename), m_sGUISettingsFilename(sGUISettingsFilename)
 {
 	m_pGUIBuilder = gtk_builder_new();
@@ -611,7 +611,7 @@ CInterfacedScenario::CInterfacedScenario(const IKernelContext& rKernelContext, C
 	this->redrawScenarioInputSettings();
 	this->redrawScenarioOutputSettings();
 
-	m_oStateStack.reset(new CScenarioStateStack(rKernelContext, *this, rScenario));
+	m_oStateStack.reset(new CScenarioStateStack(ctx, *this, rScenario));
 
 	CInterfacedScenario::updateScenarioLabel();
 
@@ -1711,15 +1711,15 @@ bool CInterfacedScenario::pickInterfacedObject(const int x, const int y, int iSi
 	}
 
 	const int rowBytesCount = gdk_pixbuf_get_rowstride(pixbuf);
-	const int channelCount  = gdk_pixbuf_get_n_channels(pixbuf);
+	const int nChannel  = gdk_pixbuf_get_n_channels(pixbuf);
 	for (int j = 0; j < iSizeY; j++)
 	{
 		for (int i = 0; i < iSizeX; ++i)
 		{
 			uint32_t interfacedObjectId = 0;
-			interfacedObjectId += (pixels[j * rowBytesCount + i * channelCount + 0] << 16);
-			interfacedObjectId += (pixels[j * rowBytesCount + i * channelCount + 1] << 8);
-			interfacedObjectId += (pixels[j * rowBytesCount + i * channelCount + 2]);
+			interfacedObjectId += (pixels[j * rowBytesCount + i * nChannel + 0] << 16);
+			interfacedObjectId += (pixels[j * rowBytesCount + i * nChannel + 1] << 8);
+			interfacedObjectId += (pixels[j * rowBytesCount + i * nChannel + 2]);
 			if (m_vInterfacedObject[interfacedObjectId].m_oIdentifier != OV_UndefinedIdentifier)
 			{
 				m_SelectedObjects.insert(m_vInterfacedObject[interfacedObjectId].m_oIdentifier);
@@ -3941,20 +3941,20 @@ bool CInterfacedScenario::setModifiableSettingsWidgets()
 	return true;
 }
 
-bool CInterfacedScenario::centerOnBox(const CIdentifier& rIdentifier)
+bool CInterfacedScenario::centerOnBox(const CIdentifier& identifier)
 {
 	//m_kernelContext.getLogManager() << LogLevel_Fatal << "CInterfacedScenario::centerOnBox" << "\n";
 	bool ret_val = false;
-	if (m_rScenario.isBox(rIdentifier))
+	if (m_rScenario.isBox(identifier))
 	{
 		//m_kernelContext.getLogManager() << LogLevel_Fatal << "CInterfacedScenario::centerOnBox is box" << "\n";
-		IBox* box = m_rScenario.getBoxDetails(rIdentifier);
+		IBox* box = m_rScenario.getBoxDetails(identifier);
 
 		//clear previous selection
 		m_SelectedObjects.clear();
 		//to select the box
 
-		m_SelectedObjects.insert(rIdentifier);
+		m_SelectedObjects.insert(identifier);
 		//		m_bScenarioModified=true;
 		redraw();
 

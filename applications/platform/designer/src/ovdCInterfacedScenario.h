@@ -24,7 +24,7 @@ namespace OpenViBEDesigner
 	{
 	public:
 
-		CInterfacedScenario(const OpenViBE::Kernel::IKernelContext& rKernelContext, CApplication& rApplication, OpenViBE::Kernel::IScenario& rScenario, OpenViBE::CIdentifier& scenarioID,
+		CInterfacedScenario(const OpenViBE::Kernel::IKernelContext& ctx, CApplication& rApplication, OpenViBE::Kernel::IScenario& rScenario, OpenViBE::CIdentifier& scenarioID,
 							GtkNotebook& rNotebook, const char* sGUIFilename, const char* sGUISettingsFilename);
 		virtual ~CInterfacedScenario();
 
@@ -129,7 +129,7 @@ namespace OpenViBEDesigner
 		void stopAndReleasePlayer();
 		bool setModifiableSettingsWidgets();
 		bool hasSelection() const { return !m_SelectedObjects.empty(); }
-		bool centerOnBox(const OpenViBE::CIdentifier& rIdentifier);
+		bool centerOnBox(const OpenViBE::CIdentifier& identifier);
 		void setScale(double scale);
 		double getScale() const { return m_currentScale; }
 

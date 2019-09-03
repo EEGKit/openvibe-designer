@@ -445,8 +445,8 @@ namespace
 
 // ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- -----------
 
-CSettingCollectionHelper::CSettingCollectionHelper(const IKernelContext& rKernelContext, const char* sGUIFilename)
-	: m_kernelContext(rKernelContext), m_sGUIFilename(sGUIFilename) { }
+CSettingCollectionHelper::CSettingCollectionHelper(const IKernelContext& ctx, const char* sGUIFilename)
+	: m_kernelContext(ctx), m_sGUIFilename(sGUIFilename) { }
 
 CSettingCollectionHelper::~CSettingCollectionHelper() = default;
 

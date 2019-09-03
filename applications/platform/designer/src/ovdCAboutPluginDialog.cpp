@@ -5,13 +5,13 @@ using namespace OpenViBE;
 using namespace Plugins;
 using namespace Kernel;
 
-CAboutPluginDialog::CAboutPluginDialog(const IKernelContext& rKernelContext, const CIdentifier& rPluginClassIdentifier, const char* sGUIFilename)
-	: m_kernelContext(rKernelContext),
+CAboutPluginDialog::CAboutPluginDialog(const IKernelContext& ctx, const CIdentifier& rPluginClassIdentifier, const char* sGUIFilename)
+	: m_kernelContext(ctx),
 	  m_oPluginClassIdentifier(rPluginClassIdentifier),
 	  m_sGUIFilename(sGUIFilename) { }
 
-CAboutPluginDialog::CAboutPluginDialog(const IKernelContext& rKernelContext, const IPluginObjectDesc* pPluginObjectDesc, const char* sGUIFilename)
-	: m_kernelContext(rKernelContext),
+CAboutPluginDialog::CAboutPluginDialog(const IKernelContext& ctx, const IPluginObjectDesc* pPluginObjectDesc, const char* sGUIFilename)
+	: m_kernelContext(ctx),
 	  m_oPluginClassIdentifier(OV_UndefinedIdentifier),
 	  m_sGUIFilename(sGUIFilename),
 	  m_pPluginObjectDescriptor(pPluginObjectDesc) { }

@@ -4,7 +4,7 @@
 
 namespace OpenViBEDesigner
 {
-	typedef void (*fpButtonCB)(GtkWidget* pWidget, gpointer pUserData);
+	typedef void (*fpButtonCB)(GtkWidget* pWidget, gpointer data);
 
 	class CInputDialog
 	{

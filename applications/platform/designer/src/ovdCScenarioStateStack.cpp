@@ -10,8 +10,8 @@ using namespace Plugins;
 using namespace OpenViBEDesigner;
 using namespace OpenViBEToolkit;
 
-CScenarioStateStack::CScenarioStateStack(const IKernelContext& kernelContext, CInterfacedScenario& interfacedScenario, IScenario& scenario)
-	: m_kernelContext(kernelContext), m_InterfacedScenario(interfacedScenario), m_Scenario(scenario)
+CScenarioStateStack::CScenarioStateStack(const IKernelContext& ctx, CInterfacedScenario& interfacedScenario, IScenario& scenario)
+	: m_kernelContext(ctx), m_InterfacedScenario(interfacedScenario), m_Scenario(scenario)
 {
 	m_CurrentState      = m_States.begin();
 	m_MaximumStateCount = uint32_t(m_kernelContext.getConfigurationManager().expandAsUInteger("${Designer_UndoRedoStackSize}", 64));

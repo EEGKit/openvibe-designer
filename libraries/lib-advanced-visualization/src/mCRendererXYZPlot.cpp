@@ -32,11 +32,11 @@ void CRendererXYZPlot::rebuild(const IRendererContext& rContext)
 	m_plotDimension = (m_hasDepth ? 3 : 2);
 	m_plotCount     = (rContext.getChannelCount() + m_plotDimension - 1) / m_plotDimension;
 	m_vertex.resize(m_plotCount);
-	const float inverseSampleCount = 1.0f / float(m_sampleCount < 2 ? 1 : (m_sampleCount - 1));
+	const float inverseSampleCount = 1.0f / float(m_nSample < 2 ? 1 : (m_nSample - 1));
 	for (uint32_t i = 0; i < m_plotCount; ++i)
 	{
-		m_vertex[i].resize(this->m_sampleCount);
-		for (uint32_t j = 0; j < this->m_sampleCount; j++) { m_vertex[i][j].u = j * inverseSampleCount; }
+		m_vertex[i].resize(this->m_nSample);
+		for (uint32_t j = 0; j < this->m_nSample; j++) { m_vertex[i][j].u = j * inverseSampleCount; }
 	}
 
 	m_historyIndex = 0;
@@ -50,7 +50,7 @@ void CRendererXYZPlot::refresh(const IRendererContext& rContext)
 
 	while (m_historyIndex < m_historyCount)
 	{
-		const uint32_t j = m_historyIndex % this->m_sampleCount;
+		const uint32_t j = m_historyIndex % this->m_nSample;
 		for (uint32_t i = 0; i < m_plotCount; ++i)
 		{
 			if (m_hasDepth)
@@ -106,8 +106,8 @@ bool CRendererXYZPlot::render(const IRendererContext& rContext)
 		else { this->draw2DCoordinateSystem(); }
 	}
 
-	uint32_t n       = m_sampleCount;
-	const uint32_t d = (m_historyIndex % m_sampleCount);
+	uint32_t n       = m_nSample;
+	const uint32_t d = (m_historyIndex % m_nSample);
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);

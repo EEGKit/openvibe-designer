@@ -14,7 +14,7 @@ namespace OpenViBEDesigner
 	{
 	public:
 
-		CVisualizationManager(const OpenViBE::Kernel::IKernelContext& kernelContext) : m_kernelContext(kernelContext) {}
+		CVisualizationManager(const OpenViBE::Kernel::IKernelContext& ctx) : m_kernelContext(ctx) {}
 		~CVisualizationManager() = default;
 
 		bool createVisualizationTree(OpenViBE::CIdentifier& visualizationTreeIdentifier);

@@ -10,7 +10,7 @@ namespace OpenViBEDesigner
 	{
 	public:
 
-		CSettingCollectionHelper(const OpenViBE::Kernel::IKernelContext& rKernelContext, const char* sGUIFilename);
+		CSettingCollectionHelper(const OpenViBE::Kernel::IKernelContext& ctx, const char* sGUIFilename);
 		virtual ~CSettingCollectionHelper();
 
 		OpenViBE::CString getSettingWidgetName(const OpenViBE::CIdentifier& typeID) const;

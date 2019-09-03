@@ -80,11 +80,11 @@ namespace Mensia
 		{
 		public:
 
-			TBoxAlgorithmStackedInstantVizDesc(const OpenViBE::CString& sName, const OpenViBE::CIdentifier& rDescClassId, const OpenViBE::CIdentifier& rClassId,
+			TBoxAlgorithmStackedInstantVizDesc(const OpenViBE::CString& name, const OpenViBE::CIdentifier& rDescClassId, const OpenViBE::CIdentifier& rClassId,
 											   const OpenViBE::CString& sAddedSoftwareVersion, const OpenViBE::CString& sUpdatedSoftwareVersion,
 											   const CParameterSet& rParameterSet, const OpenViBE::CString& sShortDescription,
 											   const OpenViBE::CString& sDetailedDescription)
-				: CBoxAlgorithmVizDesc(sName, rDescClassId, rClassId, sAddedSoftwareVersion, sUpdatedSoftwareVersion, rParameterSet, sShortDescription,
+				: CBoxAlgorithmVizDesc(name, rDescClassId, rClassId, sAddedSoftwareVersion, sUpdatedSoftwareVersion, rParameterSet, sShortDescription,
 									   sDetailedDescription) { }
 
 			OpenViBE::Plugins::IPluginObject* create() override
@@ -173,9 +173,9 @@ namespace Mensia
 				m_oMatrixDecoder.decode(chunk);
 
 				OpenViBE::IMatrix* inputMatrix = m_oMatrixDecoder.getOutputMatrix();
-				const uint32_t channelCount    = inputMatrix->getDimensionSize(0);
+				const uint32_t nChannel    = inputMatrix->getDimensionSize(0);
 
-				if (channelCount == 0)
+				if (nChannel == 0)
 				{
 					this->getLogManager() << LogLevel_Error << "Input stream " << uint32_t(chunk) << " has 0 channels\n";
 					return false;
@@ -185,12 +185,12 @@ namespace Mensia
 				{
 					for (auto renderer : m_vRenderer) { m_oRendererFactory.release(renderer); }
 					m_vRenderer.clear();
-					m_vRenderer.resize(channelCount);
+					m_vRenderer.resize(nChannel);
 
 					m_pSubRendererContext->clear();
 					m_pSubRendererContext->setParentRendererContext(m_pRendererContext);
 					m_pSubRendererContext->setTimeLocked(false);
-					m_pSubRendererContext->setStackCount(channelCount);
+					m_pSubRendererContext->setStackCount(nChannel);
 					m_pSubRendererContext->setPositiveOnly(true);
 
 
@@ -237,7 +237,7 @@ namespace Mensia
 						m_pSubRendererContext->setElementCount(sampleCount);
 						gtk_tree_view_set_model(m_pChannelTreeView, nullptr);
 
-						for (uint32_t channel = 0; channel < channelCount; channel++)
+						for (uint32_t channel = 0; channel < nChannel; channel++)
 						{
 							std::string channelName          = trim(inputMatrix->getDimensionLabel(0, channel));
 							std::string lowercaseChannelName = channelName;
@@ -270,7 +270,7 @@ namespace Mensia
 						return false;
 					}
 
-					m_pRuler->setRenderer(channelCount ? m_vRenderer[0] : nullptr);
+					m_pRuler->setRenderer(nChannel ? m_vRenderer[0] : nullptr);
 
 					m_bRebuildNeeded = true;
 					m_bRefreshNeeded = true;
@@ -293,7 +293,7 @@ namespace Mensia
 						m_pSubRendererContext->setSampleDuration(sampleDuration);
 						m_pRendererContext->setSampleDuration(sampleDuration);
 
-						for (uint32_t channel = 0; channel < channelCount; channel++)
+						for (uint32_t channel = 0; channel < nChannel; channel++)
 						{
 							// Feed renderer with actual samples
 							for (uint32_t sample = 0; sample < sampleCount; sample++)

@@ -74,11 +74,11 @@ namespace Mensia
 		{
 		public:
 
-			TBoxAlgorithmStackedContinuousVizDesc(const OpenViBE::CString& sName, const OpenViBE::CIdentifier& rDescClassId,
+			TBoxAlgorithmStackedContinuousVizDesc(const OpenViBE::CString& name, const OpenViBE::CIdentifier& rDescClassId,
 												  const OpenViBE::CIdentifier& rClassId, const OpenViBE::CString& sAddedSoftwareVersion,
 												  const OpenViBE::CString& sUpdatedSoftwareVersion, const CParameterSet& rParameterSet,
 												  const OpenViBE::CString& sShortDescription, const OpenViBE::CString& sDetailedDescription)
-				: CBoxAlgorithmVizDesc(sName, rDescClassId, rClassId, sAddedSoftwareVersion, sUpdatedSoftwareVersion, rParameterSet, sShortDescription,
+				: CBoxAlgorithmVizDesc(name, rDescClassId, rClassId, sAddedSoftwareVersion, sUpdatedSoftwareVersion, rParameterSet, sShortDescription,
 									   sDetailedDescription) { }
 
 			OpenViBE::Plugins::IPluginObject* create() override

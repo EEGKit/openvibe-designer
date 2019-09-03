@@ -10,7 +10,7 @@ namespace OpenViBEDesigner
 	{
 	public:
 
-		CConnectorEditor(const OpenViBE::Kernel::IKernelContext& rKernelContext, OpenViBE::Kernel::IBox& box, uint32_t connectorType, 
+		CConnectorEditor(const OpenViBE::Kernel::IKernelContext& ctx, OpenViBE::Kernel::IBox& box, uint32_t connectorType, 
 						 uint32_t connectorIndex, const char* sTitle, const char* sGUIFilename);
 		virtual ~CConnectorEditor();
 		virtual bool run();

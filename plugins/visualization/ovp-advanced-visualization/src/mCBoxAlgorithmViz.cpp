@@ -38,7 +38,7 @@ namespace
 	class toolbar_sort_changed_
 	{
 	public:
-		static void callback(GtkButton* /*pButton*/, CBoxAlgorithmViz* pThis)
+		static void callback(GtkButton* /*button*/, CBoxAlgorithmViz* pThis)
 		{
 			pThis->m_pRendererContext->sortSelectedChannel(i);
 			pThis->m_bRedrawNeeded = true;
@@ -75,20 +75,20 @@ namespace
 		pRendererContext->setElementCount(uint64_t(gtk_spin_button_get_value(pSpinButton)));
 	}
 
-	void checkbutton_positive_toggled_callback(GtkToggleButton* pButton, IRendererContext* pRendererContext)
+	void checkbutton_positive_toggled_callback(GtkToggleButton* button, IRendererContext* pRendererContext)
 	{
-		pRendererContext->setPositiveOnly(gtk_toggle_button_get_active(pButton) != 0);
+		pRendererContext->setPositiveOnly(gtk_toggle_button_get_active(button) != 0);
 	}
 
-	void checkbutton_show_scale_toggled_callback(GtkToggleButton* pButton, IRendererContext* pRendererContext)
+	void checkbutton_show_scale_toggled_callback(GtkToggleButton* button, IRendererContext* pRendererContext)
 	{
-		pRendererContext->setScaleVisibility(gtk_toggle_button_get_active(pButton) != 0);
+		pRendererContext->setScaleVisibility(gtk_toggle_button_get_active(button) != 0);
 	}
 
-	void button_video_recording_pressed_callback(GtkButton* pButton, CBoxAlgorithmViz* pBox)
+	void button_video_recording_pressed_callback(GtkButton* button, CBoxAlgorithmViz* pBox)
 	{
 		pBox->m_bIsVideoOutputWorking = !pBox->m_bIsVideoOutputWorking;
-		gtk_button_set_label(pButton, pBox->m_bIsVideoOutputWorking ? GTK_STOCK_MEDIA_PAUSE : GTK_STOCK_MEDIA_RECORD);
+		gtk_button_set_label(button, pBox->m_bIsVideoOutputWorking ? GTK_STOCK_MEDIA_PAUSE : GTK_STOCK_MEDIA_RECORD);
 	}
 
 	void range_erp_value_changed_callback(GtkRange* pRange, GtkLabel* pLabel)
@@ -99,7 +99,7 @@ namespace
 		getContext().stepERPFractionBy(float(gtk_range_get_value(pRange)) - getContext().getERPFraction());
 	}
 
-	void button_erp_play_pause_pressed_callback(GtkButton* /*pButton*/, IRendererContext* pRendererContext)
+	void button_erp_play_pause_pressed_callback(GtkButton* /*button*/, IRendererContext* pRendererContext)
 	{
 		pRendererContext->setERPPlayerActive(!pRendererContext->isERPPlayerActive());
 	}

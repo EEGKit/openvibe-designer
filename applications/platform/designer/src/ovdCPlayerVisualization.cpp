@@ -32,9 +32,9 @@ static void delete_window_manager_window_cb(GtkWidget* widget, GdkEvent*, gpoint
 	gtk_widget_destroy(confirmationDialog);
 }
 
-CPlayerVisualization::CPlayerVisualization(const IKernelContext& rKernelContext, IVisualizationTree& rVisualizationTree,
+CPlayerVisualization::CPlayerVisualization(const IKernelContext& ctx, IVisualizationTree& rVisualizationTree,
 										   CInterfacedScenario& rInterfacedScenario)
-	: m_kernelContext(rKernelContext), m_rVisualizationTree(rVisualizationTree), m_rInterfacedScenario(rInterfacedScenario) { }
+	: m_kernelContext(ctx), m_rVisualizationTree(rVisualizationTree), m_rInterfacedScenario(rInterfacedScenario) { }
 
 CPlayerVisualization::~CPlayerVisualization()
 

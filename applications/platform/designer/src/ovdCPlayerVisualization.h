@@ -13,7 +13,7 @@ namespace OpenViBEDesigner
 	class CPlayerVisualization : public OpenViBEVisualizationToolkit::ITreeViewCB
 	{
 	public:
-		CPlayerVisualization(const OpenViBE::Kernel::IKernelContext& rKernelContext, OpenViBEVisualizationToolkit::IVisualizationTree& rVisualizationTree, CInterfacedScenario& rInterfacedScenario);
+		CPlayerVisualization(const OpenViBE::Kernel::IKernelContext& ctx, OpenViBEVisualizationToolkit::IVisualizationTree& rVisualizationTree, CInterfacedScenario& rInterfacedScenario);
 
 		virtual ~CPlayerVisualization();
 

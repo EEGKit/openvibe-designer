@@ -22,12 +22,12 @@ static gboolean on_focus_out_event(GtkEntry* /*entry*/, GdkEvent* /*event*/, gpo
 #endif
 
 CFilenameSettingView::
-CFilenameSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext): CAbstractSettingView(
+CFilenameSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& ctx): CAbstractSettingView(
 																																		box, index,
 																																		rBuilderName,
 																																		"settings_collection-hbox_setting_filename"),
 																																	m_kernelContext(
-																																		rKernelContext)
+																																		ctx)
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 

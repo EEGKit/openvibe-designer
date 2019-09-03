@@ -15,8 +15,8 @@ using namespace OpenViBEDesigner;
 using namespace OpenViBE;
 using namespace Setting;
 
-CSettingViewFactory::CSettingViewFactory(const CString& rBuilderName, const Kernel::IKernelContext& rKernelContext)
-	: m_builderName(rBuilderName), m_kernelContext(rKernelContext) {}
+CSettingViewFactory::CSettingViewFactory(const CString& rBuilderName, const Kernel::IKernelContext& ctx)
+	: m_builderName(rBuilderName), m_kernelContext(ctx) {}
 
 CAbstractSettingView* CSettingViewFactory::getSettingView(Kernel::IBox& box, const uint32_t index)
 {

@@ -38,10 +38,10 @@ static void on_override_browse_clicked(GtkButton* /*button*/, gpointer data) { s
 
 static void collect_widget_cb(GtkWidget* widget, gpointer data) { static_cast<std::vector<GtkWidget*>*>(data)->push_back(widget); }
 
-CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& rKernelContext, IBox& box, const char* sGUIFilename, const char* sGUISettingsFilename,
+CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& ctx, IBox& box, const char* sGUIFilename, const char* sGUISettingsFilename,
 												 const bool isScenarioRunning)
-	: m_kernelContext(rKernelContext), m_rBox(box), m_sGUIFilename(sGUIFilename), m_sGUISettingsFilename(sGUISettingsFilename)
-	  , m_oSettingFactory(m_sGUISettingsFilename.toASCIIString(), rKernelContext), m_bIsScenarioRunning(isScenarioRunning)
+	: m_kernelContext(ctx), m_rBox(box), m_sGUIFilename(sGUIFilename), m_sGUISettingsFilename(sGUISettingsFilename)
+	  , m_oSettingFactory(m_sGUISettingsFilename.toASCIIString(), ctx), m_bIsScenarioRunning(isScenarioRunning)
 {
 	m_rBox.addObserver(this);
 

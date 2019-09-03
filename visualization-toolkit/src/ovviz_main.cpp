@@ -11,10 +11,10 @@ namespace
 	OpenViBEVisualizationToolkit::CVisualizationContextDesc visualizationContextDesc;
 } // namespace
 
-bool OpenViBEVisualizationToolkit::initialize(const IKernelContext& kernelContext)
+bool OpenViBEVisualizationToolkit::initialize(const IKernelContext& ctx)
 {
-	ITypeManager& typeManager     = kernelContext.getTypeManager();
-	IPluginManager& pluginManager = kernelContext.getPluginManager();
+	ITypeManager& typeManager     = ctx.getTypeManager();
+	IPluginManager& pluginManager = ctx.getPluginManager();
 
 	typeManager.registerType(OV_TypeId_Color, "Color");
 	typeManager.registerType(OV_TypeId_ColorGradient, "Color Gradient");
@@ -24,4 +24,4 @@ bool OpenViBEVisualizationToolkit::initialize(const IKernelContext& kernelContex
 	return true;
 }
 
-bool OpenViBEVisualizationToolkit::uninitialize(const IKernelContext& /*kernelContext*/) { return true; }
+bool OpenViBEVisualizationToolkit::uninitialize(const IKernelContext& /*ctx*/) { return true; }

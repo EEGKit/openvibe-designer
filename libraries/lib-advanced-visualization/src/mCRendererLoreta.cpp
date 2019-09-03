@@ -674,7 +674,7 @@ bool CRendererLoreta::render(const IRendererContext& rContext)
 			if (m_vSelected[i])
 			{
 				float l_fPower = l_vSample[i] * rContext.getScale();
-				// m_history[i][m_historyCount-m_sampleCount+m_sampleIndexERP]*rContext.getScale();
+				// m_history[i][m_historyCount-m_nSample+m_sampleIndexERP]*rContext.getScale();
 				::glColor4f(.1f, .1f, .1f, rContext.getTranslucency());
 				::glPushMatrix();
 				::glTexCoord1f(l_fPower);
@@ -707,7 +707,7 @@ bool CRendererLoreta::render(const IRendererContext& rContext)
 		{
 			if (m_vSelected[i])
 			{
-				// float l_fPower=m_history[i][m_historyCount-m_sampleCount+m_sampleIndexERP]*rContext.getScale();
+				// float l_fPower=m_history[i][m_historyCount-m_nSample+m_sampleIndexERP]*rContext.getScale();
 				::glColor4f(.1f, .1f, .1f, rContext.getTranslucency());
 				::glPushMatrix();
 				::glTexCoord1f(0);

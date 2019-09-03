@@ -10,7 +10,7 @@ namespace OpenViBEDesigner
 	class CVisualizationWidget final : public OpenViBEVisualizationToolkit::IVisualizationWidget
 	{
 	public:
-		CVisualizationWidget(const OpenViBE::Kernel::IKernelContext& kernelContext);
+		CVisualizationWidget(const OpenViBE::Kernel::IKernelContext& ctx);
 
 		~CVisualizationWidget() = default;
 

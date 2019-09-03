@@ -15,7 +15,7 @@ namespace OpenViBEDesigner
 	class CVisualizationTree final : public OpenViBEVisualizationToolkit::IVisualizationTree
 	{
 	public:
-		CVisualizationTree(const OpenViBE::Kernel::IKernelContext& kernelContext);
+		CVisualizationTree(const OpenViBE::Kernel::IKernelContext& ctx);
 		virtual ~CVisualizationTree();
 
 		bool init(const OpenViBE::Kernel::IScenario* scenario);

@@ -31,8 +31,8 @@ void CRendererBars::rebuild(const IRendererContext& rContext)
 	m_vertex.resize(m_channelCount);
 	for (size_t i = 0; i < m_channelCount; ++i)
 	{
-		m_vertex[i].resize(size_t(m_sampleCount) * 4);
-		for (size_t j = 0; j < m_sampleCount; j++)
+		m_vertex[i].resize(size_t(m_nSample) * 4);
+		for (size_t j = 0; j < m_nSample; j++)
 		{
 			const size_t id       = j * 4;
 			const float value     = j * m_inverseSampleCount;
@@ -59,10 +59,10 @@ void CRendererBars::refresh(const IRendererContext& rContext)
 
 	for (size_t i = 0; i < m_channelCount; ++i)
 	{
-		size_t k                       = ((m_historyCount - 1) / m_sampleCount) * m_sampleCount;
+		size_t k                       = ((m_historyCount - 1) / m_nSample) * m_nSample;
 		std::vector<float>& l_vHistory = m_history[i];
 		CVertex* l_pVertex             = &m_vertex[i][0];
-		for (size_t j = 0; j < m_sampleCount; j++, k++)
+		for (size_t j = 0; j < m_nSample; j++, k++)
 		{
 			if (k >= m_historyIndex && k < m_historyCount)
 			{
@@ -117,7 +117,7 @@ bool CRendererBars::render(const IRendererContext& rContext)
 		glScalef(1, rContext.getScale(), 1);
 		glVertexPointer(2, GL_FLOAT, sizeof(CVertex), &m_vertex[rContext.getSelected(i)][0].x);
 		glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_vertex[rContext.getSelected(i)][0].u);
-		glDrawArrays(GL_QUADS, 0, m_sampleCount * 4);
+		glDrawArrays(GL_QUADS, 0, m_nSample * 4);
 		glPopMatrix();
 	}
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);

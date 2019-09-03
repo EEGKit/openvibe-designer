@@ -71,11 +71,11 @@ namespace Mensia
 		{
 		public:
 
-			TBoxAlgorithmContinuousVizDesc(const OpenViBE::CString& sName, const OpenViBE::CIdentifier& rDescClassId, const OpenViBE::CIdentifier& rClassId,
+			TBoxAlgorithmContinuousVizDesc(const OpenViBE::CString& name, const OpenViBE::CIdentifier& rDescClassId, const OpenViBE::CIdentifier& rClassId,
 										   const OpenViBE::CString& sAddedSoftwareVersion, const OpenViBE::CString& sUpdatedSoftwareVersion,
 										   const CParameterSet& rParameterSet, const OpenViBE::CString& sShortDescription,
 										   const OpenViBE::CString& sDetailedDescription)
-				: CBoxAlgorithmVizDesc(sName, rDescClassId, rClassId, sAddedSoftwareVersion, sUpdatedSoftwareVersion, rParameterSet, sShortDescription,
+				: CBoxAlgorithmVizDesc(name, rDescClassId, rClassId, sAddedSoftwareVersion, sUpdatedSoftwareVersion, rParameterSet, sShortDescription,
 									   sDetailedDescription) { }
 
 			OpenViBE::Plugins::IPluginObject* create() override
@@ -141,10 +141,10 @@ namespace Mensia
 				m_oMatrixDecoder.decode(i);
 
 				OpenViBE::IMatrix* l_pMatrix = m_oMatrixDecoder.getOutputMatrix();
-				uint32_t channelCount        = l_pMatrix->getDimensionSize(0);
+				uint32_t nChannel        = l_pMatrix->getDimensionSize(0);
 				uint32_t sampleCount         = l_pMatrix->getDimensionSize(1);
 
-				if (channelCount == 0)
+				if (nChannel == 0)
 				{
 					this->getLogManager() << LogLevel_Error << "Input stream " << uint32_t(i) << " has 0 channels\n";
 					return false;
@@ -152,7 +152,7 @@ namespace Mensia
 
 				if (l_pMatrix->getDimensionCount() == 1)
 				{
-					channelCount = l_pMatrix->getDimensionSize(0);
+					nChannel = l_pMatrix->getDimensionSize(0);
 					sampleCount  = 1;
 				}
 
@@ -161,7 +161,7 @@ namespace Mensia
 					GtkTreeIter l_oGtkTreeIterator;
 					gtk_list_store_clear(m_pChannelListStore);
 
-					m_vSwap.resize(size_t(channelCount));
+					m_vSwap.resize(size_t(nChannel));
 
 					m_pRendererContext->clear();
 					m_pRendererContext->setTranslucency(float(m_translucency));
@@ -176,7 +176,7 @@ namespace Mensia
 					m_pRendererContext->setXYZPlotDepth(m_bXYZPlotHasDepth);
 
 					gtk_tree_view_set_model(m_pChannelTreeView, nullptr);
-					for (uint32_t j = 0; j < channelCount; ++j)
+					for (uint32_t j = 0; j < nChannel; ++j)
 					{
 						std::string l_sName    = trim(l_pMatrix->getDimensionLabel(0, j));
 						std::string l_sSubname = l_sName;
@@ -197,7 +197,7 @@ namespace Mensia
 					gtk_tree_view_set_model(m_pChannelTreeView, GTK_TREE_MODEL(m_pChannelListStore));
 					gtk_tree_selection_select_all(gtk_tree_view_get_selection(m_pChannelTreeView));
 
-					m_pRenderer->setChannelCount(channelCount);
+					m_pRenderer->setChannelCount(nChannel);
 
 					if (m_oTypeIdentifier == OV_TypeId_Signal) { m_pRendererContext->setDataType(IRendererContext::DataType_Signal); }
 					else if (m_oTypeIdentifier == OV_TypeId_Spectrum) { m_pRendererContext->setDataType(IRendererContext::DataType_Spectrum); }
@@ -255,7 +255,7 @@ namespace Mensia
 					// Feed renderer with actual samples
 					for (uint32_t j = 0; j < sampleCount; ++j)
 					{
-						for (uint32_t k = 0; k < channelCount; ++k) { m_vSwap[k] = float(l_pMatrix->getBuffer()[k * sampleCount + j]); }
+						for (uint32_t k = 0; k < nChannel; ++k) { m_vSwap[k] = float(l_pMatrix->getBuffer()[k * sampleCount + j]); }
 						m_pRenderer->feed(&m_vSwap[0]);
 					}
 

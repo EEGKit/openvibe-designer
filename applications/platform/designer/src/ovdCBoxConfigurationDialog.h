@@ -13,7 +13,7 @@ namespace OpenViBEDesigner
 	{
 	public:
 
-		CBoxConfigurationDialog(const OpenViBE::Kernel::IKernelContext& rKernelContext, OpenViBE::Kernel::IBox& box, const char* sGUIFilename,
+		CBoxConfigurationDialog(const OpenViBE::Kernel::IKernelContext& ctx, OpenViBE::Kernel::IBox& box, const char* sGUIFilename,
 								const char* sGUISettingsFilename, const bool isScenarioRunning = false);
 		virtual ~CBoxConfigurationDialog();
 		virtual bool run();

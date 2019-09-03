@@ -32,17 +32,17 @@ namespace
 	};
 
 	template <class T, class TTest>
-	bool getNextTIdentifier(const map<CIdentifier, T*>& vMap, CIdentifier& rIdentifier, const TTest& rTest)
+	bool getNextTIdentifier(const map<CIdentifier, T*>& vMap, CIdentifier& identifier, const TTest& rTest)
 	{
 		typename map<CIdentifier, T*>::const_iterator it;
 
-		if (rIdentifier == OV_UndefinedIdentifier) { it = vMap.begin(); }
+		if (identifier == OV_UndefinedIdentifier) { it = vMap.begin(); }
 		else
 		{
-			it = vMap.find(rIdentifier);
+			it = vMap.find(identifier);
 			if (it == vMap.end())
 			{
-				rIdentifier = OV_UndefinedIdentifier;
+				identifier = OV_UndefinedIdentifier;
 				return false;
 			}
 			++it;
@@ -52,7 +52,7 @@ namespace
 		{
 			if (rTest(it))
 			{
-				rIdentifier = it->first;
+				identifier = it->first;
 				return true;
 			}
 			++it;
@@ -62,7 +62,7 @@ namespace
 	}
 }
 
-CVisualizationTree::CVisualizationTree(const IKernelContext& kernelContext) : m_kernelContext(kernelContext) {}
+CVisualizationTree::CVisualizationTree(const IKernelContext& ctx) : m_kernelContext(ctx) {}
 
 CVisualizationTree::~CVisualizationTree()
 {

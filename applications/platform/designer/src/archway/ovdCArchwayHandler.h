@@ -56,7 +56,7 @@ namespace Mensia {
 
 	class CArchwayHandler final {
 	public:
-		CArchwayHandler(const OpenViBE::Kernel::IKernelContext& kernelContext);
+		CArchwayHandler(const OpenViBE::Kernel::IKernelContext& ctx);
 		~CArchwayHandler();
 
 		EngineInitialisationStatus initialize();

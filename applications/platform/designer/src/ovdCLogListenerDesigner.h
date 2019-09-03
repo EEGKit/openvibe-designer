@@ -75,7 +75,7 @@ namespace OpenViBEDesigner
 			bool m_bPassedFilter     = false;
 		};
 
-		CLogListenerDesigner(const OpenViBE::Kernel::IKernelContext& rKernelContext, GtkBuilder* pBuilderInterface);
+		CLogListenerDesigner(const OpenViBE::Kernel::IKernelContext& ctx, GtkBuilder* pBuilderInterface);
 
 		bool isActive(OpenViBE::Kernel::ELogLevel eLogLevel) override;
 		bool activate(OpenViBE::Kernel::ELogLevel eLogLevel, bool bActive) override;
@@ -161,7 +161,7 @@ namespace OpenViBEDesigner
 
 		uint32_t m_countMessages   = 0;
 		uint32_t m_countWarnings   = 0;
-		uint32_t m_ui32CountErrors = 0;
+		uint32_t m_nErrors = 0;
 
 		bool m_bConsoleLogWithHexa             = false;
 		bool m_bConsoleLogTimeInSecond         = false;

@@ -12,11 +12,11 @@ using namespace Setting;
 static void on_change(GtkEntry* /*entry*/, gpointer data) { static_cast<CEnumerationSettingView *>(data)->onChange(); }
 
 CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName,
-												 const Kernel::IKernelContext& rKernelContext, const CIdentifier& typeID): CAbstractSettingView(
+												 const Kernel::IKernelContext& ctx, const CIdentifier& typeID): CAbstractSettingView(
 																															   box, index, rBuilderName,
 																															   "settings_collection-comboboxentry_setting_enumeration"),
 																														   m_oTypeIdentifier(typeID),
-																														   m_kernelContext(rKernelContext)
+																														   m_kernelContext(ctx)
 {
 	p                           = false;
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();

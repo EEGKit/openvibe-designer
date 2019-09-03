@@ -36,8 +36,8 @@ void CRendererLine::rebuild(const IRendererContext& rContext)
 
 	for (size_t channel = 0; channel < m_channelCount; channel++)
 	{
-		m_Vertices[channel].resize(m_sampleCount);
-		for (size_t sample = 0; sample < m_sampleCount; sample++) { m_Vertices[channel][sample].x = sample * m_inverseSampleCount; }
+		m_Vertices[channel].resize(m_nSample);
+		for (size_t sample = 0; sample < m_nSample; sample++) { m_Vertices[channel][sample].x = sample * m_inverseSampleCount; }
 	}
 
 	m_historyIndex = 0;
@@ -59,16 +59,16 @@ void CRendererLine::refresh(const IRendererContext& rContext)
 
 	for (size_t channel = 0; channel < m_channelCount; channel++)
 	{
-		const uint32_t firstSampleIndex = ((l_ui32HistoryIndexMax - 1) / m_sampleCount) * m_sampleCount;
+		const uint32_t firstSampleIndex = ((l_ui32HistoryIndexMax - 1) / m_nSample) * m_nSample;
 		std::vector<float>& l_vHistory  = m_history[channel];
 		CVertex* l_pVertex              = &m_Vertices[channel][0];
 
-		for (uint32_t sample = 0; sample < m_sampleCount; sample++)
+		for (uint32_t sample = 0; sample < m_nSample; sample++)
 		{
 			const uint32_t currentSampleIndex = firstSampleIndex + sample;
 
 			if (currentSampleIndex < l_ui32HistoryIndexMax) { l_pVertex->y = l_vHistory[currentSampleIndex]; }
-			else if (currentSampleIndex >= m_sampleCount) { l_pVertex->y = l_vHistory[currentSampleIndex - m_sampleCount]; }
+			else if (currentSampleIndex >= m_nSample) { l_pVertex->y = l_vHistory[currentSampleIndex - m_nSample]; }
 
 			l_pVertex++;
 		}
@@ -82,7 +82,7 @@ bool CRendererLine::render(const IRendererContext& rContext)
 	if (!rContext.getSelectedCount()) { return false; }
 	if (!m_historyCount) { return false; }
 
-	const auto sampleCount = int(m_sampleCount);
+	const auto sampleCount = int(m_nSample);
 
 
 	// When the display is in continuous mode, there will be n1 samples
@@ -97,7 +97,7 @@ bool CRendererLine::render(const IRendererContext& rContext)
 	// |              |___/                                     |
 	// Time          25s              10s                      20s
 
-	const auto n1 = int(m_historyIndex % m_sampleCount);
+	const auto n1 = int(m_historyIndex % m_nSample);
 	const auto n2 = int(sampleCount - n1);
 
 	if (!sampleCount) { return false; }

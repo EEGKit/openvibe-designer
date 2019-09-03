@@ -8,7 +8,7 @@ namespace OpenViBEDesigner
 	{
 	public:
 
-		CRenameDialog(const OpenViBE::Kernel::IKernelContext& rKernelContext, const OpenViBE::CString& rInitialName, const OpenViBE::CString& rDefaultName, const char* sGUIFilename);
+		CRenameDialog(const OpenViBE::Kernel::IKernelContext& ctx, const OpenViBE::CString& rInitialName, const OpenViBE::CString& rDefaultName, const char* sGUIFilename);
 		virtual ~CRenameDialog();
 
 		bool run();

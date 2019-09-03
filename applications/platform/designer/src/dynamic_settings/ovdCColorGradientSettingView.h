@@ -24,7 +24,7 @@ namespace OpenViBEDesigner
 		{
 		public:
 			CColorGradientSettingView(OpenViBE::Kernel::IBox& box, const uint32_t index, OpenViBE::CString& rBuilderName,
-									  const OpenViBE::Kernel::IKernelContext& rKernelContext);
+									  const OpenViBE::Kernel::IKernelContext& ctx);
 
 			void getValue(OpenViBE::CString& value) const override;
 			void setValue(const OpenViBE::CString& value) override;

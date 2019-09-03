@@ -10,7 +10,7 @@ namespace OpenViBEDesigner
 	{
 	public:
 
-		CBoxProxy(const OpenViBE::Kernel::IKernelContext& rKernelContext, OpenViBE::Kernel::IScenario& rScenario, const OpenViBE::CIdentifier& boxID);
+		CBoxProxy(const OpenViBE::Kernel::IKernelContext& ctx, OpenViBE::Kernel::IScenario& rScenario, const OpenViBE::CIdentifier& boxID);
 		virtual ~CBoxProxy() { if (!m_bApplied) { this->apply(); } }
 
 		operator OpenViBE::Kernel::IBox* () const { return m_pBox; }

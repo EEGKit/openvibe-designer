@@ -9,10 +9,10 @@ using namespace Setting;
 
 static void on_checkbutton__pressed(GtkToggleButton* /*button*/, gpointer data) { static_cast<CBitMaskSettingView *>(data)->onChange(); }
 
-CBitMaskSettingView::CBitMaskSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext,
+CBitMaskSettingView::CBitMaskSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& ctx,
 										 const CIdentifier& typeID): CAbstractSettingView(box, index, rBuilderName,
 																						  "settings_collection-table_setting_bitmask"),
-																	 m_oTypeIdentifier(typeID), m_kernelContext(rKernelContext)
+																	 m_oTypeIdentifier(typeID), m_kernelContext(ctx)
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 

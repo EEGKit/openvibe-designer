@@ -35,9 +35,9 @@ void CRendererFlower::rebuild(const IRendererContext& rContext)
 
 	uint32_t i;
 
-	m_autoDecimationFactor = 1 + uint32_t((m_sampleCount - 1) / rContext.getMaximumSampleCountPerDisplay());
+	m_autoDecimationFactor = 1 + uint32_t((m_nSample - 1) / rContext.getMaximumSampleCountPerDisplay());
 
-	const uint32_t n = m_sampleCount / m_autoDecimationFactor;
+	const uint32_t n = m_nSample / m_autoDecimationFactor;
 
 	for (auto& multivertex : m_vMuliVertex)
 	{
@@ -46,7 +46,7 @@ void CRendererFlower::rebuild(const IRendererContext& rContext)
 		for (i = 0; i < m_channelCount; ++i)
 		{
 			multivertex[i].resize(n);
-			for (uint32_t j = 0; j < m_sampleCount - m_autoDecimationFactor + 1; j += m_autoDecimationFactor)
+			for (uint32_t j = 0; j < m_nSample - m_autoDecimationFactor + 1; j += m_autoDecimationFactor)
 			{
 				multivertex[i][j / m_autoDecimationFactor].u = j * m_inverseSampleCount;
 			}
@@ -75,11 +75,11 @@ void CRendererFlower::refresh(const IRendererContext& rContext)
 	{
 		for (size_t i = 0; i < m_channelCount; ++i)
 		{
-			size_t k                       = ((m_historyCount - 1 - z * m_vMuliVertex[z][i].size()) / m_sampleCount) * m_sampleCount;
+			size_t k                       = ((m_historyCount - 1 - z * m_vMuliVertex[z][i].size()) / m_nSample) * m_nSample;
 			std::vector<float>& l_vHistory = m_history[i];
 			CVertex* l_pVertex             = &m_vMuliVertex[z][i][0];
 			CVertex* l_pCircleVertex       = &m_vCircle[0];
-			for (size_t j = 0; j < m_sampleCount - m_autoDecimationFactor + 1; j += m_autoDecimationFactor, k += m_autoDecimationFactor)
+			for (size_t j = 0; j < m_nSample - m_autoDecimationFactor + 1; j += m_autoDecimationFactor, k += m_autoDecimationFactor)
 			{
 				float sum    = 0;
 				size_t count = 0;
@@ -120,8 +120,8 @@ bool CRendererFlower::render(const IRendererContext& rContext)
 	if (m_vMuliVertex.empty()) { return false; }
 	if (!m_historyCount) { return false; }
 
-	const uint32_t n = m_sampleCount / m_autoDecimationFactor;
-	const uint32_t d = (m_historyIndex % m_sampleCount) / m_autoDecimationFactor;
+	const uint32_t n = m_nSample / m_autoDecimationFactor;
+	const uint32_t d = (m_historyIndex % m_nSample) / m_autoDecimationFactor;
 
 	glMatrixMode(GL_TEXTURE);
 	glPushMatrix();

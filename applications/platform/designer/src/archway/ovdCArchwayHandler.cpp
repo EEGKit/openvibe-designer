@@ -31,8 +31,8 @@ std::string CArchwayHandler::getArchwayErrorString() const
 	return "[0x" + stream.str() + "] " + errorString;
 }
 
-CArchwayHandler::CArchwayHandler(const OpenViBE::Kernel::IKernelContext& kernelContext)
-	: m_DeviceURL("simulator://"), m_Archway(nullptr), m_KernelContext(kernelContext), m_RunningPipelineId(0) { }
+CArchwayHandler::CArchwayHandler(const OpenViBE::Kernel::IKernelContext& ctx)
+	: m_DeviceURL("simulator://"), m_Archway(nullptr), m_KernelContext(ctx), m_RunningPipelineId(0) { }
 
 EngineInitialisationStatus CArchwayHandler::initialize()
 {

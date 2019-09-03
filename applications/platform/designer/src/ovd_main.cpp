@@ -35,7 +35,7 @@ class CPluginObjectDescEnum
 {
 public:
 
-	explicit CPluginObjectDescEnum(const IKernelContext& rKernelContext) : m_kernelContext(rKernelContext) { }
+	explicit CPluginObjectDescEnum(const IKernelContext& ctx) : m_kernelContext(ctx) { }
 
 	virtual ~CPluginObjectDescEnum() = default;
 
@@ -73,7 +73,7 @@ class CPluginObjectDescCollector : public CPluginObjectDescEnum
 {
 public:
 
-	CPluginObjectDescCollector(const IKernelContext& rKernelContext) : CPluginObjectDescEnum(rKernelContext) { }
+	CPluginObjectDescCollector(const IKernelContext& ctx) : CPluginObjectDescEnum(ctx) { }
 
 	bool callback(const IPluginObjectDesc& rPluginObjectDesc) override
 	{
@@ -103,8 +103,8 @@ class CPluginObjectDescLogger : public CPluginObjectDescEnum
 {
 public:
 
-	explicit CPluginObjectDescLogger(const IKernelContext& rKernelContext)
-		: CPluginObjectDescEnum(rKernelContext) { }
+	explicit CPluginObjectDescLogger(const IKernelContext& ctx)
+		: CPluginObjectDescEnum(ctx) { }
 
 	bool callback(const IPluginObjectDesc& rPluginObjectDesc) override
 	{
@@ -153,17 +153,17 @@ namespace
 	}
 } // namespace
 
-static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernelContext, map<string, const IPluginObjectDesc*>& vPluginObjectDesc,
+static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& ctx, map<string, const IPluginObjectDesc*>& vPluginObjectDesc,
 												   GtkTreeStore* pTreeStore,
 												   std::vector<const IPluginObjectDesc*>& vNewBoxes, std::vector<const IPluginObjectDesc*>& vUpdatedBoxes,
 												   bool bIsNewVersion = false)
 {
 	typedef std::map<std::string, std::tuple<int, int, int>> componentsMap;
 	componentsMap currentVersions;
-	getVersionComponentsFromConfigurationToken(rKernelContext, "ProjectVersion_Components", currentVersions);
+	getVersionComponentsFromConfigurationToken(ctx, "ProjectVersion_Components", currentVersions);
 	// By default, fix version to current version - to display the new/update boxes available since current version only
 	componentsMap lastUsedVersions = currentVersions;
-	getVersionComponentsFromConfigurationToken(rKernelContext, "Designer_LastComponentVersionsUsed", lastUsedVersions);
+	getVersionComponentsFromConfigurationToken(ctx, "Designer_LastComponentVersionsUsed", lastUsedVersions);
 
 	for (const auto& pPluginObjectDesc : vPluginObjectDesc)
 	{
@@ -176,12 +176,12 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 
 		bool l_bShouldShow = true;
 
-		if (rKernelContext.getPluginManager().isPluginObjectFlaggedAsDeprecated(l_pPluginObjectDesc->getCreatedClass())
-			&& !rKernelContext.getConfigurationManager().expandAsBoolean("${Designer_ShowDeprecated}", false)) { l_bShouldShow = false; }
+		if (ctx.getPluginManager().isPluginObjectFlaggedAsDeprecated(l_pPluginObjectDesc->getCreatedClass())
+			&& !ctx.getConfigurationManager().expandAsBoolean("${Designer_ShowDeprecated}", false)) { l_bShouldShow = false; }
 
 		/*
-		if  (rKernelContext.getPluginManager().isPluginObjectFlaggedAsUnstable(l_pPluginObjectDesc->getCreatedClass())
-		&& !rKernelContext.getConfigurationManager().expandAsBoolean("${Designer_ShowUnstable}", false))
+		if  (ctx.getPluginManager().isPluginObjectFlaggedAsUnstable(l_pPluginObjectDesc->getCreatedClass())
+		&& !ctx.getConfigurationManager().expandAsBoolean("${Designer_ShowUnstable}", false))
 		{
 		l_bShouldShow=false;
 		}
@@ -241,7 +241,7 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& rKernel
 			std::string l_sTextFont;
 			std::string l_sName(l_pPluginObjectDesc->getName().toASCIIString());
 
-			if (rKernelContext.getPluginManager().isPluginObjectFlaggedAsDeprecated(l_pPluginObjectDesc->getCreatedClass())) { l_sTextColor = "#3f7f7f"; }
+			if (ctx.getPluginManager().isPluginObjectFlaggedAsDeprecated(l_pPluginObjectDesc->getCreatedClass())) { l_sTextColor = "#3f7f7f"; }
 
 			// If the software is launched for the first time after update, highlight new/updated boxes in tree-view
 
@@ -409,9 +409,9 @@ bool parse_arguments(int argc, char** argv, SConfiguration& rConfiguration)
 
 	std::vector<std::string> l_vArgValue;
 #if defined TARGET_OS_Windows
-	int argCount;
-	LPWSTR* argListUtf16 = CommandLineToArgvW(GetCommandLineW(), &argCount);
-	for (int i = 1; i < argCount; ++i)
+	int nArg;
+	LPWSTR* argListUtf16 = CommandLineToArgvW(GetCommandLineW(), &nArg);
+	for (int i = 1; i < nArg; ++i)
 	{
 		GError* error = nullptr;
 		glong itemsRead, itemsWritten;

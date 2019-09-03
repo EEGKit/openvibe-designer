@@ -21,8 +21,8 @@ using namespace OpenViBEDesigner;
 using namespace Kernel;
 using namespace OpenViBEVisualizationToolkit;
 
-CVisualizationWidget::CVisualizationWidget(const IKernelContext& kernelContext)
-	: m_kernelContext(kernelContext), m_Identifier(OV_UndefinedIdentifier), m_Type(EVisualizationWidget_Undefined),
+CVisualizationWidget::CVisualizationWidget(const IKernelContext& ctx)
+	: m_kernelContext(ctx), m_Identifier(OV_UndefinedIdentifier), m_Type(EVisualizationWidget_Undefined),
 	  m_ParentIdentifier(OV_UndefinedIdentifier), m_BoxIdentifier(OV_UndefinedIdentifier) {}
 
 

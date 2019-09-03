@@ -32,12 +32,12 @@ void CRendererSlice::rebuild(const IRendererContext& rContext)
 	uint32_t k = 0, l = 0;
 
 	m_vVertex.clear();
-	m_vVertex.resize(m_sampleCount * m_channelCount * 8);
+	m_vVertex.resize(m_nSample * m_channelCount * 8);
 
 	m_vQuad.clear();
-	m_vQuad.resize(m_sampleCount * m_channelCount * 6 * 4);
+	m_vQuad.resize(m_nSample * m_channelCount * 6 * 4);
 
-	for (uint32_t i = 0; i < m_sampleCount; ++i)
+	for (uint32_t i = 0; i < m_nSample; ++i)
 	{
 		for (uint32_t j = 0; j < m_channelCount; j++)
 		{
@@ -75,7 +75,7 @@ void CRendererSlice::rebuild(const IRendererContext& rContext)
 
 			const float ox = 0;
 			const float oy = 0.5f * float(m_channelCount - 1) - j;
-			const float oz = 0.5f * float(m_sampleCount - 1) - i;
+			const float oz = 0.5f * float(m_nSample - 1) - i;
 
 			m_vVertex[k].x = ox + f32Size;
 			m_vVertex[k].y = oy - f32Size; // v0
@@ -127,7 +127,7 @@ void CRendererSlice::refresh(const IRendererContext& rContext)
 
 	for (uint32_t i = m_historyIndex; i < m_historyCount; ++i)
 	{
-		uint32_t k = (i % m_sampleCount) * m_channelCount * 8;
+		uint32_t k = (i % m_nSample) * m_channelCount * 8;
 		for (uint32_t j = 0; j < m_channelCount; j++) { for (uint32_t l = 0; l < 8; l++) { m_vVertex[k++].u = m_history[j][i]; } }
 	}
 
@@ -165,7 +165,7 @@ bool CRendererSlice::render(const IRendererContext& rContext)
 	glScalef(1., 1., 3.);
 
 	glPushMatrix();
-	glScalef(1.f / rContext.getStackCount(), 1.f / m_channelCount, 1.f / m_sampleCount);
+	glScalef(1.f / rContext.getStackCount(), 1.f / m_channelCount, 1.f / m_nSample);
 	glTranslatef(rContext.getStackIndex() - 0.5f * float(rContext.getStackCount() - 1), 0, 0);
 	glColor4f(.1f, .1f, .1f, rContext.getTranslucency());
 
@@ -182,7 +182,7 @@ bool CRendererSlice::render(const IRendererContext& rContext)
 
 	glDisable(GL_TEXTURE_1D);
 
-	const float progress = 1 - 2.0f * float(m_historyIndex % m_sampleCount) / m_sampleCount;
+	const float progress = 1 - 2.0f * float(m_historyIndex % m_nSample) / m_nSample;
 	glScalef(.5, .5, .5);
 	glBegin(GL_LINE_LOOP);
 	glColor3f(1, 1, 1);

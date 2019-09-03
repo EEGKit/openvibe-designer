@@ -145,9 +145,9 @@ static gint num_visualization_box_menu_items    = sizeof(visualization_box_menu_
 static gint num_undefined_widget_menu_items     = sizeof(undefined_widget_menu_items) / sizeof(undefined_widget_menu_items[0]);
 static gint num_split_widget_menu_items         = sizeof(split_widget_menu_items) / sizeof(split_widget_menu_items[0]);
 
-CDesignerVisualization::CDesignerVisualization(const IKernelContext& rKernelContext, IVisualizationTree& rVisualizationTree,
+CDesignerVisualization::CDesignerVisualization(const IKernelContext& ctx, IVisualizationTree& rVisualizationTree,
 											   CInterfacedScenario& rInterfacedScenario)
-	: m_kernelContext(rKernelContext), m_rVisualizationTree(rVisualizationTree), m_rInterfacedScenario(rInterfacedScenario),
+	: m_kernelContext(ctx), m_rVisualizationTree(rVisualizationTree), m_rInterfacedScenario(rInterfacedScenario),
 	  m_fpDeleteEventCB(nullptr), m_pDeleteEventUserData(nullptr) { }
 
 CDesignerVisualization::~CDesignerVisualization()
@@ -1298,17 +1298,17 @@ bool CDesignerVisualization::removeVisualizationWidget()
 }
 
 //TODO : move this to CVisualizationTree?
-bool CDesignerVisualization::removeVisualizationWidget(const CIdentifier& rIdentifier)
+bool CDesignerVisualization::removeVisualizationWidget(const CIdentifier& identifier)
 {
-	IVisualizationWidget* l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(rIdentifier);
+	IVisualizationWidget* l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(identifier);
 	if (l_pVisualizationWidget == nullptr) { return false; }
 
 	IVisualizationWidget* l_pParentVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_pVisualizationWidget->getParentIdentifier());
 
 	//unparent or destroy widget
 	uint32_t l_ui32ChildIndex;
-	m_rVisualizationTree.unparentVisualizationWidget(rIdentifier, l_ui32ChildIndex);
-	if (l_pVisualizationWidget->getType() != EVisualizationWidget_VisualizationBox) { m_rVisualizationTree.destroyHierarchy(rIdentifier, false); }
+	m_rVisualizationTree.unparentVisualizationWidget(identifier, l_ui32ChildIndex);
+	if (l_pVisualizationWidget->getType() != EVisualizationWidget_VisualizationBox) { m_rVisualizationTree.destroyHierarchy(identifier, false); }
 
 	//reparent other child widget, if any
 	if (l_pParentVisualizationWidget->getType() != EVisualizationWidget_VisualizationPanel)
@@ -1338,10 +1338,10 @@ bool CDesignerVisualization::removeVisualizationWidget(const CIdentifier& rIdent
 	return true;
 }
 
-bool CDesignerVisualization::destroyVisualizationWidget(const CIdentifier& rIdentifier)
+bool CDesignerVisualization::destroyVisualizationWidget(const CIdentifier& identifier)
 {
-	const bool b = removeVisualizationWidget(rIdentifier);
-	m_rVisualizationTree.destroyHierarchy(rIdentifier, true);
+	const bool b = removeVisualizationWidget(identifier);
+	m_rVisualizationTree.destroyHierarchy(identifier, true);
 	return b;
 }
 

@@ -923,10 +923,10 @@ namespace OpenViBEPlugins
 			pango_layout_get_pixel_size(l_pElectrodeLabelLayout, nullptr, &textHeight);
 
 			//draw rings
-			const uint32_t channelCount = uint32_t(m_topographicMapDatabase.getChannelCount());
+			const uint32_t nChannel = uint32_t(m_topographicMapDatabase.getChannelCount());
 			gint channelX, channelY;
 
-			for (uint32_t i = 0; i < channelCount; ++i)
+			for (uint32_t i = 0; i < nChannel; ++i)
 			{
 				if (!getChannel2DPosition(i, channelX, channelY)) { continue; }
 
@@ -1107,11 +1107,11 @@ namespace OpenViBEPlugins
 			uint32_t curSample = 0;
 
 #ifdef INTERPOLATE_AT_CHANNEL_LOCATION
-			uint32_t channelCount = (uint32_t)m_topographicMapDatabase.getChannelCount();
+			uint32_t nChannel = (uint32_t)m_topographicMapDatabase.getChannelCount();
 			double* electrodePosition = nullptr;
 
 			//sampling at electrode locations
-			for (curSample = 0; curSample < channelCount; curSample++)
+			for (curSample = 0; curSample < nChannel; curSample++)
 			{
 				m_topographicMapDatabase.getChannelPosition(curSample, electrodePosition);
 

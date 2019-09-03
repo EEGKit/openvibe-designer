@@ -8,8 +8,8 @@ namespace OpenViBEDesigner
 	{
 	public:
 
-		CAboutPluginDialog(const OpenViBE::Kernel::IKernelContext& rKernelContext, const OpenViBE::CIdentifier& rPluginClassIdentifier, const char* sGUIFilename);
-		CAboutPluginDialog(const OpenViBE::Kernel::IKernelContext& rKernelContext, const OpenViBE::Plugins::IPluginObjectDesc* pPluginObjectDesc, const char* sGUIFilename);
+		CAboutPluginDialog(const OpenViBE::Kernel::IKernelContext& ctx, const OpenViBE::CIdentifier& rPluginClassIdentifier, const char* sGUIFilename);
+		CAboutPluginDialog(const OpenViBE::Kernel::IKernelContext& ctx, const OpenViBE::Plugins::IPluginObjectDesc* pPluginObjectDesc, const char* sGUIFilename);
 		virtual ~CAboutPluginDialog();
 
 		bool run();

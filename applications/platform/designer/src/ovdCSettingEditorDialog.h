@@ -11,7 +11,7 @@ namespace OpenViBEDesigner
 	{
 	public:
 
-		CSettingEditorDialog(const OpenViBE::Kernel::IKernelContext& rKernelContext, OpenViBE::Kernel::IBox& box, uint32_t settingIndex, const char* sTitle, const char* sGUIFilename, const char* sGUISettingsFilename);
+		CSettingEditorDialog(const OpenViBE::Kernel::IKernelContext& ctx, OpenViBE::Kernel::IBox& box, uint32_t settingIndex, const char* sTitle, const char* sGUIFilename, const char* sGUISettingsFilename);
 		virtual ~CSettingEditorDialog();
 		virtual bool run();
 

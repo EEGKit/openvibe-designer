@@ -5,8 +5,8 @@ using namespace OpenViBE;
 using namespace Plugins;
 using namespace Kernel;
 
-CAboutScenarioDialog::CAboutScenarioDialog(const IKernelContext& rKernelContext, IScenario& rScenario, const char* sGUIFilename)
-	: m_kernelContext(rKernelContext), m_rScenario(rScenario), m_sGUIFilename(sGUIFilename) { }
+CAboutScenarioDialog::CAboutScenarioDialog(const IKernelContext& ctx, IScenario& rScenario, const char* sGUIFilename)
+	: m_kernelContext(ctx), m_rScenario(rScenario), m_sGUIFilename(sGUIFilename) { }
 
 CAboutScenarioDialog::~CAboutScenarioDialog() = default;
 

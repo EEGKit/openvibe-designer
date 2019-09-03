@@ -229,7 +229,7 @@ void CRendererTopo::rebuild(const IRendererContext& rContext)
 	if (m_bMultiSlice)
 	{
 		m_vInterpolatedSample.clear();
-		m_vInterpolatedSample.resize(m_sampleCount, Eigen::VectorXd::Zero(m_oScalp.m_vVertex.size()));
+		m_vInterpolatedSample.resize(m_nSample, Eigen::VectorXd::Zero(m_oScalp.m_vVertex.size()));
 	}
 
 	// Finalizes
@@ -271,11 +271,11 @@ void CRendererTopo::refresh(const IRendererContext& rContext)
 	}
 	else
 	{
-		if (m_historyCount >= m_sampleCount)
+		if (m_historyCount >= m_nSample)
 		{
-			for (size_t k = 0; k < m_sampleCount; k++)
+			for (size_t k = 0; k < m_nSample; k++)
 			{
-				for (size_t i = 0; i < nc; ++i) { V(i) = m_history[i][m_historyCount - m_sampleCount + k]; }
+				for (size_t i = 0; i < nc; ++i) { V(i) = m_history[i][m_historyCount - m_nSample + k]; }
 				this->interpolate(V, W, Z);
 				m_vInterpolatedSample[k] = W;
 			}
@@ -377,12 +377,12 @@ bool CRendererTopo::render(const IRendererContext& rContext)
 			}
 			else
 			{
-				glColor4f(1.f, 1.f, 1.f, 4.f / m_sampleCount);
+				glColor4f(1.f, 1.f, 1.f, 4.f / m_nSample);
 				glDisable(GL_DEPTH_TEST);
 				glEnable(GL_BLEND);
-				for (uint32_t i = 0; i < m_sampleCount; ++i)
+				for (uint32_t i = 0; i < m_nSample; ++i)
 				{
-					float l_f32Scale = 1.f + i * 0.25f / m_sampleCount;
+					float l_f32Scale = 1.f + i * 0.25f / m_nSample;
 					glPushMatrix();
 					glScalef(l_f32Scale, l_f32Scale, l_f32Scale);
 					glTexCoordPointer(1, GL_DOUBLE, 0, &m_vInterpolatedSample[i][0]);

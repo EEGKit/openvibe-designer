@@ -438,20 +438,20 @@ namespace OpenViBEVisualizationToolkit
 		virtual bool findChildNodeFromParent(GtkTreeIter* iter, void* widget) = 0;
 
 		/**
-		 * \brief Looks for a node whose identifier matches 'oIdentifier' from the root of the internal tree store
+		 * \brief Looks for a node whose identifier matches 'identifier' from the root of the internal tree store
 		 * \param iter [out] pointer to node to be retrieved
-		 * \param oIdentifier identifier of node to be retrieved, as stored in the EVisualizationTreeColumn_StringIdentifier column
+		 * \param identifier identifier of node to be retrieved, as stored in the EVisualizationTreeColumn_StringIdentifier column
 		 * \return true if node was found, false otherwise
 		 */
-		virtual bool findChildNodeFromRoot(GtkTreeIter* iter, OpenViBE::CIdentifier oIdentifier) = 0;
+		virtual bool findChildNodeFromRoot(GtkTreeIter* iter, OpenViBE::CIdentifier identifier) = 0;
 
 		/**
-		 * \brief Looks for a node whose identifier matches 'oIdentifier' from a given node in the internal tree store
+		 * \brief Looks for a node whose identifier matches 'identifier' from a given node in the internal tree store
 		 * \param iter [in/out] pointer to node from which to start searching when calling function and to node found upon return
-		 * \param oIdentifier identifier of node to be retrieved, as stored in the EVisualizationTreeColumn_StringIdentifier column
+		 * \param identifier identifier of node to be retrieved, as stored in the EVisualizationTreeColumn_StringIdentifier column
 		 * \return true if node was found, false otherwise
 		 */
-		virtual bool findChildNodeFromParent(GtkTreeIter* iter, OpenViBE::CIdentifier oIdentifier) = 0;
+		virtual bool findChildNodeFromParent(GtkTreeIter* iter, OpenViBE::CIdentifier identifier) = 0;
 
 		/**
 		 * \brief Find first parent node of a given type

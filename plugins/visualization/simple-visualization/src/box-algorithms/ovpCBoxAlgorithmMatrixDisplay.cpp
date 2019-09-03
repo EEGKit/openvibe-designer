@@ -22,16 +22,16 @@ using namespace SimpleVisualization;
 
 namespace
 {
-	void show_values_toggle_button_cb(GtkToggleToolButton* pButton, gpointer data)
+	void show_values_toggle_button_cb(GtkToggleToolButton* button, gpointer data)
 	{
 		auto* l_pMatrixDisplay          = reinterpret_cast<CBoxAlgorithmMatrixDisplay*>(data);
-		l_pMatrixDisplay->m_bShowValues = (gtk_toggle_tool_button_get_active(pButton) != 0);
+		l_pMatrixDisplay->m_bShowValues = (gtk_toggle_tool_button_get_active(button) != 0);
 	}
 
-	void show_colors_toggle_button_cb(GtkToggleToolButton* pButton, gpointer data)
+	void show_colors_toggle_button_cb(GtkToggleToolButton* button, gpointer data)
 	{
 		auto* l_pMatrixDisplay          = reinterpret_cast<CBoxAlgorithmMatrixDisplay*>(data);
-		l_pMatrixDisplay->m_bShowColors = (gtk_toggle_tool_button_get_active(pButton) != 0);
+		l_pMatrixDisplay->m_bShowColors = (gtk_toggle_tool_button_get_active(button) != 0);
 		l_pMatrixDisplay->resetColors();
 	}
 } // namespace

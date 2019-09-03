@@ -41,8 +41,8 @@ static void on_color_gradient_spin_button_value_changed(GtkSpinButton* button, g
 static void on_change(GtkEntry* /*entry*/, gpointer data) { static_cast<CColorGradientSettingView *>(data)->onChange(); }
 
 CColorGradientSettingView::CColorGradientSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName,
-													 const Kernel::IKernelContext& rKernelContext)
-	: CAbstractSettingView(box, index, rBuilderName, "settings_collection-hbox_setting_color_gradient"), m_kernelContext(rKernelContext),
+													 const Kernel::IKernelContext& ctx)
+	: CAbstractSettingView(box, index, rBuilderName, "settings_collection-hbox_setting_color_gradient"), m_kernelContext(ctx),
 	  m_builderName(rBuilderName)
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();

@@ -80,46 +80,46 @@ namespace
 	{
 		SBoxProto(ITypeManager& typeManager) : m_TypeManager(typeManager) { }
 
-		bool addInput(const CString& /*sName*/, const CIdentifier& typeID, const CIdentifier& rIdentifier, const bool /*bNotify*/) override
+		bool addInput(const CString& /*name*/, const CIdentifier& typeID, const CIdentifier& identifier, const bool /*bNotify*/) override
 		{
 			uint64_t v = typeID.toUInteger();
 			swap_byte(v, m_inputCountHash);
 			swap_byte(m_inputCountHash, 0x7936A0F3BD12D936LL);
 			m_oHash = m_oHash.toUInteger() ^ v;
-			if (rIdentifier != OV_UndefinedIdentifier)
+			if (identifier != OV_UndefinedIdentifier)
 			{
-				v = rIdentifier.toUInteger();
+				v = identifier.toUInteger();
 				swap_byte(v, 0x2BD1D158F340014D);
 				m_oHash = m_oHash.toUInteger() ^ v;
 			}
 			return true;
 		}
 		//
-		bool addOutput(const CString& /*sName*/, const CIdentifier& typeID, const CIdentifier& rIdentifier, const bool /*bNotify*/) override
+		bool addOutput(const CString& /*name*/, const CIdentifier& typeID, const CIdentifier& identifier, const bool /*bNotify*/) override
 		{
 			uint64_t v = typeID.toUInteger();
 			swap_byte(v, m_outputCountHash);
 			swap_byte(m_outputCountHash, 0xCBB66A5B893AA4E9LL);
 			m_oHash = m_oHash.toUInteger() ^ v;
-			if (rIdentifier != OV_UndefinedIdentifier)
+			if (identifier != OV_UndefinedIdentifier)
 			{
-				v = rIdentifier.toUInteger();
+				v = identifier.toUInteger();
 				swap_byte(v, 0x87CA0F5EFC4FAC68);
 				m_oHash = m_oHash.toUInteger() ^ v;
 			}
 			return true;
 		}
 
-		bool addSetting(const CString& /*sName*/, const CIdentifier& typeID, const CString& /*sDefaultValue*/, const bool /*bModifiable*/,
-						const CIdentifier& rIdentifier, const bool /*bNotify*/) override
+		bool addSetting(const CString& /*name*/, const CIdentifier& typeID, const CString& /*sDefaultValue*/, const bool /*bModifiable*/,
+						const CIdentifier& identifier, const bool /*bNotify*/) override
 		{
 			uint64_t v = typeID.toUInteger();
 			swap_byte(v, m_settingCountHash);
 			swap_byte(m_settingCountHash, 0x3C87F3AAE9F8303BLL);
 			m_oHash = m_oHash.toUInteger() ^ v;
-			if (rIdentifier != OV_UndefinedIdentifier)
+			if (identifier != OV_UndefinedIdentifier)
 			{
-				v = rIdentifier.toUInteger();
+				v = identifier.toUInteger();
 				swap_byte(v, 0x17185F7CDA63A9FA);
 				m_oHash = m_oHash.toUInteger() ^ v;
 			}
@@ -755,7 +755,7 @@ static GtkTargetEntry g_vTargetEntry[] = {
 	{ static_cast<gchar*>("text/plain"), 0, 0 }
 };
 
-CApplication::CApplication(const IKernelContext& rKernelContext) : m_kernelContext(rKernelContext)
+CApplication::CApplication(const IKernelContext& ctx) : m_kernelContext(ctx)
 {
 	m_pPluginManager   = &m_kernelContext.getPluginManager();
 	m_pScenarioManager = &m_kernelContext.getScenarioManager();
@@ -778,7 +778,7 @@ CApplication::CApplication(const IKernelContext& rKernelContext) : m_kernelConte
 	m_kernelContext.getConfigurationManager().createConfigurationToken("__volatile_ScenarioDir", "");
 
 #ifdef MENSIA_DISTRIBUTION
-	m_pArchwayHandler = new Mensia::CArchwayHandler(rKernelContext);
+	m_pArchwayHandler = new Mensia::CArchwayHandler(ctx);
 	m_pArchwayHandlerGUI = new Mensia::CArchwayHandlerGUI(*m_pArchwayHandler, this);
 #endif
 }
