@@ -22,7 +22,8 @@ bool CBoxAlgorithmTopographicMap2DDisplay::initialize()
 	m_pDecoder             = new OpenViBEToolkit::TStreamedMatrixDecoder<CBoxAlgorithmTopographicMap2DDisplay>;
 	m_pDecoder->initialize(*this, 0);
 
-	m_pSphericalSplineInterpolation = &getAlgorithmManager().getAlgorithm(getAlgorithmManager().createAlgorithm(OVP_ClassId_Algorithm_SphericalSplineInterpolation));
+	m_pSphericalSplineInterpolation = &getAlgorithmManager().getAlgorithm(
+		getAlgorithmManager().createAlgorithm(OVP_ClassId_Algorithm_SphericalSplineInterpolation));
 	m_pSphericalSplineInterpolation->initialize();
 
 	//create topographic map database
@@ -35,7 +36,10 @@ bool CBoxAlgorithmTopographicMap2DDisplay::initialize()
 	getStaticBoxContext().getSettingValue(1, l_sDelaySettingValue);
 
 	//create topographic map view (handling GUI interaction)
-	m_pTopographicMap2DView = new CTopographicMap2DView(*m_pTopographicMapDatabase, getTypeManager().getEnumerationEntryValueFromName(OVP_TypeId_SphericalLinearInterpolationType, l_sInterpolationModeSettingValue), strtod(l_sDelaySettingValue, nullptr));
+	m_pTopographicMap2DView = new CTopographicMap2DView(*m_pTopographicMapDatabase,
+														getTypeManager().getEnumerationEntryValueFromName(
+															OVP_TypeId_SphericalLinearInterpolationType, l_sInterpolationModeSettingValue),
+														strtod(l_sDelaySettingValue, nullptr));
 
 	//have database notify us when new data is available
 	m_pTopographicMapDatabase->setDrawable(m_pTopographicMap2DView);
@@ -53,7 +57,8 @@ bool CBoxAlgorithmTopographicMap2DDisplay::initialize()
 		return false;
 	}
 
-	m_visualizationContext = dynamic_cast<OpenViBEVisualizationToolkit::IVisualizationContext*>(this->createPluginObject(OVP_ClassId_Plugin_VisualizationContext));
+	m_visualizationContext = dynamic_cast<OpenViBEVisualizationToolkit::IVisualizationContext*>(this->createPluginObject(
+		OVP_ClassId_Plugin_VisualizationContext));
 	m_visualizationContext->setWidget(*this, l_pWidget);
 	m_visualizationContext->setToolbar(*this, l_pToolbarWidget);
 
@@ -87,7 +92,7 @@ bool CBoxAlgorithmTopographicMap2DDisplay::processInput(const uint32_t /*index*/
 	return true;
 }
 
-bool CBoxAlgorithmTopographicMap2DDisplay::processClock(IMessageClock& /*rMessageClock*/)
+bool CBoxAlgorithmTopographicMap2DDisplay::processClock(IMessageClock& /*messageClock*/)
 {
 	getBoxAlgorithmContext()->markAlgorithmAsReadyToProcess();
 	return true;
@@ -123,7 +128,8 @@ bool CBoxAlgorithmTopographicMap2DDisplay::process()
 			}
 			//
 
-			if (!m_pTopographicMapDatabase->setMatrixBuffer(l_pInputMatrix->getBuffer(), context->getInputChunkStartTime(0, i), context->getInputChunkEndTime(0, i))) { return false; }
+			if (!m_pTopographicMapDatabase->setMatrixBuffer(l_pInputMatrix->getBuffer(), context->getInputChunkStartTime(0, i),
+															context->getInputChunkEndTime(0, i))) { return false; }
 		}
 	}
 

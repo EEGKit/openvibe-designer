@@ -22,13 +22,13 @@ namespace OpenViBEPlugins
 		 * \brief The class CBoxAlgorithmModifiableSettings describes the box ModifiableSettings.
 		 *
 		 */
-		class CBoxAlgorithmModifiableSettings : virtual public OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>
+		class CBoxAlgorithmModifiableSettings final : virtual public OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>
 		{
 		public:
 			void release() override { delete this; }
 			bool initialize() override;
 			bool uninitialize() override;
-			bool processClock(OpenViBE::CMessageClock& rMessageClock) override;
+			bool processClock(OpenViBE::CMessageClock& messageClock) override;
 			uint64_t getClockFrequency() override;
 
 			bool process() override;
@@ -47,7 +47,7 @@ namespace OpenViBEPlugins
 		 * \brief Descriptor of the box ModifiableSettings.
 		 *
 		 */
-		class CBoxAlgorithmModifiableSettingsDesc : virtual public OpenViBE::Plugins::IBoxAlgorithmDesc
+		class CBoxAlgorithmModifiableSettingsDesc final : virtual public OpenViBE::Plugins::IBoxAlgorithmDesc
 		{
 		public:
 
@@ -56,8 +56,18 @@ namespace OpenViBEPlugins
 			OpenViBE::CString getName() const override { return OpenViBE::CString("Modifiable Settings example"); }
 			OpenViBE::CString getAuthorName() const override { return OpenViBE::CString("lmahe"); }
 			OpenViBE::CString getAuthorCompanyName() const override { return OpenViBE::CString("Inria"); }
-			OpenViBE::CString getShortDescription() const override { return OpenViBE::CString("Settings of this box are modifiable during playback. Values are displayed in log every 5 seconds"); }
-			OpenViBE::CString getDetailedDescription() const override { return OpenViBE::CString("This box purpose is to test and demonstrate the modifiable settings feature.\n It has a setting of each type and all are modifiable during scenario playback.\n"); }
+
+			OpenViBE::CString getShortDescription() const override
+			{
+				return OpenViBE::CString("Settings of this box are modifiable during playback. Values are displayed in log every 5 seconds");
+			}
+
+			OpenViBE::CString getDetailedDescription() const override
+			{
+				return OpenViBE::CString(
+					"This box purpose is to test and demonstrate the modifiable settings feature.\n It has a setting of each type and all are modifiable during scenario playback.\n");
+			}
+
 			OpenViBE::CString getCategory() const override { return OpenViBE::CString("Examples/Basic"); }
 			OpenViBE::CString getVersion() const override { return OpenViBE::CString("1.0"); }
 			OpenViBE::CString getStockItemName() const override { return OpenViBE::CString(""); }

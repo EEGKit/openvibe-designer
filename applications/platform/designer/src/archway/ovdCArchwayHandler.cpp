@@ -31,8 +31,8 @@ std::string CArchwayHandler::getArchwayErrorString() const
 	return "[0x" + stream.str() + "] " + errorString;
 }
 
-CArchwayHandler::CArchwayHandler(const OpenViBE::Kernel::IKernelContext& kernelContext)
-	: m_DeviceURL("simulator://"), m_Archway(nullptr), m_KernelContext(kernelContext), m_RunningPipelineId(0) { }
+CArchwayHandler::CArchwayHandler(const OpenViBE::Kernel::IKernelContext& ctx)
+	: m_DeviceURL("simulator://"), m_Archway(nullptr), m_KernelContext(ctx), m_RunningPipelineId(0) { }
 
 EngineInitialisationStatus CArchwayHandler::initialize()
 {
@@ -430,16 +430,16 @@ bool CArchwayHandler::isEngineStarted()
 
 namespace
 {
-	void enumerateEnginePipelinesCallback(unsigned int pipelineId, const char* pipelineDescription, void* userData)
+	void enumerateEnginePipelinesCallback(unsigned int pipelineID, const char* pipelineDescription, void* userData)
 	{
 		auto callbackParameters = static_cast<pair< vector<SPipeline>*, map< unsigned int, map< string, string > >* >*>(userData);
 		auto enginePipelines = callbackParameters->first;
 		auto pipelineSettings = callbackParameters->second;
 
-		enginePipelines->push_back({ pipelineId, pipelineDescription, pipelineSettings->count(pipelineId) != 0 });
+		enginePipelines->push_back({ pipelineID, pipelineDescription, pipelineSettings->count(pipelineID) != 0 });
 	}
 
-	void enumeratePipelineParametersCallback(unsigned int/*pipelineId*/, const char* parameterName, const char* parameterValue, void* userData)
+	void enumeratePipelineParametersCallback(unsigned int/*pipelineID*/, const char* parameterName, const char* parameterValue, void* userData)
 	{
 		// This callback will go through the pipeline parameters one by one and push them into the
 // vector of SPipelineParameters which is passed as the first element of the data input pair
@@ -484,28 +484,28 @@ std::vector<SPipeline> CArchwayHandler::getEnginePipelines() const
 	return enginePipelines;
 }
 
-std::vector<SPipelineParameter> CArchwayHandler::getPipelineParameters(unsigned int pipelineClassId) const
+std::vector<SPipelineParameter> CArchwayHandler::getPipelineParameters(unsigned int pipelineClassID) const
 {
 	assert(m_Archway);
 
 	std::vector<SPipelineParameter> pipelineParameters;
 	map<string, string> const* pipelineSettings = nullptr;
 
-	if (m_PipelineSettings.count(pipelineClassId) != 0)
+	if (m_PipelineSettings.count(pipelineClassID) != 0)
 	{
-		pipelineSettings = &m_PipelineSettings.at(pipelineClassId);
+		pipelineSettings = &m_PipelineSettings.at(pipelineClassID);
 	}
 
 	auto callbackParameters = std::make_pair(&pipelineParameters, pipelineSettings);
 
-	unsigned int pipelineId = m_Archway->createPipeline(pipelineClassId, "");
+	unsigned int pipelineID = m_Archway->createPipeline(pipelineClassID, "");
 
-	if (!m_Archway->enumeratePipelineParameters(pipelineId, enumeratePipelineParametersCallback, &callbackParameters))
+	if (!m_Archway->enumeratePipelineParameters(pipelineID, enumeratePipelineParametersCallback, &callbackParameters))
 	{
 		m_KernelContext.getLogManager() << LogLevel_Warning << "Failed enumerate the pipeline's parameters " << this->getArchwayErrorString().c_str() << "\n";
 	}
 
-	if (!m_Archway->releasePipeline(pipelineId))
+	if (!m_Archway->releasePipeline(pipelineID))
 	{
 		m_KernelContext.getLogManager() << LogLevel_Warning << "Failed to release pipeline " << this->getArchwayErrorString().c_str() << "\n";
 	}
@@ -513,21 +513,21 @@ std::vector<SPipelineParameter> CArchwayHandler::getPipelineParameters(unsigned 
 	return pipelineParameters;
 }
 
-std::string CArchwayHandler::getPipelineScenarioPath(uint64_t pipelineClassId) const
+std::string CArchwayHandler::getPipelineScenarioPath(uint64_t pipelineClassID) const
 {
 	assert(m_Archway);
 
 	char messageBuffer[2048];
 	std::string logMessages;
 
-	if (!m_Archway->getPipelineScenarioPath(pipelineClassId, messageBuffer, sizeof(messageBuffer))) { return ""; }
+	if (!m_Archway->getPipelineScenarioPath(pipelineClassID, messageBuffer, sizeof(messageBuffer))) { return ""; }
 	return std::string(messageBuffer);
 }
 
 
-bool CArchwayHandler::setPipelineParameterValue(unsigned int pipelineClassId, std::string const& parameterName, std::string const& parameterValue)
+bool CArchwayHandler::setPipelineParameterValue(unsigned int pipelineClassID, std::string const& parameterName, std::string const& parameterValue)
 {
-	if (m_PipelineSettings.find(pipelineClassId) == m_PipelineSettings.end())
+	if (m_PipelineSettings.find(pipelineClassID) == m_PipelineSettings.end())
 	{
 		m_KernelContext.getLogManager() << LogLevel_Error << "Failed to set the value [" << parameterValue.c_str() << "] to the parameter [" << parameterName.c_str() << "]. The pipeline class id is invalid.\n";
 		return false;
@@ -535,17 +535,17 @@ bool CArchwayHandler::setPipelineParameterValue(unsigned int pipelineClassId, st
 
 	if (parameterValue != "")
 	{
-		m_PipelineSettings[pipelineClassId][parameterName] = parameterValue;
+		m_PipelineSettings[pipelineClassID][parameterName] = parameterValue;
 	}
 	else
 	{
-		if (m_PipelineSettings.count(pipelineClassId) != 0)
+		if (m_PipelineSettings.count(pipelineClassID) != 0)
 		{
-			if (m_PipelineSettings[pipelineClassId].count(parameterName) != 0)
+			if (m_PipelineSettings[pipelineClassID].count(parameterName) != 0)
 			{
-				m_PipelineSettings[pipelineClassId].erase(m_PipelineSettings[pipelineClassId].find(parameterName));
+				m_PipelineSettings[pipelineClassID].erase(m_PipelineSettings[pipelineClassID].find(parameterName));
 
-				if (m_PipelineSettings[pipelineClassId].size() == 0) { m_PipelineSettings.erase(m_PipelineSettings.find(pipelineClassId)); }
+				if (m_PipelineSettings[pipelineClassID].size() == 0) { m_PipelineSettings.erase(m_PipelineSettings.find(pipelineClassID)); }
 			}
 		}
 	}
@@ -609,8 +609,8 @@ bool CArchwayHandler::loadPipelineConfigurations()
 
 	while (!file.eof())
 	{
-		unsigned int pipelineClassId;
-		file >> pipelineClassId;
+		unsigned int pipelineClassID;
+		file >> pipelineClassID;
 
 		std::string parameterName;
 		// The first one simply trashes the tab after the pipeline Id
@@ -622,8 +622,8 @@ bool CArchwayHandler::loadPipelineConfigurations()
 
 		if (parameterValue != "")
 		{
-			m_PipelineSettings[pipelineClassId];
-			m_PipelineSettings[pipelineClassId][parameterName] = parameterValue;
+			m_PipelineSettings[pipelineClassID];
+			m_PipelineSettings[pipelineClassID][parameterName] = parameterValue;
 		}
 	}
 

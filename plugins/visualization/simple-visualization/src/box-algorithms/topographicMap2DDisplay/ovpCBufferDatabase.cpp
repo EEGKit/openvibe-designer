@@ -21,7 +21,9 @@ using namespace std;
 CBufferDatabase::CBufferDatabase(TBoxAlgorithm<IBoxAlgorithm>& oPlugin)
 	: m_oParentPlugin(oPlugin), m_oDisplayMode(OVP_TypeId_SignalDisplayMode_Scan)
 {
-	m_pChannelLocalisationStreamDecoder = &m_oParentPlugin.getAlgorithmManager().getAlgorithm(m_oParentPlugin.getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_ChannelLocalisationStreamDecoder));
+	m_pChannelLocalisationStreamDecoder = &m_oParentPlugin.getAlgorithmManager().getAlgorithm(
+		m_oParentPlugin.getAlgorithmManager().createAlgorithm(
+			OVP_GD_ClassId_Algorithm_ChannelLocalisationStreamDecoder));
 
 	m_pChannelLocalisationStreamDecoder->initialize();
 
@@ -57,7 +59,8 @@ CBufferDatabase::~CBufferDatabase()
 bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer* pMemoryBuffer, uint64_t ui64StartTime, uint64_t ui64EndTime)
 {
 	//feed memory buffer to decoder
-	m_pChannelLocalisationStreamDecoder->getInputParameter(OVP_GD_Algorithm_ChannelLocalisationStreamDecoder_InputParameterId_MemoryBufferToDecode)->setReferenceTarget(&pMemoryBuffer);
+	m_pChannelLocalisationStreamDecoder->getInputParameter(OVP_GD_Algorithm_ChannelLocalisationStreamDecoder_InputParameterId_MemoryBufferToDecode)->
+										 setReferenceTarget(&pMemoryBuffer);
 
 	//process buffer
 	m_pChannelLocalisationStreamDecoder->process();
@@ -67,7 +70,8 @@ bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer*
 	{
 		//retrieve matrix header
 		TParameterHandler<IMatrix*> l_oMatrix;
-		l_oMatrix.initialize(m_pChannelLocalisationStreamDecoder->getOutputParameter(OVP_GD_Algorithm_ChannelLocalisationStreamDecoder_OutputParameterId_Matrix));
+		l_oMatrix.initialize(
+			m_pChannelLocalisationStreamDecoder->getOutputParameter(OVP_GD_Algorithm_ChannelLocalisationStreamDecoder_OutputParameterId_Matrix));
 
 		//copy channel labels
 		m_oChannelLocalisationLabels.resize(l_oMatrix->getDimensionSize(0));
@@ -78,7 +82,8 @@ bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer*
 
 		//retrieve dynamic flag
 		TParameterHandler<bool> l_bDynamic;
-		l_bDynamic.initialize(m_pChannelLocalisationStreamDecoder->getOutputParameter(OVP_GD_Algorithm_ChannelLocalisationStreamDecoder_OutputParameterId_Dynamic));
+		l_bDynamic.initialize(
+			m_pChannelLocalisationStreamDecoder->getOutputParameter(OVP_GD_Algorithm_ChannelLocalisationStreamDecoder_OutputParameterId_Dynamic));
 		m_bDynamicChannelLocalisation = l_bDynamic;
 
 		if (l_oMatrix->getDimensionSize(1) == 3)
@@ -117,10 +122,7 @@ bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer*
 			if (l_ui64BufferDuration != 0)
 			{
 				l_ui64MaxBufferCount = uint64_t(ceil(m_totalDuration / l_ui64BufferDuration));
-				if (l_ui64MaxBufferCount == 0)
-				{
-					l_ui64MaxBufferCount = 1;
-				}
+				if (l_ui64MaxBufferCount == 0) { l_ui64MaxBufferCount = 1; }
 			}
 
 			//if new number of buffers decreased, resize list and destroy useless buffers
@@ -136,7 +138,8 @@ bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer*
 
 		//retrieve coordinates matrix
 		TParameterHandler<IMatrix*> l_oMatrix;
-		l_oMatrix.initialize(m_pChannelLocalisationStreamDecoder->getOutputParameter(OVP_GD_Algorithm_ChannelLocalisationStreamDecoder_OutputParameterId_Matrix));
+		l_oMatrix.initialize(
+			m_pChannelLocalisationStreamDecoder->getOutputParameter(OVP_GD_Algorithm_ChannelLocalisationStreamDecoder_OutputParameterId_Matrix));
 
 		//get pointer to destination matrix
 		CMatrix* l_pChannelLocalisation = nullptr;
@@ -240,11 +243,13 @@ void CBufferDatabase::setMatrixDimensionCount(const uint32_t ui32DimensionCount)
 	if (ui32DimensionCount != 2)
 	{
 		m_bError = true;
-		m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error << "Caller tried to set a " << ui32DimensionCount << "-dimensional matrix. Only 2-dimensional matrices are supported (e.g. [rows X cols]).\n";
+		m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error << "Caller tried to set a " << ui32DimensionCount <<
+				"-dimensional matrix. Only 2-dimensional matrices are supported (e.g. [rows X cols]).\n";
 	}
 	if (ui32DimensionCount == 1)
 	{
-		m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error << "Note: For 1-dimensional matrices, you may try Matrix Transpose box to upgrade the stream to [N X 1] first.\n";
+		m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error <<
+				"Note: For 1-dimensional matrices, you may try Matrix Transpose box to upgrade the stream to [N X 1] first.\n";
 	}
 }
 
@@ -253,13 +258,15 @@ void CBufferDatabase::setMatrixDimensionSize(const uint32_t ui32DimensionIndex, 
 	if (ui32DimensionIndex >= 2)
 	{
 		m_bError = true;
-		m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error << "Tried to access dimension " << ui32DimensionIndex << ", only 0 and 1 supported\n";
+		m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error << "Tried to access dimension " << ui32DimensionIndex <<
+				", only 0 and 1 supported\n";
 		return;
 	}
 
 	if (m_pDimensionSizes[ui32DimensionIndex] != 0 && m_pDimensionSizes[ui32DimensionIndex] != ui32DimensionSize)
 	{
-		m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error << "Upstream tried to change the data chunk size after the first header, this is not supported.\n";
+		m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error <<
+				"Upstream tried to change the data chunk size after the first header, this is not supported.\n";
 		m_bError = true;
 		return;
 	}
@@ -283,14 +290,15 @@ void CBufferDatabase::setMatrixDimensionLabel(const uint32_t ui32DimensionIndex,
 	if (ui32DimensionIndex >= 2)
 	{
 		m_bError = true;
-		m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error << "Tried to access dimension " << ui32DimensionIndex << ", only 0 and 1 supported\n";
+		m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error << "Tried to access dimension " << ui32DimensionIndex <<
+				", only 0 and 1 supported\n";
 		return;
 	}
 
 	m_pDimensionLabels[ui32DimensionIndex][ui32DimensionEntryIndex] = sDimensionLabel;
 }
 
-bool CBufferDatabase::setMatrixBuffer(const double* pBuffer, const uint64_t ui64StartTime, const uint64_t ui64EndTime)
+bool CBufferDatabase::setMatrixBuffer(const double* buffer, const uint64_t ui64StartTime, const uint64_t ui64EndTime)
 {
 	//if an error has occurred, do nothing
 	if (m_bError) { return false; }
@@ -298,7 +306,8 @@ bool CBufferDatabase::setMatrixBuffer(const double* pBuffer, const uint64_t ui64
 	// Check for time-continuity
 	if (ui64StartTime < m_ui64LastBufferEndTime && !m_bWarningPrinted)
 	{
-		m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Warning << "Your signal does not appear to be continuous in time. "
+		m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Warning <<
+				"Your signal does not appear to be continuous in time. "
 				<< "Previously inserted buffer ended at " << ITimeArithmetics::timeToSeconds(m_ui64LastBufferEndTime)
 				<< "s, the current starts at " << ITimeArithmetics::timeToSeconds(ui64StartTime)
 				<< "s. The display may be incorrect.\n";
@@ -315,7 +324,8 @@ bool CBufferDatabase::setMatrixBuffer(const double* pBuffer, const uint64_t ui64
 		//test if it is equal to zero : Error
 		if (m_ui64BufferDuration == 0)
 		{
-			m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Warning << "Error : buffer start time and end time are equal : " << ui64StartTime << "\n";
+			m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Warning <<
+					"Error : buffer start time and end time are equal : " << ui64StartTime << "\n";
 
 			m_bError = true;
 
@@ -328,8 +338,10 @@ bool CBufferDatabase::setMatrixBuffer(const double* pBuffer, const uint64_t ui64
 		if (l_ui32EstimatedFrequency == 0)
 		{
 			// Complain if estimate is bad
-			m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Warning << "The integer sampling frequency was estimated from the chunk size to be 0"
-					<< " (nSamples " << m_pDimensionSizes[1] << " / bufferLength " << ITimeArithmetics::timeToSeconds(m_ui64BufferDuration) << "s = 0). This is not supported. Forcing the rate to 1. This may lead to problems.\n";
+			m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Warning <<
+					"The integer sampling frequency was estimated from the chunk size to be 0"
+					<< " (nSamples " << m_pDimensionSizes[1] << " / bufferLength " << ITimeArithmetics::timeToSeconds(m_ui64BufferDuration) <<
+					"s = 0). This is not supported. Forcing the rate to 1. This may lead to problems.\n";
 			l_ui32EstimatedFrequency = 1;
 		}
 		if (m_ui32SamplingFrequency == 0)
@@ -340,7 +352,8 @@ bool CBufferDatabase::setMatrixBuffer(const double* pBuffer, const uint64_t ui64
 		if (m_ui32SamplingFrequency != l_ui32EstimatedFrequency)
 		{
 			m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Warning
-					<< "Sampling rate [" << l_ui32EstimatedFrequency << "] suggested by chunk properties differs from stream-specified rate [" << m_ui32SamplingFrequency << "]. There may be a problem with an upstream box. Trying to use the estimated rate.\n";
+					<< "Sampling rate [" << l_ui32EstimatedFrequency << "] suggested by chunk properties differs from stream-specified rate [" <<
+					m_ui32SamplingFrequency << "]. There may be a problem with an upstream box. Trying to use the estimated rate.\n";
 			m_ui32SamplingFrequency = l_ui32EstimatedFrequency;
 		}
 
@@ -375,19 +388,13 @@ bool CBufferDatabase::setMatrixBuffer(const double* pBuffer, const uint64_t ui64
 	//if old buffers need to be removed
 	if (m_oSampleBuffers.size() == m_bufferToDisplayCount)
 	{
-		if (m_ovTotalDuration == 0)
-		{
-			m_ovTotalDuration = (m_oStartTime.back() - m_oStartTime.front()) + (m_oEndTime.back() - m_oStartTime.back());
-		}
+		if (m_ovTotalDuration == 0) { m_ovTotalDuration = (m_oStartTime.back() - m_oStartTime.front()) + (m_oEndTime.back() - m_oStartTime.back()); }
 		if (m_bufferStep == 0)
 		{
 			if (m_oStartTime.size() <= 1) { m_bufferStep = m_ovTotalDuration; }
 			else { m_bufferStep = m_oStartTime[1] - m_oStartTime[0]; }
 		}
-		if (m_totalStep == 0)
-		{
-			m_totalStep = (m_oStartTime.back() - m_oStartTime.front()) + m_bufferStep;
-		}
+		if (m_totalStep == 0) { m_totalStep = (m_oStartTime.back() - m_oStartTime.front()) + m_bufferStep; }
 
 		//save first buffer pointer
 		l_pBufferToWrite = m_oSampleBuffers.front();
@@ -400,13 +407,10 @@ bool CBufferDatabase::setMatrixBuffer(const double* pBuffer, const uint64_t ui64
 	}
 
 	//do we need to allocate a new buffer?
-	if (l_pBufferToWrite == nullptr)
-	{
-		l_pBufferToWrite = new double[size_t(l_ui64NumberOfSamplesPerBuffer)];
-	}
+	if (l_pBufferToWrite == nullptr) { l_pBufferToWrite = new double[size_t(l_ui64NumberOfSamplesPerBuffer)]; }
 
 	//copy new buffer into internal buffer
-	System::Memory::copy(l_pBufferToWrite, pBuffer, l_ui64NumberOfSamplesPerBuffer * sizeof(double));
+	System::Memory::copy(l_pBufferToWrite, buffer, l_ui64NumberOfSamplesPerBuffer * sizeof(double));
 
 	//push new buffer and its timestamps
 	m_oSampleBuffers.push_back(l_pBufferToWrite);
@@ -425,14 +429,8 @@ bool CBufferDatabase::setMatrixBuffer(const double* pBuffer, const uint64_t ui64
 		for (uint64_t i = 0; i < m_pDimensionSizes[1]; i++, l_ui64CurrentSample++)
 		{
 			//get channel local min/max
-			if (pBuffer[l_ui64CurrentSample] < l_f64LocalMin)
-			{
-				l_f64LocalMin = pBuffer[l_ui64CurrentSample];
-			}
-			if (pBuffer[l_ui64CurrentSample] > l_f64LocalMax)
-			{
-				l_f64LocalMax = pBuffer[l_ui64CurrentSample];
-			}
+			if (buffer[l_ui64CurrentSample] < l_f64LocalMin) { l_f64LocalMin = buffer[l_ui64CurrentSample]; }
+			if (buffer[l_ui64CurrentSample] > l_f64LocalMax) { l_f64LocalMax = buffer[l_ui64CurrentSample]; }
 		}
 
 		//adds the minmax pair to the corresponding channel's list
@@ -463,14 +461,8 @@ void CBufferDatabase::getDisplayedChannelLocalMinMaxValue(const uint32_t ui32Cha
 
 	for (uint64_t i = 0; i < m_oLocalMinMaxValue[size_t(ui32Channel)].size(); ++i)
 	{
-		if (f64Min > m_oLocalMinMaxValue[size_t(ui32Channel)][size_t(i)].first)
-		{
-			f64Min = m_oLocalMinMaxValue[size_t(ui32Channel)][size_t(i)].first;
-		}
-		if (f64Max < m_oLocalMinMaxValue[size_t(ui32Channel)][size_t(i)].second)
-		{
-			f64Max = m_oLocalMinMaxValue[size_t(ui32Channel)][size_t(i)].second;
-		}
+		if (f64Min > m_oLocalMinMaxValue[size_t(ui32Channel)][size_t(i)].first) { f64Min = m_oLocalMinMaxValue[size_t(ui32Channel)][size_t(i)].first; }
+		if (f64Max < m_oLocalMinMaxValue[size_t(ui32Channel)][size_t(i)].second) { f64Max = m_oLocalMinMaxValue[size_t(ui32Channel)][size_t(i)].second; }
 	}
 }
 
@@ -609,7 +601,6 @@ bool CBufferDatabase::getChannelLabel(const uint32_t ui32ChannelIndex, CString& 
 	return false;
 }
 
-void CBufferDatabase::setStimulationCount(const uint32_t /*ui32StimulationCount*/) { }
 
 void CBufferDatabase::setStimulation(const uint32_t /*ui32StimulationIndex*/, const uint64_t ui64StimulationIdentifier, const uint64_t ui64StimulationDate)
 {
@@ -619,16 +610,9 @@ void CBufferDatabase::setStimulation(const uint32_t /*ui32StimulationIndex*/, co
 
 	if (!m_oStartTime.empty())
 	{
-		std::deque<std::pair<uint64_t, uint64_t>>::iterator i;
 		while (m_oStimulations.begin() != m_oStimulations.end() && m_oStimulations.begin()->first < m_oStartTime.front()) { m_oStimulations.pop_front(); }
 	}
 }
-
-void CBufferDatabase::setDisplayMode(const CIdentifier& oDisplayMode) { m_oDisplayMode = oDisplayMode; }
-
-CIdentifier CBufferDatabase::getDisplayMode() { return m_oDisplayMode; }
-
-void CBufferDatabase::setRedrawOnNewData(const bool bSet) { m_bRedrawOnNewData = bSet; }
 
 bool CBufferDatabase::fillChannelLookupTable()
 {
@@ -713,22 +697,13 @@ bool CBufferDatabase::convertCartesianToSpherical(const double* pCartesianCoords
 	rTheta = acos(pCartesianCoords[2]) * l_f64RadToDeg;
 
 	//compute phi so that it lies in [0, 360]
-	if (fabs(pCartesianCoords[0]) < MY_THRESHOLD)
-	{
-		rPhi = (pCartesianCoords[1] > 0) ? 90 : 270;
-	}
+	if (fabs(pCartesianCoords[0]) < MY_THRESHOLD) { rPhi = (pCartesianCoords[1] > 0) ? 90 : 270; }
 	else
 	{
 		rPhi = atan(pCartesianCoords[1] / pCartesianCoords[0]) * l_f64RadToDeg;
 
-		if (pCartesianCoords[0] < 0)
-		{
-			rPhi += 180;
-		}
-		else if (pCartesianCoords[1] < 0)
-		{
-			rPhi += 360;
-		}
+		if (pCartesianCoords[0] < 0) { rPhi += 180; }
+		else if (pCartesianCoords[1] < 0) { rPhi += 360; }
 	}
 
 	return true;

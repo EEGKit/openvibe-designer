@@ -59,21 +59,18 @@ namespace Mensia
 			void draw() override;
 		};
 
-		class CBoxAlgorithmStackedInstantVizListener : public CBoxAlgorithmVizListener
+		class CBoxAlgorithmStackedInstantVizListener final : public CBoxAlgorithmVizListener
 		{
 		public:
 
 			CBoxAlgorithmStackedInstantVizListener(const std::vector<int>& vParameter) : CBoxAlgorithmVizListener(vParameter) { }
 
-			bool onInputTypeChanged(IBox& rBox, const uint32_t index) override
+			bool onInputTypeChanged(IBox& box, const uint32_t index) override
 			{
-				OpenViBE::CIdentifier l_oTypeIdentifier = OV_UndefinedIdentifier;
-				rBox.getInputType(index, l_oTypeIdentifier);
-				if (!this->getTypeManager().isDerivedFromStream(l_oTypeIdentifier, OV_TypeId_TimeFrequency))
-				{
-					rBox.setInputType(index, OV_TypeId_TimeFrequency);
-				}
-				rBox.setInputType(1, OV_TypeId_Stimulations);
+				OpenViBE::CIdentifier typeID = OV_UndefinedIdentifier;
+				box.getInputType(index, typeID);
+				if (!this->getTypeManager().isDerivedFromStream(typeID, OV_TypeId_TimeFrequency)) { box.setInputType(index, OV_TypeId_TimeFrequency); }
+				box.setInputType(1, OV_TypeId_Stimulations);
 				return true;
 			}
 		};
@@ -83,8 +80,12 @@ namespace Mensia
 		{
 		public:
 
-			TBoxAlgorithmStackedInstantVizDesc(const OpenViBE::CString& sName, const OpenViBE::CIdentifier& rDescClassId, const OpenViBE::CIdentifier& rClassId, const OpenViBE::CString& sAddedSoftwareVersion, const OpenViBE::CString& sUpdatedSoftwareVersion, const CParameterSet& rParameterSet, const OpenViBE::CString& sShortDescription, const OpenViBE::CString& sDetailedDescription)
-				: CBoxAlgorithmVizDesc(sName, rDescClassId, rClassId, sAddedSoftwareVersion, sUpdatedSoftwareVersion, rParameterSet, sShortDescription, sDetailedDescription) { }
+			TBoxAlgorithmStackedInstantVizDesc(const OpenViBE::CString& name, const OpenViBE::CIdentifier& rDescClassId, const OpenViBE::CIdentifier& rClassId,
+											   const OpenViBE::CString& sAddedSoftwareVersion, const OpenViBE::CString& sUpdatedSoftwareVersion,
+											   const CParameterSet& rParameterSet, const OpenViBE::CString& sShortDescription,
+											   const OpenViBE::CString& sDetailedDescription)
+				: CBoxAlgorithmVizDesc(name, rDescClassId, rClassId, sAddedSoftwareVersion, sUpdatedSoftwareVersion, rParameterSet, sShortDescription,
+									   sDetailedDescription) { }
 
 			OpenViBE::Plugins::IPluginObject* create() override
 			{
@@ -100,7 +101,8 @@ namespace Mensia
 
 
 		template <bool bDrawBorders, class TRendererFactoryClass, class TRulerClass>
-		TBoxAlgorithmStackedInstantViz<bDrawBorders, TRendererFactoryClass, TRulerClass>::TBoxAlgorithmStackedInstantViz(const OpenViBE::CIdentifier& rClassId, const std::vector<int>& vParameter)
+		TBoxAlgorithmStackedInstantViz<bDrawBorders, TRendererFactoryClass, TRulerClass>::TBoxAlgorithmStackedInstantViz(
+			const OpenViBE::CIdentifier& rClassId, const std::vector<int>& vParameter)
 			: CBoxAlgorithmViz(rClassId, vParameter) { }
 
 		template <bool bDrawBorders, class TRendererFactoryClass, class TRulerClass>
@@ -171,9 +173,9 @@ namespace Mensia
 				m_oMatrixDecoder.decode(chunk);
 
 				OpenViBE::IMatrix* inputMatrix = m_oMatrixDecoder.getOutputMatrix();
-				const uint32_t channelCount    = inputMatrix->getDimensionSize(0);
+				const uint32_t nChannel    = inputMatrix->getDimensionSize(0);
 
-				if (channelCount == 0)
+				if (nChannel == 0)
 				{
 					this->getLogManager() << LogLevel_Error << "Input stream " << uint32_t(chunk) << " has 0 channels\n";
 					return false;
@@ -183,12 +185,12 @@ namespace Mensia
 				{
 					for (auto renderer : m_vRenderer) { m_oRendererFactory.release(renderer); }
 					m_vRenderer.clear();
-					m_vRenderer.resize(channelCount);
+					m_vRenderer.resize(nChannel);
 
 					m_pSubRendererContext->clear();
 					m_pSubRendererContext->setParentRendererContext(m_pRendererContext);
 					m_pSubRendererContext->setTimeLocked(false);
-					m_pSubRendererContext->setStackCount(channelCount);
+					m_pSubRendererContext->setStackCount(nChannel);
 					m_pSubRendererContext->setPositiveOnly(true);
 
 
@@ -223,10 +225,7 @@ namespace Mensia
 									m_pRendererContext->setDimensionLabel(1, frequencyCount - frequency - 1, buffer.get());
 								}
 							}
-							catch (...)
-							{
-								m_pRendererContext->setDimensionLabel(1, frequencyCount - frequency - 1, "NaN");
-							}
+							catch (...) { m_pRendererContext->setDimensionLabel(1, frequencyCount - frequency - 1, "NaN"); }
 							m_pSubRendererContext->addChannel("", 0, 0, 0);
 						}
 
@@ -238,7 +237,7 @@ namespace Mensia
 						m_pSubRendererContext->setElementCount(sampleCount);
 						gtk_tree_view_set_model(m_pChannelTreeView, nullptr);
 
-						for (uint32_t channel = 0; channel < channelCount; channel++)
+						for (uint32_t channel = 0; channel < nChannel; channel++)
 						{
 							std::string channelName          = trim(inputMatrix->getDimensionLabel(0, channel));
 							std::string lowercaseChannelName = channelName;
@@ -271,7 +270,7 @@ namespace Mensia
 						return false;
 					}
 
-					m_pRuler->setRenderer(channelCount ? m_vRenderer[0] : nullptr);
+					m_pRuler->setRenderer(nChannel ? m_vRenderer[0] : nullptr);
 
 					m_bRebuildNeeded = true;
 					m_bRefreshNeeded = true;
@@ -294,7 +293,7 @@ namespace Mensia
 						m_pSubRendererContext->setSampleDuration(sampleDuration);
 						m_pRendererContext->setSampleDuration(sampleDuration);
 
-						for (uint32_t channel = 0; channel < channelCount; channel++)
+						for (uint32_t channel = 0; channel < nChannel; channel++)
 						{
 							// Feed renderer with actual samples
 							for (uint32_t sample = 0; sample < sampleCount; sample++)
@@ -302,7 +301,8 @@ namespace Mensia
 								m_vSwap.resize(frequencyCount);
 								for (uint32_t frequency = 0; frequency < frequencyCount; frequency++)
 								{
-									m_vSwap[frequencyCount - frequency - 1] = float(inputMatrix->getBuffer()[sample + frequency * sampleCount + channel * sampleCount * frequencyCount]);
+									m_vSwap[frequencyCount - frequency - 1] = float(
+										inputMatrix->getBuffer()[sample + frequency * sampleCount + channel * sampleCount * frequencyCount]);
 								}
 								m_vRenderer[channel]->feed(&m_vSwap[0]);
 							}
@@ -331,14 +331,8 @@ namespace Mensia
 				}
 			}
 
-			if (m_bRebuildNeeded)
-			{
-				for (auto& renderer : m_vRenderer) { renderer->rebuild(*m_pSubRendererContext); }
-			}
-			if (m_bRefreshNeeded)
-			{
-				for (auto& renderer : m_vRenderer) { renderer->refresh(*m_pSubRendererContext); }
-			}
+			if (m_bRebuildNeeded) { for (auto& renderer : m_vRenderer) { renderer->rebuild(*m_pSubRendererContext); } }
+			if (m_bRefreshNeeded) { for (auto& renderer : m_vRenderer) { renderer->refresh(*m_pSubRendererContext); } }
 			if (m_bRedrawNeeded) { this->redraw(); }
 
 			m_bRebuildNeeded = false;

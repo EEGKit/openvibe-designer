@@ -5,13 +5,13 @@ using namespace OpenViBE;
 using namespace Plugins;
 using namespace Kernel;
 
-CAboutPluginDialog::CAboutPluginDialog(const IKernelContext& rKernelContext, const CIdentifier& rPluginClassIdentifier, const char* sGUIFilename)
-	: m_kernelContext(rKernelContext),
+CAboutPluginDialog::CAboutPluginDialog(const IKernelContext& ctx, const CIdentifier& rPluginClassIdentifier, const char* sGUIFilename)
+	: m_kernelContext(ctx),
 	  m_oPluginClassIdentifier(rPluginClassIdentifier),
 	  m_sGUIFilename(sGUIFilename) { }
 
-CAboutPluginDialog::CAboutPluginDialog(const IKernelContext& rKernelContext, const IPluginObjectDesc* pPluginObjectDesc, const char* sGUIFilename)
-	: m_kernelContext(rKernelContext),
+CAboutPluginDialog::CAboutPluginDialog(const IKernelContext& ctx, const IPluginObjectDesc* pPluginObjectDesc, const char* sGUIFilename)
+	: m_kernelContext(ctx),
 	  m_oPluginClassIdentifier(OV_UndefinedIdentifier),
 	  m_sGUIFilename(sGUIFilename),
 	  m_pPluginObjectDescriptor(pPluginObjectDesc) { }
@@ -45,14 +45,8 @@ bool CAboutPluginDialog::run()
 	GtkWidget* l_pDetailedDescription    = GTK_WIDGET(gtk_builder_get_object(interface, "plugin_about-textview_detailed_description"));
 	g_object_unref(interface);
 
-	if (m_pPluginObjectDescriptor->isDerivedFromClass(OV_ClassId_Plugins_AlgorithmDesc))
-	{
-		gtk_entry_set_text(GTK_ENTRY(l_pType), "Algorithm");
-	}
-	else if (m_pPluginObjectDescriptor->isDerivedFromClass(OV_ClassId_Plugins_BoxAlgorithmDesc))
-	{
-		gtk_entry_set_text(GTK_ENTRY(l_pType), "Box algorithm");
-	}
+	if (m_pPluginObjectDescriptor->isDerivedFromClass(OV_ClassId_Plugins_AlgorithmDesc)) { gtk_entry_set_text(GTK_ENTRY(l_pType), "Algorithm"); }
+	else if (m_pPluginObjectDescriptor->isDerivedFromClass(OV_ClassId_Plugins_BoxAlgorithmDesc)) { gtk_entry_set_text(GTK_ENTRY(l_pType), "Box algorithm"); }
 	else if (m_pPluginObjectDescriptor->isDerivedFromClass(OV_ClassId_Plugins_ScenarioImporterDesc))
 	{
 		gtk_entry_set_text(GTK_ENTRY(l_pType), "Scenario importer");

@@ -11,30 +11,18 @@ using namespace Kernel;
 
 namespace
 {
-	void button_comment_bold_selection_cb(GtkButton* /*button*/, gpointer data)
-	{
-		static_cast<CCommentEditorDialog*>(data)->applyTagCB("<b>", "</b>");
-	}
+	void button_comment_bold_selection_cb(GtkButton* /*button*/, gpointer data) { static_cast<CCommentEditorDialog*>(data)->applyTagCB("<b>", "</b>"); }
 
-	void button_comment_italic_selection_cb(GtkButton* /*button*/, gpointer data)
-	{
-		static_cast<CCommentEditorDialog*>(data)->applyTagCB("<i>", "</i>");
-	}
+	void button_comment_italic_selection_cb(GtkButton* /*button*/, gpointer data) { static_cast<CCommentEditorDialog*>(data)->applyTagCB("<i>", "</i>"); }
 
-	void button_comment_underline_selection_cb(GtkButton* /*button*/, gpointer data)
-	{
-		static_cast<CCommentEditorDialog*>(data)->applyTagCB("<u>", "</u>");
-	}
+	void button_comment_underline_selection_cb(GtkButton* /*button*/, gpointer data) { static_cast<CCommentEditorDialog*>(data)->applyTagCB("<u>", "</u>"); }
 
 	void button_comment_strikethrough_selection_cb(GtkButton* /*button*/, gpointer data)
 	{
 		static_cast<CCommentEditorDialog*>(data)->applyTagCB("<s>", "</s>");
 	}
 
-	void button_comment_mono_selection_cb(GtkButton* /*button*/, gpointer data)
-	{
-		static_cast<CCommentEditorDialog*>(data)->applyTagCB("<tt>", "</tt>");
-	}
+	void button_comment_mono_selection_cb(GtkButton* /*button*/, gpointer data) { static_cast<CCommentEditorDialog*>(data)->applyTagCB("<tt>", "</tt>"); }
 
 	void button_comment_subscript_selection_cb(GtkButton* /*button*/, gpointer data)
 	{
@@ -46,10 +34,7 @@ namespace
 		static_cast<CCommentEditorDialog*>(data)->applyTagCB("<sup>", "</sup>");
 	}
 
-	void button_comment_big_selection_cb(GtkButton* /*button*/, gpointer data)
-	{
-		static_cast<CCommentEditorDialog*>(data)->applyTagCB("<big>", "</big>");
-	}
+	void button_comment_big_selection_cb(GtkButton* /*button*/, gpointer data) { static_cast<CCommentEditorDialog*>(data)->applyTagCB("<big>", "</big>"); }
 
 	void button_comment_small_selection_cb(GtkButton* /*button*/, gpointer data)
 	{
@@ -71,14 +56,11 @@ namespace
 		static_cast<CCommentEditorDialog*>(data)->applyTagCB("<span color=\"blue\">", "</span>");
 	}
 
-	void button_comment_info_cb(GtkButton* /*button*/, gpointer data)
-	{
-		static_cast<CCommentEditorDialog*>(data)->infoCB();
-	}
+	void button_comment_info_cb(GtkButton* /*button*/, gpointer data) { static_cast<CCommentEditorDialog*>(data)->infoCB(); }
 } // namespace
 
-CCommentEditorDialog::CCommentEditorDialog(const IKernelContext& rKernelContext, IComment& rComment, const char* sGUIFilename)
-	: m_kernelContext(rKernelContext), m_rComment(rComment), m_sGUIFilename(sGUIFilename) { }
+CCommentEditorDialog::CCommentEditorDialog(const IKernelContext& ctx, IComment& rComment, const char* sGUIFilename)
+	: m_kernelContext(ctx), m_rComment(rComment), m_sGUIFilename(sGUIFilename) { }
 
 bool CCommentEditorDialog::run()
 
@@ -91,11 +73,15 @@ bool CCommentEditorDialog::run()
 
 	::g_signal_connect(::gtk_builder_get_object(m_pInterface, "comment_toolbutton_bold"), "clicked", G_CALLBACK(button_comment_bold_selection_cb), this);
 	::g_signal_connect(::gtk_builder_get_object(m_pInterface, "comment_toolbutton_italic"), "clicked", G_CALLBACK(button_comment_italic_selection_cb), this);
-	::g_signal_connect(::gtk_builder_get_object(m_pInterface, "comment_toolbutton_underline"), "clicked", G_CALLBACK(button_comment_underline_selection_cb), this);
-	::g_signal_connect(::gtk_builder_get_object(m_pInterface, "comment_toolbutton_strikethrough"), "clicked", G_CALLBACK(button_comment_strikethrough_selection_cb), this);
+	::g_signal_connect(::gtk_builder_get_object(m_pInterface, "comment_toolbutton_underline"), "clicked", G_CALLBACK(button_comment_underline_selection_cb),
+					   this);
+	::g_signal_connect(::gtk_builder_get_object(m_pInterface, "comment_toolbutton_strikethrough"), "clicked",
+					   G_CALLBACK(button_comment_strikethrough_selection_cb), this);
 	::g_signal_connect(::gtk_builder_get_object(m_pInterface, "comment_toolbutton_mono"), "clicked", G_CALLBACK(button_comment_mono_selection_cb), this);
-	::g_signal_connect(::gtk_builder_get_object(m_pInterface, "comment_toolbutton_subscript"), "clicked", G_CALLBACK(button_comment_subscript_selection_cb), this);
-	::g_signal_connect(::gtk_builder_get_object(m_pInterface, "comment_toolbutton_superscript"), "clicked", G_CALLBACK(button_comment_superscript_selection_cb), this);
+	::g_signal_connect(::gtk_builder_get_object(m_pInterface, "comment_toolbutton_subscript"), "clicked", G_CALLBACK(button_comment_subscript_selection_cb),
+					   this);
+	::g_signal_connect(::gtk_builder_get_object(m_pInterface, "comment_toolbutton_superscript"), "clicked", G_CALLBACK(button_comment_superscript_selection_cb),
+					   this);
 	::g_signal_connect(::gtk_builder_get_object(m_pInterface, "comment_toolbutton_big"), "clicked", G_CALLBACK(button_comment_big_selection_cb), this);
 	::g_signal_connect(::gtk_builder_get_object(m_pInterface, "comment_toolbutton_small"), "clicked", G_CALLBACK(button_comment_small_selection_cb), this);
 	::g_signal_connect(::gtk_builder_get_object(m_pInterface, "comment_toolbutton_red"), "clicked", G_CALLBACK(button_comment_red_selection_cb), this);

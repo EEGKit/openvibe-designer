@@ -21,29 +21,26 @@ using namespace OpenViBEDesigner;
 using namespace Kernel;
 using namespace OpenViBEVisualizationToolkit;
 
-CVisualizationWidget::CVisualizationWidget(const IKernelContext& kernelContext)
-	: m_kernelContext(kernelContext), m_Identifier(OV_UndefinedIdentifier), m_Type(EVisualizationWidget_Undefined),
+CVisualizationWidget::CVisualizationWidget(const IKernelContext& ctx)
+	: m_kernelContext(ctx), m_Identifier(OV_UndefinedIdentifier), m_Type(EVisualizationWidget_Undefined),
 	  m_ParentIdentifier(OV_UndefinedIdentifier), m_BoxIdentifier(OV_UndefinedIdentifier) {}
 
 
 bool CVisualizationWidget::initialize(const CIdentifier& identifier, const CString& name, const EVisualizationWidgetType type,
-									  const CIdentifier& parentIdentifier, const CIdentifier& boxIdentifier, const uint32_t childCount)
+									  const CIdentifier& parentIdentifier, const CIdentifier& boxID, const uint32_t childCount)
 {
 	m_Identifier       = identifier;
 	m_Name             = name;
 	m_Type             = type;
 	m_ParentIdentifier = parentIdentifier;
-	m_BoxIdentifier    = boxIdentifier;
+	m_BoxIdentifier    = boxID;
 	m_Children.resize(childCount, OV_UndefinedIdentifier);
 	return true;
 }
 
 bool CVisualizationWidget::getChildIndex(const CIdentifier& identifier, uint32_t& index) const
 {
-	for (index = 0; index < m_Children.size(); index++)
-	{
-		if (m_Children[index] == identifier) { return true; }
-	}
+	for (index = 0; index < m_Children.size(); index++) { if (m_Children[index] == identifier) { return true; } }
 	return false;
 }
 
@@ -60,10 +57,7 @@ bool CVisualizationWidget::removeChild(const CIdentifier& identifier)
 		if (m_Children[i] == identifier)
 		{
 			//remove tab from a window (variable number of children)
-			if (m_Type == EVisualizationWidget_VisualizationWindow)
-			{
-				m_Children.erase(m_Children.begin() + i);
-			}
+			if (m_Type == EVisualizationWidget_VisualizationWindow) { m_Children.erase(m_Children.begin() + i); }
 			else //clear identifier if ith child for a regular widget (fixed number of children)
 			{
 				m_Children[i] = OV_UndefinedIdentifier;
@@ -88,10 +82,7 @@ bool CVisualizationWidget::getChildIdentifier(const uint32_t childIndex, CIdenti
 
 bool CVisualizationWidget::setChildIdentifier(const uint32_t childIndex, const CIdentifier& identifier)
 {
-	if (childIndex >= m_Children.size())
-	{
-		OV_ERROR_DRF("Child with index " << childIndex << " not found", ErrorType::ResourceNotFound);
-	}
+	if (childIndex >= m_Children.size()) { OV_ERROR_DRF("Child with index " << childIndex << " not found", ErrorType::ResourceNotFound); }
 	m_Children[childIndex] = identifier;
 	return true;
 }

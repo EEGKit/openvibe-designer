@@ -16,7 +16,7 @@ namespace OpenViBEPlugins
 {
 	namespace SimpleVisualization
 	{
-		class CBoxAlgorithmMatrixDisplay : public OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>
+		class CBoxAlgorithmMatrixDisplay final : public OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>
 		{
 		public:
 
@@ -24,7 +24,7 @@ namespace OpenViBEPlugins
 
 			bool initialize() override;
 			bool uninitialize() override;
-			bool processInput(const uint32_t ui32InputIndex) override;
+			bool processInput(const uint32_t index) override;
 			bool process() override;
 
 			_IsDerivedFromClass_Final_(OpenViBEToolkit::TBoxAlgorithm < OpenViBE::Plugins::IBoxAlgorithm >, OVP_ClassId_BoxAlgorithm_MatrixDisplay)
@@ -70,7 +70,7 @@ namespace OpenViBEPlugins
 			OpenViBEVisualizationToolkit::IVisualizationContext* m_visualizationContext{};
 		};
 
-		class CBoxAlgorithmMatrixDisplayDesc : public OpenViBE::Plugins::IBoxAlgorithmDesc
+		class CBoxAlgorithmMatrixDisplayDesc final : public OpenViBE::Plugins::IBoxAlgorithmDesc
 		{
 		public:
 
@@ -80,7 +80,12 @@ namespace OpenViBEPlugins
 			OpenViBE::CString getAuthorName() const override { return OpenViBE::CString("Laurent Bonnet"); }
 			OpenViBE::CString getAuthorCompanyName() const override { return OpenViBE::CString("INRIA/IRISA"); }
 			OpenViBE::CString getShortDescription() const override { return OpenViBE::CString("Display a streamed matrix"); }
-			OpenViBE::CString getDetailedDescription() const override { return OpenViBE::CString("The streamed matrix can be visualized using a table of values and/or a color gradient."); }
+
+			OpenViBE::CString getDetailedDescription() const override
+			{
+				return OpenViBE::CString("The streamed matrix can be visualized using a table of values and/or a color gradient.");
+			}
+
 			OpenViBE::CString getCategory() const override { return OpenViBE::CString("Visualization/Basic"); }
 			OpenViBE::CString getVersion() const override { return OpenViBE::CString("1.0"); }
 			OpenViBE::CString getStockItemName() const override { return OpenViBE::CString("gtk-select-color"); }

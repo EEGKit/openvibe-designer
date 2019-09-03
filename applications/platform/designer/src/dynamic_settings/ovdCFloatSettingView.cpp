@@ -7,23 +7,18 @@ using namespace OpenViBE;
 using namespace OpenViBEDesigner;
 using namespace Setting;
 
-static void on_button_setting_float_up_pressed(GtkButton* /*button*/, gpointer data)
-{
-	static_cast<CFloatSettingView *>(data)->adjustValue(1.0);
-}
+static void on_button_setting_float_up_pressed(GtkButton* /*button*/, gpointer data) { static_cast<CFloatSettingView *>(data)->adjustValue(1.0); }
 
-static void on_button_setting_float_down_pressed(GtkButton* /*button*/, gpointer data)
-{
-	static_cast<CFloatSettingView *>(data)->adjustValue(-1.0);
-}
+static void on_button_setting_float_down_pressed(GtkButton* /*button*/, gpointer data) { static_cast<CFloatSettingView *>(data)->adjustValue(-1.0); }
 
-static void on_change(GtkEntry* /*entry*/, gpointer data)
-{
-	static_cast<CFloatSettingView *>(data)->onChange();
-}
+static void on_change(GtkEntry* /*entry*/, gpointer data) { static_cast<CFloatSettingView *>(data)->onChange(); }
 
 
-CFloatSettingView::CFloatSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext): CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-hbox_setting_float"), m_kernelContext(rKernelContext)
+CFloatSettingView::
+CFloatSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& ctx): CAbstractSettingView(
+																																	 box, index, rBuilderName,
+																																	 "settings_collection-hbox_setting_float"),
+																																 m_kernelContext(ctx)
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 
@@ -40,10 +35,7 @@ CFloatSettingView::CFloatSettingView(Kernel::IBox& rBox, const uint32_t index, C
 }
 
 
-void CFloatSettingView::getValue(CString& value) const
-{
-	value = CString(gtk_entry_get_text(m_entry));
-}
+void CFloatSettingView::getValue(CString& value) const { value = CString(gtk_entry_get_text(m_entry)); }
 
 
 void CFloatSettingView::setValue(const CString& value)

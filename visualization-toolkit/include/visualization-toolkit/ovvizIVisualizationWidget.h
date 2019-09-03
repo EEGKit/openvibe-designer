@@ -35,13 +35,13 @@ namespace OpenViBEVisualizationToolkit
 		 * \param name name of the widget (optional)
 		 * \param type type of the widget
 		 * \param parentIdentifier parent widget identifier (OV_Undefined for top-level widgets)
-		 * \param boxIdentifier if widget type is EVisualizationWidget_VisualizationBox, identifier of corresponding IBox
+		 * \param boxID if widget type is EVisualizationWidget_VisualizationBox, identifier of corresponding IBox
 		 * \param childCount number of children of this widget (none for a visualization box, 1 for a visualization panel, 2 for split widgets, variable number for windows)
 		 * \return True if widget was successfully initialized, false otherwise
 		 */
 		virtual bool initialize(const OpenViBE::CIdentifier& identifier, const OpenViBE::CString& name,
 								EVisualizationWidgetType type, const OpenViBE::CIdentifier& parentIdentifier,
-								const OpenViBE::CIdentifier& boxIdentifier, uint32_t childCount) = 0;
+								const OpenViBE::CIdentifier& boxID, uint32_t childCount) = 0;
 
 		/**
 		 * \brief Returns the identifier of the widget

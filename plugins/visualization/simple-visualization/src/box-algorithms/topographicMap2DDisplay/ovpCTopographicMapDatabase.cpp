@@ -23,22 +23,28 @@ CTopographicMapDatabase::CTopographicMapDatabase(TBoxAlgorithm<IBoxAlgorithm>& o
 	//--------------------
 
 	//spline order
-	m_rSphericalSplineInterpolation.getInputParameter(OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_SplineOrder)->setReferenceTarget(&m_splineOrder);
+	m_rSphericalSplineInterpolation.getInputParameter(OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_SplineOrder)->
+									setReferenceTarget(&m_splineOrder);
 	//number of channels (or electrodes)
-	m_rSphericalSplineInterpolation.getInputParameter(OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_ControlPointsCount)->setReferenceTarget(&m_i64NbElectrodes);
+	m_rSphericalSplineInterpolation.getInputParameter(OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_ControlPointsCount)->
+									setReferenceTarget(&m_i64NbElectrodes);
 	//matrix of pointers to electrode coordinates
 	m_pElectrodeCoords = &m_electrodeCoords;
-	m_rSphericalSplineInterpolation.getInputParameter(OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_ControlPointsCoordinates)->setReferenceTarget(&m_pElectrodeCoords);
+	m_rSphericalSplineInterpolation.getInputParameter(OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_ControlPointsCoordinates)->
+									setReferenceTarget(&m_pElectrodeCoords);
 	//matrix of potentials measured at each electrode
 	m_pElectrodePotentials = &m_oElectrodePotentials;
-	m_rSphericalSplineInterpolation.getInputParameter(OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_ControlPointsValues)->setReferenceTarget(&m_pElectrodePotentials);
+	m_rSphericalSplineInterpolation.getInputParameter(OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_ControlPointsValues)->setReferenceTarget(
+		&m_pElectrodePotentials);
 	//matrix holding sample coordinates mapped at runtime (its size is not known a priori and may vary)
 	//
 
 	//map output parameters
 	//---------------------
-	m_oMinSamplePointValue.initialize(m_rSphericalSplineInterpolation.getOutputParameter(OVP_Algorithm_SphericalSplineInterpolation_OutputParameterId_MinSamplePointValue));
-	m_oMaxSamplePointValue.initialize(m_rSphericalSplineInterpolation.getOutputParameter(OVP_Algorithm_SphericalSplineInterpolation_OutputParameterId_MaxSamplePointValue));
+	m_oMinSamplePointValue.initialize(
+		m_rSphericalSplineInterpolation.getOutputParameter(OVP_Algorithm_SphericalSplineInterpolation_OutputParameterId_MinSamplePointValue));
+	m_oMaxSamplePointValue.initialize(
+		m_rSphericalSplineInterpolation.getOutputParameter(OVP_Algorithm_SphericalSplineInterpolation_OutputParameterId_MaxSamplePointValue));
 }
 
 void CTopographicMapDatabase::setMatrixDimensionSize(const uint32_t ui32DimensionIndex, const uint32_t ui32DimensionSize)
@@ -123,14 +129,8 @@ bool CTopographicMapDatabase::processValues()
 	//determine what sample to use
 	uint64_t l_ui64SampleIndex;
 	if (l_ui64DisplayTime <= m_oStartTime[l_ui32BufferIndex]) { l_ui64SampleIndex = 0; }
-	else if (l_ui64DisplayTime >= m_oEndTime[l_ui32BufferIndex])
-	{
-		l_ui64SampleIndex = m_pDimensionSizes[1] - 1;
-	}
-	else
-	{
-		l_ui64SampleIndex = uint64_t(double(l_ui64DisplayTime - m_oStartTime[l_ui32BufferIndex]) / double(m_ui64BufferDuration) * m_pDimensionSizes[1]);
-	}
+	else if (l_ui64DisplayTime >= m_oEndTime[l_ui32BufferIndex]) { l_ui64SampleIndex = m_pDimensionSizes[1] - 1; }
+	else { l_ui64SampleIndex = uint64_t(double(l_ui64DisplayTime - m_oStartTime[l_ui32BufferIndex]) / double(m_ui64BufferDuration) * m_pDimensionSizes[1]); }
 
 	for (int64_t i = 0; i < m_i64NbElectrodes; ++i)
 	{
@@ -153,16 +153,14 @@ bool CTopographicMapDatabase::processValues()
 	if (m_pSamplePointCoords != nullptr)
 	{
 		//map pointer to input parameter
-		m_rSphericalSplineInterpolation.getInputParameter(OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_SamplePointsCoordinates)->setReferenceTarget(&m_pSamplePointCoords);
+		m_rSphericalSplineInterpolation.getInputParameter(OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_SamplePointsCoordinates)->
+										setReferenceTarget(&m_pSamplePointCoords);
 
 		if (m_interpolationType == OVP_TypeId_SphericalLinearInterpolationType_Spline)
 		{
 			m_rSphericalSplineInterpolation.activateInputTrigger(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_InterpolateSpline, true);
 		}
-		else
-		{
-			m_rSphericalSplineInterpolation.activateInputTrigger(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_InterpolateLaplacian, true);
-		}
+		else { m_rSphericalSplineInterpolation.activateInputTrigger(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_InterpolateLaplacian, true); }
 	}
 
 	m_rSphericalSplineInterpolation.process();
@@ -178,7 +176,8 @@ bool CTopographicMapDatabase::processValues()
 		{
 			//retrieve interpolation results
 			TParameterHandler<IMatrix*> l_oSampleValuesMatrix;
-			l_oSampleValuesMatrix.initialize(m_rSphericalSplineInterpolation.getOutputParameter(OVP_Algorithm_SphericalSplineInterpolation_OutputParameterId_SamplePointsValues));
+			l_oSampleValuesMatrix.initialize(
+				m_rSphericalSplineInterpolation.getOutputParameter(OVP_Algorithm_SphericalSplineInterpolation_OutputParameterId_SamplePointsValues));
 			dynamic_cast<CTopographicMapDrawable*>(m_pDrawable)->setSampleValuesMatrix(l_oSampleValuesMatrix);
 
 			//tells the drawable to redraw itself since the signal information has been updated
@@ -215,17 +214,15 @@ bool CTopographicMapDatabase::interpolateValues()
 	if (m_pSamplePointCoords != nullptr)
 	{
 		//map pointer to input parameter
-		m_rSphericalSplineInterpolation.getInputParameter(OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_SamplePointsCoordinates)->setReferenceTarget(&m_pSamplePointCoords);
+		m_rSphericalSplineInterpolation.getInputParameter(OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_SamplePointsCoordinates)->
+										setReferenceTarget(&m_pSamplePointCoords);
 
 		//interpolate using spline or laplacian coefficients depending on interpolation mode
 		if (m_interpolationType == OVP_TypeId_SphericalLinearInterpolationType_Spline)
 		{
 			m_rSphericalSplineInterpolation.activateInputTrigger(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_InterpolateSpline, true);
 		}
-		else
-		{
-			m_rSphericalSplineInterpolation.activateInputTrigger(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_InterpolateLaplacian, true);
-		}
+		else { m_rSphericalSplineInterpolation.activateInputTrigger(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_InterpolateLaplacian, true); }
 	}
 
 	m_rSphericalSplineInterpolation.process();
@@ -240,7 +237,8 @@ bool CTopographicMapDatabase::interpolateValues()
 		{
 			//retrieve interpolation results
 			TParameterHandler<IMatrix*> l_oSampleValuesMatrix;
-			l_oSampleValuesMatrix.initialize(m_rSphericalSplineInterpolation.getOutputParameter(OVP_Algorithm_SphericalSplineInterpolation_OutputParameterId_SamplePointsValues));
+			l_oSampleValuesMatrix.initialize(
+				m_rSphericalSplineInterpolation.getOutputParameter(OVP_Algorithm_SphericalSplineInterpolation_OutputParameterId_SamplePointsValues));
 			dynamic_cast<CTopographicMapDrawable*>(m_pDrawable)->setSampleValuesMatrix(l_oSampleValuesMatrix);
 		}
 	}
@@ -276,9 +274,9 @@ bool CTopographicMapDatabase::getBufferIndexFromTime(const uint64_t ui64Time, ui
 
 bool CTopographicMapDatabase::checkElectrodeCoordinates()
 {
-	const uint64_t channelCount = getChannelCount();
+	const uint64_t nChannel = getChannelCount();
 
-	for (uint32_t i = 0; i < channelCount; ++i)
+	for (uint32_t i = 0; i < nChannel; ++i)
 	{
 		double* l_pNormalizedChannelCoords = nullptr;
 		if (!getChannelPosition(i, l_pNormalizedChannelCoords))

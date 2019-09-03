@@ -49,7 +49,8 @@ namespace OpenViBEPlugins
 
 			//load the gtk builder interface
 			m_builderInterface = gtk_builder_new();
-			gtk_builder_add_from_file(m_builderInterface, Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-TopographicMap2D.ui", nullptr);
+			gtk_builder_add_from_file(m_builderInterface,
+									  Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-TopographicMap2D.ui", nullptr);
 
 			if (m_builderInterface == nullptr)
 			{
@@ -264,8 +265,10 @@ namespace OpenViBEPlugins
 			//reflect default interpolation type
 			m_topographicMapDatabase.setInterpolationType(m_currentInterpolation);
 			enableInterpolationButtonSignals(false);
-			gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(m_mapPotentials), gboolean(m_currentInterpolation == OVP_TypeId_SphericalLinearInterpolationType_Spline));
-			gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(m_mapCurrents), gboolean(m_currentInterpolation == OVP_TypeId_SphericalLinearInterpolationType_Laplacian));
+			gtk_toggle_tool_button_set_active(
+				GTK_TOGGLE_TOOL_BUTTON(m_mapPotentials), gboolean(m_currentInterpolation == OVP_TypeId_SphericalLinearInterpolationType_Spline));
+			gtk_toggle_tool_button_set_active(
+				GTK_TOGGLE_TOOL_BUTTON(m_mapCurrents), gboolean(m_currentInterpolation == OVP_TypeId_SphericalLinearInterpolationType_Laplacian));
 			enableInterpolationButtonSignals(true);
 
 			//hide electrodes by default
@@ -371,14 +374,8 @@ namespace OpenViBEPlugins
 		{
 			if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(pWidget)) == FALSE) { return; }
 
-			if (pWidget == GTK_WIDGET(m_axialProjectionButton))
-			{
-				m_currentProjection = TopographicMap2DProjection_Axial;
-			}
-			else if (pWidget == GTK_WIDGET(m_radialProjectionButton))
-			{
-				m_currentProjection = TopographicMap2DProjection_Radial;
-			}
+			if (pWidget == GTK_WIDGET(m_axialProjectionButton)) { m_currentProjection = TopographicMap2DProjection_Axial; }
+			else if (pWidget == GTK_WIDGET(m_radialProjectionButton)) { m_currentProjection = TopographicMap2DProjection_Radial; }
 
 			//recompute sample points coordinates
 			m_needResize = true;
@@ -445,14 +442,8 @@ namespace OpenViBEPlugins
 			//determine palette bar dims
 			const gint l_iPaletteBarWidth = gint(0.9 * ui32Width);
 			gint l_iPaletteBarHeight      = gint(ui32Height - textHeight);
-			if (l_iPaletteBarHeight < gint(m_minPaletteBarHeight))
-			{
-				l_iPaletteBarHeight = gint(m_minPaletteBarHeight);
-			}
-			else if (l_iPaletteBarHeight > gint(m_maxPaletteBarHeight))
-			{
-				l_iPaletteBarHeight = gint(m_maxPaletteBarHeight);
-			}
+			if (l_iPaletteBarHeight < gint(m_minPaletteBarHeight)) { l_iPaletteBarHeight = gint(m_minPaletteBarHeight); }
+			else if (l_iPaletteBarHeight > gint(m_maxPaletteBarHeight)) { l_iPaletteBarHeight = gint(m_maxPaletteBarHeight); }
 			const gint l_iPaletteBarStartX = gint(ui32X + (ui32Width - l_iPaletteBarWidth) / 2);
 			const gint l_iPaletteBarStartY = gint(ui32Y);
 
@@ -469,20 +460,14 @@ namespace OpenViBEPlugins
 			pango_layout_set_text(l_pText, "+", 1);
 			pango_layout_get_pixel_size(l_pText, &textWidth, nullptr);
 			l_iLabelX = l_iPaletteBarStartX - textWidth / 2;
-			if (l_iLabelX < 0)
-			{
-				l_iLabelX = 0;
-			}
+			if (l_iLabelX < 0) { l_iLabelX = 0; }
 			gdk_draw_layout(m_drawingArea->window, m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], l_iLabelX, l_iLabelY, l_pText);
 
 			//draw - label
 			pango_layout_set_text(l_pText, "-", 1);
 			pango_layout_get_pixel_size(l_pText, &textWidth, nullptr);
 			l_iLabelX = l_iPaletteBarStartX + l_iPaletteBarWidth - textWidth / 2;
-			if (l_iLabelX + textWidth >= gint(ui32Width))
-			{
-				l_iLabelX = ui32Width - textWidth;
-			}
+			if (l_iLabelX + textWidth >= gint(ui32Width)) { l_iLabelX = ui32Width - textWidth; }
 			gdk_draw_layout(m_drawingArea->window, m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)],
 							l_iLabelX, l_iLabelY, l_pText);
 
@@ -601,10 +586,7 @@ namespace OpenViBEPlugins
 			//palette sub-window dims
 			m_paletteWindowWidth  = l_iWindowWidth;
 			m_paletteWindowHeight = uint32_t(0.1 * l_iWindowHeight);
-			if (m_paletteWindowHeight > uint32_t(m_maxPaletteBarHeight + textHeight + 4))
-			{
-				m_paletteWindowHeight = m_maxPaletteBarHeight + textHeight + 4;
-			}
+			if (m_paletteWindowHeight > uint32_t(m_maxPaletteBarHeight + textHeight + 4)) { m_paletteWindowHeight = m_maxPaletteBarHeight + textHeight + 4; }
 			else if (m_paletteWindowHeight < uint32_t(m_minPaletteBarHeight + textHeight))
 			{
 				m_paletteWindowHeight = uint32_t(m_minPaletteBarHeight + textHeight);
@@ -618,14 +600,8 @@ namespace OpenViBEPlugins
 			m_headWindowHeight = l_iWindowHeight - m_paletteWindowHeight;
 
 			uint32_t l_ui32HeadMaxSize;
-			if (m_headWindowWidth < m_headWindowHeight)
-			{
-				l_ui32HeadMaxSize = uint32_t(0.9 * m_headWindowWidth);
-			}
-			else
-			{
-				l_ui32HeadMaxSize = uint32_t(0.9 * m_headWindowHeight);
-			}
+			if (m_headWindowWidth < m_headWindowHeight) { l_ui32HeadMaxSize = uint32_t(0.9 * m_headWindowWidth); }
+			else { l_ui32HeadMaxSize = uint32_t(0.9 * m_headWindowHeight); }
 
 			if (m_currentView == TopographicMap2DView_Top)
 			{
@@ -889,25 +865,17 @@ namespace OpenViBEPlugins
 #endif
 			{
 				//cells of last row and last column may be smaller than other ones
-				if (m_sample2DCoordinates[i].first + m_cellSize >= m_skullDiameter)
-				{
-					w = m_skullDiameter - m_sample2DCoordinates[i].first;
-				}
-				else
-				{
-					w = m_cellSize;
-				}
+				if (m_sample2DCoordinates[i].first + m_cellSize >= m_skullDiameter) { w = m_skullDiameter - m_sample2DCoordinates[i].first; }
+				else { w = m_cellSize; }
 
-				if (m_sample2DCoordinates[i].second + m_cellSize >= m_skullDiameter)
-				{
-					h = m_skullDiameter - m_sample2DCoordinates[i].second;
-				}
+				if (m_sample2DCoordinates[i].second + m_cellSize >= m_skullDiameter) { h = m_skullDiameter - m_sample2DCoordinates[i].second; }
 				else { h = m_cellSize; }
 
 				uint32_t index = m_sampleValues[i];
 				if (index > 12) { index = 12; }
 
-				drawBoxToBuffer(m_sample2DCoordinates[i].first, m_sample2DCoordinates[i].second, w, h, s_palette8[3 * index], s_palette8[3 * index + 1], s_palette8[3 * index + 2]);
+				drawBoxToBuffer(m_sample2DCoordinates[i].first, m_sample2DCoordinates[i].second, w, h, s_palette8[3 * index], s_palette8[3 * index + 1],
+								s_palette8[3 * index + 2]);
 			}
 		}
 
@@ -945,7 +913,8 @@ namespace OpenViBEPlugins
 
 			//set electrode ring thickness
 			const gint electrodeRingThickness = 1;
-			gdk_gc_set_line_attributes(m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], electrodeRingThickness, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
+			gdk_gc_set_line_attributes(m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], electrodeRingThickness, GDK_LINE_SOLID, GDK_CAP_BUTT,
+									   GDK_JOIN_BEVEL);
 
 			//electrode label
 			CString electrodeLabel;
@@ -954,10 +923,10 @@ namespace OpenViBEPlugins
 			pango_layout_get_pixel_size(l_pElectrodeLabelLayout, nullptr, &textHeight);
 
 			//draw rings
-			const uint32_t channelCount = uint32_t(m_topographicMapDatabase.getChannelCount());
+			const uint32_t nChannel = uint32_t(m_topographicMapDatabase.getChannelCount());
 			gint channelX, channelY;
 
-			for (uint32_t i = 0; i < channelCount; ++i)
+			for (uint32_t i = 0; i < nChannel; ++i)
 			{
 				if (!getChannel2DPosition(i, channelX, channelY)) { continue; }
 
@@ -1107,7 +1076,8 @@ namespace OpenViBEPlugins
 			return gdk_region_point_in(m_visibleRegion, channelX - int(m_skullX), channelY - int(m_skullY)) != 0;
 		}
 
-		void CTopographicMap2DView::drawBoxToBuffer(const uint32_t ui32X, const uint32_t ui32Y, const uint32_t ui32Width, const uint32_t ui32Height, const uint8_t ui8Red, const uint8_t ui8Green, const uint8_t ui8Blue) const
+		void CTopographicMap2DView::drawBoxToBuffer(const uint32_t ui32X, const uint32_t ui32Y, const uint32_t ui32Width, const uint32_t ui32Height,
+													const uint8_t ui8Red, const uint8_t ui8Green, const uint8_t ui8Blue) const
 		{
 #ifdef TARGET_OS_Windows
 #ifndef NDEBUG
@@ -1137,11 +1107,11 @@ namespace OpenViBEPlugins
 			uint32_t curSample = 0;
 
 #ifdef INTERPOLATE_AT_CHANNEL_LOCATION
-			uint32_t channelCount = (uint32_t)m_topographicMapDatabase.getChannelCount();
+			uint32_t nChannel = (uint32_t)m_topographicMapDatabase.getChannelCount();
 			double* electrodePosition = nullptr;
 
 			//sampling at electrode locations
-			for (curSample = 0; curSample < channelCount; curSample++)
+			for (curSample = 0; curSample < nChannel; curSample++)
 			{
 				m_topographicMapDatabase.getChannelPosition(curSample, electrodePosition);
 
@@ -1283,10 +1253,7 @@ namespace OpenViBEPlugins
 
 		void CTopographicMap2DView::enableElectrodeButtonSignals(const bool enable)
 		{
-			if (enable)
-			{
-				g_signal_connect(G_OBJECT(m_electrodesToggleButton), "toggled", G_CALLBACK(toggleElectrodesCallback), this);
-			}
+			if (enable) { g_signal_connect(G_OBJECT(m_electrodesToggleButton), "toggled", G_CALLBACK(toggleElectrodesCallback), this); }
 			else
 			{
 				g_signal_handlers_disconnect_by_func(G_OBJECT(m_electrodesToggleButton), reinterpret_cast<void*>(G_CALLBACK(toggleElectrodesCallback)), this);
@@ -1349,19 +1316,14 @@ namespace OpenViBEPlugins
 				phi = atan(cartesianCoords[1] / cartesianCoords[0]);
 				if (phi < 0) { phi += 2 * M_PI; }
 			}
-			else if (cartesianCoords[0] < -0.001)
-			{
-				phi = atan(cartesianCoords[1] / cartesianCoords[0]) + M_PI;
-			}
-			else
-			{
-				phi = cartesianCoords[1] > 0 ? (M_PI / 2) : (3 * M_PI / 2);
-			}
+			else if (cartesianCoords[0] < -0.001) { phi = atan(cartesianCoords[1] / cartesianCoords[0]) + M_PI; }
+			else { phi = cartesianCoords[1] > 0 ? (M_PI / 2) : (3 * M_PI / 2); }
 
 			return phi;
 		}
 
-		bool CTopographicMap2DView::compute2DCoordinates(const double f64Theta, const double f64Phi, const uint32_t ui32SkullCenterX, const uint32_t ui32SkullCenterY, gint& rX, gint& rY) const
+		bool CTopographicMap2DView::compute2DCoordinates(const double f64Theta, const double f64Phi, const uint32_t ui32SkullCenterX,
+														 const uint32_t ui32SkullCenterY, gint& rX, gint& rY) const
 		{
 			//linear plotting along radius
 			const double length = f64Theta / (M_PI / 2) * m_skullDiameter / 2;

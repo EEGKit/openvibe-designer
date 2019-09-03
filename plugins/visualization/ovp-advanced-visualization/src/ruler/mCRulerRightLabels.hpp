@@ -40,19 +40,19 @@ namespace Mensia
 				gint w, h;
 				gint lw, lh;
 
-				const uint32_t channelCount = m_pRendererContext->getSelectedCount();
-				for (uint32_t channel = 0; channel < channelCount; ++channel)
+				const uint32_t nChannel = m_pRendererContext->getSelectedCount();
+				for (uint32_t channel = 0; channel < nChannel; ++channel)
 				{
 					gdk_drawable_get_size(widget->window, &w, &h);
 					GdkGC* drawGC = gdk_gc_new(widget->window);
 
 					const auto labelCount = float(m_pRendererContext->getDimensionLabelCount(dimension));
 
-					gint last_y = gint((channel + (-1 + 0.5f) / labelCount) * (h * 1.f / channelCount));
+					gint last_y = gint((channel + (-1 + 0.5f) / labelCount) * (h * 1.f / nChannel));
 
 					for (uint32_t label = 0; label < m_pRendererContext->getDimensionLabelCount(dimension); ++label)
 					{
-						const gint y = gint((channel + (label + 0.5f) / labelCount) * (h * 1.f / channelCount));
+						const gint y = gint((channel + (label + 0.5f) / labelCount) * (h * 1.f / nChannel));
 						if (y >= last_y + 10)
 						{
 							PangoLayout* l_pPangoLayout = gtk_widget_create_pango_layout(widget, m_pRendererContext->getDimensionLabel(dimension, label));

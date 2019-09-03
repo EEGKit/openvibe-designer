@@ -7,12 +7,12 @@ using namespace OpenViBE;
 using namespace OpenViBEDesigner;
 using namespace Setting;
 
-static void on_checkbutton__pressed(GtkToggleButton* /*button*/, gpointer data)
-{
-	static_cast<CBitMaskSettingView *>(data)->onChange();
-}
+static void on_checkbutton__pressed(GtkToggleButton* /*button*/, gpointer data) { static_cast<CBitMaskSettingView *>(data)->onChange(); }
 
-CBitMaskSettingView::CBitMaskSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext, const CIdentifier& rTypeIdentifier): CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-table_setting_bitmask"), m_oTypeIdentifier(rTypeIdentifier), m_kernelContext(rKernelContext)
+CBitMaskSettingView::CBitMaskSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& ctx,
+										 const CIdentifier& typeID): CAbstractSettingView(box, index, rBuilderName,
+																						  "settings_collection-table_setting_bitmask"),
+																	 m_oTypeIdentifier(typeID), m_kernelContext(ctx)
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 
@@ -62,14 +62,8 @@ void CBitMaskSettingView::setValue(const CString& value)
 	for (auto& toggle : m_toggleButton)
 	{
 		const gchar* l_sLabel = gtk_button_get_label(GTK_BUTTON(toggle));
-		if (sValue.find(l_sLabel) != std::string::npos)
-		{
-			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), true);
-		}
-		else
-		{
-			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), false);
-		}
+		if (sValue.find(l_sLabel) != std::string::npos) { gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), true); }
+		else { gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), false); }
 	}
 
 	m_onValueSetting = false;

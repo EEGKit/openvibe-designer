@@ -6,7 +6,7 @@ using namespace OpenViBEVisualizationToolkit;
 
 bool CVisualizationContext::setWidget(OpenViBEToolkit::TBoxAlgorithm<Plugins::IBoxAlgorithm>& box, GtkWidget* widget)
 {
-	const CIdentifier boxIdentifier = box.getStaticBoxContext().getIdentifier();
+	const CIdentifier boxID = box.getStaticBoxContext().getIdentifier();
 
 	CIdentifier treeIdentifier = OV_UndefinedIdentifier;
 
@@ -18,16 +18,16 @@ bool CVisualizationContext::setWidget(OpenViBEToolkit::TBoxAlgorithm<Plugins::IB
 	// can be accessed as long as we have the boxAlgorithm.
 	if (!treeIdentifier.fromString(box.getConfigurationManager().lookUpConfigurationTokenValue("VisualizationContext_VisualizationTreeId"))) { return false; }
 
-	return m_VisualizationManager->setWidget(treeIdentifier, boxIdentifier, widget);
+	return m_VisualizationManager->setWidget(treeIdentifier, boxID, widget);
 }
 
 bool CVisualizationContext::setToolbar(OpenViBEToolkit::TBoxAlgorithm<Plugins::IBoxAlgorithm>& box, GtkWidget* toolbarWidget)
 {
-	const CIdentifier boxIdentifier = box.getStaticBoxContext().getIdentifier();
+	const CIdentifier boxID = box.getStaticBoxContext().getIdentifier();
 
 	CIdentifier treeIdentifier = OV_UndefinedIdentifier;
 
 	if (!treeIdentifier.fromString(box.getConfigurationManager().lookUpConfigurationTokenValue("VisualizationContext_VisualizationTreeId"))) { return false; }
 
-	return m_VisualizationManager->setToolbar(treeIdentifier, boxIdentifier, toolbarWidget);
+	return m_VisualizationManager->setToolbar(treeIdentifier, boxID, toolbarWidget);
 }

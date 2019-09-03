@@ -8,15 +8,16 @@ using namespace OpenViBE;
 using namespace OpenViBEDesigner;
 using namespace Setting;
 
-static void on_button_setting_color_choose_pressed(GtkColorButton* /*button*/, gpointer data)
-{
-	static_cast<CColorSettingView *>(data)->selectColor();
-}
+static void on_button_setting_color_choose_pressed(GtkColorButton* /*button*/, gpointer data) { static_cast<CColorSettingView *>(data)->selectColor(); }
 
 static void on_change(GtkEntry* /*entry*/, gpointer data) { static_cast<CColorSettingView*>(data)->onChange(); }
 
 
-CColorSettingView::CColorSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext): CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-hbox_setting_color"), m_kernelContext(rKernelContext)
+CColorSettingView::
+CColorSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& ctx): CAbstractSettingView(
+																																	 box, index, rBuilderName,
+																																	 "settings_collection-hbox_setting_color"),
+																																 m_kernelContext(ctx)
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 
@@ -56,7 +57,8 @@ void CColorSettingView::selectColor()
 	gtk_color_button_get_color(m_button, &l_oColor);
 
 	char l_sBuffer[1024];
-	sprintf(l_sBuffer, "%i,%i,%i", int(round((l_oColor.red * 100) / 65535.)), int(round((l_oColor.green * 100) / 65535.)), int(round((l_oColor.blue * 100) / 65535.)));
+	sprintf(l_sBuffer, "%i,%i,%i", int(round((l_oColor.red * 100) / 65535.)), int(round((l_oColor.green * 100) / 65535.)),
+			int(round((l_oColor.blue * 100) / 65535.)));
 
 	getBox().setSettingValue(getSettingIndex(), l_sBuffer);
 	setValue(l_sBuffer);

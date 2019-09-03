@@ -23,8 +23,8 @@ namespace OpenViBEPlugins
 			uint64_t getClockFrequency() override;
 			bool initialize() override;
 			bool uninitialize() override;
-			bool processInput(const uint32_t ui32InputIndex) override;
-			bool processClock(OpenViBE::Kernel::IMessageClock& rMessageClock) override;
+			bool processInput(const uint32_t index) override;
+			bool processClock(OpenViBE::Kernel::IMessageClock& messageClock) override;
 			bool process() override;
 
 			_IsDerivedFromClass_Final_(OpenViBEToolkit::TBoxAlgorithm < OpenViBE::Plugins::IBoxAlgorithm >, OVP_ClassId_TopographicMap2DDisplay)
@@ -49,7 +49,12 @@ namespace OpenViBEPlugins
 			OpenViBE::CString getName() const override { return OpenViBE::CString("2D topographic map"); }
 			OpenViBE::CString getAuthorName() const override { return OpenViBE::CString("Vincent Delannoy"); }
 			OpenViBE::CString getAuthorCompanyName() const override { return OpenViBE::CString("INRIA/IRISA"); }
-			OpenViBE::CString getShortDescription() const override { return OpenViBE::CString("This box demonstrates how to perform spherical spline interpolation"); }
+
+			OpenViBE::CString getShortDescription() const override
+			{
+				return OpenViBE::CString("This box demonstrates how to perform spherical spline interpolation");
+			}
+
 			OpenViBE::CString getDetailedDescription() const override { return OpenViBE::CString(""); }
 			OpenViBE::CString getCategory() const override { return OpenViBE::CString("Visualization/Topography"); }
 			OpenViBE::CString getVersion() const override { return OpenViBE::CString("2.0"); }

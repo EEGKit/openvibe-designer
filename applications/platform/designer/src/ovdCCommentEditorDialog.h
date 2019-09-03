@@ -8,7 +8,7 @@ namespace OpenViBEDesigner
 	{
 	public:
 
-		CCommentEditorDialog(const OpenViBE::Kernel::IKernelContext& rKernelContext, OpenViBE::Kernel::IComment& rComment, const char* sGUIFilename);
+		CCommentEditorDialog(const OpenViBE::Kernel::IKernelContext& ctx, OpenViBE::Kernel::IComment& rComment, const char* sGUIFilename);
 		virtual ~CCommentEditorDialog() = default;
 
 		bool run();

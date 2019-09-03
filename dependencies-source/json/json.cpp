@@ -240,20 +240,14 @@ bool Object::HasKey(const std::string& key) const { return find(key) != end(); }
 
 int Object::HasKeys(const std::vector<std::string>& keys) const
 {
-	for (size_t i = 0; i < keys.size(); i++)
-	{
-		if (!HasKey(keys[i])) { return int(i); }
-	}
+	for (size_t i = 0; i < keys.size(); i++) { if (!HasKey(keys[i])) { return int(i); } }
 
 	return -1;
 }
 
 int Object::HasKeys(const char** keys, const int key_count) const
 {
-	for (int i = 0; i < key_count; i++)
-	{
-		if (!HasKey(keys[i])) { return i; }
-	}
+	for (int i = 0; i < key_count; i++) { if (!HasKey(keys[i])) { return i; } }
 
 	return -1;
 }
@@ -395,10 +389,7 @@ static size_t GetEndOfArrayOrObj(const std::string& str, std::stack<StackDepthTy
 
 	for (; i < str.length(); i++)
 	{
-		if (str[i] == '\"')
-		{
-			if (str[i - 1] != '\\') { in_quote = !in_quote; }
-		}
+		if (str[i] == '\"') { if (str[i - 1] != '\\') { in_quote = !in_quote; } }
 		else if (!in_quote)
 		{
 			if (str[i] == '[') { depth_stack.push(InArray); }
@@ -571,10 +562,7 @@ static Value DeserializeValue(std::string& str, bool* had_error, std::stack<Stac
 		{
 			// Check if the value is beyond the size of an int and if so, store it as a double
 			double tmp_val = strtod(temp_val.c_str(), nullptr);
-			if ((tmp_val >= double(INT_MIN)) && (tmp_val <= double(INT_MAX)))
-			{
-				v = Value(int(strtol(temp_val.c_str(), nullptr, 10)));
-			}
+			if ((tmp_val >= double(INT_MIN)) && (tmp_val <= double(INT_MAX))) { v = Value(int(strtol(temp_val.c_str(), nullptr, 10))); }
 			else { v = Value(tmp_val); }
 		}
 

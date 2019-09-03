@@ -9,20 +9,11 @@ using namespace OpenViBE;
 using namespace OpenViBEDesigner;
 using namespace Setting;
 
-static void on_button_setting_filename_browse_pressed(GtkButton* /*button*/, gpointer data)
-{
-	static_cast<CScriptSettingView *>(data)->browse();
-}
+static void on_button_setting_filename_browse_pressed(GtkButton* /*button*/, gpointer data) { static_cast<CScriptSettingView *>(data)->browse(); }
 
-static void on_button_setting_script_edit_pressed(GtkButton* /*button*/, gpointer data)
-{
-	static_cast<CScriptSettingView *>(data)->edit();
-}
+static void on_button_setting_script_edit_pressed(GtkButton* /*button*/, gpointer data) { static_cast<CScriptSettingView *>(data)->edit(); }
 
-static void on_change(GtkEntry* /*entry*/, gpointer data)
-{
-	static_cast<CScriptSettingView *>(data)->onChange();
-}
+static void on_change(GtkEntry* /*entry*/, gpointer data) { static_cast<CScriptSettingView *>(data)->onChange(); }
 
 #if defined TARGET_OS_Windows
 static gboolean on_focus_out_event(GtkEntry* /*entry*/, GdkEvent* /*event*/, gpointer data)
@@ -32,7 +23,12 @@ static gboolean on_focus_out_event(GtkEntry* /*entry*/, GdkEvent* /*event*/, gpo
 }
 #endif
 
-CScriptSettingView::CScriptSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext): CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-hbox_setting_script"), m_kernelContext(rKernelContext)
+CScriptSettingView::
+CScriptSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& ctx): CAbstractSettingView(
+																																	  box, index, rBuilderName,
+																																	  "settings_collection-hbox_setting_script"),
+																																  m_kernelContext(
+																																	  ctx)
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 
@@ -52,10 +48,7 @@ CScriptSettingView::CScriptSettingView(Kernel::IBox& rBox, const uint32_t index,
 }
 
 
-void CScriptSettingView::getValue(CString& value) const
-{
-	value = CString(gtk_entry_get_text(m_entry));
-}
+void CScriptSettingView::getValue(CString& value) const { value = CString(gtk_entry_get_text(m_entry)); }
 
 
 void CScriptSettingView::setValue(const CString& value)
@@ -141,10 +134,7 @@ void CScriptSettingView::onFocusLost()
 				*iter = '/';
 				break;
 			}
-			if (*std::next(iter) != '{' && *std::next(iter) != '$' && *std::next(iter) != '}')
-			{
-				*iter = '/';
-			}
+			if (*std::next(iter) != '{' && *std::next(iter) != '$' && *std::next(iter) != '}') { *iter = '/'; }
 
 			std::advance(iter, 1);
 		}

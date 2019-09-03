@@ -5,8 +5,8 @@ using namespace OpenViBE;
 using namespace Plugins;
 using namespace Kernel;
 
-CRenameDialog::CRenameDialog(const IKernelContext& rKernelContext, const CString& rInitialName, const CString& rDefaultName, const char* sGUIFilename)
-	: m_kernelContext(rKernelContext), m_sInitialName(rInitialName), m_sDefaultName(rDefaultName), m_sResult(rInitialName), m_sGUIFilename(sGUIFilename) { }
+CRenameDialog::CRenameDialog(const IKernelContext& ctx, const CString& rInitialName, const CString& rDefaultName, const char* sGUIFilename)
+	: m_kernelContext(ctx), m_sInitialName(rInitialName), m_sDefaultName(rDefaultName), m_sResult(rInitialName), m_sGUIFilename(sGUIFilename) { }
 
 CRenameDialog::~CRenameDialog() = default;
 

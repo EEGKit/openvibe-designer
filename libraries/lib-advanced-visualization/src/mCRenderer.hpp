@@ -47,7 +47,7 @@ namespace Mensia
 			~CRenderer() override;
 
 			void setChannelLocalisation(const char* sFilename) override;
-			void setChannelCount(const uint32_t channelCount) override;
+			void setChannelCount(const uint32_t nChannel) override;
 			void setSampleCount(const uint32_t sampleCount) override;
 			void setHistoryDrawIndex(const uint32_t index) override;
 			void feed(const float* pDataVector) override;
@@ -97,7 +97,7 @@ namespace Mensia
 			uint32_t m_historyDrawIndex = 0;
 			uint32_t m_historyCount     = 0;
 			uint32_t m_channelCount     = 0;
-			uint32_t m_sampleCount      = 1;
+			uint32_t m_nSample      = 1;
 
 			float m_inverseChannelCount     = 1.0;
 			float m_inverseSampleCount      = 1.0;

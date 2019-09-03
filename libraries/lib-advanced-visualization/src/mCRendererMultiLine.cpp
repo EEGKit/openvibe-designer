@@ -30,8 +30,8 @@ bool CRendererMultiLine::render(const IRendererContext& rContext)
 	if (!rContext.getSelectedCount()) { return false; }
 	if (!m_historyCount) { return false; }
 
-	const auto sampleCount = int(m_sampleCount);
-	const auto n1          = int(m_historyIndex % m_sampleCount);
+	const auto sampleCount = int(m_nSample);
+	const auto n1          = int(m_historyIndex % m_nSample);
 	const auto n2          = int(sampleCount - n1);
 
 	if (!sampleCount) { return false; }

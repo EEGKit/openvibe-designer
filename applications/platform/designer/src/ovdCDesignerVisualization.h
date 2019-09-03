@@ -15,7 +15,7 @@ namespace OpenViBEDesigner
 	class CDesignerVisualization : public OpenViBEVisualizationToolkit::ITreeViewCB
 	{
 	public:
-		CDesignerVisualization(const OpenViBE::Kernel::IKernelContext& rKernelContext, OpenViBEVisualizationToolkit::IVisualizationTree& rVisualizationTree, CInterfacedScenario& rInterfacedScenario);
+		CDesignerVisualization(const OpenViBE::Kernel::IKernelContext& ctx, OpenViBEVisualizationToolkit::IVisualizationTree& rVisualizationTree, CInterfacedScenario& rInterfacedScenario);
 
 		virtual ~CDesignerVisualization();
 
@@ -27,8 +27,8 @@ namespace OpenViBEDesigner
 		void setDeleteEventCB(fpDesignerVisualizationDeleteEventCB fpDeleteEventCB, gpointer data);
 
 		void onVisualizationBoxAdded(const OpenViBE::Kernel::IBox* pBox);
-		void onVisualizationBoxRemoved(const OpenViBE::CIdentifier& boxIdentifier);
-		void onVisualizationBoxRenamed(const OpenViBE::CIdentifier& boxIdentifier);
+		void onVisualizationBoxRemoved(const OpenViBE::CIdentifier& boxID);
+		void onVisualizationBoxRenamed(const OpenViBE::CIdentifier& boxID);
 
 		//ITreeViewCB callbacks overloading
 		void createTreeWidget(OpenViBEVisualizationToolkit::IVisualizationWidget* widget);
@@ -94,8 +94,8 @@ namespace OpenViBEDesigner
 
 		//visualization widgets
 		bool removeVisualizationWidget();
-		bool removeVisualizationWidget(const OpenViBE::CIdentifier& rIdentifier);
-		bool destroyVisualizationWidget(const OpenViBE::CIdentifier& rIdentifier);
+		bool removeVisualizationWidget(const OpenViBE::CIdentifier& identifier);
+		bool destroyVisualizationWidget(const OpenViBE::CIdentifier& identifier);
 
 		void enableNotebookSignals(GtkWidget* notebook, bool b);
 		void notebookPageSelectedCB(GtkNotebook* notebook, guint pagenum);

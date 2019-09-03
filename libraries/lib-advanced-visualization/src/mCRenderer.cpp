@@ -41,28 +41,25 @@ CRenderer::~CRenderer()
 	//	::printf("CRenderer::~CRenderer - %i instances left\n", iCount);
 }
 
-void CRenderer::setChannelLocalisation(const char* sFilename)
-{
-	m_channelLocalisationFilename = sFilename;
-}
+void CRenderer::setChannelLocalisation(const char* sFilename) { m_channelLocalisationFilename = sFilename; }
 
-void CRenderer::setChannelCount(const uint32_t channelCount)
+void CRenderer::setChannelCount(const uint32_t nChannel)
 {
-	m_channelCount        = channelCount;
-	m_inverseChannelCount = (channelCount ? 1.f / channelCount : 1);
+	m_channelCount        = nChannel;
+	m_inverseChannelCount = (nChannel ? 1.f / nChannel : 1);
 	m_vertex.clear();
 	m_mesh.clear();
 
 	m_historyIndex = 0;
 	m_historyCount = 0;
 	m_history.clear();
-	m_history.resize(channelCount);
+	m_history.resize(nChannel);
 }
 
 void CRenderer::setSampleCount(const uint32_t sampleCount)
 {
-	m_sampleCount        = sampleCount == 0 ? 1 : sampleCount;
-	m_inverseSampleCount = (m_sampleCount ? 1.f / m_sampleCount : 1);
+	m_nSample        = sampleCount == 0 ? 1 : sampleCount;
+	m_inverseSampleCount = (m_nSample ? 1.f / m_nSample : 1);
 	m_vertex.clear();
 	m_mesh.clear();
 }
@@ -90,10 +87,7 @@ void CRenderer::feed(const uint64_t stimulationDate, const uint64_t stimulationI
 
 void CRenderer::prefeed(const uint32_t preFeedSampleCount)
 {
-	for (uint32_t i = 0; i < m_channelCount; ++i)
-	{
-		m_history[i].insert(m_history[i].begin(), preFeedSampleCount, 0.f);
-	}
+	for (uint32_t i = 0; i < m_channelCount; ++i) { m_history[i].insert(m_history[i].begin(), preFeedSampleCount, 0.f); }
 	m_historyCount += preFeedSampleCount;
 	m_historyIndex = 0;
 }
@@ -108,12 +102,9 @@ float CRenderer::getSuggestedScale()
 		{
 			l_vf32Average.push_back(0);
 
-			const size_t samplesToAverage = (m_history[i].size() < m_sampleCount) ? m_history[i].size() : m_sampleCount;
+			const size_t samplesToAverage = (m_history[i].size() < m_nSample) ? m_history[i].size() : m_nSample;
 
-			for (size_t j = m_history[i].size(); j > (m_history[i].size() - samplesToAverage); --j)
-			{
-				l_vf32Average.back() += m_history[i][j - 1];
-			}
+			for (size_t j = m_history[i].size(); j > (m_history[i].size() - samplesToAverage); --j) { l_vf32Average.back() += m_history[i][j - 1]; }
 
 			l_vf32Average.back() /= float(samplesToAverage);
 		}
@@ -151,7 +142,7 @@ void CRenderer::clear(const uint32_t sampleCountToKeep = 0)
 
 uint32_t CRenderer::getChannelCount() const { return m_channelCount; }
 
-uint32_t CRenderer::getSampleCount() const { return m_sampleCount; }
+uint32_t CRenderer::getSampleCount() const { return m_nSample; }
 
 uint32_t CRenderer::getHistoryCount() const { return m_historyCount; }
 
@@ -167,17 +158,17 @@ bool CRenderer::getSampleAtERPFraction(const float fERPFraction, std::vector<flo
 {
 	vSample.resize(m_channelCount);
 
-	if (m_sampleCount > m_historyCount) { return false; }
+	if (m_nSample > m_historyCount) { return false; }
 
-	const float sampleIndexERP     = (fERPFraction * float(m_sampleCount - 1));
+	const float sampleIndexERP     = (fERPFraction * float(m_nSample - 1));
 	const float alpha              = sampleIndexERP - std::floor(sampleIndexERP);
-	const uint32_t sampleIndexERP1 = uint32_t(sampleIndexERP) % m_sampleCount;
-	const uint32_t sampleIndexERP2 = uint32_t(sampleIndexERP + 1) % m_sampleCount;
+	const uint32_t sampleIndexERP1 = uint32_t(sampleIndexERP) % m_nSample;
+	const uint32_t sampleIndexERP2 = uint32_t(sampleIndexERP + 1) % m_nSample;
 
 	for (uint32_t i = 0; i < m_channelCount; ++i)
 	{
-		vSample[i] = m_history[i][m_historyCount - m_sampleCount + sampleIndexERP1] * (1 - alpha)
-					 + m_history[i][m_historyCount - m_sampleCount + sampleIndexERP2] * (alpha);
+		vSample[i] = m_history[i][m_historyCount - m_nSample + sampleIndexERP1] * (1 - alpha)
+					 + m_history[i][m_historyCount - m_nSample + sampleIndexERP2] * (alpha);
 	}
 
 	return true;
@@ -187,7 +178,7 @@ void CRenderer::rebuild(const IRendererContext& /*rContext*/) { }
 
 void CRenderer::refresh(const IRendererContext& rContext)
 {
-	if (!m_sampleCount)
+	if (!m_nSample)
 	{
 		m_ERPFraction    = 0;
 		m_sampleIndexERP = 0;
@@ -195,7 +186,7 @@ void CRenderer::refresh(const IRendererContext& rContext)
 	}
 
 	m_ERPFraction    = rContext.getERPFraction();
-	m_sampleIndexERP = uint32_t(m_ERPFraction * float(m_sampleCount - 1)) % m_sampleCount;
+	m_sampleIndexERP = uint32_t(m_ERPFraction * float(m_nSample - 1)) % m_nSample;
 }
 
 #if 0

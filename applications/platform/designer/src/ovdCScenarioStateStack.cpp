@@ -10,22 +10,16 @@ using namespace Plugins;
 using namespace OpenViBEDesigner;
 using namespace OpenViBEToolkit;
 
-CScenarioStateStack::CScenarioStateStack(const IKernelContext& kernelContext, CInterfacedScenario& interfacedScenario, IScenario& scenario)
-	: m_kernelContext(kernelContext), m_InterfacedScenario(interfacedScenario), m_Scenario(scenario)
+CScenarioStateStack::CScenarioStateStack(const IKernelContext& ctx, CInterfacedScenario& interfacedScenario, IScenario& scenario)
+	: m_kernelContext(ctx), m_InterfacedScenario(interfacedScenario), m_Scenario(scenario)
 {
 	m_CurrentState      = m_States.begin();
 	m_MaximumStateCount = uint32_t(m_kernelContext.getConfigurationManager().expandAsUInteger("${Designer_UndoRedoStackSize}", 64));
 }
 
-CScenarioStateStack::~CScenarioStateStack()
-{
-	for (auto& state : m_States) { delete state; }
-}
+CScenarioStateStack::~CScenarioStateStack() { for (auto& state : m_States) { delete state; } }
 
-bool CScenarioStateStack::isUndoPossible()
-{
-	return m_CurrentState != m_States.begin();
-}
+bool CScenarioStateStack::isUndoPossible() { return m_CurrentState != m_States.begin(); }
 
 bool CScenarioStateStack::undo()
 {
@@ -77,14 +71,11 @@ bool CScenarioStateStack::snapshot()
 
 	while (m_CurrentState != m_States.end())
 	{
-		delete* m_CurrentState;
+		delete*m_CurrentState;
 		m_CurrentState = m_States.erase(m_CurrentState);
 	}
 
-	if (m_MaximumStateCount != 0)
-	{
-		while (m_States.size() >= m_MaximumStateCount) { m_States.erase(m_States.begin()); }
-	}
+	if (m_MaximumStateCount != 0) { while (m_States.size() >= m_MaximumStateCount) { m_States.erase(m_States.begin()); } }
 
 	m_States.push_back(newState);
 
@@ -131,10 +122,10 @@ bool CScenarioStateStack::restoreState(const IMemoryBuffer& state)
 
 	// Find the VisualizationTree metadata
 	IMetadata* visualizationTreeMetadata = nullptr;
-	CIdentifier metadataIdentifier       = OV_UndefinedIdentifier;
-	while ((metadataIdentifier = m_Scenario.getNextMetadataIdentifier(metadataIdentifier)) != OV_UndefinedIdentifier)
+	CIdentifier metadataID               = OV_UndefinedIdentifier;
+	while ((metadataID = m_Scenario.getNextMetadataIdentifier(metadataID)) != OV_UndefinedIdentifier)
 	{
-		visualizationTreeMetadata = m_Scenario.getMetadataDetails(metadataIdentifier);
+		visualizationTreeMetadata = m_Scenario.getMetadataDetails(metadataID);
 		if (visualizationTreeMetadata && visualizationTreeMetadata->getType() == OVVIZ_MetadataIdentifier_VisualizationTree) { break; }
 	}
 
@@ -153,21 +144,21 @@ bool CScenarioStateStack::dumpState(IMemoryBuffer& state)
 
 	// Remove all VisualizationTree type metadata
 	CIdentifier oldVisualizationTreeMetadataIdentifier = OV_UndefinedIdentifier;
-	CIdentifier metadataIdentifier                     = OV_UndefinedIdentifier;
-	while ((metadataIdentifier = m_Scenario.getNextMetadataIdentifier(metadataIdentifier)) != OV_UndefinedIdentifier)
+	CIdentifier metadataID                             = OV_UndefinedIdentifier;
+	while ((metadataID = m_Scenario.getNextMetadataIdentifier(metadataID)) != OV_UndefinedIdentifier)
 	{
-		if (m_Scenario.getMetadataDetails(metadataIdentifier)->getType() == OVVIZ_MetadataIdentifier_VisualizationTree)
+		if (m_Scenario.getMetadataDetails(metadataID)->getType() == OVVIZ_MetadataIdentifier_VisualizationTree)
 		{
-			oldVisualizationTreeMetadataIdentifier = metadataIdentifier;
-			m_Scenario.removeMetadata(metadataIdentifier);
-			metadataIdentifier = OV_UndefinedIdentifier;
+			oldVisualizationTreeMetadataIdentifier = metadataID;
+			m_Scenario.removeMetadata(metadataID);
+			metadataID = OV_UndefinedIdentifier;
 		}
 	}
 
 	// Insert new metadata
-	m_Scenario.addMetadata(metadataIdentifier, oldVisualizationTreeMetadataIdentifier);
-	m_Scenario.getMetadataDetails(metadataIdentifier)->setType(OVVIZ_MetadataIdentifier_VisualizationTree);
-	m_Scenario.getMetadataDetails(metadataIdentifier)->setData(m_InterfacedScenario.m_pVisualizationTree->serialize());
+	m_Scenario.addMetadata(metadataID, oldVisualizationTreeMetadataIdentifier);
+	m_Scenario.getMetadataDetails(metadataID)->setType(OVVIZ_MetadataIdentifier_VisualizationTree);
+	m_Scenario.getMetadataDetails(metadataID)->setData(m_InterfacedScenario.m_pVisualizationTree->serialize());
 
 	const CIdentifier exporterIdentifier = m_kernelContext.getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_XMLScenarioExporter);
 
@@ -200,7 +191,7 @@ bool CScenarioStateStack::dumpState(IMemoryBuffer& state)
 
 	state.setSize(0, true);
 	state.append(compressedMemoryBuffer.getDirectPointer(), destinationSize);
-	state.append(reinterpret_cast<const uint8_t*>(& sourceSize), sizeof(uLongf));
+	state.append(reinterpret_cast<const uint8_t*>(&sourceSize), sizeof(uLongf));
 
 	return true;
 }

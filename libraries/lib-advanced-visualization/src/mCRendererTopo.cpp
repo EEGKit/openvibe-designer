@@ -56,10 +56,7 @@ namespace
 	double g(const unsigned int n, const unsigned int m, const std::vector<double>& vLegendre)
 	{
 		double result = 0;
-		for (unsigned int i = 1; i <= n; ++i)
-		{
-			result += (2 * i + 1) / pow(double(i * (i + 1)), int(m)) * vLegendre[i];
-		}
+		for (unsigned int i = 1; i <= n; ++i) { result += (2 * i + 1) / pow(double(i * (i + 1)), int(m)) * vLegendre[i]; }
 		return result / (4 * M_PI);
 	}
 
@@ -70,10 +67,7 @@ namespace
 	double h(const unsigned int n, const unsigned int m, const std::vector<double>& vLegendre)
 	{
 		double result = 0;
-		for (unsigned int i = 1; i <= n; ++i)
-		{
-			result += (2 * i + 1) / pow(double(i * (i + 1)), int(m - 1)) * vLegendre[i];
-		}
+		for (unsigned int i = 1; i <= n; ++i) { result += (2 * i + 1) / pow(double(i * (i + 1)), int(m - 1)) * vLegendre[i]; }
 		return result / (4 * M_PI);
 	}
 
@@ -176,10 +170,9 @@ void CRendererTopo::rebuild(const IRendererContext& rContext)
 	const unsigned int M = 3;
 	const auto N         = static_cast<unsigned int>(pow(10., 10. / (2 * M - 2)));
 
-	std::vector<double> l_vLegendre;
-	std::vector<double> l_vGCache;
-	std::vector<double> l_vHCache;
-	build(N, M, l_vGCache, l_vHCache);
+	std::vector<double> gCaches;
+	std::vector<double> hCaches;
+	build(N, M, gCaches, hCaches);
 
 	const size_t nc = rContext.getChannelCount();
 	const size_t vc = m_oScalp.m_vVertex.size();
@@ -197,8 +190,8 @@ void CRendererTopo::rebuild(const IRendererContext& rContext)
 			rContext.getChannelLocalisation(j, v2.x, v2.y, v2.z);
 
 			const double cosine = CVertex::dot(v1, v2);
-			A(i, j)             = cache(cosine, l_vGCache);
-			A(j, i)             = cache(cosine, l_vGCache);
+			A(i, j)             = cache(cosine, gCaches);
+			A(j, i)             = cache(cosine, gCaches);
 		}
 	}
 
@@ -220,8 +213,8 @@ void CRendererTopo::rebuild(const IRendererContext& rContext)
 			rContext.getChannelLocalisation(j, v2.x, v2.y, v2.z);
 
 			const double cosine = CVertex::dot(v1, v2);
-			B(i, j)             = cache(cosine, l_vGCache);
-			D(i, j)             = cache(cosine, l_vHCache);
+			B(i, j)             = cache(cosine, gCaches);
+			D(i, j)             = cache(cosine, hCaches);
 		}
 	}
 
@@ -236,7 +229,7 @@ void CRendererTopo::rebuild(const IRendererContext& rContext)
 	if (m_bMultiSlice)
 	{
 		m_vInterpolatedSample.clear();
-		m_vInterpolatedSample.resize(m_sampleCount, Eigen::VectorXd::Zero(m_oScalp.m_vVertex.size()));
+		m_vInterpolatedSample.resize(m_nSample, Eigen::VectorXd::Zero(m_oScalp.m_vVertex.size()));
 	}
 
 	// Finalizes
@@ -250,11 +243,8 @@ void CRendererTopo::rebuild(const IRendererContext& rContext)
 void CRendererTopo::interpolate(const Eigen::VectorXd& V, Eigen::VectorXd& W, Eigen::VectorXd& Z) const
 {
 	Eigen::VectorXd C = Ai * V;
-
 	W = B * C;
-
 	C[V.size() - 1] = 0;
-
 	Z = D * C;
 }
 
@@ -263,8 +253,6 @@ void CRendererTopo::refresh(const IRendererContext& rContext)
 	CRenderer::refresh(rContext);
 
 	if (!m_historyCount) { return; }
-
-	size_t i, k;
 
 	size_t nc       = rContext.getChannelCount();
 	const size_t vc = m_oScalp.m_vVertex.size();
@@ -277,17 +265,17 @@ void CRendererTopo::refresh(const IRendererContext& rContext)
 	if (!m_bMultiSlice)
 	{
 		this->getSampleAtERPFraction(m_ERPFraction, l_vSample);
-		for (i = 0; i < nc; ++i) { V(i) = l_vSample[i]; }
+		for (size_t i = 0; i < nc; ++i) { V(i) = l_vSample[i]; }
 		this->interpolate(V, W, Z);
 		for (size_t j = 0; j < vc; j++) { m_oScalp.m_vVertex[j].u = float(W(j)); }
 	}
 	else
 	{
-		if (m_historyCount >= m_sampleCount)
+		if (m_historyCount >= m_nSample)
 		{
-			for (k = 0; k < m_sampleCount; k++)
+			for (size_t k = 0; k < m_nSample; k++)
 			{
-				for (i = 0; i < nc; ++i) { V(i) = m_history[i][m_historyCount - m_sampleCount + k]; }
+				for (size_t i = 0; i < nc; ++i) { V(i) = m_history[i][m_historyCount - m_nSample + k]; }
 				this->interpolate(V, W, Z);
 				m_vInterpolatedSample[k] = W;
 			}
@@ -356,10 +344,7 @@ bool CRendererTopo::render(const IRendererContext& rContext)
 			glColor3f(m_oFace.m_vColor[0], m_oFace.m_vColor[1], m_oFace.m_vColor[2]);
 			glEnableClientState(GL_VERTEX_ARRAY);
 			glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_oFace.m_vVertex[0].x);
-			if (!m_oFace.m_vNormal.empty())
-			{
-				glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_oFace.m_vNormal[0].x);
-			}
+			if (!m_oFace.m_vNormal.empty()) { glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_oFace.m_vNormal[0].x); }
 			glDrawElements(GL_TRIANGLES, GLsizei(m_oFace.m_vTriangle.size()), GL_UNSIGNED_INT, &m_oFace.m_vTriangle[0]);
 			glDisableClientState(GL_NORMAL_ARRAY);
 			glDisableClientState(GL_VERTEX_ARRAY);
@@ -381,10 +366,7 @@ bool CRendererTopo::render(const IRendererContext& rContext)
 			glEnableClientState(GL_VERTEX_ARRAY);
 			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 			glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_oScalp.m_vVertex[0].x);
-			if (!m_oScalp.m_vNormal.empty())
-			{
-				glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_oScalp.m_vNormal[0].x);
-			}
+			if (!m_oScalp.m_vNormal.empty()) { glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_oScalp.m_vNormal[0].x); }
 			if (!m_bMultiSlice)
 			{
 				glColor3f(1, 1, 1);
@@ -395,12 +377,12 @@ bool CRendererTopo::render(const IRendererContext& rContext)
 			}
 			else
 			{
-				glColor4f(1.f, 1.f, 1.f, 4.f / m_sampleCount);
+				glColor4f(1.f, 1.f, 1.f, 4.f / m_nSample);
 				glDisable(GL_DEPTH_TEST);
 				glEnable(GL_BLEND);
-				for (uint32_t i = 0; i < m_sampleCount; ++i)
+				for (uint32_t i = 0; i < m_nSample; ++i)
 				{
-					float l_f32Scale = 1.f + i * 0.25f / m_sampleCount;
+					float l_f32Scale = 1.f + i * 0.25f / m_nSample;
 					glPushMatrix();
 					glScalef(l_f32Scale, l_f32Scale, l_f32Scale);
 					glTexCoordPointer(1, GL_DOUBLE, 0, &m_vInterpolatedSample[i][0]);

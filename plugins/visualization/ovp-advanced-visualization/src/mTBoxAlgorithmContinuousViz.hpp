@@ -28,7 +28,7 @@ namespace Mensia
 	namespace AdvancedVisualization
 	{
 		template <class TRendererFactoryClass, class TRulerClass>
-		class TBoxAlgorithmContinuousViz : public CBoxAlgorithmViz
+		class TBoxAlgorithmContinuousViz final : public CBoxAlgorithmViz
 		{
 		public:
 
@@ -49,35 +49,34 @@ namespace Mensia
 			void draw() override;
 		};
 
-		class CBoxAlgorithmContinuousVizListener : public CBoxAlgorithmVizListener
+		class CBoxAlgorithmContinuousVizListener final : public CBoxAlgorithmVizListener
 		{
 		public:
 
 			explicit CBoxAlgorithmContinuousVizListener(const std::vector<int>& vParameter)
 				: CBoxAlgorithmVizListener(vParameter) { }
 
-			bool onInputTypeChanged(IBox& rBox, const uint32_t index) override
+			bool onInputTypeChanged(IBox& box, const uint32_t index) override
 			{
-				OpenViBE::CIdentifier l_oTypeIdentifier = OV_UndefinedIdentifier;
-				rBox.getInputType(index, l_oTypeIdentifier);
-				if (!this->getTypeManager().isDerivedFromStream(l_oTypeIdentifier, OV_TypeId_StreamedMatrix))
-				{
-					rBox.setInputType(index, OV_TypeId_StreamedMatrix);
-				}
-				rBox.setInputType(1, OV_TypeId_Stimulations);
+				OpenViBE::CIdentifier typeID = OV_UndefinedIdentifier;
+				box.getInputType(index, typeID);
+				if (!this->getTypeManager().isDerivedFromStream(typeID, OV_TypeId_StreamedMatrix)) { box.setInputType(index, OV_TypeId_StreamedMatrix); }
+				box.setInputType(1, OV_TypeId_Stimulations);
 				return true;
 			}
 		};
 
 		template <class TRendererFactoryClass, class TRulerClass = IRuler>
-		class TBoxAlgorithmContinuousVizDesc : public CBoxAlgorithmVizDesc
+		class TBoxAlgorithmContinuousVizDesc final : public CBoxAlgorithmVizDesc
 		{
 		public:
 
-			TBoxAlgorithmContinuousVizDesc(const OpenViBE::CString& sName, const OpenViBE::CIdentifier& rDescClassId, const OpenViBE::CIdentifier& rClassId,
+			TBoxAlgorithmContinuousVizDesc(const OpenViBE::CString& name, const OpenViBE::CIdentifier& rDescClassId, const OpenViBE::CIdentifier& rClassId,
 										   const OpenViBE::CString& sAddedSoftwareVersion, const OpenViBE::CString& sUpdatedSoftwareVersion,
-										   const CParameterSet& rParameterSet, const OpenViBE::CString& sShortDescription, const OpenViBE::CString& sDetailedDescription)
-				: CBoxAlgorithmVizDesc(sName, rDescClassId, rClassId, sAddedSoftwareVersion, sUpdatedSoftwareVersion, rParameterSet, sShortDescription, sDetailedDescription) { }
+										   const CParameterSet& rParameterSet, const OpenViBE::CString& sShortDescription,
+										   const OpenViBE::CString& sDetailedDescription)
+				: CBoxAlgorithmVizDesc(name, rDescClassId, rClassId, sAddedSoftwareVersion, sUpdatedSoftwareVersion, rParameterSet, sShortDescription,
+									   sDetailedDescription) { }
 
 			OpenViBE::Plugins::IPluginObject* create() override
 			{
@@ -92,7 +91,8 @@ namespace Mensia
 		};
 
 		template <class TRendererFactoryClass, class TRulerClass>
-		TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>::TBoxAlgorithmContinuousViz(const OpenViBE::CIdentifier& rClassId, const std::vector<int>& vParameter)
+		TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>::TBoxAlgorithmContinuousViz(
+			const OpenViBE::CIdentifier& rClassId, const std::vector<int>& vParameter)
 			: CBoxAlgorithmViz(rClassId, vParameter) { }
 
 		template <class TRendererFactoryClass, class TRulerClass>
@@ -141,10 +141,10 @@ namespace Mensia
 				m_oMatrixDecoder.decode(i);
 
 				OpenViBE::IMatrix* l_pMatrix = m_oMatrixDecoder.getOutputMatrix();
-				uint32_t channelCount        = l_pMatrix->getDimensionSize(0);
+				uint32_t nChannel        = l_pMatrix->getDimensionSize(0);
 				uint32_t sampleCount         = l_pMatrix->getDimensionSize(1);
 
-				if (channelCount == 0)
+				if (nChannel == 0)
 				{
 					this->getLogManager() << LogLevel_Error << "Input stream " << uint32_t(i) << " has 0 channels\n";
 					return false;
@@ -152,7 +152,7 @@ namespace Mensia
 
 				if (l_pMatrix->getDimensionCount() == 1)
 				{
-					channelCount = l_pMatrix->getDimensionSize(0);
+					nChannel = l_pMatrix->getDimensionSize(0);
 					sampleCount  = 1;
 				}
 
@@ -161,7 +161,7 @@ namespace Mensia
 					GtkTreeIter l_oGtkTreeIterator;
 					gtk_list_store_clear(m_pChannelListStore);
 
-					m_vSwap.resize(size_t(channelCount));
+					m_vSwap.resize(size_t(nChannel));
 
 					m_pRendererContext->clear();
 					m_pRendererContext->setTranslucency(float(m_translucency));
@@ -176,7 +176,7 @@ namespace Mensia
 					m_pRendererContext->setXYZPlotDepth(m_bXYZPlotHasDepth);
 
 					gtk_tree_view_set_model(m_pChannelTreeView, nullptr);
-					for (uint32_t j = 0; j < channelCount; ++j)
+					for (uint32_t j = 0; j < nChannel; ++j)
 					{
 						std::string l_sName    = trim(l_pMatrix->getDimensionLabel(0, j));
 						std::string l_sSubname = l_sName;
@@ -197,7 +197,7 @@ namespace Mensia
 					gtk_tree_view_set_model(m_pChannelTreeView, GTK_TREE_MODEL(m_pChannelListStore));
 					gtk_tree_selection_select_all(gtk_tree_view_get_selection(m_pChannelTreeView));
 
-					m_pRenderer->setChannelCount(channelCount);
+					m_pRenderer->setChannelCount(nChannel);
 
 					if (m_oTypeIdentifier == OV_TypeId_Signal) { m_pRendererContext->setDataType(IRendererContext::DataType_Signal); }
 					else if (m_oTypeIdentifier == OV_TypeId_Spectrum) { m_pRendererContext->setDataType(IRendererContext::DataType_Spectrum); }
@@ -211,7 +211,8 @@ namespace Mensia
 							//warned = true;
 							this->getLogManager() << LogLevel_Warning << "Input matrix has 'spectrum' type\n";
 							this->getLogManager() << LogLevel_Warning << "Such configuration is uncommon for a 'continous' kind of visualization !\n";
-							this->getLogManager() << LogLevel_Warning << "You might want to consider the 'stacked' kind of visualization for time/frequency analysis for instance\n";
+							this->getLogManager() << LogLevel_Warning <<
+									"You might want to consider the 'stacked' kind of visualization for time/frequency analysis for instance\n";
 							this->getLogManager() << LogLevel_Warning << "Please double check your scenario\n";
 						}
 						else
@@ -219,11 +220,15 @@ namespace Mensia
 							if (!m_pRendererContext->isTimeLocked())
 							{
 								//warned = true;
-								this->getLogManager() << LogLevel_Warning << "Input matrix has " << sampleCount << " elements and the box settings say the elements are independant with " << uint64_t(m_elementCount) << " elements to render\n";
+								this->getLogManager() << LogLevel_Warning << "Input matrix has " << sampleCount <<
+										" elements and the box settings say the elements are independant with " << uint64_t(m_elementCount) <<
+										" elements to render\n";
 								this->getLogManager() << LogLevel_Warning << "Such configuration is uncommon for a 'continous' kind of visualization !\n";
 								this->getLogManager() << LogLevel_Warning << "You might want either of the following alternative :\n";
-								this->getLogManager() << LogLevel_Warning << " - an 'instant' kind of visualization to highlight the " << m_elementCount << " elements of the matrix\n";
-								this->getLogManager() << LogLevel_Warning << " - a 'time locked' kind of elements (thus the scenario must refresh the matrix on a regular basis)\n";
+								this->getLogManager() << LogLevel_Warning << " - an 'instant' kind of visualization to highlight the " << m_elementCount <<
+										" elements of the matrix\n";
+								this->getLogManager() << LogLevel_Warning <<
+										" - a 'time locked' kind of elements (thus the scenario must refresh the matrix on a regular basis)\n";
 								this->getLogManager() << LogLevel_Warning << "Please double check your scenario and box settings\n";
 							}
 						}
@@ -242,17 +247,15 @@ namespace Mensia
 					{
 						m_pRendererContext->setSampleDuration(duration);
 					}
-					m_pRendererContext->setSpectrumFrequencyRange(uint32_t((uint64_t(sampleCount) << 32) / (boxContext.getInputChunkEndTime(0, i) - boxContext.getInputChunkStartTime(0, i))));
+					m_pRendererContext->setSpectrumFrequencyRange(
+						uint32_t((uint64_t(sampleCount) << 32) / (boxContext.getInputChunkEndTime(0, i) - boxContext.getInputChunkStartTime(0, i))));
 					m_pRendererContext->setMinimumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_pFrequencyBandMin))));
 					m_pRendererContext->setMaximumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_pFrequencyBandMax))));
 
 					// Feed renderer with actual samples
 					for (uint32_t j = 0; j < sampleCount; ++j)
 					{
-						for (uint32_t k = 0; k < channelCount; ++k)
-						{
-							m_vSwap[k] = float(l_pMatrix->getBuffer()[k * sampleCount + j]);
-						}
+						for (uint32_t k = 0; k < nChannel; ++k) { m_vSwap[k] = float(l_pMatrix->getBuffer()[k * sampleCount + j]); }
 						m_pRenderer->feed(&m_vSwap[0]);
 					}
 
@@ -260,7 +263,10 @@ namespace Mensia
 					if (m_pRendererContext->isTimeLocked() && m_pRendererContext->getSampleDuration())
 					{
 						auto theoreticalSampleCount = uint32_t(m_time2 / m_pRendererContext->getSampleDuration());
-						if (theoreticalSampleCount > m_pRenderer->getHistoryCount()) { m_pRenderer->prefeed(theoreticalSampleCount - m_pRenderer->getHistoryCount()); }
+						if (theoreticalSampleCount > m_pRenderer->getHistoryCount())
+						{
+							m_pRenderer->prefeed(theoreticalSampleCount - m_pRenderer->getHistoryCount());
+						}
 					}
 
 					m_bRefreshNeeded = true;

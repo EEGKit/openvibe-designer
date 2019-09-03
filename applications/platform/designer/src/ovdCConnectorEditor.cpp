@@ -12,16 +12,17 @@ namespace
 {
 	void reset_scenario_connector_identifier(GtkWidget*, CConnectorEditor* self)
 	{
-		const CIdentifier newIdentifier = self->m_rBox.getUnusedInputIdentifier(OV_UndefinedIdentifier);
-		if (self->m_ConnectorIdentifierEntry && newIdentifier != OV_UndefinedIdentifier)
+		const CIdentifier newID = self->m_rBox.getUnusedInputIdentifier(OV_UndefinedIdentifier);
+		if (self->m_ConnectorIdentifierEntry && newID != OV_UndefinedIdentifier)
 		{
-			gtk_entry_set_text(self->m_ConnectorIdentifierEntry, newIdentifier.toString().toASCIIString());
+			gtk_entry_set_text(self->m_ConnectorIdentifierEntry, newID.toString().toASCIIString());
 		}
 	}
 } // namespace
 
-CConnectorEditor::CConnectorEditor(const IKernelContext& rKernelContext, IBox& rBox, const uint32_t connectorType, const uint32_t connectorIndex, const char* sTitle, const char* sGUIFilename)
-	: m_kernelContext(rKernelContext), m_rBox(rBox), m_connectorType(connectorType),
+CConnectorEditor::CConnectorEditor(const IKernelContext& ctx, IBox& box, const uint32_t connectorType, const uint32_t connectorIndex,
+								   const char* sTitle, const char* sGUIFilename)
+	: m_kernelContext(ctx), m_rBox(box), m_connectorType(connectorType),
 	  m_connectorIndex(connectorIndex), m_sGUIFilename(sGUIFilename), m_sTitle(sTitle ? sTitle : "") { }
 
 CConnectorEditor::~CConnectorEditor() = default;
@@ -70,7 +71,8 @@ bool CConnectorEditor::run()
 	GtkEntry* l_pConnectorNameEntry           = GTK_ENTRY(gtk_builder_get_object(l_pBuilderInterfaceConnector, "connector_editor-connector_name_entry"));
 	GtkComboBox* l_pConnectorTypeComboBox     = GTK_COMBO_BOX(gtk_builder_get_object(l_pBuilderInterfaceConnector, "connector_editor-connector_type_combobox"));
 	m_ConnectorIdentifierEntry                = GTK_ENTRY(gtk_builder_get_object(l_pBuilderInterfaceConnector, "connector_editor-connector_identifier_entry"));
-	GtkButton* connectorIdentifierResetButton = GTK_BUTTON(gtk_builder_get_object(l_pBuilderInterfaceConnector, "connector_editor-connector_identifier_reset_button"));
+	GtkButton* connectorIdentifierResetButton = GTK_BUTTON(
+		gtk_builder_get_object(l_pBuilderInterfaceConnector, "connector_editor-connector_identifier_reset_button"));
 	gtk_list_store_clear(GTK_LIST_STORE(gtk_combo_box_get_model(l_pConnectorTypeComboBox)));
 	gtk_window_set_title(GTK_WINDOW(l_pConnectorDialog), m_sTitle.c_str());
 
@@ -128,10 +130,10 @@ bool CConnectorEditor::run()
 
 				// If the connector identifier is valid then create a new one and swap it with the edited one
 				// this is because we can not change the identifier of a setting
-				CIdentifier newIdentifier;
-				if (newIdentifier.fromString(newIdentifierString) && (newIdentifier != connectorIdentifier))
+				CIdentifier newID;
+				if (newID.fromString(newIdentifierString) && (newID != connectorIdentifier))
 				{
-					m_rBox.updateInterfacorIdentifier(interfacorType, m_connectorIndex, newIdentifier);
+					m_rBox.updateInterfacorIdentifier(interfacorType, m_connectorIndex, newID);
 				}
 				//				(m_rBox.*addConnector)(newName, newType);
 				l_bFinished = true;

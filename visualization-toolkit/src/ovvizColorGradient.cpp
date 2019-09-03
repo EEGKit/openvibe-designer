@@ -21,17 +21,14 @@ namespace
 bool Tools::ColorGradient::parse(IMatrix& colorGradient, const CString& string)
 {
 	const std::string colorString(string.toASCIIString());
-	std::string::size_type startPosition = 0;
+	size_t startPosition = 0;
 
 	std::map<double, SColor> colorGradientVector;
 
 	do
 	{
-		std::string::size_type endPosition = colorString.find(OV_Value_EnumeratedStringSeparator, startPosition);
-		if (endPosition == std::string::npos)
-		{
-			endPosition = colorString.length();
-		}
+		size_t endPosition = colorString.find(OV_Value_EnumeratedStringSeparator, startPosition);
+		if (endPosition == std::string::npos) { endPosition = colorString.length(); }
 
 		std::string colorSubString;
 		colorSubString.assign(colorString, startPosition, endPosition - startPosition);

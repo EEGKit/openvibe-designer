@@ -34,13 +34,13 @@ void CRendererMountain::rebuild(const IRendererContext& rContext)
 	size_t i, j, k;
 
 	m_oMountain.m_vVertex.clear();
-	m_oMountain.m_vVertex.resize(m_channelCount * m_sampleCount);
+	m_oMountain.m_vVertex.resize(m_channelCount * m_nSample);
 	for (i = 0, k = 0; i < m_channelCount; ++i)
 	{
-		for (j = 0; j < m_sampleCount; ++j)
+		for (j = 0; j < m_nSample; ++j)
 		{
 			const float a              = i * 1.f / float(m_channelCount - 1);
-			const float b              = 1 - j * 1.f / float(m_sampleCount - 1);
+			const float b              = 1 - j * 1.f / float(m_nSample - 1);
 			m_oMountain.m_vVertex[k].x = a;
 			m_oMountain.m_vVertex[k].y = 0;
 			m_oMountain.m_vVertex[k].z = b;
@@ -50,14 +50,14 @@ void CRendererMountain::rebuild(const IRendererContext& rContext)
 	}
 
 	m_oMountain.m_vTriangle.clear();
-	m_oMountain.m_vTriangle.resize((m_channelCount - 1) * (m_sampleCount - 1) * 6);
+	m_oMountain.m_vTriangle.resize((m_channelCount - 1) * (m_nSample - 1) * 6);
 	for (i = 0, k = 0; i < m_channelCount - 1; ++i)
 	{
-		for (j = 0; j < m_sampleCount - 1; ++j)
+		for (j = 0; j < m_nSample - 1; ++j)
 		{
 			const size_t id                 = k * 6;
-			const uint32_t v1               = uint32_t(i * m_sampleCount + j);
-			const uint32_t v2               = v1 + m_sampleCount;
+			const uint32_t v1               = uint32_t(i * m_nSample + j);
+			const uint32_t v2               = v1 + m_nSample;
 			m_oMountain.m_vTriangle[id]     = v1;
 			m_oMountain.m_vTriangle[id + 1] = v2;
 			m_oMountain.m_vTriangle[id + 2] = v2 + 1;
@@ -81,10 +81,10 @@ void CRendererMountain::refresh(const IRendererContext& rContext)
 
 	for (i = 0, k = 0; i < rContext.getSelectedCount(); ++i)
 	{
-		k                              = ((m_historyCount - 1) / m_sampleCount) * m_sampleCount;
+		k                              = ((m_historyCount - 1) / m_nSample) * m_nSample;
 		std::vector<float>& l_vHistory = m_history[rContext.getSelected(uint32_t(i))];
-		CVertex* l_pVertex             = &m_oMountain.m_vVertex[i * m_sampleCount];
-		for (size_t j = 0; j < m_sampleCount; j++, k++)
+		CVertex* l_pVertex             = &m_oMountain.m_vVertex[i * m_nSample];
+		for (size_t j = 0; j < m_nSample; j++, k++)
 		{
 			if (/*k>=m_historyIndex && */k < m_historyCount)
 			{
@@ -138,7 +138,7 @@ bool CRendererMountain::render(const IRendererContext& rContext)
 	glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_oMountain.m_vVertex[0].u);
 
 	glColor3f(rContext.getTranslucency(), rContext.getTranslucency(), rContext.getTranslucency());
-	glDrawElements(GL_TRIANGLES, (rContext.getSelectedCount() - 1) * (m_sampleCount - 1) * 6, GL_UNSIGNED_INT, &m_oMountain.m_vTriangle[0]);
+	glDrawElements(GL_TRIANGLES, (rContext.getSelectedCount() - 1) * (m_nSample - 1) * 6, GL_UNSIGNED_INT, &m_oMountain.m_vTriangle[0]);
 	/*
 		::glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		::glColor3f(0, 0, 0);

@@ -13,7 +13,7 @@ namespace OpenViBEDesigner
 	class CPlayerVisualization : public OpenViBEVisualizationToolkit::ITreeViewCB
 	{
 	public:
-		CPlayerVisualization(const OpenViBE::Kernel::IKernelContext& rKernelContext, OpenViBEVisualizationToolkit::IVisualizationTree& rVisualizationTree, CInterfacedScenario& rInterfacedScenario);
+		CPlayerVisualization(const OpenViBE::Kernel::IKernelContext& ctx, OpenViBEVisualizationToolkit::IVisualizationTree& rVisualizationTree, CInterfacedScenario& rInterfacedScenario);
 
 		virtual ~CPlayerVisualization();
 
@@ -23,8 +23,8 @@ namespace OpenViBEDesigner
 		//@{
 		GtkWidget* loadTreeWidget(OpenViBEVisualizationToolkit::IVisualizationWidget* pVisualizationWidget);
 		void endLoadTreeWidget(OpenViBEVisualizationToolkit::IVisualizationWidget* pVisualizationWidget);
-		bool setToolbar(const OpenViBE::CIdentifier& boxIdentifier, GtkWidget* pToolbarWidget);
-		bool setWidget(const OpenViBE::CIdentifier& boxIdentifier, GtkWidget* widget);
+		bool setToolbar(const OpenViBE::CIdentifier& boxID, GtkWidget* pToolbarWidget);
+		bool setWidget(const OpenViBE::CIdentifier& boxID, GtkWidget* widget);
 		//@}
 
 		void showTopLevelWindows();

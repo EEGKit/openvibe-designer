@@ -24,7 +24,7 @@ namespace OpenViBEDesigner
 	{
 	public:
 
-		CInterfacedScenario(const OpenViBE::Kernel::IKernelContext& rKernelContext, CApplication& rApplication, OpenViBE::Kernel::IScenario& rScenario, OpenViBE::CIdentifier& rScenarioIdentifier,
+		CInterfacedScenario(const OpenViBE::Kernel::IKernelContext& ctx, CApplication& rApplication, OpenViBE::Kernel::IScenario& rScenario, OpenViBE::CIdentifier& scenarioID,
 							GtkNotebook& rNotebook, const char* sGUIFilename, const char* sGUISettingsFilename);
 		virtual ~CInterfacedScenario();
 
@@ -52,7 +52,7 @@ namespace OpenViBEDesigner
 		void editScenarioInputCB(unsigned int index);
 		void swapScenarioInputs(unsigned int inputAIndex, unsigned int inputBIndex);
 		void addScenarioOutputCB();
-		void editScenarioOutputCB(unsigned int outputIndex);
+		void editScenarioOutputCB(unsigned int outputIdx);
 		void swapScenarioOutputs(unsigned int outputAIndex, unsigned int outputBIndex);
 
 
@@ -78,7 +78,7 @@ namespace OpenViBEDesigner
 		void pasteSelection();
 		void deleteSelection();
 
-		void deleteBox(const OpenViBE::CIdentifier& boxIdentifier); // Utility method to remove box from scenario and visualization
+		void deleteBox(const OpenViBE::CIdentifier& boxID); // Utility method to remove box from scenario and visualization
 		void contextMenuBoxUpdateCB(OpenViBE::Kernel::IBox& box);
 		void contextMenuBoxRemoveDeprecatedInterfacorsCB(OpenViBE::Kernel::IBox& box);
 		void contextMenuBoxRenameCB(OpenViBE::Kernel::IBox& box);
@@ -91,10 +91,10 @@ namespace OpenViBEDesigner
 		void contextMenuBoxEditOutputCB(OpenViBE::Kernel::IBox& box, const uint32_t index);
 		void contextMenuBoxRemoveOutputCB(OpenViBE::Kernel::IBox& box, const uint32_t index);
 
-		void contextMenuBoxConnectScenarioInputCB(OpenViBE::Kernel::IBox& box, uint32_t boxInputIndex, uint32_t scenarioInputIndex);
-		void contextMenuBoxConnectScenarioOutputCB(OpenViBE::Kernel::IBox& box, uint32_t boxOutputIndex, uint32_t scenarioOutputIndex);
-		void contextMenuBoxDisconnectScenarioInputCB(OpenViBE::Kernel::IBox& box, uint32_t boxInputIndex, uint32_t scenarioInputIndex);
-		void contextMenuBoxDisconnectScenarioOutputCB(OpenViBE::Kernel::IBox& box, uint32_t boxOutputIndex, uint32_t scenarioOutputIndex);
+		void contextMenuBoxConnectScenarioInputCB(OpenViBE::Kernel::IBox& box, uint32_t boxInputIdx, uint32_t scenarioInputIdx);
+		void contextMenuBoxConnectScenarioOutputCB(OpenViBE::Kernel::IBox& box, uint32_t boxOutputIdx, uint32_t scenarioOutputIdx);
+		void contextMenuBoxDisconnectScenarioInputCB(OpenViBE::Kernel::IBox& box, uint32_t boxInputIdx, uint32_t scenarioInputIdx);
+		void contextMenuBoxDisconnectScenarioOutputCB(OpenViBE::Kernel::IBox& box, uint32_t boxOutputIdx, uint32_t scenarioOutputIdx);
 
 		void contextMenuBoxAddSettingCB(OpenViBE::Kernel::IBox& box);
 		void contextMenuBoxEditSettingCB(OpenViBE::Kernel::IBox& box, const uint32_t index);
@@ -129,7 +129,7 @@ namespace OpenViBEDesigner
 		void stopAndReleasePlayer();
 		bool setModifiableSettingsWidgets();
 		bool hasSelection() const { return !m_SelectedObjects.empty(); }
-		bool centerOnBox(const OpenViBE::CIdentifier& rIdentifier);
+		bool centerOnBox(const OpenViBE::CIdentifier& identifier);
 		void setScale(double scale);
 		double getScale() const { return m_currentScale; }
 

@@ -12,7 +12,7 @@ namespace OpenViBEDesigner
 	{
 	public:
 
-		CScenarioStateStack(const OpenViBE::Kernel::IKernelContext& kernelContext, CInterfacedScenario& interfacedScenario, OpenViBE::Kernel::IScenario& scenario);
+		CScenarioStateStack(const OpenViBE::Kernel::IKernelContext& ctx, CInterfacedScenario& interfacedScenario, OpenViBE::Kernel::IScenario& scenario);
 		virtual ~CScenarioStateStack();
 
 		virtual bool isUndoPossible();

@@ -28,14 +28,14 @@ void CRendererBitmap::rebuild(const IRendererContext& rContext)
 {
 	CRenderer::rebuild(rContext);
 
-	m_autoDecimationFactor = 1 + uint32_t((m_sampleCount - 1) / rContext.getMaximumSampleCountPerDisplay());
+	m_autoDecimationFactor = 1 + uint32_t((m_nSample - 1) / rContext.getMaximumSampleCountPerDisplay());
 
 	m_vertex.clear();
 	m_vertex.resize(m_channelCount);
 	for (size_t i = 0; i < m_channelCount; ++i)
 	{
-		m_vertex[i].resize((m_sampleCount / m_autoDecimationFactor) * 4);
-		for (size_t j = 0; j < m_sampleCount - m_autoDecimationFactor + 1; j += m_autoDecimationFactor)
+		m_vertex[i].resize((m_nSample / m_autoDecimationFactor) * 4);
+		for (size_t j = 0; j < m_nSample - m_autoDecimationFactor + 1; j += m_autoDecimationFactor)
 		{
 			const size_t l     = j / m_autoDecimationFactor;
 			const size_t id    = l * 4;
@@ -67,10 +67,10 @@ void CRendererBitmap::refresh(const IRendererContext& rContext)
 
 	for (uint32_t i = 0; i < m_channelCount; ++i)
 	{
-		uint32_t k                     = ((m_historyCount - 1) / m_sampleCount) * m_sampleCount;
+		uint32_t k                     = ((m_historyCount - 1) / m_nSample) * m_nSample;
 		std::vector<float>& l_vHistory = m_history[i];
 		CVertex* l_pVertex             = &m_vertex[i][0];
-		for (uint32_t j = 0; j < m_sampleCount - m_autoDecimationFactor + 1; j += m_autoDecimationFactor, k += m_autoDecimationFactor)
+		for (uint32_t j = 0; j < m_nSample - m_autoDecimationFactor + 1; j += m_autoDecimationFactor, k += m_autoDecimationFactor)
 		{
 			if (k >= m_historyIndex && k < m_historyCount)
 			{
@@ -80,10 +80,7 @@ void CRendererBitmap::refresh(const IRendererContext& rContext)
 				l_pVertex++->u    = value;
 				l_pVertex++->u    = value;
 			}
-			else
-			{
-				l_pVertex += 4;
-			}
+			else { l_pVertex += 4; }
 		}
 	}
 	m_historyIndex = m_historyCount;
@@ -110,7 +107,7 @@ bool CRendererBitmap::render(const IRendererContext& rContext)
 		glTranslatef(0, float(rContext.getSelectedCount() - i) - 1.f, 0);
 		glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_vertex[rContext.getSelected(i)][0].x);
 		glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_vertex[rContext.getSelected(i)][0].u);
-		glDrawArrays(GL_QUADS, 0, (m_sampleCount / m_autoDecimationFactor) * 4);
+		glDrawArrays(GL_QUADS, 0, (m_nSample / m_autoDecimationFactor) * 4);
 		glPopMatrix();
 	}
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);

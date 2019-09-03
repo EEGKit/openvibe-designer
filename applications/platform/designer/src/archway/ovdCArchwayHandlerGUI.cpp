@@ -123,15 +123,15 @@ namespace
 	void view_pipeline_config(CArchwayHandlerGUI * gui)
 	{
 		auto treeModel = gtk_tree_view_get_model(GTK_TREE_VIEW(gui->m_TreeViewEnginePipelines));
-		guint64 pipelineId;
-		gtk_tree_model_get(treeModel, &gui->m_SelectedPipelineIter, Column_PipelineId, &pipelineId, -1);
+		guint64 pipelineID;
+		gtk_tree_model_get(treeModel, &gui->m_SelectedPipelineIter, Column_PipelineId, &pipelineID, -1);
 
-		gui->displayPipelineConfigurationDialog(static_cast<unsigned int>(pipelineId));
+		gui->displayPipelineConfigurationDialog(static_cast<unsigned int>(pipelineID));
 
 		auto enginePipelines = gui->m_Controller.getEnginePipelines();
 		for (const auto& pipeline : enginePipelines)
 		{
-			if (pipeline.id != pipelineId) { continue; }
+			if (pipeline.id != pipelineID) { continue; }
 			gtk_list_store_set(GTK_LIST_STORE(treeModel), &gui->m_SelectedPipelineIter, Column_PipelineIsConfigured, pipeline.isConfigured, -1);
 		}
 	}
@@ -140,12 +140,12 @@ namespace
 	{
 		auto gui = static_cast<CArchwayHandlerGUI*>(userData);
 		auto treeModel = gtk_tree_view_get_model(GTK_TREE_VIEW(gui->m_TreeViewEnginePipelines));
-		guint64 pipelineId;
-		gtk_tree_model_get(treeModel, &gui->m_SelectedPipelineIter, Column_PipelineId, &pipelineId, -1);
+		guint64 pipelineID;
+		gtk_tree_model_get(treeModel, &gui->m_SelectedPipelineIter, Column_PipelineId, &pipelineID, -1);
 
 		if (gui->m_Controller.m_EngineType == EngineType::Local)
 		{
-			std::string path = gui->m_Controller.getPipelineScenarioPath(uint64_t(pipelineId));
+			std::string path = gui->m_Controller.getPipelineScenarioPath(uint64_t(pipelineID));
 			gui->m_Application->openScenario(path.c_str());
 		}
 	}
@@ -212,15 +212,15 @@ namespace
 		{
 			gtk_tree_selection_get_selected(selection, &gui->m_TreeModelEnginePipelines, &gui->m_SelectedPipelineIter);
 
-			unsigned long long pipelineId = 0;
+			unsigned long long pipelineID = 0;
 			gtk_tree_model_get(gui->m_TreeModelEnginePipelines,
 				&gui->m_SelectedPipelineIter,
 				Column_PipelineId,
-				&pipelineId,
+				&pipelineID,
 				-1);
 
 			bool shouldAcquireImpedance = (gtk_toggle_tool_button_get_active(gui->m_ToggleAcquireImpedance) == gboolean(true));
-			if (gui->m_Controller.startEngineWithPipeline(static_cast<unsigned int>(pipelineId), isFastForward, shouldAcquireImpedance))
+			if (gui->m_Controller.startEngineWithPipeline(static_cast<unsigned int>(pipelineID), isFastForward, shouldAcquireImpedance))
 			{
 				gtk_widget_set_sensitive(GTK_WIDGET(gui->m_ToggleAcquireImpedance), false);
 				gtk_widget_set_sensitive(GTK_WIDGET(gui->m_ComboBoxEngineType), false);
@@ -454,32 +454,32 @@ void CArchwayHandlerGUI::toggleNeuroRTEngineConfigurationDialog(const bool shoul
 	else { gtk_widget_hide(engineConfigurationWidget); }
 }
 
-void CArchwayHandlerGUI::displayPipelineConfigurationDialog(const unsigned int pipelineId)
+void CArchwayHandlerGUI::displayPipelineConfigurationDialog(const unsigned int pipelineID)
 {
 	auto pipelineConfigurationWidget = GTK_WIDGET(gtk_builder_get_object(m_Builder, "dialog-pipeline-configuration"));
 	auto pipelineConfigurationListStore = GTK_LIST_STORE(gtk_builder_get_object(m_Builder, "liststore-pipeline-configuration"));
 
 	gtk_list_store_clear(pipelineConfigurationListStore);
 
-	auto pipelineParameters = m_Controller.getPipelineParameters(pipelineId);
+	auto pipelineParameters = m_Controller.getPipelineParameters(pipelineID);
 
 	GtkTreeIter iter;
 	for (auto& parameter : pipelineParameters)
 	{
 		gtk_list_store_append(pipelineConfigurationListStore, &iter);
 		gtk_list_store_set(pipelineConfigurationListStore, &iter,
-			Column_SettingPipelineId, static_cast<unsigned long long>(pipelineId),
+			Column_SettingPipelineId, static_cast<unsigned long long>(pipelineID),
 			Column_SettingName, parameter.name.c_str(),
 			Column_SettingDefaultValue, parameter.defaultValue.c_str(),
 			Column_SettingValue, parameter.value.c_str(),
 			-1);
 	}
 
-	auto savedSettings = m_Controller.getPipelineSettings(pipelineId);
+	auto savedSettings = m_Controller.getPipelineSettings(pipelineID);
 	auto response = gtk_dialog_run(GTK_DIALOG(pipelineConfigurationWidget));
 	if (response == GTK_RESPONSE_CANCEL)
 	{
-		m_Controller.getPipelineSettings(pipelineId) = savedSettings;
+		m_Controller.getPipelineSettings(pipelineID) = savedSettings;
 	}
 }
 
@@ -492,7 +492,7 @@ bool CArchwayHandlerGUI::setPipelineParameterValueAtPath(gchar const* path, gcha
 	gboolean isIteratorValid = gtk_tree_model_get_iter_from_string(pipelineConfigurationListStore, &parameterIter, path);
 	assert(isIteratorValid);
 
-	unsigned long long pipelineId = 0;
+	unsigned long long pipelineID = 0;
 	gchar* parameterName;
 
 	gtk_tree_model_get(pipelineConfigurationListStore, &parameterIter,
@@ -500,14 +500,14 @@ bool CArchwayHandlerGUI::setPipelineParameterValueAtPath(gchar const* path, gcha
 		-1);
 
 	gtk_tree_model_get(pipelineConfigurationListStore, &parameterIter,
-		Column_SettingPipelineId, &pipelineId,
+		Column_SettingPipelineId, &pipelineID,
 		-1);
 
 	gtk_list_store_set(GTK_LIST_STORE(pipelineConfigurationListStore), &parameterIter,
 		Column_SettingValue, newValue,
 		-1);
 
-	this->m_Controller.setPipelineParameterValue(static_cast<unsigned int>(pipelineId), parameterName, newValue);
+	this->m_Controller.setPipelineParameterValue(static_cast<unsigned int>(pipelineID), parameterName, newValue);
 	g_free(parameterName);
 
 	return true;

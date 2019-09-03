@@ -52,44 +52,35 @@ namespace Mensia
 			void draw() override;
 		};
 
-		class CBoxAlgorithmInstantVizListener : public CBoxAlgorithmVizListener
+		class CBoxAlgorithmInstantVizListener final : public CBoxAlgorithmVizListener
 		{
 		public:
 
 			explicit CBoxAlgorithmInstantVizListener(const std::vector<int>& vParameter)
 				: CBoxAlgorithmVizListener(vParameter) { }
 
-			bool onInputTypeChanged(IBox& rBox, const uint32_t index) override
+			bool onInputTypeChanged(IBox& box, const uint32_t index) override
 			{
-				OpenViBE::CIdentifier l_oTypeIdentifier = OV_UndefinedIdentifier;
-				rBox.getInputType(index, l_oTypeIdentifier);
-				if (!this->getTypeManager().isDerivedFromStream(l_oTypeIdentifier, OV_TypeId_StreamedMatrix))
-				{
-					rBox.setInputType(index, OV_TypeId_StreamedMatrix);
-				}
-				else
-				{
-					for (uint32_t i = 0; i < rBox.getInputCount(); ++i)
-					{
-						rBox.setInputType(i, l_oTypeIdentifier);
-					}
-				}
+				OpenViBE::CIdentifier typeID = OV_UndefinedIdentifier;
+				box.getInputType(index, typeID);
+				if (!this->getTypeManager().isDerivedFromStream(typeID, OV_TypeId_StreamedMatrix)) { box.setInputType(index, OV_TypeId_StreamedMatrix); }
+				else { for (uint32_t i = 0; i < box.getInputCount(); ++i) { box.setInputType(i, typeID); } }
 				return true;
 			}
 
-			bool onInputAdded(IBox& rBox, const uint32_t index) override
+			bool onInputAdded(IBox& box, const uint32_t index) override
 			{
-				OpenViBE::CIdentifier l_oTypeIdentifier = OV_UndefinedIdentifier;
-				rBox.getInputType(0, l_oTypeIdentifier);
-				rBox.setInputType(index, l_oTypeIdentifier);
-				rBox.setInputName(index, "Matrix");
-				rBox.addSetting("Color", OV_TypeId_Color, "${AdvancedViz_DefaultColor}");
+				OpenViBE::CIdentifier typeID = OV_UndefinedIdentifier;
+				box.getInputType(0, typeID);
+				box.setInputType(index, typeID);
+				box.setInputName(index, "Matrix");
+				box.addSetting("Color", OV_TypeId_Color, "${AdvancedViz_DefaultColor}");
 				return true;
 			}
 
-			bool onInputRemoved(IBox& rBox, const uint32_t index) override
+			bool onInputRemoved(IBox& box, const uint32_t index) override
 			{
-				rBox.removeSetting(this->getBaseSettingCount() + index - 1);
+				box.removeSetting(this->getBaseSettingCount() + index - 1);
 				return true;
 			}
 		};
@@ -99,13 +90,14 @@ namespace Mensia
 		{
 		public:
 
-			TBoxAlgorithmInstantVizDesc(const OpenViBE::CString& sName, const OpenViBE::CIdentifier& rDescClassId, const OpenViBE::CIdentifier& rClassId, const OpenViBE::CString& sAddedSoftwareVersion, const OpenViBE::CString& sUpdatedSoftwareVersion, const CParameterSet& rParameterSet, const OpenViBE::CString& sShortDescription, const OpenViBE::CString& sDetailedDescription)
-				: CBoxAlgorithmVizDesc(sName, rDescClassId, rClassId, sAddedSoftwareVersion, sUpdatedSoftwareVersion, rParameterSet, sShortDescription, sDetailedDescription) { }
+			TBoxAlgorithmInstantVizDesc(const OpenViBE::CString& name, const OpenViBE::CIdentifier& rDescClassId, const OpenViBE::CIdentifier& rClassId,
+										const OpenViBE::CString& sAddedSoftwareVersion, const OpenViBE::CString& sUpdatedSoftwareVersion,
+										const CParameterSet& rParameterSet, const OpenViBE::CString& sShortDescription,
+										const OpenViBE::CString& sDetailedDescription)
+				: CBoxAlgorithmVizDesc(name, rDescClassId, rClassId, sAddedSoftwareVersion, sUpdatedSoftwareVersion, rParameterSet, sShortDescription,
+									   sDetailedDescription) { }
 
-			OpenViBE::Plugins::IPluginObject* create() override
-			{
-				return new TBoxAlgorithm<TRendererFactoryClass, TRulerClass>(m_oClassId, m_vParameter);
-			}
+			OpenViBE::Plugins::IPluginObject* create() override { return new TBoxAlgorithm<TRendererFactoryClass, TRulerClass>(m_oClassId, m_vParameter); }
 
 			OpenViBE::Plugins::IBoxListener* createBoxListener() const override { return new CBoxAlgorithmInstantVizListener(m_vParameter); }
 
@@ -116,19 +108,18 @@ namespace Mensia
 
 
 		template <class TRendererFactoryClass, class TRulerClass>
-		TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::TBoxAlgorithmInstantViz(const OpenViBE::CIdentifier& rClassId, const std::vector<int>& vParameter)
+		TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::TBoxAlgorithmInstantViz(const OpenViBE::CIdentifier& rClassId,
+																							 const std::vector<int>& vParameter)
 			: CBoxAlgorithmViz(rClassId, vParameter) { }
 
 		template <class TRendererFactoryClass, class TRulerClass>
 		bool TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::initialize()
-
 		{
 			bool l_bResult = CBoxAlgorithmViz::initialize();
 
 			m_dLastERPFraction = 0;
 
-			const IBox& l_rStaticBoxContext = this->getStaticBoxContext();
-			m_ui32InputCount                = l_rStaticBoxContext.getInputCount();
+			m_ui32InputCount = this->getStaticBoxContext().getInputCount();
 			m_vRenderer.resize(m_ui32InputCount);
 			m_vMatrixDecoder.resize(m_ui32InputCount);
 			for (uint32_t i = 0; i < m_ui32InputCount; ++i)
@@ -153,7 +144,6 @@ namespace Mensia
 
 		template <class TRendererFactoryClass, class TRulerClass>
 		bool TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::uninitialize()
-
 		{
 			for (uint32_t i = 0; i < m_ui32InputCount; ++i)
 			{
@@ -171,20 +161,20 @@ namespace Mensia
 		bool TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::process()
 
 		{
-			const IBox& l_rStaticBoxContext = this->getStaticBoxContext();
-			IBoxIO& l_rDynamicBoxContext    = this->getDynamicBoxContext();
+			IBoxIO& boxContext    = this->getDynamicBoxContext();
+			const uint32_t nInput = this->getStaticBoxContext().getInputCount();
 
-			for (uint32_t i = 0; i < l_rStaticBoxContext.getInputCount(); ++i)
+			for (uint32_t i = 0; i < nInput; ++i)
 			{
-				for (uint32_t j = 0; j < l_rDynamicBoxContext.getInputChunkCount(i); j++)
+				for (uint32_t j = 0; j < boxContext.getInputChunkCount(i); j++)
 				{
 					m_vMatrixDecoder[i].decode(j);
 
 					OpenViBE::IMatrix* l_pMatrix = m_vMatrixDecoder[i].getOutputMatrix();
-					uint32_t channelCount        = l_pMatrix->getDimensionSize(0);
+					uint32_t nChannel        = l_pMatrix->getDimensionSize(0);
 					uint32_t sampleCount         = l_pMatrix->getDimensionSize(1);
 
-					if (channelCount == 0)
+					if (nChannel == 0)
 					{
 						this->getLogManager() << LogLevel_Error << "Input stream " << uint32_t(i) << " has 0 channels\n";
 						return false;
@@ -192,7 +182,7 @@ namespace Mensia
 
 					if (l_pMatrix->getDimensionCount() == 1)
 					{
-						channelCount = 1;
+						nChannel = 1;
 						sampleCount  = l_pMatrix->getDimensionSize(0);
 					}
 
@@ -205,7 +195,7 @@ namespace Mensia
 						GtkTreeIter l_oGtkTreeIterator;
 						gtk_list_store_clear(m_pChannelListStore);
 
-						m_vSwap.resize(channelCount);
+						m_vSwap.resize(nChannel);
 
 						m_pRendererContext->clear();
 						m_pRendererContext->setTranslucency(float(m_translucency));
@@ -218,7 +208,7 @@ namespace Mensia
 						m_pRendererContext->setXYZPlotDepth(m_bXYZPlotHasDepth);
 
 						gtk_tree_view_set_model(m_pChannelTreeView, nullptr);
-						for (j = 0; j < channelCount; j++)
+						for (j = 0; j < nChannel; j++)
 						{
 							std::string l_sName    = trim(l_pMatrix->getDimensionLabel(0, j));
 							std::string l_sSubname = l_sName;
@@ -239,7 +229,7 @@ namespace Mensia
 						gtk_tree_view_set_model(m_pChannelTreeView, GTK_TREE_MODEL(m_pChannelListStore));
 						gtk_tree_selection_select_all(gtk_tree_view_get_selection(m_pChannelTreeView));
 
-						m_vRenderer[i]->setChannelCount(channelCount);
+						m_vRenderer[i]->setChannelCount(nChannel);
 						m_vRenderer[i]->setSampleCount(sampleCount);
 
 						if (sampleCount > 1 && m_oTypeIdentifier != OV_TypeId_Spectrum) { gtk_widget_show(m_pERPPlayer); }
@@ -254,7 +244,7 @@ namespace Mensia
 					}
 					if (m_vMatrixDecoder[i].isBufferReceived())
 					{
-						const uint64_t chunkDuration = (l_rDynamicBoxContext.getInputChunkEndTime(i, j) - l_rDynamicBoxContext.getInputChunkStartTime(i, j));
+						const uint64_t chunkDuration = (boxContext.getInputChunkEndTime(i, j) - boxContext.getInputChunkStartTime(i, j));
 
 						m_pRendererContext->setSampleDuration(chunkDuration / sampleCount);
 						m_pRendererContext->setSpectrumFrequencyRange(uint32_t((uint64_t(sampleCount) << 32) / chunkDuration));
@@ -262,15 +252,13 @@ namespace Mensia
 						m_pRendererContext->setMaximumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_pFrequencyBandMax))));
 
 						// Sets time scale
-						gtk_spin_button_set_value(GTK_SPIN_BUTTON(::gtk_builder_get_object(m_pBuilder, "spinbutton_time_scale")), (chunkDuration >> 22) / 1024.);
+						gtk_spin_button_set_value(
+							GTK_SPIN_BUTTON(::gtk_builder_get_object(m_pBuilder, "spinbutton_time_scale")), (chunkDuration >> 22) / 1024.);
 
 						m_vRenderer[i]->clear(0); // Drop last samples as they will be fed again
 						for (uint32_t k = 0; k < sampleCount; k++)
 						{
-							for (uint32_t l = 0; l < channelCount; l++)
-							{
-								m_vSwap[l] = float(l_pMatrix->getBuffer()[l * sampleCount + k]);
-							}
+							for (uint32_t l = 0; l < nChannel; l++) { m_vSwap[l] = float(l_pMatrix->getBuffer()[l * sampleCount + k]); }
 							m_vRenderer[i]->feed(&m_vSwap[0]);
 						}
 
@@ -294,28 +282,16 @@ namespace Mensia
 				m_bRedrawNeeded    = true;
 			}
 
-			if (m_bRebuildNeeded)
-			{
-				for (auto& renderer : m_vRenderer) { renderer->rebuild(*m_pRendererContext); }
-			}
-			if (m_bRefreshNeeded)
-			{
-				for (auto& renderer : m_vRenderer) { renderer->refresh(*m_pRendererContext); }
-			}
+			if (m_bRebuildNeeded) { for (auto& renderer : m_vRenderer) { renderer->rebuild(*m_pRendererContext); } }
+			if (m_bRefreshNeeded) { for (auto& renderer : m_vRenderer) { renderer->refresh(*m_pRendererContext); } }
 			if (m_bRedrawNeeded) { this->redraw(); }
 
 			m_bRebuildNeeded = false;
 			m_bRefreshNeeded = false;
 			m_bRedrawNeeded  = false;
 
-			if (m_pRendererContext->isERPPlayerActive())
-			{
-				gtk_button_set_label(GTK_BUTTON(m_pERPPlayerButton), GTK_STOCK_MEDIA_PAUSE);
-			}
-			else
-			{
-				gtk_button_set_label(GTK_BUTTON(m_pERPPlayerButton), GTK_STOCK_MEDIA_PLAY);
-			}
+			if (m_pRendererContext->isERPPlayerActive()) { gtk_button_set_label(GTK_BUTTON(m_pERPPlayerButton), GTK_STOCK_MEDIA_PAUSE); }
+			else { gtk_button_set_label(GTK_BUTTON(m_pERPPlayerButton), GTK_STOCK_MEDIA_PLAY); }
 
 			return true;
 		}
@@ -329,10 +305,7 @@ namespace Mensia
 			for (uint32_t i = 0; i < m_ui32InputCount; ++i)
 			{
 				glPushAttrib(GL_ALL_ATTRIB_BITS);
-				if (i < m_vColor.size())
-				{
-					glColor4f(m_vColor[i].r, m_vColor[i].g, m_vColor[i].b, m_pRendererContext->getTranslucency());
-				}
+				if (i < m_vColor.size()) { glColor4f(m_vColor[i].r, m_vColor[i].g, m_vColor[i].b, m_pRendererContext->getTranslucency()); }
 				else { glColor4f(m_oColor.r, m_oColor.g, m_oColor.b, m_pRendererContext->getTranslucency()); }
 				if (m_vRenderer[i]) { m_vRenderer[i]->render(*m_pRendererContext); }
 				glPopAttrib();

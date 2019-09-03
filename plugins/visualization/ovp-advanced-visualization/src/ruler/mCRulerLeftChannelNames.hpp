@@ -50,7 +50,8 @@ namespace Mensia
 					pango_layout_get_size(l_pPangoLayout, &lw, &lh);
 					lw /= PANGO_SCALE;
 					lh /= PANGO_SCALE;
-					gdk_draw_layout(pWidget->window, l_pDrawGC, w - lw, gint(((i + 0.5) * h) / m_pRendererContext->getSelectedCount() - float(lh) / 2), l_pPangoLayout);
+					gdk_draw_layout(pWidget->window, l_pDrawGC, w - lw, gint(((i + 0.5) * h) / m_pRendererContext->getSelectedCount() - float(lh) / 2),
+									l_pPangoLayout);
 					g_object_unref(l_pPangoLayout);
 				}
 				g_object_unref(l_pDrawGC);

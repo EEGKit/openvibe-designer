@@ -28,14 +28,17 @@ namespace Mensia
 	namespace AdvancedVisualization
 	{
 		template <class TRendererFactoryClass, class TRulerClass>
-		class TBoxAlgorithmInstantLoretaViz : public TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>
+		class TBoxAlgorithmInstantLoretaViz final : public TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>
 		{
 		public:
 
 			TBoxAlgorithmInstantLoretaViz(const OpenViBE::CIdentifier& rClassId, const std::vector<int>& vParameter)
 				: TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>(rClassId, vParameter) { }
 
-			static void callback(GtkTreeSelection* pTreeSelection, TBoxAlgorithmInstantLoretaViz<TRendererFactoryClass, TRulerClass>* pBox) { pBox->region_selection_changed(pTreeSelection); }
+			static void callback(GtkTreeSelection* pTreeSelection, TBoxAlgorithmInstantLoretaViz<TRendererFactoryClass, TRulerClass>* pBox)
+			{
+				pBox->region_selection_changed(pTreeSelection);
+			}
 
 			void region_selection_changed(GtkTreeSelection* pTreeSelection)
 			{

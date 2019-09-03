@@ -27,33 +27,23 @@ static void on_refresh_color_gradient(GtkWidget* /*widget*/, GdkEventExpose* /*e
 
 static void on_gtk_widget_destroy_cb(GtkWidget* widget, gpointer /*data*/) { gtk_widget_destroy(widget); }
 
-static void on_initialize_color_gradient(GtkWidget* /*widget*/, gpointer data)
-{
-	static_cast<CColorGradientSettingView *>(data)->initializeGradient();
-}
+static void on_initialize_color_gradient(GtkWidget* /*widget*/, gpointer data) { static_cast<CColorGradientSettingView *>(data)->initializeGradient(); }
 
-static void on_button_color_gradient_add_pressed(GtkButton* /*button*/, gpointer data)
-{
-	static_cast<CColorGradientSettingView *>(data)->addColor();
-}
+static void on_button_color_gradient_add_pressed(GtkButton* /*button*/, gpointer data) { static_cast<CColorGradientSettingView *>(data)->addColor(); }
 
-static void on_button_color_gradient_remove_pressed(GtkButton* /*button*/, gpointer data)
-{
-	static_cast<CColorGradientSettingView *>(data)->removeColor();
-}
+static void on_button_color_gradient_remove_pressed(GtkButton* /*button*/, gpointer data) { static_cast<CColorGradientSettingView *>(data)->removeColor(); }
 
 static void on_color_gradient_spin_button_value_changed(GtkSpinButton* button, gpointer data)
 {
 	static_cast<CColorGradientSettingView *>(data)->spinChange(button);
 }
 
-static void on_change(GtkEntry* /*entry*/, gpointer data)
-{
-	static_cast<CColorGradientSettingView *>(data)->onChange();
-}
+static void on_change(GtkEntry* /*entry*/, gpointer data) { static_cast<CColorGradientSettingView *>(data)->onChange(); }
 
-CColorGradientSettingView::CColorGradientSettingView(Kernel::IBox& rBox, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& rKernelContext)
-	: CAbstractSettingView(rBox, index, rBuilderName, "settings_collection-hbox_setting_color_gradient"), m_kernelContext(rKernelContext), m_builderName(rBuilderName)
+CColorGradientSettingView::CColorGradientSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName,
+													 const Kernel::IKernelContext& ctx)
+	: CAbstractSettingView(box, index, rBuilderName, "settings_collection-hbox_setting_color_gradient"), m_kernelContext(ctx),
+	  m_builderName(rBuilderName)
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 
@@ -68,10 +58,7 @@ CColorGradientSettingView::CColorGradientSettingView(Kernel::IBox& rBox, const u
 }
 
 
-void CColorGradientSettingView::getValue(CString& value) const
-{
-	value = CString(gtk_entry_get_text(m_entry));
-}
+void CColorGradientSettingView::getValue(CString& value) const { value = CString(gtk_entry_get_text(m_entry)); }
 
 
 void CColorGradientSettingView::setValue(const CString& value)
@@ -108,8 +95,10 @@ void CColorGradientSettingView::configurePressed()
 
 	g_signal_connect(G_OBJECT(pDialog), "show", G_CALLBACK(on_initialize_color_gradient), this);
 	g_signal_connect(G_OBJECT(pDrawingArea), "expose_event", G_CALLBACK(on_refresh_color_gradient), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-add_button")), "pressed", G_CALLBACK(on_button_color_gradient_add_pressed), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-remove_button")), "pressed", G_CALLBACK(on_button_color_gradient_remove_pressed), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-add_button")), "pressed",
+					 G_CALLBACK(on_button_color_gradient_add_pressed), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-remove_button")), "pressed",
+					 G_CALLBACK(on_button_color_gradient_remove_pressed), this);
 
 	if (gtk_dialog_run(GTK_DIALOG(pDialog)) == GTK_RESPONSE_APPLY)
 	{

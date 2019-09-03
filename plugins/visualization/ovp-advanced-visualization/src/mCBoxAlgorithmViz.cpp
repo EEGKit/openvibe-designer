@@ -38,7 +38,7 @@ namespace
 	class toolbar_sort_changed_
 	{
 	public:
-		static void callback(GtkButton* /*pButton*/, CBoxAlgorithmViz* pThis)
+		static void callback(GtkButton* /*button*/, CBoxAlgorithmViz* pThis)
 		{
 			pThis->m_pRendererContext->sortSelectedChannel(i);
 			pThis->m_bRedrawNeeded = true;
@@ -70,22 +70,25 @@ namespace
 		pRendererContext->setTimeScale(uint64_t(gtk_spin_button_get_value(pSpinButton) * (1LL << 32)));
 	}
 
-	void spinbutton_element_count_change_value_callback(GtkSpinButton* pSpinButton, IRendererContext* pRendererContext) { pRendererContext->setElementCount(uint64_t(gtk_spin_button_get_value(pSpinButton))); }
-
-	void checkbutton_positive_toggled_callback(GtkToggleButton* pButton, IRendererContext* pRendererContext)
+	void spinbutton_element_count_change_value_callback(GtkSpinButton* pSpinButton, IRendererContext* pRendererContext)
 	{
-		pRendererContext->setPositiveOnly(gtk_toggle_button_get_active(pButton) != 0);
+		pRendererContext->setElementCount(uint64_t(gtk_spin_button_get_value(pSpinButton)));
 	}
 
-	void checkbutton_show_scale_toggled_callback(GtkToggleButton* pButton, IRendererContext* pRendererContext)
+	void checkbutton_positive_toggled_callback(GtkToggleButton* button, IRendererContext* pRendererContext)
 	{
-		pRendererContext->setScaleVisibility(gtk_toggle_button_get_active(pButton) != 0);
+		pRendererContext->setPositiveOnly(gtk_toggle_button_get_active(button) != 0);
 	}
 
-	void button_video_recording_pressed_callback(GtkButton* pButton, CBoxAlgorithmViz* pBox)
+	void checkbutton_show_scale_toggled_callback(GtkToggleButton* button, IRendererContext* pRendererContext)
+	{
+		pRendererContext->setScaleVisibility(gtk_toggle_button_get_active(button) != 0);
+	}
+
+	void button_video_recording_pressed_callback(GtkButton* button, CBoxAlgorithmViz* pBox)
 	{
 		pBox->m_bIsVideoOutputWorking = !pBox->m_bIsVideoOutputWorking;
-		gtk_button_set_label(pButton, pBox->m_bIsVideoOutputWorking ? GTK_STOCK_MEDIA_PAUSE : GTK_STOCK_MEDIA_RECORD);
+		gtk_button_set_label(button, pBox->m_bIsVideoOutputWorking ? GTK_STOCK_MEDIA_PAUSE : GTK_STOCK_MEDIA_RECORD);
 	}
 
 	void range_erp_value_changed_callback(GtkRange* pRange, GtkLabel* pLabel)
@@ -96,14 +99,20 @@ namespace
 		getContext().stepERPFractionBy(float(gtk_range_get_value(pRange)) - getContext().getERPFraction());
 	}
 
-	void button_erp_play_pause_pressed_callback(GtkButton* /*pButton*/, IRendererContext* pRendererContext)
+	void button_erp_play_pause_pressed_callback(GtkButton* /*button*/, IRendererContext* pRendererContext)
 	{
 		pRendererContext->setERPPlayerActive(!pRendererContext->isERPPlayerActive());
 	}
 
-	void spinbutton_freq_band_min_change_value_callback(GtkSpinButton* pSpinButton, IRendererContext* pRendererContext) { pRendererContext->setMinimumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(pSpinButton))); }
+	void spinbutton_freq_band_min_change_value_callback(GtkSpinButton* pSpinButton, IRendererContext* pRendererContext)
+	{
+		pRendererContext->setMinimumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(pSpinButton)));
+	}
 
-	void spinbutton_freq_band_max_change_value_callback(GtkSpinButton* pSpinButton, IRendererContext* pRendererContext) { pRendererContext->setMaximumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(pSpinButton))); }
+	void spinbutton_freq_band_max_change_value_callback(GtkSpinButton* pSpinButton, IRendererContext* pRendererContext)
+	{
+		pRendererContext->setMaximumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(pSpinButton)));
+	}
 } // namespace
 
 bool CBoxAlgorithmViz::initialize()
@@ -175,24 +184,41 @@ bool CBoxAlgorithmViz::initialize()
 	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "expander_sort_button_default"), "pressed", G_CALLBACK(::toolbar_sort_changed_<1>::callback), this);
 	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "expander_sort_button_alpha"), "pressed", G_CALLBACK(::toolbar_sort_changed_<2>::callback), this);
 	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "expander_sort_button_reversed"), "pressed", G_CALLBACK(::toolbar_sort_changed_<3>::callback), this);
-	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "expander_sort_button_left_right"), "pressed", G_CALLBACK(::toolbar_sort_changed_<4>::callback), this);
-	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "expander_sort_button_front_back"), "pressed", G_CALLBACK(::toolbar_sort_changed_<5>::callback), this);
-	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "spinbutton_time_scale"), "value-changed", G_CALLBACK(::spinbutton_time_scale_change_value_callback), m_pRendererContext);
-	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "spinbutton_element_count"), "value-changed", G_CALLBACK(::spinbutton_element_count_change_value_callback), m_pRendererContext);
-	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "spinbutton_element_count"), "value-changed", G_CALLBACK(::spinbutton_element_count_change_value_callback), m_pSubRendererContext);
-	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "checkbutton_positive"), "toggled", G_CALLBACK(::checkbutton_positive_toggled_callback), m_pRendererContext);
-	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "checkbutton_show_scale"), "toggled", G_CALLBACK(::checkbutton_show_scale_toggled_callback), &Mensia::AdvancedVisualization::getContext());
-	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "button_erp_play_pause"), "pressed", G_CALLBACK(::button_erp_play_pause_pressed_callback), &Mensia::AdvancedVisualization::getContext());
+	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "expander_sort_button_left_right"), "pressed", G_CALLBACK(::toolbar_sort_changed_<4>::callback),
+					 this);
+	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "expander_sort_button_front_back"), "pressed", G_CALLBACK(::toolbar_sort_changed_<5>::callback),
+					 this);
+	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "spinbutton_time_scale"), "value-changed", G_CALLBACK(::spinbutton_time_scale_change_value_callback),
+					 m_pRendererContext);
+	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "spinbutton_element_count"), "value-changed",
+					 G_CALLBACK(::spinbutton_element_count_change_value_callback), m_pRendererContext);
+	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "spinbutton_element_count"), "value-changed",
+					 G_CALLBACK(::spinbutton_element_count_change_value_callback), m_pSubRendererContext);
+	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "checkbutton_positive"), "toggled", G_CALLBACK(::checkbutton_positive_toggled_callback),
+					 m_pRendererContext);
+	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "checkbutton_show_scale"), "toggled", G_CALLBACK(::checkbutton_show_scale_toggled_callback),
+					 &Mensia::AdvancedVisualization::getContext());
+	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "button_erp_play_pause"), "pressed", G_CALLBACK(::button_erp_play_pause_pressed_callback),
+					 &Mensia::AdvancedVisualization::getContext());
 	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "button_video_recording"), "pressed", G_CALLBACK(::button_video_recording_pressed_callback), this);
-	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "range_erp"), "value-changed", G_CALLBACK(::range_erp_value_changed_callback), ::gtk_builder_get_object(m_pBuilder, "label_erp_progress"));
-	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "spinbutton_freq_band_min"), "value-changed", G_CALLBACK(::spinbutton_freq_band_min_change_value_callback), m_pRendererContext);
-	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "spinbutton_freq_band_max"), "value-changed", G_CALLBACK(::spinbutton_freq_band_max_change_value_callback), m_pRendererContext);
+	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "range_erp"), "value-changed", G_CALLBACK(::range_erp_value_changed_callback),
+					 ::gtk_builder_get_object(m_pBuilder, "label_erp_progress"));
+	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "spinbutton_freq_band_min"), "value-changed",
+					 G_CALLBACK(::spinbutton_freq_band_min_change_value_callback), m_pRendererContext);
+	g_signal_connect(::gtk_builder_get_object(m_pBuilder, "spinbutton_freq_band_max"), "value-changed",
+					 G_CALLBACK(::spinbutton_freq_band_max_change_value_callback), m_pRendererContext);
 
 	g_signal_connect(::gtk_tree_view_get_selection(m_pChannelTreeView), "changed", G_CALLBACK(channel_selection_changed_), m_pRendererContext);
 
 	// Hides unnecessary widgets
-	if (std::find(m_vParameter.begin(), m_vParameter.end(), S_DataScale) == m_vParameter.end()) { gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "checkbutton_positive"))); }
-	if (std::find(m_vParameter.begin(), m_vParameter.end(), S_ChannelLocalisation) == m_vParameter.end()) { gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "expander_sort"))); }
+	if (std::find(m_vParameter.begin(), m_vParameter.end(), S_DataScale) == m_vParameter.end())
+	{
+		gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "checkbutton_positive")));
+	}
+	if (std::find(m_vParameter.begin(), m_vParameter.end(), S_ChannelLocalisation) == m_vParameter.end())
+	{
+		gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "expander_sort")));
+	}
 	if (m_oTypeIdentifier != OV_TypeId_Spectrum) { gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "expander_freq_band"))); }
 	gtk_widget_hide(m_pERPPlayer);
 
@@ -207,7 +233,8 @@ bool CBoxAlgorithmViz::initialize()
 		return false;
 	}
 
-	m_visualizationContext = dynamic_cast<OpenViBEVisualizationToolkit::IVisualizationContext*>(this->createPluginObject(OVP_ClassId_Plugin_VisualizationContext));
+	m_visualizationContext = dynamic_cast<OpenViBEVisualizationToolkit::IVisualizationContext*>(this->createPluginObject(
+		OVP_ClassId_Plugin_VisualizationContext));
 	m_visualizationContext->setWidget(*this, l_pMain);
 	m_visualizationContext->setToolbar(*this, l_pToolbar);
 
@@ -290,10 +317,7 @@ bool CBoxAlgorithmViz::initialize()
 	}
 
 	// Sets caption
-	if (m_sCaption != CString(""))
-	{
-		gtk_label_set_text(GTK_LABEL(m_pTop), std::string(m_sCaption.toASCIIString()).c_str());
-	}
+	if (m_sCaption != CString("")) { gtk_label_set_text(GTK_LABEL(m_pTop), std::string(m_sCaption.toASCIIString()).c_str()); }
 
 	// Sets time scale
 	if (m_temporalCoherence == OVP_TypeId_TemporalCoherence_TimeLocked.toUInteger())
@@ -301,10 +325,7 @@ bool CBoxAlgorithmViz::initialize()
 		gtk_spin_button_set_value(GTK_SPIN_BUTTON(::gtk_builder_get_object(m_pBuilder, "spinbutton_time_scale")), (m_timeScale >> 22) / 1024.);
 		m_bIsTimeLocked = true;
 	}
-	else
-	{
-		gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "vbox_time_scale")));
-	}
+	else { gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "vbox_time_scale"))); }
 
 	// Sets matrix count
 	if (m_temporalCoherence == OVP_TypeId_TemporalCoherence_Independant.toUInteger())
@@ -312,10 +333,7 @@ bool CBoxAlgorithmViz::initialize()
 		gtk_spin_button_set_value(GTK_SPIN_BUTTON(::gtk_builder_get_object(m_pBuilder, "spinbutton_element_count")), double(m_elementCount));
 		m_bIsTimeLocked = false;
 	}
-	else
-	{
-		gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "vbox_element_count")));
-	}
+	else { gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "vbox_element_count"))); }
 
 	// Shows / hides scale
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_pScaleVisible), gboolean(m_pRendererContext->getScaleVisibility()));
@@ -323,10 +341,12 @@ bool CBoxAlgorithmViz::initialize()
 	// Reads channel localisation
 	if (m_sLocalisation != CString(""))
 	{
-		IAlgorithmProxy* l_pChannelLocalisationReader = &this->getAlgorithmManager().getAlgorithm(this->getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_OVMatrixFileReader));
+		IAlgorithmProxy* l_pChannelLocalisationReader = &this->getAlgorithmManager().getAlgorithm(
+			this->getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_OVMatrixFileReader));
 		l_pChannelLocalisationReader->initialize();
 
-		const TParameterHandler<CString*> ip_sFilename(l_pChannelLocalisationReader->getInputParameter(OVP_GD_Algorithm_OVMatrixFileReader_InputParameterId_Filename));
+		const TParameterHandler<CString*> ip_sFilename(
+			l_pChannelLocalisationReader->getInputParameter(OVP_GD_Algorithm_OVMatrixFileReader_InputParameterId_Filename));
 		TParameterHandler<IMatrix*> op_pMatrix(l_pChannelLocalisationReader->getOutputParameter(OVP_GD_Algorithm_OVMatrixFileReader_OutputParameterId_Matrix));
 
 		*ip_sFilename = m_sLocalisation;
@@ -339,14 +359,14 @@ bool CBoxAlgorithmViz::initialize()
 		}
 		else
 		{
-			const uint32_t l_ui32ChannelCount = op_pMatrix->getDimensionSize(0);
-			double* l_pBuffer                 = op_pMatrix->getBuffer();
-			for (uint32_t i = 0; i < l_ui32ChannelCount; ++i)
+			const uint32_t nChannel = op_pMatrix->getDimensionSize(0);
+			double* buffer          = op_pMatrix->getBuffer();
+			for (uint32_t i = 0; i < nChannel; ++i)
 			{
 				std::string l_sName = trim(op_pMatrix->getDimensionLabel(0, i));
 				std::transform(l_sName.begin(), l_sName.end(), l_sName.begin(), tolower);
-				m_vChannelLocalisation[l_sName] = CVertex(-l_pBuffer[1], l_pBuffer[2], -l_pBuffer[0]);
-				l_pBuffer += 3;
+				m_vChannelLocalisation[l_sName] = CVertex(-buffer[1], buffer[2], -buffer[0]);
+				buffer += 3;
 			}
 		}
 
@@ -364,7 +384,9 @@ bool CBoxAlgorithmViz::initialize()
 	m_bIsVideoOutputWorking          = false;
 	m_ui32FrameId                    = 0;
 	gtk_widget_set_visible(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "hbox_video_recording")), m_bIsVideoOutputEnabled ? TRUE : FALSE);
-	gtk_label_set_markup(GTK_LABEL(::gtk_builder_get_object(m_pBuilder, "label_video_recording_filename")), (CString("<span foreground=\"darkblue\"><small>") + m_sFrameFilenameFormat + CString("</small></span>")).toASCIIString());
+	gtk_label_set_markup(
+		GTK_LABEL(::gtk_builder_get_object(m_pBuilder, "label_video_recording_filename")),
+		(CString("<span foreground=\"darkblue\"><small>") + m_sFrameFilenameFormat + CString("</small></span>")).toASCIIString());
 
 	m_width  = 0;
 	m_height = 0;
@@ -401,29 +423,22 @@ bool CBoxAlgorithmViz::processClock(IMessageClock& /*rClock*/)
 	const uint64_t minDeltaTimeLowDefinition2 = (1LL << 32) * 5;
 
 	uint64_t minDeltaTime;
-	if (this->getPlayerContext().getStatus() == PlayerStatus_Play)
-	{
-		minDeltaTime = minDeltaTimeHighDefinition;
-	}
+	if (this->getPlayerContext().getStatus() == PlayerStatus_Play) { minDeltaTime = minDeltaTimeHighDefinition; }
 	else
 	{
 		const auto l_f32CurrentFastForwardMaximumFactor = float(this->getPlayerContext().getCurrentFastForwardMaximumFactor());
-		if (l_f32CurrentFastForwardMaximumFactor <= m_fastForwardMaximumFactorHighDefinition)
-		{
-			minDeltaTime = minDeltaTimeHighDefinition;
-		}
+		if (l_f32CurrentFastForwardMaximumFactor <= m_fastForwardMaximumFactorHighDefinition) { minDeltaTime = minDeltaTimeHighDefinition; }
 		else if (l_f32CurrentFastForwardMaximumFactor <= m_fastForwardMaximumFactorLowDefinition)
 		{
-			const float alpha = (l_f32CurrentFastForwardMaximumFactor - m_fastForwardMaximumFactorHighDefinition) / (m_fastForwardMaximumFactorLowDefinition - m_fastForwardMaximumFactorHighDefinition);
-			minDeltaTime      = uint64_t((minDeltaTimeLowDefinition * alpha) + minDeltaTimeHighDefinition * (1.f - alpha));
+			const float alpha = (l_f32CurrentFastForwardMaximumFactor - m_fastForwardMaximumFactorHighDefinition) / (
+									m_fastForwardMaximumFactorLowDefinition - m_fastForwardMaximumFactorHighDefinition);
+			minDeltaTime = uint64_t((minDeltaTimeLowDefinition * alpha) + minDeltaTimeHighDefinition * (1.f - alpha));
 		}
-		else
-		{
-			minDeltaTime = minDeltaTimeLowDefinition2;
-		}
+		else { minDeltaTime = minDeltaTimeLowDefinition2; }
 	}
 
-	if (currentTime > m_ui64LastProcessTime + minDeltaTime || this->getPlayerContext().getStatus() == PlayerStatus_Step || this->getPlayerContext().getStatus() == PlayerStatus_Pause)
+	if (currentTime > m_ui64LastProcessTime + minDeltaTime || this->getPlayerContext().getStatus() == PlayerStatus_Step || this->getPlayerContext().getStatus()
+		== PlayerStatus_Pause)
 	{
 		m_ui64LastProcessTime = currentTime;
 		this->m_bRedrawNeeded = true;
@@ -435,7 +450,6 @@ bool CBoxAlgorithmViz::processClock(IMessageClock& /*rClock*/)
 }
 
 void CBoxAlgorithmViz::updateRulerVisibility()
-
 {
 	if (m_bIsScaleVisible != m_pRendererContext->getScaleVisibility())
 	{
@@ -468,10 +482,7 @@ void CBoxAlgorithmViz::preDraw()
 {
 	this->updateRulerVisibility();
 
-	if (m_textureId == 0u)
-	{
-		m_textureId = m_oGtkGLWidget.createTexture(m_sColorGradient.toASCIIString());
-	}
+	if (m_textureId == 0u) { m_textureId = m_oGtkGLWidget.createTexture(m_sColorGradient.toASCIIString()); }
 	glBindTexture(GL_TEXTURE_1D, m_textureId);
 
 	m_pRendererContext->setAspect(m_pViewport->allocation.width * 1.f / m_pViewport->allocation.height);
@@ -517,23 +528,11 @@ void CBoxAlgorithmViz::postDraw()
 
 void CBoxAlgorithmViz::draw() { }
 
-void CBoxAlgorithmViz::drawLeft()
+void CBoxAlgorithmViz::drawLeft() { if (m_pRuler != nullptr) { m_pRuler->doRenderLeft(m_pLeft); } }
 
-{
-	if (m_pRuler != nullptr) { m_pRuler->doRenderLeft(m_pLeft); }
-}
+void CBoxAlgorithmViz::drawRight() { if (m_pRuler != nullptr) { m_pRuler->doRenderRight(m_pRight); } }
 
-void CBoxAlgorithmViz::drawRight()
-
-{
-	if (m_pRuler != nullptr) { m_pRuler->doRenderRight(m_pRight); }
-}
-
-void CBoxAlgorithmViz::drawBottom()
-
-{
-	if (m_pRuler != nullptr) { m_pRuler->doRenderBottom(m_pBottom); }
-}
+void CBoxAlgorithmViz::drawBottom() { if (m_pRuler != nullptr) { m_pRuler->doRenderBottom(m_pBottom); } }
 
 void CBoxAlgorithmViz::mouseButton(const int x, const int y, const int button, const int status)
 {

@@ -172,10 +172,7 @@ void Mensia::AdvancedVisualization::GtkGL::preRender(GtkWidget* pWidget, const b
 	}
 
 	// Enable / Disable vsync
-	if (wglSwapIntervalEXT != nullptr)
-	{
-		wglSwapIntervalEXT(bVerticalSync ? 1 : 0);
-	}
+	if (wglSwapIntervalEXT != nullptr) { wglSwapIntervalEXT(bVerticalSync ? 1 : 0); }
 
 	GtkGL_Debug("pre-render::success");
 }

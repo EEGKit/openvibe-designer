@@ -50,10 +50,7 @@ namespace Mensia
 			IRuler(const IRuler&) = delete;
 			virtual ~IRuler()     = default;
 
-			virtual void setRendererContext(const IRendererContext* pRendererContext)
-			{
-				m_pRendererContext = pRendererContext;
-			}
+			virtual void setRendererContext(const IRendererContext* pRendererContext) { m_pRendererContext = pRendererContext; }
 
 			virtual void setRenderer(const IRenderer* pRenderer)
 			{
@@ -69,20 +66,11 @@ namespace Mensia
 				this->render();
 			}
 
-			virtual void doRenderLeft(GtkWidget* pWidget)
-			{
-				if (m_pRendererContext->getScaleVisibility()) { this->renderLeft(pWidget); }
-			}
+			virtual void doRenderLeft(GtkWidget* pWidget) { if (m_pRendererContext->getScaleVisibility()) { this->renderLeft(pWidget); } }
 
-			virtual void doRenderRight(GtkWidget* pWidget)
-			{
-				if (m_pRendererContext->getScaleVisibility()) { this->renderRight(pWidget); }
-			}
+			virtual void doRenderRight(GtkWidget* pWidget) { if (m_pRendererContext->getScaleVisibility()) { this->renderRight(pWidget); } }
 
-			virtual void doRenderBottom(GtkWidget* pWidget)
-			{
-				if (m_pRendererContext->getScaleVisibility()) { this->renderBottom(pWidget); }
-			}
+			virtual void doRenderBottom(GtkWidget* pWidget) { if (m_pRendererContext->getScaleVisibility()) { this->renderBottom(pWidget); } }
 
 		protected:
 
@@ -114,10 +102,7 @@ namespace Mensia
 				}
 
 				double l_fValue = trunc(fStart / l_fStep) * l_fStep;
-				while (l_fValue < fStart)
-				{
-					l_fValue += l_fStep;
-				}
+				while (l_fValue < fStart) { l_fValue += l_fStep; }
 				while (l_fValue <= fStop)
 				{
 					l_vResult.push_back(std::abs(l_fValue) < std::abs(l_fRange / 1000) ? 0 : l_fValue);
@@ -139,14 +124,8 @@ namespace Mensia
 				}
 				if (l_sLabel[i] == '.') l_sLabel[i] = '\0';
 #else
-				if (fabs(v) < 1E-10)
-				{
-					sprintf(l_sLabel, "0");
-				}
-				else
-				{
-					sprintf(l_sLabel, "%g", v);
-				}
+				if (fabs(v) < 1E-10) { sprintf(l_sLabel, "0"); }
+				else { sprintf(l_sLabel, "%g", v); }
 #endif
 				return l_sLabel;
 			}

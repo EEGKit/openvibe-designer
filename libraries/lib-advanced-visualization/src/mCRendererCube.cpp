@@ -45,15 +45,15 @@ void CRendererCube::refresh(const IRendererContext& rContext)
 
 	if (!m_historyCount) { return; }
 
-	const float sampleIndexERP     = (m_ERPFraction * float(m_sampleCount - 1));
+	const float sampleIndexERP     = (m_ERPFraction * float(m_nSample - 1));
 	const float alpha              = sampleIndexERP - std::floor(sampleIndexERP);
-	const uint32_t sampleIndexERP1 = uint32_t(sampleIndexERP) % m_sampleCount;
-	const uint32_t sampleIndexERP2 = uint32_t(sampleIndexERP + 1) % m_sampleCount;
+	const uint32_t sampleIndexERP1 = uint32_t(sampleIndexERP) % m_nSample;
+	const uint32_t sampleIndexERP2 = uint32_t(sampleIndexERP + 1) % m_nSample;
 
 	for (uint32_t i = 0; i < m_vVertex.size(); ++i)
 	{
-		m_vVertex[i].u = m_history[i][m_historyCount - m_sampleCount + sampleIndexERP1] * (1 - alpha)
-						 + m_history[i][m_historyCount - m_sampleCount + sampleIndexERP2] * (alpha);
+		m_vVertex[i].u = m_history[i][m_historyCount - m_nSample + sampleIndexERP1] * (1 - alpha)
+						 + m_history[i][m_historyCount - m_nSample + sampleIndexERP2] * (alpha);
 	}
 
 	m_historyIndex = m_historyCount;

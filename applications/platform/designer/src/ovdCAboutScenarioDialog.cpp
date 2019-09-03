@@ -5,8 +5,8 @@ using namespace OpenViBE;
 using namespace Plugins;
 using namespace Kernel;
 
-CAboutScenarioDialog::CAboutScenarioDialog(const IKernelContext& rKernelContext, IScenario& rScenario, const char* sGUIFilename)
-	: m_kernelContext(rKernelContext), m_rScenario(rScenario), m_sGUIFilename(sGUIFilename) { }
+CAboutScenarioDialog::CAboutScenarioDialog(const IKernelContext& ctx, IScenario& rScenario, const char* sGUIFilename)
+	: m_kernelContext(ctx), m_rScenario(rScenario), m_sGUIFilename(sGUIFilename) { }
 
 CAboutScenarioDialog::~CAboutScenarioDialog() = default;
 
@@ -87,13 +87,11 @@ bool CAboutScenarioDialog::run()
 		CIdentifier cid;
 		if (!cid.fromString(textId))
 		{
-			m_kernelContext.getLogManager() << LogLevel_Error << "Invalid identifier " << textId << " is not in the \"(0x[0-9a-f]{1-8}, 0x[0-9a-f]{1-8})\" format. ";
+			m_kernelContext.getLogManager() << LogLevel_Error << "Invalid identifier " << textId <<
+					" is not in the \"(0x[0-9a-f]{1-8}, 0x[0-9a-f]{1-8})\" format. ";
 			m_kernelContext.getLogManager() << "Reverting to " << m_rScenario.getAttributeValue(OVP_AttributeId_Metabox_Identifier).toASCIIString() << ".\n";
 		}
-		else
-		{
-			m_rScenario.setAttributeValue(OVP_AttributeId_Metabox_Identifier, textId);
-		}
+		else { m_rScenario.setAttributeValue(OVP_AttributeId_Metabox_Identifier, textId); }
 	}
 
 	GtkTextIter l_pTextIterStart;
@@ -101,11 +99,15 @@ bool CAboutScenarioDialog::run()
 
 	gtk_text_buffer_get_start_iter(l_pShortDescriptionBuffer, &l_pTextIterStart);
 	gtk_text_buffer_get_end_iter(l_pShortDescriptionBuffer, &l_pTextIterEnd);
-	m_rScenario.setAttributeValue(OV_AttributeId_Scenario_ShortDescription, gtk_text_buffer_get_text(gtk_text_view_get_buffer(GTK_TEXT_VIEW(l_pShortDescription)), &l_pTextIterStart, &l_pTextIterEnd, FALSE));
+	m_rScenario.setAttributeValue(
+		OV_AttributeId_Scenario_ShortDescription,
+		gtk_text_buffer_get_text(gtk_text_view_get_buffer(GTK_TEXT_VIEW(l_pShortDescription)), &l_pTextIterStart, &l_pTextIterEnd, FALSE));
 
 	gtk_text_buffer_get_start_iter(l_pDetailedDescriptionBuffer, &l_pTextIterStart);
 	gtk_text_buffer_get_end_iter(l_pDetailedDescriptionBuffer, &l_pTextIterEnd);
-	m_rScenario.setAttributeValue(OV_AttributeId_Scenario_DetailedDescription, gtk_text_buffer_get_text(gtk_text_view_get_buffer(GTK_TEXT_VIEW(l_pDetailedDescription)), &l_pTextIterStart, &l_pTextIterEnd, FALSE));
+	m_rScenario.setAttributeValue(
+		OV_AttributeId_Scenario_DetailedDescription,
+		gtk_text_buffer_get_text(gtk_text_view_get_buffer(GTK_TEXT_VIEW(l_pDetailedDescription)), &l_pTextIterStart, &l_pTextIterEnd, FALSE));
 
 	gtk_widget_destroy(l_pDialog);
 

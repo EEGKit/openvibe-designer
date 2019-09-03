@@ -322,13 +322,13 @@ namespace OpenViBEPlugins
 			virtual void setMatrixDimensionLabel(const uint32_t ui32DimensionIndex, const uint32_t ui32DimensionEntryIndex, const char* sDimensionLabel);
 
 			// Returns false on failure
-			virtual bool setMatrixBuffer(const double* pBuffer, const uint64_t ui64StartTime, const uint64_t ui64EndTime);
+			virtual bool setMatrixBuffer(const double* buffer, const uint64_t ui64StartTime, const uint64_t ui64EndTime);
 
 			// Sets the sampling frequency. If this is not called, the frequency is estimated from the stream chunk properties.
 			// Mainly used to force a warning if stream-specified rate differs from the chunk-estimated rate.
 			virtual bool setSamplingFrequency(const uint32_t ui32SamplingFrequency);
 
-			virtual void setStimulationCount(const uint32_t ui32StimulationCount);
+			virtual void setStimulationCount(const uint32_t /*ui32StimulationCount*/) { }
 			virtual void setStimulation(const uint32_t ui32StimulationIndex, const uint64_t ui64StimulationIdentifier, const uint64_t ui64StimulationDate);
 
 			/**
@@ -336,19 +336,19 @@ namespace OpenViBEPlugins
 			 * \remarks Used by signal display and time ruler to determine how they should be updated
 			 * \param oDisplayMode New display mode
 			 */
-			virtual void setDisplayMode(const OpenViBE::CIdentifier& oDisplayMode);
+			virtual void setDisplayMode(const OpenViBE::CIdentifier& oDisplayMode) { m_oDisplayMode = oDisplayMode; }
 
 			/**
 			 * \brief Get current display mode
 			 * \return Current display mode
 			 */
-			virtual OpenViBE::CIdentifier getDisplayMode();
+			virtual OpenViBE::CIdentifier getDisplayMode() { return m_oDisplayMode; }
 
 			/**
 			 * \brief Set flag stating whether to redraw associated SignalDisplayDrawable objet when new data is available
 			 * \param bSet Value to set flag with
 			 */
-			virtual void setRedrawOnNewData(const bool bSet);
+			virtual void setRedrawOnNewData(const bool bSet) { m_bRedrawOnNewData = bSet; }
 
 		protected:
 			/**
