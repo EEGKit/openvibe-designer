@@ -149,7 +149,7 @@ namespace
 {
 	void unfold(std::vector<CVertex>& rVertex, const float fLayer = 0)
 	{
-		for (std::vector<CVertex>::iterator it = rVertex.begin(); it != rVertex.end(); ++it)
+		for (auto it = rVertex.begin(); it != rVertex.end(); ++it)
 		{
 			CVertex& p = (*it);
 			p.y += OFFSET;

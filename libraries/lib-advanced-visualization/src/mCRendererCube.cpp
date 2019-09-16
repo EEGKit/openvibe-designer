@@ -61,7 +61,6 @@ void CRendererCube::refresh(const IRendererContext& rContext)
 
 bool CRendererCube::render(const IRendererContext& rContext)
 {
-	std::map<std::string, CVertex>::const_iterator it;
 
 	if (!rContext.getSelectedCount()) { return false; }
 	if (m_vVertex.empty()) { return false; }
@@ -96,18 +95,9 @@ bool CRendererCube::render(const IRendererContext& rContext)
 		CVertex v;
 		const uint32_t k = rContext.getSelected(j);
 		rContext.getChannelLocalisation(k, v.x, v.y, v.z);
-		/*
-				std::string l_sName=rContext.getChannelName(k);
-				std::transform(l_sName.begin(), l_sName.end(), l_sName.begin(), ::tolower);
-
-				it=m_channelLocalisation.find(l_sName);
-				if(it!=m_channelLocalisation.end())
-				{
-		*/
 		const float l_fCubeScale = .1f * (.25f + fabs(m_vVertex[k].u * rContext.getScale()));
 
 		glPushMatrix();
-		//			::glTranslatef(it->second.x, it->second.y, it->second.z);
 		glTranslatef(v.x, v.y, v.z);
 		glTexCoord1f(m_vVertex[k].u);
 		glScalef(l_fCubeScale, l_fCubeScale, l_fCubeScale);
@@ -121,7 +111,6 @@ bool CRendererCube::render(const IRendererContext& rContext)
 		cube();
 
 		glPopMatrix();
-		//		}
 	}
 	glPopMatrix();
 

@@ -315,7 +315,7 @@ std::string json::Serialize(const Value& v)
 	{
 		str        = "{";
 		Object obj = v.ToObject();
-		for (Object::ValueMap::const_iterator it = obj.begin(); it != obj.end(); ++it)
+		for (auto it = obj.begin(); it != obj.end(); ++it)
 		{
 			if (!first) { str += std::string(","); }
 			str += std::string("\"") + it->first + std::string("\":") + SerializeValue(it->second);
@@ -328,7 +328,7 @@ std::string json::Serialize(const Value& v)
 	{
 		str     = "[";
 		Array a = v.ToArray();
-		for (Array::ValueVector::const_iterator it = a.begin(); it != a.end(); ++it)
+		for (auto it = a.begin(); it != a.end(); ++it)
 		{
 			if (!first) { str += std::string(","); }
 			str += SerializeValue(*it);

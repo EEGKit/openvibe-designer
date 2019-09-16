@@ -662,7 +662,7 @@ int go(int argc, char** argv)
 			CString l_sAppConfigFile = l_pKernelContext->getConfigurationManager().expand("${Designer_CustomConfigurationFile}");
 			l_pKernelContext->getConfigurationManager().addConfigurationFromFile(l_sAppConfigFile);
 			// add other configuration file if --config option
-			std::vector<std::pair<ECommandLineFlag, std::string>>::iterator it = l_oConfiguration.m_vFlag.begin();
+			auto it = l_oConfiguration.m_vFlag.begin();
 
 			// initialize random number generator with nullptr by default
 			System::Math::initializeRandomMachine(time(nullptr));

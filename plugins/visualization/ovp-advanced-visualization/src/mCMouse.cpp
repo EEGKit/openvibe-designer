@@ -61,6 +61,6 @@ void CMouse::mouseMotion(IRendererContext& rContext, const int x, const int y)
 bool CMouse::hasButtonPressed()
 
 {
-	for (std::map<int, int>::const_iterator it = m_vButton.begin(); it != m_vButton.end(); ++it) { if (it->second) { return true; } }
+	for (auto it = m_vButton.begin(); it != m_vButton.end(); ++it) { if (it->second) { return true; } }
 	return false;
 }

@@ -322,7 +322,7 @@ namespace
 		const size_t count = l_pUserData->vColorGradient.size();
 		l_pUserData->vColorButtonMap.clear();
 		l_pUserData->vSpinButtonMap.clear();
-		for (vector<SColorGradientDataNode>::iterator it = l_pUserData->vColorGradient.begin(); it != l_pUserData->vColorGradient.end(); ++it, ++i)
+		for (auto it = l_pUserData->vColorGradient.begin(); it != l_pUserData->vColorGradient.end(); ++it, ++i)
 		{
 			GtkBuilder* l_pBuilderInterface =
 					gtk_builder_new(); // glade_xml_new(l_pUserData->sGUIFilename.c_str(), "setting_editor-color_gradient-hbox", nullptr);
@@ -761,9 +761,8 @@ void CSettingCollectionHelper::setValueEnumeration(const CIdentifier& typeID, Gt
 	if (typeID == OV_TypeId_Stimulation)
 	{
 #endif
-	std::map<CString, uint64_t> m_vListEntries;
-	std::map<CString, uint64_t>::const_iterator it;
 
+	std::map<CString, uint64_t> m_vListEntries;
 	for (i = 0; i < m_kernelContext.getTypeManager().getEnumerationEntryCount(typeID); ++i)
 	{
 		CString l_sEntryName;
@@ -776,7 +775,8 @@ void CSettingCollectionHelper::setValueEnumeration(const CIdentifier& typeID, Gt
 
 	gtk_combo_box_set_wrap_width(l_widget, 0);
 	gtk_list_store_clear(l_pList);
-	for (i = 0, it = m_vListEntries.begin(); it != m_vListEntries.end(); ++it, i++)
+	i = 0;
+	for (auto it = m_vListEntries.begin(); it != m_vListEntries.end(); ++it, i++)
 	{
 		gtk_list_store_append(l_pList, &l_oListIter);
 		gtk_list_store_set(l_pList, &l_oListIter, 0, it->first.toASCIIString(), -1);

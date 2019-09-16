@@ -83,7 +83,7 @@ namespace
 			std::transform(channelNameI.begin(), channelNameI.end(), channelNameI.begin(), tolower);
 			std::transform(channelNameJ.begin(), channelNameJ.end(), channelNameJ.begin(), tolower);
 
-			for (std::map<std::string, float>::const_iterator it = m_vScore.begin(); it != m_vScore.end(); ++it)
+			for (auto it = m_vScore.begin(); it != m_vScore.end(); ++it)
 			{
 				if (it->first == channelNameI) { scoreI = it->second; }
 				if (it->first == channelNameJ) { scoreJ = it->second; }

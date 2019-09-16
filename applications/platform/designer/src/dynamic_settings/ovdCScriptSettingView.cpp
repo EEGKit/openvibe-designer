@@ -125,7 +125,7 @@ void CScriptSettingView::onFocusLost()
 	if (!m_onValueSetting)
 	{
 		std::string fileName       = gtk_entry_get_text(m_entry);
-		std::string::iterator iter = fileName.begin();
+		auto iter = fileName.begin();
 
 		while ((iter = std::find(iter, fileName.end(), '\\')) != fileName.end())
 		{

@@ -257,7 +257,7 @@ bool CVisualizationTree::_destroyHierarchy(const CIdentifier& identifier, const 
 	{
 		m_kernelContext.getLogManager() << LogLevel_Debug << "Deleting visualization widget\n";
 		delete visualizationWidget;
-		const map<CIdentifier, IVisualizationWidget*>::iterator it = m_VisualizationWidgets.find(identifier);
+		const auto it = m_VisualizationWidgets.find(identifier);
 		m_VisualizationWidgets.erase(it);
 	}
 

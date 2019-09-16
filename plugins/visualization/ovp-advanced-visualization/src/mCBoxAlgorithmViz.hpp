@@ -121,7 +121,7 @@ namespace Mensia
 			uint32_t getBaseSettingCount()
 			{
 				uint32_t result = 0;
-				for (std::vector<int>::const_iterator it = m_vParameter.begin(); it != m_vParameter.end(); ++it)
+				for (auto it = m_vParameter.begin(); it != m_vParameter.end(); ++it)
 				{
 					// if(*it==I_Matrix)              result++;
 					// if(*it==I_Signal)              result++;

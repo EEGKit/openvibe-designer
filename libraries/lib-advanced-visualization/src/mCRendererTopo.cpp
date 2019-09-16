@@ -287,8 +287,6 @@ void CRendererTopo::refresh(const IRendererContext& rContext)
 
 bool CRendererTopo::render(const IRendererContext& rContext)
 {
-	std::map<std::string, CVertex>::const_iterator it;
-
 	if (!rContext.getSelectedCount()) { return false; }
 	if (m_oScalp.m_vVertex.empty()) { return false; }
 	if (!m_historyCount) { return false; }

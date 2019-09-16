@@ -229,7 +229,7 @@ bool CRendererSlice::render(const IRendererContext& rContext)
 
 	glEnable(GL_TEXTURE_1D);
 
-	if (rContext.getCheckBoardVisibility()) this->drawCoordinateSystem();
+	if (rContext.getCheckBoardVisibility()) { this->drawCoordinateSystem(); }
 
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();

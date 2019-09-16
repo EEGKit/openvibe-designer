@@ -55,9 +55,6 @@ void CRendererConnectivity::rebuild(const IRendererContext& rContext)
 {
 	CRenderer::rebuild(rContext);
 
-	std::map<std::string, CVertex>::const_iterator it1;
-	std::map<std::string, CVertex>::const_iterator it2;
-
 	uint32_t i, l = 0;
 
 	Eigen::Quaterniond q          = Eigen::Quaterniond::Identity();
@@ -153,7 +150,6 @@ bool CRendererConnectivity::render(const IRendererContext& rContext)
 	if (m_vertex.empty()) { return false; }
 	if (!m_historyCount) { return false; }
 
-	std::map<std::string, std::pair<float, float>>::const_iterator it;
 	const float d = 3.5;
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);

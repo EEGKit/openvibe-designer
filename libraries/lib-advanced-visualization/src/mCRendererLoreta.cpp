@@ -499,7 +499,7 @@ CRendererLoreta::CRendererLoreta()
 
 			std::vector<unsigned int> l_vRightVoxels;
 			std::vector<unsigned int> l_vLeftVoxels;
-			for (l_oMapIterator = m_vLookup[l_iRegionIndex].begin(); l_oMapIterator != m_vLookup[l_iRegionIndex].end(); l_oMapIterator++)
+			for (auto = m_vLookup[l_iRegionIndex].begin(); l_oMapIterator != m_vLookup[l_iRegionIndex].end(); l_oMapIterator++)
 			{
 				//region
 				l_vRightVoxels.clear();
@@ -540,7 +540,7 @@ CRendererLoreta::CRendererLoreta()
 			l_uiAreaCount = 0;
 			unsigned int l_uiRightVoxels = 0;
 			unsigned int l_uiLeftVoxels = 0;
-			for (l_oMapIterator = m_vLookup[l_iRegionIndex].begin(); l_oMapIterator != m_vLookup[l_iRegionIndex].end() && l_uiAreaCount < m_vLookup[l_iRegionIndex].size(); l_oMapIterator++)
+			for (auto = m_vLookup[l_iRegionIndex].begin(); l_oMapIterator != m_vLookup[l_iRegionIndex].end() && l_uiAreaCount < m_vLookup[l_iRegionIndex].size(); l_oMapIterator++)
 			{
 				l_uiRightVoxels = 0;
 				l_uiLeftVoxels = 0;
@@ -786,7 +786,7 @@ bool CRendererLoreta::render(const IRendererContext& rContext)
 
 void CRendererLoreta::clearRegionSelection()
 {
-	for (std::vector<bool>::iterator it = m_vSelected.begin(); it != m_vSelected.end(); ++it) { *it = false; }
+	for (auto it = m_vSelected.begin(); it != m_vSelected.end(); ++it) { *it = false; }
 	this->refreshBrainSubset();
 }
 
@@ -830,7 +830,7 @@ void CRendererLoreta::selectRegion(const uint32_t regionCategory, const char* sR
 
 	std::map<std::string, std::vector<uint32_t>>& l_vLookup = m_vLookup[regionCategory];
 
-	std::map<std::string, std::vector<uint32_t>>::iterator it = l_vLookup.find(sRegionName);
+	auto it = l_vLookup.find(sRegionName);
 	if (it != l_vLookup.end())
 	{
 		std::vector<uint32_t>& l_rList = it->second;
@@ -845,7 +845,7 @@ void CRendererLoreta::selectRegion(const uint32_t regionCategory, const uint32_t
 	if (regionCategory >= m_vLookup.size()) { return; }
 
 	std::map<std::string, std::vector<uint32_t>>& l_vLookup   = m_vLookup[regionCategory];
-	std::map<std::string, std::vector<uint32_t>>::iterator it = l_vLookup.begin();
+	auto it = l_vLookup.begin();
 
 	for (uint32_t j = 0; j < regionIndex && it != l_vLookup.end(); j++) { ++it; }
 

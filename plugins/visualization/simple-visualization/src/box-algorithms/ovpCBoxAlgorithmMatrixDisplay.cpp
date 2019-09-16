@@ -42,15 +42,11 @@ bool CBoxAlgorithmMatrixDisplay::resetColors()
 	if (m_bShowColors)
 	{
 		//we take colors from cache and re-put it in the table
-		auto it = m_vEventBoxCache.begin();
-
-		for (; it != m_vEventBoxCache.end(); ++it) { gtk_widget_modify_bg((*it).first, GTK_STATE_NORMAL, &(*it).second); }
+		for (auto it = m_vEventBoxCache.begin(); it != m_vEventBoxCache.end(); ++it) { gtk_widget_modify_bg((*it).first, GTK_STATE_NORMAL, &(*it).second); }
 	}
 	else
 	{
-		vector<pair<GtkWidget*, GdkColor>>::iterator it = m_vEventBoxCache.begin();
-
-		for (; it != m_vEventBoxCache.end(); ++it)
+		for (auto it = m_vEventBoxCache.begin(); it != m_vEventBoxCache.end(); ++it)
 		{
 			GdkColor l_ColorWhite;
 			l_ColorWhite.red   = 65535;
