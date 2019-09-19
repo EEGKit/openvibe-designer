@@ -14,7 +14,7 @@ CScenarioStateStack::CScenarioStateStack(const IKernelContext& ctx, CInterfacedS
 	: m_kernelContext(ctx), m_InterfacedScenario(interfacedScenario), m_Scenario(scenario)
 {
 	m_CurrentState      = m_States.begin();
-	m_MaximumStateCount = uint32_t(m_kernelContext.getConfigurationManager().expandAsUInteger("${Designer_UndoRedoStackSize}", 64));
+	m_nMaximumState = uint32_t(m_kernelContext.getConfigurationManager().expandAsUInteger("${Designer_UndoRedoStackSize}", 64));
 }
 
 CScenarioStateStack::~CScenarioStateStack() { for (auto& state : m_States) { delete state; } }
@@ -75,7 +75,7 @@ bool CScenarioStateStack::snapshot()
 		m_CurrentState = m_States.erase(m_CurrentState);
 	}
 
-	if (m_MaximumStateCount != 0) { while (m_States.size() >= m_MaximumStateCount) { m_States.erase(m_States.begin()); } }
+	if (m_nMaximumState != 0) { while (m_States.size() >= m_nMaximumState) { m_States.erase(m_States.begin()); } }
 
 	m_States.push_back(newState);
 

@@ -36,7 +36,7 @@ namespace Mensia
 
 			bool m_hasDepth          = false;
 			uint32_t m_plotDimension = 0;
-			uint32_t m_plotCount     = 0;
+			uint32_t m_nPlot     = 0;
 			std::vector<std::vector<CVertex>> m_vertex;
 		};
 	} // namespace AdvancedVisualization

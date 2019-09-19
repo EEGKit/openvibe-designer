@@ -42,13 +42,13 @@ void CRendererFlower::rebuild(const IRendererContext& rContext)
 	for (auto& multivertex : m_vMuliVertex)
 	{
 		multivertex.clear();
-		multivertex.resize(m_channelCount);
-		for (i = 0; i < m_channelCount; ++i)
+		multivertex.resize(m_nChannel);
+		for (i = 0; i < m_nChannel; ++i)
 		{
 			multivertex[i].resize(n);
 			for (uint32_t j = 0; j < m_nSample - m_autoDecimationFactor + 1; j += m_autoDecimationFactor)
 			{
-				multivertex[i][j / m_autoDecimationFactor].u = j * m_inverseSampleCount;
+				multivertex[i][j / m_autoDecimationFactor].u = j * m_nInverseSample;
 			}
 		}
 	}
@@ -62,20 +62,20 @@ void CRendererFlower::rebuild(const IRendererContext& rContext)
 		m_vCircle[i].z = 0;
 	}
 
-	m_historyIndex = 0;
+	m_historyIdx = 0;
 }
 
 void CRendererFlower::refresh(const IRendererContext& rContext)
 {
 	CRenderer::refresh(rContext);
 
-	if (!m_historyCount) { return; }
+	if (!m_nHistory) { return; }
 
 	for (size_t z = 0; z < m_vMuliVertex.size(); z++)
 	{
-		for (size_t i = 0; i < m_channelCount; ++i)
+		for (size_t i = 0; i < m_nChannel; ++i)
 		{
-			size_t k                       = ((m_historyCount - 1 - z * m_vMuliVertex[z][i].size()) / m_nSample) * m_nSample;
+			size_t k                       = ((m_nHistory - 1 - z * m_vMuliVertex[z][i].size()) / m_nSample) * m_nSample;
 			std::vector<float>& l_vHistory = m_history[i];
 			CVertex* l_pVertex             = &m_vMuliVertex[z][i][0];
 			CVertex* l_pCircleVertex       = &m_vCircle[0];
@@ -86,7 +86,7 @@ void CRendererFlower::refresh(const IRendererContext& rContext)
 
 				for (size_t l = 0; l < m_autoDecimationFactor; l++)
 				{
-					if (/*k+l>=m_historyIndex && */k + l < m_historyCount)
+					if (/*k+l>=m_historyIdx && */k + l < m_nHistory)
 					{
 						sum += l_vHistory[k + l];
 						count++;
@@ -111,17 +111,17 @@ void CRendererFlower::refresh(const IRendererContext& rContext)
 		}
 	}
 
-	m_historyIndex = m_historyCount;
+	m_historyIdx = m_nHistory;
 }
 
 bool CRendererFlower::render(const IRendererContext& rContext)
 {
 	if (!rContext.getSelectedCount()) { return false; }
 	if (m_vMuliVertex.empty()) { return false; }
-	if (!m_historyCount) { return false; }
+	if (!m_nHistory) { return false; }
 
 	const uint32_t n = m_nSample / m_autoDecimationFactor;
-	const uint32_t d = (m_historyIndex % m_nSample) / m_autoDecimationFactor;
+	const uint32_t d = (m_historyIdx % m_nSample) / m_autoDecimationFactor;
 
 	glMatrixMode(GL_TEXTURE);
 	glPushMatrix();

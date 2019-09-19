@@ -209,7 +209,7 @@ namespace Mensia
 						gtk_list_store_clear(m_pChannelListStore);
 
 						const uint32_t frequencyCount = inputMatrix->getDimensionSize(1);
-						const uint32_t sampleCount    = inputMatrix->getDimensionSize(2);
+						const uint32_t nSample    = inputMatrix->getDimensionSize(2);
 
 						// I do not know what this is for...
 						for (uint32_t frequency = 0; frequency < frequencyCount; frequency++)
@@ -233,8 +233,8 @@ namespace Mensia
 						m_pRendererContext->setDataType(IRendererContext::DataType_TimeFrequency);
 						m_pSubRendererContext->setDataType(IRendererContext::DataType_TimeFrequency);
 
-						m_pRendererContext->setElementCount(sampleCount);
-						m_pSubRendererContext->setElementCount(sampleCount);
+						m_pRendererContext->setElementCount(nSample);
+						m_pSubRendererContext->setElementCount(nSample);
 						gtk_tree_view_set_model(m_pChannelTreeView, nullptr);
 
 						for (uint32_t channel = 0; channel < nChannel; channel++)
@@ -255,7 +255,7 @@ namespace Mensia
 
 							// The channels in the sub-renderer are the frequencies in the spectrum
 							m_vRenderer[channel]->setChannelCount(frequencyCount);
-							m_vRenderer[channel]->setSampleCount(sampleCount);
+							m_vRenderer[channel]->setSampleCount(nSample);
 
 							m_pRendererContext->addChannel(channelName, v.x, v.y, v.z);
 							gtk_list_store_append(m_pChannelListStore, &l_oGtkTreeIterator);
@@ -285,10 +285,10 @@ namespace Mensia
 						m_time2 = dynamicBoxContext.getInputChunkEndTime(0, chunk);
 
 						const uint32_t frequencyCount = inputMatrix->getDimensionSize(1);
-						const uint32_t sampleCount    = inputMatrix->getDimensionSize(2);
+						const uint32_t nSample    = inputMatrix->getDimensionSize(2);
 
 						const uint64_t chunkDuration  = dynamicBoxContext.getInputChunkEndTime(0, chunk) - dynamicBoxContext.getInputChunkStartTime(0, chunk);
-						const uint64_t sampleDuration = chunkDuration / sampleCount;
+						const uint64_t sampleDuration = chunkDuration / nSample;
 
 						m_pSubRendererContext->setSampleDuration(sampleDuration);
 						m_pRendererContext->setSampleDuration(sampleDuration);
@@ -296,13 +296,13 @@ namespace Mensia
 						for (uint32_t channel = 0; channel < nChannel; channel++)
 						{
 							// Feed renderer with actual samples
-							for (uint32_t sample = 0; sample < sampleCount; sample++)
+							for (uint32_t sample = 0; sample < nSample; sample++)
 							{
 								m_vSwap.resize(frequencyCount);
 								for (uint32_t frequency = 0; frequency < frequencyCount; frequency++)
 								{
 									m_vSwap[frequencyCount - frequency - 1] = float(
-										inputMatrix->getBuffer()[sample + frequency * sampleCount + channel * sampleCount * frequencyCount]);
+										inputMatrix->getBuffer()[sample + frequency * nSample + channel * nSample * frequencyCount]);
 								}
 								m_vRenderer[channel]->feed(&m_vSwap[0]);
 							}

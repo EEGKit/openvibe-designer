@@ -41,7 +41,7 @@ namespace Mensia
 
 			TRendererFactoryClass m_oRendererFactory;
 
-			uint32_t m_ui32InputCount = 0;
+			uint32_t m_nInput = 0;
 			std::vector<IRenderer*> m_vRenderer;
 			std::vector<OpenViBEToolkit::TStreamedMatrixDecoder<TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>>> m_vMatrixDecoder;
 
@@ -119,10 +119,10 @@ namespace Mensia
 
 			m_dLastERPFraction = 0;
 
-			m_ui32InputCount = this->getStaticBoxContext().getInputCount();
-			m_vRenderer.resize(m_ui32InputCount);
-			m_vMatrixDecoder.resize(m_ui32InputCount);
-			for (uint32_t i = 0; i < m_ui32InputCount; ++i)
+			m_nInput = this->getStaticBoxContext().getInputCount();
+			m_vRenderer.resize(m_nInput);
+			m_vMatrixDecoder.resize(m_nInput);
+			for (uint32_t i = 0; i < m_nInput; ++i)
 			{
 				m_vRenderer[i] = m_oRendererFactory.create();
 				m_vMatrixDecoder[i].initialize(*this, i);
@@ -145,7 +145,7 @@ namespace Mensia
 		template <class TRendererFactoryClass, class TRulerClass>
 		bool TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::uninitialize()
 		{
-			for (uint32_t i = 0; i < m_ui32InputCount; ++i)
+			for (uint32_t i = 0; i < m_nInput; ++i)
 			{
 				m_oRendererFactory.release(m_vRenderer[i]);
 				m_vMatrixDecoder[i].uninitialize();
@@ -172,7 +172,7 @@ namespace Mensia
 
 					OpenViBE::IMatrix* l_pMatrix = m_vMatrixDecoder[i].getOutputMatrix();
 					uint32_t nChannel        = l_pMatrix->getDimensionSize(0);
-					uint32_t sampleCount         = l_pMatrix->getDimensionSize(1);
+					uint32_t nSample         = l_pMatrix->getDimensionSize(1);
 
 					if (nChannel == 0)
 					{
@@ -183,7 +183,7 @@ namespace Mensia
 					if (l_pMatrix->getDimensionCount() == 1)
 					{
 						nChannel = 1;
-						sampleCount  = l_pMatrix->getDimensionSize(0);
+						nSample  = l_pMatrix->getDimensionSize(0);
 					}
 
 					if (m_vMatrixDecoder[i].isHeaderReceived())
@@ -199,7 +199,7 @@ namespace Mensia
 
 						m_pRendererContext->clear();
 						m_pRendererContext->setTranslucency(float(m_translucency));
-						m_pRendererContext->setFlowerRingCount(m_flowerRingCount);
+						m_pRendererContext->setFlowerRingCount(m_nFlowerRing);
 						//				m_pRendererContext->setTimeScale(1); // Won't be used
 						m_pRendererContext->scaleBy(float(m_f64DataScale));
 						m_pRendererContext->setPositiveOnly(m_bIsPositive);
@@ -230,9 +230,9 @@ namespace Mensia
 						gtk_tree_selection_select_all(gtk_tree_view_get_selection(m_pChannelTreeView));
 
 						m_vRenderer[i]->setChannelCount(nChannel);
-						m_vRenderer[i]->setSampleCount(sampleCount);
+						m_vRenderer[i]->setSampleCount(nSample);
 
-						if (sampleCount > 1 && m_oTypeIdentifier != OV_TypeId_Spectrum) { gtk_widget_show(m_pERPPlayer); }
+						if (nSample > 1 && m_oTypeIdentifier != OV_TypeId_Spectrum) { gtk_widget_show(m_pERPPlayer); }
 
 						if (m_oTypeIdentifier == OV_TypeId_Signal) { m_pRendererContext->setDataType(IRendererContext::DataType_Signal); }
 						else if (m_oTypeIdentifier == OV_TypeId_Spectrum) { m_pRendererContext->setDataType(IRendererContext::DataType_Spectrum); }
@@ -246,8 +246,8 @@ namespace Mensia
 					{
 						const uint64_t chunkDuration = (boxContext.getInputChunkEndTime(i, j) - boxContext.getInputChunkStartTime(i, j));
 
-						m_pRendererContext->setSampleDuration(chunkDuration / sampleCount);
-						m_pRendererContext->setSpectrumFrequencyRange(uint32_t((uint64_t(sampleCount) << 32) / chunkDuration));
+						m_pRendererContext->setSampleDuration(chunkDuration / nSample);
+						m_pRendererContext->setSpectrumFrequencyRange(uint32_t((uint64_t(nSample) << 32) / chunkDuration));
 						m_pRendererContext->setMinimumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_pFrequencyBandMin))));
 						m_pRendererContext->setMaximumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_pFrequencyBandMax))));
 
@@ -256,9 +256,9 @@ namespace Mensia
 							GTK_SPIN_BUTTON(::gtk_builder_get_object(m_pBuilder, "spinbutton_time_scale")), (chunkDuration >> 22) / 1024.);
 
 						m_vRenderer[i]->clear(0); // Drop last samples as they will be fed again
-						for (uint32_t k = 0; k < sampleCount; k++)
+						for (uint32_t k = 0; k < nSample; k++)
 						{
-							for (uint32_t l = 0; l < nChannel; l++) { m_vSwap[l] = float(l_pMatrix->getBuffer()[l * sampleCount + k]); }
+							for (uint32_t l = 0; l < nChannel; l++) { m_vSwap[l] = float(l_pMatrix->getBuffer()[l * nSample + k]); }
 							m_vRenderer[i]->feed(&m_vSwap[0]);
 						}
 
@@ -302,7 +302,7 @@ namespace Mensia
 		{
 			CBoxAlgorithmViz::preDraw();
 
-			for (uint32_t i = 0; i < m_ui32InputCount; ++i)
+			for (uint32_t i = 0; i < m_nInput; ++i)
 			{
 				glPushAttrib(GL_ALL_ATTRIB_BITS);
 				if (i < m_vColor.size()) { glColor4f(m_vColor[i].r, m_vColor[i].g, m_vColor[i].b, m_pRendererContext->getTranslucency()); }

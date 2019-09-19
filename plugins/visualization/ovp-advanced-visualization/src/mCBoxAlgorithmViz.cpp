@@ -124,7 +124,7 @@ bool CBoxAlgorithmViz::initialize()
 	// Sets default setting values
 	m_sLocalisation       = CString("");
 	m_temporalCoherence   = OVP_TypeId_TemporalCoherence_TimeLocked.toUInteger();
-	m_elementCount        = 50;
+	m_nElement        = 50;
 	m_timeScale           = 10LL << 32;
 	m_bIsPositive         = false;
 	m_bIsTimeLocked       = true;
@@ -268,13 +268,13 @@ bool CBoxAlgorithmViz::initialize()
 				m_timeScale = uint64_t(l_fValue * (1LL << 32));
 				break;
 			case S_ElementCount:
-				m_elementCount = uint64_t(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), settingIndex));
+				m_nElement = uint64_t(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), settingIndex));
 				break;
 			case S_DataScale:
 				m_f64DataScale = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), settingIndex);
 				break;
 			case S_FlowerRingCount:
-				m_flowerRingCount = uint64_t(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), settingIndex));
+				m_nFlowerRing = uint64_t(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), settingIndex));
 				break;
 			case S_Translucency:
 				m_translucency = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), settingIndex);
@@ -330,7 +330,7 @@ bool CBoxAlgorithmViz::initialize()
 	// Sets matrix count
 	if (m_temporalCoherence == OVP_TypeId_TemporalCoherence_Independant.toUInteger())
 	{
-		gtk_spin_button_set_value(GTK_SPIN_BUTTON(::gtk_builder_get_object(m_pBuilder, "spinbutton_element_count")), double(m_elementCount));
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(::gtk_builder_get_object(m_pBuilder, "spinbutton_element_count")), double(m_nElement));
 		m_bIsTimeLocked = false;
 	}
 	else { gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "vbox_element_count"))); }

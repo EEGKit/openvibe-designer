@@ -48,16 +48,16 @@ namespace Mensia
 
 			void setChannelLocalisation(const char* sFilename) override;
 			void setChannelCount(const uint32_t nChannel) override;
-			void setSampleCount(const uint32_t sampleCount) override;
+			void setSampleCount(const uint32_t nSample) override;
 			void setHistoryDrawIndex(const uint32_t index) override;
 			void feed(const float* pDataVector) override;
-			void feed(const float* pDataVector, const uint32_t sampleCount) override;
+			void feed(const float* pDataVector, const uint32_t nSample) override;
 			void feed(const uint64_t stimulationDate, const uint64_t stimulationId) override;
-			void prefeed(const uint32_t preFeedSampleCount) override;
+			void prefeed(const uint32_t nPreFeedSample) override;
 
 			float getSuggestedScale() override;
 
-			void clear(const uint32_t sampleCountToKeep) override;
+			void clear(const uint32_t nSampleToKeep) override;
 
 			uint32_t getChannelCount() const override;
 			uint32_t getSampleCount() const override;
@@ -85,22 +85,19 @@ namespace Mensia
 			virtual void draw3DCoordinateSystem();
 			virtual void draw2DCoordinateSystem();
 
-			virtual void drawCoordinateSystem() // for retro compatibility
-			{
-				this->draw3DCoordinateSystem();
-			}
+			virtual void drawCoordinateSystem() { this->draw3DCoordinateSystem(); }
 
 		protected:
 
 			std::string m_channelLocalisationFilename;
-			uint32_t m_historyIndex     = 0;
-			uint32_t m_historyDrawIndex = 0;
-			uint32_t m_historyCount     = 0;
-			uint32_t m_channelCount     = 0;
+			uint32_t m_historyIdx     = 0;
+			uint32_t m_historyDrawIdx = 0;
+			uint32_t m_nHistory     = 0;
+			uint32_t m_nChannel     = 0;
 			uint32_t m_nSample      = 1;
 
-			float m_inverseChannelCount     = 1.0;
-			float m_inverseSampleCount      = 1.0;
+			float m_nInverseChannel     = 1.0;
+			float m_nInverseSample      = 1.0;
 			uint32_t m_autoDecimationFactor = 1;
 
 			float m_ERPFraction       = 0.0;

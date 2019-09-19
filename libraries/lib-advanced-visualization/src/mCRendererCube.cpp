@@ -36,14 +36,14 @@ void CRendererCube::rebuild(const IRendererContext& rContext)
 	m_vVertex.clear();
 	m_vVertex.resize(rContext.getChannelCount());
 
-	m_historyIndex = 0;
+	m_historyIdx = 0;
 }
 
 void CRendererCube::refresh(const IRendererContext& rContext)
 {
 	CRenderer::refresh(rContext);
 
-	if (!m_historyCount) { return; }
+	if (!m_nHistory) { return; }
 
 	const float sampleIndexERP     = (m_ERPFraction * float(m_nSample - 1));
 	const float alpha              = sampleIndexERP - std::floor(sampleIndexERP);
@@ -52,11 +52,11 @@ void CRendererCube::refresh(const IRendererContext& rContext)
 
 	for (uint32_t i = 0; i < m_vVertex.size(); ++i)
 	{
-		m_vVertex[i].u = m_history[i][m_historyCount - m_nSample + sampleIndexERP1] * (1 - alpha)
-						 + m_history[i][m_historyCount - m_nSample + sampleIndexERP2] * (alpha);
+		m_vVertex[i].u = m_history[i][m_nHistory - m_nSample + sampleIndexERP1] * (1 - alpha)
+						 + m_history[i][m_nHistory - m_nSample + sampleIndexERP2] * (alpha);
 	}
 
-	m_historyIndex = m_historyCount;
+	m_historyIdx = m_nHistory;
 }
 
 bool CRendererCube::render(const IRendererContext& rContext)
@@ -64,7 +64,7 @@ bool CRendererCube::render(const IRendererContext& rContext)
 
 	if (!rContext.getSelectedCount()) { return false; }
 	if (m_vVertex.empty()) { return false; }
-	if (!m_historyCount) { return false; }
+	if (!m_nHistory) { return false; }
 
 	const float d = 3.5;
 

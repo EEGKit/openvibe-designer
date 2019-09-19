@@ -181,9 +181,9 @@ namespace OpenViBEDesigner
 		int m_viewOffsetY = 0;
 		uint32_t m_currentMode = 0;
 
-		uint32_t m_boxCount = 0;
-		uint32_t m_commentCount = 0;
-		uint32_t m_linkCount = 0;
+		uint32_t m_nBox = 0;
+		uint32_t m_nComment = 0;
+		uint32_t m_nLink = 0;
 
 		uint32_t m_interfacedObjectId = 0;
 		std::map<uint32_t, CInterfacedObject> m_vInterfacedObject;

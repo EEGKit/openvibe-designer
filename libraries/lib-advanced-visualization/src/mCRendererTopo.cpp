@@ -234,7 +234,7 @@ void CRendererTopo::rebuild(const IRendererContext& rContext)
 
 	// Finalizes
 
-	m_historyIndex = 0;
+	m_historyIdx = 0;
 }
 
 // V has sensor potentials
@@ -252,7 +252,7 @@ void CRendererTopo::refresh(const IRendererContext& rContext)
 {
 	CRenderer::refresh(rContext);
 
-	if (!m_historyCount) { return; }
+	if (!m_nHistory) { return; }
 
 	size_t nc       = rContext.getChannelCount();
 	const size_t vc = m_oScalp.m_vVertex.size();
@@ -271,25 +271,25 @@ void CRendererTopo::refresh(const IRendererContext& rContext)
 	}
 	else
 	{
-		if (m_historyCount >= m_nSample)
+		if (m_nHistory >= m_nSample)
 		{
 			for (size_t k = 0; k < m_nSample; k++)
 			{
-				for (size_t i = 0; i < nc; ++i) { V(i) = m_history[i][m_historyCount - m_nSample + k]; }
+				for (size_t i = 0; i < nc; ++i) { V(i) = m_history[i][m_nHistory - m_nSample + k]; }
 				this->interpolate(V, W, Z);
 				m_vInterpolatedSample[k] = W;
 			}
 		}
 	}
 
-	m_historyIndex = m_historyCount;
+	m_historyIdx = m_nHistory;
 }
 
 bool CRendererTopo::render(const IRendererContext& rContext)
 {
 	if (!rContext.getSelectedCount()) { return false; }
 	if (m_oScalp.m_vVertex.empty()) { return false; }
-	if (!m_historyCount) { return false; }
+	if (!m_nHistory) { return false; }
 
 	const float d = 3.5;
 

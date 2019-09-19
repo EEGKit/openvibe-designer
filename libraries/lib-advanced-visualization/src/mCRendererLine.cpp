@@ -32,32 +32,32 @@ void CRendererLine::rebuild(const IRendererContext& rContext)
 	CRenderer::rebuild(rContext);
 
 	m_Vertices.clear();
-	m_Vertices.resize(m_channelCount);
+	m_Vertices.resize(m_nChannel);
 
-	for (size_t channel = 0; channel < m_channelCount; channel++)
+	for (size_t channel = 0; channel < m_nChannel; channel++)
 	{
 		m_Vertices[channel].resize(m_nSample);
-		for (size_t sample = 0; sample < m_nSample; sample++) { m_Vertices[channel][sample].x = sample * m_inverseSampleCount; }
+		for (size_t sample = 0; sample < m_nSample; sample++) { m_Vertices[channel][sample].x = sample * m_nInverseSample; }
 	}
 
-	m_historyIndex = 0;
+	m_historyIdx = 0;
 }
 
 void CRendererLine::refresh(const IRendererContext& rContext)
 {
 	CRenderer::refresh(rContext);
 
-	if (!m_historyCount) { return; }
+	if (!m_nHistory) { return; }
 
 	uint32_t l_ui32HistoryIndexMax;
 
-	if (m_historyDrawIndex == 0) { l_ui32HistoryIndexMax = m_historyCount; } // Draw real-time 
-	else // stay at the m_historyDrawIndex
+	if (m_historyDrawIdx == 0) { l_ui32HistoryIndexMax = m_nHistory; } // Draw real-time 
+	else // stay at the m_historyDrawIdx
 	{
-		l_ui32HistoryIndexMax = m_historyDrawIndex;
+		l_ui32HistoryIndexMax = m_historyDrawIdx;
 	}
 
-	for (size_t channel = 0; channel < m_channelCount; channel++)
+	for (size_t channel = 0; channel < m_nChannel; channel++)
 	{
 		const uint32_t firstSampleIndex = ((l_ui32HistoryIndexMax - 1) / m_nSample) * m_nSample;
 		std::vector<float>& l_vHistory  = m_history[channel];
@@ -74,15 +74,15 @@ void CRendererLine::refresh(const IRendererContext& rContext)
 		}
 	}
 
-	m_historyIndex = l_ui32HistoryIndexMax;
+	m_historyIdx = l_ui32HistoryIndexMax;
 }
 
 bool CRendererLine::render(const IRendererContext& rContext)
 {
 	if (!rContext.getSelectedCount()) { return false; }
-	if (!m_historyCount) { return false; }
+	if (!m_nHistory) { return false; }
 
-	const auto sampleCount = int(m_nSample);
+	const auto nSample = int(m_nSample);
 
 
 	// When the display is in continuous mode, there will be n1 samples
@@ -97,13 +97,13 @@ bool CRendererLine::render(const IRendererContext& rContext)
 	// |              |___/                                     |
 	// Time          25s              10s                      20s
 
-	const auto n1 = int(m_historyIndex % m_nSample);
-	const auto n2 = int(sampleCount - n1);
+	const auto n1 = int(m_historyIdx % m_nSample);
+	const auto n2 = int(nSample - n1);
 
-	if (!sampleCount) { return false; }
+	if (!nSample) { return false; }
 
-	const float t1 = n2 * 1.f / sampleCount;
-	const float t2 = -n1 * 1.f / sampleCount;
+	const float t1 = n2 * 1.f / nSample;
+	const float t2 = -n1 * 1.f / nSample;
 
 	glDisable(GL_TEXTURE_1D);
 
@@ -148,7 +148,7 @@ bool CRendererLine::render(const IRendererContext& rContext)
 				if (n1 > 0)
 				{
 					glBegin(GL_LINES);
-					glVertex2f(l_rVertex[sampleCount - 1].x + t2, l_rVertex[sampleCount - 1].y);
+					glVertex2f(l_rVertex[nSample - 1].x + t2, l_rVertex[nSample - 1].y);
 					glVertex2f(l_rVertex[0].x + t1, l_rVertex[0].y);
 					glEnd();
 				}
@@ -157,7 +157,7 @@ bool CRendererLine::render(const IRendererContext& rContext)
 		else
 		{
 			glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &l_rVertex[0].x);
-			glDrawArrays(GL_LINE_STRIP, 0, sampleCount);
+			glDrawArrays(GL_LINE_STRIP, 0, nSample);
 		}
 		glPopMatrix();
 	}

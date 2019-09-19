@@ -81,8 +81,8 @@ void CRendererConnectivity::rebuild(const IRendererContext& rContext)
 	// Generates arcs
 
 	m_vertex.clear();
-	m_vertex.resize(m_channelCount * (m_channelCount - 1) / 2);
-	for (i = 0; i < m_channelCount; ++i)
+	m_vertex.resize(m_nChannel * (m_nChannel - 1) / 2);
+	for (i = 0; i < m_nChannel; ++i)
 	{
 		for (uint32_t j = 0; j < i; j++)
 		{
@@ -121,34 +121,34 @@ void CRendererConnectivity::rebuild(const IRendererContext& rContext)
 		}
 	}
 
-	m_historyIndex = 0;
+	m_historyIdx = 0;
 }
 
 void CRendererConnectivity::refresh(const IRendererContext& rContext)
 {
 	CRenderer::refresh(rContext);
 
-	if (!m_historyCount) { return; }
-	if (m_historyCount < m_channelCount) { return; }
+	if (!m_nHistory) { return; }
+	if (m_nHistory < m_nChannel) { return; }
 
 	uint32_t l = 0;
-	for (uint32_t i = 0; i < m_channelCount; ++i)
+	for (uint32_t i = 0; i < m_nChannel; ++i)
 	{
 		for (uint32_t j = 0; j < i; j++)
 		{
-			for (uint32_t k = 0; k < COUNT; k++) { m_vertex[l][k].u = m_history[i][m_historyCount - 1 - j]; }
+			for (uint32_t k = 0; k < COUNT; k++) { m_vertex[l][k].u = m_history[i][m_nHistory - 1 - j]; }
 			l++;
 		}
 	}
 
-	m_historyIndex = m_historyCount;
+	m_historyIdx = m_nHistory;
 }
 
 bool CRendererConnectivity::render(const IRendererContext& rContext)
 {
 	if (!rContext.getSelectedCount()) { return false; }
 	if (m_vertex.empty()) { return false; }
-	if (!m_historyCount) { return false; }
+	if (!m_nHistory) { return false; }
 
 	const float d = 3.5;
 
@@ -171,7 +171,7 @@ bool CRendererConnectivity::render(const IRendererContext& rContext)
 	glLoadIdentity();
 	glScalef(rContext.getZoom(), rContext.getZoom(), rContext.getZoom());
 
-	//	uint32_t l_ui32ChannelCountSquare=m_channelCount*m_channelCount;
+	//	uint32_t l_ui32ChannelCountSquare=m_nChannel*m_nChannel;
 	const float rgb = 1.f;
 	glColor4f(rgb, rgb, rgb, rContext.getTranslucency());
 	glPushMatrix();
@@ -186,7 +186,7 @@ bool CRendererConnectivity::render(const IRendererContext& rContext)
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	for (uint32_t i = 0; i < m_channelCount * (m_channelCount - 1) / 2; ++i)
+	for (uint32_t i = 0; i < m_nChannel * (m_nChannel - 1) / 2; ++i)
 	{
 		glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_vertex[i][0].x);
 		glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_vertex[i][0].u);

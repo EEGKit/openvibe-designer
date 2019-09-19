@@ -1187,7 +1187,7 @@ void CInterfacedScenario::redraw(IBox& box)
 		CIdentifier l_oComputationTime;
 		l_oComputationTime.fromString(box.getAttributeValue(OV_AttributeId_Box_ComputationTimeLastSecond));
 		uint64_t l_ui64ComputationTime          = (l_oComputationTime == OV_UndefinedIdentifier ? 0 : l_oComputationTime.toUInteger());
-		uint64_t l_ui64ComputationTimeReference = (1LL << 32) / (m_boxCount == 0 ? 1 : m_boxCount);
+		uint64_t l_ui64ComputationTimeReference = (1LL << 32) / (m_nBox == 0 ? 1 : m_nBox);
 
 		GdkColor l_oColor;
 		if (l_ui64ComputationTime < l_ui64ComputationTimeReference)
@@ -2129,7 +2129,7 @@ void CInterfacedScenario::scenarioDrawingAreaExposeCB(GdkEventExpose* /*event*/)
 		redraw(*m_rScenario.getCommentDetails(l_oCommentIdentifier));
 		commentCount++;
 	}
-	m_commentCount = commentCount;
+	m_nComment = commentCount;
 
 	uint32_t l_ui32BoxCount = 0;
 	CIdentifier l_oBoxIdentifier;
@@ -2138,7 +2138,7 @@ void CInterfacedScenario::scenarioDrawingAreaExposeCB(GdkEventExpose* /*event*/)
 		redraw(*m_rScenario.getBoxDetails(l_oBoxIdentifier));
 		l_ui32BoxCount++;
 	}
-	m_boxCount = l_ui32BoxCount;
+	m_nBox = l_ui32BoxCount;
 
 	uint32_t linkCount = 0;
 	CIdentifier l_oLinkIdentifier;
@@ -2147,7 +2147,7 @@ void CInterfacedScenario::scenarioDrawingAreaExposeCB(GdkEventExpose* /*event*/)
 		redraw(*m_rScenario.getLinkDetails(l_oLinkIdentifier));
 		linkCount++;
 	}
-	m_linkCount = linkCount;
+	m_nLink = linkCount;
 
 	if (m_currentMode == Mode_Selection || m_currentMode == Mode_SelectionAdd)
 	{

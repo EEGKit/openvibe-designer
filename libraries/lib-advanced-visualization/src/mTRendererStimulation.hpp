@@ -74,7 +74,7 @@ namespace Mensia
 				{
 					glPushAttrib(GL_ALL_ATTRIB_BITS);
 
-					const uint32_t sampleCount    = CRenderer::getSampleCount();
+					const uint32_t nSample    = CRenderer::getSampleCount();
 					const uint32_t historyIndex   = CRenderer::getHistoryIndex();
 					const uint64_t sampleDuration = rContext.getSampleDuration();
 
@@ -82,11 +82,11 @@ namespace Mensia
 					glDisable(GL_BLEND);
 					glDisable(GL_LINE_SMOOTH);
 
-					const uint32_t leftIndex = historyIndex - historyIndex % sampleCount;
+					const uint32_t leftIndex = historyIndex - historyIndex % nSample;
 					const uint32_t midIndex  = historyIndex;
 					const double startTime   = ((leftIndex * sampleDuration) >> 16) / 65536.;
 					const double midTime     = ((midIndex * sampleDuration) >> 16) / 65536.;
-					const double duration    = ((sampleCount * sampleDuration) >> 16) / 65536.;
+					const double duration    = ((nSample * sampleDuration) >> 16) / 65536.;
 
 					m_mEncounteredStimulations.clear();
 					for (auto it = CRenderer::m_stimulationHistory.begin(); it != CRenderer::m_stimulationHistory.end(); ++it)

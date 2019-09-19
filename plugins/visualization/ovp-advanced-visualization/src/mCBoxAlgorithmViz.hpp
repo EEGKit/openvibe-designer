@@ -256,11 +256,11 @@ namespace Mensia
 			OpenViBE::CString m_sLocalisation;
 			uint64_t m_temporalCoherence = 0;
 			uint64_t m_timeScale         = 0;
-			uint64_t m_elementCount      = 0;
+			uint64_t m_nElement      = 0;
 			double m_f64DataScale        = 0.0;
 			OpenViBE::CString m_sCaption;
 			uint32_t m_textureId       = 0;
-			uint64_t m_flowerRingCount = 0;
+			uint64_t m_nFlowerRing = 0;
 			double m_translucency      = 0.0;
 			OpenViBE::CString m_sColor;
 			OpenViBE::CString m_sColorGradient;

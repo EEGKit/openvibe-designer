@@ -28,17 +28,17 @@ void CRendererBars::rebuild(const IRendererContext& rContext)
 {
 	CRenderer::rebuild(rContext);
 
-	m_vertex.resize(m_channelCount);
-	for (size_t i = 0; i < m_channelCount; ++i)
+	m_vertex.resize(m_nChannel);
+	for (size_t i = 0; i < m_nChannel; ++i)
 	{
 		m_vertex[i].resize(size_t(m_nSample) * 4);
 		for (size_t j = 0; j < m_nSample; j++)
 		{
 			const size_t id       = j * 4;
-			const float value     = j * m_inverseSampleCount;
+			const float value     = j * m_nInverseSample;
 			m_vertex[i][id].x     = value;
-			m_vertex[i][id + 1].x = value + m_inverseSampleCount;
-			m_vertex[i][id + 2].x = value + m_inverseSampleCount;
+			m_vertex[i][id + 1].x = value + m_nInverseSample;
+			m_vertex[i][id + 2].x = value + m_nInverseSample;
 			m_vertex[i][id + 3].x = value;
 
 			m_vertex[i][id].u     = value;
@@ -48,23 +48,23 @@ void CRendererBars::rebuild(const IRendererContext& rContext)
 		}
 	}
 
-	m_historyIndex = 0;
+	m_historyIdx = 0;
 }
 
 void CRendererBars::refresh(const IRendererContext& rContext)
 {
 	CRenderer::refresh(rContext);
 
-	if (!m_historyCount) { return; }
+	if (!m_nHistory) { return; }
 
-	for (size_t i = 0; i < m_channelCount; ++i)
+	for (size_t i = 0; i < m_nChannel; ++i)
 	{
-		size_t k                       = ((m_historyCount - 1) / m_nSample) * m_nSample;
+		size_t k                       = ((m_nHistory - 1) / m_nSample) * m_nSample;
 		std::vector<float>& l_vHistory = m_history[i];
 		CVertex* l_pVertex             = &m_vertex[i][0];
 		for (size_t j = 0; j < m_nSample; j++, k++)
 		{
-			if (k >= m_historyIndex && k < m_historyCount)
+			if (k >= m_historyIdx && k < m_nHistory)
 			{
 				const float l_f32Value = l_vHistory[k];
 				l_pVertex++->y         = 0;
@@ -75,14 +75,14 @@ void CRendererBars::refresh(const IRendererContext& rContext)
 			else { l_pVertex += 4; }
 		}
 	}
-	m_historyIndex = m_historyCount;
+	m_historyIdx = m_nHistory;
 }
 
 bool CRendererBars::render(const IRendererContext& rContext)
 {
 	if (!rContext.getSelectedCount()) { return false; }
 	if (m_vertex.empty()) { return false; }
-	if (!m_historyCount) { return false; }
+	if (!m_nHistory) { return false; }
 
 	uint32_t i;
 

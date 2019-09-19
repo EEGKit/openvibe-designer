@@ -231,8 +231,8 @@ void CRendererContext::clearTransformInfo()
 	m_aspect                 = 1;
 	m_sampleDuration         = 0;
 	m_timeScale              = 1;
-	m_elementCount           = 1;
-	m_flowerRingCount        = 1;
+	m_nElement           = 1;
+	m_nFlowerRing        = 1;
 	m_hasXYZPlotDepth        = false;
 	m_isAxisDisplayed        = false;
 	m_isPositiveOnly         = false;
@@ -246,7 +246,7 @@ void CRendererContext::clearTransformInfo()
 	m_maxSpectrumFrequency   = 0;
 	m_ERPPlayerActive        = false;
 	m_ERPFraction            = 0;
-	m_stackCount             = 1;
+	m_nStack             = 1;
 	m_stackIndex             = 1;
 	m_faceMeshVisible        = true;
 	m_scalpMeshVisible       = true;
@@ -276,9 +276,9 @@ void CRendererContext::setSampleDuration(const uint64_t ui64SampleDuration) { m_
 
 void CRendererContext::setTimeScale(const uint64_t ui64TimeScale) { m_timeScale = ui64TimeScale; }
 
-void CRendererContext::setElementCount(const uint64_t ui64ElementCount) { m_elementCount = ui64ElementCount; }
+void CRendererContext::setElementCount(const uint64_t ui64ElementCount) { m_nElement = ui64ElementCount; }
 
-void CRendererContext::setFlowerRingCount(const uint64_t ui64FlowerRingCount) { m_flowerRingCount = ui64FlowerRingCount; }
+void CRendererContext::setFlowerRingCount(const uint64_t ui64FlowerRingCount) { m_nFlowerRing = ui64FlowerRingCount; }
 
 void CRendererContext::setXYZPlotDepth(const bool bHasDepth) { m_hasXYZPlotDepth = bHasDepth; }
 
@@ -302,7 +302,7 @@ void CRendererContext::setMinimumSpectrumFrequency(const uint32_t ui32MinSpectru
 
 void CRendererContext::setMaximumSpectrumFrequency(const uint32_t ui32MaxSpectrumFrequency) { m_maxSpectrumFrequency = ui32MaxSpectrumFrequency; }
 
-void CRendererContext::setStackCount(const uint32_t ui32StackCount) { m_stackCount = ui32StackCount; }
+void CRendererContext::setStackCount(const uint32_t ui32StackCount) { m_nStack = ui32StackCount; }
 
 void CRendererContext::setStackIndex(const uint32_t ui32StackIndex) { m_stackIndex = ui32StackIndex; }
 
@@ -370,9 +370,9 @@ uint64_t CRendererContext::getSampleDuration() const { return m_sampleDuration; 
 
 uint64_t CRendererContext::getTimeScale() const { return m_timeScale; }
 
-uint64_t CRendererContext::getElementCount() const { return m_elementCount; }
+uint64_t CRendererContext::getElementCount() const { return m_nElement; }
 
-uint64_t CRendererContext::getFlowerRingCount() const { return m_flowerRingCount; }
+uint64_t CRendererContext::getFlowerRingCount() const { return m_nFlowerRing; }
 
 bool CRendererContext::hasXYZPlotDepth() const { return m_hasXYZPlotDepth; }
 
@@ -409,7 +409,7 @@ uint32_t CRendererContext::getMaxSpectrumFrequency() const
 	return m_maxSpectrumFrequency > m_spectrumFrequencyRange ? m_spectrumFrequencyRange : m_maxSpectrumFrequency;
 }
 
-uint32_t CRendererContext::getStackCount() const { return m_stackCount; }
+uint32_t CRendererContext::getStackCount() const { return m_nStack; }
 
 uint32_t CRendererContext::getStackIndex() const { return m_stackIndex; }
 

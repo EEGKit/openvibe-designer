@@ -38,9 +38,9 @@ namespace Mensia
 				if (m_pRenderer->getHistoryCount() == 0) { return; }
 				if (m_pRenderer->getHistoryIndex() == 0) { return; }
 
-				const uint32_t sampleCount    = m_pRenderer->getSampleCount();
+				const uint32_t nSample    = m_pRenderer->getSampleCount();
 				const uint64_t sampleDuration = m_pRendererContext->getSampleDuration();
-				const double duration         = double((sampleCount * sampleDuration) >> 16) / 65536.;
+				const double duration         = double((nSample * sampleDuration) >> 16) / 65536.;
 
 				std::vector<double> range = split_range(0, duration, 10);
 

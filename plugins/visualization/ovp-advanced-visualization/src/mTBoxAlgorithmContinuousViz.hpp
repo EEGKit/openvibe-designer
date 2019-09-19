@@ -142,7 +142,7 @@ namespace Mensia
 
 				OpenViBE::IMatrix* l_pMatrix = m_oMatrixDecoder.getOutputMatrix();
 				uint32_t nChannel        = l_pMatrix->getDimensionSize(0);
-				uint32_t sampleCount         = l_pMatrix->getDimensionSize(1);
+				uint32_t nSample         = l_pMatrix->getDimensionSize(1);
 
 				if (nChannel == 0)
 				{
@@ -153,7 +153,7 @@ namespace Mensia
 				if (l_pMatrix->getDimensionCount() == 1)
 				{
 					nChannel = l_pMatrix->getDimensionSize(0);
-					sampleCount  = 1;
+					nSample  = 1;
 				}
 
 				if (m_oMatrixDecoder.isHeaderReceived())
@@ -165,9 +165,9 @@ namespace Mensia
 
 					m_pRendererContext->clear();
 					m_pRendererContext->setTranslucency(float(m_translucency));
-					m_pRendererContext->setFlowerRingCount(m_flowerRingCount);
+					m_pRendererContext->setFlowerRingCount(m_nFlowerRing);
 					m_pRendererContext->setTimeScale(m_timeScale);
-					m_pRendererContext->setElementCount(m_elementCount);
+					m_pRendererContext->setElementCount(m_nElement);
 					m_pRendererContext->scaleBy(float(m_f64DataScale));
 					m_pRendererContext->setAxisDisplay(m_bShowAxis);
 					m_pRendererContext->setPositiveOnly(m_bIsPositive);
@@ -203,7 +203,7 @@ namespace Mensia
 					else if (m_oTypeIdentifier == OV_TypeId_Spectrum) { m_pRendererContext->setDataType(IRendererContext::DataType_Spectrum); }
 					else { m_pRendererContext->setDataType(IRendererContext::DataType_Matrix); }
 
-					if (sampleCount != 1)
+					if (nSample != 1)
 					{
 						//bool warned = false;
 						if (m_oTypeIdentifier == OV_TypeId_Spectrum)
@@ -220,12 +220,12 @@ namespace Mensia
 							if (!m_pRendererContext->isTimeLocked())
 							{
 								//warned = true;
-								this->getLogManager() << LogLevel_Warning << "Input matrix has " << sampleCount <<
-										" elements and the box settings say the elements are independant with " << uint64_t(m_elementCount) <<
+								this->getLogManager() << LogLevel_Warning << "Input matrix has " << nSample <<
+										" elements and the box settings say the elements are independant with " << uint64_t(m_nElement) <<
 										" elements to render\n";
 								this->getLogManager() << LogLevel_Warning << "Such configuration is uncommon for a 'continous' kind of visualization !\n";
 								this->getLogManager() << LogLevel_Warning << "You might want either of the following alternative :\n";
-								this->getLogManager() << LogLevel_Warning << " - an 'instant' kind of visualization to highlight the " << m_elementCount <<
+								this->getLogManager() << LogLevel_Warning << " - an 'instant' kind of visualization to highlight the " << m_nElement <<
 										" elements of the matrix\n";
 								this->getLogManager() << LogLevel_Warning <<
 										" - a 'time locked' kind of elements (thus the scenario must refresh the matrix on a regular basis)\n";
@@ -242,20 +242,20 @@ namespace Mensia
 				{
 					m_time1                 = m_time2;
 					m_time2                 = boxContext.getInputChunkEndTime(0, i);
-					const uint64_t duration = (m_time2 - m_time1) / sampleCount;
+					const uint64_t duration = (m_time2 - m_time1) / nSample;
 					if ((duration & ~0xf) != (m_pRendererContext->getSampleDuration() & ~0xf) && duration != 0) // 0xf mask avoids rounding errors
 					{
 						m_pRendererContext->setSampleDuration(duration);
 					}
 					m_pRendererContext->setSpectrumFrequencyRange(
-						uint32_t((uint64_t(sampleCount) << 32) / (boxContext.getInputChunkEndTime(0, i) - boxContext.getInputChunkStartTime(0, i))));
+						uint32_t((uint64_t(nSample) << 32) / (boxContext.getInputChunkEndTime(0, i) - boxContext.getInputChunkStartTime(0, i))));
 					m_pRendererContext->setMinimumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_pFrequencyBandMin))));
 					m_pRendererContext->setMaximumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_pFrequencyBandMax))));
 
 					// Feed renderer with actual samples
-					for (uint32_t j = 0; j < sampleCount; ++j)
+					for (uint32_t j = 0; j < nSample; ++j)
 					{
-						for (uint32_t k = 0; k < nChannel; ++k) { m_vSwap[k] = float(l_pMatrix->getBuffer()[k * sampleCount + j]); }
+						for (uint32_t k = 0; k < nChannel; ++k) { m_vSwap[k] = float(l_pMatrix->getBuffer()[k * nSample + j]); }
 						m_pRenderer->feed(&m_vSwap[0]);
 					}
 
@@ -301,7 +301,7 @@ namespace Mensia
 			}
 			else
 			{
-				rendererSampleCount = size_t(m_pRendererContext->getElementCount()); // *sampleCount;
+				rendererSampleCount = size_t(m_pRendererContext->getElementCount()); // *nSample;
 			}
 
 			if (rendererSampleCount != 0 && rendererSampleCount != m_pRenderer->getSampleCount())

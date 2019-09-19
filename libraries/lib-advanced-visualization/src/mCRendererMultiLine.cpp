@@ -28,16 +28,16 @@ using namespace AdvancedVisualization;
 bool CRendererMultiLine::render(const IRendererContext& rContext)
 {
 	if (!rContext.getSelectedCount()) { return false; }
-	if (!m_historyCount) { return false; }
+	if (!m_nHistory) { return false; }
 
-	const auto sampleCount = int(m_nSample);
-	const auto n1          = int(m_historyIndex % m_nSample);
-	const auto n2          = int(sampleCount - n1);
+	const auto nSample = int(m_nSample);
+	const auto n1          = int(m_historyIdx % m_nSample);
+	const auto n2          = int(nSample - n1);
 
-	if (!sampleCount) { return false; }
+	if (!nSample) { return false; }
 
-	const float t1 = n2 * 1.f / sampleCount;
-	const float t2 = -n1 * 1.f / sampleCount;
+	const float t1 = n2 * 1.f / nSample;
+	const float t2 = -n1 * 1.f / nSample;
 
 	glMatrixMode(GL_TEXTURE);
 	glPushMatrix();
@@ -70,7 +70,7 @@ bool CRendererMultiLine::render(const IRendererContext& rContext)
 				if (n1 > 0)
 				{
 					glBegin(GL_LINES);
-					glVertex2f(l_rVertex[sampleCount - 1].x + t2, l_rVertex[sampleCount - 1].y);
+					glVertex2f(l_rVertex[nSample - 1].x + t2, l_rVertex[nSample - 1].y);
 					glVertex2f(l_rVertex[0].x + t1, l_rVertex[0].y);
 					glEnd();
 				}
@@ -79,7 +79,7 @@ bool CRendererMultiLine::render(const IRendererContext& rContext)
 		else
 		{
 			glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &l_rVertex[0].x);
-			glDrawArrays(GL_LINE_STRIP, 0, sampleCount);
+			glDrawArrays(GL_LINE_STRIP, 0, nSample);
 		}
 	}
 	glDisableClientState(GL_VERTEX_ARRAY);

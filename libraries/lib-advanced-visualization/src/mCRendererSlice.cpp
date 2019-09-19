@@ -32,14 +32,14 @@ void CRendererSlice::rebuild(const IRendererContext& rContext)
 	uint32_t k = 0, l = 0;
 
 	m_vVertex.clear();
-	m_vVertex.resize(m_nSample * m_channelCount * 8);
+	m_vVertex.resize(m_nSample * m_nChannel * 8);
 
 	m_vQuad.clear();
-	m_vQuad.resize(m_nSample * m_channelCount * 6 * 4);
+	m_vQuad.resize(m_nSample * m_nChannel * 6 * 4);
 
 	for (uint32_t i = 0; i < m_nSample; ++i)
 	{
-		for (uint32_t j = 0; j < m_channelCount; j++)
+		for (uint32_t j = 0; j < m_nChannel; j++)
 		{
 			const float f32Size = .5;
 
@@ -74,7 +74,7 @@ void CRendererSlice::rebuild(const IRendererContext& rContext)
 			m_vQuad[l++] = k + 2;
 
 			const float ox = 0;
-			const float oy = 0.5f * float(m_channelCount - 1) - j;
+			const float oy = 0.5f * float(m_nChannel - 1) - j;
 			const float oz = 0.5f * float(m_nSample - 1) - i;
 
 			m_vVertex[k].x = ox + f32Size;
@@ -118,20 +118,20 @@ void CRendererSlice::rebuild(const IRendererContext& rContext)
 			k++;
 		}
 	}
-	m_historyIndex = 0;
+	m_historyIdx = 0;
 }
 
 void CRendererSlice::refresh(const IRendererContext& rContext)
 {
 	CRenderer::refresh(rContext);
 
-	for (uint32_t i = m_historyIndex; i < m_historyCount; ++i)
+	for (uint32_t i = m_historyIdx; i < m_nHistory; ++i)
 	{
-		uint32_t k = (i % m_nSample) * m_channelCount * 8;
-		for (uint32_t j = 0; j < m_channelCount; j++) { for (uint32_t l = 0; l < 8; l++) { m_vVertex[k++].u = m_history[j][i]; } }
+		uint32_t k = (i % m_nSample) * m_nChannel * 8;
+		for (uint32_t j = 0; j < m_nChannel; j++) { for (uint32_t l = 0; l < 8; l++) { m_vVertex[k++].u = m_history[j][i]; } }
 	}
 
-	m_historyIndex = m_historyCount;
+	m_historyIdx = m_nHistory;
 }
 
 bool CRendererSlice::render(const IRendererContext& rContext)
@@ -140,7 +140,7 @@ bool CRendererSlice::render(const IRendererContext& rContext)
 	const float d = 3.5;
 
 	if (!rContext.getSelectedCount()) { return false; }
-	if (!m_historyCount) { return false; }
+	if (!m_nHistory) { return false; }
 
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_LIGHTING);
@@ -165,7 +165,7 @@ bool CRendererSlice::render(const IRendererContext& rContext)
 	glScalef(1., 1., 3.);
 
 	glPushMatrix();
-	glScalef(1.f / rContext.getStackCount(), 1.f / m_channelCount, 1.f / m_nSample);
+	glScalef(1.f / rContext.getStackCount(), 1.f / m_nChannel, 1.f / m_nSample);
 	glTranslatef(rContext.getStackIndex() - 0.5f * float(rContext.getStackCount() - 1), 0, 0);
 	glColor4f(.1f, .1f, .1f, rContext.getTranslucency());
 
@@ -182,7 +182,7 @@ bool CRendererSlice::render(const IRendererContext& rContext)
 
 	glDisable(GL_TEXTURE_1D);
 
-	const float progress = 1 - 2.0f * float(m_historyIndex % m_nSample) / m_nSample;
+	const float progress = 1 - 2.0f * float(m_historyIdx % m_nSample) / m_nSample;
 	glScalef(.5, .5, .5);
 	glBegin(GL_LINE_LOOP);
 	glColor3f(1, 1, 1);

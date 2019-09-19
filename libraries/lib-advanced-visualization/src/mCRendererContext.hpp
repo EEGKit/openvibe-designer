@@ -146,8 +146,8 @@ namespace Mensia
 			float m_aspect                    = 1;
 			uint64_t m_sampleDuration         = 0;
 			uint64_t m_timeScale              = 1;
-			uint64_t m_elementCount           = 1;
-			uint64_t m_flowerRingCount        = 1;
+			uint64_t m_nElement           = 1;
+			uint64_t m_nFlowerRing        = 1;
 			bool m_hasXYZPlotDepth            = false;
 			bool m_isAxisDisplayed            = false;
 			bool m_isPositiveOnly             = false;
@@ -159,7 +159,7 @@ namespace Mensia
 			uint32_t m_spectrumFrequencyRange = 0;
 			uint32_t m_minSpectrumFrequency   = 0;
 			uint32_t m_maxSpectrumFrequency   = 0;
-			uint32_t m_stackCount             = 1;
+			uint32_t m_nStack             = 1;
 			uint32_t m_stackIndex             = 1;
 			bool m_faceMeshVisible            = true;
 			bool m_scalpMeshVisible           = true;

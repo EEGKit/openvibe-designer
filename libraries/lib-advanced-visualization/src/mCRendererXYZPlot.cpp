@@ -30,44 +30,44 @@ void CRendererXYZPlot::rebuild(const IRendererContext& rContext)
 
 	m_hasDepth      = rContext.hasXYZPlotDepth();
 	m_plotDimension = (m_hasDepth ? 3 : 2);
-	m_plotCount     = (rContext.getChannelCount() + m_plotDimension - 1) / m_plotDimension;
-	m_vertex.resize(m_plotCount);
+	m_nPlot     = (rContext.getChannelCount() + m_plotDimension - 1) / m_plotDimension;
+	m_vertex.resize(m_nPlot);
 	const float inverseSampleCount = 1.0f / float(m_nSample < 2 ? 1 : (m_nSample - 1));
-	for (uint32_t i = 0; i < m_plotCount; ++i)
+	for (uint32_t i = 0; i < m_nPlot; ++i)
 	{
 		m_vertex[i].resize(this->m_nSample);
 		for (uint32_t j = 0; j < this->m_nSample; j++) { m_vertex[i][j].u = j * inverseSampleCount; }
 	}
 
-	m_historyIndex = 0;
+	m_historyIdx = 0;
 }
 
 void CRendererXYZPlot::refresh(const IRendererContext& rContext)
 {
 	CRenderer::refresh(rContext);
 
-	if (!m_historyCount) { return; }
+	if (!m_nHistory) { return; }
 
-	while (m_historyIndex < m_historyCount)
+	while (m_historyIdx < m_nHistory)
 	{
-		const uint32_t j = m_historyIndex % this->m_nSample;
-		for (uint32_t i = 0; i < m_plotCount; ++i)
+		const uint32_t j = m_historyIdx % this->m_nSample;
+		for (uint32_t i = 0; i < m_nPlot; ++i)
 		{
 			if (m_hasDepth)
 			{
 				const uint32_t i3 = i * 3;
-				m_vertex[i][j].x  = (i3 < m_history.size() ? m_history[i3][m_historyIndex] : 0);
-				m_vertex[i][j].y  = (i3 + 1 < m_history.size() ? m_history[i3 + 1][m_historyIndex] : 0);
-				m_vertex[i][j].z  = (i3 + 2 < m_history.size() ? m_history[i3 + 2][m_historyIndex] : 0);
+				m_vertex[i][j].x  = (i3 < m_history.size() ? m_history[i3][m_historyIdx] : 0);
+				m_vertex[i][j].y  = (i3 + 1 < m_history.size() ? m_history[i3 + 1][m_historyIdx] : 0);
+				m_vertex[i][j].z  = (i3 + 2 < m_history.size() ? m_history[i3 + 2][m_historyIdx] : 0);
 			}
 			else
 			{
 				const uint32_t i3 = i * 2;
-				m_vertex[i][j].x  = (i3 < m_history.size() ? m_history[i3][m_historyIndex] : 0);
-				m_vertex[i][j].y  = (i3 + 1 < m_history.size() ? m_history[i3 + 1][m_historyIndex] : 0);
+				m_vertex[i][j].x  = (i3 < m_history.size() ? m_history[i3][m_historyIdx] : 0);
+				m_vertex[i][j].y  = (i3 + 1 < m_history.size() ? m_history[i3 + 1][m_historyIdx] : 0);
 			}
 		}
-		m_historyIndex++;
+		m_historyIdx++;
 	}
 }
 
@@ -75,7 +75,7 @@ bool CRendererXYZPlot::render(const IRendererContext& rContext)
 {
 	if (!rContext.getSelectedCount()) { return false; }
 	if (m_vertex.empty()) { return false; }
-	if (!m_historyCount) { return false; }
+	if (!m_nHistory) { return false; }
 
 	glPointSize(5);
 
@@ -107,11 +107,11 @@ bool CRendererXYZPlot::render(const IRendererContext& rContext)
 	}
 
 	uint32_t n       = m_nSample;
-	const uint32_t d = (m_historyIndex % m_nSample);
+	const uint32_t d = (m_historyIdx % m_nSample);
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	for (uint32_t i = 0; i < m_plotCount; ++i)
+	for (uint32_t i = 0; i < m_nPlot; ++i)
 	{
 		glPushMatrix();
 		glScalef(rContext.getScale(), rContext.getScale(), rContext.getScale());
@@ -122,7 +122,7 @@ bool CRendererXYZPlot::render(const IRendererContext& rContext)
 
 		glVertexPointer(m_plotDimension, GL_FLOAT, sizeof(CVertex), &m_vertex[i][d].x);
 		glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_vertex[i][0].u);
-		glDrawArrays(GL_POINTS, 0, (m_historyIndex > n ? n : m_historyIndex) - d);
+		glDrawArrays(GL_POINTS, 0, (m_historyIdx > n ? n : m_historyIdx) - d);
 
 		glPopMatrix();
 	}

@@ -211,13 +211,13 @@ bool CBufferDatabase::adjustNumberOfDisplayedBuffers(const double f64NumberOfSec
 
 	//displays at least one buffer
 	l_ui64NewNumberOfBufferToDisplay = (l_ui64NewNumberOfBufferToDisplay == 0) ? 1 : l_ui64NewNumberOfBufferToDisplay;
-	if (l_ui64NewNumberOfBufferToDisplay != m_bufferToDisplayCount || f64NumberOfSecondsToDisplay <= 0)
+	if (l_ui64NewNumberOfBufferToDisplay != m_nBufferToDisplay || f64NumberOfSecondsToDisplay <= 0)
 	{
-		m_bufferToDisplayCount            = l_ui64NewNumberOfBufferToDisplay;
+		m_nBufferToDisplay            = l_ui64NewNumberOfBufferToDisplay;
 		l_bNumberOfBufferToDisplayChanged = true;
 
 		//if new number of buffers decreased, resize lists and destroy useless buffers
-		while (m_bufferToDisplayCount < m_oSampleBuffers.size())
+		while (m_nBufferToDisplay < m_oSampleBuffers.size())
 		{
 			delete[] m_oSampleBuffers.front();
 			m_oSampleBuffers.pop_front();
@@ -236,7 +236,7 @@ bool CBufferDatabase::adjustNumberOfDisplayedBuffers(const double f64NumberOfSec
 
 uint64_t CBufferDatabase::getChannelCount() const { return m_pDimensionSizes[0]; }
 
-double CBufferDatabase::getDisplayedTimeIntervalWidth() const { return (m_bufferToDisplayCount * ((m_pDimensionSizes[1] * 1000.0) / m_ui32SamplingFrequency)); }
+double CBufferDatabase::getDisplayedTimeIntervalWidth() const { return (m_nBufferToDisplay * ((m_pDimensionSizes[1] * 1000.0) / m_ui32SamplingFrequency)); }
 
 void CBufferDatabase::setMatrixDimensionCount(const uint32_t ui32DimensionCount)
 {
@@ -386,7 +386,7 @@ bool CBufferDatabase::setMatrixBuffer(const double* buffer, const uint64_t ui64S
 	const uint64_t l_ui64NumberOfSamplesPerBuffer = m_pDimensionSizes[0] * m_pDimensionSizes[1];
 
 	//if old buffers need to be removed
-	if (m_oSampleBuffers.size() == m_bufferToDisplayCount)
+	if (m_oSampleBuffers.size() == m_nBufferToDisplay)
 	{
 		if (m_ovTotalDuration == 0) { m_ovTotalDuration = (m_oStartTime.back() - m_oStartTime.front()) + (m_oEndTime.back() - m_oStartTime.back()); }
 		if (m_bufferStep == 0)

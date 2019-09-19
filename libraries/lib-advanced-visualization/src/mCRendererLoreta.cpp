@@ -620,7 +620,7 @@ bool CRendererLoreta::render(const IRendererContext& rContext)
 {
 	uint32_t i, j;
 
-	//	if(!m_historyCount) return false;
+	//	if(!m_nHistory) return false;
 	//	if(m_history.size()!=2394) return false;
 
 	const float d = 3.5;
@@ -649,7 +649,7 @@ bool CRendererLoreta::render(const IRendererContext& rContext)
 	glTranslatef(0, -10, 15);
 	glDisable(GL_DEPTH_TEST);
 
-	if (m_historyCount && m_history.size() == 2394)
+	if (m_nHistory && m_history.size() == 2394)
 	{
 		std::vector<float> l_vSample;
 		this->getSampleAtERPFraction(m_ERPFraction, l_vSample);
@@ -674,7 +674,7 @@ bool CRendererLoreta::render(const IRendererContext& rContext)
 			if (m_vSelected[i])
 			{
 				float l_fPower = l_vSample[i] * rContext.getScale();
-				// m_history[i][m_historyCount-m_nSample+m_sampleIndexERP]*rContext.getScale();
+				// m_history[i][m_nHistory-m_nSample+m_sampleIndexERP]*rContext.getScale();
 				::glColor4f(.1f, .1f, .1f, rContext.getTranslucency());
 				::glPushMatrix();
 				::glTexCoord1f(l_fPower);
@@ -707,7 +707,7 @@ bool CRendererLoreta::render(const IRendererContext& rContext)
 		{
 			if (m_vSelected[i])
 			{
-				// float l_fPower=m_history[i][m_historyCount-m_nSample+m_sampleIndexERP]*rContext.getScale();
+				// float l_fPower=m_history[i][m_nHistory-m_nSample+m_sampleIndexERP]*rContext.getScale();
 				::glColor4f(.1f, .1f, .1f, rContext.getTranslucency());
 				::glPushMatrix();
 				::glTexCoord1f(0);

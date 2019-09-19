@@ -72,7 +72,7 @@ namespace OpenViBEPlugins
 			//std::vector<OpenViBE::CString> m_oElectrodesLabels;
 
 			//! Number of buffer to display at the same time
-			uint64_t m_bufferToDisplayCount = 2;
+			uint64_t m_nBufferToDisplay = 2;
 
 			//! The global maximum value of the signal (up to now)
 			double m_maximumValue = -DBL_MAX;
@@ -98,7 +98,7 @@ namespace OpenViBEPlugins
 			Computed once, but not constant when sampling frequency is not a multiple of buffer size!*/
 			uint64_t m_ui64BufferDuration = 0;
 
-			/*! Time step separating the start times of m_bufferToDisplayCount+1 buffers.
+			/*! Time step separating the start times of m_nBufferToDisplay+1 buffers.
 			Recomputed once every time the user changes the total duration to display,
 			but not constant when sampling frequency is not a multiple of buffer size!*/
 			uint64_t m_totalStep = 0;

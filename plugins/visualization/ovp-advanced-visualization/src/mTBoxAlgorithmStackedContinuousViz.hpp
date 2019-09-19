@@ -110,7 +110,7 @@ namespace Mensia
 
 			m_pRendererContext->clear();
 			m_pRendererContext->setTranslucency(float(m_translucency));
-			// m_pRendererContext->setTranslucency(m_flowerRingCount);
+			// m_pRendererContext->setTranslucency(m_nFlowerRing);
 			m_pRendererContext->scaleBy(float(m_f64DataScale));
 			m_pRendererContext->setPositiveOnly(m_bIsPositive);
 			m_pRendererContext->setAxisDisplay(m_bShowAxis);
@@ -160,7 +160,7 @@ namespace Mensia
 
 				OpenViBE::IMatrix* l_pMatrix = m_oMatrixDecoder.getOutputMatrix();
 				uint32_t l_ui32ChannelCount  = l_pMatrix->getDimensionSize(0);
-				uint32_t sampleCount         = l_pMatrix->getDimensionSize(1);
+				uint32_t nSample         = l_pMatrix->getDimensionSize(1);
 
 				if (l_ui32ChannelCount == 0)
 				{
@@ -171,7 +171,7 @@ namespace Mensia
 				if (l_pMatrix->getDimensionCount() == 1)
 				{
 					l_ui32ChannelCount = l_pMatrix->getDimensionSize(0);
-					sampleCount        = 1;
+					nSample        = 1;
 				}
 
 				if (m_oMatrixDecoder.isHeaderReceived())
@@ -179,7 +179,7 @@ namespace Mensia
 					GtkTreeIter l_oGtkTreeIterator;
 					gtk_list_store_clear(m_pChannelListStore);
 
-					m_vSwap.resize(sampleCount);
+					m_vSwap.resize(nSample);
 
 					for (j = 0; j < m_vRenderer.size(); j++) { m_oRendererFactory.release(m_vRenderer[j]); }
 					m_vRenderer.clear();
@@ -189,7 +189,7 @@ namespace Mensia
 					m_pSubRendererContext->setParentRendererContext(m_pRendererContext);
 					m_pSubRendererContext->setTimeLocked(m_bIsTimeLocked);
 					m_pSubRendererContext->setStackCount(l_ui32ChannelCount);
-					for (j = 0; j < sampleCount; j++)
+					for (j = 0; j < nSample; j++)
 					{
 						std::string l_sName    = trim(l_pMatrix->getDimensionLabel(1, uint32_t(j)));
 						std::string l_sSubname = l_sName;
@@ -201,7 +201,7 @@ namespace Mensia
 					m_pRendererContext->clear();
 					m_pRendererContext->setTranslucency(float(m_translucency));
 					m_pRendererContext->setTimeScale(m_timeScale);
-					m_pRendererContext->setElementCount(m_elementCount);
+					m_pRendererContext->setElementCount(m_nElement);
 					m_pRendererContext->scaleBy(float(m_f64DataScale));
 					m_pRendererContext->setParentRendererContext(&getContext());
 					m_pRendererContext->setTimeLocked(m_bIsTimeLocked);
@@ -223,8 +223,8 @@ namespace Mensia
 						}
 
 						m_vRenderer[j] = m_oRendererFactory.create();
-						m_vRenderer[j]->setChannelCount(sampleCount);
-						m_vRenderer[j]->setSampleCount(uint32_t(m_elementCount)); // $$$
+						m_vRenderer[j]->setChannelCount(nSample);
+						m_vRenderer[j]->setSampleCount(uint32_t(m_nElement)); // $$$
 						//				m_vRenderer[j]->setSampleCount(uint32_t(m_f64TimeScale)); // $$$
 
 						m_pRendererContext->addChannel(l_sName, v.x, v.y, v.z);
@@ -264,7 +264,7 @@ namespace Mensia
 					const uint64_t l_ui64InterChunkDuration = m_time2 - m_time1;
 					const uint64_t l_ui64ChunkDuration      = (boxContext.getInputChunkEndTime(0, uint32_t(i)) - boxContext.getInputChunkStartTime(
 																   0, uint32_t(i)));
-					const uint64_t l_ui64SampleDuration = l_ui64ChunkDuration / m_elementCount;
+					const uint64_t l_ui64SampleDuration = l_ui64ChunkDuration / m_nElement;
 					if (m_pRendererContext->isTimeLocked())
 					{
 						if ((l_ui64InterChunkDuration & ~0xf) != (m_pRendererContext->getSampleDuration() & ~0xf) && l_ui64InterChunkDuration != 0
@@ -280,14 +280,14 @@ namespace Mensia
 						m_pRendererContext->setSampleDuration(l_ui64SampleDuration);
 					}
 
-					m_pRendererContext->setSpectrumFrequencyRange(uint32_t((uint64_t(sampleCount) << 32) / l_ui64ChunkDuration));
+					m_pRendererContext->setSpectrumFrequencyRange(uint32_t((uint64_t(nSample) << 32) / l_ui64ChunkDuration));
 					m_pRendererContext->setMinimumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_pFrequencyBandMin))));
 					m_pRendererContext->setMaximumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_pFrequencyBandMax))));
 
 					for (j = 0; j < l_ui32ChannelCount; j++)
 					{
 						// Feed renderer with actual samples
-						for (size_t k = 0; k < sampleCount; k++) { m_vSwap[sampleCount - k - 1] = float(l_pMatrix->getBuffer()[j * sampleCount + k]); }
+						for (size_t k = 0; k < nSample; k++) { m_vSwap[nSample - k - 1] = float(l_pMatrix->getBuffer()[j * nSample + k]); }
 						m_vRenderer[j]->feed(&m_vSwap[0]);
 
 						// Adjust feeding depending on theoretical dates

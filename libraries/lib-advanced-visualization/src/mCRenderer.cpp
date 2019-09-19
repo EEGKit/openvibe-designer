@@ -45,39 +45,39 @@ void CRenderer::setChannelLocalisation(const char* sFilename) { m_channelLocalis
 
 void CRenderer::setChannelCount(const uint32_t nChannel)
 {
-	m_channelCount        = nChannel;
-	m_inverseChannelCount = (nChannel ? 1.f / nChannel : 1);
+	m_nChannel        = nChannel;
+	m_nInverseChannel = (nChannel ? 1.f / nChannel : 1);
 	m_vertex.clear();
 	m_mesh.clear();
 
-	m_historyIndex = 0;
-	m_historyCount = 0;
+	m_historyIdx = 0;
+	m_nHistory = 0;
 	m_history.clear();
 	m_history.resize(nChannel);
 }
 
-void CRenderer::setSampleCount(const uint32_t sampleCount)
+void CRenderer::setSampleCount(const uint32_t nSample)
 {
-	m_nSample        = sampleCount == 0 ? 1 : sampleCount;
-	m_inverseSampleCount = (m_nSample ? 1.f / m_nSample : 1);
+	m_nSample        = nSample == 0 ? 1 : nSample;
+	m_nInverseSample = (m_nSample ? 1.f / m_nSample : 1);
 	m_vertex.clear();
 	m_mesh.clear();
 }
 
 void CRenderer::feed(const float* pDataVector)
 {
-	for (uint32_t i = 0; i < m_channelCount; ++i) { m_history[i].push_back(pDataVector[i]); }
-	m_historyCount++;
+	for (uint32_t i = 0; i < m_nChannel; ++i) { m_history[i].push_back(pDataVector[i]); }
+	m_nHistory++;
 }
 
-void CRenderer::feed(const float* pDataVector, const uint32_t sampleCount)
+void CRenderer::feed(const float* pDataVector, const uint32_t nSample)
 {
-	for (uint32_t i = 0; i < m_channelCount; ++i)
+	for (uint32_t i = 0; i < m_nChannel; ++i)
 	{
-		for (uint32_t j = 0; j < sampleCount; j++) { m_history[i].push_back(pDataVector[j]); }
-		pDataVector += sampleCount;
+		for (uint32_t j = 0; j < nSample; j++) { m_history[i].push_back(pDataVector[j]); }
+		pDataVector += nSample;
 	}
-	m_historyCount += sampleCount;
+	m_nHistory += nSample;
 }
 
 void CRenderer::feed(const uint64_t stimulationDate, const uint64_t stimulationId)
@@ -85,20 +85,20 @@ void CRenderer::feed(const uint64_t stimulationDate, const uint64_t stimulationI
 	m_stimulationHistory.emplace_back((stimulationDate >> 16) / 65536., stimulationId);
 }
 
-void CRenderer::prefeed(const uint32_t preFeedSampleCount)
+void CRenderer::prefeed(const uint32_t nPreFeedSample)
 {
-	for (uint32_t i = 0; i < m_channelCount; ++i) { m_history[i].insert(m_history[i].begin(), preFeedSampleCount, 0.f); }
-	m_historyCount += preFeedSampleCount;
-	m_historyIndex = 0;
+	for (uint32_t i = 0; i < m_nChannel; ++i) { m_history[i].insert(m_history[i].begin(), nPreFeedSample, 0.f); }
+	m_nHistory += nPreFeedSample;
+	m_historyIdx = 0;
 }
 
 float CRenderer::getSuggestedScale()
 {
-	if (m_channelCount != 0)
+	if (m_nChannel != 0)
 	{
 		std::vector<float> l_vf32Average;
 
-		for (size_t i = 0; i < m_channelCount; ++i)
+		for (size_t i = 0; i < m_nChannel; ++i)
 		{
 			l_vf32Average.push_back(0);
 
@@ -114,61 +114,61 @@ float CRenderer::getSuggestedScale()
 	return 0;
 }
 
-void CRenderer::clear(const uint32_t sampleCountToKeep = 0)
+void CRenderer::clear(const uint32_t nSampleToKeep = 0)
 {
 	if (!m_history.empty())
 	{
-		if (sampleCountToKeep == 0)
+		if (nSampleToKeep == 0)
 		{
 			for (auto& vec : m_history) { vec.clear(); }
-			m_historyCount = 0;
+			m_nHistory = 0;
 		}
-		else if (sampleCountToKeep < m_history[0].size())
+		else if (nSampleToKeep < m_history[0].size())
 		{
-			const size_t sampleToDelete = m_history[0].size() - sampleCountToKeep;
+			const size_t sampleToDelete = m_history[0].size() - nSampleToKeep;
 
 			if (sampleToDelete > 1)
 			{
 				for (auto& vec : m_history) { std::vector<float>(vec.begin() + sampleToDelete, vec.end()).swap(vec); }
-				m_historyCount -= uint32_t(sampleToDelete);
+				m_nHistory -= uint32_t(sampleToDelete);
 			}
 		}
 	}
 	// We always delete all of the stimulations, ideally we would know the time
 	// scale so we can keep the stimulations according to the kept samples
 	m_stimulationHistory.clear();
-	m_historyIndex = 0;
+	m_historyIdx = 0;
 }
 
-uint32_t CRenderer::getChannelCount() const { return m_channelCount; }
+uint32_t CRenderer::getChannelCount() const { return m_nChannel; }
 
 uint32_t CRenderer::getSampleCount() const { return m_nSample; }
 
-uint32_t CRenderer::getHistoryCount() const { return m_historyCount; }
+uint32_t CRenderer::getHistoryCount() const { return m_nHistory; }
 
-uint32_t CRenderer::getHistoryIndex() const { return m_historyIndex; }
+uint32_t CRenderer::getHistoryIndex() const { return m_historyIdx; }
 
 void CRenderer::setHistoryDrawIndex(const uint32_t index)
 {
-	m_historyDrawIndex = index;
-	m_historyIndex     = 0;
+	m_historyDrawIdx = index;
+	m_historyIdx     = 0;
 }
 
 bool CRenderer::getSampleAtERPFraction(const float fERPFraction, std::vector<float>& vSample) const
 {
-	vSample.resize(m_channelCount);
+	vSample.resize(m_nChannel);
 
-	if (m_nSample > m_historyCount) { return false; }
+	if (m_nSample > m_nHistory) { return false; }
 
 	const float sampleIndexERP     = (fERPFraction * float(m_nSample - 1));
 	const float alpha              = sampleIndexERP - std::floor(sampleIndexERP);
 	const uint32_t sampleIndexERP1 = uint32_t(sampleIndexERP) % m_nSample;
 	const uint32_t sampleIndexERP2 = uint32_t(sampleIndexERP + 1) % m_nSample;
 
-	for (uint32_t i = 0; i < m_channelCount; ++i)
+	for (uint32_t i = 0; i < m_nChannel; ++i)
 	{
-		vSample[i] = m_history[i][m_historyCount - m_nSample + sampleIndexERP1] * (1 - alpha)
-					 + m_history[i][m_historyCount - m_nSample + sampleIndexERP2] * (alpha);
+		vSample[i] = m_history[i][m_nHistory - m_nSample + sampleIndexERP1] * (1 - alpha)
+					 + m_history[i][m_nHistory - m_nSample + sampleIndexERP2] * (alpha);
 	}
 
 	return true;

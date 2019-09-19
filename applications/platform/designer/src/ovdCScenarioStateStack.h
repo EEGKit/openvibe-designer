@@ -37,6 +37,6 @@ namespace OpenViBEDesigner
 		std::list<OpenViBE::CMemoryBuffer*> m_States;
 		std::list<OpenViBE::CMemoryBuffer*>::iterator m_CurrentState;
 
-		uint32_t m_MaximumStateCount = 0;
+		uint32_t m_nMaximumState = 0;
 	};
 }
