@@ -9,7 +9,7 @@ namespace OpenViBEDesigner
 	public:
 
 		CLinkProxy(const OpenViBE::Kernel::ILink& rLink);
-		CLinkProxy(OpenViBE::Kernel::IScenario& rScenario, const OpenViBE::CIdentifier& rLinkIdentifier);
+		CLinkProxy(OpenViBE::Kernel::IScenario& scenario, const OpenViBE::CIdentifier& rLinkIdentifier);
 		virtual ~CLinkProxy();
 
 		operator OpenViBE::Kernel::ILink*() { return m_pLink; }

@@ -24,7 +24,7 @@ namespace OpenViBEDesigner
 	{
 	public:
 
-		CInterfacedScenario(const OpenViBE::Kernel::IKernelContext& ctx, CApplication& rApplication, OpenViBE::Kernel::IScenario& rScenario, OpenViBE::CIdentifier& scenarioID,
+		CInterfacedScenario(const OpenViBE::Kernel::IKernelContext& ctx, CApplication& rApplication, OpenViBE::Kernel::IScenario& scenario, OpenViBE::CIdentifier& scenarioID,
 							GtkNotebook& rNotebook, const char* sGUIFilename, const char* sGUISettingsFilename);
 		virtual ~CInterfacedScenario();
 

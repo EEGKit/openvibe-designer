@@ -18,9 +18,9 @@ CLinkProxy::CLinkProxy(const ILink& rLink)
 	}
 }
 
-CLinkProxy::CLinkProxy(IScenario& rScenario, const CIdentifier& rLinkIdentifier)
-	: m_pConstLink(rScenario.getLinkDetails(rLinkIdentifier))
-	  , m_pLink(rScenario.getLinkDetails(rLinkIdentifier))
+CLinkProxy::CLinkProxy(IScenario& scenario, const CIdentifier& rLinkIdentifier)
+	: m_pConstLink(scenario.getLinkDetails(rLinkIdentifier))
+	  , m_pLink(scenario.getLinkDetails(rLinkIdentifier))
 {
 	if (m_pConstLink)
 	{

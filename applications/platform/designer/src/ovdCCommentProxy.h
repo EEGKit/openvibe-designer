@@ -11,7 +11,7 @@ namespace OpenViBEDesigner
 	public:
 
 		CCommentProxy(const OpenViBE::Kernel::IKernelContext& ctx, const OpenViBE::Kernel::IComment& rComment);
-		CCommentProxy(const OpenViBE::Kernel::IKernelContext& ctx, OpenViBE::Kernel::IScenario& rScenario, const OpenViBE::CIdentifier& rCommentIdentifier);
+		CCommentProxy(const OpenViBE::Kernel::IKernelContext& ctx, OpenViBE::Kernel::IScenario& scenario, const OpenViBE::CIdentifier& rCommentIdentifier);
 		virtual ~CCommentProxy();
 
 		operator OpenViBE::Kernel::IComment*() const { return m_pComment; }

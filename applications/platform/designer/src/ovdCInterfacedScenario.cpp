@@ -531,10 +531,10 @@ namespace
 	//*/
 } // namespace
 
-CInterfacedScenario::CInterfacedScenario(const IKernelContext& ctx, CApplication& rApplication, IScenario& rScenario, CIdentifier& scenarioID,
+CInterfacedScenario::CInterfacedScenario(const IKernelContext& ctx, CApplication& rApplication, IScenario& scenario, CIdentifier& scenarioID,
 										 GtkNotebook& rNotebook, const char* sGUIFilename, const char* sGUISettingsFilename)
 	: m_ePlayerStatus(PlayerStatus_Stop), m_oScenarioIdentifier(scenarioID), m_rApplication(rApplication), m_kernelContext(ctx),
-	  m_rScenario(rScenario), m_rNotebook(rNotebook), m_sGUIFilename(sGUIFilename), m_sGUISettingsFilename(sGUISettingsFilename)
+	  m_rScenario(scenario), m_rNotebook(rNotebook), m_sGUIFilename(sGUIFilename), m_sGUISettingsFilename(sGUISettingsFilename)
 {
 	m_pGUIBuilder = gtk_builder_new();
 	gtk_builder_add_from_file(m_pGUIBuilder, m_sGUIFilename.c_str(), nullptr);
@@ -611,7 +611,7 @@ CInterfacedScenario::CInterfacedScenario(const IKernelContext& ctx, CApplication
 	this->redrawScenarioInputSettings();
 	this->redrawScenarioOutputSettings();
 
-	m_oStateStack.reset(new CScenarioStateStack(ctx, *this, rScenario));
+	m_oStateStack.reset(new CScenarioStateStack(ctx, *this, scenario));
 
 	CInterfacedScenario::updateScenarioLabel();
 
@@ -1242,11 +1242,11 @@ void CInterfacedScenario::redraw(IBox& box)
 	int l_iInputOffset = xSize / 2 - int(box.getInputCount()) * (iCircleSpace + iCircleSize) / 2 + iCircleSize / 4;
 	for (uint32_t i = 0; i < box.getInterfacorCountIncludingDeprecated(Input); ++i)
 	{
-		CIdentifier l_oInputIdentifier;
+		CIdentifier InputID;
 		bool isDeprecated;
-		box.getInputType(i, l_oInputIdentifier);
+		box.getInputType(i, InputID);
 		box.getInterfacorDeprecatedStatus(Input, i, isDeprecated);
-		GdkColor l_oInputColor = colorFromIdentifier(l_oInputIdentifier);
+		GdkColor l_oInputColor = colorFromIdentifier(InputID);
 
 
 		GdkPoint l_vPoint[4];
@@ -1369,11 +1369,11 @@ void CInterfacedScenario::redraw(IBox& box)
 	int l_iOutputOffset = xSize / 2 - int(box.getOutputCount()) * (iCircleSpace + iCircleSize) / 2 + iCircleSize / 4;
 	for (uint32_t i = 0; i < box.getInterfacorCountIncludingDeprecated(Output); ++i)
 	{
-		CIdentifier l_oOutputIdentifier;
+		CIdentifier OutputID;
 		bool isDeprecated;
-		box.getOutputType(i, l_oOutputIdentifier);
+		box.getOutputType(i, OutputID);
 		box.getInterfacorDeprecatedStatus(Output, i, isDeprecated);
-		GdkColor l_oOutputColor = colorFromIdentifier(l_oOutputIdentifier);
+		GdkColor l_oOutputColor = colorFromIdentifier(OutputID);
 
 		if (isDeprecated)
 		{
@@ -1533,8 +1533,8 @@ void CInterfacedScenario::redraw(IBox& box)
 	/*
 		CLinkPositionSetterEnum l_oLinkPositionSetterInput(Connector_Input, l_vInputPosition);
 		CLinkPositionSetterEnum l_oLinkPositionSetterOutput(Connector_Output, l_vOutputPosition);
-		rScenario.enumerateLinksToBox(l_oLinkPositionSetterInput, box.getIdentifier());
-		rScenario.enumerateLinksFromBox(l_oLinkPositionSetterOutput, box.getIdentifier());
+		scenario.enumerateLinksToBox(l_oLinkPositionSetterInput, box.getIdentifier());
+		scenario.enumerateLinksFromBox(l_oLinkPositionSetterOutput, box.getIdentifier());
 	*/
 }
 

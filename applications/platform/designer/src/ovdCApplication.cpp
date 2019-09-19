@@ -83,8 +83,8 @@ namespace
 		bool addInput(const CString& /*name*/, const CIdentifier& typeID, const CIdentifier& identifier, const bool /*bNotify*/) override
 		{
 			uint64_t v = typeID.toUInteger();
-			swap_byte(v, m_inputCountHash);
-			swap_byte(m_inputCountHash, 0x7936A0F3BD12D936LL);
+			swap_byte(v, m_nInputHash);
+			swap_byte(m_nInputHash, 0x7936A0F3BD12D936LL);
 			m_oHash = m_oHash.toUInteger() ^ v;
 			if (identifier != OV_UndefinedIdentifier)
 			{
@@ -98,8 +98,8 @@ namespace
 		bool addOutput(const CString& /*name*/, const CIdentifier& typeID, const CIdentifier& identifier, const bool /*bNotify*/) override
 		{
 			uint64_t v = typeID.toUInteger();
-			swap_byte(v, m_outputCountHash);
-			swap_byte(m_outputCountHash, 0xCBB66A5B893AA4E9LL);
+			swap_byte(v, m_nOutputHash);
+			swap_byte(m_nOutputHash, 0xCBB66A5B893AA4E9LL);
 			m_oHash = m_oHash.toUInteger() ^ v;
 			if (identifier != OV_UndefinedIdentifier)
 			{
@@ -114,8 +114,8 @@ namespace
 						const CIdentifier& identifier, const bool /*bNotify*/) override
 		{
 			uint64_t v = typeID.toUInteger();
-			swap_byte(v, m_settingCountHash);
-			swap_byte(m_settingCountHash, 0x3C87F3AAE9F8303BLL);
+			swap_byte(v, m_nSettingHash);
+			swap_byte(m_nSettingHash, 0x3C87F3AAE9F8303BLL);
 			m_oHash = m_oHash.toUInteger() ^ v;
 			if (identifier != OV_UndefinedIdentifier)
 			{
@@ -187,9 +187,9 @@ namespace
 
 		CIdentifier m_oHash;
 		bool m_bIsDeprecated        = false;
-		uint64_t m_inputCountHash   = 0x64AC3CB54A35888CLL;
-		uint64_t m_outputCountHash  = 0x21E0FAAFE5CAF1E1LL;
-		uint64_t m_settingCountHash = 0x6BDFB15B54B09F63LL;
+		uint64_t m_nInputHash   = 0x64AC3CB54A35888CLL;
+		uint64_t m_nOutputHash  = 0x21E0FAAFE5CAF1E1LL;
+		uint64_t m_nSettingHash = 0x6BDFB15B54B09F63LL;
 		ITypeManager& m_TypeManager;
 	};
 } // namespace
@@ -1798,30 +1798,30 @@ void CApplication::saveScenarioCB(CInterfacedScenario* interfacedScenario)
 			SBoxProto metaboxProto(m_kernelContext.getTypeManager());
 
 			IScenario& scenario = currentInterfacedScenario->m_rScenario;
-			for (uint32_t l_ui32ScenarioInputIdx = 0; l_ui32ScenarioInputIdx < scenario.getInputCount(); l_ui32ScenarioInputIdx++)
+			for (uint32_t scenarioInputIdx = 0; scenarioInputIdx < scenario.getInputCount(); scenarioInputIdx++)
 			{
-				CString l_sInputName;
-				CIdentifier l_oInputTypeIdentifier;
-				CIdentifier l_oInputIdentifier;
+				CString inputName;
+				CIdentifier inputTypeID;
+				CIdentifier InputID;
 
-				scenario.getInputType(l_ui32ScenarioInputIdx, l_oInputTypeIdentifier);
-				scenario.getInputName(l_ui32ScenarioInputIdx, l_sInputName);
-				scenario.getInterfacorIdentifier(Input, l_ui32ScenarioInputIdx, l_oInputIdentifier);
+				scenario.getInputType(scenarioInputIdx, inputTypeID);
+				scenario.getInputName(scenarioInputIdx, inputName);
+				scenario.getInterfacorIdentifier(Input, scenarioInputIdx, InputID);
 
-				metaboxProto.addInput(l_sInputName, l_oInputTypeIdentifier, l_oInputIdentifier, true);
+				metaboxProto.addInput(inputName, inputTypeID, InputID, true);
 			}
 
 			for (uint32_t l_ui32ScenarioOutputIdx = 0; l_ui32ScenarioOutputIdx < scenario.getOutputCount(); l_ui32ScenarioOutputIdx++)
 			{
-				CString l_sOutputName;
-				CIdentifier l_oOutputTypeIdentifier;
-				CIdentifier l_oOutputIdentifier;
+				CString outputName;
+				CIdentifier OutputTypeID;
+				CIdentifier OutputID;
 
-				scenario.getOutputType(l_ui32ScenarioOutputIdx, l_oOutputTypeIdentifier);
-				scenario.getOutputName(l_ui32ScenarioOutputIdx, l_sOutputName);
-				scenario.getInterfacorIdentifier(Output, l_ui32ScenarioOutputIdx, l_oOutputIdentifier);
+				scenario.getOutputType(l_ui32ScenarioOutputIdx, OutputTypeID);
+				scenario.getOutputName(l_ui32ScenarioOutputIdx, outputName);
+				scenario.getInterfacorIdentifier(Output, l_ui32ScenarioOutputIdx, OutputID);
 
-				metaboxProto.addOutput(l_sOutputName, l_oOutputTypeIdentifier, l_oOutputIdentifier, true);
+				metaboxProto.addOutput(outputName, OutputTypeID, OutputID, true);
 			}
 
 			for (uint32_t l_ui32ScenarioSettingIndex = 0; l_ui32ScenarioSettingIndex < scenario.getSettingCount(); l_ui32ScenarioSettingIndex++)

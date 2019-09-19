@@ -8,7 +8,7 @@ namespace OpenViBEDesigner
 	{
 	public:
 
-		CAboutScenarioDialog(const OpenViBE::Kernel::IKernelContext& ctx, OpenViBE::Kernel::IScenario& rScenario, const char* sGUIFilename);
+		CAboutScenarioDialog(const OpenViBE::Kernel::IKernelContext& ctx, OpenViBE::Kernel::IScenario& scenario, const char* sGUIFilename);
 		virtual ~CAboutScenarioDialog();
 
 		bool run();

@@ -56,32 +56,32 @@ void CFilenameSettingView::setValue(const CString& value)
 
 void CFilenameSettingView::browse() const
 {
-	GtkWidget* l_pWidgetDialogOpen = gtk_file_chooser_dialog_new("Select file to open...", nullptr, GTK_FILE_CHOOSER_ACTION_SAVE,
+	GtkWidget* widgetDialogOpen = gtk_file_chooser_dialog_new("Select file to open...", nullptr, GTK_FILE_CHOOSER_ACTION_SAVE,
 																 GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, nullptr);
 
 	const CString initialFileName = m_kernelContext.getConfigurationManager().expand(gtk_entry_get_text(m_entry));
 	if (g_path_is_absolute(initialFileName.toASCIIString()))
 	{
-		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(l_pWidgetDialogOpen), initialFileName.toASCIIString());
+		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(widgetDialogOpen), initialFileName.toASCIIString());
 	}
 	else
 	{
 		char* l_sFullPath = g_build_filename(g_get_current_dir(), initialFileName.toASCIIString(), nullptr);
-		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(l_pWidgetDialogOpen), l_sFullPath);
+		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(widgetDialogOpen), l_sFullPath);
 		g_free(l_sFullPath);
 	}
 
-	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(l_pWidgetDialogOpen), false);
+	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(widgetDialogOpen), false);
 
-	if (gtk_dialog_run(GTK_DIALOG(l_pWidgetDialogOpen)) == GTK_RESPONSE_ACCEPT)
+	if (gtk_dialog_run(GTK_DIALOG(widgetDialogOpen)) == GTK_RESPONSE_ACCEPT)
 	{
-		char* l_sFileName = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(l_pWidgetDialogOpen));
+		char* l_sFileName = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widgetDialogOpen));
 		char* l_pBackslash;
 		while ((l_pBackslash = strchr(l_sFileName, '\\')) != nullptr) { *l_pBackslash = '/'; }
 		gtk_entry_set_text(m_entry, l_sFileName);
 		g_free(l_sFileName);
 	}
-	gtk_widget_destroy(l_pWidgetDialogOpen);
+	gtk_widget_destroy(widgetDialogOpen);
 }
 
 void CFilenameSettingView::onChange()
