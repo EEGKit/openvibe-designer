@@ -141,7 +141,7 @@ bool CVisualizationTree::addVisualizationWidget(CIdentifier& identifier, const C
 				//extend number of children of parent window if necessary
 				if (parentVisualizationWidget->getNbChildren() <= parentIndex)
 				{
-					for (unsigned int i = parentVisualizationWidget->getNbChildren(); i <= parentIndex; i++)
+					for (uint32_t i = parentVisualizationWidget->getNbChildren(); i <= parentIndex; i++)
 					{
 						parentVisualizationWidget->addChild(OV_UndefinedIdentifier);
 					}
@@ -934,9 +934,9 @@ bool CVisualizationTree::deserialize(const CString& serializedVisualizationTree)
 		CIdentifier parentIdentifier;
 		parentIdentifier.fromString(jsonWidget["parentIdentifier"].ToString().c_str());
 
-		unsigned int widgetIndex = 0;
-		if (this->getVisualizationWidget(parentIdentifier)) { widgetIndex = static_cast<unsigned int>(jsonWidget["index"].ToInt()); }
-		const unsigned int widgetChildCount = static_cast<unsigned int>(jsonWidget["childCount"].ToInt());
+		uint32_t widgetIndex = 0;
+		if (this->getVisualizationWidget(parentIdentifier)) { widgetIndex = uint32_t(jsonWidget["index"].ToInt()); }
+		const uint32_t widgetChildCount = uint32_t(jsonWidget["childCount"].ToInt());
 
 		this->addVisualizationWidget(newVisualizationWidgetIdentifier, widgetName, widgetType, parentIdentifier,
 									 widgetIndex, boxID, widgetChildCount, widgetIdentifier);
@@ -954,8 +954,8 @@ bool CVisualizationTree::deserialize(const CString& serializedVisualizationTree)
 		{
 			if (visualizationWidget->getType() == EVisualizationWidget_VisualizationWindow)
 			{
-				visualizationWidget->setWidth(static_cast<unsigned int>(jsonWidget["width"].ToInt()));
-				visualizationWidget->setHeight(static_cast<unsigned int>(jsonWidget["height"].ToInt()));
+				visualizationWidget->setWidth(uint32_t(jsonWidget["width"].ToInt()));
+				visualizationWidget->setHeight(uint32_t(jsonWidget["height"].ToInt()));
 			}
 			if (visualizationWidget->getType() == EVisualizationWidget_HorizontalSplit || visualizationWidget->getType() == EVisualizationWidget_VerticalSplit)
 			{

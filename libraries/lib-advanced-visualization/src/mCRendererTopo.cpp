@@ -32,17 +32,17 @@ const bool m_bMultiSlice = false;
 
 namespace
 {
-	const unsigned int S = 1000;
+	const uint32_t S = 1000;
 
 	// Legendre polynomials
 	// http://en.wikipedia.org/wiki/Legendre_polynomials
 
-	void legendre(const unsigned int n, const double x, std::vector<double>& vLegendre)
+	void legendre(const uint32_t n, const double x, std::vector<double>& vLegendre)
 	{
 		vLegendre.resize(n + 1);
 		vLegendre[0] = 1;
 		vLegendre[1] = x;
-		for (unsigned int i = 2; i <= n; ++i)
+		for (uint32_t i = 2; i <= n; ++i)
 		{
 			const double invi = 1. / i;
 			vLegendre[i]      = (2 - invi) * x * vLegendre[i - 1] - (1 - invi) * vLegendre[i - 2];
@@ -53,10 +53,10 @@ namespace
 	// Spherical splines for scalp potential and current density mapping
 	// http://www.sciencedirect.com/science/article/pii/0013469489901806
 
-	double g(const unsigned int n, const unsigned int m, const std::vector<double>& vLegendre)
+	double g(const uint32_t n, const uint32_t m, const std::vector<double>& vLegendre)
 	{
 		double result = 0;
-		for (unsigned int i = 1; i <= n; ++i) { result += (2 * i + 1) / pow(double(i * (i + 1)), int(m)) * vLegendre[i]; }
+		for (uint32_t i = 1; i <= n; ++i) { result += (2 * i + 1) / pow(double(i * (i + 1)), int(m)) * vLegendre[i]; }
 		return result / (4 * M_PI);
 	}
 
@@ -64,20 +64,20 @@ namespace
 	// Spherical splines for scalp potential and current density mapping
 	// http://www.sciencedirect.com/science/article/pii/0013469489901806
 
-	double h(const unsigned int n, const unsigned int m, const std::vector<double>& vLegendre)
+	double h(const uint32_t n, const uint32_t m, const std::vector<double>& vLegendre)
 	{
 		double result = 0;
-		for (unsigned int i = 1; i <= n; ++i) { result += (2 * i + 1) / pow(double(i * (i + 1)), int(m - 1)) * vLegendre[i]; }
+		for (uint32_t i = 1; i <= n; ++i) { result += (2 * i + 1) / pow(double(i * (i + 1)), int(m - 1)) * vLegendre[i]; }
 		return result / (4 * M_PI);
 	}
 
 	// Caching system
 
-	void build(const unsigned int n, const unsigned int m, std::vector<double>& rGCache, std::vector<double>& rHCache)
+	void build(const uint32_t n, const uint32_t m, std::vector<double>& rGCache, std::vector<double>& rHCache)
 	{
 		rGCache.resize(2 * S + 1);
 		rHCache.resize(2 * S + 1);
-		for (unsigned int i = 0; i <= 2 * S; ++i)
+		for (uint32_t i = 0; i <= 2 * S; ++i)
 		{
 			std::vector<double> l_vLegendre;
 			const double cosine = (double(i) - S) / S;
@@ -167,8 +167,8 @@ void CRendererTopo::rebuild(const IRendererContext& rContext)
 
 	// Generates transformation matrices based spherical spline interpolations
 
-	const unsigned int M = 3;
-	const auto N         = static_cast<unsigned int>(pow(10., 10. / (2 * M - 2)));
+	const uint32_t M = 3;
+	const auto N         = uint32_t(pow(10., 10. / (2 * M - 2)));
 
 	std::vector<double> gCaches;
 	std::vector<double> hCaches;

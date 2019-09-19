@@ -62,7 +62,7 @@ public:
 #define OV_EXCEPTION_D(description, type) \
 do { \
 	m_kernelContext.getErrorManager().pushErrorAtLocation(type, static_cast<const OpenViBE::ErrorStream&>(OpenViBE::ErrorStream() << description).str().c_str(), __FILE__, __LINE__ ); \
-	m_kernelContext.getLogManager() << OpenViBE::Kernel::LogLevel_Fatal << "[Error description] = " << description << "; [Error code] = " << static_cast<unsigned int>((type)) << "\n"; \
+	m_kernelContext.getLogManager() << OpenViBE::Kernel::LogLevel_Fatal << "[Error description] = " << description << "; [Error code] = " << uint32_t((type)) << "\n"; \
 	throw DesignerException(m_kernelContext.getErrorManager()); \
 } while(0)
 

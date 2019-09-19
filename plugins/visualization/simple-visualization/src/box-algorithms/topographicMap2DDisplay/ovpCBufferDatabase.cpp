@@ -527,7 +527,7 @@ bool CBufferDatabase::getElectrodePosition(const uint32_t ui32ElectrodeIndex, do
 bool CBufferDatabase::getElectrodePosition(const CString& rElectrodeLabel, double* pElectrodePosition)
 {
 	//TODO : add time parameter and look for coordinates closest to that time!
-	for (unsigned int i = 0; i < m_oChannelLocalisationLabels.size(); ++i)
+	for (uint32_t i = 0; i < m_oChannelLocalisationLabels.size(); ++i)
 	{
 		if (strcmp(rElectrodeLabel.toASCIIString(), m_oChannelLocalisationLabels[i].toASCIIString()) == 0)
 		{
@@ -650,7 +650,7 @@ bool CBufferDatabase::fillChannelLookupTable()
 		{
 			std::string l_oChannelLabel(m_pDimensionLabels[0][i].substr(firstNonWhitespaceChar, lastNonWhitespaceChar - firstNonWhitespaceChar + 1));
 
-			for (unsigned int j = 0; j < m_oChannelLocalisationLabels.size(); j++)
+			for (uint32_t j = 0; j < m_oChannelLocalisationLabels.size(); j++)
 			{
 				if (strcmp(l_oChannelLabel.c_str(), m_oChannelLocalisationLabels[j].toASCIIString()) == 0)
 				{

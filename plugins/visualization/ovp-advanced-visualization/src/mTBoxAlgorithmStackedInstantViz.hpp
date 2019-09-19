@@ -129,7 +129,7 @@ namespace Mensia
 
 			OpenViBE::CMatrix gradientMatrix;
 			OpenViBEVisualizationToolkit::Tools::ColorGradient::parse(gradientMatrix, m_sColorGradient);
-			for (unsigned int step = 0; step < gradientMatrix.getDimensionSize(1); ++step)
+			for (uint32_t step = 0; step < gradientMatrix.getDimensionSize(1); ++step)
 			{
 				const double currentStepValue            = gradientMatrix.getBuffer()[4 * step + 0];
 				gradientMatrix.getBuffer()[4 * step + 0] = (currentStepValue / 100.0) * 50.0 + 50.0;

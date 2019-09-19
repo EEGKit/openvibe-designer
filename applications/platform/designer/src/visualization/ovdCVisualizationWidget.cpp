@@ -52,7 +52,7 @@ bool CVisualizationWidget::addChild(const CIdentifier& childIdentifier)
 
 bool CVisualizationWidget::removeChild(const CIdentifier& identifier)
 {
-	for (unsigned int i = 0; i < m_Children.size(); i++)
+	for (uint32_t i = 0; i < m_Children.size(); i++)
 	{
 		if (m_Children[i] == identifier)
 		{

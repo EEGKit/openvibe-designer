@@ -45,15 +45,15 @@ namespace OpenViBEDesigner
 		// Utility functions for scenario settings, inputs and outputs
 
 		void addScenarioSettingCB();
-		void editScenarioSettingCB(unsigned int settingIndex);
-		void swapScenarioSettings(unsigned int settingAIndex, unsigned int settingBIndex);
+		void editScenarioSettingCB(uint32_t settingIndex);
+		void swapScenarioSettings(uint32_t settingAIndex, uint32_t settingBIndex);
 
 		void addScenarioInputCB();
-		void editScenarioInputCB(unsigned int index);
-		void swapScenarioInputs(unsigned int inputAIndex, unsigned int inputBIndex);
+		void editScenarioInputCB(uint32_t index);
+		void swapScenarioInputs(uint32_t inputAIndex, uint32_t inputBIndex);
 		void addScenarioOutputCB();
-		void editScenarioOutputCB(unsigned int outputIdx);
-		void swapScenarioOutputs(unsigned int outputAIndex, unsigned int outputBIndex);
+		void editScenarioOutputCB(uint32_t outputIdx);
+		void swapScenarioOutputs(uint32_t outputAIndex, uint32_t outputBIndex);
 
 
 		// Utility functions for scenario settings, inputs and outputs

@@ -42,7 +42,7 @@ namespace Mensia
 			virtual ~C3DMesh();
 
 			virtual void clear();
-			virtual bool load(const void* buffer, unsigned int size);
+			virtual bool load(const void* buffer, uint32_t size);
 			virtual bool compile();
 
 			virtual bool project(std::vector<CVertex>& vProjectedChannelCoordinate, const std::vector<CVertex>& vChannelCoordinate);

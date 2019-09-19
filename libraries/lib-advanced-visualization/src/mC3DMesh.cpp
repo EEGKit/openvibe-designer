@@ -37,7 +37,7 @@ namespace
 		if (!buffer) { return false; }
 		if (!pValue) { return false; }
 		memset(pValue, 0, sizeof(T));
-		for (unsigned int i = 0; i < sizeof(T); ++i) { reinterpret_cast<uint8_t*>(pValue)[i] = buffer[i]; }
+		for (uint32_t i = 0; i < sizeof(T); ++i) { reinterpret_cast<uint8_t*>(pValue)[i] = buffer[i]; }
 		return true;
 	}
 } // namespace
@@ -62,7 +62,7 @@ void C3DMesh::clear()
 	m_vTriangle.clear();
 }
 
-bool C3DMesh::load(const void* buffer, unsigned int /*size*/)
+bool C3DMesh::load(const void* buffer, uint32_t /*size*/)
 {
 	const auto* tmp = reinterpret_cast<const uint32_t*>(buffer);
 

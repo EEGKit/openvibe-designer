@@ -51,7 +51,7 @@ namespace Mensia
 
 				gdk_drawable_get_size(pWidget->window, &w, &h);
 				GdkGC* l_pDrawGC = gdk_gc_new(pWidget->window);
-				for (unsigned int i = 0; i < m_pRendererContext->getSelectedCount(); ++i)
+				for (uint32_t i = 0; i < m_pRendererContext->getSelectedCount(); ++i)
 				{
 					for (it = m_vRange.begin(); it != m_vRange.end(); ++it)
 					{

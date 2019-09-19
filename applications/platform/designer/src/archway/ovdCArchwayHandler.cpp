@@ -95,14 +95,14 @@ EngineInitialisationStatus CArchwayHandler::initialize()
 	// this way we do not have to expose the Archway object or the C API
 
 	m_ArchwayBridge.isStarted = [this]() { return this->m_Archway->isStarted(); };
-	m_ArchwayBridge.getAvailableValueMatrixCount = [this](unsigned int uiValueChannelId) {
+	m_ArchwayBridge.getAvailableValueMatrixCount = [this](uint32_t uiValueChannelId) {
 		return this->m_Archway->getPendingValueCount(m_RunningPipelineId, uiValueChannelId);
 	};
 
 	// This function returns the last getPendingValue result as a vector
 // Such encapsulation enables us to avoid a call to getPendingValueDimension
 	// from the client plugin.
-	m_ArchwayBridge.popValueMatrix = [this](unsigned int uiValueChannelId) {
+	m_ArchwayBridge.popValueMatrix = [this](uint32_t uiValueChannelId) {
 		std::vector<float> m_vValueMatrix;
 		auto l_uiValueChannelDimension = this->m_Archway->getPendingValueDimension(m_RunningPipelineId, uiValueChannelId);
 		m_vValueMatrix.resize(l_uiValueChannelDimension);
@@ -266,7 +266,7 @@ bool CArchwayHandler::reinitializeArchway()
 	return true;
 }
 
-bool CArchwayHandler::startEngineWithPipeline(unsigned int uiPipelineClassId, bool isFastForward, bool shouldAcquireImpedance)
+bool CArchwayHandler::startEngineWithPipeline(uint32_t uiPipelineClassId, bool isFastForward, bool shouldAcquireImpedance)
 {
 	assert(m_Archway);
 
@@ -314,11 +314,11 @@ bool CArchwayHandler::startEngineWithPipeline(unsigned int uiPipelineClassId, bo
 	{
 		m_KernelContext.getLogManager() << LogLevel_Error << "Engine failed to start " << this->getArchwayErrorString().c_str() << "\n";
 
-		unsigned int pendingLogMessageCount = m_Archway->getPendingLogMessageCount(m_RunningPipelineId);
+		uint32_t pendingLogMessageCount = m_Archway->getPendingLogMessageCount(m_RunningPipelineId);
 
-		for (unsigned int i = 0; i < pendingLogMessageCount; ++i)
+		for (uint32_t i = 0; i < pendingLogMessageCount; ++i)
 		{
-			unsigned int logLevel;
+			uint32_t logLevel;
 			char messageBuffer[2048];
 			std::string logMessages;
 
@@ -397,11 +397,11 @@ bool CArchwayHandler::loopEngine()
 		m_KernelContext.getLogManager() << LogLevel_Error << "Pipeline [" << m_RunningPipelineId << "] is in error state.\n";
 	}
 
-	unsigned int pendingLogMessageCount = m_Archway->getPendingLogMessageCount(m_RunningPipelineId);
+	uint32_t pendingLogMessageCount = m_Archway->getPendingLogMessageCount(m_RunningPipelineId);
 
-	for (unsigned int i = 0; i < pendingLogMessageCount; ++i)
+	for (uint32_t i = 0; i < pendingLogMessageCount; ++i)
 	{
-		unsigned int logLevel;
+		uint32_t logLevel;
 		char messageBuffer[2048];
 		std::string logMessages;
 
@@ -430,16 +430,16 @@ bool CArchwayHandler::isEngineStarted()
 
 namespace
 {
-	void enumerateEnginePipelinesCallback(unsigned int pipelineID, const char* pipelineDescription, void* userData)
+	void enumerateEnginePipelinesCallback(uint32_t pipelineID, const char* pipelineDescription, void* userData)
 	{
-		auto callbackParameters = static_cast<pair< vector<SPipeline>*, map< unsigned int, map< string, string > >* >*>(userData);
+		auto callbackParameters = static_cast<pair< vector<SPipeline>*, map< uint32_t, map< string, string > >* >*>(userData);
 		auto enginePipelines = callbackParameters->first;
 		auto pipelineSettings = callbackParameters->second;
 
 		enginePipelines->push_back({ pipelineID, pipelineDescription, pipelineSettings->count(pipelineID) != 0 });
 	}
 
-	void enumeratePipelineParametersCallback(unsigned int/*pipelineID*/, const char* parameterName, const char* parameterValue, void* userData)
+	void enumeratePipelineParametersCallback(uint32_t/*pipelineID*/, const char* parameterName, const char* parameterValue, void* userData)
 	{
 		// This callback will go through the pipeline parameters one by one and push them into the
 // vector of SPipelineParameters which is passed as the first element of the data input pair
@@ -484,7 +484,7 @@ std::vector<SPipeline> CArchwayHandler::getEnginePipelines() const
 	return enginePipelines;
 }
 
-std::vector<SPipelineParameter> CArchwayHandler::getPipelineParameters(unsigned int pipelineClassID) const
+std::vector<SPipelineParameter> CArchwayHandler::getPipelineParameters(uint32_t pipelineClassID) const
 {
 	assert(m_Archway);
 
@@ -498,7 +498,7 @@ std::vector<SPipelineParameter> CArchwayHandler::getPipelineParameters(unsigned 
 
 	auto callbackParameters = std::make_pair(&pipelineParameters, pipelineSettings);
 
-	unsigned int pipelineID = m_Archway->createPipeline(pipelineClassID, "");
+	uint32_t pipelineID = m_Archway->createPipeline(pipelineClassID, "");
 
 	if (!m_Archway->enumeratePipelineParameters(pipelineID, enumeratePipelineParametersCallback, &callbackParameters))
 	{
@@ -525,7 +525,7 @@ std::string CArchwayHandler::getPipelineScenarioPath(uint64_t pipelineClassID) c
 }
 
 
-bool CArchwayHandler::setPipelineParameterValue(unsigned int pipelineClassID, std::string const& parameterName, std::string const& parameterValue)
+bool CArchwayHandler::setPipelineParameterValue(uint32_t pipelineClassID, std::string const& parameterName, std::string const& parameterValue)
 {
 	if (m_PipelineSettings.find(pipelineClassID) == m_PipelineSettings.end())
 	{
@@ -609,7 +609,7 @@ bool CArchwayHandler::loadPipelineConfigurations()
 
 	while (!file.eof())
 	{
-		unsigned int pipelineClassID;
+		uint32_t pipelineClassID;
 		file >> pipelineClassID;
 
 		std::string parameterName;

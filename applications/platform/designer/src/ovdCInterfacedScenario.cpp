@@ -51,8 +51,8 @@ namespace
 	GdkColor colorFromIdentifier(const CIdentifier& identifier)
 	{
 		GdkColor l_oGdkColor;
-		unsigned int l_ui32Value1 = 0;
-		unsigned int l_ui32Value2 = 0;
+		uint32_t l_ui32Value1 = 0;
+		uint32_t l_ui32Value2 = 0;
 		uint64_t l_ui64Result     = 0;
 
 		sscanf(identifier.toString(), "(0x%08X, 0x%08X)", &l_ui32Value1, &l_ui32Value2);
@@ -1936,7 +1936,7 @@ void CInterfacedScenario::addScenarioInputCB()
 	this->redrawScenarioInputSettings();
 }
 
-void CInterfacedScenario::editScenarioInputCB(const unsigned int index)
+void CInterfacedScenario::editScenarioInputCB(const uint32_t index)
 
 {
 	CConnectorEditor l_oConnectorEditor(m_kernelContext, m_rScenario, Box_Input, index, "Edit Input", m_sGUIFilename.c_str());
@@ -1961,7 +1961,7 @@ void CInterfacedScenario::addScenarioOutputCB()
 	this->redrawScenarioOutputSettings();
 }
 
-void CInterfacedScenario::editScenarioOutputCB(const unsigned int outputIdx)
+void CInterfacedScenario::editScenarioOutputCB(const uint32_t outputIdx)
 
 {
 	CConnectorEditor l_oConnectorEditor(m_kernelContext, m_rScenario, Box_Output, outputIdx, "Edit Output", m_sGUIFilename.c_str());
@@ -1970,19 +1970,19 @@ void CInterfacedScenario::editScenarioOutputCB(const unsigned int outputIdx)
 	this->redrawScenarioOutputSettings();
 }
 
-void CInterfacedScenario::swapScenarioSettings(const unsigned int settingAIndex, const unsigned int settingBIndex)
+void CInterfacedScenario::swapScenarioSettings(const uint32_t settingAIndex, const uint32_t settingBIndex)
 {
 	m_rScenario.swapSettings(settingAIndex, settingBIndex);
 	this->redrawConfigureScenarioSettingsDialog();
 }
 
 
-void CInterfacedScenario::swapScenarioInputs(const unsigned int inputAIndex, const unsigned int inputBIndex)
+void CInterfacedScenario::swapScenarioInputs(const uint32_t inputAIndex, const uint32_t inputBIndex)
 {
 	CIdentifier ABoxIdentifier;
-	unsigned int ABoxInputIndex;
+	uint32_t ABoxInputIndex;
 	CIdentifier BBoxIdentifier;
-	unsigned int BBoxInputIndex;
+	uint32_t BBoxInputIndex;
 
 	m_rScenario.getScenarioInputLink(inputAIndex, ABoxIdentifier, ABoxInputIndex);
 	m_rScenario.getScenarioInputLink(inputBIndex, BBoxIdentifier, BBoxInputIndex);
@@ -1996,12 +1996,12 @@ void CInterfacedScenario::swapScenarioInputs(const unsigned int inputAIndex, con
 	this->redraw();
 }
 
-void CInterfacedScenario::swapScenarioOutputs(const unsigned int outputAIndex, const unsigned int outputBIndex)
+void CInterfacedScenario::swapScenarioOutputs(const uint32_t outputAIndex, const uint32_t outputBIndex)
 {
 	CIdentifier ABoxIdentifier;
-	unsigned int ABoxOutputIndex;
+	uint32_t ABoxOutputIndex;
 	CIdentifier BBoxIdentifier;
-	unsigned int BBoxOutputIndex;
+	uint32_t BBoxOutputIndex;
 
 	m_rScenario.getScenarioOutputLink(outputAIndex, ABoxIdentifier, ABoxOutputIndex);
 	m_rScenario.getScenarioOutputLink(outputBIndex, BBoxIdentifier, BBoxOutputIndex);

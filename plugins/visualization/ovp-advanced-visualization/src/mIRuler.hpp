@@ -82,7 +82,7 @@ namespace Mensia
 
 			virtual void renderBottom(GtkWidget* /*pWidget*/) { }
 
-			std::vector<double> split_range(const double fStart, const double fStop, const unsigned int uiCount = 10) const
+			std::vector<double> split_range(const double fStart, const double fStop, const uint32_t uiCount = 10) const
 			{
 				std::vector<double> l_vResult;
 				const double l_fRange = fStop - fStart;

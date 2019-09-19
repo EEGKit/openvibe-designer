@@ -44,8 +44,8 @@ namespace Mensia {
 	struct SArchwayBridge
 	{
 		std::function<bool()> isStarted;
-		std::function<unsigned int(unsigned int)> getAvailableValueMatrixCount;
-		std::function<std::vector<float>(unsigned int)> popValueMatrix;
+		std::function<uint32_t(uint32_t)> getAvailableValueMatrixCount;
+		std::function<std::vector<float>(uint32_t)> popValueMatrix;
 		std::function<bool()> dropBuffers;
 	};
 
@@ -64,18 +64,18 @@ namespace Mensia {
 
 		bool reinitializeArchway();
 		std::vector<SPipeline> getEnginePipelines() const;
-		std::vector<SPipelineParameter> getPipelineParameters(unsigned int pipelineClassID) const;
-		bool setPipelineParameterValue(unsigned int pipelineClassID, std::string const& parameterName, std::string const& parameterValue);
+		std::vector<SPipelineParameter> getPipelineParameters(uint32_t pipelineClassID) const;
+		bool setPipelineParameterValue(uint32_t pipelineClassID, std::string const& parameterName, std::string const& parameterValue);
 		std::string getPipelineScenarioPath(uint64_t pipelineID) const;
 
-		bool startEngineWithPipeline(unsigned int pipelineClassID, bool isFastForward, bool shouldAcquireImpedance);
+		bool startEngineWithPipeline(uint32_t pipelineClassID, bool isFastForward, bool shouldAcquireImpedance);
 		bool loopEngine();
 		bool stopEngine();
 
 		bool isEngineStarted();
 		bool writeArchwayConfigurationFile();
 
-		std::map< std::string, std::string >& getPipelineSettings(unsigned int pipelineClassID) { return m_PipelineSettings[pipelineClassID]; }
+		std::map< std::string, std::string >& getPipelineSettings(uint32_t pipelineClassID) { return m_PipelineSettings[pipelineClassID]; }
 
 	public:
 		SArchwayBridge m_ArchwayBridge;
@@ -91,16 +91,16 @@ namespace Mensia {
 		std::string getArchwayErrorString() const;
 
 	private:
-		typedef void (*FPEnumerateAvailablePipelinesCallback)(unsigned int pipelineClassID, const char* pipelineDescription, void* userData);
-		typedef void (*FPEnumeratePipelineParametersCallback)(unsigned int pipelineID, const char* parameterName, const char* parameterValue, void* userData) ;
+		typedef void (*FPEnumerateAvailablePipelinesCallback)(uint32_t pipelineClassID, const char* pipelineDescription, void* userData);
+		typedef void (*FPEnumeratePipelineParametersCallback)(uint32_t pipelineID, const char* parameterName, const char* parameterValue, void* userData) ;
 		struct ArchwayAPI {
-			unsigned int (*getLastError)();
-			const char* (*getErrorString)(unsigned int errorCode);
+			uint32_t (*getLastError)();
+			const char* (*getErrorString)(uint32_t errorCode);
 
 			const char* (*getVersionDescription)();
 
-			void (*getConfigurationParameterAsString)(const char* configurationParameter, char* outputBuffer, unsigned int bufferLength);
-			bool (*getPipelineScenarioPath)(uint64_t pipelineID, char* messageBuffer, unsigned int bufferLength);
+			void (*getConfigurationParameterAsString)(const char* configurationParameter, char* outputBuffer, uint32_t bufferLength);
+			bool (*getPipelineScenarioPath)(uint64_t pipelineID, char* messageBuffer, uint32_t bufferLength);
 
 			bool (*initialize)(const char* login, const char* password, const char* applicationName, const char* configurationFilename);
 			bool (*startAllAcquisitionDevices)();
@@ -112,23 +112,23 @@ namespace Mensia {
 			bool (*uninitialize)();
 
 			bool (*enumerateAvailablePipelines)(FPEnumerateAvailablePipelinesCallback callback, void* userData);
-			unsigned int (*createPipeline)(unsigned int pipelineClassID, const char* profileName);
-			bool (*releasePipeline)(unsigned int pipelineID);
-			bool (*isPipelineRunning)(unsigned int pipelineID);
-			bool (*isPipelineInErrorState)(unsigned int pipelineID);
+			uint32_t (*createPipeline)(uint32_t pipelineClassID, const char* profileName);
+			bool (*releasePipeline)(uint32_t pipelineID);
+			bool (*isPipelineRunning)(uint32_t pipelineID);
+			bool (*isPipelineInErrorState)(uint32_t pipelineID);
 
-			bool (*enumeratePipelineParameters)(unsigned int pipelineID, FPEnumeratePipelineParametersCallback callback, void* userData);
-			bool (*setPipelineParameterAsString)(unsigned int pipelineID, const char* parameterName, const char* value);
+			bool (*enumeratePipelineParameters)(uint32_t pipelineID, FPEnumeratePipelineParametersCallback callback, void* userData);
+			bool (*setPipelineParameterAsString)(uint32_t pipelineID, const char* parameterName, const char* value);
 
 			bool (*mainloop)();
-			unsigned int (*getPendingValueCount)(unsigned int pipelineID, unsigned int matrixOutputIdx);
-			unsigned int (*getPendingValueDimension)(unsigned int pipelineID, unsigned int matrixOutputIdx);
-			bool (*getPendingValue)(unsigned int pipelineID, unsigned int matrixOutputIdx, float* value);
-			unsigned int (*getPendingLogMessageCount)(unsigned int pipelineID);
-			bool (*getPendingLogMessage)(unsigned int pipelineID, unsigned int* logLevel, char* messageBuffer, unsigned int bufferSize);
+			uint32_t (*getPendingValueCount)(uint32_t pipelineID, uint32_t matrixOutputIdx);
+			uint32_t (*getPendingValueDimension)(uint32_t pipelineID, uint32_t matrixOutputIdx);
+			bool (*getPendingValue)(uint32_t pipelineID, uint32_t matrixOutputIdx, float* value);
+			uint32_t (*getPendingLogMessageCount)(uint32_t pipelineID);
+			bool (*getPendingLogMessage)(uint32_t pipelineID, uint32_t* logLevel, char* messageBuffer, uint32_t bufferSize);
 
-			bool (*dropPendingValues)(unsigned int pipelineID);
-			bool (*dropPendingEvents)(unsigned int pipelineID);
+			bool (*dropPendingValues)(uint32_t pipelineID);
+			bool (*dropPendingEvents)(uint32_t pipelineID);
 
 			bool (*isInitialized)();
 			bool (*isAcquiring)();
@@ -140,12 +140,12 @@ namespace Mensia {
 		const OpenViBE::Kernel::IKernelContext& m_KernelContext;
 
 		// Current Configuration
-		std::map< unsigned int, std::map< std::string, std::string > > m_PipelineSettings;
+		std::map< uint32_t, std::map< std::string, std::string > > m_PipelineSettings;
 
 		static const std::string s_ArchwayConfigurationFile;
 		static const std::string s_ArchwayPipelinesConfigurationFile;
 
-		unsigned int m_RunningPipelineId = 0;
+		uint32_t m_RunningPipelineId = 0;
 	};
 }
 

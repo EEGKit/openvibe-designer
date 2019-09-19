@@ -328,7 +328,7 @@ namespace
 
 	void insertLoretaVoxelInMesh(C3DMesh& rMesh, const float x, const float y, const float z, const float s)
 	{
-		const unsigned int i = static_cast<unsigned int>(rMesh.m_vVertex.size());
+		const uint32_t i = uint32_t(rMesh.m_vVertex.size());
 
 		// Insert the 8 vertices of the cube
 		rMesh.m_vVertex.emplace_back(x - s, y - s, z - s);	// i+0
@@ -401,10 +401,10 @@ CRendererLoreta::CRendererLoreta()
 	for (auto& voxel : g_iLoretaVoxel) { insertLoretaVoxelInMesh(m_oBrain, float(-voxel[0]), float(voxel[1]), float(-voxel[2]), 3.5); }
 
 	m_vLookup.clear();
-	const unsigned int l_uiCategoryIndex_BrodmannAreas   = 0;
-	const unsigned int l_uiCategoryIndex_AnatomicalAreas = 1;
-	const unsigned int l_uiCategoryIndex_Lobes           = 2;
-	const unsigned int l_uiCategoryIndex_ROI             = 3;
+	const uint32_t l_uiCategoryIndex_BrodmannAreas   = 0;
+	const uint32_t l_uiCategoryIndex_AnatomicalAreas = 1;
+	const uint32_t l_uiCategoryIndex_Lobes           = 2;
+	const uint32_t l_uiCategoryIndex_ROI             = 3;
 	m_vLookup.resize(4);
 
 #if 0 /* SAVING DATA INTO C FILE */
@@ -475,14 +475,14 @@ CRendererLoreta::CRendererLoreta()
 		::fprintf(l_pFile, "/*********************************************************************\n * Software License Agreement (AGPL-3 License)\n *\n * OpenViBE Designer\n * Based on OpenViBE V1.1.0, Copyright (C) Inria, 2006-2015\n * Copyright (C) Inria, 2015-2017,V1.0\n *\n * This program is free software: you can redistribute it and/or modify\n * it under the terms of the GNU Affero General Public License version 3,\n * as published by the Free Software Foundation.\n *\n * This program is distributed in the hope that it will be useful,\n * but WITHOUT ANY WARRANTY; without even the implied warranty of\n * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the\n * GNU Affero General Public License for more details.\n *\n * You should have received a copy of the GNU Affero General Public License\n * along with this program.\n * If not, see <http://www.gnu.org/licenses/>.\n */\n");
 		::fprintf(l_pFile, "#ifndef __autoconvert__LoretaAnatomic_csv__\n#define __autoconvert__LoretaAnatomic_csv__\n");
 		::fprintf(l_pFile, "\nnamespace LoretaRegions\n{\n");
-		::fprintf(l_pFile, "#ifndef LoretaRegions_VoxelRegionStruct\n#define LoretaRegions_VoxelRegionStruct\n\ttypedef struct\n\t{\n\t\tconst char * _sName;\n\t\tunsigned int _uiVoxelCount;\n\t\tunsigned int * _pVoxels;\n\t}SVoxelRegion;\n#endif\n\n");
+		::fprintf(l_pFile, "#ifndef LoretaRegions_VoxelRegionStruct\n#define LoretaRegions_VoxelRegionStruct\n\ttypedef struct\n\t{\n\t\tconst char * _sName;\n\t\tuint32_t _uiVoxelCount;\n\t\tuint32_t * _pVoxels;\n\t}SVoxelRegion;\n#endif\n\n");
 		::fprintf(l_pFile, "#ifndef LoretaRegions_VoxelCount\n#define LoretaRegions_VoxelCount 2394\n#endif\n\n");
 
 		std::map < std::string, std::vector < uint32_t > >::iterator l_oMapIterator;
 
-		for (unsigned int l_iRegionIndex = 0; l_iRegionIndex < m_vLookup.size() - 1; l_iRegionIndex++) // all but ROI, they are in separated file
+		for (uint32_t l_iRegionIndex = 0; l_iRegionIndex < m_vLookup.size() - 1; l_iRegionIndex++) // all but ROI, they are in separated file
 		{
-			unsigned int l_uiAreaCount = 0;
+			uint32_t l_uiAreaCount = 0;
 			const char* l_sRegionGroupName;
 			if (l_iRegionIndex == l_uiCategoryIndex_BrodmannAreas)
 			{
@@ -497,28 +497,28 @@ CRendererLoreta::CRendererLoreta()
 				l_sRegionGroupName = "Lobes";
 			}
 
-			std::vector<unsigned int> l_vRightVoxels;
-			std::vector<unsigned int> l_vLeftVoxels;
+			std::vector<uint32_t> l_vRightVoxels;
+			std::vector<uint32_t> l_vLeftVoxels;
 			for (auto = m_vLookup[l_iRegionIndex].begin(); l_oMapIterator != m_vLookup[l_iRegionIndex].end(); l_oMapIterator++)
 			{
 				//region
 				l_vRightVoxels.clear();
 				l_vLeftVoxels.clear();
-				for (unsigned int l_uiVoxel = 0; l_uiVoxel < (*l_oMapIterator).second.size(); l_uiVoxel++)
+				for (uint32_t l_uiVoxel = 0; l_uiVoxel < (*l_oMapIterator).second.size(); l_uiVoxel++)
 				{
 					if (g_iLoretaVoxel[(*l_oMapIterator).second[l_uiVoxel]][0] < 0) l_vRightVoxels.push_back((*l_oMapIterator).second[l_uiVoxel]);
 					if (g_iLoretaVoxel[(*l_oMapIterator).second[l_uiVoxel]][0] > 0) l_vLeftVoxels.push_back((*l_oMapIterator).second[l_uiVoxel]);
 				}
 
-				::fprintf(l_pFile, "\tstatic unsigned int g_p%sVoxels_%i[%i] = {", l_sRegionGroupName, l_uiAreaCount, (*l_oMapIterator).second.size());
-				for (unsigned int l_uiVoxel = 0; l_uiVoxel < (*l_oMapIterator).second.size() - 1; l_uiVoxel++)
+				::fprintf(l_pFile, "\tstatic uint32_t g_p%sVoxels_%i[%i] = {", l_sRegionGroupName, l_uiAreaCount, (*l_oMapIterator).second.size());
+				for (uint32_t l_uiVoxel = 0; l_uiVoxel < (*l_oMapIterator).second.size() - 1; l_uiVoxel++)
 				{
 					::fprintf(l_pFile, "%i,", (*l_oMapIterator).second[l_uiVoxel]);
 				}
 				::fprintf(l_pFile, "%i};\n", (*l_oMapIterator).second[(*l_oMapIterator).second.size() - 1]);
 
 				//region - RIGHT
-				::fprintf(l_pFile, "\tstatic unsigned int g_p%sVoxels_%iR[%i] = {", l_sRegionGroupName, l_uiAreaCount, l_vRightVoxels.size());
+				::fprintf(l_pFile, "\tstatic uint32_t g_p%sVoxels_%iR[%i] = {", l_sRegionGroupName, l_uiAreaCount, l_vRightVoxels.size());
 				for (int l_uiVoxel = 0; l_uiVoxel < int(l_vRightVoxels.size()) - 1; l_uiVoxel++) // int to handle size == 0
 				{
 					::fprintf(l_pFile, "%i,", l_vRightVoxels[l_uiVoxel]);
@@ -526,7 +526,7 @@ CRendererLoreta::CRendererLoreta()
 				::fprintf(l_pFile, "%i};\n", l_vRightVoxels[l_vRightVoxels.size() - 1]);
 
 				//region - LEFT
-				::fprintf(l_pFile, "\tstatic unsigned int g_p%sVoxels_%iL[%i] = {", l_sRegionGroupName, l_uiAreaCount, l_vLeftVoxels.size());
+				::fprintf(l_pFile, "\tstatic uint32_t g_p%sVoxels_%iL[%i] = {", l_sRegionGroupName, l_uiAreaCount, l_vLeftVoxels.size());
 				for (int l_uiVoxel = 0; l_uiVoxel < int(l_vLeftVoxels.size()) - 1; l_uiVoxel++)
 				{
 					::fprintf(l_pFile, "%i,", l_vLeftVoxels[l_uiVoxel]);
@@ -535,16 +535,16 @@ CRendererLoreta::CRendererLoreta()
 
 				l_uiAreaCount++;
 			}
-			::fprintf(l_pFile, "\n\tstatic unsigned int g_ui%sCount = %i;\n", l_sRegionGroupName, m_vLookup[l_iRegionIndex].size() * 3);
+			::fprintf(l_pFile, "\n\tstatic uint32_t g_ui%sCount = %i;\n", l_sRegionGroupName, m_vLookup[l_iRegionIndex].size() * 3);
 			::fprintf(l_pFile, "\tstatic SVoxelRegion g_p%s[%i] =\n\t{\n", l_sRegionGroupName, m_vLookup[l_iRegionIndex].size() * 3);
 			l_uiAreaCount = 0;
-			unsigned int l_uiRightVoxels = 0;
-			unsigned int l_uiLeftVoxels = 0;
+			uint32_t l_uiRightVoxels = 0;
+			uint32_t l_uiLeftVoxels = 0;
 			for (auto = m_vLookup[l_iRegionIndex].begin(); l_oMapIterator != m_vLookup[l_iRegionIndex].end() && l_uiAreaCount < m_vLookup[l_iRegionIndex].size(); l_oMapIterator++)
 			{
 				l_uiRightVoxels = 0;
 				l_uiLeftVoxels = 0;
-				for (unsigned int l_uiVoxel = 0; l_uiVoxel < (*l_oMapIterator).second.size(); l_uiVoxel++)
+				for (uint32_t l_uiVoxel = 0; l_uiVoxel < (*l_oMapIterator).second.size(); l_uiVoxel++)
 				{
 					if (g_iLoretaVoxel[(*l_oMapIterator).second[l_uiVoxel]][0] < 0) l_uiRightVoxels++;
 					if (g_iLoretaVoxel[(*l_oMapIterator).second[l_uiVoxel]][0] > 0) l_uiLeftVoxels++;
@@ -574,22 +574,22 @@ CRendererLoreta::CRendererLoreta()
 #endif
 	{
 		//::printf("Voxel description file [%s] not found, falling back to default.\n", l_sVoxelGroupFilename);
-		unsigned int l_uiMapSize = g_uiBrodmannAreasCount;
-		for (unsigned int i = 0; i < l_uiMapSize; ++i)
+		uint32_t l_uiMapSize = g_uiBrodmannAreasCount;
+		for (uint32_t i = 0; i < l_uiMapSize; ++i)
 		{
 			m_vLookup[l_uiCategoryIndex_BrodmannAreas][g_pBrodmannAreas[i]._sName].insert(
 				m_vLookup[l_uiCategoryIndex_BrodmannAreas][g_pBrodmannAreas[i]._sName].begin(), g_pBrodmannAreas[i]._pVoxels,
 				g_pBrodmannAreas[i]._pVoxels + g_pBrodmannAreas[i]._uiVoxelCount);
 		}
 		l_uiMapSize = g_uiAnatomicalAreasCount;
-		for (unsigned int i = 0; i < l_uiMapSize; ++i)
+		for (uint32_t i = 0; i < l_uiMapSize; ++i)
 		{
 			m_vLookup[l_uiCategoryIndex_AnatomicalAreas][g_pAnatomicalAreas[i]._sName].insert(
 				m_vLookup[l_uiCategoryIndex_AnatomicalAreas][g_pAnatomicalAreas[i]._sName].begin(), g_pAnatomicalAreas[i]._pVoxels,
 				g_pAnatomicalAreas[i]._pVoxels + g_pAnatomicalAreas[i]._uiVoxelCount);
 		}
 		l_uiMapSize = g_uiLobesCount;
-		for (unsigned int i = 0; i < l_uiMapSize; ++i)
+		for (uint32_t i = 0; i < l_uiMapSize; ++i)
 		{
 			m_vLookup[l_uiCategoryIndex_Lobes][g_pLobes[i]._sName].insert(m_vLookup[l_uiCategoryIndex_Lobes][g_pLobes[i]._sName].begin(), g_pLobes[i]._pVoxels,
 																		  g_pLobes[i]._pVoxels + g_pLobes[i]._uiVoxelCount);
@@ -597,8 +597,8 @@ CRendererLoreta::CRendererLoreta()
 	}
 
 	// Loading ROI data
-	const unsigned int mapSize = g_uiROICount;
-	for (unsigned int i = 0; i < mapSize; ++i)
+	const uint32_t mapSize = g_uiROICount;
+	for (uint32_t i = 0; i < mapSize; ++i)
 	{
 		m_vLookup[l_uiCategoryIndex_ROI][g_pRegionsOfInterest[i]._sName].insert(m_vLookup[l_uiCategoryIndex_ROI][g_pRegionsOfInterest[i]._sName].begin(),
 																				g_pRegionsOfInterest[i]._pVoxels,

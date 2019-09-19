@@ -45,7 +45,7 @@
 #define OVD_SCENARIOS_PATH					"${Path_Data}/scenarios"
 #define OVD_WORKING_SCENARIOS_PATH			"${Designer_DefaultWorkingDirectory}/scenarios"
 
-static const unsigned int s_RecentFileNumber = 10;
+static const uint32_t s_RecentFileNumber = 10;
 
 #include "ovdCDesignerVisualization.h"
 #include "ovdCPlayerVisualization.h"
@@ -703,7 +703,7 @@ namespace
 				// Whatever contains the message the first instance should try to take the focus
 				gtk_window_present(GTK_WINDOW(l_pApplication->m_pMainWindow));
 				size_t recvd_size;
-				unsigned int priority = 0;
+				uint32_t priority = 0;
 				char buffer[2048];
 				if (message.try_receive(&buffer, sizeof(buffer), recvd_size, priority))
 				{
@@ -1499,7 +1499,7 @@ void CApplication::saveOpenedScenarios()
 		FILE* l_pFile = FS::Files::open(appConfigFile.toASCIIString(), "wt");
 		if (l_pFile)
 		{
-			unsigned int i = 1;
+			uint32_t i = 1;
 			fprintf(l_pFile, "# This file is generated\n");
 			fprintf(l_pFile, "# Do not modify\n");
 			fprintf(l_pFile, "\n");
@@ -1533,7 +1533,7 @@ void CApplication::saveOpenedScenarios()
 			fprintf(l_pFile, "\n");
 
 			fprintf(l_pFile, "# Recently opened scenario\n");
-			unsigned int scenarioID = 1;
+			uint32_t scenarioID = 1;
 			for (const GtkWidget* recentScenario : m_RecentScenarios)
 			{
 				const gchar* recentScenarioPath = gtk_menu_item_get_label(GTK_MENU_ITEM(recentScenario));

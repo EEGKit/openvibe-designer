@@ -134,10 +134,10 @@ namespace OpenViBEVisualizationToolkit
 		virtual bool setChildIdentifier(const uint32_t childIndex, const OpenViBE::CIdentifier& childIdentifier) = 0;
 
 
-		virtual void setWidth(unsigned int width) = 0;
-		virtual void setHeight(unsigned int height) = 0;
-		virtual unsigned int getWidth() = 0;
-		virtual unsigned int getHeight() = 0;
+		virtual void setWidth(uint32_t width) = 0;
+		virtual void setHeight(uint32_t height) = 0;
+		virtual uint32_t getWidth() = 0;
+		virtual uint32_t getHeight() = 0;
 
 		virtual void setDividerPosition(int dividerPosition) = 0;
 		virtual void setMaxDividerPosition(int maxDividerPosition) = 0;

@@ -126,7 +126,7 @@ namespace
 		guint64 pipelineID;
 		gtk_tree_model_get(treeModel, &gui->m_SelectedPipelineIter, Column_PipelineId, &pipelineID, -1);
 
-		gui->displayPipelineConfigurationDialog(static_cast<unsigned int>(pipelineID));
+		gui->displayPipelineConfigurationDialog(uint32_t(pipelineID));
 
 		auto enginePipelines = gui->m_Controller.getEnginePipelines();
 		for (const auto& pipeline : enginePipelines)
@@ -220,7 +220,7 @@ namespace
 				-1);
 
 			bool shouldAcquireImpedance = (gtk_toggle_tool_button_get_active(gui->m_ToggleAcquireImpedance) == gboolean(true));
-			if (gui->m_Controller.startEngineWithPipeline(static_cast<unsigned int>(pipelineID), isFastForward, shouldAcquireImpedance))
+			if (gui->m_Controller.startEngineWithPipeline(uint32_t(pipelineID), isFastForward, shouldAcquireImpedance))
 			{
 				gtk_widget_set_sensitive(GTK_WIDGET(gui->m_ToggleAcquireImpedance), false);
 				gtk_widget_set_sensitive(GTK_WIDGET(gui->m_ComboBoxEngineType), false);
@@ -454,7 +454,7 @@ void CArchwayHandlerGUI::toggleNeuroRTEngineConfigurationDialog(const bool shoul
 	else { gtk_widget_hide(engineConfigurationWidget); }
 }
 
-void CArchwayHandlerGUI::displayPipelineConfigurationDialog(const unsigned int pipelineID)
+void CArchwayHandlerGUI::displayPipelineConfigurationDialog(const uint32_t pipelineID)
 {
 	auto pipelineConfigurationWidget = GTK_WIDGET(gtk_builder_get_object(m_Builder, "dialog-pipeline-configuration"));
 	auto pipelineConfigurationListStore = GTK_LIST_STORE(gtk_builder_get_object(m_Builder, "liststore-pipeline-configuration"));
@@ -507,7 +507,7 @@ bool CArchwayHandlerGUI::setPipelineParameterValueAtPath(gchar const* path, gcha
 		Column_SettingValue, newValue,
 		-1);
 
-	this->m_Controller.setPipelineParameterValue(static_cast<unsigned int>(pipelineID), parameterName, newValue);
+	this->m_Controller.setPipelineParameterValue(uint32_t(pipelineID), parameterName, newValue);
 	g_free(parameterName);
 
 	return true;

@@ -44,11 +44,11 @@ namespace OpenViBEDesigner
 
 		bool setChildIdentifier(const uint32_t childIndex, const OpenViBE::CIdentifier& identifier) override;
 
-		void setWidth(unsigned int width) override { m_Width = width; }
-		void setHeight(unsigned int height) override { m_Height = height; }
+		void setWidth(uint32_t width) override { m_Width = width; }
+		void setHeight(uint32_t height) override { m_Height = height; }
 
-		unsigned int getWidth() override { return m_Width; }
-		unsigned int getHeight() override { return m_Height; }
+		uint32_t getWidth() override { return m_Width; }
+		uint32_t getHeight() override { return m_Height; }
 
 		void setDividerPosition(int dividerPosition) override { m_DividerPosition = dividerPosition; }
 		void setMaxDividerPosition(int maxDividerPosition) override { m_MaxDividerPosition = maxDividerPosition; }
@@ -67,8 +67,8 @@ namespace OpenViBEDesigner
 		std::vector<OpenViBE::CIdentifier> m_Children;
 
 		// @fixme should initialize meaningfully in constructor or initialize()?
-		unsigned int m_Width = 0;
-		unsigned int m_Height = 0;
+		uint32_t m_Width = 0;
+		uint32_t m_Height = 0;
 		int m_DividerPosition = std::numeric_limits<int>::min();
 		int m_MaxDividerPosition = std::numeric_limits<int>::min();
 	};

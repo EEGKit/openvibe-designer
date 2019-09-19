@@ -506,7 +506,7 @@ void CBoxAlgorithmViz::postDraw()
 		glReadPixels(0, 0, m_width, m_height, GL_BGRA, GL_UNSIGNED_BYTE, cairo_image_surface_get_data(l_pCairoSurface));
 
 		// OpenGL buffers are defined bottom to top while PNG are defined top to bottom, this flips the acquired image
-		const unsigned int l_ui32BytesInPixel = 4; // should be 3
+		const uint32_t l_ui32BytesInPixel = 4; // should be 3
 		std::vector<unsigned char> l_vSwap(m_width * l_ui32BytesInPixel);
 		unsigned char* l_pSwap    = &l_vSwap[0];
 		unsigned char* l_pSource1 = cairo_image_surface_get_data(l_pCairoSurface);
