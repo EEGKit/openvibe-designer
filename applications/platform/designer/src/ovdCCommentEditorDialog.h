@@ -26,12 +26,12 @@ namespace OpenViBEDesigner
 
 	private:
 
-		CCommentEditorDialog();
+		CCommentEditorDialog() = delete;
 
-		GtkBuilder* m_pInterface{};
-		GtkWidget* m_pDialog{};
-		GtkWidget* m_pInfoDialog{};
-		GtkWidget* m_pDescription{};
-		GtkTextBuffer* m_pDescriptionBuffer{};
+		GtkBuilder* m_pInterface = nullptr;
+		GtkWidget* m_pDialog = nullptr;
+		GtkWidget* m_pInfoDialog = nullptr;
+		GtkWidget* m_pDescription = nullptr;
+		GtkTextBuffer* m_pDescriptionBuffer = nullptr;
 	};
 } // namespace OpenViBEDesigner

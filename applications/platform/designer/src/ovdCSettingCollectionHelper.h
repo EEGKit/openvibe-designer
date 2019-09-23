@@ -47,6 +47,6 @@ namespace OpenViBEDesigner
 
 	private:
 
-		CSettingCollectionHelper();
+		CSettingCollectionHelper() = delete;
 	};
 } // namespace OpenViBEDesigner

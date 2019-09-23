@@ -99,11 +99,11 @@ CLogListenerDesigner::CLogListenerDesigner(const IKernelContext& ctx, GtkBuilder
 
 	m_pToggleButtonPopup = GTK_TOGGLE_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_alert_on_error"));
 
-	m_pLabelCountMessages       = GTK_LABEL(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_count_message_label"));
-	m_pLabelCountWarnings       = GTK_LABEL(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_count_warning_label"));
-	m_pLabelCountErrors         = GTK_LABEL(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_count_error_label"));
-	m_pLabelDialogCountWarnings = GTK_LABEL(gtk_builder_get_object(m_pBuilderInterface, "dialog_error_popup-warning_count"));
-	m_pLabelDialogCountErrors   = GTK_LABEL(gtk_builder_get_object(m_pBuilderInterface, "dialog_error_popup-error_count"));
+	m_labelnMessages       = GTK_LABEL(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_count_message_label"));
+	m_labelnWarnings       = GTK_LABEL(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_count_warning_label"));
+	m_labelnErrors         = GTK_LABEL(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_count_error_label"));
+	m_labelDialognWarnings = GTK_LABEL(gtk_builder_get_object(m_pBuilderInterface, "dialog_error_popup-warning_count"));
+	m_labelDialognErrors   = GTK_LABEL(gtk_builder_get_object(m_pBuilderInterface, "dialog_error_popup-error_count"));
 
 	m_pImageWarnings = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_count_warning_image"));
 	m_pImageErrors   = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_count_error_image"));
@@ -145,9 +145,9 @@ CLogListenerDesigner::CLogListenerDesigner(const IKernelContext& ctx, GtkBuilder
 	GtkTextTagTable* l_pTagtable = gtk_text_buffer_get_tag_table(m_pBuffer);
 	m_pCIdentifierTag            = gtk_text_tag_table_lookup(l_pTagtable, "link");
 
-	m_bConsoleLogWithHexa         = ctx.getConfigurationManager().expandAsBoolean("${Designer_ConsoleLogWithHexa}", false);
-	m_bConsoleLogTimeInSecond     = ctx.getConfigurationManager().expandAsBoolean("${Kernel_ConsoleLogTimeInSecond}", false);
-	m_ui32ConsoleLogTimePrecision = uint32_t(ctx.getConfigurationManager().expandAsUInteger("${Designer_ConsoleLogTimePrecision}", 3));
+	m_logWithHexa         = ctx.getConfigurationManager().expandAsBoolean("${Designer_ConsoleLogWithHexa}", false);
+	m_logTimeInSecond     = ctx.getConfigurationManager().expandAsBoolean("${Kernel_ConsoleLogTimeInSecond}", false);
+	m_logTimePrecision = uint32_t(ctx.getConfigurationManager().expandAsUInteger("${Designer_ConsoleLogTimePrecision}", 3));
 }
 
 bool CLogListenerDesigner::isActive(const ELogLevel eLogLevel)
@@ -176,22 +176,22 @@ void CLogListenerDesigner::log(const time64 value)
 	if (m_bIngnoreMessages) { return; }
 
 	stringstream l_sText;
-	if (m_bConsoleLogTimeInSecond)
+	if (m_logTimeInSecond)
 	{
 		const double l_f64Time = ITimeArithmetics::timeToSeconds(value.m_ui64TimeValue);
 		std::stringstream ss;
-		ss.precision(m_ui32ConsoleLogTimePrecision);
+		ss.precision(m_logTimePrecision);
 		ss.setf(std::ios::fixed, std::ios::floatfield);
 		ss << l_f64Time;
 		ss << " sec";
-		if (m_bConsoleLogWithHexa) { ss << " (0x" << hex << value.m_ui64TimeValue << ")"; }
+		if (m_logWithHexa) { ss << " (0x" << hex << value.m_ui64TimeValue << ")"; }
 
 		l_sText << ss.str().c_str();
 	}
 	else
 	{
 		l_sText << dec << value.m_ui64TimeValue;
-		if (m_bConsoleLogWithHexa) { l_sText << " (0x" << hex << value.m_ui64TimeValue << ")"; }
+		if (m_logWithHexa) { l_sText << " (0x" << hex << value.m_ui64TimeValue << ")"; }
 	}
 
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
@@ -203,7 +203,7 @@ void CLogListenerDesigner::log(const uint64_t value)
 
 	stringstream l_sText;
 	l_sText << dec << value;
-	if (m_bConsoleLogWithHexa) { l_sText << " (0x" << hex << value << ")"; }
+	if (m_logWithHexa) { l_sText << " (0x" << hex << value << ")"; }
 
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
 }
@@ -214,7 +214,7 @@ void CLogListenerDesigner::log(const uint32_t value)
 
 	stringstream l_sText;
 	l_sText << dec << value;
-	if (m_bConsoleLogWithHexa) { l_sText << " (0x" << hex << value << ")"; }
+	if (m_logWithHexa) { l_sText << " (0x" << hex << value << ")"; }
 
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
 }
@@ -225,7 +225,7 @@ void CLogListenerDesigner::log(const uint16_t value)
 
 	stringstream l_sText;
 	l_sText << dec << value;
-	if (m_bConsoleLogWithHexa) { l_sText << " (0x" << hex << value << ")"; }
+	if (m_logWithHexa) { l_sText << " (0x" << hex << value << ")"; }
 
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
 }
@@ -236,7 +236,7 @@ void CLogListenerDesigner::log(const uint8_t value)
 
 	stringstream l_sText;
 	l_sText << dec << value;
-	if (m_bConsoleLogWithHexa) { l_sText << " (0x" << hex << value << ")"; }
+	if (m_logWithHexa) { l_sText << " (0x" << hex << value << ")"; }
 
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
 }
@@ -247,7 +247,7 @@ void CLogListenerDesigner::log(const int64_t value)
 
 	stringstream l_sText;
 	l_sText << dec << value;
-	if (m_bConsoleLogWithHexa) { l_sText << " (0x" << hex << value << ")"; }
+	if (m_logWithHexa) { l_sText << " (0x" << hex << value << ")"; }
 
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
 }
@@ -258,7 +258,7 @@ void CLogListenerDesigner::log(const int value)
 
 	stringstream l_sText;
 	l_sText << dec << value;
-	if (m_bConsoleLogWithHexa) { l_sText << " (0x" << hex << value << ")"; }
+	if (m_logWithHexa) { l_sText << " (0x" << hex << value << ")"; }
 
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
 }
@@ -269,7 +269,7 @@ void CLogListenerDesigner::log(const int16_t value)
 
 	stringstream l_sText;
 	l_sText << dec << value;
-	if (m_bConsoleLogWithHexa) { l_sText << " (0x" << hex << value << ")"; }
+	if (m_logWithHexa) { l_sText << " (0x" << hex << value << ")"; }
 
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
 }
@@ -280,7 +280,7 @@ void CLogListenerDesigner::log(const int8_t value)
 
 	stringstream l_sText;
 	l_sText << dec << value;
-	if (m_bConsoleLogWithHexa) { l_sText << " (0x" << hex << value << ")"; }
+	if (m_logWithHexa) { l_sText << " (0x" << hex << value << ")"; }
 
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
 }
@@ -362,27 +362,27 @@ void CLogListenerDesigner::log(const ELogLevel eLogLevel)
 	switch (eLogLevel)
 	{
 		case LogLevel_Debug:
-			addTagName(m_pToggleButtonActive_Debug, m_countMessages, "DEBUG", "c_blue");
+			addTagName(m_pToggleButtonActive_Debug, m_nMessages, "DEBUG", "c_blue");
 			break;
 
 		case LogLevel_Benchmark:
-			addTagName(m_pToggleButtonActive_Benchmark, m_countMessages, "BENCH", "c_magenta");
+			addTagName(m_pToggleButtonActive_Benchmark, m_nMessages, "BENCH", "c_magenta");
 			break;
 
 		case LogLevel_Trace:
-			addTagName(m_pToggleButtonActive_Trace, m_countMessages, "TRACE", "c_watercourse");
+			addTagName(m_pToggleButtonActive_Trace, m_nMessages, "TRACE", "c_watercourse");
 			break;
 
 		case LogLevel_Info:
-			addTagName(m_pToggleButtonActive_Info, m_countMessages, "INF", "c_blueChill");
+			addTagName(m_pToggleButtonActive_Info, m_nMessages, "INF", "c_blueChill");
 			break;
 
 		case LogLevel_Warning:
-			addTagName(m_pToggleButtonActive_Warning, m_countWarnings, "WARNING", "c_darkViolet");
+			addTagName(m_pToggleButtonActive_Warning, m_nWarnings, "WARNING", "c_darkViolet");
 			break;
 
 		case LogLevel_ImportantWarning:
-			addTagName(m_pToggleButtonActive_ImportantWarning, m_countWarnings, "WARNING", "c_darkOrange");
+			addTagName(m_pToggleButtonActive_ImportantWarning, m_nWarnings, "WARNING", "c_darkOrange");
 			break;
 
 		case LogLevel_Error:
@@ -394,7 +394,7 @@ void CLogListenerDesigner::log(const ELogLevel eLogLevel)
 			break;
 
 		default:
-			addTagName(nullptr, m_countMessages, "UNKNOWN", nullptr);
+			addTagName(nullptr, m_nMessages, "UNKNOWN", nullptr);
 			break;
 	}
 
@@ -431,22 +431,22 @@ void CLogListenerDesigner::log(const ELogColor /*eLogColor*/) { if (m_bIngnoreMe
 void CLogListenerDesigner::updateMessageCounts() const
 {
 	stringstream l_sCountMessages;
-	l_sCountMessages << "<b>" << m_countMessages << "</b> Message";
+	l_sCountMessages << "<b>" << m_nMessages << "</b> Message";
 
-	if (m_countMessages > 1) { l_sCountMessages << "s"; }
+	if (m_nMessages > 1) { l_sCountMessages << "s"; }
 
-	gtk_label_set_markup(m_pLabelCountMessages, l_sCountMessages.str().data());
+	gtk_label_set_markup(m_labelnMessages, l_sCountMessages.str().data());
 
-	if (m_countWarnings > 0)
+	if (m_nWarnings > 0)
 	{
 		stringstream countWarnings;
-		countWarnings << "<b>" << m_countWarnings << "</b> Warning";
+		countWarnings << "<b>" << m_nWarnings << "</b> Warning";
 
-		if (m_countWarnings > 1) { countWarnings << "s"; }
+		if (m_nWarnings > 1) { countWarnings << "s"; }
 
-		gtk_label_set_markup(m_pLabelCountWarnings, countWarnings.str().data());
-		gtk_label_set_markup(m_pLabelDialogCountWarnings, countWarnings.str().data());
-		gtk_widget_set_visible(GTK_WIDGET(m_pLabelCountWarnings), true);
+		gtk_label_set_markup(m_labelnWarnings, countWarnings.str().data());
+		gtk_label_set_markup(m_labelDialognWarnings, countWarnings.str().data());
+		gtk_widget_set_visible(GTK_WIDGET(m_labelnWarnings), true);
 		gtk_widget_set_visible(GTK_WIDGET(m_pImageWarnings), true);
 	}
 
@@ -457,30 +457,30 @@ void CLogListenerDesigner::updateMessageCounts() const
 
 		if (m_nErrors > 1) { countErrors << "s"; }
 
-		gtk_label_set_markup(m_pLabelCountErrors, countErrors.str().data());
-		gtk_label_set_markup(m_pLabelDialogCountErrors, countErrors.str().data());
+		gtk_label_set_markup(m_labelnErrors, countErrors.str().data());
+		gtk_label_set_markup(m_labelDialognErrors, countErrors.str().data());
 
-		gtk_widget_set_visible(GTK_WIDGET(m_pLabelCountErrors), true);
+		gtk_widget_set_visible(GTK_WIDGET(m_labelnErrors), true);
 		gtk_widget_set_visible(GTK_WIDGET(m_pImageErrors), true);
 	}
 }
 
 void CLogListenerDesigner::clearMessages()
 {
-	m_countMessages   = 0;
-	m_countWarnings   = 0;
+	m_nMessages   = 0;
+	m_nWarnings   = 0;
 	m_nErrors = 0;
 
-	gtk_label_set_markup(m_pLabelCountMessages, "<b>0</b> Messages");
-	gtk_label_set_markup(m_pLabelCountWarnings, "<b>0</b> Warnings");
-	gtk_label_set_markup(m_pLabelCountErrors, "<b>0</b> Errors");
-	gtk_label_set_markup(m_pLabelDialogCountWarnings, "<b>0</b> Warnings");
-	gtk_label_set_markup(m_pLabelDialogCountErrors, "<b>0</b> Errors");
+	gtk_label_set_markup(m_labelnMessages, "<b>0</b> Messages");
+	gtk_label_set_markup(m_labelnWarnings, "<b>0</b> Warnings");
+	gtk_label_set_markup(m_labelnErrors, "<b>0</b> Errors");
+	gtk_label_set_markup(m_labelDialognWarnings, "<b>0</b> Warnings");
+	gtk_label_set_markup(m_labelDialognErrors, "<b>0</b> Errors");
 
 	gtk_widget_set_visible(m_pImageWarnings, false);
-	gtk_widget_set_visible(GTK_WIDGET(m_pLabelCountWarnings), false);
+	gtk_widget_set_visible(GTK_WIDGET(m_labelnWarnings), false);
 	gtk_widget_set_visible(m_pImageErrors, false);
-	gtk_widget_set_visible(GTK_WIDGET(m_pLabelCountErrors), false);
+	gtk_widget_set_visible(GTK_WIDGET(m_labelnErrors), false);
 
 	gtk_text_buffer_set_text(m_pBuffer, "", -1);
 

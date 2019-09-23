@@ -146,11 +146,11 @@ namespace OpenViBEDesigner
 		GtkToggleToolButton* m_pToggleButtonActive_Error            = nullptr;
 		GtkToggleToolButton* m_pToggleButtonActive_Fatal            = nullptr;
 
-		GtkLabel* m_pLabelCountMessages       = nullptr;
-		GtkLabel* m_pLabelCountWarnings       = nullptr;
-		GtkLabel* m_pLabelCountErrors         = nullptr;
-		GtkLabel* m_pLabelDialogCountWarnings = nullptr;
-		GtkLabel* m_pLabelDialogCountErrors   = nullptr;
+		GtkLabel* m_labelnMessages       = nullptr;
+		GtkLabel* m_labelnWarnings       = nullptr;
+		GtkLabel* m_labelnErrors         = nullptr;
+		GtkLabel* m_labelDialognWarnings = nullptr;
+		GtkLabel* m_labelDialognErrors   = nullptr;
 
 		GtkWidget* m_pImageWarnings = nullptr;
 		GtkWidget* m_pImageErrors   = nullptr;
@@ -159,13 +159,13 @@ namespace OpenViBEDesigner
 
 		bool m_bIngnoreMessages = false;
 
-		uint32_t m_countMessages   = 0;
-		uint32_t m_countWarnings   = 0;
-		uint32_t m_nErrors = 0;
+		uint32_t m_nMessages = 0;
+		uint32_t m_nWarnings = 0;
+		uint32_t m_nErrors   = 0;
 
-		bool m_bConsoleLogWithHexa             = false;
-		bool m_bConsoleLogTimeInSecond         = false;
-		uint32_t m_ui32ConsoleLogTimePrecision = 0;
+		bool m_logWithHexa          = false;
+		bool m_logTimeInSecond      = false;
+		uint32_t m_logTimePrecision = 0;
 
 		CLogObject* m_pCurrentLog = nullptr;
 

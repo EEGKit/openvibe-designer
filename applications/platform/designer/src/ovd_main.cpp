@@ -361,9 +361,9 @@ static char backslash_to_slash(const char c) { return c == '\\' ? '/' : c; }
 * Use Mutex to ensure that only one instance with GUI of Designer runs at the same time
 * if another instance exists, sends a message to it so that it opens a scenario or get the focus back
 * \param configuration: play, play-fast or open
-* \param l_rLogManager: name of the scenario to open
+* \param logManager: name of the scenario to open
 ------------------------------------------------------------------------------------------------------------------------------------**/
-static bool ensureOneInstanceOfDesigner(SConfiguration& configuration, ILogManager& l_rLogManager)
+static bool ensureOneInstanceOfDesigner(SConfiguration& configuration, ILogManager& logManager)
 {
 #if defined NDEBUG
 	try
@@ -547,7 +547,7 @@ void message(const char* sTitle, const char* sMessage, const GtkMessageType eTyp
 	gtk_widget_destroy(l_pDialog);
 }
 
-void user_info(char** argv, ILogManager* l_rLogManager)
+void user_info(char** argv, ILogManager* logManager)
 {
 	const std::vector<std::string> messages =
 	{
@@ -567,7 +567,7 @@ void user_info(char** argv, ILogManager* l_rLogManager)
 		"  --random-seed uint      : initialize random number generator with value, default=time(nullptr)\n"
 	};
 
-	if (l_rLogManager != nullptr) { for (const auto& m : messages) { (*l_rLogManager) << LogLevel_Info << m.c_str(); } }
+	if (logManager != nullptr) { for (const auto& m : messages) { (*logManager) << LogLevel_Info << m.c_str(); } }
 	else { for (const auto& m : messages) { cout << m; } }
 }
 
@@ -709,7 +709,7 @@ int go(int argc, char** argv)
 #endif
 
 				IConfigurationManager& l_rConfigurationManager = l_pKernelContext->getConfigurationManager();
-				ILogManager& l_rLogManager                     = l_pKernelContext->getLogManager();
+				ILogManager& logManager                     = l_pKernelContext->getLogManager();
 
 				bArgParseResult = parse_arguments(argc, argv, l_oConfiguration);
 
@@ -720,21 +720,21 @@ int go(int argc, char** argv)
 				if (l_sLocale == CString("")) { l_sLocale = "C"; }
 				setlocale(LC_ALL, l_sLocale.toASCIIString());
 
-				if (!(bArgParseResult || l_oConfiguration.m_help)) { user_info(argv, &l_rLogManager); }
+				if (!(bArgParseResult || l_oConfiguration.m_help)) { user_info(argv, &logManager); }
 				else
 				{
 					if ((!l_rConfigurationManager.expandAsBoolean("${Kernel_WithGUI}", true)) && ((l_oConfiguration.getFlags() & CommandLineFlag_NoGui) == 0))
 					{
-						l_rLogManager << LogLevel_ImportantWarning <<
+						logManager << LogLevel_ImportantWarning <<
 								"${Kernel_WithGUI} is set to false and --no-gui flag not set. Forcing the --no-gui flag\n";
 						l_oConfiguration.m_eNoGui             = CommandLineFlag_NoGui;
 						l_oConfiguration.m_eNoCheckColorDepth = CommandLineFlag_NoCheckColorDepth;
 						l_oConfiguration.m_eNoManageSession   = CommandLineFlag_NoManageSession;
 					}
 
-					if (l_oConfiguration.m_eNoGui != CommandLineFlag_NoGui && !ensureOneInstanceOfDesigner(l_oConfiguration, l_rLogManager))
+					if (l_oConfiguration.m_eNoGui != CommandLineFlag_NoGui && !ensureOneInstanceOfDesigner(l_oConfiguration, logManager))
 					{
-						l_rLogManager << LogLevel_Trace << "An instance of Designer is already running.\n";
+						logManager << LogLevel_Trace << "An instance of Designer is already running.\n";
 						return 0;
 					}
 
@@ -758,7 +758,7 @@ int go(int argc, char** argv)
 										//l_bIsScreenValid=true;
 										break;
 									default:
-										l_rLogManager << LogLevel_Error << "Please change the color depth of your screen to either 24 or 32 bits\n";
+										logManager << LogLevel_Error << "Please change the color depth of your screen to either 24 or 32 bits\n";
 										// TODO find a way to break
 										break;
 								}
@@ -768,7 +768,7 @@ int go(int argc, char** argv)
 						// Add or replace a configuration token if required in command line
 						for (const auto& token : l_oConfiguration.m_oTokenMap)
 						{
-							l_rLogManager << LogLevel_Trace << "Adding command line configuration token [" << token.first.c_str() << " = " << token
+							logManager << LogLevel_Trace << "Adding command line configuration token [" << token.first.c_str() << " = " << token
 																																			  .second.c_str() <<
 									"]\n";
 							l_rConfigurationManager.addOrReplaceConfigurationToken(token.first.c_str(), token.second.c_str());
@@ -782,15 +782,15 @@ int go(int argc, char** argv)
 							switch (l_oConfiguration.m_vFlag[i].first)
 							{
 								case CommandLineFlag_Open:
-									l_rLogManager << LogLevel_Info << "Opening scenario [" << CString(fileName.c_str()) << "]\n";
+									logManager << LogLevel_Info << "Opening scenario [" << CString(fileName.c_str()) << "]\n";
 									if (!app.openScenario(fileName.c_str()))
 									{
-										l_rLogManager << LogLevel_Error << "Could not open scenario " << fileName.c_str() << "\n";
+										logManager << LogLevel_Error << "Could not open scenario " << fileName.c_str() << "\n";
 										errorWhileLoadingScenario = l_oConfiguration.m_eNoGui == CommandLineFlag_NoGui;
 									}
 									break;
 								case CommandLineFlag_Play:
-									l_rLogManager << LogLevel_Info << "Opening and playing scenario [" << CString(fileName.c_str()) << "]\n";
+									logManager << LogLevel_Info << "Opening and playing scenario [" << CString(fileName.c_str()) << "]\n";
 									error = !app.openScenario(fileName.c_str());
 									if (!error)
 									{
@@ -799,12 +799,12 @@ int go(int argc, char** argv)
 									}
 									if (error)
 									{
-										l_rLogManager << LogLevel_Error << "Scenario open or load error with --play.\n";
+										logManager << LogLevel_Error << "Scenario open or load error with --play.\n";
 										errorWhileLoadingScenario = l_oConfiguration.m_eNoGui == CommandLineFlag_NoGui;
 									}
 									break;
 								case CommandLineFlag_PlayFast:
-									l_rLogManager << LogLevel_Info << "Opening and fast playing scenario [" << CString(fileName.c_str()) << "]\n";
+									logManager << LogLevel_Info << "Opening and fast playing scenario [" << CString(fileName.c_str()) << "]\n";
 									error = !app.openScenario(fileName.c_str());
 									if (!error)
 									{
@@ -813,7 +813,7 @@ int go(int argc, char** argv)
 									}
 									if (error)
 									{
-										l_rLogManager << LogLevel_Error << "Scenario open or load error with --play-fast.\n";
+										logManager << LogLevel_Error << "Scenario open or load error with --play-fast.\n";
 										errorWhileLoadingScenario = l_oConfiguration.m_eNoGui == CommandLineFlag_NoGui;
 									}
 									playRequested = true;
@@ -827,7 +827,7 @@ int go(int argc, char** argv)
 
 						if (!playRequested && l_oConfiguration.m_eNoGui == CommandLineFlag_NoGui)
 						{
-							l_rLogManager << LogLevel_Info <<
+							logManager << LogLevel_Info <<
 									"Switch --no-gui is enabled but no play operation was requested. Designer will exit automatically.\n";
 						}
 
@@ -872,7 +872,7 @@ int go(int argc, char** argv)
 					}
 				}
 
-				l_rLogManager << LogLevel_Info << "Application terminated, releasing allocated objects\n";
+				logManager << LogLevel_Info << "Application terminated, releasing allocated objects\n";
 
 				OpenViBEVisualizationToolkit::uninitialize(*l_pKernelContext);
 				OpenViBEToolkit::uninitialize(*l_pKernelContext);
