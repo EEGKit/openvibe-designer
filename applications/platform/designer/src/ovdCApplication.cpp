@@ -23,7 +23,7 @@
 #include "Windows.h"
 #endif
 
-#include <openvibe/ovITimeArithmetics.h>
+#include <openvibe/ovTimeArithmetics.h>
 #include <visualization-toolkit/ovviz_defines.h>
 #include <visualization-toolkit/ovvizIVisualizationContext.h>
 #include <ovp_global_defines.h>
@@ -610,7 +610,7 @@ namespace
 			else
 			{
 				const double time = (currentInterfacedScenario->m_pPlayer
-										 ? ITimeArithmetics::timeToSeconds(currentInterfacedScenario->m_pPlayer->getCurrentSimulatedTime()) : 0);
+										 ? TimeArithmetics::timeToSeconds(currentInterfacedScenario->m_pPlayer->getCurrentSimulatedTime()) : 0);
 				if (l_pApplication->m_ui64LastTimeRefresh != time)
 				{
 					l_pApplication->m_ui64LastTimeRefresh = uint64_t(time);

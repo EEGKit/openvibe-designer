@@ -124,7 +124,7 @@ bool CBoxAlgorithmViz::initialize()
 	// Sets default setting values
 	m_sLocalisation       = CString("");
 	m_temporalCoherence   = OVP_TypeId_TemporalCoherence_TimeLocked.toUInteger();
-	m_nElement        = 50;
+	m_nElement            = 50;
 	m_timeScale           = 10LL << 32;
 	m_bIsPositive         = false;
 	m_bIsTimeLocked       = true;

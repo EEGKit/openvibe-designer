@@ -1,7 +1,7 @@
 #include "ovpCBufferDatabase.h"
 
 #include <system/ovCMemory.h>
-#include <openvibe/ovITimeArithmetics.h>
+#include <openvibe/ovTimeArithmetics.h>
 
 #include <algorithm>
 #include <cmath>
@@ -308,8 +308,8 @@ bool CBufferDatabase::setMatrixBuffer(const double* buffer, const uint64_t ui64S
 	{
 		m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Warning <<
 				"Your signal does not appear to be continuous in time. "
-				<< "Previously inserted buffer ended at " << ITimeArithmetics::timeToSeconds(m_ui64LastBufferEndTime)
-				<< "s, the current starts at " << ITimeArithmetics::timeToSeconds(ui64StartTime)
+				<< "Previously inserted buffer ended at " << TimeArithmetics::timeToSeconds(m_ui64LastBufferEndTime)
+				<< "s, the current starts at " << TimeArithmetics::timeToSeconds(ui64StartTime)
 				<< "s. The display may be incorrect.\n";
 		m_bWarningPrinted = true;
 	}
@@ -340,7 +340,7 @@ bool CBufferDatabase::setMatrixBuffer(const double* buffer, const uint64_t ui64S
 			// Complain if estimate is bad
 			m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Warning <<
 					"The integer sampling frequency was estimated from the chunk size to be 0"
-					<< " (nSamples " << m_pDimensionSizes[1] << " / bufferLength " << ITimeArithmetics::timeToSeconds(m_ui64BufferDuration) <<
+					<< " (nSamples " << m_pDimensionSizes[1] << " / bufferLength " << TimeArithmetics::timeToSeconds(m_ui64BufferDuration) <<
 					"s = 0). This is not supported. Forcing the rate to 1. This may lead to problems.\n";
 			l_ui32EstimatedFrequency = 1;
 		}
