@@ -485,9 +485,9 @@ namespace OpenViBEPlugins
 			}
 
 			//restore default black color
-			GdkColor l_oBlack;
-			l_oBlack.red = l_oBlack.green = l_oBlack.blue = 0;
-			gdk_gc_set_rgb_fg_color(m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], &l_oBlack);
+			GdkColor black;
+			black.red = black.green = black.blue = 0;
+			gdk_gc_set_rgb_fg_color(m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], &black);
 
 			//delete pango layout
 			g_object_unref(l_pText);
@@ -818,15 +818,15 @@ namespace OpenViBEPlugins
 		void CTopographicMap2DView::redrawClipmask()
 		{
 			//clear clipmask by drawing a black rectangle
-			GdkColor l_oBlack;
-			l_oBlack.red = l_oBlack.green = l_oBlack.blue = 0;
-			gdk_gc_set_rgb_fg_color(m_clipmaskGC, &l_oBlack);
+			GdkColor black;
+			black.red = black.green = black.blue = 0;
+			gdk_gc_set_rgb_fg_color(m_clipmaskGC, &black);
 			gdk_draw_rectangle(m_clipmask, m_clipmaskGC, TRUE, 0, 0, m_clipmaskWidth, m_clipmaskHeight);
 
 			//draw visible circular region with a white filled arc
-			GdkColor l_oWhite;
-			l_oWhite.red = l_oWhite.green = l_oWhite.blue = 65535;
-			gdk_gc_set_rgb_fg_color(m_clipmaskGC, &l_oWhite);
+			GdkColor white;
+			white.red = white.green = white.blue = 65535;
+			gdk_gc_set_rgb_fg_color(m_clipmaskGC, &white);
 			gdk_draw_arc(m_clipmask, m_clipmaskGC, TRUE, 0, 0, gint(m_skullDiameter), gint(m_skullDiameter),
 						 gint(64 * m_skullFillStartAngle), gint(64 * (m_skullFillEndAngle - m_skullFillStartAngle)));
 
@@ -834,20 +834,20 @@ namespace OpenViBEPlugins
 			if (m_currentView == TopographicMap2DView_Left || m_currentView == TopographicMap2DView_Right || m_currentView == TopographicMap2DView_Back)
 			{
 				//draw polygon : { skullCenter, skullFillStartPoint, skullFillBottomPoint, skullFillEndPoint, skullCenter }
-				GdkPoint l_pPolygon[4];
-				l_pPolygon[0].x = m_skullX + m_skullDiameter / 2 - m_skullX;
-				l_pPolygon[0].y = m_skullY + m_skullDiameter / 2 - m_skullY - 2;
-				l_pPolygon[1].x = m_skullFillRightPointX - m_skullX;
-				l_pPolygon[1].y = m_skullFillRightPointY - m_skullY - 2;
-				l_pPolygon[2].x = m_skullFillBottomPointX - m_skullX;
-				l_pPolygon[2].y = m_skullFillBottomPointY - m_skullY - 2;
-				l_pPolygon[3].x = m_skullFillLeftPointX - m_skullX;
-				l_pPolygon[3].y = m_skullFillLeftPointY - m_skullY - 2;
-				gdk_draw_polygon(m_clipmask, m_clipmaskGC, TRUE, l_pPolygon, 4);
+				GdkPoint polygon[4];
+				polygon[0].x = m_skullX + m_skullDiameter / 2 - m_skullX;
+				polygon[0].y = m_skullY + m_skullDiameter / 2 - m_skullY - 2;
+				polygon[1].x = m_skullFillRightPointX - m_skullX;
+				polygon[1].y = m_skullFillRightPointY - m_skullY - 2;
+				polygon[2].x = m_skullFillBottomPointX - m_skullX;
+				polygon[2].y = m_skullFillBottomPointY - m_skullY - 2;
+				polygon[3].x = m_skullFillLeftPointX - m_skullX;
+				polygon[3].y = m_skullFillLeftPointY - m_skullY - 2;
+				gdk_draw_polygon(m_clipmask, m_clipmaskGC, TRUE, polygon, 4);
 			}
 
 			//restore default black color
-			gdk_gc_set_rgb_fg_color(m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], &l_oBlack);
+			gdk_gc_set_rgb_fg_color(m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], &black);
 
 			//update visible region
 			if (m_visibleRegion != nullptr) { gdk_region_destroy(m_visibleRegion); }
@@ -889,11 +889,11 @@ namespace OpenViBEPlugins
 		{
 			if (!m_electrodesToggledOn) { return; }
 
-			//determine size of electrode rings
-			const double l_f64ElectrodeRingOverSkullSizeRatio = 0.05;
 
 #if 0
-			gint electrodeRingSize = gint(m_skullDiameter * l_f64ElectrodeRingOverSkullSizeRatio);
+			//determine size of electrode rings
+			const double electrodeRingOverSkullSizeRatio = 0.05;
+			gint electrodeRingSize = gint(m_skullDiameter * electrodeRingOverSkullSizeRatio);
 			if (electrodeRingSize < (gint)electrodeRingMinSize) { electrodeRingSize = (gint)electrodeRingMinSize; }
 			else if (electrodeRingSize > (gint)electrodeRingMaxSize) { electrodeRingSize = (gint)electrodeRingMaxSize; }
 			if (electrodeRingSize == 0) { return; }
@@ -901,15 +901,15 @@ namespace OpenViBEPlugins
 			const gint electrodeRingSize = 5;
 #endif
 
-			GdkColor l_oWhite;
-			l_oWhite.red   = 65535;
-			l_oWhite.green = 65535;
-			l_oWhite.blue  = 65535;
+			GdkColor white;
+			white.red   = 65535;
+			white.green = 65535;
+			white.blue  = 65535;
 
-			GdkColor l_oBlack;
-			l_oBlack.red   = 0;
-			l_oBlack.green = 0;
-			l_oBlack.blue  = 0;
+			GdkColor black;
+			black.red   = 0;
+			black.green = 0;
+			black.blue  = 0;
 
 			//set electrode ring thickness
 			const gint electrodeRingThickness = 1;
@@ -918,9 +918,9 @@ namespace OpenViBEPlugins
 
 			//electrode label
 			CString electrodeLabel;
-			PangoLayout* l_pElectrodeLabelLayout = gtk_widget_create_pango_layout(GTK_WIDGET(m_drawingArea), " ");
+			PangoLayout* electrodeLabelLayout = gtk_widget_create_pango_layout(GTK_WIDGET(m_drawingArea), " ");
 			gint textHeight, textWidth;
-			pango_layout_get_pixel_size(l_pElectrodeLabelLayout, nullptr, &textHeight);
+			pango_layout_get_pixel_size(electrodeLabelLayout, nullptr, &textHeight);
 
 			//draw rings
 			const uint32_t nChannel = uint32_t(m_topographicMapDatabase.getChannelCount());
@@ -935,14 +935,14 @@ namespace OpenViBEPlugins
 				gdk_gc_set_rgb_fg_color(m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], &s_palette[m_sampleValues[i]]);
 #else
 				//fill ring with white
-				gdk_gc_set_rgb_fg_color(m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], &l_oWhite);
+				gdk_gc_set_rgb_fg_color(m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], &white);
 #endif
 				gdk_draw_arc(m_drawingArea->window, m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], TRUE,
 							 channelX - electrodeRingSize / 2, channelY - electrodeRingSize / 2,
 							 electrodeRingSize, electrodeRingSize, 0, 64 * 360);
 
 				//ring centered on channel location
-				gdk_gc_set_rgb_fg_color(m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], &l_oBlack);
+				gdk_gc_set_rgb_fg_color(m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], &black);
 
 				gdk_draw_arc(m_drawingArea->window,
 							 m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], FALSE,
@@ -950,25 +950,25 @@ namespace OpenViBEPlugins
 							 electrodeRingSize, electrodeRingSize, 0, 64 * 360);
 
 				//channel label
-				gdk_gc_set_rgb_fg_color(m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], &l_oBlack/*&l_oWhite*/);
+				gdk_gc_set_rgb_fg_color(m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], &black/*&white*/);
 
 				m_topographicMapDatabase.getChannelLabel(i, electrodeLabel);
-				pango_layout_set_text(l_pElectrodeLabelLayout, electrodeLabel, int(strlen(electrodeLabel)));
-				pango_layout_get_pixel_size(l_pElectrodeLabelLayout, &textWidth, nullptr);
+				pango_layout_set_text(electrodeLabelLayout, electrodeLabel, int(strlen(electrodeLabel)));
+				pango_layout_get_pixel_size(electrodeLabelLayout, &textWidth, nullptr);
 				gdk_draw_layout(m_drawingArea->window, m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)],
 								channelX - textWidth / 2,
 								channelY - electrodeRingSize / 2 - textHeight - 5,
-								l_pElectrodeLabelLayout);
+								electrodeLabelLayout);
 			}
 
 			//restore default line thickness
 			gdk_gc_set_line_attributes(m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
 
 			//restore default black color
-			gdk_gc_set_rgb_fg_color(m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], &l_oBlack);
+			gdk_gc_set_rgb_fg_color(m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], &black);
 
 			//delete pango layout
-			g_object_unref(l_pElectrodeLabelLayout);
+			g_object_unref(electrodeLabelLayout);
 		}
 
 		bool CTopographicMap2DView::getChannel2DPosition(const uint32_t channelIndex, gint& channelX, gint& channelY) const
@@ -976,13 +976,13 @@ namespace OpenViBEPlugins
 			const uint32_t skullCenterX = m_skullX + m_skullDiameter / 2;
 			const uint32_t skullCenterY = m_skullY + m_skullDiameter / 2;
 			//get normalized coordinates
-			double* l_pOriginalElectrodePosition;
-			m_topographicMapDatabase.getChannelPosition(channelIndex, l_pOriginalElectrodePosition);
+			double* originalElectrodePosition;
+			m_topographicMapDatabase.getChannelPosition(channelIndex, originalElectrodePosition);
 
 			/* flip the eletrode positions in order to use the mensia coordinate system */
-			const double x = l_pOriginalElectrodePosition[0];
-			const double y = l_pOriginalElectrodePosition[1];
-			const double z = l_pOriginalElectrodePosition[2];
+			const double x = originalElectrodePosition[0];
+			const double y = originalElectrodePosition[1];
+			const double z = originalElectrodePosition[2];
 
 			double electrodePosition[3] = { -y, x, z };
 
@@ -996,9 +996,9 @@ namespace OpenViBEPlugins
 				else //radial
 				{
 					//compute back frame 2D coordinates
-					const double l_f64Theta = getThetaFromCartesianCoordinates(electrodePosition);
-					const double l_f64Phi   = getPhiFromCartesianCoordinates(electrodePosition);
-					compute2DCoordinates(l_f64Theta, l_f64Phi, skullCenterX, skullCenterY, channelX, channelY);
+					const double theta = getThetaFromCartesianCoordinates(electrodePosition);
+					const double phi   = getPhiFromCartesianCoordinates(electrodePosition);
+					compute2DCoordinates(theta, phi, skullCenterX, skullCenterY, channelX, channelY);
 				}
 			}
 			else if (m_currentView == TopographicMap2DView_Back)
@@ -1014,14 +1014,14 @@ namespace OpenViBEPlugins
 				else //radial
 				{
 					//transform coordinates from top frame to back frame
-					double l_pBackElectrodePosition[3];
-					l_pBackElectrodePosition[0] = electrodePosition[0];
-					l_pBackElectrodePosition[1] = electrodePosition[2];
-					l_pBackElectrodePosition[2] = -electrodePosition[1];
+					double backElectrodePosition[3];
+					backElectrodePosition[0] = electrodePosition[0];
+					backElectrodePosition[1] = electrodePosition[2];
+					backElectrodePosition[2] = -electrodePosition[1];
 					//compute back frame 2D coordinates
-					const double l_f64Theta = getThetaFromCartesianCoordinates(l_pBackElectrodePosition);
-					const double l_f64Phi   = getPhiFromCartesianCoordinates(l_pBackElectrodePosition);
-					compute2DCoordinates(l_f64Theta, l_f64Phi, skullCenterX, skullCenterY, channelX, channelY);
+					const double theta = getThetaFromCartesianCoordinates(backElectrodePosition);
+					const double phi   = getPhiFromCartesianCoordinates(backElectrodePosition);
+					compute2DCoordinates(theta, phi, skullCenterX, skullCenterY, channelX, channelY);
 				}
 			}
 			else if (m_currentView == TopographicMap2DView_Left)
@@ -1037,14 +1037,14 @@ namespace OpenViBEPlugins
 				else //radial
 				{
 					//transform coordinates from top frame to left frame
-					double l_pBackElectrodePosition[3];
-					l_pBackElectrodePosition[0] = -electrodePosition[1];
-					l_pBackElectrodePosition[1] = electrodePosition[2];
-					l_pBackElectrodePosition[2] = -electrodePosition[0];
+					double backElectrodePosition[3];
+					backElectrodePosition[0] = -electrodePosition[1];
+					backElectrodePosition[1] = electrodePosition[2];
+					backElectrodePosition[2] = -electrodePosition[0];
 					//compute back frame 2D coordinates
-					const double l_f64Theta = getThetaFromCartesianCoordinates(l_pBackElectrodePosition);
-					const double l_f64Phi   = getPhiFromCartesianCoordinates(l_pBackElectrodePosition);
-					compute2DCoordinates(l_f64Theta, l_f64Phi, skullCenterX, skullCenterY, channelX, channelY);
+					const double theta = getThetaFromCartesianCoordinates(backElectrodePosition);
+					const double phi   = getPhiFromCartesianCoordinates(backElectrodePosition);
+					compute2DCoordinates(theta, phi, skullCenterX, skullCenterY, channelX, channelY);
 				}
 			}
 			else if (m_currentView == TopographicMap2DView_Right)
@@ -1060,14 +1060,14 @@ namespace OpenViBEPlugins
 				else //radial
 				{
 					//transform coordinates from top frame to left frame
-					double l_pBackElectrodePosition[3];
-					l_pBackElectrodePosition[0] = electrodePosition[1];
-					l_pBackElectrodePosition[1] = electrodePosition[2];
-					l_pBackElectrodePosition[2] = electrodePosition[0];
+					double backElectrodePosition[3];
+					backElectrodePosition[0] = electrodePosition[1];
+					backElectrodePosition[1] = electrodePosition[2];
+					backElectrodePosition[2] = electrodePosition[0];
 					//compute back frame 2D coordinates
-					const double l_f64Theta = getThetaFromCartesianCoordinates(l_pBackElectrodePosition);
-					const double l_f64Phi   = getPhiFromCartesianCoordinates(l_pBackElectrodePosition);
-					compute2DCoordinates(l_f64Theta, l_f64Phi, skullCenterX, skullCenterY, channelX, channelY);
+					const double theta = getThetaFromCartesianCoordinates(backElectrodePosition);
+					const double phi   = getPhiFromCartesianCoordinates(backElectrodePosition);
+					compute2DCoordinates(theta, phi, skullCenterX, skullCenterY, channelX, channelY);
 				}
 			}
 

@@ -17,7 +17,7 @@ namespace OpenViBEDesigner
 		bool initialize(const OpenViBE::CIdentifier& identifier, const OpenViBE::CString& name, OpenViBEVisualizationToolkit::EVisualizationWidgetType type,
 						const OpenViBE::CIdentifier& parentIdentifier, const OpenViBE::CIdentifier& boxID, uint32_t childCount) override;
 
-		OpenViBE::CIdentifier getIdentifier() const override { return m_Identifier; }
+		OpenViBE::CIdentifier getIdentifier() const override { return m_id; }
 
 		const OpenViBE::CString& getName() const override { return m_Name; }
 
@@ -59,7 +59,7 @@ namespace OpenViBEDesigner
 	private:
 
 		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
-		OpenViBE::CIdentifier m_Identifier = OV_UndefinedIdentifier;
+		OpenViBE::CIdentifier m_id = OV_UndefinedIdentifier;
 		OpenViBE::CString m_Name;
 		OpenViBEVisualizationToolkit::EVisualizationWidgetType m_Type;
 		OpenViBE::CIdentifier m_ParentIdentifier = OV_UndefinedIdentifier;

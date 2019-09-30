@@ -35,7 +35,7 @@ bool CConnectorEditor::run()
 	t_isTypeSupported isTypeSupported   = nullptr;
 	//	t_updateConnectorIdentifier updateConnectorIdentifier = nullptr;
 
-	BoxInterfacorType interfacorType;
+	EBoxInterfacorType interfacorType;
 	switch (m_connectorType)
 	{
 		case Box_Input:

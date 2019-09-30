@@ -456,7 +456,7 @@ namespace
 		const CIdentifier newID = data->interfacedScenario->m_rScenario.getUnusedSettingIdentifier(OV_UndefinedIdentifier);
 		if (newID != OV_UndefinedIdentifier)
 		{
-			data->interfacedScenario->m_rScenario.updateInterfacorIdentifier(BoxInterfacorType::Setting, uint32_t(data->settingIndex), newID);
+			data->interfacedScenario->m_rScenario.updateInterfacorIdentifier(EBoxInterfacorType::Setting, uint32_t(data->settingIndex), newID);
 			data->interfacedScenario->redrawConfigureScenarioSettingsDialog();
 		}
 	}
@@ -466,7 +466,7 @@ namespace
 		CIdentifier newID;
 		if (newID.fromString(gtk_entry_get_text(GTK_ENTRY(entry))))
 		{
-			data->interfacedScenario->m_rScenario.updateInterfacorIdentifier(BoxInterfacorType::Setting, uint32_t(data->settingIndex), newID);
+			data->interfacedScenario->m_rScenario.updateInterfacorIdentifier(EBoxInterfacorType::Setting, uint32_t(data->settingIndex), newID);
 		}
 	}
 
@@ -760,7 +760,7 @@ void CInterfacedScenario::redrawConfigureScenarioSettingsDialog()
 
 			// Set the identifer
 			CIdentifier settingIdentifier;
-			m_rScenario.getInterfacorIdentifier(BoxInterfacorType::Setting, l_ui32SettingIndex, settingIdentifier);
+			m_rScenario.getInterfacorIdentifier(EBoxInterfacorType::Setting, l_ui32SettingIndex, settingIdentifier);
 			gtk_entry_set_text(GTK_ENTRY(l_pSettingEntryIdentifier), settingIdentifier.toString().toASCIIString());
 
 			// Add widget for the actual setting

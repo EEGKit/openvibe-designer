@@ -45,7 +45,7 @@ CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& ctx, IBox
 {
 	m_rBox.addObserver(this);
 
-	if (m_rBox.getInterfacorCountIncludingDeprecated(BoxInterfacorType::Setting))
+	if (m_rBox.getInterfacorCountIncludingDeprecated(EBoxInterfacorType::Setting))
 	{
 		GtkBuilder* l_pBuilderInterfaceSetting = gtk_builder_new(); // glade_xml_new(m_sGUIFilename.toASCIIString(), "box_configuration", nullptr);
 		gtk_builder_add_from_file(l_pBuilderInterfaceSetting, m_sGUIFilename.toASCIIString(), nullptr);
@@ -68,7 +68,7 @@ CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& ctx, IBox
 		m_pScrolledWindow = GTK_SCROLLED_WINDOW(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration-scrolledwindow"));
 		m_pViewPort       = GTK_VIEWPORT(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration-viewport"));
 
-		gtk_table_resize(m_pSettingsTable, m_rBox.getInterfacorCountIncludingDeprecated(BoxInterfacorType::Setting), 4);
+		gtk_table_resize(m_pSettingsTable, m_rBox.getInterfacorCountIncludingDeprecated(EBoxInterfacorType::Setting), 4);
 
 		generateSettingsTable();
 
@@ -129,7 +129,7 @@ CBoxConfigurationDialog::~CBoxConfigurationDialog()
 bool CBoxConfigurationDialog::run()
 {
 	bool modified = false;
-	if (m_rBox.getInterfacorCountIncludingDeprecated(BoxInterfacorType::Setting))
+	if (m_rBox.getInterfacorCountIncludingDeprecated(EBoxInterfacorType::Setting))
 	{
 		CSettingCollectionHelper l_oHelper(m_kernelContext, m_sGUISettingsFilename.toASCIIString());
 		storeState();
@@ -206,7 +206,7 @@ void CBoxConfigurationDialog::update(CObservable& /*o*/, void* data)
 {
 	const BoxEventMessage* l_pEvent = static_cast<BoxEventMessage*>(data);
 
-	switch (l_pEvent->m_eType)
+	switch (l_pEvent->m_Type)
 	{
 		case SettingsAllChange:
 			generateSettingsTable();
@@ -215,22 +215,22 @@ void CBoxConfigurationDialog::update(CObservable& /*o*/, void* data)
 		case SettingValueUpdate:
 		{
 			CString l_sSettingValue;
-			m_rBox.getSettingValue(l_pEvent->m_i32FirstIndex, l_sSettingValue);
+			m_rBox.getSettingValue(l_pEvent->m_FirstIndex, l_sSettingValue);
 
-			m_vSettingViewVector[l_pEvent->m_i32FirstIndex]->setValue(l_sSettingValue);
+			m_vSettingViewVector[l_pEvent->m_FirstIndex]->setValue(l_sSettingValue);
 			break;
 		}
 
 		case SettingDelete:
-			removeSetting(l_pEvent->m_i32FirstIndex);
+			removeSetting(l_pEvent->m_FirstIndex);
 			break;
 
 		case SettingAdd:
-			addSetting(l_pEvent->m_i32FirstIndex);
+			addSetting(l_pEvent->m_FirstIndex);
 			break;
 
 		case SettingChange:
-			settingChange(l_pEvent->m_i32FirstIndex);
+			settingChange(l_pEvent->m_FirstIndex);
 			break;
 
 		default:
@@ -251,19 +251,19 @@ void CBoxConfigurationDialog::generateSettingsTable()
 	uint32_t l_ui32TableSize = 0;
 	if (m_bIsScenarioRunning)
 	{
-		for (uint32_t i = 0; i < m_rBox.getInterfacorCountIncludingDeprecated(BoxInterfacorType::Setting); ++i)
+		for (uint32_t i = 0; i < m_rBox.getInterfacorCountIncludingDeprecated(EBoxInterfacorType::Setting); ++i)
 		{
 			bool mod = false;
 			m_rBox.getSettingMod(i, mod);
 			if (mod) { l_ui32TableSize++; }
 		}
 	}
-	else { l_ui32TableSize = m_rBox.getInterfacorCountIncludingDeprecated(BoxInterfacorType::Setting); }
+	else { l_ui32TableSize = m_rBox.getInterfacorCountIncludingDeprecated(EBoxInterfacorType::Setting); }
 	gtk_table_resize(m_pSettingsTable, l_ui32TableSize + 2, 4);
 
 	// Iterate over box settings, generate corresponding gtk widgets. If the scenario is running, we are making a
 	// 'modifiable settings' dialog and use a subset of widgets with a slightly different layout and buttons.
-	for (uint32_t settingIndex = 0, tableIndex = 0; settingIndex < m_rBox.getInterfacorCountIncludingDeprecated(BoxInterfacorType::Setting); ++settingIndex)
+	for (uint32_t settingIndex = 0, tableIndex = 0; settingIndex < m_rBox.getInterfacorCountIncludingDeprecated(EBoxInterfacorType::Setting); ++settingIndex)
 	{
 		if (addSettingsToView(settingIndex, tableIndex)) { ++tableIndex; }
 	}
@@ -283,7 +283,7 @@ bool CBoxConfigurationDialog::addSettingsToView(const uint32_t settingIndex, con
 		Setting::CAbstractSettingView* l_oView = m_oSettingFactory.getSettingView(m_rBox, settingIndex);
 
 		bool isSettingDeprecated = false;
-		m_rBox.getInterfacorDeprecatedStatus(BoxInterfacorType::Setting, settingIndex, isSettingDeprecated);
+		m_rBox.getInterfacorDeprecatedStatus(EBoxInterfacorType::Setting, settingIndex, isSettingDeprecated);
 		if (isSettingDeprecated)
 		{
 			gtk_widget_set_sensitive(GTK_WIDGET(l_oView->getNameWidget()), false);
@@ -458,7 +458,7 @@ void CBoxConfigurationDialog::saveConfiguration() const
 
 		XML::IXMLHandler* l_pHandler = XML::createXMLHandler();
 		XML::IXMLNode* l_pRootNode   = XML::createNode(ROOT_NAME);
-		for (size_t i = 0; i < m_rBox.getInterfacorCountIncludingDeprecated(BoxInterfacorType::Setting); ++i)
+		for (size_t i = 0; i < m_rBox.getInterfacorCountIncludingDeprecated(EBoxInterfacorType::Setting); ++i)
 		{
 			XML::IXMLNode* l_pTempNode = XML::createNode(SETTING_NAME);
 			CString l_sValue;
@@ -550,7 +550,7 @@ void CBoxConfigurationDialog::onOverrideBrowse() const
 void CBoxConfigurationDialog::storeState()
 {
 	m_SettingsMemory.clear();
-	for (uint32_t i = 0; i < m_rBox.getInterfacorCountIncludingDeprecated(BoxInterfacorType::Setting); ++i)
+	for (uint32_t i = 0; i < m_rBox.getInterfacorCountIncludingDeprecated(EBoxInterfacorType::Setting); ++i)
 	{
 		CString temp;
 		m_rBox.getSettingValue(i, temp);
@@ -562,7 +562,7 @@ void CBoxConfigurationDialog::restoreState()
 {
 	for (uint32_t i = 0; i < m_SettingsMemory.size(); ++i)
 	{
-		if (i >= m_rBox.getInterfacorCountIncludingDeprecated(BoxInterfacorType::Setting))
+		if (i >= m_rBox.getInterfacorCountIncludingDeprecated(EBoxInterfacorType::Setting))
 		{
 			// This is not supposed to happen
 			return;
