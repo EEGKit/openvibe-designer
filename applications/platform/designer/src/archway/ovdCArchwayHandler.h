@@ -137,7 +137,7 @@ namespace Mensia {
 
 		struct ArchwayAPI* m_Archway = nullptr;
 		System::CDynamicModule m_ArchwayModule;
-		const OpenViBE::Kernel::IKernelContext& m_KernelContext;
+		const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
 
 		// Current Configuration
 		std::map< uint32_t, std::map< std::string, std::string > > m_PipelineSettings;

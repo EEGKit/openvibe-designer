@@ -32,7 +32,7 @@ std::string CArchwayHandler::getArchwayErrorString() const
 }
 
 CArchwayHandler::CArchwayHandler(const OpenViBE::Kernel::IKernelContext& ctx)
-	: m_DeviceURL("simulator://"), m_Archway(nullptr), m_KernelContext(ctx), m_RunningPipelineId(0) { }
+	: m_DeviceURL("simulator://"), m_Archway(nullptr), m_kernelCtx(ctx), m_RunningPipelineId(0) { }
 
 EngineInitialisationStatus CArchwayHandler::initialize()
 {
@@ -83,13 +83,13 @@ EngineInitialisationStatus CArchwayHandler::initialize()
 
 	if (!didLoad)
 	{
-		m_KernelContext.getLogManager() << LogLevel_Warning << "Failed to load symbols from Archway library [" << m_ArchwayModule.getErrorDetails() << "]\n";
+		m_kernelCtx.getLogManager() << LogLevel_Warning << "Failed to load symbols from Archway library [" << m_ArchwayModule.getErrorDetails() << "]\n";
 		delete m_Archway;
 		m_Archway = nullptr;
 		return EngineInitialisationStatus::NotAvailable;
 	}
 
-	m_KernelContext.getLogManager() << LogLevel_Trace << "Working with Archway version: " << m_Archway->getVersionDescription() << "\n";
+	m_kernelCtx.getLogManager() << LogLevel_Trace << "Working with Archway version: " << m_Archway->getVersionDescription() << "\n";
 
 	// Now initialize the ArchwayBridge structure with closures that bridge to local Archway functions
 	// this way we do not have to expose the Archway object or the C API
@@ -110,7 +110,7 @@ EngineInitialisationStatus CArchwayHandler::initialize()
 		{
 			if (!this->m_Archway->getPendingValue(m_RunningPipelineId, uiValueChannelId, &m_vValueMatrix[0]))
 			{
-				m_KernelContext.getLogManager() << LogLevel_Warning << "Failed to get pending value " << this->getArchwayErrorString().c_str() << "\n";
+				m_kernelCtx.getLogManager() << LogLevel_Warning << "Failed to get pending value " << this->getArchwayErrorString().c_str() << "\n";
 			}
 		}
 		return m_vValueMatrix;
@@ -127,7 +127,7 @@ EngineInitialisationStatus CArchwayHandler::initialize()
 	// the ConfigurationManager, this is because a box can not communicate directly with the Designer
 	std::ostringstream l_ssArchwayBridgeAddress;
 	l_ssArchwayBridgeAddress << static_cast<void const*>(&m_ArchwayBridge);
-	m_KernelContext.getConfigurationManager().createConfigurationToken("Designer_ArchwayBridgeAddress", l_ssArchwayBridgeAddress.str().c_str());
+	m_kernelCtx.getConfigurationManager().createConfigurationToken("Designer_ArchwayBridgeAddress", l_ssArchwayBridgeAddress.str().c_str());
 
 	if (!this->loadPipelineConfigurations()) { return EngineInitialisationStatus::Failure; }
 
@@ -167,7 +167,7 @@ EngineInitialisationStatus CArchwayHandler::initialize()
 
 	if (!this->initializeArchway())
 	{
-		m_KernelContext.getLogManager() << LogLevel_Warning << "Failed to initialize the engine " << this->getArchwayErrorString().c_str() << "\n";
+		m_kernelCtx.getLogManager() << LogLevel_Warning << "Failed to initialize the engine " << this->getArchwayErrorString().c_str() << "\n";
 		return EngineInitialisationStatus::Failure;
 	}
 
@@ -186,7 +186,7 @@ bool CArchwayHandler::uninitialize()
 	{
 		if (!m_Archway->stopEngine())
 		{
-			m_KernelContext.getLogManager() << LogLevel_Warning << "Failed to stop Engine " << this->getArchwayErrorString().c_str() << "\n";
+			m_kernelCtx.getLogManager() << LogLevel_Warning << "Failed to stop Engine " << this->getArchwayErrorString().c_str() << "\n";
 		}
 	}
 
@@ -194,7 +194,7 @@ bool CArchwayHandler::uninitialize()
 	{
 		if (!m_Archway->stopAllAcquisitionDevices())
 		{
-			m_KernelContext.getLogManager() << LogLevel_Warning << "Failed to stop all acquisition devices " << this->getArchwayErrorString().c_str() << "\n";
+			m_kernelCtx.getLogManager() << LogLevel_Warning << "Failed to stop all acquisition devices " << this->getArchwayErrorString().c_str() << "\n";
 		}
 	}
 
@@ -202,7 +202,7 @@ bool CArchwayHandler::uninitialize()
 	{
 		if (!m_Archway->uninitialize())
 		{
-			m_KernelContext.getLogManager() << LogLevel_Warning << "Failed to uninitialize Archway " << this->getArchwayErrorString().c_str() << "\n";
+			m_kernelCtx.getLogManager() << LogLevel_Warning << "Failed to uninitialize Archway " << this->getArchwayErrorString().c_str() << "\n";
 		}
 	}
 
@@ -224,7 +224,7 @@ bool CArchwayHandler::initializeArchway()
 {
 	assert(m_Archway);
 
-	m_KernelContext.getLogManager() << LogLevel_Trace << "Re-initializing engine in [" << (m_EngineType == EngineType::Local ? "Local" : "LAN") << "]" << "\n";
+	m_kernelCtx.getLogManager() << LogLevel_Trace << "Re-initializing engine in [" << (m_EngineType == EngineType::Local ? "Local" : "LAN") << "]" << "\n";
 	return m_Archway->initialize("user", "pass", "neurort-studio", s_ArchwayConfigurationFile.c_str());
 }
 
@@ -236,7 +236,7 @@ bool CArchwayHandler::uninitializeArchway()
 	{
 		if (!m_Archway->uninitialize())
 		{
-			m_KernelContext.getLogManager() << LogLevel_Warning << "Failed to uninitialize Archway " << this->getArchwayErrorString().c_str() << "\n";
+			m_kernelCtx.getLogManager() << LogLevel_Warning << "Failed to uninitialize Archway " << this->getArchwayErrorString().c_str() << "\n";
 			return false;
 		}
 	}
@@ -250,7 +250,7 @@ bool CArchwayHandler::reinitializeArchway()
 
 	if (!this->uninitializeArchway())
 	{
-		m_KernelContext.getLogManager() << LogLevel_Warning << "Failed to uninitialize Engine " << this->getArchwayErrorString().c_str() << "\n";
+		m_kernelCtx.getLogManager() << LogLevel_Warning << "Failed to uninitialize Engine " << this->getArchwayErrorString().c_str() << "\n";
 		return false;
 	}
 
@@ -258,11 +258,11 @@ bool CArchwayHandler::reinitializeArchway()
 
 	if (!this->initializeArchway())
 	{
-		m_KernelContext.getLogManager() << LogLevel_Warning << "Failed to initialize Engine " << this->getArchwayErrorString().c_str() << "\n";
+		m_kernelCtx.getLogManager() << LogLevel_Warning << "Failed to initialize Engine " << this->getArchwayErrorString().c_str() << "\n";
 		return false;
 	}
 
-	m_KernelContext.getLogManager() << LogLevel_Info << "Archway re-initialized \n";
+	m_kernelCtx.getLogManager() << LogLevel_Info << "Archway re-initialized \n";
 	return true;
 }
 
@@ -272,7 +272,7 @@ bool CArchwayHandler::startEngineWithPipeline(uint32_t uiPipelineClassId, bool i
 
 	if (m_Archway->isStarted())
 	{
-		m_KernelContext.getLogManager() << LogLevel_Info << "Engine is already started\n";
+		m_kernelCtx.getLogManager() << LogLevel_Info << "Engine is already started\n";
 		return true;
 	}
 
@@ -282,13 +282,13 @@ bool CArchwayHandler::startEngineWithPipeline(uint32_t uiPipelineClassId, bool i
 		{
 			if (!m_Archway->startImpedanceCheckOnAllAcquisitionDevices())
 			{
-				m_KernelContext.getLogManager() << LogLevel_Error << "Failed to start the impedance acquisition" << this->getArchwayErrorString().c_str() << "\n";
+				m_kernelCtx.getLogManager() << LogLevel_Error << "Failed to start the impedance acquisition" << this->getArchwayErrorString().c_str() << "\n";
 				return false;
 			}
 		}
 		else if (!m_Archway->startAllAcquisitionDevices())
 		{
-			m_KernelContext.getLogManager() << LogLevel_Error << "Failed to start the data acquisition" << this->getArchwayErrorString().c_str() << "\n";
+			m_kernelCtx.getLogManager() << LogLevel_Error << "Failed to start the data acquisition" << this->getArchwayErrorString().c_str() << "\n";
 			return false;
 		}
 	}
@@ -298,7 +298,7 @@ bool CArchwayHandler::startEngineWithPipeline(uint32_t uiPipelineClassId, bool i
 	if (m_RunningPipelineId == 0)
 	{
 		m_Archway->stopAllAcquisitionDevices();
-		m_KernelContext.getLogManager() << LogLevel_Error << "Failed to create pipeline " << this->getArchwayErrorString().c_str() << "\n";
+		m_kernelCtx.getLogManager() << LogLevel_Error << "Failed to create pipeline " << this->getArchwayErrorString().c_str() << "\n";
 		return false;
 	}
 
@@ -312,7 +312,7 @@ bool CArchwayHandler::startEngineWithPipeline(uint32_t uiPipelineClassId, bool i
 
 	if (!(isFastForward ? m_Archway->startEngineInFastForward() : m_Archway->startEngine()))
 	{
-		m_KernelContext.getLogManager() << LogLevel_Error << "Engine failed to start " << this->getArchwayErrorString().c_str() << "\n";
+		m_kernelCtx.getLogManager() << LogLevel_Error << "Engine failed to start " << this->getArchwayErrorString().c_str() << "\n";
 
 		uint32_t pendingLogMessageCount = m_Archway->getPendingLogMessageCount(m_RunningPipelineId);
 
@@ -323,18 +323,18 @@ bool CArchwayHandler::startEngineWithPipeline(uint32_t uiPipelineClassId, bool i
 			std::string logMessages;
 
 			m_Archway->getPendingLogMessage(m_RunningPipelineId, &logLevel, messageBuffer, sizeof(messageBuffer));
-			m_KernelContext.getLogManager() << ELogLevel(logLevel) << messageBuffer;
+			m_kernelCtx.getLogManager() << ELogLevel(logLevel) << messageBuffer;
 		}
 
 		if (!m_Archway->stopAllAcquisitionDevices())
 		{
-			m_KernelContext.getLogManager() << LogLevel_Error << "Failed to stop all acquisition devices " << this->getArchwayErrorString().c_str() << "\n";
+			m_kernelCtx.getLogManager() << LogLevel_Error << "Failed to stop all acquisition devices " << this->getArchwayErrorString().c_str() << "\n";
 		}
 
 		return false;
 	}
 
-	m_KernelContext.getLogManager() << LogLevel_Info << "Engine Started\n";
+	m_kernelCtx.getLogManager() << LogLevel_Info << "Engine Started\n";
 
 	return true;
 }
@@ -349,7 +349,7 @@ bool CArchwayHandler::stopEngine()
 	{
 		if (!m_Archway->stopEngine())
 		{
-			m_KernelContext.getLogManager() << LogLevel_Warning << "Failed to stop Engine " << this->getArchwayErrorString().c_str() << "\n";
+			m_kernelCtx.getLogManager() << LogLevel_Warning << "Failed to stop Engine " << this->getArchwayErrorString().c_str() << "\n";
 			hasStopSucceeded = false;
 		}
 	}
@@ -358,7 +358,7 @@ bool CArchwayHandler::stopEngine()
 	{
 		if (!m_Archway->stopAllAcquisitionDevices())
 		{
-			m_KernelContext.getLogManager() << LogLevel_Warning << "Failed to all acquisition devices " << this->getArchwayErrorString().c_str() << "\n";
+			m_kernelCtx.getLogManager() << LogLevel_Warning << "Failed to all acquisition devices " << this->getArchwayErrorString().c_str() << "\n";
 			hasStopSucceeded = false;
 		}
 	}
@@ -367,14 +367,14 @@ bool CArchwayHandler::stopEngine()
 	{
 		if (!m_Archway->releasePipeline(m_RunningPipelineId))
 		{
-			m_KernelContext.getLogManager() << LogLevel_Warning << "Failed to release pipeline [" << m_RunningPipelineId << "] " << this->getArchwayErrorString().c_str() << "\n";
+			m_kernelCtx.getLogManager() << LogLevel_Warning << "Failed to release pipeline [" << m_RunningPipelineId << "] " << this->getArchwayErrorString().c_str() << "\n";
 			hasStopSucceeded = false;
 		}
 
 		m_RunningPipelineId = 0;
 	}
 
-	m_KernelContext.getLogManager() << LogLevel_Info << "Engine Stopped\n";
+	m_kernelCtx.getLogManager() << LogLevel_Info << "Engine Stopped\n";
 	return hasStopSucceeded;
 }
 
@@ -389,12 +389,12 @@ bool CArchwayHandler::loopEngine()
 
 	if (!isPipelineRunning)
 	{
-		m_KernelContext.getLogManager() << LogLevel_Info << "Pipeline [" << m_RunningPipelineId << "] is not running.\n";
+		m_kernelCtx.getLogManager() << LogLevel_Info << "Pipeline [" << m_RunningPipelineId << "] is not running.\n";
 	}
 
 	if (isPipelineInErrorState)
 	{
-		m_KernelContext.getLogManager() << LogLevel_Error << "Pipeline [" << m_RunningPipelineId << "] is in error state.\n";
+		m_kernelCtx.getLogManager() << LogLevel_Error << "Pipeline [" << m_RunningPipelineId << "] is in error state.\n";
 	}
 
 	uint32_t pendingLogMessageCount = m_Archway->getPendingLogMessageCount(m_RunningPipelineId);
@@ -406,7 +406,7 @@ bool CArchwayHandler::loopEngine()
 		std::string logMessages;
 
 		m_Archway->getPendingLogMessage(m_RunningPipelineId, &logLevel, messageBuffer, sizeof(messageBuffer));
-		m_KernelContext.getLogManager() << ELogLevel(logLevel) << messageBuffer;
+		m_kernelCtx.getLogManager() << ELogLevel(logLevel) << messageBuffer;
 	}
 
 	if (!isPipelineRunning || isPipelineInErrorState)
@@ -478,7 +478,7 @@ std::vector<SPipeline> CArchwayHandler::getEnginePipelines() const
 
 	if (!m_Archway->enumerateAvailablePipelines(enumerateEnginePipelinesCallback, &callbackParameters))
 	{
-		m_KernelContext.getLogManager() << LogLevel_Warning << "Failed enumerate the available pipelines " << this->getArchwayErrorString().c_str() << "\n";
+		m_kernelCtx.getLogManager() << LogLevel_Warning << "Failed enumerate the available pipelines " << this->getArchwayErrorString().c_str() << "\n";
 	}
 
 	return enginePipelines;
@@ -502,12 +502,12 @@ std::vector<SPipelineParameter> CArchwayHandler::getPipelineParameters(uint32_t 
 
 	if (!m_Archway->enumeratePipelineParameters(pipelineID, enumeratePipelineParametersCallback, &callbackParameters))
 	{
-		m_KernelContext.getLogManager() << LogLevel_Warning << "Failed enumerate the pipeline's parameters " << this->getArchwayErrorString().c_str() << "\n";
+		m_kernelCtx.getLogManager() << LogLevel_Warning << "Failed enumerate the pipeline's parameters " << this->getArchwayErrorString().c_str() << "\n";
 	}
 
 	if (!m_Archway->releasePipeline(pipelineID))
 	{
-		m_KernelContext.getLogManager() << LogLevel_Warning << "Failed to release pipeline " << this->getArchwayErrorString().c_str() << "\n";
+		m_kernelCtx.getLogManager() << LogLevel_Warning << "Failed to release pipeline " << this->getArchwayErrorString().c_str() << "\n";
 	}
 
 	return pipelineParameters;
@@ -529,7 +529,7 @@ bool CArchwayHandler::setPipelineParameterValue(uint32_t pipelineClassID, std::s
 {
 	if (m_PipelineSettings.find(pipelineClassID) == m_PipelineSettings.end())
 	{
-		m_KernelContext.getLogManager() << LogLevel_Error << "Failed to set the value [" << parameterValue.c_str() << "] to the parameter [" << parameterName.c_str() << "]. The pipeline class id is invalid.\n";
+		m_kernelCtx.getLogManager() << LogLevel_Error << "Failed to set the value [" << parameterValue.c_str() << "] to the parameter [" << parameterName.c_str() << "]. The pipeline class id is invalid.\n";
 		return false;
 	}
 
@@ -579,7 +579,7 @@ bool CArchwayHandler::savePipelineConfigurations()
 
 	if (!file.good())
 	{
-		m_KernelContext.getLogManager() << LogLevel_Warning << "Cannot open file for writing\n";
+		m_kernelCtx.getLogManager() << LogLevel_Warning << "Cannot open file for writing\n";
 		return false;
 	}
 
@@ -603,7 +603,7 @@ bool CArchwayHandler::loadPipelineConfigurations()
 
 	if (!file.good())
 	{
-		m_KernelContext.getLogManager() << LogLevel_Trace << "Cannot open Engine Pipeline Configuration file for reading\n";
+		m_kernelCtx.getLogManager() << LogLevel_Trace << "Cannot open Engine Pipeline Configuration file for reading\n";
 		return false;
 	}
 
