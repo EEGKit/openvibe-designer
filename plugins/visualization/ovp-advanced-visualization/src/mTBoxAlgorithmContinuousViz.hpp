@@ -99,7 +99,7 @@ namespace Mensia
 		bool TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>::initialize()
 
 		{
-			const bool l_bResult = CBoxAlgorithmViz::initialize();
+			const bool res = CBoxAlgorithmViz::initialize();
 
 			m_oMatrixDecoder.initialize(*this, 0);
 			m_oStimulationDecoder.initialize(*this, 1);
@@ -110,7 +110,7 @@ namespace Mensia
 			m_pRuler->setRendererContext(m_pRendererContext);
 			m_pRuler->setRenderer(m_pRenderer);
 
-			return l_bResult;
+			return res;
 		}
 
 		template <class TRendererFactoryClass, class TRulerClass>

@@ -56,12 +56,12 @@ void CColorSettingView::selectColor()
 	GdkColor l_oColor;
 	gtk_color_button_get_color(m_button, &l_oColor);
 
-	char l_sBuffer[1024];
-	sprintf(l_sBuffer, "%i,%i,%i", int(round((l_oColor.red * 100) / 65535.)), int(round((l_oColor.green * 100) / 65535.)),
+	char buffer[1024];
+	sprintf(buffer, "%i,%i,%i", int(round((l_oColor.red * 100) / 65535.)), int(round((l_oColor.green * 100) / 65535.)),
 			int(round((l_oColor.blue * 100) / 65535.)));
 
-	getBox().setSettingValue(getSettingIndex(), l_sBuffer);
-	setValue(l_sBuffer);
+	getBox().setSettingValue(getSettingIndex(), buffer);
+	setValue(buffer);
 }
 
 void CColorSettingView::onChange()

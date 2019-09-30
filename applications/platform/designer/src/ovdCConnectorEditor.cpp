@@ -112,7 +112,7 @@ bool CConnectorEditor::run()
 	gtk_entry_set_text(m_ConnectorIdentifierEntry, connectorIdentifier.toString().toASCIIString());
 
 	bool l_bFinished = false;
-	bool l_bResult   = false;
+	bool res   = false;
 	while (!l_bFinished)
 	{
 		const gint l_iResult = gtk_dialog_run(GTK_DIALOG(l_pConnectorDialog));
@@ -137,7 +137,7 @@ bool CConnectorEditor::run()
 				}
 				//				(m_rBox.*addConnector)(newName, newType);
 				l_bFinished = true;
-				l_bResult   = true;
+				res   = true;
 			}
 		}
 		else if (l_iResult == 2) // revert
@@ -151,7 +151,7 @@ bool CConnectorEditor::run()
 		else
 		{
 			l_bFinished = true;
-			l_bResult   = false;
+			res   = false;
 		}
 	}
 
@@ -159,5 +159,5 @@ bool CConnectorEditor::run()
 
 	g_object_unref(l_pBuilderInterfaceConnector);
 
-	return l_bResult;
+	return res;
 }

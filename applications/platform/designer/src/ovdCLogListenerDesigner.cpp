@@ -339,7 +339,7 @@ void CLogListenerDesigner::log(const char* value)
 void CLogListenerDesigner::log(const ELogLevel eLogLevel)
 {
 	//	GtkTextIter l_oTextIter;
-	//	gtk_text_buffer_get_end_iter(m_pBuffer, &l_oTextIter);
+	//	gtk_text_buffer_get_end_iter(m_Buffer, &l_oTextIter);
 
 	//new log, will be deleted when m_vStoredLog is cleared
 	m_pCurrentLog = new CLogObject(m_pBuffer);//m_pNonFilteredBuffer);

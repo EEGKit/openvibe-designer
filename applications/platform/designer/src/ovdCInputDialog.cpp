@@ -38,9 +38,9 @@ CInputDialog::~CInputDialog() { gtk_widget_destroy(GTK_WIDGET(m_pInputDialog)); 
 
 void CInputDialog::run()
 {
-	const gint l_iResult = gtk_dialog_run(m_pInputDialog);
+	const gint res = gtk_dialog_run(m_pInputDialog);
 
-	if (l_iResult == GTK_RESPONSE_ACCEPT) { if (m_fpOKButtonCB != nullptr) { m_fpOKButtonCB(GTK_WIDGET(m_pInputDialogOKButton), this); } }
+	if (res == GTK_RESPONSE_ACCEPT) { if (m_fpOKButtonCB != nullptr) { m_fpOKButtonCB(GTK_WIDGET(m_pInputDialogOKButton), this); } }
 
 	gtk_widget_hide_all(GTK_WIDGET(m_pInputDialog));
 }

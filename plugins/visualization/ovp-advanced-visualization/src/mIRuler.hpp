@@ -84,7 +84,7 @@ namespace Mensia
 
 			std::vector<double> split_range(const double fStart, const double fStop, const uint32_t uiCount = 10) const
 			{
-				std::vector<double> l_vResult;
+				std::vector<double> res;
 				const double l_fRange = fStop - fStart;
 				const double l_fOrder = floor(log(l_fRange) / log(10.) - .1f);
 				double l_fStep        = pow(10, l_fOrder);
@@ -105,10 +105,10 @@ namespace Mensia
 				while (l_fValue < fStart) { l_fValue += l_fStep; }
 				while (l_fValue <= fStop)
 				{
-					l_vResult.push_back(std::abs(l_fValue) < std::abs(l_fRange / 1000) ? 0 : l_fValue);
+					res.push_back(std::abs(l_fValue) < std::abs(l_fRange / 1000) ? 0 : l_fValue);
 					l_fValue += l_fStep;
 				}
-				return l_vResult;
+				return res;
 			}
 
 			static std::string getLabel(const double v)

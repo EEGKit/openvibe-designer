@@ -23,7 +23,7 @@ bool CRenameDialog::run()
 	gtk_entry_set_text(GTK_ENTRY(l_pName), m_sInitialName.toASCIIString());
 
 	bool l_bFinished = false;
-	bool l_bResult   = false;
+	bool res   = false;
 	while (!l_bFinished)
 	{
 		const gint l_iResult = gtk_dialog_run(GTK_DIALOG(l_pDialog));
@@ -31,7 +31,7 @@ bool CRenameDialog::run()
 		{
 			m_sResult   = gtk_entry_get_text(GTK_ENTRY(l_pName));
 			l_bFinished = true;
-			l_bResult   = true;
+			res   = true;
 		}
 		else if (l_iResult == 1) // default
 		{
@@ -44,11 +44,11 @@ bool CRenameDialog::run()
 		else
 		{
 			l_bFinished = true;
-			l_bResult   = false;
+			res   = false;
 		}
 	}
 
 	gtk_widget_destroy(l_pDialog);
 
-	return l_bResult;
+	return res;
 }

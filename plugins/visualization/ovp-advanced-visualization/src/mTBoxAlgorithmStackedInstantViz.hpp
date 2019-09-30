@@ -109,7 +109,7 @@ namespace Mensia
 		bool TBoxAlgorithmStackedInstantViz<bDrawBorders, TRendererFactoryClass, TRulerClass>::initialize()
 
 		{
-			const bool l_bResult = CBoxAlgorithmViz::initialize();
+			const bool res = CBoxAlgorithmViz::initialize();
 
 			m_oMatrixDecoder.initialize(*this, 0);
 			m_oStimulationDecoder.initialize(*this, 1);
@@ -136,7 +136,7 @@ namespace Mensia
 			}
 			OpenViBEVisualizationToolkit::Tools::ColorGradient::format(m_sColorGradient, gradientMatrix);
 
-			return l_bResult;
+			return res;
 		}
 
 		template <bool bDrawBorders, class TRendererFactoryClass, class TRulerClass>

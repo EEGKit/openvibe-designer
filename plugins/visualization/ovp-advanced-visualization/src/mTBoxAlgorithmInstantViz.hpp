@@ -115,7 +115,7 @@ namespace Mensia
 		template <class TRendererFactoryClass, class TRulerClass>
 		bool TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::initialize()
 		{
-			bool l_bResult = CBoxAlgorithmViz::initialize();
+			bool res = CBoxAlgorithmViz::initialize();
 
 			m_dLastERPFraction = 0;
 
@@ -129,7 +129,7 @@ namespace Mensia
 				if (!m_vRenderer[i])
 				{
 					this->getLogManager() << LogLevel_Error << "Could not create renderer, it might have been disabled at compile time\n";
-					l_bResult = false;
+					res = false;
 				}
 			}
 
@@ -139,7 +139,7 @@ namespace Mensia
 
 			gtk_widget_set_sensitive(m_pTimeScale, false);
 
-			return l_bResult;
+			return res;
 		}
 
 		template <class TRendererFactoryClass, class TRulerClass>

@@ -65,7 +65,7 @@ CCommentEditorDialog::CCommentEditorDialog(const IKernelContext& ctx, IComment& 
 bool CCommentEditorDialog::run()
 
 {
-	bool l_bResult = false;
+	bool res = false;
 
 	m_pInterface = gtk_builder_new(); // glade_xml_new(m_sGUIFilename.toASCIIString(), "comment", nullptr);
 	gtk_builder_add_from_file(m_pInterface, m_sGUIFilename.toASCIIString(), nullptr);
@@ -111,7 +111,7 @@ bool CCommentEditorDialog::run()
 	const gint l_iResult = gtk_dialog_run(GTK_DIALOG(m_pDialog));
 	if (l_iResult == GTK_RESPONSE_APPLY)
 	{
-		l_bResult = true;
+		res = true;
 
 		GtkTextIter l_oStartIter;
 		GtkTextIter l_oEndIter;
@@ -123,7 +123,7 @@ bool CCommentEditorDialog::run()
 	gtk_widget_destroy(m_pInfoDialog);
 	gtk_widget_destroy(m_pDialog);
 
-	return l_bResult;
+	return res;
 }
 
 //-----------------------------------------------------------------------------------

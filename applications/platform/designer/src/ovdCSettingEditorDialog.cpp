@@ -57,7 +57,7 @@ bool CSettingEditorDialog::run()
 	if (l_iActive != -1) { gtk_combo_box_set_active(GTK_COMBO_BOX(m_pType), l_iActive); }
 
 	bool l_bFinished = false;
-	bool l_bResult   = false;
+	bool res   = false;
 	while (!l_bFinished)
 	{
 		const gint l_iResult = gtk_dialog_run(GTK_DIALOG(l_pDialog));
@@ -72,7 +72,7 @@ bool CSettingEditorDialog::run()
 				m_rBox.setSettingValue(m_ui32SettingIndex, m_oHelper.getValue(l_oSettingType, m_pDefaultValue));
 				m_rBox.setSettingDefaultValue(m_ui32SettingIndex, m_oHelper.getValue(l_oSettingType, m_pDefaultValue));
 				l_bFinished = true;
-				l_bResult   = true;
+				res   = true;
 			}
 		}
 		else if (l_iResult == 2) // revert
@@ -84,13 +84,13 @@ bool CSettingEditorDialog::run()
 		else
 		{
 			l_bFinished = true;
-			l_bResult   = false;
+			res   = false;
 		}
 	}
 
 	gtk_widget_destroy(l_pDialog);
 
-	return l_bResult;
+	return res;
 }
 
 void CSettingEditorDialog::typeChangedCB()

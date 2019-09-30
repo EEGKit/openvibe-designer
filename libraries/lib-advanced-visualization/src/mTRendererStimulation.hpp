@@ -56,12 +56,12 @@ namespace Mensia
 
 			bool render(const IRendererContext& rContext) override
 			{
-				bool l_bResult = true;
+				bool res = true;
 
 				if (bPreRender)
 				{
 					glPushAttrib(GL_ALL_ATTRIB_BITS);
-					l_bResult = T::render(rContext);
+					res = T::render(rContext);
 					glPopAttrib();
 				}
 
@@ -161,11 +161,11 @@ namespace Mensia
 				if (!bPreRender)
 				{
 					glPushAttrib(GL_ALL_ATTRIB_BITS);
-					l_bResult = T::render(rContext);
+					res = T::render(rContext);
 					glPopAttrib();
 				}
 
-				return l_bResult && ok;
+				return res && ok;
 			}
 
 			float* getMarkerColor(const uint64_t ui64Identifier)
@@ -183,13 +183,13 @@ namespace Mensia
 			template <typename V>
 			V reverse(V v)
 			{
-				V l_uiResult = 0;
+				V res = 0;
 				for (V i = 0; i < sizeof(V) * 8; ++i)
 				{
-					l_uiResult <<= 1;
-					l_uiResult |= ((v & (1 << i)) ? 1 : 0);
+					res <<= 1;
+					res |= ((v & (1 << i)) ? 1 : 0);
 				}
-				return l_uiResult;
+				return res;
 			}
 		};
 	} // namespace AdvancedVisualization

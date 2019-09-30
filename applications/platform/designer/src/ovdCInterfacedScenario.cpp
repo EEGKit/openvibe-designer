@@ -53,17 +53,17 @@ namespace
 		GdkColor l_oGdkColor;
 		uint32_t l_ui32Value1 = 0;
 		uint32_t l_ui32Value2 = 0;
-		uint64_t l_ui64Result     = 0;
+		uint64_t res     = 0;
 
 		sscanf(identifier.toString(), "(0x%08X, 0x%08X)", &l_ui32Value1, &l_ui32Value2);
-		l_ui64Result += l_ui32Value1;
-		l_ui64Result <<= 32;
-		l_ui64Result += l_ui32Value2;
+		res += l_ui32Value1;
+		res <<= 32;
+		res += l_ui32Value2;
 
 		l_oGdkColor.pixel = guint16(0);
-		l_oGdkColor.red   = guint16((l_ui64Result & 0xffff) | 0x8000);
-		l_oGdkColor.green = guint16(((l_ui64Result >> 16) & 0xffff) | 0x8000);
-		l_oGdkColor.blue  = guint16(((l_ui64Result >> 32) & 0xffff) | 0x8000);
+		l_oGdkColor.red   = guint16((res & 0xffff) | 0x8000);
+		l_oGdkColor.green = guint16(((res >> 16) & 0xffff) | 0x8000);
+		l_oGdkColor.blue  = guint16(((res >> 32) & 0xffff) | 0x8000);
 
 		return l_oGdkColor;
 	}

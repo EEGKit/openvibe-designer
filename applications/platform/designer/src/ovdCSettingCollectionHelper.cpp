@@ -203,10 +203,10 @@ namespace
 		GdkColor l_oColor;
 		gtk_color_button_get_color(button, &l_oColor);
 
-		char l_sBuffer[1024];
-		sprintf(l_sBuffer, "%i,%i,%i", (l_oColor.red * 100) / 65535, (l_oColor.green * 100) / 65535, (l_oColor.blue * 100) / 65535);
+		char buffer[1024];
+		sprintf(buffer, "%i,%i,%i", (l_oColor.red * 100) / 65535, (l_oColor.green * 100) / 65535, (l_oColor.blue * 100) / 65535);
 
-		gtk_entry_set_text(l_widget, l_sBuffer);
+		gtk_entry_set_text(l_widget, buffer);
 	}
 
 	// ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- -----------
@@ -604,18 +604,18 @@ CString CSettingCollectionHelper::getValueBitMask(const CIdentifier& /*typeID*/,
 	vector<GtkWidget*> l_vWidget;
 	if (!GTK_IS_CONTAINER(widget)) { return ""; }
 	gtk_container_foreach(GTK_CONTAINER(widget), collect_widget_cb, &l_vWidget);
-	string l_sResult;
+	string res;
 
 	for (auto& window : l_vWidget)
 	{
 		if (!GTK_IS_TOGGLE_BUTTON(window)) { return ""; }
 		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(window)))
 		{
-			if (!l_sResult.empty()) { l_sResult += string(1, OV_Value_EnumeratedStringSeparator); }
-			l_sResult += gtk_button_get_label(GTK_BUTTON(window));
+			if (!res.empty()) { res += string(1, OV_Value_EnumeratedStringSeparator); }
+			res += gtk_button_get_label(GTK_BUTTON(window));
 		}
 	}
-	return CString(l_sResult.c_str());
+	return CString(res.c_str());
 }
 
 // ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- -----------

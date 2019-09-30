@@ -103,7 +103,7 @@ namespace Mensia
 		bool TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>::initialize()
 
 		{
-			const bool l_bResult = CBoxAlgorithmViz::initialize();
+			const bool res = CBoxAlgorithmViz::initialize();
 
 			m_oMatrixDecoder.initialize(*this, 0);
 			m_oStimulationDecoder.initialize(*this, 1);
@@ -122,7 +122,7 @@ namespace Mensia
 			m_pRuler = new TRulerClass;
 			m_pRuler->setRendererContext(m_pRendererContext);
 
-			return l_bResult;
+			return res;
 		}
 
 		template <bool bHorizontalStack, bool bDrawBorders, class TRendererFactoryClass, class TRulerClass>
