@@ -159,10 +159,10 @@ namespace Mensia
 				m_oMatrixDecoder.decode(uint32_t(i));
 
 				OpenViBE::IMatrix* l_pMatrix = m_oMatrixDecoder.getOutputMatrix();
-				uint32_t l_ui32ChannelCount  = l_pMatrix->getDimensionSize(0);
+				uint32_t nChannel  = l_pMatrix->getDimensionSize(0);
 				uint32_t nSample         = l_pMatrix->getDimensionSize(1);
 
-				if (l_ui32ChannelCount == 0)
+				if (nChannel == 0)
 				{
 					this->getLogManager() << OpenViBE::Kernel::LogLevel_Error << "Input stream " << uint32_t(i) << " has 0 channels\n";
 					return false;
@@ -170,7 +170,7 @@ namespace Mensia
 
 				if (l_pMatrix->getDimensionCount() == 1)
 				{
-					l_ui32ChannelCount = l_pMatrix->getDimensionSize(0);
+					nChannel = l_pMatrix->getDimensionSize(0);
 					nSample        = 1;
 				}
 
@@ -183,12 +183,12 @@ namespace Mensia
 
 					for (j = 0; j < m_vRenderer.size(); j++) { m_oRendererFactory.release(m_vRenderer[j]); }
 					m_vRenderer.clear();
-					m_vRenderer.resize(l_ui32ChannelCount);
+					m_vRenderer.resize(nChannel);
 
 					m_pSubRendererContext->clear();
 					m_pSubRendererContext->setParentRendererContext(m_pRendererContext);
 					m_pSubRendererContext->setTimeLocked(m_bIsTimeLocked);
-					m_pSubRendererContext->setStackCount(l_ui32ChannelCount);
+					m_pSubRendererContext->setStackCount(nChannel);
 					for (j = 0; j < nSample; j++)
 					{
 						std::string l_sName    = trim(l_pMatrix->getDimensionLabel(1, uint32_t(j)));
@@ -208,7 +208,7 @@ namespace Mensia
 					m_pRendererContext->setXYZPlotDepth(m_bXYZPlotHasDepth);
 
 					gtk_tree_view_set_model(m_pChannelTreeView, nullptr);
-					for (j = 0; j < l_ui32ChannelCount; j++)
+					for (j = 0; j < nChannel; j++)
 					{
 						std::string l_sName    = trim(l_pMatrix->getDimensionLabel(0, uint32_t(j)));
 						std::string l_sSubname = l_sName;
@@ -251,7 +251,7 @@ namespace Mensia
 						m_pSubRendererContext->setDataType(IRendererContext::DataType_Matrix);
 					}
 
-					m_pRuler->setRenderer(l_ui32ChannelCount ? m_vRenderer[0] : nullptr);
+					m_pRuler->setRenderer(nChannel ? m_vRenderer[0] : nullptr);
 
 					m_bRebuildNeeded = true;
 					m_bRefreshNeeded = true;
@@ -284,7 +284,7 @@ namespace Mensia
 					m_pRendererContext->setMinimumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_pFrequencyBandMin))));
 					m_pRendererContext->setMaximumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_pFrequencyBandMax))));
 
-					for (j = 0; j < l_ui32ChannelCount; j++)
+					for (j = 0; j < nChannel; j++)
 					{
 						// Feed renderer with actual samples
 						for (size_t k = 0; k < nSample; k++) { m_vSwap[nSample - k - 1] = float(l_pMatrix->getBuffer()[j * nSample + k]); }

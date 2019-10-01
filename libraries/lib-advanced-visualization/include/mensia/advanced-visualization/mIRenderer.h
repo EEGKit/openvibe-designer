@@ -61,7 +61,7 @@ namespace Mensia
 			virtual ~IRenderer() = default;
 
 			virtual void setChannelLocalisation(const char* sFilename) = 0;
-			virtual void setChannelCount(const uint32_t ui32ChannelCount) = 0;
+			virtual void setChannelCount(const uint32_t nChannel) = 0;
 			virtual void setSampleCount(const uint32_t ui32SampleCount) = 0;
 			virtual void setHistoryDrawIndex(const uint32_t ui32HistoryDrawIndex) = 0;
 			virtual void feed(const float* pDataVector) = 0;

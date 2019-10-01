@@ -178,20 +178,20 @@ void CLogListenerDesigner::log(const time64 value)
 	stringstream l_sText;
 	if (m_logTimeInSecond)
 	{
-		const double l_f64Time = TimeArithmetics::timeToSeconds(value.m_ui64TimeValue);
+		const double l_f64Time = TimeArithmetics::timeToSeconds(value.timeValue);
 		std::stringstream ss;
 		ss.precision(m_logTimePrecision);
 		ss.setf(std::ios::fixed, std::ios::floatfield);
 		ss << l_f64Time;
 		ss << " sec";
-		if (m_logWithHexa) { ss << " (0x" << hex << value.m_ui64TimeValue << ")"; }
+		if (m_logWithHexa) { ss << " (0x" << hex << value.timeValue << ")"; }
 
 		l_sText << ss.str().c_str();
 	}
 	else
 	{
-		l_sText << dec << value.m_ui64TimeValue;
-		if (m_logWithHexa) { l_sText << " (0x" << hex << value.m_ui64TimeValue << ")"; }
+		l_sText << dec << value.timeValue;
+		if (m_logWithHexa) { l_sText << " (0x" << hex << value.timeValue << ")"; }
 	}
 
 	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());

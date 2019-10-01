@@ -52,25 +52,25 @@ namespace
 
 	struct sort_alpha
 	{
-		explicit sort_alpha(const std::vector<std::string>& vChannelName) : m_vChannelName(vChannelName) { }
+		explicit sort_alpha(const std::vector<std::string>& vChannelName) : m_channelNames(vChannelName) { }
 
 		bool operator()(const size_t i, const size_t j) const
 		{
-			std::string channelNameI = m_vChannelName[i];
-			std::string channelNameJ = m_vChannelName[j];
+			std::string channelNameI = m_channelNames[i];
+			std::string channelNameJ = m_channelNames[j];
 			std::transform(channelNameI.begin(), channelNameI.end(), channelNameI.begin(), tolower);
 			std::transform(channelNameJ.begin(), channelNameJ.end(), channelNameJ.begin(), tolower);
 
 			return channelNameI < channelNameJ;
 		}
 
-		const std::vector<std::string>& m_vChannelName;
+		const std::vector<std::string>& m_channelNames;
 	};
 
 	struct sort_special
 	{
 		sort_special(const std::vector<std::string>& vChannelName, const std::map<std::string, float>& vScore)
-			: m_vChannelName(vChannelName)
+			: m_channelNames(vChannelName)
 			  , m_vScore(vScore) { }
 
 		bool operator()(const size_t i, const size_t j) const
@@ -78,8 +78,8 @@ namespace
 			float scoreI = 0;
 			float scoreJ = 0;
 
-			std::string channelNameI = std::string(",") + m_vChannelName[i] + std::string(",");
-			std::string channelNameJ = std::string(",") + m_vChannelName[j] + std::string(",");
+			std::string channelNameI = std::string(",") + m_channelNames[i] + std::string(",");
+			std::string channelNameJ = std::string(",") + m_channelNames[j] + std::string(",");
 			std::transform(channelNameI.begin(), channelNameI.end(), channelNameI.begin(), tolower);
 			std::transform(channelNameJ.begin(), channelNameJ.end(), channelNameJ.begin(), tolower);
 
@@ -92,7 +92,7 @@ namespace
 			return scoreI < scoreJ;
 		}
 
-		const std::vector<std::string>& m_vChannelName;
+		const std::vector<std::string>& m_channelNames;
 		const std::map<std::string, float>& m_vScore;
 	};
 } // namespace

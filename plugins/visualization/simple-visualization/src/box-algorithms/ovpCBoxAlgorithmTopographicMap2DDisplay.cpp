@@ -110,25 +110,25 @@ bool CBoxAlgorithmTopographicMap2DDisplay::process()
 		m_pDecoder->decode(i);
 		if (m_pDecoder->isBufferReceived())
 		{
-			IMatrix* l_pInputMatrix = m_pDecoder->getOutputMatrix();
+			IMatrix* iMatrix = m_pDecoder->getOutputMatrix();
 
 			//do we need to recopy this for each chunk?
 			if (!m_bFirstBufferReceived)
 			{
-				m_pTopographicMapDatabase->setMatrixDimensionCount(l_pInputMatrix->getDimensionCount());
-				for (uint32_t dimension = 0; dimension < l_pInputMatrix->getDimensionCount(); dimension++)
+				m_pTopographicMapDatabase->setMatrixDimensionCount(iMatrix->getDimensionCount());
+				for (uint32_t dimension = 0; dimension < iMatrix->getDimensionCount(); dimension++)
 				{
-					m_pTopographicMapDatabase->setMatrixDimensionSize(dimension, l_pInputMatrix->getDimensionSize(dimension));
-					for (uint32_t entryIndex = 0; entryIndex < l_pInputMatrix->getDimensionSize(dimension); entryIndex++)
+					m_pTopographicMapDatabase->setMatrixDimensionSize(dimension, iMatrix->getDimensionSize(dimension));
+					for (uint32_t entryIndex = 0; entryIndex < iMatrix->getDimensionSize(dimension); entryIndex++)
 					{
-						m_pTopographicMapDatabase->setMatrixDimensionLabel(dimension, entryIndex, l_pInputMatrix->getDimensionLabel(dimension, entryIndex));
+						m_pTopographicMapDatabase->setMatrixDimensionLabel(dimension, entryIndex, iMatrix->getDimensionLabel(dimension, entryIndex));
 					}
 				}
 				m_bFirstBufferReceived = true;
 			}
 			//
 
-			if (!m_pTopographicMapDatabase->setMatrixBuffer(l_pInputMatrix->getBuffer(), context->getInputChunkStartTime(0, i),
+			if (!m_pTopographicMapDatabase->setMatrixBuffer(iMatrix->getBuffer(), context->getInputChunkStartTime(0, i),
 															context->getInputChunkEndTime(0, i))) { return false; }
 		}
 	}
