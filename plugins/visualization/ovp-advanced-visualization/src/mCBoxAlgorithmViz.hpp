@@ -272,7 +272,7 @@ namespace Mensia
 			std::vector<TColor> m_vColor;
 			TColor m_oColor;
 
-			OpenViBE::CIdentifier m_oTypeIdentifier = OV_UndefinedIdentifier;
+			OpenViBE::CIdentifier m_typeID = OV_UndefinedIdentifier;
 			uint64_t m_time1                        = 0;
 			uint64_t m_time2                        = 0;
 

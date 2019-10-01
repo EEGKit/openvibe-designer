@@ -199,14 +199,14 @@ namespace Mensia
 
 					m_pRenderer->setChannelCount(nChannel);
 
-					if (m_oTypeIdentifier == OV_TypeId_Signal) { m_pRendererContext->setDataType(IRendererContext::DataType_Signal); }
-					else if (m_oTypeIdentifier == OV_TypeId_Spectrum) { m_pRendererContext->setDataType(IRendererContext::DataType_Spectrum); }
+					if (m_typeID == OV_TypeId_Signal) { m_pRendererContext->setDataType(IRendererContext::DataType_Signal); }
+					else if (m_typeID == OV_TypeId_Spectrum) { m_pRendererContext->setDataType(IRendererContext::DataType_Spectrum); }
 					else { m_pRendererContext->setDataType(IRendererContext::DataType_Matrix); }
 
 					if (nSample != 1)
 					{
 						//bool warned = false;
-						if (m_oTypeIdentifier == OV_TypeId_Spectrum)
+						if (m_typeID == OV_TypeId_Spectrum)
 						{
 							//warned = true;
 							this->getLogManager() << LogLevel_Warning << "Input matrix has 'spectrum' type\n";

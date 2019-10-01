@@ -64,7 +64,7 @@ bool CTopographicMapDatabase::onChannelLocalisationBufferReceived(const uint32_t
 
 	if (!m_bChannelLookupTableInitialized || m_oChannelLocalisationStreamedCoords.empty() || m_i64NbElectrodes == 0)
 	{
-		m_oParentPlugin.getLogManager() << LogLevel_Warning
+		m_parentPlugin.getLogManager() << LogLevel_Warning
 				<< "Channel localisation buffer received before channel lookup table was initialized! Can't process buffer!\n";
 	}
 
@@ -122,7 +122,7 @@ bool CTopographicMapDatabase::processValues()
 	//retrieve electrode values
 	//determine what buffer to use from delay
 	uint32_t l_ui32BufferIndex;
-	const uint64_t currentTime       = m_oParentPlugin.getPlayerContext().getCurrentTime();
+	const uint64_t currentTime       = m_parentPlugin.getPlayerContext().getCurrentTime();
 	const uint64_t l_ui64DisplayTime = currentTime - m_delay;
 	getBufferIndexFromTime(l_ui64DisplayTime, l_ui32BufferIndex);
 
@@ -167,7 +167,7 @@ bool CTopographicMapDatabase::processValues()
 	bool l_bProcess = true;
 	if (m_rSphericalSplineInterpolation.isOutputTriggerActive(OVP_Algorithm_SphericalSplineInterpolation_OutputTriggerId_Error))
 	{
-		m_oParentPlugin.getLogManager() << LogLevel_Warning << "An error occurred while interpolating potentials!\n";
+		m_parentPlugin.getLogManager() << LogLevel_Warning << "An error occurred while interpolating potentials!\n";
 		l_bProcess = false;
 	}
 	else
@@ -229,7 +229,7 @@ bool CTopographicMapDatabase::interpolateValues()
 
 	if (m_rSphericalSplineInterpolation.isOutputTriggerActive(OVP_Algorithm_SphericalSplineInterpolation_OutputTriggerId_Error))
 	{
-		m_oParentPlugin.getLogManager() << LogLevel_Warning << "An error occurred while interpolating potentials!\n";
+		m_parentPlugin.getLogManager() << LogLevel_Warning << "An error occurred while interpolating potentials!\n";
 	}
 	else
 	{
@@ -283,7 +283,7 @@ bool CTopographicMapDatabase::checkElectrodeCoordinates()
 		{
 			CString l_sChannelLabel;
 			getChannelLabel(i, l_sChannelLabel);
-			m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager()
+			m_parentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager()
 					<< LogLevel_Error
 					<< "Couldn't retrieve coordinates of electrode #" << i
 					<< "(" << l_sChannelLabel << "), aborting model frame electrode coordinates computation\n";
@@ -298,7 +298,7 @@ bool CTopographicMapDatabase::checkElectrodeCoordinates()
 		{
 			CString l_sChannelLabel;
 			getChannelLabel(i, l_sChannelLabel);
-			m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager()
+			m_parentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager()
 					<< LogLevel_Error
 					<< "Coordinates of electrode #" << i
 					<< "(" << l_sChannelLabel << "), are not normalized, aborting model frame electrode coordinates computation\n";

@@ -9,7 +9,7 @@ static void type_changed_cb(GtkComboBox* /*widget*/, gpointer data) { static_cas
 
 CSettingEditorDialog::CSettingEditorDialog(const IKernelContext& ctx, IBox& box, const uint32_t settingIndex, const char* sTitle,
 										   const char* sGUIFilename, const char* sGUISettingsFilename)
-	: m_kernelContext(ctx), m_rBox(box), m_oHelper(ctx, sGUIFilename), m_ui32SettingIndex(settingIndex),
+	: m_kernelContext(ctx), m_box(box), m_oHelper(ctx, sGUIFilename), m_ui32SettingIndex(settingIndex),
 	  m_sGUIFilename(sGUIFilename), m_sGUISettingsFilename(sGUISettingsFilename), m_sTitle(sTitle) { }
 
 CSettingEditorDialog::~CSettingEditorDialog() = default;
@@ -34,8 +34,8 @@ bool CSettingEditorDialog::run()
 
 	CString l_sSettingName;
 	CIdentifier l_oSettingType;
-	m_rBox.getSettingName(m_ui32SettingIndex, l_sSettingName);
-	m_rBox.getSettingType(m_ui32SettingIndex, l_oSettingType);
+	m_box.getSettingName(m_ui32SettingIndex, l_sSettingName);
+	m_box.getSettingType(m_ui32SettingIndex, l_oSettingType);
 
 	gtk_entry_set_text(GTK_ENTRY(l_pName), l_sSettingName.toASCIIString());
 
@@ -67,10 +67,10 @@ bool CSettingEditorDialog::run()
 			if (l_sActiveText)
 			{
 				l_oSettingType = m_vSettingTypes[l_sActiveText];
-				m_rBox.setSettingName(m_ui32SettingIndex, gtk_entry_get_text(GTK_ENTRY(l_pName)));
-				m_rBox.setSettingType(m_ui32SettingIndex, l_oSettingType);
-				m_rBox.setSettingValue(m_ui32SettingIndex, m_oHelper.getValue(l_oSettingType, m_pDefaultValue));
-				m_rBox.setSettingDefaultValue(m_ui32SettingIndex, m_oHelper.getValue(l_oSettingType, m_pDefaultValue));
+				m_box.setSettingName(m_ui32SettingIndex, gtk_entry_get_text(GTK_ENTRY(l_pName)));
+				m_box.setSettingType(m_ui32SettingIndex, l_oSettingType);
+				m_box.setSettingValue(m_ui32SettingIndex, m_oHelper.getValue(l_oSettingType, m_pDefaultValue));
+				m_box.setSettingDefaultValue(m_ui32SettingIndex, m_oHelper.getValue(l_oSettingType, m_pDefaultValue));
 				l_bFinished = true;
 				res   = true;
 			}
@@ -111,6 +111,6 @@ void CSettingEditorDialog::typeChangedCB()
 	g_object_unref(l_pBuilderInterfaceDefaultValueDummy);
 
 	CString defaultValue;
-	m_rBox.getSettingDefaultValue(m_ui32SettingIndex, defaultValue);
+	m_box.getSettingDefaultValue(m_ui32SettingIndex, defaultValue);
 	m_oHelper.setValue(l_oSettingType, m_pDefaultValue, defaultValue);
 }

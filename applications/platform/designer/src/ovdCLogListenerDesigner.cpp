@@ -68,7 +68,7 @@ namespace
 void CLogListenerDesigner::searchMessages(const CString& l_sSearchTerm)
 {
 	//clear displayed buffer
-	gtk_text_buffer_set_text(m_pBuffer, "", -1);
+	gtk_text_buffer_set_text(m_buffer, "", -1);
 	m_sSearchTerm = l_sSearchTerm;
 	for (CLogObject* log : m_vStoredLog)
 	{
@@ -83,12 +83,12 @@ void CLogListenerDesigner::searchMessages(const CString& l_sSearchTerm)
 void CLogListenerDesigner::appendLog(CLogObject* oLog) const
 {
 	GtkTextIter l_oEndter, l_oLogBegin, l_oLogEnd;
-	gtk_text_buffer_get_end_iter(m_pBuffer, &l_oEndter);
+	gtk_text_buffer_get_end_iter(m_buffer, &l_oEndter);
 	//get log buffer bounds
 	gtk_text_buffer_get_start_iter(oLog->getTextBuffer(), &l_oLogBegin);
 	gtk_text_buffer_get_end_iter(oLog->getTextBuffer(), &l_oLogEnd);
 	//copy at the end of the displayed buffer
-	gtk_text_buffer_insert_range(m_pBuffer, &l_oEndter, &l_oLogBegin, &l_oLogEnd);
+	gtk_text_buffer_insert_range(m_buffer, &l_oEndter, &l_oLogBegin, &l_oLogEnd);
 }
 
 CLogListenerDesigner::CLogListenerDesigner(const IKernelContext& ctx, GtkBuilder* pBuilderInterface)
@@ -128,21 +128,21 @@ CLogListenerDesigner::CLogListenerDesigner(const IKernelContext& ctx, GtkBuilder
 
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "searchEntry")), "changed", G_CALLBACK(::refresh_search_log_entry), this);
 	g_signal_connect(G_OBJECT(m_pTextView), "button_press_event", G_CALLBACK(focus_on_box_cidentifier_clicked), this);
-	m_pBuffer = gtk_text_view_get_buffer(m_pTextView);
+	m_buffer = gtk_text_view_get_buffer(m_pTextView);
 
-	gtk_text_buffer_create_tag(m_pBuffer, "f_mono", "family", "monospace", nullptr);
-	gtk_text_buffer_create_tag(m_pBuffer, "w_bold", "weight", PANGO_WEIGHT_BOLD, nullptr);
-	gtk_text_buffer_create_tag(m_pBuffer, "c_blue", "foreground", "#0000FF", nullptr);				// debug
-	gtk_text_buffer_create_tag(m_pBuffer, "c_magenta", "foreground", "#FF00FF", nullptr);			// benchmark
-	gtk_text_buffer_create_tag(m_pBuffer, "c_darkOrange", "foreground", "#FF9000", nullptr);		// important warning
-	gtk_text_buffer_create_tag(m_pBuffer, "c_red", "foreground", "#FF0000", nullptr);				// error, fatal
-	gtk_text_buffer_create_tag(m_pBuffer, "c_watercourse", "foreground", "#008238", nullptr);		// trace
-	gtk_text_buffer_create_tag(m_pBuffer, "c_aqua", "foreground", "#00FFFF", nullptr);				// number
-	gtk_text_buffer_create_tag(m_pBuffer, "c_darkViolet", "foreground", "#6900D7", nullptr);		// warning
-	gtk_text_buffer_create_tag(m_pBuffer, "c_blueChill", "foreground", "#3d889b", nullptr);			// information
-	gtk_text_buffer_create_tag(m_pBuffer, "link", "underline", PANGO_UNDERLINE_SINGLE, nullptr);	// link for CIdentifier
+	gtk_text_buffer_create_tag(m_buffer, "f_mono", "family", "monospace", nullptr);
+	gtk_text_buffer_create_tag(m_buffer, "w_bold", "weight", PANGO_WEIGHT_BOLD, nullptr);
+	gtk_text_buffer_create_tag(m_buffer, "c_blue", "foreground", "#0000FF", nullptr);				// debug
+	gtk_text_buffer_create_tag(m_buffer, "c_magenta", "foreground", "#FF00FF", nullptr);			// benchmark
+	gtk_text_buffer_create_tag(m_buffer, "c_darkOrange", "foreground", "#FF9000", nullptr);		// important warning
+	gtk_text_buffer_create_tag(m_buffer, "c_red", "foreground", "#FF0000", nullptr);				// error, fatal
+	gtk_text_buffer_create_tag(m_buffer, "c_watercourse", "foreground", "#008238", nullptr);		// trace
+	gtk_text_buffer_create_tag(m_buffer, "c_aqua", "foreground", "#00FFFF", nullptr);				// number
+	gtk_text_buffer_create_tag(m_buffer, "c_darkViolet", "foreground", "#6900D7", nullptr);		// warning
+	gtk_text_buffer_create_tag(m_buffer, "c_blueChill", "foreground", "#3d889b", nullptr);			// information
+	gtk_text_buffer_create_tag(m_buffer, "link", "underline", PANGO_UNDERLINE_SINGLE, nullptr);	// link for CIdentifier
 
-	GtkTextTagTable* l_pTagtable = gtk_text_buffer_get_tag_table(m_pBuffer);
+	GtkTextTagTable* l_pTagtable = gtk_text_buffer_get_tag_table(m_buffer);
 	m_pCIdentifierTag            = gtk_text_tag_table_lookup(l_pTagtable, "link");
 
 	m_logWithHexa         = ctx.getConfigurationManager().expandAsBoolean("${Designer_ConsoleLogWithHexa}", false);
@@ -342,7 +342,7 @@ void CLogListenerDesigner::log(const ELogLevel eLogLevel)
 	//	gtk_text_buffer_get_end_iter(m_Buffer, &l_oTextIter);
 
 	//new log, will be deleted when m_vStoredLog is cleared
-	m_pCurrentLog = new CLogObject(m_pBuffer);//m_pNonFilteredBuffer);
+	m_pCurrentLog = new CLogObject(m_buffer);//m_pNonFilteredBuffer);
 
 	//copy this newly added content in the current log
 	GtkTextIter l_oEndLogIter;
@@ -414,8 +414,8 @@ void CLogListenerDesigner::log(const ELogLevel eLogLevel)
 	const bool l_bPassFilter = m_pCurrentLog->Filter(m_sSearchTerm);
 	//if it does mark this position and insert the log in the text buffer displayed
 	GtkTextIter l_oEndDisplayedTextIter;
-	gtk_text_buffer_get_end_iter(m_pBuffer, &l_oEndDisplayedTextIter);
-	gtk_text_buffer_create_mark(m_pBuffer, "current_log", &l_oEndDisplayedTextIter,
+	gtk_text_buffer_get_end_iter(m_buffer, &l_oEndDisplayedTextIter);
+	gtk_text_buffer_create_mark(m_buffer, "current_log", &l_oEndDisplayedTextIter,
 								true);//creating a mark will erase the previous one with the same name so no worry here
 	if (l_bPassFilter) { displayLog(m_pCurrentLog); }
 
@@ -482,7 +482,7 @@ void CLogListenerDesigner::clearMessages()
 	gtk_widget_set_visible(m_pImageErrors, false);
 	gtk_widget_set_visible(GTK_WIDGET(m_labelnErrors), false);
 
-	gtk_text_buffer_set_text(m_pBuffer, "", -1);
+	gtk_text_buffer_set_text(m_buffer, "", -1);
 
 	std::for_each(m_vStoredLog.begin(), m_vStoredLog.end(), [](CLogObject* elem) { delete elem; });
 	m_vStoredLog.clear();
@@ -511,17 +511,17 @@ void CLogListenerDesigner::checkAppendFilterCurrentLog(const char* textColor, co
 
 void CLogListenerDesigner::displayLog(CLogObject* oLog) const
 {
-	GtkTextMark* mark = gtk_text_buffer_get_mark(m_pBuffer, "current_log");
+	GtkTextMark* mark = gtk_text_buffer_get_mark(m_buffer, "current_log");
 	GtkTextIter l_oIter, l_oEndter, l_oLogBegin, l_oLogEnd;
-	gtk_text_buffer_get_iter_at_mark(m_pBuffer, &l_oIter, mark);
-	gtk_text_buffer_get_end_iter(m_pBuffer, &l_oEndter);
+	gtk_text_buffer_get_iter_at_mark(m_buffer, &l_oIter, mark);
+	gtk_text_buffer_get_end_iter(m_buffer, &l_oEndter);
 
 	//delete what after the mark
-	gtk_text_buffer_delete(m_pBuffer, &l_oIter, &l_oEndter);
+	gtk_text_buffer_delete(m_buffer, &l_oIter, &l_oEndter);
 	//get iter
-	gtk_text_buffer_get_iter_at_mark(m_pBuffer, &l_oIter, mark);
+	gtk_text_buffer_get_iter_at_mark(m_buffer, &l_oIter, mark);
 	//rewrite the log
 	gtk_text_buffer_get_start_iter(oLog->getTextBuffer(), &l_oLogBegin);
 	gtk_text_buffer_get_end_iter(oLog->getTextBuffer(), &l_oLogEnd);
-	gtk_text_buffer_insert_range(m_pBuffer, &l_oIter, &l_oLogBegin, &l_oLogEnd);
+	gtk_text_buffer_insert_range(m_buffer, &l_oIter, &l_oLogBegin, &l_oLogEnd);
 }

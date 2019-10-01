@@ -232,10 +232,10 @@ namespace Mensia
 						m_vRenderer[i]->setChannelCount(nChannel);
 						m_vRenderer[i]->setSampleCount(nSample);
 
-						if (nSample > 1 && m_oTypeIdentifier != OV_TypeId_Spectrum) { gtk_widget_show(m_pERPPlayer); }
+						if (nSample > 1 && m_typeID != OV_TypeId_Spectrum) { gtk_widget_show(m_pERPPlayer); }
 
-						if (m_oTypeIdentifier == OV_TypeId_Signal) { m_pRendererContext->setDataType(IRendererContext::DataType_Signal); }
-						else if (m_oTypeIdentifier == OV_TypeId_Spectrum) { m_pRendererContext->setDataType(IRendererContext::DataType_Spectrum); }
+						if (m_typeID == OV_TypeId_Signal) { m_pRendererContext->setDataType(IRendererContext::DataType_Signal); }
+						else if (m_typeID == OV_TypeId_Spectrum) { m_pRendererContext->setDataType(IRendererContext::DataType_Spectrum); }
 						else { m_pRendererContext->setDataType(IRendererContext::DataType_Matrix); }
 
 						m_bRebuildNeeded = true;

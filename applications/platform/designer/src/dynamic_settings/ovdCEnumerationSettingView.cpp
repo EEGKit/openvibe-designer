@@ -15,7 +15,7 @@ CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox& box, const uint32
 												 const Kernel::IKernelContext& ctx, const CIdentifier& typeID): CAbstractSettingView(
 																															   box, index, rBuilderName,
 																															   "settings_collection-comboboxentry_setting_enumeration"),
-																														   m_oTypeIdentifier(typeID),
+																														   m_typeID(typeID),
 																														   m_kernelContext(ctx)
 {
 	p                           = false;
@@ -25,11 +25,11 @@ CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox& box, const uint32
 
 	std::vector<std::string> l_vEntries;
 
-	for (uint64_t i = 0; i < m_kernelContext.getTypeManager().getEnumerationEntryCount(m_oTypeIdentifier); i++)
+	for (uint64_t i = 0; i < m_kernelContext.getTypeManager().getEnumerationEntryCount(m_typeID); i++)
 	{
 		CString l_sEntryName;
 		uint64_t l_ui64EntryValue;
-		if (m_kernelContext.getTypeManager().getEnumerationEntry(m_oTypeIdentifier, i, l_sEntryName, l_ui64EntryValue))
+		if (m_kernelContext.getTypeManager().getEnumerationEntry(m_typeID, i, l_sEntryName, l_ui64EntryValue))
 		{
 			l_vEntries.push_back(l_sEntryName.toASCIIString());
 		}

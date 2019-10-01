@@ -34,7 +34,7 @@ namespace OpenViBEDesigner
 			CAbstractSettingView(OpenViBE::Kernel::IBox& box, const uint32_t index, const char* sBuilderName, const char* sWidgetName);
 
 			//Return the box which contains the setting
-			virtual OpenViBE::Kernel::IBox& getBox() { return m_rBox; }
+			virtual OpenViBE::Kernel::IBox& getBox() { return m_box; }
 
 
 			//Set the widget as the new widget name
@@ -58,7 +58,7 @@ namespace OpenViBEDesigner
 			virtual GtkWidget* generateEntryWidget();
 
 
-			OpenViBE::Kernel::IBox& m_rBox;
+			OpenViBE::Kernel::IBox& m_box;
 			uint32_t m_index = 0;
 			OpenViBE::CString m_settingWidgetName;
 			GtkWidget* m_nameWidget       = nullptr;

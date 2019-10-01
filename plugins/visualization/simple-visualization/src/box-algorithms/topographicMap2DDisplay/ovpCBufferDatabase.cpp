@@ -19,10 +19,10 @@ using namespace OpenViBEToolkit;
 using namespace std;
 
 CBufferDatabase::CBufferDatabase(TBoxAlgorithm<IBoxAlgorithm>& oPlugin)
-	: m_oParentPlugin(oPlugin), m_oDisplayMode(OVP_TypeId_SignalDisplayMode_Scan)
+	: m_parentPlugin(oPlugin), m_oDisplayMode(OVP_TypeId_SignalDisplayMode_Scan)
 {
-	m_pChannelLocalisationStreamDecoder = &m_oParentPlugin.getAlgorithmManager().getAlgorithm(
-		m_oParentPlugin.getAlgorithmManager().createAlgorithm(
+	m_pChannelLocalisationStreamDecoder = &m_parentPlugin.getAlgorithmManager().getAlgorithm(
+		m_parentPlugin.getAlgorithmManager().createAlgorithm(
 			OVP_GD_ClassId_Algorithm_ChannelLocalisationStreamDecoder));
 
 	m_pChannelLocalisationStreamDecoder->initialize();
@@ -33,7 +33,7 @@ CBufferDatabase::CBufferDatabase(TBoxAlgorithm<IBoxAlgorithm>& oPlugin)
 CBufferDatabase::~CBufferDatabase()
 {
 	m_pChannelLocalisationStreamDecoder->uninitialize();
-	m_oParentPlugin.getAlgorithmManager().releaseAlgorithm(*m_pChannelLocalisationStreamDecoder);
+	m_parentPlugin.getAlgorithmManager().releaseAlgorithm(*m_pChannelLocalisationStreamDecoder);
 
 	//delete all the remaining buffers
 	while (!m_oSampleBuffers.empty())
@@ -100,7 +100,7 @@ bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer*
 		}
 		else
 		{
-			m_oParentPlugin.getLogManager() << LogLevel_Error
+			m_parentPlugin.getLogManager() << LogLevel_Error
 					<< "Wrong size found for dimension 1 of Channel localisation header! Can't process header!\n";
 			return false;
 		}
@@ -207,13 +207,13 @@ bool CBufferDatabase::adjustNumberOfDisplayedBuffers(const double f64NumberOfSec
 	//return if buffer length is not known yet
 	if (m_pDimensionSizes[1] == 0) { return false; }
 
-	uint64_t l_ui64NewNumberOfBufferToDisplay = uint64_t(ceil((m_totalDuration * m_ui32SamplingFrequency) / m_pDimensionSizes[1]));
+	uint64_t newNbufferToDisplay = uint64_t(ceil((m_totalDuration * m_ui32SamplingFrequency) / m_pDimensionSizes[1]));
 
 	//displays at least one buffer
-	l_ui64NewNumberOfBufferToDisplay = (l_ui64NewNumberOfBufferToDisplay == 0) ? 1 : l_ui64NewNumberOfBufferToDisplay;
-	if (l_ui64NewNumberOfBufferToDisplay != m_nBufferToDisplay || f64NumberOfSecondsToDisplay <= 0)
+	newNbufferToDisplay = (newNbufferToDisplay == 0) ? 1 : newNbufferToDisplay;
+	if (newNbufferToDisplay != m_nBufferToDisplay || f64NumberOfSecondsToDisplay <= 0)
 	{
-		m_nBufferToDisplay            = l_ui64NewNumberOfBufferToDisplay;
+		m_nBufferToDisplay            = newNbufferToDisplay;
 		l_bNumberOfBufferToDisplayChanged = true;
 
 		//if new number of buffers decreased, resize lists and destroy useless buffers
@@ -243,12 +243,12 @@ void CBufferDatabase::setMatrixDimensionCount(const uint32_t ui32DimensionCount)
 	if (ui32DimensionCount != 2)
 	{
 		m_bError = true;
-		m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error << "Caller tried to set a " << ui32DimensionCount <<
+		m_parentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error << "Caller tried to set a " << ui32DimensionCount <<
 				"-dimensional matrix. Only 2-dimensional matrices are supported (e.g. [rows X cols]).\n";
 	}
 	if (ui32DimensionCount == 1)
 	{
-		m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error <<
+		m_parentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error <<
 				"Note: For 1-dimensional matrices, you may try Matrix Transpose box to upgrade the stream to [N X 1] first.\n";
 	}
 }
@@ -258,14 +258,14 @@ void CBufferDatabase::setMatrixDimensionSize(const uint32_t ui32DimensionIndex, 
 	if (ui32DimensionIndex >= 2)
 	{
 		m_bError = true;
-		m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error << "Tried to access dimension " << ui32DimensionIndex <<
+		m_parentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error << "Tried to access dimension " << ui32DimensionIndex <<
 				", only 0 and 1 supported\n";
 		return;
 	}
 
 	if (m_pDimensionSizes[ui32DimensionIndex] != 0 && m_pDimensionSizes[ui32DimensionIndex] != ui32DimensionSize)
 	{
-		m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error <<
+		m_parentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error <<
 				"Upstream tried to change the data chunk size after the first header, this is not supported.\n";
 		m_bError = true;
 		return;
@@ -290,7 +290,7 @@ void CBufferDatabase::setMatrixDimensionLabel(const uint32_t ui32DimensionIndex,
 	if (ui32DimensionIndex >= 2)
 	{
 		m_bError = true;
-		m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error << "Tried to access dimension " << ui32DimensionIndex <<
+		m_parentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error << "Tried to access dimension " << ui32DimensionIndex <<
 				", only 0 and 1 supported\n";
 		return;
 	}
@@ -306,7 +306,7 @@ bool CBufferDatabase::setMatrixBuffer(const double* buffer, const uint64_t ui64S
 	// Check for time-continuity
 	if (ui64StartTime < m_ui64LastBufferEndTime && !m_bWarningPrinted)
 	{
-		m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Warning <<
+		m_parentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Warning <<
 				"Your signal does not appear to be continuous in time. "
 				<< "Previously inserted buffer ended at " << TimeArithmetics::timeToSeconds(m_ui64LastBufferEndTime)
 				<< "s, the current starts at " << TimeArithmetics::timeToSeconds(ui64StartTime)
@@ -324,7 +324,7 @@ bool CBufferDatabase::setMatrixBuffer(const double* buffer, const uint64_t ui64S
 		//test if it is equal to zero : Error
 		if (m_ui64BufferDuration == 0)
 		{
-			m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Warning <<
+			m_parentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Warning <<
 					"Error : buffer start time and end time are equal : " << ui64StartTime << "\n";
 
 			m_bError = true;
@@ -338,7 +338,7 @@ bool CBufferDatabase::setMatrixBuffer(const double* buffer, const uint64_t ui64S
 		if (l_ui32EstimatedFrequency == 0)
 		{
 			// Complain if estimate is bad
-			m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Warning <<
+			m_parentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Warning <<
 					"The integer sampling frequency was estimated from the chunk size to be 0"
 					<< " (nSamples " << m_pDimensionSizes[1] << " / bufferLength " << TimeArithmetics::timeToSeconds(m_ui64BufferDuration) <<
 					"s = 0). This is not supported. Forcing the rate to 1. This may lead to problems.\n";
@@ -351,7 +351,7 @@ bool CBufferDatabase::setMatrixBuffer(const double* buffer, const uint64_t ui64S
 		}
 		if (m_ui32SamplingFrequency != l_ui32EstimatedFrequency)
 		{
-			m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Warning
+			m_parentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Warning
 					<< "Sampling rate [" << l_ui32EstimatedFrequency << "] suggested by chunk properties differs from stream-specified rate [" <<
 					m_ui32SamplingFrequency << "]. There may be a problem with an upstream box. Trying to use the estimated rate.\n";
 			m_ui32SamplingFrequency = l_ui32EstimatedFrequency;
@@ -369,7 +369,7 @@ bool CBufferDatabase::setMatrixBuffer(const double* buffer, const uint64_t ui64S
 	{
 		fillChannelLookupTable();  //to retrieve the unrecognized electrode warning
 		// The above call will fail if no electrode localisation data...
-		// m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error << "Unable to fill lookup table\n";
+		// m_parentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error << "Unable to fill lookup table\n";
 		//	return false;
 	}
 	else
@@ -604,7 +604,7 @@ bool CBufferDatabase::getChannelLabel(const uint32_t ui32ChannelIndex, CString& 
 
 void CBufferDatabase::setStimulation(const uint32_t /*ui32StimulationIndex*/, const uint64_t ui64StimulationIdentifier, const uint64_t ui64StimulationDate)
 {
-	// m_oParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Trace << "Received new stimulation id:" << ui64StimulationIdentifier << " date:" << ui64StimulationDate << "\n";
+	// m_parentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Trace << "Received new stimulation id:" << ui64StimulationIdentifier << " date:" << ui64StimulationDate << "\n";
 
 	m_oStimulations.emplace_back(ui64StimulationDate, ui64StimulationIdentifier);
 
@@ -664,7 +664,7 @@ bool CBufferDatabase::fillChannelLookupTable()
 		//unrecognized electrode!
 		if (!l_bLabelRecognized)
 		{
-			m_oParentPlugin.getLogManager() << LogLevel_Warning
+			m_parentPlugin.getLogManager() << LogLevel_Warning
 					<< "Unrecognized electrode name (index=" << uint32_t(i)
 					<< ", name=" << m_pDimensionLabels[0][i].c_str()
 					<< ")!\n";
@@ -672,13 +672,13 @@ bool CBufferDatabase::fillChannelLookupTable()
 		}
 	}
 
-	m_oParentPlugin.getLogManager() << LogLevel_Trace << "Electrodes list : ";
+	m_parentPlugin.getLogManager() << LogLevel_Trace << "Electrodes list : ";
 
 	for (size_t i = 0; i < size_t(m_pDimensionSizes[0]); ++i)
 	{
-		m_oParentPlugin.getLogManager() << CString(m_pDimensionLabels[0][i].c_str());
-		if (i < m_pDimensionSizes[0] - 1) { m_oParentPlugin.getLogManager() << ", "; }
-		else { m_oParentPlugin.getLogManager() << "\n"; }
+		m_parentPlugin.getLogManager() << CString(m_pDimensionLabels[0][i].c_str());
+		if (i < m_pDimensionSizes[0] - 1) { m_parentPlugin.getLogManager() << ", "; }
+		else { m_parentPlugin.getLogManager() << "\n"; }
 	}
 
 	if (res) { m_bChannelLookupTableInitialized = true; }

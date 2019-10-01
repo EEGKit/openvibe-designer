@@ -17,7 +17,7 @@ CAbstractSettingView::~CAbstractSettingView()
 }
 
 CAbstractSettingView::
-CAbstractSettingView(Kernel::IBox& box, const uint32_t index, const char* sBuilderName, const char* sWidgetName): m_rBox(box), m_index(index),
+CAbstractSettingView(Kernel::IBox& box, const uint32_t index, const char* sBuilderName, const char* sWidgetName): m_box(box), m_index(index),
 																												  m_settingWidgetName("")
 {
 	if (sBuilderName != nullptr)

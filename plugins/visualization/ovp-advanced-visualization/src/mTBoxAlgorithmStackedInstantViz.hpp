@@ -203,7 +203,7 @@ namespace Mensia
 					m_pRendererContext->setXYZPlotDepth(false);
 					m_pRendererContext->setPositiveOnly(true);
 
-					if (m_oTypeIdentifier == OV_TypeId_TimeFrequency)
+					if (m_typeID == OV_TypeId_TimeFrequency)
 					{
 						GtkTreeIter l_oGtkTreeIterator;
 						gtk_list_store_clear(m_pChannelListStore);
@@ -279,7 +279,7 @@ namespace Mensia
 
 				if (m_oMatrixDecoder.isBufferReceived())
 				{
-					if (m_oTypeIdentifier == OV_TypeId_TimeFrequency)
+					if (m_typeID == OV_TypeId_TimeFrequency)
 					{
 						m_time1 = m_time2;
 						m_time2 = dynamicBoxContext.getInputChunkEndTime(0, chunk);
@@ -322,7 +322,7 @@ namespace Mensia
 					if (m_oStimulationDecoder.isBufferReceived())
 					{
 						OpenViBE::IStimulationSet* l_pStimulationSet = m_oStimulationDecoder.getOutputStimulationSet();
-						for (uint64_t j = 0; j < l_pStimulationSet->getStimulationCount(); ++j)
+						for (size_t j = 0; j < l_pStimulationSet->getStimulationCount(); ++j)
 						{
 							m_vRenderer[0]->feed(l_pStimulationSet->getStimulationDate(j), l_pStimulationSet->getStimulationIdentifier(j));
 							m_bRedrawNeeded = true;

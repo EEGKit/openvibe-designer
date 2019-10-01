@@ -12,19 +12,19 @@ static void on_checkbutton__pressed(GtkToggleButton* /*button*/, gpointer data) 
 CBitMaskSettingView::CBitMaskSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& ctx,
 										 const CIdentifier& typeID): CAbstractSettingView(box, index, rBuilderName,
 																						  "settings_collection-table_setting_bitmask"),
-																	 m_oTypeIdentifier(typeID), m_kernelContext(ctx)
+																	 m_typeID(typeID), m_kernelContext(ctx)
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 
-	const gint tableSize      = guint((m_kernelContext.getTypeManager().getBitMaskEntryCount(m_oTypeIdentifier) + 1) >> 1);
+	const gint tableSize      = guint((m_kernelContext.getTypeManager().getBitMaskEntryCount(m_typeID) + 1) >> 1);
 	GtkTable* l_pBitMaskTable = GTK_TABLE(l_pSettingWidget);
 	gtk_table_resize(l_pBitMaskTable, 2, tableSize);
 
-	for (uint64_t i = 0; i < m_kernelContext.getTypeManager().getBitMaskEntryCount(m_oTypeIdentifier); i++)
+	for (uint64_t i = 0; i < m_kernelContext.getTypeManager().getBitMaskEntryCount(m_typeID); i++)
 	{
 		CString l_sEntryName;
 		uint64_t l_ui64EntryValue;
-		if (m_kernelContext.getTypeManager().getBitMaskEntry(m_oTypeIdentifier, i, l_sEntryName, l_ui64EntryValue))
+		if (m_kernelContext.getTypeManager().getBitMaskEntry(m_typeID, i, l_sEntryName, l_ui64EntryValue))
 		{
 			GtkWidget* l_pSettingButton = gtk_check_button_new();
 			gtk_table_attach_defaults(l_pBitMaskTable, l_pSettingButton, guint(i & 1), guint((i & 1) + 1), guint(i >> 1), guint((i >> 1) + 1));

@@ -117,7 +117,7 @@ namespace OpenViBEPlugins
 
 			std::vector<std::deque<std::pair<double, double>>> m_oLocalMinMaxValue;
 
-			OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>& m_oParentPlugin;
+			OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>& m_parentPlugin;
 
 			bool m_bError = false;
 

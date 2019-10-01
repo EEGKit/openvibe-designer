@@ -235,12 +235,12 @@ namespace Mensia
 					gtk_tree_view_set_model(m_pChannelTreeView, GTK_TREE_MODEL(m_pChannelListStore));
 					gtk_tree_selection_select_all(gtk_tree_view_get_selection(m_pChannelTreeView));
 
-					if (m_oTypeIdentifier == OV_TypeId_Signal)
+					if (m_typeID == OV_TypeId_Signal)
 					{
 						m_pRendererContext->setDataType(IRendererContext::DataType_Signal);
 						m_pSubRendererContext->setDataType(IRendererContext::DataType_Signal);
 					}
-					else if (m_oTypeIdentifier == OV_TypeId_Spectrum)
+					else if (m_typeID == OV_TypeId_Spectrum)
 					{
 						m_pRendererContext->setDataType(IRendererContext::DataType_Spectrum);
 						m_pSubRendererContext->setDataType(IRendererContext::DataType_Spectrum);

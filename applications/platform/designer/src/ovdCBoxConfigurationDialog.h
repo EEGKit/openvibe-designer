@@ -26,7 +26,7 @@ namespace OpenViBEDesigner
 		void storeState();
 		void restoreState();
 
-		virtual OpenViBE::CIdentifier getBoxID() const { return m_rBox.getIdentifier(); }
+		virtual OpenViBE::CIdentifier getBoxID() const { return m_box.getIdentifier(); }
 		virtual GtkWidget* getWidget() { return m_pSettingDialog; }
 	protected:
 
@@ -42,7 +42,7 @@ namespace OpenViBEDesigner
 		int getTableIndex(const uint32_t settingIndex);
 
 		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
-		OpenViBE::Kernel::IBox& m_rBox;
+		OpenViBE::Kernel::IBox& m_box;
 		OpenViBE::CString m_sGUIFilename;
 		OpenViBE::CString m_sGUISettingsFilename;
 

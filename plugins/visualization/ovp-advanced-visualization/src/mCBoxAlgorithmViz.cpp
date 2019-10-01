@@ -145,7 +145,7 @@ bool CBoxAlgorithmViz::initialize()
 	m_fastForwardMaximumFactorLowDefinition  = float(this->getConfigurationManager().expandAsFloat("${AdvancedViz_LowDefinition_FastForwardFactor}", 20.f));
 
 	// Gets data stream type
-	this->getStaticBoxContext().getInputType(0, m_oTypeIdentifier);
+	this->getStaticBoxContext().getInputType(0, m_typeID);
 
 	// Prepares GUI
 	m_pBuilder = gtk_builder_new();
@@ -219,7 +219,7 @@ bool CBoxAlgorithmViz::initialize()
 	{
 		gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "expander_sort")));
 	}
-	if (m_oTypeIdentifier != OV_TypeId_Spectrum) { gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "expander_freq_band"))); }
+	if (m_typeID != OV_TypeId_Spectrum) { gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "expander_freq_band"))); }
 	gtk_widget_hide(m_pERPPlayer);
 
 	// Prepares 3D View
