@@ -480,26 +480,26 @@ CRendererLoreta::CRendererLoreta()
 
 		std::map < std::string, std::vector < uint32_t > >::iterator l_oMapIterator;
 
-		for (uint32_t l_iRegionIndex = 0; l_iRegionIndex < m_vLookup.size() - 1; l_iRegionIndex++) // all but ROI, they are in separated file
+		for (uint32_t l_iRegionIdx = 0; l_iRegionIdx < m_vLookup.size() - 1; l_iRegionIdx++) // all but ROI, they are in separated file
 		{
 			uint32_t l_uiAreaCount = 0;
 			const char* l_sRegionGroupName;
-			if (l_iRegionIndex == l_uiCategoryIndex_BrodmannAreas)
+			if (l_iRegionIdx == l_uiCategoryIndex_BrodmannAreas)
 			{
 				l_sRegionGroupName = "BrodmannAreas";
 			}
-			if (l_iRegionIndex == l_uiCategoryIndex_AnatomicalAreas)
+			if (l_iRegionIdx == l_uiCategoryIndex_AnatomicalAreas)
 			{
 				l_sRegionGroupName = "AnatomicalAreas";
 			}
-			if (l_iRegionIndex == l_uiCategoryIndex_Lobes)
+			if (l_iRegionIdx == l_uiCategoryIndex_Lobes)
 			{
 				l_sRegionGroupName = "Lobes";
 			}
 
 			std::vector<uint32_t> l_vRightVoxels;
 			std::vector<uint32_t> l_vLeftVoxels;
-			for (auto = m_vLookup[l_iRegionIndex].begin(); l_oMapIterator != m_vLookup[l_iRegionIndex].end(); l_oMapIterator++)
+			for (auto = m_vLookup[l_iRegionIdx].begin(); l_oMapIterator != m_vLookup[l_iRegionIdx].end(); l_oMapIterator++)
 			{
 				//region
 				l_vRightVoxels.clear();
@@ -535,12 +535,12 @@ CRendererLoreta::CRendererLoreta()
 
 				l_uiAreaCount++;
 			}
-			::fprintf(l_pFile, "\n\tstatic uint32_t g_ui%sCount = %i;\n", l_sRegionGroupName, m_vLookup[l_iRegionIndex].size() * 3);
-			::fprintf(l_pFile, "\tstatic SVoxelRegion g_p%s[%i] =\n\t{\n", l_sRegionGroupName, m_vLookup[l_iRegionIndex].size() * 3);
+			::fprintf(l_pFile, "\n\tstatic uint32_t g_ui%sCount = %i;\n", l_sRegionGroupName, m_vLookup[l_iRegionIdx].size() * 3);
+			::fprintf(l_pFile, "\tstatic SVoxelRegion g_p%s[%i] =\n\t{\n", l_sRegionGroupName, m_vLookup[l_iRegionIdx].size() * 3);
 			l_uiAreaCount = 0;
 			uint32_t l_uiRightVoxels = 0;
 			uint32_t l_uiLeftVoxels = 0;
-			for (auto = m_vLookup[l_iRegionIndex].begin(); l_oMapIterator != m_vLookup[l_iRegionIndex].end() && l_uiAreaCount < m_vLookup[l_iRegionIndex].size(); l_oMapIterator++)
+			for (auto = m_vLookup[l_iRegionIdx].begin(); l_oMapIterator != m_vLookup[l_iRegionIdx].end() && l_uiAreaCount < m_vLookup[l_iRegionIdx].size(); l_oMapIterator++)
 			{
 				l_uiRightVoxels = 0;
 				l_uiLeftVoxels = 0;
@@ -550,7 +550,7 @@ CRendererLoreta::CRendererLoreta()
 					if (g_iLoretaVoxel[(*l_oMapIterator).second[l_uiVoxel]][0] > 0) l_uiLeftVoxels++;
 				}
 
-				if (l_uiAreaCount != m_vLookup[l_iRegionIndex].size() - 1)
+				if (l_uiAreaCount != m_vLookup[l_iRegionIdx].size() - 1)
 				{
 					::fprintf(l_pFile, "\t\t{\"%s\", %i, g_p%sVoxels_%i},\n", (*l_oMapIterator).first.c_str(), (*l_oMapIterator).second.size(), l_sRegionGroupName, l_uiAreaCount);
 					::fprintf(l_pFile, "\t\t{\"%s\", %i, g_p%sVoxels_%iR},\n", ((*l_oMapIterator).first + " R").c_str(), l_uiRightVoxels, l_sRegionGroupName, l_uiAreaCount);

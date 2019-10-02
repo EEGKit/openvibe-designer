@@ -88,21 +88,21 @@ bool CConnectorEditor::run()
 	map<string, CIdentifier> l_vStreamTypes;
 	gint l_iActive = -1;
 
-	for (const auto& l_oCurrentTypeIdentifier : m_kernelContext.getTypeManager().getSortedTypes())
+	for (const auto& l_oCurrentTypeID : m_kernelContext.getTypeManager().getSortedTypes())
 	{
 		//First check if the type is support by the connector
-		if ((m_box.*isTypeSupported)(l_oCurrentTypeIdentifier.first))
+		if ((m_box.*isTypeSupported)(l_oCurrentTypeID.first))
 		{
 			//If the input type is support by the connector, let's add it to the list
-			if (m_kernelContext.getTypeManager().isStream(l_oCurrentTypeIdentifier.first))
+			if (m_kernelContext.getTypeManager().isStream(l_oCurrentTypeID.first))
 			{
-				gtk_combo_box_append_text(l_pConnectorTypeComboBox, l_oCurrentTypeIdentifier.second.toASCIIString());
-				if (l_oCurrentTypeIdentifier.first == l_oConnectorType)
+				gtk_combo_box_append_text(l_pConnectorTypeComboBox, l_oCurrentTypeID.second.toASCIIString());
+				if (l_oCurrentTypeID.first == l_oConnectorType)
 				{
 					l_iActive = gint(l_vStreamTypes.size());
 					gtk_combo_box_set_active(l_pConnectorTypeComboBox, l_iActive);
 				}
-				l_vStreamTypes[l_oCurrentTypeIdentifier.second.toASCIIString()] = l_oCurrentTypeIdentifier.first;
+				l_vStreamTypes[l_oCurrentTypeID.second.toASCIIString()] = l_oCurrentTypeID.first;
 			}
 		}
 	}

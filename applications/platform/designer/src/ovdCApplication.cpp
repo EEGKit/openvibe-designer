@@ -824,10 +824,10 @@ void CApplication::initialize(const ECommandLineFlag eCommandLineFlags)
 
 
 	// Prepares scenario clipboard
-	CIdentifier l_oClipboardScenarioIdentifier;
-	if (m_pScenarioManager->createScenario(l_oClipboardScenarioIdentifier))
+	CIdentifier l_oClipboardScenarioID;
+	if (m_pScenarioManager->createScenario(l_oClipboardScenarioID))
 	{
-		m_pClipboardScenario = &m_pScenarioManager->getScenario(l_oClipboardScenarioIdentifier);
+		m_pClipboardScenario = &m_pScenarioManager->getScenario(l_oClipboardScenarioID);
 	}
 
 	m_pBuilderInterface = gtk_builder_new(); // glade_xml_new(OVD_GUI_File, "openvibe", nullptr);
@@ -1138,16 +1138,16 @@ void CApplication::initialize(const ECommandLineFlag eCommandLineFlags)
 
 	if (!(m_eCommandLineFlags & CommandLineFlag_NoManageSession))
 	{
-		CIdentifier l_oTokenIdentifier;
+		CIdentifier l_oTokenID;
 		char varName[1024];
 		unsigned i = 0;
 		do
 		{
 			sprintf(varName, "Designer_LastScenarioFilename_%03u", ++i);
-			if ((l_oTokenIdentifier = m_kernelContext.getConfigurationManager().lookUpConfigurationTokenIdentifier(varName)) != OV_UndefinedIdentifier)
+			if ((l_oTokenID = m_kernelContext.getConfigurationManager().lookUpConfigurationTokenIdentifier(varName)) != OV_UndefinedIdentifier)
 			{
 				CString fileName;
-				fileName = m_kernelContext.getConfigurationManager().getConfigurationTokenValue(l_oTokenIdentifier);
+				fileName = m_kernelContext.getConfigurationManager().getConfigurationTokenValue(l_oTokenID);
 				fileName = m_kernelContext.getConfigurationManager().expand(fileName);
 				m_kernelContext.getLogManager() << LogLevel_Trace << "Restoring scenario [" << fileName << "]\n";
 				if (!this->openScenario(fileName.toASCIIString()))
@@ -1155,19 +1155,19 @@ void CApplication::initialize(const ECommandLineFlag eCommandLineFlags)
 					m_kernelContext.getLogManager() << LogLevel_ImportantWarning << "Failed to restore scenario [" << fileName << "]\n";
 				}
 			}
-		} while (l_oTokenIdentifier != OV_UndefinedIdentifier);
+		} while (l_oTokenID != OV_UndefinedIdentifier);
 	}
 
-	CIdentifier l_oTokenIdentifier;
+	CIdentifier l_oTokenID;
 	char varName[1024];
 	unsigned i = 0;
 	do
 	{
 		sprintf(varName, "Designer_RecentScenario_%03u", ++i);
-		if ((l_oTokenIdentifier = m_kernelContext.getConfigurationManager().lookUpConfigurationTokenIdentifier(varName)) != OV_UndefinedIdentifier)
+		if ((l_oTokenID = m_kernelContext.getConfigurationManager().lookUpConfigurationTokenIdentifier(varName)) != OV_UndefinedIdentifier)
 		{
 			CString fileName;
-			fileName = m_kernelContext.getConfigurationManager().getConfigurationTokenValue(l_oTokenIdentifier);
+			fileName = m_kernelContext.getConfigurationManager().getConfigurationTokenValue(l_oTokenID);
 			fileName = m_kernelContext.getConfigurationManager().expand(fileName);
 
 			GtkWidget* newRecentItem = gtk_image_menu_item_new_with_label(fileName.toASCIIString());
@@ -1176,7 +1176,7 @@ void CApplication::initialize(const ECommandLineFlag eCommandLineFlags)
 			gtk_widget_show(newRecentItem);
 			m_RecentScenarios.push_back(newRecentItem);
 		}
-	} while (l_oTokenIdentifier != OV_UndefinedIdentifier);
+	} while (l_oTokenID != OV_UndefinedIdentifier);
 
 	refresh_search_no_data_cb(nullptr, this);
 	// Add the designer log listener
@@ -1378,7 +1378,7 @@ bool CApplication::openScenario(const char* sFileName)
 		OpenViBEVisualizationToolkit::IVisualizationTree* vizTree = interfacedScenario->m_pVisualizationTree;
 		if (vizTreeMetadata && vizTree) { vizTree->deserialize(vizTreeMetadata->getData()); }
 
-		CIdentifier l_oVisualizationWidgetIdentifier;
+		CIdentifier l_oVisualizationWidgetID;
 
 		// Ensure visualization widgets contained in the scenario (if any) appear in the window manager
 		//  even when the VisualizationTree section of a scenario file is missing, erroneous or deprecated
@@ -1394,7 +1394,7 @@ bool CApplication::openScenario(const char* sFileName)
 				if (boxAlgorithmDesc && boxAlgorithmDesc->hasFunctionality(OVD_Functionality_Visualization))
 				{
 					//a visualization widget was found in scenario : manually add it to visualization tree
-					vizTree->addVisualizationWidget(l_oVisualizationWidgetIdentifier, box->getName(),
+					vizTree->addVisualizationWidget(l_oVisualizationWidgetID, box->getName(),
 													OpenViBEVisualizationToolkit::EVisualizationWidget_VisualizationBox, OV_UndefinedIdentifier,
 													0, box->getIdentifier(), 0, OV_UndefinedIdentifier);
 				}
@@ -1559,12 +1559,12 @@ void CApplication::dragDataGetCB(GtkWidget* /*widget*/, GdkDragContext* /*pDragC
 	GtkTreeIter l_oTreeIter;
 	if (gtk_tree_selection_get_selected(l_pTreeSelection, &l_pTreeModel, &l_oTreeIter))
 	{
-		const char* l_sBoxAlgorithmIdentifier = nullptr;
-		gtk_tree_model_get(l_pTreeModel, &l_oTreeIter, Resource_StringIdentifier, &l_sBoxAlgorithmIdentifier, -1);
-		if (l_sBoxAlgorithmIdentifier)
+		const char* l_sBoxAlgorithmID = nullptr;
+		gtk_tree_model_get(l_pTreeModel, &l_oTreeIter, Resource_StringIdentifier, &l_sBoxAlgorithmID, -1);
+		if (l_sBoxAlgorithmID)
 		{
-			gtk_selection_data_set(pSelectionData, GDK_SELECTION_TYPE_STRING, 8, reinterpret_cast<const guchar*>(l_sBoxAlgorithmIdentifier),
-								   gint(strlen(l_sBoxAlgorithmIdentifier) + 1));
+			gtk_selection_data_set(pSelectionData, GDK_SELECTION_TYPE_STRING, 8, reinterpret_cast<const guchar*>(l_sBoxAlgorithmID),
+								   gint(strlen(l_sBoxAlgorithmID) + 1));
 		}
 	}
 }
@@ -1667,13 +1667,13 @@ void CApplication::preferencesCB() const
 	gtk_tree_view_column_set_sort_indicator(l_pTreeViewColumnTokenName, TRUE);
 
 	// Prepares tree model
-	CIdentifier l_oTokenIdentifier;
+	CIdentifier l_oTokenID;
 	GtkTreeStore* l_pConfigurationManagerTreeModel = gtk_tree_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
-	while ((l_oTokenIdentifier = m_kernelContext.getConfigurationManager().getNextConfigurationTokenIdentifier(l_oTokenIdentifier)) != OV_UndefinedIdentifier)
+	while ((l_oTokenID = m_kernelContext.getConfigurationManager().getNextConfigurationTokenIdentifier(l_oTokenID)) != OV_UndefinedIdentifier)
 	{
 		GtkTreeIter l_oGtkIterChild;
-		CString l_sTokenName   = m_kernelContext.getConfigurationManager().getConfigurationTokenName(l_oTokenIdentifier);
-		CString l_sTokenValue  = m_kernelContext.getConfigurationManager().getConfigurationTokenValue(l_oTokenIdentifier);
+		CString l_sTokenName   = m_kernelContext.getConfigurationManager().getConfigurationTokenName(l_oTokenID);
+		CString l_sTokenValue  = m_kernelContext.getConfigurationManager().getConfigurationTokenValue(l_oTokenID);
 		CString l_sTokenExpand = m_kernelContext.getConfigurationManager().expand(l_sTokenValue);
 		gtk_tree_store_append(l_pConfigurationManagerTreeModel, &l_oGtkIterChild, nullptr);
 		gtk_tree_store_set(l_pConfigurationManagerTreeModel, &l_oGtkIterChild,
@@ -1824,17 +1824,17 @@ void CApplication::saveScenarioCB(CInterfacedScenario* interfacedScenario)
 				metaboxProto.addOutput(outputName, OutputTypeID, OutputID, true);
 			}
 
-			for (uint32_t l_ui32ScenarioSettingIndex = 0; l_ui32ScenarioSettingIndex < scenario.getSettingCount(); l_ui32ScenarioSettingIndex++)
+			for (uint32_t l_ui32ScenarioSettingIdx = 0; l_ui32ScenarioSettingIdx < scenario.getSettingCount(); l_ui32ScenarioSettingIdx++)
 			{
 				CString l_sSettingName;
-				CIdentifier l_oSettingTypeIdentifier;
+				CIdentifier l_oSettingTypeID;
 				CString l_sSettingDefaultValue;
 
-				scenario.getSettingName(l_ui32ScenarioSettingIndex, l_sSettingName);
-				scenario.getSettingType(l_ui32ScenarioSettingIndex, l_oSettingTypeIdentifier);
-				scenario.getSettingDefaultValue(l_ui32ScenarioSettingIndex, l_sSettingDefaultValue);
+				scenario.getSettingName(l_ui32ScenarioSettingIdx, l_sSettingName);
+				scenario.getSettingType(l_ui32ScenarioSettingIdx, l_oSettingTypeID);
+				scenario.getSettingDefaultValue(l_ui32ScenarioSettingIdx, l_sSettingDefaultValue);
 
-				metaboxProto.addSetting(l_sSettingName, l_oSettingTypeIdentifier, l_sSettingDefaultValue, false, OV_UndefinedIdentifier, true);
+				metaboxProto.addSetting(l_sSettingName, l_oSettingTypeID, l_sSettingDefaultValue, false, OV_UndefinedIdentifier, true);
 			}
 
 			if (scenario.hasAttribute(OV_AttributeId_Scenario_MetaboxHash))
@@ -2543,10 +2543,10 @@ void CApplication::playScenarioCB()
 			if (m_kernelContext.getConfigurationManager().expandAsBoolean("${Kernel_AbortPlayerWhenBoxIsOutdated}", false))
 			{
 				std::string l_sOutdatedBoxesList = "You can not start the scenario because following boxes need to be updated: \n";
-				CIdentifier l_oBoxIdentifier;
-				while ((l_oBoxIdentifier = l_oCurrentScenario.getNextOutdatedBoxIdentifier(l_oBoxIdentifier)) != OV_UndefinedIdentifier)
+				CIdentifier l_oBoxID;
+				while ((l_oBoxID = l_oCurrentScenario.getNextOutdatedBoxIdentifier(l_oBoxID)) != OV_UndefinedIdentifier)
 				{
-					const IBox* l_pBox = l_oCurrentScenario.getBoxDetails(l_oBoxIdentifier);
+					const IBox* l_pBox = l_oCurrentScenario.getBoxDetails(l_oBoxID);
 					l_sOutdatedBoxesList += "\t[" + l_pBox->getName() + "]\n";
 				}
 				l_sOutdatedBoxesList += "To update a box you need to delete it from scenario, and add it again.";
@@ -2559,10 +2559,10 @@ void CApplication::playScenarioCB()
 			if (m_kernelContext.getConfigurationManager().expandAsBoolean("${Designer_ThrowPopUpWhenBoxIsOutdated}", false))
 			{
 				std::string l_sOutdatedBoxesList = "The following boxes need to be updated: \n";
-				CIdentifier l_oBoxIdentifier;
-				while ((l_oBoxIdentifier = l_oCurrentScenario.getNextOutdatedBoxIdentifier(l_oBoxIdentifier)) != OV_UndefinedIdentifier)
+				CIdentifier l_oBoxID;
+				while ((l_oBoxID = l_oCurrentScenario.getNextOutdatedBoxIdentifier(l_oBoxID)) != OV_UndefinedIdentifier)
 				{
-					const IBox* l_pBox = l_oCurrentScenario.getBoxDetails(l_oBoxIdentifier);
+					const IBox* l_pBox = l_oCurrentScenario.getBoxDetails(l_oBoxID);
 					l_sOutdatedBoxesList += "\t[" + l_pBox->getName() + "]\n";
 				}
 				l_sOutdatedBoxesList += "Do you still want to play the scenario ?";

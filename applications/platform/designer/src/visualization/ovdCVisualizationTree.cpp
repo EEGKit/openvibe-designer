@@ -232,12 +232,12 @@ bool CVisualizationTree::_destroyHierarchy(const CIdentifier& identifier, const 
 	if (!visualizationWidget) { return false; }
 
 	//remove children
-	CIdentifier l_oChildIdentifier;
+	CIdentifier l_oChildID;
 	const uint32_t nbChildren = visualizationWidget->getNbChildren();
 	for (uint32_t i = 0; i < nbChildren; i++)
 	{
-		visualizationWidget->getChildIdentifier(i, l_oChildIdentifier);
-		_destroyHierarchy(l_oChildIdentifier, destroyVisualizationBoxes);
+		visualizationWidget->getChildIdentifier(i, l_oChildID);
+		_destroyHierarchy(l_oChildID, destroyVisualizationBoxes);
 	}
 
 	//if parent widget is a window, remove this widget from it

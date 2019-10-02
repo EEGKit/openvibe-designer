@@ -212,11 +212,11 @@ void CDesignerVisualization::init(const std::string& guiFile)
 	const uint32_t treeViewWidth = 200;
 	m_previewWindowW             = uint32_t(m_kernelContext.getConfigurationManager().expandAsUInteger("${Designer_UnaffectedVisualizationWindowWidth}", 400));
 	m_previewWindowH             = uint32_t(m_kernelContext.getConfigurationManager().expandAsUInteger("${Designer_UnaffectedVisualizationWindowHeight}", 400));
-	CIdentifier l_oVisualizationWindowIdentifier;
+	CIdentifier l_oVisualizationWindowID;
 	//if at least one window was created, retrieve its dimensions
-	if (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowIdentifier, EVisualizationWidget_VisualizationWindow))
+	if (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowID, EVisualizationWidget_VisualizationWindow))
 	{
-		IVisualizationWidget* l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowIdentifier);
+		IVisualizationWidget* l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowID);
 		m_previewWindowW                             = l_pVisualizationWindow->getWidth();
 		m_previewWindowH                             = l_pVisualizationWindow->getHeight();
 		/* Change the way window sizes are stored in the widget
@@ -280,10 +280,10 @@ void CDesignerVisualization::load()
 	m_rVisualizationTree.reloadTree();
 
 	//if at least one window was created, retrieve its dimensions
-	CIdentifier l_oVisualizationWindowIdentifier;
-	if (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowIdentifier, EVisualizationWidget_VisualizationWindow))
+	CIdentifier l_oVisualizationWindowID;
+	if (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowID, EVisualizationWidget_VisualizationWindow))
 	{
-		IVisualizationWidget* l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowIdentifier);
+		IVisualizationWidget* l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowID);
 		m_previewWindowW                             = l_pVisualizationWindow->getWidth();
 		m_previewWindowH                             = l_pVisualizationWindow->getHeight();
 	}
@@ -318,15 +318,15 @@ void CDesignerVisualization::setDeleteEventCB(fpDesignerVisualizationDeleteEvent
 
 void CDesignerVisualization::onVisualizationBoxAdded(const IBox* pBox)
 {
-	CIdentifier l_oVisualizationWidgetIdentifier;
-	m_rVisualizationTree.addVisualizationWidget(l_oVisualizationWidgetIdentifier, pBox->getName(), EVisualizationWidget_VisualizationBox,
+	CIdentifier l_oVisualizationWidgetID;
+	m_rVisualizationTree.addVisualizationWidget(l_oVisualizationWidgetID, pBox->getName(), EVisualizationWidget_VisualizationBox,
 												OV_UndefinedIdentifier, 0, pBox->getIdentifier(), 0, OV_UndefinedIdentifier);
 
 	m_rVisualizationTree.reloadTree();
 
 	//refresh view
 	GtkTreeIter l_oIter;
-	m_rVisualizationTree.findChildNodeFromRoot(&l_oIter, l_oVisualizationWidgetIdentifier);
+	m_rVisualizationTree.findChildNodeFromRoot(&l_oIter, l_oVisualizationWidgetID);
 	refreshActiveVisualization(m_rVisualizationTree.getTreePath(&l_oIter));
 }
 
@@ -407,17 +407,17 @@ GtkWidget* CDesignerVisualization::loadTreeWidget(IVisualizationWidget* widget)
 		IVisualizationWidget* l_pWindow = m_rVisualizationTree.getVisualizationWidget(widget->getParentIdentifier());
 		if (l_pWindow != nullptr)
 		{
-			uint32_t l_ui32PanelIndex;
-			l_pWindow->getChildIndex(widget->getIdentifier(), l_ui32PanelIndex);
+			uint32_t l_ui32PanelIdx;
+			l_pWindow->getChildIndex(widget->getIdentifier(), l_ui32PanelIdx);
 
 			//create notebook if this is the first panel
-			if (l_ui32PanelIndex == 0) { l_pTreeWidget = gtk_notebook_new(); }
+			if (l_ui32PanelIdx == 0) { l_pTreeWidget = gtk_notebook_new(); }
 			else //otherwise retrieve it from first panel
 			{
-				CIdentifier l_oFirstPanelIdentifier;
-				l_pWindow->getChildIdentifier(0, l_oFirstPanelIdentifier);
+				CIdentifier l_oFirstPanelID;
+				l_pWindow->getChildIdentifier(0, l_oFirstPanelID);
 				GtkTreeIter l_oFirstPanelIter;
-				m_rVisualizationTree.findChildNodeFromRoot(&l_oFirstPanelIter, l_oFirstPanelIdentifier);
+				m_rVisualizationTree.findChildNodeFromRoot(&l_oFirstPanelIter, l_oFirstPanelID);
 				void* l_pNotebookWidget = nullptr;
 				m_rVisualizationTree.getPointerValueFromTreeIter(&l_oFirstPanelIter, l_pNotebookWidget, EVisualizationTreeColumn_PointerWidget);
 				l_pTreeWidget = static_cast<GtkWidget*>(l_pNotebookWidget);
@@ -518,10 +518,10 @@ GtkWidget* CDesignerVisualization::loadTreeWidget(IVisualizationWidget* widget)
 					GtkWidget* l_pParentWidget = getVisualizationWidget(GTK_WIDGET(l_pParentTreeWidget));
 					if (l_pParentWidget != nullptr && GTK_IS_PANED(l_pParentWidget))
 					{
-						uint32_t l_ui32ChildIndex;
-						if (l_pParentVisualizationWidget->getChildIndex(widget->getIdentifier(), l_ui32ChildIndex))
+						uint32_t l_ui32ChildIdx;
+						if (l_pParentVisualizationWidget->getChildIndex(widget->getIdentifier(), l_ui32ChildIdx))
 						{
-							if (l_ui32ChildIndex == 0) { gtk_paned_pack1(GTK_PANED(l_pParentWidget), l_pTreeWidget, TRUE, TRUE); }
+							if (l_ui32ChildIdx == 0) { gtk_paned_pack1(GTK_PANED(l_pParentWidget), l_pTreeWidget, TRUE, TRUE); }
 							else { gtk_paned_pack2(GTK_PANED(l_pParentWidget), l_pTreeWidget, TRUE, TRUE); }
 						}
 					}
@@ -682,7 +682,7 @@ void CDesignerVisualization::resizeCB(IVisualizationWidget* pVisualizationWidget
 		GtkWidget* l_pNotebook = gtk_paned_get_child2(GTK_PANED(m_pPane));
 		if (l_pNotebook != nullptr)
 		{
-			CIdentifier l_oVisualizationWindowIdentifier = OV_UndefinedIdentifier;
+			CIdentifier l_oVisualizationWindowID = OV_UndefinedIdentifier;
 			//retrieve current preview window size, if window is visible
 			if (m_bPreviewWindowVisible)
 			{
@@ -695,9 +695,9 @@ void CDesignerVisualization::resizeCB(IVisualizationWidget* pVisualizationWidget
 				}
 			}
 
-			while (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowIdentifier, EVisualizationWidget_VisualizationWindow))
+			while (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowID, EVisualizationWidget_VisualizationWindow))
 			{
-				IVisualizationWidget* l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowIdentifier);
+				IVisualizationWidget* l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowID);
 
 				//store new dimensions
 				l_pVisualizationWindow->setWidth(m_previewWindowW);
@@ -720,19 +720,19 @@ void CDesignerVisualization::resizeCB(IVisualizationWidget* pVisualizationWidget
 		{
 			return;
 		}
-		CIdentifier l_oVisualizationPanelIdentifier;
-		if (!m_rVisualizationTree.getIdentifierFromTreeIter(&l_oPanelIter, l_oVisualizationPanelIdentifier, EVisualizationTreeColumn_StringIdentifier))
+		CIdentifier l_oVisualizationPanelID;
+		if (!m_rVisualizationTree.getIdentifierFromTreeIter(&l_oPanelIter, l_oVisualizationPanelID, EVisualizationTreeColumn_StringIdentifier))
 		{
 			return;
 		}
-		IVisualizationWidget* l_pVisualizationPanel = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationPanelIdentifier);
+		IVisualizationWidget* l_pVisualizationPanel = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationPanelID);
 
 		//resize visualization panel hierarchy
 		if (l_pVisualizationPanel != nullptr)
 		{
-			CIdentifier l_oChildIdentifier;
-			l_pVisualizationPanel->getChildIdentifier(0, l_oChildIdentifier);
-			IVisualizationWidget* l_pChildVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oChildIdentifier);
+			CIdentifier l_oChildID;
+			l_pVisualizationPanel->getChildIdentifier(0, l_oChildID);
+			IVisualizationWidget* l_pChildVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oChildID);
 			if (l_pChildVisualizationWidget != nullptr) { resizeCB(l_pChildVisualizationWidget); }
 		}
 	}
@@ -769,14 +769,14 @@ void CDesignerVisualization::resizeCB(IVisualizationWidget* pVisualizationWidget
 			enablePanedSignals(paned, true);
 
 			//go down child 1
-			CIdentifier l_oChildIdentifier;
-			pVisualizationWidget->getChildIdentifier(0, l_oChildIdentifier);
-			IVisualizationWidget* l_pChildVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oChildIdentifier);
+			CIdentifier l_oChildID;
+			pVisualizationWidget->getChildIdentifier(0, l_oChildID);
+			IVisualizationWidget* l_pChildVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oChildID);
 			if (l_pChildVisualizationWidget != nullptr) { resizeCB(l_pChildVisualizationWidget); }
 
 			//go down child 2
-			pVisualizationWidget->getChildIdentifier(1, l_oChildIdentifier);
-			l_pChildVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oChildIdentifier);
+			pVisualizationWidget->getChildIdentifier(1, l_oChildID);
+			l_pChildVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oChildID);
 			if (l_pChildVisualizationWidget != nullptr) { resizeCB(l_pChildVisualizationWidget); }
 		}
 	}
@@ -866,11 +866,11 @@ void CDesignerVisualization::setActiveVisualization(const char* activeWindow, co
 	else
 	{
 		//pick first window if previously active window doesn't exist anymore
-		CIdentifier l_oIdentifier = OV_UndefinedIdentifier;
+		CIdentifier l_oID = OV_UndefinedIdentifier;
 
-		if (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oIdentifier, EVisualizationWidget_VisualizationWindow))
+		if (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oID, EVisualizationWidget_VisualizationWindow))
 		{
-			m_oActiveVisualizationWindowName = m_rVisualizationTree.getVisualizationWidget(l_oIdentifier)->getName();
+			m_oActiveVisualizationWindowName = m_rVisualizationTree.getVisualizationWidget(l_oID)->getName();
 			m_rVisualizationTree.findChildNodeFromRoot(&l_oWindowIter, static_cast<const char*>(m_oActiveVisualizationWindowName),
 													   EVisualizationTreeNode_VisualizationWindow);
 		}
@@ -889,14 +889,14 @@ void CDesignerVisualization::setActiveVisualization(const char* activeWindow, co
 	}
 	else //couldn't find panel : select first one
 	{
-		CIdentifier l_oWindowIdentifier;
-		m_rVisualizationTree.getIdentifierFromTreeIter(&l_oWindowIter, l_oWindowIdentifier, EVisualizationTreeColumn_StringIdentifier);
-		IVisualizationWidget* l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oWindowIdentifier);
-		CIdentifier l_oPanelIdentifier;
-		if (l_pVisualizationWindow->getChildIdentifier(0, l_oPanelIdentifier))
+		CIdentifier l_oWindowID;
+		m_rVisualizationTree.getIdentifierFromTreeIter(&l_oWindowIter, l_oWindowID, EVisualizationTreeColumn_StringIdentifier);
+		IVisualizationWidget* l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oWindowID);
+		CIdentifier l_oPanelID;
+		if (l_pVisualizationWindow->getChildIdentifier(0, l_oPanelID))
 		{
 			l_oPanelIter = l_oWindowIter;
-			m_rVisualizationTree.findChildNodeFromParent(&l_oPanelIter, l_oPanelIdentifier);
+			m_rVisualizationTree.findChildNodeFromParent(&l_oPanelIter, l_oPanelID);
 			char* l_pString = nullptr;
 			m_rVisualizationTree.getStringValueFromTreeIter(&l_oPanelIter, l_pString, EVisualizationTreeColumn_StringName);
 			m_oActiveVisualizationPanelName = l_pString;
@@ -1009,11 +1009,11 @@ bool CDesignerVisualization::newVisualizationWindow(const char* label)
 {
 	//ensure name is unique
 	IVisualizationWidget* l_pVisualizationWindow;
-	CIdentifier l_oVisualizationWindowIdentifier = OV_UndefinedIdentifier;
+	CIdentifier l_oVisualizationWindowID = OV_UndefinedIdentifier;
 
-	while (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowIdentifier, EVisualizationWidget_VisualizationWindow))
+	while (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowID, EVisualizationWidget_VisualizationWindow))
 	{
-		l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowIdentifier);
+		l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowID);
 
 		if (strcmp(static_cast<const char*>(l_pVisualizationWindow->getName()), label) == 0)
 		{
@@ -1023,28 +1023,28 @@ bool CDesignerVisualization::newVisualizationWindow(const char* label)
 	}
 
 	//proceed with window creation
-	//m_rVisualizationTree.addVisualizationWindow(l_oVisualizationWindowIdentifier, CString(label));
-	m_rVisualizationTree.addVisualizationWidget(l_oVisualizationWindowIdentifier, CString(label), EVisualizationWidget_VisualizationWindow,
+	//m_rVisualizationTree.addVisualizationWindow(l_oVisualizationWindowID, CString(label));
+	m_rVisualizationTree.addVisualizationWidget(l_oVisualizationWindowID, CString(label), EVisualizationWidget_VisualizationWindow,
 												OV_UndefinedIdentifier, 0, OV_UndefinedIdentifier, 0, OV_UndefinedIdentifier);
 
-	l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowIdentifier);
+	l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowID);
 
 	//add attributes
 	l_pVisualizationWindow->setWidth(1);
 	l_pVisualizationWindow->setHeight(1);
 
 	//create default visualization panel as well
-	CIdentifier l_oChildIdentifier;
+	CIdentifier l_oChildID;
 	const CString l_oChildName = "Default tab";
 
-	m_rVisualizationTree.addVisualizationWidget(l_oChildIdentifier, l_oChildName, EVisualizationWidget_VisualizationPanel,
-												l_oVisualizationWindowIdentifier, 0, OV_UndefinedIdentifier, 1, OV_UndefinedIdentifier);
+	m_rVisualizationTree.addVisualizationWidget(l_oChildID, l_oChildName, EVisualizationWidget_VisualizationPanel,
+												l_oVisualizationWindowID, 0, OV_UndefinedIdentifier, 1, OV_UndefinedIdentifier);
 
 	m_rVisualizationTree.reloadTree();
 
 	//refresh view
 	GtkTreeIter l_oChildIter;
-	m_rVisualizationTree.findChildNodeFromRoot(&l_oChildIter, l_oChildIdentifier);
+	m_rVisualizationTree.findChildNodeFromRoot(&l_oChildIter, l_oChildID);
 	refreshActiveVisualization(m_rVisualizationTree.getTreePath(&l_oChildIter));
 
 	return true;
@@ -1068,9 +1068,9 @@ bool CDesignerVisualization::renameVisualizationWindow(const char* label)
 		return false;
 	}
 
-	CIdentifier l_oWindowIdentifier;
-	m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, l_oWindowIdentifier, EVisualizationTreeColumn_StringIdentifier);
-	IVisualizationWidget* l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oWindowIdentifier);
+	CIdentifier l_oWindowID;
+	m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, l_oWindowID, EVisualizationTreeColumn_StringIdentifier);
+	IVisualizationWidget* l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oWindowID);
 	if (l_pVisualizationWindow == nullptr)
 	{
 		displayErrorDialog("Window renaming failed !", "Couldn't retrieve window.");
@@ -1082,11 +1082,11 @@ bool CDesignerVisualization::renameVisualizationWindow(const char* label)
 	if (l_pVisualizationWindow->getName() == l_oNewWindowName) { return true; }
 
 	//ensure name is unique
-	CIdentifier l_oVisualizationWindowIdentifier = OV_UndefinedIdentifier;
-	while (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowIdentifier, EVisualizationWidget_VisualizationWindow))
+	CIdentifier l_oVisualizationWindowID = OV_UndefinedIdentifier;
+	while (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowID, EVisualizationWidget_VisualizationWindow))
 	{
 		//name already in use : warn user
-		if (m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowIdentifier)->getName() == l_oNewWindowName)
+		if (m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowID)->getName() == l_oNewWindowName)
 		{
 			displayErrorDialog("Window renaming failed !", "An existing window already uses this name. Please choose another name.");
 			return false;
@@ -1099,7 +1099,7 @@ bool CDesignerVisualization::renameVisualizationWindow(const char* label)
 	m_rVisualizationTree.reloadTree();
 
 	//refresh view
-	m_rVisualizationTree.findChildNodeFromRoot(&l_oIter, l_oWindowIdentifier);
+	m_rVisualizationTree.findChildNodeFromRoot(&l_oIter, l_oWindowID);
 	refreshActiveVisualization(m_rVisualizationTree.getTreePath(&l_oIter));
 
 	return true;
@@ -1108,21 +1108,21 @@ bool CDesignerVisualization::renameVisualizationWindow(const char* label)
 bool CDesignerVisualization::removeVisualizationWindow()
 {
 	//retrieve visualization window
-	CIdentifier l_oVisualizationWindowIdentifier = OV_UndefinedIdentifier;
-	while (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowIdentifier, EVisualizationWidget_VisualizationWindow))
+	CIdentifier l_oVisualizationWindowID = OV_UndefinedIdentifier;
+	while (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowID, EVisualizationWidget_VisualizationWindow))
 	{
-		if (m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowIdentifier)->getName() == m_oActiveVisualizationWindowName) { break; }
+		if (m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowID)->getName() == m_oActiveVisualizationWindowName) { break; }
 	}
 
 	//return if window was not found
-	if (l_oVisualizationWindowIdentifier == OV_UndefinedIdentifier)
+	if (l_oVisualizationWindowID == OV_UndefinedIdentifier)
 	{
 		displayErrorDialog("Window removal failed !", "Couldn't retrieve window.");
 		return false;
 	}
 
 	//destroy hierarchy but only unaffect visualization boxes
-	m_rVisualizationTree.destroyHierarchy(l_oVisualizationWindowIdentifier, false);
+	m_rVisualizationTree.destroyHierarchy(l_oVisualizationWindowID, false);
 
 	m_rVisualizationTree.reloadTree();
 
@@ -1144,29 +1144,29 @@ bool CDesignerVisualization::newVisualizationPanel(const char* label)
 {
 	//retrieve visualization window
 	IVisualizationWidget* l_pVisualizationWindow = nullptr;
-	CIdentifier l_oVisualizationWindowIdentifier = OV_UndefinedIdentifier;
+	CIdentifier l_oVisualizationWindowID = OV_UndefinedIdentifier;
 
-	while (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowIdentifier, EVisualizationWidget_VisualizationWindow))
+	while (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowID, EVisualizationWidget_VisualizationWindow))
 	{
-		l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowIdentifier);
+		l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowID);
 		if (l_pVisualizationWindow->getName() == m_oActiveVisualizationWindowName) { break; }
 	}
 
 	//return if parent window was not found
-	if (l_oVisualizationWindowIdentifier == OV_UndefinedIdentifier || l_pVisualizationWindow == nullptr)
+	if (l_oVisualizationWindowID == OV_UndefinedIdentifier || l_pVisualizationWindow == nullptr)
 	{
 		displayErrorDialog("Tab creation failed !", "Couldn't retrieve parent window.");
 		return false;
 	}
 
-	CIdentifier l_oChildIdentifier;
+	CIdentifier l_oChildID;
 	const CString l_oNewChildName = label;
 
 	//ensure visualization panel name is unique in this window
 	for (uint32_t i = 0; i < l_pVisualizationWindow->getNbChildren(); ++i)
 	{
-		l_pVisualizationWindow->getChildIdentifier(i, l_oChildIdentifier);
-		if (m_rVisualizationTree.getVisualizationWidget(l_oChildIdentifier)->getName() == l_oNewChildName)
+		l_pVisualizationWindow->getChildIdentifier(i, l_oChildID);
+		if (m_rVisualizationTree.getVisualizationWidget(l_oChildID)->getName() == l_oNewChildName)
 		{
 			displayErrorDialog("Tab creation failed !", "An existing tab already uses this name. Please choose another name.");
 			return false;
@@ -1174,15 +1174,15 @@ bool CDesignerVisualization::newVisualizationPanel(const char* label)
 	}
 
 	//proceed with panel creation
-	m_rVisualizationTree.addVisualizationWidget(l_oChildIdentifier, l_oNewChildName, EVisualizationWidget_VisualizationPanel,
-												l_oVisualizationWindowIdentifier, l_pVisualizationWindow->getNbChildren(), OV_UndefinedIdentifier, 1,
+	m_rVisualizationTree.addVisualizationWidget(l_oChildID, l_oNewChildName, EVisualizationWidget_VisualizationPanel,
+												l_oVisualizationWindowID, l_pVisualizationWindow->getNbChildren(), OV_UndefinedIdentifier, 1,
 												OV_UndefinedIdentifier);
 
 	m_rVisualizationTree.reloadTree();
 
 	//refresh view
 	GtkTreeIter l_oIter;
-	m_rVisualizationTree.findChildNodeFromRoot(&l_oIter, l_oChildIdentifier);
+	m_rVisualizationTree.findChildNodeFromRoot(&l_oIter, l_oChildID);
 	refreshActiveVisualization(m_rVisualizationTree.getTreePath(&l_oIter));
 
 	return true;
@@ -1206,9 +1206,9 @@ bool CDesignerVisualization::renameVisualizationPanel(const char* label)
 		displayErrorDialog("Tab renaming failed !", "Couldn't retrieve parent window.");
 		return false;
 	}
-	CIdentifier l_oVisualizationWindowIdentifier;
-	m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, l_oVisualizationWindowIdentifier, EVisualizationTreeColumn_StringIdentifier);
-	IVisualizationWidget* l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowIdentifier);
+	CIdentifier l_oVisualizationWindowID;
+	m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, l_oVisualizationWindowID, EVisualizationTreeColumn_StringIdentifier);
+	IVisualizationWidget* l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowID);
 	if (l_pVisualizationWindow == nullptr)
 	{
 		displayErrorDialog("Tab renaming failed !", "Couldn't retrieve parent window.");
@@ -1223,9 +1223,9 @@ bool CDesignerVisualization::renameVisualizationPanel(const char* label)
 		return false;
 	}
 
-	CIdentifier l_oVisualizationPanelIdentifier;
-	m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, l_oVisualizationPanelIdentifier, EVisualizationTreeColumn_StringIdentifier);
-	IVisualizationWidget* l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationPanelIdentifier);
+	CIdentifier l_oVisualizationPanelID;
+	m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, l_oVisualizationPanelID, EVisualizationTreeColumn_StringIdentifier);
+	IVisualizationWidget* l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationPanelID);
 	if (l_pVisualizationWidget == nullptr)
 	{
 		displayErrorDialog("tab renaming failed !", "Couldn't retrieve tab.");
@@ -1237,11 +1237,11 @@ bool CDesignerVisualization::renameVisualizationPanel(const char* label)
 	if (l_pVisualizationWidget->getName() == l_oNewPanelName) { return true; }
 
 	//ensure visualization panel name is unique in this window
-	CIdentifier l_oChildIdentifier;
+	CIdentifier l_oChildID;
 	for (uint32_t i = 0; i < l_pVisualizationWindow->getNbChildren(); ++i)
 	{
-		l_pVisualizationWindow->getChildIdentifier(i, l_oChildIdentifier);
-		if (m_rVisualizationTree.getVisualizationWidget(l_oChildIdentifier)->getName() == l_oNewPanelName)
+		l_pVisualizationWindow->getChildIdentifier(i, l_oChildID);
+		if (m_rVisualizationTree.getVisualizationWidget(l_oChildID)->getName() == l_oNewPanelName)
 		{
 			displayErrorDialog("Tab renaming failed !", "An existing tab already uses this name. Please choose another name.");
 			return false;
@@ -1253,7 +1253,7 @@ bool CDesignerVisualization::renameVisualizationPanel(const char* label)
 	m_rVisualizationTree.reloadTree();
 
 	//refresh view
-	m_rVisualizationTree.findChildNodeFromRoot(&l_oIter, l_oVisualizationPanelIdentifier);
+	m_rVisualizationTree.findChildNodeFromRoot(&l_oIter, l_oVisualizationPanelID);
 	refreshActiveVisualization(m_rVisualizationTree.getTreePath(&l_oIter));
 
 	return true;
@@ -1269,11 +1269,11 @@ bool CDesignerVisualization::removeVisualizationPanel()
 	//retrieve visualization panel
 	m_rVisualizationTree.findChildNodeFromParent(&l_oIter, static_cast<const char*>(m_oActiveVisualizationPanelName),
 												 EVisualizationTreeNode_VisualizationPanel);
-	CIdentifier l_oVisualizationPanelIdentifier;
-	m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, l_oVisualizationPanelIdentifier, EVisualizationTreeColumn_StringIdentifier);
+	CIdentifier l_oVisualizationPanelID;
+	m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, l_oVisualizationPanelID, EVisualizationTreeColumn_StringIdentifier);
 
 	//destroy hierarchy but only unaffect visualization boxes (as opposed to destroying them)
-	if (!m_rVisualizationTree.destroyHierarchy(m_rVisualizationTree.getVisualizationWidget(l_oVisualizationPanelIdentifier)->getIdentifier(), false))
+	if (!m_rVisualizationTree.destroyHierarchy(m_rVisualizationTree.getVisualizationWidget(l_oVisualizationPanelID)->getIdentifier(), false))
 	{
 		displayErrorDialog("Tab removal failed !", "An error occurred while destroying widget hierarchy.");
 		return false;
@@ -1292,9 +1292,9 @@ bool CDesignerVisualization::removeVisualizationWidget()
 	//retrieve widget
 	GtkTreeIter l_oIter;
 	if (!m_rVisualizationTree.getTreeSelection(m_pTreeView, &l_oIter)) { return false; }
-	CIdentifier l_oIdentifier;
-	m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, l_oIdentifier, EVisualizationTreeColumn_StringIdentifier);
-	return removeVisualizationWidget(l_oIdentifier);
+	CIdentifier l_oID;
+	m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, l_oID, EVisualizationTreeColumn_StringIdentifier);
+	return removeVisualizationWidget(l_oID);
 }
 
 //TODO : move this to CVisualizationTree?
@@ -1306,25 +1306,25 @@ bool CDesignerVisualization::removeVisualizationWidget(const CIdentifier& identi
 	IVisualizationWidget* l_pParentVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_pVisualizationWidget->getParentIdentifier());
 
 	//unparent or destroy widget
-	uint32_t l_ui32ChildIndex;
-	m_rVisualizationTree.unparentVisualizationWidget(identifier, l_ui32ChildIndex);
+	uint32_t l_ui32ChildIdx;
+	m_rVisualizationTree.unparentVisualizationWidget(identifier, l_ui32ChildIdx);
 	if (l_pVisualizationWidget->getType() != EVisualizationWidget_VisualizationBox) { m_rVisualizationTree.destroyHierarchy(identifier, false); }
 
 	//reparent other child widget, if any
 	if (l_pParentVisualizationWidget->getType() != EVisualizationWidget_VisualizationPanel)
 	{
 		//retrieve parent's other widget
-		CIdentifier l_oOtherVisualizationWidgetIdentifier;
-		l_pParentVisualizationWidget->getChildIdentifier(1 - l_ui32ChildIndex, l_oOtherVisualizationWidgetIdentifier);
+		CIdentifier l_oOtherVisualizationWidgetID;
+		l_pParentVisualizationWidget->getChildIdentifier(1 - l_ui32ChildIdx, l_oOtherVisualizationWidgetID);
 
 		//unparent parent
-		uint32_t l_ui32ParentIndex;
-		const CIdentifier l_oParentParentIdentifier = l_pParentVisualizationWidget->getParentIdentifier();
-		m_rVisualizationTree.unparentVisualizationWidget(l_pParentVisualizationWidget->getIdentifier(), l_ui32ParentIndex);
+		uint32_t l_ui32ParentIdx;
+		const CIdentifier l_oParentParentID = l_pParentVisualizationWidget->getParentIdentifier();
+		m_rVisualizationTree.unparentVisualizationWidget(l_pParentVisualizationWidget->getIdentifier(), l_ui32ParentIdx);
 
 		//reparent other widget to its grandparent
-		m_rVisualizationTree.unparentVisualizationWidget(l_oOtherVisualizationWidgetIdentifier, l_ui32ChildIndex);
-		m_rVisualizationTree.parentVisualizationWidget(l_oOtherVisualizationWidgetIdentifier, l_oParentParentIdentifier, l_ui32ParentIndex);
+		m_rVisualizationTree.unparentVisualizationWidget(l_oOtherVisualizationWidgetID, l_ui32ChildIdx);
+		m_rVisualizationTree.parentVisualizationWidget(l_oOtherVisualizationWidgetID, l_oParentParentID, l_ui32ParentIdx);
 
 		//destroy parent
 		m_rVisualizationTree.destroyHierarchy(l_pParentVisualizationWidget->getIdentifier(), false);
@@ -1352,16 +1352,16 @@ void CDesignerVisualization::notebookPageSelectedCB(GtkNotebook* notebook, const
 {
 	GtkTreeIter l_oIter;
 	m_rVisualizationTree.findChildNodeFromRoot(&l_oIter, static_cast<void*>(notebook));
-	CIdentifier l_oIdentifier;
-	m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, l_oIdentifier, EVisualizationTreeColumn_StringIdentifier);
-	IVisualizationWidget* l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oIdentifier);
+	CIdentifier l_oID;
+	m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, l_oID, EVisualizationTreeColumn_StringIdentifier);
+	IVisualizationWidget* l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oID);
 	if (l_pVisualizationWidget != nullptr)
 	{
 		IVisualizationWidget* l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_pVisualizationWidget->getParentIdentifier());
 		if (l_pVisualizationWindow != nullptr)
 		{
-			l_pVisualizationWindow->getChildIdentifier(pagenum, l_oIdentifier);
-			if (m_rVisualizationTree.findChildNodeFromRoot(&l_oIter, l_oIdentifier)) { refreshActiveVisualization(m_rVisualizationTree.getTreePath(&l_oIter)); }
+			l_pVisualizationWindow->getChildIdentifier(pagenum, l_oID);
+			if (m_rVisualizationTree.findChildNodeFromRoot(&l_oIter, l_oID)) { refreshActiveVisualization(m_rVisualizationTree.getTreePath(&l_oIter)); }
 		}
 	}
 }
@@ -1388,11 +1388,11 @@ void CDesignerVisualization::notifyPositionPanedCB(GtkWidget* widget)
 	GtkTreeIter l_oIter;
 	if (m_rVisualizationTree.findChildNodeFromRoot(&l_oIter, l_pTreeWidget))
 	{
-		CIdentifier l_oIdentifier;
-		m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, l_oIdentifier, EVisualizationTreeColumn_StringIdentifier);
+		CIdentifier l_oID;
+		m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, l_oID, EVisualizationTreeColumn_StringIdentifier);
 
 		//store new position and max position
-		auto* visualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oIdentifier);
+		auto* visualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oID);
 		visualizationWidget->setDividerPosition(l_iPos);
 		visualizationWidget->setMaxDividerPosition(l_iMaxPos);
 	}
@@ -1494,9 +1494,9 @@ void CDesignerVisualization::visualizationWidgetKeyPressEventCB(GtkWidget*, GdkE
 			GtkTreeIter l_oIter;
 			if (m_rVisualizationTree.findChildNodeFromRoot(&l_oIter, getTreeWidget(m_pHighlightedWidget)))
 			{
-				CIdentifier l_oIdentifier;
-				m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, l_oIdentifier, EVisualizationTreeColumn_StringIdentifier);
-				removeVisualizationWidget(l_oIdentifier);
+				CIdentifier l_oID;
+				m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, l_oID, EVisualizationTreeColumn_StringIdentifier);
+				removeVisualizationWidget(l_oID);
 			}
 		}
 	}
@@ -1574,9 +1574,9 @@ void CDesignerVisualization::buttonReleaseCB(GtkWidget* widget, GdkEventButton* 
 				else if (type == EVisualizationTreeNode_Undefined)
 				{
 					//ensure empty plugin is not parented to a panel (because an empty widget is always present in an empty panel)
-					CIdentifier l_oIdentifier;
-					m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, l_oIdentifier, EVisualizationTreeColumn_StringIdentifier);
-					IVisualizationWidget* l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oIdentifier);
+					CIdentifier l_oID;
+					m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, l_oID, EVisualizationTreeColumn_StringIdentifier);
+					IVisualizationWidget* l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oID);
 					if (l_pVisualizationWidget != nullptr)
 					{
 						IVisualizationWidget* l_pParentVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(
@@ -1642,18 +1642,18 @@ void CDesignerVisualization::cursorChangedCB(GtkTreeView* pTreeView)
 		if (m_rVisualizationTree.findParentNode(&l_oVisualizationWindowIter, EVisualizationTreeNode_VisualizationWindow))
 		{
 			//retrieve visualization window
-			CIdentifier l_oVisualizationWindowIdentifier;
-			m_rVisualizationTree.getIdentifierFromTreeIter(&l_oVisualizationWindowIter, l_oVisualizationWindowIdentifier,
+			CIdentifier l_oVisualizationWindowID;
+			m_rVisualizationTree.getIdentifierFromTreeIter(&l_oVisualizationWindowIter, l_oVisualizationWindowID,
 														   EVisualizationTreeColumn_StringIdentifier);
-			IVisualizationWidget* l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowIdentifier);
+			IVisualizationWidget* l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowID);
 
 			//if window has at least one panel
 			if (l_pVisualizationWindow->getNbChildren() > 0)
 			{
 				//retrieve first panel
-				CIdentifier l_oVisualizationPanelIdentifier;
-				l_pVisualizationWindow->getChildIdentifier(0, l_oVisualizationPanelIdentifier);
-				m_rVisualizationTree.findChildNodeFromParent(&l_oVisualizationPanelIter, l_oVisualizationPanelIdentifier);
+				CIdentifier l_oVisualizationPanelID;
+				l_pVisualizationWindow->getChildIdentifier(0, l_oVisualizationPanelID);
+				m_rVisualizationTree.findChildNodeFromParent(&l_oVisualizationPanelIter, l_oVisualizationPanelID);
 
 				//retrieve notebook
 				void* l_pNotebook = nullptr;
@@ -1745,9 +1745,9 @@ void CDesignerVisualization::dragDataReceivedInWidgetCB(GtkWidget* dstWidget, Gt
 	else { return; }
 
 	//retrieve src widget identifier and src visualization widget
-	CIdentifier l_oSrcIdentifier;
-	m_rVisualizationTree.getIdentifierFromTreeIter(&l_oSrcIter, l_oSrcIdentifier, EVisualizationTreeColumn_StringIdentifier);
-	IVisualizationWidget* l_pSrcVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oSrcIdentifier);
+	CIdentifier l_oSrcID;
+	m_rVisualizationTree.getIdentifierFromTreeIter(&l_oSrcIter, l_oSrcID, EVisualizationTreeColumn_StringIdentifier);
+	IVisualizationWidget* l_pSrcVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oSrcID);
 	if (l_pSrcVisualizationWidget == nullptr)
 	{
 		m_kernelContext.getLogManager() << LogLevel_Debug << "dragDataReceivedInWidgetCB couldn't retrieve source visualization widget!\n";
@@ -1766,23 +1766,23 @@ void CDesignerVisualization::dragDataReceivedInWidgetCB(GtkWidget* dstWidget, Gt
 	if (l_pSrcVisualizationWidget->getParentIdentifier() == OV_UndefinedIdentifier ||
 		m_rVisualizationTree.getULongValueFromTreeIter(&l_oDstIter, EVisualizationTreeColumn_ULongNodeType) == EVisualizationTreeNode_VisualizationBox)
 	{
-		m_rVisualizationTree.dragDataReceivedInWidgetCB(l_oSrcIdentifier, dstWidget);
+		m_rVisualizationTree.dragDataReceivedInWidgetCB(l_oSrcID, dstWidget);
 	}
 	else //dest widget is a dummy : unaffect src widget and simplify the tree before performing the drop operation
 	{
 		//save dest widget identifier
-		CIdentifier l_oDstIdentifier;
-		m_rVisualizationTree.getIdentifierFromTreeIter(&l_oDstIter, l_oDstIdentifier, EVisualizationTreeColumn_StringIdentifier);
+		CIdentifier l_oDstID;
+		m_rVisualizationTree.getIdentifierFromTreeIter(&l_oDstIter, l_oDstID, EVisualizationTreeColumn_StringIdentifier);
 
 		//unaffect src widget, so that tree is simplified
-		if (!removeVisualizationWidget(l_oSrcIdentifier))
+		if (!removeVisualizationWidget(l_oSrcID))
 		{
 			m_kernelContext.getLogManager() << LogLevel_Debug << "dragDataReceivedInWidgetCB couldn't remove source widget from its parent!\n";
 			return;
 		}
 
 		//then drop it
-		if (!m_rVisualizationTree.findChildNodeFromRoot(&l_oDstIter, l_oDstIdentifier))
+		if (!m_rVisualizationTree.findChildNodeFromRoot(&l_oDstIter, l_oDstID))
 		{
 			m_kernelContext.getLogManager() << LogLevel_Debug <<
 					"dragDataReceivedInWidgetCB couldn't retrieve iterator of dummy destination widget to delete!\n";
@@ -1790,12 +1790,12 @@ void CDesignerVisualization::dragDataReceivedInWidgetCB(GtkWidget* dstWidget, Gt
 		}
 		void* l_pNewDstTreeWidget = nullptr;
 		m_rVisualizationTree.getPointerValueFromTreeIter(&l_oDstIter, l_pNewDstTreeWidget, EVisualizationTreeColumn_PointerWidget);
-		m_rVisualizationTree.dragDataReceivedInWidgetCB(l_oSrcIdentifier, getVisualizationWidget(GTK_WIDGET(l_pNewDstTreeWidget)));
+		m_rVisualizationTree.dragDataReceivedInWidgetCB(l_oSrcID, getVisualizationWidget(GTK_WIDGET(l_pNewDstTreeWidget)));
 	}
 
 	//refresh view
 	GtkTreeIter l_oDraggedIter;
-	m_rVisualizationTree.findChildNodeFromRoot(&l_oDraggedIter, l_oSrcIdentifier);
+	m_rVisualizationTree.findChildNodeFromRoot(&l_oDraggedIter, l_oSrcID);
 	refreshActiveVisualization(m_rVisualizationTree.getTreePath(&l_oDraggedIter));
 }
 
@@ -1844,46 +1844,46 @@ void CDesignerVisualization::dragDataReceivedInEventBoxCB(GtkWidget* dstWidget, 
 	}
 
 	//retrieve src widget identifier
-	CIdentifier l_oSrcIdentifier;
-	m_rVisualizationTree.getIdentifierFromTreeIter(&l_oSrcIter, l_oSrcIdentifier, EVisualizationTreeColumn_StringIdentifier);
+	CIdentifier l_oSrcID;
+	m_rVisualizationTree.getIdentifierFromTreeIter(&l_oSrcIter, l_oSrcID, EVisualizationTreeColumn_StringIdentifier);
 
 	//if widget is unaffected, just drag n drop it
 	GtkTreeIter l_oUnaffectedIter = l_oSrcIter;
 	if (m_rVisualizationTree.findParentNode(&l_oUnaffectedIter, EVisualizationTreeNode_Unaffected))
 	{
-		m_rVisualizationTree.dragDataReceivedOutsideWidgetCB(l_oSrcIdentifier, dstWidget, oLocation);
+		m_rVisualizationTree.dragDataReceivedOutsideWidgetCB(l_oSrcID, dstWidget, oLocation);
 	}
 	else
 	{
 		//save dest widget identifier
 		GtkTreeIter l_oDstIter;
 		m_rVisualizationTree.findChildNodeFromRoot(&l_oDstIter, getTreeWidget(dstWidget));
-		CIdentifier l_oDstIdentifier;
-		m_rVisualizationTree.getIdentifierFromTreeIter(&l_oDstIter, l_oDstIdentifier, EVisualizationTreeColumn_StringIdentifier);
+		CIdentifier l_oDstID;
+		m_rVisualizationTree.getIdentifierFromTreeIter(&l_oDstIter, l_oDstID, EVisualizationTreeColumn_StringIdentifier);
 
 		//if dest widget is src widget's parent (paned widget), drop src widget in corresponding event box of parent's other child
 		//(otherwise, DND will fail due to parent's removal during tree simplification process)
-		IVisualizationWidget* l_pSrcVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oSrcIdentifier);
-		if (l_pSrcVisualizationWidget->getParentIdentifier() == l_oDstIdentifier)
+		IVisualizationWidget* l_pSrcVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oSrcID);
+		if (l_pSrcVisualizationWidget->getParentIdentifier() == l_oDstID)
 		{
 			IVisualizationWidget* l_pSrcParentVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(
 				l_pSrcVisualizationWidget->getParentIdentifier());
-			l_pSrcParentVisualizationWidget->getChildIdentifier(0, l_oDstIdentifier);
-			if (l_oSrcIdentifier == l_oDstIdentifier) { l_pSrcParentVisualizationWidget->getChildIdentifier(1, l_oDstIdentifier); }
+			l_pSrcParentVisualizationWidget->getChildIdentifier(0, l_oDstID);
+			if (l_oSrcID == l_oDstID) { l_pSrcParentVisualizationWidget->getChildIdentifier(1, l_oDstID); }
 		}
 
 		//unaffect src widget, so that tree is simplified
-		removeVisualizationWidget(l_oSrcIdentifier);
+		removeVisualizationWidget(l_oSrcID);
 
 		//then drop it
-		m_rVisualizationTree.findChildNodeFromRoot(&l_oDstIter, l_oDstIdentifier);
+		m_rVisualizationTree.findChildNodeFromRoot(&l_oDstIter, l_oDstID);
 		void* l_pNewDstTreeWidget = nullptr;
 		m_rVisualizationTree.getPointerValueFromTreeIter(&l_oDstIter, l_pNewDstTreeWidget, EVisualizationTreeColumn_PointerWidget);
-		m_rVisualizationTree.dragDataReceivedOutsideWidgetCB(l_oSrcIdentifier, getVisualizationWidget(GTK_WIDGET(l_pNewDstTreeWidget)), oLocation);
+		m_rVisualizationTree.dragDataReceivedOutsideWidgetCB(l_oSrcID, getVisualizationWidget(GTK_WIDGET(l_pNewDstTreeWidget)), oLocation);
 	}
 
 	//refresh view
 	GtkTreeIter l_oDraggedIter;
-	m_rVisualizationTree.findChildNodeFromRoot(&l_oDraggedIter, l_oSrcIdentifier);
+	m_rVisualizationTree.findChildNodeFromRoot(&l_oDraggedIter, l_oSrcID);
 	refreshActiveVisualization(m_rVisualizationTree.getTreePath(&l_oDraggedIter));
 }

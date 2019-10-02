@@ -96,10 +96,10 @@ GtkWidget* CPlayerVisualization::loadTreeWidget(IVisualizationWidget* pVisualiza
 			if (panelIndex == 0) { treeWidget = gtk_notebook_new(); }
 			else //otherwise retrieve it from first panel
 			{
-				CIdentifier l_oFirstPanelIdentifier;
-				l_pVisualizationWindow->getChildIdentifier(0, l_oFirstPanelIdentifier);
+				CIdentifier l_oFirstPanelID;
+				l_pVisualizationWindow->getChildIdentifier(0, l_oFirstPanelID);
 				GtkTreeIter l_oFirstPanelIter;
-				m_rVisualizationTree.findChildNodeFromRoot(&l_oFirstPanelIter, l_oFirstPanelIdentifier);
+				m_rVisualizationTree.findChildNodeFromRoot(&l_oFirstPanelIter, l_oFirstPanelID);
 				void* l_pNotebookWidget = nullptr;
 				m_rVisualizationTree.getPointerValueFromTreeIter(&l_oFirstPanelIter, l_pNotebookWidget, EVisualizationTreeColumn_PointerWidget);
 				treeWidget = static_cast<GtkWidget*>(l_pNotebookWidget);
@@ -167,10 +167,10 @@ GtkWidget* CPlayerVisualization::loadTreeWidget(IVisualizationWidget* pVisualiza
 				m_rVisualizationTree.getPointerValueFromTreeIter(&parentIter, paned, EVisualizationTreeColumn_PointerWidget);
 				if (paned != nullptr && GTK_IS_PANED(paned))
 				{
-					uint32_t l_ui32ChildIndex;
-					if (l_pParentVisualizationWidget->getChildIndex(pVisualizationWidget->getIdentifier(), l_ui32ChildIndex))
+					uint32_t l_ui32ChildIdx;
+					if (l_pParentVisualizationWidget->getChildIndex(pVisualizationWidget->getIdentifier(), l_ui32ChildIdx))
 					{
-						if (l_ui32ChildIndex == 0) { gtk_paned_pack1(GTK_PANED(paned), treeWidget, TRUE, TRUE); }
+						if (l_ui32ChildIdx == 0) { gtk_paned_pack1(GTK_PANED(paned), treeWidget, TRUE, TRUE); }
 						else { gtk_paned_pack2(GTK_PANED(paned), treeWidget, TRUE, TRUE); }
 					}
 				}
@@ -187,16 +187,16 @@ GtkWidget* CPlayerVisualization::loadTreeWidget(IVisualizationWidget* pVisualiza
 		while (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(identifier, EVisualizationWidget_VisualizationBox))
 		{
 			//retrieve window containing current visualization box
-			CIdentifier l_oParentIdentifier;
+			CIdentifier l_oParentID;
 			IVisualizationWidget* l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(identifier);
 			while (l_pVisualizationWidget->getParentIdentifier() != OV_UndefinedIdentifier)
 			{
-				l_oParentIdentifier    = l_pVisualizationWidget->getParentIdentifier();
-				l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oParentIdentifier);
+				l_oParentID    = l_pVisualizationWidget->getParentIdentifier();
+				l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oParentID);
 			}
 
 			//if current box is parented to window passed in parameter, break and create it
-			if (m_rVisualizationTree.getVisualizationWidget(l_oParentIdentifier) == pVisualizationWidget)
+			if (m_rVisualizationTree.getVisualizationWidget(l_oParentID) == pVisualizationWidget)
 			{
 				l_bCreateWindow = true;
 				break;
@@ -247,10 +247,10 @@ void CPlayerVisualization::endLoadTreeWidget(IVisualizationWidget* pVisualizatio
 	if (l_pTreeWidget != nullptr && pVisualizationWidget->getType() == EVisualizationWidget_VisualizationWindow)
 	{
 		//retrieve notebook
-		CIdentifier l_oChildIdentifier;
-		pVisualizationWidget->getChildIdentifier(0, l_oChildIdentifier);
+		CIdentifier l_oChildID;
+		pVisualizationWidget->getChildIdentifier(0, l_oChildID);
 		GtkTreeIter l_oChildIter;
-		m_rVisualizationTree.findChildNodeFromRoot(&l_oChildIter, l_oChildIdentifier);
+		m_rVisualizationTree.findChildNodeFromRoot(&l_oChildIter, l_oChildID);
 		void* l_pChildTreeWidget;
 		m_rVisualizationTree.getPointerValueFromTreeIter(&l_oChildIter, l_pChildTreeWidget, EVisualizationTreeColumn_PointerWidget);
 
@@ -450,14 +450,14 @@ bool CPlayerVisualization::parentWidgetBox(IVisualizationWidget* widget, GtkBox*
 		{
 			void* l_pParentWidget = nullptr;
 			m_rVisualizationTree.getPointerValueFromTreeIter(&l_oParentIter, l_pParentWidget, EVisualizationTreeColumn_PointerWidget);
-			CIdentifier l_oParentIdentifier;
-			m_rVisualizationTree.getIdentifierFromTreeIter(&l_oParentIter, l_oParentIdentifier, EVisualizationTreeColumn_StringIdentifier);
+			CIdentifier l_oParentID;
+			m_rVisualizationTree.getIdentifierFromTreeIter(&l_oParentIter, l_oParentID, EVisualizationTreeColumn_StringIdentifier);
 
 			//widget is to be parented to a paned widget
 			if (GTK_IS_PANED(l_pParentWidget))
 			{
 				//retrieve index at which to insert child
-				IVisualizationWidget* l_pParentVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oParentIdentifier);
+				IVisualizationWidget* l_pParentVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oParentID);
 				uint32_t l_oVisualizationBoxIdx;
 				l_pParentVisualizationWidget->getChildIndex(widget->getIdentifier(), l_oVisualizationBoxIdx);
 				//insert visualization box in paned
@@ -475,18 +475,18 @@ bool CPlayerVisualization::parentWidgetBox(IVisualizationWidget* widget, GtkBox*
 			else if (GTK_IS_NOTEBOOK(l_pParentWidget)) //widget is to be added to a notebook page
 			{
 				//retrieve notebook page index
-				IVisualizationWidget* l_pParentVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oParentIdentifier);
+				IVisualizationWidget* l_pParentVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oParentID);
 				IVisualizationWidget* l_pParentVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(
 					l_pParentVisualizationWidget->getParentIdentifier());
-				uint32_t l_oPanelIndex;
-				l_pParentVisualizationWindow->getChildIndex(l_pParentVisualizationWidget->getIdentifier(), l_oPanelIndex);
+				uint32_t l_oPanelIdx;
+				l_pParentVisualizationWindow->getChildIndex(l_pParentVisualizationWidget->getIdentifier(), l_oPanelIdx);
 
 				//remove temporary page
-				gtk_notebook_remove_page(GTK_NOTEBOOK(l_pParentWidget), l_oPanelIndex);
+				gtk_notebook_remove_page(GTK_NOTEBOOK(l_pParentWidget), l_oPanelIdx);
 
 				//insert final page
 				gtk_notebook_insert_page(GTK_NOTEBOOK(l_pParentWidget), GTK_WIDGET(widgetBox),
-										 gtk_label_new(static_cast<const char*>(l_pParentVisualizationWidget->getName())), l_oPanelIndex);
+										 gtk_label_new(static_cast<const char*>(l_pParentVisualizationWidget->getName())), l_oPanelIdx);
 			}
 
 			//resize widgets once they are allocated : this is the case when they are shown on an expose event
@@ -500,12 +500,12 @@ bool CPlayerVisualization::parentWidgetBox(IVisualizationWidget* widget, GtkBox*
 			if (m_rVisualizationTree.findParentNode(&l_oPanelIter, EVisualizationTreeNode_VisualizationPanel))
 			{
 				//get panel identifier
-				CIdentifier l_oPanelIdentifier;
-				m_rVisualizationTree.getIdentifierFromTreeIter(&l_oPanelIter, l_oPanelIdentifier, EVisualizationTreeColumn_StringIdentifier);
+				CIdentifier l_oPanelID;
+				m_rVisualizationTree.getIdentifierFromTreeIter(&l_oPanelIter, l_oPanelID, EVisualizationTreeColumn_StringIdentifier);
 
 				//get panel index in window
-				uint32_t l_ui32PanelIndex;
-				m_rVisualizationTree.getVisualizationWidgetIndex(l_oPanelIdentifier, l_ui32PanelIndex);
+				uint32_t l_ui32PanelIdx;
+				m_rVisualizationTree.getVisualizationWidgetIndex(l_oPanelID, l_ui32PanelIdx);
 
 				//get notebook pointer
 				void* l_pPanelWidget = nullptr;
@@ -525,7 +525,7 @@ bool CPlayerVisualization::parentWidgetBox(IVisualizationWidget* widget, GtkBox*
 					// gdk_flush();
 
 					//set panel containing widget as current (this realizes the widget)
-					gtk_notebook_set_current_page(GTK_NOTEBOOK(l_pPanelWidget), l_ui32PanelIndex);
+					gtk_notebook_set_current_page(GTK_NOTEBOOK(l_pPanelWidget), l_ui32PanelIdx);
 
 					//then reset first panel as current
 					gtk_notebook_set_current_page(GTK_NOTEBOOK(l_pPanelWidget), 0);
@@ -622,10 +622,10 @@ void CPlayerVisualization::resizeCB(GtkContainer* container)
 		GtkPaned* l_pPaned = GTK_PANED(container);
 
 		//retrieve paned identifier from paned map
-		CIdentifier& l_oPanedIdentifier = m_mSplitWidgets[GTK_PANED(l_pPaned)];
+		CIdentifier& l_oPanedID = m_mSplitWidgets[GTK_PANED(l_pPaned)];
 
 		//retrieve its attributes
-		IVisualizationWidget* l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oPanedIdentifier);
+		IVisualizationWidget* l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oPanedID);
 		const int l_i32HandlePos                     = l_pVisualizationWidget->getDividerPosition();
 		const int l_i32MaxHandlePos                  = l_pVisualizationWidget->getMaxDividerPosition();
 

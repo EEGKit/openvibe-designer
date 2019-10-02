@@ -44,8 +44,8 @@ namespace Mensia
 				GdkGC* l_pDrawGC = gdk_gc_new(pWidget->window);
 				for (uint32_t i = 0; i < m_pRendererContext->getSelectedCount(); ++i)
 				{
-					const uint32_t l_ui32Index = m_pRendererContext->getSelected(i);
-					sprintf(l_sLabel, "%s (%i)", m_pRendererContext->getChannelName(l_ui32Index).c_str(), l_ui32Index + 1);
+					const uint32_t l_ui32Idx = m_pRendererContext->getSelected(i);
+					sprintf(l_sLabel, "%s (%i)", m_pRendererContext->getChannelName(l_ui32Idx).c_str(), l_ui32Idx + 1);
 					PangoLayout* l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, l_sLabel);
 					pango_layout_get_size(l_pPangoLayout, &lw, &lh);
 					lw /= PANGO_SCALE;

@@ -43,13 +43,13 @@ bool CSettingEditorDialog::run()
 	uint32_t numSettings =
 			0; // Cannot rely on m_vSettingTypes.size() -- if there are any duplicates, it wont increment properly (and should be an error anyway) ...
 
-	for (const auto& l_oCurrentTypeIdentifier : m_kernelContext.getTypeManager().getSortedTypes())
+	for (const auto& l_oCurrentTypeID : m_kernelContext.getTypeManager().getSortedTypes())
 	{
-		if (!m_kernelContext.getTypeManager().isStream(l_oCurrentTypeIdentifier.first))
+		if (!m_kernelContext.getTypeManager().isStream(l_oCurrentTypeID.first))
 		{
-			gtk_combo_box_append_text(GTK_COMBO_BOX(m_pType), l_oCurrentTypeIdentifier.second.toASCIIString());
-			if (l_oCurrentTypeIdentifier.first == l_oSettingType) { l_iActive = numSettings; }
-			m_vSettingTypes[l_oCurrentTypeIdentifier.second.toASCIIString()] = l_oCurrentTypeIdentifier.first;
+			gtk_combo_box_append_text(GTK_COMBO_BOX(m_pType), l_oCurrentTypeID.second.toASCIIString());
+			if (l_oCurrentTypeID.first == l_oSettingType) { l_iActive = numSettings; }
+			m_vSettingTypes[l_oCurrentTypeID.second.toASCIIString()] = l_oCurrentTypeID.first;
 			numSettings++;
 		}
 	}
