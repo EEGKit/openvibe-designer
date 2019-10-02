@@ -321,10 +321,10 @@ namespace Mensia
 					m_oStimulationDecoder.decode(i);
 					if (m_oStimulationDecoder.isBufferReceived())
 					{
-						OpenViBE::IStimulationSet* l_pStimulationSet = m_oStimulationDecoder.getOutputStimulationSet();
-						for (size_t j = 0; j < l_pStimulationSet->getStimulationCount(); ++j)
+						OpenViBE::IStimulationSet* stimSet = m_oStimulationDecoder.getOutputStimulationSet();
+						for (size_t j = 0; j < stimSet->getStimulationCount(); ++j)
 						{
-							m_vRenderer[0]->feed(l_pStimulationSet->getStimulationDate(j), l_pStimulationSet->getStimulationIdentifier(j));
+							m_vRenderer[0]->feed(stimSet->getStimulationDate(j), stimSet->getStimulationIdentifier(j));
 							m_bRedrawNeeded = true;
 						}
 					}
