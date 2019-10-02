@@ -304,25 +304,25 @@ bool CBufferDatabase::setMatrixBuffer(const double* buffer, const uint64_t ui64S
 	if (m_bError) { return false; }
 
 	// Check for time-continuity
-	if (ui64StartTime < m_ui64LastBufferEndTime && !m_bWarningPrinted)
+	if (ui64StartTime < m_lastBufferEndTime && !m_bWarningPrinted)
 	{
 		m_parentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Warning <<
 				"Your signal does not appear to be continuous in time. "
-				<< "Previously inserted buffer ended at " << TimeArithmetics::timeToSeconds(m_ui64LastBufferEndTime)
+				<< "Previously inserted buffer ended at " << TimeArithmetics::timeToSeconds(m_lastBufferEndTime)
 				<< "s, the current starts at " << TimeArithmetics::timeToSeconds(ui64StartTime)
 				<< "s. The display may be incorrect.\n";
 		m_bWarningPrinted = true;
 	}
-	m_ui64LastBufferEndTime = ui64EndTime;
+	m_lastBufferEndTime = ui64EndTime;
 
 
 	//if this the first buffer, perform some precomputations
 	if (!m_bFirstBufferReceived)
 	{
-		m_ui64BufferDuration = ui64EndTime - ui64StartTime;
+		m_bufferDuration = ui64EndTime - ui64StartTime;
 
 		//test if it is equal to zero : Error
-		if (m_ui64BufferDuration == 0)
+		if (m_bufferDuration == 0)
 		{
 			m_parentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Warning <<
 					"Error : buffer start time and end time are equal : " << ui64StartTime << "\n";
@@ -334,13 +334,13 @@ bool CBufferDatabase::setMatrixBuffer(const double* buffer, const uint64_t ui64S
 
 		//computes the sampling frequency for sanity checking or if the setter has not been called
 		const uint64_t l_ui64SampleDuration = (uint64_t(1) << 32) * m_pDimensionSizes[1];
-		uint32_t l_ui32EstimatedFrequency   = uint32_t(l_ui64SampleDuration / m_ui64BufferDuration);
+		uint32_t l_ui32EstimatedFrequency   = uint32_t(l_ui64SampleDuration / m_bufferDuration);
 		if (l_ui32EstimatedFrequency == 0)
 		{
 			// Complain if estimate is bad
 			m_parentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Warning <<
 					"The integer sampling frequency was estimated from the chunk size to be 0"
-					<< " (nSamples " << m_pDimensionSizes[1] << " / bufferLength " << TimeArithmetics::timeToSeconds(m_ui64BufferDuration) <<
+					<< " (nSamples " << m_pDimensionSizes[1] << " / bufferLength " << TimeArithmetics::timeToSeconds(m_bufferDuration) <<
 					"s = 0). This is not supported. Forcing the rate to 1. This may lead to problems.\n";
 			l_ui32EstimatedFrequency = 1;
 		}

@@ -47,12 +47,12 @@ CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox& box, const uint32
 		gtk_list_store_append(l_pList, &l_oListIter);
 		gtk_list_store_set(l_pList, &l_oListIter, 0, l_vEntries[i].c_str(), -1);
 
-		m_entriesIndex[CString(l_vEntries[i].c_str())] = uint64_t(i);
+		m_entriesIdx[CString(l_vEntries[i].c_str())] = uint64_t(i);
 	}
 
 	CString settingValue;
 	box.getSettingValue(index, settingValue);
-	if (m_entriesIndex.count(settingValue.toASCIIString()) == 0)
+	if (m_entriesIdx.count(settingValue.toASCIIString()) == 0)
 	{
 		gtk_list_store_append(l_pList, &l_oListIter);
 		gtk_list_store_set(l_pList, &l_oListIter, 0, settingValue.toASCIIString(), -1);
@@ -72,12 +72,12 @@ void CEnumerationSettingView::setValue(const CString& value)
 	m_onValueSetting = true;
 
 	// If the current value of the setting is not in the enumeration list, we will add or replace the last value in the list, so it can be set to this value
-	if (m_entriesIndex.count(value) == 0)
+	if (m_entriesIdx.count(value) == 0)
 	{
 		GtkTreeIter l_oListIter;
 		GtkListStore* l_pList = GTK_LIST_STORE(gtk_combo_box_get_model(m_comboBox));
 		int valuesInModel     = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(l_pList), nullptr);
-		if (valuesInModel == int(m_entriesIndex.size()))
+		if (valuesInModel == int(m_entriesIdx.size()))
 		{
 			gtk_list_store_append(l_pList, &l_oListIter);
 			valuesInModel += 1;
@@ -92,7 +92,7 @@ void CEnumerationSettingView::setValue(const CString& value)
 		gtk_list_store_set(l_pList, &l_oListIter, 0, value.toASCIIString(), -1);
 		gtk_combo_box_set_active(m_comboBox, valuesInModel - 1);
 	}
-	else { gtk_combo_box_set_active(m_comboBox, gint(m_entriesIndex[value])); }
+	else { gtk_combo_box_set_active(m_comboBox, gint(m_entriesIdx[value])); }
 	m_onValueSetting = false;
 }
 

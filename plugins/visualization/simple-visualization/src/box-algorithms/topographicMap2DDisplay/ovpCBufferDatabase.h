@@ -96,7 +96,7 @@ namespace OpenViBEPlugins
 
 			/*! Duration of a single buffer.
 			Computed once, but not constant when sampling frequency is not a multiple of buffer size!*/
-			uint64_t m_ui64BufferDuration = 0;
+			uint64_t m_bufferDuration = 0;
 
 			/*! Time step separating the start times of m_nBufferToDisplay+1 buffers.
 			Recomputed once every time the user changes the total duration to display,
@@ -108,7 +108,7 @@ namespace OpenViBEPlugins
 			uint64_t m_bufferStep = 0;
 
 			// When did the last inserted buffer end
-			uint64_t m_ui64LastBufferEndTime = 0;
+			uint64_t m_lastBufferEndTime = 0;
 			// Did we print a warning about noncontinuity?
 			bool m_bWarningPrinted = false;
 

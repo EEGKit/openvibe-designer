@@ -211,14 +211,14 @@ namespace Mensia
 			virtual void redraw(const bool immediate = false)
 			{
 				const uint64_t currentTime = System::Time::zgetTime();
-				if (m_bRedrawNeeded || currentTime - m_ui64LastRenderTime > ((1LL << 32) / 16))
+				if (m_bRedrawNeeded || currentTime - m_lastRenderTime > ((1LL << 32) / 16))
 				{
-					// immediate |= (l_ui64CurrentTime - m_ui64LastRenderTime > ((1LL<<32)/4));
+					// immediate |= (l_ui64CurrentTime - m_lastRenderTime > ((1LL<<32)/4));
 					m_oGtkGLWidget.redraw(immediate);
 					m_oGtkGLWidget.redrawLeft(immediate);
 					m_oGtkGLWidget.redrawRight(immediate);
 					m_oGtkGLWidget.redrawBottom(immediate);
-					m_ui64LastRenderTime = currentTime;
+					m_lastRenderTime = currentTime;
 					m_bRedrawNeeded      = false;
 				}
 			}
@@ -243,7 +243,7 @@ namespace Mensia
 
 			OpenViBE::CIdentifier m_oClassId = OV_UndefinedIdentifier;
 			std::vector<int> m_vParameter;
-			uint64_t m_ui64LastProcessTime = 0;
+			uint64_t m_lastProcessTime = 0;
 
 			TGtkGLWidget<CBoxAlgorithmViz> m_oGtkGLWidget;
 			std::map<std::string, CVertex> m_vChannelLocalisation;
@@ -309,7 +309,7 @@ namespace Mensia
 			bool m_bRebuildNeeded         = false;
 			bool m_bRefreshNeeded         = false;
 			bool m_bRedrawNeeded          = false;
-			uint64_t m_ui64LastRenderTime = 0;
+			uint64_t m_lastRenderTime = 0;
 
 			bool m_bIsVideoOutputEnabled = false; // for video output
 			bool m_bIsVideoOutputWorking = false;

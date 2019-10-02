@@ -130,7 +130,7 @@ bool CBoxAlgorithmViz::initialize()
 	m_bIsTimeLocked       = true;
 	m_bIsScaleVisible     = true;
 	m_textureId           = 0;
-	m_ui64LastProcessTime = 0;
+	m_lastProcessTime = 0;
 	m_time1               = 0;
 	m_time2               = 0;
 	m_sColor              = CString("100,100,100");
@@ -437,10 +437,10 @@ bool CBoxAlgorithmViz::processClock(IMessageClock& /*rClock*/)
 		else { minDeltaTime = minDeltaTimeLowDefinition2; }
 	}
 
-	if (currentTime > m_ui64LastProcessTime + minDeltaTime || this->getPlayerContext().getStatus() == PlayerStatus_Step || this->getPlayerContext().getStatus()
+	if (currentTime > m_lastProcessTime + minDeltaTime || this->getPlayerContext().getStatus() == PlayerStatus_Step || this->getPlayerContext().getStatus()
 		== PlayerStatus_Pause)
 	{
-		m_ui64LastProcessTime = currentTime;
+		m_lastProcessTime = currentTime;
 		this->m_bRedrawNeeded = true;
 		this->getBoxAlgorithmContext()->markAlgorithmAsReadyToProcess();
 	}

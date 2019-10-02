@@ -26,7 +26,7 @@ namespace OpenViBEDesigner
 			OpenViBE::CIdentifier m_typeID = OV_UndefinedIdentifier;
 			bool p                                  = false;
 
-			std::map<OpenViBE::CString, uint64_t> m_entriesIndex;
+			std::map<OpenViBE::CString, uint64_t> m_entriesIdx;
 
 			const OpenViBE::Kernel::IKernelContext& m_kernelContext;
 			bool m_onValueSetting = false;

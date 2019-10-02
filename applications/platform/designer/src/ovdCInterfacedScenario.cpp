@@ -2216,7 +2216,7 @@ void CInterfacedScenario::scenarioDrawingAreaDragDataReceivedCB(GdkDragContext* 
 			CIdentifier metaboxId;
 			metaboxId.fromString(CString(l_sSelectionData.substr(l_sSelectionData.find(')') + 1).c_str()));
 
-			//m_kernelContext.getLogManager() << LogLevel_Info << "This is a metabox with ID " << l_sMetaboxID.c_str() << "\n";
+			//m_kernelContext.getLogManager() << LogLevel_Info << "This is a metabox with ID " << metaboxID.c_str() << "\n";
 			POD = m_kernelContext.getMetaboxManager().getMetaboxObjectDesc(metaboxId);
 
 			// insert a box into the scenario, initialize it from the proxy-descriptor from the metabox loader

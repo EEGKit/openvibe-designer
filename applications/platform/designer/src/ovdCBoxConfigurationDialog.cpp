@@ -215,22 +215,22 @@ void CBoxConfigurationDialog::update(CObservable& /*o*/, void* data)
 		case SettingValueUpdate:
 		{
 			CString l_sSettingValue;
-			m_box.getSettingValue(l_pEvent->m_FirstIndex, l_sSettingValue);
+			m_box.getSettingValue(l_pEvent->m_FirstIdx, l_sSettingValue);
 
-			m_vSettingViewVector[l_pEvent->m_FirstIndex]->setValue(l_sSettingValue);
+			m_vSettingViewVector[l_pEvent->m_FirstIdx]->setValue(l_sSettingValue);
 			break;
 		}
 
 		case SettingDelete:
-			removeSetting(l_pEvent->m_FirstIndex);
+			removeSetting(l_pEvent->m_FirstIdx);
 			break;
 
 		case SettingAdd:
-			addSetting(l_pEvent->m_FirstIndex);
+			addSetting(l_pEvent->m_FirstIdx);
 			break;
 
 		case SettingChange:
-			settingChange(l_pEvent->m_FirstIndex);
+			settingChange(l_pEvent->m_FirstIdx);
 			break;
 
 		default:

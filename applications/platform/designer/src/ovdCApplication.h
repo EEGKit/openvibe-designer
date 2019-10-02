@@ -78,8 +78,8 @@ namespace OpenViBEDesigner
 
 		void addCommentCB(CInterfacedScenario* pScenario) const;
 
-		void changeCurrentScenario(int pageIndex);
-		void reorderCurrentScenario(uint32_t newPageIndex);
+		void changeCurrentScenario(int pageIdx);
+		void reorderCurrentScenario(uint32_t newPageIdx);
 
 		void addRecentScenario(const std::string& scenarioPath);
 
@@ -180,12 +180,12 @@ namespace OpenViBEDesigner
 
 		const gchar* m_sSearchTerm = nullptr;
 
-		uint64_t m_ui64LastTimeRefresh = 0;
+		uint64_t m_lastTimeRefresh = 0;
 		bool m_bIsQuitting = false;
 		bool m_bIsNewVersion = false;
 
 		std::vector<CInterfacedScenario*> m_vInterfacedScenario;
-		uint32_t m_ui32CurrentInterfacedScenarioIndex = 0;
+		uint32_t m_currentInterfacedScenarioIdx = 0;
 		std::vector<const OpenViBE::Plugins::IPluginObjectDesc*> m_vNewBoxes;
 		std::vector<const OpenViBE::Plugins::IPluginObjectDesc*> m_vUpdatedBoxes;
 		std::vector<std::string> m_vDocumentedBoxes;

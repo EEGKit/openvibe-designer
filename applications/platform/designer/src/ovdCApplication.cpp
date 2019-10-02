@@ -611,9 +611,9 @@ namespace
 			{
 				const double time = (currentInterfacedScenario->m_pPlayer
 										 ? TimeArithmetics::timeToSeconds(currentInterfacedScenario->m_pPlayer->getCurrentSimulatedTime()) : 0);
-				if (l_pApplication->m_ui64LastTimeRefresh != time)
+				if (l_pApplication->m_lastTimeRefresh != time)
 				{
-					l_pApplication->m_ui64LastTimeRefresh = uint64_t(time);
+					l_pApplication->m_lastTimeRefresh = uint64_t(time);
 
 					const uint32_t milli   = (uint32_t(time * 1000) % 1000);
 					const uint32_t seconds = uint32_t(time) % 60;
@@ -1119,15 +1119,15 @@ void CApplication::initialize(const ECommandLineFlag eCommandLineFlags)
 
 
 	// List the notebook pages, cycle through them in reverse so we can remove pages without modifying indexes
-	for (int notebookIndex = gtk_notebook_get_n_pages(sidebar) - 1; notebookIndex >= 0; notebookIndex--)
+	for (int notebookIdx = gtk_notebook_get_n_pages(sidebar) - 1; notebookIdx >= 0; notebookIdx--)
 	{
-		GtkWidget* tabWidget = gtk_notebook_get_nth_page(sidebar, notebookIndex);
+		GtkWidget* tabWidget = gtk_notebook_get_nth_page(sidebar, notebookIdx);
 		GtkWidget* tabLabel  = gtk_notebook_get_tab_label(sidebar, tabWidget);
 		if (!m_kernelContext.getConfigurationManager().expandAsBoolean("${Designer_ShowAlgorithms}"))
 		{
 			if (tabLabel == GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-algorithm_title_container")))
 			{
-				gtk_notebook_remove_page(sidebar, notebookIndex);
+				gtk_notebook_remove_page(sidebar, notebookIdx);
 			}
 		}
 	}
@@ -1485,7 +1485,7 @@ bool CApplication::hasUnsavedScenario()
 
 CInterfacedScenario* CApplication::getCurrentInterfacedScenario()
 {
-	if (m_ui32CurrentInterfacedScenarioIndex < m_vInterfacedScenario.size()) { return m_vInterfacedScenario[m_ui32CurrentInterfacedScenarioIndex]; }
+	if (m_currentInterfacedScenarioIdx < m_vInterfacedScenario.size()) { return m_vInterfacedScenario[m_currentInterfacedScenarioIdx]; }
 	return nullptr;
 }
 
@@ -2376,7 +2376,7 @@ void CApplication::addCommentCB(CInterfacedScenario* pScenario) const
 
 void CApplication::configureScenarioSettingsCB(CInterfacedScenario* pScenario) const
 {
-	m_kernelContext.getLogManager() << LogLevel_Debug << "CApplication::configureScenarioSettingsCB " << m_ui32CurrentInterfacedScenarioIndex << "\n";
+	m_kernelContext.getLogManager() << LogLevel_Debug << "CApplication::configureScenarioSettingsCB " << m_currentInterfacedScenarioIdx << "\n";
 
 	if (pScenario && !pScenario->isLocked()) { pScenario->configureScenarioSettingsCB(); }
 }
@@ -2832,7 +2832,7 @@ void CApplication::CPUUsageCB()
 	}
 }
 
-void CApplication::changeCurrentScenario(const int pageIndex)
+void CApplication::changeCurrentScenario(const int pageIdx)
 {
 	if (m_bIsQuitting) { return; }
 
@@ -2841,7 +2841,7 @@ void CApplication::changeCurrentScenario(const int pageIndex)
 	if (i >= 0 && i < int(m_vInterfacedScenario.size())) { m_vInterfacedScenario[i]->hideCurrentVisualization(); }
 
 	//closing last open scenario
-	if (pageIndex == -1)
+	if (pageIdx == -1)
 	{
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")), false);
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), false);
@@ -2881,12 +2881,12 @@ void CApplication::changeCurrentScenario(const int pageIndex)
 
 
 		// current scenario is the current notebook page.
-		m_ui32CurrentInterfacedScenarioIndex = i;
+		m_currentInterfacedScenarioIdx = i;
 	}
 		//switching to an existing scenario
-	else if (pageIndex < int(m_vInterfacedScenario.size()))
+	else if (pageIdx < int(m_vInterfacedScenario.size()))
 	{
-		CInterfacedScenario* currentInterfacedScenario = m_vInterfacedScenario[pageIndex];
+		CInterfacedScenario* currentInterfacedScenario = m_vInterfacedScenario[pageIdx];
 		const EPlayerStatus playerStatus               = (currentInterfacedScenario->m_pPlayer ? currentInterfacedScenario->m_pPlayer->getStatus()
 															  : PlayerStatus_Stop);
 
@@ -2914,34 +2914,34 @@ void CApplication::changeCurrentScenario(const int pageIndex)
 		// gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_builderInterface, "openvibe-menu_save")),   currentInterfacedScenario->m_hasFileName && currentInterfacedScenario->m_hasBeenModified);
 
 		//don't show window manager if in offline mode and it is toggled off
-		if (playerStatus == PlayerStatus_Stop && !m_vInterfacedScenario[pageIndex]->isDesignerVisualizationToggled())
+		if (playerStatus == PlayerStatus_Stop && !m_vInterfacedScenario[pageIdx]->isDesignerVisualizationToggled())
 		{
-			m_vInterfacedScenario[pageIndex]->hideCurrentVisualization();
+			m_vInterfacedScenario[pageIdx]->hideCurrentVisualization();
 
 			// we are in edition mode, updating internal configuration token
-			std::string l_sPath = m_vInterfacedScenario[pageIndex]->m_sFileName;
+			std::string l_sPath = m_vInterfacedScenario[pageIdx]->m_sFileName;
 			l_sPath             = l_sPath.substr(0, l_sPath.rfind('/'));
 			m_kernelContext.getConfigurationManager().setConfigurationTokenValue(
 				m_kernelContext.getConfigurationManager().lookUpConfigurationTokenIdentifier("Player_ScenarioDirectory"), l_sPath.c_str());
 			m_kernelContext.getConfigurationManager().setConfigurationTokenValue(
 				m_kernelContext.getConfigurationManager().lookUpConfigurationTokenIdentifier("__volatile_ScenarioDir"), l_sPath.c_str());
 		}
-		else { m_vInterfacedScenario[pageIndex]->showCurrentVisualization(); }
+		else { m_vInterfacedScenario[pageIdx]->showCurrentVisualization(); }
 
 		//update window manager button state
 		GtkWidget* l_pWindowManagerButton = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager"));
 		g_signal_handlers_disconnect_by_func(l_pWindowManagerButton, G_CALLBACK2(button_toggle_window_manager_cb), this);
-		gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(l_pWindowManagerButton), m_vInterfacedScenario[pageIndex]->isDesignerVisualizationToggled());
+		gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(l_pWindowManagerButton), m_vInterfacedScenario[pageIdx]->isDesignerVisualizationToggled());
 		g_signal_connect(l_pWindowManagerButton, "toggled", G_CALLBACK(button_toggle_window_manager_cb), this);
 
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-scenario_configuration_button_configure")), true);
-		m_vInterfacedScenario[pageIndex]->redrawScenarioSettings();
-		m_vInterfacedScenario[pageIndex]->redrawScenarioInputSettings();
-		m_vInterfacedScenario[pageIndex]->redrawScenarioOutputSettings();
+		m_vInterfacedScenario[pageIdx]->redrawScenarioSettings();
+		m_vInterfacedScenario[pageIdx]->redrawScenarioInputSettings();
+		m_vInterfacedScenario[pageIdx]->redrawScenarioOutputSettings();
 
 
 		// current scenario is the selected one
-		m_ui32CurrentInterfacedScenarioIndex = pageIndex;
+		m_currentInterfacedScenarioIdx = pageIdx;
 	}
 		//first scenario is created (or a scenario is opened and replaces first unnamed unmodified scenario)
 	else
@@ -2970,7 +2970,7 @@ void CApplication::changeCurrentScenario(const int pageIndex)
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-scenario_configuration_button_configure")), true);
 
 		// we have a new notebook page
-		m_ui32CurrentInterfacedScenarioIndex = pageIndex;
+		m_currentInterfacedScenarioIdx = pageIdx;
 
 		// we are in edition mode, updating internal configuration token
 		m_kernelContext.getConfigurationManager().setConfigurationTokenValue(
@@ -2990,13 +2990,13 @@ void CApplication::changeCurrentScenario(const int pageIndex)
 	else { gtk_spin_button_set_value(GTK_SPIN_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-zoom_spinner")), 100); }
 }
 
-void CApplication::reorderCurrentScenario(const uint32_t newPageIndex)
+void CApplication::reorderCurrentScenario(const uint32_t newPageIdx)
 {
-	CInterfacedScenario* currentInterfacedScenario = m_vInterfacedScenario[m_ui32CurrentInterfacedScenarioIndex];
-	m_vInterfacedScenario.erase(m_vInterfacedScenario.begin() + m_ui32CurrentInterfacedScenarioIndex);
-	m_vInterfacedScenario.insert(m_vInterfacedScenario.begin() + newPageIndex, currentInterfacedScenario);
+	CInterfacedScenario* currentInterfacedScenario = m_vInterfacedScenario[m_currentInterfacedScenarioIdx];
+	m_vInterfacedScenario.erase(m_vInterfacedScenario.begin() + m_currentInterfacedScenarioIdx);
+	m_vInterfacedScenario.insert(m_vInterfacedScenario.begin() + newPageIdx, currentInterfacedScenario);
 
-	this->changeCurrentScenario(newPageIndex);
+	this->changeCurrentScenario(newPageIdx);
 }
 
 //Increase the zoom of the current scenario
