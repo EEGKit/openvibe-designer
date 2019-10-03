@@ -23,12 +23,12 @@ bool CScenarioStateStack::isUndoPossible() { return m_CurrentState != m_States.b
 
 bool CScenarioStateStack::undo()
 {
-	auto itState = m_CurrentState;
-	if (itState == m_States.begin()) { return false; }
+	auto it = m_CurrentState;
+	if (it == m_States.begin()) { return false; }
 
-	--itState;
+	--it;
 
-	m_CurrentState = itState;
+	m_CurrentState = it;
 
 	return this->restoreState(**m_CurrentState);
 }
@@ -37,22 +37,22 @@ void CScenarioStateStack::dropLastState() { m_States.pop_back(); }
 
 bool CScenarioStateStack::isRedoPossible()
 {
-	auto itState = m_CurrentState;
-	if (itState == m_States.end()) { return false; }
+	auto it = m_CurrentState;
+	if (it == m_States.end()) { return false; }
 
-	++itState;
-	return itState != m_States.end();
+	++it;
+	return it != m_States.end();
 }
 
 bool CScenarioStateStack::redo()
 {
-	auto itState = m_CurrentState;
-	if (itState == m_States.end()) { return false; }
+	auto it = m_CurrentState;
+	if (it == m_States.end()) { return false; }
 
-	++itState;
-	if (itState == m_States.end()) { return false; }
+	++it;
+	if (it == m_States.end()) { return false; }
 
-	m_CurrentState = itState;
+	m_CurrentState = it;
 
 	return this->restoreState(**m_CurrentState);
 }

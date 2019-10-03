@@ -78,11 +78,11 @@ public:
 	bool callback(const IPluginObjectDesc& rPluginObjectDesc) override
 	{
 		const string l_sFullName      = string(rPluginObjectDesc.getCategory()) + "/" + string(rPluginObjectDesc.getName());
-		const auto itPluginObjectDesc = m_vPluginObjectDesc.find(l_sFullName);
-		if (itPluginObjectDesc != m_vPluginObjectDesc.end())
+		const auto it = m_vPluginObjectDesc.find(l_sFullName);
+		if (it != m_vPluginObjectDesc.end())
 		{
 			m_kernelContext.getLogManager() << LogLevel_ImportantWarning << "Duplicate plugin object name " << CString(l_sFullName.c_str()) << " " <<
-					itPluginObjectDesc->second->getCreatedClass() << " and " << rPluginObjectDesc.getCreatedClass() << "\n";
+					it->second->getCreatedClass() << " and " << rPluginObjectDesc.getCreatedClass() << "\n";
 		}
 		m_vPluginObjectDesc[l_sFullName] = &rPluginObjectDesc;
 		return true;
@@ -708,22 +708,22 @@ int go(int argc, char** argv)
 				while (gtk_events_pending()) { gtk_main_iteration(); }
 #endif
 
-				IConfigurationManager& l_rConfigurationManager = l_pKernelContext->getConfigurationManager();
+				IConfigurationManager& configManager = l_pKernelContext->getConfigurationManager();
 				ILogManager& logManager                     = l_pKernelContext->getLogManager();
 
 				bArgParseResult = parse_arguments(argc, argv, l_oConfiguration);
 
-				l_pKernelContext->getPluginManager().addPluginsFromFiles(l_rConfigurationManager.expand("${Kernel_Plugins}"));
+				l_pKernelContext->getPluginManager().addPluginsFromFiles(configManager.expand("${Kernel_Plugins}"));
 
 				//FIXME : set locale only when needed
-				CString l_sLocale = l_rConfigurationManager.expand("${Designer_Locale}");
+				CString l_sLocale = configManager.expand("${Designer_Locale}");
 				if (l_sLocale == CString("")) { l_sLocale = "C"; }
 				setlocale(LC_ALL, l_sLocale.toASCIIString());
 
 				if (!(bArgParseResult || l_oConfiguration.m_help)) { user_info(argv, &logManager); }
 				else
 				{
-					if ((!l_rConfigurationManager.expandAsBoolean("${Kernel_WithGUI}", true)) && ((l_oConfiguration.getFlags() & CommandLineFlag_NoGui) == 0))
+					if ((!configManager.expandAsBoolean("${Kernel_WithGUI}", true)) && ((l_oConfiguration.getFlags() & CommandLineFlag_NoGui) == 0))
 					{
 						logManager << LogLevel_ImportantWarning <<
 								"${Kernel_WithGUI} is set to false and --no-gui flag not set. Forcing the --no-gui flag\n";
@@ -771,7 +771,7 @@ int go(int argc, char** argv)
 							logManager << LogLevel_Trace << "Adding command line configuration token [" << token.first.c_str() << " = " << token
 																																			  .second.c_str() <<
 									"]\n";
-							l_rConfigurationManager.addOrReplaceConfigurationToken(token.first.c_str(), token.second.c_str());
+							configManager.addOrReplaceConfigurationToken(token.first.c_str(), token.second.c_str());
 						}
 
 						for (size_t i = 0; i < l_oConfiguration.m_vFlag.size(); ++i)

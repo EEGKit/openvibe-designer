@@ -152,9 +152,9 @@ CLogListenerDesigner::CLogListenerDesigner(const IKernelContext& ctx, GtkBuilder
 
 bool CLogListenerDesigner::isActive(const ELogLevel eLogLevel)
 {
-	const auto itLogLevel = m_vActiveLevel.find(eLogLevel);
-	if (itLogLevel == m_vActiveLevel.end()) { return true; }
-	return itLogLevel->second;
+	const auto it = m_vActiveLevel.find(eLogLevel);
+	if (it == m_vActiveLevel.end()) { return true; }
+	return it->second;
 }
 
 bool CLogListenerDesigner::activate(const ELogLevel eLogLevel, const bool bActive)

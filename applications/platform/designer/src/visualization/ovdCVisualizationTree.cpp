@@ -904,9 +904,9 @@ bool CVisualizationTree::deserialize(const CString& serializedVisualizationTree)
 
 	json::Array jsonRepresentation = json::Deserialize(serializedVisualizationTree.toASCIIString());
 
-	for (auto itWidget = jsonRepresentation.begin(); itWidget != jsonRepresentation.end(); ++itWidget)
+	for (auto it = jsonRepresentation.begin(); it != jsonRepresentation.end(); ++it)
 	{
-		json::Value& jsonWidget = *itWidget;
+		json::Value& jsonWidget = *it;
 
 		widgetIdentifier.fromString(jsonWidget["identifier"].ToString().c_str());
 

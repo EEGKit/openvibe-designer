@@ -866,11 +866,11 @@ void CDesignerVisualization::setActiveVisualization(const char* activeWindow, co
 	else
 	{
 		//pick first window if previously active window doesn't exist anymore
-		CIdentifier l_oID = OV_UndefinedIdentifier;
+		CIdentifier id = OV_UndefinedIdentifier;
 
-		if (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oID, EVisualizationWidget_VisualizationWindow))
+		if (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(id, EVisualizationWidget_VisualizationWindow))
 		{
-			m_oActiveVisualizationWindowName = m_rVisualizationTree.getVisualizationWidget(l_oID)->getName();
+			m_oActiveVisualizationWindowName = m_rVisualizationTree.getVisualizationWidget(id)->getName();
 			m_rVisualizationTree.findChildNodeFromRoot(&l_oWindowIter, static_cast<const char*>(m_oActiveVisualizationWindowName),
 													   EVisualizationTreeNode_VisualizationWindow);
 		}
@@ -1292,9 +1292,9 @@ bool CDesignerVisualization::removeVisualizationWidget()
 	//retrieve widget
 	GtkTreeIter l_oIter;
 	if (!m_rVisualizationTree.getTreeSelection(m_pTreeView, &l_oIter)) { return false; }
-	CIdentifier l_oID;
-	m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, l_oID, EVisualizationTreeColumn_StringIdentifier);
-	return removeVisualizationWidget(l_oID);
+	CIdentifier id;
+	m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, id, EVisualizationTreeColumn_StringIdentifier);
+	return removeVisualizationWidget(id);
 }
 
 //TODO : move this to CVisualizationTree?
@@ -1352,16 +1352,16 @@ void CDesignerVisualization::notebookPageSelectedCB(GtkNotebook* notebook, const
 {
 	GtkTreeIter l_oIter;
 	m_rVisualizationTree.findChildNodeFromRoot(&l_oIter, static_cast<void*>(notebook));
-	CIdentifier l_oID;
-	m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, l_oID, EVisualizationTreeColumn_StringIdentifier);
-	IVisualizationWidget* l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oID);
+	CIdentifier id;
+	m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, id, EVisualizationTreeColumn_StringIdentifier);
+	IVisualizationWidget* l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(id);
 	if (l_pVisualizationWidget != nullptr)
 	{
 		IVisualizationWidget* l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_pVisualizationWidget->getParentIdentifier());
 		if (l_pVisualizationWindow != nullptr)
 		{
-			l_pVisualizationWindow->getChildIdentifier(pagenum, l_oID);
-			if (m_rVisualizationTree.findChildNodeFromRoot(&l_oIter, l_oID)) { refreshActiveVisualization(m_rVisualizationTree.getTreePath(&l_oIter)); }
+			l_pVisualizationWindow->getChildIdentifier(pagenum, id);
+			if (m_rVisualizationTree.findChildNodeFromRoot(&l_oIter, id)) { refreshActiveVisualization(m_rVisualizationTree.getTreePath(&l_oIter)); }
 		}
 	}
 }
@@ -1388,11 +1388,11 @@ void CDesignerVisualization::notifyPositionPanedCB(GtkWidget* widget)
 	GtkTreeIter l_oIter;
 	if (m_rVisualizationTree.findChildNodeFromRoot(&l_oIter, l_pTreeWidget))
 	{
-		CIdentifier l_oID;
-		m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, l_oID, EVisualizationTreeColumn_StringIdentifier);
+		CIdentifier id;
+		m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, id, EVisualizationTreeColumn_StringIdentifier);
 
 		//store new position and max position
-		auto* visualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oID);
+		auto* visualizationWidget = m_rVisualizationTree.getVisualizationWidget(id);
 		visualizationWidget->setDividerPosition(l_iPos);
 		visualizationWidget->setMaxDividerPosition(l_iMaxPos);
 	}
@@ -1494,9 +1494,9 @@ void CDesignerVisualization::visualizationWidgetKeyPressEventCB(GtkWidget*, GdkE
 			GtkTreeIter l_oIter;
 			if (m_rVisualizationTree.findChildNodeFromRoot(&l_oIter, getTreeWidget(m_pHighlightedWidget)))
 			{
-				CIdentifier l_oID;
-				m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, l_oID, EVisualizationTreeColumn_StringIdentifier);
-				removeVisualizationWidget(l_oID);
+				CIdentifier id;
+				m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, id, EVisualizationTreeColumn_StringIdentifier);
+				removeVisualizationWidget(id);
 			}
 		}
 	}
@@ -1574,9 +1574,9 @@ void CDesignerVisualization::buttonReleaseCB(GtkWidget* widget, GdkEventButton* 
 				else if (type == EVisualizationTreeNode_Undefined)
 				{
 					//ensure empty plugin is not parented to a panel (because an empty widget is always present in an empty panel)
-					CIdentifier l_oID;
-					m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, l_oID, EVisualizationTreeColumn_StringIdentifier);
-					IVisualizationWidget* l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oID);
+					CIdentifier id;
+					m_rVisualizationTree.getIdentifierFromTreeIter(&l_oIter, id, EVisualizationTreeColumn_StringIdentifier);
+					IVisualizationWidget* l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(id);
 					if (l_pVisualizationWidget != nullptr)
 					{
 						IVisualizationWidget* l_pParentVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(
