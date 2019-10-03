@@ -22,7 +22,7 @@ namespace OpenViBEDesigner
 		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
 		OpenViBE::Kernel::IBox& m_box;
 		CSettingCollectionHelper m_oHelper;
-		uint32_t m_ui32SettingIndex = 0;
+		uint32_t m_settingIdx = 0;
 		OpenViBE::CString m_sGUIFilename;
 		OpenViBE::CString m_sGUISettingsFilename;
 		std::string m_sTitle;

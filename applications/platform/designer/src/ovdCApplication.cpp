@@ -1352,7 +1352,7 @@ bool CApplication::openScenario(const char* sFileName)
 		{
 			if (!m_vInterfacedScenario[0]->m_hasBeenModified && !m_vInterfacedScenario[0]->m_hasFileName)
 			{
-				const CIdentifier tmp = m_vInterfacedScenario[0]->m_oScenarioIdentifier;
+				const CIdentifier tmp = m_vInterfacedScenario[0]->m_scenarioID;
 				delete m_vInterfacedScenario[0];
 				m_pScenarioManager->releaseScenario(tmp);
 				m_vInterfacedScenario.clear();
@@ -1907,7 +1907,7 @@ void CApplication::saveScenarioCB(CInterfacedScenario* interfacedScenario)
 		if (currentInterfacedScenario->m_rScenario.isMetabox()) { scenarioExportContext = OVD_ScenarioExportContext_SaveMetabox; }
 
 		m_kernelContext.getErrorManager().releaseErrors();
-		if (m_pScenarioManager->exportScenarioToFile(scenarioExportContext, scenarioFileName, currentInterfacedScenario->m_oScenarioIdentifier))
+		if (m_pScenarioManager->exportScenarioToFile(scenarioExportContext, scenarioFileName, currentInterfacedScenario->m_scenarioID))
 		{
 			currentInterfacedScenario->snapshotCB();
 			currentInterfacedScenario->m_hasFileName     = true;
@@ -2238,7 +2238,7 @@ void CApplication::closeScenarioCB(CInterfacedScenario* interfacedScenario)
 		// We need to erase the scenario from the list first, because deleting the scenario will launch a "switch-page"
 		// callback accessing this array with the identifier of the deleted scenario (if its not the last one) -> boom.
 		m_vInterfacedScenario.erase(it);
-		const CIdentifier scenarioID = interfacedScenario->m_oScenarioIdentifier;
+		const CIdentifier scenarioID = interfacedScenario->m_scenarioID;
 		delete interfacedScenario;
 		m_pScenarioManager->releaseScenario(scenarioID);
 		//when closing last open scenario, no "switch-page" event is triggered so we manually handle this case
@@ -2408,7 +2408,7 @@ bool CApplication::createPlayer()
 		}
 
 		m_kernelContext.getPlayerManager().createPlayer(currentInterfacedScenario->m_oPlayerIdentifier);
-		const CIdentifier scenarioID         = currentInterfacedScenario->m_oScenarioIdentifier;
+		const CIdentifier scenarioID         = currentInterfacedScenario->m_scenarioID;
 		const CIdentifier playerIdentifier   = currentInterfacedScenario->m_oPlayerIdentifier;
 		currentInterfacedScenario->m_pPlayer = &m_kernelContext.getPlayerManager().getPlayer(playerIdentifier);
 		if (!currentInterfacedScenario->m_pPlayer->setScenario(scenarioID))

@@ -323,7 +323,7 @@ namespace Mensia
 		{
 		public:
 
-			OpenViBE::CString m_sName;
+			OpenViBE::CString m_name;
 			OpenViBE::CString m_sCategoryName;
 			OpenViBE::CString m_sShortDescription;
 			OpenViBE::CString m_sDetailedDescription;
@@ -343,19 +343,19 @@ namespace Mensia
 				const size_t i = l_sFullname.rfind('/');
 				if (i != std::string::npos)
 				{
-					m_sName         = OpenViBE::CString(l_sFullname.substr(i + 1).c_str());
+					m_name         = OpenViBE::CString(l_sFullname.substr(i + 1).c_str());
 					m_sCategoryName = OpenViBE::CString(l_sFullname.substr(0, i).c_str());
 				}
 				else
 				{
-					m_sName         = OpenViBE::CString(sFullName);
+					m_name         = OpenViBE::CString(sFullName);
 					m_sCategoryName = OpenViBE::CString("");
 				}
 			}
 
 			void release() override { }
 
-			OpenViBE::CString getName() const override { return m_sName; }
+			OpenViBE::CString getName() const override { return m_name; }
 			OpenViBE::CString getAuthorName() const override { return OpenViBE::CString("Yann Renard"); }
 			OpenViBE::CString getAuthorCompanyName() const override { return OpenViBE::CString("Mensia Technologies SA"); }
 			OpenViBE::CString getShortDescription() const override { return m_sShortDescription; }

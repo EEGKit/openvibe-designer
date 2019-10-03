@@ -533,7 +533,7 @@ namespace
 
 CInterfacedScenario::CInterfacedScenario(const IKernelContext& ctx, CApplication& rApplication, IScenario& scenario, CIdentifier& scenarioID,
 										 GtkNotebook& rNotebook, const char* sGUIFilename, const char* sGUISettingsFilename)
-	: m_ePlayerStatus(PlayerStatus_Stop), m_oScenarioIdentifier(scenarioID), m_rApplication(rApplication), m_kernelContext(ctx),
+	: m_ePlayerStatus(PlayerStatus_Stop), m_scenarioID(scenarioID), m_rApplication(rApplication), m_kernelContext(ctx),
 	  m_rScenario(scenario), m_rNotebook(rNotebook), m_sGUIFilename(sGUIFilename), m_sGUISettingsFilename(sGUISettingsFilename)
 {
 	m_pGUIBuilder = gtk_builder_new();
@@ -1720,9 +1720,9 @@ bool CInterfacedScenario::pickInterfacedObject(const int x, const int y, int iSi
 			interfacedObjectId += (pixels[j * rowBytesCount + i * nChannel + 0] << 16);
 			interfacedObjectId += (pixels[j * rowBytesCount + i * nChannel + 1] << 8);
 			interfacedObjectId += (pixels[j * rowBytesCount + i * nChannel + 2]);
-			if (m_vInterfacedObject[interfacedObjectId].m_oIdentifier != OV_UndefinedIdentifier)
+			if (m_vInterfacedObject[interfacedObjectId].m_id != OV_UndefinedIdentifier)
 			{
-				m_SelectedObjects.insert(m_vInterfacedObject[interfacedObjectId].m_oIdentifier);
+				m_SelectedObjects.insert(m_vInterfacedObject[interfacedObjectId].m_id);
 			}
 		}
 	}
@@ -2298,11 +2298,11 @@ void CInterfacedScenario::scenarioDrawingAreaMotionNotifyCB(GtkWidget* /*widget*
 	gtk_widget_set_name(l_pTooltip, "gtk-tooltips");
 	const uint32_t l_interfacedObjectId = pickInterfacedObject(int(event->x), int(event->y));
 	CInterfacedObject& l_rObject        = m_vInterfacedObject[l_interfacedObjectId];
-	if (l_rObject.m_oIdentifier != OV_UndefinedIdentifier
+	if (l_rObject.m_id != OV_UndefinedIdentifier
 		&& l_rObject.m_connectorType != Box_Link
 		&& l_rObject.m_connectorType != Box_None)
 	{
-		IBox* l_pBoxDetails = m_rScenario.getBoxDetails(l_rObject.m_oIdentifier);
+		IBox* l_pBoxDetails = m_rScenario.getBoxDetails(l_rObject.m_id);
 		if (l_pBoxDetails)
 		{
 			CString l_sName;
@@ -2393,13 +2393,13 @@ void CInterfacedScenario::scenarioDrawingAreaMotionNotifyCB(GtkWidget* /*widget*
 		}
 		else if (m_currentMode == Mode_MoveSelection)
 		{
-			if (m_controlPressed) { m_SelectedObjects.insert(m_oCurrentObject.m_oIdentifier); }
+			if (m_controlPressed) { m_SelectedObjects.insert(m_oCurrentObject.m_id); }
 			else
 			{
-				if (!m_SelectedObjects.count(m_oCurrentObject.m_oIdentifier))
+				if (!m_SelectedObjects.count(m_oCurrentObject.m_id))
 				{
 					m_SelectedObjects.clear();
-					m_SelectedObjects.insert(m_oCurrentObject.m_oIdentifier);
+					m_SelectedObjects.insert(m_oCurrentObject.m_id);
 				}
 			}
 			for (auto& objectId : m_SelectedObjects)
@@ -2480,7 +2480,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(GtkWidget* widget, 
 	{
 		if (event->type == GDK_BUTTON_PRESS)
 		{
-			if (m_oCurrentObject.m_oIdentifier == OV_UndefinedIdentifier)
+			if (m_oCurrentObject.m_id == OV_UndefinedIdentifier)
 			{
 				if (m_shiftPressed) { m_currentMode = Mode_MoveScenario; }
 				else
@@ -2497,19 +2497,19 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(GtkWidget* widget, 
 					m_currentMode = Mode_MoveSelection;
 					if (m_controlPressed)
 					{
-						// m_vCurrentObject[m_oCurrentObject.m_oIdentifier]=!m_vCurrentObject[m_oCurrentObject.m_oIdentifier];
+						// m_vCurrentObject[m_oCurrentObject.m_id]=!m_vCurrentObject[m_oCurrentObject.m_id];
 					}
 					else
 					{
 						// m_vCurrentObject.clear();
-						// m_vCurrentObject[m_oCurrentObject.m_oIdentifier]=true;
+						// m_vCurrentObject[m_oCurrentObject.m_id]=true;
 					}
 				}
 			}
 		}
 		else if (event->type == GDK_2BUTTON_PRESS)
 		{
-			if (m_oCurrentObject.m_oIdentifier != OV_UndefinedIdentifier)
+			if (m_oCurrentObject.m_id != OV_UndefinedIdentifier)
 			{
 				m_currentMode    = Mode_EditSettings;
 				m_shiftPressed   = false;
@@ -2520,7 +2520,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(GtkWidget* widget, 
 
 				if (m_oCurrentObject.m_connectorType == Box_Input || m_oCurrentObject.m_connectorType == Box_Output)
 				{
-					IBox* l_pBox = m_rScenario.getBoxDetails(m_oCurrentObject.m_oIdentifier);
+					IBox* l_pBox = m_rScenario.getBoxDetails(m_oCurrentObject.m_id);
 					if (l_pBox)
 					{
 						if ((m_oCurrentObject.m_connectorType == Box_Input && l_pBox->hasAttribute(OV_AttributeId_Box_FlagCanModifyInput))
@@ -2535,9 +2535,9 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(GtkWidget* widget, 
 				}
 				else
 				{
-					if (m_rScenario.isBox(m_oCurrentObject.m_oIdentifier))
+					if (m_rScenario.isBox(m_oCurrentObject.m_id))
 					{
-						IBox* l_pBox = m_rScenario.getBoxDetails(m_oCurrentObject.m_oIdentifier);
+						IBox* l_pBox = m_rScenario.getBoxDetails(m_oCurrentObject.m_id);
 						if (l_pBox)
 						{
 							CBoxConfigurationDialog l_oBoxConfigurationDialog(m_kernelContext, *l_pBox, m_sGUIFilename.c_str(), m_sGUISettingsFilename.c_str(),
@@ -2545,9 +2545,9 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(GtkWidget* widget, 
 							if (l_oBoxConfigurationDialog.run()) { this->snapshotCB(); }
 						}
 					}
-					if (m_rScenario.isComment(m_oCurrentObject.m_oIdentifier))
+					if (m_rScenario.isComment(m_oCurrentObject.m_id))
 					{
-						IComment* l_pComment = m_rScenario.getCommentDetails(m_oCurrentObject.m_oIdentifier);
+						IComment* l_pComment = m_rScenario.getCommentDetails(m_oCurrentObject.m_id);
 						if (l_pComment)
 						{
 							CCommentEditorDialog l_oCommentEditorDialog(m_kernelContext, *l_pComment, m_sGUIFilename.c_str());
@@ -2586,9 +2586,9 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(GtkWidget* widget, 
 				gtk_menu_add_new_image_menu_item_with_cb(l_pMenu, GTK_STOCK_DELETE, "delete", context_menu_cb, nullptr, ContextMenu_SelectionDelete, unused);
 			}
 
-			if (m_oCurrentObject.m_oIdentifier != OV_UndefinedIdentifier && m_rScenario.isBox(m_oCurrentObject.m_oIdentifier))
+			if (m_oCurrentObject.m_id != OV_UndefinedIdentifier && m_rScenario.isBox(m_oCurrentObject.m_id))
 			{
-				IBox* l_pBox = m_rScenario.getBoxDetails(m_oCurrentObject.m_oIdentifier);
+				IBox* l_pBox = m_rScenario.getBoxDetails(m_oCurrentObject.m_id);
 				if (l_pBox)
 				{
 					uint32_t i, j;
@@ -2941,8 +2941,8 @@ void CInterfacedScenario::scenarioDrawingAreaButtonReleasedCB(GtkWidget* /*widge
 			{
 				CIdentifier l_oSourceTypeID;
 				CIdentifier l_oTargetTypeID;
-				const IBox* l_pSourceBox = m_rScenario.getBoxDetails(l_oSourceObject.m_oIdentifier);
-				const IBox* l_pTargetBox = m_rScenario.getBoxDetails(l_oTargetObject.m_oIdentifier);
+				const IBox* l_pSourceBox = m_rScenario.getBoxDetails(l_oSourceObject.m_id);
+				const IBox* l_pTargetBox = m_rScenario.getBoxDetails(l_oTargetObject.m_id);
 				if (l_pSourceBox && l_pTargetBox)
 				{
 					l_pSourceBox->getOutputType(l_oSourceObject.m_connectorIndex, l_oSourceTypeID);
@@ -2959,8 +2959,8 @@ void CInterfacedScenario::scenarioDrawingAreaButtonReleasedCB(GtkWidget* /*widge
 						if (!hasDeprecatedInput && !hasDeprecatedOutput)
 						{
 							CIdentifier l_oLinkID;
-							m_rScenario.connect(l_oLinkID, l_oSourceObject.m_oIdentifier, l_oSourceObject.m_connectorIndex,
-												l_oTargetObject.m_oIdentifier, l_oTargetObject.m_connectorIndex, OV_UndefinedIdentifier);
+							m_rScenario.connect(l_oLinkID, l_oSourceObject.m_id, l_oSourceObject.m_connectorIndex,
+												l_oTargetObject.m_id, l_oTargetObject.m_connectorIndex, OV_UndefinedIdentifier);
 							this->snapshotCB();
 						}
 						else { m_kernelContext.getLogManager() << LogLevel_Warning << "Cannot connect to/from deprecated I/O\n"; }
@@ -2975,13 +2975,13 @@ void CInterfacedScenario::scenarioDrawingAreaButtonReleasedCB(GtkWidget* /*widge
 			{
 				if (m_controlPressed)
 				{
-					if (m_SelectedObjects.count(m_oCurrentObject.m_oIdentifier)) { m_SelectedObjects.erase(m_oCurrentObject.m_oIdentifier); }
-					else { m_SelectedObjects.insert(m_oCurrentObject.m_oIdentifier); }
+					if (m_SelectedObjects.count(m_oCurrentObject.m_id)) { m_SelectedObjects.erase(m_oCurrentObject.m_id); }
+					else { m_SelectedObjects.insert(m_oCurrentObject.m_id); }
 				}
 				else
 				{
 					m_SelectedObjects.clear();
-					m_SelectedObjects.insert(m_oCurrentObject.m_oIdentifier);
+					m_SelectedObjects.insert(m_oCurrentObject.m_id);
 				}
 			}
 			else

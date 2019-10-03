@@ -139,7 +139,7 @@ namespace OpenViBEDesigner
 				void generateDisplayPluginName(OpenViBE::Kernel::IBox* pDisplayBox, OpenViBE::CString& rDisplayBoxName);*/
 
 		OpenViBE::Kernel::EPlayerStatus m_ePlayerStatus;
-		OpenViBE::CIdentifier m_oScenarioIdentifier = OV_UndefinedIdentifier;
+		OpenViBE::CIdentifier m_scenarioID = OV_UndefinedIdentifier;
 		OpenViBE::CIdentifier m_oPlayerIdentifier = OV_UndefinedIdentifier;
 		OpenViBE::CIdentifier m_oVisualizationTreeIdentifier = OV_UndefinedIdentifier;
 		CApplication& m_rApplication;
