@@ -39,15 +39,15 @@ namespace Mensia
 
 				const uint32_t nSample          = m_pRenderer->getSampleCount();
 				const uint32_t historyIndex         = m_pRenderer->getHistoryIndex();
-				const uint64_t l_ui64SampleDuration = m_pRendererContext->getSampleDuration();
+				const uint64_t sampleDuration = m_pRendererContext->getSampleDuration();
 
 				std::vector<double>::iterator it;
 
 				const uint32_t leftIndex = historyIndex - historyIndex % nSample;
 				const uint32_t midIndex  = historyIndex;
-				double startTime         = double((leftIndex * l_ui64SampleDuration) >> 16) / 65536.;
-				double midTime           = double((midIndex * l_ui64SampleDuration) >> 16) / 65536.;
-				const double duration    = double((nSample * l_ui64SampleDuration) >> 16) / 65536.;
+				double startTime         = double((leftIndex * sampleDuration) >> 16) / 65536.;
+				double midTime           = double((midIndex * sampleDuration) >> 16) / 65536.;
+				const double duration    = double((nSample * sampleDuration) >> 16) / 65536.;
 
 				const double offset = (m_pRenderer->getTimeOffset() >> 16) / 65536.;
 				startTime += offset;

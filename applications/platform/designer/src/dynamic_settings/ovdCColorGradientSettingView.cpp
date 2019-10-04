@@ -45,12 +45,12 @@ CColorGradientSettingView::CColorGradientSettingView(Kernel::IBox& box, const ui
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 
-	std::vector<GtkWidget*> l_vWidget;
-	extractWidget(l_pSettingWidget, l_vWidget);
-	m_entry = GTK_ENTRY(l_vWidget[0]);
+	std::vector<GtkWidget*> widgets;
+	extractWidget(l_pSettingWidget, widgets);
+	m_entry = GTK_ENTRY(widgets[0]);
 
 	g_signal_connect(G_OBJECT(m_entry), "changed", G_CALLBACK(on_change), this);
-	g_signal_connect(G_OBJECT(l_vWidget[1]), "clicked", G_CALLBACK(on_button_setting_color_gradient_configure_pressed), this);
+	g_signal_connect(G_OBJECT(widgets[1]), "clicked", G_CALLBACK(on_button_setting_color_gradient_configure_pressed), this);
 
 	initializeValue();
 }

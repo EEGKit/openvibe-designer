@@ -264,7 +264,7 @@ namespace Mensia
 					const uint64_t l_ui64InterChunkDuration = m_time2 - m_time1;
 					const uint64_t l_ui64ChunkDuration      = (boxContext.getInputChunkEndTime(0, uint32_t(i)) - boxContext.getInputChunkStartTime(
 																   0, uint32_t(i)));
-					const uint64_t l_ui64SampleDuration = l_ui64ChunkDuration / m_nElement;
+					const uint64_t sampleDuration = l_ui64ChunkDuration / m_nElement;
 					if (m_pRendererContext->isTimeLocked())
 					{
 						if ((l_ui64InterChunkDuration & ~0xf) != (m_pRendererContext->getSampleDuration() & ~0xf) && l_ui64InterChunkDuration != 0
@@ -276,8 +276,8 @@ namespace Mensia
 					}
 					else
 					{
-						m_pSubRendererContext->setSampleDuration(l_ui64SampleDuration);
-						m_pRendererContext->setSampleDuration(l_ui64SampleDuration);
+						m_pSubRendererContext->setSampleDuration(sampleDuration);
+						m_pRendererContext->setSampleDuration(sampleDuration);
 					}
 
 					m_pRendererContext->setSpectrumFrequencyRange(uint32_t((uint64_t(nSample) << 32) / l_ui64ChunkDuration));

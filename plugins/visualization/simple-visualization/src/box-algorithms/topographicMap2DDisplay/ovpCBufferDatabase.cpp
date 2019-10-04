@@ -333,8 +333,8 @@ bool CBufferDatabase::setMatrixBuffer(const double* buffer, const uint64_t ui64S
 		}
 
 		//computes the sampling frequency for sanity checking or if the setter has not been called
-		const uint64_t l_ui64SampleDuration = (uint64_t(1) << 32) * m_pDimensionSizes[1];
-		uint32_t l_ui32EstimatedFrequency   = uint32_t(l_ui64SampleDuration / m_bufferDuration);
+		const uint64_t sampleDuration = (uint64_t(1) << 32) * m_pDimensionSizes[1];
+		uint32_t l_ui32EstimatedFrequency   = uint32_t(sampleDuration / m_bufferDuration);
 		if (l_ui32EstimatedFrequency == 0)
 		{
 			// Complain if estimate is bad

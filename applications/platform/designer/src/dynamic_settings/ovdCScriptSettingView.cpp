@@ -31,17 +31,17 @@ CScriptSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderNam
 {
 	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
 
-	std::vector<GtkWidget*> l_vWidget;
-	extractWidget(l_pSettingWidget, l_vWidget);
-	m_entry = GTK_ENTRY(l_vWidget[0]);
+	std::vector<GtkWidget*> widgets;
+	extractWidget(l_pSettingWidget, widgets);
+	m_entry = GTK_ENTRY(widgets[0]);
 
 	g_signal_connect(G_OBJECT(m_entry), "changed", G_CALLBACK(on_change), this);
 #if defined TARGET_OS_Windows
 	// Only called for Windows path
 	g_signal_connect(G_OBJECT(m_entry), "focus_out_event", G_CALLBACK(on_focus_out_event), this);
 #endif
-	g_signal_connect(G_OBJECT(l_vWidget[1]), "clicked", G_CALLBACK(on_button_setting_script_edit_pressed), this);
-	g_signal_connect(G_OBJECT(l_vWidget[2]), "clicked", G_CALLBACK(on_button_setting_filename_browse_pressed), this);
+	g_signal_connect(G_OBJECT(widgets[1]), "clicked", G_CALLBACK(on_button_setting_script_edit_pressed), this);
+	g_signal_connect(G_OBJECT(widgets[2]), "clicked", G_CALLBACK(on_button_setting_filename_browse_pressed), this);
 
 	initializeValue();
 }

@@ -85,16 +85,16 @@ CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& ctx, IBox
 
 			m_pOverrideEntryContainer = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceSettingCollection, l_sSettingOverrideWidgetName.c_str()));
 
-			std::vector<GtkWidget*> l_vWidget;
-			gtk_container_foreach(GTK_CONTAINER(m_pOverrideEntryContainer), collect_widget_cb, &l_vWidget);
+			std::vector<GtkWidget*> widgets;
+			gtk_container_foreach(GTK_CONTAINER(m_pOverrideEntryContainer), collect_widget_cb, &widgets);
 
 			gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(m_pOverrideEntryContainer)), m_pOverrideEntryContainer);
 			gtk_container_add(l_pFileOverrideContainer, m_pOverrideEntryContainer);
-			m_pOverrideEntry = GTK_ENTRY(l_vWidget[0]);
+			m_pOverrideEntry = GTK_ENTRY(widgets[0]);
 
 
 			g_signal_connect(G_OBJECT(m_pFileOverrideCheck), "toggled", G_CALLBACK(on_file_override_check_toggled), GTK_WIDGET(m_pSettingsTable));
-			g_signal_connect(G_OBJECT(l_vWidget[1]), "clicked", G_CALLBACK(on_override_browse_clicked), this);
+			g_signal_connect(G_OBJECT(widgets[1]), "clicked", G_CALLBACK(on_override_browse_clicked), this);
 			g_signal_connect(G_OBJECT(l_pButtonLoad), "clicked", G_CALLBACK(on_button_load_clicked), this);
 			g_signal_connect(G_OBJECT(l_pButtonSave), "clicked", G_CALLBACK(on_button_save_clicked), this);
 
