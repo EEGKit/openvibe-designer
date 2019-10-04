@@ -35,7 +35,7 @@ namespace OpenViBEPlugins
 
 			// for the TARGET
 			OpenViBEToolkit::TStreamedMatrixDecoder<CBoxAlgorithmMatrixDisplay> m_MatrixDecoder;
-			OpenViBE::Kernel::IAlgorithmProxy* m_pMatrixDecoder{};
+			OpenViBE::Kernel::IAlgorithmProxy* m_matrixDecoder{};
 			OpenViBE::Kernel::TParameterHandler<const OpenViBE::IMemoryBuffer*> ip_pMemoryBuffer;
 			OpenViBE::Kernel::TParameterHandler<OpenViBE::IMatrix*> op_pMatrix;
 

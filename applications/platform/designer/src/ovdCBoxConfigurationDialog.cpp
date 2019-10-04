@@ -41,7 +41,7 @@ static void collect_widget_cb(GtkWidget* widget, gpointer data) { static_cast<st
 CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& ctx, IBox& box, const char* sGUIFilename, const char* sGUISettingsFilename,
 												 const bool isScenarioRunning)
 	: m_kernelContext(ctx), m_box(box), m_sGUIFilename(sGUIFilename), m_sGUISettingsFilename(sGUISettingsFilename)
-	  , m_oSettingFactory(m_sGUISettingsFilename.toASCIIString(), ctx), m_bIsScenarioRunning(isScenarioRunning)
+	  , m_oSettingFactory(m_sGUISettingsFilename.toASCIIString(), ctx), m_isScenarioRunning(isScenarioRunning)
 {
 	m_box.addObserver(this);
 
@@ -51,7 +51,7 @@ CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& ctx, IBox
 		gtk_builder_add_from_file(l_pBuilderInterfaceSetting, m_sGUIFilename.toASCIIString(), nullptr);
 		gtk_builder_connect_signals(l_pBuilderInterfaceSetting, nullptr);
 
-		if (!m_bIsScenarioRunning)
+		if (!m_isScenarioRunning)
 		{
 			// TODO : This is not a modal dialog. It would be better if it was.
 			m_pSettingDialog = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration"));
@@ -74,7 +74,7 @@ CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& ctx, IBox
 
 		const CSettingCollectionHelper l_oHelper(m_kernelContext, m_sGUISettingsFilename.toASCIIString());
 
-		if (!m_bIsScenarioRunning)
+		if (!m_isScenarioRunning)
 		{
 			GtkContainer* l_pFileOverrideContainer = GTK_CONTAINER(
 				gtk_builder_get_object(l_pBuilderInterfaceSetting, "box_configuration-hbox_filename_override"));
@@ -249,7 +249,7 @@ void CBoxConfigurationDialog::generateSettingsTable()
 						  GTK_WIDGET(m_pSettingsTable));
 
 	uint32_t l_ui32TableSize = 0;
-	if (m_bIsScenarioRunning)
+	if (m_isScenarioRunning)
 	{
 		for (uint32_t i = 0; i < m_box.getInterfacorCountIncludingDeprecated(EBoxInterfacorType::Setting); ++i)
 		{
@@ -275,7 +275,7 @@ bool CBoxConfigurationDialog::addSettingsToView(const uint32_t settingIndex, con
 	bool l_bSettingModifiable;
 	m_box.getSettingMod(settingIndex, l_bSettingModifiable);
 
-	if ((!m_bIsScenarioRunning) || (m_bIsScenarioRunning && l_bSettingModifiable))
+	if ((!m_isScenarioRunning) || (m_isScenarioRunning && l_bSettingModifiable))
 	{
 		CString l_sSettingName;
 
@@ -316,7 +316,7 @@ void CBoxConfigurationDialog::addSetting(const uint32_t settingIndex)
 	bool l_bSettingModifiable;
 	m_box.getSettingMod(settingIndex, l_bSettingModifiable);
 
-	if ((!m_bIsScenarioRunning) || (m_bIsScenarioRunning && l_bSettingModifiable))
+	if ((!m_isScenarioRunning) || (m_isScenarioRunning && l_bSettingModifiable))
 	{
 		const size_t tableSize = m_vSettingViewVector.size();
 		/*There is two case.

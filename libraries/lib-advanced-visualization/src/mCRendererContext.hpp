@@ -160,7 +160,7 @@ namespace Mensia
 			uint32_t m_minSpectrumFrequency   = 0;
 			uint32_t m_maxSpectrumFrequency   = 0;
 			uint32_t m_nStack             = 1;
-			uint32_t m_stackIndex             = 1;
+			uint32_t m_stackIdx             = 1;
 			bool m_faceMeshVisible            = true;
 			bool m_scalpMeshVisible           = true;
 

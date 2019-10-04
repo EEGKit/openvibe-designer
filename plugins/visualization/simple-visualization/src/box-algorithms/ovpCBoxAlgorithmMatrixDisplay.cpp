@@ -65,13 +65,13 @@ bool CBoxAlgorithmMatrixDisplay::initialize()
 	//IBox& l_rStaticBoxContext=this->getStaticBoxContext();
 
 	//targets decoder
-	m_pMatrixDecoder = &this->getAlgorithmManager().getAlgorithm(
+	m_matrixDecoder = &this->getAlgorithmManager().getAlgorithm(
 		this->getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_StreamedMatrixStreamDecoder));
-	m_pMatrixDecoder->initialize();
+	m_matrixDecoder->initialize();
 
 	//IO for the targets MemoryBuffer -> StreamedMatrix
-	ip_pMemoryBuffer.initialize(m_pMatrixDecoder->getInputParameter(OVP_GD_Algorithm_StreamedMatrixStreamDecoder_InputParameterId_MemoryBufferToDecode));
-	op_pMatrix.initialize(m_pMatrixDecoder->getOutputParameter(OVP_GD_Algorithm_StreamedMatrixStreamDecoder_OutputParameterId_Matrix));
+	ip_pMemoryBuffer.initialize(m_matrixDecoder->getInputParameter(OVP_GD_Algorithm_StreamedMatrixStreamDecoder_InputParameterId_MemoryBufferToDecode));
+	op_pMatrix.initialize(m_matrixDecoder->getOutputParameter(OVP_GD_Algorithm_StreamedMatrixStreamDecoder_OutputParameterId_Matrix));
 
 	//widgets
 	m_pMainWidgetInterface =
@@ -141,8 +141,8 @@ bool CBoxAlgorithmMatrixDisplay::uninitialize()
 	ip_pMemoryBuffer.uninitialize();
 
 	//decoders
-	m_pMatrixDecoder->uninitialize();
-	this->getAlgorithmManager().releaseAlgorithm(*m_pMatrixDecoder);
+	m_matrixDecoder->uninitialize();
+	this->getAlgorithmManager().releaseAlgorithm(*m_matrixDecoder);
 
 	//widgets
 	g_object_unref(m_pToolbarWidgetInterface);
@@ -171,9 +171,9 @@ bool CBoxAlgorithmMatrixDisplay::process()
 	for (uint32_t i = 0; i < boxContext.getInputChunkCount(0); ++i)
 	{
 		ip_pMemoryBuffer = boxContext.getInputChunk(0, i);
-		m_pMatrixDecoder->process();
+		m_matrixDecoder->process();
 
-		if (m_pMatrixDecoder->isOutputTriggerActive(OVP_GD_Algorithm_StreamedMatrixStreamDecoder_OutputTriggerId_ReceivedHeader))
+		if (m_matrixDecoder->isOutputTriggerActive(OVP_GD_Algorithm_StreamedMatrixStreamDecoder_OutputTriggerId_ReceivedHeader))
 		{
 			//header received
 			//adding the event  to the window
@@ -269,7 +269,7 @@ bool CBoxAlgorithmMatrixDisplay::process()
 			}
 		}
 
-		if (m_pMatrixDecoder->isOutputTriggerActive(OVP_GD_Algorithm_StreamedMatrixStreamDecoder_OutputTriggerId_ReceivedBuffer))
+		if (m_matrixDecoder->isOutputTriggerActive(OVP_GD_Algorithm_StreamedMatrixStreamDecoder_OutputTriggerId_ReceivedBuffer))
 		{
 			//buffer received
 			//2-dimension-matrix values
@@ -383,7 +383,7 @@ bool CBoxAlgorithmMatrixDisplay::process()
 			}
 		}
 
-		/*if(m_pMatrixDecoder->isOutputTriggerActive(OVP_GD_Algorithm_StreamedMatrixStreamDecoder_OutputTriggerId_ReceivedEnd)) { }*/
+		/*if(m_matrixDecoder->isOutputTriggerActive(OVP_GD_Algorithm_StreamedMatrixStreamDecoder_OutputTriggerId_ReceivedEnd)) { }*/
 
 		boxContext.markInputAsDeprecated(0, i);
 	}

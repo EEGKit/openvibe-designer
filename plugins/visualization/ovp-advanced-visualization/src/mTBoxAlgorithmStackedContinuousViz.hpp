@@ -112,7 +112,7 @@ namespace Mensia
 			m_pRendererContext->setTranslucency(float(m_translucency));
 			// m_pRendererContext->setTranslucency(m_nFlowerRing);
 			m_pRendererContext->scaleBy(float(m_f64DataScale));
-			m_pRendererContext->setPositiveOnly(m_bIsPositive);
+			m_pRendererContext->setPositiveOnly(m_isPositive);
 			m_pRendererContext->setAxisDisplay(m_bShowAxis);
 			m_pRendererContext->setParentRendererContext(&getContext());
 
@@ -187,7 +187,7 @@ namespace Mensia
 
 					m_pSubRendererContext->clear();
 					m_pSubRendererContext->setParentRendererContext(m_pRendererContext);
-					m_pSubRendererContext->setTimeLocked(m_bIsTimeLocked);
+					m_pSubRendererContext->setTimeLocked(m_isTimeLocked);
 					m_pSubRendererContext->setStackCount(nChannel);
 					for (j = 0; j < nSample; j++)
 					{
@@ -204,7 +204,7 @@ namespace Mensia
 					m_pRendererContext->setElementCount(m_nElement);
 					m_pRendererContext->scaleBy(float(m_f64DataScale));
 					m_pRendererContext->setParentRendererContext(&getContext());
-					m_pRendererContext->setTimeLocked(m_bIsTimeLocked);
+					m_pRendererContext->setTimeLocked(m_isTimeLocked);
 					m_pRendererContext->setXYZPlotDepth(m_bXYZPlotHasDepth);
 
 					gtk_tree_view_set_model(m_pChannelTreeView, nullptr);

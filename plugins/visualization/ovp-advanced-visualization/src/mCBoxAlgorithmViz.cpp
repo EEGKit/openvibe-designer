@@ -87,8 +87,8 @@ namespace
 
 	void button_video_recording_pressed_callback(GtkButton* button, CBoxAlgorithmViz* pBox)
 	{
-		pBox->m_bIsVideoOutputWorking = !pBox->m_bIsVideoOutputWorking;
-		gtk_button_set_label(button, pBox->m_bIsVideoOutputWorking ? GTK_STOCK_MEDIA_PAUSE : GTK_STOCK_MEDIA_RECORD);
+		pBox->m_isVideoOutputWorking = !pBox->m_isVideoOutputWorking;
+		gtk_button_set_label(button, pBox->m_isVideoOutputWorking ? GTK_STOCK_MEDIA_PAUSE : GTK_STOCK_MEDIA_RECORD);
 	}
 
 	void range_erp_value_changed_callback(GtkRange* pRange, GtkLabel* pLabel)
@@ -126,9 +126,9 @@ bool CBoxAlgorithmViz::initialize()
 	m_temporalCoherence   = OVP_TypeId_TemporalCoherence_TimeLocked.toUInteger();
 	m_nElement            = 50;
 	m_timeScale           = 10LL << 32;
-	m_bIsPositive         = false;
-	m_bIsTimeLocked       = true;
-	m_bIsScaleVisible     = true;
+	m_isPositive         = false;
+	m_isTimeLocked       = true;
+	m_isScaleVisible     = true;
 	m_textureId           = 0;
 	m_lastProcessTime = 0;
 	m_time1               = 0;
@@ -258,7 +258,7 @@ bool CBoxAlgorithmViz::initialize()
 				m_sColorGradient = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), settingIndex);
 				break;
 			case S_DataPositive:
-				m_bIsPositive = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), settingIndex);
+				m_isPositive = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), settingIndex);
 				break;
 			case S_TemporalCoherence:
 				m_temporalCoherence = uint64_t(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), settingIndex));
@@ -302,7 +302,7 @@ bool CBoxAlgorithmViz::initialize()
 		settingIndex++;
 	}
 
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(::gtk_builder_get_object(m_pBuilder, "checkbutton_positive")), gboolean(m_bIsPositive));
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(::gtk_builder_get_object(m_pBuilder, "checkbutton_positive")), gboolean(m_isPositive));
 
 	// Parses color string
 	parseColor(m_oColor, m_sColor.toASCIIString());
@@ -323,7 +323,7 @@ bool CBoxAlgorithmViz::initialize()
 	if (m_temporalCoherence == OVP_TypeId_TemporalCoherence_TimeLocked.toUInteger())
 	{
 		gtk_spin_button_set_value(GTK_SPIN_BUTTON(::gtk_builder_get_object(m_pBuilder, "spinbutton_time_scale")), (m_timeScale >> 22) / 1024.);
-		m_bIsTimeLocked = true;
+		m_isTimeLocked = true;
 	}
 	else { gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "vbox_time_scale"))); }
 
@@ -331,7 +331,7 @@ bool CBoxAlgorithmViz::initialize()
 	if (m_temporalCoherence == OVP_TypeId_TemporalCoherence_Independant.toUInteger())
 	{
 		gtk_spin_button_set_value(GTK_SPIN_BUTTON(::gtk_builder_get_object(m_pBuilder, "spinbutton_element_count")), double(m_nElement));
-		m_bIsTimeLocked = false;
+		m_isTimeLocked = false;
 	}
 	else { gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "vbox_element_count"))); }
 
@@ -380,10 +380,10 @@ bool CBoxAlgorithmViz::initialize()
 	const CString l_sFrameSessionId  = this->getConfigurationManager().expand("[$core{date}-$core{time}]");
 	const CString l_sFrameWidgetName = this->getStaticBoxContext().getName();
 	m_sFrameFilenameFormat           = l_sFrameBasePath + l_sFrameSessionId + l_sFrameWidgetName + CString("-%06i.png");
-	m_bIsVideoOutputEnabled          = (l_sFrameBasePath != CString(""));
-	m_bIsVideoOutputWorking          = false;
-	m_ui32FrameId                    = 0;
-	gtk_widget_set_visible(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "hbox_video_recording")), m_bIsVideoOutputEnabled ? TRUE : FALSE);
+	m_isVideoOutputEnabled          = (l_sFrameBasePath != CString(""));
+	m_isVideoOutputWorking          = false;
+	m_frameId                    = 0;
+	gtk_widget_set_visible(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "hbox_video_recording")), m_isVideoOutputEnabled ? TRUE : FALSE);
 	gtk_label_set_markup(
 		GTK_LABEL(::gtk_builder_get_object(m_pBuilder, "label_video_recording_filename")),
 		(CString("<span foreground=\"darkblue\"><small>") + m_sFrameFilenameFormat + CString("</small></span>")).toASCIIString());
@@ -451,16 +451,16 @@ bool CBoxAlgorithmViz::processClock(IMessageClock& /*rClock*/)
 
 void CBoxAlgorithmViz::updateRulerVisibility()
 {
-	if (m_bIsScaleVisible != m_pRendererContext->getScaleVisibility())
+	if (m_isScaleVisible != m_pRendererContext->getScaleVisibility())
 	{
-		m_bIsScaleVisible = m_pRendererContext->getScaleVisibility();
+		m_isScaleVisible = m_pRendererContext->getScaleVisibility();
 
-		if ((gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(m_pScaleVisible)) != 0) != m_bIsScaleVisible)
+		if ((gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(m_pScaleVisible)) != 0) != m_isScaleVisible)
 		{
-			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_pScaleVisible), gboolean(m_bIsScaleVisible));
+			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_pScaleVisible), gboolean(m_isScaleVisible));
 		}
 
-		void (*l_fpAction)(GtkWidget*) = m_bIsScaleVisible ? gtk_widget_show : gtk_widget_hide;
+		void (*l_fpAction)(GtkWidget*) = m_isScaleVisible ? gtk_widget_show : gtk_widget_hide;
 		(*l_fpAction)(this->m_pTop);
 		(*l_fpAction)(this->m_pLeft);
 		(*l_fpAction)(this->m_pRight);
@@ -495,11 +495,11 @@ void CBoxAlgorithmViz::postDraw()
 	if (m_pRuler != nullptr) { m_pRuler->doRender(); }
 	glPopAttrib();
 
-	if (m_bIsVideoOutputEnabled && m_bIsVideoOutputWorking && m_width > 0 && m_height > 0)
+	if (m_isVideoOutputEnabled && m_isVideoOutputWorking && m_width > 0 && m_height > 0)
 	{
 		// Builds up filename to save PNG to
 		char l_sFilename[1024];
-		sprintf(l_sFilename, m_sFrameFilenameFormat.toASCIIString(), ++m_ui32FrameId);
+		sprintf(l_sFilename, m_sFrameFilenameFormat.toASCIIString(), ++m_frameId);
 
 		// Reads OpenGL buffer and stores it to a cairo surface
 		cairo_surface_t* l_pCairoSurface = cairo_image_surface_create(CAIRO_FORMAT_RGB24, m_width, m_height);

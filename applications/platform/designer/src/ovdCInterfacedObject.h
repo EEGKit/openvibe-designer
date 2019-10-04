@@ -14,6 +14,6 @@ namespace OpenViBEDesigner
 
 		OpenViBE::CIdentifier m_id = OV_UndefinedIdentifier;
 		uint32_t m_connectorType = 0;
-		uint32_t m_connectorIndex = 0;
+		uint32_t m_connectorIdx = 0;
 	};
 };

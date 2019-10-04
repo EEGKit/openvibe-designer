@@ -7,12 +7,12 @@ using namespace Kernel;
 
 CAboutPluginDialog::CAboutPluginDialog(const IKernelContext& ctx, const CIdentifier& rPluginClassIdentifier, const char* sGUIFilename)
 	: m_kernelContext(ctx),
-	  m_oPluginClassIdentifier(rPluginClassIdentifier),
+	  m_oPluginClassID(rPluginClassIdentifier),
 	  m_sGUIFilename(sGUIFilename) { }
 
 CAboutPluginDialog::CAboutPluginDialog(const IKernelContext& ctx, const IPluginObjectDesc* pPluginObjectDesc, const char* sGUIFilename)
 	: m_kernelContext(ctx),
-	  m_oPluginClassIdentifier(OV_UndefinedIdentifier),
+	  m_oPluginClassID(OV_UndefinedIdentifier),
 	  m_sGUIFilename(sGUIFilename),
 	  m_pPluginObjectDescriptor(pPluginObjectDesc) { }
 
@@ -23,7 +23,7 @@ bool CAboutPluginDialog::run()
 {
 	if (m_pPluginObjectDescriptor == nullptr)
 	{
-		m_pPluginObjectDescriptor = m_kernelContext.getPluginManager().getPluginObjectDescCreating(m_oPluginClassIdentifier);
+		m_pPluginObjectDescriptor = m_kernelContext.getPluginManager().getPluginObjectDescCreating(m_oPluginClassID);
 	}
 
 	if (!m_pPluginObjectDescriptor) { return false; }

@@ -51,7 +51,7 @@ namespace OpenViBEPlugins
 			bool m_bFirstBufferReceived = false;
 
 			//! Sampling frequency of the incoming stream
-			uint32_t m_ui32SamplingFrequency = 0;
+			uint32_t m_samplingFrequency = 0;
 
 			//! double-linked list of pointers to the samples buffers of the current time window
 			std::deque<double*> m_oSampleBuffers;

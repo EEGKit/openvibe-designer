@@ -25,11 +25,11 @@ namespace OpenViBEDesigner
 
 		OpenViBEVisualizationToolkit::EVisualizationWidgetType getType() const override { return m_Type; }
 
-		OpenViBE::CIdentifier getParentIdentifier() const override { return m_ParentIdentifier; }
+		OpenViBE::CIdentifier getParentIdentifier() const override { return m_ParentID; }
 
-		void setParentIdentifier(const OpenViBE::CIdentifier& parentIdentifier) override { m_ParentIdentifier = parentIdentifier; }
+		void setParentIdentifier(const OpenViBE::CIdentifier& parentIdentifier) override { m_ParentID = parentIdentifier; }
 
-		OpenViBE::CIdentifier getBoxIdentifier() const override { return m_BoxIdentifier; }
+		OpenViBE::CIdentifier getBoxIdentifier() const override { return m_BoxID; }
 
 		uint32_t getNbChildren() const override { return uint32_t(m_Children.size()); }
 
@@ -62,8 +62,8 @@ namespace OpenViBEDesigner
 		OpenViBE::CIdentifier m_id = OV_UndefinedIdentifier;
 		OpenViBE::CString m_Name;
 		OpenViBEVisualizationToolkit::EVisualizationWidgetType m_Type;
-		OpenViBE::CIdentifier m_ParentIdentifier = OV_UndefinedIdentifier;
-		OpenViBE::CIdentifier m_BoxIdentifier = OV_UndefinedIdentifier;
+		OpenViBE::CIdentifier m_ParentID = OV_UndefinedIdentifier;
+		OpenViBE::CIdentifier m_BoxID = OV_UndefinedIdentifier;
 		std::vector<OpenViBE::CIdentifier> m_Children;
 
 		// @fixme should initialize meaningfully in constructor or initialize()?

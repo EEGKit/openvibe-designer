@@ -29,7 +29,7 @@ CCommentProxy::CCommentProxy(const IKernelContext& ctx, IScenario& scenario, con
 	}
 }
 
-CCommentProxy::~CCommentProxy() { if (!m_bApplied) { this->apply(); } }
+CCommentProxy::~CCommentProxy() { if (!m_applied) { this->apply(); } }
 
 int CCommentProxy::getWidth(GtkWidget* widget) const
 {
@@ -49,7 +49,7 @@ void CCommentProxy::setCenter(const int centerX, const int centerY)
 {
 	m_centerX  = centerX;
 	m_centerY  = centerY;
-	m_bApplied = false;
+	m_applied = false;
 }
 
 void CCommentProxy::apply()
@@ -69,7 +69,7 @@ void CCommentProxy::apply()
 			l_oAttributeHandler.setAttributeValue<int>(OV_AttributeId_Comment_YCenterPosition, m_centerY);
 		}
 		else { l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Comment_YCenterPosition, m_centerY); }
-		m_bApplied = true;
+		m_applied = true;
 	}
 }
 

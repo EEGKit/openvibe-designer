@@ -1610,7 +1610,7 @@ void CDesignerVisualization::cursorChangedCB(GtkTreeView* pTreeView)
 	//save active item
 	if (m_rVisualizationTree.getULongValueFromTreeIter(&l_oSelectionIter, EVisualizationTreeColumn_ULongNodeType) == EVisualizationTreeNode_VisualizationBox)
 	{
-		m_rVisualizationTree.getIdentifierFromTreeIter(&l_oSelectionIter, m_oActiveVisualizationBoxIdentifier, EVisualizationTreeColumn_StringIdentifier);
+		m_rVisualizationTree.getIdentifierFromTreeIter(&l_oSelectionIter, m_oActiveVisualizationBoxID, EVisualizationTreeColumn_StringIdentifier);
 	}
 
 	GtkTreeIter l_oVisualizationPanelIter = l_oSelectionIter;
@@ -1727,7 +1727,7 @@ void CDesignerVisualization::dragDataReceivedInWidgetCB(GtkWidget* dstWidget, Gt
 	if (GTK_IS_TREE_VIEW(l_pSrcWidget))
 	{
 		//ensure dragged widget is a visualization box
-		if (!m_rVisualizationTree.findChildNodeFromRoot(&l_oSrcIter, m_oActiveVisualizationBoxIdentifier))
+		if (!m_rVisualizationTree.findChildNodeFromRoot(&l_oSrcIter, m_oActiveVisualizationBoxID))
 		{
 			m_kernelContext.getLogManager() << LogLevel_Debug << "dragDataReceivedInWidgetCB couldn't retrieve iterator of active visualization box!\n";
 			return;
@@ -1824,7 +1824,7 @@ void CDesignerVisualization::dragDataReceivedInEventBoxCB(GtkWidget* dstWidget, 
 	//get iterator to src widget
 	if (GTK_IS_TREE_VIEW(l_pSrcWidget))
 	{
-		if (!m_rVisualizationTree.findChildNodeFromRoot(&l_oSrcIter, m_oActiveVisualizationBoxIdentifier)) { return; }
+		if (!m_rVisualizationTree.findChildNodeFromRoot(&l_oSrcIter, m_oActiveVisualizationBoxID)) { return; }
 		//get actual src widget (item being dropped) and ensure it isn't being dropped in its own table
 		m_rVisualizationTree.getPointerValueFromTreeIter(&l_oSrcIter, l_pSrcWidget, EVisualizationTreeColumn_PointerWidget);
 		if (l_pSrcWidget == gtk_widget_get_parent(dstWidget)) { return; }

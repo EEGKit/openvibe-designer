@@ -266,9 +266,9 @@ namespace Mensia
 			OpenViBE::CString m_sColorGradient;
 			bool m_bShowAxis        = false;
 			bool m_bXYZPlotHasDepth = false;
-			bool m_bIsPositive      = false;
-			bool m_bIsTimeLocked    = false;
-			bool m_bIsScaleVisible  = false;
+			bool m_isPositive      = false;
+			bool m_isTimeLocked    = false;
+			bool m_isScaleVisible  = false;
 			std::vector<TColor> m_vColor;
 			TColor m_oColor;
 
@@ -311,9 +311,9 @@ namespace Mensia
 			bool m_bRedrawNeeded          = false;
 			uint64_t m_lastRenderTime = 0;
 
-			bool m_bIsVideoOutputEnabled = false; // for video output
-			bool m_bIsVideoOutputWorking = false;
-			uint32_t m_ui32FrameId       = 0;
+			bool m_isVideoOutputEnabled = false; // for video output
+			bool m_isVideoOutputWorking = false;
+			uint32_t m_frameId       = 0;
 			OpenViBE::CString m_sFrameFilenameFormat;
 		private:
 			OpenViBEVisualizationToolkit::IVisualizationContext* m_visualizationContext{};

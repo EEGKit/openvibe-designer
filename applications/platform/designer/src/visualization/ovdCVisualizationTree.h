@@ -76,7 +76,7 @@ namespace OpenViBEDesigner
 		bool loadVisualizationWidget(OpenViBEVisualizationToolkit::IVisualizationWidget* visualizationWidget, GtkTreeIter* parentIter);
 
 		std::map<OpenViBE::CIdentifier, OpenViBEVisualizationToolkit::IVisualizationWidget*> m_VisualizationWidgets;
-		OpenViBE::CIdentifier m_ScenarioIdentifier = OV_UndefinedIdentifier;
+		OpenViBE::CIdentifier m_ScenarioID = OV_UndefinedIdentifier;
 		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
 		const OpenViBE::Kernel::IScenario* m_Scenario = nullptr;
 		GtkTreeStore* m_TreeStore = nullptr;

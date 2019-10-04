@@ -176,13 +176,13 @@ namespace OpenViBEDesigner
 
 		gint m_giFilterTimeout = 0;
 
-		bool m_bIsMaximized = false;
+		bool m_isMaximized = false;
 
 		const gchar* m_sSearchTerm = nullptr;
 
 		uint64_t m_lastTimeRefresh = 0;
-		bool m_bIsQuitting = false;
-		bool m_bIsNewVersion = false;
+		bool m_isQuitting = false;
+		bool m_isNewVersion = false;
 
 		std::vector<CInterfacedScenario*> m_vInterfacedScenario;
 		uint32_t m_currentInterfacedScenarioIdx = 0;

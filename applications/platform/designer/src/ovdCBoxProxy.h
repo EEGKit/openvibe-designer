@@ -11,7 +11,7 @@ namespace OpenViBEDesigner
 	public:
 
 		CBoxProxy(const OpenViBE::Kernel::IKernelContext& ctx, OpenViBE::Kernel::IScenario& scenario, const OpenViBE::CIdentifier& boxID);
-		virtual ~CBoxProxy() { if (!m_bApplied) { this->apply(); } }
+		virtual ~CBoxProxy() { if (!m_applied) { this->apply(); } }
 
 		operator OpenViBE::Kernel::IBox* () const { return m_pBox; }
 		operator const OpenViBE::Kernel::IBox* () const { return m_pConstBox; }
@@ -46,7 +46,7 @@ namespace OpenViBEDesigner
 		const OpenViBE::Plugins::IBoxAlgorithmDesc* m_pBoxAlgorithmDescriptorOverride = nullptr;
 		const OpenViBE::Kernel::IBox* m_pConstBox = nullptr;
 		OpenViBE::Kernel::IBox* m_pBox = nullptr;
-		bool m_bApplied = false;
+		bool m_applied = false;
 		bool m_bShowOriginalNameWhenModified = false;
 		int m_centerX = 0;
 		int m_centerY = 0;

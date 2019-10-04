@@ -153,7 +153,7 @@ namespace
 					m_oHash = m_oHash.toUInteger() ^ CIdentifier(0x624D7661, 0xD8DDEA0A).toUInteger();
 					break;
 				case BoxFlag_IsDeprecated:
-					m_bIsDeprecated = true;
+					m_isDeprecated = true;
 					break;
 				default: return false;
 			}
@@ -186,7 +186,7 @@ namespace
 		_IsDerivedFromClass_Final_(IBoxProto, OV_UndefinedIdentifier)
 
 		CIdentifier m_oHash;
-		bool m_bIsDeprecated        = false;
+		bool m_isDeprecated        = false;
 		uint64_t m_nInputHash   = 0x64AC3CB54A35888CLL;
 		uint64_t m_nOutputHash  = 0x21E0FAAFE5CAF1E1LL;
 		uint64_t m_nSettingHash = 0x6BDFB15B54B09F63LL;
@@ -1104,7 +1104,7 @@ void CApplication::initialize(const ECommandLineFlag eCommandLineFlags)
 
 	// Shows main window
 	gtk_builder_connect_signals(m_pBuilderInterface, nullptr);
-	m_bIsMaximized = false;
+	m_isMaximized = false;
 
 	const int height = int(m_kernelContext.getConfigurationManager().expandAsInteger("${Designer_EditorSizeHeight}"));
 	const int width  = int(m_kernelContext.getConfigurationManager().expandAsInteger("${Designer_EditorSizeWidth}"));
@@ -1255,7 +1255,7 @@ void CApplication::initialize(const ECommandLineFlag eCommandLineFlags)
 	if (lastUsedVersionMajor < currentVersionMajor
 		|| (lastUsedVersionMajor == currentVersionMajor && lastUsedVersionMinor < currentVersionMinor)
 		|| (lastUsedVersionMinor == currentVersionMinor && lastUsedVersionPatch < currentVersionPatch)
-		|| (lastUsedVersionMajor == 0 && lastUsedVersionMinor == 0 && lastUsedVersionPatch == 0)) { m_bIsNewVersion = true; }
+		|| (lastUsedVersionMajor == 0 && lastUsedVersionMinor == 0 && lastUsedVersionPatch == 0)) { m_isNewVersion = true; }
 
 	std::string defaultURLBaseString = std::string(m_kernelContext.getConfigurationManager().expand("${Designer_HelpBrowserURLBase}"));
 #ifdef MENSIA_DISTRIBUTION
@@ -1318,7 +1318,7 @@ bool CApplication::displayChangelogWhenAvailable()
 		GtkLabel* l_pLabel = GTK_LABEL(gtk_builder_get_object(interface, "label-newversion"));
 		gtk_label_set_markup(l_pLabel, labelNewBoxesList.c_str());
 		gtk_dialog_run(GTK_DIALOG(l_pDialog));
-		if (m_bIsNewVersion)
+		if (m_isNewVersion)
 		{
 			gtk_entry_set_text(GTK_ENTRY(gtk_builder_get_object(m_pBuilderInterface, "openvibe-box_algorithm_searchbox")), "(New)");
 			gtk_window_set_focus(GTK_WINDOW(m_pMainWindow), GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-box_algorithm_searchbox")));
@@ -1510,7 +1510,7 @@ void CApplication::saveOpenedScenarios()
 			fprintf(l_pFile, "Designer_EditorSizeHeight = %i\n", height);
 			fprintf(l_pFile, "Designer_EditorPanedPosition = %i\n",
 					gtk_paned_get_position(GTK_PANED(gtk_builder_get_object(m_pBuilderInterface, "openvibe-horizontal_container"))));
-			fprintf(l_pFile, "Designer_FullscreenEditor = %s\n", m_bIsMaximized ? "True" : "False");
+			fprintf(l_pFile, "Designer_FullscreenEditor = %s\n", m_isMaximized ? "True" : "False");
 
 			fprintf(l_pFile, "# Last files opened in %s\n", std::string(DESIGNER_NAME).c_str());
 
@@ -2407,13 +2407,13 @@ bool CApplication::createPlayer()
 			else { currentInterfacedScenario->m_rScenario.addAttribute(OV_AttributeId_ScenarioFilename, currentInterfacedScenario->m_sFileName.c_str()); }
 		}
 
-		m_kernelContext.getPlayerManager().createPlayer(currentInterfacedScenario->m_oPlayerIdentifier);
+		m_kernelContext.getPlayerManager().createPlayer(currentInterfacedScenario->m_oPlayerID);
 		const CIdentifier scenarioID         = currentInterfacedScenario->m_scenarioID;
-		const CIdentifier playerIdentifier   = currentInterfacedScenario->m_oPlayerIdentifier;
+		const CIdentifier playerIdentifier   = currentInterfacedScenario->m_oPlayerID;
 		currentInterfacedScenario->m_pPlayer = &m_kernelContext.getPlayerManager().getPlayer(playerIdentifier);
 		if (!currentInterfacedScenario->m_pPlayer->setScenario(scenarioID))
 		{
-			currentInterfacedScenario->m_oPlayerIdentifier = OV_UndefinedIdentifier;
+			currentInterfacedScenario->m_oPlayerID = OV_UndefinedIdentifier;
 			currentInterfacedScenario->m_pPlayer           = nullptr;
 			m_kernelContext.getPlayerManager().releasePlayer(playerIdentifier);
 			OV_ERROR_DRF("The current scenario could not be loaded by the player.\n", ErrorType::BadCall);
@@ -2421,7 +2421,7 @@ bool CApplication::createPlayer()
 
 		// The visualization manager needs to know the visualization tree in which the widgets should be inserted
 		currentInterfacedScenario->m_pPlayer->getRuntimeConfigurationManager().createConfigurationToken(
-			"VisualizationContext_VisualizationTreeId", currentInterfacedScenario->m_oVisualizationTreeIdentifier.toString());
+			"VisualizationContext_VisualizationTreeId", currentInterfacedScenario->m_oVisualizationTreeID.toString());
 
 		// TODO_JL: This should be a copy of the tree containing visualizations from the metaboxes
 		currentInterfacedScenario->createPlayerVisualization(currentInterfacedScenario->m_pVisualizationTree);
@@ -2431,7 +2431,7 @@ bool CApplication::createPlayer()
 		{
 			currentInterfacedScenario->releasePlayerVisualization();
 			m_kernelContext.getLogManager() << LogLevel_Error << "The player could not be initialized.\n";
-			currentInterfacedScenario->m_oPlayerIdentifier = OV_UndefinedIdentifier;
+			currentInterfacedScenario->m_oPlayerID = OV_UndefinedIdentifier;
 			currentInterfacedScenario->m_pPlayer           = nullptr;
 			m_kernelContext.getPlayerManager().releasePlayer(playerIdentifier);
 			return false;
@@ -2692,7 +2692,7 @@ bool CApplication::quitApplicationCB()
 	}
 
 	// Switch to quitting mode
-	m_bIsQuitting = true;
+	m_isQuitting = true;
 
 	// Saves opened scenarios
 	this->saveOpenedScenarios();
@@ -2723,12 +2723,12 @@ bool CApplication::quitApplicationCB()
 
 void CApplication::windowStateChangedCB(const bool bIsMaximized)
 {
-	if (m_bIsMaximized != bIsMaximized && !bIsMaximized) // we switched to not maximized
+	if (m_isMaximized != bIsMaximized && !bIsMaximized) // we switched to not maximized
 	{
 		//gtk_paned_set_position(GTK_PANED(gtk_builder_get_object(m_builderInterface, "openvibe-horizontal_container")), 640);
 		gtk_window_resize(GTK_WINDOW(m_pMainWindow), 1024, 768);
 	}
-	m_bIsMaximized = bIsMaximized;
+	m_isMaximized = bIsMaximized;
 }
 
 void CApplication::logLevelCB() const
@@ -2834,7 +2834,7 @@ void CApplication::CPUUsageCB()
 
 void CApplication::changeCurrentScenario(const int pageIdx)
 {
-	if (m_bIsQuitting) { return; }
+	if (m_isQuitting) { return; }
 
 	//hide window manager of previously active scenario, if any
 	const int i = gtk_notebook_get_current_page(m_pScenarioNotebook);

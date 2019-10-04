@@ -147,7 +147,7 @@ namespace OpenViBEDesigner
 		GtkWidget* m_pHighlightedWidget = nullptr;
 		//active items
 		OpenViBE::CString m_oActiveVisualizationWindowName, m_oActiveVisualizationPanelName;
-		OpenViBE::CIdentifier m_oActiveVisualizationBoxIdentifier = OV_UndefinedIdentifier;
+		OpenViBE::CIdentifier m_oActiveVisualizationBoxID = OV_UndefinedIdentifier;
 		//preview window visibility flag
 		bool m_bPreviewWindowVisible = false;
 		uint32_t m_previewWindowW = 0;

@@ -472,41 +472,41 @@ namespace
 
 	void edit_scenario_link_cb(GtkWidget*, CInterfacedScenario::SLinkCallbackData* data)
 	{
-		if (data->m_bIsInput) { data->m_pInterfacedScenario->editScenarioInputCB(data->m_uiLinkIndex); }
-		else { data->m_pInterfacedScenario->editScenarioOutputCB(data->m_uiLinkIndex); }
+		if (data->m_isInput) { data->m_pInterfacedScenario->editScenarioInputCB(data->m_uiLinkIdx); }
+		else { data->m_pInterfacedScenario->editScenarioOutputCB(data->m_uiLinkIdx); }
 		data->m_pInterfacedScenario->redraw();
 	}
 
 	void modify_scenario_link_move_up_cb(GtkWidget*, CInterfacedScenario::SLinkCallbackData* data)
 	{
-		if (data->m_uiLinkIndex == 0) { return; }
-		if (data->m_bIsInput) { data->m_pInterfacedScenario->swapScenarioInputs(data->m_uiLinkIndex - 1, data->m_uiLinkIndex); }
-		else { data->m_pInterfacedScenario->swapScenarioOutputs(data->m_uiLinkIndex - 1, data->m_uiLinkIndex); }
+		if (data->m_uiLinkIdx == 0) { return; }
+		if (data->m_isInput) { data->m_pInterfacedScenario->swapScenarioInputs(data->m_uiLinkIdx - 1, data->m_uiLinkIdx); }
+		else { data->m_pInterfacedScenario->swapScenarioOutputs(data->m_uiLinkIdx - 1, data->m_uiLinkIdx); }
 
 		data->m_pInterfacedScenario->snapshotCB();
 	}
 
 	void modify_scenario_link_move_down_cb(GtkWidget*, CInterfacedScenario::SLinkCallbackData* data)
 	{
-		const auto interfacorType = data->m_bIsInput ? Input : Output;
+		const auto interfacorType = data->m_isInput ? Input : Output;
 		if (data->m_pInterfacedScenario->m_rScenario.getInterfacorCount(interfacorType) < 2
-			|| data->m_uiLinkIndex >= data->m_pInterfacedScenario->m_rScenario.getInterfacorCount(interfacorType) - 1) { return; }
+			|| data->m_uiLinkIdx >= data->m_pInterfacedScenario->m_rScenario.getInterfacorCount(interfacorType) - 1) { return; }
 
-		if (data->m_bIsInput) { data->m_pInterfacedScenario->swapScenarioInputs(data->m_uiLinkIndex, data->m_uiLinkIndex + 1); }
-		else { data->m_pInterfacedScenario->swapScenarioOutputs(data->m_uiLinkIndex, data->m_uiLinkIndex + 1); }
+		if (data->m_isInput) { data->m_pInterfacedScenario->swapScenarioInputs(data->m_uiLinkIdx, data->m_uiLinkIdx + 1); }
+		else { data->m_pInterfacedScenario->swapScenarioOutputs(data->m_uiLinkIdx, data->m_uiLinkIdx + 1); }
 		data->m_pInterfacedScenario->snapshotCB();
 	}
 
 	void delete_scenario_link_cb(GtkButton*, CInterfacedScenario::SLinkCallbackData* data)
 	{
-		if (data->m_bIsInput)
+		if (data->m_isInput)
 		{
-			data->m_pInterfacedScenario->m_rScenario.removeScenarioInput(data->m_uiLinkIndex);
+			data->m_pInterfacedScenario->m_rScenario.removeScenarioInput(data->m_uiLinkIdx);
 			data->m_pInterfacedScenario->redrawScenarioInputSettings();
 		}
 		else
 		{
-			data->m_pInterfacedScenario->m_rScenario.removeScenarioOutput(data->m_uiLinkIndex);
+			data->m_pInterfacedScenario->m_rScenario.removeScenarioOutput(data->m_uiLinkIdx);
 			data->m_pInterfacedScenario->redrawScenarioOutputSettings();
 		}
 
@@ -517,15 +517,15 @@ namespace
 	/*
 	void modify_scenario_link_name_cb(GtkWidget* pEntry, CInterfacedScenario::SLinkCallbackData* data)
 	{
-		if (data->m_bIsInput) { data->m_pInterfacedScenario->m_rScenario.setInputName(data->m_uiLinkIndex, gtk_entry_get_text(GTK_ENTRY(pEntry))); }
-		else { data->m_pInterfacedScenario->m_rScenario.setOutputName(data->m_uiLinkIndex, gtk_entry_get_text(GTK_ENTRY(pEntry))); }
+		if (data->m_isInput) { data->m_pInterfacedScenario->m_rScenario.setInputName(data->m_uiLinkIdx, gtk_entry_get_text(GTK_ENTRY(pEntry))); }
+		else { data->m_pInterfacedScenario->m_rScenario.setOutputName(data->m_uiLinkIdx, gtk_entry_get_text(GTK_ENTRY(pEntry))); }
 	}
 
 	void modify_scenario_link_type_cb(GtkWidget* pComboBox, CInterfacedScenario::SLinkCallbackData* data)
 	{
 		const CIdentifier l_oStreamType = data->m_pInterfacedScenario->m_mStreamType[gtk_combo_box_get_active_text(GTK_COMBO_BOX(pComboBox))];
-		if (data->m_bIsInput) { data->m_pInterfacedScenario->m_rScenario.setInputType(data->m_uiLinkIndex, l_oStreamType); }
-		else { data->m_pInterfacedScenario->m_rScenario.setOutputType(data->m_uiLinkIndex, l_oStreamType); }
+		if (data->m_isInput) { data->m_pInterfacedScenario->m_rScenario.setInputType(data->m_uiLinkIdx, l_oStreamType); }
+		else { data->m_pInterfacedScenario->m_rScenario.setOutputType(data->m_uiLinkIdx, l_oStreamType); }
 		data->m_pInterfacedScenario->redraw();
 	}
 	//*/
@@ -590,8 +590,8 @@ CInterfacedScenario::CInterfacedScenario(const IKernelContext& ctx, CApplication
 
 	//retrieve visualization tree
 
-	m_rApplication.m_pVisualizationManager->createVisualizationTree(m_oVisualizationTreeIdentifier);
-	m_pVisualizationTree = &m_rApplication.m_pVisualizationManager->getVisualizationTree(m_oVisualizationTreeIdentifier);
+	m_rApplication.m_pVisualizationManager->createVisualizationTree(m_oVisualizationTreeID);
+	m_pVisualizationTree = &m_rApplication.m_pVisualizationManager->getVisualizationTree(m_oVisualizationTreeID);
 	m_pVisualizationTree->init(&m_rScenario);
 
 	//create window manager
@@ -1021,8 +1021,8 @@ void CInterfacedScenario::redrawScenarioLinkSettings(GtkWidget* pLinkTable, cons
 			// Set the callbacks
 			SLinkCallbackData l_oCallbackData;
 			l_oCallbackData.m_pInterfacedScenario = this;
-			l_oCallbackData.m_uiLinkIndex         = linkIndex;
-			l_oCallbackData.m_bIsInput            = bIsInput;
+			l_oCallbackData.m_uiLinkIdx         = linkIndex;
+			l_oCallbackData.m_isInput            = bIsInput;
 
 			vLinkCallbackData[linkIndex] = l_oCallbackData;
 
@@ -2310,16 +2310,16 @@ void CInterfacedScenario::scenarioDrawingAreaMotionNotifyCB(GtkWidget* /*widget*
 			if (l_rObject.m_connectorType == Box_Input)
 			{
 				CIdentifier l_oType;
-				l_pBoxDetails->getInputName(l_rObject.m_connectorIndex, l_sName);
-				l_pBoxDetails->getInputType(l_rObject.m_connectorIndex, l_oType);
+				l_pBoxDetails->getInputName(l_rObject.m_connectorIdx, l_sName);
+				l_pBoxDetails->getInputType(l_rObject.m_connectorIdx, l_oType);
 				l_sType = m_kernelContext.getTypeManager().getTypeName(l_oType);
 				l_sType = CString("[") + l_sType + CString("]");
 			}
 			else if (l_rObject.m_connectorType == Box_Output)
 			{
 				CIdentifier l_oType;
-				l_pBoxDetails->getOutputName(l_rObject.m_connectorIndex, l_sName);
-				l_pBoxDetails->getOutputType(l_rObject.m_connectorIndex, l_oType);
+				l_pBoxDetails->getOutputName(l_rObject.m_connectorIdx, l_sName);
+				l_pBoxDetails->getOutputType(l_rObject.m_connectorIdx, l_oType);
 				l_sType = m_kernelContext.getTypeManager().getTypeName(l_oType);
 				l_sType = CString("[") + l_sType + CString("]");
 			}
@@ -2332,8 +2332,8 @@ void CInterfacedScenario::scenarioDrawingAreaMotionNotifyCB(GtkWidget* /*widget*
 			else if (l_rObject.m_connectorType == Box_ScenarioInput)
 			{
 				CIdentifier l_oType;
-				l_pBoxDetails->getInputName(l_rObject.m_connectorIndex, l_sName);
-				l_pBoxDetails->getInputType(l_rObject.m_connectorIndex, l_oType);
+				l_pBoxDetails->getInputName(l_rObject.m_connectorIdx, l_sName);
+				l_pBoxDetails->getInputType(l_rObject.m_connectorIdx, l_oType);
 
 				for (uint32_t l_scenarioInputIdx = 0; l_scenarioInputIdx < m_rScenario.getInputCount(); l_scenarioInputIdx++)
 				{
@@ -2342,7 +2342,7 @@ void CInterfacedScenario::scenarioDrawingAreaMotionNotifyCB(GtkWidget* /*widget*
 
 					m_rScenario.getScenarioInputLink(l_scenarioInputIdx, scenarioInputLinkBoxIdentifier, l_scenarioInputLinkBoxInputIdx);
 
-					if (scenarioInputLinkBoxIdentifier == l_pBoxDetails->getIdentifier() && l_scenarioInputLinkBoxInputIdx == l_rObject.m_connectorIndex)
+					if (scenarioInputLinkBoxIdentifier == l_pBoxDetails->getIdentifier() && l_scenarioInputLinkBoxInputIdx == l_rObject.m_connectorIdx)
 					{
 						m_rScenario.getInputName(l_scenarioInputIdx, l_sName);
 						l_sName = CString("Connected to \n") + l_sName;
@@ -2355,8 +2355,8 @@ void CInterfacedScenario::scenarioDrawingAreaMotionNotifyCB(GtkWidget* /*widget*
 			else if (l_rObject.m_connectorType == Box_ScenarioOutput)
 			{
 				CIdentifier l_oType;
-				l_pBoxDetails->getOutputName(l_rObject.m_connectorIndex, l_sName);
-				l_pBoxDetails->getOutputType(l_rObject.m_connectorIndex, l_oType);
+				l_pBoxDetails->getOutputName(l_rObject.m_connectorIdx, l_sName);
+				l_pBoxDetails->getOutputType(l_rObject.m_connectorIdx, l_oType);
 
 				for (uint32_t l_scenarioOutputIdx = 0; l_scenarioOutputIdx < m_rScenario.getOutputCount(); l_scenarioOutputIdx++)
 				{
@@ -2365,7 +2365,7 @@ void CInterfacedScenario::scenarioDrawingAreaMotionNotifyCB(GtkWidget* /*widget*
 
 					m_rScenario.getScenarioOutputLink(l_scenarioOutputIdx, scenarioOutputLinkBoxIdentifier, l_scenarioOutputLinkBoxOutputIdx);
 
-					if (scenarioOutputLinkBoxIdentifier == l_pBoxDetails->getIdentifier() && l_scenarioOutputLinkBoxOutputIdx == l_rObject.m_connectorIndex)
+					if (scenarioOutputLinkBoxIdentifier == l_pBoxDetails->getIdentifier() && l_scenarioOutputLinkBoxOutputIdx == l_rObject.m_connectorIdx)
 					{
 						m_rScenario.getOutputName(l_scenarioOutputIdx, l_sName);
 						l_sName = CString("Connected to \n") + l_sName;
@@ -2526,7 +2526,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(GtkWidget* widget, 
 						if ((m_oCurrentObject.m_connectorType == Box_Input && l_pBox->hasAttribute(OV_AttributeId_Box_FlagCanModifyInput))
 							|| (m_oCurrentObject.m_connectorType == Box_Output && l_pBox->hasAttribute(OV_AttributeId_Box_FlagCanModifyOutput)))
 						{
-							CConnectorEditor l_oConnectorEditor(m_kernelContext, *l_pBox, m_oCurrentObject.m_connectorType, m_oCurrentObject.m_connectorIndex,
+							CConnectorEditor l_oConnectorEditor(m_kernelContext, *l_pBox, m_oCurrentObject.m_connectorType, m_oCurrentObject.m_connectorIdx,
 																m_oCurrentObject.m_connectorType == Box_Input ? "Edit Input" : "Edit Output",
 																m_sGUIFilename.c_str());
 							if (l_oConnectorEditor.run()) { this->snapshotCB(); }
@@ -2945,13 +2945,13 @@ void CInterfacedScenario::scenarioDrawingAreaButtonReleasedCB(GtkWidget* /*widge
 				const IBox* l_pTargetBox = m_rScenario.getBoxDetails(l_oTargetObject.m_id);
 				if (l_pSourceBox && l_pTargetBox)
 				{
-					l_pSourceBox->getOutputType(l_oSourceObject.m_connectorIndex, l_oSourceTypeID);
-					l_pTargetBox->getInputType(l_oTargetObject.m_connectorIndex, l_oTargetTypeID);
+					l_pSourceBox->getOutputType(l_oSourceObject.m_connectorIdx, l_oSourceTypeID);
+					l_pTargetBox->getInputType(l_oTargetObject.m_connectorIdx, l_oTargetTypeID);
 
 					bool hasDeprecatedInput = false;
-					l_pSourceBox->getInterfacorDeprecatedStatus(Output, l_oSourceObject.m_connectorIndex, hasDeprecatedInput);
+					l_pSourceBox->getInterfacorDeprecatedStatus(Output, l_oSourceObject.m_connectorIdx, hasDeprecatedInput);
 					bool hasDeprecatedOutput = false;
-					l_pTargetBox->getInterfacorDeprecatedStatus(Input, l_oTargetObject.m_connectorIndex, hasDeprecatedOutput);
+					l_pTargetBox->getInterfacorDeprecatedStatus(Input, l_oTargetObject.m_connectorIdx, hasDeprecatedOutput);
 
 					if ((m_kernelContext.getTypeManager().isDerivedFromStream(l_oSourceTypeID, l_oTargetTypeID)
 						 || m_kernelContext.getConfigurationManager().expandAsBoolean("${Designer_AllowUpCastConnection}", false)) && (!l_bConnectionIsMessage))
@@ -2959,8 +2959,8 @@ void CInterfacedScenario::scenarioDrawingAreaButtonReleasedCB(GtkWidget* /*widge
 						if (!hasDeprecatedInput && !hasDeprecatedOutput)
 						{
 							CIdentifier l_oLinkID;
-							m_rScenario.connect(l_oLinkID, l_oSourceObject.m_id, l_oSourceObject.m_connectorIndex,
-												l_oTargetObject.m_id, l_oTargetObject.m_connectorIndex, OV_UndefinedIdentifier);
+							m_rScenario.connect(l_oLinkID, l_oSourceObject.m_id, l_oSourceObject.m_connectorIdx,
+												l_oTargetObject.m_id, l_oTargetObject.m_connectorIdx, OV_UndefinedIdentifier);
 							this->snapshotCB();
 						}
 						else { m_kernelContext.getLogManager() << LogLevel_Warning << "Cannot connect to/from deprecated I/O\n"; }
@@ -3917,12 +3917,12 @@ void CInterfacedScenario::stopAndReleasePlayer()
 	m_vBoxConfigurationDialog.clear();
 
 
-	if (!m_kernelContext.getPlayerManager().releasePlayer(m_oPlayerIdentifier))
+	if (!m_kernelContext.getPlayerManager().releasePlayer(m_oPlayerID))
 	{
 		m_kernelContext.getLogManager() << LogLevel_Error << "Failed to release the player" << "\n";
 	}
 
-	m_oPlayerIdentifier = OV_UndefinedIdentifier;
+	m_oPlayerID = OV_UndefinedIdentifier;
 	m_pPlayer           = nullptr;
 
 	// destroy player windows

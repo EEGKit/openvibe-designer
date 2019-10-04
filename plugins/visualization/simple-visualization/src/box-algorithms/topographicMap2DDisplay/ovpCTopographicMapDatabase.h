@@ -103,7 +103,7 @@ namespace OpenViBEPlugins
 			//pointer to electrode potentials matrix - mapped to OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_ControlPointsValues
 			OpenViBE::IMatrix* m_pElectrodePotentials = nullptr;
 			//pointer to sample points coordinates matrix - mapped to OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_SamplePointsCoordinates
-			OpenViBE::IMatrix* m_pSamplePointCoords = nullptr;
+			OpenViBE::IMatrix* m_samplePointCoords = nullptr;
 			//minimum interpolated value
 			OpenViBE::Kernel::TParameterHandler<double> m_oMinSamplePointValue;
 			//maximum interpolated value

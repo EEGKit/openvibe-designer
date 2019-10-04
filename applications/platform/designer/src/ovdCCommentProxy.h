@@ -36,7 +36,7 @@ namespace OpenViBEDesigner
 		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
 		const OpenViBE::Kernel::IComment* m_pConstComment = nullptr;
 		OpenViBE::Kernel::IComment* m_pComment = nullptr;
-		bool m_bApplied = false;
+		bool m_applied = false;
 		int m_centerX = 0;
 		int m_centerY = 0;
 		mutable std::string m_sLabel;

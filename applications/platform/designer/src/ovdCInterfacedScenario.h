@@ -140,8 +140,8 @@ namespace OpenViBEDesigner
 
 		OpenViBE::Kernel::EPlayerStatus m_ePlayerStatus;
 		OpenViBE::CIdentifier m_scenarioID = OV_UndefinedIdentifier;
-		OpenViBE::CIdentifier m_oPlayerIdentifier = OV_UndefinedIdentifier;
-		OpenViBE::CIdentifier m_oVisualizationTreeIdentifier = OV_UndefinedIdentifier;
+		OpenViBE::CIdentifier m_oPlayerID = OV_UndefinedIdentifier;
+		OpenViBE::CIdentifier m_oVisualizationTreeID = OV_UndefinedIdentifier;
 		CApplication& m_rApplication;
 		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
 		OpenViBE::Kernel::IScenario& m_rScenario;
@@ -240,8 +240,8 @@ namespace OpenViBEDesigner
 		typedef struct _SLinkCallbackData
 		{
 			CInterfacedScenario* m_pInterfacedScenario;
-			uint32_t m_uiLinkIndex;
-			bool m_bIsInput;
+			uint32_t m_uiLinkIdx;
+			bool m_isInput;
 		} SLinkCallbackData;
 
 		std::vector<SLinkCallbackData> m_vScenarioInputCallbackData;

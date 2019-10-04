@@ -55,7 +55,7 @@ namespace OpenViBEDesigner
 		GtkWidget* m_pOverrideEntryContainer = nullptr;
 		GtkWidget* m_pSettingDialog          = nullptr;
 		GtkCheckButton* m_pFileOverrideCheck = nullptr;
-		bool m_bIsScenarioRunning            = false;
+		bool m_isScenarioRunning            = false;
 
 		std::vector<OpenViBE::CString> m_SettingsMemory;
 	};

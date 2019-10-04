@@ -207,7 +207,7 @@ bool CBufferDatabase::adjustNumberOfDisplayedBuffers(const double f64NumberOfSec
 	//return if buffer length is not known yet
 	if (m_pDimensionSizes[1] == 0) { return false; }
 
-	uint64_t newNbufferToDisplay = uint64_t(ceil((m_totalDuration * m_ui32SamplingFrequency) / m_pDimensionSizes[1]));
+	uint64_t newNbufferToDisplay = uint64_t(ceil((m_totalDuration * m_samplingFrequency) / m_pDimensionSizes[1]));
 
 	//displays at least one buffer
 	newNbufferToDisplay = (newNbufferToDisplay == 0) ? 1 : newNbufferToDisplay;
@@ -236,7 +236,7 @@ bool CBufferDatabase::adjustNumberOfDisplayedBuffers(const double f64NumberOfSec
 
 uint64_t CBufferDatabase::getChannelCount() const { return m_pDimensionSizes[0]; }
 
-double CBufferDatabase::getDisplayedTimeIntervalWidth() const { return (m_nBufferToDisplay * ((m_pDimensionSizes[1] * 1000.0) / m_ui32SamplingFrequency)); }
+double CBufferDatabase::getDisplayedTimeIntervalWidth() const { return (m_nBufferToDisplay * ((m_pDimensionSizes[1] * 1000.0) / m_samplingFrequency)); }
 
 void CBufferDatabase::setMatrixDimensionCount(const uint32_t ui32DimensionCount)
 {
@@ -344,17 +344,17 @@ bool CBufferDatabase::setMatrixBuffer(const double* buffer, const uint64_t ui64S
 					"s = 0). This is not supported. Forcing the rate to 1. This may lead to problems.\n";
 			l_ui32EstimatedFrequency = 1;
 		}
-		if (m_ui32SamplingFrequency == 0)
+		if (m_samplingFrequency == 0)
 		{
 			// use chunking duration estimate if setter hasn't been used
-			m_ui32SamplingFrequency = l_ui32EstimatedFrequency;
+			m_samplingFrequency = l_ui32EstimatedFrequency;
 		}
-		if (m_ui32SamplingFrequency != l_ui32EstimatedFrequency)
+		if (m_samplingFrequency != l_ui32EstimatedFrequency)
 		{
 			m_parentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Warning
 					<< "Sampling rate [" << l_ui32EstimatedFrequency << "] suggested by chunk properties differs from stream-specified rate [" <<
-					m_ui32SamplingFrequency << "]. There may be a problem with an upstream box. Trying to use the estimated rate.\n";
-			m_ui32SamplingFrequency = l_ui32EstimatedFrequency;
+					m_samplingFrequency << "]. There may be a problem with an upstream box. Trying to use the estimated rate.\n";
+			m_samplingFrequency = l_ui32EstimatedFrequency;
 		}
 
 		//computes the number of buffer necessary to display the interval
@@ -447,7 +447,7 @@ bool CBufferDatabase::setMatrixBuffer(const double* buffer, const uint64_t ui64S
 
 bool CBufferDatabase::setSamplingFrequency(const uint32_t ui32SamplingFrequency)
 {
-	m_ui32SamplingFrequency = ui32SamplingFrequency;
+	m_samplingFrequency = ui32SamplingFrequency;
 
 	return true;
 }

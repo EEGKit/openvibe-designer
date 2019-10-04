@@ -170,9 +170,9 @@ namespace Mensia
 					m_pRendererContext->setElementCount(m_nElement);
 					m_pRendererContext->scaleBy(float(m_f64DataScale));
 					m_pRendererContext->setAxisDisplay(m_bShowAxis);
-					m_pRendererContext->setPositiveOnly(m_bIsPositive);
+					m_pRendererContext->setPositiveOnly(m_isPositive);
 					m_pRendererContext->setParentRendererContext(&getContext());
-					m_pRendererContext->setTimeLocked(m_bIsTimeLocked);
+					m_pRendererContext->setTimeLocked(m_isTimeLocked);
 					m_pRendererContext->setXYZPlotDepth(m_bXYZPlotHasDepth);
 
 					gtk_tree_view_set_model(m_pChannelTreeView, nullptr);

@@ -842,7 +842,7 @@ int go(int argc, char** argv)
 							cb_collector1.enumeratePluginObjectDesc(OV_ClassId_Plugins_BoxAlgorithmDesc);
 							cb_collector2.enumeratePluginObjectDesc(OV_ClassId_Plugins_AlgorithmDesc);
 							insertPluginObjectDesc_to_GtkTreeStore(*l_pKernelContext, cb_collector1.getPluginObjectDescMap(), app.m_pBoxAlgorithmTreeModel,
-																   app.m_vNewBoxes, app.m_vUpdatedBoxes, app.m_bIsNewVersion);
+																   app.m_vNewBoxes, app.m_vUpdatedBoxes, app.m_isNewVersion);
 							insertPluginObjectDesc_to_GtkTreeStore(*l_pKernelContext, cb_collector2.getPluginObjectDescMap(), app.m_pAlgorithmTreeModel,
 																   app.m_vNewBoxes, app.m_vUpdatedBoxes);
 
@@ -851,13 +851,13 @@ int go(int argc, char** argv)
 							while ((identifier = l_pKernelContext->getMetaboxManager().getNextMetaboxObjectDescIdentifier(identifier)) != OV_UndefinedIdentifier
 							) { metaboxDescMap[std::string(identifier.toString())] = l_pKernelContext->getMetaboxManager().getMetaboxObjectDesc(identifier); }
 							insertPluginObjectDesc_to_GtkTreeStore(*l_pKernelContext, metaboxDescMap, app.m_pBoxAlgorithmTreeModel, app.m_vNewBoxes,
-																   app.m_vUpdatedBoxes, app.m_bIsNewVersion);
+																   app.m_vUpdatedBoxes, app.m_isNewVersion);
 
 							l_pKernelContext->getLogManager() << LogLevel_Info << "Initialization took " << l_pKernelContext
 																											->getConfigurationManager().expand(
 																												"$Core{real-time}") << " ms\n";
 							// If the application is a newly launched version, and not launched without GUI -> display changelog
-							if (app.m_bIsNewVersion && l_oConfiguration.m_eNoGui != CommandLineFlag_NoGui) { app.displayChangelogWhenAvailable(); }
+							if (app.m_isNewVersion && l_oConfiguration.m_eNoGui != CommandLineFlag_NoGui) { app.displayChangelogWhenAvailable(); }
 							try { gtk_main(); }
 							catch (DesignerException& ex)
 							{

@@ -247,7 +247,7 @@ void CRendererContext::clearTransformInfo()
 	m_ERPPlayerActive        = false;
 	m_ERPFraction            = 0;
 	m_nStack             = 1;
-	m_stackIndex             = 1;
+	m_stackIdx             = 1;
 	m_faceMeshVisible        = true;
 	m_scalpMeshVisible       = true;
 }
@@ -304,7 +304,7 @@ void CRendererContext::setMaximumSpectrumFrequency(const uint32_t ui32MaxSpectru
 
 void CRendererContext::setStackCount(const uint32_t ui32StackCount) { m_nStack = ui32StackCount; }
 
-void CRendererContext::setStackIndex(const uint32_t ui32StackIndex) { m_stackIndex = ui32StackIndex; }
+void CRendererContext::setStackIndex(const uint32_t ui32StackIndex) { m_stackIdx = ui32StackIndex; }
 
 void CRendererContext::setFaceMeshVisible(const bool bVisible) { m_faceMeshVisible = bVisible; }
 
@@ -411,7 +411,7 @@ uint32_t CRendererContext::getMaxSpectrumFrequency() const
 
 uint32_t CRendererContext::getStackCount() const { return m_nStack; }
 
-uint32_t CRendererContext::getStackIndex() const { return m_stackIndex; }
+uint32_t CRendererContext::getStackIndex() const { return m_stackIdx; }
 
 // ____________________________________________________________________________________________________________________________________________________________________________________
 //

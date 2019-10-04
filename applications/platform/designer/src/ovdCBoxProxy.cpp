@@ -51,7 +51,7 @@ void CBoxProxy::setCenter(const int centerX, const int centerY)
 {
 	m_centerX  = centerX;
 	m_centerY  = centerY;
-	m_bApplied = false;
+	m_applied = false;
 }
 
 void CBoxProxy::setBoxAlgorithmDescriptorOverride(const IBoxAlgorithmDesc* pBoxAlgorithmDescriptor)
@@ -77,7 +77,7 @@ void CBoxProxy::apply()
 		}
 		else { l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Box_YCenterPosition, m_centerY); }
 
-		m_bApplied = true;
+		m_applied = true;
 	}
 }
 

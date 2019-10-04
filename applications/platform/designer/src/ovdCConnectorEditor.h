@@ -19,7 +19,7 @@ namespace OpenViBEDesigner
 		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
 		OpenViBE::Kernel::IBox& m_box;
 		uint32_t m_connectorType = 0;
-		uint32_t m_connectorIndex = 0;
+		uint32_t m_connectorIdx = 0;
 		const std::string m_sGUIFilename;
 		const std::string m_sTitle;
 		GtkEntry* m_ConnectorIdentifierEntry = nullptr;

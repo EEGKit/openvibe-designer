@@ -148,13 +148,13 @@ bool CTopographicMapDatabase::processValues()
 	}
 
 	//retrieve up-to-date pointer to sample matrix
-	m_pSamplePointCoords = dynamic_cast<CTopographicMapDrawable*>(m_pDrawable)->getSampleCoordinatesMatrix();
+	m_samplePointCoords = dynamic_cast<CTopographicMapDrawable*>(m_pDrawable)->getSampleCoordinatesMatrix();
 
-	if (m_pSamplePointCoords != nullptr)
+	if (m_samplePointCoords != nullptr)
 	{
 		//map pointer to input parameter
 		m_rSphericalSplineInterpolation.getInputParameter(OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_SamplePointsCoordinates)->
-										setReferenceTarget(&m_pSamplePointCoords);
+										setReferenceTarget(&m_samplePointCoords);
 
 		if (m_interpolationType == OVP_TypeId_SphericalLinearInterpolationType_Spline)
 		{
@@ -172,7 +172,7 @@ bool CTopographicMapDatabase::processValues()
 	}
 	else
 	{
-		if (m_pSamplePointCoords != nullptr)
+		if (m_samplePointCoords != nullptr)
 		{
 			//retrieve interpolation results
 			TParameterHandler<IMatrix*> l_oSampleValuesMatrix;
@@ -209,13 +209,13 @@ bool CTopographicMapDatabase::interpolateValues()
 	if (m_firstProcess) { return false; }
 
 	//retrieve up-to-date pointer to sample matrix
-	m_pSamplePointCoords = dynamic_cast<CTopographicMapDrawable*>(m_pDrawable)->getSampleCoordinatesMatrix();
+	m_samplePointCoords = dynamic_cast<CTopographicMapDrawable*>(m_pDrawable)->getSampleCoordinatesMatrix();
 
-	if (m_pSamplePointCoords != nullptr)
+	if (m_samplePointCoords != nullptr)
 	{
 		//map pointer to input parameter
 		m_rSphericalSplineInterpolation.getInputParameter(OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_SamplePointsCoordinates)->
-										setReferenceTarget(&m_pSamplePointCoords);
+										setReferenceTarget(&m_samplePointCoords);
 
 		//interpolate using spline or laplacian coefficients depending on interpolation mode
 		if (m_interpolationType == OVP_TypeId_SphericalLinearInterpolationType_Spline)
@@ -233,7 +233,7 @@ bool CTopographicMapDatabase::interpolateValues()
 	}
 	else
 	{
-		if (m_pSamplePointCoords != nullptr)
+		if (m_samplePointCoords != nullptr)
 		{
 			//retrieve interpolation results
 			TParameterHandler<IMatrix*> l_oSampleValuesMatrix;

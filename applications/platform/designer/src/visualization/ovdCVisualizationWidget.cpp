@@ -23,7 +23,7 @@ using namespace OpenViBEVisualizationToolkit;
 
 CVisualizationWidget::CVisualizationWidget(const IKernelContext& ctx)
 	: m_kernelContext(ctx), m_id(OV_UndefinedIdentifier), m_Type(EVisualizationWidget_Undefined),
-	  m_ParentIdentifier(OV_UndefinedIdentifier), m_BoxIdentifier(OV_UndefinedIdentifier) {}
+	  m_ParentID(OV_UndefinedIdentifier), m_BoxID(OV_UndefinedIdentifier) {}
 
 
 bool CVisualizationWidget::initialize(const CIdentifier& identifier, const CString& name, const EVisualizationWidgetType type,
@@ -32,8 +32,8 @@ bool CVisualizationWidget::initialize(const CIdentifier& identifier, const CStri
 	m_id       = identifier;
 	m_Name             = name;
 	m_Type             = type;
-	m_ParentIdentifier = parentIdentifier;
-	m_BoxIdentifier    = boxID;
+	m_ParentID = parentIdentifier;
+	m_BoxID    = boxID;
 	m_Children.resize(childCount, OV_UndefinedIdentifier);
 	return true;
 }
