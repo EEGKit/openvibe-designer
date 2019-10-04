@@ -1809,28 +1809,28 @@ void CApplication::saveScenarioCB(CInterfacedScenario* interfacedScenario)
 				metaboxProto.addInput(inputName, inputTypeID, InputID, true);
 			}
 
-			for (uint32_t l_ui32ScenarioOutputIdx = 0; l_ui32ScenarioOutputIdx < scenario.getOutputCount(); l_ui32ScenarioOutputIdx++)
+			for (uint32_t scenarioOutputIdx = 0; scenarioOutputIdx < scenario.getOutputCount(); scenarioOutputIdx++)
 			{
 				CString outputName;
 				CIdentifier OutputTypeID;
 				CIdentifier OutputID;
 
-				scenario.getOutputType(l_ui32ScenarioOutputIdx, OutputTypeID);
-				scenario.getOutputName(l_ui32ScenarioOutputIdx, outputName);
-				scenario.getInterfacorIdentifier(Output, l_ui32ScenarioOutputIdx, OutputID);
+				scenario.getOutputType(scenarioOutputIdx, OutputTypeID);
+				scenario.getOutputName(scenarioOutputIdx, outputName);
+				scenario.getInterfacorIdentifier(Output, scenarioOutputIdx, OutputID);
 
 				metaboxProto.addOutput(outputName, OutputTypeID, OutputID, true);
 			}
 
-			for (uint32_t l_ui32ScenarioSettingIdx = 0; l_ui32ScenarioSettingIdx < scenario.getSettingCount(); l_ui32ScenarioSettingIdx++)
+			for (uint32_t scenarioSettingIdx = 0; scenarioSettingIdx < scenario.getSettingCount(); scenarioSettingIdx++)
 			{
 				CString l_sSettingName;
 				CIdentifier l_oSettingTypeID;
 				CString l_sSettingDefaultValue;
 
-				scenario.getSettingName(l_ui32ScenarioSettingIdx, l_sSettingName);
-				scenario.getSettingType(l_ui32ScenarioSettingIdx, l_oSettingTypeID);
-				scenario.getSettingDefaultValue(l_ui32ScenarioSettingIdx, l_sSettingDefaultValue);
+				scenario.getSettingName(scenarioSettingIdx, l_sSettingName);
+				scenario.getSettingType(scenarioSettingIdx, l_oSettingTypeID);
+				scenario.getSettingDefaultValue(scenarioSettingIdx, l_sSettingDefaultValue);
 
 				metaboxProto.addSetting(l_sSettingName, l_oSettingTypeID, l_sSettingDefaultValue, false, OV_UndefinedIdentifier, true);
 			}

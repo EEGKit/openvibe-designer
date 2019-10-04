@@ -119,20 +119,20 @@ bool CTopographicMapDatabase::processValues()
 
 	//retrieve electrode values
 	//determine what buffer to use from delay
-	uint32_t l_ui32BufferIdx;
+	uint32_t bufferIdx;
 	const uint64_t currentTime       = m_parentPlugin.getPlayerContext().getCurrentTime();
 	const uint64_t l_ui64DisplayTime = currentTime - m_delay;
-	getBufferIndexFromTime(l_ui64DisplayTime, l_ui32BufferIdx);
+	getBufferIndexFromTime(l_ui64DisplayTime, bufferIdx);
 
 	//determine what sample to use
 	uint64_t l_ui64SampleIdx;
-	if (l_ui64DisplayTime <= m_oStartTime[l_ui32BufferIdx]) { l_ui64SampleIdx = 0; }
-	else if (l_ui64DisplayTime >= m_oEndTime[l_ui32BufferIdx]) { l_ui64SampleIdx = m_pDimensionSizes[1] - 1; }
-	else { l_ui64SampleIdx = uint64_t(double(l_ui64DisplayTime - m_oStartTime[l_ui32BufferIdx]) / double(m_bufferDuration) * m_pDimensionSizes[1]); }
+	if (l_ui64DisplayTime <= m_oStartTime[bufferIdx]) { l_ui64SampleIdx = 0; }
+	else if (l_ui64DisplayTime >= m_oEndTime[bufferIdx]) { l_ui64SampleIdx = m_pDimensionSizes[1] - 1; }
+	else { l_ui64SampleIdx = uint64_t(double(l_ui64DisplayTime - m_oStartTime[bufferIdx]) / double(m_bufferDuration) * m_pDimensionSizes[1]); }
 
 	for (int64_t i = 0; i < m_i64NbElectrodes; ++i)
 	{
-		*(m_oElectrodePotentials.getBuffer() + i) = m_oSampleBuffers[l_ui32BufferIdx][i * m_pDimensionSizes[1] + l_ui64SampleIdx];
+		*(m_oElectrodePotentials.getBuffer() + i) = m_oSampleBuffers[bufferIdx][i * m_pDimensionSizes[1] + l_ui64SampleIdx];
 	}
 
 	//interpolate spline values (potentials)
