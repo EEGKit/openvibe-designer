@@ -22,7 +22,7 @@ using namespace Kernel;
 using namespace OpenViBEVisualizationToolkit;
 
 CVisualizationWidget::CVisualizationWidget(const IKernelContext& ctx)
-	: m_kernelContext(ctx), m_id(OV_UndefinedIdentifier), m_Type(EVisualizationWidget_Undefined),
+	: m_kernelContext(ctx), m_id(OV_UndefinedIdentifier), m_Type(VisualizationWidget_Undefined),
 	  m_ParentID(OV_UndefinedIdentifier), m_BoxID(OV_UndefinedIdentifier) {}
 
 
@@ -57,7 +57,7 @@ bool CVisualizationWidget::removeChild(const CIdentifier& identifier)
 		if (m_Children[i] == identifier)
 		{
 			//remove tab from a window (variable number of children)
-			if (m_Type == EVisualizationWidget_VisualizationWindow) { m_Children.erase(m_Children.begin() + i); }
+			if (m_Type == VisualizationWidget_VisualizationWindow) { m_Children.erase(m_Children.begin() + i); }
 			else //clear identifier if ith child for a regular widget (fixed number of children)
 			{
 				m_Children[i] = OV_UndefinedIdentifier;

@@ -15,7 +15,6 @@
 /*&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&*/
 
 #include <cmath>
-#include <cstdio>
 #include <cstdlib>
 
 #define dmax(x,y) (((x) > (y)) ? (x) : (y))

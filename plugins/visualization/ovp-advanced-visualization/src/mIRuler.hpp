@@ -33,7 +33,6 @@
 
 #include <cmath>
 #include <vector>
-#include <cstring>
 #include <cstdlib>
 
 #define IRuler_SplitCount 5

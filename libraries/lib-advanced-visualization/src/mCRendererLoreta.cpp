@@ -22,15 +22,11 @@
 #if defined TARGET_HAS_ThirdPartyOpenGL
 
 #include "mCRendererLoreta.hpp"
-#include "m_RendererTools.hpp"
 
 #include "content/loreta_anatomic_voxels.hpp"
 #include "content/loreta_roi_voxels.hpp"
 #include "content/Face.obj.hpp"
 #include "content/Scalp.obj.hpp"
-
-#include <cstring>
-#include <cstdio>
 
 using namespace Mensia;
 using namespace AdvancedVisualization;

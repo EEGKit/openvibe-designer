@@ -1,7 +1,6 @@
 #include "ovdCFilenameSettingView.h"
 #include "../ovd_base.h"
 
-#include <iostream>
 #include <cstring>
 #include <iterator>
 

@@ -1,7 +1,5 @@
 #include "ovdCAbstractSettingView.h"
 
-#include <iostream>
-
 using namespace OpenViBE;
 using namespace OpenViBEDesigner;
 using namespace Setting;

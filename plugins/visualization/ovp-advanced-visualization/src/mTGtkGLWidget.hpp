@@ -35,7 +35,6 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-#include <map>
 #include <string>
 
 // #define __DIRECT_RENDER__

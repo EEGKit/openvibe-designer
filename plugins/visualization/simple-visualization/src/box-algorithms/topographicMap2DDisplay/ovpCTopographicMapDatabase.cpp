@@ -1,7 +1,5 @@
 #include "ovpCTopographicMapDatabase.h"
 
-#include <algorithm>
-
 #include <cmath>
 
 using namespace OpenViBE;

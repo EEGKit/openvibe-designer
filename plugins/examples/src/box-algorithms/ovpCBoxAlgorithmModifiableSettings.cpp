@@ -1,5 +1,4 @@
 #include "ovpCBoxAlgorithmModifiableSettings.h"
-#include <openvibe/ovTimeArithmetics.h>
 
 using namespace OpenViBE;
 using namespace Kernel;

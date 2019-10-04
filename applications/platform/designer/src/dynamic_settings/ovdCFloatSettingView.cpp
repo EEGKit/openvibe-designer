@@ -1,8 +1,6 @@
 #include "ovdCFloatSettingView.h"
 #include "../ovd_base.h"
 
-#include <iostream>
-
 using namespace OpenViBE;
 using namespace OpenViBEDesigner;
 using namespace Setting;

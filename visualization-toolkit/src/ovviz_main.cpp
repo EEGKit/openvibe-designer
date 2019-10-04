@@ -1,5 +1,3 @@
-#include <cstdio>
-
 #include "visualization-toolkit/ovviz_all.h"
 #include "ovvizCVisualizationContext.hpp"
 

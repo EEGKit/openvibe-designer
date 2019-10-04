@@ -23,7 +23,6 @@
 #include "../mIRuler.hpp"
 
 #include <string>
-#include <map>
 
 namespace Mensia
 {

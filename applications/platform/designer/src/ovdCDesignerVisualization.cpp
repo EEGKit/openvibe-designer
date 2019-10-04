@@ -1,6 +1,4 @@
 #include "ovd_base.h"
-#include "ovdTAttributeHandler.h"
-#include "ovdCApplication.h"
 #include "ovdCDesignerVisualization.h"
 #include "ovdCInterfacedScenario.h"
 #include "ovdCInputDialog.h"
@@ -214,7 +212,7 @@ void CDesignerVisualization::init(const std::string& guiFile)
 	m_previewWindowH             = uint32_t(m_kernelContext.getConfigurationManager().expandAsUInteger("${Designer_UnaffectedVisualizationWindowHeight}", 400));
 	CIdentifier l_oVisualizationWindowID;
 	//if at least one window was created, retrieve its dimensions
-	if (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowID, EVisualizationWidget_VisualizationWindow))
+	if (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowID, VisualizationWidget_VisualizationWindow))
 	{
 		IVisualizationWidget* l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowID);
 		m_previewWindowW                             = l_pVisualizationWindow->getWidth();
@@ -281,7 +279,7 @@ void CDesignerVisualization::load()
 
 	//if at least one window was created, retrieve its dimensions
 	CIdentifier l_oVisualizationWindowID;
-	if (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowID, EVisualizationWidget_VisualizationWindow))
+	if (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowID, VisualizationWidget_VisualizationWindow))
 	{
 		IVisualizationWidget* l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowID);
 		m_previewWindowW                             = l_pVisualizationWindow->getWidth();
@@ -319,7 +317,7 @@ void CDesignerVisualization::setDeleteEventCB(fpDesignerVisualizationDeleteEvent
 void CDesignerVisualization::onVisualizationBoxAdded(const IBox* pBox)
 {
 	CIdentifier l_oVisualizationWidgetID;
-	m_rVisualizationTree.addVisualizationWidget(l_oVisualizationWidgetID, pBox->getName(), EVisualizationWidget_VisualizationBox,
+	m_rVisualizationTree.addVisualizationWidget(l_oVisualizationWidgetID, pBox->getName(), VisualizationWidget_VisualizationBox,
 												OV_UndefinedIdentifier, 0, pBox->getIdentifier(), 0, OV_UndefinedIdentifier);
 
 	m_rVisualizationTree.reloadTree();
@@ -376,7 +374,7 @@ void CDesignerVisualization::onVisualizationBoxRenamed(const CIdentifier& boxID)
 
 void CDesignerVisualization::createTreeWidget(IVisualizationWidget* widget)
 {
-	if (widget->getType() == EVisualizationWidget_HorizontalSplit || widget->getType() == EVisualizationWidget_VerticalSplit)
+	if (widget->getType() == VisualizationWidget_HorizontalSplit || widget->getType() == VisualizationWidget_VerticalSplit)
 	{
 		/* TODO_JL: Find a way to store divider position and max divider position
 		TAttributeHandler l_oAttributeHandler(*widget);
@@ -401,7 +399,7 @@ GtkWidget* CDesignerVisualization::loadTreeWidget(IVisualizationWidget* widget)
 
 	//create widget
 	//-------------
-	if (widget->getType() == EVisualizationWidget_VisualizationPanel)
+	if (widget->getType() == VisualizationWidget_VisualizationPanel)
 	{
 		//retrieve panel index
 		IVisualizationWidget* l_pWindow = m_rVisualizationTree.getVisualizationWidget(widget->getParentIdentifier());
@@ -424,20 +422,20 @@ GtkWidget* CDesignerVisualization::loadTreeWidget(IVisualizationWidget* widget)
 			}
 		}
 	}
-	else if (widget->getType() == EVisualizationWidget_VerticalSplit || widget->getType() == EVisualizationWidget_HorizontalSplit ||
-			 widget->getType() == EVisualizationWidget_Undefined || widget->getType() == EVisualizationWidget_VisualizationBox)
+	else if (widget->getType() == VisualizationWidget_VerticalSplit || widget->getType() == VisualizationWidget_HorizontalSplit ||
+			 widget->getType() == VisualizationWidget_Undefined || widget->getType() == VisualizationWidget_VisualizationBox)
 	{
 		//tree widget = table containing event boxes + visualization widget in the center
 		l_pTreeWidget                            = GTK_WIDGET(newWidgetsTable());
 		GtkWidget* l_pCurrentVisualizationWidget = getVisualizationWidget(l_pTreeWidget);
 		if (l_pCurrentVisualizationWidget != nullptr) { gtk_container_remove(GTK_CONTAINER(l_pTreeWidget), l_pCurrentVisualizationWidget); }
 
-		if (widget->getType() == EVisualizationWidget_VerticalSplit || widget->getType() == EVisualizationWidget_HorizontalSplit)
+		if (widget->getType() == VisualizationWidget_VerticalSplit || widget->getType() == VisualizationWidget_HorizontalSplit)
 		{
 			if (gtk_widget_get_parent(l_pTreeWidget) != nullptr) { gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(l_pTreeWidget)), l_pTreeWidget); }
 
 			//create a paned and insert it in table
-			GtkWidget* l_pPaned = (widget->getType() == EVisualizationWidget_HorizontalSplit) ? gtk_hpaned_new() : gtk_vpaned_new();
+			GtkWidget* l_pPaned = (widget->getType() == VisualizationWidget_HorizontalSplit) ? gtk_hpaned_new() : gtk_vpaned_new();
 			gtk_table_attach(GTK_TABLE(l_pTreeWidget), l_pPaned, 1, 2, 1, 2,
 							 GtkAttachOptions(GTK_EXPAND | GTK_SHRINK | GTK_FILL),
 							 GtkAttachOptions(GTK_EXPAND | GTK_SHRINK | GTK_FILL), 0, 0);
@@ -479,7 +477,7 @@ GtkWidget* CDesignerVisualization::loadTreeWidget(IVisualizationWidget* widget)
 			g_signal_connect(G_OBJECT(l_pButton), "drag_data_get", G_CALLBACK(drag_data_get_from_widget_cb), this);
 
 			//ask for notification of some events
-			if (widget->getType() == EVisualizationWidget_VisualizationBox)
+			if (widget->getType() == VisualizationWidget_VisualizationBox)
 			{
 				GTK_WIDGET_SET_FLAGS(l_pButton, GDK_KEY_PRESS_MASK | GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK);
 				g_signal_connect(G_OBJECT(l_pButton), "key-press-event", G_CALLBACK(visualization_widget_key_press_event_cb), this);
@@ -496,7 +494,7 @@ GtkWidget* CDesignerVisualization::loadTreeWidget(IVisualizationWidget* widget)
 			GtkTreeIter l_oParentIter;
 			m_rVisualizationTree.findChildNodeFromRoot(&l_oParentIter, l_pParentVisualizationWidget->getIdentifier());
 
-			if (l_pParentVisualizationWidget->getType() == EVisualizationWidget_VisualizationPanel)
+			if (l_pParentVisualizationWidget->getType() == VisualizationWidget_VisualizationPanel)
 			{
 				//parent widget to notebook as a new page
 				void* l_pNotebook = nullptr;
@@ -505,8 +503,8 @@ GtkWidget* CDesignerVisualization::loadTreeWidget(IVisualizationWidget* widget)
 				m_rVisualizationTree.getStringValueFromTreeIter(&l_oParentIter, l_pVisualizationPanelName, EVisualizationTreeColumn_StringName);
 				gtk_notebook_append_page(GTK_NOTEBOOK(l_pNotebook), l_pTreeWidget, gtk_label_new(l_pVisualizationPanelName));
 			}
-			else if (l_pParentVisualizationWidget->getType() == EVisualizationWidget_VerticalSplit || l_pParentVisualizationWidget->getType() ==
-					 EVisualizationWidget_HorizontalSplit)
+			else if (l_pParentVisualizationWidget->getType() == VisualizationWidget_VerticalSplit || l_pParentVisualizationWidget->getType() ==
+					 VisualizationWidget_HorizontalSplit)
 			{
 				//insert widget in parent paned
 				void* l_pParentTreeWidget = nullptr;
@@ -551,12 +549,12 @@ void CDesignerVisualization::endLoadTreeWidget(IVisualizationWidget* widget)
 	//get actual visualization widget
 	GtkWidget* l_widget = getVisualizationWidget(static_cast<GtkWidget*>(l_pTreeWidget));
 
-	if (widget->getType() == EVisualizationWidget_VisualizationPanel)
+	if (widget->getType() == VisualizationWidget_VisualizationPanel)
 	{
 		//reposition paned widget handles
 		resizeCB(nullptr);
 	}
-	else if (widget->getType() == EVisualizationWidget_Undefined || widget->getType() == EVisualizationWidget_VisualizationBox)
+	else if (widget->getType() == VisualizationWidget_Undefined || widget->getType() == VisualizationWidget_VisualizationBox)
 	{
 		if (GTK_IS_BUTTON(l_widget) != FALSE)
 		{
@@ -695,7 +693,7 @@ void CDesignerVisualization::resizeCB(IVisualizationWidget* pVisualizationWidget
 				}
 			}
 
-			while (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowID, EVisualizationWidget_VisualizationWindow))
+			while (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowID, VisualizationWidget_VisualizationWindow))
 			{
 				IVisualizationWidget* l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowID);
 
@@ -736,7 +734,7 @@ void CDesignerVisualization::resizeCB(IVisualizationWidget* pVisualizationWidget
 			if (l_pChildVisualizationWidget != nullptr) { resizeCB(l_pChildVisualizationWidget); }
 		}
 	}
-	else if (pVisualizationWidget->getType() == EVisualizationWidget_VerticalSplit || pVisualizationWidget->getType() == EVisualizationWidget_HorizontalSplit)
+	else if (pVisualizationWidget->getType() == VisualizationWidget_VerticalSplit || pVisualizationWidget->getType() == VisualizationWidget_HorizontalSplit)
 	{
 		GtkTreeIter l_oIter;
 		if (m_rVisualizationTree.findChildNodeFromRoot(&l_oIter, pVisualizationWidget->getIdentifier()) == TRUE)
@@ -868,7 +866,7 @@ void CDesignerVisualization::setActiveVisualization(const char* activeWindow, co
 		//pick first window if previously active window doesn't exist anymore
 		CIdentifier id = OV_UndefinedIdentifier;
 
-		if (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(id, EVisualizationWidget_VisualizationWindow))
+		if (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(id, VisualizationWidget_VisualizationWindow))
 		{
 			m_oActiveVisualizationWindowName = m_rVisualizationTree.getVisualizationWidget(id)->getName();
 			m_rVisualizationTree.findChildNodeFromRoot(&l_oWindowIter, static_cast<const char*>(m_oActiveVisualizationWindowName),
@@ -1011,7 +1009,7 @@ bool CDesignerVisualization::newVisualizationWindow(const char* label)
 	IVisualizationWidget* l_pVisualizationWindow;
 	CIdentifier l_oVisualizationWindowID = OV_UndefinedIdentifier;
 
-	while (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowID, EVisualizationWidget_VisualizationWindow))
+	while (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowID, VisualizationWidget_VisualizationWindow))
 	{
 		l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowID);
 
@@ -1024,7 +1022,7 @@ bool CDesignerVisualization::newVisualizationWindow(const char* label)
 
 	//proceed with window creation
 	//m_rVisualizationTree.addVisualizationWindow(l_oVisualizationWindowID, CString(label));
-	m_rVisualizationTree.addVisualizationWidget(l_oVisualizationWindowID, CString(label), EVisualizationWidget_VisualizationWindow,
+	m_rVisualizationTree.addVisualizationWidget(l_oVisualizationWindowID, CString(label), VisualizationWidget_VisualizationWindow,
 												OV_UndefinedIdentifier, 0, OV_UndefinedIdentifier, 0, OV_UndefinedIdentifier);
 
 	l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowID);
@@ -1037,7 +1035,7 @@ bool CDesignerVisualization::newVisualizationWindow(const char* label)
 	CIdentifier l_oChildID;
 	const CString l_oChildName = "Default tab";
 
-	m_rVisualizationTree.addVisualizationWidget(l_oChildID, l_oChildName, EVisualizationWidget_VisualizationPanel,
+	m_rVisualizationTree.addVisualizationWidget(l_oChildID, l_oChildName, VisualizationWidget_VisualizationPanel,
 												l_oVisualizationWindowID, 0, OV_UndefinedIdentifier, 1, OV_UndefinedIdentifier);
 
 	m_rVisualizationTree.reloadTree();
@@ -1083,7 +1081,7 @@ bool CDesignerVisualization::renameVisualizationWindow(const char* label)
 
 	//ensure name is unique
 	CIdentifier l_oVisualizationWindowID = OV_UndefinedIdentifier;
-	while (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowID, EVisualizationWidget_VisualizationWindow))
+	while (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowID, VisualizationWidget_VisualizationWindow))
 	{
 		//name already in use : warn user
 		if (m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowID)->getName() == l_oNewWindowName)
@@ -1109,7 +1107,7 @@ bool CDesignerVisualization::removeVisualizationWindow()
 {
 	//retrieve visualization window
 	CIdentifier l_oVisualizationWindowID = OV_UndefinedIdentifier;
-	while (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowID, EVisualizationWidget_VisualizationWindow))
+	while (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowID, VisualizationWidget_VisualizationWindow))
 	{
 		if (m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowID)->getName() == m_oActiveVisualizationWindowName) { break; }
 	}
@@ -1146,7 +1144,7 @@ bool CDesignerVisualization::newVisualizationPanel(const char* label)
 	IVisualizationWidget* l_pVisualizationWindow = nullptr;
 	CIdentifier l_oVisualizationWindowID = OV_UndefinedIdentifier;
 
-	while (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowID, EVisualizationWidget_VisualizationWindow))
+	while (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowID, VisualizationWidget_VisualizationWindow))
 	{
 		l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(l_oVisualizationWindowID);
 		if (l_pVisualizationWindow->getName() == m_oActiveVisualizationWindowName) { break; }
@@ -1174,7 +1172,7 @@ bool CDesignerVisualization::newVisualizationPanel(const char* label)
 	}
 
 	//proceed with panel creation
-	m_rVisualizationTree.addVisualizationWidget(l_oChildID, l_oNewChildName, EVisualizationWidget_VisualizationPanel,
+	m_rVisualizationTree.addVisualizationWidget(l_oChildID, l_oNewChildName, VisualizationWidget_VisualizationPanel,
 												l_oVisualizationWindowID, l_pVisualizationWindow->getNbChildren(), OV_UndefinedIdentifier, 1,
 												OV_UndefinedIdentifier);
 
@@ -1308,10 +1306,10 @@ bool CDesignerVisualization::removeVisualizationWidget(const CIdentifier& identi
 	//unparent or destroy widget
 	uint32_t l_ui32ChildIdx;
 	m_rVisualizationTree.unparentVisualizationWidget(identifier, l_ui32ChildIdx);
-	if (l_pVisualizationWidget->getType() != EVisualizationWidget_VisualizationBox) { m_rVisualizationTree.destroyHierarchy(identifier, false); }
+	if (l_pVisualizationWidget->getType() != VisualizationWidget_VisualizationBox) { m_rVisualizationTree.destroyHierarchy(identifier, false); }
 
 	//reparent other child widget, if any
-	if (l_pParentVisualizationWidget->getType() != EVisualizationWidget_VisualizationPanel)
+	if (l_pParentVisualizationWidget->getType() != VisualizationWidget_VisualizationPanel)
 	{
 		//retrieve parent's other widget
 		CIdentifier l_oOtherVisualizationWidgetID;
@@ -1583,7 +1581,7 @@ void CDesignerVisualization::buttonReleaseCB(GtkWidget* widget, GdkEventButton* 
 							l_pVisualizationWidget->getParentIdentifier());
 						if (l_pParentVisualizationWidget != nullptr)
 						{
-							if (l_pParentVisualizationWidget->getType() != EVisualizationWidget_VisualizationPanel)
+							if (l_pParentVisualizationWidget->getType() != VisualizationWidget_VisualizationPanel)
 							{
 								gtk_menu_popup(GTK_MENU(gtk_item_factory_get_widget(m_pUndefinedItemFactory, "<undefined_widget_main>")), nullptr, nullptr,
 											   nullptr, nullptr, event->button, event->time);

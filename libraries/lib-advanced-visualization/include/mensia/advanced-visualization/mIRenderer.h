@@ -23,9 +23,6 @@
 #include "m_defines.h"
 #include "mIRendererContext.h"
 
-#include <string>
-#include <vector>
-
 namespace Mensia
 {
 	namespace AdvancedVisualization

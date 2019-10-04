@@ -22,8 +22,6 @@
 
 #include "mCRenderer.hpp"
 
-#include "mC3DMesh.hpp"
-
 namespace Mensia
 {
 	namespace AdvancedVisualization

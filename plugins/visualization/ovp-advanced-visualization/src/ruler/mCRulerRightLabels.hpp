@@ -22,10 +22,6 @@
 
 #include "../mIRuler.hpp"
 
-#include <string>
-#include <map>
-#include <iostream>
-
 namespace Mensia
 {
 	namespace AdvancedVisualization

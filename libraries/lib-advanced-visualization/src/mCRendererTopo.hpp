@@ -26,9 +26,7 @@
 
 #include <Eigen/Eigen>
 
-#include <map>
 #include <vector>
-#include <string>
 
 namespace Mensia
 {

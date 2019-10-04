@@ -20,7 +20,6 @@
  */
 
 #include "mCRendererSlice.hpp"
-#include "m_RendererTools.hpp"
 
 using namespace Mensia;
 using namespace AdvancedVisualization;

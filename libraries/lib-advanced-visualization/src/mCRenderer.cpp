@@ -21,9 +21,6 @@
 
 #include "mCRenderer.hpp"
 
-#include <cassert>
-#include <cstdio>
-#include <cstdlib>
 #include <cmath>
 #include <algorithm>    // std::min_element, std::max_element
 

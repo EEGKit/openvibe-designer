@@ -2,8 +2,6 @@
 #include "../ovd_base.h"
 #include <visualization-toolkit/ovvizColorGradient.h>
 
-#include <iostream>
-#include <cstring>
 #include <cmath>
 
 using namespace OpenViBE;

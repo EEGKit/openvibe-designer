@@ -21,7 +21,6 @@
 #pragma once
 
 #include "../mIRuler.hpp"
-#include "../m_VisualizationTools.hpp"
 
 namespace Mensia
 {

@@ -10,7 +10,6 @@
 #include "ovpCTopographicMapDatabase.h"
 
 #include <vector>
-#include <string>
 
 namespace OpenViBEPlugins
 {

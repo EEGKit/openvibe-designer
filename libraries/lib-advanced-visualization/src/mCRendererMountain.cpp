@@ -21,9 +21,6 @@
 
 #include "mCRendererMountain.hpp"
 
-#include <cmath>
-#include <algorithm>
-
 using namespace Mensia;
 using namespace AdvancedVisualization;
 

@@ -136,7 +136,7 @@ bool CVisualizationTree::addVisualizationWidget(CIdentifier& identifier, const C
 
 		if (parentVisualizationWidget != nullptr)
 		{
-			if (parentVisualizationWidget->getType() == EVisualizationWidget_VisualizationWindow)
+			if (parentVisualizationWidget->getType() == VisualizationWidget_VisualizationWindow)
 			{
 				//extend number of children of parent window if necessary
 				if (parentVisualizationWidget->getNbChildren() <= parentIndex)
@@ -202,7 +202,7 @@ bool CVisualizationTree::destroyHierarchy(const CIdentifier& identifier, const b
 	IVisualizationWidget* visualizationWidget = getVisualizationWidget(identifier);
 
 	//is hierarchy top item a window?
-	if (visualizationWidget->getType() == EVisualizationWidget_VisualizationWindow)
+	if (visualizationWidget->getType() == VisualizationWidget_VisualizationWindow)
 	{
 		CIdentifier childIdentifier;
 		for (uint32_t i = 0; i < visualizationWidget->getNbChildren(); i++)
@@ -241,14 +241,14 @@ bool CVisualizationTree::_destroyHierarchy(const CIdentifier& identifier, const 
 	}
 
 	//if parent widget is a window, remove this widget from it
-	if (visualizationWidget->getType() == EVisualizationWidget_VisualizationPanel)
+	if (visualizationWidget->getType() == VisualizationWidget_VisualizationPanel)
 	{
 		IVisualizationWidget* l_pVisualizationWindow = getVisualizationWidget(visualizationWidget->getParentIdentifier());
 		if (l_pVisualizationWindow != nullptr) { l_pVisualizationWindow->removeChild(identifier); }
 	}
 
 	//if this widget is a visualization box and they are to be unaffected
-	if (visualizationWidget->getType() == EVisualizationWidget_VisualizationBox && !destroyVisualizationBoxes)
+	if (visualizationWidget->getType() == VisualizationWidget_VisualizationBox && !destroyVisualizationBoxes)
 	{
 		uint32_t index;
 		unparentVisualizationWidget(identifier, index);
@@ -353,7 +353,7 @@ bool CVisualizationTree::reloadTree()
 
 	//reload unaffected visualization boxes
 	CIdentifier visualizationWidgetIdentifier = OV_UndefinedIdentifier;
-	while (getNextVisualizationWidgetIdentifier(visualizationWidgetIdentifier, EVisualizationWidget_VisualizationBox))
+	while (getNextVisualizationWidgetIdentifier(visualizationWidgetIdentifier, VisualizationWidget_VisualizationBox))
 	{
 		IVisualizationWidget* visualizationWidget = getVisualizationWidget(visualizationWidgetIdentifier);
 		//load widget if it doesn't have a parent (== is unaffected)
@@ -362,7 +362,7 @@ bool CVisualizationTree::reloadTree()
 
 	//reload visualization windows
 	CIdentifier visualizationWindowIdentifier = OV_UndefinedIdentifier;
-	while (getNextVisualizationWidgetIdentifier(visualizationWindowIdentifier, EVisualizationWidget_VisualizationWindow))
+	while (getNextVisualizationWidgetIdentifier(visualizationWindowIdentifier, VisualizationWidget_VisualizationWindow))
 	{
 		loadVisualizationWidget(getVisualizationWidget(visualizationWindowIdentifier), nullptr);
 	}
@@ -635,10 +635,10 @@ bool CVisualizationTree::dragDataReceivedOutsideWidgetCB(const CIdentifier& sour
 	unparentVisualizationWidget(destinationWidgetIdentifier, destinationIndex);
 
 	//create paned widget
-	const EVisualizationWidgetType panedType = (location == EDragData_Top || location == EDragData_Bottom) ? EVisualizationWidget_VerticalSplit
-												   : EVisualizationWidget_HorizontalSplit;
+	const EVisualizationWidgetType panedType = (location == EDragData_Top || location == EDragData_Bottom) ? VisualizationWidget_VerticalSplit
+												   : VisualizationWidget_HorizontalSplit;
 	CIdentifier panedIdentifier;
-	addVisualizationWidget(panedIdentifier, CString(panedType == EVisualizationWidget_VerticalSplit ? "Vertical split" : "Horizontal split"), panedType,
+	addVisualizationWidget(panedIdentifier, CString(panedType == VisualizationWidget_VerticalSplit ? "Vertical split" : "Horizontal split"), panedType,
 						   destinationParentIdentifier, //parent paned to dest widget parent
 						   destinationIndex, //put it at the index occupied by dest widget
 						   OV_UndefinedIdentifier, //no box algorithm for a paned
@@ -690,7 +690,7 @@ bool CVisualizationTree::dragDataReceivedInWidgetCB(const CIdentifier& sourceWid
 	if (sourceParentIdentifier == OV_UndefinedIdentifier)
 	{
 		//if dest widget was dummy, destroy it
-		if (destinationVisualizationWidget->getType() == EVisualizationWidget_Undefined)
+		if (destinationVisualizationWidget->getType() == VisualizationWidget_Undefined)
 		{
 			getVisualizationWidgetIndex(destinationWidgetIdentifier, destinationIndex);
 			destroyHierarchy(destinationWidgetIdentifier, true);
@@ -732,22 +732,22 @@ bool CVisualizationTree::loadVisualizationWidget(IVisualizationWidget* visualiza
 	EVisualizationTreeNode childType;
 	switch (visualizationWidget->getType())
 	{
-		case EVisualizationWidget_VisualizationWindow:
+		case VisualizationWidget_VisualizationWindow:
 			childType = EVisualizationTreeNode_VisualizationWindow;
 			break;
-		case EVisualizationWidget_VisualizationPanel:
+		case VisualizationWidget_VisualizationPanel:
 			childType = EVisualizationTreeNode_VisualizationPanel;
 			break;
-		case EVisualizationWidget_VisualizationBox:
+		case VisualizationWidget_VisualizationBox:
 			childType = EVisualizationTreeNode_VisualizationBox;
 			break;
-		case EVisualizationWidget_HorizontalSplit:
+		case VisualizationWidget_HorizontalSplit:
 			childType = EVisualizationTreeNode_HorizontalSplit;
 			break;
-		case EVisualizationWidget_VerticalSplit:
+		case VisualizationWidget_VerticalSplit:
 			childType = EVisualizationTreeNode_VerticalSplit;
 			break;
-		case EVisualizationWidget_Undefined:
+		case VisualizationWidget_Undefined:
 			childType = EVisualizationTreeNode_Undefined;
 			break;
 		default: childType = EVisualizationTreeNode_Undefined;
@@ -756,7 +756,7 @@ bool CVisualizationTree::loadVisualizationWidget(IVisualizationWidget* visualiza
 
 	CString stockIconString = m_TreeViewCB->getTreeWidgetIcon(childType);
 
-	if (visualizationWidget->getType() == EVisualizationWidget_VisualizationBox)
+	if (visualizationWidget->getType() == VisualizationWidget_VisualizationBox)
 	{
 		const IBox* box = m_Scenario->getBoxDetails(visualizationWidget->getBoxIdentifier());
 		if (!box)
@@ -783,13 +783,13 @@ bool CVisualizationTree::loadVisualizationWidget(IVisualizationWidget* visualiza
 	//load visualization widget hierarchy
 	//-----------------------------------
 	//create a dummy child for visualization panels if none exists
-	if (visualizationWidget->getType() == EVisualizationWidget_VisualizationPanel)
+	if (visualizationWidget->getType() == VisualizationWidget_VisualizationPanel)
 	{
 		CIdentifier childIdentifier;
 		visualizationWidget->getChildIdentifier(0, childIdentifier);
 		if (childIdentifier == OV_UndefinedIdentifier)
 		{
-			addVisualizationWidget(childIdentifier, "Empty", EVisualizationWidget_Undefined,
+			addVisualizationWidget(childIdentifier, "Empty", VisualizationWidget_Undefined,
 								   visualizationWidget->getIdentifier(), 0, OV_UndefinedIdentifier, 0, OV_UndefinedIdentifier);
 		}
 	}
@@ -828,7 +828,7 @@ json::Object CVisualizationTree::serializeWidget(IVisualizationWidget& widget) c
 	jsonRepresentation["identifier"] = widget.getIdentifier().toString().toASCIIString();
 
 	// visualization box name can be retrieved from corresponding IBox, so we can skip it for these
-	if (widget.getType() != EVisualizationWidget_VisualizationBox) { jsonRepresentation["name"] = widget.getName().toASCIIString(); }
+	if (widget.getType() != VisualizationWidget_VisualizationBox) { jsonRepresentation["name"] = widget.getName().toASCIIString(); }
 
 	jsonRepresentation["type"]             = widget.getType();
 	jsonRepresentation["parentIdentifier"] = widget.getParentIdentifier().toString().toASCIIString();
@@ -845,12 +845,12 @@ json::Object CVisualizationTree::serializeWidget(IVisualizationWidget& widget) c
 	jsonRepresentation["boxIdentifier"] = widget.getBoxIdentifier().toString().toASCIIString();
 	jsonRepresentation["childCount"]    = int(widget.getNbChildren());
 
-	if (widget.getType() == EVisualizationWidget_VisualizationWindow)
+	if (widget.getType() == VisualizationWidget_VisualizationWindow)
 	{
 		jsonRepresentation["width"]  = int(widget.getWidth());
 		jsonRepresentation["height"] = int(widget.getHeight());
 	}
-	if (widget.getType() == EVisualizationWidget_HorizontalSplit || widget.getType() == EVisualizationWidget_VerticalSplit)
+	if (widget.getType() == VisualizationWidget_HorizontalSplit || widget.getType() == VisualizationWidget_VerticalSplit)
 	{
 		jsonRepresentation["dividerPosition"]    = widget.getDividerPosition();
 		jsonRepresentation["maxDividerPosition"] = widget.getMaxDividerPosition();
@@ -869,7 +869,7 @@ CString CVisualizationTree::serialize() const
 	while (this->getNextVisualizationWidgetIdentifier(visualizationWidgetIdentifier))
 	{
 		IVisualizationWidget* widget = this->getVisualizationWidget(visualizationWidgetIdentifier);
-		if (widget->getType() == EVisualizationWidget_VisualizationWindow || widget->getParentIdentifier() == OV_UndefinedIdentifier)
+		if (widget->getType() == VisualizationWidget_VisualizationWindow || widget->getParentIdentifier() == OV_UndefinedIdentifier)
 		{
 			widgetsToExport.push_back(visualizationWidgetIdentifier);
 		}
@@ -916,7 +916,7 @@ bool CVisualizationTree::deserialize(const CString& serializedVisualizationTree)
 		const EVisualizationWidgetType widgetType = EVisualizationWidgetType(jsonWidget["type"].ToInt());
 
 		CString widgetName;
-		if (widgetType == EVisualizationWidget_VisualizationBox)
+		if (widgetType == VisualizationWidget_VisualizationBox)
 		{
 			const IBox* box = m_Scenario->getBoxDetails(boxID);
 			if (!box)
@@ -952,12 +952,12 @@ bool CVisualizationTree::deserialize(const CString& serializedVisualizationTree)
 
 		if (visualizationWidget)
 		{
-			if (visualizationWidget->getType() == EVisualizationWidget_VisualizationWindow)
+			if (visualizationWidget->getType() == VisualizationWidget_VisualizationWindow)
 			{
 				visualizationWidget->setWidth(uint32_t(jsonWidget["width"].ToInt()));
 				visualizationWidget->setHeight(uint32_t(jsonWidget["height"].ToInt()));
 			}
-			if (visualizationWidget->getType() == EVisualizationWidget_HorizontalSplit || visualizationWidget->getType() == EVisualizationWidget_VerticalSplit)
+			if (visualizationWidget->getType() == VisualizationWidget_HorizontalSplit || visualizationWidget->getType() == VisualizationWidget_VerticalSplit)
 			{
 				visualizationWidget->setDividerPosition(jsonWidget["dividerPosition"].ToInt());
 				visualizationWidget->setMaxDividerPosition(jsonWidget["maxDividerPosition"].ToInt());

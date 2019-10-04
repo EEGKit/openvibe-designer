@@ -16,7 +16,6 @@
 #include "ovdCCommentEditorDialog.h"
 
 #include <vector>
-#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <streambuf>

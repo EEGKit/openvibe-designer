@@ -20,6 +20,7 @@
  */
 
 #include "mCBoxAlgorithmViz.hpp"
+#include <system/ovCMemory.h>
 
 // OpenGL 1.2
 #ifndef GL_BGRA

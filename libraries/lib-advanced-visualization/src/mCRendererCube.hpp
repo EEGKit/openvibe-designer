@@ -22,9 +22,6 @@
 
 #include "mCRenderer.hpp"
 
-#include <map>
-#include <string>
-
 namespace Mensia
 {
 	namespace AdvancedVisualization

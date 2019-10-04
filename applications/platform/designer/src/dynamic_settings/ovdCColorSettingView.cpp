@@ -1,7 +1,6 @@
 #include "ovdCColorSettingView.h"
 #include "../ovd_base.h"
 
-#include <iostream>
 #include <cmath>
 
 using namespace OpenViBE;

@@ -30,7 +30,6 @@
 
 #include <mensia/advanced-visualization.h>
 
-#include <system/ovCMemory.h>
 #include <system/ovCTime.h>
 
 #include "mCVertex.hpp"
@@ -40,10 +39,6 @@
 
 #include "mIRuler.hpp"
 
-#include "m_VisualizationTools.hpp"
-
-#include <cstdlib>
-#include <cmath>
 #include <vector>
 #include <string>
 #include <cstdarg>

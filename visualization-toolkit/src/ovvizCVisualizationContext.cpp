@@ -1,4 +1,3 @@
-#include <cstdio>
 #include "ovvizCVisualizationContext.hpp"
 
 using namespace OpenViBE;

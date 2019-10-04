@@ -4,14 +4,12 @@
 
 #include <system/ovCTime.h>
 #include <system/ovCMemory.h>
-#include <stack>
 #include <vector>
 #include <set>
 #include <map>
 #include <string>
 #include <iostream>
 #include <sstream>
-#include <fstream>
 
 #include <cstring>
 #include <cstdlib>
@@ -1395,7 +1393,7 @@ bool CApplication::openScenario(const char* sFileName)
 				{
 					//a visualization widget was found in scenario : manually add it to visualization tree
 					vizTree->addVisualizationWidget(l_oVisualizationWidgetID, box->getName(),
-													OpenViBEVisualizationToolkit::EVisualizationWidget_VisualizationBox, OV_UndefinedIdentifier,
+													OpenViBEVisualizationToolkit::VisualizationWidget_VisualizationBox, OV_UndefinedIdentifier,
 													0, box->getIdentifier(), 0, OV_UndefinedIdentifier);
 				}
 			}

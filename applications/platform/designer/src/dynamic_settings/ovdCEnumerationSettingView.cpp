@@ -2,7 +2,6 @@
 #include "../ovd_base.h"
 
 #include <algorithm> // std::sort
-#include <iostream>
 #include <map>
 
 using namespace OpenViBE;

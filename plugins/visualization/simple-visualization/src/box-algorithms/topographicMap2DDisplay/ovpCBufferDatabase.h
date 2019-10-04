@@ -7,11 +7,8 @@
 
 #include <vector>
 #include <deque>
-#include <queue>
 #include <string>
 #include <cfloat>
-
-#include <iostream>
 
 namespace OpenViBEPlugins
 {
@@ -317,7 +314,7 @@ namespace OpenViBEPlugins
 			 */
 			virtual bool getChannelLabel(const uint32_t ui32ChannelIndex, OpenViBE::CString& rChannelLabel);
 
-			virtual void setMatrixDimensionCount(const uint32_t ui32DimensionCount);
+			virtual void setMatrixDimensionCount(const uint32_t nDimension);
 			virtual void setMatrixDimensionSize(const uint32_t ui32DimensionIndex, const uint32_t ui32DimensionSize);
 			virtual void setMatrixDimensionLabel(const uint32_t ui32DimensionIndex, const uint32_t ui32DimensionEntryIndex, const char* sDimensionLabel);
 

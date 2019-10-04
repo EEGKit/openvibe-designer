@@ -11,7 +11,6 @@ using namespace Kernel;
 using namespace OpenViBEDesigner;
 using namespace std;
 
-#include <iostream>
 #include <visualization-toolkit/ovvizColorGradient.h>
 // ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- -----------
 

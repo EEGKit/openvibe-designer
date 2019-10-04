@@ -22,7 +22,6 @@
 #include "m_RendererTools.hpp"
 
 #include <cmath>
-#include <algorithm>
 
 using namespace Mensia;
 using namespace AdvancedVisualization;

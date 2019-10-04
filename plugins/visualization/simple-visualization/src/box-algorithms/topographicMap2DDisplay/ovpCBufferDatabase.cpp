@@ -238,15 +238,15 @@ uint64_t CBufferDatabase::getChannelCount() const { return m_pDimensionSizes[0];
 
 double CBufferDatabase::getDisplayedTimeIntervalWidth() const { return (m_nBufferToDisplay * ((m_pDimensionSizes[1] * 1000.0) / m_samplingFrequency)); }
 
-void CBufferDatabase::setMatrixDimensionCount(const uint32_t ui32DimensionCount)
+void CBufferDatabase::setMatrixDimensionCount(const uint32_t nDimension)
 {
-	if (ui32DimensionCount != 2)
+	if (nDimension != 2)
 	{
 		m_bError = true;
-		m_parentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error << "Caller tried to set a " << ui32DimensionCount <<
+		m_parentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error << "Caller tried to set a " << nDimension <<
 				"-dimensional matrix. Only 2-dimensional matrices are supported (e.g. [rows X cols]).\n";
 	}
-	if (ui32DimensionCount == 1)
+	if (nDimension == 1)
 	{
 		m_parentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error <<
 				"Note: For 1-dimensional matrices, you may try Matrix Transpose box to upgrade the stream to [N X 1] first.\n";

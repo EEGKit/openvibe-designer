@@ -267,7 +267,7 @@ namespace OpenViBEVisualizationToolkit
 		 * \param type type of the widget
 		 * \param parentIdentifier parent widget identifier (OV_UndefinedIdentifier for top-level widgets)
 		 * \param parentIndex index where this widget is to be parented (irrelevant for top-level widgets)
-		 * \param boxID identifier of associated IBox (for widgets of type EVisualizationWidget_VisualizationBox only)
+		 * \param boxID identifier of associated IBox (for widgets of type VisualizationWidget_VisualizationBox only)
 		 * \param childCount number of children of this widget (none for a visualization box, 1 for a visualization panel, 2 for split widgets, variable number for windows)
 		 * \param suggestedID a suggestion as to the identifier to use
 		 * \return true if widget successfully added to the internal tree store, false otherwise

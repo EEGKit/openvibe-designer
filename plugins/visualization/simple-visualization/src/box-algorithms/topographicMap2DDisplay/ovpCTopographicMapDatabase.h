@@ -7,13 +7,6 @@
 #include <openvibe/ov_all.h>
 #include <toolkit/ovtk_all.h>
 
-#include <vector>
-#include <deque>
-#include <queue>
-#include <string>
-#include <cfloat>
-#include <iostream>
-
 namespace OpenViBEPlugins
 {
 	namespace SimpleVisualization

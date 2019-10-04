@@ -19,8 +19,6 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "mIRendererContext.h"
-
 #include "mCRendererBitmap.hpp"
 #include "mCRendererLine.hpp"
 #include "mCRendererMultiLine.hpp"

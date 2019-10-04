@@ -3,10 +3,7 @@
 
 #include <vector>
 #include <string>
-#include <fstream>
 
-#include <xml/IReader.h>
-#include <xml/IWriter.h>
 #include <xml/IXMLHandler.h>
 #include <xml/IXMLNode.h>
 
@@ -16,8 +13,6 @@ using namespace OpenViBE;
 using namespace Kernel;
 using namespace OpenViBEDesigner;
 using namespace std;
-
-#include <iostream>
 
 namespace
 {

@@ -4,7 +4,6 @@
 #include "spline_sph.h"
 
 #include <cfloat> //DBL_MAX
-#include <cmath>
 #include <cstdio>
 #include <cstring>
 
