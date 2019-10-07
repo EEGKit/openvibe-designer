@@ -23,7 +23,7 @@ static gboolean OnFocusOutEvent(GtkEntry* /*entry*/, GdkEvent* /*event*/, gpoint
 #endif
 
 CScriptSettingView::CScriptSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& ctx)
-	: CAbstractSettingView(box, index, rBuilderName, "settings_collection-hbox_setting_script"), m_kernelContext(ctx)
+	: CAbstractSettingView(box, index, rBuilderName, "settings_collection-hbox_setting_script"), m_kernelCtx(ctx)
 {
 	GtkWidget* settingWidget = this->getEntryFieldWidget();
 
@@ -58,7 +58,7 @@ void CScriptSettingView::browse() const
 	GtkWidget* widgetDialogOpen = gtk_file_chooser_dialog_new("Select file to open...", nullptr, GTK_FILE_CHOOSER_ACTION_SAVE,
 																 GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, nullptr);
 
-	const CString initialFileName = m_kernelContext.getConfigurationManager().expand(gtk_entry_get_text(m_entry));
+	const CString initialFileName = m_kernelCtx.getConfigurationManager().expand(gtk_entry_get_text(m_entry));
 	if (g_path_is_absolute(initialFileName.toASCIIString()))
 	{
 		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(widgetDialogOpen), initialFileName.toASCIIString());
@@ -85,8 +85,8 @@ void CScriptSettingView::browse() const
 
 void CScriptSettingView::edit() const
 {
-	const CString fileName      = m_kernelContext.getConfigurationManager().expand(gtk_entry_get_text(m_entry));
-	const CString editorCommand = m_kernelContext.getConfigurationManager().expand("${Designer_ScriptEditorCommand}");
+	const CString fileName      = m_kernelCtx.getConfigurationManager().expand(gtk_entry_get_text(m_entry));
+	const CString editorCommand = m_kernelCtx.getConfigurationManager().expand("${Designer_ScriptEditorCommand}");
 
 	if (editorCommand != CString(""))
 	{
@@ -99,7 +99,7 @@ void CScriptSettingView::edit() const
 #endif
 		if (system(fullCommand.toASCIIString()) < 0)
 		{
-			m_kernelContext.getLogManager() << Kernel::LogLevel_Warning << "Could not run command " << fullCommand << "\n";
+			m_kernelCtx.getLogManager() << Kernel::LogLevel_Warning << "Could not run command " << fullCommand << "\n";
 		}
 	}
 }

@@ -20,7 +20,7 @@ namespace OpenViBEDesigner
 		void infoCB() const { gtk_widget_show(m_pInfoDialog); }
 	protected:
 
-		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
+		const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
 		OpenViBE::Kernel::IComment& m_rComment;
 		OpenViBE::CString m_sGUIFilename;
 

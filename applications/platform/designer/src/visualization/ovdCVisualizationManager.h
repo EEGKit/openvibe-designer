@@ -14,7 +14,7 @@ namespace OpenViBEDesigner
 	{
 	public:
 
-		CVisualizationManager(const OpenViBE::Kernel::IKernelContext& ctx) : m_kernelContext(ctx) {}
+		CVisualizationManager(const OpenViBE::Kernel::IKernelContext& ctx) : m_kernelCtx(ctx) {}
 		~CVisualizationManager() = default;
 
 		bool createVisualizationTree(OpenViBE::CIdentifier& visualizationTreeIdentifier);
@@ -30,6 +30,6 @@ namespace OpenViBEDesigner
 
 		/// Map of visualization trees (one per scenario, storing visualization widgets arrangement in space)
 		std::map<OpenViBE::CIdentifier, OpenViBEVisualizationToolkit::IVisualizationTree*> m_VisualizationTrees;
-		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
+		const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
 	};
 }

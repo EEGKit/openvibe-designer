@@ -33,7 +33,7 @@ static void delete_window_manager_window_cb(GtkWidget* widget, GdkEvent*, gpoint
 
 CPlayerVisualization::CPlayerVisualization(const IKernelContext& ctx, IVisualizationTree& rVisualizationTree,
 										   CInterfacedScenario& rInterfacedScenario)
-	: m_kernelContext(ctx), m_rVisualizationTree(rVisualizationTree), m_rInterfacedScenario(rInterfacedScenario) { }
+	: m_kernelCtx(ctx), m_rVisualizationTree(rVisualizationTree), m_rInterfacedScenario(rInterfacedScenario) { }
 
 CPlayerVisualization::~CPlayerVisualization()
 
@@ -217,7 +217,7 @@ GtkWidget* CPlayerVisualization::loadTreeWidget(IVisualizationWidget* pVisualiza
 			//gtk_window_set_transient_for(GTK_WINDOW(l_pTreeWidget), GTK_WINDOW(m_rInterfacedScenario.m_rApplication.m_pMainWindow));
 
 			//centered on the main window
-			if (m_kernelContext.getConfigurationManager().expandAsBoolean("${Designer_WindowManager_Center}", false))
+			if (m_kernelCtx.getConfigurationManager().expandAsBoolean("${Designer_WindowManager_Center}", false))
 			{
 				gtk_window_set_position(GTK_WINDOW(treeWidget), GTK_WIN_POS_CENTER_ON_PARENT);
 			}
@@ -267,7 +267,7 @@ bool CPlayerVisualization::setToolbar(const CIdentifier& boxID, GtkWidget* pTool
 	IVisualizationWidget* l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidgetFromBoxIdentifier(boxID);
 	if (l_pVisualizationWidget == nullptr)
 	{
-		m_kernelContext.getLogManager() << LogLevel_Warning << "CPlayerVisualization::setToolbar FAILED : couldn't retrieve simulated box with identifier " <<
+		m_kernelCtx.getLogManager() << LogLevel_Warning << "CPlayerVisualization::setToolbar FAILED : couldn't retrieve simulated box with identifier " <<
 				boxID << "\n";
 		return false;
 	}
@@ -275,7 +275,7 @@ bool CPlayerVisualization::setToolbar(const CIdentifier& boxID, GtkWidget* pTool
 	//ensure toolbar pointer is not null
 	if (pToolbarWidget == nullptr)
 	{
-		m_kernelContext.getLogManager() << LogLevel_Warning << "CPlayerVisualization::setToolbar FAILED : toolbar pointer is nullptr for plugin " <<
+		m_kernelCtx.getLogManager() << LogLevel_Warning << "CPlayerVisualization::setToolbar FAILED : toolbar pointer is nullptr for plugin " <<
 				l_pVisualizationWidget->getName() << "\n";
 		return false;
 	}
@@ -283,7 +283,7 @@ bool CPlayerVisualization::setToolbar(const CIdentifier& boxID, GtkWidget* pTool
 	//ensure toolbar pointer is a window
 	if (GTK_IS_WINDOW(pToolbarWidget) == 0)
 	{
-		m_kernelContext.getLogManager() << LogLevel_Warning << "CPlayerVisualization::setToolbar FAILED : toolbar pointer is not a GtkWindow for plugin " <<
+		m_kernelCtx.getLogManager() << LogLevel_Warning << "CPlayerVisualization::setToolbar FAILED : toolbar pointer is not a GtkWindow for plugin " <<
 				l_pVisualizationWidget->getName() << "\n";
 		return false;
 	}
@@ -318,7 +318,7 @@ bool CPlayerVisualization::setWidget(const CIdentifier& boxID, GtkWidget* widget
 	IVisualizationWidget* l_pVisualizationWidget = m_rVisualizationTree.getVisualizationWidgetFromBoxIdentifier(boxID);
 	if (l_pVisualizationWidget == nullptr)
 	{
-		m_kernelContext.getLogManager() << LogLevel_Warning << "CPlayerVisualization::setWidget FAILED : couldn't retrieve simulated box with identifier " <<
+		m_kernelCtx.getLogManager() << LogLevel_Warning << "CPlayerVisualization::setWidget FAILED : couldn't retrieve simulated box with identifier " <<
 				boxID << "\n";
 		return false;
 	}
@@ -326,7 +326,7 @@ bool CPlayerVisualization::setWidget(const CIdentifier& boxID, GtkWidget* widget
 	//ensure widget pointer is not null
 	if (widget == nullptr)
 	{
-		m_kernelContext.getLogManager() << LogLevel_Warning << "CPlayerVisualization::setWidget FAILED : widget pointer is nullptr for plugin " <<
+		m_kernelCtx.getLogManager() << LogLevel_Warning << "CPlayerVisualization::setWidget FAILED : widget pointer is nullptr for plugin " <<
 				l_pVisualizationWidget->getName() << "\n";
 		return false;
 	}
@@ -420,8 +420,8 @@ bool CPlayerVisualization::parentWidgetBox(IVisualizationWidget* widget, GtkBox*
 		//create a top level window
 		GtkWidget* l_pWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 		m_vWindows.push_back(GTK_WINDOW(l_pWindow));
-		const uint64_t l_ui64DefaultWidth  = m_kernelContext.getConfigurationManager().expandAsUInteger("${Designer_UnaffectedVisualizationWindowWidth}", 400);
-		const uint64_t l_ui64DefaultHeight = m_kernelContext.getConfigurationManager().expandAsUInteger("${Designer_UnaffectedVisualizationWindowHeight}", 400);
+		const uint64_t l_ui64DefaultWidth  = m_kernelCtx.getConfigurationManager().expandAsUInteger("${Designer_UnaffectedVisualizationWindowWidth}", 400);
+		const uint64_t l_ui64DefaultHeight = m_kernelCtx.getConfigurationManager().expandAsUInteger("${Designer_UnaffectedVisualizationWindowHeight}", 400);
 
 		gtk_window_set_default_size(GTK_WINDOW(l_pWindow), gint(l_ui64DefaultWidth), gint(l_ui64DefaultHeight));
 		//set its title
@@ -434,7 +434,7 @@ bool CPlayerVisualization::parentWidgetBox(IVisualizationWidget* widget, GtkBox*
 		g_signal_connect(l_pWindow, "delete_event", G_CALLBACK(delete_window_manager_window_cb), this);
 
 		//position: centered in the main window
-		if (m_kernelContext.getConfigurationManager().expandAsBoolean("${Designer_WindowManager_Center}", false))
+		if (m_kernelCtx.getConfigurationManager().expandAsBoolean("${Designer_WindowManager_Center}", false))
 		{
 			gtk_window_set_position(GTK_WINDOW(l_pWindow), GTK_WIN_POS_CENTER_ON_PARENT);
 		}

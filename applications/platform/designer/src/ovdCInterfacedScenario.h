@@ -143,7 +143,7 @@ namespace OpenViBEDesigner
 		OpenViBE::CIdentifier m_oPlayerID = OV_UndefinedIdentifier;
 		OpenViBE::CIdentifier m_oVisualizationTreeID = OV_UndefinedIdentifier;
 		CApplication& m_rApplication;
-		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
+		const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
 		OpenViBE::Kernel::IScenario& m_rScenario;
 		OpenViBE::Kernel::IPlayer* m_pPlayer = nullptr;
 		uint64_t m_lastLoopTime = 0;

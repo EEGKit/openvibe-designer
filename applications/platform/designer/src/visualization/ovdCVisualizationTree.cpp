@@ -62,7 +62,7 @@ namespace
 	}
 }
 
-CVisualizationTree::CVisualizationTree(const IKernelContext& ctx) : m_kernelContext(ctx) {}
+CVisualizationTree::CVisualizationTree(const IKernelContext& ctx) : m_kernelCtx(ctx) {}
 
 CVisualizationTree::~CVisualizationTree()
 {
@@ -115,15 +115,15 @@ bool CVisualizationTree::addVisualizationWidget(CIdentifier& identifier, const C
 												const CIdentifier& parentIdentifier, const uint32_t parentIndex, const CIdentifier& boxID,
 												const uint32_t childCount, const CIdentifier& suggestedID)
 {
-	m_kernelContext.getLogManager() << LogLevel_Debug << "Adding new visualization widget\n";
+	m_kernelCtx.getLogManager() << LogLevel_Debug << "Adding new visualization widget\n";
 
 	//create new widget
-	IVisualizationWidget* visualizationWidget = new CVisualizationWidget(m_kernelContext);
+	IVisualizationWidget* visualizationWidget = new CVisualizationWidget(m_kernelCtx);
 	identifier                                = getUnusedIdentifier(suggestedID);
 
 	if (!visualizationWidget->initialize(identifier, name, type, parentIdentifier, boxID, childCount))
 	{
-		m_kernelContext.getLogManager() << LogLevel_Error << "Failed to add new visualization widget (couldn't initialize it)\n";
+		m_kernelCtx.getLogManager() << LogLevel_Error << "Failed to add new visualization widget (couldn't initialize it)\n";
 		delete visualizationWidget;
 		return false;
 	}
@@ -131,7 +131,7 @@ bool CVisualizationTree::addVisualizationWidget(CIdentifier& identifier, const C
 	// assign a parent to it
 	if (parentIdentifier != OV_UndefinedIdentifier)
 	{
-		m_kernelContext.getLogManager() << LogLevel_Debug << "Parenting visualization widget\n";
+		m_kernelCtx.getLogManager() << LogLevel_Debug << "Parenting visualization widget\n";
 		IVisualizationWidget* parentVisualizationWidget = getVisualizationWidget(parentIdentifier);
 
 		if (parentVisualizationWidget != nullptr)
@@ -150,14 +150,14 @@ bool CVisualizationTree::addVisualizationWidget(CIdentifier& identifier, const C
 
 			if (!parentVisualizationWidget->setChildIdentifier(parentIndex, identifier))
 			{
-				m_kernelContext.getLogManager() << LogLevel_Error <<
+				m_kernelCtx.getLogManager() << LogLevel_Error <<
 						"Failed to add new visualization widget (couldn't set child identifier in parent window)\n";
 				return false;
 			}
 		}
 		else
 		{
-			m_kernelContext.getLogManager() << LogLevel_Error << "Failed to add new visualization widget (couldn't find parent)\n";
+			m_kernelCtx.getLogManager() << LogLevel_Error << "Failed to add new visualization widget (couldn't find parent)\n";
 			return false;
 		}
 	}
@@ -172,21 +172,21 @@ bool CVisualizationTree::getVisualizationWidgetIndex(const CIdentifier& identifi
 	IVisualizationWidget* visualizationWidget = getVisualizationWidget(identifier);
 	if (!visualizationWidget)
 	{
-		m_kernelContext.getLogManager() << LogLevel_Error << "Failed to get widget.\n";
+		m_kernelCtx.getLogManager() << LogLevel_Error << "Failed to get widget.\n";
 		return false;
 	}
 
 	const CIdentifier& parentIdentifier = visualizationWidget->getParentIdentifier();
 	if (parentIdentifier == OV_UndefinedIdentifier)
 	{
-		m_kernelContext.getLogManager() << LogLevel_Error << "Failed to get parent identifier widget\n";
+		m_kernelCtx.getLogManager() << LogLevel_Error << "Failed to get parent identifier widget\n";
 		return false;
 	}
 
 	IVisualizationWidget* parentVisualizationWidget = getVisualizationWidget(parentIdentifier);
 	if (!parentVisualizationWidget)
 	{
-		m_kernelContext.getLogManager() << LogLevel_Error << "Failed to unparent visualization widget (couldn't find parent)\n";
+		m_kernelCtx.getLogManager() << LogLevel_Error << "Failed to unparent visualization widget (couldn't find parent)\n";
 		return false;
 	}
 
@@ -255,7 +255,7 @@ bool CVisualizationTree::_destroyHierarchy(const CIdentifier& identifier, const 
 	}
 	else
 	{
-		m_kernelContext.getLogManager() << LogLevel_Debug << "Deleting visualization widget\n";
+		m_kernelCtx.getLogManager() << LogLevel_Debug << "Deleting visualization widget\n";
 		delete visualizationWidget;
 		const auto it = m_VisualizationWidgets.find(identifier);
 		m_VisualizationWidgets.erase(it);
@@ -302,7 +302,7 @@ bool CVisualizationTree::parentVisualizationWidget(const CIdentifier& identifier
 	IVisualizationWidget* parentVisualizationWidget = getVisualizationWidget(parentIdentifier);
 	if (!parentVisualizationWidget)
 	{
-		m_kernelContext.getLogManager() << LogLevel_Error << "Failed to parent visualization widget (couldn't find parent)\n";
+		m_kernelCtx.getLogManager() << LogLevel_Error << "Failed to parent visualization widget (couldn't find parent)\n";
 		return false;
 	}
 
@@ -455,7 +455,7 @@ bool CVisualizationTree::_findChildNodeFromParent(GtkTreeIter* iter, const char*
 
 	if (!name)
 	{
-		m_kernelContext.getLogManager() << LogLevel_Error << "Can not get values from the model" << "\n";
+		m_kernelCtx.getLogManager() << LogLevel_Error << "Can not get values from the model" << "\n";
 		return false;
 	}
 
@@ -761,11 +761,11 @@ bool CVisualizationTree::loadVisualizationWidget(IVisualizationWidget* visualiza
 		const IBox* box = m_Scenario->getBoxDetails(visualizationWidget->getBoxIdentifier());
 		if (!box)
 		{
-			m_kernelContext.getLogManager() << LogLevel_Error << "Box with identifier " << visualizationWidget->getBoxIdentifier() <<
+			m_kernelCtx.getLogManager() << LogLevel_Error << "Box with identifier " << visualizationWidget->getBoxIdentifier() <<
 					" not found in the scenario" << "\n";
 			return false;
 		}
-		const IBoxAlgorithmDesc* boxDesc = dynamic_cast<const IBoxAlgorithmDesc*>(m_kernelContext
+		const IBoxAlgorithmDesc* boxDesc = dynamic_cast<const IBoxAlgorithmDesc*>(m_kernelCtx
 																				  .getPluginManager().getPluginObjectDescCreating(
 																					  box->getAlgorithmClassIdentifier()));
 		if (boxDesc) { stockIconString = boxDesc->getStockItemName(); }
@@ -921,7 +921,7 @@ bool CVisualizationTree::deserialize(const CString& serializedVisualizationTree)
 			const IBox* box = m_Scenario->getBoxDetails(boxID);
 			if (!box)
 			{
-				m_kernelContext.getLogManager() << LogLevel_Error << "The box identifier [" << boxID <<
+				m_kernelCtx.getLogManager() << LogLevel_Error << "The box identifier [" << boxID <<
 						"] used in Window manager was not found in the scenario.\n";
 				return false;
 			}
@@ -943,7 +943,7 @@ bool CVisualizationTree::deserialize(const CString& serializedVisualizationTree)
 
 		if (widgetIdentifier != newVisualizationWidgetIdentifier)
 		{
-			m_kernelContext.getLogManager() << LogLevel_Error << "Visualization widget [" << widgetIdentifier << "] for box [" << boxID <<
+			m_kernelCtx.getLogManager() << LogLevel_Error << "Visualization widget [" << widgetIdentifier << "] for box [" << boxID <<
 					"] could not be imported.\n";
 			return false;
 		}

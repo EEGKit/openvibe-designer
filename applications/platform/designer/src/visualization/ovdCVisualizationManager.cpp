@@ -23,7 +23,7 @@ using namespace OpenViBEVisualizationToolkit;
 
 bool CVisualizationManager::createVisualizationTree(CIdentifier& visualizationTreeIdentifier)
 {
-	IVisualizationTree* newVisualizationTree = new CVisualizationTree(m_kernelContext);
+	IVisualizationTree* newVisualizationTree = new CVisualizationTree(m_kernelCtx);
 
 	visualizationTreeIdentifier = getUnusedIdentifier();
 
@@ -50,7 +50,7 @@ IVisualizationTree& CVisualizationManager::getVisualizationTree(const CIdentifie
 	const auto it = m_VisualizationTrees.find(visualizationTreeIdentifier);
 	if (it == m_VisualizationTrees.end())
 	{
-		m_kernelContext.getLogManager() << LogLevel_Fatal << "Visualization Tree " << visualizationTreeIdentifier << " does not exist !\n";
+		m_kernelCtx.getLogManager() << LogLevel_Fatal << "Visualization Tree " << visualizationTreeIdentifier << " does not exist !\n";
 	}
 	return *it->second;
 }

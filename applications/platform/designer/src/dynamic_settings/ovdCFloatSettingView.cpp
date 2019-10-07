@@ -13,7 +13,7 @@ static void OnChange(GtkEntry* /*entry*/, gpointer data) { static_cast<CFloatSet
 
 
 CFloatSettingView::CFloatSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& ctx)
-	: CAbstractSettingView(box, index, rBuilderName, "settings_collection-hbox_setting_float"), m_kernelContext(ctx)
+	: CAbstractSettingView(box, index, rBuilderName, "settings_collection-hbox_setting_float"), m_kernelCtx(ctx)
 {
 	GtkWidget* settingWidget = this->getEntryFieldWidget();
 
@@ -43,7 +43,7 @@ void CFloatSettingView::setValue(const CString& value)
 void CFloatSettingView::adjustValue(const double amount)
 {
 	char l_sValue[1024];
-	double l_f64lValue = m_kernelContext.getConfigurationManager().expandAsFloat(gtk_entry_get_text(m_entry), 0);
+	double l_f64lValue = m_kernelCtx.getConfigurationManager().expandAsFloat(gtk_entry_get_text(m_entry), 0);
 	l_f64lValue += amount;
 	sprintf(l_sValue, "%lf", l_f64lValue);
 

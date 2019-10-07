@@ -13,7 +13,7 @@ static void OnInsertion(GtkEntry* /*entry*/, gpointer data) { static_cast<CInteg
 
 
 CIntegerSettingView::CIntegerSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& ctx)
-	: CAbstractSettingView(box, index, rBuilderName, "settings_collection-hbox_setting_integer"), m_kernelContext(ctx)
+	: CAbstractSettingView(box, index, rBuilderName, "settings_collection-hbox_setting_integer"), m_kernelCtx(ctx)
 {
 	GtkWidget* settingWidget = this->getEntryFieldWidget();
 
@@ -42,20 +42,18 @@ void CIntegerSettingView::setValue(const CString& value)
 
 void CIntegerSettingView::adjustValue(const int amount)
 {
-	char l_sValue[1024];
-	int64_t l_i64lValue = m_kernelContext.getConfigurationManager().expandAsInteger(gtk_entry_get_text(m_entry), 0);
-	l_i64lValue += amount;
-	sprintf(l_sValue, "%lli", l_i64lValue);
+	const int64_t value = m_kernelCtx.getConfigurationManager().expandAsInteger(gtk_entry_get_text(m_entry), 0) + amount;
+	const char* res = std::to_string(value).c_str();
 
-	getBox().setSettingValue(getSettingIndex(), l_sValue);
-	setValue(l_sValue);
+	getBox().setSettingValue(getSettingIndex(), res);
+	setValue(res);
 }
 
 void CIntegerSettingView::onChange()
 {
 	if (!m_onValueSetting)
 	{
-		const gchar* l_sValue = gtk_entry_get_text(m_entry);
-		getBox().setSettingValue(getSettingIndex(), l_sValue);
+		const gchar* value = gtk_entry_get_text(m_entry);
+		getBox().setSettingValue(getSettingIndex(), value);
 	}
 }

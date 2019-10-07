@@ -19,7 +19,7 @@ static void OnColorGradientSpinButtonValueChanged(GtkSpinButton* button, gpointe
 static void OnChange(GtkEntry* /*entry*/, gpointer data) { static_cast<CColorGradientSettingView *>(data)->onChange(); }
 
 CColorGradientSettingView::CColorGradientSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& ctx)
-	: CAbstractSettingView(box, index, rBuilderName, "settings_collection-hbox_setting_color_gradient"), m_kernelContext(ctx), m_builderName(rBuilderName)
+	: CAbstractSettingView(box, index, rBuilderName, "settings_collection-hbox_setting_color_gradient"), m_kernelCtx(ctx), m_builderName(rBuilderName)
 {
 	GtkWidget* settingWidget = this->getEntryFieldWidget();
 
@@ -52,7 +52,7 @@ void CColorGradientSettingView::configurePressed()
 
 	pDialog = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-dialog"));
 
-	const CString initialGradient = m_kernelContext.getConfigurationManager().expand(gtk_entry_get_text(m_entry));
+	const CString initialGradient = m_kernelCtx.getConfigurationManager().expand(gtk_entry_get_text(m_entry));
 	CMatrix colorGradient;
 
 	OpenViBEVisualizationToolkit::Tools::ColorGradient::parse(colorGradient, initialGradient);

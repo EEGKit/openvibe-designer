@@ -50,7 +50,7 @@ namespace OpenViBEDesigner
 
 	private:
 
-		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
+		const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
 		OpenViBEVisualizationToolkit::IVisualizationTree& m_rVisualizationTree;
 		CInterfacedScenario& m_rInterfacedScenario;
 

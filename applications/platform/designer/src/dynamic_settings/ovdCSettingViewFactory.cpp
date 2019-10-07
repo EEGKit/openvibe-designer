@@ -16,7 +16,7 @@ using namespace OpenViBE;
 using namespace Setting;
 
 CSettingViewFactory::CSettingViewFactory(const CString& rBuilderName, const Kernel::IKernelContext& ctx)
-	: m_builderName(rBuilderName), m_kernelContext(ctx) {}
+	: m_builderName(rBuilderName), m_kernelCtx(ctx) {}
 
 CAbstractSettingView* CSettingViewFactory::getSettingView(Kernel::IBox& box, const uint32_t index)
 {
@@ -24,20 +24,20 @@ CAbstractSettingView* CSettingViewFactory::getSettingView(Kernel::IBox& box, con
 	box.getSettingType(index, type);
 
 	if (type == OV_TypeId_Boolean) { return new CBooleanSettingView(box, index, m_builderName); }
-	if (type == OV_TypeId_Integer) { return new CIntegerSettingView(box, index, m_builderName, m_kernelContext); }
-	if (type == OV_TypeId_Float) { return new CFloatSettingView(box, index, m_builderName, m_kernelContext); }
+	if (type == OV_TypeId_Integer) { return new CIntegerSettingView(box, index, m_builderName, m_kernelCtx); }
+	if (type == OV_TypeId_Float) { return new CFloatSettingView(box, index, m_builderName, m_kernelCtx); }
 	if (type == OV_TypeId_String) { return new CStringSettingView(box, index, m_builderName); }
-	if (type == OV_TypeId_Filename) { return new CFilenameSettingView(box, index, m_builderName, m_kernelContext); }
-	if (type == OV_TypeId_Script) { return new CScriptSettingView(box, index, m_builderName, m_kernelContext); }
-	if (type == OV_TypeId_Color) { return new CColorSettingView(box, index, m_builderName, m_kernelContext); }
-	if (type == OV_TypeId_ColorGradient) { return new CColorGradientSettingView(box, index, m_builderName, m_kernelContext); }
-	if (m_kernelContext.getTypeManager().isEnumeration(type))
+	if (type == OV_TypeId_Filename) { return new CFilenameSettingView(box, index, m_builderName, m_kernelCtx); }
+	if (type == OV_TypeId_Script) { return new CScriptSettingView(box, index, m_builderName, m_kernelCtx); }
+	if (type == OV_TypeId_Color) { return new CColorSettingView(box, index, m_builderName, m_kernelCtx); }
+	if (type == OV_TypeId_ColorGradient) { return new CColorGradientSettingView(box, index, m_builderName, m_kernelCtx); }
+	if (m_kernelCtx.getTypeManager().isEnumeration(type))
 	{
-		return new CEnumerationSettingView(box, index, m_builderName, m_kernelContext, type);
+		return new CEnumerationSettingView(box, index, m_builderName, m_kernelCtx, type);
 	}
-	if (m_kernelContext.getTypeManager().isBitMask(type))
+	if (m_kernelCtx.getTypeManager().isBitMask(type))
 	{
-		return new CBitMaskSettingView(box, index, m_builderName, m_kernelContext, type);
+		return new CBitMaskSettingView(box, index, m_builderName, m_kernelCtx, type);
 	}
 
 	//By default we consider every settings as a string

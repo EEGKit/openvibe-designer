@@ -17,7 +17,7 @@ namespace OpenViBEDesigner
 
 		private:
 			OpenViBE::CString m_builderName;
-			const OpenViBE::Kernel::IKernelContext& m_kernelContext;
+			const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
 		};
 	} // namespace Setting
 } // namespace OpenViBEDesigner

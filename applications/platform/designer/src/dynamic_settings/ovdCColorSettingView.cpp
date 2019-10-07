@@ -11,7 +11,7 @@ static void OnButtonSettingColorChoosePressed(GtkColorButton* /*button*/, gpoint
 static void OnChange(GtkEntry* /*entry*/, gpointer data) { static_cast<CColorSettingView*>(data)->onChange(); }
 
 CColorSettingView::CColorSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& ctx)
-	: CAbstractSettingView(box, index, rBuilderName, "settings_collection-hbox_setting_color"), m_kernelContext(ctx)
+	: CAbstractSettingView(box, index, rBuilderName, "settings_collection-hbox_setting_color"), m_kernelCtx(ctx)
 {
 	GtkWidget* settingWidget = this->getEntryFieldWidget();
 
@@ -33,7 +33,7 @@ void CColorSettingView::setValue(const CString& value)
 {
 	m_onValueSetting = true;
 	int r            = 0, g = 0, b = 0;
-	sscanf(m_kernelContext.getConfigurationManager().expand(value).toASCIIString(), "%i,%i,%i", &r, &g, &b);
+	sscanf(m_kernelCtx.getConfigurationManager().expand(value).toASCIIString(), "%i,%i,%i", &r, &g, &b);
 
 	GdkColor l_oColor;
 	l_oColor.red   = (r * 65535) / 100;

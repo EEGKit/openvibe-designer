@@ -44,7 +44,7 @@ namespace OpenViBEDesigner
 
 		private:
 			GtkEntry* m_entry = nullptr;
-			const OpenViBE::Kernel::IKernelContext& m_kernelContext;
+			const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
 			OpenViBE::CString m_builderName;
 
 			GtkWidget* pDialog      = nullptr;

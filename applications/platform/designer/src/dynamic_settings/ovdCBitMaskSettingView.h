@@ -22,7 +22,7 @@ namespace OpenViBEDesigner
 
 		private:
 			OpenViBE::CIdentifier m_typeID = OV_UndefinedIdentifier;
-			const OpenViBE::Kernel::IKernelContext& m_kernelContext;
+			const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
 
 			std::vector<GtkToggleButton *> m_toggleButton;
 			bool m_onValueSetting = false;

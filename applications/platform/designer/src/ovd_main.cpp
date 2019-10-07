@@ -34,7 +34,7 @@ class CPluginObjectDescEnum
 {
 public:
 
-	explicit CPluginObjectDescEnum(const IKernelContext& ctx) : m_kernelContext(ctx) { }
+	explicit CPluginObjectDescEnum(const IKernelContext& ctx) : m_kernelCtx(ctx) { }
 
 	virtual ~CPluginObjectDescEnum() = default;
 
@@ -42,9 +42,9 @@ public:
 
 	{
 		CIdentifier identifier;
-		while ((identifier = m_kernelContext.getPluginManager().getNextPluginObjectDescIdentifier(identifier)) != OV_UndefinedIdentifier)
+		while ((identifier = m_kernelCtx.getPluginManager().getNextPluginObjectDescIdentifier(identifier)) != OV_UndefinedIdentifier)
 		{
-			this->callback(*m_kernelContext.getPluginManager().getPluginObjectDesc(identifier));
+			this->callback(*m_kernelCtx.getPluginManager().getPluginObjectDesc(identifier));
 		}
 		return true;
 	}
@@ -52,8 +52,8 @@ public:
 	virtual bool enumeratePluginObjectDesc(const CIdentifier& rParentClassIdentifier)
 	{
 		CIdentifier identifier;
-		while ((identifier = m_kernelContext.getPluginManager().getNextPluginObjectDescIdentifier(identifier, rParentClassIdentifier)) != OV_UndefinedIdentifier
-		) { this->callback(*m_kernelContext.getPluginManager().getPluginObjectDesc(identifier)); }
+		while ((identifier = m_kernelCtx.getPluginManager().getNextPluginObjectDescIdentifier(identifier, rParentClassIdentifier)) != OV_UndefinedIdentifier
+		) { this->callback(*m_kernelCtx.getPluginManager().getPluginObjectDesc(identifier)); }
 		return true;
 	}
 
@@ -61,7 +61,7 @@ public:
 
 protected:
 
-	const IKernelContext& m_kernelContext;
+	const IKernelContext& m_kernelCtx;
 };
 
 // ------------------------------------------------------------------------------------------------------------------------------------
@@ -80,7 +80,7 @@ public:
 		const auto it = m_vPluginObjectDesc.find(l_sFullName);
 		if (it != m_vPluginObjectDesc.end())
 		{
-			m_kernelContext.getLogManager() << LogLevel_ImportantWarning << "Duplicate plugin object name " << CString(l_sFullName.c_str()) << " " <<
+			m_kernelCtx.getLogManager() << LogLevel_ImportantWarning << "Duplicate plugin object name " << CString(l_sFullName.c_str()) << " " <<
 					it->second->getCreatedClass() << " and " << rPluginObjectDesc.getCreatedClass() << "\n";
 		}
 		m_vPluginObjectDesc[l_sFullName] = &rPluginObjectDesc;
@@ -108,13 +108,13 @@ public:
 	bool callback(const IPluginObjectDesc& rPluginObjectDesc) override
 	{
 		// Outputs plugin info to console
-		m_kernelContext.getLogManager() << LogLevel_Trace << "Plugin <" << rPluginObjectDesc.getName() << ">\n";
-		m_kernelContext.getLogManager() << LogLevel_Debug << " | Plugin category        : " << rPluginObjectDesc.getCategory() << "\n";
-		m_kernelContext.getLogManager() << LogLevel_Debug << " | Class identifier       : " << rPluginObjectDesc.getCreatedClass() << "\n";
-		m_kernelContext.getLogManager() << LogLevel_Debug << " | Author name            : " << rPluginObjectDesc.getAuthorName() << "\n";
-		m_kernelContext.getLogManager() << LogLevel_Debug << " | Author company name    : " << rPluginObjectDesc.getAuthorCompanyName() << "\n";
-		m_kernelContext.getLogManager() << LogLevel_Debug << " | Short description      : " << rPluginObjectDesc.getShortDescription() << "\n";
-		m_kernelContext.getLogManager() << LogLevel_Debug << " | Detailed description   : " << rPluginObjectDesc.getDetailedDescription() << "\n";
+		m_kernelCtx.getLogManager() << LogLevel_Trace << "Plugin <" << rPluginObjectDesc.getName() << ">\n";
+		m_kernelCtx.getLogManager() << LogLevel_Debug << " | Plugin category        : " << rPluginObjectDesc.getCategory() << "\n";
+		m_kernelCtx.getLogManager() << LogLevel_Debug << " | Class identifier       : " << rPluginObjectDesc.getCreatedClass() << "\n";
+		m_kernelCtx.getLogManager() << LogLevel_Debug << " | Author name            : " << rPluginObjectDesc.getAuthorName() << "\n";
+		m_kernelCtx.getLogManager() << LogLevel_Debug << " | Author company name    : " << rPluginObjectDesc.getAuthorCompanyName() << "\n";
+		m_kernelCtx.getLogManager() << LogLevel_Debug << " | Short description      : " << rPluginObjectDesc.getShortDescription() << "\n";
+		m_kernelCtx.getLogManager() << LogLevel_Debug << " | Detailed description   : " << rPluginObjectDesc.getDetailedDescription() << "\n";
 
 		return true;
 	}
@@ -767,9 +767,7 @@ int go(int argc, char** argv)
 						// Add or replace a configuration token if required in command line
 						for (const auto& token : l_oConfiguration.m_oTokenMap)
 						{
-							logManager << LogLevel_Trace << "Adding command line configuration token [" << token.first.c_str() << " = " << token
-																																			  .second.c_str() <<
-									"]\n";
+							logManager << LogLevel_Trace << "Adding command line configuration token [" << token.first.c_str() << " = " << token.second.c_str() << "]\n";
 							configManager.addOrReplaceConfigurationToken(token.first.c_str(), token.second.c_str());
 						}
 
@@ -817,8 +815,8 @@ int go(int argc, char** argv)
 									}
 									playRequested = true;
 									break;
-									//								case CommandLineFlag_Define:
-									//									break;
+									//case CommandLineFlag_Define:
+									//break;
 								default:
 									break;
 							}
@@ -826,8 +824,7 @@ int go(int argc, char** argv)
 
 						if (!playRequested && l_oConfiguration.m_eNoGui == CommandLineFlag_NoGui)
 						{
-							logManager << LogLevel_Info <<
-									"Switch --no-gui is enabled but no play operation was requested. Designer will exit automatically.\n";
+							logManager << LogLevel_Info << "Switch --no-gui is enabled but no play operation was requested. Designer will exit automatically.\n";
 						}
 
 						if (app.m_vInterfacedScenario.empty() && l_oConfiguration.m_eNoGui != CommandLineFlag_NoGui) { app.newScenarioCB(); }
@@ -840,10 +837,8 @@ int go(int argc, char** argv)
 							cb_logger.enumeratePluginObjectDesc();
 							cb_collector1.enumeratePluginObjectDesc(OV_ClassId_Plugins_BoxAlgorithmDesc);
 							cb_collector2.enumeratePluginObjectDesc(OV_ClassId_Plugins_AlgorithmDesc);
-							insertPluginObjectDesc_to_GtkTreeStore(*l_pKernelContext, cb_collector1.getPluginObjectDescMap(), app.m_pBoxAlgorithmTreeModel,
-																   app.m_vNewBoxes, app.m_vUpdatedBoxes, app.m_isNewVersion);
-							insertPluginObjectDesc_to_GtkTreeStore(*l_pKernelContext, cb_collector2.getPluginObjectDescMap(), app.m_pAlgorithmTreeModel,
-																   app.m_vNewBoxes, app.m_vUpdatedBoxes);
+							insertPluginObjectDesc_to_GtkTreeStore(*l_pKernelContext, cb_collector1.getPluginObjectDescMap(), app.m_pBoxAlgorithmTreeModel, app.m_vNewBoxes, app.m_vUpdatedBoxes, app.m_isNewVersion);
+							insertPluginObjectDesc_to_GtkTreeStore(*l_pKernelContext, cb_collector2.getPluginObjectDescMap(), app.m_pAlgorithmTreeModel, app.m_vNewBoxes, app.m_vUpdatedBoxes);
 
 							std::map<std::string, const IPluginObjectDesc*> metaboxDescMap;
 							CIdentifier identifier;
@@ -852,9 +847,7 @@ int go(int argc, char** argv)
 							insertPluginObjectDesc_to_GtkTreeStore(*l_pKernelContext, metaboxDescMap, app.m_pBoxAlgorithmTreeModel, app.m_vNewBoxes,
 																   app.m_vUpdatedBoxes, app.m_isNewVersion);
 
-							l_pKernelContext->getLogManager() << LogLevel_Info << "Initialization took " << l_pKernelContext
-																											->getConfigurationManager().expand(
-																												"$Core{real-time}") << " ms\n";
+							l_pKernelContext->getLogManager() << LogLevel_Info << "Initialization took " << l_pKernelContext->getConfigurationManager().expand("$Core{real-time}") << " ms\n";
 							// If the application is a newly launched version, and not launched without GUI -> display changelog
 							if (app.m_isNewVersion && l_oConfiguration.m_eNoGui != CommandLineFlag_NoGui) { app.displayChangelogWhenAvailable(); }
 							try { gtk_main(); }
@@ -888,14 +881,13 @@ int go(int argc, char** argv)
 	return errorWhileLoadingScenario ? -1 : 0;
 }
 
-int main(int argc, char** argv)
+int main(const int argc, char** argv)
 {
 	// Remove mutex at startup, as the main loop regenerates frequently this mutex,
 	// if another instance is running, it should have the time to regenerate it
 	// Avoids that after crashing, a mutex stays blocking
 	boost::interprocess::named_mutex::remove(MUTEX_NAME);
-	int ret = -1;
-	try { ret = go(argc, argv); }
+	try { go(argc, argv); }
 	catch (...) { std::cout << "Caught an exception at the very top...\nLeaving application!\n"; }
 	//return go(argc, argv);
 }

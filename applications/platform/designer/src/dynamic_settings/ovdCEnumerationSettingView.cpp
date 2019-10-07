@@ -11,7 +11,7 @@ using namespace Setting;
 static void OnChange(GtkEntry* /*entry*/, gpointer data) { static_cast<CEnumerationSettingView *>(data)->onChange(); }
 
 CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& ctx, const CIdentifier& typeID)
-	: CAbstractSettingView(box, index, rBuilderName, "settings_collection-comboboxentry_setting_enumeration"), m_typeID(typeID), m_kernelContext(ctx)
+	: CAbstractSettingView(box, index, rBuilderName, "settings_collection-comboboxentry_setting_enumeration"), m_typeID(typeID), m_kernelCtx(ctx)
 {
 	p                        = false;
 	GtkWidget* settingWidget = this->getEntryFieldWidget();
@@ -20,11 +20,11 @@ CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox& box, const uint32
 
 	std::vector<std::string> entries;
 
-	for (uint64_t i = 0; i < m_kernelContext.getTypeManager().getEnumerationEntryCount(m_typeID); ++i)
+	for (uint64_t i = 0; i < m_kernelCtx.getTypeManager().getEnumerationEntryCount(m_typeID); ++i)
 	{
 		CString name;
 		uint64_t value;
-		if (m_kernelContext.getTypeManager().getEnumerationEntry(m_typeID, i, name, value))
+		if (m_kernelCtx.getTypeManager().getEnumerationEntry(m_typeID, i, name, value))
 		{
 			entries.push_back(name.toASCIIString());
 		}

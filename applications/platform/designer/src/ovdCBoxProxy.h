@@ -42,7 +42,7 @@ namespace OpenViBEDesigner
 
 		virtual void updateSize(GtkWidget* widget, const char* sLabel, const char* sStatus, int* pXSize, int* pYSize) const;
 
-		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
+		const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
 		const OpenViBE::Plugins::IBoxAlgorithmDesc* m_pBoxAlgorithmDescriptorOverride = nullptr;
 		const OpenViBE::Kernel::IBox* m_pConstBox = nullptr;
 		OpenViBE::Kernel::IBox* m_pBox = nullptr;

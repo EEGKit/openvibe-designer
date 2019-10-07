@@ -9,8 +9,8 @@ using namespace OpenViBEDesigner;
 using namespace std;
 
 CBoxProxy::CBoxProxy(const IKernelContext& ctx, IScenario& scenario, const CIdentifier& boxID)
-	: m_kernelContext(ctx), m_pConstBox(scenario.getBoxDetails(boxID)), m_pBox(scenario.getBoxDetails(boxID)),
-	  m_IsDeprecated(m_kernelContext.getPluginManager().isPluginObjectFlaggedAsDeprecated(m_pConstBox->getAlgorithmClassIdentifier()))
+	: m_kernelCtx(ctx), m_pConstBox(scenario.getBoxDetails(boxID)), m_pBox(scenario.getBoxDetails(boxID)),
+	  m_IsDeprecated(m_kernelCtx.getPluginManager().isPluginObjectFlaggedAsDeprecated(m_pConstBox->getAlgorithmClassIdentifier()))
 {
 	m_IsBoxAlgorithmPresent = false;
 
@@ -20,17 +20,17 @@ CBoxProxy::CBoxProxy(const IKernelContext& ctx, IScenario& scenario, const CIden
 		{
 			CIdentifier metaboxId;
 			metaboxId.fromString(m_pConstBox->getAttributeValue(OVP_AttributeId_Metabox_Identifier));
-			const CString l_sMetaboxScenarioPath(m_kernelContext.getMetaboxManager().getMetaboxFilePath(metaboxId));
+			const CString l_sMetaboxScenarioPath(m_kernelCtx.getMetaboxManager().getMetaboxFilePath(metaboxId));
 
 			m_IsBoxAlgorithmPresent = FS::Files::fileExists(l_sMetaboxScenarioPath.toASCIIString());
 		}
-		else { m_IsBoxAlgorithmPresent = m_kernelContext.getPluginManager().canCreatePluginObject(m_pConstBox->getAlgorithmClassIdentifier()); }
+		else { m_IsBoxAlgorithmPresent = m_kernelCtx.getPluginManager().canCreatePluginObject(m_pConstBox->getAlgorithmClassIdentifier()); }
 
 		const TAttributeHandler handler(*m_pConstBox);
 		m_centerX = handler.getAttributeValue<int>(OV_AttributeId_Box_XCenterPosition);
 		m_centerY = handler.getAttributeValue<int>(OV_AttributeId_Box_YCenterPosition);
 	}
-	m_bShowOriginalNameWhenModified = m_kernelContext.getConfigurationManager().expandAsBoolean("${Designer_ShowOriginalBoxName}", true);
+	m_bShowOriginalNameWhenModified = m_kernelCtx.getConfigurationManager().expandAsBoolean("${Designer_ShowOriginalBoxName}", true);
 }
 
 int CBoxProxy::getWidth(GtkWidget* widget) const
@@ -94,7 +94,7 @@ const char* CBoxProxy::getLabel() const
 
 	if (m_pBoxAlgorithmDescriptorOverride == nullptr)
 	{
-		l_pDesc = m_kernelContext.getPluginManager().getPluginObjectDescCreating(m_pConstBox->getAlgorithmClassIdentifier());
+		l_pDesc = m_kernelCtx.getPluginManager().getPluginObjectDescCreating(m_pConstBox->getAlgorithmClassIdentifier());
 	}
 	else { l_pDesc = m_pBoxAlgorithmDescriptorOverride; }
 

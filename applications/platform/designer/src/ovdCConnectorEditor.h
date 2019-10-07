@@ -16,7 +16,7 @@ namespace OpenViBEDesigner
 		virtual bool run();
 
 
-		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
+		const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
 		OpenViBE::Kernel::IBox& m_box;
 		uint32_t m_connectorType = 0;
 		uint32_t m_connectorIdx = 0;

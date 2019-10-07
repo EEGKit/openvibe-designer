@@ -30,7 +30,7 @@ namespace OpenViBEDesigner
 
 	protected:
 
-		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
+		const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
 		CInterfacedScenario& m_InterfacedScenario;
 		OpenViBE::Kernel::IScenario& m_Scenario;
 

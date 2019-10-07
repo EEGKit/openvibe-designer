@@ -28,7 +28,7 @@ namespace OpenViBEDesigner
 
 			std::map<OpenViBE::CString, uint64_t> m_entriesIdx;
 
-			const OpenViBE::Kernel::IKernelContext& m_kernelContext;
+			const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
 			bool m_onValueSetting = false;
 		};
 	} // namespace Setting

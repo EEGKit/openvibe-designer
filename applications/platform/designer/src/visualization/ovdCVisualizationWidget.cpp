@@ -22,7 +22,7 @@ using namespace Kernel;
 using namespace OpenViBEVisualizationToolkit;
 
 CVisualizationWidget::CVisualizationWidget(const IKernelContext& ctx)
-	: m_kernelContext(ctx), m_id(OV_UndefinedIdentifier), m_Type(VisualizationWidget_Undefined),
+	: m_kernelCtx(ctx), m_id(OV_UndefinedIdentifier), m_Type(VisualizationWidget_Undefined),
 	  m_ParentID(OV_UndefinedIdentifier), m_BoxID(OV_UndefinedIdentifier) {}
 
 

@@ -550,7 +550,7 @@ bool CArchwayHandler::setPipelineParameterValue(uint32_t pipelineClassID, std::s
 		}
 	}
 
-	//	m_kernelContext.getLogManager() << LogLevel_Info << "Set [" << uiPipelineClassId << "/" << sParameterName.c_str() << "] to [" << sParameterValue.c_str() << "]\n";
+	//	m_kernelCtx.getLogManager() << LogLevel_Info << "Set [" << uiPipelineClassId << "/" << sParameterName.c_str() << "] to [" << sParameterValue.c_str() << "]\n";
 	return true;
 }
 

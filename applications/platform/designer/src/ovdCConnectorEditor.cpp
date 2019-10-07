@@ -22,7 +22,7 @@ namespace
 
 CConnectorEditor::CConnectorEditor(const IKernelContext& ctx, IBox& box, const uint32_t connectorType, const uint32_t connectorIndex,
 								   const char* sTitle, const char* sGUIFilename)
-	: m_kernelContext(ctx), m_box(box), m_connectorType(connectorType),
+	: m_kernelCtx(ctx), m_box(box), m_connectorType(connectorType),
 	  m_connectorIdx(connectorIndex), m_sGUIFilename(sGUIFilename), m_sTitle(sTitle ? sTitle : "") { }
 
 CConnectorEditor::~CConnectorEditor() = default;
@@ -88,13 +88,13 @@ bool CConnectorEditor::run()
 	map<string, CIdentifier> l_vStreamTypes;
 	gint l_iActive = -1;
 
-	for (const auto& l_oCurrentTypeID : m_kernelContext.getTypeManager().getSortedTypes())
+	for (const auto& l_oCurrentTypeID : m_kernelCtx.getTypeManager().getSortedTypes())
 	{
 		//First check if the type is support by the connector
 		if ((m_box.*isTypeSupported)(l_oCurrentTypeID.first))
 		{
 			//If the input type is support by the connector, let's add it to the list
-			if (m_kernelContext.getTypeManager().isStream(l_oCurrentTypeID.first))
+			if (m_kernelCtx.getTypeManager().isStream(l_oCurrentTypeID.first))
 			{
 				gtk_combo_box_append_text(l_pConnectorTypeComboBox, l_oCurrentTypeID.second.toASCIIString());
 				if (l_oCurrentTypeID.first == l_oConnectorType)
