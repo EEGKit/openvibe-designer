@@ -11,9 +11,9 @@ CCommentProxy::CCommentProxy(const IKernelContext& ctx, const IComment& rComment
 {
 	if (m_pConstComment)
 	{
-		const TAttributeHandler l_oAttributeHandler(*m_pConstComment);
-		m_centerX = l_oAttributeHandler.getAttributeValue<int>(OV_AttributeId_Comment_XCenterPosition);
-		m_centerY = l_oAttributeHandler.getAttributeValue<int>(OV_AttributeId_Comment_YCenterPosition);
+		const TAttributeHandler handler(*m_pConstComment);
+		m_centerX = handler.getAttributeValue<int>(OV_AttributeId_Comment_XCenterPosition);
+		m_centerY = handler.getAttributeValue<int>(OV_AttributeId_Comment_YCenterPosition);
 	}
 }
 
@@ -23,9 +23,9 @@ CCommentProxy::CCommentProxy(const IKernelContext& ctx, IScenario& scenario, con
 {
 	if (m_pConstComment)
 	{
-		const TAttributeHandler l_oAttributeHandler(*m_pConstComment);
-		m_centerX = l_oAttributeHandler.getAttributeValue<int>(OV_AttributeId_Comment_XCenterPosition);
-		m_centerY = l_oAttributeHandler.getAttributeValue<int>(OV_AttributeId_Comment_YCenterPosition);
+		const TAttributeHandler handler(*m_pConstComment);
+		m_centerX = handler.getAttributeValue<int>(OV_AttributeId_Comment_XCenterPosition);
+		m_centerY = handler.getAttributeValue<int>(OV_AttributeId_Comment_YCenterPosition);
 	}
 }
 
@@ -56,19 +56,19 @@ void CCommentProxy::apply()
 {
 	if (m_pComment)
 	{
-		TAttributeHandler l_oAttributeHandler(*m_pComment);
+		TAttributeHandler handler(*m_pComment);
 
-		if (l_oAttributeHandler.hasAttribute(OV_AttributeId_Comment_XCenterPosition))
+		if (handler.hasAttribute(OV_AttributeId_Comment_XCenterPosition))
 		{
-			l_oAttributeHandler.setAttributeValue<int>(OV_AttributeId_Comment_XCenterPosition, m_centerX);
+			handler.setAttributeValue<int>(OV_AttributeId_Comment_XCenterPosition, m_centerX);
 		}
-		else { l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Comment_XCenterPosition, m_centerX); }
+		else { handler.addAttribute<int>(OV_AttributeId_Comment_XCenterPosition, m_centerX); }
 
-		if (l_oAttributeHandler.hasAttribute(OV_AttributeId_Comment_YCenterPosition))
+		if (handler.hasAttribute(OV_AttributeId_Comment_YCenterPosition))
 		{
-			l_oAttributeHandler.setAttributeValue<int>(OV_AttributeId_Comment_YCenterPosition, m_centerY);
+			handler.setAttributeValue<int>(OV_AttributeId_Comment_YCenterPosition, m_centerY);
 		}
-		else { l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Comment_YCenterPosition, m_centerY); }
+		else { handler.addAttribute<int>(OV_AttributeId_Comment_YCenterPosition, m_centerY); }
 		m_applied = true;
 	}
 }

@@ -8,40 +8,36 @@ using namespace OpenViBE;
 using namespace OpenViBEDesigner;
 using namespace Setting;
 
-static void on_button_setting_filename_browse_pressed(GtkButton* /*button*/, gpointer data) { static_cast<CScriptSettingView *>(data)->browse(); }
+static void OnButtonSettingFilenameBrowsePressed(GtkButton* /*button*/, gpointer data) { static_cast<CScriptSettingView *>(data)->browse(); }
 
-static void on_button_setting_script_edit_pressed(GtkButton* /*button*/, gpointer data) { static_cast<CScriptSettingView *>(data)->edit(); }
+static void OnButtonSettingScriptEditPressed(GtkButton* /*button*/, gpointer data) { static_cast<CScriptSettingView *>(data)->edit(); }
 
-static void on_change(GtkEntry* /*entry*/, gpointer data) { static_cast<CScriptSettingView *>(data)->onChange(); }
+static void OnChange(GtkEntry* /*entry*/, gpointer data) { static_cast<CScriptSettingView *>(data)->onChange(); }
 
 #if defined TARGET_OS_Windows
-static gboolean on_focus_out_event(GtkEntry* /*entry*/, GdkEvent* /*event*/, gpointer data)
+static gboolean OnFocusOutEvent(GtkEntry* /*entry*/, GdkEvent* /*event*/, gpointer data)
 {
 	static_cast<CScriptSettingView *>(data)->onFocusLost();
 	return FALSE;
 }
 #endif
 
-CScriptSettingView::
-CScriptSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& ctx): CAbstractSettingView(
-																																	  box, index, rBuilderName,
-																																	  "settings_collection-hbox_setting_script"),
-																																  m_kernelContext(
-																																	  ctx)
+CScriptSettingView::CScriptSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& ctx)
+	: CAbstractSettingView(box, index, rBuilderName, "settings_collection-hbox_setting_script"), m_kernelContext(ctx)
 {
-	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
+	GtkWidget* settingWidget = this->getEntryFieldWidget();
 
 	std::vector<GtkWidget*> widgets;
-	extractWidget(l_pSettingWidget, widgets);
+	extractWidget(settingWidget, widgets);
 	m_entry = GTK_ENTRY(widgets[0]);
 
-	g_signal_connect(G_OBJECT(m_entry), "changed", G_CALLBACK(on_change), this);
+	g_signal_connect(G_OBJECT(m_entry), "changed", G_CALLBACK(OnChange), this);
 #if defined TARGET_OS_Windows
 	// Only called for Windows path
-	g_signal_connect(G_OBJECT(m_entry), "focus_out_event", G_CALLBACK(on_focus_out_event), this);
+	g_signal_connect(G_OBJECT(m_entry), "focus_out_event", G_CALLBACK(OnFocusOutEvent), this);
 #endif
-	g_signal_connect(G_OBJECT(widgets[1]), "clicked", G_CALLBACK(on_button_setting_script_edit_pressed), this);
-	g_signal_connect(G_OBJECT(widgets[2]), "clicked", G_CALLBACK(on_button_setting_filename_browse_pressed), this);
+	g_signal_connect(G_OBJECT(widgets[1]), "clicked", G_CALLBACK(OnButtonSettingScriptEditPressed), this);
+	g_signal_connect(G_OBJECT(widgets[2]), "clicked", G_CALLBACK(OnButtonSettingFilenameBrowsePressed), this);
 
 	initializeValue();
 }

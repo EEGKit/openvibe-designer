@@ -1755,8 +1755,8 @@ void CApplication::openScenarioCB()
 	if (gtk_dialog_run(GTK_DIALOG(widgetDialogOpen)) == GTK_RESPONSE_ACCEPT)
 	{
 		//char* fileName=gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widgetDialogOpen));
-		GSList* l_pList;
-		GSList* l_pFile = l_pList = gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(widgetDialogOpen));
+		GSList* list;
+		GSList* l_pFile = list = gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(widgetDialogOpen));
 		while (l_pFile)
 		{
 			char* fileName = static_cast<char*>(l_pFile->data);
@@ -1766,7 +1766,7 @@ void CApplication::openScenarioCB()
 			g_free(l_pFile->data);
 			l_pFile = l_pFile->next;
 		}
-		g_slist_free(l_pList);
+		g_slist_free(list);
 	}
 	gtk_widget_destroy(widgetDialogOpen);
 	//	g_object_unref(l_pFileFilterSpecific);
@@ -2860,22 +2860,22 @@ void CApplication::changeCurrentScenario(const int pageIdx)
 		g_signal_connect(l_pWindowManagerButton, "toggled", G_CALLBACK(button_toggle_window_manager_cb), this);
 
 		// toggle off and reset scenario settings
-		GtkWidget* l_pSettingsVBox = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-scenario_configuration_vbox"));
+		GtkWidget* settingsVBox = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-scenario_configuration_vbox"));
 
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-scenario_configuration_button_configure")), false);
 
 
-		GList* l_pSettingWidgets = gtk_container_get_children(
+		GList* settingWidgets = gtk_container_get_children(
 			GTK_CONTAINER(gtk_builder_get_object(m_pBuilderInterface, "openvibe-scenario_configuration_vbox")));
-		for (GList* l_pSettingIterator = l_pSettingWidgets; l_pSettingIterator != nullptr; l_pSettingIterator = g_list_next(l_pSettingIterator))
+		for (GList* settingIterator = settingWidgets; settingIterator != nullptr; settingIterator = g_list_next(settingIterator))
 		{
-			gtk_widget_destroy(GTK_WIDGET(l_pSettingIterator->data));
+			gtk_widget_destroy(GTK_WIDGET(settingIterator->data));
 		}
-		g_list_free(l_pSettingWidgets);
+		g_list_free(settingWidgets);
 
-		GtkWidget* l_pSettingPlaceholderLabel = gtk_label_new("This scenario has no settings");
-		gtk_box_pack_end_defaults(GTK_BOX(l_pSettingsVBox), l_pSettingPlaceholderLabel);
-		gtk_widget_show_all(l_pSettingsVBox);
+		GtkWidget* settingPlaceholderLabel = gtk_label_new("This scenario has no settings");
+		gtk_box_pack_end_defaults(GTK_BOX(settingsVBox), settingPlaceholderLabel);
+		gtk_widget_show_all(settingsVBox);
 
 
 		// current scenario is the current notebook page.

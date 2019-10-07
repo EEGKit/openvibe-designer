@@ -5,7 +5,7 @@ using namespace Kernel;
 using namespace OpenViBEDesigner;
 using namespace std;
 
-static void type_changed_cb(GtkComboBox* /*widget*/, gpointer data) { static_cast<CSettingEditorDialog*>(data)->typeChangedCB(); }
+static void TypeChangedCB(GtkComboBox* /*widget*/, gpointer data) { static_cast<CSettingEditorDialog*>(data)->typeChangedCB(); }
 
 CSettingEditorDialog::CSettingEditorDialog(const IKernelContext& ctx, IBox& box, const uint32_t settingIndex, const char* sTitle,
 										   const char* sGUIFilename, const char* sGUISettingsFilename)
@@ -21,74 +21,73 @@ bool CSettingEditorDialog::run()
 	gtk_builder_add_from_file(l_pBuilderInterfaceSetting, m_sGUIFilename.toASCIIString(), nullptr);
 	gtk_builder_connect_signals(l_pBuilderInterfaceSetting, nullptr);
 
-	GtkWidget* l_pDialog = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceSetting, "setting_editor"));
-	GtkWidget* l_pName   = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceSetting, "setting_editor-setting_name_entry"));
-	m_pTable             = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceSetting, "setting_editor-table"));
-	m_pType              = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceSetting, "setting_editor-setting_type_combobox"));
-	gtk_list_store_clear(GTK_LIST_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(m_pType))));
+	GtkWidget* dialog = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceSetting, "setting_editor"));
+	GtkWidget* name   = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceSetting, "setting_editor-setting_name_entry"));
+	m_table           = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceSetting, "setting_editor-table"));
+	m_type            = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceSetting, "setting_editor-setting_type_combobox"));
+	gtk_list_store_clear(GTK_LIST_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(m_type))));
 	g_object_unref(l_pBuilderInterfaceSetting);
 
-	gtk_window_set_title(GTK_WINDOW(l_pDialog), m_sTitle.c_str());
+	gtk_window_set_title(GTK_WINDOW(dialog), m_sTitle.c_str());
 
-	g_signal_connect(G_OBJECT(m_pType), "changed", G_CALLBACK(type_changed_cb), this);
+	g_signal_connect(G_OBJECT(m_type), "changed", G_CALLBACK(TypeChangedCB), this);
 
-	CString l_sSettingName;
-	CIdentifier l_oSettingType;
-	m_box.getSettingName(m_settingIdx, l_sSettingName);
-	m_box.getSettingType(m_settingIdx, l_oSettingType);
+	CString settingName;
+	CIdentifier settingType;
+	m_box.getSettingName(m_settingIdx, settingName);
+	m_box.getSettingType(m_settingIdx, settingType);
 
-	gtk_entry_set_text(GTK_ENTRY(l_pName), l_sSettingName.toASCIIString());
+	gtk_entry_set_text(GTK_ENTRY(name), settingName.toASCIIString());
 
-	gint l_iActive       = -1;
-	uint32_t numSettings =
-			0; // Cannot rely on m_vSettingTypes.size() -- if there are any duplicates, it wont increment properly (and should be an error anyway) ...
+	gint active        = -1;
+	uint32_t nSettings = 0; // Cannot rely on m_vSettingTypes.size() -- if there are any duplicates, it wont increment properly (and should be an error anyway) ...
 
-	for (const auto& l_oCurrentTypeID : m_kernelContext.getTypeManager().getSortedTypes())
+	for (const auto& currentTypeID : m_kernelContext.getTypeManager().getSortedTypes())
 	{
-		if (!m_kernelContext.getTypeManager().isStream(l_oCurrentTypeID.first))
+		if (!m_kernelContext.getTypeManager().isStream(currentTypeID.first))
 		{
-			gtk_combo_box_append_text(GTK_COMBO_BOX(m_pType), l_oCurrentTypeID.second.toASCIIString());
-			if (l_oCurrentTypeID.first == l_oSettingType) { l_iActive = numSettings; }
-			m_vSettingTypes[l_oCurrentTypeID.second.toASCIIString()] = l_oCurrentTypeID.first;
-			numSettings++;
+			gtk_combo_box_append_text(GTK_COMBO_BOX(m_type), currentTypeID.second.toASCIIString());
+			if (currentTypeID.first == settingType) { active = nSettings; }
+			m_vSettingTypes[currentTypeID.second.toASCIIString()] = currentTypeID.first;
+			nSettings++;
 		}
 	}
 
-	if (l_iActive != -1) { gtk_combo_box_set_active(GTK_COMBO_BOX(m_pType), l_iActive); }
+	if (active != -1) { gtk_combo_box_set_active(GTK_COMBO_BOX(m_type), active); }
 
-	bool l_bFinished = false;
-	bool res   = false;
-	while (!l_bFinished)
+	bool finished = false;
+	bool res      = false;
+	while (!finished)
 	{
-		const gint l_iResult = gtk_dialog_run(GTK_DIALOG(l_pDialog));
-		if (l_iResult == GTK_RESPONSE_APPLY)
+		const gint result = gtk_dialog_run(GTK_DIALOG(dialog));
+		if (result == GTK_RESPONSE_APPLY)
 		{
-			char* l_sActiveText = gtk_combo_box_get_active_text(GTK_COMBO_BOX(m_pType));
-			if (l_sActiveText)
+			char* activeText = gtk_combo_box_get_active_text(GTK_COMBO_BOX(m_type));
+			if (activeText)
 			{
-				l_oSettingType = m_vSettingTypes[l_sActiveText];
-				m_box.setSettingName(m_settingIdx, gtk_entry_get_text(GTK_ENTRY(l_pName)));
-				m_box.setSettingType(m_settingIdx, l_oSettingType);
-				m_box.setSettingValue(m_settingIdx, m_oHelper.getValue(l_oSettingType, m_pDefaultValue));
-				m_box.setSettingDefaultValue(m_settingIdx, m_oHelper.getValue(l_oSettingType, m_pDefaultValue));
-				l_bFinished = true;
-				res   = true;
+				settingType = m_vSettingTypes[activeText];
+				m_box.setSettingName(m_settingIdx, gtk_entry_get_text(GTK_ENTRY(name)));
+				m_box.setSettingType(m_settingIdx, settingType);
+				m_box.setSettingValue(m_settingIdx, m_oHelper.getValue(settingType, m_defaultValue));
+				m_box.setSettingDefaultValue(m_settingIdx, m_oHelper.getValue(settingType, m_defaultValue));
+				finished = true;
+				res      = true;
 			}
 		}
-		else if (l_iResult == 2) // revert
+		else if (result == 2) // revert
 		{
-			gtk_entry_set_text(GTK_ENTRY(l_pName), l_sSettingName.toASCIIString());
+			gtk_entry_set_text(GTK_ENTRY(name), settingName.toASCIIString());
 
-			if (l_iActive != -1) { gtk_combo_box_set_active(GTK_COMBO_BOX(m_pType), l_iActive); }
+			if (active != -1) { gtk_combo_box_set_active(GTK_COMBO_BOX(m_type), active); }
 		}
 		else
 		{
-			l_bFinished = true;
-			res   = false;
+			finished = true;
+			res      = false;
 		}
 	}
 
-	gtk_widget_destroy(l_pDialog);
+	gtk_widget_destroy(dialog);
 
 	return res;
 }
@@ -96,21 +95,20 @@ bool CSettingEditorDialog::run()
 void CSettingEditorDialog::typeChangedCB()
 
 {
-	const CIdentifier l_oSettingType = m_vSettingTypes[gtk_combo_box_get_active_text(GTK_COMBO_BOX(m_pType))];
+	const CIdentifier settingType = m_vSettingTypes[gtk_combo_box_get_active_text(GTK_COMBO_BOX(m_type))];
 
-	const CString l_sWidgetName                      = m_oHelper.getSettingWidgetName(l_oSettingType).toASCIIString();
-	GtkBuilder* l_pBuilderInterfaceDefaultValueDummy =
-			gtk_builder_new(); // glade_xml_new(m_sGUIFilename.toASCIIString(), l_sWidgetName.toASCIIString(), nullptr);
-	gtk_builder_add_from_file(l_pBuilderInterfaceDefaultValueDummy, m_sGUISettingsFilename.toASCIIString(), nullptr);
-	gtk_builder_connect_signals(l_pBuilderInterfaceDefaultValueDummy, nullptr);
+	const CString widgetName                      = m_oHelper.getSettingWidgetName(settingType).toASCIIString();
+	GtkBuilder* builderInterfaceDefaultValueDummy = gtk_builder_new(); // glade_xml_new(m_sGUIFilename.toASCIIString(), l_sWidgetName.toASCIIString(), nullptr);
+	gtk_builder_add_from_file(builderInterfaceDefaultValueDummy, m_sGUISettingsFilename.toASCIIString(), nullptr);
+	gtk_builder_connect_signals(builderInterfaceDefaultValueDummy, nullptr);
 
-	if (m_pDefaultValue) { gtk_container_remove(GTK_CONTAINER(m_pTable), m_pDefaultValue); }
-	m_pDefaultValue = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceDefaultValueDummy, l_sWidgetName.toASCIIString()));
-	gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(m_pDefaultValue)), m_pDefaultValue);
-	gtk_table_attach(GTK_TABLE(m_pTable), m_pDefaultValue, 1, 2, 2, 3, GtkAttachOptions(GTK_FILL | GTK_EXPAND), GtkAttachOptions(GTK_FILL | GTK_EXPAND), 0, 0);
-	g_object_unref(l_pBuilderInterfaceDefaultValueDummy);
+	if (m_defaultValue) { gtk_container_remove(GTK_CONTAINER(m_table), m_defaultValue); }
+	m_defaultValue = GTK_WIDGET(gtk_builder_get_object(builderInterfaceDefaultValueDummy, widgetName.toASCIIString()));
+	gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(m_defaultValue)), m_defaultValue);
+	gtk_table_attach(GTK_TABLE(m_table), m_defaultValue, 1, 2, 2, 3, GtkAttachOptions(GTK_FILL | GTK_EXPAND), GtkAttachOptions(GTK_FILL | GTK_EXPAND), 0, 0);
+	g_object_unref(builderInterfaceDefaultValueDummy);
 
 	CString defaultValue;
 	m_box.getSettingDefaultValue(m_settingIdx, defaultValue);
-	m_oHelper.setValue(l_oSettingType, m_pDefaultValue, defaultValue);
+	m_oHelper.setValue(settingType, m_defaultValue, defaultValue);
 }

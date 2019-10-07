@@ -42,22 +42,20 @@ extern map<uint32_t, GdkColor> g_vColors;
 
 namespace
 {
-	GtkTargetEntry g_vTargetEntry[] = {
-		{ static_cast<gchar*>("STRING"), 0, 0 },
-		{ static_cast<gchar*>("text/plain"), 0, 0 }
+	GtkTargetEntry g_vTargetEntry[] = { { static_cast<gchar*>("STRING"), 0, 0 }, { static_cast<gchar*>("text/plain"), 0, 0 } 
 	};
 
 	GdkColor colorFromIdentifier(const CIdentifier& identifier)
 	{
 		GdkColor l_oGdkColor;
-		uint32_t l_ui32Value1 = 0;
-		uint32_t l_ui32Value2 = 0;
+		uint32_t value1 = 0;
+		uint32_t value2 = 0;
 		uint64_t res     = 0;
 
-		sscanf(identifier.toString(), "(0x%08X, 0x%08X)", &l_ui32Value1, &l_ui32Value2);
-		res += l_ui32Value1;
+		sscanf(identifier.toString(), "(0x%08X, 0x%08X)", &value1, &value2);
+		res += value1;
 		res <<= 32;
-		res += l_ui32Value2;
+		res += value2;
 
 		l_oGdkColor.pixel = guint16(0);
 		l_oGdkColor.red   = guint16((res & 0xffff) | 0x8000);
@@ -692,46 +690,46 @@ void CInterfacedScenario::redrawConfigureScenarioSettingsDialog()
 	}
 	else { gtk_window_set_title(GTK_WINDOW(m_pConfigureSettingsDialog), "Settings for an unnamed scenario"); }
 
-	GList* l_pSettingWidgets = gtk_container_get_children(GTK_CONTAINER(m_pSettingsVBox));
-	for (GList* l_pSettingIterator = l_pSettingWidgets; l_pSettingIterator != nullptr; l_pSettingIterator = g_list_next(l_pSettingIterator))
+	GList* settingWidgets = gtk_container_get_children(GTK_CONTAINER(m_pSettingsVBox));
+	for (GList* settingIterator = settingWidgets; settingIterator != nullptr; settingIterator = g_list_next(settingIterator))
 	{
-		gtk_widget_destroy(GTK_WIDGET(l_pSettingIterator->data));
+		gtk_widget_destroy(GTK_WIDGET(settingIterator->data));
 	}
-	g_list_free(l_pSettingWidgets);
+	g_list_free(settingWidgets);
 
 	m_vSettingConfigurationCallbackData.clear();
 	m_vSettingConfigurationCallbackData.resize(m_rScenario.getSettingCount());
 
 	if (m_rScenario.getSettingCount() == 0)
 	{
-		GtkWidget* l_pSettingPlaceholderLabel = gtk_label_new("This scenario has no settings");
-		gtk_box_pack_start(GTK_BOX(m_pSettingsVBox), l_pSettingPlaceholderLabel, TRUE, TRUE, 5);
+		GtkWidget* settingPlaceholderLabel = gtk_label_new("This scenario has no settings");
+		gtk_box_pack_start(GTK_BOX(m_pSettingsVBox), settingPlaceholderLabel, TRUE, TRUE, 5);
 	}
 	else
 	{
 		for (uint32_t settingIdx = 0; settingIdx < m_rScenario.getSettingCount(); ++settingIdx)
 		{
-			GtkBuilder* l_pSettingsGUIBuilder = gtk_builder_new();
-			gtk_builder_add_from_string(l_pSettingsGUIBuilder, m_sSerializedSettingGUIXML.c_str(), m_sSerializedSettingGUIXML.length(), nullptr);
+			GtkBuilder* settingsGUIBuilder = gtk_builder_new();
+			gtk_builder_add_from_string(settingsGUIBuilder, m_sSerializedSettingGUIXML.c_str(), m_sSerializedSettingGUIXML.length(), nullptr);
 
-			GtkWidget* l_pSettingContainerWidget = GTK_WIDGET(gtk_builder_get_object(l_pSettingsGUIBuilder, "scenario_configuration_setting-table"));
+			GtkWidget* settingContainerWidget = GTK_WIDGET(gtk_builder_get_object(settingsGUIBuilder, "scenario_configuration_setting-table"));
 			// this has to be done since the widget is already inside a parent in the gtkbuilder
-			gtk_container_remove(GTK_CONTAINER(::gtk_widget_get_parent(l_pSettingContainerWidget)), l_pSettingContainerWidget);
-			gtk_box_pack_start(GTK_BOX(m_pSettingsVBox), l_pSettingContainerWidget, FALSE, FALSE, 5);
+			gtk_container_remove(GTK_CONTAINER(::gtk_widget_get_parent(settingContainerWidget)), settingContainerWidget);
+			gtk_box_pack_start(GTK_BOX(m_pSettingsVBox), settingContainerWidget, FALSE, FALSE, 5);
 
-			GtkWidget* l_pSettingEntryName    = GTK_WIDGET(gtk_builder_get_object(l_pSettingsGUIBuilder, "scenario_configuration_setting-entry_name"));
-			GtkWidget* l_pSettingComboboxType = GTK_WIDGET(
-				gtk_builder_get_object(l_pSettingsGUIBuilder, "scenario_configuration_setting-combobox_type"));
-			GtkWidget* l_pSettingButtonUp = GTK_WIDGET(
-				gtk_builder_get_object(l_pSettingsGUIBuilder, "scenario_configuration_setting-button_move_up"));
-			GtkWidget* l_pSettingButtonDown = GTK_WIDGET(
-				gtk_builder_get_object(l_pSettingsGUIBuilder, "scenario_configuration_setting-button_move_down"));
-			GtkWidget* l_pSettingButtonDelete = GTK_WIDGET(
-				gtk_builder_get_object(l_pSettingsGUIBuilder, "scenario_configuration_setting-button_delete"));
-			GtkWidget* l_pSettingEntryID = GTK_WIDGET(
-				gtk_builder_get_object(l_pSettingsGUIBuilder, "scenario_configuration_setting-entry_identifier"));
-			GtkWidget* l_pSettingButtonResetID = GTK_WIDGET(
-				gtk_builder_get_object(l_pSettingsGUIBuilder, "scenario_configuration_setting-button_reset_identifier"));
+			GtkWidget* settingEntryName    = GTK_WIDGET(gtk_builder_get_object(settingsGUIBuilder, "scenario_configuration_setting-entry_name"));
+			GtkWidget* settingComboboxType = GTK_WIDGET(
+				gtk_builder_get_object(settingsGUIBuilder, "scenario_configuration_setting-combobox_type"));
+			GtkWidget* settingButtonUp = GTK_WIDGET(
+				gtk_builder_get_object(settingsGUIBuilder, "scenario_configuration_setting-button_move_up"));
+			GtkWidget* settingButtonDown = GTK_WIDGET(
+				gtk_builder_get_object(settingsGUIBuilder, "scenario_configuration_setting-button_move_down"));
+			GtkWidget* settingButtonDelete = GTK_WIDGET(
+				gtk_builder_get_object(settingsGUIBuilder, "scenario_configuration_setting-button_delete"));
+			GtkWidget* settingEntryID = GTK_WIDGET(
+				gtk_builder_get_object(settingsGUIBuilder, "scenario_configuration_setting-entry_identifier"));
+			GtkWidget* settingButtonResetID = GTK_WIDGET(
+				gtk_builder_get_object(settingsGUIBuilder, "scenario_configuration_setting-button_reset_identifier"));
 
 			// fill the type dropdown
 			CIdentifier l_oSettingTypeID = OV_UndefinedIdentifier;
@@ -744,10 +742,10 @@ void CInterfacedScenario::redrawConfigureScenarioSettingsDialog()
 				if (!m_kernelContext.getTypeManager().isStream(l_oCurrentTypeID))
 				{
 					gtk_combo_box_append_text(
-						GTK_COMBO_BOX(l_pSettingComboboxType), m_kernelContext.getTypeManager().getTypeName(l_oCurrentTypeID).toASCIIString());
+						GTK_COMBO_BOX(settingComboboxType), m_kernelContext.getTypeManager().getTypeName(l_oCurrentTypeID).toASCIIString());
 					if (l_oCurrentTypeID == l_oSettingTypeID)
 					{
-						gtk_combo_box_set_active(GTK_COMBO_BOX(l_pSettingComboboxType), l_iCurrentSettingIdx);
+						gtk_combo_box_set_active(GTK_COMBO_BOX(settingComboboxType), l_iCurrentSettingIdx);
 					}
 					l_iCurrentSettingIdx++;
 				}
@@ -755,20 +753,20 @@ void CInterfacedScenario::redrawConfigureScenarioSettingsDialog()
 			// Set name
 			CString l_sSettingLabel;
 			m_rScenario.getSettingName(settingIdx, l_sSettingLabel);
-			gtk_entry_set_text(GTK_ENTRY(l_pSettingEntryName), l_sSettingLabel.toASCIIString());
+			gtk_entry_set_text(GTK_ENTRY(settingEntryName), l_sSettingLabel.toASCIIString());
 
 			// Set the identifer
 			CIdentifier settingIdentifier;
 			m_rScenario.getInterfacorIdentifier(EBoxInterfacorType::Setting, settingIdx, settingIdentifier);
-			gtk_entry_set_text(GTK_ENTRY(l_pSettingEntryID), settingIdentifier.toString().toASCIIString());
+			gtk_entry_set_text(GTK_ENTRY(settingEntryID), settingIdentifier.toString().toASCIIString());
 
 			// Add widget for the actual setting
 			CString l_sSettingWidgetName = m_pSettingHelper->getSettingWidgetName(l_oSettingTypeID);
 
-			GtkWidget* l_widgetDefaultValue = GTK_WIDGET(gtk_builder_get_object(l_pSettingsGUIBuilder, l_sSettingWidgetName.toASCIIString()));
+			GtkWidget* l_widgetDefaultValue = GTK_WIDGET(gtk_builder_get_object(settingsGUIBuilder, l_sSettingWidgetName.toASCIIString()));
 
 			gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(l_widgetDefaultValue)), l_widgetDefaultValue);
-			gtk_table_attach_defaults(GTK_TABLE(l_pSettingContainerWidget), l_widgetDefaultValue, 1, 5, 1, 2);
+			gtk_table_attach_defaults(GTK_TABLE(settingContainerWidget), l_widgetDefaultValue, 1, 5, 1, 2);
 
 			// Set the value and connect GUI callbacks (because, yes, setValue connects callbacks like a ninja)
 			CString l_sSettingDefaultValue;
@@ -777,7 +775,7 @@ void CInterfacedScenario::redrawConfigureScenarioSettingsDialog()
 
 			// add callbacks to disable the Edit menu in openvibe designer, which will in turn enable using stuff like copy-paste inside the widget
 			CString l_sSettingEntryWidgetName    = m_pSettingHelper->getSettingEntryWidgetName(l_oSettingTypeID);
-			GtkWidget* l_widgetEntryDefaultValue = GTK_WIDGET(gtk_builder_get_object(l_pSettingsGUIBuilder, l_sSettingEntryWidgetName.toASCIIString()));
+			GtkWidget* l_widgetEntryDefaultValue = GTK_WIDGET(gtk_builder_get_object(settingsGUIBuilder, l_sSettingEntryWidgetName.toASCIIString()));
 
 			// Set the callbacks
 			SSettingCallbackData l_oCallbackData;
@@ -785,30 +783,30 @@ void CInterfacedScenario::redrawConfigureScenarioSettingsDialog()
 			l_oCallbackData.settingIndex       = settingIdx;
 			l_oCallbackData.widgetValue        = l_widgetDefaultValue;
 			l_oCallbackData.widgetEntryValue   = l_widgetEntryDefaultValue;
-			l_oCallbackData.container          = l_pSettingContainerWidget;
+			l_oCallbackData.container          = settingContainerWidget;
 
 			m_vSettingConfigurationCallbackData[settingIdx] = l_oCallbackData;
 
 			// Connect signals of the container
-			g_signal_connect(G_OBJECT(l_pSettingComboboxType), "changed", G_CALLBACK(modify_scenario_setting_type_cb),
+			g_signal_connect(G_OBJECT(settingComboboxType), "changed", G_CALLBACK(modify_scenario_setting_type_cb),
 							 &m_vSettingConfigurationCallbackData[settingIdx]);
-			g_signal_connect(G_OBJECT(l_pSettingButtonDelete), "clicked", G_CALLBACK(delete_scenario_setting_cb),
+			g_signal_connect(G_OBJECT(settingButtonDelete), "clicked", G_CALLBACK(delete_scenario_setting_cb),
 							 &m_vSettingConfigurationCallbackData[settingIdx]);
-			g_signal_connect(G_OBJECT(l_pSettingButtonUp), "clicked", G_CALLBACK(modify_scenario_setting_move_up_cb),
+			g_signal_connect(G_OBJECT(settingButtonUp), "clicked", G_CALLBACK(modify_scenario_setting_move_up_cb),
 							 &m_vSettingConfigurationCallbackData[settingIdx]);
-			g_signal_connect(G_OBJECT(l_pSettingButtonDown), "clicked", G_CALLBACK(modify_scenario_setting_move_down_cb),
+			g_signal_connect(G_OBJECT(settingButtonDown), "clicked", G_CALLBACK(modify_scenario_setting_move_down_cb),
 							 &m_vSettingConfigurationCallbackData[settingIdx]);
-			g_signal_connect(G_OBJECT(l_pSettingEntryName), "changed", G_CALLBACK(modify_scenario_setting_name_cb),
+			g_signal_connect(G_OBJECT(settingEntryName), "changed", G_CALLBACK(modify_scenario_setting_name_cb),
 							 &m_vSettingConfigurationCallbackData[settingIdx]);
-			g_signal_connect(G_OBJECT(l_pSettingEntryID), "activate", G_CALLBACK(modify_scenario_setting_identifier_cb),
+			g_signal_connect(G_OBJECT(settingEntryID), "activate", G_CALLBACK(modify_scenario_setting_identifier_cb),
 							 &m_vSettingConfigurationCallbackData[settingIdx]);
-			g_signal_connect(G_OBJECT(l_pSettingButtonResetID), "clicked", G_CALLBACK(reset_scenario_setting_identifier_cb),
+			g_signal_connect(G_OBJECT(settingButtonResetID), "clicked", G_CALLBACK(reset_scenario_setting_identifier_cb),
 							 &m_vSettingConfigurationCallbackData[settingIdx]);
 
 			// these callbacks assure that we can use copy/paste and undo within editable fields
 			// as otherwise the keyboard shortucts are stolen by the designer
-			g_signal_connect(G_OBJECT(l_pSettingEntryName), "focus-in-event", G_CALLBACK(editable_widget_focus_in_cb), &m_rApplication);
-			g_signal_connect(G_OBJECT(l_pSettingEntryName), "focus-out-event", G_CALLBACK(editable_widget_focus_out_cb), &m_rApplication);
+			g_signal_connect(G_OBJECT(settingEntryName), "focus-in-event", G_CALLBACK(editable_widget_focus_in_cb), &m_rApplication);
+			g_signal_connect(G_OBJECT(settingEntryName), "focus-out-event", G_CALLBACK(editable_widget_focus_out_cb), &m_rApplication);
 			g_signal_connect(G_OBJECT(l_widgetEntryDefaultValue), "focus-in-event", G_CALLBACK(editable_widget_focus_in_cb), &m_rApplication);
 			g_signal_connect(G_OBJECT(l_widgetEntryDefaultValue), "focus-out-event", G_CALLBACK(editable_widget_focus_out_cb), &m_rApplication);
 
@@ -816,7 +814,7 @@ void CInterfacedScenario::redrawConfigureScenarioSettingsDialog()
 			g_signal_connect(l_widgetEntryDefaultValue, "changed", G_CALLBACK(modify_scenario_setting_default_value_cb),
 							 &m_vSettingConfigurationCallbackData[settingIdx]);
 
-			g_object_unref(l_pSettingsGUIBuilder);
+			g_object_unref(settingsGUIBuilder);
 		}
 	}
 }
@@ -824,54 +822,54 @@ void CInterfacedScenario::redrawConfigureScenarioSettingsDialog()
 // This function, similar to the previous one, repaints the settings handling sidebar
 void CInterfacedScenario::redrawScenarioSettings()
 {
-	GtkWidget* l_pSettingsVBox = GTK_WIDGET(gtk_builder_get_object(m_rApplication.m_pBuilderInterface, "openvibe-scenario_configuration_vbox"));
+	GtkWidget* settingsVBox = GTK_WIDGET(gtk_builder_get_object(m_rApplication.m_pBuilderInterface, "openvibe-scenario_configuration_vbox"));
 
-	GList* l_pSettingWidgets = gtk_container_get_children(GTK_CONTAINER(l_pSettingsVBox));
-	for (GList* l_pSettingIterator = l_pSettingWidgets; l_pSettingIterator != nullptr; l_pSettingIterator = g_list_next(l_pSettingIterator))
+	GList* settingWidgets = gtk_container_get_children(GTK_CONTAINER(settingsVBox));
+	for (GList* settingIterator = settingWidgets; settingIterator != nullptr; settingIterator = g_list_next(settingIterator))
 	{
-		gtk_widget_destroy(GTK_WIDGET(l_pSettingIterator->data));
+		gtk_widget_destroy(GTK_WIDGET(settingIterator->data));
 	}
-	g_list_free(l_pSettingWidgets);
+	g_list_free(settingWidgets);
 
 	m_vSettingCallbackData.clear();
 	m_vSettingCallbackData.resize(m_rScenario.getSettingCount());
 
 	if (m_rScenario.getSettingCount() == 0)
 	{
-		GtkWidget* l_pSettingPlaceholderLabel = gtk_label_new("This scenario has no settings");
-		gtk_box_pack_start(GTK_BOX(l_pSettingsVBox), l_pSettingPlaceholderLabel, TRUE, TRUE, 5);
+		GtkWidget* settingPlaceholderLabel = gtk_label_new("This scenario has no settings");
+		gtk_box_pack_start(GTK_BOX(settingsVBox), settingPlaceholderLabel, TRUE, TRUE, 5);
 	}
 	else
 	{
 		for (uint32_t settingIdx = 0; settingIdx < m_rScenario.getSettingCount(); ++settingIdx)
 		{
-			GtkBuilder* l_pSettingsGUIBuilder = gtk_builder_new();
-			gtk_builder_add_from_string(l_pSettingsGUIBuilder, m_sSerializedSettingGUIXML.c_str(), m_sSerializedSettingGUIXML.length(), nullptr);
+			GtkBuilder* settingsGUIBuilder = gtk_builder_new();
+			gtk_builder_add_from_string(settingsGUIBuilder, m_sSerializedSettingGUIXML.c_str(), m_sSerializedSettingGUIXML.length(), nullptr);
 
-			GtkWidget* l_pSettingContainerWidget = GTK_WIDGET(gtk_builder_get_object(l_pSettingsGUIBuilder, "scenario_setting-table"));
+			GtkWidget* settingContainerWidget = GTK_WIDGET(gtk_builder_get_object(settingsGUIBuilder, "scenario_setting-table"));
 			// this has to be done since the widget is already inside a parent in the gtkbuilder
-			gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(l_pSettingContainerWidget)), l_pSettingContainerWidget);
-			gtk_box_pack_start(GTK_BOX(l_pSettingsVBox), l_pSettingContainerWidget, FALSE, FALSE, 5);
+			gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(settingContainerWidget)), settingContainerWidget);
+			gtk_box_pack_start(GTK_BOX(settingsVBox), settingContainerWidget, FALSE, FALSE, 5);
 
-			GtkWidget* l_pSettingLabelName     = GTK_WIDGET(gtk_builder_get_object(l_pSettingsGUIBuilder, "scenario_setting-label"));
-			GtkWidget* l_pSettingButtonDefault = GTK_WIDGET(gtk_builder_get_object(l_pSettingsGUIBuilder, "scenario_setting-button_default"));
-			GtkWidget* l_pSettingButtonCopy    = GTK_WIDGET(gtk_builder_get_object(l_pSettingsGUIBuilder, "scenario_setting-button_copy"));
+			GtkWidget* settingLabelName     = GTK_WIDGET(gtk_builder_get_object(settingsGUIBuilder, "scenario_setting-label"));
+			GtkWidget* settingButtonDefault = GTK_WIDGET(gtk_builder_get_object(settingsGUIBuilder, "scenario_setting-button_default"));
+			GtkWidget* settingButtonCopy    = GTK_WIDGET(gtk_builder_get_object(settingsGUIBuilder, "scenario_setting-button_copy"));
 
 			// Set name
 			CString l_sSettingLabel;
 			m_rScenario.getSettingName(settingIdx, l_sSettingLabel);
-			gtk_label_set_text(GTK_LABEL(l_pSettingLabelName), l_sSettingLabel.toASCIIString());
-			gtk_misc_set_alignment(GTK_MISC(l_pSettingLabelName), 0.0, 0.5);
+			gtk_label_set_text(GTK_LABEL(settingLabelName), l_sSettingLabel.toASCIIString());
+			gtk_misc_set_alignment(GTK_MISC(settingLabelName), 0.0, 0.5);
 
 			// Add widget for the actual setting
 			CIdentifier l_oSettingTypeID = OV_UndefinedIdentifier;
 			m_rScenario.getSettingType(settingIdx, l_oSettingTypeID);
 			CString l_sSettingWidgetName = m_pSettingHelper->getSettingWidgetName(l_oSettingTypeID);
 
-			GtkWidget* l_widgetValue = GTK_WIDGET(gtk_builder_get_object(l_pSettingsGUIBuilder, l_sSettingWidgetName.toASCIIString()));
+			GtkWidget* l_widgetValue = GTK_WIDGET(gtk_builder_get_object(settingsGUIBuilder, l_sSettingWidgetName.toASCIIString()));
 
 			gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(l_widgetValue)), l_widgetValue);
-			gtk_table_attach_defaults(GTK_TABLE(l_pSettingContainerWidget), l_widgetValue, 0, 1, 1, 2);
+			gtk_table_attach_defaults(GTK_TABLE(settingContainerWidget), l_widgetValue, 0, 1, 1, 2);
 
 			// Set the value and connect GUI callbacks (because, yes, setValue connects callbacks like a ninja)
 			CString l_sSettingValue;
@@ -880,7 +878,7 @@ void CInterfacedScenario::redrawScenarioSettings()
 
 			// add callbacks to disable the Edit menu in openvibe designer, which will in turn enable using stuff like copy-paste inside the widget
 			CString l_sSettingEntryWidgetName = m_pSettingHelper->getSettingEntryWidgetName(l_oSettingTypeID);
-			GtkWidget* l_widgetEntryValue     = GTK_WIDGET(gtk_builder_get_object(l_pSettingsGUIBuilder, l_sSettingEntryWidgetName.toASCIIString()));
+			GtkWidget* l_widgetEntryValue     = GTK_WIDGET(gtk_builder_get_object(settingsGUIBuilder, l_sSettingEntryWidgetName.toASCIIString()));
 
 			// Set the callbacks
 			SSettingCallbackData l_oCallbackData;
@@ -888,7 +886,7 @@ void CInterfacedScenario::redrawScenarioSettings()
 			l_oCallbackData.settingIndex       = settingIdx;
 			l_oCallbackData.widgetValue        = l_widgetValue;
 			l_oCallbackData.widgetEntryValue   = l_widgetEntryValue;
-			l_oCallbackData.container          = l_pSettingContainerWidget;
+			l_oCallbackData.container          = settingContainerWidget;
 
 			m_vSettingCallbackData[settingIdx] = l_oCallbackData;
 
@@ -899,14 +897,14 @@ void CInterfacedScenario::redrawScenarioSettings()
 
 			// add callbacks for setting the settings
 			g_signal_connect(l_widgetEntryValue, "changed", G_CALLBACK(modify_scenario_setting_value_cb), &m_vSettingCallbackData[settingIdx]);
-			g_signal_connect(l_pSettingButtonDefault, "clicked", G_CALLBACK(modify_scenario_setting_revert_to_default_cb),
+			g_signal_connect(settingButtonDefault, "clicked", G_CALLBACK(modify_scenario_setting_revert_to_default_cb),
 							 &m_vSettingCallbackData[settingIdx]);
-			g_signal_connect(l_pSettingButtonCopy, "clicked", G_CALLBACK(copy_scenario_setting_token_cb), &m_vSettingCallbackData[settingIdx]);
+			g_signal_connect(settingButtonCopy, "clicked", G_CALLBACK(copy_scenario_setting_token_cb), &m_vSettingCallbackData[settingIdx]);
 
-			g_object_unref(l_pSettingsGUIBuilder);
+			g_object_unref(settingsGUIBuilder);
 		}
 	}
-	gtk_widget_show_all(l_pSettingsVBox);
+	gtk_widget_show_all(settingsVBox);
 }
 
 void CInterfacedScenario::redrawScenarioInputSettings()
@@ -935,12 +933,12 @@ void CInterfacedScenario::redrawScenarioLinkSettings(GtkWidget* pLinkTable, cons
 													 bool (IScenario::* pfGetLinkType)(uint32_t, CIdentifier&) const
 )
 {
-	GList* l_pSettingWidgets = gtk_container_get_children(GTK_CONTAINER(pLinkTable));
-	for (GList* l_pSettingIterator = l_pSettingWidgets; l_pSettingIterator != nullptr; l_pSettingIterator = g_list_next(l_pSettingIterator))
+	GList* settingWidgets = gtk_container_get_children(GTK_CONTAINER(pLinkTable));
+	for (GList* settingIterator = settingWidgets; settingIterator != nullptr; settingIterator = g_list_next(settingIterator))
 	{
-		gtk_widget_destroy(GTK_WIDGET(l_pSettingIterator->data));
+		gtk_widget_destroy(GTK_WIDGET(settingIterator->data));
 	}
-	g_list_free(l_pSettingWidgets);
+	g_list_free(settingWidgets);
 
 	const uint32_t linkCount = (m_rScenario.*pfGetLinkCount)();
 
@@ -951,8 +949,8 @@ void CInterfacedScenario::redrawScenarioLinkSettings(GtkWidget* pLinkTable, cons
 
 	if (linkCount == 0)
 	{
-		GtkWidget* l_pSettingPlaceholderLabel = gtk_label_new("This scenario has none");
-		gtk_table_attach_defaults(GTK_TABLE(pLinkTable), l_pSettingPlaceholderLabel, 0, 1, 0, 1);
+		GtkWidget* settingPlaceholderLabel = gtk_label_new("This scenario has none");
+		gtk_table_attach_defaults(GTK_TABLE(pLinkTable), settingPlaceholderLabel, 0, 1, 0, 1);
 	}
 	else
 	{
@@ -961,9 +959,9 @@ void CInterfacedScenario::redrawScenarioLinkSettings(GtkWidget* pLinkTable, cons
 			GtkBuilder* ioSettingsGUIBuilder = gtk_builder_new();
 			gtk_builder_add_from_string(ioSettingsGUIBuilder, m_sSerializedSettingGUIXML.c_str(), m_sSerializedSettingGUIXML.length(), nullptr);
 
-			GtkWidget* l_pSettingContainerWidget = GTK_WIDGET(gtk_builder_get_object(ioSettingsGUIBuilder, "scenario_io_setting-table"));
+			GtkWidget* settingContainerWidget = GTK_WIDGET(gtk_builder_get_object(ioSettingsGUIBuilder, "scenario_io_setting-table"));
 			// this has to be done since the widget is already inside a parent in the gtkbuilder
-			gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(l_pSettingContainerWidget)), l_pSettingContainerWidget);
+			gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(settingContainerWidget)), settingContainerWidget);
 
 			GtkWidget* l_pEntryLinkName = GTK_WIDGET(gtk_builder_get_object(ioSettingsGUIBuilder, "scenario_io_setting-label"));
 			gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(l_pEntryLinkName)), l_pEntryLinkName);
@@ -997,10 +995,10 @@ void CInterfacedScenario::redrawScenarioLinkSettings(GtkWidget* pLinkTable, cons
 			gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(ioSettingButtonUp)), ioSettingButtonUp);
 			GtkWidget* ioSettingButtonDown = GTK_WIDGET(gtk_builder_get_object(ioSettingsGUIBuilder, "scenario_io_setting-button_move_down"));
 			gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(ioSettingButtonDown)), ioSettingButtonDown);
-			GtkWidget* l_pSettingButtonEdit = GTK_WIDGET(gtk_builder_get_object(ioSettingsGUIBuilder, "scenario_io_setting-button_edit"));
-			gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(l_pSettingButtonEdit)), l_pSettingButtonEdit);
-			GtkWidget* l_pSettingButtonDelete = GTK_WIDGET(gtk_builder_get_object(ioSettingsGUIBuilder, "scenario_io_setting-button_delete"));
-			gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(l_pSettingButtonDelete)), l_pSettingButtonDelete);
+			GtkWidget* settingButtonEdit = GTK_WIDGET(gtk_builder_get_object(ioSettingsGUIBuilder, "scenario_io_setting-button_edit"));
+			gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(settingButtonEdit)), settingButtonEdit);
+			GtkWidget* settingButtonDelete = GTK_WIDGET(gtk_builder_get_object(ioSettingsGUIBuilder, "scenario_io_setting-button_delete"));
+			gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(settingButtonDelete)), settingButtonDelete);
 
 			// Set name
 			CString l_sLinkName;
@@ -1014,8 +1012,8 @@ void CInterfacedScenario::redrawScenarioLinkSettings(GtkWidget* pLinkTable, cons
 			gtk_table_attach(GTK_TABLE(pLinkTable), ioSettingComboboxType, 1, 2, linkIndex, linkIndex + 1, GTK_SHRINK, GTK_SHRINK, 4, 4);
 			gtk_table_attach(GTK_TABLE(pLinkTable), ioSettingButtonUp, 3, 4, linkIndex, linkIndex + 1, GTK_SHRINK, GTK_SHRINK, 4, 4);
 			gtk_table_attach(GTK_TABLE(pLinkTable), ioSettingButtonDown, 4, 5, linkIndex, linkIndex + 1, GTK_SHRINK, GTK_SHRINK, 4, 4);
-			gtk_table_attach(GTK_TABLE(pLinkTable), l_pSettingButtonEdit, 5, 6, linkIndex, linkIndex + 1, GTK_SHRINK, GTK_SHRINK, 4, 4);
-			gtk_table_attach(GTK_TABLE(pLinkTable), l_pSettingButtonDelete, 6, 7, linkIndex, linkIndex + 1, GTK_SHRINK, GTK_SHRINK, 4, 4);
+			gtk_table_attach(GTK_TABLE(pLinkTable), settingButtonEdit, 5, 6, linkIndex, linkIndex + 1, GTK_SHRINK, GTK_SHRINK, 4, 4);
+			gtk_table_attach(GTK_TABLE(pLinkTable), settingButtonDelete, 6, 7, linkIndex, linkIndex + 1, GTK_SHRINK, GTK_SHRINK, 4, 4);
 
 			// Set the callbacks
 			SLinkCallbackData l_oCallbackData;
@@ -1025,8 +1023,8 @@ void CInterfacedScenario::redrawScenarioLinkSettings(GtkWidget* pLinkTable, cons
 
 			vLinkCallbackData[linkIndex] = l_oCallbackData;
 
-			g_signal_connect(G_OBJECT(l_pSettingButtonDelete), "clicked", G_CALLBACK(delete_scenario_link_cb), &vLinkCallbackData[linkIndex]);
-			g_signal_connect(G_OBJECT(l_pSettingButtonEdit), "clicked", G_CALLBACK(edit_scenario_link_cb), &vLinkCallbackData[linkIndex]);
+			g_signal_connect(G_OBJECT(settingButtonDelete), "clicked", G_CALLBACK(delete_scenario_link_cb), &vLinkCallbackData[linkIndex]);
+			g_signal_connect(G_OBJECT(settingButtonEdit), "clicked", G_CALLBACK(edit_scenario_link_cb), &vLinkCallbackData[linkIndex]);
 			g_signal_connect(G_OBJECT(ioSettingButtonUp), "clicked", G_CALLBACK(modify_scenario_link_move_up_cb), &vLinkCallbackData[linkIndex]);
 			g_signal_connect(G_OBJECT(ioSettingButtonDown), "clicked", G_CALLBACK(modify_scenario_link_move_down_cb), &vLinkCallbackData[linkIndex]);
 
@@ -1236,7 +1234,7 @@ void CInterfacedScenario::redraw(IBox& box)
 		gdk_draw_rounded_rectangle(l_widget->window, l_pDrawGC, FALSE, xStart - 3, yStart - 3, xSize + 6, ySize + 6, gint(round(8.0 * m_currentScale)));
 	}
 
-	TAttributeHandler l_oAttributeHandler(box);
+	TAttributeHandler handler(box);
 
 	int l_iInputOffset = xSize / 2 - int(box.getInputCount()) * (iCircleSpace + iCircleSize) / 2 + iCircleSize / 4;
 	for (uint32_t i = 0; i < box.getInterfacorCountIncludingDeprecated(Input); ++i)
@@ -3481,9 +3479,9 @@ void CInterfacedScenario::contextMenuBoxToggleEnableAllCB()
 	{
 		if (m_rScenario.isBox(objectId))
 		{
-			TAttributeHandler l_oAttributeHandler(*m_rScenario.getBoxDetails(objectId));
-			if (l_oAttributeHandler.hasAttribute(OV_AttributeId_Box_Disabled)) { l_oAttributeHandler.removeAttribute(OV_AttributeId_Box_Disabled); }
-			else { l_oAttributeHandler.addAttribute(OV_AttributeId_Box_Disabled, 1); }
+			TAttributeHandler handler(*m_rScenario.getBoxDetails(objectId));
+			if (handler.hasAttribute(OV_AttributeId_Box_Disabled)) { handler.removeAttribute(OV_AttributeId_Box_Disabled); }
+			else { handler.addAttribute(OV_AttributeId_Box_Disabled, 1); }
 		}
 	}
 	this->snapshotCB();
@@ -3497,8 +3495,8 @@ void CInterfacedScenario::contextMenuBoxEnableAllCB()
 	{
 		if (m_rScenario.isBox(objectId))
 		{
-			TAttributeHandler l_oAttributeHandler(*m_rScenario.getBoxDetails(objectId));
-			if (l_oAttributeHandler.hasAttribute(OV_AttributeId_Box_Disabled)) { l_oAttributeHandler.removeAttribute(OV_AttributeId_Box_Disabled); }
+			TAttributeHandler handler(*m_rScenario.getBoxDetails(objectId));
+			if (handler.hasAttribute(OV_AttributeId_Box_Disabled)) { handler.removeAttribute(OV_AttributeId_Box_Disabled); }
 		}
 	}
 	this->snapshotCB();
@@ -3512,8 +3510,8 @@ void CInterfacedScenario::contextMenuBoxDisableAllCB()
 	{
 		if (m_rScenario.isBox(objectId))
 		{
-			TAttributeHandler l_oAttributeHandler(*m_rScenario.getBoxDetails(objectId));
-			if (!l_oAttributeHandler.hasAttribute(OV_AttributeId_Box_Disabled)) { l_oAttributeHandler.addAttribute(OV_AttributeId_Box_Disabled, 1); }
+			TAttributeHandler handler(*m_rScenario.getBoxDetails(objectId));
+			if (!handler.hasAttribute(OV_AttributeId_Box_Disabled)) { handler.addAttribute(OV_AttributeId_Box_Disabled, 1); }
 		}
 	}
 	this->snapshotCB();
@@ -3793,17 +3791,17 @@ void CInterfacedScenario::contextMenuBoxDocumentationCB(IBox& box) const
 void CInterfacedScenario::contextMenuBoxEnableCB(IBox& box)
 {
 	m_kernelContext.getLogManager() << LogLevel_Debug << "contextMenuBoxEnableCB\n";
-	TAttributeHandler l_oAttributeHandler(box);
-	l_oAttributeHandler.removeAttribute(OV_AttributeId_Box_Disabled);
+	TAttributeHandler handler(box);
+	handler.removeAttribute(OV_AttributeId_Box_Disabled);
 	this->snapshotCB();
 }
 
 void CInterfacedScenario::contextMenuBoxDisableCB(IBox& box)
 {
 	m_kernelContext.getLogManager() << LogLevel_Debug << "contextMenuBoxDisableCB\n";
-	TAttributeHandler l_oAttributeHandler(box);
-	if (!l_oAttributeHandler.hasAttribute(OV_AttributeId_Box_Disabled)) { l_oAttributeHandler.addAttribute(OV_AttributeId_Box_Disabled, 1); }
-	else { l_oAttributeHandler.setAttributeValue(OV_AttributeId_Box_Disabled, 1); }
+	TAttributeHandler handler(box);
+	if (!handler.hasAttribute(OV_AttributeId_Box_Disabled)) { handler.addAttribute(OV_AttributeId_Box_Disabled, 1); }
+	else { handler.setAttributeValue(OV_AttributeId_Box_Disabled, 1); }
 	this->snapshotCB();
 }
 

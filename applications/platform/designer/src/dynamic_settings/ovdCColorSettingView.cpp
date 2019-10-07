@@ -7,26 +7,21 @@ using namespace OpenViBE;
 using namespace OpenViBEDesigner;
 using namespace Setting;
 
-static void on_button_setting_color_choose_pressed(GtkColorButton* /*button*/, gpointer data) { static_cast<CColorSettingView *>(data)->selectColor(); }
+static void OnButtonSettingColorChoosePressed(GtkColorButton* /*button*/, gpointer data) { static_cast<CColorSettingView *>(data)->selectColor(); }
+static void OnChange(GtkEntry* /*entry*/, gpointer data) { static_cast<CColorSettingView*>(data)->onChange(); }
 
-static void on_change(GtkEntry* /*entry*/, gpointer data) { static_cast<CColorSettingView*>(data)->onChange(); }
-
-
-CColorSettingView::
-CColorSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& ctx): CAbstractSettingView(
-																																	 box, index, rBuilderName,
-																																	 "settings_collection-hbox_setting_color"),
-																																 m_kernelContext(ctx)
+CColorSettingView::CColorSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& ctx)
+	: CAbstractSettingView(box, index, rBuilderName, "settings_collection-hbox_setting_color"), m_kernelContext(ctx)
 {
-	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
+	GtkWidget* settingWidget = this->getEntryFieldWidget();
 
 	std::vector<GtkWidget*> widgets;
-	extractWidget(l_pSettingWidget, widgets);
+	extractWidget(settingWidget, widgets);
 	m_entry  = GTK_ENTRY(widgets[0]);
 	m_button = GTK_COLOR_BUTTON(widgets[1]);
 
-	g_signal_connect(G_OBJECT(m_entry), "changed", G_CALLBACK(on_change), this);
-	g_signal_connect(G_OBJECT(m_button), "color-set", G_CALLBACK(on_button_setting_color_choose_pressed), this);
+	g_signal_connect(G_OBJECT(m_entry), "changed", G_CALLBACK(OnChange), this);
+	g_signal_connect(G_OBJECT(m_button), "color-set", G_CALLBACK(OnButtonSettingColorChoosePressed), this);
 
 	initializeValue();
 }

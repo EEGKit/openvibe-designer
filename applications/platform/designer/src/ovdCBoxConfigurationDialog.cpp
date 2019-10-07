@@ -20,18 +20,18 @@ namespace
 	const char* const SETTING_NAME = "SettingValue";
 } // namespace
 
-static void on_file_override_check_toggled(GtkToggleButton* pToggleButton, gpointer data)
+static void onFileOverrideCheckToggled(GtkToggleButton* pToggleButton, gpointer data)
 {
 	gtk_widget_set_sensitive(static_cast<GtkWidget*>(data), !gtk_toggle_button_get_active(pToggleButton));
 }
 
-static void on_button_load_clicked(GtkButton*, gpointer data) { static_cast<CBoxConfigurationDialog*>(data)->loadConfiguration(); }
+static void OnButtonLoadClicked(GtkButton*, gpointer data) { static_cast<CBoxConfigurationDialog*>(data)->loadConfiguration(); }
 
-static void on_button_save_clicked(GtkButton*, gpointer data) { static_cast<CBoxConfigurationDialog*>(data)->saveConfiguration(); }
+static void OnButtonSaveClicked(GtkButton*, gpointer data) { static_cast<CBoxConfigurationDialog*>(data)->saveConfiguration(); }
 
-static void on_override_browse_clicked(GtkButton* /*button*/, gpointer data) { static_cast<CBoxConfigurationDialog*>(data)->onOverrideBrowse(); }
+static void OnOverrideBrowseClicked(GtkButton* /*button*/, gpointer data) { static_cast<CBoxConfigurationDialog*>(data)->onOverrideBrowse(); }
 
-static void collect_widget_cb(GtkWidget* widget, gpointer data) { static_cast<std::vector<GtkWidget*>*>(data)->push_back(widget); }
+static void CollectWidgetCB(GtkWidget* widget, gpointer data) { static_cast<std::vector<GtkWidget*>*>(data)->push_back(widget); }
 
 CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& ctx, IBox& box, const char* sGUIFilename, const char* sGUISettingsFilename,
 												 const bool isScenarioRunning)
@@ -86,17 +86,17 @@ CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& ctx, IBox
 			m_pOverrideEntryContainer = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterfaceSettingCollection, l_sSettingOverrideWidgetName.c_str()));
 
 			std::vector<GtkWidget*> widgets;
-			gtk_container_foreach(GTK_CONTAINER(m_pOverrideEntryContainer), collect_widget_cb, &widgets);
+			gtk_container_foreach(GTK_CONTAINER(m_pOverrideEntryContainer), CollectWidgetCB, &widgets);
 
 			gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(m_pOverrideEntryContainer)), m_pOverrideEntryContainer);
 			gtk_container_add(l_pFileOverrideContainer, m_pOverrideEntryContainer);
 			m_pOverrideEntry = GTK_ENTRY(widgets[0]);
 
 
-			g_signal_connect(G_OBJECT(m_pFileOverrideCheck), "toggled", G_CALLBACK(on_file_override_check_toggled), GTK_WIDGET(m_pSettingsTable));
-			g_signal_connect(G_OBJECT(widgets[1]), "clicked", G_CALLBACK(on_override_browse_clicked), this);
-			g_signal_connect(G_OBJECT(l_pButtonLoad), "clicked", G_CALLBACK(on_button_load_clicked), this);
-			g_signal_connect(G_OBJECT(l_pButtonSave), "clicked", G_CALLBACK(on_button_save_clicked), this);
+			g_signal_connect(G_OBJECT(m_pFileOverrideCheck), "toggled", G_CALLBACK(onFileOverrideCheckToggled), GTK_WIDGET(m_pSettingsTable));
+			g_signal_connect(G_OBJECT(widgets[1]), "clicked", G_CALLBACK(OnOverrideBrowseClicked), this);
+			g_signal_connect(G_OBJECT(l_pButtonLoad), "clicked", G_CALLBACK(OnButtonLoadClicked), this);
+			g_signal_connect(G_OBJECT(l_pButtonSave), "clicked", G_CALLBACK(OnButtonSaveClicked), this);
 
 			if (m_box.hasAttribute(OV_AttributeId_Box_SettingOverrideFilename))
 			{

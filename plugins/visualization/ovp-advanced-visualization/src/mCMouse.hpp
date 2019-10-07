@@ -42,7 +42,7 @@ namespace Mensia
 
 
 			CBoxAlgorithmViz& m_rBoxAlgorithmViz;
-			std::map<int, int> m_vButton;
+			std::map<int, int> m_Buttons;
 			int m_mouseX = 0;
 			int m_mouseY = 0;
 		};

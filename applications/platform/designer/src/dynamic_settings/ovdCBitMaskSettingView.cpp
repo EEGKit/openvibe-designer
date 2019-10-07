@@ -5,15 +5,15 @@ using namespace OpenViBE;
 using namespace OpenViBEDesigner;
 using namespace Setting;
 
-static void on_checkbutton__pressed(GtkToggleButton* /*button*/, gpointer data) { static_cast<CBitMaskSettingView *>(data)->onChange(); }
+static void OnCheckbuttonPressed(GtkToggleButton* /*button*/, gpointer data) { static_cast<CBitMaskSettingView *>(data)->onChange(); }
 
 CBitMaskSettingView::CBitMaskSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& ctx, const CIdentifier& typeID)
 	: CAbstractSettingView(box, index, rBuilderName, "settings_collection-table_setting_bitmask"), m_typeID(typeID), m_kernelContext(ctx)
 {
-	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
+	GtkWidget* settingWidget = this->getEntryFieldWidget();
 
 	const gint tableSize      = guint((m_kernelContext.getTypeManager().getBitMaskEntryCount(m_typeID) + 1) >> 1);
-	GtkTable* l_pBitMaskTable = GTK_TABLE(l_pSettingWidget);
+	GtkTable* l_pBitMaskTable = GTK_TABLE(settingWidget);
 	gtk_table_resize(l_pBitMaskTable, 2, tableSize);
 
 	for (uint64_t i = 0; i < m_kernelContext.getTypeManager().getBitMaskEntryCount(m_typeID); ++i)
@@ -22,11 +22,11 @@ CBitMaskSettingView::CBitMaskSettingView(Kernel::IBox& box, const uint32_t index
 		uint64_t l_ui64EntryValue;
 		if (m_kernelContext.getTypeManager().getBitMaskEntry(m_typeID, i, l_sEntryName, l_ui64EntryValue))
 		{
-			GtkWidget* l_pSettingButton = gtk_check_button_new();
-			gtk_table_attach_defaults(l_pBitMaskTable, l_pSettingButton, guint(i & 1), guint((i & 1) + 1), guint(i >> 1), guint((i >> 1) + 1));
-			gtk_button_set_label(GTK_BUTTON(l_pSettingButton), static_cast<const char*>(l_sEntryName));
-			m_toggleButton.push_back(GTK_TOGGLE_BUTTON(l_pSettingButton));
-			g_signal_connect(G_OBJECT(l_pSettingButton), "toggled", G_CALLBACK(on_checkbutton__pressed), this);
+			GtkWidget* settingButton = gtk_check_button_new();
+			gtk_table_attach_defaults(l_pBitMaskTable, settingButton, guint(i & 1), guint((i & 1) + 1), guint(i >> 1), guint((i >> 1) + 1));
+			gtk_button_set_label(GTK_BUTTON(settingButton), static_cast<const char*>(l_sEntryName));
+			m_toggleButton.push_back(GTK_TOGGLE_BUTTON(settingButton));
+			g_signal_connect(G_OBJECT(settingButton), "toggled", G_CALLBACK(OnCheckbuttonPressed), this);
 		}
 	}
 	gtk_widget_show_all(GTK_WIDGET(l_pBitMaskTable));

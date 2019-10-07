@@ -218,9 +218,9 @@ void CDesignerVisualization::init(const std::string& guiFile)
 		m_previewWindowW                             = l_pVisualizationWindow->getWidth();
 		m_previewWindowH                             = l_pVisualizationWindow->getHeight();
 		/* Change the way window sizes are stored in the widget
-		TAttributeHandler l_oAttributeHandler(*l_pVisualizationWindow);
-		m_previewWindowW = l_oAttributeHandler.getAttributeValue<int>(OVD_AttributeId_VisualizationWindow_Width);
-		m_previewWindowH = l_oAttributeHandler.getAttributeValue<int>(OVD_AttributeId_VisualizationWindow_Height);
+		TAttributeHandler handler(*l_pVisualizationWindow);
+		m_previewWindowW = handler.getAttributeValue<int>(OVD_AttributeId_VisualizationWindow_Width);
+		m_previewWindowH = handler.getAttributeValue<int>(OVD_AttributeId_VisualizationWindow_Height);
 		*/
 	}
 	gtk_window_set_default_size(GTK_WINDOW(m_pDialog), gint(treeViewWidth + m_previewWindowW), gint(m_previewWindowH));
@@ -377,9 +377,9 @@ void CDesignerVisualization::createTreeWidget(IVisualizationWidget* widget)
 	if (widget->getType() == VisualizationWidget_HorizontalSplit || widget->getType() == VisualizationWidget_VerticalSplit)
 	{
 		/* TODO_JL: Find a way to store divider position and max divider position
-		TAttributeHandler l_oAttributeHandler(*widget);
-		l_oAttributeHandler.addAttribute(OVD_AttributeId_VisualizationWidget_DividerPosition, 1);
-		l_oAttributeHandler.addAttribute(OVD_AttributeId_VisualizationWidget_MaxDividerPosition, 2);
+		TAttributeHandler handler(*widget);
+		handler.addAttribute(OVD_AttributeId_VisualizationWidget_DividerPosition, 1);
+		handler.addAttribute(OVD_AttributeId_VisualizationWidget_MaxDividerPosition, 2);
 		*/
 	}
 }

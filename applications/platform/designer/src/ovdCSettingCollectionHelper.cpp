@@ -16,16 +16,16 @@ using namespace std;
 
 namespace
 {
-	void collect_widget_cb(GtkWidget* widget, gpointer data) { static_cast<vector<GtkWidget*>*>(data)->push_back(widget); }
+	void CollectWidgetCB(GtkWidget* widget, gpointer data) { static_cast<vector<GtkWidget*>*>(data)->push_back(widget); }
 
-	void remove_widget_cb(GtkWidget* widget, gpointer data) { gtk_container_remove(GTK_CONTAINER(data), widget); }
+	void RemoveWidgetCB(GtkWidget* widget, gpointer data) { gtk_container_remove(GTK_CONTAINER(data), widget); }
 
 	// ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- -----------
 
 	void on_entry_setting_bool_edited(GtkEntry* pEntry, gpointer /*data*/)
 	{
 		vector<GtkWidget*> widgets;
-		gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(pEntry))), collect_widget_cb, &widgets);
+		gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(pEntry))), CollectWidgetCB, &widgets);
 		GtkToggleButton* l_widget = GTK_TOGGLE_BUTTON(widgets[1]);
 
 		const std::string l_sEntryValue = gtk_entry_get_text(pEntry);
@@ -45,7 +45,7 @@ namespace
 	void on_checkbutton_setting_bool_pressed(GtkToggleButton* button, gpointer /*data*/)
 	{
 		vector<GtkWidget*> widgets;
-		gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), collect_widget_cb, &widgets);
+		gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), CollectWidgetCB, &widgets);
 		GtkEntry* l_widget = GTK_ENTRY(widgets[0]);
 
 		if (gtk_toggle_button_get_active(button)) { gtk_entry_set_text(l_widget, "true"); }
@@ -58,7 +58,7 @@ namespace
 		const IKernelContext& l_rKernelContext = static_cast<CSettingCollectionHelper*>(data)->m_kernelContext;
 
 		vector<GtkWidget*> widgets;
-		gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), collect_widget_cb, &widgets);
+		gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), CollectWidgetCB, &widgets);
 		GtkEntry* l_widget = GTK_ENTRY(widgets[0]);
 
 		char l_sValue[1024];
@@ -68,16 +68,16 @@ namespace
 		gtk_entry_set_text(l_widget, l_sValue);
 	}
 
-	void on_button_setting_integer_up_pressed(GtkButton* button, gpointer data) { on_button_setting_integer_pressed(button, data, 1); }
+	void OnButtonSettingIntegerUpPressed(GtkButton* button, gpointer data) { on_button_setting_integer_pressed(button, data, 1); }
 
-	void on_button_setting_integer_down_pressed(GtkButton* button, gpointer data) { on_button_setting_integer_pressed(button, data, -1); }
+	void OnButtonSettingIntegerDownPressed(GtkButton* button, gpointer data) { on_button_setting_integer_pressed(button, data, -1); }
 
 	void on_button_setting_float_pressed(GtkButton* button, gpointer data, const gdouble offset)
 	{
 		const IKernelContext& l_rKernelContext = static_cast<CSettingCollectionHelper*>(data)->m_kernelContext;
 
 		vector<GtkWidget*> widgets;
-		gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), collect_widget_cb, &widgets);
+		gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), CollectWidgetCB, &widgets);
 		GtkEntry* l_widget = GTK_ENTRY(widgets[0]);
 
 		char l_sValue[1024];
@@ -87,16 +87,16 @@ namespace
 		gtk_entry_set_text(l_widget, l_sValue);
 	}
 
-	void on_button_setting_float_up_pressed(GtkButton* button, gpointer data) { on_button_setting_float_pressed(button, data, 1); }
+	void OnButtonSettingFloatUpPressed(GtkButton* button, gpointer data) { on_button_setting_float_pressed(button, data, 1); }
 
-	void on_button_setting_float_down_pressed(GtkButton* button, gpointer data) { on_button_setting_float_pressed(button, data, -1); }
+	void OnButtonSettingFloatDownPressed(GtkButton* button, gpointer data) { on_button_setting_float_pressed(button, data, -1); }
 
-	void on_button_setting_filename_browse_pressed(GtkButton* button, gpointer data)
+	void OnButtonSettingFilenameBrowsePressed(GtkButton* button, gpointer data)
 	{
 		const IKernelContext& l_rKernelContext = static_cast<CSettingCollectionHelper*>(data)->m_kernelContext;
 
 		vector<GtkWidget*> widgets;
-		gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), collect_widget_cb, &widgets);
+		gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), CollectWidgetCB, &widgets);
 		GtkEntry* l_widget = GTK_ENTRY(widgets[0]);
 
 		GtkWidget* widgetDialogOpen = gtk_file_chooser_dialog_new("Select file to open...", nullptr,
@@ -133,7 +133,7 @@ namespace
 		const IKernelContext& l_rKernelContext = static_cast<CSettingCollectionHelper*>(data)->m_kernelContext;
 
 		vector<GtkWidget*> widgets;
-		gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), collect_widget_cb, &widgets);
+		gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), CollectWidgetCB, &widgets);
 		GtkEntry* l_widget = GTK_ENTRY(widgets[0]);
 
 		GtkWidget* widgetDialogOpen = gtk_file_chooser_dialog_new("Select folder to open...", nullptr, GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
@@ -165,12 +165,12 @@ namespace
 	}
 	// ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- -----------
 
-	void on_button_setting_script_edit_pressed(GtkButton* button, gpointer data)
+	void OnButtonSettingScriptEditPressed(GtkButton* button, gpointer data)
 	{
 		const IKernelContext& l_rKernelContext = static_cast<CSettingCollectionHelper*>(data)->m_kernelContext;
 
 		vector<GtkWidget*> widgets;
-		gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), collect_widget_cb, &widgets);
+		gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), CollectWidgetCB, &widgets);
 		GtkEntry* l_widget = GTK_ENTRY(widgets[0]);
 
 		const CString fileName         = l_rKernelContext.getConfigurationManager().expand(gtk_entry_get_text(l_widget));
@@ -194,10 +194,10 @@ namespace
 
 	// ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- -----------
 
-	void on_button_setting_color_choose_pressed(GtkColorButton* button, gpointer /*data*/)
+	void OnButtonSettingColorChoosePressed(GtkColorButton* button, gpointer /*data*/)
 	{
 		vector<GtkWidget*> widgets;
-		gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), collect_widget_cb, &widgets);
+		gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), CollectWidgetCB, &widgets);
 		GtkEntry* l_widget = GTK_ENTRY(widgets[0]);
 		GdkColor l_oColor;
 		gtk_color_button_get_color(button, &l_oColor);
@@ -229,11 +229,11 @@ namespace
 		map<GtkSpinButton*, uint32_t> vSpinButtonMap;
 	} SColorGradientData;
 
-	void on_gtk_widget_destroy_cb(GtkWidget* widget, gpointer /*data*/) { gtk_widget_destroy(widget); }
+	void OnGTKWidgetDestroy(GtkWidget* widget, gpointer /*data*/) { gtk_widget_destroy(widget); }
 
-	void on_initialize_color_gradient(GtkWidget* widget, gpointer data);
+	void OnInitializeColorGradient(GtkWidget* widget, gpointer data);
 
-	void on_refresh_color_gradient(GtkWidget* /*widget*/, GdkEventExpose* /*pEvent*/, gpointer data)
+	void OnRefreshColorGradient(GtkWidget* /*widget*/, GdkEventExpose* /*pEvent*/, gpointer data)
 	{
 		auto* l_pUserData = static_cast<SColorGradientData*>(data);
 
@@ -272,7 +272,7 @@ namespace
 		g_object_unref(l_pGC);
 	}
 
-	void on_color_gradient_spin_button_value_changed(GtkSpinButton* button, gpointer data)
+	void OnColorGradientSpinButtonValueChanged(GtkSpinButton* button, gpointer data)
 	{
 		auto* l_pUserData = static_cast<SColorGradientData*>(data);
 
@@ -294,10 +294,10 @@ namespace
 
 		l_pUserData->vColorGradient[i].fPercent = gtk_spin_button_get_value(button);
 
-		on_refresh_color_gradient(nullptr, nullptr, data);
+		OnRefreshColorGradient(nullptr, nullptr, data);
 	}
 
-	void on_color_gradient_color_button_pressed(GtkColorButton* button, gpointer data)
+	void OnColorGradientColorButtonPressed(GtkColorButton* button, gpointer data)
 	{
 		auto* l_pUserData = static_cast<SColorGradientData*>(data);
 
@@ -306,16 +306,16 @@ namespace
 
 		l_pUserData->vColorGradient[l_pUserData->vColorButtonMap[button]].oColor = l_oColor;
 
-		on_refresh_color_gradient(nullptr, nullptr, data);
+		OnRefreshColorGradient(nullptr, nullptr, data);
 	}
 
-	void on_initialize_color_gradient(GtkWidget* /*widget*/, gpointer data)
+	void OnInitializeColorGradient(GtkWidget* /*widget*/, gpointer data)
 	{
 		auto* l_pUserData = static_cast<SColorGradientData*>(data);
 
 		gtk_widget_hide(l_pUserData->pContainer);
 
-		gtk_container_foreach(GTK_CONTAINER(l_pUserData->pContainer), on_gtk_widget_destroy_cb, nullptr);
+		gtk_container_foreach(GTK_CONTAINER(l_pUserData->pContainer), OnGTKWidgetDestroy, nullptr);
 
 		uint32_t i         = 0;
 		const size_t count = l_pUserData->vColorGradient.size();
@@ -336,8 +336,8 @@ namespace
 			gtk_color_button_set_color(it->pColorButton, &it->oColor);
 			gtk_spin_button_set_value(it->pSpinButton, it->fPercent);
 
-			g_signal_connect(G_OBJECT(it->pColorButton), "color-set", G_CALLBACK(on_color_gradient_color_button_pressed), l_pUserData);
-			g_signal_connect(G_OBJECT(it->pSpinButton), "value-changed", G_CALLBACK(on_color_gradient_spin_button_value_changed), l_pUserData);
+			g_signal_connect(G_OBJECT(it->pColorButton), "color-set", G_CALLBACK(OnColorGradientColorButtonPressed), l_pUserData);
+			g_signal_connect(G_OBJECT(it->pSpinButton), "value-changed", G_CALLBACK(OnColorGradientSpinButtonValueChanged), l_pUserData);
 
 			g_object_ref(l_widget);
 			gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(l_widget)), l_widget);
@@ -356,35 +356,35 @@ namespace
 		gtk_widget_show(l_pUserData->pContainer);
 	}
 
-	void on_button_color_gradient_add_pressed(GtkButton* /*button*/, gpointer data)
+	void OnButtonColorGradientAddPressed(GtkButton* /*button*/, gpointer data)
 	{
 		auto* l_pUserData = static_cast<SColorGradientData*>(data);
 		l_pUserData->vColorGradient.resize(l_pUserData->vColorGradient.size() + 1);
 		l_pUserData->vColorGradient[l_pUserData->vColorGradient.size() - 1].fPercent = 100;
-		on_initialize_color_gradient(nullptr, data);
-		on_refresh_color_gradient(nullptr, nullptr, data);
+		OnInitializeColorGradient(nullptr, data);
+		OnRefreshColorGradient(nullptr, nullptr, data);
 	}
 
-	void on_button_color_gradient_remove_pressed(GtkButton* /*button*/, gpointer data)
+	void OnButtonColorGradientRemovePressed(GtkButton* /*button*/, gpointer data)
 	{
 		auto* l_pUserData = static_cast<SColorGradientData*>(data);
 		if (l_pUserData->vColorGradient.size() > 2)
 		{
 			l_pUserData->vColorGradient.resize(l_pUserData->vColorGradient.size() - 1);
 			l_pUserData->vColorGradient[l_pUserData->vColorGradient.size() - 1].fPercent = 100;
-			on_initialize_color_gradient(nullptr, data);
-			on_refresh_color_gradient(nullptr, nullptr, data);
+			OnInitializeColorGradient(nullptr, data);
+			OnRefreshColorGradient(nullptr, nullptr, data);
 		}
 	}
 
-	void on_button_setting_color_gradient_configure_pressed(GtkButton* button, gpointer data)
+	void OnButtonSettingColorGradientConfigurePressed(GtkButton* button, gpointer data)
 	{
 		SColorGradientData l_oUserData;
 
 		l_oUserData.sGUIFilename = static_cast<CSettingCollectionHelper*>(data)->m_sGUIFilename.toASCIIString();
 
 		vector<GtkWidget*> widgets;
-		gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), collect_widget_cb, &widgets);
+		gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), CollectWidgetCB, &widgets);
 		GtkEntry* l_widget = GTK_ENTRY(widgets[0]);
 
 		GtkBuilder* l_pBuilderInterface =
@@ -412,12 +412,12 @@ namespace
 		l_oUserData.pContainer   = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-vbox"));
 		l_oUserData.pDrawingArea = GTK_WIDGET(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-drawingarea"));
 
-		g_signal_connect(G_OBJECT(l_oUserData.pDialog), "show", G_CALLBACK(on_initialize_color_gradient), &l_oUserData);
-		g_signal_connect(G_OBJECT(l_oUserData.pDrawingArea), "expose_event", G_CALLBACK(on_refresh_color_gradient), &l_oUserData);
+		g_signal_connect(G_OBJECT(l_oUserData.pDialog), "show", G_CALLBACK(OnInitializeColorGradient), &l_oUserData);
+		g_signal_connect(G_OBJECT(l_oUserData.pDrawingArea), "expose_event", G_CALLBACK(OnRefreshColorGradient), &l_oUserData);
 		g_signal_connect(G_OBJECT(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-add_button")), "pressed",
-						 G_CALLBACK(on_button_color_gradient_add_pressed), &l_oUserData);
+						 G_CALLBACK(OnButtonColorGradientAddPressed), &l_oUserData);
 		g_signal_connect(G_OBJECT(gtk_builder_get_object(l_pBuilderInterface, "setting_editor-color_gradient-remove_button")), "pressed",
-						 G_CALLBACK(on_button_color_gradient_remove_pressed), &l_oUserData);
+						 G_CALLBACK(OnButtonColorGradientRemovePressed), &l_oUserData);
 
 		if (gtk_dialog_run(GTK_DIALOG(l_oUserData.pDialog)) == GTK_RESPONSE_APPLY)
 		{
@@ -508,7 +508,7 @@ CString CSettingCollectionHelper::getValueBoolean(GtkWidget* widget)
 {
 	vector<GtkWidget*> widgets;
 	if (!GTK_IS_CONTAINER(widget)) { return "false"; }
-	gtk_container_foreach(GTK_CONTAINER(widget), collect_widget_cb, &widgets);
+	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
 	if (!GTK_IS_ENTRY(widgets[1])) { return "false"; }
 	GtkEntry* l_widget = GTK_ENTRY(widgets[1]);
 	return CString(gtk_entry_get_text(l_widget));
@@ -518,7 +518,7 @@ CString CSettingCollectionHelper::getValueInteger(GtkWidget* widget)
 {
 	vector<GtkWidget*> widgets;
 	if (!GTK_IS_CONTAINER(widget)) { return "0"; }
-	gtk_container_foreach(GTK_CONTAINER(widget), collect_widget_cb, &widgets);
+	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
 	if (!GTK_IS_ENTRY(widgets[0])) { return "O"; }
 	GtkEntry* l_widget = GTK_ENTRY(widgets[0]);
 	return CString(gtk_entry_get_text(l_widget));
@@ -528,7 +528,7 @@ CString CSettingCollectionHelper::getValueFloat(GtkWidget* widget)
 {
 	vector<GtkWidget*> widgets;
 	if (!GTK_IS_CONTAINER(widget)) { return "0"; }
-	gtk_container_foreach(GTK_CONTAINER(widget), collect_widget_cb, &widgets);
+	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
 	if (!GTK_IS_ENTRY(widgets[0])) { return "O"; }
 	GtkEntry* l_widget = GTK_ENTRY(widgets[0]);
 	return CString(gtk_entry_get_text(l_widget));
@@ -545,7 +545,7 @@ CString CSettingCollectionHelper::getValueFilename(GtkWidget* widget)
 {
 	vector<GtkWidget*> widgets;
 	if (!GTK_IS_CONTAINER(widget)) { return ""; }
-	gtk_container_foreach(GTK_CONTAINER(widget), collect_widget_cb, &widgets);
+	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
 	if (!GTK_IS_ENTRY(widgets[0])) { return ""; }
 	GtkEntry* l_widget = GTK_ENTRY(widgets[0]);
 	return CString(gtk_entry_get_text(l_widget));
@@ -555,7 +555,7 @@ CString CSettingCollectionHelper::getValueFoldername(GtkWidget* widget)
 {
 	vector<GtkWidget*> widgets;
 	if (!GTK_IS_CONTAINER(widget)) { return ""; }
-	gtk_container_foreach(GTK_CONTAINER(widget), collect_widget_cb, &widgets);
+	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
 	if (!GTK_IS_ENTRY(widgets[0])) { return ""; }
 	GtkEntry* l_widget = GTK_ENTRY(widgets[0]);
 	return CString(gtk_entry_get_text(l_widget));
@@ -565,7 +565,7 @@ CString CSettingCollectionHelper::getValueScript(GtkWidget* widget)
 {
 	vector<GtkWidget*> widgets;
 	if (!GTK_IS_CONTAINER(widget)) { return ""; }
-	gtk_container_foreach(GTK_CONTAINER(widget), collect_widget_cb, &widgets);
+	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
 	if (!GTK_IS_ENTRY(widgets[0])) { return ""; }
 	GtkEntry* l_widget = GTK_ENTRY(widgets[0]);
 	return CString(gtk_entry_get_text(l_widget));
@@ -575,7 +575,7 @@ CString CSettingCollectionHelper::getValueColor(GtkWidget* widget)
 {
 	vector<GtkWidget*> widgets;
 	if (!GTK_IS_CONTAINER(widget)) { return ""; }
-	gtk_container_foreach(GTK_CONTAINER(widget), collect_widget_cb, &widgets);
+	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
 	if (!GTK_IS_ENTRY(widgets[0])) { return ""; }
 	GtkEntry* l_widget = GTK_ENTRY(widgets[0]);
 	return CString(gtk_entry_get_text(l_widget));
@@ -585,7 +585,7 @@ CString CSettingCollectionHelper::getValueColorGradient(GtkWidget* widget)
 {
 	vector<GtkWidget*> widgets;
 	if (!GTK_IS_CONTAINER(widget)) { return ""; }
-	gtk_container_foreach(GTK_CONTAINER(widget), collect_widget_cb, &widgets);
+	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
 	if (!GTK_IS_ENTRY(widgets[0])) { return ""; }
 	GtkEntry* l_widget = GTK_ENTRY(widgets[0]);
 	return CString(gtk_entry_get_text(l_widget));
@@ -602,7 +602,7 @@ CString CSettingCollectionHelper::getValueBitMask(const CIdentifier& /*typeID*/,
 {
 	vector<GtkWidget*> widgets;
 	if (!GTK_IS_CONTAINER(widget)) { return ""; }
-	gtk_container_foreach(GTK_CONTAINER(widget), collect_widget_cb, &widgets);
+	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
 	string res;
 
 	for (auto& window : widgets)
@@ -639,7 +639,7 @@ void CSettingCollectionHelper::setValue(const CIdentifier& typeID, GtkWidget* wi
 void CSettingCollectionHelper::setValueBoolean(GtkWidget* widget, const CString& rValue)
 {
 	vector<GtkWidget*> widgets;
-	gtk_container_foreach(GTK_CONTAINER(widget), collect_widget_cb, &widgets);
+	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
 	GtkEntry* l_pEntryWidget               = GTK_ENTRY(widgets[0]);
 	GtkToggleButton* l_pToggleButtonWidget = GTK_TOGGLE_BUTTON(widgets[1]);
 
@@ -656,11 +656,11 @@ void CSettingCollectionHelper::setValueBoolean(GtkWidget* widget, const CString&
 void CSettingCollectionHelper::setValueInteger(GtkWidget* widget, const CString& rValue)
 {
 	vector<GtkWidget*> widgets;
-	gtk_container_foreach(GTK_CONTAINER(widget), collect_widget_cb, &widgets);
+	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
 	GtkEntry* l_widget = GTK_ENTRY(widgets[0]);
 
-	g_signal_connect(G_OBJECT(widgets[1]), "clicked", G_CALLBACK(on_button_setting_integer_up_pressed), this);
-	g_signal_connect(G_OBJECT(widgets[2]), "clicked", G_CALLBACK(on_button_setting_integer_down_pressed), this);
+	g_signal_connect(G_OBJECT(widgets[1]), "clicked", G_CALLBACK(OnButtonSettingIntegerUpPressed), this);
+	g_signal_connect(G_OBJECT(widgets[2]), "clicked", G_CALLBACK(OnButtonSettingIntegerDownPressed), this);
 
 	gtk_entry_set_text(l_widget, rValue);
 }
@@ -668,11 +668,11 @@ void CSettingCollectionHelper::setValueInteger(GtkWidget* widget, const CString&
 void CSettingCollectionHelper::setValueFloat(GtkWidget* widget, const CString& rValue)
 {
 	vector<GtkWidget*> widgets;
-	gtk_container_foreach(GTK_CONTAINER(widget), collect_widget_cb, &widgets);
+	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
 	GtkEntry* l_widget = GTK_ENTRY(widgets[0]);
 
-	g_signal_connect(G_OBJECT(widgets[1]), "clicked", G_CALLBACK(on_button_setting_float_up_pressed), this);
-	g_signal_connect(G_OBJECT(widgets[2]), "clicked", G_CALLBACK(on_button_setting_float_down_pressed), this);
+	g_signal_connect(G_OBJECT(widgets[1]), "clicked", G_CALLBACK(OnButtonSettingFloatUpPressed), this);
+	g_signal_connect(G_OBJECT(widgets[2]), "clicked", G_CALLBACK(OnButtonSettingFloatDownPressed), this);
 
 	gtk_entry_set_text(l_widget, rValue);
 }
@@ -686,10 +686,10 @@ void CSettingCollectionHelper::setValueString(GtkWidget* widget, const CString& 
 void CSettingCollectionHelper::setValueFilename(GtkWidget* widget, const CString& rValue)
 {
 	vector<GtkWidget*> widgets;
-	gtk_container_foreach(GTK_CONTAINER(widget), collect_widget_cb, &widgets);
+	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
 	GtkEntry* l_widget = GTK_ENTRY(widgets[0]);
 
-	g_signal_connect(G_OBJECT(widgets[1]), "clicked", G_CALLBACK(on_button_setting_filename_browse_pressed), this);
+	g_signal_connect(G_OBJECT(widgets[1]), "clicked", G_CALLBACK(OnButtonSettingFilenameBrowsePressed), this);
 
 	gtk_entry_set_text(l_widget, rValue);
 }
@@ -697,7 +697,7 @@ void CSettingCollectionHelper::setValueFilename(GtkWidget* widget, const CString
 void CSettingCollectionHelper::setValueFoldername(GtkWidget* widget, const CString& rValue)
 {
 	vector<GtkWidget*> widgets;
-	gtk_container_foreach(GTK_CONTAINER(widget), collect_widget_cb, &widgets);
+	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
 	GtkEntry* l_widget = GTK_ENTRY(widgets[0]);
 
 	g_signal_connect(G_OBJECT(widgets[1]), "clicked", G_CALLBACK(on_button_setting_foldername_browse_pressed), this);
@@ -708,11 +708,11 @@ void CSettingCollectionHelper::setValueFoldername(GtkWidget* widget, const CStri
 void CSettingCollectionHelper::setValueScript(GtkWidget* widget, const CString& rValue)
 {
 	vector<GtkWidget*> widgets;
-	gtk_container_foreach(GTK_CONTAINER(widget), collect_widget_cb, &widgets);
+	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
 	GtkEntry* l_widget = GTK_ENTRY(widgets[0]);
 
-	g_signal_connect(G_OBJECT(widgets[1]), "clicked", G_CALLBACK(on_button_setting_script_edit_pressed), this);
-	g_signal_connect(G_OBJECT(widgets[2]), "clicked", G_CALLBACK(on_button_setting_filename_browse_pressed), this);
+	g_signal_connect(G_OBJECT(widgets[1]), "clicked", G_CALLBACK(OnButtonSettingScriptEditPressed), this);
+	g_signal_connect(G_OBJECT(widgets[2]), "clicked", G_CALLBACK(OnButtonSettingFilenameBrowsePressed), this);
 
 	gtk_entry_set_text(l_widget, rValue);
 }
@@ -720,10 +720,10 @@ void CSettingCollectionHelper::setValueScript(GtkWidget* widget, const CString& 
 void CSettingCollectionHelper::setValueColor(GtkWidget* widget, const CString& rValue)
 {
 	vector<GtkWidget*> widgets;
-	gtk_container_foreach(GTK_CONTAINER(widget), collect_widget_cb, &widgets);
+	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
 	GtkEntry* l_widget = GTK_ENTRY(widgets[0]);
 
-	g_signal_connect(G_OBJECT(widgets[1]), "color-set", G_CALLBACK(on_button_setting_color_choose_pressed), this);
+	g_signal_connect(G_OBJECT(widgets[1]), "color-set", G_CALLBACK(OnButtonSettingColorChoosePressed), this);
 
 	int r = 0, g = 0, b = 0;
 	sscanf(m_kernelContext.getConfigurationManager().expand(rValue).toASCIIString(), "%i,%i,%i", &r, &g, &b);
@@ -740,19 +740,19 @@ void CSettingCollectionHelper::setValueColor(GtkWidget* widget, const CString& r
 void CSettingCollectionHelper::setValueColorGradient(GtkWidget* widget, const CString& rValue)
 {
 	vector<GtkWidget*> widgets;
-	gtk_container_foreach(GTK_CONTAINER(widget), collect_widget_cb, &widgets);
+	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
 	GtkEntry* l_widget = GTK_ENTRY(widgets[0]);
 
-	g_signal_connect(G_OBJECT(widgets[1]), "clicked", G_CALLBACK(on_button_setting_color_gradient_configure_pressed), this);
+	g_signal_connect(G_OBJECT(widgets[1]), "clicked", G_CALLBACK(OnButtonSettingColorGradientConfigurePressed), this);
 
 	gtk_entry_set_text(l_widget, rValue);
 }
 
 void CSettingCollectionHelper::setValueEnumeration(const CIdentifier& typeID, GtkWidget* widget, const CString& rValue) const
 {
-	GtkTreeIter l_oListIter;
+	GtkTreeIter listIter;
 	GtkComboBox* l_widget      = GTK_COMBO_BOX(widget);
-	GtkListStore* l_pList      = GTK_LIST_STORE(gtk_combo_box_get_model(l_widget));
+	GtkListStore* list      = GTK_LIST_STORE(gtk_combo_box_get_model(l_widget));
 	const uint64_t l_ui64Value = m_kernelContext.getTypeManager().getEnumerationEntryValueFromName(typeID, rValue);
 	uint64_t i;
 
@@ -773,12 +773,12 @@ void CSettingCollectionHelper::setValueEnumeration(const CIdentifier& typeID, Gt
 	}
 
 	gtk_combo_box_set_wrap_width(l_widget, 0);
-	gtk_list_store_clear(l_pList);
+	gtk_list_store_clear(list);
 	i = 0;
 	for (auto it = m_vListEntries.begin(); it != m_vListEntries.end(); ++it, i++)
 	{
-		gtk_list_store_append(l_pList, &l_oListIter);
-		gtk_list_store_set(l_pList, &l_oListIter, 0, it->first.toASCIIString(), -1);
+		gtk_list_store_append(list, &listIter);
+		gtk_list_store_set(list, &listIter, 0, it->first.toASCIIString(), -1);
 
 		if (l_ui64Value == it->second) { gtk_combo_box_set_active(l_widget, gint(i)); }
 	}
@@ -786,15 +786,15 @@ void CSettingCollectionHelper::setValueEnumeration(const CIdentifier& typeID, Gt
 	}
 	else
 	{
-		gtk_list_store_clear(l_pList);
+		gtk_list_store_clear(list);
 		for (i = 0; i < m_kernelContext.getTypeManager().getEnumerationEntryCount(typeID); ++i)
 		{
 			CString l_sEntryName;
 			uint64_t l_ui64EntryValue;
 			if (m_kernelContext.getTypeManager().getEnumerationEntry(typeID, i, l_sEntryName, l_ui64EntryValue))
 			{
-				gtk_list_store_append(l_pList, &l_oListIter);
-				gtk_list_store_set(l_pList, &l_oListIter, 0, l_sEntryName.toASCIIString(), -1);
+				gtk_list_store_append(list, &listIter);
+				gtk_list_store_set(list, &listIter, 0, l_sEntryName.toASCIIString(), -1);
 
 				if (l_ui64Value == l_ui64EntryValue) { gtk_combo_box_set_active(l_widget, gint(i)); }
 			}
@@ -803,15 +803,15 @@ void CSettingCollectionHelper::setValueEnumeration(const CIdentifier& typeID, Gt
 #endif
 	if (gtk_combo_box_get_active(l_widget) == -1)
 	{
-		gtk_list_store_append(l_pList, &l_oListIter);
-		gtk_list_store_set(l_pList, &l_oListIter, 0, rValue.toASCIIString(), -1);
+		gtk_list_store_append(list, &listIter);
+		gtk_list_store_set(list, &listIter, 0, rValue.toASCIIString(), -1);
 		gtk_combo_box_set_active(l_widget, gint(i)); // $$$ i should be ok :)
 	}
 }
 
 void CSettingCollectionHelper::setValueBitMask(const CIdentifier& typeID, GtkWidget* widget, const CString& rValue) const
 {
-	gtk_container_foreach(GTK_CONTAINER(widget), remove_widget_cb, widget);
+	gtk_container_foreach(GTK_CONTAINER(widget), RemoveWidgetCB, widget);
 
 	const string l_sValue(rValue);
 
@@ -825,13 +825,13 @@ void CSettingCollectionHelper::setValueBitMask(const CIdentifier& typeID, GtkWid
 		uint64_t l_ui64EntryValue;
 		if (m_kernelContext.getTypeManager().getBitMaskEntry(typeID, i, l_sEntryName, l_ui64EntryValue))
 		{
-			GtkWidget* l_pSettingButton = gtk_check_button_new();
-			gtk_table_attach_defaults(l_pBitMaskTable, l_pSettingButton, guint(i & 1), guint((i & 1) + 1), guint(i >> 1), guint((i >> 1) + 1));
-			gtk_button_set_label(GTK_BUTTON(l_pSettingButton), static_cast<const char*>(l_sEntryName));
+			GtkWidget* settingButton = gtk_check_button_new();
+			gtk_table_attach_defaults(l_pBitMaskTable, settingButton, guint(i & 1), guint((i & 1) + 1), guint(i >> 1), guint((i >> 1) + 1));
+			gtk_button_set_label(GTK_BUTTON(settingButton), static_cast<const char*>(l_sEntryName));
 
 			if (l_sValue.find(static_cast<const char*>(l_sEntryName)) != string::npos)
 			{
-				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(l_pSettingButton), true);
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(settingButton), true);
 			}
 		}
 	}

@@ -26,9 +26,9 @@ CBoxProxy::CBoxProxy(const IKernelContext& ctx, IScenario& scenario, const CIden
 		}
 		else { m_IsBoxAlgorithmPresent = m_kernelContext.getPluginManager().canCreatePluginObject(m_pConstBox->getAlgorithmClassIdentifier()); }
 
-		const TAttributeHandler l_oAttributeHandler(*m_pConstBox);
-		m_centerX = l_oAttributeHandler.getAttributeValue<int>(OV_AttributeId_Box_XCenterPosition);
-		m_centerY = l_oAttributeHandler.getAttributeValue<int>(OV_AttributeId_Box_YCenterPosition);
+		const TAttributeHandler handler(*m_pConstBox);
+		m_centerX = handler.getAttributeValue<int>(OV_AttributeId_Box_XCenterPosition);
+		m_centerY = handler.getAttributeValue<int>(OV_AttributeId_Box_YCenterPosition);
 	}
 	m_bShowOriginalNameWhenModified = m_kernelContext.getConfigurationManager().expandAsBoolean("${Designer_ShowOriginalBoxName}", true);
 }
@@ -63,19 +63,19 @@ void CBoxProxy::apply()
 {
 	if (m_pBox)
 	{
-		TAttributeHandler l_oAttributeHandler(*m_pBox);
+		TAttributeHandler handler(*m_pBox);
 
-		if (l_oAttributeHandler.hasAttribute(OV_AttributeId_Box_XCenterPosition))
+		if (handler.hasAttribute(OV_AttributeId_Box_XCenterPosition))
 		{
-			l_oAttributeHandler.setAttributeValue<int>(OV_AttributeId_Box_XCenterPosition, m_centerX);
+			handler.setAttributeValue<int>(OV_AttributeId_Box_XCenterPosition, m_centerX);
 		}
-		else { l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Box_XCenterPosition, m_centerX); }
+		else { handler.addAttribute<int>(OV_AttributeId_Box_XCenterPosition, m_centerX); }
 
-		if (l_oAttributeHandler.hasAttribute(OV_AttributeId_Box_YCenterPosition))
+		if (handler.hasAttribute(OV_AttributeId_Box_YCenterPosition))
 		{
-			l_oAttributeHandler.setAttributeValue<int>(OV_AttributeId_Box_YCenterPosition, m_centerY);
+			handler.setAttributeValue<int>(OV_AttributeId_Box_YCenterPosition, m_centerY);
 		}
-		else { l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Box_YCenterPosition, m_centerY); }
+		else { handler.addAttribute<int>(OV_AttributeId_Box_YCenterPosition, m_centerY); }
 
 		m_applied = true;
 	}
@@ -183,8 +183,8 @@ const char* CBoxProxy::getStatusLabel() const
 
 bool CBoxProxy::isDisabled() const
 {
-	const TAttributeHandler l_oAttributeHandler(*m_pConstBox);
-	return l_oAttributeHandler.hasAttribute(OV_AttributeId_Box_Disabled);
+	const TAttributeHandler handler(*m_pConstBox);
+	return handler.hasAttribute(OV_AttributeId_Box_Disabled);
 }
 
 void CBoxProxy::updateSize(GtkWidget* widget, const char* sLabel, const char* sStatus, int* pXSize, int* pYSize) const

@@ -5,29 +5,26 @@ using namespace OpenViBE;
 using namespace OpenViBEDesigner;
 using namespace Setting;
 
-static void on_button_setting_float_up_pressed(GtkButton* /*button*/, gpointer data) { static_cast<CFloatSettingView *>(data)->adjustValue(1.0); }
+static void OnButtonSettingFloatUpPressed(GtkButton* /*button*/, gpointer data) { static_cast<CFloatSettingView *>(data)->adjustValue(1.0); }
 
-static void on_button_setting_float_down_pressed(GtkButton* /*button*/, gpointer data) { static_cast<CFloatSettingView *>(data)->adjustValue(-1.0); }
+static void OnButtonSettingFloatDownPressed(GtkButton* /*button*/, gpointer data) { static_cast<CFloatSettingView *>(data)->adjustValue(-1.0); }
 
-static void on_change(GtkEntry* /*entry*/, gpointer data) { static_cast<CFloatSettingView *>(data)->onChange(); }
+static void OnChange(GtkEntry* /*entry*/, gpointer data) { static_cast<CFloatSettingView *>(data)->onChange(); }
 
 
-CFloatSettingView::
-CFloatSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& ctx): CAbstractSettingView(
-																																	 box, index, rBuilderName,
-																																	 "settings_collection-hbox_setting_float"),
-																																 m_kernelContext(ctx)
+CFloatSettingView::CFloatSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& ctx)
+	: CAbstractSettingView(box, index, rBuilderName, "settings_collection-hbox_setting_float"), m_kernelContext(ctx)
 {
-	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
+	GtkWidget* settingWidget = this->getEntryFieldWidget();
 
 	std::vector<GtkWidget*> widgets;
-	extractWidget(l_pSettingWidget, widgets);
+	extractWidget(settingWidget, widgets);
 	m_entry = GTK_ENTRY(widgets[0]);
 
-	g_signal_connect(G_OBJECT(m_entry), "changed", G_CALLBACK(on_change), this);
+	g_signal_connect(G_OBJECT(m_entry), "changed", G_CALLBACK(OnChange), this);
 
-	g_signal_connect(G_OBJECT(widgets[1]), "clicked", G_CALLBACK(on_button_setting_float_up_pressed), this);
-	g_signal_connect(G_OBJECT(widgets[2]), "clicked", G_CALLBACK(on_button_setting_float_down_pressed), this);
+	g_signal_connect(G_OBJECT(widgets[1]), "clicked", G_CALLBACK(OnButtonSettingFloatUpPressed), this);
+	g_signal_connect(G_OBJECT(widgets[2]), "clicked", G_CALLBACK(OnButtonSettingFloatDownPressed), this);
 
 	initializeValue();
 }
