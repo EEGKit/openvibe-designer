@@ -40,7 +40,7 @@ bool CVisualizationWidget::initialize(const CIdentifier& identifier, const CStri
 
 bool CVisualizationWidget::getChildIndex(const CIdentifier& identifier, uint32_t& index) const
 {
-	for (index = 0; index < m_Children.size(); index++) { if (m_Children[index] == identifier) { return true; } }
+	for (index = 0; index < m_Children.size(); ++index) { if (m_Children[index] == identifier) { return true; } }
 	return false;
 }
 
@@ -52,7 +52,7 @@ bool CVisualizationWidget::addChild(const CIdentifier& childIdentifier)
 
 bool CVisualizationWidget::removeChild(const CIdentifier& identifier)
 {
-	for (uint32_t i = 0; i < m_Children.size(); i++)
+	for (uint32_t i = 0; i < m_Children.size(); ++i)
 	{
 		if (m_Children[i] == identifier)
 		{

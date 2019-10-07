@@ -71,7 +71,7 @@ void CRenderer::feed(const float* pDataVector, const uint32_t nSample)
 {
 	for (uint32_t i = 0; i < m_nChannel; ++i)
 	{
-		for (uint32_t j = 0; j < nSample; j++) { m_history[i].push_back(pDataVector[j]); }
+		for (uint32_t j = 0; j < nSample; ++j) { m_history[i].push_back(pDataVector[j]); }
 		pDataVector += nSample;
 	}
 	m_nHistory += nSample;
@@ -221,9 +221,9 @@ void CRenderer::draw3DCoordinateSystem()
 	glColor3f(.2f, .2f, .2f);
 	glScalef(.2f, .2f, .2f);
 	glBegin(GL_LINES);
-	for (int x = -10; x <= 10; x++)
+	for (int x = -10; x <= 10; ++x)
 	{
-		for (int z = -10; z <= 10; z++)
+		for (int z = -10; z <= 10; ++z)
 		{
 			if (x != 0)
 			{
@@ -269,9 +269,9 @@ void CRenderer::draw2DCoordinateSystem()
 	glColor3f(.2f, .2f, .2f);
 	glScalef(.2f, .2f, .2f);
 	glBegin(GL_LINES);
-	for (int x = -10; x <= 10; x++)
+	for (int x = -10; x <= 10; ++x)
 	{
-		for (int y = -10; y <= 10; y++)
+		for (int y = -10; y <= 10; ++y)
 		{
 			if (x != 0)
 			{

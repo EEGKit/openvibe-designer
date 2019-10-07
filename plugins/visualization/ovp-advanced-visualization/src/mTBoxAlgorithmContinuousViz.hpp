@@ -282,7 +282,7 @@ namespace Mensia
 					if (m_oStimulationDecoder.isBufferReceived())
 					{
 						OpenViBE::IStimulationSet* stimulationSet = m_oStimulationDecoder.getOutputStimulationSet();
-						for (size_t j = 0; j < stimulationSet->getStimulationCount(); j++)
+						for (size_t j = 0; j < stimulationSet->getStimulationCount(); ++j)
 						{
 							m_pRenderer->feed(stimulationSet->getStimulationDate(j), stimulationSet->getStimulationIdentifier(j));
 							m_bRedrawNeeded = true;

@@ -114,10 +114,10 @@ bool CBoxAlgorithmTopographicMap2DDisplay::process()
 			if (!m_bFirstBufferReceived)
 			{
 				m_pTopographicMapDatabase->setMatrixDimensionCount(iMatrix->getDimensionCount());
-				for (uint32_t dimension = 0; dimension < iMatrix->getDimensionCount(); dimension++)
+				for (uint32_t dimension = 0; dimension < iMatrix->getDimensionCount(); ++dimension)
 				{
 					m_pTopographicMapDatabase->setMatrixDimensionSize(dimension, iMatrix->getDimensionSize(dimension));
-					for (uint32_t entryIndex = 0; entryIndex < iMatrix->getDimensionSize(dimension); entryIndex++)
+					for (uint32_t entryIndex = 0; entryIndex < iMatrix->getDimensionSize(dimension); ++entryIndex)
 					{
 						m_pTopographicMapDatabase->setMatrixDimensionLabel(dimension, entryIndex, iMatrix->getDimensionLabel(dimension, entryIndex));
 					}

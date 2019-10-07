@@ -97,7 +97,7 @@ begin_dspfa:;
 		imaxp1 = imax + 1;
 		im     = (imax * (imax - 1)) / 2;
 		imj    = im + 2 * imax;
-		for (j = imaxp1; j <= k; j++)
+		for (j = imaxp1; j <= k; ++j)
 		{
 			rowmax = dmax(rowmax, fabs(*(ap + imj - 1)));
 			imj += j;
@@ -142,7 +142,7 @@ begin_dspfa:;
 			{
 				sswap(&imax, (ap + im), &one, (ap + ik), &one);
 				imj = ik + imax;
-				for (jj = imax; jj <= k; jj++)
+				for (jj = imax; jj <= k; ++jj)
 				{
 					j               = k + imax - jj;
 					jk              = ik + j;
@@ -153,7 +153,7 @@ begin_dspfa:;
 				}
 			}
 			ij = ik - (k - 1);
-			for (jj = 1; jj <= km1; jj++)
+			for (jj = 1; jj <= km1; ++jj)
 			{
 				j    = k - jj;
 				jk   = ik + j;
@@ -176,7 +176,7 @@ begin_dspfa:;
 			{
 				sswap(&imax, (ap + im), &one, (ap + ikm1), &one);
 				imj = ikm1 + imax;
-				for (jj = imax; jj <= km1; jj++)
+				for (jj = imax; jj <= km1; ++jj)
 				{
 					j                = km1 + imax - jj;
 					jkm1             = ikm1 + j;
@@ -197,7 +197,7 @@ begin_dspfa:;
 				akm1   = *(ap + km1km1 - 1) / (*(ap + km1k - 1));
 				denom  = 1.0 - ak * akm1;
 				ij     = ik - (k - 1) - (k - 2);
-				for (jj = 1; jj <= km2; jj++)
+				for (jj = 1; jj <= km2; ++jj)
 				{
 					j      = km1 - jj;
 					jk     = ik + j;

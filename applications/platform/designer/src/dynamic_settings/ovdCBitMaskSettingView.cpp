@@ -16,7 +16,7 @@ CBitMaskSettingView::CBitMaskSettingView(Kernel::IBox& box, const uint32_t index
 	GtkTable* l_pBitMaskTable = GTK_TABLE(l_pSettingWidget);
 	gtk_table_resize(l_pBitMaskTable, 2, tableSize);
 
-	for (uint64_t i = 0; i < m_kernelContext.getTypeManager().getBitMaskEntryCount(m_typeID); i++)
+	for (uint64_t i = 0; i < m_kernelContext.getTypeManager().getBitMaskEntryCount(m_typeID); ++i)
 	{
 		CString l_sEntryName;
 		uint64_t l_ui64EntryValue;

@@ -181,7 +181,7 @@ namespace Mensia
 
 					m_vSwap.resize(nSample);
 
-					for (j = 0; j < m_vRenderer.size(); j++) { m_oRendererFactory.release(m_vRenderer[j]); }
+					for (j = 0; j < m_vRenderer.size(); ++j) { m_oRendererFactory.release(m_vRenderer[j]); }
 					m_vRenderer.clear();
 					m_vRenderer.resize(nChannel);
 
@@ -189,7 +189,7 @@ namespace Mensia
 					m_pSubRendererContext->setParentRendererContext(m_pRendererContext);
 					m_pSubRendererContext->setTimeLocked(m_isTimeLocked);
 					m_pSubRendererContext->setStackCount(nChannel);
-					for (j = 0; j < nSample; j++)
+					for (j = 0; j < nSample; ++j)
 					{
 						std::string l_sName    = trim(l_pMatrix->getDimensionLabel(1, uint32_t(j)));
 						std::string l_sSubname = l_sName;
@@ -208,7 +208,7 @@ namespace Mensia
 					m_pRendererContext->setXYZPlotDepth(m_bXYZPlotHasDepth);
 
 					gtk_tree_view_set_model(m_pChannelTreeView, nullptr);
-					for (j = 0; j < nChannel; j++)
+					for (j = 0; j < nChannel; ++j)
 					{
 						std::string l_sName    = trim(l_pMatrix->getDimensionLabel(0, uint32_t(j)));
 						std::string l_sSubname = l_sName;
@@ -284,10 +284,10 @@ namespace Mensia
 					m_pRendererContext->setMinimumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_pFrequencyBandMin))));
 					m_pRendererContext->setMaximumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_pFrequencyBandMax))));
 
-					for (j = 0; j < nChannel; j++)
+					for (j = 0; j < nChannel; ++j)
 					{
 						// Feed renderer with actual samples
-						for (size_t k = 0; k < nSample; k++) { m_vSwap[nSample - k - 1] = float(l_pMatrix->getBuffer()[j * nSample + k]); }
+						for (size_t k = 0; k < nSample; ++k) { m_vSwap[nSample - k - 1] = float(l_pMatrix->getBuffer()[j * nSample + k]); }
 						m_vRenderer[j]->feed(&m_vSwap[0]);
 
 						// Adjust feeding depending on theoretical dates
@@ -314,7 +314,7 @@ namespace Mensia
 					if (m_oStimulationDecoder.isBufferReceived())
 					{
 						OpenViBE::IStimulationSet* stimulationSet = m_oStimulationDecoder.getOutputStimulationSet();
-						for (j = 0; j < stimulationSet->getStimulationCount(); j++)
+						for (j = 0; j < stimulationSet->getStimulationCount(); ++j)
 						{
 							m_vRenderer[0]->feed(stimulationSet->getStimulationDate(j), stimulationSet->getStimulationIdentifier(j));
 							m_bRedrawNeeded = true;
@@ -335,7 +335,7 @@ namespace Mensia
 
 			if (rendererSampleCount != 0)
 			{
-				for (j = 0; j < m_vRenderer.size(); j++)
+				for (j = 0; j < m_vRenderer.size(); ++j)
 				{
 					if (rendererSampleCount != m_vRenderer[j]->getSampleCount())
 					{

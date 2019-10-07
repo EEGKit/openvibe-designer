@@ -709,7 +709,7 @@ void CInterfacedScenario::redrawConfigureScenarioSettingsDialog()
 	}
 	else
 	{
-		for (uint32_t settingIdx = 0; settingIdx < m_rScenario.getSettingCount(); settingIdx++)
+		for (uint32_t settingIdx = 0; settingIdx < m_rScenario.getSettingCount(); ++settingIdx)
 		{
 			GtkBuilder* l_pSettingsGUIBuilder = gtk_builder_new();
 			gtk_builder_add_from_string(l_pSettingsGUIBuilder, m_sSerializedSettingGUIXML.c_str(), m_sSerializedSettingGUIXML.length(), nullptr);
@@ -843,7 +843,7 @@ void CInterfacedScenario::redrawScenarioSettings()
 	}
 	else
 	{
-		for (uint32_t settingIdx = 0; settingIdx < m_rScenario.getSettingCount(); settingIdx++)
+		for (uint32_t settingIdx = 0; settingIdx < m_rScenario.getSettingCount(); ++settingIdx)
 		{
 			GtkBuilder* l_pSettingsGUIBuilder = gtk_builder_new();
 			gtk_builder_add_from_string(l_pSettingsGUIBuilder, m_sSerializedSettingGUIXML.c_str(), m_sSerializedSettingGUIXML.length(), nullptr);
@@ -956,7 +956,7 @@ void CInterfacedScenario::redrawScenarioLinkSettings(GtkWidget* pLinkTable, cons
 	}
 	else
 	{
-		for (uint32_t linkIndex = 0; linkIndex < linkCount; linkIndex++)
+		for (uint32_t linkIndex = 0; linkIndex < linkCount; ++linkIndex)
 		{
 			GtkBuilder* ioSettingsGUIBuilder = gtk_builder_new();
 			gtk_builder_add_from_string(ioSettingsGUIBuilder, m_sSerializedSettingGUIXML.c_str(), m_sSerializedSettingGUIXML.length(), nullptr);
@@ -1255,7 +1255,7 @@ void CInterfacedScenario::redraw(IBox& box)
 		l_vPoint[1].y = 0;
 		l_vPoint[2].x = iCircleSize - 1;
 		l_vPoint[2].y = 0;
-		for (int j = 0; j < 3; j++)
+		for (int j = 0; j < 3; ++j)
 		{
 			l_vPoint[j].x += xStart + i * (iCircleSpace + iCircleSize) + l_iInputOffset;
 			l_vPoint[j].y += yStart - (iCircleSize >> 1);
@@ -1388,7 +1388,7 @@ void CInterfacedScenario::redraw(IBox& box)
 		l_vPoint[1].y = 0;
 		l_vPoint[2].x = iCircleSize - 1;
 		l_vPoint[2].y = 0;
-		for (int j = 0; j < 3; j++)
+		for (int j = 0; j < 3; ++j)
 		{
 			l_vPoint[j].x += xStart + i * (iCircleSpace + iCircleSize) + l_iOutputOffset;
 			l_vPoint[j].y += yStart - (iCircleSize >> 1) + ySize;
@@ -1711,7 +1711,7 @@ bool CInterfacedScenario::pickInterfacedObject(const int x, const int y, int iSi
 
 	const int rowBytesCount = gdk_pixbuf_get_rowstride(pixbuf);
 	const int nChannel  = gdk_pixbuf_get_n_channels(pixbuf);
-	for (int j = 0; j < iSizeY; j++)
+	for (int j = 0; j < iSizeY; ++j)
 	{
 		for (int i = 0; i < iSizeX; ++i)
 		{
@@ -2624,7 +2624,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(GtkWidget* widget, 
 
 							if (l_bCanConnectScenarioInput)
 							{
-								for (j = 0; j < m_rScenario.getInputCount(); j++)
+								for (j = 0; j < m_rScenario.getInputCount(); ++j)
 								{
 									char l_sScenarioInputNameComplete[1024];
 									CString l_sScenarioInputName;
@@ -2709,7 +2709,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(GtkWidget* widget, 
 
 							if (l_bCanConnectScenarioOutput)
 							{
-								for (j = 0; j < m_rScenario.getOutputCount(); j++)
+								for (j = 0; j < m_rScenario.getOutputCount(); ++j)
 								{
 									char l_sScenarioOutputNameComplete[1024];
 									CString l_sScenarioOutputName;

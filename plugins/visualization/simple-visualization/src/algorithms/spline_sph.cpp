@@ -84,20 +84,20 @@ int spline_tables(const int order, double* pot_table, double* scd_table)
 	/* Coefficient computation */
 	/*=========================*/
 	double cn = 1.0;
-	for (j = 1; j < order; j++) { cn /= 2.0; }
+	for (j = 1; j < order; ++j) { cn /= 2.0; }
 	c[0] = cn * 3.0;
-	for (n = 2; n <= kc; n++)
+	for (n = 2; n <= kc; ++n)
 	{
 		fn              = double(n);
 		const double cx = (fn - 1.0) / (fn + 1.0);
-		for (j = 1; j < order; j++) { cn *= cx; }
+		for (j = 1; j < order; ++j) { cn *= cx; }
 		c[n - 1] = (2.0 * fn + 1.0) * cn;
 	}
 
 	/*========================*/
 	/* Table generation       */
 	/*========================*/
-	for (int ig = 0; ig <= 1000; ig++)
+	for (int ig = 0; ig <= 1000; ++ig)
 	{
 		/*-------------------------*/
 		/* Pn polynomial           */
@@ -107,7 +107,7 @@ int spline_tables(const int order, double* pot_table, double* scd_table)
 		double p0    = 1.0;
 		double p1    = gamma;
 		p[0]         = p1;
-		for (n = 2; n <= kc; n++)
+		for (n = 2; n <= kc; ++n)
 		{
 			fn                = double(n);
 			const double usfn = 1.0 / fn;
@@ -221,7 +221,7 @@ int spline_coef(const int nb_value, double** xyz, const double* values, const do
 	/* computation of matrix A */
 	/*=========================*/
 	int ih = 0;
-	for (int j = 0; j < nb_value; j++)
+	for (int j = 0; j < nb_value; ++j)
 	{
 		const double xj = xyz[j][0];
 		const double yj = xyz[j][1];

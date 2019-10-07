@@ -89,7 +89,7 @@ bool CRendererCube::render(const IRendererContext& rContext)
 
 	glPushMatrix();
 	glRotatef(19, 1, 0, 0);
-	for (uint32_t j = 0; j < rContext.getSelectedCount(); j++)
+	for (uint32_t j = 0; j < rContext.getSelectedCount(); ++j)
 	{
 		CVertex v;
 		const uint32_t k = rContext.getSelected(j);

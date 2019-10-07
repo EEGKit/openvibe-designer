@@ -81,7 +81,7 @@ void CRendererConnectivity::rebuild(const IRendererContext& rContext)
 	m_vertex.resize(m_nChannel * (m_nChannel - 1) / 2);
 	for (i = 0; i < m_nChannel; ++i)
 	{
-		for (uint32_t j = 0; j < i; j++)
+		for (uint32_t j = 0; j < i; ++j)
 		{
 			m_vertex[l].resize(COUNT);
 
@@ -97,7 +97,7 @@ void CRendererConnectivity::rebuild(const IRendererContext& rContext)
 			const double alpha = 0;
 			const double dot   = (1 - CVertex::dot(vi, vj)) * .5;
 
-			for (uint32_t k = 0; k < COUNT; k++)
+			for (uint32_t k = 0; k < COUNT; ++k)
 			{
 				const float t = float(k * 1. / (COUNT - 1));
 				auto s        = float((t - .5) * 2);
@@ -131,9 +131,9 @@ void CRendererConnectivity::refresh(const IRendererContext& rContext)
 	uint32_t l = 0;
 	for (uint32_t i = 0; i < m_nChannel; ++i)
 	{
-		for (uint32_t j = 0; j < i; j++)
+		for (uint32_t j = 0; j < i; ++j)
 		{
-			for (uint32_t k = 0; k < COUNT; k++) { m_vertex[l][k].u = m_history[i][m_nHistory - 1 - j]; }
+			for (uint32_t k = 0; k < COUNT; ++k) { m_vertex[l][k].u = m_history[i][m_nHistory - 1 - j]; }
 			l++;
 		}
 	}

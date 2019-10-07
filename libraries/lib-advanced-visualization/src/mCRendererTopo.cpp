@@ -182,7 +182,7 @@ void CRendererTopo::rebuild(const IRendererContext& rContext)
 	{
 		A(i, nc) = 1;
 		A(nc, i) = 1;
-		for (j = 0; j <= i; j++)
+		for (j = 0; j <= i; ++j)
 		{
 			CVertex v1, v2;
 			rContext.getChannelLocalisation(i, v1.x, v1.y, v1.z);
@@ -202,7 +202,7 @@ void CRendererTopo::rebuild(const IRendererContext& rContext)
 	{
 		B(i, nc) = 1;
 		D(i, nc) = 1;
-		for (j = 0; j < nc; j++)
+		for (j = 0; j < nc; ++j)
 		{
 			B(vc, j) = 1;
 			D(vc, j) = 1;
@@ -266,13 +266,13 @@ void CRendererTopo::refresh(const IRendererContext& rContext)
 		this->getSampleAtERPFraction(m_ERPFraction, l_vSample);
 		for (size_t i = 0; i < nc; ++i) { V(i) = l_vSample[i]; }
 		this->interpolate(V, W, Z);
-		for (size_t j = 0; j < vc; j++) { m_oScalp.m_vVertex[j].u = float(W(j)); }
+		for (size_t j = 0; j < vc; ++j) { m_oScalp.m_vVertex[j].u = float(W(j)); }
 	}
 	else
 	{
 		if (m_nHistory >= m_nSample)
 		{
-			for (size_t k = 0; k < m_nSample; k++)
+			for (size_t k = 0; k < m_nSample; ++k)
 			{
 				for (size_t i = 0; i < nc; ++i) { V(i) = m_history[i][m_nHistory - m_nSample + k]; }
 				this->interpolate(V, W, Z);
@@ -399,7 +399,7 @@ bool CRendererTopo::render(const IRendererContext& rContext)
 	glDisable(GL_TEXTURE_1D);
 
 	glLineWidth(3);
-	for (uint32_t j = 0; j < rContext.getChannelCount(); j++)
+	for (uint32_t j = 0; j < rContext.getChannelCount(); ++j)
 	{
 		const float l_fCubeScale = .025f;
 		const CVertex v          = m_vProjectedChannelCoordinate[j];

@@ -34,10 +34,10 @@ void CRendererLine::rebuild(const IRendererContext& rContext)
 	m_Vertices.clear();
 	m_Vertices.resize(m_nChannel);
 
-	for (size_t channel = 0; channel < m_nChannel; channel++)
+	for (size_t channel = 0; channel < m_nChannel; ++channel)
 	{
 		m_Vertices[channel].resize(m_nSample);
-		for (size_t sample = 0; sample < m_nSample; sample++) { m_Vertices[channel][sample].x = sample * m_nInverseSample; }
+		for (size_t sample = 0; sample < m_nSample; ++sample) { m_Vertices[channel][sample].x = sample * m_nInverseSample; }
 	}
 
 	m_historyIdx = 0;
@@ -57,13 +57,13 @@ void CRendererLine::refresh(const IRendererContext& rContext)
 		l_ui32HistoryIndexMax = m_historyDrawIdx;
 	}
 
-	for (size_t channel = 0; channel < m_nChannel; channel++)
+	for (size_t channel = 0; channel < m_nChannel; ++channel)
 	{
 		const uint32_t firstSampleIndex = ((l_ui32HistoryIndexMax - 1) / m_nSample) * m_nSample;
 		std::vector<float>& l_vHistory  = m_history[channel];
 		CVertex* l_pVertex              = &m_Vertices[channel][0];
 
-		for (uint32_t sample = 0; sample < m_nSample; sample++)
+		for (uint32_t sample = 0; sample < m_nSample; ++sample)
 		{
 			const uint32_t currentSampleIndex = firstSampleIndex + sample;
 
@@ -114,7 +114,7 @@ bool CRendererLine::render(const IRendererContext& rContext)
 	glPushAttrib(GL_CURRENT_BIT);
 	glColor3f(.2f, .2f, .2f);
 	glBegin(GL_LINES);
-	for (uint32_t selectedChannel = 0; selectedChannel < rContext.getSelectedCount(); selectedChannel++)
+	for (uint32_t selectedChannel = 0; selectedChannel < rContext.getSelectedCount(); ++selectedChannel)
 	{
 		glVertex2f(0, float(selectedChannel));
 		glVertex2f(1, float(selectedChannel));
@@ -123,7 +123,7 @@ bool CRendererLine::render(const IRendererContext& rContext)
 	glPopAttrib();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
-	for (uint32_t selectedChannel = 0; selectedChannel < rContext.getSelectedCount(); selectedChannel++)
+	for (uint32_t selectedChannel = 0; selectedChannel < rContext.getSelectedCount(); ++selectedChannel)
 	{
 		glPushMatrix();
 		glTranslatef(0, float(rContext.getSelectedCount() - selectedChannel) - 1.f, 0);

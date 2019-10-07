@@ -105,7 +105,7 @@ void CColorGradientSettingView::configurePressed()
 		finalColorGradient.setDimensionCount(2);
 		finalColorGradient.setDimensionSize(0, 4);
 		finalColorGradient.setDimensionSize(1, uint32_t(vColorGradient.size()));
-		for (uint32_t i = 0; i < uint32_t(vColorGradient.size()); i++)
+		for (uint32_t i = 0; i < uint32_t(vColorGradient.size()); ++i)
 		{
 			const uint32_t idx          = i * 4;
 			finalColorGradient[idx]     = vColorGradient[i].percent;

@@ -168,7 +168,7 @@ namespace Mensia
 			const IBox& staticBoxContext = this->getStaticBoxContext();
 			IBoxIO& dynamicBoxContext    = this->getDynamicBoxContext();
 
-			for (uint32_t chunk = 0; chunk < dynamicBoxContext.getInputChunkCount(0); chunk++)
+			for (uint32_t chunk = 0; chunk < dynamicBoxContext.getInputChunkCount(0); ++chunk)
 			{
 				m_oMatrixDecoder.decode(chunk);
 
@@ -212,7 +212,7 @@ namespace Mensia
 						const uint32_t nSample    = inputMatrix->getDimensionSize(2);
 
 						// I do not know what this is for...
-						for (uint32_t frequency = 0; frequency < frequencyCount; frequency++)
+						for (uint32_t frequency = 0; frequency < frequencyCount; ++frequency)
 						{
 							try
 							{
@@ -237,7 +237,7 @@ namespace Mensia
 						m_pSubRendererContext->setElementCount(nSample);
 						gtk_tree_view_set_model(m_pChannelTreeView, nullptr);
 
-						for (uint32_t channel = 0; channel < nChannel; channel++)
+						for (uint32_t channel = 0; channel < nChannel; ++channel)
 						{
 							std::string channelName          = trim(inputMatrix->getDimensionLabel(0, channel));
 							std::string lowercaseChannelName = channelName;
@@ -293,13 +293,13 @@ namespace Mensia
 						m_pSubRendererContext->setSampleDuration(sampleDuration);
 						m_pRendererContext->setSampleDuration(sampleDuration);
 
-						for (uint32_t channel = 0; channel < nChannel; channel++)
+						for (uint32_t channel = 0; channel < nChannel; ++channel)
 						{
 							// Feed renderer with actual samples
-							for (uint32_t sample = 0; sample < nSample; sample++)
+							for (uint32_t sample = 0; sample < nSample; ++sample)
 							{
 								m_vSwap.resize(frequencyCount);
-								for (uint32_t frequency = 0; frequency < frequencyCount; frequency++)
+								for (uint32_t frequency = 0; frequency < frequencyCount; ++frequency)
 								{
 									m_vSwap[frequencyCount - frequency - 1] = float(
 										inputMatrix->getBuffer()[sample + frequency * nSample + channel * nSample * frequencyCount]);

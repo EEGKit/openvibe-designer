@@ -32,7 +32,7 @@ void CRendererBars::rebuild(const IRendererContext& rContext)
 	for (size_t i = 0; i < m_nChannel; ++i)
 	{
 		m_vertex[i].resize(size_t(m_nSample) * 4);
-		for (size_t j = 0; j < m_nSample; j++)
+		for (size_t j = 0; j < m_nSample; ++j)
 		{
 			const size_t id       = j * 4;
 			const float value     = j * m_nInverseSample;

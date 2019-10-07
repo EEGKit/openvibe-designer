@@ -1796,7 +1796,7 @@ void CApplication::saveScenarioCB(CInterfacedScenario* interfacedScenario)
 			SBoxProto metaboxProto(m_kernelContext.getTypeManager());
 
 			IScenario& scenario = currentInterfacedScenario->m_rScenario;
-			for (uint32_t scenarioInputIdx = 0; scenarioInputIdx < scenario.getInputCount(); scenarioInputIdx++)
+			for (uint32_t scenarioInputIdx = 0; scenarioInputIdx < scenario.getInputCount(); ++scenarioInputIdx)
 			{
 				CString inputName;
 				CIdentifier inputTypeID;
@@ -1809,7 +1809,7 @@ void CApplication::saveScenarioCB(CInterfacedScenario* interfacedScenario)
 				metaboxProto.addInput(inputName, inputTypeID, InputID, true);
 			}
 
-			for (uint32_t scenarioOutputIdx = 0; scenarioOutputIdx < scenario.getOutputCount(); scenarioOutputIdx++)
+			for (uint32_t scenarioOutputIdx = 0; scenarioOutputIdx < scenario.getOutputCount(); ++scenarioOutputIdx)
 			{
 				CString outputName;
 				CIdentifier OutputTypeID;
@@ -1822,7 +1822,7 @@ void CApplication::saveScenarioCB(CInterfacedScenario* interfacedScenario)
 				metaboxProto.addOutput(outputName, OutputTypeID, OutputID, true);
 			}
 
-			for (uint32_t scenarioSettingIdx = 0; scenarioSettingIdx < scenario.getSettingCount(); scenarioSettingIdx++)
+			for (uint32_t scenarioSettingIdx = 0; scenarioSettingIdx < scenario.getSettingCount(); ++scenarioSettingIdx)
 			{
 				CString l_sSettingName;
 				CIdentifier l_oSettingTypeID;

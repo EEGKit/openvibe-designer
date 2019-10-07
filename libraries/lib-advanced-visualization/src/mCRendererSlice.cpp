@@ -38,7 +38,7 @@ void CRendererSlice::rebuild(const IRendererContext& rContext)
 
 	for (uint32_t i = 0; i < m_nSample; ++i)
 	{
-		for (uint32_t j = 0; j < m_nChannel; j++)
+		for (uint32_t j = 0; j < m_nChannel; ++j)
 		{
 			const float f32Size = .5;
 
@@ -127,7 +127,7 @@ void CRendererSlice::refresh(const IRendererContext& rContext)
 	for (uint32_t i = m_historyIdx; i < m_nHistory; ++i)
 	{
 		uint32_t k = (i % m_nSample) * m_nChannel * 8;
-		for (uint32_t j = 0; j < m_nChannel; j++) { for (uint32_t l = 0; l < 8; l++) { m_vVertex[k++].u = m_history[j][i]; } }
+		for (uint32_t j = 0; j < m_nChannel; ++j) { for (uint32_t l = 0; l < 8; ++l) { m_vVertex[k++].u = m_history[j][i]; } }
 	}
 
 	m_historyIdx = m_nHistory;

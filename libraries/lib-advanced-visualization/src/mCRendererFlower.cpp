@@ -71,7 +71,7 @@ void CRendererFlower::refresh(const IRendererContext& rContext)
 
 	if (!m_nHistory) { return; }
 
-	for (size_t z = 0; z < m_vMuliVertex.size(); z++)
+	for (size_t z = 0; z < m_vMuliVertex.size(); ++z)
 	{
 		for (size_t i = 0; i < m_nChannel; ++i)
 		{
@@ -84,7 +84,7 @@ void CRendererFlower::refresh(const IRendererContext& rContext)
 				float sum    = 0;
 				size_t count = 0;
 
-				for (size_t l = 0; l < m_autoDecimationFactor; l++)
+				for (size_t l = 0; l < m_autoDecimationFactor; ++l)
 				{
 					if (/*k+l>=m_historyIdx && */k + l < m_nHistory)
 					{

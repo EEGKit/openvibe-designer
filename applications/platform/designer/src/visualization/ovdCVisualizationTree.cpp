@@ -141,7 +141,7 @@ bool CVisualizationTree::addVisualizationWidget(CIdentifier& identifier, const C
 				//extend number of children of parent window if necessary
 				if (parentVisualizationWidget->getNbChildren() <= parentIndex)
 				{
-					for (uint32_t i = parentVisualizationWidget->getNbChildren(); i <= parentIndex; i++)
+					for (uint32_t i = parentVisualizationWidget->getNbChildren(); i <= parentIndex; ++i)
 					{
 						parentVisualizationWidget->addChild(OV_UndefinedIdentifier);
 					}
@@ -205,7 +205,7 @@ bool CVisualizationTree::destroyHierarchy(const CIdentifier& identifier, const b
 	if (visualizationWidget->getType() == VisualizationWidget_VisualizationWindow)
 	{
 		CIdentifier childIdentifier;
-		for (uint32_t i = 0; i < visualizationWidget->getNbChildren(); i++)
+		for (uint32_t i = 0; i < visualizationWidget->getNbChildren(); ++i)
 		{
 			visualizationWidget->getChildIdentifier(i, childIdentifier);
 			res &= _destroyHierarchy(childIdentifier, destroyVisualizationBoxes);
@@ -234,7 +234,7 @@ bool CVisualizationTree::_destroyHierarchy(const CIdentifier& identifier, const 
 	//remove children
 	CIdentifier l_oChildID;
 	const uint32_t nbChildren = visualizationWidget->getNbChildren();
-	for (uint32_t i = 0; i < nbChildren; i++)
+	for (uint32_t i = 0; i < nbChildren; ++i)
 	{
 		visualizationWidget->getChildIdentifier(i, l_oChildID);
 		_destroyHierarchy(l_oChildID, destroyVisualizationBoxes);
@@ -468,7 +468,7 @@ bool CVisualizationTree::_findChildNodeFromParent(GtkTreeIter* iter, const char*
 	//look among current node's children
 	const int childCount = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(m_TreeStore), iter);
 	GtkTreeIter childIter;
-	for (int i = 0; i < childCount; i++)
+	for (int i = 0; i < childCount; ++i)
 	{
 		gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(m_TreeStore), &childIter, iter, i);
 
@@ -522,7 +522,7 @@ bool CVisualizationTree::_findChildNodeFromParent(GtkTreeIter* iter, void* widge
 	//look among current node's children
 	const int childCount = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(m_TreeStore), iter);
 	GtkTreeIter childIter;
-	for (int i = 0; i < childCount; i++)
+	for (int i = 0; i < childCount; ++i)
 	{
 		gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(m_TreeStore), &childIter, iter, i);
 
@@ -578,7 +578,7 @@ bool CVisualizationTree::_findChildNodeFromParent(GtkTreeIter* iter, const CIden
 	//look among current node's children
 	const int childCount = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(m_TreeStore), iter);
 	GtkTreeIter childIter;
-	for (int i = 0; i < childCount; i++)
+	for (int i = 0; i < childCount; ++i)
 	{
 		gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(m_TreeStore), &childIter, iter, i);
 
@@ -794,7 +794,7 @@ bool CVisualizationTree::loadVisualizationWidget(IVisualizationWidget* visualiza
 		}
 	}
 
-	for (uint32_t i = 0; i < visualizationWidget->getNbChildren(); i++)
+	for (uint32_t i = 0; i < visualizationWidget->getNbChildren(); ++i)
 	{
 		CIdentifier childIdentifier;
 		visualizationWidget->getChildIdentifier(i, childIdentifier);

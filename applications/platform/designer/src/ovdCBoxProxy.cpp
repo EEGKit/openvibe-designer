@@ -112,7 +112,7 @@ const char* CBoxProxy::getLabel() const
 		// we sanitize the markup tag overture '<'
 		// markup should not be used in the box name anyway (hidden feature),
 		// but the character '<' may actually be useful in a valid name
-		for (size_t c = 0; c < l_sBoxName.size(); c++)
+		for (size_t c = 0; c < l_sBoxName.size(); ++c)
 		{
 			if (l_sBoxName[c] == '<')
 			{

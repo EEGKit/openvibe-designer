@@ -227,7 +227,7 @@ bool CBufferDatabase::adjustNumberOfDisplayedBuffers(const double f64NumberOfSec
 			m_oEndTime.pop_front();
 
 			//suppress the corresponding minmax values
-			for (size_t c = 0; c < size_t(m_pDimensionSizes[0]); c++) { m_oLocalMinMaxValue[c].pop_front(); }
+			for (size_t c = 0; c < size_t(m_pDimensionSizes[0]); ++c) { m_oLocalMinMaxValue[c].pop_front(); }
 		}
 	}
 
@@ -403,7 +403,7 @@ bool CBufferDatabase::setMatrixBuffer(const double* buffer, const uint64_t ui64S
 		m_oSampleBuffers.pop_front();
 		m_oStartTime.pop_front();
 		m_oEndTime.pop_front();
-		for (size_t c = 0; c < size_t(m_pDimensionSizes[0]); c++) { m_oLocalMinMaxValue[c].pop_front(); }
+		for (size_t c = 0; c < size_t(m_pDimensionSizes[0]); ++c) { m_oLocalMinMaxValue[c].pop_front(); }
 	}
 
 	//do we need to allocate a new buffer?
@@ -420,7 +420,7 @@ bool CBufferDatabase::setMatrixBuffer(const double* buffer, const uint64_t ui64S
 	//compute and push min and max values of new buffer
 	uint64_t l_ui64CurrentSample = 0;
 	//for each channel
-	for (size_t c = 0; c < size_t(m_pDimensionSizes[0]); c++)
+	for (size_t c = 0; c < size_t(m_pDimensionSizes[0]); ++c)
 	{
 		double l_f64LocalMin = DBL_MAX;
 		double l_f64LocalMax = -DBL_MAX;
@@ -628,7 +628,7 @@ bool CBufferDatabase::fillChannelLookupTable()
 	{
 		//trim leading spaces
 		size_t firstNonWhitespaceChar = 0;
-		for (; firstNonWhitespaceChar < m_pDimensionLabels[0][i].size(); firstNonWhitespaceChar++)
+		for (; firstNonWhitespaceChar < m_pDimensionLabels[0][i].size(); ++firstNonWhitespaceChar)
 		{
 			if (isspace(m_pDimensionLabels[0][i][firstNonWhitespaceChar]) == 0) { break; }
 		}
@@ -650,7 +650,7 @@ bool CBufferDatabase::fillChannelLookupTable()
 		{
 			std::string l_oChannelLabel(m_pDimensionLabels[0][i].substr(firstNonWhitespaceChar, lastNonWhitespaceChar - firstNonWhitespaceChar + 1));
 
-			for (uint32_t j = 0; j < m_oChannelLocalisationLabels.size(); j++)
+			for (uint32_t j = 0; j < m_oChannelLocalisationLabels.size(); ++j)
 			{
 				if (strcmp(l_oChannelLabel.c_str(), m_oChannelLocalisationLabels[j].toASCIIString()) == 0)
 				{

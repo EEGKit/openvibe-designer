@@ -1087,7 +1087,7 @@ namespace OpenViBEPlugins
 #endif
 			guchar* lineBase = m_skullRGBBuffer + (m_rowStride * ui32Y) + (ui32X * 3);
 
-			for (uint32_t j = 0; j < ui32Height; j++)
+			for (uint32_t j = 0; j < ui32Height; ++j)
 			{
 				for (uint32_t i = 0; i < (ui32Width * 3); i += 3)
 				{
@@ -1109,7 +1109,7 @@ namespace OpenViBEPlugins
 			double* electrodePosition = nullptr;
 
 			//sampling at electrode locations
-			for (curSample = 0; curSample < nChannel; curSample++)
+			for (curSample = 0; curSample < nChannel; ++curSample)
 			{
 				m_topographicMapDatabase.getChannelPosition(curSample, electrodePosition);
 
@@ -1134,7 +1134,7 @@ namespace OpenViBEPlugins
 			{
 				//for each column
 				float curX = float(m_skullX);
-				for (size_t j = 0; j < m_gridSize; j++)
+				for (size_t j = 0; j < m_gridSize; ++j)
 				{
 					//find corner closest to skull center
 					const float closestX = fabs(curX - skullCenterX) < fabs(curX + m_cellSize - skullCenterX) ? curX : (curX + m_cellSize);

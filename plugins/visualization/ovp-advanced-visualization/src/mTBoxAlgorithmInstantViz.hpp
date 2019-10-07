@@ -166,7 +166,7 @@ namespace Mensia
 
 			for (uint32_t i = 0; i < nInput; ++i)
 			{
-				for (uint32_t j = 0; j < boxContext.getInputChunkCount(i); j++)
+				for (uint32_t j = 0; j < boxContext.getInputChunkCount(i); ++j)
 				{
 					m_vMatrixDecoder[i].decode(j);
 
@@ -208,7 +208,7 @@ namespace Mensia
 						m_pRendererContext->setXYZPlotDepth(m_bXYZPlotHasDepth);
 
 						gtk_tree_view_set_model(m_pChannelTreeView, nullptr);
-						for (j = 0; j < nChannel; j++)
+						for (j = 0; j < nChannel; ++j)
 						{
 							std::string l_sName    = trim(l_pMatrix->getDimensionLabel(0, j));
 							std::string l_sSubname = l_sName;
@@ -256,9 +256,9 @@ namespace Mensia
 							GTK_SPIN_BUTTON(::gtk_builder_get_object(m_pBuilder, "spinbutton_time_scale")), (chunkDuration >> 22) / 1024.);
 
 						m_vRenderer[i]->clear(0); // Drop last samples as they will be fed again
-						for (uint32_t k = 0; k < nSample; k++)
+						for (uint32_t k = 0; k < nSample; ++k)
 						{
-							for (uint32_t l = 0; l < nChannel; l++) { m_vSwap[l] = float(l_pMatrix->getBuffer()[l * nSample + k]); }
+							for (uint32_t l = 0; l < nChannel; ++l) { m_vSwap[l] = float(l_pMatrix->getBuffer()[l * nSample + k]); }
 							m_vRenderer[i]->feed(&m_vSwap[0]);
 						}
 

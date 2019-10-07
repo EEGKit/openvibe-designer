@@ -813,7 +813,7 @@ const char* CRendererLoreta::getRegionName(const uint32_t regionCategory, const 
 	std::map<std::string, std::vector<uint32_t>>& l_vLookup = m_vLookup[regionCategory];
 	auto it                                                 = l_vLookup.begin();
 
-	for (uint32_t j = 0; j < regionIndex && it != l_vLookup.end(); j++) { ++it; }
+	for (uint32_t j = 0; j < regionIndex && it != l_vLookup.end(); ++j) { ++it; }
 
 	if (it != l_vLookup.end()) { return it->first.c_str(); }
 
@@ -843,7 +843,7 @@ void CRendererLoreta::selectRegion(const uint32_t regionCategory, const uint32_t
 	std::map<std::string, std::vector<uint32_t>>& l_vLookup   = m_vLookup[regionCategory];
 	auto it = l_vLookup.begin();
 
-	for (uint32_t j = 0; j < regionIndex && it != l_vLookup.end(); j++) { ++it; }
+	for (uint32_t j = 0; j < regionIndex && it != l_vLookup.end(); ++j) { ++it; }
 
 	if (it != l_vLookup.end())
 	{
@@ -868,7 +868,7 @@ void CRendererLoreta::refreshBrainSubset()
 	uint32_t i, j, k;
 	for (i = 0, j = 0, k = 0; i < 2394; i++, k += l_ui32VertexPerRenderedVoxel)
 	{
-		if (m_vSelected[i]) { for (uint32_t l = 0; l < l_ui32VertexPerRenderedVoxel; l++) { m_vBrainSubsetTriangle[j++] = m_oBrain.m_vTriangle[k + l]; } }
+		if (m_vSelected[i]) { for (uint32_t l = 0; l < l_ui32VertexPerRenderedVoxel; ++l) { m_vBrainSubsetTriangle[j++] = m_oBrain.m_vTriangle[k + l]; } }
 	}
 
 	// Crops look up to the subset size

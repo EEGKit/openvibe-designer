@@ -24,7 +24,7 @@ CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox& box, const uint32
 
 	std::vector<std::string> l_vEntries;
 
-	for (uint64_t i = 0; i < m_kernelContext.getTypeManager().getEnumerationEntryCount(m_typeID); i++)
+	for (uint64_t i = 0; i < m_kernelContext.getTypeManager().getEnumerationEntryCount(m_typeID); ++i)
 	{
 		CString l_sEntryName;
 		uint64_t l_ui64EntryValue;
@@ -41,7 +41,7 @@ CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox& box, const uint32
 	gtk_combo_box_set_wrap_width(m_comboBox, 0);
 	gtk_list_store_clear(l_pList);
 
-	for (size_t i = 0; i < l_vEntries.size(); i++)
+	for (size_t i = 0; i < l_vEntries.size(); ++i)
 	{
 		gtk_list_store_append(l_pList, &l_oListIter);
 		gtk_list_store_set(l_pList, &l_oListIter, 0, l_vEntries[i].c_str(), -1);

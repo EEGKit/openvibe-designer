@@ -202,7 +202,7 @@ bool CBoxAlgorithmMatrixDisplay::process()
 
 			//first line : labels
 			uint32_t row = 0;
-			for (uint32_t c = 1; c < l_ui32ColumnCount + 1; c++)
+			for (uint32_t c = 1; c < l_ui32ColumnCount + 1; ++c)
 			{
 				GtkWidget* l_pWidgetLabel = gtk_label_new("");
 				gtk_widget_set_visible(l_pWidgetLabel, 1);
@@ -218,7 +218,7 @@ bool CBoxAlgorithmMatrixDisplay::process()
 
 			//first column : labels
 			uint32_t col = 0;
-			for (uint32_t r = 1; r < l_ui32RowCount + 1; r++)
+			for (uint32_t r = 1; r < l_ui32RowCount + 1; ++r)
 			{
 				//::GtkBuilder* l_pGtkBuilderLabel=gtk_builder_new(); // glade_xml_new(OpenViBE::Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-MatrixDisplay.ui", "matrix-value-label", nullptr);
 				//gtk_builder_add_from_file(l_pGtkBuilderLabel, OpenViBE::Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-MatrixDisplay.ui", nullptr);
@@ -237,9 +237,9 @@ bool CBoxAlgorithmMatrixDisplay::process()
 				m_vRowLabelCache.emplace_back(GTK_LABEL(l_pWidgetLabel), ss.str().c_str());
 			}
 
-			for (uint32_t r = 1; r < l_ui32RowCount + 1; r++)
+			for (uint32_t r = 1; r < l_ui32RowCount + 1; ++r)
 			{
-				for (uint32_t c = 1; c < l_ui32ColumnCount + 1; c++)
+				for (uint32_t c = 1; c < l_ui32ColumnCount + 1; ++c)
 				{
 					//::GtkBuilder* l_pGtkBuilderEventBox=gtk_builder_new(); // glade_xml_new(OpenViBE::Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-MatrixDisplay.ui", "matrix-value-eventbox", nullptr);
 					//gtk_builder_add_from_file(l_pGtkBuilderEventBox, OpenViBE::Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-MatrixDisplay.ui", nullptr);
@@ -296,9 +296,9 @@ bool CBoxAlgorithmMatrixDisplay::process()
 			}
 
 			// MIN-MAX computation
-			for (uint32_t r = 0; r < l_ui32RowCount; r++)
+			for (uint32_t r = 0; r < l_ui32RowCount; ++r)
 			{
-				for (uint32_t c = 0; c < l_ui32ColumnCount; c++)
+				for (uint32_t c = 0; c < l_ui32ColumnCount; ++c)
 				{
 					double l_f64Value = op_pMatrix->getBuffer()[r * l_ui32ColumnCount + c];
 					m_f64MaxValue     = (l_f64Value > m_f64MaxValue ? l_f64Value : m_f64MaxValue);
@@ -313,9 +313,9 @@ bool CBoxAlgorithmMatrixDisplay::process()
 				}
 			}
 
-			for (uint32_t r = 0; r < l_ui32RowCount; r++)
+			for (uint32_t r = 0; r < l_ui32RowCount; ++r)
 			{
-				for (uint32_t c = 0; c < l_ui32ColumnCount; c++)
+				for (uint32_t c = 0; c < l_ui32ColumnCount; ++c)
 				{
 					double l_f64Value = op_pMatrix->getBuffer()[r * l_ui32ColumnCount + c];
 					if (m_f64MaxValue != 0 || m_f64MinValue != 0) // if the first value ever sent is 0, both are 0, and we dont want to divide by 0 :)
@@ -350,7 +350,7 @@ bool CBoxAlgorithmMatrixDisplay::process()
 			if (op_pMatrix->getDimensionCount() != 1)
 			{
 				//first line : labels
-				for (uint32_t c = 0; c < l_ui32ColumnCount; c++)
+				for (uint32_t c = 0; c < l_ui32ColumnCount; ++c)
 				{
 					if (m_vColumnLabelCache[c].second != op_pMatrix->getDimensionLabel(1, c) && !string(op_pMatrix->getDimensionLabel(1, c)).empty())
 					{
@@ -360,7 +360,7 @@ bool CBoxAlgorithmMatrixDisplay::process()
 				}
 
 				//first column : labels
-				for (uint32_t r = 0; r < l_ui32RowCount; r++)
+				for (uint32_t r = 0; r < l_ui32RowCount; ++r)
 				{
 					if (m_vRowLabelCache[r].second != op_pMatrix->getDimensionLabel(0, r) && !string(op_pMatrix->getDimensionLabel(0, r)).empty())
 					{
@@ -372,7 +372,7 @@ bool CBoxAlgorithmMatrixDisplay::process()
 			else
 			{
 				//first line : labels
-				for (uint32_t c = 0; c < l_ui32ColumnCount; c++)
+				for (uint32_t c = 0; c < l_ui32ColumnCount; ++c)
 				{
 					if (m_vColumnLabelCache[c].second != op_pMatrix->getDimensionLabel(0, c) && !string(op_pMatrix->getDimensionLabel(0, c)).empty())
 					{
