@@ -308,17 +308,12 @@ void CLogListenerDesigner::log(const double value)
 void CLogListenerDesigner::log(const bool value)
 {
 	if (m_bIngnoreMessages) { return; }
-
-	stringstream l_sText;
-	l_sText << (value ? "true" : "false");
-
-	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
+	checkAppendFilterCurrentLog("c_watercourse", (value ? "true" : "false"));
 }
 
 void CLogListenerDesigner::log(const CIdentifier& value)
 {
 	if (m_bIngnoreMessages) { return; }
-
 	checkAppendFilterCurrentLog("c_blueChill", value.toString(), true);
 }
 
