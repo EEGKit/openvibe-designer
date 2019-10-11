@@ -77,8 +77,8 @@ namespace OpenViBEDesigner
 
 		CLogListenerDesigner(const OpenViBE::Kernel::IKernelContext& ctx, GtkBuilder* pBuilderInterface);
 
-		bool isActive(OpenViBE::Kernel::ELogLevel eLogLevel) override;
-		bool activate(OpenViBE::Kernel::ELogLevel eLogLevel, bool bActive) override;
+		bool isActive(OpenViBE::Kernel::ELogLevel level) override;
+		bool activate(OpenViBE::Kernel::ELogLevel level, bool bActive) override;
 		bool activate(OpenViBE::Kernel::ELogLevel eStartLogLevel, OpenViBE::Kernel::ELogLevel eEndLogLevel, bool bActive) override;
 		bool activate(bool bActive) override;
 
@@ -103,8 +103,8 @@ namespace OpenViBEDesigner
 		void log(const OpenViBE::CString& value) override;
 		void log(const char* value) override;
 
-		void log(const OpenViBE::Kernel::ELogLevel eLogLevel) override;
-		void log(const OpenViBE::Kernel::ELogColor eLogColor) override;
+		void log(const OpenViBE::Kernel::ELogLevel level) override;
+		void log(const OpenViBE::Kernel::ELogColor color) override;
 
 		void clearMessages();
 		void focusMessageWindow() const;
@@ -159,9 +159,9 @@ namespace OpenViBEDesigner
 
 		bool m_bIngnoreMessages = false;
 
-		uint32_t m_nMessages = 0;
-		uint32_t m_nWarnings = 0;
-		uint32_t m_nErrors   = 0;
+		size_t m_nMessages = 0;
+		size_t m_nWarnings = 0;
+		size_t m_nErrors   = 0;
 
 		bool m_logWithHexa          = false;
 		bool m_logTimeInSecond      = false;

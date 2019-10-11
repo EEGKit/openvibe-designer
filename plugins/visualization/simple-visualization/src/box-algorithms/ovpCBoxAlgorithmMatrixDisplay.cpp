@@ -156,7 +156,7 @@ bool CBoxAlgorithmMatrixDisplay::uninitialize()
 	return true;
 }
 
-bool CBoxAlgorithmMatrixDisplay::processInput(const uint32_t /*index*/)
+bool CBoxAlgorithmMatrixDisplay::processInput(const size_t /*index*/)
 {
 	getBoxAlgorithmContext()->markAlgorithmAsReadyToProcess();
 

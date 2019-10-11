@@ -84,7 +84,7 @@ bool CBoxAlgorithmTopographicMap2DDisplay::uninitialize()
 	return true;
 }
 
-bool CBoxAlgorithmTopographicMap2DDisplay::processInput(const uint32_t /*index*/)
+bool CBoxAlgorithmTopographicMap2DDisplay::processInput(const size_t /*index*/)
 {
 	getBoxAlgorithmContext()->markAlgorithmAsReadyToProcess();
 	return true;

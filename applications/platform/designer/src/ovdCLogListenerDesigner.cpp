@@ -150,16 +150,16 @@ CLogListenerDesigner::CLogListenerDesigner(const IKernelContext& ctx, GtkBuilder
 	m_logTimePrecision = uint32_t(ctx.getConfigurationManager().expandAsUInteger("${Designer_ConsoleLogTimePrecision}", 3));
 }
 
-bool CLogListenerDesigner::isActive(const ELogLevel eLogLevel)
+bool CLogListenerDesigner::isActive(const ELogLevel level)
 {
-	const auto it = m_vActiveLevel.find(eLogLevel);
+	const auto it = m_vActiveLevel.find(level);
 	if (it == m_vActiveLevel.end()) { return true; }
 	return it->second;
 }
 
-bool CLogListenerDesigner::activate(const ELogLevel eLogLevel, const bool bActive)
+bool CLogListenerDesigner::activate(const ELogLevel level, const bool bActive)
 {
-	m_vActiveLevel[eLogLevel] = bActive;
+	m_vActiveLevel[level] = bActive;
 	return true;
 }
 
@@ -175,7 +175,7 @@ void CLogListenerDesigner::log(const time64 value)
 {
 	if (m_bIngnoreMessages) { return; }
 
-	stringstream l_sText;
+	stringstream txt;
 	if (m_logTimeInSecond)
 	{
 		const double l_f64Time = TimeArithmetics::timeToSeconds(value.timeValue);
@@ -186,26 +186,26 @@ void CLogListenerDesigner::log(const time64 value)
 		ss << " sec";
 		if (m_logWithHexa) { ss << " (0x" << hex << value.timeValue << ")"; }
 
-		l_sText << ss.str().c_str();
+		txt << ss.str().c_str();
 	}
 	else
 	{
-		l_sText << dec << value.timeValue;
-		if (m_logWithHexa) { l_sText << " (0x" << hex << value.timeValue << ")"; }
+		txt << dec << value.timeValue;
+		if (m_logWithHexa) { txt << " (0x" << hex << value.timeValue << ")"; }
 	}
 
-	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
+	checkAppendFilterCurrentLog("c_watercourse", txt.str().c_str());
 }
 
 void CLogListenerDesigner::log(const uint64_t value)
 {
 	if (m_bIngnoreMessages) { return; }
 
-	stringstream l_sText;
-	l_sText << dec << value;
-	if (m_logWithHexa) { l_sText << " (0x" << hex << value << ")"; }
+	stringstream txt;
+	txt << dec << value;
+	if (m_logWithHexa) { txt << " (0x" << hex << value << ")"; }
 
-	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
+	checkAppendFilterCurrentLog("c_watercourse", txt.str().c_str());
 }
 
 void CLogListenerDesigner::log(const uint32_t value)
@@ -314,24 +314,22 @@ void CLogListenerDesigner::log(const bool value)
 void CLogListenerDesigner::log(const CIdentifier& value)
 {
 	if (m_bIngnoreMessages) { return; }
-	checkAppendFilterCurrentLog("c_blueChill", value.toString(), true);
+	checkAppendFilterCurrentLog("c_blueChill", value.str().c_str(), true);
 }
 
 void CLogListenerDesigner::log(const CString& value)
 {
 	if (m_bIngnoreMessages) { return; }
-
-	checkAppendFilterCurrentLog("c_blueChill", value);
+	checkAppendFilterCurrentLog("c_blueChill", value.toASCIIString());
 }
 
 void CLogListenerDesigner::log(const char* value)
 {
 	if (m_bIngnoreMessages) { return; }
-
 	checkAppendFilterCurrentLog(nullptr, value);
 }
 
-void CLogListenerDesigner::log(const ELogLevel eLogLevel)
+void CLogListenerDesigner::log(const ELogLevel level)
 {
 	//	GtkTextIter l_oTextIter;
 	//	gtk_text_buffer_get_end_iter(m_Buffer, &l_oTextIter);
@@ -343,7 +341,7 @@ void CLogListenerDesigner::log(const ELogLevel eLogLevel)
 	GtkTextIter l_oEndLogIter;
 	gtk_text_buffer_get_end_iter(m_pCurrentLog->getTextBuffer(), &l_oEndLogIter);
 
-	const auto addTagName = [this, &l_oEndLogIter](GtkToggleToolButton* activeButton, uint32_t& countVariable, const char* state, const char* color)
+	const auto addTagName = [this, &l_oEndLogIter](GtkToggleToolButton* activeButton, size_t& countVariable, const char* state, const char* color)
 	{
 		m_bIngnoreMessages = !gtk_toggle_tool_button_get_active(activeButton);
 		if (m_bIngnoreMessages) { return; }
@@ -354,7 +352,7 @@ void CLogListenerDesigner::log(const ELogLevel eLogLevel)
 		gtk_text_buffer_insert_with_tags_by_name(m_pCurrentLog->getTextBuffer(), &l_oEndLogIter, " ] ", -1, "w_bold", "f_mono", nullptr);
 	};
 
-	switch (eLogLevel)
+	switch (level)
 	{
 		case LogLevel_Debug:
 			addTagName(m_pToggleButtonActive_Debug, m_nMessages, "DEBUG", "c_blue");
@@ -393,8 +391,8 @@ void CLogListenerDesigner::log(const ELogLevel eLogLevel)
 			break;
 	}
 
-	if (gtk_toggle_button_get_active(m_pToggleButtonPopup) && (eLogLevel == LogLevel_Warning || eLogLevel == LogLevel_ImportantWarning || eLogLevel ==
-															   LogLevel_Error || eLogLevel == LogLevel_Fatal))
+	if (gtk_toggle_button_get_active(m_pToggleButtonPopup) && (level == LogLevel_Warning || level == LogLevel_ImportantWarning || level ==
+															   LogLevel_Error || level == LogLevel_Fatal))
 	{
 		if (!gtk_widget_get_visible(GTK_WIDGET(m_pAlertWindow)))
 		{
@@ -421,7 +419,7 @@ void CLogListenerDesigner::log(const ELogLevel eLogLevel)
 	gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(m_pTextView), &mark, 0.0, FALSE, 0.0, 0.0);
 }
 
-void CLogListenerDesigner::log(const ELogColor /*eLogColor*/) { if (m_bIngnoreMessages) {} }
+void CLogListenerDesigner::log(const ELogColor /*color*/) { if (m_bIngnoreMessages) {} }
 
 void CLogListenerDesigner::updateMessageCounts() const
 {
