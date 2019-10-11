@@ -157,19 +157,19 @@ bool CLogListenerDesigner::isActive(const ELogLevel level)
 	return it->second;
 }
 
-bool CLogListenerDesigner::activate(const ELogLevel level, const bool bActive)
+bool CLogListenerDesigner::activate(const ELogLevel level, const bool active)
 {
-	m_vActiveLevel[level] = bActive;
+	m_vActiveLevel[level] = active;
 	return true;
 }
 
-bool CLogListenerDesigner::activate(const ELogLevel eStartLogLevel, const ELogLevel eEndLogLevel, const bool bActive)
+bool CLogListenerDesigner::activate(const ELogLevel eStartLogLevel, const ELogLevel eEndLogLevel, const bool active)
 {
-	for (int i = eStartLogLevel; i <= eEndLogLevel; ++i) { m_vActiveLevel[ELogLevel(i)] = bActive; }
+	for (int i = eStartLogLevel; i <= eEndLogLevel; ++i) { m_vActiveLevel[ELogLevel(i)] = active; }
 	return true;
 }
 
-bool CLogListenerDesigner::activate(const bool bActive) { return activate(LogLevel_First, LogLevel_Last, bActive); }
+bool CLogListenerDesigner::activate(const bool active) { return activate(LogLevel_First, LogLevel_Last, active); }
 
 void CLogListenerDesigner::log(const time64 value)
 {
@@ -219,28 +219,6 @@ void CLogListenerDesigner::log(const uint32_t value)
 	checkAppendFilterCurrentLog("c_watercourse", txt.str().c_str());
 }
 
-void CLogListenerDesigner::log(const uint16_t value)
-{
-	if (m_bIngnoreMessages) { return; }
-
-	stringstream txt;
-	txt << dec << value;
-	if (m_logWithHexa) { txt << " (0x" << hex << value << ")"; }
-
-	checkAppendFilterCurrentLog("c_watercourse", txt.str().c_str());
-}
-
-void CLogListenerDesigner::log(const uint8_t value)
-{
-	if (m_bIngnoreMessages) { return; }
-
-	stringstream txt;
-	txt << dec << value;
-	if (m_logWithHexa) { txt << " (0x" << hex << value << ")"; }
-
-	checkAppendFilterCurrentLog("c_watercourse", txt.str().c_str());
-}
-
 void CLogListenerDesigner::log(const int64_t value)
 {
 	if (m_bIngnoreMessages) { return; }
@@ -253,28 +231,6 @@ void CLogListenerDesigner::log(const int64_t value)
 }
 
 void CLogListenerDesigner::log(const int value)
-{
-	if (m_bIngnoreMessages) { return; }
-
-	stringstream txt;
-	txt << dec << value;
-	if (m_logWithHexa) { txt << " (0x" << hex << value << ")"; }
-
-	checkAppendFilterCurrentLog("c_watercourse", txt.str().c_str());
-}
-
-void CLogListenerDesigner::log(const int16_t value)
-{
-	if (m_bIngnoreMessages) { return; }
-
-	stringstream txt;
-	txt << dec << value;
-	if (m_logWithHexa) { txt << " (0x" << hex << value << ")"; }
-
-	checkAppendFilterCurrentLog("c_watercourse", txt.str().c_str());
-}
-
-void CLogListenerDesigner::log(const int8_t value)
 {
 	if (m_bIngnoreMessages) { return; }
 

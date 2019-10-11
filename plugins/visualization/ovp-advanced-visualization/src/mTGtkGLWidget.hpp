@@ -151,9 +151,9 @@ namespace Mensia
 				else { gdk_window_invalidate_rect(m_pBottom->window, nullptr, true); }
 			}
 
-			virtual void setPointSmoothingActive(const bool bActive = false)
+			virtual void setPointSmoothingActive(const bool active = false)
 			{
-				if (bActive) { glEnable(GL_POINT_SMOOTH); }
+				if (active) { glEnable(GL_POINT_SMOOTH); }
 				else { glDisable(GL_POINT_SMOOTH); }
 			}
 

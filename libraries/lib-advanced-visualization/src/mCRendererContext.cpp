@@ -313,7 +313,7 @@ void CRendererContext::setScalpMeshVisible(const bool bVisible) { m_scalpMeshVis
 // ____________________________________________________________________________________________________________________________________________________________________________________
 //
 
-void CRendererContext::setERPPlayerActive(const bool bActive) { m_ERPPlayerActive = bActive; }
+void CRendererContext::setERPPlayerActive(const bool active) { m_ERPPlayerActive = active; }
 
 void CRendererContext::stepERPFractionBy(const float f32ERPFraction) { m_ERPFraction += f32ERPFraction; }
 

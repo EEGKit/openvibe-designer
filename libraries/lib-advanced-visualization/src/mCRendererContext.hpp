@@ -80,7 +80,7 @@ namespace Mensia
 			void setFaceMeshVisible(bool bVisible) override;
 			void setScalpMeshVisible(bool bVisible) override;
 
-			void setERPPlayerActive(bool bActive) override;
+			void setERPPlayerActive(bool active) override;
 			void stepERPFractionBy(float f32ERPFraction) override;
 
 			std::string getChannelName(uint32_t index) const override;

@@ -78,21 +78,17 @@ namespace OpenViBEDesigner
 		CLogListenerDesigner(const OpenViBE::Kernel::IKernelContext& ctx, GtkBuilder* pBuilderInterface);
 
 		bool isActive(OpenViBE::Kernel::ELogLevel level) override;
-		bool activate(OpenViBE::Kernel::ELogLevel level, bool bActive) override;
-		bool activate(OpenViBE::Kernel::ELogLevel eStartLogLevel, OpenViBE::Kernel::ELogLevel eEndLogLevel, bool bActive) override;
-		bool activate(bool bActive) override;
+		bool activate(OpenViBE::Kernel::ELogLevel level, bool active) override;
+		bool activate(OpenViBE::Kernel::ELogLevel eStartLogLevel, OpenViBE::Kernel::ELogLevel eEndLogLevel, bool active) override;
+		bool activate(bool active) override;
 
 		void log(const OpenViBE::time64 value) override;
 
 		void log(const uint64_t value) override;
 		void log(const uint32_t value) override;
-		void log(const uint16_t value) override;
-		void log(const uint8_t value) override;
 
 		void log(const int64_t value) override;
 		void log(const int value) override;
-		void log(const int16_t value) override;
-		void log(const int8_t value) override;
 
 		void log(const double value) override;
 		void log(const float value) override;

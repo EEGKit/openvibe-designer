@@ -89,7 +89,7 @@ namespace Mensia
 			virtual void setFaceMeshVisible(bool bVisible) = 0;
 			virtual void setScalpMeshVisible(bool bVisible) = 0;
 
-			virtual void setERPPlayerActive(bool bActive) = 0;
+			virtual void setERPPlayerActive(bool active) = 0;
 			virtual void stepERPFractionBy(float f32ERPFraction) = 0;
 
 			virtual std::string getChannelName(uint32_t index) const = 0;
