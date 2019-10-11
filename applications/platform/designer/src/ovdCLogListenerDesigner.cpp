@@ -212,97 +212,89 @@ void CLogListenerDesigner::log(const uint32_t value)
 {
 	if (m_bIngnoreMessages) { return; }
 
-	stringstream l_sText;
-	l_sText << dec << value;
-	if (m_logWithHexa) { l_sText << " (0x" << hex << value << ")"; }
+	stringstream txt;
+	txt << dec << value;
+	if (m_logWithHexa) { txt << " (0x" << hex << value << ")"; }
 
-	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
+	checkAppendFilterCurrentLog("c_watercourse", txt.str().c_str());
 }
 
 void CLogListenerDesigner::log(const uint16_t value)
 {
 	if (m_bIngnoreMessages) { return; }
 
-	stringstream l_sText;
-	l_sText << dec << value;
-	if (m_logWithHexa) { l_sText << " (0x" << hex << value << ")"; }
+	stringstream txt;
+	txt << dec << value;
+	if (m_logWithHexa) { txt << " (0x" << hex << value << ")"; }
 
-	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
+	checkAppendFilterCurrentLog("c_watercourse", txt.str().c_str());
 }
 
 void CLogListenerDesigner::log(const uint8_t value)
 {
 	if (m_bIngnoreMessages) { return; }
 
-	stringstream l_sText;
-	l_sText << dec << value;
-	if (m_logWithHexa) { l_sText << " (0x" << hex << value << ")"; }
+	stringstream txt;
+	txt << dec << value;
+	if (m_logWithHexa) { txt << " (0x" << hex << value << ")"; }
 
-	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
+	checkAppendFilterCurrentLog("c_watercourse", txt.str().c_str());
 }
 
 void CLogListenerDesigner::log(const int64_t value)
 {
 	if (m_bIngnoreMessages) { return; }
 
-	stringstream l_sText;
-	l_sText << dec << value;
-	if (m_logWithHexa) { l_sText << " (0x" << hex << value << ")"; }
+	stringstream txt;
+	txt << dec << value;
+	if (m_logWithHexa) { txt << " (0x" << hex << value << ")"; }
 
-	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
+	checkAppendFilterCurrentLog("c_watercourse", txt.str().c_str());
 }
 
 void CLogListenerDesigner::log(const int value)
 {
 	if (m_bIngnoreMessages) { return; }
 
-	stringstream l_sText;
-	l_sText << dec << value;
-	if (m_logWithHexa) { l_sText << " (0x" << hex << value << ")"; }
+	stringstream txt;
+	txt << dec << value;
+	if (m_logWithHexa) { txt << " (0x" << hex << value << ")"; }
 
-	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
+	checkAppendFilterCurrentLog("c_watercourse", txt.str().c_str());
 }
 
 void CLogListenerDesigner::log(const int16_t value)
 {
 	if (m_bIngnoreMessages) { return; }
 
-	stringstream l_sText;
-	l_sText << dec << value;
-	if (m_logWithHexa) { l_sText << " (0x" << hex << value << ")"; }
+	stringstream txt;
+	txt << dec << value;
+	if (m_logWithHexa) { txt << " (0x" << hex << value << ")"; }
 
-	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
+	checkAppendFilterCurrentLog("c_watercourse", txt.str().c_str());
 }
 
 void CLogListenerDesigner::log(const int8_t value)
 {
 	if (m_bIngnoreMessages) { return; }
 
-	stringstream l_sText;
-	l_sText << dec << value;
-	if (m_logWithHexa) { l_sText << " (0x" << hex << value << ")"; }
+	stringstream txt;
+	txt << dec << value;
+	if (m_logWithHexa) { txt << " (0x" << hex << value << ")"; }
 
-	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
+	checkAppendFilterCurrentLog("c_watercourse", txt.str().c_str());
 }
 
 void CLogListenerDesigner::log(const float value)
 {
 	if (m_bIngnoreMessages) { return; }
-
-	stringstream l_sText;
-	l_sText << value;
-
-	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
+	checkAppendFilterCurrentLog("c_watercourse", std::to_string(value).c_str());
 }
 
 void CLogListenerDesigner::log(const double value)
 {
 	if (m_bIngnoreMessages) { return; }
-
-	stringstream l_sText;
-	l_sText << value;
-
-	checkAppendFilterCurrentLog("c_watercourse", l_sText.str().c_str());
+	checkAppendFilterCurrentLog("c_watercourse", std::to_string(value).c_str());
 }
 
 void CLogListenerDesigner::log(const bool value)
@@ -321,6 +313,12 @@ void CLogListenerDesigner::log(const CString& value)
 {
 	if (m_bIngnoreMessages) { return; }
 	checkAppendFilterCurrentLog("c_blueChill", value.toASCIIString());
+}
+
+void CLogListenerDesigner::log(const std::string& value)
+{
+	if (m_bIngnoreMessages) { return; }
+	checkAppendFilterCurrentLog(nullptr, value.c_str());
 }
 
 void CLogListenerDesigner::log(const char* value)

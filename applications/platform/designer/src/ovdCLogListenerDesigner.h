@@ -101,6 +101,7 @@ namespace OpenViBEDesigner
 
 		void log(const OpenViBE::CIdentifier& value) override;
 		void log(const OpenViBE::CString& value) override;
+		void log(const std::string& value) override;
 		void log(const char* value) override;
 
 		void log(const OpenViBE::Kernel::ELogLevel level) override;
