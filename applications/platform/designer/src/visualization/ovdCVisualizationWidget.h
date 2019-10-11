@@ -31,7 +31,7 @@ namespace OpenViBEDesigner
 
 		OpenViBE::CIdentifier getBoxIdentifier() const override { return m_BoxID; }
 
-		uint32_t getNbChildren() const override { return uint32_t(m_Children.size()); }
+		uint32_t getNbChildren() const override { return m_Children.size(); }
 
 		bool getChildIndex(const OpenViBE::CIdentifier& identifier, uint32_t& index) const override;
 

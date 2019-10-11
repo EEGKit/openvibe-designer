@@ -324,7 +324,7 @@ namespace
 
 	void insertLoretaVoxelInMesh(C3DMesh& rMesh, const float x, const float y, const float z, const float s)
 	{
-		const uint32_t i = uint32_t(rMesh.m_vVertex.size());
+		const uint32_t i = rMesh.m_vVertex.size();
 
 		// Insert the 8 vertices of the cube
 		rMesh.m_vVertex.emplace_back(x - s, y - s, z - s);	// i+0
@@ -515,7 +515,7 @@ CRendererLoreta::CRendererLoreta()
 
 				//region - RIGHT
 				::fprintf(l_pFile, "\tstatic uint32_t g_p%sVoxels_%iR[%i] = {", l_sRegionGroupName, l_uiAreaCount, l_vRightVoxels.size());
-				for (int l_uiVoxel = 0; l_uiVoxel < int(l_vRightVoxels.size()) - 1; l_uiVoxel++) // int to handle size == 0
+				for (int l_uiVoxel = 0; l_uiVoxel < l_vRightVoxels.size() - 1; l_uiVoxel++) // int to handle size == 0
 				{
 					::fprintf(l_pFile, "%i,", l_vRightVoxels[l_uiVoxel]);
 				}
@@ -523,7 +523,7 @@ CRendererLoreta::CRendererLoreta()
 
 				//region - LEFT
 				::fprintf(l_pFile, "\tstatic uint32_t g_p%sVoxels_%iL[%i] = {", l_sRegionGroupName, l_uiAreaCount, l_vLeftVoxels.size());
-				for (int l_uiVoxel = 0; l_uiVoxel < int(l_vLeftVoxels.size()) - 1; l_uiVoxel++)
+				for (int l_uiVoxel = 0; l_uiVoxel < l_vLeftVoxels.size() - 1; l_uiVoxel++)
 				{
 					::fprintf(l_pFile, "%i,", l_vLeftVoxels[l_uiVoxel]);
 				}
@@ -786,7 +786,7 @@ void CRendererLoreta::clearRegionSelection()
 	this->refreshBrainSubset();
 }
 
-uint32_t CRendererLoreta::getRegionCategoryCount() { return uint32_t(m_vLookup.size()); }
+uint32_t CRendererLoreta::getRegionCategoryCount() { return m_vLookup.size(); }
 
 uint32_t CRendererLoreta::getRegionCount(const uint32_t regionCategory)
 {

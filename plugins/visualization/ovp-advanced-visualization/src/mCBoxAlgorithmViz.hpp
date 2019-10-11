@@ -249,13 +249,13 @@ namespace Mensia
 			CMouse m_oMouseHandler;
 
 			OpenViBE::CString m_sLocalisation;
-			uint64_t m_temporalCoherence = 0;
-			uint64_t m_timeScale         = 0;
-			uint64_t m_nElement      = 0;
+			size_t m_temporalCoherence = 0;
+			size_t m_timeScale         = 0;
+			size_t m_nElement      = 0;
 			double m_f64DataScale        = 0.0;
 			OpenViBE::CString m_sCaption;
 			uint32_t m_textureId       = 0;
-			uint64_t m_nFlowerRing = 0;
+			size_t m_nFlowerRing = 0;
 			double m_translucency      = 0.0;
 			OpenViBE::CString m_sColor;
 			OpenViBE::CString m_sColorGradient;
@@ -268,8 +268,8 @@ namespace Mensia
 			TColor m_oColor;
 
 			OpenViBE::CIdentifier m_typeID = OV_UndefinedIdentifier;
-			uint64_t m_time1                        = 0;
-			uint64_t m_time2                        = 0;
+			size_t m_time1                 = 0;
+			size_t m_time2                 = 0;
 
 			float m_fastForwardMaximumFactorHighDefinition = 0.0;
 			float m_fastForwardMaximumFactorLowDefinition  = 0.0;
@@ -298,8 +298,8 @@ namespace Mensia
 			GtkTreeView* m_pChannelTreeView   = nullptr;
 			GtkListStore* m_pChannelListStore = nullptr;
 
-			uint32_t m_width  = 0;
-			uint32_t m_height = 0;
+			size_t m_width  = 0;
+			size_t m_height = 0;
 
 			bool m_bRebuildNeeded         = false;
 			bool m_bRefreshNeeded         = false;
@@ -308,7 +308,7 @@ namespace Mensia
 
 			bool m_isVideoOutputEnabled = false; // for video output
 			bool m_isVideoOutputWorking = false;
-			uint32_t m_frameId       = 0;
+			size_t m_frameId       = 0;
 			OpenViBE::CString m_sFrameFilenameFormat;
 		private:
 			OpenViBEVisualizationToolkit::IVisualizationContext* m_visualizationContext{};

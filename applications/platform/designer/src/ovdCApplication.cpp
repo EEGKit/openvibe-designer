@@ -2876,7 +2876,7 @@ void CApplication::changeCurrentScenario(const int pageIdx)
 		m_currentInterfacedScenarioIdx = i;
 	}
 		//switching to an existing scenario
-	else if (pageIdx < int(m_vInterfacedScenario.size()))
+	else if (pageIdx < m_vInterfacedScenario.size())
 	{
 		CInterfacedScenario* currentInterfacedScenario = m_vInterfacedScenario[pageIdx];
 		const EPlayerStatus playerStatus               = (currentInterfacedScenario->m_pPlayer ? currentInterfacedScenario->m_pPlayer->getStatus()

@@ -164,7 +164,7 @@ namespace Mensia
 
 				if (nChannel == 0)
 				{
-					this->getLogManager() << OpenViBE::Kernel::LogLevel_Error << "Input stream " << uint32_t(i) << " has 0 channels\n";
+					this->getLogManager() << OpenViBE::Kernel::LogLevel_Error << "Input stream " << i << " has 0 channels\n";
 					return false;
 				}
 

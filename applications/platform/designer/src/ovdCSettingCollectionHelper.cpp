@@ -232,7 +232,7 @@ namespace
 		CMatrix l_oGradientMatrix;
 		l_oGradientMatrix.setDimensionCount(2);
 		l_oGradientMatrix.setDimensionSize(0, 4);
-		l_oGradientMatrix.setDimensionSize(1, uint32_t(userData->vColorGradient.size()));
+		l_oGradientMatrix.setDimensionSize(1, userData->vColorGradient.size());
 		for (i = 0; i < userData->vColorGradient.size(); ++i)
 		{
 			l_oGradientMatrix[i * 4]     = userData->vColorGradient[i].fPercent;
@@ -402,7 +402,7 @@ namespace
 			CMatrix finalGradient;
 			finalGradient.setDimensionCount(2);
 			finalGradient.setDimensionSize(0, 4);
-			finalGradient.setDimensionSize(1, uint32_t(userData.vColorGradient.size()));
+			finalGradient.setDimensionSize(1, userData.vColorGradient.size());
 			for (uint32_t i = 0; i < userData.vColorGradient.size(); ++i)
 			{
 				finalGradient[i * 4]     = userData.vColorGradient[i].fPercent;

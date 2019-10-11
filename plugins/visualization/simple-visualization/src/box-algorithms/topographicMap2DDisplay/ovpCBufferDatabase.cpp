@@ -665,7 +665,7 @@ bool CBufferDatabase::fillChannelLookupTable()
 		if (!l_bLabelRecognized)
 		{
 			m_parentPlugin.getLogManager() << LogLevel_Warning
-					<< "Unrecognized electrode name (index=" << uint32_t(i)
+					<< "Unrecognized electrode name (index=" << i
 					<< ", name=" << m_pDimensionLabels[0][i].c_str()
 					<< ")!\n";
 			res = false;

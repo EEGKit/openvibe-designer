@@ -136,17 +136,17 @@ namespace Mensia
 			const IBox& l_rStaticBoxContext = this->getStaticBoxContext();
 			IBoxIO& boxContext              = this->getDynamicBoxContext();
 
-			for (uint32_t i = 0; i < boxContext.getInputChunkCount(0); ++i)
+			for (size_t i = 0; i < boxContext.getInputChunkCount(0); ++i)
 			{
 				m_oMatrixDecoder.decode(i);
 
 				OpenViBE::IMatrix* l_pMatrix = m_oMatrixDecoder.getOutputMatrix();
-				uint32_t nChannel        = l_pMatrix->getDimensionSize(0);
-				uint32_t nSample         = l_pMatrix->getDimensionSize(1);
+				size_t nChannel        = l_pMatrix->getDimensionSize(0);
+				size_t nSample         = l_pMatrix->getDimensionSize(1);
 
 				if (nChannel == 0)
 				{
-					this->getLogManager() << LogLevel_Error << "Input stream " << uint32_t(i) << " has 0 channels\n";
+					this->getLogManager() << LogLevel_Error << "Input stream " << i << " has 0 channels\n";
 					return false;
 				}
 
@@ -221,7 +221,7 @@ namespace Mensia
 							{
 								//warned = true;
 								this->getLogManager() << LogLevel_Warning << "Input matrix has " << nSample <<
-										" elements and the box settings say the elements are independant with " << uint64_t(m_nElement) <<
+										" elements and the box settings say the elements are independant with " << m_nElement <<
 										" elements to render\n";
 								this->getLogManager() << LogLevel_Warning << "Such configuration is uncommon for a 'continous' kind of visualization !\n";
 								this->getLogManager() << LogLevel_Warning << "You might want either of the following alternative :\n";

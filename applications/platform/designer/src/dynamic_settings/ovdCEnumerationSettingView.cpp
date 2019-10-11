@@ -72,7 +72,7 @@ void CEnumerationSettingView::setValue(const CString& value)
 		GtkTreeIter listIter;
 		GtkListStore* list = GTK_LIST_STORE(gtk_combo_box_get_model(m_comboBox));
 		int valuesInModel     = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(list), nullptr);
-		if (valuesInModel == int(m_entriesIdx.size()))
+		if (valuesInModel == m_entriesIdx.size())
 		{
 			gtk_list_store_append(list, &listIter);
 			valuesInModel += 1;

@@ -82,8 +82,8 @@ void CColorGradientSettingView::configurePressed()
 		CMatrix finalColorGradient;
 		finalColorGradient.setDimensionCount(2);
 		finalColorGradient.setDimensionSize(0, 4);
-		finalColorGradient.setDimensionSize(1, uint32_t(vColorGradient.size()));
-		for (uint32_t i = 0; i < uint32_t(vColorGradient.size()); ++i)
+		finalColorGradient.setDimensionSize(1, vColorGradient.size());
+		for (uint32_t i = 0; i < vColorGradient.size(); ++i)
 		{
 			const uint32_t idx          = i * 4;
 			finalColorGradient[idx]     = vColorGradient[i].percent;
@@ -108,7 +108,7 @@ void CColorGradientSettingView::initializeGradient()
 	gtk_container_foreach(GTK_CONTAINER(pContainer), OnGTKWidgetDestroy, nullptr);
 
 	uint32_t i           = 0;
-	const uint32_t count = uint32_t(vColorGradient.size());
+	const uint32_t count = vColorGradient.size();
 	vColorButtonMap.clear();
 	vSpinButtonMap.clear();
 	for (auto it = vColorGradient.begin(); it != vColorGradient.end(); ++it, i++)
@@ -155,7 +155,7 @@ void CColorGradientSettingView::refreshColorGradient()
 	CMatrix l_oGradientMatrix;
 	l_oGradientMatrix.setDimensionCount(2);
 	l_oGradientMatrix.setDimensionSize(0, 4);
-	l_oGradientMatrix.setDimensionSize(1, uint32_t(vColorGradient.size()));
+	l_oGradientMatrix.setDimensionSize(1, vColorGradient.size());
 	for (uint32_t i = 0; i < vColorGradient.size(); ++i)
 	{
 		const uint32_t idx         = i * 4;

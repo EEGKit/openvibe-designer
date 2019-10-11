@@ -857,7 +857,7 @@ namespace OpenViBEPlugins
 			uint32_t w, h;
 
 #ifdef INTERPOLATE_AT_CHANNEL_LOCATION
-			for (uint32_t i = uint32_t(m_topographicMapDatabase.getChannelCount()); i < uint32_t(m_sampleValues.size()); ++i)
+			for (uint32_t i = uint32_t(m_topographicMapDatabase.getChannelCount()); i < m_sampleValues.size(); ++i)
 #else
 			for (uint32_t i = 0; i < m_sampleValues.size(); ++i)
 #endif

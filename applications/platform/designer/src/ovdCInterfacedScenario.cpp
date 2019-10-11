@@ -2450,7 +2450,7 @@ GtkImageMenuItem* CInterfacedScenario::gtk_menu_add_new_image_menu_item_with_cb_
 	l_oBoxContextMenuCB.secondaryIndex      = index2;
 	l_oBoxContextMenuCB.pBox                = box;
 	l_oBoxContextMenuCB.pInterfacedScenario = this;
-	const auto mapIndex                     = uint32_t(m_vBoxContextMenuCB.size());
+	const auto mapIndex                     = m_vBoxContextMenuCB.size();
 	m_vBoxContextMenuCB[mapIndex]           = l_oBoxContextMenuCB;
 	g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(cb), &m_vBoxContextMenuCB[mapIndex]);
 	return menuitem;
