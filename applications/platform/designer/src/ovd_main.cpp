@@ -307,11 +307,11 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& ctx, ma
 			}
 
 			// Construct a string containing the BoxAlgorithmIdentifier concatenated with a metabox identifier if necessary
-			std::string l_sBoxAlgorithmDescriptor(l_pPluginObjectDesc->getCreatedClass().toString().toASCIIString());
+			std::string boxAlgorithmDesc = l_pPluginObjectDesc->getCreatedClass().str();
 
 			if (l_pPluginObjectDesc->getCreatedClass() == OVP_ClassId_BoxAlgorithm_Metabox)
 			{
-				l_sBoxAlgorithmDescriptor += dynamic_cast<const Metabox::IMetaboxObjectDesc*>(l_pPluginObjectDesc)->getMetaboxDescriptor();
+				boxAlgorithmDesc += dynamic_cast<const Metabox::IMetaboxObjectDesc*>(l_pPluginObjectDesc)->getMetaboxDescriptor();
 				l_sTextColor = "#007020";
 			}
 			else { if (l_pPluginObjectDesc->hasFunctionality(M_Functionality_IsMensia)) { l_sTextColor = "#00b090"; } }
@@ -319,7 +319,7 @@ static void insertPluginObjectDesc_to_GtkTreeStore(const IKernelContext& ctx, ma
 
 			gtk_tree_store_set(GTK_TREE_STORE(pTreeStore), l_pGtkIterChild, Resource_StringName, l_sName.c_str(),
 							   Resource_StringShortDescription, static_cast<const char*>(l_pPluginObjectDesc->getShortDescription()),
-							   Resource_StringIdentifier, static_cast<const char*>(l_sBoxAlgorithmDescriptor.c_str()),
+							   Resource_StringIdentifier, static_cast<const char*>(boxAlgorithmDesc.c_str()),
 							   Resource_StringStockIcon, static_cast<const char*>(l_sStockItemName), Resource_StringColor, l_sTextColor.c_str(),
 							   Resource_StringFont, l_sTextFont.c_str(), Resource_BooleanIsPlugin, gboolean(TRUE),
 							   Resource_BackGroundColor, static_cast<const char*>(l_sBackGroundColor.c_str()), -1);

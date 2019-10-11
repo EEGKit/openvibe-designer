@@ -825,13 +825,13 @@ json::Object CVisualizationTree::serializeWidget(IVisualizationWidget& widget) c
 {
 	json::Object jsonRepresentation;
 
-	jsonRepresentation["identifier"] = widget.getIdentifier().toString().toASCIIString();
+	jsonRepresentation["identifier"] = widget.getIdentifier().str().c_str();
 
 	// visualization box name can be retrieved from corresponding IBox, so we can skip it for these
 	if (widget.getType() != VisualizationWidget_VisualizationBox) { jsonRepresentation["name"] = widget.getName().toASCIIString(); }
 
 	jsonRepresentation["type"]             = widget.getType();
-	jsonRepresentation["parentIdentifier"] = widget.getParentIdentifier().toString().toASCIIString();
+	jsonRepresentation["parentIdentifier"] = widget.getParentIdentifier().str().c_str();
 
 	// visualization widget index
 	IVisualizationWidget* parentVisualizationWidget = this->getVisualizationWidget(widget.getParentIdentifier());
@@ -842,7 +842,7 @@ json::Object CVisualizationTree::serializeWidget(IVisualizationWidget& widget) c
 		jsonRepresentation["index"] = int(childIndex);
 	}
 
-	jsonRepresentation["boxIdentifier"] = widget.getBoxIdentifier().toString().toASCIIString();
+	jsonRepresentation["boxIdentifier"] = widget.getBoxIdentifier().str().c_str();
 	jsonRepresentation["childCount"]    = int(widget.getNbChildren());
 
 	if (widget.getType() == VisualizationWidget_VisualizationWindow)

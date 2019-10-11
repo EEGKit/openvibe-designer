@@ -15,7 +15,7 @@ namespace
 		const CIdentifier newID = self->m_box.getUnusedInputIdentifier(OV_UndefinedIdentifier);
 		if (self->m_ConnectorIdentifierEntry && newID != OV_UndefinedIdentifier)
 		{
-			gtk_entry_set_text(self->m_ConnectorIdentifierEntry, newID.toString().toASCIIString());
+			gtk_entry_set_text(self->m_ConnectorIdentifierEntry, newID.str().c_str());
 		}
 	}
 } // namespace
@@ -109,7 +109,7 @@ bool CConnectorEditor::run()
 
 	//display connector name
 	gtk_entry_set_text(l_pConnectorNameEntry, l_oConnectorName.toASCIIString());
-	gtk_entry_set_text(m_ConnectorIdentifierEntry, connectorIdentifier.toString().toASCIIString());
+	gtk_entry_set_text(m_ConnectorIdentifierEntry, connectorIdentifier.str().c_str());
 
 	bool l_bFinished = false;
 	bool res   = false;

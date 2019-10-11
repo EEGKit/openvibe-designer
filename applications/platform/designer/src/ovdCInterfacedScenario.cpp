@@ -758,7 +758,7 @@ void CInterfacedScenario::redrawConfigureScenarioSettingsDialog()
 			// Set the identifer
 			CIdentifier settingIdentifier;
 			m_rScenario.getInterfacorIdentifier(EBoxInterfacorType::Setting, settingIdx, settingIdentifier);
-			gtk_entry_set_text(GTK_ENTRY(settingEntryID), settingIdentifier.toString().toASCIIString());
+			gtk_entry_set_text(GTK_ENTRY(settingEntryID), settingIdentifier.str().c_str());
 
 			// Add widget for the actual setting
 			CString l_sSettingWidgetName = m_pSettingHelper->getSettingWidgetName(l_oSettingTypeID);

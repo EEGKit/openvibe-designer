@@ -10,7 +10,7 @@ namespace OpenViBE
 {
 	std::ostream& operator<<(std::ostream& os, const OpenViBE::CIdentifier& identifier)
 	{
-		return os << identifier.toString().toASCIIString();
+		return os << identifier.str().c_str();
 	}
 }
 #endif
