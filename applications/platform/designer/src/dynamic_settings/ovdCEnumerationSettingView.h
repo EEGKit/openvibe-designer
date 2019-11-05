@@ -12,7 +12,7 @@ namespace OpenViBEDesigner
 		class CEnumerationSettingView : public CAbstractSettingView
 		{
 		public:
-			CEnumerationSettingView(OpenViBE::Kernel::IBox& box, const uint32_t index, OpenViBE::CString& rBuilderName,
+			CEnumerationSettingView(OpenViBE::Kernel::IBox& box, const size_t index, OpenViBE::CString& rBuilderName,
 									const OpenViBE::Kernel::IKernelContext& ctx, const OpenViBE::CIdentifier& typeID);
 
 			void getValue(OpenViBE::CString& value) const override;

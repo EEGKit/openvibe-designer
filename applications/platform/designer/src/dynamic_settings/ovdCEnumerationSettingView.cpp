@@ -10,7 +10,7 @@ using namespace Setting;
 
 static void OnChange(GtkEntry* /*entry*/, gpointer data) { static_cast<CEnumerationSettingView *>(data)->onChange(); }
 
-CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& ctx, const CIdentifier& typeID)
+CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox& box, const size_t index, CString& rBuilderName, const Kernel::IKernelContext& ctx, const CIdentifier& typeID)
 	: CAbstractSettingView(box, index, rBuilderName, "settings_collection-comboboxentry_setting_enumeration"), m_typeID(typeID), m_kernelCtx(ctx)
 {
 	p                        = false;

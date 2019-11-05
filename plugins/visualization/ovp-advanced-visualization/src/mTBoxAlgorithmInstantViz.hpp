@@ -59,7 +59,7 @@ namespace Mensia
 			explicit CBoxAlgorithmInstantVizListener(const std::vector<int>& vParameter)
 				: CBoxAlgorithmVizListener(vParameter) { }
 
-			bool onInputTypeChanged(IBox& box, const uint32_t index) override
+			bool onInputTypeChanged(IBox& box, const size_t index) override
 			{
 				OpenViBE::CIdentifier typeID = OV_UndefinedIdentifier;
 				box.getInputType(index, typeID);
@@ -68,7 +68,7 @@ namespace Mensia
 				return true;
 			}
 
-			bool onInputAdded(IBox& box, const uint32_t index) override
+			bool onInputAdded(IBox& box, const size_t index) override
 			{
 				OpenViBE::CIdentifier typeID = OV_UndefinedIdentifier;
 				box.getInputType(0, typeID);
@@ -78,7 +78,7 @@ namespace Mensia
 				return true;
 			}
 
-			bool onInputRemoved(IBox& box, const uint32_t index) override
+			bool onInputRemoved(IBox& box, const size_t index) override
 			{
 				box.removeSetting(this->getBaseSettingCount() + index - 1);
 				return true;
