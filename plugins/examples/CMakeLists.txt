@@ -1,7 +1,7 @@
 PROJECT(openvibe-plugins-designer-examples)
 
-FILE(GLOB_RECURSE source_files src/*.cpp src/*.h src/*.inl)
-ADD_LIBRARY(${PROJECT_NAME} SHARED ${source_files})
+FILE(GLOB_RECURSE SRC_FILES src/*.cpp src/*.h src/*.inl)
+ADD_LIBRARY(${PROJECT_NAME} SHARED ${SRC_FILES})
 SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES
 	VERSION ${PROJECT_VERSION}
 	SOVERSION ${PROJECT_VERSION_MAJOR}

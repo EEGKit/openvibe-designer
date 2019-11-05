@@ -3,13 +3,13 @@ MESSAGE(STATUS "Now building ${PROJECT_NAME} ${PROJECT_VERSION} (${OV_PROJECT_BR
 
 OV_ADD_THIS_TO_PROJECT_LIST()
 
-file(GLOB_RECURSE source_files src/*.cpp src/*.h  src/*.hpp include/*.h)
+file(GLOB_RECURSE SRC_FILES src/*.cpp src/*.h  src/*.hpp include/*.h)
 include("FindSourceRCProperties")
 
 include_directories(${openvibe-visualization-toolkit_SOURCE_DIR}/include/)
 include_directories(${openvibe-visualization-toolkit_SOURCE_DIR}/include/visualization-toolkit)
 
-add_library(${PROJECT_NAME} SHARED ${source_files})
+add_library(${PROJECT_NAME} SHARED ${SRC_FILES})
 set_target_properties(${PROJECT_NAME} PROPERTIES
 	VERSION ${PROJECT_VERSION}
 	SOVERSION ${PROJECT_VERSION_MAJOR}

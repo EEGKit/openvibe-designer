@@ -29,7 +29,7 @@ IF(MENSIA_BUILD_DOC)
 
 		# intializes the variable that will contain the list of resource files to
 		# copy to the target directory
-		SET(resource_files "")
+		SET(RESOURCE_FILES "")
 		SET(scenario_files "")
 
 		# for each project, we look at its resources and store them in a list
@@ -45,7 +45,7 @@ IF(MENSIA_BUILD_DOC)
 
 		# looks for resources and stores thm in a list
 		FILE(GLOB_RECURSE resource_files_tmp "${current_project_src}/*.png" "${current_project_src}/*.svg" "${current_project_src}/*.css" "${current_project_src}/*.php")
-		SET(resource_files ${resource_files} ${resource_files_tmp})
+		SET(RESOURCE_FILES ${RESOURCE_FILES} ${resource_files_tmp})
 
 		# looks for scenario files
 		FILE(GLOB_RECURSE scenario_files_tmp "${current_project_src}/*.xml")
@@ -162,9 +162,9 @@ IF(MENSIA_BUILD_DOC)
 		ENDFOREACH(dox_skeleton)
 
 		# now add post-build commands to copy resources in the target directory
-		IF(resource_files)
+		IF(RESOURCE_FILES)
 			debug_message( "  Found resources...")
-			FOREACH(current_resource ${resource_files})
+			FOREACH(current_resource ${RESOURCE_FILES})
 				GET_FILENAME_COMPONENT(current_resource_stripped ${current_resource} NAME)
 				debug_message( "    [  OK  ] Resource file ${current_resource}")
 				ADD_CUSTOM_COMMAND(
@@ -177,7 +177,7 @@ IF(MENSIA_BUILD_DOC)
 					COMMENT "      --->  [html/latex] Copying resource file ${current_resource_stripped}..."
 				VERBATIM)
 			ENDFOREACH(current_resource)
-		ENDIF(resource_files)
+		ENDIF(RESOURCE_FILES)
 		# now add post-build commands to copy scenario files in the target directory
 		IF(scenario_files)
 			debug_message( "  Found scenario files...")
