@@ -51,7 +51,7 @@ bool Tools::ColorGradient::parse(IMatrix& colorGradient, const CString& string)
 	colorGradient.setDimensionSize(0, 4);
 	colorGradient.setDimensionSize(1, colorGradientVector.size());
 
-	uint32_t i = 0;
+	size_t i = 0;
 	for (auto it = colorGradientVector.begin(); it != colorGradientVector.end(); ++it, i++)
 	{
 		colorGradient[i * 4]     = it->second.percent;
@@ -73,7 +73,7 @@ bool Tools::ColorGradient::format(CString& string, const IMatrix& colorGradient)
 	separator[0] = OV_Value_EnumeratedStringSeparator;
 
 	std::string result;
-	for (uint32_t i = 0; i < colorGradient.getDimensionSize(1); ++i)
+	for (size_t i = 0; i < colorGradient.getDimensionSize(1); ++i)
 	{
 		char buffer[1024];
 		sprintf(buffer, "%.0lf:%i,%i,%i", colorGradient[i * 4], int(colorGradient[i * 4 + 1]), int(colorGradient[i * 4 + 2]), int(colorGradient[i * 4 + 3]));
@@ -85,12 +85,11 @@ bool Tools::ColorGradient::format(CString& string, const IMatrix& colorGradient)
 	return true;
 }
 
-bool Tools::ColorGradient::interpolate(IMatrix& interpolatedColorGradient, const IMatrix& colorGradient, const uint32_t steps)
+bool Tools::ColorGradient::interpolate(IMatrix& interpolatedColorGradient, const IMatrix& colorGradient, const size_t steps)
 {
-	uint32_t i;
+	size_t i;
 
 	if (colorGradient.getDimensionCount() != 2) { return false; }
-
 	if (colorGradient.getDimensionSize(0) != 4) { return false; }
 
 	if (steps <= 1) { return false; }

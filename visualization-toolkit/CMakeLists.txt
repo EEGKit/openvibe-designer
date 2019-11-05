@@ -24,7 +24,7 @@ include("FindThirdPartyGTK")
 # Defines target architecture
 # Defines target compiler
 # ---------------------------------
-set_build_platform()
+SET_BUILD_PLATFORM()
 
 # -----------------------------
 # Install files

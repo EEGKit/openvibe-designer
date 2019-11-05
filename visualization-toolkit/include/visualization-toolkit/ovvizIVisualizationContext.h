@@ -6,7 +6,7 @@
 
 #include "ovvizIVisualizationManager.h"
 
-#define OV_ClassId_VisualizationContext OpenViBE::CIdentifier(0xE06B92EF, 0xB6B68081)
+#define OV_ClassId_VisualizationContext		OpenViBE::CIdentifier(0xE06B92EF, 0xB6B68081)
 
 namespace OpenViBEVisualizationToolkit
 {

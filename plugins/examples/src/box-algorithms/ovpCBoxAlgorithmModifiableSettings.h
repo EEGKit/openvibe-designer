@@ -8,9 +8,6 @@
 
 #include <vector>
 
-#define OVP_ClassId_BoxAlgorithm_ModifiableSettings OpenViBE::CIdentifier(0x4AB0DD05, 0x32155D41)
-#define OVP_ClassId_BoxAlgorithm_ModifiableSettingsDesc OpenViBE::CIdentifier(0x3808515D, 0x97C7F9B6)
-
 namespace OpenViBEPlugins
 {
 	namespace Examples

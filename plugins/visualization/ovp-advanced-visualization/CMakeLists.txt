@@ -19,7 +19,7 @@ IF(MENSIA_ADVANCED_VISUALIZATION_EXPERIMENTAL)
 ENDIF()
 
 INCLUDE("AddOpenViBESDKComponents")
-include("FindOpenViBEVisualizationToolkit")
+INCLUDE("FindOpenViBEVisualizationToolkit")
 INCLUDE("FindThirdPartyGTK")
 
 INCLUDE("FindLibMensiaAdvancedVisualisation")

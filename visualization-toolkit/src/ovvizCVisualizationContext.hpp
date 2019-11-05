@@ -9,9 +9,8 @@
 #include "ovvizIVisualizationManager.h"
 #include "ovvizIVisualizationContext.h"
 
-#define OVP_ClassId_Plugin_VisualizationContext OpenViBE::CIdentifier(0x05A7171D, 0x78E4FE3C)
-#define OVP_ClassId_Plugin_VisualizationContextDesc OpenViBE::CIdentifier(0x35A11438, 0x764F72E8)
-
+#define OVP_ClassId_Plugin_VisualizationContext			OpenViBE::CIdentifier(0x05A7171D, 0x78E4FE3C)
+#define OVP_ClassId_Plugin_VisualizationContextDesc		OpenViBE::CIdentifier(0x35A11438, 0x764F72E8)
 
 namespace OpenViBEVisualizationToolkit
 {

@@ -10,7 +10,7 @@ else()
 	set(ENTRYPOINT )
 endif()
 
-file(GLOB_RECURSE SRC_FILES src/*.cpp src/visualization/*.cpp src/dynamic_settings/*.cpp)
+file(GLOB_RECURSE SRC_FILES src/*.cpp src/*.h src/visualization/*.cpp src/dynamic_settings/*.cpp)
 
 include("FindSourceDependencyJSON")
 
@@ -33,7 +33,7 @@ add_definitions(-DProjectVersion=\"${OV_GLOBAL_VERSION_STRING}\")
 add_definitions(-DM_VERSION_MAJOR=${OV_GLOBAL_VERSION_MAJOR})
 add_definitions(-DM_VERSION_MINOR=${OV_GLOBAL_VERSION_MINOR})
 
-set_build_platform()
+SET_BUILD_PLATFORM()
 
 # Install files
 install(TARGETS ${PROJECT_NAME}
