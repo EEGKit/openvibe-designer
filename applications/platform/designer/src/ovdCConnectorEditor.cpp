@@ -20,10 +20,10 @@ namespace
 	}
 } // namespace
 
-CConnectorEditor::CConnectorEditor(const IKernelContext& ctx, IBox& box, const uint32_t connectorType, const uint32_t connectorIndex,
+CConnectorEditor::CConnectorEditor(const IKernelContext& ctx, IBox& box, const size_t connectorType, const size_t connectorIndex,
 								   const char* sTitle, const char* sGUIFilename)
-	: m_kernelCtx(ctx), m_box(box), m_connectorType(connectorType),
-	  m_connectorIdx(connectorIndex), m_sGUIFilename(sGUIFilename), m_sTitle(sTitle ? sTitle : "") { }
+	: m_kernelCtx(ctx), m_box(box), m_connectorType(connectorType), m_connectorIdx(connectorIndex), 
+	  m_sGUIFilename(sGUIFilename), m_sTitle(sTitle ? sTitle : "") { }
 
 CConnectorEditor::~CConnectorEditor() = default;
 

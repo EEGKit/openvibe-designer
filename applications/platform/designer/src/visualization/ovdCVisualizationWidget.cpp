@@ -66,7 +66,7 @@ bool CVisualizationWidget::removeChild(const CIdentifier& identifier)
 		}
 	}
 
-	OV_ERROR_DRF("Trying to remove non existing visualization widget " << identifier, ErrorType::ResourceNotFound);
+	OV_ERROR_DRF("Trying to remove non existing visualization widget " << identifier.str(), ErrorType::ResourceNotFound);
 }
 
 bool CVisualizationWidget::getChildIdentifier(const uint32_t childIndex, CIdentifier& identifier) const

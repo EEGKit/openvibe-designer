@@ -45,15 +45,15 @@ namespace OpenViBEDesigner
 		// Utility functions for scenario settings, inputs and outputs
 
 		void addScenarioSettingCB();
-		void editScenarioSettingCB(uint32_t settingIndex);
-		void swapScenarioSettings(uint32_t settingAIndex, uint32_t settingBIndex);
+		void editScenarioSettingCB(size_t settingIndex);
+		void swapScenarioSettings(size_t settingAIndex, size_t settingBIndex);
 
 		void addScenarioInputCB();
-		void editScenarioInputCB(uint32_t index);
-		void swapScenarioInputs(uint32_t inputAIndex, uint32_t inputBIndex);
+		void editScenarioInputCB(size_t index);
+		void swapScenarioInputs(size_t inputAIndex, size_t inputBIndex);
 		void addScenarioOutputCB();
-		void editScenarioOutputCB(uint32_t outputIdx);
-		void swapScenarioOutputs(uint32_t outputAIndex, uint32_t outputBIndex);
+		void editScenarioOutputCB(size_t outputIdx);
+		void swapScenarioOutputs(size_t outputAIndex, size_t outputBIndex);
 
 
 		// Utility functions for scenario settings, inputs and outputs
@@ -85,20 +85,20 @@ namespace OpenViBEDesigner
 		void contextMenuBoxRenameAllCB();
 		void contextMenuBoxToggleEnableAllCB();
 		void contextMenuBoxAddInputCB(OpenViBE::Kernel::IBox& box);
-		void contextMenuBoxEditInputCB(OpenViBE::Kernel::IBox& box, const uint32_t index);
-		void contextMenuBoxRemoveInputCB(OpenViBE::Kernel::IBox& box, const uint32_t index);
+		void contextMenuBoxEditInputCB(OpenViBE::Kernel::IBox& box, const size_t index);
+		void contextMenuBoxRemoveInputCB(OpenViBE::Kernel::IBox& box, const size_t index);
 		void contextMenuBoxAddOutputCB(OpenViBE::Kernel::IBox& box);
-		void contextMenuBoxEditOutputCB(OpenViBE::Kernel::IBox& box, const uint32_t index);
-		void contextMenuBoxRemoveOutputCB(OpenViBE::Kernel::IBox& box, const uint32_t index);
+		void contextMenuBoxEditOutputCB(OpenViBE::Kernel::IBox& box, const size_t index);
+		void contextMenuBoxRemoveOutputCB(OpenViBE::Kernel::IBox& box, const size_t index);
 
-		void contextMenuBoxConnectScenarioInputCB(OpenViBE::Kernel::IBox& box, uint32_t boxInputIdx, uint32_t scenarioInputIdx);
-		void contextMenuBoxConnectScenarioOutputCB(OpenViBE::Kernel::IBox& box, uint32_t boxOutputIdx, uint32_t scenarioOutputIdx);
-		void contextMenuBoxDisconnectScenarioInputCB(OpenViBE::Kernel::IBox& box, uint32_t boxInputIdx, uint32_t scenarioInputIdx);
-		void contextMenuBoxDisconnectScenarioOutputCB(OpenViBE::Kernel::IBox& box, uint32_t boxOutputIdx, uint32_t scenarioOutputIdx);
+		void contextMenuBoxConnectScenarioInputCB(OpenViBE::Kernel::IBox& box, size_t boxInputIdx, size_t scenarioInputIdx);
+		void contextMenuBoxConnectScenarioOutputCB(OpenViBE::Kernel::IBox& box, size_t boxOutputIdx, size_t scenarioOutputIdx);
+		void contextMenuBoxDisconnectScenarioInputCB(OpenViBE::Kernel::IBox& box, size_t boxInputIdx, size_t scenarioInputIdx);
+		void contextMenuBoxDisconnectScenarioOutputCB(OpenViBE::Kernel::IBox& box, size_t boxOutputIdx, size_t scenarioOutputIdx);
 
 		void contextMenuBoxAddSettingCB(OpenViBE::Kernel::IBox& box);
-		void contextMenuBoxEditSettingCB(OpenViBE::Kernel::IBox& box, const uint32_t index);
-		void contextMenuBoxRemoveSettingCB(OpenViBE::Kernel::IBox& box, const uint32_t index);
+		void contextMenuBoxEditSettingCB(OpenViBE::Kernel::IBox& box, const size_t index);
+		void contextMenuBoxRemoveSettingCB(OpenViBE::Kernel::IBox& box, const size_t index);
 		void contextMenuBoxConfigureCB(OpenViBE::Kernel::IBox& box);
 		void contextMenuBoxAboutCB(OpenViBE::Kernel::IBox& box) const;
 		void contextMenuBoxEditMetaboxCB(OpenViBE::Kernel::IBox& box) const;
@@ -221,7 +221,7 @@ namespace OpenViBEDesigner
 		typedef struct _SSettingCallbackData
 		{
 			CInterfacedScenario* interfacedScenario;
-			uint32_t settingIndex;
+			size_t settingIndex;
 			GtkWidget* widgetValue;
 			GtkWidget* widgetEntryValue;
 			GtkWidget* container;
@@ -240,7 +240,7 @@ namespace OpenViBEDesigner
 		typedef struct _SLinkCallbackData
 		{
 			CInterfacedScenario* m_pInterfacedScenario;
-			uint32_t m_uiLinkIdx;
+			size_t m_uiLinkIdx;
 			bool m_isInput;
 		} SLinkCallbackData;
 
@@ -251,16 +251,16 @@ namespace OpenViBEDesigner
 		typedef void (*menu_callback_function)(GtkMenuItem*, BoxContextMenuCB*);
 		GtkImageMenuItem* gtk_menu_add_new_image_menu_item_with_cb_generic(GtkMenu* menu, const char* icon, const char* label, 
 																		   menu_callback_function cb, OpenViBE::Kernel::IBox* box, 
-																		   uint32_t command, const uint32_t index, const uint32_t index2);
+																		   size_t command, const size_t index, const size_t index2);
 
 		GtkImageMenuItem* gtk_menu_add_new_image_menu_item_with_cb(GtkMenu* menu, const char* icon, const char* label, 
 																   menu_callback_function cb, OpenViBE::Kernel::IBox* box, 
-																   uint32_t command, const uint32_t index) { return gtk_menu_add_new_image_menu_item_with_cb_generic(menu, icon, label, cb, box, command, index, 0); }
+																   size_t command, const size_t index) { return gtk_menu_add_new_image_menu_item_with_cb_generic(menu, icon, label, cb, box, command, index, 0); }
 
 		void redrawScenarioLinkSettings(GtkWidget* pLinkTable, bool bIsInput, std::vector<SLinkCallbackData>& vLinkCallbackData,
-										uint32_t (OpenViBE::Kernel::IScenario::*pfGetLinkCount)() const,
-										bool (OpenViBE::Kernel::IScenario::*pfGetLinkName)(uint32_t, OpenViBE::CString&) const,
-										bool (OpenViBE::Kernel::IScenario::*pfGetLinkType)(uint32_t, OpenViBE::CIdentifier&) const);
+										size_t (OpenViBE::Kernel::IScenario::*pfGetLinkCount)() const,
+										bool (OpenViBE::Kernel::IScenario::*pfGetLinkName)(size_t, OpenViBE::CString&) const,
+										bool (OpenViBE::Kernel::IScenario::*pfGetLinkType)(size_t, OpenViBE::CIdentifier&) const);
 
 		double m_currentScale = 1;
 		gint m_normalFontSize = 0;
