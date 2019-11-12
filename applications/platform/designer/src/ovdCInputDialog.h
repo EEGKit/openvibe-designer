@@ -15,7 +15,7 @@ namespace OpenViBEDesigner
 
 		void run();
 		void* getUserData() { return m_pUserData; }
-		const char* getEntry() { return static_cast<const char*>(gtk_entry_get_text(m_pInputDialogEntry)); }
+		const char* getEntry() { return static_cast<const char*>(gtk_entry_get_text(m_iDialogEntry)); }
 
 	private:
 
@@ -25,10 +25,10 @@ namespace OpenViBEDesigner
 
 		void* m_pUserData = nullptr;
 		fpButtonCB m_fpOKButtonCB;
-		GtkDialog* m_pInputDialog = nullptr;
-		GtkLabel* m_pInputDialogLabel = nullptr;
-		GtkEntry* m_pInputDialogEntry = nullptr;
-		GtkButton* m_pInputDialogOKButton = nullptr;
-		GtkButton* m_pInputDialogCancelButton = nullptr;
+		GtkDialog* m_iDialog = nullptr;
+		GtkLabel* m_iDialogLabel = nullptr;
+		GtkEntry* m_iDialogEntry = nullptr;
+		GtkButton* m_iDialogOKButton = nullptr;
+		GtkButton* m_iDialogCancelButton = nullptr;
 	};
 };
