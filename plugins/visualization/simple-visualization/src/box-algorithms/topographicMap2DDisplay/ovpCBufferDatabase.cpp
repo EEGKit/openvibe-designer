@@ -23,7 +23,7 @@ CBufferDatabase::CBufferDatabase(TBoxAlgorithm<IBoxAlgorithm>& oPlugin)
 {
 	m_pChannelLocalisationStreamDecoder = &m_parentPlugin.getAlgorithmManager().getAlgorithm(
 		m_parentPlugin.getAlgorithmManager().createAlgorithm(
-			OVP_GD_ClassId_Algorithm_ChannelLocalisationStreamDecoder));
+			OVP_GD_ClassId_Algorithm_ChannelLocalisationDecoder));
 
 	m_pChannelLocalisationStreamDecoder->initialize();
 
@@ -59,19 +59,19 @@ CBufferDatabase::~CBufferDatabase()
 bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer* pMemoryBuffer, uint64_t ui64StartTime, uint64_t ui64EndTime)
 {
 	//feed memory buffer to decoder
-	m_pChannelLocalisationStreamDecoder->getInputParameter(OVP_GD_Algorithm_ChannelLocalisationStreamDecoder_InputParameterId_MemoryBufferToDecode)->
+	m_pChannelLocalisationStreamDecoder->getInputParameter(OVP_GD_Algorithm_ChannelLocalisationDecoder_InputParameterId_MemoryBufferToDecode)->
 										 setReferenceTarget(&pMemoryBuffer);
 
 	//process buffer
 	m_pChannelLocalisationStreamDecoder->process();
 
 	//copy header if needed
-	if (m_pChannelLocalisationStreamDecoder->isOutputTriggerActive(OVP_GD_Algorithm_ChannelLocalisationStreamDecoder_OutputTriggerId_ReceivedHeader))
+	if (m_pChannelLocalisationStreamDecoder->isOutputTriggerActive(OVP_GD_Algorithm_ChannelLocalisationDecoder_OutputTriggerId_ReceivedHeader))
 	{
 		//retrieve matrix header
 		TParameterHandler<IMatrix*> l_oMatrix;
 		l_oMatrix.initialize(
-			m_pChannelLocalisationStreamDecoder->getOutputParameter(OVP_GD_Algorithm_ChannelLocalisationStreamDecoder_OutputParameterId_Matrix));
+			m_pChannelLocalisationStreamDecoder->getOutputParameter(OVP_GD_Algorithm_ChannelLocalisationDecoder_OutputParameterId_Matrix));
 
 		//copy channel labels
 		m_oChannelLocalisationLabels.resize(l_oMatrix->getDimensionSize(0));
@@ -83,7 +83,7 @@ bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer*
 		//retrieve dynamic flag
 		TParameterHandler<bool> l_bDynamic;
 		l_bDynamic.initialize(
-			m_pChannelLocalisationStreamDecoder->getOutputParameter(OVP_GD_Algorithm_ChannelLocalisationStreamDecoder_OutputParameterId_Dynamic));
+			m_pChannelLocalisationStreamDecoder->getOutputParameter(OVP_GD_Algorithm_ChannelLocalisationDecoder_OutputParameterId_Dynamic));
 		m_bDynamicChannelLocalisation = l_bDynamic;
 
 		if (l_oMatrix->getDimensionSize(1) == 3)
@@ -110,7 +110,7 @@ bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer*
 	}
 
 	//has a chanloc buffer been received?
-	if (m_pChannelLocalisationStreamDecoder->isOutputTriggerActive(OVP_GD_Algorithm_ChannelLocalisationStreamDecoder_OutputTriggerId_ReceivedBuffer))
+	if (m_pChannelLocalisationStreamDecoder->isOutputTriggerActive(OVP_GD_Algorithm_ChannelLocalisationDecoder_OutputTriggerId_ReceivedBuffer))
 	{
 		//number of buffers required to cover displayed time range
 		uint64_t l_ui64MaxBufferCount = 1;
@@ -139,7 +139,7 @@ bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer*
 		//retrieve coordinates matrix
 		TParameterHandler<IMatrix*> l_oMatrix;
 		l_oMatrix.initialize(
-			m_pChannelLocalisationStreamDecoder->getOutputParameter(OVP_GD_Algorithm_ChannelLocalisationStreamDecoder_OutputParameterId_Matrix));
+			m_pChannelLocalisationStreamDecoder->getOutputParameter(OVP_GD_Algorithm_ChannelLocalisationDecoder_OutputParameterId_Matrix));
 
 		//get pointer to destination matrix
 		CMatrix* l_pChannelLocalisation = nullptr;

@@ -56,7 +56,7 @@ bool CAboutScenarioDialog::run()
 
 	if (m_rScenario.isMetabox())
 	{
-		gtk_entry_set_text(GTK_ENTRY(l_pMetaboxId), m_rScenario.getAttributeValue(OVP_AttributeId_Metabox_Identifier).toASCIIString());
+		gtk_entry_set_text(GTK_ENTRY(l_pMetaboxId), m_rScenario.getAttributeValue(OVP_AttributeId_Metabox_ID).toASCIIString());
 	}
 	else
 	{
@@ -89,9 +89,9 @@ bool CAboutScenarioDialog::run()
 		{
 			m_kernelCtx.getLogManager() << LogLevel_Error << "Invalid identifier " << textId <<
 					" is not in the \"(0x[0-9a-f]{1-8}, 0x[0-9a-f]{1-8})\" format. ";
-			m_kernelCtx.getLogManager() << "Reverting to " << m_rScenario.getAttributeValue(OVP_AttributeId_Metabox_Identifier).toASCIIString() << ".\n";
+			m_kernelCtx.getLogManager() << "Reverting to " << m_rScenario.getAttributeValue(OVP_AttributeId_Metabox_ID).toASCIIString() << ".\n";
 		}
-		else { m_rScenario.setAttributeValue(OVP_AttributeId_Metabox_Identifier, textId); }
+		else { m_rScenario.setAttributeValue(OVP_AttributeId_Metabox_ID, textId); }
 	}
 
 	GtkTextIter l_pTextIterStart;

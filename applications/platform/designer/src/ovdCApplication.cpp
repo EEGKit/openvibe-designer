@@ -1835,9 +1835,9 @@ void CApplication::saveScenarioCB(CInterfacedScenario* interfacedScenario)
 			}
 			else { scenario.addAttribute(OV_AttributeId_Scenario_MetaboxHash, metaboxProto.m_oHash.toString()); }
 
-			if (!scenario.hasAttribute(OVP_AttributeId_Metabox_Identifier))
+			if (!scenario.hasAttribute(OVP_AttributeId_Metabox_ID))
 			{
-				scenario.setAttributeValue(OVP_AttributeId_Metabox_Identifier, CIdentifier::random().str().c_str());
+				scenario.setAttributeValue(OVP_AttributeId_Metabox_ID, CIdentifier::random().str().c_str());
 			}
 
 			m_kernelCtx.getLogManager() << LogLevel_Trace << "This metaboxes Hash : " << metaboxProto.m_oHash << "\n";

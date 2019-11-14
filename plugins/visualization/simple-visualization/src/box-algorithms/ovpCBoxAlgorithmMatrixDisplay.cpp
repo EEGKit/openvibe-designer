@@ -66,12 +66,12 @@ bool CBoxAlgorithmMatrixDisplay::initialize()
 
 	//targets decoder
 	m_matrixDecoder = &this->getAlgorithmManager().getAlgorithm(
-		this->getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_StreamedMatrixStreamDecoder));
+		this->getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_StreamedMatrixDecoder));
 	m_matrixDecoder->initialize();
 
 	//IO for the targets MemoryBuffer -> StreamedMatrix
-	ip_pMemoryBuffer.initialize(m_matrixDecoder->getInputParameter(OVP_GD_Algorithm_StreamedMatrixStreamDecoder_InputParameterId_MemoryBufferToDecode));
-	op_pMatrix.initialize(m_matrixDecoder->getOutputParameter(OVP_GD_Algorithm_StreamedMatrixStreamDecoder_OutputParameterId_Matrix));
+	ip_pMemoryBuffer.initialize(m_matrixDecoder->getInputParameter(OVP_GD_Algorithm_StreamedMatrixDecoder_InputParameterId_MemoryBufferToDecode));
+	op_pMatrix.initialize(m_matrixDecoder->getOutputParameter(OVP_GD_Algorithm_StreamedMatrixDecoder_OutputParameterId_Matrix));
 
 	//widgets
 	m_pMainWidgetInterface =
@@ -173,7 +173,7 @@ bool CBoxAlgorithmMatrixDisplay::process()
 		ip_pMemoryBuffer = boxContext.getInputChunk(0, i);
 		m_matrixDecoder->process();
 
-		if (m_matrixDecoder->isOutputTriggerActive(OVP_GD_Algorithm_StreamedMatrixStreamDecoder_OutputTriggerId_ReceivedHeader))
+		if (m_matrixDecoder->isOutputTriggerActive(OVP_GD_Algorithm_StreamedMatrixDecoder_OutputTriggerId_ReceivedHeader))
 		{
 			//header received
 			//adding the event  to the window
@@ -269,7 +269,7 @@ bool CBoxAlgorithmMatrixDisplay::process()
 			}
 		}
 
-		if (m_matrixDecoder->isOutputTriggerActive(OVP_GD_Algorithm_StreamedMatrixStreamDecoder_OutputTriggerId_ReceivedBuffer))
+		if (m_matrixDecoder->isOutputTriggerActive(OVP_GD_Algorithm_StreamedMatrixDecoder_OutputTriggerId_ReceivedBuffer))
 		{
 			//buffer received
 			//2-dimension-matrix values
@@ -383,7 +383,7 @@ bool CBoxAlgorithmMatrixDisplay::process()
 			}
 		}
 
-		/*if(m_matrixDecoder->isOutputTriggerActive(OVP_GD_Algorithm_StreamedMatrixStreamDecoder_OutputTriggerId_ReceivedEnd)) { }*/
+		/*if(m_matrixDecoder->isOutputTriggerActive(OVP_GD_Algorithm_StreamedMatrixDecoder_OutputTriggerId_ReceivedEnd)) { }*/
 
 		boxContext.markInputAsDeprecated(0, i);
 	}
