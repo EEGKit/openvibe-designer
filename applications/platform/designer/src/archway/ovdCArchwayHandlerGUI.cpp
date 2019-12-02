@@ -38,7 +38,7 @@ namespace
 		auto gui = static_cast<CArchwayHandlerGUI*>(userData);
 
 		std::string configurationToolLaunchCmd = std::string(OpenViBE::Directories::getBinDir().toASCIIString()) + "/mensia-device-configuration";
-		//std::string configurationFilePath = std::string(getenv("USERPROFILE")) + "\\lib-mensia-engine.conf";
+		//std::string configFilePath = std::string(getenv("USERPROFILE")) + "\\lib-mensia-engine.conf";
 
 		std::string escapedURL = gui->m_Controller.m_DeviceURL;
 

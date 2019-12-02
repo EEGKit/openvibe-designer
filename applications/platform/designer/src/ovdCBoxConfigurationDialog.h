@@ -19,8 +19,8 @@ namespace OpenViBEDesigner
 		virtual bool run();
 		void update(OpenViBE::CObservable& o, void* data) override;
 
-		void saveConfiguration() const;
-		void loadConfiguration() const;
+		void saveConfig() const;
+		void loadConfig() const;
 		void onOverrideBrowse() const;
 
 		void storeState();

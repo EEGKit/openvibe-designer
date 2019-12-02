@@ -25,9 +25,9 @@ static void onFileOverrideCheckToggled(GtkToggleButton* pToggleButton, gpointer 
 	gtk_widget_set_sensitive(static_cast<GtkWidget*>(data), !gtk_toggle_button_get_active(pToggleButton));
 }
 
-static void OnButtonLoadClicked(GtkButton*, gpointer data) { static_cast<CBoxConfigurationDialog*>(data)->loadConfiguration(); }
+static void OnButtonLoadClicked(GtkButton*, gpointer data) { static_cast<CBoxConfigurationDialog*>(data)->loadConfig(); }
 
-static void OnButtonSaveClicked(GtkButton*, gpointer data) { static_cast<CBoxConfigurationDialog*>(data)->saveConfiguration(); }
+static void OnButtonSaveClicked(GtkButton*, gpointer data) { static_cast<CBoxConfigurationDialog*>(data)->saveConfig(); }
 
 static void OnOverrideBrowseClicked(GtkButton* /*button*/, gpointer data) { static_cast<CBoxConfigurationDialog*>(data)->onOverrideBrowse(); }
 
@@ -429,7 +429,7 @@ void CBoxConfigurationDialog::updateSize() const
 	gtk_widget_set_size_request(GTK_WIDGET(m_pScrolledWindow), std::min(maxWidth, uint32_t(l_oSize.width)), std::min(maxHeight, uint32_t(l_oSize.height)));
 }
 
-void CBoxConfigurationDialog::saveConfiguration() const
+void CBoxConfigurationDialog::saveConfig() const
 {
 	GtkWidget* widgetDialogOpen = gtk_file_chooser_dialog_new("Select file to save settings to...", nullptr, GTK_FILE_CHOOSER_ACTION_SAVE,
 															  GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, nullptr);
@@ -472,7 +472,7 @@ void CBoxConfigurationDialog::saveConfiguration() const
 	gtk_widget_destroy(widgetDialogOpen);
 }
 
-void CBoxConfigurationDialog::loadConfiguration() const
+void CBoxConfigurationDialog::loadConfig() const
 {
 	GtkWidget* widgetDialogOpen = gtk_file_chooser_dialog_new("Select file to load settings from...", nullptr, GTK_FILE_CHOOSER_ACTION_SAVE,
 															  GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, nullptr);
