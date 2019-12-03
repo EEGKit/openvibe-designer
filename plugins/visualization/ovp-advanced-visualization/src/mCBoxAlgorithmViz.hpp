@@ -383,10 +383,7 @@ namespace Mensia
 						prototype.addSetting("Channel Localisation", OV_TypeId_Filename, "${AdvancedViz_ChannelLocalisation}");
 					} // "../share/electrode_sets/electrode_set_standard_cartesian.txt" 
 					if (p == S_DataPositive) { prototype.addSetting("Positive Data Only ?", OV_TypeId_Boolean, "false"); }
-					if (p == S_TemporalCoherence)
-					{
-						prototype.addSetting("Temporal Coherence", OVP_TypeId_TemporalCoherence, OVP_TypeId_TemporalCoherence_TimeLocked.toString());
-					}
+					if (p == S_TemporalCoherence) { prototype.addSetting("Temporal Coherence", OVP_TypeId_TemporalCoherence, "Time Locked"); }
 					if (p == S_TimeScale) { prototype.addSetting("Time Scale", OV_TypeId_Float, "20"); }
 					if (p == S_ElementCount) { prototype.addSetting("Matrix Count", OV_TypeId_Integer, "50"); }
 					if (p == S_DataScale) { prototype.addSetting("Gain", OV_TypeId_Float, "1"); }

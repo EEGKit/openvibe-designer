@@ -141,8 +141,8 @@ namespace Mensia
 
 OVP_Declare_Begin()
 	context.getTypeManager().registerEnumerationType(OVP_TypeId_TemporalCoherence, "Temporal Coherence");
-	context.getTypeManager().registerEnumerationEntry(OVP_TypeId_TemporalCoherence, "Time Locked", OVP_TypeId_TemporalCoherence_TimeLocked.toUInteger());
-	context.getTypeManager().registerEnumerationEntry(OVP_TypeId_TemporalCoherence, "Independant", OVP_TypeId_TemporalCoherence_Independant.toUInteger());
+	context.getTypeManager().registerEnumerationEntry(OVP_TypeId_TemporalCoherence, "Time Locked", ETemporalCoherence::TimeLocked);
+	context.getTypeManager().registerEnumerationEntry(OVP_TypeId_TemporalCoherence, "Independant", ETemporalCoherence::Independant);
 
 	using namespace Mensia::AdvancedVisualization;
 

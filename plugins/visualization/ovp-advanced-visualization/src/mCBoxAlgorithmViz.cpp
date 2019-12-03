@@ -124,7 +124,7 @@ bool CBoxAlgorithmViz::initialize()
 
 	// Sets default setting values
 	m_sLocalisation       = CString("");
-	m_temporalCoherence   = OVP_TypeId_TemporalCoherence_TimeLocked.toUInteger();
+	m_temporalCoherence   = ETemporalCoherence::TimeLocked;
 	m_nElement            = 50;
 	m_timeScale           = 10LL << 32;
 	m_isPositive         = false;
@@ -321,7 +321,7 @@ bool CBoxAlgorithmViz::initialize()
 	if (m_sCaption != CString("")) { gtk_label_set_text(GTK_LABEL(m_pTop), std::string(m_sCaption.toASCIIString()).c_str()); }
 
 	// Sets time scale
-	if (m_temporalCoherence == OVP_TypeId_TemporalCoherence_TimeLocked.toUInteger())
+	if (m_temporalCoherence == ETemporalCoherence::TimeLocked)
 	{
 		gtk_spin_button_set_value(GTK_SPIN_BUTTON(::gtk_builder_get_object(m_pBuilder, "spinbutton_time_scale")), (m_timeScale >> 22) / 1024.);
 		m_isTimeLocked = true;
@@ -329,7 +329,7 @@ bool CBoxAlgorithmViz::initialize()
 	else { gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "vbox_time_scale"))); }
 
 	// Sets matrix count
-	if (m_temporalCoherence == OVP_TypeId_TemporalCoherence_Independant.toUInteger())
+	if (m_temporalCoherence == ETemporalCoherence::Independant)
 	{
 		gtk_spin_button_set_value(GTK_SPIN_BUTTON(::gtk_builder_get_object(m_pBuilder, "spinbutton_element_count")), double(m_nElement));
 		m_isTimeLocked = false;
