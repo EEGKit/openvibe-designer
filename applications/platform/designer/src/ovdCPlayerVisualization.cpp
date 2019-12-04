@@ -88,7 +88,7 @@ GtkWidget* CPlayerVisualization::loadTreeWidget(IVisualizationWidget* pVisualiza
 		IVisualizationWidget* l_pVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(pVisualizationWidget->getParentIdentifier());
 		if (l_pVisualizationWindow != nullptr)
 		{
-			uint32_t panelIndex;
+			size_t panelIndex;
 			l_pVisualizationWindow->getChildIndex(pVisualizationWidget->getIdentifier(), panelIndex);
 
 			//create notebook if this is the first panel
@@ -166,7 +166,7 @@ GtkWidget* CPlayerVisualization::loadTreeWidget(IVisualizationWidget* pVisualiza
 				m_rVisualizationTree.getPointerValueFromTreeIter(&parentIter, paned, EVisualizationTreeColumn_PointerWidget);
 				if (paned != nullptr && GTK_IS_PANED(paned))
 				{
-					uint32_t l_ui32ChildIdx;
+					size_t l_ui32ChildIdx;
 					if (l_pParentVisualizationWidget->getChildIndex(pVisualizationWidget->getIdentifier(), l_ui32ChildIdx))
 					{
 						if (l_ui32ChildIdx == 0) { gtk_paned_pack1(GTK_PANED(paned), treeWidget, TRUE, TRUE); }
@@ -457,7 +457,7 @@ bool CPlayerVisualization::parentWidgetBox(IVisualizationWidget* widget, GtkBox*
 			{
 				//retrieve index at which to insert child
 				IVisualizationWidget* l_pParentVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oParentID);
-				uint32_t l_oVisualizationBoxIdx;
+				size_t l_oVisualizationBoxIdx;
 				l_pParentVisualizationWidget->getChildIndex(widget->getIdentifier(), l_oVisualizationBoxIdx);
 				//insert visualization box in paned
 				if (l_oVisualizationBoxIdx == 0)
@@ -477,7 +477,7 @@ bool CPlayerVisualization::parentWidgetBox(IVisualizationWidget* widget, GtkBox*
 				IVisualizationWidget* l_pParentVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_oParentID);
 				IVisualizationWidget* l_pParentVisualizationWindow = m_rVisualizationTree.getVisualizationWidget(
 					l_pParentVisualizationWidget->getParentIdentifier());
-				uint32_t l_oPanelIdx;
+				size_t l_oPanelIdx;
 				l_pParentVisualizationWindow->getChildIndex(l_pParentVisualizationWidget->getIdentifier(), l_oPanelIdx);
 
 				//remove temporary page
@@ -503,7 +503,7 @@ bool CPlayerVisualization::parentWidgetBox(IVisualizationWidget* widget, GtkBox*
 				m_rVisualizationTree.getIdentifierFromTreeIter(&l_oPanelIter, l_oPanelID, EVisualizationTreeColumn_StringIdentifier);
 
 				//get panel index in window
-				uint32_t l_ui32PanelIdx;
+				size_t l_ui32PanelIdx;
 				m_rVisualizationTree.getVisualizationWidgetIndex(l_oPanelID, l_ui32PanelIdx);
 
 				//get notebook pointer

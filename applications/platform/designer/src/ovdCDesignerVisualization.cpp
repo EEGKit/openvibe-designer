@@ -207,9 +207,9 @@ void CDesignerVisualization::init(const std::string& guiFile)
 	m_pDialog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
 	//retrieve default window size
-	const uint32_t treeViewWidth = 200;
-	m_previewWindowW             = uint32_t(m_kernelCtx.getConfigurationManager().expandAsUInteger("${Designer_UnaffectedVisualizationWindowWidth}", 400));
-	m_previewWindowH             = uint32_t(m_kernelCtx.getConfigurationManager().expandAsUInteger("${Designer_UnaffectedVisualizationWindowHeight}", 400));
+	const size_t treeViewWidth = 200;
+	m_previewWindowW             = size_t(m_kernelCtx.getConfigurationManager().expandAsUInteger("${Designer_UnaffectedVisualizationWindowWidth}", 400));
+	m_previewWindowH             = size_t(m_kernelCtx.getConfigurationManager().expandAsUInteger("${Designer_UnaffectedVisualizationWindowHeight}", 400));
 	CIdentifier l_oVisualizationWindowID;
 	//if at least one window was created, retrieve its dimensions
 	if (m_rVisualizationTree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowID, VisualizationWidget_VisualizationWindow))
@@ -285,7 +285,7 @@ void CDesignerVisualization::load()
 		m_previewWindowW                             = l_pVisualizationWindow->getWidth();
 		m_previewWindowH                             = l_pVisualizationWindow->getHeight();
 	}
-	const uint32_t treeViewWidth = gtk_paned_get_position(GTK_PANED(m_pPane));
+	const size_t treeViewWidth = gtk_paned_get_position(GTK_PANED(m_pPane));
 	gtk_widget_set_size_request(GTK_WIDGET(m_pDialog), gint(treeViewWidth + m_previewWindowW), gint(m_previewWindowH));
 
 	gtk_tree_view_expand_all(m_pTreeView);
@@ -405,7 +405,7 @@ GtkWidget* CDesignerVisualization::loadTreeWidget(IVisualizationWidget* widget)
 		IVisualizationWidget* l_pWindow = m_rVisualizationTree.getVisualizationWidget(widget->getParentIdentifier());
 		if (l_pWindow != nullptr)
 		{
-			uint32_t l_ui32PanelIdx;
+			size_t l_ui32PanelIdx;
 			l_pWindow->getChildIndex(widget->getIdentifier(), l_ui32PanelIdx);
 
 			//create notebook if this is the first panel
@@ -516,7 +516,7 @@ GtkWidget* CDesignerVisualization::loadTreeWidget(IVisualizationWidget* widget)
 					GtkWidget* l_pParentWidget = getVisualizationWidget(GTK_WIDGET(l_pParentTreeWidget));
 					if (l_pParentWidget != nullptr && GTK_IS_PANED(l_pParentWidget))
 					{
-						uint32_t l_ui32ChildIdx;
+						size_t l_ui32ChildIdx;
 						if (l_pParentVisualizationWidget->getChildIndex(widget->getIdentifier(), l_ui32ChildIdx))
 						{
 							if (l_ui32ChildIdx == 0) { gtk_paned_pack1(GTK_PANED(l_pParentWidget), l_pTreeWidget, TRUE, TRUE); }
@@ -1161,7 +1161,7 @@ bool CDesignerVisualization::newVisualizationPanel(const char* label)
 	const CString l_oNewChildName = label;
 
 	//ensure visualization panel name is unique in this window
-	for (uint32_t i = 0; i < l_pVisualizationWindow->getNbChildren(); ++i)
+	for (size_t i = 0; i < l_pVisualizationWindow->getNbChildren(); ++i)
 	{
 		l_pVisualizationWindow->getChildIdentifier(i, l_oChildID);
 		if (m_rVisualizationTree.getVisualizationWidget(l_oChildID)->getName() == l_oNewChildName)
@@ -1236,7 +1236,7 @@ bool CDesignerVisualization::renameVisualizationPanel(const char* label)
 
 	//ensure visualization panel name is unique in this window
 	CIdentifier l_oChildID;
-	for (uint32_t i = 0; i < l_pVisualizationWindow->getNbChildren(); ++i)
+	for (size_t i = 0; i < l_pVisualizationWindow->getNbChildren(); ++i)
 	{
 		l_pVisualizationWindow->getChildIdentifier(i, l_oChildID);
 		if (m_rVisualizationTree.getVisualizationWidget(l_oChildID)->getName() == l_oNewPanelName)
@@ -1304,7 +1304,7 @@ bool CDesignerVisualization::removeVisualizationWidget(const CIdentifier& identi
 	IVisualizationWidget* l_pParentVisualizationWidget = m_rVisualizationTree.getVisualizationWidget(l_pVisualizationWidget->getParentIdentifier());
 
 	//unparent or destroy widget
-	uint32_t l_ui32ChildIdx;
+	size_t l_ui32ChildIdx;
 	m_rVisualizationTree.unparentVisualizationWidget(identifier, l_ui32ChildIdx);
 	if (l_pVisualizationWidget->getType() != VisualizationWidget_VisualizationBox) { m_rVisualizationTree.destroyHierarchy(identifier, false); }
 
@@ -1316,7 +1316,7 @@ bool CDesignerVisualization::removeVisualizationWidget(const CIdentifier& identi
 		l_pParentVisualizationWidget->getChildIdentifier(1 - l_ui32ChildIdx, l_oOtherVisualizationWidgetID);
 
 		//unparent parent
-		uint32_t l_ui32ParentIdx;
+		size_t l_ui32ParentIdx;
 		const CIdentifier l_oParentParentID = l_pParentVisualizationWidget->getParentIdentifier();
 		m_rVisualizationTree.unparentVisualizationWidget(l_pParentVisualizationWidget->getIdentifier(), l_ui32ParentIdx);
 
