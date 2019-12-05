@@ -41,8 +41,8 @@ namespace Mensia
 				DataType_TimeFrequency
 			} EDataType;
 
-			static IRendererContext* create(IRendererContext* pParentRendererContext = nullptr);
-			static void release(IRendererContext* pRendererContext);
+			static IRendererContext* create(IRendererContext* parentCtx = nullptr);
+			static void release(IRendererContext* ctx);
 
 			virtual ~IRendererContext() = default;
 

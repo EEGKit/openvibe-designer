@@ -228,14 +228,14 @@ bool CBoxAlgorithmViz::initialize()
 	m_oGtkGLWidget.setPointSmoothingActive(this->getConfigurationManager().expandAsBoolean("${AdvancedViz_SmoothPoint}", false));
 
 	// Fowards widgets to the OpenViBE viz context
-	if (!this->canCreatePluginObject(OVP_ClassId_Plugin_VisualizationContext))
+	if (!this->canCreatePluginObject(OVP_ClassId_Plugin_VisualizationCtx))
 	{
 		this->getLogManager() << LogLevel_Error << "Visualization framework is not loaded" << "\n";
 		return false;
 	}
 
 	m_visualizationContext = dynamic_cast<OpenViBEVisualizationToolkit::IVisualizationContext*>(this->createPluginObject(
-		OVP_ClassId_Plugin_VisualizationContext));
+		OVP_ClassId_Plugin_VisualizationCtx));
 	m_visualizationContext->setWidget(*this, l_pMain);
 	m_visualizationContext->setToolbar(*this, l_pToolbar);
 

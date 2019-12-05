@@ -25,6 +25,6 @@
 using namespace Mensia;
 using namespace AdvancedVisualization;
 
-IRendererContext* IRendererContext::create(IRendererContext* pParentRendererContext) { return new CRendererContext(pParentRendererContext); }
+IRendererContext* IRendererContext::create(IRendererContext* parentCtx) { return new CRendererContext(parentCtx); }
 
-void IRendererContext::release(IRendererContext* pRendererContext) { delete pRendererContext; }
+void IRendererContext::release(IRendererContext* ctx) { delete ctx; }

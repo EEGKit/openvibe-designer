@@ -9,7 +9,7 @@ int main()
 
 	context->setDataType(IRendererContext::DataType_Matrix);
 
-	IRenderer* rend = IRenderer::create(IRenderer::RendererType_Bitmap, false);
+	IRenderer* rend = IRenderer::create(ERendererType::Bitmap, false);
 
 	rend->setChannelCount(10);
 	auto* tmp = new float[666];

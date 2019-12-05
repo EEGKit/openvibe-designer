@@ -27,32 +27,30 @@ namespace Mensia
 {
 	namespace AdvancedVisualization
 	{
+		enum class ERendererType
+		{
+			Default,
+			Topography2D,
+			Topography3D,
+			Bars,
+			Bitmap,
+			Connectivity,
+			Cube,
+			Flower,
+			Line,
+			Loreta,
+			Mountain,
+			MultiLine,
+			Slice,
+			XYZPlot,
+			Last
+		};
+		
 		class LMAV_API IRenderer
 		{
 		public:
 
-			typedef enum
-			{
-				RendererType_Default,
-
-				RendererType_2DTopography,
-				RendererType_3DTopography,
-				RendererType_Bars,
-				RendererType_Bitmap,
-				RendererType_Connectivity,
-				RendererType_Cube,
-				RendererType_Flower,
-				RendererType_Line,
-				RendererType_Loreta,
-				RendererType_Mountain,
-				RendererType_MultiLine,
-				RendererType_Slice,
-				RendererType_XYZPlot,
-
-				RendererType_Last,
-			} ERendererType;
-
-			static IRenderer* create(int eRendererType, bool stimulation);
+			static IRenderer* create(ERendererType type, bool stimulation);
 			static void release(IRenderer* pRenderer);
 
 			virtual ~IRenderer() = default;

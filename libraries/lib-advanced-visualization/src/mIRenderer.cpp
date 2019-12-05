@@ -37,24 +37,24 @@
 using namespace Mensia;
 using namespace AdvancedVisualization;
 
-IRenderer* IRenderer::create(const int eRendererType, const bool stimulation)
+IRenderer* IRenderer::create(const ERendererType type, const bool stimulation)
 {
-	switch (eRendererType)
+	switch (type)
 	{
-		case RendererType_2DTopography: return (stimulation ? nullptr : new CRendererTopo2D);
-		case RendererType_3DTopography: return (stimulation ? nullptr : new CRendererTopo3D);
-		case RendererType_Bars: return (stimulation ? new TRendererStimulation<true, CRendererBars> : new CRendererBars);
-		case RendererType_Bitmap: return (stimulation ? new TRendererStimulation<true, CRendererBitmap> : new CRendererBitmap);
-		case RendererType_Connectivity: return (stimulation ? nullptr : new CRendererConnectivity);
-		case RendererType_Cube: return (stimulation ? nullptr : new CRendererCube);
-		case RendererType_Flower: return (stimulation ? nullptr : new CRendererFlower);
-		case RendererType_Line: return (stimulation ? new TRendererStimulation<false, CRendererLine> : new CRendererLine);
-		case RendererType_Loreta: return (stimulation ? nullptr : new CRendererLoreta);
-		case RendererType_Mountain: return (stimulation ? nullptr : new CRendererMountain);
-		case RendererType_MultiLine: return (stimulation ? new TRendererStimulation<false, CRendererMultiLine> : new CRendererMultiLine);
-		case RendererType_Slice: return (stimulation ? nullptr : new CRendererSlice);
-		case RendererType_XYZPlot: return (stimulation ? nullptr : new CRendererXYZPlot);
-			//		case RendererType_:             return (stimulation?new TRendererStimulation < false, CRenderer >:new CRenderer);
+		case ERendererType::Topography2D: return (stimulation ? nullptr : new CRendererTopo2D);
+		case ERendererType::Topography3D: return (stimulation ? nullptr : new CRendererTopo3D);
+		case ERendererType::Bars: return (stimulation ? new TRendererStimulation<true, CRendererBars> : new CRendererBars);
+		case ERendererType::Bitmap: return (stimulation ? new TRendererStimulation<true, CRendererBitmap> : new CRendererBitmap);
+		case ERendererType::Connectivity: return (stimulation ? nullptr : new CRendererConnectivity);
+		case ERendererType::Cube: return (stimulation ? nullptr : new CRendererCube);
+		case ERendererType::Flower: return (stimulation ? nullptr : new CRendererFlower);
+		case ERendererType::Line: return (stimulation ? new TRendererStimulation<false, CRendererLine> : new CRendererLine);
+		case ERendererType::Loreta: return (stimulation ? nullptr : new CRendererLoreta);
+		case ERendererType::Mountain: return (stimulation ? nullptr : new CRendererMountain);
+		case ERendererType::MultiLine: return (stimulation ? new TRendererStimulation<false, CRendererMultiLine> : new CRendererMultiLine);
+		case ERendererType::Slice: return (stimulation ? nullptr : new CRendererSlice);
+		case ERendererType::XYZPlot: return (stimulation ? nullptr : new CRendererXYZPlot);
+			// case ERendererType::Default: return (stimulation ? new TRendererStimulation<false, CRenderer> : new CRenderer);
 		default:
 			return nullptr;
 	}
