@@ -8,11 +8,8 @@
 
 OVP_Declare_Begin()
 	context.getTypeManager().registerEnumerationType(OVP_TypeId_SphericalLinearInterpolationType, "Spherical linear interpolation type");
-	context.getTypeManager().registerEnumerationEntry(
-		OVP_TypeId_SphericalLinearInterpolationType, "Spline (potentials)", OVP_TypeId_SphericalLinearInterpolationType_Spline);
-	context.getTypeManager().registerEnumerationEntry(
-		OVP_TypeId_SphericalLinearInterpolationType, "Spline laplacian (currents)", OVP_TypeId_SphericalLinearInterpolationType_Laplacian);
-
+	context.getTypeManager().registerEnumerationEntry(OVP_TypeId_SphericalLinearInterpolationType, "Spline (potentials)", Spline);
+	context.getTypeManager().registerEnumerationEntry(OVP_TypeId_SphericalLinearInterpolationType, "Spline laplacian (currents)", Laplacian);
 
 	OVP_Declare_New(OpenViBEPlugins::Test::CAlgorithmSphericalSplineInterpolationDesc)
 

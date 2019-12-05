@@ -763,8 +763,8 @@ CApplication::CApplication(const IKernelContext& ctx) : m_kernelCtx(ctx)
 	m_pScenarioManager->registerScenarioExporter(OVD_ScenarioExportContext_SaveMetabox, ".mxb", OVP_GD_ClassId_Algorithm_XMLScenarioExporter);
 
 	m_pVisualizationManager = new CVisualizationManager(m_kernelCtx);
-	m_visualizationContext  = dynamic_cast<OpenViBEVisualizationToolkit::IVisualizationContext*>(m_kernelCtx.getPluginManager().createPluginObject(OVP_ClassId_Plugin_VisualizationContext));
-	m_visualizationContext->setManager(m_pVisualizationManager);
+	m_VisualizationCtx  = dynamic_cast<OpenViBEVisualizationToolkit::IVisualizationContext*>(m_kernelCtx.getPluginManager().createPluginObject(OVP_ClassId_Plugin_VisualizationCtx));
+	m_VisualizationCtx->setManager(m_pVisualizationManager);
 	m_pLogListenerDesigner = nullptr;
 
 	m_kernelCtx.getConfigurationManager().createConfigurationToken("Player_ScenarioDirectory", "");
@@ -786,7 +786,7 @@ CApplication::~CApplication()
 		m_pBuilderInterface = nullptr;
 	}
 
-	m_kernelCtx.getPluginManager().releasePluginObject(m_visualizationContext);
+	m_kernelCtx.getPluginManager().releasePluginObject(m_VisualizationCtx);
 
 #ifdef MENSIA_DISTRIBUTION
 	delete m_pArchwayHandlerGUI;

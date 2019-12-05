@@ -8,9 +8,6 @@
 #include <map>
 #include <string>
 
-#define OVP_ClassId_BoxAlgorithm_MatrixDisplay     OpenViBE::CIdentifier(0x54F0796D, 0x3EDE2CC0)
-#define OVP_ClassId_BoxAlgorithm_MatrixDisplayDesc OpenViBE::CIdentifier(0x63AB4BA7, 0x022C1524)
-
 
 namespace OpenViBEPlugins
 {
@@ -34,40 +31,39 @@ namespace OpenViBEPlugins
 			// we need an algorithm to decode the EBML stream (memory buffer) into a Streamed Matrix
 
 			// for the TARGET
-			OpenViBEToolkit::TStreamedMatrixDecoder<CBoxAlgorithmMatrixDisplay> m_MatrixDecoder;
-			OpenViBE::Kernel::IAlgorithmProxy* m_matrixDecoder{};
-			OpenViBE::Kernel::TParameterHandler<const OpenViBE::IMemoryBuffer*> ip_pMemoryBuffer;
-			OpenViBE::Kernel::TParameterHandler<OpenViBE::IMatrix*> op_pMatrix;
+			OpenViBEToolkit::TStreamedMatrixDecoder<CBoxAlgorithmMatrixDisplay> m_decoder;
+			OpenViBE::Kernel::IAlgorithmProxy* iMatrix = nullptr;
+			OpenViBE::Kernel::TParameterHandler<const OpenViBE::IMemoryBuffer*> ip_buffer;
+			OpenViBE::Kernel::TParameterHandler<OpenViBE::IMatrix*> op_matrix;
 
 			// Outputs: visualization in a gtk window
-			GtkBuilder* m_pMainWidgetInterface{};
-			GtkBuilder* m_pToolbarWidgetInterface{};
-			GtkWidget* m_pMainWidget{};
-			GtkWidget* m_pToolbarWidget{};
+			GtkBuilder* m_mainWidgetInterface    = nullptr;
+			GtkBuilder* m_toolbarWidgetInterface = nullptr;
+			GtkWidget* m_mainWidget              = nullptr;
+			GtkWidget* m_toolbarWidget           = nullptr;
 
-			std::vector<std::pair<GtkWidget*, GdkColor>> m_vEventBoxCache;
-			std::vector<std::pair<GtkLabel*, std::string>> m_vLabelCache;
+			std::vector<std::pair<GtkWidget*, GdkColor>> m_eventBoxCache;
+			std::vector<std::pair<GtkLabel*, std::string>> m_labelCache;
+			std::vector<std::pair<GtkLabel*, std::string>> m_rowLabelCache;
+			std::vector<std::pair<GtkLabel*, std::string>> m_columnLabelCache;
 
-			std::vector<std::pair<GtkLabel*, std::string>> m_vRowLabelCache;
-			std::vector<std::pair<GtkLabel*, std::string>> m_vColumnLabelCache;
+			OpenViBE::CMatrix m_interpolatedColorGardient;
+			OpenViBE::CMatrix m_colorGradient;
+			size_t m_gradientSteps = 0;
+			double m_max           = 0;
+			double m_min           = 0;
 
-			OpenViBE::CMatrix m_MatrixInterpolatedColorGardient;
-			OpenViBE::CMatrix m_MatrixColorGradient;
-			uint32_t m_GradientSteps = 0;
-			double m_f64MaxValue     = 0;
-			double m_f64MinValue     = 0;
+			bool m_symetricMinMax = false;
+			bool m_realTimeMinMax = false;
 
-			bool m_bSymetricMinMax = false;
-			bool m_bRealTimeMinMax = false;
+			OpenViBEVisualizationToolkit::IVisualizationContext* m_visualizationCtx{};
 
 		public:
 
-			bool m_bShowValues = false;
-			bool m_bShowColors = false;
+			bool m_ShowValues = false;
+			bool m_ShowColors = false;
 
-			virtual bool resetColors();
-		private:
-			OpenViBEVisualizationToolkit::IVisualizationContext* m_visualizationContext{};
+			bool resetColors();
 		};
 
 		class CBoxAlgorithmMatrixDisplayDesc final : public OpenViBE::Plugins::IBoxAlgorithmDesc

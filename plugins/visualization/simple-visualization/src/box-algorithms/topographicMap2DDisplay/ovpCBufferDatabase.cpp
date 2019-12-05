@@ -18,35 +18,30 @@ using namespace OpenViBEToolkit;
 
 using namespace std;
 
-CBufferDatabase::CBufferDatabase(TBoxAlgorithm<IBoxAlgorithm>& oPlugin)
-	: m_parentPlugin(oPlugin), m_oDisplayMode(OVP_TypeId_SignalDisplayMode_Scan)
+CBufferDatabase::CBufferDatabase(TBoxAlgorithm<IBoxAlgorithm>& plugin) : m_ParentPlugin(plugin)
 {
-	m_pChannelLocalisationStreamDecoder = &m_parentPlugin.getAlgorithmManager().getAlgorithm(
-		m_parentPlugin.getAlgorithmManager().createAlgorithm(
-			OVP_GD_ClassId_Algorithm_ChannelLocalisationDecoder));
-
-	m_pChannelLocalisationStreamDecoder->initialize();
-
-	m_pDimensionSizes[0] = m_pDimensionSizes[1] = 0;
+	m_decoder = &m_ParentPlugin.getAlgorithmManager().getAlgorithm(m_ParentPlugin.getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_ChannelLocalisationDecoder));
+	m_decoder->initialize();
+	m_DimSizes.fill(0);
 }
 
 CBufferDatabase::~CBufferDatabase()
 {
-	m_pChannelLocalisationStreamDecoder->uninitialize();
-	m_parentPlugin.getAlgorithmManager().releaseAlgorithm(*m_pChannelLocalisationStreamDecoder);
+	m_decoder->uninitialize();
+	m_ParentPlugin.getAlgorithmManager().releaseAlgorithm(*m_decoder);
 
 	//delete all the remaining buffers
-	while (!m_oSampleBuffers.empty())
+	while (!m_SampleBuffers.empty())
 	{
-		delete[] m_oSampleBuffers.front();
-		m_oSampleBuffers.pop_front();
+		delete[] m_SampleBuffers.front();
+		m_SampleBuffers.pop_front();
 	}
 
 	//delete channel localisation matrices
-	while (!m_oChannelLocalisationStreamedCoords.empty())
+	while (!m_channelLocalisationCoords.empty())
 	{
-		delete m_oChannelLocalisationStreamedCoords.front().first;
-		m_oChannelLocalisationStreamedCoords.pop_front();
+		delete m_channelLocalisationCoords.front().first;
+		m_channelLocalisationCoords.pop_front();
 	}
 
 	/*while(m_oChannelLocalisationAlternateCoords.size() > 0)
@@ -56,434 +51,415 @@ CBufferDatabase::~CBufferDatabase()
 	}*/
 }
 
-bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer* pMemoryBuffer, uint64_t ui64StartTime, uint64_t ui64EndTime)
+bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer* memoryBuffer, uint64_t startTime, uint64_t endTime)
 {
 	//feed memory buffer to decoder
-	m_pChannelLocalisationStreamDecoder->getInputParameter(OVP_GD_Algorithm_ChannelLocalisationDecoder_InputParameterId_MemoryBufferToDecode)->
-										 setReferenceTarget(&pMemoryBuffer);
+	m_decoder->getInputParameter(OVP_GD_Algorithm_ChannelLocalisationDecoder_InputParameterId_MemoryBufferToDecode)->setReferenceTarget(&memoryBuffer);
 
 	//process buffer
-	m_pChannelLocalisationStreamDecoder->process();
+	m_decoder->process();
 
 	//copy header if needed
-	if (m_pChannelLocalisationStreamDecoder->isOutputTriggerActive(OVP_GD_Algorithm_ChannelLocalisationDecoder_OutputTriggerId_ReceivedHeader))
+	if (m_decoder->isOutputTriggerActive(OVP_GD_Algorithm_ChannelLocalisationDecoder_OutputTriggerId_ReceivedHeader))
 	{
 		//retrieve matrix header
-		TParameterHandler<IMatrix*> l_oMatrix;
-		l_oMatrix.initialize(
-			m_pChannelLocalisationStreamDecoder->getOutputParameter(OVP_GD_Algorithm_ChannelLocalisationDecoder_OutputParameterId_Matrix));
+		TParameterHandler<IMatrix*> matrix;
+		matrix.initialize(m_decoder->getOutputParameter(OVP_GD_Algorithm_ChannelLocalisationDecoder_OutputParameterId_Matrix));
 
 		//copy channel labels
-		m_oChannelLocalisationLabels.resize(l_oMatrix->getDimensionSize(0));
-		for (vector<CString>::size_type i = 0; i < m_oChannelLocalisationLabels.size(); ++i)
+		m_channelLocalisationLabels.resize(matrix->getDimensionSize(0));
+		for (vector<CString>::size_type i = 0; i < m_channelLocalisationLabels.size(); ++i)
 		{
-			m_oChannelLocalisationLabels[i] = l_oMatrix->getDimensionLabel(0, uint32_t(i));
+			m_channelLocalisationLabels[i] = matrix->getDimensionLabel(0, size_t(i));
 		}
 
 		//retrieve dynamic flag
-		TParameterHandler<bool> l_bDynamic;
-		l_bDynamic.initialize(
-			m_pChannelLocalisationStreamDecoder->getOutputParameter(OVP_GD_Algorithm_ChannelLocalisationDecoder_OutputParameterId_Dynamic));
-		m_bDynamicChannelLocalisation = l_bDynamic;
+		TParameterHandler<bool> dynamic;
+		dynamic.initialize(m_decoder->getOutputParameter(OVP_GD_Algorithm_ChannelLocalisationDecoder_OutputParameterId_Dynamic));
+		m_dynamicChannelLocalisation = dynamic;
 
-		if (l_oMatrix->getDimensionSize(1) == 3)
+		if (matrix->getDimensionSize(1) == 3)
 		{
-			m_bCartesianStreamedCoords = true;
-			/*m_pChannelLocalisationCartesianCoords = &m_oChannelLocalisationStreamedCoords;
-			m_pChannelLocalisationSphericalCoords = &m_oChannelLocalisationAlternateCoords;*/
+			m_cartesianCoords = true;
+			/*m_channelLocalisationCartesianCoords = &m_channelLocalisationCoords;
+			m_channelLocalisationSphericalCoords = &m_oChannelLocalisationAlternateCoords;*/
 		}
-		else if (l_oMatrix->getDimensionSize(1) == 2)
+		else if (matrix->getDimensionSize(1) == 2)
 		{
-			m_bCartesianStreamedCoords = false;
-			/*m_pChannelLocalisationCartesianCoords = &m_oChannelLocalisationAlternateCoords;
-			m_pChannelLocalisationSphericalCoords = &m_oChannelLocalisationStreamedCoords;*/
+			m_cartesianCoords = false;
+			/*m_channelLocalisationCartesianCoords = &m_oChannelLocalisationAlternateCoords;
+			m_channelLocalisationSphericalCoords = &m_channelLocalisationCoords;*/
 		}
 		else
 		{
-			m_parentPlugin.getLogManager() << LogLevel_Error
-					<< "Wrong size found for dimension 1 of Channel localisation header! Can't process header!\n";
+			m_ParentPlugin.getLogManager() << LogLevel_Error << "Wrong size found for dimension 1 of Channel localisation header! Can't process header!\n";
 			return false;
 		}
 
 		//header information received
-		m_bChannelLocalisationHeaderReceived = true;
+		m_channelLocalisationHeaderReceived = true;
 	}
 
 	//has a chanloc buffer been received?
-	if (m_pChannelLocalisationStreamDecoder->isOutputTriggerActive(OVP_GD_Algorithm_ChannelLocalisationDecoder_OutputTriggerId_ReceivedBuffer))
+	if (m_decoder->isOutputTriggerActive(OVP_GD_Algorithm_ChannelLocalisationDecoder_OutputTriggerId_ReceivedBuffer))
 	{
 		//number of buffers required to cover displayed time range
-		uint64_t l_ui64MaxBufferCount = 1;
+		size_t maxNBuffer = 1;
 
 		//resize channel localisation queue if necessary
-		if (m_bDynamicChannelLocalisation)
+		if (m_dynamicChannelLocalisation)
 		{
-			const uint64_t l_ui64BufferDuration = ui64EndTime - ui64StartTime;
-			if (l_ui64BufferDuration != 0)
+			const uint64_t bufferDuration = endTime - startTime;
+			if (bufferDuration != 0)
 			{
-				l_ui64MaxBufferCount = uint64_t(ceil(m_totalDuration / l_ui64BufferDuration));
-				if (l_ui64MaxBufferCount == 0) { l_ui64MaxBufferCount = 1; }
+				maxNBuffer = size_t(ceil(m_TotalDuration / bufferDuration));
+				if (maxNBuffer == 0) { maxNBuffer = 1; }
 			}
 
 			//if new number of buffers decreased, resize list and destroy useless buffers
-			while (m_oChannelLocalisationStreamedCoords.size() > l_ui64MaxBufferCount)
+			while (m_channelLocalisationCoords.size() > maxNBuffer)
 			{
-				delete[] m_oChannelLocalisationStreamedCoords.front().first;
-				m_oChannelLocalisationStreamedCoords.pop_front();
+				delete[] m_channelLocalisationCoords.front().first;
+				m_channelLocalisationCoords.pop_front();
 				// delete[] m_oChannelLocalisationAlternateCoords.front().first;
 				// m_oChannelLocalisationAlternateCoords.pop_front();
-				m_oChannelLocalisationTimes.pop_front();
+				m_channelLocalisationTimes.pop_front();
 			}
 		}
 
 		//retrieve coordinates matrix
-		TParameterHandler<IMatrix*> l_oMatrix;
-		l_oMatrix.initialize(
-			m_pChannelLocalisationStreamDecoder->getOutputParameter(OVP_GD_Algorithm_ChannelLocalisationDecoder_OutputParameterId_Matrix));
+		TParameterHandler<IMatrix*> matrix;
+		matrix.initialize(m_decoder->getOutputParameter(OVP_GD_Algorithm_ChannelLocalisationDecoder_OutputParameterId_Matrix));
 
 		//get pointer to destination matrix
-		CMatrix* l_pChannelLocalisation = nullptr;
-		//CMatrix* l_pAlternateChannelLocalisation = nullptr;
-		if (m_oChannelLocalisationStreamedCoords.size() < l_ui64MaxBufferCount)
+		CMatrix* channelLocalisation;
+		//CMatrix* alternateChannelLocalisation = nullptr;
+		if (m_channelLocalisationCoords.size() < maxNBuffer)
 		{
 			//create a new matrix and resize it
-			l_pChannelLocalisation = new CMatrix();
-			Tools::Matrix::copyDescription(*l_pChannelLocalisation, *l_oMatrix);
-			// l_pAlternateChannelLocalisation = new CMatrix();
+			channelLocalisation = new CMatrix();
+			Tools::Matrix::copyDescription(*channelLocalisation, *matrix);
+			// alternateChannelLocalisation = new CMatrix();
 			// TODO : resize it appropriately depending on whether it is spherical or cartesian
 		}
-		else //m_oChannelLocalisationStreamedCoords.size() == l_ui64MaxBufferCount
+		else //m_channelLocalisationCoords.size() == maxNBuffer
 		{
-			l_pChannelLocalisation = m_oChannelLocalisationStreamedCoords.front().first;
-			m_oChannelLocalisationStreamedCoords.pop_front();
-			// l_pAlternateChannelLocalisation = m_oChannelLocalisationAlternateCoords.front().first;
+			channelLocalisation = m_channelLocalisationCoords.front().first;
+			m_channelLocalisationCoords.pop_front();
+			// alternateChannelLocalisation = m_oChannelLocalisationAlternateCoords.front().first;
 			// m_oChannelLocalisationAlternateCoords.pop_front();
-			m_oChannelLocalisationTimes.pop_front();
+			m_channelLocalisationTimes.pop_front();
 		}
 
-		if (l_pChannelLocalisation != nullptr)
+		if (channelLocalisation)
 		{
 			//copy coordinates and times
-			Tools::Matrix::copyContent(*l_pChannelLocalisation, *l_oMatrix);
-			m_oChannelLocalisationStreamedCoords.emplace_back(l_pChannelLocalisation, true);
-			//m_oChannelLocalisationAlternateCoords.push_back(std::pair<CMatrix*, bool>(l_pAlternateChannelLocalisation, true));
-			m_oChannelLocalisationTimes.emplace_back(ui64StartTime, ui64EndTime);
+			Tools::Matrix::copyContent(*channelLocalisation, *matrix);
+			m_channelLocalisationCoords.emplace_back(channelLocalisation, true);
+			//m_oChannelLocalisationAlternateCoords.push_back(std::pair<CMatrix*, bool>(alternateChannelLocalisation, true));
+			m_channelLocalisationTimes.emplace_back(startTime, endTime);
 		}
 	}
 
 	return true;
 }
 
-void CBufferDatabase::setDrawable(CSignalDisplayDrawable* pDrawable) { m_pDrawable = pDrawable; }
-
-bool CBufferDatabase::getErrorStatus() { return m_bError; }
-
-bool CBufferDatabase::onChannelLocalisationBufferReceived(const uint32_t ui32ChannelLocalisationBufferIndex)
+bool CBufferDatabase::onChannelLocalisationBufferReceived(const size_t index)
 {
-	m_oChannelLocalisationStreamedCoords[ui32ChannelLocalisationBufferIndex].second = false;
-
+	m_channelLocalisationCoords[index].second = false;
 	return true;
 }
-
-bool CBufferDatabase::isFirstBufferReceived() { return m_bFirstBufferReceived; }
 
 bool CBufferDatabase::isFirstChannelLocalisationBufferProcessed()
 {
 	//at least one chanloc buffer must have been received and processed
-	return (!m_oChannelLocalisationStreamedCoords.empty()) && (!m_oChannelLocalisationStreamedCoords[0].second);
+	return (!m_channelLocalisationCoords.empty()) && (!m_channelLocalisationCoords[0].second);
 }
 
-bool CBufferDatabase::adjustNumberOfDisplayedBuffers(const double f64NumberOfSecondsToDisplay)
+bool CBufferDatabase::adjustNumberOfDisplayedBuffers(const double time)
 {
-	bool l_bNumberOfBufferToDisplayChanged = false;
+	bool nBufferToDisplayChanged = false;
 
-	if (f64NumberOfSecondsToDisplay > 0)
+	if (time > 0)
 	{
-		m_totalDuration   = f64NumberOfSecondsToDisplay;
+		m_TotalDuration   = time;
 		m_ovTotalDuration = 0;
-		m_totalStep       = 0;
+		m_TotalStep       = 0;
 	}
 
 	//return if buffer length is not known yet
-	if (m_pDimensionSizes[1] == 0) { return false; }
+	if (m_DimSizes[1] == 0) { return false; }
 
-	uint64_t newNbufferToDisplay = uint64_t(ceil((m_totalDuration * m_samplingFrequency) / m_pDimensionSizes[1]));
+	size_t newNbufferToDisplay = size_t(ceil((m_TotalDuration * m_Sampling) / m_DimSizes[1]));
 
 	//displays at least one buffer
 	newNbufferToDisplay = (newNbufferToDisplay == 0) ? 1 : newNbufferToDisplay;
-	if (newNbufferToDisplay != m_nBufferToDisplay || f64NumberOfSecondsToDisplay <= 0)
+	if (newNbufferToDisplay != m_NBufferToDisplay || time <= 0)
 	{
-		m_nBufferToDisplay            = newNbufferToDisplay;
-		l_bNumberOfBufferToDisplayChanged = true;
+		m_NBufferToDisplay      = newNbufferToDisplay;
+		nBufferToDisplayChanged = true;
 
 		//if new number of buffers decreased, resize lists and destroy useless buffers
-		while (m_nBufferToDisplay < m_oSampleBuffers.size())
+		while (m_NBufferToDisplay < m_SampleBuffers.size())
 		{
-			delete[] m_oSampleBuffers.front();
-			m_oSampleBuffers.pop_front();
-
-			m_oStartTime.pop_front();
-
-			m_oEndTime.pop_front();
+			delete[] m_SampleBuffers.front();
+			m_SampleBuffers.pop_front();
+			m_StartTime.pop_front();
+			m_EndTime.pop_front();
 
 			//suppress the corresponding minmax values
-			for (size_t c = 0; c < size_t(m_pDimensionSizes[0]); ++c) { m_oLocalMinMaxValue[c].pop_front(); }
+			for (size_t c = 0; c < m_DimSizes[0]; ++c) { m_LocalMinMaxValue[c].pop_front(); }
 		}
 	}
 
-	return l_bNumberOfBufferToDisplayChanged;
+	return nBufferToDisplayChanged;
 }
 
-uint64_t CBufferDatabase::getChannelCount() const { return m_pDimensionSizes[0]; }
+size_t CBufferDatabase::getChannelCount() const { return m_DimSizes[0]; }
 
-double CBufferDatabase::getDisplayedTimeIntervalWidth() const { return (m_nBufferToDisplay * ((m_pDimensionSizes[1] * 1000.0) / m_samplingFrequency)); }
+double CBufferDatabase::getDisplayedTimeIntervalWidth() const { return (m_NBufferToDisplay * ((m_DimSizes[1] * 1000.0) / m_Sampling)); }
 
-void CBufferDatabase::setMatrixDimensionCount(const uint32_t nDimension)
+void CBufferDatabase::setMatrixDimensionCount(const size_t n)
 {
-	if (nDimension != 2)
+	if (n != 2)
 	{
-		m_bError = true;
-		m_parentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error << "Caller tried to set a " << nDimension <<
+		m_Error = true;
+		m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error << "Caller tried to set a " << n <<
 				"-dimensional matrix. Only 2-dimensional matrices are supported (e.g. [rows X cols]).\n";
 	}
-	if (nDimension == 1)
+	if (n == 1)
 	{
-		m_parentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error <<
+		m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error <<
 				"Note: For 1-dimensional matrices, you may try Matrix Transpose box to upgrade the stream to [N X 1] first.\n";
 	}
 }
 
-void CBufferDatabase::setMatrixDimensionSize(const uint32_t ui32DimensionIndex, const uint32_t ui32DimensionSize)
+void CBufferDatabase::setMatrixDimensionSize(const size_t index, const size_t size)
 {
-	if (ui32DimensionIndex >= 2)
+	if (index >= 2)
 	{
-		m_bError = true;
-		m_parentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error << "Tried to access dimension " << ui32DimensionIndex <<
+		m_Error = true;
+		m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error << "Tried to access dimension " << index <<
 				", only 0 and 1 supported\n";
 		return;
 	}
 
-	if (m_pDimensionSizes[ui32DimensionIndex] != 0 && m_pDimensionSizes[ui32DimensionIndex] != ui32DimensionSize)
+	if (m_DimSizes[index] != 0 && m_DimSizes[index] != size)
 	{
-		m_parentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error <<
+		m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error <<
 				"Upstream tried to change the data chunk size after the first header, this is not supported.\n";
-		m_bError = true;
+		m_Error = true;
 		return;
 	}
 
-	m_pDimensionSizes[ui32DimensionIndex] = ui32DimensionSize;
-	m_pDimensionLabels[ui32DimensionIndex].resize(ui32DimensionSize);
+	m_DimSizes[index] = size;
+	m_DimLabels[index].resize(size);
 
-	if (ui32DimensionIndex == 0)
+	if (index == 0)
 	{
-		m_i64NbElectrodes = m_pDimensionSizes[ui32DimensionIndex];
+		m_NElectrodes = m_DimSizes[index];
 
 		//resize min/max values vector
-		m_oLocalMinMaxValue.resize(size_t(m_i64NbElectrodes));
+		m_LocalMinMaxValue.resize(size_t(m_NElectrodes));
 	}
 }
 
-void CBufferDatabase::setMatrixDimensionLabel(const uint32_t ui32DimensionIndex, const uint32_t ui32DimensionEntryIndex, const char* sDimensionLabel)
+void CBufferDatabase::setMatrixDimensionLabel(const size_t index1, const size_t idx2, const char* label)
 {
-	if (m_bError) { return; }
+	if (m_Error) { return; }
 
-	if (ui32DimensionIndex >= 2)
+	if (index1 >= 2)
 	{
-		m_bError = true;
-		m_parentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error << "Tried to access dimension " << ui32DimensionIndex <<
+		m_Error = true;
+		m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error << "Tried to access dimension " << index1 <<
 				", only 0 and 1 supported\n";
 		return;
 	}
 
-	m_pDimensionLabels[ui32DimensionIndex][ui32DimensionEntryIndex] = sDimensionLabel;
+	m_DimLabels[index1][idx2] = label;
 }
 
-bool CBufferDatabase::setMatrixBuffer(const double* buffer, const uint64_t ui64StartTime, const uint64_t ui64EndTime)
+bool CBufferDatabase::setMatrixBuffer(const double* buffer, const uint64_t startTime, const uint64_t endTime)
 {
 	//if an error has occurred, do nothing
-	if (m_bError) { return false; }
+	if (m_Error) { return false; }
 
 	// Check for time-continuity
-	if (ui64StartTime < m_lastBufferEndTime && !m_bWarningPrinted)
+	if (startTime < m_LastBufferEndTime && !m_WarningPrinted)
 	{
-		m_parentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Warning <<
-				"Your signal does not appear to be continuous in time. "
-				<< "Previously inserted buffer ended at " << TimeArithmetics::timeToSeconds(m_lastBufferEndTime)
-				<< "s, the current starts at " << TimeArithmetics::timeToSeconds(ui64StartTime)
+		m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Warning
+				<< "Your signal does not appear to be continuous in time. "
+				<< "Previously inserted buffer ended at " << TimeArithmetics::timeToSeconds(m_LastBufferEndTime)
+				<< "s, the current starts at " << TimeArithmetics::timeToSeconds(startTime)
 				<< "s. The display may be incorrect.\n";
-		m_bWarningPrinted = true;
+		m_WarningPrinted = true;
 	}
-	m_lastBufferEndTime = ui64EndTime;
+	m_LastBufferEndTime = endTime;
 
 
 	//if this the first buffer, perform some precomputations
-	if (!m_bFirstBufferReceived)
+	if (!m_HasFirstBuffer)
 	{
-		m_bufferDuration = ui64EndTime - ui64StartTime;
+		m_BufferDuration = endTime - startTime;
 
 		//test if it is equal to zero : Error
-		if (m_bufferDuration == 0)
+		if (m_BufferDuration == 0)
 		{
-			m_parentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Warning <<
-					"Error : buffer start time and end time are equal : " << ui64StartTime << "\n";
-
-			m_bError = true;
-
+			m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Warning <<
+					"Error : buffer start time and end time are equal : " << startTime << "\n";
+			m_Error = true;
 			return false;
 		}
 
 		//computes the sampling frequency for sanity checking or if the setter has not been called
-		const uint64_t sampleDuration = (uint64_t(1) << 32) * m_pDimensionSizes[1];
-		uint32_t l_ui32EstimatedFrequency   = uint32_t(sampleDuration / m_bufferDuration);
-		if (l_ui32EstimatedFrequency == 0)
+		const uint64_t duration = (uint64_t(1) << 32) * m_DimSizes[1];
+		size_t sampling         = size_t(duration / m_BufferDuration);
+		if (sampling == 0)
 		{
 			// Complain if estimate is bad
-			m_parentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Warning <<
-					"The integer sampling frequency was estimated from the chunk size to be 0"
-					<< " (nSamples " << m_pDimensionSizes[1] << " / bufferLength " << TimeArithmetics::timeToSeconds(m_bufferDuration) <<
-					"s = 0). This is not supported. Forcing the rate to 1. This may lead to problems.\n";
-			l_ui32EstimatedFrequency = 1;
+			m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Warning
+					<< "The integer sampling frequency was estimated from the chunk size to be 0"
+					<< " (nSamples " << m_DimSizes[1] << " / bufferLength " << TimeArithmetics::timeToSeconds(m_BufferDuration)
+					<< "s = 0). This is not supported. Forcing the rate to 1. This may lead to problems.\n";
+			sampling = 1;
 		}
-		if (m_samplingFrequency == 0)
+		if (m_Sampling == 0)
 		{
 			// use chunking duration estimate if setter hasn't been used
-			m_samplingFrequency = l_ui32EstimatedFrequency;
+			m_Sampling = sampling;
 		}
-		if (m_samplingFrequency != l_ui32EstimatedFrequency)
+		if (m_Sampling != sampling)
 		{
-			m_parentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Warning
-					<< "Sampling rate [" << l_ui32EstimatedFrequency << "] suggested by chunk properties differs from stream-specified rate [" <<
-					m_samplingFrequency << "]. There may be a problem with an upstream box. Trying to use the estimated rate.\n";
-			m_samplingFrequency = l_ui32EstimatedFrequency;
+			m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Warning
+					<< "Sampling rate [" << sampling << "] suggested by chunk properties differs from stream-specified rate ["
+					<< m_Sampling << "]. There may be a problem with an upstream box. Trying to use the estimated rate.\n";
+			m_Sampling = sampling;
 		}
 
 		//computes the number of buffer necessary to display the interval
 		adjustNumberOfDisplayedBuffers(-1);
 
-		m_pDrawable->init();
+		m_Drawable->init();
 
-		m_bFirstBufferReceived = true;
+		m_HasFirstBuffer = true;
 	}
 
-	if (!m_bChannelLookupTableInitialized)
+	if (!m_ChannelLookupTableInitialized)
 	{
 		fillChannelLookupTable();  //to retrieve the unrecognized electrode warning
 		// The above call will fail if no electrode localisation data...
-		// m_parentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error << "Unable to fill lookup table\n";
-		//	return false;
+		// m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error << "Unable to fill lookup table\n";
+		// return false;
 	}
 	else
 	{
 		//look for chanloc buffers recently received
-		for (uint32_t i = 0; i < m_oChannelLocalisationStreamedCoords.size(); ++i)
+		for (size_t i = 0; i < m_channelLocalisationCoords.size(); ++i)
 		{
 			//if a new set of coordinates was received
-			if (m_oChannelLocalisationStreamedCoords[i].second) { onChannelLocalisationBufferReceived(i); }
+			if (m_channelLocalisationCoords[i].second) { onChannelLocalisationBufferReceived(i); }
 		}
 	}
 
-	double* l_pBufferToWrite                      = nullptr;
-	const uint64_t l_ui64NumberOfSamplesPerBuffer = m_pDimensionSizes[0] * m_pDimensionSizes[1];
+	double* bufferToWrite          = nullptr;
+	const size_t nSamplesPerBuffer = m_DimSizes[0] * m_DimSizes[1];
 
 	//if old buffers need to be removed
-	if (m_oSampleBuffers.size() == m_nBufferToDisplay)
+	if (m_SampleBuffers.size() == m_NBufferToDisplay)
 	{
-		if (m_ovTotalDuration == 0) { m_ovTotalDuration = (m_oStartTime.back() - m_oStartTime.front()) + (m_oEndTime.back() - m_oStartTime.back()); }
-		if (m_bufferStep == 0)
+		if (m_ovTotalDuration == 0) { m_ovTotalDuration = (m_StartTime.back() - m_StartTime.front()) + (m_EndTime.back() - m_StartTime.back()); }
+		if (m_BufferStep == 0)
 		{
-			if (m_oStartTime.size() <= 1) { m_bufferStep = m_ovTotalDuration; }
-			else { m_bufferStep = m_oStartTime[1] - m_oStartTime[0]; }
+			if (m_StartTime.size() <= 1) { m_BufferStep = size_t(m_ovTotalDuration); }
+			else { m_BufferStep = m_StartTime[1] - m_StartTime[0]; }
 		}
-		if (m_totalStep == 0) { m_totalStep = (m_oStartTime.back() - m_oStartTime.front()) + m_bufferStep; }
+		if (m_TotalStep == 0) { m_TotalStep = (m_StartTime.back() - m_StartTime.front()) + m_BufferStep; }
 
 		//save first buffer pointer
-		l_pBufferToWrite = m_oSampleBuffers.front();
+		bufferToWrite = m_SampleBuffers.front();
 
 		//pop first element from queues
-		m_oSampleBuffers.pop_front();
-		m_oStartTime.pop_front();
-		m_oEndTime.pop_front();
-		for (size_t c = 0; c < size_t(m_pDimensionSizes[0]); ++c) { m_oLocalMinMaxValue[c].pop_front(); }
+		m_SampleBuffers.pop_front();
+		m_StartTime.pop_front();
+		m_EndTime.pop_front();
+		for (size_t c = 0; c < size_t(m_DimSizes[0]); ++c) { m_LocalMinMaxValue[c].pop_front(); }
 	}
 
 	//do we need to allocate a new buffer?
-	if (l_pBufferToWrite == nullptr) { l_pBufferToWrite = new double[size_t(l_ui64NumberOfSamplesPerBuffer)]; }
+	if (bufferToWrite == nullptr) { bufferToWrite = new double[nSamplesPerBuffer]; }
 
 	//copy new buffer into internal buffer
-	System::Memory::copy(l_pBufferToWrite, buffer, l_ui64NumberOfSamplesPerBuffer * sizeof(double));
+	System::Memory::copy(bufferToWrite, buffer, nSamplesPerBuffer * sizeof(double));
 
 	//push new buffer and its timestamps
-	m_oSampleBuffers.push_back(l_pBufferToWrite);
-	m_oStartTime.push_back(ui64StartTime);
-	m_oEndTime.push_back(ui64EndTime);
+	m_SampleBuffers.push_back(bufferToWrite);
+	m_StartTime.push_back(startTime);
+	m_EndTime.push_back(endTime);
 
 	//compute and push min and max values of new buffer
-	uint64_t l_ui64CurrentSample = 0;
+	size_t currentSample = 0;
 	//for each channel
-	for (size_t c = 0; c < size_t(m_pDimensionSizes[0]); ++c)
+	for (size_t c = 0; c < size_t(m_DimSizes[0]); ++c)
 	{
-		double l_f64LocalMin = DBL_MAX;
-		double l_f64LocalMax = -DBL_MAX;
+		double localMin = DBL_MAX;
+		double localMax = -DBL_MAX;
 
 		//for each sample
-		for (uint64_t i = 0; i < m_pDimensionSizes[1]; i++, l_ui64CurrentSample++)
+		for (size_t i = 0; i < m_DimSizes[1]; i++, currentSample++)
 		{
 			//get channel local min/max
-			if (buffer[l_ui64CurrentSample] < l_f64LocalMin) { l_f64LocalMin = buffer[l_ui64CurrentSample]; }
-			if (buffer[l_ui64CurrentSample] > l_f64LocalMax) { l_f64LocalMax = buffer[l_ui64CurrentSample]; }
+			if (buffer[currentSample] < localMin) { localMin = buffer[currentSample]; }
+			if (buffer[currentSample] > localMax) { localMax = buffer[currentSample]; }
 		}
 
 		//adds the minmax pair to the corresponding channel's list
-		m_oLocalMinMaxValue[c].emplace_back(l_f64LocalMin, l_f64LocalMax);
+		m_LocalMinMaxValue[c].emplace_back(localMin, localMax);
 
-		if (l_f64LocalMax > m_maximumValue) { m_maximumValue = l_f64LocalMax; }
-		if (l_f64LocalMin < m_minimumValue) { m_minimumValue = l_f64LocalMin; }
+		if (localMax > m_MaxValue) { m_MaxValue = localMax; }
+		if (localMin < m_MinValue) { m_MinValue = localMin; }
 	}
 
 	//tells the drawable to redraw himself since the signal information has been updated
-	if (m_bRedrawOnNewData) { m_pDrawable->redraw(); }
+	if (m_RedrawOnNewData) { m_Drawable->redraw(); }
 	return true;
 }
 
-bool CBufferDatabase::setSamplingFrequency(const uint32_t ui32SamplingFrequency)
+bool CBufferDatabase::setSampling(const size_t sampling)
 {
-	m_samplingFrequency = ui32SamplingFrequency;
-
+	m_Sampling = sampling;
 	return true;
 }
 
-void CBufferDatabase::getDisplayedChannelLocalMeanValue(uint32_t /*ui32Channel*/, double& /*f64Mean*/) {}
-
-void CBufferDatabase::getDisplayedChannelLocalMinMaxValue(const uint32_t ui32Channel, double& f64Min, double& f64Max)
+void CBufferDatabase::getDisplayedChannelLocalMinMaxValue(const size_t channel, double& min, double& max)
 {
-	f64Min = +DBL_MAX;
-	f64Max = -DBL_MAX;
+	min = +DBL_MAX;
+	max = -DBL_MAX;
 
-	for (uint64_t i = 0; i < m_oLocalMinMaxValue[size_t(ui32Channel)].size(); ++i)
+	for (size_t i = 0; i < m_LocalMinMaxValue[channel].size(); ++i)
 	{
-		if (f64Min > m_oLocalMinMaxValue[size_t(ui32Channel)][size_t(i)].first) { f64Min = m_oLocalMinMaxValue[size_t(ui32Channel)][size_t(i)].first; }
-		if (f64Max < m_oLocalMinMaxValue[size_t(ui32Channel)][size_t(i)].second) { f64Max = m_oLocalMinMaxValue[size_t(ui32Channel)][size_t(i)].second; }
+		if (min > m_LocalMinMaxValue[channel][i].first) { min = m_LocalMinMaxValue[channel][i].first; }
+		if (max < m_LocalMinMaxValue[channel][i].second) { max = m_LocalMinMaxValue[channel][i].second; }
 	}
 }
 
-bool CBufferDatabase::isTimeInDisplayedInterval(const uint64_t& ui64Time) const
+bool CBufferDatabase::isTimeInDisplayedInterval(const uint64_t& time) const
 {
-	if (m_oStartTime.empty()) { return false; }
+	if (m_StartTime.empty()) { return false; }
 
-	return ui64Time >= m_oStartTime.front() && ui64Time <= m_oEndTime.back();
+	return time >= m_StartTime.front() && time <= m_EndTime.back();
 }
 
-bool CBufferDatabase::getIndexOfBufferStartingAtTime(const uint64_t& ui64Time, uint32_t& rIndex) const
+bool CBufferDatabase::getIndexOfBufferStartingAtTime(const uint64_t& time, size_t& index) const
 {
-	rIndex = 0;
+	index = 0;
 
-	if (m_oSampleBuffers.empty() || ui64Time < m_oStartTime.front() || ui64Time > m_oStartTime.back()) { return false; }
+	if (m_SampleBuffers.empty() || time < m_StartTime.front() || time > m_StartTime.back()) { return false; }
 
-	for (uint32_t i = 0; i < m_oStartTime.size(); ++i)
+	for (size_t i = 0; i < m_StartTime.size(); ++i)
 	{
-		if (m_oStartTime[i] == ui64Time)
+		if (m_StartTime[i] == time)
 		{
-			rIndex = i;
+			index = i;
 			return true;
 		}
 	}
@@ -491,51 +467,67 @@ bool CBufferDatabase::getIndexOfBufferStartingAtTime(const uint64_t& ui64Time, u
 	return false;
 }
 
-void CBufferDatabase::getDisplayedGlobalMinMaxValue(double& f64Min, double& f64Max)
+void CBufferDatabase::getDisplayedGlobalMinMaxValue(double& min, double& max)
 {
-	f64Min = +DBL_MAX;
-	f64Max = -DBL_MAX;
+	min = +DBL_MAX;
+	max = -DBL_MAX;
 
-	for (auto& pairs : m_oLocalMinMaxValue)
+	for (auto& pairs : m_LocalMinMaxValue)
 	{
 		for (const auto& pair : pairs)
 		{
-			if (f64Min > pair.first) { f64Min = pair.first; }
-			if (f64Max < pair.second) { f64Max = pair.second; }
+			if (min > pair.first) { min = pair.first; }
+			if (max < pair.second) { max = pair.second; }
 		}
 	}
 }
 
-uint64_t CBufferDatabase::getElectrodeCount() { return m_oChannelLocalisationLabels.size(); }
+void CBufferDatabase::getLastBufferChannelLocalMinMaxValue(const size_t channel, double& min, double& max)
+{
+	min = m_LocalMinMaxValue[channel].back().first;
+	max = m_LocalMinMaxValue[channel].back().second;
+}
 
-bool CBufferDatabase::getElectrodePosition(const uint32_t ui32ElectrodeIndex, double* pElectrodePosition)
+void CBufferDatabase::getLastBufferMinMaxValue(double& min, double& max)
+{
+	min = +DBL_MAX;
+	max = -DBL_MAX;
+
+	for (auto& localValue : m_LocalMinMaxValue)
+	{
+		min = (localValue.back().first < min) ? localValue.back().first : min;
+		max = (localValue.back().second > max) ? localValue.back().second : max;
+	}
+}
+
+bool CBufferDatabase::getElectrodePosition(const size_t index, double* position)
 {
 	//TODO : add time parameter and look for coordinates closest to that time!
-	if (ui32ElectrodeIndex < m_oChannelLocalisationLabels.size())
+	if (index < m_channelLocalisationLabels.size())
 	{
-		//if(m_bCartesianStreamedCoords == true)
+		//if(m_cartesianCoords == true)
 		//{
-		*pElectrodePosition       = *(m_oChannelLocalisationStreamedCoords[0].first->getBuffer() + 3 * ui32ElectrodeIndex);
-		*(pElectrodePosition + 1) = *(m_oChannelLocalisationStreamedCoords[0].first->getBuffer() + 3 * ui32ElectrodeIndex + 1);
-		*(pElectrodePosition + 2) = *(m_oChannelLocalisationStreamedCoords[0].first->getBuffer() + 3 * ui32ElectrodeIndex + 2);
+		*position       = *(m_channelLocalisationCoords[0].first->getBuffer() + 3 * index);
+		*(position + 1) = *(m_channelLocalisationCoords[0].first->getBuffer() + 3 * index + 1);
+		*(position + 2) = *(m_channelLocalisationCoords[0].first->getBuffer() + 3 * index + 2);
 		//}
 		return true;
 	}
 	return false;
 }
 
-bool CBufferDatabase::getElectrodePosition(const CString& rElectrodeLabel, double* pElectrodePosition)
+bool CBufferDatabase::getElectrodePosition(const CString& label, double* position)
 {
 	//TODO : add time parameter and look for coordinates closest to that time!
-	for (uint32_t i = 0; i < m_oChannelLocalisationLabels.size(); ++i)
+	for (size_t i = 0; i < m_channelLocalisationLabels.size(); ++i)
 	{
-		if (strcmp(rElectrodeLabel.toASCIIString(), m_oChannelLocalisationLabels[i].toASCIIString()) == 0)
+		if (strcmp(label.toASCIIString(), m_channelLocalisationLabels[i].toASCIIString()) == 0)
 		{
-			//if(m_bCartesianStreamedCoords == true)
+			//if(m_cartesianCoords == true)
 			//{
-			*pElectrodePosition       = *(m_oChannelLocalisationStreamedCoords[0].first->getBuffer() + 3 * i);
-			*(pElectrodePosition + 1) = *(m_oChannelLocalisationStreamedCoords[0].first->getBuffer() + 3 * i + 1);
-			*(pElectrodePosition + 2) = *(m_oChannelLocalisationStreamedCoords[0].first->getBuffer() + 3 * i + 2);
+			*position       = *(m_channelLocalisationCoords[0].first->getBuffer() + 3 * i);
+			*(position + 1) = *(m_channelLocalisationCoords[0].first->getBuffer() + 3 * i + 1);
+			*(position + 2) = *(m_channelLocalisationCoords[0].first->getBuffer() + 3 * i + 2);
 			//}
 			return true;
 		}
@@ -544,44 +536,38 @@ bool CBufferDatabase::getElectrodePosition(const CString& rElectrodeLabel, doubl
 	return false;
 }
 
-bool CBufferDatabase::getElectrodeLabel(const uint32_t ui32ElectrodeIndex, CString& rElectrodeLabel)
+bool CBufferDatabase::getElectrodeLabel(const size_t index, CString& label)
 {
-	if (ui32ElectrodeIndex >= m_oChannelLocalisationLabels.size()) { return false; }
-	rElectrodeLabel = m_oChannelLocalisationLabels[ui32ElectrodeIndex].toASCIIString();
+	if (index >= m_channelLocalisationLabels.size()) { return false; }
+	label = m_channelLocalisationLabels[index].toASCIIString();
 	return true;
 }
 
-bool CBufferDatabase::getChannelPosition(const uint32_t ui32ChannelIndex, double*& rChannelPosition)
+bool CBufferDatabase::getChannelPosition(const size_t index, double*& position)
 {
 	//TODO : add time parameter and look for coordinates closest to that time!
-	if (ui32ChannelIndex >= 0 && ui32ChannelIndex < m_oChannelLookupIndices.size())
+	if (index >= 0 && index < m_ChannelLookupIndices.size())
 	{
-		if (m_bCartesianStreamedCoords)
-		{
-			rChannelPosition = m_oChannelLocalisationStreamedCoords[0].first->getBuffer() + 3 * m_oChannelLookupIndices[ui32ChannelIndex];
-		}/*
-		else
-		{
-			//TODO
-		}*/
+		if (m_cartesianCoords) { position = m_channelLocalisationCoords[0].first->getBuffer() + 3 * m_ChannelLookupIndices[index]; }
+		// else { } //TODO
 		return true;
 	}
 
 	return false;
 }
 
-bool CBufferDatabase::getChannelSphericalCoordinates(const uint32_t ui32ChannelIndex, double& rTheta, double& rPhi)
+bool CBufferDatabase::getChannelSphericalCoordinates(const size_t index, double& rTheta, double& rPhi)
 {
 	//TODO : add time parameter and look for coordinates closest to that time!
-	if (ui32ChannelIndex >= 0 && ui32ChannelIndex < m_oChannelLookupIndices.size())
+	if (index >= 0 && index < m_ChannelLookupIndices.size())
 	{
-		if (m_bCartesianStreamedCoords)
+		if (m_cartesianCoords)
 		{
 			//get cartesian coords
-			double* l_pCoords = m_oChannelLocalisationStreamedCoords[0].first->getBuffer() + 3 * m_oChannelLookupIndices[ui32ChannelIndex];
+			double* coords = m_channelLocalisationCoords[0].first->getBuffer() + 3 * m_ChannelLookupIndices[index];
 
 			//convert to spherical coords
-			return convertCartesianToSpherical(l_pCoords, rTheta, rPhi);
+			return convertCartesianToSpherical(coords, rTheta, rPhi);
 		}
 		//streamed coordinates are spherical already
 		//TODO
@@ -590,120 +576,112 @@ bool CBufferDatabase::getChannelSphericalCoordinates(const uint32_t ui32ChannelI
 	return false;
 }
 
-bool CBufferDatabase::getChannelLabel(const uint32_t ui32ChannelIndex, CString& rChannelLabel)
+bool CBufferDatabase::getChannelLabel(const size_t index, CString& label)
 {
-	if (ui32ChannelIndex >= 0 && ui32ChannelIndex < m_oChannelLookupIndices.size())
+	if (index >= 0 && index < m_ChannelLookupIndices.size())
 	{
-		rChannelLabel = m_oChannelLocalisationLabels[m_oChannelLookupIndices[ui32ChannelIndex]];
+		label = m_channelLocalisationLabels[m_ChannelLookupIndices[index]];
 		return true;
 	}
-	rChannelLabel = "";
+	label = "";
 	return false;
 }
 
 
-void CBufferDatabase::setStimulation(const uint32_t /*ui32StimulationIndex*/, const uint64_t ui64StimulationIdentifier, const uint64_t ui64StimulationDate)
+void CBufferDatabase::setStimulation(const size_t /*index*/, const uint64_t id, const uint64_t date)
 {
-	// m_parentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Trace << "Received new stimulation id:" << ui64StimulationIdentifier << " date:" << ui64StimulationDate << "\n";
+	m_Stimulations.emplace_back(date, id);
 
-	m_oStimulations.emplace_back(ui64StimulationDate, ui64StimulationIdentifier);
-
-	if (!m_oStartTime.empty())
+	if (!m_StartTime.empty())
 	{
-		while (m_oStimulations.begin() != m_oStimulations.end() && m_oStimulations.begin()->first < m_oStartTime.front()) { m_oStimulations.pop_front(); }
+		while (m_Stimulations.begin() != m_Stimulations.end() && m_Stimulations.begin()->first < m_StartTime.front()) { m_Stimulations.pop_front(); }
 	}
 }
 
 bool CBufferDatabase::fillChannelLookupTable()
 {
-	if (!m_bFirstBufferReceived || !m_bChannelLocalisationHeaderReceived) { return false; }
+	if (!m_HasFirstBuffer || !m_channelLocalisationHeaderReceived) { return false; }
 
 	bool res = true;
 
 	//resize lookup array and initialize lookup indices to 0
-	m_oChannelLookupIndices.resize(uint32_t(m_i64NbElectrodes), 0);
+	m_ChannelLookupIndices.resize(size_t(m_NElectrodes), 0);
 
 	//for all channels
-	for (size_t i = 0; i < size_t(m_pDimensionSizes[0]); ++i)
+	for (size_t i = 0; i < m_DimSizes[0]; ++i)
 	{
 		//trim leading spaces
 		size_t firstNonWhitespaceChar = 0;
-		for (; firstNonWhitespaceChar < m_pDimensionLabels[0][i].size(); ++firstNonWhitespaceChar)
+		for (; firstNonWhitespaceChar < m_DimLabels[0][i].size(); ++firstNonWhitespaceChar)
 		{
-			if (isspace(m_pDimensionLabels[0][i][firstNonWhitespaceChar]) == 0) { break; }
+			if (isspace(m_DimLabels[0][i][firstNonWhitespaceChar]) == 0) { break; }
 		}
 
 		//trim trailing spaces
 		size_t lastNonWhitespaceChar = 0;
-		if (!m_pDimensionLabels[0][i].empty())
+		if (!m_DimLabels[0][i].empty())
 		{
-			for (lastNonWhitespaceChar = m_pDimensionLabels[0][i].size() - 1; lastNonWhitespaceChar >= 0; lastNonWhitespaceChar--)
+			for (lastNonWhitespaceChar = m_DimLabels[0][i].size() - 1; lastNonWhitespaceChar >= 0; lastNonWhitespaceChar--)
 			{
-				if (isspace(m_pDimensionLabels[0][i][lastNonWhitespaceChar]) == 0) { break; }
+				if (isspace(m_DimLabels[0][i][lastNonWhitespaceChar]) == 0) { break; }
 			}
 		}
 
 		//look for label in channel localisation labels database
-		bool l_bLabelRecognized = false;
+		bool labelRecognized = false;
 
 		if (firstNonWhitespaceChar < lastNonWhitespaceChar)
 		{
-			std::string l_oChannelLabel(m_pDimensionLabels[0][i].substr(firstNonWhitespaceChar, lastNonWhitespaceChar - firstNonWhitespaceChar + 1));
+			std::string channelLabel(m_DimLabels[0][i].substr(firstNonWhitespaceChar, lastNonWhitespaceChar - firstNonWhitespaceChar + 1));
 
-			for (uint32_t j = 0; j < m_oChannelLocalisationLabels.size(); ++j)
+			for (size_t j = 0; j < m_channelLocalisationLabels.size(); ++j)
 			{
-				if (strcmp(l_oChannelLabel.c_str(), m_oChannelLocalisationLabels[j].toASCIIString()) == 0)
+				if (strcmp(channelLabel.c_str(), m_channelLocalisationLabels[j].toASCIIString()) == 0)
 				{
-					l_bLabelRecognized         = true;
-					m_oChannelLookupIndices[i] = j;
+					labelRecognized           = true;
+					m_ChannelLookupIndices[i] = j;
 					break;
 				}
 			}
 		}
 
 		//unrecognized electrode!
-		if (!l_bLabelRecognized)
+		if (!labelRecognized)
 		{
-			m_parentPlugin.getLogManager() << LogLevel_Warning
-					<< "Unrecognized electrode name (index=" << i
-					<< ", name=" << m_pDimensionLabels[0][i].c_str()
-					<< ")!\n";
+			m_ParentPlugin.getLogManager() << LogLevel_Warning << "Unrecognized electrode name (index=" << i << ", name=" << m_DimLabels[0][i] << ")!\n";
 			res = false;
 		}
 	}
 
-	m_parentPlugin.getLogManager() << LogLevel_Trace << "Electrodes list : ";
+	m_ParentPlugin.getLogManager() << LogLevel_Trace << "Electrodes list : ";
 
-	for (size_t i = 0; i < size_t(m_pDimensionSizes[0]); ++i)
+	for (size_t i = 0; i < size_t(m_DimSizes[0]); ++i)
 	{
-		m_parentPlugin.getLogManager() << CString(m_pDimensionLabels[0][i].c_str());
-		if (i < m_pDimensionSizes[0] - 1) { m_parentPlugin.getLogManager() << ", "; }
-		else { m_parentPlugin.getLogManager() << "\n"; }
+		m_ParentPlugin.getLogManager() << m_DimLabels[0][i].c_str();
+		if (i < m_DimSizes[0] - 1) { m_ParentPlugin.getLogManager() << ", "; }
+		else { m_ParentPlugin.getLogManager() << "\n"; }
 	}
 
-	if (res) { m_bChannelLookupTableInitialized = true; }
+	if (res) { m_ChannelLookupTableInitialized = true; }
 
 	return res;
 }
 
-bool CBufferDatabase::convertCartesianToSpherical(const double* pCartesianCoords, double& rTheta, double& rPhi) const
+bool CBufferDatabase::convertCartesianToSpherical(const double* cartesian, double& theta, double& phi) const
 {
-#define MY_THRESHOLD 1e-3
-#define PI 3.1415926535
-
-	const double l_f64RadToDeg = 180 / PI;
+	const double threshold = 1e-3;
+	const double radToDeg  = 57.2957795131; // 180 / pi
 
 	//compute theta
-	rTheta = acos(pCartesianCoords[2]) * l_f64RadToDeg;
-
+	theta = acos(cartesian[2]) * radToDeg;
+	
 	//compute phi so that it lies in [0, 360]
-	if (fabs(pCartesianCoords[0]) < MY_THRESHOLD) { rPhi = (pCartesianCoords[1] > 0) ? 90 : 270; }
+	if (fabs(cartesian[0]) < threshold) { phi = (cartesian[1] > 0) ? 90 : 270; }
 	else
 	{
-		rPhi = atan(pCartesianCoords[1] / pCartesianCoords[0]) * l_f64RadToDeg;
-
-		if (pCartesianCoords[0] < 0) { rPhi += 180; }
-		else if (pCartesianCoords[1] < 0) { rPhi += 360; }
+		phi = atan(cartesian[1] / cartesian[0]) * radToDeg;
+		if (cartesian[0] < 0) { phi += 180; }
+		else if (cartesian[1] < 0) { phi += 360; }
 	}
 
 	return true;

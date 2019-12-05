@@ -145,7 +145,7 @@ namespace OpenViBEDesigner
 		OpenViBE::Kernel::IPluginManager* m_pPluginManager = nullptr;
 		OpenViBE::Kernel::IScenarioManager* m_pScenarioManager = nullptr;
 		OpenViBEVisualizationToolkit::IVisualizationManager* m_pVisualizationManager = nullptr;
-		OpenViBEVisualizationToolkit::IVisualizationContext* m_visualizationContext = nullptr;
+		OpenViBEVisualizationToolkit::IVisualizationContext* m_VisualizationCtx = nullptr;
 		OpenViBE::Kernel::IScenario* m_pClipboardScenario = nullptr;
 
 		CLogListenerDesigner* m_pLogListenerDesigner = nullptr;

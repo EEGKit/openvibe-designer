@@ -9,8 +9,8 @@
 #include "ovvizIVisualizationManager.h"
 #include "ovvizIVisualizationContext.h"
 
-#define OVP_ClassId_Plugin_VisualizationContext			OpenViBE::CIdentifier(0x05A7171D, 0x78E4FE3C)
-#define OVP_ClassId_Plugin_VisualizationContextDesc		OpenViBE::CIdentifier(0x35A11438, 0x764F72E8)
+#define OVP_ClassId_Plugin_VisualizationCtx			OpenViBE::CIdentifier(0x05A7171D, 0x78E4FE3C)
+#define OVP_ClassId_Plugin_VisualizationCtxDesc		OpenViBE::CIdentifier(0x35A11438, 0x764F72E8)
 
 namespace OpenViBEVisualizationToolkit
 {
@@ -40,10 +40,10 @@ namespace OpenViBEVisualizationToolkit
 
 		bool isDerivedFromClass(const OpenViBE::CIdentifier& classIdentifier) const override
 		{
-			return ((classIdentifier == OVP_ClassId_Plugin_VisualizationContext) || IVisualizationContext::isDerivedFromClass(classIdentifier));
+			return ((classIdentifier == OVP_ClassId_Plugin_VisualizationCtx) || IVisualizationContext::isDerivedFromClass(classIdentifier));
 		}
 
-		OpenViBE::CIdentifier getClassIdentifier() const override { return OVP_ClassId_Plugin_VisualizationContext; }
+		OpenViBE::CIdentifier getClassIdentifier() const override { return OVP_ClassId_Plugin_VisualizationCtx; }
 
 		CVisualizationContext() = default;
 
@@ -55,7 +55,7 @@ namespace OpenViBEVisualizationToolkit
 	{
 	public:
 
-		CVisualizationContextDesc() : m_VisualizationContext(new CVisualizationContext()) {}
+		CVisualizationContextDesc() : m_visualizationCtx(new CVisualizationContext()) {}
 
 		void release() override { }
 
@@ -67,7 +67,7 @@ namespace OpenViBEVisualizationToolkit
 		OpenViBE::CString getCategory() const override { return OpenViBE::CString(""); }
 		OpenViBE::CString getVersion() const override { return OpenViBE::CString("1.0"); }
 
-		OpenViBE::CIdentifier getCreatedClass() const override { return OVP_ClassId_Plugin_VisualizationContext; }
+		OpenViBE::CIdentifier getCreatedClass() const override { return OVP_ClassId_Plugin_VisualizationCtx; }
 
 		/**
 		 * The create function usage is different from standard plugins. As we need to be able to pass data between
@@ -77,16 +77,16 @@ namespace OpenViBEVisualizationToolkit
 		 *
 		 * @return The singleton visualizationContext object
 		 */
-		OpenViBE::Plugins::IPluginObject* create() override { return m_VisualizationContext.get(); }
+		OpenViBE::Plugins::IPluginObject* create() override { return m_visualizationCtx.get(); }
 
 		bool isDerivedFromClass(const OpenViBE::CIdentifier& classIdentifier) const override
 		{
-			return ((classIdentifier == OVP_ClassId_Plugin_VisualizationContextDesc) || IPluginObjectDesc::isDerivedFromClass(classIdentifier));
+			return ((classIdentifier == OVP_ClassId_Plugin_VisualizationCtxDesc) || IPluginObjectDesc::isDerivedFromClass(classIdentifier));
 		}
 
-		OpenViBE::CIdentifier getClassIdentifier() const override { return OVP_ClassId_Plugin_VisualizationContextDesc; }
+		OpenViBE::CIdentifier getClassIdentifier() const override { return OVP_ClassId_Plugin_VisualizationCtxDesc; }
 
 	private:
-		std::unique_ptr<CVisualizationContext> m_VisualizationContext;
+		std::unique_ptr<CVisualizationContext> m_visualizationCtx;
 	};
 } // namespace OpenViBEVisualizationToolkit
