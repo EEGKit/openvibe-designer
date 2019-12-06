@@ -22,7 +22,7 @@
 
 #include "m_defines.hpp"
 
-#include <mensia/advanced-visualization.h>
+#include <mensia/advanced-visualization.hpp>
 
 #include <string>
 

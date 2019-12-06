@@ -20,7 +20,7 @@
  */
 #pragma once
 
-#include "mIRendererContext.h"
+#include "mIRendererContext.hpp"
 #include "mCVertex.hpp"
 
 #include <vector>

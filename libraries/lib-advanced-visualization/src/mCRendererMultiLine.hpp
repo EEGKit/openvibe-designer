@@ -30,7 +30,7 @@ namespace Mensia
 		{
 		public:
 
-			bool render(const IRendererContext& rContext) override;
+			bool render(const IRendererContext& ctx) override;
 		};
 	} // namespace AdvancedVisualization
 } // namespace Mensia

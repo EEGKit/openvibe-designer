@@ -18,6 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+
 #pragma once
 
 #include <cmath>
@@ -49,7 +50,7 @@ namespace Mensia
 				const float n = this->length();
 				if (n != 0)
 				{
-					const float in = 1.f / n;
+					const float in = 1.F / n;
 					this->x *= in;
 					this->y *= in;
 					this->z *= in;
@@ -57,25 +58,25 @@ namespace Mensia
 				return *this;
 			}
 
-			float length() const { return sqrt(this->sqr_length()); }
+			float length() const { return sqrt(this->sqrLength()); }
 
-			float sqr_length() const { return dot(*this, *this); }
+			float sqrLength() const { return dot(*this, *this); }
 
-			static float dot(const CVertex& v1, const CVertex& v2) { return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z; }
+			static float dot(const CVertex& a, const CVertex& b) { return a.x * b.x + a.y * b.y + a.z * b.z; }
 
-			static CVertex cross(const CVertex& v1, const CVertex& v2)
+			static CVertex cross(const CVertex& a, const CVertex& b)
 			{
 				CVertex r;
-				r.x = v1.y * v2.z - v1.z * v2.y;
-				r.y = v1.z * v2.x - v1.x * v2.z;
-				r.z = v1.x * v2.y - v1.y * v2.x;
+				r.x = a.y * b.z - a.z * b.y;
+				r.y = a.z * b.x - a.x * b.z;
+				r.z = a.x * b.y - a.y * b.x;
 				return r;
 			}
 
-			static CVertex cross(const CVertex& v1a, const CVertex& v1b, const CVertex& v2a, const CVertex& v2b)
+			static CVertex cross(const CVertex& a1, const CVertex& b1, const CVertex& a2, const CVertex& b2)
 			{
-				const CVertex v1(v1a, v1b);
-				const CVertex v2(v2a, v2b);
+				const CVertex v1(a1, b1);
+				const CVertex v2(a2, b2);
 				return cross(v1, v2);
 			}
 

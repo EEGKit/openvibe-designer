@@ -24,11 +24,11 @@
 using namespace Mensia;
 using namespace AdvancedVisualization;
 
-void CRendererBitmap::rebuild(const IRendererContext& rContext)
+void CRendererBitmap::rebuild(const IRendererContext& ctx)
 {
-	CRenderer::rebuild(rContext);
+	IRenderer::rebuild(ctx);
 
-	m_autoDecimationFactor = 1 + uint32_t((m_nSample - 1) / rContext.getMaximumSampleCountPerDisplay());
+	m_autoDecimationFactor = 1 + uint32_t((m_nSample - 1) / ctx.getMaximumSampleCountPerDisplay());
 
 	m_vertex.clear();
 	m_vertex.resize(m_nChannel);
@@ -58,9 +58,9 @@ void CRendererBitmap::rebuild(const IRendererContext& rContext)
 	m_historyIdx = 0;
 }
 
-void CRendererBitmap::refresh(const IRendererContext& rContext)
+void CRendererBitmap::refresh(const IRendererContext& ctx)
 {
-	CRenderer::refresh(rContext);
+	IRenderer::refresh(ctx);
 
 	if (!m_nHistory) { return; }
 	if (m_vertex.empty()) { return; }
@@ -86,27 +86,27 @@ void CRendererBitmap::refresh(const IRendererContext& rContext)
 	m_historyIdx = m_nHistory;
 }
 
-bool CRendererBitmap::render(const IRendererContext& rContext)
+bool CRendererBitmap::render(const IRendererContext& ctx)
 {
-	if (!rContext.getSelectedCount()) { return false; }
+	if (!ctx.getSelectedCount()) { return false; }
 	if (m_vertex.empty()) { return false; }
 	if (!m_nHistory) { return false; }
 
 	glMatrixMode(GL_TEXTURE);
 	glPushMatrix();
-	glScalef(rContext.getScale(), 1, 1);
+	glScalef(ctx.getScale(), 1, 1);
 	glMatrixMode(GL_MODELVIEW);
 
 	glPushMatrix();
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glScalef(1, 1.f / rContext.getSelectedCount(), 1);
-	for (uint32_t i = 0; i < rContext.getSelectedCount(); ++i)
+	glScalef(1, 1.f / ctx.getSelectedCount(), 1);
+	for (uint32_t i = 0; i < ctx.getSelectedCount(); ++i)
 	{
 		glPushMatrix();
-		glTranslatef(0, float(rContext.getSelectedCount() - i) - 1.f, 0);
-		glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_vertex[rContext.getSelected(i)][0].x);
-		glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_vertex[rContext.getSelected(i)][0].u);
+		glTranslatef(0, float(ctx.getSelectedCount() - i) - 1.f, 0);
+		glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_vertex[ctx.getSelected(i)][0].x);
+		glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_vertex[ctx.getSelected(i)][0].u);
 		glDrawArrays(GL_QUADS, 0, (m_nSample / m_autoDecimationFactor) * 4);
 		glPopMatrix();
 	}

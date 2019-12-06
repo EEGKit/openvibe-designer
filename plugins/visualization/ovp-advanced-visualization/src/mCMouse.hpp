@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include <mensia/advanced-visualization.h>
+#include <mensia/advanced-visualization.hpp>
 
 #include <map>
 

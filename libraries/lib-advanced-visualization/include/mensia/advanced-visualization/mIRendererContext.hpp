@@ -20,7 +20,7 @@
  */
 #pragma once
 
-#include "m_defines.h"
+#include "m_defines.hpp"
 
 #include <cstdint>
 #include <string>

@@ -3,7 +3,7 @@ MESSAGE(STATUS "Now building ${PROJECT_NAME} ${PROJECT_VERSION} (${OV_PROJECT_BR
 
 OV_ADD_THIS_TO_PROJECT_LIST()
 
-file(GLOB_RECURSE SRC_FILES src/*.cpp src/*.h  src/*.hpp include/*.h)
+file(GLOB_RECURSE SRC_FILES src/*.cpp src/*.h  src/*.hpp include/*.h include/*.hpp)
 include("FindSourceRCProperties")
 
 include_directories(${openvibe-visualization-toolkit_SOURCE_DIR}/include/)

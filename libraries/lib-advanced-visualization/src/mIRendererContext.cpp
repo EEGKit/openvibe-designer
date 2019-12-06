@@ -19,7 +19,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "mIRendererContext.h"
+#include "mIRendererContext.hpp"
 #include "mCRendererContext.hpp"
 
 using namespace Mensia;

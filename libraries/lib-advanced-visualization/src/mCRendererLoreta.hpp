@@ -23,7 +23,7 @@
 #if defined TARGET_HAS_ThirdPartyOpenGL
 
 
-#include "mCRenderer.hpp"
+#include "mIRenderer.hpp"
 #include "mC3DMesh.hpp"
 #include <vector>
 #include <map>
@@ -33,14 +33,14 @@ namespace Mensia
 {
 	namespace AdvancedVisualization
 	{
-		class CRendererLoreta : public CRenderer
+		class CRendererLoreta : public IRenderer
 		{
 		public:
 
 			CRendererLoreta();
 
-			void rebuild(const IRendererContext& ctx) override { CRenderer::rebuild(ctx); }
-			void refresh(const IRendererContext& ctx) override { CRenderer::refresh(ctx); }
+			void rebuild(const IRendererContext& ctx) override { IRenderer::rebuild(ctx); }
+			void refresh(const IRendererContext& ctx) override { IRenderer::refresh(ctx); }
 			bool render(const IRendererContext& ctx) override;
 
 			void clearRegionSelection() override;

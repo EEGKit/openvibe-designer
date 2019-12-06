@@ -22,13 +22,13 @@
 
 // #if defined TARGET_HAS_ThirdPartyVRPN
 
-#include "mCRenderer.hpp"
+#include "mIRenderer.hpp"
 
 namespace Mensia
 {
 	namespace AdvancedVisualization
 	{
-		class CRendererConnectivity : public CRenderer
+		class CRendererConnectivity : public IRenderer
 		{
 		public:
 

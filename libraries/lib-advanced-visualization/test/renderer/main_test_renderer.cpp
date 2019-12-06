@@ -1,4 +1,4 @@
-#include <mensia/advanced-visualization.h>
+#include <mensia/advanced-visualization.hpp>
 
 using namespace Mensia::AdvancedVisualization;
 

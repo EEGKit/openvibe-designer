@@ -20,11 +20,15 @@
  */
 #pragma once
 
-#include "mCRenderer.hpp"
+#include "mIRenderer.hpp"
 
 #include <string>
 #include <vector>
 #include <map>
+
+#ifndef M_PI
+#define M_PI 3.1415926535897932384626433832795
+#endif
 
 namespace Mensia
 {
@@ -66,16 +70,16 @@ namespace Mensia
 				}
 
 				bool ok = true;
-				ok &= (CRenderer::getSampleCount() != 0);
-				ok &= (CRenderer::getHistoryCount() != 0);
-				ok &= (CRenderer::getHistoryIndex() != 0);
+				ok &= (IRenderer::getSampleCount() != 0);
+				ok &= (IRenderer::getHistoryCount() != 0);
+				ok &= (IRenderer::getHistoryIndex() != 0);
 
 				if (ok)
 				{
 					glPushAttrib(GL_ALL_ATTRIB_BITS);
 
-					const uint32_t nSample    = CRenderer::getSampleCount();
-					const uint32_t historyIndex   = CRenderer::getHistoryIndex();
+					const uint32_t nSample    = IRenderer::getSampleCount();
+					const uint32_t historyIndex   = IRenderer::getHistoryIndex();
 					const uint64_t sampleDuration = rContext.getSampleDuration();
 
 					glDisable(GL_TEXTURE_1D);
@@ -89,7 +93,7 @@ namespace Mensia
 					const double duration    = ((nSample * sampleDuration) >> 16) / 65536.;
 
 					m_mEncounteredStimulations.clear();
-					for (auto it = CRenderer::m_stimulationHistory.begin(); it != CRenderer::m_stimulationHistory.end(); ++it)
+					for (auto it = IRenderer::m_stimulationHistory.begin(); it != IRenderer::m_stimulationHistory.end(); ++it)
 					{
 						if (m_mEncounteredStimulations.count(it->second) == 0)
 						{

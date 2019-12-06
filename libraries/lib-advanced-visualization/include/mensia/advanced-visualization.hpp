@@ -20,5 +20,6 @@
  */
 #pragma once
 
-#include "advanced-visualization/mIRenderer.h"
-#include "advanced-visualization/mIRendererContext.h"
+#include "advanced-visualization/mIRenderer.hpp"
+#include "advanced-visualization/mIRendererContext.hpp"
+#include "advanced-visualization/mCVertex.hpp"

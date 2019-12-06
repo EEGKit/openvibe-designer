@@ -28,11 +28,9 @@
 #include <toolkit/ovtk_all.h>
 #include <visualization-toolkit/ovviz_all.h>
 
-#include <mensia/advanced-visualization.h>
+#include <mensia/advanced-visualization.hpp>
 
 #include <system/ovCTime.h>
-
-#include "mCVertex.hpp"
 
 #include "mTGtkGLWidget.hpp"
 #include "mCMouse.hpp"

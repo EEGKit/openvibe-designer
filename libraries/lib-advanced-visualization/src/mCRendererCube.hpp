@@ -20,23 +20,24 @@
  */
 #pragma once
 
-#include "mCRenderer.hpp"
+#include "mIRenderer.hpp"
 
 namespace Mensia
 {
 	namespace AdvancedVisualization
 	{
-		class CRendererCube : public CRenderer
+		class CRendererCube : public IRenderer
 		{
 		public:
 
 			CRendererCube();
 
-			void rebuild(const IRendererContext& rContext) override;
-			void refresh(const IRendererContext& rContext) override;
-			bool render(const IRendererContext& rContext) override;
+			void rebuild(const IRendererContext& ctx) override;
+			void refresh(const IRendererContext& ctx) override;
+			bool render(const IRendererContext& ctx) override;
 
-			std::vector<CVertex> m_vVertex;
+		protected:
+			std::vector<CVertex> m_vertices;
 		};
 	} // namespace AdvancedVisualization
 } // namespace Mensia

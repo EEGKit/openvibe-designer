@@ -20,22 +20,23 @@
  */
 #pragma once
 
-#include "mCRenderer.hpp"
+#include "mIRenderer.hpp"
 #include "mC3DMesh.hpp"
 
 namespace Mensia
 {
 	namespace AdvancedVisualization
 	{
-		class CRendererMountain : public CRenderer
+		class CRendererMountain : public IRenderer
 		{
 		public:
 
-			void rebuild(const IRendererContext& rContext) override;
-			void refresh(const IRendererContext& rContext) override;
-			bool render(const IRendererContext& rContext) override;
+			void rebuild(const IRendererContext& ctx) override;
+			void refresh(const IRendererContext& ctx) override;
+			bool render(const IRendererContext& ctx) override;
 
-			C3DMesh m_oMountain;
+		protected:
+			C3DMesh m_mountain;
 		};
 	} // namespace AdvancedVisualization
 } // namespace Mensia

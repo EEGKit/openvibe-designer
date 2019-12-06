@@ -50,7 +50,7 @@ static void q_from_polar(Eigen::Quaterniond& q, Eigen::VectorXd& v1, Eigen::Vect
 
 void CRendererConnectivity::rebuild(const IRendererContext& rContext)
 {
-	CRenderer::rebuild(rContext);
+	IRenderer::rebuild(rContext);
 
 	uint32_t i, l = 0;
 
@@ -123,7 +123,7 @@ void CRendererConnectivity::rebuild(const IRendererContext& rContext)
 
 void CRendererConnectivity::refresh(const IRendererContext& rContext)
 {
-	CRenderer::refresh(rContext);
+	IRenderer::refresh(rContext);
 
 	if (!m_nHistory) { return; }
 	if (m_nHistory < m_nChannel) { return; }

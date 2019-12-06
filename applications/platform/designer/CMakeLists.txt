@@ -10,7 +10,7 @@ else()
 	set(ENTRYPOINT )
 endif()
 
-file(GLOB_RECURSE SRC_FILES src/*.cpp src/*.h src/visualization/*.cpp src/dynamic_settings/*.cpp)
+file(GLOB_RECURSE SRC_FILES src/*.cpp src/*.h src/*.hpp src/visualization/*.cpp src/dynamic_settings/*.cpp)
 
 include("FindSourceDependencyJSON")
 

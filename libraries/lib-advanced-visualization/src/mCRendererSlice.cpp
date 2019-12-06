@@ -24,110 +24,110 @@
 using namespace Mensia;
 using namespace AdvancedVisualization;
 
-void CRendererSlice::rebuild(const IRendererContext& rContext)
+void CRendererSlice::rebuild(const IRendererContext& ctx)
 {
-	CRenderer::rebuild(rContext);
+	IRenderer::rebuild(ctx);
 
-	uint32_t k = 0, l = 0;
 
-	m_vVertex.clear();
-	m_vVertex.resize(m_nSample * m_nChannel * 8);
+	m_vertices.clear();
+	m_vertices.resize(m_nSample * m_nChannel * 8);
 
-	m_vQuad.clear();
-	m_vQuad.resize(m_nSample * m_nChannel * 6 * 4);
+	m_quads.clear();
+	m_quads.resize(m_nSample * m_nChannel * 6 * 4);
 
-	for (uint32_t i = 0; i < m_nSample; ++i)
+	size_t k = 0, l = 0;
+	for (size_t i = 0; i < m_nSample; ++i)
 	{
-		for (uint32_t j = 0; j < m_nChannel; ++j)
+		for (size_t j = 0; j < m_nChannel; ++j)
 		{
-			const float f32Size = .5;
+			const float size = .5;
 
-			m_vQuad[l++] = k + 0;
-			m_vQuad[l++] = k + 1; // q0
-			m_vQuad[l++] = k + 2;
-			m_vQuad[l++] = k + 3;
+			m_quads[l++] = k + 0;
+			m_quads[l++] = k + 1; // q0
+			m_quads[l++] = k + 2;
+			m_quads[l++] = k + 3;
 
-			m_vQuad[l++] = k + 4;
-			m_vQuad[l++] = k + 7; // q1
-			m_vQuad[l++] = k + 6;
-			m_vQuad[l++] = k + 5;
+			m_quads[l++] = k + 4;
+			m_quads[l++] = k + 7; // q1
+			m_quads[l++] = k + 6;
+			m_quads[l++] = k + 5;
 
-			m_vQuad[l++] = k + 5;
-			m_vQuad[l++] = k + 1; // q2
-			m_vQuad[l++] = k + 2;
-			m_vQuad[l++] = k + 6;
+			m_quads[l++] = k + 5;
+			m_quads[l++] = k + 1; // q2
+			m_quads[l++] = k + 2;
+			m_quads[l++] = k + 6;
 
-			m_vQuad[l++] = k + 4;
-			m_vQuad[l++] = k + 7; // q3
-			m_vQuad[l++] = k + 3;
-			m_vQuad[l++] = k + 0;
+			m_quads[l++] = k + 4;
+			m_quads[l++] = k + 7; // q3
+			m_quads[l++] = k + 3;
+			m_quads[l++] = k + 0;
 
-			m_vQuad[l++] = k + 5;
-			m_vQuad[l++] = k + 4; // q4
-			m_vQuad[l++] = k + 0;
-			m_vQuad[l++] = k + 1;
+			m_quads[l++] = k + 5;
+			m_quads[l++] = k + 4; // q4
+			m_quads[l++] = k + 0;
+			m_quads[l++] = k + 1;
 
-			m_vQuad[l++] = k + 6;
-			m_vQuad[l++] = k + 7; // q5
-			m_vQuad[l++] = k + 3;
-			m_vQuad[l++] = k + 2;
+			m_quads[l++] = k + 6;
+			m_quads[l++] = k + 7; // q5
+			m_quads[l++] = k + 3;
+			m_quads[l++] = k + 2;
 
 			const float ox = 0;
-			const float oy = 0.5f * float(m_nChannel - 1) - j;
-			const float oz = 0.5f * float(m_nSample - 1) - i;
+			const float oy = 0.5F * float(m_nChannel - 1) - j;
+			const float oz = 0.5F * float(m_nSample - 1) - i;
 
-			m_vVertex[k].x = ox + f32Size;
-			m_vVertex[k].y = oy - f32Size; // v0
-			m_vVertex[k].z = oz + f32Size;
+			m_vertices[k].x = ox + size;
+			m_vertices[k].y = oy - size; // v0
+			m_vertices[k].z = oz + size;
 			k++;
 
-			m_vVertex[k].x = ox + f32Size;
-			m_vVertex[k].y = oy + f32Size; // v1
-			m_vVertex[k].z = oz + f32Size;
+			m_vertices[k].x = ox + size;
+			m_vertices[k].y = oy + size; // v1
+			m_vertices[k].z = oz + size;
 			k++;
 
-			m_vVertex[k].x = ox + f32Size;
-			m_vVertex[k].y = oy + f32Size; // v2
-			m_vVertex[k].z = oz - f32Size;
+			m_vertices[k].x = ox + size;
+			m_vertices[k].y = oy + size; // v2
+			m_vertices[k].z = oz - size;
 			k++;
 
-			m_vVertex[k].x = ox + f32Size;
-			m_vVertex[k].y = oy - f32Size; // v3
-			m_vVertex[k].z = oz - f32Size;
+			m_vertices[k].x = ox + size;
+			m_vertices[k].y = oy - size; // v3
+			m_vertices[k].z = oz - size;
 			k++;
 
-			m_vVertex[k].x = ox - f32Size;
-			m_vVertex[k].y = oy - f32Size; // v4
-			m_vVertex[k].z = oz + f32Size;
+			m_vertices[k].x = ox - size;
+			m_vertices[k].y = oy - size; // v4
+			m_vertices[k].z = oz + size;
 			k++;
 
-			m_vVertex[k].x = ox - f32Size;
-			m_vVertex[k].y = oy + f32Size; // v5
-			m_vVertex[k].z = oz + f32Size;
+			m_vertices[k].x = ox - size;
+			m_vertices[k].y = oy + size; // v5
+			m_vertices[k].z = oz + size;
 			k++;
 
-			m_vVertex[k].x = ox - f32Size;
-			m_vVertex[k].y = oy + f32Size; // v6
-			m_vVertex[k].z = oz - f32Size;
+			m_vertices[k].x = ox - size;
+			m_vertices[k].y = oy + size; // v6
+			m_vertices[k].z = oz - size;
 			k++;
 
-			m_vVertex[k].x = ox - f32Size;
-			m_vVertex[k].y = oy - f32Size; // v7
-			m_vVertex[k].z = oz - f32Size;
+			m_vertices[k].x = ox - size;
+			m_vertices[k].y = oy - size; // v7
+			m_vertices[k].z = oz - size;
 			k++;
 		}
 	}
 	m_historyIdx = 0;
 }
 
-void CRendererSlice::refresh(const IRendererContext& rContext)
+void CRendererSlice::refresh(const IRendererContext& ctx)
 {
-	CRenderer::refresh(rContext);
+	IRenderer::refresh(ctx);
 
-	for (uint32_t i = m_historyIdx; i < m_nHistory; ++i)
+	for (size_t i = m_historyIdx; i < m_nHistory; ++i)
 	{
-		uint32_t k = (i % m_nSample) * m_nChannel * 8;
-		for (uint32_t j = 0; j < m_nChannel; ++j) { for (uint32_t l = 0; l < 8; ++l) { m_vVertex[k++].u = m_history[j][i]; } }
+		size_t k = (i % m_nSample) * m_nChannel * 8;
+		for (size_t j = 0; j < m_nChannel; ++j) { for (size_t l = 0; l < 8; ++l) { m_vertices[k++].u = m_history[j][i]; } }
 	}
 
 	m_historyIdx = m_nHistory;
@@ -135,7 +135,7 @@ void CRendererSlice::refresh(const IRendererContext& rContext)
 
 bool CRendererSlice::render(const IRendererContext& rContext)
 {
-	// uint32_t i, j;
+	// size_t i, j;
 	const float d = 3.5;
 
 	if (!rContext.getSelectedCount()) { return false; }
@@ -164,16 +164,16 @@ bool CRendererSlice::render(const IRendererContext& rContext)
 	glScalef(1., 1., 3.);
 
 	glPushMatrix();
-	glScalef(1.f / rContext.getStackCount(), 1.f / m_nChannel, 1.f / m_nSample);
-	glTranslatef(rContext.getStackIndex() - 0.5f * float(rContext.getStackCount() - 1), 0, 0);
-	glColor4f(.1f, .1f, .1f, rContext.getTranslucency());
+	glScalef(1.F / rContext.getStackCount(), 1.F / m_nChannel, 1.F / m_nSample);
+	glTranslatef(rContext.getStackIndex() - 0.5F * float(rContext.getStackCount() - 1), 0, 0);
+	glColor4f(.1F, .1F, .1F, rContext.getTranslucency());
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_vVertex[0].x);
-	glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_vVertex[0].u);
-	glDrawElements(GL_QUADS, GLsizei(m_vQuad.size()), GL_UNSIGNED_INT, &m_vQuad[0]);
+	glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_vertices[0].x);
+	glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_vertices[0].u);
+	glDrawElements(GL_QUADS, GLsizei(m_quads.size()), GL_UNSIGNED_INT, &m_quads[0]);
 
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);
@@ -181,7 +181,7 @@ bool CRendererSlice::render(const IRendererContext& rContext)
 
 	glDisable(GL_TEXTURE_1D);
 
-	const float progress = 1 - 2.0f * float(m_historyIdx % m_nSample) / m_nSample;
+	const float progress = 1 - 2.0F * float(m_historyIdx % m_nSample) / m_nSample;
 	glScalef(.5, .5, .5);
 	glBegin(GL_LINE_LOOP);
 	glColor3f(1, 1, 1);
@@ -212,14 +212,14 @@ bool CRendererSlice::render(const IRendererContext& rContext)
 	glVertex3f(1, -1, 1);
 	glEnd();
 	glBegin(GL_LINE_LOOP);
-	glColor4f(0.25f, 1, 0.25f, .9f / rContext.getStackCount());
+	glColor4f(0.25F, 1, 0.25F, .9F / rContext.getStackCount());
 	glVertex3f(-1, -1, progress);
 	glVertex3f(-1, 1, progress);
 	glVertex3f(1, 1, progress);
 	glVertex3f(1, -1, progress);
 	glEnd();
 	glBegin(GL_QUADS);
-	glColor4f(0.25f, 1, 0.25f, .1f / rContext.getStackCount());
+	glColor4f(0.25F, 1, 0.25F, .1F / rContext.getStackCount());
 	glVertex3f(-1, -1, progress);
 	glVertex3f(-1, 1, progress);
 	glVertex3f(1, 1, progress);

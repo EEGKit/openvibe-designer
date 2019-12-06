@@ -21,7 +21,7 @@ ENDIF()
 SET(PATH_LIBADVVIZ "PATH_LIBADVVIZ-NOTFOUND")
 SET(MENSIA_SRC_DIR ${CMAKE_SOURCE_DIR}/libraries/lib-advanced-visualization/include/)
 
-FIND_PATH(PATH_LIBADVVIZ mensia/advanced-visualization.h PATHS ${MENSIA_SRC_DIR} NO_DEFAULT_PATH)
+FIND_PATH(PATH_LIBADVVIZ mensia/advanced-visualization.hpp PATHS ${MENSIA_SRC_DIR} NO_DEFAULT_PATH)
 IF(PATH_LIBADVVIZ)
 	debug_message( "  Found mensia-advanced-visualization... ${PATH_LIBADVVIZ}")
 	INCLUDE_DIRECTORIES(${PATH_LIBADVVIZ}/)
