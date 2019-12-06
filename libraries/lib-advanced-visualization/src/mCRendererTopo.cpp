@@ -263,7 +263,7 @@ void CRendererTopo::refresh(const IRendererContext& rContext)
 
 	if (!m_bMultiSlice)
 	{
-		this->getSampleAtERPFraction(m_ERPFraction, l_vSample);
+		this->getSampleAtERPFraction(m_erpFraction, l_vSample);
 		for (size_t i = 0; i < nc; ++i) { V(i) = l_vSample[i]; }
 		this->interpolate(V, W, Z);
 		for (size_t j = 0; j < vc; ++j) { m_oScalp.m_vVertex[j].u = float(W(j)); }

@@ -386,22 +386,22 @@ CRendererLoreta::CRendererLoreta()
 
 {
 #if 0
-	m_oFace.load(Mensia::Directories::getDataDir() + "/content/Face.obj");
-	m_oScalp.load(Mensia::Directories::getDataDir() + "/content/Scalp.obj");
+	m_face.load(Mensia::Directories::getDataDir() + "/content/Face.obj");
+	m_scalp.load(Mensia::Directories::getDataDir() + "/content/Scalp.obj");
 #else
-	m_oFace.load(g_pFaceData, sizeof(g_pFaceData));
-	m_oScalp.load(g_pScalpData, sizeof(g_pScalpData));
+	m_face.load(g_pFaceData, sizeof(g_pFaceData));
+	m_scalp.load(g_pScalpData, sizeof(g_pScalpData));
 #endif
 
-	m_oBrain.clear();
-	for (auto& voxel : g_iLoretaVoxel) { insertLoretaVoxelInMesh(m_oBrain, float(-voxel[0]), float(voxel[1]), float(-voxel[2]), 3.5); }
+	m_brain.clear();
+	for (auto& voxel : g_iLoretaVoxel) { insertLoretaVoxelInMesh(m_brain, float(-voxel[0]), float(voxel[1]), float(-voxel[2]), 3.5); }
 
-	m_vLookup.clear();
+	m_lookups.clear();
 	const uint32_t l_uiCategoryIndex_BrodmannAreas   = 0;
 	const uint32_t l_uiCategoryIndex_AnatomicalAreas = 1;
 	const uint32_t l_uiCategoryIndex_Lobes           = 2;
 	const uint32_t l_uiCategoryIndex_ROI             = 3;
-	m_vLookup.resize(4);
+	m_lookups.resize(4);
 
 #if 0 /* SAVING DATA INTO C FILE */
 	const char* l_sVoxelGroupFilename = "./LORETA-Talairach-BAs.csv";
@@ -450,9 +450,9 @@ CRendererLoreta::CRendererLoreta()
 					{
 						if (g_iLoretaVoxel[i][0] == -x && g_iLoretaVoxel[i][1] == z && g_iLoretaVoxel[i][2] == y)
 						{
-							m_vLookup[l_uiCategoryIndex_BrodmannAreas][l_sLookup1_fixed.c_str()].push_back(i);
-							m_vLookup[l_uiCategoryIndex_AnatomicalAreas][l_sLookup2_fixed.c_str()].push_back(i);
-							m_vLookup[l_uiCategoryIndex_Lobes][l_sLookup3_fixed.c_str()].push_back(i);
+							m_lookups[l_uiCategoryIndex_BrodmannAreas][l_sLookup1_fixed.c_str()].push_back(i);
+							m_lookups[l_uiCategoryIndex_AnatomicalAreas][l_sLookup2_fixed.c_str()].push_back(i);
+							m_lookups[l_uiCategoryIndex_Lobes][l_sLookup3_fixed.c_str()].push_back(i);
 							l_bFound = true;
 						}
 					}
@@ -463,7 +463,7 @@ CRendererLoreta::CRendererLoreta()
 				}
 				else { break; }
 			}
-		//		::printf("Sucessfully read voxel groups from [%s] - %lu,%lu,%lu group(s)\n", l_sVoxelGroupFilename, m_vLookup[l_uiCategoryIndex_BrodmannAreas].size(), m_vLookup[l_uiCategoryIndex_AnatomicalAreas].size(), m_vLookup[l_uiCategoryIndex_Lobes].size());
+		//		::printf("Sucessfully read voxel groups from [%s] - %lu,%lu,%lu group(s)\n", l_sVoxelGroupFilename, m_lookups[l_uiCategoryIndex_BrodmannAreas].size(), m_lookups[l_uiCategoryIndex_AnatomicalAreas].size(), m_lookups[l_uiCategoryIndex_Lobes].size());
 		::fclose(l_pFile);
 
 		const char* l_sDataFilename = "./loreta_anatomic_voxels.hpp";
@@ -476,7 +476,7 @@ CRendererLoreta::CRendererLoreta()
 
 		std::map < std::string, std::vector < uint32_t > >::iterator l_oMapIterator;
 
-		for (uint32_t l_iRegionIdx = 0; l_iRegionIdx < m_vLookup.size() - 1; l_iRegionIdx++) // all but ROI, they are in separated file
+		for (uint32_t l_iRegionIdx = 0; l_iRegionIdx < m_lookups.size() - 1; l_iRegionIdx++) // all but ROI, they are in separated file
 		{
 			uint32_t l_uiAreaCount = 0;
 			const char* l_sRegionGroupName;
@@ -495,7 +495,7 @@ CRendererLoreta::CRendererLoreta()
 
 			std::vector<uint32_t> l_vRightVoxels;
 			std::vector<uint32_t> l_vLeftVoxels;
-			for (auto = m_vLookup[l_iRegionIdx].begin(); l_oMapIterator != m_vLookup[l_iRegionIdx].end(); l_oMapIterator++)
+			for (auto = m_lookups[l_iRegionIdx].begin(); l_oMapIterator != m_lookups[l_iRegionIdx].end(); l_oMapIterator++)
 			{
 				//region
 				l_vRightVoxels.clear();
@@ -531,12 +531,12 @@ CRendererLoreta::CRendererLoreta()
 
 				l_uiAreaCount++;
 			}
-			::fprintf(l_pFile, "\n\tstatic uint32_t g_ui%sCount = %i;\n", l_sRegionGroupName, m_vLookup[l_iRegionIdx].size() * 3);
-			::fprintf(l_pFile, "\tstatic SVoxelRegion g_p%s[%i] =\n\t{\n", l_sRegionGroupName, m_vLookup[l_iRegionIdx].size() * 3);
+			::fprintf(l_pFile, "\n\tstatic uint32_t g_ui%sCount = %i;\n", l_sRegionGroupName, m_lookups[l_iRegionIdx].size() * 3);
+			::fprintf(l_pFile, "\tstatic SVoxelRegion g_p%s[%i] =\n\t{\n", l_sRegionGroupName, m_lookups[l_iRegionIdx].size() * 3);
 			l_uiAreaCount = 0;
 			uint32_t l_uiRightVoxels = 0;
 			uint32_t l_uiLeftVoxels = 0;
-			for (auto = m_vLookup[l_iRegionIdx].begin(); l_oMapIterator != m_vLookup[l_iRegionIdx].end() && l_uiAreaCount < m_vLookup[l_iRegionIdx].size(); l_oMapIterator++)
+			for (auto = m_lookups[l_iRegionIdx].begin(); l_oMapIterator != m_lookups[l_iRegionIdx].end() && l_uiAreaCount < m_lookups[l_iRegionIdx].size(); l_oMapIterator++)
 			{
 				l_uiRightVoxels = 0;
 				l_uiLeftVoxels = 0;
@@ -546,7 +546,7 @@ CRendererLoreta::CRendererLoreta()
 					if (g_iLoretaVoxel[(*l_oMapIterator).second[l_uiVoxel]][0] > 0) l_uiLeftVoxels++;
 				}
 
-				if (l_uiAreaCount != m_vLookup[l_iRegionIdx].size() - 1)
+				if (l_uiAreaCount != m_lookups[l_iRegionIdx].size() - 1)
 				{
 					::fprintf(l_pFile, "\t\t{\"%s\", %i, g_p%sVoxels_%i},\n", (*l_oMapIterator).first.c_str(), (*l_oMapIterator).second.size(), l_sRegionGroupName, l_uiAreaCount);
 					::fprintf(l_pFile, "\t\t{\"%s\", %i, g_p%sVoxels_%iR},\n", ((*l_oMapIterator).first + " R").c_str(), l_uiRightVoxels, l_sRegionGroupName, l_uiAreaCount);
@@ -573,21 +573,21 @@ CRendererLoreta::CRendererLoreta()
 		uint32_t l_uiMapSize = g_uiBrodmannAreasCount;
 		for (uint32_t i = 0; i < l_uiMapSize; ++i)
 		{
-			m_vLookup[l_uiCategoryIndex_BrodmannAreas][g_pBrodmannAreas[i]._sName].insert(
-				m_vLookup[l_uiCategoryIndex_BrodmannAreas][g_pBrodmannAreas[i]._sName].begin(), g_pBrodmannAreas[i]._pVoxels,
+			m_lookups[l_uiCategoryIndex_BrodmannAreas][g_pBrodmannAreas[i]._sName].insert(
+				m_lookups[l_uiCategoryIndex_BrodmannAreas][g_pBrodmannAreas[i]._sName].begin(), g_pBrodmannAreas[i]._pVoxels,
 				g_pBrodmannAreas[i]._pVoxels + g_pBrodmannAreas[i]._uiVoxelCount);
 		}
 		l_uiMapSize = g_uiAnatomicalAreasCount;
 		for (uint32_t i = 0; i < l_uiMapSize; ++i)
 		{
-			m_vLookup[l_uiCategoryIndex_AnatomicalAreas][g_pAnatomicalAreas[i]._sName].insert(
-				m_vLookup[l_uiCategoryIndex_AnatomicalAreas][g_pAnatomicalAreas[i]._sName].begin(), g_pAnatomicalAreas[i]._pVoxels,
+			m_lookups[l_uiCategoryIndex_AnatomicalAreas][g_pAnatomicalAreas[i]._sName].insert(
+				m_lookups[l_uiCategoryIndex_AnatomicalAreas][g_pAnatomicalAreas[i]._sName].begin(), g_pAnatomicalAreas[i]._pVoxels,
 				g_pAnatomicalAreas[i]._pVoxels + g_pAnatomicalAreas[i]._uiVoxelCount);
 		}
 		l_uiMapSize = g_uiLobesCount;
 		for (uint32_t i = 0; i < l_uiMapSize; ++i)
 		{
-			m_vLookup[l_uiCategoryIndex_Lobes][g_pLobes[i]._sName].insert(m_vLookup[l_uiCategoryIndex_Lobes][g_pLobes[i]._sName].begin(), g_pLobes[i]._pVoxels,
+			m_lookups[l_uiCategoryIndex_Lobes][g_pLobes[i]._sName].insert(m_lookups[l_uiCategoryIndex_Lobes][g_pLobes[i]._sName].begin(), g_pLobes[i]._pVoxels,
 																		  g_pLobes[i]._pVoxels + g_pLobes[i]._uiVoxelCount);
 		}
 	}
@@ -596,26 +596,20 @@ CRendererLoreta::CRendererLoreta()
 	const uint32_t mapSize = g_uiROICount;
 	for (uint32_t i = 0; i < mapSize; ++i)
 	{
-		m_vLookup[l_uiCategoryIndex_ROI][g_pRegionsOfInterest[i]._sName].insert(m_vLookup[l_uiCategoryIndex_ROI][g_pRegionsOfInterest[i]._sName].begin(),
+		m_lookups[l_uiCategoryIndex_ROI][g_pRegionsOfInterest[i]._sName].insert(m_lookups[l_uiCategoryIndex_ROI][g_pRegionsOfInterest[i]._sName].begin(),
 																				g_pRegionsOfInterest[i]._pVoxels,
 																				g_pRegionsOfInterest[i]._pVoxels + g_pRegionsOfInterest[i]._uiVoxelCount);
 	}
 
-	m_vSelected.resize(2394, true);
+	m_selecteds.resize(2394, true);
 
 	this->CRendererLoreta::refreshBrainSubset();
 }
 
-void CRendererLoreta::rebuild(const IRendererContext& rContext) { CRenderer::rebuild(rContext); }
-
-void CRendererLoreta::refresh(const IRendererContext& rContext) { CRenderer::refresh(rContext); }
-
 #define __Rendering_VertexBuffer__
 
-bool CRendererLoreta::render(const IRendererContext& rContext)
+bool CRendererLoreta::render(const IRendererContext& ctx)
 {
-	uint32_t i, j;
-
 	//	if(!m_nHistory) return false;
 	//	if(m_history.size()!=2394) return false;
 
@@ -628,15 +622,15 @@ bool CRendererLoreta::render(const IRendererContext& rContext)
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
-	gluPerspective(60, rContext.getAspect(), .01, 100);
+	gluPerspective(60, ctx.getAspect(), .01, 100);
 	glTranslatef(0, 0, -d);
-	glRotatef(rContext.getRotationX() * 10, 1, 0, 0);
-	glRotatef(rContext.getRotationY() * 10, 0, 1, 0);
+	glRotatef(ctx.getRotationX() * 10, 1, 0, 0);
+	glRotatef(ctx.getRotationY() * 10, 0, 1, 0);
 
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadIdentity();
-	glScalef(rContext.getZoom(), rContext.getZoom(), rContext.getZoom());
+	glScalef(ctx.getZoom(), ctx.getZoom(), ctx.getZoom());
 
 	glPushMatrix();
 	glTranslatef(0, .5, 0);
@@ -648,32 +642,32 @@ bool CRendererLoreta::render(const IRendererContext& rContext)
 	if (m_nHistory && m_history.size() == 2394)
 	{
 		std::vector<float> l_vSample;
-		this->getSampleAtERPFraction(m_ERPFraction, l_vSample);
+		this->getSampleAtERPFraction(m_erpFraction, l_vSample);
 
 #if defined __Rendering_VertexBuffer__
-		for (i = 0, j = 0; i < 2394; ++i)
+		for (size_t i = 0, j = 0; i < 2394; ++i)
 		{
 			// Apply texture coordinate to each of the 8 vertices of this voxel
-			const float l_fPower      = l_vSample[i] * rContext.getScale();
-			m_oBrain.m_vVertex[j++].u = l_fPower;
-			m_oBrain.m_vVertex[j++].u = l_fPower;
-			m_oBrain.m_vVertex[j++].u = l_fPower;
-			m_oBrain.m_vVertex[j++].u = l_fPower;
-			m_oBrain.m_vVertex[j++].u = l_fPower;
-			m_oBrain.m_vVertex[j++].u = l_fPower;
-			m_oBrain.m_vVertex[j++].u = l_fPower;
-			m_oBrain.m_vVertex[j++].u = l_fPower;
+			const float power      = l_vSample[i] * ctx.getScale();
+			m_brain.m_vVertex[j++].u = power;
+			m_brain.m_vVertex[j++].u = power;
+			m_brain.m_vVertex[j++].u = power;
+			m_brain.m_vVertex[j++].u = power;
+			m_brain.m_vVertex[j++].u = power;
+			m_brain.m_vVertex[j++].u = power;
+			m_brain.m_vVertex[j++].u = power;
+			m_brain.m_vVertex[j++].u = power;
 		}
 #else
-		for (uint32_t i = 0; i < 2394; ++i)
+		for (size_t i = 0; i < 2394; ++i)
 		{
-			if (m_vSelected[i])
+			if (m_selecteds[i])
 			{
-				float l_fPower = l_vSample[i] * rContext.getScale();
-				// m_history[i][m_nHistory-m_nSample+m_sampleIndexERP]*rContext.getScale();
-				::glColor4f(.1f, .1f, .1f, rContext.getTranslucency());
+				float power = l_vSample[i] * ctx.getScale();
+				// m_history[i][m_nHistory-m_nSample+m_sampleIndexERP]*ctx.getScale();
+				::glColor4f(.1f, .1f, .1f, ctx.getTranslucency());
 				::glPushMatrix();
-				::glTexCoord1f(l_fPower);
+				::glTexCoord1f(power);
 				::glTranslatef(float(-g_iLoretaVoxel[i][0]), float(g_iLoretaVoxel[i][1]), float(-g_iLoretaVoxel[i][2]));
 				::glScalef(3.5, 3.5, 3.5);
 				cube();
@@ -685,26 +679,26 @@ bool CRendererLoreta::render(const IRendererContext& rContext)
 	else
 	{
 #if defined __Rendering_VertexBuffer__
-		for (i = 0, j = 0; i < 2394; ++i)
+		for (size_t i = 0, j = 0; i < 2394; ++i)
 		{
 			// Apply texture coordinate to each of the 8 vertices of this voxel
-			const float l_fPower      = 0;
-			m_oBrain.m_vVertex[j++].u = l_fPower;
-			m_oBrain.m_vVertex[j++].u = l_fPower;
-			m_oBrain.m_vVertex[j++].u = l_fPower;
-			m_oBrain.m_vVertex[j++].u = l_fPower;
-			m_oBrain.m_vVertex[j++].u = l_fPower;
-			m_oBrain.m_vVertex[j++].u = l_fPower;
-			m_oBrain.m_vVertex[j++].u = l_fPower;
-			m_oBrain.m_vVertex[j++].u = l_fPower;
+			const float power      = 0;
+			m_brain.m_vVertex[j++].u = power;
+			m_brain.m_vVertex[j++].u = power;
+			m_brain.m_vVertex[j++].u = power;
+			m_brain.m_vVertex[j++].u = power;
+			m_brain.m_vVertex[j++].u = power;
+			m_brain.m_vVertex[j++].u = power;
+			m_brain.m_vVertex[j++].u = power;
+			m_brain.m_vVertex[j++].u = power;
 		}
 #else
 		for (uint32_t i = 0; i < 2394; ++i)
 		{
-			if (m_vSelected[i])
+			if (m_selecteds[i])
 			{
-				// float l_fPower=m_history[i][m_nHistory-m_nSample+m_sampleIndexERP]*rContext.getScale();
-				::glColor4f(.1f, .1f, .1f, rContext.getTranslucency());
+				// float power=m_history[i][m_nHistory-m_nSample+m_sampleIndexERP]*ctx.getScale();
+				::glColor4f(.1f, .1f, .1f, ctx.getTranslucency());
 				::glPushMatrix();
 				::glTexCoord1f(0);
 				::glTranslatef(float(-g_iLoretaVoxel[i][0]), float(g_iLoretaVoxel[i][1]), float(-g_iLoretaVoxel[i][2]));
@@ -719,13 +713,13 @@ bool CRendererLoreta::render(const IRendererContext& rContext)
 #if defined __Rendering_VertexBuffer__
 	glEnable(GL_TEXTURE_1D);
 	glDisable(GL_LIGHTING);
-	glColor4f(.1f, .1f, .1f, rContext.getTranslucency());
+	glColor4f(.1f, .1f, .1f, ctx.getTranslucency());
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_oBrain.m_vVertex[0].x);
-	glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_oBrain.m_vVertex[0].u);
-	// ::glDrawElements(GL_TRIANGLES, m_oBrain.m_vTriangle.size(), GL_UNSIGNED_INT, &m_oBrain.m_vTriangle[0]);
-	if (!m_vBrainSubsetTriangle.empty()) { glDrawElements(GL_TRIANGLES, GLsizei(m_vBrainSubsetTriangle.size()), GL_UNSIGNED_INT, &m_vBrainSubsetTriangle[0]); }
+	glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_brain.m_vVertex[0].x);
+	glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_brain.m_vVertex[0].u);
+	// ::glDrawElements(GL_TRIANGLES, m_brain.m_vTriangle.size(), GL_UNSIGNED_INT, &m_brain.m_vTriangle[0]);
+	if (!m_brainSubsetTriangles.empty()) { glDrawElements(GL_TRIANGLES, GLsizei(m_brainSubsetTriangles.size()), GL_UNSIGNED_INT, &m_brainSubsetTriangles[0]); }
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);
 #endif
@@ -740,26 +734,26 @@ bool CRendererLoreta::render(const IRendererContext& rContext)
 	glTranslatef(0, -.2f, .35f);
 	//	::glScalef(1.8f, 1.8f, 1.8f);
 
-	if (rContext.isScalpMeshVisible())
+	if (ctx.isScalpMeshVisible())
 	{
 		glColor4f(.8f, .6f, .5f, .1f);
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glEnableClientState(GL_NORMAL_ARRAY);
-		glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_oScalp.m_vVertex[0].x);
-		glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_oScalp.m_vNormal[0].x);
-		glDrawElements(GL_TRIANGLES, GLsizei(m_oScalp.m_vTriangle.size()), GL_UNSIGNED_INT, &m_oScalp.m_vTriangle[0]);
+		glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_scalp.m_vVertex[0].x);
+		glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_scalp.m_vNormal[0].x);
+		glDrawElements(GL_TRIANGLES, GLsizei(m_scalp.m_vTriangle.size()), GL_UNSIGNED_INT, &m_scalp.m_vTriangle[0]);
 		glDisableClientState(GL_NORMAL_ARRAY);
 		glDisableClientState(GL_VERTEX_ARRAY);
 	}
-	if (rContext.isFaceMeshVisible())
+	if (ctx.isFaceMeshVisible())
 	{
 		glColor4f(.8f, .6f, .5f, .1f);
 		glDisable(GL_TEXTURE_1D);
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glEnableClientState(GL_NORMAL_ARRAY);
-		glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_oFace.m_vVertex[0].x);
-		glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_oFace.m_vNormal[0].x);
-		glDrawElements(GL_TRIANGLES, GLsizei(m_oFace.m_vTriangle.size()), GL_UNSIGNED_INT, &m_oFace.m_vTriangle[0]);
+		glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_face.m_vVertex[0].x);
+		glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_face.m_vNormal[0].x);
+		glDrawElements(GL_TRIANGLES, GLsizei(m_face.m_vTriangle.size()), GL_UNSIGNED_INT, &m_face.m_vTriangle[0]);
 		glDisableClientState(GL_NORMAL_ARRAY);
 		glDisableClientState(GL_VERTEX_ARRAY);
 	}
@@ -767,7 +761,7 @@ bool CRendererLoreta::render(const IRendererContext& rContext)
 	glDisable(GL_LIGHTING);
 	glPopMatrix();
 
-	if (rContext.getCheckBoardVisibility()) { this->drawCoordinateSystem(); }
+	if (ctx.getCheckBoardVisibility()) { this->drawCoordinateSystem(); }
 
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
@@ -782,21 +776,19 @@ bool CRendererLoreta::render(const IRendererContext& rContext)
 
 void CRendererLoreta::clearRegionSelection()
 {
-	for (auto it = m_vSelected.begin(); it != m_vSelected.end(); ++it) { *it = false; }
+	for (auto it = m_selecteds.begin(); it != m_selecteds.end(); ++it) { *it = false; }
 	this->refreshBrainSubset();
 }
 
-uint32_t CRendererLoreta::getRegionCategoryCount() { return m_vLookup.size(); }
-
-uint32_t CRendererLoreta::getRegionCount(const uint32_t regionCategory)
+size_t CRendererLoreta::getRegionCount(const size_t category)
 {
-	if (regionCategory >= m_vLookup.size()) { return 0; }
-	return uint32_t(m_vLookup[regionCategory].size());
+	if (category >= m_lookups.size()) { return 0; }
+	return uint32_t(m_lookups[category].size());
 }
 
-const char* CRendererLoreta::getRegionCategoryName(const uint32_t regionCategory)
+const char* CRendererLoreta::getRegionCategoryName(const size_t category)
 {
-	switch (regionCategory)
+	switch (category)
 	{
 		case 0: return "Brodmann";
 		case 1: return "Anatomic";
@@ -806,49 +798,49 @@ const char* CRendererLoreta::getRegionCategoryName(const uint32_t regionCategory
 	}
 }
 
-const char* CRendererLoreta::getRegionName(const uint32_t regionCategory, const uint32_t regionIndex)
+const char* CRendererLoreta::getRegionName(const size_t category, const size_t index)
 {
-	if (regionCategory >= m_vLookup.size()) { return nullptr; }
+	if (category >= m_lookups.size()) { return nullptr; }
 
-	std::map<std::string, std::vector<uint32_t>>& l_vLookup = m_vLookup[regionCategory];
-	auto it                                                 = l_vLookup.begin();
+	std::map<std::string, std::vector<uint32_t>>& lookup = m_lookups[category];
+	auto it                                                 = lookup.begin();
 
-	for (uint32_t j = 0; j < regionIndex && it != l_vLookup.end(); ++j) { ++it; }
+	for (size_t j = 0; j < index && it != lookup.end(); ++j) { ++it; }
 
-	if (it != l_vLookup.end()) { return it->first.c_str(); }
+	if (it != lookup.end()) { return it->first.c_str(); }
 
 	return nullptr;
 }
 
-void CRendererLoreta::selectRegion(const uint32_t regionCategory, const char* sRegionName)
+void CRendererLoreta::selectRegion(const size_t category, const char* name)
 {
-	if (regionCategory >= m_vLookup.size()) { return; }
+	if (category >= m_lookups.size()) { return; }
 
-	std::map<std::string, std::vector<uint32_t>>& l_vLookup = m_vLookup[regionCategory];
+	std::map<std::string, std::vector<uint32_t>>& lookup = m_lookups[category];
 
-	auto it = l_vLookup.find(sRegionName);
-	if (it != l_vLookup.end())
+	auto it = lookup.find(name);
+	if (it != lookup.end())
 	{
-		std::vector<uint32_t>& l_rList = it->second;
-		for (auto& i : l_rList) { m_vSelected[i] = true; }
+		std::vector<uint32_t>& list = it->second;
+		for (auto& i : list) { m_selecteds[i] = true; }
 	}
 
 	this->refreshBrainSubset();
 }
 
-void CRendererLoreta::selectRegion(const uint32_t regionCategory, const uint32_t regionIndex)
+void CRendererLoreta::selectRegion(const size_t category, const size_t index)
 {
-	if (regionCategory >= m_vLookup.size()) { return; }
+	if (category >= m_lookups.size()) { return; }
 
-	std::map<std::string, std::vector<uint32_t>>& l_vLookup   = m_vLookup[regionCategory];
-	auto it = l_vLookup.begin();
+	std::map<std::string, std::vector<uint32_t>>& lookup   = m_lookups[category];
+	auto it = lookup.begin();
 
-	for (uint32_t j = 0; j < regionIndex && it != l_vLookup.end(); ++j) { ++it; }
+	for (size_t j = 0; j < index && it != lookup.end(); ++j) { ++it; }
 
-	if (it != l_vLookup.end())
+	if (it != lookup.end())
 	{
-		std::vector<uint32_t>& l_rList = it->second;
-		for (auto& i : l_rList) { m_vSelected[i] = true; }
+		std::vector<uint32_t>& list = it->second;
+		for (auto& i : list) { m_selecteds[i] = true; }
 	}
 
 	this->refreshBrainSubset();
@@ -858,22 +850,19 @@ void CRendererLoreta::refreshBrainSubset()
 
 {
 	// Initializes look up to its maximum size
-
-	m_vBrainSubsetTriangle = m_oBrain.m_vTriangle;
+	m_brainSubsetTriangles = m_brain.m_vTriangle;
 
 	// Inserts selected voxels in look up
-
-	const uint32_t l_ui32TrianglePerRenderedVoxel = 12;
-	const uint32_t l_ui32VertexPerRenderedVoxel   = l_ui32TrianglePerRenderedVoxel * 3;
-	uint32_t i, j, k;
-	for (i = 0, j = 0, k = 0; i < 2394; i++, k += l_ui32VertexPerRenderedVoxel)
+	const size_t trianglePerRenderedVoxel = 12;
+	const size_t vertexPerRenderedVoxel   = trianglePerRenderedVoxel * 3;
+	size_t i, j, k;
+	for (i = 0, j = 0, k = 0; i < 2394; i++, k += vertexPerRenderedVoxel)
 	{
-		if (m_vSelected[i]) { for (uint32_t l = 0; l < l_ui32VertexPerRenderedVoxel; ++l) { m_vBrainSubsetTriangle[j++] = m_oBrain.m_vTriangle[k + l]; } }
+		if (m_selecteds[i]) { for (size_t l = 0; l < vertexPerRenderedVoxel; ++l) { m_brainSubsetTriangles[j++] = m_brain.m_vTriangle[k + l]; } }
 	}
 
 	// Crops look up to the subset size
-
-	m_vBrainSubsetTriangle.resize(j);
+	m_brainSubsetTriangles.resize(j);
 }
 
 #endif // TARGET_HAS_ThirdPartyOpenGL

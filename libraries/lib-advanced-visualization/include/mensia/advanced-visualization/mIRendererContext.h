@@ -24,6 +24,7 @@
 
 #include <cstdint>
 #include <string>
+#include <cstdlib>	// size_t for unix
 
 namespace Mensia
 {
@@ -48,56 +49,56 @@ namespace Mensia
 
 			virtual void clear() = 0;
 
-			virtual void setParentRendererContext(IRendererContext* pParentRendererContext) = 0;
+			virtual void setParentRendererContext(IRendererContext* ctx) = 0;
 
 			virtual void clearChannelInfo() = 0;
-			virtual void addChannel(const std::string& sChannelName, float x = 0, float y = 0, float z = 0) = 0;
-			virtual void selectChannel(uint32_t index) = 0;
-			virtual void unselectChannel(uint32_t index) = 0;
-			virtual void sortSelectedChannel(uint32_t ui32SortMode) = 0;
+			virtual void addChannel(const std::string& name, float x = 0, float y = 0, float z = 0) = 0;
+			virtual void selectChannel(size_t index) = 0;
+			virtual void unselectChannel(size_t index) = 0;
+			virtual void sortSelectedChannel(size_t mode) = 0;
 
-			virtual void setDimensionLabel(size_t dimensionIndex, size_t labelIndex, const char* label) = 0;
-			virtual size_t getDimensionLabelCount(size_t dimensionIndex) const = 0;
-			virtual const char* getDimensionLabel(size_t dimensionIndex, size_t labelIndex) const = 0;
+			virtual void setDimensionLabel(size_t idx1, size_t idx2, const char* label) = 0;
+			virtual size_t getDimensionLabelCount(size_t index) const = 0;
+			virtual const char* getDimensionLabel(size_t idx1, size_t idx2) const = 0;
 
 			virtual void clearTransformInfo() = 0;
-			virtual void scaleBy(float f32Scale) = 0;
-			virtual void setScale(float f32Scale) = 0;
-			virtual void zoomBy(float f32Zoom) = 0;
-			virtual void rotateByX(float f32Rotation) = 0;
-			virtual void rotateByY(float f32Rotation) = 0;
+			virtual void scaleBy(const float scale) = 0;
+			virtual void setScale(const float scale) = 0;
+			virtual void zoomBy(const float zoom) = 0;
+			virtual void rotateByX(const float rotation) = 0;
+			virtual void rotateByY(const float rotation) = 0;
 
-			virtual void setTranslucency(float f32Translucency) = 0;
-			virtual void setAspect(float f32Aspect) = 0;
-			virtual void setSampleDuration(uint64_t ui64SampleDuration) = 0;
-			virtual void setTimeScale(uint64_t ui64TimeScale) = 0;
-			virtual void setElementCount(uint64_t ui64ElementCount) = 0;
-			virtual void setFlowerRingCount(uint64_t ui64FlowerRingCount) = 0;
-			virtual void setXYZPlotDepth(bool bHasDepth) = 0;
-			virtual void setAxisDisplay(bool bIsAxisDisplayed) = 0;
-			virtual void setPositiveOnly(bool bPositiveOnly) = 0;
-			virtual void setTimeLocked(bool bTimeLocked) = 0;
-			virtual void setScrollModeActive(bool bScrollModeActive) = 0;
-			virtual void setScaleVisibility(bool bVisibility) = 0;
-			virtual void setCheckBoardVisibility(bool bVisibility) = 0;
-			virtual void setDataType(EDataType eDataType) = 0;
-			virtual void setSpectrumFrequencyRange(uint32_t ui32SpectrumFrequencyRange) = 0;
-			virtual void setMinimumSpectrumFrequency(uint32_t ui32MinSpectrumFrequency) = 0;
-			virtual void setMaximumSpectrumFrequency(uint32_t ui32MaxSpectrumFrequency) = 0;
-			virtual void setStackCount(uint32_t ui32StackCount) = 0;
-			virtual void setStackIndex(uint32_t ui32StackIndex) = 0;
-			virtual void setFaceMeshVisible(bool bVisible) = 0;
-			virtual void setScalpMeshVisible(bool bVisible) = 0;
+			virtual void setTranslucency(const float translucency) = 0;
+			virtual void setAspect(const float aspect) = 0;
+			virtual void setSampleDuration(const uint64_t duration) = 0;
+			virtual void setTimeScale(const size_t scale) = 0;
+			virtual void setElementCount(const size_t count) = 0;
+			virtual void setFlowerRingCount(const size_t count) = 0;
+			virtual void setXYZPlotDepth(const bool hasDepth) = 0;
+			virtual void setAxisDisplay(const bool isAxisDisplayed) = 0;
+			virtual void setPositiveOnly(const bool positiveOnly) = 0;
+			virtual void setTimeLocked(const bool timeLocked) = 0;
+			virtual void setScrollModeActive(const bool scrollModeActive) = 0;
+			virtual void setScaleVisibility(const bool visibility) = 0;
+			virtual void setCheckBoardVisibility(const bool visibility) = 0;
+			virtual void setDataType(const EDataType type) = 0;
+			virtual void setSpectrumFrequencyRange(const size_t range) = 0;
+			virtual void setMinimumSpectrumFrequency(const size_t frequency) = 0;
+			virtual void setMaximumSpectrumFrequency(const size_t frequency) = 0;
+			virtual void setStackCount(const size_t count) = 0;
+			virtual void setStackIndex(const size_t index) = 0;
+			virtual void setFaceMeshVisible(const bool visible) = 0;
+			virtual void setScalpMeshVisible(const bool visible) = 0;
 
-			virtual void setERPPlayerActive(bool active) = 0;
-			virtual void stepERPFractionBy(float f32ERPFraction) = 0;
+			virtual void setERPPlayerActive(const bool active) = 0;
+			virtual void stepERPFractionBy(const float erpFraction) = 0;
 
-			virtual std::string getChannelName(uint32_t index) const = 0;
-			virtual bool getChannelLocalisation(uint32_t index, float& x, float& y, float& z) const = 0;
-			virtual uint32_t getChannelCount() const = 0;
-			virtual uint32_t getSelectedCount() const = 0;
-			virtual uint32_t getSelected(uint32_t index) const = 0;
-			virtual bool isSelected(uint32_t index) const = 0;
+			virtual std::string getChannelName(const size_t index) const = 0;
+			virtual bool getChannelLocalisation(const size_t index, float& x, float& y, float& z) const = 0;
+			virtual size_t getChannelCount() const = 0;
+			virtual size_t getSelectedCount() const = 0;
+			virtual size_t getSelected(const size_t index) const = 0;
+			virtual bool isSelected(const size_t index) const = 0;
 
 			virtual float getScale() const = 0;
 			virtual float getZoom() const = 0;
@@ -107,9 +108,9 @@ namespace Mensia
 			virtual float getTranslucency() const = 0;
 			virtual float getAspect() const = 0;
 			virtual uint64_t getSampleDuration() const = 0;
-			virtual uint64_t getTimeScale() const = 0;
-			virtual uint64_t getElementCount() const = 0;
-			virtual uint64_t getFlowerRingCount() const = 0;
+			virtual size_t getTimeScale() const = 0;
+			virtual size_t getElementCount() const = 0;
+			virtual size_t getFlowerRingCount() const = 0;
 			virtual bool hasXYZPlotDepth() const = 0;
 			virtual bool isAxisDisplayed() const = 0;
 			virtual bool isPositiveOnly() const = 0;
@@ -118,18 +119,18 @@ namespace Mensia
 			virtual bool getScaleVisibility() const = 0;
 			virtual bool getCheckBoardVisibility() const = 0;
 			virtual EDataType getDataType() const = 0;
-			virtual uint32_t getSpectrumFrequencyRange() const = 0;
-			virtual uint32_t getMinSpectrumFrequency() const = 0;
-			virtual uint32_t getMaxSpectrumFrequency() const = 0;
-			virtual uint32_t getStackCount() const = 0;
-			virtual uint32_t getStackIndex() const = 0;
+			virtual size_t getSpectrumFrequencyRange() const = 0;
+			virtual size_t getMinSpectrumFrequency() const = 0;
+			virtual size_t getMaxSpectrumFrequency() const = 0;
+			virtual size_t getStackCount() const = 0;
+			virtual size_t getStackIndex() const = 0;
 			virtual bool isFaceMeshVisible() const = 0;
 			virtual bool isScalpMeshVisible() const = 0;
 
 			virtual bool isERPPlayerActive() const = 0;
 			virtual float getERPFraction() const = 0;
 
-			virtual uint32_t getMaximumSampleCountPerDisplay() const = 0;
+			virtual size_t getMaximumSampleCountPerDisplay() const = 0;
 		};
 	} // namespace AdvancedVisualization
 } // namespace Mensia

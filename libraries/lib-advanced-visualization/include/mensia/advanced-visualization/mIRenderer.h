@@ -51,42 +51,42 @@ namespace Mensia
 		public:
 
 			static IRenderer* create(ERendererType type, bool stimulation);
-			static void release(IRenderer* pRenderer);
+			static void release(IRenderer* renderer) { delete renderer; }
 
 			virtual ~IRenderer() = default;
 
-			virtual void setChannelLocalisation(const char* sFilename) = 0;
-			virtual void setChannelCount(const uint32_t nChannel) = 0;
-			virtual void setSampleCount(const uint32_t ui32SampleCount) = 0;
-			virtual void setHistoryDrawIndex(const uint32_t ui32HistoryDrawIndex) = 0;
-			virtual void feed(const float* pDataVector) = 0;
-			virtual void feed(const float* pDataVector, const uint32_t ui32SampleCount) = 0;
-			virtual void feed(const uint64_t ui64StimulationDate, const uint64_t ui64StimulationId) = 0;
-			virtual void clear(const uint32_t ui32SampleCountToKeep) = 0;
-			virtual void prefeed(const uint32_t ui32PreFeedSampleCount) = 0;
+			virtual void setChannelLocalisation(const char* filename) = 0;
+			virtual void setChannelCount(const size_t nChannel) = 0;
+			virtual void setSampleCount(const size_t nSample) = 0;
+			virtual void setHistoryDrawIndex(const size_t index) = 0;
+			virtual void feed(const float* data) = 0;
+			virtual void feed(const float* data, const size_t nSample) = 0;
+			virtual void feed(const uint64_t stimDate, const uint64_t stimID) = 0;
+			virtual void clear(const size_t nSampleToKeep) = 0;
+			virtual void prefeed(const size_t preFeedNSample) = 0;
 
 			virtual float getSuggestedScale() = 0;
 
-			virtual uint32_t getChannelCount() const = 0;
-			virtual uint32_t getSampleCount() const = 0;
-			virtual uint32_t getHistoryCount() const = 0;
-			virtual uint32_t getHistoryIndex() const = 0;
+			virtual size_t getChannelCount() const = 0;
+			virtual size_t getSampleCount() const = 0;
+			virtual size_t getHistoryCount() const = 0;
+			virtual size_t getHistoryIndex() const = 0;
 
 			virtual void setTimeOffset(const uint64_t offset) = 0;
 			virtual uint64_t getTimeOffset() const = 0;
 
-			virtual void rebuild(const IRendererContext& rContext) = 0;
-			virtual void refresh(const IRendererContext& rContext) = 0;
-			virtual bool render(const IRendererContext& rContext) = 0;
+			virtual void rebuild(const IRendererContext& ctx) = 0;
+			virtual void refresh(const IRendererContext& ctx) = 0;
+			virtual bool render(const IRendererContext& ctx) = 0;
 
 			// For regions of interest
 			virtual void clearRegionSelection() = 0;
-			virtual uint32_t getRegionCategoryCount() = 0;
-			virtual uint32_t getRegionCount(const uint32_t regionCategory) = 0;
-			virtual const char* getRegionCategoryName(const uint32_t regionCategory) = 0;
-			virtual const char* getRegionName(const uint32_t regionCategory, const uint32_t regionIndex) = 0;
-			virtual void selectRegion(const uint32_t regionCategory, const char* sRegionName) = 0;
-			virtual void selectRegion(const uint32_t regionCategory, const uint32_t regionIndex) = 0;
+			virtual size_t getRegionCategoryCount() = 0;
+			virtual size_t getRegionCount(const size_t category) = 0;
+			virtual const char* getRegionCategoryName(const size_t category) = 0;
+			virtual const char* getRegionName(const size_t category, const size_t index) = 0;
+			virtual void selectRegion(const size_t category, const char* name) = 0;
+			virtual void selectRegion(const size_t category, const size_t index) = 0;
 		};
 	} // namespace AdvancedVisualization
 } // namespace Mensia

@@ -55,9 +55,6 @@ IRenderer* IRenderer::create(const ERendererType type, const bool stimulation)
 		case ERendererType::Slice: return (stimulation ? nullptr : new CRendererSlice);
 		case ERendererType::XYZPlot: return (stimulation ? nullptr : new CRendererXYZPlot);
 			// case ERendererType::Default: return (stimulation ? new TRendererStimulation<false, CRenderer> : new CRenderer);
-		default:
-			return nullptr;
+		default: return nullptr;
 	}
 }
-
-void IRenderer::release(IRenderer* pRenderer) { delete pRenderer; }

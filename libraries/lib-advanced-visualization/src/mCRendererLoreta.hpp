@@ -39,30 +39,28 @@ namespace Mensia
 
 			CRendererLoreta();
 
-			void rebuild(const IRendererContext& rContext) override;
-			void refresh(const IRendererContext& rContext) override;
-			bool render(const IRendererContext& rContext) override;
+			void rebuild(const IRendererContext& ctx) override { CRenderer::rebuild(ctx); }
+			void refresh(const IRendererContext& ctx) override { CRenderer::refresh(ctx); }
+			bool render(const IRendererContext& ctx) override;
 
 			void clearRegionSelection() override;
-			uint32_t getRegionCategoryCount() override;
-			uint32_t getRegionCount(const uint32_t regionCategory) override;
-			const char* getRegionCategoryName(const uint32_t regionCategory) override;
-			const char* getRegionName(const uint32_t regionCategory, const uint32_t regionIndex) override;
-			void selectRegion(const uint32_t regionCategory, const char* sRegionName) override;
-			void selectRegion(const uint32_t regionCategory, const uint32_t regionIndex) override;
+			size_t getRegionCategoryCount() override { return m_lookups.size(); }
+			size_t getRegionCount(const size_t category) override;
+			const char* getRegionCategoryName(const size_t category) override;
+			const char* getRegionName(const size_t category, const size_t index) override;
+			void selectRegion(const size_t category, const char* name) override;
+			void selectRegion(const size_t category, const size_t index) override;
 
-			virtual void refreshBrainSubset();
+			void refreshBrainSubset();
 
 		protected:
 
-			std::vector<std::map<std::string, std::vector<uint32_t>>> m_vLookup;
-			std::vector<bool> m_vSelected;
+			std::vector<std::map<std::string, std::vector<uint32_t>>> m_lookups;
+			std::vector<bool> m_selecteds;
 
-			C3DMesh m_oFace;
-			C3DMesh m_oScalp;
-			C3DMesh m_oBrain;
+			C3DMesh m_face, m_scalp, m_brain;
 
-			std::vector<uint32_t> m_vBrainSubsetTriangle;
+			std::vector<uint32_t> m_brainSubsetTriangles;
 		};
 	} // namespace AdvancedVisualization
 } // namespace Mensia

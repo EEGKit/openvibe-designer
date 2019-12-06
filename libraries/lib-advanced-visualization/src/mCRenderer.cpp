@@ -22,7 +22,7 @@
 #include "mCRenderer.hpp"
 
 #include <cmath>
-#include <algorithm>    // std::min_element, std::max_element
+#include <algorithm>	// std::min_element, std::max_element
 
 using namespace Mensia;
 using namespace AdvancedVisualization;
@@ -30,61 +30,48 @@ using namespace AdvancedVisualization;
 static int iCount = 0;
 
 CRenderer::CRenderer() { iCount++; }
+CRenderer::~CRenderer() { iCount--; }
 
-CRenderer::~CRenderer()
-
-{
-	iCount--;
-	//	::printf("CRenderer::~CRenderer - %i instances left\n", iCount);
-}
-
-void CRenderer::setChannelLocalisation(const char* sFilename) { m_channelLocalisationFilename = sFilename; }
-
-void CRenderer::setChannelCount(const uint32_t nChannel)
+void CRenderer::setChannelCount(const size_t nChannel)
 {
 	m_nChannel        = nChannel;
-	m_nInverseChannel = (nChannel ? 1.f / nChannel : 1);
+	m_nInverseChannel = (nChannel ? 1.F / nChannel : 1);
 	m_vertex.clear();
 	m_mesh.clear();
 
 	m_historyIdx = 0;
-	m_nHistory = 0;
+	m_nHistory   = 0;
 	m_history.clear();
 	m_history.resize(nChannel);
 }
 
-void CRenderer::setSampleCount(const uint32_t nSample)
+void CRenderer::setSampleCount(const size_t nSample)
 {
 	m_nSample        = nSample == 0 ? 1 : nSample;
-	m_nInverseSample = (m_nSample ? 1.f / m_nSample : 1);
+	m_nInverseSample = (m_nSample ? 1.F / m_nSample : 1);
 	m_vertex.clear();
 	m_mesh.clear();
 }
 
-void CRenderer::feed(const float* pDataVector)
+void CRenderer::feed(const float* data)
 {
-	for (uint32_t i = 0; i < m_nChannel; ++i) { m_history[i].push_back(pDataVector[i]); }
+	for (size_t i = 0; i < m_nChannel; ++i) { m_history[i].push_back(data[i]); }
 	m_nHistory++;
 }
 
-void CRenderer::feed(const float* pDataVector, const uint32_t nSample)
+void CRenderer::feed(const float* data, const size_t nSample)
 {
-	for (uint32_t i = 0; i < m_nChannel; ++i)
+	for (size_t i = 0; i < m_nChannel; ++i)
 	{
-		for (uint32_t j = 0; j < nSample; ++j) { m_history[i].push_back(pDataVector[j]); }
-		pDataVector += nSample;
+		for (size_t j = 0; j < nSample; ++j) { m_history[i].push_back(data[j]); }
+		data += nSample;
 	}
 	m_nHistory += nSample;
 }
 
-void CRenderer::feed(const uint64_t stimulationDate, const uint64_t stimulationId)
+void CRenderer::prefeed(const size_t nPreFeedSample)
 {
-	m_stimulationHistory.emplace_back((stimulationDate >> 16) / 65536., stimulationId);
-}
-
-void CRenderer::prefeed(const uint32_t nPreFeedSample)
-{
-	for (uint32_t i = 0; i < m_nChannel; ++i) { m_history[i].insert(m_history[i].begin(), nPreFeedSample, 0.f); }
+	for (size_t i = 0; i < m_nChannel; ++i) { m_history[i].insert(m_history[i].begin(), nPreFeedSample, 0.F); }
 	m_nHistory += nPreFeedSample;
 	m_historyIdx = 0;
 }
@@ -93,25 +80,25 @@ float CRenderer::getSuggestedScale()
 {
 	if (m_nChannel != 0)
 	{
-		std::vector<float> l_vf32Average;
+		std::vector<float> averages;
 
 		for (size_t i = 0; i < m_nChannel; ++i)
 		{
-			l_vf32Average.push_back(0);
+			averages.push_back(0);
 
-			const size_t samplesToAverage = (m_history[i].size() < m_nSample) ? m_history[i].size() : m_nSample;
+			const size_t n = (m_history[i].size() < m_nSample) ? m_history[i].size() : m_nSample;
 
-			for (size_t j = m_history[i].size(); j > (m_history[i].size() - samplesToAverage); --j) { l_vf32Average.back() += m_history[i][j - 1]; }
+			for (size_t j = m_history[i].size(); j > (m_history[i].size() - n); --j) { averages.back() += m_history[i][j - 1]; }
 
-			l_vf32Average.back() /= float(samplesToAverage);
+			averages.back() /= float(n);
 		}
 
-		return (1 / *std::max_element(l_vf32Average.begin(), l_vf32Average.end()));
+		return (1 / *std::max_element(averages.begin(), averages.end()));
 	}
 	return 0;
 }
 
-void CRenderer::clear(const uint32_t nSampleToKeep = 0)
+void CRenderer::clear(const size_t nSampleToKeep)
 {
 	if (!m_history.empty())
 	{
@@ -127,7 +114,7 @@ void CRenderer::clear(const uint32_t nSampleToKeep = 0)
 			if (sampleToDelete > 1)
 			{
 				for (auto& vec : m_history) { std::vector<float>(vec.begin() + sampleToDelete, vec.end()).swap(vec); }
-				m_nHistory -= uint32_t(sampleToDelete);
+				m_nHistory -= size_t(sampleToDelete);
 			}
 		}
 	}
@@ -137,56 +124,46 @@ void CRenderer::clear(const uint32_t nSampleToKeep = 0)
 	m_historyIdx = 0;
 }
 
-uint32_t CRenderer::getChannelCount() const { return m_nChannel; }
-
-uint32_t CRenderer::getSampleCount() const { return m_nSample; }
-
-uint32_t CRenderer::getHistoryCount() const { return m_nHistory; }
-
-uint32_t CRenderer::getHistoryIndex() const { return m_historyIdx; }
-
-void CRenderer::setHistoryDrawIndex(const uint32_t index)
+void CRenderer::setHistoryDrawIndex(const size_t index)
 {
 	m_historyDrawIdx = index;
 	m_historyIdx     = 0;
 }
 
-bool CRenderer::getSampleAtERPFraction(const float fERPFraction, std::vector<float>& vSample) const
+bool CRenderer::getSampleAtERPFraction(const float erpFraction, std::vector<float>& samples) const
 {
-	vSample.resize(m_nChannel);
+	samples.resize(m_nChannel);
 
 	if (m_nSample > m_nHistory) { return false; }
 
-	const float sampleIndexERP     = (fERPFraction * float(m_nSample - 1));
-	const float alpha              = sampleIndexERP - std::floor(sampleIndexERP);
-	const uint32_t sampleIndexERP1 = uint32_t(sampleIndexERP) % m_nSample;
-	const uint32_t sampleIndexERP2 = uint32_t(sampleIndexERP + 1) % m_nSample;
+	const float sampleIndexERP   = (erpFraction * float(m_nSample - 1));
+	const float alpha            = sampleIndexERP - std::floor(sampleIndexERP);
+	const size_t sampleIndexERP1 = size_t(sampleIndexERP) % m_nSample;
+	const size_t sampleIndexERP2 = size_t(sampleIndexERP + 1) % m_nSample;
 
-	for (uint32_t i = 0; i < m_nChannel; ++i)
+	for (size_t i = 0; i < m_nChannel; ++i)
 	{
-		vSample[i] = m_history[i][m_nHistory - m_nSample + sampleIndexERP1] * (1 - alpha)
+		samples[i] = m_history[i][m_nHistory - m_nSample + sampleIndexERP1] * (1 - alpha)
 					 + m_history[i][m_nHistory - m_nSample + sampleIndexERP2] * (alpha);
 	}
 
 	return true;
 }
 
-void CRenderer::rebuild(const IRendererContext& /*rContext*/) { }
-
-void CRenderer::refresh(const IRendererContext& rContext)
+void CRenderer::refresh(const IRendererContext& ctx)
 {
 	if (!m_nSample)
 	{
-		m_ERPFraction    = 0;
+		m_erpFraction    = 0;
 		m_sampleIndexERP = 0;
 		return;
 	}
 
-	m_ERPFraction    = rContext.getERPFraction();
-	m_sampleIndexERP = uint32_t(m_ERPFraction * float(m_nSample - 1)) % m_nSample;
+	m_erpFraction    = ctx.getERPFraction();
+	m_sampleIndexERP = size_t(m_erpFraction * float(m_nSample - 1)) % m_nSample;
 }
 
-#if 0
+/*
 bool CRenderer::render(const IRendererContext & rContext)
 {
 	::glLineWidth(7);
@@ -205,7 +182,7 @@ bool CRenderer::render(const IRendererContext & rContext)
 	::glVertex2f(1, 0);
 	::glEnd();
 }
-#endif
+*/
 
 void CRenderer::draw3DCoordinateSystem()
 
@@ -218,8 +195,8 @@ void CRenderer::draw3DCoordinateSystem()
 	glLineWidth(2);
 
 	glPushMatrix();
-	glColor3f(.2f, .2f, .2f);
-	glScalef(.2f, .2f, .2f);
+	glColor3f(.2F, .2F, .2F);
+	glScalef(.2F, .2F, .2F);
 	glBegin(GL_LINES);
 	for (int x = -10; x <= 10; ++x)
 	{
@@ -227,13 +204,13 @@ void CRenderer::draw3DCoordinateSystem()
 		{
 			if (x != 0)
 			{
-				glVertex3f(float(x), 0, 10.f);
-				glVertex3f(float(x), 0, -10.f);
+				glVertex3f(float(x), 0, 10.F);
+				glVertex3f(float(x), 0, -10.F);
 			}
 			if (z != 0)
 			{
-				glVertex3f(10.f, 0, float(z));
-				glVertex3f(-10.f, 0, float(z));
+				glVertex3f(10.F, 0, float(z));
+				glVertex3f(-10.F, 0, float(z));
 			}
 		}
 	}
@@ -242,14 +219,14 @@ void CRenderer::draw3DCoordinateSystem()
 
 	glBegin(GL_LINES);
 	glColor3f(0, 0, 1);
-	glVertex3f(0, 0, 2.f);
-	glVertex3f(0, 0, -3.f);
+	glVertex3f(0, 0, 2.F);
+	glVertex3f(0, 0, -3.F);
 	glColor3f(0, 1, 0);
-	glVertex3f(0, 1.25f, 0);
-	glVertex3f(0, -1.25f, 0);
+	glVertex3f(0, 1.25F, 0);
+	glVertex3f(0, -1.25F, 0);
 	glColor3f(1, 0, 0);
-	glVertex3f(2.f, 0, 0);
-	glVertex3f(-2.f, 0, 0);
+	glVertex3f(2.F, 0, 0);
+	glVertex3f(-2.F, 0, 0);
 	glEnd();
 
 	glPopAttrib();
@@ -266,8 +243,8 @@ void CRenderer::draw2DCoordinateSystem()
 	glLineWidth(2);
 
 	glPushMatrix();
-	glColor3f(.2f, .2f, .2f);
-	glScalef(.2f, .2f, .2f);
+	glColor3f(.2F, .2F, .2F);
+	glScalef(.2F, .2F, .2F);
 	glBegin(GL_LINES);
 	for (int x = -10; x <= 10; ++x)
 	{
@@ -275,13 +252,13 @@ void CRenderer::draw2DCoordinateSystem()
 		{
 			if (x != 0)
 			{
-				glVertex2f(float(x), 10.f);
-				glVertex2f(float(x), -10.f);
+				glVertex2f(float(x), 10.F);
+				glVertex2f(float(x), -10.F);
 			}
 			if (y != 0)
 			{
-				glVertex2f(10.f, float(y));
-				glVertex2f(-10.f, float(y));
+				glVertex2f(10.F, float(y));
+				glVertex2f(-10.F, float(y));
 			}
 		}
 	}
@@ -290,11 +267,11 @@ void CRenderer::draw2DCoordinateSystem()
 
 	glBegin(GL_LINES);
 	glColor3f(0, 1, 0);
-	glVertex2f(0, 2.0f);
-	glVertex2f(0, -2.0f);
+	glVertex2f(0, 2.0F);
+	glVertex2f(0, -2.0F);
 	glColor3f(1, 0, 0);
-	glVertex2f(2.f, 0);
-	glVertex2f(-2.f, 0);
+	glVertex2f(2.F, 0);
+	glVertex2f(-2.F, 0);
 	glEnd();
 
 	glPopAttrib();

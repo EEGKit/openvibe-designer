@@ -104,7 +104,7 @@ namespace Mensia
 				m_pLookupListStore[1] = GTK_LIST_STORE(::gtk_builder_get_object(m_pBuilder, "liststore_select_neuro_1"));
 				m_pLookupListStore[2] = GTK_LIST_STORE(::gtk_builder_get_object(m_pBuilder, "liststore_select_neuro_2"));
 
-				for (uint32_t i = 0; i < m_pRenderer->getRegionCategoryCount() && i < 3; ++i)
+				for (size_t i = 0; i < m_pRenderer->getRegionCategoryCount() && i < 3; ++i)
 				{
 					this->fill_region(m_pLookupListStore[i], m_pLookupTreeView[i], m_pRenderer, i);
 				}

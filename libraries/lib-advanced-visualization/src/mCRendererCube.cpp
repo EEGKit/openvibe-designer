@@ -44,7 +44,7 @@ void CRendererCube::refresh(const IRendererContext& rContext)
 
 	if (!m_nHistory) { return; }
 
-	const float sampleIndexERP     = (m_ERPFraction * float(m_nSample - 1));
+	const float sampleIndexERP     = (m_erpFraction * float(m_nSample - 1));
 	const float alpha              = sampleIndexERP - std::floor(sampleIndexERP);
 	const uint32_t sampleIndexERP1 = uint32_t(sampleIndexERP) % m_nSample;
 	const uint32_t sampleIndexERP2 = uint32_t(sampleIndexERP + 1) % m_nSample;
