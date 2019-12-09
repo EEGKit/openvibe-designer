@@ -146,10 +146,10 @@ namespace Mensia
 			for (uint32_t i = 0; i < m_vRenderer.size(); ++i) { m_oRendererFactory.release(m_vRenderer[i]); }
 			m_vRenderer.clear();
 
-			IRendererContext::release(m_pSubRendererContext);
+			delete m_pSubRendererContext;
 			m_pSubRendererContext = nullptr;
 
-			IRendererContext::release(m_pRendererContext);
+			delete m_pRendererContext;
 			m_pRendererContext = nullptr;
 
 			delete m_pRuler;
@@ -230,8 +230,8 @@ namespace Mensia
 						}
 
 
-						m_pRendererContext->setDataType(IRendererContext::DataType_TimeFrequency);
-						m_pSubRendererContext->setDataType(IRendererContext::DataType_TimeFrequency);
+						m_pRendererContext->setDataType(CRendererContext::DataType_TimeFrequency);
+						m_pSubRendererContext->setDataType(CRendererContext::DataType_TimeFrequency);
 
 						m_pRendererContext->setElementCount(nSample);
 						m_pSubRendererContext->setElementCount(nSample);

@@ -46,7 +46,7 @@ namespace
 		}
 	};
 
-	void channel_selection_changed_(GtkTreeSelection* pTreeSelection, IRendererContext* pRendererContext)
+	void channel_selection_changed_(GtkTreeSelection* pTreeSelection, CRendererContext* pRendererContext)
 	{
 		uint32_t i                 = 0;
 		GtkTreeView* l_pTreeView   = gtk_tree_selection_get_tree_view(pTreeSelection);
@@ -66,22 +66,22 @@ namespace
 		}
 	}
 
-	void spinbutton_time_scale_change_value_callback(GtkSpinButton* pSpinButton, IRendererContext* pRendererContext)
+	void spinbutton_time_scale_change_value_callback(GtkSpinButton* pSpinButton, CRendererContext* pRendererContext)
 	{
 		pRendererContext->setTimeScale(uint64_t(gtk_spin_button_get_value(pSpinButton) * (1LL << 32)));
 	}
 
-	void spinbutton_element_count_change_value_callback(GtkSpinButton* pSpinButton, IRendererContext* pRendererContext)
+	void spinbutton_element_count_change_value_callback(GtkSpinButton* pSpinButton, CRendererContext* pRendererContext)
 	{
 		pRendererContext->setElementCount(uint64_t(gtk_spin_button_get_value(pSpinButton)));
 	}
 
-	void checkbutton_positive_toggled_callback(GtkToggleButton* button, IRendererContext* pRendererContext)
+	void checkbutton_positive_toggled_callback(GtkToggleButton* button, CRendererContext* pRendererContext)
 	{
 		pRendererContext->setPositiveOnly(gtk_toggle_button_get_active(button) != 0);
 	}
 
-	void checkbutton_show_scale_toggled_callback(GtkToggleButton* button, IRendererContext* pRendererContext)
+	void checkbutton_show_scale_toggled_callback(GtkToggleButton* button, CRendererContext* pRendererContext)
 	{
 		pRendererContext->setScaleVisibility(gtk_toggle_button_get_active(button) != 0);
 	}
@@ -100,17 +100,17 @@ namespace
 		getContext().stepERPFractionBy(float(gtk_range_get_value(pRange)) - getContext().getERPFraction());
 	}
 
-	void button_erp_play_pause_pressed_callback(GtkButton* /*button*/, IRendererContext* pRendererContext)
+	void button_erp_play_pause_pressed_callback(GtkButton* /*button*/, CRendererContext* pRendererContext)
 	{
 		pRendererContext->setERPPlayerActive(!pRendererContext->isERPPlayerActive());
 	}
 
-	void spinbutton_freq_band_min_change_value_callback(GtkSpinButton* pSpinButton, IRendererContext* pRendererContext)
+	void spinbutton_freq_band_min_change_value_callback(GtkSpinButton* pSpinButton, CRendererContext* pRendererContext)
 	{
 		pRendererContext->setMinimumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(pSpinButton)));
 	}
 
-	void spinbutton_freq_band_max_change_value_callback(GtkSpinButton* pSpinButton, IRendererContext* pRendererContext)
+	void spinbutton_freq_band_max_change_value_callback(GtkSpinButton* pSpinButton, CRendererContext* pRendererContext)
 	{
 		pRendererContext->setMaximumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(pSpinButton)));
 	}
@@ -119,26 +119,26 @@ namespace
 bool CBoxAlgorithmViz::initialize()
 
 {
-	m_pRendererContext    = IRendererContext::create();
-	m_pSubRendererContext = IRendererContext::create();
+	m_pRendererContext    = new CRendererContext();
+	m_pSubRendererContext = new CRendererContext();
 
 	// Sets default setting values
-	m_sLocalisation       = CString("");
-	m_temporalCoherence   = ETemporalCoherence::TimeLocked;
-	m_nElement            = 50;
-	m_timeScale           = 10LL << 32;
-	m_isPositive         = false;
-	m_isTimeLocked       = true;
-	m_isScaleVisible     = true;
-	m_textureId           = 0;
-	m_lastProcessTime = 0;
-	m_time1               = 0;
-	m_time2               = 0;
-	m_sColor              = CString("100,100,100");
-	m_sColorGradient      = CString("0:0,0,0; 100:100,100,100");
-	m_bXYZPlotHasDepth    = false;
-	m_f64DataScale        = 1;
-	m_translucency        = 1;
+	m_sLocalisation     = CString("");
+	m_temporalCoherence = TimeLocked;
+	m_nElement          = 50;
+	m_timeScale         = 10LL << 32;
+	m_isPositive        = false;
+	m_isTimeLocked      = true;
+	m_isScaleVisible    = true;
+	m_textureId         = 0;
+	m_lastProcessTime   = 0;
+	m_time1             = 0;
+	m_time2             = 0;
+	m_sColor            = CString("100,100,100");
+	m_sColorGradient    = CString("0:0,0,0; 100:100,100,100");
+	m_bXYZPlotHasDepth  = false;
+	m_f64DataScale      = 1;
+	m_translucency      = 1;
 	m_vColor.clear();
 
 	// Initializes fast forward behavior
@@ -152,15 +152,15 @@ bool CBoxAlgorithmViz::initialize()
 	m_pBuilder = gtk_builder_new();
 	gtk_builder_add_from_file(m_pBuilder, std::string(Directories::getDataDir() + "/plugins/advanced-visualization.ui").c_str(), nullptr);
 
-	GtkWidget* l_pMain    = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "table"));
-	GtkWidget* l_pToolbar = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "toolbar-window"));
-	m_pViewport           = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "viewport"));
-	m_pTop                = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "label_top"));
-	m_pLeft               = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "drawingarea_left"));
-	m_pRight              = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "drawingarea_right"));
-	m_pBottom             = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "drawingarea_bottom"));
-	m_pCornerLeft         = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "label_corner_left"));
-	m_pCornerRight        = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "label_corner_right"));
+	GtkWidget* main    = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "table"));
+	GtkWidget* toolbar = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "toolbar-window"));
+	m_pViewport        = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "viewport"));
+	m_pTop             = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "label_top"));
+	m_pLeft            = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "drawingarea_left"));
+	m_pRight           = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "drawingarea_right"));
+	m_pBottom          = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "drawingarea_bottom"));
+	m_pCornerLeft      = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "label_corner_left"));
+	m_pCornerRight     = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "label_corner_right"));
 
 	// Gets important widgets
 	m_pTimeScale        = GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "spinbutton_time_scale"));
@@ -236,8 +236,8 @@ bool CBoxAlgorithmViz::initialize()
 
 	m_visualizationContext = dynamic_cast<OpenViBEVisualizationToolkit::IVisualizationContext*>(this->createPluginObject(
 		OVP_ClassId_Plugin_VisualizationCtx));
-	m_visualizationContext->setWidget(*this, l_pMain);
-	m_visualizationContext->setToolbar(*this, l_pToolbar);
+	m_visualizationContext->setWidget(*this, main);
+	m_visualizationContext->setToolbar(*this, toolbar);
 
 	// Parses box settings
 	uint32_t settingIndex = 0;
@@ -381,9 +381,9 @@ bool CBoxAlgorithmViz::initialize()
 	const CString l_sFrameSessionId  = this->getConfigurationManager().expand("[$core{date}-$core{time}]");
 	const CString l_sFrameWidgetName = this->getStaticBoxContext().getName();
 	m_sFrameFilenameFormat           = l_sFrameBasePath + l_sFrameSessionId + l_sFrameWidgetName + CString("-%06i.png");
-	m_isVideoOutputEnabled          = (l_sFrameBasePath != CString(""));
-	m_isVideoOutputWorking          = false;
-	m_frameId                    = 0;
+	m_isVideoOutputEnabled           = (l_sFrameBasePath != CString(""));
+	m_isVideoOutputWorking           = false;
+	m_frameId                        = 0;
 	gtk_widget_set_visible(GTK_WIDGET(::gtk_builder_get_object(m_pBuilder, "hbox_video_recording")), m_isVideoOutputEnabled ? TRUE : FALSE);
 	gtk_label_set_markup(
 		GTK_LABEL(::gtk_builder_get_object(m_pBuilder, "label_video_recording_filename")),
@@ -404,10 +404,10 @@ bool CBoxAlgorithmViz::uninitialize()
 	getContext().stepERPFractionBy(-getContext().getERPFraction());
 	getContext().setERPPlayerActive(false);
 
-	IRendererContext::release(m_pSubRendererContext);
+	delete m_pSubRendererContext;
 	m_pSubRendererContext = nullptr;
 
-	IRendererContext::release(m_pRendererContext);
+	delete m_pRendererContext;
 	m_pRendererContext = nullptr;
 
 	this->releasePluginObject(m_visualizationContext);
@@ -441,7 +441,7 @@ bool CBoxAlgorithmViz::processClock(IMessageClock& /*rClock*/)
 	if (currentTime > m_lastProcessTime + minDeltaTime || this->getPlayerContext().getStatus() == PlayerStatus_Step || this->getPlayerContext().getStatus()
 		== PlayerStatus_Pause)
 	{
-		m_lastProcessTime = currentTime;
+		m_lastProcessTime     = currentTime;
 		this->m_bRedrawNeeded = true;
 		this->getBoxAlgorithmContext()->markAlgorithmAsReadyToProcess();
 	}

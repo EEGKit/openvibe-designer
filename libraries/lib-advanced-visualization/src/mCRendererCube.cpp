@@ -28,7 +28,7 @@ using namespace AdvancedVisualization;
 
 CRendererCube::CRendererCube() = default;
 
-void CRendererCube::rebuild(const IRendererContext& ctx)
+void CRendererCube::rebuild(const CRendererContext& ctx)
 {
 	IRenderer::rebuild(ctx);
 
@@ -38,26 +38,26 @@ void CRendererCube::rebuild(const IRendererContext& ctx)
 	m_historyIdx = 0;
 }
 
-void CRendererCube::refresh(const IRendererContext& ctx)
+void CRendererCube::refresh(const CRendererContext& ctx)
 {
 	IRenderer::refresh(ctx);
 
 	if (!m_nHistory) { return; }
 
-	const float idxERP   = (m_erpFraction * float(m_nSample - 1));
-	const float alpha    = idxERP - std::floor(idxERP);
-	const size_t idxERP1 = size_t(idxERP) % m_nSample;
-	const size_t idxERP2 = size_t(idxERP + 1) % m_nSample;
+	const float indexERP   = (m_erpFraction * float(m_nSample - 1));
+	const float alpha      = indexERP - std::floor(indexERP);
+	const size_t indexERP1 = size_t(indexERP) % m_nSample;
+	const size_t indexERP2 = size_t(indexERP + 1) % m_nSample;
 
 	for (size_t i = 0; i < m_vertices.size(); ++i)
 	{
-		m_vertices[i].u = m_history[i][m_nHistory - m_nSample + idxERP1] * (1 - alpha) + m_history[i][m_nHistory - m_nSample + idxERP2] * (alpha);
+		m_vertices[i].u = m_history[i][m_nHistory - m_nSample + indexERP1] * (1 - alpha) + m_history[i][m_nHistory - m_nSample + indexERP2] * (alpha);
 	}
 
 	m_historyIdx = m_nHistory;
 }
 
-bool CRendererCube::render(const IRendererContext& ctx)
+bool CRendererCube::render(const CRendererContext& ctx)
 {
 	if (!ctx.getSelectedCount()) { return false; }
 	if (m_vertices.empty()) { return false; }
@@ -92,7 +92,7 @@ bool CRendererCube::render(const IRendererContext& ctx)
 		CVertex v;
 		const size_t k = ctx.getSelected(j);
 		ctx.getChannelLocalisation(k, v.x, v.y, v.z);
-		const float scale = 0.1F * (0.25F + fabs(m_vertices[k].u * ctx.getScale()));
+		const float scale = .1F * (.25F + fabs(m_vertices[k].u * ctx.getScale()));
 
 		glPushMatrix();
 		glTranslatef(v.x, v.y, v.z);

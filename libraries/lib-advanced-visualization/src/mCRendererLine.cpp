@@ -27,7 +27,7 @@ using namespace AdvancedVisualization;
 
 CRendererLine::CRendererLine() = default;
 
-void CRendererLine::rebuild(const IRendererContext& ctx)
+void CRendererLine::rebuild(const CRendererContext& ctx)
 {
 	IRenderer::rebuild(ctx);
 
@@ -43,27 +43,29 @@ void CRendererLine::rebuild(const IRendererContext& ctx)
 	m_historyIdx = 0;
 }
 
-void CRendererLine::refresh(const IRendererContext& ctx)
+void CRendererLine::refresh(const CRendererContext& ctx)
 {
 	IRenderer::refresh(ctx);
+
 	if (!m_nHistory) { return; }
 
 	size_t maxIdx;
+
 	if (m_historyDrawIdx == 0) { maxIdx = m_nHistory; }	// Draw real-time 
 	else { maxIdx = m_historyDrawIdx; }					// stay at the m_historyDrawIdx
 
 	for (size_t i = 0; i < m_nChannel; ++i)
 	{
-		const size_t firstIdx       = ((maxIdx - 1) / m_nSample) * m_nSample;
-		std::vector<float>& history = m_history[i];
-		CVertex* vertex             = &m_vertices[i][0];
+		const size_t firstIdx = ((maxIdx - 1) / m_nSample) * m_nSample;
+		std::vector<float>& history   = m_history[i];
+		CVertex* vertex               = &m_vertices[i][0];
 
 		for (size_t j = 0; j < m_nSample; ++j)
 		{
-			const size_t index = firstIdx + j;
+			const size_t idx = firstIdx + j;
 
-			if (index < maxIdx) { vertex->y = history[index]; }
-			else if (index >= m_nSample) { vertex->y = history[index - m_nSample]; }
+			if (idx < maxIdx) { vertex->y = history[idx]; }
+			else if (idx >= m_nSample) { vertex->y = history[idx - m_nSample]; }
 
 			vertex++;
 		}
@@ -72,7 +74,7 @@ void CRendererLine::refresh(const IRendererContext& ctx)
 	m_historyIdx = maxIdx;
 }
 
-bool CRendererLine::render(const IRendererContext& ctx)
+bool CRendererLine::render(const CRendererContext& ctx)
 {
 	if (!ctx.getSelectedCount()) { return false; }
 	if (!m_nHistory) { return false; }

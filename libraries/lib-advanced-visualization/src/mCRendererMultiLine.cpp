@@ -25,7 +25,7 @@
 using namespace Mensia;
 using namespace AdvancedVisualization;
 
-bool CRendererMultiLine::render(const IRendererContext& ctx)
+bool CRendererMultiLine::render(const CRendererContext& ctx)
 {
 	if (!ctx.getSelectedCount()) { return false; }
 	if (!m_nHistory) { return false; }
@@ -48,7 +48,7 @@ bool CRendererMultiLine::render(const IRendererContext& ctx)
 	glTranslatef(0, ctx.isPositiveOnly() ? 0 : 0.5F, 0);
 	glScalef(1, ctx.getScale(), 1);
 	glEnableClientState(GL_VERTEX_ARRAY);
-	for (uint32_t i = 0; i < ctx.getSelectedCount(); ++i)
+	for (size_t i = 0; i < ctx.getSelectedCount(); ++i)
 	{
 		std::vector<CVertex>& vertices = m_vertices[ctx.getSelected(i)];
 		glTexCoord1f(1 - (i + .5F) / ctx.getSelectedCount());

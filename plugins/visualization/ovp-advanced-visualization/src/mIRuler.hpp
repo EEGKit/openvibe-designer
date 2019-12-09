@@ -49,7 +49,7 @@ namespace Mensia
 			IRuler(const IRuler&) = delete;
 			virtual ~IRuler()     = default;
 
-			virtual void setRendererContext(const IRendererContext* pRendererContext) { m_pRendererContext = pRendererContext; }
+			virtual void setRendererContext(const CRendererContext* pRendererContext) { m_pRendererContext = pRendererContext; }
 
 			virtual void setRenderer(const IRenderer* pRenderer)
 			{
@@ -129,7 +129,7 @@ namespace Mensia
 				return l_sLabel;
 			}
 
-			const IRendererContext* m_pRendererContext = nullptr;
+			const CRendererContext* m_pRendererContext = nullptr;
 			const IRenderer* m_pRenderer               = nullptr;
 			float m_fBlackAlpha                        = 0.9f;
 			float m_fWhiteAlpha                        = 1.0f;

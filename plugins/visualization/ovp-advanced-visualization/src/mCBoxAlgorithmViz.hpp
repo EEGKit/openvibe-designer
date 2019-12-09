@@ -241,8 +241,8 @@ namespace Mensia
 			TGtkGLWidget<CBoxAlgorithmViz> m_oGtkGLWidget;
 			std::map<std::string, CVertex> m_vChannelLocalisation;
 
-			IRendererContext* m_pRendererContext    = nullptr;
-			IRendererContext* m_pSubRendererContext = nullptr;
+			CRendererContext* m_pRendererContext    = nullptr;
+			CRendererContext* m_pSubRendererContext = nullptr;
 			IRuler* m_pRuler                        = nullptr;
 			CMouse m_oMouseHandler;
 

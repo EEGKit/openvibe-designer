@@ -18,6 +18,7 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+
 #include "mCRendererContext.hpp"
 
 #include <algorithm>
@@ -29,31 +30,32 @@
 using namespace Mensia;
 using namespace AdvancedVisualization;
 
+
 namespace
 {
-	void getLeftRightScore(std::map<std::string, float>& scores, const std::vector<std::string>& channelNames, const std::vector<CVertex>& channelLocalisations)
+	void getLeftRightScore(std::map<std::string, float>& scores, const std::vector<std::string>& names, const std::vector<CVertex>& positions)
 	{
-		for (size_t i = 0; i < channelNames.size() && i < channelLocalisations.size(); ++i)
+		for (size_t i = 0; i < names.size() && i < positions.size(); ++i)
 		{
-			std::string name = std::string(",") + channelNames[i] + std::string(",");
+			std::string name = std::string(",") + names[i] + std::string(",");
 			std::transform(name.begin(), name.end(), name.begin(), tolower);
-			scores[name] = float(channelLocalisations[i].x * 1E-0 + channelLocalisations[i].y * 1E-10 + channelLocalisations[i].z * 1E-5);
+			scores[name] = float(positions[i].x * 1E-0 + positions[i].y * 1E-10 + positions[i].z * 1E-5);
 		}
 	}
 
-	void getFrontBackScore(std::map<std::string, float>& scores, const std::vector<std::string>& channelNames, const std::vector<CVertex>& channelLocalisations)
+	void getFrontBackScore(std::map<std::string, float>& scores, const std::vector<std::string>& names, const std::vector<CVertex>& positions)
 	{
-		for (size_t i = 0; i < channelNames.size() && i < channelLocalisations.size(); ++i)
+		for (size_t i = 0; i < names.size() && i < positions.size(); ++i)
 		{
-			std::string name = std::string(",") + channelNames[i] + std::string(",");
+			std::string name = std::string(",") + names[i] + std::string(",");
 			std::transform(name.begin(), name.end(), name.begin(), tolower);
-			scores[name] = float(channelLocalisations[i].x * 1E-5 + channelLocalisations[i].y * 1E-10 + channelLocalisations[i].z * 1E-0);
+			scores[name] = float(positions[i].x * 1E-5 + positions[i].y * 1E-10 + positions[i].z * 1E-0);
 		}
 	}
 
-	struct sort_alpha
+	struct SSortAlpha
 	{
-		explicit sort_alpha(const std::vector<std::string>& channels) : names(channels) { }
+		explicit SSortAlpha(const std::vector<std::string>& channels) : names(channels) { }
 
 		bool operator()(const size_t i, const size_t j) const
 		{
@@ -68,9 +70,9 @@ namespace
 		const std::vector<std::string>& names;
 	};
 
-	struct sort_special
+	struct SSortSpecial
 	{
-		sort_special(const std::vector<std::string>& channels, const std::map<std::string, float>& scoreMap)
+		SSortSpecial(const std::vector<std::string>& channels, const std::map<std::string, float>& scoreMap)
 			: names(channels), scores(scoreMap) { }
 
 		bool operator()(const size_t i, const size_t j) const
@@ -97,48 +99,41 @@ namespace
 	};
 } // namespace
 
-// ____________________________________________________________________________________________________________________________________________________________________________________
-//
 
-CRendererContext::CRendererContext(IRendererContext* parentCtx)
+CRendererContext::CRendererContext(CRendererContext* parentCtx)
 {
-	this->CRendererContext::clear();
-	this->CRendererContext::setParentRendererContext(parentCtx);
+	clear();
+	setParentRendererContext(parentCtx);
 }
 
 void CRendererContext::clear()
-
 {
 	this->clearChannelInfo();
 	this->clearTransformInfo();
 	m_dimLabels.clear();
 }
 
-// ____________________________________________________________________________________________________________________________________________________________________________________
-//
-
 void CRendererContext::clearChannelInfo()
-
 {
 	m_channelLookup.clear();
 	m_channelName.clear();
-	m_channelLocalisation.clear();
+	m_channelPos.clear();
 
 	m_leftRightScore.clear();
 	m_frontBackScore.clear();
 }
 
-void CRendererContext::addChannel(const std::string& sChannelName, const float x, const float y, const float z)
+void CRendererContext::addChannel(const std::string& name, const float x, const float y, const float z)
 {
-	const auto l_fNorm     = float(sqrt(x * x + y * y + z * z));
-	const float l_fInvNorm = (l_fNorm != 0 ? 1.f / l_fNorm : 0);
-	CVertex l_oChannelLocalisation;
-	l_oChannelLocalisation.x = x * l_fInvNorm;
-	l_oChannelLocalisation.y = y * l_fInvNorm;
-	l_oChannelLocalisation.z = z * l_fInvNorm;
+	const auto norm     = float(sqrt(x * x + y * y + z * z));
+	const float invNorm = (norm != 0 ? 1.F / norm : 0);
+	CVertex pos;
+	pos.x = x * invNorm;
+	pos.y = y * invNorm;
+	pos.z = z * invNorm;
 	m_channelLookup.push_back(m_channelName.size());
-	m_channelName.push_back(sChannelName);
-	m_channelLocalisation.push_back(l_oChannelLocalisation);
+	m_channelName.push_back(name);
+	m_channelPos.push_back(pos);
 }
 
 void CRendererContext::selectChannel(const size_t index)
@@ -161,41 +156,33 @@ void CRendererContext::unselectChannel(const size_t index)
 
 void CRendererContext::sortSelectedChannel(const size_t mode)
 {
-	if (m_leftRightScore.empty()) { getLeftRightScore(m_leftRightScore, m_channelName, m_channelLocalisation); }
-	if (m_frontBackScore.empty()) { getFrontBackScore(m_frontBackScore, m_channelName, m_channelLocalisation); }
+	if (m_leftRightScore.empty()) { getLeftRightScore(m_leftRightScore, m_channelName, m_channelPos); }
+	if (m_frontBackScore.empty()) { getFrontBackScore(m_frontBackScore, m_channelName, m_channelPos); }
 
 	switch (mode)
 	{
-		case 0:
+		case 0: break;
+
+		case 1: std::stable_sort(m_channelLookup.begin(), m_channelLookup.end());
 			break;
 
-		case 1:
-			std::stable_sort(m_channelLookup.begin(), m_channelLookup.end());
+		case 2: std::stable_sort(m_channelLookup.begin(), m_channelLookup.end(), SSortAlpha(m_channelName));
 			break;
 
-		case 2:
-			std::stable_sort(m_channelLookup.begin(), m_channelLookup.end(), sort_alpha(m_channelName));
+		case 3: std::reverse(m_channelLookup.begin(), m_channelLookup.end());
 			break;
 
-		case 3:
-			std::reverse(m_channelLookup.begin(), m_channelLookup.end());
+		case 4: std::stable_sort(m_channelLookup.begin(), m_channelLookup.end(), SSortSpecial(m_channelName, m_leftRightScore));
 			break;
 
-		case 4:
-			std::stable_sort(m_channelLookup.begin(), m_channelLookup.end(), sort_special(m_channelName, m_leftRightScore));
+		case 5: std::stable_sort(m_channelLookup.begin(), m_channelLookup.end(), SSortSpecial(m_channelName, m_frontBackScore));
 			break;
 
-		case 5:
-			std::stable_sort(m_channelLookup.begin(), m_channelLookup.end(), sort_special(m_channelName, m_frontBackScore));
-			break;
-
-		default:
-			break;
+		default: break;
 	}
 }
 
-// ____________________________________________________________________________________________________________________________________________________________________________________
-
+///-------------------------------------------------------------------------------------------------
 void CRendererContext::setDimensionLabel(const size_t idx1, const size_t idx2, const char* label)
 {
 	if (m_dimLabels[idx1].size() <= idx2) { m_dimLabels[idx1].resize(idx2 + 1); }
@@ -214,11 +201,8 @@ const char* CRendererContext::getDimensionLabel(const size_t idx1, const size_t 
 	return m_dimLabels.at(idx1)[idx2].c_str();
 }
 
-// ____________________________________________________________________________________________________________________________________________________________________________________
-//
-
+///-------------------------------------------------------------------------------------------------
 void CRendererContext::clearTransformInfo()
-
 {
 	m_parentCtx           = nullptr;
 	m_scale               = 1;
@@ -250,9 +234,6 @@ void CRendererContext::clearTransformInfo()
 	m_scalpMeshVisible    = true;
 }
 
-// ____________________________________________________________________________________________________________________________________________________________________________________
-//
-
 std::string CRendererContext::getChannelName(const size_t index) const
 {
 	if (index < m_channelName.size()) { return m_channelName[index]; }
@@ -262,7 +243,7 @@ std::string CRendererContext::getChannelName(const size_t index) const
 
 bool CRendererContext::getChannelLocalisation(const size_t index, float& x, float& y, float& z) const
 {
-	const CVertex& tmp = m_channelLocalisation[index];
+	const CVertex& tmp = m_channelPos[index];
 	x                  = tmp.x;
 	y                  = tmp.y;
 	z                  = tmp.z;
@@ -274,10 +255,6 @@ bool CRendererContext::isSelected(const size_t index) const
 	for (auto& i : m_channelLookup) { if (i == index) { return true; } }
 	return false;
 }
-
-// ____________________________________________________________________________________________________________________________________________________________________________________
-//
-
 
 float CRendererContext::getERPFraction() const
 {

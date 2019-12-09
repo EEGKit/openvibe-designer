@@ -32,7 +32,7 @@ namespace Mensia
 		{
 		public:
 
-			void setRendererContext(const IRendererContext* pRendererContext) override
+			void setRendererContext(const CRendererContext* pRendererContext) override
 			{
 				IRuler::setRendererContext(pRendererContext);
 				m_oRulerSignal.setRendererContext(pRendererContext);
@@ -51,34 +51,34 @@ namespace Mensia
 			void render() override
 
 			{
-				const IRendererContext::EDataType l_eDataType = m_pRendererContext->getDataType();
-				if (l_eDataType == IRendererContext::DataType_Signal) { m_oRulerSignal.doRender(); }
-				else if (l_eDataType == IRendererContext::DataType_Spectrum) { m_oRulerSpectrum.doRender(); }
+				const CRendererContext::EDataType l_eDataType = m_pRendererContext->getDataType();
+				if (l_eDataType == CRendererContext::DataType_Signal) { m_oRulerSignal.doRender(); }
+				else if (l_eDataType == CRendererContext::DataType_Spectrum) { m_oRulerSpectrum.doRender(); }
 				else { m_oRulerMatrix.doRender(); }
 			}
 
 			void renderLeft(GtkWidget* pWidget) override
 			{
-				const IRendererContext::EDataType l_eDataType = m_pRendererContext->getDataType();
-				if (l_eDataType == IRendererContext::DataType_Signal) { m_oRulerSignal.doRenderLeft(pWidget); }
-				else if (l_eDataType == IRendererContext::DataType_Spectrum) { m_oRulerSpectrum.doRenderLeft(pWidget); }
+				const CRendererContext::EDataType l_eDataType = m_pRendererContext->getDataType();
+				if (l_eDataType == CRendererContext::DataType_Signal) { m_oRulerSignal.doRenderLeft(pWidget); }
+				else if (l_eDataType == CRendererContext::DataType_Spectrum) { m_oRulerSpectrum.doRenderLeft(pWidget); }
 				else { m_oRulerMatrix.doRenderLeft(pWidget); }
 			}
 
 			void renderRight(GtkWidget* pWidget) override
 			{
-				const IRendererContext::EDataType l_eDataType = m_pRendererContext->getDataType();
-				if (l_eDataType == IRendererContext::DataType_Signal) { m_oRulerSignal.doRenderRight(pWidget); }
-				else if (l_eDataType == IRendererContext::DataType_Spectrum) { m_oRulerSpectrum.doRenderRight(pWidget); }
+				const CRendererContext::EDataType l_eDataType = m_pRendererContext->getDataType();
+				if (l_eDataType == CRendererContext::DataType_Signal) { m_oRulerSignal.doRenderRight(pWidget); }
+				else if (l_eDataType == CRendererContext::DataType_Spectrum) { m_oRulerSpectrum.doRenderRight(pWidget); }
 				else { m_oRulerMatrix.doRenderRight(pWidget); }
 			}
 
 			void renderBottom(GtkWidget* pWidget) override
 			{
-				const IRendererContext::EDataType l_eDataType = m_pRendererContext->getDataType();
+				const CRendererContext::EDataType l_eDataType = m_pRendererContext->getDataType();
 
-				if (l_eDataType == IRendererContext::DataType_Signal) { m_oRulerSignal.doRenderBottom(pWidget); }
-				else if (l_eDataType == IRendererContext::DataType_Spectrum) { m_oRulerSpectrum.doRenderBottom(pWidget); }
+				if (l_eDataType == CRendererContext::DataType_Signal) { m_oRulerSignal.doRenderBottom(pWidget); }
+				else if (l_eDataType == CRendererContext::DataType_Spectrum) { m_oRulerSpectrum.doRenderBottom(pWidget); }
 				else { m_oRulerMatrix.doRenderBottom(pWidget); }
 			}
 

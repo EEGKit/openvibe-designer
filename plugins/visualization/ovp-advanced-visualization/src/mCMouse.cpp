@@ -30,7 +30,7 @@ using namespace AdvancedVisualization;
 
 CMouse::CMouse(CBoxAlgorithmViz& rBoxAlgorithmViz) : m_rBoxAlgorithmViz(rBoxAlgorithmViz) { }
 
-void CMouse::mouseButton(IRendererContext& rContext, const int x, const int y, const int button, const int status)
+void CMouse::mouseButton(CRendererContext& rContext, const int x, const int y, const int button, const int status)
 {
 	m_Buttons[button] = status;
 
@@ -44,7 +44,7 @@ void CMouse::mouseButton(IRendererContext& rContext, const int x, const int y, c
 	m_mouseY = y;
 }
 
-void CMouse::mouseMotion(IRendererContext& rContext, const int x, const int y)
+void CMouse::mouseMotion(CRendererContext& rContext, const int x, const int y)
 {
 	if (m_Buttons[3]) { rContext.scaleBy(powf(.99f, float(y - m_mouseY))); }
 	if (m_Buttons[2]) { rContext.zoomBy(powf(.99f, float(y - m_mouseY))); }

@@ -31,7 +31,7 @@ namespace Mensia
 		{
 		public:
 
-			void setRendererContext(const IRendererContext* pRendererContext) override
+			void setRendererContext(const CRendererContext* pRendererContext) override
 			{
 				IRuler::setRendererContext(pRendererContext);
 				condition.setRendererContext(pRendererContext);

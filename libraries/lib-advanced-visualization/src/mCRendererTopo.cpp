@@ -101,7 +101,7 @@ namespace
 	}
 } // namespace
 
-void CRendererTopo::rebuild(const IRendererContext& ctx)
+void CRendererTopo::rebuild(const CRendererContext& ctx)
 {
 	IRenderer::rebuild(ctx);
 
@@ -109,15 +109,15 @@ void CRendererTopo::rebuild(const IRendererContext& ctx)
 
 	// Projects electrode coordinates to 3D mesh
 
-	std::vector<CVertex> l_vProjectedChannelCoordinate;
-	std::vector<CVertex> l_vChannelCoordinate;
-	l_vChannelCoordinate.resize(ctx.getChannelCount());
+	std::vector<CVertex> projectedChannelCPos;
+	std::vector<CVertex> channelPos;
+	channelPos.resize(ctx.getChannelCount());
 	for (size_t i = 0; i < ctx.getChannelCount(); ++i)
 	{
-		ctx.getChannelLocalisation(i, l_vChannelCoordinate[i].x, l_vChannelCoordinate[i].y, l_vChannelCoordinate[i].z);
+		ctx.getChannelLocalisation(i, channelPos[i].x, channelPos[i].y, channelPos[i].z);
 	}
-	m_scalp.project(l_vProjectedChannelCoordinate, l_vChannelCoordinate);
-	m_projectedChannelCoordinates = l_vProjectedChannelCoordinate;
+	m_scalp.project(projectedChannelCPos, channelPos);
+	m_projectedChannelCoordinates = projectedChannelCPos;
 
 #if 0
 
@@ -126,12 +126,12 @@ void CRendererTopo::rebuild(const IRendererContext& ctx)
 	{
 		CVertex p, q;
 		ctx.getChannelLocalisation(i, p.x, p.y, p.z);
-		for (size_t j = 0; j < m_scalp.m_vTriangle.size(); j += 3)
+		for (size_t j = 0; j < m_scalp.m_Triangles.size(); j += 3)
 		{
 			size_t i1, i2, i3;
-			i1 = m_scalp.m_vTriangle[j];
-			i2 = m_scalp.m_vTriangle[j + 1];
-			i3 = m_scalp.m_vTriangle[j + 2];
+			i1 = m_scalp.m_Triangles[j];
+			i2 = m_scalp.m_Triangles[j + 1];
+			i3 = m_scalp.m_Triangles[j + 2];
 
 			CVertex v1, v2, v3;
 			v1 = m_scalp.m_vertex[i1];
@@ -156,7 +156,7 @@ void CRendererTopo::rebuild(const IRendererContext& ctx)
 		}
 		if (m_projectedChannelCoordinates[i].x == 0 && m_projectedChannelCoordinates[i].y == 0 && m_projectedChannelCoordinates[i].z == 0)
 		{
-			//			::printf("Could not project coordinates on mesh for channel %i [%s]\n", i+1, ctx.getChannelName(i).c_str());
+			// ::printf("Could not project coordinates on mesh for channel %i [%s]\n", i+1, rContext.getChannelName(i).c_str());
 		}
 	}
 
@@ -172,7 +172,7 @@ void CRendererTopo::rebuild(const IRendererContext& ctx)
 	build(n, m, gCaches, hCaches);
 
 	const size_t nc = ctx.getChannelCount();
-	const size_t vc = m_scalp.m_vVertex.size();
+	const size_t vc = m_scalp.m_Vertices.size();
 
 	A         = Eigen::MatrixXd(nc + 1, nc + 1);
 	A(nc, nc) = 0;
@@ -205,7 +205,7 @@ void CRendererTopo::rebuild(const IRendererContext& ctx)
 			B(vc, j) = 1;
 			D(vc, j) = 1;
 			CVertex v1, v2;
-			v1 = m_scalp.m_vVertex[i];
+			v1 = m_scalp.m_Vertices[i];
 			v1.normalize();
 			ctx.getChannelLocalisation(j, v2.x, v2.y, v2.z);
 
@@ -226,7 +226,7 @@ void CRendererTopo::rebuild(const IRendererContext& ctx)
 	if (MULTI_SLICE)
 	{
 		m_interpolatedSamples.clear();
-		m_interpolatedSamples.resize(m_nSample, Eigen::VectorXd::Zero(m_scalp.m_vVertex.size()));
+		m_interpolatedSamples.resize(m_nSample, Eigen::VectorXd::Zero(m_scalp.m_Vertices.size()));
 	}
 
 	// Finalizes
@@ -245,14 +245,14 @@ void CRendererTopo::interpolate(const Eigen::VectorXd& v, Eigen::VectorXd& w, Ei
 	z                 = D * c;
 }
 
-void CRendererTopo::refresh(const IRendererContext& ctx)
+void CRendererTopo::refresh(const CRendererContext& ctx)
 {
 	IRenderer::refresh(ctx);
 
 	if (!m_nHistory) { return; }
 
 	size_t nc       = ctx.getChannelCount();
-	const size_t vc = m_scalp.m_vVertex.size();
+	const size_t vc = m_scalp.m_Vertices.size();
 
 	std::vector<float> samples;
 	Eigen::VectorXd v = Eigen::VectorXd::Zero(nc + 1);
@@ -264,7 +264,7 @@ void CRendererTopo::refresh(const IRendererContext& ctx)
 		this->getSampleAtERPFraction(m_erpFraction, samples);
 		for (size_t i = 0; i < nc; ++i) { v(i) = samples[i]; }
 		this->interpolate(v, w, z);
-		for (size_t j = 0; j < vc; ++j) { m_scalp.m_vVertex[j].u = float(w(j)); }
+		for (size_t j = 0; j < vc; ++j) { m_scalp.m_Vertices[j].u = float(w(j)); }
 	}
 	else
 	{
@@ -282,16 +282,16 @@ void CRendererTopo::refresh(const IRendererContext& ctx)
 	m_historyIdx = m_nHistory;
 }
 
-bool CRendererTopo::render(const IRendererContext& ctx)
+bool CRendererTopo::render(const CRendererContext& ctx)
 {
 	if (!ctx.getSelectedCount()) { return false; }
-	if (m_scalp.m_vVertex.empty()) { return false; }
+	if (m_scalp.m_Vertices.empty()) { return false; }
 	if (!m_nHistory) { return false; }
 
 	const float d = 3.5;
 
-	//	::glEnable(GL_DEPTH_TEST);
-	//	::glDisable(GL_BLEND);
+	// ::glEnable(GL_DEPTH_TEST);
+	// ::glDisable(GL_BLEND);
 
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
@@ -317,11 +317,11 @@ bool CRendererTopo::render(const IRendererContext& ctx)
 	glTranslatef(0, .5F, 0);
 	glRotatef(19, 1, 0, 0);
 	glTranslatef(0, -.2F, .35F);
-	//	::glScalef(1.8f, 1.8f, 1.8f);
+	// ::glScalef(1.8f, 1.8f, 1.8f);
 #else
 	::glRotatef(19, 1, 0, 0);
 	::glTranslatef(0, -.2f, .35f);
-	//	::glScalef(1.8f, 1.8f, 1.8f);
+	// ::glScalef(1.8f, 1.8f, 1.8f);
 #endif
 
 	if (ctx.isFaceMeshVisible())
@@ -329,18 +329,18 @@ bool CRendererTopo::render(const IRendererContext& ctx)
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
 		glDisable(GL_TEXTURE_1D);
-		if (!m_face.m_vTriangle.empty())
+		if (!m_face.m_Triangles.empty())
 		{
-			if (!m_face.m_vNormal.empty())
+			if (!m_face.m_Normals.empty())
 			{
 				glEnable(GL_LIGHTING);
 				glEnableClientState(GL_NORMAL_ARRAY);
 			}
-			glColor3f(m_face.m_vColor[0], m_face.m_vColor[1], m_face.m_vColor[2]);
+			glColor3f(m_face.m_Color[0], m_face.m_Color[1], m_face.m_Color[2]);
 			glEnableClientState(GL_VERTEX_ARRAY);
-			glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_face.m_vVertex[0].x);
-			if (!m_face.m_vNormal.empty()) { glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_face.m_vNormal[0].x); }
-			glDrawElements(GL_TRIANGLES, GLsizei(m_face.m_vTriangle.size()), GL_UNSIGNED_INT, &m_face.m_vTriangle[0]);
+			glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_face.m_Vertices[0].x);
+			if (!m_face.m_Normals.empty()) { glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_face.m_Normals[0].x); }
+			glDrawElements(GL_TRIANGLES, GLsizei(m_face.m_Triangles.size()), GL_UNSIGNED_INT, &m_face.m_Triangles[0]);
 			glDisableClientState(GL_NORMAL_ARRAY);
 			glDisableClientState(GL_VERTEX_ARRAY);
 			glDisable(GL_LIGHTING);
@@ -350,25 +350,25 @@ bool CRendererTopo::render(const IRendererContext& ctx)
 	if (ctx.isScalpMeshVisible())
 	{
 		glEnable(GL_TEXTURE_1D);
-		if (!m_scalp.m_vTriangle.empty())
+		if (!m_scalp.m_Triangles.empty())
 		{
-			if (!m_scalp.m_vNormal.empty())
+			if (!m_scalp.m_Normals.empty())
 			{
 				glEnable(GL_LIGHTING);
 				glEnableClientState(GL_NORMAL_ARRAY);
 			}
-			glColor3f(m_scalp.m_vColor[0], m_scalp.m_vColor[1], m_scalp.m_vColor[2]);
+			glColor3f(m_scalp.m_Color[0], m_scalp.m_Color[1], m_scalp.m_Color[2]);
 			glEnableClientState(GL_VERTEX_ARRAY);
 			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-			glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_scalp.m_vVertex[0].x);
-			if (!m_scalp.m_vNormal.empty()) { glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_scalp.m_vNormal[0].x); }
+			glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_scalp.m_Vertices[0].x);
+			if (!m_scalp.m_Normals.empty()) { glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_scalp.m_Normals[0].x); }
 			if (!MULTI_SLICE)
 			{
 				glColor3f(1, 1, 1);
 				glEnable(GL_DEPTH_TEST);
 				glDisable(GL_BLEND);
-				glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_scalp.m_vVertex[0].u);
-				glDrawElements(GL_TRIANGLES, GLsizei(m_scalp.m_vTriangle.size()), GL_UNSIGNED_INT, &m_scalp.m_vTriangle[0]);
+				glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_scalp.m_Vertices[0].u);
+				glDrawElements(GL_TRIANGLES, GLsizei(m_scalp.m_Triangles.size()), GL_UNSIGNED_INT, &m_scalp.m_Triangles[0]);
 			}
 			else
 			{
@@ -381,7 +381,7 @@ bool CRendererTopo::render(const IRendererContext& ctx)
 					glPushMatrix();
 					glScalef(scale, scale, scale);
 					glTexCoordPointer(1, GL_DOUBLE, 0, &m_interpolatedSamples[i][0]);
-					glDrawElements(GL_TRIANGLES, GLsizei(m_scalp.m_vTriangle.size()), GL_UNSIGNED_INT, &m_scalp.m_vTriangle[0]);
+					glDrawElements(GL_TRIANGLES, GLsizei(m_scalp.m_Triangles.size()), GL_UNSIGNED_INT, &m_scalp.m_Triangles[0]);
 					glPopMatrix();
 				}
 			}
@@ -399,13 +399,13 @@ bool CRendererTopo::render(const IRendererContext& ctx)
 	glLineWidth(3);
 	for (size_t j = 0; j < ctx.getChannelCount(); ++j)
 	{
-		const float l_fCubeScale = .025F;
-		const CVertex v          = m_projectedChannelCoordinates[j];
+		const float scale = .025F;
+		const CVertex v   = m_projectedChannelCoordinates[j];
 		//ctx.getChannelLocalisation(j, v.x, v.y, v.z);
 
 		glPushMatrix();
 		glTranslatef(v.x, v.y, v.z);
-		glScalef(l_fCubeScale, l_fCubeScale, l_fCubeScale);
+		glScalef(scale, scale, scale);
 
 		float l_vSelected[]   = { 1, 1, 1 };
 		float l_vUnselected[] = { .2F, .2F, .2F };

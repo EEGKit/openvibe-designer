@@ -34,9 +34,8 @@ std::string AdvancedVisualization::trim(const std::string& sValue)
 	return sValue.substr(i, j - i + 1);
 }
 
-IRendererContext& AdvancedVisualization::getContext()
-
+CRendererContext& AdvancedVisualization::getContext() 
 {
-	static IRendererContext* l_pRendererContext = IRendererContext::create();
-	return *l_pRendererContext;
-}
+	static CRendererContext* ctx = new CRendererContext();
+	return *ctx;
+ }

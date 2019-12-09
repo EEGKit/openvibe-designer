@@ -188,7 +188,7 @@ bool IRenderer::getSampleAtERPFraction(const float erpFraction, std::vector<floa
 	return true;
 }
 
-void IRenderer::refresh(const IRendererContext& ctx)
+void IRenderer::refresh(const CRendererContext& ctx)
 {
 	if (!m_nSample)
 	{
@@ -202,7 +202,7 @@ void IRenderer::refresh(const IRendererContext& ctx)
 }
 
 /*
-bool IRenderer::render(const IRendererContext & ctx)
+bool IRenderer::render(const CRendererContext & ctx)
 {
 	::glLineWidth(7);
 	::glColor3f(1.f, 0.9f, 0.1f);

@@ -33,24 +33,24 @@ namespace Mensia
 {
 	namespace AdvancedVisualization
 	{
-		class C3DMesh
+		class C3DMesh final
 		{
 		public:
 
 			C3DMesh();
-			//C3DMesh(const char* sFilename);
-			virtual ~C3DMesh();
+			//C3DMesh(const char* filename);
+			~C3DMesh();
 
-			virtual void clear();
-			virtual bool load(const void* buffer, uint32_t size);
-			virtual bool compile();
+			void clear();
+			bool load(const void* buffer);
+			bool compile();
 
-			virtual bool project(std::vector<CVertex>& vProjectedChannelCoordinate, const std::vector<CVertex>& vChannelCoordinate);
+			bool project(std::vector<CVertex>& vProjectedChannelCoordinate, const std::vector<CVertex>& vChannelCoordinate);
 
-			std::vector<CVertex> m_vVertex;
-			std::vector<CVertex> m_vNormal;
-			std::vector<uint32_t> m_vTriangle;
-			float m_vColor[3];
+			std::vector<CVertex> m_Vertices;
+			std::vector<CVertex> m_Normals;
+			std::vector<uint32_t> m_Triangles;
+			float m_Color[3];
 		};
 	} // namespace AdvancedVisualization
 } // namespace Mensia

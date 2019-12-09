@@ -24,7 +24,7 @@
 using namespace Mensia;
 using namespace AdvancedVisualization;
 
-void CRendererSlice::rebuild(const IRendererContext& ctx)
+void CRendererSlice::rebuild(const CRendererContext& ctx)
 {
 	IRenderer::rebuild(ctx);
 
@@ -120,7 +120,7 @@ void CRendererSlice::rebuild(const IRendererContext& ctx)
 	m_historyIdx = 0;
 }
 
-void CRendererSlice::refresh(const IRendererContext& ctx)
+void CRendererSlice::refresh(const CRendererContext& ctx)
 {
 	IRenderer::refresh(ctx);
 
@@ -133,40 +133,40 @@ void CRendererSlice::refresh(const IRendererContext& ctx)
 	m_historyIdx = m_nHistory;
 }
 
-bool CRendererSlice::render(const IRendererContext& rContext)
+bool CRendererSlice::render(const CRendererContext& ctx)
 {
 	// size_t i, j;
 	const float d = 3.5;
 
-	if (!rContext.getSelectedCount()) { return false; }
+	if (!ctx.getSelectedCount()) { return false; }
 	if (!m_nHistory) { return false; }
 
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_LIGHTING);
-	//	::glEnable(GL_CULL_FACE);
+	// ::glEnable(GL_CULL_FACE);
 
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
-	gluPerspective(60, rContext.getAspect(), .01, 100);
+	gluPerspective(60, ctx.getAspect(), .01, 100);
 	glTranslatef(0, 0, -d);
-	glRotatef(rContext.getRotationX() * 10, 1, 0, 0);
-	glRotatef(rContext.getRotationY() * 10, 0, 1, 0);
+	glRotatef(ctx.getRotationX() * 10, 1, 0, 0);
+	glRotatef(ctx.getRotationY() * 10, 0, 1, 0);
 
 	glMatrixMode(GL_TEXTURE);
 	glPushMatrix();
-	glScalef(rContext.getScale(), 1, 1);
+	glScalef(ctx.getScale(), 1, 1);
 
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadIdentity();
-	glScalef(rContext.getZoom(), rContext.getZoom(), rContext.getZoom());
+	glScalef(ctx.getZoom(), ctx.getZoom(), ctx.getZoom());
 	glScalef(1., 1., 3.);
 
 	glPushMatrix();
-	glScalef(1.F / rContext.getStackCount(), 1.F / m_nChannel, 1.F / m_nSample);
-	glTranslatef(rContext.getStackIndex() - 0.5F * float(rContext.getStackCount() - 1), 0, 0);
-	glColor4f(.1F, .1F, .1F, rContext.getTranslucency());
+	glScalef(1.F / ctx.getStackCount(), 1.F / m_nChannel, 1.F / m_nSample);
+	glTranslatef(ctx.getStackIndex() - 0.5F * float(ctx.getStackCount() - 1), 0, 0);
+	glColor4f(.1F, .1F, .1F, ctx.getTranslucency());
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -212,14 +212,14 @@ bool CRendererSlice::render(const IRendererContext& rContext)
 	glVertex3f(1, -1, 1);
 	glEnd();
 	glBegin(GL_LINE_LOOP);
-	glColor4f(0.25F, 1, 0.25F, .9F / rContext.getStackCount());
+	glColor4f(0.25F, 1, 0.25F, .9F / ctx.getStackCount());
 	glVertex3f(-1, -1, progress);
 	glVertex3f(-1, 1, progress);
 	glVertex3f(1, 1, progress);
 	glVertex3f(1, -1, progress);
 	glEnd();
 	glBegin(GL_QUADS);
-	glColor4f(0.25F, 1, 0.25F, .1F / rContext.getStackCount());
+	glColor4f(0.25F, 1, 0.25F, .1F / ctx.getStackCount());
 	glVertex3f(-1, -1, progress);
 	glVertex3f(-1, 1, progress);
 	glVertex3f(1, 1, progress);
@@ -228,7 +228,7 @@ bool CRendererSlice::render(const IRendererContext& rContext)
 
 	glEnable(GL_TEXTURE_1D);
 
-	if (rContext.getCheckBoardVisibility()) { this->drawCoordinateSystem(); }
+	if (ctx.getCheckBoardVisibility()) { this->drawCoordinateSystem(); }
 
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();

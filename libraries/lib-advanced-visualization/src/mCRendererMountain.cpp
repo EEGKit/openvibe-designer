@@ -24,29 +24,29 @@
 using namespace Mensia;
 using namespace AdvancedVisualization;
 
-void CRendererMountain::rebuild(const IRendererContext& ctx)
+void CRendererMountain::rebuild(const CRendererContext& ctx)
 {
 	IRenderer::rebuild(ctx);
 
 
-	m_mountain.m_vVertex.clear();
-	m_mountain.m_vVertex.resize(m_nChannel * m_nSample);
+	m_mountain.m_Vertices.clear();
+	m_mountain.m_Vertices.resize(m_nChannel * m_nSample);
 	for (size_t i = 0, k = 0; i < m_nChannel; ++i)
 	{
 		for (size_t j = 0; j < m_nSample; ++j)
 		{
 			const float a             = i * 1.F / float(m_nChannel - 1);
 			const float b             = 1 - j * 1.F / float(m_nSample - 1);
-			m_mountain.m_vVertex[k].x = a;
-			m_mountain.m_vVertex[k].y = 0;
-			m_mountain.m_vVertex[k].z = b;
-			m_mountain.m_vVertex[k].u = 0;
+			m_mountain.m_Vertices[k].x = a;
+			m_mountain.m_Vertices[k].y = 0;
+			m_mountain.m_Vertices[k].z = b;
+			m_mountain.m_Vertices[k].u = 0;
 			k++;
 		}
 	}
 
-	m_mountain.m_vTriangle.clear();
-	m_mountain.m_vTriangle.resize((m_nChannel - 1) * (m_nSample - 1) * 6);
+	m_mountain.m_Triangles.clear();
+	m_mountain.m_Triangles.resize((m_nChannel - 1) * (m_nSample - 1) * 6);
 	size_t id = 0;
 	for (size_t i = 0; i < m_nChannel - 1; ++i)
 	{
@@ -54,19 +54,19 @@ void CRendererMountain::rebuild(const IRendererContext& ctx)
 		{
 			const size_t v1              = i * m_nSample + j;
 			const size_t v2              = v1 + m_nSample;
-			m_mountain.m_vTriangle[id++] = v1;
-			m_mountain.m_vTriangle[id++] = v2;
-			m_mountain.m_vTriangle[id++] = v2 + 1;
-			m_mountain.m_vTriangle[id++] = v1;
-			m_mountain.m_vTriangle[id++] = v2 + 1;
-			m_mountain.m_vTriangle[id++] = v1 + 1;
+			m_mountain.m_Triangles[id++] = v1;
+			m_mountain.m_Triangles[id++] = v2;
+			m_mountain.m_Triangles[id++] = v2 + 1;
+			m_mountain.m_Triangles[id++] = v1;
+			m_mountain.m_Triangles[id++] = v2 + 1;
+			m_mountain.m_Triangles[id++] = v1 + 1;
 		}
 	}
 
 	m_historyIdx = 0;
 }
 
-void CRendererMountain::refresh(const IRendererContext& ctx)
+void CRendererMountain::refresh(const CRendererContext& ctx)
 {
 	IRenderer::refresh(ctx);
 
@@ -77,7 +77,7 @@ void CRendererMountain::refresh(const IRendererContext& ctx)
 	{
 		size_t k                    = ((m_nHistory - 1) / m_nSample) * m_nSample;
 		std::vector<float>& history = m_history[ctx.getSelected(i)];
-		CVertex* vertex             = &m_mountain.m_vVertex[i * m_nSample];
+		CVertex* vertex             = &m_mountain.m_Vertices[i * m_nSample];
 		for (size_t j = 0; j < m_nSample; j++, k++)
 		{
 			if (/*k>=m_historyIdx && */k < m_nHistory)
@@ -93,9 +93,9 @@ void CRendererMountain::refresh(const IRendererContext& ctx)
 	m_historyIdx = m_nHistory;
 }
 
-bool CRendererMountain::render(const IRendererContext& ctx)
+bool CRendererMountain::render(const CRendererContext& ctx)
 {
-	if (m_mountain.m_vVertex.empty()) { return false; }
+	if (m_mountain.m_Vertices.empty()) { return false; }
 	if (!m_nHistory) { return false; }
 
 	const float d = 2.5F;
@@ -127,16 +127,16 @@ bool CRendererMountain::render(const IRendererContext& ctx)
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_mountain.m_vVertex[0].x);
-	glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_mountain.m_vNormal[0].x);
-	glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_mountain.m_vVertex[0].u);
+	glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_mountain.m_Vertices[0].x);
+	glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_mountain.m_Normals[0].x);
+	glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_mountain.m_Vertices[0].u);
 
 	glColor3f(ctx.getTranslucency(), ctx.getTranslucency(), ctx.getTranslucency());
-	glDrawElements(GL_TRIANGLES, (ctx.getSelectedCount() - 1) * (m_nSample - 1) * 6, GL_UNSIGNED_INT, &m_mountain.m_vTriangle[0]);
+	glDrawElements(GL_TRIANGLES, (ctx.getSelectedCount() - 1) * (m_nSample - 1) * 6, GL_UNSIGNED_INT, &m_mountain.m_Triangles[0]);
 	/*
 		::glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		::glColor3f(0, 0, 0);
-		::glDrawElements(GL_TRIANGLES, m_mountain.m_vTriangle.size(), GL_UNSIGNED_INT, &m_mountain.m_vTriangle[0]);
+		::glDrawElements(GL_TRIANGLES, m_mountain.m_Triangles.size(), GL_UNSIGNED_INT, &m_mountain.m_Triangles[0]);
 		::glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	*/
 

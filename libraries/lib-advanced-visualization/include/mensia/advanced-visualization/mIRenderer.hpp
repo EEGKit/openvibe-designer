@@ -21,7 +21,7 @@
 #pragma once
 
 #include "m_defines.hpp"
-#include "mIRendererContext.hpp"
+#include "mCRendererContext.hpp"
 #include "mCVertex.hpp"
 
 #if defined TARGET_OS_Windows
@@ -57,7 +57,7 @@ namespace Mensia
 			XYZPlot,
 			Last
 		};
-		
+
 		class LMAV_API IRenderer
 		{
 		public:
@@ -67,8 +67,8 @@ namespace Mensia
 
 			static IRenderer* create(const ERendererType type, const bool stimulation);
 			static void release(IRenderer* renderer) { delete renderer; }
-			
-			void setChannelLocalisation(const char* filename) { m_channelLocalisationFilename = filename; }
+
+			void setChannelLocalisation(const char* filename) { m_channelPosFilename = filename; }
 			void setChannelCount(const size_t nChannel);
 			void setSampleCount(const size_t nSample);
 			void setHistoryDrawIndex(const size_t index);
@@ -93,10 +93,10 @@ namespace Mensia
 			void draw2DCoordinateSystem();
 			void draw3DCoordinateSystem();
 			void drawCoordinateSystem() { this->draw3DCoordinateSystem(); }
-			
-			virtual void rebuild(const IRendererContext& /*ctx*/) { }
-			virtual void refresh(const IRendererContext& ctx);
-			virtual bool render(const IRendererContext& ctx) = 0;
+
+			virtual void rebuild(const CRendererContext& /*ctx*/) { }
+			virtual void refresh(const CRendererContext& ctx);
+			virtual bool render(const CRendererContext& ctx) = 0;
 
 			virtual void clearRegionSelection() { }
 			virtual size_t getRegionCategoryCount() { return 0; }
@@ -109,7 +109,7 @@ namespace Mensia
 
 		protected:
 
-			std::string m_channelLocalisationFilename;
+			std::string m_channelPosFilename;
 			size_t m_historyIdx     = 0;
 			size_t m_historyDrawIdx = 0;
 			size_t m_nHistory       = 0;
@@ -125,7 +125,7 @@ namespace Mensia
 
 			uint64_t m_timeOffset = 0;
 
-			// std::map < std::string, CVertex > m_channelLocalisation;
+			// std::map < std::string, CVertex > m_channelPos;
 			std::vector<std::pair<double, uint64_t>> m_stimulationHistory;
 			std::vector<std::vector<float>> m_history;
 			std::vector<std::vector<CVertex>> m_vertex;

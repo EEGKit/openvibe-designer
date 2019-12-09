@@ -32,13 +32,13 @@ namespace Mensia
 
 			CRulerConditionIsTimeLocked() : m_pRendererContext(nullptr), m_pRenderer(nullptr) { }
 
-			void setRendererContext(const IRendererContext* pRendererContext) override { m_pRendererContext = pRendererContext; }
+			void setRendererContext(const CRendererContext* pRendererContext) override { m_pRendererContext = pRendererContext; }
 
 			void setRenderer(const IRenderer* pRenderer) override { m_pRenderer = pRenderer; }
 
 			bool operator()() { return m_pRendererContext->isTimeLocked(); }
 
-			const IRendererContext* m_pRendererContext;
+			const CRendererContext* m_pRendererContext;
 			const IRenderer* m_pRenderer;
 		};
 	} // namespace AdvancedVisualization

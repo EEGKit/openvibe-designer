@@ -21,5 +21,5 @@
 #pragma once
 
 #include "advanced-visualization/mIRenderer.hpp"
-#include "advanced-visualization/mIRendererContext.hpp"
+#include "advanced-visualization/mCRendererContext.hpp"
 #include "advanced-visualization/mCVertex.hpp"

@@ -36,14 +36,14 @@ namespace Mensia
 		{
 		public:
 
-			void rebuild(const IRendererContext& ctx) override;
-			void refresh(const IRendererContext& ctx) override;
-			bool render(const IRendererContext& ctx) override;
+			void rebuild(const CRendererContext& ctx) override;
+			void refresh(const CRendererContext& ctx) override;
+			bool render(const CRendererContext& ctx) override;
 
 			// Called before electrode projections and spherical interpolation parameters generations and might be used to load a mesh or generate a sphere for instance
-			virtual void rebuild3DMeshesPre(const IRendererContext& ctx) = 0;
+			virtual void rebuild3DMeshesPre(const CRendererContext& ctx) = 0;
 			// Called after electrode projections and spherical interpolation parameters generations and might be used to unfold previously loaded mesh for instance
-			virtual void rebuild3DMeshesPost(const IRendererContext& ctx) = 0;
+			virtual void rebuild3DMeshesPost(const CRendererContext& ctx) = 0;
 
 		private:
 

@@ -33,7 +33,7 @@
 using namespace Mensia;
 using namespace AdvancedVisualization;
 
-static void q_rotate(Eigen::VectorXd& vDest, const Eigen::VectorXd& vSrc, const Eigen::Quaterniond& q) { vDest = q.matrix() * vSrc; }
+static void q_rotate(Eigen::VectorXd& dst, const Eigen::VectorXd& src, const Eigen::Quaterniond& q) { dst = q.matrix() * src; }
 
 static void q_from_polar(Eigen::Quaterniond& q, Eigen::VectorXd& v1, Eigen::VectorXd& v2, const CVertex& cv1, const CVertex& cv2)
 {
@@ -48,66 +48,63 @@ static void q_from_polar(Eigen::Quaterniond& q, Eigen::VectorXd& v1, Eigen::Vect
 	q.setFromTwoVectors(v1, v2);
 }
 
-void CRendererConnectivity::rebuild(const IRendererContext& rContext)
+void CRendererConnectivity::rebuild(const CRendererContext& ctx)
 {
-	IRenderer::rebuild(rContext);
+	IRenderer::rebuild(ctx);
 
-	uint32_t i, l = 0;
 
-	Eigen::Quaterniond q          = Eigen::Quaterniond::Identity();
-	const Eigen::Quaterniond q_id = Eigen::Quaterniond::Identity();
-	Eigen::Quaterniond q_diff     = Eigen::Quaterniond::Identity();
+	Eigen::Quaterniond q         = Eigen::Quaterniond::Identity();
+	const Eigen::Quaterniond qId = Eigen::Quaterniond::Identity();
+	Eigen::Quaterniond qDiff     = Eigen::Quaterniond::Identity();
 	Eigen::VectorXd v(3);
 	Eigen::VectorXd v1(3);
 	Eigen::VectorXd v2(3);
 
-	C3DMesh l_oScalp;
-	l_oScalp.load(g_pScalpData, sizeof(g_pScalpData));
+	C3DMesh scalp;
+	scalp.load(SCALP_DATA);
 
 	// Projects electrode coordinates to 3D mesh
 
-	std::vector<CVertex> l_vProjectedChannelCoordinate;
-	std::vector<CVertex> l_vChannelCoordinate;
-	l_vChannelCoordinate.resize(rContext.getChannelCount());
-	for (i = 0; i < rContext.getChannelCount(); ++i)
-	{
-		rContext.getChannelLocalisation(i, l_vChannelCoordinate[i].x, l_vChannelCoordinate[i].y, l_vChannelCoordinate[i].z);
-	}
-	l_oScalp.project(l_vProjectedChannelCoordinate, l_vChannelCoordinate);
+	std::vector<CVertex> projectedChannelPos;
+	std::vector<CVertex> channelPos;
+	channelPos.resize(ctx.getChannelCount());
+	for (size_t i = 0; i < ctx.getChannelCount(); ++i) { ctx.getChannelLocalisation(i, channelPos[i].x, channelPos[i].y, channelPos[i].z); }
+	scalp.project(projectedChannelPos, channelPos);
 
 	// Generates arcs
 
 	m_vertex.clear();
 	m_vertex.resize(m_nChannel * (m_nChannel - 1) / 2);
-	for (i = 0; i < m_nChannel; ++i)
+	size_t l = 0;
+	for (size_t i = 0; i < m_nChannel; ++i)
 	{
-		for (uint32_t j = 0; j < i; ++j)
+		for (size_t j = 0; j < i; ++j)
 		{
 			m_vertex[l].resize(COUNT);
 
 			CVertex vi, vj;
-			vi = l_vChannelCoordinate[i];
-			vj = l_vChannelCoordinate[j];
+			vi = channelPos[i];
+			vj = channelPos[j];
 
-			const float vi_len = l_vProjectedChannelCoordinate[i].length();
-			const float vj_len = l_vProjectedChannelCoordinate[j].length();
+			const float viLen = projectedChannelPos[i].length();
+			const float vjLen = projectedChannelPos[j].length();
 
-			q_from_polar(q_diff, v1, v2, vi, vj);
+			q_from_polar(qDiff, v1, v2, vi, vj);
 
 			const double alpha = 0;
 			const double dot   = (1 - CVertex::dot(vi, vj)) * .5;
 
-			for (uint32_t k = 0; k < COUNT; ++k)
+			for (size_t k = 0; k < COUNT; ++k)
 			{
 				const float t = float(k * 1. / (COUNT - 1));
 				auto s        = float((t - .5) * 2);
 				s             = float(1 + .5 * (1 - s * s) * dot);
 
-				q = q_id.slerp(t, q_diff);
+				q = qId.slerp(t, qDiff);
 
 				q_rotate(v, v1, q);
 
-				const float len  = (vi_len * (1 - t) + vj_len * t);
+				const float len  = (viLen * (1 - t) + vjLen * t);
 				m_vertex[l][k].x = float(s * v[0] * len);
 				m_vertex[l][k].y = float(s * v[1] * len);
 				m_vertex[l][k].z = float(s * v[2] * len);
@@ -121,19 +118,19 @@ void CRendererConnectivity::rebuild(const IRendererContext& rContext)
 	m_historyIdx = 0;
 }
 
-void CRendererConnectivity::refresh(const IRendererContext& rContext)
+void CRendererConnectivity::refresh(const CRendererContext& ctx)
 {
-	IRenderer::refresh(rContext);
+	IRenderer::refresh(ctx);
 
 	if (!m_nHistory) { return; }
 	if (m_nHistory < m_nChannel) { return; }
 
-	uint32_t l = 0;
-	for (uint32_t i = 0; i < m_nChannel; ++i)
+	size_t l = 0;
+	for (size_t i = 0; i < m_nChannel; ++i)
 	{
-		for (uint32_t j = 0; j < i; ++j)
+		for (size_t j = 0; j < i; ++j)
 		{
-			for (uint32_t k = 0; k < COUNT; ++k) { m_vertex[l][k].u = m_history[i][m_nHistory - 1 - j]; }
+			for (size_t k = 0; k < COUNT; ++k) { m_vertex[l][k].u = m_history[i][m_nHistory - 1 - j]; }
 			l++;
 		}
 	}
@@ -141,9 +138,9 @@ void CRendererConnectivity::refresh(const IRendererContext& rContext)
 	m_historyIdx = m_nHistory;
 }
 
-bool CRendererConnectivity::render(const IRendererContext& rContext)
+bool CRendererConnectivity::render(const CRendererContext& ctx)
 {
-	if (!rContext.getSelectedCount()) { return false; }
+	if (!ctx.getSelectedCount()) { return false; }
 	if (m_vertex.empty()) { return false; }
 	if (!m_nHistory) { return false; }
 
@@ -154,36 +151,32 @@ bool CRendererConnectivity::render(const IRendererContext& rContext)
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
-	gluPerspective(60, rContext.getAspect(), .01, 100);
+	gluPerspective(60, ctx.getAspect(), .01, 100);
 	glTranslatef(0, 0, -d);
-	glRotatef(rContext.getRotationX() * 10, 1, 0, 0);
-	glRotatef(rContext.getRotationY() * 10, 0, 1, 0);
+	glRotatef(ctx.getRotationX() * 10, 1, 0, 0);
+	glRotatef(ctx.getRotationY() * 10, 0, 1, 0);
 
 	glMatrixMode(GL_TEXTURE);
 	glPushMatrix();
-	glScalef(rContext.getScale(), 1, 1);
+	glScalef(ctx.getScale(), 1, 1);
 
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadIdentity();
-	glScalef(rContext.getZoom(), rContext.getZoom(), rContext.getZoom());
+	glScalef(ctx.getZoom(), ctx.getZoom(), ctx.getZoom());
 
-	//	uint32_t l_ui32ChannelCountSquare=m_nChannel*m_nChannel;
-	const float rgb = 1.f;
-	glColor4f(rgb, rgb, rgb, rContext.getTranslucency());
+	const float rgb = 1.F;
+	glColor4f(rgb, rgb, rgb, ctx.getTranslucency());
 	glPushMatrix();
-#if 1
-	glTranslatef(0, .5f, 0);
+
+	glTranslatef(0, .5F, 0);
 	glRotatef(19, 1, 0, 0);
-	glTranslatef(0, -.2f, .35f);
-	//	::glScalef(1.8f, 1.8f, 1.8f);
-#else
-	::glRotatef(19, 1, 0, 0);
-#endif
+	glTranslatef(0, -.2F, .35F);
+	// ::glScalef(1.8f, 1.8f, 1.8f);
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	for (uint32_t i = 0; i < m_nChannel * (m_nChannel - 1) / 2; ++i)
+	for (size_t i = 0; i < m_nChannel * (m_nChannel - 1) / 2; ++i)
 	{
 		glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_vertex[i][0].x);
 		glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_vertex[i][0].u);
@@ -194,7 +187,7 @@ bool CRendererConnectivity::render(const IRendererContext& rContext)
 
 	glPopMatrix();
 
-	if (rContext.getCheckBoardVisibility()) { this->drawCoordinateSystem(); }
+	if (ctx.getCheckBoardVisibility()) { this->drawCoordinateSystem(); }
 
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();

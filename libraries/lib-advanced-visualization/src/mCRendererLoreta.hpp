@@ -39,9 +39,9 @@ namespace Mensia
 
 			CRendererLoreta();
 
-			void rebuild(const IRendererContext& ctx) override { IRenderer::rebuild(ctx); }
-			void refresh(const IRendererContext& ctx) override { IRenderer::refresh(ctx); }
-			bool render(const IRendererContext& ctx) override;
+			void rebuild(const CRendererContext& ctx) override { IRenderer::rebuild(ctx); }
+			void refresh(const CRendererContext& ctx) override { IRenderer::refresh(ctx); }
+			bool render(const CRendererContext& ctx) override;
 
 			void clearRegionSelection() override;
 			size_t getRegionCategoryCount() override { return m_lookups.size(); }
@@ -55,7 +55,7 @@ namespace Mensia
 
 		protected:
 
-			std::vector<std::map<std::string, std::vector<uint32_t>>> m_lookups;
+			std::vector<std::map<std::string, std::vector<size_t>>> m_lookups;
 			std::vector<bool> m_selecteds;
 
 			C3DMesh m_face, m_scalp, m_brain;

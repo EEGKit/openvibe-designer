@@ -10,8 +10,8 @@ namespace Mensia
 		{
 		public:
 
-			void rebuild3DMeshesPre(const IRendererContext& ctx) override;
-			void rebuild3DMeshesPost(const IRendererContext& ctx) override;
+			void rebuild3DMeshesPre(const CRendererContext& ctx) override;
+			void rebuild3DMeshesPost(const CRendererContext& ctx) override;
 		};
 	} // namespace AdvancedVisualization
 } // namespace Mensia

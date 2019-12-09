@@ -29,7 +29,7 @@ using namespace AdvancedVisualization;
 
 CRendererFlower::CRendererFlower(const size_t multiCount) { m_muliVertices.resize(multiCount); }
 
-void CRendererFlower::rebuild(const IRendererContext& ctx)
+void CRendererFlower::rebuild(const CRendererContext& ctx)
 {
 	IRenderer::rebuild(ctx);
 
@@ -63,9 +63,9 @@ void CRendererFlower::rebuild(const IRendererContext& ctx)
 	m_historyIdx = 0;
 }
 
-void CRendererFlower::refresh(const IRendererContext& rContext)
+void CRendererFlower::refresh(const CRendererContext& ctx)
 {
-	IRenderer::refresh(rContext);
+	IRenderer::refresh(ctx);
 
 	if (!m_nHistory) { return; }
 
@@ -112,7 +112,7 @@ void CRendererFlower::refresh(const IRendererContext& rContext)
 	m_historyIdx = m_nHistory;
 }
 
-bool CRendererFlower::render(const IRendererContext& ctx)
+bool CRendererFlower::render(const CRendererContext& ctx)
 {
 	if (!ctx.getSelectedCount()) { return false; }
 	if (m_muliVertices.empty()) { return false; }
@@ -143,11 +143,11 @@ bool CRendererFlower::render(const IRendererContext& ctx)
 
 				glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &vertices[0].x);
 				glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &vertices[n - d].u);
-				glDrawArrays(GL_LINE_STRIP, 0, d);
+				glDrawArrays(GL_LINE_STRIP, 0, GLsizei(d));
 
 				glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &vertices[d].x);
 				glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &vertices[0].u);
-				glDrawArrays(GL_LINE_STRIP, 0, n - d);
+				glDrawArrays(GL_LINE_STRIP, 0, GLsizei(n - d));
 
 				glBegin(GL_LINES);
 				glTexCoord1fv(&vertices[n - d].u);

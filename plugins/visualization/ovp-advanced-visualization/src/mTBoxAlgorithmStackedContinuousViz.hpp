@@ -132,10 +132,10 @@ namespace Mensia
 			for (uint32_t i = 0; i < m_vRenderer.size(); ++i) { m_oRendererFactory.release(m_vRenderer[i]); }
 			m_vRenderer.clear();
 
-			IRendererContext::release(m_pSubRendererContext);
+			delete m_pSubRendererContext;
 			m_pSubRendererContext = nullptr;
 
-			IRendererContext::release(m_pRendererContext);
+			delete m_pRendererContext;
 			m_pRendererContext = nullptr;
 
 			delete m_pRuler;
@@ -237,18 +237,18 @@ namespace Mensia
 
 					if (m_typeID == OV_TypeId_Signal)
 					{
-						m_pRendererContext->setDataType(IRendererContext::DataType_Signal);
-						m_pSubRendererContext->setDataType(IRendererContext::DataType_Signal);
+						m_pRendererContext->setDataType(CRendererContext::DataType_Signal);
+						m_pSubRendererContext->setDataType(CRendererContext::DataType_Signal);
 					}
 					else if (m_typeID == OV_TypeId_Spectrum)
 					{
-						m_pRendererContext->setDataType(IRendererContext::DataType_Spectrum);
-						m_pSubRendererContext->setDataType(IRendererContext::DataType_Spectrum);
+						m_pRendererContext->setDataType(CRendererContext::DataType_Spectrum);
+						m_pSubRendererContext->setDataType(CRendererContext::DataType_Spectrum);
 					}
 					else
 					{
-						m_pRendererContext->setDataType(IRendererContext::DataType_Matrix);
-						m_pSubRendererContext->setDataType(IRendererContext::DataType_Matrix);
+						m_pRendererContext->setDataType(CRendererContext::DataType_Matrix);
+						m_pSubRendererContext->setDataType(CRendererContext::DataType_Matrix);
 					}
 
 					m_pRuler->setRenderer(nChannel ? m_vRenderer[0] : nullptr);

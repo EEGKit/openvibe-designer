@@ -31,9 +31,9 @@ namespace Mensia
 		public:
 			CRendererLine();
 
-			void rebuild(const IRendererContext& ctx) override;
-			void refresh(const IRendererContext& ctx) override;
-			bool render(const IRendererContext& ctx) override;
+			void rebuild(const CRendererContext& ctx) override;
+			void refresh(const CRendererContext& ctx) override;
+			bool render(const CRendererContext& ctx) override;
 
 		protected:
 			std::vector<std::vector<CVertex>> m_vertices;

@@ -199,9 +199,9 @@ namespace Mensia
 
 					m_pRenderer->setChannelCount(nChannel);
 
-					if (m_typeID == OV_TypeId_Signal) { m_pRendererContext->setDataType(IRendererContext::DataType_Signal); }
-					else if (m_typeID == OV_TypeId_Spectrum) { m_pRendererContext->setDataType(IRendererContext::DataType_Spectrum); }
-					else { m_pRendererContext->setDataType(IRendererContext::DataType_Matrix); }
+					if (m_typeID == OV_TypeId_Signal) { m_pRendererContext->setDataType(CRendererContext::DataType_Signal); }
+					else if (m_typeID == OV_TypeId_Spectrum) { m_pRendererContext->setDataType(CRendererContext::DataType_Spectrum); }
+					else { m_pRendererContext->setDataType(CRendererContext::DataType_Matrix); }
 
 					if (nSample != 1)
 					{

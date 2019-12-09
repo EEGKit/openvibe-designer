@@ -4,10 +4,10 @@
 using namespace Mensia;
 using namespace AdvancedVisualization;
 
-//	constexpr constexpr float OFFSET = 0.0001f; //Macro modernization, Not yet with jenkins (not the last visual 2013 which it works)
+// constexpr constexpr float OFFSET = 0.0001f; //Macro modernization, Not yet with jenkins (not the last visual 2013 which it works)
 #define OFFSET 0.0001f
 
-void CRendererTopo2D::rebuild3DMeshesPre(const IRendererContext& /*rContext*/)
+void CRendererTopo2D::rebuild3DMeshesPre(const CRendererContext& /*rContext*/)
 {
 	const size_t nVertex1      = 32;
 	const size_t nVertex2      = 32;
@@ -16,8 +16,8 @@ void CRendererTopo2D::rebuild3DMeshesPre(const IRendererContext& /*rContext*/)
 	{
 		m_scalp.clear();
 
-		std::vector<CVertex>& vertices   = m_scalp.m_vVertex;
-		std::vector<uint32_t>& triangles = m_scalp.m_vTriangle;
+		std::vector<CVertex>& vertices   = m_scalp.m_Vertices;
+		std::vector<uint32_t>& triangles = m_scalp.m_Triangles;
 
 		vertices.resize(nVertex1 * nVertex2);
 		for (size_t i = 0, k = 0; i < nVertex1; ++i)
@@ -48,9 +48,9 @@ void CRendererTopo2D::rebuild3DMeshesPre(const IRendererContext& /*rContext*/)
 			}
 		}
 
-		m_scalp.m_vColor[0] = 1;
-		m_scalp.m_vColor[1] = 1;
-		m_scalp.m_vColor[2] = 1;
+		m_scalp.m_Color[0] = 1;
+		m_scalp.m_Color[1] = 1;
+		m_scalp.m_Color[2] = 1;
 
 		//		m_scalp.compile();
 	}
@@ -58,8 +58,8 @@ void CRendererTopo2D::rebuild3DMeshesPre(const IRendererContext& /*rContext*/)
 	{
 		m_face.clear();
 
-		std::vector<CVertex>& vertices   = m_face.m_vVertex;
-		std::vector<uint32_t>& triangles = m_face.m_vTriangle;
+		std::vector<CVertex>& vertices   = m_face.m_Vertices;
+		std::vector<uint32_t>& triangles = m_face.m_Triangles;
 
 		// Ribbon mesh
 
@@ -106,7 +106,7 @@ void CRendererTopo2D::rebuild3DMeshesPre(const IRendererContext& /*rContext*/)
 
 		triangles.resize(nCircleVertex * 6/*+12*/);
 		const size_t mod = nCircleVertex * 2;
-		for (size_t i = 0, k = 0; i < nCircleVertex; i++)
+		for (size_t i = 0, k = 0; i < nCircleVertex; ++i)
 		{
 			triangles[k++] = (i) % mod;
 			triangles[k++] = (i + 1) % mod;
@@ -135,9 +135,9 @@ void CRendererTopo2D::rebuild3DMeshesPre(const IRendererContext& /*rContext*/)
 				l_vTriangle[k+10]=l_ui32CircleVertexCount*2+4;
 				l_vTriangle[k+11]=l_ui32CircleVertexCount*2+5;
 		*/
-		m_face.m_vColor[0] = 1.15F;
-		m_face.m_vColor[1] = 1.15F;
-		m_face.m_vColor[2] = 1.15F;
+		m_face.m_Color[0] = 1.15F;
+		m_face.m_Color[1] = 1.15F;
+		m_face.m_Color[2] = 1.15F;
 
 		//		m_face.compile();
 	}
@@ -147,25 +147,24 @@ namespace
 {
 	void unfold(std::vector<CVertex>& vertices, const float layer = 0)
 	{
-		for (auto it = vertices.begin(); it != vertices.end(); ++it)
+		for (auto& v : vertices)
 		{
-			CVertex& p = (*it);
-			p.y += OFFSET;
-			const float phi = float(M_PI) * .5F - asinf(p.y);
-			const float psi = atan2f(p.z, p.x);
+			v.y += OFFSET;
+			const float phi = float(M_PI) * .5F - asinf(v.y);
+			const float psi = atan2f(v.z, v.x);
 
-			p.x = phi * cos(psi);
-			p.y = layer;
-			p.z = phi * sin(psi);
+			v.x = phi * cos(psi);
+			v.y = layer;
+			v.z = phi * sin(psi);
 		}
 	}
 } // namespace
 
-void CRendererTopo2D::rebuild3DMeshesPost(const IRendererContext& /*rContext*/)
+void CRendererTopo2D::rebuild3DMeshesPost(const CRendererContext& /*ctx*/)
 {
 	const float layer = 1E-3F;
 
-	unfold(m_scalp.m_vVertex, -layer);
-	unfold(m_face.m_vVertex, layer);
+	unfold(m_scalp.m_Vertices, -layer);
+	unfold(m_face.m_Vertices, layer);
 	unfold(m_projectedChannelCoordinates);
 }
