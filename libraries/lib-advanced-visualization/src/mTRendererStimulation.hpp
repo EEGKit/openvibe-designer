@@ -184,11 +184,11 @@ namespace Mensia
 				return color;
 			}
 
-			template <typename T>
-			T reverse(T v)
+			template <typename Tvector>
+			Tvector reverse(Tvector v)
 			{
-				T res = 0;
-				for (T i = 0; i < sizeof(T) * 8; ++i)
+				Tvector res = 0;
+				for (Tvector i = 0; i < sizeof(Tvector) * 8; ++i)
 				{
 					res <<= 1;
 					res |= ((v & (1 << i)) ? 1 : 0);
