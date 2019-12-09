@@ -32,61 +32,60 @@ namespace Mensia
 		{
 		public:
 
-			void setRendererContext(const CRendererContext* pRendererContext) override
+			void setRendererContext(const CRendererContext* ctx) override
 			{
-				IRuler::setRendererContext(pRendererContext);
-				m_oRulerSignal.setRendererContext(pRendererContext);
-				m_oRulerSpectrum.setRendererContext(pRendererContext);
-				m_oRulerMatrix.setRendererContext(pRendererContext);
+				IRuler::setRendererContext(ctx);
+				m_rulerSignal.setRendererContext(ctx);
+				m_rulerSpectrum.setRendererContext(ctx);
+				m_rulerMatrix.setRendererContext(ctx);
 			}
 
-			void setRenderer(const IRenderer* pRenderer) override
+			void setRenderer(const IRenderer* renderer) override
 			{
-				IRuler::setRenderer(pRenderer);
-				m_oRulerSignal.setRenderer(pRenderer);
-				m_oRulerSpectrum.setRenderer(pRenderer);
-				m_oRulerMatrix.setRenderer(pRenderer);
+				IRuler::setRenderer(renderer);
+				m_rulerSignal.setRenderer(renderer);
+				m_rulerSpectrum.setRenderer(renderer);
+				m_rulerMatrix.setRenderer(renderer);
 			}
 
 			void render() override
-
 			{
-				const CRendererContext::EDataType l_eDataType = m_pRendererContext->getDataType();
-				if (l_eDataType == CRendererContext::DataType_Signal) { m_oRulerSignal.doRender(); }
-				else if (l_eDataType == CRendererContext::DataType_Spectrum) { m_oRulerSpectrum.doRender(); }
-				else { m_oRulerMatrix.doRender(); }
+				const CRendererContext::EDataType dataType = m_rendererCtx->getDataType();
+				if (dataType == CRendererContext::DataType_Signal) { m_rulerSignal.doRender(); }
+				else if (dataType == CRendererContext::DataType_Spectrum) { m_rulerSpectrum.doRender(); }
+				else { m_rulerMatrix.doRender(); }
 			}
 
-			void renderLeft(GtkWidget* pWidget) override
+			void renderLeft(GtkWidget* widget) override
 			{
-				const CRendererContext::EDataType l_eDataType = m_pRendererContext->getDataType();
-				if (l_eDataType == CRendererContext::DataType_Signal) { m_oRulerSignal.doRenderLeft(pWidget); }
-				else if (l_eDataType == CRendererContext::DataType_Spectrum) { m_oRulerSpectrum.doRenderLeft(pWidget); }
-				else { m_oRulerMatrix.doRenderLeft(pWidget); }
+				const CRendererContext::EDataType dataType = m_rendererCtx->getDataType();
+				if (dataType == CRendererContext::DataType_Signal) { m_rulerSignal.doRenderLeft(widget); }
+				else if (dataType == CRendererContext::DataType_Spectrum) { m_rulerSpectrum.doRenderLeft(widget); }
+				else { m_rulerMatrix.doRenderLeft(widget); }
 			}
 
-			void renderRight(GtkWidget* pWidget) override
+			void renderRight(GtkWidget* widget) override
 			{
-				const CRendererContext::EDataType l_eDataType = m_pRendererContext->getDataType();
-				if (l_eDataType == CRendererContext::DataType_Signal) { m_oRulerSignal.doRenderRight(pWidget); }
-				else if (l_eDataType == CRendererContext::DataType_Spectrum) { m_oRulerSpectrum.doRenderRight(pWidget); }
-				else { m_oRulerMatrix.doRenderRight(pWidget); }
+				const CRendererContext::EDataType dataType = m_rendererCtx->getDataType();
+				if (dataType == CRendererContext::DataType_Signal) { m_rulerSignal.doRenderRight(widget); }
+				else if (dataType == CRendererContext::DataType_Spectrum) { m_rulerSpectrum.doRenderRight(widget); }
+				else { m_rulerMatrix.doRenderRight(widget); }
 			}
 
-			void renderBottom(GtkWidget* pWidget) override
+			void renderBottom(GtkWidget* widget) override
 			{
-				const CRendererContext::EDataType l_eDataType = m_pRendererContext->getDataType();
+				const CRendererContext::EDataType dataType = m_rendererCtx->getDataType();
 
-				if (l_eDataType == CRendererContext::DataType_Signal) { m_oRulerSignal.doRenderBottom(pWidget); }
-				else if (l_eDataType == CRendererContext::DataType_Spectrum) { m_oRulerSpectrum.doRenderBottom(pWidget); }
-				else { m_oRulerMatrix.doRenderBottom(pWidget); }
+				if (dataType == CRendererContext::DataType_Signal) { m_rulerSignal.doRenderBottom(widget); }
+				else if (dataType == CRendererContext::DataType_Spectrum) { m_rulerSpectrum.doRenderBottom(widget); }
+				else { m_rulerMatrix.doRenderBottom(widget); }
 			}
 
 		protected:
 
-			TRulerMatrix m_oRulerMatrix;
-			TRulerSignal m_oRulerSignal;
-			TRulerSpectrum m_oRulerSpectrum;
+			TRulerMatrix m_rulerMatrix;
+			TRulerSignal m_rulerSignal;
+			TRulerSpectrum m_rulerSpectrum;
 		};
 	} // namespace AdvancedVisualization
 } // namespace Mensia

@@ -30,30 +30,29 @@ namespace Mensia
 		{
 		public:
 
-			void renderFinal(const float fProgress) override
+			void renderFinal(const float progress) override
 			{
-				const uint32_t selectedCount = m_pRendererContext->getSelectedCount();
-				uint32_t i;
+				const size_t selectedCount = m_rendererCtx->getSelectedCount();
 				glDisable(GL_TEXTURE_1D);
 				glDisable(GL_BLEND);
 
 				glLineWidth(4);
 				glColor3f(0, 0, 0);
 				glBegin(GL_LINES);
-				for (i = 0; i < selectedCount; ++i)
+				for (size_t i = 0; i < selectedCount; ++i)
 				{
-					glVertex2f(0, (i + fProgress) / selectedCount);
-					glVertex2f(1, (i + fProgress) / selectedCount);
+					glVertex2f(0, (i + progress) / selectedCount);
+					glVertex2f(1, (i + progress) / selectedCount);
 				}
 				glEnd();
 
 				glLineWidth(2);
 				glColor3f(0.25, 1, 0.25);
 				glBegin(GL_LINES);
-				for (i = 0; i < selectedCount; ++i)
+				for (size_t i = 0; i < selectedCount; ++i)
 				{
-					glVertex2f(0, (i + fProgress) / selectedCount);
-					glVertex2f(1, (i + fProgress) / selectedCount);
+					glVertex2f(0, (i + progress) / selectedCount);
+					glVertex2f(1, (i + progress) / selectedCount);
 				}
 				glEnd();
 			}

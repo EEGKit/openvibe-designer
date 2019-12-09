@@ -31,45 +31,26 @@ namespace Mensia
 		{
 		public:
 
-			void setRendererContext(const CRendererContext* pRendererContext) override
+			void setRendererContext(const CRendererContext* ctx) override
 			{
-				IRuler::setRendererContext(pRendererContext);
-				condition.setRendererContext(pRendererContext);
-				first.setRendererContext(pRendererContext);
-				second.setRendererContext(pRendererContext);
+				IRuler::setRendererContext(ctx);
+				condition.setRendererContext(ctx);
+				first.setRendererContext(ctx);
+				second.setRendererContext(ctx);
 			}
 
-			void setRenderer(const IRenderer* pRenderer) override
+			void setRenderer(const IRenderer* renderer) override
 			{
-				IRuler::setRenderer(pRenderer);
-				condition.setRenderer(pRenderer);
-				first.setRenderer(pRenderer);
-				second.setRenderer(pRenderer);
+				IRuler::setRenderer(renderer);
+				condition.setRenderer(renderer);
+				first.setRenderer(renderer);
+				second.setRenderer(renderer);
 			}
 
-			void render() override
-			{
-				if (condition()) { first.doRender(); }
-				else { second.doRender(); }
-			}
-
-			void renderLeft(GtkWidget* pWidget) override
-			{
-				if (condition()) { first.doRenderLeft(pWidget); }
-				else { second.doRenderLeft(pWidget); }
-			}
-
-			void renderRight(GtkWidget* pWidget) override
-			{
-				if (condition()) { first.doRenderRight(pWidget); }
-				else { second.doRenderRight(pWidget); }
-			}
-
-			void renderBottom(GtkWidget* pWidget) override
-			{
-				if (condition()) { first.doRenderBottom(pWidget); }
-				else { second.doRenderBottom(pWidget); }
-			}
+			void render() override { condition() ? first.doRender() : second.doRender(); }
+			void renderLeft(GtkWidget* widget) override { condition() ? first.doRenderLeft(widget) : second.doRenderLeft(widget); }
+			void renderRight(GtkWidget* widget) override { condition() ? first.doRenderRight(widget) : second.doRenderRight(widget); }
+			void renderBottom(GtkWidget* widget) override { condition() ? first.doRenderBottom(widget) : second.doRenderBottom(widget); }
 
 			TCondition condition;
 			T1 first;
