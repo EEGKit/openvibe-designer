@@ -23,8 +23,10 @@
 
 #if defined TARGET_HAS_ThirdPartyOpenGL
 
-#include <cstdint>
 #include <vector>
+#include <array>
+#include <cstdint>
+#include <cstdlib>	// size_t for unix
 
 #include "mCVertex.hpp"
 
@@ -37,20 +39,20 @@ namespace Mensia
 		{
 		public:
 
-			C3DMesh();
+			C3DMesh() { m_Color.fill(1.0); }
 			//C3DMesh(const char* filename);
-			~C3DMesh();
+			~C3DMesh() = default;
 
 			void clear();
 			bool load(const void* buffer);
 			bool compile();
 
-			bool project(std::vector<CVertex>& vProjectedChannelCoordinate, const std::vector<CVertex>& vChannelCoordinate);
+			bool project(std::vector<CVertex>& out, const std::vector<CVertex>& in);
 
 			std::vector<CVertex> m_Vertices;
 			std::vector<CVertex> m_Normals;
 			std::vector<uint32_t> m_Triangles;
-			float m_Color[3];
+			std::array<float, 3> m_Color;
 		};
 	} // namespace AdvancedVisualization
 } // namespace Mensia

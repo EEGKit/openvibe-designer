@@ -43,7 +43,7 @@ namespace Mensia
 		{
 		public:
 			std::vector<std::pair<float, float>> m_Circles;
-			std::map<uint64_t, int> m_EncounteredStimulations;
+			std::map<uint64_t, int> m_Stimulations;
 
 			TRendererStimulation()
 			{
@@ -86,27 +86,27 @@ namespace Mensia
 					glDisable(GL_BLEND);
 					glDisable(GL_LINE_SMOOTH);
 
-					const uint32_t leftIndex = historyIndex - historyIndex % nSample;
-					const uint32_t midIndex  = historyIndex;
-					const double startTime   = ((leftIndex * sampleDuration) >> 16) / 65536.;
-					const double midTime     = ((midIndex * sampleDuration) >> 16) / 65536.;
-					const double duration    = ((nSample * sampleDuration) >> 16) / 65536.;
+					const size_t leftIndex = historyIndex - historyIndex % nSample;
+					const size_t midIndex  = historyIndex;
+					const double startTime = ((leftIndex * sampleDuration) >> 16) / 65536.;
+					const double midTime   = ((midIndex * sampleDuration) >> 16) / 65536.;
+					const double duration  = ((nSample * sampleDuration) >> 16) / 65536.;
 
-					m_EncounteredStimulations.clear();
-					for (auto it = IRenderer::m_stimulationHistory.begin(); it != IRenderer::m_stimulationHistory.end(); ++it)
+					m_Stimulations.clear();
+					for (const auto& stim : IRenderer::m_stimulationHistory)
 					{
-						if (m_EncounteredStimulations.count(it->second) == 0)
+						if (m_Stimulations.count(stim.second) == 0)
 						{
 							// we store the "position" of the indicator for each new encountered stimulation
 							// if there are too many of them, we loop over to the beginning.
-							m_EncounteredStimulations[it->second] = m_EncounteredStimulations.size() % int(1.0F / STIMULATION_INDICATOR_SPACING);
+							m_Stimulations[stim.second] = m_Stimulations.size() % int(1.0F / STIMULATION_INDICATOR_SPACING);
 						}
 
-						if (midTime - duration < it->first && it->first < midTime)
+						if (midTime - duration < stim.first && stim.first < midTime)
 						{
-							float l_fProgress;
-							if (it->first > startTime) { l_fProgress = float((it->first - startTime) / duration); }
-							else { l_fProgress = float((it->first + duration - startTime) / duration); }
+							float progress;
+							if (stim.first > startTime) { progress = float((stim.first - startTime) / duration); }
+							else { progress = float((stim.first + duration - startTime) / duration); }
 
 							/*
 							::glLineWidth(3);
@@ -119,19 +119,19 @@ namespace Mensia
 
 							// draw a vertical line representing the stimulation
 							glLineWidth(1);
-							glColor3fv(getMarkerColor(it->second));
+							glColor3fv(getMarkerColor(stim.second));
 							glBegin(GL_LINES);
-							glVertex2f(l_fProgress, 0);
-							glVertex2f(l_fProgress, 1);
+							glVertex2f(progress, 0);
+							glVertex2f(progress, 1);
 							glEnd();
 
 
 							// draw a (ugly) disc representing a stimulation
 							glBegin(GL_TRIANGLE_FAN);
-							for (auto l_oVertex = m_Circles.cbegin(); l_oVertex != m_Circles.cend(); ++l_oVertex)
+							for (const auto& circle : m_Circles)
 							{
-								glVertex2f(float(l_oVertex->first / ctx.getAspect() + l_fProgress),
-										   float(l_oVertex->second + 0.95F - m_EncounteredStimulations[it->second] * STIMULATION_INDICATOR_SPACING));
+								glVertex2f(float(circle.first / ctx.getAspect() + progress),
+										   float(circle.second + 0.95F - m_Stimulations[stim.second] * STIMULATION_INDICATOR_SPACING));
 							}
 							glEnd();
 
@@ -143,10 +143,10 @@ namespace Mensia
 							glEnable(GL_LINE_SMOOTH);
 							glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 							glBegin(GL_LINE_LOOP);
-							for (auto l_oVertex = m_Circles.cbegin(); l_oVertex != m_Circles.cend(); ++l_oVertex)
+							for (const auto& circle : m_Circles)
 							{
-								glVertex2f(float(l_oVertex->first / ctx.getAspect() + l_fProgress),
-										   float(l_oVertex->second + 0.95F - m_EncounteredStimulations[it->second] * STIMULATION_INDICATOR_SPACING));
+								glVertex2f(float(circle.first / ctx.getAspect() + progress),
+										   float(circle.second + 0.95F - m_Stimulations[stim.second] * STIMULATION_INDICATOR_SPACING));
 							}
 							glEnd();
 							glDisable(GL_LINE_SMOOTH);
@@ -172,10 +172,10 @@ namespace Mensia
 				return res && ok;
 			}
 
-			float* getMarkerColor(const uint64_t ui64Identifier)
+			float* getMarkerColor(const uint64_t id)
 			{
 				static float color[4];
-				const float alpha       = reverse<>(uint8_t(ui64Identifier & 255)) * 3.F / 255.F;
+				const float alpha       = reverse<>(uint8_t(id & 255)) * 3.F / 255.F;
 				const auto alphai       = int(alpha);
 				color[(alphai + 0) % 3] = 1 - alpha / 3.F;
 				color[(alphai + 1) % 3] = alpha / 3.F;
@@ -184,11 +184,11 @@ namespace Mensia
 				return color;
 			}
 
-			template <typename V>
-			V reverse(V v)
+			template <typename T>
+			T reverse(T v)
 			{
-				V res = 0;
-				for (V i = 0; i < sizeof(V) * 8; ++i)
+				T res = 0;
+				for (T i = 0; i < sizeof(T) * 8; ++i)
 				{
 					res <<= 1;
 					res |= ((v & (1 << i)) ? 1 : 0);

@@ -109,19 +109,16 @@ void CRendererTopo::rebuild(const CRendererContext& ctx)
 
 	// Projects electrode coordinates to 3D mesh
 
-	std::vector<CVertex> projectedChannelCPos;
-	std::vector<CVertex> channelPos;
-	channelPos.resize(ctx.getChannelCount());
-	for (size_t i = 0; i < ctx.getChannelCount(); ++i)
-	{
-		ctx.getChannelLocalisation(i, channelPos[i].x, channelPos[i].y, channelPos[i].z);
-	}
-	m_scalp.project(projectedChannelCPos, channelPos);
-	m_projectedChannelCoordinates = projectedChannelCPos;
+	std::vector<CVertex> projectedPositions;
+	std::vector<CVertex> positions;
+	positions.resize(ctx.getChannelCount());
+	for (size_t i = 0; i < ctx.getChannelCount(); ++i) { ctx.getChannelLocalisation(i, positions[i].x, positions[i].y, positions[i].z); }
+	m_scalp.project(projectedPositions, positions);
+	m_projectedPositions = projectedPositions;
 
 #if 0
 
-	m_projectedChannelCoordinates.resize(ctx.getChannelCount());
+	m_projectedPositions.resize(ctx.getChannelCount());
 	for (size_t i = 0; i < ctx.getChannelCount(); ++i)
 	{
 		CVertex p, q;
@@ -149,12 +146,12 @@ void CRendererTopo::rebuild(const CRendererContext& ctx)
 
 			if (CVertex::isInTriangle(q, v1, v2, v3) && t >= 0)
 			{
-				m_projectedChannelCoordinates[i].x = q.x;
-				m_projectedChannelCoordinates[i].y = q.y;
-				m_projectedChannelCoordinates[i].z = q.z;
+				m_projectedPositions[i].x = q.x;
+				m_projectedPositions[i].y = q.y;
+				m_projectedPositions[i].z = q.z;
 			}
 		}
-		if (m_projectedChannelCoordinates[i].x == 0 && m_projectedChannelCoordinates[i].y == 0 && m_projectedChannelCoordinates[i].z == 0)
+		if (m_projectedPositions[i].x == 0 && m_projectedPositions[i].y == 0 && m_projectedPositions[i].z == 0)
 		{
 			// ::printf("Could not project coordinates on mesh for channel %i [%s]\n", i+1, rContext.getChannelName(i).c_str());
 		}
@@ -400,16 +397,16 @@ bool CRendererTopo::render(const CRendererContext& ctx)
 	for (size_t j = 0; j < ctx.getChannelCount(); ++j)
 	{
 		const float scale = .025F;
-		const CVertex v   = m_projectedChannelCoordinates[j];
+		const CVertex v   = m_projectedPositions[j];
 		//ctx.getChannelLocalisation(j, v.x, v.y, v.z);
 
 		glPushMatrix();
 		glTranslatef(v.x, v.y, v.z);
 		glScalef(scale, scale, scale);
 
-		float l_vSelected[]   = { 1, 1, 1 };
-		float l_vUnselected[] = { .2F, .2F, .2F };
-		glColor3fv(ctx.isSelected(j) ? l_vSelected : l_vUnselected);
+		const float value = ctx.isSelected(j) ? 1.0F : 0.2F;
+		const std::array<float, 3> color = { value, value, value };
+		glColor3fv(color.data());
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		cube();
 

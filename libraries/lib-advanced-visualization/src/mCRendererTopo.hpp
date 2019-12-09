@@ -51,7 +51,7 @@ namespace Mensia
 
 		protected:
 
-			std::vector<CVertex> m_projectedChannelCoordinates;
+			std::vector<CVertex> m_projectedPositions;
 
 			C3DMesh m_face;
 			C3DMesh m_scalp;

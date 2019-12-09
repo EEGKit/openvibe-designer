@@ -660,8 +660,8 @@ void CRendererLoreta::refreshBrainSubset()
 	{
 		if (m_selecteds[i]) { for (size_t l = 0; l < vertexPerVoxel; ++l) { m_brainSubsetTriangles[j++] = m_brain.m_Triangles[k + l]; } }
 	}
-
 	// Crops look up to the subset size
+
 	m_brainSubsetTriangles.resize(j);
 }
 

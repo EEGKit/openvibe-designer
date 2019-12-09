@@ -35,8 +35,8 @@ void CRendererMountain::rebuild(const CRendererContext& ctx)
 	{
 		for (size_t j = 0; j < m_nSample; ++j)
 		{
-			const float a             = i * 1.F / float(m_nChannel - 1);
-			const float b             = 1 - j * 1.F / float(m_nSample - 1);
+			const float a              = i * 1.F / float(m_nChannel - 1);
+			const float b              = 1 - j * 1.F / float(m_nSample - 1);
 			m_mountain.m_Vertices[k].x = a;
 			m_mountain.m_Vertices[k].y = 0;
 			m_mountain.m_Vertices[k].z = b;
@@ -78,7 +78,7 @@ void CRendererMountain::refresh(const CRendererContext& ctx)
 		size_t k                    = ((m_nHistory - 1) / m_nSample) * m_nSample;
 		std::vector<float>& history = m_history[ctx.getSelected(i)];
 		CVertex* vertex             = &m_mountain.m_Vertices[i * m_nSample];
-		for (size_t j = 0; j < m_nSample; j++, k++)
+		for (size_t j = 0; j < m_nSample; ++j, ++k)
 		{
 			if (/*k>=m_historyIdx && */k < m_nHistory)
 			{
@@ -132,7 +132,7 @@ bool CRendererMountain::render(const CRendererContext& ctx)
 	glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_mountain.m_Vertices[0].u);
 
 	glColor3f(ctx.getTranslucency(), ctx.getTranslucency(), ctx.getTranslucency());
-	glDrawElements(GL_TRIANGLES, (ctx.getSelectedCount() - 1) * (m_nSample - 1) * 6, GL_UNSIGNED_INT, &m_mountain.m_Triangles[0]);
+	glDrawElements(GL_TRIANGLES, GLsizei((ctx.getSelectedCount() - 1) * (m_nSample - 1) * 6), GL_UNSIGNED_INT, &m_mountain.m_Triangles[0]);
 	/*
 		::glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		::glColor3f(0, 0, 0);

@@ -13,7 +13,7 @@ void CRendererTopo2D::rebuild3DMeshesPre(const CRendererContext& /*rContext*/)
 	const size_t nVertex2      = 32;
 	const size_t nCircleVertex = 128;
 
-	{
+	{	// Scalp
 		m_scalp.clear();
 
 		std::vector<CVertex>& vertices   = m_scalp.m_Vertices;
@@ -48,14 +48,11 @@ void CRendererTopo2D::rebuild3DMeshesPre(const CRendererContext& /*rContext*/)
 			}
 		}
 
-		m_scalp.m_Color[0] = 1;
-		m_scalp.m_Color[1] = 1;
-		m_scalp.m_Color[2] = 1;
-
-		//		m_scalp.compile();
+		m_scalp.m_Color.fill(1.0);
+		// m_scalp.compile();
 	}
 
-	{
+	{	// Face
 		m_face.clear();
 
 		std::vector<CVertex>& vertices   = m_face.m_Vertices;
@@ -64,9 +61,10 @@ void CRendererTopo2D::rebuild3DMeshesPre(const CRendererContext& /*rContext*/)
 		// Ribbon mesh
 
 		vertices.resize(nCircleVertex * 2/*+6*/);
-		for (size_t i = 0, k = 0; i < nCircleVertex; i++, k++)
+		for (size_t i = 0, k = 0; i < nCircleVertex; ++i, ++k)
 		{
-			const auto a  = float(i * 4 * M_PI / nCircleVertex);
+			const auto a = float(i * 4 * M_PI / nCircleVertex);
+
 			vertices[k].x = cosf(a);
 			vertices[k].y = .01F;
 			vertices[k].z = sinf(a);
@@ -78,29 +76,29 @@ void CRendererTopo2D::rebuild3DMeshesPre(const CRendererContext& /*rContext*/)
 
 		// Nose mesh
 		/*
-				l_vVertex[k].x=-1;
-				l_vVertex[k].y=.01;
-				l_vVertex[k].z=-.5;
-			k++;
-				l_vVertex[k].x=-1;
-				l_vVertex[k].y=-.01;
-				l_vVertex[k].z=-.5;
-			k++;
-				l_vVertex[k].x=0;
-				l_vVertex[k].y=.01;
-				l_vVertex[k].z=-1.5;
-			k++;
-				l_vVertex[k].x=0;
-				l_vVertex[k].y=-.01;
-				l_vVertex[k].z=-1.5;
-			k++;
-				l_vVertex[k].x=1;
-				l_vVertex[k].y=.01;
-				l_vVertex[k].z=-.5;
-			k++;
-				l_vVertex[k].x=1;
-				l_vVertex[k].y=-.01;
-				l_vVertex[k].z=-.5;
+		vertices[k].x=-1;
+		vertices[k].y=.01;
+		vertices[k].z=-.5;
+		k++;
+		vertices[k].x=-1;
+		vertices[k].y=-.01;
+		vertices[k].z=-.5;
+		k++;
+		vertices[k].x=0;
+		vertices[k].y=.01;
+		vertices[k].z=-1.5;
+		k++;
+		vertices[k].x=0;
+		vertices[k].y=-.01;
+		vertices[k].z=-1.5;
+		k++;
+		vertices[k].x=1;
+		vertices[k].y=.01;
+		vertices[k].z=-.5;
+		k++;
+		vertices[k].x=1;
+		vertices[k].y=-.01;
+		vertices[k].z=-.5;
 		*/
 		// Ribon mesh
 
@@ -119,27 +117,24 @@ void CRendererTopo2D::rebuild3DMeshesPre(const CRendererContext& /*rContext*/)
 
 		// Nose mesh
 		/*
-				l_vTriangle[k  ]=l_ui32CircleVertexCount*2;
-				l_vTriangle[k+1]=l_ui32CircleVertexCount*2+1;
-				l_vTriangle[k+2]=l_ui32CircleVertexCount*2+2;
-		
-				l_vTriangle[k+3]=l_ui32CircleVertexCount*2+1;
-				l_vTriangle[k+4]=l_ui32CircleVertexCount*2+2;
-				l_vTriangle[k+5]=l_ui32CircleVertexCount*2+3;
-		
-				l_vTriangle[k+6]=l_ui32CircleVertexCount*2+2;
-				l_vTriangle[k+7]=l_ui32CircleVertexCount*2+3;
-				l_vTriangle[k+8]=l_ui32CircleVertexCount*2+4;
-		
-				l_vTriangle[k+9]=l_ui32CircleVertexCount*2+3;
-				l_vTriangle[k+10]=l_ui32CircleVertexCount*2+4;
-				l_vTriangle[k+11]=l_ui32CircleVertexCount*2+5;
-		*/
-		m_face.m_Color[0] = 1.15F;
-		m_face.m_Color[1] = 1.15F;
-		m_face.m_Color[2] = 1.15F;
+		triangles[k++] = mod;
+		triangles[k++] = mod + 1;
+		triangles[k++] = mod + 2;
 
-		//		m_face.compile();
+		triangles[k++] = mod + 1;
+		triangles[k++] = mod + 2;
+		triangles[k++] = mod + 3;
+
+		triangles[k++] = mod + 2;
+		triangles[k++] = mod + 3;
+		triangles[k++] = mod + 4;
+		
+		triangles[k++] = mod + 3;
+		triangles[k++] = mod + 4;
+		triangles[k++] = mod + 5;
+		*/
+		m_face.m_Color.fill(1.15F);
+		// m_face.compile();
 	}
 }
 
@@ -166,5 +161,5 @@ void CRendererTopo2D::rebuild3DMeshesPost(const CRendererContext& /*ctx*/)
 
 	unfold(m_scalp.m_Vertices, -layer);
 	unfold(m_face.m_Vertices, layer);
-	unfold(m_projectedChannelCoordinates);
+	unfold(m_projectedPositions);
 }
