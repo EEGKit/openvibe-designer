@@ -64,13 +64,13 @@ namespace Mensia
 			virtual void renderRight(GtkWidget* /*widget*/) { }
 			virtual void renderBottom(GtkWidget* /*widget*/) { }
 
-			std::vector<double> splitRange(const double start, const double stop, const uint32_t count = 10) const
+			std::vector<double> splitRange(const double start, const double stop, const size_t count = 10) const
 			{
 				std::vector<double> res;
 				const double range = stop - start;
 				const double order = floor(log(range) / log(10.) - .1F);
 				double step        = pow(10, order);
-				double nStep   = trunc(range / step);
+				double nStep       = trunc(range / step);
 
 				while (nStep < count)
 				{

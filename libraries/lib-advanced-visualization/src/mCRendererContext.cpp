@@ -222,7 +222,7 @@ void CRendererContext::clearTransformInfo()
 	m_isScrollModeActive  = false;
 	m_checkBoardVisiblity = false;
 	m_scaleVisiblity      = true;
-	m_dataType            = DataType_Matrix;
+	m_dataType            = Matrix;
 	m_spectrumFreqRange   = 0;
 	m_minSpectrumFreq     = 0;
 	m_maxSpectrumFreq     = 0;

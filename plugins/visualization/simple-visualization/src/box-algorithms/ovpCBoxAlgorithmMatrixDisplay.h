@@ -92,7 +92,7 @@ namespace OpenViBEPlugins
 			OpenViBE::CIdentifier getCreatedClass() const override { return OVP_ClassId_BoxAlgorithm_MatrixDisplay; }
 			OpenViBE::Plugins::IPluginObject* create() override { return new CBoxAlgorithmMatrixDisplay; }
 
-			bool hasFunctionality(const OpenViBE::CIdentifier functionality) const override { return functionality == OVD_Functionality_Visualization; }
+			bool hasFunctionality(const OpenViBE::CIdentifier& functionality) const override { return functionality == OVD_Functionality_Visualization; }
 
 			bool getBoxPrototype(OpenViBE::Kernel::IBoxProto& prototype) const override
 			{

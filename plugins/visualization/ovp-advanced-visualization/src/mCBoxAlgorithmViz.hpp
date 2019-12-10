@@ -88,55 +88,192 @@ namespace Mensia
 
 			explicit CParameterSet(int p, ...)
 			{
-				va_list l_oArguments;
-				va_start(l_oArguments, p);
+				va_list args;
+				va_start(args, p);
 				while (p != P_None)
 				{
-					m_vParameter.push_back(p);
-					p = va_arg(l_oArguments, int);
+					m_parameters.push_back(p);
+					p = va_arg(args, int);
 				}
-				va_end(l_oArguments);
+				va_end(args);
 			}
 
-			explicit operator const std::vector<int>&() const { return m_vParameter; }
+			explicit operator const std::vector<int>&() const { return m_parameters; }
 
 		protected:
 
-			std::vector<int> m_vParameter;
+			std::vector<int> m_parameters;
+		};
+
+		class CBoxAlgorithmViz : public OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>
+		{
+		public:
+
+			typedef struct
+			{
+				float r, g, b;
+			} color_t;
+
+			CBoxAlgorithmViz(const OpenViBE::CIdentifier& classID, const std::vector<int>& parameters)
+				: m_ClassID(classID), m_Parameters(parameters), m_MouseHandler(*this)
+			{
+				m_Color.r = 1;
+				m_Color.g = 1;
+				m_Color.b = 1;
+			}
+
+			void release() override { delete this; }
+
+			uint64_t getClockFrequency() override { return (32LL << 32); }
+			bool initialize() override;
+			bool uninitialize() override;
+			bool processInput(const size_t /*index*/) override { return true; }
+			bool processClock(OpenViBE::Kernel::IMessageClock& rClock) override;
+
+			virtual void redrawTopLevelWindow(const bool immediate = false) { m_GtkGLWidget.redrawTopLevelWindow(immediate); }
+
+			virtual void redraw(const bool immediate = false)
+			{
+				const uint64_t currentTime = System::Time::zgetTime();
+				if (m_RedrawNeeded || currentTime - m_LastRenderTime > ((1LL << 32) / 16))
+				{
+					// immediate |= (currentTime - m_lastRenderTime > ((1LL<<32)/4));
+					m_GtkGLWidget.redraw(immediate);
+					m_GtkGLWidget.redrawLeft(immediate);
+					m_GtkGLWidget.redrawRight(immediate);
+					m_GtkGLWidget.redrawBottom(immediate);
+					m_LastRenderTime = currentTime;
+					m_RedrawNeeded   = false;
+				}
+			}
+
+			virtual void updateRulerVisibility();
+			virtual void reshape(int width, int height);
+			virtual void preDraw();
+			virtual void postDraw();
+			virtual void draw() { }
+			virtual void drawLeft() { if (m_Ruler != nullptr) { m_Ruler->doRenderLeft(m_Left); } }
+			virtual void drawRight() { if (m_Ruler != nullptr) { m_Ruler->doRenderRight(m_Right); } }
+			virtual void drawBottom() { if (m_Ruler != nullptr) { m_Ruler->doRenderBottom(m_Bottom); } }
+			virtual void mouseButton(int x, int y, int button, int status);
+			virtual void mouseMotion(int x, int y);
+			virtual void keyboard(int x, int y, size_t key, bool status);
+
+		protected:
+
+			static void parseColor(color_t& rColor, const std::string& sColor);
+
+		public:
+
+			OpenViBE::CIdentifier m_ClassID = OV_UndefinedIdentifier;
+			std::vector<int> m_Parameters;
+			uint64_t m_lastProcessTime = 0;
+
+			TGtkGLWidget<CBoxAlgorithmViz> m_GtkGLWidget;
+			std::map<std::string, CVertex> m_ChannelPositions;
+
+			CRendererContext* m_RendererCtx    = nullptr;
+			CRendererContext* m_SubRendererCtx = nullptr;
+			IRuler* m_Ruler                    = nullptr;
+			CMouse m_MouseHandler;
+
+			OpenViBE::CString m_Localisation;
+			uint64_t m_TemporalCoherence = 0;
+			uint64_t m_TimeScale         = 0;
+			size_t m_NElement            = 0;
+			double m_DataScale           = 0.0;
+			OpenViBE::CString m_Caption;
+			uint32_t m_TextureID  = 0;
+			size_t m_NFlowerRing  = 0;
+			double m_Translucency = 0.0;
+			OpenViBE::CString m_ColorGradient;
+			bool m_ShowAxis        = false;
+			bool m_XYZPlotHasDepth = false;
+			bool m_IsPositive      = false;
+			bool m_IsTimeLocked    = false;
+			bool m_IsScaleVisible  = false;
+			std::vector<color_t> m_Colors;
+			color_t m_Color;
+
+			OpenViBE::CIdentifier m_TypeID = OV_UndefinedIdentifier;
+			uint64_t m_Time1               = 0;
+			uint64_t m_Time2               = 0;
+
+			float m_fastForwardMaxFactorHD = 0.0;
+			float m_fastForwardMaxFactorLD = 0.0;
+
+			std::vector<float> m_Swaps;
+
+			GtkBuilder* m_Builder = nullptr;
+
+			GtkWidget* m_Viewport    = nullptr;
+			GtkWidget* m_Top         = nullptr;
+			GtkWidget* m_Left        = nullptr;
+			GtkWidget* m_Right       = nullptr;
+			GtkWidget* m_Bottom      = nullptr;
+			GtkWidget* m_CornerLeft  = nullptr;
+			GtkWidget* m_CornerRight = nullptr;
+
+			GtkWidget* m_TimeScaleW       = nullptr;
+			GtkWidget* m_nElementW        = nullptr;
+			GtkWidget* m_ERPRange         = nullptr;
+			GtkWidget* m_ERPPlayerButton  = nullptr;
+			GtkWidget* m_ERPPlayer        = nullptr;
+			GtkWidget* m_ScaleVisible     = nullptr;
+			GtkWidget* m_FrequencyBandMin = nullptr;
+			GtkWidget* m_FrequencyBandMax = nullptr;
+
+			GtkTreeView* m_ChannelTreeView   = nullptr;
+			GtkListStore* m_ChannelListStore = nullptr;
+
+			size_t m_Width  = 0;
+			size_t m_Height = 0;
+
+			bool m_RebuildNeeded      = false;
+			bool m_RefreshNeeded      = false;
+			bool m_RedrawNeeded       = false;
+			uint64_t m_LastRenderTime = 0;
+
+			bool m_IsVideoOutputEnabled = false; // for video output
+			bool m_IsVideoOutputWorking = false;
+			size_t m_FrameId            = 0;
+			OpenViBE::CString m_FrameFilenameFormat;
+		private:
+			OpenViBEVisualizationToolkit::IVisualizationContext* m_visualizationCtx = nullptr;
 		};
 
 		class CBoxAlgorithmVizListener : public OpenViBEToolkit::TBoxListener<OpenViBE::Plugins::IBoxListener>
 		{
 		public:
 
-			explicit CBoxAlgorithmVizListener(const std::vector<int>& vParameter) : m_vParameter(vParameter) { }
+			explicit CBoxAlgorithmVizListener(const std::vector<int>& parameters) : m_Parameters(parameters) { }
 
-			uint32_t getBaseSettingCount()
+			size_t getBaseSettingCount()
 			{
-				uint32_t result = 0;
-				for (auto it = m_vParameter.begin(); it != m_vParameter.end(); ++it)
+				size_t result = 0;
+				for (const auto& p : m_Parameters)
 				{
-					// if(*it==I_Matrix)              result++;
-					// if(*it==I_Signal)              result++;
-					// if(*it==I_Spectrum)            result++;
-					// if(*it==I_Covariance)          result++;
-					// if(*it==I_Stimulations)        result++;
-					if (*it == S_ChannelLocalisation) { result++; }
-					if (*it == S_TemporalCoherence) { result++; }
-					if (*it == S_TimeScale) { result++; }
-					if (*it == S_ElementCount) { result++; }
-					if (*it == S_DataScale) { result++; }
-					if (*it == S_Caption) { result++; }
-					if (*it == S_DataPositive) { result++; }
-					if (*it == S_Translucency) { result++; }
-					if (*it == S_FlowerRingCount) { result++; }
-					if (*it == S_Color) { result++; }
-					if (*it == S_ColorGradient) { result++; }
-					if (*it == S_ShowAxis) { result++; }
-					if (*it == S_XYZPlotHasDepth) { result++; }
-					// if(*it==F_CanAddInput)         result++;
-					// if(*it==F_FixedChannelOrder)   result++;
-					// if(*it==F_FixedChannelSelection)result++;
+					// if(p == I_Matrix) { result++; }
+					// if(p == I_Signal) { result++; }
+					// if(p == I_Spectrum) { result++; }
+					// if(p == I_Covariance) { result++; }
+					// if(p == I_Stimulations) { result++; }
+					if (p == S_ChannelLocalisation) { result++; }
+					if (p == S_TemporalCoherence) { result++; }
+					if (p == S_TimeScale) { result++; }
+					if (p == S_ElementCount) { result++; }
+					if (p == S_DataScale) { result++; }
+					if (p == S_Caption) { result++; }
+					if (p == S_DataPositive) { result++; }
+					if (p == S_Translucency) { result++; }
+					if (p == S_FlowerRingCount) { result++; }
+					if (p == S_Color) { result++; }
+					if (p == S_ColorGradient) { result++; }
+					if (p == S_ShowAxis) { result++; }
+					if (p == S_XYZPlotHasDepth) { result++; }
+					// if(p == F_CanAddInput) { result++; }
+					// if(p == F_FixedChannelOrder) { result++; }
+					// if(p == F_FixedChannelSelection) { result++; }
 				}
 				return result;
 			}
@@ -151,235 +288,93 @@ namespace Mensia
 
 			bool onDefaultInitialized(OpenViBE::Kernel::IBox& box) override
 			{
-				const bool l_bIsSignal       = (std::find(m_vParameter.begin(), m_vParameter.end(), I_Signal) != m_vParameter.end());
-				const bool l_bIsSpectrum     = (std::find(m_vParameter.begin(), m_vParameter.end(), I_Spectrum) != m_vParameter.end());
-				const bool l_bIsCovariance   = (std::find(m_vParameter.begin(), m_vParameter.end(), I_Covariance) != m_vParameter.end());
+				const bool isSignal = (std::find(m_Parameters.begin(), m_Parameters.end(), I_Signal) != m_Parameters.end());
+				const bool isSpectrum = (std::find(m_Parameters.begin(), m_Parameters.end(), I_Spectrum) != m_Parameters.end());
+				const bool isCovariance = (std::find(m_Parameters.begin(), m_Parameters.end(), I_Covariance) != m_Parameters.end());
 				OpenViBE::CIdentifier typeID = OV_UndefinedIdentifier;
 
-				for (uint32_t i = 0; i < box.getInputCount(); ++i)
+				for (size_t i = 0; i < box.getInputCount(); ++i)
 				{
 					box.getInputType(i, typeID);
 					if (typeID == OV_TypeId_StreamedMatrix)
 					{
-						if (l_bIsSignal) { box.setInputType(i, OV_TypeId_Signal); }
-						if (l_bIsSpectrum) { box.setInputType(i, OV_TypeId_Spectrum); }
-						if (l_bIsCovariance) { box.setInputType(i, OV_TypeId_CovarianceMatrix); }
+						if (isSignal) { box.setInputType(i, OV_TypeId_Signal); }
+						if (isSpectrum) { box.setInputType(i, OV_TypeId_Spectrum); }
+						if (isCovariance) { box.setInputType(i, OV_TypeId_CovarianceMatrix); }
 					}
 				}
 				return true;
 			}
 
-			_IsDerivedFromClass_Final_(OpenViBEToolkit::TBoxListener < OpenViBE::Plugins::IBoxListener >, OV_UndefinedIdentifier)
+			_IsDerivedFromClass_Final_(OpenViBEToolkit::TBoxListener<OpenViBE::Plugins::IBoxListener>, OV_UndefinedIdentifier)
 
-			std::vector<int> m_vParameter;
-		};
-
-		class CBoxAlgorithmViz : public OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>
-		{
-		public:
-
-			typedef struct
-			{
-				float r, g, b;
-			} TColor;
-
-			CBoxAlgorithmViz(const OpenViBE::CIdentifier& rClassId, const std::vector<int>& vParameter)
-				: m_oClassId(rClassId), m_vParameter(vParameter), m_oMouseHandler(*this)
-			{
-				m_oColor.r = 1;
-				m_oColor.g = 1;
-				m_oColor.b = 1;
-			}
-
-			void release() override { delete this; }
-
-			uint64_t getClockFrequency() override { return (32LL << 32); }
-			bool initialize() override;
-			bool uninitialize() override;
-			bool processInput(const size_t /*index*/) override { return true; }
-			bool processClock(OpenViBE::Kernel::IMessageClock& rClock) override;
-
-			virtual void redrawTopLevelWindow(const bool immediate = false) { m_oGtkGLWidget.redrawTopLevelWindow(immediate); }
-
-			virtual void redraw(const bool immediate = false)
-			{
-				const uint64_t currentTime = System::Time::zgetTime();
-				if (m_bRedrawNeeded || currentTime - m_lastRenderTime > ((1LL << 32) / 16))
-				{
-					// immediate |= (l_ui64CurrentTime - m_lastRenderTime > ((1LL<<32)/4));
-					m_oGtkGLWidget.redraw(immediate);
-					m_oGtkGLWidget.redrawLeft(immediate);
-					m_oGtkGLWidget.redrawRight(immediate);
-					m_oGtkGLWidget.redrawBottom(immediate);
-					m_lastRenderTime = currentTime;
-					m_bRedrawNeeded      = false;
-				}
-			}
-
-			virtual void updateRulerVisibility();
-			virtual void reshape(int width, int height);
-			virtual void preDraw();
-			virtual void postDraw();
-			virtual void draw();
-			virtual void drawLeft();
-			virtual void drawRight();
-			virtual void drawBottom();
-			virtual void mouseButton(int x, int y, int button, int status);
-			virtual void mouseMotion(int x, int y);
-			virtual void keyboard(int x, int y, uint32_t key, bool status);
-
-		protected:
-
-			static void parseColor(TColor& rColor, const std::string& sColor);
-
-		public:
-
-			OpenViBE::CIdentifier m_oClassId = OV_UndefinedIdentifier;
-			std::vector<int> m_vParameter;
-			uint64_t m_lastProcessTime = 0;
-
-			TGtkGLWidget<CBoxAlgorithmViz> m_oGtkGLWidget;
-			std::map<std::string, CVertex> m_vChannelLocalisation;
-
-			CRendererContext* m_pRendererContext    = nullptr;
-			CRendererContext* m_pSubRendererContext = nullptr;
-			IRuler* m_pRuler                        = nullptr;
-			CMouse m_oMouseHandler;
-
-			OpenViBE::CString m_sLocalisation;
-			size_t m_temporalCoherence = 0;
-			size_t m_timeScale         = 0;
-			size_t m_nElement      = 0;
-			double m_f64DataScale        = 0.0;
-			OpenViBE::CString m_sCaption;
-			uint32_t m_textureId       = 0;
-			size_t m_nFlowerRing = 0;
-			double m_translucency      = 0.0;
-			OpenViBE::CString m_sColor;
-			OpenViBE::CString m_sColorGradient;
-			bool m_bShowAxis        = false;
-			bool m_bXYZPlotHasDepth = false;
-			bool m_isPositive      = false;
-			bool m_isTimeLocked    = false;
-			bool m_isScaleVisible  = false;
-			std::vector<TColor> m_vColor;
-			TColor m_oColor;
-
-			OpenViBE::CIdentifier m_typeID = OV_UndefinedIdentifier;
-			size_t m_time1                 = 0;
-			size_t m_time2                 = 0;
-
-			float m_fastForwardMaximumFactorHighDefinition = 0.0;
-			float m_fastForwardMaximumFactorLowDefinition  = 0.0;
-
-			std::vector<float> m_vSwap;
-
-			GtkBuilder* m_pBuilder = nullptr;
-
-			GtkWidget* m_pViewport    = nullptr;
-			GtkWidget* m_pTop         = nullptr;
-			GtkWidget* m_pLeft        = nullptr;
-			GtkWidget* m_pRight       = nullptr;
-			GtkWidget* m_pBottom      = nullptr;
-			GtkWidget* m_pCornerLeft  = nullptr;
-			GtkWidget* m_pCornerRight = nullptr;
-
-			GtkWidget* m_pTimeScale        = nullptr;
-			GtkWidget* m_pElementCount     = nullptr;
-			GtkWidget* m_pERPRange         = nullptr;
-			GtkWidget* m_pERPPlayerButton  = nullptr;
-			GtkWidget* m_pERPPlayer        = nullptr;
-			GtkWidget* m_pScaleVisible     = nullptr;
-			GtkWidget* m_pFrequencyBandMin = nullptr;
-			GtkWidget* m_pFrequencyBandMax = nullptr;
-
-			GtkTreeView* m_pChannelTreeView   = nullptr;
-			GtkListStore* m_pChannelListStore = nullptr;
-
-			size_t m_width  = 0;
-			size_t m_height = 0;
-
-			bool m_bRebuildNeeded         = false;
-			bool m_bRefreshNeeded         = false;
-			bool m_bRedrawNeeded          = false;
-			uint64_t m_lastRenderTime = 0;
-
-			bool m_isVideoOutputEnabled = false; // for video output
-			bool m_isVideoOutputWorking = false;
-			size_t m_frameId       = 0;
-			OpenViBE::CString m_sFrameFilenameFormat;
-		private:
-			OpenViBEVisualizationToolkit::IVisualizationContext* m_visualizationContext{};
+				std::vector<int> m_Parameters;
 		};
 
 		class CBoxAlgorithmVizDesc : public OpenViBE::Plugins::IBoxAlgorithmDesc
 		{
 		public:
 
-			OpenViBE::CString m_name;
-			OpenViBE::CString m_sCategoryName;
-			OpenViBE::CString m_sShortDescription;
-			OpenViBE::CString m_sDetailedDescription;
-			OpenViBE::CIdentifier m_oDescClassId = OV_UndefinedIdentifier;
-			OpenViBE::CIdentifier m_oClassId     = OV_UndefinedIdentifier;
-			OpenViBE::CString m_sAddedSoftwareVersion;
-			OpenViBE::CString m_sUpdatedSoftwareVersion;
-			std::vector<int> m_vParameter;
+			OpenViBE::CString m_Name;
+			OpenViBE::CString m_CategoryName;
+			OpenViBE::CString m_ShortDesc;
+			OpenViBE::CString m_DetailedDesc;
+			OpenViBE::CIdentifier m_DescClassID = OV_UndefinedIdentifier;
+			OpenViBE::CIdentifier m_ClassID     = OV_UndefinedIdentifier;
+			OpenViBE::CString m_AddedSoftwareVersion;
+			OpenViBE::CString m_UpdatedSoftwareVersion;
+			std::vector<int> m_Parameters;
 
-			CBoxAlgorithmVizDesc(const OpenViBE::CString& sFullName, const OpenViBE::CIdentifier& rDescClassId, const OpenViBE::CIdentifier& rClassId,
-								 const OpenViBE::CString& sAddedSoftwareVersion, const OpenViBE::CString& sUpdatedSoftwareVersion,
-								 const CParameterSet& rParameterSet, const OpenViBE::CString& sShortDescription, const OpenViBE::CString& sDetailedDescription)
-				: m_sShortDescription(sShortDescription), m_sDetailedDescription(sDetailedDescription), m_oDescClassId(rDescClassId), m_oClassId(rClassId),
-				  m_sAddedSoftwareVersion(sAddedSoftwareVersion), m_sUpdatedSoftwareVersion(sUpdatedSoftwareVersion), m_vParameter(rParameterSet)
+			CBoxAlgorithmVizDesc(const OpenViBE::CString& name, const OpenViBE::CIdentifier& descClassID, const OpenViBE::CIdentifier& classID,
+								 const OpenViBE::CString& addedSoftwareVersion, const OpenViBE::CString& updatedSoftwareVersion,
+								 const CParameterSet& parameterSet, const OpenViBE::CString& shortDesc, const OpenViBE::CString& detailedDesc)
+				: m_ShortDesc(shortDesc), m_DetailedDesc(detailedDesc), m_DescClassID(descClassID), m_ClassID(classID),
+				  m_AddedSoftwareVersion(addedSoftwareVersion), m_UpdatedSoftwareVersion(updatedSoftwareVersion), m_Parameters(parameterSet)
 			{
-				const std::string l_sFullname(sFullName.toASCIIString());
-				const size_t i = l_sFullname.rfind('/');
+				const std::string fullname(name.toASCIIString());
+				const size_t i = fullname.rfind('/');
 				if (i != std::string::npos)
 				{
-					m_name         = OpenViBE::CString(l_sFullname.substr(i + 1).c_str());
-					m_sCategoryName = OpenViBE::CString(l_sFullname.substr(0, i).c_str());
+					m_Name         = OpenViBE::CString(fullname.substr(i + 1).c_str());
+					m_CategoryName = OpenViBE::CString(fullname.substr(0, i).c_str());
 				}
 				else
 				{
-					m_name         = OpenViBE::CString(sFullName);
-					m_sCategoryName = OpenViBE::CString("");
+					m_Name         = OpenViBE::CString(name);
+					m_CategoryName = OpenViBE::CString("");
 				}
 			}
 
 			void release() override { }
 
-			OpenViBE::CString getName() const override { return m_name; }
+			OpenViBE::CString getName() const override { return m_Name; }
 			OpenViBE::CString getAuthorName() const override { return OpenViBE::CString("Yann Renard"); }
 			OpenViBE::CString getAuthorCompanyName() const override { return OpenViBE::CString("Mensia Technologies SA"); }
-			OpenViBE::CString getShortDescription() const override { return m_sShortDescription; }
-			OpenViBE::CString getDetailedDescription() const override { return m_sDetailedDescription; }
-			//			virtual OpenViBE::CString getCategory() const            { return OpenViBE::CString(""); }
+			OpenViBE::CString getShortDescription() const override { return m_ShortDesc; }
+			OpenViBE::CString getDetailedDescription() const override { return m_DetailedDesc; }
+			// virtual OpenViBE::CString getCategory() const            { return OpenViBE::CString(""); }
 			OpenViBE::CString getVersion() const override { return OpenViBE::CString("1.0"); }
 			OpenViBE::CString getSoftwareComponent() const override { return "openvibe-designer"; }
-			OpenViBE::CString getAddedSoftwareVersion() const override { return m_sAddedSoftwareVersion; }
-			OpenViBE::CString getUpdatedSoftwareVersion() const override { return m_sUpdatedSoftwareVersion; }
+			OpenViBE::CString getAddedSoftwareVersion() const override { return m_AddedSoftwareVersion; }
+			OpenViBE::CString getUpdatedSoftwareVersion() const override { return m_UpdatedSoftwareVersion; }
 			OpenViBE::CString getStockItemName() const override { return OpenViBE::CString("gtk-find"); }
-			OpenViBE::CIdentifier getCreatedClass() const override { return m_oClassId; }
+			OpenViBE::CIdentifier getCreatedClass() const override { return m_ClassID; }
 
 			void releaseBoxListener(OpenViBE::Plugins::IBoxListener* listener) const override { delete listener; }
 
-			bool hasFunctionality(const OpenViBE::CIdentifier functionality) const override { return functionality == OVD_Functionality_Visualization; }
+			bool hasFunctionality(const OpenViBE::CIdentifier& functionality) const override { return functionality == OVD_Functionality_Visualization; }
 
 			bool getBoxPrototype(OpenViBE::Kernel::IBoxProto& prototype) const override
 			{
-				for (auto p : m_vParameter)
+				for (auto p : m_Parameters)
 				{
 					if (p == I_Matrix) { prototype.addInput("Matrix", OV_TypeId_StreamedMatrix); }
-					if (p == I_Signal) { prototype.addInput("Matrix", OV_TypeId_StreamedMatrix); }		// This is later changed in the listener 
-					if (p == I_Spectrum) { prototype.addInput("Matrix", OV_TypeId_StreamedMatrix); }	// This is later changed in the listener 
-					if (p == I_TimeFrequency) prototype.addInput("Matrix", OV_TypeId_TimeFrequency);	// This is later changed in the listener
-					if (p == I_Covariance) { prototype.addInput("Matrix", OV_TypeId_StreamedMatrix); }	// This is later changed in the listener 
+					if (p == I_Signal) { prototype.addInput("Matrix", OV_TypeId_StreamedMatrix); }			// This is later changed in the listener 
+					if (p == I_Spectrum) { prototype.addInput("Matrix", OV_TypeId_StreamedMatrix); }		// This is later changed in the listener 
+					if (p == I_TimeFrequency) { prototype.addInput("Matrix", OV_TypeId_TimeFrequency); }	// This is later changed in the listener
+					if (p == I_Covariance) { prototype.addInput("Matrix", OV_TypeId_StreamedMatrix); }		// This is later changed in the listener 
 					if (p == I_Stimulations) { prototype.addInput("Markers", OV_TypeId_Stimulations); }
-					if (p == S_ChannelLocalisation
-					)
-					{
-						prototype.addSetting("Channel Localisation", OV_TypeId_Filename, "${AdvancedViz_ChannelLocalisation}");
-					} // "../share/electrode_sets/electrode_set_standard_cartesian.txt" 
+					if (p == S_ChannelLocalisation) { prototype.addSetting("Channel Localisation", OV_TypeId_Filename, "${AdvancedViz_ChannelLocalisation}"); } // "../share/electrode_sets/electrode_set_standard_cartesian.txt" 
 					if (p == S_DataPositive) { prototype.addSetting("Positive Data Only ?", OV_TypeId_Boolean, "false"); }
 					if (p == S_TemporalCoherence) { prototype.addSetting("Temporal Coherence", OVP_TypeId_TemporalCoherence, "Time Locked"); }
 					if (p == S_TimeScale) { prototype.addSetting("Time Scale", OV_TypeId_Float, "20"); }
@@ -389,7 +384,7 @@ namespace Mensia
 					if (p == S_FlowerRingCount) { prototype.addSetting("Flower Ring Count", OV_TypeId_Integer, "1"); }
 					if (p == S_Translucency) { prototype.addSetting("Translucency", OV_TypeId_Float, "1"); }
 					if (p == S_ShowAxis) { prototype.addSetting("Show Axis", OV_TypeId_Boolean, "true"); }
-					if (p == S_XYZPlotHasDepth) prototype.addSetting("Use third channel as depth", OV_TypeId_Boolean, "false"); // XYZ Plot
+					if (p == S_XYZPlotHasDepth) { prototype.addSetting("Use third channel as depth", OV_TypeId_Boolean, "false"); } // XYZ Plot
 					if (p == S_Color) { prototype.addSetting("Color", OV_TypeId_Color, "${AdvancedViz_DefaultColor}"); }
 					if (p == S_ColorGradient) { prototype.addSetting("Color", OV_TypeId_ColorGradient, "${AdvancedViz_DefaultColorGradient}"); }
 					if (p == F_CanAddInput) { prototype.addFlag(OpenViBE::Kernel::BoxFlag_CanAddInput); }

@@ -7,7 +7,7 @@ int main()
 	CRendererContext context;
 	context.clear();
 
-	context.setDataType(CRendererContext::DataType_Matrix);
+	context.setDataType(CRendererContext::EDataType::Matrix);
 
 	IRenderer* rend = IRenderer::create(ERendererType::Bitmap, false);
 

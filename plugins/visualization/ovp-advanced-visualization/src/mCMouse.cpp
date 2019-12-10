@@ -24,43 +24,40 @@
 
 #include <cmath>
 
-
 using namespace Mensia;
 using namespace AdvancedVisualization;
 
-CMouse::CMouse(CBoxAlgorithmViz& rBoxAlgorithmViz) : m_rBoxAlgorithmViz(rBoxAlgorithmViz) { }
-
-void CMouse::mouseButton(CRendererContext& rContext, const int x, const int y, const int button, const int status)
+void CMouse::mouseButton(CRendererContext& ctx, const int x, const int y, const int button, const int status)
 {
 	m_Buttons[button] = status;
 
 	if (m_Buttons[1] == 2)
 	{
-		rContext.setScaleVisibility(!rContext.getScaleVisibility());
-		m_rBoxAlgorithmViz.redrawTopLevelWindow();
+		ctx.setScaleVisibility(!ctx.getScaleVisibility());
+		m_BoxAlgorithmViz.redrawTopLevelWindow();
 	}
 
-	m_mouseX = x;
-	m_mouseY = y;
+	m_X = x;
+	m_Y = y;
 }
 
-void CMouse::mouseMotion(CRendererContext& rContext, const int x, const int y)
+void CMouse::mouseMotion(CRendererContext& ctx, const int x, const int y)
 {
-	if (m_Buttons[3]) { rContext.scaleBy(powf(.99f, float(y - m_mouseY))); }
-	if (m_Buttons[2]) { rContext.zoomBy(powf(.99f, float(y - m_mouseY))); }
+	if (m_Buttons[3]) { ctx.scaleBy(powf(.99F, float(y - m_Y))); }
+	if (m_Buttons[2]) { ctx.zoomBy(powf(.99F, float(y - m_Y))); }
 	if (m_Buttons[1])
 	{
-		rContext.rotateByY(float(x - m_mouseX) * .1f);
-		rContext.rotateByX(float(y - m_mouseY) * .1f);
+		ctx.rotateByY(float(x - m_X) * .1F);
+		ctx.rotateByX(float(y - m_Y) * .1F);
 	}
 
-	m_mouseX = x;
-	m_mouseY = y;
+	m_X = x;
+	m_Y = y;
 }
 
 bool CMouse::hasButtonPressed()
 
 {
-	for (auto it = m_Buttons.begin(); it != m_Buttons.end(); ++it) { if (it->second) { return true; } }
+	for (const auto& button : m_Buttons) { if (button.second) { return true; } }
 	return false;
 }

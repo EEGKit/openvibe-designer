@@ -42,17 +42,17 @@
 // ###########################################################################################################################################################
 // ###########################################################################################################################################################
 
-#define GtkGL_RenderingContextName "GL Rendering Context"
-#define GtkGL_DeviceContextName "Device Context"
-#define GtkGL_Debug(s) // g_debug("GtkGL : "#s);
-#define GtkGL_Warning(s) g_warning("GtkGL : "#s);
+#define GTK_GL_RENDERING_CONTEXT_NAME "GL Rendering Context"
+#define GTK_GL_DEVICE_CONTEXT_NAME "Device Context"
+#define GTK_GL_DEBUG(s) // g_debug("GtkGL : "#s);
+#define GTK_GL_WARNING(s) g_warning("GtkGL : "#s);
 
 #if defined TARGET_OS_Windows
 
 namespace
 {
-	typedef bool (*wglSwapIntervalEXT_t)(int);
-	wglSwapIntervalEXT_t wglSwapIntervalEXT = nullptr;
+	typedef bool (*gl_swap_interval_ext_t)(int);
+	gl_swap_interval_ext_t wglSwapIntervalEXT = nullptr;
 } // namespace
 
 #elif defined TARGET_OS_Linux || defined TARGET_OS_MacOS
@@ -71,134 +71,132 @@ namespace
 
 namespace
 {
-	void on_realize_cb(GtkWidget* pWidget, void*)
+	void on_realize_cb(GtkWidget* widget, void* /*data*/)
 	{
-		GtkGL_Debug("realize-callback");
+		GTK_GL_DEBUG("realize-callback");
 
-		gdk_window_ensure_native(gtk_widget_get_window(pWidget));
+		gdk_window_ensure_native(gtk_widget_get_window(widget));
 
-		HWND window        = HWND(GDK_WINDOW_HWND(::gtk_widget_get_window(pWidget)));
-		HDC drawingContext = GetDC(window);
+		const HWND window        = HWND(GDK_WINDOW_HWND(::gtk_widget_get_window(widget)));
+		const HDC drawingCtx = GetDC(window);
 
-		PIXELFORMATDESCRIPTOR pixelFormatDescriptor;
-		pixelFormatDescriptor.nSize      = sizeof(pixelFormatDescriptor);
-		pixelFormatDescriptor.nVersion   = 1;
-		pixelFormatDescriptor.dwFlags    = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
-		pixelFormatDescriptor.iPixelType = PFD_TYPE_RGBA;
-		pixelFormatDescriptor.cColorBits = 24;
-		pixelFormatDescriptor.cAlphaBits = 8;
-		pixelFormatDescriptor.cDepthBits = 32;
-		pixelFormatDescriptor.iLayerType = PFD_MAIN_PLANE;
+		PIXELFORMATDESCRIPTOR pixelFormatDesc;
+		pixelFormatDesc.nSize      = sizeof(pixelFormatDesc);
+		pixelFormatDesc.nVersion   = 1;
+		pixelFormatDesc.dwFlags    = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+		pixelFormatDesc.iPixelType = PFD_TYPE_RGBA;
+		pixelFormatDesc.cColorBits = 24;
+		pixelFormatDesc.cAlphaBits = 8;
+		pixelFormatDesc.cDepthBits = 32;
+		pixelFormatDesc.iLayerType = PFD_MAIN_PLANE;
 
-		const int pixelFormatIdentifier = ChoosePixelFormat(drawingContext, &pixelFormatDescriptor);
+		const int pixelFormatID = ChoosePixelFormat(drawingCtx, &pixelFormatDesc);
 
-		if (pixelFormatIdentifier == 0)
+		if (pixelFormatID == 0)
 		{
-			GtkGL_Warning("ChoosePixelFormat failed");
-			GtkGL_Debug("realize-callback::failed");
+			GTK_GL_WARNING("ChoosePixelFormat failed");
+			GTK_GL_DEBUG("realize-callback::failed");
 			return;
 		}
 
-		if (SetPixelFormat(drawingContext, pixelFormatIdentifier, &pixelFormatDescriptor) == 0)
+		if (SetPixelFormat(drawingCtx, pixelFormatID, &pixelFormatDesc) == 0)
 		{
-			GtkGL_Warning("SetPixelFormat failed");
-			GtkGL_Debug("realize-callback::failed");
+			GTK_GL_WARNING("SetPixelFormat failed");
+			GTK_GL_DEBUG("realize-callback::failed");
 			return;
 		}
 
-		HGLRC GLRenderingContext = wglCreateContext(drawingContext);
-		if (GLRenderingContext == nullptr)
+		const HGLRC glRenderingCtx = wglCreateContext(drawingCtx);
+		if (glRenderingCtx == nullptr)
 		{
-			GtkGL_Warning("wglCreateContext failed");
-			GtkGL_Debug("realize-callback::failed");
+			GTK_GL_WARNING("wglCreateContext failed");
+			GTK_GL_DEBUG("realize-callback::failed");
 			return;
 		}
 
-		g_object_set_data(G_OBJECT(pWidget), GtkGL_RenderingContextName, GLRenderingContext);
-		g_object_set_data(G_OBJECT(pWidget), GtkGL_DeviceContextName, drawingContext);
+		g_object_set_data(G_OBJECT(widget), GTK_GL_RENDERING_CONTEXT_NAME, glRenderingCtx);
+		g_object_set_data(G_OBJECT(widget), GTK_GL_DEVICE_CONTEXT_NAME, drawingCtx);
 
-		gtk_widget_queue_resize(pWidget);
-		gtk_widget_set_double_buffered(pWidget, FALSE);
+		gtk_widget_queue_resize(widget);
+		gtk_widget_set_double_buffered(widget, FALSE);
 
-		wglSwapIntervalEXT = wglSwapIntervalEXT_t(wglGetProcAddress("wglSwapIntervalEXT"));
+		wglSwapIntervalEXT = gl_swap_interval_ext_t(wglGetProcAddress("wglSwapIntervalEXT"));
 
-		GtkGL_Debug("realize-callback::success");
+		GTK_GL_DEBUG("realize-callback::success");
 	}
 } // namespace
 
-void Mensia::AdvancedVisualization::GtkGL::initialize(GtkWidget* pWidget)
+void Mensia::AdvancedVisualization::GtkGL::initialize(GtkWidget* widget)
 {
-	GtkGL_Debug("initialize");
-
-	g_signal_connect(pWidget, "realize", G_CALLBACK(on_realize_cb), nullptr);
-
-	GtkGL_Debug("initialize::success");
+	GTK_GL_DEBUG("initialize");
+	g_signal_connect(widget, "realize", G_CALLBACK(on_realize_cb), nullptr);
+	GTK_GL_DEBUG("initialize::success");
 }
 
-void Mensia::AdvancedVisualization::GtkGL::uninitialize(GtkWidget* pWidget)
+void Mensia::AdvancedVisualization::GtkGL::uninitialize(GtkWidget* widget)
 {
-	GtkGL_Debug("uninitialize");
+	GTK_GL_DEBUG("uninitialize");
 
-	HWND window = HWND(GDK_WINDOW_HWND(::gtk_widget_get_window(pWidget)));
+	const HWND window = HWND(GDK_WINDOW_HWND(::gtk_widget_get_window(widget)));
 
-	const auto l_pGLRenderingContext = HGLRC(g_object_get_data(G_OBJECT(pWidget), GtkGL_RenderingContextName));
-	wglDeleteContext(l_pGLRenderingContext);
+	const auto glRenderingCtx = HGLRC(g_object_get_data(G_OBJECT(widget), GTK_GL_RENDERING_CONTEXT_NAME));
+	wglDeleteContext(glRenderingCtx);
 
-	HDC drawingContext = HDC(g_object_get_data(G_OBJECT(pWidget), GtkGL_DeviceContextName));
-	ReleaseDC(window, drawingContext);
+	const HDC drawingCtx = HDC(g_object_get_data(G_OBJECT(widget), GTK_GL_DEVICE_CONTEXT_NAME));
+	ReleaseDC(window, drawingCtx);
 
-	GtkGL_Debug("uninitialize::success");
+	GTK_GL_DEBUG("uninitialize::success");
 }
 
-void Mensia::AdvancedVisualization::GtkGL::preRender(GtkWidget* pWidget, const bool bVerticalSync)
+void Mensia::AdvancedVisualization::GtkGL::preRender(GtkWidget* widget, const bool verticalSync)
 {
-	GtkGL_Debug("pre-render");
+	GTK_GL_DEBUG("pre-render");
 
-	HDC drawingContext      = HDC(g_object_get_data(G_OBJECT(pWidget), GtkGL_DeviceContextName));
-	auto GLRenderingContext = HGLRC(g_object_get_data(G_OBJECT(pWidget), GtkGL_RenderingContextName));
+	const HDC drawingCtx      = HDC(g_object_get_data(G_OBJECT(widget), GTK_GL_DEVICE_CONTEXT_NAME));
+	const auto glRenderingCtx = HGLRC(g_object_get_data(G_OBJECT(widget), GTK_GL_RENDERING_CONTEXT_NAME));
 
-	if (GLRenderingContext == nullptr)
+	if (glRenderingCtx == nullptr)
 	{
-		GtkGL_Debug("Rendering context not ready");
-		GtkGL_Debug("pre-render::failed");
+		GTK_GL_DEBUG("Rendering context not ready");
+		GTK_GL_DEBUG("pre-render::failed");
 		return;
 	}
 
-	if (wglMakeCurrent(drawingContext, GLRenderingContext) == 0)
+	if (wglMakeCurrent(drawingCtx, glRenderingCtx) == 0)
 	{
-		GtkGL_Warning("wglMakeCurrent failed");
-		GtkGL_Debug("pre-render::failed");
+		GTK_GL_WARNING("wglMakeCurrent failed");
+		GTK_GL_DEBUG("pre-render::failed");
 		return;
 	}
 
 	// Enable / Disable vsync
-	if (wglSwapIntervalEXT != nullptr) { wglSwapIntervalEXT(bVerticalSync ? 1 : 0); }
+	if (wglSwapIntervalEXT != nullptr) { wglSwapIntervalEXT(verticalSync ? 1 : 0); }
 
-	GtkGL_Debug("pre-render::success");
+	GTK_GL_DEBUG("pre-render::success");
 }
 
-void Mensia::AdvancedVisualization::GtkGL::postRender(GtkWidget* pWidget)
+void Mensia::AdvancedVisualization::GtkGL::postRender(GtkWidget* widget)
 {
-	GtkGL_Debug("post-render");
+	GTK_GL_DEBUG("post-render");
 
-	HDC drawingContext = HDC(g_object_get_data(G_OBJECT(pWidget), GtkGL_DeviceContextName));
+	const HDC drawingCtx = HDC(g_object_get_data(G_OBJECT(widget), GTK_GL_DEVICE_CONTEXT_NAME));
 
-	if (drawingContext == nullptr)
+	if (drawingCtx == nullptr)
 	{
-		GtkGL_Debug("Rendering context not ready");
-		GtkGL_Debug("post-render::failed");
+		GTK_GL_DEBUG("Rendering context not ready");
+		GTK_GL_DEBUG("post-render::failed");
 	}
-	else if (SwapBuffers(drawingContext) == 0)
+	else if (SwapBuffers(drawingCtx) == 0)
 	{
-		GtkGL_Warning("SwapBuffers failed");
-		GtkGL_Debug("post-render::failed");
+		GTK_GL_WARNING("SwapBuffers failed");
+		GTK_GL_DEBUG("post-render::failed");
 	}
-	else if (wglMakeCurrent(drawingContext, nullptr) == 0)
+	else if (wglMakeCurrent(drawingCtx, nullptr) == 0)
 	{
-		GtkGL_Warning("wglMakeCurrent failed");
-		GtkGL_Debug("post-render::failed");
+		GTK_GL_WARNING("wglMakeCurrent failed");
+		GTK_GL_DEBUG("post-render::failed");
 	}
-	else { GtkGL_Debug("post-render::success"); }
+	else { GTK_GL_DEBUG("post-render::success"); }
 }
 
 // ##  WINDOWS  ##############################################################################################################################################
@@ -207,17 +205,17 @@ void Mensia::AdvancedVisualization::GtkGL::postRender(GtkWidget* pWidget)
 
 // ##  LINUX  ################################################################################################################################################
 
-void Mensia::AdvancedVisualization::GtkGL::initialize(::GtkWidget * pWidget)
+void Mensia::AdvancedVisualization::GtkGL::initialize(::GtkWidget * widget)
 {
-	GtkGL_Debug("initialize");
+	GTK_GL_DEBUG("initialize");
 
-	// ::gdk_window_ensure_native(gtk_widget_get_window(pWidget));
+	// ::gdk_window_ensure_native(gtk_widget_get_window(widget));
 
-	::GdkScreen* l_pScreen = ::gdk_screen_get_default();
-	::Display* l_pDisplay = GDK_SCREEN_XDISPLAY(l_pScreen);
-	::gint l_iScreenNumber = GDK_SCREEN_XNUMBER(l_pScreen);
+	::GdkScreen* screen = ::gdk_screen_get_default();
+	::Display* display = GDK_SCREEN_XDISPLAY(screen);
+	::gint screenNumber = GDK_SCREEN_XNUMBER(screen);
 
-	int l_vVisualInfoAttributes[] =
+	int visualInfoAttributes[] =
 	{
 		GLX_RGBA,
 		GLX_RED_SIZE,    1,
@@ -229,85 +227,85 @@ void Mensia::AdvancedVisualization::GtkGL::initialize(::GtkWidget * pWidget)
 		None
 	};
 
-	if (!::glXQueryVersion(l_pDisplay, nullptr, nullptr))
+	if (!::glXQueryVersion(display, nullptr, nullptr))
 	{
-		GtkGL_Warning("initialize::failed");
+		GTK_GL_WARNING("initialize::failed");
 		return;
 	}
 
-	::XVisualInfo* l_pVisualInfo = ::glXChooseVisual(l_pDisplay, l_iScreenNumber, l_vVisualInfoAttributes);
-	::GLXContext l_pGLRenderingContext = glXCreateContext(l_pDisplay, l_pVisualInfo, nullptr, True);
-	g_object_set_data(G_OBJECT(pWidget), GtkGL_RenderingContextName, l_pGLRenderingContext);
+	::XVisualInfo* visualInfo = ::glXChooseVisual(display, screenNumber, visualInfoAttributes);
+	::GLXContext glRenderingCtx = glXCreateContext(display, visualInfo, nullptr, True);
+	g_object_set_data(G_OBJECT(widget), GTK_GL_RENDERING_CONTEXT_NAME, glRenderingCtx);
 
 #if 1
 	/* Fix up colormap */
-	::GdkVisual* l_pVisual = ::gdk_x11_screen_lookup_visual(l_pScreen, l_pVisualInfo->visualid);
-	::GdkColormap* l_pColorMap = ::gdk_colormap_new(l_pVisual, FALSE);
-	::gtk_widget_set_colormap(pWidget, l_pColorMap);
+	::GdkVisual* visual = ::gdk_x11_screen_lookup_visual(screen, visualInfo->visualid);
+	::GdkColormap* colorMap = ::gdk_colormap_new(visual, FALSE);
+	::gtk_widget_set_colormap(widget, colorMap);
 #endif
 
-	::gtk_widget_queue_resize(pWidget);
-	::gtk_widget_set_double_buffered(pWidget, FALSE);
+	::gtk_widget_queue_resize(widget);
+	::gtk_widget_set_double_buffered(widget, FALSE);
 
 	glXSwapIntervalEXT = (glXSwapIntervalEXT_t) ::glXGetProcAddressARB(reinterpret_cast <const unsigned char*>("glXSwapIntervalEXT"));
 
-	GtkGL_Debug("initialize::success");
+	GTK_GL_DEBUG("initialize::success");
 }
 
-void Mensia::AdvancedVisualization::GtkGL::uninitialize(::GtkWidget * pWidget)
+void Mensia::AdvancedVisualization::GtkGL::uninitialize(::GtkWidget * widget)
 {
-	GtkGL_Debug("uninitialize");
+	GTK_GL_DEBUG("uninitialize");
 
-	::Display* l_pDisplay = GDK_SCREEN_XDISPLAY(::gtk_widget_get_screen(pWidget));
-	::GLXContext l_pGLRenderingContext = (::GLXContext) g_object_get_data(G_OBJECT(pWidget), GtkGL_RenderingContextName);
-	if (!l_pDisplay || !l_pGLRenderingContext)
+	::Display* display = GDK_SCREEN_XDISPLAY(::gtk_widget_get_screen(widget));
+	::GLXContext glRenderingCtx = (::GLXContext) g_object_get_data(G_OBJECT(widget), GTK_GL_RENDERING_CONTEXT_NAME);
+	if (!display || !glRenderingCtx)
 	{
-		GtkGL_Warning("uninitialize::failed");
+		GTK_GL_WARNING("uninitialize::failed");
 		return;
 	}
-	::glXMakeCurrent(l_pDisplay, None, nullptr);
-	::glXDestroyContext(l_pDisplay, l_pGLRenderingContext);
+	::glXMakeCurrent(display, None, nullptr);
+	::glXDestroyContext(display, glRenderingCtx);
 
-	GtkGL_Debug("uninitialize::success");
+	GTK_GL_DEBUG("uninitialize::success");
 }
 
-void Mensia::AdvancedVisualization::GtkGL::preRender(::GtkWidget * pWidget, bool bVerticalSync)
+void Mensia::AdvancedVisualization::GtkGL::preRender(::GtkWidget * widget, bool bVerticalSync)
 {
-	GtkGL_Debug("pre-render");
+	GTK_GL_DEBUG("pre-render");
 
-	::Display* l_pDisplay = GDK_SCREEN_XDISPLAY(::gtk_widget_get_screen(pWidget));
-	::Window l_pWindow = GDK_WINDOW_XID(gtk_widget_get_window(pWidget));
-	::GLXContext l_pGLRenderingContext = (::GLXContext) g_object_get_data(G_OBJECT(pWidget), GtkGL_RenderingContextName);
-	if (!l_pDisplay || !l_pGLRenderingContext)
+	::Display* display = GDK_SCREEN_XDISPLAY(::gtk_widget_get_screen(widget));
+	::Window window = GDK_WINDOW_XID(gtk_widget_get_window(widget));
+	::GLXContext glRenderingCtx = (::GLXContext) g_object_get_data(G_OBJECT(widget), GTK_GL_RENDERING_CONTEXT_NAME);
+	if (!display || !glRenderingCtx)
 	{
-		GtkGL_Warning("pre-render::failed");
+		GTK_GL_WARNING("pre-render::failed");
 		return;
 	}
-	::glXMakeCurrent(l_pDisplay, l_pWindow, l_pGLRenderingContext);
+	::glXMakeCurrent(display, window, glRenderingCtx);
 
 	// Enable / Disable vsync
 	if (glXSwapIntervalEXT)
 	{
-		glXSwapIntervalEXT(l_pDisplay, ::glXGetCurrentDrawable(), bVerticalSync ? 1 : 0);
+		glXSwapIntervalEXT(display, ::glXGetCurrentDrawable(), bVerticalSync ? 1 : 0);
 	}
 
-	GtkGL_Debug("pre-render::success");
+	GTK_GL_DEBUG("pre-render::success");
 }
 
-void Mensia::AdvancedVisualization::GtkGL::postRender(::GtkWidget * pWidget)
+void Mensia::AdvancedVisualization::GtkGL::postRender(::GtkWidget * widget)
 {
-	GtkGL_Debug("post-render");
+	GTK_GL_DEBUG("post-render");
 
-	::Display* l_pDisplay = GDK_SCREEN_XDISPLAY(::gtk_widget_get_screen(pWidget));
-	::Window l_pWindow = GDK_WINDOW_XID(gtk_widget_get_window(pWidget));
-	if (!l_pDisplay)
+	::Display* display = GDK_SCREEN_XDISPLAY(::gtk_widget_get_screen(widget));
+	::Window window = GDK_WINDOW_XID(gtk_widget_get_window(widget));
+	if (!display)
 	{
-		GtkGL_Warning("post-render::failed");
+		GTK_GL_WARNING("post-render::failed");
 		return;
 	}
-	::glXSwapBuffers(l_pDisplay, l_pWindow);
+	::glXSwapBuffers(display, window);
 
-	GtkGL_Debug("post-render::success");
+	GTK_GL_DEBUG("post-render::success");
 }
 
 // ##  LINUX  ################################################################################################################################################

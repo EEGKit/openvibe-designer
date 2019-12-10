@@ -32,20 +32,20 @@ namespace Mensia
 		{
 		public:
 
-			TBoxAlgorithmStackedContinuousViz(const OpenViBE::CIdentifier& rClassId, const std::vector<int>& vParameter);
+			TBoxAlgorithmStackedContinuousViz(const OpenViBE::CIdentifier& classID, const std::vector<int>& parameters);
 			bool initialize() override;
 			bool uninitialize() override;
 			bool process() override;
 
-			_IsDerivedFromClass_Final_(CBoxAlgorithmViz, m_oClassId)
+			_IsDerivedFromClass_Final_(CBoxAlgorithmViz, m_ClassID)
 
 			OpenViBEToolkit::TStimulationDecoder<TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>>
-			m_oStimulationDecoder;
+			m_StimDecoder;
 			OpenViBEToolkit::TStreamedMatrixDecoder<TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>>
-			m_oMatrixDecoder;
+			m_MatrixDecoder;
 
-			TRendererFactoryClass m_oRendererFactory;
-			std::vector<IRenderer*> m_vRenderer;
+			TRendererFactoryClass m_RendererFactory;
+			std::vector<IRenderer*> m_Renderers;
 
 		protected:
 
@@ -56,8 +56,7 @@ namespace Mensia
 		{
 		public:
 
-			explicit CBoxAlgorithmStackedContinuousVizListener(const std::vector<int>& vParameter)
-				: CBoxAlgorithmVizListener(vParameter) { }
+			explicit CBoxAlgorithmStackedContinuousVizListener(const std::vector<int>& parameters) : CBoxAlgorithmVizListener(parameters) { }
 
 			bool onInputTypeChanged(OpenViBE::Kernel::IBox& box, const size_t index) override
 			{
@@ -74,30 +73,28 @@ namespace Mensia
 		{
 		public:
 
-			TBoxAlgorithmStackedContinuousVizDesc(const OpenViBE::CString& name, const OpenViBE::CIdentifier& rDescClassId,
-												  const OpenViBE::CIdentifier& rClassId, const OpenViBE::CString& sAddedSoftwareVersion,
-												  const OpenViBE::CString& sUpdatedSoftwareVersion, const CParameterSet& rParameterSet,
-												  const OpenViBE::CString& sShortDescription, const OpenViBE::CString& sDetailedDescription)
-				: CBoxAlgorithmVizDesc(name, rDescClassId, rClassId, sAddedSoftwareVersion, sUpdatedSoftwareVersion, rParameterSet, sShortDescription,
-									   sDetailedDescription) { }
+			TBoxAlgorithmStackedContinuousVizDesc(const OpenViBE::CString& name, const OpenViBE::CIdentifier& descClassID,
+												  const OpenViBE::CIdentifier& classID, const OpenViBE::CString& addedSoftwareVersion,
+												  const OpenViBE::CString& updatedSoftwareVersion, const CParameterSet& parameterSet,
+												  const OpenViBE::CString& shortDesc, const OpenViBE::CString& detailedDesc)
+				: CBoxAlgorithmVizDesc(name, descClassID, classID, addedSoftwareVersion, updatedSoftwareVersion, parameterSet, shortDesc, detailedDesc) { }
 
 			OpenViBE::Plugins::IPluginObject* create() override
 			{
-				return new TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>(m_oClassId, m_vParameter);
+				return new TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>(m_ClassID, m_Parameters);
 			}
 
-			OpenViBE::Plugins::IBoxListener* createBoxListener() const override { return new CBoxAlgorithmStackedContinuousVizListener(m_vParameter); }
+			OpenViBE::Plugins::IBoxListener* createBoxListener() const override { return new CBoxAlgorithmStackedContinuousVizListener(m_Parameters); }
 
-			OpenViBE::CString getCategory() const override { return OpenViBE::CString("Advanced Visualization/") + m_sCategoryName; }
+			OpenViBE::CString getCategory() const override { return OpenViBE::CString("Advanced Visualization/") + m_CategoryName; }
 
-			_IsDerivedFromClass_Final_(OpenViBE::Plugins::IBoxAlgorithmDesc, m_oDescClassId)
+			_IsDerivedFromClass_Final_(OpenViBE::Plugins::IBoxAlgorithmDesc, m_DescClassID)
 		};
 
 
 		template <bool bHorizontalStack, bool bDrawBorders, class TRendererFactoryClass, class TRulerClass>
 		TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>::TBoxAlgorithmStackedContinuousViz(
-			const OpenViBE::CIdentifier& rClassId, const std::vector<int>& vParameter)
-			: CBoxAlgorithmViz(rClassId, vParameter) { }
+			const OpenViBE::CIdentifier& classID, const std::vector<int>& parameters) : CBoxAlgorithmViz(classID, parameters) { }
 
 		template <bool bHorizontalStack, bool bDrawBorders, class TRendererFactoryClass, class TRulerClass>
 		bool TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>::initialize()
@@ -105,22 +102,22 @@ namespace Mensia
 		{
 			const bool res = CBoxAlgorithmViz::initialize();
 
-			m_oMatrixDecoder.initialize(*this, 0);
-			m_oStimulationDecoder.initialize(*this, 1);
+			m_MatrixDecoder.initialize(*this, 0);
+			m_StimDecoder.initialize(*this, 1);
 
-			m_pRendererContext->clear();
-			m_pRendererContext->setTranslucency(float(m_translucency));
-			// m_pRendererContext->setTranslucency(m_nFlowerRing);
-			m_pRendererContext->scaleBy(float(m_f64DataScale));
-			m_pRendererContext->setPositiveOnly(m_isPositive);
-			m_pRendererContext->setAxisDisplay(m_bShowAxis);
-			m_pRendererContext->setParentRendererContext(&getContext());
+			m_RendererCtx->clear();
+			m_RendererCtx->setTranslucency(float(m_Translucency));
+			// m_rendererCtx->setTranslucency(m_nFlowerRing);
+			m_RendererCtx->scaleBy(float(m_DataScale));
+			m_RendererCtx->setPositiveOnly(m_IsPositive);
+			m_RendererCtx->setAxisDisplay(m_ShowAxis);
+			m_RendererCtx->setParentRendererContext(&getContext());
 
-			m_pSubRendererContext->clear();
-			m_pSubRendererContext->setParentRendererContext(m_pRendererContext);
+			m_SubRendererCtx->clear();
+			m_SubRendererCtx->setParentRendererContext(m_RendererCtx);
 
-			m_pRuler = new TRulerClass;
-			m_pRuler->setRendererContext(m_pRendererContext);
+			m_Ruler = new TRulerClass;
+			m_Ruler->setRendererContext(m_RendererCtx);
 
 			return res;
 		}
@@ -129,20 +126,20 @@ namespace Mensia
 		bool TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>::uninitialize()
 
 		{
-			for (uint32_t i = 0; i < m_vRenderer.size(); ++i) { m_oRendererFactory.release(m_vRenderer[i]); }
-			m_vRenderer.clear();
+			for (size_t i = 0; i < m_Renderers.size(); ++i) { m_RendererFactory.release(m_Renderers[i]); }
+			m_Renderers.clear();
 
-			delete m_pSubRendererContext;
-			m_pSubRendererContext = nullptr;
+			delete m_SubRendererCtx;
+			m_SubRendererCtx = nullptr;
 
-			delete m_pRendererContext;
-			m_pRendererContext = nullptr;
+			delete m_RendererCtx;
+			m_RendererCtx = nullptr;
 
-			delete m_pRuler;
-			m_pRuler = nullptr;
+			delete m_Ruler;
+			m_Ruler = nullptr;
 
-			m_oStimulationDecoder.uninitialize();
-			m_oMatrixDecoder.uninitialize();
+			m_StimDecoder.uninitialize();
+			m_MatrixDecoder.uninitialize();
 
 			return CBoxAlgorithmViz::uninitialize();
 		}
@@ -151,16 +148,16 @@ namespace Mensia
 		bool TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>::process()
 		{
 			OpenViBE::Kernel::IBoxIO& boxContext = this->getDynamicBoxContext();
-			const uint32_t nInput                = this->getStaticBoxContext().getInputCount();
+			const size_t nInput                  = this->getStaticBoxContext().getInputCount();
 			size_t i, j;
 
 			for (i = 0; i < boxContext.getInputChunkCount(0); ++i)
 			{
-				m_oMatrixDecoder.decode(uint32_t(i));
+				m_MatrixDecoder.decode(size_t(i));
 
-				OpenViBE::IMatrix* l_pMatrix = m_oMatrixDecoder.getOutputMatrix();
-				uint32_t nChannel  = l_pMatrix->getDimensionSize(0);
-				uint32_t nSample         = l_pMatrix->getDimensionSize(1);
+				OpenViBE::IMatrix* matrix = m_MatrixDecoder.getOutputMatrix();
+				size_t nChannel           = matrix->getDimensionSize(0);
+				size_t nSample            = matrix->getDimensionSize(1);
 
 				if (nChannel == 0)
 				{
@@ -168,141 +165,135 @@ namespace Mensia
 					return false;
 				}
 
-				if (l_pMatrix->getDimensionCount() == 1)
+				if (matrix->getDimensionCount() == 1)
 				{
-					nChannel = l_pMatrix->getDimensionSize(0);
-					nSample        = 1;
+					nChannel = matrix->getDimensionSize(0);
+					nSample  = 1;
 				}
 
-				if (m_oMatrixDecoder.isHeaderReceived())
+				if (m_MatrixDecoder.isHeaderReceived())
 				{
-					GtkTreeIter l_oGtkTreeIterator;
-					gtk_list_store_clear(m_pChannelListStore);
+					GtkTreeIter gtkTreeIter;
+					gtk_list_store_clear(m_ChannelListStore);
 
-					m_vSwap.resize(nSample);
+					m_Swaps.resize(nSample);
 
-					for (j = 0; j < m_vRenderer.size(); ++j) { m_oRendererFactory.release(m_vRenderer[j]); }
-					m_vRenderer.clear();
-					m_vRenderer.resize(nChannel);
+					for (j = 0; j < m_Renderers.size(); ++j) { m_RendererFactory.release(m_Renderers[j]); }
+					m_Renderers.clear();
+					m_Renderers.resize(nChannel);
 
-					m_pSubRendererContext->clear();
-					m_pSubRendererContext->setParentRendererContext(m_pRendererContext);
-					m_pSubRendererContext->setTimeLocked(m_isTimeLocked);
-					m_pSubRendererContext->setStackCount(nChannel);
+					m_SubRendererCtx->clear();
+					m_SubRendererCtx->setParentRendererContext(m_RendererCtx);
+					m_SubRendererCtx->setTimeLocked(m_IsTimeLocked);
+					m_SubRendererCtx->setStackCount(nChannel);
 					for (j = 0; j < nSample; ++j)
 					{
-						std::string l_sName    = trim(l_pMatrix->getDimensionLabel(1, uint32_t(j)));
-						std::string l_sSubname = l_sName;
-						std::transform(l_sName.begin(), l_sName.end(), l_sSubname.begin(), tolower);
-						CVertex v = m_vChannelLocalisation[l_sSubname];
-						m_pSubRendererContext->addChannel(l_sName, v.x, v.y, v.z);
+						std::string name    = trim(matrix->getDimensionLabel(1, size_t(j)));
+						std::string subname = name;
+						std::transform(name.begin(), name.end(), subname.begin(), tolower);
+						const CVertex v = m_ChannelPositions[subname];
+						m_SubRendererCtx->addChannel(name, v.x, v.y, v.z);
 					}
 
-					m_pRendererContext->clear();
-					m_pRendererContext->setTranslucency(float(m_translucency));
-					m_pRendererContext->setTimeScale(m_timeScale);
-					m_pRendererContext->setElementCount(m_nElement);
-					m_pRendererContext->scaleBy(float(m_f64DataScale));
-					m_pRendererContext->setParentRendererContext(&getContext());
-					m_pRendererContext->setTimeLocked(m_isTimeLocked);
-					m_pRendererContext->setXYZPlotDepth(m_bXYZPlotHasDepth);
+					m_RendererCtx->clear();
+					m_RendererCtx->setTranslucency(float(m_Translucency));
+					m_RendererCtx->setTimeScale(m_TimeScale);
+					m_RendererCtx->setElementCount(m_NElement);
+					m_RendererCtx->scaleBy(float(m_DataScale));
+					m_RendererCtx->setParentRendererContext(&getContext());
+					m_RendererCtx->setTimeLocked(m_IsTimeLocked);
+					m_RendererCtx->setXYZPlotDepth(m_XYZPlotHasDepth);
 
-					gtk_tree_view_set_model(m_pChannelTreeView, nullptr);
+					gtk_tree_view_set_model(m_ChannelTreeView, nullptr);
 					for (j = 0; j < nChannel; ++j)
 					{
-						std::string l_sName    = trim(l_pMatrix->getDimensionLabel(0, uint32_t(j)));
-						std::string l_sSubname = l_sName;
-						std::transform(l_sName.begin(), l_sName.end(), l_sSubname.begin(), tolower);
-						const CVertex v = m_vChannelLocalisation[l_sSubname];
+						std::string name    = trim(matrix->getDimensionLabel(0, size_t(j)));
+						std::string subname = name;
+						std::transform(name.begin(), name.end(), subname.begin(), tolower);
+						const CVertex v = m_ChannelPositions[subname];
 
-						if (l_sName.empty())
-						{
-							char l_sIndexedChannelName[1024];
-							sprintf(l_sIndexedChannelName, "Channel %llu", j + 1);
-							l_sName = l_sIndexedChannelName;
-						}
+						if (name.empty()) { name = "Channel " + std::to_string(j + 1); }
 
-						m_vRenderer[j] = m_oRendererFactory.create();
-						m_vRenderer[j]->setChannelCount(nSample);
-						m_vRenderer[j]->setSampleCount(uint32_t(m_nElement)); // $$$
-						//				m_vRenderer[j]->setSampleCount(uint32_t(m_f64TimeScale)); // $$$
+						m_Renderers[j] = m_RendererFactory.create();
+						m_Renderers[j]->setChannelCount(nSample);
+						m_Renderers[j]->setSampleCount(size_t(m_NElement)); // $$$
+						// m_Renderers[j]->setSampleCount(size_t(m_TimeScaleW)); // $$$
 
-						m_pRendererContext->addChannel(l_sName, v.x, v.y, v.z);
-						//				m_pRendererContext->addChannel(sanitize(l_pMatrix->getDimensionLabel(0, j)));
-						gtk_list_store_append(m_pChannelListStore, &l_oGtkTreeIterator);
-						gtk_list_store_set(m_pChannelListStore, &l_oGtkTreeIterator, 0, j + 1, 1, l_sName.c_str(), -1);
+						m_RendererCtx->addChannel(name, v.x, v.y, v.z);
+						// m_rendererCtx->addChannel(sanitize(matrix->getDimensionLabel(0, j)));
+						gtk_list_store_append(m_ChannelListStore, &gtkTreeIter);
+						gtk_list_store_set(m_ChannelListStore, &gtkTreeIter, 0, j + 1, 1, name.c_str(), -1);
 					}
-					gtk_tree_view_set_model(m_pChannelTreeView, GTK_TREE_MODEL(m_pChannelListStore));
-					gtk_tree_selection_select_all(gtk_tree_view_get_selection(m_pChannelTreeView));
+					gtk_tree_view_set_model(m_ChannelTreeView, GTK_TREE_MODEL(m_ChannelListStore));
+					gtk_tree_selection_select_all(gtk_tree_view_get_selection(m_ChannelTreeView));
 
-					if (m_typeID == OV_TypeId_Signal)
+					if (m_TypeID == OV_TypeId_Signal)
 					{
-						m_pRendererContext->setDataType(CRendererContext::DataType_Signal);
-						m_pSubRendererContext->setDataType(CRendererContext::DataType_Signal);
+						m_RendererCtx->setDataType(CRendererContext::EDataType::Signal);
+						m_SubRendererCtx->setDataType(CRendererContext::EDataType::Signal);
 					}
-					else if (m_typeID == OV_TypeId_Spectrum)
+					else if (m_TypeID == OV_TypeId_Spectrum)
 					{
-						m_pRendererContext->setDataType(CRendererContext::DataType_Spectrum);
-						m_pSubRendererContext->setDataType(CRendererContext::DataType_Spectrum);
+						m_RendererCtx->setDataType(CRendererContext::EDataType::Spectrum);
+						m_SubRendererCtx->setDataType(CRendererContext::EDataType::Spectrum);
 					}
 					else
 					{
-						m_pRendererContext->setDataType(CRendererContext::DataType_Matrix);
-						m_pSubRendererContext->setDataType(CRendererContext::DataType_Matrix);
+						m_RendererCtx->setDataType(CRendererContext::EDataType::Matrix);
+						m_SubRendererCtx->setDataType(CRendererContext::EDataType::Matrix);
 					}
 
-					m_pRuler->setRenderer(nChannel ? m_vRenderer[0] : nullptr);
+					m_Ruler->setRenderer(nChannel ? m_Renderers[0] : nullptr);
 
-					m_bRebuildNeeded = true;
-					m_bRefreshNeeded = true;
-					m_bRedrawNeeded  = true;
+					m_RebuildNeeded = true;
+					m_RefreshNeeded = true;
+					m_RedrawNeeded  = true;
 				}
-				if (m_oMatrixDecoder.isBufferReceived())
+				if (m_MatrixDecoder.isBufferReceived())
 				{
-					m_time1                                 = m_time2;
-					m_time2                                 = boxContext.getInputChunkEndTime(0, uint32_t(i));
-					const uint64_t l_ui64InterChunkDuration = m_time2 - m_time1;
-					const uint64_t l_ui64ChunkDuration      = (boxContext.getInputChunkEndTime(0, uint32_t(i)) - boxContext.getInputChunkStartTime(
-																   0, uint32_t(i)));
-					const uint64_t sampleDuration = l_ui64ChunkDuration / m_nElement;
-					if (m_pRendererContext->isTimeLocked())
+					m_Time1                           = m_Time2;
+					m_Time2                           = boxContext.getInputChunkEndTime(0, size_t(i));
+					const uint64_t interChunkDuration = m_Time2 - m_Time1;
+					const uint64_t chunkDuration      = (boxContext.getInputChunkEndTime(0, size_t(i)) - boxContext.getInputChunkStartTime(0, size_t(i)));
+					const uint64_t sampleDuration     = chunkDuration / m_NElement;
+					if (m_RendererCtx->isTimeLocked())
 					{
-						if ((l_ui64InterChunkDuration & ~0xf) != (m_pRendererContext->getSampleDuration() & ~0xf) && l_ui64InterChunkDuration != 0
+						if ((interChunkDuration & ~0xf) != (m_RendererCtx->getSampleDuration() & ~0xf) && interChunkDuration != 0
 						) // 0xf mask avoids rounding errors
 						{
-							m_pSubRendererContext->setSampleDuration(l_ui64InterChunkDuration);
-							m_pRendererContext->setSampleDuration(l_ui64InterChunkDuration);
+							m_SubRendererCtx->setSampleDuration(interChunkDuration);
+							m_RendererCtx->setSampleDuration(interChunkDuration);
 						}
 					}
 					else
 					{
-						m_pSubRendererContext->setSampleDuration(sampleDuration);
-						m_pRendererContext->setSampleDuration(sampleDuration);
+						m_SubRendererCtx->setSampleDuration(sampleDuration);
+						m_RendererCtx->setSampleDuration(sampleDuration);
 					}
 
-					m_pRendererContext->setSpectrumFrequencyRange(uint32_t((uint64_t(nSample) << 32) / l_ui64ChunkDuration));
-					m_pRendererContext->setMinimumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_pFrequencyBandMin))));
-					m_pRendererContext->setMaximumSpectrumFrequency(uint32_t(gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_pFrequencyBandMax))));
+					m_RendererCtx->setSpectrumFrequencyRange(size_t((uint64_t(nSample) << 32) / chunkDuration));
+					m_RendererCtx->setMinimumSpectrumFrequency(size_t(gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_FrequencyBandMin))));
+					m_RendererCtx->setMaximumSpectrumFrequency(size_t(gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_FrequencyBandMax))));
 
 					for (j = 0; j < nChannel; ++j)
 					{
 						// Feed renderer with actual samples
-						for (size_t k = 0; k < nSample; ++k) { m_vSwap[nSample - k - 1] = float(l_pMatrix->getBuffer()[j * nSample + k]); }
-						m_vRenderer[j]->feed(&m_vSwap[0]);
+						for (size_t k = 0; k < nSample; ++k) { m_Swaps[nSample - k - 1] = float(matrix->getBuffer()[j * nSample + k]); }
+						m_Renderers[j]->feed(&m_Swaps[0]);
 
 						// Adjust feeding depending on theoretical dates
-						if (m_pRendererContext->isTimeLocked() && m_pRendererContext->getSampleDuration())
+						if (m_RendererCtx->isTimeLocked() && m_RendererCtx->getSampleDuration())
 						{
-							const auto l_ui32TheoreticalSampleCount = uint32_t(m_time2 / m_pRendererContext->getSampleDuration());
-							if (l_ui32TheoreticalSampleCount > m_vRenderer[j]->getHistoryCount())
+							const auto nTheoreticalSample = size_t(m_Time2 / m_RendererCtx->getSampleDuration());
+							if (nTheoreticalSample > m_Renderers[j]->getHistoryCount())
 							{
-								m_vRenderer[j]->prefeed(l_ui32TheoreticalSampleCount - m_vRenderer[j]->getHistoryCount());
+								m_Renderers[j]->prefeed(nTheoreticalSample - m_Renderers[j]->getHistoryCount());
 							}
 						}
 					}
 
-					m_bRefreshNeeded = true;
-					m_bRedrawNeeded  = true;
+					m_RefreshNeeded = true;
+					m_RedrawNeeded  = true;
 				}
 			}
 
@@ -310,50 +301,50 @@ namespace Mensia
 			{
 				for (i = 0; i < boxContext.getInputChunkCount(1); ++i)
 				{
-					m_oStimulationDecoder.decode(uint32_t(i));
-					if (m_oStimulationDecoder.isBufferReceived())
+					m_StimDecoder.decode(size_t(i));
+					if (m_StimDecoder.isBufferReceived())
 					{
-						OpenViBE::IStimulationSet* stimulationSet = m_oStimulationDecoder.getOutputStimulationSet();
+						OpenViBE::IStimulationSet* stimulationSet = m_StimDecoder.getOutputStimulationSet();
 						for (j = 0; j < stimulationSet->getStimulationCount(); ++j)
 						{
-							m_vRenderer[0]->feed(stimulationSet->getStimulationDate(j), stimulationSet->getStimulationIdentifier(j));
-							m_bRedrawNeeded = true;
+							m_Renderers[0]->feed(stimulationSet->getStimulationDate(j), stimulationSet->getStimulationIdentifier(j));
+							m_RedrawNeeded = true;
 						}
 					}
 				}
 			}
 
-			uint32_t rendererSampleCount = 0;
-			if (m_pRendererContext->isTimeLocked())
+			size_t rendererSampleCount = 0;
+			if (m_RendererCtx->isTimeLocked())
 			{
-				if (0 != m_pRendererContext->getSampleDuration())
+				if (0 != m_RendererCtx->getSampleDuration())
 				{
-					rendererSampleCount = uint32_t(m_pRendererContext->getTimeScale() / m_pRendererContext->getSampleDuration());
+					rendererSampleCount = size_t(m_RendererCtx->getTimeScale() / m_RendererCtx->getSampleDuration());
 				}
 			}
-			else { rendererSampleCount = uint32_t(m_pRendererContext->getElementCount()); }
+			else { rendererSampleCount = size_t(m_RendererCtx->getElementCount()); }
 
 			if (rendererSampleCount != 0)
 			{
-				for (j = 0; j < m_vRenderer.size(); ++j)
+				for (j = 0; j < m_Renderers.size(); ++j)
 				{
-					if (rendererSampleCount != m_vRenderer[j]->getSampleCount())
+					if (rendererSampleCount != m_Renderers[j]->getSampleCount())
 					{
-						m_vRenderer[j]->setSampleCount(rendererSampleCount);
-						m_bRebuildNeeded = true;
-						m_bRefreshNeeded = true;
-						m_bRedrawNeeded  = true;
+						m_Renderers[j]->setSampleCount(rendererSampleCount);
+						m_RebuildNeeded = true;
+						m_RefreshNeeded = true;
+						m_RedrawNeeded  = true;
 					}
 				}
 			}
 
-			if (m_bRebuildNeeded) { for (auto& renderer : m_vRenderer) { renderer->rebuild(*m_pSubRendererContext); } }
-			if (m_bRefreshNeeded) { for (auto& renderer : m_vRenderer) { renderer->refresh(*m_pSubRendererContext); } }
-			if (m_bRedrawNeeded) { this->redraw(); }
+			if (m_RebuildNeeded) { for (auto& renderer : m_Renderers) { renderer->rebuild(*m_SubRendererCtx); } }
+			if (m_RefreshNeeded) { for (auto& renderer : m_Renderers) { renderer->refresh(*m_SubRendererCtx); } }
+			if (m_RedrawNeeded) { this->redraw(); }
 
-			m_bRebuildNeeded = false;
-			m_bRefreshNeeded = false;
-			m_bRedrawNeeded  = false;
+			m_RebuildNeeded = false;
+			m_RefreshNeeded = false;
+			m_RedrawNeeded  = false;
 
 			return true;
 		}
@@ -364,25 +355,25 @@ namespace Mensia
 		{
 			CBoxAlgorithmViz::preDraw();
 
-			if (m_pRendererContext->getSelectedCount() != 0)
+			if (m_RendererCtx->getSelectedCount() != 0)
 			{
 				glPushMatrix();
-				glScalef(1, 1.f / m_pRendererContext->getSelectedCount(), 1);
-				for (uint32_t i = 0; i < m_pRendererContext->getSelectedCount(); ++i)
+				glScalef(1, 1.F / m_RendererCtx->getSelectedCount(), 1);
+				for (size_t i = 0; i < m_RendererCtx->getSelectedCount(); ++i)
 				{
 					glPushAttrib(GL_ALL_ATTRIB_BITS);
 					glPushMatrix();
-					glColor4f(m_oColor.r, m_oColor.g, m_oColor.b, m_pRendererContext->getTranslucency());
-					glTranslatef(0, m_pRendererContext->getSelectedCount() - i - 1.f, 0);
+					glColor4f(m_Color.r, m_Color.g, m_Color.b, m_RendererCtx->getTranslucency());
+					glTranslatef(0, m_RendererCtx->getSelectedCount() - i - 1.F, 0);
 					if (!bHorizontalStack)
 					{
 						glScalef(1, -1, 1);
 						glRotatef(-90, 0, 0, 1);
 					}
-					m_pSubRendererContext->setAspect(m_pRendererContext->getAspect());
-					m_pSubRendererContext->setStackCount(m_pRendererContext->getSelectedCount());
-					m_pSubRendererContext->setStackIndex(i);
-					m_vRenderer[m_pRendererContext->getSelected(i)]->render(*m_pSubRendererContext);
+					m_SubRendererCtx->setAspect(m_RendererCtx->getAspect());
+					m_SubRendererCtx->setStackCount(m_RendererCtx->getSelectedCount());
+					m_SubRendererCtx->setStackIndex(i);
+					m_Renderers[m_RendererCtx->getSelected(i)]->render(*m_SubRendererCtx);
 					if (bDrawBorders)
 					{
 						glDisable(GL_TEXTURE_1D);

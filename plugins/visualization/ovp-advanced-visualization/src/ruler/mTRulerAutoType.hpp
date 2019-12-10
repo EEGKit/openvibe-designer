@@ -51,24 +51,24 @@ namespace Mensia
 			void render() override
 			{
 				const CRendererContext::EDataType dataType = m_rendererCtx->getDataType();
-				if (dataType == CRendererContext::DataType_Signal) { m_rulerSignal.doRender(); }
-				else if (dataType == CRendererContext::DataType_Spectrum) { m_rulerSpectrum.doRender(); }
+				if (dataType == CRendererContext::EDataType::Signal) { m_rulerSignal.doRender(); }
+				else if (dataType == CRendererContext::EDataType::Spectrum) { m_rulerSpectrum.doRender(); }
 				else { m_rulerMatrix.doRender(); }
 			}
 
 			void renderLeft(GtkWidget* widget) override
 			{
 				const CRendererContext::EDataType dataType = m_rendererCtx->getDataType();
-				if (dataType == CRendererContext::DataType_Signal) { m_rulerSignal.doRenderLeft(widget); }
-				else if (dataType == CRendererContext::DataType_Spectrum) { m_rulerSpectrum.doRenderLeft(widget); }
+				if (dataType == CRendererContext::EDataType::Signal) { m_rulerSignal.doRenderLeft(widget); }
+				else if (dataType == CRendererContext::EDataType::Spectrum) { m_rulerSpectrum.doRenderLeft(widget); }
 				else { m_rulerMatrix.doRenderLeft(widget); }
 			}
 
 			void renderRight(GtkWidget* widget) override
 			{
 				const CRendererContext::EDataType dataType = m_rendererCtx->getDataType();
-				if (dataType == CRendererContext::DataType_Signal) { m_rulerSignal.doRenderRight(widget); }
-				else if (dataType == CRendererContext::DataType_Spectrum) { m_rulerSpectrum.doRenderRight(widget); }
+				if (dataType == CRendererContext::EDataType::Signal) { m_rulerSignal.doRenderRight(widget); }
+				else if (dataType == CRendererContext::EDataType::Spectrum) { m_rulerSpectrum.doRenderRight(widget); }
 				else { m_rulerMatrix.doRenderRight(widget); }
 			}
 
@@ -76,8 +76,8 @@ namespace Mensia
 			{
 				const CRendererContext::EDataType dataType = m_rendererCtx->getDataType();
 
-				if (dataType == CRendererContext::DataType_Signal) { m_rulerSignal.doRenderBottom(widget); }
-				else if (dataType == CRendererContext::DataType_Spectrum) { m_rulerSpectrum.doRenderBottom(widget); }
+				if (dataType == CRendererContext::EDataType::Signal) { m_rulerSignal.doRenderBottom(widget); }
+				else if (dataType == CRendererContext::EDataType::Spectrum) { m_rulerSpectrum.doRenderBottom(widget); }
 				else { m_rulerMatrix.doRenderBottom(widget); }
 			}
 
