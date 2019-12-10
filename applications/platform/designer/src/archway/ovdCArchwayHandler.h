@@ -12,15 +12,15 @@
 #include <gtk/gtk.h>
 #include <system/ovCDynamicModule.h>
 
-namespace Mensia {
-
-	enum class EngineType
+namespace Mensia
+{
+	enum class EEngineType
 	{
 		Local,
 		LAN
 	};
 
-	enum class EngineInitialisationStatus
+	enum class EEngineInitialisationStatus
 	{
 		Success,
 		Failure,
@@ -36,7 +36,7 @@ namespace Mensia {
 
 	struct SPipeline
 	{
-		unsigned long long id;
+		size_t id;
 		std::string description;
 		bool isConfigured;
 	};
@@ -54,19 +54,20 @@ namespace Mensia {
 		std::function<void()> refreshStoppedEngine;
 	};
 
-	class CArchwayHandler final {
+	class CArchwayHandler final
+	{
 	public:
-		CArchwayHandler(const OpenViBE::Kernel::IKernelContext& ctx);
+		explicit CArchwayHandler(const OpenViBE::Kernel::IKernelContext& ctx) : m_DeviceURL("simulator://"), m_kernelCtx(ctx) { }
 		~CArchwayHandler();
 
-		EngineInitialisationStatus initialize();
+		EEngineInitialisationStatus initialize();
 		bool uninitialize();
 
 		bool reinitializeArchway();
 		std::vector<SPipeline> getEnginePipelines() const;
 		std::vector<SPipelineParameter> getPipelineParameters(size_t pipelineClassID) const;
 		bool setPipelineParameterValue(size_t pipelineClassID, std::string const& parameterName, std::string const& parameterValue);
-		std::string getPipelineScenarioPath(uint64_t pipelineID) const;
+		std::string getPipelineScenarioPath(size_t pipelineID) const;
 
 		bool startEngineWithPipeline(size_t pipelineClassID, bool isFastForward, bool shouldAcquireImpedance);
 		bool loopEngine();
@@ -75,13 +76,12 @@ namespace Mensia {
 		bool isEngineStarted();
 		bool writeArchwayConfigurationFile();
 
-		std::map< std::string, std::string >& getPipelineSettings(size_t pipelineClassID) { return m_PipelineSettings[pipelineClassID]; }
+		std::map<std::string, std::string>& getPipelineSettings(const size_t pipelineClassID) { return m_pipelineSettings[pipelineClassID]; }
 
-	public:
 		SArchwayBridge m_ArchwayBridge;
 		SGUIBridge m_GUIBridge;
 		std::string m_DeviceURL;
-		EngineType m_EngineType;
+		EEngineType m_EngineType = EEngineType::Local;
 
 	private:
 		bool initializeArchway();
@@ -92,15 +92,17 @@ namespace Mensia {
 
 	private:
 		typedef void (*FPEnumerateAvailablePipelinesCallback)(size_t pipelineClassID, const char* pipelineDescription, void* userData);
-		typedef void (*FPEnumeratePipelineParametersCallback)(size_t pipelineID, const char* parameterName, const char* parameterValue, void* userData) ;
-		struct ArchwayAPI {
+		typedef void (*FPEnumeratePipelineParametersCallback)(size_t pipelineID, const char* parameterName, const char* parameterValue, void* userData);
+
+		struct ArchwayAPI
+		{
 			size_t (*getLastError)();
 			const char* (*getErrorString)(size_t errorCode);
 
 			const char* (*getVersionDescription)();
 
 			void (*getConfigurationParameterAsString)(const char* configurationParameter, char* outputBuffer, size_t bufferLength);
-			bool (*getPipelineScenarioPath)(uint64_t pipelineID, char* messageBuffer, size_t bufferLength);
+			bool (*getPipelineScenarioPath)(size_t pipelineID, char* messageBuffer, size_t bufferLength);
 
 			bool (*initialize)(const char* login, const char* password, const char* applicationName, const char* configFilename);
 			bool (*startAllAcquisitionDevices)();
@@ -135,15 +137,15 @@ namespace Mensia {
 			bool (*isStarted)();
 		};
 
-		struct ArchwayAPI* m_Archway = nullptr;
-		System::CDynamicModule m_ArchwayModule;
+		struct ArchwayAPI* m_archway = nullptr;
+		System::CDynamicModule m_archwayModule;
 		const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
 
 		// Current Configuration
-		std::map< size_t, std::map< std::string, std::string > > m_PipelineSettings;
+		std::map<size_t, std::map<std::string, std::string>> m_pipelineSettings;
 
-		static const std::string s_ArchwayConfigurationFile;
-		static const std::string s_ArchwayPipelinesConfigurationFile;
+		static const std::string ARCHWAY_CONFIG_FILE;
+		static const std::string ARCHWAY_PIPELINES_CONFIG_FILE;
 
 		size_t m_RunningPipelineId = 0;
 	};

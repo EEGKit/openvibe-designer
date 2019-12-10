@@ -23,34 +23,31 @@ namespace
 	class CProcessEnumeratorCB : public FS::IEntryEnumeratorCallBack
 	{
 	public:
-		CProcessEnumeratorCB(std::string sProcessName, bool& rbFoundProcess)
-			: m_sProcessName(sProcessName),
-			  m_rbFoundProcess(rbFoundProcess)
-		{}
+		CProcessEnumeratorCB(std::string processName, bool& rbFoundProcess)
+			: m_name(processName), m_found(rbFoundProcess) { }
 
-		virtual FS::boolean callback(FS::IEntryEnumerator::IEntry& rEntry,
-									 FS::IEntryEnumerator::IAttributes& rAttributes)
+		virtual FS::boolean callback(FS::IEntryEnumerator::IEntry& entry, FS::IEntryEnumerator::IAttributes& /*attributes*/)
 		{
-			std::ifstream l_fsInputStream;
-			FS::Files::openIFStream(l_fsInputStream, rEntry.getName());
-			std::string l_sFileContents;
+			std::ifstream fsInputStream;
+			FS::Files::openIFStream(fsInputStream, entry.getName());
+			std::string fileContents;
 
-			if (l_fsInputStream.is_open())
+			if (fsInputStream.is_open())
 			{
-				while(!l_fsInputStream.eof()) { l_fsInputStream >> l_sFileContents; }
-				size_t l_stFound = l_sFileContents.rfind(m_sProcessName);
-				if (l_stFound != std::string::npos && l_stFound == l_sFileContents.length() - m_sProcessName.length() - 1 )
+				while(!fsInputStream.eof()) { fsInputStream >> fileContents; }
+				size_t pos = fileContents.rfind(m_name);
+				if (pos != std::string::npos && pos == fileContents.length() - m_name.length() - 1 )
 				{
-					m_rbFoundProcess = true;
+					m_found = true;
 				}
 
 			}
-			l_fsInputStream.close();
+			fsInputStream.close();
 			return true;
 		}
 
-		std::string m_sProcessName;
-		bool& m_rbFoundProcess;
+		std::string m_name;
+		bool& m_found;
 	};
 }
 #endif
@@ -59,57 +56,50 @@ namespace OpenViBE
 {
 	namespace ProcessUtilities
 	{
-		bool doesProcessExist(std::string sProcessName)
+		bool doesProcessExist(std::string name)
 		{
 #if defined TARGET_OS_Windows
-			HANDLE hProcessSnap;
 			PROCESSENTRY32 pe32;
 
 			// Take a snapshot of all processes in the system.
-			hProcessSnap = CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 );
-			if( hProcessSnap == INVALID_HANDLE_VALUE ) { return false; }
+			const HANDLE processSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+			if (processSnap == INVALID_HANDLE_VALUE) { return false; }
 
 			// Set the size of the structure before using it.
-			pe32.dwSize = sizeof( PROCESSENTRY32 );
+			pe32.dwSize = sizeof(PROCESSENTRY32);
 
 			// Retrieve information about the first process,
 			// and exit if unsuccessful
-			if( !Process32First( hProcessSnap, &pe32 ) )
+			if (!Process32First(processSnap, &pe32))
 			{
-				CloseHandle( hProcessSnap );          // clean the snapshot object
+				CloseHandle(processSnap);          // clean the snapshot object
 				return false;
 			}
 
 			bool bReturnValue = false;
 			// Now walk the snapshot of processes
-			do
-			{
-				if (sProcessName + ".exe" == std::string(pe32.szExeFile))
-				{
-					bReturnValue = true;
-				}
-			} while( Process32Next( hProcessSnap, &pe32 ) );
+			do { if (name + ".exe" == std::string(pe32.szExeFile)) { bReturnValue = true; } } while (Process32Next(processSnap, &pe32));
 
-			CloseHandle( hProcessSnap );
+			CloseHandle(processSnap);
 
 			return bReturnValue;
 #elif defined TARGET_OS_Linux || defined TARGET_OS_MacOS
 
-			bool l_bFoundProcess = false;
-			CProcessEnumeratorCB* l_rCB = new CProcessEnumeratorCB(sProcessName, l_bFoundProcess);
+			bool found = false;
+			CProcessEnumeratorCB* cb = new CProcessEnumeratorCB(name, found);
 
-			FS::IEntryEnumerator* l_pEntryEnumerator = FS::createEntryEnumerator(*l_rCB);
-			l_pEntryEnumerator->enumerate("/proc/*/cmdline");
-			l_pEntryEnumerator->release();
+			FS::IEntryEnumerator* entry = FS::createEntryEnumerator(*cb);
+			entry->enumerate("/proc/*/cmdline");
+			entry->release();
 
-			delete l_rCB;
-			return l_bFoundProcess;
+			delete cb;
+			return found;
 #endif
 		}
 
 		bool launchCommand(const char* sCommandLine)
 		{
-		#if defined TARGET_OS_Windows
+#if defined TARGET_OS_Windows
 			/*
 			LPTSTR szCmdline = TEXT(const_cast<char*>(sCommandLine));
 
@@ -122,9 +112,9 @@ namespace OpenViBE
 			// Create the process
 			if (!CreateProcess(nullptr,szCmdline, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, &lpStartupInfo, &lpProcessInfo)) { exit(1); }
 			*/
-			std::string l_sCommand = "start \"\" \"" + std::string(sCommandLine) + "\"";
-			system(l_sCommand.c_str());
-		#elif defined TARGET_OS_Linux || defined TARGET_OS_MacOS
+			const std::string cmd = "start \"\" \"" + std::string(sCommandLine) + "\"";
+			system(cmd.c_str());
+#elif defined TARGET_OS_Linux || defined TARGET_OS_MacOS
 
 			if (fork() == 0)
 			{
@@ -133,7 +123,7 @@ namespace OpenViBE
 			}
 
 			// FIXME: temporary solution using system()
-		#endif
+#endif
 
 			return true;
 		}
