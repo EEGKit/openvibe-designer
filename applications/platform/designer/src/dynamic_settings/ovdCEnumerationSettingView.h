@@ -9,10 +9,10 @@ namespace OpenViBEDesigner
 {
 	namespace Setting
 	{
-		class CEnumerationSettingView : public CAbstractSettingView
+		class CEnumerationSettingView final : public CAbstractSettingView
 		{
 		public:
-			CEnumerationSettingView(OpenViBE::Kernel::IBox& box, const size_t index, OpenViBE::CString& rBuilderName,
+			CEnumerationSettingView(OpenViBE::Kernel::IBox& box, const size_t index, OpenViBE::CString& builderName,
 									const OpenViBE::Kernel::IKernelContext& ctx, const OpenViBE::CIdentifier& typeID);
 
 			void getValue(OpenViBE::CString& value) const override;
@@ -22,11 +22,10 @@ namespace OpenViBEDesigner
 
 
 		private:
-			GtkComboBox* m_comboBox                 = nullptr;
+			GtkComboBox* m_comboBox        = nullptr;
 			OpenViBE::CIdentifier m_typeID = OV_UndefinedIdentifier;
-			bool p                                  = false;
 
-			std::map<OpenViBE::CString, uint64_t> m_entriesIdx;
+			std::map<OpenViBE::CString, size_t> m_entriesIdx;
 
 			const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
 			bool m_onValueSetting = false;

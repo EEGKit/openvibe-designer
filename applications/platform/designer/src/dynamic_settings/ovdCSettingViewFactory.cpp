@@ -15,10 +15,7 @@ using namespace OpenViBEDesigner;
 using namespace OpenViBE;
 using namespace Setting;
 
-CSettingViewFactory::CSettingViewFactory(const CString& rBuilderName, const Kernel::IKernelContext& ctx)
-	: m_builderName(rBuilderName), m_kernelCtx(ctx) {}
-
-CAbstractSettingView* CSettingViewFactory::getSettingView(Kernel::IBox& box, const uint32_t index)
+CAbstractSettingView* CSettingViewFactory::getSettingView(Kernel::IBox& box, const size_t index)
 {
 	CIdentifier type;
 	box.getSettingType(index, type);
@@ -31,14 +28,8 @@ CAbstractSettingView* CSettingViewFactory::getSettingView(Kernel::IBox& box, con
 	if (type == OV_TypeId_Script) { return new CScriptSettingView(box, index, m_builderName, m_kernelCtx); }
 	if (type == OV_TypeId_Color) { return new CColorSettingView(box, index, m_builderName, m_kernelCtx); }
 	if (type == OV_TypeId_ColorGradient) { return new CColorGradientSettingView(box, index, m_builderName, m_kernelCtx); }
-	if (m_kernelCtx.getTypeManager().isEnumeration(type))
-	{
-		return new CEnumerationSettingView(box, index, m_builderName, m_kernelCtx, type);
-	}
-	if (m_kernelCtx.getTypeManager().isBitMask(type))
-	{
-		return new CBitMaskSettingView(box, index, m_builderName, m_kernelCtx, type);
-	}
+	if (m_kernelCtx.getTypeManager().isEnumeration(type)) { return new CEnumerationSettingView(box, index, m_builderName, m_kernelCtx, type); }
+	if (m_kernelCtx.getTypeManager().isBitMask(type)) { return new CBitMaskSettingView(box, index, m_builderName, m_kernelCtx, type); }
 
 	//By default we consider every settings as a string
 	return new CStringSettingView(box, index, m_builderName);

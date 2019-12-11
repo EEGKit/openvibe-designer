@@ -39,9 +39,9 @@ namespace Mensia
 				GdkGC* drawGC = gdk_gc_new(widget->window);
 				for (int i = 0; i <= 10; i += 2)
 				{
-					const gint x        = (i * (w - 1)) / 10;
-					const char* label   = (std::to_string(i * 10) + "%").c_str();
-					PangoLayout* layout = gtk_widget_create_pango_layout(widget, label);
+					const gint x            = (i * (w - 1)) / 10;
+					const std::string label = (std::to_string(i * 10) + "%");
+					PangoLayout* layout = gtk_widget_create_pango_layout(widget, label.c_str());
 					pango_layout_get_size(layout, &lw, &lh);
 					lw /= PANGO_SCALE;
 					lh /= PANGO_SCALE;

@@ -42,7 +42,7 @@ CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& ctx, IBox
 
 	if (m_box.getInterfacorCountIncludingDeprecated(EBoxInterfacorType::Setting))
 	{
-		GtkBuilder* l_pBuilderInterfaceSetting = gtk_builder_new(); // glade_xml_new(m_sGUIFilename.toASCIIString(), "box_configuration", nullptr);
+		GtkBuilder* l_pBuilderInterfaceSetting = gtk_builder_new(); // glade_xml_new(m_guiFilename.toASCIIString(), "box_configuration", nullptr);
 		gtk_builder_add_from_file(l_pBuilderInterfaceSetting, m_sGUIFilename.toASCIIString(), nullptr);
 		gtk_builder_connect_signals(l_pBuilderInterfaceSetting, nullptr);
 
@@ -79,7 +79,7 @@ CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& ctx, IBox
 
 			const string l_sSettingOverrideWidgetName        = l_oHelper.getSettingWidgetName(OV_TypeId_Filename).toASCIIString();
 			GtkBuilder* l_pBuilderInterfaceSettingCollection =
-					gtk_builder_new(); // glade_xml_new(m_sGUIFilename.toASCIIString(), l_sSettingOverrideWidgetName.c_str(), nullptr);
+					gtk_builder_new(); // glade_xml_new(m_guiFilename.toASCIIString(), l_sSettingOverrideWidgetName.c_str(), nullptr);
 			gtk_builder_add_from_file(l_pBuilderInterfaceSettingCollection, m_sGUISettingsFilename.toASCIIString(), nullptr);
 			//			gtk_builder_connect_signals(l_pBuilderInterfaceSettingCollection, nullptr);
 

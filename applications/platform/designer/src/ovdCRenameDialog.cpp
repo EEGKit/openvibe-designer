@@ -12,7 +12,7 @@ CRenameDialog::~CRenameDialog() = default;
 
 bool CRenameDialog::run()
 {
-	GtkBuilder* interface = gtk_builder_new(); // glade_xml_new(m_sGUIFilename.toASCIIString(), "rename", nullptr);
+	GtkBuilder* interface = gtk_builder_new(); // glade_xml_new(m_guiFilename.toASCIIString(), "rename", nullptr);
 	gtk_builder_add_from_file(interface, m_sGUIFilename.toASCIIString(), nullptr);
 	gtk_builder_connect_signals(interface, nullptr);
 

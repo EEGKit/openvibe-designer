@@ -66,7 +66,7 @@ bool CCommentEditorDialog::run()
 {
 	bool res = false;
 
-	m_pInterface = gtk_builder_new(); // glade_xml_new(m_sGUIFilename.toASCIIString(), "comment", nullptr);
+	m_pInterface = gtk_builder_new(); // glade_xml_new(m_guiFilename.toASCIIString(), "comment", nullptr);
 	gtk_builder_add_from_file(m_pInterface, m_sGUIFilename.toASCIIString(), nullptr);
 	gtk_builder_connect_signals(m_pInterface, nullptr);
 

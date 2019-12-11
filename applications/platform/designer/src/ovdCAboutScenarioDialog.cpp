@@ -21,7 +21,7 @@ namespace
 bool CAboutScenarioDialog::run()
 
 {
-	GtkBuilder* interface = gtk_builder_new(); // glade_xml_new(m_sGUIFilename.toASCIIString(), "scenario_about", nullptr);
+	GtkBuilder* interface = gtk_builder_new(); // glade_xml_new(m_guiFilename.toASCIIString(), "scenario_about", nullptr);
 	gtk_builder_add_from_file(interface, m_sGUIFilename.toASCIIString(), nullptr);
 	gtk_builder_connect_signals(interface, nullptr);
 

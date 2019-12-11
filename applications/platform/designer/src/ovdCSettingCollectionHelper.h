@@ -6,12 +6,12 @@
 
 namespace OpenViBEDesigner
 {
-	class CSettingCollectionHelper
+	class CSettingCollectionHelper final
 	{
 	public:
 
-		CSettingCollectionHelper(const OpenViBE::Kernel::IKernelContext& ctx, const char* guiFilename);
-		virtual ~CSettingCollectionHelper();
+		CSettingCollectionHelper(const OpenViBE::Kernel::IKernelContext& ctx, const char* guiFilename) : m_KernelCtx(ctx), m_GUIFilename(guiFilename) { }
+		virtual ~CSettingCollectionHelper() = default;
 
 		OpenViBE::CString getSettingWidgetName(const OpenViBE::CIdentifier& typeID) const;
 		OpenViBE::CString getSettingEntryWidgetName(const OpenViBE::CIdentifier& typeID) const;
@@ -42,11 +42,10 @@ namespace OpenViBEDesigner
 		void setValueEnumeration(const OpenViBE::CIdentifier& typeID, GtkWidget* widget, const OpenViBE::CString& value) const;
 		void setValueBitMask(const OpenViBE::CIdentifier& typeID, GtkWidget* widget, const OpenViBE::CString& value) const;
 
-		const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
-		OpenViBE::CString m_sGUIFilename;
+		const OpenViBE::Kernel::IKernelContext& m_KernelCtx;
+		OpenViBE::CString m_GUIFilename;
 
 	private:
-
 		CSettingCollectionHelper() = delete;
 	};
 } // namespace OpenViBEDesigner

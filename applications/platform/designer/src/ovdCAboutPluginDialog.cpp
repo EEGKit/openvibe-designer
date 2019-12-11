@@ -28,7 +28,7 @@ bool CAboutPluginDialog::run()
 
 	if (!m_pPluginObjectDescriptor) { return false; }
 
-	GtkBuilder* interface = gtk_builder_new(); // glade_xml_new(m_sGUIFilename.toASCIIString(), "plugin_about", nullptr);
+	GtkBuilder* interface = gtk_builder_new(); // glade_xml_new(m_guiFilename.toASCIIString(), "plugin_about", nullptr);
 	gtk_builder_add_from_file(interface, m_sGUIFilename.toASCIIString(), nullptr);
 	gtk_builder_connect_signals(interface, nullptr);
 

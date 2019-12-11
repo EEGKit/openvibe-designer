@@ -10,24 +10,21 @@ using namespace Setting;
 
 static void OnChange(GtkEntry* /*entry*/, gpointer data) { static_cast<CEnumerationSettingView *>(data)->onChange(); }
 
-CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox& box, const size_t index, CString& rBuilderName, const Kernel::IKernelContext& ctx, const CIdentifier& typeID)
-	: CAbstractSettingView(box, index, rBuilderName, "settings_collection-comboboxentry_setting_enumeration"), m_typeID(typeID), m_kernelCtx(ctx)
+CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox& box, const size_t index, CString& builderName, const Kernel::IKernelContext& ctx,
+												 const CIdentifier& typeID)
+	: CAbstractSettingView(box, index, builderName, "settings_collection-comboboxentry_setting_enumeration"), m_typeID(typeID), m_kernelCtx(ctx)
 {
-	p                        = false;
-	GtkWidget* settingWidget = this->getEntryFieldWidget();
+	GtkWidget* setting = CAbstractSettingView::getEntryFieldWidget();
 
-	m_comboBox = GTK_COMBO_BOX(settingWidget);
+	m_comboBox = GTK_COMBO_BOX(setting);
 
 	std::vector<std::string> entries;
 
-	for (uint64_t i = 0; i < m_kernelCtx.getTypeManager().getEnumerationEntryCount(m_typeID); ++i)
+	for (size_t i = 0; i < m_kernelCtx.getTypeManager().getEnumerationEntryCount(m_typeID); ++i)
 	{
 		CString name;
 		uint64_t value;
-		if (m_kernelCtx.getTypeManager().getEnumerationEntry(m_typeID, i, name, value))
-		{
-			entries.push_back(name.toASCIIString());
-		}
+		if (m_kernelCtx.getTypeManager().getEnumerationEntry(m_typeID, i, name, value)) { entries.push_back(name.toASCIIString()); }
 	}
 
 	std::sort(entries.begin(), entries.end());
@@ -45,15 +42,15 @@ CEnumerationSettingView::CEnumerationSettingView(Kernel::IBox& box, const size_t
 		m_entriesIdx[CString(entries[i].c_str())] = uint64_t(i);
 	}
 
-	CString settingValue;
-	box.getSettingValue(index, settingValue);
-	if (m_entriesIdx.count(settingValue.toASCIIString()) == 0)
+	CString value;
+	box.getSettingValue(index, value);
+	if (m_entriesIdx.count(value.toASCIIString()) == 0)
 	{
 		gtk_list_store_append(list, &listIter);
-		gtk_list_store_set(list, &listIter, 0, settingValue.toASCIIString(), -1);
+		gtk_list_store_set(list, &listIter, 0, value.toASCIIString(), -1);
 	}
 
-	initializeValue();
+	CAbstractSettingView::initializeValue();
 
 	g_signal_connect(G_OBJECT(m_comboBox), "changed", G_CALLBACK(OnChange), this);
 }
@@ -71,8 +68,8 @@ void CEnumerationSettingView::setValue(const CString& value)
 	{
 		GtkTreeIter listIter;
 		GtkListStore* list = GTK_LIST_STORE(gtk_combo_box_get_model(m_comboBox));
-		int valuesInModel     = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(list), nullptr);
-		if (valuesInModel == m_entriesIdx.size())
+		int valuesInModel  = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(list), nullptr);
+		if (valuesInModel == int(m_entriesIdx.size()))
 		{
 			gtk_list_store_append(list, &listIter);
 			valuesInModel += 1;
