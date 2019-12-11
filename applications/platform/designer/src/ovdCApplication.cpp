@@ -1853,10 +1853,10 @@ void CApplication::saveScenarioCB(CInterfacedScenario* interfacedScenario)
 		while ((linkID = currentInterfacedScenario->m_rScenario.getNextLinkIdentifier(linkID)) != OV_UndefinedIdentifier)
 		{
 			auto link = currentInterfacedScenario->m_rScenario.getLinkDetails(linkID);
-			link->removeAttribute(OV_AttributeId_Link_XSourcePosition);
-			link->removeAttribute(OV_AttributeId_Link_YSourcePosition);
-			link->removeAttribute(OV_AttributeId_Link_XTargetPosition);
-			link->removeAttribute(OV_AttributeId_Link_YTargetPosition);
+			link->removeAttribute(OV_AttributeId_Link_XSrc);
+			link->removeAttribute(OV_AttributeId_Link_YSrc);
+			link->removeAttribute(OV_AttributeId_Link_XDst);
+			link->removeAttribute(OV_AttributeId_Link_YDst);
 			link->removeAttribute(OV_ClassId_Selected);
 		}
 

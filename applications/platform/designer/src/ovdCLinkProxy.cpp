@@ -1,34 +1,33 @@
 #include "ovdCLinkProxy.h"
 #include "ovdTAttributeHandler.h"
+#include "../../../../../sdk/openvibe/include/openvibe/ov_defines.h"
 
 using namespace OpenViBE;
 using namespace Kernel;
 using namespace OpenViBEDesigner;
 
-CLinkProxy::CLinkProxy(const ILink& rLink)
-	: m_constLink(&rLink)
+CLinkProxy::CLinkProxy(const ILink& link) : m_constLink(&link)
 {
 	if (m_constLink)
 	{
 		const TAttributeHandler handler(*m_constLink);
-		m_xSource = handler.getAttributeValue<int>(OV_AttributeId_Link_XSourcePosition);
-		m_ySource = handler.getAttributeValue<int>(OV_AttributeId_Link_YSourcePosition);
-		m_xTarget = handler.getAttributeValue<int>(OV_AttributeId_Link_XTargetPosition);
-		m_yTarget = handler.getAttributeValue<int>(OV_AttributeId_Link_YTargetPosition);
+		m_xSrc = handler.getAttributeValue<int>(OV_AttributeId_Link_XSrc);
+		m_ySrc = handler.getAttributeValue<int>(OV_AttributeId_Link_YSrc);
+		m_xDst = handler.getAttributeValue<int>(OV_AttributeId_Link_XDst);
+		m_yDst = handler.getAttributeValue<int>(OV_AttributeId_Link_YDst);
 	}
 }
 
 CLinkProxy::CLinkProxy(IScenario& scenario, const CIdentifier& linkID)
-	: m_constLink(scenario.getLinkDetails(linkID))
-	  , m_link(scenario.getLinkDetails(linkID))
+	: m_constLink(scenario.getLinkDetails(linkID)), m_link(scenario.getLinkDetails(linkID))
 {
 	if (m_constLink)
 	{
 		const TAttributeHandler handler(*m_constLink);
-		m_xSource = handler.getAttributeValue<int>(OV_AttributeId_Link_XSourcePosition);
-		m_ySource = handler.getAttributeValue<int>(OV_AttributeId_Link_YSourcePosition);
-		m_xTarget = handler.getAttributeValue<int>(OV_AttributeId_Link_XTargetPosition);
-		m_yTarget = handler.getAttributeValue<int>(OV_AttributeId_Link_YTargetPosition);
+		m_xSrc = handler.getAttributeValue<int>(OV_AttributeId_Link_XSrc);
+		m_ySrc = handler.getAttributeValue<int>(OV_AttributeId_Link_YSrc);
+		m_xDst = handler.getAttributeValue<int>(OV_AttributeId_Link_XDst);
+		m_yDst = handler.getAttributeValue<int>(OV_AttributeId_Link_YDst);
 	}
 }
 
@@ -38,40 +37,28 @@ CLinkProxy::~CLinkProxy()
 	{
 		TAttributeHandler handler(*m_link);
 
-		if (handler.hasAttribute(OV_AttributeId_Link_XSourcePosition))
-		{
-			handler.setAttributeValue<int>(OV_AttributeId_Link_XSourcePosition, m_xSource);
-		}
-		else { handler.addAttribute<int>(OV_AttributeId_Link_XSourcePosition, m_xSource); }
+		if (handler.hasAttribute(OV_AttributeId_Link_XSrc)) { handler.setAttributeValue<int>(OV_AttributeId_Link_XSrc, m_xSrc); }
+		else { handler.addAttribute<int>(OV_AttributeId_Link_XSrc, m_xSrc); }
 
-		if (handler.hasAttribute(OV_AttributeId_Link_YSourcePosition))
-		{
-			handler.setAttributeValue<int>(OV_AttributeId_Link_YSourcePosition, m_ySource);
-		}
-		else { handler.addAttribute<int>(OV_AttributeId_Link_YSourcePosition, m_ySource); }
+		if (handler.hasAttribute(OV_AttributeId_Link_YSrc)) { handler.setAttributeValue<int>(OV_AttributeId_Link_YSrc, m_ySrc); }
+		else { handler.addAttribute<int>(OV_AttributeId_Link_YSrc, m_ySrc); }
 
-		if (handler.hasAttribute(OV_AttributeId_Link_XTargetPosition))
-		{
-			handler.setAttributeValue<int>(OV_AttributeId_Link_XTargetPosition, m_xTarget);
-		}
-		else { handler.addAttribute<int>(OV_AttributeId_Link_XTargetPosition, m_xTarget); }
+		if (handler.hasAttribute(OV_AttributeId_Link_XDst)) { handler.setAttributeValue<int>(OV_AttributeId_Link_XDst, m_xDst); }
+		else { handler.addAttribute<int>(OV_AttributeId_Link_XDst, m_xDst); }
 
-		if (handler.hasAttribute(OV_AttributeId_Link_YTargetPosition))
-		{
-			handler.setAttributeValue<int>(OV_AttributeId_Link_YTargetPosition, m_yTarget);
-		}
-		else { handler.addAttribute<int>(OV_AttributeId_Link_YTargetPosition, m_yTarget); }
+		if (handler.hasAttribute(OV_AttributeId_Link_YDst)) { handler.setAttributeValue<int>(OV_AttributeId_Link_YDst, m_yDst); }
+		else { handler.addAttribute<int>(OV_AttributeId_Link_YDst, m_yDst); }
 	}
 }
 
-void CLinkProxy::setSource(const int xSource, const int ySource)
+void CLinkProxy::setSource(const int x, const int y)
 {
-	m_xSource = xSource;
-	m_ySource = ySource;
+	m_xSrc = x;
+	m_ySrc = y;
 }
 
-void CLinkProxy::setTarget(const int xTarget, const int yTarget)
+void CLinkProxy::setTarget(const int x, const int y)
 {
-	m_xTarget = xTarget;
-	m_yTarget = yTarget;
+	m_xDst = x;
+	m_yDst = y;
 }

@@ -1283,17 +1283,17 @@ void CInterfacedScenario::redraw(IBox& box)
 			{
 				TAttributeHandler attributeHandler(*l_pLink);
 
-				if (!attributeHandler.hasAttribute(OV_AttributeId_Link_XTargetPosition))
+				if (!attributeHandler.hasAttribute(OV_AttributeId_Link_XDst))
 				{
-					attributeHandler.addAttribute<int>(OV_AttributeId_Link_XTargetPosition, x);
+					attributeHandler.addAttribute<int>(OV_AttributeId_Link_XDst, x);
 				}
-				else { attributeHandler.setAttributeValue<int>(OV_AttributeId_Link_XTargetPosition, x); }
+				else { attributeHandler.setAttributeValue<int>(OV_AttributeId_Link_XDst, x); }
 
-				if (!attributeHandler.hasAttribute(OV_AttributeId_Link_YTargetPosition))
+				if (!attributeHandler.hasAttribute(OV_AttributeId_Link_YDst))
 				{
-					attributeHandler.addAttribute<int>(OV_AttributeId_Link_YTargetPosition, y);
+					attributeHandler.addAttribute<int>(OV_AttributeId_Link_YDst, y);
 				}
-				else { attributeHandler.setAttributeValue<int>(OV_AttributeId_Link_YTargetPosition, y); }
+				else { attributeHandler.setAttributeValue<int>(OV_AttributeId_Link_YDst, y); }
 			}
 			l_oLinkID = m_rScenario.getNextLinkIdentifierToBoxInput(l_oLinkID, box.getIdentifier(), i);
 		}
@@ -1409,17 +1409,17 @@ void CInterfacedScenario::redraw(IBox& box)
 			{
 				TAttributeHandler attributeHandler(*l_pLink);
 
-				if (!attributeHandler.hasAttribute(OV_AttributeId_Link_XSourcePosition))
+				if (!attributeHandler.hasAttribute(OV_AttributeId_Link_XSrc))
 				{
-					attributeHandler.addAttribute<int>(OV_AttributeId_Link_XSourcePosition, x);
+					attributeHandler.addAttribute<int>(OV_AttributeId_Link_XSrc, x);
 				}
-				else { attributeHandler.setAttributeValue<int>(OV_AttributeId_Link_XSourcePosition, x); }
+				else { attributeHandler.setAttributeValue<int>(OV_AttributeId_Link_XSrc, x); }
 
-				if (!attributeHandler.hasAttribute(OV_AttributeId_Link_YSourcePosition))
+				if (!attributeHandler.hasAttribute(OV_AttributeId_Link_YSrc))
 				{
-					attributeHandler.addAttribute<int>(OV_AttributeId_Link_YSourcePosition, y);
+					attributeHandler.addAttribute<int>(OV_AttributeId_Link_YSrc, y);
 				}
-				else attributeHandler.setAttributeValue<int>(OV_AttributeId_Link_YSourcePosition, y);
+				else attributeHandler.setAttributeValue<int>(OV_AttributeId_Link_YSrc, y);
 			}
 			l_oLinkID = m_rScenario.getNextLinkIdentifierFromBoxOutput(l_oLinkID, box.getIdentifier(), i);
 		}
