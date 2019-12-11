@@ -794,9 +794,9 @@ void CSettingCollectionHelper::setValueBitMask(const CIdentifier& typeID, GtkWid
 		{
 			GtkWidget* settingButton = gtk_check_button_new();
 			gtk_table_attach_defaults(bitMaskTable, settingButton, guint(i & 1), guint((i & 1) + 1), guint(i >> 1), guint((i >> 1) + 1));
-			gtk_button_set_label(GTK_BUTTON(settingButton), static_cast<const char*>(entryName));
+			gtk_button_set_label(GTK_BUTTON(settingButton), entryName.toASCIIString());
 
-			if (str.find(static_cast<const char*>(entryName)) != string::npos) { gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(settingButton), true); }
+			if (str.find(entryName.toASCIIString()) != string::npos) { gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(settingButton), true); }
 		}
 	}
 

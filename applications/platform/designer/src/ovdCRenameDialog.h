@@ -4,26 +4,28 @@
 
 namespace OpenViBEDesigner
 {
-	class CRenameDialog
+	class CRenameDialog final
 	{
 	public:
 
-		CRenameDialog(const OpenViBE::Kernel::IKernelContext& ctx, const OpenViBE::CString& rInitialName, const OpenViBE::CString& rDefaultName, const char* sGUIFilename);
-		virtual ~CRenameDialog();
+		CRenameDialog(const OpenViBE::Kernel::IKernelContext& ctx, const OpenViBE::CString& initialName, const OpenViBE::CString& defaultName,
+					  const char* guiFilename)
+			: m_kernelCtx(ctx), m_initialName(initialName), m_defaultName(defaultName), m_result(initialName), m_guiFilename(guiFilename) { }
+
+		~CRenameDialog() = default;
 
 		bool run();
-		OpenViBE::CString getResult() { return m_sResult; }
+		OpenViBE::CString getResult() const { return m_result; }
 
 	protected:
 
 		const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
-		OpenViBE::CString m_sInitialName;
-		OpenViBE::CString m_sDefaultName;
-		OpenViBE::CString m_sResult;
-		OpenViBE::CString m_sGUIFilename;
+		OpenViBE::CString m_initialName;
+		OpenViBE::CString m_defaultName;
+		OpenViBE::CString m_result;
+		OpenViBE::CString m_guiFilename;
 
 	private:
-
-		CRenameDialog();
+		CRenameDialog() = delete;
 	};
-};
+}  // namespace OpenViBEDesigner

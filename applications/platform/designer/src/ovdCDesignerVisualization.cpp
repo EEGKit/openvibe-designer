@@ -226,7 +226,7 @@ void CDesignerVisualization::init(const std::string& guiFile)
 	gtk_window_set_default_size(GTK_WINDOW(m_pDialog), gint(treeViewWidth + m_previewWindowW), gint(m_previewWindowH));
 	//set window title
 	gtk_window_set_title(GTK_WINDOW(m_pDialog), " Window Manager");
-	// gtk_window_set_transient_for(GTK_WINDOW(m_pDialog), GTK_WINDOW(m_rInterfacedScenario.m_rApplication.m_pMainWindow));
+	// gtk_window_set_transient_for(GTK_WINDOW(m_pDialog), GTK_WINDOW(m_interfacedScenario.m_rApplication.m_pMainWindow));
 	gtk_signal_connect(GTK_OBJECT(m_pDialog), "configure_event", G_CALLBACK(configure_event_cb), this);
 #ifdef HANDLE_MIN_MAX_EVENTS
 	gtk_signal_connect(GTK_OBJECT(m_pDialog), "window_state_event", G_CALLBACK(window_state_event_cb), this);
@@ -1021,7 +1021,7 @@ bool CDesignerVisualization::newVisualizationWindow(const char* label)
 	}
 
 	//proceed with window creation
-	//m_rVisualizationTree.addVisualizationWindow(l_oVisualizationWindowID, CString(label));
+	//m_visualizationTree.addVisualizationWindow(l_oVisualizationWindowID, CString(label));
 	m_rVisualizationTree.addVisualizationWidget(l_oVisualizationWindowID, CString(label), VisualizationWidget_VisualizationWindow,
 												OV_UndefinedIdentifier, 0, OV_UndefinedIdentifier, 0, OV_UndefinedIdentifier);
 
