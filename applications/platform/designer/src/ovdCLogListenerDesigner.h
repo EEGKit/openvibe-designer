@@ -25,49 +25,49 @@ namespace OpenViBEDesigner
 
 			GtkTextBuffer* getTextBuffer() const { return m_Buffer; }
 
-			//determine if the log contains the sSearchTerm and tag the part with the sSerachTerm in gray
-			bool Filter(const OpenViBE::CString& sSearchTerm)
+			//determine if the log contains the searchTerm and tag the part with the sSerachTerm in gray
+			bool filter(const OpenViBE::CString& searchTerm)
 			{
 				m_PassedFilter = false;
-				GtkTextIter start_find, end_find;
-				gtk_text_buffer_get_start_iter(m_Buffer, &start_find);
-				gtk_text_buffer_get_end_iter(m_Buffer, &end_find);
+				GtkTextIter startFind, endFind;
+				gtk_text_buffer_get_start_iter(m_Buffer, &startFind);
+				gtk_text_buffer_get_end_iter(m_Buffer, &endFind);
 
 				//tag for highlighting the search term
 				GtkTextTag* tag = gtk_text_tag_table_lookup(gtk_text_buffer_get_tag_table(m_Buffer), "gray_bg");
 				if (tag == nullptr) { gtk_text_buffer_create_tag(m_Buffer, "gray_bg", "background", "gray", nullptr); }
 
 				//remove previous tagging
-				gtk_text_buffer_remove_tag_by_name(m_Buffer, "gray_bg", &start_find, &end_find);
+				gtk_text_buffer_remove_tag_by_name(m_Buffer, "gray_bg", &startFind, &endFind);
 
 				//no term means no research so no filter we let all pass
-				if (sSearchTerm == OpenViBE::CString(""))
+				if (searchTerm == OpenViBE::CString(""))
 				{
 					m_PassedFilter = true;
 					return m_PassedFilter;
 				}
 
 
-				GtkTextIter start_match, end_match;
-				const gchar* text = sSearchTerm.toASCIIString();
-				while (gtk_text_iter_forward_search(&start_find, text, GTK_TEXT_SEARCH_TEXT_ONLY, &start_match, &end_match, nullptr))
+				GtkTextIter startMatch, endMatch;
+				const gchar* text = searchTerm.toASCIIString();
+				while (gtk_text_iter_forward_search(&startFind, text, GTK_TEXT_SEARCH_TEXT_ONLY, &startMatch, &endMatch, nullptr))
 				{
-					gtk_text_buffer_apply_tag_by_name(m_Buffer, "gray_bg", &start_match, &end_match);
+					gtk_text_buffer_apply_tag_by_name(m_Buffer, "gray_bg", &startMatch, &endMatch);
 					//offset to end_match
-					const int offset = gtk_text_iter_get_offset(&end_match);
+					const int offset = gtk_text_iter_get_offset(&endMatch);
 					//begin next search at end match
-					gtk_text_buffer_get_iter_at_offset(m_Buffer, &start_find, offset);
+					gtk_text_buffer_get_iter_at_offset(m_Buffer, &startFind, offset);
 					m_PassedFilter = true;
 				}
 				return m_PassedFilter;
 			}
 
-			void appendToCurrentLog(const char* textColor, const char* logMessage, bool bIsLink /* = false */) const
+			void appendToCurrentLog(const char* textColor, const char* logMessage, const bool isLink /* = false */) const
 			{
 				GtkTextIter endIter;
 				gtk_text_buffer_get_end_iter(m_Buffer, &endIter);
 
-				if (bIsLink) { gtk_text_buffer_insert_with_tags_by_name(m_Buffer, &endIter, logMessage, -1, "f_mono", textColor, "link", nullptr); }
+				if (isLink) { gtk_text_buffer_insert_with_tags_by_name(m_Buffer, &endIter, logMessage, -1, "f_mono", textColor, "link", nullptr); }
 				else { gtk_text_buffer_insert_with_tags_by_name(m_Buffer, &endIter, logMessage, -1, "f_mono", textColor, nullptr); }
 			}
 
@@ -75,11 +75,11 @@ namespace OpenViBEDesigner
 			bool m_PassedFilter     = false;
 		};
 
-		CLogListenerDesigner(const OpenViBE::Kernel::IKernelContext& ctx, GtkBuilder* pBuilderInterface);
+		CLogListenerDesigner(const OpenViBE::Kernel::IKernelContext& ctx, GtkBuilder* builder);
 
 		bool isActive(OpenViBE::Kernel::ELogLevel level) override;
 		bool activate(OpenViBE::Kernel::ELogLevel level, bool active) override;
-		bool activate(OpenViBE::Kernel::ELogLevel eStartLogLevel, OpenViBE::Kernel::ELogLevel eEndLogLevel, bool active) override;
+		bool activate(OpenViBE::Kernel::ELogLevel startLevel, OpenViBE::Kernel::ELogLevel endLevel, bool active) override;
 		bool activate(bool active) override;
 
 		void log(const OpenViBE::time64 value) override;
@@ -107,63 +107,63 @@ namespace OpenViBEDesigner
 
 		// TODO
 		void searchMessages(const OpenViBE::CString& searchTerm);
-		void displayLog(CLogObject* oLog) const;
-		void appendLog(CLogObject* oLog) const;
+		void displayLog(CLogObject* log) const;
+		void appendLog(CLogObject* log) const;
 
 		_IsDerivedFromClass_Final_(OpenViBE::Kernel::ILogListener, OV_UndefinedIdentifier)
 
-		OpenViBE::CString m_sSearchTerm;
-		GtkTextTag* m_pCIdentifierTag = nullptr;
+		OpenViBE::CString m_SearchTerm;
+		GtkTextTag* m_IdTag = nullptr;
 		std::function<void(OpenViBE::CIdentifier&)> m_CenterOnBoxFun;
 
 	protected:
 
-		std::map<OpenViBE::Kernel::ELogLevel, bool> m_vActiveLevel;
+		std::map<OpenViBE::Kernel::ELogLevel, bool> m_activeLevels;
 
 		//logs
-		std::vector<CLogObject*> m_vStoredLog;
+		std::vector<CLogObject*> m_storedLogs;
 
 	private:
 
-		GtkBuilder* m_builderInterface = nullptr;
-		GtkTextView* m_pTextView        = nullptr;
-		GtkTextBuffer* m_buffer        = nullptr;
+		GtkBuilder* m_builder   = nullptr;
+		GtkTextView* m_textView = nullptr;
+		GtkTextBuffer* m_buffer = nullptr;
 
-		GtkToggleButton* m_pToggleButtonPopup = nullptr;
+		GtkToggleButton* m_buttonPopup = nullptr;
 
-		GtkToggleToolButton* m_pToggleButtonActive_Debug            = nullptr;
-		GtkToggleToolButton* m_pToggleButtonActive_Benchmark        = nullptr;
-		GtkToggleToolButton* m_pToggleButtonActive_Trace            = nullptr;
-		GtkToggleToolButton* m_pToggleButtonActive_Info             = nullptr;
-		GtkToggleToolButton* m_pToggleButtonActive_Warning          = nullptr;
-		GtkToggleToolButton* m_pToggleButtonActive_ImportantWarning = nullptr;
-		GtkToggleToolButton* m_pToggleButtonActive_Error            = nullptr;
-		GtkToggleToolButton* m_pToggleButtonActive_Fatal            = nullptr;
+		GtkToggleToolButton* m_buttonActiveDebug            = nullptr;
+		GtkToggleToolButton* m_buttonActiveBenchmark        = nullptr;
+		GtkToggleToolButton* m_buttonActiveTrace            = nullptr;
+		GtkToggleToolButton* m_buttonActiveInfo             = nullptr;
+		GtkToggleToolButton* m_buttonActiveWarning          = nullptr;
+		GtkToggleToolButton* m_buttonActiveImportantWarning = nullptr;
+		GtkToggleToolButton* m_buttonActiveError            = nullptr;
+		GtkToggleToolButton* m_buttonActiveFatal            = nullptr;
 
-		GtkLabel* m_labelnMessages       = nullptr;
+		GtkLabel* m_labelnMsg            = nullptr;
 		GtkLabel* m_labelnWarnings       = nullptr;
 		GtkLabel* m_labelnErrors         = nullptr;
 		GtkLabel* m_labelDialognWarnings = nullptr;
 		GtkLabel* m_labelDialognErrors   = nullptr;
 
-		GtkWidget* m_pImageWarnings = nullptr;
-		GtkWidget* m_pImageErrors   = nullptr;
+		GtkWidget* m_imageWarnings = nullptr;
+		GtkWidget* m_imageErrors   = nullptr;
 
-		GtkWindow* m_pAlertWindow = nullptr;
+		GtkWindow* m_alertWindow = nullptr;
 
-		bool m_bIngnoreMessages = false;
+		bool m_ignoreMsg = false;
 
-		size_t m_nMessages = 0;
-		size_t m_nWarnings = 0;
-		size_t m_nErrors   = 0;
+		size_t m_nMsg     = 0;
+		size_t m_nWarning = 0;
+		size_t m_nError   = 0;
 
-		bool m_logWithHexa          = false;
-		bool m_logTimeInSecond      = false;
+		bool m_logWithHexa        = false;
+		bool m_logTimeInSecond    = false;
 		size_t m_logTimePrecision = 0;
 
-		CLogObject* m_pCurrentLog = nullptr;
+		CLogObject* m_currentLog = nullptr;
 
 		void updateMessageCounts() const;
-		void checkAppendFilterCurrentLog(const char* textColor, const char* logMessage, bool bIsLink = false) const;
+		void checkAppendFilterCurrentLog(const char* textColor, const char* logMessage, bool isLink = false) const;
 	};
 } // namespace OpenViBEDesigner

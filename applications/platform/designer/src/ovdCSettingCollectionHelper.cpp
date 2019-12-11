@@ -203,7 +203,7 @@ static void OnButtonSettingScriptEditPressed(GtkButton* button, gpointer data)
 #if defined TARGET_OS_Windows
 		fullCmd = "START " + fullCmd;
 #elif defined TARGET_OS_Linux || defined TARGET_OS_MacOS
-			fullCommand = fullCommand + " &";
+			fullCmd = fullCmd + " &";
 #else
 #endif
 		if (system(fullCmd.toASCIIString()) < 0) { ctx.getLogManager() << LogLevel_Warning << "Could not run command " << fullCmd << "\n"; }

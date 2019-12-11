@@ -85,21 +85,21 @@ void CScriptSettingView::browse() const
 
 void CScriptSettingView::edit() const
 {
-	const CString fileName      = m_kernelCtx.getConfigurationManager().expand(gtk_entry_get_text(m_entry));
-	const CString editorCommand = m_kernelCtx.getConfigurationManager().expand("${Designer_ScriptEditorCommand}");
+	const CString fileName  = m_kernelCtx.getConfigurationManager().expand(gtk_entry_get_text(m_entry));
+	const CString editorCmd = m_kernelCtx.getConfigurationManager().expand("${Designer_ScriptEditorCommand}");
 
-	if (editorCommand != CString(""))
+	if (editorCmd != CString(""))
 	{
-		CString fullCommand = editorCommand + CString(" \"") + fileName + CString("\"");
+		CString fullCmd = editorCmd + CString(" \"") + fileName + CString("\"");
 #if defined TARGET_OS_Windows
-		fullCommand = "START " + fullCommand;
+		fullCmd = "START " + fullCmd;
 #elif defined TARGET_OS_Linux
-		fullCommand = fullCommand + " &";
+		fullCmd = fullCmd + " &";
 #else
 #endif
-		if (system(fullCommand.toASCIIString()) < 0)
+		if (system(fullCmd.toASCIIString()) < 0)
 		{
-			m_kernelCtx.getLogManager() << Kernel::LogLevel_Warning << "Could not run command " << fullCommand << "\n";
+			m_kernelCtx.getLogManager() << Kernel::LogLevel_Warning << "Could not run command " << fullCmd << "\n";
 		}
 	}
 }
