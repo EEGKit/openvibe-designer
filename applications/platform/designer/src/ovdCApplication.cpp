@@ -484,12 +484,12 @@ namespace
 		if (0 == strcmp(pApplication->m_sSearchTerm, ""))
 		{
 			// reattach the old model
-			gtk_tree_view_set_model(pApplication->m_pBoxAlgorithmTreeView, GTK_TREE_MODEL(pApplication->m_pBoxAlgorithmTreeModel));
+			gtk_tree_view_set_model(pApplication->m_pBoxAlgorithmTreeView, GTK_TREE_MODEL(pApplication->m_BoxAlgorithmTreeModel));
 		}
 		else
 		*/
 		{
-			pApplication->m_pBoxAlgorithmTreeModelFilter  = gtk_tree_model_filter_new(GTK_TREE_MODEL(pApplication->m_pBoxAlgorithmTreeModel), nullptr);
+			pApplication->m_pBoxAlgorithmTreeModelFilter  = gtk_tree_model_filter_new(GTK_TREE_MODEL(pApplication->m_BoxAlgorithmTreeModel), nullptr);
 			pApplication->m_pBoxAlgorithmTreeModelFilter2 = gtk_tree_model_filter_new(GTK_TREE_MODEL(pApplication->m_pBoxAlgorithmTreeModelFilter), nullptr);
 			pApplication->m_pBoxAlgorithmTreeModelFilter3 = gtk_tree_model_filter_new(GTK_TREE_MODEL(pApplication->m_pBoxAlgorithmTreeModelFilter2), nullptr);
 			pApplication->m_pBoxAlgorithmTreeModelFilter4 = gtk_tree_model_filter_new(GTK_TREE_MODEL(pApplication->m_pBoxAlgorithmTreeModelFilter3), nullptr);
@@ -1012,11 +1012,11 @@ void CApplication::initialize(const ECommandLineFlag eCommandLineFlags)
 		gtk_tree_view_append_column(m_pBoxAlgorithmTreeView, l_pTreeViewColumnDesc);
 
 		// Prepares box algorithm model
-		m_pBoxAlgorithmTreeModel = gtk_tree_store_new(9, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
+		m_BoxAlgorithmTreeModel = gtk_tree_store_new(9, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
 													  G_TYPE_BOOLEAN, G_TYPE_BOOLEAN, G_TYPE_STRING);
 
 		// Tree Storage for the searches
-		gtk_tree_view_set_model(m_pBoxAlgorithmTreeView, GTK_TREE_MODEL(m_pBoxAlgorithmTreeModel));
+		gtk_tree_view_set_model(m_pBoxAlgorithmTreeView, GTK_TREE_MODEL(m_BoxAlgorithmTreeModel));
 	}
 
 	{
@@ -1263,7 +1263,7 @@ void CApplication::initialize(const ECommandLineFlag eCommandLineFlags)
 bool CApplication::displayChangelogWhenAvailable()
 {
 	// If last version used is ulterior as current version, and at least one box was added/updated, show the list
-	if (!m_vNewBoxes.empty() || !m_vUpdatedBoxes.empty())
+	if (!m_NewBoxes.empty() || !m_UpdatedBoxes.empty())
 	{
 		GtkBuilder* interface = gtk_builder_new();
 		gtk_builder_add_from_file(interface, OVD_GUI_File, nullptr);
@@ -1281,18 +1281,18 @@ bool CApplication::displayChangelogWhenAvailable()
 		gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(l_pDialog), projectVersion.c_str());
 
 		std::string labelNewBoxesList = "<big><b>Changes in version " + projectVersion + " of the software:</b></big>";
-		if (!m_vNewBoxes.empty())
+		if (!m_NewBoxes.empty())
 		{
 			labelNewBoxesList += "\n<big>The following boxes were added:</big>\n";
-			for (auto pNewBoxDesc : m_vNewBoxes)
+			for (auto pNewBoxDesc : m_NewBoxes)
 			{
 				labelNewBoxesList += "    <b>" + pNewBoxDesc->getName() + ":</b> " + pNewBoxDesc->getShortDescription() + "\n";
 			}
 		}
-		if (!m_vUpdatedBoxes.empty())
+		if (!m_UpdatedBoxes.empty())
 		{
 			labelNewBoxesList += "\n<big>The following boxes were updated:</big>\n";
-			for (auto pUpdatedBoxDesc : m_vUpdatedBoxes)
+			for (auto pUpdatedBoxDesc : m_UpdatedBoxes)
 			{
 				labelNewBoxesList += "    <b>" + pUpdatedBoxDesc->getName() + ":</b> " + pUpdatedBoxDesc->getShortDescription() + "\n";
 			}
@@ -1326,9 +1326,9 @@ bool CApplication::displayChangelogWhenAvailable()
 bool CApplication::openScenario(const char* sFileName)
 {
 	// Prevent opening twice the same scenario
-	for (uint32_t i = 0; i < m_vInterfacedScenario.size(); ++i)
+	for (uint32_t i = 0; i < m_Scenarios.size(); ++i)
 	{
-		const auto interfacedScenario = m_vInterfacedScenario[i];
+		const auto interfacedScenario = m_Scenarios[i];
 		if (interfacedScenario->m_sFileName == std::string(sFileName))
 		{
 			gtk_notebook_set_current_page(m_pScenarioNotebook, i);
@@ -1340,14 +1340,14 @@ bool CApplication::openScenario(const char* sFileName)
 	if (m_pScenarioManager->importScenarioFromFile(scenarioID, OVD_ScenarioImportContext_OpenScenario, sFileName))
 	{
 		// Closes first unnamed scenario
-		if (m_vInterfacedScenario.size() == 1)
+		if (m_Scenarios.size() == 1)
 		{
-			if (!m_vInterfacedScenario[0]->m_hasBeenModified && !m_vInterfacedScenario[0]->m_hasFileName)
+			if (!m_Scenarios[0]->m_hasBeenModified && !m_Scenarios[0]->m_hasFileName)
 			{
-				const CIdentifier tmp = m_vInterfacedScenario[0]->m_scenarioID;
-				delete m_vInterfacedScenario[0];
+				const CIdentifier tmp = m_Scenarios[0]->m_scenarioID;
+				delete m_Scenarios[0];
 				m_pScenarioManager->releaseScenario(tmp);
-				m_vInterfacedScenario.clear();
+				m_Scenarios.clear();
 			}
 		}
 
@@ -1404,7 +1404,7 @@ bool CApplication::openScenario(const char* sFileName)
 		interfacedScenario->m_hasBeenModified = false;
 		interfacedScenario->snapshotCB(false);
 
-		m_vInterfacedScenario.push_back(interfacedScenario);
+		m_Scenarios.push_back(interfacedScenario);
 
 		interfacedScenario->redrawScenarioSettings();
 
@@ -1467,17 +1467,17 @@ CString CApplication::getWorkingDirectory()
 
 bool CApplication::hasRunningScenario()
 {
-	return std::any_of(m_vInterfacedScenario.begin(), m_vInterfacedScenario.end(), [](CInterfacedScenario* elem) { return elem->m_pPlayer != nullptr; });
+	return std::any_of(m_Scenarios.begin(), m_Scenarios.end(), [](CInterfacedScenario* elem) { return elem->m_pPlayer != nullptr; });
 }
 
 bool CApplication::hasUnsavedScenario()
 {
-	return std::any_of(m_vInterfacedScenario.begin(), m_vInterfacedScenario.end(), [](CInterfacedScenario* elem) { return elem->m_hasBeenModified; });
+	return std::any_of(m_Scenarios.begin(), m_Scenarios.end(), [](CInterfacedScenario* elem) { return elem->m_hasBeenModified; });
 }
 
 CInterfacedScenario* CApplication::getCurrentInterfacedScenario()
 {
-	if (m_currentInterfacedScenarioIdx < m_vInterfacedScenario.size()) { return m_vInterfacedScenario[m_currentInterfacedScenarioIdx]; }
+	if (m_currentScenarioIdx < m_Scenarios.size()) { return m_Scenarios[m_currentScenarioIdx]; }
 	return nullptr;
 }
 
@@ -1506,7 +1506,7 @@ void CApplication::saveOpenedScenarios()
 
 			fprintf(l_pFile, "# Last files opened in %s\n", std::string(DESIGNER_NAME).c_str());
 
-			for (CInterfacedScenario* scenario : m_vInterfacedScenario)
+			for (CInterfacedScenario* scenario : m_Scenarios)
 			{
 				if (!scenario->m_sFileName.empty())
 				{
@@ -1700,7 +1700,7 @@ void CApplication::newScenarioCB()
 			interfacedScenario->m_pDesignerVisualization->newVisualizationWindow("Default window");
 		}
 		interfacedScenario->updateScenarioLabel();
-		m_vInterfacedScenario.push_back(interfacedScenario);
+		m_Scenarios.push_back(interfacedScenario);
 		gtk_notebook_set_current_page(m_pScenarioNotebook, gtk_notebook_get_n_pages(m_pScenarioNotebook) - 1);
 		//this->changeCurrentScenario(gtk_notebook_get_n_pages(m_pScenarioNotebook)-1);
 	}
@@ -2224,17 +2224,17 @@ void CApplication::closeScenarioCB(CInterfacedScenario* interfacedScenario)
 	// Add scenario to recently opened:
 	this->addRecentScenario(interfacedScenario->m_sFileName);
 
-	const auto it = std::find(m_vInterfacedScenario.begin(), m_vInterfacedScenario.end(), interfacedScenario);
-	if (it != m_vInterfacedScenario.end())
+	const auto it = std::find(m_Scenarios.begin(), m_Scenarios.end(), interfacedScenario);
+	if (it != m_Scenarios.end())
 	{
 		// We need to erase the scenario from the list first, because deleting the scenario will launch a "switch-page"
 		// callback accessing this array with the identifier of the deleted scenario (if its not the last one) -> boom.
-		m_vInterfacedScenario.erase(it);
+		m_Scenarios.erase(it);
 		const CIdentifier scenarioID = interfacedScenario->m_scenarioID;
 		delete interfacedScenario;
 		m_pScenarioManager->releaseScenario(scenarioID);
 		//when closing last open scenario, no "switch-page" event is triggered so we manually handle this case
-		if (m_vInterfacedScenario.empty()) { newScenarioCB(); }
+		if (m_Scenarios.empty()) { newScenarioCB(); }
 		else { changeCurrentScenario(gtk_notebook_get_current_page(m_pScenarioNotebook)); }
 	}
 
@@ -2256,7 +2256,7 @@ void CApplication::toggleDesignerVisualizationCB()
 	if (currentInterfacedScenario != nullptr && !currentInterfacedScenario->isLocked())
 	{
 		const auto index = size_t(gtk_notebook_get_current_page(m_pScenarioNotebook));
-		if (index < m_vInterfacedScenario.size()) { m_vInterfacedScenario[index]->toggleDesignerVisualization(); }
+		if (index < m_Scenarios.size()) { m_Scenarios[index]->toggleDesignerVisualization(); }
 	}
 }
 
@@ -2368,7 +2368,7 @@ void CApplication::addCommentCB(CInterfacedScenario* pScenario) const
 
 void CApplication::configureScenarioSettingsCB(CInterfacedScenario* pScenario) const
 {
-	m_kernelCtx.getLogManager() << LogLevel_Debug << "CApplication::configureScenarioSettingsCB " << m_currentInterfacedScenarioIdx << "\n";
+	m_kernelCtx.getLogManager() << LogLevel_Debug << "CApplication::configureScenarioSettingsCB " << m_currentScenarioIdx << "\n";
 
 	if (pScenario && !pScenario->isLocked()) { pScenario->configureScenarioSettingsCB(); }
 }
@@ -2595,7 +2595,7 @@ void CApplication::playScenarioCB()
 	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager")), false);
 	gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), GTK_STOCK_MEDIA_PAUSE);
 
-	if (m_eCommandLineFlags & CommandLineFlag_NoVisualization) { for (auto& iScenario : m_vInterfacedScenario) { iScenario->hideCurrentVisualization(); } }
+	if (m_eCommandLineFlags & CommandLineFlag_NoVisualization) { for (auto& iScenario : m_Scenarios) { iScenario->hideCurrentVisualization(); } }
 }
 
 void CApplication::forwardScenarioCB()
@@ -2624,7 +2624,7 @@ void CApplication::forwardScenarioCB()
 	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager")), false);
 	gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), GTK_STOCK_MEDIA_PLAY);
 
-	if (m_eCommandLineFlags & CommandLineFlag_NoVisualization) { for (auto& iScenario : m_vInterfacedScenario) { iScenario->hideCurrentVisualization(); } }
+	if (m_eCommandLineFlags & CommandLineFlag_NoVisualization) { for (auto& iScenario : m_Scenarios) { iScenario->hideCurrentVisualization(); } }
 }
 
 bool CApplication::quitApplicationCB()
@@ -2667,7 +2667,7 @@ bool CApplication::quitApplicationCB()
 		switch (responseId)
 		{
 			case GTK_RESPONSE_OK:
-				for (auto i = m_vInterfacedScenario.begin(); i != m_vInterfacedScenario.end(); ++i) { this->saveScenarioCB(*i); }
+				for (auto i = m_Scenarios.begin(); i != m_Scenarios.end(); ++i) { this->saveScenarioCB(*i); }
 				if (this->hasUnsavedScenario())
 				{
 					// prevent Gtk from handling delete_event and killing app
@@ -2690,7 +2690,7 @@ bool CApplication::quitApplicationCB()
 	this->saveOpenedScenarios();
 
 	// Clears all existing interfaced scenarios
-	for (auto interfacedScenario : m_vInterfacedScenario) { delete interfacedScenario; }
+	for (auto interfacedScenario : m_Scenarios) { delete interfacedScenario; }
 
 	// Clears all existing scenarios
 	vector<CIdentifier> l_vScenarioIdentifiers;
@@ -2830,7 +2830,7 @@ void CApplication::changeCurrentScenario(const int pageIdx)
 
 	//hide window manager of previously active scenario, if any
 	const int i = gtk_notebook_get_current_page(m_pScenarioNotebook);
-	if (i >= 0 && i < int(m_vInterfacedScenario.size())) { m_vInterfacedScenario[i]->hideCurrentVisualization(); }
+	if (i >= 0 && i < int(m_Scenarios.size())) { m_Scenarios[i]->hideCurrentVisualization(); }
 
 	//closing last open scenario
 	if (pageIdx == -1)
@@ -2873,12 +2873,12 @@ void CApplication::changeCurrentScenario(const int pageIdx)
 
 
 		// current scenario is the current notebook page.
-		m_currentInterfacedScenarioIdx = i;
+		m_currentScenarioIdx = i;
 	}
 		//switching to an existing scenario
-	else if (pageIdx < m_vInterfacedScenario.size())
+	else if (pageIdx < m_Scenarios.size())
 	{
-		CInterfacedScenario* currentInterfacedScenario = m_vInterfacedScenario[pageIdx];
+		CInterfacedScenario* currentInterfacedScenario = m_Scenarios[pageIdx];
 		const EPlayerStatus playerStatus               = (currentInterfacedScenario->m_pPlayer ? currentInterfacedScenario->m_pPlayer->getStatus()
 															  : PlayerStatus_Stop);
 
@@ -2906,34 +2906,34 @@ void CApplication::changeCurrentScenario(const int pageIdx)
 		// gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_builderInterface, "openvibe-menu_save")),   currentInterfacedScenario->m_hasFileName && currentInterfacedScenario->m_hasBeenModified);
 
 		//don't show window manager if in offline mode and it is toggled off
-		if (playerStatus == PlayerStatus_Stop && !m_vInterfacedScenario[pageIdx]->isDesignerVisualizationToggled())
+		if (playerStatus == PlayerStatus_Stop && !m_Scenarios[pageIdx]->isDesignerVisualizationToggled())
 		{
-			m_vInterfacedScenario[pageIdx]->hideCurrentVisualization();
+			m_Scenarios[pageIdx]->hideCurrentVisualization();
 
 			// we are in edition mode, updating internal configuration token
-			std::string l_sPath = m_vInterfacedScenario[pageIdx]->m_sFileName;
+			std::string l_sPath = m_Scenarios[pageIdx]->m_sFileName;
 			l_sPath             = l_sPath.substr(0, l_sPath.rfind('/'));
 			m_kernelCtx.getConfigurationManager().setConfigurationTokenValue(
 				m_kernelCtx.getConfigurationManager().lookUpConfigurationTokenIdentifier("Player_ScenarioDirectory"), l_sPath.c_str());
 			m_kernelCtx.getConfigurationManager().setConfigurationTokenValue(
 				m_kernelCtx.getConfigurationManager().lookUpConfigurationTokenIdentifier("__volatile_ScenarioDir"), l_sPath.c_str());
 		}
-		else { m_vInterfacedScenario[pageIdx]->showCurrentVisualization(); }
+		else { m_Scenarios[pageIdx]->showCurrentVisualization(); }
 
 		//update window manager button state
 		GtkWidget* l_pWindowManagerButton = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager"));
 		g_signal_handlers_disconnect_by_func(l_pWindowManagerButton, G_CALLBACK2(button_toggle_window_manager_cb), this);
-		gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(l_pWindowManagerButton), m_vInterfacedScenario[pageIdx]->isDesignerVisualizationToggled());
+		gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(l_pWindowManagerButton), m_Scenarios[pageIdx]->isDesignerVisualizationToggled());
 		g_signal_connect(l_pWindowManagerButton, "toggled", G_CALLBACK(button_toggle_window_manager_cb), this);
 
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-scenario_configuration_button_configure")), true);
-		m_vInterfacedScenario[pageIdx]->redrawScenarioSettings();
-		m_vInterfacedScenario[pageIdx]->redrawScenarioInputSettings();
-		m_vInterfacedScenario[pageIdx]->redrawScenarioOutputSettings();
+		m_Scenarios[pageIdx]->redrawScenarioSettings();
+		m_Scenarios[pageIdx]->redrawScenarioInputSettings();
+		m_Scenarios[pageIdx]->redrawScenarioOutputSettings();
 
 
 		// current scenario is the selected one
-		m_currentInterfacedScenarioIdx = pageIdx;
+		m_currentScenarioIdx = pageIdx;
 	}
 		//first scenario is created (or a scenario is opened and replaces first unnamed unmodified scenario)
 	else
@@ -2962,7 +2962,7 @@ void CApplication::changeCurrentScenario(const int pageIdx)
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-scenario_configuration_button_configure")), true);
 
 		// we have a new notebook page
-		m_currentInterfacedScenarioIdx = pageIdx;
+		m_currentScenarioIdx = pageIdx;
 
 		// we are in edition mode, updating internal configuration token
 		m_kernelCtx.getConfigurationManager().setConfigurationTokenValue(
@@ -2972,7 +2972,7 @@ void CApplication::changeCurrentScenario(const int pageIdx)
 	}
 
 	// updates the trimming if need be
-	for (auto& scenario : m_vInterfacedScenario) { scenario->updateScenarioLabel(); }
+	for (auto& scenario : m_Scenarios) { scenario->updateScenarioLabel(); }
 	// Reset zoom
 	if (getCurrentInterfacedScenario())
 	{
@@ -2984,9 +2984,9 @@ void CApplication::changeCurrentScenario(const int pageIdx)
 
 void CApplication::reorderCurrentScenario(const uint32_t newPageIdx)
 {
-	CInterfacedScenario* currentInterfacedScenario = m_vInterfacedScenario[m_currentInterfacedScenarioIdx];
-	m_vInterfacedScenario.erase(m_vInterfacedScenario.begin() + m_currentInterfacedScenarioIdx);
-	m_vInterfacedScenario.insert(m_vInterfacedScenario.begin() + newPageIdx, currentInterfacedScenario);
+	CInterfacedScenario* currentInterfacedScenario = m_Scenarios[m_currentScenarioIdx];
+	m_Scenarios.erase(m_Scenarios.begin() + m_currentScenarioIdx);
+	m_Scenarios.insert(m_Scenarios.begin() + newPageIdx, currentInterfacedScenario);
 
 	this->changeCurrentScenario(newPageIdx);
 }

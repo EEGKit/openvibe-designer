@@ -38,7 +38,7 @@ using namespace OpenViBEDesigner;
 using namespace OpenViBEVisualizationToolkit;
 using namespace std;
 
-extern map<uint32_t, GdkColor> g_vColors;
+extern map<size_t, GdkColor> gColors;
 
 namespace
 {
@@ -50,7 +50,7 @@ namespace
 		GdkColor l_oGdkColor;
 		uint32_t value1 = 0;
 		uint32_t value2 = 0;
-		uint64_t res     = 0;
+		uint64_t res    = 0;
 
 		sscanf(identifier.toString(), "(0x%08X, 0x%08X)", &value1, &value2);
 		res += value1;
@@ -1148,7 +1148,7 @@ void CInterfacedScenario::redraw(IBox& box)
 			l_iBottomRightOffset = 6;
 		}
 
-		gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[Color_BoxBorderSelected]);
+		gdk_gc_set_rgb_fg_color(l_pDrawGC, &gColors[Color_BoxBorderSelected]);
 		gdk_gc_set_line_attributes(l_pDrawGC, 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_ROUND);
 		gdk_draw_rounded_rectangle(l_widget->window, l_pDrawGC, TRUE, xStart - l_iTopLeftOffset, yStart - l_iTopLeftOffset, xSize + l_iBottomRightOffset,
 								   ySize + l_iBottomRightOffset);
@@ -1158,21 +1158,21 @@ void CInterfacedScenario::redraw(IBox& box)
 	{
 		/*if(m_vCurrentObject[box.getIdentifier()])
 		{
-			gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[Color_BoxBackgroundSelected]);
+			gdk_gc_set_rgb_fg_color(l_pDrawGC, &gColors[Color_BoxBackgroundSelected]);
 		}
 		else*/
-		if (!l_bCanCreate) { gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[Color_BoxBackgroundMissing]); }
-		else if (l_bDisabled) { gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[Color_BoxBackgroundDisabled]); }
-		else if (l_bDeprecated) { gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[Color_BoxBackgroundDeprecated]); }
-		else if (!l_bUpToDate || l_bPendingDeprecatedInterfacors) { gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[Color_BoxBackgroundOutdated]); }
-		else if (l_bMensia) { gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[Color_BoxBackgroundMensia]); }
+		if (!l_bCanCreate) { gdk_gc_set_rgb_fg_color(l_pDrawGC, &gColors[Color_BoxBackgroundMissing]); }
+		else if (l_bDisabled) { gdk_gc_set_rgb_fg_color(l_pDrawGC, &gColors[Color_BoxBackgroundDisabled]); }
+		else if (l_bDeprecated) { gdk_gc_set_rgb_fg_color(l_pDrawGC, &gColors[Color_BoxBackgroundDeprecated]); }
+		else if (!l_bUpToDate || l_bPendingDeprecatedInterfacors) { gdk_gc_set_rgb_fg_color(l_pDrawGC, &gColors[Color_BoxBackgroundOutdated]); }
+		else if (l_bMensia) { gdk_gc_set_rgb_fg_color(l_pDrawGC, &gColors[Color_BoxBackgroundMensia]); }
 			/*
 					else if(l_bMetabox)
 					{
-						gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[Color_BoxBackgroundMetabox]);
+						gdk_gc_set_rgb_fg_color(l_pDrawGC, &gColors[Color_BoxBackgroundMetabox]);
 					}
 			*/
-		else { gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[Color_BoxBackground]); }
+		else { gdk_gc_set_rgb_fg_color(l_pDrawGC, &gColors[Color_BoxBackground]); }
 	}
 	else
 	{
@@ -1218,13 +1218,13 @@ void CInterfacedScenario::redraw(IBox& box)
 
 	int l_iBorderColor = Color_BoxBorder;
 	if (l_bMensia) { l_iBorderColor = Color_BoxBorderMensia; }
-	gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[l_iBorderColor]);
+	gdk_gc_set_rgb_fg_color(l_pDrawGC, &gColors[l_iBorderColor]);
 	gdk_gc_set_line_attributes(l_pDrawGC, 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_ROUND);
 	gdk_draw_rounded_rectangle(l_widget->window, l_pDrawGC, FALSE, xStart, yStart, xSize, ySize, gint(round(8.0 * m_currentScale)));
 
 	if (l_bMetabox)
 	{
-		gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[l_iBorderColor]);
+		gdk_gc_set_rgb_fg_color(l_pDrawGC, &gColors[l_iBorderColor]);
 		gdk_gc_set_line_attributes(l_pDrawGC, 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_ROUND);
 		gdk_draw_rounded_rectangle(l_widget->window, l_pDrawGC, FALSE, xStart - 3, yStart - 3, xSize + 6, ySize + 6, gint(round(8.0 * m_currentScale)));
 	}
@@ -1269,8 +1269,8 @@ void CInterfacedScenario::redraw(IBox& box)
 
 		gdk_draw_polygon(l_widget->window, l_pDrawGC, TRUE, l_vPoint, 3);
 		int l_iBoxInputBorderColor = Color_BoxInputBorder;
-		if (isDeprecated) { gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[Color_LinkInvalid]); }
-		else { gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[l_iBoxInputBorderColor]); }
+		if (isDeprecated) { gdk_gc_set_rgb_fg_color(l_pDrawGC, &gColors[Color_LinkInvalid]); }
+		else { gdk_gc_set_rgb_fg_color(l_pDrawGC, &gColors[l_iBoxInputBorderColor]); }
 		gdk_draw_polygon(l_widget->window, l_pDrawGC, FALSE, l_vPoint, 3);
 
 		int x                         = xStart + i * (iCircleSpace + iCircleSize) + (iCircleSize >> 1) - m_viewOffsetX + l_iInputOffset;
@@ -1331,7 +1331,7 @@ void CInterfacedScenario::redraw(IBox& box)
 							 l_iScenarioInputIndicatorLeft,
 							 l_iScenarioInputIndicatorTop,
 							 iCircleSize * 2, iCircleSize * 2, 0, 64 * 360);
-				gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[l_iBoxInputBorderColor]);
+				gdk_gc_set_rgb_fg_color(l_pDrawGC, &gColors[l_iBoxInputBorderColor]);
 				gdk_draw_arc(l_widget->window, l_pDrawGC, FALSE,
 							 l_iScenarioInputIndicatorLeft,
 							 l_iScenarioInputIndicatorTop,
@@ -1394,8 +1394,8 @@ void CInterfacedScenario::redraw(IBox& box)
 		gdk_gc_set_rgb_fg_color(l_pDrawGC, &l_oOutputColor);
 		gdk_draw_polygon(l_widget->window, l_pDrawGC, TRUE, l_vPoint, 3);
 		int l_iBoxOutputBorderColor = Color_BoxOutputBorder;
-		if (isDeprecated) { gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[Color_LinkInvalid]); }
-		else { gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[l_iBoxOutputBorderColor]); }
+		if (isDeprecated) { gdk_gc_set_rgb_fg_color(l_pDrawGC, &gColors[Color_LinkInvalid]); }
+		else { gdk_gc_set_rgb_fg_color(l_pDrawGC, &gColors[l_iBoxOutputBorderColor]); }
 
 		gdk_draw_polygon(l_widget->window, l_pDrawGC, FALSE, l_vPoint, 3);
 
@@ -1456,7 +1456,7 @@ void CInterfacedScenario::redraw(IBox& box)
 							 l_iScenarioOutputIndicatorLeft,
 							 l_iScenarioOutputIndicatorTop,
 							 iCircleSize * 2, iCircleSize * 2, 0, 64 * 360);
-				gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[l_iBoxOutputBorderColor]);
+				gdk_gc_set_rgb_fg_color(l_pDrawGC, &gColors[l_iBoxOutputBorderColor]);
 				gdk_draw_arc(l_widget->window, l_pDrawGC, FALSE,
 							 l_iScenarioOutputIndicatorLeft,
 							 l_iScenarioOutputIndicatorTop,
@@ -1551,9 +1551,9 @@ void CInterfacedScenario::redraw(IComment& rComment)
 	m_vInterfacedObject[m_interfacedObjectId] = CInterfacedObject(rComment.getIdentifier());
 
 	gdk_gc_set_rgb_fg_color(
-		l_pDrawGC, &g_vColors[m_SelectedObjects.count(rComment.getIdentifier()) ? Color_CommentBackgroundSelected : Color_CommentBackground]);
+		l_pDrawGC, &gColors[m_SelectedObjects.count(rComment.getIdentifier()) ? Color_CommentBackgroundSelected : Color_CommentBackground]);
 	gdk_draw_rounded_rectangle(l_widget->window, l_pDrawGC, TRUE, startX, startY, sizeX, sizeY, gint(round(16.0 * m_currentScale)));
-	gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[m_SelectedObjects.count(rComment.getIdentifier()) ? Color_CommentBorderSelected : Color_CommentBorder]);
+	gdk_gc_set_rgb_fg_color(l_pDrawGC, &gColors[m_SelectedObjects.count(rComment.getIdentifier()) ? Color_CommentBorderSelected : Color_CommentBorder]);
 	gdk_draw_rounded_rectangle(l_widget->window, l_pDrawGC, FALSE, startX, startY, sizeX, sizeY, gint(round(16.0 * m_currentScale)));
 
 	PangoContext* l_pPangoContext = gtk_widget_get_pango_context(l_widget);
@@ -1585,20 +1585,20 @@ void CInterfacedScenario::redraw(ILink& rLink)
 	m_rScenario.getBoxDetails(rLink.getSourceBoxIdentifier())->getOutputType(rLink.getSourceBoxOutputIndex(), l_oSourceOutputTypeID);
 	m_rScenario.getBoxDetails(rLink.getTargetBoxIdentifier())->getInputType(rLink.getTargetBoxInputIndex(), l_oTargetInputTypeID);
 
-	if (rLink.hasAttribute(OV_AttributeId_Link_Invalid)) { gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[Color_LinkInvalid]); }
-	else if (m_SelectedObjects.count(rLink.getIdentifier())) { gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[Color_LinkSelected]); }
-	else if (l_oTargetInputTypeID == l_oSourceOutputTypeID) { gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[Color_Link]); }
+	if (rLink.hasAttribute(OV_AttributeId_Link_Invalid)) { gdk_gc_set_rgb_fg_color(l_pDrawGC, &gColors[Color_LinkInvalid]); }
+	else if (m_SelectedObjects.count(rLink.getIdentifier())) { gdk_gc_set_rgb_fg_color(l_pDrawGC, &gColors[Color_LinkSelected]); }
+	else if (l_oTargetInputTypeID == l_oSourceOutputTypeID) { gdk_gc_set_rgb_fg_color(l_pDrawGC, &gColors[Color_Link]); }
 	else
 	{
 		if (m_kernelCtx.getTypeManager().isDerivedFromStream(l_oSourceOutputTypeID, l_oTargetInputTypeID))
 		{
-			gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[Color_LinkDownCast]);
+			gdk_gc_set_rgb_fg_color(l_pDrawGC, &gColors[Color_LinkDownCast]);
 		}
 		else if (m_kernelCtx.getTypeManager().isDerivedFromStream(l_oTargetInputTypeID, l_oSourceOutputTypeID))
 		{
-			gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[Color_LinkUpCast]);
+			gdk_gc_set_rgb_fg_color(l_pDrawGC, &gColors[Color_LinkUpCast]);
 		}
-		else { gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[Color_LinkInvalid]); }
+		else { gdk_gc_set_rgb_fg_color(l_pDrawGC, &gColors[Color_LinkInvalid]); }
 	}
 
 	updateStencilIndex(m_interfacedObjectId, l_pStencilGC);
@@ -2147,10 +2147,10 @@ void CInterfacedScenario::scenarioDrawingAreaExposeCB(GdkEventExpose* /*event*/)
 		GtkWidget* l_widget = GTK_WIDGET(m_pScenarioDrawingArea);
 		GdkGC* l_pDrawGC    = gdk_gc_new(l_widget->window);
 		gdk_gc_set_function(l_pDrawGC, GDK_OR);
-		gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[Color_SelectionArea]);
+		gdk_gc_set_rgb_fg_color(l_pDrawGC, &gColors[Color_SelectionArea]);
 		gdk_draw_rectangle(l_widget->window, l_pDrawGC, TRUE, startX, startY, sizeX, sizeY);
 		gdk_gc_set_function(l_pDrawGC, GDK_COPY);
-		gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[Color_SelectionAreaBorder]);
+		gdk_gc_set_rgb_fg_color(l_pDrawGC, &gColors[Color_SelectionAreaBorder]);
 		gdk_draw_rectangle(l_widget->window, l_pDrawGC, FALSE, startX, startY, sizeX, sizeY);
 		g_object_unref(l_pDrawGC);
 	}
@@ -2160,7 +2160,7 @@ void CInterfacedScenario::scenarioDrawingAreaExposeCB(GdkEventExpose* /*event*/)
 		GtkWidget* l_widget = GTK_WIDGET(m_pScenarioDrawingArea);
 		GdkGC* l_pDrawGC    = gdk_gc_new(l_widget->window);
 
-		gdk_gc_set_rgb_fg_color(l_pDrawGC, &g_vColors[Color_Link]);
+		gdk_gc_set_rgb_fg_color(l_pDrawGC, &gColors[Color_Link]);
 		gdk_draw_line(l_widget->window, l_pDrawGC, int(m_pressMouseX), int(m_pressMouseY), int(m_currentMouseX), int(m_currentMouseY));
 		g_object_unref(l_pDrawGC);
 	}

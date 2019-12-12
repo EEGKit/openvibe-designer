@@ -157,7 +157,7 @@ namespace OpenViBEDesigner
 		GtkWidget* m_pSplashScreen = nullptr;
 		GtkNotebook* m_pScenarioNotebook = nullptr;
 		GtkNotebook* m_pResourceNotebook = nullptr;
-		GtkTreeStore* m_pBoxAlgorithmTreeModel = nullptr;
+		GtkTreeStore* m_BoxAlgorithmTreeModel = nullptr;
 		GtkTreeModel* m_pBoxAlgorithmTreeModelFilter = nullptr;
 		GtkTreeModel* m_pBoxAlgorithmTreeModelFilter2 = nullptr;
 		GtkTreeModel* m_pBoxAlgorithmTreeModelFilter3 = nullptr;
@@ -184,10 +184,10 @@ namespace OpenViBEDesigner
 		bool m_isQuitting = false;
 		bool m_isNewVersion = false;
 
-		std::vector<CInterfacedScenario*> m_vInterfacedScenario;
-		uint32_t m_currentInterfacedScenarioIdx = 0;
-		std::vector<const OpenViBE::Plugins::IPluginObjectDesc*> m_vNewBoxes;
-		std::vector<const OpenViBE::Plugins::IPluginObjectDesc*> m_vUpdatedBoxes;
+		std::vector<CInterfacedScenario*> m_Scenarios;
+		uint32_t m_currentScenarioIdx = 0;
+		std::vector<const OpenViBE::Plugins::IPluginObjectDesc*> m_NewBoxes;
+		std::vector<const OpenViBE::Plugins::IPluginObjectDesc*> m_UpdatedBoxes;
 		std::vector<std::string> m_vDocumentedBoxes;
 #ifdef MENSIA_DISTRIBUTION
 		Mensia::CArchwayHandler* m_pArchwayHandler = nullptr;
