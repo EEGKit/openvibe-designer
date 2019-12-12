@@ -5,111 +5,93 @@ using namespace OpenViBE;
 using namespace Plugins;
 using namespace Kernel;
 
-CAboutScenarioDialog::CAboutScenarioDialog(const IKernelContext& ctx, IScenario& scenario, const char* sGUIFilename)
-	: m_kernelCtx(ctx), m_rScenario(scenario), m_sGUIFilename(sGUIFilename) { }
-
-CAboutScenarioDialog::~CAboutScenarioDialog() = default;
-
-namespace
-{
-	void buttonMetaboxReset_clicked(GtkWidget* /*widget*/, gpointer data)
-	{
-		gtk_entry_set_text(GTK_ENTRY(data), CIdentifier::random().str().c_str());
-	}
-} // namespace
+static void buttonMetaboxReset_clicked(GtkWidget* /*widget*/, gpointer data) { gtk_entry_set_text(GTK_ENTRY(data), CIdentifier::random().str().c_str()); }
 
 bool CAboutScenarioDialog::run()
 
 {
 	GtkBuilder* interface = gtk_builder_new(); // glade_xml_new(m_guiFilename.toASCIIString(), "scenario_about", nullptr);
-	gtk_builder_add_from_file(interface, m_sGUIFilename.toASCIIString(), nullptr);
+	gtk_builder_add_from_file(interface, m_guiFilename.toASCIIString(), nullptr);
 	gtk_builder_connect_signals(interface, nullptr);
 
-	GtkWidget* l_pDialog                 = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about"));
-	GtkWidget* l_pName                   = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_name"));
-	GtkWidget* l_pAuthorName             = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_author_name"));
-	GtkWidget* l_pAuthorCompanyName      = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_company_name"));
-	GtkWidget* l_pCategory               = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_category"));
-	GtkWidget* l_pVersion                = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_version"));
-	GtkWidget* l_pDocumentationPage      = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_documentation_page"));
-	GtkWidget* l_pAddedSoftwareVersion   = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_added_software_version"));
-	GtkWidget* l_pUpdatedSoftwareVersion = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_update_software_version"));
+	GtkWidget* dialog                 = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about"));
+	GtkWidget* name                   = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_name"));
+	GtkWidget* authorName             = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_author_name"));
+	GtkWidget* authorCompanyName      = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_company_name"));
+	GtkWidget* category               = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_category"));
+	GtkWidget* version                = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_version"));
+	GtkWidget* documentationPage      = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_documentation_page"));
+	GtkWidget* addedSoftwareVersion   = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_added_software_version"));
+	GtkWidget* updatedSoftwareVersion = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_update_software_version"));
 
-	GtkWidget* l_pMetaboxId = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_metabox_id"));
+	GtkWidget* metaboxId = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_metabox_id"));
 
-	GtkWidget* l_pResetMetaboxId = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-button_reset_metabox_id"));
-	const gulong signalHandlerId = g_signal_connect(G_OBJECT(l_pResetMetaboxId), "clicked", G_CALLBACK(buttonMetaboxReset_clicked), l_pMetaboxId);
+	GtkWidget* resetMetaboxId    = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-button_reset_metabox_id"));
+	const gulong signalHandlerId = g_signal_connect(G_OBJECT(resetMetaboxId), "clicked", G_CALLBACK(buttonMetaboxReset_clicked), metaboxId);
 
-	GtkWidget* l_pShortDescription    = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-textview_short_description"));
-	GtkWidget* l_pDetailedDescription = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-textview_detailed_description"));
+	GtkWidget* shortDesc    = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-textview_short_description"));
+	GtkWidget* detailedDesc = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-textview_detailed_description"));
 
 	g_object_unref(interface);
 
-	gtk_entry_set_text(GTK_ENTRY(l_pName), m_rScenario.getAttributeValue(OV_AttributeId_Scenario_Name).toASCIIString());
-	gtk_entry_set_text(GTK_ENTRY(l_pAuthorName), m_rScenario.getAttributeValue(OV_AttributeId_Scenario_Author).toASCIIString());
-	gtk_entry_set_text(GTK_ENTRY(l_pAuthorCompanyName), m_rScenario.getAttributeValue(OV_AttributeId_Scenario_Company).toASCIIString());
-	gtk_entry_set_text(GTK_ENTRY(l_pCategory), m_rScenario.getAttributeValue(OV_AttributeId_Scenario_Category).toASCIIString());
-	gtk_entry_set_text(GTK_ENTRY(l_pVersion), m_rScenario.getAttributeValue(OV_AttributeId_Scenario_Version).toASCIIString());
-	gtk_entry_set_text(GTK_ENTRY(l_pDocumentationPage), m_rScenario.getAttributeValue(OV_AttributeId_Scenario_DocumentationPage).toASCIIString());
-	gtk_entry_set_text(GTK_ENTRY(l_pAddedSoftwareVersion), m_rScenario.getAttributeValue(OV_AttributeId_Scenario_AddedSoftwareVersion).toASCIIString());
-	gtk_entry_set_text(GTK_ENTRY(l_pUpdatedSoftwareVersion), m_rScenario.getAttributeValue(OV_AttributeId_Scenario_UpdatedSoftwareVersion).toASCIIString());
+	gtk_entry_set_text(GTK_ENTRY(name), m_scenario.getAttributeValue(OV_AttributeId_Scenario_Name).toASCIIString());
+	gtk_entry_set_text(GTK_ENTRY(authorName), m_scenario.getAttributeValue(OV_AttributeId_Scenario_Author).toASCIIString());
+	gtk_entry_set_text(GTK_ENTRY(authorCompanyName), m_scenario.getAttributeValue(OV_AttributeId_Scenario_Company).toASCIIString());
+	gtk_entry_set_text(GTK_ENTRY(category), m_scenario.getAttributeValue(OV_AttributeId_Scenario_Category).toASCIIString());
+	gtk_entry_set_text(GTK_ENTRY(version), m_scenario.getAttributeValue(OV_AttributeId_Scenario_Version).toASCIIString());
+	gtk_entry_set_text(GTK_ENTRY(documentationPage), m_scenario.getAttributeValue(OV_AttributeId_Scenario_DocumentationPage).toASCIIString());
+	gtk_entry_set_text(GTK_ENTRY(addedSoftwareVersion), m_scenario.getAttributeValue(OV_AttributeId_Scenario_AddedSoftwareVersion).toASCIIString());
+	gtk_entry_set_text(GTK_ENTRY(updatedSoftwareVersion), m_scenario.getAttributeValue(OV_AttributeId_Scenario_UpdatedSoftwareVersion).toASCIIString());
 
-	if (m_rScenario.isMetabox())
-	{
-		gtk_entry_set_text(GTK_ENTRY(l_pMetaboxId), m_rScenario.getAttributeValue(OVP_AttributeId_Metabox_ID).toASCIIString());
-	}
+	if (m_scenario.isMetabox()) { gtk_entry_set_text(GTK_ENTRY(metaboxId), m_scenario.getAttributeValue(OVP_AttributeId_Metabox_ID).toASCIIString()); }
 	else
 	{
-		gtk_widget_set_sensitive(l_pMetaboxId, FALSE);
-		gtk_widget_set_sensitive(l_pResetMetaboxId, FALSE);
+		gtk_widget_set_sensitive(metaboxId, FALSE);
+		gtk_widget_set_sensitive(resetMetaboxId, FALSE);
 	}
 
-	GtkTextBuffer* l_pShortDescriptionBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(l_pShortDescription));
-	gtk_text_buffer_set_text(l_pShortDescriptionBuffer, m_rScenario.getAttributeValue(OV_AttributeId_Scenario_ShortDescription).toASCIIString(), -1);
-	GtkTextBuffer* l_pDetailedDescriptionBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(l_pDetailedDescription));
-	gtk_text_buffer_set_text(l_pDetailedDescriptionBuffer, m_rScenario.getAttributeValue(OV_AttributeId_Scenario_DetailedDescription).toASCIIString(), -1);
+	GtkTextBuffer* shortDescBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(shortDesc));
+	gtk_text_buffer_set_text(shortDescBuffer, m_scenario.getAttributeValue(OV_AttributeId_Scenario_ShortDescription).toASCIIString(), -1);
+	GtkTextBuffer* detailedDescBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(detailedDesc));
+	gtk_text_buffer_set_text(detailedDescBuffer, m_scenario.getAttributeValue(OV_AttributeId_Scenario_DetailedDescription).toASCIIString(), -1);
 
-	gtk_dialog_run(GTK_DIALOG(l_pDialog));
+	gtk_dialog_run(GTK_DIALOG(dialog));
 
-	g_signal_handler_disconnect(G_OBJECT(l_pResetMetaboxId), signalHandlerId);
-	m_rScenario.setAttributeValue(OV_AttributeId_Scenario_Name, gtk_entry_get_text(GTK_ENTRY(l_pName)));
-	m_rScenario.setAttributeValue(OV_AttributeId_Scenario_Author, gtk_entry_get_text(GTK_ENTRY(l_pAuthorName)));
-	m_rScenario.setAttributeValue(OV_AttributeId_Scenario_Company, gtk_entry_get_text(GTK_ENTRY(l_pAuthorCompanyName)));
-	m_rScenario.setAttributeValue(OV_AttributeId_Scenario_Category, gtk_entry_get_text(GTK_ENTRY(l_pCategory)));
-	m_rScenario.setAttributeValue(OV_AttributeId_Scenario_Version, gtk_entry_get_text(GTK_ENTRY(l_pVersion)));
-	m_rScenario.setAttributeValue(OV_AttributeId_Scenario_DocumentationPage, gtk_entry_get_text(GTK_ENTRY(l_pDocumentationPage)));
-	m_rScenario.setAttributeValue(OV_AttributeId_Scenario_AddedSoftwareVersion, gtk_entry_get_text(GTK_ENTRY(l_pAddedSoftwareVersion)));
-	m_rScenario.setAttributeValue(OV_AttributeId_Scenario_UpdatedSoftwareVersion, gtk_entry_get_text(GTK_ENTRY(l_pUpdatedSoftwareVersion)));
+	g_signal_handler_disconnect(G_OBJECT(resetMetaboxId), signalHandlerId);
+	m_scenario.setAttributeValue(OV_AttributeId_Scenario_Name, gtk_entry_get_text(GTK_ENTRY(name)));
+	m_scenario.setAttributeValue(OV_AttributeId_Scenario_Author, gtk_entry_get_text(GTK_ENTRY(authorName)));
+	m_scenario.setAttributeValue(OV_AttributeId_Scenario_Company, gtk_entry_get_text(GTK_ENTRY(authorCompanyName)));
+	m_scenario.setAttributeValue(OV_AttributeId_Scenario_Category, gtk_entry_get_text(GTK_ENTRY(category)));
+	m_scenario.setAttributeValue(OV_AttributeId_Scenario_Version, gtk_entry_get_text(GTK_ENTRY(version)));
+	m_scenario.setAttributeValue(OV_AttributeId_Scenario_DocumentationPage, gtk_entry_get_text(GTK_ENTRY(documentationPage)));
+	m_scenario.setAttributeValue(OV_AttributeId_Scenario_AddedSoftwareVersion, gtk_entry_get_text(GTK_ENTRY(addedSoftwareVersion)));
+	m_scenario.setAttributeValue(OV_AttributeId_Scenario_UpdatedSoftwareVersion, gtk_entry_get_text(GTK_ENTRY(updatedSoftwareVersion)));
 
-	if (m_rScenario.isMetabox())
+	if (m_scenario.isMetabox())
 	{
-		const CString textId(gtk_entry_get_text(GTK_ENTRY(l_pMetaboxId)));
-		CIdentifier cid;
-		if (!cid.fromString(textId))
+		const CString id(gtk_entry_get_text(GTK_ENTRY(metaboxId)));
+		CIdentifier tmp;
+		if (!tmp.fromString(id))
 		{
-			m_kernelCtx.getLogManager() << LogLevel_Error << "Invalid identifier " << textId <<
-					" is not in the \"(0x[0-9a-f]{1-8}, 0x[0-9a-f]{1-8})\" format. ";
-			m_kernelCtx.getLogManager() << "Reverting to " << m_rScenario.getAttributeValue(OVP_AttributeId_Metabox_ID).toASCIIString() << ".\n";
+			m_kernelCtx.getLogManager() << LogLevel_Error << "Invalid identifier " << id << " is not in the \"(0x[0-9a-f]{1-8}, 0x[0-9a-f]{1-8})\" format. ";
+			m_kernelCtx.getLogManager() << "Reverting to " << m_scenario.getAttributeValue(OVP_AttributeId_Metabox_ID).toASCIIString() << ".\n";
 		}
-		else { m_rScenario.setAttributeValue(OVP_AttributeId_Metabox_ID, textId); }
+		else { m_scenario.setAttributeValue(OVP_AttributeId_Metabox_ID, id); }
 	}
 
-	GtkTextIter l_pTextIterStart;
-	GtkTextIter l_pTextIterEnd;
+	GtkTextIter start, end;
 
-	gtk_text_buffer_get_start_iter(l_pShortDescriptionBuffer, &l_pTextIterStart);
-	gtk_text_buffer_get_end_iter(l_pShortDescriptionBuffer, &l_pTextIterEnd);
-	m_rScenario.setAttributeValue(
-		OV_AttributeId_Scenario_ShortDescription,
-		gtk_text_buffer_get_text(gtk_text_view_get_buffer(GTK_TEXT_VIEW(l_pShortDescription)), &l_pTextIterStart, &l_pTextIterEnd, FALSE));
+	gtk_text_buffer_get_start_iter(shortDescBuffer, &start);
+	gtk_text_buffer_get_end_iter(shortDescBuffer, &end);
+	m_scenario.setAttributeValue(
+		OV_AttributeId_Scenario_ShortDescription, gtk_text_buffer_get_text(gtk_text_view_get_buffer(GTK_TEXT_VIEW(shortDesc)), &start, &end, FALSE));
 
-	gtk_text_buffer_get_start_iter(l_pDetailedDescriptionBuffer, &l_pTextIterStart);
-	gtk_text_buffer_get_end_iter(l_pDetailedDescriptionBuffer, &l_pTextIterEnd);
-	m_rScenario.setAttributeValue(
-		OV_AttributeId_Scenario_DetailedDescription,
-		gtk_text_buffer_get_text(gtk_text_view_get_buffer(GTK_TEXT_VIEW(l_pDetailedDescription)), &l_pTextIterStart, &l_pTextIterEnd, FALSE));
+	gtk_text_buffer_get_start_iter(detailedDescBuffer, &start);
+	gtk_text_buffer_get_end_iter(detailedDescBuffer, &end);
+	m_scenario.setAttributeValue(
+		OV_AttributeId_Scenario_DetailedDescription, gtk_text_buffer_get_text(gtk_text_view_get_buffer(GTK_TEXT_VIEW(detailedDesc)), &start, &end, FALSE));
 
-	gtk_widget_destroy(l_pDialog);
+	gtk_widget_destroy(dialog);
 
 	return true;
 }

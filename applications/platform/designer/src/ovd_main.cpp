@@ -128,20 +128,20 @@ namespace
 	typedef std::map<std::string, std::tuple<int, int, int>> components_map_t;
 	// Parses a JSON encoded list of components with their versions
 	// We use an output variable because we want to be able to "enhance" an already existing list if necessary
-	void getVersionComponentsFromConfigurationToken(const IKernelContext& ctx, const char* configToken, components_map_t& componentVersions)
+	void getVersionComponentsFromConfigToken(const IKernelContext& ctx, const char* configToken, components_map_t& componentVersions)
 	{
-		json::Object componentVersionsObject;
+		json::Object versionsObject;
 		// We use a lookup instead of expansion as JSON can contain { } characters
 
-		const CString componentVersionsJSON = ctx.getConfigurationManager().expand(CString("${") + configToken + "}");
-		if (componentVersionsJSON.length() != 0)
+		const CString versionsJSON = ctx.getConfigurationManager().expand(CString("${") + configToken + "}");
+		if (versionsJSON.length() != 0)
 		{
 			// This check is necessary because the asignemt operator would fail with an assert
-			if (json::Deserialize(componentVersionsJSON.toASCIIString()).GetType() == json::ObjectVal)
+			if (json::Deserialize(versionsJSON.toASCIIString()).GetType() == json::ObjectVal)
 			{
-				componentVersionsObject = json::Deserialize(componentVersionsJSON.toASCIIString());
+				versionsObject = json::Deserialize(versionsJSON.toASCIIString());
 			}
-			for (const auto& component : componentVersionsObject)
+			for (const auto& component : versionsObject)
 			{
 				int versionMajor, versionMinor, versionPatch;
 				sscanf(component.second, "%d.%d.%d", &versionMajor, &versionMinor, &versionPatch);
@@ -157,10 +157,10 @@ static void InsertPluginObjectDescToGtkTreeStore(const IKernelContext& ctx, map<
 {
 	typedef std::map<std::string, std::tuple<int, int, int>> components_map_t;
 	components_map_t currentVersions;
-	getVersionComponentsFromConfigurationToken(ctx, "ProjectVersion_Components", currentVersions);
+	getVersionComponentsFromConfigToken(ctx, "ProjectVersion_Components", currentVersions);
 	// By default, fix version to current version - to display the new/update boxes available since current version only
 	components_map_t lastUsedVersions = currentVersions;
-	getVersionComponentsFromConfigurationToken(ctx, "Designer_LastComponentVersionsUsed", lastUsedVersions);
+	getVersionComponentsFromConfigToken(ctx, "Designer_LastComponentVersionsUsed", lastUsedVersions);
 
 	for (const auto& pod : pods)
 	{

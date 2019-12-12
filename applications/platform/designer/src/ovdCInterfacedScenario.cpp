@@ -509,15 +509,15 @@ namespace
 	/*
 	void modify_scenario_link_name_cb(GtkWidget* pEntry, CInterfacedScenario::SLinkCallbackData* data)
 	{
-		if (data->m_isInput) { data->m_pInterfacedScenario->m_rScenario.setInputName(data->m_uiLinkIdx, gtk_entry_get_text(GTK_ENTRY(pEntry))); }
-		else { data->m_pInterfacedScenario->m_rScenario.setOutputName(data->m_uiLinkIdx, gtk_entry_get_text(GTK_ENTRY(pEntry))); }
+		if (data->m_isInput) { data->m_pInterfacedScenario->m_scenario.setInputName(data->m_uiLinkIdx, gtk_entry_get_text(GTK_ENTRY(pEntry))); }
+		else { data->m_pInterfacedScenario->m_scenario.setOutputName(data->m_uiLinkIdx, gtk_entry_get_text(GTK_ENTRY(pEntry))); }
 	}
 
 	void modify_scenario_link_type_cb(GtkWidget* pComboBox, CInterfacedScenario::SLinkCallbackData* data)
 	{
 		const CIdentifier l_oStreamType = data->m_pInterfacedScenario->m_mStreamType[gtk_combo_box_get_active_text(GTK_COMBO_BOX(pComboBox))];
-		if (data->m_isInput) { data->m_pInterfacedScenario->m_rScenario.setInputType(data->m_uiLinkIdx, l_oStreamType); }
-		else { data->m_pInterfacedScenario->m_rScenario.setOutputType(data->m_uiLinkIdx, l_oStreamType); }
+		if (data->m_isInput) { data->m_pInterfacedScenario->m_scenario.setInputType(data->m_uiLinkIdx, l_oStreamType); }
+		else { data->m_pInterfacedScenario->m_scenario.setOutputType(data->m_uiLinkIdx, l_oStreamType); }
 		data->m_pInterfacedScenario->redraw();
 	}
 	//*/
@@ -614,7 +614,7 @@ CInterfacedScenario::CInterfacedScenario(const IKernelContext& ctx, CApplication
 	bool warningUnknown          = false;
 	while ((l_oBoxID = m_rScenario.getNextBoxIdentifier(l_oBoxID)) != OV_UndefinedIdentifier)
 	{
-		//const IBox *l_pBox = m_rScenario.getBoxDetails(l_oBoxID);
+		//const IBox *l_pBox = m_scenario.getBoxDetails(l_oBoxID);
 		//const CBoxProxy l_oBoxProxy(m_kernelCtx, *l_pBox);
 		const CBoxProxy l_oBoxProxy(m_kernelCtx, m_rScenario, l_oBoxID);
 
@@ -2025,7 +2025,7 @@ void CInterfacedScenario::scenarioDrawingAreaExposeCB(GdkEventExpose* /*event*/)
 		CIdentifier l_oBoxID;
 		while ((l_oBoxID = m_rScenario.getNextBoxIdentifier(l_oBoxID)) != OV_UndefinedIdentifier)
 		{
-			//CBoxProxy l_oBoxProxy(m_kernelCtx, *m_rScenario.getBoxDetails(l_oBoxID));
+			//CBoxProxy l_oBoxProxy(m_kernelCtx, *m_scenario.getBoxDetails(l_oBoxID));
 			CBoxProxy l_oBoxProxy(m_kernelCtx, m_rScenario, l_oBoxID);
 			l_iMinX = std::min(l_iMinX, gint((l_oBoxProxy.getXCenter() - 1.0 * l_oBoxProxy.getWidth(GTK_WIDGET(m_pScenarioDrawingArea)) / 2) * m_currentScale));
 			l_iMaxX = std::max(l_iMaxX, gint((l_oBoxProxy.getXCenter() + 1.0 * l_oBoxProxy.getWidth(GTK_WIDGET(m_pScenarioDrawingArea)) / 2) * m_currentScale));
@@ -2093,7 +2093,7 @@ void CInterfacedScenario::scenarioDrawingAreaExposeCB(GdkEventExpose* /*event*/)
 	}
 	// TODO: optimize this as this will be called endlessly
 	/*
-	else if (false) //m_rScenario.containsBoxWithDeprecatedInterfacors() 
+	else if (false) //m_scenario.containsBoxWithDeprecatedInterfacors() 
 	{
 		l_oColor.pixel = 0;
 		l_oColor.red = 0xffff;
@@ -2313,7 +2313,7 @@ void CInterfacedScenario::scenarioDrawingAreaMotionNotifyCB(GtkWidget* /*widget*
 			}
 			else if (l_rObject.m_connectorType == Box_Update)
 			{
-				//m_rScenario.updateBox(l_pBoxDetails->getIdentifier());
+				//m_scenario.updateBox(l_pBoxDetails->getIdentifier());
 				l_sName = CString("Right click for");
 				l_sType = "box update";
 			}
