@@ -30,15 +30,15 @@ public:
 	{
 		GCallback fp;
 		gpointer p;
-	} _data;
+	} data_t;
 
-	_data m_pData;
+	data_t m_Data;
 
-	G_CALLBACK_AUTOCAST(gpointer p) { m_pData.p = p; }
-	G_CALLBACK_AUTOCAST(GCallback fp) { m_pData.fp = fp; }
+	G_CALLBACK_AUTOCAST(const gpointer p) { m_Data.p = p; }
+	G_CALLBACK_AUTOCAST(const GCallback fp) { m_Data.fp = fp; }
 
-	operator gpointer() { return m_pData.p; }
-	operator GCallback() { return m_pData.fp; }
+	operator gpointer() const { return m_Data.p; }
+	operator GCallback() const { return m_Data.fp; }
 
 private:
 
