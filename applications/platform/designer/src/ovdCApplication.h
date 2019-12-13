@@ -152,7 +152,7 @@ namespace OpenViBEDesigner
 
 		ECommandLineFlag m_eCommandLineFlags = CommandLineFlag_None;
 
-		GtkBuilder* m_pBuilderInterface = nullptr;
+		GtkBuilder* m_Builder = nullptr;
 		GtkWidget* m_pMainWindow = nullptr;
 		GtkWidget* m_pSplashScreen = nullptr;
 		GtkNotebook* m_pScenarioNotebook = nullptr;

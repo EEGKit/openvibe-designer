@@ -226,7 +226,7 @@ namespace
 
 	void menu_focus_search_cb(GtkMenuItem* /*pMenuItem*/, gpointer data)
 	{
-		gtk_widget_grab_focus(GTK_WIDGET(gtk_builder_get_object(static_cast<CApplication*>(data)->m_pBuilderInterface, "openvibe-box_algorithm_searchbox")));
+		gtk_widget_grab_focus(GTK_WIDGET(gtk_builder_get_object(static_cast<CApplication*>(data)->m_Builder, "openvibe-box_algorithm_searchbox")));
 	}
 
 	void menu_copy_selection_cb(GtkMenuItem* /*pMenuItem*/, gpointer data) { static_cast<CApplication*>(data)->copySelectionCB(); }
@@ -394,30 +394,30 @@ namespace
 
 	void box_algorithm_title_button_expand_cb(GtkButton* /*button*/, gpointer data)
 	{
-		gtk_tree_view_expand_all(GTK_TREE_VIEW(gtk_builder_get_object(static_cast<CApplication*>(data)->m_pBuilderInterface, "openvibe-box_algorithm_tree")));
+		gtk_tree_view_expand_all(GTK_TREE_VIEW(gtk_builder_get_object(static_cast<CApplication*>(data)->m_Builder, "openvibe-box_algorithm_tree")));
 		gtk_notebook_set_current_page(
-			GTK_NOTEBOOK(gtk_builder_get_object(static_cast<CApplication*>(data)->m_pBuilderInterface, "openvibe-resource_notebook")), 0);
+			GTK_NOTEBOOK(gtk_builder_get_object(static_cast<CApplication*>(data)->m_Builder, "openvibe-resource_notebook")), 0);
 	}
 
 	void box_algorithm_title_button_collapse_cb(GtkButton* /*button*/, gpointer data)
 	{
-		gtk_tree_view_collapse_all(GTK_TREE_VIEW(gtk_builder_get_object(static_cast<CApplication*>(data)->m_pBuilderInterface, "openvibe-box_algorithm_tree")));
+		gtk_tree_view_collapse_all(GTK_TREE_VIEW(gtk_builder_get_object(static_cast<CApplication*>(data)->m_Builder, "openvibe-box_algorithm_tree")));
 		gtk_notebook_set_current_page(
-			GTK_NOTEBOOK(gtk_builder_get_object(static_cast<CApplication*>(data)->m_pBuilderInterface, "openvibe-resource_notebook")), 0);
+			GTK_NOTEBOOK(gtk_builder_get_object(static_cast<CApplication*>(data)->m_Builder, "openvibe-resource_notebook")), 0);
 	}
 
 	void algorithm_title_button_expand_cb(GtkButton* /*button*/, gpointer data)
 	{
-		gtk_tree_view_expand_all(GTK_TREE_VIEW(gtk_builder_get_object(static_cast<CApplication*>(data)->m_pBuilderInterface, "openvibe-algorithm_tree")));
+		gtk_tree_view_expand_all(GTK_TREE_VIEW(gtk_builder_get_object(static_cast<CApplication*>(data)->m_Builder, "openvibe-algorithm_tree")));
 		gtk_notebook_set_current_page(
-			GTK_NOTEBOOK(gtk_builder_get_object(static_cast<CApplication*>(data)->m_pBuilderInterface, "openvibe-resource_notebook")), 1);
+			GTK_NOTEBOOK(gtk_builder_get_object(static_cast<CApplication*>(data)->m_Builder, "openvibe-resource_notebook")), 1);
 	}
 
 	void algorithm_title_button_collapse_cb(GtkButton* /*button*/, gpointer data)
 	{
-		gtk_tree_view_collapse_all(GTK_TREE_VIEW(gtk_builder_get_object(static_cast<CApplication*>(data)->m_pBuilderInterface, "openvibe-algorithm_tree")));
+		gtk_tree_view_collapse_all(GTK_TREE_VIEW(gtk_builder_get_object(static_cast<CApplication*>(data)->m_Builder, "openvibe-algorithm_tree")));
 		gtk_notebook_set_current_page(
-			GTK_NOTEBOOK(gtk_builder_get_object(static_cast<CApplication*>(data)->m_pBuilderInterface, "openvibe-resource_notebook")), 1);
+			GTK_NOTEBOOK(gtk_builder_get_object(static_cast<CApplication*>(data)->m_Builder, "openvibe-resource_notebook")), 1);
 	}
 
 	void clear_messages_cb(GtkButton* /*button*/, gpointer data) { static_cast<CLogListenerDesigner*>(data)->clearMessages(); }
@@ -537,7 +537,7 @@ namespace
 	void refresh_search_no_data_cb(GtkToggleButton* /*pToggleButton*/, CApplication* pApplication)
 	{
 		pApplication->m_sSearchTerm = gtk_entry_get_text(
-			GTK_ENTRY(gtk_builder_get_object(pApplication->m_pBuilderInterface, "openvibe-box_algorithm_searchbox")));
+			GTK_ENTRY(gtk_builder_get_object(pApplication->m_Builder, "openvibe-box_algorithm_searchbox")));
 
 		queue_refilter(pApplication);
 	}
@@ -552,13 +552,13 @@ namespace
 
 	gboolean searchbox_focus_in_cb(GtkWidget* /*widget*/, GdkEvent* /*pEvent*/, CApplication* pApplication)
 	{
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(pApplication->m_pBuilderInterface, "openvibe-menu_edit")), false);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(pApplication->m_Builder, "openvibe-menu_edit")), false);
 		return false;
 	}
 
 	gboolean searchbox_focus_out_cb(GtkWidget* widget, GdkEvent* /*pEvent*/, CApplication* pApplication)
 	{
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(pApplication->m_pBuilderInterface, "openvibe-menu_edit")), true);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(pApplication->m_Builder, "openvibe-menu_edit")), true);
 		gtk_editable_select_region(GTK_EDITABLE(widget), 0, 0);
 		return false;
 	}
@@ -585,20 +585,20 @@ namespace
 				switch (l_pApplication->getPlayer()->getStatus())
 				{
 					case PlayerStatus_Stop:
-						gtk_signal_emit_by_name(GTK_OBJECT(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-button_stop")), "clicked");
+						gtk_signal_emit_by_name(GTK_OBJECT(gtk_builder_get_object(l_pApplication->m_Builder, "openvibe-button_stop")), "clicked");
 						break;
 					case PlayerStatus_Pause:
 						while (currentInterfacedScenario->m_PlayerStatus != PlayerStatus_Pause) gtk_signal_emit_by_name(
-							GTK_OBJECT(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-button_play_pause")), "clicked");
+							GTK_OBJECT(gtk_builder_get_object(l_pApplication->m_Builder, "openvibe-button_play_pause")), "clicked");
 						break;
 					case PlayerStatus_Step:
 						break;
 					case PlayerStatus_Play:
 						while (currentInterfacedScenario->m_PlayerStatus != PlayerStatus_Play) gtk_signal_emit_by_name(
-							GTK_OBJECT(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-button_play_pause")), "clicked");
+							GTK_OBJECT(gtk_builder_get_object(l_pApplication->m_Builder, "openvibe-button_play_pause")), "clicked");
 						break;
 					case PlayerStatus_Forward:
-						gtk_signal_emit_by_name(GTK_OBJECT(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-button_forward")), "clicked");
+						gtk_signal_emit_by_name(GTK_OBJECT(gtk_builder_get_object(l_pApplication->m_Builder, "openvibe-button_forward")), "clicked");
 						break;
 					default:
 						std::cout << "unhandled player status : " << l_pApplication->getPlayer()->getStatus() << " :(\n";
@@ -626,15 +626,15 @@ namespace
 					else if (seconds) { sprintf(l_sTime, "Time : %02ds %03dms", seconds, milli); }
 					else { sprintf(l_sTime, "Time : %03dms", milli); }
 
-					gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-label_current_time")), l_sTime);
+					gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(l_pApplication->m_Builder, "openvibe-label_current_time")), l_sTime);
 
 					char l_sCPU[1024];
 					sprintf(l_sCPU, "%3.01f%%", CPUUsage);
 
 					gtk_progress_bar_set_fraction(
-						GTK_PROGRESS_BAR(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-progressbar_cpu_usage")), CPUUsage * .01);
+						GTK_PROGRESS_BAR(gtk_builder_get_object(l_pApplication->m_Builder, "openvibe-progressbar_cpu_usage")), CPUUsage * .01);
 					gtk_progress_bar_set_text(
-						GTK_PROGRESS_BAR(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-progressbar_cpu_usage")), l_sCPU);
+						GTK_PROGRESS_BAR(gtk_builder_get_object(l_pApplication->m_Builder, "openvibe-progressbar_cpu_usage")), l_sCPU);
 					if (currentInterfacedScenario->m_Player && currentInterfacedScenario->m_DebugCPUUsage)
 					{
 						// redraws scenario
@@ -645,9 +645,9 @@ namespace
 		}
 		else
 		{
-			gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-label_current_time")), "Time : 000ms");
-			gtk_progress_bar_set_text(GTK_PROGRESS_BAR(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-progressbar_cpu_usage")), "");
-			gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-progressbar_cpu_usage")), 0);
+			gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(l_pApplication->m_Builder, "openvibe-label_current_time")), "Time : 000ms");
+			gtk_progress_bar_set_text(GTK_PROGRESS_BAR(gtk_builder_get_object(l_pApplication->m_Builder, "openvibe-progressbar_cpu_usage")), "");
+			gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(gtk_builder_get_object(l_pApplication->m_Builder, "openvibe-progressbar_cpu_usage")), 0);
 		}
 
 		if (!l_pApplication->hasRunningScenario()) { System::Time::sleep(50); }
@@ -778,12 +778,12 @@ CApplication::CApplication(const IKernelContext& ctx) : m_kernelCtx(ctx)
 
 CApplication::~CApplication()
 {
-	if (m_pBuilderInterface)
+	if (m_Builder)
 	{
 		m_kernelCtx.getLogManager().removeListener(m_pLogListenerDesigner);
 		// @FIXME this likely still does not deallocate the actual widgets allocated by add_from_file
-		g_object_unref(G_OBJECT(m_pBuilderInterface));
-		m_pBuilderInterface = nullptr;
+		g_object_unref(G_OBJECT(m_Builder));
+		m_Builder = nullptr;
 	}
 
 	m_kernelCtx.getPluginManager().releasePluginObject(m_VisualizationCtx);
@@ -823,9 +823,9 @@ void CApplication::initialize(const ECommandLineFlag eCommandLineFlags)
 		m_pClipboardScenario = &m_pScenarioManager->getScenario(l_oClipboardScenarioID);
 	}
 
-	m_pBuilderInterface = gtk_builder_new(); // glade_xml_new(OVD_GUI_File, "openvibe", nullptr);
-	gtk_builder_add_from_file(m_pBuilderInterface, OVD_GUI_File, nullptr);
-	gtk_builder_connect_signals(m_pBuilderInterface, nullptr);
+	m_Builder = gtk_builder_new(); // glade_xml_new(OVD_GUI_File, "openvibe", nullptr);
+	gtk_builder_add_from_file(m_Builder, OVD_GUI_File, nullptr);
+	gtk_builder_connect_signals(m_Builder, nullptr);
 
 	std::string applicationVersion = m_kernelCtx.getConfigurationManager().expand("${Application_Version}").toASCIIString();
 	if (applicationVersion == "${Application_Version}")
@@ -834,10 +834,10 @@ void CApplication::initialize(const ECommandLineFlag eCommandLineFlags)
 	}
 	const std::string defaultWindowTitle = BRAND_NAME " " DESIGNER_NAME " " + applicationVersion;
 
-	m_pMainWindow = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe"));
+	m_pMainWindow = GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe"));
 	gtk_window_set_title(GTK_WINDOW(m_pMainWindow), defaultWindowTitle.c_str());
 	gtk_menu_item_set_label(
-		GTK_MENU_ITEM(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_display_changelog")),
+		GTK_MENU_ITEM(gtk_builder_get_object(m_Builder, "openvibe-menu_display_changelog")),
 		("What's new in " + applicationVersion + " version of " + BRAND_NAME " " DESIGNER_NAME).c_str());
 
 	// Catch delete events when close button is clicked
@@ -846,104 +846,104 @@ void CApplication::initialize(const ECommandLineFlag eCommandLineFlags)
 	g_signal_connect(m_pMainWindow, "window-state-event", G_CALLBACK(window_state_changed_cb), this);
 
 	// Connects menu actions
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_undo")), "activate", G_CALLBACK(menu_undo_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_redo")), "activate", G_CALLBACK(menu_redo_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-menu_undo")), "activate", G_CALLBACK(menu_undo_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-menu_redo")), "activate", G_CALLBACK(menu_redo_cb), this);
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_focus_search")), "activate", G_CALLBACK(menu_focus_search_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_copy")), "activate", G_CALLBACK(menu_copy_selection_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_cut")), "activate", G_CALLBACK(menu_cut_selection_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_paste")), "activate", G_CALLBACK(menu_paste_selection_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_delete")), "activate", G_CALLBACK(menu_delete_selection_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_preferences")), "activate", G_CALLBACK(menu_preferences_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-menu_focus_search")), "activate", G_CALLBACK(menu_focus_search_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-menu_copy")), "activate", G_CALLBACK(menu_copy_selection_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-menu_cut")), "activate", G_CALLBACK(menu_cut_selection_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-menu_paste")), "activate", G_CALLBACK(menu_paste_selection_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-menu_delete")), "activate", G_CALLBACK(menu_delete_selection_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-menu_preferences")), "activate", G_CALLBACK(menu_preferences_cb), this);
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_new")), "activate", G_CALLBACK(menu_new_scenario_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_open")), "activate", G_CALLBACK(menu_open_scenario_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_save")), "activate", G_CALLBACK(menu_save_scenario_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_save_as")), "activate", G_CALLBACK(menu_save_scenario_as_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_close")), "activate", G_CALLBACK(menu_close_scenario_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_quit")), "activate", G_CALLBACK(menu_quit_application_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-menu_new")), "activate", G_CALLBACK(menu_new_scenario_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-menu_open")), "activate", G_CALLBACK(menu_open_scenario_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-menu_save")), "activate", G_CALLBACK(menu_save_scenario_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-menu_save_as")), "activate", G_CALLBACK(menu_save_scenario_as_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-menu_close")), "activate", G_CALLBACK(menu_close_scenario_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-menu_quit")), "activate", G_CALLBACK(menu_quit_application_cb), this);
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_restore_default_scenarios")), "activate",
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-menu_restore_default_scenarios")), "activate",
 					 G_CALLBACK(menu_restore_default_scenarios_cb), this);
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_about")), "activate", G_CALLBACK(menu_about_openvibe_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_scenario_about")), "activate", G_CALLBACK(menu_about_scenario_cb),
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-menu_about")), "activate", G_CALLBACK(menu_about_openvibe_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-menu_scenario_about")), "activate", G_CALLBACK(menu_about_scenario_cb),
 					 this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_documentation")), "activate", G_CALLBACK(menu_browse_documentation_cb),
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-menu_documentation")), "activate", G_CALLBACK(menu_browse_documentation_cb),
 					 this);
 #ifdef MENSIA_DISTRIBUTION
 	if (FS::Files::fileExists(Directories::getBinDir() + "/mensia-flexnet-activation.exe"))
 	{
-		g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_register_license")), "activate", G_CALLBACK(menu_register_license_cb), this);
+		g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-menu_register_license")), "activate", G_CALLBACK(menu_register_license_cb), this);
 	}
 	else
 	{
-		gtk_widget_hide(GTK_WIDGET((gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_register_license"))));
+		gtk_widget_hide(GTK_WIDGET((gtk_builder_get_object(m_Builder, "openvibe-menu_register_license"))));
 	}
 #else
-	gtk_widget_hide(GTK_WIDGET((gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_register_license"))));
+	gtk_widget_hide(GTK_WIDGET((gtk_builder_get_object(m_Builder, "openvibe-menu_register_license"))));
 #endif
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_issue_report")), "activate", G_CALLBACK(menu_report_issue_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_display_changelog")), "activate",
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-menu_issue_report")), "activate", G_CALLBACK(menu_report_issue_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-menu_display_changelog")), "activate",
 					 G_CALLBACK(menu_display_changelog_cb), this);
 
 	// g_signal_connect(G_OBJECT(gtk_builder_get_object(m_builderInterface, "openvibe-menu_test")),        "activate", G_CALLBACK(menu_test_cb),               this);
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_new")), "clicked", G_CALLBACK(button_new_scenario_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_open")), "clicked", G_CALLBACK(button_open_scenario_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_save")), "clicked", G_CALLBACK(button_save_scenario_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_save_as")), "clicked", G_CALLBACK(button_save_scenario_as_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_close")), "clicked", G_CALLBACK(button_close_scenario_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_undo")), "clicked", G_CALLBACK(button_undo_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_redo")), "clicked", G_CALLBACK(button_redo_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-button_new")), "clicked", G_CALLBACK(button_new_scenario_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-button_open")), "clicked", G_CALLBACK(button_open_scenario_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-button_save")), "clicked", G_CALLBACK(button_save_scenario_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-button_save_as")), "clicked", G_CALLBACK(button_save_scenario_as_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-button_close")), "clicked", G_CALLBACK(button_close_scenario_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-button_undo")), "clicked", G_CALLBACK(button_undo_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-button_redo")), "clicked", G_CALLBACK(button_redo_cb), this);
 
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_log_level")), "clicked", G_CALLBACK(log_level_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager")), "toggled",
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-button_log_level")), "clicked", G_CALLBACK(log_level_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-button_windowmanager")), "toggled",
 					 G_CALLBACK(button_toggle_window_manager_cb), this);
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_comment")), "clicked", G_CALLBACK(button_comment_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_aboutscenario")), "clicked", G_CALLBACK(button_about_scenario_cb),
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-button_comment")), "clicked", G_CALLBACK(button_comment_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-button_aboutscenario")), "clicked", G_CALLBACK(button_about_scenario_cb),
 					 this);
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")), "clicked", G_CALLBACK(stop_scenario_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), "clicked", G_CALLBACK(play_pause_scenario_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_next")), "clicked", G_CALLBACK(next_scenario_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_forward")), "clicked", G_CALLBACK(forward_scenario_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-button_stop")), "clicked", G_CALLBACK(stop_scenario_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-button_play_pause")), "clicked", G_CALLBACK(play_pause_scenario_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-button_next")), "clicked", G_CALLBACK(next_scenario_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-button_forward")), "clicked", G_CALLBACK(forward_scenario_cb), this);
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-box_algorithm_title_button_expand")), "clicked",
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-box_algorithm_title_button_expand")), "clicked",
 					 G_CALLBACK(box_algorithm_title_button_expand_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-box_algorithm_title_button_collapse")), "clicked",
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-box_algorithm_title_button_collapse")), "clicked",
 					 G_CALLBACK(box_algorithm_title_button_collapse_cb), this);
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-algorithm_title_button_expand")), "clicked",
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-algorithm_title_button_expand")), "clicked",
 					 G_CALLBACK(algorithm_title_button_expand_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-algorithm_title_button_collapse")), "clicked",
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-algorithm_title_button_collapse")), "clicked",
 					 G_CALLBACK(algorithm_title_button_collapse_cb), this);
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-box_algorithm_searchbox")), "icon-press",
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-box_algorithm_searchbox")), "icon-press",
 					 G_CALLBACK(searchbox_select_all_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-box_algorithm_searchbox")), "changed", G_CALLBACK(refresh_search_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-box_algorithm_searchbox")), "focus-in-event",
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-box_algorithm_searchbox")), "changed", G_CALLBACK(refresh_search_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-box_algorithm_searchbox")), "focus-in-event",
 					 G_CALLBACK(searchbox_focus_in_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-box_algorithm_searchbox")), "focus-out-event",
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-box_algorithm_searchbox")), "focus-out-event",
 					 G_CALLBACK(searchbox_focus_out_cb), this);
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-scenario_configuration_button_configure")), "clicked",
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-scenario_configuration_button_configure")), "clicked",
 					 G_CALLBACK(button_configure_current_scenario_settings_cb), this);
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_zoomin")), "clicked", G_CALLBACK(zoom_in_scenario_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_zoomout")), "clicked", G_CALLBACK(zoom_out_scenario_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-zoom_spinner")), "value-changed", G_CALLBACK(spinner_zoom_changed_cb),
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-button_zoomin")), "clicked", G_CALLBACK(zoom_in_scenario_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-button_zoomout")), "clicked", G_CALLBACK(zoom_out_scenario_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-zoom_spinner")), "value-changed", G_CALLBACK(spinner_zoom_changed_cb),
 					 this);
 #ifdef MENSIA_DISTRIBUTION
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration")), "clicked", G_CALLBACK(button_toggle_neurort_engine_configuration_cb), this);
-	m_pArchwayHandlerGUI->m_ButtonOpenEngineConfigurationDialog = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration"));
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "neurort-toggle_engine_configuration")), "clicked", G_CALLBACK(button_toggle_neurort_engine_configuration_cb), this);
+	m_pArchwayHandlerGUI->m_ButtonOpenEngineConfigurationDialog = GTK_WIDGET(gtk_builder_get_object(m_Builder, "neurort-toggle_engine_configuration"));
 #endif
 	// Prepares fast forward feature
 	const double fastForwardFactor = m_kernelCtx.getConfigurationManager().expandAsFloat("${Designer_FastForwardFactor}", -1);
-	m_pFastForwardFactor           = GTK_SPIN_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-spinbutton_fast-forward-factor"));
+	m_pFastForwardFactor           = GTK_SPIN_BUTTON(gtk_builder_get_object(m_Builder, "openvibe-spinbutton_fast-forward-factor"));
 	if (fastForwardFactor == -1) { gtk_spin_button_set_value(m_pFastForwardFactor, 100); }
 	else { gtk_spin_button_set_value(m_pFastForwardFactor, fastForwardFactor); }
 
@@ -962,7 +962,7 @@ void CApplication::initialize(const ECommandLineFlag eCommandLineFlags)
 #endif
 
 	// Prepares main notebooks
-	m_pScenarioNotebook = GTK_NOTEBOOK(gtk_builder_get_object(m_pBuilderInterface, "openvibe-scenario_notebook"));
+	m_pScenarioNotebook = GTK_NOTEBOOK(gtk_builder_get_object(m_Builder, "openvibe-scenario_notebook"));
 	// optional behavior: vertically stacked scenarios (filename trimming mandatory in that case).
 	if (m_kernelCtx.getConfigurationManager().expandAsBoolean("${Designer_ScenarioTabsVerticalStack}", false))
 	{
@@ -971,18 +971,18 @@ void CApplication::initialize(const ECommandLineFlag eCommandLineFlags)
 
 	g_signal_connect(G_OBJECT(m_pScenarioNotebook), "switch-page", G_CALLBACK(change_current_scenario_cb), this);
 	g_signal_connect(G_OBJECT(m_pScenarioNotebook), "page-reordered", G_CALLBACK(reorder_scenario_cb), this);
-	m_pResourceNotebook = GTK_NOTEBOOK(gtk_builder_get_object(m_pBuilderInterface, "openvibe-resource_notebook"));
+	m_pResourceNotebook = GTK_NOTEBOOK(gtk_builder_get_object(m_Builder, "openvibe-resource_notebook"));
 
 	// Creates an empty scnenario
 	gtk_notebook_remove_page(m_pScenarioNotebook, 0);
 
 	// Initialize menu open recent
-	m_MenuOpenRecent = GTK_CONTAINER(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_recent_content"));
+	m_MenuOpenRecent = GTK_CONTAINER(gtk_builder_get_object(m_Builder, "openvibe-menu_recent_content"));
 
 	//newScenarioCB();
 	{
 		// Prepares box algorithm view
-		m_pBoxAlgorithmTreeView                  = GTK_TREE_VIEW(gtk_builder_get_object(m_pBuilderInterface, "openvibe-box_algorithm_tree"));
+		m_pBoxAlgorithmTreeView                  = GTK_TREE_VIEW(gtk_builder_get_object(m_Builder, "openvibe-box_algorithm_tree"));
 		GtkTreeViewColumn* l_pTreeViewColumnName = gtk_tree_view_column_new();
 		GtkTreeViewColumn* l_pTreeViewColumnDesc = gtk_tree_view_column_new();
 		GtkCellRenderer* l_pCellRendererIcon     = gtk_cell_renderer_pixbuf_new();
@@ -1021,7 +1021,7 @@ void CApplication::initialize(const ECommandLineFlag eCommandLineFlags)
 
 	{
 		// Prepares algorithm view
-		m_pAlgorithmTreeView                     = GTK_TREE_VIEW(gtk_builder_get_object(m_pBuilderInterface, "openvibe-algorithm_tree"));
+		m_pAlgorithmTreeView                     = GTK_TREE_VIEW(gtk_builder_get_object(m_Builder, "openvibe-algorithm_tree"));
 		GtkTreeViewColumn* l_pTreeViewColumnName = gtk_tree_view_column_new();
 		GtkTreeViewColumn* l_pTreeViewColumnDesc = gtk_tree_view_column_new();
 		GtkCellRenderer* l_pCellRendererIcon     = gtk_cell_renderer_pixbuf_new();
@@ -1057,11 +1057,11 @@ void CApplication::initialize(const ECommandLineFlag eCommandLineFlags)
 		gtk_tree_view_set_model(m_pAlgorithmTreeView, GTK_TREE_MODEL(m_pAlgorithmTreeModel));
 	}
 
-	m_pConfigureSettingsAddSettingButton = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "dialog_scenario_configuration-button_add_setting"));
+	m_pConfigureSettingsAddSettingButton = GTK_WIDGET(gtk_builder_get_object(m_Builder, "dialog_scenario_configuration-button_add_setting"));
 	g_signal_connect(G_OBJECT(m_pConfigureSettingsAddSettingButton), "clicked", G_CALLBACK(add_scenario_setting_cb), this);
 	// Set up the UI for adding Inputs and Outputs to the scenario
 
-	GtkWidget* l_pScenarioLinksVBox = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-scenario_links_vbox"));
+	GtkWidget* l_pScenarioLinksVBox = GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-scenario_links_vbox"));
 
 	m_pTableInputs  = gtk_table_new(1, 3, FALSE);
 	m_pTableOutputs = gtk_table_new(1, 3, FALSE);
@@ -1095,7 +1095,7 @@ void CApplication::initialize(const ECommandLineFlag eCommandLineFlags)
 	g_signal_connect(G_OBJECT(m_pBoxAlgorithmTreeView), "drag_data_get", G_CALLBACK(drag_data_get_cb), this);
 
 	// Shows main window
-	gtk_builder_connect_signals(m_pBuilderInterface, nullptr);
+	gtk_builder_connect_signals(m_Builder, nullptr);
 	m_isMaximized = false;
 
 	const int height = int(m_kernelCtx.getConfigurationManager().expandAsInteger("${Designer_EditorSizeHeight}"));
@@ -1105,9 +1105,9 @@ void CApplication::initialize(const ECommandLineFlag eCommandLineFlags)
 	if (m_kernelCtx.getConfigurationManager().expandAsBoolean("${Designer_FullscreenEditor}")) { gtk_window_maximize(GTK_WINDOW(m_pMainWindow)); }
 
 	const int panedPosition = int(m_kernelCtx.getConfigurationManager().expandAsInteger("${Designer_EditorPanedPosition}"));
-	if (panedPosition > 0) { gtk_paned_set_position(GTK_PANED(gtk_builder_get_object(m_pBuilderInterface, "openvibe-horizontal_container")), panedPosition); }
+	if (panedPosition > 0) { gtk_paned_set_position(GTK_PANED(gtk_builder_get_object(m_Builder, "openvibe-horizontal_container")), panedPosition); }
 
-	GtkNotebook* sidebar = GTK_NOTEBOOK(gtk_builder_get_object(m_pBuilderInterface, "openvibe-resource_notebook"));
+	GtkNotebook* sidebar = GTK_NOTEBOOK(gtk_builder_get_object(m_Builder, "openvibe-resource_notebook"));
 
 
 	// List the notebook pages, cycle through them in reverse so we can remove pages without modifying indexes
@@ -1117,7 +1117,7 @@ void CApplication::initialize(const ECommandLineFlag eCommandLineFlags)
 		GtkWidget* tabLabel  = gtk_notebook_get_tab_label(sidebar, tabWidget);
 		if (!m_kernelCtx.getConfigurationManager().expandAsBoolean("${Designer_ShowAlgorithms}"))
 		{
-			if (tabLabel == GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-algorithm_title_container")))
+			if (tabLabel == GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-algorithm_title_container")))
 			{
 				gtk_notebook_remove_page(sidebar, notebookIdx);
 			}
@@ -1188,49 +1188,49 @@ void CApplication::initialize(const ECommandLineFlag eCommandLineFlags)
 	switch (l_eLogLevel)
 	{
 		case LogLevel_Debug:
-			gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_debug")), true);
+			gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_Builder, "openvibe-messages_tb_debug")), true);
 		case LogLevel_Benchmark:
-			gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_bench")), true);
+			gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_Builder, "openvibe-messages_tb_bench")), true);
 		case LogLevel_Trace:
-			gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_trace")), true);
+			gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_Builder, "openvibe-messages_tb_trace")), true);
 		case LogLevel_Info:
-			gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_info")), true);
+			gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_Builder, "openvibe-messages_tb_info")), true);
 		case LogLevel_Warning:
-			gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_warning")), true);
+			gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_Builder, "openvibe-messages_tb_warning")), true);
 		case LogLevel_ImportantWarning:
-			gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_impwarning")), true);
+			gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_Builder, "openvibe-messages_tb_impwarning")), true);
 		case LogLevel_Error:
-			gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_error")), true);
+			gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_Builder, "openvibe-messages_tb_error")), true);
 		case LogLevel_Fatal:
-			gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_fatal")), true);
+			gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_Builder, "openvibe-messages_tb_fatal")), true);
 		default:
 			break;
 	}
 
 	gtk_widget_set_sensitive(
-		GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_debug")), m_kernelCtx.getLogManager().isActive(LogLevel_Debug));
+		GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-messages_tb_debug")), m_kernelCtx.getLogManager().isActive(LogLevel_Debug));
 	gtk_widget_set_sensitive(
-		GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_bench")), m_kernelCtx.getLogManager().isActive(LogLevel_Benchmark));
+		GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-messages_tb_bench")), m_kernelCtx.getLogManager().isActive(LogLevel_Benchmark));
 	gtk_widget_set_sensitive(
-		GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_trace")), m_kernelCtx.getLogManager().isActive(LogLevel_Trace));
+		GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-messages_tb_trace")), m_kernelCtx.getLogManager().isActive(LogLevel_Trace));
 	gtk_widget_set_sensitive(
-		GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_info")), m_kernelCtx.getLogManager().isActive(LogLevel_Info));
+		GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-messages_tb_info")), m_kernelCtx.getLogManager().isActive(LogLevel_Info));
 	gtk_widget_set_sensitive(
-		GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_warning")), m_kernelCtx.getLogManager().isActive(LogLevel_Warning));
+		GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-messages_tb_warning")), m_kernelCtx.getLogManager().isActive(LogLevel_Warning));
 	gtk_widget_set_sensitive(
-		GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_impwarning")),
+		GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-messages_tb_impwarning")),
 		m_kernelCtx.getLogManager().isActive(LogLevel_ImportantWarning));
 	gtk_widget_set_sensitive(
-		GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_error")), m_kernelCtx.getLogManager().isActive(LogLevel_Error));
+		GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-messages_tb_error")), m_kernelCtx.getLogManager().isActive(LogLevel_Error));
 	gtk_widget_set_sensitive(
-		GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_fatal")), m_kernelCtx.getLogManager().isActive(LogLevel_Fatal));
+		GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-messages_tb_fatal")), m_kernelCtx.getLogManager().isActive(LogLevel_Fatal));
 
 	if (!(m_eCommandLineFlags & CommandLineFlag_NoGui))
 	{
-		m_pLogListenerDesigner                   = new CLogListenerDesigner(m_kernelCtx, m_pBuilderInterface);
+		m_pLogListenerDesigner                   = new CLogListenerDesigner(m_kernelCtx, m_Builder);
 		m_pLogListenerDesigner->m_CenterOnBoxFun = [this](CIdentifier& id) { this->getCurrentInterfacedScenario()->centerOnBox(id); };
 		m_kernelCtx.getLogManager().addListener(m_pLogListenerDesigner);
-		g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_clear")), "clicked", G_CALLBACK(clear_messages_cb),
+		g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-messages_tb_clear")), "clicked", G_CALLBACK(clear_messages_cb),
 						 m_pLogListenerDesigner);
 		gtk_widget_show(m_pMainWindow);
 	}
@@ -1253,10 +1253,10 @@ void CApplication::initialize(const ECommandLineFlag eCommandLineFlags)
 #ifdef MENSIA_DISTRIBUTION
 	if (m_pArchwayHandler->initialize() == Mensia::EEngineInitialisationStatus::NotAvailable)
 	{
-		gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration")));
+		gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_Builder, "neurort-toggle_engine_configuration")));
 	}
 #else
-	gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration")));
+	gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_Builder, "neurort-toggle_engine_configuration")));
 #endif
 }
 
@@ -1312,8 +1312,8 @@ bool CApplication::displayChangelogWhenAvailable()
 		gtk_dialog_run(GTK_DIALOG(l_pDialog));
 		if (m_isNewVersion)
 		{
-			gtk_entry_set_text(GTK_ENTRY(gtk_builder_get_object(m_pBuilderInterface, "openvibe-box_algorithm_searchbox")), "(New)");
-			gtk_window_set_focus(GTK_WINDOW(m_pMainWindow), GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-box_algorithm_searchbox")));
+			gtk_entry_set_text(GTK_ENTRY(gtk_builder_get_object(m_Builder, "openvibe-box_algorithm_searchbox")), "(New)");
+			gtk_window_set_focus(GTK_WINDOW(m_pMainWindow), GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-box_algorithm_searchbox")));
 		}
 
 		gtk_widget_destroy(l_pDialog);
@@ -1501,7 +1501,7 @@ void CApplication::saveOpenedScenarios()
 			fprintf(l_pFile, "Designer_EditorSizeWidth = %i\n", width);
 			fprintf(l_pFile, "Designer_EditorSizeHeight = %i\n", height);
 			fprintf(l_pFile, "Designer_EditorPanedPosition = %i\n",
-					gtk_paned_get_position(GTK_PANED(gtk_builder_get_object(m_pBuilderInterface, "openvibe-horizontal_container"))));
+					gtk_paned_get_position(GTK_PANED(gtk_builder_get_object(m_Builder, "openvibe-horizontal_container"))));
 			fprintf(l_pFile, "Designer_FullscreenEditor = %s\n", m_isMaximized ? "True" : "False");
 
 			fprintf(l_pFile, "# Last files opened in %s\n", std::string(DESIGNER_NAME).c_str());
@@ -1545,7 +1545,7 @@ void CApplication::dragDataGetCB(GtkWidget* /*widget*/, GdkDragContext* /*pDragC
 {
 	m_kernelCtx.getLogManager() << LogLevel_Debug << "dragDataGetCB\n";
 
-	GtkTreeView* l_pTreeView           = GTK_TREE_VIEW(gtk_builder_get_object(m_pBuilderInterface, "openvibe-box_algorithm_tree"));
+	GtkTreeView* l_pTreeView           = GTK_TREE_VIEW(gtk_builder_get_object(m_Builder, "openvibe-box_algorithm_tree"));
 	GtkTreeSelection* l_pTreeSelection = gtk_tree_view_get_selection(l_pTreeView);
 	GtkTreeModel* l_pTreeModel         = nullptr;
 	GtkTreeIter l_oTreeIter;
@@ -2244,7 +2244,7 @@ void CApplication::closeScenarioCB(CInterfacedScenario* interfacedScenario)
 void CApplication::deleteDesignerVisualizationCB()
 {
 	//untoggle window manager button when its associated dialog is closed
-	gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager")), FALSE);
+	gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_Builder, "openvibe-button_windowmanager")), FALSE);
 
 	CInterfacedScenario* currentInterfacedScenario = getCurrentInterfacedScenario();
 	if (currentInterfacedScenario) { currentInterfacedScenario->snapshotCB(); }
@@ -2451,12 +2451,12 @@ void CApplication::stopInterfacedScenarioAndReleasePlayer(CInterfacedScenario* i
 
 	if (interfacedScenario == this->getCurrentInterfacedScenario())
 	{
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")), false);
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), true);
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_next")), true);
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_forward")), true);
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager")), true);
-		gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), GTK_STOCK_MEDIA_PLAY);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_stop")), false);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_play_pause")), true);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_next")), true);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_forward")), true);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_windowmanager")), true);
+		gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(gtk_builder_get_object(m_Builder, "openvibe-button_play_pause")), GTK_STOCK_MEDIA_PLAY);
 	}
 }
 
@@ -2470,7 +2470,7 @@ void CApplication::stopScenarioCB()
 	{
 		this->stopInterfacedScenarioAndReleasePlayer(this->getCurrentInterfacedScenario());
 
-		if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-toggle_button_loop"))))
+		if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_Builder, "openvibe-toggle_button_loop"))))
 		{
 			switch (currentState)
 			{
@@ -2496,12 +2496,12 @@ void CApplication::pauseScenarioCB()
 	this->getPlayer()->pause();
 	this->getCurrentInterfacedScenario()->m_PlayerStatus = this->getPlayer()->getStatus();
 
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")), true);
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), true);
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_next")), true);
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_forward")), true);
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager")), false);
-	gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), GTK_STOCK_MEDIA_PLAY);
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_stop")), true);
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_play_pause")), true);
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_next")), true);
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_forward")), true);
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_windowmanager")), false);
+	gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(gtk_builder_get_object(m_Builder, "openvibe-button_play_pause")), GTK_STOCK_MEDIA_PLAY);
 }
 
 void CApplication::nextScenarioCB()
@@ -2515,12 +2515,12 @@ void CApplication::nextScenarioCB()
 	player->step();
 	this->getCurrentInterfacedScenario()->m_PlayerStatus = this->getPlayer()->getStatus();
 
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")), true);
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), true);
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_next")), true);
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_forward")), true);
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager")), false);
-	gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), GTK_STOCK_MEDIA_PLAY);
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_stop")), true);
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_play_pause")), true);
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_next")), true);
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_forward")), true);
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_windowmanager")), false);
+	gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(gtk_builder_get_object(m_Builder, "openvibe-button_play_pause")), GTK_STOCK_MEDIA_PLAY);
 }
 
 void CApplication::playScenarioCB()
@@ -2588,12 +2588,12 @@ void CApplication::playScenarioCB()
 	}
 	this->getCurrentInterfacedScenario()->m_PlayerStatus = this->getPlayer()->getStatus();
 
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")), true);
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), true);
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_next")), true);
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_forward")), true);
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager")), false);
-	gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), GTK_STOCK_MEDIA_PAUSE);
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_stop")), true);
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_play_pause")), true);
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_next")), true);
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_forward")), true);
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_windowmanager")), false);
+	gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(gtk_builder_get_object(m_Builder, "openvibe-button_play_pause")), GTK_STOCK_MEDIA_PAUSE);
 
 	if (m_eCommandLineFlags & CommandLineFlag_NoVisualization) { for (auto& iScenario : m_Scenarios) { iScenario->hideCurrentVisualization(); } }
 }
@@ -2617,12 +2617,12 @@ void CApplication::forwardScenarioCB()
 
 	this->getCurrentInterfacedScenario()->m_PlayerStatus = this->getPlayer()->getStatus();
 
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")), true);
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), true);
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_next")), true);
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_forward")), false);
-	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager")), false);
-	gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), GTK_STOCK_MEDIA_PLAY);
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_stop")), true);
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_play_pause")), true);
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_next")), true);
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_forward")), false);
+	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_windowmanager")), false);
+	gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(gtk_builder_get_object(m_Builder, "openvibe-button_play_pause")), GTK_STOCK_MEDIA_PLAY);
 
 	if (m_eCommandLineFlags & CommandLineFlag_NoVisualization) { for (auto& iScenario : m_Scenarios) { iScenario->hideCurrentVisualization(); } }
 }
@@ -2787,24 +2787,24 @@ void CApplication::logLevelCB() const
 								GTK_TOGGLE_BUTTON(gtk_builder_get_object(l_pBuilderInterface, "loglevel-checkbutton_loglevel_debug"))) != 0);
 
 		gtk_widget_set_sensitive(
-			GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_debug")), m_kernelCtx.getLogManager().isActive(LogLevel_Debug));
+			GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-messages_tb_debug")), m_kernelCtx.getLogManager().isActive(LogLevel_Debug));
 		gtk_widget_set_sensitive(
-			GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_bench")),
+			GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-messages_tb_bench")),
 			m_kernelCtx.getLogManager().isActive(LogLevel_Benchmark));
 		gtk_widget_set_sensitive(
-			GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_trace")), m_kernelCtx.getLogManager().isActive(LogLevel_Trace));
+			GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-messages_tb_trace")), m_kernelCtx.getLogManager().isActive(LogLevel_Trace));
 		gtk_widget_set_sensitive(
-			GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_info")), m_kernelCtx.getLogManager().isActive(LogLevel_Info));
+			GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-messages_tb_info")), m_kernelCtx.getLogManager().isActive(LogLevel_Info));
 		gtk_widget_set_sensitive(
-			GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_warning")),
+			GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-messages_tb_warning")),
 			m_kernelCtx.getLogManager().isActive(LogLevel_Warning));
 		gtk_widget_set_sensitive(
-			GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_impwarning")),
+			GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-messages_tb_impwarning")),
 			m_kernelCtx.getLogManager().isActive(LogLevel_ImportantWarning));
 		gtk_widget_set_sensitive(
-			GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_error")), m_kernelCtx.getLogManager().isActive(LogLevel_Error));
+			GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-messages_tb_error")), m_kernelCtx.getLogManager().isActive(LogLevel_Error));
 		gtk_widget_set_sensitive(
-			GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_fatal")), m_kernelCtx.getLogManager().isActive(LogLevel_Fatal));
+			GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-messages_tb_fatal")), m_kernelCtx.getLogManager().isActive(LogLevel_Fatal));
 	}
 
 	gtk_widget_destroy(GTK_WIDGET(l_pLogLevelDialog));
@@ -2818,7 +2818,7 @@ void CApplication::CPUUsageCB()
 	if (currentInterfacedScenario)
 	{
 		currentInterfacedScenario->m_DebugCPUUsage = (gtk_toggle_button_get_active(
-														  GTK_TOGGLE_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-togglebutton_cpu_usage"))) !=
+														  GTK_TOGGLE_BUTTON(gtk_builder_get_object(m_Builder, "openvibe-togglebutton_cpu_usage"))) !=
 													  0);
 		currentInterfacedScenario->redraw();
 	}
@@ -2835,32 +2835,32 @@ void CApplication::changeCurrentScenario(const int pageIdx)
 	//closing last open scenario
 	if (pageIdx == -1)
 	{
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")), false);
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), false);
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_next")), false);
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_forward")), false);
-		gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), GTK_STOCK_MEDIA_PLAY);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_stop")), false);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_play_pause")), false);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_next")), false);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_forward")), false);
+		gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(gtk_builder_get_object(m_Builder, "openvibe-button_play_pause")), GTK_STOCK_MEDIA_PLAY);
 
-		g_signal_handlers_disconnect_by_func(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-togglebutton_cpu_usage")),
+		g_signal_handlers_disconnect_by_func(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-togglebutton_cpu_usage")),
 											 G_CALLBACK2(cpu_usage_cb), this);
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager")), false);
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-togglebutton_cpu_usage")), false);
-		g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-togglebutton_cpu_usage")), "toggled", G_CALLBACK(cpu_usage_cb), this);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_windowmanager")), false);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(m_Builder, "openvibe-togglebutton_cpu_usage")), false);
+		g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-togglebutton_cpu_usage")), "toggled", G_CALLBACK(cpu_usage_cb), this);
 
 		//toggle off window manager button
-		GtkWidget* l_pWindowManagerButton = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager"));
+		GtkWidget* l_pWindowManagerButton = GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_windowmanager"));
 		g_signal_handlers_disconnect_by_func(l_pWindowManagerButton, G_CALLBACK2(button_toggle_window_manager_cb), this);
 		gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(l_pWindowManagerButton), false);
 		g_signal_connect(l_pWindowManagerButton, "toggled", G_CALLBACK(button_toggle_window_manager_cb), this);
 
 		// toggle off and reset scenario settings
-		GtkWidget* settingsVBox = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-scenario_configuration_vbox"));
+		GtkWidget* settingsVBox = GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-scenario_configuration_vbox"));
 
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-scenario_configuration_button_configure")), false);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-scenario_configuration_button_configure")), false);
 
 
 		GList* settingWidgets = gtk_container_get_children(
-			GTK_CONTAINER(gtk_builder_get_object(m_pBuilderInterface, "openvibe-scenario_configuration_vbox")));
+			GTK_CONTAINER(gtk_builder_get_object(m_Builder, "openvibe-scenario_configuration_vbox")));
 		for (GList* settingIterator = settingWidgets; settingIterator != nullptr; settingIterator = g_list_next(settingIterator))
 		{
 			gtk_widget_destroy(GTK_WIDGET(settingIterator->data));
@@ -2882,25 +2882,25 @@ void CApplication::changeCurrentScenario(const int pageIdx)
 		const EPlayerStatus playerStatus               = (currentInterfacedScenario->m_Player ? currentInterfacedScenario->m_Player->getStatus()
 															  : PlayerStatus_Stop);
 
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")), playerStatus != PlayerStatus_Stop);
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), true);
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_next")), true);
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_forward")), playerStatus != PlayerStatus_Forward);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_stop")), playerStatus != PlayerStatus_Stop);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_play_pause")), true);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_next")), true);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_forward")), playerStatus != PlayerStatus_Forward);
 		gtk_tool_button_set_stock_id(
-			GTK_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")),
+			GTK_TOOL_BUTTON(gtk_builder_get_object(m_Builder, "openvibe-button_play_pause")),
 			(playerStatus == PlayerStatus_Stop || playerStatus == PlayerStatus_Pause) ? GTK_STOCK_MEDIA_PLAY : GTK_STOCK_MEDIA_PAUSE);
 
 		gtk_widget_set_sensitive(
-			GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_undo")), currentInterfacedScenario->m_StateStack->isUndoPossible());
+			GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_undo")), currentInterfacedScenario->m_StateStack->isUndoPossible());
 		gtk_widget_set_sensitive(
-			GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_redo")), currentInterfacedScenario->m_StateStack->isRedoPossible());
+			GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_redo")), currentInterfacedScenario->m_StateStack->isRedoPossible());
 
-		g_signal_handlers_disconnect_by_func(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-togglebutton_cpu_usage")),
+		g_signal_handlers_disconnect_by_func(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-togglebutton_cpu_usage")),
 											 G_CALLBACK2(cpu_usage_cb), this);
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager")), playerStatus == PlayerStatus_Stop);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_windowmanager")), playerStatus == PlayerStatus_Stop);
 		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-togglebutton_cpu_usage")), currentInterfacedScenario->m_DebugCPUUsage);
-		g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-togglebutton_cpu_usage")), "toggled", G_CALLBACK(cpu_usage_cb), this);
+			GTK_TOGGLE_BUTTON(gtk_builder_get_object(m_Builder, "openvibe-togglebutton_cpu_usage")), currentInterfacedScenario->m_DebugCPUUsage);
+		g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-togglebutton_cpu_usage")), "toggled", G_CALLBACK(cpu_usage_cb), this);
 
 		// gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_builderInterface, "openvibe-button_save")), currentInterfacedScenario->m_hasFileName && currentInterfacedScenario->m_hasBeenModified);
 		// gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_builderInterface, "openvibe-menu_save")),   currentInterfacedScenario->m_hasFileName && currentInterfacedScenario->m_hasBeenModified);
@@ -2921,12 +2921,12 @@ void CApplication::changeCurrentScenario(const int pageIdx)
 		else { m_Scenarios[pageIdx]->showCurrentVisualization(); }
 
 		//update window manager button state
-		GtkWidget* l_pWindowManagerButton = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager"));
+		GtkWidget* l_pWindowManagerButton = GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_windowmanager"));
 		g_signal_handlers_disconnect_by_func(l_pWindowManagerButton, G_CALLBACK2(button_toggle_window_manager_cb), this);
 		gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(l_pWindowManagerButton), m_Scenarios[pageIdx]->isDesignerVisualizationToggled());
 		g_signal_connect(l_pWindowManagerButton, "toggled", G_CALLBACK(button_toggle_window_manager_cb), this);
 
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-scenario_configuration_button_configure")), true);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-scenario_configuration_button_configure")), true);
 		m_Scenarios[pageIdx]->redrawScenarioSettings();
 		m_Scenarios[pageIdx]->redrawScenarioInputSettings();
 		m_Scenarios[pageIdx]->redrawScenarioOutputSettings();
@@ -2938,28 +2938,28 @@ void CApplication::changeCurrentScenario(const int pageIdx)
 		//first scenario is created (or a scenario is opened and replaces first unnamed unmodified scenario)
 	else
 	{
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")), false);
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), true);
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_next")), true);
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_forward")), true);
-		gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), GTK_STOCK_MEDIA_PLAY);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_stop")), false);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_play_pause")), true);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_next")), true);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_forward")), true);
+		gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(gtk_builder_get_object(m_Builder, "openvibe-button_play_pause")), GTK_STOCK_MEDIA_PLAY);
 
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_undo")), false);
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_redo")), false);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_undo")), false);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_redo")), false);
 
-		g_signal_handlers_disconnect_by_func(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-togglebutton_cpu_usage")),
+		g_signal_handlers_disconnect_by_func(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-togglebutton_cpu_usage")),
 											 G_CALLBACK2(cpu_usage_cb), this);
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager")), true);
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-togglebutton_cpu_usage")), false);
-		g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-togglebutton_cpu_usage")), "toggled", G_CALLBACK(cpu_usage_cb), this);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_windowmanager")), true);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(m_Builder, "openvibe-togglebutton_cpu_usage")), false);
+		g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-togglebutton_cpu_usage")), "toggled", G_CALLBACK(cpu_usage_cb), this);
 
 		//toggle off window manager button
-		GtkWidget* l_pWindowManagerButton = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager"));
+		GtkWidget* l_pWindowManagerButton = GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_windowmanager"));
 		g_signal_handlers_disconnect_by_func(l_pWindowManagerButton, G_CALLBACK2(button_toggle_window_manager_cb), this);
 		gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(l_pWindowManagerButton), false);
 		g_signal_connect(l_pWindowManagerButton, "toggled", G_CALLBACK(button_toggle_window_manager_cb), this);
 
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-scenario_configuration_button_configure")), true);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-scenario_configuration_button_configure")), true);
 
 		// we have a new notebook page
 		m_currentScenarioIdx = pageIdx;
@@ -2976,10 +2976,10 @@ void CApplication::changeCurrentScenario(const int pageIdx)
 	// Reset zoom
 	if (getCurrentInterfacedScenario())
 	{
-		gtk_spin_button_set_value(GTK_SPIN_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-zoom_spinner")),
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(gtk_builder_get_object(m_Builder, "openvibe-zoom_spinner")),
 								  round(getCurrentInterfacedScenario()->getScale() * 100.0));
 	}
-	else { gtk_spin_button_set_value(GTK_SPIN_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-zoom_spinner")), 100); }
+	else { gtk_spin_button_set_value(GTK_SPIN_BUTTON(gtk_builder_get_object(m_Builder, "openvibe-zoom_spinner")), 100); }
 }
 
 void CApplication::reorderCurrentScenario(const uint32_t newPageIdx)
@@ -2994,14 +2994,14 @@ void CApplication::reorderCurrentScenario(const uint32_t newPageIdx)
 //Increase the zoom of the current scenario
 void CApplication::zoomInCB()
 {
-	gtk_spin_button_set_value(GTK_SPIN_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-zoom_spinner")),
+	gtk_spin_button_set_value(GTK_SPIN_BUTTON(gtk_builder_get_object(m_Builder, "openvibe-zoom_spinner")),
 							  round(getCurrentInterfacedScenario()->getScale() * 100.0) + 5);
 }
 
 //Decrease the zoom of the current scenario
 void CApplication::zoomOutCB()
 {
-	gtk_spin_button_set_value(GTK_SPIN_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-zoom_spinner")),
+	gtk_spin_button_set_value(GTK_SPIN_BUTTON(gtk_builder_get_object(m_Builder, "openvibe-zoom_spinner")),
 							  round(getCurrentInterfacedScenario()->getScale() * 100.0) - 5);
 }
 
