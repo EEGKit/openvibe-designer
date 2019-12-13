@@ -118,7 +118,7 @@ bool CConnectorEditor::run()
 				// this is because we can not change the identifier of a setting
 				CIdentifier newID;
 				if (newID.fromString(newIdStr) && (newID != id)) { m_Box.updateInterfacorIdentifier(interfacorType, m_index, newID); }
-				//				(m_box.*addConnector)(newName, newType);
+				// (m_Box.*addConnector)(newName, newType);
 				finished = true;
 				res      = true;
 			}

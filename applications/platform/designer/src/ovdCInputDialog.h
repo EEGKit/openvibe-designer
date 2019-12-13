@@ -31,4 +31,4 @@ namespace OpenViBEDesigner
 		GtkButton* m_iDialogOKButton = nullptr;
 		GtkButton* m_iDialogCancelButton = nullptr;
 	};
-};
+}  // namespace OpenViBEDesigner
