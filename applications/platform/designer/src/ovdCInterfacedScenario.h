@@ -24,36 +24,38 @@ namespace OpenViBEDesigner
 	{
 	public:
 
-		CInterfacedScenario(const OpenViBE::Kernel::IKernelContext& ctx, CApplication& rApplication, OpenViBE::Kernel::IScenario& scenario, OpenViBE::CIdentifier& scenarioID,
-							GtkNotebook& rNotebook, const char* sGUIFilename, const char* sGUISettingsFilename);
+		CInterfacedScenario(const OpenViBE::Kernel::IKernelContext& ctx, CApplication& application, OpenViBE::Kernel::IScenario& scenario,
+							OpenViBE::CIdentifier& scenarioID,
+							GtkNotebook& notebook, const char* guiFilename, const char* guiSettingsFilename);
 		virtual ~CInterfacedScenario();
 
-		virtual bool isLocked() const { return m_pPlayer != nullptr; }
+		virtual bool isLocked() const { return m_Player != nullptr; }
 		virtual void redraw();
 		virtual void redraw(OpenViBE::Kernel::IBox& box);
-		virtual void redraw(OpenViBE::Kernel::IComment& rComment);
-		virtual void redraw(OpenViBE::Kernel::ILink& rLink);
+		virtual void redraw(OpenViBE::Kernel::IComment& comment);
+		virtual void redraw(OpenViBE::Kernel::ILink& link);
 		virtual void updateScenarioLabel();
-		uint32_t pickInterfacedObject(int x, int y) const;
-		bool pickInterfacedObject(int x, int y, int iSizeX, int iSizeY);
+		size_t pickInterfacedObject(int x, int y) const;
+		bool pickInterfacedObject(int x, int y, int sizeX, int sizeY);
 
-		void undoCB(bool bManageModifiedStatusFlag = true);
-		void redoCB(bool bManageModifiedStatusFlag = true);
-		void snapshotCB(bool bManageModifiedStatusFlag = true);
+		void undoCB(bool manageModifiedStatusFlag = true);
+		void redoCB(bool manageModifiedStatusFlag = true);
+		void snapshotCB(bool manageModifiedStatusFlag = true);
 		void addCommentCB(int x = -1, int y = -1);
 
 		// Utility functions for scenario settings, inputs and outputs
 
 		void addScenarioSettingCB();
-		void editScenarioSettingCB(size_t settingIndex);
-		void swapScenarioSettings(size_t settingAIndex, size_t settingBIndex);
+		//void editScenarioSettingCB(size_t index);
+		void swapScenarioSettings(size_t indexA, size_t indexB);
 
 		void addScenarioInputCB();
 		void editScenarioInputCB(size_t index);
-		void swapScenarioInputs(size_t inputAIndex, size_t inputBIndex);
+		void swapScenarioInputs(size_t indexA, size_t indexB);
+
 		void addScenarioOutputCB();
-		void editScenarioOutputCB(size_t outputIdx);
-		void swapScenarioOutputs(size_t outputAIndex, size_t outputBIndex);
+		void editScenarioOutputCB(size_t index);
+		void swapScenarioOutputs(size_t indexA, size_t indexB);
 
 
 		// Utility functions for scenario settings, inputs and outputs
@@ -66,7 +68,7 @@ namespace OpenViBEDesigner
 		void redrawScenarioOutputSettings();
 
 		void scenarioDrawingAreaExposeCB(GdkEventExpose* event);
-		void scenarioDrawingAreaDragDataReceivedCB(GdkDragContext* pDragContext, gint iX, gint iY, GtkSelectionData* pSelectionData, guint info, guint t);
+		void scenarioDrawingAreaDragDataReceivedCB(GdkDragContext* dc, gint x, gint y, GtkSelectionData* selectionData, guint info, guint t);
 		void scenarioDrawingAreaMotionNotifyCB(GtkWidget* widget, GdkEventMotion* event);
 		void scenarioDrawingAreaButtonPressedCB(GtkWidget* widget, GdkEventButton* event);
 		void scenarioDrawingAreaButtonReleasedCB(GtkWidget* widget, GdkEventButton* event);
@@ -114,7 +116,7 @@ namespace OpenViBEDesigner
 		void contextMenuScenarioAboutCB();
 
 		bool browseURL(const OpenViBE::CString& url, const OpenViBE::CString& browserPrefix, const OpenViBE::CString& browserPostfix) const;
-		bool browseBoxDocumentation(const OpenViBE::CIdentifier& oBoxId) const;
+		bool browseBoxDocumentation(const OpenViBE::CIdentifier& boxID) const;
 
 		void toggleDesignerVisualization();
 		bool isDesignerVisualizationToggled() const { return m_designerVisualizationToggled; }
@@ -122,7 +124,7 @@ namespace OpenViBEDesigner
 		void showCurrentVisualization() const;
 		void hideCurrentVisualization() const;
 
-		void createPlayerVisualization(OpenViBEVisualizationToolkit::IVisualizationTree* pVisualizationTree = nullptr);
+		void createPlayerVisualization(OpenViBEVisualizationToolkit::IVisualizationTree* tree = nullptr);
 		void releasePlayerVisualization();
 
 
@@ -133,138 +135,143 @@ namespace OpenViBEDesigner
 		void setScale(double scale);
 		double getScale() const { return m_currentScale; }
 
-		/*
-			private:
+		//-----------------------------
+		//---------- typedef ----------
+		//-----------------------------
+		typedef struct SBoxContextMenuCB
+		{
+			size_t command;
+			size_t index;
+			size_t secondaryIndex; // Used for connecting two streams
+			OpenViBE::Kernel::IBox* box;
+			CInterfacedScenario* scenario;
+		} box_ctx_menu_cb_t;
 		
-				void generateDisplayPluginName(OpenViBE::Kernel::IBox* pDisplayBox, OpenViBE::CString& rDisplayBoxName);*/
+		// This struct is used for both settings inside the scenario and inside
+		// the settings configurator
+		typedef struct SSettingCallbackData
+		{
+			CInterfacedScenario* scenario;
+			size_t index;
+			GtkWidget* widgetValue;
+			GtkWidget* widgetEntryValue;
+			GtkWidget* container;
+		} setting_cb_data_t;
 
-		OpenViBE::Kernel::EPlayerStatus m_ePlayerStatus;
-		OpenViBE::CIdentifier m_scenarioID = OV_UndefinedIdentifier;
-		OpenViBE::CIdentifier m_oPlayerID = OV_UndefinedIdentifier;
-		OpenViBE::CIdentifier m_oVisualizationTreeID = OV_UndefinedIdentifier;
-		CApplication& m_rApplication;
+		// This struct is used for both inputs and outputs of the scenario
+		typedef struct SLinkCallbackData
+		{
+			CInterfacedScenario* scenario;
+			size_t index;
+			bool input;
+		} link_cb_data_t;
+
+		//-------------------------------
+		//---------- variables ----------
+		//-------------------------------
+		OpenViBE::Kernel::EPlayerStatus m_PlayerStatus;
+		OpenViBE::CIdentifier m_ScenarioID = OV_UndefinedIdentifier;
+		OpenViBE::CIdentifier m_PlayerID   = OV_UndefinedIdentifier;
+		OpenViBE::CIdentifier m_TreeID     = OV_UndefinedIdentifier;
+
+		CApplication& m_Application;
+		OpenViBE::Kernel::IScenario& m_Scenario;
+		OpenViBE::Kernel::IPlayer* m_Player                      = nullptr;
+		OpenViBEVisualizationToolkit::IVisualizationTree* m_Tree = nullptr;
+		CDesignerVisualization* m_DesignerVisualization          = nullptr;
+
+		uint64_t m_LastLoopTime = 0;
+		bool m_HasFileName      = false;
+		bool m_HasBeenModified  = false;
+		bool m_DebugCPUUsage    = false;
+
+		std::string m_Filename;
+
+		std::set<OpenViBE::CIdentifier> m_SelectedObjects;
+
+		std::unique_ptr<CScenarioStateStack> m_StateStack;
+
+		// Objects necessary for holding settings GUI
+		std::map<std::string, OpenViBE::CIdentifier> m_SettingTypes;
+		CSettingCollectionHelper* m_SettingHelper = nullptr;
+		std::string m_SerializedSettingGUIXML;
+
+	private:
 		const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
-		OpenViBE::Kernel::IScenario& m_rScenario;
-		OpenViBE::Kernel::IPlayer* m_pPlayer = nullptr;
-		uint64_t m_lastLoopTime = 0;
-		GtkNotebook& m_rNotebook;
-		OpenViBEVisualizationToolkit::IVisualizationTree* m_pVisualizationTree = nullptr;
-		bool m_designerVisualizationToggled = false;
-		CDesignerVisualization* m_pDesignerVisualization = nullptr;
-		CPlayerVisualization* m_pPlayerVisualization = nullptr;
-		GtkBuilder* m_pGUIBuilder = nullptr;
-		GtkWidget* m_pNotebookPageTitle = nullptr;
-		GtkWidget* m_pNotebookPageContent = nullptr;
-		GtkViewport* m_pScenarioViewport = nullptr;
-		GtkDrawingArea* m_pScenarioDrawingArea = nullptr;
-		GdkPixmap* m_pStencilBuffer = nullptr;
-		GdkPixbuf* m_pMensiaLogoPixbuf = nullptr;
-		bool m_hasFileName = false;
-		bool m_hasBeenModified = false;
-		bool m_buttonPressed = false;
-		bool m_shiftPressed = false;
+		GtkNotebook& m_notebook;
+		bool m_designerVisualizationToggled   = false;
+		CPlayerVisualization* m_playerVisu    = nullptr;
+		GtkBuilder* m_guiBuilder              = nullptr;
+		GtkWidget* m_notebookPageTitle        = nullptr;
+		GtkWidget* m_notebookPageContent      = nullptr;
+		GtkViewport* m_scenarioViewport       = nullptr;
+		GtkDrawingArea* m_scenarioDrawingArea = nullptr;
+		GdkPixmap* m_stencilBuffer            = nullptr;
+		GdkPixbuf* m_mensiaLogoPixbuf         = nullptr;
+
+		bool m_buttonPressed  = false;
+		bool m_shiftPressed   = false;
 		bool m_controlPressed = false;
-		bool m_altPressed = false;
-		bool m_aPressed = false;
-		bool m_wPressed = false;
-		bool m_debugCPUUsage = false;
-		std::string m_sFileName;
-		std::string m_sGUIFilename;
-		std::string m_sGUISettingsFilename;
-		double m_pressMouseX = 0;
-		double m_pressMouseY = 0;
+		bool m_altPressed     = false;
+		bool m_aPressed       = false;
+		bool m_wPressed       = false;
+		std::string m_guiFilename;
+		std::string m_guiSettingsFilename;
+
+		double m_pressMouseX   = 0;
+		double m_pressMouseY   = 0;
 		double m_releaseMouseX = 0;
 		double m_releaseMouseY = 0;
 		double m_currentMouseX = 0;
 		double m_currentMouseY = 0;
-		int m_viewOffsetX = 0;
-		int m_viewOffsetY = 0;
-		uint32_t m_currentMode = 0;
+		int m_viewOffsetX      = 0;
+		int m_viewOffsetY      = 0;
+		size_t m_currentMode   = 0;
 
-		uint32_t m_nBox = 0;
-		uint32_t m_nComment = 0;
-		uint32_t m_nLink = 0;
+		size_t m_nBox     = 0;
+		size_t m_nComment = 0;
+		size_t m_nLink    = 0;
 
-		uint32_t m_interfacedObjectId = 0;
-		std::map<uint32_t, CInterfacedObject> m_vInterfacedObject;
-		std::set<OpenViBE::CIdentifier> m_SelectedObjects;
-		CInterfacedObject m_oCurrentObject;
+		size_t m_interfacedObjectId = 0;
+		std::map<size_t, CInterfacedObject> m_interfacedObjects;
+		CInterfacedObject m_currentObject;
 
 		double m_panInitialPositionH = 0;
 		double m_panInitialPositionV = 0;
 
-		typedef struct _BoxContextMenuCB
-		{
-			uint32_t command;
-			uint32_t index;
-			uint32_t secondaryIndex; // Used for connecting two streams
-			OpenViBE::Kernel::IBox* pBox;
-			CInterfacedScenario* pInterfacedScenario;
-		} BoxContextMenuCB;
+		GtkWidget* m_configureSettingsDialog                 = nullptr;
+		GtkWidget* m_settingsVBox                            = nullptr;
+		GtkWidget* m_noHelpDialog                            = nullptr;
+		GtkWidget* m_errorPendingDeprecatedInterfacorsDialog = nullptr;
 
-		std::map<uint32_t, BoxContextMenuCB> m_vBoxContextMenuCB;
+		std::map<std::string, OpenViBE::CIdentifier> m_streamTypes;
 
-		std::unique_ptr<CScenarioStateStack> m_oStateStack;
-
-		// Objects necessary for holding settings GUI
-		std::map<std::string, OpenViBE::CIdentifier> m_vSettingType;
-		CSettingCollectionHelper* m_pSettingHelper = nullptr;
-		std::string m_sSerializedSettingGUIXML;
-
-		GtkWidget* m_pConfigureSettingsDialog = nullptr;
-		GtkWidget* m_pSettingsVBox = nullptr;
-		GtkWidget* m_pNoHelpDialog = nullptr;
-		GtkWidget* m_pErrorPendingDeprecatedInterfacorsDialog = nullptr;
-
-		// This struct is used for both settings inside the scenario and inside
-		// the settings configurator
-		typedef struct _SSettingCallbackData
-		{
-			CInterfacedScenario* interfacedScenario;
-			size_t settingIndex;
-			GtkWidget* widgetValue;
-			GtkWidget* widgetEntryValue;
-			GtkWidget* container;
-		} SSettingCallbackData;
-
-
-		std::vector<SSettingCallbackData> m_vSettingConfigurationCallbackData;
-		std::vector<SSettingCallbackData> m_vSettingCallbackData;
-
-		// Object necessary for holding scenario inputs/outputs
-
-		std::map<std::string, OpenViBE::CIdentifier> m_mStreamType;
-
-		// This struct is used for both inputs and outputs of the scenario
-
-		typedef struct _SLinkCallbackData
-		{
-			CInterfacedScenario* m_pInterfacedScenario;
-			size_t m_uiLinkIdx;
-			bool m_isInput;
-		} SLinkCallbackData;
-
-		std::vector<SLinkCallbackData> m_vScenarioInputCallbackData;
-		std::vector<SLinkCallbackData> m_vScenarioOutputCallbackData;
-
-	private:
-		typedef void (*menu_callback_function)(GtkMenuItem*, BoxContextMenuCB*);
-		GtkImageMenuItem* gtk_menu_add_new_image_menu_item_with_cb_generic(GtkMenu* menu, const char* icon, const char* label, 
-																		   menu_callback_function cb, OpenViBE::Kernel::IBox* box, 
-																		   size_t command, const size_t index, const size_t index2);
-
-		GtkImageMenuItem* gtk_menu_add_new_image_menu_item_with_cb(GtkMenu* menu, const char* icon, const char* label, 
-																   menu_callback_function cb, OpenViBE::Kernel::IBox* box, 
-																   size_t command, const size_t index) { return gtk_menu_add_new_image_menu_item_with_cb_generic(menu, icon, label, cb, box, command, index, 0); }
-
-		void redrawScenarioLinkSettings(GtkWidget* pLinkTable, bool bIsInput, std::vector<SLinkCallbackData>& vLinkCallbackData,
-										size_t (OpenViBE::Kernel::IScenario::*pfGetLinkCount)() const,
-										bool (OpenViBE::Kernel::IScenario::*pfGetLinkName)(size_t, OpenViBE::CString&) const,
-										bool (OpenViBE::Kernel::IScenario::*pfGetLinkType)(size_t, OpenViBE::CIdentifier&) const);
+		std::map<size_t, box_ctx_menu_cb_t> m_boxCtxMenuCBs;
+		std::vector<setting_cb_data_t> m_settingConfigCBDatas;
+		std::vector<setting_cb_data_t> m_settingCBDatas;
+		std::vector<link_cb_data_t> m_scenarioInputCBDatas;
+		std::vector<link_cb_data_t> m_scenarioOutputCBDatas;
 
 		double m_currentScale = 1;
 		gint m_normalFontSize = 0;
 
-		std::vector<CBoxConfigurationDialog*> m_vBoxConfigurationDialog;
+		std::vector<CBoxConfigurationDialog*> m_boxConfigDialogs;
+
+		//void generateDisplayPluginName(OpenViBE::Kernel::IBox* pDisplayBox, OpenViBE::CString& rDisplayBoxName);
+
+		typedef void (*menu_cb_function_t)(GtkMenuItem*, box_ctx_menu_cb_t*);
+		GtkImageMenuItem* addNewImageMenuItemWithCBGeneric(GtkMenu* menu, const char* icon, const char* label, menu_cb_function_t cb,
+														   OpenViBE::Kernel::IBox* box, size_t command, const size_t index, const size_t index2);
+
+		GtkImageMenuItem* addNewImageMenuItemWithCB(GtkMenu* menu, const char* icon, const char* label, const menu_cb_function_t cb,
+													OpenViBE::Kernel::IBox* box, const size_t command, const size_t index)
+		{
+			return addNewImageMenuItemWithCBGeneric(menu, icon, label, cb, box, command, index, 0);
+		}
+
+		void redrawScenarioLinkSettings(GtkWidget* links, bool isInput, std::vector<link_cb_data_t>& linkCBDatas,
+										size_t (OpenViBE::Kernel::IScenario::* getNLink)() const,
+										bool (OpenViBE::Kernel::IScenario::* getLinkName)(size_t, OpenViBE::CString&) const,
+										bool (OpenViBE::Kernel::IScenario::* getLinkType)(size_t, OpenViBE::CIdentifier&) const);
 	};
-}
+} // namespace OpenViBEDesigner

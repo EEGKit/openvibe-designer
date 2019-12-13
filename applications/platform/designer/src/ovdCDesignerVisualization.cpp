@@ -318,7 +318,7 @@ void CDesignerVisualization::onVisualizationBoxRenamed(const CIdentifier& boxID)
 	if (widget != nullptr)
 	{
 		//retrieve box name
-		const IBox* box = m_scenario.m_rScenario.getBoxDetails(boxID);
+		const IBox* box = m_scenario.m_Scenario.getBoxDetails(boxID);
 		if (box != nullptr)
 		{
 			widget->setName(box->getName());		//set new visualization widget name

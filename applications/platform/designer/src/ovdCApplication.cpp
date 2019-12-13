@@ -580,7 +580,7 @@ namespace
 		CInterfacedScenario* currentInterfacedScenario = l_pApplication->getCurrentInterfacedScenario();
 		if (currentInterfacedScenario)
 		{
-			if (l_pApplication->getPlayer() && currentInterfacedScenario->m_ePlayerStatus != l_pApplication->getPlayer()->getStatus())
+			if (l_pApplication->getPlayer() && currentInterfacedScenario->m_PlayerStatus != l_pApplication->getPlayer()->getStatus())
 			{
 				switch (l_pApplication->getPlayer()->getStatus())
 				{
@@ -588,13 +588,13 @@ namespace
 						gtk_signal_emit_by_name(GTK_OBJECT(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-button_stop")), "clicked");
 						break;
 					case PlayerStatus_Pause:
-						while (currentInterfacedScenario->m_ePlayerStatus != PlayerStatus_Pause) gtk_signal_emit_by_name(
+						while (currentInterfacedScenario->m_PlayerStatus != PlayerStatus_Pause) gtk_signal_emit_by_name(
 							GTK_OBJECT(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-button_play_pause")), "clicked");
 						break;
 					case PlayerStatus_Step:
 						break;
 					case PlayerStatus_Play:
-						while (currentInterfacedScenario->m_ePlayerStatus != PlayerStatus_Play) gtk_signal_emit_by_name(
+						while (currentInterfacedScenario->m_PlayerStatus != PlayerStatus_Play) gtk_signal_emit_by_name(
 							GTK_OBJECT(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-button_play_pause")), "clicked");
 						break;
 					case PlayerStatus_Forward:
@@ -607,8 +607,8 @@ namespace
 			}
 			else
 			{
-				const double time = (currentInterfacedScenario->m_pPlayer
-										 ? TimeArithmetics::timeToSeconds(currentInterfacedScenario->m_pPlayer->getCurrentSimulatedTime()) : 0);
+				const double time = (currentInterfacedScenario->m_Player
+										 ? TimeArithmetics::timeToSeconds(currentInterfacedScenario->m_Player->getCurrentSimulatedTime()) : 0);
 				if (l_pApplication->m_lastTimeRefresh != time)
 				{
 					l_pApplication->m_lastTimeRefresh = uint64_t(time);
@@ -618,7 +618,7 @@ namespace
 					const uint32_t minutes = (uint32_t(time) / 60) % 60;
 					const uint32_t hours   = ((uint32_t(time) / 60) / 60);
 
-					const double CPUUsage = (currentInterfacedScenario->m_pPlayer ? currentInterfacedScenario->m_pPlayer->getCPUUsage() : 0);
+					const double CPUUsage = (currentInterfacedScenario->m_Player ? currentInterfacedScenario->m_Player->getCPUUsage() : 0);
 
 					char l_sTime[1024];
 					if (hours) { sprintf(l_sTime, "Time : %02dh %02dm %02ds %03dms", hours, minutes, seconds, milli); }
@@ -635,7 +635,7 @@ namespace
 						GTK_PROGRESS_BAR(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-progressbar_cpu_usage")), CPUUsage * .01);
 					gtk_progress_bar_set_text(
 						GTK_PROGRESS_BAR(gtk_builder_get_object(l_pApplication->m_pBuilderInterface, "openvibe-progressbar_cpu_usage")), l_sCPU);
-					if (currentInterfacedScenario->m_pPlayer && currentInterfacedScenario->m_debugCPUUsage)
+					if (currentInterfacedScenario->m_Player && currentInterfacedScenario->m_DebugCPUUsage)
 					{
 						// redraws scenario
 						currentInterfacedScenario->redraw();
@@ -659,13 +659,13 @@ namespace
 	{
 		auto* interfacedScenario   = static_cast<CInterfacedScenario*>(data);
 		const uint64_t currentTime = System::Time::zgetTime();
-		if (interfacedScenario->m_lastLoopTime == uint64_t(-1)) { interfacedScenario->m_lastLoopTime = currentTime; }
-		interfacedScenario->m_pPlayer->setFastForwardMaximumFactor(gtk_spin_button_get_value(interfacedScenario->m_rApplication.m_pFastForwardFactor));
-		if (!interfacedScenario->m_pPlayer->loop(currentTime - interfacedScenario->m_lastLoopTime))
+		if (interfacedScenario->m_LastLoopTime == uint64_t(-1)) { interfacedScenario->m_LastLoopTime = currentTime; }
+		interfacedScenario->m_Player->setFastForwardMaximumFactor(gtk_spin_button_get_value(interfacedScenario->m_Application.m_pFastForwardFactor));
+		if (!interfacedScenario->m_Player->loop(currentTime - interfacedScenario->m_LastLoopTime))
 		{
-			interfacedScenario->m_rApplication.stopInterfacedScenarioAndReleasePlayer(interfacedScenario);
+			interfacedScenario->m_Application.stopInterfacedScenarioAndReleasePlayer(interfacedScenario);
 		}
-		interfacedScenario->m_lastLoopTime = currentTime;
+		interfacedScenario->m_LastLoopTime = currentTime;
 		return TRUE;
 	}
 
@@ -874,11 +874,11 @@ void CApplication::initialize(const ECommandLineFlag eCommandLineFlags)
 #ifdef MENSIA_DISTRIBUTION
 	if (FS::Files::fileExists(Directories::getBinDir() + "/mensia-flexnet-activation.exe"))
 	{
-		g_signal_connect(G_OBJECT(gtk_builder_get_object(m_builderInterface, "openvibe-menu_register_license")), "activate", G_CALLBACK(menu_register_license_cb), this);
+		g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_register_license")), "activate", G_CALLBACK(menu_register_license_cb), this);
 	}
 	else
 	{
-		gtk_widget_hide(GTK_WIDGET((gtk_builder_get_object(m_builderInterface, "openvibe-menu_register_license"))));
+		gtk_widget_hide(GTK_WIDGET((gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_register_license"))));
 	}
 #else
 	gtk_widget_hide(GTK_WIDGET((gtk_builder_get_object(m_pBuilderInterface, "openvibe-menu_register_license"))));
@@ -938,8 +938,8 @@ void CApplication::initialize(const ECommandLineFlag eCommandLineFlags)
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-zoom_spinner")), "value-changed", G_CALLBACK(spinner_zoom_changed_cb),
 					 this);
 #ifdef MENSIA_DISTRIBUTION
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_builderInterface, "neurort-toggle_engine_configuration")), "clicked", G_CALLBACK(button_toggle_neurort_engine_configuration_cb), this);
-	m_pArchwayHandlerGUI->m_ButtonOpenEngineConfigurationDialog = GTK_WIDGET(gtk_builder_get_object(m_builderInterface, "neurort-toggle_engine_configuration"));
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration")), "clicked", G_CALLBACK(button_toggle_neurort_engine_configuration_cb), this);
+	m_pArchwayHandlerGUI->m_ButtonOpenEngineConfigurationDialog = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration"));
 #endif
 	// Prepares fast forward feature
 	const double fastForwardFactor = m_kernelCtx.getConfigurationManager().expandAsFloat("${Designer_FastForwardFactor}", -1);
@@ -1251,9 +1251,9 @@ void CApplication::initialize(const ECommandLineFlag eCommandLineFlags)
 
 	std::string defaultURLBaseString = std::string(m_kernelCtx.getConfigurationManager().expand("${Designer_HelpBrowserURLBase}"));
 #ifdef MENSIA_DISTRIBUTION
-	if (m_pArchwayHandler->initialize() == Mensia::EngineInitialisationStatus::NotAvailable)
+	if (m_pArchwayHandler->initialize() == Mensia::EEngineInitialisationStatus::NotAvailable)
 	{
-		gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_builderInterface, "neurort-toggle_engine_configuration")));
+		gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration")));
 	}
 #else
 	gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "neurort-toggle_engine_configuration")));
@@ -1265,10 +1265,10 @@ bool CApplication::displayChangelogWhenAvailable()
 	// If last version used is ulterior as current version, and at least one box was added/updated, show the list
 	if (!m_NewBoxes.empty() || !m_UpdatedBoxes.empty())
 	{
-		GtkBuilder* interface = gtk_builder_new();
-		gtk_builder_add_from_file(interface, OVD_GUI_File, nullptr);
+		GtkBuilder* builder = gtk_builder_new();
+		gtk_builder_add_from_file(builder, OVD_GUI_File, nullptr);
 
-		GtkWidget* l_pDialog = GTK_WIDGET(gtk_builder_get_object(interface, "aboutdialog-newversion"));
+		GtkWidget* l_pDialog = GTK_WIDGET(gtk_builder_get_object(builder, "aboutdialog-newversion"));
 		gtk_window_set_title(GTK_WINDOW(l_pDialog), "Changelog");
 
 
@@ -1298,16 +1298,16 @@ bool CApplication::displayChangelogWhenAvailable()
 			}
 		}
 #if defined TARGET_OS_Windows // This function makes Windows calls only, hide button on other OSs
-		g_signal_connect(G_OBJECT(gtk_builder_get_object(interface, "button-display_changelog")), "clicked",
+		g_signal_connect(G_OBJECT(gtk_builder_get_object(builder, "button-display_changelog")), "clicked",
 						 G_CALLBACK(about_newversion_button_display_changelog_cb), this);
 #else
-		gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(interface, "button-display_changelog")));
+		gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(builder, "button-display_changelog")));
 #endif
 		if (!FS::Files::fileExists((OVD_README_File).toASCIIString()))
 		{
-			gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(interface, "button-display_changelog")));
+			gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(builder, "button-display_changelog")));
 		}
-		GtkLabel* l_pLabel = GTK_LABEL(gtk_builder_get_object(interface, "label-newversion"));
+		GtkLabel* l_pLabel = GTK_LABEL(gtk_builder_get_object(builder, "label-newversion"));
 		gtk_label_set_markup(l_pLabel, labelNewBoxesList.c_str());
 		gtk_dialog_run(GTK_DIALOG(l_pDialog));
 		if (m_isNewVersion)
@@ -1317,7 +1317,7 @@ bool CApplication::displayChangelogWhenAvailable()
 		}
 
 		gtk_widget_destroy(l_pDialog);
-		g_object_unref(interface);
+		g_object_unref(builder);
 	}
 	else { return false; }
 	return true;
@@ -1329,7 +1329,7 @@ bool CApplication::openScenario(const char* sFileName)
 	for (uint32_t i = 0; i < m_Scenarios.size(); ++i)
 	{
 		const auto interfacedScenario = m_Scenarios[i];
-		if (interfacedScenario->m_sFileName == std::string(sFileName))
+		if (interfacedScenario->m_Filename == std::string(sFileName))
 		{
 			gtk_notebook_set_current_page(m_pScenarioNotebook, i);
 			return true;
@@ -1342,9 +1342,9 @@ bool CApplication::openScenario(const char* sFileName)
 		// Closes first unnamed scenario
 		if (m_Scenarios.size() == 1)
 		{
-			if (!m_Scenarios[0]->m_hasBeenModified && !m_Scenarios[0]->m_hasFileName)
+			if (!m_Scenarios[0]->m_HasBeenModified && !m_Scenarios[0]->m_HasFileName)
 			{
-				const CIdentifier tmp = m_Scenarios[0]->m_scenarioID;
+				const CIdentifier tmp = m_Scenarios[0]->m_ScenarioID;
 				delete m_Scenarios[0];
 				m_pScenarioManager->releaseScenario(tmp);
 				m_Scenarios.clear();
@@ -1367,7 +1367,7 @@ bool CApplication::openScenario(const char* sFileName)
 			vizTreeMetadata = scenario.getMetadataDetails(metadataID);
 			if (vizTreeMetadata && vizTreeMetadata->getType() == OVVIZ_MetadataIdentifier_VisualizationTree) { break; }
 		}
-		OpenViBEVisualizationToolkit::IVisualizationTree* vizTree = interfacedScenario->m_pVisualizationTree;
+		OpenViBEVisualizationToolkit::IVisualizationTree* vizTree = interfacedScenario->m_Tree;
 		if (vizTreeMetadata && vizTree) { vizTree->deserialize(vizTreeMetadata->getData()); }
 
 		CIdentifier l_oVisualizationWidgetID;
@@ -1393,15 +1393,15 @@ bool CApplication::openScenario(const char* sFileName)
 			}
 		}
 
-		if (interfacedScenario->m_pDesignerVisualization != nullptr)
+		if (interfacedScenario->m_DesignerVisualization != nullptr)
 		{
-			interfacedScenario->m_pDesignerVisualization->setDeleteEventCB(&delete_designer_visualisation_cb, this);
-			interfacedScenario->m_pDesignerVisualization->load();
+			interfacedScenario->m_DesignerVisualization->setDeleteEventCB(&delete_designer_visualisation_cb, this);
+			interfacedScenario->m_DesignerVisualization->load();
 		}
 		//interfacedScenario->snapshotCB(); --> a snapshot is already created in CInterfacedScenario builder !
-		interfacedScenario->m_sFileName       = sFileName;
-		interfacedScenario->m_hasFileName     = true;
-		interfacedScenario->m_hasBeenModified = false;
+		interfacedScenario->m_Filename       = sFileName;
+		interfacedScenario->m_HasFileName     = true;
+		interfacedScenario->m_HasBeenModified = false;
 		interfacedScenario->snapshotCB(false);
 
 		m_Scenarios.push_back(interfacedScenario);
@@ -1443,9 +1443,9 @@ CString CApplication::getWorkingDirectory()
 	CInterfacedScenario* l_pCurrentScenario = this->getCurrentInterfacedScenario();
 	if (l_pCurrentScenario)
 	{
-		if (l_pCurrentScenario->m_hasFileName)
+		if (l_pCurrentScenario->m_HasFileName)
 		{
-			std::string l_sCurrentDirectory = std::string(g_path_get_dirname(l_pCurrentScenario->m_sFileName.c_str()));
+			std::string l_sCurrentDirectory = std::string(g_path_get_dirname(l_pCurrentScenario->m_Filename.c_str()));
 #if defined TARGET_OS_Windows
 			std::replace(l_sCurrentDirectory.begin(), l_sCurrentDirectory.end(), '\\', '/');
 #endif
@@ -1467,12 +1467,12 @@ CString CApplication::getWorkingDirectory()
 
 bool CApplication::hasRunningScenario()
 {
-	return std::any_of(m_Scenarios.begin(), m_Scenarios.end(), [](CInterfacedScenario* elem) { return elem->m_pPlayer != nullptr; });
+	return std::any_of(m_Scenarios.begin(), m_Scenarios.end(), [](CInterfacedScenario* elem) { return elem->m_Player != nullptr; });
 }
 
 bool CApplication::hasUnsavedScenario()
 {
-	return std::any_of(m_Scenarios.begin(), m_Scenarios.end(), [](CInterfacedScenario* elem) { return elem->m_hasBeenModified; });
+	return std::any_of(m_Scenarios.begin(), m_Scenarios.end(), [](CInterfacedScenario* elem) { return elem->m_HasBeenModified; });
 }
 
 CInterfacedScenario* CApplication::getCurrentInterfacedScenario()
@@ -1508,9 +1508,9 @@ void CApplication::saveOpenedScenarios()
 
 			for (CInterfacedScenario* scenario : m_Scenarios)
 			{
-				if (!scenario->m_sFileName.empty())
+				if (!scenario->m_Filename.empty())
 				{
-					fprintf(l_pFile, "Designer_LastScenarioFilename_%03u = %s\n", i, scenario->m_sFileName.c_str());
+					fprintf(l_pFile, "Designer_LastScenarioFilename_%03u = %s\n", i, scenario->m_Filename.c_str());
 					i++;
 				}
 			}
@@ -1694,10 +1694,10 @@ void CApplication::newScenarioCB()
 		IScenario& scenario                     = m_pScenarioManager->getScenario(scenarioID);
 		CInterfacedScenario* interfacedScenario = new CInterfacedScenario(m_kernelCtx, *this, scenario, scenarioID, *m_pScenarioNotebook, OVD_GUI_File,
 																		  OVD_GUI_Settings_File);
-		if (interfacedScenario->m_pDesignerVisualization != nullptr)
+		if (interfacedScenario->m_DesignerVisualization != nullptr)
 		{
-			interfacedScenario->m_pDesignerVisualization->setDeleteEventCB(&delete_designer_visualisation_cb, this);
-			interfacedScenario->m_pDesignerVisualization->newVisualizationWindow("Default window");
+			interfacedScenario->m_DesignerVisualization->setDeleteEventCB(&delete_designer_visualisation_cb, this);
+			interfacedScenario->m_DesignerVisualization->newVisualizationWindow("Default window");
 		}
 		interfacedScenario->updateScenarioLabel();
 		m_Scenarios.push_back(interfacedScenario);
@@ -1774,22 +1774,22 @@ void CApplication::saveScenarioCB(CInterfacedScenario* interfacedScenario)
 	CInterfacedScenario* currentInterfacedScenario = interfacedScenario ? interfacedScenario : getCurrentInterfacedScenario();
 	if (!currentInterfacedScenario) { return; }
 
-	if (currentInterfacedScenario->m_rScenario.containsBoxWithDeprecatedInterfacors())
+	if (currentInterfacedScenario->m_Scenario.containsBoxWithDeprecatedInterfacors())
 	{
 		cannotSaveScenarioBeforeUpdate();
 		return;
 	}
 
-	if (!currentInterfacedScenario->m_hasFileName) { saveScenarioAsCB(interfacedScenario); }
+	if (!currentInterfacedScenario->m_HasFileName) { saveScenarioAsCB(interfacedScenario); }
 	else
 	{
 		// If the current scenario is a metabox, we will save its prototype hash into an attribute of the scenario
 		// that way the standalone scheduler can check whether metaboxes included inside need updating.
-		if (currentInterfacedScenario->m_rScenario.isMetabox())
+		if (currentInterfacedScenario->m_Scenario.isMetabox())
 		{
 			SBoxProto metaboxProto(m_kernelCtx.getTypeManager());
 
-			IScenario& scenario = currentInterfacedScenario->m_rScenario;
+			IScenario& scenario = currentInterfacedScenario->m_Scenario;
 			for (uint32_t scenarioInputIdx = 0; scenarioInputIdx < scenario.getInputCount(); ++scenarioInputIdx)
 			{
 				CString inputName;
@@ -1843,16 +1843,16 @@ void CApplication::saveScenarioCB(CInterfacedScenario* interfacedScenario)
 			m_kernelCtx.getLogManager() << LogLevel_Trace << "This metaboxes Hash : " << metaboxProto.m_oHash << "\n";
 		}
 
-		const char* scenarioFileName = currentInterfacedScenario->m_sFileName.c_str();
+		const char* scenarioFileName = currentInterfacedScenario->m_Filename.c_str();
 
 		// Remove attributes that were added to links and boxes by the designer and which are used only for interal functionality.
 		// This way the scenarios do not change if, for example somebody opens them on a system with different font metrics.
-		currentInterfacedScenario->m_rScenario.removeAttribute(OV_AttributeId_ScenarioFilename);
+		currentInterfacedScenario->m_Scenario.removeAttribute(OV_AttributeId_ScenarioFilename);
 
 		CIdentifier linkID;
-		while ((linkID = currentInterfacedScenario->m_rScenario.getNextLinkIdentifier(linkID)) != OV_UndefinedIdentifier)
+		while ((linkID = currentInterfacedScenario->m_Scenario.getNextLinkIdentifier(linkID)) != OV_UndefinedIdentifier)
 		{
-			auto link = currentInterfacedScenario->m_rScenario.getLinkDetails(linkID);
+			auto link = currentInterfacedScenario->m_Scenario.getLinkDetails(linkID);
 			link->removeAttribute(OV_AttributeId_Link_XSrc);
 			link->removeAttribute(OV_AttributeId_Link_YSrc);
 			link->removeAttribute(OV_AttributeId_Link_XDst);
@@ -1861,18 +1861,18 @@ void CApplication::saveScenarioCB(CInterfacedScenario* interfacedScenario)
 		}
 
 		CIdentifier boxID;
-		while ((boxID = currentInterfacedScenario->m_rScenario.getNextBoxIdentifier(boxID)) != OV_UndefinedIdentifier)
+		while ((boxID = currentInterfacedScenario->m_Scenario.getNextBoxIdentifier(boxID)) != OV_UndefinedIdentifier)
 		{
-			auto box = currentInterfacedScenario->m_rScenario.getBoxDetails(boxID);
+			auto box = currentInterfacedScenario->m_Scenario.getBoxDetails(boxID);
 			box->removeAttribute(OV_AttributeId_Box_XSize);
 			box->removeAttribute(OV_AttributeId_Box_YSize);
 			box->removeAttribute(OV_ClassId_Selected);
 		}
 
 		CIdentifier commentID;
-		while ((commentID = currentInterfacedScenario->m_rScenario.getNextCommentIdentifier(commentID)) != OV_UndefinedIdentifier)
+		while ((commentID = currentInterfacedScenario->m_Scenario.getNextCommentIdentifier(commentID)) != OV_UndefinedIdentifier)
 		{
-			auto comment = currentInterfacedScenario->m_rScenario.getCommentDetails(commentID);
+			auto comment = currentInterfacedScenario->m_Scenario.getCommentDetails(commentID);
 			comment->removeAttribute(OV_ClassId_Selected);
 		}
 
@@ -1880,30 +1880,30 @@ void CApplication::saveScenarioCB(CInterfacedScenario* interfacedScenario)
 		// We save the last found identifier if there was one, this allows us to not modify it on subsequent saves
 		CIdentifier metadataID              = OV_UndefinedIdentifier;
 		CIdentifier lastFoundTreeIdentifier = OV_UndefinedIdentifier;
-		while ((metadataID = currentInterfacedScenario->m_rScenario.getNextMetadataIdentifier(metadataID)) != OV_UndefinedIdentifier)
+		while ((metadataID = currentInterfacedScenario->m_Scenario.getNextMetadataIdentifier(metadataID)) != OV_UndefinedIdentifier)
 		{
-			if (currentInterfacedScenario->m_rScenario.getMetadataDetails(metadataID)->getType() == OVVIZ_MetadataIdentifier_VisualizationTree)
+			if (currentInterfacedScenario->m_Scenario.getMetadataDetails(metadataID)->getType() == OVVIZ_MetadataIdentifier_VisualizationTree)
 			{
-				currentInterfacedScenario->m_rScenario.removeMetadata(metadataID);
+				currentInterfacedScenario->m_Scenario.removeMetadata(metadataID);
 				lastFoundTreeIdentifier = metadataID;
 				metadataID              = OV_UndefinedIdentifier;
 			}
 		}
 
 		// Insert new metadata
-		currentInterfacedScenario->m_rScenario.addMetadata(metadataID, lastFoundTreeIdentifier);
-		currentInterfacedScenario->m_rScenario.getMetadataDetails(metadataID)->setType(OVVIZ_MetadataIdentifier_VisualizationTree);
-		currentInterfacedScenario->m_rScenario.getMetadataDetails(metadataID)->setData(currentInterfacedScenario->m_pVisualizationTree->serialize());
+		currentInterfacedScenario->m_Scenario.addMetadata(metadataID, lastFoundTreeIdentifier);
+		currentInterfacedScenario->m_Scenario.getMetadataDetails(metadataID)->setType(OVVIZ_MetadataIdentifier_VisualizationTree);
+		currentInterfacedScenario->m_Scenario.getMetadataDetails(metadataID)->setData(currentInterfacedScenario->m_Tree->serialize());
 
 		CIdentifier scenarioExportContext = OVD_ScenarioExportContext_SaveScenario;
-		if (currentInterfacedScenario->m_rScenario.isMetabox()) { scenarioExportContext = OVD_ScenarioExportContext_SaveMetabox; }
+		if (currentInterfacedScenario->m_Scenario.isMetabox()) { scenarioExportContext = OVD_ScenarioExportContext_SaveMetabox; }
 
 		m_kernelCtx.getErrorManager().releaseErrors();
-		if (m_pScenarioManager->exportScenarioToFile(scenarioExportContext, scenarioFileName, currentInterfacedScenario->m_scenarioID))
+		if (m_pScenarioManager->exportScenarioToFile(scenarioExportContext, scenarioFileName, currentInterfacedScenario->m_ScenarioID))
 		{
 			currentInterfacedScenario->snapshotCB();
-			currentInterfacedScenario->m_hasFileName     = true;
-			currentInterfacedScenario->m_hasBeenModified = false;
+			currentInterfacedScenario->m_HasFileName     = true;
+			currentInterfacedScenario->m_HasBeenModified = false;
 			currentInterfacedScenario->updateScenarioLabel();
 			this->saveOpenedScenarios();
 		}
@@ -1984,13 +1984,13 @@ void CApplication::saveScenarioAsCB(CInterfacedScenario* interfacedScenario)
 	CInterfacedScenario* currentInterfacedScenario = interfacedScenario ? interfacedScenario : getCurrentInterfacedScenario();
 	if (!currentInterfacedScenario) { return; }
 
-	if (currentInterfacedScenario->m_rScenario.containsBoxWithDeprecatedInterfacors())
+	if (currentInterfacedScenario->m_Scenario.containsBoxWithDeprecatedInterfacors())
 	{
 		cannotSaveScenarioBeforeUpdate();
 		return;
 	}
 
-	const bool isCurrentScenarioAMetabox = currentInterfacedScenario->m_rScenario.isMetabox();
+	const bool isCurrentScenarioAMetabox = currentInterfacedScenario->m_Scenario.isMetabox();
 
 	GtkFileFilter* l_pFileFilterAll = gtk_file_filter_new(); // All files
 	gtk_file_filter_set_name(l_pFileFilterAll, "All files");
@@ -2046,9 +2046,9 @@ void CApplication::saveScenarioAsCB(CInterfacedScenario* interfacedScenario)
 
 	gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(widgetDialogSaveAs), allCompatibleFormatsFileFilter);
 	// gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(l_widgetDialogSaveAs), true);
-	if (currentInterfacedScenario->m_hasFileName)
+	if (currentInterfacedScenario->m_HasFileName)
 	{
-		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(widgetDialogSaveAs), currentInterfacedScenario->m_sFileName.c_str());
+		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(widgetDialogSaveAs), currentInterfacedScenario->m_Filename.c_str());
 	}
 	else
 	{
@@ -2123,9 +2123,9 @@ void CApplication::saveScenarioAsCB(CInterfacedScenario* interfacedScenario)
 		// Finally save the scenario
 		if (l_bIsSaveActionValid)
 		{
-			currentInterfacedScenario->m_sFileName       = filename;
-			currentInterfacedScenario->m_hasFileName     = true;
-			currentInterfacedScenario->m_hasBeenModified = false;
+			currentInterfacedScenario->m_Filename       = filename;
+			currentInterfacedScenario->m_HasFileName     = true;
+			currentInterfacedScenario->m_HasBeenModified = false;
 			currentInterfacedScenario->updateScenarioLabel();
 			saveScenarioCB(currentInterfacedScenario);
 		}
@@ -2195,7 +2195,7 @@ void CApplication::closeScenarioCB(CInterfacedScenario* interfacedScenario)
 		g_object_unref(l_pBuilder);
 		return;
 	}
-	if (interfacedScenario->m_hasBeenModified)
+	if (interfacedScenario->m_HasBeenModified)
 	{
 		GtkBuilder* l_pBuilder = gtk_builder_new(); // glade_xml_new(OVD_GUI_File, "about", nullptr);
 		gtk_builder_add_from_file(l_pBuilder, OVD_GUI_File, nullptr);
@@ -2212,7 +2212,7 @@ void CApplication::closeScenarioCB(CInterfacedScenario* interfacedScenario)
 		{
 			case GTK_RESPONSE_OK:
 				this->saveScenarioCB(interfacedScenario);
-				if (interfacedScenario->m_hasBeenModified) { return; }
+				if (interfacedScenario->m_HasBeenModified) { return; }
 				break;
 			case GTK_RESPONSE_DELETE_EVENT:
 			case GTK_RESPONSE_CANCEL:
@@ -2222,7 +2222,7 @@ void CApplication::closeScenarioCB(CInterfacedScenario* interfacedScenario)
 		}
 	}
 	// Add scenario to recently opened:
-	this->addRecentScenario(interfacedScenario->m_sFileName);
+	this->addRecentScenario(interfacedScenario->m_Filename);
 
 	const auto it = std::find(m_Scenarios.begin(), m_Scenarios.end(), interfacedScenario);
 	if (it != m_Scenarios.end())
@@ -2230,7 +2230,7 @@ void CApplication::closeScenarioCB(CInterfacedScenario* interfacedScenario)
 		// We need to erase the scenario from the list first, because deleting the scenario will launch a "switch-page"
 		// callback accessing this array with the identifier of the deleted scenario (if its not the last one) -> boom.
 		m_Scenarios.erase(it);
-		const CIdentifier scenarioID = interfacedScenario->m_scenarioID;
+		const CIdentifier scenarioID = interfacedScenario->m_ScenarioID;
 		delete interfacedScenario;
 		m_pScenarioManager->releaseScenario(scenarioID);
 		//when closing last open scenario, no "switch-page" event is triggered so we manually handle this case
@@ -2377,58 +2377,58 @@ IPlayer* CApplication::getPlayer()
 
 {
 	CInterfacedScenario* currentInterfacedScenario = getCurrentInterfacedScenario();
-	return (currentInterfacedScenario ? currentInterfacedScenario->m_pPlayer : nullptr);
+	return (currentInterfacedScenario ? currentInterfacedScenario->m_Player : nullptr);
 }
 
 bool CApplication::createPlayer()
 
 {
 	CInterfacedScenario* currentInterfacedScenario = getCurrentInterfacedScenario();
-	if (currentInterfacedScenario && !currentInterfacedScenario->m_pPlayer)
+	if (currentInterfacedScenario && !currentInterfacedScenario->m_Player)
 	{
 		// create a snapshot so settings override does not modify the scenario !
 		currentInterfacedScenario->snapshotCB(false);
 
 		// set filename attribute to scenario so delayed configuration can be used
-		if (currentInterfacedScenario->m_hasFileName)
+		if (currentInterfacedScenario->m_HasFileName)
 		{
-			if (currentInterfacedScenario->m_rScenario.hasAttribute(OV_AttributeId_ScenarioFilename))
+			if (currentInterfacedScenario->m_Scenario.hasAttribute(OV_AttributeId_ScenarioFilename))
 			{
-				currentInterfacedScenario->m_rScenario.setAttributeValue(OV_AttributeId_ScenarioFilename, currentInterfacedScenario->m_sFileName.c_str());
+				currentInterfacedScenario->m_Scenario.setAttributeValue(OV_AttributeId_ScenarioFilename, currentInterfacedScenario->m_Filename.c_str());
 			}
-			else { currentInterfacedScenario->m_rScenario.addAttribute(OV_AttributeId_ScenarioFilename, currentInterfacedScenario->m_sFileName.c_str()); }
+			else { currentInterfacedScenario->m_Scenario.addAttribute(OV_AttributeId_ScenarioFilename, currentInterfacedScenario->m_Filename.c_str()); }
 		}
 
-		m_kernelCtx.getPlayerManager().createPlayer(currentInterfacedScenario->m_oPlayerID);
-		const CIdentifier scenarioID         = currentInterfacedScenario->m_scenarioID;
-		const CIdentifier playerIdentifier   = currentInterfacedScenario->m_oPlayerID;
-		currentInterfacedScenario->m_pPlayer = &m_kernelCtx.getPlayerManager().getPlayer(playerIdentifier);
-		if (!currentInterfacedScenario->m_pPlayer->setScenario(scenarioID))
+		m_kernelCtx.getPlayerManager().createPlayer(currentInterfacedScenario->m_PlayerID);
+		const CIdentifier scenarioID         = currentInterfacedScenario->m_ScenarioID;
+		const CIdentifier playerIdentifier   = currentInterfacedScenario->m_PlayerID;
+		currentInterfacedScenario->m_Player = &m_kernelCtx.getPlayerManager().getPlayer(playerIdentifier);
+		if (!currentInterfacedScenario->m_Player->setScenario(scenarioID))
 		{
-			currentInterfacedScenario->m_oPlayerID = OV_UndefinedIdentifier;
-			currentInterfacedScenario->m_pPlayer           = nullptr;
+			currentInterfacedScenario->m_PlayerID = OV_UndefinedIdentifier;
+			currentInterfacedScenario->m_Player           = nullptr;
 			m_kernelCtx.getPlayerManager().releasePlayer(playerIdentifier);
 			OV_ERROR_DRF("The current scenario could not be loaded by the player.\n", ErrorType::BadCall);
 		}
 
 		// The visualization manager needs to know the visualization tree in which the widgets should be inserted
-		currentInterfacedScenario->m_pPlayer->getRuntimeConfigurationManager().createConfigurationToken(
-			"VisualizationContext_VisualizationTreeId", currentInterfacedScenario->m_oVisualizationTreeID.toString());
+		currentInterfacedScenario->m_Player->getRuntimeConfigurationManager().createConfigurationToken(
+			"VisualizationContext_VisualizationTreeId", currentInterfacedScenario->m_TreeID.toString());
 
 		// TODO_JL: This should be a copy of the tree containing visualizations from the metaboxes
-		currentInterfacedScenario->createPlayerVisualization(currentInterfacedScenario->m_pVisualizationTree);
+		currentInterfacedScenario->createPlayerVisualization(currentInterfacedScenario->m_Tree);
 
 
-		if (currentInterfacedScenario->m_pPlayer->initialize() != PlayerReturnCode_Sucess)
+		if (currentInterfacedScenario->m_Player->initialize() != PlayerReturnCode_Sucess)
 		{
 			currentInterfacedScenario->releasePlayerVisualization();
 			m_kernelCtx.getLogManager() << LogLevel_Error << "The player could not be initialized.\n";
-			currentInterfacedScenario->m_oPlayerID = OV_UndefinedIdentifier;
-			currentInterfacedScenario->m_pPlayer           = nullptr;
+			currentInterfacedScenario->m_PlayerID = OV_UndefinedIdentifier;
+			currentInterfacedScenario->m_Player           = nullptr;
 			m_kernelCtx.getPlayerManager().releasePlayer(playerIdentifier);
 			return false;
 		}
-		currentInterfacedScenario->m_lastLoopTime = uint64_t(-1);
+		currentInterfacedScenario->m_LastLoopTime = uint64_t(-1);
 
 		//set up idle function
 		__g_idle_add__(idle_scenario_loop, currentInterfacedScenario);
@@ -2441,7 +2441,7 @@ bool CApplication::createPlayer()
 
 void CApplication::stopInterfacedScenarioAndReleasePlayer(CInterfacedScenario* interfacedScenario)
 {
-	if (!(interfacedScenario && interfacedScenario->m_pPlayer))
+	if (!(interfacedScenario && interfacedScenario->m_Player))
 	{
 		m_kernelCtx.getLogManager() << LogLevel_Warning << "Trying to stop a non-started scenario" << "\n";
 		return;
@@ -2465,7 +2465,7 @@ void CApplication::stopScenarioCB()
 {
 	m_kernelCtx.getLogManager() << LogLevel_Debug << "stopScenarioCB\n";
 
-	const EPlayerStatus currentState = this->getCurrentInterfacedScenario()->m_ePlayerStatus;
+	const EPlayerStatus currentState = this->getCurrentInterfacedScenario()->m_PlayerStatus;
 	if (currentState == PlayerStatus_Play || currentState == PlayerStatus_Pause || currentState == PlayerStatus_Forward)
 	{
 		this->stopInterfacedScenarioAndReleasePlayer(this->getCurrentInterfacedScenario());
@@ -2494,7 +2494,7 @@ void CApplication::pauseScenarioCB()
 
 	this->createPlayer();
 	this->getPlayer()->pause();
-	this->getCurrentInterfacedScenario()->m_ePlayerStatus = this->getPlayer()->getStatus();
+	this->getCurrentInterfacedScenario()->m_PlayerStatus = this->getPlayer()->getStatus();
 
 	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")), true);
 	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), true);
@@ -2513,7 +2513,7 @@ void CApplication::nextScenarioCB()
 	auto player = this->getPlayer();
 	OV_ERROR_UNLESS_DRV(player, "Player did not initialize correctly", ErrorType::BadCall);
 	player->step();
-	this->getCurrentInterfacedScenario()->m_ePlayerStatus = this->getPlayer()->getStatus();
+	this->getCurrentInterfacedScenario()->m_PlayerStatus = this->getPlayer()->getStatus();
 
 	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")), true);
 	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), true);
@@ -2528,7 +2528,7 @@ void CApplication::playScenarioCB()
 {
 	if (this->getCurrentInterfacedScenario() != nullptr)
 	{
-		IScenario& l_oCurrentScenario = this->getCurrentInterfacedScenario()->m_rScenario;
+		IScenario& l_oCurrentScenario = this->getCurrentInterfacedScenario()->m_Scenario;
 		m_kernelCtx.getLogManager() << LogLevel_Debug << "playScenarioCB\n";
 		if (l_oCurrentScenario.hasOutdatedBox())
 		{
@@ -2586,7 +2586,7 @@ void CApplication::playScenarioCB()
 		this->stopInterfacedScenarioAndReleasePlayer(this->getCurrentInterfacedScenario());
 		return;
 	}
-	this->getCurrentInterfacedScenario()->m_ePlayerStatus = this->getPlayer()->getStatus();
+	this->getCurrentInterfacedScenario()->m_PlayerStatus = this->getPlayer()->getStatus();
 
 	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")), true);
 	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), true);
@@ -2615,7 +2615,7 @@ void CApplication::forwardScenarioCB()
 		return;
 	}
 
-	this->getCurrentInterfacedScenario()->m_ePlayerStatus = this->getPlayer()->getStatus();
+	this->getCurrentInterfacedScenario()->m_PlayerStatus = this->getPlayer()->getStatus();
 
 	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")), true);
 	gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_play_pause")), true);
@@ -2817,7 +2817,7 @@ void CApplication::CPUUsageCB()
 	CInterfacedScenario* currentInterfacedScenario = getCurrentInterfacedScenario();
 	if (currentInterfacedScenario)
 	{
-		currentInterfacedScenario->m_debugCPUUsage = (gtk_toggle_button_get_active(
+		currentInterfacedScenario->m_DebugCPUUsage = (gtk_toggle_button_get_active(
 														  GTK_TOGGLE_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-togglebutton_cpu_usage"))) !=
 													  0);
 		currentInterfacedScenario->redraw();
@@ -2879,7 +2879,7 @@ void CApplication::changeCurrentScenario(const int pageIdx)
 	else if (pageIdx < m_Scenarios.size())
 	{
 		CInterfacedScenario* currentInterfacedScenario = m_Scenarios[pageIdx];
-		const EPlayerStatus playerStatus               = (currentInterfacedScenario->m_pPlayer ? currentInterfacedScenario->m_pPlayer->getStatus()
+		const EPlayerStatus playerStatus               = (currentInterfacedScenario->m_Player ? currentInterfacedScenario->m_Player->getStatus()
 															  : PlayerStatus_Stop);
 
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_stop")), playerStatus != PlayerStatus_Stop);
@@ -2891,15 +2891,15 @@ void CApplication::changeCurrentScenario(const int pageIdx)
 			(playerStatus == PlayerStatus_Stop || playerStatus == PlayerStatus_Pause) ? GTK_STOCK_MEDIA_PLAY : GTK_STOCK_MEDIA_PAUSE);
 
 		gtk_widget_set_sensitive(
-			GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_undo")), currentInterfacedScenario->m_oStateStack->isUndoPossible());
+			GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_undo")), currentInterfacedScenario->m_StateStack->isUndoPossible());
 		gtk_widget_set_sensitive(
-			GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_redo")), currentInterfacedScenario->m_oStateStack->isRedoPossible());
+			GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_redo")), currentInterfacedScenario->m_StateStack->isRedoPossible());
 
 		g_signal_handlers_disconnect_by_func(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-togglebutton_cpu_usage")),
 											 G_CALLBACK2(cpu_usage_cb), this);
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-button_windowmanager")), playerStatus == PlayerStatus_Stop);
 		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-togglebutton_cpu_usage")), currentInterfacedScenario->m_debugCPUUsage);
+			GTK_TOGGLE_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-togglebutton_cpu_usage")), currentInterfacedScenario->m_DebugCPUUsage);
 		g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "openvibe-togglebutton_cpu_usage")), "toggled", G_CALLBACK(cpu_usage_cb), this);
 
 		// gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_builderInterface, "openvibe-button_save")), currentInterfacedScenario->m_hasFileName && currentInterfacedScenario->m_hasBeenModified);
@@ -2911,7 +2911,7 @@ void CApplication::changeCurrentScenario(const int pageIdx)
 			m_Scenarios[pageIdx]->hideCurrentVisualization();
 
 			// we are in edition mode, updating internal configuration token
-			std::string l_sPath = m_Scenarios[pageIdx]->m_sFileName;
+			std::string l_sPath = m_Scenarios[pageIdx]->m_Filename;
 			l_sPath             = l_sPath.substr(0, l_sPath.rfind('/'));
 			m_kernelCtx.getConfigurationManager().setConfigurationTokenValue(
 				m_kernelCtx.getConfigurationManager().lookUpConfigurationTokenIdentifier("Player_ScenarioDirectory"), l_sPath.c_str());

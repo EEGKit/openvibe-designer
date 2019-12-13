@@ -774,7 +774,7 @@ int go(int argc, char** argv)
 									if (!error)
 									{
 										app.playScenarioCB();
-										error = app.getCurrentInterfacedScenario()->m_ePlayerStatus != PlayerStatus_Play;
+										error = app.getCurrentInterfacedScenario()->m_PlayerStatus != PlayerStatus_Play;
 									}
 									if (error)
 									{
@@ -788,7 +788,7 @@ int go(int argc, char** argv)
 									if (!error)
 									{
 										app.forwardScenarioCB();
-										error = app.getCurrentInterfacedScenario()->m_ePlayerStatus != PlayerStatus_Forward;
+										error = app.getCurrentInterfacedScenario()->m_PlayerStatus != PlayerStatus_Forward;
 									}
 									if (error)
 									{

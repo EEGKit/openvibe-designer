@@ -11,11 +11,7 @@ using namespace OpenViBEDesigner;
 using namespace std;
 using namespace OpenViBEVisualizationToolkit;
 
-static GtkTargetEntry targets[] =
-{
-	{ static_cast<gchar*>("STRING"), 0, 0 },
-	{ static_cast<gchar*>("text/plain"), 0, 0 },
-};
+static GtkTargetEntry targets[] = { { static_cast<gchar*>("STRING"), 0, 0 }, { static_cast<gchar*>("text/plain"), 0, 0 }, };
 
 static void delete_window_manager_window_cb(GtkWidget* widget, GdkEvent*, gpointer data)
 {
@@ -25,7 +21,7 @@ static void delete_window_manager_window_cb(GtkWidget* widget, GdkEvent*, gpoint
 																	 "Would you like to stop the scenario execution?");
 	const gint returnValue = gtk_dialog_run(GTK_DIALOG(confirmationDialog));
 
-	if (returnValue == GTK_RESPONSE_YES) { if (visualization != nullptr) { interfacedScenario.m_pPlayer->stop(); } }
+	if (returnValue == GTK_RESPONSE_YES) { if (visualization != nullptr) { interfacedScenario.m_Player->stop(); } }
 	else if (returnValue == GTK_RESPONSE_NO) {}
 
 	gtk_widget_destroy(confirmationDialog);

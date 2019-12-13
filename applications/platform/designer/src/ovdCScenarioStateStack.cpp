@@ -123,7 +123,7 @@ bool CScenarioStateStack::restoreState(const IMemoryBuffer& state)
 		if (treeMetadata && treeMetadata->getType() == OVVIZ_MetadataIdentifier_VisualizationTree) { break; }
 	}
 
-	OpenViBEVisualizationToolkit::IVisualizationTree* visualizationTree = m_interfacedScenario.m_pVisualizationTree;
+	OpenViBEVisualizationToolkit::IVisualizationTree* visualizationTree = m_interfacedScenario.m_Tree;
 	if (treeMetadata && visualizationTree) { visualizationTree->deserialize(treeMetadata->getData()); }
 
 	return true;
@@ -152,7 +152,7 @@ bool CScenarioStateStack::dumpState(IMemoryBuffer& state)
 	// Insert new metadata
 	m_scenario.addMetadata(metadataID, oldTreeMetadataID);
 	m_scenario.getMetadataDetails(metadataID)->setType(OVVIZ_MetadataIdentifier_VisualizationTree);
-	m_scenario.getMetadataDetails(metadataID)->setData(m_interfacedScenario.m_pVisualizationTree->serialize());
+	m_scenario.getMetadataDetails(metadataID)->setData(m_interfacedScenario.m_Tree->serialize());
 
 	const CIdentifier exporterID = m_kernelCtx.getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_XMLScenarioExporter);
 
