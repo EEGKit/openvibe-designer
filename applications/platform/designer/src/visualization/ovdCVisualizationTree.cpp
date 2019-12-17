@@ -17,42 +17,42 @@ using namespace std;
 namespace
 {
 	template <class T>
-	struct TTestTrue
+	struct STestTrue
 	{
 		bool operator()(typename map<CIdentifier, T*>::const_iterator /*it*/) const { return true; }
 	};
 
-	struct TTestEqVisualizationWidgetType
+	struct STestEqVisualizationWidgetType
 	{
-		TTestEqVisualizationWidgetType(const EVisualizationWidgetType oType) : m_oType(oType) { }
+		STestEqVisualizationWidgetType(const EVisualizationWidgetType widgetType) : type(widgetType) { }
 
-		bool operator()(const map<CIdentifier, IVisualizationWidget*>::const_iterator& it) const { return it->second->getType() == m_oType; }
+		bool operator()(const map<CIdentifier, IVisualizationWidget*>::const_iterator& it) const { return it->second->getType() == type; }
 
-		EVisualizationWidgetType m_oType;
+		EVisualizationWidgetType type;
 	};
 
 	template <class T, class TTest>
-	bool getNextTIdentifier(const map<CIdentifier, T*>& vMap, CIdentifier& identifier, const TTest& rTest)
+	bool getNextTIdentifier(const map<CIdentifier, T*>& ids, CIdentifier& id, const TTest& test)
 	{
 		typename map<CIdentifier, T*>::const_iterator it;
 
-		if (identifier == OV_UndefinedIdentifier) { it = vMap.begin(); }
+		if (id == OV_UndefinedIdentifier) { it = ids.begin(); }
 		else
 		{
-			it = vMap.find(identifier);
-			if (it == vMap.end())
+			it = ids.find(id);
+			if (it == ids.end())
 			{
-				identifier = OV_UndefinedIdentifier;
+				id = OV_UndefinedIdentifier;
 				return false;
 			}
 			++it;
 		}
 
-		while (it != vMap.end())
+		while (it != ids.end())
 		{
-			if (rTest(it))
+			if (test(it))
 			{
-				identifier = it->first;
+				id = it->first;
 				return true;
 			}
 			++it;
@@ -60,71 +60,60 @@ namespace
 
 		return false;
 	}
-}
-
-CVisualizationTree::CVisualizationTree(const IKernelContext& ctx) : m_kernelCtx(ctx) {}
+} // namespace
 
 CVisualizationTree::~CVisualizationTree()
 {
-	for (auto& widget : m_VisualizationWidgets) { delete widget.second; }
-	g_object_unref(m_TreeStore);
+	for (auto& widget : m_widgets) { delete widget.second; }
+	g_object_unref(m_treeStore);
 }
 
 bool CVisualizationTree::init(const IScenario* scenario)
 {
-	m_Scenario = scenario;
-
+	m_scenario = scenario;
 	//create tree store
-	m_TreeStore = gtk_tree_store_new(5, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_ULONG, G_TYPE_STRING, G_TYPE_POINTER);
-
+	m_treeStore = gtk_tree_store_new(5, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_ULONG, G_TYPE_STRING, G_TYPE_POINTER);
 	return true;
 }
 
 bool CVisualizationTree::getNextVisualizationWidgetIdentifier(CIdentifier& id) const
 {
-	return getNextTIdentifier<IVisualizationWidget, TTestTrue<IVisualizationWidget>>
-			(m_VisualizationWidgets, id, TTestTrue<IVisualizationWidget>());
+	return getNextTIdentifier<IVisualizationWidget, STestTrue<IVisualizationWidget>>(m_widgets, id, STestTrue<IVisualizationWidget>());
 }
 
 bool CVisualizationTree::getNextVisualizationWidgetIdentifier(CIdentifier& id, const EVisualizationWidgetType type) const
 {
-	return getNextTIdentifier<IVisualizationWidget, TTestEqVisualizationWidgetType>
-			(m_VisualizationWidgets, id, TTestEqVisualizationWidgetType(type));
+	return getNextTIdentifier<IVisualizationWidget, STestEqVisualizationWidgetType>(m_widgets, id, STestEqVisualizationWidgetType(type));
 }
 
-bool CVisualizationTree::isVisualizationWidget(const CIdentifier& id) const
-{
-	return m_VisualizationWidgets.find(id) != m_VisualizationWidgets.end();
-}
+bool CVisualizationTree::isVisualizationWidget(const CIdentifier& id) const { return m_widgets.find(id) != m_widgets.end(); }
 
 IVisualizationWidget* CVisualizationTree::getVisualizationWidget(const CIdentifier& id) const
 {
-	const auto it = m_VisualizationWidgets.find(id);
-
-	if (it == m_VisualizationWidgets.end()) { return nullptr; }
+	const auto it = m_widgets.find(id);
+	if (it == m_widgets.end()) { return nullptr; }
 	return it->second;
 }
 
 IVisualizationWidget* CVisualizationTree::getVisualizationWidgetFromBoxIdentifier(const CIdentifier& boxID) const
 {
-	for (auto& widget : m_VisualizationWidgets) { if (widget.second->getBoxIdentifier() == boxID) { return widget.second; } }
+	for (auto& widget : m_widgets) { if (widget.second->getBoxIdentifier() == boxID) { return widget.second; } }
 	return nullptr;
 }
 
-bool CVisualizationTree::addVisualizationWidget(CIdentifier& id, const CString& name, const EVisualizationWidgetType type,
-												const CIdentifier& parentID, const size_t parentIdx, const CIdentifier& boxID,
-												const size_t nChild, const CIdentifier& suggestedID)
+bool CVisualizationTree::addVisualizationWidget(CIdentifier& id, const CString& name, const EVisualizationWidgetType type, const CIdentifier& parentID,
+												const size_t parentIdx, const CIdentifier& boxID, const size_t nChild, const CIdentifier& suggestedID)
 {
 	m_kernelCtx.getLogManager() << LogLevel_Debug << "Adding new visualization widget\n";
 
 	//create new widget
-	IVisualizationWidget* visualizationWidget = new CVisualizationWidget(m_kernelCtx);
-	id                                = getUnusedIdentifier(suggestedID);
+	IVisualizationWidget* widget = new CVisualizationWidget(m_kernelCtx);
+	id                           = getUnusedIdentifier(suggestedID);
 
-	if (!visualizationWidget->initialize(id, name, type, parentID, boxID, nChild))
+	if (!widget->initialize(id, name, type, parentID, boxID, nChild))
 	{
 		m_kernelCtx.getLogManager() << LogLevel_Error << "Failed to add new visualization widget (couldn't initialize it)\n";
-		delete visualizationWidget;
+		delete widget;
 		return false;
 	}
 
@@ -132,26 +121,22 @@ bool CVisualizationTree::addVisualizationWidget(CIdentifier& id, const CString& 
 	if (parentID != OV_UndefinedIdentifier)
 	{
 		m_kernelCtx.getLogManager() << LogLevel_Debug << "Parenting visualization widget\n";
-		IVisualizationWidget* parentVisualizationWidget = getVisualizationWidget(parentID);
+		IVisualizationWidget* parentWidget = getVisualizationWidget(parentID);
 
-		if (parentVisualizationWidget != nullptr)
+		if (parentWidget != nullptr)
 		{
-			if (parentVisualizationWidget->getType() == VisualizationWidget_VisualizationWindow)
+			if (parentWidget->getType() == VisualizationWidget_VisualizationWindow)
 			{
 				//extend number of children of parent window if necessary
-				if (parentVisualizationWidget->getNbChildren() <= parentIdx)
+				if (parentWidget->getNbChildren() <= parentIdx)
 				{
-					for (size_t i = parentVisualizationWidget->getNbChildren(); i <= parentIdx; ++i)
-					{
-						parentVisualizationWidget->addChild(OV_UndefinedIdentifier);
-					}
+					for (size_t i = parentWidget->getNbChildren(); i <= parentIdx; ++i) { parentWidget->addChild(OV_UndefinedIdentifier); }
 				}
 			}
 
-			if (!parentVisualizationWidget->setChildIdentifier(parentIdx, id))
+			if (!parentWidget->setChildIdentifier(parentIdx, id))
 			{
-				m_kernelCtx.getLogManager() << LogLevel_Error <<
-						"Failed to add new visualization widget (couldn't set child identifier in parent window)\n";
+				m_kernelCtx.getLogManager() << LogLevel_Error << "Failed to add new visualization widget (couldn't set child identifier in parent window)\n";
 				return false;
 			}
 		}
@@ -163,7 +148,7 @@ bool CVisualizationTree::addVisualizationWidget(CIdentifier& id, const CString& 
 	}
 
 	//add it to widgets map
-	m_VisualizationWidgets[id] = visualizationWidget;
+	m_widgets[id] = widget;
 	return true;
 }
 
@@ -213,8 +198,8 @@ bool CVisualizationTree::destroyHierarchy(const CIdentifier& id, const bool dest
 
 		//delete this window in kernel factory and erase its slot in map
 		delete visualizationWidget;
-		const auto it = m_VisualizationWidgets.find(id);
-		m_VisualizationWidgets.erase(it);
+		const auto it = m_widgets.find(id);
+		m_widgets.erase(it);
 	}
 	else //top item is a widget
 	{
@@ -228,27 +213,27 @@ bool CVisualizationTree::destroyHierarchy(const CIdentifier& id, const bool dest
 
 bool CVisualizationTree::_destroyHierarchy(const CIdentifier& id, const bool destroy)
 {
-	IVisualizationWidget* visualizationWidget = getVisualizationWidget(id);
-	if (!visualizationWidget) { return false; }
+	IVisualizationWidget* widget = getVisualizationWidget(id);
+	if (!widget) { return false; }
 
 	//remove children
-	CIdentifier l_oChildID;
-	const size_t nbChildren = visualizationWidget->getNbChildren();
-	for (size_t i = 0; i < nbChildren; ++i)
+	CIdentifier childID;
+	const size_t nChildren = widget->getNbChildren();
+	for (size_t i = 0; i < nChildren; ++i)
 	{
-		visualizationWidget->getChildIdentifier(i, l_oChildID);
-		_destroyHierarchy(l_oChildID, destroy);
+		widget->getChildIdentifier(i, childID);
+		_destroyHierarchy(childID, destroy);
 	}
 
 	//if parent widget is a window, remove this widget from it
-	if (visualizationWidget->getType() == VisualizationWidget_VisualizationPanel)
+	if (widget->getType() == VisualizationWidget_VisualizationPanel)
 	{
-		IVisualizationWidget* l_pVisualizationWindow = getVisualizationWidget(visualizationWidget->getParentIdentifier());
-		if (l_pVisualizationWindow != nullptr) { l_pVisualizationWindow->removeChild(id); }
+		IVisualizationWidget* window = getVisualizationWidget(widget->getParentIdentifier());
+		if (window != nullptr) { window->removeChild(id); }
 	}
 
 	//if this widget is a visualization box and they are to be unaffected
-	if (visualizationWidget->getType() == VisualizationWidget_VisualizationBox && !destroy)
+	if (widget->getType() == VisualizationWidget_VisualizationBox && !destroy)
 	{
 		size_t index;
 		unparentVisualizationWidget(id, index);
@@ -256,9 +241,9 @@ bool CVisualizationTree::_destroyHierarchy(const CIdentifier& id, const bool des
 	else
 	{
 		m_kernelCtx.getLogManager() << LogLevel_Debug << "Deleting visualization widget\n";
-		delete visualizationWidget;
-		const auto it = m_VisualizationWidgets.find(id);
-		m_VisualizationWidgets.erase(it);
+		delete widget;
+		const auto it = m_widgets.find(id);
+		m_widgets.erase(it);
 	}
 
 	return true;
@@ -267,22 +252,22 @@ bool CVisualizationTree::_destroyHierarchy(const CIdentifier& id, const bool des
 bool CVisualizationTree::unparentVisualizationWidget(const CIdentifier& id, size_t& index)
 {
 	//retrieve widget to be unparented
-	IVisualizationWidget* visualizationWidget = getVisualizationWidget(id);
-	if (visualizationWidget == nullptr) { return false; }
+	IVisualizationWidget* widget = getVisualizationWidget(id);
+	if (widget == nullptr) { return false; }
 
 	//get its parent identifier
-	const CIdentifier& parentIdentifier = visualizationWidget->getParentIdentifier();
-	if (parentIdentifier == OV_UndefinedIdentifier) { return true; }
+	const CIdentifier& parentID = widget->getParentIdentifier();
+	if (parentID == OV_UndefinedIdentifier) { return true; }
 
 	//unparent widget
-	visualizationWidget->setParentIdentifier(OV_UndefinedIdentifier);
+	widget->setParentIdentifier(OV_UndefinedIdentifier);
 
 	//retrieve parent and remove widget from its children list
-	IVisualizationWidget* parentVisualizationWidget = getVisualizationWidget(parentIdentifier);
-	if (parentVisualizationWidget != nullptr)
+	IVisualizationWidget* parentWidget = getVisualizationWidget(parentID);
+	if (parentWidget != nullptr)
 	{
-		parentVisualizationWidget->getChildIndex(id, index);
-		parentVisualizationWidget->removeChild(id);
+		parentWidget->getChildIndex(id, index);
+		parentWidget->removeChild(id);
 	}
 
 	return true;
@@ -293,79 +278,75 @@ bool CVisualizationTree::parentVisualizationWidget(const CIdentifier& id, const 
 	if (parentID == OV_UndefinedIdentifier) { return false; }
 
 	//retrieve widget to be parented
-	IVisualizationWidget* l_pVisualizationWidget = getVisualizationWidget(id);
-	if (!l_pVisualizationWidget) { return false; }
+	IVisualizationWidget* widget = getVisualizationWidget(id);
+	if (!widget) { return false; }
 
-	l_pVisualizationWidget->setParentIdentifier(parentID);
+	widget->setParentIdentifier(parentID);
 
 	//retrieve its parent
-	IVisualizationWidget* parentVisualizationWidget = getVisualizationWidget(parentID);
-	if (!parentVisualizationWidget)
+	IVisualizationWidget* parentWidget = getVisualizationWidget(parentID);
+	if (!parentWidget)
 	{
 		m_kernelCtx.getLogManager() << LogLevel_Error << "Failed to parent visualization widget (couldn't find parent)\n";
 		return false;
 	}
 
-	parentVisualizationWidget->setChildIdentifier(index, id);
+	parentWidget->setChildIdentifier(index, id);
 
 	return true;
 }
 
 CIdentifier CVisualizationTree::getUnusedIdentifier(const CIdentifier& suggestedID) const
 {
-	uint64_t proposedIdentifier = (uint64_t(rand()) << 32) + uint64_t(rand());
-	if (suggestedID != OV_UndefinedIdentifier) { proposedIdentifier = suggestedID.toUInteger() - 1; }
+	uint64_t id = (uint64_t(rand()) << 32) + uint64_t(rand());
+	if (suggestedID != OV_UndefinedIdentifier) { id = suggestedID.toUInteger() - 1; }
 
 	CIdentifier result;
 	map<CIdentifier, IVisualizationWidget*>::const_iterator i;
 	do
 	{
-		proposedIdentifier++;
-		result = CIdentifier(proposedIdentifier);
-		i      = m_VisualizationWidgets.find(result);
-	} while (i != m_VisualizationWidgets.end() || result == OV_UndefinedIdentifier);
+		id++;
+		result = CIdentifier(id);
+		i      = m_widgets.find(result);
+	} while (i != m_widgets.end() || result == OV_UndefinedIdentifier);
 	return result;
 }
 
-GtkTreeView* CVisualizationTree::createTreeViewWithModel() { return GTK_TREE_VIEW(gtk_tree_view_new_with_model(GTK_TREE_MODEL(m_TreeStore))); }
+GtkTreeView* CVisualizationTree::createTreeViewWithModel() { return GTK_TREE_VIEW(gtk_tree_view_new_with_model(GTK_TREE_MODEL(m_treeStore))); }
 
 bool CVisualizationTree::setTreeViewCB(ITreeViewCB* callback)
 {
-	m_TreeViewCB = callback;
+	m_treeViewCB = callback;
 	return true;
 }
 
 bool CVisualizationTree::reloadTree()
 {
-	if (!m_TreeViewCB) { return false; }
+	if (!m_treeViewCB) { return false; }
 
 	//clear current tree
 	GtkTreeIter iter;
-	while (gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(m_TreeStore), &iter, nullptr, 0) != FALSE) { gtk_tree_store_remove(m_TreeStore, &iter); }
+	while (gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(m_treeStore), &iter, nullptr, 0) != FALSE) { gtk_tree_store_remove(m_treeStore, &iter); }
 	//create 'unaffected display plugins' node
-	gtk_tree_store_append(m_TreeStore, &iter, nullptr);
-	gtk_tree_store_set(m_TreeStore, &iter,
+	gtk_tree_store_append(m_treeStore, &iter, nullptr);
+	gtk_tree_store_set(m_treeStore, &iter,
 					   EVisualizationTreeColumn_StringName, "Unaffected display plugins",
-					   EVisualizationTreeColumn_StringStockIcon, m_TreeViewCB->getTreeWidgetIcon(EVisualizationTreeNode_Unaffected),
+					   EVisualizationTreeColumn_StringStockIcon, m_treeViewCB->getTreeWidgetIcon(EVisualizationTreeNode_Unaffected),
 					   EVisualizationTreeColumn_ULongNodeType, static_cast<unsigned long>(EVisualizationTreeNode_Unaffected),
-					   EVisualizationTreeColumn_StringIdentifier, static_cast<const char*>(OV_UndefinedIdentifier.toString()),
-					   -1);
+					   EVisualizationTreeColumn_StringIdentifier, OV_UndefinedIdentifier.str().c_str(), -1);
 
 	//reload unaffected visualization boxes
-	CIdentifier visualizationWidgetIdentifier = OV_UndefinedIdentifier;
-	while (getNextVisualizationWidgetIdentifier(visualizationWidgetIdentifier, VisualizationWidget_VisualizationBox))
+	CIdentifier id = OV_UndefinedIdentifier;
+	while (getNextVisualizationWidgetIdentifier(id, VisualizationWidget_VisualizationBox))
 	{
-		IVisualizationWidget* visualizationWidget = getVisualizationWidget(visualizationWidgetIdentifier);
+		IVisualizationWidget* widget = getVisualizationWidget(id);
 		//load widget if it doesn't have a parent (== is unaffected)
-		if (visualizationWidget->getParentIdentifier() == OV_UndefinedIdentifier) { loadVisualizationWidget(visualizationWidget, &iter); }
+		if (widget->getParentIdentifier() == OV_UndefinedIdentifier) { loadVisualizationWidget(widget, &iter); }
 	}
 
 	//reload visualization windows
-	CIdentifier visualizationWindowIdentifier = OV_UndefinedIdentifier;
-	while (getNextVisualizationWidgetIdentifier(visualizationWindowIdentifier, VisualizationWidget_VisualizationWindow))
-	{
-		loadVisualizationWidget(getVisualizationWidget(visualizationWindowIdentifier), nullptr);
-	}
+	id = OV_UndefinedIdentifier;
+	while (getNextVisualizationWidgetIdentifier(id, VisualizationWidget_VisualizationWindow)) { loadVisualizationWidget(getVisualizationWidget(id), nullptr); }
 
 	return true;
 }
@@ -376,39 +357,39 @@ bool CVisualizationTree::reloadTree()
 bool CVisualizationTree::getTreeSelection(GtkTreeView* preeView, GtkTreeIter* iter)
 {
 	GtkTreeSelection* treeSelection = gtk_tree_view_get_selection(preeView);
-	GtkTreeModel* treeModel         = GTK_TREE_MODEL(m_TreeStore);
+	GtkTreeModel* treeModel         = GTK_TREE_MODEL(m_treeStore);
 	return gtk_tree_selection_get_selected(treeSelection, &treeModel, iter) != 0;
 }
 
 GtkTreePath* CVisualizationTree::getTreePath(GtkTreeIter* iter) const
 {
-	return (iter == nullptr) ? nullptr : gtk_tree_model_get_path(GTK_TREE_MODEL(m_TreeStore), iter);
+	return (iter == nullptr) ? nullptr : gtk_tree_model_get_path(GTK_TREE_MODEL(m_treeStore), iter);
 }
 
 size_t CVisualizationTree::getULongValueFromTreeIter(GtkTreeIter* iter, const EVisualizationTreeColumn colType) const
 {
-	unsigned long value = 0;
-	gtk_tree_model_get(GTK_TREE_MODEL(m_TreeStore), iter, colType, &value, -1);
-	return size_t(value);
+	size_t value = 0;
+	gtk_tree_model_get(GTK_TREE_MODEL(m_treeStore), iter, colType, &value, -1);
+	return value;
 }
 
 bool CVisualizationTree::getStringValueFromTreeIter(GtkTreeIter* iter, char*& string, const EVisualizationTreeColumn colType) const
 {
-	gtk_tree_model_get(GTK_TREE_MODEL(m_TreeStore), iter, colType, &string, -1);
+	gtk_tree_model_get(GTK_TREE_MODEL(m_treeStore), iter, colType, &string, -1);
 	return true;
 }
 
 bool CVisualizationTree::getPointerValueFromTreeIter(GtkTreeIter* iter, void*& pointer, const EVisualizationTreeColumn colType) const
 {
-	gtk_tree_model_get(GTK_TREE_MODEL(m_TreeStore), iter, colType, &pointer, -1);
+	gtk_tree_model_get(GTK_TREE_MODEL(m_treeStore), iter, colType, &pointer, -1);
 	return true;
 }
 
 bool CVisualizationTree::getIdentifierFromTreeIter(GtkTreeIter* iter, CIdentifier& id, const EVisualizationTreeColumn colType) const
 {
-	char* stringIdentifier = nullptr;
-	getStringValueFromTreeIter(iter, stringIdentifier, colType);
-	id.fromString(CString(stringIdentifier));
+	char* str = nullptr;
+	getStringValueFromTreeIter(iter, str, colType);
+	id.fromString(CString(str));
 	return true;
 }
 
@@ -418,7 +399,7 @@ bool CVisualizationTree::findChildNodeFromRoot(GtkTreeIter* iter, const char* la
 	if (!label) { return false; }
 
 	//if tree is empty return false
-	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(m_TreeStore), iter) == 0) { return false; }
+	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(m_treeStore), iter) == 0) { return false; }
 
 	//look for node in the whole tree
 	do
@@ -427,7 +408,7 @@ bool CVisualizationTree::findChildNodeFromRoot(GtkTreeIter* iter, const char* la
 		if (findChildNodeFromParent(iter, label, type)) { return true; }
 
 		//proceed with next top-level node
-	} while (gtk_tree_model_iter_next(GTK_TREE_MODEL(m_TreeStore), iter) != 0);
+	} while (gtk_tree_model_iter_next(GTK_TREE_MODEL(m_treeStore), iter) != 0);
 
 	//node wasn't found
 	return false;
@@ -438,7 +419,7 @@ bool CVisualizationTree::findChildNodeFromParent(GtkTreeIter* iter, const char* 
 {
 	if (_findChildNodeFromParent(iter, label, type))
 	{
-		*iter = m_InternalTreeNode;
+		*iter = m_internalTreeNode;
 		return true;
 	}
 	return false;
@@ -451,7 +432,7 @@ bool CVisualizationTree::_findChildNodeFromParent(GtkTreeIter* iter, const char*
 	unsigned long typeAsInt;
 
 	//is current node the one looked for?
-	gtk_tree_model_get(GTK_TREE_MODEL(m_TreeStore), iter, EVisualizationTreeColumn_StringName, &name, EVisualizationTreeColumn_ULongNodeType, &typeAsInt, -1);
+	gtk_tree_model_get(GTK_TREE_MODEL(m_treeStore), iter, EVisualizationTreeColumn_StringName, &name, EVisualizationTreeColumn_ULongNodeType, &typeAsInt, -1);
 
 	if (!name)
 	{
@@ -461,16 +442,16 @@ bool CVisualizationTree::_findChildNodeFromParent(GtkTreeIter* iter, const char*
 
 	if (strcmp(label, name) == 0 && type == EVisualizationTreeNode(typeAsInt))
 	{
-		m_InternalTreeNode = *iter;
+		m_internalTreeNode = *iter;
 		return true;
 	}
 
 	//look among current node's children
-	const int childCount = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(m_TreeStore), iter);
+	const int nChild = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(m_treeStore), iter);
 	GtkTreeIter childIter;
-	for (int i = 0; i < childCount; ++i)
+	for (int i = 0; i < nChild; ++i)
 	{
-		gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(m_TreeStore), &childIter, iter, i);
+		gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(m_treeStore), &childIter, iter, i);
 
 		if (_findChildNodeFromParent(&childIter, label, type)) { return true; }
 	}
@@ -482,7 +463,7 @@ bool CVisualizationTree::_findChildNodeFromParent(GtkTreeIter* iter, const char*
 bool CVisualizationTree::findChildNodeFromRoot(GtkTreeIter* iter, void* widget)
 {
 	// if tree is empty
-	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(m_TreeStore), iter) == 0) { return false; }
+	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(m_treeStore), iter) == 0) { return false; }
 
 	//look for node in the whole tree
 	do
@@ -491,7 +472,7 @@ bool CVisualizationTree::findChildNodeFromRoot(GtkTreeIter* iter, void* widget)
 		if (findChildNodeFromParent(iter, widget)) { return true; }
 
 		//proceed with next top-level node
-	} while (gtk_tree_model_iter_next(GTK_TREE_MODEL(m_TreeStore), iter) != 0);
+	} while (gtk_tree_model_iter_next(GTK_TREE_MODEL(m_treeStore), iter) != 0);
 
 	//node wasn't found
 	return false;
@@ -501,7 +482,7 @@ bool CVisualizationTree::findChildNodeFromParent(GtkTreeIter* iter, void* widget
 {
 	if (_findChildNodeFromParent(iter, widget))
 	{
-		*iter = m_InternalTreeNode;
+		*iter = m_internalTreeNode;
 		return true;
 	}
 	return false;
@@ -512,19 +493,19 @@ bool CVisualizationTree::_findChildNodeFromParent(GtkTreeIter* iter, void* widge
 	void* currentWidget;
 
 	//is current node the one looked for?
-	gtk_tree_model_get(GTK_TREE_MODEL(m_TreeStore), iter, EVisualizationTreeColumn_PointerWidget, &currentWidget, -1);
+	gtk_tree_model_get(GTK_TREE_MODEL(m_treeStore), iter, EVisualizationTreeColumn_PointerWidget, &currentWidget, -1);
 	if (widget == currentWidget)
 	{
-		m_InternalTreeNode = *iter;
+		m_internalTreeNode = *iter;
 		return true;
 	}
 
 	//look among current node's children
-	const int childCount = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(m_TreeStore), iter);
+	const int nChild = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(m_treeStore), iter);
 	GtkTreeIter childIter;
-	for (int i = 0; i < childCount; ++i)
+	for (int i = 0; i < nChild; ++i)
 	{
-		gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(m_TreeStore), &childIter, iter, i);
+		gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(m_treeStore), &childIter, iter, i);
 
 		if (_findChildNodeFromParent(&childIter, widget)) { return true; }
 	}
@@ -536,16 +517,15 @@ bool CVisualizationTree::_findChildNodeFromParent(GtkTreeIter* iter, void* widge
 bool CVisualizationTree::findChildNodeFromRoot(GtkTreeIter* iter, const CIdentifier id)
 {
 	//if tree is empty return false
-	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(m_TreeStore), iter) == 0) { return false; }
+	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(m_treeStore), iter) == 0) { return false; }
 
 	//look for node in the whole tree
 	do
 	{
 		//look for node in current subtree
 		if (findChildNodeFromParent(iter, id)) { return true; }
-
 		//proceed with next top-level node
-	} while (gtk_tree_model_iter_next(GTK_TREE_MODEL(m_TreeStore), iter) != 0);
+	} while (gtk_tree_model_iter_next(GTK_TREE_MODEL(m_treeStore), iter) != 0);
 
 	//node wasn't found
 	return false;
@@ -555,7 +535,7 @@ bool CVisualizationTree::findChildNodeFromParent(GtkTreeIter* iter, const CIdent
 {
 	if (_findChildNodeFromParent(iter, id))
 	{
-		*iter = m_InternalTreeNode;
+		*iter = m_internalTreeNode;
 		return true;
 	}
 	return false;
@@ -563,25 +543,24 @@ bool CVisualizationTree::findChildNodeFromParent(GtkTreeIter* iter, const CIdent
 
 bool CVisualizationTree::_findChildNodeFromParent(GtkTreeIter* iter, const CIdentifier& id)
 {
-	gchar* identifierAsString;
-	CIdentifier currentIdentifier;
+	gchar* str;
+	CIdentifier currentID;
 
 	//is current node the one looked for?
-	gtk_tree_model_get(GTK_TREE_MODEL(m_TreeStore), iter, EVisualizationTreeColumn_StringIdentifier, &identifierAsString, -1);
-	currentIdentifier.fromString(CString(identifierAsString));
-	if (id == currentIdentifier)
+	gtk_tree_model_get(GTK_TREE_MODEL(m_treeStore), iter, EVisualizationTreeColumn_StringIdentifier, &str, -1);
+	currentID.fromString(CString(str));
+	if (id == currentID)
 	{
-		m_InternalTreeNode = *iter;
+		m_internalTreeNode = *iter;
 		return true;
 	}
 
 	//look among current node's children
-	const int childCount = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(m_TreeStore), iter);
+	const int nChild = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(m_treeStore), iter);
 	GtkTreeIter childIter;
-	for (int i = 0; i < childCount; ++i)
+	for (int i = 0; i < nChild; ++i)
 	{
-		gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(m_TreeStore), &childIter, iter, i);
-
+		gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(m_treeStore), &childIter, iter, i);
 		if (_findChildNodeFromParent(&childIter, id)) { return true; }
 	}
 
@@ -595,10 +574,10 @@ bool CVisualizationTree::findParentNode(GtkTreeIter* iter, const EVisualizationT
 	GtkTreeIter currentIter;
 
 	//is current node the one looked for?
-	gtk_tree_model_get(GTK_TREE_MODEL(m_TreeStore), iter, EVisualizationTreeColumn_ULongNodeType, &typeAsInt, -1);
+	gtk_tree_model_get(GTK_TREE_MODEL(m_treeStore), iter, EVisualizationTreeColumn_ULongNodeType, &typeAsInt, -1);
 	if (type == EVisualizationTreeNode(typeAsInt)) { return true; }
 	//look one level higher
-	if (gtk_tree_model_iter_parent(GTK_TREE_MODEL(m_TreeStore), &currentIter, iter) != 0)
+	if (gtk_tree_model_iter_parent(GTK_TREE_MODEL(m_treeStore), &currentIter, iter) != 0)
 	{
 		*iter = currentIter;
 		return findParentNode(iter, type);
@@ -607,52 +586,51 @@ bool CVisualizationTree::findParentNode(GtkTreeIter* iter, const EVisualizationT
 	return false;
 }
 
-bool CVisualizationTree::dragDataReceivedOutsideWidgetCB(const CIdentifier& srcWidgetID, GtkWidget* dstWidget,
-														 const EDragDataLocation location)
+bool CVisualizationTree::dragDataReceivedOutsideWidgetCB(const CIdentifier& srcWidgetID, GtkWidget* dstWidget, const EDragDataLocation location)
 {
 	//retrieve source widget parent
 	//-----------------------------
-	IVisualizationWidget* sourceVisualizationWidget = getVisualizationWidget(srcWidgetID);
-	if (!sourceVisualizationWidget) { return false; }
+	IVisualizationWidget* srcWidget = getVisualizationWidget(srcWidgetID);
+	if (!srcWidget) { return false; }
 
 	//retrieve dest widget and dest widget parent identifiers
 	//-------------------------------------------------------
-	GtkTreeIter destinationIterator;
-	if (!findChildNodeFromRoot(&destinationIterator, m_TreeViewCB->getTreeWidget(dstWidget))) { return false; }
-	CIdentifier destinationWidgetIdentifier;
-	getIdentifierFromTreeIter(&destinationIterator, destinationWidgetIdentifier, EVisualizationTreeColumn_StringIdentifier);
-	IVisualizationWidget* destinationVisualizationWidget = getVisualizationWidget(destinationWidgetIdentifier);
-	if (destinationVisualizationWidget == nullptr) { return false; }
+	GtkTreeIter dstIt;
+	if (!findChildNodeFromRoot(&dstIt, m_treeViewCB->getTreeWidget(dstWidget))) { return false; }
+	CIdentifier dstWidgetID;
+	getIdentifierFromTreeIter(&dstIt, dstWidgetID, EVisualizationTreeColumn_StringIdentifier);
+	IVisualizationWidget* dstVisualizationWidget = getVisualizationWidget(dstWidgetID);
+	if (dstVisualizationWidget == nullptr) { return false; }
 	// dst widget is the widget already present in
-	const CIdentifier destinationParentIdentifier = destinationVisualizationWidget->getParentIdentifier();
+	const CIdentifier dstParentID = dstVisualizationWidget->getParentIdentifier();
 
 	//unparent source widget
-	size_t sourceIndex = 0;
-	unparentVisualizationWidget(srcWidgetID, sourceIndex);
+	size_t srcIdx = 0;
+	unparentVisualizationWidget(srcWidgetID, srcIdx);
 
 	//unparent dest widget
-	size_t destinationIndex = 0;
-	unparentVisualizationWidget(destinationWidgetIdentifier, destinationIndex);
+	size_t dstIdx = 0;
+	unparentVisualizationWidget(dstWidgetID, dstIdx);
 
 	//create paned widget
 	const EVisualizationWidgetType panedType = (location == EDragData_Top || location == EDragData_Bottom) ? VisualizationWidget_VerticalSplit
 												   : VisualizationWidget_HorizontalSplit;
-	CIdentifier panedIdentifier;
-	addVisualizationWidget(panedIdentifier, CString(panedType == VisualizationWidget_VerticalSplit ? "Vertical split" : "Horizontal split"), panedType,
-						   destinationParentIdentifier, //parent paned to dest widget parent
-						   destinationIndex, //put it at the index occupied by dest widget
-						   OV_UndefinedIdentifier, //no box algorithm for a paned
-						   2, //2 children
-						   OV_UndefinedIdentifier); //no prefered visualization identifier
-	IVisualizationWidget* panedVisualizationWidget = getVisualizationWidget(panedIdentifier);
+	CIdentifier panedID;
+	addVisualizationWidget(panedID, CString(panedType == VisualizationWidget_VerticalSplit ? "Vertical split" : "Horizontal split"), panedType,
+						   dstParentID,				//parent paned to dest widget parent
+						   dstIdx,					//put it at the index occupied by dest widget
+						   OV_UndefinedIdentifier,	//no box algorithm for a paned
+						   2,						//2 children
+						   OV_UndefinedIdentifier);	//no prefered visualization identifier
+	IVisualizationWidget* panedWidget = getVisualizationWidget(panedID);
 
 	//add attributes
-	if (m_TreeViewCB != nullptr) { m_TreeViewCB->createTreeWidget(panedVisualizationWidget); }
+	if (m_treeViewCB != nullptr) { m_treeViewCB->createTreeWidget(panedWidget); }
 
 	//reparent widgets
-	const size_t newSourceIndex = (location == EDragData_Top || location == EDragData_Left) ? 0 : 1;
-	parentVisualizationWidget(srcWidgetID, panedIdentifier, newSourceIndex);
-	parentVisualizationWidget(destinationWidgetIdentifier, panedIdentifier, 1 - newSourceIndex);
+	const size_t newSrcIdx = (location == EDragData_Top || location == EDragData_Left) ? 0 : 1;
+	parentVisualizationWidget(srcWidgetID, panedID, newSrcIdx);
+	parentVisualizationWidget(dstWidgetID, panedID, 1 - newSrcIdx);
 
 	//update Gtk tree
 	reloadTree();
@@ -663,54 +641,54 @@ bool CVisualizationTree::dragDataReceivedOutsideWidgetCB(const CIdentifier& srcW
 bool CVisualizationTree::dragDataReceivedInWidgetCB(const CIdentifier& srcWidgetID, GtkWidget* dstWidget)
 {
 	//retrieve source widget parent
-	IVisualizationWidget* sourceVisualizationWidget = getVisualizationWidget(srcWidgetID);
-	OV_EXCEPTION_UNLESS_D(sourceVisualizationWidget, "Source visualization identifier does not exist in the tree", ErrorType::ResourceNotFound);
+	IVisualizationWidget* srcWidget = getVisualizationWidget(srcWidgetID);
+	OV_EXCEPTION_UNLESS_D(srcWidget, "Source visualization identifier does not exist in the tree", ErrorType::ResourceNotFound);
 
-	const CIdentifier sourceParentIdentifier = sourceVisualizationWidget->getParentIdentifier();
+	const CIdentifier srcParentID = srcWidget->getParentIdentifier();
 
 	//retrieve dest widget and dest widget parent identifiers
-	GtkTreeIter destinationIterator;
-	if (!findChildNodeFromRoot(&destinationIterator, m_TreeViewCB->getTreeWidget(dstWidget))) { return false; }
+	GtkTreeIter dstIt;
+	if (!findChildNodeFromRoot(&dstIt, m_treeViewCB->getTreeWidget(dstWidget))) { return false; }
 
-	CIdentifier destinationWidgetIdentifier;
-	getIdentifierFromTreeIter(&destinationIterator, destinationWidgetIdentifier, EVisualizationTreeColumn_StringIdentifier);
-	IVisualizationWidget* destinationVisualizationWidget = getVisualizationWidget(destinationWidgetIdentifier);
-	if (!destinationVisualizationWidget) { return false; }
+	CIdentifier dstWidgetID;
+	getIdentifierFromTreeIter(&dstIt, dstWidgetID, EVisualizationTreeColumn_StringIdentifier);
+	IVisualizationWidget* dstVisualizationWidget = getVisualizationWidget(dstWidgetID);
+	if (!dstVisualizationWidget) { return false; }
 
-	const CIdentifier destinationParentIdentifier = destinationVisualizationWidget->getParentIdentifier();
+	const CIdentifier dstParentID = dstVisualizationWidget->getParentIdentifier();
 
 	//unparent source widget
-	size_t sourceIndex;
-	unparentVisualizationWidget(srcWidgetID, sourceIndex);
+	size_t srcIdx;
+	unparentVisualizationWidget(srcWidgetID, srcIdx);
 
 	//destroy, unparent or reparent dest widget
-	size_t destinationIndex;
+	size_t dstIdx;
 
 	//if source widget was unaffected
-	if (sourceParentIdentifier == OV_UndefinedIdentifier)
+	if (srcParentID == OV_UndefinedIdentifier)
 	{
 		//if dest widget was dummy, destroy it
-		if (destinationVisualizationWidget->getType() == VisualizationWidget_Undefined)
+		if (dstVisualizationWidget->getType() == VisualizationWidget_Undefined)
 		{
-			getVisualizationWidgetIndex(destinationWidgetIdentifier, destinationIndex);
-			destroyHierarchy(destinationWidgetIdentifier, true);
+			getVisualizationWidgetIndex(dstWidgetID, dstIdx);
+			destroyHierarchy(dstWidgetID, true);
 		}
 		else //dest widget becomes unaffected
 		{
-			unparentVisualizationWidget(destinationWidgetIdentifier, destinationIndex);
+			unparentVisualizationWidget(dstWidgetID, dstIdx);
 		}
 	}
 	else //source widget was affected
 	{
 		//unparent dest widget
-		unparentVisualizationWidget(destinationWidgetIdentifier, destinationIndex);
+		unparentVisualizationWidget(dstWidgetID, dstIdx);
 
 		//reparent it to source widget parent
-		parentVisualizationWidget(destinationWidgetIdentifier, sourceParentIdentifier, sourceIndex);
+		parentVisualizationWidget(dstWidgetID, srcParentID, srcIdx);
 	}
 
 	//reparent source widget
-	parentVisualizationWidget(srcWidgetID, destinationParentIdentifier, destinationIndex);
+	parentVisualizationWidget(srcWidgetID, dstParentID, dstIdx);
 
 	//update Gtk tree
 	reloadTree();
@@ -722,43 +700,37 @@ bool CVisualizationTree::loadVisualizationWidget(IVisualizationWidget* widget, G
 {
 	//create visualization widget
 	//---------------------------
-	GtkWidget* tmp = m_TreeViewCB->loadTreeWidget(widget);
+	GtkWidget* tmp = m_treeViewCB->loadTreeWidget(widget);
 
 	//add visualization widget node to tree store
 	GtkTreeIter iter;
-	gtk_tree_store_append(m_TreeStore, &iter, parentIter);
+	gtk_tree_store_append(m_treeStore, &iter, parentIter);
 
 	//retrieve values of tree node fields
 	EVisualizationTreeNode childType;
 	switch (widget->getType())
 	{
-		case VisualizationWidget_VisualizationWindow:
-			childType = EVisualizationTreeNode_VisualizationWindow;
+		case VisualizationWidget_VisualizationWindow: childType = EVisualizationTreeNode_VisualizationWindow;
 			break;
-		case VisualizationWidget_VisualizationPanel:
-			childType = EVisualizationTreeNode_VisualizationPanel;
+		case VisualizationWidget_VisualizationPanel: childType = EVisualizationTreeNode_VisualizationPanel;
 			break;
-		case VisualizationWidget_VisualizationBox:
-			childType = EVisualizationTreeNode_VisualizationBox;
+		case VisualizationWidget_VisualizationBox: childType = EVisualizationTreeNode_VisualizationBox;
 			break;
-		case VisualizationWidget_HorizontalSplit:
-			childType = EVisualizationTreeNode_HorizontalSplit;
+		case VisualizationWidget_HorizontalSplit: childType = EVisualizationTreeNode_HorizontalSplit;
 			break;
-		case VisualizationWidget_VerticalSplit:
-			childType = EVisualizationTreeNode_VerticalSplit;
+		case VisualizationWidget_VerticalSplit: childType = EVisualizationTreeNode_VerticalSplit;
 			break;
-		case VisualizationWidget_Undefined:
-			childType = EVisualizationTreeNode_Undefined;
+		case VisualizationWidget_Undefined: childType = EVisualizationTreeNode_Undefined;
 			break;
 		default: childType = EVisualizationTreeNode_Undefined;
 			break;
 	}
 
-	CString stockIconString = m_TreeViewCB->getTreeWidgetIcon(childType);
+	CString stockIconString = m_treeViewCB->getTreeWidgetIcon(childType);
 
 	if (widget->getType() == VisualizationWidget_VisualizationBox)
 	{
-		const IBox* box = m_Scenario->getBoxDetails(widget->getBoxIdentifier());
+		const IBox* box = m_scenario->getBoxDetails(widget->getBoxIdentifier());
 		if (!box)
 		{
 			m_kernelCtx.getLogManager() << LogLevel_Error << "Box with identifier " << widget->getBoxIdentifier() <<
@@ -772,65 +744,64 @@ bool CVisualizationTree::loadVisualizationWidget(IVisualizationWidget* widget, G
 	}
 
 	//set tree node fields
-	gtk_tree_store_set(m_TreeStore, &iter,
-					   EVisualizationTreeColumn_StringName, static_cast<const char*>(widget->getName()),
-					   EVisualizationTreeColumn_StringStockIcon, static_cast<const char*>(stockIconString),
+	gtk_tree_store_set(m_treeStore, &iter,
+					   EVisualizationTreeColumn_StringName, widget->getName().toASCIIString(),
+					   EVisualizationTreeColumn_StringStockIcon, stockIconString.toASCIIString(),
 					   EVisualizationTreeColumn_ULongNodeType, static_cast<unsigned long>(childType),
-					   EVisualizationTreeColumn_StringIdentifier, static_cast<const char*>(widget->getIdentifier().toString()),
-					   EVisualizationTreeColumn_PointerWidget, tmp,
-					   -1);
+					   EVisualizationTreeColumn_StringIdentifier, widget->getIdentifier().toString().toASCIIString(),
+					   EVisualizationTreeColumn_PointerWidget, tmp, -1);
 
 	//load visualization widget hierarchy
 	//-----------------------------------
 	//create a dummy child for visualization panels if none exists
 	if (widget->getType() == VisualizationWidget_VisualizationPanel)
 	{
-		CIdentifier childIdentifier;
-		widget->getChildIdentifier(0, childIdentifier);
-		if (childIdentifier == OV_UndefinedIdentifier)
+		CIdentifier id;
+		widget->getChildIdentifier(0, id);
+		if (id == OV_UndefinedIdentifier)
 		{
-			addVisualizationWidget(childIdentifier, "Empty", VisualizationWidget_Undefined, widget->getIdentifier(), 0, OV_UndefinedIdentifier, 0, OV_UndefinedIdentifier);
+			addVisualizationWidget(id, "Empty", VisualizationWidget_Undefined, widget->getIdentifier(), 0, OV_UndefinedIdentifier, 0, OV_UndefinedIdentifier);
 		}
 	}
 
 	for (size_t i = 0; i < widget->getNbChildren(); ++i)
 	{
-		CIdentifier childIdentifier;
-		widget->getChildIdentifier(i, childIdentifier);
+		CIdentifier id;
+		widget->getChildIdentifier(i, id);
 
-		loadVisualizationWidget(getVisualizationWidget(childIdentifier), &iter);
+		loadVisualizationWidget(getVisualizationWidget(id), &iter);
 	}
 
 	//complete visualization widget loading now that its hierarchy is loaded
-	m_TreeViewCB->endLoadTreeWidget(widget);
+	m_treeViewCB->endLoadTreeWidget(widget);
 
 	return true;
 }
 
 bool CVisualizationTree::setToolbar(const CIdentifier& boxID, GtkWidget* toolbar)
 {
-	if (m_TreeViewCB != nullptr) { return m_TreeViewCB->setToolbar(boxID, toolbar); }
+	if (m_treeViewCB != nullptr) { return m_treeViewCB->setToolbar(boxID, toolbar); }
 	return false;
 }
 
 bool CVisualizationTree::setWidget(const CIdentifier& boxID, GtkWidget* widget)
 {
-	if (m_TreeViewCB != nullptr) { return m_TreeViewCB->setWidget(boxID, widget); }
+	if (m_treeViewCB != nullptr) { return m_treeViewCB->setWidget(boxID, widget); }
 	return false;
 }
 
 
 json::Object CVisualizationTree::serializeWidget(IVisualizationWidget& widget) const
 {
-	json::Object jsonRepresentation;
+	json::Object representation;
 
-	jsonRepresentation["identifier"] = widget.getIdentifier().str().c_str();
+	representation["identifier"] = widget.getIdentifier().str().c_str();
 
 	// visualization box name can be retrieved from corresponding IBox, so we can skip it for these
-	if (widget.getType() != VisualizationWidget_VisualizationBox) { jsonRepresentation["name"] = widget.getName().toASCIIString(); }
+	if (widget.getType() != VisualizationWidget_VisualizationBox) { representation["name"] = widget.getName().toASCIIString(); }
 
-	jsonRepresentation["type"]             = widget.getType();
-	jsonRepresentation["parentIdentifier"] = widget.getParentIdentifier().str().c_str();
+	representation["type"]             = widget.getType();
+	representation["parentIdentifier"] = widget.getParentIdentifier().str().c_str();
 
 	// visualization widget index
 	IVisualizationWidget* parentVisualizationWidget = this->getVisualizationWidget(widget.getParentIdentifier());
@@ -838,39 +809,39 @@ json::Object CVisualizationTree::serializeWidget(IVisualizationWidget& widget) c
 	{
 		size_t childIndex = 0;
 		parentVisualizationWidget->getChildIndex(widget.getIdentifier(), childIndex);
-		jsonRepresentation["index"] = int(childIndex);
+		representation["index"] = int(childIndex);
 	}
 
-	jsonRepresentation["boxIdentifier"] = widget.getBoxIdentifier().str().c_str();
-	jsonRepresentation["childCount"]    = int(widget.getNbChildren());
+	representation["boxIdentifier"] = widget.getBoxIdentifier().str().c_str();
+	representation["childCount"]    = int(widget.getNbChildren());
 
 	if (widget.getType() == VisualizationWidget_VisualizationWindow)
 	{
-		jsonRepresentation["width"]  = int(widget.getWidth());
-		jsonRepresentation["height"] = int(widget.getHeight());
+		representation["width"]  = int(widget.getWidth());
+		representation["height"] = int(widget.getHeight());
 	}
 	if (widget.getType() == VisualizationWidget_HorizontalSplit || widget.getType() == VisualizationWidget_VerticalSplit)
 	{
-		jsonRepresentation["dividerPosition"]    = widget.getDividerPosition();
-		jsonRepresentation["maxDividerPosition"] = widget.getMaxDividerPosition();
+		representation["dividerPosition"]    = widget.getDividerPosition();
+		representation["maxDividerPosition"] = widget.getMaxDividerPosition();
 	}
 
-	return jsonRepresentation;
+	return representation;
 }
 
 CString CVisualizationTree::serialize() const
 {
-	json::Array jsonRepresentation;
+	json::Array representation;
 
 	std::vector<CIdentifier> widgetsToExport;
 
-	CIdentifier visualizationWidgetIdentifier;
-	while (this->getNextVisualizationWidgetIdentifier(visualizationWidgetIdentifier))
+	CIdentifier widgetID;
+	while (this->getNextVisualizationWidgetIdentifier(widgetID))
 	{
-		IVisualizationWidget* widget = this->getVisualizationWidget(visualizationWidgetIdentifier);
+		IVisualizationWidget* widget = this->getVisualizationWidget(widgetID);
 		if (widget->getType() == VisualizationWidget_VisualizationWindow || widget->getParentIdentifier() == OV_UndefinedIdentifier)
 		{
-			widgetsToExport.push_back(visualizationWidgetIdentifier);
+			widgetsToExport.push_back(widgetID);
 		}
 	}
 
@@ -878,88 +849,79 @@ CString CVisualizationTree::serialize() const
 	{
 		IVisualizationWidget* widget = this->getVisualizationWidget(widgetsToExport[i]);
 
-		jsonRepresentation.push_back(this->serializeWidget(*widget));
+		representation.push_back(this->serializeWidget(*widget));
 
-		for (size_t j = 0; j < widget->getNbChildren(); ++j)
-		{
-			if (widget->getChildIdentifier(j, visualizationWidgetIdentifier)) { widgetsToExport.push_back(visualizationWidgetIdentifier); }
-		}
+		for (size_t j = 0; j < widget->getNbChildren(); ++j) { if (widget->getChildIdentifier(j, widgetID)) { widgetsToExport.push_back(widgetID); } }
 	}
 
-	CString serializedString = Serialize(jsonRepresentation).c_str();
-	return serializedString;
+	return CString(Serialize(representation).c_str());
 }
 
 bool CVisualizationTree::deserialize(const CString& tree)
 {
 	// Empty this visualization tree
-	auto widgetIdentifier = OV_UndefinedIdentifier;
-	while (this->getNextVisualizationWidgetIdentifier(widgetIdentifier) && widgetIdentifier != OV_UndefinedIdentifier)
+	auto widgetID = OV_UndefinedIdentifier;
+	while (this->getNextVisualizationWidgetIdentifier(widgetID) && widgetID != OV_UndefinedIdentifier)
 	{
-		this->destroyHierarchy(widgetIdentifier, true);
-		widgetIdentifier = OV_UndefinedIdentifier;
+		this->destroyHierarchy(widgetID, true);
+		widgetID = OV_UndefinedIdentifier;
 	}
 
 
-	json::Array jsonRepresentation = json::Deserialize(tree.toASCIIString());
+	json::Array representation = json::Deserialize(tree.toASCIIString());
 
-	for (auto it = jsonRepresentation.begin(); it != jsonRepresentation.end(); ++it)
+	for (auto it = representation.begin(); it != representation.end(); ++it)
 	{
 		json::Value& jsonWidget = *it;
 
-		widgetIdentifier.fromString(jsonWidget["identifier"].ToString().c_str());
+		widgetID.fromString(jsonWidget["identifier"].ToString().c_str());
 
 		CIdentifier boxID;
 		boxID.fromString(jsonWidget["boxIdentifier"].ToString().c_str());
 
 		const EVisualizationWidgetType widgetType = EVisualizationWidgetType(jsonWidget["type"].ToInt());
 
-		CString widgetName;
+		CString name;
 		if (widgetType == VisualizationWidget_VisualizationBox)
 		{
-			const IBox* box = m_Scenario->getBoxDetails(boxID);
+			const IBox* box = m_scenario->getBoxDetails(boxID);
 			if (!box)
 			{
-				m_kernelCtx.getLogManager() << LogLevel_Error << "The box identifier [" << boxID <<
-						"] used in Window manager was not found in the scenario.\n";
+				m_kernelCtx.getLogManager() << LogLevel_Error << "The box identifier [" << boxID << "] used in Window manager was not found in the scenario.\n";
 				return false;
 			}
-			widgetName = box->getName();
+			name = box->getName();
 		}
-		else { widgetName = jsonWidget["name"].ToString().c_str(); }
+		else { name = jsonWidget["name"].ToString().c_str(); }
 
-		CIdentifier newVisualizationWidgetIdentifier;
+		CIdentifier id, parentID;
+		parentID.fromString(jsonWidget["parentIdentifier"].ToString().c_str());
 
-		CIdentifier parentIdentifier;
-		parentIdentifier.fromString(jsonWidget["parentIdentifier"].ToString().c_str());
+		size_t index = 0;
+		if (this->getVisualizationWidget(parentID)) { index = size_t(jsonWidget["index"].ToInt()); }
+		const size_t nChild = size_t(jsonWidget["childCount"].ToInt());
 
-		size_t widgetIndex = 0;
-		if (this->getVisualizationWidget(parentIdentifier)) { widgetIndex = size_t(jsonWidget["index"].ToInt()); }
-		const size_t widgetChildCount = size_t(jsonWidget["childCount"].ToInt());
+		this->addVisualizationWidget(id, name, widgetType, parentID, index, boxID, nChild, widgetID);
 
-		this->addVisualizationWidget(newVisualizationWidgetIdentifier, widgetName, widgetType, parentIdentifier,
-									 widgetIndex, boxID, widgetChildCount, widgetIdentifier);
-
-		if (widgetIdentifier != newVisualizationWidgetIdentifier)
+		if (widgetID != id)
 		{
-			m_kernelCtx.getLogManager() << LogLevel_Error << "Visualization widget [" << widgetIdentifier << "] for box [" << boxID <<
-					"] could not be imported.\n";
+			m_kernelCtx.getLogManager() << LogLevel_Error << "Visualization widget [" << widgetID << "] for box [" << boxID << "] could not be imported.\n";
 			return false;
 		}
 
-		IVisualizationWidget* visualizationWidget = this->getVisualizationWidget(widgetIdentifier);
+		IVisualizationWidget* widget = this->getVisualizationWidget(widgetID);
 
-		if (visualizationWidget)
+		if (widget)
 		{
-			if (visualizationWidget->getType() == VisualizationWidget_VisualizationWindow)
+			if (widget->getType() == VisualizationWidget_VisualizationWindow)
 			{
-				visualizationWidget->setWidth(size_t(jsonWidget["width"].ToInt()));
-				visualizationWidget->setHeight(size_t(jsonWidget["height"].ToInt()));
+				widget->setWidth(size_t(jsonWidget["width"].ToInt()));
+				widget->setHeight(size_t(jsonWidget["height"].ToInt()));
 			}
-			if (visualizationWidget->getType() == VisualizationWidget_HorizontalSplit || visualizationWidget->getType() == VisualizationWidget_VerticalSplit)
+			if (widget->getType() == VisualizationWidget_HorizontalSplit || widget->getType() == VisualizationWidget_VerticalSplit)
 			{
-				visualizationWidget->setDividerPosition(jsonWidget["dividerPosition"].ToInt());
-				visualizationWidget->setMaxDividerPosition(jsonWidget["maxDividerPosition"].ToInt());
+				widget->setDividerPosition(jsonWidget["dividerPosition"].ToInt());
+				widget->setMaxDividerPosition(jsonWidget["maxDividerPosition"].ToInt());
 			}
 		}
 	}

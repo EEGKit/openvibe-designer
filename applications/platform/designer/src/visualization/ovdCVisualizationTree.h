@@ -15,7 +15,7 @@ namespace OpenViBEDesigner
 	class CVisualizationTree final : public OpenViBEVisualizationToolkit::IVisualizationTree
 	{
 	public:
-		CVisualizationTree(const OpenViBE::Kernel::IKernelContext& ctx);
+		CVisualizationTree(const OpenViBE::Kernel::IKernelContext& ctx) : m_kernelCtx(ctx) {}
 		virtual ~CVisualizationTree();
 
 		bool init(const OpenViBE::Kernel::IScenario* scenario);
@@ -75,12 +75,12 @@ namespace OpenViBEDesigner
 
 		bool loadVisualizationWidget(OpenViBEVisualizationToolkit::IVisualizationWidget* widget, GtkTreeIter* parentIter);
 
-		std::map<OpenViBE::CIdentifier, OpenViBEVisualizationToolkit::IVisualizationWidget*> m_VisualizationWidgets;
-		OpenViBE::CIdentifier m_ScenarioID = OV_UndefinedIdentifier;
+		std::map<OpenViBE::CIdentifier, OpenViBEVisualizationToolkit::IVisualizationWidget*> m_widgets;
+		OpenViBE::CIdentifier m_scenarioID = OV_UndefinedIdentifier;
 		const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
-		const OpenViBE::Kernel::IScenario* m_Scenario = nullptr;
-		GtkTreeStore* m_TreeStore                     = nullptr;
-		GtkTreeIter m_InternalTreeNode;
-		OpenViBEVisualizationToolkit::ITreeViewCB* m_TreeViewCB = nullptr;
+		const OpenViBE::Kernel::IScenario* m_scenario = nullptr;
+		GtkTreeStore* m_treeStore                     = nullptr;
+		GtkTreeIter m_internalTreeNode;
+		OpenViBEVisualizationToolkit::ITreeViewCB* m_treeViewCB = nullptr;
 	};
 }

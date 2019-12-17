@@ -193,7 +193,7 @@ void CDesignerVisualization::init(const std::string& guiFile)
 	gtk_window_set_default_size(GTK_WINDOW(m_dialog), gint(treeViewWidth + m_previewWindowW), gint(m_previewWindowH));
 	//set window title
 	gtk_window_set_title(GTK_WINDOW(m_dialog), " Window Manager");
-	// gtk_window_set_transient_for(GTK_WINDOW(m_dialog), GTK_WINDOW(m_scenario.m_rApplication.m_pMainWindow));
+	// gtk_window_set_transient_for(GTK_WINDOW(m_dialog), GTK_WINDOW(m_scenario.m_rApplication.m_MainWindow));
 	gtk_signal_connect(GTK_OBJECT(m_dialog), "configure_event", G_CALLBACK(configureEventCB), this);
 #ifdef HANDLE_MIN_MAX_EVENTS
 	gtk_signal_connect(GTK_OBJECT(m_dialog), "window_state_event", G_CALLBACK(window_state_event_cb), this);

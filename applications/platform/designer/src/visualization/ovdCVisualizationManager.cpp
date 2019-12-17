@@ -21,67 +21,60 @@ using namespace Plugins;
 using namespace OpenViBEVisualizationToolkit;
 //using namespace OpenViBE::Tools;
 
-bool CVisualizationManager::createVisualizationTree(CIdentifier& visualizationTreeIdentifier)
+bool CVisualizationManager::createVisualizationTree(CIdentifier& treeID)
 {
-	IVisualizationTree* newVisualizationTree = new CVisualizationTree(m_kernelCtx);
-
-	visualizationTreeIdentifier = getUnusedIdentifier();
-
-	m_VisualizationTrees[visualizationTreeIdentifier] = newVisualizationTree;
-
+	IVisualizationTree* newTree = new CVisualizationTree(m_kernelCtx);
+	treeID = getUnusedIdentifier();
+	m_trees[treeID] = newTree;
 	return true;
 }
 
-bool CVisualizationManager::releaseVisualizationTree(const CIdentifier& visualizationTreeIdentifier)
+bool CVisualizationManager::releaseVisualizationTree(const CIdentifier& treeID)
 {
-	auto it = m_VisualizationTrees.find(visualizationTreeIdentifier);
-	if (it != m_VisualizationTrees.end())
+	auto it = m_trees.find(treeID);
+	if (it != m_trees.end())
 	{
 		delete it->second;
-		m_VisualizationTrees.erase(it);
+		m_trees.erase(it);
 		return true;
 	}
 
 	return false;
 }
 
-IVisualizationTree& CVisualizationManager::getVisualizationTree(const CIdentifier& visualizationTreeIdentifier)
+IVisualizationTree& CVisualizationManager::getVisualizationTree(const CIdentifier& treeID)
 {
-	const auto it = m_VisualizationTrees.find(visualizationTreeIdentifier);
-	if (it == m_VisualizationTrees.end())
+	const auto it = m_trees.find(treeID);
+	if (it == m_trees.end())
 	{
-		m_kernelCtx.getLogManager() << LogLevel_Fatal << "Visualization Tree " << visualizationTreeIdentifier << " does not exist !\n";
+		m_kernelCtx.getLogManager() << LogLevel_Fatal << "Visualization Tree " << treeID << " does not exist !\n";
 	}
 	return *it->second;
 }
 
-bool CVisualizationManager::setToolbar(const CIdentifier& visualizationTreeIdentifier, const CIdentifier& boxID, GtkWidget* toolbar)
+bool CVisualizationManager::setToolbar(const CIdentifier& treeID, const CIdentifier& boxID, GtkWidget* toolbar)
 {
-	IVisualizationTree& l_rVisualizationTree = getVisualizationTree(visualizationTreeIdentifier);
-
-	l_rVisualizationTree.setToolbar(boxID, toolbar);
-
+	IVisualizationTree& tree = getVisualizationTree(treeID);
+	tree.setToolbar(boxID, toolbar);
 	return true;
 }
 
-bool CVisualizationManager::setWidget(const CIdentifier& visualizationTreeIdentifier, const CIdentifier& boxID, GtkWidget* topmostWidget)
+bool CVisualizationManager::setWidget(const CIdentifier& treeID, const CIdentifier& boxID, GtkWidget* topmostWidget)
 {
-	IVisualizationTree& visualizationTree = getVisualizationTree(visualizationTreeIdentifier);
-
-	visualizationTree.setWidget(boxID, topmostWidget);
-
+	IVisualizationTree& tree = getVisualizationTree(treeID);
+	tree.setWidget(boxID, topmostWidget);
 	return true;
 }
 
 CIdentifier CVisualizationManager::getUnusedIdentifier() const
 {
-	uint64_t possibleIdentifier = CIdentifier::random().toUInteger();
-	CIdentifier finalIdentifier;
+	uint64_t id = CIdentifier::random().toUInteger();
+	CIdentifier res;
 	map<CIdentifier, IVisualizationTree*>::const_iterator it;
 	do
 	{
-		finalIdentifier = CIdentifier(possibleIdentifier++);
-		it              = m_VisualizationTrees.find(finalIdentifier);
-	} while (it != m_VisualizationTrees.end() || finalIdentifier == OV_UndefinedIdentifier);
-	return finalIdentifier;
+		res = CIdentifier(id++);
+		it  = m_trees.find(res);
+	} while (it != m_trees.end() || res == OV_UndefinedIdentifier);
+	return res;
 }

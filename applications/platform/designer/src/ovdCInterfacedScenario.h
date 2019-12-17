@@ -25,8 +25,7 @@ namespace OpenViBEDesigner
 	public:
 
 		CInterfacedScenario(const OpenViBE::Kernel::IKernelContext& ctx, CApplication& application, OpenViBE::Kernel::IScenario& scenario,
-							OpenViBE::CIdentifier& scenarioID,
-							GtkNotebook& notebook, const char* guiFilename, const char* guiSettingsFilename);
+							OpenViBE::CIdentifier& scenarioID, GtkNotebook& notebook, const char* guiFilename, const char* guiSettingsFilename);
 		virtual ~CInterfacedScenario();
 
 		virtual bool isLocked() const { return m_Player != nullptr; }
@@ -199,15 +198,15 @@ namespace OpenViBEDesigner
 	private:
 		const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
 		GtkNotebook& m_notebook;
-		bool m_designerVisualizationToggled   = false;
-		CPlayerVisualization* m_playerVisu    = nullptr;
-		GtkBuilder* m_guiBuilder              = nullptr;
-		GtkWidget* m_notebookPageTitle        = nullptr;
-		GtkWidget* m_notebookPageContent      = nullptr;
-		GtkViewport* m_scenarioViewport       = nullptr;
-		GtkDrawingArea* m_scenarioDrawingArea = nullptr;
-		GdkPixmap* m_stencilBuffer            = nullptr;
-		GdkPixbuf* m_mensiaLogoPixbuf         = nullptr;
+		bool m_designerVisualizationToggled         = false;
+		CPlayerVisualization* m_playerVisualization = nullptr;
+		GtkBuilder* m_guiBuilder                    = nullptr;
+		GtkWidget* m_notebookPageTitle              = nullptr;
+		GtkWidget* m_notebookPageContent            = nullptr;
+		GtkViewport* m_scenarioViewport             = nullptr;
+		GtkDrawingArea* m_scenarioDrawingArea       = nullptr;
+		GdkPixmap* m_stencilBuffer                  = nullptr;
+		GdkPixbuf* m_mensiaLogoPixbuf               = nullptr;
 
 		bool m_buttonPressed  = false;
 		bool m_shiftPressed   = false;
@@ -236,9 +235,6 @@ namespace OpenViBEDesigner
 		std::map<size_t, CInterfacedObject> m_interfacedObjects;
 		CInterfacedObject m_currentObject;
 
-		double m_panInitialPositionH = 0;
-		double m_panInitialPositionV = 0;
-
 		GtkWidget* m_configureSettingsDialog                 = nullptr;
 		GtkWidget* m_settingsVBox                            = nullptr;
 		GtkWidget* m_noHelpDialog                            = nullptr;
@@ -256,8 +252,6 @@ namespace OpenViBEDesigner
 		gint m_normalFontSize = 0;
 
 		std::vector<CBoxConfigurationDialog*> m_boxConfigDialogs;
-
-		//void generateDisplayPluginName(OpenViBE::Kernel::IBox* pDisplayBox, OpenViBE::CString& rDisplayBoxName);
 
 		typedef void (*menu_cb_function_t)(GtkMenuItem*, box_ctx_menu_cb_t*);
 		GtkImageMenuItem* addNewImageMenuItemWithCBGeneric(GtkMenu* menu, const char* icon, const char* label, menu_cb_function_t cb,

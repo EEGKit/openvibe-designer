@@ -630,8 +630,8 @@ CInterfacedScenario::CInterfacedScenario(const IKernelContext& ctx, CApplication
 
 	//retrieve visualization tree
 
-	m_Application.m_pVisualizationManager->createVisualizationTree(m_TreeID);
-	m_Tree = &m_Application.m_pVisualizationManager->getVisualizationTree(m_TreeID);
+	m_Application.m_VisualizationMgr->createVisualizationTree(m_TreeID);
+	m_Tree = &m_Application.m_VisualizationMgr->getVisualizationTree(m_TreeID);
 	m_Tree->init(&m_Scenario);
 
 	//create window manager
@@ -924,7 +924,7 @@ void CInterfacedScenario::redrawScenarioInputSettings()
 	bool (IScenario::* getLinkName)(size_t, CString&) const     = &IScenario::getInputName;
 	bool (IScenario::* getLinkType)(size_t, CIdentifier&) const = &IScenario::getInputType;
 
-	this->redrawScenarioLinkSettings(m_Application.m_pTableInputs, true, m_scenarioInputCBDatas, getNLink, getLinkName, getLinkType);
+	this->redrawScenarioLinkSettings(m_Application.m_Inputs, true, m_scenarioInputCBDatas, getNLink, getLinkName, getLinkType);
 }
 
 void CInterfacedScenario::redrawScenarioOutputSettings()
@@ -933,7 +933,7 @@ void CInterfacedScenario::redrawScenarioOutputSettings()
 	bool (IScenario::* getLinkName)(size_t, CString&) const     = &IScenario::getOutputName;
 	bool (IScenario::* getLinkType)(size_t, CIdentifier&) const = &IScenario::getOutputType;
 
-	this->redrawScenarioLinkSettings(m_Application.m_pTableOutputs, false, m_scenarioOutputCBDatas, getNLink, getLinkName, getLinkType);
+	this->redrawScenarioLinkSettings(m_Application.m_Outputs, false, m_scenarioOutputCBDatas, getNLink, getLinkName, getLinkType);
 }
 
 // Redraws the tab containing inputs or outputs of the scenario
@@ -2380,8 +2380,8 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(GtkWidget* widget, 
 			{
 				addNewImageMenuItemWithCB(l_pMenu, GTK_STOCK_COPY, "copy", context_menu_cb, nullptr, ContextMenu_SelectionCopy, unused);
 			}
-			if ((m_Application.m_pClipboardScenario->getNextBoxIdentifier(OV_UndefinedIdentifier) != OV_UndefinedIdentifier)
-				|| (m_Application.m_pClipboardScenario->getNextCommentIdentifier(OV_UndefinedIdentifier) != OV_UndefinedIdentifier))
+			if ((m_Application.m_ClipboardScenario->getNextBoxIdentifier(OV_UndefinedIdentifier) != OV_UndefinedIdentifier)
+				|| (m_Application.m_ClipboardScenario->getNextCommentIdentifier(OV_UndefinedIdentifier) != OV_UndefinedIdentifier))
 			{
 				addNewImageMenuItemWithCB(l_pMenu, GTK_STOCK_PASTE, "paste", context_menu_cb, nullptr, ContextMenu_SelectionPaste, unused);
 			}
@@ -2953,7 +2953,7 @@ void CInterfacedScenario::copySelection()
 
 	// Prepares copy
 	map<CIdentifier, CIdentifier> l_vIdMapping;
-	m_Application.m_pClipboardScenario->clear();
+	m_Application.m_ClipboardScenario->clear();
 
 	// Copies boxes to clipboard
 	for (auto& objectId : m_SelectedObjects)
@@ -2962,7 +2962,7 @@ void CInterfacedScenario::copySelection()
 		{
 			CIdentifier l_oNewID;
 			const IBox* l_pBox = m_Scenario.getBoxDetails(objectId);
-			m_Application.m_pClipboardScenario->addBox(l_oNewID, *l_pBox, objectId);
+			m_Application.m_ClipboardScenario->addBox(l_oNewID, *l_pBox, objectId);
 			l_vIdMapping[objectId] = l_oNewID;
 		}
 	}
@@ -2974,7 +2974,7 @@ void CInterfacedScenario::copySelection()
 		{
 			CIdentifier l_oNewID;
 			const IComment* l_pComment = m_Scenario.getCommentDetails(objectId);
-			m_Application.m_pClipboardScenario->addComment(l_oNewID, *l_pComment, objectId);
+			m_Application.m_ClipboardScenario->addComment(l_oNewID, *l_pComment, objectId);
 			l_vIdMapping[objectId] = l_oNewID;
 		}
 	}
@@ -2991,7 +2991,7 @@ void CInterfacedScenario::copySelection()
 			if (l_vIdMapping.find(l_pLink->getSourceBoxIdentifier()) != l_vIdMapping.end()
 				&& l_vIdMapping.find(l_pLink->getTargetBoxIdentifier()) != l_vIdMapping.end())
 			{
-				m_Application.m_pClipboardScenario->connect(l_oNewID, l_vIdMapping[l_pLink->getSourceBoxIdentifier()], l_pLink->getSourceBoxOutputIndex(),
+				m_Application.m_ClipboardScenario->connect(l_oNewID, l_vIdMapping[l_pLink->getSourceBoxIdentifier()], l_pLink->getSourceBoxOutputIndex(),
 															l_vIdMapping[l_pLink->getTargetBoxIdentifier()], l_pLink->getTargetBoxInputIndex(),
 															l_pLink->getIdentifier());
 			}
@@ -3023,10 +3023,10 @@ void CInterfacedScenario::pasteSelection()
 	// std::cout << "Mouse position : " << m_currentMouseX << "/" << m_currentMouseY << std::endl;
 
 	// Pastes boxes from clipboard
-	while ((identifier = m_Application.m_pClipboardScenario->getNextBoxIdentifier(identifier)) != OV_UndefinedIdentifier)
+	while ((identifier = m_Application.m_ClipboardScenario->getNextBoxIdentifier(identifier)) != OV_UndefinedIdentifier)
 	{
 		CIdentifier l_oNewID;
-		IBox* l_pBox = m_Application.m_pClipboardScenario->getBoxDetails(identifier);
+		IBox* l_pBox = m_Application.m_ClipboardScenario->getBoxDetails(identifier);
 		m_Scenario.addBox(l_oNewID, *l_pBox, identifier);
 		l_vIdMapping[identifier] = l_oNewID;
 
@@ -3052,10 +3052,10 @@ void CInterfacedScenario::pasteSelection()
 	}
 
 	// Pastes comments from clipboard
-	while ((identifier = m_Application.m_pClipboardScenario->getNextCommentIdentifier(identifier)) != OV_UndefinedIdentifier)
+	while ((identifier = m_Application.m_ClipboardScenario->getNextCommentIdentifier(identifier)) != OV_UndefinedIdentifier)
 	{
 		CIdentifier l_oNewID;
-		IComment* l_pComment = m_Application.m_pClipboardScenario->getCommentDetails(identifier);
+		IComment* l_pComment = m_Application.m_ClipboardScenario->getCommentDetails(identifier);
 		m_Scenario.addComment(l_oNewID, *l_pComment, identifier);
 		l_vIdMapping[identifier] = l_oNewID;
 
@@ -3069,10 +3069,10 @@ void CInterfacedScenario::pasteSelection()
 	}
 
 	// Pastes links from clipboard
-	while ((identifier = m_Application.m_pClipboardScenario->getNextLinkIdentifier(identifier)) != OV_UndefinedIdentifier)
+	while ((identifier = m_Application.m_ClipboardScenario->getNextLinkIdentifier(identifier)) != OV_UndefinedIdentifier)
 	{
 		CIdentifier l_oNewID;
-		ILink* l_pLink = m_Application.m_pClipboardScenario->getLinkDetails(identifier);
+		ILink* l_pLink = m_Application.m_ClipboardScenario->getLinkDetails(identifier);
 		m_Scenario.connect(l_oNewID, l_vIdMapping[l_pLink->getSourceBoxIdentifier()], l_pLink->getSourceBoxOutputIndex(),
 						   l_vIdMapping[l_pLink->getTargetBoxIdentifier()], l_pLink->getTargetBoxInputIndex(), l_pLink->getIdentifier());
 	}
@@ -3080,8 +3080,8 @@ void CInterfacedScenario::pasteSelection()
 	// Makes pasted stuff the default selection
 	// Moves boxes under cursor
 	// Moves comments under cursor
-	if (m_Application.m_pClipboardScenario->getNextBoxIdentifier(OV_UndefinedIdentifier) != OV_UndefinedIdentifier
-		|| m_Application.m_pClipboardScenario->getNextCommentIdentifier(OV_UndefinedIdentifier) != OV_UndefinedIdentifier)
+	if (m_Application.m_ClipboardScenario->getNextBoxIdentifier(OV_UndefinedIdentifier) != OV_UndefinedIdentifier
+		|| m_Application.m_ClipboardScenario->getNextCommentIdentifier(OV_UndefinedIdentifier) != OV_UndefinedIdentifier)
 	{
 		m_SelectedObjects.clear();
 		for (auto& it : l_vIdMapping)
@@ -3616,13 +3616,13 @@ void CInterfacedScenario::toggleDesignerVisualization()
 
 void CInterfacedScenario::showCurrentVisualization() const
 {
-	if (isLocked()) { if (m_playerVisu != nullptr) { m_playerVisu->showTopLevelWindows(); } }
+	if (isLocked()) { if (m_playerVisualization != nullptr) { m_playerVisualization->showTopLevelWindows(); } }
 	else { if (m_DesignerVisualization != nullptr) { m_DesignerVisualization->show(); } }
 }
 
 void CInterfacedScenario::hideCurrentVisualization() const
 {
-	if (isLocked()) { if (m_playerVisu != nullptr) { m_playerVisu->hideTopLevelWindows(); } }
+	if (isLocked()) { if (m_playerVisualization != nullptr) { m_playerVisualization->hideTopLevelWindows(); } }
 	else { if (m_DesignerVisualization != nullptr) { m_DesignerVisualization->hide(); } }
 }
 
@@ -3631,10 +3631,10 @@ void CInterfacedScenario::createPlayerVisualization(IVisualizationTree* tree)
 	//hide window manager
 	if (m_DesignerVisualization) { m_DesignerVisualization->hide(); }
 
-	if (m_playerVisu == nullptr)
+	if (m_playerVisualization == nullptr)
 	{
-		if (tree) { m_playerVisu = new CPlayerVisualization(m_kernelCtx, *tree, *this); }
-		else { m_playerVisu = new CPlayerVisualization(m_kernelCtx, *m_Tree, *this); }
+		if (tree) { m_playerVisualization = new CPlayerVisualization(m_kernelCtx, *tree, *this); }
+		else { m_playerVisualization = new CPlayerVisualization(m_kernelCtx, *m_Tree, *this); }
 
 
 		//we go here when we press start
@@ -3656,15 +3656,15 @@ void CInterfacedScenario::createPlayerVisualization(IVisualizationTree* tree)
 	}
 
 	//initialize and show windows
-	m_playerVisu->init();
+	m_playerVisualization->init();
 }
 
 void CInterfacedScenario::releasePlayerVisualization()
 {
-	if (m_playerVisu != nullptr)
+	if (m_playerVisualization != nullptr)
 	{
-		delete m_playerVisu;
-		m_playerVisu = nullptr;
+		delete m_playerVisualization;
+		m_playerVisualization = nullptr;
 	}
 
 	//reload designer visualization
@@ -3709,7 +3709,7 @@ void CInterfacedScenario::stopAndReleasePlayer()
 //give the PlayerVisualisation the matching between the GtkWidget created by the CBoxConfigurationDialog and the Box CIdentifier
 bool CInterfacedScenario::setModifiableSettingsWidgets()
 {
-	for (auto& elem : m_boxConfigDialogs) { m_playerVisu->setWidget(elem->getBoxID(), elem->getWidget()); }
+	for (auto& elem : m_boxConfigDialogs) { m_playerVisualization->setWidget(elem->getBoxID(), elem->getWidget()); }
 
 	return true;
 }

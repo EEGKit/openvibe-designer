@@ -727,11 +727,11 @@ int go(int argc, char** argv)
 						//bool l_bIsScreenValid=true;
 						if (config.noCheckColorDepth == 0)
 						{
-							if (GDK_IS_DRAWABLE(GTK_WIDGET(app.m_pMainWindow)->window))
+							if (GDK_IS_DRAWABLE(GTK_WIDGET(app.m_MainWindow)->window))
 							{
 								// FIXME is it necessary to keep next line uncomment ?
 								//l_bIsScreenValid=false;
-								switch (gdk_drawable_get_depth(GTK_WIDGET(app.m_pMainWindow)->window))
+								switch (gdk_drawable_get_depth(GTK_WIDGET(app.m_MainWindow)->window))
 								{
 									case 24:
 									case 32:
@@ -820,8 +820,8 @@ int go(int argc, char** argv)
 							cbCollector1.enumeratePluginObjectDesc(OV_ClassId_Plugins_BoxAlgorithmDesc);
 							cbCollector2.enumeratePluginObjectDesc(OV_ClassId_Plugins_AlgorithmDesc);
 							InsertPluginObjectDescToGtkTreeStore(*context, cbCollector1.getPluginObjectDescMap(), app.m_BoxAlgorithmTreeModel, app.m_NewBoxes,
-																 app.m_UpdatedBoxes, app.m_isNewVersion);
-							InsertPluginObjectDescToGtkTreeStore(*context, cbCollector2.getPluginObjectDescMap(), app.m_pAlgorithmTreeModel, app.m_NewBoxes,
+																 app.m_UpdatedBoxes, app.m_IsNewVersion);
+							InsertPluginObjectDescToGtkTreeStore(*context, cbCollector2.getPluginObjectDescMap(), app.m_AlgorithmTreeModel, app.m_NewBoxes,
 																 app.m_UpdatedBoxes);
 
 							std::map<std::string, const IPluginObjectDesc*> metaboxDescMap;
@@ -829,12 +829,12 @@ int go(int argc, char** argv)
 							while ((identifier = context->getMetaboxManager().getNextMetaboxObjectDescIdentifier(identifier)) != OV_UndefinedIdentifier
 							) { metaboxDescMap[std::string(identifier.toString())] = context->getMetaboxManager().getMetaboxObjectDesc(identifier); }
 							InsertPluginObjectDescToGtkTreeStore(*context, metaboxDescMap, app.m_BoxAlgorithmTreeModel, app.m_NewBoxes, app.m_UpdatedBoxes,
-																 app.m_isNewVersion);
+																 app.m_IsNewVersion);
 
 							context->getLogManager() << LogLevel_Info << "Initialization took " << context->getConfigurationManager().expand("$Core{real-time}")
 									<< " ms\n";
 							// If the application is a newly launched version, and not launched without GUI -> display changelog
-							if (app.m_isNewVersion && config.noGui != CommandLineFlag_NoGui) { app.displayChangelogWhenAvailable(); }
+							if (app.m_IsNewVersion && config.noGui != CommandLineFlag_NoGui) { app.displayChangelogWhenAvailable(); }
 							try { gtk_main(); }
 							catch (DesignerException& ex)
 							{
