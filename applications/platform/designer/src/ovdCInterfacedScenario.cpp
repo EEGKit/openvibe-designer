@@ -42,14 +42,14 @@ extern map<size_t, GdkColor> gColors;
 
 static GtkTargetEntry targets[] = { { static_cast<gchar*>("STRING"), 0, 0 }, { static_cast<gchar*>("text/plain"), 0, 0 } };
 
-static GdkColor colorFromIdentifier(const CIdentifier& identifier, bool isDeprecated = false)
+static GdkColor colorFromIdentifier(const CIdentifier& id, const bool isDeprecated = false)
 {
 	GdkColor color;
 	uint32_t value1 = 0;
 	uint32_t value2 = 0;
 	uint64_t res    = 0;
 
-	sscanf(identifier.toString(), "(0x%08X, 0x%08X)", &value1, &value2);
+	sscanf(id.toString(), "(0x%08X, 0x%08X)", &value1, &value2);
 	res += value1;
 	res <<= 32;
 	res += value2;
@@ -1547,10 +1547,7 @@ bool CInterfacedScenario::pickInterfacedObject(const int x, const int y, int siz
 			idx += (pixels[j * nRowBytes + i * nChannel + 0] << 16);
 			idx += (pixels[j * nRowBytes + i * nChannel + 1] << 8);
 			idx += (pixels[j * nRowBytes + i * nChannel + 2]);
-			if (m_interfacedObjects[idx].m_ID != OV_UndefinedIdentifier)
-			{
-				m_SelectedObjects.insert(m_interfacedObjects[idx].m_ID);
-			}
+			if (m_interfacedObjects[idx].m_ID != OV_UndefinedIdentifier) { m_SelectedObjects.insert(m_interfacedObjects[idx].m_ID); }
 		}
 	}
 
@@ -2992,8 +2989,8 @@ void CInterfacedScenario::copySelection()
 				&& l_vIdMapping.find(l_pLink->getTargetBoxIdentifier()) != l_vIdMapping.end())
 			{
 				m_Application.m_ClipboardScenario->connect(l_oNewID, l_vIdMapping[l_pLink->getSourceBoxIdentifier()], l_pLink->getSourceBoxOutputIndex(),
-															l_vIdMapping[l_pLink->getTargetBoxIdentifier()], l_pLink->getTargetBoxInputIndex(),
-															l_pLink->getIdentifier());
+														   l_vIdMapping[l_pLink->getTargetBoxIdentifier()], l_pLink->getTargetBoxInputIndex(),
+														   l_pLink->getIdentifier());
 			}
 		}
 	}
