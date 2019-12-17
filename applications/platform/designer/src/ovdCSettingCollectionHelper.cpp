@@ -231,7 +231,7 @@ static void OnGTKWidgetDestroy(GtkWidget* widget, gpointer /*data*/) { gtk_widge
 
 static void OnInitializeColorGradient(GtkWidget* widget, gpointer data);
 
-static void OnRefreshColorGradient(GtkWidget* /*widget*/, GdkEventExpose* /*pEvent*/, gpointer data)
+static void OnRefreshColorGradient(GtkWidget* /*widget*/, GdkEventExpose* /*event*/, gpointer data)
 {
 	auto* userData = static_cast<color_gradient_t*>(data);
 
