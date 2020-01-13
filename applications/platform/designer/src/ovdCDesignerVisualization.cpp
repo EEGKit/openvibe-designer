@@ -7,7 +7,7 @@
 #include <cstring>
 
 using namespace OpenViBE;
-using namespace Kernel;
+using namespace /*OpenViBE::*/Kernel;
 using namespace OpenViBEDesigner;
 using namespace OpenViBEVisualizationToolkit;
 
@@ -1439,10 +1439,7 @@ gboolean CDesignerVisualization::widgetLeaveNotifyEventCB(GtkWidget* widget, Gdk
 	return FALSE;
 }
 
-void CDesignerVisualization::widgetLeaveNotifyEvent(GtkWidget* /*widget*/, GdkEventCrossing* /*event*/)
-{
-	m_highlightedWidget = nullptr;
-}
+void CDesignerVisualization::widgetLeaveNotifyEvent(GtkWidget* /*widget*/, GdkEventCrossing* /*event*/) { m_highlightedWidget = nullptr; }
 
 gboolean CDesignerVisualization::buttonReleaseCB(GtkWidget* widget, GdkEventButton* event, gpointer data)
 {
@@ -1600,7 +1597,7 @@ void CDesignerVisualization::cursorChanged(GtkTreeView* treeView)
 }
 
 void CDesignerVisualization::dragDataGetFromTreeCB(GtkWidget* srcWidget, GdkDragContext* /*dc*/, GtkSelectionData* selection, guint /*info*/,
-														guint /*time*/, gpointer /*data*/)
+												   guint /*time*/, gpointer /*data*/)
 {
 	char str[1024];
 	sprintf(str, "%p", srcWidget);
@@ -1608,7 +1605,7 @@ void CDesignerVisualization::dragDataGetFromTreeCB(GtkWidget* srcWidget, GdkDrag
 }
 
 void CDesignerVisualization::dragDataGetFromWidgetCB(GtkWidget* srcWidget, GdkDragContext* /*dc*/, GtkSelectionData* selection, guint /*info*/, guint /*time*/,
-														  gpointer /*data*/)
+													 gpointer /*data*/)
 {
 	char str[1024];
 	sprintf(str, "%p", srcWidget);
@@ -1616,7 +1613,7 @@ void CDesignerVisualization::dragDataGetFromWidgetCB(GtkWidget* srcWidget, GdkDr
 }
 
 void CDesignerVisualization::dragDataReceivedInWidgetCB(GtkWidget* dstWidget, GdkDragContext* /*dc*/, gint /*x*/, gint /*y*/,
-															 GtkSelectionData* selection, guint /*info*/, guint /*time*/, gpointer data)
+														GtkSelectionData* selection, guint /*info*/, guint /*time*/, gpointer data)
 {
 	static_cast<CDesignerVisualization*>(data)->dragDataReceivedInWidget(dstWidget, selection);
 }
@@ -1704,7 +1701,7 @@ void CDesignerVisualization::dragDataReceivedInWidget(GtkWidget* dstWidget, GtkS
 }
 
 void CDesignerVisualization::dataReceivedInEventBoxCB(GtkWidget* dstWidget, GdkDragContext* /*dc*/, gint /*x*/, gint /*y*/,
-																GtkSelectionData* selection, guint /*info*/, guint /*time*/, gpointer data)
+													  GtkSelectionData* selection, guint /*info*/, guint /*time*/, gpointer data)
 {
 	char buf[1024];
 	void* visualization = nullptr;

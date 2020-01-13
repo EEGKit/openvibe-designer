@@ -3,7 +3,7 @@
 #include <cstdlib>
 
 using namespace OpenViBE;
-using namespace Kernel;
+using namespace /*OpenViBE::*/Kernel;
 using namespace OpenViBEDesigner;
 
 bool TAttributeHandler::removeAttribute(const CIdentifier& id)

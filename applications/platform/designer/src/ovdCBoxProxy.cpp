@@ -3,7 +3,7 @@
 #include <fs/Files.h>
 
 using namespace OpenViBE;
-using namespace Kernel;
+using namespace /*OpenViBE::*/Kernel;
 using namespace Plugins;
 using namespace OpenViBEDesigner;
 using namespace std;
@@ -20,9 +20,9 @@ CBoxProxy::CBoxProxy(const IKernelContext& ctx, IScenario& scenario, const CIden
 		{
 			CIdentifier metaboxId;
 			metaboxId.fromString(m_constBox->getAttributeValue(OVP_AttributeId_Metabox_ID));
-			const CString l_sMetaboxScenarioPath(m_kernelCtx.getMetaboxManager().getMetaboxFilePath(metaboxId));
+			const CString path(m_kernelCtx.getMetaboxManager().getMetaboxFilePath(metaboxId));
 
-			m_isBoxAlgorithmPresent = FS::Files::fileExists(l_sMetaboxScenarioPath.toASCIIString());
+			m_isBoxAlgorithmPresent = FS::Files::fileExists(path.toASCIIString());
 		}
 		else { m_isBoxAlgorithmPresent = m_kernelCtx.getPluginManager().canCreatePluginObject(m_constBox->getAlgorithmClassIdentifier()); }
 
@@ -125,10 +125,7 @@ const char* CBoxProxy::getLabel() const
 	if (m_showOriginalNameWhenModified)
 	{
 		const string boxOriginalName(desc ? string(desc->getName()) : name);
-		if (boxOriginalName != name)
-		{
-			m_label = "<small><i><span foreground=\"" + grey + "\">" + boxOriginalName + "</span></i></small>\n" + m_label;
-		}
+		if (boxOriginalName != name) { m_label = "<small><i><span foreground=\"" + grey + "\">" + boxOriginalName + "</span></i></small>\n" + m_label; }
 	}
 
 	if (canChangeInput || canChangeOutput || canChangeSetting)

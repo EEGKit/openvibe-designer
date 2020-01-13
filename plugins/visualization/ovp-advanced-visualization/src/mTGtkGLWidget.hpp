@@ -75,22 +75,22 @@ namespace Mensia
 					m_right  = right;
 					m_bottom = bottom;
 
-					::g_signal_connect(widget, "configure-event", G_CALLBACK(TGtkGLWidget<TBox>::__configure_cb), m_box);
-					::g_signal_connect(widget, "expose-event", G_CALLBACK(TGtkGLWidget<TBox>::__expose_cb), m_box);
-					::g_signal_connect(widget, "button-press-event", G_CALLBACK(TGtkGLWidget<TBox>::__mouse_button_cb), m_box);
-					::g_signal_connect(widget, "button-release-event", G_CALLBACK(TGtkGLWidget<TBox>::__mouse_button_cb), m_box);
-					::g_signal_connect(widget, "motion-notify-event", G_CALLBACK(TGtkGLWidget<TBox>::__motion_notify_cb), m_box);
-					::g_signal_connect(widget, "enter-notify-event", G_CALLBACK(TGtkGLWidget<TBox>::__enter_notify_cb), m_box);
-					::g_signal_connect(gtk_widget_get_parent(widget), "key-press-event", G_CALLBACK(TGtkGLWidget<TBox>::__key_press_cb), m_box);
-					::g_signal_connect(gtk_widget_get_parent(widget), "key-release-event", G_CALLBACK(TGtkGLWidget<TBox>::__key_release_cb), m_box);
+					::g_signal_connect(widget, "configure-event", G_CALLBACK(TGtkGLWidget<TBox>::configureCB), m_box);
+					::g_signal_connect(widget, "expose-event", G_CALLBACK(TGtkGLWidget<TBox>::exposeCB), m_box);
+					::g_signal_connect(widget, "button-press-event", G_CALLBACK(TGtkGLWidget<TBox>::mouseButtonCB), m_box);
+					::g_signal_connect(widget, "button-release-event", G_CALLBACK(TGtkGLWidget<TBox>::mouseButtonCB), m_box);
+					::g_signal_connect(widget, "motion-notify-event", G_CALLBACK(TGtkGLWidget<TBox>::motionNotifyCB), m_box);
+					::g_signal_connect(widget, "enter-notify-event", G_CALLBACK(TGtkGLWidget<TBox>::enterNotifyCB), m_box);
+					::g_signal_connect(gtk_widget_get_parent(widget), "key-press-event", G_CALLBACK(TGtkGLWidget<TBox>::keyPressCB), m_box);
+					::g_signal_connect(gtk_widget_get_parent(widget), "key-release-event", G_CALLBACK(TGtkGLWidget<TBox>::keyReleaseCB), m_box);
 
-					::g_signal_connect_after(left, "expose-event", G_CALLBACK(TGtkGLWidget<TBox>::__expose_left_cb), m_box);
-					::g_signal_connect_after(right, "expose-event", G_CALLBACK(TGtkGLWidget<TBox>::__expose_right_cb), m_box);
-					::g_signal_connect_after(bottom, "expose-event", G_CALLBACK(TGtkGLWidget<TBox>::__expose_bottom_cb), m_box);
+					::g_signal_connect_after(left, "expose-event", G_CALLBACK(TGtkGLWidget<TBox>::exposeLeftCB), m_box);
+					::g_signal_connect_after(right, "expose-event", G_CALLBACK(TGtkGLWidget<TBox>::exposeRightCB), m_box);
+					::g_signal_connect_after(bottom, "expose-event", G_CALLBACK(TGtkGLWidget<TBox>::exposeBottomCB), m_box);
 
 					m_timeoutSrc = g_timeout_source_new(250); // timeouts every 50 ms
 					g_source_set_priority(m_timeoutSrc, G_PRIORITY_LOW);
-					g_source_set_callback(m_timeoutSrc, GSourceFunc(__timeout_redraw), m_box, nullptr);
+					g_source_set_callback(m_timeoutSrc, GSourceFunc(timeoutRedrawCB), m_box, nullptr);
 					g_source_attach(m_timeoutSrc, nullptr);
 
 					gtk_widget_queue_resize(widget);
@@ -208,26 +208,22 @@ namespace Mensia
 		private:
 
 
-			static gboolean __timeout_redraw(TBox* box)
+			static gboolean timeoutRedrawCB(TBox* box)
 			{
 				box->redraw();
 				return TRUE;
 			}
 
-			static gboolean __configure_cb(GtkWidget* widget, GdkEventConfigure* /*event*/, TBox* box)
+			static gboolean configureCB(GtkWidget* widget, GdkEventConfigure* /*event*/, TBox* box)
 			{
 				GtkGL::preRender(widget);
-
 				glViewport(0, 0, widget->allocation.width, widget->allocation.height);
-
 				box->reshape(widget->allocation.width, widget->allocation.height);
-
 				GtkGL::postRender(widget);
-
 				return TRUE;
 			}
 
-			static gboolean __expose_cb(GtkWidget* widget, GdkEventExpose* /*event*/, TBox* box)
+			static gboolean exposeCB(GtkWidget* widget, GdkEventExpose* /*event*/, TBox* box)
 			{
 				const float d  = 1.F;
 				const float dx = d / (widget->allocation.width - d);
@@ -294,7 +290,7 @@ namespace Mensia
 				return TRUE;
 			}
 
-			static gboolean __enter_notify_cb(GtkWidget* /*widget*/, GdkEventCrossing* /*event*/, TBox* box)
+			static gboolean enterNotifyCB(GtkWidget* /*widget*/, GdkEventCrossing* /*event*/, TBox* box)
 			{
 				box->redraw();
 				//box->request();
@@ -302,25 +298,25 @@ namespace Mensia
 				return TRUE;
 			}
 
-			static gboolean __expose_left_cb(GtkWidget* /*widget*/, GdkEventExpose* /*event*/, TBox* box)
+			static gboolean exposeLeftCB(GtkWidget* /*widget*/, GdkEventExpose* /*event*/, TBox* box)
 			{
 				box->drawLeft();
 				return TRUE;
 			}
 
-			static gboolean __expose_right_cb(GtkWidget* /*widget*/, GdkEventExpose* /*event*/, TBox* box)
+			static gboolean exposeRightCB(GtkWidget* /*widget*/, GdkEventExpose* /*event*/, TBox* box)
 			{
 				box->drawRight();
 				return TRUE;
 			}
 
-			static gboolean __expose_bottom_cb(GtkWidget* /*widget*/, GdkEventExpose* /*event*/, TBox* box)
+			static gboolean exposeBottomCB(GtkWidget* /*widget*/, GdkEventExpose* /*event*/, TBox* box)
 			{
 				box->drawBottom();
 				return TRUE;
 			}
 
-			static gboolean __mouse_button_cb(GtkWidget* /*widget*/, GdkEventButton* event, TBox* box)
+			static gboolean mouseButtonCB(GtkWidget* /*widget*/, GdkEventButton* event, TBox* box)
 			{
 				int status = 0;
 				switch (event->type)
@@ -338,19 +334,19 @@ namespace Mensia
 				return TRUE;
 			}
 
-			static gboolean __motion_notify_cb(GtkWidget* /*widget*/, GdkEventMotion* event, TBox* box)
+			static gboolean motionNotifyCB(GtkWidget* /*widget*/, GdkEventMotion* event, TBox* box)
 			{
 				box->mouseMotion(int(event->x), int(event->y));
 				return TRUE;
 			}
 
-			static gboolean __key_press_cb(GtkWidget* /*widget*/, GdkEventKey* event, TBox* box)
+			static gboolean keyPressCB(GtkWidget* /*widget*/, GdkEventKey* event, TBox* box)
 			{
 				box->keyboard(0, 0, /*event->x, event->y,*/ event->keyval, true);
 				return TRUE;
 			}
 
-			static gboolean __key_release_cb(GtkWidget* /*widget*/, GdkEventKey* event, TBox* box)
+			static gboolean keyReleaseCB(GtkWidget* /*widget*/, GdkEventKey* event, TBox* box)
 			{
 				box->keyboard(0, 0, /*event->x, event->y,*/ event->keyval, false);
 				return TRUE;

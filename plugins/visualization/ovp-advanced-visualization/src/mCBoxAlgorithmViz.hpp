@@ -288,9 +288,9 @@ namespace Mensia
 
 			bool onDefaultInitialized(OpenViBE::Kernel::IBox& box) override
 			{
-				const bool isSignal = (std::find(m_Parameters.begin(), m_Parameters.end(), I_Signal) != m_Parameters.end());
-				const bool isSpectrum = (std::find(m_Parameters.begin(), m_Parameters.end(), I_Spectrum) != m_Parameters.end());
-				const bool isCovariance = (std::find(m_Parameters.begin(), m_Parameters.end(), I_Covariance) != m_Parameters.end());
+				const bool isSignal          = (std::find(m_Parameters.begin(), m_Parameters.end(), I_Signal) != m_Parameters.end());
+				const bool isSpectrum        = (std::find(m_Parameters.begin(), m_Parameters.end(), I_Spectrum) != m_Parameters.end());
+				const bool isCovariance      = (std::find(m_Parameters.begin(), m_Parameters.end(), I_Covariance) != m_Parameters.end());
 				OpenViBE::CIdentifier typeID = OV_UndefinedIdentifier;
 
 				for (size_t i = 0; i < box.getInputCount(); ++i)
@@ -308,7 +308,7 @@ namespace Mensia
 
 			_IsDerivedFromClass_Final_(OpenViBEToolkit::TBoxListener<OpenViBE::Plugins::IBoxListener>, OV_UndefinedIdentifier)
 
-				std::vector<int> m_Parameters;
+			std::vector<int> m_Parameters;
 		};
 
 		class CBoxAlgorithmVizDesc : public OpenViBE::Plugins::IBoxAlgorithmDesc

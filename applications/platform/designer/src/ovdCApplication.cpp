@@ -58,7 +58,7 @@ static const size_t s_RecentFileNumber = 10;
 #define OV_ClassId_Selected OpenViBE::CIdentifier(0xC67A01DC, 0x28CE06C1)
 
 using namespace OpenViBE;
-using namespace Kernel;
+using namespace /*OpenViBE::*/Kernel;
 using namespace Plugins;
 using namespace OpenViBEDesigner;
 using namespace std;
@@ -595,7 +595,7 @@ static gboolean idle_application_loop(gpointer data)
 				else if (minutes) { ss << std::setw(2) << minutes << "m " << std::setw(2) << seconds << "s " << std::setw(3) << milli << "ms"; }
 				else if (seconds) { ss << std::setw(2) << seconds << "s " << std::setw(3) << milli << "ms"; }
 				else { ss << std::setw(3) << milli << "ms"; }
-				
+
 
 				gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(app->m_Builder, "openvibe-label_current_time")), ss.str().c_str());
 
@@ -2115,7 +2115,7 @@ void CApplication::closeScenarioCB(CInterfacedScenario* scenario)
 
 		GtkWidget* dialog = GTK_WIDGET(gtk_builder_get_object(builder, "dialog_running_scenario"));
 		gtk_builder_connect_signals(builder, nullptr);
-		// gtk_dialog_set_response_sensitive(GTK_DIALOG(l_pDialog), GTK_RESPONSE_CLOSE, true);
+		// gtk_dialog_set_response_sensitive(GTK_DIALOG(dialog), GTK_RESPONSE_CLOSE, true);
 		gtk_dialog_run(GTK_DIALOG(dialog));
 		gtk_widget_destroy(dialog);
 		g_object_unref(builder);
@@ -2129,7 +2129,7 @@ void CApplication::closeScenarioCB(CInterfacedScenario* scenario)
 
 		GtkWidget* dialog = GTK_WIDGET(gtk_builder_get_object(builder, "dialog_unsaved_scenario"));
 		gtk_builder_connect_signals(builder, nullptr);
-		// gtk_dialog_set_response_sensitive(GTK_DIALOG(l_pDialog), GTK_RESPONSE_CLOSE, true);
+		// gtk_dialog_set_response_sensitive(GTK_DIALOG(dialog), GTK_RESPONSE_CLOSE, true);
 		const gint responseId = gtk_dialog_run(GTK_DIALOG(dialog));
 		gtk_widget_destroy(dialog);
 		g_object_unref(builder);
@@ -2569,7 +2569,7 @@ bool CApplication::quitApplicationCB()
 
 		GtkWidget* dialog = GTK_WIDGET(gtk_builder_get_object(builder, "dialog_running_scenario_global"));
 		gtk_builder_connect_signals(builder, nullptr);
-		// gtk_dialog_set_response_sensitive(GTK_DIALOG(l_pDialog), GTK_RESPONSE_CLOSE, true);
+		// gtk_dialog_set_response_sensitive(GTK_DIALOG(dialog), GTK_RESPONSE_CLOSE, true);
 		gtk_dialog_run(GTK_DIALOG(dialog));
 		gtk_widget_destroy(dialog);
 		g_object_unref(builder);

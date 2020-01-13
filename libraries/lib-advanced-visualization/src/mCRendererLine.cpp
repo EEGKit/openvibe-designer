@@ -56,9 +56,9 @@ void CRendererLine::refresh(const CRendererContext& ctx)
 
 	for (size_t i = 0; i < m_nChannel; ++i)
 	{
-		const size_t firstIdx = ((maxIdx - 1) / m_nSample) * m_nSample;
-		std::vector<float>& history   = m_history[i];
-		CVertex* vertex               = &m_vertices[i][0];
+		const size_t firstIdx       = ((maxIdx - 1) / m_nSample) * m_nSample;
+		std::vector<float>& history = m_history[i];
+		CVertex* vertex             = &m_vertices[i][0];
 
 		for (size_t j = 0; j < m_nSample; ++j)
 		{

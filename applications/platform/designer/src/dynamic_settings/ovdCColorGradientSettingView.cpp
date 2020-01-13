@@ -42,9 +42,7 @@ CColorGradientSettingView::CColorGradientSettingView(Kernel::IBox& box, const si
 	CAbstractSettingView::initializeValue();
 }
 
-
 void CColorGradientSettingView::getValue(CString& value) const { value = CString(gtk_entry_get_text(m_entry)); }
-
 
 void CColorGradientSettingView::setValue(const CString& value)
 {
@@ -68,7 +66,7 @@ void CColorGradientSettingView::configurePressed()
 	m_colorGradient.resize(std::max<size_t>(colorGradient.getDimensionSize(1), 2));
 	for (size_t i = 0; i < colorGradient.getDimensionSize(1); ++i)
 	{
-		const size_t idx              = i * 4;
+		const size_t idx               = i * 4;
 		m_colorGradient[i].percent     = colorGradient[idx];
 		m_colorGradient[i].color.red   = guint(colorGradient[idx + 1] * .01 * 65535.);
 		m_colorGradient[i].color.green = guint(colorGradient[idx + 2] * .01 * 65535.);

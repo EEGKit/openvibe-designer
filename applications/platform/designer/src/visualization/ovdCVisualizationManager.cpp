@@ -16,7 +16,7 @@
 using namespace std;
 using namespace OpenViBEDesigner;
 using namespace OpenViBE;
-using namespace Kernel;
+using namespace /*OpenViBE::*/Kernel;
 using namespace Plugins;
 using namespace OpenViBEVisualizationToolkit;
 //using namespace OpenViBE::Tools;
@@ -24,8 +24,8 @@ using namespace OpenViBEVisualizationToolkit;
 bool CVisualizationManager::createVisualizationTree(CIdentifier& treeID)
 {
 	IVisualizationTree* newTree = new CVisualizationTree(m_kernelCtx);
-	treeID = getUnusedIdentifier();
-	m_trees[treeID] = newTree;
+	treeID                      = getUnusedIdentifier();
+	m_trees[treeID]             = newTree;
 	return true;
 }
 
@@ -45,10 +45,7 @@ bool CVisualizationManager::releaseVisualizationTree(const CIdentifier& treeID)
 IVisualizationTree& CVisualizationManager::getVisualizationTree(const CIdentifier& treeID)
 {
 	const auto it = m_trees.find(treeID);
-	if (it == m_trees.end())
-	{
-		m_kernelCtx.getLogManager() << LogLevel_Fatal << "Visualization Tree " << treeID << " does not exist !\n";
-	}
+	if (it == m_trees.end()) { m_kernelCtx.getLogManager() << LogLevel_Fatal << "Visualization Tree " << treeID << " does not exist !\n"; }
 	return *it->second;
 }
 

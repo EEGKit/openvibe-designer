@@ -8,7 +8,7 @@
 #define OVD_GUI_File		OpenViBE::Directories::getDataDir() + "/applications/designer/interface.ui"
 
 using namespace OpenViBE;
-using namespace Kernel;
+using namespace /*OpenViBE::*/Kernel;
 using namespace OpenViBEDesigner;
 using namespace std;
 

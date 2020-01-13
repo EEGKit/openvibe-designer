@@ -39,7 +39,7 @@ namespace OpenViBEPlugins
 
 			//internal data
 			//-------------
-			bool m_firstProcess  = true;
+			bool m_firstProcess = true;
 			std::vector<double> m_coords;
 			std::vector<double*> m_coordsPtr;
 			std::vector<double> m_splineCoefs;

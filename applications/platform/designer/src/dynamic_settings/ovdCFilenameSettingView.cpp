@@ -94,18 +94,18 @@ void CFilenameSettingView::onFocusLost()
 	if (!m_onValueSetting)
 	{
 		std::string fileName = gtk_entry_get_text(m_entry);
-		auto iter            = fileName.begin();
+		auto it              = fileName.begin();
 
-		while ((iter = std::find(iter, fileName.end(), '\\')) != fileName.end())
+		while ((it = std::find(it, fileName.end(), '\\')) != fileName.end())
 		{
-			if (iter == std::prev(fileName.end()))
+			if (it == std::prev(fileName.end()))
 			{
-				*iter = '/';
+				*it = '/';
 				break;
 			}
-			if (*std::next(iter) != '{' && *std::next(iter) != '$' && *std::next(iter) != '}') { *iter = '/'; }
+			if (*std::next(it) != '{' && *std::next(it) != '$' && *std::next(it) != '}') { *it = '/'; }
 
-			std::advance(iter, 1);
+			std::advance(it, 1);
 		}
 
 		gtk_entry_set_text(m_entry, fileName.c_str());

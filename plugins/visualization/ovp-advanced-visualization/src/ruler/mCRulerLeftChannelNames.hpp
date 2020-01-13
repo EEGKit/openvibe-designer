@@ -39,9 +39,9 @@ namespace Mensia
 				GdkGC* drawGC = gdk_gc_new(widget->window);
 				for (size_t i = 0; i < m_rendererCtx->getSelectedCount(); ++i)
 				{
-					const size_t idx    = m_rendererCtx->getSelected(i);
-					const std::string label   = (m_rendererCtx->getChannelName(idx) + " (" + std::to_string(idx + 1) + ")");
-					PangoLayout* layout = gtk_widget_create_pango_layout(widget, label.c_str());
+					const size_t idx        = m_rendererCtx->getSelected(i);
+					const std::string label = (m_rendererCtx->getChannelName(idx) + " (" + std::to_string(idx + 1) + ")");
+					PangoLayout* layout     = gtk_widget_create_pango_layout(widget, label.c_str());
 					pango_layout_get_size(layout, &lw, &lh);
 					lw /= PANGO_SCALE;
 					lh /= PANGO_SCALE;

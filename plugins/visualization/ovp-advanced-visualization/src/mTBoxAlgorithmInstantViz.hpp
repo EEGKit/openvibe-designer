@@ -107,7 +107,7 @@ namespace Mensia
 		template <class TRendererFactoryClass, class TRulerClass>
 		TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::TBoxAlgorithmInstantViz(const OpenViBE::CIdentifier& classID,
 																							 const std::vector<int>& params)
-		: CBoxAlgorithmViz(classID, params) { }
+			: CBoxAlgorithmViz(classID, params) { }
 
 		template <class TRendererFactoryClass, class TRulerClass>
 		bool TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::initialize()

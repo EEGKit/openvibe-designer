@@ -5,7 +5,7 @@
 using namespace OpenViBEDesigner;
 using namespace OpenViBE;
 using namespace Plugins;
-using namespace Kernel;
+using namespace /*OpenViBE::*/Kernel;
 
 static void BoldSelectionCB(GtkButton* /*button*/, gpointer data) { static_cast<CCommentEditorDialog*>(data)->applyTagCB("<b>", "</b>"); }
 static void ItalicSelectionCB(GtkButton* /*button*/, gpointer data) { static_cast<CCommentEditorDialog*>(data)->applyTagCB("<i>", "</i>"); }

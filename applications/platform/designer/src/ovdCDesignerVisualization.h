@@ -152,8 +152,8 @@ namespace OpenViBEDesigner
 		
 		//preview window visibility flag
 		bool m_previewWindowVisible = false;
-		size_t m_previewWindowW   = 0;
-		size_t m_previewWindowH   = 0;
+		size_t m_previewWindowW     = 0;
+		size_t m_previewWindowH     = 0;
 
 		//Factories
 		GtkItemFactory* m_unaffectedItemFactory          = nullptr;

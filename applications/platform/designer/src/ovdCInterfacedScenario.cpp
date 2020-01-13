@@ -32,7 +32,7 @@
 #endif
 
 using namespace OpenViBE;
-using namespace Kernel;
+using namespace /*OpenViBE::*/Kernel;
 using namespace Plugins;
 using namespace OpenViBEDesigner;
 using namespace OpenViBEVisualizationToolkit;
@@ -1731,7 +1731,7 @@ void CInterfacedScenario::configureScenarioSettingsCB()
 void CInterfacedScenario::addScenarioSettingCB()
 {
 	const std::string name = "Setting " + std::to_string(m_Scenario.getSettingCount() + 1);
-	m_Scenario.addSetting(name.c_str(), OVTK_TypeId_Integer, "0", OV_Value_UndefinedIndexUInt, false,
+	m_Scenario.addSetting(name.c_str(), OVTK_TypeId_Integer, "0", size_t(-1), false,
 						  m_Scenario.getUnusedSettingIdentifier(OV_UndefinedIdentifier));
 
 	this->redrawConfigureScenarioSettingsDialog();
@@ -2525,14 +2525,14 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(GtkWidget* widget, 
 						size_t nFixedSetting = 0;
 						sscanf(box->getAttributeValue(OV_AttributeId_Box_InitialSettingCount).toASCIIString(), "%d", &nFixedSetting);
 						GtkImageMenuItem* itemSetting = gtk_menu_add_new_image_menu_item(menu, GTK_STOCK_PROPERTIES, "modify settings");
-						GtkMenu* menuSetting              = GTK_MENU(gtk_menu_new());
+						GtkMenu* menuSetting          = GTK_MENU(gtk_menu_new());
 						for (size_t i = 0; i < box->getSettingCount(); ++i)
 						{
 							CString name;
 							CIdentifier typeID;
 							box->getSettingName(i, name);
 							box->getSettingType(i, typeID);
-							const string str                      = std::to_string(i + 1) + " : " + name.toASCIIString();
+							const string str           = std::to_string(i + 1) + " : " + name.toASCIIString();
 							GtkImageMenuItem* menuItem = gtk_menu_add_new_image_menu_item(menuSetting, GTK_STOCK_PROPERTIES, str.c_str());
 
 							if (canModifySetting || nFixedSetting <= i)
@@ -3344,7 +3344,7 @@ void CInterfacedScenario::contextMenuBoxAddSettingCB(IBox& box)
 	m_kernelCtx.getLogManager() << LogLevel_Debug << "contextMenuBoxAddSettingCB\n";
 	// Store setting count in case the custom "onSettingAdded" of the box adds more than one setting
 	const size_t nOldSettings = box.getSettingCount();
-	box.addSetting("New setting", OV_UndefinedIdentifier, "", OV_Value_UndefinedIndexUInt, false,
+	box.addSetting("New setting", OV_UndefinedIdentifier, "", size_t(-1), false,
 				   m_Scenario.getUnusedSettingIdentifier(OV_UndefinedIdentifier));
 	const size_t nNewSettings = box.getSettingCount();
 	// Check that at least one setting was added

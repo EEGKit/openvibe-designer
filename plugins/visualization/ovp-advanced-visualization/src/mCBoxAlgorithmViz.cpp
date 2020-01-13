@@ -31,7 +31,7 @@ using namespace Mensia;
 using namespace AdvancedVisualization;
 
 using namespace OpenViBE;
-using namespace Kernel;
+using namespace /*OpenViBE::*/Kernel;
 
 namespace
 {

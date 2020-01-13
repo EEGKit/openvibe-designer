@@ -27,9 +27,9 @@ namespace OpenViBEDesigner
 
 		const OpenViBE::Kernel::ILink* m_constLink;
 		OpenViBE::Kernel::ILink* m_link = nullptr;
-		int m_xSrc = 0;
-		int m_ySrc = 0;
-		int m_xDst = 0;
-		int m_yDst = 0;
+		int m_xSrc                      = 0;
+		int m_ySrc                      = 0;
+		int m_xDst                      = 0;
+		int m_yDst                      = 0;
 	};
 }  // namespace OpenViBEDesigner

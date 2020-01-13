@@ -26,7 +26,7 @@ namespace OpenViBEDesigner
 		size_t m_index = 0;
 		const std::string m_guiFilename;
 		const std::string m_title;
-		
+
 		typedef bool (OpenViBE::Kernel::IBox::*get_identifier_t)(size_t index, OpenViBE::CIdentifier& identifier) const;
 		typedef bool (OpenViBE::Kernel::IBox::*get_type_t)(size_t index, OpenViBE::CIdentifier& typeID) const;
 		typedef bool (OpenViBE::Kernel::IBox::*get_name_t)(size_t index, OpenViBE::CString& name) const;

@@ -247,10 +247,7 @@ namespace Mensia
 					if (m_RendererCtx->isTimeLocked() && m_RendererCtx->getSampleDuration())
 					{
 						const auto nTheoreticalSample = size_t(m_Time2 / m_RendererCtx->getSampleDuration());
-						if (nTheoreticalSample > m_Renderer->getHistoryCount())
-						{
-							m_Renderer->prefeed(nTheoreticalSample - m_Renderer->getHistoryCount());
-						}
+						if (nTheoreticalSample > m_Renderer->getHistoryCount()) { m_Renderer->prefeed(nTheoreticalSample - m_Renderer->getHistoryCount()); }
 					}
 
 					m_RefreshNeeded = true;

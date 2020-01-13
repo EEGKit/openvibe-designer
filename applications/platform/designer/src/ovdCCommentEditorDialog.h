@@ -9,7 +9,8 @@ namespace OpenViBEDesigner
 	public:
 
 		CCommentEditorDialog(const OpenViBE::Kernel::IKernelContext& ctx, OpenViBE::Kernel::IComment& comment, const char* guiFilename)
-		: m_kernelCtx(ctx), m_comment(comment), m_guiFilename(guiFilename) { }
+			: m_kernelCtx(ctx), m_comment(comment), m_guiFilename(guiFilename) { }
+
 		~CCommentEditorDialog() = default;
 
 		bool run();

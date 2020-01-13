@@ -2,7 +2,7 @@
 #include <gdk/gdkkeysyms.h>
 
 using namespace OpenViBE;
-using namespace Kernel;
+using namespace /*OpenViBE::*/Kernel;
 using namespace OpenViBEDesigner;
 
 CInputDialog::CInputDialog(const char* gtkBuilder, const fpButtonCB okButtonCB, void* data, const char* title, const char* label, const char* entry)

@@ -7,7 +7,7 @@
 #include <cstdlib>
 
 using namespace OpenViBE;
-using namespace Kernel;
+using namespace /*OpenViBE::*/Kernel;
 using namespace OpenViBEDesigner;
 using namespace std;
 
@@ -410,7 +410,7 @@ static void OnButtonSettingColorGradientConfigurePressed(GtkButton* button, gpoi
 		CString str;
 		CMatrix gradient;
 		gradients2Matrix(userData.colorGradient, gradient);
-		
+
 		OpenViBEVisualizationToolkit::Tools::ColorGradient::format(str, gradient);
 		gtk_entry_set_text(widget, str.toASCIIString());
 	}
@@ -480,8 +480,8 @@ CString CSettingCollectionHelper::getValueBoolean(GtkWidget* widget)
 	if (!GTK_IS_CONTAINER(widget)) { return "false"; }
 	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
 	if (!GTK_IS_ENTRY(widgets[1])) { return "false"; }
-	GtkEntry* l_widget = GTK_ENTRY(widgets[1]);
-	return CString(gtk_entry_get_text(l_widget));
+	GtkEntry* entry = GTK_ENTRY(widgets[1]);
+	return CString(gtk_entry_get_text(entry));
 }
 
 CString CSettingCollectionHelper::getValueInteger(GtkWidget* widget)

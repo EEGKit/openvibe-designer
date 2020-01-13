@@ -3,7 +3,7 @@
 using namespace OpenViBEDesigner;
 using namespace OpenViBE;
 using namespace Plugins;
-using namespace Kernel;
+using namespace /*OpenViBE::*/Kernel;
 
 bool CRenameDialog::run()
 {

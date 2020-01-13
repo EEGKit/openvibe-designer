@@ -23,7 +23,7 @@
 #endif
 
 using namespace OpenViBE;
-using namespace Kernel;
+using namespace /*OpenViBE::*/Kernel;
 using namespace Plugins;
 using namespace OpenViBEDesigner;
 using namespace std;
@@ -261,7 +261,7 @@ static void InsertPluginObjectDescToGtkTreeStore(const IKernelContext& ctx, map<
 					&& ((lastUsedVMajor < boxCompoVMajor && boxCompoVMajor <= currentVMajor)
 						|| (boxCompoVMajor == currentVMajor && lastUsedVMinor < boxCompoVMinor && boxCompoVMinor <= currentVMinor)
 						|| (boxCompoVMinor == currentVMinor && lastUsedVPatch < boxCompoVPatch && boxCompoVPatch <= currentVPatch)
-						// As default value for l_uiMinorLastVersionOpened and l_uiMajorLastVersionOpened are the current software version
+						// As default value for lastUsedVMinor and lastUsedVMajor are the current software version
 						|| (boxCompoVMajor == currentVMajor && boxCompoVMinor == currentVMinor && boxCompoVPatch == currentVPatch)))
 				{
 					str += " (New)";
@@ -677,15 +677,15 @@ int go(int argc, char** argv)
 
 
 #if defined OPENVIBE_SPLASHSCREEN
-				GtkWidget* l_pSplashScreenWindow = gtk_window_new(GTK_WINDOW_POPUP);
-				gtk_window_set_position(GTK_WINDOW(l_pSplashScreenWindow), GTK_WIN_POS_CENTER);
-				gtk_window_set_type_hint(GTK_WINDOW(l_pSplashScreenWindow), GDK_WINDOW_TYPE_HINT_SPLASHSCREEN);
-				gtk_window_set_default_size(GTK_WINDOW(l_pSplashScreenWindow), 600, 400);
-				GtkWidget* l_pSplashScreenImage = gtk_image_new_from_file(OpenViBE::Directories::getDataDir() + "/applications/designer/splashscreen.png");
-				gtk_container_add(GTK_CONTAINER(l_pSplashScreenWindow), (l_pSplashScreenImage));
-				gtk_widget_show(l_pSplashScreenImage);
-				gtk_widget_show(l_pSplashScreenWindow);
-				g_timeout_add(500, cb_remove_splashscreen, l_pSplashScreenWindow);
+				GtkWidget* splashScreenWindow = gtk_window_new(GTK_WINDOW_POPUP);
+				gtk_window_set_position(GTK_WINDOW(splashScreenWindow), GTK_WIN_POS_CENTER);
+				gtk_window_set_type_hint(GTK_WINDOW(splashScreenWindow), GDK_WINDOW_TYPE_HINT_SPLASHSCREEN);
+				gtk_window_set_default_size(GTK_WINDOW(splashScreenWindow), 600, 400);
+				GtkWidget* splashScreenImage = gtk_image_new_from_file(OpenViBE::Directories::getDataDir() + "/applications/designer/splashscreen.png");
+				gtk_container_add(GTK_CONTAINER(splashScreenWindow), (splashScreenImage));
+				gtk_widget_show(splashScreenImage);
+				gtk_widget_show(splashScreenWindow);
+				g_timeout_add(500, cb_remove_splashscreen, splashScreenWindow);
 
 				while (gtk_events_pending()) { gtk_main_iteration(); }
 #endif
@@ -724,19 +724,19 @@ int go(int argc, char** argv)
 						app.initialize(config.getFlags());
 
 						// FIXME is it necessary to keep next line uncomment ?
-						//bool l_bIsScreenValid=true;
+						//bool isScreenValid=true;
 						if (config.noCheckColorDepth == 0)
 						{
 							if (GDK_IS_DRAWABLE(GTK_WIDGET(app.m_MainWindow)->window))
 							{
 								// FIXME is it necessary to keep next line uncomment ?
-								//l_bIsScreenValid=false;
+								//isScreenValid=false;
 								switch (gdk_drawable_get_depth(GTK_WIDGET(app.m_MainWindow)->window))
 								{
 									case 24:
 									case 32:
 										// FIXME is it necessary to keep next line uncomment ?
-										//l_bIsScreenValid=true;
+										//isScreenValid=true;
 										break;
 									default:
 										logMgr << LogLevel_Error << "Please change the color depth of your screen to either 24 or 32 bits\n";

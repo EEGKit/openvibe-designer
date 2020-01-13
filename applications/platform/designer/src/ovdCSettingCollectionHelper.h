@@ -11,7 +11,7 @@ namespace OpenViBEDesigner
 	public:
 
 		CSettingCollectionHelper(const OpenViBE::Kernel::IKernelContext& ctx, const char* guiFilename) : m_KernelCtx(ctx), m_GUIFilename(guiFilename) { }
-		virtual ~CSettingCollectionHelper() = default;
+		~CSettingCollectionHelper() = default;
 
 		OpenViBE::CString getSettingWidgetName(const OpenViBE::CIdentifier& typeID) const;
 		OpenViBE::CString getSettingEntryWidgetName(const OpenViBE::CIdentifier& typeID) const;

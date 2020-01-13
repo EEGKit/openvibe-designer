@@ -9,7 +9,7 @@
 
 using namespace OpenViBEDesigner;
 using namespace OpenViBE;
-using namespace Kernel;
+using namespace /*OpenViBE::*/Kernel;
 using namespace Plugins;
 using namespace OpenViBEVisualizationToolkit;
 using namespace std;

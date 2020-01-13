@@ -3,7 +3,7 @@
 #include "../../../../../sdk/openvibe/include/openvibe/ov_defines.h"
 
 using namespace OpenViBE;
-using namespace Kernel;
+using namespace /*OpenViBE::*/Kernel;
 using namespace OpenViBEDesigner;
 
 CLinkProxy::CLinkProxy(const ILink& link) : m_constLink(&link)

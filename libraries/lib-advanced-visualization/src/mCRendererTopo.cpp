@@ -404,7 +404,7 @@ bool CRendererTopo::render(const CRendererContext& ctx)
 		glTranslatef(v.x, v.y, v.z);
 		glScalef(scale, scale, scale);
 
-		const float value = ctx.isSelected(j) ? 1.0F : 0.2F;
+		const float value                = ctx.isSelected(j) ? 1.0F : 0.2F;
 		const std::array<float, 3> color = { value, value, value };
 		glColor3fv(color.data());
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);

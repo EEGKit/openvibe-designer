@@ -42,7 +42,7 @@ void CFloatSettingView::setValue(const CString& value)
 
 void CFloatSettingView::adjustValue(const double amount)
 {
-	const double value = m_kernelCtx.getConfigurationManager().expandAsFloat(gtk_entry_get_text(m_entry), 0) + amount;
+	const double value    = m_kernelCtx.getConfigurationManager().expandAsFloat(gtk_entry_get_text(m_entry), 0) + amount;
 	const std::string str = std::to_string(value);
 	getBox().setSettingValue(getSettingIndex(), str.c_str());
 	setValue(str.c_str());

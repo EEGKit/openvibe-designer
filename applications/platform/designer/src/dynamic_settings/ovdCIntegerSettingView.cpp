@@ -42,7 +42,7 @@ void CIntegerSettingView::setValue(const CString& value)
 
 void CIntegerSettingView::adjustValue(const int amount)
 {
-	const int64_t value = m_kernelCtx.getConfigurationManager().expandAsInteger(gtk_entry_get_text(m_entry), 0) + amount;
+	const int64_t value   = m_kernelCtx.getConfigurationManager().expandAsInteger(gtk_entry_get_text(m_entry), 0) + amount;
 	const std::string res = std::to_string(value);
 
 	getBox().setSettingValue(getSettingIndex(), res.c_str());

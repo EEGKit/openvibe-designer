@@ -12,7 +12,7 @@
 using namespace std;
 
 using namespace OpenViBE;
-using namespace Kernel;
+using namespace /*OpenViBE::*/Kernel;
 using namespace Plugins;
 
 using namespace OpenViBEPlugins;
@@ -69,7 +69,7 @@ bool CBoxAlgorithmMatrixDisplay::initialize()
 	op_matrix.initialize(iMatrix->getOutputParameter(OVP_GD_Algorithm_StreamedMatrixDecoder_OutputParameterId_Matrix));
 
 	//widgets
-	m_mainWidgetInterface = gtk_builder_new();
+	m_mainWidgetInterface    = gtk_builder_new();
 	m_toolbarWidgetInterface = gtk_builder_new(); 
 	// glade_xml_new(OpenViBE::Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-MatrixDisplay.ui", "matrix-display-table", nullptr);
 	// glade_xml_new(OpenViBE::Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-MatrixDisplay.ui", "matrix-display-toolbar", nullptr);

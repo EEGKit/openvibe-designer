@@ -35,11 +35,10 @@ namespace OpenViBEDesigner
 
 		const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
 		const OpenViBE::Kernel::IComment* m_constComment = nullptr;
-		OpenViBE::Kernel::IComment* m_comment = nullptr;
-		bool m_applied = false;
-		int m_centerX = 0;
-		int m_centerY = 0;
+		OpenViBE::Kernel::IComment* m_comment            = nullptr;
+		bool m_applied                                   = false;
+		int m_centerX                                    = 0;
+		int m_centerY                                    = 0;
 		mutable std::string m_label;
 	};
 } // namespace OpenViBEDesigner
-

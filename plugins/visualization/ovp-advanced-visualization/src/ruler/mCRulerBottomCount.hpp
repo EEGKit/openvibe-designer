@@ -37,7 +37,7 @@ namespace Mensia
 				if (m_renderer->getHistoryCount() == 0) { return; }
 				if (m_renderer->getHistoryIndex() == 0) { return; }
 
-				const size_t nSample      = m_renderer->getSampleCount();
+				const size_t nSample    = m_renderer->getSampleCount();
 				const size_t historyIdx = m_renderer->getHistoryIndex();
 
 

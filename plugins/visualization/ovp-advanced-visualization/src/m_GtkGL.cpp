@@ -77,7 +77,7 @@ namespace
 
 		gdk_window_ensure_native(gtk_widget_get_window(widget));
 
-		const HWND window        = HWND(GDK_WINDOW_HWND(::gtk_widget_get_window(widget)));
+		const HWND window    = HWND(GDK_WINDOW_HWND(::gtk_widget_get_window(widget)));
 		const HDC drawingCtx = GetDC(window);
 
 		PIXELFORMATDESCRIPTOR pixelFormatDesc;

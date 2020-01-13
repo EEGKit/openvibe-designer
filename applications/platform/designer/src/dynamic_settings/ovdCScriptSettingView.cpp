@@ -9,9 +9,7 @@ using namespace OpenViBEDesigner;
 using namespace Setting;
 
 static void OnButtonSettingFilenameBrowsePressed(GtkButton* /*button*/, gpointer data) { static_cast<CScriptSettingView *>(data)->browse(); }
-
 static void OnButtonSettingScriptEditPressed(GtkButton* /*button*/, gpointer data) { static_cast<CScriptSettingView *>(data)->edit(); }
-
 static void OnChange(GtkEntry* /*entry*/, gpointer data) { static_cast<CScriptSettingView *>(data)->onChange(); }
 
 #if defined TARGET_OS_Windows
@@ -42,9 +40,7 @@ CScriptSettingView::CScriptSettingView(Kernel::IBox& box, const size_t index, CS
 	CAbstractSettingView::initializeValue();
 }
 
-
 void CScriptSettingView::getValue(CString& value) const { value = CString(gtk_entry_get_text(m_entry)); }
-
 
 void CScriptSettingView::setValue(const CString& value)
 {
@@ -97,10 +93,7 @@ void CScriptSettingView::edit() const
 		fullCmd = fullCmd + " &";
 #else
 #endif
-		if (system(fullCmd.toASCIIString()) < 0)
-		{
-			m_kernelCtx.getLogManager() << Kernel::LogLevel_Warning << "Could not run command " << fullCmd << "\n";
-		}
+		if (system(fullCmd.toASCIIString()) < 0) { m_kernelCtx.getLogManager() << Kernel::LogLevel_Warning << "Could not run command " << fullCmd << "\n"; }
 	}
 }
 
@@ -120,18 +113,18 @@ void CScriptSettingView::onFocusLost()
 	if (!m_onValueSetting)
 	{
 		std::string fileName = gtk_entry_get_text(m_entry);
-		auto iter            = fileName.begin();
+		auto it              = fileName.begin();
 
-		while ((iter = std::find(iter, fileName.end(), '\\')) != fileName.end())
+		while ((it = std::find(it, fileName.end(), '\\')) != fileName.end())
 		{
-			if (iter == std::prev(fileName.end()))
+			if (it == std::prev(fileName.end()))
 			{
-				*iter = '/';
+				*it = '/';
 				break;
 			}
-			if (*std::next(iter) != '{' && *std::next(iter) != '$' && *std::next(iter) != '}') { *iter = '/'; }
+			if (*std::next(it) != '{' && *std::next(it) != '$' && *std::next(it) != '}') { *it = '/'; }
 
-			std::advance(iter, 1);
+			std::advance(it, 1);
 		}
 
 		gtk_entry_set_text(m_entry, fileName.c_str());

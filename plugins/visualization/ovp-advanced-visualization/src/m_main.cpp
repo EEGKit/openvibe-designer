@@ -147,7 +147,8 @@ OVP_Declare_Begin()
 	using namespace Mensia::AdvancedVisualization;
 
 	OVP_Declare_New(bitmap_t("Continuous bitmap_t", CIdentifier(0x0BE99978487D3DC6), CIdentifier(0x9E1CD34586569E7E), "0.0.0", "0.0.0",
-		CParameterSet(I_Matrix,I_Stimulations, S_ChannelLocalisation, S_TemporalCoherence, S_TimeScale, S_ElementCount, S_DataScale, S_Caption, S_ColorGradient, P_None),
+		CParameterSet(I_Matrix,I_Stimulations, S_ChannelLocalisation, S_TemporalCoherence, S_TimeScale, S_ElementCount, S_DataScale, S_Caption, S_ColorGradient,
+			P_None),
 		"Displays the input matrices as a map of colored tiles, or bitmap, continuously.", ""))
 
 	OVP_Declare_New(oscilloscope_t("Continuous oscilloscope_t", CIdentifier(0x6D63896D86685134), CIdentifier(0x0842BCD1D53C1C89), "0.0.0", "0.0.0",
@@ -166,7 +167,7 @@ OVP_Declare_Begin()
 		"Displays the input matrices as a series of curves.\nAll channels are rendered on the same vertical axis, with different colors.", ""))
 
 	OVP_Declare_New(xyz_plot_t("Continuous XYZ Plot", CIdentifier(0xAAFD16CF57DC7138), CIdentifier(0xDDA9A9D9D04F2C14), "0.0.0", "0.0.0",
-		CParameterSet(I_Signal, S_TemporalCoherence, S_TimeScale, S_ElementCount, S_DataScale, S_Caption, S_Translucency, S_ShowAxis,S_XYZPlotHasDepth, 
+		CParameterSet(I_Signal, S_TemporalCoherence, S_TimeScale, S_ElementCount, S_DataScale, S_Caption, S_Translucency, S_ShowAxis,S_XYZPlotHasDepth,
 			S_ColorGradient, F_FixedChannelOrder, F_FixedChannelSelection, P_None),
 		"Displays the input matrices as a series of points in 2D or 3D space, continuously.", ""))
 
@@ -185,20 +186,26 @@ OVP_Declare_Begin()
 
 	OVP_Declare_New(MIOscilloscope("Instant Multi oscilloscope_t", CIdentifier(0x4F142FE87C7773E3), CIdentifier(0x072B75A9C28D588A), "0.0.0", "0.0.0",
 		CParameterSet(I_Signal, S_ChannelLocalisation, S_DataPositive, S_DataScale, S_Caption, S_Translucency, S_ColorGradient, P_None),
-		"Displays each and every input matrix as a series of curves, instantly.\nAll channels are rendered on the same vertical axis, with different colors.", ""))
+		"Displays each and every input matrix as a series of curves, instantly.\nAll channels are rendered on the same vertical axis, with different colors.",
+		""))
 
 	OVP_Declare_New(i_xyz_plot_t("Instant XYZ Plot", CIdentifier(0x1353BED819EC86A5), CIdentifier(0xDB19374A41A22DD3), "0.0.0", "0.0.0",
-		CParameterSet(I_Signal, S_DataScale, S_Caption, S_Translucency, S_ShowAxis, S_XYZPlotHasDepth, S_ColorGradient,F_FixedChannelOrder, F_FixedChannelSelection, P_None),
+		CParameterSet(I_Signal, S_DataScale, S_Caption, S_Translucency, S_ShowAxis, S_XYZPlotHasDepth, S_ColorGradient,F_FixedChannelOrder,
+			F_FixedChannelSelection, P_None),
 		"Displays the input matrices as a series of points in 2D or 3D space, instantly.", ""))
 
 
 	OVP_Declare_New(sv_bitmap_t("Stacked bitmap_t (Vertical)", CIdentifier(0x93F400CF9F6C5AFD), CIdentifier(0x9926A761BA82D233), "0.0.0", "0.0.0",
-		CParameterSet(I_Matrix, I_Stimulations, S_ChannelLocalisation, S_TemporalCoherence, S_TimeScale, S_ElementCount, S_DataScale, S_Caption, S_ColorGradient,P_None),
-		"Displays the input matrices as a map of colored tiles, or bitmap, continuously.\nAll the bitmaps are stacked vertically, starting from the bottom edge of the window", ""))
+		CParameterSet(I_Matrix, I_Stimulations, S_ChannelLocalisation, S_TemporalCoherence, S_TimeScale, S_ElementCount, S_DataScale, S_Caption, S_ColorGradient
+			,P_None),
+		"Displays the input matrices as a map of colored tiles, or bitmap, continuously.\nAll the bitmaps are stacked vertically, starting from the bottom edge of the window"
+		, ""))
 
 	OVP_Declare_New(sh_bitmap_t("Stacked bitmap_t (Horizontal)", CIdentifier(0x6B22DC653AB0EC0F), CIdentifier(0x7B0DDB65FDC51488), "0.0.0", "0.0.0",
-		CParameterSet(I_Matrix, I_Stimulations, S_ChannelLocalisation, S_TemporalCoherence, S_TimeScale, S_ElementCount, S_DataScale, S_Caption, S_ColorGradient, P_None),
-		"Displays the input matrices as a map of colored tiles, or bitmap, continuously.\nAll the bitmaps are stacked horizontally, starting from the left edge of the window", ""))
+		CParameterSet(I_Matrix, I_Stimulations, S_ChannelLocalisation, S_TemporalCoherence, S_TimeScale, S_ElementCount, S_DataScale, S_Caption, S_ColorGradient
+			, P_None),
+		"Displays the input matrices as a map of colored tiles, or bitmap, continuously.\nAll the bitmaps are stacked horizontally, starting from the left edge of the window"
+		, ""))
 
 	OVP_Declare_New(si_bitmap_t("Instant bitmap_t (3D Stream)", CIdentifier(0x0C61E7632A5C3178), CIdentifier(0xC3CC8B43EE985C1D), "0.1.0", "0.1.0",
 		CParameterSet(I_TimeFrequency, I_Stimulations, S_ChannelLocalisation, S_DataScale, S_Caption, S_ColorGradient, P_None),
@@ -214,7 +221,8 @@ OVP_Declare_Begin()
 
 	OVP_Declare_New(cubes_t("3D cubes_t", CIdentifier(0x6307469DF938EF27), CIdentifier(0xE028305D4ACF9D1A), "0.0.0", "0.0.0",
 		CParameterSet(I_Signal,S_ChannelLocalisation, S_DataScale, S_Caption, S_ColorGradient, F_FixedChannelOrder, P_None),
-		"The input is mapped to a 3D representation of the EEG setup where electrodes are symbolized with cubes,\nusing a color gradient and interpolation.", ""))
+		"The input is mapped to a 3D representation of the EEG setup where electrodes are symbolized with cubes,\nusing a color gradient and interpolation.", ""
+	))
 
 	OVP_Declare_New(loreta_t("3D Tomographic Visualization", CIdentifier(0xD5F62E7685E0D97C), CIdentifier(0xFD0826035C47E922), "0.0.0", "0.0.0",
 		CParameterSet(I_Signal, S_DataScale, S_Caption, S_Translucency, S_ColorGradient, F_FixedChannelOrder, P_None),

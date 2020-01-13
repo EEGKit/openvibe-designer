@@ -3,7 +3,7 @@
 using namespace OpenViBEDesigner;
 using namespace OpenViBE;
 using namespace Plugins;
-using namespace Kernel;
+using namespace /*OpenViBE::*/Kernel;
 
 static void buttonMetaboxReset_clicked(GtkWidget* /*widget*/, gpointer data) { gtk_entry_set_text(GTK_ENTRY(data), CIdentifier::random().str().c_str()); }
 

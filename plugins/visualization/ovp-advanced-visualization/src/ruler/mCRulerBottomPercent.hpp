@@ -41,7 +41,7 @@ namespace Mensia
 				{
 					const gint x            = (i * (w - 1)) / 10;
 					const std::string label = (std::to_string(i * 10) + "%");
-					PangoLayout* layout = gtk_widget_create_pango_layout(widget, label.c_str());
+					PangoLayout* layout     = gtk_widget_create_pango_layout(widget, label.c_str());
 					pango_layout_get_size(layout, &lw, &lh);
 					lw /= PANGO_SCALE;
 					lh /= PANGO_SCALE;

@@ -4,7 +4,7 @@
 
 using namespace OpenViBE;
 using namespace Plugins;
-using namespace Kernel;
+using namespace /*OpenViBE::*/Kernel;
 
 using namespace OpenViBEPlugins;
 using namespace SimpleVisualization;
@@ -285,8 +285,8 @@ bool CTopographicMapDatabase::checkElectrodeCoordinates()
 		{
 			CString channelLabel;
 			getChannelLabel(i, channelLabel);
-			m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error 
-					<< "Coordinates of electrode #" << i << "(" << channelLabel 
+			m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error
+					<< "Coordinates of electrode #" << i << "(" << channelLabel
 					<< "), are not normalized, aborting model frame electrode coordinates computation\n";
 			return false;
 		}

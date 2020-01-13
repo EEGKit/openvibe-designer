@@ -67,7 +67,7 @@ namespace OpenViBEDesigner
 			GtkWidget* m_entryFieldWidget = nullptr;
 
 			//If we don't store the builder, the setting name will be free when we'll unref the builder
-			GtkBuilder* m_pBuilder = nullptr;
+			GtkBuilder* m_builder = nullptr;
 		};
 	} // namespace Setting
 } // namespace OpenViBEDesigner

@@ -6,7 +6,7 @@
 #include <cstring>
 
 using namespace OpenViBE;
-using namespace Kernel;
+using namespace /*OpenViBE::*/Kernel;
 using namespace OpenViBEDesigner;
 using namespace std;
 using namespace OpenViBEVisualizationToolkit;
@@ -599,14 +599,14 @@ void CPlayerVisualization::resizeCB(GtkContainer* container)
 
 		//retrieve its attributes
 		IVisualizationWidget* widget = m_visualizationTree.getVisualizationWidget(id);
-		const int pos                     = widget->getDividerPosition();
-		const int maxPos                  = widget->getMaxDividerPosition();
+		const int pos                = widget->getDividerPosition();
+		const int maxPos             = widget->getMaxDividerPosition();
 
 		if (maxPos > 0)
 		{
 			//retrieve current maximum handle position
 			const int currentMaxPos = GTK_IS_VPANED(paned) ? paned->container.widget.allocation.height
-													 : paned->container.widget.allocation.width;
+										  : paned->container.widget.allocation.width;
 
 			//set new paned handle position
 			gtk_paned_set_position(paned, pos * currentMaxPos / maxPos);
@@ -677,7 +677,7 @@ void CPlayerVisualization::drag_data_received_in_widget_cb(GtkWidget* dstWidget,
 	if (GTK_IS_WINDOW(dstParentWidget)) { dstIndex = 0; }
 	else if (GTK_IS_NOTEBOOK(dstParentWidget))
 	{
-		dstIndex       = gtk_notebook_page_num(GTK_NOTEBOOK(dstParentWidget), dstBoxWidget);
+		dstIndex    = gtk_notebook_page_num(GTK_NOTEBOOK(dstParentWidget), dstBoxWidget);
 		dstTabLabel = gtk_label_new(gtk_notebook_get_tab_label_text(GTK_NOTEBOOK(dstParentWidget), dstBoxWidget));
 	}
 	else if (GTK_IS_PANED(dstParentWidget)) { dstIndex = reinterpret_cast<GtkPaned*>(dstParentWidget)->child1 == dstBoxWidget ? 1 : 2; }

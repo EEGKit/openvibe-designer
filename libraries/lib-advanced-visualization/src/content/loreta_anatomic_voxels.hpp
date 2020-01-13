@@ -22,7 +22,6 @@
 
 namespace LoretaRegions
 {
-
 #ifndef LoretaRegions_VoxelCount
 #	define LoretaRegions_VoxelCount  2394
 #endif
