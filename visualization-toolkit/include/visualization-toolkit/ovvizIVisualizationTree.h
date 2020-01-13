@@ -108,9 +108,9 @@ namespace OpenViBEVisualizationToolkit
 
 		/**
 		 * \brief Notifies the tree view that a new widget is being created
-		 * \paramvisualizationWidget pointer to the newly created widget
+		 * \param widget pointer to the newly created widget
 		 */
-		virtual void createTreeWidget(IVisualizationWidget* /*visualizationWidget*/) { }
+		virtual void createTreeWidget(IVisualizationWidget* widget) { }
 
 		/**
 		 * \brief Notifies the tree view that a widget is being loaded.
@@ -118,18 +118,18 @@ namespace OpenViBEVisualizationToolkit
 		 * it doesn't wish to support a specific kind of widget (e.g. top level windows are not instantiated by the
 		 * offline window manager). The widget pointer returned is stored in the EVisualizationTreeColumn_PointerWidget
 		 * column of the corresponding tree node.
-		 * \paramvisualizationWidget pointer to loaded visualization widget
+		 * \param widget pointer to loaded visualization widget
 		 * \return GtkWidget* pointer to Gtk widget associated to visualization widget (possibly nullptr)
 		 */
-		virtual GtkWidget* loadTreeWidget(IVisualizationWidget* /*visualizationWidget*/) { return nullptr; }
+		virtual GtkWidget* loadTreeWidget(IVisualizationWidget* widget) { return nullptr; }
 
 		/**
 		 * \brief Notifies the tree view that a widget hierarchy has been loaded
 		 * This method lets the tree view perform additional loading operations at the end of the loading
 		 * process
-		 * \paramvisualizationWidget pointer to visualization widget
+		 * \param widget pointer to visualization widget
 		 */
-		virtual void endLoadTreeWidget(IVisualizationWidget* /*visualizationWidget*/) { }
+		virtual void endLoadTreeWidget(IVisualizationWidget* widget) { }
 
 		/**
 		 * \brief Asks for the visualization (visible) widget associated to the tree widget passed in parameter
@@ -138,53 +138,53 @@ namespace OpenViBEVisualizationToolkit
 		 * by transparent event boxes for drag n' drop purposes.
 		 * This callback returns the central 'visualization widget' (the visible widget) contained in such a table if any, otherwise
 		 * it returns the tree widget itself.
-		 * \parampTreeWidget pointer to the Gtk widget associated to a tree node (as stored in the EVisualizationTreeColumn_PointerWidget
+		 * \param widget pointer to the Gtk widget associated to a tree node (as stored in the EVisualizationTreeColumn_PointerWidget
 		 * column of a tree store)
 		 * \return pointer to the visible Gtk widget if pTreeWidget is a table, pTreeWidget itself otherwise(default)
 		 * \sa getTreeWidget()
 		 */
-		virtual GtkWidget* getVisualizationWidget(GtkWidget* pTreeWidget) { return pTreeWidget; }
+		virtual GtkWidget* getVisualizationWidget(GtkWidget* widget) { return widget; }
 
 		/**
 		 * \brief Asks for the tree widget associated to a visualization widget
 		 * In some cases a Gtk widget is inserted in a 3x3 table for drag n' drop purposes. In such cases, a distinction is
 		 * made between the 'visualization widget' (the actual visible widget) and the widget stored in the EVisualizationTreeColumn_PointerWidget
 		 * column of a tree store.
-		 * \paramvisualizationWidget pointer to visualization widget
+		 * \param widget pointer to visualization widget
 		 * \return parent table if any, visualizationWidget otherwise (default)
 		 * \sa getVisualizationWidget()
 		 */
-		virtual GtkWidget* getTreeWidget(GtkWidget* visualizationWidget) { return visualizationWidget; }
+		virtual GtkWidget* getTreeWidget(GtkWidget* widget) { return widget; }
 
 		/**
 		 * \brief Icon associated to a visualization tree node
 		 * Each node has a Gtk icon. It is defined by the tree view, but can be customised for nodes of type EVisualizationTreeNode_VisualizationBox.
 		 * This method asks the tree view what icon is to be used for a given type of node.
-		 * \param visualizationTreeNode type of node whose icon name is to be retrieved
+		 * \param nodeType type of node whose icon name is to be retrieved
 		 * \return name of stock icon to be associated to the type of node passed in parameter
 		 */
-		virtual const char* getTreeWidgetIcon(EVisualizationTreeNode /*visualizationTreeNode*/) { return ""; }
+		virtual const char* getTreeWidgetIcon(EVisualizationTreeNode nodeType) { return ""; }
 
 		/**
 		 * \brief Set toolbar pointer of a visualization box
 		 * Forwards pointer to the toolbar of a visualization box as the player is launched and each visualization
 		 * box contained in the active scenario is being instantiated.
-		 * \paramboxIdentifier Identifier of IBox whose toolbar is being set
-		 * \paramtoolbarWidget pointer to toolbar of visualization box
+		 * \param boxID Identifier of IBox whose toolbar is being set
+		 * \param toolbar pointer to toolbar of visualization box
 		 * \return true if widget was successfully registered, false otherwise
 		 */
-		virtual bool setToolbar(const OpenViBE::CIdentifier& /*boxID*/, GtkWidget* /*toolbarWidget*/) { return false; }
+		virtual bool setToolbar(const OpenViBE::CIdentifier& boxID, GtkWidget* toolbar) { return false; }
 
 		/**
 		 * \brief Set topmost widget pointer of a visualization box
 		 * Forwards pointer to the topmost widget of a visualization box as the player is launched and each visualization
 		 * box contained in the active scenario is being instantiated. Used to position each box at the appropriate position, as defined
 		   * using the offline window manager.
-		 * \paramboxIdentifier Identifier of IBox whose toolbar is being set
-		 * \paramwidget pointer to main window of visualization box
+		 * \param boxID Identifier of IBox whose toolbar is being set
+		 * \param widget pointer to main window of visualization box
 		 * \return true if widget was successfully registered, false otherwise
 		 */
-		virtual bool setWidget(const OpenViBE::CIdentifier& /*boxID*/, GtkWidget* /*widget*/) { return false; }
+		virtual bool setWidget(const OpenViBE::CIdentifier& boxID, GtkWidget* widget) { return false; }
 	};
 
 	/**
@@ -220,35 +220,35 @@ namespace OpenViBEVisualizationToolkit
 		 * Upon first call, this method should be passed an identifier initialized with OV_UndefinedIdentifier.
 		 * It is modified at each subsequent call until all widgets have been returned (in which
 		 * case the identifier is reset to OV_Undefined)
-		 * \param identifier [in/out] identifier of current visualization widget when calling the method and of next widget upon return
+		 * \param id [in/out] identifier of current visualization widget when calling the method and of next widget upon return
 		 * \return true if a widget was found, false if past beyond last one
 		 */
-		virtual bool getNextVisualizationWidgetIdentifier(OpenViBE::CIdentifier& identifier) const = 0;
+		virtual bool getNextVisualizationWidgetIdentifier(OpenViBE::CIdentifier& id) const = 0;
 
 		/**
 		 * \brief Iterates through IVisualizationWidget instances of type type managed by this tree
-		 * \param identifier [in/out] identifier of current visualization widget when calling the method and of next widget upon return
+		 * \param id [in/out] identifier of current visualization widget when calling the method and of next widget upon return
 		 * \param type restricts search to IVisualizationWidget instances of type type
 		 * \return true if a widget was found, false if past beyond last one
 		 * \sa getNextVisualizationWidgetIdentifier()
 		 */
-		virtual bool getNextVisualizationWidgetIdentifier(OpenViBE::CIdentifier& identifier, EVisualizationWidgetType type) const = 0;
+		virtual bool getNextVisualizationWidgetIdentifier(OpenViBE::CIdentifier& id, EVisualizationWidgetType type) const = 0;
 
 		/**
 		 * \brief Tests whether an identifier corresponds to an IVisualizationWidget instance
 		 * This method browses the internal tree store to look for a node whose EVisualizationTreeColumn_StringIdentifier field
 		 * equals 'identifier' once converted to CString format.
-		 * \param identifier identifier to look for in the internal tree store
+		 * \param id identifier to look for in the internal tree store
 		 * \return true if identifier corresponds to an IVisualizationWidget instance stored in this tree, false otherwise
 		 */
-		virtual bool isVisualizationWidget(const OpenViBE::CIdentifier& identifier) const = 0;
+		virtual bool isVisualizationWidget(const OpenViBE::CIdentifier& id) const = 0;
 
 		/**
 		 * \brief Returns the IVisualizationWidget instance whose identifier is passed in parameter
-		 * \param identifier identifier to look for in the internal tree store
+		 * \param id identifier to look for in the internal tree store
 		 * \return pointer to IVisualizationWidget whose identifier matches 'identifier' if any, nullptr otherwise
 		 */
-		virtual IVisualizationWidget* getVisualizationWidget(const OpenViBE::CIdentifier& identifier) const = 0;
+		virtual IVisualizationWidget* getVisualizationWidget(const OpenViBE::CIdentifier& id) const = 0;
 
 		/**
 		 * \brief Returns the IVisualizationWidget instance whose corresponding IBox identifier matches 'boxID'
@@ -262,55 +262,54 @@ namespace OpenViBEVisualizationToolkit
 		/**
 		 * \brief Adds an IVisualizationWidget instance to the tree
 		 * Seven parameters describe the IVisualizationWidget to be created. Not all are relevant for every type of widget.
-		 * \param identifier identifier of the widget to be created
+		 * \param id identifier of the widget to be created
 		 * \param name name of the widget
 		 * \param type type of the widget
-		 * \param parentIdentifier parent widget identifier (OV_UndefinedIdentifier for top-level widgets)
-		 * \param parentIndex index where this widget is to be parented (irrelevant for top-level widgets)
+		 * \param parentID parent widget identifier (OV_UndefinedIdentifier for top-level widgets)
+		 * \param parentIdx index where this widget is to be parented (irrelevant for top-level widgets)
 		 * \param boxID identifier of associated IBox (for widgets of type VisualizationWidget_VisualizationBox only)
-		 * \param childCount number of children of this widget (none for a visualization box, 1 for a visualization panel, 2 for split widgets, variable number for windows)
+		 * \param nChild number of children of this widget (none for a visualization box, 1 for a visualization panel, 2 for split widgets, variable number for windows)
 		 * \param suggestedID a suggestion as to the identifier to use
 		 * \return true if widget successfully added to the internal tree store, false otherwise
 		 */
-		virtual bool addVisualizationWidget(OpenViBE::CIdentifier& identifier, const OpenViBE::CString& name,
-											EVisualizationWidgetType type, const OpenViBE::CIdentifier& parentIdentifier,
-											uint32_t parentIndex, const OpenViBE::CIdentifier& boxID,
-											uint32_t childCount, const OpenViBE::CIdentifier& suggestedID) = 0;
+		virtual bool addVisualizationWidget(OpenViBE::CIdentifier& id, const OpenViBE::CString& name,
+											EVisualizationWidgetType type, const OpenViBE::CIdentifier& parentID,
+											size_t parentIdx, const OpenViBE::CIdentifier& boxID,
+											size_t nChild, const OpenViBE::CIdentifier& suggestedID) = 0;
 
 		/**
 		 * \brief Returns the index where a widget is parented
 		 * Irrelevant for top level windows.
-		 * \param identifier identifier of the IVisualizationWidget whose index is to be retrieved
+		 * \param id identifier of the IVisualizationWidget whose index is to be retrieved
 		 * \param index [out] index where the widget is parented
 		 * \return true if widget index could be determined, false otherwise
 		 */
-		virtual bool getVisualizationWidgetIndex(const OpenViBE::CIdentifier& identifier, uint32_t& index) const = 0;
+		virtual bool getVisualizationWidgetIndex(const OpenViBE::CIdentifier& id, size_t& index) const = 0;
 
 		/**
 		 * \brief Unparents a widget from its parent, if any
-		 * \param identifier identifier of widget to be unparented
+		 * \param id identifier of widget to be unparented
 		 * \param index [out] index where this widget was parented
 		 * \return true if widget could be removed from its parent, false otherwise
 		 */
-		virtual bool unparentVisualizationWidget(const OpenViBE::CIdentifier& identifier, uint32_t& index) = 0;
+		virtual bool unparentVisualizationWidget(const OpenViBE::CIdentifier& id, size_t& index) = 0;
 
 		/**
 		 * \brief Parents a widget to a parent widget
-		 * \param identifier identifier of widget to be parented
-		 * \param parentIdentifier identifier of parent widget
+		 * \param id identifier of widget to be parented
+		 * \param parentID identifier of parent widget
 		 * \param index index where widget is to be parented
 		 * \return true if widget could be parented as desired, false otherwise
 		 */
-		virtual bool parentVisualizationWidget(const OpenViBE::CIdentifier& identifier, const OpenViBE::CIdentifier& parentIdentifier,
-											   const uint32_t index) = 0;
+		virtual bool parentVisualizationWidget(const OpenViBE::CIdentifier& id, const OpenViBE::CIdentifier& parentID, const size_t index) = 0;
 
 		/**
 		 * \brief Destroys a widget hierarchy
-		 * \param identifier identifier of widget that is to be destroyed, along with all widgets in its subtree
-		 * \param destroyVisualizationBoxes if false, widgets of type EVisualizationTreeNode_VisualizationBox are unaffected only (as opposed to destroyed)
+		 * \param id identifier of widget that is to be destroyed, along with all widgets in its subtree
+		 * \param destroy if false, widgets of type EVisualizationTreeNode_VisualizationBox are unaffected only (as opposed to destroyed)
 		 * \return true if hierarchy was successfully destroyed, false otherwise
 		 */
-		virtual bool destroyHierarchy(const OpenViBE::CIdentifier& identifier, bool destroyVisualizationBoxes = true) = 0;
+		virtual bool destroyHierarchy(const OpenViBE::CIdentifier& id, bool destroy = true) = 0;
 		//@}
 
 		/**
@@ -326,11 +325,11 @@ namespace OpenViBEVisualizationToolkit
 
 		/**
 		 * \brief Sets the instance implementing the ITreeViewCB interface that is to be used with the visualization tree
-		 * \param treeViewCB pointer to an implementation of the ITreeViewCB interface
+		 * \param callback pointer to an implementation of the ITreeViewCB interface
 		 * \return true if tree view was successfully registered, false otherwise
 		 * \sa ITreeViewCB
 		 */
-		virtual bool setTreeViewCB(ITreeViewCB* treeViewCB) = 0;
+		virtual bool setTreeViewCB(ITreeViewCB* callback) = 0;
 		//@}
 
 		/**
@@ -356,46 +355,45 @@ namespace OpenViBEVisualizationToolkit
 
 		/**
 		 * \brief Returns tree path of a given node
-		 * \param treeIter pointer to node whose path is to be retrieved
+		 * \param iter pointer to node whose path is to be retrieved
 		 * \return pointer to path of node
 		 */
-		virtual GtkTreePath* getTreePath(GtkTreeIter* treeIter) const = 0;
+		virtual GtkTreePath* getTreePath(GtkTreeIter* iter) const = 0;
 
 		/**
-		 * \brief Returns unsigned long value stored in the 'visualizationTreeColumn' column of node 'treeIter'
-		 * \param treeIter pointer to node
-		 * \param visualizationTreeColumn index of column where unsigned long value is stored
-		 * \return unsigned long value retrieved at the specified column of the specified node, if any, 0 otherwise.
+		 * \brief Returns size_t value stored in the 'colType' column of node 'iter'
+		 * \param iter pointer to node
+		 * \param colType index of column where size_t value is stored
+		 * \return size_t value retrieved at the specified column of the specified node, if any, 0 otherwise.
 		 */
-		virtual unsigned long getULongValueFromTreeIter(GtkTreeIter* treeIter, EVisualizationTreeColumn visualizationTreeColumn) const = 0;
+		virtual size_t getULongValueFromTreeIter(GtkTreeIter* iter, EVisualizationTreeColumn colType) const = 0;
 
 		/**
-		 * \brief Returns string stored in the 'visualizationTreeColumn' column of node 'treeIter'
-		 * \param treeIter pointer to node
+		 * \brief Returns string stored in the 'colType' column of node 'iter'
+		 * \param iter pointer to node
 		 * \param string [out] string to be retrieved
-		 * \param visualizationTreeColumn index of column where string is stored
+		 * \param colType index of column where string is stored
 		 * \return true if string was successfully retrieved at the specified column of the specified node, 0 otherwise.
 		 */
-		virtual bool getStringValueFromTreeIter(GtkTreeIter* treeIter, char*& string, EVisualizationTreeColumn visualizationTreeColumn) const = 0;
+		virtual bool getStringValueFromTreeIter(GtkTreeIter* iter, char*& string, EVisualizationTreeColumn colType) const = 0;
 
 		/**
-		 * \brief Returns pointer stored in the 'visualizationTreeColumn' column of node 'treeIter'
-		 * \param treeIter pointer to node
+		 * \brief Returns pointer stored in the 'colType' column of node 'iter'
+		 * \param iter pointer to node
 		 * \param pointer [out] pointer to be retrieved
-		 * \param visualizationTreeColumn index of column where pointer is stored
+		 * \param colType index of column where pointer is stored
 		 * \return true if pointer was successfully retrieved at the specified column of the specified node, 0 otherwise.
 		 */
-		virtual bool getPointerValueFromTreeIter(GtkTreeIter* treeIter, void*& pointer, EVisualizationTreeColumn visualizationTreeColumn) const = 0;
+		virtual bool getPointerValueFromTreeIter(GtkTreeIter* iter, void*& pointer, EVisualizationTreeColumn colType) const = 0;
 
 		/**
-		 * \brief Returns identifier stored in the 'visualizationTreeColumn' column of node 'treeIter'
-		 * \param treeIter pointer to node
-		 * \param identifier [out] identifier to be retrieved
-		 * \param visualizationTreeColumn index of column where identifier is stored
+		 * \brief Returns identifier stored in the 'colType' column of node 'iter'
+		 * \param iter pointer to node
+		 * \param id [out] identifier to be retrieved
+		 * \param colType index of column where identifier is stored
 		 * \return true if identifier was successfully retrieved at the specified column of the specified node, 0 otherwise.
 		 */
-		virtual bool getIdentifierFromTreeIter(GtkTreeIter* treeIter, OpenViBE::CIdentifier& identifier,
-											   EVisualizationTreeColumn visualizationTreeColumn) const = 0;
+		virtual bool getIdentifierFromTreeIter(GtkTreeIter* iter, OpenViBE::CIdentifier& id, EVisualizationTreeColumn colType) const = 0;
 		//@}
 
 		/**
@@ -440,18 +438,18 @@ namespace OpenViBEVisualizationToolkit
 		/**
 		 * \brief Looks for a node whose identifier matches 'identifier' from the root of the internal tree store
 		 * \param iter [out] pointer to node to be retrieved
-		 * \param identifier identifier of node to be retrieved, as stored in the EVisualizationTreeColumn_StringIdentifier column
+		 * \param id identifier of node to be retrieved, as stored in the EVisualizationTreeColumn_StringIdentifier column
 		 * \return true if node was found, false otherwise
 		 */
-		virtual bool findChildNodeFromRoot(GtkTreeIter* iter, OpenViBE::CIdentifier identifier) = 0;
+		virtual bool findChildNodeFromRoot(GtkTreeIter* iter, OpenViBE::CIdentifier id) = 0;
 
 		/**
 		 * \brief Looks for a node whose identifier matches 'identifier' from a given node in the internal tree store
 		 * \param iter [in/out] pointer to node from which to start searching when calling function and to node found upon return
-		 * \param identifier identifier of node to be retrieved, as stored in the EVisualizationTreeColumn_StringIdentifier column
+		 * \param id identifier of node to be retrieved, as stored in the EVisualizationTreeColumn_StringIdentifier column
 		 * \return true if node was found, false otherwise
 		 */
-		virtual bool findChildNodeFromParent(GtkTreeIter* iter, OpenViBE::CIdentifier identifier) = 0;
+		virtual bool findChildNodeFromParent(GtkTreeIter* iter, OpenViBE::CIdentifier id) = 0;
 
 		/**
 		 * \brief Find first parent node of a given type
@@ -473,41 +471,40 @@ namespace OpenViBEVisualizationToolkit
 		 * This operation replaces the existing widget with the one passed in parameter. The existing widget
 		 * is unaffected if it is of type EVisualizationTreeNode_VisualizationBox, or destroyed if it is of
 		 * type EVisualizationTreeNode_Undefined (placeholder widget).
-		 * \param sourceWidgetIdentifier identifier of widget being dropped
-		 * \param destinationWidget pointer to widget on which the drop operation is performed
+		 * \param srcWidgetID identifier of widget being dropped
+		 * \param dstWidget pointer to widget on which the drop operation is performed
 		 * \return true if drop operation was successfully completed, false otherwise
 		 */
-		virtual bool dragDataReceivedInWidgetCB(const OpenViBE::CIdentifier& sourceWidgetIdentifier, GtkWidget* destinationWidget) = 0;
+		virtual bool dragDataReceivedInWidgetCB(const OpenViBE::CIdentifier& srcWidgetID, GtkWidget* dstWidget) = 0;
 
 		/**
 		 * \brief Handles drop of a widget in an event box
 		 * This operation adds a widget to the tree and changes the tree structure.
 		 * If a widget is moved from one place to the other in the tree, it is automatically
 		 * simplified to avoid placeholders creation.
-		 * \param sourceWidgetIdentifier identifier of widget being dropped
-		 * \param destinationWidget pointer to widget on which the drop operation is performed
+		 * \param srcWidgetID identifier of widget being dropped
+		 * \param dstWidget pointer to widget on which the drop operation is performed
 		 * \param location
 		 * \return true if drop operation was successfully completed, false otherwise
 		 */
-		virtual bool dragDataReceivedOutsideWidgetCB(const OpenViBE::CIdentifier& sourceWidgetIdentifier, GtkWidget* destinationWidget,
-													 EDragDataLocation location) = 0;
+		virtual bool dragDataReceivedOutsideWidgetCB(const OpenViBE::CIdentifier& srcWidgetID, GtkWidget* dstWidget, EDragDataLocation location) = 0;
 		//@}
 
 		/**
 		 * \brief Forward pointer to the toolbar of a visualization plugin (if any) to the tree view
 		 * \param boxID Identifier of IBox whose toolbar pointer is being set
-		 * \param toolbarWidget pointer to toolbar
+		 * \param toolbar pointer to toolbar
 		 * \return \e true in case of success, \e false otherwise.
 		 */
-		virtual bool setToolbar(const OpenViBE::CIdentifier& boxID, GtkWidget* toolbarWidget) = 0;
+		virtual bool setToolbar(const OpenViBE::CIdentifier& boxID, GtkWidget* toolbar) = 0;
 
 		/**
 		 * \brief Forward pointer to the main widget of a visualization plugin to the tree view
 		 * \param boxID Identifier of IBox whose topmost widget pointer is being set
-		 * \param topmostWidget pointer to main window
+		 * \param widget pointer to main window
 		 * \return \e true in case of success, \e false otherwise.
 		 */
-		virtual bool setWidget(const OpenViBE::CIdentifier& boxID, GtkWidget* topmostWidget) = 0;
+		virtual bool setWidget(const OpenViBE::CIdentifier& boxID, GtkWidget* widget) = 0;
 
 		/**
 		 * \return String representation of the visualization tree
@@ -516,10 +513,10 @@ namespace OpenViBEVisualizationToolkit
 
 		/**
 		 * \brief Initializes the visualization tree from a string representation
-		 * \param serializedVisualizationTree The string representation of the new tree
+		 * \param tree The string representation of the new tree
 		 * \retval true In case of success
 		 * \retval false In case of error
 		 */
-		virtual bool deserialize(const OpenViBE::CString& serializedVisualizationTree) = 0;
+		virtual bool deserialize(const OpenViBE::CString& tree) = 0;
 	};
 } // namespace OpenViBEVisualizationToolkit

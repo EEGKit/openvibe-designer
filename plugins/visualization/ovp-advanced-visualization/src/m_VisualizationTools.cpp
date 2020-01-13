@@ -24,19 +24,18 @@
 using namespace Mensia;
 using namespace AdvancedVisualization;
 
-std::string AdvancedVisualization::trim(const std::string& sValue)
+std::string AdvancedVisualization::trim(const std::string& value)
 {
-	if (sValue.length() == 0) { return ""; }
+	if (value.length() == 0) { return ""; }
 	size_t i = 0;
-	size_t j = sValue.length() - 1;
-	while (i < sValue.length() && sValue[i] == ' ') { i++; }
-	while (j > i && sValue[j] == ' ') { j--; }
-	return sValue.substr(i, j - i + 1);
+	size_t j = value.length() - 1;
+	while (i < value.length() && value[i] == ' ') { i++; }
+	while (j > i && value[j] == ' ') { j--; }
+	return value.substr(i, j - i + 1);
 }
 
-IRendererContext& AdvancedVisualization::getContext()
-
+CRendererContext& AdvancedVisualization::getContext()
 {
-	static IRendererContext* l_pRendererContext = IRendererContext::create();
-	return *l_pRendererContext;
+	static CRendererContext* ctx = new CRendererContext();
+	return *ctx;
 }

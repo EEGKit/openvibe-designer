@@ -10,12 +10,12 @@ else()
 	set(ENTRYPOINT )
 endif()
 
-file(GLOB_RECURSE source_files src/*.cpp src/visualization/*.cpp src/dynamic_settings/*.cpp)
+file(GLOB_RECURSE SRC_FILES src/*.cpp src/*.h src/*.hpp src/visualization/*.cpp src/dynamic_settings/*.cpp)
 
 include("FindSourceDependencyJSON")
 
-set(source_files "${source_files};${CMAKE_BINARY_DIR}/resource-files/${LOWER_BRAND_NAME}-${LOWER_DESIGNER_NAME}.rc")
-add_executable(${PROJECT_NAME} ${ENTRYPOINT} ${source_files})
+set(SRC_FILES "${SRC_FILES};${CMAKE_BINARY_DIR}/resource-files/${LOWER_BRAND_NAME}-${LOWER_DESIGNER_NAME}.rc")
+add_executable(${PROJECT_NAME} ${ENTRYPOINT} ${SRC_FILES})
 
 # Generate launch script
 OV_INSTALL_LAUNCH_SCRIPT(SCRIPT_PREFIX "${LOWER_BRAND_NAME}-${LOWER_DESIGNER_NAME}" EXECUTABLE_NAME "${PROJECT_NAME}" ICON_PATH "${OV_ICON_PATH}/designer.ico")
@@ -33,7 +33,7 @@ add_definitions(-DProjectVersion=\"${OV_GLOBAL_VERSION_STRING}\")
 add_definitions(-DM_VERSION_MAJOR=${OV_GLOBAL_VERSION_MAJOR})
 add_definitions(-DM_VERSION_MINOR=${OV_GLOBAL_VERSION_MINOR})
 
-set_build_platform()
+SET_BUILD_PLATFORM()
 
 # Install files
 install(TARGETS ${PROJECT_NAME}

@@ -3,71 +3,65 @@
 #include <cstdlib>
 
 using namespace OpenViBE;
-using namespace Kernel;
+using namespace /*OpenViBE::*/Kernel;
 using namespace OpenViBEDesigner;
 
-bool TAttributeHandler::removeAttribute(const CIdentifier& attributeID)
+bool TAttributeHandler::removeAttribute(const CIdentifier& id)
 {
-	if (!m_pAttributable) { return false; }
-	return m_pAttributable->removeAttribute(attributeID);
+	if (!m_attributable) { return false; }
+	return m_attributable->removeAttribute(id);
 }
 
 bool TAttributeHandler::removeAllAttributes()
 
 {
-	if (!m_pAttributable) { return false; }
-	return m_pAttributable->removeAllAttributes();
+	if (!m_attributable) { return false; }
+	return m_attributable->removeAllAttributes();
 }
 
 namespace OpenViBEDesigner
 {
 	template <>
-	bool TAttributeHandler::addAttribute(const CIdentifier& attributeID, const int& rValue) const
+	bool TAttributeHandler::addAttribute(const CIdentifier& id, const int& value) const
 	{
-		if (!m_pAttributable) { return false; }
-		char l_sValue[1024];
-		sprintf(l_sValue, "%i", rValue);
-		return m_pAttributable->addAttribute(attributeID, l_sValue);
+		if (!m_attributable) { return false; }
+		const std::string str = std::to_string(value);	// pass directly  std::to_string().c_str() with int value can return anything
+		return m_attributable->addAttribute(id, str.c_str());
 	}
 
 	template <>
-	bool TAttributeHandler::addAttribute(const CIdentifier& attributeID, const bool& rValue) const
+	bool TAttributeHandler::addAttribute(const CIdentifier& id, const bool& value) const
 	{
-		if (!m_pAttributable) { return false; }
+		if (!m_attributable) { return false; }
 
-		return m_pAttributable->addAttribute(attributeID, (rValue ? "true" : "false"));
+		return m_attributable->addAttribute(id, (value ? "true" : "false"));
 	}
 
 	template <>
-	int TAttributeHandler::getAttributeValue<int>(const CIdentifier& attributeID) const
+	int TAttributeHandler::getAttributeValue<int>(const CIdentifier& id) const { return strtol(m_constAttributable->getAttributeValue(id), nullptr, 10); }
+
+	template <>
+	bool TAttributeHandler::getAttributeValue<bool>(const CIdentifier& id) const
 	{
-		return strtol(m_pConstAttributable->getAttributeValue(attributeID), nullptr, 10);
+		bool res = false;
+		const CString value(m_constAttributable->getAttributeValue(id));
+		if (value == CString("true")) { res = true; }
+
+		return res;
 	}
 
 	template <>
-	bool TAttributeHandler::getAttributeValue<bool>(const CIdentifier& attributeID) const
+	bool TAttributeHandler::setAttributeValue(const CIdentifier& id, const int& value)
 	{
-		bool retval = false;
-		const CString l_sAttributeValue(m_pConstAttributable->getAttributeValue(attributeID));
-		if (l_sAttributeValue == CString("true")) { retval = true; }
-
-		return retval;
+		if (!m_attributable) { return false; }
+		const std::string str = std::to_string(value);	// pass directly  std::to_string().c_str() with int value can return anything
+		return m_attributable->setAttributeValue(id, str.c_str());
 	}
 
 	template <>
-	bool TAttributeHandler::setAttributeValue(const CIdentifier& attributeID, const int& rValue)
+	bool TAttributeHandler::setAttributeValue(const CIdentifier& id, const bool& value)
 	{
-		if (!m_pAttributable) { return false; }
-		char l_sValue[1024];
-		sprintf(l_sValue, "%i", rValue);
-		return m_pAttributable->setAttributeValue(attributeID, l_sValue);
-	}
-
-	template <>
-	bool TAttributeHandler::setAttributeValue(const CIdentifier& attributeID, const bool& rValue)
-	{
-		if (!m_pAttributable) { return false; }
-
-		return m_pAttributable->setAttributeValue(attributeID, (rValue ? "true" : "false"));
+		if (!m_attributable) { return false; }
+		return m_attributable->setAttributeValue(id, (value ? "true" : "false"));
 	}
 } // namespace OpenViBEDesigner

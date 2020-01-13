@@ -5,25 +5,26 @@
 #include "ovdCArchwayHandler.h"
 #include <gtk/gtk.h>
 
-namespace OpenViBEDesigner {
+namespace OpenViBEDesigner
+{
 	class CApplication;
 }
 
-namespace Mensia {
-
-	class CArchwayHandlerGUI final {
+namespace Mensia
+{
+	class CArchwayHandlerGUI final
+	{
 	public:
 		CArchwayHandlerGUI(CArchwayHandler& controller, OpenViBEDesigner::CApplication* application);
 		~CArchwayHandlerGUI();
 
 		void refreshEnginePipelines();
 		void toggleNeuroRTEngineConfigurationDialog(const bool shouldDisplay);
-		void displayPipelineConfigurationDialog(const uint32_t pipelineID);
+		void displayPipelineConfigurationDialog(const size_t pipelineID);
 
-		bool setPipelineParameterValueAtPath(gchar const* path, gchar const* newValue);
+		bool setPipelineParameterValueAtPath(gchar const* path, gchar const* value);
 
-	public:
-		GtkBuilder* m_Builder = nullptr;
+		GtkBuilder* m_Builder            = nullptr;
 		GtkBuilder* m_ApplicationBuilder = nullptr;
 		CArchwayHandler& m_Controller;
 		OpenViBEDesigner::CApplication* m_Application = nullptr;
@@ -34,16 +35,16 @@ namespace Mensia {
 
 		GtkWidget* m_ButtonOpenEngineConfigurationDialog = nullptr;
 
-		GtkWidget* m_ButtonConfigureAcquisition = nullptr;
+		GtkWidget* m_ButtonConfigureAcquisition       = nullptr;
 		GtkToggleToolButton* m_ToggleAcquireImpedance = nullptr;
 
-		GtkComboBox* m_ComboBoxEngineType = nullptr;
+		GtkComboBox* m_ComboBoxEngineType      = nullptr;
 		GtkWidget* m_ButtonReinitializeArchway = nullptr;
-		GtkWidget* m_ButtonLaunchEngine = nullptr;
+		GtkWidget* m_ButtonLaunchEngine        = nullptr;
 
-		GtkWidget* m_ButtonStartEngine = nullptr;
+		GtkWidget* m_ButtonStartEngine           = nullptr;
 		GtkWidget* m_ButtonStartEngineFastFoward = nullptr;
-		GtkWidget* m_ButtonStopEngine = nullptr;
+		GtkWidget* m_ButtonStopEngine            = nullptr;
 
 		GtkWidget* m_TreeViewEnginePipelines = nullptr;
 
@@ -51,7 +52,6 @@ namespace Mensia {
 
 		GtkTreeModel* m_TreeModelEnginePipelines = nullptr;
 		GtkTreeIter m_SelectedPipelineIter;
-
 	};
 }
 

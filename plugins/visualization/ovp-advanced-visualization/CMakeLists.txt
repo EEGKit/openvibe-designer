@@ -2,11 +2,11 @@ PROJECT(openvibe-plugins-designer-advanced-visualization)
 SET(PROJECT_PRODUCT_NAME "Mensia Advanced Visualization Toolset")
 MESSAGE(STATUS "Now building ${PROJECT_NAME} ${PROJECT_VERSION} (${OV_PROJECT_BRANCH}~${OV_PROJECT_COMMITHASH})" )
 
-FILE(GLOB_RECURSE source_files src/*.cpp src/*.h src/*.hpp src/*.inl include/*.h)
+FILE(GLOB_RECURSE SRC_FILES src/*.cpp src/*.h src/*.hpp src/*.inl include/*.h include/*.hpp)
 
 INCLUDE("FindSourceRCProperties")
 
-ADD_LIBRARY(${PROJECT_NAME} SHARED ${source_files})
+ADD_LIBRARY(${PROJECT_NAME} SHARED ${SRC_FILES})
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${RLM_LIB_FILES})
 SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES
 	VERSION ${PROJECT_VERSION}
@@ -19,7 +19,7 @@ IF(MENSIA_ADVANCED_VISUALIZATION_EXPERIMENTAL)
 ENDIF()
 
 INCLUDE("AddOpenViBESDKComponents")
-include("FindOpenViBEVisualizationToolkit")
+INCLUDE("FindOpenViBEVisualizationToolkit")
 INCLUDE("FindThirdPartyGTK")
 
 INCLUDE("FindLibMensiaAdvancedVisualisation")

@@ -31,18 +31,18 @@ namespace Mensia
 		{
 		public:
 
-			void setRendererContext(const IRendererContext* pRendererContext) override
+			void setRendererContext(const CRendererContext* ctx) override
 			{
-				IRuler::setRendererContext(pRendererContext);
-				first.setRendererContext(pRendererContext);
-				second.setRendererContext(pRendererContext);
+				IRuler::setRendererContext(ctx);
+				first.setRendererContext(ctx);
+				second.setRendererContext(ctx);
 			}
 
-			void setRenderer(const IRenderer* pRenderer) override
+			void setRenderer(const IRenderer* renderer) override
 			{
-				IRuler::setRenderer(pRenderer);
-				first.setRenderer(pRenderer);
-				second.setRenderer(pRenderer);
+				IRuler::setRenderer(renderer);
+				first.setRenderer(renderer);
+				second.setRenderer(renderer);
 			}
 
 			void render() override
@@ -51,22 +51,22 @@ namespace Mensia
 				second.doRender();
 			}
 
-			void renderLeft(GtkWidget* pWidget) override
+			void renderLeft(GtkWidget* widget) override
 			{
-				first.doRenderLeft(pWidget);
-				second.doRenderLeft(pWidget);
+				first.doRenderLeft(widget);
+				second.doRenderLeft(widget);
 			}
 
-			void renderRight(GtkWidget* pWidget) override
+			void renderRight(GtkWidget* widget) override
 			{
-				first.doRenderRight(pWidget);
-				second.doRenderRight(pWidget);
+				first.doRenderRight(widget);
+				second.doRenderRight(widget);
 			}
 
-			void renderBottom(GtkWidget* pWidget) override
+			void renderBottom(GtkWidget* widget) override
 			{
-				first.doRenderBottom(pWidget);
-				second.doRenderBottom(pWidget);
+				first.doRenderBottom(widget);
+				second.doRenderBottom(widget);
 			}
 
 			T1 first;

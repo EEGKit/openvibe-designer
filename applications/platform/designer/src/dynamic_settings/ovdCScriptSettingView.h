@@ -7,10 +7,10 @@ namespace OpenViBEDesigner
 {
 	namespace Setting
 	{
-		class CScriptSettingView : public CAbstractSettingView
+		class CScriptSettingView final : public CAbstractSettingView
 		{
 		public:
-			CScriptSettingView(OpenViBE::Kernel::IBox& box, const uint32_t index, OpenViBE::CString& rBuilderName,
+			CScriptSettingView(OpenViBE::Kernel::IBox& box, const size_t index, OpenViBE::CString& builderName,
 							   const OpenViBE::Kernel::IKernelContext& ctx);
 
 			void getValue(OpenViBE::CString& value) const override;

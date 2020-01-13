@@ -5,10 +5,10 @@
 
 #include <openvibe/ovTimeArithmetics.h>
 
-#define OVD_GUI_File OpenViBE::Directories::getDataDir() + "/applications/designer/interface.ui"
+#define OVD_GUI_File		OpenViBE::Directories::getDataDir() + "/applications/designer/interface.ui"
 
 using namespace OpenViBE;
-using namespace Kernel;
+using namespace /*OpenViBE::*/Kernel;
 using namespace OpenViBEDesigner;
 using namespace std;
 
@@ -18,117 +18,109 @@ namespace
 
 	void focus_message_window_cb(GtkButton* /*button*/, gpointer data) { static_cast<CLogListenerDesigner*>(data)->focusMessageWindow(); }
 
-	void refresh_search_log_entry(GtkEntry* pTextfield, gpointer data)
+	void refresh_search_log_entry(GtkEntry* text, gpointer data)
 	{
-		auto* designerLog_ptr          = static_cast<CLogListenerDesigner*>(data);
-		designerLog_ptr->m_sSearchTerm = gtk_entry_get_text(pTextfield);
-		designerLog_ptr->searchMessages(designerLog_ptr->m_sSearchTerm);
+		auto* ptr         = static_cast<CLogListenerDesigner*>(data);
+		ptr->m_SearchTerm = gtk_entry_get_text(text);
+		ptr->searchMessages(ptr->m_SearchTerm);
 	}
 
-	void focus_on_box_cidentifier_clicked(GtkWidget* widget, GdkEventButton* pEvent, gpointer data)
+	void focus_on_box_cidentifier_clicked(GtkWidget* widget, GdkEventButton* event, gpointer data)
 	{
 		//log text view grab the focus so isLogAreaClicked() return true and CTRL+F will focus on the log searchEntry
 		gtk_widget_grab_focus(widget);
 
-		auto* designerLog_ptr = static_cast<CLogListenerDesigner*>(data);
+		auto* ptr = static_cast<CLogListenerDesigner*>(data);
 
 		//if left click
-		if (pEvent->button == 1)
+		if (event->button == 1)
 		{
-			GtkTextView* l_pTextView              = GTK_TEXT_VIEW(widget);
-			const GtkTextWindowType l_oWindowType = gtk_text_view_get_window_type(l_pTextView, pEvent->window);
-			gint l_iBufferX, l_iBufferY;
+			GtkTextView* textView              = GTK_TEXT_VIEW(widget);
+			const GtkTextWindowType windowType = gtk_text_view_get_window_type(textView, event->window);
+			gint bufferX, bufferY;
 			//convert event coord (mouse position) in buffer coord (character in buffer)
-			gtk_text_view_window_to_buffer_coords(l_pTextView, l_oWindowType, gint(round(pEvent->x)), gint(round(pEvent->y)), &l_iBufferX, &l_iBufferY);
+			gtk_text_view_window_to_buffer_coords(textView, windowType, gint(round(event->x)), gint(round(event->y)), &bufferX, &bufferY);
 			//get the text iter corresponding to that position
-			GtkTextIter l_oIter;
-			gtk_text_view_get_iter_at_location(l_pTextView, &l_oIter, l_iBufferX, l_iBufferY);
+			GtkTextIter iter;
+			gtk_text_view_get_iter_at_location(textView, &iter, bufferX, bufferY);
 
 			//if this position is not tagged, exit
-			if (!gtk_text_iter_has_tag(&l_oIter, designerLog_ptr->m_pCIdentifierTag)) { return; }
+			if (!gtk_text_iter_has_tag(&iter, ptr->m_IdTag)) { return; }
 			//the position is tagged, we are on a CIdentifier
-			GtkTextIter l_oStart = l_oIter;
-			GtkTextIter l_oEnd   = l_oIter;
+			GtkTextIter start = iter;
+			GtkTextIter end   = iter;
 
-			while (gtk_text_iter_has_tag(&l_oEnd, designerLog_ptr->m_pCIdentifierTag)) { gtk_text_iter_forward_char(&l_oEnd); }
-			while (gtk_text_iter_has_tag(&l_oStart, designerLog_ptr->m_pCIdentifierTag)) { gtk_text_iter_backward_char(&l_oStart); }
+			while (gtk_text_iter_has_tag(&end, ptr->m_IdTag)) { gtk_text_iter_forward_char(&end); }
+			while (gtk_text_iter_has_tag(&start, ptr->m_IdTag)) { gtk_text_iter_backward_char(&start); }
 			//we went one char to far for start
-			gtk_text_iter_forward_char(&l_oStart);
+			gtk_text_iter_forward_char(&start);
 			//this contains the CIdentifier
-			gchar* l_sLink = gtk_text_iter_get_text(&l_oStart, &l_oEnd);
+			gchar* link = gtk_text_iter_get_text(&start, &end);
 			//cout << "cid is |" << link << "|" << endl;
-			CIdentifier l_oId;
-			l_oId.fromString(CString(l_sLink));
-			designerLog_ptr->m_CenterOnBoxFun(l_oId);
+			CIdentifier id;
+			id.fromString(CString(link));
+			ptr->m_CenterOnBoxFun(id);
 		}
 	}
 } // namespace
 
 
-void CLogListenerDesigner::searchMessages(const CString& l_sSearchTerm)
+void CLogListenerDesigner::searchMessages(const CString& searchTerm)
 {
 	//clear displayed buffer
 	gtk_text_buffer_set_text(m_buffer, "", -1);
-	m_sSearchTerm = l_sSearchTerm;
-	for (CLogObject* log : m_vStoredLog)
-	{
-		if (log->Filter(l_sSearchTerm))
-		{
-			//display the log
-			appendLog(log);
-		}
-	}
+	m_SearchTerm = searchTerm;
+	for (CLogObject* log : m_storedLogs) { if (log->filter(searchTerm)) { appendLog(log); } }	//display the log
 }
 
-void CLogListenerDesigner::appendLog(CLogObject* oLog) const
+void CLogListenerDesigner::appendLog(CLogObject* log) const
 {
-	GtkTextIter l_oEndter, l_oLogBegin, l_oLogEnd;
-	gtk_text_buffer_get_end_iter(m_buffer, &l_oEndter);
+	GtkTextIter endIter, begin, end;
+	gtk_text_buffer_get_end_iter(m_buffer, &endIter);
 	//get log buffer bounds
-	gtk_text_buffer_get_start_iter(oLog->getTextBuffer(), &l_oLogBegin);
-	gtk_text_buffer_get_end_iter(oLog->getTextBuffer(), &l_oLogEnd);
+	gtk_text_buffer_get_start_iter(log->getTextBuffer(), &begin);
+	gtk_text_buffer_get_end_iter(log->getTextBuffer(), &end);
 	//copy at the end of the displayed buffer
-	gtk_text_buffer_insert_range(m_buffer, &l_oEndter, &l_oLogBegin, &l_oLogEnd);
+	gtk_text_buffer_insert_range(m_buffer, &endIter, &begin, &end);
 }
 
-CLogListenerDesigner::CLogListenerDesigner(const IKernelContext& ctx, GtkBuilder* pBuilderInterface)
-	: m_sSearchTerm(""), m_CenterOnBoxFun([](CIdentifier& /*id*/) {}), m_pBuilderInterface(pBuilderInterface)
+CLogListenerDesigner::CLogListenerDesigner(const IKernelContext& ctx, GtkBuilder* builder)
+	: m_SearchTerm(""), m_CenterOnBoxFun([](CIdentifier& /*id*/) {}), m_builder(builder)
 {
-	m_pTextView    = GTK_TEXT_VIEW(gtk_builder_get_object(m_pBuilderInterface, "openvibe-textview_messages"));
-	m_pAlertWindow = GTK_WINDOW(gtk_builder_get_object(m_pBuilderInterface, "dialog_error_popup"));
+	m_textView    = GTK_TEXT_VIEW(gtk_builder_get_object(m_builder, "openvibe-textview_messages"));
+	m_alertWindow = GTK_WINDOW(gtk_builder_get_object(m_builder, "dialog_error_popup"));
 
-	m_pToggleButtonPopup = GTK_TOGGLE_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_alert_on_error"));
+	m_buttonPopup = GTK_TOGGLE_BUTTON(gtk_builder_get_object(m_builder, "openvibe-messages_alert_on_error"));
 
-	m_labelnMessages       = GTK_LABEL(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_count_message_label"));
-	m_labelnWarnings       = GTK_LABEL(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_count_warning_label"));
-	m_labelnErrors         = GTK_LABEL(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_count_error_label"));
-	m_labelDialognWarnings = GTK_LABEL(gtk_builder_get_object(m_pBuilderInterface, "dialog_error_popup-warning_count"));
-	m_labelDialognErrors   = GTK_LABEL(gtk_builder_get_object(m_pBuilderInterface, "dialog_error_popup-error_count"));
+	m_labelnMsg            = GTK_LABEL(gtk_builder_get_object(m_builder, "openvibe-messages_count_message_label"));
+	m_labelnWarnings       = GTK_LABEL(gtk_builder_get_object(m_builder, "openvibe-messages_count_warning_label"));
+	m_labelnErrors         = GTK_LABEL(gtk_builder_get_object(m_builder, "openvibe-messages_count_error_label"));
+	m_labelDialognWarnings = GTK_LABEL(gtk_builder_get_object(m_builder, "dialog_error_popup-warning_count"));
+	m_labelDialognErrors   = GTK_LABEL(gtk_builder_get_object(m_builder, "dialog_error_popup-error_count"));
 
-	m_pImageWarnings = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_count_warning_image"));
-	m_pImageErrors   = GTK_WIDGET(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_count_error_image"));
+	m_imageWarnings = GTK_WIDGET(gtk_builder_get_object(m_builder, "openvibe-messages_count_warning_image"));
+	m_imageErrors   = GTK_WIDGET(gtk_builder_get_object(m_builder, "openvibe-messages_count_error_image"));
 
-	m_pToggleButtonActive_Debug            = GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_debug"));
-	m_pToggleButtonActive_Benchmark        = GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_bench"));
-	m_pToggleButtonActive_Trace            = GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_trace"));
-	m_pToggleButtonActive_Info             = GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_info"));
-	m_pToggleButtonActive_Warning          = GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_warning"));
-	m_pToggleButtonActive_ImportantWarning = GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_impwarning"));
-	m_pToggleButtonActive_Error            = GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_error"));
-	m_pToggleButtonActive_Fatal            = GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_pBuilderInterface, "openvibe-messages_tb_fatal"));
+	m_buttonActiveDebug            = GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_builder, "openvibe-messages_tb_debug"));
+	m_buttonActiveBenchmark        = GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_builder, "openvibe-messages_tb_bench"));
+	m_buttonActiveTrace            = GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_builder, "openvibe-messages_tb_trace"));
+	m_buttonActiveInfo             = GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_builder, "openvibe-messages_tb_info"));
+	m_buttonActiveWarning          = GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_builder, "openvibe-messages_tb_warning"));
+	m_buttonActiveImportantWarning = GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_builder, "openvibe-messages_tb_impwarning"));
+	m_buttonActiveError            = GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_builder, "openvibe-messages_tb_error"));
+	m_buttonActiveFatal            = GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_builder, "openvibe-messages_tb_fatal"));
 
 	// set the popup-on-error checkbox according to the configuration token
-	gtk_toggle_button_set_active(m_pToggleButtonPopup, bool(ctx.getConfigurationManager().expandAsBoolean("${Designer_PopUpOnError}")));
+	gtk_toggle_button_set_active(m_buttonPopup, bool(ctx.getConfigurationManager().expandAsBoolean("${Designer_PopUpOnError}")));
 
-	g_signal_connect(G_OBJECT(m_pAlertWindow), "delete_event", G_CALLBACK(::gtk_widget_hide), nullptr);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "dialog_error_popup-button_view")), "clicked", G_CALLBACK(::focus_message_window_cb),
-					 this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "dialog_error_popup-button_ok")), "clicked",
-					 G_CALLBACK(::close_messages_alert_window_cb), m_pAlertWindow);
+	g_signal_connect(G_OBJECT(m_alertWindow), "delete_event", G_CALLBACK(::gtk_widget_hide), nullptr);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_builder, "dialog_error_popup-button_view")), "clicked", G_CALLBACK(::focus_message_window_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_builder, "dialog_error_popup-button_ok")), "clicked",
+					 G_CALLBACK(::close_messages_alert_window_cb), m_alertWindow);
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_pBuilderInterface, "searchEntry")), "changed", G_CALLBACK(::refresh_search_log_entry), this);
-	g_signal_connect(G_OBJECT(m_pTextView), "button_press_event", G_CALLBACK(focus_on_box_cidentifier_clicked), this);
-	m_buffer = gtk_text_view_get_buffer(m_pTextView);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_builder, "searchEntry")), "changed", G_CALLBACK(::refresh_search_log_entry), this);
+	g_signal_connect(G_OBJECT(m_textView), "button_press_event", G_CALLBACK(focus_on_box_cidentifier_clicked), this);
+	m_buffer = gtk_text_view_get_buffer(m_textView);
 
 	gtk_text_buffer_create_tag(m_buffer, "f_mono", "family", "monospace", nullptr);
 	gtk_text_buffer_create_tag(m_buffer, "w_bold", "weight", PANGO_WEIGHT_BOLD, nullptr);
@@ -142,30 +134,30 @@ CLogListenerDesigner::CLogListenerDesigner(const IKernelContext& ctx, GtkBuilder
 	gtk_text_buffer_create_tag(m_buffer, "c_blueChill", "foreground", "#3d889b", nullptr);			// information
 	gtk_text_buffer_create_tag(m_buffer, "link", "underline", PANGO_UNDERLINE_SINGLE, nullptr);	// link for CIdentifier
 
-	GtkTextTagTable* l_pTagtable = gtk_text_buffer_get_tag_table(m_buffer);
-	m_pCIdentifierTag            = gtk_text_tag_table_lookup(l_pTagtable, "link");
+	GtkTextTagTable* tagTable = gtk_text_buffer_get_tag_table(m_buffer);
+	m_IdTag                   = gtk_text_tag_table_lookup(tagTable, "link");
 
-	m_logWithHexa         = ctx.getConfigurationManager().expandAsBoolean("${Designer_ConsoleLogWithHexa}", false);
-	m_logTimeInSecond     = ctx.getConfigurationManager().expandAsBoolean("${Kernel_ConsoleLogTimeInSecond}", false);
-	m_logTimePrecision = uint32_t(ctx.getConfigurationManager().expandAsUInteger("${Designer_ConsoleLogTimePrecision}", 3));
+	m_logWithHexa      = ctx.getConfigurationManager().expandAsBoolean("${Designer_ConsoleLogWithHexa}", false);
+	m_logTimeInSecond  = ctx.getConfigurationManager().expandAsBoolean("${Kernel_ConsoleLogTimeInSecond}", false);
+	m_logTimePrecision = size_t(ctx.getConfigurationManager().expandAsUInteger("${Designer_ConsoleLogTimePrecision}", 3));
 }
 
 bool CLogListenerDesigner::isActive(const ELogLevel level)
 {
-	const auto it = m_vActiveLevel.find(level);
-	if (it == m_vActiveLevel.end()) { return true; }
+	const auto it = m_activeLevels.find(level);
+	if (it == m_activeLevels.end()) { return true; }
 	return it->second;
 }
 
 bool CLogListenerDesigner::activate(const ELogLevel level, const bool active)
 {
-	m_vActiveLevel[level] = active;
+	m_activeLevels[level] = active;
 	return true;
 }
 
-bool CLogListenerDesigner::activate(const ELogLevel eStartLogLevel, const ELogLevel eEndLogLevel, const bool active)
+bool CLogListenerDesigner::activate(const ELogLevel startLevel, const ELogLevel endLevel, const bool active)
 {
-	for (int i = eStartLogLevel; i <= eEndLogLevel; ++i) { m_vActiveLevel[ELogLevel(i)] = active; }
+	for (int i = startLevel; i <= endLevel; ++i) { m_activeLevels[ELogLevel(i)] = active; }
 	return true;
 }
 
@@ -173,20 +165,20 @@ bool CLogListenerDesigner::activate(const bool active) { return activate(LogLeve
 
 void CLogListenerDesigner::log(const time64 value)
 {
-	if (m_bIngnoreMessages) { return; }
+	if (m_ignoreMsg) { return; }
 
 	stringstream txt;
 	if (m_logTimeInSecond)
 	{
-		const double l_f64Time = TimeArithmetics::timeToSeconds(value.timeValue);
+		const double time = TimeArithmetics::timeToSeconds(value.timeValue);
 		std::stringstream ss;
 		ss.precision(m_logTimePrecision);
 		ss.setf(std::ios::fixed, std::ios::floatfield);
-		ss << l_f64Time;
+		ss << time;
 		ss << " sec";
 		if (m_logWithHexa) { ss << " (0x" << hex << value.timeValue << ")"; }
 
-		txt << ss.str().c_str();
+		txt << ss.str();
 	}
 	else
 	{
@@ -199,7 +191,7 @@ void CLogListenerDesigner::log(const time64 value)
 
 void CLogListenerDesigner::log(const uint64_t value)
 {
-	if (m_bIngnoreMessages) { return; }
+	if (m_ignoreMsg) { return; }
 
 	stringstream txt;
 	txt << dec << value;
@@ -210,7 +202,7 @@ void CLogListenerDesigner::log(const uint64_t value)
 
 void CLogListenerDesigner::log(const uint32_t value)
 {
-	if (m_bIngnoreMessages) { return; }
+	if (m_ignoreMsg) { return; }
 
 	stringstream txt;
 	txt << dec << value;
@@ -221,7 +213,7 @@ void CLogListenerDesigner::log(const uint32_t value)
 
 void CLogListenerDesigner::log(const int64_t value)
 {
-	if (m_bIngnoreMessages) { return; }
+	if (m_ignoreMsg) { return; }
 
 	stringstream txt;
 	txt << dec << value;
@@ -232,7 +224,7 @@ void CLogListenerDesigner::log(const int64_t value)
 
 void CLogListenerDesigner::log(const int value)
 {
-	if (m_bIngnoreMessages) { return; }
+	if (m_ignoreMsg) { return; }
 
 	stringstream txt;
 	txt << dec << value;
@@ -241,234 +233,225 @@ void CLogListenerDesigner::log(const int value)
 	checkAppendFilterCurrentLog("c_watercourse", txt.str().c_str());
 }
 
-void CLogListenerDesigner::log(const float value)
-{
-	if (m_bIngnoreMessages) { return; }
-	checkAppendFilterCurrentLog("c_watercourse", std::to_string(value).c_str());
-}
-
 void CLogListenerDesigner::log(const double value)
 {
-	if (m_bIngnoreMessages) { return; }
+	if (m_ignoreMsg) { return; }
 	checkAppendFilterCurrentLog("c_watercourse", std::to_string(value).c_str());
 }
 
 void CLogListenerDesigner::log(const bool value)
 {
-	if (m_bIngnoreMessages) { return; }
+	if (m_ignoreMsg) { return; }
 	checkAppendFilterCurrentLog("c_watercourse", (value ? "true" : "false"));
 }
 
 void CLogListenerDesigner::log(const CIdentifier& value)
 {
-	if (m_bIngnoreMessages) { return; }
+	if (m_ignoreMsg) { return; }
 	checkAppendFilterCurrentLog("c_blueChill", value.str().c_str(), true);
 }
 
 void CLogListenerDesigner::log(const CString& value)
 {
-	if (m_bIngnoreMessages) { return; }
+	if (m_ignoreMsg) { return; }
 	checkAppendFilterCurrentLog("c_blueChill", value.toASCIIString());
 }
 
 void CLogListenerDesigner::log(const std::string& value)
 {
-	if (m_bIngnoreMessages) { return; }
+	if (m_ignoreMsg) { return; }
 	checkAppendFilterCurrentLog(nullptr, value.c_str());
 }
 
 void CLogListenerDesigner::log(const char* value)
 {
-	if (m_bIngnoreMessages) { return; }
+	if (m_ignoreMsg) { return; }
 	checkAppendFilterCurrentLog(nullptr, value);
 }
 
 void CLogListenerDesigner::log(const ELogLevel level)
 {
-	//	GtkTextIter l_oTextIter;
-	//	gtk_text_buffer_get_end_iter(m_Buffer, &l_oTextIter);
+	// GtkTextIter textIter;
+	// gtk_text_buffer_get_end_iter(m_Buffer, &l_oTextIter);
 
-	//new log, will be deleted when m_vStoredLog is cleared
-	m_pCurrentLog = new CLogObject(m_buffer);//m_pNonFilteredBuffer);
+	//new log, will be deleted when m_storedLogs is cleared
+	m_currentLog = new CLogObject(m_buffer);//m_pNonFilteredBuffer);
 
 	//copy this newly added content in the current log
-	GtkTextIter l_oEndLogIter;
-	gtk_text_buffer_get_end_iter(m_pCurrentLog->getTextBuffer(), &l_oEndLogIter);
+	GtkTextIter endIter;
+	gtk_text_buffer_get_end_iter(m_currentLog->getTextBuffer(), &endIter);
 
-	const auto addTagName = [this, &l_oEndLogIter](GtkToggleToolButton* activeButton, size_t& countVariable, const char* state, const char* color)
+	const auto addTagName = [this, &endIter](GtkToggleToolButton* activeButton, size_t& countVariable, const char* state, const char* color)
 	{
-		m_bIngnoreMessages = !gtk_toggle_tool_button_get_active(activeButton);
-		if (m_bIngnoreMessages) { return; }
+		m_ignoreMsg = !gtk_toggle_tool_button_get_active(activeButton);
+		if (m_ignoreMsg) { return; }
 
 		countVariable++;
-		gtk_text_buffer_insert_with_tags_by_name(m_pCurrentLog->getTextBuffer(), &l_oEndLogIter, "[ ", -1, "w_bold", "f_mono", nullptr);
-		gtk_text_buffer_insert_with_tags_by_name(m_pCurrentLog->getTextBuffer(), &l_oEndLogIter, state, -1, "w_bold", "f_mono", color, nullptr);
-		gtk_text_buffer_insert_with_tags_by_name(m_pCurrentLog->getTextBuffer(), &l_oEndLogIter, " ] ", -1, "w_bold", "f_mono", nullptr);
+		gtk_text_buffer_insert_with_tags_by_name(m_currentLog->getTextBuffer(), &endIter, "[ ", -1, "w_bold", "f_mono", nullptr);
+		gtk_text_buffer_insert_with_tags_by_name(m_currentLog->getTextBuffer(), &endIter, state, -1, "w_bold", "f_mono", color, nullptr);
+		gtk_text_buffer_insert_with_tags_by_name(m_currentLog->getTextBuffer(), &endIter, " ] ", -1, "w_bold", "f_mono", nullptr);
 	};
 
 	switch (level)
 	{
 		case LogLevel_Debug:
-			addTagName(m_pToggleButtonActive_Debug, m_nMessages, "DEBUG", "c_blue");
+			addTagName(m_buttonActiveDebug, m_nMsg, "DEBUG", "c_blue");
 			break;
 
 		case LogLevel_Benchmark:
-			addTagName(m_pToggleButtonActive_Benchmark, m_nMessages, "BENCH", "c_magenta");
+			addTagName(m_buttonActiveBenchmark, m_nMsg, "BENCH", "c_magenta");
 			break;
 
 		case LogLevel_Trace:
-			addTagName(m_pToggleButtonActive_Trace, m_nMessages, "TRACE", "c_watercourse");
+			addTagName(m_buttonActiveTrace, m_nMsg, "TRACE", "c_watercourse");
 			break;
 
 		case LogLevel_Info:
-			addTagName(m_pToggleButtonActive_Info, m_nMessages, "INF", "c_blueChill");
+			addTagName(m_buttonActiveInfo, m_nMsg, "INF", "c_blueChill");
 			break;
 
 		case LogLevel_Warning:
-			addTagName(m_pToggleButtonActive_Warning, m_nWarnings, "WARNING", "c_darkViolet");
+			addTagName(m_buttonActiveWarning, m_nWarning, "WARNING", "c_darkViolet");
 			break;
 
 		case LogLevel_ImportantWarning:
-			addTagName(m_pToggleButtonActive_ImportantWarning, m_nWarnings, "WARNING", "c_darkOrange");
+			addTagName(m_buttonActiveImportantWarning, m_nWarning, "WARNING", "c_darkOrange");
 			break;
 
 		case LogLevel_Error:
-			addTagName(m_pToggleButtonActive_Error, m_nErrors, "ERROR", "c_red");
+			addTagName(m_buttonActiveError, m_nError, "ERROR", "c_red");
 			break;
 
 		case LogLevel_Fatal:
-			addTagName(m_pToggleButtonActive_Fatal, m_nErrors, "FATAL", "c_red");
+			addTagName(m_buttonActiveFatal, m_nError, "FATAL", "c_red");
 			break;
 
 		default:
-			addTagName(nullptr, m_nMessages, "UNKNOWN", nullptr);
+			addTagName(nullptr, m_nMsg, "UNKNOWN", nullptr);
 			break;
 	}
 
-	if (gtk_toggle_button_get_active(m_pToggleButtonPopup) && (level == LogLevel_Warning || level == LogLevel_ImportantWarning || level ==
-															   LogLevel_Error || level == LogLevel_Fatal))
+	if (gtk_toggle_button_get_active(m_buttonPopup) && (level == LogLevel_Warning || level == LogLevel_ImportantWarning || level ==
+														LogLevel_Error || level == LogLevel_Fatal))
 	{
-		if (!gtk_widget_get_visible(GTK_WIDGET(m_pAlertWindow)))
+		if (!gtk_widget_get_visible(GTK_WIDGET(m_alertWindow)))
 		{
-			gtk_window_set_position(GTK_WINDOW(m_pAlertWindow), GTK_WIN_POS_CENTER);
-			gtk_window_present(GTK_WINDOW(m_pAlertWindow));
-			gtk_window_set_keep_above(GTK_WINDOW(m_pAlertWindow), true);
+			gtk_window_set_position(GTK_WINDOW(m_alertWindow), GTK_WIN_POS_CENTER);
+			gtk_window_present(GTK_WINDOW(m_alertWindow));
+			gtk_window_set_keep_above(GTK_WINDOW(m_alertWindow), true);
 		}
 	}
-	m_vStoredLog.push_back(m_pCurrentLog);
+	m_storedLogs.push_back(m_currentLog);
 
 	//see if the log passes the filter
-	const bool l_bPassFilter = m_pCurrentLog->Filter(m_sSearchTerm);
+	const bool passFilter = m_currentLog->filter(m_SearchTerm);
 	//if it does mark this position and insert the log in the text buffer displayed
-	GtkTextIter l_oEndDisplayedTextIter;
-	gtk_text_buffer_get_end_iter(m_buffer, &l_oEndDisplayedTextIter);
-	gtk_text_buffer_create_mark(m_buffer, "current_log", &l_oEndDisplayedTextIter,
-								true);//creating a mark will erase the previous one with the same name so no worry here
-	if (l_bPassFilter) { displayLog(m_pCurrentLog); }
+	GtkTextIter endDisplayedTextIter;
+	gtk_text_buffer_get_end_iter(m_buffer, &endDisplayedTextIter);
+	gtk_text_buffer_create_mark(m_buffer, "current_log", &endDisplayedTextIter,
+								true);	//creating a mark will erase the previous one with the same name so no worry here
+	if (passFilter) { displayLog(m_currentLog); }
 
 	this->updateMessageCounts();
 
 	GtkTextMark mark;
-	mark = *(gtk_text_buffer_get_mark(gtk_text_view_get_buffer(m_pTextView), "insert"));
-	gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(m_pTextView), &mark, 0.0, FALSE, 0.0, 0.0);
+	mark = *(gtk_text_buffer_get_mark(gtk_text_view_get_buffer(m_textView), "insert"));
+	gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(m_textView), &mark, 0.0, FALSE, 0.0, 0.0);
 }
 
-void CLogListenerDesigner::log(const ELogColor /*color*/) { if (m_bIngnoreMessages) {} }
+void CLogListenerDesigner::log(const ELogColor /*color*/) { }
 
 void CLogListenerDesigner::updateMessageCounts() const
 {
-	stringstream l_sCountMessages;
-	l_sCountMessages << "<b>" << m_nMessages << "</b> Message";
+	stringstream ss;
+	ss << "<b>" << m_nMsg << "</b> Message";
 
-	if (m_nMessages > 1) { l_sCountMessages << "s"; }
+	if (m_nMsg > 1) { ss << "s"; }
 
-	gtk_label_set_markup(m_labelnMessages, l_sCountMessages.str().data());
+	gtk_label_set_markup(m_labelnMsg, ss.str().data());
 
-	if (m_nWarnings > 0)
+	if (m_nWarning > 0)
 	{
-		stringstream countWarnings;
-		countWarnings << "<b>" << m_nWarnings << "</b> Warning";
+		ss.str("");
+		ss << "<b>" << m_nWarning << "</b> Warning";
+		if (m_nWarning > 1) { ss << "s"; }
 
-		if (m_nWarnings > 1) { countWarnings << "s"; }
-
-		gtk_label_set_markup(m_labelnWarnings, countWarnings.str().data());
-		gtk_label_set_markup(m_labelDialognWarnings, countWarnings.str().data());
+		gtk_label_set_markup(m_labelnWarnings, ss.str().data());
+		gtk_label_set_markup(m_labelDialognWarnings, ss.str().data());
 		gtk_widget_set_visible(GTK_WIDGET(m_labelnWarnings), true);
-		gtk_widget_set_visible(GTK_WIDGET(m_pImageWarnings), true);
+		gtk_widget_set_visible(GTK_WIDGET(m_imageWarnings), true);
 	}
 
-	if (m_nErrors > 0)
+	if (m_nError > 0)
 	{
-		stringstream countErrors;
-		countErrors << "<b>" << m_nErrors << "</b> Error";
+		ss.str("");
+		ss << "<b>" << m_nError << "</b> Error";
+		if (m_nError > 1) { ss << "s"; }
 
-		if (m_nErrors > 1) { countErrors << "s"; }
-
-		gtk_label_set_markup(m_labelnErrors, countErrors.str().data());
-		gtk_label_set_markup(m_labelDialognErrors, countErrors.str().data());
-
+		gtk_label_set_markup(m_labelnErrors, ss.str().data());
+		gtk_label_set_markup(m_labelDialognErrors, ss.str().data());
 		gtk_widget_set_visible(GTK_WIDGET(m_labelnErrors), true);
-		gtk_widget_set_visible(GTK_WIDGET(m_pImageErrors), true);
+		gtk_widget_set_visible(GTK_WIDGET(m_imageErrors), true);
 	}
 }
 
 void CLogListenerDesigner::clearMessages()
 {
-	m_nMessages   = 0;
-	m_nWarnings   = 0;
-	m_nErrors = 0;
+	m_nMsg     = 0;
+	m_nWarning = 0;
+	m_nError   = 0;
 
-	gtk_label_set_markup(m_labelnMessages, "<b>0</b> Messages");
+	gtk_label_set_markup(m_labelnMsg, "<b>0</b> Messages");
 	gtk_label_set_markup(m_labelnWarnings, "<b>0</b> Warnings");
 	gtk_label_set_markup(m_labelnErrors, "<b>0</b> Errors");
 	gtk_label_set_markup(m_labelDialognWarnings, "<b>0</b> Warnings");
 	gtk_label_set_markup(m_labelDialognErrors, "<b>0</b> Errors");
 
-	gtk_widget_set_visible(m_pImageWarnings, false);
+	gtk_widget_set_visible(m_imageWarnings, false);
 	gtk_widget_set_visible(GTK_WIDGET(m_labelnWarnings), false);
-	gtk_widget_set_visible(m_pImageErrors, false);
+	gtk_widget_set_visible(m_imageErrors, false);
 	gtk_widget_set_visible(GTK_WIDGET(m_labelnErrors), false);
 
 	gtk_text_buffer_set_text(m_buffer, "", -1);
 
-	std::for_each(m_vStoredLog.begin(), m_vStoredLog.end(), [](CLogObject* elem) { delete elem; });
-	m_vStoredLog.clear();
+	std::for_each(m_storedLogs.begin(), m_storedLogs.end(), [](CLogObject* elem) { delete elem; });
+	m_storedLogs.clear();
 
-	m_pCurrentLog = nullptr;
+	m_currentLog = nullptr;
 }
 
 void CLogListenerDesigner::focusMessageWindow() const
 {
-	gtk_widget_hide(GTK_WIDGET(m_pAlertWindow));
-	gtk_expander_set_expanded(GTK_EXPANDER(gtk_builder_get_object(m_pBuilderInterface, "openvibe-expander_messages")), true);
+	gtk_widget_hide(GTK_WIDGET(m_alertWindow));
+	gtk_expander_set_expanded(GTK_EXPANDER(gtk_builder_get_object(m_builder, "openvibe-expander_messages")), true);
 }
 
 
-void CLogListenerDesigner::checkAppendFilterCurrentLog(const char* textColor, const char* logMessage, const bool bIsLink) const
+void CLogListenerDesigner::checkAppendFilterCurrentLog(const char* textColor, const char* logMessage, const bool isLink) const
 {
-	if (!m_pCurrentLog)
+	if (!m_currentLog)
 	{
 		std::cout << "Ouch, current log had been deleted before creating new, this shouldn't happen...\n";
 		return;
 	}
-	m_pCurrentLog->appendToCurrentLog(textColor, logMessage, bIsLink);
+	m_currentLog->appendToCurrentLog(textColor, logMessage, isLink);
 
-	if (m_pCurrentLog->Filter(m_sSearchTerm)) { displayLog(m_pCurrentLog); }
+	if (m_currentLog->filter(m_SearchTerm)) { displayLog(m_currentLog); }
 }
 
-void CLogListenerDesigner::displayLog(CLogObject* oLog) const
+void CLogListenerDesigner::displayLog(CLogObject* log) const
 {
 	GtkTextMark* mark = gtk_text_buffer_get_mark(m_buffer, "current_log");
-	GtkTextIter l_oIter, l_oEndter, l_oLogBegin, l_oLogEnd;
-	gtk_text_buffer_get_iter_at_mark(m_buffer, &l_oIter, mark);
-	gtk_text_buffer_get_end_iter(m_buffer, &l_oEndter);
+	GtkTextIter iter, endIter, begin, end;
+	gtk_text_buffer_get_iter_at_mark(m_buffer, &iter, mark);
+	gtk_text_buffer_get_end_iter(m_buffer, &endIter);
 
 	//delete what after the mark
-	gtk_text_buffer_delete(m_buffer, &l_oIter, &l_oEndter);
+	gtk_text_buffer_delete(m_buffer, &iter, &endIter);
 	//get iter
-	gtk_text_buffer_get_iter_at_mark(m_buffer, &l_oIter, mark);
+	gtk_text_buffer_get_iter_at_mark(m_buffer, &iter, mark);
 	//rewrite the log
-	gtk_text_buffer_get_start_iter(oLog->getTextBuffer(), &l_oLogBegin);
-	gtk_text_buffer_get_end_iter(oLog->getTextBuffer(), &l_oLogEnd);
-	gtk_text_buffer_insert_range(m_buffer, &l_oIter, &l_oLogBegin, &l_oLogEnd);
+	gtk_text_buffer_get_start_iter(log->getTextBuffer(), &begin);
+	gtk_text_buffer_get_end_iter(log->getTextBuffer(), &end);
+	gtk_text_buffer_insert_range(m_buffer, &iter, &begin, &end);
 }

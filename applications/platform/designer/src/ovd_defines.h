@@ -1,14 +1,14 @@
 #pragma once
 
 //Attributes of visualisation window :
-#define OVD_AttributeId_VisualisationWindow_Width           OpenViBE::CIdentifier(0x7B814CCA, 0x271DF6DD)
-#define OVD_AttributeId_VisualisationWindow_Height          OpenViBE::CIdentifier(0x4C90D4AD, 0x7A2554EC)
+#define OVD_AttributeId_VisualisationWindow_Width 					OpenViBE::CIdentifier(0x7B814CCA, 0x271DF6DD)
+#define OVD_AttributeId_VisualisationWindow_Height					OpenViBE::CIdentifier(0x4C90D4AD, 0x7A2554EC)
 
 //Attributes of visualisation paned :
-#define OVD_AttributeId_VisualisationWidget_DividerPosition         OpenViBE::CIdentifier(0x54E45F5B, 0x76C036E2)
-#define OVD_AttributeId_VisualisationWidget_MaxDividerPosition      OpenViBE::CIdentifier(0x237E56D2, 0x10CD68AE)
+#define OVD_AttributeId_VisualisationWidget_DividerPosition     	OpenViBE::CIdentifier(0x54E45F5B, 0x76C036E2)
+#define OVD_AttributeId_VisualisationWidget_MaxDividerPosition  	OpenViBE::CIdentifier(0x237E56D2, 0x10CD68AE)
 
-#define OV_AttributeId_Box_Disabled                         OpenViBE::CIdentifier(0x341D3912, 0x1478DE86)
+#define OV_AttributeId_Box_Disabled                					OpenViBE::CIdentifier(0x341D3912, 0x1478DE86)
 
 namespace OpenViBEDesigner
 {

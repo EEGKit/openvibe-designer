@@ -30,8 +30,6 @@
 #define snprintf _snprintf
 #endif
 
-using namespace OpenViBE::Kernel;
-
 namespace Mensia
 {
 	namespace AdvancedVisualization
@@ -41,18 +39,18 @@ namespace Mensia
 		{
 		public:
 
-			TBoxAlgorithmStackedInstantViz(const OpenViBE::CIdentifier& rClassId, const std::vector<int>& vParameter);
+			TBoxAlgorithmStackedInstantViz(const OpenViBE::CIdentifier& classId, const std::vector<int>& parameters);
 			bool initialize() override;
 			bool uninitialize() override;
 			bool process() override;
 
-			_IsDerivedFromClass_Final_(CBoxAlgorithmViz, m_oClassId)
+			_IsDerivedFromClass_Final_(CBoxAlgorithmViz, m_ClassID)
 
-			OpenViBEToolkit::TStimulationDecoder<TBoxAlgorithmStackedInstantViz<bDrawBorders, TRendererFactoryClass, TRulerClass>> m_oStimulationDecoder;
-			OpenViBEToolkit::TStreamedMatrixDecoder<TBoxAlgorithmStackedInstantViz<bDrawBorders, TRendererFactoryClass, TRulerClass>> m_oMatrixDecoder;
+			OpenViBEToolkit::TStimulationDecoder<TBoxAlgorithmStackedInstantViz<bDrawBorders, TRendererFactoryClass, TRulerClass>> m_StimDecoder;
+			OpenViBEToolkit::TStreamedMatrixDecoder<TBoxAlgorithmStackedInstantViz<bDrawBorders, TRendererFactoryClass, TRulerClass>> m_MatrixDecoder;
 
-			TRendererFactoryClass m_oRendererFactory;
-			std::vector<IRenderer*> m_vRenderer;
+			TRendererFactoryClass m_RendererFactory;
+			std::vector<IRenderer*> m_Renderers;
 
 		protected:
 
@@ -63,9 +61,9 @@ namespace Mensia
 		{
 		public:
 
-			CBoxAlgorithmStackedInstantVizListener(const std::vector<int>& vParameter) : CBoxAlgorithmVizListener(vParameter) { }
+			CBoxAlgorithmStackedInstantVizListener(const std::vector<int>& parameters) : CBoxAlgorithmVizListener(parameters) { }
 
-			bool onInputTypeChanged(IBox& box, const uint32_t index) override
+			bool onInputTypeChanged(OpenViBE::Kernel::IBox& box, const size_t index) override
 			{
 				OpenViBE::CIdentifier typeID = OV_UndefinedIdentifier;
 				box.getInputType(index, typeID);
@@ -80,30 +78,28 @@ namespace Mensia
 		{
 		public:
 
-			TBoxAlgorithmStackedInstantVizDesc(const OpenViBE::CString& name, const OpenViBE::CIdentifier& rDescClassId, const OpenViBE::CIdentifier& rClassId,
-											   const OpenViBE::CString& sAddedSoftwareVersion, const OpenViBE::CString& sUpdatedSoftwareVersion,
-											   const CParameterSet& rParameterSet, const OpenViBE::CString& sShortDescription,
-											   const OpenViBE::CString& sDetailedDescription)
-				: CBoxAlgorithmVizDesc(name, rDescClassId, rClassId, sAddedSoftwareVersion, sUpdatedSoftwareVersion, rParameterSet, sShortDescription,
-									   sDetailedDescription) { }
+			TBoxAlgorithmStackedInstantVizDesc(const OpenViBE::CString& name, const OpenViBE::CIdentifier& descClassID, const OpenViBE::CIdentifier& classID,
+											   const OpenViBE::CString& addedSoftwareVersion, const OpenViBE::CString& updatedSoftwareVersion,
+											   const CParameterSet& parameterSet, const OpenViBE::CString& shortDesc, const OpenViBE::CString& detailedDesc)
+				: CBoxAlgorithmVizDesc(name, descClassID, classID, addedSoftwareVersion, updatedSoftwareVersion, parameterSet, shortDesc, detailedDesc) { }
 
 			OpenViBE::Plugins::IPluginObject* create() override
 			{
-				return new TBoxAlgorithmStackedInstantViz<bDrawBorders, TRendererFactoryClass, TRulerClass>(m_oClassId, m_vParameter);
+				return new TBoxAlgorithmStackedInstantViz<bDrawBorders, TRendererFactoryClass, TRulerClass>(m_ClassID, m_Parameters);
 			}
 
-			OpenViBE::Plugins::IBoxListener* createBoxListener() const override { return new CBoxAlgorithmStackedInstantVizListener(m_vParameter); }
+			OpenViBE::Plugins::IBoxListener* createBoxListener() const override { return new CBoxAlgorithmStackedInstantVizListener(m_Parameters); }
 
-			OpenViBE::CString getCategory() const override { return OpenViBE::CString("Advanced Visualization/") + m_sCategoryName; }
+			OpenViBE::CString getCategory() const override { return OpenViBE::CString("Advanced Visualization/") + m_CategoryName; }
 
-			_IsDerivedFromClass_Final_(OpenViBE::Plugins::IBoxAlgorithmDesc, m_oDescClassId)
+			_IsDerivedFromClass_Final_(OpenViBE::Plugins::IBoxAlgorithmDesc, m_DescClassID)
 		};
 
 
 		template <bool bDrawBorders, class TRendererFactoryClass, class TRulerClass>
 		TBoxAlgorithmStackedInstantViz<bDrawBorders, TRendererFactoryClass, TRulerClass>::TBoxAlgorithmStackedInstantViz(
-			const OpenViBE::CIdentifier& rClassId, const std::vector<int>& vParameter)
-			: CBoxAlgorithmViz(rClassId, vParameter) { }
+			const OpenViBE::CIdentifier& classId, const std::vector<int>& parameters)
+			: CBoxAlgorithmViz(classId, parameters) { }
 
 		template <bool bDrawBorders, class TRendererFactoryClass, class TRulerClass>
 		bool TBoxAlgorithmStackedInstantViz<bDrawBorders, TRendererFactoryClass, TRulerClass>::initialize()
@@ -111,108 +107,108 @@ namespace Mensia
 		{
 			const bool res = CBoxAlgorithmViz::initialize();
 
-			m_oMatrixDecoder.initialize(*this, 0);
-			m_oStimulationDecoder.initialize(*this, 1);
+			m_MatrixDecoder.initialize(*this, 0);
+			m_StimDecoder.initialize(*this, 1);
 
-			m_pRendererContext->clear();
-			m_pRendererContext->setTranslucency(float(m_translucency));
-			m_pRendererContext->scaleBy(float(m_f64DataScale));
-			m_pRendererContext->setPositiveOnly(true);
-			m_pRendererContext->setAxisDisplay(m_bShowAxis);
-			m_pRendererContext->setParentRendererContext(&getContext());
+			m_RendererCtx->clear();
+			m_RendererCtx->setTranslucency(float(m_Translucency));
+			m_RendererCtx->scaleBy(float(m_DataScale));
+			m_RendererCtx->setPositiveOnly(true);
+			m_RendererCtx->setAxisDisplay(m_ShowAxis);
+			m_RendererCtx->setParentRendererContext(&getContext());
 
-			m_pSubRendererContext->clear();
-			m_pSubRendererContext->setParentRendererContext(m_pRendererContext);
+			m_SubRendererCtx->clear();
+			m_SubRendererCtx->setParentRendererContext(m_RendererCtx);
 
-			m_pRuler = new TRulerClass;
-			m_pRuler->setRendererContext(m_pRendererContext);
+			m_Ruler = new TRulerClass;
+			m_Ruler->setRendererContext(m_RendererCtx);
 
 			OpenViBE::CMatrix gradientMatrix;
-			OpenViBEVisualizationToolkit::Tools::ColorGradient::parse(gradientMatrix, m_sColorGradient);
-			for (uint32_t step = 0; step < gradientMatrix.getDimensionSize(1); ++step)
+			OpenViBEVisualizationToolkit::Tools::ColorGradient::parse(gradientMatrix, m_ColorGradient);
+			for (size_t step = 0; step < gradientMatrix.getDimensionSize(1); ++step)
 			{
 				const double currentStepValue            = gradientMatrix.getBuffer()[4 * step + 0];
 				gradientMatrix.getBuffer()[4 * step + 0] = (currentStepValue / 100.0) * 50.0 + 50.0;
 			}
-			OpenViBEVisualizationToolkit::Tools::ColorGradient::format(m_sColorGradient, gradientMatrix);
+			OpenViBEVisualizationToolkit::Tools::ColorGradient::format(m_ColorGradient, gradientMatrix);
 
 			return res;
 		}
 
-		template <bool bDrawBorders, class TRendererFactoryClass, class TRulerClass>
-		bool TBoxAlgorithmStackedInstantViz<bDrawBorders, TRendererFactoryClass, TRulerClass>::uninitialize()
+		template <bool TDrawBorders, class TRendererFactoryClass, class TRulerClass>
+		bool TBoxAlgorithmStackedInstantViz<TDrawBorders, TRendererFactoryClass, TRulerClass>::uninitialize()
 
 		{
-			for (uint32_t i = 0; i < m_vRenderer.size(); ++i) { m_oRendererFactory.release(m_vRenderer[i]); }
-			m_vRenderer.clear();
+			for (size_t i = 0; i < m_Renderers.size(); ++i) { m_RendererFactory.release(m_Renderers[i]); }
+			m_Renderers.clear();
 
-			IRendererContext::release(m_pSubRendererContext);
-			m_pSubRendererContext = nullptr;
+			delete m_SubRendererCtx;
+			m_SubRendererCtx = nullptr;
 
-			IRendererContext::release(m_pRendererContext);
-			m_pRendererContext = nullptr;
+			delete m_RendererCtx;
+			m_RendererCtx = nullptr;
 
-			delete m_pRuler;
-			m_pRuler = nullptr;
+			delete m_Ruler;
+			m_Ruler = nullptr;
 
-			m_oStimulationDecoder.uninitialize();
-			m_oMatrixDecoder.uninitialize();
+			m_StimDecoder.uninitialize();
+			m_MatrixDecoder.uninitialize();
 
 			return CBoxAlgorithmViz::uninitialize();
 		}
 
-		template <bool bDrawBorders, class TRendererFactoryClass, class TRulerClass>
-		bool TBoxAlgorithmStackedInstantViz<bDrawBorders, TRendererFactoryClass, TRulerClass>::process()
+		template <bool TDrawBorders, class TRendererFactoryClass, class TRulerClass>
+		bool TBoxAlgorithmStackedInstantViz<TDrawBorders, TRendererFactoryClass, TRulerClass>::process()
 
 		{
-			const IBox& staticBoxContext = this->getStaticBoxContext();
-			IBoxIO& dynamicBoxContext    = this->getDynamicBoxContext();
+			const OpenViBE::Kernel::IBox& staticBoxContext = this->getStaticBoxContext();
+			OpenViBE::Kernel::IBoxIO& dynamicBoxContext    = this->getDynamicBoxContext();
 
-			for (uint32_t chunk = 0; chunk < dynamicBoxContext.getInputChunkCount(0); ++chunk)
+			for (size_t chunk = 0; chunk < dynamicBoxContext.getInputChunkCount(0); ++chunk)
 			{
-				m_oMatrixDecoder.decode(chunk);
+				m_MatrixDecoder.decode(chunk);
 
-				OpenViBE::IMatrix* inputMatrix = m_oMatrixDecoder.getOutputMatrix();
-				const uint32_t nChannel    = inputMatrix->getDimensionSize(0);
+				OpenViBE::IMatrix* inputMatrix = m_MatrixDecoder.getOutputMatrix();
+				const size_t nChannel          = inputMatrix->getDimensionSize(0);
 
 				if (nChannel == 0)
 				{
-					this->getLogManager() << LogLevel_Error << "Input stream " << chunk << " has 0 channels\n";
+					this->getLogManager() << OpenViBE::Kernel::LogLevel_Error << "Input stream " << chunk << " has 0 channels\n";
 					return false;
 				}
 
-				if (m_oMatrixDecoder.isHeaderReceived())
+				if (m_MatrixDecoder.isHeaderReceived())
 				{
-					for (auto renderer : m_vRenderer) { m_oRendererFactory.release(renderer); }
-					m_vRenderer.clear();
-					m_vRenderer.resize(nChannel);
+					for (auto renderer : m_Renderers) { m_RendererFactory.release(renderer); }
+					m_Renderers.clear();
+					m_Renderers.resize(nChannel);
 
-					m_pSubRendererContext->clear();
-					m_pSubRendererContext->setParentRendererContext(m_pRendererContext);
-					m_pSubRendererContext->setTimeLocked(false);
-					m_pSubRendererContext->setStackCount(nChannel);
-					m_pSubRendererContext->setPositiveOnly(true);
+					m_SubRendererCtx->clear();
+					m_SubRendererCtx->setParentRendererContext(m_RendererCtx);
+					m_SubRendererCtx->setTimeLocked(false);
+					m_SubRendererCtx->setStackCount(nChannel);
+					m_SubRendererCtx->setPositiveOnly(true);
 
 
-					m_pRendererContext->clear();
-					m_pRendererContext->setTranslucency(float(m_translucency));
-					m_pRendererContext->setTimeScale(1);
-					m_pRendererContext->scaleBy(float(m_f64DataScale));
-					m_pRendererContext->setParentRendererContext(&getContext());
-					m_pRendererContext->setTimeLocked(false);
-					m_pRendererContext->setXYZPlotDepth(false);
-					m_pRendererContext->setPositiveOnly(true);
+					m_RendererCtx->clear();
+					m_RendererCtx->setTranslucency(float(m_Translucency));
+					m_RendererCtx->setTimeScale(1);
+					m_RendererCtx->scaleBy(float(m_DataScale));
+					m_RendererCtx->setParentRendererContext(&getContext());
+					m_RendererCtx->setTimeLocked(false);
+					m_RendererCtx->setXYZPlotDepth(false);
+					m_RendererCtx->setPositiveOnly(true);
 
-					if (m_typeID == OV_TypeId_TimeFrequency)
+					if (m_TypeID == OV_TypeId_TimeFrequency)
 					{
-						GtkTreeIter l_oGtkTreeIterator;
-						gtk_list_store_clear(m_pChannelListStore);
+						GtkTreeIter gtkTreeIter;
+						gtk_list_store_clear(m_ChannelListStore);
 
-						const uint32_t frequencyCount = inputMatrix->getDimensionSize(1);
-						const uint32_t nSample    = inputMatrix->getDimensionSize(2);
+						const size_t frequencyCount = inputMatrix->getDimensionSize(1);
+						const size_t nSample        = inputMatrix->getDimensionSize(2);
 
 						// I do not know what this is for...
-						for (uint32_t frequency = 0; frequency < frequencyCount; ++frequency)
+						for (size_t frequency = 0; frequency < frequencyCount; ++frequency)
 						{
 							try
 							{
@@ -222,122 +218,117 @@ namespace Mensia
 								{
 									std::unique_ptr<char[]> buffer(new char[stringSize]);
 									snprintf(buffer.get(), size_t(stringSize), "%.2f", frequencyValue);
-									m_pRendererContext->setDimensionLabel(1, frequencyCount - frequency - 1, buffer.get());
+									m_RendererCtx->setDimensionLabel(1, frequencyCount - frequency - 1, buffer.get());
 								}
 							}
-							catch (...) { m_pRendererContext->setDimensionLabel(1, frequencyCount - frequency - 1, "NaN"); }
-							m_pSubRendererContext->addChannel("", 0, 0, 0);
+							catch (...) { m_RendererCtx->setDimensionLabel(1, frequencyCount - frequency - 1, "NaN"); }
+							m_SubRendererCtx->addChannel("", 0, 0, 0);
 						}
 
 
-						m_pRendererContext->setDataType(IRendererContext::DataType_TimeFrequency);
-						m_pSubRendererContext->setDataType(IRendererContext::DataType_TimeFrequency);
+						m_RendererCtx->setDataType(CRendererContext::EDataType::TimeFrequency);
+						m_SubRendererCtx->setDataType(CRendererContext::EDataType::TimeFrequency);
 
-						m_pRendererContext->setElementCount(nSample);
-						m_pSubRendererContext->setElementCount(nSample);
-						gtk_tree_view_set_model(m_pChannelTreeView, nullptr);
+						m_RendererCtx->setElementCount(nSample);
+						m_SubRendererCtx->setElementCount(nSample);
+						gtk_tree_view_set_model(m_ChannelTreeView, nullptr);
 
-						for (uint32_t channel = 0; channel < nChannel; ++channel)
+						for (size_t channel = 0; channel < nChannel; ++channel)
 						{
 							std::string channelName          = trim(inputMatrix->getDimensionLabel(0, channel));
 							std::string lowercaseChannelName = channelName;
 							std::transform(channelName.begin(), channelName.end(), lowercaseChannelName.begin(), tolower);
-							const CVertex v = m_vChannelLocalisation[lowercaseChannelName];
+							const CVertex v = m_ChannelPositions[lowercaseChannelName];
 
-							if (channelName.empty())
-							{
-								char indexedChannelName[1024];
-								sprintf(indexedChannelName, "Channel %u", channel + 1);
-								channelName = indexedChannelName;
-							}
+							if (channelName.empty()) { channelName = "Channel " + std::to_string(channel + 1); }
 
-							m_vRenderer[channel] = m_oRendererFactory.create();
+							m_Renderers[channel] = m_RendererFactory.create();
 
 							// The channels in the sub-renderer are the frequencies in the spectrum
-							m_vRenderer[channel]->setChannelCount(frequencyCount);
-							m_vRenderer[channel]->setSampleCount(nSample);
+							m_Renderers[channel]->setChannelCount(frequencyCount);
+							m_Renderers[channel]->setSampleCount(nSample);
 
-							m_pRendererContext->addChannel(channelName, v.x, v.y, v.z);
-							gtk_list_store_append(m_pChannelListStore, &l_oGtkTreeIterator);
-							gtk_list_store_set(m_pChannelListStore, &l_oGtkTreeIterator, 0, channel + 1, 1, channelName.c_str(), -1);
+							m_RendererCtx->addChannel(channelName, v.x, v.y, v.z);
+							gtk_list_store_append(m_ChannelListStore, &gtkTreeIter);
+							gtk_list_store_set(m_ChannelListStore, &gtkTreeIter, 0, channel + 1, 1, channelName.c_str(), -1);
 						}
-						gtk_tree_view_set_model(m_pChannelTreeView, GTK_TREE_MODEL(m_pChannelListStore));
-						gtk_tree_selection_select_all(gtk_tree_view_get_selection(m_pChannelTreeView));
+						gtk_tree_view_set_model(m_ChannelTreeView, GTK_TREE_MODEL(m_ChannelListStore));
+						gtk_tree_selection_select_all(gtk_tree_view_get_selection(m_ChannelTreeView));
 					}
 					else
 					{
-						this->getLogManager() << LogLevel_Error << "Input stream type is not supported\n";
+						this->getLogManager() << OpenViBE::Kernel::LogLevel_Error << "Input stream type is not supported\n";
 						return false;
 					}
 
-					m_pRuler->setRenderer(nChannel ? m_vRenderer[0] : nullptr);
+					m_Ruler->setRenderer(nChannel ? m_Renderers[0] : nullptr);
 
-					m_bRebuildNeeded = true;
-					m_bRefreshNeeded = true;
-					m_bRedrawNeeded  = true;
+					m_RebuildNeeded = true;
+					m_RefreshNeeded = true;
+					m_RedrawNeeded  = true;
 				}
 
-				if (m_oMatrixDecoder.isBufferReceived())
+				if (m_MatrixDecoder.isBufferReceived())
 				{
-					if (m_typeID == OV_TypeId_TimeFrequency)
+					if (m_TypeID == OV_TypeId_TimeFrequency)
 					{
-						m_time1 = m_time2;
-						m_time2 = dynamicBoxContext.getInputChunkEndTime(0, chunk);
+						m_Time1 = m_Time2;
+						m_Time2 = dynamicBoxContext.getInputChunkEndTime(0, chunk);
 
-						const uint32_t frequencyCount = inputMatrix->getDimensionSize(1);
-						const uint32_t nSample    = inputMatrix->getDimensionSize(2);
+						const size_t frequencyCount = inputMatrix->getDimensionSize(1);
+						const size_t nSample        = inputMatrix->getDimensionSize(2);
 
 						const uint64_t chunkDuration  = dynamicBoxContext.getInputChunkEndTime(0, chunk) - dynamicBoxContext.getInputChunkStartTime(0, chunk);
 						const uint64_t sampleDuration = chunkDuration / nSample;
 
-						m_pSubRendererContext->setSampleDuration(sampleDuration);
-						m_pRendererContext->setSampleDuration(sampleDuration);
+						m_SubRendererCtx->setSampleDuration(sampleDuration);
+						m_RendererCtx->setSampleDuration(sampleDuration);
 
-						for (uint32_t channel = 0; channel < nChannel; ++channel)
+						for (size_t channel = 0; channel < nChannel; ++channel)
 						{
 							// Feed renderer with actual samples
-							for (uint32_t sample = 0; sample < nSample; ++sample)
+							for (size_t sample = 0; sample < nSample; ++sample)
 							{
-								m_vSwap.resize(frequencyCount);
-								for (uint32_t frequency = 0; frequency < frequencyCount; ++frequency)
+								m_Swaps.resize(frequencyCount);
+								for (size_t frequency = 0; frequency < frequencyCount; ++frequency)
 								{
-									m_vSwap[frequencyCount - frequency - 1] = float(
+									m_Swaps[frequencyCount - frequency - 1] = float(
 										inputMatrix->getBuffer()[sample + frequency * nSample + channel * nSample * frequencyCount]);
 								}
-								m_vRenderer[channel]->feed(&m_vSwap[0]);
+								m_Renderers[channel]->feed(&m_Swaps[0]);
 							}
 						}
 
-						m_bRefreshNeeded = true;
-						m_bRedrawNeeded  = true;
+						m_RefreshNeeded = true;
+						m_RedrawNeeded  = true;
 					}
 				}
 			}
 
 			if (staticBoxContext.getInputCount() > 1)
 			{
-				for (uint32_t i = 0; i < dynamicBoxContext.getInputChunkCount(1); ++i)
+				for (size_t i = 0; i < dynamicBoxContext.getInputChunkCount(1); ++i)
 				{
-					m_oStimulationDecoder.decode(i);
-					if (m_oStimulationDecoder.isBufferReceived())
+					m_StimDecoder.decode(i);
+					if (m_StimDecoder.isBufferReceived())
 					{
-						OpenViBE::IStimulationSet* stimSet = m_oStimulationDecoder.getOutputStimulationSet();
+						OpenViBE::IStimulationSet* stimSet = m_StimDecoder.getOutputStimulationSet();
 						for (size_t j = 0; j < stimSet->getStimulationCount(); ++j)
 						{
-							m_vRenderer[0]->feed(stimSet->getStimulationDate(j), stimSet->getStimulationIdentifier(j));
-							m_bRedrawNeeded = true;
+							m_Renderers[0]->feed(stimSet->getStimulationDate(j), stimSet->getStimulationIdentifier(j));
+							m_RedrawNeeded = true;
 						}
 					}
 				}
 			}
 
-			if (m_bRebuildNeeded) { for (auto& renderer : m_vRenderer) { renderer->rebuild(*m_pSubRendererContext); } }
-			if (m_bRefreshNeeded) { for (auto& renderer : m_vRenderer) { renderer->refresh(*m_pSubRendererContext); } }
-			if (m_bRedrawNeeded) { this->redraw(); }
+			if (m_RebuildNeeded) { for (auto& renderer : m_Renderers) { renderer->rebuild(*m_SubRendererCtx); } }
+			if (m_RefreshNeeded) { for (auto& renderer : m_Renderers) { renderer->refresh(*m_SubRendererCtx); } }
+			if (m_RedrawNeeded) { this->redraw(); }
 
-			m_bRebuildNeeded = false;
-			m_bRefreshNeeded = false;
-			m_bRedrawNeeded  = false;
+			m_RebuildNeeded = false;
+			m_RefreshNeeded = false;
+			m_RedrawNeeded  = false;
 
 			return true;
 		}
@@ -348,21 +339,21 @@ namespace Mensia
 		{
 			CBoxAlgorithmViz::preDraw();
 
-			if (m_pRendererContext->getSelectedCount() != 0)
+			if (m_RendererCtx->getSelectedCount() != 0)
 			{
 				glPushMatrix();
-				glScalef(1, 1.f / m_pRendererContext->getSelectedCount(), 1);
-				for (uint32_t i = 0; i < m_pRendererContext->getSelectedCount(); ++i)
+				glScalef(1, 1.F / m_RendererCtx->getSelectedCount(), 1);
+				for (size_t i = 0; i < m_RendererCtx->getSelectedCount(); ++i)
 				{
 					glPushAttrib(GL_ALL_ATTRIB_BITS);
 					glPushMatrix();
-					glColor4f(m_oColor.r, m_oColor.g, m_oColor.b, m_pRendererContext->getTranslucency());
-					glTranslatef(0, m_pRendererContext->getSelectedCount() - i - 1.f, 0);
+					glColor4f(m_Color.r, m_Color.g, m_Color.b, m_RendererCtx->getTranslucency());
+					glTranslatef(0, m_RendererCtx->getSelectedCount() - i - 1.F, 0);
 
-					m_pSubRendererContext->setAspect(m_pRendererContext->getAspect());
-					m_pSubRendererContext->setStackCount(m_pRendererContext->getSelectedCount());
-					m_pSubRendererContext->setStackIndex(i);
-					m_vRenderer[m_pRendererContext->getSelected(i)]->render(*m_pSubRendererContext);
+					m_SubRendererCtx->setAspect(m_RendererCtx->getAspect());
+					m_SubRendererCtx->setStackCount(m_RendererCtx->getSelectedCount());
+					m_SubRendererCtx->setStackIndex(i);
+					m_Renderers[m_RendererCtx->getSelected(i)]->render(*m_SubRendererCtx);
 					if (bDrawBorders)
 					{
 						glDisable(GL_TEXTURE_1D);

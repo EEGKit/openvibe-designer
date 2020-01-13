@@ -13,13 +13,13 @@ namespace OpenViBEDesigner
 	public:
 
 		CScenarioStateStack(const OpenViBE::Kernel::IKernelContext& ctx, CInterfacedScenario& interfacedScenario, OpenViBE::Kernel::IScenario& scenario);
-		virtual ~CScenarioStateStack();
+		virtual ~CScenarioStateStack() { for (auto& state : m_states) { delete state; } }
 
-		virtual bool isUndoPossible();
+		virtual bool isUndoPossible() { return m_currentState != m_states.begin(); }
 		virtual bool undo();
 		virtual bool isRedoPossible();
 		virtual bool redo();
-		void dropLastState();
+		void dropLastState() { m_states.pop_back(); }
 
 		virtual bool snapshot();
 
@@ -31,12 +31,12 @@ namespace OpenViBEDesigner
 	protected:
 
 		const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
-		CInterfacedScenario& m_InterfacedScenario;
-		OpenViBE::Kernel::IScenario& m_Scenario;
+		CInterfacedScenario& m_interfacedScenario;
+		OpenViBE::Kernel::IScenario& m_scenario;
 
-		std::list<OpenViBE::CMemoryBuffer*> m_States;
-		std::list<OpenViBE::CMemoryBuffer*>::iterator m_CurrentState;
+		std::list<OpenViBE::CMemoryBuffer*> m_states;
+		std::list<OpenViBE::CMemoryBuffer*>::iterator m_currentState;
 
-		uint32_t m_nMaximumState = 0;
+		size_t m_nMaximumState = 0;
 	};
 }

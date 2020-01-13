@@ -24,9 +24,9 @@
 using namespace Mensia;
 using namespace AdvancedVisualization;
 
-void CRendererBars::rebuild(const IRendererContext& rContext)
+void CRendererBars::rebuild(const CRendererContext& ctx)
 {
-	CRenderer::rebuild(rContext);
+	IRenderer::rebuild(ctx);
 
 	m_vertex.resize(m_nChannel);
 	for (size_t i = 0; i < m_nChannel; ++i)
@@ -51,40 +51,40 @@ void CRendererBars::rebuild(const IRendererContext& rContext)
 	m_historyIdx = 0;
 }
 
-void CRendererBars::refresh(const IRendererContext& rContext)
+void CRendererBars::refresh(const CRendererContext& ctx)
 {
-	CRenderer::refresh(rContext);
+	IRenderer::refresh(ctx);
 
 	if (!m_nHistory) { return; }
 
 	for (size_t i = 0; i < m_nChannel; ++i)
 	{
-		size_t k                       = ((m_nHistory - 1) / m_nSample) * m_nSample;
-		std::vector<float>& l_vHistory = m_history[i];
-		CVertex* l_pVertex             = &m_vertex[i][0];
+		size_t k                    = ((m_nHistory - 1) / m_nSample) * m_nSample;
+		std::vector<float>& history = m_history[i];
+		CVertex* vertex             = &m_vertex[i][0];
 		for (size_t j = 0; j < m_nSample; j++, k++)
 		{
 			if (k >= m_historyIdx && k < m_nHistory)
 			{
-				const float l_f32Value = l_vHistory[k];
-				l_pVertex++->y         = 0;
-				l_pVertex++->y         = 0;
-				l_pVertex++->y         = l_f32Value;
-				l_pVertex++->y         = l_f32Value;
+				const float value = history[k];
+				vertex++->y       = 0;
+				vertex++->y       = 0;
+				vertex++->y       = value;
+				vertex++->y       = value;
 			}
-			else { l_pVertex += 4; }
+			else { vertex += 4; }
 		}
 	}
 	m_historyIdx = m_nHistory;
 }
 
-bool CRendererBars::render(const IRendererContext& rContext)
+bool CRendererBars::render(const CRendererContext& ctx)
 {
-	if (!rContext.getSelectedCount()) { return false; }
+	if (!ctx.getSelectedCount()) { return false; }
 	if (m_vertex.empty()) { return false; }
 	if (!m_nHistory) { return false; }
 
-	uint32_t i;
+	size_t i;
 
 	glMatrixMode(GL_TEXTURE);
 	glPushMatrix();
@@ -92,14 +92,14 @@ bool CRendererBars::render(const IRendererContext& rContext)
 
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
-	glScalef(1, 1.f / rContext.getSelectedCount(), 1);
-	glTranslatef(0, rContext.isPositiveOnly() ? 0 : 0.5f, 0);
+	glScalef(1, 1.F / ctx.getSelectedCount(), 1);
+	glTranslatef(0, ctx.isPositiveOnly() ? 0 : 0.5F, 0);
 
 	glPushAttrib(GL_CURRENT_BIT);
 	glDisable(GL_TEXTURE_1D);
-	glColor3f(.2f, .2f, .2f);
+	glColor3f(.2F, .2F, .2F);
 	glBegin(GL_LINES);
-	for (i = 0; i < rContext.getSelectedCount(); ++i)
+	for (i = 0; i < ctx.getSelectedCount(); ++i)
 	{
 		glVertex2f(0, float(i));
 		glVertex2f(1, float(i));
@@ -110,14 +110,14 @@ bool CRendererBars::render(const IRendererContext& rContext)
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	for (i = 0; i < rContext.getSelectedCount(); ++i)
+	for (i = 0; i < ctx.getSelectedCount(); ++i)
 	{
 		glPushMatrix();
-		glTranslatef(0, float(rContext.getSelectedCount()) - i - 1.f, 0);
-		glScalef(1, rContext.getScale(), 1);
-		glVertexPointer(2, GL_FLOAT, sizeof(CVertex), &m_vertex[rContext.getSelected(i)][0].x);
-		glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_vertex[rContext.getSelected(i)][0].u);
-		glDrawArrays(GL_QUADS, 0, m_nSample * 4);
+		glTranslatef(0, float(ctx.getSelectedCount()) - i - 1.F, 0);
+		glScalef(1, ctx.getScale(), 1);
+		glVertexPointer(2, GL_FLOAT, sizeof(CVertex), &m_vertex[ctx.getSelected(i)][0].x);
+		glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_vertex[ctx.getSelected(i)][0].u);
+		glDrawArrays(GL_QUADS, 0, GLsizei(m_nSample * 4));
 		glPopMatrix();
 	}
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);

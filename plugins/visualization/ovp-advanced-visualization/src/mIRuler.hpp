@@ -20,7 +20,7 @@
  */
 #pragma once
 
-#include <mensia/advanced-visualization.h>
+#include <mensia/advanced-visualization.hpp>
 
 #include <gtk/gtk.h>
 
@@ -49,90 +49,61 @@ namespace Mensia
 			IRuler(const IRuler&) = delete;
 			virtual ~IRuler()     = default;
 
-			virtual void setRendererContext(const IRendererContext* pRendererContext) { m_pRendererContext = pRendererContext; }
+			virtual void setRendererContext(const CRendererContext* ctx) { m_rendererCtx = ctx; }
+			virtual void setRenderer(const IRenderer* renderer) { m_renderer = renderer; }
 
-			virtual void setRenderer(const IRenderer* pRenderer)
-			{
-#if 0
-				::printf("%p = %p -> %p\n", this, m_pRenderer, pRenderer);
-#endif
-				m_pRenderer = pRenderer;
-			}
-
-			virtual void doRender()
-			{
-				// if(m_pRendererContext->getScaleVisibility()) { this->render(); }
-				this->render();
-			}
-
-			virtual void doRenderLeft(GtkWidget* pWidget) { if (m_pRendererContext->getScaleVisibility()) { this->renderLeft(pWidget); } }
-
-			virtual void doRenderRight(GtkWidget* pWidget) { if (m_pRendererContext->getScaleVisibility()) { this->renderRight(pWidget); } }
-
-			virtual void doRenderBottom(GtkWidget* pWidget) { if (m_pRendererContext->getScaleVisibility()) { this->renderBottom(pWidget); } }
+			virtual void doRender() { this->render(); }
+			virtual void doRenderLeft(GtkWidget* widget) { if (m_rendererCtx->getScaleVisibility()) { this->renderLeft(widget); } }
+			virtual void doRenderRight(GtkWidget* widget) { if (m_rendererCtx->getScaleVisibility()) { this->renderRight(widget); } }
+			virtual void doRenderBottom(GtkWidget* widget) { if (m_rendererCtx->getScaleVisibility()) { this->renderBottom(widget); } }
 
 		protected:
 
 			virtual void render() { }
+			virtual void renderLeft(GtkWidget* /*widget*/) { }
+			virtual void renderRight(GtkWidget* /*widget*/) { }
+			virtual void renderBottom(GtkWidget* /*widget*/) { }
 
-			virtual void renderLeft(GtkWidget* /*pWidget*/) { }
-
-			virtual void renderRight(GtkWidget* /*pWidget*/) { }
-
-			virtual void renderBottom(GtkWidget* /*pWidget*/) { }
-
-			std::vector<double> split_range(const double fStart, const double fStop, const uint32_t uiCount = 10) const
+			std::vector<double> splitRange(const double start, const double stop, const size_t count = 10) const
 			{
 				std::vector<double> res;
-				const double l_fRange = fStop - fStart;
-				const double l_fOrder = floor(log(l_fRange) / log(10.) - .1f);
-				double l_fStep        = pow(10, l_fOrder);
-				double l_fStepCount   = trunc(l_fRange / l_fStep);
+				const double range = stop - start;
+				const double order = floor(log(range) / log(10.) - .1F);
+				double step        = pow(10, order);
+				double nStep       = trunc(range / step);
 
-				while (l_fStepCount < uiCount)
+				while (nStep < count)
 				{
-					l_fStepCount *= 2;
-					l_fStep /= 2;
+					nStep *= 2;
+					step /= 2;
 				}
-				while (l_fStepCount > uiCount)
+				while (nStep > count)
 				{
-					l_fStepCount /= 2;
-					l_fStep *= 2;
+					nStep /= 2;
+					step *= 2;
 				}
 
-				double l_fValue = trunc(fStart / l_fStep) * l_fStep;
-				while (l_fValue < fStart) { l_fValue += l_fStep; }
-				while (l_fValue <= fStop)
+				double value = trunc(start / step) * step;
+				while (value < start) { value += step; }
+				while (value <= stop)
 				{
-					res.push_back(std::abs(l_fValue) < std::abs(l_fRange / 1000) ? 0 : l_fValue);
-					l_fValue += l_fStep;
+					res.push_back(std::abs(value) < std::abs(range / 1000) ? 0 : value);
+					value += step;
 				}
 				return res;
 			}
 
 			static std::string getLabel(const double v)
 			{
-				char l_sLabel[1024];
-#if 0
-				::sprintf(l_sLabel, "%f", v);
-				size_t i = ::strlen(l_sLabel) - 1;
-				while (l_sLabel[i] == '0')
-				{
-					l_sLabel[i] = '\0';
-					i--;
-				}
-				if (l_sLabel[i] == '.') l_sLabel[i] = '\0';
-#else
-				if (fabs(v) < 1E-10) { sprintf(l_sLabel, "0"); }
-				else { sprintf(l_sLabel, "%g", v); }
-#endif
-				return l_sLabel;
+				char label[1024];
+				(fabs(v) < 1E-10) ? sprintf(label, "0") : sprintf(label, "%g", v);
+				return label;
 			}
 
-			const IRendererContext* m_pRendererContext = nullptr;
-			const IRenderer* m_pRenderer               = nullptr;
-			float m_fBlackAlpha                        = 0.9f;
-			float m_fWhiteAlpha                        = 1.0f;
+			const CRendererContext* m_rendererCtx = nullptr;
+			const IRenderer* m_renderer           = nullptr;
+			float m_blackAlpha                    = 0.9F;
+			float m_whiteAlpha                    = 1.0F;
 		};
 	} // namespace AdvancedVisualization
 } // namespace Mensia

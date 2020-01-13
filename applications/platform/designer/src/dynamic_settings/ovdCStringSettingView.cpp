@@ -7,15 +7,15 @@ using namespace Setting;
 
 static void OnChange(GtkEntry* /*entry*/, gpointer data) { static_cast<CStringSettingView *>(data)->onChange(); }
 
-CStringSettingView::CStringSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName)
-	: CAbstractSettingView(box, index, rBuilderName, "settings_collection-entry_setting_string")
+CStringSettingView::CStringSettingView(Kernel::IBox& box, const size_t index, CString& builderName)
+	: CAbstractSettingView(box, index, builderName, "settings_collection-entry_setting_string")
 {
-	GtkWidget* settingWidget = this->getEntryFieldWidget();
+	GtkWidget* settingWidget = CAbstractSettingView::getEntryFieldWidget();
 
 	m_entry = GTK_ENTRY(settingWidget);
 	g_signal_connect(G_OBJECT(m_entry), "changed", G_CALLBACK(OnChange), this);
 
-	initializeValue();
+	CAbstractSettingView::initializeValue();
 }
 
 void CStringSettingView::getValue(CString& value) const { value = CString(gtk_entry_get_text(m_entry)); }
@@ -31,7 +31,7 @@ void CStringSettingView::onChange()
 {
 	if (!m_onValueSetting)
 	{
-		const gchar* l_sValue = gtk_entry_get_text(m_entry);
-		getBox().setSettingValue(getSettingIndex(), l_sValue);
+		const gchar* value = gtk_entry_get_text(m_entry);
+		getBox().setSettingValue(getSettingIndex(), value);
 	}
 }

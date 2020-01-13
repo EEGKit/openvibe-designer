@@ -17,7 +17,7 @@ INCLUDE("OvInstallLaunchScript")
 INCLUDE("OvLinkBoostLib")
 INCLUDE("OvDelayLoad")
 INCLUDE("SetProjectVersion")
-INCLUDE("Utilities") # Include functions debug_message, set_build_platform
+INCLUDE("Utilities") # Include functions debug_message, SET_BUILD_PLATFORM
 
 # ----------------------
 # Build CMake flags

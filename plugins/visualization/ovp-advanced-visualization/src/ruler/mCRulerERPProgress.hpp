@@ -33,28 +33,28 @@ namespace Mensia
 			void render() override
 
 			{
-				if (m_pRenderer == nullptr) { return; }
-				if (m_pRenderer->getSampleCount() == 0) { return; }
-				if (m_pRenderer->getHistoryCount() == 0) { return; }
-				if (m_pRenderer->getHistoryIndex() == 0) { return; }
+				if (m_renderer == nullptr) { return; }
+				if (m_renderer->getSampleCount() == 0) { return; }
+				if (m_renderer->getHistoryCount() == 0) { return; }
+				if (m_renderer->getHistoryIndex() == 0) { return; }
 
-				const float l_fProgress = m_pRendererContext->getERPFraction();
-				if (l_fProgress != 0 && l_fProgress != 1)
+				const float progress = m_rendererCtx->getERPFraction();
+				if (progress != 0 && progress != 1)
 				{
 					glDisable(GL_TEXTURE_1D);
 
 					glLineWidth(4);
 					glColor3f(0, 0, 0);
 					glBegin(GL_LINES);
-					glVertex2f(l_fProgress, 0);
-					glVertex2f(l_fProgress, 1);
+					glVertex2f(progress, 0);
+					glVertex2f(progress, 1);
 					glEnd();
 
 					glLineWidth(2);
 					glColor3f(0.25, 1, 0.25);
 					glBegin(GL_LINES);
-					glVertex2f(l_fProgress, 0);
-					glVertex2f(l_fProgress, 1);
+					glVertex2f(progress, 0);
+					glVertex2f(progress, 1);
 					glEnd();
 				}
 			}

@@ -24,56 +24,56 @@
 using namespace Mensia;
 using namespace AdvancedVisualization;
 
-void CRendererXYZPlot::rebuild(const IRendererContext& rContext)
+void CRendererXYZPlot::rebuild(const CRendererContext& ctx)
 {
-	CRenderer::rebuild(rContext);
+	IRenderer::rebuild(ctx);
 
-	m_hasDepth      = rContext.hasXYZPlotDepth();
-	m_plotDimension = (m_hasDepth ? 3 : 2);
-	m_nPlot     = (rContext.getChannelCount() + m_plotDimension - 1) / m_plotDimension;
+	m_hasDepth = ctx.hasXYZPlotDepth();
+	m_plotDim  = (m_hasDepth ? 3 : 2);
+	m_nPlot    = (ctx.getChannelCount() + m_plotDim - 1) / m_plotDim;
 	m_vertex.resize(m_nPlot);
-	const float inverseSampleCount = 1.0f / float(m_nSample < 2 ? 1 : (m_nSample - 1));
-	for (uint32_t i = 0; i < m_nPlot; ++i)
+	const float inverseSampleCount = 1.0F / float(m_nSample < 2 ? 1 : (m_nSample - 1));
+	for (size_t i = 0; i < m_nPlot; ++i)
 	{
 		m_vertex[i].resize(this->m_nSample);
-		for (uint32_t j = 0; j < this->m_nSample; ++j) { m_vertex[i][j].u = j * inverseSampleCount; }
+		for (size_t j = 0; j < this->m_nSample; ++j) { m_vertex[i][j].u = j * inverseSampleCount; }
 	}
 
 	m_historyIdx = 0;
 }
 
-void CRendererXYZPlot::refresh(const IRendererContext& rContext)
+void CRendererXYZPlot::refresh(const CRendererContext& ctx)
 {
-	CRenderer::refresh(rContext);
+	IRenderer::refresh(ctx);
 
 	if (!m_nHistory) { return; }
 
 	while (m_historyIdx < m_nHistory)
 	{
-		const uint32_t j = m_historyIdx % this->m_nSample;
-		for (uint32_t i = 0; i < m_nPlot; ++i)
+		const size_t j = m_historyIdx % this->m_nSample;
+		for (size_t i = 0; i < m_nPlot; ++i)
 		{
 			if (m_hasDepth)
 			{
-				const uint32_t i3 = i * 3;
-				m_vertex[i][j].x  = (i3 < m_history.size() ? m_history[i3][m_historyIdx] : 0);
-				m_vertex[i][j].y  = (i3 + 1 < m_history.size() ? m_history[i3 + 1][m_historyIdx] : 0);
-				m_vertex[i][j].z  = (i3 + 2 < m_history.size() ? m_history[i3 + 2][m_historyIdx] : 0);
+				const size_t i3  = i * 3;
+				m_vertex[i][j].x = (i3 < m_history.size() ? m_history[i3][m_historyIdx] : 0);
+				m_vertex[i][j].y = (i3 + 1 < m_history.size() ? m_history[i3 + 1][m_historyIdx] : 0);
+				m_vertex[i][j].z = (i3 + 2 < m_history.size() ? m_history[i3 + 2][m_historyIdx] : 0);
 			}
 			else
 			{
-				const uint32_t i3 = i * 2;
-				m_vertex[i][j].x  = (i3 < m_history.size() ? m_history[i3][m_historyIdx] : 0);
-				m_vertex[i][j].y  = (i3 + 1 < m_history.size() ? m_history[i3 + 1][m_historyIdx] : 0);
+				const size_t i3  = i * 2;
+				m_vertex[i][j].x = (i3 < m_history.size() ? m_history[i3][m_historyIdx] : 0);
+				m_vertex[i][j].y = (i3 + 1 < m_history.size() ? m_history[i3 + 1][m_historyIdx] : 0);
 			}
 		}
 		m_historyIdx++;
 	}
 }
 
-bool CRendererXYZPlot::render(const IRendererContext& rContext)
+bool CRendererXYZPlot::render(const CRendererContext& ctx)
 {
-	if (!rContext.getSelectedCount()) { return false; }
+	if (!ctx.getSelectedCount()) { return false; }
 	if (m_vertex.empty()) { return false; }
 	if (!m_nHistory) { return false; }
 
@@ -86,10 +86,10 @@ bool CRendererXYZPlot::render(const IRendererContext& rContext)
 		glMatrixMode(GL_PROJECTION);
 		glPushMatrix();
 		glLoadIdentity();
-		gluPerspective(60, rContext.getAspect(), .01, 100);
+		gluPerspective(60, ctx.getAspect(), .01, 100);
 		glTranslatef(0, 0, -d);
-		glRotatef(rContext.getRotationX() * 10, 1, 0, 0);
-		glRotatef(rContext.getRotationY() * 10, 0, 1, 0);
+		glRotatef(ctx.getRotationX() * 10, 1, 0, 0);
+		glRotatef(ctx.getRotationY() * 10, 0, 1, 0);
 	}
 
 	glMatrixMode(GL_TEXTURE);
@@ -97,32 +97,32 @@ bool CRendererXYZPlot::render(const IRendererContext& rContext)
 	glLoadIdentity();
 
 	glMatrixMode(GL_MODELVIEW);
-	glTranslatef(m_hasDepth ? 0 : 0.5f, m_hasDepth ? 0 : 0.5f, 0);
-	glScalef(rContext.getZoom(), rContext.getZoom(), rContext.getZoom());
+	glTranslatef(m_hasDepth ? 0 : 0.5F, m_hasDepth ? 0 : 0.5F, 0);
+	glScalef(ctx.getZoom(), ctx.getZoom(), ctx.getZoom());
 
-	if (rContext.isAxisDisplayed())
+	if (ctx.isAxisDisplayed())
 	{
 		if (m_hasDepth) { this->draw3DCoordinateSystem(); }
 		else { this->draw2DCoordinateSystem(); }
 	}
 
-	uint32_t n       = m_nSample;
-	const uint32_t d = (m_historyIdx % m_nSample);
+	size_t n       = m_nSample;
+	const size_t d = (m_historyIdx % m_nSample);
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	for (uint32_t i = 0; i < m_nPlot; ++i)
+	for (size_t i = 0; i < m_nPlot; ++i)
 	{
 		glPushMatrix();
-		glScalef(rContext.getScale(), rContext.getScale(), rContext.getScale());
+		glScalef(ctx.getScale(), ctx.getScale(), ctx.getScale());
 
-		glVertexPointer(m_plotDimension, GL_FLOAT, sizeof(CVertex), &m_vertex[i][0].x);
+		glVertexPointer(GLint(m_plotDim), GL_FLOAT, sizeof(CVertex), &m_vertex[i][0].x);
 		glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_vertex[i][n - d].u);
-		glDrawArrays(GL_POINTS, 0, d);
+		glDrawArrays(GL_POINTS, 0, GLsizei(d));
 
-		glVertexPointer(m_plotDimension, GL_FLOAT, sizeof(CVertex), &m_vertex[i][d].x);
+		glVertexPointer(GLint(m_plotDim), GL_FLOAT, sizeof(CVertex), &m_vertex[i][d].x);
 		glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_vertex[i][0].u);
-		glDrawArrays(GL_POINTS, 0, (m_historyIdx > n ? n : m_historyIdx) - d);
+		glDrawArrays(GL_POINTS, 0, GLsizei((m_historyIdx > n ? n : m_historyIdx) - d));
 
 		glPopMatrix();
 	}

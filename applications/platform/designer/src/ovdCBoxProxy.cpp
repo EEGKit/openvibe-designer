@@ -3,34 +3,34 @@
 #include <fs/Files.h>
 
 using namespace OpenViBE;
-using namespace Kernel;
+using namespace /*OpenViBE::*/Kernel;
 using namespace Plugins;
 using namespace OpenViBEDesigner;
 using namespace std;
 
 CBoxProxy::CBoxProxy(const IKernelContext& ctx, IScenario& scenario, const CIdentifier& boxID)
-	: m_kernelCtx(ctx), m_pConstBox(scenario.getBoxDetails(boxID)), m_pBox(scenario.getBoxDetails(boxID)),
-	  m_IsDeprecated(m_kernelCtx.getPluginManager().isPluginObjectFlaggedAsDeprecated(m_pConstBox->getAlgorithmClassIdentifier()))
+	: m_kernelCtx(ctx), m_constBox(scenario.getBoxDetails(boxID)), m_box(scenario.getBoxDetails(boxID)),
+	  m_isDeprecated(m_kernelCtx.getPluginManager().isPluginObjectFlaggedAsDeprecated(m_constBox->getAlgorithmClassIdentifier()))
 {
-	m_IsBoxAlgorithmPresent = false;
+	m_isBoxAlgorithmPresent = false;
 
-	if (m_pConstBox)
+	if (m_constBox)
 	{
-		if (m_pConstBox->getAlgorithmClassIdentifier() == OVP_ClassId_BoxAlgorithm_Metabox)
+		if (m_constBox->getAlgorithmClassIdentifier() == OVP_ClassId_BoxAlgorithm_Metabox)
 		{
 			CIdentifier metaboxId;
-			metaboxId.fromString(m_pConstBox->getAttributeValue(OVP_AttributeId_Metabox_Identifier));
-			const CString l_sMetaboxScenarioPath(m_kernelCtx.getMetaboxManager().getMetaboxFilePath(metaboxId));
+			metaboxId.fromString(m_constBox->getAttributeValue(OVP_AttributeId_Metabox_ID));
+			const CString path(m_kernelCtx.getMetaboxManager().getMetaboxFilePath(metaboxId));
 
-			m_IsBoxAlgorithmPresent = FS::Files::fileExists(l_sMetaboxScenarioPath.toASCIIString());
+			m_isBoxAlgorithmPresent = FS::Files::fileExists(path.toASCIIString());
 		}
-		else { m_IsBoxAlgorithmPresent = m_kernelCtx.getPluginManager().canCreatePluginObject(m_pConstBox->getAlgorithmClassIdentifier()); }
+		else { m_isBoxAlgorithmPresent = m_kernelCtx.getPluginManager().canCreatePluginObject(m_constBox->getAlgorithmClassIdentifier()); }
 
-		const TAttributeHandler handler(*m_pConstBox);
+		const TAttributeHandler handler(*m_constBox);
 		m_centerX = handler.getAttributeValue<int>(OV_AttributeId_Box_XCenterPosition);
 		m_centerY = handler.getAttributeValue<int>(OV_AttributeId_Box_YCenterPosition);
 	}
-	m_bShowOriginalNameWhenModified = m_kernelCtx.getConfigurationManager().expandAsBoolean("${Designer_ShowOriginalBoxName}", true);
+	m_showOriginalNameWhenModified = m_kernelCtx.getConfigurationManager().expandAsBoolean("${Designer_ShowOriginalBoxName}", true);
 }
 
 int CBoxProxy::getWidth(GtkWidget* widget) const
@@ -47,34 +47,25 @@ int CBoxProxy::getHeight(GtkWidget* widget) const
 	return y;
 }
 
-void CBoxProxy::setCenter(const int centerX, const int centerY)
+void CBoxProxy::setCenter(const int x, const int y)
 {
-	m_centerX  = centerX;
-	m_centerY  = centerY;
+	m_centerX = x;
+	m_centerY = y;
 	m_applied = false;
 }
 
-void CBoxProxy::setBoxAlgorithmDescriptorOverride(const IBoxAlgorithmDesc* pBoxAlgorithmDescriptor)
-{
-	m_pBoxAlgorithmDescriptorOverride = pBoxAlgorithmDescriptor;
-}
+void CBoxProxy::setBoxAlgorithmDescriptorOverride(const IBoxAlgorithmDesc* pBoxAlgorithmDescriptor) { m_boxAlgorithmDescOverride = pBoxAlgorithmDescriptor; }
 
 void CBoxProxy::apply()
 {
-	if (m_pBox)
+	if (m_box)
 	{
-		TAttributeHandler handler(*m_pBox);
+		TAttributeHandler handler(*m_box);
 
-		if (handler.hasAttribute(OV_AttributeId_Box_XCenterPosition))
-		{
-			handler.setAttributeValue<int>(OV_AttributeId_Box_XCenterPosition, m_centerX);
-		}
+		if (handler.hasAttribute(OV_AttributeId_Box_XCenterPosition)) { handler.setAttributeValue<int>(OV_AttributeId_Box_XCenterPosition, m_centerX); }
 		else { handler.addAttribute<int>(OV_AttributeId_Box_XCenterPosition, m_centerX); }
 
-		if (handler.hasAttribute(OV_AttributeId_Box_YCenterPosition))
-		{
-			handler.setAttributeValue<int>(OV_AttributeId_Box_YCenterPosition, m_centerY);
-		}
+		if (handler.hasAttribute(OV_AttributeId_Box_YCenterPosition)) { handler.setAttributeValue<int>(OV_AttributeId_Box_YCenterPosition, m_centerY); }
 		else { handler.addAttribute<int>(OV_AttributeId_Box_YCenterPosition, m_centerY); }
 
 		m_applied = true;
@@ -83,130 +74,120 @@ void CBoxProxy::apply()
 
 const char* CBoxProxy::getLabel() const
 {
-	const bool l_bBoxCanChangeInput(
-		m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanModifyInput) || m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanAddInput));
-	const bool l_bBoxCanChangeOutput(
-		m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanModifyOutput) || m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanAddOutput));
-	const bool l_bBoxCanChangeSetting(
-		m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanModifySetting) || m_pConstBox->hasAttribute(OV_AttributeId_Box_FlagCanAddSetting));
+	const bool canChangeInput(
+		m_constBox->hasAttribute(OV_AttributeId_Box_FlagCanModifyInput) || m_constBox->hasAttribute(OV_AttributeId_Box_FlagCanAddInput));
+	const bool canChangeOutput(
+		m_constBox->hasAttribute(OV_AttributeId_Box_FlagCanModifyOutput) || m_constBox->hasAttribute(OV_AttributeId_Box_FlagCanAddOutput));
+	const bool canChangeSetting(
+		m_constBox->hasAttribute(OV_AttributeId_Box_FlagCanModifySetting) || m_constBox->hasAttribute(OV_AttributeId_Box_FlagCanAddSetting));
 
-	const IPluginObjectDesc* l_pDesc = nullptr;
+	const IPluginObjectDesc* desc = (m_boxAlgorithmDescOverride == nullptr
+										 ? m_kernelCtx.getPluginManager().getPluginObjectDescCreating(m_constBox->getAlgorithmClassIdentifier())
+										 : m_boxAlgorithmDescOverride);
 
-	if (m_pBoxAlgorithmDescriptorOverride == nullptr)
-	{
-		l_pDesc = m_kernelCtx.getPluginManager().getPluginObjectDescCreating(m_pConstBox->getAlgorithmClassIdentifier());
-	}
-	else { l_pDesc = m_pBoxAlgorithmDescriptorOverride; }
+	string name(m_constBox->getName());
 
-	string l_sBoxName(m_pConstBox->getName());
-
-	const string l_sRed("#602020");
-	const string l_sGreen("#206020");
-	const string l_sGrey("#404040");
+	const string red("#602020");
+	const string green("#206020");
+	const string grey("#404040");
 
 	// pango is used in the box diplay to format the box name (e.g. bold to tell it's a configurable box)
 	// incidently, this makes the box name pango-enabled. If an error appears in the markup, the box display would be wrong.
-	if (!pango_parse_markup(l_sBoxName.c_str(), -1, 0, nullptr, nullptr, nullptr, nullptr))
+	if (!pango_parse_markup(name.c_str(), -1, 0, nullptr, nullptr, nullptr, nullptr))
 	{
 		// the name uses invalid markup characters
 		// we sanitize the markup tag overture '<'
 		// markup should not be used in the box name anyway (hidden feature),
 		// but the character '<' may actually be useful in a valid name
-		for (size_t c = 0; c < l_sBoxName.size(); ++c)
+		for (size_t c = 0; c < name.size(); ++c)
 		{
-			if (l_sBoxName[c] == '<')
+			if (name[c] == '<')
 			{
-				l_sBoxName[c] = ';';
-				l_sBoxName.insert(c, "&lt");
+				name[c] = ';';
+				name.insert(c, "&lt");
 			}
-			else if (l_sBoxName[c] == '&')
+			else if (name[c] == '&')
 			{
-				l_sBoxName[c] = ';';
-				l_sBoxName.insert(c, "&amp");
+				name[c] = ';';
+				name.insert(c, "&amp");
 			}
 		}
 	}
 
-	m_sLabel = l_sBoxName;
+	m_label = name;
 
-	if (l_sBoxName.empty()) { m_sLabel = "Unnamed Box"; }
+	if (name.empty()) { m_label = "Unnamed Box"; }
 
-	const std::string l_sBoxNameColor = "#000000";
+	const std::string boxNameColor = "#000000";
 
-	if (m_pConstBox->getSettingCount() != 0) { m_sLabel = "<span color=\"" + l_sBoxNameColor + R"(" weight="bold">)" + m_sLabel + "</span>"; }
+	if (m_constBox->getSettingCount() != 0) { m_label = "<span color=\"" + boxNameColor + R"(" weight="bold">)" + m_label + "</span>"; }
 
-	if (m_bShowOriginalNameWhenModified)
+	if (m_showOriginalNameWhenModified)
 	{
-		const string l_sBoxOriginalName(l_pDesc ? string(l_pDesc->getName()) : l_sBoxName);
-		if (l_sBoxOriginalName != l_sBoxName)
-		{
-			m_sLabel = "<small><i><span foreground=\"" + l_sGrey + "\">" + l_sBoxOriginalName + "</span></i></small>\n" + m_sLabel;
-		}
+		const string boxOriginalName(desc ? string(desc->getName()) : name);
+		if (boxOriginalName != name) { m_label = "<small><i><span foreground=\"" + grey + "\">" + boxOriginalName + "</span></i></small>\n" + m_label; }
 	}
 
-	if (l_bBoxCanChangeInput || l_bBoxCanChangeOutput || l_bBoxCanChangeSetting)
+	if (canChangeInput || canChangeOutput || canChangeSetting)
 	{
-		m_sLabel += "\n";
-		m_sLabel += "<span size=\"smaller\">";
-		m_sLabel += "<span foreground=\"" + (l_bBoxCanChangeInput ? l_sGreen : l_sRed) + "\">In</span>";
-		m_sLabel += "|";
-		m_sLabel += "<span foreground=\"" + (l_bBoxCanChangeOutput ? l_sGreen : l_sRed) + "\">Out</span>";
-		m_sLabel += "|";
-		m_sLabel += "<span foreground=\"" + (l_bBoxCanChangeSetting ? l_sGreen : l_sRed) + "\">Set</span>";
-		m_sLabel += "</span>";
+		m_label += "\n<span size=\"smaller\">";
+		m_label += "<span foreground=\"" + (canChangeInput ? green : red) + "\">In</span>";
+		m_label += "|<span foreground=\"" + (canChangeOutput ? green : red) + "\">Out</span>";
+		m_label += "|<span foreground=\"" + (canChangeSetting ? green : red) + "\">Set</span>";
+		m_label += "</span>";
 	}
 
-	return m_sLabel.c_str();
+	return m_label.c_str();
 }
 
 const char* CBoxProxy::getStatusLabel() const
 {
-	const bool l_bBoxToBeUpdated(m_pBox->hasAttribute(OV_AttributeId_Box_ToBeUpdated));
-	const bool l_bBoxPendingDeprecatedInterfacors(m_pBox->hasAttribute(OV_AttributeId_Box_PendingDeprecatedInterfacors));
-	const bool l_bBoxIsDeprecated(this->isBoxAlgorithmPluginPresent() && this->isDeprecated());
-	const bool l_bBoxIsDisabled(this->isDisabled());
+	const bool toBeUpdated(m_box->hasAttribute(OV_AttributeId_Box_ToBeUpdated));
+	const bool pendingDeprecatedInterfacors(m_box->hasAttribute(OV_AttributeId_Box_PendingDeprecatedInterfacors));
+	const bool isDeprecated(this->isBoxAlgorithmPluginPresent() && this->isDeprecated());
+	const bool isDisabled(this->isDisabled());
 
-	const string l_sBlue("#202060");
+	const string blue("#202060");
 
-	m_sStatus = "";
-	if (l_bBoxIsDeprecated || l_bBoxToBeUpdated || l_bBoxIsDisabled || l_bBoxPendingDeprecatedInterfacors)
+	m_status = "";
+	if (isDeprecated || toBeUpdated || isDisabled || pendingDeprecatedInterfacors)
 	{
-		m_sStatus += R"(<span size="smaller" foreground=")" + l_sBlue + "\">";
-		if (l_bBoxIsDeprecated) { m_sStatus += " <span style=\"italic\">deprecated</span>"; }
-		if (l_bBoxToBeUpdated) { m_sStatus += " <span style=\"italic\">update</span>"; }
-		if (l_bBoxIsDisabled) { m_sStatus += " <span style=\"italic\">disabled</span>"; }
-		if (l_bBoxPendingDeprecatedInterfacors) { m_sStatus += " <span style=\"italic\">deprecated I/O/S</span>"; }
-		m_sStatus += " </span>";
+		m_status += R"(<span size="smaller" foreground=")" + blue + "\">";
+		if (isDeprecated) { m_status += " <span style=\"italic\">deprecated</span>"; }
+		if (toBeUpdated) { m_status += " <span style=\"italic\">update</span>"; }
+		if (isDisabled) { m_status += " <span style=\"italic\">disabled</span>"; }
+		if (pendingDeprecatedInterfacors) { m_status += " <span style=\"italic\">deprecated I/O/S</span>"; }
+		m_status += " </span>";
 	}
-	return m_sStatus.c_str();
+	return m_status.c_str();
 }
 
 bool CBoxProxy::isDisabled() const
 {
-	const TAttributeHandler handler(*m_pConstBox);
+	const TAttributeHandler handler(*m_constBox);
 	return handler.hasAttribute(OV_AttributeId_Box_Disabled);
 }
 
-void CBoxProxy::updateSize(GtkWidget* widget, const char* sLabel, const char* sStatus, int* pXSize, int* pYSize) const
+void CBoxProxy::updateSize(GtkWidget* widget, const char* label, const char* status, int* xSize, int* ySize) const
 {
-	PangoRectangle l_oPangoLabelRect;
-	PangoRectangle l_oPangoStatusRect;
-	PangoContext* l_pPangoContext = gtk_widget_create_pango_context(widget);
-	PangoLayout* l_pPangoLayout   = pango_layout_new(l_pPangoContext);
-	pango_layout_set_markup(l_pPangoLayout, sLabel, -1);
-	pango_layout_get_pixel_extents(l_pPangoLayout, nullptr, &l_oPangoLabelRect);
-	pango_layout_set_markup(l_pPangoLayout, sStatus, -1);
-	pango_layout_get_pixel_extents(l_pPangoLayout, nullptr, &l_oPangoStatusRect);
+	PangoRectangle labelRect;
+	PangoRectangle statusRect;
+	PangoContext* context = gtk_widget_create_pango_context(widget);
+	PangoLayout* layout   = pango_layout_new(context);
+	pango_layout_set_markup(layout, label, -1);
+	pango_layout_get_pixel_extents(layout, nullptr, &labelRect);
+	pango_layout_set_markup(layout, status, -1);
+	pango_layout_get_pixel_extents(layout, nullptr, &statusRect);
 
-	if (!strlen(sStatus))
+	if (!strlen(status))
 	{
-		l_oPangoStatusRect.width  = 0;
-		l_oPangoStatusRect.height = 0;
+		statusRect.width  = 0;
+		statusRect.height = 0;
 	}
 
-	*pXSize = max(l_oPangoLabelRect.width, l_oPangoStatusRect.width);
-	*pYSize = l_oPangoLabelRect.height + l_oPangoStatusRect.height;
+	*xSize = max(labelRect.width, statusRect.width);
+	*ySize = labelRect.height + statusRect.height;
 
-	g_object_unref(l_pPangoLayout);
-	g_object_unref(l_pPangoContext);
+	g_object_unref(layout);
+	g_object_unref(context);
 }

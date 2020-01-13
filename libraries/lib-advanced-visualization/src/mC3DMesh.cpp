@@ -31,37 +31,27 @@ using namespace AdvancedVisualization;
 namespace
 {
 	template <typename T>
-	bool littleEndianToHost(const uint8_t* buffer, T* pValue)
+	bool littleEndianToHost(const uint8_t* buffer, T* value)
 	{
 		if (!buffer) { return false; }
-		if (!pValue) { return false; }
-		memset(pValue, 0, sizeof(T));
-		for (uint32_t i = 0; i < sizeof(T); ++i) { reinterpret_cast<uint8_t*>(pValue)[i] = buffer[i]; }
+		if (!value) { return false; }
+		memset(value, 0, sizeof(T));
+		for (uint32_t i = 0; i < sizeof(T); ++i) { reinterpret_cast<uint8_t*>(value)[i] = buffer[i]; }
 		return true;
 	}
 } // namespace
 
-C3DMesh::C3DMesh()
-{
-	m_vColor[0] = 1.0;
-	m_vColor[1] = 1.0;
-	m_vColor[2] = 1.0;
-}
-
-C3DMesh::~C3DMesh() = default;
 
 void C3DMesh::clear()
 {
-	m_vColor[0] = 1.0;
-	m_vColor[1] = 1.0;
-	m_vColor[2] = 1.0;
+	m_Color.fill(1.0);
 
-	m_vVertex.clear();
-	m_vNormal.clear();
-	m_vTriangle.clear();
+	m_Vertices.clear();
+	m_Normals.clear();
+	m_Triangles.clear();
 }
 
-bool C3DMesh::load(const void* buffer, uint32_t /*size*/)
+bool C3DMesh::load(const void* buffer)
 {
 	const auto* tmp = reinterpret_cast<const uint32_t*>(buffer);
 
@@ -71,19 +61,19 @@ bool C3DMesh::load(const void* buffer, uint32_t /*size*/)
 	littleEndianToHost<uint32_t>(reinterpret_cast<const uint8_t*>(&tmp[0]), &nVertex);
 	littleEndianToHost<uint32_t>(reinterpret_cast<const uint8_t*>(&tmp[1]), &nTriangle);
 
-	m_vVertex.resize(nVertex);
-	m_vTriangle.resize(size_t(nTriangle) * 3);
+	m_Vertices.resize(nVertex);
+	m_Triangles.resize(size_t(nTriangle) * 3);
 
-	uint32_t i, j = 2;
+	size_t j = 2;
 
-	for (i = 0; i < nVertex; ++i)
+	for (size_t i = 0; i < nVertex; ++i)
 	{
-		littleEndianToHost<float>(reinterpret_cast<const uint8_t*>(&tmp[j++]), &m_vVertex[i].x);
-		littleEndianToHost<float>(reinterpret_cast<const uint8_t*>(&tmp[j++]), &m_vVertex[i].y);
-		littleEndianToHost<float>(reinterpret_cast<const uint8_t*>(&tmp[j++]), &m_vVertex[i].z);
+		littleEndianToHost<float>(reinterpret_cast<const uint8_t*>(&tmp[j++]), &m_Vertices[i].x);
+		littleEndianToHost<float>(reinterpret_cast<const uint8_t*>(&tmp[j++]), &m_Vertices[i].y);
+		littleEndianToHost<float>(reinterpret_cast<const uint8_t*>(&tmp[j++]), &m_Vertices[i].z);
 	}
 
-	for (i = 0; i < nTriangle * 3; ++i) { littleEndianToHost<uint32_t>(reinterpret_cast<const uint8_t*>(&tmp[j++]), &m_vTriangle[i]); }
+	for (size_t i = 0; i < nTriangle * 3; ++i) { littleEndianToHost<uint32_t>(reinterpret_cast<const uint8_t*>(&tmp[j++]), &m_Triangles[i]); }
 
 	this->compile();
 
@@ -92,16 +82,16 @@ bool C3DMesh::load(const void* buffer, uint32_t /*size*/)
 
 bool C3DMesh::compile()
 {
-	m_vNormal.clear();
-	m_vNormal.resize(m_vVertex.size());
-	for (size_t i = 0; i < m_vTriangle.size(); i += 3)
+	m_Normals.clear();
+	m_Normals.resize(m_Vertices.size());
+	for (size_t i = 0; i < m_Triangles.size(); i += 3)
 	{
-		const uint32_t i1 = m_vTriangle[i];
-		const uint32_t i2 = m_vTriangle[i + 1];
-		const uint32_t i3 = m_vTriangle[i + 2];
-		CVertex v1        = m_vVertex[i1];
-		CVertex v2        = m_vVertex[i2];
-		CVertex v3        = m_vVertex[i3];
+		const uint32_t i1 = m_Triangles[i];
+		const uint32_t i2 = m_Triangles[i + 1];
+		const uint32_t i3 = m_Triangles[i + 2];
+		CVertex v1        = m_Vertices[i1];
+		CVertex v2        = m_Vertices[i2];
+		CVertex v3        = m_Vertices[i3];
 		v2.x -= v1.x;
 		v2.y -= v1.y;
 		v2.z -= v1.z;
@@ -110,39 +100,39 @@ bool C3DMesh::compile()
 		v3.z -= v1.z;
 		v1 = CVertex::cross(v2, v3);
 		v1.normalize();
-		m_vNormal[i1].x += v1.x;
-		m_vNormal[i1].y += v1.y;
-		m_vNormal[i1].z += v1.z;
-		m_vNormal[i2].x += v1.x;
-		m_vNormal[i2].y += v1.y;
-		m_vNormal[i2].z += v1.z;
-		m_vNormal[i3].x += v1.x;
-		m_vNormal[i3].y += v1.y;
-		m_vNormal[i3].z += v1.z;
+		m_Normals[i1].x += v1.x;
+		m_Normals[i1].y += v1.y;
+		m_Normals[i1].z += v1.z;
+		m_Normals[i2].x += v1.x;
+		m_Normals[i2].y += v1.y;
+		m_Normals[i2].z += v1.z;
+		m_Normals[i3].x += v1.x;
+		m_Normals[i3].y += v1.y;
+		m_Normals[i3].z += v1.z;
 	}
 
-	for (auto& normal : m_vNormal) { normal.normalize(); }
+	for (auto& normal : m_Normals) { normal.normalize(); }
 	return true;
 }
 
-bool C3DMesh::project(std::vector<CVertex>& vProjectedChannelCoordinate, const std::vector<CVertex>& vChannelCoordinate)
+bool C3DMesh::project(std::vector<CVertex>& out, const std::vector<CVertex>& in)
 {
-	vProjectedChannelCoordinate.resize(vChannelCoordinate.size());
-	for (size_t i = 0; i < vChannelCoordinate.size(); ++i)
+	out.resize(in.size());
+	for (size_t i = 0; i < in.size(); ++i)
 	{
 		CVertex p, q;
-		p = vChannelCoordinate[i];
-		//		q = vChannelCoordinate[i];
-		for (size_t j = 0; j < this->m_vTriangle.size(); j += 3)
+		p = in[i];
+		// q = vChannelCoordinate[i];
+		for (size_t j = 0; j < this->m_Triangles.size(); j += 3)
 		{
-			const uint32_t i1 = this->m_vTriangle[j];
-			const uint32_t i2 = this->m_vTriangle[j + 1];
-			const uint32_t i3 = this->m_vTriangle[j + 2];
+			const uint32_t i1 = this->m_Triangles[j];
+			const uint32_t i2 = this->m_Triangles[j + 1];
+			const uint32_t i3 = this->m_Triangles[j + 2];
 
 			CVertex v1, v2, v3;
-			v1 = this->m_vVertex[i1];
-			v2 = this->m_vVertex[i2];
-			v3 = this->m_vVertex[i3];
+			v1 = this->m_Vertices[i1];
+			v2 = this->m_Vertices[i2];
+			v3 = this->m_Vertices[i3];
 
 			CVertex e1(v1, v2);
 			CVertex e2(v1, v3);
@@ -153,12 +143,9 @@ bool C3DMesh::project(std::vector<CVertex>& vProjectedChannelCoordinate, const s
 			q.y           = t * p.y;
 			q.z           = t * p.z;
 
-			if (CVertex::isInTriangle(q, v1, v2, v3) && t >= 0) { vProjectedChannelCoordinate[i] = q; }
+			if (CVertex::isInTriangle(q, v1, v2, v3) && t >= 0) { out[i] = q; }
 		}
-		if (q.x == 0 && q.y == 0 && q.z == 0)
-		{
-			//			::printf("Could not project coordinates on mesh for channel %i [%s]\n", i+1, rContext.getChannelName(i).c_str());
-		}
+		//  if (q.x == 0 && q.y == 0 && q.z == 0) { ::printf("Could not project coordinates on mesh for channel %i [%s]\n", i+1, ctx.getChannelName(i).c_str()); }
 	}
 	return true;
 }

@@ -13,14 +13,14 @@ namespace OpenViBEPlugins
 {
 	namespace SimpleVisualization
 	{
-		class CBoxAlgorithmTopographicMap2DDisplay : public OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>
+		class CBoxAlgorithmTopographicMap2DDisplay final : public OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>
 		{
 		public:
-			CBoxAlgorithmTopographicMap2DDisplay();
+			CBoxAlgorithmTopographicMap2DDisplay() = default;
 
 			void release() override { delete this; }
 
-			uint64_t getClockFrequency() override;
+			uint64_t getClockFrequency() override { return uint64_t(1LL) << 37; }
 			bool initialize() override;
 			bool uninitialize() override;
 			bool processInput(const size_t index) override;
@@ -30,17 +30,16 @@ namespace OpenViBEPlugins
 			_IsDerivedFromClass_Final_(OpenViBEToolkit::TBoxAlgorithm < OpenViBE::Plugins::IBoxAlgorithm >, OVP_ClassId_TopographicMap2DDisplay)
 
 		protected:
-			OpenViBEToolkit::TStreamedMatrixDecoder<CBoxAlgorithmTopographicMap2DDisplay>* m_pDecoder = nullptr;
-			bool m_bFirstBufferReceived                                                               = false;
+			OpenViBEToolkit::TStreamedMatrixDecoder<CBoxAlgorithmTopographicMap2DDisplay> m_decoder;
 
-			OpenViBE::Kernel::IAlgorithmProxy* m_pSphericalSplineInterpolation = nullptr;
-			CTopographicMapDatabase* m_pTopographicMapDatabase                 = nullptr;
-			CSignalDisplayDrawable* m_pTopographicMap2DView                    = nullptr; //main object used for the display (contains all the GUI code)
-		private:
-			OpenViBEVisualizationToolkit::IVisualizationContext* m_visualizationContext = nullptr;
+			OpenViBEVisualizationToolkit::IVisualizationContext* m_visualizationCtx = nullptr;
+			OpenViBE::Kernel::IAlgorithmProxy* m_interpolation                      = nullptr;
+			CTopographicMapDatabase* m_database                                     = nullptr;
+			CSignalDisplayDrawable* m_view                                          = nullptr; //main object used for the display (contains all the GUI code)
+			bool m_hasFirstBuffer                                                   = false;
 		};
 
-		class CBoxAlgorithmTopographicMap2DDisplayDesc : public OpenViBE::Plugins::IBoxAlgorithmDesc
+		class CBoxAlgorithmTopographicMap2DDisplayDesc final : public OpenViBE::Plugins::IBoxAlgorithmDesc
 		{
 		public:
 
@@ -66,14 +65,14 @@ namespace OpenViBEPlugins
 			OpenViBE::CIdentifier getCreatedClass() const override { return OVP_ClassId_TopographicMap2DDisplay; }
 			OpenViBE::Plugins::IPluginObject* create() override { return new CBoxAlgorithmTopographicMap2DDisplay(); }
 
-			bool hasFunctionality(const OpenViBE::CIdentifier functionality) const override { return functionality == OVD_Functionality_Visualization; }
+			bool hasFunctionality(const OpenViBE::CIdentifier& functionality) const override { return functionality == OVD_Functionality_Visualization; }
 
-			bool getBoxPrototype(OpenViBE::Kernel::IBoxProto& rPrototype) const override
+			bool getBoxPrototype(OpenViBE::Kernel::IBoxProto& prototype) const override
 			{
-				rPrototype.addSetting("Interpolation type", OVP_TypeId_SphericalLinearInterpolationType, "1");
-				rPrototype.addSetting("Delay (in s)", OV_TypeId_Float, "0");
-				rPrototype.addInput("Signal", OV_TypeId_StreamedMatrix);
-				rPrototype.addInput("Channel localization", OV_TypeId_ChannelLocalisation);
+				prototype.addSetting("Interpolation type", OVP_TypeId_SphericalLinearInterpolationType, "1");
+				prototype.addSetting("Delay (in s)", OV_TypeId_Float, "0");
+				prototype.addInput("Signal", OV_TypeId_StreamedMatrix);
+				prototype.addInput("Channel localization", OV_TypeId_ChannelLocalisation);
 				return true;
 			}
 

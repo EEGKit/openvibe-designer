@@ -22,8 +22,8 @@
 #pragma once
 
 // Temporal coherence definition
-#define OVP_TypeId_TemporalCoherence                     OpenViBE::CIdentifier(0x8F02E3F6, 0xFFB00F4B)
-#define OVP_TypeId_TemporalCoherence_TimeLocked          OpenViBE::CIdentifier(0xED81E5C6, 0x9B1CFA99)
-#define OVP_TypeId_TemporalCoherence_Independant         OpenViBE::CIdentifier(0x0EC86437, 0x32344DE7)
+#define OVP_TypeId_TemporalCoherence					OpenViBE::CIdentifier(0x8F02E3F6, 0xFFB00F4B)
 
-#define OV_TypeId_TimeFrequency OpenViBE::CIdentifier(0x5A90816B, 0xFF2AFF72)
+enum ETemporalCoherence { TimeLocked, Independant };
+
+#define OV_TypeId_TimeFrequency							OpenViBE::CIdentifier(0x5A90816B, 0xFF2AFF72)

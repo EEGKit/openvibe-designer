@@ -10,7 +10,7 @@ namespace OpenViBEVisualizationToolkit
 		{
 			OVVIZ_API bool parse(OpenViBE::IMatrix& colorGradient, const OpenViBE::CString& string);
 			OVVIZ_API bool format(OpenViBE::CString& string, const OpenViBE::IMatrix& colorGradient);
-			OVVIZ_API bool interpolate(OpenViBE::IMatrix& interpolatedColorGradient, const OpenViBE::IMatrix& colorGradient, uint32_t steps);
+			OVVIZ_API bool interpolate(OpenViBE::IMatrix& interpolatedColorGradient, const OpenViBE::IMatrix& colorGradient, size_t steps);
 		} // namespace ColorGradient
 	} // namespace Tools
 } // namespace OpenViBEVisualizationToolkit

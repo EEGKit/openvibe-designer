@@ -28,41 +28,39 @@ using namespace AdvancedVisualization;
 
 CRendererCube::CRendererCube() = default;
 
-void CRendererCube::rebuild(const IRendererContext& rContext)
+void CRendererCube::rebuild(const CRendererContext& ctx)
 {
-	CRenderer::rebuild(rContext);
+	IRenderer::rebuild(ctx);
 
-	m_vVertex.clear();
-	m_vVertex.resize(rContext.getChannelCount());
+	m_vertices.clear();
+	m_vertices.resize(ctx.getChannelCount());
 
 	m_historyIdx = 0;
 }
 
-void CRendererCube::refresh(const IRendererContext& rContext)
+void CRendererCube::refresh(const CRendererContext& ctx)
 {
-	CRenderer::refresh(rContext);
+	IRenderer::refresh(ctx);
 
 	if (!m_nHistory) { return; }
 
-	const float sampleIndexERP     = (m_ERPFraction * float(m_nSample - 1));
-	const float alpha              = sampleIndexERP - std::floor(sampleIndexERP);
-	const uint32_t sampleIndexERP1 = uint32_t(sampleIndexERP) % m_nSample;
-	const uint32_t sampleIndexERP2 = uint32_t(sampleIndexERP + 1) % m_nSample;
+	const float indexERP   = (m_erpFraction * float(m_nSample - 1));
+	const float alpha      = indexERP - std::floor(indexERP);
+	const size_t indexERP1 = size_t(indexERP) % m_nSample;
+	const size_t indexERP2 = size_t(indexERP + 1) % m_nSample;
 
-	for (uint32_t i = 0; i < m_vVertex.size(); ++i)
+	for (size_t i = 0; i < m_vertices.size(); ++i)
 	{
-		m_vVertex[i].u = m_history[i][m_nHistory - m_nSample + sampleIndexERP1] * (1 - alpha)
-						 + m_history[i][m_nHistory - m_nSample + sampleIndexERP2] * (alpha);
+		m_vertices[i].u = m_history[i][m_nHistory - m_nSample + indexERP1] * (1 - alpha) + m_history[i][m_nHistory - m_nSample + indexERP2] * (alpha);
 	}
 
 	m_historyIdx = m_nHistory;
 }
 
-bool CRendererCube::render(const IRendererContext& rContext)
+bool CRendererCube::render(const CRendererContext& ctx)
 {
-
-	if (!rContext.getSelectedCount()) { return false; }
-	if (m_vVertex.empty()) { return false; }
+	if (!ctx.getSelectedCount()) { return false; }
+	if (m_vertices.empty()) { return false; }
 	if (!m_nHistory) { return false; }
 
 	const float d = 3.5;
@@ -73,33 +71,33 @@ bool CRendererCube::render(const IRendererContext& rContext)
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
-	gluPerspective(60, rContext.getAspect(), .01, 100);
+	gluPerspective(60, ctx.getAspect(), .01, 100);
 	glTranslatef(0, 0, -d);
-	glRotatef(rContext.getRotationX() * 10, 1, 0, 0);
-	glRotatef(rContext.getRotationY() * 10, 0, 1, 0);
+	glRotatef(ctx.getRotationX() * 10, 1, 0, 0);
+	glRotatef(ctx.getRotationY() * 10, 0, 1, 0);
 
 	glMatrixMode(GL_TEXTURE);
 	glPushMatrix();
-	glScalef(rContext.getScale(), 1, 1);
+	glScalef(ctx.getScale(), 1, 1);
 
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadIdentity();
-	glScalef(rContext.getZoom(), rContext.getZoom(), rContext.getZoom());
+	glScalef(ctx.getZoom(), ctx.getZoom(), ctx.getZoom());
 
 	glPushMatrix();
 	glRotatef(19, 1, 0, 0);
-	for (uint32_t j = 0; j < rContext.getSelectedCount(); ++j)
+	for (size_t j = 0; j < ctx.getSelectedCount(); ++j)
 	{
 		CVertex v;
-		const uint32_t k = rContext.getSelected(j);
-		rContext.getChannelLocalisation(k, v.x, v.y, v.z);
-		const float l_fCubeScale = .1f * (.25f + fabs(m_vVertex[k].u * rContext.getScale()));
+		const size_t k = ctx.getSelected(j);
+		ctx.getChannelLocalisation(k, v.x, v.y, v.z);
+		const float scale = .1F * (.25F + fabs(m_vertices[k].u * ctx.getScale()));
 
 		glPushMatrix();
 		glTranslatef(v.x, v.y, v.z);
-		glTexCoord1f(m_vVertex[k].u);
-		glScalef(l_fCubeScale, l_fCubeScale, l_fCubeScale);
+		glTexCoord1f(m_vertices[k].u);
+		glScalef(scale, scale, scale);
 
 		glColor3f(1, 1, 1);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -115,7 +113,7 @@ bool CRendererCube::render(const IRendererContext& rContext)
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-	if (rContext.getCheckBoardVisibility()) { this->drawCoordinateSystem(); }
+	if (ctx.getCheckBoardVisibility()) { this->drawCoordinateSystem(); }
 
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();

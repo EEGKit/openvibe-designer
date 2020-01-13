@@ -17,13 +17,13 @@ namespace OpenViBEDesigner
 			GdkColor color;
 			GtkColorButton* colorButton;
 			GtkSpinButton* spinButton;
-		} SColorGradientDataNode;
+		} color_gradient_data_node_t;
 
 
-		class CColorGradientSettingView : public CAbstractSettingView
+		class CColorGradientSettingView final : public CAbstractSettingView
 		{
 		public:
-			CColorGradientSettingView(OpenViBE::Kernel::IBox& box, const uint32_t index, OpenViBE::CString& rBuilderName,
+			CColorGradientSettingView(OpenViBE::Kernel::IBox& box, const size_t index, OpenViBE::CString& builderName,
 									  const OpenViBE::Kernel::IKernelContext& ctx);
 
 			void getValue(OpenViBE::CString& value) const override;
@@ -47,12 +47,12 @@ namespace OpenViBEDesigner
 			const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
 			OpenViBE::CString m_builderName;
 
-			GtkWidget* pDialog      = nullptr;
-			GtkWidget* pContainer   = nullptr;
-			GtkWidget* pDrawingArea = nullptr;
-			std::vector<SColorGradientDataNode> vColorGradient;
-			std::map<GtkColorButton*, uint32_t> vColorButtonMap;
-			std::map<GtkSpinButton*, uint32_t> vSpinButtonMap;
+			GtkWidget* m_dialog      = nullptr;
+			GtkWidget* m_container   = nullptr;
+			GtkWidget* m_drawingArea = nullptr;
+			std::vector<color_gradient_data_node_t> m_colorGradient;
+			std::map<GtkColorButton*, size_t> m_colorButtons;
+			std::map<GtkSpinButton*, size_t> m_spinButtons;
 
 			bool m_onValueSetting = false;
 		};

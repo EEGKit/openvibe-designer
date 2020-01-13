@@ -8,9 +8,6 @@
 
 #include <vector>
 
-#define OVP_ClassId_BoxAlgorithm_ModifiableSettings OpenViBE::CIdentifier(0x4AB0DD05, 0x32155D41)
-#define OVP_ClassId_BoxAlgorithm_ModifiableSettingsDesc OpenViBE::CIdentifier(0x3808515D, 0x97C7F9B6)
-
 namespace OpenViBEPlugins
 {
 	namespace Examples
@@ -75,7 +72,7 @@ namespace OpenViBEPlugins
 			OpenViBE::CIdentifier getCreatedClass() const override { return OVP_ClassId_BoxAlgorithm_ModifiableSettings; }
 			OpenViBE::Plugins::IPluginObject* create() override { return new CBoxAlgorithmModifiableSettings; }
 
-			bool hasFunctionality(const OpenViBE::CIdentifier functionality) const override { return functionality == OVD_Functionality_Visualization; }
+			bool hasFunctionality(const OpenViBE::CIdentifier& functionality) const override { return functionality == OVD_Functionality_Visualization; }
 
 
 			bool getBoxPrototype(OpenViBE::Kernel::IBoxProto& prototype) const override

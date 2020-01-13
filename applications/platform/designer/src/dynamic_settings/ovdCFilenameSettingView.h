@@ -7,10 +7,10 @@ namespace OpenViBEDesigner
 {
 	namespace Setting
 	{
-		class CFilenameSettingView : public CAbstractSettingView
+		class CFilenameSettingView final : public CAbstractSettingView
 		{
 		public:
-			CFilenameSettingView(OpenViBE::Kernel::IBox& box, const uint32_t index, OpenViBE::CString& rBuilderName,
+			CFilenameSettingView(OpenViBE::Kernel::IBox& box, const size_t index, OpenViBE::CString& builderName,
 								 const OpenViBE::Kernel::IKernelContext& ctx);
 
 			void getValue(OpenViBE::CString& value) const override;

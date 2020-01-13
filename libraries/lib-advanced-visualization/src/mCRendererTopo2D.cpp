@@ -4,170 +4,162 @@
 using namespace Mensia;
 using namespace AdvancedVisualization;
 
-//	constexpr constexpr float OFFSET = 0.0001f; //Macro modernization, Not yet with jenkins (not the last visual 2013 which it works)
+// constexpr constexpr float OFFSET = 0.0001f; //Macro modernization, Not yet with jenkins (not the last visual 2013 which it works)
 #define OFFSET 0.0001f
 
-void CRendererTopo2D::rebuild3DMeshesPre(const IRendererContext& /*rContext*/)
+void CRendererTopo2D::rebuild3DMeshesPre(const CRendererContext& /*rContext*/)
 {
-	uint32_t i, j, k;
+	const size_t nVertex1      = 32;
+	const size_t nVertex2      = 32;
+	const size_t nCircleVertex = 128;
 
-	const uint32_t vertexCount1      = 32;
-	const uint32_t vertexCount2      = 32;
-	const uint32_t circleVertexCount = 128;
+	{	// Scalp
+		m_scalp.clear();
 
-	{
-		m_oScalp.clear();
+		std::vector<CVertex>& vertices   = m_scalp.m_Vertices;
+		std::vector<uint32_t>& triangles = m_scalp.m_Triangles;
 
-		std::vector<CVertex>& l_vVertex    = m_oScalp.m_vVertex;
-		std::vector<uint32_t>& l_vTriangle = m_oScalp.m_vTriangle;
-
-		l_vVertex.resize(vertexCount1 * vertexCount2);
-		for (i = 0, k = 0; i < vertexCount1; ++i)
+		vertices.resize(nVertex1 * nVertex2);
+		for (size_t i = 0, k = 0; i < nVertex1; ++i)
 		{
-			for (j = 0; j < vertexCount2; j++, k++)
+			for (size_t j = 0; j < nVertex2; j++, k++)
 			{
-				const auto a   = float(i * M_PI / (vertexCount1 - 1));
-				const auto b   = float(j * 1.25 * M_PI / (vertexCount2 - 1) - M_PI * .2);
-				l_vVertex[k].x = cosf(a);
-				l_vVertex[k].y = sinf(a) * sinf(b) - OFFSET;
-				l_vVertex[k].z = sinf(a) * cosf(b);
-				l_vVertex[k].u = k * 200.f / (vertexCount1 * vertexCount2);
+				const auto a  = float(i * M_PI / (nVertex1 - 1));
+				const auto b  = float(j * 1.25 * M_PI / (nVertex2 - 1) - M_PI * .2);
+				vertices[k].x = cosf(a);
+				vertices[k].y = sinf(a) * sinf(b) - OFFSET;
+				vertices[k].z = sinf(a) * cosf(b);
+				vertices[k].u = k * 200.F / (nVertex1 * nVertex2);
 			}
 		}
 
-		l_vTriangle.resize((vertexCount1 - 1) * (vertexCount2 - 1) * 6);
-		for (i = 0, k = 0; i < vertexCount1 - 1; ++i)
+		triangles.resize((nVertex1 - 1) * (nVertex2 - 1) * 6);
+		for (size_t i = 0, k = 0; i < nVertex1 - 1; ++i)
 		{
-			for (j = 0; j < vertexCount2 - 1; j++, k += 6)
+			for (size_t j = 0; j < nVertex2 - 1; j++, k += 6)
 			{
-				l_vTriangle[k]     = (i) * vertexCount2 + (j);
-				l_vTriangle[k + 1] = (i + 1) * vertexCount2 + (j);
-				l_vTriangle[k + 2] = (i + 1) * vertexCount2 + (j + 1);
+				triangles[k]     = (i) * nVertex2 + (j);
+				triangles[k + 1] = (i + 1) * nVertex2 + (j);
+				triangles[k + 2] = (i + 1) * nVertex2 + (j + 1);
 
-				l_vTriangle[k + 3] = l_vTriangle[k];
-				l_vTriangle[k + 4] = l_vTriangle[k + 2];
-				l_vTriangle[k + 5] = (i) * vertexCount2 + (j + 1);
+				triangles[k + 3] = triangles[k];
+				triangles[k + 4] = triangles[k + 2];
+				triangles[k + 5] = (i) * nVertex2 + (j + 1);
 			}
 		}
 
-		m_oScalp.m_vColor[0] = 1;
-		m_oScalp.m_vColor[1] = 1;
-		m_oScalp.m_vColor[2] = 1;
-
-		//		m_oScalp.compile();
+		m_scalp.m_Color.fill(1.0);
+		// m_scalp.compile();
 	}
 
-	{
-		m_oFace.clear();
+	{	// Face
+		m_face.clear();
 
-		std::vector<CVertex>& l_vVertex    = m_oFace.m_vVertex;
-		std::vector<uint32_t>& l_vTriangle = m_oFace.m_vTriangle;
+		std::vector<CVertex>& vertices   = m_face.m_Vertices;
+		std::vector<uint32_t>& triangles = m_face.m_Triangles;
 
 		// Ribbon mesh
 
-		l_vVertex.resize(circleVertexCount * 2/*+6*/);
-		for (i = 0, k = 0; i < circleVertexCount; i++, k += 2)
+		vertices.resize(nCircleVertex * 2/*+6*/);
+		for (size_t i = 0, k = 0; i < nCircleVertex; ++i, ++k)
 		{
-			const auto a = float(i * 4 * M_PI / circleVertexCount);
+			const auto a = float(i * 4 * M_PI / nCircleVertex);
 
-			l_vVertex[k].x = cosf(a);
-			l_vVertex[k].y = .01f;
-			l_vVertex[k].z = sinf(a);
-
-			l_vVertex[k + 1].x = cosf(a);
-			l_vVertex[k + 1].y = -.01f;
-			l_vVertex[k + 1].z = sinf(a);
+			vertices[k].x = cosf(a);
+			vertices[k].y = .01F;
+			vertices[k].z = sinf(a);
+			k++;
+			vertices[k].x = cosf(a);
+			vertices[k].y = -.01F;
+			vertices[k].z = sinf(a);
 		}
 
 		// Nose mesh
 		/*
-				l_vVertex[k  ].x=-1;
-				l_vVertex[k  ].y=.01;
-				l_vVertex[k  ].z=-.5;
-		
-				l_vVertex[k+1].x=-1;
-				l_vVertex[k+1].y=-.01;
-				l_vVertex[k+1].z=-.5;
-		
-				l_vVertex[k+2].x=0;
-				l_vVertex[k+2].y=.01;
-				l_vVertex[k+2].z=-1.5;
-		
-				l_vVertex[k+3].x=0;
-				l_vVertex[k+3].y=-.01;
-				l_vVertex[k+3].z=-1.5;
-		
-				l_vVertex[k+4].x=1;
-				l_vVertex[k+4].y=.01;
-				l_vVertex[k+4].z=-.5;
-		
-				l_vVertex[k+5].x=1;
-				l_vVertex[k+5].y=-.01;
-				l_vVertex[k+5].z=-.5;
+		vertices[k].x=-1;
+		vertices[k].y=.01;
+		vertices[k].z=-.5;
+		k++;
+		vertices[k].x=-1;
+		vertices[k].y=-.01;
+		vertices[k].z=-.5;
+		k++;
+		vertices[k].x=0;
+		vertices[k].y=.01;
+		vertices[k].z=-1.5;
+		k++;
+		vertices[k].x=0;
+		vertices[k].y=-.01;
+		vertices[k].z=-1.5;
+		k++;
+		vertices[k].x=1;
+		vertices[k].y=.01;
+		vertices[k].z=-.5;
+		k++;
+		vertices[k].x=1;
+		vertices[k].y=-.01;
+		vertices[k].z=-.5;
 		*/
 		// Ribon mesh
 
-		l_vTriangle.resize(circleVertexCount * 6/*+12*/);
-		for (i = 0, k = 0; i < circleVertexCount; i++, k += 6)
+		triangles.resize(nCircleVertex * 6/*+12*/);
+		const size_t mod = nCircleVertex * 2;
+		for (size_t i = 0, k = 0; i < nCircleVertex; ++i)
 		{
-			l_vTriangle[k]     = (i) % (circleVertexCount * 2);
-			l_vTriangle[k + 1] = (i + 1) % (circleVertexCount * 2);
-			l_vTriangle[k + 2] = (i + 2) % (circleVertexCount * 2);
+			triangles[k++] = (i) % mod;
+			triangles[k++] = (i + 1) % mod;
+			triangles[k++] = (i + 2) % mod;
 
-			l_vTriangle[k + 3] = (i + 1) % (circleVertexCount * 2);
-			l_vTriangle[k + 4] = (i + 2) % (circleVertexCount * 2);
-			l_vTriangle[k + 5] = (i + 3) % (circleVertexCount * 2);
+			triangles[k++] = (i + 1) % mod;
+			triangles[k++] = (i + 2) % mod;
+			triangles[k++] = (i + 3) % mod;
 		}
 
 		// Nose mesh
 		/*
-				l_vTriangle[k  ]=l_ui32CircleVertexCount*2;
-				l_vTriangle[k+1]=l_ui32CircleVertexCount*2+1;
-				l_vTriangle[k+2]=l_ui32CircleVertexCount*2+2;
-		
-				l_vTriangle[k+3]=l_ui32CircleVertexCount*2+1;
-				l_vTriangle[k+4]=l_ui32CircleVertexCount*2+2;
-				l_vTriangle[k+5]=l_ui32CircleVertexCount*2+3;
-		
-				l_vTriangle[k+6]=l_ui32CircleVertexCount*2+2;
-				l_vTriangle[k+7]=l_ui32CircleVertexCount*2+3;
-				l_vTriangle[k+8]=l_ui32CircleVertexCount*2+4;
-		
-				l_vTriangle[k+9]=l_ui32CircleVertexCount*2+3;
-				l_vTriangle[k+10]=l_ui32CircleVertexCount*2+4;
-				l_vTriangle[k+11]=l_ui32CircleVertexCount*2+5;
-		*/
-		m_oFace.m_vColor[0] = 1.15f;
-		m_oFace.m_vColor[1] = 1.15f;
-		m_oFace.m_vColor[2] = 1.15f;
+		triangles[k++] = mod;
+		triangles[k++] = mod + 1;
+		triangles[k++] = mod + 2;
 
-		//		m_oFace.compile();
+		triangles[k++] = mod + 1;
+		triangles[k++] = mod + 2;
+		triangles[k++] = mod + 3;
+
+		triangles[k++] = mod + 2;
+		triangles[k++] = mod + 3;
+		triangles[k++] = mod + 4;
+		
+		triangles[k++] = mod + 3;
+		triangles[k++] = mod + 4;
+		triangles[k++] = mod + 5;
+		*/
+		m_face.m_Color.fill(1.15F);
+		// m_face.compile();
 	}
 }
 
 namespace
 {
-	void unfold(std::vector<CVertex>& rVertex, const float fLayer = 0)
+	void unfold(std::vector<CVertex>& vertices, const float layer = 0)
 	{
-		for (auto it = rVertex.begin(); it != rVertex.end(); ++it)
+		for (auto& v : vertices)
 		{
-			CVertex& p = (*it);
-			p.y += OFFSET;
-			const float phi = float(M_PI) * .5f - asinf(p.y);
-			const float psi = atan2f(p.z, p.x);
+			v.y += OFFSET;
+			const float phi = float(M_PI) * .5F - asinf(v.y);
+			const float psi = atan2f(v.z, v.x);
 
-			p.x = phi * cos(psi);
-			p.y = fLayer;
-			p.z = phi * sin(psi);
+			v.x = phi * cos(psi);
+			v.y = layer;
+			v.z = phi * sin(psi);
 		}
 	}
 } // namespace
 
-void CRendererTopo2D::rebuild3DMeshesPost(const IRendererContext& /*rContext*/)
+void CRendererTopo2D::rebuild3DMeshesPost(const CRendererContext& /*ctx*/)
 {
-	const float l_f32Layer = 1E-3f;
+	const float layer = 1E-3F;
 
-	unfold(m_oScalp.m_vVertex, -l_f32Layer);
-	unfold(m_oFace.m_vVertex, l_f32Layer);
-	unfold(m_vProjectedChannelCoordinate);
+	unfold(m_scalp.m_Vertices, -layer);
+	unfold(m_face.m_Vertices, layer);
+	unfold(m_projectedPositions);
 }

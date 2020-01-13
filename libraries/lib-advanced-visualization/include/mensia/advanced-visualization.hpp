@@ -18,13 +18,8 @@
  * along with this program.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+#pragma once
 
-#include "mIRendererContext.h"
-#include "mCRendererContext.hpp"
-
-using namespace Mensia;
-using namespace AdvancedVisualization;
-
-IRendererContext* IRendererContext::create(IRendererContext* pParentRendererContext) { return new CRendererContext(pParentRendererContext); }
-
-void IRendererContext::release(IRendererContext* pRendererContext) { delete pRendererContext; }
+#include "advanced-visualization/mIRenderer.hpp"
+#include "advanced-visualization/mCRendererContext.hpp"
+#include "advanced-visualization/mCVertex.hpp"
