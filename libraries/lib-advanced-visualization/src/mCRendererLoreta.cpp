@@ -441,14 +441,14 @@ bool CRendererLoreta::render(const CRendererContext& ctx)
 
 	if (m_nHistory && m_history.size() == 2394)
 	{
-		std::vector<float> l_vSample;
-		this->getSampleAtERPFraction(m_erpFraction, l_vSample);
+		std::vector<float> samples;
+		this->getSampleAtERPFraction(m_erpFraction, samples);
 
 #if defined __Rendering_VertexBuffer__
 		for (size_t i = 0, j = 0; i < 2394; ++i)
 		{
 			// Apply texture coordinate to each of the 8 vertices of this voxel
-			const float power         = l_vSample[i] * ctx.getScale();
+			const float power         = samples[i] * ctx.getScale();
 			m_brain.m_Vertices[j++].u = power;
 			m_brain.m_Vertices[j++].u = power;
 			m_brain.m_Vertices[j++].u = power;
@@ -463,7 +463,7 @@ bool CRendererLoreta::render(const CRendererContext& ctx)
 		{
 			if (m_selecteds[i])
 			{
-				float power = l_vSample[i] * ctx.getScale();
+				float power = samples[i] * ctx.getScale();
 				// m_history[i][m_nHistory-m_nSample+m_sampleIndexERP]*ctx.getScale();
 				::glColor4f(.1f, .1f, .1f, ctx.getTranslucency());
 				::glPushMatrix();

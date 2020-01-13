@@ -238,25 +238,21 @@ void CDesignerVisualization::init(const std::string& guiFile)
 }
 
 void CDesignerVisualization::load()
-
 {
 	m_tree.setTreeViewCB(this);
-
 	m_tree.reloadTree();
 
 	//if at least one window was created, retrieve its dimensions
-	CIdentifier l_oVisualizationWindowID;
-	if (m_tree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowID, VisualizationWidget_VisualizationWindow))
+	CIdentifier id;
+	if (m_tree.getNextVisualizationWidgetIdentifier(id, VisualizationWidget_VisualizationWindow))
 	{
-		IVisualizationWidget* l_pVisualizationWindow = m_tree.getVisualizationWidget(l_oVisualizationWindowID);
-		m_previewWindowW                             = l_pVisualizationWindow->getWidth();
-		m_previewWindowH                             = l_pVisualizationWindow->getHeight();
+		IVisualizationWidget* window = m_tree.getVisualizationWidget(id);
+		m_previewWindowW             = window->getWidth();
+		m_previewWindowH             = window->getHeight();
 	}
-	const size_t treeViewWidth = gtk_paned_get_position(GTK_PANED(m_pane));
-	gtk_widget_set_size_request(GTK_WIDGET(m_dialog), gint(treeViewWidth + m_previewWindowW), gint(m_previewWindowH));
-
+	const size_t width = gtk_paned_get_position(GTK_PANED(m_pane));
+	gtk_widget_set_size_request(GTK_WIDGET(m_dialog), gint(width + m_previewWindowW), gint(m_previewWindowH));
 	gtk_tree_view_expand_all(m_treeView);
-
 	setActiveVisualization(m_activeVisualizationWindowName, m_activeVisualizationPanelName);
 }
 
@@ -494,13 +490,13 @@ GtkWidget* CDesignerVisualization::loadTreeWidget(IVisualizationWidget* widget)
 void CDesignerVisualization::endLoadTreeWidget(IVisualizationWidget* widget)
 {
 	//retrieve tree widget
-	GtkTreeIter l_oIter;
-	m_tree.findChildNodeFromRoot(&l_oIter, widget->getIdentifier());
-	void* l_pTreeWidget = nullptr;
-	m_tree.getPointerValueFromTreeIter(&l_oIter, l_pTreeWidget, EVisualizationTreeColumn_PointerWidget);
+	GtkTreeIter it;
+	m_tree.findChildNodeFromRoot(&it, widget->getIdentifier());
+	void* treeWidget = nullptr;
+	m_tree.getPointerValueFromTreeIter(&it, treeWidget, EVisualizationTreeColumn_PointerWidget);
 
 	//get actual visualization widget
-	GtkWidget* l_widget = getVisualizationWidget(static_cast<GtkWidget*>(l_pTreeWidget));
+	GtkWidget* vizWidget = getVisualizationWidget(static_cast<GtkWidget*>(treeWidget));
 
 	if (widget->getType() == VisualizationWidget_VisualizationPanel)
 	{
@@ -509,25 +505,25 @@ void CDesignerVisualization::endLoadTreeWidget(IVisualizationWidget* widget)
 	}
 	else if (widget->getType() == VisualizationWidget_Undefined || widget->getType() == VisualizationWidget_VisualizationBox)
 	{
-		if (GTK_IS_BUTTON(l_widget) != FALSE)
+		if (GTK_IS_BUTTON(vizWidget) != FALSE)
 		{
 			//replace dummy icon with correct one
 			//-----------------------------------
 			//retrieve icon name from tree
 			char* iconString = nullptr;
-			m_tree.getStringValueFromTreeIter(&l_oIter, iconString, EVisualizationTreeColumn_StringStockIcon);
+			m_tree.getStringValueFromTreeIter(&it, iconString, EVisualizationTreeColumn_StringStockIcon);
 			//retrieve hbox
-			GList* l_pButtonChildren = gtk_container_get_children(GTK_CONTAINER(l_widget));
-			GtkContainer* l_pBox     = GTK_CONTAINER(l_pButtonChildren->data);
+			GList* buttonChildren = gtk_container_get_children(GTK_CONTAINER(vizWidget));
+			GtkContainer* box     = GTK_CONTAINER(buttonChildren->data);
 			//remove first widget
-			GList* l_pBoxChildren = gtk_container_get_children(l_pBox);
-			gtk_container_remove(l_pBox, GTK_WIDGET(l_pBoxChildren->data));
+			GList* boxChildren = gtk_container_get_children(box);
+			gtk_container_remove(box, GTK_WIDGET(boxChildren->data));
 			//create new icon
 			GtkWidget* icon = gtk_image_new_from_stock(iconString, GTK_ICON_SIZE_BUTTON);
 			if (iconWidthRequest == 0) { gtk_widget_set_size_request(icon, 0, 0); }
-			gtk_box_pack_start(GTK_BOX(l_pBox), icon, iconExpand, iconFill, 0);
+			gtk_box_pack_start(GTK_BOX(box), icon, iconExpand, iconFill, 0);
 			//insert it in first position
-			gtk_box_reorder_child(GTK_BOX(l_pBox), icon, 0);
+			gtk_box_reorder_child(GTK_BOX(box), icon, 0);
 		}
 	}
 }
@@ -591,30 +587,15 @@ gboolean CDesignerVisualization::window_state_event_cb(::GtkWidget * widget, Gdk
 gboolean CDesignerVisualization::configureEventCB(GtkWidget* /*widget*/, GdkEventConfigure* /*event*/, gpointer data)
 {
 	static_cast<CDesignerVisualization*>(data)->m_previewWindowVisible = true;
-	/*
-	//upon first show, resize window so that the preview widget has the desired size
-	if(m_bFirstShow == true)
-	{
-		//set preview widget size
-		::GtkWidget* notebook = gtk_paned_get_child2(GTK_PANED(m_pane));
-		//gtk_window_resize(m_iInitialWidth, m_iInitialHeight);
-
-		m_bFirstShow == false;
-	}*/
-
 	static_cast<CDesignerVisualization*>(data)->resizeCB(nullptr);
-
 	return FALSE;
 }
 
 gboolean CDesignerVisualization::widgetExposeEventCB(GtkWidget* widget, GdkEventExpose* /*event*/, gpointer data)
 {
 	static_cast<CDesignerVisualization*>(data)->m_previewWindowVisible = true;
-
 	g_signal_handlers_disconnect_by_func(G_OBJECT(widget), G_CALLBACK2(CDesignerVisualization::widgetExposeEventCB), data);
-
 	static_cast<CDesignerVisualization*>(data)->resizeCB(nullptr);
-
 	return FALSE;
 }
 
@@ -623,62 +604,59 @@ void CDesignerVisualization::resizeCB(IVisualizationWidget* widget)
 	if (widget == nullptr)
 	{
 		//assign current window size to each window
-		GtkWidget* l_pNotebook = gtk_paned_get_child2(GTK_PANED(m_pane));
-		if (l_pNotebook != nullptr)
+		GtkWidget* notebook = gtk_paned_get_child2(GTK_PANED(m_pane));
+		if (notebook != nullptr)
 		{
-			CIdentifier l_oVisualizationWindowID = OV_UndefinedIdentifier;
+			CIdentifier id = OV_UndefinedIdentifier;
 			//retrieve current preview window size, if window is visible
 			if (m_previewWindowVisible)
 			{
-				l_pNotebook = gtk_paned_get_child2(GTK_PANED(m_pane));
-				if (l_pNotebook != nullptr)
+				notebook = gtk_paned_get_child2(GTK_PANED(m_pane));
+				if (notebook != nullptr)
 				{
 					//update preview window dims
-					m_previewWindowW = l_pNotebook->allocation.width;
-					m_previewWindowH = l_pNotebook->allocation.height;
+					m_previewWindowW = notebook->allocation.width;
+					m_previewWindowH = notebook->allocation.height;
 				}
 			}
 
-			while (m_tree.getNextVisualizationWidgetIdentifier(l_oVisualizationWindowID, VisualizationWidget_VisualizationWindow))
+			while (m_tree.getNextVisualizationWidgetIdentifier(id, VisualizationWidget_VisualizationWindow))
 			{
-				IVisualizationWidget* l_pVisualizationWindow = m_tree.getVisualizationWidget(l_oVisualizationWindowID);
+				IVisualizationWidget* window = m_tree.getVisualizationWidget(id);
 
 				//store new dimensions
-				l_pVisualizationWindow->setWidth(m_previewWindowW);
-				l_pVisualizationWindow->setHeight(m_previewWindowH);
+				window->setWidth(m_previewWindowW);
+				window->setHeight(m_previewWindowH);
 			}
 		}
-		else
-		{
-			//return; //?
-		}
+		// else { return;}	 //? 
 
 		//retrieve active visualization panel
-		GtkTreeIter l_oWindowIter;
-		if (!m_tree.findChildNodeFromRoot(&l_oWindowIter, m_activeVisualizationWindowName, EVisualizationTreeNode_VisualizationWindow)) { return; }
-		GtkTreeIter l_oPanelIter = l_oWindowIter;
-		if (!m_tree.findChildNodeFromParent(&l_oPanelIter, m_activeVisualizationPanelName, EVisualizationTreeNode_VisualizationPanel)) { return; }
-		CIdentifier l_oVisualizationPanelID;
-		if (!m_tree.getIdentifierFromTreeIter(&l_oPanelIter, l_oVisualizationPanelID, EVisualizationTreeColumn_StringIdentifier)) { return; }
-		IVisualizationWidget* l_pVisualizationPanel = m_tree.getVisualizationWidget(l_oVisualizationPanelID);
+		GtkTreeIter windowIt;
+		if (!m_tree.findChildNodeFromRoot(&windowIt, m_activeVisualizationWindowName, EVisualizationTreeNode_VisualizationWindow)) { return; }
+		GtkTreeIter panelIt = windowIt;
+		if (!m_tree.findChildNodeFromParent(&panelIt, m_activeVisualizationPanelName, EVisualizationTreeNode_VisualizationPanel)) { return; }
+		CIdentifier panelID;
+		if (!m_tree.getIdentifierFromTreeIter(&panelIt, panelID, EVisualizationTreeColumn_StringIdentifier)) { return; }
+		IVisualizationWidget* panel = m_tree.getVisualizationWidget(panelID);
 
 		//resize visualization panel hierarchy
-		if (l_pVisualizationPanel != nullptr)
+		if (panel != nullptr)
 		{
-			CIdentifier l_oChildID;
-			l_pVisualizationPanel->getChildIdentifier(0, l_oChildID);
-			IVisualizationWidget* l_pChildVisualizationWidget = m_tree.getVisualizationWidget(l_oChildID);
-			if (l_pChildVisualizationWidget != nullptr) { resizeCB(l_pChildVisualizationWidget); }
+			CIdentifier childID;
+			panel->getChildIdentifier(0, childID);
+			IVisualizationWidget* childWidget = m_tree.getVisualizationWidget(childID);
+			if (childWidget != nullptr) { resizeCB(childWidget); }
 		}
 	}
 	else if (widget->getType() == VisualizationWidget_VerticalSplit || widget->getType() == VisualizationWidget_HorizontalSplit)
 	{
-		GtkTreeIter l_oIter;
-		if (m_tree.findChildNodeFromRoot(&l_oIter, widget->getIdentifier()) == TRUE)
+		GtkTreeIter it;
+		if (m_tree.findChildNodeFromRoot(&it, widget->getIdentifier()) == TRUE)
 		{
 			//retrieve paned widget
 			void* treeWidget = nullptr;
-			m_tree.getPointerValueFromTreeIter(&l_oIter, treeWidget, EVisualizationTreeColumn_PointerWidget);
+			m_tree.getPointerValueFromTreeIter(&it, treeWidget, EVisualizationTreeColumn_PointerWidget);
 			GtkWidget* paned = getVisualizationWidget(GTK_WIDGET(treeWidget));
 			enablePanedSignals(paned, false);
 
@@ -694,25 +672,24 @@ void CDesignerVisualization::resizeCB(IVisualizationWidget* widget)
 			if (maxHandlePos > 0)
 			{
 				//retrieve current maximum handle position
-				const int l_i32CurrentMaxHandlePos = GTK_IS_VPANED(paned) ? GTK_PANED(paned)->container.widget.allocation.height
-														 : GTK_PANED(paned)->container.widget.allocation.width;
+				const int pos = GTK_IS_VPANED(paned) ? GTK_PANED(paned)->container.widget.allocation.height : GTK_PANED(paned)->container.widget.allocation.width;
 
 				//set new paned handle position
-				gtk_paned_set_position(GTK_PANED(paned), handlePos * l_i32CurrentMaxHandlePos / maxHandlePos);
+				gtk_paned_set_position(GTK_PANED(paned), handlePos * pos / maxHandlePos);
 			}
 
 			enablePanedSignals(paned, true);
 
 			//go down child 1
-			CIdentifier l_oChildID;
-			widget->getChildIdentifier(0, l_oChildID);
-			IVisualizationWidget* l_pChildVisualizationWidget = m_tree.getVisualizationWidget(l_oChildID);
-			if (l_pChildVisualizationWidget != nullptr) { resizeCB(l_pChildVisualizationWidget); }
+			CIdentifier childID;
+			widget->getChildIdentifier(0, childID);
+			IVisualizationWidget* childWidget = m_tree.getVisualizationWidget(childID);
+			if (childWidget != nullptr) { resizeCB(childWidget); }
 
 			//go down child 2
-			widget->getChildIdentifier(1, l_oChildID);
-			l_pChildVisualizationWidget = m_tree.getVisualizationWidget(l_oChildID);
-			if (l_pChildVisualizationWidget != nullptr) { resizeCB(l_pChildVisualizationWidget); }
+			widget->getChildIdentifier(1, childID);
+			childWidget = m_tree.getVisualizationWidget(childID);
+			if (childWidget != nullptr) { resizeCB(childWidget); }
 		}
 	}
 }
@@ -783,10 +760,6 @@ void CDesignerVisualization::refreshActiveVisualization(GtkTreePath* selectedIte
 
 void CDesignerVisualization::setActiveVisualization(const char* activeWindow, const char* activePanel)
 {
-	//ensures correct behavior when _active[Window/Panel] point to m_oActiveVisualization[Window/Panel]Name.m_impl
-	const CString window = activeWindow;
-	const CString panel  = activePanel;
-
 	//clear active window/panel names
 	m_activeVisualizationWindowName = "";
 	m_activeVisualizationPanelName  = "";
@@ -794,7 +767,7 @@ void CDesignerVisualization::setActiveVisualization(const char* activeWindow, co
 	//retrieve active window
 	GtkTreeIter windowIter;
 
-	if (m_tree.findChildNodeFromRoot(&windowIter, window, EVisualizationTreeNode_VisualizationWindow)) { m_activeVisualizationWindowName = window; }
+	if (m_tree.findChildNodeFromRoot(&windowIter, activeWindow, EVisualizationTreeNode_VisualizationWindow)) { m_activeVisualizationWindowName = CString(activeWindow); }
 	else
 	{
 		//pick first window if previously active window doesn't exist anymore
@@ -815,7 +788,7 @@ void CDesignerVisualization::setActiveVisualization(const char* activeWindow, co
 
 	//retrieve active panel
 	GtkTreeIter panelIter = windowIter;
-	if (m_tree.findChildNodeFromParent(&panelIter, panel, EVisualizationTreeNode_VisualizationPanel)) { m_activeVisualizationPanelName = panel; }
+	if (m_tree.findChildNodeFromParent(&panelIter, activePanel, EVisualizationTreeNode_VisualizationPanel)) { m_activeVisualizationPanelName = CString(activePanel); }
 	else //couldn't find panel : select first one
 	{
 		CIdentifier windowID;
@@ -845,14 +818,14 @@ void CDesignerVisualization::setActiveVisualization(const char* activeWindow, co
 	//retrieve notebook	and set it visible
 	void* notebook = nullptr;
 	m_tree.getPointerValueFromTreeIter(&panelIter, notebook, EVisualizationTreeColumn_PointerWidget);
-	GtkWidget* l_pCurrentNotebook = gtk_paned_get_child2(GTK_PANED(m_pane));
-	if (l_pCurrentNotebook != GTK_WIDGET(notebook))
+	GtkWidget* widget = gtk_paned_get_child2(GTK_PANED(m_pane));
+	if (widget != GTK_WIDGET(notebook))
 	{
-		if (l_pCurrentNotebook != nullptr)
+		if (widget != nullptr)
 		{
 			//FIXME : don't ref previous notebook if parent window doesn't exist anymore
-			gtk_object_ref(GTK_OBJECT(l_pCurrentNotebook));
-			gtk_container_remove(GTK_CONTAINER(m_pane), l_pCurrentNotebook);
+			gtk_object_ref(GTK_OBJECT(widget));
+			gtk_container_remove(GTK_CONTAINER(m_pane), widget);
 		}
 		gtk_paned_add2(GTK_PANED(m_pane), GTK_WIDGET(notebook));
 		//gtk_object_unref(l_pCurrentNotebook);
@@ -1455,11 +1428,11 @@ void CDesignerVisualization::buttonRelease(GtkWidget* widget, GdkEventButton* ev
 		{
 			if (event->type != GDK_BUTTON_PRESS)
 			{
-				GtkTreeIter l_oIter;
+				GtkTreeIter it;
 
-				if (!m_tree.getTreeSelection(m_treeView, &l_oIter)) { return; }
+				if (!m_tree.getTreeSelection(m_treeView, &it)) { return; }
 
-				const unsigned long type = m_tree.getULongValueFromTreeIter(&l_oIter, EVisualizationTreeColumn_ULongNodeType);
+				const unsigned long type = m_tree.getULongValueFromTreeIter(&it, EVisualizationTreeColumn_ULongNodeType);
 
 				if (type == EVisualizationTreeNode_Unaffected)
 				{
@@ -1484,7 +1457,7 @@ void CDesignerVisualization::buttonRelease(GtkWidget* widget, GdkEventButton* ev
 				else if (type == EVisualizationTreeNode_VisualizationBox)
 				{
 					//ensure visualization box is parented to a tab
-					if (m_tree.findParentNode(&l_oIter, EVisualizationTreeNode_VisualizationPanel))
+					if (m_tree.findParentNode(&it, EVisualizationTreeNode_VisualizationPanel))
 					{
 						gtk_menu_popup(GTK_MENU(gtk_item_factory_get_widget(m_visualizationBoxItemFactory, "<visualization_box_main>")), nullptr, nullptr,
 									   nullptr, nullptr, event->button, event->time);
@@ -1494,15 +1467,15 @@ void CDesignerVisualization::buttonRelease(GtkWidget* widget, GdkEventButton* ev
 				{
 					//ensure empty plugin is not parented to a panel (because an empty widget is always present in an empty panel)
 					CIdentifier id;
-					m_tree.getIdentifierFromTreeIter(&l_oIter, id, EVisualizationTreeColumn_StringIdentifier);
-					IVisualizationWidget* l_pVisualizationWidget = m_tree.getVisualizationWidget(id);
-					if (l_pVisualizationWidget != nullptr)
+					m_tree.getIdentifierFromTreeIter(&it, id, EVisualizationTreeColumn_StringIdentifier);
+					IVisualizationWidget* visuWidget = m_tree.getVisualizationWidget(id);
+					if (visuWidget != nullptr)
 					{
-						IVisualizationWidget* l_pParentVisualizationWidget = m_tree.getVisualizationWidget(
-							l_pVisualizationWidget->getParentIdentifier());
-						if (l_pParentVisualizationWidget != nullptr)
+						IVisualizationWidget* parentVisuWidget = m_tree.getVisualizationWidget(
+							visuWidget->getParentIdentifier());
+						if (parentVisuWidget != nullptr)
 						{
-							if (l_pParentVisualizationWidget->getType() != VisualizationWidget_VisualizationPanel)
+							if (parentVisuWidget->getType() != VisualizationWidget_VisualizationPanel)
 							{
 								gtk_menu_popup(GTK_MENU(gtk_item_factory_get_widget(m_undefinedItemFactory, "<undefined_widget_main>")), nullptr, nullptr,
 											   nullptr, nullptr, event->button, event->time);
@@ -1520,31 +1493,31 @@ void CDesignerVisualization::cursorChangedCB(GtkTreeView* treeView, gpointer dat
 void CDesignerVisualization::cursorChanged(GtkTreeView* treeView)
 {
 	//retrieve selection
-	GtkTreeIter selectionIter;
-	if (!m_tree.getTreeSelection(treeView, &selectionIter)) { return; }
+	GtkTreeIter selectionIt;
+	if (!m_tree.getTreeSelection(treeView, &selectionIt)) { return; }
 
 	//save active item
-	if (m_tree.getULongValueFromTreeIter(&selectionIter, EVisualizationTreeColumn_ULongNodeType) == EVisualizationTreeNode_VisualizationBox)
+	if (m_tree.getULongValueFromTreeIter(&selectionIt, EVisualizationTreeColumn_ULongNodeType) == EVisualizationTreeNode_VisualizationBox)
 	{
-		m_tree.getIdentifierFromTreeIter(&selectionIter, m_activeVisualizationBoxID, EVisualizationTreeColumn_StringIdentifier);
+		m_tree.getIdentifierFromTreeIter(&selectionIt, m_activeVisualizationBoxID, EVisualizationTreeColumn_StringIdentifier);
 	}
 
-	GtkTreeIter panelIter = selectionIter;
+	GtkTreeIter panelIt = selectionIt;
 
 	//if selection lies in a visualization panel subtree, display this subtree
-	if (m_tree.findParentNode(&panelIter, EVisualizationTreeNode_VisualizationPanel))
+	if (m_tree.findParentNode(&panelIt, EVisualizationTreeNode_VisualizationPanel))
 	{
 		//get visualization panel name
 		char* panelName = nullptr;
-		m_tree.getStringValueFromTreeIter(&panelIter, panelName, EVisualizationTreeColumn_StringName);
+		m_tree.getStringValueFromTreeIter(&panelIt, panelName, EVisualizationTreeColumn_StringName);
 
 		//retrieve visualization window that contains selection
-		GtkTreeIter windowIter = panelIter;
-		if (m_tree.findParentNode(&windowIter, EVisualizationTreeNode_VisualizationWindow))
+		GtkTreeIter windowIt = panelIt;
+		if (m_tree.findParentNode(&windowIt, EVisualizationTreeNode_VisualizationWindow))
 		{
 			//get its name
 			char* windowName = nullptr;
-			m_tree.getStringValueFromTreeIter(&windowIter, windowName, EVisualizationTreeColumn_StringName);
+			m_tree.getStringValueFromTreeIter(&windowIt, windowName, EVisualizationTreeColumn_StringName);
 
 			//set active visualization
 			setActiveVisualization(windowName, panelName);
@@ -1552,14 +1525,14 @@ void CDesignerVisualization::cursorChanged(GtkTreeView* treeView)
 	}
 	else
 	{
-		GtkTreeIter windowIter = selectionIter;
+		GtkTreeIter windowIt = selectionIt;
 
 		//if selection is a visualization window, display it
-		if (m_tree.findParentNode(&windowIter, EVisualizationTreeNode_VisualizationWindow))
+		if (m_tree.findParentNode(&windowIt, EVisualizationTreeNode_VisualizationWindow))
 		{
 			//retrieve visualization window
 			CIdentifier windowID;
-			m_tree.getIdentifierFromTreeIter(&windowIter, windowID,
+			m_tree.getIdentifierFromTreeIter(&windowIt, windowID,
 											 EVisualizationTreeColumn_StringIdentifier);
 			IVisualizationWidget* window = m_tree.getVisualizationWidget(windowID);
 
@@ -1569,11 +1542,11 @@ void CDesignerVisualization::cursorChanged(GtkTreeView* treeView)
 				//retrieve first panel
 				CIdentifier panelID;
 				window->getChildIdentifier(0, panelID);
-				m_tree.findChildNodeFromParent(&panelIter, panelID);
+				m_tree.findChildNodeFromParent(&panelIt, panelID);
 
 				//retrieve notebook
 				void* notebook = nullptr;
-				m_tree.getPointerValueFromTreeIter(&panelIter, notebook, EVisualizationTreeColumn_PointerWidget);
+				m_tree.getPointerValueFromTreeIter(&panelIt, notebook, EVisualizationTreeColumn_PointerWidget);
 
 				//get label of its active tab
 				GtkWidget* pageLabel = gtk_notebook_get_tab_label(

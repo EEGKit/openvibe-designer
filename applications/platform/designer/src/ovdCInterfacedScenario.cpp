@@ -2964,10 +2964,7 @@ void CInterfacedScenario::pasteSelection()
 	// Prepares paste
 	CIdentifier id;
 	map<CIdentifier, CIdentifier> mapping;
-	/*
-	int l_iCenterX=0;
-	int l_iCenterY=0;
-	*/
+	// int centerX = 0, centerY = 0;
 	int mostTLCopiedBoxCenterX = 1 << 15;	// most top most left 
 	int mostTLCopiedBoxCenterY = 1 << 15;	// most top most left 
 	// std::cout << "Mouse position : " << m_currentMouseX << "/" << m_currentMouseY << std::endl;
