@@ -761,15 +761,15 @@ int go(int argc, char** argv)
 							switch (f.first)
 							{
 								case CommandLineFlag_Open:
-									logMgr << LogLevel_Info << "Opening scenario [" << CString(fileName.c_str()) << "]\n";
+									logMgr << LogLevel_Info << "Opening scenario [" << fileName << "]\n";
 									if (!app.openScenario(fileName.c_str()))
 									{
-										logMgr << LogLevel_Error << "Could not open scenario " << fileName.c_str() << "\n";
+										logMgr << LogLevel_Error << "Could not open scenario " << fileName << "\n";
 										errorWhileLoadingScenario = config.noGui == CommandLineFlag_NoGui;
 									}
 									break;
 								case CommandLineFlag_Play:
-									logMgr << LogLevel_Info << "Opening and playing scenario [" << CString(fileName.c_str()) << "]\n";
+									logMgr << LogLevel_Info << "Opening and playing scenario [" << fileName << "]\n";
 									error = !app.openScenario(fileName.c_str());
 									if (!error)
 									{
@@ -783,7 +783,7 @@ int go(int argc, char** argv)
 									}
 									break;
 								case CommandLineFlag_PlayFast:
-									logMgr << LogLevel_Info << "Opening and fast playing scenario [" << CString(fileName.c_str()) << "]\n";
+									logMgr << LogLevel_Info << "Opening and fast playing scenario [" << fileName << "]\n";
 									error = !app.openScenario(fileName.c_str());
 									if (!error)
 									{

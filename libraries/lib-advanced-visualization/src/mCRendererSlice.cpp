@@ -138,8 +138,7 @@ bool CRendererSlice::render(const CRendererContext& ctx)
 	// size_t i, j;
 	const float d = 3.5;
 
-	if (!ctx.getSelectedCount()) { return false; }
-	if (!m_nHistory) { return false; }
+	if (!ctx.getSelectedCount() || !m_nHistory) { return false; }
 
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_LIGHTING);

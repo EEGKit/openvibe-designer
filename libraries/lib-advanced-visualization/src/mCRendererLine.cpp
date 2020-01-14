@@ -76,8 +76,7 @@ void CRendererLine::refresh(const CRendererContext& ctx)
 
 bool CRendererLine::render(const CRendererContext& ctx)
 {
-	if (!ctx.getSelectedCount()) { return false; }
-	if (!m_nHistory) { return false; }
+	if (!ctx.getSelectedCount() || !m_nHistory) { return false; }
 
 	const auto nSample = int(m_nSample);
 

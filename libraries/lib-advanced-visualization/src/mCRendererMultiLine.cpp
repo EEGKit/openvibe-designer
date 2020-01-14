@@ -27,8 +27,7 @@ using namespace AdvancedVisualization;
 
 bool CRendererMultiLine::render(const CRendererContext& ctx)
 {
-	if (!ctx.getSelectedCount()) { return false; }
-	if (!m_nHistory) { return false; }
+	if (!ctx.getSelectedCount() || !m_nHistory) { return false; }
 
 	const auto nSample = int(m_nSample);
 	const auto n1      = int(m_historyIdx % m_nSample);

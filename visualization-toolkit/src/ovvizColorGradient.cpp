@@ -89,8 +89,7 @@ bool Tools::ColorGradient::interpolate(IMatrix& interpolatedColorGradient, const
 {
 	size_t i;
 
-	if (colorGradient.getDimensionCount() != 2) { return false; }
-	if (colorGradient.getDimensionSize(0) != 4) { return false; }
+	if (colorGradient.getDimensionCount() != 2 || colorGradient.getDimensionSize(0) != 4) { return false; }
 
 	if (steps <= 1) { return false; }
 

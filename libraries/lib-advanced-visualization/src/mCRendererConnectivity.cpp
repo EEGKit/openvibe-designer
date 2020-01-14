@@ -140,9 +140,7 @@ void CRendererConnectivity::refresh(const CRendererContext& ctx)
 
 bool CRendererConnectivity::render(const CRendererContext& ctx)
 {
-	if (!ctx.getSelectedCount()) { return false; }
-	if (m_vertex.empty()) { return false; }
-	if (!m_nHistory) { return false; }
+	if (!ctx.getSelectedCount() || m_vertex.empty() || !m_nHistory) { return false; }
 
 	const float d = 3.5;
 

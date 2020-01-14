@@ -88,9 +88,7 @@ void CRendererBitmap::refresh(const CRendererContext& ctx)
 
 bool CRendererBitmap::render(const CRendererContext& ctx)
 {
-	if (!ctx.getSelectedCount()) { return false; }
-	if (m_vertex.empty()) { return false; }
-	if (!m_nHistory) { return false; }
+	if (!ctx.getSelectedCount() || m_vertex.empty() || !m_nHistory) { return false; }
 
 	glMatrixMode(GL_TEXTURE);
 	glPushMatrix();

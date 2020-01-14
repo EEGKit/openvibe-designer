@@ -80,9 +80,7 @@ void CRendererBars::refresh(const CRendererContext& ctx)
 
 bool CRendererBars::render(const CRendererContext& ctx)
 {
-	if (!ctx.getSelectedCount()) { return false; }
-	if (m_vertex.empty()) { return false; }
-	if (!m_nHistory) { return false; }
+	if (!ctx.getSelectedCount() || m_vertex.empty() || !m_nHistory) { return false; }
 
 	size_t i;
 

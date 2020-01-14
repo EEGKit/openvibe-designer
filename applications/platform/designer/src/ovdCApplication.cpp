@@ -1693,8 +1693,8 @@ void CApplication::openScenarioCB()
 		g_slist_free(list);
 	}
 	gtk_widget_destroy(widgetDialogOpen);
-	//	g_object_unref(l_pFileFilterSpecific);
-	//	g_object_unref(l_pFileFilterAll);
+	//	g_object_unref(fileFilterSpecific);
+	//	g_object_unref(fileFilterAll);
 }
 
 void CApplication::saveScenarioCB(CInterfacedScenario* scenario)
@@ -1962,8 +1962,8 @@ void CApplication::saveScenarioAsCB(CInterfacedScenario* scenario)
 
 	gtk_file_filter_set_name(allCompatibleFormatsFileFilter, allCompatibleFormatsFilterName.c_str());
 
-	// gtk_file_filter_set_name(l_pFileFilterSVG, "SVG image");
-	// gtk_file_filter_add_pattern(l_pFileFilterSVG, "*.svg");
+	// gtk_file_filter_set_name(fileFilterSVG, "SVG image");
+	// gtk_file_filter_add_pattern(fileFilterSVG, "*.svg");
 
 	GtkWidget* widgetDialogSaveAs = gtk_file_chooser_dialog_new("Select scenario to save...", nullptr, GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL,
 																GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, nullptr);
@@ -2059,8 +2059,8 @@ void CApplication::saveScenarioAsCB(CInterfacedScenario* scenario)
 	}
 
 	gtk_widget_destroy(widgetDialogSaveAs);
-	//	g_object_unref(l_pFileFilterSpecific);
-	//	g_object_unref(l_pFileFilterAll);
+	//	g_object_unref(fileFilterSpecific);
+	//	g_object_unref(fileFilterAll);
 }
 
 void CApplication::addRecentScenario(const std::string& scenarioPath)

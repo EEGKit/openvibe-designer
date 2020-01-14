@@ -33,8 +33,7 @@ namespace
 	template <typename T>
 	bool littleEndianToHost(const uint8_t* buffer, T* value)
 	{
-		if (!buffer) { return false; }
-		if (!value) { return false; }
+		if (!buffer || !value) { return false; }
 		memset(value, 0, sizeof(T));
 		for (uint32_t i = 0; i < sizeof(T); ++i) { reinterpret_cast<uint8_t*>(value)[i] = buffer[i]; }
 		return true;

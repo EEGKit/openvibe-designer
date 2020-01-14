@@ -281,9 +281,7 @@ void CRendererTopo::refresh(const CRendererContext& ctx)
 
 bool CRendererTopo::render(const CRendererContext& ctx)
 {
-	if (!ctx.getSelectedCount()) { return false; }
-	if (m_scalp.m_Vertices.empty()) { return false; }
-	if (!m_nHistory) { return false; }
+	if (!ctx.getSelectedCount() || m_scalp.m_Vertices.empty() || !m_nHistory) { return false; }
 
 	const float d = 3.5;
 

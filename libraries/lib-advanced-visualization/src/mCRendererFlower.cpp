@@ -114,9 +114,7 @@ void CRendererFlower::refresh(const CRendererContext& ctx)
 
 bool CRendererFlower::render(const CRendererContext& ctx)
 {
-	if (!ctx.getSelectedCount()) { return false; }
-	if (m_muliVertices.empty()) { return false; }
-	if (!m_nHistory) { return false; }
+	if (!ctx.getSelectedCount() || m_muliVertices.empty() || !m_nHistory) { return false; }
 
 	const size_t n = m_nSample / m_autoDecimationFactor;
 	const size_t d = (m_historyIdx % m_nSample) / m_autoDecimationFactor;

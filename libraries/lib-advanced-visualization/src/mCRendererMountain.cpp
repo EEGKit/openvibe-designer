@@ -95,8 +95,7 @@ void CRendererMountain::refresh(const CRendererContext& ctx)
 
 bool CRendererMountain::render(const CRendererContext& ctx)
 {
-	if (m_mountain.m_Vertices.empty()) { return false; }
-	if (!m_nHistory) { return false; }
+	if (m_mountain.m_Vertices.empty() || !m_nHistory) { return false; }
 
 	const float d = 2.5F;
 

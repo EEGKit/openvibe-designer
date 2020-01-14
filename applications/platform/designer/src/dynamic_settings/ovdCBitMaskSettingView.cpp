@@ -47,7 +47,7 @@ void CBitMaskSettingView::getValue(CString& value) const
 			res += gtk_button_get_label(GTK_BUTTON(toggle));
 		}
 	}
-	value = CString(res.c_str());
+	value = res.c_str();
 }
 
 

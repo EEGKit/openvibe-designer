@@ -584,7 +584,7 @@ CString CSettingCollectionHelper::getValueBitMask(const CIdentifier& /*typeID*/,
 			res += gtk_button_get_label(GTK_BUTTON(window));
 		}
 	}
-	return CString(res.c_str());
+	return res.c_str();
 }
 
 // ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- -----------

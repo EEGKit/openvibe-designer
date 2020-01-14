@@ -73,9 +73,7 @@ void CRendererXYZPlot::refresh(const CRendererContext& ctx)
 
 bool CRendererXYZPlot::render(const CRendererContext& ctx)
 {
-	if (!ctx.getSelectedCount()) { return false; }
-	if (m_vertex.empty()) { return false; }
-	if (!m_nHistory) { return false; }
+	if (!ctx.getSelectedCount() || m_vertex.empty() || !m_nHistory) { return false; }
 
 	glPointSize(5);
 

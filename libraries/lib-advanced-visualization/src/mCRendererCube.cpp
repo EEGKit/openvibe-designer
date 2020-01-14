@@ -59,9 +59,7 @@ void CRendererCube::refresh(const CRendererContext& ctx)
 
 bool CRendererCube::render(const CRendererContext& ctx)
 {
-	if (!ctx.getSelectedCount()) { return false; }
-	if (m_vertices.empty()) { return false; }
-	if (!m_nHistory) { return false; }
+	if (!ctx.getSelectedCount() || m_vertices.empty() || !m_nHistory) { return false; }
 
 	const float d = 3.5;
 
