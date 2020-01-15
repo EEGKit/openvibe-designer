@@ -42,10 +42,10 @@ bool CVisualizationManager::releaseVisualizationTree(const CIdentifier& treeID)
 	return false;
 }
 
-IVisualizationTree& CVisualizationManager::getVisualizationTree(const CIdentifier& treeID)
+IVisualizationTree& CVisualizationManager::getVisualizationTree(const CIdentifier& id)
 {
-	const auto it = m_trees.find(treeID);
-	if (it == m_trees.end()) { m_kernelCtx.getLogManager() << LogLevel_Fatal << "Visualization Tree " << treeID << " does not exist !\n"; }
+	const auto it = m_trees.find(id);
+	if (it == m_trees.end()) { m_kernelCtx.getLogManager() << LogLevel_Fatal << "Visualization Tree " << id << " does not exist !\n"; }
 	return *it->second;
 }
 

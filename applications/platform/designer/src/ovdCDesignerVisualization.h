@@ -168,4 +168,4 @@ namespace OpenViBEDesigner
 		std::string m_rightEventBoxData;
 		std::string m_bottomEventBoxData;
 	};
-};
+}  // namespace OpenViBEDesigner

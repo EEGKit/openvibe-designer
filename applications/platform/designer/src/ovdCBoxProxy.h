@@ -55,4 +55,4 @@ namespace OpenViBEDesigner
 		bool m_isBoxAlgorithmPresent = false;
 		bool m_isDeprecated          = false;
 	};
-};
+}  // namespace OpenViBEAcquisitionServer

@@ -2008,7 +2008,7 @@ void CInterfacedScenario::scenarioDrawingAreaDragDataReceivedCB(GdkDragContext* 
 			CIdentifier id;
 			id.fromString(CString(str.substr(str.find(')') + 1).c_str()));
 
-			//m_kernelCtx.getLogManager() << LogLevel_Info << "This is a metabox with ID " << metaboxID.c_str() << "\n";
+			//m_kernelCtx.getLogManager() << LogLevel_Info << "This is a metabox with ID " << metaboxID << "\n";
 			pod = m_kernelCtx.getMetaboxManager().getMetaboxObjectDesc(id);
 
 			// insert a box into the scenario, initialize it from the proxy-descriptor from the metabox loader
@@ -3308,14 +3308,14 @@ void CInterfacedScenario::contextMenuBoxRemoveOutputCB(IBox& box, const size_t i
 
 void CInterfacedScenario::contextMenuBoxConnectScenarioInputCB(IBox& box, const size_t boxInputIdx, const size_t scenarioInputIdx)
 {
-	//	m_kernelCtx.getLogManager() << LogLevel_Info << "contextMenuBoxConnectScenarioInputCB : box = " << box.getIdentifier().toString() << " box input = " << boxInputIdx << " , scenario input = " << scenarioInputIdx << "\n";
+	//	m_kernelCtx.getLogManager() << LogLevel_Info << "contextMenuBoxConnectScenarioInputCB : box = " << box.getIdentifier().str() << " box input = " << boxInputIdx << " , scenario input = " << scenarioInputIdx << "\n";
 	m_Scenario.setScenarioInputLink(scenarioInputIdx, box.getIdentifier(), boxInputIdx);
 	this->snapshotCB();
 }
 
 void CInterfacedScenario::contextMenuBoxConnectScenarioOutputCB(IBox& box, const size_t boxOutputIdx, const size_t scenarioOutputIdx)
 {
-	//	m_kernelCtx.getLogManager() << LogLevel_Info << "contextMenuBoxConnectScenarioOutputCB : box = " << box.getIdentifier().toString() << " box Output = " << boxOutputIdx << " , scenario Output = " << scenarioOutputIdx << "\n";
+	//	m_kernelCtx.getLogManager() << LogLevel_Info << "contextMenuBoxConnectScenarioOutputCB : box = " << box.getIdentifier().str() << " box Output = " << boxOutputIdx << " , scenario Output = " << scenarioOutputIdx << "\n";
 	m_Scenario.setScenarioOutputLink(scenarioOutputIdx, box.getIdentifier(), boxOutputIdx);
 	this->snapshotCB();
 }

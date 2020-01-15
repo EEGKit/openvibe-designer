@@ -11,9 +11,9 @@ namespace OpenViBEDesigner
 	{
 	public:
 
-		CSettingEditorDialog(const OpenViBE::Kernel::IKernelContext& ctx, OpenViBE::Kernel::IBox& box, size_t settingIndex, const char* title,
+		CSettingEditorDialog(const OpenViBE::Kernel::IKernelContext& ctx, OpenViBE::Kernel::IBox& box, const size_t index, const char* title,
 							 const char* guiFilename, const char* guiSettingsFilename)
-			: m_kernelCtx(ctx), m_box(box), m_helper(ctx, guiFilename), m_settingIdx(settingIndex), m_guiFilename(guiFilename),
+			: m_kernelCtx(ctx), m_box(box), m_helper(ctx, guiFilename), m_settingIdx(index), m_guiFilename(guiFilename),
 			  m_guiSettingsFilename(guiSettingsFilename), m_title(title) { }
 
 		~CSettingEditorDialog() = default;

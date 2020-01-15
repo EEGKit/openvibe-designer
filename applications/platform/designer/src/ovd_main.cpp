@@ -346,9 +346,9 @@ static char backslash_to_slash(const char c) { return c == '\\' ? '/' : c; }
 * \param config: play, play-fast or open
 * \param logMgr: name of the scenario to open
 ------------------------------------------------------------------------------------------------------------------------------------**/
-static bool ensureOneInstanceOfDesigner(config_t& config, ILogManager& logMgr)
-{
 #if defined NDEBUG
+static bool ensureOneInstanceOfDesigner(config_t & config, ILogManager & logMgr)
+{
 	try
 	{
 		// If the mutex cannot be opened, it's the first instance of Designer, go to catch
@@ -381,10 +381,10 @@ static bool ensureOneInstanceOfDesigner(config_t& config, ILogManager& logMgr)
 		boost::interprocess::named_mutex mutex(boost::interprocess::create_only, MUTEX_NAME);
 		return true;
 	}
-#else
-	return true;
-#endif
 }
+#else
+static bool ensureOneInstanceOfDesigner(config_t& /*config*/, ILogManager& /*logMgr*/) { return true; }
+#endif
 
 bool parse_arguments(int argc, char** argv, config_t& config)
 {
@@ -549,7 +549,7 @@ void user_info(char** argv, ILogManager* logManager)
 		"  --random-seed uint      : initialize random number generator with value, default=time(nullptr)\n"
 	};
 
-	if (logManager != nullptr) { for (const auto& m : messages) { (*logManager) << LogLevel_Info << m.c_str(); } }
+	if (logManager != nullptr) { for (const auto& m : messages) { (*logManager) << LogLevel_Info << m; } }
 	else { for (const auto& m : messages) { cout << m; } }
 }
 
@@ -563,40 +563,40 @@ int go(int argc, char** argv)
 	{ 0, 49151, 49151, 49151 },
 	{ 0, 65535, 65535, 65535 },
 	*/
-#define gdk_color_set(c, r, g, b) { (c).pixel=0; (c).red=r; (c).green=g; (c).blue=b; }
-	gdk_color_set(gColors[Color_BackgroundPlayerStarted], 32767, 32767, 32767);
-	gdk_color_set(gColors[Color_BoxBackgroundSelected], 65535, 65535, 49151);
-	gdk_color_set(gColors[Color_BoxBackgroundMissing], 49151, 32767, 32767);
-	gdk_color_set(gColors[Color_BoxBackgroundDisabled], 46767, 46767, 59151);
-	gdk_color_set(gColors[Color_BoxBackgroundDeprecated], 65535, 50000, 32767);
-	gdk_color_set(gColors[Color_BoxBackgroundOutdated], 57343, 57343, 57343);
-	gdk_color_set(gColors[Color_BoxBackgroundMetabox], 58343, 65535, 62343);
-	gdk_color_set(gColors[Color_BoxBackgroundUnstable], 49151, 49151, 49151);
-	gdk_color_set(gColors[Color_BoxBackgroundMensia], 65535, 65535, 65535);
-	gdk_color_set(gColors[Color_BoxBackground], 65535, 65535, 65535);
-	gdk_color_set(gColors[Color_BoxBorderSelected], 0, 0, 0);
-	gdk_color_set(gColors[Color_BoxBorder], 0, 0, 0);
-	gdk_color_set(gColors[Color_BoxBorderMensia], 10000, 45535, 35535);
-	gdk_color_set(gColors[Color_BoxInputBackground], 65535, 49151, 32767);
-	gdk_color_set(gColors[Color_BoxInputBorder], 16383, 16383, 16383);
-	gdk_color_set(gColors[Color_BoxOutputBackground], 32767, 65535, 49151);
-	gdk_color_set(gColors[Color_BoxOutputBorder], 16383, 16383, 16383);
-	gdk_color_set(gColors[Color_BoxSettingBackground], 49151, 32767, 65535);
-	gdk_color_set(gColors[Color_BoxSettingBorder], 16383, 16383, 16383);
+#define GDK_COLOR_SET(c, r, g, b) { (c).pixel=0; (c).red=r; (c).green=g; (c).blue=b; }
+	GDK_COLOR_SET(gColors[Color_BackgroundPlayerStarted], 32767, 32767, 32767);
+	GDK_COLOR_SET(gColors[Color_BoxBackgroundSelected], 65535, 65535, 49151);
+	GDK_COLOR_SET(gColors[Color_BoxBackgroundMissing], 49151, 32767, 32767);
+	GDK_COLOR_SET(gColors[Color_BoxBackgroundDisabled], 46767, 46767, 59151);
+	GDK_COLOR_SET(gColors[Color_BoxBackgroundDeprecated], 65535, 50000, 32767);
+	GDK_COLOR_SET(gColors[Color_BoxBackgroundOutdated], 57343, 57343, 57343);
+	GDK_COLOR_SET(gColors[Color_BoxBackgroundMetabox], 58343, 65535, 62343);
+	GDK_COLOR_SET(gColors[Color_BoxBackgroundUnstable], 49151, 49151, 49151);
+	GDK_COLOR_SET(gColors[Color_BoxBackgroundMensia], 65535, 65535, 65535);
+	GDK_COLOR_SET(gColors[Color_BoxBackground], 65535, 65535, 65535);
+	GDK_COLOR_SET(gColors[Color_BoxBorderSelected], 0, 0, 0);
+	GDK_COLOR_SET(gColors[Color_BoxBorder], 0, 0, 0);
+	GDK_COLOR_SET(gColors[Color_BoxBorderMensia], 10000, 45535, 35535);
+	GDK_COLOR_SET(gColors[Color_BoxInputBackground], 65535, 49151, 32767);
+	GDK_COLOR_SET(gColors[Color_BoxInputBorder], 16383, 16383, 16383);
+	GDK_COLOR_SET(gColors[Color_BoxOutputBackground], 32767, 65535, 49151);
+	GDK_COLOR_SET(gColors[Color_BoxOutputBorder], 16383, 16383, 16383);
+	GDK_COLOR_SET(gColors[Color_BoxSettingBackground], 49151, 32767, 65535);
+	GDK_COLOR_SET(gColors[Color_BoxSettingBorder], 16383, 16383, 16383);
 
-	gdk_color_set(gColors[Color_CommentBackground], 65535, 65535, 57343);
-	gdk_color_set(gColors[Color_CommentBackgroundSelected], 65535, 65535, 49151);
-	gdk_color_set(gColors[Color_CommentBorder], 32767, 32767, 32767);
-	gdk_color_set(gColors[Color_CommentBorderSelected], 32767, 32767, 32767);
+	GDK_COLOR_SET(gColors[Color_CommentBackground], 65535, 65535, 57343);
+	GDK_COLOR_SET(gColors[Color_CommentBackgroundSelected], 65535, 65535, 49151);
+	GDK_COLOR_SET(gColors[Color_CommentBorder], 32767, 32767, 32767);
+	GDK_COLOR_SET(gColors[Color_CommentBorderSelected], 32767, 32767, 32767);
 
-	gdk_color_set(gColors[Color_Link], 0, 0, 0);
-	gdk_color_set(gColors[Color_LinkSelected], 49151, 49151, 16383);
-	gdk_color_set(gColors[Color_LinkUpCast], 32767, 16383, 16383);
-	gdk_color_set(gColors[Color_LinkDownCast], 16383, 32767, 16383);
-	gdk_color_set(gColors[Color_LinkInvalid], 49151, 16383, 16383);
-	gdk_color_set(gColors[Color_SelectionArea], 0x3f00, 0x3f00, 0x3f00);
-	gdk_color_set(gColors[Color_SelectionAreaBorder], 0, 0, 0);
-#undef gdk_color_set
+	GDK_COLOR_SET(gColors[Color_Link], 0, 0, 0);
+	GDK_COLOR_SET(gColors[Color_LinkSelected], 49151, 49151, 16383);
+	GDK_COLOR_SET(gColors[Color_LinkUpCast], 32767, 16383, 16383);
+	GDK_COLOR_SET(gColors[Color_LinkDownCast], 16383, 32767, 16383);
+	GDK_COLOR_SET(gColors[Color_LinkInvalid], 49151, 16383, 16383);
+	GDK_COLOR_SET(gColors[Color_SelectionArea], 0x3f00, 0x3f00, 0x3f00);
+	GDK_COLOR_SET(gColors[Color_SelectionAreaBorder], 0, 0, 0);
+#undef GDK_COLOR_SET
 	//___________________________________________________________________//
 	//                                                                   //
 
@@ -746,7 +746,7 @@ int go(int argc, char** argv)
 						// Add or replace a configuration token if required in command line
 						for (const auto& t : config.tokens)
 						{
-							logMgr << LogLevel_Trace << "Adding command line configuration token [" << t.first.c_str() << " = " << t.second.c_str() << "]\n";
+							logMgr << LogLevel_Trace << "Adding command line configuration token [" << t.first << " = " << t.second << "]\n";
 							configMgr.addOrReplaceConfigurationToken(t.first.c_str(), t.second.c_str());
 						}
 

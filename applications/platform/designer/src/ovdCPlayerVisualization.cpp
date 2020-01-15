@@ -474,7 +474,6 @@ bool CPlayerVisualization::parentWidgetBox(IVisualizationWidget* widget, GtkBox*
 			if (m_visualizationTree.findParentNode(&panelIter, EVisualizationTreeNode_VisualizationPanel))
 			{
 				//get panel identifier
-				CIdentifier id;
 				m_visualizationTree.getIdentifierFromTreeIter(&panelIter, id, EVisualizationTreeColumn_StringIdentifier);
 
 				//get panel index in window

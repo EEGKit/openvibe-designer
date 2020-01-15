@@ -32,7 +32,7 @@ namespace
 	};
 
 	template <class T, class TTest>
-	bool getNextTIdentifier(const map<CIdentifier, T*>& ids, CIdentifier& id, const TTest& test)
+	bool getNextID(const map<CIdentifier, T*>& ids, CIdentifier& id, const TTest& test)
 	{
 		typename map<CIdentifier, T*>::const_iterator it;
 
@@ -78,12 +78,12 @@ bool CVisualizationTree::init(const IScenario* scenario)
 
 bool CVisualizationTree::getNextVisualizationWidgetIdentifier(CIdentifier& id) const
 {
-	return getNextTIdentifier<IVisualizationWidget, STestTrue<IVisualizationWidget>>(m_widgets, id, STestTrue<IVisualizationWidget>());
+	return getNextID<IVisualizationWidget, STestTrue<IVisualizationWidget>>(m_widgets, id, STestTrue<IVisualizationWidget>());
 }
 
 bool CVisualizationTree::getNextVisualizationWidgetIdentifier(CIdentifier& id, const EVisualizationWidgetType type) const
 {
-	return getNextTIdentifier<IVisualizationWidget, STestEqVisualizationWidgetType>(m_widgets, id, STestEqVisualizationWidgetType(type));
+	return getNextID<IVisualizationWidget, STestEqVisualizationWidgetType>(m_widgets, id, STestEqVisualizationWidgetType(type));
 }
 
 bool CVisualizationTree::isVisualizationWidget(const CIdentifier& id) const { return m_widgets.find(id) != m_widgets.end(); }

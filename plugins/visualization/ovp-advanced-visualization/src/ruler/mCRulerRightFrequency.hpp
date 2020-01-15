@@ -47,10 +47,10 @@ namespace Mensia
 				{
 					gdk_drawable_get_size(widget->window, &w, &h);
 					GdkGC* drawGC = gdk_gc_new(widget->window);
-					for (const auto& i : m_range)
+					for (const auto& r : m_range)
 					{
-						const gint y        = gint((i + i / scale) * (h * 1.F / nChannel));
-						PangoLayout* layout = gtk_widget_create_pango_layout(widget, getLabel(i).c_str());
+						const gint y        = gint((i + r / scale) * (h * 1.F / nChannel));
+						PangoLayout* layout = gtk_widget_create_pango_layout(widget, getLabel(r).c_str());
 						pango_layout_get_size(layout, &lw, &lh);
 						lw /= PANGO_SCALE;
 						lh /= PANGO_SCALE;

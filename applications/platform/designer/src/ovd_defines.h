@@ -146,7 +146,7 @@ namespace OpenViBEDesigner
 		Mode_Connect,
 		Mode_EditSettings,
 	};
-};
+}  // namespace OpenViBEDesigner
 
 //___________________________________________________________________//
 //                                                                   //

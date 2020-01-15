@@ -505,8 +505,7 @@ bool CArchwayHandler::setPipelineParameterValue(const size_t pipelineClassID, st
 {
 	if (m_pipelineSettings.find(pipelineClassID) == m_pipelineSettings.end())
 	{
-		m_kernelCtx.getLogManager() << LogLevel_Error << "Failed to set the value [" << parameterValue.c_str() << "] to the parameter [" << parameterName.
-				c_str() << "]. The pipeline class id is invalid.\n";
+		m_kernelCtx.getLogManager() << LogLevel_Error << "Failed to set the value [" << parameterValue << "] to the parameter [" << parameterName << "]. The pipeline class id is invalid.\n";
 		return false;
 	}
 
@@ -524,7 +523,7 @@ bool CArchwayHandler::setPipelineParameterValue(const size_t pipelineClassID, st
 		}
 	}
 
-	// m_kernelCtx.getLogManager() << LogLevel_Info << "Set [" << uiPipelineClassId << "/" << sParameterName.c_str() << "] to [" << sParameterValue.c_str() << "]\n";
+	// m_kernelCtx.getLogManager() << LogLevel_Info << "Set [" << uiPipelineClassId << "/" << sParameterName << "] to [" << sParameterValue << "]\n";
 	return true;
 }
 

@@ -20,7 +20,8 @@ using namespace std;
 
 CBufferDatabase::CBufferDatabase(TBoxAlgorithm<IBoxAlgorithm>& plugin) : m_ParentPlugin(plugin)
 {
-	m_decoder = &m_ParentPlugin.getAlgorithmManager().getAlgorithm(m_ParentPlugin.getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_ChannelLocalisationDecoder));
+	m_decoder = &m_ParentPlugin.getAlgorithmManager().getAlgorithm(
+		m_ParentPlugin.getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_ChannelLocalisationDecoder));
 	m_decoder->initialize();
 	m_DimSizes.fill(0);
 }
@@ -51,10 +52,10 @@ CBufferDatabase::~CBufferDatabase()
 	}*/
 }
 
-bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer* memoryBuffer, uint64_t startTime, uint64_t endTime)
+bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer* buffer, uint64_t startTime, uint64_t endTime)
 {
 	//feed memory buffer to decoder
-	m_decoder->getInputParameter(OVP_GD_Algorithm_ChannelLocalisationDecoder_InputParameterId_MemoryBufferToDecode)->setReferenceTarget(&memoryBuffer);
+	m_decoder->getInputParameter(OVP_GD_Algorithm_ChannelLocalisationDecoder_InputParameterId_MemoryBufferToDecode)->setReferenceTarget(&buffer);
 
 	//process buffer
 	m_decoder->process();
@@ -264,19 +265,19 @@ void CBufferDatabase::setMatrixDimensionSize(const size_t index, const size_t si
 	}
 }
 
-void CBufferDatabase::setMatrixDimensionLabel(const size_t index1, const size_t idx2, const char* label)
+void CBufferDatabase::setMatrixDimensionLabel(const size_t idx1, const size_t idx2, const char* label)
 {
 	if (m_Error) { return; }
 
-	if (index1 >= 2)
+	if (idx1 >= 2)
 	{
 		m_Error = true;
-		m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error << "Tried to access dimension " << index1 <<
-				", only 0 and 1 supported\n";
+		m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error << "Tried to access dimension " << idx1
+				<< ", only 0 and 1 supported\n";
 		return;
 	}
 
-	m_DimLabels[index1][idx2] = label;
+	m_DimLabels[idx1][idx2] = label;
 }
 
 bool CBufferDatabase::setMatrixBuffer(const double* buffer, const uint64_t startTime, const uint64_t endTime)
@@ -556,7 +557,7 @@ bool CBufferDatabase::getChannelPosition(const size_t index, double*& position)
 	return false;
 }
 
-bool CBufferDatabase::getChannelSphericalCoordinates(const size_t index, double& rTheta, double& rPhi)
+bool CBufferDatabase::getChannelSphericalCoordinates(const size_t index, double& theta, double& phi)
 {
 	//TODO : add time parameter and look for coordinates closest to that time!
 	if (index >= 0 && index < m_ChannelLookupIndices.size())
@@ -567,7 +568,7 @@ bool CBufferDatabase::getChannelSphericalCoordinates(const size_t index, double&
 			double* coords = m_channelLocalisationCoords[0].first->getBuffer() + 3 * m_ChannelLookupIndices[index];
 
 			//convert to spherical coords
-			return convertCartesianToSpherical(coords, rTheta, rPhi);
+			return convertCartesianToSpherical(coords, theta, phi);
 		}
 		//streamed coordinates are spherical already
 		//TODO

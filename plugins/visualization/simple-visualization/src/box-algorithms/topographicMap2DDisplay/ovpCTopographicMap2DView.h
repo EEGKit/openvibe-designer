@@ -99,7 +99,7 @@ namespace OpenViBEPlugins
 			/** \name Callbacks */
 			//@{
 
-			void resizeCB(size_t width, size_t height) { m_needResize = true; }
+			void resizeCB(size_t /*width*/, size_t /*height*/) { m_needResize = true; }
 			void toggleElectrodesCB();
 			void setProjectionCB(GtkWidget* widget);
 			void setViewCB(GtkWidget* widget);
