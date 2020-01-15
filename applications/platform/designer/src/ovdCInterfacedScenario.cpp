@@ -89,7 +89,7 @@ static std::string getBoxAlgorithmURL(const std::string& in, const bool removeSl
 		}
 		else
 		{
-			// if(!l_bLastWasSeparator) { out += "_"; }
+			// if(!lastWasSeparator) { out += "_"; }
 			lastWasSeparator = true;
 		}
 	}
@@ -501,16 +501,16 @@ static void delete_scenario_link_cb(GtkButton* /*button*/, CInterfacedScenario::
 /*
 static void modify_scenario_link_name_cb(GtkWidget* entry, CInterfacedScenario::link_cb_data_t* data)
 {
-	if (data->m_isInput) { data->m_pInterfacedScenario->m_scenario.setInputName(data->m_uiLinkIdx, gtk_entry_get_text(GTK_ENTRY(entry))); }
-	else { data->m_pInterfacedScenario->m_scenario.setOutputName(data->m_uiLinkIdx, gtk_entry_get_text(GTK_ENTRY(entry))); }
+	if (data->m_isInput) { data->m_interfacedScenario->m_scenario.setInputName(data->m_uiLinkIdx, gtk_entry_get_text(GTK_ENTRY(entry))); }
+	else { data->m_interfacedScenario->m_scenario.setOutputName(data->m_uiLinkIdx, gtk_entry_get_text(GTK_ENTRY(entry))); }
 }
 
 static void modify_scenario_link_type_cb(GtkWidget* comboBox, CInterfacedScenario::link_cb_data_t* data)
 {
-	const CIdentifier typeID = data->m_pInterfacedScenario->m_mStreamType[gtk_combo_box_get_active_text(GTK_COMBO_BOX(comboBox))];
-	if (data->m_isInput) { data->m_pInterfacedScenario->m_scenario.setInputType(data->m_uiLinkIdx, typeID); }
-	else { data->m_pInterfacedScenario->m_scenario.setOutputType(data->m_uiLinkIdx, typeID); }
-	data->m_pInterfacedScenario->redraw();
+	const CIdentifier typeID = data->m_interfacedScenario->m_mStreamType[gtk_combo_box_get_active_text(GTK_COMBO_BOX(comboBox))];
+	if (data->m_isInput) { data->m_interfacedScenario->m_scenario.setInputType(data->m_uiLinkIdx, typeID); }
+	else { data->m_interfacedScenario->m_scenario.setOutputType(data->m_uiLinkIdx, typeID); }
+	data->m_interfacedScenario->redraw();
 }
 //*/
 
@@ -658,8 +658,8 @@ CInterfacedScenario::CInterfacedScenario(const IKernelContext& ctx, CApplication
 	bool warningUnknown    = false;
 	while ((boxID = m_Scenario.getNextBoxIdentifier(boxID)) != OV_UndefinedIdentifier)
 	{
-		//const IBox *l_pBox = m_scenario.getBoxDetails(l_oBoxID);
-		//const CBoxProxy proxy(m_kernelCtx, *l_pBox);
+		//const IBox *box = m_scenario.getBoxDetails(l_oBoxID);
+		//const CBoxProxy proxy(m_kernelCtx, *box);
 		const CBoxProxy proxy(m_kernelCtx, m_Scenario, boxID);
 
 		if (!warningUpdate && !proxy.isUpToDate())
@@ -703,8 +703,8 @@ CInterfacedScenario::~CInterfacedScenario()
 
 	g_object_unref(m_guiBuilder);
 	/*
-	g_object_unref(m_pBuilder);
-	g_object_unref(m_pBuilder);
+	g_object_unref(m_builder);
+	g_object_unref(m_builder);
 	*/
 
 	gtk_notebook_remove_page(&m_notebook, gtk_notebook_page_num(&m_notebook, m_notebookPageContent));
@@ -1158,7 +1158,7 @@ void CInterfacedScenario::redraw(IBox& box)
 
 	if (!this->isLocked() || !m_DebugCPUUsage)
 	{
-		//if(m_vCurrentObject[box.getIdentifier()]) { gdk_gc_set_rgb_fg_color(drawGC, &gColors[Color_BoxBackgroundSelected]); }
+		//if(m_currentObject[box.getIdentifier()]) { gdk_gc_set_rgb_fg_color(drawGC, &gColors[Color_BoxBackgroundSelected]); }
 		//else
 		if (!canCreate) { gdk_gc_set_rgb_fg_color(drawGC, &gColors[Color_BoxBackgroundMissing]); }
 		else if (disabled) { gdk_gc_set_rgb_fg_color(drawGC, &gColors[Color_BoxBackgroundDisabled]); }
@@ -2114,7 +2114,7 @@ void CInterfacedScenario::scenarioDrawingAreaMotionNotifyCB(GtkWidget* /*widget*
 			}
 			else if (obj.m_ConnectorType == Box_Update)
 			{
-				//m_scenario.updateBox(l_pBoxDetails->getIdentifier());
+				//m_scenario.updateBox(boxDetails->getIdentifier());
 				name = CString("Right click for");
 				type = "box update";
 			}
@@ -2281,8 +2281,8 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(GtkWidget* widget, 
 					if (m_controlPressed) { m_interfacedObjects[m_currentObject.m_id]=!m_interfacedObjects[m_currentObject.m_id]; }
 					else
 					{
-						m_vCurrentObject.clear();
-						m_vCurrentObject[m_oCurrentObject.m_id]=true;
+						m_currentObject.clear();
+						m_currentObject[m_oCurrentObject.m_id]=true;
 					}
 					*/
 				}
@@ -3719,6 +3719,6 @@ void CInterfacedScenario::setScale(const double scale)
 	if (m_normalFontSize == 0) { m_normalFontSize = pango_font_description_get_size(desc); }
 	pango_font_description_set_size(desc, gint(round(m_normalFontSize * m_currentScale)));
 
-	//m_bScenarioModified = true;
+	//m_scenarioModified = true;
 	redraw();
 }

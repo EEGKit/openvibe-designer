@@ -168,8 +168,8 @@ static void InsertPluginObjectDescToGtkTreeStore(const IKernelContext& ctx, map<
 
 		CString stockItemName;
 
-		const auto* pBoxAlgorithmDesc = dynamic_cast<const IBoxAlgorithmDesc*>(p);
-		if (pBoxAlgorithmDesc != nullptr) { stockItemName = pBoxAlgorithmDesc->getStockItemName(); }
+		const auto* desc = dynamic_cast<const IBoxAlgorithmDesc*>(p);
+		if (desc != nullptr) { stockItemName = desc->getStockItemName(); }
 
 		bool shouldShow = true;
 
@@ -177,11 +177,8 @@ static void InsertPluginObjectDescToGtkTreeStore(const IKernelContext& ctx, map<
 			&& !ctx.getConfigurationManager().expandAsBoolean("${Designer_ShowDeprecated}", false)) { shouldShow = false; }
 
 		/*
-		if  (ctx.getPluginManager().isPluginObjectFlaggedAsUnstable(l_pPluginObjectDesc->getCreatedClass())
-		&& !ctx.getConfigurationManager().expandAsBoolean("${Designer_ShowUnstable}", false))
-		{
-		l_bShouldShow=false;
-		}
+		if  (ctx.getPluginManager().isPluginObjectFlaggedAsUnstable(desc->getCreatedClass()) 
+		&& !ctx.getConfigurationManager().expandAsBoolean("${Designer_ShowUnstable}", false)) { shouldShow = false; }
 		*/
 
 		if (shouldShow)
@@ -498,8 +495,8 @@ bool parse_arguments(int argc, char** argv, config_t& config)
 
 #if 0
 	config.flags = config.flags;
-	config.m_bCheckColorDepth = config.m_bCheckColorDepth;
-	config.m_bShowGui = config.m_bShowGui;
+	config.checkColorDepth = config.m_bCheckColorDepth;
+	config.showGui = config.m_bShowGui;
 #else
 	config = tmp;
 #endif

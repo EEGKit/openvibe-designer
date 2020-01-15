@@ -296,7 +296,7 @@ namespace OpenViBEPlugins
 			 * window. It is pasted into the DrawingArea's window upon redraw
 			 */
 			//TODO
-			//GdkPixmap* m_pPixmap;
+			//GdkPixmap* m_pixmap;
 
 			/**
 			 * \brief Skull pixmap

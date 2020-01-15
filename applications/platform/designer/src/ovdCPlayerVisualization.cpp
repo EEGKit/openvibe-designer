@@ -191,7 +191,7 @@ GtkWidget* CPlayerVisualization::loadTreeWidget(IVisualizationWidget* widget)
 			gtk_window_set_title(GTK_WINDOW(treeWidget), static_cast<const char*>(widget->getName()));
 
 			//set it transient for main window
-			//gtk_window_set_transient_for(GTK_WINDOW(l_pTreeWidget), GTK_WINDOW(m_interfacedScenario.m_rApplication.m_MainWindow));
+			//gtk_window_set_transient_for(GTK_WINDOW(treeWidget), GTK_WINDOW(m_interfacedScenario.m_rApplication.m_MainWindow));
 
 			//centered on the main window
 			if (m_kernelCtx.getConfigurationManager().expandAsBoolean("${Designer_WindowManager_Center}", false))
@@ -318,14 +318,14 @@ bool CPlayerVisualization::setWidget(const CIdentifier& boxID, GtkWidget* widget
 
 	//create a box to store toolbar button and plugin widget
 	GtkBox* box = GTK_BOX(gtk_vbox_new(FALSE, 0));
-	//gtk_widget_set_size_request(GTK_WIDGET(l_pVBox), 0, 0);
+	//gtk_widget_set_size_request(GTK_WIDGET(vBox), 0, 0);
 
 	//create toolbar button
 	GtkToggleButton* button = GTK_TOGGLE_BUTTON(gtk_toggle_button_new());
 	{
 		//horizontal container : icon + label
 		GtkBox* hBox = GTK_BOX(gtk_hbox_new(FALSE, 0));
-		//gtk_widget_set_size_request(GTK_WIDGET(l_pHBox), 0, 0);
+		//gtk_widget_set_size_request(GTK_WIDGET(hBox), 0, 0);
 
 		//retrieve icon name
 		GtkTreeIter iter;
@@ -343,7 +343,7 @@ bool CPlayerVisualization::setWidget(const CIdentifier& boxID, GtkWidget* widget
 
 		//create label
 		GtkWidget* label = gtk_label_new(static_cast<const char*>(visualizationWidget->getName()));
-		//gtk_widget_set_size_request(l_pLabel, 0, 0);
+		//gtk_widget_set_size_request(label, 0, 0);
 		gtk_box_pack_start(hBox, label, TRUE, TRUE, 0);
 
 		//add box to button
@@ -404,7 +404,7 @@ bool CPlayerVisualization::parentWidgetBox(IVisualizationWidget* widget, GtkBox*
 		//set its title
 		gtk_window_set_title(GTK_WINDOW(window), static_cast<const char*>(widget->getName()));
 		//set it transient for main window
-		//gtk_window_set_transient_for(GTK_WINDOW(l_pWindow), GTK_WINDOW(m_interfacedScenario.m_rApplication.m_MainWindow));
+		//gtk_window_set_transient_for(GTK_WINDOW(window), GTK_WINDOW(m_interfacedScenario.m_rApplication.m_MainWindow));
 		//insert box in top level window
 		gtk_container_add(GTK_CONTAINER(window), reinterpret_cast<GtkWidget*>(widgetBox));
 		//prevent user from closing this window
@@ -495,7 +495,7 @@ bool CPlayerVisualization::parentWidgetBox(IVisualizationWidget* widget, GtkBox*
 
 					//show parent window
 					gtk_widget_show(GTK_WIDGET(windowWidget));
-					// gtk_widget_realize(GTK_WIDGET(l_pWindowWidget));
+					// gtk_widget_realize(GTK_WIDGET(windowWidget));
 					// gdk_flush();
 
 					//set panel containing widget as current (this realizes the widget)

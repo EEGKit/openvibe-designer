@@ -146,7 +146,7 @@ void CDesignerVisualization::init(const std::string& guiFile)
 	gtk_tree_view_column_pack_start(treeViewColumnName, cellRendererName, TRUE);
 	gtk_tree_view_column_set_attributes(treeViewColumnName, cellRendererIcon, "stock-id", EVisualizationTreeColumn_StringStockIcon, nullptr);
 	gtk_tree_view_column_set_attributes(treeViewColumnName, cellRendererName, "text", EVisualizationTreeColumn_StringName, nullptr);
-	//gtk_tree_view_column_set_sizing(l_pTreeViewColumnName, GTK_TREE_VIEW_COLUMN_FIXED);
+	//gtk_tree_view_column_set_sizing(treeViewColumnName, GTK_TREE_VIEW_COLUMN_FIXED);
 	gtk_tree_view_column_set_expand(treeViewColumnName, TRUE/*FALSE*/);
 	gtk_tree_view_column_set_resizable(treeViewColumnName, TRUE);
 	gtk_tree_view_column_set_min_width(treeViewColumnName, 64);
@@ -185,7 +185,7 @@ void CDesignerVisualization::init(const std::string& guiFile)
 		m_previewWindowW             = window->getWidth();
 		m_previewWindowH             = window->getHeight();
 		/* Change the way window sizes are stored in the widget
-		TAttributeHandler handler(*l_pVisualizationWindow);
+		TAttributeHandler handler(*window);
 		m_previewWindowW = handler.getAttributeValue<int>(OVD_AttributeId_VisualizationWindow_Width);
 		m_previewWindowH = handler.getAttributeValue<int>(OVD_AttributeId_VisualizationWindow_Height);
 		*/
@@ -193,7 +193,7 @@ void CDesignerVisualization::init(const std::string& guiFile)
 	gtk_window_set_default_size(GTK_WINDOW(m_dialog), gint(treeViewWidth + m_previewWindowW), gint(m_previewWindowH));
 	//set window title
 	gtk_window_set_title(GTK_WINDOW(m_dialog), " Window Manager");
-	// gtk_window_set_transient_for(GTK_WINDOW(m_dialog), GTK_WINDOW(m_scenario.m_rApplication.m_MainWindow));
+	// gtk_window_set_transient_for(GTK_WINDOW(m_dialog), GTK_WINDOW(m_scenario.m_application.m_MainWindow));
 	gtk_signal_connect(GTK_OBJECT(m_dialog), "configure_event", G_CALLBACK(configureEventCB), this);
 #ifdef HANDLE_MIN_MAX_EVENTS
 	gtk_signal_connect(GTK_OBJECT(m_dialog), "window_state_event", G_CALLBACK(window_state_event_cb), this);
@@ -828,7 +828,7 @@ void CDesignerVisualization::setActiveVisualization(const char* activeWindow, co
 			gtk_container_remove(GTK_CONTAINER(m_pane), widget);
 		}
 		gtk_paned_add2(GTK_PANED(m_pane), GTK_WIDGET(notebook));
-		//gtk_object_unref(l_pCurrentNotebook);
+		//gtk_object_unref(currentNotebook);
 	}
 
 	//disable switch page notifications
@@ -924,7 +924,7 @@ bool CDesignerVisualization::newVisualizationWindow(const char* label)
 	}
 
 	//proceed with window creation
-	//m_visualizationTree.addVisualizationWindow(l_oVisualizationWindowID, CString(label));
+	//m_visualizationTree.addVisualizationWindow(windowID, CString(label));
 	m_tree.addVisualizationWidget(windowID, CString(label), VisualizationWidget_VisualizationWindow, OV_UndefinedIdentifier, 0, OV_UndefinedIdentifier, 0,
 								  OV_UndefinedIdentifier);
 

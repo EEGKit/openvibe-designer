@@ -294,7 +294,7 @@ namespace Mensia
 			{
 				box->redraw();
 				//box->request();
-				//box->m_bRedrawNeeded=true;
+				//box->m_redrawNeeded = true;
 				return TRUE;
 			}
 

@@ -156,7 +156,7 @@ bool CBoxConfigurationDialog::run()
 					m_box.getSettingDefaultValue(i, value);
 					m_box.setSettingValue(i, value);
 					//m_settingViews[i]->setValue(value);
-					//helper.setValue(l_oSettingType, i < m_settingViews.size()? m_settingViews[i]->getEntryWidget() : nullptr, value);
+					//helper.setValue(settingType, i < m_settingViews.size()? m_settingViews[i]->getEntryWidget() : nullptr, value);
 				}
 				gtk_entry_set_text(GTK_ENTRY(m_overrideEntryContainer), "");
 				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_fileOverrideCheck), false);

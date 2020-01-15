@@ -112,8 +112,8 @@ namespace Mensia
 							::glLineWidth(3);
 							::glColor3f(0, 0, 0);
 							::glBegin(GL_LINES);
-								::glVertex2f(l_fProgress, 0);
-								::glVertex2f(l_fProgress, 1);
+								::glVertex2f(progress, 0);
+								::glVertex2f(progress, 1);
 							::glEnd();
 							*/
 

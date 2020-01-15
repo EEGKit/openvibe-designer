@@ -422,7 +422,7 @@ void CTopographicMap2DView::drawPalette(const size_t x, const size_t y, const si
 	if (textHeight >= gint(height - m_minPaletteBarHeight))
 	{
 		// FIXME is it necessary to keep next line uncomment ?
-		//l_bDrawText = false;
+		//drawText = false;
 	}
 	//determine palette bar dims
 	const gint barWidth = gint(0.9 * width);

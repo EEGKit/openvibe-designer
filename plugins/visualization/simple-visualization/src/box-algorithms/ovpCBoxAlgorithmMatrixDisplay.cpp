@@ -168,7 +168,7 @@ bool CBoxAlgorithmMatrixDisplay::process()
 			guint nRow, nCol;
 			if (op_matrix->getDimensionCount() == 1)
 			{
-				//getLogManager() << LogLevel_Warning<< "The streamed matrix received has 1 dimensions (found "<< op_pMatrix->getDimensionCount() <<" dimensions)\n";
+				//getLogManager() << LogLevel_Warning<< "The streamed matrix received has 1 dimensions (found "<< op_matrix->getDimensionCount() <<" dimensions)\n";
 				nRow = 1;
 				nCol = guint(op_matrix->getDimensionSize(0));
 				//return false;

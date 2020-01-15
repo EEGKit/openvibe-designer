@@ -522,7 +522,7 @@ void CBoxAlgorithmViz::postDraw()
 void CBoxAlgorithmViz::mouseButton(const int x, const int y, const int button, const int status)
 {
 	// Mouse interacts with local renderer context
-	// m_oMouseHandler.mouseButton(*m_rendererCtx, x, y, button, status);
+	// m_MouseHandler.mouseButton(*m_rendererCtx, x, y, button, status);
 	// Mouse interacts with global renderer context
 	m_MouseHandler.mouseButton(getContext(), x, y, button, status);
 	this->redraw();
@@ -531,7 +531,7 @@ void CBoxAlgorithmViz::mouseButton(const int x, const int y, const int button, c
 void CBoxAlgorithmViz::mouseMotion(const int x, const int y)
 {
 	// Mouse interacts with local renderer context
-	// m_oMouseHandler.mouseMotion(*m_rendererCtx, x, y);
+	// m_MouseHandler.mouseMotion(*m_rendererCtx, x, y);
 	// Mouse interacts with global renderer context
 	m_MouseHandler.mouseMotion(getContext(), x, y);
 	if (m_MouseHandler.hasButtonPressed()) { this->redraw(); }

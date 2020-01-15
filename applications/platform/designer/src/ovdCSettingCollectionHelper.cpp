@@ -375,7 +375,7 @@ static void OnButtonSettingColorGradientConfigurePressed(GtkButton* button, gpoi
 	gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), CollectWidgetCB, &widgets);
 	GtkEntry* widget = GTK_ENTRY(widgets[0]);
 
-	GtkBuilder* builder = gtk_builder_new(); // glade_xml_new(l_oUserData.guiFilename.c_str(), "setting_editor-color_gradient-dialog", nullptr);
+	GtkBuilder* builder = gtk_builder_new(); // glade_xml_new(userData.guiFilename.c_str(), "setting_editor-color_gradient-dialog", nullptr);
 	gtk_builder_add_from_file(builder, userData.guiFilename.c_str(), nullptr);
 	gtk_builder_connect_signals(builder, nullptr);
 

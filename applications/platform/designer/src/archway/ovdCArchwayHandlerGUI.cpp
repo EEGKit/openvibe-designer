@@ -331,7 +331,7 @@ CArchwayHandlerGUI::CArchwayHandlerGUI(CArchwayHandler& controller, CApplication
 	gtk_builder_add_from_file(m_Builder, OpenViBE::Directories::getDataDir() + "/applications/designer/interface-archway.ui", &gtkError);
 
 	assert(gtkError == nullptr);
-	// gtk_builder_connect_signals(m_pBuilder, nullptr);
+	// gtk_builder_connect_signals(m_builder, nullptr);
 
 
 	m_ButtonConfigureAcquisition = GTK_WIDGET(gtk_builder_get_object(m_Builder, "button-configure-acquisition"));

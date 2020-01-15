@@ -435,7 +435,7 @@ static gboolean box_algorithm_search_func(GtkTreeModel* model, GtkTreeIter* iter
 		if (!unstable && (string::npos != strtoupper(name).find(strtoupper(app->m_SearchTerm))
 						  || string::npos != strtoupper(desc).find(strtoupper(app->m_SearchTerm)) || gtk_tree_model_iter_has_child(model, iter)))
 		{
-			//std::cout << "value : " << app->m_sSearchTerm << "\n";
+			//std::cout << "value : " << app->m_searchTerm << "\n";
 			visible = true;
 		}
 
@@ -459,7 +459,7 @@ static gboolean box_algorithm_prune_empty_folders(GtkTreeModel* model, GtkTreeIt
 
 static gboolean do_refilter(CApplication* app)
 {
-	//if (0 == strcmp(app->m_sSearchTerm, "")) { gtk_tree_view_set_model(pApplication->m_pBoxAlgorithmTreeView, GTK_TREE_MODEL(app->m_BoxAlgorithmTreeModel)); } // reattach the old model
+	//if (0 == strcmp(app->m_searchTerm, "")) { gtk_tree_view_set_model(pApplication->m_pBoxAlgorithmTreeView, GTK_TREE_MODEL(app->m_BoxAlgorithmTreeModel)); } // reattach the old model
 	//else {
 	app->m_BoxAlgorithmTreeModelFilter  = gtk_tree_model_filter_new(GTK_TREE_MODEL(app->m_BoxAlgorithmTreeModel), nullptr);
 	app->m_BoxAlgorithmTreeModelFilter2 = gtk_tree_model_filter_new(GTK_TREE_MODEL(app->m_BoxAlgorithmTreeModelFilter), nullptr);
@@ -1079,7 +1079,7 @@ void CApplication::initialize(const ECommandLineFlag cmdLineFlags)
 		}
 	}
 
-	// gtk_window_set_icon_name(GTK_WINDOW(m_pMainWindow), "ov-logo");
+	// gtk_window_set_icon_name(GTK_WINDOW(m_MainWindow), "ov-logo");
 	gtk_window_set_icon_from_file(GTK_WINDOW(m_MainWindow), Directories::getDataDir() + "/applications/designer/designer.ico", nullptr);
 	gtk_window_set_default_icon_from_file(Directories::getDataDir() + "/applications/designer/designer.ico", nullptr);
 
@@ -1349,7 +1349,7 @@ bool CApplication::openScenario(const char* filename)
 		interfacedScenario->redrawScenarioSettings();
 
 		gtk_notebook_set_current_page(m_scenarioNotebook, gtk_notebook_get_n_pages(m_scenarioNotebook) - 1);
-		//this->changeCurrentScenario(gtk_notebook_get_n_pages(m_pScenarioNotebook)-1);
+		//this->changeCurrentScenario(gtk_notebook_get_n_pages(m_scenarioNotebook)-1);
 
 		interfacedScenario->updateScenarioLabel();
 
@@ -1634,7 +1634,7 @@ void CApplication::newScenarioCB()
 		interfacedScenario->updateScenarioLabel();
 		m_Scenarios.push_back(interfacedScenario);
 		gtk_notebook_set_current_page(m_scenarioNotebook, gtk_notebook_get_n_pages(m_scenarioNotebook) - 1);
-		//this->changeCurrentScenario(gtk_notebook_get_n_pages(m_pScenarioNotebook)-1);
+		//this->changeCurrentScenario(gtk_notebook_get_n_pages(m_scenarioNotebook)-1);
 	}
 }
 
@@ -2193,7 +2193,7 @@ void CApplication::aboutOpenViBECB() const
 	GtkBuilder* builder = gtk_builder_new(); // glade_xml_new(OVD_GUI_File, "about", nullptr);
 	gtk_builder_add_from_file(builder, OVD_GUI_AboutDialog_File, nullptr);
 	gtk_builder_connect_signals(builder, nullptr);
-	//gtk_builder_connect_signals(l_pBuilder, nullptr);
+	//gtk_builder_connect_signals(builder, nullptr);
 	GtkWidget* dialog = GTK_WIDGET(gtk_builder_get_object(builder, "about"));
 	if (dialog == nullptr)
 	{

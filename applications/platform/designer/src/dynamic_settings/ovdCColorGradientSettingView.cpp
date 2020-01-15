@@ -53,7 +53,7 @@ void CColorGradientSettingView::setValue(const CString& value)
 
 void CColorGradientSettingView::configurePressed()
 {
-	GtkBuilder* builder = gtk_builder_new(); // glade_xml_new(l_oUserData.guiFilename.c_str(), "setting_editor-color_gradient-dialog", nullptr);
+	GtkBuilder* builder = gtk_builder_new();
 	gtk_builder_add_from_file(builder, m_builderName.toASCIIString(), nullptr);
 	gtk_builder_connect_signals(builder, nullptr);
 
@@ -120,7 +120,7 @@ void CColorGradientSettingView::initializeGradient()
 	m_spinButtons.clear();
 	for (auto& cg : m_colorGradient)
 	{
-		GtkBuilder* builder = gtk_builder_new(); // glade_xml_new(l_pUserData->guiFilename.c_str(), "setting_editor-color_gradient-hbox", nullptr);
+		GtkBuilder* builder = gtk_builder_new();
 		gtk_builder_add_from_file(builder, m_builderName.toASCIIString(), nullptr);
 		gtk_builder_connect_signals(builder, nullptr);
 
