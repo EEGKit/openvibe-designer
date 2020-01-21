@@ -2,34 +2,31 @@
 #include "ovdTAttributeHandler.h"
 
 using namespace OpenViBE;
-using namespace Kernel;
+using namespace /*OpenViBE::*/Kernel;
 using namespace OpenViBEDesigner;
 using namespace std;
 
-CCommentProxy::CCommentProxy(const IKernelContext& ctx, const IComment& rComment)
-	: m_kernelContext(ctx), m_pConstComment(&rComment)
+CCommentProxy::CCommentProxy(const IKernelContext& ctx, const IComment& comment)
+	: m_kernelCtx(ctx), m_constComment(&comment)
 {
-	if (m_pConstComment)
+	if (m_constComment)
 	{
-		const TAttributeHandler l_oAttributeHandler(*m_pConstComment);
-		m_centerX = l_oAttributeHandler.getAttributeValue<int>(OV_AttributeId_Comment_XCenterPosition);
-		m_centerY = l_oAttributeHandler.getAttributeValue<int>(OV_AttributeId_Comment_YCenterPosition);
+		const TAttributeHandler handler(*m_constComment);
+		m_centerX = handler.getAttributeValue<int>(OV_AttributeId_Comment_XCenterPosition);
+		m_centerY = handler.getAttributeValue<int>(OV_AttributeId_Comment_YCenterPosition);
 	}
 }
 
-CCommentProxy::CCommentProxy(const IKernelContext& ctx, IScenario& rScenario, const CIdentifier& rCommentIdentifier)
-	: m_kernelContext(ctx), m_pConstComment(rScenario.getCommentDetails(rCommentIdentifier)),
-	  m_pComment(rScenario.getCommentDetails(rCommentIdentifier))
+CCommentProxy::CCommentProxy(const IKernelContext& ctx, IScenario& scenario, const CIdentifier& commentID)
+	: m_kernelCtx(ctx), m_constComment(scenario.getCommentDetails(commentID)), m_comment(scenario.getCommentDetails(commentID))
 {
-	if (m_pConstComment)
+	if (m_constComment)
 	{
-		const TAttributeHandler l_oAttributeHandler(*m_pConstComment);
-		m_centerX = l_oAttributeHandler.getAttributeValue<int>(OV_AttributeId_Comment_XCenterPosition);
-		m_centerY = l_oAttributeHandler.getAttributeValue<int>(OV_AttributeId_Comment_YCenterPosition);
+		const TAttributeHandler handler(*m_constComment);
+		m_centerX = handler.getAttributeValue<int>(OV_AttributeId_Comment_XCenterPosition);
+		m_centerY = handler.getAttributeValue<int>(OV_AttributeId_Comment_YCenterPosition);
 	}
 }
-
-CCommentProxy::~CCommentProxy() { if (!m_bApplied) { this->apply(); } }
 
 int CCommentProxy::getWidth(GtkWidget* widget) const
 {
@@ -47,51 +44,44 @@ int CCommentProxy::getHeight(GtkWidget* widget) const
 
 void CCommentProxy::setCenter(const int centerX, const int centerY)
 {
-	m_centerX  = centerX;
-	m_centerY  = centerY;
-	m_bApplied = false;
+	m_centerX = centerX;
+	m_centerY = centerY;
+	m_applied = false;
 }
 
 void CCommentProxy::apply()
 {
-	if (m_pComment)
+	if (m_comment)
 	{
-		TAttributeHandler l_oAttributeHandler(*m_pComment);
+		TAttributeHandler handler(*m_comment);
 
-		if (l_oAttributeHandler.hasAttribute(OV_AttributeId_Comment_XCenterPosition))
-		{
-			l_oAttributeHandler.setAttributeValue<int>(OV_AttributeId_Comment_XCenterPosition, m_centerX);
-		}
-		else { l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Comment_XCenterPosition, m_centerX); }
+		if (handler.hasAttribute(OV_AttributeId_Comment_XCenterPosition)) { handler.setAttributeValue<int>(OV_AttributeId_Comment_XCenterPosition, m_centerX); }
+		else { handler.addAttribute<int>(OV_AttributeId_Comment_XCenterPosition, m_centerX); }
 
-		if (l_oAttributeHandler.hasAttribute(OV_AttributeId_Comment_YCenterPosition))
-		{
-			l_oAttributeHandler.setAttributeValue<int>(OV_AttributeId_Comment_YCenterPosition, m_centerY);
-		}
-		else { l_oAttributeHandler.addAttribute<int>(OV_AttributeId_Comment_YCenterPosition, m_centerY); }
-		m_bApplied = true;
+		if (handler.hasAttribute(OV_AttributeId_Comment_YCenterPosition)) { handler.setAttributeValue<int>(OV_AttributeId_Comment_YCenterPosition, m_centerY); }
+		else { handler.addAttribute<int>(OV_AttributeId_Comment_YCenterPosition, m_centerY); }
+		m_applied = true;
 	}
 }
 
 const char* CCommentProxy::getLabel() const
 {
-	m_sLabel = m_pConstComment->getText().toASCIIString();
-	return m_sLabel.c_str();
+	m_label = m_constComment->getText().toASCIIString();
+	return m_label.c_str();
 }
 
-void CCommentProxy::updateSize(GtkWidget* widget, const char* sText, int* pXSize, int* pYSize) const
+void CCommentProxy::updateSize(GtkWidget* widget, const char* text, int* xSize, int* ySize)
 {
-	PangoContext* l_pPangoContext = nullptr;
-	PangoLayout* l_pPangoLayout   = nullptr;
-	PangoRectangle l_oPangoRectangle;
-	l_pPangoContext = gtk_widget_create_pango_context(widget);
-	l_pPangoLayout  = pango_layout_new(l_pPangoContext);
-	pango_layout_set_alignment(l_pPangoLayout, PANGO_ALIGN_CENTER);
-	if (pango_parse_markup(sText, -1, 0, nullptr, nullptr, nullptr, nullptr)) { pango_layout_set_markup(l_pPangoLayout, sText, -1); }
-	else { pango_layout_set_text(l_pPangoLayout, sText, -1); }
-	pango_layout_get_pixel_extents(l_pPangoLayout, nullptr, &l_oPangoRectangle);
-	*pXSize = l_oPangoRectangle.width;
-	*pYSize = l_oPangoRectangle.height;
-	g_object_unref(l_pPangoLayout);
-	g_object_unref(l_pPangoContext);
+	PangoRectangle rectangle;
+	PangoContext* context = gtk_widget_create_pango_context(widget);
+	PangoLayout* layout   = pango_layout_new(context);
+
+	pango_layout_set_alignment(layout, PANGO_ALIGN_CENTER);
+	if (pango_parse_markup(text, -1, 0, nullptr, nullptr, nullptr, nullptr)) { pango_layout_set_markup(layout, text, -1); }
+	else { pango_layout_set_text(layout, text, -1); }
+	pango_layout_get_pixel_extents(layout, nullptr, &rectangle);
+	*xSize = rectangle.width;
+	*ySize = rectangle.height;
+	g_object_unref(layout);
+	g_object_unref(context);
 }

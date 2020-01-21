@@ -12,15 +12,15 @@
 #include <gtk/gtk.h>
 #include <system/ovCDynamicModule.h>
 
-namespace Mensia {
-
-	enum class EngineType
+namespace Mensia
+{
+	enum class EEngineType
 	{
 		Local,
 		LAN
 	};
 
-	enum class EngineInitialisationStatus
+	enum class EEngineInitialisationStatus
 	{
 		Success,
 		Failure,
@@ -36,7 +36,7 @@ namespace Mensia {
 
 	struct SPipeline
 	{
-		unsigned long long id;
+		size_t id;
 		std::string description;
 		bool isConfigured;
 	};
@@ -44,8 +44,8 @@ namespace Mensia {
 	struct SArchwayBridge
 	{
 		std::function<bool()> isStarted;
-		std::function<unsigned int(unsigned int)> getAvailableValueMatrixCount;
-		std::function<std::vector<float>(unsigned int)> popValueMatrix;
+		std::function<size_t(size_t)> getAvailableValueMatrixCount;
+		std::function<std::vector<float>(size_t)> popValueMatrix;
 		std::function<bool()> dropBuffers;
 	};
 
@@ -54,34 +54,34 @@ namespace Mensia {
 		std::function<void()> refreshStoppedEngine;
 	};
 
-	class CArchwayHandler final {
+	class CArchwayHandler final
+	{
 	public:
-		CArchwayHandler(const OpenViBE::Kernel::IKernelContext& ctx);
+		explicit CArchwayHandler(const OpenViBE::Kernel::IKernelContext& ctx) : m_DeviceURL("simulator://"), m_kernelCtx(ctx) { }
 		~CArchwayHandler();
 
-		EngineInitialisationStatus initialize();
+		EEngineInitialisationStatus initialize();
 		bool uninitialize();
 
 		bool reinitializeArchway();
 		std::vector<SPipeline> getEnginePipelines() const;
-		std::vector<SPipelineParameter> getPipelineParameters(unsigned int pipelineClassID) const;
-		bool setPipelineParameterValue(unsigned int pipelineClassID, std::string const& parameterName, std::string const& parameterValue);
-		std::string getPipelineScenarioPath(uint64_t pipelineID) const;
+		std::vector<SPipelineParameter> getPipelineParameters(size_t pipelineClassID) const;
+		bool setPipelineParameterValue(size_t pipelineClassID, std::string const& parameterName, std::string const& parameterValue);
+		std::string getPipelineScenarioPath(size_t pipelineID) const;
 
-		bool startEngineWithPipeline(unsigned int pipelineClassID, bool isFastForward, bool shouldAcquireImpedance);
+		bool startEngineWithPipeline(size_t pipelineClassID, bool isFastForward, bool shouldAcquireImpedance);
 		bool loopEngine();
 		bool stopEngine();
 
 		bool isEngineStarted();
 		bool writeArchwayConfigurationFile();
 
-		std::map< std::string, std::string >& getPipelineSettings(unsigned int pipelineClassID) { return m_PipelineSettings[pipelineClassID]; }
+		std::map<std::string, std::string>& getPipelineSettings(const size_t pipelineClassID) { return m_pipelineSettings[pipelineClassID]; }
 
-	public:
 		SArchwayBridge m_ArchwayBridge;
 		SGUIBridge m_GUIBridge;
 		std::string m_DeviceURL;
-		EngineType m_EngineType;
+		EEngineType m_EngineType = EEngineType::Local;
 
 	private:
 		bool initializeArchway();
@@ -91,18 +91,20 @@ namespace Mensia {
 		std::string getArchwayErrorString() const;
 
 	private:
-		typedef void (*FPEnumerateAvailablePipelinesCallback)(unsigned int pipelineClassID, const char* pipelineDescription, void* userData);
-		typedef void (*FPEnumeratePipelineParametersCallback)(unsigned int pipelineID, const char* parameterName, const char* parameterValue, void* userData) ;
-		struct ArchwayAPI {
-			unsigned int (*getLastError)();
-			const char* (*getErrorString)(unsigned int errorCode);
+		typedef void (*FPEnumerateAvailablePipelinesCallback)(size_t pipelineClassID, const char* pipelineDescription, void* userData);
+		typedef void (*FPEnumeratePipelineParametersCallback)(size_t pipelineID, const char* parameterName, const char* parameterValue, void* userData);
+
+		struct ArchwayAPI
+		{
+			size_t (*getLastError)();
+			const char* (*getErrorString)(size_t errorCode);
 
 			const char* (*getVersionDescription)();
 
-			void (*getConfigurationParameterAsString)(const char* configurationParameter, char* outputBuffer, unsigned int bufferLength);
-			bool (*getPipelineScenarioPath)(uint64_t pipelineID, char* messageBuffer, unsigned int bufferLength);
+			void (*getConfigurationParameterAsString)(const char* configurationParameter, char* outputBuffer, size_t bufferLength);
+			bool (*getPipelineScenarioPath)(size_t pipelineID, char* messageBuffer, size_t bufferLength);
 
-			bool (*initialize)(const char* login, const char* password, const char* applicationName, const char* configurationFilename);
+			bool (*initialize)(const char* login, const char* password, const char* applicationName, const char* configFilename);
 			bool (*startAllAcquisitionDevices)();
 			bool (*startImpedanceCheckOnAllAcquisitionDevices)();
 			bool (*startEngine)();
@@ -112,40 +114,40 @@ namespace Mensia {
 			bool (*uninitialize)();
 
 			bool (*enumerateAvailablePipelines)(FPEnumerateAvailablePipelinesCallback callback, void* userData);
-			unsigned int (*createPipeline)(unsigned int pipelineClassID, const char* profileName);
-			bool (*releasePipeline)(unsigned int pipelineID);
-			bool (*isPipelineRunning)(unsigned int pipelineID);
-			bool (*isPipelineInErrorState)(unsigned int pipelineID);
+			size_t (*createPipeline)(size_t pipelineClassID, const char* profileName);
+			bool (*releasePipeline)(size_t pipelineID);
+			bool (*isPipelineRunning)(size_t pipelineID);
+			bool (*isPipelineInErrorState)(size_t pipelineID);
 
-			bool (*enumeratePipelineParameters)(unsigned int pipelineID, FPEnumeratePipelineParametersCallback callback, void* userData);
-			bool (*setPipelineParameterAsString)(unsigned int pipelineID, const char* parameterName, const char* value);
+			bool (*enumeratePipelineParameters)(size_t pipelineID, FPEnumeratePipelineParametersCallback callback, void* userData);
+			bool (*setPipelineParameterAsString)(size_t pipelineID, const char* parameterName, const char* value);
 
 			bool (*mainloop)();
-			unsigned int (*getPendingValueCount)(unsigned int pipelineID, unsigned int matrixOutputIdx);
-			unsigned int (*getPendingValueDimension)(unsigned int pipelineID, unsigned int matrixOutputIdx);
-			bool (*getPendingValue)(unsigned int pipelineID, unsigned int matrixOutputIdx, float* value);
-			unsigned int (*getPendingLogMessageCount)(unsigned int pipelineID);
-			bool (*getPendingLogMessage)(unsigned int pipelineID, unsigned int* logLevel, char* messageBuffer, unsigned int bufferSize);
+			size_t (*getPendingValueCount)(size_t pipelineID, size_t matrixOutputIdx);
+			size_t (*getPendingValueDimension)(size_t pipelineID, size_t matrixOutputIdx);
+			bool (*getPendingValue)(size_t pipelineID, size_t matrixOutputIdx, float* value);
+			size_t (*getPendingLogMessageCount)(size_t pipelineID);
+			bool (*getPendingLogMessage)(size_t pipelineID, size_t* logLevel, char* messageBuffer, size_t bufferSize);
 
-			bool (*dropPendingValues)(unsigned int pipelineID);
-			bool (*dropPendingEvents)(unsigned int pipelineID);
+			bool (*dropPendingValues)(size_t pipelineID);
+			bool (*dropPendingEvents)(size_t pipelineID);
 
 			bool (*isInitialized)();
 			bool (*isAcquiring)();
 			bool (*isStarted)();
 		};
 
-		struct ArchwayAPI* m_Archway = nullptr;
-		System::CDynamicModule m_ArchwayModule;
-		const OpenViBE::Kernel::IKernelContext& m_KernelContext;
+		struct ArchwayAPI* m_archway = nullptr;
+		System::CDynamicModule m_archwayModule;
+		const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
 
 		// Current Configuration
-		std::map< unsigned int, std::map< std::string, std::string > > m_PipelineSettings;
+		std::map<size_t, std::map<std::string, std::string>> m_pipelineSettings;
 
-		static const std::string s_ArchwayConfigurationFile;
-		static const std::string s_ArchwayPipelinesConfigurationFile;
+		static const std::string ARCHWAY_CONFIG_FILE;
+		static const std::string ARCHWAY_PIPELINES_CONFIG_FILE;
 
-		unsigned int m_RunningPipelineId = 0;
+		size_t m_RunningPipelineId = 0;
 	};
 }
 

@@ -1,8 +1,7 @@
 #include "ovpCBoxAlgorithmModifiableSettings.h"
-#include <openvibe/ovITimeArithmetics.h>
 
 using namespace OpenViBE;
-using namespace Kernel;
+using namespace /*OpenViBE::*/Kernel;
 using namespace Plugins;
 
 using namespace OpenViBEPlugins;
@@ -28,7 +27,7 @@ bool CBoxAlgorithmModifiableSettings::processClock(IMessageClock& /* messageCloc
 	//print settings values
 	for (size_t i = 0; i < m_SettingsValue.size(); ++i)
 	{
-		this->getLogManager() << LogLevel_Info << "Setting " << uint64_t(i) << " value is " << m_SettingsValue[i] << "\n";
+		this->getLogManager() << LogLevel_Info << "Setting " << i << " value is " << m_SettingsValue[i] << "\n";
 	}
 	this->getLogManager() << LogLevel_Info << "\n";
 
@@ -40,11 +39,11 @@ bool CBoxAlgorithmModifiableSettings::processClock(IMessageClock& /* messageCloc
 bool CBoxAlgorithmModifiableSettings::updateSettings()
 {
 	m_SettingsValue.clear();
-	const IBox& l_rStaticBoxContext = this->getStaticBoxContext();
-	for (uint32_t i = 0; i < l_rStaticBoxContext.getSettingCount(); ++i)
+	const size_t nSetting = this->getStaticBoxContext().getSettingCount();
+	for (size_t i = 0; i < nSetting; ++i)
 	{
-		CString l_sSettingValue = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), i);
-		m_SettingsValue.push_back(l_sSettingValue);
+		CString value = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), i);
+		m_SettingsValue.push_back(value);
 	}
 	return true;
 }

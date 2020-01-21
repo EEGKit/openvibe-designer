@@ -27,68 +27,66 @@
 using namespace Mensia;
 using namespace AdvancedVisualization;
 
-CRendererFlower::CRendererFlower(const uint32_t multiCount) { m_vMuliVertex.resize(multiCount); }
+CRendererFlower::CRendererFlower(const size_t multiCount) { m_muliVertices.resize(multiCount); }
 
-void CRendererFlower::rebuild(const IRendererContext& rContext)
+void CRendererFlower::rebuild(const CRendererContext& ctx)
 {
-	CRenderer::rebuild(rContext);
+	IRenderer::rebuild(ctx);
 
-	uint32_t i;
+	m_autoDecimationFactor = 1 + size_t((m_nSample - 1) / ctx.getMaximumSampleCountPerDisplay());
 
-	m_autoDecimationFactor = 1 + uint32_t((m_nSample - 1) / rContext.getMaximumSampleCountPerDisplay());
+	const size_t n = m_nSample / m_autoDecimationFactor;
 
-	const uint32_t n = m_nSample / m_autoDecimationFactor;
-
-	for (auto& multivertex : m_vMuliVertex)
+	for (auto& multivertex : m_muliVertices)
 	{
 		multivertex.clear();
-		multivertex.resize(m_channelCount);
-		for (i = 0; i < m_channelCount; ++i)
+		multivertex.resize(m_nChannel);
+		for (size_t i = 0; i < m_nChannel; ++i)
 		{
 			multivertex[i].resize(n);
-			for (uint32_t j = 0; j < m_nSample - m_autoDecimationFactor + 1; j += m_autoDecimationFactor)
+			for (size_t j = 0; j < m_nSample - m_autoDecimationFactor + 1; j += m_autoDecimationFactor)
 			{
-				multivertex[i][j / m_autoDecimationFactor].u = j * m_inverseSampleCount;
+				multivertex[i][j / m_autoDecimationFactor].u = j * m_nInverseSample;
 			}
 		}
 	}
 
-	m_vCircle.clear();
-	m_vCircle.resize(n);
-	for (i = 0; i < n; ++i)
+	m_circles.clear();
+	m_circles.resize(n);
+	for (size_t i = 0; i < n; ++i)
 	{
-		m_vCircle[i].x = cosf(float(rContext.getFlowerRingCount()) * i * float(M_PI) * 2.f / n);
-		m_vCircle[i].y = sinf(float(rContext.getFlowerRingCount()) * i * float(M_PI) * 2.f / n);
-		m_vCircle[i].z = 0;
+		m_circles[i].x = cosf(float(ctx.getFlowerRingCount()) * i * float(M_PI) * 2.F / n);
+		m_circles[i].y = sinf(float(ctx.getFlowerRingCount()) * i * float(M_PI) * 2.F / n);
+		m_circles[i].z = 0;
 	}
 
-	m_historyIndex = 0;
+	m_historyIdx = 0;
 }
 
-void CRendererFlower::refresh(const IRendererContext& rContext)
+void CRendererFlower::refresh(const CRendererContext& ctx)
 {
-	CRenderer::refresh(rContext);
+	IRenderer::refresh(ctx);
 
-	if (!m_historyCount) { return; }
+	if (!m_nHistory) { return; }
 
-	for (size_t z = 0; z < m_vMuliVertex.size(); z++)
+	for (size_t z = 0; z < m_muliVertices.size(); ++z)
 	{
-		for (size_t i = 0; i < m_channelCount; ++i)
+		for (size_t i = 0; i < m_nChannel; ++i)
 		{
-			size_t k                       = ((m_historyCount - 1 - z * m_vMuliVertex[z][i].size()) / m_nSample) * m_nSample;
-			std::vector<float>& l_vHistory = m_history[i];
-			CVertex* l_pVertex             = &m_vMuliVertex[z][i][0];
-			CVertex* l_pCircleVertex       = &m_vCircle[0];
+			size_t k                    = ((m_nHistory - 1 - z * m_muliVertices[z][i].size()) / m_nSample) * m_nSample;
+			std::vector<float>& history = m_history[i];
+			CVertex* vertex             = &m_muliVertices[z][i][0];
+			CVertex* circleVertex       = &m_circles[0];
 			for (size_t j = 0; j < m_nSample - m_autoDecimationFactor + 1; j += m_autoDecimationFactor, k += m_autoDecimationFactor)
 			{
 				float sum    = 0;
 				size_t count = 0;
 
-				for (size_t l = 0; l < m_autoDecimationFactor; l++)
+				for (size_t l = 0; l < m_autoDecimationFactor; ++l)
 				{
-					if (/*k+l>=m_historyIndex && */k + l < m_historyCount)
+					if (/*k+l>=m_historyIdx && */k + l < m_nHistory)
 					{
-						sum += l_vHistory[k + l];
+						sum += history[k + l];
 						count++;
 					}
 				}
@@ -96,32 +94,30 @@ void CRendererFlower::refresh(const IRendererContext& rContext)
 				if (count)
 				{
 					const float v = sum / count;
-					l_pVertex->x  = l_pCircleVertex->x * v;
-					l_pVertex->y  = l_pCircleVertex->y * v;
-					l_pVertex->z  = l_pCircleVertex->z * v;
-					l_pVertex++;
-					l_pCircleVertex++;
+					vertex->x     = circleVertex->x * v;
+					vertex->y     = circleVertex->y * v;
+					vertex->z     = circleVertex->z * v;
+					vertex++;
+					circleVertex++;
 				}
 				else
 				{
-					l_pVertex++;
-					l_pCircleVertex++;
+					vertex++;
+					circleVertex++;
 				}
 			}
 		}
 	}
 
-	m_historyIndex = m_historyCount;
+	m_historyIdx = m_nHistory;
 }
 
-bool CRendererFlower::render(const IRendererContext& rContext)
+bool CRendererFlower::render(const CRendererContext& ctx)
 {
-	if (!rContext.getSelectedCount()) { return false; }
-	if (m_vMuliVertex.empty()) { return false; }
-	if (!m_historyCount) { return false; }
+	if (!ctx.getSelectedCount() || m_muliVertices.empty() || !m_nHistory) { return false; }
 
-	const uint32_t n = m_nSample / m_autoDecimationFactor;
-	const uint32_t d = (m_historyIndex % m_nSample) / m_autoDecimationFactor;
+	const size_t n = m_nSample / m_autoDecimationFactor;
+	const size_t d = (m_historyIdx % m_nSample) / m_autoDecimationFactor;
 
 	glMatrixMode(GL_TEXTURE);
 	glPushMatrix();
@@ -131,30 +127,30 @@ bool CRendererFlower::render(const IRendererContext& rContext)
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	for (size_t i = 0; i < rContext.getSelectedCount(); ++i)
+	for (size_t i = 0; i < ctx.getSelectedCount(); ++i)
 	{
 		glPushMatrix();
-		glTranslatef(.5f, .5f, 0);
-		glScalef(rContext.getScale(), rContext.getScale(), rContext.getScale());
+		glTranslatef(.5F, .5F, 0);
+		glScalef(ctx.getScale(), ctx.getScale(), ctx.getScale());
 
-		for (auto& multi : m_vMuliVertex)
+		for (auto& multi : m_muliVertices)
 		{
 			if (!multi.empty())
 			{
-				std::vector<CVertex>& l_vVertex = multi[rContext.getSelected(uint32_t(i))];
+				std::vector<CVertex>& vertices = multi[ctx.getSelected(i)];
 
-				glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &l_vVertex[0].x);
-				glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &l_vVertex[n - d].u);
-				glDrawArrays(GL_LINE_STRIP, 0, d);
+				glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &vertices[0].x);
+				glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &vertices[n - d].u);
+				glDrawArrays(GL_LINE_STRIP, 0, GLsizei(d));
 
-				glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &l_vVertex[d].x);
-				glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &l_vVertex[0].u);
-				glDrawArrays(GL_LINE_STRIP, 0, n - d);
+				glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &vertices[d].x);
+				glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &vertices[0].u);
+				glDrawArrays(GL_LINE_STRIP, 0, GLsizei(n - d));
 
 				glBegin(GL_LINES);
-				glTexCoord1fv(&l_vVertex[n - d].u);
-				glVertex2fv(&l_vVertex[n - 1].x);
-				glVertex2fv(&l_vVertex[0].x);
+				glTexCoord1fv(&vertices[n - d].u);
+				glVertex2fv(&vertices[n - 1].x);
+				glVertex2fv(&vertices[0].x);
 				glEnd();
 			}
 		}

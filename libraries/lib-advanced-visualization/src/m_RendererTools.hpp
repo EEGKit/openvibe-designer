@@ -20,42 +20,39 @@
  */
 #pragma once
 
-namespace
+inline void cube(const float size = 1)
 {
-	void cube(const float fSize = 1)
-	{
-		glBegin(GL_QUADS);
+	glBegin(GL_QUADS);
 
-		glVertex3f(fSize, -fSize, fSize);
-		glVertex3f(fSize, fSize, fSize);
-		glVertex3f(fSize, fSize, -fSize);
-		glVertex3f(fSize, -fSize, -fSize);
+	glVertex3f(size, -size, size);
+	glVertex3f(size, size, size);
+	glVertex3f(size, size, -size);
+	glVertex3f(size, -size, -size);
 
-		glVertex3f(-fSize, -fSize, fSize);
-		glVertex3f(-fSize, -fSize, -fSize);
-		glVertex3f(-fSize, fSize, -fSize);
-		glVertex3f(-fSize, fSize, fSize);
+	glVertex3f(-size, -size, size);
+	glVertex3f(-size, -size, -size);
+	glVertex3f(-size, size, -size);
+	glVertex3f(-size, size, size);
 
-		glVertex3f(-fSize, fSize, fSize);
-		glVertex3f(fSize, fSize, fSize);
-		glVertex3f(fSize, fSize, -fSize);
-		glVertex3f(-fSize, fSize, -fSize);
+	glVertex3f(-size, size, size);
+	glVertex3f(size, size, size);
+	glVertex3f(size, size, -size);
+	glVertex3f(-size, size, -size);
 
-		glVertex3f(-fSize, -fSize, fSize);
-		glVertex3f(-fSize, -fSize, -fSize);
-		glVertex3f(fSize, -fSize, -fSize);
-		glVertex3f(fSize, -fSize, fSize);
+	glVertex3f(-size, -size, size);
+	glVertex3f(-size, -size, -size);
+	glVertex3f(size, -size, -size);
+	glVertex3f(size, -size, size);
 
-		glVertex3f(-fSize, fSize, fSize);
-		glVertex3f(-fSize, -fSize, fSize);
-		glVertex3f(fSize, -fSize, fSize);
-		glVertex3f(fSize, fSize, fSize);
+	glVertex3f(-size, size, size);
+	glVertex3f(-size, -size, size);
+	glVertex3f(size, -size, size);
+	glVertex3f(size, size, size);
 
-		glVertex3f(-fSize, fSize, -fSize);
-		glVertex3f(-fSize, -fSize, -fSize);
-		glVertex3f(fSize, -fSize, -fSize);
-		glVertex3f(fSize, fSize, -fSize);
+	glVertex3f(-size, size, -size);
+	glVertex3f(-size, -size, -size);
+	glVertex3f(size, -size, -size);
+	glVertex3f(size, size, -size);
 
-		glEnd();
-	}
-} // namespace
+	glEnd();
+}

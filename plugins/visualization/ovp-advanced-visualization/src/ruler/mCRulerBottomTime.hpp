@@ -21,7 +21,6 @@
 #pragma once
 
 #include "../mIRuler.hpp"
-#include "../m_VisualizationTools.hpp"
 
 namespace Mensia
 {
@@ -31,59 +30,57 @@ namespace Mensia
 		{
 		public:
 
-			void renderBottom(GtkWidget* pWidget) override
+			void renderBottom(GtkWidget* widget) override
 			{
-				if (m_pRenderer == nullptr) { return; }
-				if (m_pRenderer->getSampleCount() == 0) { return; }
-				if (m_pRenderer->getHistoryCount() == 0) { return; }
-				if (m_pRenderer->getHistoryIndex() == 0) { return; }
+				if (m_renderer == nullptr) { return; }
+				if (m_renderer->getSampleCount() == 0) { return; }
+				if (m_renderer->getHistoryCount() == 0) { return; }
+				if (m_renderer->getHistoryIndex() == 0) { return; }
 
-				const uint32_t sampleCount          = m_pRenderer->getSampleCount();
-				const uint32_t historyIndex         = m_pRenderer->getHistoryIndex();
-				const uint64_t l_ui64SampleDuration = m_pRendererContext->getSampleDuration();
+				const size_t nSample          = m_renderer->getSampleCount();
+				const size_t historyIdx       = m_renderer->getHistoryIndex();
+				const uint64_t sampleDuration = m_rendererCtx->getSampleDuration();
 
-				std::vector<double>::iterator it;
+				const size_t leftIdx  = historyIdx - historyIdx % nSample;
+				const size_t midIdx   = historyIdx;
+				double startTime      = double((leftIdx * sampleDuration) >> 16) / 65536.;
+				double midTime        = double((midIdx * sampleDuration) >> 16) / 65536.;
+				const double duration = double((nSample * sampleDuration) >> 16) / 65536.;
 
-				const uint32_t leftIndex = historyIndex - historyIndex % sampleCount;
-				const uint32_t midIndex  = historyIndex;
-				double startTime         = double((leftIndex * l_ui64SampleDuration) >> 16) / 65536.;
-				double midTime           = double((midIndex * l_ui64SampleDuration) >> 16) / 65536.;
-				const double duration    = double((sampleCount * l_ui64SampleDuration) >> 16) / 65536.;
-
-				const double offset = (m_pRenderer->getTimeOffset() >> 16) / 65536.;
+				const double offset = (m_renderer->getTimeOffset() >> 16) / 65536.;
 				startTime += offset;
 				midTime += offset;
 
-				std::vector<double> l_vRange1 = this->split_range(startTime - duration, startTime, 10);
-				std::vector<double> l_vRange2 = this->split_range(startTime, startTime + duration, 10);
+				std::vector<double> range1 = this->splitRange(startTime - duration, startTime, 10);
+				std::vector<double> range2 = this->splitRange(startTime, startTime + duration, 10);
 
 				gint w, h, x;
 
-				gdk_drawable_get_size(pWidget->window, &w, &h);
-				GdkGC* l_pDrawGC = gdk_gc_new(pWidget->window);
-				for (it = l_vRange1.begin(); it != l_vRange1.end(); ++it)
+				gdk_drawable_get_size(widget->window, &w, &h);
+				GdkGC* drawGC = gdk_gc_new(widget->window);
+				for (const auto& i : range1)
 				{
-					if (*it >= 0 && *it + duration > midTime)
+					if (i >= 0 && i + duration > midTime)
 					{
-						x                           = gint(((*it + duration - startTime) / duration) * w);
-						PangoLayout* l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, getLabel(*it).c_str());
-						gdk_draw_layout(pWidget->window, l_pDrawGC, x, 5, l_pPangoLayout);
-						gdk_draw_line(pWidget->window, l_pDrawGC, x, 0, x, 3);
-						g_object_unref(l_pPangoLayout);
+						x                   = gint(((i + duration - startTime) / duration) * w);
+						PangoLayout* layout = gtk_widget_create_pango_layout(widget, getLabel(i).c_str());
+						gdk_draw_layout(widget->window, drawGC, x, 5, layout);
+						gdk_draw_line(widget->window, drawGC, x, 0, x, 3);
+						g_object_unref(layout);
 					}
 				}
-				for (it = l_vRange2.begin(); it != l_vRange2.end(); ++it)
+				for (const auto& i : range2)
 				{
-					if (*it >= 0 && *it < midTime)
+					if (i >= 0 && i < midTime)
 					{
-						x                           = gint(((*it - startTime) / duration) * w);
-						PangoLayout* l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, getLabel(*it).c_str());
-						gdk_draw_layout(pWidget->window, l_pDrawGC, x, 5, l_pPangoLayout);
-						gdk_draw_line(pWidget->window, l_pDrawGC, x, 0, x, 3);
-						g_object_unref(l_pPangoLayout);
+						x                   = gint(((i - startTime) / duration) * w);
+						PangoLayout* layout = gtk_widget_create_pango_layout(widget, getLabel(i).c_str());
+						gdk_draw_layout(widget->window, drawGC, x, 5, layout);
+						gdk_draw_line(widget->window, drawGC, x, 0, x, 3);
+						g_object_unref(layout);
 					}
 				}
-				g_object_unref(l_pDrawGC);
+				g_object_unref(drawGC);
 			}
 		};
 	} // namespace AdvancedVisualization

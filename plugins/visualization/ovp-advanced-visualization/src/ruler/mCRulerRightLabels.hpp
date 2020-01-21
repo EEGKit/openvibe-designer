@@ -22,47 +22,42 @@
 
 #include "../mIRuler.hpp"
 
-#include <string>
-#include <map>
-#include <iostream>
-
 namespace Mensia
 {
 	namespace AdvancedVisualization
 	{
-		template <size_t dimension>
+		template <size_t TDim>
 		class CRulerRightLabels : public IRuler
 		{
 		public:
 
 			void renderRight(GtkWidget* widget) override
 			{
-				gint w, h;
-				gint lw, lh;
+				gint w, h, lw, lh;
 
-				const uint32_t nChannel = m_pRendererContext->getSelectedCount();
-				for (uint32_t channel = 0; channel < nChannel; ++channel)
+				const size_t nChannel = m_rendererCtx->getSelectedCount();
+				for (size_t channel = 0; channel < nChannel; ++channel)
 				{
 					gdk_drawable_get_size(widget->window, &w, &h);
 					GdkGC* drawGC = gdk_gc_new(widget->window);
 
-					const auto labelCount = float(m_pRendererContext->getDimensionLabelCount(dimension));
+					const auto labelCount = float(m_rendererCtx->getDimensionLabelCount(TDim));
 
-					gint last_y = gint((channel + (-1 + 0.5f) / labelCount) * (h * 1.f / nChannel));
+					gint lastY = gint((channel + (-1 + 0.5F) / labelCount) * (h * 1.F / nChannel));
 
-					for (uint32_t label = 0; label < m_pRendererContext->getDimensionLabelCount(dimension); ++label)
+					for (size_t label = 0; label < m_rendererCtx->getDimensionLabelCount(TDim); ++label)
 					{
-						const gint y = gint((channel + (label + 0.5f) / labelCount) * (h * 1.f / nChannel));
-						if (y >= last_y + 10)
+						const gint y = gint((channel + (label + 0.5F) / labelCount) * (h * 1.F / nChannel));
+						if (y >= lastY + 10)
 						{
-							PangoLayout* l_pPangoLayout = gtk_widget_create_pango_layout(widget, m_pRendererContext->getDimensionLabel(dimension, label));
-							pango_layout_get_size(l_pPangoLayout, &lw, &lh);
+							PangoLayout* layout = gtk_widget_create_pango_layout(widget, m_rendererCtx->getDimensionLabel(TDim, label));
+							pango_layout_get_size(layout, &lw, &lh);
 							lw /= PANGO_SCALE;
 							lh /= PANGO_SCALE;
-							gdk_draw_layout(widget->window, drawGC, 8, h - y - lh / 2, l_pPangoLayout);
+							gdk_draw_layout(widget->window, drawGC, 8, h - y - lh / 2, layout);
 							gdk_draw_line(widget->window, drawGC, 0, h - y, 3, h - y);
-							g_object_unref(l_pPangoLayout);
-							last_y = y;
+							g_object_unref(layout);
+							lastY = y;
 						}
 					}
 					g_object_unref(drawGC);

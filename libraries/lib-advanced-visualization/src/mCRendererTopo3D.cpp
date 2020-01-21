@@ -6,22 +6,17 @@
 using namespace Mensia;
 using namespace AdvancedVisualization;
 
-void CRendererTopo3D::rebuild3DMeshesPre(const IRendererContext& /*rContext*/)
+void CRendererTopo3D::rebuild3DMeshesPre(const CRendererContext& /*ctx*/)
 {
-	m_oFace.clear();
-	m_oScalp.clear();
+	m_face.clear();
+	m_scalp.clear();
 
-#if 0
-	m_oFace.load(Mensia::Directories::getDataDir() + "/content/Face.obj");
-	m_oScalp.load(Mensia::Directories::getDataDir() + "/content/Scalp.obj");
-#else
-	m_oFace.load(g_pFaceData, sizeof(g_pFaceData));
-	m_oScalp.load(g_pScalpData, sizeof(g_pScalpData));
-#endif
+	//m_face.load(Mensia::Directories::getDataDir() + "/content/Face.obj");
+	//m_scalp.load(Mensia::Directories::getDataDir() + "/content/Scalp.obj");
+	m_face.load(FACE_DATA);
+	m_scalp.load(SCALP_DATA);
 
-	m_oFace.m_vColor[0] = .8f;
-	m_oFace.m_vColor[1] = .6f;
-	m_oFace.m_vColor[2] = .5f;
+	m_face.m_Color[0] = .8F;
+	m_face.m_Color[1] = .6F;
+	m_face.m_Color[2] = .5F;
 }
-
-void CRendererTopo3D::rebuild3DMeshesPost(const IRendererContext& /*context*/) { }

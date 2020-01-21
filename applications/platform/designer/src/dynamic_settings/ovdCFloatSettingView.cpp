@@ -1,37 +1,32 @@
 #include "ovdCFloatSettingView.h"
 #include "../ovd_base.h"
 
-#include <iostream>
-
 using namespace OpenViBE;
 using namespace OpenViBEDesigner;
 using namespace Setting;
 
-static void on_button_setting_float_up_pressed(GtkButton* /*button*/, gpointer data) { static_cast<CFloatSettingView *>(data)->adjustValue(1.0); }
+static void OnButtonSettingFloatUpPressed(GtkButton* /*button*/, gpointer data) { static_cast<CFloatSettingView *>(data)->adjustValue(1.0); }
 
-static void on_button_setting_float_down_pressed(GtkButton* /*button*/, gpointer data) { static_cast<CFloatSettingView *>(data)->adjustValue(-1.0); }
+static void OnButtonSettingFloatDownPressed(GtkButton* /*button*/, gpointer data) { static_cast<CFloatSettingView *>(data)->adjustValue(-1.0); }
 
-static void on_change(GtkEntry* /*entry*/, gpointer data) { static_cast<CFloatSettingView *>(data)->onChange(); }
+static void OnChange(GtkEntry* /*entry*/, gpointer data) { static_cast<CFloatSettingView *>(data)->onChange(); }
 
 
-CFloatSettingView::
-CFloatSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName, const Kernel::IKernelContext& ctx): CAbstractSettingView(
-																																	 box, index, rBuilderName,
-																																	 "settings_collection-hbox_setting_float"),
-																																 m_kernelContext(ctx)
+CFloatSettingView::CFloatSettingView(Kernel::IBox& box, const size_t index, CString& builderName, const Kernel::IKernelContext& ctx)
+	: CAbstractSettingView(box, index, builderName, "settings_collection-hbox_setting_float"), m_kernelCtx(ctx)
 {
-	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
+	GtkWidget* settingWidget = CAbstractSettingView::getEntryFieldWidget();
 
-	std::vector<GtkWidget*> l_vWidget;
-	extractWidget(l_pSettingWidget, l_vWidget);
-	m_entry = GTK_ENTRY(l_vWidget[0]);
+	std::vector<GtkWidget*> widgets;
+	CAbstractSettingView::extractWidget(settingWidget, widgets);
+	m_entry = GTK_ENTRY(widgets[0]);
 
-	g_signal_connect(G_OBJECT(m_entry), "changed", G_CALLBACK(on_change), this);
+	g_signal_connect(G_OBJECT(m_entry), "changed", G_CALLBACK(OnChange), this);
 
-	g_signal_connect(G_OBJECT(l_vWidget[1]), "clicked", G_CALLBACK(on_button_setting_float_up_pressed), this);
-	g_signal_connect(G_OBJECT(l_vWidget[2]), "clicked", G_CALLBACK(on_button_setting_float_down_pressed), this);
+	g_signal_connect(G_OBJECT(widgets[1]), "clicked", G_CALLBACK(OnButtonSettingFloatUpPressed), this);
+	g_signal_connect(G_OBJECT(widgets[2]), "clicked", G_CALLBACK(OnButtonSettingFloatDownPressed), this);
 
-	initializeValue();
+	CAbstractSettingView::initializeValue();
 }
 
 
@@ -47,20 +42,17 @@ void CFloatSettingView::setValue(const CString& value)
 
 void CFloatSettingView::adjustValue(const double amount)
 {
-	char l_sValue[1024];
-	double l_f64lValue = m_kernelContext.getConfigurationManager().expandAsFloat(gtk_entry_get_text(m_entry), 0);
-	l_f64lValue += amount;
-	sprintf(l_sValue, "%lf", l_f64lValue);
-
-	getBox().setSettingValue(getSettingIndex(), l_sValue);
-	setValue(l_sValue);
+	const double value    = m_kernelCtx.getConfigurationManager().expandAsFloat(gtk_entry_get_text(m_entry), 0) + amount;
+	const std::string str = std::to_string(value);
+	getBox().setSettingValue(getSettingIndex(), str.c_str());
+	setValue(str.c_str());
 }
 
 void CFloatSettingView::onChange()
 {
 	if (!m_onValueSetting)
 	{
-		const gchar* l_sValue = gtk_entry_get_text(m_entry);
-		getBox().setSettingValue(getSettingIndex(), l_sValue);
+		const gchar* value = gtk_entry_get_text(m_entry);
+		getBox().setSettingValue(getSettingIndex(), value);
 	}
 }

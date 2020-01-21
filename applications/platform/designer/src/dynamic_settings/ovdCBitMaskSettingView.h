@@ -9,10 +9,10 @@ namespace OpenViBEDesigner
 {
 	namespace Setting
 	{
-		class CBitMaskSettingView : public CAbstractSettingView
+		class CBitMaskSettingView final : public CAbstractSettingView
 		{
 		public:
-			CBitMaskSettingView(OpenViBE::Kernel::IBox& box, const uint32_t index, OpenViBE::CString& rBuilderName,
+			CBitMaskSettingView(OpenViBE::Kernel::IBox& box, const size_t index, OpenViBE::CString& builderName,
 								const OpenViBE::Kernel::IKernelContext& ctx, const OpenViBE::CIdentifier& typeID);
 
 			void getValue(OpenViBE::CString& value) const override;
@@ -21,8 +21,8 @@ namespace OpenViBEDesigner
 			void onChange();
 
 		private:
-			OpenViBE::CIdentifier m_oTypeIdentifier = OV_UndefinedIdentifier;
-			const OpenViBE::Kernel::IKernelContext& m_kernelContext;
+			OpenViBE::CIdentifier m_typeID = OV_UndefinedIdentifier;
+			const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
 
 			std::vector<GtkToggleButton *> m_toggleButton;
 			bool m_onValueSetting = false;

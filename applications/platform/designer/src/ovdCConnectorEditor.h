@@ -6,33 +6,33 @@
 
 namespace OpenViBEDesigner
 {
-	class CConnectorEditor
+	class CConnectorEditor final
 	{
 	public:
 
-		CConnectorEditor(const OpenViBE::Kernel::IKernelContext& ctx, OpenViBE::Kernel::IBox& box, uint32_t connectorType, 
-						 uint32_t connectorIndex, const char* sTitle, const char* sGUIFilename);
-		virtual ~CConnectorEditor();
-		virtual bool run();
+		CConnectorEditor(const OpenViBE::Kernel::IKernelContext& ctx, OpenViBE::Kernel::IBox& box, const size_t type, const size_t index, const char* title,
+						 const char* guiFilename)
+			: m_Box(box), m_kernelCtx(ctx), m_type(type), m_index(index), m_guiFilename(guiFilename), m_title(title ? title : "") { }
 
+		~CConnectorEditor() = default;
+		bool run();
 
-		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
-		OpenViBE::Kernel::IBox& m_rBox;
-		uint32_t m_connectorType = 0;
-		uint32_t m_connectorIndex = 0;
-		const std::string m_sGUIFilename;
-		const std::string m_sTitle;
-		GtkEntry* m_ConnectorIdentifierEntry = nullptr;
+		OpenViBE::Kernel::IBox& m_Box;
+		GtkEntry* m_IDEntry = nullptr;
 
-	private:
+	protected:
+		const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
+		size_t m_type  = 0;
+		size_t m_index = 0;
+		const std::string m_guiFilename;
+		const std::string m_title;
 
-		//		typedef uint32_t (OpenViBE::Kernel::IBox::*t_getConnectorCount)() const;
-		typedef bool (OpenViBE::Kernel::IBox::*t_getConnectorIdentifier)(uint32_t index, OpenViBE::CIdentifier& identifier) const;
-		typedef bool (OpenViBE::Kernel::IBox::*t_getConnectorType)(uint32_t index, OpenViBE::CIdentifier& typeID) const;
-		typedef bool (OpenViBE::Kernel::IBox::*t_getConnectorName)(uint32_t index, OpenViBE::CString& rName) const;
-		typedef bool (OpenViBE::Kernel::IBox::*t_setConnectorType)(uint32_t index, const OpenViBE::CIdentifier& typeID);
-		typedef bool (OpenViBE::Kernel::IBox::*t_setConnectorName)(uint32_t index, const OpenViBE::CString& rName);
-		typedef bool (OpenViBE::Kernel::IBox::*t_isTypeSupported)(const OpenViBE::CIdentifier& typeID) const;
-		typedef bool (OpenViBE::Kernel::IBox::*t_updateConnectorIdentifier)(uint32_t index, const OpenViBE::CIdentifier& newID);
+		typedef bool (OpenViBE::Kernel::IBox::*get_identifier_t)(size_t index, OpenViBE::CIdentifier& identifier) const;
+		typedef bool (OpenViBE::Kernel::IBox::*get_type_t)(size_t index, OpenViBE::CIdentifier& typeID) const;
+		typedef bool (OpenViBE::Kernel::IBox::*get_name_t)(size_t index, OpenViBE::CString& name) const;
+		typedef bool (OpenViBE::Kernel::IBox::*set_type_t)(size_t index, const OpenViBE::CIdentifier& typeID);
+		typedef bool (OpenViBE::Kernel::IBox::*set_name_t)(size_t index, const OpenViBE::CString& name);
+		typedef bool (OpenViBE::Kernel::IBox::*is_type_supported_t)(const OpenViBE::CIdentifier& typeID) const;
+		typedef bool (OpenViBE::Kernel::IBox::*update_identifier_t)(size_t index, const OpenViBE::CIdentifier& newID);
 	};
-};
+}  //namespace OpenViBEDesigner

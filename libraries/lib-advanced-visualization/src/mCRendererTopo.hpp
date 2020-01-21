@@ -21,41 +21,41 @@
 
 #pragma once
 
-#include "mCRenderer.hpp"
+#include "mIRenderer.hpp"
 #include "mC3DMesh.hpp"
 
 #include <Eigen/Eigen>
 
-#include <map>
 #include <vector>
-#include <string>
 
 namespace Mensia
 {
 	namespace AdvancedVisualization
 	{
-		class CRendererTopo : public CRenderer
+		class CRendererTopo : public IRenderer
 		{
 		public:
 
-			void rebuild(const IRendererContext& rContext) override;
-			void refresh(const IRendererContext& rContext) override;
-			bool render(const IRendererContext& rContext) override;
+			void rebuild(const CRendererContext& ctx) override;
+			void refresh(const CRendererContext& ctx) override;
+			bool render(const CRendererContext& ctx) override;
 
-			virtual void rebuild3DMeshesPre(const IRendererContext& rContext) = 0; // Called before electrode projections and spherical interpolation parameters generations and might be used to load a mesh or generate a sphere for instance
-			virtual void rebuild3DMeshesPost(const IRendererContext& rContext) = 0; // Called after electrode projections and spherical interpolation parameters generations and might be used to unfold previously loaded mesh for instance
+			// Called before electrode projections and spherical interpolation parameters generations and might be used to load a mesh or generate a sphere for instance
+			virtual void rebuild3DMeshesPre(const CRendererContext& ctx) = 0;
+			// Called after electrode projections and spherical interpolation parameters generations and might be used to unfold previously loaded mesh for instance
+			virtual void rebuild3DMeshesPost(const CRendererContext& ctx) = 0;
 
 		private:
 
-			void interpolate(const Eigen::VectorXd& V, Eigen::VectorXd& W, Eigen::VectorXd& Z) const;
+			void interpolate(const Eigen::VectorXd& v, Eigen::VectorXd& w, Eigen::VectorXd& z) const;
 
 		protected:
 
-			std::vector<CVertex> m_vProjectedChannelCoordinate;
+			std::vector<CVertex> m_projectedPositions;
 
-			C3DMesh m_oFace;
-			C3DMesh m_oScalp;
-			std::vector<Eigen::VectorXd> m_vInterpolatedSample;
+			C3DMesh m_face;
+			C3DMesh m_scalp;
+			std::vector<Eigen::VectorXd> m_interpolatedSamples;
 
 			Eigen::MatrixXd A, B, D, Ai;
 		};

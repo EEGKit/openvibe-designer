@@ -10,25 +10,26 @@ namespace OpenViBEDesigner
 	{
 	public:
 
-		CInputDialog(const char* sGtkBuilder, fpButtonCB fpOKButtonCB, void* data = nullptr, const char* sTitle = nullptr, const char* sLabel = nullptr, const char* sEntry = nullptr);
+		CInputDialog(const char* gtkBuilder, fpButtonCB okButtonCB, void* data = nullptr, const char* title = nullptr, const char* label = nullptr,
+					 const char* entry = nullptr);
 		~CInputDialog();
 
 		void run();
-		void* getUserData() { return m_pUserData; }
-		const char* getEntry() { return static_cast<const char*>(gtk_entry_get_text(m_pInputDialogEntry)); }
+		void* getUserData() const { return m_userData; }
+		const char* getEntry() const { return static_cast<const char*>(gtk_entry_get_text(m_dialogEntry)); }
 
 	private:
 
-		static gboolean key_press_event_cb(GtkWidget* widget, GdkEventKey* eventKey, gpointer data);
-		static void button_clicked_cb(GtkButton* button, gpointer data);
-		void buttonClickedCB(GtkButton* button) const;
+		static gboolean keyPressEventCB(GtkWidget* widget, GdkEventKey* eventKey, gpointer data);
+		static void buttonClickedCB(GtkButton* button, gpointer data);
+		void buttonClicked(GtkButton* button) const;
 
-		void* m_pUserData = nullptr;
-		fpButtonCB m_fpOKButtonCB;
-		GtkDialog* m_pInputDialog = nullptr;
-		GtkLabel* m_pInputDialogLabel = nullptr;
-		GtkEntry* m_pInputDialogEntry = nullptr;
-		GtkButton* m_pInputDialogOKButton = nullptr;
-		GtkButton* m_pInputDialogCancelButton = nullptr;
+		void* m_userData = nullptr;
+		fpButtonCB m_okButtonCB;
+		GtkDialog* m_dialog             = nullptr;
+		GtkLabel* m_dialogLabel         = nullptr;
+		GtkEntry* m_dialogEntry         = nullptr;
+		GtkButton* m_dialogOkButton     = nullptr;
+		GtkButton* m_dialogCancelButton = nullptr;
 	};
-};
+}  // namespace OpenViBEDesigner

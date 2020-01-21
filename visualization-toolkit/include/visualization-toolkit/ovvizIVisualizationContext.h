@@ -6,7 +6,7 @@
 
 #include "ovvizIVisualizationManager.h"
 
-#define OV_ClassId_VisualizationContext OpenViBE::CIdentifier(0xE06B92EF, 0xB6B68081)
+#define OV_ClassId_VisualizationCtx		OpenViBE::CIdentifier(0xE06B92EF, 0xB6B68081)
 
 namespace OpenViBEVisualizationToolkit
 {
@@ -39,6 +39,6 @@ namespace OpenViBEVisualizationToolkit
 		 */
 		virtual bool setToolbar(OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>& box, GtkWidget* toolbarWidget) = 0;
 
-		_IsDerivedFromClass_(OpenViBE::Plugins::IPluginObject, OV_ClassId_VisualizationContext)
+		_IsDerivedFromClass_(OpenViBE::Plugins::IPluginObject, OV_ClassId_VisualizationCtx)
 	};
 } // namespace OpenViBEVisualizationToolkit

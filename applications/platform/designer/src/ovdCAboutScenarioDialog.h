@@ -4,23 +4,23 @@
 
 namespace OpenViBEDesigner
 {
-	class CAboutScenarioDialog
+	class CAboutScenarioDialog final
 	{
 	public:
 
-		CAboutScenarioDialog(const OpenViBE::Kernel::IKernelContext& ctx, OpenViBE::Kernel::IScenario& rScenario, const char* sGUIFilename);
-		virtual ~CAboutScenarioDialog();
+		CAboutScenarioDialog(const OpenViBE::Kernel::IKernelContext& ctx, OpenViBE::Kernel::IScenario& scenario, const char* guiFilename)
+			: m_kernelCtx(ctx), m_scenario(scenario), m_guiFilename(guiFilename) { }
+
+		~CAboutScenarioDialog() = default;
 
 		bool run();
 
 	protected:
 
-		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
-		OpenViBE::Kernel::IScenario& m_rScenario;
-		OpenViBE::CString m_sGUIFilename;
+		const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
+		OpenViBE::Kernel::IScenario& m_scenario;
+		OpenViBE::CString m_guiFilename;
 
-	private:
-
-		CAboutScenarioDialog();
+		CAboutScenarioDialog() = delete;
 	};
-};
+}  // namespace OpenViBEDesigner

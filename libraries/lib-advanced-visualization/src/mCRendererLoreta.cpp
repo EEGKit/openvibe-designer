@@ -22,15 +22,11 @@
 #if defined TARGET_HAS_ThirdPartyOpenGL
 
 #include "mCRendererLoreta.hpp"
-#include "m_RendererTools.hpp"
 
 #include "content/loreta_anatomic_voxels.hpp"
 #include "content/loreta_roi_voxels.hpp"
 #include "content/Face.obj.hpp"
 #include "content/Scalp.obj.hpp"
-
-#include <cstring>
-#include <cstdio>
 
 using namespace Mensia;
 using namespace AdvancedVisualization;
@@ -40,7 +36,7 @@ using namespace LoretaRegions;
 namespace
 {
 	//-32,8,-40,
-	int g_iLoretaVoxel[2394][3] = {
+	int loretaVoxel[2394][3] = {
 		{ 52, -41, -11 }, { 45, -41, -11 }, { 38, -41, -11 }, { 31, -41, -11 }, { -32, -41, -11 }, { -39, -41, -11 }, { -46, -41, -11 }, { -53, -41, -11 },
 		{ 52, -41, -4 }, { 45, -41, -4 }, { 38, -41, -4 }, { 31, -41, -4 }, { 24, -41, -4 }, { -25, -41, -4 }, { -32, -41, -4 }, { -39, -41, -4 },
 		{ -46, -41, -4 }, { -53, -41, -4 }, { 52, -41, 3 }, { 45, -41, 3 }, { 38, -41, 3 }, { 31, -41, 3 }, { 24, -41, 3 }, { -18, -41, 3 }, { -25, -41, 3 },
@@ -326,301 +322,95 @@ namespace
 		{ -18, 71, -4 }, { 17, 71, 3 }, { 10, 71, 3 }, { 3, 71, 3 }, { -4, 71, 3 }, { -11, 71, 3 }, { -18, 71, 3 }, { 17, 71, 10 },
 	};
 
-	void insertLoretaVoxelInMesh(C3DMesh& rMesh, const float x, const float y, const float z, const float s)
+	void insertLoretaVoxelInMesh(C3DMesh& mesh, const float x, const float y, const float z, const float s)
 	{
-		const unsigned int i = static_cast<unsigned int>(rMesh.m_vVertex.size());
+		const size_t i = mesh.m_Vertices.size();
 
 		// Insert the 8 vertices of the cube
-		rMesh.m_vVertex.emplace_back(x - s, y - s, z - s);	// i+0
-		rMesh.m_vVertex.emplace_back(x + s, y - s, z - s);	// i+1
-		rMesh.m_vVertex.emplace_back(x + s, y + s, z - s);	// i+2
-		rMesh.m_vVertex.emplace_back(x - s, y + s, z - s);	// i+3
+		mesh.m_Vertices.emplace_back(x - s, y - s, z - s);	// i+0
+		mesh.m_Vertices.emplace_back(x + s, y - s, z - s);	// i+1
+		mesh.m_Vertices.emplace_back(x + s, y + s, z - s);	// i+2
+		mesh.m_Vertices.emplace_back(x - s, y + s, z - s);	// i+3
 
-		rMesh.m_vVertex.emplace_back(x - s, y - s, z + s);	// i+4
-		rMesh.m_vVertex.emplace_back(x + s, y - s, z + s);	// i+5
-		rMesh.m_vVertex.emplace_back(x + s, y + s, z + s);	// i+6
-		rMesh.m_vVertex.emplace_back(x - s, y + s, z + s);	// i+7
+		mesh.m_Vertices.emplace_back(x - s, y - s, z + s);	// i+4
+		mesh.m_Vertices.emplace_back(x + s, y - s, z + s);	// i+5
+		mesh.m_Vertices.emplace_back(x + s, y + s, z + s);	// i+6
+		mesh.m_Vertices.emplace_back(x - s, y + s, z + s);	// i+7
 
 		// Insert the 12 triangles of the cube
-		rMesh.m_vTriangle.push_back(i + 0);
-		rMesh.m_vTriangle.push_back(i + 1);
-		rMesh.m_vTriangle.push_back(i + 2);
-		rMesh.m_vTriangle.push_back(i + 0);
-		rMesh.m_vTriangle.push_back(i + 2);
-		rMesh.m_vTriangle.push_back(i + 3);
+		mesh.m_Triangles.push_back(i + 0);
+		mesh.m_Triangles.push_back(i + 1);
+		mesh.m_Triangles.push_back(i + 2);
+		mesh.m_Triangles.push_back(i + 0);
+		mesh.m_Triangles.push_back(i + 2);
+		mesh.m_Triangles.push_back(i + 3);
 
-		rMesh.m_vTriangle.push_back(i + 1);
-		rMesh.m_vTriangle.push_back(i + 5);
-		rMesh.m_vTriangle.push_back(i + 6);
-		rMesh.m_vTriangle.push_back(i + 1);
-		rMesh.m_vTriangle.push_back(i + 6);
-		rMesh.m_vTriangle.push_back(i + 2);
+		mesh.m_Triangles.push_back(i + 1);
+		mesh.m_Triangles.push_back(i + 5);
+		mesh.m_Triangles.push_back(i + 6);
+		mesh.m_Triangles.push_back(i + 1);
+		mesh.m_Triangles.push_back(i + 6);
+		mesh.m_Triangles.push_back(i + 2);
 
-		rMesh.m_vTriangle.push_back(i + 5);
-		rMesh.m_vTriangle.push_back(i + 4);
-		rMesh.m_vTriangle.push_back(i + 7);
-		rMesh.m_vTriangle.push_back(i + 5);
-		rMesh.m_vTriangle.push_back(i + 7);
-		rMesh.m_vTriangle.push_back(i + 6);
+		mesh.m_Triangles.push_back(i + 5);
+		mesh.m_Triangles.push_back(i + 4);
+		mesh.m_Triangles.push_back(i + 7);
+		mesh.m_Triangles.push_back(i + 5);
+		mesh.m_Triangles.push_back(i + 7);
+		mesh.m_Triangles.push_back(i + 6);
 
-		rMesh.m_vTriangle.push_back(i + 4);
-		rMesh.m_vTriangle.push_back(i + 0);
-		rMesh.m_vTriangle.push_back(i + 3);
-		rMesh.m_vTriangle.push_back(i + 4);
-		rMesh.m_vTriangle.push_back(i + 3);
-		rMesh.m_vTriangle.push_back(i + 7);
+		mesh.m_Triangles.push_back(i + 4);
+		mesh.m_Triangles.push_back(i + 0);
+		mesh.m_Triangles.push_back(i + 3);
+		mesh.m_Triangles.push_back(i + 4);
+		mesh.m_Triangles.push_back(i + 3);
+		mesh.m_Triangles.push_back(i + 7);
 
-		rMesh.m_vTriangle.push_back(i + 4);
-		rMesh.m_vTriangle.push_back(i + 5);
-		rMesh.m_vTriangle.push_back(i + 1);
-		rMesh.m_vTriangle.push_back(i + 4);
-		rMesh.m_vTriangle.push_back(i + 1);
-		rMesh.m_vTriangle.push_back(i + 0);
+		mesh.m_Triangles.push_back(i + 4);
+		mesh.m_Triangles.push_back(i + 5);
+		mesh.m_Triangles.push_back(i + 1);
+		mesh.m_Triangles.push_back(i + 4);
+		mesh.m_Triangles.push_back(i + 1);
+		mesh.m_Triangles.push_back(i + 0);
 
-		rMesh.m_vTriangle.push_back(i + 3);
-		rMesh.m_vTriangle.push_back(i + 2);
-		rMesh.m_vTriangle.push_back(i + 6);
-		rMesh.m_vTriangle.push_back(i + 3);
-		rMesh.m_vTriangle.push_back(i + 6);
-		rMesh.m_vTriangle.push_back(i + 7);
+		mesh.m_Triangles.push_back(i + 3);
+		mesh.m_Triangles.push_back(i + 2);
+		mesh.m_Triangles.push_back(i + 6);
+		mesh.m_Triangles.push_back(i + 3);
+		mesh.m_Triangles.push_back(i + 6);
+		mesh.m_Triangles.push_back(i + 7);
 	}
 } // namespace
 
 CRendererLoreta::CRendererLoreta()
 
 {
-#if 0
-	m_oFace.load(Mensia::Directories::getDataDir() + "/content/Face.obj");
-	m_oScalp.load(Mensia::Directories::getDataDir() + "/content/Scalp.obj");
-#else
-	m_oFace.load(g_pFaceData, sizeof(g_pFaceData));
-	m_oScalp.load(g_pScalpData, sizeof(g_pScalpData));
-#endif
+	m_face.load(FACE_DATA);
+	m_scalp.load(SCALP_DATA);
 
-	m_oBrain.clear();
-	for (auto& voxel : g_iLoretaVoxel) { insertLoretaVoxelInMesh(m_oBrain, float(-voxel[0]), float(voxel[1]), float(-voxel[2]), 3.5); }
+	m_brain.clear();
+	for (auto& voxel : loretaVoxel) { insertLoretaVoxelInMesh(m_brain, float(-voxel[0]), float(voxel[1]), float(-voxel[2]), 3.5); }
 
-	m_vLookup.clear();
-	const unsigned int l_uiCategoryIndex_BrodmannAreas   = 0;
-	const unsigned int l_uiCategoryIndex_AnatomicalAreas = 1;
-	const unsigned int l_uiCategoryIndex_Lobes           = 2;
-	const unsigned int l_uiCategoryIndex_ROI             = 3;
-	m_vLookup.resize(4);
+	m_lookups.clear();
+	const size_t idxBrodmanns   = 0;
+	const size_t idxAnatomicals = 1;
+	const size_t idxLobes       = 2;
+	const size_t idxRoi         = 3;
+	m_lookups.reserve(4);
+	m_lookups.emplace_back(BRODMANNS);
+	m_lookups.emplace_back(ANATOMICALS);
+	m_lookups.emplace_back(LOBES);
+	m_lookups.emplace_back(REGIONS_OF_INTEREST);
+	m_selecteds.resize(2394, true);
 
-#if 0 /* SAVING DATA INTO C FILE */
-	const char* l_sVoxelGroupFilename = "./LORETA-Talairach-BAs.csv";
-	FILE * l_pFile = ::Mensia::Files::open(l_sVoxelGroupFilename, "rt");
-	if (l_pFile)
-	{
-		int x, y, z, dx, dy, dz, d;
-		char l_sLookup1[1024];
-		char l_sLookup2[1024];
-		char l_sLookup3[1024];
-		char l_sLine[1024];
-		if (::fscanf(l_pFile, "%s\n", l_sLine) == 0) {} // Avoids warning 
-
-			while (!::feof(l_pFile))
-			{
-				::strcpy(l_sLine, "");
-				if (::fscanf(l_pFile, "%[^\n]\n\r", l_sLine) == 0) {} // Avoids warning 
-
-					int n = ::sscanf(l_sLine, "%i,%i,%i,%i,%i,%i,%i,%[^,],%[^,],%[^,]", &x, &y, &z, &dx, &dy, &dz, &d, l_sLookup1, l_sLookup2, l_sLookup3);
-				if (n == 10)
-				{
-					// the brodmann areas in the CSV file are named "Brodmann area  X" (note the double space) or "Brodmann area XX"
-					// reformat the Lookups to replace "area  X" by "area 0X" which allows alphabetical order browsing
-					std::string l_sLookup1_fixed(l_sLookup1);
-					std::size_t pos = l_sLookup1_fixed.find("area  ");
-					if (pos != std::string::npos)
-					{
-						l_sLookup1_fixed.replace(pos, 6, "area 0");
-					}
-					std::string l_sLookup2_fixed(l_sLookup2);
-					pos = l_sLookup2_fixed.find("area  ");
-					if (pos != std::string::npos)
-					{
-						l_sLookup2_fixed.replace(pos, 6, "area 0");
-					}
-					std::string l_sLookup3_fixed(l_sLookup3);
-					pos = l_sLookup3_fixed.find("area  ");
-					if (pos != std::string::npos)
-					{
-						l_sLookup3_fixed.replace(pos, 6, "area 0");
-					}
-
-					bool l_bFound = false;
-					//				::printf("Got %i %i %i - %s - %s - %s\n", x, y, z, l_sLookup1, l_sLookup2, l_sLookup3);
-					for (int i = 0; i < 2394; ++i)
-					{
-						if (g_iLoretaVoxel[i][0] == -x && g_iLoretaVoxel[i][1] == z && g_iLoretaVoxel[i][2] == y)
-						{
-							m_vLookup[l_uiCategoryIndex_BrodmannAreas][l_sLookup1_fixed.c_str()].push_back(i);
-							m_vLookup[l_uiCategoryIndex_AnatomicalAreas][l_sLookup2_fixed.c_str()].push_back(i);
-							m_vLookup[l_uiCategoryIndex_Lobes][l_sLookup3_fixed.c_str()].push_back(i);
-							l_bFound = true;
-						}
-					}
-					if (!l_bFound)
-					{
-						::printf("Not found voxel %i %i %i - %s - %s - %s\n", x, y, z, l_sLookup1, l_sLookup2, l_sLookup3);
-					}
-				}
-				else { break; }
-			}
-		//		::printf("Sucessfully read voxel groups from [%s] - %lu,%lu,%lu group(s)\n", l_sVoxelGroupFilename, m_vLookup[l_uiCategoryIndex_BrodmannAreas].size(), m_vLookup[l_uiCategoryIndex_AnatomicalAreas].size(), m_vLookup[l_uiCategoryIndex_Lobes].size());
-		::fclose(l_pFile);
-
-		const char* l_sDataFilename = "./loreta_anatomic_voxels.hpp";
-		l_pFile = ::Mensia::Files::open(l_sDataFilename, "w");
-		::fprintf(l_pFile, "/*********************************************************************\n * Software License Agreement (AGPL-3 License)\n *\n * OpenViBE Designer\n * Based on OpenViBE V1.1.0, Copyright (C) Inria, 2006-2015\n * Copyright (C) Inria, 2015-2017,V1.0\n *\n * This program is free software: you can redistribute it and/or modify\n * it under the terms of the GNU Affero General Public License version 3,\n * as published by the Free Software Foundation.\n *\n * This program is distributed in the hope that it will be useful,\n * but WITHOUT ANY WARRANTY; without even the implied warranty of\n * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the\n * GNU Affero General Public License for more details.\n *\n * You should have received a copy of the GNU Affero General Public License\n * along with this program.\n * If not, see <http://www.gnu.org/licenses/>.\n */\n");
-		::fprintf(l_pFile, "#ifndef __autoconvert__LoretaAnatomic_csv__\n#define __autoconvert__LoretaAnatomic_csv__\n");
-		::fprintf(l_pFile, "\nnamespace LoretaRegions\n{\n");
-		::fprintf(l_pFile, "#ifndef LoretaRegions_VoxelRegionStruct\n#define LoretaRegions_VoxelRegionStruct\n\ttypedef struct\n\t{\n\t\tconst char * _sName;\n\t\tunsigned int _uiVoxelCount;\n\t\tunsigned int * _pVoxels;\n\t}SVoxelRegion;\n#endif\n\n");
-		::fprintf(l_pFile, "#ifndef LoretaRegions_VoxelCount\n#define LoretaRegions_VoxelCount 2394\n#endif\n\n");
-
-		std::map < std::string, std::vector < uint32_t > >::iterator l_oMapIterator;
-
-		for (unsigned int l_iRegionIndex = 0; l_iRegionIndex < m_vLookup.size() - 1; l_iRegionIndex++) // all but ROI, they are in separated file
-		{
-			unsigned int l_uiAreaCount = 0;
-			const char* l_sRegionGroupName;
-			if (l_iRegionIndex == l_uiCategoryIndex_BrodmannAreas)
-			{
-				l_sRegionGroupName = "BrodmannAreas";
-			}
-			if (l_iRegionIndex == l_uiCategoryIndex_AnatomicalAreas)
-			{
-				l_sRegionGroupName = "AnatomicalAreas";
-			}
-			if (l_iRegionIndex == l_uiCategoryIndex_Lobes)
-			{
-				l_sRegionGroupName = "Lobes";
-			}
-
-			std::vector<unsigned int> l_vRightVoxels;
-			std::vector<unsigned int> l_vLeftVoxels;
-			for (l_oMapIterator = m_vLookup[l_iRegionIndex].begin(); l_oMapIterator != m_vLookup[l_iRegionIndex].end(); l_oMapIterator++)
-			{
-				//region
-				l_vRightVoxels.clear();
-				l_vLeftVoxels.clear();
-				for (unsigned int l_uiVoxel = 0; l_uiVoxel < (*l_oMapIterator).second.size(); l_uiVoxel++)
-				{
-					if (g_iLoretaVoxel[(*l_oMapIterator).second[l_uiVoxel]][0] < 0) l_vRightVoxels.push_back((*l_oMapIterator).second[l_uiVoxel]);
-					if (g_iLoretaVoxel[(*l_oMapIterator).second[l_uiVoxel]][0] > 0) l_vLeftVoxels.push_back((*l_oMapIterator).second[l_uiVoxel]);
-				}
-
-				::fprintf(l_pFile, "\tstatic unsigned int g_p%sVoxels_%i[%i] = {", l_sRegionGroupName, l_uiAreaCount, (*l_oMapIterator).second.size());
-				for (unsigned int l_uiVoxel = 0; l_uiVoxel < (*l_oMapIterator).second.size() - 1; l_uiVoxel++)
-				{
-					::fprintf(l_pFile, "%i,", (*l_oMapIterator).second[l_uiVoxel]);
-				}
-				::fprintf(l_pFile, "%i};\n", (*l_oMapIterator).second[(*l_oMapIterator).second.size() - 1]);
-
-				//region - RIGHT
-				::fprintf(l_pFile, "\tstatic unsigned int g_p%sVoxels_%iR[%i] = {", l_sRegionGroupName, l_uiAreaCount, l_vRightVoxels.size());
-				for (int l_uiVoxel = 0; l_uiVoxel < int(l_vRightVoxels.size()) - 1; l_uiVoxel++) // int to handle size == 0
-				{
-					::fprintf(l_pFile, "%i,", l_vRightVoxels[l_uiVoxel]);
-				}
-				::fprintf(l_pFile, "%i};\n", l_vRightVoxels[l_vRightVoxels.size() - 1]);
-
-				//region - LEFT
-				::fprintf(l_pFile, "\tstatic unsigned int g_p%sVoxels_%iL[%i] = {", l_sRegionGroupName, l_uiAreaCount, l_vLeftVoxels.size());
-				for (int l_uiVoxel = 0; l_uiVoxel < int(l_vLeftVoxels.size()) - 1; l_uiVoxel++)
-				{
-					::fprintf(l_pFile, "%i,", l_vLeftVoxels[l_uiVoxel]);
-				}
-				::fprintf(l_pFile, "%i};\n", l_vLeftVoxels[l_vLeftVoxels.size() - 1]);
-
-				l_uiAreaCount++;
-			}
-			::fprintf(l_pFile, "\n\tstatic unsigned int g_ui%sCount = %i;\n", l_sRegionGroupName, m_vLookup[l_iRegionIndex].size() * 3);
-			::fprintf(l_pFile, "\tstatic SVoxelRegion g_p%s[%i] =\n\t{\n", l_sRegionGroupName, m_vLookup[l_iRegionIndex].size() * 3);
-			l_uiAreaCount = 0;
-			unsigned int l_uiRightVoxels = 0;
-			unsigned int l_uiLeftVoxels = 0;
-			for (l_oMapIterator = m_vLookup[l_iRegionIndex].begin(); l_oMapIterator != m_vLookup[l_iRegionIndex].end() && l_uiAreaCount < m_vLookup[l_iRegionIndex].size(); l_oMapIterator++)
-			{
-				l_uiRightVoxels = 0;
-				l_uiLeftVoxels = 0;
-				for (unsigned int l_uiVoxel = 0; l_uiVoxel < (*l_oMapIterator).second.size(); l_uiVoxel++)
-				{
-					if (g_iLoretaVoxel[(*l_oMapIterator).second[l_uiVoxel]][0] < 0) l_uiRightVoxels++;
-					if (g_iLoretaVoxel[(*l_oMapIterator).second[l_uiVoxel]][0] > 0) l_uiLeftVoxels++;
-				}
-
-				if (l_uiAreaCount != m_vLookup[l_iRegionIndex].size() - 1)
-				{
-					::fprintf(l_pFile, "\t\t{\"%s\", %i, g_p%sVoxels_%i},\n", (*l_oMapIterator).first.c_str(), (*l_oMapIterator).second.size(), l_sRegionGroupName, l_uiAreaCount);
-					::fprintf(l_pFile, "\t\t{\"%s\", %i, g_p%sVoxels_%iR},\n", ((*l_oMapIterator).first + " R").c_str(), l_uiRightVoxels, l_sRegionGroupName, l_uiAreaCount);
-					::fprintf(l_pFile, "\t\t{\"%s\", %i, g_p%sVoxels_%iL},\n", ((*l_oMapIterator).first + " L").c_str(), l_uiLeftVoxels, l_sRegionGroupName, l_uiAreaCount);
-				}
-				else // last one
-				{
-					::fprintf(l_pFile, "\t\t{\"%s\", %i, g_p%sVoxels_%i},\n", (*l_oMapIterator).first.c_str(), (*l_oMapIterator).second.size(), l_sRegionGroupName, l_uiAreaCount);
-					::fprintf(l_pFile, "\t\t{\"%s\", %i, g_p%sVoxels_%iR},\n", ((*l_oMapIterator).first + " R").c_str(), l_uiRightVoxels, l_sRegionGroupName, l_uiAreaCount);
-					::fprintf(l_pFile, "\t\t{\"%s\", %i, g_p%sVoxels_%iL}\n\t};\n\n", ((*l_oMapIterator).first + " L").c_str(), l_uiLeftVoxels, l_sRegionGroupName, l_uiAreaCount);
-				}
-
-				l_uiAreaCount++;
-			}
-		}
-		::fprintf(l_pFile, "}\n#endif\n");
-		::fclose(l_pFile);
-
-	}
-	else
-#endif
-	{
-		//::printf("Voxel description file [%s] not found, falling back to default.\n", l_sVoxelGroupFilename);
-		unsigned int l_uiMapSize = g_uiBrodmannAreasCount;
-		for (unsigned int i = 0; i < l_uiMapSize; ++i)
-		{
-			m_vLookup[l_uiCategoryIndex_BrodmannAreas][g_pBrodmannAreas[i]._sName].insert(
-				m_vLookup[l_uiCategoryIndex_BrodmannAreas][g_pBrodmannAreas[i]._sName].begin(), g_pBrodmannAreas[i]._pVoxels,
-				g_pBrodmannAreas[i]._pVoxels + g_pBrodmannAreas[i]._uiVoxelCount);
-		}
-		l_uiMapSize = g_uiAnatomicalAreasCount;
-		for (unsigned int i = 0; i < l_uiMapSize; ++i)
-		{
-			m_vLookup[l_uiCategoryIndex_AnatomicalAreas][g_pAnatomicalAreas[i]._sName].insert(
-				m_vLookup[l_uiCategoryIndex_AnatomicalAreas][g_pAnatomicalAreas[i]._sName].begin(), g_pAnatomicalAreas[i]._pVoxels,
-				g_pAnatomicalAreas[i]._pVoxels + g_pAnatomicalAreas[i]._uiVoxelCount);
-		}
-		l_uiMapSize = g_uiLobesCount;
-		for (unsigned int i = 0; i < l_uiMapSize; ++i)
-		{
-			m_vLookup[l_uiCategoryIndex_Lobes][g_pLobes[i]._sName].insert(m_vLookup[l_uiCategoryIndex_Lobes][g_pLobes[i]._sName].begin(), g_pLobes[i]._pVoxels,
-																		  g_pLobes[i]._pVoxels + g_pLobes[i]._uiVoxelCount);
-		}
-	}
-
-	// Loading ROI data
-	const unsigned int mapSize = g_uiROICount;
-	for (unsigned int i = 0; i < mapSize; ++i)
-	{
-		m_vLookup[l_uiCategoryIndex_ROI][g_pRegionsOfInterest[i]._sName].insert(m_vLookup[l_uiCategoryIndex_ROI][g_pRegionsOfInterest[i]._sName].begin(),
-																				g_pRegionsOfInterest[i]._pVoxels,
-																				g_pRegionsOfInterest[i]._pVoxels + g_pRegionsOfInterest[i]._uiVoxelCount);
-	}
-
-	m_vSelected.resize(2394, true);
-
-	this->CRendererLoreta::refreshBrainSubset();
+	this->refreshBrainSubset();
 }
-
-void CRendererLoreta::rebuild(const IRendererContext& rContext) { CRenderer::rebuild(rContext); }
-
-void CRendererLoreta::refresh(const IRendererContext& rContext) { CRenderer::refresh(rContext); }
 
 #define __Rendering_VertexBuffer__
 
-bool CRendererLoreta::render(const IRendererContext& rContext)
+bool CRendererLoreta::render(const CRendererContext& ctx)
 {
-	uint32_t i, j;
-
-	//	if(!m_historyCount) return false;
+	//	if(!m_nHistory) return false;
 	//	if(m_history.size()!=2394) return false;
 
 	const float d = 3.5;
@@ -632,53 +422,53 @@ bool CRendererLoreta::render(const IRendererContext& rContext)
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
-	gluPerspective(60, rContext.getAspect(), .01, 100);
+	gluPerspective(60, ctx.getAspect(), .01, 100);
 	glTranslatef(0, 0, -d);
-	glRotatef(rContext.getRotationX() * 10, 1, 0, 0);
-	glRotatef(rContext.getRotationY() * 10, 0, 1, 0);
+	glRotatef(ctx.getRotationX() * 10, 1, 0, 0);
+	glRotatef(ctx.getRotationY() * 10, 0, 1, 0);
 
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadIdentity();
-	glScalef(rContext.getZoom(), rContext.getZoom(), rContext.getZoom());
+	glScalef(ctx.getZoom(), ctx.getZoom(), ctx.getZoom());
 
 	glPushMatrix();
 	glTranslatef(0, .5, 0);
-	glScalef(.00944f, .00944f, .00944f);
+	glScalef(.00944F, .00944F, .00944F);
 	glRotatef(19, 1, 0, 0);
 	glTranslatef(0, -10, 15);
 	glDisable(GL_DEPTH_TEST);
 
-	if (m_historyCount && m_history.size() == 2394)
+	if (m_nHistory && m_history.size() == 2394)
 	{
-		std::vector<float> l_vSample;
-		this->getSampleAtERPFraction(m_ERPFraction, l_vSample);
+		std::vector<float> samples;
+		this->getSampleAtERPFraction(m_erpFraction, samples);
 
 #if defined __Rendering_VertexBuffer__
-		for (i = 0, j = 0; i < 2394; ++i)
+		for (size_t i = 0, j = 0; i < 2394; ++i)
 		{
 			// Apply texture coordinate to each of the 8 vertices of this voxel
-			const float l_fPower      = l_vSample[i] * rContext.getScale();
-			m_oBrain.m_vVertex[j++].u = l_fPower;
-			m_oBrain.m_vVertex[j++].u = l_fPower;
-			m_oBrain.m_vVertex[j++].u = l_fPower;
-			m_oBrain.m_vVertex[j++].u = l_fPower;
-			m_oBrain.m_vVertex[j++].u = l_fPower;
-			m_oBrain.m_vVertex[j++].u = l_fPower;
-			m_oBrain.m_vVertex[j++].u = l_fPower;
-			m_oBrain.m_vVertex[j++].u = l_fPower;
+			const float power         = samples[i] * ctx.getScale();
+			m_brain.m_Vertices[j++].u = power;
+			m_brain.m_Vertices[j++].u = power;
+			m_brain.m_Vertices[j++].u = power;
+			m_brain.m_Vertices[j++].u = power;
+			m_brain.m_Vertices[j++].u = power;
+			m_brain.m_Vertices[j++].u = power;
+			m_brain.m_Vertices[j++].u = power;
+			m_brain.m_Vertices[j++].u = power;
 		}
 #else
-		for (uint32_t i = 0; i < 2394; ++i)
+		for (size_t i = 0; i < 2394; ++i)
 		{
-			if (m_vSelected[i])
+			if (m_selecteds[i])
 			{
-				float l_fPower = l_vSample[i] * rContext.getScale();
-				// m_history[i][m_historyCount-m_nSample+m_sampleIndexERP]*rContext.getScale();
-				::glColor4f(.1f, .1f, .1f, rContext.getTranslucency());
+				float power = samples[i] * ctx.getScale();
+				// m_history[i][m_nHistory-m_nSample+m_sampleIndexERP]*ctx.getScale();
+				::glColor4f(.1f, .1f, .1f, ctx.getTranslucency());
 				::glPushMatrix();
-				::glTexCoord1f(l_fPower);
-				::glTranslatef(float(-g_iLoretaVoxel[i][0]), float(g_iLoretaVoxel[i][1]), float(-g_iLoretaVoxel[i][2]));
+				::glTexCoord1f(power);
+				::glTranslatef(float(-loretaVoxel[i][0]), float(loretaVoxel[i][1]), float(-loretaVoxel[i][2]));
 				::glScalef(3.5, 3.5, 3.5);
 				cube();
 				::glPopMatrix();
@@ -689,29 +479,29 @@ bool CRendererLoreta::render(const IRendererContext& rContext)
 	else
 	{
 #if defined __Rendering_VertexBuffer__
-		for (i = 0, j = 0; i < 2394; ++i)
+		for (size_t i = 0, j = 0; i < 2394; ++i)
 		{
 			// Apply texture coordinate to each of the 8 vertices of this voxel
-			const float l_fPower      = 0;
-			m_oBrain.m_vVertex[j++].u = l_fPower;
-			m_oBrain.m_vVertex[j++].u = l_fPower;
-			m_oBrain.m_vVertex[j++].u = l_fPower;
-			m_oBrain.m_vVertex[j++].u = l_fPower;
-			m_oBrain.m_vVertex[j++].u = l_fPower;
-			m_oBrain.m_vVertex[j++].u = l_fPower;
-			m_oBrain.m_vVertex[j++].u = l_fPower;
-			m_oBrain.m_vVertex[j++].u = l_fPower;
+			const float power         = 0;
+			m_brain.m_Vertices[j++].u = power;
+			m_brain.m_Vertices[j++].u = power;
+			m_brain.m_Vertices[j++].u = power;
+			m_brain.m_Vertices[j++].u = power;
+			m_brain.m_Vertices[j++].u = power;
+			m_brain.m_Vertices[j++].u = power;
+			m_brain.m_Vertices[j++].u = power;
+			m_brain.m_Vertices[j++].u = power;
 		}
 #else
-		for (uint32_t i = 0; i < 2394; ++i)
+		for (size_t i = 0; i < 2394; ++i)
 		{
-			if (m_vSelected[i])
+			if (m_selecteds[i])
 			{
-				// float l_fPower=m_history[i][m_historyCount-m_nSample+m_sampleIndexERP]*rContext.getScale();
-				::glColor4f(.1f, .1f, .1f, rContext.getTranslucency());
+				// float power=m_history[i][m_nHistory-m_nSample+m_sampleIndexERP]*ctx.getScale();
+				::glColor4f(.1f, .1f, .1f, ctx.getTranslucency());
 				::glPushMatrix();
 				::glTexCoord1f(0);
-				::glTranslatef(float(-g_iLoretaVoxel[i][0]), float(g_iLoretaVoxel[i][1]), float(-g_iLoretaVoxel[i][2]));
+				::glTranslatef(float(-loretaVoxel[i][0]), float(loretaVoxel[i][1]), float(-loretaVoxel[i][2]));
 				::glScalef(3.5, 3.5, 3.5);
 				cube();
 				::glPopMatrix();
@@ -723,13 +513,13 @@ bool CRendererLoreta::render(const IRendererContext& rContext)
 #if defined __Rendering_VertexBuffer__
 	glEnable(GL_TEXTURE_1D);
 	glDisable(GL_LIGHTING);
-	glColor4f(.1f, .1f, .1f, rContext.getTranslucency());
+	glColor4f(.1F, .1F, .1F, ctx.getTranslucency());
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_oBrain.m_vVertex[0].x);
-	glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_oBrain.m_vVertex[0].u);
-	// ::glDrawElements(GL_TRIANGLES, m_oBrain.m_vTriangle.size(), GL_UNSIGNED_INT, &m_oBrain.m_vTriangle[0]);
-	if (!m_vBrainSubsetTriangle.empty()) { glDrawElements(GL_TRIANGLES, GLsizei(m_vBrainSubsetTriangle.size()), GL_UNSIGNED_INT, &m_vBrainSubsetTriangle[0]); }
+	glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_brain.m_Vertices[0].x);
+	glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_brain.m_Vertices[0].u);
+	// ::glDrawElements(GL_TRIANGLES, m_brain.m_Triangles.size(), GL_UNSIGNED_INT, &m_brain.m_Triangles[0]);
+	if (!m_brainSubsetTriangles.empty()) { glDrawElements(GL_TRIANGLES, GLsizei(m_brainSubsetTriangles.size()), GL_UNSIGNED_INT, &m_brainSubsetTriangles[0]); }
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);
 #endif
@@ -739,31 +529,31 @@ bool CRendererLoreta::render(const IRendererContext& rContext)
 	glEnable(GL_LIGHTING);
 	glDisable(GL_TEXTURE_1D);
 	glPushMatrix();
-	glTranslatef(0, .5f, 0);
+	glTranslatef(0, .5F, 0);
 	glRotatef(19, 1, 0, 0);
-	glTranslatef(0, -.2f, .35f);
+	glTranslatef(0, -.2F, .35F);
 	//	::glScalef(1.8f, 1.8f, 1.8f);
 
-	if (rContext.isScalpMeshVisible())
+	if (ctx.isScalpMeshVisible())
 	{
-		glColor4f(.8f, .6f, .5f, .1f);
+		glColor4f(.8F, .6F, .5F, .1F);
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glEnableClientState(GL_NORMAL_ARRAY);
-		glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_oScalp.m_vVertex[0].x);
-		glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_oScalp.m_vNormal[0].x);
-		glDrawElements(GL_TRIANGLES, GLsizei(m_oScalp.m_vTriangle.size()), GL_UNSIGNED_INT, &m_oScalp.m_vTriangle[0]);
+		glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_scalp.m_Vertices[0].x);
+		glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_scalp.m_Normals[0].x);
+		glDrawElements(GL_TRIANGLES, GLsizei(m_scalp.m_Triangles.size()), GL_UNSIGNED_INT, &m_scalp.m_Triangles[0]);
 		glDisableClientState(GL_NORMAL_ARRAY);
 		glDisableClientState(GL_VERTEX_ARRAY);
 	}
-	if (rContext.isFaceMeshVisible())
+	if (ctx.isFaceMeshVisible())
 	{
-		glColor4f(.8f, .6f, .5f, .1f);
+		glColor4f(.8F, .6F, .5F, .1F);
 		glDisable(GL_TEXTURE_1D);
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glEnableClientState(GL_NORMAL_ARRAY);
-		glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_oFace.m_vVertex[0].x);
-		glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_oFace.m_vNormal[0].x);
-		glDrawElements(GL_TRIANGLES, GLsizei(m_oFace.m_vTriangle.size()), GL_UNSIGNED_INT, &m_oFace.m_vTriangle[0]);
+		glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_face.m_Vertices[0].x);
+		glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_face.m_Normals[0].x);
+		glDrawElements(GL_TRIANGLES, GLsizei(m_face.m_Triangles.size()), GL_UNSIGNED_INT, &m_face.m_Triangles[0]);
 		glDisableClientState(GL_NORMAL_ARRAY);
 		glDisableClientState(GL_VERTEX_ARRAY);
 	}
@@ -771,7 +561,7 @@ bool CRendererLoreta::render(const IRendererContext& rContext)
 	glDisable(GL_LIGHTING);
 	glPopMatrix();
 
-	if (rContext.getCheckBoardVisibility()) { this->drawCoordinateSystem(); }
+	if (ctx.getCheckBoardVisibility()) { this->drawCoordinateSystem(); }
 
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
@@ -786,21 +576,19 @@ bool CRendererLoreta::render(const IRendererContext& rContext)
 
 void CRendererLoreta::clearRegionSelection()
 {
-	for (std::vector<bool>::iterator it = m_vSelected.begin(); it != m_vSelected.end(); ++it) { *it = false; }
+	for (auto it = m_selecteds.begin(); it != m_selecteds.end(); ++it) { *it = false; }
 	this->refreshBrainSubset();
 }
 
-uint32_t CRendererLoreta::getRegionCategoryCount() { return uint32_t(m_vLookup.size()); }
-
-uint32_t CRendererLoreta::getRegionCount(const uint32_t regionCategory)
+size_t CRendererLoreta::getRegionCount(const size_t category)
 {
-	if (regionCategory >= m_vLookup.size()) { return 0; }
-	return uint32_t(m_vLookup[regionCategory].size());
+	if (category >= m_lookups.size()) { return 0; }
+	return size_t(m_lookups[category].size());
 }
 
-const char* CRendererLoreta::getRegionCategoryName(const uint32_t regionCategory)
+const char* CRendererLoreta::getRegionCategoryName(const size_t category)
 {
-	switch (regionCategory)
+	switch (category)
 	{
 		case 0: return "Brodmann";
 		case 1: return "Anatomic";
@@ -810,49 +598,49 @@ const char* CRendererLoreta::getRegionCategoryName(const uint32_t regionCategory
 	}
 }
 
-const char* CRendererLoreta::getRegionName(const uint32_t regionCategory, const uint32_t regionIndex)
+const char* CRendererLoreta::getRegionName(const size_t category, const size_t index)
 {
-	if (regionCategory >= m_vLookup.size()) { return nullptr; }
+	if (category >= m_lookups.size()) { return nullptr; }
 
-	std::map<std::string, std::vector<uint32_t>>& l_vLookup = m_vLookup[regionCategory];
-	auto it                                                 = l_vLookup.begin();
+	auto& lookup = m_lookups[category];
+	auto it      = lookup.begin();
 
-	for (uint32_t j = 0; j < regionIndex && it != l_vLookup.end(); j++) { ++it; }
+	for (size_t j = 0; j < index && it != lookup.end(); ++j) { ++it; }
 
-	if (it != l_vLookup.end()) { return it->first.c_str(); }
+	if (it != lookup.end()) { return it->first.c_str(); }
 
 	return nullptr;
 }
 
-void CRendererLoreta::selectRegion(const uint32_t regionCategory, const char* sRegionName)
+void CRendererLoreta::selectRegion(const size_t category, const char* name)
 {
-	if (regionCategory >= m_vLookup.size()) { return; }
+	if (category >= m_lookups.size()) { return; }
 
-	std::map<std::string, std::vector<uint32_t>>& l_vLookup = m_vLookup[regionCategory];
+	auto& lookup = m_lookups[category];
 
-	std::map<std::string, std::vector<uint32_t>>::iterator it = l_vLookup.find(sRegionName);
-	if (it != l_vLookup.end())
+	auto it = lookup.find(name);
+	if (it != lookup.end())
 	{
-		std::vector<uint32_t>& l_rList = it->second;
-		for (auto& i : l_rList) { m_vSelected[i] = true; }
+		std::vector<size_t>& list = it->second;
+		for (auto& i : list) { m_selecteds[i] = true; }
 	}
 
 	this->refreshBrainSubset();
 }
 
-void CRendererLoreta::selectRegion(const uint32_t regionCategory, const uint32_t regionIndex)
+void CRendererLoreta::selectRegion(const size_t category, const size_t index)
 {
-	if (regionCategory >= m_vLookup.size()) { return; }
+	if (category >= m_lookups.size()) { return; }
 
-	std::map<std::string, std::vector<uint32_t>>& l_vLookup   = m_vLookup[regionCategory];
-	std::map<std::string, std::vector<uint32_t>>::iterator it = l_vLookup.begin();
+	auto& lookup = m_lookups[category];
+	auto it      = lookup.begin();
 
-	for (uint32_t j = 0; j < regionIndex && it != l_vLookup.end(); j++) { ++it; }
+	for (size_t j = 0; j < index && it != lookup.end(); ++j) { ++it; }
 
-	if (it != l_vLookup.end())
+	if (it != lookup.end())
 	{
-		std::vector<uint32_t>& l_rList = it->second;
-		for (auto& i : l_rList) { m_vSelected[i] = true; }
+		std::vector<size_t>& list = it->second;
+		for (auto& i : list) { m_selecteds[i] = true; }
 	}
 
 	this->refreshBrainSubset();
@@ -862,22 +650,19 @@ void CRendererLoreta::refreshBrainSubset()
 
 {
 	// Initializes look up to its maximum size
-
-	m_vBrainSubsetTriangle = m_oBrain.m_vTriangle;
+	m_brainSubsetTriangles = m_brain.m_Triangles;
 
 	// Inserts selected voxels in look up
-
-	const uint32_t l_ui32TrianglePerRenderedVoxel = 12;
-	const uint32_t l_ui32VertexPerRenderedVoxel   = l_ui32TrianglePerRenderedVoxel * 3;
-	uint32_t i, j, k;
-	for (i = 0, j = 0, k = 0; i < 2394; i++, k += l_ui32VertexPerRenderedVoxel)
+	const size_t trianglePerVoxel = 12;
+	const size_t vertexPerVoxel   = trianglePerVoxel * 3;
+	size_t i, j, k;
+	for (i = 0, j = 0, k = 0; i < 2394; i++, k += vertexPerVoxel)
 	{
-		if (m_vSelected[i]) { for (uint32_t l = 0; l < l_ui32VertexPerRenderedVoxel; l++) { m_vBrainSubsetTriangle[j++] = m_oBrain.m_vTriangle[k + l]; } }
+		if (m_selecteds[i]) { for (size_t l = 0; l < vertexPerVoxel; ++l) { m_brainSubsetTriangles[j++] = m_brain.m_Triangles[k + l]; } }
 	}
-
 	// Crops look up to the subset size
 
-	m_vBrainSubsetTriangle.resize(j);
+	m_brainSubsetTriangles.resize(j);
 }
 
 #endif // TARGET_HAS_ThirdPartyOpenGL

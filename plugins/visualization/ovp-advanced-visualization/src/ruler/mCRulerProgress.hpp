@@ -21,7 +21,6 @@
 #pragma once
 
 #include "../mIRuler.hpp"
-#include "../m_VisualizationTools.hpp"
 
 namespace Mensia
 {
@@ -31,24 +30,20 @@ namespace Mensia
 		{
 		public:
 
-			virtual void renderFinal(const float fProgress) = 0;
+			virtual void renderFinal(const float progress) = 0;
 
 			void render() override
-
 			{
-#if 0
-				::printf("%p = %p\n", this, m_pRenderer);
-#endif
-				if (m_pRenderer == nullptr) { return; }
-				if (m_pRenderer->getSampleCount() == 0) { return; }
-				if (m_pRenderer->getHistoryCount() == 0) { return; }
-				if (m_pRenderer->getHistoryIndex() == 0) { return; }
+				if (m_renderer == nullptr) { return; }
+				if (m_renderer->getSampleCount() == 0) { return; }
+				if (m_renderer->getHistoryCount() == 0) { return; }
+				if (m_renderer->getHistoryIndex() == 0) { return; }
 
-				const uint32_t sampleCount  = m_pRenderer->getSampleCount();
-				const uint32_t historyIndex = m_pRenderer->getHistoryIndex();
+				const size_t nSample    = m_renderer->getSampleCount();
+				const size_t historyIdx = m_renderer->getHistoryIndex();
 
-				const float l_fProgress = float(historyIndex - (float(historyIndex) / sampleCount) * sampleCount) / sampleCount;
-				if (l_fProgress != 0 && l_fProgress != 1) { this->renderFinal(l_fProgress); }
+				const float progress = float(historyIdx - (float(historyIdx) / nSample) * nSample) / nSample;
+				if (progress != 0 && progress != 1) { this->renderFinal(progress); }
 			}
 		};
 	} // namespace AdvancedVisualization

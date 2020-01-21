@@ -4,34 +4,34 @@
 
 namespace OpenViBEDesigner
 {
-	class CCommentEditorDialog
+	class CCommentEditorDialog final
 	{
 	public:
 
-		CCommentEditorDialog(const OpenViBE::Kernel::IKernelContext& ctx, OpenViBE::Kernel::IComment& rComment, const char* sGUIFilename);
-		virtual ~CCommentEditorDialog() = default;
+		CCommentEditorDialog(const OpenViBE::Kernel::IKernelContext& ctx, OpenViBE::Kernel::IComment& comment, const char* guiFilename)
+			: m_kernelCtx(ctx), m_comment(comment), m_guiFilename(guiFilename) { }
+
+		~CCommentEditorDialog() = default;
 
 		bool run();
 
 		// Callback for text formatting
-		void applyTagCB(const char* sTagIn, const char* sTagOut) const;
+		void applyTagCB(const char* in, const char* out) const;
 
 		// help formatting pango
-		void infoCB() const { gtk_widget_show(m_pInfoDialog); }
+		void infoCB() const { gtk_widget_show(m_infoDialog); }
 	protected:
 
-		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
-		OpenViBE::Kernel::IComment& m_rComment;
-		OpenViBE::CString m_sGUIFilename;
+		const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
+		OpenViBE::Kernel::IComment& m_comment;
+		OpenViBE::CString m_guiFilename;
 
-	private:
+		GtkBuilder* m_interface = nullptr;
+		GtkWidget* m_dialog     = nullptr;
+		GtkWidget* m_infoDialog = nullptr;
+		GtkWidget* m_desc       = nullptr;
+		GtkTextBuffer* m_buffer = nullptr;
 
-		CCommentEditorDialog();
-
-		GtkBuilder* m_pInterface{};
-		GtkWidget* m_pDialog{};
-		GtkWidget* m_pInfoDialog{};
-		GtkWidget* m_pDescription{};
-		GtkTextBuffer* m_pDescriptionBuffer{};
+		CCommentEditorDialog() = delete;
 	};
 } // namespace OpenViBEDesigner

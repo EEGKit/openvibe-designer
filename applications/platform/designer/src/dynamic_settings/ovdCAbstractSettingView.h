@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../ovd_base.h"
+#include <cstdlib>	// size_t for unix
 
 namespace OpenViBEDesigner
 {
@@ -22,19 +23,19 @@ namespace OpenViBEDesigner
 			virtual GtkWidget* getEntryWidget() { return m_entryNameWidget; }
 
 			//This function is use to update the setting index when a setting is suppressed or inserted
-			virtual void setSettingIndex(const uint32_t index) { m_index = index; }
+			virtual void setSettingIndex(const size_t index) { m_index = index; }
 
 			//Get the index of the setting
-			virtual uint32_t getSettingIndex() { return m_index; }
+			virtual size_t getSettingIndex() { return m_index; }
 
 		protected:
-			//Initialize the common part of all view. If sBuilderName and sWidgetName are not nullptr, the entryTable and the label
+			//Initialize the common part of all view. If builderName and widgetName are not nullptr, the entryTable and the label
 			//will be set according to these informations.
 			//If there are nullptr, name and entry widget will have to be set after with corresponding setter.
-			CAbstractSettingView(OpenViBE::Kernel::IBox& box, const uint32_t index, const char* sBuilderName, const char* sWidgetName);
+			CAbstractSettingView(OpenViBE::Kernel::IBox& box, const size_t index, const char* builderName, const char* widgetName);
 
 			//Return the box which contains the setting
-			virtual OpenViBE::Kernel::IBox& getBox() { return m_rBox; }
+			virtual OpenViBE::Kernel::IBox& getBox() { return m_box; }
 
 
 			//Set the widget as the new widget name
@@ -46,7 +47,7 @@ namespace OpenViBEDesigner
 			virtual void initializeValue();
 
 			//Return a vector which contains the list of the widget contains int the widget widget
-			virtual void extractWidget(GtkWidget* widget, std::vector<GtkWidget *>& rVector);
+			virtual void extractWidget(GtkWidget* widget, std::vector<GtkWidget *>& widgets);
 
 			//Return the part of the entry table which is not revert or default button
 			virtual GtkWidget* getEntryFieldWidget() { return m_entryFieldWidget; }
@@ -58,15 +59,15 @@ namespace OpenViBEDesigner
 			virtual GtkWidget* generateEntryWidget();
 
 
-			OpenViBE::Kernel::IBox& m_rBox;
-			uint32_t m_index = 0;
+			OpenViBE::Kernel::IBox& m_box;
+			size_t m_index = 0;
 			OpenViBE::CString m_settingWidgetName;
 			GtkWidget* m_nameWidget       = nullptr;
 			GtkWidget* m_entryNameWidget  = nullptr;
 			GtkWidget* m_entryFieldWidget = nullptr;
 
 			//If we don't store the builder, the setting name will be free when we'll unref the builder
-			GtkBuilder* m_pBuilder = nullptr;
+			GtkBuilder* m_builder = nullptr;
 		};
 	} // namespace Setting
 } // namespace OpenViBEDesigner

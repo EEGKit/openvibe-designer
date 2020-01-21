@@ -7,10 +7,10 @@ namespace OpenViBEDesigner
 {
 	namespace Setting
 	{
-		class CBooleanSettingView : public CAbstractSettingView
+		class CBooleanSettingView final : public CAbstractSettingView
 		{
 		public:
-			CBooleanSettingView(OpenViBE::Kernel::IBox& box, const uint32_t index, OpenViBE::CString& rBuilderName);
+			CBooleanSettingView(OpenViBE::Kernel::IBox& box, const size_t index, OpenViBE::CString& builderName);
 
 			void getValue(OpenViBE::CString& value) const override;
 			void setValue(const OpenViBE::CString& value) override;

@@ -21,7 +21,6 @@
 #pragma once
 
 #include "../mIRuler.hpp"
-#include "../m_VisualizationTools.hpp"
 
 namespace Mensia
 {
@@ -31,41 +30,41 @@ namespace Mensia
 		{
 		public:
 
-			void renderRight(GtkWidget* pWidget) override
+			void renderRight(GtkWidget* widget) override
 			{
-				const auto l_fScale = float(m_pRendererContext->getSpectrumFrequencyRange());
-				if (m_fLastScale != l_fScale)
+				const auto scale = float(m_rendererCtx->getSpectrumFrequencyRange());
+				if (m_lastScale != scale)
 				{
-					m_vRange     = split_range(0, l_fScale);
-					m_fLastScale = l_fScale;
+					m_range     = splitRange(0, scale);
+					m_lastScale = scale;
 				}
 
 				gint w, h;
 				gint lw, lh;
 
-				const uint32_t l_ui32ChannelCount = m_pRendererContext->getSelectedCount();
-				for (uint32_t i = 0; i < l_ui32ChannelCount; ++i)
+				const size_t nChannel = m_rendererCtx->getSelectedCount();
+				for (size_t i = 0; i < nChannel; ++i)
 				{
-					gdk_drawable_get_size(pWidget->window, &w, &h);
-					GdkGC* l_pDrawGC = gdk_gc_new(pWidget->window);
-					for (it = m_vRange.begin(); it != m_vRange.end(); ++it)
+					gdk_drawable_get_size(widget->window, &w, &h);
+					GdkGC* drawGC = gdk_gc_new(widget->window);
+					for (const auto& r : m_range)
 					{
-						const gint y                = gint((i + *it / l_fScale) * (h * 1.f / l_ui32ChannelCount));
-						PangoLayout* l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, getLabel(*it).c_str());
-						pango_layout_get_size(l_pPangoLayout, &lw, &lh);
+						const gint y        = gint((i + r / scale) * (h * 1.F / nChannel));
+						PangoLayout* layout = gtk_widget_create_pango_layout(widget, getLabel(r).c_str());
+						pango_layout_get_size(layout, &lw, &lh);
 						lw /= PANGO_SCALE;
 						lh /= PANGO_SCALE;
-						gdk_draw_layout(pWidget->window, l_pDrawGC, 8, h - y - lh / 2, l_pPangoLayout);
-						gdk_draw_line(pWidget->window, l_pDrawGC, 0, h - y, 3, h - y);
-						g_object_unref(l_pPangoLayout);
+						gdk_draw_layout(widget->window, drawGC, 8, h - y - lh / 2, layout);
+						gdk_draw_line(widget->window, drawGC, 0, h - y, 3, h - y);
+						g_object_unref(layout);
 					}
-					g_object_unref(l_pDrawGC);
+					g_object_unref(drawGC);
 				}
 			}
 
-			float m_fLastScale = 1;
-			std::vector<double> m_vRange;
-			std::vector<double>::iterator it;
+		protected:
+			float m_lastScale = 1;
+			std::vector<double> m_range;
 		};
 	} // namespace AdvancedVisualization
 } // namespace Mensia

@@ -22,7 +22,7 @@
 
 #include "m_defines.hpp"
 
-#include <mensia/advanced-visualization.h>
+#include <mensia/advanced-visualization.hpp>
 
 #include <string>
 
@@ -30,7 +30,7 @@ namespace Mensia
 {
 	namespace AdvancedVisualization
 	{
-		std::string trim(const std::string& sValue);
-		IRendererContext& getContext();
+		std::string trim(const std::string& value);
+		CRendererContext& getContext();
 	} // namespace AdvancedVisualization
 } // namespace Mensia

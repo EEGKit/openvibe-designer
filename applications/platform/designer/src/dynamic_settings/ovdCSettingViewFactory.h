@@ -7,17 +7,19 @@ namespace OpenViBEDesigner
 {
 	namespace Setting
 	{
-		class CSettingViewFactory
+		class CSettingViewFactory final
 		{
 		public:
-			CSettingViewFactory(const OpenViBE::CString& rBuilderName, const OpenViBE::Kernel::IKernelContext& ctx);
-			virtual ~CSettingViewFactory() = default;
+			CSettingViewFactory(const OpenViBE::CString& builderName, const OpenViBE::Kernel::IKernelContext& ctx)
+				: m_builderName(builderName), m_kernelCtx(ctx) { }
 
-			CAbstractSettingView* getSettingView(OpenViBE::Kernel::IBox& box, const uint32_t index);
+			~CSettingViewFactory() = default;
+
+			CAbstractSettingView* getSettingView(OpenViBE::Kernel::IBox& box, const size_t index);
 
 		private:
 			OpenViBE::CString m_builderName;
-			const OpenViBE::Kernel::IKernelContext& m_kernelContext;
+			const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
 		};
 	} // namespace Setting
 } // namespace OpenViBEDesigner

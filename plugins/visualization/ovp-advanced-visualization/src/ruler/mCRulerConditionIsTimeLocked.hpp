@@ -30,16 +30,17 @@ namespace Mensia
 		{
 		public:
 
-			CRulerConditionIsTimeLocked() : m_pRendererContext(nullptr), m_pRenderer(nullptr) { }
+			CRulerConditionIsTimeLocked() : m_rendererCtx(nullptr), m_renderer(nullptr) { }
 
-			void setRendererContext(const IRendererContext* pRendererContext) override { m_pRendererContext = pRendererContext; }
+			void setRendererContext(const CRendererContext* ctx) override { m_rendererCtx = ctx; }
 
-			void setRenderer(const IRenderer* pRenderer) override { m_pRenderer = pRenderer; }
+			void setRenderer(const IRenderer* renderer) override { m_renderer = renderer; }
 
-			bool operator()() { return m_pRendererContext->isTimeLocked(); }
+			bool operator()() const { return m_rendererCtx->isTimeLocked(); }
 
-			const IRendererContext* m_pRendererContext;
-			const IRenderer* m_pRenderer;
+		protected:
+			const CRendererContext* m_rendererCtx;
+			const IRenderer* m_renderer;
 		};
 	} // namespace AdvancedVisualization
 } // namespace Mensia

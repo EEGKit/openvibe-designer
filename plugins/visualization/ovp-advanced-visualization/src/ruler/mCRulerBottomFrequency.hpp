@@ -21,7 +21,6 @@
 #pragma once
 
 #include "../mIRuler.hpp"
-#include "../m_VisualizationTools.hpp"
 
 namespace Mensia
 {
@@ -31,33 +30,33 @@ namespace Mensia
 		{
 		public:
 
-			void renderBottom(GtkWidget* pWidget) override
+			void renderBottom(GtkWidget* widget) override
 			{
-				const auto l_fScale = float(m_pRendererContext->getSpectrumFrequencyRange());
-				if (m_fLastScale != l_fScale)
+				const auto scale = float(m_rendererCtx->getSpectrumFrequencyRange());
+				if (m_lastScale != scale)
 				{
-					m_vRange     = split_range(0, l_fScale);
-					m_fLastScale = l_fScale;
+					m_range     = splitRange(0, scale);
+					m_lastScale = scale;
 				}
 
 				gint w, h;
 
-				gdk_drawable_get_size(pWidget->window, &w, &h);
-				GdkGC* l_pDrawGC = gdk_gc_new(pWidget->window);
-				for (it = m_vRange.begin(); it != m_vRange.end(); ++it)
+				gdk_drawable_get_size(widget->window, &w, &h);
+				GdkGC* drawGC = gdk_gc_new(widget->window);
+				for (const auto& i : m_range)
 				{
-					const gint x                = gint((*it / l_fScale) * w);
-					PangoLayout* l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, getLabel(*it).c_str());
-					gdk_draw_layout(pWidget->window, l_pDrawGC, x, 5, l_pPangoLayout);
-					gdk_draw_line(pWidget->window, l_pDrawGC, x, 0, x, 3);
-					g_object_unref(l_pPangoLayout);
+					const gint x        = gint((i / scale) * w);
+					PangoLayout* layout = gtk_widget_create_pango_layout(widget, getLabel(i).c_str());
+					gdk_draw_layout(widget->window, drawGC, x, 5, layout);
+					gdk_draw_line(widget->window, drawGC, x, 0, x, 3);
+					g_object_unref(layout);
 				}
-				g_object_unref(l_pDrawGC);
+				g_object_unref(drawGC);
 			}
 
-			float m_fLastScale = 0;
-			std::vector<double> m_vRange;
-			std::vector<double>::iterator it;
+		protected:
+			float m_lastScale = 0;
+			std::vector<double> m_range;
 		};
 	} // namespace AdvancedVisualization
 } // namespace Mensia

@@ -50,7 +50,7 @@ static std::string Trim(const std::string& str)
 static size_t GetQuotePos(const std::string& str, const size_t start_pos = 0)
 {
 	bool found_slash = false;
-	for (size_t i = start_pos; i < str.length(); i++)
+	for (size_t i = start_pos; i < str.length(); ++i)
 	{
 		const char c = str[i];
 		if ((c == '\\') && !found_slash)
@@ -240,14 +240,14 @@ bool Object::HasKey(const std::string& key) const { return find(key) != end(); }
 
 int Object::HasKeys(const std::vector<std::string>& keys) const
 {
-	for (size_t i = 0; i < keys.size(); i++) { if (!HasKey(keys[i])) { return int(i); } }
+	for (size_t i = 0; i < keys.size(); ++i) { if (!HasKey(keys[i])) { return int(i); } }
 
 	return -1;
 }
 
 int Object::HasKeys(const char** keys, const int key_count) const
 {
-	for (int i = 0; i < key_count; i++) { if (!HasKey(keys[i])) { return i; } }
+	for (int i = 0; i < key_count; ++i) { if (!HasKey(keys[i])) { return i; } }
 
 	return -1;
 }
@@ -315,7 +315,7 @@ std::string json::Serialize(const Value& v)
 	{
 		str        = "{";
 		Object obj = v.ToObject();
-		for (Object::ValueMap::const_iterator it = obj.begin(); it != obj.end(); ++it)
+		for (auto it = obj.begin(); it != obj.end(); ++it)
 		{
 			if (!first) { str += std::string(","); }
 			str += std::string("\"") + it->first + std::string("\":") + SerializeValue(it->second);
@@ -328,7 +328,7 @@ std::string json::Serialize(const Value& v)
 	{
 		str     = "[";
 		Array a = v.ToArray();
-		for (Array::ValueVector::const_iterator it = a.begin(); it != a.end(); ++it)
+		for (auto it = a.begin(); it != a.end(); ++it)
 		{
 			if (!first) { str += std::string(","); }
 			str += SerializeValue(*it);
@@ -387,7 +387,7 @@ static size_t GetEndOfArrayOrObj(const std::string& str, std::stack<StackDepthTy
 	bool in_quote               = false;
 	const size_t original_count = depth_stack.size();
 
-	for (; i < str.length(); i++)
+	for (; i < str.length(); ++i)
 	{
 		if (str[i] == '\"') { if (str[i - 1] != '\\') { in_quote = !in_quote; } }
 		else if (!in_quote)
@@ -426,7 +426,7 @@ static std::string UnescapeJSONString(const std::string& str)
 {
 	std::string s;
 
-	for (size_t i = 0; i < str.length(); i++)
+	for (size_t i = 0; i < str.length(); ++i)
 	{
 		const char c = str[i];
 		if ((c == '\\') && (i + 1 < str.length()))
@@ -526,7 +526,7 @@ static Value DeserializeValue(std::string& str, bool* had_error, std::stack<Stac
 		bool has_e   = false;
 		std::string temp_val;
 		size_t i = 0;
-		for (; i < str.length(); i++)
+		for (; i < str.length(); ++i)
 		{
 			if (str[i] == '.') { has_dot = true; }
 			else if (str[i] == 'e') { has_e = true; }
@@ -587,7 +587,7 @@ static Value DeserializeArray(std::string& str, std::stack<StackDepthType>& dept
 		std::string tmp;
 
 		size_t i = 0;
-		for (; i < str.length(); i++)
+		for (; i < str.length(); ++i)
 		{
 			// If we get to an object or array, parse it:
 			if ((str[i] == '{') || (str[i] == '['))

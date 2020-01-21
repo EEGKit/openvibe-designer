@@ -30,47 +30,47 @@ namespace Mensia
 		{
 		public:
 
-			CRulerRightScale() : m_fLastScale(-1) { }
+			CRulerRightScale() : m_lastScale(-1) { }
 
 			void renderRight(GtkWidget* pWidget) override
 			{
-				const uint32_t selectedCount = m_pRendererContext->getSelectedCount();
-				if (!selectedCount) { return; }
+				const size_t nSelected = m_rendererCtx->getSelectedCount();
+				if (!nSelected) { return; }
 
-				const float l_fScale = 1.f / m_pRendererContext->getScale();
-				if (m_fLastScale != l_fScale)
+				const float scale = 1.F / m_rendererCtx->getScale();
+				if (m_lastScale != scale)
 				{
-					if (m_pRendererContext->isPositiveOnly()) { m_vRange = split_range(0, l_fScale, IRuler_SplitCount); }
-					else { m_vRange = split_range(-l_fScale * .5, l_fScale * .5, IRuler_SplitCount); }
-					m_fLastScale = l_fScale;
+					if (m_rendererCtx->isPositiveOnly()) { m_range = splitRange(0, scale, IRuler_SplitCount); }
+					else { m_range = splitRange(-scale * .5, scale * .5, IRuler_SplitCount); }
+					m_lastScale = scale;
 				}
 
-				const float l_fOffset = m_pRendererContext->isPositiveOnly() ? 0.0f : 0.5f;
+				const float offset = m_rendererCtx->isPositiveOnly() ? 0.0F : 0.5F;
 
 				gint w, h, lw, lh;
 
 				gdk_drawable_get_size(pWidget->window, &w, &h);
-				GdkGC* l_pDrawGC = gdk_gc_new(pWidget->window);
-				for (unsigned int i = 0; i < m_pRendererContext->getSelectedCount(); ++i)
+				GdkGC* drawGC = gdk_gc_new(pWidget->window);
+				for (size_t i = 0; i < m_rendererCtx->getSelectedCount(); ++i)
 				{
-					for (it = m_vRange.begin(); it != m_vRange.end(); ++it)
+					for (const auto& j : m_range)
 					{
-						PangoLayout* l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, getLabel(*it).c_str());
-						pango_layout_get_size(l_pPangoLayout, &lw, &lh);
+						PangoLayout* layout = gtk_widget_create_pango_layout(pWidget, getLabel(j).c_str());
+						pango_layout_get_size(layout, &lw, &lh);
 						lw /= PANGO_SCALE;
 						lh /= PANGO_SCALE;
-						const gint y = gint((1 - (float(i) + l_fOffset + *it / l_fScale) / selectedCount) * h);
-						gdk_draw_layout(pWidget->window, l_pDrawGC, 8, y - lh / 2, l_pPangoLayout);
-						gdk_draw_line(pWidget->window, l_pDrawGC, 0, y, 3, y);
-						g_object_unref(l_pPangoLayout);
+						const gint y = gint((1 - (float(i) + offset + j / scale) / nSelected) * h);
+						gdk_draw_layout(pWidget->window, drawGC, 8, y - lh / 2, layout);
+						gdk_draw_line(pWidget->window, drawGC, 0, y, 3, y);
+						g_object_unref(layout);
 					}
 				}
-				g_object_unref(l_pDrawGC);
+				g_object_unref(drawGC);
 			}
 
-			float m_fLastScale = 1;
-			std::vector<double> m_vRange;
-			std::vector<double>::iterator it;
+		protected:
+			float m_lastScale = 1;
+			std::vector<double> m_range;
 		};
 	} // namespace AdvancedVisualization
 } // namespace Mensia

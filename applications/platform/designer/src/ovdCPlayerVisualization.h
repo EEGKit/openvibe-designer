@@ -10,10 +10,12 @@ namespace OpenViBEDesigner
 {
 	class CInterfacedScenario;
 
-	class CPlayerVisualization : public OpenViBEVisualizationToolkit::ITreeViewCB
+	class CPlayerVisualization final : public OpenViBEVisualizationToolkit::ITreeViewCB
 	{
 	public:
-		CPlayerVisualization(const OpenViBE::Kernel::IKernelContext& ctx, OpenViBEVisualizationToolkit::IVisualizationTree& rVisualizationTree, CInterfacedScenario& rInterfacedScenario);
+		CPlayerVisualization(const OpenViBE::Kernel::IKernelContext& ctx, OpenViBEVisualizationToolkit::IVisualizationTree& tree,
+							 CInterfacedScenario& interfacedScenario)
+			: m_kernelCtx(ctx), m_visualizationTree(tree), m_interfacedScenario(interfacedScenario) { }
 
 		virtual ~CPlayerVisualization();
 
@@ -21,15 +23,15 @@ namespace OpenViBEDesigner
 
 		/** \name ITreeViewCB interface implementation */
 		//@{
-		GtkWidget* loadTreeWidget(OpenViBEVisualizationToolkit::IVisualizationWidget* pVisualizationWidget);
-		void endLoadTreeWidget(OpenViBEVisualizationToolkit::IVisualizationWidget* pVisualizationWidget);
-		bool setToolbar(const OpenViBE::CIdentifier& boxID, GtkWidget* pToolbarWidget);
+		GtkWidget* loadTreeWidget(OpenViBEVisualizationToolkit::IVisualizationWidget* widget);
+		void endLoadTreeWidget(OpenViBEVisualizationToolkit::IVisualizationWidget* widget);
+		bool setToolbar(const OpenViBE::CIdentifier& boxID, GtkWidget* widget);
 		bool setWidget(const OpenViBE::CIdentifier& boxID, GtkWidget* widget);
 		//@}
 
 		void showTopLevelWindows();
 		void hideTopLevelWindows();
-		CInterfacedScenario& getInterfacedScenario() { return m_rInterfacedScenario; }
+		CInterfacedScenario& getInterfacedScenario() const { return m_interfacedScenario; }
 
 	protected:
 		bool parentWidgetBox(OpenViBEVisualizationToolkit::IVisualizationWidget* widget, GtkBox* widgetBox);
@@ -39,8 +41,10 @@ namespace OpenViBEDesigner
 		void resizeCB(GtkContainer* container);
 
 		//callbacks for DND
-		static void drag_data_get_from_widget_cb(GtkWidget* pSrcWidget, GdkDragContext* pDC, GtkSelectionData* pSelectionData, guint uiInfo, guint uiTime, gpointer data);
-		static void drag_data_received_in_widget_cb(GtkWidget* pDstWidget, GdkDragContext*, gint, gint, GtkSelectionData* pSelectionData, guint, guint, gpointer data);
+		static void drag_data_get_from_widget_cb(GtkWidget* srcWidget, GdkDragContext* pDC, GtkSelectionData* selectionData, guint uiInfo, guint uiTime,
+												 gpointer data);
+		static void drag_data_received_in_widget_cb(GtkWidget* dstWidget, GdkDragContext*, gint, gint, GtkSelectionData* selectionData, guint, guint,
+													gpointer data);
 
 		//callback for toolbar
 		static void toolbar_button_toggled_cb(GtkToggleButton* button, gpointer data);
@@ -50,44 +54,45 @@ namespace OpenViBEDesigner
 
 	private:
 
-		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
-		OpenViBEVisualizationToolkit::IVisualizationTree& m_rVisualizationTree;
-		CInterfacedScenario& m_rInterfacedScenario;
+		const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
+		OpenViBEVisualizationToolkit::IVisualizationTree& m_visualizationTree;
+		CInterfacedScenario& m_interfacedScenario;
 
 		/**
 		 * \brief Vector of top level windows
 		 */
-		std::vector<GtkWindow*> m_vWindows;
+		std::vector<GtkWindow*> m_windows;
 
 		/**
 		 * \brief Map of split (paned) widgets associated to their identifiers
 		 * This map is used to retrieve size properties of split widgets upon window resizing,
 		 * so as to keep the relative sizes of a hierarchy of widgets
 		 */
-		std::map<GtkPaned*, OpenViBE::CIdentifier> m_mSplitWidgets;
+		std::map<GtkPaned*, OpenViBE::CIdentifier> m_splitWidgets;
 
 		/**
 		 * \brief Map associating toolbar buttons to toolbar windows
 		 */
-		std::map<GtkToggleButton*, GtkWidget*> m_mToolbars;
+		std::map<GtkToggleButton*, GtkWidget*> m_toolbars;
 
 		/**
 		 * \brief Pointer to active toolbar button
 		 */
-		GtkToggleButton* m_pActiveToolbarButton = nullptr;
+		GtkToggleButton* m_activeToolbarButton = nullptr;
 
 		class CPluginWidgets
 		{
 		public:
-			CPluginWidgets() {}
-			GtkWidget* m_widget = nullptr;
-			GtkToggleButton* m_pToolbarButton = nullptr;
-			GtkWidget* m_pToolbar = nullptr;
+			CPluginWidgets()  = default;
+			~CPluginWidgets() = default;
+			GtkWidget* m_Widget              = nullptr;
+			GtkToggleButton* m_ToolbarButton = nullptr;
+			GtkWidget* m_Toolbar             = nullptr;
 		};
 
 		/**
 		 * \brief Map of visualization plugins
 		 */
-		std::map<OpenViBE::CIdentifier, CPluginWidgets> m_mPlugins;
+		std::map<OpenViBE::CIdentifier, CPluginWidgets> m_plugins;
 	};
-};
+}

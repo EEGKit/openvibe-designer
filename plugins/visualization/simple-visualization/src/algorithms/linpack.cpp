@@ -15,7 +15,6 @@
 /*&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&*/
 
 #include <cmath>
-#include <cstdio>
 #include <cstdlib>
 
 #define dmax(x,y) (((x) > (y)) ? (x) : (y))
@@ -62,7 +61,7 @@ void sspfa(double* ap, const int* n, int* kpvt, int* info)
 	double akm1, bkm1, colmax, rowmax;
 	int ij, ik, ikm1, im = 0, imj, imk, imax, imaxp1, imim;
 	int j, jj, jk, jkm1, jmax, jmim;
-	int k, kk, km1, km2, km1k, km1km1;
+	int k, kk, km1, km2, km1K, km1Km1;
 	int kstep, swap;
 	int one, itmp;
 
@@ -98,7 +97,7 @@ begin_dspfa:;
 		imaxp1 = imax + 1;
 		im     = (imax * (imax - 1)) / 2;
 		imj    = im + 2 * imax;
-		for (j = imaxp1; j <= k; j++)
+		for (j = imaxp1; j <= k; ++j)
 		{
 			rowmax = dmax(rowmax, fabs(*(ap + imj - 1)));
 			imj += j;
@@ -143,7 +142,7 @@ begin_dspfa:;
 			{
 				sswap(&imax, (ap + im), &one, (ap + ik), &one);
 				imj = ik + imax;
-				for (jj = imax; jj <= k; jj++)
+				for (jj = imax; jj <= k; ++jj)
 				{
 					j               = k + imax - jj;
 					jk              = ik + j;
@@ -154,7 +153,7 @@ begin_dspfa:;
 				}
 			}
 			ij = ik - (k - 1);
-			for (jj = 1; jj <= km1; jj++)
+			for (jj = 1; jj <= km1; ++jj)
 			{
 				j    = k - jj;
 				jk   = ik + j;
@@ -171,13 +170,13 @@ begin_dspfa:;
 		}
 		else
 		{
-			km1k = ik + k - 1;
+			km1K = ik + k - 1;
 			ikm1 = ik - (k - 1);
 			if (swap)
 			{
 				sswap(&imax, (ap + im), &one, (ap + ikm1), &one);
 				imj = ikm1 + imax;
-				for (jj = imax; jj <= km1; jj++)
+				for (jj = imax; jj <= km1; ++jj)
 				{
 					j                = km1 + imax - jj;
 					jkm1             = ikm1 + j;
@@ -186,25 +185,25 @@ begin_dspfa:;
 					*(ap + imj - 1)  = t;
 					imj -= j - 1;
 				}
-				t                = *(ap + km1k - 1);
-				*(ap + km1k - 1) = *(ap + imk - 1);
+				t                = *(ap + km1K - 1);
+				*(ap + km1K - 1) = *(ap + imk - 1);
 				*(ap + imk - 1)  = t;
 			}
 			km2 = k - 2;
 			if (km2 != 0)
 			{
-				ak     = *(ap + kk - 1) / (*(ap + km1k - 1));
-				km1km1 = ikm1 + k - 1;
-				akm1   = *(ap + km1km1 - 1) / (*(ap + km1k - 1));
+				ak     = *(ap + kk - 1) / (*(ap + km1K - 1));
+				km1Km1 = ikm1 + k - 1;
+				akm1   = *(ap + km1Km1 - 1) / (*(ap + km1K - 1));
 				denom  = 1.0 - ak * akm1;
 				ij     = ik - (k - 1) - (k - 2);
-				for (jj = 1; jj <= km2; jj++)
+				for (jj = 1; jj <= km2; ++jj)
 				{
 					j      = km1 - jj;
 					jk     = ik + j;
-					bk     = *(ap + jk - 1) / (*(ap + km1k - 1));
+					bk     = *(ap + jk - 1) / (*(ap + km1K - 1));
 					jkm1   = ikm1 + j;
-					bkm1   = *(ap + jkm1 - 1) / (*(ap + km1k - 1));
+					bkm1   = *(ap + jkm1 - 1) / (*(ap + km1K - 1));
 					tulk   = (akm1 * bk - bkm1) / denom;
 					tulkm1 = (ak * bkm1 - bk) / denom;
 					t      = tulk;

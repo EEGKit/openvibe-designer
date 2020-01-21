@@ -28,11 +28,11 @@ namespace Mensia
 	{
 		namespace GtkGL
 		{
-			void initialize(GtkWidget* pWidget);
-			void uninitialize(GtkWidget* pWidget);
+			void initialize(GtkWidget* widget);
+			void uninitialize(GtkWidget* widget);
 
-			void preRender(GtkWidget* pWidget, bool bVerticalSync = false);
-			void postRender(GtkWidget* pWidget);
+			void preRender(GtkWidget* widget, bool verticalSync = false);
+			void postRender(GtkWidget* widget);
 		} // namespace GtkGL
 	} // namespace AdvancedVisualization
 } // namespace Mensia

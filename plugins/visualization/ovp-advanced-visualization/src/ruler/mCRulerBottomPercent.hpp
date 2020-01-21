@@ -30,28 +30,26 @@ namespace Mensia
 		{
 		public:
 
-			void renderBottom(GtkWidget* pWidget) override
+			void renderBottom(GtkWidget* widget) override
 			{
-				char l_sLabel[1024];
-
 				gint w, h;
 				gint lw, lh;
 
-				gdk_drawable_get_size(pWidget->window, &w, &h);
-				GdkGC* l_pDrawGC = gdk_gc_new(pWidget->window);
+				gdk_drawable_get_size(widget->window, &w, &h);
+				GdkGC* drawGC = gdk_gc_new(widget->window);
 				for (int i = 0; i <= 10; i += 2)
 				{
-					const gint x = (i * (w - 1)) / 10;
-					sprintf(l_sLabel, "%i%%", i * 10);
-					PangoLayout* l_pPangoLayout = gtk_widget_create_pango_layout(pWidget, l_sLabel);
-					pango_layout_get_size(l_pPangoLayout, &lw, &lh);
+					const gint x            = (i * (w - 1)) / 10;
+					const std::string label = (std::to_string(i * 10) + "%");
+					PangoLayout* layout     = gtk_widget_create_pango_layout(widget, label.c_str());
+					pango_layout_get_size(layout, &lw, &lh);
 					lw /= PANGO_SCALE;
 					lh /= PANGO_SCALE;
-					gdk_draw_layout(pWidget->window, l_pDrawGC, x, 4, l_pPangoLayout);
-					gdk_draw_line(pWidget->window, l_pDrawGC, x, 0, x, 3);
-					g_object_unref(l_pPangoLayout);
+					gdk_draw_layout(widget->window, drawGC, x, 4, layout);
+					gdk_draw_line(widget->window, drawGC, x, 0, x, 3);
+					g_object_unref(layout);
 				}
-				g_object_unref(l_pDrawGC);
+				g_object_unref(drawGC);
 			}
 		};
 	} // namespace AdvancedVisualization

@@ -23,29 +23,28 @@
 #include "m_RendererTools.hpp"
 
 #include <cmath>
-#include <algorithm>
 
 using namespace Mensia;
 using namespace AdvancedVisualization;
 
-const bool m_bMultiSlice = false;
+const bool MULTI_SLICE = false;
 
 namespace
 {
-	const unsigned int S = 1000;
+	const size_t S = 1000;
 
 	// Legendre polynomials
 	// http://en.wikipedia.org/wiki/Legendre_polynomials
 
-	void legendre(const unsigned int n, const double x, std::vector<double>& vLegendre)
+	void legendre(const size_t n, const double x, std::vector<double>& legendres)
 	{
-		vLegendre.resize(n + 1);
-		vLegendre[0] = 1;
-		vLegendre[1] = x;
-		for (unsigned int i = 2; i <= n; ++i)
+		legendres.resize(n + 1);
+		legendres[0] = 1;
+		legendres[1] = x;
+		for (size_t i = 2; i <= n; ++i)
 		{
 			const double invi = 1. / i;
-			vLegendre[i]      = (2 - invi) * x * vLegendre[i - 1] - (1 - invi) * vLegendre[i - 2];
+			legendres[i]      = (2 - invi) * x * legendres[i - 1] - (1 - invi) * legendres[i - 2];
 		}
 	}
 
@@ -53,10 +52,10 @@ namespace
 	// Spherical splines for scalp potential and current density mapping
 	// http://www.sciencedirect.com/science/article/pii/0013469489901806
 
-	double g(const unsigned int n, const unsigned int m, const std::vector<double>& vLegendre)
+	double g(const size_t n, const size_t m, const std::vector<double>& legendres)
 	{
 		double result = 0;
-		for (unsigned int i = 1; i <= n; ++i) { result += (2 * i + 1) / pow(double(i * (i + 1)), int(m)) * vLegendre[i]; }
+		for (size_t i = 1; i <= n; ++i) { result += (2 * i + 1) / pow(double(i * (i + 1)), int(m)) * legendres[i]; }
 		return result / (4 * M_PI);
 	}
 
@@ -64,30 +63,30 @@ namespace
 	// Spherical splines for scalp potential and current density mapping
 	// http://www.sciencedirect.com/science/article/pii/0013469489901806
 
-	double h(const unsigned int n, const unsigned int m, const std::vector<double>& vLegendre)
+	double h(const size_t n, const size_t m, const std::vector<double>& legendres)
 	{
 		double result = 0;
-		for (unsigned int i = 1; i <= n; ++i) { result += (2 * i + 1) / pow(double(i * (i + 1)), int(m - 1)) * vLegendre[i]; }
+		for (size_t i = 1; i <= n; ++i) { result += (2 * i + 1) / pow(double(i * (i + 1)), int(m - 1)) * legendres[i]; }
 		return result / (4 * M_PI);
 	}
 
 	// Caching system
 
-	void build(const unsigned int n, const unsigned int m, std::vector<double>& rGCache, std::vector<double>& rHCache)
+	void build(const size_t n, const size_t m, std::vector<double>& gCache, std::vector<double>& hCache)
 	{
-		rGCache.resize(2 * S + 1);
-		rHCache.resize(2 * S + 1);
-		for (unsigned int i = 0; i <= 2 * S; ++i)
+		gCache.resize(2 * S + 1);
+		hCache.resize(2 * S + 1);
+		for (size_t i = 0; i <= 2 * S; ++i)
 		{
-			std::vector<double> l_vLegendre;
+			std::vector<double> legendres;
 			const double cosine = (double(i) - S) / S;
 
-			legendre(n, cosine, l_vLegendre);
-			rGCache[i] = g(n, m, l_vLegendre);
-			rHCache[i] = h(n, m, l_vLegendre);
+			legendre(n, cosine, legendres);
+			gCache[i] = g(n, m, legendres);
+			hCache[i] = h(n, m, legendres);
 		}
-		rGCache.push_back(rGCache.back());
-		rHCache.push_back(rHCache.back());
+		gCache.push_back(gCache.back());
+		hCache.push_back(hCache.back());
 	}
 
 	double cache(const double x, std::vector<double>& rCache)
@@ -102,44 +101,39 @@ namespace
 	}
 } // namespace
 
-void CRendererTopo::rebuild(const IRendererContext& rContext)
+void CRendererTopo::rebuild(const CRendererContext& ctx)
 {
-	CRenderer::rebuild(rContext);
+	IRenderer::rebuild(ctx);
 
-	uint32_t i, j;
-
-	this->rebuild3DMeshesPre(rContext);
+	this->rebuild3DMeshesPre(ctx);
 
 	// Projects electrode coordinates to 3D mesh
 
-	std::vector<CVertex> l_vProjectedChannelCoordinate;
-	std::vector<CVertex> l_vChannelCoordinate;
-	l_vChannelCoordinate.resize(rContext.getChannelCount());
-	for (i = 0; i < rContext.getChannelCount(); ++i)
-	{
-		rContext.getChannelLocalisation(i, l_vChannelCoordinate[i].x, l_vChannelCoordinate[i].y, l_vChannelCoordinate[i].z);
-	}
-	m_oScalp.project(l_vProjectedChannelCoordinate, l_vChannelCoordinate);
-	m_vProjectedChannelCoordinate = l_vProjectedChannelCoordinate;
+	std::vector<CVertex> projectedPositions;
+	std::vector<CVertex> positions;
+	positions.resize(ctx.getChannelCount());
+	for (size_t i = 0; i < ctx.getChannelCount(); ++i) { ctx.getChannelLocalisation(i, positions[i].x, positions[i].y, positions[i].z); }
+	m_scalp.project(projectedPositions, positions);
+	m_projectedPositions = projectedPositions;
 
 #if 0
 
-	m_vProjectedChannelCoordinate.resize(rContext.getChannelCount());
-	for (i = 0; i < rContext.getChannelCount(); ++i)
+	m_projectedPositions.resize(ctx.getChannelCount());
+	for (size_t i = 0; i < ctx.getChannelCount(); ++i)
 	{
 		CVertex p, q;
-		rContext.getChannelLocalisation(i, p.x, p.y, p.z);
-		for (j = 0; j < m_oScalp.m_vTriangle.size(); j += 3)
+		ctx.getChannelLocalisation(i, p.x, p.y, p.z);
+		for (size_t j = 0; j < m_scalp.m_Triangles.size(); j += 3)
 		{
-			uint32_t i1, i2, i3;
-			i1 = m_oScalp.m_vTriangle[j];
-			i2 = m_oScalp.m_vTriangle[j + 1];
-			i3 = m_oScalp.m_vTriangle[j + 2];
+			size_t i1, i2, i3;
+			i1 = m_scalp.m_Triangles[j];
+			i2 = m_scalp.m_Triangles[j + 1];
+			i3 = m_scalp.m_Triangles[j + 2];
 
 			CVertex v1, v2, v3;
-			v1 = m_oScalp.m_vertex[i1];
-			v2 = m_oScalp.m_vertex[i2];
-			v3 = m_oScalp.m_vertex[i3];
+			v1 = m_scalp.m_vertex[i1];
+			v2 = m_scalp.m_vertex[i2];
+			v3 = m_scalp.m_vertex[i3];
 
 			CVertex e1(v1, v2);
 			CVertex e2(v1, v3);
@@ -152,14 +146,14 @@ void CRendererTopo::rebuild(const IRendererContext& rContext)
 
 			if (CVertex::isInTriangle(q, v1, v2, v3) && t >= 0)
 			{
-				m_vProjectedChannelCoordinate[i].x = q.x;
-				m_vProjectedChannelCoordinate[i].y = q.y;
-				m_vProjectedChannelCoordinate[i].z = q.z;
+				m_projectedPositions[i].x = q.x;
+				m_projectedPositions[i].y = q.y;
+				m_projectedPositions[i].z = q.z;
 			}
 		}
-		if (m_vProjectedChannelCoordinate[i].x == 0 && m_vProjectedChannelCoordinate[i].y == 0 && m_vProjectedChannelCoordinate[i].z == 0)
+		if (m_projectedPositions[i].x == 0 && m_projectedPositions[i].y == 0 && m_projectedPositions[i].z == 0)
 		{
-			//			::printf("Could not project coordinates on mesh for channel %i [%s]\n", i+1, rContext.getChannelName(i).c_str());
+			// ::printf("Could not project coordinates on mesh for channel %i [%s]\n", i+1, rContext.getChannelName(i).c_str());
 		}
 	}
 
@@ -167,27 +161,27 @@ void CRendererTopo::rebuild(const IRendererContext& rContext)
 
 	// Generates transformation matrices based spherical spline interpolations
 
-	const unsigned int M = 3;
-	const auto N         = static_cast<unsigned int>(pow(10., 10. / (2 * M - 2)));
+	const size_t m = 3;
+	const auto n   = size_t(pow(10., 10. / (2 * m - 2)));
 
 	std::vector<double> gCaches;
 	std::vector<double> hCaches;
-	build(N, M, gCaches, hCaches);
+	build(n, m, gCaches, hCaches);
 
-	const size_t nc = rContext.getChannelCount();
-	const size_t vc = m_oScalp.m_vVertex.size();
+	const size_t nc = ctx.getChannelCount();
+	const size_t vc = m_scalp.m_Vertices.size();
 
 	A         = Eigen::MatrixXd(nc + 1, nc + 1);
 	A(nc, nc) = 0;
-	for (i = 0; i < nc; ++i)
+	for (size_t i = 0; i < nc; ++i)
 	{
 		A(i, nc) = 1;
 		A(nc, i) = 1;
-		for (j = 0; j <= i; j++)
+		for (size_t j = 0; j <= i; ++j)
 		{
 			CVertex v1, v2;
-			rContext.getChannelLocalisation(i, v1.x, v1.y, v1.z);
-			rContext.getChannelLocalisation(j, v2.x, v2.y, v2.z);
+			ctx.getChannelLocalisation(i, v1.x, v1.y, v1.z);
+			ctx.getChannelLocalisation(j, v2.x, v2.y, v2.z);
 
 			const double cosine = CVertex::dot(v1, v2);
 			A(i, j)             = cache(cosine, gCaches);
@@ -199,18 +193,18 @@ void CRendererTopo::rebuild(const IRendererContext& rContext)
 	D         = Eigen::MatrixXd(vc + 1, nc + 1);
 	B(vc, nc) = 0;
 	D(vc, nc) = 0;
-	for (i = 0; i < vc; ++i)
+	for (size_t i = 0; i < vc; ++i)
 	{
 		B(i, nc) = 1;
 		D(i, nc) = 1;
-		for (j = 0; j < nc; j++)
+		for (size_t j = 0; j < nc; ++j)
 		{
 			B(vc, j) = 1;
 			D(vc, j) = 1;
 			CVertex v1, v2;
-			v1 = m_oScalp.m_vVertex[i];
+			v1 = m_scalp.m_Vertices[i];
 			v1.normalize();
-			rContext.getChannelLocalisation(j, v2.x, v2.y, v2.z);
+			ctx.getChannelLocalisation(j, v2.x, v2.y, v2.z);
 
 			const double cosine = CVertex::dot(v1, v2);
 			B(i, j)             = cache(cosine, gCaches);
@@ -222,171 +216,168 @@ void CRendererTopo::rebuild(const IRendererContext& rContext)
 
 	// Post processed 3D meshes when needed
 
-	this->rebuild3DMeshesPost(rContext);
+	this->rebuild3DMeshesPost(ctx);
 
 	// Rebuilds texture coordinates array
 
-	if (m_bMultiSlice)
+	if (MULTI_SLICE)
 	{
-		m_vInterpolatedSample.clear();
-		m_vInterpolatedSample.resize(m_nSample, Eigen::VectorXd::Zero(m_oScalp.m_vVertex.size()));
+		m_interpolatedSamples.clear();
+		m_interpolatedSamples.resize(m_nSample, Eigen::VectorXd::Zero(m_scalp.m_Vertices.size()));
 	}
 
 	// Finalizes
 
-	m_historyIndex = 0;
+	m_historyIdx = 0;
 }
 
 // V has sensor potentials
 // W has interpolated potentials
 // Z has interpolated current densities
-void CRendererTopo::interpolate(const Eigen::VectorXd& V, Eigen::VectorXd& W, Eigen::VectorXd& Z) const
+void CRendererTopo::interpolate(const Eigen::VectorXd& v, Eigen::VectorXd& w, Eigen::VectorXd& z) const
 {
-	Eigen::VectorXd C = Ai * V;
-	W = B * C;
-	C[V.size() - 1] = 0;
-	Z = D * C;
+	Eigen::VectorXd c = Ai * v;
+	w                 = B * c;
+	c[v.size() - 1]   = 0;
+	z                 = D * c;
 }
 
-void CRendererTopo::refresh(const IRendererContext& rContext)
+void CRendererTopo::refresh(const CRendererContext& ctx)
 {
-	CRenderer::refresh(rContext);
+	IRenderer::refresh(ctx);
 
-	if (!m_historyCount) { return; }
+	if (!m_nHistory) { return; }
 
-	size_t nc       = rContext.getChannelCount();
-	const size_t vc = m_oScalp.m_vVertex.size();
+	size_t nc       = ctx.getChannelCount();
+	const size_t vc = m_scalp.m_Vertices.size();
 
-	std::vector<float> l_vSample;
-	Eigen::VectorXd V = Eigen::VectorXd::Zero(nc + 1);
-	Eigen::VectorXd W;
-	Eigen::VectorXd Z;
+	std::vector<float> samples;
+	Eigen::VectorXd v = Eigen::VectorXd::Zero(nc + 1);
+	Eigen::VectorXd w;
+	Eigen::VectorXd z;
 
-	if (!m_bMultiSlice)
+	if (!MULTI_SLICE)
 	{
-		this->getSampleAtERPFraction(m_ERPFraction, l_vSample);
-		for (size_t i = 0; i < nc; ++i) { V(i) = l_vSample[i]; }
-		this->interpolate(V, W, Z);
-		for (size_t j = 0; j < vc; j++) { m_oScalp.m_vVertex[j].u = float(W(j)); }
+		this->getSampleAtERPFraction(m_erpFraction, samples);
+		for (size_t i = 0; i < nc; ++i) { v(i) = samples[i]; }
+		this->interpolate(v, w, z);
+		for (size_t j = 0; j < vc; ++j) { m_scalp.m_Vertices[j].u = float(w(j)); }
 	}
 	else
 	{
-		if (m_historyCount >= m_nSample)
+		if (m_nHistory >= m_nSample)
 		{
-			for (size_t k = 0; k < m_nSample; k++)
+			for (size_t k = 0; k < m_nSample; ++k)
 			{
-				for (size_t i = 0; i < nc; ++i) { V(i) = m_history[i][m_historyCount - m_nSample + k]; }
-				this->interpolate(V, W, Z);
-				m_vInterpolatedSample[k] = W;
+				for (size_t i = 0; i < nc; ++i) { v(i) = m_history[i][m_nHistory - m_nSample + k]; }
+				this->interpolate(v, w, z);
+				m_interpolatedSamples[k] = w;
 			}
 		}
 	}
 
-	m_historyIndex = m_historyCount;
+	m_historyIdx = m_nHistory;
 }
 
-bool CRendererTopo::render(const IRendererContext& rContext)
+bool CRendererTopo::render(const CRendererContext& ctx)
 {
-	std::map<std::string, CVertex>::const_iterator it;
-
-	if (!rContext.getSelectedCount()) { return false; }
-	if (m_oScalp.m_vVertex.empty()) { return false; }
-	if (!m_historyCount) { return false; }
+	if (!ctx.getSelectedCount() || m_scalp.m_Vertices.empty() || !m_nHistory) { return false; }
 
 	const float d = 3.5;
 
-	//	::glEnable(GL_DEPTH_TEST);
-	//	::glDisable(GL_BLEND);
+	// ::glEnable(GL_DEPTH_TEST);
+	// ::glDisable(GL_BLEND);
 
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
-	gluPerspective(60, rContext.getAspect(), .01, 100);
+	gluPerspective(60, ctx.getAspect(), .01, 100);
 	glTranslatef(0, 0, -d);
-	glRotatef(rContext.getRotationX() * 10, 1, 0, 0);
-	glRotatef(rContext.getRotationY() * 10, 0, 1, 0);
+	glRotatef(ctx.getRotationX() * 10, 1, 0, 0);
+	glRotatef(ctx.getRotationY() * 10, 0, 1, 0);
 
 	glMatrixMode(GL_TEXTURE);
 	glPushMatrix();
-	glScalef(rContext.getScale(), 1, 1);
+	glScalef(ctx.getScale(), 1, 1);
 
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadIdentity();
-	glScalef(rContext.getZoom(), rContext.getZoom(), rContext.getZoom());
+	glScalef(ctx.getZoom(), ctx.getZoom(), ctx.getZoom());
 
 	// Now renders
 
 	glPushMatrix();
 #if 1
-	glTranslatef(0, .5f, 0);
+	glTranslatef(0, .5F, 0);
 	glRotatef(19, 1, 0, 0);
-	glTranslatef(0, -.2f, .35f);
-	//	::glScalef(1.8f, 1.8f, 1.8f);
+	glTranslatef(0, -.2F, .35F);
+	// ::glScalef(1.8f, 1.8f, 1.8f);
 #else
 	::glRotatef(19, 1, 0, 0);
 	::glTranslatef(0, -.2f, .35f);
-	//	::glScalef(1.8f, 1.8f, 1.8f);
+	// ::glScalef(1.8f, 1.8f, 1.8f);
 #endif
 
-	if (rContext.isFaceMeshVisible())
+	if (ctx.isFaceMeshVisible())
 	{
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
 		glDisable(GL_TEXTURE_1D);
-		if (!m_oFace.m_vTriangle.empty())
+		if (!m_face.m_Triangles.empty())
 		{
-			if (!m_oFace.m_vNormal.empty())
+			if (!m_face.m_Normals.empty())
 			{
 				glEnable(GL_LIGHTING);
 				glEnableClientState(GL_NORMAL_ARRAY);
 			}
-			glColor3f(m_oFace.m_vColor[0], m_oFace.m_vColor[1], m_oFace.m_vColor[2]);
+			glColor3f(m_face.m_Color[0], m_face.m_Color[1], m_face.m_Color[2]);
 			glEnableClientState(GL_VERTEX_ARRAY);
-			glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_oFace.m_vVertex[0].x);
-			if (!m_oFace.m_vNormal.empty()) { glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_oFace.m_vNormal[0].x); }
-			glDrawElements(GL_TRIANGLES, GLsizei(m_oFace.m_vTriangle.size()), GL_UNSIGNED_INT, &m_oFace.m_vTriangle[0]);
+			glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_face.m_Vertices[0].x);
+			if (!m_face.m_Normals.empty()) { glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_face.m_Normals[0].x); }
+			glDrawElements(GL_TRIANGLES, GLsizei(m_face.m_Triangles.size()), GL_UNSIGNED_INT, &m_face.m_Triangles[0]);
 			glDisableClientState(GL_NORMAL_ARRAY);
 			glDisableClientState(GL_VERTEX_ARRAY);
 			glDisable(GL_LIGHTING);
 		}
 	}
 
-	if (rContext.isScalpMeshVisible())
+	if (ctx.isScalpMeshVisible())
 	{
 		glEnable(GL_TEXTURE_1D);
-		if (!m_oScalp.m_vTriangle.empty())
+		if (!m_scalp.m_Triangles.empty())
 		{
-			if (!m_oScalp.m_vNormal.empty())
+			if (!m_scalp.m_Normals.empty())
 			{
 				glEnable(GL_LIGHTING);
 				glEnableClientState(GL_NORMAL_ARRAY);
 			}
-			glColor3f(m_oScalp.m_vColor[0], m_oScalp.m_vColor[1], m_oScalp.m_vColor[2]);
+			glColor3f(m_scalp.m_Color[0], m_scalp.m_Color[1], m_scalp.m_Color[2]);
 			glEnableClientState(GL_VERTEX_ARRAY);
 			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-			glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_oScalp.m_vVertex[0].x);
-			if (!m_oScalp.m_vNormal.empty()) { glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_oScalp.m_vNormal[0].x); }
-			if (!m_bMultiSlice)
+			glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_scalp.m_Vertices[0].x);
+			if (!m_scalp.m_Normals.empty()) { glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_scalp.m_Normals[0].x); }
+			
+			if (!MULTI_SLICE)
 			{
 				glColor3f(1, 1, 1);
 				glEnable(GL_DEPTH_TEST);
 				glDisable(GL_BLEND);
-				glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_oScalp.m_vVertex[0].u);
-				glDrawElements(GL_TRIANGLES, GLsizei(m_oScalp.m_vTriangle.size()), GL_UNSIGNED_INT, &m_oScalp.m_vTriangle[0]);
+				glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_scalp.m_Vertices[0].u);
+				glDrawElements(GL_TRIANGLES, GLsizei(m_scalp.m_Triangles.size()), GL_UNSIGNED_INT, &m_scalp.m_Triangles[0]);
 			}
 			else
 			{
-				glColor4f(1.f, 1.f, 1.f, 4.f / m_nSample);
+				glColor4f(1.F, 1.F, 1.F, 4.F / m_nSample);
 				glDisable(GL_DEPTH_TEST);
 				glEnable(GL_BLEND);
-				for (uint32_t i = 0; i < m_nSample; ++i)
+				for (size_t i = 0; i < m_nSample; ++i)
 				{
-					float l_f32Scale = 1.f + i * 0.25f / m_nSample;
+					float scale = 1.F + i * 0.25F / m_nSample;
 					glPushMatrix();
-					glScalef(l_f32Scale, l_f32Scale, l_f32Scale);
-					glTexCoordPointer(1, GL_DOUBLE, 0, &m_vInterpolatedSample[i][0]);
-					glDrawElements(GL_TRIANGLES, GLsizei(m_oScalp.m_vTriangle.size()), GL_UNSIGNED_INT, &m_oScalp.m_vTriangle[0]);
+					glScalef(scale, scale, scale);
+					glTexCoordPointer(1, GL_DOUBLE, 0, &m_interpolatedSamples[i][0]);
+					glDrawElements(GL_TRIANGLES, GLsizei(m_scalp.m_Triangles.size()), GL_UNSIGNED_INT, &m_scalp.m_Triangles[0]);
 					glPopMatrix();
 				}
 			}
@@ -402,19 +393,19 @@ bool CRendererTopo::render(const IRendererContext& rContext)
 	glDisable(GL_TEXTURE_1D);
 
 	glLineWidth(3);
-	for (uint32_t j = 0; j < rContext.getChannelCount(); j++)
+	for (size_t j = 0; j < ctx.getChannelCount(); ++j)
 	{
-		const float l_fCubeScale = .025f;
-		const CVertex v          = m_vProjectedChannelCoordinate[j];
-		//rContext.getChannelLocalisation(j, v.x, v.y, v.z);
+		const float scale = .025F;
+		const CVertex v   = m_projectedPositions[j];
+		//ctx.getChannelLocalisation(j, v.x, v.y, v.z);
 
 		glPushMatrix();
 		glTranslatef(v.x, v.y, v.z);
-		glScalef(l_fCubeScale, l_fCubeScale, l_fCubeScale);
+		glScalef(scale, scale, scale);
 
-		float l_vSelected[]   = { 1, 1, 1 };
-		float l_vUnselected[] = { .2f, .2f, .2f };
-		glColor3fv(rContext.isSelected(j) ? l_vSelected : l_vUnselected);
+		const float value                = ctx.isSelected(j) ? 1.0F : 0.2F;
+		const std::array<float, 3> color = { value, value, value };
+		glColor3fv(color.data());
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		cube();
 
@@ -428,7 +419,7 @@ bool CRendererTopo::render(const IRendererContext& rContext)
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-	if (rContext.getCheckBoardVisibility()) { this->drawCoordinateSystem(); }
+	if (ctx.getCheckBoardVisibility()) { this->drawCoordinateSystem(); }
 
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();

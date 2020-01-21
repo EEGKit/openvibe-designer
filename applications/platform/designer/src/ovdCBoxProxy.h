@@ -6,53 +6,53 @@
 
 namespace OpenViBEDesigner
 {
-	class CBoxProxy
+	class CBoxProxy final
 	{
 	public:
 
-		CBoxProxy(const OpenViBE::Kernel::IKernelContext& ctx, OpenViBE::Kernel::IScenario& rScenario, const OpenViBE::CIdentifier& boxID);
-		virtual ~CBoxProxy() { if (!m_bApplied) { this->apply(); } }
+		CBoxProxy(const OpenViBE::Kernel::IKernelContext& ctx, OpenViBE::Kernel::IScenario& scenario, const OpenViBE::CIdentifier& boxID);
+		~CBoxProxy() { if (!m_applied) { this->apply(); } }
 
-		operator OpenViBE::Kernel::IBox* () const { return m_pBox; }
-		operator const OpenViBE::Kernel::IBox* () const { return m_pConstBox; }
+		operator OpenViBE::Kernel::IBox*() const { return m_box; }
+		operator const OpenViBE::Kernel::IBox*() const { return m_constBox; }
 
 		int getWidth(GtkWidget* widget) const;
 		int getHeight(GtkWidget* widget) const;
 
 		int getXCenter() const { return m_centerX; }
 		int getYCenter() const { return m_centerY; }
-		void setCenter(int centerX, int centerY);
+		void setCenter(int x, int y);
 
 		void setBoxAlgorithmDescriptorOverride(const OpenViBE::Plugins::IBoxAlgorithmDesc* pBoxAlgorithmDescriptor);
 
 		void apply();
 
-		virtual const char* getLabel() const;
-		virtual const char* getStatusLabel() const;
+		const char* getLabel() const;
+		const char* getStatusLabel() const;
 
-		bool isBoxAlgorithmPluginPresent() const { return m_IsBoxAlgorithmPresent; }
-		bool isUpToDate() const { return !m_pBox->hasAttribute(OV_AttributeId_Box_ToBeUpdated); }
-		bool hasPendingDeprecatedInterfacors() const { return m_pBox->hasAttribute(OV_AttributeId_Box_PendingDeprecatedInterfacors); }
-		bool isDeprecated() const { return m_IsDeprecated; }
-		bool isUnstable() const { return false; }
+		bool isBoxAlgorithmPluginPresent() const { return m_isBoxAlgorithmPresent; }
+		bool isUpToDate() const { return !m_box->hasAttribute(OV_AttributeId_Box_ToBeUpdated); }
+		bool hasPendingDeprecatedInterfacors() const { return m_box->hasAttribute(OV_AttributeId_Box_PendingDeprecatedInterfacors); }
+		bool isDeprecated() const { return m_isDeprecated; }
+		static bool isUnstable() { return false; }
 		bool isDisabled() const;
-		bool isMetabox() const { return m_pConstBox->getAlgorithmClassIdentifier() == OVP_ClassId_BoxAlgorithm_Metabox; }
+		bool isMetabox() const { return m_constBox->getAlgorithmClassIdentifier() == OVP_ClassId_BoxAlgorithm_Metabox; }
 
 	protected:
 
-		virtual void updateSize(GtkWidget* widget, const char* sLabel, const char* sStatus, int* pXSize, int* pYSize) const;
+		void updateSize(GtkWidget* widget, const char* label, const char* status, int* xSize, int* ySize) const;
 
-		const OpenViBE::Kernel::IKernelContext& m_kernelContext;
-		const OpenViBE::Plugins::IBoxAlgorithmDesc* m_pBoxAlgorithmDescriptorOverride = nullptr;
-		const OpenViBE::Kernel::IBox* m_pConstBox = nullptr;
-		OpenViBE::Kernel::IBox* m_pBox = nullptr;
-		bool m_bApplied = false;
-		bool m_bShowOriginalNameWhenModified = false;
-		int m_centerX = 0;
-		int m_centerY = 0;
-		mutable std::string m_sLabel;
-		mutable std::string m_sStatus;
-		bool m_IsBoxAlgorithmPresent = false;
-		bool m_IsDeprecated = false;
+		const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
+		const OpenViBE::Plugins::IBoxAlgorithmDesc* m_boxAlgorithmDescOverride = nullptr;
+		const OpenViBE::Kernel::IBox* m_constBox                               = nullptr;
+		OpenViBE::Kernel::IBox* m_box                                          = nullptr;
+		bool m_applied                                                         = false;
+		bool m_showOriginalNameWhenModified                                    = false;
+		int m_centerX                                                          = 0;
+		int m_centerY                                                          = 0;
+		mutable std::string m_label;
+		mutable std::string m_status;
+		bool m_isBoxAlgorithmPresent = false;
+		bool m_isDeprecated          = false;
 	};
-};
+}  // namespace OpenViBEAcquisitionServer

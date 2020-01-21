@@ -22,19 +22,19 @@
 
 // #if defined TARGET_HAS_ThirdPartyVRPN
 
-#include "mCRenderer.hpp"
+#include "mIRenderer.hpp"
 
 namespace Mensia
 {
 	namespace AdvancedVisualization
 	{
-		class CRendererConnectivity : public CRenderer
+		class CRendererConnectivity : public IRenderer
 		{
 		public:
 
-			void rebuild(const IRendererContext& rContext) override;
-			void refresh(const IRendererContext& rContext) override;
-			bool render(const IRendererContext& rContext) override;
+			void rebuild(const CRendererContext& ctx) override;
+			void refresh(const CRendererContext& ctx) override;
+			bool render(const CRendererContext& ctx) override;
 		};
 	} // namespace AdvancedVisualization
 } // namespace Mensia

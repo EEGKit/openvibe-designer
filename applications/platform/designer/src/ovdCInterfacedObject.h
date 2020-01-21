@@ -9,11 +9,13 @@ namespace OpenViBEDesigner
 	public:
 
 		CInterfacedObject() = default;
-		CInterfacedObject(const OpenViBE::CIdentifier& identifier);
-		CInterfacedObject(const OpenViBE::CIdentifier& identifier, uint32_t connectorType, uint32_t connectorIndex);
+		explicit CInterfacedObject(const OpenViBE::CIdentifier& identifier) : m_ID(identifier) { }
 
-		OpenViBE::CIdentifier m_oIdentifier = OV_UndefinedIdentifier;
-		uint32_t m_connectorType = 0;
-		uint32_t m_connectorIndex = 0;
+		CInterfacedObject(const OpenViBE::CIdentifier& identifier, const size_t connectorType, const size_t connectorIndex)
+			: m_ID(identifier), m_ConnectorType(connectorType), m_ConnectorIdx(connectorIndex) { }
+
+		OpenViBE::CIdentifier m_ID = OV_UndefinedIdentifier;
+		size_t m_ConnectorType     = 0;
+		size_t m_ConnectorIdx      = 0;
 	};
-};
+} // namespace OpenViBEDesigner

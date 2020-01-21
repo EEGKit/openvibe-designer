@@ -1,34 +1,28 @@
 #include "ovdCBooleanSettingView.h"
 #include "../ovd_base.h"
 
-#include <iostream>
-
 using namespace OpenViBE;
 using namespace OpenViBEDesigner;
 using namespace Setting;
 
-static void on_checkbutton_setting_boolean_pressed(GtkToggleButton* /*button*/, gpointer data)
+static void OnCheckbuttonSettingBooleanPressed(GtkToggleButton* /*button*/, gpointer data) { static_cast<CBooleanSettingView *>(data)->toggleButtonClick(); }
+
+static void OnInsertion(GtkEntry* /*entry*/, gpointer data) { static_cast<CBooleanSettingView *>(data)->onChange(); }
+
+CBooleanSettingView::CBooleanSettingView(Kernel::IBox& box, const size_t index, CString& builderName)
+	: CAbstractSettingView(box, index, builderName, "settings_collection-hbox_setting_boolean")
 {
-	static_cast<CBooleanSettingView *>(data)->toggleButtonClick();
-}
+	GtkWidget* settingWidget = CAbstractSettingView::getEntryFieldWidget();
 
-static void on_insertion(GtkEntry* /*entry*/, gpointer data) { static_cast<CBooleanSettingView *>(data)->onChange(); }
+	std::vector<GtkWidget*> widgets;
+	CAbstractSettingView::extractWidget(settingWidget, widgets);
+	m_toggle = GTK_TOGGLE_BUTTON(widgets[1]);
+	m_entry  = GTK_ENTRY(widgets[0]);
 
-CBooleanSettingView::CBooleanSettingView(Kernel::IBox& box, const uint32_t index, CString& rBuilderName): CAbstractSettingView(
-	box, index, rBuilderName, "settings_collection-hbox_setting_boolean")
-{
-	GtkWidget* l_pSettingWidget = this->getEntryFieldWidget();
+	g_signal_connect(G_OBJECT(m_entry), "changed", G_CALLBACK(OnInsertion), this);
+	g_signal_connect(G_OBJECT(m_toggle), "toggled", G_CALLBACK(OnCheckbuttonSettingBooleanPressed), this);
 
-	std::vector<GtkWidget*> l_vWidget;
-	extractWidget(l_pSettingWidget, l_vWidget);
-	m_toggle = GTK_TOGGLE_BUTTON(l_vWidget[1]);
-	m_entry  = GTK_ENTRY(l_vWidget[0]);
-
-	g_signal_connect(G_OBJECT(m_entry), "changed", G_CALLBACK(on_insertion), this);
-
-	g_signal_connect(G_OBJECT(m_toggle), "toggled", G_CALLBACK(on_checkbutton_setting_boolean_pressed), this);
-
-	initializeValue();
+	CAbstractSettingView::initializeValue();
 }
 
 
@@ -76,7 +70,7 @@ void CBooleanSettingView::onChange()
 {
 	if (!m_onValueSetting)
 	{
-		const gchar* l_sValue = gtk_entry_get_text(m_entry);
-		getBox().setSettingValue(getSettingIndex(), l_sValue);
+		const gchar* value = gtk_entry_get_text(m_entry);
+		getBox().setSettingValue(getSettingIndex(), value);
 	}
 }

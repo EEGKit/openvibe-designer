@@ -3,11 +3,11 @@
 /**                                                                         **/
 /** spline_sph :                                                            **/
 /**                                                                         **/
-/**      spline_tables                                                      **/
-/**      spline_coef                                                        **/
-/**      spline_interp                                                      **/
+/**      SplineTables                                                      **/
+/**      SplineCoef                                                        **/
+/**      SplineInterp                                                      **/
 /**                                                                         **/
-/** note : spline_coef calls linpack routines (linpack.c)                   **/
+/** note : SplineCoef calls linpack routines (linpack.c)                   **/
 /**                                                                         **/
 /*****************************************************************************/
 /*****************************************************************************/
@@ -30,7 +30,7 @@
 #define imin(x,y) (((x) < (y)) ? (x) : (y))
 
 /**********************************************************************************/
-/*                               spline_tables                                    */
+/*                               SplineTables                                    */
 /*                                                                                */
 /* Computes the tabulated functions km(cos(gamma)) and hm(cos(gamma))             */
 /* for cos(gamma) varying from -1 to 1 (see Patent, columns 2 and 6)              */
@@ -52,7 +52,7 @@
 /*                                                                                */
 /**********************************************************************************/
 
-int spline_tables(const int order, double* pot_table, double* scd_table)
+int SplineTables(const int order, double* pot, double* scd)
 {
 	if (order <= 2)
 	{
@@ -84,20 +84,20 @@ int spline_tables(const int order, double* pot_table, double* scd_table)
 	/* Coefficient computation */
 	/*=========================*/
 	double cn = 1.0;
-	for (j = 1; j < order; j++) { cn /= 2.0; }
+	for (j = 1; j < order; ++j) { cn /= 2.0; }
 	c[0] = cn * 3.0;
-	for (n = 2; n <= kc; n++)
+	for (n = 2; n <= kc; ++n)
 	{
 		fn              = double(n);
 		const double cx = (fn - 1.0) / (fn + 1.0);
-		for (j = 1; j < order; j++) { cn *= cx; }
+		for (j = 1; j < order; ++j) { cn *= cx; }
 		c[n - 1] = (2.0 * fn + 1.0) * cn;
 	}
 
 	/*========================*/
 	/* Table generation       */
 	/*========================*/
-	for (int ig = 0; ig <= 1000; ig++)
+	for (int ig = 0; ig <= 1000; ++ig)
 	{
 		/*-------------------------*/
 		/* Pn polynomial           */
@@ -107,7 +107,7 @@ int spline_tables(const int order, double* pot_table, double* scd_table)
 		double p0    = 1.0;
 		double p1    = gamma;
 		p[0]         = p1;
-		for (n = 2; n <= kc; n++)
+		for (n = 2; n <= kc; ++n)
 		{
 			fn                = double(n);
 			const double usfn = 1.0 / fn;
@@ -131,8 +131,8 @@ int spline_tables(const int order, double* pot_table, double* scd_table)
 			s2 += fs * cnpn;
 			fs = -fs;
 		}
-		*(pot_table + 2001 - ig) = s1 * 1000.0;
-		*(pot_table + 1 + ig)    = s2 * 1000.0;
+		*(pot + 2001 - ig) = s1 * 1000.0;
+		*(pot + 1 + ig)    = s2 * 1000.0;
 
 		/*-----------------------*/
 		/* scd_table computation */
@@ -147,16 +147,16 @@ int spline_tables(const int order, double* pot_table, double* scd_table)
 			s2 += fs * cnpn;
 			fs = -fs;
 		}
-		*(scd_table + 2001 - ig) = s1 * 1000.0;
-		*(scd_table + 1 + ig)    = s2 * 1000.0;
+		*(scd + 2001 - ig) = s1 * 1000.0;
+		*(scd + 1 + ig)    = s2 * 1000.0;
 	}
 
-	*(pot_table + 2002) = *(pot_table + 2001);
-	*(scd_table + 2002) = *(scd_table + 2001);
-	*(pot_table + 2003) = *(pot_table + 2002);
-	*(scd_table + 2003) = *(scd_table + 2002);
-	*pot_table          = *(pot_table + 1);
-	*scd_table          = *(scd_table + 1);
+	*(pot + 2002) = *(pot + 2001);
+	*(scd + 2002) = *(scd + 2001);
+	*(pot + 2003) = *(pot + 2002);
+	*(scd + 2003) = *(scd + 2002);
+	*pot          = *(pot + 1);
+	*scd          = *(scd + 1);
 
 	free(c);
 	free(p);
@@ -164,7 +164,7 @@ int spline_tables(const int order, double* pot_table, double* scd_table)
 }
 
 /**********************************************************************************/
-/*                               spline_coef                                      */
+/*                               SplineCoef                                      */
 /*                                                                                */
 /* Computes the interpolation coefficients P=(p1,p2,...,pn) and q                 */
 /* (see Patent, columns 2 and 6)                                                  */
@@ -176,7 +176,7 @@ int spline_tables(const int order, double* pot_table, double* scd_table)
 /* values     : array[nb_value] of double                                         */
 /*              potential values at the electrode locations                       */
 /* table      : array[2004] of double                                             */
-/*              tabulated function km (array pot_table computed by spline_tables  */
+/*              tabulated function km (array pot_table computed by SplineTables  */
 /*                                                                                */
 /* OUT                                                                            */
 /* coef       : array[nb_value + 1] of double                                     */
@@ -190,38 +190,38 @@ int spline_tables(const int order, double* pot_table, double* scd_table)
 /*                                                                                */
 /**********************************************************************************/
 
-int spline_coef(const int nb_value, double** xyz, const double* values, const double* table, double* coef)
+int SplineCoef(const int n, double** xyz, const double* values, const double* table, double* coef)
 {
 	int i, info, itmp;
 
 	/*=========================================*/
 	/* allocation of temporary arrays          */
 	/*=========================================*/
-	double* p_mat_a = static_cast<double*>(malloc(sizeof(double) * ((nb_value + 1) * (nb_value + 2)) / 2));
+	double* p_mat_a = static_cast<double*>(malloc(sizeof(double) * ((n + 1) * (n + 2)) / 2));
 	if (p_mat_a == nullptr)
 	{
-		std::cout << "spline_coef error : allocation p_mat_a\n";
+		std::cout << "SplineCoef error : allocation p_mat_a\n";
 		return (-1);
 	}
-	int* p_iwork = static_cast<int*>(malloc(sizeof(int) * (nb_value + 1)));
+	int* p_iwork = static_cast<int*>(malloc(sizeof(int) * (n + 1)));
 	if (p_iwork == nullptr)
 	{
-		std::cout << "spline_coef error : allocation p_iwork\n";
+		std::cout << "SplineCoef error : allocation p_iwork\n";
 		return (-1);
 	}
 
 	/*================================*/
 	/* Initialization of matrix A     */
 	/*================================*/
-	const int l0 = ((nb_value + 1) * (nb_value)) / 2;
-	for (i = l0; i < l0 + nb_value; ++i) { *(p_mat_a + i) = 1.0; }
+	const int l0 = ((n + 1) * (n)) / 2;
+	for (i = l0; i < l0 + n; ++i) { *(p_mat_a + i) = 1.0; }
 	*(p_mat_a + i) = 0.0;
 
 	/*=========================*/
 	/* computation of matrix A */
 	/*=========================*/
 	int ih = 0;
-	for (int j = 0; j < nb_value; j++)
+	for (int j = 0; j < n; ++j)
 	{
 		const double xj = xyz[j][0];
 		const double yj = xyz[j][1];
@@ -245,19 +245,19 @@ int spline_coef(const int nb_value, double** xyz, const double* values, const do
 	/*=================================*/
 	/* Triangularization of matrix A   */
 	/*=================================*/
-	itmp = nb_value + 1;
+	itmp = n + 1;
 	sspfa(p_mat_a, &itmp, p_iwork, &info);
 	if (info != 0)
 	{
-		printf("spline_coef error : triangularization of matrix a (sspfa : %d) \n", info);
+		printf("SplineCoef error : triangularization of matrix a (sspfa : %d) \n", info);
 		return (-1);
 	}
 
 	/*=======================================================*/
 	/* Coefficient computation (solving a triangular system) */
 	/*=======================================================*/
-	for (i = 0; i < nb_value; ++i) { coef[i] = values[i]; }
-	coef[nb_value] = 0.0;
+	for (i = 0; i < n; ++i) { coef[i] = values[i]; }
+	coef[n] = 0.0;
 	sspsl(p_mat_a, &itmp, p_iwork, coef);
 	free(p_mat_a);
 	free(p_iwork);
@@ -265,7 +265,7 @@ int spline_coef(const int nb_value, double** xyz, const double* values, const do
 }
 
 /**********************************************************************************/
-/*                               spline_interp                                    */
+/*                               SplineInterp                                    */
 /*                                                                                */
 /* Computes the interpolated potential or SCD value at a location on the sphere   */
 /* (see Patent, columns 2, 4, 7 and 9)                                            */
@@ -275,12 +275,12 @@ int spline_coef(const int nb_value, double** xyz, const double* values, const do
 /* xyz        : array[nb_value] of array[3] of double                             */
 /*              X, Y, Z electrode coordinates on a spherical surface (radius = 1) */
 /* table      : array[2004] of double                                             */
-/*              tabulated function computed by spline_tables                      */
+/*              tabulated function computed by SplineTables                      */
 /*              use pot_table (km) for potential interpolation                    */
 /*              use scd_table (hm) for SCD interpolation                          */
 /* coef       : array[nb_value + 1] of double                                     */
 /*              spline coefficients P=(p1,p2,...,pn) and q                        */
-/*              array coef computed by spline_coef                                */
+/*              array coef computed by SplineCoef                                */
 /*              IMPORTANT : coef[nb_value] should be set to 0.0 for computing     */
 /*                          the interpolated SCD (this corresponds to q=0)        */
 /* xx, yy, zz : double                                                            */
@@ -295,11 +295,11 @@ int spline_coef(const int nb_value, double** xyz, const double* values, const do
 /*                                                                                */
 /**********************************************************************************/
 
-double spline_interp(const int nb_value, double** xyz, const double* table, const double* coef, const double xx, const double yy, const double zz)
+double SplineInterp(const int n, double** xyz, const double* table, const double* coef, const double xx, const double yy, const double zz)
 {
-	double ffn = coef[nb_value];
+	double ffn = coef[n];
 	int k      = 0;
-	for (int i = 0; i < nb_value; ++i)
+	for (int i = 0; i < n; ++i)
 	{
 		const double t1   = xx - xyz[i][0];
 		const double t2   = yy - xyz[i][1];
