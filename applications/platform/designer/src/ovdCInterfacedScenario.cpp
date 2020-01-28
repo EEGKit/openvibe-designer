@@ -544,7 +544,7 @@ static void drawScenarioTextIOIndex(GtkWidget* widget, GdkGC* gcline, const size
 	gdk_draw_line(widget->window, gcline, xL1, yL1, xL2, yL2);
 }
 
-static void drawBorderInterfacor(GtkWidget* widget, GdkGC* gc, GdkColor& color, std::array<GdkPoint, 4> points, int border, bool isDeprecated)
+static void drawBorderInterfacor(GtkWidget* widget, GdkGC* gc, GdkColor& color, std::array<GdkPoint, 4> points, const int border, const bool isDeprecated)
 {
 	gdk_gc_set_rgb_fg_color(gc, &color);
 	gdk_draw_polygon(widget->window, gc, TRUE, points.data(), 3);
@@ -561,23 +561,23 @@ static void drawCircleWithBorder(GtkWidget* widget, GdkGC* gc, GdkColor& bgColor
 	gdk_draw_arc(widget->window, gc, FALSE, x, y, radius, radius, 0, 64 * 360);
 }
 
-static void linkHandler(ILink* link, int x, int y, CIdentifier attX, CIdentifier attY)
+static void linkHandler(ILink* link, const int x, const int y, const CIdentifier& attX, const CIdentifier& attY)
 {
 	if (link)
 	{
-		TAttributeHandler attHandler(*link);
+		TAttributeHandler handler(*link);
 
-		if (!attHandler.hasAttribute(attX)) { attHandler.addAttribute<int>(attX, x); }
-		else { attHandler.setAttributeValue<int>(attX, x); }
+		if (!handler.hasAttribute(attX)) { handler.addAttribute<int>(attX, x); }
+		else { handler.setAttributeValue<int>(attX, x); }
 
-		if (!attHandler.hasAttribute(attY)) { attHandler.addAttribute<int>(attY, y); }
-		else { attHandler.setAttributeValue<int>(attY, y); }
+		if (!handler.hasAttribute(attY)) { handler.addAttribute<int>(attY, y); }
+		else { handler.setAttributeValue<int>(attY, y); }
 	}
 }
 
 CInterfacedScenario::CInterfacedScenario(const IKernelContext& ctx, CApplication& application, IScenario& scenario, CIdentifier& scenarioID,
 										 GtkNotebook& notebook, const char* guiFilename, const char* guiSettingsFilename)
-	: m_PlayerStatus(PlayerStatus_Stop), m_ScenarioID(scenarioID), m_Application(application), m_kernelCtx(ctx), m_Scenario(scenario), m_notebook(notebook),
+	: m_PlayerStatus(PlayerStatus_Stop), m_ScenarioID(scenarioID), m_Application(application), m_Scenario(scenario), m_kernelCtx(ctx), m_notebook(notebook),
 	  m_guiFilename(guiFilename), m_guiSettingsFilename(guiSettingsFilename)
 {
 	m_guiBuilder = gtk_builder_new();
@@ -1055,7 +1055,7 @@ void CInterfacedScenario::updateScenarioLabel()
 		labelUntrimmed   = filename;
 		filename         = filename.substr(filename.rfind('/') + 1);
 		size_t trimLimit = size_t(m_kernelCtx.getConfigurationManager().expandAsUInteger("${Designer_ScenarioFileNameTrimmingLimit}", 25));
-		if (trimLimit > 3) trimLimit -= 3; // limit should include the '...'
+		if (trimLimit > 3) { trimLimit -= 3; } // limit should include the '...'
 		// default = we trim everything but the current scenario filename
 		// if  {we are stacking horizontally the scenarios, we trim also } current filename to avoid losing too much of the edition panel.
 		if (filename.size() > trimLimit)
@@ -1231,7 +1231,7 @@ void CInterfacedScenario::redraw(IBox& box)
 		box.getInterfacorDeprecatedStatus(Input, i, isDeprecated);
 
 		GdkColor color    = colorFromIdentifier(id, isDeprecated);
-		const auto points = get4PointsInterfacorRedraw(circleSize, startX + i * (circleSpace + circleSize) + offset, startY - (circleSize >> 1));
+		const auto points = get4PointsInterfacorRedraw(circleSize, startX + int(i) * (circleSpace + circleSize) + offset, startY - (circleSize >> 1));
 
 		UPDATE_STENCIL_IDX(m_interfacedObjectId, stencilGC);
 		gdk_draw_polygon(GDK_DRAWABLE(m_stencilBuffer), stencilGC, TRUE, points.data(), 3);

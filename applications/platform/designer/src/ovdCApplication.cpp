@@ -677,10 +677,10 @@ static gboolean receiveSecondInstanceMessage(gpointer data)
 
 				int mode = 0;
 				char path[2048];
-				char* message = strtok(buffer, ";");
-				while (message != nullptr)
+				char* msg = strtok(buffer, ";");
+				while (msg != nullptr)
 				{
-					sscanf(message, "%1d : <%2048[^>]> ", &mode, &path);
+					sscanf(msg, "%1d : <%2048[^>]> ", &mode, &path);
 					switch (mode)
 					{
 						case CommandLineFlag_Open:
@@ -695,7 +695,7 @@ static gboolean receiveSecondInstanceMessage(gpointer data)
 						default: break;
 					}
 					mode    = 0;
-					message = strtok(nullptr, ";");
+					msg = strtok(nullptr, ";");
 				}
 			}
 			else { boost::interprocess::message_queue::remove(MESSAGE_NAME); }
@@ -2260,7 +2260,7 @@ void CApplication::browseDocumentationCB() const
 	OV_WARNING_UNLESS((result == 0), "Could not launch command " << command << "\n", m_kernelCtx.getLogManager());
 }
 
-void CApplication::registerLicenseCB() const
+void CApplication::registerLicenseCB()
 {
 #if defined TARGET_OS_Windows && defined(MENSIA_DISTRIBUTION)
 	m_kernelCtx.getLogManager() << LogLevel_Debug << "CApplication::registerLicenseCB\n";

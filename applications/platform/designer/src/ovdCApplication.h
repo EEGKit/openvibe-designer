@@ -116,7 +116,7 @@ namespace OpenViBEDesigner
 		void aboutLinkClickedCB(const gchar* url) const;
 
 		void browseDocumentationCB() const;
-		void registerLicenseCB() const;
+		static void registerLicenseCB();
 		void reportIssueCB() const;
 		void windowStateChangedCB(bool isMaximized);
 		bool displayChangelogWhenAvailable();

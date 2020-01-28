@@ -142,7 +142,7 @@ CLogListenerDesigner::CLogListenerDesigner(const IKernelContext& ctx, GtkBuilder
 	m_logTimePrecision = size_t(ctx.getConfigurationManager().expandAsUInteger("${Designer_ConsoleLogTimePrecision}", 3));
 }
 
-bool CLogListenerDesigner::isActive(ELogLevel level)
+bool CLogListenerDesigner::isActive(const ELogLevel level)
 {
 	const auto it = m_activeLevels.find(level);
 	if (it == m_activeLevels.end()) { return true; }

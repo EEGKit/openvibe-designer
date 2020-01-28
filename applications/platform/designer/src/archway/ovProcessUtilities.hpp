@@ -56,7 +56,7 @@ namespace OpenViBE
 {
 	namespace ProcessUtilities
 	{
-		bool doesProcessExist(std::string name)
+		bool doesProcessExist(const std::string& name)
 		{
 #if defined TARGET_OS_Windows
 			PROCESSENTRY32 pe32;
@@ -127,5 +127,5 @@ namespace OpenViBE
 
 			return true;
 		}
-	}
-}
+	}  // namespace ProcessUtilities
+}  // namespace OpenViBE

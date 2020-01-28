@@ -13,18 +13,18 @@ using namespace OpenViBEVisualizationToolkit;
 
 static GtkTargetEntry targets[] = { { static_cast<gchar*>("STRING"), 0, 0 }, { static_cast<gchar*>("text/plain"), 0, 0 }, };
 
-static void delete_window_manager_window_cb(GtkWidget* widget, GdkEvent*, gpointer data)
+static void delete_window_manager_window_cb(GtkWidget* widget, GdkEvent* /*event*/, gpointer data)
 {
-	CPlayerVisualization* visualization     = reinterpret_cast<CPlayerVisualization*>(data);
-	CInterfacedScenario& interfacedScenario = visualization->getInterfacedScenario();
-	GtkWidget* confirmationDialog           = gtk_message_dialog_new(GTK_WINDOW(widget), GTK_DIALOG_MODAL, GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
-																	 "Would you like to stop the scenario execution?");
-	const gint returnValue = gtk_dialog_run(GTK_DIALOG(confirmationDialog));
+	CPlayerVisualization* visualization = reinterpret_cast<CPlayerVisualization*>(data);
+	CInterfacedScenario& scenario       = visualization->getInterfacedScenario();
+	GtkWidget* dialog                   = gtk_message_dialog_new(GTK_WINDOW(widget), GTK_DIALOG_MODAL, GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
+																 "Would you like to stop the scenario execution?");
+	const gint res = gtk_dialog_run(GTK_DIALOG(dialog));
 
-	if (returnValue == GTK_RESPONSE_YES) { if (visualization != nullptr) { interfacedScenario.m_Player->stop(); } }
-	else if (returnValue == GTK_RESPONSE_NO) {}
+	if (res == GTK_RESPONSE_YES) { if (visualization != nullptr) { scenario.m_Player->stop(); } }
+	else if (res == GTK_RESPONSE_NO) {}
 
-	gtk_widget_destroy(confirmationDialog);
+	gtk_widget_destroy(dialog);
 }
 
 CPlayerVisualization::~CPlayerVisualization()
@@ -36,7 +36,7 @@ CPlayerVisualization::~CPlayerVisualization()
 
 	for (auto& window : m_windows)
 	{
-		g_signal_handlers_disconnect_by_func(G_OBJECT(window), G_CALLBACK2(CPlayerVisualization::configure_event_cb), this);
+		g_signal_handlers_disconnect_by_func(G_OBJECT(window), G_CALLBACK2(CPlayerVisualization::configureEventCB), this);
 		gtk_widget_destroy(GTK_WIDGET(window));
 	}
 
@@ -200,7 +200,7 @@ GtkWidget* CPlayerVisualization::loadTreeWidget(IVisualizationWidget* widget)
 			}
 
 			//FIXME wrong spelling (-)
-			gtk_signal_connect(GTK_OBJECT(treeWidget), "configure_event", G_CALLBACK(configure_event_cb), this);
+			gtk_signal_connect(GTK_OBJECT(treeWidget), "configure_event", G_CALLBACK(configureEventCB), this);
 			//FIXME wrong spelling (-)
 			g_signal_connect(treeWidget, "delete_event", G_CALLBACK(delete_window_manager_window_cb), this);
 		}
@@ -284,7 +284,7 @@ bool CPlayerVisualization::setToolbar(const CIdentifier& boxID, GtkWidget* widge
 	}
 
 	//catch delete events
-	g_signal_connect(G_OBJECT(widget), "delete-event", G_CALLBACK(toolbar_delete_event_cb), this);
+	g_signal_connect(G_OBJECT(widget), "delete-event", G_CALLBACK(toolbarDeleteEventCB), this);
 
 	return true;
 }
@@ -351,15 +351,15 @@ bool CPlayerVisualization::setWidget(const CIdentifier& boxID, GtkWidget* widget
 	}
 
 	//detect toolbar button toggle events
-	g_signal_connect(G_OBJECT(button), "toggled", G_CALLBACK(toolbar_button_toggled_cb), this);
+	g_signal_connect(G_OBJECT(button), "toggled", G_CALLBACK(toolbarButtonToggledCB), this);
 
 	//set up toolbar button as drag destination
 	gtk_drag_dest_set(GTK_WIDGET(button), GTK_DEST_DEFAULT_ALL, targets, sizeof(targets) / sizeof(GtkTargetEntry), GDK_ACTION_COPY);
-	g_signal_connect(G_OBJECT(button), "drag_data_received", G_CALLBACK(drag_data_received_in_widget_cb), this);
+	g_signal_connect(G_OBJECT(button), "drag_data_received", G_CALLBACK(dragDataReceivedInWidgetCB), this);
 
 	//set up toolbar button as drag source as well
 	gtk_drag_source_set(GTK_WIDGET(button), GDK_BUTTON1_MASK, targets, sizeof(targets) / sizeof(GtkTargetEntry), GDK_ACTION_COPY);
-	g_signal_connect(G_OBJECT(button), "drag_data_get", G_CALLBACK(drag_data_get_from_widget_cb), this);
+	g_signal_connect(G_OBJECT(button), "drag_data_get", G_CALLBACK(dragDataGetFromWidgetCB), this);
 
 	//store plugin widget and toolbar button
 	const CIdentifier id          = visualizationWidget->getIdentifier();
@@ -465,7 +465,7 @@ bool CPlayerVisualization::parentWidgetBox(IVisualizationWidget* widget, GtkBox*
 
 			//resize widgets once they are allocated : this is the case when they are shown on an expose event
 			//FIXME : perform resizing only once (when it is done as many times as there are widgets in the tree here)
-			if (parent != nullptr) { gtk_signal_connect(GTK_OBJECT(parent), "expose-event", G_CALLBACK(widget_expose_event_cb), this); }
+			if (parent != nullptr) { gtk_signal_connect(GTK_OBJECT(parent), "expose-event", G_CALLBACK(widgetExposeEventCB), this); }
 
 			//show window (and realize widget if it owns a 3D context)
 			//--------------------------------------------------------
@@ -549,19 +549,19 @@ void CPlayerVisualization::hideTopLevelWindows()
 }
 
 //event generated whenever window changes size, including when it is first created
-gboolean CPlayerVisualization::configure_event_cb(GtkWidget* widget, GdkEventConfigure* /*event*/, gpointer data)
+gboolean CPlayerVisualization::configureEventCB(GtkWidget* widget, GdkEventConfigure* /*event*/, gpointer data)
 {
 	//paned positions aren't to be saved, they are to be read once only
-	g_signal_handlers_disconnect_by_func(G_OBJECT(widget), G_CALLBACK2(CPlayerVisualization::configure_event_cb), data);
+	g_signal_handlers_disconnect_by_func(G_OBJECT(widget), G_CALLBACK2(CPlayerVisualization::configureEventCB), data);
 
 	if (GTK_IS_CONTAINER(widget)) { static_cast<CPlayerVisualization*>(data)->resizeCB(GTK_CONTAINER(widget)); }
 
 	return FALSE;
 }
 
-gboolean CPlayerVisualization::widget_expose_event_cb(GtkWidget* widget, GdkEventExpose* /*event*/, gpointer data)
+gboolean CPlayerVisualization::widgetExposeEventCB(GtkWidget* widget, GdkEventExpose* /*event*/, gpointer data)
 {
-	g_signal_handlers_disconnect_by_func(G_OBJECT(widget), G_CALLBACK2(CPlayerVisualization::widget_expose_event_cb), data);
+	g_signal_handlers_disconnect_by_func(G_OBJECT(widget), G_CALLBACK2(CPlayerVisualization::widgetExposeEventCB), data);
 	/*
 		//retrieve topmost widget
 		while(gtk_widget_get_parent(widget) != nullptr && GTK_IS_CONTAINER(gtk_widget_get_parent(widget))) { widget = gtk_widget_get_parent(widget); }
@@ -620,7 +620,7 @@ void CPlayerVisualization::resizeCB(GtkContainer* container)
 	}
 }
 
-void CPlayerVisualization::drag_data_get_from_widget_cb(GtkWidget* srcWidget, GdkDragContext* /*dc*/, GtkSelectionData* selectionData,
+void CPlayerVisualization::dragDataGetFromWidgetCB(GtkWidget* srcWidget, GdkDragContext* /*dc*/, GtkSelectionData* selectionData,
 														guint /*info*/, guint /*time*/, gpointer /*data*/)
 {
 	char str[1024];
@@ -628,7 +628,7 @@ void CPlayerVisualization::drag_data_get_from_widget_cb(GtkWidget* srcWidget, Gd
 	gtk_selection_data_set_text(selectionData, str, gint(strlen(str)));
 }
 
-void CPlayerVisualization::drag_data_received_in_widget_cb(GtkWidget* dstWidget, GdkDragContext* /*dc*/, gint /*x*/, gint /*y*/,
+void CPlayerVisualization::dragDataReceivedInWidgetCB(GtkWidget* dstWidget, GdkDragContext* /*dc*/, gint /*x*/, gint /*y*/,
 														   GtkSelectionData* selectionData, guint /*info*/, guint /*time*/, gpointer /*data*/)
 {
 	void* srcWidget = nullptr;
@@ -707,7 +707,7 @@ void CPlayerVisualization::drag_data_received_in_widget_cb(GtkWidget* dstWidget,
 	}
 }
 
-void CPlayerVisualization::toolbar_button_toggled_cb(GtkToggleButton* button, gpointer data)
+void CPlayerVisualization::toolbarButtonToggledCB(GtkToggleButton* button, gpointer data)
 {
 	static_cast<CPlayerVisualization*>(data)->toggleToolbarCB(button);
 }
@@ -736,9 +736,9 @@ bool CPlayerVisualization::toggleToolbarCB(GtkToggleButton* button)
 		{
 			gtk_widget_hide(m_toolbars[m_activeToolbarButton]);
 
-			g_signal_handlers_disconnect_by_func(m_activeToolbarButton, G_CALLBACK2(toolbar_button_toggled_cb), this);
+			g_signal_handlers_disconnect_by_func(m_activeToolbarButton, G_CALLBACK2(toolbarButtonToggledCB), this);
 			gtk_toggle_button_set_active(m_activeToolbarButton, FALSE);
-			g_signal_connect(m_activeToolbarButton, "toggled", G_CALLBACK(toolbar_button_toggled_cb), this);
+			g_signal_connect(m_activeToolbarButton, "toggled", G_CALLBACK(toolbarButtonToggledCB), this);
 		}
 		/*
 				//set toolbar transient for plugin window
@@ -762,7 +762,7 @@ bool CPlayerVisualization::toggleToolbarCB(GtkToggleButton* button)
 	return true;
 }
 
-gboolean CPlayerVisualization::toolbar_delete_event_cb(GtkWidget* widget, GdkEvent* /*event*/, gpointer data)
+gboolean CPlayerVisualization::toolbarDeleteEventCB(GtkWidget* widget, GdkEvent* /*event*/, gpointer data)
 {
 	if (data != nullptr) { static_cast<CPlayerVisualization*>(data)->deleteToolbarCB(widget); }
 	return TRUE;
@@ -778,9 +778,9 @@ bool CPlayerVisualization::deleteToolbarCB(GtkWidget* widget)
 	}
 
 	//toggle toolbar button off
-	g_signal_handlers_disconnect_by_func(m_activeToolbarButton, G_CALLBACK2(toolbar_button_toggled_cb), this);
+	g_signal_handlers_disconnect_by_func(m_activeToolbarButton, G_CALLBACK2(toolbarButtonToggledCB), this);
 	gtk_toggle_button_set_active(m_activeToolbarButton, FALSE);
-	g_signal_connect(m_activeToolbarButton, "toggled", G_CALLBACK(toolbar_button_toggled_cb), this);
+	g_signal_connect(m_activeToolbarButton, "toggled", G_CALLBACK(toolbarButtonToggledCB), this);
 
 	//hide toolbar
 	gtk_widget_hide(widget);

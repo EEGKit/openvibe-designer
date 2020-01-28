@@ -193,7 +193,7 @@ bool CVisualizationTree::destroyHierarchy(const CIdentifier& id, const bool dest
 		for (size_t i = 0; i < visualizationWidget->getNbChildren(); ++i)
 		{
 			visualizationWidget->getChildIdentifier(i, childIdentifier);
-			res &= _destroyHierarchy(childIdentifier, destroyVisualizationBoxes);
+			res &= destroyHierarchyR(childIdentifier, destroyVisualizationBoxes);
 		}
 
 		//delete this window in kernel factory and erase its slot in map
@@ -205,13 +205,13 @@ bool CVisualizationTree::destroyHierarchy(const CIdentifier& id, const bool dest
 	{
 		size_t index;
 		unparentVisualizationWidget(id, index);
-		_destroyHierarchy(id, destroyVisualizationBoxes);
+		destroyHierarchyR(id, destroyVisualizationBoxes);
 	}
 
 	return res;
 }
 
-bool CVisualizationTree::_destroyHierarchy(const CIdentifier& id, const bool destroy)
+bool CVisualizationTree::destroyHierarchyR(const CIdentifier& id, const bool destroy)
 {
 	IVisualizationWidget* widget = getVisualizationWidget(id);
 	if (!widget) { return false; }
@@ -222,7 +222,7 @@ bool CVisualizationTree::_destroyHierarchy(const CIdentifier& id, const bool des
 	for (size_t i = 0; i < nChildren; ++i)
 	{
 		widget->getChildIdentifier(i, childID);
-		_destroyHierarchy(childID, destroy);
+		destroyHierarchyR(childID, destroy);
 	}
 
 	//if parent widget is a window, remove this widget from it
@@ -417,7 +417,7 @@ bool CVisualizationTree::findChildNodeFromRoot(GtkTreeIter* iter, const char* la
 //looks for a tree node named 'label' of class 'type' from parent passed as parameter
 bool CVisualizationTree::findChildNodeFromParent(GtkTreeIter* iter, const char* label, const EVisualizationTreeNode type)
 {
-	if (_findChildNodeFromParent(iter, label, type))
+	if (findChildNodeFromParentR(iter, label, type))
 	{
 		*iter = m_internalTreeNode;
 		return true;
@@ -426,7 +426,7 @@ bool CVisualizationTree::findChildNodeFromParent(GtkTreeIter* iter, const char* 
 }
 
 //looks for a tree node named 'label' of class 'type' from parent passed as parameter
-bool CVisualizationTree::_findChildNodeFromParent(GtkTreeIter* iter, const char* label, const EVisualizationTreeNode type)
+bool CVisualizationTree::findChildNodeFromParentR(GtkTreeIter* iter, const char* label, const EVisualizationTreeNode type)
 {
 	gchar* name;
 	unsigned long typeAsInt;
@@ -453,7 +453,7 @@ bool CVisualizationTree::_findChildNodeFromParent(GtkTreeIter* iter, const char*
 	{
 		gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(m_treeStore), &childIter, iter, i);
 
-		if (_findChildNodeFromParent(&childIter, label, type)) { return true; }
+		if (findChildNodeFromParentR(&childIter, label, type)) { return true; }
 	}
 
 	//node wasn't found
@@ -480,7 +480,7 @@ bool CVisualizationTree::findChildNodeFromRoot(GtkTreeIter* iter, void* widget)
 
 bool CVisualizationTree::findChildNodeFromParent(GtkTreeIter* iter, void* widget)
 {
-	if (_findChildNodeFromParent(iter, widget))
+	if (findChildNodeFromParentR(iter, widget))
 	{
 		*iter = m_internalTreeNode;
 		return true;
@@ -488,7 +488,7 @@ bool CVisualizationTree::findChildNodeFromParent(GtkTreeIter* iter, void* widget
 	return false;
 }
 
-bool CVisualizationTree::_findChildNodeFromParent(GtkTreeIter* iter, void* widget)
+bool CVisualizationTree::findChildNodeFromParentR(GtkTreeIter* iter, void* widget)
 {
 	void* currentWidget;
 
@@ -507,7 +507,7 @@ bool CVisualizationTree::_findChildNodeFromParent(GtkTreeIter* iter, void* widge
 	{
 		gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(m_treeStore), &childIter, iter, i);
 
-		if (_findChildNodeFromParent(&childIter, widget)) { return true; }
+		if (findChildNodeFromParentR(&childIter, widget)) { return true; }
 	}
 
 	//node wasn't found
@@ -533,7 +533,7 @@ bool CVisualizationTree::findChildNodeFromRoot(GtkTreeIter* iter, const CIdentif
 
 bool CVisualizationTree::findChildNodeFromParent(GtkTreeIter* iter, const CIdentifier id)
 {
-	if (_findChildNodeFromParent(iter, id))
+	if (findChildNodeFromParentR(iter, id))
 	{
 		*iter = m_internalTreeNode;
 		return true;
@@ -541,7 +541,7 @@ bool CVisualizationTree::findChildNodeFromParent(GtkTreeIter* iter, const CIdent
 	return false;
 }
 
-bool CVisualizationTree::_findChildNodeFromParent(GtkTreeIter* iter, const CIdentifier& id)
+bool CVisualizationTree::findChildNodeFromParentR(GtkTreeIter* iter, const CIdentifier& id)
 {
 	gchar* str;
 	CIdentifier currentID;
@@ -561,7 +561,7 @@ bool CVisualizationTree::_findChildNodeFromParent(GtkTreeIter* iter, const CIden
 	for (int i = 0; i < nChild; ++i)
 	{
 		gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(m_treeStore), &childIter, iter, i);
-		if (_findChildNodeFromParent(&childIter, id)) { return true; }
+		if (findChildNodeFromParentR(&childIter, id)) { return true; }
 	}
 
 	//node wasn't found

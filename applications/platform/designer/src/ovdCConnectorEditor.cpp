@@ -8,7 +8,7 @@ using namespace /*OpenViBE::*/Kernel;
 using namespace OpenViBEDesigner;
 using namespace std;
 
-static void reset_scenario_connector_identifier(GtkWidget*, CConnectorEditor* self)
+static void reset_scenario_connector_identifier(GtkWidget* /*widget*/, CConnectorEditor* self)
 {
 	const CIdentifier newID = self->m_Box.getUnusedInputIdentifier(OV_UndefinedIdentifier);
 	if (self->m_IDEntry && newID != OV_UndefinedIdentifier) { gtk_entry_set_text(self->m_IDEntry, newID.str().c_str()); }

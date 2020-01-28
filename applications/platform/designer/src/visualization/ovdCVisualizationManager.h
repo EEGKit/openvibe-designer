@@ -32,4 +32,4 @@ namespace OpenViBEDesigner
 		std::map<OpenViBE::CIdentifier, OpenViBEVisualizationToolkit::IVisualizationTree*> m_trees;
 		const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
 	};
-}
+}  // namespace OpenViBEDesigner

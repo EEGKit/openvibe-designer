@@ -90,9 +90,9 @@ namespace Mensia
 			void setTimeOffset(const uint64_t offset) { m_timeOffset = offset; }
 			uint64_t getTimeOffset() const { return m_timeOffset; }
 
-			void draw2DCoordinateSystem();
-			void draw3DCoordinateSystem();
-			void drawCoordinateSystem() { this->draw3DCoordinateSystem(); }
+			static void draw2DCoordinateSystem();
+			static void draw3DCoordinateSystem();
+			void drawCoordinateSystem() const { this->draw3DCoordinateSystem(); }
 
 			virtual void rebuild(const CRendererContext& /*ctx*/) { }
 			virtual void refresh(const CRendererContext& ctx);

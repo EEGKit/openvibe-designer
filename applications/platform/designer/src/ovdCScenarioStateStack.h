@@ -39,4 +39,4 @@ namespace OpenViBEDesigner
 
 		size_t m_nMaximumState = 0;
 	};
-}
+}  // namespace OpenViBEDesigner
