@@ -7,8 +7,10 @@
 #include <map>
 #include <vector>
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
+	namespace Designer
+	{
 	namespace Setting
 	{
 		typedef struct
@@ -57,4 +59,5 @@ namespace OpenViBEDesigner
 			bool m_onValueSetting = false;
 		};
 	} // namespace Setting
-} // namespace OpenViBEDesigner
+	}  // namespace Designer
+}  // namespace OpenViBE

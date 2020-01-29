@@ -6,8 +6,10 @@
 #include <vector>
 #include <map>
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
+	namespace Designer
+	{
 	class CInterfacedScenario;
 
 	class CPlayerVisualization final : public OpenViBEVisualizationToolkit::ITreeViewCB
@@ -93,4 +95,5 @@ namespace OpenViBEDesigner
 		 */
 		std::map<OpenViBE::CIdentifier, CPluginWidgets> m_plugins;
 	};
-}  // namespace OpenViBEDesigner
+	}  // namespace Designer
+}  // namespace OpenViBE

@@ -3,8 +3,10 @@
 #include "../ovd_base.h"
 #include <cstdlib>	// size_t for unix
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
+	namespace Designer
+	{
 	namespace Setting
 	{
 		class CAbstractSettingView
@@ -70,4 +72,5 @@ namespace OpenViBEDesigner
 			GtkBuilder* m_builder = nullptr;
 		};
 	} // namespace Setting
-} // namespace OpenViBEDesigner
+	}  // namespace Designer
+}  // namespace OpenViBE

@@ -2,8 +2,8 @@
 
 #include <cstring>
 
-using namespace OpenViBEDesigner;
 using namespace OpenViBE;
+using namespace /*OpenViBE::*/Designer;
 using namespace /*OpenViBE::*/Plugins;
 using namespace /*OpenViBE::*/Kernel;
 

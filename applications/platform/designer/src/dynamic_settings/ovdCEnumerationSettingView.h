@@ -5,8 +5,10 @@
 
 #include <map>
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
+	namespace Designer
+	{
 	namespace Setting
 	{
 		class CEnumerationSettingView final : public CAbstractSettingView
@@ -31,4 +33,5 @@ namespace OpenViBEDesigner
 			bool m_onValueSetting = false;
 		};
 	} // namespace Setting
-} // namespace OpenViBEDesigner
+	}  // namespace Designer
+}  // namespace OpenViBE

@@ -2,8 +2,10 @@
 
 #include "ovd_base.h"
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
+	namespace Designer
+	{
 	class CCommentEditorDialog final
 	{
 	public:
@@ -34,4 +36,5 @@ namespace OpenViBEDesigner
 
 		CCommentEditorDialog() = delete;
 	};
-} // namespace OpenViBEDesigner
+	}  // namespace Designer
+}  // namespace OpenViBE

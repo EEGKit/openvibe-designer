@@ -5,7 +5,7 @@
 
 using namespace OpenViBE;
 using namespace /*OpenViBE::*/Kernel;
-using namespace OpenViBEDesigner;
+using namespace /*OpenViBE::*/Designer;
 using namespace std;
 
 static void reset_scenario_connector_identifier(GtkWidget* /*widget*/, CConnectorEditor* self)

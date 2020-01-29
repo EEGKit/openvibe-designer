@@ -8,13 +8,15 @@
 
 using namespace OpenViBE;
 using namespace /*OpenViBE::*/Kernel;
-using namespace OpenViBEDesigner;
+using namespace /*OpenViBE::*/Designer;
 using namespace OpenViBEVisualizationToolkit;
 
 static const GtkTargetEntry TARGETS[] = { { static_cast<gchar*>("STRING"), 0, 0 }, { static_cast<gchar*>("text/plain"), 0, 0 } };
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
+	namespace Designer
+	{
 	/**
 	 * \brief Display an error dialog
 	 * \param[in] text text to display in the dialog
@@ -69,7 +71,8 @@ namespace OpenViBEDesigner
 		gtk_widget_destroy(dialog);
 		return ret;
 	}*/
-} // namespace OpenViBEDesigner
+	}  // namespace Designer
+}  // namespace OpenViBE
 
 //Menus
 //-----

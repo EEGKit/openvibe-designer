@@ -4,8 +4,10 @@
 
 #include <string>
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
+	namespace Designer
+	{
 	class CBoxProxy final
 	{
 	public:
@@ -55,4 +57,5 @@ namespace OpenViBEDesigner
 		bool m_isBoxAlgorithmPresent = false;
 		bool m_isDeprecated          = false;
 	};
-}  // namespace OpenViBEDesigner
+	}  // namespace Designer
+}  // namespace OpenViBE

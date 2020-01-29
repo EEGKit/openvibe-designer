@@ -3,8 +3,10 @@
 #include "../ovd_base.h"
 #include "ovdCAbstractSettingView.h"
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
+	namespace Designer
+	{
 	namespace Setting
 	{
 		class CSettingViewFactory final
@@ -22,4 +24,5 @@ namespace OpenViBEDesigner
 			const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
 		};
 	} // namespace Setting
-} // namespace OpenViBEDesigner
+	}  // namespace Designer
+}  // namespace OpenViBE

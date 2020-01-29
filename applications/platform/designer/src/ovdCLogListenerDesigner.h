@@ -7,8 +7,10 @@
 
 #define OVK_ClassId_Designer_LogListener		OpenViBE::CIdentifier(0x0FE155FA, 0x313C17A7)
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
+	namespace Designer
+	{
 	class CApplication;
 
 	class CLogListenerDesigner final : public OpenViBE::Kernel::ILogListener
@@ -166,4 +168,5 @@ namespace OpenViBEDesigner
 		void updateMessageCounts() const;
 		void checkAppendFilterCurrentLog(const char* textColor, const char* logMessage, bool isLink = false) const;
 	};
-} // namespace OpenViBEDesigner
+	}  // namespace Designer
+}  // namespace OpenViBE

@@ -2,8 +2,10 @@
 
 #include "ovd_base.h"
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
+	namespace Designer
+	{
 	class CAboutScenarioDialog final
 	{
 	public:
@@ -23,4 +25,5 @@ namespace OpenViBEDesigner
 
 		CAboutScenarioDialog() = delete;
 	};
-}  // namespace OpenViBEDesigner
+	}  // namespace Designer
+}  // namespace OpenViBE

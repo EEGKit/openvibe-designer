@@ -3,8 +3,10 @@
 #include "../ovd_base.h"
 #include "ovdCAbstractSettingView.h"
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
+	namespace Designer
+	{
 	namespace Setting
 	{
 		class CFloatSettingView final : public CAbstractSettingView
@@ -27,4 +29,5 @@ namespace OpenViBEDesigner
 			bool m_onValueSetting = false;
 		};
 	} // namespace Setting
-} // namespace OpenViBEDesigner
+	}  // namespace Designer
+}  // namespace OpenViBE

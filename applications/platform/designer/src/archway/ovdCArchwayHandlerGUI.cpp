@@ -15,7 +15,8 @@
 #endif
 
 using namespace Mensia;
-using namespace OpenViBEDesigner;
+using namespace OpenViBE;
+using namespace /*OpenViBE::*/Designer;
 
 namespace
 {

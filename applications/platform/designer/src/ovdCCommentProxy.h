@@ -4,8 +4,10 @@
 
 #include <string>
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
+	namespace Designer
+	{
 	class CCommentProxy final
 	{
 	public:
@@ -41,4 +43,5 @@ namespace OpenViBEDesigner
 		int m_centerY                                    = 0;
 		mutable std::string m_label;
 	};
-} // namespace OpenViBEDesigner
+	}  // namespace Designer
+}  // namespace OpenViBE

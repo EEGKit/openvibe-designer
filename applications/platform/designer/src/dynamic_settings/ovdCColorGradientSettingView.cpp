@@ -5,7 +5,7 @@
 #include <cmath>
 
 using namespace OpenViBE;
-using namespace OpenViBEDesigner;
+using namespace /*OpenViBE::*/Designer;
 using namespace Setting;
 
 static void OnColorGradientColorButtonPressed(GtkColorButton* button, gpointer data) { static_cast<CColorGradientSettingView *>(data)->colorChange(button); }

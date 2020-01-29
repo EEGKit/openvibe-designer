@@ -5,7 +5,7 @@
 #include <cstdlib>
 
 using namespace OpenViBE;
-using namespace OpenViBEDesigner;
+using namespace /*OpenViBE::*/Designer;
 using namespace Setting;
 
 static void OnButtonSettingFilenameBrowsePressed(GtkButton* /*button*/, gpointer data) { static_cast<CScriptSettingView *>(data)->browse(); }

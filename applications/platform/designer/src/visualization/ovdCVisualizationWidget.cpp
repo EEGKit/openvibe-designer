@@ -14,7 +14,7 @@ namespace OpenViBE
 
 using namespace std;
 using namespace OpenViBE;
-using namespace OpenViBEDesigner;
+using namespace /*OpenViBE::*/Designer;
 using namespace /*OpenViBE::*/Kernel;
 using namespace OpenViBEVisualizationToolkit;
 

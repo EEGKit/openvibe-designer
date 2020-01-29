@@ -5,8 +5,10 @@
 #include <string>
 #include <map>
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
+	namespace Designer
+	{
 	class CSettingEditorDialog final
 	{
 	public:
@@ -35,4 +37,5 @@ namespace OpenViBEDesigner
 		GtkWidget* m_defaultValue = nullptr;
 		std::map<std::string, OpenViBE::CIdentifier> m_settingTypes;
 	};
-}  // namespace OpenViBEDesigner
+	}  // namespace Designer
+}  // namespace OpenViBE

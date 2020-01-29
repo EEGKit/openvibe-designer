@@ -2,8 +2,10 @@
 
 #include "ovd_base.h"
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
+	namespace Designer
+	{
 	typedef void (*fpButtonCB)(GtkWidget* pWidget, gpointer data);
 
 	class CInputDialog
@@ -32,4 +34,5 @@ namespace OpenViBEDesigner
 		GtkButton* m_dialogOkButton     = nullptr;
 		GtkButton* m_dialogCancelButton = nullptr;
 	};
-}  // namespace OpenViBEDesigner
+	}  // namespace Designer
+}  // namespace OpenViBE

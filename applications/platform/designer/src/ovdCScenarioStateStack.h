@@ -4,8 +4,10 @@
 
 #include "ovd_base.h"
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
+	namespace Designer
+	{
 	class CInterfacedScenario;
 
 	class CScenarioStateStack
@@ -39,4 +41,5 @@ namespace OpenViBEDesigner
 
 		size_t m_nMaximumState = 0;
 	};
-}  // namespace OpenViBEDesigner
+	}  // namespace Designer
+}  // namespace OpenViBE

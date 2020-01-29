@@ -2,8 +2,10 @@
 
 #include "ovd_base.h"
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
+	namespace Designer
+	{
 	class CAboutPluginDialog final
 	{
 	public:
@@ -27,4 +29,5 @@ namespace OpenViBEDesigner
 
 		CAboutPluginDialog() = delete;
 	};
-}  // namespace OpenViBEDesigner
+	}  // namespace Designer
+}  // namespace OpenViBE

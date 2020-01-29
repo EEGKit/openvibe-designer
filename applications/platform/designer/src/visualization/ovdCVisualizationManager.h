@@ -8,8 +8,10 @@
 
 typedef struct _GtkWidget GtkWidget;
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
+	namespace Designer
+	{
 	class CVisualizationManager final : public OpenViBEVisualizationToolkit::IVisualizationManager
 	{
 	public:
@@ -32,4 +34,5 @@ namespace OpenViBEDesigner
 		std::map<OpenViBE::CIdentifier, OpenViBEVisualizationToolkit::IVisualizationTree*> m_trees;
 		const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
 	};
-}  // namespace OpenViBEDesigner
+	}  // namespace Designer
+}  // namespace OpenViBE

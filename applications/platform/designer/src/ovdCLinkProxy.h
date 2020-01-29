@@ -2,8 +2,10 @@
 
 #include "ovd_base.h"
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
+	namespace Designer
+	{
 	class CLinkProxy final
 	{
 	public:
@@ -32,4 +34,5 @@ namespace OpenViBEDesigner
 		int m_xDst                      = 0;
 		int m_yDst                      = 0;
 	};
-}  // namespace OpenViBEDesigner
+	}  // namespace Designer
+}  // namespace OpenViBE

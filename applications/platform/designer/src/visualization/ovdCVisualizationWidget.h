@@ -5,8 +5,10 @@
 #include <vector>
 #include <limits>
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
+	namespace Designer
+	{
 	class CVisualizationWidget final : public OpenViBEVisualizationToolkit::IVisualizationWidget
 	{
 	public:
@@ -60,4 +62,5 @@ namespace OpenViBEDesigner
 		int m_dividerPosition    = std::numeric_limits<int>::min();
 		int m_maxDividerPosition = std::numeric_limits<int>::min();
 	};
-}  // namespace OpenViBEDesigner
+	}  // namespace Designer
+}  // namespace OpenViBE

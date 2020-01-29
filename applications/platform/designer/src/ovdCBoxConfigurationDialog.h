@@ -7,8 +7,10 @@
 #include "dynamic_settings/ovdCAbstractSettingView.h"
 #include "dynamic_settings/ovdCSettingViewFactory.h"
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
+	namespace Designer
+	{
 	class CBoxConfigurationDialog final : public OpenViBE::IObserver
 	{
 	public:
@@ -57,4 +59,5 @@ namespace OpenViBEDesigner
 
 		std::vector<OpenViBE::CString> m_settingsMemory;
 	};
-} // namespace OpenViBEDesigner
+	}  // namespace Designer
+}  // namespace OpenViBE

@@ -4,8 +4,10 @@
 
 #include <string>
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
+	namespace Designer
+	{
 	class CSettingCollectionHelper final
 	{
 	public:
@@ -48,4 +50,5 @@ namespace OpenViBEDesigner
 	private:
 		CSettingCollectionHelper() = delete;
 	};
-} // namespace OpenViBEDesigner
+	}  // namespace Designer
+}  // namespace OpenViBE

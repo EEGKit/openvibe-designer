@@ -8,7 +8,7 @@ using namespace OpenViBE;
 using namespace /*OpenViBE::*/Kernel;
 using namespace /*OpenViBE::*/Plugins;
 using namespace /*OpenViBE::*/Toolkit;
-using namespace OpenViBEDesigner;
+using namespace /*OpenViBE::*/Designer;
 
 CScenarioStateStack::CScenarioStateStack(const IKernelContext& ctx, CInterfacedScenario& interfacedScenario, IScenario& scenario)
 	: m_kernelCtx(ctx), m_interfacedScenario(interfacedScenario), m_scenario(scenario)

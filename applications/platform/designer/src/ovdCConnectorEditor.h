@@ -4,8 +4,10 @@
 
 #include <string>
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
+	namespace Designer
+	{
 	class CConnectorEditor final
 	{
 	public:
@@ -35,4 +37,5 @@ namespace OpenViBEDesigner
 		typedef bool (OpenViBE::Kernel::IBox::*is_type_supported_t)(const OpenViBE::CIdentifier& typeID) const;
 		typedef bool (OpenViBE::Kernel::IBox::*update_identifier_t)(size_t index, const OpenViBE::CIdentifier& newID);
 	};
-}  //namespace OpenViBEDesigner
+	}  //namespace Designer
+}  //namespace OpenViBE

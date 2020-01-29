@@ -10,8 +10,10 @@
 
 #define OV_AttributeId_Box_Disabled                					OpenViBE::CIdentifier(0x341D3912, 0x1478DE86)
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
+	namespace Designer
+	{
 	typedef enum
 	{
 		CommandLineFlag_None =0x00000000,
@@ -146,7 +148,8 @@ namespace OpenViBEDesigner
 		Mode_Connect,
 		Mode_EditSettings,
 	};
-}  // namespace OpenViBEDesigner
+	}  // namespace Designer
+}  // namespace OpenViBE
 
 //___________________________________________________________________//
 //                                                                   //

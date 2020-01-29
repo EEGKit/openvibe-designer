@@ -2,8 +2,10 @@
 
 #include "ovd_base.h"
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
+	namespace Designer
+	{
 	class CInterfacedObject
 	{
 	public:
@@ -18,4 +20,5 @@ namespace OpenViBEDesigner
 		size_t m_ConnectorType     = 0;
 		size_t m_ConnectorIdx      = 0;
 	};
-} // namespace OpenViBEDesigner
+	}  // namespace Designer
+}  // namespace OpenViBE

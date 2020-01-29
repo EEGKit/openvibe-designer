@@ -2,8 +2,10 @@
 
 #include "ovd_base.h"
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
+	namespace Designer
+	{
 	class CRenameDialog final
 	{
 	public:
@@ -28,4 +30,5 @@ namespace OpenViBEDesigner
 	private:
 		CRenameDialog() = delete;
 	};
-}  // namespace OpenViBEDesigner
+	}  // namespace Designer
+}  // namespace OpenViBE

@@ -12,8 +12,10 @@
 
 #include <vector>
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
+	namespace Designer
+	{
 	class CInterfacedScenario;
 
 	class CLogListenerDesigner;
@@ -200,4 +202,5 @@ namespace OpenViBEDesigner
 		size_t m_currentScenarioIdx = 0;
 		std::vector<std::string> m_documentedBoxes;
 	};
-}  //namespace OpenViBEDesigner
+	}  //namespace Designer
+}  //namespace OpenViBE

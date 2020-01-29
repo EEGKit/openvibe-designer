@@ -4,7 +4,7 @@
 #include <cmath>
 
 using namespace OpenViBE;
-using namespace OpenViBEDesigner;
+using namespace /*OpenViBE::*/Designer;
 using namespace Setting;
 
 static int Color2Percent(const guint16 color) { return int(round(color / 655.350)); }	// c * 100 / 65535

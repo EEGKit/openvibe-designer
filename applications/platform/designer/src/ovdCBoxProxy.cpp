@@ -5,7 +5,7 @@
 using namespace OpenViBE;
 using namespace /*OpenViBE::*/Kernel;
 using namespace /*OpenViBE::*/Plugins;
-using namespace OpenViBEDesigner;
+using namespace /*OpenViBE::*/Designer;
 using namespace std;
 
 CBoxProxy::CBoxProxy(const IKernelContext& ctx, IScenario& scenario, const CIdentifier& boxID)

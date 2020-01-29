@@ -10,8 +10,10 @@ namespace json
 	class Object;
 }
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
+	namespace Designer
+	{
 	class CVisualizationTree final : public OpenViBEVisualizationToolkit::IVisualizationTree
 	{
 	public:
@@ -84,4 +86,5 @@ namespace OpenViBEDesigner
 		GtkTreeIter m_internalTreeNode;
 		OpenViBEVisualizationToolkit::ITreeViewCB* m_treeViewCB = nullptr;
 	};
-}  // namespace OpenViBEDesigner
+	}  // namespace Designer
+}  // namespace OpenViBE

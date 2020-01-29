@@ -4,7 +4,7 @@
 
 using namespace OpenViBE;
 using namespace /*OpenViBE::*/Kernel;
-using namespace OpenViBEDesigner;
+using namespace /*OpenViBE::*/Designer;
 
 bool TAttributeHandler::removeAttribute(const CIdentifier& id)
 {
@@ -19,8 +19,10 @@ bool TAttributeHandler::removeAllAttributes()
 	return m_attributable->removeAllAttributes();
 }
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
+	namespace Designer
+	{
 	template <>
 	bool TAttributeHandler::addAttribute(const CIdentifier& id, const int& value) const
 	{
@@ -64,4 +66,5 @@ namespace OpenViBEDesigner
 		if (!m_attributable) { return false; }
 		return m_attributable->setAttributeValue(id, (value ? "true" : "false"));
 	}
-} // namespace OpenViBEDesigner
+	}  // namespace Designer
+}  // namespace OpenViBE

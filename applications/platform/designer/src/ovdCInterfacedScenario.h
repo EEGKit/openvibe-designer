@@ -14,8 +14,10 @@
 #include "ovdCBoxConfigurationDialog.h"
 #include <visualization-toolkit/ovvizIVisualizationTree.h>
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
+	namespace Designer
+	{
 	class CApplication;
 	class CDesignerVisualization;
 	class CPlayerVisualization;
@@ -268,4 +270,5 @@ namespace OpenViBEDesigner
 										bool (OpenViBE::Kernel::IScenario::* getLinkName)(size_t, OpenViBE::CString&) const,
 										bool (OpenViBE::Kernel::IScenario::* getLinkType)(size_t, OpenViBE::CIdentifier&) const);
 	};
-} // namespace OpenViBEDesigner
+	}  // namespace Designer
+}  // namespace OpenViBE

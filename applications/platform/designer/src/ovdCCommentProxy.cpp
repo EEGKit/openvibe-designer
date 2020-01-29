@@ -3,7 +3,7 @@
 
 using namespace OpenViBE;
 using namespace /*OpenViBE::*/Kernel;
-using namespace OpenViBEDesigner;
+using namespace /*OpenViBE::*/Designer;
 using namespace std;
 
 CCommentProxy::CCommentProxy(const IKernelContext& ctx, const IComment& comment)

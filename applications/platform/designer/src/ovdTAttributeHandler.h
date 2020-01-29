@@ -2,8 +2,10 @@
 
 #include "ovd_base.h"
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
+	namespace Designer
+	{
 	class TAttributeHandler
 	{
 	public:
@@ -32,4 +34,5 @@ namespace OpenViBEDesigner
 		const OpenViBE::Kernel::IAttributable* m_constAttributable;
 		OpenViBE::Kernel::IAttributable* m_attributable = nullptr;
 	};
-}  // namespace OpenViBEDesigner
+	}  // namespace Designer
+}  // namespace OpenViBE

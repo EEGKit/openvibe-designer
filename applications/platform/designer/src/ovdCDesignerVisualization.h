@@ -6,8 +6,10 @@
 #include <gtk/gtk.h>
 #include <visualization-toolkit/ovvizIVisualizationTree.h>
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
+	namespace Designer
+	{
 	typedef void (*visualization_delete_event_cb_t)(gpointer data);
 
 	class CInterfacedScenario;
@@ -168,4 +170,5 @@ namespace OpenViBEDesigner
 		std::string m_rightEventBoxData;
 		std::string m_bottomEventBoxData;
 	};
-}  // namespace OpenViBEDesigner
+	}  // namespace Designer
+}  // namespace OpenViBE
