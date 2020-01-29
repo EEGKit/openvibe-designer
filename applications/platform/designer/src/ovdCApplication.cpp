@@ -59,7 +59,7 @@ static const size_t s_RecentFileNumber = 10;
 
 using namespace OpenViBE;
 using namespace /*OpenViBE::*/Kernel;
-using namespace Plugins;
+using namespace /*OpenViBE::*/Plugins;
 using namespace OpenViBEDesigner;
 using namespace std;
 

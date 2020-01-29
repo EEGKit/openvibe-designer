@@ -13,7 +13,7 @@ namespace OpenViBEPlugins
 {
 	namespace SimpleVisualization
 	{
-		class CBoxAlgorithmTopographicMap2DDisplay final : public OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>
+		class CBoxAlgorithmTopographicMap2DDisplay final : public OpenViBE::Toolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>
 		{
 		public:
 			CBoxAlgorithmTopographicMap2DDisplay() = default;
@@ -27,10 +27,10 @@ namespace OpenViBEPlugins
 			bool processClock(OpenViBE::Kernel::IMessageClock& messageClock) override;
 			bool process() override;
 
-			_IsDerivedFromClass_Final_(OpenViBEToolkit::TBoxAlgorithm < OpenViBE::Plugins::IBoxAlgorithm >, OVP_ClassId_TopographicMap2DDisplay)
+			_IsDerivedFromClass_Final_(OpenViBE::Toolkit::TBoxAlgorithm < OpenViBE::Plugins::IBoxAlgorithm >, OVP_ClassId_TopographicMap2DDisplay)
 
 		protected:
-			OpenViBEToolkit::TStreamedMatrixDecoder<CBoxAlgorithmTopographicMap2DDisplay> m_decoder;
+			OpenViBE::Toolkit::TStreamedMatrixDecoder<CBoxAlgorithmTopographicMap2DDisplay> m_decoder;
 
 			OpenViBEVisualizationToolkit::IVisualizationContext* m_visualizationCtx = nullptr;
 			OpenViBE::Kernel::IAlgorithmProxy* m_interpolation                      = nullptr;

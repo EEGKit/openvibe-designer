@@ -24,7 +24,7 @@
 
 using namespace OpenViBE;
 using namespace /*OpenViBE::*/Kernel;
-using namespace Plugins;
+using namespace /*OpenViBE::*/Plugins;
 using namespace OpenViBEDesigner;
 using namespace std;
 
@@ -665,7 +665,7 @@ int go(int argc, char** argv)
 			if (context == nullptr) { cout << "[ FAILED ] No kernel created by kernel descriptor" << "\n"; }
 			else
 			{
-				OpenViBEToolkit::initialize(*context);
+				OpenViBE::Toolkit::initialize(*context);
 				OpenViBEVisualizationToolkit::initialize(*context);
 
 				//initialise Gtk before 3D context
@@ -849,7 +849,7 @@ int go(int argc, char** argv)
 				logMgr << LogLevel_Info << "Application terminated, releasing allocated objects\n";
 
 				OpenViBEVisualizationToolkit::uninitialize(*context);
-				OpenViBEToolkit::uninitialize(*context);
+				OpenViBE::Toolkit::uninitialize(*context);
 
 				desc->releaseKernel(context);
 

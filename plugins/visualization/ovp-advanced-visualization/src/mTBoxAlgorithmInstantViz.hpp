@@ -43,7 +43,7 @@ namespace Mensia
 
 			size_t m_NInput = 0;
 			std::vector<IRenderer*> m_Renderers;
-			std::vector<OpenViBEToolkit::TStreamedMatrixDecoder<TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>>> m_Decoder;
+			std::vector<OpenViBE::Toolkit::TStreamedMatrixDecoder<TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>>> m_Decoder;
 
 			double m_LastERPFraction = 0;
 

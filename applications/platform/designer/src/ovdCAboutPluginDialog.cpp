@@ -2,7 +2,7 @@
 
 using namespace OpenViBEDesigner;
 using namespace OpenViBE;
-using namespace Plugins;
+using namespace /*OpenViBE::*/Plugins;
 using namespace /*OpenViBE::*/Kernel;
 
 bool CAboutPluginDialog::run()

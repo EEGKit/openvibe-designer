@@ -13,7 +13,7 @@ namespace OpenViBEPlugins
 {
 	namespace SimpleVisualization
 	{
-		class CBoxAlgorithmMatrixDisplay final : public OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>
+		class CBoxAlgorithmMatrixDisplay final : public OpenViBE::Toolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>
 		{
 		public:
 
@@ -24,14 +24,14 @@ namespace OpenViBEPlugins
 			bool processInput(const size_t index) override;
 			bool process() override;
 
-			_IsDerivedFromClass_Final_(OpenViBEToolkit::TBoxAlgorithm < OpenViBE::Plugins::IBoxAlgorithm >, OVP_ClassId_BoxAlgorithm_MatrixDisplay)
+			_IsDerivedFromClass_Final_(OpenViBE::Toolkit::TBoxAlgorithm < OpenViBE::Plugins::IBoxAlgorithm >, OVP_ClassId_BoxAlgorithm_MatrixDisplay)
 
 		protected:
 
 			// we need an algorithm to decode the EBML stream (memory buffer) into a Streamed Matrix
 
 			// for the TARGET
-			OpenViBEToolkit::TStreamedMatrixDecoder<CBoxAlgorithmMatrixDisplay> m_decoder;
+			OpenViBE::Toolkit::TStreamedMatrixDecoder<CBoxAlgorithmMatrixDisplay> m_decoder;
 			OpenViBE::Kernel::IAlgorithmProxy* iMatrix = nullptr;
 			OpenViBE::Kernel::TParameterHandler<const OpenViBE::IMemoryBuffer*> ip_buffer;
 			OpenViBE::Kernel::TParameterHandler<OpenViBE::IMatrix*> op_matrix;

@@ -114,7 +114,7 @@ namespace OpenViBEPlugins
 
 			std::vector<std::deque<std::pair<double, double>>> m_LocalMinMaxValue;
 
-			OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>& m_ParentPlugin;
+			OpenViBE::Toolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>& m_ParentPlugin;
 
 			bool m_Error = false;
 
@@ -150,7 +150,7 @@ namespace OpenViBEPlugins
 			OpenViBE::CIdentifier m_displayMode = Scan;
 
 		public:
-			explicit CBufferDatabase(OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>& plugin);
+			explicit CBufferDatabase(OpenViBE::Toolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>& plugin);
 
 			virtual ~CBufferDatabase();
 

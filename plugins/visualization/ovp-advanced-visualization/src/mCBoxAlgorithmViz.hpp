@@ -105,7 +105,7 @@ namespace Mensia
 			std::vector<int> m_parameters;
 		};
 
-		class CBoxAlgorithmViz : public OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>
+		class CBoxAlgorithmViz : public OpenViBE::Toolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>
 		{
 		public:
 
@@ -242,7 +242,7 @@ namespace Mensia
 			OpenViBEVisualizationToolkit::IVisualizationContext* m_visualizationCtx = nullptr;
 		};
 
-		class CBoxAlgorithmVizListener : public OpenViBEToolkit::TBoxListener<OpenViBE::Plugins::IBoxListener>
+		class CBoxAlgorithmVizListener : public OpenViBE::Toolkit::TBoxListener<OpenViBE::Plugins::IBoxListener>
 		{
 		public:
 
@@ -306,7 +306,7 @@ namespace Mensia
 				return true;
 			}
 
-			_IsDerivedFromClass_Final_(OpenViBEToolkit::TBoxListener<OpenViBE::Plugins::IBoxListener>, OV_UndefinedIdentifier)
+			_IsDerivedFromClass_Final_(OpenViBE::Toolkit::TBoxListener<OpenViBE::Plugins::IBoxListener>, OV_UndefinedIdentifier)
 
 			std::vector<int> m_Parameters;
 		};

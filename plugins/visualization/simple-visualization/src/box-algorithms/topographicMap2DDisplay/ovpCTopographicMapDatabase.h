@@ -26,7 +26,7 @@ namespace OpenViBEPlugins
 		class CTopographicMapDatabase : public CBufferDatabase
 		{
 		public:
-			CTopographicMapDatabase(OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>& plugin, OpenViBE::Kernel::IAlgorithmProxy& interpolation);
+			CTopographicMapDatabase(OpenViBE::Toolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>& plugin, OpenViBE::Kernel::IAlgorithmProxy& interpolation);
 			~CTopographicMapDatabase() override = default;
 
 			void setMatrixDimensionSize(const size_t index, const size_t size) override;

@@ -34,9 +34,9 @@ namespace OpenViBEVisualizationToolkit
 			return true;
 		}
 
-		bool setWidget(OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>& box, GtkWidget* widget) override;
+		bool setWidget(OpenViBE::Toolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>& box, GtkWidget* widget) override;
 
-		bool setToolbar(OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>& box, GtkWidget* toolbarWidget) override;
+		bool setToolbar(OpenViBE::Toolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>& box, GtkWidget* toolbarWidget) override;
 
 		bool isDerivedFromClass(const OpenViBE::CIdentifier& classIdentifier) const override
 		{

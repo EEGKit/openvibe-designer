@@ -28,7 +28,7 @@ namespace OpenViBEVisualizationToolkit
 		 * @retval true In case of success.
 		 * @retval false In case of error.
 		 */
-		virtual bool setWidget(OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>& box, GtkWidget* widget) = 0;
+		virtual bool setWidget(OpenViBE::Toolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>& box, GtkWidget* widget) = 0;
 
 		/**
 		 * @brief Forward a GtkWidget which displays the box toolbar to the visualization manager
@@ -37,7 +37,7 @@ namespace OpenViBEVisualizationToolkit
 		 * @retval true In case of success.
 		 * @retval false In case of error.
 		 */
-		virtual bool setToolbar(OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>& box, GtkWidget* toolbarWidget) = 0;
+		virtual bool setToolbar(OpenViBE::Toolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>& box, GtkWidget* toolbarWidget) = 0;
 
 		_IsDerivedFromClass_(OpenViBE::Plugins::IPluginObject, OV_ClassId_VisualizationCtx)
 	};

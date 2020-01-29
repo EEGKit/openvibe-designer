@@ -3,13 +3,13 @@
 #include <cmath>
 
 using namespace OpenViBE;
-using namespace Plugins;
+using namespace /*OpenViBE::*/Plugins;
 using namespace /*OpenViBE::*/Kernel;
 
 using namespace OpenViBEPlugins;
 using namespace SimpleVisualization;
 
-using namespace OpenViBEToolkit;
+using namespace /*OpenViBE::*/Toolkit;
 
 using namespace std;
 
