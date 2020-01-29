@@ -101,12 +101,12 @@ bool CBoxAlgorithmMatrixDisplay::initialize()
 
 	CString gradientSetting;
 	getBoxAlgorithmContext()->getStaticBoxContext()->getSettingValue(0, gradientSetting);
-	OpenViBEVisualizationToolkit::Tools::ColorGradient::parse(m_colorGradient, gradientSetting);
+	OpenViBEVisualizationToolkit::ColorGradient::parse(m_colorGradient, gradientSetting);
 
 	CString gradientStepsSetting;
 	getBoxAlgorithmContext()->getStaticBoxContext()->getSettingValue(1, gradientStepsSetting);
 	m_gradientSteps = strtol(gradientStepsSetting, nullptr, 10);
-	OpenViBEVisualizationToolkit::Tools::ColorGradient::interpolate(m_interpolatedColorGardient, m_colorGradient, m_gradientSteps);
+	OpenViBEVisualizationToolkit::ColorGradient::interpolate(m_interpolatedColorGardient, m_colorGradient, m_gradientSteps);
 	m_max = 0;
 	m_min = 0;
 

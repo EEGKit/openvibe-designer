@@ -18,7 +18,7 @@ namespace
 	} SColor;
 } // namespace
 
-bool Tools::ColorGradient::parse(IMatrix& colorGradient, const CString& string)
+bool ColorGradient::parse(IMatrix& colorGradient, const CString& string)
 {
 	const std::string colorString(string.toASCIIString());
 	size_t startPosition = 0;
@@ -63,7 +63,7 @@ bool Tools::ColorGradient::parse(IMatrix& colorGradient, const CString& string)
 	return true;
 }
 
-bool Tools::ColorGradient::format(CString& string, const IMatrix& colorGradient)
+bool ColorGradient::format(CString& string, const IMatrix& colorGradient)
 {
 	if (colorGradient.getDimensionCount() != 2) { return false; }
 
@@ -85,7 +85,7 @@ bool Tools::ColorGradient::format(CString& string, const IMatrix& colorGradient)
 	return true;
 }
 
-bool Tools::ColorGradient::interpolate(IMatrix& interpolatedColorGradient, const IMatrix& colorGradient, const size_t steps)
+bool ColorGradient::interpolate(IMatrix& interpolatedColorGradient, const IMatrix& colorGradient, const size_t steps)
 {
 	size_t i;
 

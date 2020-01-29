@@ -13,8 +13,8 @@ namespace OpenViBEDesigner
 		explicit CVisualizationWidget(const OpenViBE::Kernel::IKernelContext& ctx) : m_kernelCtx(ctx) { }
 		~CVisualizationWidget() override = default;
 
-		bool initialize(const OpenViBE::CIdentifier& id, const OpenViBE::CString& name, OpenViBEVisualizationToolkit::EVisualizationWidgetType type,
-						const OpenViBE::CIdentifier& parentID, const OpenViBE::CIdentifier& boxID, size_t nChild) override;
+		bool initialize(const OpenViBE::CIdentifier& id, const OpenViBE::CString& name, const OpenViBEVisualizationToolkit::EVisualizationWidgetType type,
+						const OpenViBE::CIdentifier& parentID, const OpenViBE::CIdentifier& boxID, const size_t nChild) override;
 
 		OpenViBE::CIdentifier getIdentifier() const override { return m_id; }
 		const OpenViBE::CString& getName() const override { return m_name; }

@@ -139,7 +139,7 @@ bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer*
 		{
 			//create a new matrix and resize it
 			channelLocalisation = new CMatrix();
-			Tools::Matrix::copyDescription(*channelLocalisation, *matrix);
+			Matrix::copyDescription(*channelLocalisation, *matrix);
 			// alternateChannelLocalisation = new CMatrix();
 			// TODO : resize it appropriately depending on whether it is spherical or cartesian
 		}
@@ -155,7 +155,7 @@ bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer*
 		if (channelLocalisation)
 		{
 			//copy coordinates and times
-			Tools::Matrix::copyContent(*channelLocalisation, *matrix);
+			Matrix::copyContent(*channelLocalisation, *matrix);
 			m_channelLocalisationCoords.emplace_back(channelLocalisation, true);
 			//m_oChannelLocalisationAlternateCoords.push_back(std::pair<CMatrix*, bool>(alternateChannelLocalisation, true));
 			m_channelLocalisationTimes.emplace_back(startTime, endTime);
