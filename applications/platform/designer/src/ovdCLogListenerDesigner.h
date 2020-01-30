@@ -13,7 +13,7 @@ namespace OpenViBE
 	{
 	class CApplication;
 
-	class CLogListenerDesigner final : public OpenViBE::Kernel::ILogListener
+	class CLogListenerDesigner final : public Kernel::ILogListener
 	{
 	public:
 		class CLogObject
@@ -28,7 +28,7 @@ namespace OpenViBE
 			GtkTextBuffer* getTextBuffer() const { return m_Buffer; }
 
 			//determine if the log contains the searchTerm and tag the part with the sSerachTerm in gray
-			bool filter(const OpenViBE::CString& searchTerm)
+			bool filter(const CString& searchTerm)
 			{
 				m_PassedFilter = false;
 				GtkTextIter startFind, endFind;
@@ -43,7 +43,7 @@ namespace OpenViBE
 				gtk_text_buffer_remove_tag_by_name(m_Buffer, "gray_bg", &startFind, &endFind);
 
 				//no term means no research so no filter we let all pass
-				if (searchTerm == OpenViBE::CString(""))
+				if (searchTerm == CString(""))
 				{
 					m_PassedFilter = true;
 					return m_PassedFilter;
@@ -77,14 +77,14 @@ namespace OpenViBE
 			bool m_PassedFilter     = false;
 		};
 
-		CLogListenerDesigner(const OpenViBE::Kernel::IKernelContext& ctx, GtkBuilder* builder);
+		CLogListenerDesigner(const Kernel::IKernelContext& ctx, GtkBuilder* builder);
 
-		bool isActive(const OpenViBE::Kernel::ELogLevel level) override;
-		bool activate(const OpenViBE::Kernel::ELogLevel level, const bool active) override;
-		bool activate(const OpenViBE::Kernel::ELogLevel startLevel, const OpenViBE::Kernel::ELogLevel endLevel, const bool active) override;
+		bool isActive(const Kernel::ELogLevel level) override;
+		bool activate(const Kernel::ELogLevel level, const bool active) override;
+		bool activate(const Kernel::ELogLevel startLevel, const Kernel::ELogLevel endLevel, const bool active) override;
 		bool activate(const bool active) override;
 
-		void log(const OpenViBE::time64 value) override;
+		void log(const time64 value) override;
 
 		void log(const uint64_t value) override;
 		void log(const uint32_t value) override;
@@ -96,31 +96,31 @@ namespace OpenViBE
 
 		void log(const bool value) override;
 
-		void log(const OpenViBE::CIdentifier& value) override;
-		void log(const OpenViBE::CString& value) override;
+		void log(const CIdentifier& value) override;
+		void log(const CString& value) override;
 		void log(const std::string& value) override;
 		void log(const char* value) override;
 
-		void log(const OpenViBE::Kernel::ELogLevel level) override;
-		void log(const OpenViBE::Kernel::ELogColor color) override;
+		void log(const Kernel::ELogLevel level) override;
+		void log(const Kernel::ELogColor color) override;
 
 		void clearMessages();
 		void focusMessageWindow() const;
 
 		// TODO
-		void searchMessages(const OpenViBE::CString& searchTerm);
+		void searchMessages(const CString& searchTerm);
 		void displayLog(CLogObject* log) const;
 		void appendLog(CLogObject* log) const;
 
-		_IsDerivedFromClass_Final_(OpenViBE::Kernel::ILogListener, OV_UndefinedIdentifier)
+		_IsDerivedFromClass_Final_(Kernel::ILogListener, OV_UndefinedIdentifier)
 
-		OpenViBE::CString m_SearchTerm;
+		CString m_SearchTerm;
 		GtkTextTag* m_IdTag = nullptr;
-		std::function<void(OpenViBE::CIdentifier&)> m_CenterOnBoxFun;
+		std::function<void(CIdentifier&)> m_CenterOnBoxFun;
 
 	protected:
 
-		std::map<OpenViBE::Kernel::ELogLevel, bool> m_activeLevels;
+		std::map<Kernel::ELogLevel, bool> m_activeLevels;
 
 		//logs
 		std::vector<CLogObject*> m_storedLogs;

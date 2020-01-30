@@ -15,9 +15,9 @@ namespace OpenViBE
 			virtual ~CAbstractSettingView();
 
 			//Store the value of the setting in value
-			virtual void getValue(OpenViBE::CString& value) const = 0;
+			virtual void getValue(CString& value) const = 0;
 			//Set the view with the value contains in value
-			virtual void setValue(const OpenViBE::CString& value) = 0;
+			virtual void setValue(const CString& value) = 0;
 
 			//Get the label which contains the name of the setting
 			virtual GtkWidget* getNameWidget() { return m_nameWidget; }
@@ -34,10 +34,10 @@ namespace OpenViBE
 			//Initialize the common part of all view. If builderName and widgetName are not nullptr, the entryTable and the label
 			//will be set according to these informations.
 			//If there are nullptr, name and entry widget will have to be set after with corresponding setter.
-			CAbstractSettingView(OpenViBE::Kernel::IBox& box, const size_t index, const char* builderName, const char* widgetName);
+			CAbstractSettingView(Kernel::IBox& box, const size_t index, const char* builderName, const char* widgetName);
 
 			//Return the box which contains the setting
-			virtual OpenViBE::Kernel::IBox& getBox() { return m_box; }
+			virtual Kernel::IBox& getBox() { return m_box; }
 
 
 			//Set the widget as the new widget name
@@ -61,9 +61,9 @@ namespace OpenViBE
 			virtual GtkWidget* generateEntryWidget();
 
 
-			OpenViBE::Kernel::IBox& m_box;
+			Kernel::IBox& m_box;
 			size_t m_index = 0;
-			OpenViBE::CString m_settingWidgetName;
+			CString m_settingWidgetName;
 			GtkWidget* m_nameWidget       = nullptr;
 			GtkWidget* m_entryNameWidget  = nullptr;
 			GtkWidget* m_entryFieldWidget = nullptr;

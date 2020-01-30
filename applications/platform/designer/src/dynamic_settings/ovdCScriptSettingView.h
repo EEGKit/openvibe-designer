@@ -12,11 +12,10 @@ namespace OpenViBE
 		class CScriptSettingView final : public CAbstractSettingView
 		{
 		public:
-			CScriptSettingView(OpenViBE::Kernel::IBox& box, const size_t index, OpenViBE::CString& builderName,
-							   const OpenViBE::Kernel::IKernelContext& ctx);
+			CScriptSettingView(Kernel::IBox& box, const size_t index, CString& builderName, const Kernel::IKernelContext& ctx);
 
-			void getValue(OpenViBE::CString& value) const override;
-			void setValue(const OpenViBE::CString& value) override;
+			void getValue(CString& value) const override;
+			void setValue(const CString& value) override;
 
 			void browse() const;
 			void edit() const;
@@ -29,7 +28,7 @@ namespace OpenViBE
 		private:
 			GtkEntry* m_entry = nullptr;
 
-			const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
+			const Kernel::IKernelContext& m_kernelCtx;
 			bool m_onValueSetting = false;
 		};
 	} // namespace Setting

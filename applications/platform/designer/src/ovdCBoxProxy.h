@@ -12,11 +12,11 @@ namespace OpenViBE
 	{
 	public:
 
-		CBoxProxy(const OpenViBE::Kernel::IKernelContext& ctx, OpenViBE::Kernel::IScenario& scenario, const OpenViBE::CIdentifier& boxID);
+		CBoxProxy(const Kernel::IKernelContext& ctx, Kernel::IScenario& scenario, const CIdentifier& boxID);
 		~CBoxProxy() { if (!m_applied) { this->apply(); } }
 
-		operator OpenViBE::Kernel::IBox*() const { return m_box; }
-		operator const OpenViBE::Kernel::IBox*() const { return m_constBox; }
+		operator Kernel::IBox*() const { return m_box; }
+		operator const Kernel::IBox*() const { return m_constBox; }
 
 		int getWidth(GtkWidget* widget) const;
 		int getHeight(GtkWidget* widget) const;
@@ -25,7 +25,7 @@ namespace OpenViBE
 		int getYCenter() const { return m_centerY; }
 		void setCenter(int x, int y);
 
-		void setBoxAlgorithmDescriptorOverride(const OpenViBE::Plugins::IBoxAlgorithmDesc* pBoxAlgorithmDescriptor);
+		void setBoxAlgorithmDescriptorOverride(const Plugins::IBoxAlgorithmDesc* pBoxAlgorithmDescriptor);
 
 		void apply();
 
@@ -44,14 +44,14 @@ namespace OpenViBE
 
 		void updateSize(GtkWidget* widget, const char* label, const char* status, int* xSize, int* ySize) const;
 
-		const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
-		const OpenViBE::Plugins::IBoxAlgorithmDesc* m_boxAlgorithmDescOverride = nullptr;
-		const OpenViBE::Kernel::IBox* m_constBox                               = nullptr;
-		OpenViBE::Kernel::IBox* m_box                                          = nullptr;
-		bool m_applied                                                         = false;
-		bool m_showOriginalNameWhenModified                                    = false;
-		int m_centerX                                                          = 0;
-		int m_centerY                                                          = 0;
+		const Kernel::IKernelContext& m_kernelCtx;
+		const Plugins::IBoxAlgorithmDesc* m_boxAlgorithmDescOverride = nullptr;
+		const Kernel::IBox* m_constBox                               = nullptr;
+		Kernel::IBox* m_box                                          = nullptr;
+		bool m_applied                                               = false;
+		bool m_showOriginalNameWhenModified                          = false;
+		int m_centerX                                                = 0;
+		int m_centerY                                                = 0;
 		mutable std::string m_label;
 		mutable std::string m_status;
 		bool m_isBoxAlgorithmPresent = false;

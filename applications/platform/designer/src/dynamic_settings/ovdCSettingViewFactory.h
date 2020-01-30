@@ -12,16 +12,16 @@ namespace OpenViBE
 		class CSettingViewFactory final
 		{
 		public:
-			CSettingViewFactory(const OpenViBE::CString& builderName, const OpenViBE::Kernel::IKernelContext& ctx)
+			CSettingViewFactory(const CString& builderName, const Kernel::IKernelContext& ctx)
 				: m_builderName(builderName), m_kernelCtx(ctx) { }
 
 			~CSettingViewFactory() = default;
 
-			CAbstractSettingView* getSettingView(OpenViBE::Kernel::IBox& box, const size_t index);
+			CAbstractSettingView* getSettingView(Kernel::IBox& box, const size_t index);
 
 		private:
-			OpenViBE::CString m_builderName;
-			const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
+			CString m_builderName;
+			const Kernel::IKernelContext& m_kernelCtx;
 		};
 	} // namespace Setting
 	}  // namespace Designer

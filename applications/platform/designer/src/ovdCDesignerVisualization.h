@@ -17,7 +17,7 @@ namespace OpenViBE
 	class CDesignerVisualization final : public OpenViBEVisualizationToolkit::ITreeViewCB
 	{
 	public:
-		CDesignerVisualization(const OpenViBE::Kernel::IKernelContext& ctx, OpenViBEVisualizationToolkit::IVisualizationTree& tree,
+		CDesignerVisualization(const Kernel::IKernelContext& ctx, OpenViBEVisualizationToolkit::IVisualizationTree& tree,
 							   CInterfacedScenario& scenario)
 			: m_kernelCtx(ctx), m_tree(tree), m_scenario(scenario) { }
 
@@ -30,9 +30,9 @@ namespace OpenViBE
 
 		void setDeleteEventCB(visualization_delete_event_cb_t cb, gpointer data);
 
-		void onVisualizationBoxAdded(const OpenViBE::Kernel::IBox* box);
-		void onVisualizationBoxRemoved(const OpenViBE::CIdentifier& boxID);
-		void onVisualizationBoxRenamed(const OpenViBE::CIdentifier& boxID);
+		void onVisualizationBoxAdded(const Kernel::IBox* box);
+		void onVisualizationBoxRemoved(const CIdentifier& boxID);
+		void onVisualizationBoxRenamed(const CIdentifier& boxID);
 
 		//ITreeViewCB callbacks overloading
 		void createTreeWidget(OpenViBEVisualizationToolkit::IVisualizationWidget* widget) override;
@@ -98,8 +98,8 @@ namespace OpenViBE
 
 		//visualization widgets
 		bool removeVisualizationWidget();
-		bool removeVisualizationWidget(const OpenViBE::CIdentifier& identifier);
-		bool destroyVisualizationWidget(const OpenViBE::CIdentifier& identifier);
+		bool removeVisualizationWidget(const CIdentifier& identifier);
+		bool destroyVisualizationWidget(const CIdentifier& identifier);
 
 		void enableNotebookSignals(GtkWidget* notebook, bool b);
 		void notebookPageSelectedCB(GtkNotebook* notebook, guint pagenum);
@@ -135,7 +135,7 @@ namespace OpenViBE
 		void dragDataReceivedInWidget(GtkWidget* dstWidget, GtkSelectionData* selection);
 		void dragDataReceivedInEventBox(GtkWidget* dstWidget, GtkSelectionData* selection, OpenViBEVisualizationToolkit::EDragDataLocation location);
 
-		const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
+		const Kernel::IKernelContext& m_kernelCtx;
 		OpenViBEVisualizationToolkit::IVisualizationTree& m_tree;
 		CInterfacedScenario& m_scenario;
 		visualization_delete_event_cb_t m_deleteEventCB = nullptr;
@@ -149,8 +149,8 @@ namespace OpenViBE
 		GtkWidget* m_highlightedWidget = nullptr;
 
 		//active items
-		OpenViBE::CString m_activeVisualizationWindowName, m_activeVisualizationPanelName;
-		OpenViBE::CIdentifier m_activeVisualizationBoxID = OV_UndefinedIdentifier;
+		CString m_activeVisualizationWindowName, m_activeVisualizationPanelName;
+		CIdentifier m_activeVisualizationBoxID = OV_UndefinedIdentifier;
 		
 		//preview window visibility flag
 		bool m_previewWindowVisible = false;

@@ -16,23 +16,23 @@ namespace OpenViBE
 	{
 	public:
 
-		explicit CVisualizationManager(const OpenViBE::Kernel::IKernelContext& ctx) : m_kernelCtx(ctx) {}
+		explicit CVisualizationManager(const Kernel::IKernelContext& ctx) : m_kernelCtx(ctx) {}
 		~CVisualizationManager() override = default;
 
-		bool createVisualizationTree(OpenViBE::CIdentifier& treeID) override;
-		bool releaseVisualizationTree(const OpenViBE::CIdentifier& treeID) override;
-		OpenViBEVisualizationToolkit::IVisualizationTree& getVisualizationTree(const OpenViBE::CIdentifier& id) override;
+		bool createVisualizationTree(CIdentifier& treeID) override;
+		bool releaseVisualizationTree(const CIdentifier& treeID) override;
+		OpenViBEVisualizationToolkit::IVisualizationTree& getVisualizationTree(const CIdentifier& id) override;
 
-		bool setToolbar(const OpenViBE::CIdentifier& treeID, const OpenViBE::CIdentifier& boxID, GtkWidget* toolbar) override;
-		bool setWidget(const OpenViBE::CIdentifier& treeID, const OpenViBE::CIdentifier& boxID, GtkWidget* topmostWidget) override;
+		bool setToolbar(const CIdentifier& treeID, const CIdentifier& boxID, GtkWidget* toolbar) override;
+		bool setWidget(const CIdentifier& treeID, const CIdentifier& boxID, GtkWidget* topmostWidget) override;
 
 	private:
 
-		OpenViBE::CIdentifier getUnusedIdentifier() const;
+		CIdentifier getUnusedIdentifier() const;
 
 		/// Map of visualization trees (one per scenario, storing visualization widgets arrangement in space)
-		std::map<OpenViBE::CIdentifier, OpenViBEVisualizationToolkit::IVisualizationTree*> m_trees;
-		const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
+		std::map<CIdentifier, OpenViBEVisualizationToolkit::IVisualizationTree*> m_trees;
+		const Kernel::IKernelContext& m_kernelCtx;
 	};
 	}  // namespace Designer
 }  // namespace OpenViBE

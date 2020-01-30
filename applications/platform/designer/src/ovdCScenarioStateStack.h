@@ -14,7 +14,7 @@ namespace OpenViBE
 	{
 	public:
 
-		CScenarioStateStack(const OpenViBE::Kernel::IKernelContext& ctx, CInterfacedScenario& interfacedScenario, OpenViBE::Kernel::IScenario& scenario);
+		CScenarioStateStack(const Kernel::IKernelContext& ctx, CInterfacedScenario& interfacedScenario, Kernel::IScenario& scenario);
 		virtual ~CScenarioStateStack() { for (auto& state : m_states) { delete state; } }
 
 		virtual bool isUndoPossible() { return m_currentState != m_states.begin(); }
@@ -27,17 +27,17 @@ namespace OpenViBE
 
 	private:
 
-		virtual bool restoreState(const OpenViBE::IMemoryBuffer& state);
-		virtual bool dumpState(OpenViBE::IMemoryBuffer& state);
+		virtual bool restoreState(const IMemoryBuffer& state);
+		virtual bool dumpState(IMemoryBuffer& state);
 
 	protected:
 
-		const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
+		const Kernel::IKernelContext& m_kernelCtx;
 		CInterfacedScenario& m_interfacedScenario;
-		OpenViBE::Kernel::IScenario& m_scenario;
+		Kernel::IScenario& m_scenario;
 
-		std::list<OpenViBE::CMemoryBuffer*> m_states;
-		std::list<OpenViBE::CMemoryBuffer*>::iterator m_currentState;
+		std::list<CMemoryBuffer*> m_states;
+		std::list<CMemoryBuffer*>::iterator m_currentState;
 
 		size_t m_nMaximumState = 0;
 	};

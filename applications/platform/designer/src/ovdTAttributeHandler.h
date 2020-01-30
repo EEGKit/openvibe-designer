@@ -10,29 +10,29 @@ namespace OpenViBE
 	{
 	public:
 
-		explicit TAttributeHandler(OpenViBE::Kernel::IAttributable& attributable) : m_constAttributable(&attributable), m_attributable(&attributable) { }
-		explicit TAttributeHandler(const OpenViBE::Kernel::IAttributable& attributable) : m_constAttributable(&attributable) { }
+		explicit TAttributeHandler(Kernel::IAttributable& attributable) : m_constAttributable(&attributable), m_attributable(&attributable) { }
+		explicit TAttributeHandler(const Kernel::IAttributable& attributable) : m_constAttributable(&attributable) { }
 
 		template <class T>
-		bool addAttribute(const OpenViBE::CIdentifier& id, const T& value) const;
+		bool addAttribute(const CIdentifier& id, const T& value) const;
 
-		bool removeAttribute(const OpenViBE::CIdentifier& id);
+		bool removeAttribute(const CIdentifier& id);
 
 		bool removeAllAttributes();
 
 		template <class T>
-		T getAttributeValue(const OpenViBE::CIdentifier& id) const;
+		T getAttributeValue(const CIdentifier& id) const;
 
 		template <class T>
-		bool setAttributeValue(const OpenViBE::CIdentifier& id, const T& value);
+		bool setAttributeValue(const CIdentifier& id, const T& value);
 
-		bool hasAttribute(const OpenViBE::CIdentifier& id) const { return m_constAttributable->hasAttribute(id); }
+		bool hasAttribute(const CIdentifier& id) const { return m_constAttributable->hasAttribute(id); }
 		bool hasAttributes() const { return m_constAttributable->hasAttributes(); }
 
 	protected:
 
-		const OpenViBE::Kernel::IAttributable* m_constAttributable;
-		OpenViBE::Kernel::IAttributable* m_attributable = nullptr;
+		const Kernel::IAttributable* m_constAttributable;
+		Kernel::IAttributable* m_attributable = nullptr;
 	};
 	}  // namespace Designer
 }  // namespace OpenViBE

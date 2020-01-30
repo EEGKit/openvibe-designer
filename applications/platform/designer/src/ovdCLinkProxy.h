@@ -10,12 +10,12 @@ namespace OpenViBE
 	{
 	public:
 
-		explicit CLinkProxy(const OpenViBE::Kernel::ILink& link);
-		CLinkProxy(OpenViBE::Kernel::IScenario& scenario, const OpenViBE::CIdentifier& linkID);
+		explicit CLinkProxy(const Kernel::ILink& link);
+		CLinkProxy(Kernel::IScenario& scenario, const CIdentifier& linkID);
 		~CLinkProxy();
 
-		operator OpenViBE::Kernel::ILink*() const { return m_link; }
-		operator const OpenViBE::Kernel::ILink*() const { return m_constLink; }
+		operator Kernel::ILink*() const { return m_link; }
+		operator const Kernel::ILink*() const { return m_constLink; }
 
 		int getXSource() const { return m_xSrc; }
 		int getYSource() const { return m_ySrc; }
@@ -27,12 +27,12 @@ namespace OpenViBE
 
 	protected:
 
-		const OpenViBE::Kernel::ILink* m_constLink;
-		OpenViBE::Kernel::ILink* m_link = nullptr;
-		int m_xSrc                      = 0;
-		int m_ySrc                      = 0;
-		int m_xDst                      = 0;
-		int m_yDst                      = 0;
+		const Kernel::ILink* m_constLink;
+		Kernel::ILink* m_link = nullptr;
+		int m_xSrc            = 0;
+		int m_ySrc            = 0;
+		int m_xDst            = 0;
+		int m_yDst            = 0;
 	};
 	}  // namespace Designer
 }  // namespace OpenViBE

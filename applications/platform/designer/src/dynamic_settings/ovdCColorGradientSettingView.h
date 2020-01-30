@@ -25,11 +25,10 @@ namespace OpenViBE
 		class CColorGradientSettingView final : public CAbstractSettingView
 		{
 		public:
-			CColorGradientSettingView(OpenViBE::Kernel::IBox& box, const size_t index, OpenViBE::CString& builderName,
-									  const OpenViBE::Kernel::IKernelContext& ctx);
+			CColorGradientSettingView(Kernel::IBox& box, const size_t index, CString& builderName, const Kernel::IKernelContext& ctx);
 
-			void getValue(OpenViBE::CString& value) const override;
-			void setValue(const OpenViBE::CString& value) override;
+			void getValue(CString& value) const override;
+			void setValue(const CString& value) override;
 
 			void configurePressed();
 
@@ -46,8 +45,8 @@ namespace OpenViBE
 
 		private:
 			GtkEntry* m_entry = nullptr;
-			const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
-			OpenViBE::CString m_builderName;
+			const Kernel::IKernelContext& m_kernelCtx;
+			CString m_builderName;
 
 			GtkWidget* m_dialog      = nullptr;
 			GtkWidget* m_container   = nullptr;

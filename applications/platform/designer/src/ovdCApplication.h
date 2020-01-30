@@ -23,7 +23,7 @@ namespace OpenViBE
 	class CApplication
 	{
 	public:
-		explicit CApplication(const OpenViBE::Kernel::IKernelContext& ctx);
+		explicit CApplication(const Kernel::IKernelContext& ctx);
 		~CApplication();
 
 		void initialize(ECommandLineFlag cmdLineFlags);
@@ -54,7 +54,7 @@ namespace OpenViBE
 		/** \name Scenario management */
 		//@{
 
-		OpenViBE::CString getWorkingDirectory();
+		CString getWorkingDirectory();
 
 		bool hasRunningScenario();
 		bool hasUnsavedScenario();
@@ -101,7 +101,7 @@ namespace OpenViBE
 		/** \name Player management */
 		//@{
 
-		OpenViBE::Kernel::IPlayer* getPlayer();
+		Kernel::IPlayer* getPlayer();
 
 		bool createPlayer();
 
@@ -143,11 +143,11 @@ namespace OpenViBE
 		void zoomOutCB();//Call when a zoom out is required
 		void spinnerZoomChangedCB(const size_t scaleDelta);
 
-		const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
-		OpenViBE::Kernel::IPluginManager* m_PluginMgr                           = nullptr;
-		OpenViBE::Kernel::IScenarioManager* m_ScenarioMgr                       = nullptr;
+		const Kernel::IKernelContext& m_kernelCtx;
+		Kernel::IPluginManager* m_PluginMgr                           = nullptr;
+		Kernel::IScenarioManager* m_ScenarioMgr                       = nullptr;
 		OpenViBEVisualizationToolkit::IVisualizationManager* m_VisualizationMgr = nullptr;
-		OpenViBE::Kernel::IScenario* m_ClipboardScenario                        = nullptr;
+		Kernel::IScenario* m_ClipboardScenario                        = nullptr;
 
 		ECommandLineFlag m_CmdLineFlags = CommandLineFlag_None;
 
@@ -176,8 +176,8 @@ namespace OpenViBE
 		bool m_IsNewVersion        = false;
 
 		std::vector<CInterfacedScenario*> m_Scenarios;
-		std::vector<const OpenViBE::Plugins::IPluginObjectDesc*> m_NewBoxes;
-		std::vector<const OpenViBE::Plugins::IPluginObjectDesc*> m_UpdatedBoxes;
+		std::vector<const Plugins::IPluginObjectDesc*> m_NewBoxes;
+		std::vector<const Plugins::IPluginObjectDesc*> m_UpdatedBoxes;
 
 #ifdef MENSIA_DISTRIBUTION
 		Mensia::CArchwayHandler* m_ArchwayHandler       = nullptr;

@@ -15,7 +15,7 @@ namespace OpenViBE
 	class CPlayerVisualization final : public OpenViBEVisualizationToolkit::ITreeViewCB
 	{
 	public:
-		CPlayerVisualization(const OpenViBE::Kernel::IKernelContext& ctx, OpenViBEVisualizationToolkit::IVisualizationTree& tree,
+		CPlayerVisualization(const Kernel::IKernelContext& ctx, OpenViBEVisualizationToolkit::IVisualizationTree& tree,
 							 CInterfacedScenario& interfacedScenario)
 			: m_kernelCtx(ctx), m_visualizationTree(tree), m_interfacedScenario(interfacedScenario) { }
 
@@ -27,8 +27,8 @@ namespace OpenViBE
 		//@{
 		GtkWidget* loadTreeWidget(OpenViBEVisualizationToolkit::IVisualizationWidget* widget) override;
 		void endLoadTreeWidget(OpenViBEVisualizationToolkit::IVisualizationWidget* widget) override;
-		bool setToolbar(const OpenViBE::CIdentifier& boxID, GtkWidget* widget) override;
-		bool setWidget(const OpenViBE::CIdentifier& boxID, GtkWidget* widget) override;
+		bool setToolbar(const CIdentifier& boxID, GtkWidget* widget) override;
+		bool setWidget(const CIdentifier& boxID, GtkWidget* widget) override;
 		//@}
 
 		void showTopLevelWindows();
@@ -54,7 +54,7 @@ namespace OpenViBE
 
 	private:
 
-		const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
+		const Kernel::IKernelContext& m_kernelCtx;
 		OpenViBEVisualizationToolkit::IVisualizationTree& m_visualizationTree;
 		CInterfacedScenario& m_interfacedScenario;
 
@@ -68,7 +68,7 @@ namespace OpenViBE
 		 * This map is used to retrieve size properties of split widgets upon window resizing,
 		 * so as to keep the relative sizes of a hierarchy of widgets
 		 */
-		std::map<GtkPaned*, OpenViBE::CIdentifier> m_splitWidgets;
+		std::map<GtkPaned*, CIdentifier> m_splitWidgets;
 
 		/**
 		 * \brief Map associating toolbar buttons to toolbar windows
@@ -93,7 +93,7 @@ namespace OpenViBE
 		/**
 		 * \brief Map of visualization plugins
 		 */
-		std::map<OpenViBE::CIdentifier, CPluginWidgets> m_plugins;
+		std::map<CIdentifier, CPluginWidgets> m_plugins;
 	};
 	}  // namespace Designer
 }  // namespace OpenViBE

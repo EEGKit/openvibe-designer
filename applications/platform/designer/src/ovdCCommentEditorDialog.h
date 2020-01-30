@@ -10,7 +10,7 @@ namespace OpenViBE
 	{
 	public:
 
-		CCommentEditorDialog(const OpenViBE::Kernel::IKernelContext& ctx, OpenViBE::Kernel::IComment& comment, const char* guiFilename)
+		CCommentEditorDialog(const Kernel::IKernelContext& ctx, Kernel::IComment& comment, const char* guiFilename)
 			: m_kernelCtx(ctx), m_comment(comment), m_guiFilename(guiFilename) { }
 
 		~CCommentEditorDialog() = default;
@@ -24,9 +24,9 @@ namespace OpenViBE
 		void infoCB() const { gtk_widget_show(m_infoDialog); }
 	protected:
 
-		const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
-		OpenViBE::Kernel::IComment& m_comment;
-		OpenViBE::CString m_guiFilename;
+		const Kernel::IKernelContext& m_kernelCtx;
+		Kernel::IComment& m_comment;
+		CString m_guiFilename;
 
 		GtkBuilder* m_interface = nullptr;
 		GtkWidget* m_dialog     = nullptr;

@@ -26,15 +26,15 @@ namespace OpenViBE
 	{
 	public:
 
-		CInterfacedScenario(const OpenViBE::Kernel::IKernelContext& ctx, CApplication& application, OpenViBE::Kernel::IScenario& scenario,
-							OpenViBE::CIdentifier& scenarioID, GtkNotebook& notebook, const char* guiFilename, const char* guiSettingsFilename);
+		CInterfacedScenario(const Kernel::IKernelContext& ctx, CApplication& application, Kernel::IScenario& scenario,
+							CIdentifier& scenarioID, GtkNotebook& notebook, const char* guiFilename, const char* guiSettingsFilename);
 		virtual ~CInterfacedScenario();
 
 		virtual bool isLocked() const { return m_Player != nullptr; }
 		virtual void redraw();
-		virtual void redraw(OpenViBE::Kernel::IBox& box);
-		virtual void redraw(OpenViBE::Kernel::IComment& comment);
-		virtual void redraw(OpenViBE::Kernel::ILink& link);
+		virtual void redraw(Kernel::IBox& box);
+		virtual void redraw(Kernel::IComment& comment);
+		virtual void redraw(Kernel::ILink& link);
 		virtual void updateScenarioLabel();
 		size_t pickInterfacedObject(int x, int y) const;
 		bool pickInterfacedObject(int x, int y, int sizeX, int sizeY);
@@ -81,43 +81,43 @@ namespace OpenViBE
 		void pasteSelection();
 		void deleteSelection();
 
-		void deleteBox(const OpenViBE::CIdentifier& boxID); // Utility method to remove box from scenario and visualization
-		void contextMenuBoxUpdateCB(OpenViBE::Kernel::IBox& box);
-		void contextMenuBoxRemoveDeprecatedInterfacorsCB(OpenViBE::Kernel::IBox& box);
-		void contextMenuBoxRenameCB(OpenViBE::Kernel::IBox& box);
+		void deleteBox(const CIdentifier& boxID); // Utility method to remove box from scenario and visualization
+		void contextMenuBoxUpdateCB(Kernel::IBox& box);
+		void contextMenuBoxRemoveDeprecatedInterfacorsCB(Kernel::IBox& box);
+		void contextMenuBoxRenameCB(Kernel::IBox& box);
 		void contextMenuBoxRenameAllCB();
 		void contextMenuBoxToggleEnableAllCB();
-		void contextMenuBoxAddInputCB(OpenViBE::Kernel::IBox& box);
-		void contextMenuBoxEditInputCB(OpenViBE::Kernel::IBox& box, const size_t index);
-		void contextMenuBoxRemoveInputCB(OpenViBE::Kernel::IBox& box, const size_t index);
-		void contextMenuBoxAddOutputCB(OpenViBE::Kernel::IBox& box);
-		void contextMenuBoxEditOutputCB(OpenViBE::Kernel::IBox& box, const size_t index);
-		void contextMenuBoxRemoveOutputCB(OpenViBE::Kernel::IBox& box, const size_t index);
+		void contextMenuBoxAddInputCB(Kernel::IBox& box);
+		void contextMenuBoxEditInputCB(Kernel::IBox& box, const size_t index);
+		void contextMenuBoxRemoveInputCB(Kernel::IBox& box, const size_t index);
+		void contextMenuBoxAddOutputCB(Kernel::IBox& box);
+		void contextMenuBoxEditOutputCB(Kernel::IBox& box, const size_t index);
+		void contextMenuBoxRemoveOutputCB(Kernel::IBox& box, const size_t index);
 
-		void contextMenuBoxConnectScenarioInputCB(OpenViBE::Kernel::IBox& box, size_t boxInputIdx, size_t scenarioInputIdx);
-		void contextMenuBoxConnectScenarioOutputCB(OpenViBE::Kernel::IBox& box, size_t boxOutputIdx, size_t scenarioOutputIdx);
-		void contextMenuBoxDisconnectScenarioInputCB(OpenViBE::Kernel::IBox& box, size_t boxInputIdx, size_t scenarioInputIdx);
-		void contextMenuBoxDisconnectScenarioOutputCB(OpenViBE::Kernel::IBox& box, size_t boxOutputIdx, size_t scenarioOutputIdx);
+		void contextMenuBoxConnectScenarioInputCB(Kernel::IBox& box, size_t boxInputIdx, size_t scenarioInputIdx);
+		void contextMenuBoxConnectScenarioOutputCB(Kernel::IBox& box, size_t boxOutputIdx, size_t scenarioOutputIdx);
+		void contextMenuBoxDisconnectScenarioInputCB(Kernel::IBox& box, size_t boxInputIdx, size_t scenarioInputIdx);
+		void contextMenuBoxDisconnectScenarioOutputCB(Kernel::IBox& box, size_t boxOutputIdx, size_t scenarioOutputIdx);
 
-		void contextMenuBoxAddSettingCB(OpenViBE::Kernel::IBox& box);
-		void contextMenuBoxEditSettingCB(OpenViBE::Kernel::IBox& box, const size_t index);
-		void contextMenuBoxRemoveSettingCB(OpenViBE::Kernel::IBox& box, const size_t index);
-		void contextMenuBoxConfigureCB(OpenViBE::Kernel::IBox& box);
-		void contextMenuBoxAboutCB(OpenViBE::Kernel::IBox& box) const;
-		void contextMenuBoxEditMetaboxCB(OpenViBE::Kernel::IBox& box) const;
+		void contextMenuBoxAddSettingCB(Kernel::IBox& box);
+		void contextMenuBoxEditSettingCB(Kernel::IBox& box, const size_t index);
+		void contextMenuBoxRemoveSettingCB(Kernel::IBox& box, const size_t index);
+		void contextMenuBoxConfigureCB(Kernel::IBox& box);
+		void contextMenuBoxAboutCB(Kernel::IBox& box) const;
+		void contextMenuBoxEditMetaboxCB(Kernel::IBox& box) const;
 
-		void contextMenuBoxEnableCB(OpenViBE::Kernel::IBox& box);
-		void contextMenuBoxDisableCB(OpenViBE::Kernel::IBox& box);
+		void contextMenuBoxEnableCB(Kernel::IBox& box);
+		void contextMenuBoxDisableCB(Kernel::IBox& box);
 		void contextMenuBoxEnableAllCB();
 		void contextMenuBoxDisableAllCB();
 
-		void contextMenuBoxDocumentationCB(OpenViBE::Kernel::IBox& box) const;
+		void contextMenuBoxDocumentationCB(Kernel::IBox& box) const;
 
 		void contextMenuScenarioAddCommentCB();
 		void contextMenuScenarioAboutCB();
 
-		bool browseURL(const OpenViBE::CString& url, const OpenViBE::CString& browserPrefix, const OpenViBE::CString& browserPostfix) const;
-		bool browseBoxDocumentation(const OpenViBE::CIdentifier& boxID) const;
+		bool browseURL(const CString& url, const CString& browserPrefix, const CString& browserPostfix) const;
+		bool browseBoxDocumentation(const CIdentifier& boxID) const;
 
 		void toggleDesignerVisualization();
 		bool isDesignerVisualizationToggled() const { return m_designerVisualizationToggled; }
@@ -132,7 +132,7 @@ namespace OpenViBE
 		void stopAndReleasePlayer();
 		bool setModifiableSettingsWidgets();
 		bool hasSelection() const { return !m_SelectedObjects.empty(); }
-		bool centerOnBox(const OpenViBE::CIdentifier& identifier);
+		bool centerOnBox(const CIdentifier& identifier);
 		void setScale(double scale);
 		double getScale() const { return m_currentScale; }
 
@@ -144,7 +144,7 @@ namespace OpenViBE
 			size_t command;
 			size_t index;
 			size_t secondaryIndex; // Used for connecting two streams
-			OpenViBE::Kernel::IBox* box;
+			Kernel::IBox* box;
 			CInterfacedScenario* scenario;
 		} box_ctx_menu_cb_t;
 		
@@ -170,14 +170,14 @@ namespace OpenViBE
 		//-------------------------------
 		//---------- variables ----------
 		//-------------------------------
-		OpenViBE::Kernel::EPlayerStatus m_PlayerStatus;
-		OpenViBE::CIdentifier m_ScenarioID = OV_UndefinedIdentifier;
-		OpenViBE::CIdentifier m_PlayerID   = OV_UndefinedIdentifier;
-		OpenViBE::CIdentifier m_TreeID     = OV_UndefinedIdentifier;
+		Kernel::EPlayerStatus m_PlayerStatus;
+		CIdentifier m_ScenarioID = OV_UndefinedIdentifier;
+		CIdentifier m_PlayerID   = OV_UndefinedIdentifier;
+		CIdentifier m_TreeID     = OV_UndefinedIdentifier;
 
 		CApplication& m_Application;
-		OpenViBE::Kernel::IScenario& m_Scenario;
-		OpenViBE::Kernel::IPlayer* m_Player                      = nullptr;
+		Kernel::IScenario& m_Scenario;
+		Kernel::IPlayer* m_Player                      = nullptr;
 		OpenViBEVisualizationToolkit::IVisualizationTree* m_Tree = nullptr;
 		CDesignerVisualization* m_DesignerVisualization          = nullptr;
 
@@ -188,17 +188,17 @@ namespace OpenViBE
 
 		std::string m_Filename;
 
-		std::set<OpenViBE::CIdentifier> m_SelectedObjects;
+		std::set<CIdentifier> m_SelectedObjects;
 
 		std::unique_ptr<CScenarioStateStack> m_StateStack;
 
 		// Objects necessary for holding settings GUI
-		std::map<std::string, OpenViBE::CIdentifier> m_SettingTypes;
+		std::map<std::string, CIdentifier> m_SettingTypes;
 		CSettingCollectionHelper* m_SettingHelper = nullptr;
 		std::string m_SerializedSettingGUIXML;
 
 	private:
-		const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
+		const Kernel::IKernelContext& m_kernelCtx;
 		GtkNotebook& m_notebook;
 		bool m_designerVisualizationToggled         = false;
 		CPlayerVisualization* m_playerVisualization = nullptr;
@@ -242,7 +242,7 @@ namespace OpenViBE
 		GtkWidget* m_noHelpDialog                            = nullptr;
 		GtkWidget* m_errorPendingDeprecatedInterfacorsDialog = nullptr;
 
-		std::map<std::string, OpenViBE::CIdentifier> m_streamTypes;
+		std::map<std::string, CIdentifier> m_streamTypes;
 
 		std::map<size_t, box_ctx_menu_cb_t> m_boxCtxMenuCBs;
 		std::vector<setting_cb_data_t> m_settingConfigCBDatas;
@@ -257,18 +257,18 @@ namespace OpenViBE
 
 		typedef void (*menu_cb_function_t)(GtkMenuItem*, box_ctx_menu_cb_t*);
 		GtkImageMenuItem* addNewImageMenuItemWithCBGeneric(GtkMenu* menu, const char* icon, const char* label, menu_cb_function_t cb,
-														   OpenViBE::Kernel::IBox* box, size_t command, const size_t index, const size_t index2);
+														   Kernel::IBox* box, size_t command, const size_t index, const size_t index2);
 
 		GtkImageMenuItem* addNewImageMenuItemWithCB(GtkMenu* menu, const char* icon, const char* label, const menu_cb_function_t cb,
-													OpenViBE::Kernel::IBox* box, const size_t command, const size_t index)
+													Kernel::IBox* box, const size_t command, const size_t index)
 		{
 			return addNewImageMenuItemWithCBGeneric(menu, icon, label, cb, box, command, index, 0);
 		}
 
 		void redrawScenarioLinkSettings(GtkWidget* links, bool isInput, std::vector<link_cb_data_t>& linkCBDatas,
-										size_t (OpenViBE::Kernel::IScenario::* getNLink)() const,
-										bool (OpenViBE::Kernel::IScenario::* getLinkName)(size_t, OpenViBE::CString&) const,
-										bool (OpenViBE::Kernel::IScenario::* getLinkType)(size_t, OpenViBE::CIdentifier&) const);
+										size_t (Kernel::IScenario::* getNLink)() const,
+										bool (Kernel::IScenario::* getLinkName)(size_t, CString&) const,
+										bool (Kernel::IScenario::* getLinkType)(size_t, CIdentifier&) const);
 	};
 	}  // namespace Designer
 }  // namespace OpenViBE
