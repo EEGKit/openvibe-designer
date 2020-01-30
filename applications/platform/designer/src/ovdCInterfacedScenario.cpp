@@ -35,7 +35,7 @@ using namespace OpenViBE;
 using namespace /*OpenViBE::*/Kernel;
 using namespace /*OpenViBE::*/Plugins;
 using namespace /*OpenViBE::*/Designer;
-using namespace OpenViBEVisualizationToolkit;
+using namespace /*OpenViBE::*/VisualizationToolkit;
 using namespace std;
 
 extern map<size_t, GdkColor> gColors;

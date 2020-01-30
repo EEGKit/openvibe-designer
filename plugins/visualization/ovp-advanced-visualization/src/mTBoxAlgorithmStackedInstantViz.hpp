@@ -124,13 +124,13 @@ namespace Mensia
 			m_Ruler->setRendererContext(m_RendererCtx);
 
 			OpenViBE::CMatrix gradientMatrix;
-			OpenViBEVisualizationToolkit::ColorGradient::parse(gradientMatrix, m_ColorGradient);
+			OpenViBE::VisualizationToolkit::ColorGradient::parse(gradientMatrix, m_ColorGradient);
 			for (size_t step = 0; step < gradientMatrix.getDimensionSize(1); ++step)
 			{
 				const double currentStepValue            = gradientMatrix.getBuffer()[4 * step + 0];
 				gradientMatrix.getBuffer()[4 * step + 0] = (currentStepValue / 100.0) * 50.0 + 50.0;
 			}
-			OpenViBEVisualizationToolkit::ColorGradient::format(m_ColorGradient, gradientMatrix);
+			OpenViBE::VisualizationToolkit::ColorGradient::format(m_ColorGradient, gradientMatrix);
 
 			return res;
 		}

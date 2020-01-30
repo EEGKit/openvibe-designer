@@ -12,7 +12,7 @@ namespace OpenViBE
 {
 	namespace Designer
 	{
-	class CVisualizationManager final : public OpenViBEVisualizationToolkit::IVisualizationManager
+	class CVisualizationManager final : public OpenViBE::VisualizationToolkit::IVisualizationManager
 	{
 	public:
 
@@ -21,7 +21,7 @@ namespace OpenViBE
 
 		bool createVisualizationTree(CIdentifier& treeID) override;
 		bool releaseVisualizationTree(const CIdentifier& treeID) override;
-		OpenViBEVisualizationToolkit::IVisualizationTree& getVisualizationTree(const CIdentifier& id) override;
+		OpenViBE::VisualizationToolkit::IVisualizationTree& getVisualizationTree(const CIdentifier& id) override;
 
 		bool setToolbar(const CIdentifier& treeID, const CIdentifier& boxID, GtkWidget* toolbar) override;
 		bool setWidget(const CIdentifier& treeID, const CIdentifier& boxID, GtkWidget* topmostWidget) override;
@@ -31,7 +31,7 @@ namespace OpenViBE
 		CIdentifier getUnusedIdentifier() const;
 
 		/// Map of visualization trees (one per scenario, storing visualization widgets arrangement in space)
-		std::map<CIdentifier, OpenViBEVisualizationToolkit::IVisualizationTree*> m_trees;
+		std::map<CIdentifier, OpenViBE::VisualizationToolkit::IVisualizationTree*> m_trees;
 		const Kernel::IKernelContext& m_kernelCtx;
 	};
 	}  // namespace Designer

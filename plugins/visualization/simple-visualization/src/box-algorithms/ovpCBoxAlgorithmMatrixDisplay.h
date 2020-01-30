@@ -56,7 +56,7 @@ namespace OpenViBEPlugins
 			bool m_symetricMinMax = false;
 			bool m_realTimeMinMax = false;
 
-			OpenViBEVisualizationToolkit::IVisualizationContext* m_visualizationCtx{};
+			OpenViBE::VisualizationToolkit::IVisualizationContext* m_visualizationCtx{};
 
 		public:
 

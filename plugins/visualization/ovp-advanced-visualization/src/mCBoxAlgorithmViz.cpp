@@ -230,7 +230,7 @@ bool CBoxAlgorithmViz::initialize()
 		return false;
 	}
 
-	m_visualizationCtx = dynamic_cast<OpenViBEVisualizationToolkit::IVisualizationContext*>(this->createPluginObject(OVP_ClassId_Plugin_VisualizationCtx));
+	m_visualizationCtx = dynamic_cast<OpenViBE::VisualizationToolkit::IVisualizationContext*>(this->createPluginObject(OVP_ClassId_Plugin_VisualizationCtx));
 	m_visualizationCtx->setWidget(*this, main);
 	m_visualizationCtx->setToolbar(*this, toolbar);
 

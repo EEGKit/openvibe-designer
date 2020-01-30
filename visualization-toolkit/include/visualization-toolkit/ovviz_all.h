@@ -21,8 +21,11 @@
 #include "ovvizIVisualizationTree.h"
 #include "ovvizIVisualizationWidget.h"
 
-namespace OpenViBEVisualizationToolkit
+namespace OpenViBE
 {
-	OVVIZ_API bool initialize(const OpenViBE::Kernel::IKernelContext& ctx);
-	OVVIZ_API bool uninitialize(const OpenViBE::Kernel::IKernelContext& ctx);
-} // namespace OpenViBEVisualizationToolkit
+	namespace VisualizationToolkit
+	{
+	OVVIZ_API bool initialize(const Kernel::IKernelContext& ctx);
+	OVVIZ_API bool uninitialize(const Kernel::IKernelContext& ctx);
+	}  // namespace VisualizationToolkit
+}  // namespace OpenViBE

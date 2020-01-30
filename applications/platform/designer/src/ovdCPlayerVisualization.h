@@ -12,10 +12,10 @@ namespace OpenViBE
 	{
 	class CInterfacedScenario;
 
-	class CPlayerVisualization final : public OpenViBEVisualizationToolkit::ITreeViewCB
+	class CPlayerVisualization final : public OpenViBE::VisualizationToolkit::ITreeViewCB
 	{
 	public:
-		CPlayerVisualization(const Kernel::IKernelContext& ctx, OpenViBEVisualizationToolkit::IVisualizationTree& tree,
+		CPlayerVisualization(const Kernel::IKernelContext& ctx, OpenViBE::VisualizationToolkit::IVisualizationTree& tree,
 							 CInterfacedScenario& interfacedScenario)
 			: m_kernelCtx(ctx), m_visualizationTree(tree), m_interfacedScenario(interfacedScenario) { }
 
@@ -25,8 +25,8 @@ namespace OpenViBE
 
 		/** \name ITreeViewCB interface implementation */
 		//@{
-		GtkWidget* loadTreeWidget(OpenViBEVisualizationToolkit::IVisualizationWidget* widget) override;
-		void endLoadTreeWidget(OpenViBEVisualizationToolkit::IVisualizationWidget* widget) override;
+		GtkWidget* loadTreeWidget(OpenViBE::VisualizationToolkit::IVisualizationWidget* widget) override;
+		void endLoadTreeWidget(OpenViBE::VisualizationToolkit::IVisualizationWidget* widget) override;
 		bool setToolbar(const CIdentifier& boxID, GtkWidget* widget) override;
 		bool setWidget(const CIdentifier& boxID, GtkWidget* widget) override;
 		//@}
@@ -36,7 +36,7 @@ namespace OpenViBE
 		CInterfacedScenario& getInterfacedScenario() const { return m_interfacedScenario; }
 
 	protected:
-		bool parentWidgetBox(OpenViBEVisualizationToolkit::IVisualizationWidget* widget, GtkBox* widgetBox);
+		bool parentWidgetBox(OpenViBE::VisualizationToolkit::IVisualizationWidget* widget, GtkBox* widgetBox);
 
 		static gboolean configureEventCB(GtkWidget* widget, GdkEventConfigure* event, gpointer data);
 		static gboolean widgetExposeEventCB(GtkWidget* widget, GdkEventExpose* event, gpointer data);
@@ -55,7 +55,7 @@ namespace OpenViBE
 	private:
 
 		const Kernel::IKernelContext& m_kernelCtx;
-		OpenViBEVisualizationToolkit::IVisualizationTree& m_visualizationTree;
+		OpenViBE::VisualizationToolkit::IVisualizationTree& m_visualizationTree;
 		CInterfacedScenario& m_interfacedScenario;
 
 		/**

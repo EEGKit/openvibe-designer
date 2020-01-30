@@ -32,7 +32,7 @@ namespace OpenViBEPlugins
 		protected:
 			OpenViBE::Toolkit::TStreamedMatrixDecoder<CBoxAlgorithmTopographicMap2DDisplay> m_decoder;
 
-			OpenViBEVisualizationToolkit::IVisualizationContext* m_visualizationCtx = nullptr;
+			OpenViBE::VisualizationToolkit::IVisualizationContext* m_visualizationCtx = nullptr;
 			OpenViBE::Kernel::IAlgorithmProxy* m_interpolation                      = nullptr;
 			CTopographicMapDatabase* m_database                                     = nullptr;
 			CSignalDisplayDrawable* m_view                                          = nullptr; //main object used for the display (contains all the GUI code)

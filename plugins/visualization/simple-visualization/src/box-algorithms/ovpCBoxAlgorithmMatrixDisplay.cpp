@@ -92,7 +92,7 @@ bool CBoxAlgorithmMatrixDisplay::initialize()
 		return false;
 	}
 
-	m_visualizationCtx = dynamic_cast<OpenViBEVisualizationToolkit::IVisualizationContext*>(this->createPluginObject(OVP_ClassId_Plugin_VisualizationCtx));
+	m_visualizationCtx = dynamic_cast<OpenViBE::VisualizationToolkit::IVisualizationContext*>(this->createPluginObject(OVP_ClassId_Plugin_VisualizationCtx));
 	m_visualizationCtx->setWidget(*this, m_mainWidget);
 	m_visualizationCtx->setToolbar(*this, m_toolbarWidget);
 
@@ -101,12 +101,12 @@ bool CBoxAlgorithmMatrixDisplay::initialize()
 
 	CString gradientSetting;
 	getBoxAlgorithmContext()->getStaticBoxContext()->getSettingValue(0, gradientSetting);
-	OpenViBEVisualizationToolkit::ColorGradient::parse(m_colorGradient, gradientSetting);
+	OpenViBE::VisualizationToolkit::ColorGradient::parse(m_colorGradient, gradientSetting);
 
 	CString gradientStepsSetting;
 	getBoxAlgorithmContext()->getStaticBoxContext()->getSettingValue(1, gradientStepsSetting);
 	m_gradientSteps = strtol(gradientStepsSetting, nullptr, 10);
-	OpenViBEVisualizationToolkit::ColorGradient::interpolate(m_interpolatedColorGardient, m_colorGradient, m_gradientSteps);
+	OpenViBE::VisualizationToolkit::ColorGradient::interpolate(m_interpolatedColorGardient, m_colorGradient, m_gradientSteps);
 	m_max = 0;
 	m_min = 0;
 

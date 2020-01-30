@@ -62,7 +62,7 @@ void CColorGradientSettingView::configurePressed()
 	const CString initialGradient = m_kernelCtx.getConfigurationManager().expand(gtk_entry_get_text(m_entry));
 	CMatrix colorGradient;
 
-	OpenViBEVisualizationToolkit::ColorGradient::parse(colorGradient, initialGradient);
+	OpenViBE::VisualizationToolkit::ColorGradient::parse(colorGradient, initialGradient);
 	m_colorGradient.resize(std::max<size_t>(colorGradient.getDimensionSize(1), 2));
 	for (size_t i = 0; i < colorGradient.getDimensionSize(1); ++i)
 	{
@@ -98,7 +98,7 @@ void CColorGradientSettingView::configurePressed()
 			finalColorGradient[idx++] = round(m_colorGradient[i].color.green * 100. / 65535.);
 			finalColorGradient[idx++] = round(m_colorGradient[i].color.blue * 100. / 65535.);
 		}
-		OpenViBEVisualizationToolkit::ColorGradient::format(finalGradient, finalColorGradient);
+		OpenViBE::VisualizationToolkit::ColorGradient::format(finalGradient, finalColorGradient);
 		if (!m_onValueSetting) { getBox().setSettingValue(getSettingIndex(), finalGradient.toASCIIString()); }
 		setValue(finalGradient.toASCIIString());
 	}
@@ -174,7 +174,7 @@ void CColorGradientSettingView::refreshColorGradient()
 	}
 
 	CMatrix interpolated;
-	OpenViBEVisualizationToolkit::ColorGradient::interpolate(interpolated, gradient, steps);
+	OpenViBE::VisualizationToolkit::ColorGradient::interpolate(interpolated, gradient, steps);
 
 	GdkGC* gc = gdk_gc_new(m_drawingArea->window);
 	GdkColor color;

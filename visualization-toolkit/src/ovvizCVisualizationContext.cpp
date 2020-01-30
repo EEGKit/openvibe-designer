@@ -1,9 +1,9 @@
 #include "ovvizCVisualizationContext.hpp"
 
 using namespace OpenViBE;
-using namespace OpenViBEVisualizationToolkit;
+using namespace /*OpenViBE::*/VisualizationToolkit;
 
-bool CVisualizationContext::setWidget(OpenViBE::Toolkit::TBoxAlgorithm<Plugins::IBoxAlgorithm>& box, GtkWidget* widget)
+bool CVisualizationContext::setWidget(Toolkit::TBoxAlgorithm<Plugins::IBoxAlgorithm>& box, GtkWidget* widget)
 {
 	const CIdentifier boxID = box.getStaticBoxContext().getIdentifier();
 
@@ -20,7 +20,7 @@ bool CVisualizationContext::setWidget(OpenViBE::Toolkit::TBoxAlgorithm<Plugins::
 	return m_VisualizationManager->setWidget(treeIdentifier, boxID, widget);
 }
 
-bool CVisualizationContext::setToolbar(OpenViBE::Toolkit::TBoxAlgorithm<Plugins::IBoxAlgorithm>& box, GtkWidget* toolbarWidget)
+bool CVisualizationContext::setToolbar(Toolkit::TBoxAlgorithm<Plugins::IBoxAlgorithm>& box, GtkWidget* toolbarWidget)
 {
 	const CIdentifier boxID = box.getStaticBoxContext().getIdentifier();
 

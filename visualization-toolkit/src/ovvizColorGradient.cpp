@@ -5,7 +5,7 @@
 #include <map>
 
 using namespace OpenViBE;
-using namespace OpenViBEVisualizationToolkit;
+using namespace /*OpenViBE::*/VisualizationToolkit;
 
 namespace
 {

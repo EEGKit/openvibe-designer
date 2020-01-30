@@ -239,7 +239,7 @@ namespace Mensia
 			size_t m_FrameId            = 0;
 			OpenViBE::CString m_FrameFilenameFormat;
 		private:
-			OpenViBEVisualizationToolkit::IVisualizationContext* m_visualizationCtx = nullptr;
+			OpenViBE::VisualizationToolkit::IVisualizationContext* m_visualizationCtx = nullptr;
 		};
 
 		class CBoxAlgorithmVizListener : public OpenViBE::Toolkit::TBoxListener<OpenViBE::Plugins::IBoxListener>

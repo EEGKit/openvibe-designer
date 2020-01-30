@@ -2,8 +2,10 @@
 
 #include <openvibe/ov_all.h>
 
-namespace OpenViBEVisualizationToolkit
+namespace OpenViBE
 {
+	namespace VisualizationToolkit
+	{
 	/**
 	 * \brief This enum lists the different types of IVisualizationWidget supported by the platform
 	 */
@@ -39,27 +41,27 @@ namespace OpenViBEVisualizationToolkit
 		 * \param nChild number of children of this widget (none for a visualization box, 1 for a visualization panel, 2 for split widgets, variable number for windows)
 		 * \return True if widget was successfully initialized, false otherwise
 		 */
-		virtual bool initialize(const OpenViBE::CIdentifier& identifier, const OpenViBE::CString& name,
-								const EVisualizationWidgetType type, const OpenViBE::CIdentifier& parentID,
-								const OpenViBE::CIdentifier& boxID, const size_t nChild) = 0;
+		virtual bool initialize(const CIdentifier& identifier, const CString& name,
+								const EVisualizationWidgetType type, const CIdentifier& parentID,
+								const CIdentifier& boxID, const size_t nChild) = 0;
 
 		/**
 		 * \brief Returns the identifier of the widget
 		 * \return Widget identifier
 		 */
-		virtual OpenViBE::CIdentifier getIdentifier() const = 0;
+		virtual CIdentifier getIdentifier() const = 0;
 
 		/**
 		 * \brief Returns the name of the widget
 		 * \return Widget name
 		 */
-		virtual const OpenViBE::CString& getName() const = 0;
+		virtual const CString& getName() const = 0;
 
 		/**
 		 * \brief Sets the name of the widget
 		 * \param name name to give to the widget
 		 */
-		virtual void setName(const OpenViBE::CString& name) = 0;
+		virtual void setName(const CString& name) = 0;
 
 		/**
 		 * \brief Returns the type of the widget
@@ -71,12 +73,12 @@ namespace OpenViBEVisualizationToolkit
 		 * \brief Returns the identifier of the widget's parent (if any)
 		 * \return Widget's parent identifier if any, OV_Undefined otherwise
 		 */
-		virtual OpenViBE::CIdentifier getParentIdentifier() const = 0;
+		virtual CIdentifier getParentIdentifier() const = 0;
 		/**
 		 * \brief Sets the identifier of the widget's parent
 		 * \param parentID identifier of the widget's parent
 		 */
-		virtual void setParentIdentifier(const OpenViBE::CIdentifier& parentID) = 0;
+		virtual void setParentIdentifier(const CIdentifier& parentID) = 0;
 
 		/**
 		 * \brief Returns the identifier of the IBox associated to this widget.
@@ -84,7 +86,7 @@ namespace OpenViBEVisualizationToolkit
 		 * This only applies to widgets of type VisualizationWidget_VisualizationBox.
 		 * \return Identifier of IBox associated to this widget
 		 */
-		virtual OpenViBE::CIdentifier getBoxIdentifier() const = 0;
+		virtual CIdentifier getBoxIdentifier() const = 0;
 
 		/**
 		 * \brief Returns the number of children of this widget
@@ -98,7 +100,7 @@ namespace OpenViBEVisualizationToolkit
 		 * \param index [out] index at which the child widget is stored
 		 * \return True if the child was found, false otherwise
 		 */
-		virtual bool getChildIndex(const OpenViBE::CIdentifier& identifier, size_t& index) const = 0;
+		virtual bool getChildIndex(const CIdentifier& identifier, size_t& index) const = 0;
 
 		/**
 		 * \brief Adds a child to a widget
@@ -108,14 +110,14 @@ namespace OpenViBEVisualizationToolkit
 		 * \param childIdentifier identifier of child to be added to widget
 		 * \return True if child was successfully added
 		 */
-		virtual bool addChild(const OpenViBE::CIdentifier& childIdentifier) = 0;
+		virtual bool addChild(const CIdentifier& childIdentifier) = 0;
 
 		/**
 		 * \brief Removes a child from a widget
 		 * \param childIdentifier identifier of child to be removed to the widget
 		 * \return True if the child was successfully removed
 		 */
-		virtual bool removeChild(const OpenViBE::CIdentifier& childIdentifier) = 0;
+		virtual bool removeChild(const CIdentifier& childIdentifier) = 0;
 
 		/**
 		 * \brief Returns the identifier of a given child
@@ -123,7 +125,7 @@ namespace OpenViBEVisualizationToolkit
 		 * \param childIdentifier [out] identifier of child
 		 * \return True if child identifier was successfully returned, false otherwise
 		 */
-		virtual bool getChildIdentifier(const size_t childIndex, OpenViBE::CIdentifier& childIdentifier) const = 0;
+		virtual bool getChildIdentifier(const size_t childIndex, CIdentifier& childIdentifier) const = 0;
 
 		/**
 		 * \brief Sets the identifier of a child
@@ -131,7 +133,7 @@ namespace OpenViBEVisualizationToolkit
 		 * \param childIdentifier identifier of the child to be added to the widget
 		 * \return True if the child was successfully set
 		 */
-		virtual bool setChildIdentifier(const size_t childIndex, const OpenViBE::CIdentifier& childIdentifier) = 0;
+		virtual bool setChildIdentifier(const size_t childIndex, const CIdentifier& childIdentifier) = 0;
 
 
 		virtual void setWidth(const size_t width) = 0;
@@ -144,4 +146,5 @@ namespace OpenViBEVisualizationToolkit
 		virtual int getDividerPosition() = 0;
 		virtual int getMaxDividerPosition() = 0;
 	};
-} // namespace OpenViBEVisualizationToolkit
+	}  // namespace VisualizationToolkit
+}  // namespace OpenViBE

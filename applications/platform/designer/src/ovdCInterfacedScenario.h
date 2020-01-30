@@ -125,7 +125,7 @@ namespace OpenViBE
 		void showCurrentVisualization() const;
 		void hideCurrentVisualization() const;
 
-		void createPlayerVisualization(OpenViBEVisualizationToolkit::IVisualizationTree* tree = nullptr);
+		void createPlayerVisualization(OpenViBE::VisualizationToolkit::IVisualizationTree* tree = nullptr);
 		void releasePlayerVisualization();
 
 
@@ -178,7 +178,7 @@ namespace OpenViBE
 		CApplication& m_Application;
 		Kernel::IScenario& m_Scenario;
 		Kernel::IPlayer* m_Player                      = nullptr;
-		OpenViBEVisualizationToolkit::IVisualizationTree* m_Tree = nullptr;
+		OpenViBE::VisualizationToolkit::IVisualizationTree* m_Tree = nullptr;
 		CDesignerVisualization* m_DesignerVisualization          = nullptr;
 
 		uint64_t m_LastLoopTime = 0;

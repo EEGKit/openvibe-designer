@@ -14,10 +14,10 @@ namespace OpenViBE
 
 	class CInterfacedScenario;
 
-	class CDesignerVisualization final : public OpenViBEVisualizationToolkit::ITreeViewCB
+	class CDesignerVisualization final : public OpenViBE::VisualizationToolkit::ITreeViewCB
 	{
 	public:
-		CDesignerVisualization(const Kernel::IKernelContext& ctx, OpenViBEVisualizationToolkit::IVisualizationTree& tree,
+		CDesignerVisualization(const Kernel::IKernelContext& ctx, OpenViBE::VisualizationToolkit::IVisualizationTree& tree,
 							   CInterfacedScenario& scenario)
 			: m_kernelCtx(ctx), m_tree(tree), m_scenario(scenario) { }
 
@@ -35,12 +35,12 @@ namespace OpenViBE
 		void onVisualizationBoxRenamed(const CIdentifier& boxID);
 
 		//ITreeViewCB callbacks overloading
-		void createTreeWidget(OpenViBEVisualizationToolkit::IVisualizationWidget* widget) override;
-		GtkWidget* loadTreeWidget(OpenViBEVisualizationToolkit::IVisualizationWidget* widget) override;
-		void endLoadTreeWidget(OpenViBEVisualizationToolkit::IVisualizationWidget* widget) override;
+		void createTreeWidget(OpenViBE::VisualizationToolkit::IVisualizationWidget* widget) override;
+		GtkWidget* loadTreeWidget(OpenViBE::VisualizationToolkit::IVisualizationWidget* widget) override;
+		void endLoadTreeWidget(OpenViBE::VisualizationToolkit::IVisualizationWidget* widget) override;
 		GtkWidget* getTreeWidget(GtkWidget* widget) override;
 		GtkWidget* getVisualizationWidget(GtkWidget* widget) override;
-		const char* getTreeWidgetIcon(OpenViBEVisualizationToolkit::EVisualizationTreeNode type) override;
+		const char* getTreeWidgetIcon(OpenViBE::VisualizationToolkit::EVisualizationTreeNode type) override;
 
 		//callbacks for dialog
 #ifdef HANDLE_MIN_MAX_EVENTS
@@ -48,7 +48,7 @@ namespace OpenViBE
 #endif
 		static gboolean configureEventCB(GtkWidget* widget, GdkEventConfigure* event, gpointer data);
 		static gboolean widgetExposeEventCB(GtkWidget* widget, GdkEventExpose* event, gpointer data);
-		void resizeCB(OpenViBEVisualizationToolkit::IVisualizationWidget* widget);
+		void resizeCB(OpenViBE::VisualizationToolkit::IVisualizationWidget* widget);
 
 		static void notebookPageSwitchCB(GtkNotebook* notebook, GtkNotebookPage* page, guint pagenum, gpointer data);
 
@@ -133,10 +133,10 @@ namespace OpenViBE
 		static void dragDataReceivedInWidgetCB(GtkWidget* dstWidget, GdkDragContext*, gint, gint, GtkSelectionData* selection, guint info, guint time, gpointer data);
 		static void dataReceivedInEventBoxCB(GtkWidget* dstWidget, GdkDragContext* dc, gint x, gint y, GtkSelectionData* selection, guint info, guint time, gpointer data);
 		void dragDataReceivedInWidget(GtkWidget* dstWidget, GtkSelectionData* selection);
-		void dragDataReceivedInEventBox(GtkWidget* dstWidget, GtkSelectionData* selection, OpenViBEVisualizationToolkit::EDragDataLocation location);
+		void dragDataReceivedInEventBox(GtkWidget* dstWidget, GtkSelectionData* selection, OpenViBE::VisualizationToolkit::EDragDataLocation location);
 
 		const Kernel::IKernelContext& m_kernelCtx;
-		OpenViBEVisualizationToolkit::IVisualizationTree& m_tree;
+		OpenViBE::VisualizationToolkit::IVisualizationTree& m_tree;
 		CInterfacedScenario& m_scenario;
 		visualization_delete_event_cb_t m_deleteEventCB = nullptr;
 		gpointer m_deleteEventUserData                  = nullptr;

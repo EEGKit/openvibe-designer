@@ -146,7 +146,7 @@ namespace OpenViBE
 		const Kernel::IKernelContext& m_kernelCtx;
 		Kernel::IPluginManager* m_PluginMgr                           = nullptr;
 		Kernel::IScenarioManager* m_ScenarioMgr                       = nullptr;
-		OpenViBEVisualizationToolkit::IVisualizationManager* m_VisualizationMgr = nullptr;
+		OpenViBE::VisualizationToolkit::IVisualizationManager* m_VisualizationMgr = nullptr;
 		Kernel::IScenario* m_ClipboardScenario                        = nullptr;
 
 		ECommandLineFlag m_CmdLineFlags = CommandLineFlag_None;
@@ -185,7 +185,7 @@ namespace OpenViBE
 #endif
 
 	protected:
-		OpenViBEVisualizationToolkit::IVisualizationContext* m_visualizationCtx = nullptr;
+		OpenViBE::VisualizationToolkit::IVisualizationContext* m_visualizationCtx = nullptr;
 
 		CLogListenerDesigner* m_logListener = nullptr;
 

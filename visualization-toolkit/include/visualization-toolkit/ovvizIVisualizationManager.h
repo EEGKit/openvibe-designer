@@ -6,8 +6,10 @@
 
 typedef struct _GtkWidget GtkWidget;
 
-namespace OpenViBEVisualizationToolkit
+namespace OpenViBE
 {
+	namespace VisualizationToolkit
+	{
 	/**
 		 * \class IVisualizationManager
 		 * \author Vincent Delannoy (INRIA/IRISA)
@@ -35,7 +37,7 @@ namespace OpenViBEVisualizationToolkit
 				 * \param visualizationTree corresponding IVisualizationTree object
 				 * \return True if IVisualizationTree object was successfully registered, false otherwise
 				 */
-			virtual bool callback(const OpenViBE::CIdentifier& visualizationTreeIdentifier, const IVisualizationTree& visualizationTree) = 0;
+			virtual bool callback(const CIdentifier& visualizationTreeIdentifier, const IVisualizationTree& visualizationTree) = 0;
 		};
 
 		/**
@@ -43,19 +45,19 @@ namespace OpenViBEVisualizationToolkit
 			 * \param visualizationTreeIdentifier [out] identifier of the IVisualizationTree object created by this method
 			 * \return True if object was successfully created, false otherwise
 			 */
-		virtual bool createVisualizationTree(OpenViBE::CIdentifier& visualizationTreeIdentifier) = 0;
+		virtual bool createVisualizationTree(CIdentifier& visualizationTreeIdentifier) = 0;
 		/**
 			 * \brief Releases an IVisualizationTree object.
 			 * \param visualizationTreeIdentifier identifier of the IVisualizationTree object to be released
 			 * \return True if object was successfully released, false otherwise
 			 */
-		virtual bool releaseVisualizationTree(const OpenViBE::CIdentifier& visualizationTreeIdentifier) = 0;
+		virtual bool releaseVisualizationTree(const CIdentifier& visualizationTreeIdentifier) = 0;
 		/**
 			 * \brief Looks for an IVisualizationTree object.
 			 * \param visualizationTreeIdentifier identifier of the IVisualizationTree object to be returned
 			 * \return Reference on IVisualizationTree looked for, OV_Undefined otherwise
 			 */
-		virtual IVisualizationTree& getVisualizationTree(const OpenViBE::CIdentifier& visualizationTreeIdentifier) = 0;
+		virtual IVisualizationTree& getVisualizationTree(const CIdentifier& visualizationTreeIdentifier) = 0;
 
 		/**
 			 * \brief Set the toolbar of a visualization plugin.
@@ -66,7 +68,7 @@ namespace OpenViBEVisualizationToolkit
 			 * \param toolbar pointer to the toolbar of the widget
 			 * \return True if pointer was successfully forwarded to IVisualizationTree, false otherwise
 			 */
-		virtual bool setToolbar(const OpenViBE::CIdentifier& visualizationTreeIdentifier, const OpenViBE::CIdentifier& boxID, GtkWidget* toolbar) = 0;
+		virtual bool setToolbar(const CIdentifier& visualizationTreeIdentifier, const CIdentifier& boxID, GtkWidget* toolbar) = 0;
 
 		/**
 		 * \brief Set the topmost widget of a visualization plugin.
@@ -77,6 +79,7 @@ namespace OpenViBEVisualizationToolkit
 		 * \param widget pointer to the main window of the widget
 		 * \return True if pointer was successfully forwarded to IVisualizationTree, false otherwise
 		 */
-		virtual bool setWidget(const OpenViBE::CIdentifier& visualizationTreeIdentifier, const OpenViBE::CIdentifier& boxID, GtkWidget* widget) = 0;
+		virtual bool setWidget(const CIdentifier& visualizationTreeIdentifier, const CIdentifier& boxID, GtkWidget* widget) = 0;
 	};
-} // namespace OpenViBEVisualizationToolkit
+	}  // namespace VisualizationToolkit
+}  // namespace OpenViBE
