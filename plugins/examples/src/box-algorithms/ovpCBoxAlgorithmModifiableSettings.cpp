@@ -3,16 +3,10 @@
 using namespace OpenViBE;
 using namespace /*OpenViBE::*/Kernel;
 using namespace /*OpenViBE::*/Plugins;
-
-using namespace OpenViBEPlugins;
-using namespace Examples;
+using namespace /*OpenViBE::Plugins::*/Examples;
 
 bool CBoxAlgorithmModifiableSettings::initialize() { return true; }
-/*******************************************************************************/
-
 bool CBoxAlgorithmModifiableSettings::uninitialize() { return true; }
-/*******************************************************************************/
-
 
 uint64_t CBoxAlgorithmModifiableSettings::getClockFrequency()
 

@@ -10,8 +10,10 @@
 #include <vector>
 #include <array>
 
-namespace OpenViBEPlugins
+namespace OpenViBE
 {
+	namespace Plugins
+	{
 	namespace SimpleVisualization
 	{
 		class CSignalDisplayDrawable;
@@ -57,7 +59,7 @@ namespace OpenViBEPlugins
 			std::deque<std::pair<uint64_t, uint64_t>> m_Stimulations;
 
 			//electrode spherical coordinates (in degrees)
-			//OpenViBE::CMatrix m_oElectrodesSphericalCoords;
+			//CMatrix m_oElectrodesSphericalCoords;
 
 			//flag set to true once channel lookup indices are determined
 			bool m_ChannelLookupTableInitialized = false;
@@ -66,7 +68,7 @@ namespace OpenViBEPlugins
 			std::vector<size_t> m_ChannelLookupIndices;
 
 			//electrode labels (standardized)
-			//std::vector<OpenViBE::CString> m_oElectrodesLabels;
+			//std::vector<CString> m_oElectrodesLabels;
 
 			//! Number of buffer to display at the same time
 			size_t m_NBufferToDisplay = 2;
@@ -114,7 +116,7 @@ namespace OpenViBEPlugins
 
 			std::vector<std::deque<std::pair<double, double>>> m_LocalMinMaxValue;
 
-			OpenViBE::Toolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>& m_ParentPlugin;
+			Toolkit::TBoxAlgorithm<IBoxAlgorithm>& m_ParentPlugin;
 
 			bool m_Error = false;
 
@@ -125,32 +127,32 @@ namespace OpenViBEPlugins
 			/* \name Channel localisation */
 			//@{
 			//channel localisation decoder
-			OpenViBE::Kernel::IAlgorithmProxy* m_decoder = nullptr;
+			Kernel::IAlgorithmProxy* m_decoder = nullptr;
 			//flag set to true once channel localisation buffer is received
 			bool m_channelLocalisationHeaderReceived = false;
 			//dynamic channel localisation flag (e.g. localisation is constantly updated with MEG)
 			bool m_dynamicChannelLocalisation = false;
 			//channel labels database
-			std::vector<OpenViBE::CString> m_channelLocalisationLabels;
+			std::vector<CString> m_channelLocalisationLabels;
 			//flag stating whether streamed coordinates are cartesian (as opposed to spherical)
 			bool m_cartesianCoords = false;
 			//! double-linked list of streamed channel coordinates (if cartesian, expressed in normalized space (X right Y front Z up))
-			std::deque<std::pair<OpenViBE::CMatrix*, bool>> m_channelLocalisationCoords;
+			std::deque<std::pair<CMatrix*, bool>> m_channelLocalisationCoords;
 			//! double-linked list of channel coordinates (spherical if streamed coords aere cartesian and vice versa)
-			//std::deque<  std::pair<OpenViBE::CMatrix*, bool> > m_oChannelLocalisationAlternateCoords;
+			//std::deque<  std::pair<CMatrix*, bool> > m_oChannelLocalisationAlternateCoords;
 			//pointer to double linked list of cartesian coordinates
-			//std::deque< std::pair<OpenViBE::CMatrix*, bool> > * m_channelLocalisationCartesianCoords;
+			//std::deque< std::pair<CMatrix*, bool> > * m_channelLocalisationCartesianCoords;
 			//pointer to double linked list of spherical coordinates
-			//std::deque< std::pair<OpenViBE::CMatrix*, bool> > * m_channelLocalisationSphericalCoords;
+			//std::deque< std::pair<CMatrix*, bool> > * m_channelLocalisationSphericalCoords;
 			//! double-linked list of start/end times of channel coordinates
 			std::deque<std::pair<uint64_t, uint64_t>> m_channelLocalisationTimes;
 			//@}
 
 			//! Redraw mode (shift or scan)
-			OpenViBE::CIdentifier m_displayMode = Scan;
+			CIdentifier m_displayMode = Scan;
 
 		public:
-			explicit CBufferDatabase(OpenViBE::Toolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>& plugin);
+			explicit CBufferDatabase(Toolkit::TBoxAlgorithm<IBoxAlgorithm>& plugin);
 
 			virtual ~CBufferDatabase();
 
@@ -161,7 +163,7 @@ namespace OpenViBEPlugins
 			 * \param endTime End time of memory buffer
 			 * \return True if memory buffer could be properly decoded, false otherwise
 			 */
-			virtual bool decodeChannelLocalisationMemoryBuffer(const OpenViBE::IMemoryBuffer* buffer, uint64_t startTime, uint64_t endTime);
+			virtual bool decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer* buffer, uint64_t startTime, uint64_t endTime);
 
 			/**
 			 * \brief Callback called upon channel localisation buffer reception
@@ -258,7 +260,7 @@ namespace OpenViBEPlugins
 			 * \param[out] position Pointer to an array of 3 floats where to store coordinates
 			 * \return True if electrode position could be retrieved
 			 */
-			virtual bool getElectrodePosition(const OpenViBE::CString& label, double* position);
+			virtual bool getElectrodePosition(const CString& label, double* position);
 
 			/**
 			 * \brief Get electrode label
@@ -266,7 +268,7 @@ namespace OpenViBEPlugins
 			 * \param[out] label Electrode label
 			 * \return True if electrode label could be retrieved
 			 */
-			virtual bool getElectrodeLabel(const size_t index, OpenViBE::CString& label);
+			virtual bool getElectrodeLabel(const size_t index, CString& label);
 
 			/**
 			 * \brief Get number of channels
@@ -298,7 +300,7 @@ namespace OpenViBEPlugins
 			 * \param[out] label Channel label
 			 * \return True if channel label could be retrieved
 			 */
-			virtual bool getChannelLabel(const size_t index, OpenViBE::CString& label);
+			virtual bool getChannelLabel(const size_t index, CString& label);
 
 			virtual void setMatrixDimensionCount(const size_t n);
 			virtual void setMatrixDimensionSize(const size_t index, const size_t size);
@@ -319,13 +321,13 @@ namespace OpenViBEPlugins
 			 * \remarks Used by signal display and time ruler to determine how they should be updated
 			 * \param mode New display mode
 			 */
-			virtual void setDisplayMode(const OpenViBE::CIdentifier& mode) { m_displayMode = mode; }
+			virtual void setDisplayMode(const CIdentifier& mode) { m_displayMode = mode; }
 
 			/**
 			 * \brief Get current display mode
 			 * \return Current display mode
 			 */
-			virtual OpenViBE::CIdentifier getDisplayMode() { return m_displayMode; }
+			virtual CIdentifier getDisplayMode() { return m_displayMode; }
 
 			/**
 			 * \brief Set flag stating whether to redraw associated SignalDisplayDrawable objet when new data is available
@@ -350,4 +352,5 @@ namespace OpenViBEPlugins
 			bool convertCartesianToSpherical(const double* cartesian, double& theta, double& phi) const;
 		};
 	} // namespace SimpleVisualization
-} // namespace OpenViBEPlugins
+	}  // namespace Plugins
+}  // namespace OpenViBE

@@ -12,10 +12,10 @@ namespace OpenViBE
 	{
 	class CInterfacedScenario;
 
-	class CPlayerVisualization final : public OpenViBE::VisualizationToolkit::ITreeViewCB
+	class CPlayerVisualization final : public VisualizationToolkit::ITreeViewCB
 	{
 	public:
-		CPlayerVisualization(const Kernel::IKernelContext& ctx, OpenViBE::VisualizationToolkit::IVisualizationTree& tree,
+		CPlayerVisualization(const Kernel::IKernelContext& ctx, VisualizationToolkit::IVisualizationTree& tree,
 							 CInterfacedScenario& interfacedScenario)
 			: m_kernelCtx(ctx), m_visualizationTree(tree), m_interfacedScenario(interfacedScenario) { }
 
@@ -25,8 +25,8 @@ namespace OpenViBE
 
 		/** \name ITreeViewCB interface implementation */
 		//@{
-		GtkWidget* loadTreeWidget(OpenViBE::VisualizationToolkit::IVisualizationWidget* widget) override;
-		void endLoadTreeWidget(OpenViBE::VisualizationToolkit::IVisualizationWidget* widget) override;
+		GtkWidget* loadTreeWidget(VisualizationToolkit::IVisualizationWidget* widget) override;
+		void endLoadTreeWidget(VisualizationToolkit::IVisualizationWidget* widget) override;
 		bool setToolbar(const CIdentifier& boxID, GtkWidget* widget) override;
 		bool setWidget(const CIdentifier& boxID, GtkWidget* widget) override;
 		//@}
@@ -36,7 +36,7 @@ namespace OpenViBE
 		CInterfacedScenario& getInterfacedScenario() const { return m_interfacedScenario; }
 
 	protected:
-		bool parentWidgetBox(OpenViBE::VisualizationToolkit::IVisualizationWidget* widget, GtkBox* widgetBox);
+		bool parentWidgetBox(VisualizationToolkit::IVisualizationWidget* widget, GtkBox* widgetBox);
 
 		static gboolean configureEventCB(GtkWidget* widget, GdkEventConfigure* event, gpointer data);
 		static gboolean widgetExposeEventCB(GtkWidget* widget, GdkEventExpose* event, gpointer data);
@@ -55,7 +55,7 @@ namespace OpenViBE
 	private:
 
 		const Kernel::IKernelContext& m_kernelCtx;
-		OpenViBE::VisualizationToolkit::IVisualizationTree& m_visualizationTree;
+		VisualizationToolkit::IVisualizationTree& m_visualizationTree;
 		CInterfacedScenario& m_interfacedScenario;
 
 		/**

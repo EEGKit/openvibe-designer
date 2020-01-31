@@ -9,7 +9,7 @@ namespace OpenViBE
 {
 	namespace Designer
 	{
-	class CApplication;
+		class CApplication;
 	}
 }
 

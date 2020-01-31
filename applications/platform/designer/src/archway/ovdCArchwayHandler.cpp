@@ -14,11 +14,12 @@
 #include <regex>
 
 using namespace Mensia;
-using namespace OpenViBE::Kernel;
+using namespace OpenViBE;
+using namespace /*OpenViBE::*/Kernel;
 using namespace std;
 
-const std::string CArchwayHandler::ARCHWAY_CONFIG_FILE           = (OpenViBE::Directories::getUserDataDir() + "/studio-archway.conf").toASCIIString();
-const std::string CArchwayHandler::ARCHWAY_PIPELINES_CONFIG_FILE = (OpenViBE::Directories::getUserDataDir() + "/studio-archway-pipeline-configuration.conf").
+const std::string CArchwayHandler::ARCHWAY_CONFIG_FILE           = (Directories::getUserDataDir() + "/studio-archway.conf").toASCIIString();
+const std::string CArchwayHandler::ARCHWAY_PIPELINES_CONFIG_FILE = (Directories::getUserDataDir() + "/studio-archway-pipeline-configuration.conf").
 		toASCIIString();
 
 std::string CArchwayHandler::getArchwayErrorString() const

@@ -238,6 +238,7 @@ namespace Mensia
 			bool m_IsVideoOutputWorking = false;
 			size_t m_FrameId            = 0;
 			OpenViBE::CString m_FrameFilenameFormat;
+			
 		private:
 			OpenViBE::VisualizationToolkit::IVisualizationContext* m_visualizationCtx = nullptr;
 		};

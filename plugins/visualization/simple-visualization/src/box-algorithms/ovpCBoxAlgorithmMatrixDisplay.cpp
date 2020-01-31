@@ -14,8 +14,6 @@ using namespace std;
 using namespace OpenViBE;
 using namespace /*OpenViBE::*/Kernel;
 using namespace /*OpenViBE::*/Plugins;
-
-using namespace OpenViBEPlugins;
 using namespace SimpleVisualization;
 
 namespace
@@ -71,8 +69,8 @@ bool CBoxAlgorithmMatrixDisplay::initialize()
 	//widgets
 	m_mainWidgetInterface    = gtk_builder_new();
 	m_toolbarWidgetInterface = gtk_builder_new(); 
-	// glade_xml_new(OpenViBE::Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-MatrixDisplay.ui", "matrix-display-table", nullptr);
-	// glade_xml_new(OpenViBE::Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-MatrixDisplay.ui", "matrix-display-toolbar", nullptr);
+	// glade_xml_new(Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-MatrixDisplay.ui", "matrix-display-table", nullptr);
+	// glade_xml_new(Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-MatrixDisplay.ui", "matrix-display-toolbar", nullptr);
 	gtk_builder_add_from_file(m_mainWidgetInterface, Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-MatrixDisplay.ui", nullptr);
 	gtk_builder_add_from_file(m_toolbarWidgetInterface, Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-MatrixDisplay.ui", nullptr);
 
@@ -92,7 +90,7 @@ bool CBoxAlgorithmMatrixDisplay::initialize()
 		return false;
 	}
 
-	m_visualizationCtx = dynamic_cast<OpenViBE::VisualizationToolkit::IVisualizationContext*>(this->createPluginObject(OVP_ClassId_Plugin_VisualizationCtx));
+	m_visualizationCtx = dynamic_cast<VisualizationToolkit::IVisualizationContext*>(this->createPluginObject(OVP_ClassId_Plugin_VisualizationCtx));
 	m_visualizationCtx->setWidget(*this, m_mainWidget);
 	m_visualizationCtx->setToolbar(*this, m_toolbarWidget);
 
@@ -101,12 +99,12 @@ bool CBoxAlgorithmMatrixDisplay::initialize()
 
 	CString gradientSetting;
 	getBoxAlgorithmContext()->getStaticBoxContext()->getSettingValue(0, gradientSetting);
-	OpenViBE::VisualizationToolkit::ColorGradient::parse(m_colorGradient, gradientSetting);
+	VisualizationToolkit::ColorGradient::parse(m_colorGradient, gradientSetting);
 
 	CString gradientStepsSetting;
 	getBoxAlgorithmContext()->getStaticBoxContext()->getSettingValue(1, gradientStepsSetting);
 	m_gradientSteps = strtol(gradientStepsSetting, nullptr, 10);
-	OpenViBE::VisualizationToolkit::ColorGradient::interpolate(m_interpolatedColorGardient, m_colorGradient, m_gradientSteps);
+	VisualizationToolkit::ColorGradient::interpolate(m_interpolatedColorGardient, m_colorGradient, m_gradientSteps);
 	m_max = 0;
 	m_min = 0;
 

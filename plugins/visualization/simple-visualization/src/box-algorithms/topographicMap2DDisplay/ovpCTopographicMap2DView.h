@@ -11,8 +11,10 @@
 
 #include <vector>
 
-namespace OpenViBEPlugins
+namespace OpenViBE
 {
+	namespace Plugins
+	{
 	namespace SimpleVisualization
 	{
 		/**
@@ -72,14 +74,14 @@ namespace OpenViBEPlugins
 			 * \brief Get matrix of sample points coordinates (places where to interpolate values)
 			 * \return Pointer to matrix of sample points coordinates
 			 */
-			OpenViBE::CMatrix* getSampleCoordinatesMatrix() override;
+			CMatrix* getSampleCoordinatesMatrix() override;
 
 			/**
 			 * \brief Set matrix of sample points values (values interpolated at places specified in sample coordinates matrix)
 			 * \param [in] matrix Pointer to matrix of sample points values
 			 * \return True if values were successfully set, false otherwise
 			 */
-			bool setSampleValuesMatrix(OpenViBE::IMatrix* matrix) override;
+			bool setSampleValuesMatrix(IMatrix* matrix) override;
 
 			//@}
 
@@ -212,7 +214,7 @@ namespace OpenViBEPlugins
 			size_t m_gridSize = 0;
 			size_t m_cellSize = 0;
 
-			OpenViBE::CMatrix m_sampleCoordinatesMatrix;
+			CMatrix m_sampleCoordinatesMatrix;
 
 			std::vector<size_t> m_sampleValues;
 			std::vector<std::pair<size_t, size_t>> m_sample2DCoordinates; //in skull coords
@@ -307,4 +309,5 @@ namespace OpenViBEPlugins
 			size_t m_rowStride = 0;
 		};
 	} // namespace SimpleVisualization
-} // namespace OpenViBEPlugins
+	}  // namespace Plugins
+}  // namespace OpenViBE

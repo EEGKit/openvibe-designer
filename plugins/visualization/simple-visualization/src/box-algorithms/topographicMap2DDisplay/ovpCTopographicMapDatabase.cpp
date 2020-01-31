@@ -6,7 +6,7 @@ using namespace OpenViBE;
 using namespace /*OpenViBE::*/Plugins;
 using namespace /*OpenViBE::*/Kernel;
 
-using namespace OpenViBEPlugins;
+using namespace /*OpenViBE::*/Plugins;
 using namespace SimpleVisualization;
 
 using namespace /*OpenViBE::*/Toolkit;

@@ -5,8 +5,6 @@
 using namespace OpenViBE;
 using namespace /*OpenViBE::*/Kernel;
 using namespace /*OpenViBE::*/Plugins;
-
-using namespace OpenViBEPlugins;
 using namespace SimpleVisualization;
 
 bool CBoxAlgorithmTopographicMap2DDisplay::initialize()
@@ -46,7 +44,7 @@ bool CBoxAlgorithmTopographicMap2DDisplay::initialize()
 		return false;
 	}
 
-	m_visualizationCtx = dynamic_cast<OpenViBE::VisualizationToolkit::IVisualizationContext*>(this->createPluginObject(OVP_ClassId_Plugin_VisualizationCtx));
+	m_visualizationCtx = dynamic_cast<VisualizationToolkit::IVisualizationContext*>(this->createPluginObject(OVP_ClassId_Plugin_VisualizationCtx));
 	m_visualizationCtx->setWidget(*this, widget);
 	m_visualizationCtx->setToolbar(*this, toolbarWidget);
 

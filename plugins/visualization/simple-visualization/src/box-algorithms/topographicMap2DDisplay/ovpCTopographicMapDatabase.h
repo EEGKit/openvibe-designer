@@ -7,16 +7,18 @@
 #include <openvibe/ov_all.h>
 #include <toolkit/ovtk_all.h>
 
-namespace OpenViBEPlugins
+namespace OpenViBE
 {
+	namespace Plugins
+	{
 	namespace SimpleVisualization
 	{
 		class CTopographicMapDrawable : public CSignalDisplayDrawable
 		{
 		public:
 			~CTopographicMapDrawable() override = default;
-			virtual OpenViBE::CMatrix* getSampleCoordinatesMatrix() = 0;
-			virtual bool setSampleValuesMatrix(OpenViBE::IMatrix* pSampleValuesMatrix) = 0;
+			virtual CMatrix* getSampleCoordinatesMatrix() = 0;
+			virtual bool setSampleValuesMatrix(IMatrix* pSampleValuesMatrix) = 0;
 		};
 
 		/**
@@ -26,7 +28,7 @@ namespace OpenViBEPlugins
 		class CTopographicMapDatabase : public CBufferDatabase
 		{
 		public:
-			CTopographicMapDatabase(OpenViBE::Toolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>& plugin, OpenViBE::Kernel::IAlgorithmProxy& interpolation);
+			CTopographicMapDatabase(Toolkit::TBoxAlgorithm<IBoxAlgorithm>& plugin, Kernel::IAlgorithmProxy& interpolation);
 			~CTopographicMapDatabase() override = default;
 
 			void setMatrixDimensionSize(const size_t index, const size_t size) override;
@@ -74,7 +76,7 @@ namespace OpenViBEPlugins
 			//true until process() is called for the first time
 			bool m_firstProcess = true;
 			//spherical spline interpolation
-			OpenViBE::Kernel::IAlgorithmProxy& m_interpolation;
+			Kernel::IAlgorithmProxy& m_interpolation;
 			//order of spherical spline used for interpolation - mapped to OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_SplineOrder
 			int64_t m_splineOrder = 4;
 			/**
@@ -87,21 +89,22 @@ namespace OpenViBEPlugins
 			//flag set to true once electrode coordinates have been initialized
 			bool m_electrodeCoordsInitialized = false;
 			//electrode cartesian coordinates, in normalized space (X right Y front Z up)
-			OpenViBE::CMatrix m_electrodeCoords;
+			CMatrix m_electrodeCoords;
 			//pointer to electrode coordinates matrix - mapped to OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_ControlPointsCoordinates
-			OpenViBE::IMatrix* m_pElectrodeCoords = nullptr;
+			IMatrix* m_pElectrodeCoords = nullptr;
 			//electrode potentials
-			OpenViBE::CMatrix m_electrodePotentials;
+			CMatrix m_electrodePotentials;
 			//pointer to electrode potentials matrix - mapped to OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_ControlPointsValues
-			OpenViBE::IMatrix* m_pElectrodePotentials = nullptr;
+			IMatrix* m_pElectrodePotentials = nullptr;
 			//pointer to sample points coordinates matrix - mapped to OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_SamplePointsCoordinates
-			OpenViBE::IMatrix* m_samplePointCoords = nullptr;
+			IMatrix* m_samplePointCoords = nullptr;
 			//minimum interpolated value
-			OpenViBE::Kernel::TParameterHandler<double> m_minSamplePointValue;
+			Kernel::TParameterHandler<double> m_minSamplePointValue;
 			//maximum interpolated value
-			OpenViBE::Kernel::TParameterHandler<double> m_maxSamplePointValue;
+			Kernel::TParameterHandler<double> m_maxSamplePointValue;
 			//delay to apply to interpolated values
 			uint64_t m_delay = 0;
 		};
 	} // namespace SimpleVisualization
-} // namespace OpenViBEPlugins
+	}  // namespace Plugins
+}  // namespace OpenViBE

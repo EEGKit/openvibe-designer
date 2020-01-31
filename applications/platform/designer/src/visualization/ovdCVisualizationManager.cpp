@@ -19,7 +19,6 @@ using namespace /*OpenViBE::*/Designer;
 using namespace /*OpenViBE::*/Kernel;
 using namespace /*OpenViBE::*/Plugins;
 using namespace /*OpenViBE::*/VisualizationToolkit;
-//using namespace OpenViBE::Tools;
 
 bool CVisualizationManager::createVisualizationTree(CIdentifier& treeID)
 {

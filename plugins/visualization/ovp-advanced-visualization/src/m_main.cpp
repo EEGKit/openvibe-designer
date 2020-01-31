@@ -61,7 +61,8 @@
 
 #include <ctime>
 
-using namespace Mensia::AdvancedVisualization;
+using namespace Mensia;
+using namespace /*Mensia::*/AdvancedVisualization;
 using namespace OpenViBE;
 
 namespace Mensia
@@ -143,8 +144,6 @@ OVP_Declare_Begin()
 	context.getTypeManager().registerEnumerationType(OVP_TypeId_TemporalCoherence, "Temporal Coherence");
 	context.getTypeManager().registerEnumerationEntry(OVP_TypeId_TemporalCoherence, "Time Locked", TimeLocked);
 	context.getTypeManager().registerEnumerationEntry(OVP_TypeId_TemporalCoherence, "Independant", Independant);
-
-	using namespace Mensia::AdvancedVisualization;
 
 	OVP_Declare_New(bitmap_t("Continuous bitmap_t", CIdentifier(0x0BE99978487D3DC6), CIdentifier(0x9E1CD34586569E7E), "0.0.0", "0.0.0",
 		CParameterSet(I_Matrix,I_Stimulations, S_ChannelLocalisation, S_TemporalCoherence, S_TimeScale, S_ElementCount, S_DataScale, S_Caption, S_ColorGradient,

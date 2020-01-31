@@ -1555,7 +1555,7 @@ bool CInterfacedScenario::pickInterfacedObject(const int x, const int y, int siz
 	return true;
 }
 
-#define OV_ClassId_Selected OpenViBE::CIdentifier(0xC67A01DC, 0x28CE06C1)
+#define OV_ClassId_Selected CIdentifier(0xC67A01DC, 0x28CE06C1)
 
 void CInterfacedScenario::undoCB(const bool manageModifiedStatusFlag)
 {

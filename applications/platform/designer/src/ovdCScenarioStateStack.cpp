@@ -123,7 +123,7 @@ bool CScenarioStateStack::restoreState(const IMemoryBuffer& state)
 		if (treeMetadata && treeMetadata->getType() == OVVIZ_MetadataIdentifier_VisualizationTree) { break; }
 	}
 
-	OpenViBE::VisualizationToolkit::IVisualizationTree* visualizationTree = m_interfacedScenario.m_Tree;
+	VisualizationToolkit::IVisualizationTree* visualizationTree = m_interfacedScenario.m_Tree;
 	if (treeMetadata && visualizationTree) { visualizationTree->deserialize(treeMetadata->getData()); }
 
 	return true;

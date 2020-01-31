@@ -11,8 +11,6 @@
 using namespace OpenViBE;
 using namespace /*OpenViBE::*/Kernel;
 using namespace /*OpenViBE::*/Plugins;
-
-using namespace OpenViBEPlugins;
 using namespace Test;
 
 bool CAlgorithmSphericalSplineInterpolation::initialize()
