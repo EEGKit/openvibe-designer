@@ -357,7 +357,7 @@ bool CRendererTopo::render(const CRendererContext& ctx)
 			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 			glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_scalp.m_Vertices[0].x);
 			if (!m_scalp.m_Normals.empty()) { glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_scalp.m_Normals[0].x); }
-			
+
 			if (!MULTI_SLICE)
 			{
 				glColor3f(1, 1, 1);

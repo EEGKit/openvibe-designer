@@ -347,7 +347,7 @@ static char backslash_to_slash(const char c) { return c == '\\' ? '/' : c; }
 * \param logMgr: name of the scenario to open
 ------------------------------------------------------------------------------------------------------------------------------------**/
 #if defined NDEBUG
-static bool ensureOneInstanceOfDesigner(config_t & config, ILogManager & logMgr)
+static bool ensureOneInstanceOfDesigner(config_t& config, ILogManager& logMgr)
 {
 	try
 	{

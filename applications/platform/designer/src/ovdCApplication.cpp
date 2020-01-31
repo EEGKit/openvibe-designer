@@ -694,8 +694,8 @@ static gboolean receiveSecondInstanceMessage(gpointer data)
 							break;
 						default: break;
 					}
-					mode    = 0;
-					msg = strtok(nullptr, ";");
+					mode = 0;
+					msg  = strtok(nullptr, ";");
 				}
 			}
 			else { boost::interprocess::message_queue::remove(MESSAGE_NAME); }

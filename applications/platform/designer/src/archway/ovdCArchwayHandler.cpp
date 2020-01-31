@@ -101,7 +101,7 @@ EEngineInitialisationStatus CArchwayHandler::initialize()
 	};
 
 	// This function returns the last getPendingValue result as a vector
-	// Such encapsulation enables us to avoid a call to getPendingValueDimension
+// Such encapsulation enables us to avoid a call to getPendingValueDimension
 	// from the client plugin.
 	m_ArchwayBridge.popValueMatrix = [this](const size_t valueChannelId)
 	{
@@ -429,8 +429,8 @@ namespace
 	void enumeratePipelineParametersCallback(size_t/*pipelineID*/, const char* parameterName, const char* parameterValue, void* userData)
 	{
 		// This callback will go through the pipeline parameters one by one and push them into the
-		// vector of SPipelineParameters which is passed as the first element of the data input pair
-		// This callback receives the parameter's name and default value from Archway, which is why we pass
+// vector of SPipelineParameters which is passed as the first element of the data input pair
+// This callback receives the parameter's name and default value from Archway, which is why we pass
 		// it the list of the _currently set_ parameters for the pipeline
 		const auto parameters = static_cast<pair<vector<SPipelineParameter>*, map<string, string> const*>*>(userData);
 

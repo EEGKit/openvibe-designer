@@ -7,30 +7,30 @@ namespace OpenViBE
 {
 	namespace Designer
 	{
-	namespace Setting
-	{
-		class CScriptSettingView final : public CAbstractSettingView
+		namespace Setting
 		{
-		public:
-			CScriptSettingView(Kernel::IBox& box, const size_t index, CString& builderName, const Kernel::IKernelContext& ctx);
+			class CScriptSettingView final : public CAbstractSettingView
+			{
+			public:
+				CScriptSettingView(Kernel::IBox& box, const size_t index, CString& builderName, const Kernel::IKernelContext& ctx);
 
-			void getValue(CString& value) const override;
-			void setValue(const CString& value) override;
+				void getValue(CString& value) const override;
+				void setValue(const CString& value) override;
 
-			void browse() const;
-			void edit() const;
+				void browse() const;
+				void edit() const;
 
-			void onChange();
+				void onChange();
 #if defined TARGET_OS_Windows
-			void onFocusLost();
+				void onFocusLost();
 #endif
 
-		private:
-			GtkEntry* m_entry = nullptr;
+			private:
+				GtkEntry* m_entry = nullptr;
 
-			const Kernel::IKernelContext& m_kernelCtx;
-			bool m_onValueSetting = false;
-		};
-	} // namespace Setting
+				const Kernel::IKernelContext& m_kernelCtx;
+				bool m_onValueSetting = false;
+			};
+		} // namespace Setting
 	}  // namespace Designer
 }  // namespace OpenViBE

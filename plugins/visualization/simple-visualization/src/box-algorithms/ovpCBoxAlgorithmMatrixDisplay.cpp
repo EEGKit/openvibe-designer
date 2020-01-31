@@ -71,15 +71,20 @@ bool CBoxAlgorithmMatrixDisplay::initialize()
 	m_toolbarWidgetInterface = gtk_builder_new(); 
 	// glade_xml_new(Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-MatrixDisplay.ui", "matrix-display-table", nullptr);
 	// glade_xml_new(Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-MatrixDisplay.ui", "matrix-display-toolbar", nullptr);
-	gtk_builder_add_from_file(m_mainWidgetInterface, Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-MatrixDisplay.ui", nullptr);
-	gtk_builder_add_from_file(m_toolbarWidgetInterface, Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-MatrixDisplay.ui", nullptr);
+	gtk_builder_add_from_file(m_mainWidgetInterface, Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-MatrixDisplay.ui",
+							  nullptr);
+	gtk_builder_add_from_file(m_toolbarWidgetInterface,
+							  Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-MatrixDisplay.ui", nullptr);
 
 	gtk_builder_connect_signals(m_mainWidgetInterface, nullptr);
 	gtk_builder_connect_signals(m_toolbarWidgetInterface, nullptr);
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_toolbarWidgetInterface, "show-values-toggle-button")), "toggled", G_CALLBACK(::show_values_toggle_button_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_toolbarWidgetInterface, "show-colors-toggle-button")), "toggled", G_CALLBACK(::show_colors_toggle_button_cb), this);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_toolbarWidgetInterface, "matrix-display-toolbar")), "delete_event", G_CALLBACK(gtk_widget_hide), nullptr);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_toolbarWidgetInterface, "show-values-toggle-button")), "toggled",
+					 G_CALLBACK(::show_values_toggle_button_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_toolbarWidgetInterface, "show-colors-toggle-button")), "toggled",
+					 G_CALLBACK(::show_colors_toggle_button_cb), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_toolbarWidgetInterface, "matrix-display-toolbar")), "delete_event", G_CALLBACK(gtk_widget_hide),
+					 nullptr);
 
 	m_mainWidget    = GTK_WIDGET(gtk_builder_get_object(m_mainWidgetInterface, "matrix-display-table"));
 	m_toolbarWidget = GTK_WIDGET(gtk_builder_get_object(m_toolbarWidgetInterface, "matrix-display-toolbar"));
@@ -94,8 +99,10 @@ bool CBoxAlgorithmMatrixDisplay::initialize()
 	m_visualizationCtx->setWidget(*this, m_mainWidget);
 	m_visualizationCtx->setToolbar(*this, m_toolbarWidget);
 
-	m_ShowValues = (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_toolbarWidgetInterface, "show-values-toggle-button"))) != 0);
-	m_ShowColors = (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_toolbarWidgetInterface, "show-colors-toggle-button"))) != 0);
+	m_ShowValues = (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_toolbarWidgetInterface, "show-values-toggle-button"))) !=
+					0);
+	m_ShowColors = (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(gtk_builder_get_object(m_toolbarWidgetInterface, "show-colors-toggle-button"))) !=
+					0);
 
 	CString gradientSetting;
 	getBoxAlgorithmContext()->getStaticBoxContext()->getSettingValue(0, gradientSetting);
@@ -173,7 +180,8 @@ bool CBoxAlgorithmMatrixDisplay::process()
 			}
 			else if (op_matrix->getDimensionCount() != 2)
 			{
-				getLogManager() << LogLevel_Error << "The streamed matrix received has more than 2 dimensions (found " << op_matrix->getDimensionCount() << " dimensions)\n";
+				getLogManager() << LogLevel_Error << "The streamed matrix received has more than 2 dimensions (found " << op_matrix->getDimensionCount() <<
+						" dimensions)\n";
 				return false;
 			}
 			else

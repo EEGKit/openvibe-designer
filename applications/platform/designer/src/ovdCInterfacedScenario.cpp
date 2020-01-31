@@ -2565,7 +2565,8 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(GtkWidget* widget, 
 					if (!m_boxCtxMenuCBs.empty()) { gtk_menu_add_separator_menu_item(menu); }
 					if (box->hasAttribute(OV_AttributeId_Box_ToBeUpdated))
 					{
-						auto updateMenuItem = addNewImageMenuItemWithCB(menu, GTK_STOCK_REFRESH, "update box", context_menu_cb, box, ContextMenu_BoxUpdate, unused);
+						auto updateMenuItem = addNewImageMenuItemWithCB(menu, GTK_STOCK_REFRESH, "update box", context_menu_cb, box, ContextMenu_BoxUpdate,
+																		unused);
 						if (box->hasAttribute(OV_AttributeId_Box_FlagNeedsManualUpdate)
 							|| box->hasAttribute(OV_AttributeId_Box_FlagCanAddInput)
 							|| box->hasAttribute(OV_AttributeId_Box_FlagCanAddOutput)

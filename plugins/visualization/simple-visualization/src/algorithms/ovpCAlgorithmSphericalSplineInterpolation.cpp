@@ -143,7 +143,8 @@ bool CAlgorithmSphericalSplineInterpolation::process()
 
 		//compute spline ponderation coefficients using spline values
 		//FIXME : have a working copy of control points values stored as doubles?
-		const int result = SplineCoef(int(ip_nControlPoints), m_coordsPtr.data(), ip_controlPointsValues->getBuffer(), m_pot.data(), m_laplacianCoefs.data());
+		const int result = SplineCoef(int(ip_nControlPoints), m_coordsPtr.data(), ip_controlPointsValues->getBuffer(), m_pot.data(),
+									  m_laplacianCoefs.data());
 		m_laplacianCoefs[int(ip_nControlPoints)] = 0;
 
 		if (result != 0)

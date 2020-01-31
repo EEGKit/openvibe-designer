@@ -25,7 +25,7 @@ namespace OpenViBE
 {
 	namespace VisualizationToolkit
 	{
-	OVVIZ_API bool initialize(const Kernel::IKernelContext& ctx);
-	OVVIZ_API bool uninitialize(const Kernel::IKernelContext& ctx);
+		OVVIZ_API bool initialize(const Kernel::IKernelContext& ctx);
+		OVVIZ_API bool uninitialize(const Kernel::IKernelContext& ctx);
 	}  // namespace VisualizationToolkit
 }  // namespace OpenViBE
