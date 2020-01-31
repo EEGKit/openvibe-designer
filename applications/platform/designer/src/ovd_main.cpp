@@ -24,8 +24,8 @@
 
 using namespace OpenViBE;
 using namespace /*OpenViBE::*/Kernel;
-using namespace Plugins;
-using namespace OpenViBEDesigner;
+using namespace /*OpenViBE::*/Plugins;
+using namespace /*OpenViBE::*/Designer;
 using namespace std;
 
 map<size_t, GdkColor> gColors;
@@ -347,7 +347,7 @@ static char backslash_to_slash(const char c) { return c == '\\' ? '/' : c; }
 * \param logMgr: name of the scenario to open
 ------------------------------------------------------------------------------------------------------------------------------------**/
 #if defined NDEBUG
-static bool ensureOneInstanceOfDesigner(config_t & config, ILogManager & logMgr)
+static bool ensureOneInstanceOfDesigner(config_t& config, ILogManager& logMgr)
 {
 	try
 	{
@@ -618,9 +618,9 @@ int go(int argc, char** argv)
 #if defined TARGET_OS_Windows
 	CString file = Directories::getLibDir() + "/openvibe-kernel.dll";
 #elif defined TARGET_OS_Linux
-	CString file = OpenViBE::Directories::getLibDir() + "/libopenvibe-kernel.so";
+	CString file = Directories::getLibDir() + "/libopenvibe-kernel.so";
 #elif defined TARGET_OS_MacOS
-	CString file = OpenViBE::Directories::getLibDir() + "/libopenvibe-kernel.dylib";
+	CString file = Directories::getLibDir() + "/libopenvibe-kernel.dylib";
 #endif
 	if (!loader.load(file, &errorMsg)) { cout << "[ FAILED ] Error loading kernel (" << errorMsg << ")" << " from [" << file << "]\n"; }
 	else
@@ -665,12 +665,12 @@ int go(int argc, char** argv)
 			if (context == nullptr) { cout << "[ FAILED ] No kernel created by kernel descriptor" << "\n"; }
 			else
 			{
-				OpenViBEToolkit::initialize(*context);
-				OpenViBEVisualizationToolkit::initialize(*context);
+				Toolkit::initialize(*context);
+				VisualizationToolkit::initialize(*context);
 
 				//initialise Gtk before 3D context
 				gtk_init(&argc, &argv);
-				// gtk_rc_parse(OpenViBE::Directories::getDataDir() + "/applications/designer/interface.gtkrc");
+				// gtk_rc_parse(Directories::getDataDir() + "/applications/designer/interface.gtkrc");
 
 
 #if defined OPENVIBE_SPLASHSCREEN
@@ -678,7 +678,7 @@ int go(int argc, char** argv)
 				gtk_window_set_position(GTK_WINDOW(splashScreenWindow), GTK_WIN_POS_CENTER);
 				gtk_window_set_type_hint(GTK_WINDOW(splashScreenWindow), GDK_WINDOW_TYPE_HINT_SPLASHSCREEN);
 				gtk_window_set_default_size(GTK_WINDOW(splashScreenWindow), 600, 400);
-				GtkWidget* splashScreenImage = gtk_image_new_from_file(OpenViBE::Directories::getDataDir() + "/applications/designer/splashscreen.png");
+				GtkWidget* splashScreenImage = gtk_image_new_from_file(Directories::getDataDir() + "/applications/designer/splashscreen.png");
 				gtk_container_add(GTK_CONTAINER(splashScreenWindow), (splashScreenImage));
 				gtk_widget_show(splashScreenImage);
 				gtk_widget_show(splashScreenWindow);
@@ -848,8 +848,8 @@ int go(int argc, char** argv)
 
 				logMgr << LogLevel_Info << "Application terminated, releasing allocated objects\n";
 
-				OpenViBEVisualizationToolkit::uninitialize(*context);
-				OpenViBEToolkit::uninitialize(*context);
+				VisualizationToolkit::uninitialize(*context);
+				Toolkit::uninitialize(*context);
 
 				desc->releaseKernel(context);
 

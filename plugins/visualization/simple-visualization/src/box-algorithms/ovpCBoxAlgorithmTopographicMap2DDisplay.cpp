@@ -4,9 +4,7 @@
 
 using namespace OpenViBE;
 using namespace /*OpenViBE::*/Kernel;
-using namespace Plugins;
-
-using namespace OpenViBEPlugins;
+using namespace /*OpenViBE::*/Plugins;
 using namespace SimpleVisualization;
 
 bool CBoxAlgorithmTopographicMap2DDisplay::initialize()
@@ -28,7 +26,9 @@ bool CBoxAlgorithmTopographicMap2DDisplay::initialize()
 	getStaticBoxContext().getSettingValue(1, delayValue);
 
 	//create topographic map view (handling GUI interaction)
-	m_view = new CTopographicMap2DView(*m_database, getTypeManager().getEnumerationEntryValueFromName(OVP_TypeId_SphericalLinearInterpolationType, interpolationValue), strtod(delayValue, nullptr));
+	m_view = new CTopographicMap2DView(
+		*m_database, getTypeManager().getEnumerationEntryValueFromName(OVP_TypeId_SphericalLinearInterpolationType, interpolationValue),
+		strtod(delayValue, nullptr));
 
 	//have database notify us when new data is available
 	m_database->setDrawable(m_view);
@@ -46,7 +46,7 @@ bool CBoxAlgorithmTopographicMap2DDisplay::initialize()
 		return false;
 	}
 
-	m_visualizationCtx = dynamic_cast<OpenViBEVisualizationToolkit::IVisualizationContext*>(this->createPluginObject(OVP_ClassId_Plugin_VisualizationCtx));
+	m_visualizationCtx = dynamic_cast<VisualizationToolkit::IVisualizationContext*>(this->createPluginObject(OVP_ClassId_Plugin_VisualizationCtx));
 	m_visualizationCtx->setWidget(*this, widget);
 	m_visualizationCtx->setToolbar(*this, toolbarWidget);
 

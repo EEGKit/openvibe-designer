@@ -11,7 +11,7 @@
 
 using namespace OpenViBE;
 using namespace /*OpenViBE::*/Kernel;
-using namespace OpenViBEDesigner;
+using namespace /*OpenViBE::*/Designer;
 using namespace std;
 
 static const char* const ROOT_NAME    = "OpenViBE-SettingsOverride";

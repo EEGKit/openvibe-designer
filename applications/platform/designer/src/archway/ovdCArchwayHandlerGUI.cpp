@@ -15,7 +15,8 @@
 #endif
 
 using namespace Mensia;
-using namespace OpenViBEDesigner;
+using namespace OpenViBE;
+using namespace /*OpenViBE::*/Designer;
 
 namespace
 {
@@ -39,7 +40,7 @@ namespace
 	{
 		auto gui = static_cast<CArchwayHandlerGUI*>(data);
 
-		const std::string configToolLaunchCmd = std::string(OpenViBE::Directories::getBinDir().toASCIIString()) + "/mensia-device-configuration";
+		const std::string configToolLaunchCmd = std::string(Directories::getBinDir().toASCIIString()) + "/mensia-device-configuration";
 		//std::string configFilePath = std::string(getenv("USERPROFILE")) + "\\lib-mensia-engine.conf";
 
 		std::string escapedURL = gui->m_Controller.m_DeviceURL;
@@ -301,22 +302,21 @@ namespace
 	{
 		// auto gui = static_cast<CArchwayHandlerGUI*>(data);
 
-		if (!OpenViBE::ProcessUtilities::doesProcessExist("mensia-engine-server"))
+		if (!ProcessUtilities::doesProcessExist("mensia-engine-server"))
 		{
 #if defined TARGET_OS_Windows
-			if (FS::Files::fileExists(OpenViBE::Directories::getBinDir() + "/mensia-engine-server.exe"))
+			if (FS::Files::fileExists(Directories::getBinDir() + "/mensia-engine-server.exe"))
 			{
-				OpenViBE::ProcessUtilities::launchCommand(std::string(OpenViBE::Directories::getBinDir() + "/mensia-engine-server.exe").c_str());
+				ProcessUtilities::launchCommand(std::string(Directories::getBinDir() + "/mensia-engine-server.exe").c_str());
 			}
 			else if (FS::Files::fileExists("C:/Program Files (x86)/NeuroRT/NeuroRT Engine Server/bin/mensia-engine-server.exe"))
 			{
-				OpenViBE::ProcessUtilities::
-						launchCommand(std::string("C:/Program Files (x86)/NeuroRT/NeuroRT Engine Server/neurort-engine-server.cmd").c_str());
+				ProcessUtilities::launchCommand(std::string("C:/Program Files (x86)/NeuroRT/NeuroRT Engine Server/neurort-engine-server.cmd").c_str());
 			}
 #elif defined TARGET_OS_Linux || defined TARGET_OS_MacOS
-			if (FS::Files::fileExists(OpenViBE::Directories::getBinDir() + "/mensia-engine-server"))
+			if (FS::Files::fileExists(Directories::getBinDir() + "/mensia-engine-server"))
 			{
-				OpenViBE::ProcessUtilities::launchCommand(std::string(OpenViBE::Directories::getBinDir() + "/mensia-engine-server").c_str());
+				ProcessUtilities::launchCommand(std::string(Directories::getBinDir() + "/mensia-engine-server").c_str());
 			}
 #endif
 		}
@@ -328,7 +328,7 @@ CArchwayHandlerGUI::CArchwayHandlerGUI(CArchwayHandler& controller, CApplication
 {
 	m_Builder        = gtk_builder_new();
 	GError* gtkError = nullptr;
-	gtk_builder_add_from_file(m_Builder, OpenViBE::Directories::getDataDir() + "/applications/designer/interface-archway.ui", &gtkError);
+	gtk_builder_add_from_file(m_Builder, Directories::getDataDir() + "/applications/designer/interface-archway.ui", &gtkError);
 
 	assert(gtkError == nullptr);
 	// gtk_builder_connect_signals(m_builder, nullptr);

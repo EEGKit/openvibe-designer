@@ -4,7 +4,7 @@
 
 using namespace OpenViBE;
 using namespace /*OpenViBE::*/Kernel;
-using namespace OpenViBEDesigner;
+using namespace /*OpenViBE::*/Designer;
 
 CLinkProxy::CLinkProxy(const ILink& link) : m_constLink(&link)
 {

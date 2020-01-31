@@ -6,9 +6,9 @@
 
 using namespace OpenViBE;
 using namespace /*OpenViBE::*/Kernel;
-using namespace Plugins;
-using namespace OpenViBEDesigner;
-using namespace OpenViBEToolkit;
+using namespace /*OpenViBE::*/Plugins;
+using namespace /*OpenViBE::*/Toolkit;
+using namespace /*OpenViBE::*/Designer;
 
 CScenarioStateStack::CScenarioStateStack(const IKernelContext& ctx, CInterfacedScenario& interfacedScenario, IScenario& scenario)
 	: m_kernelCtx(ctx), m_interfacedScenario(interfacedScenario), m_scenario(scenario)
@@ -123,7 +123,7 @@ bool CScenarioStateStack::restoreState(const IMemoryBuffer& state)
 		if (treeMetadata && treeMetadata->getType() == OVVIZ_MetadataIdentifier_VisualizationTree) { break; }
 	}
 
-	OpenViBEVisualizationToolkit::IVisualizationTree* visualizationTree = m_interfacedScenario.m_Tree;
+	VisualizationToolkit::IVisualizationTree* visualizationTree = m_interfacedScenario.m_Tree;
 	if (treeMetadata && visualizationTree) { visualizationTree->deserialize(treeMetadata->getData()); }
 
 	return true;

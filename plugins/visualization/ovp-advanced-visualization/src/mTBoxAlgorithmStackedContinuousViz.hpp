@@ -39,9 +39,9 @@ namespace Mensia
 
 			_IsDerivedFromClass_Final_(CBoxAlgorithmViz, m_ClassID)
 
-			OpenViBEToolkit::TStimulationDecoder<TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>>
+			OpenViBE::Toolkit::TStimulationDecoder<TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>>
 			m_StimDecoder;
-			OpenViBEToolkit::TStreamedMatrixDecoder<TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>>
+			OpenViBE::Toolkit::TStreamedMatrixDecoder<TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>>
 			m_MatrixDecoder;
 
 			TRendererFactoryClass m_RendererFactory;

@@ -3,23 +3,26 @@
 #include "../ovd_base.h"
 #include "ovdCAbstractSettingView.h"
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
-	namespace Setting
+	namespace Designer
 	{
-		class CSettingViewFactory final
+		namespace Setting
 		{
-		public:
-			CSettingViewFactory(const OpenViBE::CString& builderName, const OpenViBE::Kernel::IKernelContext& ctx)
-				: m_builderName(builderName), m_kernelCtx(ctx) { }
+			class CSettingViewFactory final
+			{
+			public:
+				CSettingViewFactory(const CString& builderName, const Kernel::IKernelContext& ctx)
+					: m_builderName(builderName), m_kernelCtx(ctx) { }
 
-			~CSettingViewFactory() = default;
+				~CSettingViewFactory() = default;
 
-			CAbstractSettingView* getSettingView(OpenViBE::Kernel::IBox& box, const size_t index);
+				CAbstractSettingView* getSettingView(Kernel::IBox& box, const size_t index);
 
-		private:
-			OpenViBE::CString m_builderName;
-			const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
-		};
-	} // namespace Setting
-} // namespace OpenViBEDesigner
+			private:
+				CString m_builderName;
+				const Kernel::IKernelContext& m_kernelCtx;
+			};
+		} // namespace Setting
+	}  // namespace Designer
+}  // namespace OpenViBE

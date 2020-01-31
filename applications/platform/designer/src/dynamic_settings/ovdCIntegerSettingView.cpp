@@ -2,7 +2,7 @@
 #include "../ovd_base.h"
 
 using namespace OpenViBE;
-using namespace OpenViBEDesigner;
+using namespace /*OpenViBE::*/Designer;
 using namespace Setting;
 
 static void OnButtonSettingIntegerUpPressed(GtkButton* /*button*/, gpointer data) { static_cast<CIntegerSettingView *>(data)->adjustValue(1); }

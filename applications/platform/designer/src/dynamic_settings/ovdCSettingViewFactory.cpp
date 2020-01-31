@@ -11,8 +11,8 @@
 #include "ovdCEnumerationSettingView.h"
 #include "ovdCBitMaskSettingView.h"
 
-using namespace OpenViBEDesigner;
 using namespace OpenViBE;
+using namespace /*OpenViBE::*/Designer;
 using namespace Setting;
 
 CAbstractSettingView* CSettingViewFactory::getSettingView(Kernel::IBox& box, const size_t index)

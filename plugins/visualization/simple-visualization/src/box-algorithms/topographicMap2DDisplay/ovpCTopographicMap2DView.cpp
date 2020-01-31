@@ -13,13 +13,13 @@
 #endif
 
 using namespace OpenViBE;
-using namespace Plugins;
+using namespace /*OpenViBE::*/Plugins;
 using namespace /*OpenViBE::*/Kernel;
+using namespace /*OpenViBE::*/Toolkit;
 
-using namespace OpenViBEPlugins;
+using namespace /*OpenViBE::*/Plugins;
 using namespace SimpleVisualization;
 
-using namespace OpenViBEToolkit;
 
 using namespace std;
 

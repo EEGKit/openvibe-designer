@@ -2,15 +2,15 @@
 
 #include "ovviz_base.h"
 
-namespace OpenViBEVisualizationToolkit
+namespace OpenViBE
 {
-	namespace Tools
+	namespace VisualizationToolkit
 	{
 		namespace ColorGradient
 		{
-			OVVIZ_API bool parse(OpenViBE::IMatrix& colorGradient, const OpenViBE::CString& string);
-			OVVIZ_API bool format(OpenViBE::CString& string, const OpenViBE::IMatrix& colorGradient);
-			OVVIZ_API bool interpolate(OpenViBE::IMatrix& interpolatedColorGradient, const OpenViBE::IMatrix& colorGradient, size_t steps);
+			OVVIZ_API bool parse(IMatrix& colorGradient, const CString& string);
+			OVVIZ_API bool format(CString& string, const IMatrix& colorGradient);
+			OVVIZ_API bool interpolate(IMatrix& interpolatedColorGradient, const IMatrix& colorGradient, size_t steps);
 		} // namespace ColorGradient
-	} // namespace Tools
-} // namespace OpenViBEVisualizationToolkit
+	}  // namespace VisualizationToolkit
+}  // namespace OpenViBE

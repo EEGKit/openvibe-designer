@@ -105,7 +105,7 @@ namespace Mensia
 			std::vector<int> m_parameters;
 		};
 
-		class CBoxAlgorithmViz : public OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>
+		class CBoxAlgorithmViz : public OpenViBE::Toolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>
 		{
 		public:
 
@@ -238,11 +238,12 @@ namespace Mensia
 			bool m_IsVideoOutputWorking = false;
 			size_t m_FrameId            = 0;
 			OpenViBE::CString m_FrameFilenameFormat;
+
 		private:
-			OpenViBEVisualizationToolkit::IVisualizationContext* m_visualizationCtx = nullptr;
+			OpenViBE::VisualizationToolkit::IVisualizationContext* m_visualizationCtx = nullptr;
 		};
 
-		class CBoxAlgorithmVizListener : public OpenViBEToolkit::TBoxListener<OpenViBE::Plugins::IBoxListener>
+		class CBoxAlgorithmVizListener : public OpenViBE::Toolkit::TBoxListener<OpenViBE::Plugins::IBoxListener>
 		{
 		public:
 
@@ -306,7 +307,7 @@ namespace Mensia
 				return true;
 			}
 
-			_IsDerivedFromClass_Final_(OpenViBEToolkit::TBoxListener<OpenViBE::Plugins::IBoxListener>, OV_UndefinedIdentifier)
+			_IsDerivedFromClass_Final_(OpenViBE::Toolkit::TBoxListener<OpenViBE::Plugins::IBoxListener>, OV_UndefinedIdentifier)
 
 			std::vector<int> m_Parameters;
 		};
@@ -374,7 +375,11 @@ namespace Mensia
 					if (p == I_TimeFrequency) { prototype.addInput("Matrix", OV_TypeId_TimeFrequency); }	// This is later changed in the listener
 					if (p == I_Covariance) { prototype.addInput("Matrix", OV_TypeId_StreamedMatrix); }		// This is later changed in the listener 
 					if (p == I_Stimulations) { prototype.addInput("Markers", OV_TypeId_Stimulations); }
-					if (p == S_ChannelLocalisation) { prototype.addSetting("Channel Localisation", OV_TypeId_Filename, "${AdvancedViz_ChannelLocalisation}"); } // "../share/electrode_sets/electrode_set_standard_cartesian.txt" 
+					if (p == S_ChannelLocalisation
+					)
+					{
+						prototype.addSetting("Channel Localisation", OV_TypeId_Filename, "${AdvancedViz_ChannelLocalisation}");
+					} // "../share/electrode_sets/electrode_set_standard_cartesian.txt" 
 					if (p == S_DataPositive) { prototype.addSetting("Positive Data Only ?", OV_TypeId_Boolean, "false"); }
 					if (p == S_TemporalCoherence) { prototype.addSetting("Temporal Coherence", OVP_TypeId_TemporalCoherence, "Time Locked"); }
 					if (p == S_TimeScale) { prototype.addSetting("Time Scale", OV_TypeId_Float, "20"); }

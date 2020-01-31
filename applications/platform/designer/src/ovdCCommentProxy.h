@@ -4,41 +4,44 @@
 
 #include <string>
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
-	class CCommentProxy final
+	namespace Designer
 	{
-	public:
+		class CCommentProxy final
+		{
+		public:
 
-		CCommentProxy(const OpenViBE::Kernel::IKernelContext& ctx, const OpenViBE::Kernel::IComment& comment);
-		CCommentProxy(const OpenViBE::Kernel::IKernelContext& ctx, OpenViBE::Kernel::IScenario& scenario, const OpenViBE::CIdentifier& commentID);
-		~CCommentProxy() { if (!m_applied) { this->apply(); } }
+			CCommentProxy(const Kernel::IKernelContext& ctx, const Kernel::IComment& comment);
+			CCommentProxy(const Kernel::IKernelContext& ctx, Kernel::IScenario& scenario, const CIdentifier& commentID);
+			~CCommentProxy() { if (!m_applied) { this->apply(); } }
 
-		operator OpenViBE::Kernel::IComment*() const { return m_comment; }
-		operator const OpenViBE::Kernel::IComment*() const { return m_constComment; }
+			operator Kernel::IComment*() const { return m_comment; }
+			operator const Kernel::IComment*() const { return m_constComment; }
 
-		int getWidth(GtkWidget* widget) const;
-		int getHeight(GtkWidget* widget) const;
+			int getWidth(GtkWidget* widget) const;
+			int getHeight(GtkWidget* widget) const;
 
-		int getXCenter() const { return m_centerX; }
-		int getYCenter() const { return m_centerY; }
+			int getXCenter() const { return m_centerX; }
+			int getYCenter() const { return m_centerY; }
 
-		void setCenter(int centerX, int centerY);
+			void setCenter(int centerX, int centerY);
 
-		void apply();
+			void apply();
 
-		const char* getLabel() const;
+			const char* getLabel() const;
 
-	protected:
+		protected:
 
-		static void updateSize(GtkWidget* widget, const char* text, int* xSize, int* ySize);
+			static void updateSize(GtkWidget* widget, const char* text, int* xSize, int* ySize);
 
-		const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
-		const OpenViBE::Kernel::IComment* m_constComment = nullptr;
-		OpenViBE::Kernel::IComment* m_comment            = nullptr;
-		bool m_applied                                   = false;
-		int m_centerX                                    = 0;
-		int m_centerY                                    = 0;
-		mutable std::string m_label;
-	};
-} // namespace OpenViBEDesigner
+			const Kernel::IKernelContext& m_kernelCtx;
+			const Kernel::IComment* m_constComment = nullptr;
+			Kernel::IComment* m_comment            = nullptr;
+			bool m_applied                         = false;
+			int m_centerX                          = 0;
+			int m_centerY                          = 0;
+			mutable std::string m_label;
+		};
+	}  // namespace Designer
+}  // namespace OpenViBE

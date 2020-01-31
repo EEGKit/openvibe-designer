@@ -2,34 +2,37 @@
 
 #include "ovd_base.h"
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
-	typedef void (*fpButtonCB)(GtkWidget* pWidget, gpointer data);
-
-	class CInputDialog
+	namespace Designer
 	{
-	public:
+		typedef void (*fpButtonCB)(GtkWidget* pWidget, gpointer data);
 
-		CInputDialog(const char* gtkBuilder, fpButtonCB okButtonCB, void* data = nullptr, const char* title = nullptr, const char* label = nullptr,
-					 const char* entry = nullptr);
-		~CInputDialog();
+		class CInputDialog
+		{
+		public:
 
-		void run();
-		void* getUserData() const { return m_userData; }
-		const char* getEntry() const { return static_cast<const char*>(gtk_entry_get_text(m_dialogEntry)); }
+			CInputDialog(const char* gtkBuilder, fpButtonCB okButtonCB, void* data = nullptr, const char* title = nullptr, const char* label = nullptr,
+						 const char* entry                                         = nullptr);
+			~CInputDialog();
 
-	private:
+			void run();
+			void* getUserData() const { return m_userData; }
+			const char* getEntry() const { return static_cast<const char*>(gtk_entry_get_text(m_dialogEntry)); }
 
-		static gboolean keyPressEventCB(GtkWidget* widget, GdkEventKey* eventKey, gpointer data);
-		static void buttonClickedCB(GtkButton* button, gpointer data);
-		void buttonClicked(GtkButton* button) const;
+		private:
 
-		void* m_userData = nullptr;
-		fpButtonCB m_okButtonCB;
-		GtkDialog* m_dialog             = nullptr;
-		GtkLabel* m_dialogLabel         = nullptr;
-		GtkEntry* m_dialogEntry         = nullptr;
-		GtkButton* m_dialogOkButton     = nullptr;
-		GtkButton* m_dialogCancelButton = nullptr;
-	};
-}  // namespace OpenViBEDesigner
+			static gboolean keyPressEventCB(GtkWidget* widget, GdkEventKey* eventKey, gpointer data);
+			static void buttonClickedCB(GtkButton* button, gpointer data);
+			void buttonClicked(GtkButton* button) const;
+
+			void* m_userData = nullptr;
+			fpButtonCB m_okButtonCB;
+			GtkDialog* m_dialog             = nullptr;
+			GtkLabel* m_dialogLabel         = nullptr;
+			GtkEntry* m_dialogEntry         = nullptr;
+			GtkButton* m_dialogOkButton     = nullptr;
+			GtkButton* m_dialogCancelButton = nullptr;
+		};
+	}  // namespace Designer
+}  // namespace OpenViBE

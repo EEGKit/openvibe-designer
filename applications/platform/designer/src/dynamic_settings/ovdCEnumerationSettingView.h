@@ -5,30 +5,33 @@
 
 #include <map>
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
-	namespace Setting
+	namespace Designer
 	{
-		class CEnumerationSettingView final : public CAbstractSettingView
+		namespace Setting
 		{
-		public:
-			CEnumerationSettingView(OpenViBE::Kernel::IBox& box, const size_t index, OpenViBE::CString& builderName,
-									const OpenViBE::Kernel::IKernelContext& ctx, const OpenViBE::CIdentifier& typeID);
+			class CEnumerationSettingView final : public CAbstractSettingView
+			{
+			public:
+				CEnumerationSettingView(Kernel::IBox& box, const size_t index, CString& builderName,
+										const Kernel::IKernelContext& ctx, const CIdentifier& typeID);
 
-			void getValue(OpenViBE::CString& value) const override;
-			void setValue(const OpenViBE::CString& value) override;
+				void getValue(CString& value) const override;
+				void setValue(const CString& value) override;
 
-			void onChange();
+				void onChange();
 
 
-		private:
-			GtkComboBox* m_comboBox        = nullptr;
-			OpenViBE::CIdentifier m_typeID = OV_UndefinedIdentifier;
+			private:
+				GtkComboBox* m_comboBox = nullptr;
+				CIdentifier m_typeID    = OV_UndefinedIdentifier;
 
-			std::map<OpenViBE::CString, size_t> m_entriesIdx;
+				std::map<CString, size_t> m_entriesIdx;
 
-			const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
-			bool m_onValueSetting = false;
-		};
-	} // namespace Setting
-} // namespace OpenViBEDesigner
+				const Kernel::IKernelContext& m_kernelCtx;
+				bool m_onValueSetting = false;
+			};
+		} // namespace Setting
+	}  // namespace Designer
+}  // namespace OpenViBE

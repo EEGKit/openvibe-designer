@@ -4,39 +4,42 @@
 
 #include "ovd_base.h"
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
-	class CInterfacedScenario;
-
-	class CScenarioStateStack
+	namespace Designer
 	{
-	public:
+		class CInterfacedScenario;
 
-		CScenarioStateStack(const OpenViBE::Kernel::IKernelContext& ctx, CInterfacedScenario& interfacedScenario, OpenViBE::Kernel::IScenario& scenario);
-		virtual ~CScenarioStateStack() { for (auto& state : m_states) { delete state; } }
+		class CScenarioStateStack
+		{
+		public:
 
-		virtual bool isUndoPossible() { return m_currentState != m_states.begin(); }
-		virtual bool undo();
-		virtual bool isRedoPossible();
-		virtual bool redo();
-		void dropLastState() { m_states.pop_back(); }
+			CScenarioStateStack(const Kernel::IKernelContext& ctx, CInterfacedScenario& interfacedScenario, Kernel::IScenario& scenario);
+			virtual ~CScenarioStateStack() { for (auto& state : m_states) { delete state; } }
 
-		virtual bool snapshot();
+			virtual bool isUndoPossible() { return m_currentState != m_states.begin(); }
+			virtual bool undo();
+			virtual bool isRedoPossible();
+			virtual bool redo();
+			void dropLastState() { m_states.pop_back(); }
 
-	private:
+			virtual bool snapshot();
 
-		virtual bool restoreState(const OpenViBE::IMemoryBuffer& state);
-		virtual bool dumpState(OpenViBE::IMemoryBuffer& state);
+		private:
 
-	protected:
+			virtual bool restoreState(const IMemoryBuffer& state);
+			virtual bool dumpState(IMemoryBuffer& state);
 
-		const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
-		CInterfacedScenario& m_interfacedScenario;
-		OpenViBE::Kernel::IScenario& m_scenario;
+		protected:
 
-		std::list<OpenViBE::CMemoryBuffer*> m_states;
-		std::list<OpenViBE::CMemoryBuffer*>::iterator m_currentState;
+			const Kernel::IKernelContext& m_kernelCtx;
+			CInterfacedScenario& m_interfacedScenario;
+			Kernel::IScenario& m_scenario;
 
-		size_t m_nMaximumState = 0;
-	};
-}  // namespace OpenViBEDesigner
+			std::list<CMemoryBuffer*> m_states;
+			std::list<CMemoryBuffer*>::iterator m_currentState;
+
+			size_t m_nMaximumState = 0;
+		};
+	}  // namespace Designer
+}  // namespace OpenViBE

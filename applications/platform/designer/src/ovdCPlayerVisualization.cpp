@@ -7,9 +7,9 @@
 
 using namespace OpenViBE;
 using namespace /*OpenViBE::*/Kernel;
-using namespace OpenViBEDesigner;
+using namespace /*OpenViBE::*/Designer;
 using namespace std;
-using namespace OpenViBEVisualizationToolkit;
+using namespace /*OpenViBE::*/VisualizationToolkit;
 
 static GtkTargetEntry targets[] = { { static_cast<gchar*>("STRING"), 0, 0 }, { static_cast<gchar*>("text/plain"), 0, 0 }, };
 
@@ -621,7 +621,7 @@ void CPlayerVisualization::resizeCB(GtkContainer* container)
 }
 
 void CPlayerVisualization::dragDataGetFromWidgetCB(GtkWidget* srcWidget, GdkDragContext* /*dc*/, GtkSelectionData* selectionData,
-														guint /*info*/, guint /*time*/, gpointer /*data*/)
+												   guint /*info*/, guint /*time*/, gpointer /*data*/)
 {
 	char str[1024];
 	sprintf(str, "%p", srcWidget);
@@ -629,7 +629,7 @@ void CPlayerVisualization::dragDataGetFromWidgetCB(GtkWidget* srcWidget, GdkDrag
 }
 
 void CPlayerVisualization::dragDataReceivedInWidgetCB(GtkWidget* dstWidget, GdkDragContext* /*dc*/, gint /*x*/, gint /*y*/,
-														   GtkSelectionData* selectionData, guint /*info*/, guint /*time*/, gpointer /*data*/)
+													  GtkSelectionData* selectionData, guint /*info*/, guint /*time*/, gpointer /*data*/)
 {
 	void* srcWidget = nullptr;
 	sscanf(reinterpret_cast<const char*>(gtk_selection_data_get_text(selectionData)), "%p", &srcWidget);
@@ -707,10 +707,7 @@ void CPlayerVisualization::dragDataReceivedInWidgetCB(GtkWidget* dstWidget, GdkD
 	}
 }
 
-void CPlayerVisualization::toolbarButtonToggledCB(GtkToggleButton* button, gpointer data)
-{
-	static_cast<CPlayerVisualization*>(data)->toggleToolbarCB(button);
-}
+void CPlayerVisualization::toolbarButtonToggledCB(GtkToggleButton* button, gpointer data) { static_cast<CPlayerVisualization*>(data)->toggleToolbarCB(button); }
 
 bool CPlayerVisualization::toggleToolbarCB(GtkToggleButton* button)
 {

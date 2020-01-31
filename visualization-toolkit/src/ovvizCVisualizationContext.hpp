@@ -12,81 +12,84 @@
 #define OVP_ClassId_Plugin_VisualizationCtx			OpenViBE::CIdentifier(0x05A7171D, 0x78E4FE3C)
 #define OVP_ClassId_Plugin_VisualizationCtxDesc		OpenViBE::CIdentifier(0x35A11438, 0x764F72E8)
 
-namespace OpenViBEVisualizationToolkit
+namespace OpenViBE
 {
-	/**
-	 * @brief The CVisualizationContext class is a singleton used for passing visualization related information between the application
-	 * and visualization plugins.
-	 */
-	class CVisualizationContext final : public IVisualizationContext
+	namespace VisualizationToolkit
 	{
-	public:
-
 		/**
-		 * The release function is neutralized. The object is only allocated once in the descriptor as a unique_ptr
-		 * and will be released at its destruction.
+		 * @brief The CVisualizationContext class is a singleton used for passing visualization related information between the application
+		 * and visualization plugins.
 		 */
-		void release() override { }
-
-		bool setManager(IVisualizationManager* visualizationManager) override
+		class CVisualizationContext final : public IVisualizationContext
 		{
-			m_VisualizationManager = visualizationManager;
-			return true;
-		}
+		public:
 
-		bool setWidget(OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>& box, GtkWidget* widget) override;
+			/**
+			 * The release function is neutralized. The object is only allocated once in the descriptor as a unique_ptr
+			 * and will be released at its destruction.
+			 */
+			void release() override { }
 
-		bool setToolbar(OpenViBEToolkit::TBoxAlgorithm<OpenViBE::Plugins::IBoxAlgorithm>& box, GtkWidget* toolbarWidget) override;
+			bool setManager(IVisualizationManager* visualizationManager) override
+			{
+				m_VisualizationManager = visualizationManager;
+				return true;
+			}
 
-		bool isDerivedFromClass(const OpenViBE::CIdentifier& classIdentifier) const override
+			bool setWidget(Toolkit::TBoxAlgorithm<Plugins::IBoxAlgorithm>& box, GtkWidget* widget) override;
+
+			bool setToolbar(Toolkit::TBoxAlgorithm<Plugins::IBoxAlgorithm>& box, GtkWidget* toolbarWidget) override;
+
+			bool isDerivedFromClass(const CIdentifier& classIdentifier) const override
+			{
+				return ((classIdentifier == OVP_ClassId_Plugin_VisualizationCtx) || IVisualizationContext::isDerivedFromClass(classIdentifier));
+			}
+
+			CIdentifier getClassIdentifier() const override { return OVP_ClassId_Plugin_VisualizationCtx; }
+
+			CVisualizationContext() = default;
+
+		private:
+			IVisualizationManager* m_VisualizationManager = nullptr;
+		};
+
+		class CVisualizationContextDesc final : public Plugins::IPluginObjectDesc
 		{
-			return ((classIdentifier == OVP_ClassId_Plugin_VisualizationCtx) || IVisualizationContext::isDerivedFromClass(classIdentifier));
-		}
+		public:
 
-		OpenViBE::CIdentifier getClassIdentifier() const override { return OVP_ClassId_Plugin_VisualizationCtx; }
+			CVisualizationContextDesc() : m_visualizationCtx(new CVisualizationContext()) {}
 
-		CVisualizationContext() = default;
+			void release() override { }
 
-	private:
-		IVisualizationManager* m_VisualizationManager = nullptr;
-	};
+			CString getName() const override { return CString("Visualization Context"); }
+			CString getAuthorName() const override { return CString("Jozef Legény"); }
+			CString getAuthorCompanyName() const override { return CString("Mensia Technologies"); }
+			CString getShortDescription() const override { return CString(""); }
+			CString getDetailedDescription() const override { return CString(""); }
+			CString getCategory() const override { return CString(""); }
+			CString getVersion() const override { return CString("1.0"); }
 
-	class CVisualizationContextDesc final : public OpenViBE::Plugins::IPluginObjectDesc
-	{
-	public:
+			CIdentifier getCreatedClass() const override { return OVP_ClassId_Plugin_VisualizationCtx; }
 
-		CVisualizationContextDesc() : m_visualizationCtx(new CVisualizationContext()) {}
+			/**
+			 * The create function usage is different from standard plugins. As we need to be able to pass data between
+			 * the application and the plugins, we need a permanent object that can be accessed by both. We achieve this
+			 * by saving the object within the plugin descriptor and returning the pointer to the same object to all
+			 * plugins.
+			 *
+			 * @return The singleton visualizationContext object
+			 */
+			Plugins::IPluginObject* create() override { return m_visualizationCtx.get(); }
 
-		void release() override { }
+			bool isDerivedFromClass(const CIdentifier& classIdentifier) const override
+			{
+				return ((classIdentifier == OVP_ClassId_Plugin_VisualizationCtxDesc) || IPluginObjectDesc::isDerivedFromClass(classIdentifier));
+			}
 
-		OpenViBE::CString getName() const override { return OpenViBE::CString("Visualization Context"); }
-		OpenViBE::CString getAuthorName() const override { return OpenViBE::CString("Jozef Legény"); }
-		OpenViBE::CString getAuthorCompanyName() const override { return OpenViBE::CString("Mensia Technologies"); }
-		OpenViBE::CString getShortDescription() const override { return OpenViBE::CString(""); }
-		OpenViBE::CString getDetailedDescription() const override { return OpenViBE::CString(""); }
-		OpenViBE::CString getCategory() const override { return OpenViBE::CString(""); }
-		OpenViBE::CString getVersion() const override { return OpenViBE::CString("1.0"); }
+			CIdentifier getClassIdentifier() const override { return OVP_ClassId_Plugin_VisualizationCtxDesc; }
 
-		OpenViBE::CIdentifier getCreatedClass() const override { return OVP_ClassId_Plugin_VisualizationCtx; }
-
-		/**
-		 * The create function usage is different from standard plugins. As we need to be able to pass data between
-		 * the application and the plugins, we need a permanent object that can be accessed by both. We achieve this
-		 * by saving the object within the plugin descriptor and returning the pointer to the same object to all
-		 * plugins.
-		 *
-		 * @return The singleton visualizationContext object
-		 */
-		OpenViBE::Plugins::IPluginObject* create() override { return m_visualizationCtx.get(); }
-
-		bool isDerivedFromClass(const OpenViBE::CIdentifier& classIdentifier) const override
-		{
-			return ((classIdentifier == OVP_ClassId_Plugin_VisualizationCtxDesc) || IPluginObjectDesc::isDerivedFromClass(classIdentifier));
-		}
-
-		OpenViBE::CIdentifier getClassIdentifier() const override { return OVP_ClassId_Plugin_VisualizationCtxDesc; }
-
-	private:
-		std::unique_ptr<CVisualizationContext> m_visualizationCtx;
-	};
-} // namespace OpenViBEVisualizationToolkit
+		private:
+			std::unique_ptr<CVisualizationContext> m_visualizationCtx;
+		};
+	}  // namespace VisualizationToolkit
+}  // namespace OpenViBE

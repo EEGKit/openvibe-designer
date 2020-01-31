@@ -8,7 +8,7 @@
 
 using namespace OpenViBE;
 using namespace /*OpenViBE::*/Kernel;
-using namespace OpenViBEDesigner;
+using namespace /*OpenViBE::*/Designer;
 using namespace std;
 
 #include <visualization-toolkit/ovvizColorGradient.h>
@@ -244,7 +244,7 @@ static void OnRefreshColorGradient(GtkWidget* /*widget*/, GdkEventExpose* /*even
 	gradients2Matrix(userData->colorGradient, gradient);
 
 	CMatrix interpolated;
-	OpenViBEVisualizationToolkit::Tools::ColorGradient::interpolate(interpolated, gradient, steps);
+	VisualizationToolkit::ColorGradient::interpolate(interpolated, gradient, steps);
 
 	GdkGC* gc = gdk_gc_new(userData->drawingArea->window);
 	GdkColor color;
@@ -384,7 +384,7 @@ static void OnButtonSettingColorGradientConfigurePressed(GtkButton* button, gpoi
 	const CString sInitialGradient = static_cast<CSettingCollectionHelper*>(data)->m_KernelCtx.getConfigurationManager().expand(gtk_entry_get_text(widget));
 	CMatrix initialGradient;
 
-	OpenViBEVisualizationToolkit::Tools::ColorGradient::parse(initialGradient, sInitialGradient);
+	VisualizationToolkit::ColorGradient::parse(initialGradient, sInitialGradient);
 
 	userData.colorGradient.resize(initialGradient.getDimensionSize(1) > 2 ? initialGradient.getDimensionSize(1) : 2);
 	for (size_t i = 0; i < initialGradient.getDimensionSize(1); ++i)
@@ -411,7 +411,7 @@ static void OnButtonSettingColorGradientConfigurePressed(GtkButton* button, gpoi
 		CMatrix gradient;
 		gradients2Matrix(userData.colorGradient, gradient);
 
-		OpenViBEVisualizationToolkit::Tools::ColorGradient::format(str, gradient);
+		VisualizationToolkit::ColorGradient::format(str, gradient);
 		gtk_entry_set_text(widget, str.toASCIIString());
 	}
 

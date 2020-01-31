@@ -3,13 +3,13 @@
 #include <cmath>
 
 using namespace OpenViBE;
-using namespace Plugins;
+using namespace /*OpenViBE::*/Plugins;
 using namespace /*OpenViBE::*/Kernel;
 
-using namespace OpenViBEPlugins;
+using namespace /*OpenViBE::*/Plugins;
 using namespace SimpleVisualization;
 
-using namespace OpenViBEToolkit;
+using namespace /*OpenViBE::*/Toolkit;
 
 using namespace std;
 
@@ -26,10 +26,12 @@ CTopographicMapDatabase::CTopographicMapDatabase(TBoxAlgorithm<IBoxAlgorithm>& p
 	m_interpolation.getInputParameter(OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_ControlPointsCount)->setReferenceTarget(&m_NElectrodes);
 	//matrix of pointers to electrode coordinates
 	m_pElectrodeCoords = &m_electrodeCoords;
-	m_interpolation.getInputParameter(OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_ControlPointsCoordinates)->setReferenceTarget(&m_pElectrodeCoords);
+	m_interpolation.getInputParameter(OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_ControlPointsCoordinates)->setReferenceTarget(
+		&m_pElectrodeCoords);
 	//matrix of potentials measured at each electrode
 	m_pElectrodePotentials = &m_electrodePotentials;
-	m_interpolation.getInputParameter(OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_ControlPointsValues)->setReferenceTarget(&m_pElectrodePotentials);
+	m_interpolation.getInputParameter(OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_ControlPointsValues)->setReferenceTarget(
+		&m_pElectrodePotentials);
 	//matrix holding sample coordinates mapped at runtime (its size is not known a priori and may vary)
 	//
 

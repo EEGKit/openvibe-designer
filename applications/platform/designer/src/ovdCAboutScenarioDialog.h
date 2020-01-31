@@ -2,25 +2,28 @@
 
 #include "ovd_base.h"
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
-	class CAboutScenarioDialog final
+	namespace Designer
 	{
-	public:
+		class CAboutScenarioDialog final
+		{
+		public:
 
-		CAboutScenarioDialog(const OpenViBE::Kernel::IKernelContext& ctx, OpenViBE::Kernel::IScenario& scenario, const char* guiFilename)
-			: m_kernelCtx(ctx), m_scenario(scenario), m_guiFilename(guiFilename) { }
+			CAboutScenarioDialog(const Kernel::IKernelContext& ctx, Kernel::IScenario& scenario, const char* guiFilename)
+				: m_kernelCtx(ctx), m_scenario(scenario), m_guiFilename(guiFilename) { }
 
-		~CAboutScenarioDialog() = default;
+			~CAboutScenarioDialog() = default;
 
-		bool run();
+			bool run();
 
-	protected:
+		protected:
 
-		const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
-		OpenViBE::Kernel::IScenario& m_scenario;
-		OpenViBE::CString m_guiFilename;
+			const Kernel::IKernelContext& m_kernelCtx;
+			Kernel::IScenario& m_scenario;
+			CString m_guiFilename;
 
-		CAboutScenarioDialog() = delete;
-	};
-}  // namespace OpenViBEDesigner
+			CAboutScenarioDialog() = delete;
+		};
+	}  // namespace Designer
+}  // namespace OpenViBE

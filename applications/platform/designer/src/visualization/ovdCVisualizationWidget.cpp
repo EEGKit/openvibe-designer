@@ -14,9 +14,9 @@ namespace OpenViBE
 
 using namespace std;
 using namespace OpenViBE;
-using namespace OpenViBEDesigner;
+using namespace /*OpenViBE::*/Designer;
 using namespace /*OpenViBE::*/Kernel;
-using namespace OpenViBEVisualizationToolkit;
+using namespace /*OpenViBE::*/VisualizationToolkit;
 
 bool CVisualizationWidget::initialize(const CIdentifier& id, const CString& name, const EVisualizationWidgetType type, const CIdentifier& parentID,
 									  const CIdentifier& boxID, const size_t nChild)

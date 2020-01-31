@@ -39,8 +39,8 @@ namespace Mensia
 
 			_IsDerivedFromClass_Final_(CBoxAlgorithmViz, m_ClassID)
 
-			OpenViBEToolkit::TStreamedMatrixDecoder<TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>> m_oMatrixDecoder;
-			OpenViBEToolkit::TStimulationDecoder<TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>> m_oStimulationDecoder;
+			OpenViBE::Toolkit::TStreamedMatrixDecoder<TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>> m_oMatrixDecoder;
+			OpenViBE::Toolkit::TStimulationDecoder<TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>> m_oStimulationDecoder;
 			TRendererFactoryClass m_RendererFactory;
 			IRenderer* m_Renderer = nullptr;
 
@@ -198,8 +198,10 @@ namespace Mensia
 						{
 							//warned = true;
 							this->getLogManager() << OpenViBE::Kernel::LogLevel_Warning << "Input matrix has 'spectrum' type\n";
-							this->getLogManager() << OpenViBE::Kernel::LogLevel_Warning << "Such configuration is uncommon for a 'continous' kind of visualization !\n";
-							this->getLogManager() << OpenViBE::Kernel::LogLevel_Warning << "You might want to consider the 'stacked' kind of visualization for time/frequency analysis for instance\n";
+							this->getLogManager() << OpenViBE::Kernel::LogLevel_Warning <<
+									"Such configuration is uncommon for a 'continous' kind of visualization !\n";
+							this->getLogManager() << OpenViBE::Kernel::LogLevel_Warning <<
+									"You might want to consider the 'stacked' kind of visualization for time/frequency analysis for instance\n";
 							this->getLogManager() << OpenViBE::Kernel::LogLevel_Warning << "Please double check your scenario\n";
 						}
 						else
@@ -209,10 +211,13 @@ namespace Mensia
 								//warned = true;
 								this->getLogManager() << OpenViBE::Kernel::LogLevel_Warning << "Input matrix has " << nSample
 										<< " elements and the box settings say the elements are independant with " << m_NElement << " elements to render\n";
-								this->getLogManager() << OpenViBE::Kernel::LogLevel_Warning << "Such configuration is uncommon for a 'continous' kind of visualization !\n";
+								this->getLogManager() << OpenViBE::Kernel::LogLevel_Warning <<
+										"Such configuration is uncommon for a 'continous' kind of visualization !\n";
 								this->getLogManager() << OpenViBE::Kernel::LogLevel_Warning << "You might want either of the following alternative :\n";
-								this->getLogManager() << OpenViBE::Kernel::LogLevel_Warning << " - an 'instant' kind of visualization to highlight the " << m_NElement << " elements of the matrix\n";
-								this->getLogManager() << OpenViBE::Kernel::LogLevel_Warning << " - a 'time locked' kind of elements (thus the scenario must refresh the matrix on a regular basis)\n";
+								this->getLogManager() << OpenViBE::Kernel::LogLevel_Warning << " - an 'instant' kind of visualization to highlight the " <<
+										m_NElement << " elements of the matrix\n";
+								this->getLogManager() << OpenViBE::Kernel::LogLevel_Warning <<
+										" - a 'time locked' kind of elements (thus the scenario must refresh the matrix on a regular basis)\n";
 								this->getLogManager() << OpenViBE::Kernel::LogLevel_Warning << "Please double check your scenario and box settings\n";
 							}
 						}

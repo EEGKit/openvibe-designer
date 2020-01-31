@@ -5,9 +5,12 @@
 #include "ovdCArchwayHandler.h"
 #include <gtk/gtk.h>
 
-namespace OpenViBEDesigner
+namespace OpenViBE
 {
-	class CApplication;
+	namespace Designer
+	{
+		class CApplication;
+	}
 }
 
 namespace Mensia
@@ -15,7 +18,7 @@ namespace Mensia
 	class CArchwayHandlerGUI final
 	{
 	public:
-		CArchwayHandlerGUI(CArchwayHandler& controller, OpenViBEDesigner::CApplication* application);
+		CArchwayHandlerGUI(CArchwayHandler& controller, OpenViBE::Designer::CApplication* application);
 		~CArchwayHandlerGUI();
 
 		void refreshEnginePipelines();
@@ -27,7 +30,7 @@ namespace Mensia
 		GtkBuilder* m_Builder            = nullptr;
 		GtkBuilder* m_ApplicationBuilder = nullptr;
 		CArchwayHandler& m_Controller;
-		OpenViBEDesigner::CApplication* m_Application = nullptr;
+		OpenViBE::Designer::CApplication* m_Application = nullptr;
 
 		// This variable is used to store the path of an edited cell
 		// while editing the PipelineParameters.

@@ -6,10 +6,10 @@ using namespace /*OpenViBE::*/Kernel;
 
 namespace
 {
-	OpenViBEVisualizationToolkit::CVisualizationContextDesc visualizationContextDesc;
+	VisualizationToolkit::CVisualizationContextDesc visualizationContextDesc;
 } // namespace
 
-bool OpenViBEVisualizationToolkit::initialize(const IKernelContext& ctx)
+bool VisualizationToolkit::initialize(const IKernelContext& ctx)
 {
 	ITypeManager& typeManager     = ctx.getTypeManager();
 	IPluginManager& pluginManager = ctx.getPluginManager();
@@ -22,4 +22,4 @@ bool OpenViBEVisualizationToolkit::initialize(const IKernelContext& ctx)
 	return true;
 }
 
-bool OpenViBEVisualizationToolkit::uninitialize(const IKernelContext& /*ctx*/) { return true; }
+bool VisualizationToolkit::uninitialize(const IKernelContext& /*ctx*/) { return true; }

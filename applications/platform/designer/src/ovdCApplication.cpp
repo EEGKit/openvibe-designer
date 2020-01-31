@@ -59,8 +59,8 @@ static const size_t s_RecentFileNumber = 10;
 
 using namespace OpenViBE;
 using namespace /*OpenViBE::*/Kernel;
-using namespace Plugins;
-using namespace OpenViBEDesigner;
+using namespace /*OpenViBE::*/Plugins;
+using namespace /*OpenViBE::*/Designer;
 using namespace std;
 
 // because std::tolower has multiple signatures, it can not be easily used in std::transform this workaround is taken from http://www.gcek.net/ref/books/sw/cpp/ticppv2/
@@ -694,8 +694,8 @@ static gboolean receiveSecondInstanceMessage(gpointer data)
 							break;
 						default: break;
 					}
-					mode    = 0;
-					msg = strtok(nullptr, ";");
+					mode = 0;
+					msg  = strtok(nullptr, ";");
 				}
 			}
 			else { boost::interprocess::message_queue::remove(MESSAGE_NAME); }
@@ -730,7 +730,7 @@ CApplication::CApplication(const IKernelContext& ctx) : m_kernelCtx(ctx)
 	m_ScenarioMgr->registerScenarioExporter(OVD_ScenarioExportContext_SaveMetabox, ".mxb", OVP_GD_ClassId_Algorithm_XMLScenarioExporter);
 
 	m_VisualizationMgr = new CVisualizationManager(m_kernelCtx);
-	m_visualizationCtx = dynamic_cast<OpenViBEVisualizationToolkit::IVisualizationContext*>(
+	m_visualizationCtx = dynamic_cast<VisualizationToolkit::IVisualizationContext*>(
 		m_kernelCtx.getPluginManager().createPluginObject(OVP_ClassId_Plugin_VisualizationCtx));
 	m_visualizationCtx->setManager(m_VisualizationMgr);
 	m_logListener = nullptr;
@@ -1308,7 +1308,7 @@ bool CApplication::openScenario(const char* filename)
 			vizTreeMetadata = scenario.getMetadataDetails(metadataID);
 			if (vizTreeMetadata && vizTreeMetadata->getType() == OVVIZ_MetadataIdentifier_VisualizationTree) { break; }
 		}
-		OpenViBEVisualizationToolkit::IVisualizationTree* vizTree = interfacedScenario->m_Tree;
+		VisualizationToolkit::IVisualizationTree* vizTree = interfacedScenario->m_Tree;
 		if (vizTreeMetadata && vizTree) { vizTree->deserialize(vizTreeMetadata->getData()); }
 
 		CIdentifier id;
@@ -1327,7 +1327,7 @@ bool CApplication::openScenario(const char* filename)
 				if (boxAlgorithmDesc && boxAlgorithmDesc->hasFunctionality(OVD_Functionality_Visualization))
 				{
 					//a visualization widget was found in scenario : manually add it to visualization tree
-					vizTree->addVisualizationWidget(id, box->getName(), OpenViBEVisualizationToolkit::VisualizationWidget_VisualizationBox,
+					vizTree->addVisualizationWidget(id, box->getName(), VisualizationToolkit::VisualizationWidget_VisualizationBox,
 													OV_UndefinedIdentifier, 0, box->getIdentifier(), 0, OV_UndefinedIdentifier);
 				}
 			}

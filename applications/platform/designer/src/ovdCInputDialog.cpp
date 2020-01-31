@@ -3,7 +3,7 @@
 
 using namespace OpenViBE;
 using namespace /*OpenViBE::*/Kernel;
-using namespace OpenViBEDesigner;
+using namespace /*OpenViBE::*/Designer;
 
 CInputDialog::CInputDialog(const char* gtkBuilder, const fpButtonCB okButtonCB, void* data, const char* title, const char* label, const char* entry)
 {

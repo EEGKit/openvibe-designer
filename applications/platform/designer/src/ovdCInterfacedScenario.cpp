@@ -33,9 +33,9 @@
 
 using namespace OpenViBE;
 using namespace /*OpenViBE::*/Kernel;
-using namespace Plugins;
-using namespace OpenViBEDesigner;
-using namespace OpenViBEVisualizationToolkit;
+using namespace /*OpenViBE::*/Plugins;
+using namespace /*OpenViBE::*/Designer;
+using namespace /*OpenViBE::*/VisualizationToolkit;
 using namespace std;
 
 extern map<size_t, GdkColor> gColors;
@@ -1555,7 +1555,7 @@ bool CInterfacedScenario::pickInterfacedObject(const int x, const int y, int siz
 	return true;
 }
 
-#define OV_ClassId_Selected OpenViBE::CIdentifier(0xC67A01DC, 0x28CE06C1)
+#define OV_ClassId_Selected CIdentifier(0xC67A01DC, 0x28CE06C1)
 
 void CInterfacedScenario::undoCB(const bool manageModifiedStatusFlag)
 {
@@ -2565,7 +2565,8 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(GtkWidget* widget, 
 					if (!m_boxCtxMenuCBs.empty()) { gtk_menu_add_separator_menu_item(menu); }
 					if (box->hasAttribute(OV_AttributeId_Box_ToBeUpdated))
 					{
-						auto updateMenuItem = addNewImageMenuItemWithCB(menu, GTK_STOCK_REFRESH, "update box", context_menu_cb, box, ContextMenu_BoxUpdate, unused);
+						auto updateMenuItem = addNewImageMenuItemWithCB(menu, GTK_STOCK_REFRESH, "update box", context_menu_cb, box, ContextMenu_BoxUpdate,
+																		unused);
 						if (box->hasAttribute(OV_AttributeId_Box_FlagNeedsManualUpdate)
 							|| box->hasAttribute(OV_AttributeId_Box_FlagCanAddInput)
 							|| box->hasAttribute(OV_AttributeId_Box_FlagCanAddOutput)

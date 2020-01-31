@@ -2,9 +2,9 @@
 
 #include <cstring>
 
-using namespace OpenViBEDesigner;
 using namespace OpenViBE;
-using namespace Plugins;
+using namespace /*OpenViBE::*/Designer;
+using namespace /*OpenViBE::*/Plugins;
 using namespace /*OpenViBE::*/Kernel;
 
 static void BoldSelectionCB(GtkButton* /*button*/, gpointer data) { static_cast<CCommentEditorDialog*>(data)->applyTagCB("<b>", "</b>"); }

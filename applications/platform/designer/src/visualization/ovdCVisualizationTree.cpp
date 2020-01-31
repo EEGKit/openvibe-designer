@@ -7,11 +7,11 @@
 #include "ovdCVisualizationWidget.h"
 #include "../ovdAssert.h"
 
-using namespace OpenViBEDesigner;
 using namespace OpenViBE;
+using namespace /*OpenViBE::*/Designer;
 using namespace /*OpenViBE::*/Kernel;
-using namespace Plugins;
-using namespace OpenViBEVisualizationToolkit;
+using namespace /*OpenViBE::*/Plugins;
+using namespace /*OpenViBE::*/VisualizationToolkit;
 using namespace std;
 
 namespace

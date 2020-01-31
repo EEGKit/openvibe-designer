@@ -2,7 +2,7 @@
 #include "../ovd_base.h"
 
 using namespace OpenViBE;
-using namespace OpenViBEDesigner;
+using namespace /*OpenViBE::*/Designer;
 using namespace Setting;
 
 static void OnButtonSettingFloatUpPressed(GtkButton* /*button*/, gpointer data) { static_cast<CFloatSettingView *>(data)->adjustValue(1.0); }
