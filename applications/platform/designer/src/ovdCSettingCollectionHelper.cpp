@@ -423,7 +423,7 @@ static void OnButtonSettingColorGradientConfigurePressed(GtkButton* button, gpoi
 
 CString CSettingCollectionHelper::getSettingWidgetName(const CIdentifier& typeID) const
 {
-	if (typeID == OV_TypeId_Boolean) { return "settings_collection-hbox_setting_bool"; }
+	if (typeID == OV_TypeId_Boolean) { return "settings_collection-hbox_setting_boolean"; }
 	if (typeID == OV_TypeId_Integer) { return "settings_collection-hbox_setting_integer"; }
 	if (typeID == OV_TypeId_Float) { return "settings_collection-hbox_setting_float"; }
 	if (typeID == OV_TypeId_String) { return "settings_collection-entry_setting_string"; }
@@ -441,7 +441,7 @@ CString CSettingCollectionHelper::getSettingWidgetName(const CIdentifier& typeID
 
 CString CSettingCollectionHelper::getSettingEntryWidgetName(const CIdentifier& typeID) const
 {
-	if (typeID == OV_TypeId_Boolean) { return "settings_collection-entry_setting_bool"; }
+	if (typeID == OV_TypeId_Boolean) { return "settings_collection-entry_setting_boolean"; }
 	if (typeID == OV_TypeId_Integer) { return "settings_collection-entry_setting_integer_string"; }
 	if (typeID == OV_TypeId_Float) { return "settings_collection-entry_setting_float_string"; }
 	if (typeID == OV_TypeId_String) { return "settings_collection-entry_setting_string"; }
