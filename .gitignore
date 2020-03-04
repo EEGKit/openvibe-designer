@@ -16,3 +16,7 @@ CustomCMakeLists.txt
 scripts/windows-install-dependencies-custom.cmd
 scripts/windows-install-dependencies-x64-custom.cmd
 .version
+
+# Temp & Software Folder
+.vs/
+.vscode/
