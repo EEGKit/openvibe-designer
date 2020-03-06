@@ -24,6 +24,6 @@
 // Temporal coherence definition
 #define OVP_TypeId_TemporalCoherence					OpenViBE::CIdentifier(0x8F02E3F6, 0xFFB00F4B)
 
-enum ETemporalCoherence { TimeLocked, Independant };
+enum class ETemporalCoherence { TimeLocked, Independant };
 
 #define OV_TypeId_TimeFrequency							OpenViBE::CIdentifier(0x5A90816B, 0xFF2AFF72)
