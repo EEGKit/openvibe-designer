@@ -42,7 +42,7 @@ static void setViewCallback(GtkWidget* widget, gpointer data);
 static void setInterpolationCallback(GtkWidget* widget, gpointer data);
 static void setDelayCallback(GtkRange* range, gpointer data);
 
-CTopographicMap2DView::CTopographicMap2DView(CTopographicMapDatabase& mapDatabase, const uint64_t interpolation, double delay)
+CTopographicMap2DView::CTopographicMap2DView(CTopographicMapDatabase& mapDatabase, const EInterpolationType interpolation, double delay)
 	: m_mapDatabase(mapDatabase), m_currentInterpolation(interpolation)
 {
 	m_sampleCoordinatesMatrix.setDimensionCount(2);
@@ -247,13 +247,13 @@ void CTopographicMap2DView::init()
 	gtk_widget_show(m_drawingArea);
 
 	//set radial projection by default
-	m_currentProjection = TopographicMap2DProjection_Radial;
+	m_currentProjection = EProjection::Radial;
 	enableProjectionButtonSignals(false);
 	gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(m_radialProjectionButton), TRUE);
 	enableProjectionButtonSignals(true);
 
 	//set top view by default
-	m_currentView = TopographicMap2DView_Top;
+	m_currentView = EView::Top;
 	enableViewButtonSignals(false);
 	gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(m_topViewButton), TRUE);
 	enableViewButtonSignals(true);
@@ -261,8 +261,8 @@ void CTopographicMap2DView::init()
 	//reflect default interpolation type
 	m_mapDatabase.setInterpolationType(m_currentInterpolation);
 	enableInterpolationButtonSignals(false);
-	gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(m_mapPotentials), gboolean(m_currentInterpolation == Spline));
-	gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(m_mapCurrents), gboolean(m_currentInterpolation == Laplacian));
+	gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(m_mapPotentials), gboolean(m_currentInterpolation == EInterpolationType::Spline));
+	gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(m_mapCurrents), gboolean(m_currentInterpolation == EInterpolationType::Laplacian));
 	enableInterpolationButtonSignals(true);
 
 	//hide electrodes by default
@@ -361,8 +361,8 @@ void CTopographicMap2DView::setProjectionCB(GtkWidget* widget)
 {
 	if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(widget)) == FALSE) { return; }
 
-	if (widget == GTK_WIDGET(m_axialProjectionButton)) { m_currentProjection = TopographicMap2DProjection_Axial; }
-	else if (widget == GTK_WIDGET(m_radialProjectionButton)) { m_currentProjection = TopographicMap2DProjection_Radial; }
+	if (widget == GTK_WIDGET(m_axialProjectionButton)) { m_currentProjection = EProjection::Axial; }
+	else if (widget == GTK_WIDGET(m_radialProjectionButton)) { m_currentProjection = EProjection::Radial; }
 
 	//recompute sample points coordinates
 	m_needResize = true;
@@ -375,10 +375,10 @@ void CTopographicMap2DView::setViewCB(GtkWidget* widget)
 {
 	if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(widget)) == FALSE) { return; }
 
-	if (widget == GTK_WIDGET(m_topViewButton)) { m_currentView = TopographicMap2DView_Top; }
-	else if (widget == GTK_WIDGET(m_leftViewButton)) { m_currentView = TopographicMap2DView_Left; }
-	else if (widget == GTK_WIDGET(m_rightViewButton)) { m_currentView = TopographicMap2DView_Right; }
-	else if (widget == GTK_WIDGET(m_backViewButton)) { m_currentView = TopographicMap2DView_Back; }
+	if (widget == GTK_WIDGET(m_topViewButton)) { m_currentView = EView::Top; }
+	else if (widget == GTK_WIDGET(m_leftViewButton)) { m_currentView = EView::Left; }
+	else if (widget == GTK_WIDGET(m_rightViewButton)) { m_currentView = EView::Right; }
+	else if (widget == GTK_WIDGET(m_backViewButton)) { m_currentView = EView::Back; }
 
 	//recompute sample points coordinates, update clipmask
 	m_needResize = true;
@@ -393,13 +393,13 @@ void CTopographicMap2DView::setInterpolationCB(GtkWidget* widget)
 
 	if (widget == GTK_WIDGET(m_mapPotentials))
 	{
-		m_currentInterpolation = Spline;
-		m_mapDatabase.setInterpolationType(Spline);
+		m_currentInterpolation = EInterpolationType::Spline;
+		m_mapDatabase.setInterpolationType(EInterpolationType::Spline);
 	}
 	else if (widget == GTK_WIDGET(m_mapCurrents))
 	{
-		m_currentInterpolation = Laplacian;
-		m_mapDatabase.setInterpolationType(Laplacian);
+		m_currentInterpolation = EInterpolationType::Laplacian;
+		m_mapDatabase.setInterpolationType(EInterpolationType::Laplacian);
 	}
 
 	//recompute sample points coordinates
@@ -486,7 +486,7 @@ void CTopographicMap2DView::drawFace(size_t /*X*/, size_t /*Y*/, size_t /*width*
 	const gint skullCenterX = gint(m_skullX + m_skullDiameter / 2);
 	const gint skullCenterY = gint(m_skullY + m_skullDiameter / 2);
 
-	if (m_currentView == TopographicMap2DView_Top)
+	if (m_currentView == EView::Top)
 	{
 		const float noseHalfAngle = 6;
 		//nose lower left/right anchor
@@ -498,14 +498,14 @@ void CTopographicMap2DView::drawFace(size_t /*X*/, size_t /*Y*/, size_t /*width*
 		gdk_draw_line(m_drawingArea->window, m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], lx, ly, skullCenterX, gint(m_noseY));
 		gdk_draw_line(m_drawingArea->window, m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], rx, ry, skullCenterX, gint(m_noseY));
 	}
-	else if (m_currentView == TopographicMap2DView_Back)
+	else if (m_currentView == EView::Back)
 	{
 		gdk_draw_line(m_drawingArea->window, m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], gint(m_skullOutlineLeftPointX),
 					  gint(m_skullOutlineLeftPointY), gint(m_leftNeckX), gint(m_leftNeckY));
 		gdk_draw_line(m_drawingArea->window, m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], gint(m_skullOutlineRightPointX),
 					  gint(m_skullOutlineRightPointY), gint(m_rightNeckX), gint(m_rightNeckY));
 	}
-	else if (m_currentView == TopographicMap2DView_Left || m_currentView == TopographicMap2DView_Right)
+	else if (m_currentView == EView::Left || m_currentView == EView::Right)
 	{
 		gdk_draw_line(m_drawingArea->window, m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], gint(m_noseTopX), gint(m_noseTopY),
 					  gint(m_noseBumpX), gint(m_noseBumpY));
@@ -565,7 +565,7 @@ void CTopographicMap2DView::resizeData()
 	if (m_headWindowWidth < m_headWindowHeight) { headMaxSize = size_t(0.9 * m_headWindowWidth); }
 	else { headMaxSize = size_t(0.9 * m_headWindowHeight); }
 
-	if (m_currentView == TopographicMap2DView_Top)
+	if (m_currentView == EView::Top)
 	{
 		//height used up by nose
 		const auto noseProtrudingHeight = size_t(0.1 * headMaxSize);
@@ -587,7 +587,7 @@ void CTopographicMap2DView::resizeData()
 		m_clipmaskWidth  = m_skullDiameter;
 		m_clipmaskHeight = m_skullDiameter;
 	}
-	else if (m_currentView == TopographicMap2DView_Back)
+	else if (m_currentView == EView::Back)
 	{
 		//FIXME take into account width used up by ears
 
@@ -631,7 +631,7 @@ void CTopographicMap2DView::resizeData()
 		m_clipmaskWidth  = m_skullDiameter;
 		m_clipmaskHeight = m_skullFillBottomPointY - m_skullY + 1;
 	}
-	else if (m_currentView == TopographicMap2DView_Left || m_currentView == TopographicMap2DView_Right)
+	else if (m_currentView == EView::Left || m_currentView == EView::Right)
 	{
 		//width used up by nose
 		const auto noseProtrudingWidth = size_t(0.06 * m_skullDiameter);//size_t(0.047 * m_skullDiameter);
@@ -642,7 +642,7 @@ void CTopographicMap2DView::resizeData()
 		//topmost skull coordinate
 		m_skullY = (m_headWindowHeight - m_skullDiameter) / 2;
 
-		if (m_currentView == TopographicMap2DView_Left)
+		if (m_currentView == EView::Left)
 		{
 			//X coordinate of nose tip
 			m_noseTipX = (m_headWindowWidth - headMaxSize) / 2;
@@ -792,7 +792,7 @@ void CTopographicMap2DView::redrawClipmask()
 				 gint(64 * (m_skullFillEndAngle - m_skullFillStartAngle)));
 
 	//views other than top have an extra non-clipped area
-	if (m_currentView == TopographicMap2DView_Left || m_currentView == TopographicMap2DView_Right || m_currentView == TopographicMap2DView_Back)
+	if (m_currentView == EView::Left || m_currentView == EView::Right || m_currentView == EView::Back)
 	{
 		//draw polygon : { skullCenter, skullFillStartPoint, skullFillBottomPoint, skullFillEndPoint, skullCenter }
 		GdkPoint polygon[4];
@@ -943,9 +943,9 @@ bool CTopographicMap2DView::getChannel2DPosition(const size_t index, gint& x, gi
 
 	const std::array<double, 3> position = { originaPosition[0], originaPosition[1], originaPosition[2] };
 
-	if (m_currentView == TopographicMap2DView_Top)
+	if (m_currentView == EView::Top)
 	{
-		if (m_currentProjection == TopographicMap2DProjection_Axial)
+		if (m_currentProjection == EProjection::Axial)
 		{
 			x = gint(skullCenterX + position[0] * m_skullDiameter / 2);
 			y = gint(skullCenterY - position[1] * m_skullDiameter / 2);
@@ -958,12 +958,12 @@ bool CTopographicMap2DView::getChannel2DPosition(const size_t index, gint& x, gi
 			compute2DCoordinates(theta, phi, skullCenterX, skullCenterY, x, y);
 		}
 	}
-	else if (m_currentView == TopographicMap2DView_Back)
+	else if (m_currentView == EView::Back)
 	{
 		//if(electrodePosition[1] > 0) //electrode not visible
 		if (position[1] > sin(1.F / 90 * M_PI / 2)) { return false; }
 
-		if (m_currentProjection == TopographicMap2DProjection_Axial)
+		if (m_currentProjection == EProjection::Axial)
 		{
 			x = gint(skullCenterX + position[0] * m_skullDiameter / 2);
 			y = gint(skullCenterY - position[2] * m_skullDiameter / 2);
@@ -978,12 +978,12 @@ bool CTopographicMap2DView::getChannel2DPosition(const size_t index, gint& x, gi
 			compute2DCoordinates(theta, phi, skullCenterX, skullCenterY, x, y);
 		}
 	}
-	else if (m_currentView == TopographicMap2DView_Left)
+	else if (m_currentView == EView::Left)
 	{
 		//if(electrodePosition[0] > 0) //electrode not visible
 		if (position[0] > cos(89.F / 90 * M_PI / 2)) { return false; }
 
-		if (m_currentProjection == TopographicMap2DProjection_Axial)
+		if (m_currentProjection == EProjection::Axial)
 		{
 			x = gint(skullCenterX - position[1] * m_skullDiameter / 2);
 			y = gint(skullCenterY - position[2] * m_skullDiameter / 2);
@@ -998,12 +998,12 @@ bool CTopographicMap2DView::getChannel2DPosition(const size_t index, gint& x, gi
 			compute2DCoordinates(theta, phi, skullCenterX, skullCenterY, x, y);
 		}
 	}
-	else if (m_currentView == TopographicMap2DView_Right)
+	else if (m_currentView == EView::Right)
 	{
 		//if(electrodePosition[0] < 0) //electrode not visible
 		if (position[0] < -cos(89.F / 90 * M_PI / 2)) { return false; }
 
-		if (m_currentProjection == TopographicMap2DProjection_Axial)
+		if (m_currentProjection == EProjection::Axial)
 		{
 			x = gint(skullCenterX + position[1] * m_skullDiameter / 2);
 			y = gint(skullCenterY - position[2] * m_skullDiameter / 2);
@@ -1113,9 +1113,9 @@ size_t CTopographicMap2DView::computeSamplesNormalizedCoordinates(const bool all
 						const float x = (closestX - skullCenterX) / (m_skullDiameter / 2.F);
 						const float y = -(closestY - skullCenterY) / (m_skullDiameter / 2.F); //y axis down in 2D but up in 3D convention
 
-						if (m_currentProjection == TopographicMap2DProjection_Axial)
+						if (m_currentProjection == EProjection::Axial)
 						{
-							if (m_currentView == TopographicMap2DView_Top)
+							if (m_currentView == EView::Top)
 							{
 								*(buffer + baseIndex)     = x;
 								*(buffer + baseIndex + 1) = y;
@@ -1123,7 +1123,7 @@ size_t CTopographicMap2DView::computeSamplesNormalizedCoordinates(const bool all
 								const float squareXYSum   = x * x + y * y;
 								*(buffer + baseIndex + 2) = (squareXYSum >= 1) ? 0 : sqrt(1 - squareXYSum);
 							}
-							else if (m_currentView == TopographicMap2DView_Back)
+							else if (m_currentView == EView::Back)
 							{
 								*(buffer + baseIndex)     = x;
 								*(buffer + baseIndex + 2) = y;
@@ -1131,7 +1131,7 @@ size_t CTopographicMap2DView::computeSamplesNormalizedCoordinates(const bool all
 								const float squareXYSum   = x * x + y * y;
 								*(buffer + baseIndex + 1) = (squareXYSum >= 1) ? 0 : sqrt(1 - squareXYSum);
 							}
-							else if (m_currentView == TopographicMap2DView_Left)
+							else if (m_currentView == EView::Left)
 							{
 								*(buffer + baseIndex + 1) = -x;
 								*(buffer + baseIndex + 2) = y;
@@ -1139,7 +1139,7 @@ size_t CTopographicMap2DView::computeSamplesNormalizedCoordinates(const bool all
 								const float squareXYSum = x * x + y * y;
 								*(buffer + baseIndex)   = (squareXYSum >= 1) ? 0 : sqrt(1 - squareXYSum);
 							}
-							else if (m_currentView == TopographicMap2DView_Right)
+							else if (m_currentView == EView::Right)
 							{
 								*(buffer + baseIndex + 1) = x;
 								*(buffer + baseIndex + 2) = y;
@@ -1161,25 +1161,25 @@ size_t CTopographicMap2DView::computeSamplesNormalizedCoordinates(const bool all
 							//z = cos(theta)
 							sampleLocalCoordinates[2] = cosf(theta);
 
-							if (m_currentView == TopographicMap2DView_Top)
+							if (m_currentView == EView::Top)
 							{
 								*(buffer + baseIndex)     = sampleLocalCoordinates[0];
 								*(buffer + baseIndex + 1) = sampleLocalCoordinates[1];
 								*(buffer + baseIndex + 2) = sampleLocalCoordinates[2];
 							}
-							else if (m_currentView == TopographicMap2DView_Back)
+							else if (m_currentView == EView::Back)
 							{
 								*(buffer + baseIndex)     = sampleLocalCoordinates[0];
 								*(buffer + baseIndex + 1) = -sampleLocalCoordinates[2];
 								*(buffer + baseIndex + 2) = sampleLocalCoordinates[1];
 							}
-							else if (m_currentView == TopographicMap2DView_Left)
+							else if (m_currentView == EView::Left)
 							{
 								*(buffer + baseIndex)     = -sampleLocalCoordinates[2];
 								*(buffer + baseIndex + 1) = -sampleLocalCoordinates[0];
 								*(buffer + baseIndex + 2) = sampleLocalCoordinates[1];
 							}
-							else if (m_currentView == TopographicMap2DView_Right)
+							else if (m_currentView == EView::Right)
 							{
 								*(buffer + baseIndex)     = sampleLocalCoordinates[2];
 								*(buffer + baseIndex + 1) = sampleLocalCoordinates[0];

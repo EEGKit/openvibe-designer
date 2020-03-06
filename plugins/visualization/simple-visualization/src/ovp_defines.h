@@ -35,11 +35,11 @@
 #define OVP_TypeId_SphericalLinearInterpolationType												OpenViBE::CIdentifier(0x44B76D9E, 0x618229BC)
 #define OVP_TypeId_SignalDisplayMode															OpenViBE::CIdentifier(0x5DE046A6, 0x086340AA)
 
-enum ESphericalLinearInterpolationType { Spline = 1, Laplacian = 2 };
+enum class EInterpolationType { Spline = 1, Laplacian = 2 };
 
-enum ESignalDisplayMode { Scroll, Scan };
+enum class ESignalDisplayMode { Scroll, Scan };
 
-enum EDisplayMode { ZoomIn, ZoomOut, GlobalBestFit };
+enum class EDisplayMode { ZoomIn, ZoomOut, GlobalBestFit };
 
 // Global defines
 //---------------------------------------------------------------------------------------------------

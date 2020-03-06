@@ -27,7 +27,7 @@ bool CBoxAlgorithmTopographicMap2DDisplay::initialize()
 
 	//create topographic map view (handling GUI interaction)
 	m_view = new CTopographicMap2DView(
-		*m_database, getTypeManager().getEnumerationEntryValueFromName(OVP_TypeId_SphericalLinearInterpolationType, interpolationValue),
+		*m_database, EInterpolationType(getTypeManager().getEnumerationEntryValueFromName(OVP_TypeId_SphericalLinearInterpolationType, interpolationValue)),
 		strtod(delayValue, nullptr));
 
 	//have database notify us when new data is available

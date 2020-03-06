@@ -24,20 +24,9 @@ namespace OpenViBE
 			class CTopographicMap2DView final : public CTopographicMapDrawable
 			{
 			public:
-				enum ETopographicMap2DProjection
-				{
-					TopographicMap2DProjection_Axial,
-					TopographicMap2DProjection_Radial,
-					TopographicMap2DProjection_NumProjection
-				};
+				enum class EProjection { Axial, Radial, NumProjection };
 
-				enum ETopographicMap2DView
-				{
-					TopographicMap2DView_Top,
-					TopographicMap2DView_Left,
-					TopographicMap2DView_Right,
-					TopographicMap2DView_Back
-				};
+				enum class EView { Top, Left, Right, Back };
 
 				/**
 				 * \brief Constructor
@@ -45,7 +34,7 @@ namespace OpenViBE
 				 * \param interpolation Interpolation mode
 				 * \param delay Delay to apply to displayed data
 				 */
-				CTopographicMap2DView(CTopographicMapDatabase& mapDatabase, uint64_t interpolation, double delay);
+				CTopographicMap2DView(CTopographicMapDatabase& mapDatabase, EInterpolationType interpolation, double delay);
 
 				/**
 				 * \brief Destructor
@@ -96,7 +85,7 @@ namespace OpenViBE
 				 * \brief Get ID of current view
 				 * \return ID of current view
 				 */
-				ETopographicMap2DView getCurrentView() const { return m_currentView; }
+				EView getCurrentView() const { return m_currentView; }
 
 				/** \name Callbacks */
 				//@{
@@ -142,11 +131,8 @@ namespace OpenViBE
 				void drawBoxToBuffer(size_t x, size_t y, size_t width, size_t height, uint8_t red, uint8_t green, uint8_t blue) const;
 
 				void enableElectrodeButtonSignals(bool enable);
-
 				void enableProjectionButtonSignals(bool enable);
-
 				void enableViewButtonSignals(bool enable);
-
 				void enableInterpolationButtonSignals(bool enable);
 
 				/**
@@ -186,13 +172,13 @@ namespace OpenViBE
 				GdkColor m_bgColor;
 
 				//! Active projection
-				ETopographicMap2DProjection m_currentProjection = TopographicMap2DProjection_Radial;
+				EProjection m_currentProjection = EProjection::Radial;
 				//! Projection radio buttons
 				GtkRadioToolButton* m_axialProjectionButton  = nullptr;
 				GtkRadioToolButton* m_radialProjectionButton = nullptr;
 
 				//! Active view
-				ETopographicMap2DView m_currentView = TopographicMap2DView_Top;
+				EView m_currentView = EView::Top;
 				//! View radio buttons
 				GtkRadioToolButton* m_topViewButton   = nullptr;
 				GtkRadioToolButton* m_leftViewButton  = nullptr;
@@ -200,9 +186,9 @@ namespace OpenViBE
 				GtkRadioToolButton* m_backViewButton  = nullptr;
 
 				//! Interpolation type
-				uint64_t m_currentInterpolation     = 0;
-				GtkRadioToolButton* m_mapPotentials = nullptr;
-				GtkRadioToolButton* m_mapCurrents   = nullptr;
+				EInterpolationType m_currentInterpolation = EInterpolationType::Laplacian;
+				GtkRadioToolButton* m_mapPotentials       = nullptr;
+				GtkRadioToolButton* m_mapCurrents         = nullptr;
 
 				//! Electrodes toggle button
 				GtkToggleToolButton* m_electrodesToggleButton = nullptr;
@@ -211,48 +197,33 @@ namespace OpenViBE
 
 				bool m_needResize = true;
 
-				size_t m_gridSize = 0;
-				size_t m_cellSize = 0;
+				size_t m_gridSize = 0, m_cellSize = 0;
 
 				CMatrix m_sampleCoordinatesMatrix;
 
 				std::vector<size_t> m_sampleValues;
 				std::vector<std::pair<size_t, size_t>> m_sample2DCoordinates; //in skull coords
 
-				size_t m_minPaletteBarHeight = 10;
-				size_t m_maxPaletteBarHeight = 30;
+				size_t m_minPaletteBarHeight = 10, m_maxPaletteBarHeight = 30;
+				size_t m_headWindowWidth     = 00, m_headWindowHeight    = 00;
+				size_t m_paletteWindowWidth  = 00, m_paletteWindowHeight = 00;
 
-				size_t m_headWindowWidth  = 0;
-				size_t m_headWindowHeight = 0;
-
-				size_t m_paletteWindowWidth  = 0;
-				size_t m_paletteWindowHeight = 0;
-
-				size_t m_skullX        = 0;
-				size_t m_skullY        = 0;
-				size_t m_skullDiameter = 0;
+				size_t m_skullX = 0, m_skullY = 0, m_skullDiameter = 0;
 				//angles relative to 3 o'clock position, CCW, in degrees
-				float m_skullOutlineStartAngle = 0.0;
-				float m_skullOutlineEndAngle   = 0.0;
-				float m_skullFillStartAngle    = 0.0;
-				float m_skullFillEndAngle      = 0.0;
+				float m_skullOutlineStartAngle = 0.0, m_skullOutlineEndAngle = 0.0;
+				float m_skullFillStartAngle    = 0.0, m_skullFillEndAngle    = 0.0;
 
 				//determined from m_skullOutlineEndAngle
-				size_t m_skullOutlineLeftPointX = 0;
-				size_t m_skullOutlineLeftPointY = 0;
+				size_t m_skullOutlineLeftPointX = 0, m_skullOutlineLeftPointY = 0;
 				//determined from m_skullOutlineStartAngle
-				size_t m_skullOutlineRightPointX = 0;
-				size_t m_skullOutlineRightPointY = 0;
+				size_t m_skullOutlineRightPointX = 0, m_skullOutlineRightPointY = 0;
 
 				//determined from m_skullFillEndAngle
-				size_t m_skullFillLeftPointX = 0;
-				size_t m_skullFillLeftPointY = 0;
+				size_t m_skullFillLeftPointX = 0, m_skullFillLeftPointY = 0;
 				//determined from m_skullFillStartAngle
-				size_t m_skullFillRightPointX = 0;
-				size_t m_skullFillRightPointY = 0;
+				size_t m_skullFillRightPointX = 0, m_skullFillRightPointY = 0;
 
-				size_t m_skullFillBottomPointX = 0;
-				size_t m_skullFillBottomPointY = 0;
+				size_t m_skullFillBottomPointX = 0, m_skullFillBottomPointY = 0;
 
 				/////////////////////////////
 				// TOP VIEW
@@ -262,10 +233,8 @@ namespace OpenViBE
 				/////////////////////////////
 				// BOTTOM VIEW
 				/////////////////////////////
-				size_t m_leftNeckX  = 0;
-				size_t m_leftNeckY  = 0;
-				size_t m_rightNeckX = 0;
-				size_t m_rightNeckY = 0;
+				size_t m_leftNeckX  = 0, m_leftNeckY  = 0;
+				size_t m_rightNeckX = 0, m_rightNeckY = 0;
 
 				//////////////////////////////////
 				// LEFT/RIGHT VIEWS
@@ -281,16 +250,11 @@ namespace OpenViBE
 					 |
 					 + E
 				*/
-				size_t m_noseTopX    = 0; //A
-				size_t m_noseTopY    = 0;
-				size_t m_noseBumpX   = 0; //B
-				size_t m_noseBumpY   = 0;
-				size_t m_noseTipX    = 0; //C
-				size_t m_noseTipY    = 0;
-				size_t m_noseBaseX   = 0; //D
-				size_t m_noseBaseY   = 0;
-				size_t m_noseBottomX = 0; //E
-				size_t m_noseBottomY = 0;
+				size_t m_noseTopX    = 0, m_noseTopY    = 0;	//A
+				size_t m_noseBumpX   = 0, m_noseBumpY   = 0;	//B
+				size_t m_noseTipX    = 0, m_noseTipY    = 0;	//C
+				size_t m_noseBaseX   = 0, m_noseBaseY   = 0;	//D
+				size_t m_noseBottomX = 0, m_noseBottomY = 0;	//E
 
 				/**
 				 * \brief Main pixmap
