@@ -344,7 +344,7 @@ namespace Mensia
 
 			void releaseBoxListener(OpenViBE::Plugins::IBoxListener* listener) const override { delete listener; }
 
-			bool hasFunctionality(const OpenViBE::CIdentifier& functionality) const override { return functionality == OVD_Functionality_Visualization; }
+			bool hasFunctionality(const OpenViBE::Plugins::EPluginFunctionality functionality) const override { return functionality == OpenViBE::Plugins::EPluginFunctionality::Visualization; }
 
 			bool getBoxPrototype(OpenViBE::Kernel::IBoxProto& prototype) const override
 			{

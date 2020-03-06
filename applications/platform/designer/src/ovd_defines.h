@@ -98,8 +98,6 @@ namespace OpenViBE
 			Color_LinkInvalid,
 			Color_SelectionArea,
 			Color_SelectionAreaBorder,
-			Color_BoxBackgroundMensia = 8002,
-			Color_BoxBorderMensia = 8004
 		};
 
 		enum { Box_None, Box_Input, Box_Output, Box_Setting, Box_Link, Box_ScenarioInput, Box_ScenarioOutput, Box_Update };

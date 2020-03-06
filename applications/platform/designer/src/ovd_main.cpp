@@ -301,8 +301,6 @@ static void InsertPluginObjectDescToGtkTreeStore(const IKernelContext& ctx, map<
 				boxAlgorithmDesc += dynamic_cast<const Metabox::IMetaboxObjectDesc*>(p)->getMetaboxDescriptor();
 				textColor = "#007020";
 			}
-			else { if (p->hasFunctionality(M_Functionality_IsMensia)) { textColor = "#00b090"; } }
-
 
 			gtk_tree_store_set(GTK_TREE_STORE(treeStore), iterChild, Resource_StringName, str.c_str(),
 							   Resource_StringShortDescription, static_cast<const char*>(p->getShortDescription()),
@@ -572,11 +570,9 @@ int go(int argc, char** argv)
 	GDK_COLOR_SET(gColors[Color_BoxBackgroundOutdated], 57343, 57343, 57343);
 	GDK_COLOR_SET(gColors[Color_BoxBackgroundMetabox], 58343, 65535, 62343);
 	GDK_COLOR_SET(gColors[Color_BoxBackgroundUnstable], 49151, 49151, 49151);
-	GDK_COLOR_SET(gColors[Color_BoxBackgroundMensia], 65535, 65535, 65535);
 	GDK_COLOR_SET(gColors[Color_BoxBackground], 65535, 65535, 65535);
 	GDK_COLOR_SET(gColors[Color_BoxBorderSelected], 0, 0, 0);
 	GDK_COLOR_SET(gColors[Color_BoxBorder], 0, 0, 0);
-	GDK_COLOR_SET(gColors[Color_BoxBorderMensia], 10000, 45535, 35535);
 	GDK_COLOR_SET(gColors[Color_BoxInputBackground], 65535, 49151, 32767);
 	GDK_COLOR_SET(gColors[Color_BoxInputBorder], 16383, 16383, 16383);
 	GDK_COLOR_SET(gColors[Color_BoxOutputBackground], 32767, 65535, 49151);

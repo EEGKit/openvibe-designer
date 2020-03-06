@@ -1129,11 +1129,6 @@ void CInterfacedScenario::redraw(IBox& box)
 	bool metabox                      = canCreate && proxy.isMetabox();
 	bool disabled                     = proxy.isDisabled();
 
-
-	// Check if this is a mensia box
-	auto pod    = m_kernelCtx.getPluginManager().getPluginObjectDescCreating(box.getAlgorithmClassIdentifier());
-	bool mensia = (pod && pod->hasFunctionality(M_Functionality_IsMensia));
-
 	// Add a thick dashed border around selected boxes
 	if (m_SelectedObjects.count(box.getIdentifier()))
 	{
@@ -1164,7 +1159,6 @@ void CInterfacedScenario::redraw(IBox& box)
 		else if (disabled) { gdk_gc_set_rgb_fg_color(drawGC, &gColors[Color_BoxBackgroundDisabled]); }
 		else if (deprecated) { gdk_gc_set_rgb_fg_color(drawGC, &gColors[Color_BoxBackgroundDeprecated]); }
 		else if (!upToDate || pendingDeprecatedInterfacors) { gdk_gc_set_rgb_fg_color(drawGC, &gColors[Color_BoxBackgroundOutdated]); }
-		else if (mensia) { gdk_gc_set_rgb_fg_color(drawGC, &gColors[Color_BoxBackgroundMensia]); }
 			//else if(metabox) { gdk_gc_set_rgb_fg_color(drawGC, &gColors[Color_BoxBackgroundMetabox]); }
 		else { gdk_gc_set_rgb_fg_color(drawGC, &gColors[Color_BoxBackground]); }
 	}
@@ -1205,10 +1199,8 @@ void CInterfacedScenario::redraw(IBox& box)
 
 	gdk_draw_rounded_rectangle(widget->window, drawGC, TRUE, startX, startY, sizeX, sizeY, gint(round(8.0 * m_currentScale)));
 
-	if (mensia) { gdk_draw_pixbuf(widget->window, drawGC, m_mensiaLogoPixbuf, 5, 5, startX, startY, 80, (sizeY < 50) ? sizeY : 50, GDK_RGB_DITHER_NONE, 0, 0); }
 
 	int borderColor = Color_BoxBorder;
-	if (mensia) { borderColor = Color_BoxBorderMensia; }
 	gdk_gc_set_rgb_fg_color(drawGC, &gColors[borderColor]);
 	gdk_gc_set_line_attributes(drawGC, 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_ROUND);
 	gdk_draw_rounded_rectangle(widget->window, drawGC, FALSE, startX, startY, sizeX, sizeY, gint(round(8.0 * m_currentScale)));
@@ -2030,7 +2022,7 @@ void CInterfacedScenario::scenarioDrawingAreaDragDataReceivedCB(GdkDragContext* 
 		m_SelectedObjects.insert(boxID);
 
 		// If a visualization box was dropped, add it in window manager
-		if (pod && pod->hasFunctionality(OVD_Functionality_Visualization))
+		if (pod && pod->hasFunctionality(EPluginFunctionality::Visualization))
 		{
 			// Let window manager know about new box
 			if (m_DesignerVisualization) { m_DesignerVisualization->onVisualizationBoxAdded(box); }
@@ -2983,7 +2975,7 @@ void CInterfacedScenario::pasteSelection()
 		const IPluginObjectDesc* pod = m_kernelCtx.getPluginManager().getPluginObjectDescCreating(boxAlgorithmID);
 
 		// If a visualization box was dropped, add it in window manager
-		if (pod && pod->hasFunctionality(OVD_Functionality_Visualization))
+		if (pod && pod->hasFunctionality(EPluginFunctionality::Visualization))
 		{
 			// Let window manager know about new box
 			if (m_DesignerVisualization) { m_DesignerVisualization->onVisualizationBoxAdded(m_Scenario.getBoxDetails(newID)); }
@@ -3135,7 +3127,7 @@ void CInterfacedScenario::contextMenuBoxRenameCB(IBox& box)
 		const IPluginObjectDesc* desc = m_kernelCtx.getPluginManager().getPluginObjectDescCreating(id);
 
 		//if a visualization box was renamed, tell window manager about it
-		if (desc && desc->hasFunctionality(OVD_Functionality_Visualization))
+		if (desc && desc->hasFunctionality(EPluginFunctionality::Visualization))
 		{
 			if (m_DesignerVisualization) { m_DesignerVisualization->onVisualizationBoxRenamed(box.getIdentifier()); }
 		}
@@ -3191,7 +3183,7 @@ void CInterfacedScenario::contextMenuBoxRenameAllCB()
 						const IPluginObjectDesc* pod = m_kernelCtx.getPluginManager().getPluginObjectDescCreating(id);
 
 						//if a visualization box was renamed, tell window manager about it
-						if (pod && pod->hasFunctionality(OVD_Functionality_Visualization))
+						if (pod && pod->hasFunctionality(EPluginFunctionality::Visualization))
 						{
 							if (m_DesignerVisualization) { m_DesignerVisualization->onVisualizationBoxRenamed(box->getIdentifier()); }
 						}

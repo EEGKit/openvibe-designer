@@ -1324,7 +1324,7 @@ bool CApplication::openScenario(const char* filename)
 			{
 				const IBox* box                           = scenario.getBoxDetails(boxID);
 				const IPluginObjectDesc* boxAlgorithmDesc = m_kernelCtx.getPluginManager().getPluginObjectDescCreating(box->getAlgorithmClassIdentifier());
-				if (boxAlgorithmDesc && boxAlgorithmDesc->hasFunctionality(OVD_Functionality_Visualization))
+				if (boxAlgorithmDesc && boxAlgorithmDesc->hasFunctionality(EPluginFunctionality::Visualization))
 				{
 					//a visualization widget was found in scenario : manually add it to visualization tree
 					vizTree->addVisualizationWidget(id, box->getName(), VisualizationToolkit::VisualizationWidget_VisualizationBox,
