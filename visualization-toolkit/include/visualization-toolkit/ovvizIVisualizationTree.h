@@ -200,7 +200,7 @@ namespace OpenViBE
 			 * \return true if a widget was found, false if past beyond last one
 			 * \sa getNextVisualizationWidgetIdentifier()
 			 */
-			virtual bool getNextVisualizationWidgetIdentifier(CIdentifier& id, EVisualizationWidgetType type) const = 0;
+			virtual bool getNextVisualizationWidgetIdentifier(CIdentifier& id, EVisualizationWidget type) const = 0;
 
 			/**
 			 * \brief Tests whether an identifier corresponds to an IVisualizationWidget instance
@@ -235,13 +235,13 @@ namespace OpenViBE
 			 * \param type type of the widget
 			 * \param parentID parent widget identifier (OV_UndefinedIdentifier for top-level widgets)
 			 * \param parentIdx index where this widget is to be parented (irrelevant for top-level widgets)
-			 * \param boxID identifier of associated IBox (for widgets of type VisualizationWidget_VisualizationBox only)
+			 * \param boxID identifier of associated IBox (for widgets of type EVisualizationWidget::Box only)
 			 * \param nChild number of children of this widget (none for a visualization box, 1 for a visualization panel, 2 for split widgets, variable number for windows)
 			 * \param suggestedID a suggestion as to the identifier to use
 			 * \return true if widget successfully added to the internal tree store, false otherwise
 			 */
 			virtual bool addVisualizationWidget(CIdentifier& id, const CString& name,
-												EVisualizationWidgetType type, const CIdentifier& parentID,
+												EVisualizationWidget type, const CIdentifier& parentID,
 												size_t parentIdx, const CIdentifier& boxID,
 												size_t nChild, const CIdentifier& suggestedID) = 0;
 

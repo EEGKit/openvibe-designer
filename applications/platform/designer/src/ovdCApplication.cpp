@@ -1327,7 +1327,7 @@ bool CApplication::openScenario(const char* filename)
 				if (boxAlgorithmDesc && boxAlgorithmDesc->hasFunctionality(EPluginFunctionality::Visualization))
 				{
 					//a visualization widget was found in scenario : manually add it to visualization tree
-					vizTree->addVisualizationWidget(id, box->getName(), VisualizationToolkit::VisualizationWidget_VisualizationBox,
+					vizTree->addVisualizationWidget(id, box->getName(), VisualizationToolkit::EVisualizationWidget::Box,
 													OV_UndefinedIdentifier, 0, box->getIdentifier(), 0, OV_UndefinedIdentifier);
 				}
 			}

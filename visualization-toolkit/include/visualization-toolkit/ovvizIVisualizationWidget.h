@@ -6,17 +6,15 @@ namespace OpenViBE
 {
 	namespace VisualizationToolkit
 	{
-		/**
-		 * \brief This enum lists the different types of IVisualizationWidget supported by the platform
-		 */
-		enum EVisualizationWidgetType
+		/// <summary> This enum lists the different types of IVisualizationWidget supported by the platform. </summary>
+		enum class EVisualizationWidget
 		{
-			VisualizationWidget_Undefined, /**< Undefined widget (empty slot in an IVisualizationTree) */
-			VisualizationWidget_VisualizationWindow, /**< Top-level IVisualizationWidget container */
-			VisualizationWidget_VisualizationPanel, /**< Notebook tab containing IVisualizationWidget objects */
-			VisualizationWidget_VisualizationBox, /**< Visualization plugin */
-			VisualizationWidget_VerticalSplit, /**< Split widget that divides its client area vertically in two */
-			VisualizationWidget_HorizontalSplit /**< Split widget that divides its client area horizontally in two */
+			Undefined,		///< Undefined widget (empty slot in an IVisualizationTree)
+			Window,			///< Top-level IVisualizationWidget container
+			Panel,			///< Notebook tab containing IVisualizationWidget objects
+			Box,			///< Visualization plugin
+			VerticalSplit,	///< Split widget that divides its client area vertically in two
+			HorizontalSplit	///< Split widget that divides its client area horizontally in two
 		};
 
 		/**
@@ -37,12 +35,12 @@ namespace OpenViBE
 			 * \param name name of the widget (optional)
 			 * \param type type of the widget
 			 * \param parentID parent widget identifier (OV_Undefined for top-level widgets)
-			 * \param boxID if widget type is VisualizationWidget_VisualizationBox, identifier of corresponding IBox
+			 * \param boxID if widget type is EVisualizationWidget::Box, identifier of corresponding IBox
 			 * \param nChild number of children of this widget (none for a visualization box, 1 for a visualization panel, 2 for split widgets, variable number for windows)
 			 * \return True if widget was successfully initialized, false otherwise
 			 */
 			virtual bool initialize(const CIdentifier& identifier, const CString& name,
-									const EVisualizationWidgetType type, const CIdentifier& parentID,
+									const EVisualizationWidget type, const CIdentifier& parentID,
 									const CIdentifier& boxID, const size_t nChild) = 0;
 
 			/**
@@ -67,7 +65,7 @@ namespace OpenViBE
 			 * \brief Returns the type of the widget
 			 * \return Widget type
 			 */
-			virtual EVisualizationWidgetType getType() const = 0;
+			virtual EVisualizationWidget getType() const = 0;
 
 			/**
 			 * \brief Returns the identifier of the widget's parent (if any)
@@ -83,7 +81,7 @@ namespace OpenViBE
 			/**
 			 * \brief Returns the identifier of the IBox associated to this widget.
 			 *
-			 * This only applies to widgets of type VisualizationWidget_VisualizationBox.
+			 * This only applies to widgets of type EVisualizationWidget::Box.
 			 * \return Identifier of IBox associated to this widget
 			 */
 			virtual CIdentifier getBoxIdentifier() const = 0;
@@ -105,7 +103,7 @@ namespace OpenViBE
 			/**
 			 * \brief Adds a child to a widget
 			 *
-			 * Only useful for top-level widgets (VisualizationWidget_VisualizationWindow) since the number
+			 * Only useful for top-level widgets (EVisualizationWidget::Window) since the number
 			 * of tabs their notebook may contain is unknown a priori. The child is added after existing children.
 			 * \param childIdentifier identifier of child to be added to widget
 			 * \return True if child was successfully added

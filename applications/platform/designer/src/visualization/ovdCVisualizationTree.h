@@ -23,11 +23,11 @@ namespace OpenViBE
 			bool init(const Kernel::IScenario* scenario) override;
 
 			bool getNextVisualizationWidgetIdentifier(CIdentifier& id) const override;
-			bool getNextVisualizationWidgetIdentifier(CIdentifier& id, VisualizationToolkit::EVisualizationWidgetType type) const override;
+			bool getNextVisualizationWidgetIdentifier(CIdentifier& id, VisualizationToolkit::EVisualizationWidget type) const override;
 			bool isVisualizationWidget(const CIdentifier& id) const override;
 			VisualizationToolkit::IVisualizationWidget* getVisualizationWidget(const CIdentifier& id) const override;
 			VisualizationToolkit::IVisualizationWidget* getVisualizationWidgetFromBoxIdentifier(const CIdentifier& boxID) const override;
-			bool addVisualizationWidget(CIdentifier& id, const CString& name, VisualizationToolkit::EVisualizationWidgetType type,
+			bool addVisualizationWidget(CIdentifier& id, const CString& name, VisualizationToolkit::EVisualizationWidget type,
 										const CIdentifier& parentID, size_t parentIdx, const CIdentifier& boxID, size_t nChild,
 										const CIdentifier& suggestedID) override;
 			bool getVisualizationWidgetIndex(const CIdentifier& id, size_t& index) const override;
