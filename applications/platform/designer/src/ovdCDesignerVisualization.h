@@ -135,7 +135,7 @@ namespace OpenViBE
 			static void dataReceivedInEventBoxCB(GtkWidget* dstWidget, GdkDragContext* dc, gint x, gint y, GtkSelectionData* selection, guint info, guint time,
 												 gpointer data);
 			void dragDataReceivedInWidget(GtkWidget* dstWidget, GtkSelectionData* selection);
-			void dragDataReceivedInEventBox(GtkWidget* dstWidget, GtkSelectionData* selection, VisualizationToolkit::EDragDataLocation location);
+			void dragDataReceivedInEventBox(GtkWidget* dstWidget, GtkSelectionData* selection, VisualizationToolkit::EDragLocation location);
 
 			const Kernel::IKernelContext& m_kernelCtx;
 			VisualizationToolkit::IVisualizationTree& m_tree;

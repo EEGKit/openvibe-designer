@@ -58,7 +58,7 @@ namespace OpenViBE
 
 			bool dragDataReceivedInWidgetCB(const CIdentifier& srcWidgetID, GtkWidget* dstWidget) override;
 			bool dragDataReceivedOutsideWidgetCB(const CIdentifier& srcWidgetID, GtkWidget* dstWidget,
-												 VisualizationToolkit::EDragDataLocation location) override;
+												 VisualizationToolkit::EDragLocation location) override;
 
 			bool setToolbar(const CIdentifier& boxID, GtkWidget* toolbar) override;
 			bool setWidget(const CIdentifier& boxID, GtkWidget* widget) override;
