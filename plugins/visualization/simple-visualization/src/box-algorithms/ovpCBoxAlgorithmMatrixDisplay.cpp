@@ -6,7 +6,6 @@
 
 #include <cstdlib>
 #include <cmath>
-#include <system/ovCMemory.h>
 #include <visualization-toolkit/ovvizColorGradient.h>
 
 using namespace std;
@@ -299,14 +298,16 @@ bool CBoxAlgorithmMatrixDisplay::process()
 						const size_t step = size_t(((value - m_min) / (m_max - m_min)) * (m_gradientSteps - 1));
 
 						// gtk_widget_modify_bg uses 16bit colors, the interpolated gradients gives 8bits colors.
-						GdkColor colorEventBox;
-						colorEventBox.red   = uint16_t(m_interpolatedColorGardient[step * 4 + 1] * 65535. / 100.);
-						colorEventBox.green = uint16_t(m_interpolatedColorGardient[step * 4 + 2] * 65535. / 100.);
-						colorEventBox.blue  = uint16_t(m_interpolatedColorGardient[step * 4 + 3] * 65535. / 100.);
+						GdkColor color;
+						color.red   = uint16_t(m_interpolatedColorGardient[step * 4 + 1] * 65535. / 100.);
+						color.green = uint16_t(m_interpolatedColorGardient[step * 4 + 2] * 65535. / 100.);
+						color.blue  = uint16_t(m_interpolatedColorGardient[step * 4 + 3] * 65535. / 100.);
 
-						if (!System::Memory::compare(&(m_eventBoxCache[r * nCol + c].second), &colorEventBox, sizeof(GdkColor)) && m_ShowColors
-						) { gtk_widget_modify_bg(m_eventBoxCache[r * nCol + c].first, GTK_STATE_NORMAL, &colorEventBox); }
-						m_eventBoxCache[r * nCol + c].second = colorEventBox;
+						if (memcmp(&(m_eventBoxCache[r * nCol + c].second), &color, sizeof(GdkColor)) != 0 && m_ShowColors)
+						{
+							gtk_widget_modify_bg(m_eventBoxCache[r * nCol + c].first, GTK_STATE_NORMAL, &color);
+						}
+						m_eventBoxCache[r * nCol + c].second = color;
 
 						std::stringstream ss;
 						ss << std::fixed;

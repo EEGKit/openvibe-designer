@@ -1,6 +1,5 @@
 #include "ovpCBufferDatabase.h"
 
-#include <system/ovCMemory.h>
 #include <openvibe/ovTimeArithmetics.h>
 
 #include <algorithm>
@@ -390,7 +389,7 @@ bool CBufferDatabase::setMatrixBuffer(const double* buffer, const uint64_t start
 	if (bufferToWrite == nullptr) { bufferToWrite = new double[nSamplesPerBuffer]; }
 
 	//copy new buffer into internal buffer
-	System::Memory::copy(bufferToWrite, buffer, nSamplesPerBuffer * sizeof(double));
+	if (nSamplesPerBuffer != 0) { memcpy(bufferToWrite, buffer, nSamplesPerBuffer * sizeof(double)); }
 
 	//push new buffer and its timestamps
 	m_SampleBuffers.push_back(bufferToWrite);

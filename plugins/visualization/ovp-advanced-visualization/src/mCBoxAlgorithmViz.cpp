@@ -20,7 +20,6 @@
  */
 
 #include "mCBoxAlgorithmViz.hpp"
-#include <system/ovCMemory.h>
 
 // OpenGL 1.2
 #ifndef GL_BGRA
@@ -506,9 +505,9 @@ void CBoxAlgorithmViz::postDraw()
 		unsigned char* src2 = cairo_image_surface_get_data(cairoSurface) + m_Width * (m_Height - 1) * size;
 		for (size_t i = 0; i < m_Height / 2; ++i)
 		{
-			System::Memory::copy(swap, src1, m_Width * size);
-			System::Memory::copy(src1, src2, m_Width * size);
-			System::Memory::copy(src2, swap, m_Width * size);
+			memcpy(swap, src1, m_Width * size);
+			memcpy(src1, src2, m_Width * size);
+			memcpy(src2, swap, m_Width * size);
 			src1 += m_Width * size;
 			src2 -= m_Width * size;
 		}
