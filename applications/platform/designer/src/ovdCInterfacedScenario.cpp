@@ -577,7 +577,7 @@ static void linkHandler(ILink* link, const int x, const int y, const CIdentifier
 
 CInterfacedScenario::CInterfacedScenario(const IKernelContext& ctx, CApplication& application, IScenario& scenario, CIdentifier& scenarioID,
 										 GtkNotebook& notebook, const char* guiFilename, const char* guiSettingsFilename)
-	: m_PlayerStatus(PlayerStatus_Stop), m_ScenarioID(scenarioID), m_Application(application), m_Scenario(scenario), m_kernelCtx(ctx), m_notebook(notebook),
+	: m_PlayerStatus(EPlayerStatus::Stop), m_ScenarioID(scenarioID), m_Application(application), m_Scenario(scenario), m_kernelCtx(ctx), m_notebook(notebook),
 	  m_guiFilename(guiFilename), m_guiSettingsFilename(guiSettingsFilename)
 {
 	m_guiBuilder = gtk_builder_new();
@@ -2843,7 +2843,7 @@ void CInterfacedScenario::scenarioDrawingAreaKeyPressEventCB(GtkWidget* /*widget
 	// F7 :play/pause
 	if (event->keyval == GDK_F7)
 	{
-		if (m_Application.getCurrentInterfacedScenario()->m_PlayerStatus == PlayerStatus_Play) { m_Application.pauseScenarioCB(); }
+		if (m_Application.getCurrentInterfacedScenario()->m_PlayerStatus == EPlayerStatus::Play) { m_Application.pauseScenarioCB(); }
 		else { m_Application.playScenarioCB(); }
 	}
 	// F6 : step

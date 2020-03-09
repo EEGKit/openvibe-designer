@@ -37,13 +37,13 @@ namespace Mensia
 		{
 		public:
 
-			typedef enum
+			enum class EDataType
 			{
 				Matrix,
 				Signal,
 				Spectrum,
 				TimeFrequency
-			} EDataType;
+			};
 
 			CRendererContext() { clear(); }
 			explicit CRendererContext(CRendererContext* parentCtx);
@@ -165,7 +165,7 @@ namespace Mensia
 			bool m_isScrollModeActive  = false;
 			bool m_scaleVisiblity      = true;
 			bool m_checkBoardVisiblity = false;
-			EDataType m_dataType       = Matrix;
+			EDataType m_dataType       = EDataType::Matrix;
 			size_t m_spectrumFreqRange = 0;
 			size_t m_minSpectrumFreq   = 0;
 			size_t m_maxSpectrumFreq   = 0;

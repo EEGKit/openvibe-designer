@@ -418,7 +418,7 @@ bool CBoxAlgorithmViz::processClock(IMessageClock& /*clock*/)
 	const uint64_t minDeltaTimeLD2 = (1LL << 32) * 5;
 
 	uint64_t minDeltaTime;
-	if (this->getPlayerContext().getStatus() == PlayerStatus_Play) { minDeltaTime = minDeltaTimeHD; }
+	if (this->getPlayerContext().getStatus() == EPlayerStatus::Play) { minDeltaTime = minDeltaTimeHD; }
 	else
 	{
 		const auto fastForwardMaxFactor = float(this->getPlayerContext().getCurrentFastForwardMaximumFactor());
@@ -431,8 +431,8 @@ bool CBoxAlgorithmViz::processClock(IMessageClock& /*clock*/)
 		else { minDeltaTime = minDeltaTimeLD2; }
 	}
 
-	if (currentTime > m_lastProcessTime + minDeltaTime || this->getPlayerContext().getStatus() == PlayerStatus_Step || this->getPlayerContext().getStatus() ==
-		PlayerStatus_Pause)
+	if (currentTime > m_lastProcessTime + minDeltaTime || this->getPlayerContext().getStatus() == EPlayerStatus::Step || this->getPlayerContext().getStatus() ==
+		EPlayerStatus::Pause)
 	{
 		m_lastProcessTime    = currentTime;
 		this->m_RedrawNeeded = true;
