@@ -149,7 +149,7 @@ namespace OpenViBE
 				//@}
 
 				//! Redraw mode (shift or scan)
-				CIdentifier m_displayMode = Scan;
+				ESignalDisplayMode m_displayMode = ESignalDisplayMode::Scan;
 
 			public:
 				explicit CBufferDatabase(Toolkit::TBoxAlgorithm<IBoxAlgorithm>& plugin);
@@ -321,13 +321,13 @@ namespace OpenViBE
 				 * \remarks Used by signal display and time ruler to determine how they should be updated
 				 * \param mode New display mode
 				 */
-				virtual void setDisplayMode(const CIdentifier& mode) { m_displayMode = mode; }
+				virtual void setDisplayMode(const ESignalDisplayMode mode) { m_displayMode = mode; }
 
 				/**
 				 * \brief Get current display mode
 				 * \return Current display mode
 				 */
-				virtual CIdentifier getDisplayMode() { return m_displayMode; }
+				virtual ESignalDisplayMode getDisplayMode() { return m_displayMode; }
 
 				/**
 				 * \brief Set flag stating whether to redraw associated SignalDisplayDrawable objet when new data is available

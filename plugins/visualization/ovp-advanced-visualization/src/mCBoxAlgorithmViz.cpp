@@ -20,7 +20,6 @@
  */
 
 #include "mCBoxAlgorithmViz.hpp"
-#include <system/ovCMemory.h>
 
 // OpenGL 1.2
 #ifndef GL_BGRA
@@ -122,7 +121,7 @@ bool CBoxAlgorithmViz::initialize()
 	// Sets default setting values
 	m_Colors.clear();
 	m_Localisation      = CString("");
-	m_TemporalCoherence = TimeLocked;
+	m_TemporalCoherence = ETemporalCoherence::TimeLocked;
 	m_NElement          = 50;
 	m_TimeScale         = 10LL << 32;
 	m_IsPositive        = false;
@@ -257,7 +256,7 @@ bool CBoxAlgorithmViz::initialize()
 				m_IsPositive = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), settingIndex);
 				break;
 			case S_TemporalCoherence:
-				m_TemporalCoherence = size_t(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), settingIndex));
+				m_TemporalCoherence = ETemporalCoherence(size_t(FSettingValueAutoCast(*this->getBoxAlgorithmContext(), settingIndex)));
 				break;
 			case S_TimeScale:
 				value = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), settingIndex);
@@ -316,7 +315,7 @@ bool CBoxAlgorithmViz::initialize()
 	if (m_Caption != CString("")) { gtk_label_set_text(GTK_LABEL(m_Top), std::string(m_Caption.toASCIIString()).c_str()); }
 
 	// Sets time scale
-	if (m_TemporalCoherence == TimeLocked)
+	if (m_TemporalCoherence == ETemporalCoherence::TimeLocked)
 	{
 		gtk_spin_button_set_value(GTK_SPIN_BUTTON(::gtk_builder_get_object(m_Builder, "spinbutton_time_scale")), (m_TimeScale >> 22) / 1024.);
 		m_IsTimeLocked = true;
@@ -324,7 +323,7 @@ bool CBoxAlgorithmViz::initialize()
 	else { gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_Builder, "vbox_time_scale"))); }
 
 	// Sets matrix count
-	if (m_TemporalCoherence == Independant)
+	if (m_TemporalCoherence == ETemporalCoherence::Independant)
 	{
 		gtk_spin_button_set_value(GTK_SPIN_BUTTON(::gtk_builder_get_object(m_Builder, "spinbutton_element_count")), double(m_NElement));
 		m_IsTimeLocked = false;
@@ -418,7 +417,7 @@ bool CBoxAlgorithmViz::processClock(IMessageClock& /*clock*/)
 	const uint64_t minDeltaTimeLD2 = (1LL << 32) * 5;
 
 	uint64_t minDeltaTime;
-	if (this->getPlayerContext().getStatus() == PlayerStatus_Play) { minDeltaTime = minDeltaTimeHD; }
+	if (this->getPlayerContext().getStatus() == EPlayerStatus::Play) { minDeltaTime = minDeltaTimeHD; }
 	else
 	{
 		const auto fastForwardMaxFactor = float(this->getPlayerContext().getCurrentFastForwardMaximumFactor());
@@ -431,8 +430,8 @@ bool CBoxAlgorithmViz::processClock(IMessageClock& /*clock*/)
 		else { minDeltaTime = minDeltaTimeLD2; }
 	}
 
-	if (currentTime > m_lastProcessTime + minDeltaTime || this->getPlayerContext().getStatus() == PlayerStatus_Step || this->getPlayerContext().getStatus() ==
-		PlayerStatus_Pause)
+	if (currentTime > m_lastProcessTime + minDeltaTime || this->getPlayerContext().getStatus() == EPlayerStatus::Step || this->getPlayerContext().getStatus() ==
+		EPlayerStatus::Pause)
 	{
 		m_lastProcessTime    = currentTime;
 		this->m_RedrawNeeded = true;
@@ -506,9 +505,9 @@ void CBoxAlgorithmViz::postDraw()
 		unsigned char* src2 = cairo_image_surface_get_data(cairoSurface) + m_Width * (m_Height - 1) * size;
 		for (size_t i = 0; i < m_Height / 2; ++i)
 		{
-			System::Memory::copy(swap, src1, m_Width * size);
-			System::Memory::copy(src1, src2, m_Width * size);
-			System::Memory::copy(src2, swap, m_Width * size);
+			memcpy(swap, src1, m_Width * size);
+			memcpy(src1, src2, m_Width * size);
+			memcpy(src2, swap, m_Width * size);
 			src1 += m_Width * size;
 			src2 -= m_Width * size;
 		}

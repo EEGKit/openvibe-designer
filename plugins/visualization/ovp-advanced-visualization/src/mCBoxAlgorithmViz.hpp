@@ -53,33 +53,14 @@ namespace Mensia
 			P_None,
 
 			// Input
-			I_Matrix,
-			I_Signal,
-			I_Spectrum,
-			I_TimeFrequency,
-			I_Covariance,
-			I_Stimulations,
+			I_Matrix, I_Signal, I_Spectrum, I_TimeFrequency, I_Covariance, I_Stimulations,
 
 			// Setting
-			S_ChannelLocalisation,
-			S_TemporalCoherence,
-			S_TimeScale,
-			S_ElementCount,
-			S_DataScale,
-			S_Caption,
-			S_DataPositive,
-			S_Translucency,
-			S_FlowerRingCount,
-			S_Color,
-			S_ColorGradient,
-			S_ShowAxis,
-			S_XYZPlotHasDepth,
+			S_ChannelLocalisation, S_TemporalCoherence, S_TimeScale, S_ElementCount, S_DataScale, S_Caption, S_DataPositive, 
+			S_Translucency, S_FlowerRingCount, S_Color, S_ColorGradient, S_ShowAxis, S_XYZPlotHasDepth,
 
 			// Flag
-			F_CanAddInput,
-			F_FixedChannelOrder,
-			F_FixedChannelSelection,
-			F_Unstable,
+			F_CanAddInput, F_FixedChannelOrder, F_FixedChannelSelection, F_Unstable
 		};
 
 		class CParameterSet
@@ -178,10 +159,10 @@ namespace Mensia
 			CMouse m_MouseHandler;
 
 			OpenViBE::CString m_Localisation;
-			uint64_t m_TemporalCoherence = 0;
-			uint64_t m_TimeScale         = 0;
-			size_t m_NElement            = 0;
-			double m_DataScale           = 0.0;
+			ETemporalCoherence m_TemporalCoherence = ETemporalCoherence::TimeLocked;
+			uint64_t m_TimeScale                   = 0;
+			size_t m_NElement                      = 0;
+			double m_DataScale                     = 0.0;
 			OpenViBE::CString m_Caption;
 			uint32_t m_TextureID  = 0;
 			size_t m_NFlowerRing  = 0;
@@ -363,7 +344,7 @@ namespace Mensia
 
 			void releaseBoxListener(OpenViBE::Plugins::IBoxListener* listener) const override { delete listener; }
 
-			bool hasFunctionality(const OpenViBE::CIdentifier& functionality) const override { return functionality == OVD_Functionality_Visualization; }
+			bool hasFunctionality(const OpenViBE::Plugins::EPluginFunctionality functionality) const override { return functionality == OpenViBE::Plugins::EPluginFunctionality::Visualization; }
 
 			bool getBoxPrototype(OpenViBE::Kernel::IBoxProto& prototype) const override
 			{

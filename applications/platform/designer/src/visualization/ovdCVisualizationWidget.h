@@ -15,13 +15,13 @@ namespace OpenViBE
 			explicit CVisualizationWidget(const Kernel::IKernelContext& ctx) : m_kernelCtx(ctx) { }
 			~CVisualizationWidget() override = default;
 
-			bool initialize(const CIdentifier& id, const CString& name, const VisualizationToolkit::EVisualizationWidgetType type,
+			bool initialize(const CIdentifier& id, const CString& name, const VisualizationToolkit::EVisualizationWidget type,
 							const CIdentifier& parentID, const CIdentifier& boxID, const size_t nChild) override;
 
 			CIdentifier getIdentifier() const override { return m_id; }
 			const CString& getName() const override { return m_name; }
 			void setName(const CString& name) override { m_name = name; }
-			VisualizationToolkit::EVisualizationWidgetType getType() const override { return m_type; }
+			VisualizationToolkit::EVisualizationWidget getType() const override { return m_type; }
 			CIdentifier getParentIdentifier() const override { return m_parentID; }
 			void setParentIdentifier(const CIdentifier& parentID) override { m_parentID = parentID; }
 			CIdentifier getBoxIdentifier() const override { return m_boxID; }
@@ -51,7 +51,7 @@ namespace OpenViBE
 			const Kernel::IKernelContext& m_kernelCtx;
 			CIdentifier m_id = OV_UndefinedIdentifier;
 			CString m_name;
-			VisualizationToolkit::EVisualizationWidgetType m_type = VisualizationToolkit::VisualizationWidget_Undefined;
+			VisualizationToolkit::EVisualizationWidget m_type = VisualizationToolkit::EVisualizationWidget::Undefined;
 			CIdentifier m_parentID                                = OV_UndefinedIdentifier;
 			CIdentifier m_boxID                                   = OV_UndefinedIdentifier;
 			std::vector<CIdentifier> m_childrens;

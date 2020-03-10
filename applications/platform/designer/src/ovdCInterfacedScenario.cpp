@@ -170,32 +170,32 @@ static void context_menu_cb(GtkMenuItem* /*item*/, CInterfacedScenario::box_ctx_
 	//CInterfacedScenario::box_ctx_menu_cb_t* pContextMenuCB=static_cast < CInterfacedScenario::box_ctx_menu_cb_t* >(data);
 	switch (cb->command)
 	{
-		case ContextMenu_SelectionCopy: cb->scenario->copySelection();
+		case EContextMenu::SelectionCopy: cb->scenario->copySelection();
 			break;
-		case ContextMenu_SelectionCut: cb->scenario->cutSelection();
+		case EContextMenu::SelectionCut: cb->scenario->cutSelection();
 			break;
-		case ContextMenu_SelectionPaste: cb->scenario->pasteSelection();
+		case EContextMenu::SelectionPaste: cb->scenario->pasteSelection();
 			break;
-		case ContextMenu_SelectionDelete: cb->scenario->deleteSelection();
+		case EContextMenu::SelectionDelete: cb->scenario->deleteSelection();
 			break;
 
-		case ContextMenu_BoxRename: cb->scenario->contextMenuBoxRenameCB(*cb->box);
+		case EContextMenu::BoxRename: cb->scenario->contextMenuBoxRenameCB(*cb->box);
 			break;
-		case ContextMenu_BoxUpdate:
+		case EContextMenu::BoxUpdate:
 		{
 			cb->scenario->snapshotCB();
 			cb->scenario->contextMenuBoxUpdateCB(*cb->box);
 			cb->scenario->redraw();
 			break;
 		}
-		case ContextMenu_BoxRemoveDeprecatedInterfacors:
+		case EContextMenu::BoxRemoveDeprecatedInterfacors:
 		{
 			cb->scenario->contextMenuBoxRemoveDeprecatedInterfacorsCB(*cb->box);
 			cb->scenario->redraw();
 			break;
 		}
-			//case ContextMenu_BoxRename: cb->pInterfacedScenario->contextMenuBoxRenameAllCB(); break;
-		case ContextMenu_BoxDelete:
+			//case EContextMenu::BoxRename: cb->pInterfacedScenario->contextMenuBoxRenameAllCB(); break;
+		case EContextMenu::BoxDelete:
 		{
 			// If selection is empty delete the box under cursor
 			if (cb->scenario->m_SelectedObjects.empty())
@@ -207,50 +207,50 @@ static void context_menu_cb(GtkMenuItem* /*item*/, CInterfacedScenario::box_ctx_
 			else { cb->scenario->deleteSelection(); }
 			break;
 		}
-		case ContextMenu_BoxAddInput: cb->scenario->contextMenuBoxAddInputCB(*cb->box);
+		case EContextMenu::BoxAddInput: cb->scenario->contextMenuBoxAddInputCB(*cb->box);
 			break;
-		case ContextMenu_BoxEditInput: cb->scenario->contextMenuBoxEditInputCB(*cb->box, cb->index);
+		case EContextMenu::BoxEditInput: cb->scenario->contextMenuBoxEditInputCB(*cb->box, cb->index);
 			break;
-		case ContextMenu_BoxRemoveInput: cb->scenario->contextMenuBoxRemoveInputCB(*cb->box, cb->index);
+		case EContextMenu::BoxRemoveInput: cb->scenario->contextMenuBoxRemoveInputCB(*cb->box, cb->index);
 			break;
-		case ContextMenu_BoxAddOutput: cb->scenario->contextMenuBoxAddOutputCB(*cb->box);
+		case EContextMenu::BoxAddOutput: cb->scenario->contextMenuBoxAddOutputCB(*cb->box);
 			break;
-		case ContextMenu_BoxEditOutput: cb->scenario->contextMenuBoxEditOutputCB(*cb->box, cb->index);
+		case EContextMenu::BoxEditOutput: cb->scenario->contextMenuBoxEditOutputCB(*cb->box, cb->index);
 			break;
-		case ContextMenu_BoxRemoveOutput: cb->scenario->contextMenuBoxRemoveOutputCB(*cb->box, cb->index);
-			break;
-
-		case ContextMenu_BoxConnectScenarioInput: cb->scenario->contextMenuBoxConnectScenarioInputCB(
-				*cb->box, cb->index, cb->secondaryIndex);
-			break;
-		case ContextMenu_BoxConnectScenarioOutput: cb->scenario->contextMenuBoxConnectScenarioOutputCB(
-				*cb->box, cb->index, cb->secondaryIndex);
+		case EContextMenu::BoxRemoveOutput: cb->scenario->contextMenuBoxRemoveOutputCB(*cb->box, cb->index);
 			break;
 
-		case ContextMenu_BoxDisconnectScenarioInput: cb->scenario->contextMenuBoxDisconnectScenarioInputCB(
+		case EContextMenu::BoxConnectScenarioInput: cb->scenario->contextMenuBoxConnectScenarioInputCB(
 				*cb->box, cb->index, cb->secondaryIndex);
 			break;
-		case ContextMenu_BoxDisconnectScenarioOutput: cb->scenario->contextMenuBoxDisconnectScenarioOutputCB(
+		case EContextMenu::BoxConnectScenarioOutput: cb->scenario->contextMenuBoxConnectScenarioOutputCB(
 				*cb->box, cb->index, cb->secondaryIndex);
 			break;
 
-		case ContextMenu_BoxAddSetting: cb->scenario->contextMenuBoxAddSettingCB(*cb->box);
+		case EContextMenu::BoxDisconnectScenarioInput: cb->scenario->contextMenuBoxDisconnectScenarioInputCB(
+				*cb->box, cb->index, cb->secondaryIndex);
 			break;
-		case ContextMenu_BoxEditSetting: cb->scenario->contextMenuBoxEditSettingCB(*cb->box, cb->index);
+		case EContextMenu::BoxDisconnectScenarioOutput: cb->scenario->contextMenuBoxDisconnectScenarioOutputCB(
+				*cb->box, cb->index, cb->secondaryIndex);
 			break;
-		case ContextMenu_BoxRemoveSetting: cb->scenario->contextMenuBoxRemoveSettingCB(*cb->box, cb->index);
+
+		case EContextMenu::BoxAddSetting: cb->scenario->contextMenuBoxAddSettingCB(*cb->box);
 			break;
-		case ContextMenu_BoxConfigure: cb->scenario->contextMenuBoxConfigureCB(*cb->box);
+		case EContextMenu::BoxEditSetting: cb->scenario->contextMenuBoxEditSettingCB(*cb->box, cb->index);
 			break;
-		case ContextMenu_BoxAbout: cb->scenario->contextMenuBoxAboutCB(*cb->box);
+		case EContextMenu::BoxRemoveSetting: cb->scenario->contextMenuBoxRemoveSettingCB(*cb->box, cb->index);
 			break;
-		case ContextMenu_BoxEnable:
+		case EContextMenu::BoxConfigure: cb->scenario->contextMenuBoxConfigureCB(*cb->box);
+			break;
+		case EContextMenu::BoxAbout: cb->scenario->contextMenuBoxAboutCB(*cb->box);
+			break;
+		case EContextMenu::BoxEnable:
 		{
 			if (cb->scenario->m_SelectedObjects.empty()) { cb->scenario->contextMenuBoxEnableCB(*cb->box); }
 			else { cb->scenario->contextMenuBoxEnableAllCB(); }
 			break;
 		}
-		case ContextMenu_BoxDisable:
+		case EContextMenu::BoxDisable:
 		{
 			if (cb->scenario->m_SelectedObjects.empty())
 			{
@@ -260,15 +260,15 @@ static void context_menu_cb(GtkMenuItem* /*item*/, CInterfacedScenario::box_ctx_
 			cb->scenario->contextMenuBoxDisableAllCB();
 			break;
 		}
-		case ContextMenu_BoxDocumentation: cb->scenario->contextMenuBoxDocumentationCB(*cb->box);
+		case EContextMenu::BoxDocumentation: cb->scenario->contextMenuBoxDocumentationCB(*cb->box);
 			break;
 
-		case ContextMenu_BoxEditMetabox: cb->scenario->contextMenuBoxEditMetaboxCB(*cb->box);
+		case EContextMenu::BoxEditMetabox: cb->scenario->contextMenuBoxEditMetaboxCB(*cb->box);
 			break;
 
-		case ContextMenu_ScenarioAbout: cb->scenario->contextMenuScenarioAboutCB();
+		case EContextMenu::ScenarioAbout: cb->scenario->contextMenuScenarioAboutCB();
 			break;
-		case ContextMenu_ScenarioAddComment: cb->scenario->contextMenuScenarioAddCommentCB();
+		case EContextMenu::ScenarioAddComment: cb->scenario->contextMenuScenarioAddCommentCB();
 			break;
 		default: break;
 	}
@@ -577,7 +577,7 @@ static void linkHandler(ILink* link, const int x, const int y, const CIdentifier
 
 CInterfacedScenario::CInterfacedScenario(const IKernelContext& ctx, CApplication& application, IScenario& scenario, CIdentifier& scenarioID,
 										 GtkNotebook& notebook, const char* guiFilename, const char* guiSettingsFilename)
-	: m_PlayerStatus(PlayerStatus_Stop), m_ScenarioID(scenarioID), m_Application(application), m_Scenario(scenario), m_kernelCtx(ctx), m_notebook(notebook),
+	: m_PlayerStatus(EPlayerStatus::Stop), m_ScenarioID(scenarioID), m_Application(application), m_Scenario(scenario), m_kernelCtx(ctx), m_notebook(notebook),
 	  m_guiFilename(guiFilename), m_guiSettingsFilename(guiSettingsFilename)
 {
 	m_guiBuilder = gtk_builder_new();
@@ -1129,11 +1129,6 @@ void CInterfacedScenario::redraw(IBox& box)
 	bool metabox                      = canCreate && proxy.isMetabox();
 	bool disabled                     = proxy.isDisabled();
 
-
-	// Check if this is a mensia box
-	auto pod    = m_kernelCtx.getPluginManager().getPluginObjectDescCreating(box.getAlgorithmClassIdentifier());
-	bool mensia = (pod && pod->hasFunctionality(M_Functionality_IsMensia));
-
 	// Add a thick dashed border around selected boxes
 	if (m_SelectedObjects.count(box.getIdentifier()))
 	{
@@ -1164,7 +1159,6 @@ void CInterfacedScenario::redraw(IBox& box)
 		else if (disabled) { gdk_gc_set_rgb_fg_color(drawGC, &gColors[Color_BoxBackgroundDisabled]); }
 		else if (deprecated) { gdk_gc_set_rgb_fg_color(drawGC, &gColors[Color_BoxBackgroundDeprecated]); }
 		else if (!upToDate || pendingDeprecatedInterfacors) { gdk_gc_set_rgb_fg_color(drawGC, &gColors[Color_BoxBackgroundOutdated]); }
-		else if (mensia) { gdk_gc_set_rgb_fg_color(drawGC, &gColors[Color_BoxBackgroundMensia]); }
 			//else if(metabox) { gdk_gc_set_rgb_fg_color(drawGC, &gColors[Color_BoxBackgroundMetabox]); }
 		else { gdk_gc_set_rgb_fg_color(drawGC, &gColors[Color_BoxBackground]); }
 	}
@@ -1205,10 +1199,8 @@ void CInterfacedScenario::redraw(IBox& box)
 
 	gdk_draw_rounded_rectangle(widget->window, drawGC, TRUE, startX, startY, sizeX, sizeY, gint(round(8.0 * m_currentScale)));
 
-	if (mensia) { gdk_draw_pixbuf(widget->window, drawGC, m_mensiaLogoPixbuf, 5, 5, startX, startY, 80, (sizeY < 50) ? sizeY : 50, GDK_RGB_DITHER_NONE, 0, 0); }
 
 	int borderColor = Color_BoxBorder;
-	if (mensia) { borderColor = Color_BoxBorderMensia; }
 	gdk_gc_set_rgb_fg_color(drawGC, &gColors[borderColor]);
 	gdk_gc_set_line_attributes(drawGC, 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_ROUND);
 	gdk_draw_rounded_rectangle(widget->window, drawGC, FALSE, startX, startY, sizeX, sizeY, gint(round(8.0 * m_currentScale)));
@@ -2030,7 +2022,7 @@ void CInterfacedScenario::scenarioDrawingAreaDragDataReceivedCB(GdkDragContext* 
 		m_SelectedObjects.insert(boxID);
 
 		// If a visualization box was dropped, add it in window manager
-		if (pod && pod->hasFunctionality(OVD_Functionality_Visualization))
+		if (pod && pod->hasFunctionality(EPluginFunctionality::Visualization))
 		{
 			// Let window manager know about new box
 			if (m_DesignerVisualization) { m_DesignerVisualization->onVisualizationBoxAdded(box); }
@@ -2226,7 +2218,7 @@ namespace
 } // namespace
 
 GtkImageMenuItem* CInterfacedScenario::addNewImageMenuItemWithCBGeneric(GtkMenu* menu, const char* icon, const char* label, const menu_cb_function_t cb,
-																		IBox* box, const size_t command, const size_t index, const size_t index2)
+																		IBox* box, const EContextMenu command, const size_t index, const size_t index2)
 {
 	GtkImageMenuItem* menuItem = gtk_menu_add_new_image_menu_item(menu, icon, label);
 	box_ctx_menu_cb_t menuCB;
@@ -2347,16 +2339,16 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(GtkWidget* widget, 
 
 			// -------------- SELECTION -----------
 
-			if (this->hasSelection()) { addNewImageMenuItemWithCB(menu, GTK_STOCK_CUT, "cut", context_menu_cb, nullptr, ContextMenu_SelectionCut, unused); }
-			if (this->hasSelection()) { addNewImageMenuItemWithCB(menu, GTK_STOCK_COPY, "copy", context_menu_cb, nullptr, ContextMenu_SelectionCopy, unused); }
+			if (this->hasSelection()) { addNewImageMenuItemWithCB(menu, GTK_STOCK_CUT, "cut", context_menu_cb, nullptr, EContextMenu::SelectionCut, unused); }
+			if (this->hasSelection()) { addNewImageMenuItemWithCB(menu, GTK_STOCK_COPY, "copy", context_menu_cb, nullptr, EContextMenu::SelectionCopy, unused); }
 			if ((m_Application.m_ClipboardScenario->getNextBoxIdentifier(OV_UndefinedIdentifier) != OV_UndefinedIdentifier)
 				|| (m_Application.m_ClipboardScenario->getNextCommentIdentifier(OV_UndefinedIdentifier) != OV_UndefinedIdentifier))
 			{
-				addNewImageMenuItemWithCB(menu, GTK_STOCK_PASTE, "paste", context_menu_cb, nullptr, ContextMenu_SelectionPaste, unused);
+				addNewImageMenuItemWithCB(menu, GTK_STOCK_PASTE, "paste", context_menu_cb, nullptr, EContextMenu::SelectionPaste, unused);
 			}
 			if (this->hasSelection())
 			{
-				addNewImageMenuItemWithCB(menu, GTK_STOCK_DELETE, "delete", context_menu_cb, nullptr, ContextMenu_SelectionDelete, unused);
+				addNewImageMenuItemWithCB(menu, GTK_STOCK_DELETE, "delete", context_menu_cb, nullptr, EContextMenu::SelectionDelete, unused);
 			}
 
 			if (m_currentObject.m_ID != OV_UndefinedIdentifier && m_Scenario.isBox(m_currentObject.m_ID))
@@ -2405,14 +2397,14 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(GtkWidget* widget, 
 									if (boxID == id && idx == i)
 									{
 										addNewImageMenuItemWithCBGeneric(menuAction, GTK_STOCK_DISCONNECT, ("disconnect from " + str2).c_str(),
-																		 context_menu_cb, box, ContextMenu_BoxDisconnectScenarioInput, i, j);
+																		 context_menu_cb, box, EContextMenu::BoxDisconnectScenarioInput, i, j);
 									}
 									else
 									{
 										if (m_kernelCtx.getTypeManager().isDerivedFromStream(inputTypeID, typeID))
 										{
 											addNewImageMenuItemWithCBGeneric(menuAction, GTK_STOCK_CONNECT, ("connect to " + str2).c_str(),
-																			 context_menu_cb, box, ContextMenu_BoxConnectScenarioInput, i, j);
+																			 context_menu_cb, box, EContextMenu::BoxConnectScenarioInput, i, j);
 										}
 									}
 								}
@@ -2421,13 +2413,13 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(GtkWidget* widget, 
 							if (canModifyInput)
 							{
 								addNewImageMenuItemWithCB(menuAction, GTK_STOCK_EDIT, "configure...", context_menu_cb, box,
-														  ContextMenu_BoxEditInput, i);
+														  EContextMenu::BoxEditInput, i);
 							}
 
 							if (canAddInput && nFixedInput <= i)
 							{
 								addNewImageMenuItemWithCB(menuAction, GTK_STOCK_REMOVE, "delete", context_menu_cb, box,
-														  ContextMenu_BoxRemoveInput, i);
+														  EContextMenu::BoxRemoveInput, i);
 							}
 
 							if (gtk_container_get_children_count(GTK_CONTAINER(menuAction)) > 0)
@@ -2439,7 +2431,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(GtkWidget* widget, 
 						gtk_menu_add_separator_menu_item(menuInput);
 						if (canAddInput)
 						{
-							addNewImageMenuItemWithCB(menuInput, GTK_STOCK_ADD, "new...", context_menu_cb, box, ContextMenu_BoxAddInput, unused);
+							addNewImageMenuItemWithCB(menuInput, GTK_STOCK_ADD, "new...", context_menu_cb, box, EContextMenu::BoxAddInput, unused);
 						}
 						gtk_menu_item_set_submenu(GTK_MENU_ITEM(input), GTK_WIDGET(menuInput));
 					}
@@ -2481,12 +2473,12 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(GtkWidget* widget, 
 									if (boxID == id && idx == i)
 									{
 										addNewImageMenuItemWithCBGeneric(menuAction, GTK_STOCK_DISCONNECT, ("disconnect from " + str2).c_str(),
-																		 context_menu_cb, box, ContextMenu_BoxDisconnectScenarioOutput, i, j);
+																		 context_menu_cb, box, EContextMenu::BoxDisconnectScenarioOutput, i, j);
 									}
 									else if (m_kernelCtx.getTypeManager().isDerivedFromStream(typeID, outputTypeID))
 									{
 										addNewImageMenuItemWithCBGeneric(menuAction, GTK_STOCK_CONNECT, ("connect to " + str2).c_str(),
-																		 context_menu_cb, box, ContextMenu_BoxConnectScenarioOutput, i, j);
+																		 context_menu_cb, box, EContextMenu::BoxConnectScenarioOutput, i, j);
 									}
 								}
 							}
@@ -2494,12 +2486,12 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(GtkWidget* widget, 
 							if (canModifyOutput)
 							{
 								addNewImageMenuItemWithCB(menuAction, GTK_STOCK_EDIT, "configure...", context_menu_cb, box,
-														  ContextMenu_BoxEditOutput, i);
+														  EContextMenu::BoxEditOutput, i);
 							}
 							if (canAddOutput && nFixedOutput <= i)
 							{
 								addNewImageMenuItemWithCB(menuAction, GTK_STOCK_REMOVE, "delete", context_menu_cb, box,
-														  ContextMenu_BoxRemoveOutput, i);
+														  EContextMenu::BoxRemoveOutput, i);
 							}
 
 							if (gtk_container_get_children_count(GTK_CONTAINER(menuAction)) > 0)
@@ -2511,7 +2503,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(GtkWidget* widget, 
 						gtk_menu_add_separator_menu_item(menuOutput);
 						if (canAddOutput)
 						{
-							addNewImageMenuItemWithCB(menuOutput, GTK_STOCK_ADD, "new...", context_menu_cb, box, ContextMenu_BoxAddOutput, unused);
+							addNewImageMenuItemWithCB(menuOutput, GTK_STOCK_ADD, "new...", context_menu_cb, box, EContextMenu::BoxAddOutput, unused);
 						}
 						gtk_menu_item_set_submenu(GTK_MENU_ITEM(itemOutput), GTK_WIDGET(menuOutput));
 					}
@@ -2541,12 +2533,12 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(GtkWidget* widget, 
 								if (canModifySetting)
 								{
 									addNewImageMenuItemWithCB(menuAction, GTK_STOCK_EDIT, "configure...", context_menu_cb, box,
-															  ContextMenu_BoxEditSetting, i);
+															  EContextMenu::BoxEditSetting, i);
 								}
 								if (canAddSetting && nFixedSetting <= i)
 								{
 									addNewImageMenuItemWithCB(menuAction, GTK_STOCK_REMOVE, "delete", context_menu_cb, box,
-															  ContextMenu_BoxRemoveSetting, i);
+															  EContextMenu::BoxRemoveSetting, i);
 								}
 								gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuItem), GTK_WIDGET(menuAction));
 							}
@@ -2555,7 +2547,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(GtkWidget* widget, 
 						gtk_menu_add_separator_menu_item(menuSetting);
 						if (canAddSetting)
 						{
-							addNewImageMenuItemWithCB(menuSetting, GTK_STOCK_ADD, "new...", context_menu_cb, box, ContextMenu_BoxAddSetting, unused);
+							addNewImageMenuItemWithCB(menuSetting, GTK_STOCK_ADD, "new...", context_menu_cb, box, EContextMenu::BoxAddSetting, unused);
 						}
 						gtk_menu_item_set_submenu(GTK_MENU_ITEM(itemSetting), GTK_WIDGET(menuSetting));
 					}
@@ -2565,7 +2557,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(GtkWidget* widget, 
 					if (!m_boxCtxMenuCBs.empty()) { gtk_menu_add_separator_menu_item(menu); }
 					if (box->hasAttribute(OV_AttributeId_Box_ToBeUpdated))
 					{
-						auto updateMenuItem = addNewImageMenuItemWithCB(menu, GTK_STOCK_REFRESH, "update box", context_menu_cb, box, ContextMenu_BoxUpdate,
+						auto updateMenuItem = addNewImageMenuItemWithCB(menu, GTK_STOCK_REFRESH, "update box", context_menu_cb, box, EContextMenu::BoxUpdate,
 																		unused);
 						if (box->hasAttribute(OV_AttributeId_Box_FlagNeedsManualUpdate)
 							|| box->hasAttribute(OV_AttributeId_Box_FlagCanAddInput)
@@ -2582,12 +2574,12 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(GtkWidget* widget, 
 					if (box->hasAttribute(OV_AttributeId_Box_PendingDeprecatedInterfacors))
 					{
 						addNewImageMenuItemWithCB(menu, GTK_STOCK_REFRESH, "remove deprecated I/O/S", context_menu_cb, box,
-												  ContextMenu_BoxRemoveDeprecatedInterfacors, unused);
+												  EContextMenu::BoxRemoveDeprecatedInterfacors, unused);
 					}
-					addNewImageMenuItemWithCB(menu, GTK_STOCK_EDIT, "rename box...", context_menu_cb, box, ContextMenu_BoxRename, unused);
+					addNewImageMenuItemWithCB(menu, GTK_STOCK_EDIT, "rename box...", context_menu_cb, box, EContextMenu::BoxRename, unused);
 					if (box->getSettingCount() != 0)
 					{
-						addNewImageMenuItemWithCB(menu, GTK_STOCK_PREFERENCES, "configure box...", context_menu_cb, box, ContextMenu_BoxConfigure, unused);
+						addNewImageMenuItemWithCB(menu, GTK_STOCK_PREFERENCES, "configure box...", context_menu_cb, box, EContextMenu::BoxConfigure, unused);
 					}
 					// Add this option only if the user has the authorization to open a metabox
 					if (box->getAlgorithmClassIdentifier() == OVP_ClassId_BoxAlgorithm_Metabox)
@@ -2613,20 +2605,20 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(GtkWidget* widget, 
 						if (canImportFile)
 						{
 							addNewImageMenuItemWithCB(menu, GTK_STOCK_PREFERENCES, "open this meta box in editor", context_menu_cb, box,
-													  ContextMenu_BoxEditMetabox, unused);
+													  EContextMenu::BoxEditMetabox, unused);
 						}
 					}
-					addNewImageMenuItemWithCB(menu, GTK_STOCK_CONNECT, "enable box", context_menu_cb, box, ContextMenu_BoxEnable, unused);
-					addNewImageMenuItemWithCB(menu, GTK_STOCK_DISCONNECT, "disable box", context_menu_cb, box, ContextMenu_BoxDisable, unused);
-					addNewImageMenuItemWithCB(menu, GTK_STOCK_CUT, "delete box", context_menu_cb, box, ContextMenu_BoxDelete, unused);
-					addNewImageMenuItemWithCB(menu, GTK_STOCK_HELP, "box documentation...", context_menu_cb, box, ContextMenu_BoxDocumentation, unused);
-					addNewImageMenuItemWithCB(menu, GTK_STOCK_ABOUT, "about box...", context_menu_cb, box, ContextMenu_BoxAbout, unused);
+					addNewImageMenuItemWithCB(menu, GTK_STOCK_CONNECT, "enable box", context_menu_cb, box, EContextMenu::BoxEnable, unused);
+					addNewImageMenuItemWithCB(menu, GTK_STOCK_DISCONNECT, "disable box", context_menu_cb, box, EContextMenu::BoxDisable, unused);
+					addNewImageMenuItemWithCB(menu, GTK_STOCK_CUT, "delete box", context_menu_cb, box, EContextMenu::BoxDelete, unused);
+					addNewImageMenuItemWithCB(menu, GTK_STOCK_HELP, "box documentation...", context_menu_cb, box, EContextMenu::BoxDocumentation, unused);
+					addNewImageMenuItemWithCB(menu, GTK_STOCK_ABOUT, "about box...", context_menu_cb, box, EContextMenu::BoxAbout, unused);
 				}
 			}
 
 			gtk_menu_add_separator_menu_item(menu);
-			addNewImageMenuItemWithCB(menu, GTK_STOCK_EDIT, "add comment to scenario...", context_menu_cb, nullptr, ContextMenu_ScenarioAddComment, unused);
-			addNewImageMenuItemWithCB(menu, GTK_STOCK_ABOUT, "about scenario...", context_menu_cb, nullptr, ContextMenu_ScenarioAbout, unused);
+			addNewImageMenuItemWithCB(menu, GTK_STOCK_EDIT, "add comment to scenario...", context_menu_cb, nullptr, EContextMenu::ScenarioAddComment, unused);
+			addNewImageMenuItemWithCB(menu, GTK_STOCK_ABOUT, "about scenario...", context_menu_cb, nullptr, EContextMenu::ScenarioAbout, unused);
 
 			// -------------- RUN --------------
 
@@ -2851,7 +2843,7 @@ void CInterfacedScenario::scenarioDrawingAreaKeyPressEventCB(GtkWidget* /*widget
 	// F7 :play/pause
 	if (event->keyval == GDK_F7)
 	{
-		if (m_Application.getCurrentInterfacedScenario()->m_PlayerStatus == PlayerStatus_Play) { m_Application.pauseScenarioCB(); }
+		if (m_Application.getCurrentInterfacedScenario()->m_PlayerStatus == EPlayerStatus::Play) { m_Application.pauseScenarioCB(); }
 		else { m_Application.playScenarioCB(); }
 	}
 	// F6 : step
@@ -2983,7 +2975,7 @@ void CInterfacedScenario::pasteSelection()
 		const IPluginObjectDesc* pod = m_kernelCtx.getPluginManager().getPluginObjectDescCreating(boxAlgorithmID);
 
 		// If a visualization box was dropped, add it in window manager
-		if (pod && pod->hasFunctionality(OVD_Functionality_Visualization))
+		if (pod && pod->hasFunctionality(EPluginFunctionality::Visualization))
 		{
 			// Let window manager know about new box
 			if (m_DesignerVisualization) { m_DesignerVisualization->onVisualizationBoxAdded(m_Scenario.getBoxDetails(newID)); }
@@ -3135,7 +3127,7 @@ void CInterfacedScenario::contextMenuBoxRenameCB(IBox& box)
 		const IPluginObjectDesc* desc = m_kernelCtx.getPluginManager().getPluginObjectDescCreating(id);
 
 		//if a visualization box was renamed, tell window manager about it
-		if (desc && desc->hasFunctionality(OVD_Functionality_Visualization))
+		if (desc && desc->hasFunctionality(EPluginFunctionality::Visualization))
 		{
 			if (m_DesignerVisualization) { m_DesignerVisualization->onVisualizationBoxRenamed(box.getIdentifier()); }
 		}
@@ -3191,7 +3183,7 @@ void CInterfacedScenario::contextMenuBoxRenameAllCB()
 						const IPluginObjectDesc* pod = m_kernelCtx.getPluginManager().getPluginObjectDescCreating(id);
 
 						//if a visualization box was renamed, tell window manager about it
-						if (pod && pod->hasFunctionality(OVD_Functionality_Visualization))
+						if (pod && pod->hasFunctionality(EPluginFunctionality::Visualization))
 						{
 							if (m_DesignerVisualization) { m_DesignerVisualization->onVisualizationBoxRenamed(box->getIdentifier()); }
 						}

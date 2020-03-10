@@ -18,7 +18,7 @@ using namespace /*OpenViBE::*/Designer;
 using namespace /*OpenViBE::*/Kernel;
 using namespace /*OpenViBE::*/VisualizationToolkit;
 
-bool CVisualizationWidget::initialize(const CIdentifier& id, const CString& name, const EVisualizationWidgetType type, const CIdentifier& parentID,
+bool CVisualizationWidget::initialize(const CIdentifier& id, const CString& name, const EVisualizationWidget type, const CIdentifier& parentID,
 									  const CIdentifier& boxID, const size_t nChild)
 {
 	m_id       = id;
@@ -49,7 +49,7 @@ bool CVisualizationWidget::removeChild(const CIdentifier& id)
 		if (m_childrens[i] == id)
 		{
 			//remove tab from a window (variable number of children)
-			if (m_type == VisualizationWidget_VisualizationWindow) { m_childrens.erase(m_childrens.begin() + i); }
+			if (m_type == EVisualizationWidget::Window) { m_childrens.erase(m_childrens.begin() + i); }
 			else //clear identifier if ith child for a regular widget (fixed number of children)
 			{
 				m_childrens[i] = OV_UndefinedIdentifier;

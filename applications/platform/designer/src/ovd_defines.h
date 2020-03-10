@@ -16,65 +16,41 @@ namespace OpenViBE
 	{
 		typedef enum
 		{
-			CommandLineFlag_None =0x00000000,
-			CommandLineFlag_Open =0x00000001,
-			CommandLineFlag_Play =0x00000002,
-			CommandLineFlag_PlayFast =0x00000004,
-			CommandLineFlag_NoGui =0x00000008,
-			CommandLineFlag_NoCheckColorDepth=0x00000010,
-			CommandLineFlag_NoManageSession =0x00000020,
-			CommandLineFlag_Define =0x00000040,
-			CommandLineFlag_Config =0x00000080,
-			CommandLineFlag_RandomSeed =0x00000100,
-			CommandLineFlag_NoVisualization =0x00000200  /** flag to hide visualisation widget */
+			CommandLineFlag_None = 0x00000000,
+			CommandLineFlag_Open = 0x00000001,
+			CommandLineFlag_Play = 0x00000002,
+			CommandLineFlag_PlayFast = 0x00000004,
+			CommandLineFlag_NoGui = 0x00000008,
+			CommandLineFlag_NoCheckColorDepth = 0x00000010,
+			CommandLineFlag_NoManageSession = 0x00000020,
+			CommandLineFlag_Define = 0x00000040,
+			CommandLineFlag_Config = 0x00000080,
+			CommandLineFlag_RandomSeed = 0x00000100,
+			CommandLineFlag_NoVisualization = 0x00000200  /** flag to hide visualisation widget */
 		} ECommandLineFlag;
 
-		enum
+		enum class EContextMenu
 		{
-			ContextMenu_SelectionCopy,
-			ContextMenu_SelectionCut,
-			ContextMenu_SelectionPaste,
-			ContextMenu_SelectionDelete,
+			SelectionCopy, SelectionCut, SelectionPaste, SelectionDelete,
 
-			ContextMenu_BoxUpdate,
-			ContextMenu_BoxRemoveDeprecatedInterfacors,
-			ContextMenu_BoxRename,
-			ContextMenu_BoxDelete,
-			ContextMenu_BoxAddInput,
-			ContextMenu_BoxEditInput,
-			ContextMenu_BoxRemoveInput,
-			ContextMenu_BoxAddOutput,
-			ContextMenu_BoxEditOutput,
-			ContextMenu_BoxRemoveOutput,
+			BoxUpdate, BoxRemoveDeprecatedInterfacors, BoxRename, BoxDelete,
+			BoxAddInput, BoxEditInput, BoxRemoveInput,
+			BoxAddOutput, BoxEditOutput, BoxRemoveOutput,
 
-			ContextMenu_BoxConnectScenarioInput,
-			ContextMenu_BoxConnectScenarioOutput,
+			BoxConnectScenarioInput, BoxConnectScenarioOutput,
+			BoxDisconnectScenarioInput, BoxDisconnectScenarioOutput,
 
-			ContextMenu_BoxDisconnectScenarioInput,
-			ContextMenu_BoxDisconnectScenarioOutput,
+			BoxAddSetting, BoxRemoveSetting, BoxEditSetting,
+			BoxConfigure, BoxAbout, BoxEnable, BoxDisable,
 
-			ContextMenu_BoxAddSetting,
-			ContextMenu_BoxRemoveSetting,
-			ContextMenu_BoxEditSetting,
-			ContextMenu_BoxConfigure,
-			ContextMenu_BoxAbout,
-			ContextMenu_BoxEnable,
-			ContextMenu_BoxDisable,
+			BoxAddMessageInput, BoxRemoveMessageInput,
+			BoxAddMessageOutput, BoxRemoveMessageOutput,
+			BoxEditMessageInput, BoxEditMessageOutput,
 
-			ContextMenu_BoxAddMessageInput,
-			ContextMenu_BoxRemoveMessageInput,
-			ContextMenu_BoxAddMessageOutput,
-			ContextMenu_BoxRemoveMessageOutput,
-
-			ContextMenu_BoxEditMessageInput,
-			ContextMenu_BoxEditMessageOutput,
-
-			ContextMenu_BoxEditMetabox,
-
-			ContextMenu_BoxDocumentation,
-
-			ContextMenu_ScenarioAddComment,
-			ContextMenu_ScenarioAbout,
+			BoxEditMetabox,
+			BoxDocumentation,
+			ScenarioAddComment,
+			ScenarioAbout
 		};
 
 		enum
@@ -115,39 +91,18 @@ namespace OpenViBE
 			Color_CommentBackgroundSelected,
 			Color_CommentBorder,
 			Color_CommentBorderSelected,
-			Color_Link,
+			Color_Link, 
 			Color_LinkSelected,
 			Color_LinkDownCast,
 			Color_LinkUpCast,
 			Color_LinkInvalid,
 			Color_SelectionArea,
 			Color_SelectionAreaBorder,
-			Color_BoxBackgroundMensia = 8002,
-			Color_BoxBorderMensia = 8004
 		};
 
-		enum
-		{
-			Box_None,
-			Box_Input,
-			Box_Output,
-			Box_Setting,
-			Box_Link,
-			Box_ScenarioInput,
-			Box_ScenarioOutput,
-			Box_Update
-		};
+		enum { Box_None, Box_Input, Box_Output, Box_Setting, Box_Link, Box_ScenarioInput, Box_ScenarioOutput, Box_Update };
 
-		enum
-		{
-			Mode_None,
-			Mode_Selection,
-			Mode_SelectionAdd,
-			Mode_MoveScenario,
-			Mode_MoveSelection,
-			Mode_Connect,
-			Mode_EditSettings,
-		};
+		enum { Mode_None, Mode_Selection, Mode_SelectionAdd, Mode_MoveScenario, Mode_MoveSelection, Mode_Connect, Mode_EditSettings };
 	}  // namespace Designer
 }  // namespace OpenViBE
 

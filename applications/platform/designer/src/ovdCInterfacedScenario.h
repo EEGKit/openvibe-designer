@@ -141,7 +141,7 @@ namespace OpenViBE
 			//-----------------------------
 			typedef struct SBoxContextMenuCB
 			{
-				size_t command;
+				EContextMenu command;
 				size_t index;
 				size_t secondaryIndex; // Used for connecting two streams
 				Kernel::IBox* box;
@@ -257,10 +257,10 @@ namespace OpenViBE
 
 			typedef void (*menu_cb_function_t)(GtkMenuItem*, box_ctx_menu_cb_t*);
 			GtkImageMenuItem* addNewImageMenuItemWithCBGeneric(GtkMenu* menu, const char* icon, const char* label, menu_cb_function_t cb,
-															   Kernel::IBox* box, size_t command, const size_t index, const size_t index2);
+															   Kernel::IBox* box, EContextMenu command, const size_t index, const size_t index2);
 
 			GtkImageMenuItem* addNewImageMenuItemWithCB(GtkMenu* menu, const char* icon, const char* label, const menu_cb_function_t cb,
-														Kernel::IBox* box, const size_t command, const size_t index)
+														Kernel::IBox* box, const EContextMenu command, const size_t index)
 			{
 				return addNewImageMenuItemWithCBGeneric(menu, icon, label, cb, box, command, index, 0);
 			}

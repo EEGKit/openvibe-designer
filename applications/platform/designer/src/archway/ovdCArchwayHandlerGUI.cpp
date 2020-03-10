@@ -20,7 +20,7 @@ using namespace /*OpenViBE::*/Designer;
 
 namespace
 {
-	enum EnginePipelinesModelColumn
+	enum EnginePipelinesModelColumn 
 	{
 		Column_PipelineId = 0,
 		Column_PipelineHexId,

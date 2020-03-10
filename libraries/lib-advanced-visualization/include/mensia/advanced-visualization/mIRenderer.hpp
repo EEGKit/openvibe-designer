@@ -41,21 +41,7 @@ namespace Mensia
 	{
 		enum class ERendererType
 		{
-			Default,
-			Topography2D,
-			Topography3D,
-			Bars,
-			Bitmap,
-			Connectivity,
-			Cube,
-			Flower,
-			Line,
-			Loreta,
-			Mountain,
-			MultiLine,
-			Slice,
-			XYZPlot,
-			Last
+			Default, Topography2D, Topography3D, Bars, Bitmap, Connectivity, Cube, Flower, Line, Loreta, Mountain, MultiLine, Slice, XYZPlot, Last
 		};
 
 		class LMAV_API IRenderer

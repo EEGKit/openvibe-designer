@@ -129,7 +129,7 @@ bool CTopographicMapDatabase::processValues()
 	for (int64_t i = 0; i < m_NElectrodes; ++i) { *(m_electrodePotentials.getBuffer() + i) = m_SampleBuffers[bufferIdx][i * m_DimSizes[1] + sampleIdx]; }
 
 	//interpolate spline values (potentials)
-	if (m_interpolationType == ESphericalLinearInterpolationType::Spline)
+	if (m_interpolationType == EInterpolationType::Spline)
 	{
 		m_interpolation.activateInputTrigger(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_ComputeSplineCoefs, true);
 	}
@@ -147,7 +147,7 @@ bool CTopographicMapDatabase::processValues()
 		m_interpolation.getInputParameter(OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_SamplePointsCoordinates)->
 						setReferenceTarget(&m_samplePointCoords);
 
-		if (m_interpolationType == ESphericalLinearInterpolationType::Spline)
+		if (m_interpolationType == EInterpolationType::Spline)
 		{
 			m_interpolation.activateInputTrigger(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_InterpolateSpline, true);
 		}
@@ -188,12 +188,6 @@ bool CTopographicMapDatabase::setDelay(const double delay)
 	return true;
 }
 
-bool CTopographicMapDatabase::setInterpolationType(const uint64_t type)
-{
-	m_interpolationType = type;
-	return true;
-}
-
 bool CTopographicMapDatabase::interpolateValues()
 {
 	//can't interpolate before first buffer has been received
@@ -209,7 +203,7 @@ bool CTopographicMapDatabase::interpolateValues()
 						setReferenceTarget(&m_samplePointCoords);
 
 		//interpolate using spline or laplacian coefficients depending on interpolation mode
-		if (m_interpolationType == ESphericalLinearInterpolationType::Spline)
+		if (m_interpolationType == EInterpolationType::Spline)
 		{
 			m_interpolation.activateInputTrigger(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_InterpolateSpline, true);
 		}

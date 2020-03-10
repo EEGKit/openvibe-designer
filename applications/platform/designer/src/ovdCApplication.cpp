@@ -548,27 +548,27 @@ static gboolean idle_application_loop(gpointer data)
 		{
 			switch (app->getPlayer()->getStatus())
 			{
-				case PlayerStatus_Stop:
+				case EPlayerStatus::Stop:
 					gtk_signal_emit_by_name(GTK_OBJECT(gtk_builder_get_object(app->m_Builder, "openvibe-button_stop")), "clicked");
 					break;
-				case PlayerStatus_Pause:
-					while (scenario->m_PlayerStatus != PlayerStatus_Pause)
+				case EPlayerStatus::Pause:
+					while (scenario->m_PlayerStatus != EPlayerStatus::Pause)
 					{
 						gtk_signal_emit_by_name(GTK_OBJECT(gtk_builder_get_object(app->m_Builder, "openvibe-button_play_pause")), "clicked");
 					}
 					break;
-				case PlayerStatus_Step: break;
-				case PlayerStatus_Play:
-					while (scenario->m_PlayerStatus != PlayerStatus_Play)
+				case EPlayerStatus::Step: break;
+				case EPlayerStatus::Play:
+					while (scenario->m_PlayerStatus != EPlayerStatus::Play)
 					{
 						gtk_signal_emit_by_name(GTK_OBJECT(gtk_builder_get_object(app->m_Builder, "openvibe-button_play_pause")), "clicked");
 					}
 					break;
-				case PlayerStatus_Forward:
+				case EPlayerStatus::Forward:
 					gtk_signal_emit_by_name(GTK_OBJECT(gtk_builder_get_object(app->m_Builder, "openvibe-button_forward")), "clicked");
 					break;
 				default:
-					std::cout << "unhandled player status : " << app->getPlayer()->getStatus() << " :(\n";
+					std::cout << "unhandled player status : " << toString(app->getPlayer()->getStatus()) << " :(\n";
 					break;
 			}
 		}
@@ -1324,10 +1324,10 @@ bool CApplication::openScenario(const char* filename)
 			{
 				const IBox* box                           = scenario.getBoxDetails(boxID);
 				const IPluginObjectDesc* boxAlgorithmDesc = m_kernelCtx.getPluginManager().getPluginObjectDescCreating(box->getAlgorithmClassIdentifier());
-				if (boxAlgorithmDesc && boxAlgorithmDesc->hasFunctionality(OVD_Functionality_Visualization))
+				if (boxAlgorithmDesc && boxAlgorithmDesc->hasFunctionality(EPluginFunctionality::Visualization))
 				{
 					//a visualization widget was found in scenario : manually add it to visualization tree
-					vizTree->addVisualizationWidget(id, box->getName(), VisualizationToolkit::VisualizationWidget_VisualizationBox,
+					vizTree->addVisualizationWidget(id, box->getName(), VisualizationToolkit::EVisualizationWidget::Box,
 													OV_UndefinedIdentifier, 0, box->getIdentifier(), 0, OV_UndefinedIdentifier);
 				}
 			}
@@ -2346,7 +2346,7 @@ bool CApplication::createPlayer()
 		scenario->createPlayerVisualization(scenario->m_Tree);
 
 
-		if (scenario->m_Player->initialize() != PlayerReturnCode_Sucess)
+		if (scenario->m_Player->initialize() != EPlayerReturnCodes::Success)
 		{
 			scenario->releasePlayerVisualization();
 			m_kernelCtx.getLogManager() << LogLevel_Error << "The player could not be initialized.\n";
@@ -2393,7 +2393,7 @@ void CApplication::stopScenarioCB()
 	m_kernelCtx.getLogManager() << LogLevel_Debug << "stopScenarioCB\n";
 
 	const EPlayerStatus currentState = this->getCurrentInterfacedScenario()->m_PlayerStatus;
-	if (currentState == PlayerStatus_Play || currentState == PlayerStatus_Pause || currentState == PlayerStatus_Forward)
+	if (currentState == EPlayerStatus::Play || currentState == EPlayerStatus::Pause || currentState == EPlayerStatus::Forward)
 	{
 		this->stopInterfacedScenarioAndReleasePlayer(this->getCurrentInterfacedScenario());
 
@@ -2401,10 +2401,10 @@ void CApplication::stopScenarioCB()
 		{
 			switch (currentState)
 			{
-				case PlayerStatus_Play:
+				case EPlayerStatus::Play:
 					playScenarioCB();
 					break;
-				case PlayerStatus_Forward:
+				case EPlayerStatus::Forward:
 					forwardScenarioCB();
 					break;
 				default:
@@ -2789,21 +2789,21 @@ void CApplication::changeCurrentScenario(const int pageIdx)
 	else if (pageIdx < m_Scenarios.size())
 	{
 		CInterfacedScenario* scenario    = m_Scenarios[pageIdx];
-		const EPlayerStatus playerStatus = (scenario->m_Player ? scenario->m_Player->getStatus() : PlayerStatus_Stop);
+		const EPlayerStatus playerStatus = (scenario->m_Player ? scenario->m_Player->getStatus() : EPlayerStatus::Stop);
 
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_stop")), playerStatus != PlayerStatus_Stop);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_stop")), playerStatus != EPlayerStatus::Stop);
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_play_pause")), true);
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_next")), true);
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_forward")), playerStatus != PlayerStatus_Forward);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_forward")), playerStatus != EPlayerStatus::Forward);
 		gtk_tool_button_set_stock_id(
 			GTK_TOOL_BUTTON(gtk_builder_get_object(m_Builder, "openvibe-button_play_pause")),
-			(playerStatus == PlayerStatus_Stop || playerStatus == PlayerStatus_Pause) ? GTK_STOCK_MEDIA_PLAY : GTK_STOCK_MEDIA_PAUSE);
+			(playerStatus == EPlayerStatus::Stop || playerStatus == EPlayerStatus::Pause) ? GTK_STOCK_MEDIA_PLAY : GTK_STOCK_MEDIA_PAUSE);
 
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_undo")), scenario->m_StateStack->isUndoPossible());
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_redo")), scenario->m_StateStack->isRedoPossible());
 
 		g_signal_handlers_disconnect_by_func(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-togglebutton_cpu_usage")), G_CALLBACK2(cpu_usage_cb), this);
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_windowmanager")), playerStatus == PlayerStatus_Stop);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-button_windowmanager")), playerStatus == EPlayerStatus::Stop);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(m_Builder, "openvibe-togglebutton_cpu_usage")), scenario->m_DebugCPUUsage);
 		g_signal_connect(G_OBJECT(gtk_builder_get_object(m_Builder, "openvibe-togglebutton_cpu_usage")), "toggled", G_CALLBACK(cpu_usage_cb), this);
 
@@ -2811,7 +2811,7 @@ void CApplication::changeCurrentScenario(const int pageIdx)
 		// gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(m_builderInterface, "openvibe-menu_save")),   scenario->m_hasFileName && scenario->m_hasBeenModified);
 
 		//don't show window manager if in offline mode and it is toggled off
-		if (playerStatus == PlayerStatus_Stop && !m_Scenarios[pageIdx]->isDesignerVisualizationToggled())
+		if (playerStatus == EPlayerStatus::Stop && !m_Scenarios[pageIdx]->isDesignerVisualizationToggled())
 		{
 			m_Scenarios[pageIdx]->hideCurrentVisualization();
 

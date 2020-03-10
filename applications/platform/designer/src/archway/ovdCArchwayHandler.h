@@ -14,18 +14,9 @@
 
 namespace Mensia
 {
-	enum class EEngineType
-	{
-		Local,
-		LAN
-	};
+	enum class EEngineType { Local, LAN };
 
-	enum class EEngineInitialisationStatus
-	{
-		Success,
-		Failure,
-		NotAvailable
-	};
+	enum class EEngineInitialisationStatus { Success, Failure, NotAvailable };
 
 	struct SPipelineParameter
 	{

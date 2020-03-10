@@ -47,9 +47,8 @@ namespace OpenViBE
 				 * Spline values (potentials) can be interpolated directly, but the spline laplacian (currents) may
 				 * be used as well
 				 * \sa OVP_TypeId_SphericalLinearInterpolationType enumeration
-				 * \return True if interpolation type could be set, false otherwise
 				 */
-				bool setInterpolationType(uint64_t type);
+				void setInterpolationType(const EInterpolationType type) { m_interpolationType = type; }
 
 				bool processValues();
 
@@ -83,7 +82,7 @@ namespace OpenViBE
 				 * \brief Type of interpolation
 				 * \sa OVP_TypeId_SphericalLinearInterpolationType enumeration
 				 */
-				uint64_t m_interpolationType = Spline;
+				EInterpolationType m_interpolationType = EInterpolationType::Spline;
 				//number of electrodes (see CBufferDatabase) - mapped to OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_ControlPointsCount
 				//int64_t m_NElectrodes = 0;
 				//flag set to true once electrode coordinates have been initialized
