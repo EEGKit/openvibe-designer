@@ -3,67 +3,62 @@
 #include <iostream>
 #include <sstream>
 
-#include <openvibe/ovTimeArithmetics.h>
 
 #define OVD_GUI_File		OpenViBE::Directories::getDataDir() + "/applications/designer/interface.ui"
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Kernel;
-using namespace /*OpenViBE::*/Designer;
-using namespace std;
+namespace {
+void close_messages_alert_window_cb(GtkButton* /*button*/, gpointer data) { gtk_widget_hide(GTK_WIDGET(data)); }
 
-namespace
+void focus_message_window_cb(GtkButton* /*button*/, gpointer data) { static_cast<OpenViBE::Designer::CLogListenerDesigner*>(data)->focusMessageWindow(); }
+
+void refresh_search_log_entry(GtkEntry* text, gpointer data)
 {
-	void close_messages_alert_window_cb(GtkButton* /*button*/, gpointer data) { gtk_widget_hide(GTK_WIDGET(data)); }
+	auto* ptr         = static_cast<OpenViBE::Designer::CLogListenerDesigner*>(data);
+	ptr->m_SearchTerm = gtk_entry_get_text(text);
+	ptr->searchMessages(ptr->m_SearchTerm);
+}
 
-	void focus_message_window_cb(GtkButton* /*button*/, gpointer data) { static_cast<CLogListenerDesigner*>(data)->focusMessageWindow(); }
+void focus_on_box_cidentifier_clicked(GtkWidget* widget, GdkEventButton* event, gpointer data)
+{
+	//log text view grab the focus so isLogAreaClicked() return true and CTRL+F will focus on the log searchEntry
+	gtk_widget_grab_focus(widget);
 
-	void refresh_search_log_entry(GtkEntry* text, gpointer data)
+	auto* ptr = static_cast<OpenViBE::Designer::CLogListenerDesigner*>(data);
+
+	//if left click
+	if (event->button == 1)
 	{
-		auto* ptr         = static_cast<CLogListenerDesigner*>(data);
-		ptr->m_SearchTerm = gtk_entry_get_text(text);
-		ptr->searchMessages(ptr->m_SearchTerm);
+		GtkTextView* textView              = GTK_TEXT_VIEW(widget);
+		const GtkTextWindowType windowType = gtk_text_view_get_window_type(textView, event->window);
+		gint bufferX, bufferY;
+		//convert event coord (mouse position) in buffer coord (character in buffer)
+		gtk_text_view_window_to_buffer_coords(textView, windowType, gint(round(event->x)), gint(round(event->y)), &bufferX, &bufferY);
+		//get the text iter corresponding to that position
+		GtkTextIter iter;
+		gtk_text_view_get_iter_at_location(textView, &iter, bufferX, bufferY);
+
+		//if this position is not tagged, exit
+		if (!gtk_text_iter_has_tag(&iter, ptr->m_IdTag)) { return; }
+		//the position is tagged, we are on a CIdentifier
+		GtkTextIter start = iter;
+		GtkTextIter end   = iter;
+
+		while (gtk_text_iter_has_tag(&end, ptr->m_IdTag)) { gtk_text_iter_forward_char(&end); }
+		while (gtk_text_iter_has_tag(&start, ptr->m_IdTag)) { gtk_text_iter_backward_char(&start); }
+		//we went one char to far for start
+		gtk_text_iter_forward_char(&start);
+		//this contains the CIdentifier
+		gchar* link = gtk_text_iter_get_text(&start, &end);
+		//cout << "cid is |" << link << "|" << endl;
+		OpenViBE::CIdentifier id;
+		id.fromString(OpenViBE::CString(link));
+		ptr->m_CenterOnBoxFun(id);
 	}
-
-	void focus_on_box_cidentifier_clicked(GtkWidget* widget, GdkEventButton* event, gpointer data)
-	{
-		//log text view grab the focus so isLogAreaClicked() return true and CTRL+F will focus on the log searchEntry
-		gtk_widget_grab_focus(widget);
-
-		auto* ptr = static_cast<CLogListenerDesigner*>(data);
-
-		//if left click
-		if (event->button == 1)
-		{
-			GtkTextView* textView              = GTK_TEXT_VIEW(widget);
-			const GtkTextWindowType windowType = gtk_text_view_get_window_type(textView, event->window);
-			gint bufferX, bufferY;
-			//convert event coord (mouse position) in buffer coord (character in buffer)
-			gtk_text_view_window_to_buffer_coords(textView, windowType, gint(round(event->x)), gint(round(event->y)), &bufferX, &bufferY);
-			//get the text iter corresponding to that position
-			GtkTextIter iter;
-			gtk_text_view_get_iter_at_location(textView, &iter, bufferX, bufferY);
-
-			//if this position is not tagged, exit
-			if (!gtk_text_iter_has_tag(&iter, ptr->m_IdTag)) { return; }
-			//the position is tagged, we are on a CIdentifier
-			GtkTextIter start = iter;
-			GtkTextIter end   = iter;
-
-			while (gtk_text_iter_has_tag(&end, ptr->m_IdTag)) { gtk_text_iter_forward_char(&end); }
-			while (gtk_text_iter_has_tag(&start, ptr->m_IdTag)) { gtk_text_iter_backward_char(&start); }
-			//we went one char to far for start
-			gtk_text_iter_forward_char(&start);
-			//this contains the CIdentifier
-			gchar* link = gtk_text_iter_get_text(&start, &end);
-			//cout << "cid is |" << link << "|" << endl;
-			CIdentifier id;
-			id.fromString(CString(link));
-			ptr->m_CenterOnBoxFun(id);
-		}
-	}
+}
 } // namespace
 
+namespace OpenViBE {
+namespace Designer {
 
 void CLogListenerDesigner::searchMessages(const CString& searchTerm)
 {
@@ -84,7 +79,7 @@ void CLogListenerDesigner::appendLog(CLogObject* log) const
 	gtk_text_buffer_insert_range(m_buffer, &endIter, &begin, &end);
 }
 
-CLogListenerDesigner::CLogListenerDesigner(const IKernelContext& ctx, GtkBuilder* builder)
+CLogListenerDesigner::CLogListenerDesigner(const Kernel::IKernelContext& ctx, GtkBuilder* builder)
 	: m_SearchTerm(""), m_CenterOnBoxFun([](CIdentifier& /*id*/) {}), m_builder(builder)
 {
 	m_textView    = GTK_TEXT_VIEW(gtk_builder_get_object(m_builder, "openvibe-textview_messages"));
@@ -124,14 +119,14 @@ CLogListenerDesigner::CLogListenerDesigner(const IKernelContext& ctx, GtkBuilder
 
 	gtk_text_buffer_create_tag(m_buffer, "f_mono", "family", "monospace", nullptr);
 	gtk_text_buffer_create_tag(m_buffer, "w_bold", "weight", PANGO_WEIGHT_BOLD, nullptr);
-	gtk_text_buffer_create_tag(m_buffer, "c_blue", "foreground", "#0000FF", nullptr);				// debug
-	gtk_text_buffer_create_tag(m_buffer, "c_magenta", "foreground", "#FF00FF", nullptr);			// benchmark
+	gtk_text_buffer_create_tag(m_buffer, "c_blue", "foreground", "#0000FF", nullptr);			// debug
+	gtk_text_buffer_create_tag(m_buffer, "c_magenta", "foreground", "#FF00FF", nullptr);		// benchmark
 	gtk_text_buffer_create_tag(m_buffer, "c_darkOrange", "foreground", "#FF9000", nullptr);		// important warning
-	gtk_text_buffer_create_tag(m_buffer, "c_red", "foreground", "#FF0000", nullptr);				// error, fatal
-	gtk_text_buffer_create_tag(m_buffer, "c_watercourse", "foreground", "#008238", nullptr);		// trace
-	gtk_text_buffer_create_tag(m_buffer, "c_aqua", "foreground", "#00FFFF", nullptr);				// number
+	gtk_text_buffer_create_tag(m_buffer, "c_red", "foreground", "#FF0000", nullptr);			// error, fatal
+	gtk_text_buffer_create_tag(m_buffer, "c_watercourse", "foreground", "#008238", nullptr);	// trace
+	gtk_text_buffer_create_tag(m_buffer, "c_aqua", "foreground", "#00FFFF", nullptr);			// number
 	gtk_text_buffer_create_tag(m_buffer, "c_darkViolet", "foreground", "#6900D7", nullptr);		// warning
-	gtk_text_buffer_create_tag(m_buffer, "c_blueChill", "foreground", "#3d889b", nullptr);			// information
+	gtk_text_buffer_create_tag(m_buffer, "c_blueChill", "foreground", "#3d889b", nullptr);		// information
 	gtk_text_buffer_create_tag(m_buffer, "link", "underline", PANGO_UNDERLINE_SINGLE, nullptr);	// link for CIdentifier
 
 	GtkTextTagTable* tagTable = gtk_text_buffer_get_tag_table(m_buffer);
@@ -142,60 +137,40 @@ CLogListenerDesigner::CLogListenerDesigner(const IKernelContext& ctx, GtkBuilder
 	m_logTimePrecision = size_t(ctx.getConfigurationManager().expandAsUInteger("${Designer_ConsoleLogTimePrecision}", 3));
 }
 
-bool CLogListenerDesigner::isActive(const ELogLevel level)
+bool CLogListenerDesigner::isActive(const Kernel::ELogLevel level)
 {
 	const auto it = m_activeLevels.find(level);
 	if (it == m_activeLevels.end()) { return true; }
 	return it->second;
 }
 
-bool CLogListenerDesigner::activate(const ELogLevel level, const bool active)
+bool CLogListenerDesigner::activate(const Kernel::ELogLevel level, const bool active)
 {
 	m_activeLevels[level] = active;
 	return true;
 }
 
-bool CLogListenerDesigner::activate(const ELogLevel startLevel, const ELogLevel endLevel, const bool active)
+bool CLogListenerDesigner::activate(const Kernel::ELogLevel startLevel, const Kernel::ELogLevel endLevel, const bool active)
 {
-	for (int i = startLevel; i <= endLevel; ++i) { m_activeLevels[ELogLevel(i)] = active; }
+	for (int i = startLevel; i <= endLevel; ++i) { m_activeLevels[Kernel::ELogLevel(i)] = active; }
 	return true;
 }
 
-bool CLogListenerDesigner::activate(const bool active) { return activate(LogLevel_First, LogLevel_Last, active); }
+bool CLogListenerDesigner::activate(const bool active) { return activate(Kernel::LogLevel_First, Kernel::LogLevel_Last, active); }
 
-void CLogListenerDesigner::log(const time64 value)
+void CLogListenerDesigner::log(const CTime value)
 {
 	if (m_ignoreMsg) { return; }
-
-	stringstream txt;
-	if (m_logTimeInSecond)
-	{
-		const double time = TimeArithmetics::timeToSeconds(value.timeValue);
-		std::stringstream ss;
-		ss.precision(m_logTimePrecision);
-		ss.setf(std::ios::fixed, std::ios::floatfield);
-		ss << time;
-		ss << " sec";
-		if (m_logWithHexa) { ss << " (0x" << hex << value.timeValue << ")"; }
-
-		txt << ss.str();
-	}
-	else
-	{
-		txt << dec << value.timeValue;
-		if (m_logWithHexa) { txt << " (0x" << hex << value.timeValue << ")"; }
-	}
-
-	checkAppendFilterCurrentLog("c_watercourse", txt.str().c_str());
+	checkAppendFilterCurrentLog("c_watercourse", value.str(m_logTimeInSecond, m_logWithHexa).c_str());
 }
 
 void CLogListenerDesigner::log(const uint64_t value)
 {
 	if (m_ignoreMsg) { return; }
 
-	stringstream txt;
-	txt << dec << value;
-	if (m_logWithHexa) { txt << " (0x" << hex << value << ")"; }
+	std::stringstream txt;
+	txt << std::dec << value;
+	if (m_logWithHexa) { txt << " (0x" << std::hex << value << ")"; }
 
 	checkAppendFilterCurrentLog("c_watercourse", txt.str().c_str());
 }
@@ -204,9 +179,9 @@ void CLogListenerDesigner::log(const uint32_t value)
 {
 	if (m_ignoreMsg) { return; }
 
-	stringstream txt;
-	txt << dec << value;
-	if (m_logWithHexa) { txt << " (0x" << hex << value << ")"; }
+	std::stringstream txt;
+	txt << std::dec << value;
+	if (m_logWithHexa) { txt << " (0x" << std::hex << value << ")"; }
 
 	checkAppendFilterCurrentLog("c_watercourse", txt.str().c_str());
 }
@@ -215,9 +190,9 @@ void CLogListenerDesigner::log(const int64_t value)
 {
 	if (m_ignoreMsg) { return; }
 
-	stringstream txt;
-	txt << dec << value;
-	if (m_logWithHexa) { txt << " (0x" << hex << value << ")"; }
+	std::stringstream txt;
+	txt << std::dec << value;
+	if (m_logWithHexa) { txt << " (0x" << std::hex << value << ")"; }
 
 	checkAppendFilterCurrentLog("c_watercourse", txt.str().c_str());
 }
@@ -226,9 +201,9 @@ void CLogListenerDesigner::log(const int value)
 {
 	if (m_ignoreMsg) { return; }
 
-	stringstream txt;
-	txt << dec << value;
-	if (m_logWithHexa) { txt << " (0x" << hex << value << ")"; }
+	std::stringstream txt;
+	txt << std::dec << value;
+	if (m_logWithHexa) { txt << " (0x" << std::hex << value << ")"; }
 
 	checkAppendFilterCurrentLog("c_watercourse", txt.str().c_str());
 }
@@ -269,7 +244,7 @@ void CLogListenerDesigner::log(const char* value)
 	checkAppendFilterCurrentLog(nullptr, value);
 }
 
-void CLogListenerDesigner::log(const ELogLevel level)
+void CLogListenerDesigner::log(const Kernel::ELogLevel level)
 {
 	// GtkTextIter textIter;
 	// gtk_text_buffer_get_end_iter(m_Buffer, &l_oTextIter);
@@ -294,35 +269,35 @@ void CLogListenerDesigner::log(const ELogLevel level)
 
 	switch (level)
 	{
-		case LogLevel_Debug:
+		case Kernel::LogLevel_Debug:
 			addTagName(m_buttonActiveDebug, m_nMsg, "DEBUG", "c_blue");
 			break;
 
-		case LogLevel_Benchmark:
+		case Kernel::LogLevel_Benchmark:
 			addTagName(m_buttonActiveBenchmark, m_nMsg, "BENCH", "c_magenta");
 			break;
 
-		case LogLevel_Trace:
+		case Kernel::LogLevel_Trace:
 			addTagName(m_buttonActiveTrace, m_nMsg, "TRACE", "c_watercourse");
 			break;
 
-		case LogLevel_Info:
+		case Kernel::LogLevel_Info:
 			addTagName(m_buttonActiveInfo, m_nMsg, "INF", "c_blueChill");
 			break;
 
-		case LogLevel_Warning:
+		case Kernel::LogLevel_Warning:
 			addTagName(m_buttonActiveWarning, m_nWarning, "WARNING", "c_darkViolet");
 			break;
 
-		case LogLevel_ImportantWarning:
+		case Kernel::LogLevel_ImportantWarning:
 			addTagName(m_buttonActiveImportantWarning, m_nWarning, "WARNING", "c_darkOrange");
 			break;
 
-		case LogLevel_Error:
+		case Kernel::LogLevel_Error:
 			addTagName(m_buttonActiveError, m_nError, "ERROR", "c_red");
 			break;
 
-		case LogLevel_Fatal:
+		case Kernel::LogLevel_Fatal:
 			addTagName(m_buttonActiveFatal, m_nError, "FATAL", "c_red");
 			break;
 
@@ -331,8 +306,8 @@ void CLogListenerDesigner::log(const ELogLevel level)
 			break;
 	}
 
-	if (gtk_toggle_button_get_active(m_buttonPopup) && (level == LogLevel_Warning || level == LogLevel_ImportantWarning || level ==
-														LogLevel_Error || level == LogLevel_Fatal))
+	if (gtk_toggle_button_get_active(m_buttonPopup) && (level == Kernel::LogLevel_Warning || level == Kernel::LogLevel_ImportantWarning
+														|| level == Kernel::LogLevel_Error || level == Kernel::LogLevel_Fatal))
 	{
 		if (!gtk_widget_get_visible(GTK_WIDGET(m_alertWindow)))
 		{
@@ -359,11 +334,11 @@ void CLogListenerDesigner::log(const ELogLevel level)
 	gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(m_textView), &mark, 0.0, FALSE, 0.0, 0.0);
 }
 
-void CLogListenerDesigner::log(const ELogColor /*color*/) { }
+void CLogListenerDesigner::log(const Kernel::ELogColor /*color*/) { }
 
 void CLogListenerDesigner::updateMessageCounts() const
 {
-	stringstream ss;
+	std::stringstream ss;
 	ss << "<b>" << m_nMsg << "</b> Message";
 
 	if (m_nMsg > 1) { ss << "s"; }
@@ -455,3 +430,6 @@ void CLogListenerDesigner::displayLog(CLogObject* log) const
 	gtk_text_buffer_get_end_iter(log->getTextBuffer(), &end);
 	gtk_text_buffer_insert_range(m_buffer, &iter, &begin, &end);
 }
+
+}  // namespace Designer
+}  // namespace OpenViBE
