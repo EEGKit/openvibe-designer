@@ -1,23 +1,14 @@
 #include "ovpCBufferDatabase.h"
 
-#include <openvibe/ovTimeArithmetics.h>
-
 #include <algorithm>
 #include <cmath>
 #include <cstring>
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Plugins;
-using namespace /*OpenViBE::*/Kernel;
-using namespace /*OpenViBE::*/Toolkit;
+namespace OpenViBE {
+namespace Plugins {
+namespace SimpleVisualization {
 
-using namespace /*OpenViBE::*/Plugins;
-using namespace SimpleVisualization;
-
-
-using namespace std;
-
-CBufferDatabase::CBufferDatabase(TBoxAlgorithm<IBoxAlgorithm>& plugin) : m_ParentPlugin(plugin)
+CBufferDatabase::CBufferDatabase(Toolkit::TBoxAlgorithm<IBoxAlgorithm>& plugin) : m_ParentPlugin(plugin)
 {
 	m_decoder = &m_ParentPlugin.getAlgorithmManager().getAlgorithm(
 		m_ParentPlugin.getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_ChannelLocalisationDecoder));
@@ -63,18 +54,18 @@ bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer*
 	if (m_decoder->isOutputTriggerActive(OVP_GD_Algorithm_ChannelLocalisationDecoder_OutputTriggerId_ReceivedHeader))
 	{
 		//retrieve matrix header
-		TParameterHandler<IMatrix*> matrix;
+		Kernel::TParameterHandler<IMatrix*> matrix;
 		matrix.initialize(m_decoder->getOutputParameter(OVP_GD_Algorithm_ChannelLocalisationDecoder_OutputParameterId_Matrix));
 
 		//copy channel labels
 		m_channelLocalisationLabels.resize(matrix->getDimensionSize(0));
-		for (vector<CString>::size_type i = 0; i < m_channelLocalisationLabels.size(); ++i)
+		for (size_t i = 0; i < m_channelLocalisationLabels.size(); ++i)
 		{
-			m_channelLocalisationLabels[i] = matrix->getDimensionLabel(0, size_t(i));
+			m_channelLocalisationLabels[i] = matrix->getDimensionLabel(0, i);
 		}
 
 		//retrieve dynamic flag
-		TParameterHandler<bool> dynamic;
+		Kernel::TParameterHandler<bool> dynamic;
 		dynamic.initialize(m_decoder->getOutputParameter(OVP_GD_Algorithm_ChannelLocalisationDecoder_OutputParameterId_Dynamic));
 		m_dynamicChannelLocalisation = dynamic;
 
@@ -92,7 +83,8 @@ bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer*
 		}
 		else
 		{
-			m_ParentPlugin.getLogManager() << LogLevel_Error << "Wrong size found for dimension 1 of Channel localisation header! Can't process header!\n";
+			m_ParentPlugin.getLogManager() << Kernel::LogLevel_Error
+					<< "Wrong size found for dimension 1 of Channel localisation header! Can't process header!\n";
 			return false;
 		}
 
@@ -128,7 +120,7 @@ bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer*
 		}
 
 		//retrieve coordinates matrix
-		TParameterHandler<IMatrix*> matrix;
+		Kernel::TParameterHandler<IMatrix*> matrix;
 		matrix.initialize(m_decoder->getOutputParameter(OVP_GD_Algorithm_ChannelLocalisationDecoder_OutputParameterId_Matrix));
 
 		//get pointer to destination matrix
@@ -138,7 +130,7 @@ bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer*
 		{
 			//create a new matrix and resize it
 			channelLocalisation = new CMatrix();
-			Matrix::copyDescription(*channelLocalisation, *matrix);
+			Toolkit::Matrix::copyDescription(*channelLocalisation, *matrix);
 			// alternateChannelLocalisation = new CMatrix();
 			// TODO : resize it appropriately depending on whether it is spherical or cartesian
 		}
@@ -154,7 +146,7 @@ bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer*
 		if (channelLocalisation)
 		{
 			//copy coordinates and times
-			Matrix::copyContent(*channelLocalisation, *matrix);
+			Toolkit::Matrix::copyContent(*channelLocalisation, *matrix);
 			m_channelLocalisationCoords.emplace_back(channelLocalisation, true);
 			//m_oChannelLocalisationAlternateCoords.push_back(std::pair<CMatrix*, bool>(alternateChannelLocalisation, true));
 			m_channelLocalisationTimes.emplace_back(startTime, endTime);
@@ -224,13 +216,13 @@ void CBufferDatabase::setMatrixDimensionCount(const size_t n)
 	if (n != 2)
 	{
 		m_Error = true;
-		m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error << "Caller tried to set a " << n <<
-				"-dimensional matrix. Only 2-dimensional matrices are supported (e.g. [rows X cols]).\n";
+		m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << Kernel::LogLevel_Error << "Caller tried to set a " << n
+				<< "-dimensional matrix. Only 2-dimensional matrices are supported (e.g. [rows X cols]).\n";
 	}
 	if (n == 1)
 	{
-		m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error <<
-				"Note: For 1-dimensional matrices, you may try Matrix Transpose box to upgrade the stream to [N X 1] first.\n";
+		m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << Kernel::LogLevel_Error
+				<< "Note: For 1-dimensional matrices, you may try Matrix Transpose box to upgrade the stream to [N X 1] first.\n";
 	}
 }
 
@@ -239,15 +231,15 @@ void CBufferDatabase::setMatrixDimensionSize(const size_t index, const size_t si
 	if (index >= 2)
 	{
 		m_Error = true;
-		m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error << "Tried to access dimension " << index <<
-				", only 0 and 1 supported\n";
+		m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << Kernel::LogLevel_Error << "Tried to access dimension "
+				<< index << ", only 0 and 1 supported\n";
 		return;
 	}
 
 	if (m_DimSizes[index] != 0 && m_DimSizes[index] != size)
 	{
-		m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error <<
-				"Upstream tried to change the data chunk size after the first header, this is not supported.\n";
+		m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << Kernel::LogLevel_Error
+				<< "Upstream tried to change the data chunk size after the first header, this is not supported.\n";
 		m_Error = true;
 		return;
 	}
@@ -271,7 +263,7 @@ void CBufferDatabase::setMatrixDimensionLabel(const size_t idx1, const size_t id
 	if (idx1 >= 2)
 	{
 		m_Error = true;
-		m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error << "Tried to access dimension " << idx1
+		m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << Kernel::LogLevel_Error << "Tried to access dimension " << idx1
 				<< ", only 0 and 1 supported\n";
 		return;
 	}
@@ -287,10 +279,10 @@ bool CBufferDatabase::setMatrixBuffer(const double* buffer, const uint64_t start
 	// Check for time-continuity
 	if (startTime < m_LastBufferEndTime && !m_WarningPrinted)
 	{
-		m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Warning
+		m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << Kernel::LogLevel_Warning
 				<< "Your signal does not appear to be continuous in time. "
-				<< "Previously inserted buffer ended at " << TimeArithmetics::timeToSeconds(m_LastBufferEndTime)
-				<< "s, the current starts at " << TimeArithmetics::timeToSeconds(startTime)
+				<< "Previously inserted buffer ended at " << CTime(m_LastBufferEndTime).toSeconds()
+				<< "s, the current starts at " << CTime(startTime).toSeconds()
 				<< "s. The display may be incorrect.\n";
 		m_WarningPrinted = true;
 	}
@@ -305,7 +297,7 @@ bool CBufferDatabase::setMatrixBuffer(const double* buffer, const uint64_t start
 		//test if it is equal to zero : Error
 		if (m_BufferDuration == 0)
 		{
-			m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Warning <<
+			m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << Kernel::LogLevel_Warning <<
 					"Error : buffer start time and end time are equal : " << startTime << "\n";
 			m_Error = true;
 			return false;
@@ -317,9 +309,9 @@ bool CBufferDatabase::setMatrixBuffer(const double* buffer, const uint64_t start
 		if (sampling == 0)
 		{
 			// Complain if estimate is bad
-			m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Warning
+			m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << Kernel::LogLevel_Warning
 					<< "The integer sampling frequency was estimated from the chunk size to be 0"
-					<< " (nSamples " << m_DimSizes[1] << " / bufferLength " << TimeArithmetics::timeToSeconds(m_BufferDuration)
+					<< " (nSamples " << m_DimSizes[1] << " / bufferLength " << CTime(m_BufferDuration).toSeconds()
 					<< "s = 0). This is not supported. Forcing the rate to 1. This may lead to problems.\n";
 			sampling = 1;
 		}
@@ -330,7 +322,7 @@ bool CBufferDatabase::setMatrixBuffer(const double* buffer, const uint64_t start
 		}
 		if (m_Sampling != sampling)
 		{
-			m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Warning
+			m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << Kernel::LogLevel_Warning
 					<< "Sampling rate [" << sampling << "] suggested by chunk properties differs from stream-specified rate ["
 					<< m_Sampling << "]. There may be a problem with an upstream box. Trying to use the estimated rate.\n";
 			m_Sampling = sampling;
@@ -648,12 +640,13 @@ bool CBufferDatabase::fillChannelLookupTable()
 		//unrecognized electrode!
 		if (!labelRecognized)
 		{
-			m_ParentPlugin.getLogManager() << LogLevel_Warning << "Unrecognized electrode name (index=" << i << ", name=" << m_DimLabels[0][i] << ")!\n";
+			m_ParentPlugin.getLogManager() << Kernel::LogLevel_Warning << "Unrecognized electrode name (index=" << i
+					<< ", name=" << m_DimLabels[0][i] << ")!\n";
 			res = false;
 		}
 	}
 
-	m_ParentPlugin.getLogManager() << LogLevel_Trace << "Electrodes list : ";
+	m_ParentPlugin.getLogManager() << Kernel::LogLevel_Trace << "Electrodes list : ";
 
 	for (size_t i = 0; i < size_t(m_DimSizes[0]); ++i)
 	{
@@ -674,7 +667,7 @@ bool CBufferDatabase::convertCartesianToSpherical(const double* cartesian, doubl
 
 	//compute theta
 	theta = acos(cartesian[2]) * radToDeg;
-	
+
 	//compute phi so that it lies in [0, 360]
 	if (fabs(cartesian[0]) < threshold) { phi = (cartesian[1] > 0) ? 90 : 270; }
 	else
@@ -686,3 +679,7 @@ bool CBufferDatabase::convertCartesianToSpherical(const double* cartesian, doubl
 
 	return true;
 }
+
+}  // namespace SimpleVisualization
+}  // namespace Plugins
+}  // namespace OpenViBE
