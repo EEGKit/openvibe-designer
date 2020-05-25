@@ -272,7 +272,7 @@ public:
 	virtual void setMatrixDimensionLabel(const size_t idx1, const size_t idx2, const char* label);
 
 	// Returns false on failure
-	virtual bool setMatrixBuffer(const double* buffer, const uint64_t startTime, const uint64_t endTime);
+	virtual bool setMatrixBuffer(const double* buffer, const CTime startTime, const CTime endTime);
 
 	// Sets the sampling frequency. If this is not called, the frequency is estimated from the stream chunk properties.
 	// Mainly used to force a warning if stream-specified rate differs from the chunk-estimated rate.

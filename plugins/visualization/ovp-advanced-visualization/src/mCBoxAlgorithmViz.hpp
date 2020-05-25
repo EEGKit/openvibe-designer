@@ -109,7 +109,7 @@ namespace Mensia
 			bool initialize() override;
 			bool uninitialize() override;
 			bool processInput(const size_t /*index*/) override { return true; }
-			bool processClock(OpenViBE::Kernel::IMessageClock& rClock) override;
+			bool processClock(OpenViBE::CMessage& rClock) override;
 
 			virtual void redrawTopLevelWindow(const bool immediate = false) { m_GtkGLWidget.redrawTopLevelWindow(immediate); }
 

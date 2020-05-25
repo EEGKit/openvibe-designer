@@ -27,7 +27,7 @@ namespace OpenViBE
 				void release() override { delete this; }
 				bool initialize() override;
 				bool uninitialize() override;
-				bool processClock(CMessageClock& messageClock) override;
+				bool processClock(CMessage& msg) override;
 				uint64_t getClockFrequency() override;
 
 				bool process() override;

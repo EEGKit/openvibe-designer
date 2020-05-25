@@ -271,7 +271,7 @@ void CBufferDatabase::setMatrixDimensionLabel(const size_t idx1, const size_t id
 	m_DimLabels[idx1][idx2] = label;
 }
 
-bool CBufferDatabase::setMatrixBuffer(const double* buffer, const uint64_t startTime, const uint64_t endTime)
+bool CBufferDatabase::setMatrixBuffer(const double* buffer, const CTime startTime, const CTime endTime)
 {
 	//if an error has occurred, do nothing
 	if (m_Error) { return false; }
