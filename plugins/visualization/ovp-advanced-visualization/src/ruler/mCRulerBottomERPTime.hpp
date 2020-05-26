@@ -22,41 +22,41 @@
 
 #include "../mIRuler.hpp"
 
-namespace Mensia
+namespace Mensia {
+namespace AdvancedVisualization {
+
+class CRulerBottomERPTime : public IRuler
 {
-	namespace AdvancedVisualization
+public:
+
+	void renderBottom(GtkWidget* widget) override
 	{
-		class CRulerBottomERPTime : public IRuler
+		if (m_renderer == nullptr) { return; }
+		if (m_renderer->getSampleCount() == 0) { return; }
+		if (m_renderer->getHistoryCount() == 0) { return; }
+		if (m_renderer->getHistoryIndex() == 0) { return; }
+
+		const size_t nSample          = m_renderer->getSampleCount();
+		const uint64_t sampleDuration = m_rendererCtx->getSampleDuration();
+		const double duration         = double((nSample * sampleDuration) >> 16) / 65536.;
+
+		std::vector<double> range = splitRange(0, duration, 10);
+
+		gint w, h;
+
+		gdk_drawable_get_size(widget->window, &w, &h);
+		GdkGC* drawGC = gdk_gc_new(widget->window);
+		for (const auto& i : range)
 		{
-		public:
+			const gint x        = gint((i / duration) * w);
+			PangoLayout* layout = gtk_widget_create_pango_layout(widget, getLabel(i).c_str());
+			gdk_draw_layout(widget->window, drawGC, x, 5, layout);
+			gdk_draw_line(widget->window, drawGC, x, 0, x, 3);
+			g_object_unref(layout);
+		}
+		g_object_unref(drawGC);
+	}
+};
 
-			void renderBottom(GtkWidget* widget) override
-			{
-				if (m_renderer == nullptr) { return; }
-				if (m_renderer->getSampleCount() == 0) { return; }
-				if (m_renderer->getHistoryCount() == 0) { return; }
-				if (m_renderer->getHistoryIndex() == 0) { return; }
-
-				const size_t nSample          = m_renderer->getSampleCount();
-				const uint64_t sampleDuration = m_rendererCtx->getSampleDuration();
-				const double duration         = double((nSample * sampleDuration) >> 16) / 65536.;
-
-				std::vector<double> range = splitRange(0, duration, 10);
-
-				gint w, h;
-
-				gdk_drawable_get_size(widget->window, &w, &h);
-				GdkGC* drawGC = gdk_gc_new(widget->window);
-				for (const auto& i : range)
-				{
-					const gint x        = gint((i / duration) * w);
-					PangoLayout* layout = gtk_widget_create_pango_layout(widget, getLabel(i).c_str());
-					gdk_draw_layout(widget->window, drawGC, x, 5, layout);
-					gdk_draw_line(widget->window, drawGC, x, 0, x, 3);
-					g_object_unref(layout);
-				}
-				g_object_unref(drawGC);
-			}
-		};
-	} // namespace AdvancedVisualization
-} // namespace Mensia
+}  // namespace AdvancedVisualization
+}  // namespace Mensia

@@ -186,5 +186,5 @@ protected:
 	std::vector<std::string> m_documentedBoxes;
 };
 
-}  //namespace Designer
-}  //namespace OpenViBE
+}  // namespace Designer
+}  // namespace OpenViBE

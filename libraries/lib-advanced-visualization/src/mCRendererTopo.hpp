@@ -28,36 +28,36 @@
 
 #include <vector>
 
-namespace Mensia
+namespace Mensia {
+namespace AdvancedVisualization {
+
+class CRendererTopo : public IRenderer
 {
-	namespace AdvancedVisualization
-	{
-		class CRendererTopo : public IRenderer
-		{
-		public:
+public:
 
-			void rebuild(const CRendererContext& ctx) override;
-			void refresh(const CRendererContext& ctx) override;
-			bool render(const CRendererContext& ctx) override;
+	void rebuild(const CRendererContext& ctx) override;
+	void refresh(const CRendererContext& ctx) override;
+	bool render(const CRendererContext& ctx) override;
 
-			// Called before electrode projections and spherical interpolation parameters generations and might be used to load a mesh or generate a sphere for instance
-			virtual void rebuild3DMeshesPre(const CRendererContext& ctx) = 0;
-			// Called after electrode projections and spherical interpolation parameters generations and might be used to unfold previously loaded mesh for instance
-			virtual void rebuild3DMeshesPost(const CRendererContext& ctx) = 0;
+	// Called before electrode projections and spherical interpolation parameters generations and might be used to load a mesh or generate a sphere for instance
+	virtual void rebuild3DMeshesPre(const CRendererContext& ctx) = 0;
+	// Called after electrode projections and spherical interpolation parameters generations and might be used to unfold previously loaded mesh for instance
+	virtual void rebuild3DMeshesPost(const CRendererContext& ctx) = 0;
 
-		private:
+private:
 
-			void interpolate(const Eigen::VectorXd& v, Eigen::VectorXd& w, Eigen::VectorXd& z) const;
+	void interpolate(const Eigen::VectorXd& v, Eigen::VectorXd& w, Eigen::VectorXd& z) const;
 
-		protected:
+protected:
 
-			std::vector<CVertex> m_projectedPositions;
+	std::vector<CVertex> m_projectedPositions;
 
-			C3DMesh m_face;
-			C3DMesh m_scalp;
-			std::vector<Eigen::VectorXd> m_interpolatedSamples;
+	C3DMesh m_face;
+	C3DMesh m_scalp;
+	std::vector<Eigen::VectorXd> m_interpolatedSamples;
 
-			Eigen::MatrixXd A, B, D, Ai;
-		};
-	} // namespace AdvancedVisualization
-} // namespace Mensia
+	Eigen::MatrixXd A, B, D, Ai;
+};
+
+}  // namespace AdvancedVisualization
+}  // namespace Mensia

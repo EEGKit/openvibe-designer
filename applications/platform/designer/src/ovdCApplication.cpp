@@ -63,6 +63,7 @@ static TChar to_lower(TChar c) { return tolower(c); }
 
 namespace OpenViBE {
 namespace Designer {
+
 namespace {
 
 struct SBoxProto final : Kernel::IBoxProto
@@ -181,7 +182,7 @@ extern "C" G_MODULE_EXPORT void open_url_mensia_cb(GtkWidget* /*widget*/, gpoint
 		system("start http://mensiatech.com");
 #endif
 }
-} // namespace
+}  // namespace
 
 static guint idle_add_cb(GSourceFunc callback, gpointer data, gint /*priority*/  = G_PRIORITY_DEFAULT_IDLE)
 {
@@ -2938,5 +2939,5 @@ void CApplication::cannotSaveScenarioBeforeUpdate()
 	gtk_widget_destroy(dialog);
 }
 
-}  //namespace Designer
-}  //namespace OpenViBE
+}  // namespace Designer
+}  // namespace OpenViBE

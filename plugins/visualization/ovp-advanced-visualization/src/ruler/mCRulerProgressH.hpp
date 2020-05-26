@@ -22,40 +22,40 @@
 
 #include "mCRulerProgress.hpp"
 
-namespace Mensia
+namespace Mensia {
+namespace AdvancedVisualization {
+
+class CRulerProgressH : public CRulerProgress
 {
-	namespace AdvancedVisualization
+public:
+
+	void renderFinal(const float progress) override
 	{
-		class CRulerProgressH : public CRulerProgress
+		const size_t selectedCount = m_rendererCtx->getSelectedCount();
+		glDisable(GL_TEXTURE_1D);
+		glDisable(GL_BLEND);
+
+		glLineWidth(4);
+		glColor3f(0, 0, 0);
+		glBegin(GL_LINES);
+		for (size_t i = 0; i < selectedCount; ++i)
 		{
-		public:
+			glVertex2f(0, (i + progress) / selectedCount);
+			glVertex2f(1, (i + progress) / selectedCount);
+		}
+		glEnd();
 
-			void renderFinal(const float progress) override
-			{
-				const size_t selectedCount = m_rendererCtx->getSelectedCount();
-				glDisable(GL_TEXTURE_1D);
-				glDisable(GL_BLEND);
+		glLineWidth(2);
+		glColor3f(0.25, 1, 0.25);
+		glBegin(GL_LINES);
+		for (size_t i = 0; i < selectedCount; ++i)
+		{
+			glVertex2f(0, (i + progress) / selectedCount);
+			glVertex2f(1, (i + progress) / selectedCount);
+		}
+		glEnd();
+	}
+};
 
-				glLineWidth(4);
-				glColor3f(0, 0, 0);
-				glBegin(GL_LINES);
-				for (size_t i = 0; i < selectedCount; ++i)
-				{
-					glVertex2f(0, (i + progress) / selectedCount);
-					glVertex2f(1, (i + progress) / selectedCount);
-				}
-				glEnd();
-
-				glLineWidth(2);
-				glColor3f(0.25, 1, 0.25);
-				glBegin(GL_LINES);
-				for (size_t i = 0; i < selectedCount; ++i)
-				{
-					glVertex2f(0, (i + progress) / selectedCount);
-					glVertex2f(1, (i + progress) / selectedCount);
-				}
-				glEnd();
-			}
-		};
-	} // namespace AdvancedVisualization
-} // namespace Mensia
+}  // namespace AdvancedVisualization
+}  // namespace Mensia

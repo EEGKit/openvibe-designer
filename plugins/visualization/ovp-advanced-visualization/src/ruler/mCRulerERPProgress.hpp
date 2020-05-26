@@ -22,42 +22,42 @@
 
 #include "../mIRuler.hpp"
 
-namespace Mensia
+namespace Mensia {
+namespace AdvancedVisualization {
+
+class CRulerERPProgress : public IRuler
 {
-	namespace AdvancedVisualization
+public:
+
+	void render() override
+
 	{
-		class CRulerERPProgress : public IRuler
+		if (m_renderer == nullptr) { return; }
+		if (m_renderer->getSampleCount() == 0) { return; }
+		if (m_renderer->getHistoryCount() == 0) { return; }
+		if (m_renderer->getHistoryIndex() == 0) { return; }
+
+		const float progress = m_rendererCtx->getERPFraction();
+		if (progress != 0 && progress != 1)
 		{
-		public:
+			glDisable(GL_TEXTURE_1D);
 
-			void render() override
+			glLineWidth(4);
+			glColor3f(0, 0, 0);
+			glBegin(GL_LINES);
+			glVertex2f(progress, 0);
+			glVertex2f(progress, 1);
+			glEnd();
 
-			{
-				if (m_renderer == nullptr) { return; }
-				if (m_renderer->getSampleCount() == 0) { return; }
-				if (m_renderer->getHistoryCount() == 0) { return; }
-				if (m_renderer->getHistoryIndex() == 0) { return; }
+			glLineWidth(2);
+			glColor3f(0.25, 1, 0.25);
+			glBegin(GL_LINES);
+			glVertex2f(progress, 0);
+			glVertex2f(progress, 1);
+			glEnd();
+		}
+	}
+};
 
-				const float progress = m_rendererCtx->getERPFraction();
-				if (progress != 0 && progress != 1)
-				{
-					glDisable(GL_TEXTURE_1D);
-
-					glLineWidth(4);
-					glColor3f(0, 0, 0);
-					glBegin(GL_LINES);
-					glVertex2f(progress, 0);
-					glVertex2f(progress, 1);
-					glEnd();
-
-					glLineWidth(2);
-					glColor3f(0.25, 1, 0.25);
-					glBegin(GL_LINES);
-					glVertex2f(progress, 0);
-					glVertex2f(progress, 1);
-					glEnd();
-				}
-			}
-		};
-	} // namespace AdvancedVisualization
-} // namespace Mensia
+}  // namespace AdvancedVisualization
+}  // namespace Mensia

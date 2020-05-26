@@ -13,71 +13,71 @@ using namespace /*OpenViBE::*/VisualizationToolkit;
 
 static const GtkTargetEntry TARGETS[] = { { static_cast<gchar*>("STRING"), 0, 0 }, { static_cast<gchar*>("text/plain"), 0, 0 } };
 
-namespace OpenViBE
+namespace OpenViBE {
+namespace Designer {
+
+/**
+ * \brief Display an error dialog
+ * \param[in] text text to display in the dialog
+ * \param[in] secondaryText additional text to display in the dialog
+ */
+void displayErrorDialog(const char* text, const char* secondaryText)
 {
-	namespace Designer
+	GtkWidget* dialog = gtk_message_dialog_new(nullptr, GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_OK, "%s", text);
+	gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog), "%s", secondaryText);
+	gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_MOUSE);
+	gtk_dialog_run(GTK_DIALOG(dialog));
+	gtk_widget_destroy(dialog);
+}
+
+/**
+ * \brief Helper function retrieving a child in a table from its attach indices
+ * \param table Table parent to the child to be retrieved
+ * \param leftAttach Left attach index
+ * \param rightAttach Right attach index
+ * \param topAttach Top attach index
+ * \param bottomAttach Bottom attach index
+ * \return Pointer to table child if one was found, nullptr otherwise
+ */
+GtkTableChild* getTableChild(GtkTable* table, const int leftAttach, const int rightAttach, const int topAttach, const int bottomAttach)
+{
+	GList* list = table->children;
+
+	do
 	{
-		/**
-		 * \brief Display an error dialog
-		 * \param[in] text text to display in the dialog
-		 * \param[in] secondaryText additional text to display in the dialog
-		 */
-		void displayErrorDialog(const char* text, const char* secondaryText)
-		{
-			GtkWidget* dialog = gtk_message_dialog_new(nullptr, GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_OK, "%s", text);
-			gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog), "%s", secondaryText);
-			gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_MOUSE);
-			gtk_dialog_run(GTK_DIALOG(dialog));
-			gtk_widget_destroy(dialog);
-		}
+		GtkTableChild* pTC = static_cast<GtkTableChild*>(list->data);
+		if (pTC->left_attach == leftAttach && pTC->right_attach == rightAttach &&
+			pTC->top_attach == topAttach && pTC->bottom_attach == bottomAttach) { return pTC; }
+		list = list->next;
+	} while (list);
 
-		/**
-		 * \brief Helper function retrieving a child in a table from its attach indices
-		 * \param table Table parent to the child to be retrieved
-		 * \param leftAttach Left attach index
-		 * \param rightAttach Right attach index
-		 * \param topAttach Top attach index
-		 * \param bottomAttach Bottom attach index
-		 * \return Pointer to table child if one was found, nullptr otherwise
-		 */
-		GtkTableChild* getTableChild(GtkTable* table, const int leftAttach, const int rightAttach, const int topAttach, const int bottomAttach)
-		{
-			GList* list = table->children;
+	return nullptr;
+}
 
-			do
-			{
-				GtkTableChild* pTC = static_cast<GtkTableChild*>(list->data);
-				if (pTC->left_attach == leftAttach && pTC->right_attach == rightAttach &&
-					pTC->top_attach == topAttach && pTC->bottom_attach == bottomAttach) { return pTC; }
-				list = list->next;
-			} while (list);
+/**
+ * \brief Display a yes/no question dialog
+ * \param[in] pText text to display in the dialog
+ * \param[in] pSecondaryText additional text to display in the dialog
+ * \return identifier of the button pressed
+ */
+/*
+gint displayQuestionDialog(const char* pText, const char* pSecondaryText)
+{
+	::GtkWidget* dialog = gtk_message_dialog_new(nullptr, GTK_DIALOG_MODAL, GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO, pText);
+	gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog),	pSecondaryText);
+	gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_MOUSE);
+	gint ret = gtk_dialog_run(GTK_DIALOG(dialog));
+	gtk_widget_destroy(dialog);
+	return ret;
+}*/
 
-			return nullptr;
-		}
-
-		/**
-		 * \brief Display a yes/no question dialog
-		 * \param[in] pText text to display in the dialog
-		 * \param[in] pSecondaryText additional text to display in the dialog
-		 * \return identifier of the button pressed
-		 */
-		/*
-		gint displayQuestionDialog(const char* pText, const char* pSecondaryText)
-		{
-			::GtkWidget* dialog = gtk_message_dialog_new(nullptr, GTK_DIALOG_MODAL, GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO, pText);
-			gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog),	pSecondaryText);
-			gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_MOUSE);
-			gint ret = gtk_dialog_run(GTK_DIALOG(dialog));
-			gtk_widget_destroy(dialog);
-			return ret;
-		}*/
-	}  // namespace Designer
+}  // namespace Designer
 }  // namespace OpenViBE
 
 //Menus
 //-----
 
-static char* cNewWin = const_cast<char *>("/New window");
+static char* cNewWin = const_cast<char*>("/New window");
 static char* cNewTab = const_cast<char*>("/New tab");
 static char* cRename = const_cast<char*>("/Rename");
 static char* cRemove = const_cast<char*>("/Remove");
@@ -1647,7 +1647,7 @@ void CDesignerVisualization::dragDataReceivedInWidget(GtkWidget* dstWidget, GtkS
 	}
 
 	//if src widget is unaffected or if dest widget is a visualization box, perform the drop operation directly
-	if (srcVisualizationWidget->getParentIdentifier() == OV_UndefinedIdentifier 
+	if (srcVisualizationWidget->getParentIdentifier() == OV_UndefinedIdentifier
 		|| m_tree.getULongValueFromTreeIter(&dstIter, EVisualizationTreeColumn::ULongNodeType) == size_t(EVisualizationTreeNode::VisualizationBox))
 	{
 		m_tree.dragDataReceivedInWidgetCB(srcID, dstWidget);

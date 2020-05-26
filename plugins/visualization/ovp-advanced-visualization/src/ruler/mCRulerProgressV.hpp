@@ -22,33 +22,33 @@
 
 #include "mCRulerProgress.hpp"
 
-namespace Mensia
+namespace Mensia {
+namespace AdvancedVisualization {
+
+class CRulerProgressV : public CRulerProgress
 {
-	namespace AdvancedVisualization
+public:
+
+	void renderFinal(const float progress) override
 	{
-		class CRulerProgressV : public CRulerProgress
-		{
-		public:
+		glDisable(GL_TEXTURE_1D);
+		glDisable(GL_BLEND);
 
-			void renderFinal(const float progress) override
-			{
-				glDisable(GL_TEXTURE_1D);
-				glDisable(GL_BLEND);
+		glLineWidth(4);
+		glColor3f(0, 0, 0);
+		glBegin(GL_LINES);
+		glVertex2f(progress, 0);
+		glVertex2f(progress, 1);
+		glEnd();
 
-				glLineWidth(4);
-				glColor3f(0, 0, 0);
-				glBegin(GL_LINES);
-				glVertex2f(progress, 0);
-				glVertex2f(progress, 1);
-				glEnd();
+		glLineWidth(2);
+		glColor3f(0.25, 1, 0.25);
+		glBegin(GL_LINES);
+		glVertex2f(progress, 0);
+		glVertex2f(progress, 1);
+		glEnd();
+	}
+};
 
-				glLineWidth(2);
-				glColor3f(0.25, 1, 0.25);
-				glBegin(GL_LINES);
-				glVertex2f(progress, 0);
-				glVertex2f(progress, 1);
-				glEnd();
-			}
-		};
-	} // namespace AdvancedVisualization
-} // namespace Mensia
+}  // namespace AdvancedVisualization
+}  // namespace Mensia

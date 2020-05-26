@@ -22,22 +22,22 @@
 
 #include "mIRenderer.hpp"
 
-namespace Mensia
+namespace Mensia {
+namespace AdvancedVisualization {
+
+class CRendererCube : public IRenderer
 {
-	namespace AdvancedVisualization
-	{
-		class CRendererCube : public IRenderer
-		{
-		public:
+public:
 
-			CRendererCube();
+	CRendererCube();
 
-			void rebuild(const CRendererContext& ctx) override;
-			void refresh(const CRendererContext& ctx) override;
-			bool render(const CRendererContext& ctx) override;
+	void rebuild(const CRendererContext& ctx) override;
+	void refresh(const CRendererContext& ctx) override;
+	bool render(const CRendererContext& ctx) override;
 
-		protected:
-			std::vector<CVertex> m_vertices;
-		};
-	} // namespace AdvancedVisualization
-} // namespace Mensia
+protected:
+	std::vector<CVertex> m_vertices;
+};
+
+}  // namespace AdvancedVisualization
+}  // namespace Mensia

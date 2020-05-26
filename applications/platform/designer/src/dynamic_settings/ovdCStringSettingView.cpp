@@ -5,7 +5,7 @@ using namespace OpenViBE;
 using namespace /*OpenViBE::*/Designer;
 using namespace Setting;
 
-static void OnChange(GtkEntry* /*entry*/, gpointer data) { static_cast<CStringSettingView *>(data)->onChange(); }
+static void OnChange(GtkEntry* /*entry*/, gpointer data) { static_cast<CStringSettingView*>(data)->onChange(); }
 
 CStringSettingView::CStringSettingView(Kernel::IBox& box, const size_t index, CString& builderName)
 	: CAbstractSettingView(box, index, builderName, "settings_collection-entry_setting_string")

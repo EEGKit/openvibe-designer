@@ -22,17 +22,16 @@
 
 #include <gtk/gtk.h>
 
-namespace Mensia
-{
-	namespace AdvancedVisualization
-	{
-		namespace GtkGL
-		{
-			void initialize(GtkWidget* widget);
-			void uninitialize(GtkWidget* widget);
+namespace Mensia {
+namespace AdvancedVisualization {
+namespace GtkGL {
 
-			void preRender(GtkWidget* widget, bool verticalSync = false);
-			void postRender(GtkWidget* widget);
-		} // namespace GtkGL
-	} // namespace AdvancedVisualization
-} // namespace Mensia
+void initialize(GtkWidget* widget);
+void uninitialize(GtkWidget* widget);
+
+void preRender(GtkWidget* widget, bool verticalSync = false);
+void postRender(GtkWidget* widget);
+
+}  // namespace GtkGL
+}  // namespace AdvancedVisualization
+}  // namespace Mensia

@@ -24,74 +24,74 @@
 #include <cmath>
 
 #pragma pack(1)
-namespace Mensia
+namespace Mensia {
+namespace AdvancedVisualization {
+
+class CVertex
 {
-	namespace AdvancedVisualization
+public:
+
+	explicit CVertex(const double _x = 0, const double _y = 0, const double _z = 0, const double _u = 0, const double _v = 0)
+		: x(float(_x)), y(float(_y)), z(float(_z)), u(float(_u)), v(float(_v)) { }
+
+	CVertex(const CVertex& a, const CVertex& b)
+		: x(b.x - a.x), y(b.y - a.y), z(b.z - a.z), u(b.u - a.u), v(b.v - a.v) { }
+
+	float x = 0;
+	float y = 0;
+	float z = 0;
+	float u = 0;
+	float v = 0;
+
+	CVertex& normalize()
+
 	{
-		class CVertex
+		const float n = this->length();
+		if (n != 0)
 		{
-		public:
+			const float in = 1.F / n;
+			this->x *= in;
+			this->y *= in;
+			this->z *= in;
+		}
+		return *this;
+	}
 
-			explicit CVertex(const double _x = 0, const double _y = 0, const double _z = 0, const double _u = 0, const double _v = 0)
-				: x(float(_x)), y(float(_y)), z(float(_z)), u(float(_u)), v(float(_v)) { }
+	float length() const { return sqrt(this->sqrLength()); }
 
-			CVertex(const CVertex& a, const CVertex& b)
-				: x(b.x - a.x), y(b.y - a.y), z(b.z - a.z), u(b.u - a.u), v(b.v - a.v) { }
+	float sqrLength() const { return dot(*this, *this); }
 
-			float x = 0;
-			float y = 0;
-			float z = 0;
-			float u = 0;
-			float v = 0;
+	static float dot(const CVertex& a, const CVertex& b) { return a.x * b.x + a.y * b.y + a.z * b.z; }
 
-			CVertex& normalize()
+	static CVertex cross(const CVertex& a, const CVertex& b)
+	{
+		CVertex r;
+		r.x = a.y * b.z - a.z * b.y;
+		r.y = a.z * b.x - a.x * b.z;
+		r.z = a.x * b.y - a.y * b.x;
+		return r;
+	}
 
-			{
-				const float n = this->length();
-				if (n != 0)
-				{
-					const float in = 1.F / n;
-					this->x *= in;
-					this->y *= in;
-					this->z *= in;
-				}
-				return *this;
-			}
+	static CVertex cross(const CVertex& a1, const CVertex& b1, const CVertex& a2, const CVertex& b2)
+	{
+		const CVertex v1(a1, b1);
+		const CVertex v2(a2, b2);
+		return cross(v1, v2);
+	}
 
-			float length() const { return sqrt(this->sqrLength()); }
+	static bool isOnSameSide(const CVertex& p1, const CVertex& p2, const CVertex& a, const CVertex& b)
+	{
+		const CVertex cp1 = cross(a, b, a, p1);
+		const CVertex cp2 = cross(a, b, a, p2);
+		return dot(cp1, cp2) >= 0;
+	}
 
-			float sqrLength() const { return dot(*this, *this); }
+	static bool isInTriangle(const CVertex& p, const CVertex& a, const CVertex& b, const CVertex& c)
+	{
+		return isOnSameSide(p, a, b, c) && isOnSameSide(p, b, c, a) && isOnSameSide(p, c, a, b);
+	}
+};
 
-			static float dot(const CVertex& a, const CVertex& b) { return a.x * b.x + a.y * b.y + a.z * b.z; }
-
-			static CVertex cross(const CVertex& a, const CVertex& b)
-			{
-				CVertex r;
-				r.x = a.y * b.z - a.z * b.y;
-				r.y = a.z * b.x - a.x * b.z;
-				r.z = a.x * b.y - a.y * b.x;
-				return r;
-			}
-
-			static CVertex cross(const CVertex& a1, const CVertex& b1, const CVertex& a2, const CVertex& b2)
-			{
-				const CVertex v1(a1, b1);
-				const CVertex v2(a2, b2);
-				return cross(v1, v2);
-			}
-
-			static bool isOnSameSide(const CVertex& p1, const CVertex& p2, const CVertex& a, const CVertex& b)
-			{
-				const CVertex cp1 = cross(a, b, a, p1);
-				const CVertex cp2 = cross(a, b, a, p2);
-				return dot(cp1, cp2) >= 0;
-			}
-
-			static bool isInTriangle(const CVertex& p, const CVertex& a, const CVertex& b, const CVertex& c)
-			{
-				return isOnSameSide(p, a, b, c) && isOnSameSide(p, b, c, a) && isOnSameSide(p, c, a, b);
-			}
-		};
-	} // namespace AdvancedVisualization
-} // namespace Mensia
+}  // namespace AdvancedVisualization
+}  // namespace Mensia
 #pragma pack()

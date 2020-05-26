@@ -14,53 +14,52 @@ using namespace /*OpenViBE::*/Plugins;
 using namespace /*OpenViBE::*/VisualizationToolkit;
 using namespace std;
 
-namespace
+namespace {
+template <class T>
+struct STestTrue
 {
-	template <class T>
-	struct STestTrue
+	bool operator()(typename map<CIdentifier, T*>::const_iterator /*it*/) const { return true; }
+};
+
+struct STestEqVisualizationWidgetType
+{
+	STestEqVisualizationWidgetType(const EVisualizationWidget widgetType) : type(widgetType) { }
+
+	bool operator()(const map<CIdentifier, IVisualizationWidget*>::const_iterator& it) const { return it->second->getType() == type; }
+
+	EVisualizationWidget type;
+};
+
+template <class T, class TTest>
+bool getNextID(const map<CIdentifier, T*>& ids, CIdentifier& id, const TTest& test)
+{
+	typename map<CIdentifier, T*>::const_iterator it;
+
+	if (id == OV_UndefinedIdentifier) { it = ids.begin(); }
+	else
 	{
-		bool operator()(typename map<CIdentifier, T*>::const_iterator /*it*/) const { return true; }
-	};
-
-	struct STestEqVisualizationWidgetType
-	{
-		STestEqVisualizationWidgetType(const EVisualizationWidget widgetType) : type(widgetType) { }
-
-		bool operator()(const map<CIdentifier, IVisualizationWidget*>::const_iterator& it) const { return it->second->getType() == type; }
-
-		EVisualizationWidget type;
-	};
-
-	template <class T, class TTest>
-	bool getNextID(const map<CIdentifier, T*>& ids, CIdentifier& id, const TTest& test)
-	{
-		typename map<CIdentifier, T*>::const_iterator it;
-
-		if (id == OV_UndefinedIdentifier) { it = ids.begin(); }
-		else
+		it = ids.find(id);
+		if (it == ids.end())
 		{
-			it = ids.find(id);
-			if (it == ids.end())
-			{
-				id = OV_UndefinedIdentifier;
-				return false;
-			}
-			++it;
+			id = OV_UndefinedIdentifier;
+			return false;
 		}
-
-		while (it != ids.end())
-		{
-			if (test(it))
-			{
-				id = it->first;
-				return true;
-			}
-			++it;
-		}
-
-		return false;
+		++it;
 	}
-} // namespace
+
+	while (it != ids.end())
+	{
+		if (test(it))
+		{
+			id = it->first;
+			return true;
+		}
+		++it;
+	}
+
+	return false;
+}
+}  // namespace
 
 CVisualizationTree::~CVisualizationTree()
 {
@@ -614,7 +613,7 @@ bool CVisualizationTree::dragDataReceivedOutsideWidgetCB(const CIdentifier& srcW
 
 	//create paned widget
 	const EVisualizationWidget panedType = (location == EDragLocation::Top || location == EDragLocation::Bottom) ? EVisualizationWidget::VerticalSplit
-												   : EVisualizationWidget::HorizontalSplit;
+											   : EVisualizationWidget::HorizontalSplit;
 	CIdentifier panedID;
 	addVisualizationWidget(panedID, CString(panedType == EVisualizationWidget::VerticalSplit ? "Vertical split" : "Horizontal split"), panedType,
 						   dstParentID,				//parent paned to dest widget parent

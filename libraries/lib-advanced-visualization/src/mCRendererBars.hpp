@@ -22,17 +22,17 @@
 
 #include "mIRenderer.hpp"
 
-namespace Mensia
-{
-	namespace AdvancedVisualization
-	{
-		class CRendererBars : public IRenderer
-		{
-		public:
+namespace Mensia {
+namespace AdvancedVisualization {
 
-			void rebuild(const CRendererContext& ctx) override;
-			void refresh(const CRendererContext& ctx) override;
-			bool render(const CRendererContext& ctx) override;
-		};
-	} // namespace AdvancedVisualization
-} // namespace Mensia
+class CRendererBars : public IRenderer
+{
+public:
+
+	void rebuild(const CRendererContext& ctx) override;
+	void refresh(const CRendererContext& ctx) override;
+	bool render(const CRendererContext& ctx) override;
+};
+
+}  // namespace AdvancedVisualization
+}  // namespace Mensia

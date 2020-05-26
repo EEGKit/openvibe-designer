@@ -55,7 +55,7 @@ void focus_on_box_cidentifier_clicked(GtkWidget* widget, GdkEventButton* event, 
 		ptr->m_CenterOnBoxFun(id);
 	}
 }
-} // namespace
+}  // namespace
 
 namespace OpenViBE {
 namespace Designer {

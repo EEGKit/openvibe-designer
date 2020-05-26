@@ -22,39 +22,39 @@
 
 #include "../mIRuler.hpp"
 
-namespace Mensia
+namespace Mensia {
+namespace AdvancedVisualization {
+
+template <class T1, class T2, class TCondition>
+class TRulerConditionalPair : public IRuler
 {
-	namespace AdvancedVisualization
+public:
+
+	void setRendererContext(const CRendererContext* ctx) override
 	{
-		template <class T1, class T2, class TCondition>
-		class TRulerConditionalPair : public IRuler
-		{
-		public:
+		IRuler::setRendererContext(ctx);
+		condition.setRendererContext(ctx);
+		first.setRendererContext(ctx);
+		second.setRendererContext(ctx);
+	}
 
-			void setRendererContext(const CRendererContext* ctx) override
-			{
-				IRuler::setRendererContext(ctx);
-				condition.setRendererContext(ctx);
-				first.setRendererContext(ctx);
-				second.setRendererContext(ctx);
-			}
+	void setRenderer(const IRenderer* renderer) override
+	{
+		IRuler::setRenderer(renderer);
+		condition.setRenderer(renderer);
+		first.setRenderer(renderer);
+		second.setRenderer(renderer);
+	}
 
-			void setRenderer(const IRenderer* renderer) override
-			{
-				IRuler::setRenderer(renderer);
-				condition.setRenderer(renderer);
-				first.setRenderer(renderer);
-				second.setRenderer(renderer);
-			}
+	void render() override { condition() ? first.doRender() : second.doRender(); }
+	void renderLeft(GtkWidget* widget) override { condition() ? first.doRenderLeft(widget) : second.doRenderLeft(widget); }
+	void renderRight(GtkWidget* widget) override { condition() ? first.doRenderRight(widget) : second.doRenderRight(widget); }
+	void renderBottom(GtkWidget* widget) override { condition() ? first.doRenderBottom(widget) : second.doRenderBottom(widget); }
 
-			void render() override { condition() ? first.doRender() : second.doRender(); }
-			void renderLeft(GtkWidget* widget) override { condition() ? first.doRenderLeft(widget) : second.doRenderLeft(widget); }
-			void renderRight(GtkWidget* widget) override { condition() ? first.doRenderRight(widget) : second.doRenderRight(widget); }
-			void renderBottom(GtkWidget* widget) override { condition() ? first.doRenderBottom(widget) : second.doRenderBottom(widget); }
+	TCondition condition;
+	T1 first;
+	T2 second;
+};
 
-			TCondition condition;
-			T1 first;
-			T2 second;
-		};
-	} // namespace AdvancedVisualization
-} // namespace Mensia
+}  // namespace AdvancedVisualization
+}  // namespace Mensia

@@ -10,100 +10,100 @@
 
 #define OV_AttributeId_Box_Disabled                					OpenViBE::CIdentifier(0x341D3912, 0x1478DE86)
 
-namespace OpenViBE
+namespace OpenViBE {
+namespace Designer {
+
+typedef enum
 {
-	namespace Designer
-	{
-		typedef enum
-		{
-			CommandLineFlag_None = 0x00000000,
-			CommandLineFlag_Open = 0x00000001,
-			CommandLineFlag_Play = 0x00000002,
-			CommandLineFlag_PlayFast = 0x00000004,
-			CommandLineFlag_NoGui = 0x00000008,
-			CommandLineFlag_NoCheckColorDepth = 0x00000010,
-			CommandLineFlag_NoManageSession = 0x00000020,
-			CommandLineFlag_Define = 0x00000040,
-			CommandLineFlag_Config = 0x00000080,
-			CommandLineFlag_RandomSeed = 0x00000100,
-			CommandLineFlag_NoVisualization = 0x00000200  /** flag to hide visualisation widget */
-		} ECommandLineFlag;
+	CommandLineFlag_None = 0x00000000,
+	CommandLineFlag_Open = 0x00000001,
+	CommandLineFlag_Play = 0x00000002,
+	CommandLineFlag_PlayFast = 0x00000004,
+	CommandLineFlag_NoGui = 0x00000008,
+	CommandLineFlag_NoCheckColorDepth = 0x00000010,
+	CommandLineFlag_NoManageSession = 0x00000020,
+	CommandLineFlag_Define = 0x00000040,
+	CommandLineFlag_Config = 0x00000080,
+	CommandLineFlag_RandomSeed = 0x00000100,
+	CommandLineFlag_NoVisualization = 0x00000200  /** flag to hide visualisation widget */
+} ECommandLineFlag;
 
-		enum class EContextMenu
-		{
-			SelectionCopy, SelectionCut, SelectionPaste, SelectionDelete,
+enum class EContextMenu
+{
+	SelectionCopy, SelectionCut, SelectionPaste, SelectionDelete,
 
-			BoxUpdate, BoxRemoveDeprecatedInterfacors, BoxRename, BoxDelete,
-			BoxAddInput, BoxEditInput, BoxRemoveInput,
-			BoxAddOutput, BoxEditOutput, BoxRemoveOutput,
+	BoxUpdate, BoxRemoveDeprecatedInterfacors, BoxRename, BoxDelete,
+	BoxAddInput, BoxEditInput, BoxRemoveInput,
+	BoxAddOutput, BoxEditOutput, BoxRemoveOutput,
 
-			BoxConnectScenarioInput, BoxConnectScenarioOutput,
-			BoxDisconnectScenarioInput, BoxDisconnectScenarioOutput,
+	BoxConnectScenarioInput, BoxConnectScenarioOutput,
+	BoxDisconnectScenarioInput, BoxDisconnectScenarioOutput,
 
-			BoxAddSetting, BoxRemoveSetting, BoxEditSetting,
-			BoxConfigure, BoxAbout, BoxEnable, BoxDisable,
+	BoxAddSetting, BoxRemoveSetting, BoxEditSetting,
+	BoxConfigure, BoxAbout, BoxEnable, BoxDisable,
 
-			BoxAddMessageInput, BoxRemoveMessageInput,
-			BoxAddMessageOutput, BoxRemoveMessageOutput,
-			BoxEditMessageInput, BoxEditMessageOutput,
+	BoxAddMessageInput, BoxRemoveMessageInput,
+	BoxAddMessageOutput, BoxRemoveMessageOutput,
+	BoxEditMessageInput, BoxEditMessageOutput,
 
-			BoxEditMetabox,
-			BoxDocumentation,
-			ScenarioAddComment,
-			ScenarioAbout
-		};
+	BoxEditMetabox,
+	BoxDocumentation,
+	ScenarioAddComment,
+	ScenarioAbout
+};
 
-		enum
-		{
-			Resource_StringName,
-			Resource_StringShortDescription,
-			Resource_StringIdentifier,
-			Resource_StringStockIcon,
-			Resource_StringColor,
-			Resource_StringFont,
-			Resource_BooleanIsPlugin,
-			Resource_BooleanIsUnstable,
-			Resource_BackGroundColor,
-			Resource_BooleanIsGhost = 8001,
-			Resource_BooleanIsMensia = 8002
-		};
+enum
+{
+	Resource_StringName,
+	Resource_StringShortDescription,
+	Resource_StringIdentifier,
+	Resource_StringStockIcon,
+	Resource_StringColor,
+	Resource_StringFont,
+	Resource_BooleanIsPlugin,
+	Resource_BooleanIsUnstable,
+	Resource_BackGroundColor,
+	Resource_BooleanIsGhost = 8001,
+	Resource_BooleanIsMensia = 8002
+};
 
-		enum
-		{
-			Color_BackgroundPlayerStarted,
-			Color_BoxBackground,
-			Color_BoxBackgroundSelected,
-			Color_BoxBackgroundMissing,
-			Color_BoxBackgroundDisabled,
-			Color_BoxBackgroundDeprecated,
-			Color_BoxBackgroundUnstable,
-			Color_BoxBackgroundOutdated,
-			Color_BoxBackgroundMetabox,
-			Color_BoxBorder,
-			Color_BoxBorderSelected,
-			Color_BoxInputBackground,
-			Color_BoxInputBorder,
-			Color_BoxOutputBackground,
-			Color_BoxOutputBorder,
-			Color_BoxSettingBackground,
-			Color_BoxSettingBorder,
-			Color_CommentBackground,
-			Color_CommentBackgroundSelected,
-			Color_CommentBorder,
-			Color_CommentBorderSelected,
-			Color_Link, 
-			Color_LinkSelected,
-			Color_LinkDownCast,
-			Color_LinkUpCast,
-			Color_LinkInvalid,
-			Color_SelectionArea,
-			Color_SelectionAreaBorder,
-		};
+enum
+{
+	Color_BackgroundPlayerStarted,
+	Color_BoxBackground,
+	Color_BoxBackgroundSelected,
+	Color_BoxBackgroundMissing,
+	Color_BoxBackgroundDisabled,
+	Color_BoxBackgroundDeprecated,
+	Color_BoxBackgroundUnstable,
+	Color_BoxBackgroundOutdated,
+	Color_BoxBackgroundMetabox,
+	Color_BoxBorder,
+	Color_BoxBorderSelected,
+	Color_BoxInputBackground,
+	Color_BoxInputBorder,
+	Color_BoxOutputBackground,
+	Color_BoxOutputBorder,
+	Color_BoxSettingBackground,
+	Color_BoxSettingBorder,
+	Color_CommentBackground,
+	Color_CommentBackgroundSelected,
+	Color_CommentBorder,
+	Color_CommentBorderSelected,
+	Color_Link,
+	Color_LinkSelected,
+	Color_LinkDownCast,
+	Color_LinkUpCast,
+	Color_LinkInvalid,
+	Color_SelectionArea,
+	Color_SelectionAreaBorder,
+};
 
-		enum { Box_None, Box_Input, Box_Output, Box_Setting, Box_Link, Box_ScenarioInput, Box_ScenarioOutput, Box_Update };
+enum { Box_None, Box_Input, Box_Output, Box_Setting, Box_Link, Box_ScenarioInput, Box_ScenarioOutput, Box_Update };
 
-		enum { Mode_None, Mode_Selection, Mode_SelectionAdd, Mode_MoveScenario, Mode_MoveSelection, Mode_Connect, Mode_EditSettings };
-	}  // namespace Designer
+enum { Mode_None, Mode_Selection, Mode_SelectionAdd, Mode_MoveScenario, Mode_MoveSelection, Mode_Connect, Mode_EditSettings };
+
+}  // namespace Designer
 }  // namespace OpenViBE
 
 //___________________________________________________________________//

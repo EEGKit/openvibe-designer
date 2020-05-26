@@ -24,102 +24,102 @@
 #include "mTBoxAlgorithmInstantViz.hpp"
 #include <array>
 
-namespace Mensia
+namespace Mensia {
+namespace AdvancedVisualization {
+
+template <class TRendererFactoryClass, class TRulerClass>
+class TBoxAlgorithmInstantLoretaViz final : public TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>
 {
-	namespace AdvancedVisualization
+public:
+
+	TBoxAlgorithmInstantLoretaViz(const OpenViBE::CIdentifier& classID, const std::vector<int>& parameters)
+		: TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>(classID, parameters) { }
+
+	static void callback(GtkTreeSelection* selection, TBoxAlgorithmInstantLoretaViz<TRendererFactoryClass, TRulerClass>* box)
 	{
-		template <class TRendererFactoryClass, class TRulerClass>
-		class TBoxAlgorithmInstantLoretaViz final : public TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>
+		box->regionSelectionChanged(selection);
+	}
+
+	void regionSelectionChanged(GtkTreeSelection* pTreeSelection)
+	{
+		m_Renderer->clearRegionSelection();
+
+		GtkTreeIter iter;
+
+		char* value = nullptr;
+		for (size_t i = 0; i < 3; ++i)
 		{
-		public:
+			GtkTreeSelection* selection = gtk_tree_view_get_selection(m_LookupTreeView[i]);
 
-			TBoxAlgorithmInstantLoretaViz(const OpenViBE::CIdentifier& classID, const std::vector<int>& parameters)
-				: TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>(classID, parameters) { }
-
-			static void callback(GtkTreeSelection* selection, TBoxAlgorithmInstantLoretaViz<TRendererFactoryClass, TRulerClass>* box)
+			if (selection == pTreeSelection)
 			{
-				box->regionSelectionChanged(selection);
-			}
-
-			void regionSelectionChanged(GtkTreeSelection* pTreeSelection)
-			{
-				m_Renderer->clearRegionSelection();
-
-				GtkTreeIter iter;
-
-				char* value = nullptr;
-				for (size_t i = 0; i < 3; ++i)
+				if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(m_LookupListStore[i]), &iter))
 				{
-					GtkTreeSelection* selection = gtk_tree_view_get_selection(m_LookupTreeView[i]);
-
-					if (selection == pTreeSelection)
+					do
 					{
-						if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(m_LookupListStore[i]), &iter))
+						if (gtk_tree_selection_iter_is_selected(selection, &iter))
 						{
-							do
-							{
-								if (gtk_tree_selection_iter_is_selected(selection, &iter))
-								{
-									gtk_tree_model_get(GTK_TREE_MODEL(m_LookupListStore[i]), &iter, 0, &value, -1);
-									m_Renderer->selectRegion(i, value);
-								}
-							} while (gtk_tree_model_iter_next(GTK_TREE_MODEL(m_LookupListStore[i]), &iter));
+							gtk_tree_model_get(GTK_TREE_MODEL(m_LookupListStore[i]), &iter, 0, &value, -1);
+							m_Renderer->selectRegion(i, value);
 						}
-					}
-					else { gtk_tree_selection_unselect_all(selection); }
+					} while (gtk_tree_model_iter_next(GTK_TREE_MODEL(m_LookupListStore[i]), &iter));
 				}
 			}
+			else { gtk_tree_selection_unselect_all(selection); }
+		}
+	}
 
-			void fillRegion(GtkListStore* listStore, GtkTreeView* view, IRenderer* renderer, const size_t category) const
-			{
-				GtkTreeIter gtkTreeIter;
+	void fillRegion(GtkListStore* listStore, GtkTreeView* view, IRenderer* renderer, const size_t category) const
+	{
+		GtkTreeIter gtkTreeIter;
 
-				gtk_list_store_clear(listStore);
-				gtk_tree_selection_set_mode(gtk_tree_view_get_selection(view), GTK_SELECTION_MULTIPLE);
-				for (size_t i = 0; i < renderer->getRegionCount(category); ++i)
-				{
-					const char* name = m_Renderer->getRegionName(category, i);
-					gtk_list_store_append((listStore), &gtkTreeIter);
-					gtk_list_store_set(listStore, &gtkTreeIter, 0, name ? name : "", -1);
-					gtk_tree_selection_select_iter(gtk_tree_view_get_selection(view), &gtkTreeIter);
-				}
-			}
+		gtk_list_store_clear(listStore);
+		gtk_tree_selection_set_mode(gtk_tree_view_get_selection(view), GTK_SELECTION_MULTIPLE);
+		for (size_t i = 0; i < renderer->getRegionCount(category); ++i)
+		{
+			const char* name = m_Renderer->getRegionName(category, i);
+			gtk_list_store_append((listStore), &gtkTreeIter);
+			gtk_list_store_set(listStore, &gtkTreeIter, 0, name ? name : "", -1);
+			gtk_tree_selection_select_iter(gtk_tree_view_get_selection(view), &gtkTreeIter);
+		}
+	}
 
-			using TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::m_Renderers;
-			using TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::m_Builder;
+	using TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::m_Renderers;
+	using TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::m_Builder;
 
-			bool initialize() override
+	bool initialize() override
 
-			{
-				TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::initialize();
+	{
+		TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::initialize();
 
-				m_Renderer = m_Renderers[0];
+		m_Renderer = m_Renderers[0];
 
-				gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_Builder, "expander_select")));
-				gtk_widget_show(GTK_WIDGET(::gtk_builder_get_object(m_Builder, "expander_select_sLORETA")));
+		gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_Builder, "expander_select")));
+		gtk_widget_show(GTK_WIDGET(::gtk_builder_get_object(m_Builder, "expander_select_sLORETA")));
 
-				m_LookupTreeView[0]  = GTK_TREE_VIEW(::gtk_builder_get_object(m_Builder, "expander_select_broadmann_treeview"));
-				m_LookupTreeView[1]  = GTK_TREE_VIEW(::gtk_builder_get_object(m_Builder, "expander_select_neuro_1_treeview"));
-				m_LookupTreeView[2]  = GTK_TREE_VIEW(::gtk_builder_get_object(m_Builder, "expander_select_neuro_2_treeview"));
-				m_LookupListStore[0] = GTK_LIST_STORE(::gtk_builder_get_object(m_Builder, "liststore_select_broadmann"));
-				m_LookupListStore[1] = GTK_LIST_STORE(::gtk_builder_get_object(m_Builder, "liststore_select_neuro_1"));
-				m_LookupListStore[2] = GTK_LIST_STORE(::gtk_builder_get_object(m_Builder, "liststore_select_neuro_2"));
+		m_LookupTreeView[0]  = GTK_TREE_VIEW(::gtk_builder_get_object(m_Builder, "expander_select_broadmann_treeview"));
+		m_LookupTreeView[1]  = GTK_TREE_VIEW(::gtk_builder_get_object(m_Builder, "expander_select_neuro_1_treeview"));
+		m_LookupTreeView[2]  = GTK_TREE_VIEW(::gtk_builder_get_object(m_Builder, "expander_select_neuro_2_treeview"));
+		m_LookupListStore[0] = GTK_LIST_STORE(::gtk_builder_get_object(m_Builder, "liststore_select_broadmann"));
+		m_LookupListStore[1] = GTK_LIST_STORE(::gtk_builder_get_object(m_Builder, "liststore_select_neuro_1"));
+		m_LookupListStore[2] = GTK_LIST_STORE(::gtk_builder_get_object(m_Builder, "liststore_select_neuro_2"));
 
-				for (size_t i = 0; i < m_Renderer->getRegionCategoryCount() && i < 3; ++i)
-				{
-					this->fillRegion(m_LookupListStore[i], m_LookupTreeView[i], m_Renderer, i);
-				}
+		for (size_t i = 0; i < m_Renderer->getRegionCategoryCount() && i < 3; ++i)
+		{
+			this->fillRegion(m_LookupListStore[i], m_LookupTreeView[i], m_Renderer, i);
+		}
 
-				g_signal_connect(::gtk_tree_view_get_selection(m_LookupTreeView[0]), "changed", G_CALLBACK(callback), this);
-				g_signal_connect(::gtk_tree_view_get_selection(m_LookupTreeView[1]), "changed", G_CALLBACK(callback), this);
-				g_signal_connect(::gtk_tree_view_get_selection(m_LookupTreeView[2]), "changed", G_CALLBACK(callback), this);
+		g_signal_connect(::gtk_tree_view_get_selection(m_LookupTreeView[0]), "changed", G_CALLBACK(callback), this);
+		g_signal_connect(::gtk_tree_view_get_selection(m_LookupTreeView[1]), "changed", G_CALLBACK(callback), this);
+		g_signal_connect(::gtk_tree_view_get_selection(m_LookupTreeView[2]), "changed", G_CALLBACK(callback), this);
 
-				return true;
-			}
+		return true;
+	}
 
-			IRenderer* m_Renderer = nullptr;
-			std::array<GtkTreeView*, 3> m_LookupTreeView{};
-			std::array<GtkListStore*, 3> m_LookupListStore{};
-		};
-	} // namespace AdvancedVisualization
-} // namespace Mensia
+	IRenderer* m_Renderer = nullptr;
+	std::array<GtkTreeView*, 3> m_LookupTreeView{};
+	std::array<GtkListStore*, 3> m_LookupListStore{};
+};
+
+}  // namespace AdvancedVisualization
+}  // namespace Mensia

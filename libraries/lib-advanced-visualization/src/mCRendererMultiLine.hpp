@@ -22,15 +22,15 @@
 
 #include "mCRendererLine.hpp"
 
-namespace Mensia
-{
-	namespace AdvancedVisualization
-	{
-		class CRendererMultiLine : public CRendererLine
-		{
-		public:
+namespace Mensia {
+namespace AdvancedVisualization {
 
-			bool render(const CRendererContext& ctx) override;
-		};
-	} // namespace AdvancedVisualization
-} // namespace Mensia
+class CRendererMultiLine : public CRendererLine
+{
+public:
+
+	bool render(const CRendererContext& ctx) override;
+};
+
+}  // namespace AdvancedVisualization
+}  // namespace Mensia

@@ -5,9 +5,9 @@ using namespace OpenViBE;
 using namespace /*OpenViBE::*/Designer;
 using namespace Setting;
 
-static void OnCheckbuttonSettingBooleanPressed(GtkToggleButton* /*button*/, gpointer data) { static_cast<CBooleanSettingView *>(data)->toggleButtonClick(); }
+static void OnCheckbuttonSettingBooleanPressed(GtkToggleButton* /*button*/, gpointer data) { static_cast<CBooleanSettingView*>(data)->toggleButtonClick(); }
 
-static void OnInsertion(GtkEntry* /*entry*/, gpointer data) { static_cast<CBooleanSettingView *>(data)->onChange(); }
+static void OnInsertion(GtkEntry* /*entry*/, gpointer data) { static_cast<CBooleanSettingView*>(data)->onChange(); }
 
 CBooleanSettingView::CBooleanSettingView(Kernel::IBox& box, const size_t index, CString& builderName)
 	: CAbstractSettingView(box, index, builderName, "settings_collection-hbox_setting_boolean")

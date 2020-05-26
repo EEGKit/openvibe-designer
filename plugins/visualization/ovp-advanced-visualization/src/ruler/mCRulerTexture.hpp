@@ -22,42 +22,42 @@
 
 #include "../mIRuler.hpp"
 
-namespace Mensia
+namespace Mensia {
+namespace AdvancedVisualization {
+
+class CRulerTexture : public IRuler
 {
-	namespace AdvancedVisualization
+protected:
+
+	virtual void preRender()
+
 	{
-		class CRulerTexture : public IRuler
-		{
-		protected:
+		glDisable(GL_BLEND);
+		glDisable(GL_DEPTH_TEST);
+		glEnable(GL_TEXTURE_1D);
+		glColor3f(1, 1, 1);
 
-			virtual void preRender()
+		glMatrixMode(GL_TEXTURE);
+		glPushMatrix();
+		glLoadIdentity();
 
-			{
-				glDisable(GL_BLEND);
-				glDisable(GL_DEPTH_TEST);
-				glEnable(GL_TEXTURE_1D);
-				glColor3f(1, 1, 1);
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+		glLoadIdentity();
+	}
 
-				glMatrixMode(GL_TEXTURE);
-				glPushMatrix();
-				glLoadIdentity();
+	virtual void postRender()
 
-				glMatrixMode(GL_MODELVIEW);
-				glPushMatrix();
-				glLoadIdentity();
-			}
+	{
+		glMatrixMode(GL_MODELVIEW);
+		glPopMatrix();
 
-			virtual void postRender()
+		glMatrixMode(GL_TEXTURE);
+		glPopMatrix();
 
-			{
-				glMatrixMode(GL_MODELVIEW);
-				glPopMatrix();
+		glMatrixMode(GL_MODELVIEW);
+	}
+};
 
-				glMatrixMode(GL_TEXTURE);
-				glPopMatrix();
-
-				glMatrixMode(GL_MODELVIEW);
-			}
-		};
-	} // namespace AdvancedVisualization
-} // namespace Mensia
+}  // namespace AdvancedVisualization
+}  // namespace Mensia

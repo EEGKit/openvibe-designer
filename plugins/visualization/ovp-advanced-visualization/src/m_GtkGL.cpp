@@ -49,11 +49,10 @@
 
 #if defined TARGET_OS_Windows
 
-namespace
-{
-	typedef bool (*gl_swap_interval_ext_t)(int);
-	gl_swap_interval_ext_t wglSwapIntervalEXT = nullptr;
-} // namespace
+namespace {
+typedef bool (*gl_swap_interval_ext_t)(int);
+gl_swap_interval_ext_t wglSwapIntervalEXT = nullptr;
+}  // namespace
 
 #elif defined TARGET_OS_Linux || defined TARGET_OS_MacOS
 
@@ -69,62 +68,61 @@ namespace
 
 #if defined TARGET_OS_Windows
 
-namespace
+namespace {
+void on_realize_cb(GtkWidget* widget, void* /*data*/)
 {
-	void on_realize_cb(GtkWidget* widget, void* /*data*/)
+	GTK_GL_DEBUG("realize-callback");
+
+	gdk_window_ensure_native(gtk_widget_get_window(widget));
+
+	const HWND window    = HWND(GDK_WINDOW_HWND(::gtk_widget_get_window(widget)));
+	const HDC drawingCtx = GetDC(window);
+
+	PIXELFORMATDESCRIPTOR pixelFormatDesc;
+	pixelFormatDesc.nSize      = sizeof(pixelFormatDesc);
+	pixelFormatDesc.nVersion   = 1;
+	pixelFormatDesc.dwFlags    = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+	pixelFormatDesc.iPixelType = PFD_TYPE_RGBA;
+	pixelFormatDesc.cColorBits = 24;
+	pixelFormatDesc.cAlphaBits = 8;
+	pixelFormatDesc.cDepthBits = 32;
+	pixelFormatDesc.iLayerType = PFD_MAIN_PLANE;
+
+	const int pixelFormatID = ChoosePixelFormat(drawingCtx, &pixelFormatDesc);
+
+	if (pixelFormatID == 0)
 	{
-		GTK_GL_DEBUG("realize-callback");
-
-		gdk_window_ensure_native(gtk_widget_get_window(widget));
-
-		const HWND window    = HWND(GDK_WINDOW_HWND(::gtk_widget_get_window(widget)));
-		const HDC drawingCtx = GetDC(window);
-
-		PIXELFORMATDESCRIPTOR pixelFormatDesc;
-		pixelFormatDesc.nSize      = sizeof(pixelFormatDesc);
-		pixelFormatDesc.nVersion   = 1;
-		pixelFormatDesc.dwFlags    = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
-		pixelFormatDesc.iPixelType = PFD_TYPE_RGBA;
-		pixelFormatDesc.cColorBits = 24;
-		pixelFormatDesc.cAlphaBits = 8;
-		pixelFormatDesc.cDepthBits = 32;
-		pixelFormatDesc.iLayerType = PFD_MAIN_PLANE;
-
-		const int pixelFormatID = ChoosePixelFormat(drawingCtx, &pixelFormatDesc);
-
-		if (pixelFormatID == 0)
-		{
-			GTK_GL_WARNING("ChoosePixelFormat failed");
-			GTK_GL_DEBUG("realize-callback::failed");
-			return;
-		}
-
-		if (SetPixelFormat(drawingCtx, pixelFormatID, &pixelFormatDesc) == 0)
-		{
-			GTK_GL_WARNING("SetPixelFormat failed");
-			GTK_GL_DEBUG("realize-callback::failed");
-			return;
-		}
-
-		const HGLRC glRenderingCtx = wglCreateContext(drawingCtx);
-		if (glRenderingCtx == nullptr)
-		{
-			GTK_GL_WARNING("wglCreateContext failed");
-			GTK_GL_DEBUG("realize-callback::failed");
-			return;
-		}
-
-		g_object_set_data(G_OBJECT(widget), GTK_GL_RENDERING_CONTEXT_NAME, glRenderingCtx);
-		g_object_set_data(G_OBJECT(widget), GTK_GL_DEVICE_CONTEXT_NAME, drawingCtx);
-
-		gtk_widget_queue_resize(widget);
-		gtk_widget_set_double_buffered(widget, FALSE);
-
-		wglSwapIntervalEXT = gl_swap_interval_ext_t(wglGetProcAddress("wglSwapIntervalEXT"));
-
-		GTK_GL_DEBUG("realize-callback::success");
+		GTK_GL_WARNING("ChoosePixelFormat failed");
+		GTK_GL_DEBUG("realize-callback::failed");
+		return;
 	}
-} // namespace
+
+	if (SetPixelFormat(drawingCtx, pixelFormatID, &pixelFormatDesc) == 0)
+	{
+		GTK_GL_WARNING("SetPixelFormat failed");
+		GTK_GL_DEBUG("realize-callback::failed");
+		return;
+	}
+
+	const HGLRC glRenderingCtx = wglCreateContext(drawingCtx);
+	if (glRenderingCtx == nullptr)
+	{
+		GTK_GL_WARNING("wglCreateContext failed");
+		GTK_GL_DEBUG("realize-callback::failed");
+		return;
+	}
+
+	g_object_set_data(G_OBJECT(widget), GTK_GL_RENDERING_CONTEXT_NAME, glRenderingCtx);
+	g_object_set_data(G_OBJECT(widget), GTK_GL_DEVICE_CONTEXT_NAME, drawingCtx);
+
+	gtk_widget_queue_resize(widget);
+	gtk_widget_set_double_buffered(widget, FALSE);
+
+	wglSwapIntervalEXT = gl_swap_interval_ext_t(wglGetProcAddress("wglSwapIntervalEXT"));
+
+	GTK_GL_DEBUG("realize-callback::success");
+}
+}  // namespace
 
 void Mensia::AdvancedVisualization::GtkGL::initialize(GtkWidget* widget)
 {

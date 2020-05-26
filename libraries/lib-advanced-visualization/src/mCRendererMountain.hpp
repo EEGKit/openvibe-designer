@@ -23,20 +23,20 @@
 #include "mIRenderer.hpp"
 #include "mC3DMesh.hpp"
 
-namespace Mensia
+namespace Mensia {
+namespace AdvancedVisualization {
+
+class CRendererMountain : public IRenderer
 {
-	namespace AdvancedVisualization
-	{
-		class CRendererMountain : public IRenderer
-		{
-		public:
+public:
 
-			void rebuild(const CRendererContext& ctx) override;
-			void refresh(const CRendererContext& ctx) override;
-			bool render(const CRendererContext& ctx) override;
+	void rebuild(const CRendererContext& ctx) override;
+	void refresh(const CRendererContext& ctx) override;
+	bool render(const CRendererContext& ctx) override;
 
-		protected:
-			C3DMesh m_mountain;
-		};
-	} // namespace AdvancedVisualization
-} // namespace Mensia
+protected:
+	C3DMesh m_mountain;
+};
+
+}  // namespace AdvancedVisualization
+}  // namespace Mensia

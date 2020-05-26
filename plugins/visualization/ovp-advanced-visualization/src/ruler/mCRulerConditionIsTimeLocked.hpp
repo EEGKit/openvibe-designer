@@ -22,25 +22,25 @@
 
 #include "../mIRuler.hpp"
 
-namespace Mensia
+namespace Mensia {
+namespace AdvancedVisualization {
+
+class CRulerConditionIsTimeLocked : public IRuler
 {
-	namespace AdvancedVisualization
-	{
-		class CRulerConditionIsTimeLocked : public IRuler
-		{
-		public:
+public:
 
-			CRulerConditionIsTimeLocked() : m_rendererCtx(nullptr), m_renderer(nullptr) { }
+	CRulerConditionIsTimeLocked() : m_rendererCtx(nullptr), m_renderer(nullptr) { }
 
-			void setRendererContext(const CRendererContext* ctx) override { m_rendererCtx = ctx; }
+	void setRendererContext(const CRendererContext* ctx) override { m_rendererCtx = ctx; }
 
-			void setRenderer(const IRenderer* renderer) override { m_renderer = renderer; }
+	void setRenderer(const IRenderer* renderer) override { m_renderer = renderer; }
 
-			bool operator()() const { return m_rendererCtx->isTimeLocked(); }
+	bool operator()() const { return m_rendererCtx->isTimeLocked(); }
 
-		protected:
-			const CRendererContext* m_rendererCtx;
-			const IRenderer* m_renderer;
-		};
-	} // namespace AdvancedVisualization
-} // namespace Mensia
+protected:
+	const CRendererContext* m_rendererCtx;
+	const IRenderer* m_renderer;
+};
+
+}  // namespace AdvancedVisualization
+}  // namespace Mensia

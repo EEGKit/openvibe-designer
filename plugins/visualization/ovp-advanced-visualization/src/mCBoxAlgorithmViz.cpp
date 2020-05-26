@@ -32,85 +32,81 @@ using namespace AdvancedVisualization;
 using namespace OpenViBE;
 using namespace /*OpenViBE::*/Kernel;
 
-namespace
+namespace {
+template <int i>
+class toolbar_sort_changed_
 {
-	template <int i>
-	class toolbar_sort_changed_
+public:
+	static void callback(GtkButton* /*button*/, CBoxAlgorithmViz* box)
 	{
-	public:
-		static void callback(GtkButton* /*button*/, CBoxAlgorithmViz* box)
-		{
-			box->m_RendererCtx->sortSelectedChannel(i);
-			box->m_RedrawNeeded = true;
-		}
-	};
+		box->m_RendererCtx->sortSelectedChannel(i);
+		box->m_RedrawNeeded = true;
+	}
+};
 
-	void channel_selection_changed_(GtkTreeSelection* selection, CRendererContext* ctx)
+void channel_selection_changed_(GtkTreeSelection* selection, CRendererContext* ctx)
+{
+	size_t i                = 0;
+	GtkTreeView* treeView   = gtk_tree_selection_get_tree_view(selection);
+	GtkTreeModel* treeModel = gtk_tree_view_get_model(treeView);
+	if (treeModel != nullptr)
 	{
-		size_t i                = 0;
-		GtkTreeView* treeView   = gtk_tree_selection_get_tree_view(selection);
-		GtkTreeModel* treeModel = gtk_tree_view_get_model(treeView);
-		if (treeModel != nullptr)
+		GtkTreeIter iter;
+		if (gtk_tree_model_get_iter_first(treeModel, &iter) != 0)
 		{
-			GtkTreeIter iter;
-			if (gtk_tree_model_get_iter_first(treeModel, &iter) != 0)
+			do
 			{
-				do
-				{
-					if (gtk_tree_selection_iter_is_selected(selection, &iter) != 0) { ctx->selectChannel(i); }
-					else { ctx->unselectChannel(i); }
-					i++;
-				} while (gtk_tree_model_iter_next(treeModel, &iter) != 0);
-			}
+				if (gtk_tree_selection_iter_is_selected(selection, &iter) != 0) { ctx->selectChannel(i); }
+				else { ctx->unselectChannel(i); }
+				i++;
+			} while (gtk_tree_model_iter_next(treeModel, &iter) != 0);
 		}
 	}
+}
 
-	void spinbutton_time_scale_change_value_callback(GtkSpinButton* button, CRendererContext* ctx)
-	{
-		ctx->setTimeScale(size_t(gtk_spin_button_get_value(button) * (1LL << 32)));
-	}
+void spinbutton_time_scale_change_value_callback(GtkSpinButton* button, CRendererContext* ctx)
+{
+	ctx->setTimeScale(size_t(gtk_spin_button_get_value(button) * (1LL << 32)));
+}
 
-	void spinbutton_element_count_change_value_callback(GtkSpinButton* button, CRendererContext* ctx)
-	{
-		ctx->setElementCount(size_t(gtk_spin_button_get_value(button)));
-	}
+void spinbutton_element_count_change_value_callback(GtkSpinButton* button, CRendererContext* ctx)
+{
+	ctx->setElementCount(size_t(gtk_spin_button_get_value(button)));
+}
 
-	void checkbutton_positive_toggled_callback(GtkToggleButton* button, CRendererContext* ctx)
-	{
-		ctx->setPositiveOnly(gtk_toggle_button_get_active(button) != 0);
-	}
+void checkbutton_positive_toggled_callback(GtkToggleButton* button, CRendererContext* ctx) { ctx->setPositiveOnly(gtk_toggle_button_get_active(button) != 0); }
 
-	void checkbutton_show_scale_toggled_callback(GtkToggleButton* button, CRendererContext* ctx)
-	{
-		ctx->setScaleVisibility(gtk_toggle_button_get_active(button) != 0);
-	}
+void checkbutton_show_scale_toggled_callback(GtkToggleButton* button, CRendererContext* ctx)
+{
+	ctx->setScaleVisibility(gtk_toggle_button_get_active(button) != 0);
+}
 
-	void button_video_recording_pressed_callback(GtkButton* button, CBoxAlgorithmViz* box)
-	{
-		box->m_IsVideoOutputWorking = !box->m_IsVideoOutputWorking;
-		gtk_button_set_label(button, box->m_IsVideoOutputWorking ? GTK_STOCK_MEDIA_PAUSE : GTK_STOCK_MEDIA_RECORD);
-	}
+void button_video_recording_pressed_callback(GtkButton* button, CBoxAlgorithmViz* box)
+{
+	box->m_IsVideoOutputWorking = !box->m_IsVideoOutputWorking;
+	gtk_button_set_label(button, box->m_IsVideoOutputWorking ? GTK_STOCK_MEDIA_PAUSE : GTK_STOCK_MEDIA_RECORD);
+}
 
-	void range_erp_value_changed_callback(GtkRange* range, GtkLabel* label)
-	{
-		char str[1024];
-		sprintf(str, "%.02f%%", gtk_range_get_value(range) * 100);
-		gtk_label_set_text(label, str);
-		getContext().stepERPFractionBy(float(gtk_range_get_value(range)) - getContext().getERPFraction());
-	}
+void range_erp_value_changed_callback(GtkRange* range, GtkLabel* label)
+{
+	char str[1024];
+	sprintf(str, "%.02f%%", gtk_range_get_value(range) * 100);
+	gtk_label_set_text(label, str);
+	getContext().stepERPFractionBy(float(gtk_range_get_value(range)) - getContext().getERPFraction());
+}
 
-	void button_erp_play_pause_pressed_callback(GtkButton* /*button*/, CRendererContext* ctx) { ctx->setERPPlayerActive(!ctx->isERPPlayerActive()); }
+void button_erp_play_pause_pressed_callback(GtkButton* /*button*/, CRendererContext* ctx) { ctx->setERPPlayerActive(!ctx->isERPPlayerActive()); }
 
-	void spinbutton_freq_band_min_change_value_callback(GtkSpinButton* button, CRendererContext* ctx)
-	{
-		ctx->setMinimumSpectrumFrequency(size_t(gtk_spin_button_get_value(button)));
-	}
+void spinbutton_freq_band_min_change_value_callback(GtkSpinButton* button, CRendererContext* ctx)
+{
+	ctx->setMinimumSpectrumFrequency(size_t(gtk_spin_button_get_value(button)));
+}
 
-	void spinbutton_freq_band_max_change_value_callback(GtkSpinButton* button, CRendererContext* ctx)
-	{
-		ctx->setMaximumSpectrumFrequency(size_t(gtk_spin_button_get_value(button)));
-	}
-} // namespace
+void spinbutton_freq_band_max_change_value_callback(GtkSpinButton* button, CRendererContext* ctx)
+{
+	ctx->setMaximumSpectrumFrequency(size_t(gtk_spin_button_get_value(button)));
+}
+}  // namespace
 
 bool CBoxAlgorithmViz::initialize()
 
@@ -137,7 +133,7 @@ bool CBoxAlgorithmViz::initialize()
 	m_DataScale         = 1;
 	m_Translucency      = 1;
 
-	
+
 	// Initializes fast forward behavior
 	m_fastForwardMaxFactorHD = float(this->getConfigurationManager().expandAsFloat("${AdvancedViz_HighDefinition_FastForwardFactor}", 5.F));
 	m_fastForwardMaxFactorLD = float(this->getConfigurationManager().expandAsFloat("${AdvancedViz_LowDefinition_FastForwardFactor}", 20.F));

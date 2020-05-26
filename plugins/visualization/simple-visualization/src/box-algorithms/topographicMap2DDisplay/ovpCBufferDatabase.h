@@ -317,6 +317,6 @@ protected:
 	bool convertCartesianToSpherical(const double* cartesian, double& theta, double& phi) const;
 };
 
-} // namespace SimpleVisualization
+}  // namespace SimpleVisualization
 }  // namespace Plugins
 }  // namespace OpenViBE

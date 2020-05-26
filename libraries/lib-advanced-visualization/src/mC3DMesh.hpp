@@ -31,31 +31,31 @@
 #include "mCVertex.hpp"
 
 
-namespace Mensia
+namespace Mensia {
+namespace AdvancedVisualization {
+
+class C3DMesh final
 {
-	namespace AdvancedVisualization
-	{
-		class C3DMesh final
-		{
-		public:
+public:
 
-			C3DMesh() { m_Color.fill(1.0); }
-			//C3DMesh(const char* filename);
-			~C3DMesh() = default;
+	C3DMesh() { m_Color.fill(1.0); }
+	//C3DMesh(const char* filename);
+	~C3DMesh() = default;
 
-			void clear();
-			bool load(const void* buffer);
-			bool compile();
+	void clear();
+	bool load(const void* buffer);
+	bool compile();
 
-			bool project(std::vector<CVertex>& out, const std::vector<CVertex>& in);
+	bool project(std::vector<CVertex>& out, const std::vector<CVertex>& in);
 
-			std::vector<CVertex> m_Vertices;
-			std::vector<CVertex> m_Normals;
-			std::vector<uint32_t> m_Triangles;
-			std::array<float, 3> m_Color;
-		};
-	} // namespace AdvancedVisualization
-} // namespace Mensia
+	std::vector<CVertex> m_Vertices;
+	std::vector<CVertex> m_Normals;
+	std::vector<uint32_t> m_Triangles;
+	std::array<float, 3> m_Color;
+};
+
+}  // namespace AdvancedVisualization
+}  // namespace Mensia
 
 
 #endif // TARGET_HAS_ThirdPartyOpenGL

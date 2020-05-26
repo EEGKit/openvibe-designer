@@ -15,21 +15,20 @@ using namespace /*OpenViBE::*/Kernel;
 using namespace /*OpenViBE::*/Plugins;
 using namespace SimpleVisualization;
 
-namespace
+namespace {
+void show_values_toggle_button_cb(GtkToggleToolButton* button, gpointer data)
 {
-	void show_values_toggle_button_cb(GtkToggleToolButton* button, gpointer data)
-	{
-		auto* display         = reinterpret_cast<CBoxAlgorithmMatrixDisplay*>(data);
-		display->m_ShowValues = (gtk_toggle_tool_button_get_active(button) != 0);
-	}
+	auto* display         = reinterpret_cast<CBoxAlgorithmMatrixDisplay*>(data);
+	display->m_ShowValues = (gtk_toggle_tool_button_get_active(button) != 0);
+}
 
-	void show_colors_toggle_button_cb(GtkToggleToolButton* button, gpointer data)
-	{
-		auto* display         = reinterpret_cast<CBoxAlgorithmMatrixDisplay*>(data);
-		display->m_ShowColors = (gtk_toggle_tool_button_get_active(button) != 0);
-		display->resetColors();
-	}
-} // namespace
+void show_colors_toggle_button_cb(GtkToggleToolButton* button, gpointer data)
+{
+	auto* display         = reinterpret_cast<CBoxAlgorithmMatrixDisplay*>(data);
+	display->m_ShowColors = (gtk_toggle_tool_button_get_active(button) != 0);
+	display->resetColors();
+}
+}  // namespace
 
 bool CBoxAlgorithmMatrixDisplay::resetColors()
 
@@ -67,7 +66,7 @@ bool CBoxAlgorithmMatrixDisplay::initialize()
 
 	//widgets
 	m_mainWidgetInterface    = gtk_builder_new();
-	m_toolbarWidgetInterface = gtk_builder_new(); 
+	m_toolbarWidgetInterface = gtk_builder_new();
 	// glade_xml_new(Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-MatrixDisplay.ui", "matrix-display-table", nullptr);
 	// glade_xml_new(Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-MatrixDisplay.ui", "matrix-display-toolbar", nullptr);
 	gtk_builder_add_from_file(m_mainWidgetInterface, Directories::getDataDir() + "/plugins/simple-visualization/openvibe-simple-visualization-MatrixDisplay.ui",
