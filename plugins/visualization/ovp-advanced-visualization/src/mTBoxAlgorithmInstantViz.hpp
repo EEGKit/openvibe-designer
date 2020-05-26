@@ -236,7 +236,7 @@ namespace Mensia
 					}
 					if (m_Decoder[i].isBufferReceived())
 					{
-						const uint64_t chunkDuration = (boxContext.getInputChunkEndTime(i, j) - boxContext.getInputChunkStartTime(i, j));
+						const CTime chunkDuration = (boxContext.getInputChunkEndTime(i, j) - boxContext.getInputChunkStartTime(i, j));
 
 						m_RendererCtx->setSampleDuration(chunkDuration / nSample);
 						m_RendererCtx->setSpectrumFrequencyRange(size_t((uint64_t(nSample) << 32) / chunkDuration));

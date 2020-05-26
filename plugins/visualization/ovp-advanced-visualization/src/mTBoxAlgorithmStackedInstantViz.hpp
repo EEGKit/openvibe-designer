@@ -278,7 +278,7 @@ namespace Mensia
 						const size_t frequencyCount = inputMatrix->getDimensionSize(1);
 						const size_t nSample        = inputMatrix->getDimensionSize(2);
 
-						const uint64_t chunkDuration  = dynamicBoxContext.getInputChunkEndTime(0, chunk) - dynamicBoxContext.getInputChunkStartTime(0, chunk);
+						const CTime chunkDuration  = dynamicBoxContext.getInputChunkEndTime(0, chunk) - dynamicBoxContext.getInputChunkStartTime(0, chunk);
 						const uint64_t sampleDuration = chunkDuration / nSample;
 
 						m_SubRendererCtx->setSampleDuration(sampleDuration);
@@ -312,10 +312,10 @@ namespace Mensia
 					m_StimDecoder.decode(i);
 					if (m_StimDecoder.isBufferReceived())
 					{
-						OpenViBE::IStimulationSet* stimSet = m_StimDecoder.getOutputStimulationSet();
-						for (size_t j = 0; j < stimSet->getStimulationCount(); ++j)
+						OpenViBE::CStimulationSet& stimSet = m_StimDecoder.getOutputStimulationSet();
+						for (size_t j = 0; j < stimSet->size(); ++j)
 						{
-							m_Renderers[0]->feed(stimSet->getStimulationDate(j), stimSet->getStimulationIdentifier(j));
+							m_Renderers[0]->feed(stimSet[j].m_Date, stimSet[j].m_ID);
 							m_RedrawNeeded = true;
 						}
 					}

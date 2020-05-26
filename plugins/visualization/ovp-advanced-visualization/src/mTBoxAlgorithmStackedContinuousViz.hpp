@@ -254,7 +254,7 @@ namespace Mensia
 					m_Time1                           = m_Time2;
 					m_Time2                           = boxContext.getInputChunkEndTime(0, size_t(i));
 					const uint64_t interChunkDuration = m_Time2 - m_Time1;
-					const uint64_t chunkDuration      = (boxContext.getInputChunkEndTime(0, size_t(i)) - boxContext.getInputChunkStartTime(0, size_t(i)));
+					const CTime chunkDuration      = (boxContext.getInputChunkEndTime(0, size_t(i)) - boxContext.getInputChunkStartTime(0, size_t(i)));
 					const uint64_t sampleDuration     = chunkDuration / m_NElement;
 					if (m_RendererCtx->isTimeLocked())
 					{
@@ -304,10 +304,10 @@ namespace Mensia
 					m_StimDecoder.decode(size_t(i));
 					if (m_StimDecoder.isBufferReceived())
 					{
-						OpenViBE::IStimulationSet* stimulationSet = m_StimDecoder.getOutputStimulationSet();
-						for (j = 0; j < stimulationSet->getStimulationCount(); ++j)
+						OpenViBE::CStimulationSet& stimulationSet = m_StimDecoder.getOutputStimulationSet();
+						for (j = 0; j < stimulationSet->size(); ++j)
 						{
-							m_Renderers[0]->feed(stimulationSet->getStimulationDate(j), stimulationSet->getStimulationIdentifier(j));
+							m_Renderers[0]->feed(stimulationSet[j].m_Date, stimulationSet[j].m_ID);
 							m_RedrawNeeded = true;
 						}
 					}

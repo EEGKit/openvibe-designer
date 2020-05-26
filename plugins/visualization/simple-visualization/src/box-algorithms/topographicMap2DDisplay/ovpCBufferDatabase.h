@@ -128,7 +128,7 @@ public:
 	 * \param endTime End time of memory buffer
 	 * \return True if memory buffer could be properly decoded, false otherwise
 	 */
-	virtual bool decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer* buffer, uint64_t startTime, uint64_t endTime);
+	virtual bool decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer* buffer, CTime startTime, CTime endTime);
 
 	/**
 	 * \brief Callback called upon channel localisation buffer reception
@@ -278,7 +278,7 @@ public:
 	// Mainly used to force a warning if stream-specified rate differs from the chunk-estimated rate.
 	virtual bool setSampling(const size_t sampling);
 
-	virtual void setStimulationCount(const size_t /*n*/) { }
+	virtual void resize(const size_t /*n*/) { }
 	virtual void setStimulation(const size_t index, const uint64_t id, const uint64_t date);
 
 	/**

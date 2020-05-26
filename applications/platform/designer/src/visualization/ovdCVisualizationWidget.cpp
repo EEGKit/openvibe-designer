@@ -58,7 +58,7 @@ bool CVisualizationWidget::removeChild(const CIdentifier& id)
 		}
 	}
 
-	OV_ERROR_DRF("Trying to remove non existing visualization widget " << id.str(), ErrorType::ResourceNotFound);
+	OV_ERROR_DRF("Trying to remove non existing visualization widget " << id.str(), Kernel::ErrorType::ResourceNotFound);
 }
 
 bool CVisualizationWidget::getChildIdentifier(const size_t index, CIdentifier& id) const
@@ -66,7 +66,7 @@ bool CVisualizationWidget::getChildIdentifier(const size_t index, CIdentifier& i
 	if (index >= m_childrens.size())
 	{
 		id = OV_UndefinedIdentifier;
-		OV_ERROR_DRF("Child with index " << index << " not found", ErrorType::ResourceNotFound);
+		OV_ERROR_DRF("Child with index " << index << " not found", Kernel::ErrorType::ResourceNotFound);
 	}
 	id = m_childrens[index];
 	return true;
@@ -74,7 +74,7 @@ bool CVisualizationWidget::getChildIdentifier(const size_t index, CIdentifier& i
 
 bool CVisualizationWidget::setChildIdentifier(const size_t index, const CIdentifier& id)
 {
-	if (index >= m_childrens.size()) { OV_ERROR_DRF("Child with index " << index << " not found", ErrorType::ResourceNotFound); }
+	if (index >= m_childrens.size()) { OV_ERROR_DRF("Child with index " << index << " not found", Kernel::ErrorType::ResourceNotFound); }
 	m_childrens[index] = id;
 	return true;
 }

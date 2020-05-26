@@ -642,7 +642,7 @@ bool CVisualizationTree::dragDataReceivedInWidgetCB(const CIdentifier& srcWidget
 {
 	//retrieve source widget parent
 	IVisualizationWidget* srcWidget = getVisualizationWidget(srcWidgetID);
-	OV_EXCEPTION_UNLESS_D(srcWidget, "Source visualization identifier does not exist in the tree", ErrorType::ResourceNotFound);
+	OV_EXCEPTION_UNLESS_D(srcWidget, "Source visualization identifier does not exist in the tree", Kernel::ErrorType::ResourceNotFound);
 
 	const CIdentifier srcParentID = srcWidget->getParentIdentifier();
 

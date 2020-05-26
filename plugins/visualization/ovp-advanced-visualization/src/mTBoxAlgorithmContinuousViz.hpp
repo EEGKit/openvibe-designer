@@ -237,7 +237,7 @@ namespace Mensia
 						m_RendererCtx->setSampleDuration(duration);
 					}
 					m_RendererCtx->setSpectrumFrequencyRange(
-						size_t((uint64_t(nSample) << 32) / (boxContext.getInputChunkEndTime(0, i) - boxContext.getInputChunkStartTime(0, i))));
+						size_t((uint64_t(nSample) << 32) / (boxContext.getInputChunkEndTime(0, i) - boxContext.getInputChunkStartTime(0, i)).time()));
 					m_RendererCtx->setMinimumSpectrumFrequency(size_t(gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_FrequencyBandMin))));
 					m_RendererCtx->setMaximumSpectrumFrequency(size_t(gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_FrequencyBandMax))));
 
@@ -268,10 +268,10 @@ namespace Mensia
 					m_oStimulationDecoder.decode(i);
 					if (m_oStimulationDecoder.isBufferReceived())
 					{
-						OpenViBE::IStimulationSet* stimulationSet = m_oStimulationDecoder.getOutputStimulationSet();
-						for (size_t j = 0; j < stimulationSet->getStimulationCount(); ++j)
+						OpenViBE::CStimulationSet& stimulationSet = m_oStimulationDecoder.getOutputStimulationSet();
+						for (size_t j = 0; j < stimulationSet->size(); ++j)
 						{
-							m_Renderer->feed(stimulationSet->getStimulationDate(j), stimulationSet->getStimulationIdentifier(j));
+							m_Renderer->feed(stimulationSet[j].m_Date, stimulationSet[j].m_ID);
 							m_RedrawNeeded = true;
 						}
 					}

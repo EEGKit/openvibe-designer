@@ -218,7 +218,7 @@ void CBoxConfigurationDialog::update(CObservable& /*o*/, void* data)
 			settingChange(event->m_FirstIdx);
 			break;
 
-		default: break;		//OV_ERROR_KRF("wtf", ErrorType::BadSetting);
+		default: break;		//OV_ERROR_KRF("wtf", Kernel::ErrorType::BadSetting);
 	}
 }
 
