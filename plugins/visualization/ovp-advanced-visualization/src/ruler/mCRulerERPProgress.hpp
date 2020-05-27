@@ -22,7 +22,7 @@
 
 #include "../mIRuler.hpp"
 
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 
 class CRulerERPProgress : public IRuler
@@ -60,4 +60,4 @@ public:
 };
 
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE

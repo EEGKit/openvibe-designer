@@ -10,6 +10,7 @@
 namespace OpenViBE {
 namespace Plugins {
 namespace SimpleVisualization {
+
 class CTopographicMapDrawable : public CSignalDisplayDrawable
 {
 public:
@@ -61,7 +62,7 @@ private:
 	 * \param bufferIndex [out] Index of buffer closest to time passed as parameter
 	 * \return True if time passed as parameter lies within a buffer's timeframe, false otherwise
 	 */
-	bool getBufferIndexFromTime(uint64_t time, size_t& bufferIndex);
+	bool getBufferIndexFromTime(CTime time, size_t& bufferIndex);
 
 	/**
 	 * \brief Ensure electrode coordinates are normalized
@@ -99,8 +100,9 @@ private:
 	//maximum interpolated value
 	Kernel::TParameterHandler<double> m_maxSamplePointValue;
 	//delay to apply to interpolated values
-	uint64_t m_delay = 0;
+	CTime m_delay = 0;
 };
+
 }  // namespace SimpleVisualization
 }  // namespace Plugins
 }  // namespace OpenViBE

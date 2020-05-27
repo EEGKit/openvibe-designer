@@ -98,10 +98,10 @@ bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer*
 		//resize channel localisation queue if necessary
 		if (m_dynamicChannelLocalisation)
 		{
-			const uint64_t bufferDuration = endTime - startTime;
+			const CTime bufferDuration = endTime - startTime;
 			if (bufferDuration != 0)
 			{
-				maxNBuffer = size_t(ceil(m_TotalDuration / bufferDuration));
+				maxNBuffer = size_t(ceil(m_TotalDuration / bufferDuration.time()));
 				if (maxNBuffer == 0) { maxNBuffer = 1; }
 			}
 
@@ -204,10 +204,6 @@ bool CBufferDatabase::adjustNumberOfDisplayedBuffers(const double time)
 	return nBufferToDisplayChanged;
 }
 
-size_t CBufferDatabase::getChannelCount() const { return m_DimSizes[0]; }
-
-double CBufferDatabase::getDisplayedTimeIntervalWidth() const { return (m_NBufferToDisplay * ((m_DimSizes[1] * 1000.0) / m_Sampling)); }
-
 void CBufferDatabase::setMatrixDimensionCount(const size_t n)
 {
 	if (n != 2)
@@ -302,7 +298,7 @@ bool CBufferDatabase::setMatrixBuffer(const double* buffer, const CTime startTim
 
 		//computes the sampling frequency for sanity checking or if the setter has not been called
 		const uint64_t duration = (uint64_t(1) << 32) * m_DimSizes[1];
-		size_t sampling         = size_t(duration / m_BufferDuration);
+		size_t sampling         = size_t(duration / m_BufferDuration.time());
 		if (sampling == 0)
 		{
 			// Complain if estimate is bad
@@ -359,7 +355,7 @@ bool CBufferDatabase::setMatrixBuffer(const double* buffer, const CTime startTim
 		if (m_ovTotalDuration == 0) { m_ovTotalDuration = (m_StartTime.back() - m_StartTime.front()) + (m_EndTime.back() - m_StartTime.back()); }
 		if (m_BufferStep == 0)
 		{
-			if (m_StartTime.size() <= 1) { m_BufferStep = size_t(m_ovTotalDuration); }
+			if (m_StartTime.size() <= 1) { m_BufferStep = m_ovTotalDuration; }
 			else { m_BufferStep = m_StartTime[1] - m_StartTime[0]; }
 		}
 		if (m_TotalStep == 0) { m_TotalStep = (m_StartTime.back() - m_StartTime.front()) + m_BufferStep; }
@@ -431,14 +427,14 @@ void CBufferDatabase::getDisplayedChannelLocalMinMaxValue(const size_t channel, 
 	}
 }
 
-bool CBufferDatabase::isTimeInDisplayedInterval(const uint64_t& time) const
+bool CBufferDatabase::isTimeInDisplayedInterval(const CTime& time) const
 {
 	if (m_StartTime.empty()) { return false; }
 
 	return time >= m_StartTime.front() && time <= m_EndTime.back();
 }
 
-bool CBufferDatabase::getIndexOfBufferStartingAtTime(const uint64_t& time, size_t& index) const
+bool CBufferDatabase::getIndexOfBufferStartingAtTime(const CTime& time, size_t& index) const
 {
 	index = 0;
 

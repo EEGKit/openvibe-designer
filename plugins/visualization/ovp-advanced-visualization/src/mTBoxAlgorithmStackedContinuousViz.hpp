@@ -23,7 +23,7 @@
 
 #include "mCBoxAlgorithmViz.hpp"
 
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 
 template <bool bHorizontalStack, bool bDrawBorders, class TRendererFactoryClass, class TRulerClass>
@@ -31,16 +31,16 @@ class TBoxAlgorithmStackedContinuousViz : public CBoxAlgorithmViz
 {
 public:
 
-	TBoxAlgorithmStackedContinuousViz(const OpenViBE::CIdentifier& classID, const std::vector<int>& parameters);
+	TBoxAlgorithmStackedContinuousViz(const CIdentifier& classID, const std::vector<int>& parameters);
 	bool initialize() override;
 	bool uninitialize() override;
 	bool process() override;
 
 	_IsDerivedFromClass_Final_(CBoxAlgorithmViz, m_ClassID)
 
-	OpenViBE::Toolkit::TStimulationDecoder<TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>>
+	Toolkit::TStimulationDecoder<TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>>
 	m_StimDecoder;
-	OpenViBE::Toolkit::TStreamedMatrixDecoder<TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>>
+	Toolkit::TStreamedMatrixDecoder<TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>>
 	m_MatrixDecoder;
 
 	TRendererFactoryClass m_RendererFactory;
@@ -57,9 +57,9 @@ public:
 
 	explicit CBoxAlgorithmStackedContinuousVizListener(const std::vector<int>& parameters) : CBoxAlgorithmVizListener(parameters) { }
 
-	bool onInputTypeChanged(OpenViBE::Kernel::IBox& box, const size_t index) override
+	bool onInputTypeChanged(Kernel::IBox& box, const size_t index) override
 	{
-		OpenViBE::CIdentifier typeID = OV_UndefinedIdentifier;
+		CIdentifier typeID = OV_UndefinedIdentifier;
 		box.getInputType(index, typeID);
 		if (!this->getTypeManager().isDerivedFromStream(typeID, OV_TypeId_StreamedMatrix)) { box.setInputType(index, OV_TypeId_StreamedMatrix); }
 		box.setInputType(1, OV_TypeId_Stimulations);
@@ -72,20 +72,20 @@ class TBoxAlgorithmStackedContinuousVizDesc : public CBoxAlgorithmVizDesc
 {
 public:
 
-	TBoxAlgorithmStackedContinuousVizDesc(const OpenViBE::CString& name, const OpenViBE::CIdentifier& descClassID,
-										  const OpenViBE::CIdentifier& classID, const OpenViBE::CString& addedSoftwareVersion,
-										  const OpenViBE::CString& updatedSoftwareVersion, const CParameterSet& parameterSet,
-										  const OpenViBE::CString& shortDesc, const OpenViBE::CString& detailedDesc)
+	TBoxAlgorithmStackedContinuousVizDesc(const CString& name, const CIdentifier& descClassID,
+										  const CIdentifier& classID, const CString& addedSoftwareVersion,
+										  const CString& updatedSoftwareVersion, const CParameterSet& parameterSet,
+										  const CString& shortDesc, const CString& detailedDesc)
 		: CBoxAlgorithmVizDesc(name, descClassID, classID, addedSoftwareVersion, updatedSoftwareVersion, parameterSet, shortDesc, detailedDesc) { }
 
-	OpenViBE::Plugins::IPluginObject* create() override
+	Plugins::IPluginObject* create() override
 	{
 		return new TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>(m_ClassID, m_Parameters);
 	}
 
-	OpenViBE::Plugins::IBoxListener* createBoxListener() const override { return new CBoxAlgorithmStackedContinuousVizListener(m_Parameters); }
+	Plugins::IBoxListener* createBoxListener() const override { return new CBoxAlgorithmStackedContinuousVizListener(m_Parameters); }
 
-	OpenViBE::CString getCategory() const override { return OpenViBE::CString("Advanced Visualization/") + m_CategoryName; }
+	CString getCategory() const override { return CString("Advanced Visualization/") + m_CategoryName; }
 
 	_IsDerivedFromClass_Final_(OpenViBE::Plugins::IBoxAlgorithmDesc, m_DescClassID)
 };
@@ -93,7 +93,7 @@ public:
 
 template <bool bHorizontalStack, bool bDrawBorders, class TRendererFactoryClass, class TRulerClass>
 TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>::TBoxAlgorithmStackedContinuousViz(
-	const OpenViBE::CIdentifier& classID, const std::vector<int>& parameters) : CBoxAlgorithmViz(classID, parameters) { }
+	const CIdentifier& classID, const std::vector<int>& parameters) : CBoxAlgorithmViz(classID, parameters) { }
 
 template <bool bHorizontalStack, bool bDrawBorders, class TRendererFactoryClass, class TRulerClass>
 bool TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>::initialize()
@@ -146,21 +146,21 @@ bool TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRenderer
 template <bool bHorizontalStack, bool bDrawBorders, class TRendererFactoryClass, class TRulerClass>
 bool TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>::process()
 {
-	OpenViBE::Kernel::IBoxIO& boxContext = this->getDynamicBoxContext();
-	const size_t nInput                  = this->getStaticBoxContext().getInputCount();
+	Kernel::IBoxIO& boxContext = this->getDynamicBoxContext();
+	const size_t nInput        = this->getStaticBoxContext().getInputCount();
 	size_t i, j;
 
 	for (i = 0; i < boxContext.getInputChunkCount(0); ++i)
 	{
 		m_MatrixDecoder.decode(size_t(i));
 
-		OpenViBE::IMatrix* matrix = m_MatrixDecoder.getOutputMatrix();
-		size_t nChannel           = matrix->getDimensionSize(0);
-		size_t nSample            = matrix->getDimensionSize(1);
+		IMatrix* matrix = m_MatrixDecoder.getOutputMatrix();
+		size_t nChannel = matrix->getDimensionSize(0);
+		size_t nSample  = matrix->getDimensionSize(1);
 
 		if (nChannel == 0)
 		{
-			this->getLogManager() << OpenViBE::Kernel::LogLevel_Error << "Input stream " << i << " has 0 channels\n";
+			this->getLogManager() << Kernel::LogLevel_Error << "Input stream " << i << " has 0 channels\n";
 			return false;
 		}
 
@@ -250,27 +250,26 @@ bool TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRenderer
 		}
 		if (m_MatrixDecoder.isBufferReceived())
 		{
-			m_Time1                           = m_Time2;
-			m_Time2                           = boxContext.getInputChunkEndTime(0, size_t(i));
-			const uint64_t interChunkDuration = m_Time2 - m_Time1;
-			const CTime chunkDuration         = (boxContext.getInputChunkEndTime(0, size_t(i)) - boxContext.getInputChunkStartTime(0, size_t(i)));
-			const uint64_t sampleDuration     = chunkDuration / m_NElement;
+			m_Time1                        = m_Time2;
+			m_Time2                        = boxContext.getInputChunkEndTime(0, size_t(i));
+			const CTime interChunkDuration = m_Time2 - m_Time1;
+			const CTime chunkDuration      = boxContext.getInputChunkEndTime(0, size_t(i)) - boxContext.getInputChunkStartTime(0, size_t(i));
+			const CTime sampleDuration     = chunkDuration.time() / m_NElement;
 			if (m_RendererCtx->isTimeLocked())
 			{
-				if ((interChunkDuration & ~0xf) != (m_RendererCtx->getSampleDuration() & ~0xf) && interChunkDuration != 0
-				) // 0xf mask avoids rounding errors
+				if ((interChunkDuration.time() & ~0xf) != (m_RendererCtx->getSampleDuration() & ~0xf) && interChunkDuration != 0) // 0xf mask avoids rounding errors
 				{
-					m_SubRendererCtx->setSampleDuration(interChunkDuration);
-					m_RendererCtx->setSampleDuration(interChunkDuration);
+					m_SubRendererCtx->setSampleDuration(interChunkDuration.time());
+					m_RendererCtx->setSampleDuration(interChunkDuration.time());
 				}
 			}
 			else
 			{
-				m_SubRendererCtx->setSampleDuration(sampleDuration);
-				m_RendererCtx->setSampleDuration(sampleDuration);
+				m_SubRendererCtx->setSampleDuration(sampleDuration.time());
+				m_RendererCtx->setSampleDuration(sampleDuration.time());
 			}
 
-			m_RendererCtx->setSpectrumFrequencyRange(size_t((uint64_t(nSample) << 32) / chunkDuration));
+			m_RendererCtx->setSpectrumFrequencyRange(size_t((uint64_t(nSample) << 32) / chunkDuration.time()));
 			m_RendererCtx->setMinimumSpectrumFrequency(size_t(gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_FrequencyBandMin))));
 			m_RendererCtx->setMaximumSpectrumFrequency(size_t(gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_FrequencyBandMax))));
 
@@ -283,7 +282,7 @@ bool TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRenderer
 				// Adjust feeding depending on theoretical dates
 				if (m_RendererCtx->isTimeLocked() && m_RendererCtx->getSampleDuration())
 				{
-					const auto nTheoreticalSample = size_t(m_Time2 / m_RendererCtx->getSampleDuration());
+					const auto nTheoreticalSample = size_t(m_Time2.time() / m_RendererCtx->getSampleDuration());
 					if (nTheoreticalSample > m_Renderers[j]->getHistoryCount())
 					{
 						m_Renderers[j]->prefeed(nTheoreticalSample - m_Renderers[j]->getHistoryCount());
@@ -303,10 +302,10 @@ bool TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRenderer
 			m_StimDecoder.decode(size_t(i));
 			if (m_StimDecoder.isBufferReceived())
 			{
-				OpenViBE::CStimulationSet& stimulationSet = m_StimDecoder.getOutputStimulationSet();
-				for (j = 0; j < stimulationSet->size(); ++j)
+				CStimulationSet& set = *m_StimDecoder.getOutputStimulationSet();
+				for (j = 0; j < set.size(); ++j)
 				{
-					m_Renderers[0]->feed(stimulationSet[j].m_Date, stimulationSet[j].m_ID);
+					m_Renderers[0]->feed(set[j].m_Date.time(), set[j].m_ID);
 					m_RedrawNeeded = true;
 				}
 			}
@@ -392,4 +391,4 @@ void TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRenderer
 }
 
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE

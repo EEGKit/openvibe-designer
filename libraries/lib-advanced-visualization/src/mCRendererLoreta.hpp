@@ -29,7 +29,7 @@
 #include <map>
 #include <string>
 
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 
 class CRendererLoreta : public IRenderer
@@ -63,6 +63,6 @@ protected:
 };
 
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE
 
 #endif // TARGET_HAS_ThirdPartyOpenGL

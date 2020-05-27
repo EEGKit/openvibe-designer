@@ -116,15 +116,15 @@ bool CTopographicMapDatabase::processValues()
 	//retrieve electrode values
 	//determine what buffer to use from delay
 	size_t bufferIdx           = 0;
-	const uint64_t currentTime = m_ParentPlugin.getPlayerContext().getCurrentTime();
-	const uint64_t displayTime = currentTime - m_delay;
+	const CTime currentTime = m_ParentPlugin.getPlayerContext().getCurrentTime();
+	const CTime displayTime = currentTime - m_delay;
 	getBufferIndexFromTime(displayTime, bufferIdx);
 
 	//determine what sample to use
 	size_t sampleIdx;
 	if (displayTime <= m_StartTime[bufferIdx]) { sampleIdx = 0; }
 	else if (displayTime >= m_EndTime[bufferIdx]) { sampleIdx = m_DimSizes[1] - 1; }
-	else { sampleIdx = size_t(double(displayTime - m_StartTime[bufferIdx]) / double(m_BufferDuration) * m_DimSizes[1]); }
+	else { sampleIdx = size_t(double((displayTime - m_StartTime[bufferIdx]).time()) / double(m_BufferDuration.time()) * m_DimSizes[1]); }
 
 	for (int64_t i = 0; i < m_NElectrodes; ++i) { *(m_electrodePotentials.getBuffer() + i) = m_SampleBuffers[bufferIdx][i * m_DimSizes[1] + sampleIdx]; }
 
@@ -230,7 +230,7 @@ bool CTopographicMapDatabase::interpolateValues()
 	return true;
 }
 
-bool CTopographicMapDatabase::getBufferIndexFromTime(const uint64_t time, size_t& bufferIndex)
+bool CTopographicMapDatabase::getBufferIndexFromTime(const CTime time, size_t& bufferIndex)
 {
 	if (m_SampleBuffers.empty()) { return false; }
 

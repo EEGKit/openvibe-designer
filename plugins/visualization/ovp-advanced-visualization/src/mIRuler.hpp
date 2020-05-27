@@ -37,7 +37,7 @@
 
 #define IRuler_SplitCount 5
 
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 
 class IRuler
@@ -106,4 +106,4 @@ protected:
 };
 
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE

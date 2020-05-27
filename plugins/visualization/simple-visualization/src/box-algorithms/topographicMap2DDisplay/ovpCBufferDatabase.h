@@ -39,9 +39,9 @@ public:
 	std::array<size_t, 2> m_DimSizes;			///< Number of channels and number of samples per buffer
 	std::vector<std::string> m_DimLabels[2];	///< Channel labels, buffer labels
 	bool m_HasFirstBuffer = false;				///< Flag set to true once first buffer is received
-	size_t m_Sampling     = 0;						///< Sampling frequency of the incoming stream
+	size_t m_Sampling     = 0;					///< Sampling frequency of the incoming stream
 	std::deque<double*> m_SampleBuffers;		///< double-linked list of pointers to the samples buffers of the current time window
-	std::deque<std::pair<uint64_t, uint64_t>> m_Stimulations;	///< stimulations to display. pair values are <date, stimcode>
+	std::deque<std::pair<CTime, size_t>> m_Stimulations;	///< stimulations to display. pair values are <date, stimcode>
 
 	bool m_ChannelLookupTableInitialized = false;	///< flag set to true once channel lookup indices are determined
 	std::vector<size_t> m_ChannelLookupIndices;		///< indices of electrodes in channel localisation database
@@ -52,30 +52,30 @@ public:
 	size_t m_NBufferToDisplay = 2;			///< Number of buffer to display at the same time
 	double m_MaxValue         = -DBL_MAX;	///< The global maximum value of the signal (up to now)
 	double m_MinValue         = +DBL_MAX;	///< The global minimum value of the signal (up to now)
-	std::deque<uint64_t> m_StartTime;		///< Double-linked list of the start times of the current buffers
-	std::deque<uint64_t> m_EndTime;			///< Double-linked list of the end times of the current buffers
+	std::deque<CTime> m_StartTime;			///< Double-linked list of the start times of the current buffers
+	std::deque<CTime> m_EndTime;			///< Double-linked list of the end times of the current buffers
 	double m_TotalDuration = 0;				///< Duration to display in seconds
 
 	/*! Duration to display in openvibe time units.
 	Computed once every time the user changes the total duration to display,
 	when the maximum number of buffers to store are received.*/
-	uint64_t m_ovTotalDuration = 0;
+	CTime m_ovTotalDuration = 0;
 
 	/*! Duration of a single buffer.
 	Computed once, but not constant when sampling frequency is not a multiple of buffer size!*/
-	uint64_t m_BufferDuration = 0;
+	CTime m_BufferDuration = 0;
 
 	/*! Time step separating the start times of m_NBufferToDisplay+1 buffers.
 	Recomputed once every time the user changes the total duration to display,
 	but not constant when sampling frequency is not a multiple of buffer size!*/
-	size_t m_TotalStep = 0;
+	CTime m_TotalStep = 0;
 
 	/*! Time step separating the start times of 2 consecutive buffers.
 	Computed once, but not constant when sampling frequency is not a multiple of buffer size!*/
-	size_t m_BufferStep = 0;
+	CTime m_BufferStep = 0;
 
-	uint64_t m_LastBufferEndTime = 0;		///< When did the last inserted buffer end
-	bool m_WarningPrinted        = false;	///< Did we print a warning about noncontinuity?
+	CTime m_LastBufferEndTime = 0;		///< When did the last inserted buffer end
+	bool m_WarningPrinted     = false;	///< Did we print a warning about noncontinuity?
 
 	CSignalDisplayDrawable* m_Drawable = nullptr;///< Pointer to the drawable object to update (if needed)
 
@@ -110,7 +110,7 @@ protected:
 	//pointer to double linked list of spherical coordinates
 	//std::deque< std::pair<CMatrix*, bool> > * m_channelLocalisationSphericalCoords;
 	//! double-linked list of start/end times of channel coordinates
-	std::deque<std::pair<uint64_t, uint64_t>> m_channelLocalisationTimes;
+	std::deque<std::pair<CTime, CTime>> m_channelLocalisationTimes;
 	//@}
 
 	//! Redraw mode (shift or scan)
@@ -173,14 +173,14 @@ public:
 	 * \brief Get time interval covered by data held in this object
 	 * \return Time interval in ms
 	 */
-	virtual double getDisplayedTimeIntervalWidth() const;
+	virtual double getDisplayedTimeIntervalWidth() const { return (m_NBufferToDisplay * ((m_DimSizes[1] * 1000.0) / m_Sampling)); }
 
 	/**
 	 * \brief Determine whether time passed in parameter lies in displayed data interval
 	 * \param time Time to test
 	 * \return True if time lies in displayed time interval, false otherwise
 	 */
-	virtual bool isTimeInDisplayedInterval(const uint64_t& time) const;
+	virtual bool isTimeInDisplayedInterval(const CTime& time) const;
 
 	/**
 	 * \brief Get index of sample buffer which starts at a given time
@@ -188,7 +188,7 @@ public:
 	 * \param index[out] Buffer index
 	 * \return True if buffer index could be determined, false otherwise
 	 */
-	virtual bool getIndexOfBufferStartingAtTime(const uint64_t& time, size_t& index) const;
+	virtual bool getIndexOfBufferStartingAtTime(const CTime& time, size_t& index) const;
 
 	//! Returns the min/max values currently displayed for the given channel
 	virtual void getDisplayedChannelLocalMinMaxValue(const size_t channel, double& min, double& max);
@@ -239,7 +239,7 @@ public:
 	 * \brief Get number of channels
 	 * \return Number of channels
 	 */
-	virtual size_t getChannelCount() const;
+	virtual size_t getChannelCount() const { return m_DimSizes[0]; }
 
 	/**
 	 * \brief Get channel normalized position

@@ -26,7 +26,7 @@
 #	define GL_BGRA 0x80E1
 #endif // GL_BGRA
 
-using namespace Mensia;
+using namespace OpenViBE;
 using namespace AdvancedVisualization;
 
 using namespace OpenViBE;
@@ -189,9 +189,9 @@ bool CBoxAlgorithmViz::initialize()
 	g_signal_connect(::gtk_builder_get_object(m_Builder, "checkbutton_positive"), "toggled", G_CALLBACK(::checkbutton_positive_toggled_callback),
 					 m_RendererCtx);
 	g_signal_connect(::gtk_builder_get_object(m_Builder, "checkbutton_show_scale"), "toggled", G_CALLBACK(::checkbutton_show_scale_toggled_callback),
-					 &Mensia::AdvancedVisualization::getContext());
+					 &OpenViBE::AdvancedVisualization::getContext());
 	g_signal_connect(::gtk_builder_get_object(m_Builder, "button_erp_play_pause"), "pressed", G_CALLBACK(::button_erp_play_pause_pressed_callback),
-					 &Mensia::AdvancedVisualization::getContext());
+					 &OpenViBE::AdvancedVisualization::getContext());
 	g_signal_connect(::gtk_builder_get_object(m_Builder, "button_video_recording"), "pressed", G_CALLBACK(::button_video_recording_pressed_callback), this);
 	g_signal_connect(::gtk_builder_get_object(m_Builder, "range_erp"), "value-changed", G_CALLBACK(::range_erp_value_changed_callback),
 					 ::gtk_builder_get_object(m_Builder, "label_erp_progress"));
@@ -406,7 +406,7 @@ bool CBoxAlgorithmViz::uninitialize()
 
 bool CBoxAlgorithmViz::processClock(CMessage& /*clock*/)
 {
-	const uint64_t currentTime = this->getPlayerContext().getCurrentTime();
+	const CTime currentTime = this->getPlayerContext().getCurrentTime();
 
 	const uint64_t minDeltaTimeHD  = (1LL << 32) / 16;
 	const uint64_t minDeltaTimeLD  = (1LL << 32);

@@ -29,7 +29,7 @@
 #include "mCVertex.hpp"
 #include <map>
 
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 
 class LMAV_API CRendererContext
@@ -178,4 +178,4 @@ protected:
 };
 
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE

@@ -24,7 +24,7 @@
 #include <cmath>
 
 #pragma pack(1)
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 
 class CVertex
@@ -93,5 +93,5 @@ public:
 };
 
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE
 #pragma pack()

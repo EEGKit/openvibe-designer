@@ -12,7 +12,7 @@
 #include <gtk/gtk.h>
 #include <system/ovCDynamicModule.h>
 
-namespace Mensia
+namespace OpenViBE
 {
 	enum class EEngineType { Local, LAN };
 

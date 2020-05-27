@@ -28,7 +28,7 @@
 
 #include <vector>
 
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 
 class CRendererTopo : public IRenderer
@@ -60,4 +60,4 @@ protected:
 };
 
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE

@@ -35,7 +35,7 @@
 #include <map>
 #include <vector>
 
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 
 enum class ERendererType
@@ -118,4 +118,4 @@ protected:
 };
 
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE

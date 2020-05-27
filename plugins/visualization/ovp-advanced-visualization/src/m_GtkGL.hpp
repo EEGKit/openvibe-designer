@@ -22,7 +22,7 @@
 
 #include <gtk/gtk.h>
 
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 namespace GtkGL {
 
@@ -34,4 +34,4 @@ void postRender(GtkWidget* widget);
 
 }  // namespace GtkGL
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE

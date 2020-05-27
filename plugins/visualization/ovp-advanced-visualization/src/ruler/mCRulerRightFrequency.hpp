@@ -22,7 +22,7 @@
 
 #include "../mIRuler.hpp"
 
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 
 class CRulerRightFrequency : public IRuler
@@ -67,4 +67,4 @@ protected:
 };
 
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE

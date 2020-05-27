@@ -21,7 +21,7 @@
 
 #include "mCRendererBars.hpp"
 
-using namespace Mensia;
+using namespace OpenViBE;
 using namespace AdvancedVisualization;
 
 void CRendererBars::rebuild(const CRendererContext& ctx)

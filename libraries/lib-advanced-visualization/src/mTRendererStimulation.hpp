@@ -30,7 +30,7 @@
 #define M_PI 3.1415926535897932384626433832795
 #endif
 
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 
 static const int STIMULATION_INDICATOR_SMOOTHNESS = 10;
@@ -197,4 +197,4 @@ public:
 };
 
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE

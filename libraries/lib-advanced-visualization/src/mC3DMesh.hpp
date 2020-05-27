@@ -31,7 +31,7 @@
 #include "mCVertex.hpp"
 
 
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 
 class C3DMesh final
@@ -55,7 +55,7 @@ public:
 };
 
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE
 
 
 #endif // TARGET_HAS_ThirdPartyOpenGL

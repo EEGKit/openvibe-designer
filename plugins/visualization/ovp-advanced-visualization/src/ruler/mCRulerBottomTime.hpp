@@ -22,7 +22,7 @@
 
 #include "../mIRuler.hpp"
 
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 
 class CRulerBottomTime : public IRuler
@@ -84,4 +84,4 @@ public:
 };
 
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE

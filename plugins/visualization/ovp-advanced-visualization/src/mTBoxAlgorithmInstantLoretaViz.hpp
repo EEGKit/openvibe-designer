@@ -24,7 +24,7 @@
 #include "mTBoxAlgorithmInstantViz.hpp"
 #include <array>
 
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 
 template <class TRendererFactoryClass, class TRulerClass>
@@ -32,7 +32,7 @@ class TBoxAlgorithmInstantLoretaViz final : public TBoxAlgorithmInstantViz<TRend
 {
 public:
 
-	TBoxAlgorithmInstantLoretaViz(const OpenViBE::CIdentifier& classID, const std::vector<int>& parameters)
+	TBoxAlgorithmInstantLoretaViz(const CIdentifier& classID, const std::vector<int>& parameters)
 		: TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>(classID, parameters) { }
 
 	static void callback(GtkTreeSelection* selection, TBoxAlgorithmInstantLoretaViz<TRendererFactoryClass, TRulerClass>* box)
@@ -122,4 +122,4 @@ public:
 };
 
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE

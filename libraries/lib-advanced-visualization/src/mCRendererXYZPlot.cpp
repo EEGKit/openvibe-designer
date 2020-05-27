@@ -21,7 +21,7 @@
 
 #include "mCRendererXYZPlot.hpp"
 
-using namespace Mensia;
+using namespace OpenViBE;
 using namespace AdvancedVisualization;
 
 void CRendererXYZPlot::rebuild(const CRendererContext& ctx)

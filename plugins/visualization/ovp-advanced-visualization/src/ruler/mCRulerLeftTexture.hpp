@@ -22,7 +22,7 @@
 
 #include "mCRulerTexture.hpp"
 
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 
 class CRulerLeftTexture : public CRulerTexture
@@ -59,4 +59,4 @@ public:
 };
 
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE

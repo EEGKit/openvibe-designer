@@ -22,7 +22,7 @@
 
 #include "../mIRuler.hpp"
 
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 
 template <size_t TDim>
@@ -65,4 +65,4 @@ public:
 };
 
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE

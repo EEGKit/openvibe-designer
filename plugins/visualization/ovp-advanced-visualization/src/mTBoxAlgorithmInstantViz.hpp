@@ -23,7 +23,7 @@
 
 #include "mCBoxAlgorithmViz.hpp"
 
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 
 template <class TRendererFactoryClass, class TRulerClass>
@@ -31,7 +31,7 @@ class TBoxAlgorithmInstantViz : public CBoxAlgorithmViz
 {
 public:
 
-	TBoxAlgorithmInstantViz(const OpenViBE::CIdentifier& classID, const std::vector<int>& params);
+	TBoxAlgorithmInstantViz(const CIdentifier& classID, const std::vector<int>& params);
 	bool initialize() override;
 	bool uninitialize() override;
 	bool process() override;
@@ -42,7 +42,7 @@ public:
 
 	size_t m_NInput = 0;
 	std::vector<IRenderer*> m_Renderers;
-	std::vector<OpenViBE::Toolkit::TStreamedMatrixDecoder<TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>>> m_Decoder;
+	std::vector<Toolkit::TStreamedMatrixDecoder<TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>>> m_Decoder;
 
 	double m_LastERPFraction = 0;
 
@@ -57,18 +57,18 @@ public:
 
 	explicit CBoxAlgorithmInstantVizListener(const std::vector<int>& parameters) : CBoxAlgorithmVizListener(parameters) { }
 
-	bool onInputTypeChanged(OpenViBE::Kernel::IBox& box, const size_t index) override
+	bool onInputTypeChanged(Kernel::IBox& box, const size_t index) override
 	{
-		OpenViBE::CIdentifier typeID = OV_UndefinedIdentifier;
+		CIdentifier typeID = OV_UndefinedIdentifier;
 		box.getInputType(index, typeID);
 		if (!this->getTypeManager().isDerivedFromStream(typeID, OV_TypeId_StreamedMatrix)) { box.setInputType(index, OV_TypeId_StreamedMatrix); }
 		else { for (size_t i = 0; i < box.getInputCount(); ++i) { box.setInputType(i, typeID); } }
 		return true;
 	}
 
-	bool onInputAdded(OpenViBE::Kernel::IBox& box, const size_t index) override
+	bool onInputAdded(Kernel::IBox& box, const size_t index) override
 	{
-		OpenViBE::CIdentifier typeID = OV_UndefinedIdentifier;
+		CIdentifier typeID = OV_UndefinedIdentifier;
 		box.getInputType(0, typeID);
 		box.setInputType(index, typeID);
 		box.setInputName(index, "Matrix");
@@ -76,7 +76,7 @@ public:
 		return true;
 	}
 
-	bool onInputRemoved(OpenViBE::Kernel::IBox& box, const size_t index) override
+	bool onInputRemoved(Kernel::IBox& box, const size_t index) override
 	{
 		box.removeSetting(this->getBaseSettingCount() + index - 1);
 		return true;
@@ -88,23 +88,23 @@ class TBoxAlgorithmInstantVizDesc : public CBoxAlgorithmVizDesc
 {
 public:
 
-	TBoxAlgorithmInstantVizDesc(const OpenViBE::CString& name, const OpenViBE::CIdentifier& descClassID, const OpenViBE::CIdentifier& classID,
-								const OpenViBE::CString& addedSoftwareVersion, const OpenViBE::CString& updatedSoftwareVersion,
-								const CParameterSet& parameterSet, const OpenViBE::CString& shortDesc, const OpenViBE::CString& detailedDesc)
+	TBoxAlgorithmInstantVizDesc(const CString& name, const CIdentifier& descClassID, const CIdentifier& classID,
+								const CString& addedSoftwareVersion, const CString& updatedSoftwareVersion,
+								const CParameterSet& parameterSet, const CString& shortDesc, const CString& detailedDesc)
 		: CBoxAlgorithmVizDesc(name, descClassID, classID, addedSoftwareVersion, updatedSoftwareVersion, parameterSet, shortDesc, detailedDesc) { }
 
-	OpenViBE::Plugins::IPluginObject* create() override { return new TBoxAlgorithm<TRendererFactoryClass, TRulerClass>(m_ClassID, m_Parameters); }
+	Plugins::IPluginObject* create() override { return new TBoxAlgorithm<TRendererFactoryClass, TRulerClass>(m_ClassID, m_Parameters); }
 
-	OpenViBE::Plugins::IBoxListener* createBoxListener() const override { return new CBoxAlgorithmInstantVizListener(m_Parameters); }
+	Plugins::IBoxListener* createBoxListener() const override { return new CBoxAlgorithmInstantVizListener(m_Parameters); }
 
-	OpenViBE::CString getCategory() const override { return OpenViBE::CString("Advanced Visualization/") + m_CategoryName; }
+	CString getCategory() const override { return CString("Advanced Visualization/") + m_CategoryName; }
 
 	_IsDerivedFromClass_Final_(OpenViBE::Plugins::IBoxAlgorithmDesc, m_DescClassID)
 };
 
 
 template <class TRendererFactoryClass, class TRulerClass>
-TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::TBoxAlgorithmInstantViz(const OpenViBE::CIdentifier& classID,
+TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::TBoxAlgorithmInstantViz(const CIdentifier& classID,
 																					 const std::vector<int>& params)
 	: CBoxAlgorithmViz(classID, params) { }
 
@@ -124,7 +124,7 @@ bool TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::initialize()
 		m_Decoder[i].initialize(*this, i);
 		if (!m_Renderers[i])
 		{
-			this->getLogManager() << OpenViBE::Kernel::LogLevel_Error << "Could not create renderer, it might have been disabled at compile time\n";
+			this->getLogManager() << Kernel::LogLevel_Error << "Could not create renderer, it might have been disabled at compile time\n";
 			res = false;
 		}
 	}
@@ -157,7 +157,7 @@ template <class TRendererFactoryClass, class TRulerClass>
 bool TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::process()
 
 {
-	OpenViBE::Kernel::IBoxIO& boxContext = this->getDynamicBoxContext();
+	Kernel::IBoxIO& boxContext = this->getDynamicBoxContext();
 	const size_t nInput                  = this->getStaticBoxContext().getInputCount();
 
 	for (size_t i = 0; i < nInput; ++i)
@@ -166,13 +166,13 @@ bool TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::process()
 		{
 			m_Decoder[i].decode(j);
 
-			OpenViBE::IMatrix* matrix = m_Decoder[i].getOutputMatrix();
+			IMatrix* matrix = m_Decoder[i].getOutputMatrix();
 			size_t nChannel           = matrix->getDimensionSize(0);
 			size_t nSample            = matrix->getDimensionSize(1);
 
 			if (nChannel == 0)
 			{
-				this->getLogManager() << OpenViBE::Kernel::LogLevel_Error << "Input stream " << i << " has 0 channels\n";
+				this->getLogManager() << Kernel::LogLevel_Error << "Input stream " << i << " has 0 channels\n";
 				return false;
 			}
 
@@ -237,14 +237,14 @@ bool TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::process()
 			{
 				const CTime chunkDuration = (boxContext.getInputChunkEndTime(i, j) - boxContext.getInputChunkStartTime(i, j));
 
-				m_RendererCtx->setSampleDuration(chunkDuration / nSample);
-				m_RendererCtx->setSpectrumFrequencyRange(size_t((uint64_t(nSample) << 32) / chunkDuration));
+				m_RendererCtx->setSampleDuration(chunkDuration.time() / nSample);
+				m_RendererCtx->setSpectrumFrequencyRange(size_t((uint64_t(nSample) << 32) / chunkDuration.time()));
 				m_RendererCtx->setMinimumSpectrumFrequency(size_t(gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_FrequencyBandMin))));
 				m_RendererCtx->setMaximumSpectrumFrequency(size_t(gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_FrequencyBandMax))));
 
 				// Sets time scale
 				gtk_spin_button_set_value(
-					GTK_SPIN_BUTTON(::gtk_builder_get_object(m_Builder, "spinbutton_time_scale")), (chunkDuration >> 22) / 1024.);
+					GTK_SPIN_BUTTON(::gtk_builder_get_object(m_Builder, "spinbutton_time_scale")), (chunkDuration.time() >> 22) / 1024.);
 
 				m_Renderers[i]->clear(0); // Drop last samples as they will be fed again
 				for (size_t k = 0; k < nSample; ++k)
@@ -306,4 +306,4 @@ void TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::draw()
 }
 
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE

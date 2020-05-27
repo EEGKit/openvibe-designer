@@ -24,7 +24,7 @@
 
 #include <cmath>
 
-using namespace Mensia;
+using namespace OpenViBE;
 using namespace AdvancedVisualization;
 
 void CMouse::mouseButton(CRendererContext& ctx, const int x, const int y, const int button, const int status)
