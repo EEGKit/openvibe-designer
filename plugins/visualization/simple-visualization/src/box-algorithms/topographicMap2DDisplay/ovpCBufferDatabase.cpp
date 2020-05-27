@@ -573,7 +573,7 @@ bool CBufferDatabase::getChannelLabel(const size_t index, CString& label)
 }
 
 
-void CBufferDatabase::setStimulation(const size_t /*index*/, const uint64_t id, const uint64_t date)
+void CBufferDatabase::setStimulation(const size_t /*index*/, const size_t id, const CTime date)
 {
 	m_Stimulations.emplace_back(date, id);
 

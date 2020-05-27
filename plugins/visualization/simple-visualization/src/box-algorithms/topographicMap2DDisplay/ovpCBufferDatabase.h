@@ -279,7 +279,7 @@ public:
 	virtual bool setSampling(const size_t sampling);
 
 	virtual void resize(const size_t /*n*/) { }
-	virtual void setStimulation(const size_t index, const uint64_t id, const uint64_t date);
+	virtual void setStimulation(const size_t index, const size_t id, const CTime date);
 
 	/**
 	 * \brief Set display mode
