@@ -394,7 +394,7 @@ int CBoxConfigurationDialog::getTableIndex(const size_t index)
 	for (auto it = m_settingViews.begin(); it != m_settingViews.end(); ++it, ++tableIdx)
 	{
 		Setting::CAbstractSettingView* view = *it;
-		if (view->getSettingIndex() == index) { return index; }
+		if (view->getSettingIndex() == index) { return int(index); }
 	}
 
 	return -1;
