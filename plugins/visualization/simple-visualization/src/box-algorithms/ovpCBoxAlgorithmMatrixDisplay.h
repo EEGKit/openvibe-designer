@@ -72,22 +72,22 @@ public:
 
 	void release() override { }
 
-	CString getName() const override { return CString("Matrix Display"); }
-	CString getAuthorName() const override { return CString("Laurent Bonnet"); }
-	CString getAuthorCompanyName() const override { return CString("INRIA/IRISA"); }
-	CString getShortDescription() const override { return CString("Display a streamed matrix"); }
+	CString getName() const override { return "Matrix Display"; }
+	CString getAuthorName() const override { return "Laurent Bonnet"; }
+	CString getAuthorCompanyName() const override { return "INRIA/IRISA"; }
+	CString getShortDescription() const override { return "Display a streamed matrix"; }
 
 	CString getDetailedDescription() const override
 	{
-		return CString("The streamed matrix can be visualized using a table of values and/or a color gradient.");
+		return "The streamed matrix can be visualized using a table of values and/or a color gradient.";
 	}
 
-	CString getCategory() const override { return CString("Visualization/Basic"); }
-	CString getVersion() const override { return CString("1.0"); }
-	CString getStockItemName() const override { return CString("gtk-select-color"); }
-	CString getSoftwareComponent() const override { return CString("openvibe-designer"); }
-	CString getAddedSoftwareVersion() const override { return CString("0.0.0"); }
-	CString getUpdatedSoftwareVersion() const override { return CString("0.0.0"); }
+	CString getCategory() const override { return "Visualization/Basic"; }
+	CString getVersion() const override { return "1.0"; }
+	CString getStockItemName() const override { return "gtk-select-color"; }
+	CString getSoftwareComponent() const override { return "openvibe-designer"; }
+	CString getAddedSoftwareVersion() const override { return "0.0.0"; }
+	CString getUpdatedSoftwareVersion() const override { return "0.0.0"; }
 
 	CIdentifier getCreatedClass() const override { return OVP_ClassId_BoxAlgorithm_MatrixDisplay; }
 	IPluginObject* create() override { return new CBoxAlgorithmMatrixDisplay; }

@@ -54,16 +54,16 @@ public:
 
 	void release() override { }
 
-	CString getName() const override { return CString("Spherical spline interpolation"); }
-	CString getAuthorName() const override { return CString("Vincent Delannoy"); }
-	CString getAuthorCompanyName() const override { return CString("INRIA/IRISA"); }
-	CString getShortDescription() const override { return CString("Interpolates potentials/laplacians using a spherical spline"); }
-	CString getDetailedDescription() const override { return CString(""); }
-	CString getCategory() const override { return CString("Algorithm/Signal processing"); }
-	CString getVersion() const override { return CString("1.0"); }
-	CString getSoftwareComponent() const override { return CString("openvibe-designer"); }
-	CString getAddedSoftwareVersion() const override { return CString("0.0.0"); }
-	CString getUpdatedSoftwareVersion() const override { return CString("0.0.0"); }
+	CString getName() const override { return "Spherical spline interpolation"; }
+	CString getAuthorName() const override { return "Vincent Delannoy"; }
+	CString getAuthorCompanyName() const override { return "INRIA/IRISA"; }
+	CString getShortDescription() const override { return "Interpolates potentials/laplacians using a spherical spline"; }
+	CString getDetailedDescription() const override { return ""; }
+	CString getCategory() const override { return "Algorithm/Signal processing"; }
+	CString getVersion() const override { return "1.0"; }
+	CString getSoftwareComponent() const override { return "openvibe-designer"; }
+	CString getAddedSoftwareVersion() const override { return "0.0.0"; }
+	CString getUpdatedSoftwareVersion() const override { return "0.0.0"; }
 
 	CIdentifier getCreatedClass() const override { return OVP_ClassId_Algorithm_SphericalSplineInterpolation; }
 	IPluginObject* create() override { return new CAlgorithmSphericalSplineInterpolation(); }

@@ -50,24 +50,23 @@ public:
 
 	void release() override { }
 
-	CString getName() const override { return CString("Modifiable Settings example"); }
-	CString getAuthorName() const override { return CString("lmahe"); }
-	CString getAuthorCompanyName() const override { return CString("Inria"); }
+	CString getName() const override { return "Modifiable Settings example"; }
+	CString getAuthorName() const override { return "lmahe"; }
+	CString getAuthorCompanyName() const override { return "Inria"; }
 
 	CString getShortDescription() const override
 	{
-		return CString("Settings of this box are modifiable during playback. Values are displayed in log every 5 seconds");
+		return "Settings of this box are modifiable during playback. Values are displayed in log every 5 seconds";
 	}
 
 	CString getDetailedDescription() const override
 	{
-		return CString(
-			"This box purpose is to test and demonstrate the modifiable settings feature.\n It has a setting of each type and all are modifiable during scenario playback.\n");
+		return "This box purpose is to test and demonstrate the modifiable settings feature.\n It has a setting of each type and all are modifiable during scenario playback.\n";
 	}
 
-	CString getCategory() const override { return CString("Examples/Basic"); }
-	CString getVersion() const override { return CString("1.0"); }
-	CString getStockItemName() const override { return CString(""); }
+	CString getCategory() const override { return "Examples/Basic"; }
+	CString getVersion() const override { return "1.0"; }
+	CString getStockItemName() const override { return ""; }
 
 	CIdentifier getCreatedClass() const override { return OVP_ClassId_BoxAlgorithm_ModifiableSettings; }
 	IPluginObject* create() override { return new CBoxAlgorithmModifiableSettings; }

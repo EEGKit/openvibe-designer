@@ -163,8 +163,8 @@ public:
 	std::vector<const Plugins::IPluginObjectDesc*> m_UpdatedBoxes;
 
 #ifdef MENSIA_DISTRIBUTION
-		OpenViBE::CArchwayHandler* m_ArchwayHandler       = nullptr;
-		OpenViBE::CArchwayHandlerGUI* m_ArchwayHandlerGUI = nullptr;
+		CArchwayHandler* m_ArchwayHandler       = nullptr;
+		CArchwayHandlerGUI* m_ArchwayHandlerGUI = nullptr;
 #endif
 
 protected:

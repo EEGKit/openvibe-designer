@@ -130,12 +130,12 @@ bool TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>::process()
 		m_oMatrixDecoder.decode(i);
 
 		IMatrix* matrix = m_oMatrixDecoder.getOutputMatrix();
-		size_t nChannel           = matrix->getDimensionSize(0);
-		size_t nSample            = matrix->getDimensionSize(1);
+		size_t nChannel = matrix->getDimensionSize(0);
+		size_t nSample  = matrix->getDimensionSize(1);
 
 		if (nChannel == 0)
 		{
-			this->getLogManager() << Kernel::LogLevel_Error << "Input stream " << i << " has 0 channels\n";
+			getLogManager() << Kernel::LogLevel_Error << "Input stream " << i << " has 0 channels\n";
 			return false;
 		}
 
@@ -193,28 +193,28 @@ bool TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>::process()
 				if (m_TypeID == OV_TypeId_Spectrum)
 				{
 					//warned = true;
-					this->getLogManager() << Kernel::LogLevel_Warning << "Input matrix has 'spectrum' type\n";
-					this->getLogManager() << Kernel::LogLevel_Warning <<
+					getLogManager() << Kernel::LogLevel_Warning << "Input matrix has 'spectrum' type\n";
+					getLogManager() << Kernel::LogLevel_Warning <<
 							"Such configuration is uncommon for a 'continous' kind of visualization !\n";
-					this->getLogManager() << Kernel::LogLevel_Warning <<
+					getLogManager() << Kernel::LogLevel_Warning <<
 							"You might want to consider the 'stacked' kind of visualization for time/frequency analysis for instance\n";
-					this->getLogManager() << Kernel::LogLevel_Warning << "Please double check your scenario\n";
+					getLogManager() << Kernel::LogLevel_Warning << "Please double check your scenario\n";
 				}
 				else
 				{
 					if (!m_RendererCtx->isTimeLocked())
 					{
 						//warned = true;
-						this->getLogManager() << Kernel::LogLevel_Warning << "Input matrix has " << nSample
+						getLogManager() << Kernel::LogLevel_Warning << "Input matrix has " << nSample
 								<< " elements and the box settings say the elements are independant with " << m_NElement << " elements to render\n";
-						this->getLogManager() << Kernel::LogLevel_Warning <<
+						getLogManager() << Kernel::LogLevel_Warning <<
 								"Such configuration is uncommon for a 'continous' kind of visualization !\n";
-						this->getLogManager() << Kernel::LogLevel_Warning << "You might want either of the following alternative :\n";
-						this->getLogManager() << Kernel::LogLevel_Warning << " - an 'instant' kind of visualization to highlight the " <<
+						getLogManager() << Kernel::LogLevel_Warning << "You might want either of the following alternative :\n";
+						getLogManager() << Kernel::LogLevel_Warning << " - an 'instant' kind of visualization to highlight the " <<
 								m_NElement << " elements of the matrix\n";
-						this->getLogManager() << Kernel::LogLevel_Warning <<
+						getLogManager() << Kernel::LogLevel_Warning <<
 								" - a 'time locked' kind of elements (thus the scenario must refresh the matrix on a regular basis)\n";
-						this->getLogManager() << Kernel::LogLevel_Warning << "Please double check your scenario and box settings\n";
+						getLogManager() << Kernel::LogLevel_Warning << "Please double check your scenario and box settings\n";
 					}
 				}
 			}

@@ -221,7 +221,7 @@ bool CBoxAlgorithmViz::initialize()
 	// Fowards widgets to the OpenViBE viz context
 	if (!this->canCreatePluginObject(OVP_ClassId_Plugin_VisualizationCtx))
 	{
-		this->getLogManager() << LogLevel_Error << "Visualization framework is not loaded" << "\n";
+		getLogManager() << LogLevel_Error << "Visualization framework is not loaded" << "\n";
 		return false;
 	}
 
@@ -346,7 +346,7 @@ bool CBoxAlgorithmViz::initialize()
 
 		if (op_matrix->getDimensionCount() != 2 || op_matrix->getDimensionSize(1) != 3)
 		{
-			this->getLogManager() << LogLevel_Warning << "Invalid channel localisation file " << m_Localisation << "\n";
+			getLogManager() << LogLevel_Warning << "Invalid channel localisation file " << m_Localisation << "\n";
 		}
 		else
 		{
@@ -406,17 +406,17 @@ bool CBoxAlgorithmViz::uninitialize()
 
 bool CBoxAlgorithmViz::processClock(CMessage& /*clock*/)
 {
-	const CTime currentTime = this->getPlayerContext().getCurrentTime();
+	const CTime currentTime = getPlayerContext().getCurrentTime();
 
 	const uint64_t minDeltaTimeHD  = (1LL << 32) / 16;
 	const uint64_t minDeltaTimeLD  = (1LL << 32);
 	const uint64_t minDeltaTimeLD2 = (1LL << 32) * 5;
 
 	uint64_t minDeltaTime;
-	if (this->getPlayerContext().getStatus() == EPlayerStatus::Play) { minDeltaTime = minDeltaTimeHD; }
+	if (getPlayerContext().getStatus() == EPlayerStatus::Play) { minDeltaTime = minDeltaTimeHD; }
 	else
 	{
-		const auto fastForwardMaxFactor = float(this->getPlayerContext().getCurrentFastForwardMaximumFactor());
+		const auto fastForwardMaxFactor = float(getPlayerContext().getCurrentFastForwardMaximumFactor());
 		if (fastForwardMaxFactor <= m_fastForwardMaxFactorHD) { minDeltaTime = minDeltaTimeHD; }
 		else if (fastForwardMaxFactor <= m_fastForwardMaxFactorLD)
 		{
@@ -426,7 +426,7 @@ bool CBoxAlgorithmViz::processClock(CMessage& /*clock*/)
 		else { minDeltaTime = minDeltaTimeLD2; }
 	}
 
-	if (currentTime > m_lastProcessTime + minDeltaTime || this->getPlayerContext().getStatus() == EPlayerStatus::Step || this->getPlayerContext().getStatus() ==
+	if (currentTime > m_lastProcessTime + minDeltaTime || getPlayerContext().getStatus() == EPlayerStatus::Step || getPlayerContext().getStatus() ==
 		EPlayerStatus::Pause)
 	{
 		m_lastProcessTime    = currentTime;

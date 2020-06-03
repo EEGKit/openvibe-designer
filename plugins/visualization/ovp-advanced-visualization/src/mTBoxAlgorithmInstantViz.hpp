@@ -99,7 +99,7 @@ public:
 
 	CString getCategory() const override { return CString("Advanced Visualization/") + m_CategoryName; }
 
-	_IsDerivedFromClass_Final_(OpenViBE::Plugins::IBoxAlgorithmDesc, m_DescClassID)
+	_IsDerivedFromClass_Final_(Plugins::IBoxAlgorithmDesc, m_DescClassID)
 };
 
 
@@ -124,7 +124,7 @@ bool TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::initialize()
 		m_Decoder[i].initialize(*this, i);
 		if (!m_Renderers[i])
 		{
-			this->getLogManager() << Kernel::LogLevel_Error << "Could not create renderer, it might have been disabled at compile time\n";
+			getLogManager() << Kernel::LogLevel_Error << "Could not create renderer, it might have been disabled at compile time\n";
 			res = false;
 		}
 	}
@@ -158,7 +158,7 @@ bool TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::process()
 
 {
 	Kernel::IBoxIO& boxContext = this->getDynamicBoxContext();
-	const size_t nInput                  = this->getStaticBoxContext().getInputCount();
+	const size_t nInput        = this->getStaticBoxContext().getInputCount();
 
 	for (size_t i = 0; i < nInput; ++i)
 	{
@@ -167,12 +167,12 @@ bool TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::process()
 			m_Decoder[i].decode(j);
 
 			IMatrix* matrix = m_Decoder[i].getOutputMatrix();
-			size_t nChannel           = matrix->getDimensionSize(0);
-			size_t nSample            = matrix->getDimensionSize(1);
+			size_t nChannel = matrix->getDimensionSize(0);
+			size_t nSample  = matrix->getDimensionSize(1);
 
 			if (nChannel == 0)
 			{
-				this->getLogManager() << Kernel::LogLevel_Error << "Input stream " << i << " has 0 channels\n";
+				getLogManager() << Kernel::LogLevel_Error << "Input stream " << i << " has 0 channels\n";
 				return false;
 			}
 

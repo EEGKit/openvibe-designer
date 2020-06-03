@@ -15,7 +15,6 @@
 #endif
 
 using namespace OpenViBE;
-using namespace OpenViBE;
 using namespace /*OpenViBE::*/Designer;
 
 namespace

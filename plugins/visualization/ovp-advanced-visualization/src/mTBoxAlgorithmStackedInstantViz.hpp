@@ -167,12 +167,12 @@ bool TBoxAlgorithmStackedInstantViz<TDrawBorders, TRendererFactoryClass, TRulerC
 	{
 		m_MatrixDecoder.decode(chunk);
 
-		IMatrix* inputMatrix = m_MatrixDecoder.getOutputMatrix();
-		const size_t nChannel          = inputMatrix->getDimensionSize(0);
+		IMatrix* inputMatrix  = m_MatrixDecoder.getOutputMatrix();
+		const size_t nChannel = inputMatrix->getDimensionSize(0);
 
 		if (nChannel == 0)
 		{
-			this->getLogManager() << Kernel::LogLevel_Error << "Input stream " << chunk << " has 0 channels\n";
+			getLogManager() << Kernel::LogLevel_Error << "Input stream " << chunk << " has 0 channels\n";
 			return false;
 		}
 
@@ -256,7 +256,7 @@ bool TBoxAlgorithmStackedInstantViz<TDrawBorders, TRendererFactoryClass, TRulerC
 			}
 			else
 			{
-				this->getLogManager() << Kernel::LogLevel_Error << "Input stream type is not supported\n";
+				getLogManager() << Kernel::LogLevel_Error << "Input stream type is not supported\n";
 				return false;
 			}
 

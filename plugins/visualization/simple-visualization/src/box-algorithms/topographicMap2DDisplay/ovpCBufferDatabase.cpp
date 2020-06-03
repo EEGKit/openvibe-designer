@@ -274,9 +274,8 @@ bool CBufferDatabase::setMatrixBuffer(const double* buffer, const CTime startTim
 	{
 		m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << Kernel::LogLevel_Warning
 				<< "Your signal does not appear to be continuous in time. "
-				<< "Previously inserted buffer ended at " << CTime(m_LastBufferEndTime).toSeconds()
-				<< "s, the current starts at " << CTime(startTime).toSeconds()
-				<< "s. The display may be incorrect.\n";
+				<< "Previously inserted buffer ended at " << m_LastBufferEndTime << ", the current starts at " << startTime << ". "
+				<< "The display may be incorrect.\n";
 		m_WarningPrinted = true;
 	}
 	m_LastBufferEndTime = endTime;
@@ -304,8 +303,8 @@ bool CBufferDatabase::setMatrixBuffer(const double* buffer, const CTime startTim
 			// Complain if estimate is bad
 			m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << Kernel::LogLevel_Warning
 					<< "The integer sampling frequency was estimated from the chunk size to be 0"
-					<< " (nSamples " << m_DimSizes[1] << " / bufferLength " << CTime(m_BufferDuration).toSeconds()
-					<< "s = 0). This is not supported. Forcing the rate to 1. This may lead to problems.\n";
+					<< " (nSamples " << m_DimSizes[1] << " / bufferLength " << m_BufferDuration << " = 0). "
+					<< "This is not supported. Forcing the rate to 1. This may lead to problems.\n";
 			sampling = 1;
 		}
 		if (m_Sampling == 0)

@@ -115,7 +115,7 @@ bool CTopographicMapDatabase::processValues()
 
 	//retrieve electrode values
 	//determine what buffer to use from delay
-	size_t bufferIdx           = 0;
+	size_t bufferIdx        = 0;
 	const CTime currentTime = m_ParentPlugin.getPlayerContext().getCurrentTime();
 	const CTime displayTime = currentTime - m_delay;
 	getBufferIndexFromTime(displayTime, bufferIdx);

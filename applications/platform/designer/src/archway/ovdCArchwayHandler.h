@@ -48,7 +48,7 @@ namespace OpenViBE
 	class CArchwayHandler final
 	{
 	public:
-		explicit CArchwayHandler(const OpenViBE::Kernel::IKernelContext& ctx) : m_DeviceURL("simulator://"), m_kernelCtx(ctx) { }
+		explicit CArchwayHandler(const Kernel::IKernelContext& ctx) : m_DeviceURL("simulator://"), m_kernelCtx(ctx) { }
 		~CArchwayHandler();
 
 		EEngineInitialisationStatus initialize();
@@ -130,7 +130,7 @@ namespace OpenViBE
 
 		struct ArchwayAPI* m_archway = nullptr;
 		System::CDynamicModule m_archwayModule;
-		const OpenViBE::Kernel::IKernelContext& m_kernelCtx;
+		const Kernel::IKernelContext& m_kernelCtx;
 
 		// Current Configuration
 		std::map<size_t, std::map<std::string, std::string>> m_pipelineSettings;

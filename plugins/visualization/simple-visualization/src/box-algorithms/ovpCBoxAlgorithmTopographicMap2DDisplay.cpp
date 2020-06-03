@@ -42,7 +42,7 @@ bool CBoxAlgorithmTopographicMap2DDisplay::initialize()
 
 	if (!this->canCreatePluginObject(OVP_ClassId_Plugin_VisualizationCtx))
 	{
-		this->getLogManager() << LogLevel_Error << "Visualization framework is not loaded" << "\n";
+		getLogManager() << LogLevel_Error << "Visualization framework is not loaded" << "\n";
 		return false;
 	}
 

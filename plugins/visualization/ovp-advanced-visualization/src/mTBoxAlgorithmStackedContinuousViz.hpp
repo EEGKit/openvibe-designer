@@ -87,7 +87,7 @@ public:
 
 	CString getCategory() const override { return CString("Advanced Visualization/") + m_CategoryName; }
 
-	_IsDerivedFromClass_Final_(OpenViBE::Plugins::IBoxAlgorithmDesc, m_DescClassID)
+	_IsDerivedFromClass_Final_(Plugins::IBoxAlgorithmDesc, m_DescClassID)
 };
 
 
@@ -160,7 +160,7 @@ bool TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRenderer
 
 		if (nChannel == 0)
 		{
-			this->getLogManager() << Kernel::LogLevel_Error << "Input stream " << i << " has 0 channels\n";
+			getLogManager() << Kernel::LogLevel_Error << "Input stream " << i << " has 0 channels\n";
 			return false;
 		}
 
@@ -257,7 +257,8 @@ bool TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRenderer
 			const CTime sampleDuration     = chunkDuration.time() / m_NElement;
 			if (m_RendererCtx->isTimeLocked())
 			{
-				if ((interChunkDuration.time() & ~0xf) != (m_RendererCtx->getSampleDuration() & ~0xf) && interChunkDuration != 0) // 0xf mask avoids rounding errors
+				if ((interChunkDuration.time() & ~0xf) != (m_RendererCtx->getSampleDuration() & ~0xf) && interChunkDuration != 0
+				) // 0xf mask avoids rounding errors
 				{
 					m_SubRendererCtx->setSampleDuration(interChunkDuration.time());
 					m_RendererCtx->setSampleDuration(interChunkDuration.time());

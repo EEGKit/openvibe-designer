@@ -176,8 +176,8 @@ public:
 	color_t m_Color;
 
 	CIdentifier m_TypeID = OV_UndefinedIdentifier;
-	CTime m_Time1               = 0;
-	CTime m_Time2               = 0;
+	CTime m_Time1        = 0;
+	CTime m_Time2        = 0;
 
 	float m_fastForwardMaxFactorHD = 0.0;
 	float m_fastForwardMaxFactorLD = 0.0;
@@ -269,10 +269,10 @@ public:
 
 	bool onDefaultInitialized(Kernel::IBox& box) override
 	{
-		const bool isSignal          = (std::find(m_Parameters.begin(), m_Parameters.end(), I_Signal) != m_Parameters.end());
-		const bool isSpectrum        = (std::find(m_Parameters.begin(), m_Parameters.end(), I_Spectrum) != m_Parameters.end());
-		const bool isCovariance      = (std::find(m_Parameters.begin(), m_Parameters.end(), I_Covariance) != m_Parameters.end());
-		CIdentifier typeID = OV_UndefinedIdentifier;
+		const bool isSignal     = (std::find(m_Parameters.begin(), m_Parameters.end(), I_Signal) != m_Parameters.end());
+		const bool isSpectrum   = (std::find(m_Parameters.begin(), m_Parameters.end(), I_Spectrum) != m_Parameters.end());
+		const bool isCovariance = (std::find(m_Parameters.begin(), m_Parameters.end(), I_Covariance) != m_Parameters.end());
+		CIdentifier typeID      = OV_UndefinedIdentifier;
 
 		for (size_t i = 0; i < box.getInputCount(); ++i)
 		{
@@ -329,16 +329,16 @@ public:
 	void release() override { }
 
 	CString getName() const override { return m_Name; }
-	CString getAuthorName() const override { return CString("Yann Renard"); }
-	CString getAuthorCompanyName() const override { return CString("Mensia Technologies SA"); }
+	CString getAuthorName() const override { return "Yann Renard"; }
+	CString getAuthorCompanyName() const override { return "Mensia Technologies SA"; }
 	CString getShortDescription() const override { return m_ShortDesc; }
 	CString getDetailedDescription() const override { return m_DetailedDesc; }
-	// virtual CString getCategory() const            { return CString(""); }
-	CString getVersion() const override { return CString("1.0"); }
+	// virtual CString getCategory() const            { return ""; }
+	CString getVersion() const override { return "1.0"; }
 	CString getSoftwareComponent() const override { return "openvibe-designer"; }
 	CString getAddedSoftwareVersion() const override { return m_AddedSoftwareVersion; }
 	CString getUpdatedSoftwareVersion() const override { return m_UpdatedSoftwareVersion; }
-	CString getStockItemName() const override { return CString("gtk-find"); }
+	CString getStockItemName() const override { return "gtk-find"; }
 	CIdentifier getCreatedClass() const override { return m_ClassID; }
 
 	void releaseBoxListener(Plugins::IBoxListener* listener) const override { delete listener; }
