@@ -1,6 +1,6 @@
 #ifdef MENSIA_DISTRIBUTION
 #include "ovdCArchwayHandlerGUI.h"
-#include <openvibe/ov_directories.h>
+#include <openvibe/directories.hpp>
 #include <fs/Files.h>
 #include <sstream>
 #include <cassert>

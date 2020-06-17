@@ -101,7 +101,7 @@ if(NOT CMAKE_BUILD_TYPE AND CMAKE_GENERATOR MATCHES "Visual Studio*")
 	install(FILES ${CMAKE_BINARY_DIR}/.install DESTINATION ${DIST_ROOT})
 elseif(CMAKE_BUILD_TYPE AND OV_PACKAGE)
 	# Add directories that OpenViBE will use to look for its components runtime, unless overridden by environment variables in the launch scripts.
-	# These defines should only be used in "openvibe/ov_directories.h".
+	# These defines should only be used in "openvibe/directories.hpp".
 
 	add_definitions(-DOV_CMAKE_PATH_ROOT="${CMAKE_INSTALL_PREFIX}")
 	add_definitions(-DOV_CMAKE_PATH_BIN="${CMAKE_INSTALL_FULL_BINDIR}")
@@ -143,7 +143,7 @@ elseif(CMAKE_BUILD_TYPE AND OV_PACKAGE)
 	include(CPack)
 elseif(CMAKE_BUILD_TYPE)
 	# Add directories that OpenViBE will use to look for its components runtime, unless overridden by environment variables in the launch scripts.
-	# These defines should only be used in "openvibe/ov_directories.h".
+	# These defines should only be used in "openvibe/directories.hpp".
 	add_definitions(-DOV_CMAKE_PATH_ROOT="${CMAKE_INSTALL_PREFIX}")
 	add_definitions(-DOV_CMAKE_PATH_BIN="${CMAKE_INSTALL_FULL_BINDIR}")
 	add_definitions(-DOV_CMAKE_PATH_LIB="${CMAKE_INSTALL_FULL_LIBDIR}")

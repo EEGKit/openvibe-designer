@@ -2,7 +2,7 @@
 
 #include "ovdCArchwayHandler.h"
 
-#include <openvibe/ov_directories.h>
+#include <openvibe/directories.hpp>
 #include <openvibe/kernel/log/ovILogManager.h>
 #include <openvibe/kernel/configuration/ovIConfigurationManager.h>
 #include <fs/Files.h>

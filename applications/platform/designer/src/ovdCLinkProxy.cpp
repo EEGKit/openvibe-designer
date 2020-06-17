@@ -1,6 +1,6 @@
 #include "ovdCLinkProxy.h"
 #include "ovdTAttributeHandler.h"
-#include "../../../../../sdk/openvibe/include/openvibe/ov_defines.h"
+#include "../../../../../sdk/openvibe/include/openvibe/defines.hpp"
 
 using namespace OpenViBE;
 using namespace /*OpenViBE::*/Kernel;
