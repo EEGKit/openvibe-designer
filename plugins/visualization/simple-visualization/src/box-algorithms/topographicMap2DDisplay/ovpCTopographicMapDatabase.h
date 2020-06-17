@@ -4,7 +4,7 @@
 
 #include "ovpCBufferDatabase.h"
 
-#include <openvibe/ov_all.h>
+#include <openvibe/ov_all.hpp>
 #include <toolkit/ovtk_all.h>
 
 namespace OpenViBE {

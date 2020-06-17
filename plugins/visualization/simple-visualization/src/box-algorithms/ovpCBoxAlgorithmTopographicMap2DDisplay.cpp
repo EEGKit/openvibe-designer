@@ -84,7 +84,7 @@ bool CBoxAlgorithmTopographicMap2DDisplay::processClock(CMessage& /*msg*/)
 bool CBoxAlgorithmTopographicMap2DDisplay::process()
 
 {
-	IDynamicBoxContext* context = getBoxAlgorithmContext()->getDynamicBoxContext();
+	Kernel::IBoxIO* context = getBoxAlgorithmContext()->getDynamicBoxContext();
 
 	//decode signal data
 	for (size_t i = 0; i < context->getInputChunkCount(0); ++i)

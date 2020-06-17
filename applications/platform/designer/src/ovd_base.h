@@ -1,6 +1,6 @@
 #pragma once
 
-#include <openvibe/ov_all.h>
+#include <openvibe/ov_all.hpp>
 #include <toolkit/ovtk_all.h>
 #include <visualization-toolkit/ovviz_all.h>
 

@@ -24,7 +24,7 @@
 #include "m_VisualizationTools.hpp"
 #include "m_GtkGL.hpp"
 
-#include <openvibe/ov_all.h>
+#include <openvibe/ov_all.hpp>
 #include <visualization-toolkit/ovviz_all.h>
 
 #if defined TARGET_OS_Windows

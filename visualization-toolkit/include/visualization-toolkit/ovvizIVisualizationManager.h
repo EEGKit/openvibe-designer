@@ -2,7 +2,7 @@
 
 #include "ovvizIVisualizationTree.h"
 
-#include <openvibe/ov_all.h>
+#include <openvibe/ov_all.hpp>
 
 typedef struct _GtkWidget GtkWidget;
 
