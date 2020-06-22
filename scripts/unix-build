@@ -147,7 +147,6 @@ cmake ${ov_script_dir}/.. \
 		-DCMAKE_BUILD_TYPE=${ov_build_type} \
 		-DCMAKE_INSTALL_PREFIX=${ov_install_dir} \
 		-DOV_PACKAGE=${package_option} \
-		-DOV_DISPLAY_ERROR_LOCATION=${display_error_location} \
 		-DOVT_TEST_DATA_DIR=${ov_test_data_dir} \
 		-DFlag_VerboseOutput=${verbose} \
 		-DOPENVIBE_SDK_PATH=${ov_sdk_dir} \

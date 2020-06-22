@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <fs/Files.h>
 
-#include <openvibe/ovAssert.h>
+#include <openvibe/assert.hpp>
 #include <openvibe/kernel/error/ovIErrorManager.h>
 #include <openvibe/kernel/error/ovIError.h>
 
@@ -61,7 +61,7 @@ public:
 
 #define OV_EXCEPTION_D(description, type) \
 do { \
-	m_kernelCtx.getErrorManager().pushErrorAtLocation(type, static_cast<const OpenViBE::ErrorStream&>(OpenViBE::ErrorStream() << description).str().c_str(), __FILE__, __LINE__ ); \
+	m_kernelCtx.getErrorManager().pushErrorAtLocation(type, static_cast<const std::ostringstream&>(std::ostringstream() << description).str().c_str(), __FILE__, __LINE__ ); \
 	m_kernelCtx.getLogManager() << OpenViBE::Kernel::LogLevel_Fatal << "[Error description] = " << description << "; [Error code] = " << size_t((type)) << "\n"; \
 	throw DesignerException(m_kernelCtx.getErrorManager()); \
 } while(0)

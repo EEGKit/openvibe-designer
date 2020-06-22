@@ -195,7 +195,6 @@ if %CallCmake%=="true" (
 		%build_type% ^
 		-DCMAKE_INSTALL_PREFIX=%install_dir% ^
 		!sdk_dir! ^
-		-DOV_DISPLAY_ERROR_LOCATION=%DisplayErrorLocation% ^
 		-DOEM_DISTRIBUTION=%OEMDistribution% ^
 		%UserDataSubdir% ^
 		-DOV_PACKAGE=%PackageOption% ^

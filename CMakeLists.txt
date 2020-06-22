@@ -24,7 +24,6 @@ INCLUDE("Utilities") # Include functions debug_message, SET_BUILD_PLATFORM
 # ----------------------
 OPTION(Flag_VerboseOutput "Verbose CMake output" OFF)
 SET(OEM_DISTRIBUTION "openvibe" CACHE STRING "The OEM distribution for this build, can be openvibe or mensia")
-OPTION(OV_DISPLAY_ERROR_LOCATION ON)
 
 SET(OV_SOURCE_DEPENDENCIES_PATH "${CMAKE_SOURCE_DIR}/dependencies-source")
 SET(OV_ICON_PATH "${CMAKE_SOURCE_DIR}/scripts/icons")
@@ -209,9 +208,6 @@ ELSE()
 	MESSAGE(FATAL_ERROR "OEM_DISTRIBUTION unrecognized (${OEM_DISTRIBUTION}) ! CMake cannot deduce the brand and product names. ")
 ENDIF()
 
-IF(OV_DISPLAY_ERROR_LOCATION)
-	ADD_DEFINITIONS(-DOV_DISPLAY_ERROR_LOCATION)
-ENDIF()
 
 # The user files will be stored in .../OV_CONFIG_SUBDIR folder
 ADD_DEFINITIONS("-DOV_PROJECT_NAME=\"openvibe\"")
