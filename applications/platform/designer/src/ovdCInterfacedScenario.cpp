@@ -49,7 +49,7 @@ static GdkColor colorFromIdentifier(const CIdentifier& id, const bool isDeprecat
 	uint32_t value2 = 0;
 	uint64_t res    = 0;
 
-	sscanf(id.toString(), "(0x%08X, 0x%08X)", &value1, &value2);
+	sscanf(id.str().c_str(), "(0x%08X, 0x%08X)", &value1, &value2);
 	res += value1;
 	res <<= 32;
 	res += value2;
@@ -1108,8 +1108,7 @@ void CInterfacedScenario::redraw(IBox& box)
 
 	if (box.getAlgorithmClassIdentifier() == OVP_ClassId_BoxAlgorithm_Metabox)
 	{
-		CIdentifier metaboxId;
-		metaboxId.fromString(box.getAttributeValue(OVP_AttributeId_Metabox_ID));
+		CIdentifier metaboxId(box.getAttributeValue(OVP_AttributeId_Metabox_ID).toASCIIString());
 		proxy.setBoxAlgorithmDescriptorOverride(static_cast<const IBoxAlgorithmDesc*>(m_kernelCtx.getMetaboxManager().getMetaboxObjectDesc(metaboxId)));
 	}
 
@@ -1164,9 +1163,8 @@ void CInterfacedScenario::redraw(IBox& box)
 	}
 	else
 	{
-		CIdentifier timeID;
-		timeID.fromString(box.getAttributeValue(OV_AttributeId_Box_ComputationTimeLastSecond));
-		uint64_t time      = (timeID == OV_UndefinedIdentifier ? 0 : timeID.toUInteger());
+		CIdentifier timeID(box.getAttributeValue(OV_AttributeId_Box_ComputationTimeLastSecond).toASCIIString());
+		uint64_t time      = (timeID == OV_UndefinedIdentifier ? 0 : timeID.id());
 		uint64_t reference = (1LL << 32) / (m_nBox == 0 ? 1 : m_nBox);
 
 		GdkColor color;
@@ -1983,7 +1981,7 @@ void CInterfacedScenario::scenarioDrawingAreaDragDataReceivedCB(GdkDragContext* 
 		std::string str(reinterpret_cast<const char*>(gtk_selection_data_get_text(selectionData)));
 
 		// check that there is an identifier inside the string, its form is (0xXXXXXXXX, 0xXXXXXXXX)
-		if (str.find(')') != string::npos) { boxAlgorithmClassID.fromString(str.substr(0, str.find(')')).c_str()); }
+		if (str.find(')') != string::npos) { boxAlgorithmClassID.fromString(str.substr(0, str.find(')'))); }
 
 		IBox* box                    = nullptr;
 		const IPluginObjectDesc* pod = nullptr;
@@ -1997,8 +1995,7 @@ void CInterfacedScenario::scenarioDrawingAreaDragDataReceivedCB(GdkDragContext* 
 		if (boxAlgorithmClassID == OVP_ClassId_BoxAlgorithm_Metabox)
 		{
 			// extract the name of the metabox from the drag data string
-			CIdentifier id;
-			id.fromString(CString(str.substr(str.find(')') + 1).c_str()));
+			CIdentifier id(str.substr(str.find(')') + 1));
 
 			//m_kernelCtx.getLogManager() << LogLevel_Info << "This is a metabox with ID " << metaboxID << "\n";
 			pod = m_kernelCtx.getMetaboxManager().getMetaboxObjectDesc(id);
@@ -2007,7 +2004,7 @@ void CInterfacedScenario::scenarioDrawingAreaDragDataReceivedCB(GdkDragContext* 
 			m_Scenario.addBox(boxID, *static_cast<const IBoxAlgorithmDesc*>(pod), OV_UndefinedIdentifier);
 
 			box = m_Scenario.getBoxDetails(boxID);
-			box->addAttribute(OVP_AttributeId_Metabox_ID, id.toString());
+			box->addAttribute(OVP_AttributeId_Metabox_ID, id.str().c_str());
 		}
 		else
 		{
@@ -2586,8 +2583,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(GtkWidget* widget, 
 					// Add this option only if the user has the authorization to open a metabox
 					if (box->getAlgorithmClassIdentifier() == OVP_ClassId_BoxAlgorithm_Metabox)
 					{
-						CIdentifier id;
-						id.fromString(box->getAttributeValue(OVP_AttributeId_Metabox_ID));
+						CIdentifier id(box->getAttributeValue(OVP_AttributeId_Metabox_ID).toASCIIString());
 
 						std::string path(m_kernelCtx.getMetaboxManager().getMetaboxFilePath(id).toASCIIString());
 						std::string ext    = boost::filesystem::extension(path);
@@ -2796,9 +2792,9 @@ void CInterfacedScenario::scenarioDrawingAreaKeyPressEventCB(GtkWidget* /*widget
 			CIdentifier hashValue   = m_kernelCtx.getPluginManager().getPluginObjectHashValue(algorithmID);
 			if (box->hasAttribute(OV_AttributeId_Box_InitialPrototypeHashValue))
 			{
-				box->setAttributeValue(OV_AttributeId_Box_InitialPrototypeHashValue, hashValue.toString());
+				box->setAttributeValue(OV_AttributeId_Box_InitialPrototypeHashValue, hashValue.str().c_str());
 			}
-			else { box->addAttribute(OV_AttributeId_Box_InitialPrototypeHashValue, hashValue.toString()); }
+			else { box->addAttribute(OV_AttributeId_Box_InitialPrototypeHashValue, hashValue.str().c_str()); }
 		}
 
 		this->redraw();
@@ -3114,8 +3110,7 @@ void CInterfacedScenario::contextMenuBoxRenameCB(IBox& box)
 
 	if (box.getAlgorithmClassIdentifier() == OVP_ClassId_BoxAlgorithm_Metabox)
 	{
-		CIdentifier id;
-		id.fromString(box.getAttributeValue(OVP_AttributeId_Metabox_ID));
+		CIdentifier id(box.getAttributeValue(OVP_AttributeId_Metabox_ID).toASCIIString());
 		pod = m_kernelCtx.getMetaboxManager().getMetaboxObjectDesc(id);
 	}
 
@@ -3162,9 +3157,8 @@ void CInterfacedScenario::contextMenuBoxRenameAllCB()
 							box->getAlgorithmClassIdentifier());
 						if (box->getAlgorithmClassIdentifier() == OVP_ClassId_BoxAlgorithm_Metabox)
 						{
-							CIdentifier metaboxId;
-							metaboxId.fromString(box->getAttributeValue(OVP_AttributeId_Metabox_ID));
-							pod = m_kernelCtx.getMetaboxManager().getMetaboxObjectDesc(metaboxId);
+							CIdentifier tmp(box->getAttributeValue(OVP_AttributeId_Metabox_ID).toASCIIString());
+							pod = m_kernelCtx.getMetaboxManager().getMetaboxObjectDesc(tmp);
 						}
 
 						CRenameDialog rename(m_kernelCtx, box->getName(),
@@ -3413,8 +3407,7 @@ void CInterfacedScenario::contextMenuBoxAboutCB(IBox& box) const
 	}
 	else
 	{
-		CIdentifier id;
-		id.fromString(box.getAttributeValue(OVP_AttributeId_Metabox_ID));
+		CIdentifier id(box.getAttributeValue(OVP_AttributeId_Metabox_ID).toASCIIString());
 		CAboutPluginDialog dialog(m_kernelCtx, m_kernelCtx.getMetaboxManager().getMetaboxObjectDesc(id), m_guiFilename.c_str());
 		dialog.run();
 	}
@@ -3424,8 +3417,7 @@ void CInterfacedScenario::contextMenuBoxEditMetaboxCB(IBox& box) const
 {
 	m_kernelCtx.getLogManager() << LogLevel_Debug << "contextMenuBoxEditMetaboxCB\n";
 
-	CIdentifier id;
-	id.fromString(box.getAttributeValue(OVP_AttributeId_Metabox_ID));
+	CIdentifier id(box.getAttributeValue(OVP_AttributeId_Metabox_ID).toASCIIString());
 	const CString path(m_kernelCtx.getMetaboxManager().getMetaboxFilePath(id));
 
 	m_Application.openScenario(path.toASCIIString());
@@ -3467,8 +3459,7 @@ bool CInterfacedScenario::browseBoxDocumentation(const CIdentifier& boxID) const
 	CString html = "Doc_BoxAlgorithm_";
 	if (m_Scenario.getBoxDetails(boxID)->getAlgorithmClassIdentifier() == OVP_ClassId_BoxAlgorithm_Metabox)
 	{
-		CIdentifier id;
-		id.fromString(m_Scenario.getBoxDetails(boxID)->getAttributeValue(OVP_AttributeId_Metabox_ID));
+		CIdentifier id(m_Scenario.getBoxDetails(boxID)->getAttributeValue(OVP_AttributeId_Metabox_ID).toASCIIString());
 		boxName = m_kernelCtx.getMetaboxManager().getMetaboxObjectDesc(id)->getName();
 	}
 	else

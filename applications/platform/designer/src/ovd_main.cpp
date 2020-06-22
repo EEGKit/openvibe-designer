@@ -816,7 +816,7 @@ int go(int argc, char** argv)
 							std::map<std::string, const IPluginObjectDesc*> metaboxDescMap;
 							CIdentifier identifier;
 							while ((identifier = context->getMetaboxManager().getNextMetaboxObjectDescIdentifier(identifier)) != OV_UndefinedIdentifier
-							) { metaboxDescMap[std::string(identifier.toString())] = context->getMetaboxManager().getMetaboxObjectDesc(identifier); }
+							) { metaboxDescMap[identifier.str()] = context->getMetaboxManager().getMetaboxObjectDesc(identifier); }
 							InsertPluginObjectDescToGtkTreeStore(*context, metaboxDescMap, app.m_BoxAlgorithmTreeModel, app.m_NewBoxes, app.m_UpdatedBoxes,
 																 app.m_IsNewVersion);
 

@@ -298,7 +298,7 @@ bool CVisualizationTree::parentVisualizationWidget(const CIdentifier& id, const 
 CIdentifier CVisualizationTree::getUnusedIdentifier(const CIdentifier& suggestedID) const
 {
 	uint64_t id = (uint64_t(rand()) << 32) + uint64_t(rand());
-	if (suggestedID != OV_UndefinedIdentifier) { id = suggestedID.toUInteger() - 1; }
+	if (suggestedID != OV_UndefinedIdentifier) { id = suggestedID.id() - 1; }
 
 	CIdentifier result;
 	map<CIdentifier, IVisualizationWidget*>::const_iterator i;
@@ -388,7 +388,7 @@ bool CVisualizationTree::getIdentifierFromTreeIter(GtkTreeIter* iter, CIdentifie
 {
 	char* str = nullptr;
 	getStringValueFromTreeIter(iter, str, colType);
-	id.fromString(CString(str));
+	id.fromString(str);
 	return true;
 }
 
@@ -547,7 +547,7 @@ bool CVisualizationTree::findChildNodeFromParentR(GtkTreeIter* iter, const CIden
 
 	//is current node the one looked for?
 	gtk_tree_model_get(GTK_TREE_MODEL(m_treeStore), iter, EVisualizationTreeColumn::StringIdentifier, &str, -1);
-	currentID.fromString(CString(str));
+	currentID.fromString(std::string(str));
 	if (id == currentID)
 	{
 		m_internalTreeNode = *iter;
@@ -747,7 +747,7 @@ bool CVisualizationTree::loadVisualizationWidget(IVisualizationWidget* widget, G
 					   EVisualizationTreeColumn::StringName, widget->getName().toASCIIString(),
 					   EVisualizationTreeColumn::StringStockIcon, stockIconString.toASCIIString(),
 					   EVisualizationTreeColumn::ULongNodeType, static_cast<unsigned long>(childType),
-					   EVisualizationTreeColumn::StringIdentifier, widget->getIdentifier().toString().toASCIIString(),
+					   EVisualizationTreeColumn::StringIdentifier, widget->getIdentifier().str().c_str(),
 					   EVisualizationTreeColumn::PointerWidget, tmp, -1);
 
 	//load visualization widget hierarchy
@@ -873,10 +873,9 @@ bool CVisualizationTree::deserialize(const CString& tree)
 	{
 		json::Value& jsonWidget = *it;
 
-		widgetID.fromString(jsonWidget["identifier"].ToString().c_str());
+		widgetID.fromString(jsonWidget["identifier"].ToString());
 
-		CIdentifier boxID;
-		boxID.fromString(jsonWidget["boxIdentifier"].ToString().c_str());
+		CIdentifier boxID(jsonWidget["boxIdentifier"].ToString());
 
 		const EVisualizationWidget widgetType = EVisualizationWidget(jsonWidget["type"].ToInt());
 
@@ -893,8 +892,7 @@ bool CVisualizationTree::deserialize(const CString& tree)
 		}
 		else { name = jsonWidget["name"].ToString().c_str(); }
 
-		CIdentifier id, parentID;
-		parentID.fromString(jsonWidget["parentIdentifier"].ToString().c_str());
+		CIdentifier id, parentID(jsonWidget["parentIdentifier"].ToString());
 
 		size_t index = 0;
 		if (this->getVisualizationWidget(parentID)) { index = size_t(jsonWidget["index"].ToInt()); }

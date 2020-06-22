@@ -72,30 +72,30 @@ struct SBoxProto final : Kernel::IBoxProto
 
 	bool addInput(const CString& /*name*/, const CIdentifier& typeID, const CIdentifier& id, const bool /*notify*/) override
 	{
-		uint64_t v = typeID.toUInteger();
+		uint64_t v = typeID.id();
 		swap_byte(v, nInputHash);
 		swap_byte(nInputHash, 0x7936A0F3BD12D936LL);
-		hash = hash.toUInteger() ^ v;
+		hash = hash.id() ^ v;
 		if (id != OV_UndefinedIdentifier)
 		{
-			v = id.toUInteger();
+			v = id.id();
 			swap_byte(v, 0x2BD1D158F340014D);
-			hash = hash.toUInteger() ^ v;
+			hash = hash.id() ^ v;
 		}
 		return true;
 	}
 	//
 	bool addOutput(const CString& /*name*/, const CIdentifier& typeID, const CIdentifier& id, const bool /*notify*/) override
 	{
-		uint64_t v = typeID.toUInteger();
+		uint64_t v = typeID.id();
 		swap_byte(v, nOutputHash);
 		swap_byte(nOutputHash, 0xCBB66A5B893AA4E9LL);
-		hash = hash.toUInteger() ^ v;
+		hash = hash.id() ^ v;
 		if (id != OV_UndefinedIdentifier)
 		{
-			v = id.toUInteger();
+			v = id.id();
 			swap_byte(v, 0x87CA0F5EFC4FAC68);
-			hash = hash.toUInteger() ^ v;
+			hash = hash.id() ^ v;
 		}
 		return true;
 	}
@@ -103,15 +103,15 @@ struct SBoxProto final : Kernel::IBoxProto
 	bool addSetting(const CString& /*name*/, const CIdentifier& typeID, const CString& /*defaultValue*/, const bool /*modifiable*/, const CIdentifier& id,
 					const bool /*notify*/) override
 	{
-		uint64_t v = typeID.toUInteger();
+		uint64_t v = typeID.id();
 		swap_byte(v, nSettingHash);
 		swap_byte(nSettingHash, 0x3C87F3AAE9F8303BLL);
-		hash = hash.toUInteger() ^ v;
+		hash = hash.id() ^ v;
 		if (id != OV_UndefinedIdentifier)
 		{
-			v = id.toUInteger();
+			v = id.id();
 			swap_byte(v, 0x17185F7CDA63A9FA);
-			hash = hash.toUInteger() ^ v;
+			hash = hash.id() ^ v;
 		}
 		return true;
 	}
@@ -124,17 +124,17 @@ struct SBoxProto final : Kernel::IBoxProto
 	{
 		switch (flag)
 		{
-			case Kernel::BoxFlag_CanAddInput: hash = hash.toUInteger() ^ CIdentifier(0x07507AC8, 0xEB643ACE).toUInteger();
+			case Kernel::BoxFlag_CanAddInput: hash = hash.id() ^ CIdentifier(0x07507AC8, 0xEB643ACE).id();
 				break;
-			case Kernel::BoxFlag_CanModifyInput: hash = hash.toUInteger() ^ CIdentifier(0x5C985376, 0x8D74CDB8).toUInteger();
+			case Kernel::BoxFlag_CanModifyInput: hash = hash.id() ^ CIdentifier(0x5C985376, 0x8D74CDB8).id();
 				break;
-			case Kernel::BoxFlag_CanAddOutput: hash = hash.toUInteger() ^ CIdentifier(0x58DEA69B, 0x12411365).toUInteger();
+			case Kernel::BoxFlag_CanAddOutput: hash = hash.id() ^ CIdentifier(0x58DEA69B, 0x12411365).id();
 				break;
-			case Kernel::BoxFlag_CanModifyOutput: hash = hash.toUInteger() ^ CIdentifier(0x6E162C01, 0xAC979F22).toUInteger();
+			case Kernel::BoxFlag_CanModifyOutput: hash = hash.id() ^ CIdentifier(0x6E162C01, 0xAC979F22).id();
 				break;
-			case Kernel::BoxFlag_CanAddSetting: hash = hash.toUInteger() ^ CIdentifier(0xFA7A50DC, 0x2140C013).toUInteger();
+			case Kernel::BoxFlag_CanAddSetting: hash = hash.id() ^ CIdentifier(0xFA7A50DC, 0x2140C013).id();
 				break;
-			case Kernel::BoxFlag_CanModifySetting: hash = hash.toUInteger() ^ CIdentifier(0x624D7661, 0xD8DDEA0A).toUInteger();
+			case Kernel::BoxFlag_CanModifySetting: hash = hash.id() ^ CIdentifier(0x624D7661, 0xD8DDEA0A).id();
 				break;
 			case Kernel::BoxFlag_IsDeprecated: isDeprecated = true;
 				break;
@@ -145,7 +145,7 @@ struct SBoxProto final : Kernel::IBoxProto
 
 	bool addFlag(const CIdentifier& flag) override
 	{
-		const uint64_t value = typeManager.getEnumerationEntryValueFromName(OV_TypeId_BoxAlgorithmFlag, flag.toString());
+		const uint64_t value = typeManager.getEnumerationEntryValueFromName(OV_TypeId_BoxAlgorithmFlag, flag.str().c_str());
 		return value != OV_UndefinedIdentifier;
 	}
 
@@ -1770,9 +1770,9 @@ void CApplication::saveScenarioCB(CInterfacedScenario* scenario)
 
 			if (tmp.hasAttribute(OV_AttributeId_Scenario_MetaboxHash))
 			{
-				tmp.setAttributeValue(OV_AttributeId_Scenario_MetaboxHash, metaboxProto.hash.toString());
+				tmp.setAttributeValue(OV_AttributeId_Scenario_MetaboxHash, metaboxProto.hash.str().c_str());
 			}
-			else { tmp.addAttribute(OV_AttributeId_Scenario_MetaboxHash, metaboxProto.hash.toString()); }
+			else { tmp.addAttribute(OV_AttributeId_Scenario_MetaboxHash, metaboxProto.hash.str().c_str()); }
 
 			if (!tmp.hasAttribute(OVP_AttributeId_Metabox_ID)) { tmp.setAttributeValue(OVP_AttributeId_Metabox_ID, CIdentifier::random().str().c_str()); }
 
@@ -2348,7 +2348,7 @@ bool CApplication::createPlayer()
 
 		// The visualization manager needs to know the visualization tree in which the widgets should be inserted
 		scenario->m_Player->getRuntimeConfigurationManager().
-				  createConfigurationToken("VisualizationContext_VisualizationTreeId", scenario->m_TreeID.toString());
+				  createConfigurationToken("VisualizationContext_VisualizationTreeId", scenario->m_TreeID.str().c_str());
 
 		// TODO_JL: This should be a copy of the tree containing visualizations from the metaboxes
 		scenario->createPlayerVisualization(scenario->m_Tree);

@@ -6,8 +6,7 @@ using namespace OpenViBE;
 using namespace /*OpenViBE::*/Plugins;
 
 OVP_Declare_Begin()
-	context.getTypeManager().registerEnumerationEntry(OV_TypeId_BoxAlgorithmFlag, OV_AttributeId_Box_FlagIsUnstable.toString(),
-													  OV_AttributeId_Box_FlagIsUnstable.toUInteger());
+	context.getTypeManager().registerEnumerationEntry(OV_TypeId_BoxAlgorithmFlag, OV_AttributeId_Box_FlagIsUnstable.str().c_str(), OV_AttributeId_Box_FlagIsUnstable.id());
 
 	OVP_Declare_New(Examples::CBoxAlgorithmModifiableSettingsDesc);
 OVP_Declare_End()

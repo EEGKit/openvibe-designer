@@ -51,7 +51,7 @@ void focus_on_box_cidentifier_clicked(GtkWidget* widget, GdkEventButton* event, 
 		gchar* link = gtk_text_iter_get_text(&start, &end);
 		//cout << "cid is |" << link << "|" << endl;
 		OpenViBE::CIdentifier id;
-		id.fromString(OpenViBE::CString(link));
+		id.fromString(std::string(link));
 		ptr->m_CenterOnBoxFun(id);
 	}
 }

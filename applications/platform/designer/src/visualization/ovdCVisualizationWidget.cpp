@@ -4,14 +4,6 @@
 
 #include "ovdCVisualizationWidget.h"
 
-// TODO: Remove this when SDK dependency is updated
-#ifndef HAS_IMBUED_OSTREAM_WITH_C_IDENTIFIER
-namespace OpenViBE
-{
-	std::ostream& operator<<(std::ostream& os, const CIdentifier& id) { return os << id.str(); }
-}
-#endif
-
 using namespace std;
 using namespace OpenViBE;
 using namespace /*OpenViBE::*/Designer;

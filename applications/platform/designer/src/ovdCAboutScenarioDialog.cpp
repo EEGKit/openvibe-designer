@@ -71,10 +71,10 @@ bool CAboutScenarioDialog::run()
 	{
 		const CString id(gtk_entry_get_text(GTK_ENTRY(metaboxId)));
 		CIdentifier tmp;
-		if (!tmp.fromString(id))
+		if (!tmp.fromString(id.toASCIIString()))
 		{
 			m_kernelCtx.getLogManager() << LogLevel_Error << "Invalid identifier " << id << " is not in the \"(0x[0-9a-f]{1-8}, 0x[0-9a-f]{1-8})\" format. ";
-			m_kernelCtx.getLogManager() << "Reverting to " << m_scenario.getAttributeValue(OVP_AttributeId_Metabox_ID).toASCIIString() << ".\n";
+			m_kernelCtx.getLogManager() << "Reverting to " << m_scenario.getAttributeValue(OVP_AttributeId_Metabox_ID) << ".\n";
 		}
 		else { m_scenario.setAttributeValue(OVP_AttributeId_Metabox_ID, id); }
 	}

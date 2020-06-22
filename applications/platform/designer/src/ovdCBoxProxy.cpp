@@ -18,9 +18,8 @@ CBoxProxy::CBoxProxy(const IKernelContext& ctx, IScenario& scenario, const CIden
 	{
 		if (m_constBox->getAlgorithmClassIdentifier() == OVP_ClassId_BoxAlgorithm_Metabox)
 		{
-			CIdentifier metaboxId;
-			metaboxId.fromString(m_constBox->getAttributeValue(OVP_AttributeId_Metabox_ID));
-			const CString path(m_kernelCtx.getMetaboxManager().getMetaboxFilePath(metaboxId));
+			CIdentifier tmp(m_constBox->getAttributeValue(OVP_AttributeId_Metabox_ID).toASCIIString());
+			const CString path(m_kernelCtx.getMetaboxManager().getMetaboxFilePath(tmp));
 
 			m_isBoxAlgorithmPresent = FS::Files::fileExists(path.toASCIIString());
 		}
