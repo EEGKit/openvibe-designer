@@ -7,7 +7,7 @@ bool CVisualizationContext::setWidget(Toolkit::TBoxAlgorithm<Plugins::IBoxAlgori
 {
 	const CIdentifier boxID = box.getStaticBoxContext().getIdentifier();
 
-	CIdentifier treeID = OV_UndefinedIdentifier;
+	CIdentifier treeID = CIdentifier::undefined();
 
 	// When a scenario is created in the designer, the designer creates a visualization tree for it. The box will then need to add
 	// visualization widgets into this tree. The designer can not pass this information directly to a box in a way that can be read
@@ -24,7 +24,7 @@ bool CVisualizationContext::setToolbar(Toolkit::TBoxAlgorithm<Plugins::IBoxAlgor
 {
 	const CIdentifier boxID = box.getStaticBoxContext().getIdentifier();
 
-	CIdentifier treeID = OV_UndefinedIdentifier;
+	CIdentifier treeID = CIdentifier::undefined();
 
 	if (!treeID.fromString(box.getConfigurationManager().lookUpConfigurationTokenValue("VisualizationContext_VisualizationTreeId").toASCIIString())) { return false; }
 

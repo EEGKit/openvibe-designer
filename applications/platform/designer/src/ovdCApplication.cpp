@@ -76,7 +76,7 @@ struct SBoxProto final : Kernel::IBoxProto
 		swap_byte(v, nInputHash);
 		swap_byte(nInputHash, 0x7936A0F3BD12D936LL);
 		hash = hash.id() ^ v;
-		if (id != OV_UndefinedIdentifier)
+		if (id != CIdentifier::undefined())
 		{
 			v = id.id();
 			swap_byte(v, 0x2BD1D158F340014D);
@@ -91,7 +91,7 @@ struct SBoxProto final : Kernel::IBoxProto
 		swap_byte(v, nOutputHash);
 		swap_byte(nOutputHash, 0xCBB66A5B893AA4E9LL);
 		hash = hash.id() ^ v;
-		if (id != OV_UndefinedIdentifier)
+		if (id != CIdentifier::undefined())
 		{
 			v = id.id();
 			swap_byte(v, 0x87CA0F5EFC4FAC68);
@@ -107,7 +107,7 @@ struct SBoxProto final : Kernel::IBoxProto
 		swap_byte(v, nSettingHash);
 		swap_byte(nSettingHash, 0x3C87F3AAE9F8303BLL);
 		hash = hash.id() ^ v;
-		if (id != OV_UndefinedIdentifier)
+		if (id != CIdentifier::undefined())
 		{
 			v = id.id();
 			swap_byte(v, 0x17185F7CDA63A9FA);
@@ -146,7 +146,7 @@ struct SBoxProto final : Kernel::IBoxProto
 	bool addFlag(const CIdentifier& flag) override
 	{
 		const uint64_t value = typeManager.getEnumerationEntryValueFromName(OV_TypeId_BoxAlgorithmFlag, flag.str().c_str());
-		return value != OV_UndefinedIdentifier;
+		return value != CIdentifier::undefined().id();
 	}
 
 	void swap_byte(uint64_t& v, const uint64_t s)
@@ -166,7 +166,7 @@ struct SBoxProto final : Kernel::IBoxProto
 		System::Memory::littleEndianToHost(V, &v);
 	}
 
-	_IsDerivedFromClass_Final_(IBoxProto, OV_UndefinedIdentifier)
+	_IsDerivedFromClass_Final_(IBoxProto, CIdentifier::undefined())
 
 	CIdentifier hash;
 	bool isDeprecated     = false;
@@ -1087,7 +1087,7 @@ void CApplication::initialize(const ECommandLineFlag cmdLineFlags)
 		do
 		{
 			sprintf(name, "Designer_LastScenarioFilename_%03u", ++i);
-			if ((id = m_kernelCtx.getConfigurationManager().lookUpConfigurationTokenIdentifier(name)) != OV_UndefinedIdentifier)
+			if ((id = m_kernelCtx.getConfigurationManager().lookUpConfigurationTokenIdentifier(name)) != CIdentifier::undefined())
 			{
 				CString filename;
 				filename = m_kernelCtx.getConfigurationManager().getConfigurationTokenValue(id);
@@ -1098,7 +1098,7 @@ void CApplication::initialize(const ECommandLineFlag cmdLineFlags)
 					m_kernelCtx.getLogManager() << Kernel::LogLevel_ImportantWarning << "Failed to restore scenario [" << filename << "]\n";
 				}
 			}
-		} while (id != OV_UndefinedIdentifier);
+		} while (id != CIdentifier::undefined());
 	}
 
 	CIdentifier tokenID;
@@ -1107,7 +1107,7 @@ void CApplication::initialize(const ECommandLineFlag cmdLineFlags)
 	do
 	{
 		sprintf(str, "Designer_RecentScenario_%03u", ++i);
-		if ((tokenID = m_kernelCtx.getConfigurationManager().lookUpConfigurationTokenIdentifier(str)) != OV_UndefinedIdentifier)
+		if ((tokenID = m_kernelCtx.getConfigurationManager().lookUpConfigurationTokenIdentifier(str)) != CIdentifier::undefined())
 		{
 			CString fileName;
 			fileName = m_kernelCtx.getConfigurationManager().getConfigurationTokenValue(tokenID);
@@ -1119,7 +1119,7 @@ void CApplication::initialize(const ECommandLineFlag cmdLineFlags)
 			gtk_widget_show(newRecentItem);
 			m_recentScenarios.push_back(newRecentItem);
 		}
-	} while (tokenID != OV_UndefinedIdentifier);
+	} while (tokenID != CIdentifier::undefined());
 
 	refresh_search_no_data_cb(nullptr, this);
 	// Add the designer log listener
@@ -1310,8 +1310,8 @@ bool CApplication::openScenario(const char* filename)
 
 		// Find the VisualizationTree metadata
 		Kernel::IMetadata* vizTreeMetadata = nullptr;
-		CIdentifier metadataID             = OV_UndefinedIdentifier;
-		while ((metadataID = scenario.getNextMetadataIdentifier(metadataID)) != OV_UndefinedIdentifier)
+		CIdentifier metadataID             = CIdentifier::undefined();
+		while ((metadataID = scenario.getNextMetadataIdentifier(metadataID)) != CIdentifier::undefined())
 		{
 			vizTreeMetadata = scenario.getMetadataDetails(metadataID);
 			if (vizTreeMetadata && vizTreeMetadata->getType() == OVVIZ_MetadataIdentifier_VisualizationTree) { break; }
@@ -1326,7 +1326,7 @@ bool CApplication::openScenario(const char* filename)
 
 		// no visualization widget was added to visualization tree : ensure there aren't any in scenario
 		CIdentifier boxID;
-		while ((boxID = scenario.getNextBoxIdentifier(boxID)) != OV_UndefinedIdentifier)
+		while ((boxID = scenario.getNextBoxIdentifier(boxID)) != CIdentifier::undefined())
 		{
 			if (!vizTree->getVisualizationWidgetFromBoxIdentifier(boxID))
 			{
@@ -1337,7 +1337,7 @@ bool CApplication::openScenario(const char* filename)
 				{
 					//a visualization widget was found in scenario : manually add it to visualization tree
 					vizTree->addVisualizationWidget(id, box->getName(), VisualizationToolkit::EVisualizationWidget::Box,
-													OV_UndefinedIdentifier, 0, box->getIdentifier(), 0, OV_UndefinedIdentifier);
+													CIdentifier::undefined(), 0, box->getIdentifier(), 0, CIdentifier::undefined());
 				}
 			}
 		}
@@ -1603,7 +1603,7 @@ void CApplication::preferencesCB() const
 	// Prepares tree model
 	CIdentifier tokenID;
 	GtkTreeStore* configMgrTreeModel = gtk_tree_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
-	while ((tokenID = m_kernelCtx.getConfigurationManager().getNextConfigurationTokenIdentifier(tokenID)) != OV_UndefinedIdentifier)
+	while ((tokenID = m_kernelCtx.getConfigurationManager().getNextConfigurationTokenIdentifier(tokenID)) != CIdentifier::undefined())
 	{
 		GtkTreeIter iter;
 		CString name   = m_kernelCtx.getConfigurationManager().getConfigurationTokenName(tokenID);
@@ -1765,7 +1765,7 @@ void CApplication::saveScenarioCB(CInterfacedScenario* scenario)
 				tmp.getSettingType(i, typeID);
 				tmp.getSettingDefaultValue(i, value);
 
-				metaboxProto.addSetting(name, typeID, value, false, OV_UndefinedIdentifier, true);
+				metaboxProto.addSetting(name, typeID, value, false, CIdentifier::undefined(), true);
 			}
 
 			if (tmp.hasAttribute(OV_AttributeId_Scenario_MetaboxHash))
@@ -1786,7 +1786,7 @@ void CApplication::saveScenarioCB(CInterfacedScenario* scenario)
 		currScenario->m_Scenario.removeAttribute(OV_AttributeId_ScenarioFilename);
 
 		CIdentifier linkID;
-		while ((linkID = currScenario->m_Scenario.getNextLinkIdentifier(linkID)) != OV_UndefinedIdentifier)
+		while ((linkID = currScenario->m_Scenario.getNextLinkIdentifier(linkID)) != CIdentifier::undefined())
 		{
 			auto link = currScenario->m_Scenario.getLinkDetails(linkID);
 			link->removeAttribute(OV_AttributeId_Link_XSrc);
@@ -1797,7 +1797,7 @@ void CApplication::saveScenarioCB(CInterfacedScenario* scenario)
 		}
 
 		CIdentifier boxID;
-		while ((boxID = currScenario->m_Scenario.getNextBoxIdentifier(boxID)) != OV_UndefinedIdentifier)
+		while ((boxID = currScenario->m_Scenario.getNextBoxIdentifier(boxID)) != CIdentifier::undefined())
 		{
 			auto box = currScenario->m_Scenario.getBoxDetails(boxID);
 			box->removeAttribute(OV_AttributeId_Box_XSize);
@@ -1806,7 +1806,7 @@ void CApplication::saveScenarioCB(CInterfacedScenario* scenario)
 		}
 
 		CIdentifier commentID;
-		while ((commentID = currScenario->m_Scenario.getNextCommentIdentifier(commentID)) != OV_UndefinedIdentifier)
+		while ((commentID = currScenario->m_Scenario.getNextCommentIdentifier(commentID)) != CIdentifier::undefined())
 		{
 			auto comment = currScenario->m_Scenario.getCommentDetails(commentID);
 			comment->removeAttribute(OV_ClassId_Selected);
@@ -1814,15 +1814,15 @@ void CApplication::saveScenarioCB(CInterfacedScenario* scenario)
 
 		// Remove all VisualizationTree type metadata
 		// We save the last found identifier if there was one, this allows us to not modify it on subsequent saves
-		CIdentifier metadataID              = OV_UndefinedIdentifier;
-		CIdentifier lastFoundTreeIdentifier = OV_UndefinedIdentifier;
-		while ((metadataID = currScenario->m_Scenario.getNextMetadataIdentifier(metadataID)) != OV_UndefinedIdentifier)
+		CIdentifier metadataID              = CIdentifier::undefined();
+		CIdentifier lastFoundTreeIdentifier = CIdentifier::undefined();
+		while ((metadataID = currScenario->m_Scenario.getNextMetadataIdentifier(metadataID)) != CIdentifier::undefined())
 		{
 			if (currScenario->m_Scenario.getMetadataDetails(metadataID)->getType() == OVVIZ_MetadataIdentifier_VisualizationTree)
 			{
 				currScenario->m_Scenario.removeMetadata(metadataID);
 				lastFoundTreeIdentifier = metadataID;
-				metadataID              = OV_UndefinedIdentifier;
+				metadataID              = CIdentifier::undefined();
 			}
 		}
 
@@ -2340,7 +2340,7 @@ bool CApplication::createPlayer()
 		scenario->m_Player           = &m_kernelCtx.getPlayerManager().getPlayer(playerID);
 		if (!scenario->m_Player->setScenario(scenarioID))
 		{
-			scenario->m_PlayerID = OV_UndefinedIdentifier;
+			scenario->m_PlayerID = CIdentifier::undefined();
 			scenario->m_Player   = nullptr;
 			m_kernelCtx.getPlayerManager().releasePlayer(playerID);
 			OV_ERROR_DRF("The current scenario could not be loaded by the player.\n", Kernel::ErrorType::BadCall);
@@ -2358,7 +2358,7 @@ bool CApplication::createPlayer()
 		{
 			scenario->releasePlayerVisualization();
 			m_kernelCtx.getLogManager() << Kernel::LogLevel_Error << "The player could not be initialized.\n";
-			scenario->m_PlayerID = OV_UndefinedIdentifier;
+			scenario->m_PlayerID = CIdentifier::undefined();
 			scenario->m_Player   = nullptr;
 			m_kernelCtx.getPlayerManager().releasePlayer(playerID);
 			return false;
@@ -2471,7 +2471,7 @@ void CApplication::playScenarioCB()
 			{
 				std::string outdatedBoxesList = "You can not start the scenario because following boxes need to be updated: \n";
 				CIdentifier boxID;
-				while ((boxID = scenario.getNextOutdatedBoxIdentifier(boxID)) != OV_UndefinedIdentifier)
+				while ((boxID = scenario.getNextOutdatedBoxIdentifier(boxID)) != CIdentifier::undefined())
 				{
 					const Kernel::IBox* box = scenario.getBoxDetails(boxID);
 					outdatedBoxesList += "\t[" + box->getName() + "]\n";
@@ -2487,7 +2487,7 @@ void CApplication::playScenarioCB()
 			{
 				std::string outdatedBoxesList = "The following boxes need to be updated: \n";
 				CIdentifier boxID;
-				while ((boxID = scenario.getNextOutdatedBoxIdentifier(boxID)) != OV_UndefinedIdentifier)
+				while ((boxID = scenario.getNextOutdatedBoxIdentifier(boxID)) != CIdentifier::undefined())
 				{
 					const Kernel::IBox* box = scenario.getBoxDetails(boxID);
 					outdatedBoxesList += "\t[" + box->getName() + "]\n";
@@ -2629,7 +2629,7 @@ bool CApplication::quitApplicationCB()
 
 	// Clears all existing scenarios
 	std::vector<CIdentifier> scenarioIDs;
-	while ((id = m_kernelCtx.getScenarioManager().getNextScenarioIdentifier(id)) != OV_UndefinedIdentifier) { scenarioIDs.push_back(id); }
+	while ((id = m_kernelCtx.getScenarioManager().getNextScenarioIdentifier(id)) != CIdentifier::undefined()) { scenarioIDs.push_back(id); }
 
 	for (auto& scenario : scenarioIDs) { m_kernelCtx.getScenarioManager().releaseScenario(scenario); }
 

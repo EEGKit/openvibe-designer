@@ -283,8 +283,8 @@ void CDesignerVisualization::setDeleteEventCB(visualization_delete_event_cb_t cb
 void CDesignerVisualization::onVisualizationBoxAdded(const IBox* box)
 {
 	CIdentifier widgetID;
-	m_tree.addVisualizationWidget(widgetID, box->getName(), EVisualizationWidget::Box, OV_UndefinedIdentifier, 0, box->getIdentifier(), 0,
-								  OV_UndefinedIdentifier);
+	m_tree.addVisualizationWidget(widgetID, box->getName(), EVisualizationWidget::Box, CIdentifier::undefined(), 0, box->getIdentifier(), 0,
+								  CIdentifier::undefined());
 
 	m_tree.reloadTree();
 
@@ -300,7 +300,7 @@ void CDesignerVisualization::onVisualizationBoxRemoved(const CIdentifier& boxID)
 	if (widget != nullptr)
 	{
 		//unaffected widget : delete it
-		if (widget->getParentIdentifier() == OV_UndefinedIdentifier) { m_tree.destroyHierarchy(widget->getIdentifier()); }
+		if (widget->getParentIdentifier() == CIdentifier::undefined()) { m_tree.destroyHierarchy(widget->getIdentifier()); }
 		else { destroyVisualizationWidget(widget->getIdentifier()); }	//simplify tree
 
 		m_tree.reloadTree();
@@ -610,7 +610,7 @@ void CDesignerVisualization::resizeCB(IVisualizationWidget* widget)
 		GtkWidget* notebook = gtk_paned_get_child2(GTK_PANED(m_pane));
 		if (notebook != nullptr)
 		{
-			CIdentifier id = OV_UndefinedIdentifier;
+			CIdentifier id = CIdentifier::undefined();
 			//retrieve current preview window size, if window is visible
 			if (m_previewWindowVisible)
 			{
@@ -778,7 +778,7 @@ void CDesignerVisualization::setActiveVisualization(const char* activeWindow, co
 	else
 	{
 		//pick first window if previously active window doesn't exist anymore
-		CIdentifier id = OV_UndefinedIdentifier;
+		CIdentifier id = CIdentifier::undefined();
 
 		if (m_tree.getNextVisualizationWidgetIdentifier(id, EVisualizationWidget::Window))
 		{
@@ -920,7 +920,7 @@ bool CDesignerVisualization::newVisualizationWindow(const char* label)
 {
 	//ensure name is unique
 	IVisualizationWidget* window;
-	CIdentifier windowID = OV_UndefinedIdentifier;
+	CIdentifier windowID = CIdentifier::undefined();
 
 	while (m_tree.getNextVisualizationWidgetIdentifier(windowID, EVisualizationWidget::Window))
 	{
@@ -935,8 +935,8 @@ bool CDesignerVisualization::newVisualizationWindow(const char* label)
 
 	//proceed with window creation
 	//m_visualizationTree.addVisualizationWindow(windowID, CString(label));
-	m_tree.addVisualizationWidget(windowID, CString(label), EVisualizationWidget::Window, OV_UndefinedIdentifier, 0, OV_UndefinedIdentifier, 0,
-								  OV_UndefinedIdentifier);
+	m_tree.addVisualizationWidget(windowID, CString(label), EVisualizationWidget::Window, CIdentifier::undefined(), 0, CIdentifier::undefined(), 0,
+								  CIdentifier::undefined());
 
 	window = m_tree.getVisualizationWidget(windowID);
 
@@ -948,7 +948,7 @@ bool CDesignerVisualization::newVisualizationWindow(const char* label)
 	CIdentifier childID;
 	const CString childName = "Default tab";
 
-	m_tree.addVisualizationWidget(childID, childName, EVisualizationWidget::Panel, windowID, 0, OV_UndefinedIdentifier, 1, OV_UndefinedIdentifier);
+	m_tree.addVisualizationWidget(childID, childName, EVisualizationWidget::Panel, windowID, 0, CIdentifier::undefined(), 1, CIdentifier::undefined());
 
 	m_tree.reloadTree();
 
@@ -992,7 +992,7 @@ bool CDesignerVisualization::renameVisualizationWindow(const char* label)
 	if (window->getName() == newName) { return true; }
 
 	//ensure name is unique
-	CIdentifier id = OV_UndefinedIdentifier;
+	CIdentifier id = CIdentifier::undefined();
 	while (m_tree.getNextVisualizationWidgetIdentifier(id, EVisualizationWidget::Window))
 	{
 		//name already in use : warn user
@@ -1018,14 +1018,14 @@ bool CDesignerVisualization::renameVisualizationWindow(const char* label)
 bool CDesignerVisualization::removeVisualizationWindow()
 {
 	//retrieve visualization window
-	CIdentifier windowID = OV_UndefinedIdentifier;
+	CIdentifier windowID = CIdentifier::undefined();
 	while (m_tree.getNextVisualizationWidgetIdentifier(windowID, EVisualizationWidget::Window))
 	{
 		if (m_tree.getVisualizationWidget(windowID)->getName() == m_activeVisualizationWindowName) { break; }
 	}
 
 	//return if window was not found
-	if (windowID == OV_UndefinedIdentifier)
+	if (windowID == CIdentifier::undefined())
 	{
 		displayErrorDialog("Window removal failed !", "Couldn't retrieve window.");
 		return false;
@@ -1054,7 +1054,7 @@ bool CDesignerVisualization::newVisualizationPanel(const char* label)
 {
 	//retrieve visualization window
 	IVisualizationWidget* window = nullptr;
-	CIdentifier windowID         = OV_UndefinedIdentifier;
+	CIdentifier windowID         = CIdentifier::undefined();
 
 	while (m_tree.getNextVisualizationWidgetIdentifier(windowID, EVisualizationWidget::Window))
 	{
@@ -1063,7 +1063,7 @@ bool CDesignerVisualization::newVisualizationPanel(const char* label)
 	}
 
 	//return if parent window was not found
-	if (windowID == OV_UndefinedIdentifier || window == nullptr)
+	if (windowID == CIdentifier::undefined() || window == nullptr)
 	{
 		displayErrorDialog("Tab creation failed !", "Couldn't retrieve parent window.");
 		return false;
@@ -1084,8 +1084,8 @@ bool CDesignerVisualization::newVisualizationPanel(const char* label)
 	}
 
 	//proceed with panel creation
-	m_tree.addVisualizationWidget(childID, newName, EVisualizationWidget::Panel, windowID, window->getNbChildren(), OV_UndefinedIdentifier, 1,
-								  OV_UndefinedIdentifier);
+	m_tree.addVisualizationWidget(childID, newName, EVisualizationWidget::Panel, windowID, window->getNbChildren(), CIdentifier::undefined(), 1,
+								  CIdentifier::undefined());
 
 	m_tree.reloadTree();
 
@@ -1647,7 +1647,7 @@ void CDesignerVisualization::dragDataReceivedInWidget(GtkWidget* dstWidget, GtkS
 	}
 
 	//if src widget is unaffected or if dest widget is a visualization box, perform the drop operation directly
-	if (srcVisualizationWidget->getParentIdentifier() == OV_UndefinedIdentifier
+	if (srcVisualizationWidget->getParentIdentifier() == CIdentifier::undefined()
 		|| m_tree.getULongValueFromTreeIter(&dstIter, EVisualizationTreeColumn::ULongNodeType) == size_t(EVisualizationTreeNode::VisualizationBox))
 	{
 		m_tree.dragDataReceivedInWidgetCB(srcID, dstWidget);

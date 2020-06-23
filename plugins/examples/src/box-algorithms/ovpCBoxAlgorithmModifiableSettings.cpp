@@ -15,7 +15,7 @@ uint64_t CBoxAlgorithmModifiableSettings::getClockFrequency()
 	return 0x1ULL << 30;
 }
 
-bool CBoxAlgorithmModifiableSettings::processClock(CMessage& /* msg */)
+bool CBoxAlgorithmModifiableSettings::processClock(CMessage& /*msg*/)
 {
 	updateSettings();
 	//print settings values

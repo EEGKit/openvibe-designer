@@ -40,7 +40,7 @@ public:
 	virtual bool enumeratePluginObjectDesc()
 	{
 		CIdentifier id;
-		while ((id = m_kernelCtx.getPluginManager().getNextPluginObjectDescIdentifier(id)) != OV_UndefinedIdentifier)
+		while ((id = m_kernelCtx.getPluginManager().getNextPluginObjectDescIdentifier(id)) != CIdentifier::undefined())
 		{
 			this->callback(*m_kernelCtx.getPluginManager().getPluginObjectDesc(id));
 		}
@@ -50,7 +50,7 @@ public:
 	virtual bool enumeratePluginObjectDesc(const CIdentifier& parentClassID)
 	{
 		CIdentifier id;
-		while ((id = m_kernelCtx.getPluginManager().getNextPluginObjectDescIdentifier(id, parentClassID)) != OV_UndefinedIdentifier)
+		while ((id = m_kernelCtx.getPluginManager().getNextPluginObjectDescIdentifier(id, parentClassID)) != CIdentifier::undefined())
 		{
 			this->callback(*m_kernelCtx.getPluginManager().getPluginObjectDesc(id));
 		}
@@ -815,7 +815,7 @@ int go(int argc, char** argv)
 
 							std::map<std::string, const IPluginObjectDesc*> metaboxDescMap;
 							CIdentifier identifier;
-							while ((identifier = context->getMetaboxManager().getNextMetaboxObjectDescIdentifier(identifier)) != OV_UndefinedIdentifier
+							while ((identifier = context->getMetaboxManager().getNextMetaboxObjectDescIdentifier(identifier)) != CIdentifier::undefined()
 							) { metaboxDescMap[identifier.str()] = context->getMetaboxManager().getMetaboxObjectDesc(identifier); }
 							InsertPluginObjectDescToGtkTreeStore(*context, metaboxDescMap, app.m_BoxAlgorithmTreeModel, app.m_NewBoxes, app.m_UpdatedBoxes,
 																 app.m_IsNewVersion);

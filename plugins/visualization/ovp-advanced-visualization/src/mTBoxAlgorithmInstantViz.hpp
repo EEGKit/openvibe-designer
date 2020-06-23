@@ -59,7 +59,7 @@ public:
 
 	bool onInputTypeChanged(Kernel::IBox& box, const size_t index) override
 	{
-		CIdentifier typeID = OV_UndefinedIdentifier;
+		CIdentifier typeID = CIdentifier::undefined();
 		box.getInputType(index, typeID);
 		if (!this->getTypeManager().isDerivedFromStream(typeID, OV_TypeId_StreamedMatrix)) { box.setInputType(index, OV_TypeId_StreamedMatrix); }
 		else { for (size_t i = 0; i < box.getInputCount(); ++i) { box.setInputType(i, typeID); } }
@@ -68,7 +68,7 @@ public:
 
 	bool onInputAdded(Kernel::IBox& box, const size_t index) override
 	{
-		CIdentifier typeID = OV_UndefinedIdentifier;
+		CIdentifier typeID = CIdentifier::undefined();
 		box.getInputType(0, typeID);
 		box.setInputType(index, typeID);
 		box.setInputName(index, "Matrix");

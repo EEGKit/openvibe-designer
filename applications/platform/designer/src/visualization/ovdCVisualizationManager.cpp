@@ -71,6 +71,6 @@ CIdentifier CVisualizationManager::getUnusedIdentifier() const
 	{
 		res = CIdentifier(id++);
 		it  = m_trees.find(res);
-	} while (it != m_trees.end() || res == OV_UndefinedIdentifier);
+	} while (it != m_trees.end() || res == CIdentifier::undefined());
 	return res;
 }

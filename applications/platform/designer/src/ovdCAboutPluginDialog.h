@@ -13,7 +13,7 @@ public:
 		: m_kernelCtx(ctx), m_pluginClassID(pluginClassID), m_guiFilename(guiFilename) { }
 
 	CAboutPluginDialog(const Kernel::IKernelContext& ctx, const Plugins::IPluginObjectDesc* pod, const char* guiFilename)
-		: m_kernelCtx(ctx), m_pluginClassID(OV_UndefinedIdentifier), m_guiFilename(guiFilename), m_pods(pod) { }
+		: m_kernelCtx(ctx), m_pluginClassID(CIdentifier::undefined()), m_guiFilename(guiFilename), m_pods(pod) { }
 
 	~CAboutPluginDialog() = default;
 
@@ -22,7 +22,7 @@ public:
 protected:
 
 	const Kernel::IKernelContext& m_kernelCtx;
-	CIdentifier m_pluginClassID = OV_UndefinedIdentifier;
+	CIdentifier m_pluginClassID = CIdentifier::undefined();
 	CString m_guiFilename;
 	const Plugins::IPluginObjectDesc* m_pods = nullptr;
 

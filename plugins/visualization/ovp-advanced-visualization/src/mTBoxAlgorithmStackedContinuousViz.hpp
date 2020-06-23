@@ -59,7 +59,7 @@ public:
 
 	bool onInputTypeChanged(Kernel::IBox& box, const size_t index) override
 	{
-		CIdentifier typeID = OV_UndefinedIdentifier;
+		CIdentifier typeID = CIdentifier::undefined();
 		box.getInputType(index, typeID);
 		if (!this->getTypeManager().isDerivedFromStream(typeID, OV_TypeId_StreamedMatrix)) { box.setInputType(index, OV_TypeId_StreamedMatrix); }
 		box.setInputType(1, OV_TypeId_Stimulations);

@@ -18,7 +18,7 @@ bool CVisualizationWidget::initialize(const CIdentifier& id, const CString& name
 	m_type     = type;
 	m_parentID = parentID;
 	m_boxID    = boxID;
-	m_childrens.resize(nChild, OV_UndefinedIdentifier);
+	m_childrens.resize(nChild, CIdentifier::undefined());
 	return true;
 }
 
@@ -44,7 +44,7 @@ bool CVisualizationWidget::removeChild(const CIdentifier& id)
 			if (m_type == EVisualizationWidget::Window) { m_childrens.erase(m_childrens.begin() + i); }
 			else //clear identifier if ith child for a regular widget (fixed number of children)
 			{
-				m_childrens[i] = OV_UndefinedIdentifier;
+				m_childrens[i] = CIdentifier::undefined();
 			}
 			return true;
 		}
@@ -57,7 +57,7 @@ bool CVisualizationWidget::getChildIdentifier(const size_t index, CIdentifier& i
 {
 	if (index >= m_childrens.size())
 	{
-		id = OV_UndefinedIdentifier;
+		id = CIdentifier::undefined();
 		OV_ERROR_DRF("Child with index " << index << " not found", Kernel::ErrorType::ResourceNotFound);
 	}
 	id = m_childrens[index];

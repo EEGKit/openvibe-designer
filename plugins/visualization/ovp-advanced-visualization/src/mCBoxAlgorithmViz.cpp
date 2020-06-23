@@ -404,7 +404,7 @@ bool CBoxAlgorithmViz::uninitialize()
 	return true;
 }
 
-bool CBoxAlgorithmViz::processClock(CMessage& /*clock*/)
+bool CBoxAlgorithmViz::processClock(CMessage& /*msg*/)
 {
 	const CTime currentTime = getPlayerContext().getCurrentTime();
 

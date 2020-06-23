@@ -108,7 +108,7 @@ public:
 	bool initialize() override;
 	bool uninitialize() override;
 	bool processInput(const size_t /*index*/) override { return true; }
-	bool processClock(CMessage& rClock) override;
+	bool processClock(CMessage& msg) override;
 
 	virtual void redrawTopLevelWindow(const bool immediate = false) { m_GtkGLWidget.redrawTopLevelWindow(immediate); }
 
@@ -145,7 +145,7 @@ protected:
 
 public:
 
-	CIdentifier m_ClassID = OV_UndefinedIdentifier;
+	CIdentifier m_ClassID = CIdentifier::undefined();
 	std::vector<int> m_Parameters;
 	CTime m_lastProcessTime = 0;
 
@@ -175,7 +175,7 @@ public:
 	std::vector<color_t> m_Colors;
 	color_t m_Color;
 
-	CIdentifier m_TypeID = OV_UndefinedIdentifier;
+	CIdentifier m_TypeID = CIdentifier::undefined();
 	CTime m_Time1        = 0;
 	CTime m_Time2        = 0;
 
@@ -272,7 +272,7 @@ public:
 		const bool isSignal     = (std::find(m_Parameters.begin(), m_Parameters.end(), I_Signal) != m_Parameters.end());
 		const bool isSpectrum   = (std::find(m_Parameters.begin(), m_Parameters.end(), I_Spectrum) != m_Parameters.end());
 		const bool isCovariance = (std::find(m_Parameters.begin(), m_Parameters.end(), I_Covariance) != m_Parameters.end());
-		CIdentifier typeID      = OV_UndefinedIdentifier;
+		CIdentifier typeID      = CIdentifier::undefined();
 
 		for (size_t i = 0; i < box.getInputCount(); ++i)
 		{
@@ -287,7 +287,7 @@ public:
 		return true;
 	}
 
-	_IsDerivedFromClass_Final_(Toolkit::TBoxListener<Plugins::IBoxListener>, OV_UndefinedIdentifier)
+	_IsDerivedFromClass_Final_(Toolkit::TBoxListener<Plugins::IBoxListener>, CIdentifier::undefined())
 
 	std::vector<int> m_Parameters;
 };
@@ -300,8 +300,8 @@ public:
 	CString m_CategoryName;
 	CString m_ShortDesc;
 	CString m_DetailedDesc;
-	CIdentifier m_DescClassID = OV_UndefinedIdentifier;
-	CIdentifier m_ClassID     = OV_UndefinedIdentifier;
+	CIdentifier m_DescClassID = CIdentifier::undefined();
+	CIdentifier m_ClassID     = CIdentifier::undefined();
 	CString m_AddedSoftwareVersion;
 	CString m_UpdatedSoftwareVersion;
 	std::vector<int> m_Parameters;

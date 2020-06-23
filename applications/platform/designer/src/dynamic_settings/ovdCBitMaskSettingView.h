@@ -20,7 +20,7 @@ public:
 	void onChange();
 
 private:
-	CIdentifier m_typeID = OV_UndefinedIdentifier;
+	CIdentifier m_typeID = CIdentifier::undefined();
 	const Kernel::IKernelContext& m_kernelCtx;
 
 	std::vector<GtkToggleButton*> m_toggleButton;

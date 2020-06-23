@@ -87,7 +87,7 @@ GtkWidget* CPlayerVisualization::loadTreeWidget(IVisualizationWidget* widget)
 	{
 		if (widget->getType() == EVisualizationWidget::Box)
 		{
-			if (widget->getParentIdentifier() != OV_UndefinedIdentifier)
+			if (widget->getParentIdentifier() != CIdentifier::undefined())
 			{
 				//dummy widget (actual one will be created at plugin initialization time)
 				treeWidget = gtk_button_new();
@@ -156,7 +156,7 @@ GtkWidget* CPlayerVisualization::loadTreeWidget(IVisualizationWidget* widget)
 	else if (widget->getType() == EVisualizationWidget::Window)
 	{
 		//create this window only if it contains at least one visualization box
-		CIdentifier identifier = OV_UndefinedIdentifier;
+		CIdentifier identifier = CIdentifier::undefined();
 		bool createWindow      = false;
 
 		//for all visualization boxes
@@ -165,7 +165,7 @@ GtkWidget* CPlayerVisualization::loadTreeWidget(IVisualizationWidget* widget)
 			//retrieve window containing current visualization box
 			CIdentifier parentID;
 			IVisualizationWidget* visualizationWidget = m_visualizationTree.getVisualizationWidget(identifier);
-			while (visualizationWidget->getParentIdentifier() != OV_UndefinedIdentifier)
+			while (visualizationWidget->getParentIdentifier() != CIdentifier::undefined())
 			{
 				parentID            = visualizationWidget->getParentIdentifier();
 				visualizationWidget = m_visualizationTree.getVisualizationWidget(parentID);
@@ -392,7 +392,7 @@ bool CPlayerVisualization::setWidget(const CIdentifier& boxID, GtkWidget* widget
 bool CPlayerVisualization::parentWidgetBox(IVisualizationWidget* widget, GtkBox* widgetBox)
 {
 	//if widget is unaffected, open it in its own window
-	if (widget->getParentIdentifier() == OV_UndefinedIdentifier)
+	if (widget->getParentIdentifier() == CIdentifier::undefined())
 	{
 		//create a top level window
 		GtkWidget* window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
