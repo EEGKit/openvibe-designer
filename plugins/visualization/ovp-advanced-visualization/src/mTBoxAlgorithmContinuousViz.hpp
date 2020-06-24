@@ -129,7 +129,7 @@ bool TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>::process()
 	{
 		m_oMatrixDecoder.decode(i);
 
-		IMatrix* matrix = m_oMatrixDecoder.getOutputMatrix();
+		CMatrix* matrix = m_oMatrixDecoder.getOutputMatrix();
 		size_t nChannel = matrix->getDimensionSize(0);
 		size_t nSample  = matrix->getDimensionSize(1);
 

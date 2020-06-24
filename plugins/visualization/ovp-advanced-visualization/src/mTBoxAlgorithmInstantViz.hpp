@@ -166,7 +166,7 @@ bool TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::process()
 		{
 			m_Decoder[i].decode(j);
 
-			IMatrix* matrix = m_Decoder[i].getOutputMatrix();
+			CMatrix* matrix = m_Decoder[i].getOutputMatrix();
 			size_t nChannel = matrix->getDimensionSize(0);
 			size_t nSample  = matrix->getDimensionSize(1);
 

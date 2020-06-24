@@ -166,7 +166,7 @@ bool CTopographicMapDatabase::processValues()
 		if (m_samplePointCoords != nullptr)
 		{
 			//retrieve interpolation results
-			TParameterHandler<IMatrix*> sampleValuesMatrix;
+			TParameterHandler<CMatrix*> sampleValuesMatrix;
 			sampleValuesMatrix.initialize(
 				m_interpolation.getOutputParameter(OVP_Algorithm_SphericalSplineInterpolation_OutputParameterId_SamplePointsValues));
 			dynamic_cast<CTopographicMapDrawable*>(m_Drawable)->setSampleValuesMatrix(sampleValuesMatrix);
@@ -221,7 +221,7 @@ bool CTopographicMapDatabase::interpolateValues()
 		if (m_samplePointCoords != nullptr)
 		{
 			//retrieve interpolation results
-			TParameterHandler<IMatrix*> sampleValuesMatrix;
+			TParameterHandler<CMatrix*> sampleValuesMatrix;
 			sampleValuesMatrix.initialize(m_interpolation.getOutputParameter(OVP_Algorithm_SphericalSplineInterpolation_OutputParameterId_SamplePointsValues));
 			dynamic_cast<CTopographicMapDrawable*>(m_Drawable)->setSampleValuesMatrix(sampleValuesMatrix);
 		}

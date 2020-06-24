@@ -307,10 +307,10 @@ CMatrix* CTopographicMap2DView::getSampleCoordinatesMatrix()
 	return &m_sampleCoordinatesMatrix;
 }
 
-bool CTopographicMap2DView::setSampleValuesMatrix(IMatrix* matrix)
+bool CTopographicMap2DView::setSampleValuesMatrix(CMatrix* matrix)
 {
 	//ensure matrix has the right size
-	if (matrix == nullptr || matrix->getBufferElementCount() < m_sampleValues.size()) { return false; }
+	if (matrix == nullptr || matrix->getSize() < m_sampleValues.size()) { return false; }
 
 	//retrieve min/max potentials
 	double minPotential, maxPotential;

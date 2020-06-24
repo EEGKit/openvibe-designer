@@ -27,13 +27,13 @@ protected:
 	//----------------
 	Kernel::TParameterHandler<int64_t> ip_splineOrder;
 	Kernel::TParameterHandler<int64_t> ip_nControlPoints;
-	Kernel::TParameterHandler<IMatrix*> ip_controlPointsCoords;
-	Kernel::TParameterHandler<IMatrix*> ip_controlPointsValues;
-	Kernel::TParameterHandler<IMatrix*> ip_samplePointsCoords;
+	Kernel::TParameterHandler<CMatrix*> ip_controlPointsCoords;
+	Kernel::TParameterHandler<CMatrix*> ip_controlPointsValues;
+	Kernel::TParameterHandler<CMatrix*> ip_samplePointsCoords;
 
 	//output parameters
 	//-----------------
-	Kernel::TParameterHandler<IMatrix*> op_samplePointsValues;
+	Kernel::TParameterHandler<CMatrix*> op_samplePointsValues;
 	Kernel::TParameterHandler<double> op_minSamplePointValue;
 	Kernel::TParameterHandler<double> op_maxSamplePointValue;
 

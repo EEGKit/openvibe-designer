@@ -17,7 +17,7 @@ typedef struct
 } SColor;
 }  // namespace
 
-bool ColorGradient::parse(IMatrix& colorGradient, const CString& string)
+bool ColorGradient::parse(CMatrix& colorGradient, const CString& string)
 {
 	const std::string colorString(string.toASCIIString());
 	size_t startPosition = 0;
@@ -62,7 +62,7 @@ bool ColorGradient::parse(IMatrix& colorGradient, const CString& string)
 	return true;
 }
 
-bool ColorGradient::format(CString& string, const IMatrix& colorGradient)
+bool ColorGradient::format(CString& string, const CMatrix& colorGradient)
 {
 	if (colorGradient.getDimensionCount() != 2) { return false; }
 
@@ -84,7 +84,7 @@ bool ColorGradient::format(CString& string, const IMatrix& colorGradient)
 	return true;
 }
 
-bool ColorGradient::interpolate(IMatrix& interpolatedColorGradient, const IMatrix& colorGradient, const size_t steps)
+bool ColorGradient::interpolate(CMatrix& interpolatedColorGradient, const CMatrix& colorGradient, const size_t steps)
 {
 	size_t i;
 

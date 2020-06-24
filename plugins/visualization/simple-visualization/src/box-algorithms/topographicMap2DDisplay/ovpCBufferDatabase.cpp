@@ -54,12 +54,12 @@ bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer*
 	if (m_decoder->isOutputTriggerActive(OVP_GD_Algorithm_ChannelLocalisationDecoder_OutputTriggerId_ReceivedHeader))
 	{
 		//retrieve matrix header
-		Kernel::TParameterHandler<IMatrix*> matrix;
+		Kernel::TParameterHandler<CMatrix*> matrix;
 		matrix.initialize(m_decoder->getOutputParameter(OVP_GD_Algorithm_ChannelLocalisationDecoder_OutputParameterId_Matrix));
 
 		//copy channel labels
 		m_channelLocalisationLabels.resize(matrix->getDimensionSize(0));
-		for (size_t i = 0; i < m_channelLocalisationLabels.size(); ++i) { m_channelLocalisationLabels[i] = matrix->getDimensionLabel(0, i); }
+		for (size_t i = 0; i < m_channelLocalisationLabels.size(); ++i) { m_channelLocalisationLabels[i] = matrix->getDimensionLabel(0, i).c_str(); }
 
 		//retrieve dynamic flag
 		Kernel::TParameterHandler<bool> dynamic;
@@ -117,7 +117,7 @@ bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer*
 		}
 
 		//retrieve coordinates matrix
-		Kernel::TParameterHandler<IMatrix*> matrix;
+		Kernel::TParameterHandler<CMatrix*> matrix;
 		matrix.initialize(m_decoder->getOutputParameter(OVP_GD_Algorithm_ChannelLocalisationDecoder_OutputParameterId_Matrix));
 
 		//get pointer to destination matrix

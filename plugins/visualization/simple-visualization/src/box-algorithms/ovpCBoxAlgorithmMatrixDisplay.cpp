@@ -262,7 +262,7 @@ bool CBoxAlgorithmMatrixDisplay::process()
 			if (m_realTimeMinMax || // we need recompute the min max at each loop call
 				(m_max == 0 && m_min == 0)) // we have never computed the min max values.
 			{
-				if (op_matrix->getBufferElementCount() != 0) // if the matrix is not empty.
+				if (op_matrix->getSize() != 0) // if the matrix is not empty.
 				{
 					m_max = op_matrix->getBuffer()[0];
 					m_min = op_matrix->getBuffer()[0];
@@ -324,9 +324,9 @@ bool CBoxAlgorithmMatrixDisplay::process()
 				//first line : labels
 				for (size_t c = 0; c < nCol; ++c)
 				{
-					if (m_columnLabelCache[c].second != op_matrix->getDimensionLabel(1, c) && !string(op_matrix->getDimensionLabel(1, c)).empty())
+					if (m_columnLabelCache[c].second != op_matrix->getDimensionLabel(1, c) && !op_matrix->getDimensionLabel(1, c).empty())
 					{
-						gtk_label_set_label(GTK_LABEL(m_columnLabelCache[c].first), op_matrix->getDimensionLabel(1, c));
+						gtk_label_set_label(GTK_LABEL(m_columnLabelCache[c].first), op_matrix->getDimensionLabel(1, c).c_str());
 						m_columnLabelCache[c].second = op_matrix->getDimensionLabel(1, c);
 					}
 				}
@@ -334,9 +334,9 @@ bool CBoxAlgorithmMatrixDisplay::process()
 				//first column : labels
 				for (size_t r = 0; r < nRow; ++r)
 				{
-					if (m_rowLabelCache[r].second != op_matrix->getDimensionLabel(0, r) && !string(op_matrix->getDimensionLabel(0, r)).empty())
+					if (m_rowLabelCache[r].second != op_matrix->getDimensionLabel(0, r) && !op_matrix->getDimensionLabel(0, r).empty())
 					{
-						gtk_label_set_label(GTK_LABEL(m_rowLabelCache[r].first), op_matrix->getDimensionLabel(0, r));
+						gtk_label_set_label(GTK_LABEL(m_rowLabelCache[r].first), op_matrix->getDimensionLabel(0, r).c_str());
 						m_rowLabelCache[r].second = op_matrix->getDimensionLabel(0, r);
 					}
 				}
@@ -346,9 +346,9 @@ bool CBoxAlgorithmMatrixDisplay::process()
 				//first line : labels
 				for (size_t c = 0; c < nCol; ++c)
 				{
-					if (m_columnLabelCache[c].second != op_matrix->getDimensionLabel(0, c) && !string(op_matrix->getDimensionLabel(0, c)).empty())
+					if (m_columnLabelCache[c].second != op_matrix->getDimensionLabel(0, c) && !op_matrix->getDimensionLabel(0, c).empty())
 					{
-						gtk_label_set_label(GTK_LABEL(m_columnLabelCache[c].first), op_matrix->getDimensionLabel(0, c));
+						gtk_label_set_label(GTK_LABEL(m_columnLabelCache[c].first), op_matrix->getDimensionLabel(0, c).c_str());
 						m_columnLabelCache[c].second = op_matrix->getDimensionLabel(0, c);
 					}
 				}

@@ -92,7 +92,7 @@ bool CBoxAlgorithmTopographicMap2DDisplay::process()
 		m_decoder.decode(i);
 		if (m_decoder.isBufferReceived())
 		{
-			IMatrix* iMatrix = m_decoder.getOutputMatrix();
+			CMatrix* iMatrix = m_decoder.getOutputMatrix();
 
 			//do we need to recopy this for each chunk?
 			if (!m_hasFirstBuffer)
@@ -103,7 +103,7 @@ bool CBoxAlgorithmTopographicMap2DDisplay::process()
 					m_database->setMatrixDimensionSize(dimension, iMatrix->getDimensionSize(dimension));
 					for (size_t entryIndex = 0; entryIndex < iMatrix->getDimensionSize(dimension); ++entryIndex)
 					{
-						m_database->setMatrixDimensionLabel(dimension, entryIndex, iMatrix->getDimensionLabel(dimension, entryIndex));
+						m_database->setMatrixDimensionLabel(dimension, entryIndex, iMatrix->getDimensionLabel(dimension, entryIndex).c_str());
 					}
 				}
 				m_hasFirstBuffer = true;

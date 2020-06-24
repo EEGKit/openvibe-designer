@@ -167,7 +167,7 @@ bool TBoxAlgorithmStackedInstantViz<TDrawBorders, TRendererFactoryClass, TRulerC
 	{
 		m_MatrixDecoder.decode(chunk);
 
-		IMatrix* inputMatrix  = m_MatrixDecoder.getOutputMatrix();
+		CMatrix* inputMatrix  = m_MatrixDecoder.getOutputMatrix();
 		const size_t nChannel = inputMatrix->getDimensionSize(0);
 
 		if (nChannel == 0)
