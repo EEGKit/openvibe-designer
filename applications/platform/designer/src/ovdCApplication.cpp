@@ -571,43 +571,24 @@ static gboolean idle_application_loop(gpointer data)
 		}
 		else
 		{
-			const double time = (scenario->m_Player ? scenario->m_Player->getCurrentSimulatedTime().toSeconds() : 0.0);
+			const CTime time = (scenario->m_Player ? scenario->m_Player->getCurrentSimulatedTime() : 0);
 			if (app->m_LastTimeRefresh != time)
 			{
-				app->m_LastTimeRefresh = uint64_t(time);
-
-				const size_t milli   = (size_t(time * 1000) % 1000);
-				const size_t seconds = (size_t(time)) % 60;
-				const size_t minutes = (size_t(time) / 60) % 60;
-				const size_t hours   = (size_t(time) / 60) / 60;
+				app->m_LastTimeRefresh = time;
 
 				const double cpuUsage = (scenario->m_Player ? scenario->m_Player->getCPUUsage() : 0);
+				const std::string timeStr = "Time : " + time.getTimeStr();
 
-				std::stringstream ss("Time : ");
-				ss.fill('0');
-				if (hours)
-				{
-					ss << std::setw(2) << hours << "h " << std::setw(2) << minutes << "m " << std::setw(2) << seconds << "s " << std::setw(3) << milli << "ms";
-				}
-				else if (minutes) { ss << std::setw(2) << minutes << "m " << std::setw(2) << seconds << "s " << std::setw(3) << milli << "ms"; }
-				else if (seconds) { ss << std::setw(2) << seconds << "s " << std::setw(3) << milli << "ms"; }
-				else { ss << std::setw(3) << milli << "ms"; }
-
-
-				gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(app->m_Builder, "openvibe-label_current_time")), ss.str().c_str());
-
-				ss.str("");
+				std::stringstream ss;
 				ss.fill('0');
 				ss.precision(1);
 				ss << std::fixed << cpuUsage << "%";
 
+				gtk_label_set_text(GTK_LABEL(gtk_builder_get_object(app->m_Builder, "openvibe-label_current_time")), timeStr.c_str());
 				gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(gtk_builder_get_object(app->m_Builder, "openvibe-progressbar_cpu_usage")), cpuUsage * .01);
 				gtk_progress_bar_set_text(GTK_PROGRESS_BAR(gtk_builder_get_object(app->m_Builder, "openvibe-progressbar_cpu_usage")), ss.str().c_str());
-				if (scenario->m_Player && scenario->m_DebugCPUUsage)
-				{
-					// redraws scenario
-					scenario->redraw();
-				}
+				
+				if (scenario->m_Player && scenario->m_DebugCPUUsage) { scenario->redraw(); }		// redraws scenario
 			}
 		}
 	}

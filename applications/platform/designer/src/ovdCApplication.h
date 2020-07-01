@@ -16,7 +16,6 @@ namespace OpenViBE {
 namespace Designer {
 
 class CInterfacedScenario;
-
 class CLogListenerDesigner;
 
 class CApplication
@@ -154,9 +153,9 @@ public:
 	gint m_FilterTimeout      = 0;
 	const gchar* m_SearchTerm = nullptr;
 
-	uint64_t m_LastTimeRefresh = 0;
-	bool m_IsQuitting          = false;
-	bool m_IsNewVersion        = false;
+	CTime m_LastTimeRefresh = 0;
+	bool m_IsQuitting       = false;
+	bool m_IsNewVersion     = false;
 
 	std::vector<CInterfacedScenario*> m_Scenarios;
 	std::vector<const Plugins::IPluginObjectDesc*> m_NewBoxes;
