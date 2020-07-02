@@ -571,7 +571,7 @@ static gboolean idle_application_loop(gpointer data)
 		}
 		else
 		{
-			const CTime time = (scenario->m_Player ? scenario->m_Player->getCurrentSimulatedTime() : 0);
+			const CTime time = (scenario->m_Player ? scenario->m_Player->getCurrentSimulatedTime() : CTime(0));
 			if (app->m_LastTimeRefresh != time)
 			{
 				app->m_LastTimeRefresh = time;
