@@ -295,9 +295,9 @@ bool CBufferDatabase::setMatrixBuffer(const double* buffer, const CTime startTim
 			return false;
 		}
 
-		//computes the sampling frequency for sanity checking or if the setter has not been called
-		const uint64_t duration = (uint64_t(1) << 32) * m_DimSizes[1];
-		size_t sampling         = size_t(duration / m_BufferDuration.time());
+		// Computes the sampling frequency for sanity checking or if the setter has not been called
+		const CTime duration(double(1.0 * m_DimSizes[1]));						// We consider that the number of sample corresponds to the number of seconds
+		size_t sampling = size_t(duration.time() / m_BufferDuration.time());	// We divide by the real time to have the sampling
 		if (sampling == 0)
 		{
 			// Complain if estimate is bad
@@ -632,8 +632,8 @@ bool CBufferDatabase::fillChannelLookupTable()
 		//unrecognized electrode!
 		if (!labelRecognized)
 		{
-			m_ParentPlugin.getLogManager() << Kernel::LogLevel_Warning << "Unrecognized electrode name (index=" << i
-					<< ", name=" << m_DimLabels[0][i] << ")!\n";
+			m_ParentPlugin.getLogManager() << Kernel::LogLevel_Warning << "Unrecognized electrode name (index = " << i
+					<< ", name = " << m_DimLabels[0][i] << ")!\n";
 			res = false;
 		}
 	}
