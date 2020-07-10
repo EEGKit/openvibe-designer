@@ -29,17 +29,7 @@ CBufferDatabase::~CBufferDatabase()
 	}
 
 	//delete channel localisation matrices
-	while (!m_channelLocalisationCoords.empty())
-	{
-		delete m_channelLocalisationCoords.front().first;
-		m_channelLocalisationCoords.pop_front();
-	}
-
-	/*while(m_oChannelLocalisationAlternateCoords.size() > 0)
-	{
-		delete[] m_oChannelLocalisationAlternateCoords.front().first;
-		m_oChannelLocalisationAlternateCoords.pop_front();
-	}*/
+	m_channelLocalisationCoords.clear();
 }
 
 bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer* buffer, CTime startTime, CTime endTime)
@@ -66,18 +56,8 @@ bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer*
 		dynamic.initialize(m_decoder->getOutputParameter(OVP_GD_Algorithm_ChannelLocalisationDecoder_OutputParameterId_Dynamic));
 		m_dynamicChannelLocalisation = dynamic;
 
-		if (matrix->getDimensionSize(1) == 3)
-		{
-			m_cartesianCoords = true;
-			/*m_channelLocalisationCartesianCoords = &m_channelLocalisationCoords;
-			m_channelLocalisationSphericalCoords = &m_oChannelLocalisationAlternateCoords;*/
-		}
-		else if (matrix->getDimensionSize(1) == 2)
-		{
-			m_cartesianCoords = false;
-			/*m_channelLocalisationCartesianCoords = &m_oChannelLocalisationAlternateCoords;
-			m_channelLocalisationSphericalCoords = &m_channelLocalisationCoords;*/
-		}
+		if (matrix->getDimensionSize(1) == 3) { m_cartesianCoords = true; }
+		else if (matrix->getDimensionSize(1) == 2) { m_cartesianCoords = false; }
 		else
 		{
 			m_ParentPlugin.getLogManager() << Kernel::LogLevel_Error
@@ -108,10 +88,7 @@ bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer*
 			//if new number of buffers decreased, resize list and destroy useless buffers
 			while (m_channelLocalisationCoords.size() > maxNBuffer)
 			{
-				delete[] m_channelLocalisationCoords.front().first;
 				m_channelLocalisationCoords.pop_front();
-				// delete[] m_oChannelLocalisationAlternateCoords.front().first;
-				// m_oChannelLocalisationAlternateCoords.pop_front();
 				m_channelLocalisationTimes.pop_front();
 			}
 		}
@@ -120,34 +97,15 @@ bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer*
 		Kernel::TParameterHandler<CMatrix*> matrix;
 		matrix.initialize(m_decoder->getOutputParameter(OVP_GD_Algorithm_ChannelLocalisationDecoder_OutputParameterId_Matrix));
 
-		//get pointer to destination matrix
-		CMatrix* channelLocalisation;
-		//CMatrix* alternateChannelLocalisation = nullptr;
-		if (m_channelLocalisationCoords.size() < maxNBuffer)
+		if (m_channelLocalisationCoords.size() >= maxNBuffer)
 		{
-			//create a new matrix and resize it
-			channelLocalisation = new CMatrix();
-			Toolkit::Matrix::copyDescription(*channelLocalisation, *matrix);
-			// alternateChannelLocalisation = new CMatrix();
-			// TODO : resize it appropriately depending on whether it is spherical or cartesian
-		}
-		else //m_channelLocalisationCoords.size() == maxNBuffer
-		{
-			channelLocalisation = m_channelLocalisationCoords.front().first;
 			m_channelLocalisationCoords.pop_front();
-			// alternateChannelLocalisation = m_oChannelLocalisationAlternateCoords.front().first;
-			// m_oChannelLocalisationAlternateCoords.pop_front();
 			m_channelLocalisationTimes.pop_front();
 		}
 
-		if (channelLocalisation)
-		{
-			//copy coordinates and times
-			Toolkit::Matrix::copyContent(*channelLocalisation, *matrix);
-			m_channelLocalisationCoords.emplace_back(channelLocalisation, true);
-			//m_oChannelLocalisationAlternateCoords.push_back(std::pair<CMatrix*, bool>(alternateChannelLocalisation, true));
-			m_channelLocalisationTimes.emplace_back(startTime, endTime);
-		}
+		CMatrix channelLocalisation(*matrix);
+		m_channelLocalisationCoords.emplace_back(channelLocalisation, true);
+		m_channelLocalisationTimes.emplace_back(startTime, endTime);
 	}
 
 	return true;
@@ -256,8 +214,8 @@ void CBufferDatabase::setMatrixDimensionLabel(const size_t idx1, const size_t id
 	if (idx1 >= 2)
 	{
 		m_Error = true;
-		m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << Kernel::LogLevel_Error << "Tried to access dimension " << idx1
-				<< ", only 0 and 1 supported\n";
+		m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << Kernel::LogLevel_Error
+				<< "Tried to access dimension " << idx1 << ", only 0 and 1 supported\n";
 		return;
 	}
 
@@ -366,7 +324,7 @@ bool CBufferDatabase::setMatrixBuffer(const double* buffer, const CTime startTim
 		m_SampleBuffers.pop_front();
 		m_StartTime.pop_front();
 		m_EndTime.pop_front();
-		for (size_t c = 0; c < size_t(m_DimSizes[0]); ++c) { m_LocalMinMaxValue[c].pop_front(); }
+		for (size_t c = 0; c < m_DimSizes[0]; ++c) { m_LocalMinMaxValue[c].pop_front(); }
 	}
 
 	//do we need to allocate a new buffer?
@@ -383,24 +341,23 @@ bool CBufferDatabase::setMatrixBuffer(const double* buffer, const CTime startTim
 	//compute and push min and max values of new buffer
 	size_t currentSample = 0;
 	//for each channel
-	for (size_t c = 0; c < size_t(m_DimSizes[0]); ++c)
+	for (size_t c = 0; c < m_DimSizes[0]; ++c)
 	{
-		double localMin = DBL_MAX;
-		double localMax = -DBL_MAX;
+		double min = DBL_MAX, max = -DBL_MAX;
 
 		//for each sample
-		for (size_t i = 0; i < m_DimSizes[1]; i++, currentSample++)
+		for (size_t i = 0; i < m_DimSizes[1]; i++, ++currentSample)
 		{
 			//get channel local min/max
-			if (buffer[currentSample] < localMin) { localMin = buffer[currentSample]; }
-			if (buffer[currentSample] > localMax) { localMax = buffer[currentSample]; }
+			if (buffer[currentSample] < min) { min = buffer[currentSample]; }
+			if (buffer[currentSample] > max) { max = buffer[currentSample]; }
 		}
 
 		//adds the minmax pair to the corresponding channel's list
-		m_LocalMinMaxValue[c].emplace_back(localMin, localMax);
+		m_LocalMinMaxValue[c].emplace_back(min, max);
 
-		if (localMax > m_MaxValue) { m_MaxValue = localMax; }
-		if (localMin < m_MinValue) { m_MinValue = localMin; }
+		if (max > m_MaxValue) { m_MaxValue = max; }
+		if (min < m_MinValue) { m_MinValue = min; }
 	}
 
 	//tells the drawable to redraw himself since the signal information has been updated
@@ -419,18 +376,16 @@ void CBufferDatabase::getDisplayedChannelLocalMinMaxValue(const size_t channel, 
 	min = +DBL_MAX;
 	max = -DBL_MAX;
 
-	for (size_t i = 0; i < m_LocalMinMaxValue[channel].size(); ++i)
+	for (const auto& pair : m_LocalMinMaxValue[channel])
 	{
-		if (min > m_LocalMinMaxValue[channel][i].first) { min = m_LocalMinMaxValue[channel][i].first; }
-		if (max < m_LocalMinMaxValue[channel][i].second) { max = m_LocalMinMaxValue[channel][i].second; }
+		if (min > pair.first) { min = pair.first; }
+		if (max < pair.second) { max = pair.second; }
 	}
 }
 
 bool CBufferDatabase::isTimeInDisplayedInterval(const CTime& time) const
 {
-	if (m_StartTime.empty()) { return false; }
-
-	return time >= m_StartTime.front() && time <= m_EndTime.back();
+	return !m_StartTime.empty() && time >= m_StartTime.front() && time <= m_EndTime.back();
 }
 
 bool CBufferDatabase::getIndexOfBufferStartingAtTime(const CTime& time, size_t& index) const
@@ -456,7 +411,7 @@ void CBufferDatabase::getDisplayedGlobalMinMaxValue(double& min, double& max)
 	min = +DBL_MAX;
 	max = -DBL_MAX;
 
-	for (auto& pairs : m_LocalMinMaxValue)
+	for (const auto& pairs : m_LocalMinMaxValue)
 	{
 		for (const auto& pair : pairs)
 		{
@@ -491,9 +446,9 @@ bool CBufferDatabase::getElectrodePosition(const size_t index, double* position)
 	{
 		//if(m_cartesianCoords == true)
 		//{
-		*position       = *(m_channelLocalisationCoords[0].first->getBuffer() + 3 * index);
-		*(position + 1) = *(m_channelLocalisationCoords[0].first->getBuffer() + 3 * index + 1);
-		*(position + 2) = *(m_channelLocalisationCoords[0].first->getBuffer() + 3 * index + 2);
+		*position       = *(m_channelLocalisationCoords[0].first.getBuffer() + 3 * index);
+		*(position + 1) = *(m_channelLocalisationCoords[0].first.getBuffer() + 3 * index + 1);
+		*(position + 2) = *(m_channelLocalisationCoords[0].first.getBuffer() + 3 * index + 2);
 		//}
 		return true;
 	}
@@ -509,9 +464,9 @@ bool CBufferDatabase::getElectrodePosition(const CString& label, double* positio
 		{
 			//if(m_cartesianCoords == true)
 			//{
-			*position       = *(m_channelLocalisationCoords[0].first->getBuffer() + 3 * i);
-			*(position + 1) = *(m_channelLocalisationCoords[0].first->getBuffer() + 3 * i + 1);
-			*(position + 2) = *(m_channelLocalisationCoords[0].first->getBuffer() + 3 * i + 2);
+			*position       = *(m_channelLocalisationCoords[0].first.getBuffer() + 3 * i);
+			*(position + 1) = *(m_channelLocalisationCoords[0].first.getBuffer() + 3 * i + 1);
+			*(position + 2) = *(m_channelLocalisationCoords[0].first.getBuffer() + 3 * i + 2);
 			//}
 			return true;
 		}
@@ -532,7 +487,7 @@ bool CBufferDatabase::getChannelPosition(const size_t index, double*& position)
 	//TODO : add time parameter and look for coordinates closest to that time!
 	if (index >= 0 && index < m_ChannelLookupIndices.size())
 	{
-		if (m_cartesianCoords) { position = m_channelLocalisationCoords[0].first->getBuffer() + 3 * m_ChannelLookupIndices[index]; }
+		if (m_cartesianCoords) { position = m_channelLocalisationCoords[0].first.getBuffer() + 3 * m_ChannelLookupIndices[index]; }
 		// else { } //TODO
 		return true;
 	}
@@ -548,7 +503,7 @@ bool CBufferDatabase::getChannelSphericalCoordinates(const size_t index, double&
 		if (m_cartesianCoords)
 		{
 			//get cartesian coords
-			double* coords = m_channelLocalisationCoords[0].first->getBuffer() + 3 * m_ChannelLookupIndices[index];
+			double* coords = m_channelLocalisationCoords[0].first.getBuffer() + 3 * m_ChannelLookupIndices[index];
 
 			//convert to spherical coords
 			return convertCartesianToSpherical(coords, theta, phi);
@@ -640,9 +595,9 @@ bool CBufferDatabase::fillChannelLookupTable()
 
 	m_ParentPlugin.getLogManager() << Kernel::LogLevel_Trace << "Electrodes list : ";
 
-	for (size_t i = 0; i < size_t(m_DimSizes[0]); ++i)
+	for (size_t i = 0; i < m_DimSizes[0]; ++i)
 	{
-		m_ParentPlugin.getLogManager() << m_DimLabels[0][i].c_str();
+		m_ParentPlugin.getLogManager() << m_DimLabels[0][i];
 		if (i < m_DimSizes[0] - 1) { m_ParentPlugin.getLogManager() << ", "; }
 		else { m_ParentPlugin.getLogManager() << "\n"; }
 	}

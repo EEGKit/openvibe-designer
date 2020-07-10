@@ -71,7 +71,7 @@ bool CTopographicMapDatabase::onChannelLocalisationBufferReceived(const size_t b
 			//fill electrode coordinates matrix
 			m_electrodeCoords.setDimensionCount(1);
 			m_electrodeCoords.setDimensionSize(0, size_t(3 * m_NElectrodes));
-			const double* coords = m_channelLocalisationCoords[0].first->getBuffer();
+			const double* coords = m_channelLocalisationCoords[0].first.getBuffer();
 			for (size_t i = 0; i < size_t(m_NElectrodes); ++i)
 			{
 				const size_t lookupIdx       = m_ChannelLookupIndices[i];

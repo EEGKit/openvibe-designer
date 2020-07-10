@@ -102,7 +102,7 @@ protected:
 	//flag stating whether streamed coordinates are cartesian (as opposed to spherical)
 	bool m_cartesianCoords = false;
 	//! double-linked list of streamed channel coordinates (if cartesian, expressed in normalized space (X right Y front Z up))
-	std::deque<std::pair<CMatrix*, bool>> m_channelLocalisationCoords;
+	std::deque<std::pair<CMatrix, bool>> m_channelLocalisationCoords;
 	//! double-linked list of channel coordinates (spherical if streamed coords aere cartesian and vice versa)
 	//std::deque<  std::pair<CMatrix*, bool> > m_oChannelLocalisationAlternateCoords;
 	//pointer to double linked list of cartesian coordinates
