@@ -45,11 +45,7 @@ void CTopographicMapDatabase::setMatrixDimensionSize(const size_t index, const s
 {
 	CBufferDatabase::setMatrixDimensionSize(index, size);
 
-	if (index == 0)
-	{
-		m_electrodePotentials.setDimensionCount(1);
-		m_electrodePotentials.setDimensionSize(0, size_t(m_NElectrodes));
-	}
+	if (index == 0) { m_electrodePotentials.resize(size_t(m_NElectrodes)); }	// Row Vector Matrix
 }
 
 bool CTopographicMapDatabase::onChannelLocalisationBufferReceived(const size_t bufferIndex)
@@ -69,8 +65,7 @@ bool CTopographicMapDatabase::onChannelLocalisationBufferReceived(const size_t b
 		if (m_cartesianCoords)
 		{
 			//fill electrode coordinates matrix
-			m_electrodeCoords.setDimensionCount(1);
-			m_electrodeCoords.setDimensionSize(0, size_t(3 * m_NElectrodes));
+			m_electrodeCoords.resize(size_t(3 * m_NElectrodes));		// Row Vector Matrix
 			const double* coords = m_channelLocalisationCoords[0].first.getBuffer();
 			for (size_t i = 0; i < size_t(m_NElectrodes); ++i)
 			{

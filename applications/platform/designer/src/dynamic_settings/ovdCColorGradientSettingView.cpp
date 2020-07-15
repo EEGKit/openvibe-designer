@@ -87,9 +87,7 @@ void CColorGradientSettingView::configurePressed()
 	{
 		CString finalGradient;
 		CMatrix finalColorGradient;
-		finalColorGradient.setDimensionCount(2);
-		finalColorGradient.setDimensionSize(0, 4);
-		finalColorGradient.setDimensionSize(1, m_colorGradient.size());
+		finalColorGradient.resize(4, m_colorGradient.size());
 		size_t idx = 0;
 		for (size_t i = 0; i < m_colorGradient.size(); ++i)
 		{
@@ -161,9 +159,7 @@ void CColorGradientSettingView::refreshColorGradient()
 	gdk_drawable_get_size(m_drawingArea->window, &sizex, &sizey);
 
 	CMatrix gradient;
-	gradient.setDimensionCount(2);
-	gradient.setDimensionSize(0, 4);
-	gradient.setDimensionSize(1, m_colorGradient.size());
+	gradient.resize(4, m_colorGradient.size());
 	for (size_t i = 0; i < m_colorGradient.size(); ++i)
 	{
 		const size_t idx  = i * 4;

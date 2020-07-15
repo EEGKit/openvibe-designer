@@ -46,9 +46,7 @@ bool ColorGradient::parse(CMatrix& colorGradient, const CString& string)
 		startPosition = endPosition + 1;
 	} while (startPosition < colorString.length());
 
-	colorGradient.setDimensionCount(2);
-	colorGradient.setDimensionSize(0, 4);
-	colorGradient.setDimensionSize(1, colorGradientVector.size());
+	colorGradient.resize(4, colorGradientVector.size());
 
 	size_t i = 0;
 	for (auto it = colorGradientVector.begin(); it != colorGradientVector.end(); ++it, i++)
@@ -92,9 +90,7 @@ bool ColorGradient::interpolate(CMatrix& interpolatedColorGradient, const CMatri
 
 	if (steps <= 1) { return false; }
 
-	interpolatedColorGradient.setDimensionCount(2);
-	interpolatedColorGradient.setDimensionSize(0, 4);
-	interpolatedColorGradient.setDimensionSize(1, steps);
+	interpolatedColorGradient.resize(4, steps);
 
 	std::map<double, SColor> colors;
 
