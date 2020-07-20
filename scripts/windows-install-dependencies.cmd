@@ -12,8 +12,8 @@ set URL=https://extranet.mensiatech.com/dependencies
 
 if not exist "..\dependencies\arch\build\windows" ( mkdir "..\dependencies\arch\build\windows" )
 
-REM Install build tools, CMake, Ninja, comment line if you already have an instance of CMake installed
-powershell.exe -NoProfile -ExecutionPolicy Bypass -file "windows-get-dependencies.ps1" -manifest_file .\windows-build-tools.txt
+REM Install build tools specifically needed by Designer project
+REM powershell.exe -NoProfile -ExecutionPolicy Bypass -file "windows-get-dependencies.ps1" -manifest_file .\windows-build-tools.txt
 
 REM Install OV SDK and its dependencies
 powershell.exe -NoProfile -ExecutionPolicy Bypass -file "windows-get-dependencies.ps1" -manifest_file .\windows-dependencies-sdk.txt
