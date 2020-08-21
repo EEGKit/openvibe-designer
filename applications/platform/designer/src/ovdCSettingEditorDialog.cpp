@@ -88,13 +88,13 @@ void CSettingEditorDialog::typeChangedCB()
 {
 	const CIdentifier settingType = m_settingTypes[gtk_combo_box_get_active_text(GTK_COMBO_BOX(m_type))];
 
-	const char* name         = m_helper.getSettingWidgetName(settingType).toASCIIString();
+	CString name         = m_helper.getSettingWidgetName(settingType);
 	GtkBuilder* builderDummy = gtk_builder_new(); // glade_xml_new(m_guiFilename.toASCIIString(), name, nullptr);
 	gtk_builder_add_from_file(builderDummy, m_guiSettingsFilename.toASCIIString(), nullptr);
 	gtk_builder_connect_signals(builderDummy, nullptr);
 
 	if (m_defaultValue) { gtk_container_remove(GTK_CONTAINER(m_table), m_defaultValue); }
-	m_defaultValue = GTK_WIDGET(gtk_builder_get_object(builderDummy, name));
+	m_defaultValue = GTK_WIDGET(gtk_builder_get_object(builderDummy, name.toASCIIString()));
 	gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(m_defaultValue)), m_defaultValue);
 	gtk_table_attach(GTK_TABLE(m_table), m_defaultValue, 1, 2, 2, 3, GtkAttachOptions(GTK_FILL | GTK_EXPAND), GtkAttachOptions(GTK_FILL | GTK_EXPAND), 0, 0);
 	g_object_unref(builderDummy);
