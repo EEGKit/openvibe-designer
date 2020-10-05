@@ -5,6 +5,7 @@ ADD_LIBRARY(${PROJECT_NAME} SHARED ${SRC_FILES})
 SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES
 	VERSION ${PROJECT_VERSION}
 	SOVERSION ${PROJECT_VERSION_MAJOR}
+	FOLDER ${PLUGINS_FOLDER}
 	COMPILE_FLAGS "-DOVP_Exports -DOVP_Shared")
 
 SET(INCLUDED_OV_SDK_COMPONENTS MAIN COMMON TOOLKIT EBML SYSTEM XML)
@@ -14,9 +15,7 @@ INCLUDE("FindThirdPartyGTK")
 
 # ---------------------------------
 # Target macros
-# Defines target operating system
-# Defines target architecture
-# Defines target compiler
+# Defines target operating system, architecture and compiler
 # ---------------------------------
 SET_BUILD_PLATFORM()
 
