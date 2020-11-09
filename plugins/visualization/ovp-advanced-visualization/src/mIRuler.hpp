@@ -37,73 +37,71 @@
 
 #define IRuler_SplitCount 5
 
-namespace Mensia
+namespace Mensia {
+namespace AdvancedVisualization {
+class IRuler
 {
-	namespace AdvancedVisualization
+public:
+
+	IRuler() { }
+	IRuler(const IRuler&) = delete;
+	virtual ~IRuler()     = default;
+
+	virtual void setRendererContext(const CRendererContext* ctx) { m_rendererCtx = ctx; }
+	virtual void setRenderer(const IRenderer* renderer) { m_renderer = renderer; }
+
+	virtual void doRender() { this->render(); }
+	virtual void doRenderLeft(GtkWidget* widget) { if (m_rendererCtx->getScaleVisibility()) { this->renderLeft(widget); } }
+	virtual void doRenderRight(GtkWidget* widget) { if (m_rendererCtx->getScaleVisibility()) { this->renderRight(widget); } }
+	virtual void doRenderBottom(GtkWidget* widget) { if (m_rendererCtx->getScaleVisibility()) { this->renderBottom(widget); } }
+
+protected:
+
+	virtual void render() { }
+	virtual void renderLeft(GtkWidget* /*widget*/) { }
+	virtual void renderRight(GtkWidget* /*widget*/) { }
+	virtual void renderBottom(GtkWidget* /*widget*/) { }
+
+	std::vector<double> splitRange(const double start, const double stop, const size_t count = 10) const
 	{
-		class IRuler
+		std::vector<double> res;
+		const double range = stop - start;
+		const double order = floor(log(range) / log(10.) - .1F);
+		double step        = pow(10, order);
+		double nStep       = trunc(range / step);
+
+		while (nStep < count)
 		{
-		public:
+			nStep *= 2;
+			step /= 2;
+		}
+		while (nStep > count)
+		{
+			nStep /= 2;
+			step *= 2;
+		}
 
-			IRuler() { }
-			IRuler(const IRuler&) = delete;
-			virtual ~IRuler()     = default;
+		double value = trunc(start / step) * step;
+		while (value < start) { value += step; }
+		while (value <= stop)
+		{
+			res.push_back(std::abs(value) < std::abs(range / 1000) ? 0 : value);
+			value += step;
+		}
+		return res;
+	}
 
-			virtual void setRendererContext(const CRendererContext* ctx) { m_rendererCtx = ctx; }
-			virtual void setRenderer(const IRenderer* renderer) { m_renderer = renderer; }
+	static std::string getLabel(const double v)
+	{
+		char label[1024];
+		(fabs(v) < 1E-10) ? sprintf(label, "0") : sprintf(label, "%g", v);
+		return label;
+	}
 
-			virtual void doRender() { this->render(); }
-			virtual void doRenderLeft(GtkWidget* widget) { if (m_rendererCtx->getScaleVisibility()) { this->renderLeft(widget); } }
-			virtual void doRenderRight(GtkWidget* widget) { if (m_rendererCtx->getScaleVisibility()) { this->renderRight(widget); } }
-			virtual void doRenderBottom(GtkWidget* widget) { if (m_rendererCtx->getScaleVisibility()) { this->renderBottom(widget); } }
-
-		protected:
-
-			virtual void render() { }
-			virtual void renderLeft(GtkWidget* /*widget*/) { }
-			virtual void renderRight(GtkWidget* /*widget*/) { }
-			virtual void renderBottom(GtkWidget* /*widget*/) { }
-
-			std::vector<double> splitRange(const double start, const double stop, const size_t count = 10) const
-			{
-				std::vector<double> res;
-				const double range = stop - start;
-				const double order = floor(log(range) / log(10.) - .1F);
-				double step        = pow(10, order);
-				double nStep       = trunc(range / step);
-
-				while (nStep < count)
-				{
-					nStep *= 2;
-					step /= 2;
-				}
-				while (nStep > count)
-				{
-					nStep /= 2;
-					step *= 2;
-				}
-
-				double value = trunc(start / step) * step;
-				while (value < start) { value += step; }
-				while (value <= stop)
-				{
-					res.push_back(std::abs(value) < std::abs(range / 1000) ? 0 : value);
-					value += step;
-				}
-				return res;
-			}
-
-			static std::string getLabel(const double v)
-			{
-				char label[1024];
-				(fabs(v) < 1E-10) ? sprintf(label, "0") : sprintf(label, "%g", v);
-				return label;
-			}
-
-			const CRendererContext* m_rendererCtx = nullptr;
-			const IRenderer* m_renderer           = nullptr;
-			float m_blackAlpha                    = 0.9F;
-			float m_whiteAlpha                    = 1.0F;
-		};
-	} // namespace AdvancedVisualization
-} // namespace Mensia
+	const CRendererContext* m_rendererCtx = nullptr;
+	const IRenderer* m_renderer           = nullptr;
+	float m_blackAlpha                    = 0.9F;
+	float m_whiteAlpha                    = 1.0F;
+};
+}  // namespace AdvancedVisualization
+}  // namespace Mensia

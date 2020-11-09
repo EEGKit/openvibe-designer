@@ -98,7 +98,6 @@ static void OnButtonSettingIntegerPressed(GtkButton* button, gpointer data, cons
 }
 
 static void OnButtonSettingIntegerUpPressed(GtkButton* button, gpointer data) { OnButtonSettingIntegerPressed(button, data, 1); }
-
 static void OnButtonSettingIntegerDownPressed(GtkButton* button, gpointer data) { OnButtonSettingIntegerPressed(button, data, -1); }
 
 static void OnButtonSettingFloatPressed(GtkButton* button, gpointer data, const gdouble offset)
@@ -116,7 +115,6 @@ static void OnButtonSettingFloatPressed(GtkButton* button, gpointer data, const 
 }
 
 static void OnButtonSettingFloatUpPressed(GtkButton* button, gpointer data) { OnButtonSettingFloatPressed(button, data, 1); }
-
 static void OnButtonSettingFloatDownPressed(GtkButton* button, gpointer data) { OnButtonSettingFloatPressed(button, data, -1); }
 
 static void OnButtonSettingFilenameBrowsePressed(GtkButton* button, gpointer data)
@@ -228,7 +226,6 @@ static void OnButtonSettingColorChoosePressed(GtkColorButton* button, gpointer /
 // ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- -----------
 
 static void OnGTKWidgetDestroy(GtkWidget* widget, gpointer /*data*/) { gtk_widget_destroy(widget); }
-
 static void OnInitializeColorGradient(GtkWidget* widget, gpointer data);
 
 static void OnRefreshColorGradient(GtkWidget* /*widget*/, GdkEventExpose* /*event*/, gpointer data)

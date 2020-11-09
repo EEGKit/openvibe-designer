@@ -10,7 +10,7 @@ using namespace Setting;
 static int Color2Percent(const guint16 color) { return int(round(color / 655.350)); }	// c * 100 / 65535
 static guint16 Percent2Color(const int color) { return guint16(color * 655.35); }		// c * 65535 / 100
 
-static void OnButtonSettingColorChoosePressed(GtkColorButton* /*button*/, gpointer data) { static_cast<CColorSettingView *>(data)->selectColor(); }
+static void OnButtonSettingColorChoosePressed(GtkColorButton* /*button*/, gpointer data) { static_cast<CColorSettingView*>(data)->selectColor(); }
 static void OnChange(GtkEntry* /*entry*/, gpointer data) { static_cast<CColorSettingView*>(data)->onChange(); }
 
 CColorSettingView::CColorSettingView(Kernel::IBox& box, const size_t index, CString& builderName, const Kernel::IKernelContext& ctx)

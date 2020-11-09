@@ -22,55 +22,53 @@
 
 #include "../mIRuler.hpp"
 
-namespace Mensia
+namespace Mensia {
+namespace AdvancedVisualization {
+template <class T1, class T2>
+class TRulerPair : public IRuler
 {
-	namespace AdvancedVisualization
+public:
+
+	void setRendererContext(const CRendererContext* ctx) override
 	{
-		template <class T1, class T2>
-		class TRulerPair : public IRuler
-		{
-		public:
+		IRuler::setRendererContext(ctx);
+		first.setRendererContext(ctx);
+		second.setRendererContext(ctx);
+	}
 
-			void setRendererContext(const CRendererContext* ctx) override
-			{
-				IRuler::setRendererContext(ctx);
-				first.setRendererContext(ctx);
-				second.setRendererContext(ctx);
-			}
+	void setRenderer(const IRenderer* renderer) override
+	{
+		IRuler::setRenderer(renderer);
+		first.setRenderer(renderer);
+		second.setRenderer(renderer);
+	}
 
-			void setRenderer(const IRenderer* renderer) override
-			{
-				IRuler::setRenderer(renderer);
-				first.setRenderer(renderer);
-				second.setRenderer(renderer);
-			}
+	void render() override
+	{
+		first.doRender();
+		second.doRender();
+	}
 
-			void render() override
-			{
-				first.doRender();
-				second.doRender();
-			}
+	void renderLeft(GtkWidget* widget) override
+	{
+		first.doRenderLeft(widget);
+		second.doRenderLeft(widget);
+	}
 
-			void renderLeft(GtkWidget* widget) override
-			{
-				first.doRenderLeft(widget);
-				second.doRenderLeft(widget);
-			}
+	void renderRight(GtkWidget* widget) override
+	{
+		first.doRenderRight(widget);
+		second.doRenderRight(widget);
+	}
 
-			void renderRight(GtkWidget* widget) override
-			{
-				first.doRenderRight(widget);
-				second.doRenderRight(widget);
-			}
+	void renderBottom(GtkWidget* widget) override
+	{
+		first.doRenderBottom(widget);
+		second.doRenderBottom(widget);
+	}
 
-			void renderBottom(GtkWidget* widget) override
-			{
-				first.doRenderBottom(widget);
-				second.doRenderBottom(widget);
-			}
-
-			T1 first;
-			T2 second;
-		};
-	} // namespace AdvancedVisualization
-} // namespace Mensia
+	T1 first;
+	T2 second;
+};
+}  // namespace AdvancedVisualization
+}  // namespace Mensia

@@ -5,7 +5,7 @@ using namespace OpenViBE;
 using namespace /*OpenViBE::*/Designer;
 using namespace Setting;
 
-static void OnCheckbuttonPressed(GtkToggleButton* /*button*/, gpointer data) { static_cast<CBitMaskSettingView *>(data)->onChange(); }
+static void OnCheckbuttonPressed(GtkToggleButton* /*button*/, gpointer data) { static_cast<CBitMaskSettingView*>(data)->onChange(); }
 
 CBitMaskSettingView::CBitMaskSettingView(Kernel::IBox& box, const size_t index, CString& builderName, const Kernel::IKernelContext& ctx,
 										 const CIdentifier& typeID)

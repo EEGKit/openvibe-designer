@@ -22,41 +22,39 @@
 
 #include "../mIRuler.hpp"
 
-namespace Mensia
+namespace Mensia {
+namespace AdvancedVisualization {
+class CRulerBottomFrequency : public IRuler
 {
-	namespace AdvancedVisualization
+public:
+
+	void renderBottom(GtkWidget* widget) override
 	{
-		class CRulerBottomFrequency : public IRuler
+		const auto scale = float(m_rendererCtx->getSpectrumFrequencyRange());
+		if (m_lastScale != scale)
 		{
-		public:
+			m_range     = splitRange(0, scale);
+			m_lastScale = scale;
+		}
 
-			void renderBottom(GtkWidget* widget) override
-			{
-				const auto scale = float(m_rendererCtx->getSpectrumFrequencyRange());
-				if (m_lastScale != scale)
-				{
-					m_range     = splitRange(0, scale);
-					m_lastScale = scale;
-				}
+		gint w, h;
 
-				gint w, h;
+		gdk_drawable_get_size(widget->window, &w, &h);
+		GdkGC* drawGC = gdk_gc_new(widget->window);
+		for (const auto& i : m_range)
+		{
+			const gint x        = gint((i / scale) * w);
+			PangoLayout* layout = gtk_widget_create_pango_layout(widget, getLabel(i).c_str());
+			gdk_draw_layout(widget->window, drawGC, x, 5, layout);
+			gdk_draw_line(widget->window, drawGC, x, 0, x, 3);
+			g_object_unref(layout);
+		}
+		g_object_unref(drawGC);
+	}
 
-				gdk_drawable_get_size(widget->window, &w, &h);
-				GdkGC* drawGC = gdk_gc_new(widget->window);
-				for (const auto& i : m_range)
-				{
-					const gint x        = gint((i / scale) * w);
-					PangoLayout* layout = gtk_widget_create_pango_layout(widget, getLabel(i).c_str());
-					gdk_draw_layout(widget->window, drawGC, x, 5, layout);
-					gdk_draw_line(widget->window, drawGC, x, 0, x, 3);
-					g_object_unref(layout);
-				}
-				g_object_unref(drawGC);
-			}
-
-		protected:
-			float m_lastScale = 0;
-			std::vector<double> m_range;
-		};
-	} // namespace AdvancedVisualization
-} // namespace Mensia
+protected:
+	float m_lastScale = 0;
+	std::vector<double> m_range;
+};
+}  // namespace AdvancedVisualization
+}  // namespace Mensia

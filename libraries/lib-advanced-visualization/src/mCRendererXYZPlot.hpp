@@ -22,23 +22,21 @@
 
 #include "mIRenderer.hpp"
 
-namespace Mensia
+namespace Mensia {
+namespace AdvancedVisualization {
+class CRendererXYZPlot : public IRenderer
 {
-	namespace AdvancedVisualization
-	{
-		class CRendererXYZPlot : public IRenderer
-		{
-		public:
+public:
 
-			void rebuild(const CRendererContext& ctx) override;
-			void refresh(const CRendererContext& ctx) override;
-			bool render(const CRendererContext& ctx) override;
+	void rebuild(const CRendererContext& ctx) override;
+	void refresh(const CRendererContext& ctx) override;
+	bool render(const CRendererContext& ctx) override;
 
-		protected:
-			bool m_hasDepth  = false;
-			size_t m_plotDim = 0;
-			size_t m_nPlot   = 0;
-			std::vector<std::vector<CVertex>> m_vertex;
-		};
-	} // namespace AdvancedVisualization
-} // namespace Mensia
+protected:
+	bool m_hasDepth  = false;
+	size_t m_plotDim = 0;
+	size_t m_nPlot   = 0;
+	std::vector<std::vector<CVertex>> m_vertex;
+};
+}  // namespace AdvancedVisualization
+}  // namespace Mensia

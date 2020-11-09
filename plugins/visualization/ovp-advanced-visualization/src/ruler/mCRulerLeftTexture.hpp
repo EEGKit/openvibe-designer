@@ -22,41 +22,39 @@
 
 #include "mCRulerTexture.hpp"
 
-namespace Mensia
+namespace Mensia {
+namespace AdvancedVisualization {
+class CRulerLeftTexture : public CRulerTexture
 {
-	namespace AdvancedVisualization
+public:
+
+	void render() override
+
 	{
-		class CRulerLeftTexture : public CRulerTexture
-		{
-		public:
+		this->preRender();
 
-			void render() override
+		glColor4f(0, 0, 0, m_blackAlpha);
+		glBegin(GL_QUADS);
+		glTexCoord1f(0);
+		glVertex2f(0.00F, 0);
+		glVertex2f(0.05F, 0);
+		glTexCoord1f(1);
+		glVertex2f(0.05F, 1);
+		glVertex2f(0.00F, 1);
+		glEnd();
 
-			{
-				this->preRender();
+		glColor4f(1, 1, 1, m_whiteAlpha);
+		glBegin(GL_QUADS);
+		glTexCoord1f(0);
+		glVertex2f(0.00F, 0);
+		glVertex2f(0.04F, 0);
+		glTexCoord1f(1);
+		glVertex2f(0.04F, 1);
+		glVertex2f(0.00F, 1);
+		glEnd();
 
-				glColor4f(0, 0, 0, m_blackAlpha);
-				glBegin(GL_QUADS);
-				glTexCoord1f(0);
-				glVertex2f(0.00F, 0);
-				glVertex2f(0.05F, 0);
-				glTexCoord1f(1);
-				glVertex2f(0.05F, 1);
-				glVertex2f(0.00F, 1);
-				glEnd();
-
-				glColor4f(1, 1, 1, m_whiteAlpha);
-				glBegin(GL_QUADS);
-				glTexCoord1f(0);
-				glVertex2f(0.00F, 0);
-				glVertex2f(0.04F, 0);
-				glTexCoord1f(1);
-				glVertex2f(0.04F, 1);
-				glVertex2f(0.00F, 1);
-				glEnd();
-
-				this->postRender();
-			}
-		};
-	} // namespace AdvancedVisualization
-} // namespace Mensia
+		this->postRender();
+	}
+};
+}  // namespace AdvancedVisualization
+}  // namespace Mensia

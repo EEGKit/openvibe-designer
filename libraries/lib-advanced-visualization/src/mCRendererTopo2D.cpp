@@ -138,22 +138,21 @@ void CRendererTopo2D::rebuild3DMeshesPre(const CRendererContext& /*rContext*/)
 	}
 }
 
-namespace
+namespace {
+void unfold(std::vector<CVertex>& vertices, const float layer = 0)
 {
-	void unfold(std::vector<CVertex>& vertices, const float layer = 0)
+	for (auto& v : vertices)
 	{
-		for (auto& v : vertices)
-		{
-			v.y += OFFSET;
-			const float phi = float(M_PI) * .5F - asinf(v.y);
-			const float psi = atan2f(v.z, v.x);
+		v.y += OFFSET;
+		const float phi = float(M_PI) * .5F - asinf(v.y);
+		const float psi = atan2f(v.z, v.x);
 
-			v.x = phi * cos(psi);
-			v.y = layer;
-			v.z = phi * sin(psi);
-		}
+		v.x = phi * cos(psi);
+		v.y = layer;
+		v.z = phi * sin(psi);
 	}
-} // namespace
+}
+}  // namespace
 
 void CRendererTopo2D::rebuild3DMeshesPost(const CRendererContext& /*ctx*/)
 {

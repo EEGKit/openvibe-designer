@@ -22,35 +22,33 @@
 
 #include "../mIRuler.hpp"
 
-namespace Mensia
+namespace Mensia {
+namespace AdvancedVisualization {
+class CRulerBottomPercent : public IRuler
 {
-	namespace AdvancedVisualization
+public:
+
+	void renderBottom(GtkWidget* widget) override
 	{
-		class CRulerBottomPercent : public IRuler
+		gint w, h;
+		gint lw, lh;
+
+		gdk_drawable_get_size(widget->window, &w, &h);
+		GdkGC* drawGC = gdk_gc_new(widget->window);
+		for (int i = 0; i <= 10; i += 2)
 		{
-		public:
-
-			void renderBottom(GtkWidget* widget) override
-			{
-				gint w, h;
-				gint lw, lh;
-
-				gdk_drawable_get_size(widget->window, &w, &h);
-				GdkGC* drawGC = gdk_gc_new(widget->window);
-				for (int i = 0; i <= 10; i += 2)
-				{
-					const gint x            = (i * (w - 1)) / 10;
-					const std::string label = (std::to_string(i * 10) + "%");
-					PangoLayout* layout     = gtk_widget_create_pango_layout(widget, label.c_str());
-					pango_layout_get_size(layout, &lw, &lh);
-					lw /= PANGO_SCALE;
-					lh /= PANGO_SCALE;
-					gdk_draw_layout(widget->window, drawGC, x, 4, layout);
-					gdk_draw_line(widget->window, drawGC, x, 0, x, 3);
-					g_object_unref(layout);
-				}
-				g_object_unref(drawGC);
-			}
-		};
-	} // namespace AdvancedVisualization
-} // namespace Mensia
+			const gint x            = (i * (w - 1)) / 10;
+			const std::string label = (std::to_string(i * 10) + "%");
+			PangoLayout* layout     = gtk_widget_create_pango_layout(widget, label.c_str());
+			pango_layout_get_size(layout, &lw, &lh);
+			lw /= PANGO_SCALE;
+			lh /= PANGO_SCALE;
+			gdk_draw_layout(widget->window, drawGC, x, 4, layout);
+			gdk_draw_line(widget->window, drawGC, x, 0, x, 3);
+			g_object_unref(layout);
+		}
+		g_object_unref(drawGC);
+	}
+};
+}  // namespace AdvancedVisualization
+}  // namespace Mensia
