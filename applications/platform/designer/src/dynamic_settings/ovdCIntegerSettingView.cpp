@@ -5,11 +5,9 @@ using namespace OpenViBE;
 using namespace /*OpenViBE::*/Designer;
 using namespace Setting;
 
-static void OnButtonSettingIntegerUpPressed(GtkButton* /*button*/, gpointer data) { static_cast<CIntegerSettingView *>(data)->adjustValue(1); }
-
-static void OnButtonSettingIntegerDownPressed(GtkButton* /*button*/, gpointer data) { static_cast<CIntegerSettingView *>(data)->adjustValue(-1); }
-
-static void OnInsertion(GtkEntry* /*entry*/, gpointer data) { static_cast<CIntegerSettingView *>(data)->onChange(); }
+static void OnButtonSettingIntegerUpPressed(GtkButton* /*button*/, gpointer data) { static_cast<CIntegerSettingView*>(data)->adjustValue(1); }
+static void OnButtonSettingIntegerDownPressed(GtkButton* /*button*/, gpointer data) { static_cast<CIntegerSettingView*>(data)->adjustValue(-1); }
+static void OnInsertion(GtkEntry* /*entry*/, gpointer data) { static_cast<CIntegerSettingView*>(data)->onChange(); }
 
 
 CIntegerSettingView::CIntegerSettingView(Kernel::IBox& box, const size_t index, CString& builderName, const Kernel::IKernelContext& ctx)
@@ -29,9 +27,7 @@ CIntegerSettingView::CIntegerSettingView(Kernel::IBox& box, const size_t index, 
 	CAbstractSettingView::initializeValue();
 }
 
-
 void CIntegerSettingView::getValue(CString& value) const { value = CString(gtk_entry_get_text(m_entry)); }
-
 
 void CIntegerSettingView::setValue(const CString& value)
 {

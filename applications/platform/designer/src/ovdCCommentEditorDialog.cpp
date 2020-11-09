@@ -102,7 +102,6 @@ void CCommentEditorDialog::applyTagCB(const char* in, const char* out) const
 		gtk_text_buffer_insert_at_cursor(m_buffer, in, gint(strlen(in)));
 		gtk_text_buffer_insert_at_cursor(m_buffer, out, gint(strlen(out)));
 
-
 		gtk_text_buffer_get_iter_at_offset(m_buffer, &start, gint(offset + strlen(in)));
 		gtk_text_buffer_place_cursor(m_buffer, &start);
 	}

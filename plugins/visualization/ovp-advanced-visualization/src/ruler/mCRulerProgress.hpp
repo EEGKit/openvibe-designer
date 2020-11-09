@@ -22,29 +22,27 @@
 
 #include "../mIRuler.hpp"
 
-namespace Mensia
+namespace Mensia {
+namespace AdvancedVisualization {
+class CRulerProgress : public IRuler
 {
-	namespace AdvancedVisualization
+public:
+
+	virtual void renderFinal(const float progress) = 0;
+
+	void render() override
 	{
-		class CRulerProgress : public IRuler
-		{
-		public:
+		if (m_renderer == nullptr) { return; }
+		if (m_renderer->getSampleCount() == 0) { return; }
+		if (m_renderer->getHistoryCount() == 0) { return; }
+		if (m_renderer->getHistoryIndex() == 0) { return; }
 
-			virtual void renderFinal(const float progress) = 0;
+		const size_t nSample    = m_renderer->getSampleCount();
+		const size_t historyIdx = m_renderer->getHistoryIndex();
 
-			void render() override
-			{
-				if (m_renderer == nullptr) { return; }
-				if (m_renderer->getSampleCount() == 0) { return; }
-				if (m_renderer->getHistoryCount() == 0) { return; }
-				if (m_renderer->getHistoryIndex() == 0) { return; }
-
-				const size_t nSample    = m_renderer->getSampleCount();
-				const size_t historyIdx = m_renderer->getHistoryIndex();
-
-				const float progress = float(historyIdx - (float(historyIdx) / nSample) * nSample) / nSample;
-				if (progress != 0 && progress != 1) { this->renderFinal(progress); }
-			}
-		};
-	} // namespace AdvancedVisualization
-} // namespace Mensia
+		const float progress = float(historyIdx - (float(historyIdx) / nSample) * nSample) / nSample;
+		if (progress != 0 && progress != 1) { this->renderFinal(progress); }
+	}
+};
+}  // namespace AdvancedVisualization
+}  // namespace Mensia

@@ -8,7 +8,6 @@
 
 namespace {
 void close_messages_alert_window_cb(GtkButton* /*button*/, gpointer data) { gtk_widget_hide(GTK_WIDGET(data)); }
-
 void focus_message_window_cb(GtkButton* /*button*/, gpointer data) { static_cast<OpenViBE::Designer::CLogListenerDesigner*>(data)->focusMessageWindow(); }
 
 void refresh_search_log_entry(GtkEntry* text, gpointer data)
@@ -55,7 +54,7 @@ void focus_on_box_cidentifier_clicked(GtkWidget* widget, GdkEventButton* event, 
 		ptr->m_CenterOnBoxFun(id);
 	}
 }
-} // namespace
+}  // namespace
 
 namespace OpenViBE {
 namespace Designer {

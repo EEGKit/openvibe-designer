@@ -25,26 +25,24 @@
 
 #include <map>
 
-namespace Mensia
+namespace Mensia {
+namespace AdvancedVisualization {
+class CBoxAlgorithmViz;
+
+class CMouse
 {
-	namespace AdvancedVisualization
-	{
-		class CBoxAlgorithmViz;
+public:
 
-		class CMouse
-		{
-		public:
-
-			explicit CMouse(CBoxAlgorithmViz& boxAlgorithmViz) : m_BoxAlgorithmViz(boxAlgorithmViz) { }
-			void mouseButton(CRendererContext& ctx, const int x, const int y, const int button, const int status);
-			void mouseMotion(CRendererContext& ctx, const int x, const int y);
-			bool hasButtonPressed();
+	explicit CMouse(CBoxAlgorithmViz& boxAlgorithmViz) : m_BoxAlgorithmViz(boxAlgorithmViz) { }
+	void mouseButton(CRendererContext& ctx, const int x, const int y, const int button, const int status);
+	void mouseMotion(CRendererContext& ctx, const int x, const int y);
+	bool hasButtonPressed();
 
 
-			CBoxAlgorithmViz& m_BoxAlgorithmViz;
-			std::map<int, int> m_Buttons;
-			int m_X = 0;
-			int m_Y = 0;
-		};
-	} // namespace AdvancedVisualization
-} // namespace Mensia
+	CBoxAlgorithmViz& m_BoxAlgorithmViz;
+	std::map<int, int> m_Buttons;
+	int m_X = 0;
+	int m_Y = 0;
+};
+}  // namespace AdvancedVisualization
+}  // namespace Mensia

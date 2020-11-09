@@ -123,33 +123,29 @@ public:
 // ------------------------------------------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------------------------------------------
 
-namespace
+namespace {
+typedef std::map<std::string, std::tuple<int, int, int>> components_map_t;
+// Parses a JSON encoded list of components with their versions
+// We use an output variable because we want to be able to "enhance" an already existing list if necessary
+void getVersionComponentsFromConfigToken(const IKernelContext& ctx, const char* configToken, components_map_t& componentVersions)
 {
-	typedef std::map<std::string, std::tuple<int, int, int>> components_map_t;
-	// Parses a JSON encoded list of components with their versions
-	// We use an output variable because we want to be able to "enhance" an already existing list if necessary
-	void getVersionComponentsFromConfigToken(const IKernelContext& ctx, const char* configToken, components_map_t& componentVersions)
-	{
-		json::Object versionsObject;
-		// We use a lookup instead of expansion as JSON can contain { } characters
+	json::Object versionsObject;
+	// We use a lookup instead of expansion as JSON can contain { } characters
 
-		const CString versionsJSON = ctx.getConfigurationManager().expand(CString("${") + configToken + "}");
-		if (versionsJSON.length() != 0)
+	const CString versionsJSON = ctx.getConfigurationManager().expand(CString("${") + configToken + "}");
+	if (versionsJSON.length() != 0)
+	{
+		// This check is necessary because the asignemt operator would fail with an assert
+		if (json::Deserialize(versionsJSON.toASCIIString()).GetType() == json::ObjectVal) { versionsObject = json::Deserialize(versionsJSON.toASCIIString()); }
+		for (const auto& component : versionsObject)
 		{
-			// This check is necessary because the asignemt operator would fail with an assert
-			if (json::Deserialize(versionsJSON.toASCIIString()).GetType() == json::ObjectVal)
-			{
-				versionsObject = json::Deserialize(versionsJSON.toASCIIString());
-			}
-			for (const auto& component : versionsObject)
-			{
-				int versionMajor, versionMinor, versionPatch;
-				sscanf(component.second, "%d.%d.%d", &versionMajor, &versionMinor, &versionPatch);
-				componentVersions[component.first] = std::make_tuple(versionMajor, versionMinor, versionPatch);
-			}
+			int versionMajor, versionMinor, versionPatch;
+			sscanf(component.second, "%d.%d.%d", &versionMajor, &versionMinor, &versionPatch);
+			componentVersions[component.first] = std::make_tuple(versionMajor, versionMinor, versionPatch);
 		}
 	}
-} // namespace
+}
+}  // namespace
 
 static void InsertPluginObjectDescToGtkTreeStore(const IKernelContext& ctx, map<string, const IPluginObjectDesc*>& pods, GtkTreeStore* treeStore,
 												 std::vector<const IPluginObjectDesc*>& newBoxes, std::vector<const IPluginObjectDesc*>& updatedBoxes,

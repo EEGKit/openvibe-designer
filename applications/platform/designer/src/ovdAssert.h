@@ -67,6 +67,4 @@ do { \
 } while(0)
 
 #define OV_EXCEPTION_UNLESS_D(expression, description, type) \
-do { \
-   if (!(expression)) { OV_EXCEPTION_D(description, type); } \
-} while(0)
+do { if (!(expression)) { OV_EXCEPTION_D(description, type); } } while(0)

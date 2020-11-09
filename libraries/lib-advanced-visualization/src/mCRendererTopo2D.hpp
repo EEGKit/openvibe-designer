@@ -2,16 +2,14 @@
 
 #include "mCRendererTopo.hpp"
 
-namespace Mensia
+namespace Mensia {
+namespace AdvancedVisualization {
+class CRendererTopo2D : public CRendererTopo
 {
-	namespace AdvancedVisualization
-	{
-		class CRendererTopo2D : public CRendererTopo
-		{
-		public:
+public:
 
-			void rebuild3DMeshesPre(const CRendererContext& ctx) override;
-			void rebuild3DMeshesPost(const CRendererContext& ctx) override;
-		};
-	} // namespace AdvancedVisualization
-} // namespace Mensia
+	void rebuild3DMeshesPre(const CRendererContext& ctx) override;
+	void rebuild3DMeshesPost(const CRendererContext& ctx) override;
+};
+}  // namespace AdvancedVisualization
+}  // namespace Mensia

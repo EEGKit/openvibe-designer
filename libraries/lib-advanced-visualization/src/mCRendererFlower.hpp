@@ -22,23 +22,21 @@
 
 #include "mIRenderer.hpp"
 
-namespace Mensia
+namespace Mensia {
+namespace AdvancedVisualization {
+class CRendererFlower : public IRenderer
 {
-	namespace AdvancedVisualization
-	{
-		class CRendererFlower : public IRenderer
-		{
-		public:
+public:
 
-			explicit CRendererFlower(size_t multiCount = 1);
+	explicit CRendererFlower(size_t multiCount = 1);
 
-			void rebuild(const CRendererContext& ctx) override;
-			void refresh(const CRendererContext& ctx) override;
-			bool render(const CRendererContext& ctx) override;
+	void rebuild(const CRendererContext& ctx) override;
+	void refresh(const CRendererContext& ctx) override;
+	bool render(const CRendererContext& ctx) override;
 
-		protected:
-			std::vector<std::vector<std::vector<CVertex>>> m_muliVertices;
-			std::vector<CVertex> m_circles;
-		};
-	} // namespace AdvancedVisualization
-} // namespace Mensia
+protected:
+	std::vector<std::vector<std::vector<CVertex>>> m_muliVertices;
+	std::vector<CVertex> m_circles;
+};
+}  // namespace AdvancedVisualization
+}  // namespace Mensia

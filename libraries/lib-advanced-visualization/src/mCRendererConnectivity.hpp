@@ -24,19 +24,17 @@
 
 #include "mIRenderer.hpp"
 
-namespace Mensia
+namespace Mensia {
+namespace AdvancedVisualization {
+class CRendererConnectivity : public IRenderer
 {
-	namespace AdvancedVisualization
-	{
-		class CRendererConnectivity : public IRenderer
-		{
-		public:
+public:
 
-			void rebuild(const CRendererContext& ctx) override;
-			void refresh(const CRendererContext& ctx) override;
-			bool render(const CRendererContext& ctx) override;
-		};
-	} // namespace AdvancedVisualization
-} // namespace Mensia
+	void rebuild(const CRendererContext& ctx) override;
+	void refresh(const CRendererContext& ctx) override;
+	bool render(const CRendererContext& ctx) override;
+};
+}  // namespace AdvancedVisualization
+}  // namespace Mensia
 
 // #endif // TARGET_HAS_ThirdPartyVRPN

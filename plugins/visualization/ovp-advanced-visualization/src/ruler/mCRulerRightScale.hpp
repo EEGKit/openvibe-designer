@@ -22,55 +22,53 @@
 
 #include "../mIRuler.hpp"
 
-namespace Mensia
+namespace Mensia {
+namespace AdvancedVisualization {
+class CRulerRightScale : public IRuler
 {
-	namespace AdvancedVisualization
+public:
+
+	CRulerRightScale() : m_lastScale(-1) { }
+
+	void renderRight(GtkWidget* pWidget) override
 	{
-		class CRulerRightScale : public IRuler
+		const size_t nSelected = m_rendererCtx->getSelectedCount();
+		if (!nSelected) { return; }
+
+		const float scale = 1.F / m_rendererCtx->getScale();
+		if (m_lastScale != scale)
 		{
-		public:
+			if (m_rendererCtx->isPositiveOnly()) { m_range = splitRange(0, scale, IRuler_SplitCount); }
+			else { m_range = splitRange(-scale * .5, scale * .5, IRuler_SplitCount); }
+			m_lastScale = scale;
+		}
 
-			CRulerRightScale() : m_lastScale(-1) { }
+		const float offset = m_rendererCtx->isPositiveOnly() ? 0.0F : 0.5F;
 
-			void renderRight(GtkWidget* pWidget) override
+		gint w, h, lw, lh;
+
+		gdk_drawable_get_size(pWidget->window, &w, &h);
+		GdkGC* drawGC = gdk_gc_new(pWidget->window);
+		for (size_t i = 0; i < m_rendererCtx->getSelectedCount(); ++i)
+		{
+			for (const auto& j : m_range)
 			{
-				const size_t nSelected = m_rendererCtx->getSelectedCount();
-				if (!nSelected) { return; }
-
-				const float scale = 1.F / m_rendererCtx->getScale();
-				if (m_lastScale != scale)
-				{
-					if (m_rendererCtx->isPositiveOnly()) { m_range = splitRange(0, scale, IRuler_SplitCount); }
-					else { m_range = splitRange(-scale * .5, scale * .5, IRuler_SplitCount); }
-					m_lastScale = scale;
-				}
-
-				const float offset = m_rendererCtx->isPositiveOnly() ? 0.0F : 0.5F;
-
-				gint w, h, lw, lh;
-
-				gdk_drawable_get_size(pWidget->window, &w, &h);
-				GdkGC* drawGC = gdk_gc_new(pWidget->window);
-				for (size_t i = 0; i < m_rendererCtx->getSelectedCount(); ++i)
-				{
-					for (const auto& j : m_range)
-					{
-						PangoLayout* layout = gtk_widget_create_pango_layout(pWidget, getLabel(j).c_str());
-						pango_layout_get_size(layout, &lw, &lh);
-						lw /= PANGO_SCALE;
-						lh /= PANGO_SCALE;
-						const gint y = gint((1 - (float(i) + offset + j / scale) / nSelected) * h);
-						gdk_draw_layout(pWidget->window, drawGC, 8, y - lh / 2, layout);
-						gdk_draw_line(pWidget->window, drawGC, 0, y, 3, y);
-						g_object_unref(layout);
-					}
-				}
-				g_object_unref(drawGC);
+				PangoLayout* layout = gtk_widget_create_pango_layout(pWidget, getLabel(j).c_str());
+				pango_layout_get_size(layout, &lw, &lh);
+				lw /= PANGO_SCALE;
+				lh /= PANGO_SCALE;
+				const gint y = gint((1 - (float(i) + offset + j / scale) / nSelected) * h);
+				gdk_draw_layout(pWidget->window, drawGC, 8, y - lh / 2, layout);
+				gdk_draw_line(pWidget->window, drawGC, 0, y, 3, y);
+				g_object_unref(layout);
 			}
+		}
+		g_object_unref(drawGC);
+	}
 
-		protected:
-			float m_lastScale = 1;
-			std::vector<double> m_range;
-		};
-	} // namespace AdvancedVisualization
-} // namespace Mensia
+protected:
+	float m_lastScale = 1;
+	std::vector<double> m_range;
+};
+}  // namespace AdvancedVisualization
+}  // namespace Mensia
