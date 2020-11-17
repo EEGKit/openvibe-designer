@@ -82,7 +82,7 @@ static std::string getBoxAlgorithmURL(const std::string& in, const bool removeSl
 			if (c == '/') { out += "_"; }
 			else
 			{
-				if (lastWasSeparator) { out += std::to_string(std::toupper(c)); }
+				if (lastWasSeparator) { out += std::toupper(c); }
 				else { out += c; }
 			}
 			lastWasSeparator = false;
