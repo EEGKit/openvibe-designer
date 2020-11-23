@@ -10,8 +10,10 @@ SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES
 	FOLDER ${PLUGINS_FOLDER}
 	COMPILE_FLAGS "-DOVP_Exports -DOVP_Shared")
 
+ADD_DEFINITIONS(-D_USE_MATH_DEFINES)	# Definition for constant math as M_PI
+
 INCLUDE("AddOpenViBESDKComponents")
-include("FindOpenViBEVisualizationToolkit")
+INCLUDE("FindOpenViBEVisualizationToolkit")
 INCLUDE("FindThirdPartyGTK")
 
 # ---------------------------------
