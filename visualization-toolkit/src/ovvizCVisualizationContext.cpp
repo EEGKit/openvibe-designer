@@ -5,8 +5,7 @@ using namespace /*OpenViBE::*/VisualizationToolkit;
 
 bool CVisualizationContext::setWidget(Toolkit::TBoxAlgorithm<Plugins::IBoxAlgorithm>& box, GtkWidget* widget)
 {
-	const CIdentifier boxID = box.getStaticBoxContext().getIdentifier();
-
+	const CIdentifier boxID    = box.getStaticBoxContext().getIdentifier();
 	CIdentifier treeIdentifier = OV_UndefinedIdentifier;
 
 	// When a scenario is created in the designer, the designer creates a visualization tree for it. The box will then need to add
@@ -22,8 +21,7 @@ bool CVisualizationContext::setWidget(Toolkit::TBoxAlgorithm<Plugins::IBoxAlgori
 
 bool CVisualizationContext::setToolbar(Toolkit::TBoxAlgorithm<Plugins::IBoxAlgorithm>& box, GtkWidget* toolbarWidget)
 {
-	const CIdentifier boxID = box.getStaticBoxContext().getIdentifier();
-
+	const CIdentifier boxID    = box.getStaticBoxContext().getIdentifier();
 	CIdentifier treeIdentifier = OV_UndefinedIdentifier;
 
 	if (!treeIdentifier.fromString(box.getConfigurationManager().lookUpConfigurationTokenValue("VisualizationContext_VisualizationTreeId"))) { return false; }

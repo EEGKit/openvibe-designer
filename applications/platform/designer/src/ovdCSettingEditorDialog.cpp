@@ -88,7 +88,7 @@ void CSettingEditorDialog::typeChangedCB()
 {
 	const CIdentifier settingType = m_settingTypes[gtk_combo_box_get_active_text(GTK_COMBO_BOX(m_type))];
 
-	CString name         = m_helper.getSettingWidgetName(settingType);
+	CString name             = m_helper.getSettingWidgetName(settingType);
 	GtkBuilder* builderDummy = gtk_builder_new(); // glade_xml_new(m_guiFilename.toASCIIString(), name, nullptr);
 	gtk_builder_add_from_file(builderDummy, m_guiSettingsFilename.toASCIIString(), nullptr);
 	gtk_builder_connect_signals(builderDummy, nullptr);

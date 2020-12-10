@@ -54,8 +54,16 @@ LIST(APPEND LIST_DEPENDENCIES_PATH "${CMAKE_SOURCE_DIR}/${OV_DEPENDENCIES_PLATFO
 # These versions are used by the subprojects by default.
 set_version()
 # Sets the PROJECT_VERSION variable to something, depending on overriding OvSetProjectVersion.cmake files
-OV_SET_PROJECT_VERSION()
+SET_PROJECT_VERSION()
 MESSAGE(STATUS "BUILDING VERSION Designer: ${OV_GLOBAL_VERSION_STRING} Branch : ${OV_PROJECT_BRANCH}~${OV_PROJECT_COMMITHASH}. Based on OpenViBE SDK: ${OV_SDK_VERSION_STRING}")
+
+# Sort target into directories for better visualization in IDE
+SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
+SET(APP_FOLDER Applications)
+SET(MODULES_FOLDER Modules)
+SET(PLUGINS_FOLDER Plugins)
+SET(TESTS_FOLDER Unit-Tests)
+SET(VALIDATION_FOLDER Validation-Tests)
 
 IF(NOT CMAKE_INSTALL_PREFIX)
 	# Default is to build to dist/. If you wish a custom install, set your own MAKE_INSTALL_PREFIX when you call CMake. Safest to do under a fakeroot.

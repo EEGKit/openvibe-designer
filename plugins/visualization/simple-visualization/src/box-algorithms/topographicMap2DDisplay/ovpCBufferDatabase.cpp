@@ -59,10 +59,7 @@ bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer*
 
 		//copy channel labels
 		m_channelLocalisationLabels.resize(matrix->getDimensionSize(0));
-		for (size_t i = 0; i < m_channelLocalisationLabels.size(); ++i)
-		{
-			m_channelLocalisationLabels[i] = matrix->getDimensionLabel(0, i);
-		}
+		for (size_t i = 0; i < m_channelLocalisationLabels.size(); ++i) { m_channelLocalisationLabels[i] = matrix->getDimensionLabel(0, i); }
 
 		//retrieve dynamic flag
 		Kernel::TParameterHandler<bool> dynamic;

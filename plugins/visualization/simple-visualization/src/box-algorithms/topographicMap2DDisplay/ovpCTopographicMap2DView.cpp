@@ -25,10 +25,6 @@ using namespace std;
 
 //#define INTERPOLATE_AT_CHANNEL_LOCATION
 
-#ifndef M_PI
-#	define M_PI 3.1415926535897932384626433832795
-#endif
-
 static const int NB_COLORS = 13;
 static array<GdkColor, 13> palette;
 static array<uint8_t, 13 * 3> palette8;

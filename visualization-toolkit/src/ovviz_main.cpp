@@ -4,10 +4,9 @@
 using namespace OpenViBE;
 using namespace /*OpenViBE::*/Kernel;
 
-namespace
-{
-	VisualizationToolkit::CVisualizationContextDesc visualizationContextDesc;
-} // namespace
+namespace {
+VisualizationToolkit::CVisualizationContextDesc visualizationContextDesc;
+}  // namespace
 
 bool VisualizationToolkit::initialize(const IKernelContext& ctx)
 {

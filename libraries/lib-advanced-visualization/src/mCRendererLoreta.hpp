@@ -29,40 +29,38 @@
 #include <map>
 #include <string>
 
-namespace Mensia
+namespace Mensia {
+namespace AdvancedVisualization {
+class CRendererLoreta : public IRenderer
 {
-	namespace AdvancedVisualization
-	{
-		class CRendererLoreta : public IRenderer
-		{
-		public:
+public:
 
-			CRendererLoreta();
+	CRendererLoreta();
 
-			void rebuild(const CRendererContext& ctx) override { IRenderer::rebuild(ctx); }
-			void refresh(const CRendererContext& ctx) override { IRenderer::refresh(ctx); }
-			bool render(const CRendererContext& ctx) override;
+	void rebuild(const CRendererContext& ctx) override { IRenderer::rebuild(ctx); }
+	void refresh(const CRendererContext& ctx) override { IRenderer::refresh(ctx); }
+	bool render(const CRendererContext& ctx) override;
 
-			void clearRegionSelection() override;
-			size_t getRegionCategoryCount() override { return m_lookups.size(); }
-			size_t getRegionCount(const size_t category) override;
-			const char* getRegionCategoryName(const size_t category) override;
-			const char* getRegionName(const size_t category, const size_t index) override;
-			void selectRegion(const size_t category, const char* name) override;
-			void selectRegion(const size_t category, const size_t index) override;
+	void clearRegionSelection() override;
+	size_t getRegionCategoryCount() override { return m_lookups.size(); }
+	size_t getRegionCount(const size_t category) override;
+	const char* getRegionCategoryName(const size_t category) override;
+	const char* getRegionName(const size_t category, const size_t index) override;
+	void selectRegion(const size_t category, const char* name) override;
+	void selectRegion(const size_t category, const size_t index) override;
 
-			void refreshBrainSubset();
+	void refreshBrainSubset();
 
-		protected:
+protected:
 
-			std::vector<std::map<std::string, std::vector<size_t>>> m_lookups;
-			std::vector<bool> m_selecteds;
+	std::vector<std::map<std::string, std::vector<size_t>>> m_lookups;
+	std::vector<bool> m_selecteds;
 
-			C3DMesh m_face, m_scalp, m_brain;
+	C3DMesh m_face, m_scalp, m_brain;
 
-			std::vector<uint32_t> m_brainSubsetTriangles;
-		};
-	} // namespace AdvancedVisualization
-} // namespace Mensia
+	std::vector<uint32_t> m_brainSubsetTriangles;
+};
+}  // namespace AdvancedVisualization
+}  // namespace Mensia
 
 #endif // TARGET_HAS_ThirdPartyOpenGL

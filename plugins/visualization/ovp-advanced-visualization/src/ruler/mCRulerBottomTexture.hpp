@@ -22,71 +22,69 @@
 
 #include "mCRulerTexture.hpp"
 
-namespace Mensia
+namespace Mensia {
+namespace AdvancedVisualization {
+class CRulerBottomTexture : public CRulerTexture
 {
-	namespace AdvancedVisualization
+public:
+
+	void render() override
+
 	{
-		class CRulerBottomTexture : public CRulerTexture
+		this->preRender();
+
+		glColor4f(0, 0, 0, m_blackAlpha);
+		glBegin(GL_QUADS);
+		glTexCoord1f(0);
+		glVertex2f(0, 0.00F);
+		glVertex2f(0, 0.05F);
+		glTexCoord1f(1);
+		glVertex2f(1, 0.05F);
+		glVertex2f(1, 0.00F);
+		glEnd();
+
+		glColor4f(1, 1, 1, m_whiteAlpha);
+		glBegin(GL_QUADS);
+		glTexCoord1f(0);
+		glVertex2f(0, 0.00F);
+		glVertex2f(0, 0.04F);
+		glTexCoord1f(1);
+		glVertex2f(1, 0.04F);
+		glVertex2f(1, 0.00F);
+		glEnd();
+
+		this->postRender();
+	}
+
+	void renderBottom(GtkWidget* widget) override
+	{
+		const float scale = 1.F / m_rendererCtx->getScale();
+		if (m_lastScale != scale)
 		{
-		public:
+			m_range     = splitRange(-scale * .5, scale * .5);
+			m_lastScale = scale;
+		}
 
-			void render() override
+		gint w, h;
+		gint lw, lh;
 
-			{
-				this->preRender();
+		gdk_drawable_get_size(widget->window, &w, &h);
+		GdkGC* drawGC = gdk_gc_new(widget->window);
+		for (const auto& i : m_range)
+		{
+			PangoLayout* layout = gtk_widget_create_pango_layout(widget, getLabel(i).c_str());
+			pango_layout_get_size(layout, &lw, &lh);
+			lw /= PANGO_SCALE;
+			lh /= PANGO_SCALE;
+			gdk_draw_layout(widget->window, drawGC, gint((.5 + i / scale) * w - lw * .5), 0, layout);
+			g_object_unref(layout);
+		}
+		g_object_unref(drawGC);
+	}
 
-				glColor4f(0, 0, 0, m_blackAlpha);
-				glBegin(GL_QUADS);
-				glTexCoord1f(0);
-				glVertex2f(0, 0.00F);
-				glVertex2f(0, 0.05F);
-				glTexCoord1f(1);
-				glVertex2f(1, 0.05F);
-				glVertex2f(1, 0.00F);
-				glEnd();
-
-				glColor4f(1, 1, 1, m_whiteAlpha);
-				glBegin(GL_QUADS);
-				glTexCoord1f(0);
-				glVertex2f(0, 0.00F);
-				glVertex2f(0, 0.04F);
-				glTexCoord1f(1);
-				glVertex2f(1, 0.04F);
-				glVertex2f(1, 0.00F);
-				glEnd();
-
-				this->postRender();
-			}
-
-			void renderBottom(GtkWidget* widget) override
-			{
-				const float scale = 1.F / m_rendererCtx->getScale();
-				if (m_lastScale != scale)
-				{
-					m_range     = splitRange(-scale * .5, scale * .5);
-					m_lastScale = scale;
-				}
-
-				gint w, h;
-				gint lw, lh;
-
-				gdk_drawable_get_size(widget->window, &w, &h);
-				GdkGC* drawGC = gdk_gc_new(widget->window);
-				for (const auto& i : m_range)
-				{
-					PangoLayout* layout = gtk_widget_create_pango_layout(widget, getLabel(i).c_str());
-					pango_layout_get_size(layout, &lw, &lh);
-					lw /= PANGO_SCALE;
-					lh /= PANGO_SCALE;
-					gdk_draw_layout(widget->window, drawGC, gint((.5 + i / scale) * w - lw * .5), 0, layout);
-					g_object_unref(layout);
-				}
-				g_object_unref(drawGC);
-			}
-
-		protected:
-			float m_lastScale = 0;
-			std::vector<double> m_range;
-		};
-	} // namespace AdvancedVisualization
-} // namespace Mensia
+protected:
+	float m_lastScale = 0;
+	std::vector<double> m_range;
+};
+}  // namespace AdvancedVisualization
+}  // namespace Mensia

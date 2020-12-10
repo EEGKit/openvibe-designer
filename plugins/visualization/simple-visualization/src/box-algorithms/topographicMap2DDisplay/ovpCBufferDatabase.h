@@ -35,26 +35,26 @@ public:
 class CBufferDatabase
 {
 public:
-	int64_t m_NElectrodes = 0;					///<  Number of channels
-	std::array<size_t, 2> m_DimSizes;			///< Number of channels and number of samples per buffer
-	std::vector<std::string> m_DimLabels[2];	///< Channel labels, buffer labels
-	bool m_HasFirstBuffer = false;				///< Flag set to true once first buffer is received
+	int64_t m_NElectrodes = 0;						///<  Number of channels
+	std::array<size_t, 2> m_DimSizes;				///< Number of channels and number of samples per buffer
+	std::vector<std::string> m_DimLabels[2];		///< Channel labels, buffer labels
+	bool m_HasFirstBuffer = false;					///< Flag set to true once first buffer is received
 	size_t m_Sampling     = 0;						///< Sampling frequency of the incoming stream
-	std::deque<double*> m_SampleBuffers;		///< double-linked list of pointers to the samples buffers of the current time window
+	std::deque<double*> m_SampleBuffers;			///< double-linked list of pointers to the samples buffers of the current time window
 	std::deque<std::pair<uint64_t, uint64_t>> m_Stimulations;	///< stimulations to display. pair values are <date, stimcode>
 
 	bool m_ChannelLookupTableInitialized = false;	///< flag set to true once channel lookup indices are determined
 	std::vector<size_t> m_ChannelLookupIndices;		///< indices of electrodes in channel localisation database
 
-	//CMatrix m_electrodesSphericalCoords;		///< electrode spherical coordinates (in degrees)
-	//std::vector<CString> m_oElectrodesLabels;	///< electrode labels (standardized)
+	//CMatrix m_electrodesSphericalCoords;			///< electrode spherical coordinates (in degrees)
+	//std::vector<CString> m_oElectrodesLabels;		///< electrode labels (standardized)
 
-	size_t m_NBufferToDisplay = 2;			///< Number of buffer to display at the same time
-	double m_MaxValue         = -DBL_MAX;	///< The global maximum value of the signal (up to now)
-	double m_MinValue         = +DBL_MAX;	///< The global minimum value of the signal (up to now)
-	std::deque<uint64_t> m_StartTime;		///< Double-linked list of the start times of the current buffers
-	std::deque<uint64_t> m_EndTime;			///< Double-linked list of the end times of the current buffers
-	double m_TotalDuration = 0;				///< Duration to display in seconds
+	size_t m_NBufferToDisplay = 2;					///< Number of buffer to display at the same time
+	double m_MaxValue         = -DBL_MAX;			///< The global maximum value of the signal (up to now)
+	double m_MinValue         = +DBL_MAX;			///< The global minimum value of the signal (up to now)
+	std::deque<uint64_t> m_StartTime;				///< Double-linked list of the start times of the current buffers
+	std::deque<uint64_t> m_EndTime;					///< Double-linked list of the end times of the current buffers
+	double m_TotalDuration = 0;						///< Duration to display in seconds
 
 	/*! Duration to display in openvibe time units.
 	Computed once every time the user changes the total duration to display,
@@ -317,6 +317,6 @@ protected:
 	bool convertCartesianToSpherical(const double* cartesian, double& theta, double& phi) const;
 };
 
-} // namespace SimpleVisualization
+}  // namespace SimpleVisualization
 }  // namespace Plugins
 }  // namespace OpenViBE

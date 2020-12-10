@@ -82,7 +82,7 @@ static std::string getBoxAlgorithmURL(const std::string& in, const bool removeSl
 			if (c == '/') { out += "_"; }
 			else
 			{
-				if (lastWasSeparator) { out += std::to_string(std::toupper(c)); }
+				if (lastWasSeparator) { out += std::toupper(c); }
 				else { out += c; }
 			}
 			lastWasSeparator = false;
@@ -2200,22 +2200,21 @@ void CInterfacedScenario::scenarioDrawingAreaMotionNotifyCB(GtkWidget* /*widget*
 	m_currentMouseY = event->y;
 }
 
-namespace
+namespace {
+void gtk_menu_add_separator_menu_item(GtkMenu* menu)
 {
-	void gtk_menu_add_separator_menu_item(GtkMenu* menu)
-	{
-		GtkSeparatorMenuItem* menuitem = GTK_SEPARATOR_MENU_ITEM(gtk_separator_menu_item_new());
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(menuitem));
-	}
+	GtkSeparatorMenuItem* menuitem = GTK_SEPARATOR_MENU_ITEM(gtk_separator_menu_item_new());
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(menuitem));
+}
 
-	GtkImageMenuItem* gtk_menu_add_new_image_menu_item(GtkMenu* menu, const char* icon, const char* label)
-	{
-		GtkImageMenuItem* menuitem = GTK_IMAGE_MENU_ITEM(gtk_image_menu_item_new_with_label(label));
-		gtk_image_menu_item_set_image(menuitem, gtk_image_new_from_stock(icon, GTK_ICON_SIZE_MENU));
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(menuitem));
-		return menuitem;
-	}
-} // namespace
+GtkImageMenuItem* gtk_menu_add_new_image_menu_item(GtkMenu* menu, const char* icon, const char* label)
+{
+	GtkImageMenuItem* menuitem = GTK_IMAGE_MENU_ITEM(gtk_image_menu_item_new_with_label(label));
+	gtk_image_menu_item_set_image(menuitem, gtk_image_new_from_stock(icon, GTK_ICON_SIZE_MENU));
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(menuitem));
+	return menuitem;
+}
+}  // namespace
 
 GtkImageMenuItem* CInterfacedScenario::addNewImageMenuItemWithCBGeneric(GtkMenu* menu, const char* icon, const char* label, const menu_cb_function_t cb,
 																		IBox* box, const EContextMenu command, const size_t index, const size_t index2)
@@ -2340,7 +2339,10 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(GtkWidget* widget, 
 			// -------------- SELECTION -----------
 
 			if (this->hasSelection()) { addNewImageMenuItemWithCB(menu, GTK_STOCK_CUT, "cut", context_menu_cb, nullptr, EContextMenu::SelectionCut, unused); }
-			if (this->hasSelection()) { addNewImageMenuItemWithCB(menu, GTK_STOCK_COPY, "copy", context_menu_cb, nullptr, EContextMenu::SelectionCopy, unused); }
+			if (this->hasSelection())
+			{
+				addNewImageMenuItemWithCB(menu, GTK_STOCK_COPY, "copy", context_menu_cb, nullptr, EContextMenu::SelectionCopy, unused);
+			}
 			if ((m_Application.m_ClipboardScenario->getNextBoxIdentifier(OV_UndefinedIdentifier) != OV_UndefinedIdentifier)
 				|| (m_Application.m_ClipboardScenario->getNextCommentIdentifier(OV_UndefinedIdentifier) != OV_UndefinedIdentifier))
 			{

@@ -8,14 +8,14 @@ using namespace OpenViBE;
 using namespace /*OpenViBE::*/Designer;
 using namespace Setting;
 
-static void OnButtonSettingFilenameBrowsePressed(GtkButton* /*button*/, gpointer data) { static_cast<CScriptSettingView *>(data)->browse(); }
-static void OnButtonSettingScriptEditPressed(GtkButton* /*button*/, gpointer data) { static_cast<CScriptSettingView *>(data)->edit(); }
-static void OnChange(GtkEntry* /*entry*/, gpointer data) { static_cast<CScriptSettingView *>(data)->onChange(); }
+static void OnButtonSettingFilenameBrowsePressed(GtkButton* /*button*/, gpointer data) { static_cast<CScriptSettingView*>(data)->browse(); }
+static void OnButtonSettingScriptEditPressed(GtkButton* /*button*/, gpointer data) { static_cast<CScriptSettingView*>(data)->edit(); }
+static void OnChange(GtkEntry* /*entry*/, gpointer data) { static_cast<CScriptSettingView*>(data)->onChange(); }
 
 #if defined TARGET_OS_Windows
 static gboolean OnFocusOutEvent(GtkEntry* /*entry*/, GdkEvent* /*event*/, gpointer data)
 {
-	static_cast<CScriptSettingView *>(data)->onFocusLost();
+	static_cast<CScriptSettingView*>(data)->onFocusLost();
 	return FALSE;
 }
 #endif

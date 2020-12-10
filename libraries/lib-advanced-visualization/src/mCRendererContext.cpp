@@ -31,73 +31,72 @@ using namespace Mensia;
 using namespace AdvancedVisualization;
 
 
-namespace
+namespace {
+void getLeftRightScore(std::map<std::string, float>& scores, const std::vector<std::string>& names, const std::vector<CVertex>& positions)
 {
-	void getLeftRightScore(std::map<std::string, float>& scores, const std::vector<std::string>& names, const std::vector<CVertex>& positions)
+	for (size_t i = 0; i < names.size() && i < positions.size(); ++i)
 	{
-		for (size_t i = 0; i < names.size() && i < positions.size(); ++i)
-		{
-			std::string name = std::string(",") + names[i] + std::string(",");
-			std::transform(name.begin(), name.end(), name.begin(), tolower);
-			scores[name] = float(positions[i].x * 1E-0 + positions[i].y * 1E-10 + positions[i].z * 1E-5);
-		}
+		std::string name = std::string(",") + names[i] + std::string(",");
+		std::transform(name.begin(), name.end(), name.begin(), tolower);
+		scores[name] = float(positions[i].x * 1E-0 + positions[i].y * 1E-10 + positions[i].z * 1E-5);
+	}
+}
+
+void getFrontBackScore(std::map<std::string, float>& scores, const std::vector<std::string>& names, const std::vector<CVertex>& positions)
+{
+	for (size_t i = 0; i < names.size() && i < positions.size(); ++i)
+	{
+		std::string name = std::string(",") + names[i] + std::string(",");
+		std::transform(name.begin(), name.end(), name.begin(), tolower);
+		scores[name] = float(positions[i].x * 1E-5 + positions[i].y * 1E-10 + positions[i].z * 1E-0);
+	}
+}
+
+struct SSortAlpha
+{
+	explicit SSortAlpha(const std::vector<std::string>& channels) : names(channels) { }
+
+	bool operator()(const size_t i, const size_t j) const
+	{
+		std::string nameI = names[i];
+		std::string nameJ = names[j];
+		std::transform(nameI.begin(), nameI.end(), nameI.begin(), tolower);
+		std::transform(nameJ.begin(), nameJ.end(), nameJ.begin(), tolower);
+
+		return nameI < nameJ;
 	}
 
-	void getFrontBackScore(std::map<std::string, float>& scores, const std::vector<std::string>& names, const std::vector<CVertex>& positions)
+	const std::vector<std::string>& names;
+};
+
+struct SSortSpecial
+{
+	SSortSpecial(const std::vector<std::string>& channels, const std::map<std::string, float>& scoreMap)
+		: names(channels), scores(scoreMap) { }
+
+	bool operator()(const size_t i, const size_t j) const
 	{
-		for (size_t i = 0; i < names.size() && i < positions.size(); ++i)
+		float scoreI = 0;
+		float scoreJ = 0;
+
+		std::string nameI = std::string(",") + names[i] + std::string(",");
+		std::string nameJ = std::string(",") + names[j] + std::string(",");
+		std::transform(nameI.begin(), nameI.end(), nameI.begin(), tolower);
+		std::transform(nameJ.begin(), nameJ.end(), nameJ.begin(), tolower);
+
+		for (auto it = scores.begin(); it != scores.end(); ++it)
 		{
-			std::string name = std::string(",") + names[i] + std::string(",");
-			std::transform(name.begin(), name.end(), name.begin(), tolower);
-			scores[name] = float(positions[i].x * 1E-5 + positions[i].y * 1E-10 + positions[i].z * 1E-0);
+			if (it->first == nameI) { scoreI = it->second; }
+			if (it->first == nameJ) { scoreJ = it->second; }
 		}
+
+		return scoreI < scoreJ;
 	}
 
-	struct SSortAlpha
-	{
-		explicit SSortAlpha(const std::vector<std::string>& channels) : names(channels) { }
-
-		bool operator()(const size_t i, const size_t j) const
-		{
-			std::string nameI = names[i];
-			std::string nameJ = names[j];
-			std::transform(nameI.begin(), nameI.end(), nameI.begin(), tolower);
-			std::transform(nameJ.begin(), nameJ.end(), nameJ.begin(), tolower);
-
-			return nameI < nameJ;
-		}
-
-		const std::vector<std::string>& names;
-	};
-
-	struct SSortSpecial
-	{
-		SSortSpecial(const std::vector<std::string>& channels, const std::map<std::string, float>& scoreMap)
-			: names(channels), scores(scoreMap) { }
-
-		bool operator()(const size_t i, const size_t j) const
-		{
-			float scoreI = 0;
-			float scoreJ = 0;
-
-			std::string nameI = std::string(",") + names[i] + std::string(",");
-			std::string nameJ = std::string(",") + names[j] + std::string(",");
-			std::transform(nameI.begin(), nameI.end(), nameI.begin(), tolower);
-			std::transform(nameJ.begin(), nameJ.end(), nameJ.begin(), tolower);
-
-			for (auto it = scores.begin(); it != scores.end(); ++it)
-			{
-				if (it->first == nameI) { scoreI = it->second; }
-				if (it->first == nameJ) { scoreJ = it->second; }
-			}
-
-			return scoreI < scoreJ;
-		}
-
-		const std::vector<std::string>& names;
-		const std::map<std::string, float>& scores;
-	};
-} // namespace
+	const std::vector<std::string>& names;
+	const std::map<std::string, float>& scores;
+};
+}  // namespace
 
 
 CRendererContext::CRendererContext(CRendererContext* parentCtx)
