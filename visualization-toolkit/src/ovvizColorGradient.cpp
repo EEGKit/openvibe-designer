@@ -7,16 +7,15 @@
 using namespace OpenViBE;
 using namespace /*OpenViBE::*/VisualizationToolkit;
 
-namespace
+namespace {
+typedef struct
 {
-	typedef struct
-	{
-		double percent;
-		double red;
-		double green;
-		double blue;
-	} SColor;
-} // namespace
+	double percent;
+	double red;
+	double green;
+	double blue;
+} SColor;
+}  // namespace
 
 bool ColorGradient::parse(IMatrix& colorGradient, const CString& string)
 {

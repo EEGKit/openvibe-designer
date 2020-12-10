@@ -18,14 +18,14 @@ SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES
 	SOVERSION ${PROJECT_VERSION_MAJOR}
 	COMPILE_FLAGS "-DLMAV_Exports -DLMAV_Shared")
 
+ADD_DEFINITIONS(-D_USE_MATH_DEFINES)	# Definition for constant math as M_PI
+
 INCLUDE("FindThirdPartyOpenGL")
 INCLUDE("FindThirdPartyEigen")
 
 # ---------------------------------
 # Target macros
-# Defines target operating system
-# Defines target architecture
-# Defines target compiler
+# Defines target operating system, architecture and compiler
 # ---------------------------------
 SET_BUILD_PLATFORM()
 

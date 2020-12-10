@@ -22,62 +22,59 @@
 
 #include "../mIRuler.hpp"
 
-namespace Mensia
+namespace Mensia {
+namespace AdvancedVisualization {
+class CRulerRightCount : public IRuler
 {
-	namespace AdvancedVisualization
+public:
+
+	void renderRight(GtkWidget* widget) override
 	{
-		class CRulerRightCount : public IRuler
+		if (m_renderer == nullptr) { return; }
+		if (m_renderer->getSampleCount() == 0) { return; }
+		if (m_renderer->getHistoryCount() == 0) { return; }
+		if (m_renderer->getHistoryIndex() == 0) { return; }
+
+		const size_t nSample    = m_renderer->getSampleCount();
+		const size_t historyIdx = m_renderer->getHistoryIndex();
+
+		const size_t leftIdx1  = historyIdx - historyIdx % nSample;
+		const size_t leftIdx2  = historyIdx;
+		const size_t rightIdx1 = leftIdx2 - nSample;
+		const size_t rightIdx2 = leftIdx1;
+
+		std::vector<double> range1 = splitRange(double(leftIdx1), double(leftIdx1 + nSample), 10);
+		std::vector<double> range2 = splitRange(double(rightIdx1), double(rightIdx1 + nSample), 10);
+
+		gint w, h, y;
+
+		gdk_drawable_get_size(widget->window, &w, &h);
+		GdkGC* drawGC = gdk_gc_new(widget->window);
+
+		for (const auto& i : range1)
 		{
-		public:
-
-			void renderRight(GtkWidget* widget) override
+			if (i >= leftIdx1 && i < leftIdx2)
 			{
-				if (m_renderer == nullptr) { return; }
-				if (m_renderer->getSampleCount() == 0) { return; }
-				if (m_renderer->getHistoryCount() == 0) { return; }
-				if (m_renderer->getHistoryIndex() == 0) { return; }
-
-				const size_t nSample    = m_renderer->getSampleCount();
-				const size_t historyIdx = m_renderer->getHistoryIndex();
-
-
-				const size_t leftIdx1  = historyIdx - historyIdx % nSample;
-				const size_t leftIdx2  = historyIdx;
-				const size_t rightIdx1 = leftIdx2 - nSample;
-				const size_t rightIdx2 = leftIdx1;
-
-				std::vector<double> range1 = splitRange(double(leftIdx1), double(leftIdx1 + nSample), 10);
-				std::vector<double> range2 = splitRange(double(rightIdx1), double(rightIdx1 + nSample), 10);
-
-				gint w, h, y;
-
-				gdk_drawable_get_size(widget->window, &w, &h);
-				GdkGC* drawGC = gdk_gc_new(widget->window);
-
-				for (const auto& i : range1)
-				{
-					if (i >= leftIdx1 && i < leftIdx2)
-					{
-						y                   = gint(((i - leftIdx1) / nSample) * h);
-						PangoLayout* layout = gtk_widget_create_pango_layout(widget, getLabel(i).c_str());
-						gdk_draw_layout(widget->window, drawGC, 5, y, layout);
-						gdk_draw_line(widget->window, drawGC, 0, y, 3, y);
-						g_object_unref(layout);
-					}
-				}
-				for (const auto& i : range2)
-				{
-					if (i >= rightIdx1 && i < rightIdx2)
-					{
-						y                   = gint(((i + nSample - leftIdx1) / nSample) * h);
-						PangoLayout* layout = gtk_widget_create_pango_layout(widget, getLabel(i).c_str());
-						gdk_draw_layout(widget->window, drawGC, 5, y, layout);
-						gdk_draw_line(widget->window, drawGC, 0, y, 3, y);
-						g_object_unref(layout);
-					}
-				}
-				g_object_unref(drawGC);
+				y                   = gint(((i - leftIdx1) / nSample) * h);
+				PangoLayout* layout = gtk_widget_create_pango_layout(widget, getLabel(i).c_str());
+				gdk_draw_layout(widget->window, drawGC, 5, y, layout);
+				gdk_draw_line(widget->window, drawGC, 0, y, 3, y);
+				g_object_unref(layout);
 			}
-		};
-	} // namespace AdvancedVisualization
-} // namespace Mensia
+		}
+		for (const auto& i : range2)
+		{
+			if (i >= rightIdx1 && i < rightIdx2)
+			{
+				y                   = gint(((i + nSample - leftIdx1) / nSample) * h);
+				PangoLayout* layout = gtk_widget_create_pango_layout(widget, getLabel(i).c_str());
+				gdk_draw_layout(widget->window, drawGC, 5, y, layout);
+				gdk_draw_line(widget->window, drawGC, 0, y, 3, y);
+				g_object_unref(layout);
+			}
+		}
+		g_object_unref(drawGC);
+	}
+};
+}  // namespace AdvancedVisualization
+}  // namespace Mensia

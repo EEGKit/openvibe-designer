@@ -29,77 +29,76 @@ using namespace AdvancedVisualization;
 
 const bool MULTI_SLICE = false;
 
-namespace
+namespace {
+const size_t S = 1000;
+
+// Legendre polynomials
+// http://en.wikipedia.org/wiki/Legendre_polynomials
+
+void legendre(const size_t n, const double x, std::vector<double>& legendres)
 {
-	const size_t S = 1000;
-
-	// Legendre polynomials
-	// http://en.wikipedia.org/wiki/Legendre_polynomials
-
-	void legendre(const size_t n, const double x, std::vector<double>& legendres)
+	legendres.resize(n + 1);
+	legendres[0] = 1;
+	legendres[1] = x;
+	for (size_t i = 2; i <= n; ++i)
 	{
-		legendres.resize(n + 1);
-		legendres[0] = 1;
-		legendres[1] = x;
-		for (size_t i = 2; i <= n; ++i)
-		{
-			const double invi = 1. / i;
-			legendres[i]      = (2 - invi) * x * legendres[i - 1] - (1 - invi) * legendres[i - 2];
-		}
+		const double invi = 1. / i;
+		legendres[i]      = (2 - invi) * x * legendres[i - 1] - (1 - invi) * legendres[i - 2];
 	}
+}
 
-	// G function :
-	// Spherical splines for scalp potential and current density mapping
-	// http://www.sciencedirect.com/science/article/pii/0013469489901806
+// G function :
+// Spherical splines for scalp potential and current density mapping
+// http://www.sciencedirect.com/science/article/pii/0013469489901806
 
-	double g(const size_t n, const size_t m, const std::vector<double>& legendres)
+double g(const size_t n, const size_t m, const std::vector<double>& legendres)
+{
+	double result = 0;
+	for (size_t i = 1; i <= n; ++i) { result += (2 * i + 1) / pow(double(i * (i + 1)), int(m)) * legendres[i]; }
+	return result / (4 * M_PI);
+}
+
+// H function :
+// Spherical splines for scalp potential and current density mapping
+// http://www.sciencedirect.com/science/article/pii/0013469489901806
+
+double h(const size_t n, const size_t m, const std::vector<double>& legendres)
+{
+	double result = 0;
+	for (size_t i = 1; i <= n; ++i) { result += (2 * i + 1) / pow(double(i * (i + 1)), int(m - 1)) * legendres[i]; }
+	return result / (4 * M_PI);
+}
+
+// Caching system
+
+void build(const size_t n, const size_t m, std::vector<double>& gCache, std::vector<double>& hCache)
+{
+	gCache.resize(2 * S + 1);
+	hCache.resize(2 * S + 1);
+	for (size_t i = 0; i <= 2 * S; ++i)
 	{
-		double result = 0;
-		for (size_t i = 1; i <= n; ++i) { result += (2 * i + 1) / pow(double(i * (i + 1)), int(m)) * legendres[i]; }
-		return result / (4 * M_PI);
+		std::vector<double> legendres;
+		const double cosine = (double(i) - S) / S;
+
+		legendre(n, cosine, legendres);
+		gCache[i] = g(n, m, legendres);
+		hCache[i] = h(n, m, legendres);
 	}
+	gCache.push_back(gCache.back());
+	hCache.push_back(hCache.back());
+}
 
-	// H function :
-	// Spherical splines for scalp potential and current density mapping
-	// http://www.sciencedirect.com/science/article/pii/0013469489901806
-
-	double h(const size_t n, const size_t m, const std::vector<double>& legendres)
-	{
-		double result = 0;
-		for (size_t i = 1; i <= n; ++i) { result += (2 * i + 1) / pow(double(i * (i + 1)), int(m - 1)) * legendres[i]; }
-		return result / (4 * M_PI);
-	}
-
-	// Caching system
-
-	void build(const size_t n, const size_t m, std::vector<double>& gCache, std::vector<double>& hCache)
-	{
-		gCache.resize(2 * S + 1);
-		hCache.resize(2 * S + 1);
-		for (size_t i = 0; i <= 2 * S; ++i)
-		{
-			std::vector<double> legendres;
-			const double cosine = (double(i) - S) / S;
-
-			legendre(n, cosine, legendres);
-			gCache[i] = g(n, m, legendres);
-			hCache[i] = h(n, m, legendres);
-		}
-		gCache.push_back(gCache.back());
-		hCache.push_back(hCache.back());
-	}
-
-	double cache(const double x, std::vector<double>& rCache)
-	{
-		if (x < -1) { return rCache[0]; }
-		if (x > 1) { return rCache[2 * S]; }
-		double t     = (x + 1) * S;
-		const int i1 = int(t);
-		const int i2 = int(t + 1);
-		t -= i1;
-		return rCache[i1] * (1 - t) + rCache[i2] * t;
-	}
-} // namespace
+double cache(const double x, std::vector<double>& rCache)
+{
+	if (x < -1) { return rCache[0]; }
+	if (x > 1) { return rCache[2 * S]; }
+	double t     = (x + 1) * S;
+	const int i1 = int(t);
+	const int i2 = int(t + 1);
+	t -= i1;
+	return rCache[i1] * (1 - t) + rCache[i2] * t;
+}
+}  // namespace
 
 void CRendererTopo::rebuild(const CRendererContext& ctx)
 {

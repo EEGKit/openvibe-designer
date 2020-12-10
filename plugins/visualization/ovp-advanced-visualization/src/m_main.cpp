@@ -65,80 +65,75 @@ using namespace Mensia;
 using namespace /*Mensia::*/AdvancedVisualization;
 using namespace OpenViBE;
 
-namespace Mensia
+namespace Mensia {
+namespace AdvancedVisualization {
+// Prototype to create and release final renderer instances from the renderer API
+
+template <ERendererType TType, bool TStimulation = false>
+class TRendererProto
 {
-	namespace AdvancedVisualization
-	{
-		// Prototype to create and release final renderer instances from the renderer API
+public:
 
-		template <ERendererType TType, bool TStimulation = false>
-		class TRendererProto
-		{
-		public:
+	static IRenderer* create() { return IRenderer::create(TType, TStimulation); }
+	static void release(IRenderer* renderer) { return IRenderer::release(renderer); }
+};
 
-			static IRenderer* create() { return IRenderer::create(TType, TStimulation); }
-			static void release(IRenderer* renderer) { return IRenderer::release(renderer); }
-		};
+// Type definitions of our OpenViBE boxes
 
-		// Type definitions of our OpenViBE boxes
+typedef TBoxAlgorithmContinuousVizDesc<TRendererProto<ERendererType::Bitmap, true>, TRulerPair<
+										   CRulerProgressV, TRulerPair<
+											   TRulerAutoType<IRuler, TRulerConditionalPair<CRulerBottomTime, CRulerBottomCount, CRulerConditionIsTimeLocked>,
+															  IRuler>, TRulerPair<CRulerLeftChannelNames, CRulerRightTexture>>>> bitmap_t;
+typedef TBoxAlgorithmContinuousVizDesc<TRendererProto<ERendererType::Line, true>, TRulerPair<
+										   CRulerProgressV, TRulerPair<
+											   TRulerAutoType<IRuler, TRulerConditionalPair<CRulerBottomTime, CRulerBottomCount, CRulerConditionIsTimeLocked>,
+															  IRuler>, TRulerPair<CRulerLeftChannelNames, CRulerRightScale>>>> oscilloscope_t;
+typedef TBoxAlgorithmContinuousVizDesc<TRendererProto<ERendererType::Bars, true>, TRulerPair<
+										   CRulerProgressV, TRulerPair<
+											   TRulerAutoType<IRuler, TRulerConditionalPair<CRulerBottomTime, CRulerBottomCount, CRulerConditionIsTimeLocked>,
+															  IRuler>, TRulerPair<CRulerLeftChannelNames, CRulerRightScale>>>> bars_t;
+typedef TBoxAlgorithmContinuousVizDesc<TRendererProto<ERendererType::MultiLine, true>, TRulerPair<
+										   CRulerProgressV, TRulerPair<
+											   TRulerAutoType<IRuler, TRulerConditionalPair<CRulerBottomTime, CRulerBottomCount, CRulerConditionIsTimeLocked>,
+															  IRuler>, TRulerPair<TRulerPair<CRulerLeftChannelNames, CRulerLeftTexture>, CRulerRightMonoScale>>>
+> MOscilloscope;
+typedef TBoxAlgorithmContinuousVizDesc<TRendererProto<ERendererType::XYZPlot>> xyz_plot_t;
 
-		typedef TBoxAlgorithmContinuousVizDesc<TRendererProto<ERendererType::Bitmap, true>, TRulerPair<
-												   CRulerProgressV, TRulerPair<
-													   TRulerAutoType<IRuler, TRulerConditionalPair<
-																		  CRulerBottomTime, CRulerBottomCount, CRulerConditionIsTimeLocked>, IRuler>, TRulerPair
-													   <CRulerLeftChannelNames, CRulerRightTexture>>>> bitmap_t;
-		typedef TBoxAlgorithmContinuousVizDesc<TRendererProto<ERendererType::Line, true>, TRulerPair<
-												   CRulerProgressV, TRulerPair<
-													   TRulerAutoType<IRuler, TRulerConditionalPair<
-																		  CRulerBottomTime, CRulerBottomCount, CRulerConditionIsTimeLocked>, IRuler>, TRulerPair
-													   <CRulerLeftChannelNames, CRulerRightScale>>>> oscilloscope_t;
-		typedef TBoxAlgorithmContinuousVizDesc<TRendererProto<ERendererType::Bars, true>, TRulerPair<
-												   CRulerProgressV, TRulerPair<
-													   TRulerAutoType<IRuler, TRulerConditionalPair<
-																		  CRulerBottomTime, CRulerBottomCount, CRulerConditionIsTimeLocked>, IRuler>, TRulerPair
-													   <CRulerLeftChannelNames, CRulerRightScale>>>> bars_t;
-		typedef TBoxAlgorithmContinuousVizDesc<TRendererProto<ERendererType::MultiLine, true>, TRulerPair<
-												   CRulerProgressV, TRulerPair<
-													   TRulerAutoType<IRuler, TRulerConditionalPair<
-																		  CRulerBottomTime, CRulerBottomCount, CRulerConditionIsTimeLocked>, IRuler>, TRulerPair
-													   <TRulerPair<CRulerLeftChannelNames, CRulerLeftTexture>, CRulerRightMonoScale>>>> MOscilloscope;
-		typedef TBoxAlgorithmContinuousVizDesc<TRendererProto<ERendererType::XYZPlot>> xyz_plot_t;
+typedef TBoxAlgorithmInstantVizDesc<TRendererProto<ERendererType::Bitmap>, TRulerPair<
+										CRulerERPProgress, TRulerPair<
+											TRulerAutoType<CRulerBottomERPCount, CRulerBottomERPTime, CRulerBottomFrequency>, TRulerPair<
+												CRulerLeftChannelNames, CRulerRightTexture>>>> i_bitmap_t;
+typedef TBoxAlgorithmInstantVizDesc<TRendererProto<ERendererType::Line>, TRulerPair<
+										CRulerERPProgress, TRulerPair<
+											TRulerAutoType<CRulerBottomERPCount, CRulerBottomERPTime, CRulerBottomFrequency>, TRulerPair<
+												CRulerLeftChannelNames, CRulerRightScale>>>> i_oscilloscope_t;
+typedef TBoxAlgorithmInstantVizDesc<TRendererProto<ERendererType::Bars>, TRulerPair<
+										CRulerERPProgress, TRulerPair<
+											TRulerAutoType<CRulerBottomERPCount, CRulerBottomERPTime, CRulerBottomFrequency>, TRulerPair<
+												CRulerLeftChannelNames, CRulerRightScale>>>> i_bars_t;
+typedef TBoxAlgorithmInstantVizDesc<TRendererProto<ERendererType::MultiLine>, TRulerPair<
+										CRulerERPProgress, TRulerPair<
+											TRulerAutoType<CRulerBottomERPCount, CRulerBottomERPTime, CRulerBottomFrequency>, TRulerPair<
+												TRulerPair<CRulerLeftChannelNames, CRulerLeftTexture>, CRulerRightMonoScale>>>> MIOscilloscope;
+typedef TBoxAlgorithmInstantVizDesc<TRendererProto<ERendererType::XYZPlot>> i_xyz_plot_t;
 
-		typedef TBoxAlgorithmInstantVizDesc<TRendererProto<ERendererType::Bitmap>, TRulerPair<
-												CRulerERPProgress, TRulerPair<
-													TRulerAutoType<CRulerBottomERPCount, CRulerBottomERPTime, CRulerBottomFrequency>, TRulerPair<
-														CRulerLeftChannelNames, CRulerRightTexture>>>> i_bitmap_t;
-		typedef TBoxAlgorithmInstantVizDesc<TRendererProto<ERendererType::Line>, TRulerPair<
-												CRulerERPProgress, TRulerPair<
-													TRulerAutoType<CRulerBottomERPCount, CRulerBottomERPTime, CRulerBottomFrequency>, TRulerPair<
-														CRulerLeftChannelNames, CRulerRightScale>>>> i_oscilloscope_t;
-		typedef TBoxAlgorithmInstantVizDesc<TRendererProto<ERendererType::Bars>, TRulerPair<
-												CRulerERPProgress, TRulerPair<
-													TRulerAutoType<CRulerBottomERPCount, CRulerBottomERPTime, CRulerBottomFrequency>, TRulerPair<
-														CRulerLeftChannelNames, CRulerRightScale>>>> i_bars_t;
-		typedef TBoxAlgorithmInstantVizDesc<TRendererProto<ERendererType::MultiLine>, TRulerPair<
-												CRulerERPProgress, TRulerPair<
-													TRulerAutoType<CRulerBottomERPCount, CRulerBottomERPTime, CRulerBottomFrequency>, TRulerPair<
-														TRulerPair<CRulerLeftChannelNames, CRulerLeftTexture>, CRulerRightMonoScale>>>> MIOscilloscope;
-		typedef TBoxAlgorithmInstantVizDesc<TRendererProto<ERendererType::XYZPlot>> i_xyz_plot_t;
+typedef TBoxAlgorithmStackedContinuousVizDesc<false, true, TRendererProto<ERendererType::Bitmap, true>, TRulerPair<
+												  TRulerAutoType<CRulerBottomERPCount, CRulerBottomERPTime, CRulerBottomFrequency>, TRulerPair<
+													  CRulerLeftChannelNames, CRulerProgressH>>> sv_bitmap_t;
+typedef TBoxAlgorithmStackedContinuousVizDesc<true, true, TRendererProto<ERendererType::Bitmap, true>, TRulerPair<
+												  TRulerConditionalPair<CRulerBottomTime, CRulerBottomCount, CRulerConditionIsTimeLocked>, TRulerPair<
+													  TRulerAutoType<IRuler, IRuler, CRulerRightFrequency>, TRulerPair<CRulerLeftChannelNames, CRulerProgressV>>
+											  >> sh_bitmap_t;
+typedef TBoxAlgorithmStackedInstantVizDesc<true, TRendererProto<ERendererType::Bitmap, true>, TRulerPair<
+											   CRulerBottomERPTime, TRulerPair<CRulerRightLabels<1>, TRulerPair<CRulerLeftChannelNames, CRulerProgressV>>>>
+si_bitmap_t;
 
-		typedef TBoxAlgorithmStackedContinuousVizDesc<false, true, TRendererProto<ERendererType::Bitmap, true>, TRulerPair<
-														  TRulerAutoType<CRulerBottomERPCount, CRulerBottomERPTime, CRulerBottomFrequency>, TRulerPair<
-															  CRulerLeftChannelNames, CRulerProgressH>>> sv_bitmap_t;
-		typedef TBoxAlgorithmStackedContinuousVizDesc<true, true, TRendererProto<ERendererType::Bitmap, true>, TRulerPair<
-														  TRulerConditionalPair<CRulerBottomTime, CRulerBottomCount, CRulerConditionIsTimeLocked>, TRulerPair<
-															  TRulerAutoType<IRuler, IRuler, CRulerRightFrequency>, TRulerPair<
-																  CRulerLeftChannelNames, CRulerProgressV>>>> sh_bitmap_t;
-		typedef TBoxAlgorithmStackedInstantVizDesc<true, TRendererProto<ERendererType::Bitmap, true>, TRulerPair<
-													   CRulerBottomERPTime, TRulerPair<
-														   CRulerRightLabels<1>, TRulerPair<CRulerLeftChannelNames, CRulerProgressV>>>> si_bitmap_t;
-
-		typedef TBoxAlgorithmInstantVizDesc<TRendererProto<ERendererType::Topography2D>, CRulerBottomTexture> topography_2d_t;
-		typedef TBoxAlgorithmInstantVizDesc<TRendererProto<ERendererType::Topography3D>, CRulerBottomTexture> topography_3d_t;
-		typedef TBoxAlgorithmInstantVizDesc<TRendererProto<ERendererType::Loreta>, CRulerBottomTexture, TBoxAlgorithmInstantLoretaViz> loreta_t;
-		typedef TBoxAlgorithmInstantVizDesc<TRendererProto<ERendererType::Cube>, CRulerBottomTexture> cubes_t;
-	} // namespace AdvancedVisualization
-} // namespace Mensia
+typedef TBoxAlgorithmInstantVizDesc<TRendererProto<ERendererType::Topography2D>, CRulerBottomTexture> topography_2d_t;
+typedef TBoxAlgorithmInstantVizDesc<TRendererProto<ERendererType::Topography3D>, CRulerBottomTexture> topography_3d_t;
+typedef TBoxAlgorithmInstantVizDesc<TRendererProto<ERendererType::Loreta>, CRulerBottomTexture, TBoxAlgorithmInstantLoretaViz> loreta_t;
+typedef TBoxAlgorithmInstantVizDesc<TRendererProto<ERendererType::Cube>, CRulerBottomTexture> cubes_t;
+}  // namespace AdvancedVisualization
+}  // namespace Mensia
 
 OVP_Declare_Begin()
 	context.getTypeManager().registerEnumerationType(OVP_TypeId_TemporalCoherence, "Temporal Coherence");

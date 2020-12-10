@@ -26,11 +26,9 @@
 
 #include <string>
 
-namespace Mensia
-{
-	namespace AdvancedVisualization
-	{
-		std::string trim(const std::string& value);
-		CRendererContext& getContext();
-	} // namespace AdvancedVisualization
-} // namespace Mensia
+namespace Mensia {
+namespace AdvancedVisualization {
+std::string trim(const std::string& value);
+CRendererContext& getContext();
+}  // namespace AdvancedVisualization
+}  // namespace Mensia

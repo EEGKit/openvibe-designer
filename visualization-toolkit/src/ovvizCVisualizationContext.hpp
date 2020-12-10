@@ -12,84 +12,82 @@
 #define OVP_ClassId_Plugin_VisualizationCtx			OpenViBE::CIdentifier(0x05A7171D, 0x78E4FE3C)
 #define OVP_ClassId_Plugin_VisualizationCtxDesc		OpenViBE::CIdentifier(0x35A11438, 0x764F72E8)
 
-namespace OpenViBE
+namespace OpenViBE {
+namespace VisualizationToolkit {
+/**
+ * @brief The CVisualizationContext class is a singleton used for passing visualization related information between the application
+ * and visualization plugins.
+ */
+class CVisualizationContext final : public IVisualizationContext
 {
-	namespace VisualizationToolkit
+public:
+
+	/**
+	 * The release function is neutralized. The object is only allocated once in the descriptor as a unique_ptr
+	 * and will be released at its destruction.
+	 */
+	void release() override { }
+
+	bool setManager(IVisualizationManager* visualizationManager) override
 	{
-		/**
-		 * @brief The CVisualizationContext class is a singleton used for passing visualization related information between the application
-		 * and visualization plugins.
-		 */
-		class CVisualizationContext final : public IVisualizationContext
-		{
-		public:
+		m_VisualizationManager = visualizationManager;
+		return true;
+	}
 
-			/**
-			 * The release function is neutralized. The object is only allocated once in the descriptor as a unique_ptr
-			 * and will be released at its destruction.
-			 */
-			void release() override { }
+	bool setWidget(Toolkit::TBoxAlgorithm<Plugins::IBoxAlgorithm>& box, GtkWidget* widget) override;
 
-			bool setManager(IVisualizationManager* visualizationManager) override
-			{
-				m_VisualizationManager = visualizationManager;
-				return true;
-			}
+	bool setToolbar(Toolkit::TBoxAlgorithm<Plugins::IBoxAlgorithm>& box, GtkWidget* toolbarWidget) override;
 
-			bool setWidget(Toolkit::TBoxAlgorithm<Plugins::IBoxAlgorithm>& box, GtkWidget* widget) override;
+	bool isDerivedFromClass(const CIdentifier& classIdentifier) const override
+	{
+		return ((classIdentifier == OVP_ClassId_Plugin_VisualizationCtx) || IVisualizationContext::isDerivedFromClass(classIdentifier));
+	}
 
-			bool setToolbar(Toolkit::TBoxAlgorithm<Plugins::IBoxAlgorithm>& box, GtkWidget* toolbarWidget) override;
+	CIdentifier getClassIdentifier() const override { return OVP_ClassId_Plugin_VisualizationCtx; }
 
-			bool isDerivedFromClass(const CIdentifier& classIdentifier) const override
-			{
-				return ((classIdentifier == OVP_ClassId_Plugin_VisualizationCtx) || IVisualizationContext::isDerivedFromClass(classIdentifier));
-			}
+	CVisualizationContext() = default;
 
-			CIdentifier getClassIdentifier() const override { return OVP_ClassId_Plugin_VisualizationCtx; }
+private:
+	IVisualizationManager* m_VisualizationManager = nullptr;
+};
 
-			CVisualizationContext() = default;
+class CVisualizationContextDesc final : public Plugins::IPluginObjectDesc
+{
+public:
 
-		private:
-			IVisualizationManager* m_VisualizationManager = nullptr;
-		};
+	CVisualizationContextDesc() : m_visualizationCtx(new CVisualizationContext()) {}
 
-		class CVisualizationContextDesc final : public Plugins::IPluginObjectDesc
-		{
-		public:
+	void release() override { }
 
-			CVisualizationContextDesc() : m_visualizationCtx(new CVisualizationContext()) {}
+	CString getName() const override { return CString("Visualization Context"); }
+	CString getAuthorName() const override { return CString("Jozef Legény"); }
+	CString getAuthorCompanyName() const override { return CString("Mensia Technologies"); }
+	CString getShortDescription() const override { return CString(""); }
+	CString getDetailedDescription() const override { return CString(""); }
+	CString getCategory() const override { return CString(""); }
+	CString getVersion() const override { return CString("1.0"); }
 
-			void release() override { }
+	CIdentifier getCreatedClass() const override { return OVP_ClassId_Plugin_VisualizationCtx; }
 
-			CString getName() const override { return CString("Visualization Context"); }
-			CString getAuthorName() const override { return CString("Jozef Legény"); }
-			CString getAuthorCompanyName() const override { return CString("Mensia Technologies"); }
-			CString getShortDescription() const override { return CString(""); }
-			CString getDetailedDescription() const override { return CString(""); }
-			CString getCategory() const override { return CString(""); }
-			CString getVersion() const override { return CString("1.0"); }
+	/**
+	 * The create function usage is different from standard plugins. As we need to be able to pass data between
+	 * the application and the plugins, we need a permanent object that can be accessed by both. We achieve this
+	 * by saving the object within the plugin descriptor and returning the pointer to the same object to all
+	 * plugins.
+	 *
+	 * @return The singleton visualizationContext object
+	 */
+	Plugins::IPluginObject* create() override { return m_visualizationCtx.get(); }
 
-			CIdentifier getCreatedClass() const override { return OVP_ClassId_Plugin_VisualizationCtx; }
+	bool isDerivedFromClass(const CIdentifier& classIdentifier) const override
+	{
+		return ((classIdentifier == OVP_ClassId_Plugin_VisualizationCtxDesc) || IPluginObjectDesc::isDerivedFromClass(classIdentifier));
+	}
 
-			/**
-			 * The create function usage is different from standard plugins. As we need to be able to pass data between
-			 * the application and the plugins, we need a permanent object that can be accessed by both. We achieve this
-			 * by saving the object within the plugin descriptor and returning the pointer to the same object to all
-			 * plugins.
-			 *
-			 * @return The singleton visualizationContext object
-			 */
-			Plugins::IPluginObject* create() override { return m_visualizationCtx.get(); }
+	CIdentifier getClassIdentifier() const override { return OVP_ClassId_Plugin_VisualizationCtxDesc; }
 
-			bool isDerivedFromClass(const CIdentifier& classIdentifier) const override
-			{
-				return ((classIdentifier == OVP_ClassId_Plugin_VisualizationCtxDesc) || IPluginObjectDesc::isDerivedFromClass(classIdentifier));
-			}
-
-			CIdentifier getClassIdentifier() const override { return OVP_ClassId_Plugin_VisualizationCtxDesc; }
-
-		private:
-			std::unique_ptr<CVisualizationContext> m_visualizationCtx;
-		};
-	}  // namespace VisualizationToolkit
+private:
+	std::unique_ptr<CVisualizationContext> m_visualizationCtx;
+};
+}  // namespace VisualizationToolkit
 }  // namespace OpenViBE

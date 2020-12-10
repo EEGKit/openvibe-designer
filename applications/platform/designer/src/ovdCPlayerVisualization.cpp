@@ -28,7 +28,6 @@ static void delete_window_manager_window_cb(GtkWidget* widget, GdkEvent* /*event
 }
 
 CPlayerVisualization::~CPlayerVisualization()
-
 {
 	hideTopLevelWindows();
 
@@ -330,11 +329,8 @@ bool CPlayerVisualization::setWidget(const CIdentifier& boxID, GtkWidget* widget
 		//retrieve icon name
 		GtkTreeIter iter;
 		char* iconString = nullptr;
-		if (m_visualizationTree.findChildNodeFromRoot(&iter, static_cast<const char*>(visualizationWidget->getName()),
-													  EVisualizationTreeNode::VisualizationBox))
-		{
-			m_visualizationTree.getStringValueFromTreeIter(&iter, iconString, EVisualizationTreeColumn::StringStockIcon);
-		}
+		if (m_visualizationTree.findChildNodeFromRoot(&iter, static_cast<const char*>(visualizationWidget->getName()), EVisualizationTreeNode::VisualizationBox)
+		) { m_visualizationTree.getStringValueFromTreeIter(&iter, iconString, EVisualizationTreeColumn::StringStockIcon); }
 
 		//create icon
 		GtkWidget* icon = gtk_image_new_from_stock(iconString != nullptr ? iconString : GTK_STOCK_EXECUTE, GTK_ICON_SIZE_BUTTON);

@@ -116,7 +116,6 @@ struct SBoxProto final : Kernel::IBoxProto
 	}
 
 	bool addInputSupport(const CIdentifier& /*typeID*/) override { return true; }
-
 	bool addOutputSupport(const CIdentifier& /*typeID*/) override { return true; }
 
 	bool addFlag(const Kernel::EBoxFlag flag) override
@@ -181,7 +180,7 @@ extern "C" G_MODULE_EXPORT void open_url_mensia_cb(GtkWidget* /*widget*/, gpoint
 		system("start http://mensiatech.com");
 #endif
 }
-} // namespace
+}  // namespace
 
 static guint idle_add_cb(GSourceFunc callback, gpointer data, gint /*priority*/  = G_PRIORITY_DEFAULT_IDLE)
 {
@@ -205,7 +204,6 @@ static void drag_data_get_cb(GtkWidget* widget, GdkDragContext* dc, GtkSelection
 }
 
 static void menu_undo_cb(GtkMenuItem* /*item*/, gpointer data) { static_cast<CApplication*>(data)->undoCB(); }
-
 static void menu_redo_cb(GtkMenuItem* /*item*/, gpointer data) { static_cast<CApplication*>(data)->redoCB(); }
 
 static void menu_focus_search_cb(GtkMenuItem* /*item*/, gpointer data)
@@ -214,17 +212,11 @@ static void menu_focus_search_cb(GtkMenuItem* /*item*/, gpointer data)
 }
 
 static void menu_copy_selection_cb(GtkMenuItem* /*item*/, gpointer data) { static_cast<CApplication*>(data)->copySelectionCB(); }
-
 static void menu_cut_selection_cb(GtkMenuItem* /*item*/, gpointer data) { static_cast<CApplication*>(data)->cutSelectionCB(); }
-
 static void menu_paste_selection_cb(GtkMenuItem* /*item*/, gpointer data) { static_cast<CApplication*>(data)->pasteSelectionCB(); }
-
 static void menu_delete_selection_cb(GtkMenuItem* /*item*/, gpointer data) { static_cast<CApplication*>(data)->deleteSelectionCB(); }
-
 static void menu_preferences_cb(GtkMenuItem* /*item*/, gpointer data) { static_cast<CApplication*>(data)->preferencesCB(); }
-
 static void menu_new_scenario_cb(GtkMenuItem* /*item*/, gpointer data) { static_cast<CApplication*>(data)->newScenarioCB(); }
-
 static void menu_open_scenario_cb(GtkMenuItem* /*item*/, gpointer data) { static_cast<CApplication*>(data)->openScenarioCB(); }
 
 static void menu_open_recent_scenario_cb(GtkMenuItem* item, gpointer data)
@@ -234,9 +226,7 @@ static void menu_open_recent_scenario_cb(GtkMenuItem* item, gpointer data)
 }
 
 static void menu_save_scenario_cb(GtkMenuItem* /*item*/, gpointer data) { static_cast<CApplication*>(data)->saveScenarioCB(); }
-
 static void menu_save_scenario_as_cb(GtkMenuItem* /*item*/, gpointer data) { static_cast<CApplication*>(data)->saveScenarioAsCB(); }
-
 static void menu_restore_default_scenarios_cb(GtkMenuItem* /*item*/, gpointer data) { static_cast<CApplication*>(data)->restoreDefaultScenariosCB(); }
 
 static void menu_close_scenario_cb(GtkMenuItem* /*item*/, gpointer data)
@@ -283,11 +273,8 @@ static void menu_display_changelog_cb(GtkMenuItem* /*item*/, gpointer data)
 }
 
 static void button_new_scenario_cb(GtkButton* /*button*/, gpointer data) { static_cast<CApplication*>(data)->newScenarioCB(); }
-
 static void button_open_scenario_cb(GtkButton* /*button*/, gpointer data) { static_cast<CApplication*>(data)->openScenarioCB(); }
-
 static void button_save_scenario_cb(GtkButton* /*button*/, gpointer data) { static_cast<CApplication*>(data)->saveScenarioCB(); }
-
 static void button_save_scenario_as_cb(GtkButton* /*button*/, gpointer data) { static_cast<CApplication*>(data)->saveScenarioAsCB(); }
 
 static void button_close_scenario_cb(GtkButton* /*button*/, gpointer data)
@@ -296,7 +283,6 @@ static void button_close_scenario_cb(GtkButton* /*button*/, gpointer data)
 }
 
 static void button_undo_cb(GtkButton* /*button*/, gpointer data) { static_cast<CApplication*>(data)->undoCB(); }
-
 static void button_redo_cb(GtkButton* /*button*/, gpointer data) { static_cast<CApplication*>(data)->redoCB(); }
 
 #ifdef MENSIA_DISTRIBUTION
@@ -330,7 +316,6 @@ static void play_pause_scenario_cb(GtkButton* button, gpointer data)
 }
 
 static void next_scenario_cb(GtkButton* /*button*/, gpointer data) { static_cast<CApplication*>(data)->nextScenarioCB(); }
-
 static void forward_scenario_cb(GtkButton* /*button*/, gpointer data) { static_cast<CApplication*>(data)->forwardScenarioCB(); }
 
 static void button_configure_current_scenario_settings_cb(GtkButton* /*button*/, CApplication* app)
@@ -359,7 +344,6 @@ static gboolean window_state_changed_cb(GtkWidget* /*widget*/, GdkEventWindowSta
 }
 
 static void log_level_cb(GtkButton* /*button*/, gpointer data) { static_cast<CApplication*>(data)->logLevelCB(); }
-
 static void cpu_usage_cb(GtkToggleButton* /*button*/, gpointer data) { static_cast<CApplication*>(data)->cpuUsageCB(); }
 
 static gboolean change_current_scenario_cb(GtkNotebook* /*notebook*/, GtkNotebookPage* /*notebookPage*/, const guint pageNumber, gpointer data)
@@ -399,11 +383,8 @@ static void algorithm_title_button_collapse_cb(GtkButton* /*button*/, gpointer d
 }
 
 static void clear_messages_cb(GtkButton* /*button*/, gpointer data) { static_cast<CLogListenerDesigner*>(data)->clearMessages(); }
-
 static void add_scenario_input_cb(GtkButton* /*button*/, CApplication* app) { app->getCurrentInterfacedScenario()->addScenarioInputCB(); }
-
 static void add_scenario_output_cb(GtkButton* /*button*/, CApplication* app) { app->getCurrentInterfacedScenario()->addScenarioOutputCB(); }
-
 static void add_scenario_setting_cb(GtkButton* /*button*/, CApplication* app) { app->getCurrentInterfacedScenario()->addScenarioSettingCB(); }
 
 static std::string strtoupper(std::string str)

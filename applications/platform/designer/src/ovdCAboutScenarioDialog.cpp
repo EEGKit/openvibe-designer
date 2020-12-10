@@ -83,13 +83,13 @@ bool CAboutScenarioDialog::run()
 
 	gtk_text_buffer_get_start_iter(shortDescBuffer, &start);
 	gtk_text_buffer_get_end_iter(shortDescBuffer, &end);
-	m_scenario.setAttributeValue(
-		OV_AttributeId_Scenario_ShortDescription, gtk_text_buffer_get_text(gtk_text_view_get_buffer(GTK_TEXT_VIEW(shortDesc)), &start, &end, FALSE));
+	m_scenario.setAttributeValue(OV_AttributeId_Scenario_ShortDescription,
+								 gtk_text_buffer_get_text(gtk_text_view_get_buffer(GTK_TEXT_VIEW(shortDesc)), &start, &end, FALSE));
 
 	gtk_text_buffer_get_start_iter(detailedDescBuffer, &start);
 	gtk_text_buffer_get_end_iter(detailedDescBuffer, &end);
-	m_scenario.setAttributeValue(
-		OV_AttributeId_Scenario_DetailedDescription, gtk_text_buffer_get_text(gtk_text_view_get_buffer(GTK_TEXT_VIEW(detailedDesc)), &start, &end, FALSE));
+	m_scenario.setAttributeValue(OV_AttributeId_Scenario_DetailedDescription,
+								 gtk_text_buffer_get_text(gtk_text_view_get_buffer(GTK_TEXT_VIEW(detailedDesc)), &start, &end, FALSE));
 
 	gtk_widget_destroy(dialog);
 
