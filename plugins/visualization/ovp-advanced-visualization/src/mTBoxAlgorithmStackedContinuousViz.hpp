@@ -152,7 +152,7 @@ bool TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRenderer
 	{
 		m_MatrixDecoder.decode(size_t(i));
 
-		OpenViBE::IMatrix* matrix = m_MatrixDecoder.getOutputMatrix();
+		OpenViBE::CMatrix* matrix = m_MatrixDecoder.getOutputMatrix();
 		size_t nChannel           = matrix->getDimensionSize(0);
 		size_t nSample            = matrix->getDimensionSize(1);
 

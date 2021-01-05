@@ -124,7 +124,7 @@ bool TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>::process()
 	{
 		m_oMatrixDecoder.decode(i);
 
-		OpenViBE::IMatrix* matrix = m_oMatrixDecoder.getOutputMatrix();
+		OpenViBE::CMatrix* matrix = m_oMatrixDecoder.getOutputMatrix();
 		size_t nChannel           = matrix->getDimensionSize(0);
 		size_t nSample            = matrix->getDimensionSize(1);
 

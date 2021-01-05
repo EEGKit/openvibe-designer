@@ -92,7 +92,7 @@ bool CBoxAlgorithmTopographicMap2DDisplay::process()
 		m_decoder.decode(i);
 		if (m_decoder.isBufferReceived())
 		{
-			IMatrix* iMatrix = m_decoder.getOutputMatrix();
+			CMatrix* iMatrix = m_decoder.getOutputMatrix();
 
 			//do we need to recopy this for each chunk?
 			if (!m_hasFirstBuffer)

@@ -47,8 +47,7 @@ void CTopographicMapDatabase::setMatrixDimensionSize(const size_t index, const s
 
 	if (index == 0)
 	{
-		m_electrodePotentials.setDimensionCount(1);
-		m_electrodePotentials.setDimensionSize(0, size_t(m_NElectrodes));
+		m_electrodePotentials.resize(size_t(m_NElectrodes));
 	}
 }
 
@@ -69,8 +68,7 @@ bool CTopographicMapDatabase::onChannelLocalisationBufferReceived(const size_t b
 		if (m_cartesianCoords)
 		{
 			//fill electrode coordinates matrix
-			m_electrodeCoords.setDimensionCount(1);
-			m_electrodeCoords.setDimensionSize(0, size_t(3 * m_NElectrodes));
+			m_electrodeCoords.resize(size_t(3 * m_NElectrodes));
 			const double* coords = m_channelLocalisationCoords[0].first->getBuffer();
 			for (size_t i = 0; i < size_t(m_NElectrodes); ++i)
 			{
@@ -166,7 +164,7 @@ bool CTopographicMapDatabase::processValues()
 		if (m_samplePointCoords != nullptr)
 		{
 			//retrieve interpolation results
-			TParameterHandler<IMatrix*> sampleValuesMatrix;
+			TParameterHandler<CMatrix*> sampleValuesMatrix;
 			sampleValuesMatrix.initialize(
 				m_interpolation.getOutputParameter(OVP_Algorithm_SphericalSplineInterpolation_OutputParameterId_SamplePointsValues));
 			dynamic_cast<CTopographicMapDrawable*>(m_Drawable)->setSampleValuesMatrix(sampleValuesMatrix);
@@ -221,7 +219,7 @@ bool CTopographicMapDatabase::interpolateValues()
 		if (m_samplePointCoords != nullptr)
 		{
 			//retrieve interpolation results
-			TParameterHandler<IMatrix*> sampleValuesMatrix;
+			TParameterHandler<CMatrix*> sampleValuesMatrix;
 			sampleValuesMatrix.initialize(m_interpolation.getOutputParameter(OVP_Algorithm_SphericalSplineInterpolation_OutputParameterId_SamplePointsValues));
 			dynamic_cast<CTopographicMapDrawable*>(m_Drawable)->setSampleValuesMatrix(sampleValuesMatrix);
 		}

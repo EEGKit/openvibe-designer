@@ -338,7 +338,7 @@ bool CBoxAlgorithmViz::initialize()
 
 		const TParameterHandler<CString*> ip_filename(
 			channelPosReader->getInputParameter(OVP_GD_Algorithm_OVMatrixFileReader_InputParameterId_Filename));
-		TParameterHandler<IMatrix*> op_matrix(channelPosReader->getOutputParameter(OVP_GD_Algorithm_OVMatrixFileReader_OutputParameterId_Matrix));
+		TParameterHandler<CMatrix*> op_matrix(channelPosReader->getOutputParameter(OVP_GD_Algorithm_OVMatrixFileReader_OutputParameterId_Matrix));
 
 		*ip_filename = m_Localisation;
 
