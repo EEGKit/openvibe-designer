@@ -35,9 +35,7 @@ typedef struct
 
 static void gradients2Matrix(const vector<color_gradient_node_t>& in, CMatrix& out)
 {
-	out.setDimensionCount(2);
-	out.setDimensionSize(0, 4);
-	out.setDimensionSize(1, in.size());
+	out.resize(4, in.size());
 	size_t i = 0;
 	for (const auto& color : in)
 	{

@@ -166,7 +166,7 @@ bool TBoxAlgorithmStackedInstantViz<TDrawBorders, TRendererFactoryClass, TRulerC
 	{
 		m_MatrixDecoder.decode(chunk);
 
-		OpenViBE::IMatrix* inputMatrix = m_MatrixDecoder.getOutputMatrix();
+		OpenViBE::CMatrix* inputMatrix = m_MatrixDecoder.getOutputMatrix();
 		const size_t nChannel          = inputMatrix->getDimensionSize(0);
 
 		if (nChannel == 0)

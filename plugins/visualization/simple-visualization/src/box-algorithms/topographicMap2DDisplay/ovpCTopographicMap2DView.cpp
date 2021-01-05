@@ -303,7 +303,7 @@ CMatrix* CTopographicMap2DView::getSampleCoordinatesMatrix()
 	return &m_sampleCoordinatesMatrix;
 }
 
-bool CTopographicMap2DView::setSampleValuesMatrix(IMatrix* matrix)
+bool CTopographicMap2DView::setSampleValuesMatrix(CMatrix* matrix)
 {
 	//ensure matrix has the right size
 	if (matrix == nullptr || matrix->getBufferElementCount() < m_sampleValues.size()) { return false; }
@@ -761,8 +761,7 @@ void CTopographicMap2DView::resizeData()
 
 	//resize sample grids accordingly
 	m_sample2DCoordinates.resize(nSamples);
-	m_sampleCoordinatesMatrix.setDimensionSize(0, nSamples);
-	m_sampleCoordinatesMatrix.setDimensionSize(1, 3);
+	m_sampleCoordinatesMatrix.resize(nSamples, 3);
 	m_sampleValues.resize(nSamples);
 
 	//compute samples normalized coordinates

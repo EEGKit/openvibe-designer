@@ -54,7 +54,7 @@ bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer*
 	if (m_decoder->isOutputTriggerActive(OVP_GD_Algorithm_ChannelLocalisationDecoder_OutputTriggerId_ReceivedHeader))
 	{
 		//retrieve matrix header
-		Kernel::TParameterHandler<IMatrix*> matrix;
+		Kernel::TParameterHandler<CMatrix*> matrix;
 		matrix.initialize(m_decoder->getOutputParameter(OVP_GD_Algorithm_ChannelLocalisationDecoder_OutputParameterId_Matrix));
 
 		//copy channel labels
@@ -117,7 +117,7 @@ bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer*
 		}
 
 		//retrieve coordinates matrix
-		Kernel::TParameterHandler<IMatrix*> matrix;
+		Kernel::TParameterHandler<CMatrix*> matrix;
 		matrix.initialize(m_decoder->getOutputParameter(OVP_GD_Algorithm_ChannelLocalisationDecoder_OutputParameterId_Matrix));
 
 		//get pointer to destination matrix
@@ -127,7 +127,7 @@ bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer*
 		{
 			//create a new matrix and resize it
 			channelLocalisation = new CMatrix();
-			Toolkit::Matrix::copyDescription(*channelLocalisation, *matrix);
+			channelLocalisation->copyDescription(*matrix);
 			// alternateChannelLocalisation = new CMatrix();
 			// TODO : resize it appropriately depending on whether it is spherical or cartesian
 		}
@@ -143,7 +143,7 @@ bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer*
 		if (channelLocalisation)
 		{
 			//copy coordinates and times
-			Toolkit::Matrix::copyContent(*channelLocalisation, *matrix);
+			channelLocalisation->copyContent(*matrix);
 			m_channelLocalisationCoords.emplace_back(channelLocalisation, true);
 			//m_oChannelLocalisationAlternateCoords.push_back(std::pair<CMatrix*, bool>(alternateChannelLocalisation, true));
 			m_channelLocalisationTimes.emplace_back(startTime, endTime);

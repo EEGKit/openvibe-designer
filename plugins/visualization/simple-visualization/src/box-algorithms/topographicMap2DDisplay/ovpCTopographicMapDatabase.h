@@ -15,7 +15,7 @@ class CTopographicMapDrawable : public CSignalDisplayDrawable
 public:
 	~CTopographicMapDrawable() override = default;
 	virtual CMatrix* getSampleCoordinatesMatrix() = 0;
-	virtual bool setSampleValuesMatrix(IMatrix* pSampleValuesMatrix) = 0;
+	virtual bool setSampleValuesMatrix(CMatrix* pSampleValuesMatrix) = 0;
 };
 
 /**
@@ -87,13 +87,13 @@ private:
 	//electrode cartesian coordinates, in normalized space (X right Y front Z up)
 	CMatrix m_electrodeCoords;
 	//pointer to electrode coordinates matrix - mapped to OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_ControlPointsCoordinates
-	IMatrix* m_pElectrodeCoords = nullptr;
+	CMatrix* m_pElectrodeCoords = nullptr;
 	//electrode potentials
 	CMatrix m_electrodePotentials;
 	//pointer to electrode potentials matrix - mapped to OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_ControlPointsValues
-	IMatrix* m_pElectrodePotentials = nullptr;
+	CMatrix* m_pElectrodePotentials = nullptr;
 	//pointer to sample points coordinates matrix - mapped to OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_SamplePointsCoordinates
-	IMatrix* m_samplePointCoords = nullptr;
+	CMatrix* m_samplePointCoords = nullptr;
 	//minimum interpolated value
 	Kernel::TParameterHandler<double> m_minSamplePointValue;
 	//maximum interpolated value

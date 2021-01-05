@@ -33,7 +33,7 @@ protected:
 	Toolkit::TStreamedMatrixDecoder<CBoxAlgorithmMatrixDisplay> m_decoder;
 	Kernel::IAlgorithmProxy* iMatrix = nullptr;
 	Kernel::TParameterHandler<const IMemoryBuffer*> ip_buffer;
-	Kernel::TParameterHandler<IMatrix*> op_matrix;
+	Kernel::TParameterHandler<CMatrix*> op_matrix;
 
 	// Outputs: visualization in a gtk window
 	GtkBuilder* m_mainWidgetInterface    = nullptr;

@@ -5,9 +5,9 @@
 namespace OpenViBE {
 namespace VisualizationToolkit {
 namespace ColorGradient {
-OVVIZ_API bool parse(IMatrix& colorGradient, const CString& string);
-OVVIZ_API bool format(CString& string, const IMatrix& colorGradient);
-OVVIZ_API bool interpolate(IMatrix& interpolatedColorGradient, const IMatrix& colorGradient, size_t steps);
+OVVIZ_API bool parse(CMatrix& colorGradient, const CString& string);
+OVVIZ_API bool format(CString& string, const CMatrix& colorGradient);
+OVVIZ_API bool interpolate(CMatrix& interpolatedColorGradient, const CMatrix& colorGradient, size_t steps);
 }  // namespace ColorGradient
 }  // namespace VisualizationToolkit
 }  // namespace OpenViBE

@@ -17,7 +17,7 @@ typedef struct
 } SColor;
 }  // namespace
 
-bool ColorGradient::parse(IMatrix& colorGradient, const CString& string)
+bool ColorGradient::parse(CMatrix& colorGradient, const CString& string)
 {
 	const std::string colorString(string.toASCIIString());
 	size_t startPosition = 0;
@@ -46,9 +46,7 @@ bool ColorGradient::parse(IMatrix& colorGradient, const CString& string)
 		startPosition = endPosition + 1;
 	} while (startPosition < colorString.length());
 
-	colorGradient.setDimensionCount(2);
-	colorGradient.setDimensionSize(0, 4);
-	colorGradient.setDimensionSize(1, colorGradientVector.size());
+	colorGradient.resize(4, colorGradientVector.size());
 
 	size_t i = 0;
 	for (auto it = colorGradientVector.begin(); it != colorGradientVector.end(); ++it, i++)
@@ -62,7 +60,7 @@ bool ColorGradient::parse(IMatrix& colorGradient, const CString& string)
 	return true;
 }
 
-bool ColorGradient::format(CString& string, const IMatrix& colorGradient)
+bool ColorGradient::format(CString& string, const CMatrix& colorGradient)
 {
 	if (colorGradient.getDimensionCount() != 2) { return false; }
 
@@ -84,7 +82,7 @@ bool ColorGradient::format(CString& string, const IMatrix& colorGradient)
 	return true;
 }
 
-bool ColorGradient::interpolate(IMatrix& interpolatedColorGradient, const IMatrix& colorGradient, const size_t steps)
+bool ColorGradient::interpolate(CMatrix& interpolatedColorGradient, const CMatrix& colorGradient, const size_t steps)
 {
 	size_t i;
 
@@ -92,9 +90,7 @@ bool ColorGradient::interpolate(IMatrix& interpolatedColorGradient, const IMatri
 
 	if (steps <= 1) { return false; }
 
-	interpolatedColorGradient.setDimensionCount(2);
-	interpolatedColorGradient.setDimensionSize(0, 4);
-	interpolatedColorGradient.setDimensionSize(1, steps);
+	interpolatedColorGradient.resize(4, steps);
 
 	std::map<double, SColor> colors;
 
