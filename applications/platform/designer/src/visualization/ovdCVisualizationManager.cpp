@@ -64,13 +64,13 @@ bool CVisualizationManager::setWidget(const CIdentifier& treeID, const CIdentifi
 
 CIdentifier CVisualizationManager::getUnusedIdentifier() const
 {
-	uint64_t id = CIdentifier::random().toUInteger();
+	uint64_t id = CIdentifier::random().id();
 	CIdentifier res;
 	map<CIdentifier, IVisualizationTree*>::const_iterator it;
 	do
 	{
 		res = CIdentifier(id++);
 		it  = m_trees.find(res);
-	} while (it != m_trees.end() || res == OV_UndefinedIdentifier);
+	} while (it != m_trees.end() || res == CIdentifier::undefined());
 	return res;
 }

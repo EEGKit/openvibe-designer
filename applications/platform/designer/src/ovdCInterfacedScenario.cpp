@@ -49,7 +49,7 @@ static GdkColor colorFromIdentifier(const CIdentifier& id, const bool isDeprecat
 	uint32_t value2 = 0;
 	uint64_t res    = 0;
 
-	sscanf(id.toString(), "(0x%08X, 0x%08X)", &value1, &value2);
+	sscanf(id.str().c_str(), "(0x%08X, 0x%08X)", &value1, &value2);
 	res += value1;
 	res <<= 32;
 	res += value2;
@@ -337,7 +337,7 @@ static gboolean editable_widget_focus_out_cb(GtkWidget* /*widget*/, GdkEvent* /*
 
 static void modify_scenario_setting_value_cb(GtkWidget* /*widget*/, CInterfacedScenario::setting_cb_data_t* data)
 {
-	CIdentifier typeID = OV_UndefinedIdentifier;
+	CIdentifier typeID = CIdentifier::undefined();
 	data->scenario->m_Scenario.getSettingType(data->index, typeID);
 	data->scenario->m_Scenario.setSettingValue(data->index, data->scenario->m_SettingHelper->getValue(typeID, data->widgetValue));
 	data->scenario->m_HasBeenModified = true;
@@ -346,7 +346,7 @@ static void modify_scenario_setting_value_cb(GtkWidget* /*widget*/, CInterfacedS
 
 static void modify_scenario_setting_default_value_cb(GtkWidget* /*widget*/, CInterfacedScenario::setting_cb_data_t* data)
 {
-	CIdentifier typeID = OV_UndefinedIdentifier;
+	CIdentifier typeID = CIdentifier::undefined();
 	data->scenario->m_Scenario.getSettingType(data->index, typeID);
 	data->scenario->m_Scenario.setSettingDefaultValue(data->index, data->scenario->m_SettingHelper->getValue(typeID, data->widgetValue));
 
@@ -437,8 +437,8 @@ static void modify_scenario_setting_name_cb(GtkWidget* entry, CInterfacedScenari
 
 static void reset_scenario_setting_identifier_cb(GtkWidget* /*button*/, CInterfacedScenario::setting_cb_data_t* data)
 {
-	const CIdentifier id = data->scenario->m_Scenario.getUnusedSettingIdentifier(OV_UndefinedIdentifier);
-	if (id != OV_UndefinedIdentifier)
+	const CIdentifier id = data->scenario->m_Scenario.getUnusedSettingIdentifier(CIdentifier::undefined());
+	if (id != CIdentifier::undefined())
 	{
 		data->scenario->m_Scenario.updateInterfacorIdentifier(EBoxInterfacorType::Setting, data->index, id);
 		data->scenario->redrawConfigureScenarioSettingsDialog();
@@ -592,7 +592,7 @@ CInterfacedScenario::CInterfacedScenario(const IKernelContext& ctx, CApplication
 
 	// We will need to access setting types by their name later
 	CIdentifier typeID;
-	while ((typeID = m_kernelCtx.getTypeManager().getNextTypeIdentifier(typeID)) != OV_UndefinedIdentifier)
+	while ((typeID = m_kernelCtx.getTypeManager().getNextTypeIdentifier(typeID)) != CIdentifier::undefined())
 	{
 		if (!m_kernelCtx.getTypeManager().isStream(typeID)) { m_SettingTypes[m_kernelCtx.getTypeManager().getTypeName(typeID).toASCIIString()] = typeID; }
 		else { m_streamTypes[m_kernelCtx.getTypeManager().getTypeName(typeID).toASCIIString()] = typeID; }
@@ -652,11 +652,11 @@ CInterfacedScenario::CInterfacedScenario(const IKernelContext& ctx, CApplication
 	CInterfacedScenario::updateScenarioLabel();
 
 	// Output a log message if any box of the scenario is in some special state
-	CIdentifier boxID      = OV_UndefinedIdentifier;
+	CIdentifier boxID      = CIdentifier::undefined();
 	bool warningUpdate     = false;
 	bool warningDeprecated = false;
 	bool warningUnknown    = false;
-	while ((boxID = m_Scenario.getNextBoxIdentifier(boxID)) != OV_UndefinedIdentifier)
+	while ((boxID = m_Scenario.getNextBoxIdentifier(boxID)) != CIdentifier::undefined())
 	{
 		//const IBox *box = m_scenario.getBoxDetails(l_oBoxID);
 		//const CBoxProxy proxy(m_kernelCtx, *box);
@@ -760,13 +760,13 @@ void CInterfacedScenario::redrawConfigureScenarioSettingsDialog()
 			GtkWidget* buttonResetID = GTK_WIDGET(gtk_builder_get_object(builder, "scenario_configuration_setting-button_reset_identifier"));
 
 			// fill the type dropdown
-			CIdentifier typeID = OV_UndefinedIdentifier;
+			CIdentifier typeID = CIdentifier::undefined();
 			m_Scenario.getSettingType(i, typeID);
 
 			CIdentifier id;
 			CString str;
 			gint idx = 0;
-			while ((id = m_kernelCtx.getTypeManager().getNextTypeIdentifier(id)) != OV_UndefinedIdentifier)
+			while ((id = m_kernelCtx.getTypeManager().getNextTypeIdentifier(id)) != CIdentifier::undefined())
 			{
 				if (!m_kernelCtx.getTypeManager().isStream(id))
 				{
@@ -875,7 +875,7 @@ void CInterfacedScenario::redrawScenarioSettings()
 			gtk_misc_set_alignment(GTK_MISC(labelName), 0.0, 0.5);
 
 			// Add widget for the actual setting
-			CIdentifier typeID = OV_UndefinedIdentifier;
+			CIdentifier typeID = CIdentifier::undefined();
 			m_Scenario.getSettingType(i, typeID);
 			str = m_SettingHelper->getSettingWidgetName(typeID);
 
@@ -976,12 +976,12 @@ void CInterfacedScenario::redrawScenarioLinkSettings(GtkWidget* links, const boo
 			gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(comboBoxType)), comboBoxType);
 
 			// fill the type dropdown
-			CIdentifier typeID = OV_UndefinedIdentifier;
+			CIdentifier typeID = CIdentifier::undefined();
 			(m_Scenario.*getLinkType)(i, typeID);
 
 			CIdentifier id;
 			gint idx = 0;
-			while ((id = m_kernelCtx.getTypeManager().getNextTypeIdentifier(id)) != OV_UndefinedIdentifier)
+			while ((id = m_kernelCtx.getTypeManager().getNextTypeIdentifier(id)) != CIdentifier::undefined())
 			{
 				if (m_kernelCtx.getTypeManager().isStream(id))
 				{
@@ -1166,7 +1166,7 @@ void CInterfacedScenario::redraw(IBox& box)
 	{
 		CIdentifier timeID;
 		timeID.fromString(box.getAttributeValue(OV_AttributeId_Box_ComputationTimeLastSecond));
-		uint64_t time      = (timeID == OV_UndefinedIdentifier ? 0 : timeID.toUInteger());
+		uint64_t time      = (timeID == CIdentifier::undefined() ? 0 : timeID.id());
 		uint64_t reference = (1LL << 32) / (m_nBox == 0 ? 1 : m_nBox);
 
 		GdkColor color;
@@ -1233,8 +1233,8 @@ void CInterfacedScenario::redraw(IBox& box)
 
 		int x = startX + int(i) * (circleSpace + circleSize) + (circleSize >> 1) - m_viewOffsetX + offset;
 		int y = startY - (circleSize >> 1) - m_viewOffsetY;
-		id    = m_Scenario.getNextLinkIdentifierToBoxInput(OV_UndefinedIdentifier, box.getIdentifier(), i);
-		while (id != OV_UndefinedIdentifier)
+		id    = m_Scenario.getNextLinkIdentifierToBoxInput(CIdentifier::undefined(), box.getIdentifier(), i);
+		while (id != CIdentifier::undefined())
 		{
 			ILink* link = m_Scenario.getLinkDetails(id);
 			linkHandler(link, x, y, OV_AttributeId_Link_XDst, OV_AttributeId_Link_YDst);
@@ -1293,8 +1293,8 @@ void CInterfacedScenario::redraw(IBox& box)
 
 		int x = startX + int(i) * (circleSpace + circleSize) + (circleSize >> 1) - m_viewOffsetX + offset;
 		int y = startY + sizeY + (circleSize >> 1) + 1 - m_viewOffsetY;
-		id    = m_Scenario.getNextLinkIdentifierFromBoxOutput(OV_UndefinedIdentifier, box.getIdentifier(), i);
-		while (id != OV_UndefinedIdentifier)
+		id    = m_Scenario.getNextLinkIdentifierFromBoxOutput(CIdentifier::undefined(), box.getIdentifier(), i);
+		while (id != CIdentifier::undefined())
 		{
 			ILink* link = m_Scenario.getLinkDetails(id);
 			if (link)
@@ -1539,7 +1539,7 @@ bool CInterfacedScenario::pickInterfacedObject(const int x, const int y, int siz
 			idx += (pixels[j * nRowBytes + i * nChannel + 0] << 16);
 			idx += (pixels[j * nRowBytes + i * nChannel + 1] << 8);
 			idx += (pixels[j * nRowBytes + i * nChannel + 2]);
-			if (m_interfacedObjects[idx].m_ID != OV_UndefinedIdentifier) { m_SelectedObjects.insert(m_interfacedObjects[idx].m_ID); }
+			if (m_interfacedObjects[idx].m_ID != CIdentifier::undefined()) { m_SelectedObjects.insert(m_interfacedObjects[idx].m_ID); }
 		}
 	}
 
@@ -1561,11 +1561,11 @@ void CInterfacedScenario::undoCB(const bool manageModifiedStatusFlag)
 	{
 		CIdentifier id;
 		m_SelectedObjects.clear();
-		while ((id = m_Scenario.getNextBoxIdentifier(id)) != OV_UndefinedIdentifier)
+		while ((id = m_Scenario.getNextBoxIdentifier(id)) != CIdentifier::undefined())
 		{
 			if (m_Scenario.getBoxDetails(id)->hasAttribute(OV_ClassId_Selected)) { m_SelectedObjects.insert(id); }
 		}
-		while ((id = m_Scenario.getNextLinkIdentifier(id)) != OV_UndefinedIdentifier)
+		while ((id = m_Scenario.getNextLinkIdentifier(id)) != CIdentifier::undefined())
 		{
 			if (m_Scenario.getLinkDetails(id)->hasAttribute(OV_ClassId_Selected)) { m_SelectedObjects.insert(id); }
 		}
@@ -1600,11 +1600,11 @@ void CInterfacedScenario::redoCB(const bool manageModifiedStatusFlag)
 	{
 		CIdentifier id;
 		m_SelectedObjects.clear();
-		while ((id = m_Scenario.getNextBoxIdentifier(id)) != OV_UndefinedIdentifier)
+		while ((id = m_Scenario.getNextBoxIdentifier(id)) != CIdentifier::undefined())
 		{
 			if (m_Scenario.getBoxDetails(id)->hasAttribute(OV_ClassId_Selected)) { m_SelectedObjects.insert(id); }
 		}
-		while ((id = m_Scenario.getNextLinkIdentifier(id)) != OV_UndefinedIdentifier)
+		while ((id = m_Scenario.getNextLinkIdentifier(id)) != CIdentifier::undefined())
 		{
 			if (m_Scenario.getLinkDetails(id)->hasAttribute(OV_ClassId_Selected)) { m_SelectedObjects.insert(id); }
 		}
@@ -1637,12 +1637,12 @@ void CInterfacedScenario::snapshotCB(const bool manageModifiedStatusFlag)
 	{
 		CIdentifier id;
 
-		while ((id = m_Scenario.getNextBoxIdentifier(id)) != OV_UndefinedIdentifier)
+		while ((id = m_Scenario.getNextBoxIdentifier(id)) != CIdentifier::undefined())
 		{
 			if (m_SelectedObjects.count(id)) { m_Scenario.getBoxDetails(id)->addAttribute(OV_ClassId_Selected, ""); }
 			else { m_Scenario.getBoxDetails(id)->removeAttribute(OV_ClassId_Selected); }
 		}
-		while ((id = m_Scenario.getNextLinkIdentifier(id)) != OV_UndefinedIdentifier)
+		while ((id = m_Scenario.getNextLinkIdentifier(id)) != CIdentifier::undefined())
 		{
 			if (m_SelectedObjects.count(id)) { m_Scenario.getLinkDetails(id)->addAttribute(OV_ClassId_Selected, ""); }
 			else { m_Scenario.getLinkDetails(id)->removeAttribute(OV_ClassId_Selected); }
@@ -1659,7 +1659,7 @@ void CInterfacedScenario::snapshotCB(const bool manageModifiedStatusFlag)
 void CInterfacedScenario::addCommentCB(int x, int y)
 {
 	CIdentifier id;
-	m_Scenario.addComment(id, OV_UndefinedIdentifier);
+	m_Scenario.addComment(id, CIdentifier::undefined());
 	if (x == -1 || y == -1)
 	{
 		GtkWidget* scrolledWindow  = gtk_widget_get_parent(gtk_widget_get_parent(GTK_WIDGET(m_scenarioDrawingArea)));
@@ -1724,7 +1724,7 @@ void CInterfacedScenario::addScenarioSettingCB()
 {
 	const std::string name = "Setting " + std::to_string(m_Scenario.getSettingCount() + 1);
 	m_Scenario.addSetting(name.c_str(), OVTK_TypeId_Integer, "0", size_t(-1), false,
-						  m_Scenario.getUnusedSettingIdentifier(OV_UndefinedIdentifier));
+						  m_Scenario.getUnusedSettingIdentifier(CIdentifier::undefined()));
 
 	this->redrawConfigureScenarioSettingsDialog();
 }
@@ -1733,7 +1733,7 @@ void CInterfacedScenario::addScenarioInputCB()
 {
 	const std::string name = "Input " + std::to_string(m_Scenario.getInputCount() + 1);
 	// scenario I/O are identified by name/type combination value, at worst uniq in the scope of the inputs of the box.
-	m_Scenario.addInput(name.c_str(), OVTK_TypeId_StreamedMatrix, m_Scenario.getUnusedInputIdentifier(OV_UndefinedIdentifier));
+	m_Scenario.addInput(name.c_str(), OVTK_TypeId_StreamedMatrix, m_Scenario.getUnusedInputIdentifier(CIdentifier::undefined()));
 
 	CConnectorEditor editor(m_kernelCtx, m_Scenario, Box_Input, m_Scenario.getInputCount() - 1, "Add Input", m_guiFilename.c_str());
 	if (editor.run()) { this->snapshotCB(); }
@@ -1754,7 +1754,7 @@ void CInterfacedScenario::addScenarioOutputCB()
 {
 	const std::string name = "Output " + std::to_string(m_Scenario.getOutputCount() + 1);
 	// scenario I/O are identified by name/type combination value, at worst uniq in the scope of the outputs of the box.
-	m_Scenario.addOutput(name.c_str(), OVTK_TypeId_StreamedMatrix, m_Scenario.getUnusedOutputIdentifier(OV_UndefinedIdentifier));
+	m_Scenario.addOutput(name.c_str(), OVTK_TypeId_StreamedMatrix, m_Scenario.getUnusedOutputIdentifier(CIdentifier::undefined()));
 
 	CConnectorEditor editor(m_kernelCtx, m_Scenario, Box_Output, m_Scenario.getOutputCount() - 1, "Add Output", m_guiFilename.c_str());
 	if (editor.run()) { this->snapshotCB(); }
@@ -1827,7 +1827,7 @@ void CInterfacedScenario::scenarioDrawingAreaExposeCB(GdkEventExpose* /*event*/)
 		const gint marginY = gint(round(32.0 * m_currentScale));
 
 		CIdentifier id;
-		while ((id = m_Scenario.getNextBoxIdentifier(id)) != OV_UndefinedIdentifier)
+		while ((id = m_Scenario.getNextBoxIdentifier(id)) != CIdentifier::undefined())
 		{
 			//CBoxProxy proxy(m_kernelCtx, *m_scenario.getBoxDetails(l_oBoxID));
 			CBoxProxy proxy(m_kernelCtx, m_Scenario, id);
@@ -1837,7 +1837,7 @@ void CInterfacedScenario::scenarioDrawingAreaExposeCB(GdkEventExpose* /*event*/)
 			maxY = std::max(maxY, gint((proxy.getYCenter() + 1.0 * proxy.getHeight(GTK_WIDGET(m_scenarioDrawingArea)) / 2) * m_currentScale));
 		}
 
-		while ((id = m_Scenario.getNextCommentIdentifier(id)) != OV_UndefinedIdentifier)
+		while ((id = m_Scenario.getNextCommentIdentifier(id)) != CIdentifier::undefined())
 		{
 			CCommentProxy proxy(m_kernelCtx, *m_Scenario.getCommentDetails(id));
 			minX = std::min(minX, gint((proxy.getXCenter() - 1.0 * proxy.getWidth(GTK_WIDGET(m_scenarioDrawingArea)) / 2) * m_currentScale));
@@ -1913,7 +1913,7 @@ void CInterfacedScenario::scenarioDrawingAreaExposeCB(GdkEventExpose* /*event*/)
 
 	size_t count = 0;
 	CIdentifier id;
-	while ((id = m_Scenario.getNextCommentIdentifier(id)) != OV_UndefinedIdentifier)
+	while ((id = m_Scenario.getNextCommentIdentifier(id)) != CIdentifier::undefined())
 	{
 		redraw(*m_Scenario.getCommentDetails(id));
 		count++;
@@ -1921,7 +1921,7 @@ void CInterfacedScenario::scenarioDrawingAreaExposeCB(GdkEventExpose* /*event*/)
 	m_nComment = count;
 
 	count = 0;
-	while ((id = m_Scenario.getNextBoxIdentifier(id)) != OV_UndefinedIdentifier)
+	while ((id = m_Scenario.getNextBoxIdentifier(id)) != CIdentifier::undefined())
 	{
 		redraw(*m_Scenario.getBoxDetails(id));
 		count++;
@@ -1929,7 +1929,7 @@ void CInterfacedScenario::scenarioDrawingAreaExposeCB(GdkEventExpose* /*event*/)
 	m_nBox = count;
 
 	count = 0;
-	while ((id = m_Scenario.getNextLinkIdentifier(id)) != OV_UndefinedIdentifier)
+	while ((id = m_Scenario.getNextLinkIdentifier(id)) != CIdentifier::undefined())
 	{
 		redraw(*m_Scenario.getLinkDetails(id));
 		count++;
@@ -1988,7 +1988,7 @@ void CInterfacedScenario::scenarioDrawingAreaDragDataReceivedCB(GdkDragContext* 
 		IBox* box                    = nullptr;
 		const IPluginObjectDesc* pod = nullptr;
 
-		if (boxAlgorithmClassID == OV_UndefinedIdentifier)
+		if (boxAlgorithmClassID == CIdentifier::undefined())
 		{
 			m_currentMouseX = x;
 			m_currentMouseY = y;
@@ -2004,14 +2004,14 @@ void CInterfacedScenario::scenarioDrawingAreaDragDataReceivedCB(GdkDragContext* 
 			pod = m_kernelCtx.getMetaboxManager().getMetaboxObjectDesc(id);
 
 			// insert a box into the scenario, initialize it from the proxy-descriptor from the metabox loader
-			m_Scenario.addBox(boxID, *static_cast<const IBoxAlgorithmDesc*>(pod), OV_UndefinedIdentifier);
+			m_Scenario.addBox(boxID, *static_cast<const IBoxAlgorithmDesc*>(pod), CIdentifier::undefined());
 
 			box = m_Scenario.getBoxDetails(boxID);
 			box->addAttribute(OVP_AttributeId_Metabox_ID, id.toString());
 		}
 		else
 		{
-			m_Scenario.addBox(boxID, boxAlgorithmClassID, OV_UndefinedIdentifier);
+			m_Scenario.addBox(boxID, boxAlgorithmClassID, CIdentifier::undefined());
 
 			box                  = m_Scenario.getBoxDetails(boxID);
 			const CIdentifier id = box->getAlgorithmClassIdentifier();
@@ -2081,7 +2081,7 @@ void CInterfacedScenario::scenarioDrawingAreaMotionNotifyCB(GtkWidget* /*widget*
 	gtk_widget_set_name(tooltip, "gtk-tooltips");
 	const size_t objIdx    = pickInterfacedObject(int(event->x), int(event->y));
 	CInterfacedObject& obj = m_interfacedObjects[objIdx];
-	if (obj.m_ID != OV_UndefinedIdentifier && obj.m_ConnectorType != Box_Link && obj.m_ConnectorType != Box_None)
+	if (obj.m_ID != CIdentifier::undefined() && obj.m_ConnectorType != Box_Link && obj.m_ConnectorType != Box_None)
 	{
 		IBox* boxDetails = m_Scenario.getBoxDetails(obj.m_ID);
 		if (boxDetails)
@@ -2253,7 +2253,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(GtkWidget* widget, 
 	{
 		if (event->type == GDK_BUTTON_PRESS)	// Simple click
 		{
-			if (m_currentObject.m_ID == OV_UndefinedIdentifier)
+			if (m_currentObject.m_ID == CIdentifier::undefined())
 			{
 				if (m_shiftPressed) { m_currentMode = Mode_MoveScenario; }
 				else
@@ -2281,7 +2281,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(GtkWidget* widget, 
 		}
 		else if (event->type == GDK_2BUTTON_PRESS)	// Double click
 		{
-			if (m_currentObject.m_ID != OV_UndefinedIdentifier)
+			if (m_currentObject.m_ID != CIdentifier::undefined())
 			{
 				m_currentMode    = Mode_EditSettings;
 				m_shiftPressed   = false;
@@ -2343,8 +2343,8 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(GtkWidget* widget, 
 			{
 				addNewImageMenuItemWithCB(menu, GTK_STOCK_COPY, "copy", context_menu_cb, nullptr, EContextMenu::SelectionCopy, unused);
 			}
-			if ((m_Application.m_ClipboardScenario->getNextBoxIdentifier(OV_UndefinedIdentifier) != OV_UndefinedIdentifier)
-				|| (m_Application.m_ClipboardScenario->getNextCommentIdentifier(OV_UndefinedIdentifier) != OV_UndefinedIdentifier))
+			if ((m_Application.m_ClipboardScenario->getNextBoxIdentifier(CIdentifier::undefined()) != CIdentifier::undefined())
+				|| (m_Application.m_ClipboardScenario->getNextCommentIdentifier(CIdentifier::undefined()) != CIdentifier::undefined()))
 			{
 				addNewImageMenuItemWithCB(menu, GTK_STOCK_PASTE, "paste", context_menu_cb, nullptr, EContextMenu::SelectionPaste, unused);
 			}
@@ -2353,7 +2353,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonPressedCB(GtkWidget* widget, 
 				addNewImageMenuItemWithCB(menu, GTK_STOCK_DELETE, "delete", context_menu_cb, nullptr, EContextMenu::SelectionDelete, unused);
 			}
 
-			if (m_currentObject.m_ID != OV_UndefinedIdentifier && m_Scenario.isBox(m_currentObject.m_ID))
+			if (m_currentObject.m_ID != CIdentifier::undefined() && m_Scenario.isBox(m_currentObject.m_ID))
 			{
 				IBox* box = m_Scenario.getBoxDetails(m_currentObject.m_ID);
 				if (box)
@@ -2698,7 +2698,7 @@ void CInterfacedScenario::scenarioDrawingAreaButtonReleasedCB(GtkWidget* /*widge
 						if (!hasDeprecatedInput && !hasDeprecatedOutput)
 						{
 							CIdentifier id;
-							m_Scenario.connect(id, srcObject.m_ID, srcObject.m_ConnectorIdx, dstObject.m_ID, dstObject.m_ConnectorIdx, OV_UndefinedIdentifier);
+							m_Scenario.connect(id, srcObject.m_ID, srcObject.m_ConnectorIdx, dstObject.m_ID, dstObject.m_ConnectorIdx, CIdentifier::undefined());
 							this->snapshotCB();
 						}
 						else { m_kernelCtx.getLogManager() << LogLevel_Warning << "Cannot connect to/from deprecated I/O\n"; }
@@ -2764,9 +2764,9 @@ void CInterfacedScenario::scenarioDrawingAreaKeyPressEventCB(GtkWidget* /*widget
 	if (m_aPressed && m_controlPressed && !m_shiftPressed && !m_altPressed)
 	{
 		CIdentifier id;
-		while ((id = m_Scenario.getNextBoxIdentifier(id)) != OV_UndefinedIdentifier) { m_SelectedObjects.insert(id); }
-		while ((id = m_Scenario.getNextLinkIdentifier(id)) != OV_UndefinedIdentifier) { m_SelectedObjects.insert(id); }
-		while ((id = m_Scenario.getNextCommentIdentifier(id)) != OV_UndefinedIdentifier) { m_SelectedObjects.insert(id); }
+		while ((id = m_Scenario.getNextBoxIdentifier(id)) != CIdentifier::undefined()) { m_SelectedObjects.insert(id); }
+		while ((id = m_Scenario.getNextLinkIdentifier(id)) != CIdentifier::undefined()) { m_SelectedObjects.insert(id); }
+		while ((id = m_Scenario.getNextCommentIdentifier(id)) != CIdentifier::undefined()) { m_SelectedObjects.insert(id); }
 		this->redraw();
 	}
 
@@ -2789,7 +2789,7 @@ void CInterfacedScenario::scenarioDrawingAreaKeyPressEventCB(GtkWidget* /*widget
 	if (event->keyval == GDK_F12 && m_shiftPressed)
 	{
 		CIdentifier id;
-		while ((id = m_Scenario.getNextBoxIdentifier(id)) != OV_UndefinedIdentifier)
+		while ((id = m_Scenario.getNextBoxIdentifier(id)) != CIdentifier::undefined())
 		{
 			IBox* box               = m_Scenario.getBoxDetails(id);
 			CIdentifier algorithmID = box->getAlgorithmClassIdentifier();
@@ -2965,7 +2965,7 @@ void CInterfacedScenario::pasteSelection()
 	// std::cout << "Mouse position : " << m_currentMouseX << "/" << m_currentMouseY << std::endl;
 
 	// Pastes boxes from clipboard
-	while ((id = m_Application.m_ClipboardScenario->getNextBoxIdentifier(id)) != OV_UndefinedIdentifier)
+	while ((id = m_Application.m_ClipboardScenario->getNextBoxIdentifier(id)) != CIdentifier::undefined())
 	{
 		CIdentifier newID;
 		IBox* box = m_Application.m_ClipboardScenario->getBoxDetails(id);
@@ -2994,7 +2994,7 @@ void CInterfacedScenario::pasteSelection()
 	}
 
 	// Pastes comments from clipboard
-	while ((id = m_Application.m_ClipboardScenario->getNextCommentIdentifier(id)) != OV_UndefinedIdentifier)
+	while ((id = m_Application.m_ClipboardScenario->getNextCommentIdentifier(id)) != CIdentifier::undefined())
 	{
 		CIdentifier newID;
 		IComment* comment = m_Application.m_ClipboardScenario->getCommentDetails(id);
@@ -3011,7 +3011,7 @@ void CInterfacedScenario::pasteSelection()
 	}
 
 	// Pastes links from clipboard
-	while ((id = m_Application.m_ClipboardScenario->getNextLinkIdentifier(id)) != OV_UndefinedIdentifier)
+	while ((id = m_Application.m_ClipboardScenario->getNextLinkIdentifier(id)) != CIdentifier::undefined())
 	{
 		CIdentifier newID;
 		ILink* link = m_Application.m_ClipboardScenario->getLinkDetails(id);
@@ -3022,8 +3022,8 @@ void CInterfacedScenario::pasteSelection()
 	// Makes pasted stuff the default selection
 	// Moves boxes under cursor
 	// Moves comments under cursor
-	if (m_Application.m_ClipboardScenario->getNextBoxIdentifier(OV_UndefinedIdentifier) != OV_UndefinedIdentifier
-		|| m_Application.m_ClipboardScenario->getNextCommentIdentifier(OV_UndefinedIdentifier) != OV_UndefinedIdentifier)
+	if (m_Application.m_ClipboardScenario->getNextBoxIdentifier(CIdentifier::undefined()) != CIdentifier::undefined()
+		|| m_Application.m_ClipboardScenario->getNextCommentIdentifier(CIdentifier::undefined()) != CIdentifier::undefined())
 	{
 		m_SelectedObjects.clear();
 		for (auto& it : mapping)
@@ -3150,7 +3150,7 @@ void CInterfacedScenario::contextMenuBoxRenameAllCB()
 		CString newName = "";
 		for (auto it = selectedBoxes.begin(); it != selectedBoxes.end() && dialogOk; ++it)
 		{
-			if (it->second != OV_UndefinedIdentifier)
+			if (it->second != CIdentifier::undefined())
 			{
 				if (m_kernelCtx.getPluginManager().canCreatePluginObject(it->second) || it->second == OVP_ClassId_BoxAlgorithm_Metabox)
 				{
@@ -3336,8 +3336,8 @@ void CInterfacedScenario::contextMenuBoxAddSettingCB(IBox& box)
 	m_kernelCtx.getLogManager() << LogLevel_Debug << "contextMenuBoxAddSettingCB\n";
 	// Store setting count in case the custom "onSettingAdded" of the box adds more than one setting
 	const size_t nOldSettings = box.getSettingCount();
-	box.addSetting("New setting", OV_UndefinedIdentifier, "", size_t(-1), false,
-				   m_Scenario.getUnusedSettingIdentifier(OV_UndefinedIdentifier));
+	box.addSetting("New setting", CIdentifier::undefined(), "", size_t(-1), false,
+				   m_Scenario.getUnusedSettingIdentifier(CIdentifier::undefined()));
 	const size_t nNewSettings = box.getSettingCount();
 	// Check that at least one setting was added
 	if (nNewSettings > nOldSettings && box.hasAttribute(OV_AttributeId_Box_FlagCanModifySetting))
@@ -3451,7 +3451,7 @@ bool CInterfacedScenario::browseBoxDocumentation(const CIdentifier& boxID) const
 	const CIdentifier algorithmClassID = m_Scenario.getBoxDetails(boxID)->getAlgorithmClassIdentifier();
 
 	// Do not show documentation for non-metaboxes or boxes that can not be created
-	if (!(boxID != OV_UndefinedIdentifier && (m_kernelCtx.getPluginManager().canCreatePluginObject(algorithmClassID) ||
+	if (!(boxID != CIdentifier::undefined() && (m_kernelCtx.getPluginManager().canCreatePluginObject(algorithmClassID) ||
 											  m_Scenario.getBoxDetails(boxID)->getAlgorithmClassIdentifier() == OVP_ClassId_BoxAlgorithm_Metabox)))
 	{
 		m_kernelCtx.getLogManager() << LogLevel_Warning << "Box with id " << boxID << " can not create a pluging object\n";
@@ -3580,7 +3580,7 @@ void CInterfacedScenario::createPlayerVisualization(IVisualizationTree* tree)
 		//first, find the concerned boxes
 		IScenario& runtimeScenario = m_Player->getRuntimeScenarioManager().getScenario(m_Player->getRuntimeScenarioIdentifier());
 		CIdentifier id;
-		while ((id = runtimeScenario.getNextBoxIdentifier(id)) != OV_UndefinedIdentifier)
+		while ((id = runtimeScenario.getNextBoxIdentifier(id)) != CIdentifier::undefined())
 		{
 			IBox* box = runtimeScenario.getBoxDetails(id);
 			if (box->hasModifiableSettings())//if the box has modUI
@@ -3634,7 +3634,7 @@ void CInterfacedScenario::stopAndReleasePlayer()
 
 	if (!m_kernelCtx.getPlayerManager().releasePlayer(m_PlayerID)) { m_kernelCtx.getLogManager() << LogLevel_Error << "Failed to release the player" << "\n"; }
 
-	m_PlayerID = OV_UndefinedIdentifier;
+	m_PlayerID = CIdentifier::undefined();
 	m_Player   = nullptr;
 
 	// destroy player windows

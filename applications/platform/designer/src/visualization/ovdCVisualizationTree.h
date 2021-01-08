@@ -73,7 +73,7 @@ private:
 	bool loadVisualizationWidget(VisualizationToolkit::IVisualizationWidget* widget, GtkTreeIter* parentIter);
 
 	std::map<CIdentifier, VisualizationToolkit::IVisualizationWidget*> m_widgets;
-	CIdentifier m_scenarioID = OV_UndefinedIdentifier;
+	CIdentifier m_scenarioID = CIdentifier::undefined();
 	const Kernel::IKernelContext& m_kernelCtx;
 	const Kernel::IScenario* m_scenario = nullptr;
 	GtkTreeStore* m_treeStore           = nullptr;

@@ -10,8 +10,8 @@ using namespace std;
 
 static void reset_scenario_connector_identifier(GtkWidget* /*widget*/, CConnectorEditor* self)
 {
-	const CIdentifier newID = self->m_Box.getUnusedInputIdentifier(OV_UndefinedIdentifier);
-	if (self->m_IDEntry && newID != OV_UndefinedIdentifier) { gtk_entry_set_text(self->m_IDEntry, newID.str().c_str()); }
+	const CIdentifier newID = self->m_Box.getUnusedInputIdentifier(CIdentifier::undefined());
+	if (self->m_IDEntry && newID != CIdentifier::undefined()) { gtk_entry_set_text(self->m_IDEntry, newID.str().c_str()); }
 }
 
 bool CConnectorEditor::run()
@@ -62,7 +62,7 @@ bool CConnectorEditor::run()
 	gtk_list_store_clear(GTK_LIST_STORE(gtk_combo_box_get_model(typeComboBox)));
 	gtk_window_set_title(GTK_WINDOW(dialog), m_title.c_str());
 
-	if (m_Box.getAlgorithmClassIdentifier() == OV_UndefinedIdentifier)
+	if (m_Box.getAlgorithmClassIdentifier() == CIdentifier::undefined())
 	{
 		gtk_widget_show(GTK_WIDGET(gtk_builder_get_object(builder, "connector_editor-connector_identifier_label")));
 		gtk_widget_show(GTK_WIDGET(m_IDEntry));

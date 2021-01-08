@@ -63,7 +63,7 @@ public:
 
 	bool onInputTypeChanged(OpenViBE::Kernel::IBox& box, const size_t index) override
 	{
-		OpenViBE::CIdentifier typeID = OV_UndefinedIdentifier;
+		OpenViBE::CIdentifier typeID = OpenViBE::CIdentifier::undefined();
 		box.getInputType(index, typeID);
 		if (!this->getTypeManager().isDerivedFromStream(typeID, OV_TypeId_TimeFrequency)) { box.setInputType(index, OV_TypeId_TimeFrequency); }
 		box.setInputType(1, OV_TypeId_Stimulations);
