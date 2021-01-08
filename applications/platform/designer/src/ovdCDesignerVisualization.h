@@ -149,7 +149,7 @@ private:
 
 	//active items
 	CString m_activeVisualizationWindowName, m_activeVisualizationPanelName;
-	CIdentifier m_activeVisualizationBoxID = OV_UndefinedIdentifier;
+	CIdentifier m_activeVisualizationBoxID = CIdentifier::undefined();
 
 	//preview window visibility flag
 	bool m_previewWindowVisible = false;

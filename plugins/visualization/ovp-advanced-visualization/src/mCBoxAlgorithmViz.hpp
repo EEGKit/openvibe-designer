@@ -144,7 +144,7 @@ protected:
 
 public:
 
-	OpenViBE::CIdentifier m_ClassID = OV_UndefinedIdentifier;
+	OpenViBE::CIdentifier m_ClassID = OpenViBE::CIdentifier::undefined();
 	std::vector<int> m_Parameters;
 	uint64_t m_lastProcessTime = 0;
 
@@ -174,7 +174,7 @@ public:
 	std::vector<color_t> m_Colors;
 	color_t m_Color;
 
-	OpenViBE::CIdentifier m_TypeID = OV_UndefinedIdentifier;
+	OpenViBE::CIdentifier m_TypeID = OpenViBE::CIdentifier::undefined();
 	uint64_t m_Time1               = 0;
 	uint64_t m_Time2               = 0;
 
@@ -271,7 +271,7 @@ public:
 		const bool isSignal          = (std::find(m_Parameters.begin(), m_Parameters.end(), I_Signal) != m_Parameters.end());
 		const bool isSpectrum        = (std::find(m_Parameters.begin(), m_Parameters.end(), I_Spectrum) != m_Parameters.end());
 		const bool isCovariance      = (std::find(m_Parameters.begin(), m_Parameters.end(), I_Covariance) != m_Parameters.end());
-		OpenViBE::CIdentifier typeID = OV_UndefinedIdentifier;
+		OpenViBE::CIdentifier typeID = OpenViBE::CIdentifier::undefined();
 
 		for (size_t i = 0; i < box.getInputCount(); ++i)
 		{
@@ -286,7 +286,7 @@ public:
 		return true;
 	}
 
-	_IsDerivedFromClass_Final_(OpenViBE::Toolkit::TBoxListener<OpenViBE::Plugins::IBoxListener>, OV_UndefinedIdentifier)
+	_IsDerivedFromClass_Final_(OpenViBE::Toolkit::TBoxListener<OpenViBE::Plugins::IBoxListener>, OpenViBE::CIdentifier::undefined())
 
 	std::vector<int> m_Parameters;
 };
@@ -299,8 +299,8 @@ public:
 	OpenViBE::CString m_CategoryName;
 	OpenViBE::CString m_ShortDesc;
 	OpenViBE::CString m_DetailedDesc;
-	OpenViBE::CIdentifier m_DescClassID = OV_UndefinedIdentifier;
-	OpenViBE::CIdentifier m_ClassID     = OV_UndefinedIdentifier;
+	OpenViBE::CIdentifier m_DescClassID = OpenViBE::CIdentifier::undefined();
+	OpenViBE::CIdentifier m_ClassID     = OpenViBE::CIdentifier::undefined();
 	OpenViBE::CString m_AddedSoftwareVersion;
 	OpenViBE::CString m_UpdatedSoftwareVersion;
 	std::vector<int> m_Parameters;

@@ -177,7 +177,7 @@ public:
 
 	/**
 	 * \brief Iterates through IVisualizationWidget instances managed by this tree
-	 * Upon first call, this method should be passed an identifier initialized with OV_UndefinedIdentifier.
+	 * Upon first call, this method should be passed an identifier initialized with CIdentifier::undefined().
 	 * It is modified at each subsequent call until all widgets have been returned (in which
 	 * case the identifier is reset to OV_Undefined)
 	 * \param id [in/out] identifier of current visualization widget when calling the method and of next widget upon return
@@ -225,7 +225,7 @@ public:
 	 * \param id identifier of the widget to be created
 	 * \param name name of the widget
 	 * \param type type of the widget
-	 * \param parentID parent widget identifier (OV_UndefinedIdentifier for top-level widgets)
+	 * \param parentID parent widget identifier (CIdentifier::undefined() for top-level widgets)
 	 * \param parentIdx index where this widget is to be parented (irrelevant for top-level widgets)
 	 * \param boxID identifier of associated IBox (for widgets of type EVisualizationWidget::Box only)
 	 * \param nChild number of children of this widget (none for a visualization box, 1 for a visualization panel, 2 for split widgets, variable number for windows)

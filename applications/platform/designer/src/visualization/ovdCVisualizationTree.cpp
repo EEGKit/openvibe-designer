@@ -35,13 +35,13 @@ bool getNextID(const map<CIdentifier, T*>& ids, CIdentifier& id, const TTest& te
 {
 	typename map<CIdentifier, T*>::const_iterator it;
 
-	if (id == OV_UndefinedIdentifier) { it = ids.begin(); }
+	if (id == CIdentifier::undefined()) { it = ids.begin(); }
 	else
 	{
 		it = ids.find(id);
 		if (it == ids.end())
 		{
-			id = OV_UndefinedIdentifier;
+			id = CIdentifier::undefined();
 			return false;
 		}
 		++it;
@@ -117,7 +117,7 @@ bool CVisualizationTree::addVisualizationWidget(CIdentifier& id, const CString& 
 	}
 
 	// assign a parent to it
-	if (parentID != OV_UndefinedIdentifier)
+	if (parentID != CIdentifier::undefined())
 	{
 		m_kernelCtx.getLogManager() << LogLevel_Debug << "Parenting visualization widget\n";
 		IVisualizationWidget* parentWidget = getVisualizationWidget(parentID);
@@ -129,7 +129,7 @@ bool CVisualizationTree::addVisualizationWidget(CIdentifier& id, const CString& 
 				//extend number of children of parent window if necessary
 				if (parentWidget->getNbChildren() <= parentIdx)
 				{
-					for (size_t i = parentWidget->getNbChildren(); i <= parentIdx; ++i) { parentWidget->addChild(OV_UndefinedIdentifier); }
+					for (size_t i = parentWidget->getNbChildren(); i <= parentIdx; ++i) { parentWidget->addChild(CIdentifier::undefined()); }
 				}
 			}
 
@@ -161,7 +161,7 @@ bool CVisualizationTree::getVisualizationWidgetIndex(const CIdentifier& id, size
 	}
 
 	const CIdentifier& parentIdentifier = visualizationWidget->getParentIdentifier();
-	if (parentIdentifier == OV_UndefinedIdentifier)
+	if (parentIdentifier == CIdentifier::undefined())
 	{
 		m_kernelCtx.getLogManager() << LogLevel_Error << "Failed to get parent identifier widget\n";
 		return false;
@@ -256,10 +256,10 @@ bool CVisualizationTree::unparentVisualizationWidget(const CIdentifier& id, size
 
 	//get its parent identifier
 	const CIdentifier& parentID = widget->getParentIdentifier();
-	if (parentID == OV_UndefinedIdentifier) { return true; }
+	if (parentID == CIdentifier::undefined()) { return true; }
 
 	//unparent widget
-	widget->setParentIdentifier(OV_UndefinedIdentifier);
+	widget->setParentIdentifier(CIdentifier::undefined());
 
 	//retrieve parent and remove widget from its children list
 	IVisualizationWidget* parentWidget = getVisualizationWidget(parentID);
@@ -274,7 +274,7 @@ bool CVisualizationTree::unparentVisualizationWidget(const CIdentifier& id, size
 
 bool CVisualizationTree::parentVisualizationWidget(const CIdentifier& id, const CIdentifier& parentID, const size_t index)
 {
-	if (parentID == OV_UndefinedIdentifier) { return false; }
+	if (parentID == CIdentifier::undefined()) { return false; }
 
 	//retrieve widget to be parented
 	IVisualizationWidget* widget = getVisualizationWidget(id);
@@ -298,7 +298,7 @@ bool CVisualizationTree::parentVisualizationWidget(const CIdentifier& id, const 
 CIdentifier CVisualizationTree::getUnusedIdentifier(const CIdentifier& suggestedID) const
 {
 	uint64_t id = (uint64_t(rand()) << 32) + uint64_t(rand());
-	if (suggestedID != OV_UndefinedIdentifier) { id = suggestedID.toUInteger() - 1; }
+	if (suggestedID != CIdentifier::undefined()) { id = suggestedID.id() - 1; }
 
 	CIdentifier result;
 	map<CIdentifier, IVisualizationWidget*>::const_iterator i;
@@ -307,7 +307,7 @@ CIdentifier CVisualizationTree::getUnusedIdentifier(const CIdentifier& suggested
 		id++;
 		result = CIdentifier(id);
 		i      = m_widgets.find(result);
-	} while (i != m_widgets.end() || result == OV_UndefinedIdentifier);
+	} while (i != m_widgets.end() || result == CIdentifier::undefined());
 	return result;
 }
 
@@ -332,19 +332,19 @@ bool CVisualizationTree::reloadTree()
 					   EVisualizationTreeColumn::StringName, "Unaffected display plugins",
 					   EVisualizationTreeColumn::StringStockIcon, m_treeViewCB->getTreeWidgetIcon(EVisualizationTreeNode::Unaffected),
 					   EVisualizationTreeColumn::ULongNodeType, static_cast<unsigned long>(EVisualizationTreeNode::Unaffected),
-					   EVisualizationTreeColumn::StringIdentifier, OV_UndefinedIdentifier.str().c_str(), -1);
+					   EVisualizationTreeColumn::StringIdentifier, CIdentifier::undefined().str().c_str(), -1);
 
 	//reload unaffected visualization boxes
-	CIdentifier id = OV_UndefinedIdentifier;
+	CIdentifier id = CIdentifier::undefined();
 	while (getNextVisualizationWidgetIdentifier(id, EVisualizationWidget::Box))
 	{
 		IVisualizationWidget* widget = getVisualizationWidget(id);
 		//load widget if it doesn't have a parent (== is unaffected)
-		if (widget->getParentIdentifier() == OV_UndefinedIdentifier) { loadVisualizationWidget(widget, &iter); }
+		if (widget->getParentIdentifier() == CIdentifier::undefined()) { loadVisualizationWidget(widget, &iter); }
 	}
 
 	//reload visualization windows
-	id = OV_UndefinedIdentifier;
+	id = CIdentifier::undefined();
 	while (getNextVisualizationWidgetIdentifier(id, EVisualizationWidget::Window)) { loadVisualizationWidget(getVisualizationWidget(id), nullptr); }
 
 	return true;
@@ -618,9 +618,9 @@ bool CVisualizationTree::dragDataReceivedOutsideWidgetCB(const CIdentifier& srcW
 	addVisualizationWidget(panedID, CString(panedType == EVisualizationWidget::VerticalSplit ? "Vertical split" : "Horizontal split"), panedType,
 						   dstParentID,				//parent paned to dest widget parent
 						   dstIdx,					//put it at the index occupied by dest widget
-						   OV_UndefinedIdentifier,	//no box algorithm for a paned
+						   CIdentifier::undefined(),	//no box algorithm for a paned
 						   2,						//2 children
-						   OV_UndefinedIdentifier);	//no prefered visualization identifier
+						   CIdentifier::undefined());	//no prefered visualization identifier
 	IVisualizationWidget* panedWidget = getVisualizationWidget(panedID);
 
 	//add attributes
@@ -664,7 +664,7 @@ bool CVisualizationTree::dragDataReceivedInWidgetCB(const CIdentifier& srcWidget
 	size_t dstIdx;
 
 	//if source widget was unaffected
-	if (srcParentID == OV_UndefinedIdentifier)
+	if (srcParentID == CIdentifier::undefined())
 	{
 		//if dest widget was dummy, destroy it
 		if (dstVisualizationWidget->getType() == EVisualizationWidget::Undefined)
@@ -747,7 +747,7 @@ bool CVisualizationTree::loadVisualizationWidget(IVisualizationWidget* widget, G
 					   EVisualizationTreeColumn::StringName, widget->getName().toASCIIString(),
 					   EVisualizationTreeColumn::StringStockIcon, stockIconString.toASCIIString(),
 					   EVisualizationTreeColumn::ULongNodeType, static_cast<unsigned long>(childType),
-					   EVisualizationTreeColumn::StringIdentifier, widget->getIdentifier().toString().toASCIIString(),
+					   EVisualizationTreeColumn::StringIdentifier, widget->getIdentifier().str().c_str(),
 					   EVisualizationTreeColumn::PointerWidget, tmp, -1);
 
 	//load visualization widget hierarchy
@@ -757,9 +757,9 @@ bool CVisualizationTree::loadVisualizationWidget(IVisualizationWidget* widget, G
 	{
 		CIdentifier id;
 		widget->getChildIdentifier(0, id);
-		if (id == OV_UndefinedIdentifier)
+		if (id == CIdentifier::undefined())
 		{
-			addVisualizationWidget(id, "Empty", EVisualizationWidget::Undefined, widget->getIdentifier(), 0, OV_UndefinedIdentifier, 0, OV_UndefinedIdentifier);
+			addVisualizationWidget(id, "Empty", EVisualizationWidget::Undefined, widget->getIdentifier(), 0, CIdentifier::undefined(), 0, CIdentifier::undefined());
 		}
 	}
 
@@ -838,7 +838,7 @@ CString CVisualizationTree::serialize() const
 	while (this->getNextVisualizationWidgetIdentifier(widgetID))
 	{
 		IVisualizationWidget* widget = this->getVisualizationWidget(widgetID);
-		if (widget->getType() == EVisualizationWidget::Window || widget->getParentIdentifier() == OV_UndefinedIdentifier)
+		if (widget->getType() == EVisualizationWidget::Window || widget->getParentIdentifier() == CIdentifier::undefined())
 		{
 			widgetsToExport.push_back(widgetID);
 		}
@@ -859,11 +859,11 @@ CString CVisualizationTree::serialize() const
 bool CVisualizationTree::deserialize(const CString& tree)
 {
 	// Empty this visualization tree
-	auto widgetID = OV_UndefinedIdentifier;
-	while (this->getNextVisualizationWidgetIdentifier(widgetID) && widgetID != OV_UndefinedIdentifier)
+	auto widgetID = CIdentifier::undefined();
+	while (this->getNextVisualizationWidgetIdentifier(widgetID) && widgetID != CIdentifier::undefined())
 	{
 		this->destroyHierarchy(widgetID, true);
-		widgetID = OV_UndefinedIdentifier;
+		widgetID = CIdentifier::undefined();
 	}
 
 

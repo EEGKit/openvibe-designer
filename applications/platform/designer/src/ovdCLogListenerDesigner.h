@@ -111,7 +111,7 @@ public:
 	void displayLog(CLogObject* log) const;
 	void appendLog(CLogObject* log) const;
 
-	_IsDerivedFromClass_Final_(Kernel::ILogListener, OV_UndefinedIdentifier)
+	_IsDerivedFromClass_Final_(Kernel::ILogListener, CIdentifier::undefined())
 
 	CString m_SearchTerm;
 	GtkTextTag* m_IdTag = nullptr;

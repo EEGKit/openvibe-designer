@@ -86,7 +86,7 @@ bool CScenarioStateStack::restoreState(const IMemoryBuffer& state)
 	if (state.getSize() == 0) { return false; }
 
 	const CIdentifier importerID = m_kernelCtx.getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_XMLScenarioImporter);
-	if (importerID == OV_UndefinedIdentifier) { return false; }
+	if (importerID == CIdentifier::undefined()) { return false; }
 
 	IAlgorithmProxy* importer = &m_kernelCtx.getAlgorithmManager().getAlgorithm(importerID);
 	if (!importer) { return false; }
@@ -116,8 +116,8 @@ bool CScenarioStateStack::restoreState(const IMemoryBuffer& state)
 
 	// Find the VisualizationTree metadata
 	IMetadata* treeMetadata = nullptr;
-	CIdentifier metadataID  = OV_UndefinedIdentifier;
-	while ((metadataID = m_scenario.getNextMetadataIdentifier(metadataID)) != OV_UndefinedIdentifier)
+	CIdentifier metadataID  = CIdentifier::undefined();
+	while ((metadataID = m_scenario.getNextMetadataIdentifier(metadataID)) != CIdentifier::undefined())
 	{
 		treeMetadata = m_scenario.getMetadataDetails(metadataID);
 		if (treeMetadata && treeMetadata->getType() == OVVIZ_MetadataIdentifier_VisualizationTree) { break; }
@@ -137,15 +137,15 @@ bool CScenarioStateStack::dumpState(IMemoryBuffer& state)
 	// Update the scenario metadata according to the current state of the visualization tree
 
 	// Remove all VisualizationTree type metadata
-	CIdentifier oldTreeMetadataID = OV_UndefinedIdentifier;
-	CIdentifier metadataID        = OV_UndefinedIdentifier;
-	while ((metadataID = m_scenario.getNextMetadataIdentifier(metadataID)) != OV_UndefinedIdentifier)
+	CIdentifier oldTreeMetadataID = CIdentifier::undefined();
+	CIdentifier metadataID        = CIdentifier::undefined();
+	while ((metadataID = m_scenario.getNextMetadataIdentifier(metadataID)) != CIdentifier::undefined())
 	{
 		if (m_scenario.getMetadataDetails(metadataID)->getType() == OVVIZ_MetadataIdentifier_VisualizationTree)
 		{
 			oldTreeMetadataID = metadataID;
 			m_scenario.removeMetadata(metadataID);
-			metadataID = OV_UndefinedIdentifier;
+			metadataID = CIdentifier::undefined();
 		}
 	}
 
@@ -156,7 +156,7 @@ bool CScenarioStateStack::dumpState(IMemoryBuffer& state)
 
 	const CIdentifier exporterID = m_kernelCtx.getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_XMLScenarioExporter);
 
-	if (exporterID == OV_UndefinedIdentifier) { return false; }
+	if (exporterID == CIdentifier::undefined()) { return false; }
 
 	IAlgorithmProxy* exporter = &m_kernelCtx.getAlgorithmManager().getAlgorithm(exporterID);
 	if (!exporter) { return false; }

@@ -169,9 +169,9 @@ public:
 	//---------- variables ----------
 	//-------------------------------
 	Kernel::EPlayerStatus m_PlayerStatus;
-	CIdentifier m_ScenarioID = OV_UndefinedIdentifier;
-	CIdentifier m_PlayerID   = OV_UndefinedIdentifier;
-	CIdentifier m_TreeID     = OV_UndefinedIdentifier;
+	CIdentifier m_ScenarioID = CIdentifier::undefined();
+	CIdentifier m_PlayerID   = CIdentifier::undefined();
+	CIdentifier m_TreeID     = CIdentifier::undefined();
 
 	CApplication& m_Application;
 	Kernel::IScenario& m_Scenario;
