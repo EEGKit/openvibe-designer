@@ -13,7 +13,7 @@ namespace OpenViBE
 	}
 }
 
-namespace Mensia
+namespace OpenViBE
 {
 	class CArchwayHandlerGUI final
 	{

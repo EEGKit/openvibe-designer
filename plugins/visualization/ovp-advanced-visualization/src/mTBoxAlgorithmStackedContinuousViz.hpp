@@ -23,22 +23,22 @@
 
 #include "mCBoxAlgorithmViz.hpp"
 
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 template <bool bHorizontalStack, bool bDrawBorders, class TRendererFactoryClass, class TRulerClass>
 class TBoxAlgorithmStackedContinuousViz : public CBoxAlgorithmViz
 {
 public:
 
-	TBoxAlgorithmStackedContinuousViz(const OpenViBE::CIdentifier& classID, const std::vector<int>& parameters);
+	TBoxAlgorithmStackedContinuousViz(const CIdentifier& classID, const std::vector<int>& parameters);
 	bool initialize() override;
 	bool uninitialize() override;
 	bool process() override;
 
 	_IsDerivedFromClass_Final_(CBoxAlgorithmViz, m_ClassID)
 
-	OpenViBE::Toolkit::TStimulationDecoder<TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>> m_StimDecoder;
-	OpenViBE::Toolkit::TStreamedMatrixDecoder<TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>>
+	Toolkit::TStimulationDecoder<TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>> m_StimDecoder;
+	Toolkit::TStreamedMatrixDecoder<TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>>
 	m_MatrixDecoder;
 
 	TRendererFactoryClass m_RendererFactory;
@@ -55,9 +55,9 @@ public:
 
 	explicit CBoxAlgorithmStackedContinuousVizListener(const std::vector<int>& parameters) : CBoxAlgorithmVizListener(parameters) { }
 
-	bool onInputTypeChanged(OpenViBE::Kernel::IBox& box, const size_t index) override
+	bool onInputTypeChanged(Kernel::IBox& box, const size_t index) override
 	{
-		OpenViBE::CIdentifier typeID = OpenViBE::CIdentifier::undefined();
+		CIdentifier typeID = CIdentifier::undefined();
 		box.getInputType(index, typeID);
 		if (!this->getTypeManager().isDerivedFromStream(typeID, OV_TypeId_StreamedMatrix)) { box.setInputType(index, OV_TypeId_StreamedMatrix); }
 		box.setInputType(1, OV_TypeId_Stimulations);
@@ -70,20 +70,20 @@ class TBoxAlgorithmStackedContinuousVizDesc : public CBoxAlgorithmVizDesc
 {
 public:
 
-	TBoxAlgorithmStackedContinuousVizDesc(const OpenViBE::CString& name, const OpenViBE::CIdentifier& descClassID,
-										  const OpenViBE::CIdentifier& classID, const OpenViBE::CString& addedSoftwareVersion,
-										  const OpenViBE::CString& updatedSoftwareVersion, const CParameterSet& parameterSet,
-										  const OpenViBE::CString& shortDesc, const OpenViBE::CString& detailedDesc)
+	TBoxAlgorithmStackedContinuousVizDesc(const CString& name, const CIdentifier& descClassID,
+										  const CIdentifier& classID, const CString& addedSoftwareVersion,
+										  const CString& updatedSoftwareVersion, const CParameterSet& parameterSet,
+										  const CString& shortDesc, const CString& detailedDesc)
 		: CBoxAlgorithmVizDesc(name, descClassID, classID, addedSoftwareVersion, updatedSoftwareVersion, parameterSet, shortDesc, detailedDesc) { }
 
-	OpenViBE::Plugins::IPluginObject* create() override
+	Plugins::IPluginObject* create() override
 	{
 		return new TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>(m_ClassID, m_Parameters);
 	}
 
-	OpenViBE::Plugins::IBoxListener* createBoxListener() const override { return new CBoxAlgorithmStackedContinuousVizListener(m_Parameters); }
+	Plugins::IBoxListener* createBoxListener() const override { return new CBoxAlgorithmStackedContinuousVizListener(m_Parameters); }
 
-	OpenViBE::CString getCategory() const override { return OpenViBE::CString("Advanced Visualization/") + m_CategoryName; }
+	CString getCategory() const override { return CString("Advanced Visualization/") + m_CategoryName; }
 
 	_IsDerivedFromClass_Final_(OpenViBE::Plugins::IBoxAlgorithmDesc, m_DescClassID)
 };
@@ -91,7 +91,7 @@ public:
 
 template <bool bHorizontalStack, bool bDrawBorders, class TRendererFactoryClass, class TRulerClass>
 TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>::TBoxAlgorithmStackedContinuousViz(
-	const OpenViBE::CIdentifier& classID, const std::vector<int>& parameters) : CBoxAlgorithmViz(classID, parameters) { }
+	const CIdentifier& classID, const std::vector<int>& parameters) : CBoxAlgorithmViz(classID, parameters) { }
 
 template <bool bHorizontalStack, bool bDrawBorders, class TRendererFactoryClass, class TRulerClass>
 bool TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>::initialize()
@@ -144,21 +144,21 @@ bool TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRenderer
 template <bool bHorizontalStack, bool bDrawBorders, class TRendererFactoryClass, class TRulerClass>
 bool TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>::process()
 {
-	OpenViBE::Kernel::IBoxIO& boxContext = this->getDynamicBoxContext();
-	const size_t nInput                  = this->getStaticBoxContext().getInputCount();
+	Kernel::IBoxIO& boxContext = this->getDynamicBoxContext();
+	const size_t nInput        = this->getStaticBoxContext().getInputCount();
 	size_t i, j;
 
 	for (i = 0; i < boxContext.getInputChunkCount(0); ++i)
 	{
 		m_MatrixDecoder.decode(size_t(i));
 
-		OpenViBE::CMatrix* matrix = m_MatrixDecoder.getOutputMatrix();
-		size_t nChannel           = matrix->getDimensionSize(0);
-		size_t nSample            = matrix->getDimensionSize(1);
+		CMatrix* matrix = m_MatrixDecoder.getOutputMatrix();
+		size_t nChannel = matrix->getDimensionSize(0);
+		size_t nSample  = matrix->getDimensionSize(1);
 
 		if (nChannel == 0)
 		{
-			this->getLogManager() << OpenViBE::Kernel::LogLevel_Error << "Input stream " << i << " has 0 channels\n";
+			this->getLogManager() << Kernel::LogLevel_Error << "Input stream " << i << " has 0 channels\n";
 			return false;
 		}
 
@@ -301,7 +301,7 @@ bool TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRenderer
 			m_StimDecoder.decode(size_t(i));
 			if (m_StimDecoder.isBufferReceived())
 			{
-				OpenViBE::IStimulationSet* stimulationSet = m_StimDecoder.getOutputStimulationSet();
+				IStimulationSet* stimulationSet = m_StimDecoder.getOutputStimulationSet();
 				for (j = 0; j < stimulationSet->getStimulationCount(); ++j)
 				{
 					m_Renderers[0]->feed(stimulationSet->getStimulationDate(j), stimulationSet->getStimulationIdentifier(j));
@@ -389,4 +389,4 @@ void TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRenderer
 	CBoxAlgorithmViz::postDraw();
 }
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE

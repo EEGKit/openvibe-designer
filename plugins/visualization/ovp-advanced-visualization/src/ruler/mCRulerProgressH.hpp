@@ -22,7 +22,7 @@
 
 #include "mCRulerProgress.hpp"
 
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 class CRulerProgressH : public CRulerProgress
 {
@@ -56,4 +56,4 @@ public:
 	}
 };
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE

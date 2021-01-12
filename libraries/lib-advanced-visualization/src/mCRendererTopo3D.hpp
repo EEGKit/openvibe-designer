@@ -2,7 +2,7 @@
 
 #include "mCRendererTopo.hpp"
 
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 class CRendererTopo3D : public CRendererTopo
 {
@@ -12,4 +12,4 @@ public:
 	void rebuild3DMeshesPost(const CRendererContext& /*ctx*/) override { }
 };
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE

@@ -23,22 +23,22 @@
 
 #include "mCBoxAlgorithmViz.hpp"
 
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 template <class TRendererFactoryClass, class TRulerClass>
 class TBoxAlgorithmContinuousViz final : public CBoxAlgorithmViz
 {
 public:
 
-	TBoxAlgorithmContinuousViz(const OpenViBE::CIdentifier& classID, const std::vector<int>& parameters);
+	TBoxAlgorithmContinuousViz(const CIdentifier& classID, const std::vector<int>& parameters);
 	bool initialize() override;
 	bool uninitialize() override;
 	bool process() override;
 
 	_IsDerivedFromClass_Final_(CBoxAlgorithmViz, m_ClassID)
 
-	OpenViBE::Toolkit::TStreamedMatrixDecoder<TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>> m_oMatrixDecoder;
-	OpenViBE::Toolkit::TStimulationDecoder<TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>> m_oStimulationDecoder;
+	Toolkit::TStreamedMatrixDecoder<TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>> m_oMatrixDecoder;
+	Toolkit::TStimulationDecoder<TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>> m_oStimulationDecoder;
 	TRendererFactoryClass m_RendererFactory;
 	IRenderer* m_Renderer = nullptr;
 
@@ -53,9 +53,9 @@ public:
 
 	explicit CBoxAlgorithmContinuousVizListener(const std::vector<int>& parameters) : CBoxAlgorithmVizListener(parameters) { }
 
-	bool onInputTypeChanged(OpenViBE::Kernel::IBox& box, const size_t index) override
+	bool onInputTypeChanged(Kernel::IBox& box, const size_t index) override
 	{
-		OpenViBE::CIdentifier typeID = OpenViBE::CIdentifier::undefined();
+		CIdentifier typeID = CIdentifier::undefined();
 		box.getInputType(index, typeID);
 		if (!this->getTypeManager().isDerivedFromStream(typeID, OV_TypeId_StreamedMatrix)) { box.setInputType(index, OV_TypeId_StreamedMatrix); }
 		box.setInputType(1, OV_TypeId_Stimulations);
@@ -68,21 +68,21 @@ class TBoxAlgorithmContinuousVizDesc final : public CBoxAlgorithmVizDesc
 {
 public:
 
-	TBoxAlgorithmContinuousVizDesc(const OpenViBE::CString& name, const OpenViBE::CIdentifier& descClassID, const OpenViBE::CIdentifier& classID,
-								   const OpenViBE::CString& addedSoftwareVersion, const OpenViBE::CString& updatedSoftwareVersion,
-								   const CParameterSet& parameterSet, const OpenViBE::CString& shortDesc, const OpenViBE::CString& detailedDesc)
+	TBoxAlgorithmContinuousVizDesc(const CString& name, const CIdentifier& descClassID, const CIdentifier& classID,
+								   const CString& addedSoftwareVersion, const CString& updatedSoftwareVersion,
+								   const CParameterSet& parameterSet, const CString& shortDesc, const CString& detailedDesc)
 		: CBoxAlgorithmVizDesc(name, descClassID, classID, addedSoftwareVersion, updatedSoftwareVersion, parameterSet, shortDesc, detailedDesc) { }
 
-	OpenViBE::Plugins::IPluginObject* create() override { return new TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>(m_ClassID, m_Parameters); }
-	OpenViBE::Plugins::IBoxListener* createBoxListener() const override { return new CBoxAlgorithmContinuousVizListener(m_Parameters); }
-	OpenViBE::CString getCategory() const override { return OpenViBE::CString("Advanced Visualization/") + m_CategoryName; }
+	Plugins::IPluginObject* create() override { return new TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>(m_ClassID, m_Parameters); }
+	Plugins::IBoxListener* createBoxListener() const override { return new CBoxAlgorithmContinuousVizListener(m_Parameters); }
+	CString getCategory() const override { return CString("Advanced Visualization/") + m_CategoryName; }
 
 	_IsDerivedFromClass_Final_(OpenViBE::Plugins::IBoxAlgorithmDesc, m_DescClassID)
 };
 
 template <class TRendererFactoryClass, class TRulerClass>
 TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>::TBoxAlgorithmContinuousViz(
-	const OpenViBE::CIdentifier& classID, const std::vector<int>& parameters) : CBoxAlgorithmViz(classID, parameters) { }
+	const CIdentifier& classID, const std::vector<int>& parameters) : CBoxAlgorithmViz(classID, parameters) { }
 
 template <class TRendererFactoryClass, class TRulerClass>
 bool TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>::initialize()
@@ -119,18 +119,18 @@ bool TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>::uninitializ
 template <class TRendererFactoryClass, class TRulerClass>
 bool TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>::process()
 {
-	OpenViBE::Kernel::IBoxIO& boxContext = this->getDynamicBoxContext();
+	Kernel::IBoxIO& boxContext = this->getDynamicBoxContext();
 	for (size_t i = 0; i < boxContext.getInputChunkCount(0); ++i)
 	{
 		m_oMatrixDecoder.decode(i);
 
-		OpenViBE::CMatrix* matrix = m_oMatrixDecoder.getOutputMatrix();
-		size_t nChannel           = matrix->getDimensionSize(0);
-		size_t nSample            = matrix->getDimensionSize(1);
+		CMatrix* matrix = m_oMatrixDecoder.getOutputMatrix();
+		size_t nChannel = matrix->getDimensionSize(0);
+		size_t nSample  = matrix->getDimensionSize(1);
 
 		if (nChannel == 0)
 		{
-			this->getLogManager() << OpenViBE::Kernel::LogLevel_Error << "Input stream " << i << " has 0 channels\n";
+			this->getLogManager() << Kernel::LogLevel_Error << "Input stream " << i << " has 0 channels\n";
 			return false;
 		}
 
@@ -188,27 +188,27 @@ bool TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>::process()
 				if (m_TypeID == OV_TypeId_Spectrum)
 				{
 					//warned = true;
-					this->getLogManager() << OpenViBE::Kernel::LogLevel_Warning << "Input matrix has 'spectrum' type\n";
-					this->getLogManager() << OpenViBE::Kernel::LogLevel_Warning << "Such configuration is uncommon for a 'continous' kind of visualization !\n";
-					this->getLogManager() << OpenViBE::Kernel::LogLevel_Warning <<
+					this->getLogManager() << Kernel::LogLevel_Warning << "Input matrix has 'spectrum' type\n";
+					this->getLogManager() << Kernel::LogLevel_Warning << "Such configuration is uncommon for a 'continous' kind of visualization !\n";
+					this->getLogManager() << Kernel::LogLevel_Warning <<
 							"You might want to consider the 'stacked' kind of visualization for time/frequency analysis for instance\n";
-					this->getLogManager() << OpenViBE::Kernel::LogLevel_Warning << "Please double check your scenario\n";
+					this->getLogManager() << Kernel::LogLevel_Warning << "Please double check your scenario\n";
 				}
 				else
 				{
 					if (!m_RendererCtx->isTimeLocked())
 					{
 						//warned = true;
-						this->getLogManager() << OpenViBE::Kernel::LogLevel_Warning << "Input matrix has " << nSample
+						this->getLogManager() << Kernel::LogLevel_Warning << "Input matrix has " << nSample
 								<< " elements and the box settings say the elements are independant with " << m_NElement << " elements to render\n";
-						this->getLogManager() << OpenViBE::Kernel::LogLevel_Warning <<
+						this->getLogManager() << Kernel::LogLevel_Warning <<
 								"Such configuration is uncommon for a 'continous' kind of visualization !\n";
-						this->getLogManager() << OpenViBE::Kernel::LogLevel_Warning << "You might want either of the following alternative :\n";
-						this->getLogManager() << OpenViBE::Kernel::LogLevel_Warning << " - an 'instant' kind of visualization to highlight the " << m_NElement
+						this->getLogManager() << Kernel::LogLevel_Warning << "You might want either of the following alternative :\n";
+						this->getLogManager() << Kernel::LogLevel_Warning << " - an 'instant' kind of visualization to highlight the " << m_NElement
 								<< " elements of the matrix\n";
-						this->getLogManager() << OpenViBE::Kernel::LogLevel_Warning <<
+						this->getLogManager() << Kernel::LogLevel_Warning <<
 								" - a 'time locked' kind of elements (thus the scenario must refresh the matrix on a regular basis)\n";
-						this->getLogManager() << OpenViBE::Kernel::LogLevel_Warning << "Please double check your scenario and box settings\n";
+						this->getLogManager() << Kernel::LogLevel_Warning << "Please double check your scenario and box settings\n";
 					}
 				}
 			}
@@ -258,7 +258,7 @@ bool TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>::process()
 			m_oStimulationDecoder.decode(i);
 			if (m_oStimulationDecoder.isBufferReceived())
 			{
-				OpenViBE::IStimulationSet* stimulationSet = m_oStimulationDecoder.getOutputStimulationSet();
+				IStimulationSet* stimulationSet = m_oStimulationDecoder.getOutputStimulationSet();
 				for (size_t j = 0; j < stimulationSet->getStimulationCount(); ++j)
 				{
 					m_Renderer->feed(stimulationSet->getStimulationDate(j), stimulationSet->getStimulationIdentifier(j));
@@ -311,4 +311,4 @@ void TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>::draw()
 	CBoxAlgorithmViz::postDraw();
 }
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE

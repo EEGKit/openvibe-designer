@@ -24,7 +24,7 @@
 
 #include "mCRendererFlower.hpp"
 
-using namespace Mensia;
+using namespace OpenViBE;
 using namespace AdvancedVisualization;
 
 CRendererFlower::CRendererFlower(const size_t multiCount) { m_muliVertices.resize(multiCount); }

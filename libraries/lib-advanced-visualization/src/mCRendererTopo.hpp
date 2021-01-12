@@ -28,7 +28,7 @@
 
 #include <vector>
 
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 class CRendererTopo : public IRenderer
 {
@@ -58,4 +58,4 @@ protected:
 	Eigen::MatrixXd A, B, D, Ai;
 };
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE

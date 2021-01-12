@@ -14,7 +14,6 @@
 #define pclose _pclose
 #endif
 
-using namespace Mensia;
 using namespace OpenViBE;
 using namespace /*OpenViBE::*/Designer;
 

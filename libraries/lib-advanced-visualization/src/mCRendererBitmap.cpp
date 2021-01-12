@@ -21,7 +21,7 @@
 
 #include "mCRendererBitmap.hpp"
 
-using namespace Mensia;
+using namespace OpenViBE;
 using namespace AdvancedVisualization;
 
 void CRendererBitmap::rebuild(const CRendererContext& ctx)

@@ -23,7 +23,7 @@
 #include "../mIRuler.hpp"
 #include "../m_VisualizationTools.hpp"
 
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 template <class TRulerMatrix, class TRulerSignal, class TRulerSpectrum>
 class TRulerAutoType : public IRuler
@@ -86,4 +86,4 @@ protected:
 	TRulerSpectrum m_rulerSpectrum;
 };
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE

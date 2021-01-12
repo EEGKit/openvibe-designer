@@ -124,14 +124,14 @@ void on_realize_cb(GtkWidget* widget, void* /*data*/)
 }
 }  // namespace
 
-void Mensia::AdvancedVisualization::GtkGL::initialize(GtkWidget* widget)
+void OpenViBE::AdvancedVisualization::GtkGL::initialize(GtkWidget* widget)
 {
 	GTK_GL_DEBUG("initialize");
 	g_signal_connect(widget, "realize", G_CALLBACK(on_realize_cb), nullptr);
 	GTK_GL_DEBUG("initialize::success");
 }
 
-void Mensia::AdvancedVisualization::GtkGL::uninitialize(GtkWidget* widget)
+void OpenViBE::AdvancedVisualization::GtkGL::uninitialize(GtkWidget* widget)
 {
 	GTK_GL_DEBUG("uninitialize");
 
@@ -146,7 +146,7 @@ void Mensia::AdvancedVisualization::GtkGL::uninitialize(GtkWidget* widget)
 	GTK_GL_DEBUG("uninitialize::success");
 }
 
-void Mensia::AdvancedVisualization::GtkGL::preRender(GtkWidget* widget, const bool verticalSync)
+void OpenViBE::AdvancedVisualization::GtkGL::preRender(GtkWidget* widget, const bool verticalSync)
 {
 	GTK_GL_DEBUG("pre-render");
 
@@ -173,7 +173,7 @@ void Mensia::AdvancedVisualization::GtkGL::preRender(GtkWidget* widget, const bo
 	GTK_GL_DEBUG("pre-render::success");
 }
 
-void Mensia::AdvancedVisualization::GtkGL::postRender(GtkWidget* widget)
+void OpenViBE::AdvancedVisualization::GtkGL::postRender(GtkWidget* widget)
 {
 	GTK_GL_DEBUG("post-render");
 
@@ -203,7 +203,7 @@ void Mensia::AdvancedVisualization::GtkGL::postRender(GtkWidget* widget)
 
 // ##  LINUX  ################################################################################################################################################
 
-void Mensia::AdvancedVisualization::GtkGL::initialize(::GtkWidget * widget)
+void OpenViBE::AdvancedVisualization::GtkGL::initialize(::GtkWidget * widget)
 {
 	GTK_GL_DEBUG("initialize");
 
@@ -250,7 +250,7 @@ void Mensia::AdvancedVisualization::GtkGL::initialize(::GtkWidget * widget)
 	GTK_GL_DEBUG("initialize::success");
 }
 
-void Mensia::AdvancedVisualization::GtkGL::uninitialize(::GtkWidget * widget)
+void OpenViBE::AdvancedVisualization::GtkGL::uninitialize(::GtkWidget * widget)
 {
 	GTK_GL_DEBUG("uninitialize");
 
@@ -267,7 +267,7 @@ void Mensia::AdvancedVisualization::GtkGL::uninitialize(::GtkWidget * widget)
 	GTK_GL_DEBUG("uninitialize::success");
 }
 
-void Mensia::AdvancedVisualization::GtkGL::preRender(::GtkWidget * widget, bool bVerticalSync)
+void OpenViBE::AdvancedVisualization::GtkGL::preRender(::GtkWidget * widget, bool bVerticalSync)
 {
 	GTK_GL_DEBUG("pre-render");
 
@@ -290,7 +290,7 @@ void Mensia::AdvancedVisualization::GtkGL::preRender(::GtkWidget * widget, bool 
 	GTK_GL_DEBUG("pre-render::success");
 }
 
-void Mensia::AdvancedVisualization::GtkGL::postRender(::GtkWidget * widget)
+void OpenViBE::AdvancedVisualization::GtkGL::postRender(::GtkWidget * widget)
 {
 	GTK_GL_DEBUG("post-render");
 

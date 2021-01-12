@@ -23,7 +23,7 @@
 #include "mIRenderer.hpp"
 #include "mC3DMesh.hpp"
 
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 class CRendererMountain : public IRenderer
 {
@@ -37,4 +37,4 @@ protected:
 	C3DMesh m_mountain;
 };
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE

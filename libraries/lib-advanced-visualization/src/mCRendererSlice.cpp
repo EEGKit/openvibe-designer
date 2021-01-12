@@ -21,7 +21,7 @@
 
 #include "mCRendererSlice.hpp"
 
-using namespace Mensia;
+using namespace OpenViBE;
 using namespace AdvancedVisualization;
 
 void CRendererSlice::rebuild(const CRendererContext& ctx)

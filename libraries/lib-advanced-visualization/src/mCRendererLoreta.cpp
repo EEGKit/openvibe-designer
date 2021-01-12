@@ -28,7 +28,7 @@
 #include "content/Face.obj.hpp"
 #include "content/Scalp.obj.hpp"
 
-using namespace Mensia;
+using namespace OpenViBE;
 using namespace AdvancedVisualization;
 
 using namespace LoretaRegions;

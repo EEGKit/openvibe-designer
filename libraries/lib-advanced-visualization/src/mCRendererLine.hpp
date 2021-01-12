@@ -22,7 +22,7 @@
 
 #include "mIRenderer.hpp"
 
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 class CRendererLine : public IRenderer
 {
@@ -37,4 +37,4 @@ protected:
 	std::vector<std::vector<CVertex>> m_vertices;
 };
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE

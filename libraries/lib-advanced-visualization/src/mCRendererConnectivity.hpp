@@ -24,7 +24,7 @@
 
 #include "mIRenderer.hpp"
 
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 class CRendererConnectivity : public IRenderer
 {
@@ -35,6 +35,6 @@ public:
 	bool render(const CRendererContext& ctx) override;
 };
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE
 
 // #endif // TARGET_HAS_ThirdPartyVRPN

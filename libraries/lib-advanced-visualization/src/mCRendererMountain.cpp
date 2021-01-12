@@ -21,7 +21,7 @@
 
 #include "mCRendererMountain.hpp"
 
-using namespace Mensia;
+using namespace OpenViBE;
 using namespace AdvancedVisualization;
 
 void CRendererMountain::rebuild(const CRendererContext& ctx)

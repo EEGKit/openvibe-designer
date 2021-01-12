@@ -22,7 +22,7 @@
 
 #include "mIRenderer.hpp"
 
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 class CRendererXYZPlot : public IRenderer
 {
@@ -39,4 +39,4 @@ protected:
 	std::vector<std::vector<CVertex>> m_vertex;
 };
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE

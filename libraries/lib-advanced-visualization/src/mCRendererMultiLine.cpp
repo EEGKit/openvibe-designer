@@ -22,7 +22,7 @@
 #include <cstdint>
 #include "mCRendererMultiLine.hpp"
 
-using namespace Mensia;
+using namespace OpenViBE;
 using namespace AdvancedVisualization;
 
 bool CRendererMultiLine::render(const CRendererContext& ctx)

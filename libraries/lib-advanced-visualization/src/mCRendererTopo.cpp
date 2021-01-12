@@ -24,7 +24,7 @@
 
 #include <cmath>
 
-using namespace Mensia;
+using namespace OpenViBE;
 using namespace AdvancedVisualization;
 
 const bool MULTI_SLICE = false;

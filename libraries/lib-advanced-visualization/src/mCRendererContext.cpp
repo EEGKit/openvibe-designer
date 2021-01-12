@@ -27,7 +27,7 @@
 #include <cmath>
 #include <iostream>
 
-using namespace Mensia;
+using namespace OpenViBE;
 using namespace AdvancedVisualization;
 
 

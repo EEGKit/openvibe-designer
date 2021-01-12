@@ -13,7 +13,6 @@
 #include <sstream>
 #include <regex>
 
-using namespace Mensia;
 using namespace OpenViBE;
 using namespace /*OpenViBE::*/Kernel;
 using namespace std;
