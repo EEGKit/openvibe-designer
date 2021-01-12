@@ -21,7 +21,7 @@
 
 #include "m_VisualizationTools.hpp"
 
-using namespace Mensia;
+using namespace OpenViBE;
 using namespace AdvancedVisualization;
 
 std::string AdvancedVisualization::trim(const std::string& value)

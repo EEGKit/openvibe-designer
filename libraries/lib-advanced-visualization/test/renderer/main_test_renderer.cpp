@@ -1,6 +1,6 @@
 #include <mensia/advanced-visualization.hpp>
 
-using namespace Mensia::AdvancedVisualization;
+using namespace OpenViBE::AdvancedVisualization;
 
 int main()
 {

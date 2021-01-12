@@ -29,7 +29,7 @@
 #include <map>
 #include <string>
 
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 class CRendererLoreta : public IRenderer
 {
@@ -61,6 +61,6 @@ protected:
 	std::vector<uint32_t> m_brainSubsetTriangles;
 };
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE
 
 #endif // TARGET_HAS_ThirdPartyOpenGL

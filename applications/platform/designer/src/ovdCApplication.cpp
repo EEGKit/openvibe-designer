@@ -717,8 +717,8 @@ CApplication::CApplication(const Kernel::IKernelContext& ctx) : m_kernelCtx(ctx)
 	m_kernelCtx.getConfigurationManager().createConfigurationToken("__volatile_ScenarioDir", "");
 
 #ifdef MENSIA_DISTRIBUTION
-	m_ArchwayHandler    = new Mensia::CArchwayHandler(ctx);
-	m_ArchwayHandlerGUI = new Mensia::CArchwayHandlerGUI(*m_ArchwayHandler, this);
+	m_ArchwayHandler    = new OpenViBE::CArchwayHandler(ctx);
+	m_ArchwayHandlerGUI = new OpenViBE::CArchwayHandlerGUI(*m_ArchwayHandler, this);
 #endif
 }
 
@@ -1181,7 +1181,7 @@ void CApplication::initialize(const ECommandLineFlag cmdLineFlags)
 
 	std::string defaultURLBaseString = std::string(m_kernelCtx.getConfigurationManager().expand("${Designer_HelpBrowserURLBase}"));
 #ifdef MENSIA_DISTRIBUTION
-	if (m_ArchwayHandler->initialize() == Mensia::EEngineInitialisationStatus::NotAvailable)
+	if (m_ArchwayHandler->initialize() == OpenViBE::EEngineInitialisationStatus::NotAvailable)
 	{
 		gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_Builder, "neurort-toggle_engine_configuration")));
 	}

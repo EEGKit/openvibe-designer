@@ -45,10 +45,7 @@ void CTopographicMapDatabase::setMatrixDimensionSize(const size_t index, const s
 {
 	CBufferDatabase::setMatrixDimensionSize(index, size);
 
-	if (index == 0)
-	{
-		m_electrodePotentials.resize(size_t(m_NElectrodes));
-	}
+	if (index == 0) { m_electrodePotentials.resize(size_t(m_NElectrodes)); }
 }
 
 bool CTopographicMapDatabase::onChannelLocalisationBufferReceived(const size_t bufferIndex)

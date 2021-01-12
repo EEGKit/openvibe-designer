@@ -61,11 +61,11 @@
 
 #include <ctime>
 
-using namespace Mensia;
-using namespace /*Mensia::*/AdvancedVisualization;
+using namespace OpenViBE;
+using namespace /*OpenViBE::*/AdvancedVisualization;
 using namespace OpenViBE;
 
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 // Prototype to create and release final renderer instances from the renderer API
 
@@ -133,7 +133,7 @@ typedef TBoxAlgorithmInstantVizDesc<TRendererProto<ERendererType::Topography3D>,
 typedef TBoxAlgorithmInstantVizDesc<TRendererProto<ERendererType::Loreta>, CRulerBottomTexture, TBoxAlgorithmInstantLoretaViz> loreta_t;
 typedef TBoxAlgorithmInstantVizDesc<TRendererProto<ERendererType::Cube>, CRulerBottomTexture> cubes_t;
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE
 
 OVP_Declare_Begin()
 	context.getTypeManager().registerEnumerationType(OVP_TypeId_TemporalCoherence, "Temporal Coherence");

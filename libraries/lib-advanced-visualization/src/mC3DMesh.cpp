@@ -25,7 +25,7 @@
 
 #include <cstring>
 
-using namespace Mensia;
+using namespace OpenViBE;
 using namespace AdvancedVisualization;
 
 namespace {

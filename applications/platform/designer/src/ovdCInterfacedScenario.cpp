@@ -3452,7 +3452,7 @@ bool CInterfacedScenario::browseBoxDocumentation(const CIdentifier& boxID) const
 
 	// Do not show documentation for non-metaboxes or boxes that can not be created
 	if (!(boxID != CIdentifier::undefined() && (m_kernelCtx.getPluginManager().canCreatePluginObject(algorithmClassID) ||
-											  m_Scenario.getBoxDetails(boxID)->getAlgorithmClassIdentifier() == OVP_ClassId_BoxAlgorithm_Metabox)))
+												m_Scenario.getBoxDetails(boxID)->getAlgorithmClassIdentifier() == OVP_ClassId_BoxAlgorithm_Metabox)))
 	{
 		m_kernelCtx.getLogManager() << LogLevel_Warning << "Box with id " << boxID << " can not create a pluging object\n";
 		return false;

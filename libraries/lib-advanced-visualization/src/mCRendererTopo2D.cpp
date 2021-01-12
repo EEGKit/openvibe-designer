@@ -1,7 +1,7 @@
 #include "mCRendererTopo2D.hpp"
 #include <cmath>
 
-using namespace Mensia;
+using namespace OpenViBE;
 using namespace AdvancedVisualization;
 
 // constexpr constexpr float OFFSET = 0.0001f; //Macro modernization, Not yet with jenkins (not the last visual 2013 which it works)

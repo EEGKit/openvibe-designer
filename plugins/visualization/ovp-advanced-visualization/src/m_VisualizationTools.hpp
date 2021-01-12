@@ -26,9 +26,9 @@
 
 #include <string>
 
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 std::string trim(const std::string& value);
 CRendererContext& getContext();
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE

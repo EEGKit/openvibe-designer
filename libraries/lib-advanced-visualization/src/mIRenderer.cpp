@@ -39,7 +39,7 @@
 #include <cmath>
 #include <algorithm>	// std::min_element, std::max_element
 
-using namespace Mensia;
+using namespace OpenViBE;
 using namespace AdvancedVisualization;
 
 static int iCount = 0;

@@ -24,7 +24,7 @@
 
 #include <string>
 
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 class CRulerLeftChannelNames : public IRuler
 {
@@ -50,4 +50,4 @@ public:
 	}
 };
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE

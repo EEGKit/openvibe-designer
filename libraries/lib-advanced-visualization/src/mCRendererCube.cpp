@@ -23,7 +23,7 @@
 
 #include <cmath>
 
-using namespace Mensia;
+using namespace OpenViBE;
 using namespace AdvancedVisualization;
 
 CRendererCube::CRendererCube() = default;

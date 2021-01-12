@@ -25,7 +25,7 @@
 
 #include <map>
 
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 class CBoxAlgorithmViz;
 
@@ -45,4 +45,4 @@ public:
 	int m_Y = 0;
 };
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE

@@ -26,7 +26,7 @@
 #include <vector>
 #include <map>
 
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 static const int STIMULATION_INDICATOR_SMOOTHNESS = 10;
 static const float STIMULATION_INDICATOR_RADIUS   = 0.01F;
@@ -191,4 +191,4 @@ public:
 	}
 };
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE

@@ -39,7 +39,7 @@
 
 // #define __DIRECT_RENDER__
 
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 template <class TBox>
 class TGtkGLWidget
@@ -163,9 +163,9 @@ public:
 		{
 			const std::string str = (value.empty() ? "0:0,0,100; 25:0,100,100; 50:0,49,0; 75:100,100,0; 100:100,0,0" : value);
 
-			OpenViBE::CMatrix gradientBase, gradient;
-			OpenViBE::VisualizationToolkit::ColorGradient::parse(gradientBase, str.c_str());
-			OpenViBE::VisualizationToolkit::ColorGradient::interpolate(gradient, gradientBase, M_GRADIENT_SIZE);
+			CMatrix gradientBase, gradient;
+			VisualizationToolkit::ColorGradient::parse(gradientBase, str.c_str());
+			VisualizationToolkit::ColorGradient::interpolate(gradient, gradientBase, M_GRADIENT_SIZE);
 
 			float texture[M_GRADIENT_SIZE][3];
 			for (size_t i = 0; i < M_GRADIENT_SIZE; ++i)
@@ -351,4 +351,4 @@ private:
 	}
 };
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE

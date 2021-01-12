@@ -22,7 +22,7 @@
 #include <cstdint>
 #include "mCRendererLine.hpp"
 
-using namespace Mensia;
+using namespace OpenViBE;
 using namespace AdvancedVisualization;
 
 CRendererLine::CRendererLine() = default;

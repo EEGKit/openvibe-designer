@@ -22,7 +22,7 @@
 
 #include "../mIRuler.hpp"
 
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 class CRulerBottomFrequency : public IRuler
 {
@@ -57,4 +57,4 @@ protected:
 	std::vector<double> m_range;
 };
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE
