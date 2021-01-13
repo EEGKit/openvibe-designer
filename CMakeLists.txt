@@ -23,9 +23,11 @@ INCLUDE("Utilities") # Include functions debug_message, SET_BUILD_PLATFORM
 # Build CMake flags
 # ----------------------
 OPTION(Flag_VerboseOutput "Verbose CMake output" OFF)
-SET(OEM_DISTRIBUTION "openvibe" CACHE STRING "The OEM distribution for this build, can be openvibe or mensia")
-OPTION(OV_DISPLAY_ERROR_LOCATION ON)
+OPTION(OV_DISPLAY_ERROR_LOCATION "display complete error locations" ON)
+OPTION(OV_PACKAGE "Create a package in build directory" OFF)
 
+SET(CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/designer-${CMAKE_BUILD_TYPE}")
+SET(OEM_DISTRIBUTION "openvibe" CACHE STRING "The OEM distribution for this build, can be openvibe or mensia")
 SET(OV_SOURCE_DEPENDENCIES_PATH "${CMAKE_SOURCE_DIR}/dependencies-source")
 SET(OV_ICON_PATH "${CMAKE_SOURCE_DIR}/scripts/icons")
 
@@ -57,6 +59,8 @@ set_version()
 SET_PROJECT_VERSION()
 MESSAGE(STATUS "BUILDING VERSION Designer: ${OV_GLOBAL_VERSION_STRING} Branch : ${OV_PROJECT_BRANCH}~${OV_PROJECT_COMMITHASH}. Based on OpenViBE SDK: ${OV_SDK_VERSION_STRING}")
 
+
+
 # Sort target into directories for better visualization in IDE
 SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
 SET(APP_FOLDER Applications)
@@ -65,10 +69,6 @@ SET(PLUGINS_FOLDER Plugins)
 SET(TESTS_FOLDER Unit-Tests)
 SET(VALIDATION_FOLDER Validation-Tests)
 
-IF(NOT CMAKE_INSTALL_PREFIX)
-	# Default is to build to dist/. If you wish a custom install, set your own MAKE_INSTALL_PREFIX when you call CMake. Safest to do under a fakeroot.
-	SET(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}/dist")
-ENDIF()
 
 IF(NOT DEFINED OV_PACKAGE)
 	SET(OV_PACKAGE FALSE)
