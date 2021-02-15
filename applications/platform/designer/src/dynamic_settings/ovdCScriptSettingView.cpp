@@ -4,9 +4,9 @@
 #include <cstring>
 #include <cstdlib>
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Designer;
-using namespace Setting;
+namespace OpenViBE {
+namespace Designer {
+namespace Setting {
 
 static void OnButtonSettingFilenameBrowsePressed(GtkButton* /*button*/, gpointer data) { static_cast<CScriptSettingView*>(data)->browse(); }
 static void OnButtonSettingScriptEditPressed(GtkButton* /*button*/, gpointer data) { static_cast<CScriptSettingView*>(data)->edit(); }
@@ -132,3 +132,7 @@ void CScriptSettingView::onFocusLost()
 	}
 }
 #endif
+
+}  // namespace Setting
+}  // namespace Designer
+}  // namespace OpenViBE

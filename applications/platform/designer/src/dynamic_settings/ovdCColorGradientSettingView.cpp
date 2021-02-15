@@ -4,9 +4,9 @@
 
 #include <cmath>
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Designer;
-using namespace Setting;
+namespace OpenViBE {
+namespace Designer {
+namespace Setting {
 
 static void OnColorGradientColorButtonPressed(GtkColorButton* button, gpointer data) { static_cast<CColorGradientSettingView*>(data)->colorChange(button); }
 
@@ -244,3 +244,7 @@ void CColorGradientSettingView::onChange()
 		getBox().setSettingValue(getSettingIndex(), value);
 	}
 }
+
+}  // namespace Setting
+}  // namespace Designer
+}  // namespace OpenViBE

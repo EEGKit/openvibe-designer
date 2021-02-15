@@ -1,9 +1,9 @@
 #include "ovdCBitMaskSettingView.h"
 #include "../ovd_base.h"
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Designer;
-using namespace Setting;
+namespace OpenViBE {
+namespace Designer {
+namespace Setting {
 
 static void OnCheckbuttonPressed(GtkToggleButton* /*button*/, gpointer data) { static_cast<CBitMaskSettingView*>(data)->onChange(); }
 
@@ -50,7 +50,6 @@ void CBitMaskSettingView::getValue(CString& value) const
 	value = res.c_str();
 }
 
-
 void CBitMaskSettingView::setValue(const CString& value)
 {
 	m_onValueSetting = true;
@@ -75,3 +74,7 @@ void CBitMaskSettingView::onChange()
 		getBox().setSettingValue(getSettingIndex(), value);
 	}
 }
+
+}  // namespace Setting
+}  // namespace Designer
+}  // namespace OpenViBE

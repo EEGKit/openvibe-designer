@@ -13,18 +13,16 @@
 #endif
 
 
-using namespace std;
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Designer;
-using namespace /*OpenViBE::*/Kernel;
-using namespace /*OpenViBE::*/Plugins;
-using namespace /*OpenViBE::*/VisualizationToolkit;
+namespace OpenViBE {
+namespace Designer {
+
+using IVTTree = VisualizationToolkit::IVisualizationTree;
 
 bool CVisualizationManager::createVisualizationTree(CIdentifier& treeID)
 {
-	IVisualizationTree* newTree = new CVisualizationTree(m_kernelCtx);
-	treeID                      = getUnusedIdentifier();
-	m_trees[treeID]             = newTree;
+	IVTTree* newTree = new CVisualizationTree(m_kernelCtx);
+	treeID           = getUnusedIdentifier();
+	m_trees[treeID]  = newTree;
 	return true;
 }
 
@@ -41,23 +39,23 @@ bool CVisualizationManager::releaseVisualizationTree(const CIdentifier& treeID)
 	return false;
 }
 
-IVisualizationTree& CVisualizationManager::getVisualizationTree(const CIdentifier& id)
+IVTTree& CVisualizationManager::getVisualizationTree(const CIdentifier& id)
 {
 	const auto it = m_trees.find(id);
-	if (it == m_trees.end()) { m_kernelCtx.getLogManager() << LogLevel_Fatal << "Visualization Tree " << id << " does not exist !\n"; }
+	if (it == m_trees.end()) { m_kernelCtx.getLogManager() << Kernel::LogLevel_Fatal << "Visualization Tree " << id << " does not exist !\n"; }
 	return *it->second;
 }
 
 bool CVisualizationManager::setToolbar(const CIdentifier& treeID, const CIdentifier& boxID, GtkWidget* toolbar)
 {
-	IVisualizationTree& tree = getVisualizationTree(treeID);
+	IVTTree& tree = getVisualizationTree(treeID);
 	tree.setToolbar(boxID, toolbar);
 	return true;
 }
 
 bool CVisualizationManager::setWidget(const CIdentifier& treeID, const CIdentifier& boxID, GtkWidget* topmostWidget)
 {
-	IVisualizationTree& tree = getVisualizationTree(treeID);
+	IVTTree& tree = getVisualizationTree(treeID);
 	tree.setWidget(boxID, topmostWidget);
 	return true;
 }
@@ -66,7 +64,7 @@ CIdentifier CVisualizationManager::getUnusedIdentifier() const
 {
 	uint64_t id = CIdentifier::random().id();
 	CIdentifier res;
-	map<CIdentifier, IVisualizationTree*>::const_iterator it;
+	std::map<CIdentifier, IVTTree*>::const_iterator it;
 	do
 	{
 		res = CIdentifier(id++);
@@ -74,3 +72,6 @@ CIdentifier CVisualizationManager::getUnusedIdentifier() const
 	} while (it != m_trees.end() || res == CIdentifier::undefined());
 	return res;
 }
+
+}  // namespace Designer
+}  // namespace OpenViBE

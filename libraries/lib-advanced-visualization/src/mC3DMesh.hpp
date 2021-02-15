@@ -30,7 +30,6 @@
 
 #include "mCVertex.hpp"
 
-
 namespace OpenViBE {
 namespace AdvancedVisualization {
 class C3DMesh final

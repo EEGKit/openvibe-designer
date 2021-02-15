@@ -1,9 +1,8 @@
 #include "ovdCInputDialog.h"
 #include <gdk/gdkkeysyms.h>
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Kernel;
-using namespace /*OpenViBE::*/Designer;
+namespace OpenViBE {
+namespace Designer {
 
 CInputDialog::CInputDialog(const char* gtkBuilder, const fpButtonCB okButtonCB, void* data, const char* title, const char* label, const char* entry)
 {
@@ -66,3 +65,6 @@ void CInputDialog::buttonClicked(GtkButton* button) const
 	if (button == m_dialogOkButton) { gtk_dialog_response(m_dialog, GTK_RESPONSE_ACCEPT); }
 	else { gtk_dialog_response(m_dialog, GTK_RESPONSE_REJECT); }
 }
+
+}  // namespace Designer
+}  // namespace OpenViBE

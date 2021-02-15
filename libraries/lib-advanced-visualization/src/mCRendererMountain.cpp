@@ -21,8 +21,8 @@
 
 #include "mCRendererMountain.hpp"
 
-using namespace OpenViBE;
-using namespace AdvancedVisualization;
+namespace OpenViBE {
+namespace AdvancedVisualization {
 
 void CRendererMountain::rebuild(const CRendererContext& ctx)
 {
@@ -133,10 +133,10 @@ bool CRendererMountain::render(const CRendererContext& ctx)
 	glColor3f(ctx.getTranslucency(), ctx.getTranslucency(), ctx.getTranslucency());
 	glDrawElements(GL_TRIANGLES, GLsizei((ctx.getSelectedCount() - 1) * (m_nSample - 1) * 6), GL_UNSIGNED_INT, &m_mountain.m_Triangles[0]);
 	/*
-		::glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		::glColor3f(0, 0, 0);
-		::glDrawElements(GL_TRIANGLES, m_mountain.m_Triangles.size(), GL_UNSIGNED_INT, &m_mountain.m_Triangles[0]);
-		::glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glColor3f(0, 0, 0);
+	glDrawElements(GL_TRIANGLES, m_mountain.m_Triangles.size(), GL_UNSIGNED_INT, &m_mountain.m_Triangles[0]);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	*/
 
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -156,3 +156,6 @@ bool CRendererMountain::render(const CRendererContext& ctx)
 
 	return true;
 }
+
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE

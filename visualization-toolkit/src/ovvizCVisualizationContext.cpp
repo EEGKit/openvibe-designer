@@ -1,7 +1,7 @@
 #include "ovvizCVisualizationContext.hpp"
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/VisualizationToolkit;
+namespace OpenViBE {
+namespace VisualizationToolkit {
 
 bool CVisualizationContext::setWidget(Toolkit::TBoxAlgorithm<Plugins::IBoxAlgorithm>& box, GtkWidget* widget)
 {
@@ -28,3 +28,6 @@ bool CVisualizationContext::setToolbar(Toolkit::TBoxAlgorithm<Plugins::IBoxAlgor
 
 	return m_VisualizationManager->setToolbar(treeIdentifier, boxID, toolbarWidget);
 }
+
+}  // namespace VisualizationToolkit
+}  // namespace OpenViBE

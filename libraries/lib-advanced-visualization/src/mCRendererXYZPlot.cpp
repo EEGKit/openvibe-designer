@@ -21,8 +21,8 @@
 
 #include "mCRendererXYZPlot.hpp"
 
-using namespace OpenViBE;
-using namespace AdvancedVisualization;
+namespace OpenViBE {
+namespace AdvancedVisualization {
 
 void CRendererXYZPlot::rebuild(const CRendererContext& ctx)
 {
@@ -140,3 +140,6 @@ bool CRendererXYZPlot::render(const CRendererContext& ctx)
 
 	return true;
 }
+
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE

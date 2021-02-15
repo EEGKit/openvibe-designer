@@ -1,9 +1,8 @@
 #include "ovdCAbstractSettingView.h"
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Designer;
-using namespace Setting;
-
+namespace OpenViBE {
+namespace Designer {
+namespace Setting {
 
 static void CollectWidgetCB(GtkWidget* widget, gpointer data) { static_cast<std::vector<GtkWidget*>*>(data)->push_back(widget); }
 
@@ -68,8 +67,8 @@ GtkWidget* CAbstractSettingView::generateEntryWidget()
 	gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(settingDefault)), settingDefault);
 
 	gtk_table_attach(table, settingWidget, 0, 1, 0, 1, GtkAttachOptions(GTK_FILL | GTK_EXPAND), GtkAttachOptions(GTK_FILL | GTK_EXPAND), 0, 0);
-	//gtk_table_attach(m_table, settingDefault, 1, 2, 0, 1, ::GtkAttachOptions(GTK_SHRINK),          ::GtkAttachOptions(GTK_SHRINK),          0, 0);
-	//gtk_table_attach(m_table, settingRevert,  2, 3, 0, 1, ::GtkAttachOptions(GTK_SHRINK),          ::GtkAttachOptions(GTK_SHRINK),          0, 0);
+	//gtk_table_attach(m_table, settingDefault, 1, 2, 0, 1, GtkAttachOptions(GTK_SHRINK), GtkAttachOptions(GTK_SHRINK), 0, 0);
+	//gtk_table_attach(m_table, settingRevert, 2, 3, 0, 1, GtkAttachOptions(GTK_SHRINK), GtkAttachOptions(GTK_SHRINK), 0, 0);
 
 	setEntryWidget(GTK_WIDGET(table));
 	gtk_widget_set_visible(getEntryWidget(), true);
@@ -89,3 +88,7 @@ void CAbstractSettingView::extractWidget(GtkWidget* widget, std::vector<GtkWidge
 {
 	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
 }
+
+}  // namespace Setting
+}  // namespace Designer
+}  // namespace OpenViBE

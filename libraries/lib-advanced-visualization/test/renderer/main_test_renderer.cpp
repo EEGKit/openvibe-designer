@@ -1,15 +1,15 @@
 #include <mensia/advanced-visualization.hpp>
 
-using namespace OpenViBE::AdvancedVisualization;
+namespace OAV = OpenViBE::AdvancedVisualization;
 
 int main()
 {
-	CRendererContext context;
+	OAV::CRendererContext context;
 	context.clear();
 
-	context.setDataType(CRendererContext::EDataType::Matrix);
+	context.setDataType(OAV::CRendererContext::EDataType::Matrix);
 
-	IRenderer* rend = IRenderer::create(ERendererType::Bitmap, false);
+	OAV::IRenderer* rend = OAV::IRenderer::create(OAV::ERendererType::Bitmap, false);
 
 	rend->setChannelCount(10);
 	auto* tmp = new float[666];

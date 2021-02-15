@@ -4,12 +4,11 @@
 #include <cstring>
 #include <iterator>
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Designer;
-using namespace Setting;
+namespace OpenViBE {
+namespace Designer {
+namespace Setting {
 
 static void OnButtonSettingFilenameBrowsePressed(GtkButton* /*button*/, gpointer data) { static_cast<CFilenameSettingView*>(data)->browse(); }
-
 static void OnChange(GtkEntry* /*entry*/, gpointer data) { static_cast<CFilenameSettingView*>(data)->onChange(); }
 
 #if defined TARGET_OS_Windows
@@ -113,3 +112,7 @@ void CFilenameSettingView::onFocusLost()
 	}
 }
 #endif
+
+}  // namespace Setting
+}  // namespace Designer
+}  // namespace OpenViBE

@@ -27,7 +27,7 @@ namespace AdvancedVisualization {
 class CRendererLine : public IRenderer
 {
 public:
-	CRendererLine();
+	CRendererLine() = default;
 
 	void rebuild(const CRendererContext& ctx) override;
 	void refresh(const CRendererContext& ctx) override;

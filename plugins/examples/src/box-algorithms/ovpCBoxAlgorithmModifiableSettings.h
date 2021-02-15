@@ -22,12 +22,12 @@ class CBoxAlgorithmModifiableSettings final : virtual public Toolkit::TBoxAlgori
 {
 public:
 	void release() override { delete this; }
-	bool initialize() override;
-	bool uninitialize() override;
+	bool initialize() override { return true; }
+	bool uninitialize() override { return true; }
 	bool processClock(Kernel::CMessageClock& msg) override;
-	uint64_t getClockFrequency() override;
+	uint64_t getClockFrequency() override { return 0x1ULL << 30; }	// 4Hz
 
-	bool process() override;
+	bool process() override { return true; }
 	_IsDerivedFromClass_Final_(Toolkit::TBoxAlgorithm<IBoxAlgorithm>, OVP_ClassId_BoxAlgorithm_ModifiableSettings)
 
 protected:

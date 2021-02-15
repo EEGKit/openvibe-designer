@@ -21,10 +21,10 @@
 
 #include "m_VisualizationTools.hpp"
 
-using namespace OpenViBE;
-using namespace AdvancedVisualization;
+namespace OpenViBE {
+namespace AdvancedVisualization {
 
-std::string AdvancedVisualization::trim(const std::string& value)
+std::string trim(const std::string& value)
 {
 	if (value.length() == 0) { return ""; }
 	size_t i = 0;
@@ -34,8 +34,11 @@ std::string AdvancedVisualization::trim(const std::string& value)
 	return value.substr(i, j - i + 1);
 }
 
-CRendererContext& AdvancedVisualization::getContext()
+CRendererContext& getContext()
 {
 	static CRendererContext* ctx = new CRendererContext();
 	return *ctx;
 }
+
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE

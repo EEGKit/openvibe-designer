@@ -3,8 +3,8 @@
 #include "content/Face.obj.hpp"
 #include "content/Scalp.obj.hpp"
 
-using namespace OpenViBE;
-using namespace AdvancedVisualization;
+namespace OpenViBE {
+namespace AdvancedVisualization {
 
 void CRendererTopo3D::rebuild3DMeshesPre(const CRendererContext& /*ctx*/)
 {
@@ -20,3 +20,6 @@ void CRendererTopo3D::rebuild3DMeshesPre(const CRendererContext& /*ctx*/)
 	m_face.m_Color[1] = .6F;
 	m_face.m_Color[2] = .5F;
 }
+
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE

@@ -23,8 +23,8 @@
 
 #include <cmath>
 
-using namespace OpenViBE;
-using namespace AdvancedVisualization;
+namespace OpenViBE {
+namespace AdvancedVisualization {
 
 CRendererCube::CRendererCube() = default;
 
@@ -126,3 +126,6 @@ bool CRendererCube::render(const CRendererContext& ctx)
 
 	return true;
 }
+
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE

@@ -93,24 +93,24 @@ public:
 
 		m_Renderer = m_Renderers[0];
 
-		gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_Builder, "expander_select")));
-		gtk_widget_show(GTK_WIDGET(::gtk_builder_get_object(m_Builder, "expander_select_sLORETA")));
+		gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_Builder, "expander_select")));
+		gtk_widget_show(GTK_WIDGET(gtk_builder_get_object(m_Builder, "expander_select_sLORETA")));
 
-		m_LookupTreeView[0]  = GTK_TREE_VIEW(::gtk_builder_get_object(m_Builder, "expander_select_broadmann_treeview"));
-		m_LookupTreeView[1]  = GTK_TREE_VIEW(::gtk_builder_get_object(m_Builder, "expander_select_neuro_1_treeview"));
-		m_LookupTreeView[2]  = GTK_TREE_VIEW(::gtk_builder_get_object(m_Builder, "expander_select_neuro_2_treeview"));
-		m_LookupListStore[0] = GTK_LIST_STORE(::gtk_builder_get_object(m_Builder, "liststore_select_broadmann"));
-		m_LookupListStore[1] = GTK_LIST_STORE(::gtk_builder_get_object(m_Builder, "liststore_select_neuro_1"));
-		m_LookupListStore[2] = GTK_LIST_STORE(::gtk_builder_get_object(m_Builder, "liststore_select_neuro_2"));
+		m_LookupTreeView[0]  = GTK_TREE_VIEW(gtk_builder_get_object(m_Builder, "expander_select_broadmann_treeview"));
+		m_LookupTreeView[1]  = GTK_TREE_VIEW(gtk_builder_get_object(m_Builder, "expander_select_neuro_1_treeview"));
+		m_LookupTreeView[2]  = GTK_TREE_VIEW(gtk_builder_get_object(m_Builder, "expander_select_neuro_2_treeview"));
+		m_LookupListStore[0] = GTK_LIST_STORE(gtk_builder_get_object(m_Builder, "liststore_select_broadmann"));
+		m_LookupListStore[1] = GTK_LIST_STORE(gtk_builder_get_object(m_Builder, "liststore_select_neuro_1"));
+		m_LookupListStore[2] = GTK_LIST_STORE(gtk_builder_get_object(m_Builder, "liststore_select_neuro_2"));
 
 		for (size_t i = 0; i < m_Renderer->getRegionCategoryCount() && i < 3; ++i)
 		{
 			this->fillRegion(m_LookupListStore[i], m_LookupTreeView[i], m_Renderer, i);
 		}
 
-		g_signal_connect(::gtk_tree_view_get_selection(m_LookupTreeView[0]), "changed", G_CALLBACK(callback), this);
-		g_signal_connect(::gtk_tree_view_get_selection(m_LookupTreeView[1]), "changed", G_CALLBACK(callback), this);
-		g_signal_connect(::gtk_tree_view_get_selection(m_LookupTreeView[2]), "changed", G_CALLBACK(callback), this);
+		g_signal_connect(gtk_tree_view_get_selection(m_LookupTreeView[0]), "changed", G_CALLBACK(callback), this);
+		g_signal_connect(gtk_tree_view_get_selection(m_LookupTreeView[1]), "changed", G_CALLBACK(callback), this);
+		g_signal_connect(gtk_tree_view_get_selection(m_LookupTreeView[2]), "changed", G_CALLBACK(callback), this);
 
 		return true;
 	}

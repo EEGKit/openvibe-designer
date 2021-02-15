@@ -30,8 +30,8 @@
 //constexpr size_t COUNT = 16; //Macro modernization, Not yet with jenkins (not the last visual 2013 which it works)
 #define COUNT 16
 
-using namespace OpenViBE;
-using namespace AdvancedVisualization;
+namespace OpenViBE {
+namespace AdvancedVisualization {
 
 static void q_rotate(Eigen::VectorXd& dst, const Eigen::VectorXd& src, const Eigen::Quaterniond& q) { dst = q.matrix() * src; }
 
@@ -201,4 +201,5 @@ bool CRendererConnectivity::render(const CRendererContext& ctx)
 	return true;
 }
 
-// #endif // TARGET_HAS_ThirdPartyVRPN
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE

@@ -8,7 +8,6 @@
 #include <map>
 #include <string>
 
-
 namespace OpenViBE {
 namespace Plugins {
 namespace SimpleVisualization {
