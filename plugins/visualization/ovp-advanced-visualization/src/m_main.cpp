@@ -61,10 +61,6 @@
 
 #include <ctime>
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/AdvancedVisualization;
-using namespace OpenViBE;
-
 namespace OpenViBE {
 namespace AdvancedVisualization {
 // Prototype to create and release final renderer instances from the renderer API
@@ -95,8 +91,7 @@ typedef TBoxAlgorithmContinuousVizDesc<TRendererProto<ERendererType::Bars, true>
 typedef TBoxAlgorithmContinuousVizDesc<TRendererProto<ERendererType::MultiLine, true>, TRulerPair<
 										   CRulerProgressV, TRulerPair<
 											   TRulerAutoType<IRuler, TRulerConditionalPair<CRulerBottomTime, CRulerBottomCount, CRulerConditionIsTimeLocked>,
-															  IRuler>, TRulerPair<TRulerPair<CRulerLeftChannelNames, CRulerLeftTexture>, CRulerRightMonoScale>>>
-> MOscilloscope;
+															  IRuler>, TRulerPair<TRulerPair<CRulerLeftChannelNames, CRulerLeftTexture>, CRulerRightMonoScale>>>> MOscilloscope;
 typedef TBoxAlgorithmContinuousVizDesc<TRendererProto<ERendererType::XYZPlot>> xyz_plot_t;
 
 typedef TBoxAlgorithmInstantVizDesc<TRendererProto<ERendererType::Bitmap>, TRulerPair<
@@ -132,8 +127,6 @@ typedef TBoxAlgorithmInstantVizDesc<TRendererProto<ERendererType::Topography2D>,
 typedef TBoxAlgorithmInstantVizDesc<TRendererProto<ERendererType::Topography3D>, CRulerBottomTexture> topography_3d_t;
 typedef TBoxAlgorithmInstantVizDesc<TRendererProto<ERendererType::Loreta>, CRulerBottomTexture, TBoxAlgorithmInstantLoretaViz> loreta_t;
 typedef TBoxAlgorithmInstantVizDesc<TRendererProto<ERendererType::Cube>, CRulerBottomTexture> cubes_t;
-}  // namespace AdvancedVisualization
-}  // namespace OpenViBE
 
 OVP_Declare_Begin()
 	context.getTypeManager().registerEnumerationType(OVP_TypeId_TemporalCoherence, "Temporal Coherence");
@@ -223,3 +216,6 @@ OVP_Declare_Begin()
 		"Displays sources activity by mapping it to voxels in a 3D model of the scalp.", ""))
 
 OVP_Declare_End()
+
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE

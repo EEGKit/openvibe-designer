@@ -3,7 +3,6 @@
 #include <iostream>
 #include <sstream>
 
-
 #define OVD_GUI_File		OpenViBE::Directories::getDataDir() + "/applications/designer/interface.ui"
 
 namespace {
@@ -48,7 +47,7 @@ void focus_on_box_cidentifier_clicked(GtkWidget* widget, GdkEventButton* event, 
 		gtk_text_iter_forward_char(&start);
 		//this contains the CIdentifier
 		gchar* link = gtk_text_iter_get_text(&start, &end);
-		//cout << "cid is |" << link << "|" << endl;
+		//std::cout << "cid is |" << link << "|" << std::endl;
 		OpenViBE::CIdentifier id;
 		id.fromString(OpenViBE::CString(link));
 		ptr->m_CenterOnBoxFun(id);
@@ -107,12 +106,12 @@ CLogListenerDesigner::CLogListenerDesigner(const Kernel::IKernelContext& ctx, Gt
 	// set the popup-on-error checkbox according to the configuration token
 	gtk_toggle_button_set_active(m_buttonPopup, bool(ctx.getConfigurationManager().expandAsBoolean("${Designer_PopUpOnError}")));
 
-	g_signal_connect(G_OBJECT(m_alertWindow), "delete_event", G_CALLBACK(::gtk_widget_hide), nullptr);
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_builder, "dialog_error_popup-button_view")), "clicked", G_CALLBACK(::focus_message_window_cb), this);
+	g_signal_connect(G_OBJECT(m_alertWindow), "delete_event", G_CALLBACK(gtk_widget_hide), nullptr);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_builder, "dialog_error_popup-button_view")), "clicked", G_CALLBACK(focus_message_window_cb), this);
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_builder, "dialog_error_popup-button_ok")), "clicked",
-					 G_CALLBACK(::close_messages_alert_window_cb), m_alertWindow);
+					 G_CALLBACK(close_messages_alert_window_cb), m_alertWindow);
 
-	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_builder, "searchEntry")), "changed", G_CALLBACK(::refresh_search_log_entry), this);
+	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_builder, "searchEntry")), "changed", G_CALLBACK(refresh_search_log_entry), this);
 	g_signal_connect(G_OBJECT(m_textView), "button_press_event", G_CALLBACK(focus_on_box_cidentifier_clicked), this);
 	m_buffer = gtk_text_view_get_buffer(m_textView);
 

@@ -1,35 +1,23 @@
 #include "ovpCBoxAlgorithmModifiableSettings.h"
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Kernel;
-using namespace /*OpenViBE::*/Plugins;
-using namespace /*OpenViBE::Plugins::*/Examples;
-
-bool CBoxAlgorithmModifiableSettings::initialize() { return true; }
-bool CBoxAlgorithmModifiableSettings::uninitialize() { return true; }
-
-uint64_t CBoxAlgorithmModifiableSettings::getClockFrequency()
-
-{
-	// 4Hz
-	return 0x1ULL << 30;
-}
-
+namespace OpenViBE {
+namespace Plugins {
+namespace Examples {
+//---------------------------------------------------------------------------------------------------
 bool CBoxAlgorithmModifiableSettings::processClock(Kernel::CMessageClock& /*msg*/)
 {
 	updateSettings();
 	//print settings values
 	for (size_t i = 0; i < m_SettingsValue.size(); ++i)
 	{
-		this->getLogManager() << LogLevel_Info << "Setting " << i << " value is " << m_SettingsValue[i] << "\n";
+		this->getLogManager() << Kernel::LogLevel_Info << "Setting " << i << " value is " << m_SettingsValue[i] << "\n";
 	}
-	this->getLogManager() << LogLevel_Info << "\n";
+	this->getLogManager() << Kernel::LogLevel_Info << "\n";
 
 	return true;
 }
 
-/*******************************************************************************/
-
+//---------------------------------------------------------------------------------------------------
 bool CBoxAlgorithmModifiableSettings::updateSettings()
 {
 	m_SettingsValue.clear();
@@ -42,5 +30,6 @@ bool CBoxAlgorithmModifiableSettings::updateSettings()
 	return true;
 }
 
-
-bool CBoxAlgorithmModifiableSettings::process() { return true; }
+}  // namespace Examples
+}  // namespace Plugins
+}  // namespace OpenViBE

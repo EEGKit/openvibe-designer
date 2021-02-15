@@ -337,7 +337,7 @@ bool CBufferDatabase::setMatrixBuffer(const double* buffer, const uint64_t start
 	{
 		fillChannelLookupTable();  //to retrieve the unrecognized electrode warning
 		// The above call will fail if no electrode localisation data...
-		// m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error << "Unable to fill lookup table\n";
+		// m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << Kernel::LogLevel_Error << "Unable to fill lookup table\n";
 		// return false;
 	}
 	else

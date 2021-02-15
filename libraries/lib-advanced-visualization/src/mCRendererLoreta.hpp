@@ -22,7 +22,6 @@
 
 #if defined TARGET_HAS_ThirdPartyOpenGL
 
-
 #include "mIRenderer.hpp"
 #include "mC3DMesh.hpp"
 #include <vector>

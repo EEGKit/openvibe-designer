@@ -240,7 +240,7 @@ bool TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::process()
 
 				// Sets time scale
 				gtk_spin_button_set_value(
-					GTK_SPIN_BUTTON(::gtk_builder_get_object(m_Builder, "spinbutton_time_scale")), (chunkDuration >> 22) / 1024.);
+					GTK_SPIN_BUTTON(gtk_builder_get_object(m_Builder, "spinbutton_time_scale")), (chunkDuration >> 22) / 1024.);
 
 				m_Renderers[i]->clear(0); // Drop last samples as they will be fed again
 				for (size_t k = 0; k < nSample; ++k)

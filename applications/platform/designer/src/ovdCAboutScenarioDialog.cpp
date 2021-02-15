@@ -1,9 +1,7 @@
 #include "ovdCAboutScenarioDialog.h"
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Designer;
-using namespace /*OpenViBE::*/Plugins;
-using namespace /*OpenViBE::*/Kernel;
+namespace OpenViBE {
+namespace Designer {
 
 static void buttonMetaboxReset_clicked(GtkWidget* /*widget*/, gpointer data) { gtk_entry_set_text(GTK_ENTRY(data), CIdentifier::random().str().c_str()); }
 
@@ -73,7 +71,8 @@ bool CAboutScenarioDialog::run()
 		CIdentifier tmp;
 		if (!tmp.fromString(id))
 		{
-			m_kernelCtx.getLogManager() << LogLevel_Error << "Invalid identifier " << id << " is not in the \"(0x[0-9a-f]{1-8}, 0x[0-9a-f]{1-8})\" format. ";
+			m_kernelCtx.getLogManager() << Kernel::LogLevel_Error << "Invalid identifier " << id
+					<< " is not in the \"(0x[0-9a-f]{1-8}, 0x[0-9a-f]{1-8})\" format. ";
 			m_kernelCtx.getLogManager() << "Reverting to " << m_scenario.getAttributeValue(OVP_AttributeId_Metabox_ID).toASCIIString() << ".\n";
 		}
 		else { m_scenario.setAttributeValue(OVP_AttributeId_Metabox_ID, id); }
@@ -95,3 +94,6 @@ bool CAboutScenarioDialog::run()
 
 	return true;
 }
+
+}  // namespace Designer
+}  // namespace OpenViBE

@@ -24,8 +24,8 @@
 
 #include <cmath>
 
-using namespace OpenViBE;
-using namespace AdvancedVisualization;
+namespace OpenViBE {
+namespace AdvancedVisualization {
 
 void CMouse::mouseButton(CRendererContext& ctx, const int x, const int y, const int button, const int status)
 {
@@ -61,3 +61,6 @@ bool CMouse::hasButtonPressed()
 	for (const auto& button : m_Buttons) { if (button.second) { return true; } }
 	return false;
 }
+
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE

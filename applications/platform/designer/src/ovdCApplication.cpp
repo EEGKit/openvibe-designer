@@ -177,7 +177,7 @@ struct SBoxProto final : Kernel::IBoxProto
 extern "C" G_MODULE_EXPORT void open_url_mensia_cb(GtkWidget* /*widget*/, gpointer /*data*/)
 {
 #if defined(TARGET_OS_Windows) && defined(MENSIA_DISTRIBUTION)
-		system("start http://mensiatech.com");
+	system("start http://mensiatech.com");
 #endif
 }
 }  // namespace
@@ -253,7 +253,7 @@ static void menu_about_link_clicked_cb(GtkAboutDialog* /*dialog*/, const gchar* 
 static void menu_browse_documentation_cb(GtkMenuItem* /*item*/, gpointer data) { static_cast<CApplication*>(data)->browseDocumentationCB(); }
 
 #ifdef MENSIA_DISTRIBUTION
-static void menu_register_license_cb(::GtkMenuItem* /*item*/, gpointer data) { static_cast<CApplication*>(data)->registerLicenseCB(); }
+static void menu_register_license_cb(GtkMenuItem* /*item*/, gpointer data) { static_cast<CApplication*>(data)->registerLicenseCB(); }
 #endif
 
 static void menu_report_issue_cb(GtkMenuItem* /*item*/, gpointer data) { static_cast<CApplication*>(data)->reportIssueCB(); }
@@ -286,7 +286,7 @@ static void button_undo_cb(GtkButton* /*button*/, gpointer data) { static_cast<C
 static void button_redo_cb(GtkButton* /*button*/, gpointer data) { static_cast<CApplication*>(data)->redoCB(); }
 
 #ifdef MENSIA_DISTRIBUTION
-static void button_toggle_neurort_engine_configuration_cb(::GtkMenuItem* item, gpointer data)
+static void button_toggle_neurort_engine_configuration_cb(GtkMenuItem* item, gpointer data)
 {
 	static_cast<CApplication*>(data)->m_ArchwayHandlerGUI->toggleNeuroRTEngineConfigurationDialog(
 		bool(gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(item)) == TRUE));
@@ -717,8 +717,8 @@ CApplication::CApplication(const Kernel::IKernelContext& ctx) : m_kernelCtx(ctx)
 	m_kernelCtx.getConfigurationManager().createConfigurationToken("__volatile_ScenarioDir", "");
 
 #ifdef MENSIA_DISTRIBUTION
-	m_ArchwayHandler    = new OpenViBE::CArchwayHandler(ctx);
-	m_ArchwayHandlerGUI = new OpenViBE::CArchwayHandlerGUI(*m_ArchwayHandler, this);
+	m_ArchwayHandler    = new CArchwayHandler(ctx);
+	m_ArchwayHandlerGUI = new CArchwayHandlerGUI(*m_ArchwayHandler, this);
 #endif
 }
 
@@ -1181,7 +1181,7 @@ void CApplication::initialize(const ECommandLineFlag cmdLineFlags)
 
 	std::string defaultURLBaseString = std::string(m_kernelCtx.getConfigurationManager().expand("${Designer_HelpBrowserURLBase}"));
 #ifdef MENSIA_DISTRIBUTION
-	if (m_ArchwayHandler->initialize() == OpenViBE::EEngineInitialisationStatus::NotAvailable)
+	if (m_ArchwayHandler->initialize() == EEngineInitialisationStatus::NotAvailable)
 	{
 		gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_Builder, "neurort-toggle_engine_configuration")));
 	}

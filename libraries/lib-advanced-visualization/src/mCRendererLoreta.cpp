@@ -28,10 +28,8 @@
 #include "content/Face.obj.hpp"
 #include "content/Scalp.obj.hpp"
 
-using namespace OpenViBE;
-using namespace AdvancedVisualization;
-
-using namespace LoretaRegions;
+namespace OpenViBE {
+namespace AdvancedVisualization {
 
 namespace {
 //-32,8,-40,
@@ -391,15 +389,12 @@ CRendererLoreta::CRendererLoreta()
 	for (auto& voxel : loretaVoxel) { insertLoretaVoxelInMesh(m_brain, float(-voxel[0]), float(voxel[1]), float(-voxel[2]), 3.5); }
 
 	m_lookups.clear();
-	const size_t idxBrodmanns   = 0;
-	const size_t idxAnatomicals = 1;
-	const size_t idxLobes       = 2;
-	const size_t idxRoi         = 3;
+	//const size_t idxBrodmanns = 0, idxAnatomicals = 1, idxLobes = 2, idxRoi = 3;
 	m_lookups.reserve(4);
-	m_lookups.emplace_back(BRODMANNS);
-	m_lookups.emplace_back(ANATOMICALS);
-	m_lookups.emplace_back(LOBES);
-	m_lookups.emplace_back(REGIONS_OF_INTEREST);
+	m_lookups.emplace_back(LoretaRegions::BRODMANNS);
+	m_lookups.emplace_back(LoretaRegions::ANATOMICALS);
+	m_lookups.emplace_back(LoretaRegions::LOBES);
+	m_lookups.emplace_back(LoretaRegions::REGIONS_OF_INTEREST);
 	m_selecteds.resize(2394, true);
 
 	this->refreshBrainSubset();
@@ -664,4 +659,6 @@ void CRendererLoreta::refreshBrainSubset()
 	m_brainSubsetTriangles.resize(j);
 }
 
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE
 #endif // TARGET_HAS_ThirdPartyOpenGL

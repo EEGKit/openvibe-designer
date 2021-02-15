@@ -25,8 +25,8 @@
 
 #include <cstring>
 
-using namespace OpenViBE;
-using namespace AdvancedVisualization;
+namespace OpenViBE {
+namespace AdvancedVisualization {
 
 namespace {
 template <typename T>
@@ -148,4 +148,6 @@ bool C3DMesh::project(std::vector<CVertex>& out, const std::vector<CVertex>& in)
 	return true;
 }
 
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE
 #endif // TARGET_HAS_ThirdPartyOpenGL

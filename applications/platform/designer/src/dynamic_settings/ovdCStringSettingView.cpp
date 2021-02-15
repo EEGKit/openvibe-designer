@@ -1,9 +1,9 @@
 #include "ovdCStringSettingView.h"
 #include "../ovd_base.h"
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Designer;
-using namespace Setting;
+namespace OpenViBE {
+namespace Designer {
+namespace Setting {
 
 static void OnChange(GtkEntry* /*entry*/, gpointer data) { static_cast<CStringSettingView*>(data)->onChange(); }
 
@@ -35,3 +35,7 @@ void CStringSettingView::onChange()
 		getBox().setSettingValue(getSettingIndex(), value);
 	}
 }
+
+}  // namespace Setting
+}  // namespace Designer
+}  // namespace OpenViBE

@@ -12,22 +12,15 @@
 #endif
 #endif
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Plugins;
-using namespace /*OpenViBE::*/Kernel;
-using namespace /*OpenViBE::*/Toolkit;
-
-using namespace /*OpenViBE::*/Plugins;
-using namespace SimpleVisualization;
-
-
-using namespace std;
+namespace OpenViBE {
+namespace Plugins {
+namespace SimpleVisualization {
 
 //#define INTERPOLATE_AT_CHANNEL_LOCATION
 
 static const int NB_COLORS = 13;
-static array<GdkColor, 13> palette;
-static array<uint8_t, 13 * 3> palette8;
+static std::array<GdkColor, 13> palette;
+static std::array<uint8_t, 13 * 3> palette8;
 
 static double Deg2Rad(const double x) { return x * 0.01745329251994329576923690768489; }
 static gboolean redrawCallback(GtkWidget* widget, GdkEventExpose* event, gpointer data);
@@ -1319,3 +1312,7 @@ void setDelayCallback(GtkRange* range, gpointer data)
 	auto* view = reinterpret_cast<CTopographicMap2DView*>(data);
 	view->setDelayCB(gtk_range_get_value(range));
 }
+
+}  // namespace SimpleVisualization
+}  // namespace Plugins
+}  // namespace OpenViBE

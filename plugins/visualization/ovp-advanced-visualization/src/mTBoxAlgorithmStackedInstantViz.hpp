@@ -25,7 +25,6 @@
 
 #include "mCBoxAlgorithmViz.hpp"
 
-
 #if defined TARGET_OS_Windows
 #define snprintf _snprintf
 #endif
