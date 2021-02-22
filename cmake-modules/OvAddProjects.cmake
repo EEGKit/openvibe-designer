@@ -108,7 +108,7 @@ FUNCTION(OV_ADD_PROJECTS CURRENT_FOLDER_PREFIX)
 						SET(DOC_PROJECT_BRANCH ${PROJECT_BRANCH})
 						SET(DOC_PROJECT_CPP_SOURCES "${CUSTOM_DOCUMENTATION_CPP_SOURCES}")
 
-						get_directory_property( DirDefs DIRECTORY ${CMAKE_SOURCE_DIR} COMPILE_DEFINITIONS )
+						get_directory_property( DirDefs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} COMPILE_DEFINITIONS )
 						SET(DOC_DEFINES "")
 						foreach( d ${DirDefs} )
 							#message( STATUS "Found Define: " ${d} )
@@ -118,7 +118,7 @@ FUNCTION(OV_ADD_PROJECTS CURRENT_FOLDER_PREFIX)
 
 						#message( STATUS ${DOC_DEFINES} )
 
-						CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/documentation/src/build-documentation.cmake-skeleton" "${DIST_DOCTMP}/build-documentation-${DIRNAME}.cmake" @ONLY)
+						CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/documentation/src/build-documentation.cmake-skeleton" "${DIST_DOCTMP}/build-documentation-${DIRNAME}.cmake" @ONLY)
 
 						FILE(APPEND "${DIST_DOCTMP}/build-documentation.cmd"
 							"cmake -P build-documentation-${DIRNAME}.cmake\n")

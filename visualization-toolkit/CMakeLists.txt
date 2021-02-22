@@ -14,8 +14,12 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 	VERSION ${PROJECT_VERSION}
 	SOVERSION ${PROJECT_VERSION_MAJOR}
 	COMPILE_FLAGS "-DOVVIZ_Exports -DOVVIZ_Shared")
+target_link_libraries(${PROJECT_NAME}
+                      openvibe
+                      openvibe-toolkit
+)
+add_definitions(-DTARGET_HAS_ThirdPartyOpenViBEPluginsGlobalDefines)
 
-include("AddOpenViBESDKComponents")
 include("FindThirdPartyGTK")
 
 # ---------------------------------

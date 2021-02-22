@@ -16,12 +16,26 @@ include("FindSourceDependencyJSON")
 
 set(SRC_FILES "${SRC_FILES};${CMAKE_BINARY_DIR}/resource-files/${LOWER_BRAND_NAME}-${LOWER_DESIGNER_NAME}.rc")
 add_executable(${PROJECT_NAME} ${ENTRYPOINT} ${SRC_FILES})
+target_link_libraries(${PROJECT_NAME}
+                      openvibe
+                      openvibe-kernel
+                      openvibe-toolkit
+                      openvibe-module-ebml
+                      openvibe-module-system
+                      openvibe-module-fs
+                      openvibe-module-socket
+                      openvibe-module-xml
+                      openvibe-module-csv
+                      openvibe-module-date
+                      openvibe-module-communication
+)
+
+add_definitions(-DTARGET_HAS_ThirdPartyOpenViBEPluginsGlobalDefines)
 
 # Generate launch script
 OV_INSTALL_LAUNCH_SCRIPT(SCRIPT_PREFIX "${LOWER_BRAND_NAME}-${LOWER_DESIGNER_NAME}" EXECUTABLE_NAME "${PROJECT_NAME}" ICON_PATH "${OV_ICON_PATH}/designer.ico")
 
-SET(INCLUDED_OV_SDK_COMPONENTS BASE ALLPLUGINS ALLMODULES DEPENDENCIES)
-include("AddOpenViBESDKComponents")
+
 include("FindOpenViBEVisualizationToolkit")
 include("FindThirdPartyGTK")
 include("FindThirdPartyBoost")
