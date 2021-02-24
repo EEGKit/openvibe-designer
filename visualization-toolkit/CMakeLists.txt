@@ -6,18 +6,28 @@ OV_ADD_THIS_TO_PROJECT_LIST()
 file(GLOB_RECURSE SRC_FILES src/*.cpp src/*.h  src/*.hpp include/*.h include/*.hpp)
 include("FindSourceRCProperties")
 
-include_directories(${openvibe-visualization-toolkit_SOURCE_DIR}/include/)
-include_directories(${openvibe-visualization-toolkit_SOURCE_DIR}/include/visualization-toolkit)
-
 add_library(${PROJECT_NAME} SHARED ${SRC_FILES})
+
 set_target_properties(${PROJECT_NAME} PROPERTIES
 	VERSION ${PROJECT_VERSION}
 	SOVERSION ${PROJECT_VERSION_MAJOR}
-	COMPILE_FLAGS "-DOVVIZ_Exports -DOVVIZ_Shared")
+)
+
+target_include_directories(${PROJECT_NAME}
+                           PRIVATE include/visualization-toolkit
+                           PUBLIC include
+)
+
 target_link_libraries(${PROJECT_NAME}
                       openvibe
                       openvibe-toolkit
 )
+
+target_compile_options(${PROJECT_NAME}
+                       PRIVATE -DOVVIZ_Exports
+                       PUBLIC -DOVVIZ_Shared
+)
+
 add_definitions(-DTARGET_HAS_ThirdPartyOpenViBEPluginsGlobalDefines)
 
 include("FindThirdPartyGTK")
