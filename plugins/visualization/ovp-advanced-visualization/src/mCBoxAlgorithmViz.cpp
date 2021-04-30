@@ -26,13 +26,9 @@
 #	define GL_BGRA 0x80E1
 #endif // GL_BGRA
 
-using namespace Mensia;
-using namespace AdvancedVisualization;
+namespace OpenViBE {
+namespace AdvancedVisualization {
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Kernel;
-
-namespace {
 template <int i>
 class toolbar_sort_changed_
 {
@@ -44,7 +40,7 @@ public:
 	}
 };
 
-void channel_selection_changed_(GtkTreeSelection* selection, CRendererContext* ctx)
+static void ChannelSelectionChanged(GtkTreeSelection* selection, CRendererContext* ctx)
 {
 	size_t i                = 0;
 	GtkTreeView* treeView   = gtk_tree_selection_get_tree_view(selection);
@@ -64,30 +60,30 @@ void channel_selection_changed_(GtkTreeSelection* selection, CRendererContext* c
 	}
 }
 
-void spinbutton_time_scale_change_value_callback(GtkSpinButton* button, CRendererContext* ctx)
+static void SpinbuttonTimeScaleChangeValueCB(GtkSpinButton* button, CRendererContext* ctx)
 {
 	ctx->setTimeScale(size_t(gtk_spin_button_get_value(button) * (1LL << 32)));
 }
 
-void spinbutton_element_count_change_value_callback(GtkSpinButton* button, CRendererContext* ctx)
+static void SpinbuttonElementCountChangeValueCB(GtkSpinButton* button, CRendererContext* ctx)
 {
 	ctx->setElementCount(size_t(gtk_spin_button_get_value(button)));
 }
 
-void checkbutton_positive_toggled_callback(GtkToggleButton* button, CRendererContext* ctx) { ctx->setPositiveOnly(gtk_toggle_button_get_active(button) != 0); }
+static void CheckbuttonPositiveToggledCB(GtkToggleButton* button, CRendererContext* ctx) { ctx->setPositiveOnly(gtk_toggle_button_get_active(button) != 0); }
 
-void checkbutton_show_scale_toggled_callback(GtkToggleButton* button, CRendererContext* ctx)
+static void CheckbuttonShowScaleToggledCB(GtkToggleButton* button, CRendererContext* ctx)
 {
 	ctx->setScaleVisibility(gtk_toggle_button_get_active(button) != 0);
 }
 
-void button_video_recording_pressed_callback(GtkButton* button, CBoxAlgorithmViz* box)
+static void ButtonVideoRecordingPressedCB(GtkButton* button, CBoxAlgorithmViz* box)
 {
 	box->m_IsVideoOutputWorking = !box->m_IsVideoOutputWorking;
 	gtk_button_set_label(button, box->m_IsVideoOutputWorking ? GTK_STOCK_MEDIA_PAUSE : GTK_STOCK_MEDIA_RECORD);
 }
 
-void range_erp_value_changed_callback(GtkRange* range, GtkLabel* label)
+static void RangeERPValueChangedCB(GtkRange* range, GtkLabel* label)
 {
 	char str[1024];
 	sprintf(str, "%.02f%%", gtk_range_get_value(range) * 100);
@@ -95,19 +91,20 @@ void range_erp_value_changed_callback(GtkRange* range, GtkLabel* label)
 	getContext().stepERPFractionBy(float(gtk_range_get_value(range)) - getContext().getERPFraction());
 }
 
-void button_erp_play_pause_pressed_callback(GtkButton* /*button*/, CRendererContext* ctx) { ctx->setERPPlayerActive(!ctx->isERPPlayerActive()); }
+static void ButtonERPPlayPausePressedCB(GtkButton* /*button*/, CRendererContext* ctx) { ctx->setERPPlayerActive(!ctx->isERPPlayerActive()); }
 
-void spinbutton_freq_band_min_change_value_callback(GtkSpinButton* button, CRendererContext* ctx)
+static void SpinbuttonFreqBandMinChangeValueCB(GtkSpinButton* button, CRendererContext* ctx)
 {
 	ctx->setMinimumSpectrumFrequency(size_t(gtk_spin_button_get_value(button)));
 }
 
-void spinbutton_freq_band_max_change_value_callback(GtkSpinButton* button, CRendererContext* ctx)
+static void SpinbuttonFreqBandMaxChangeValueCB(GtkSpinButton* button, CRendererContext* ctx)
 {
 	ctx->setMaximumSpectrumFrequency(size_t(gtk_spin_button_get_value(button)));
 }
-}  // namespace
+//---------------------------------------------------------------------------------------------------
 
+//---------------------------------------------------------------------------------------------------
 bool CBoxAlgorithmViz::initialize()
 
 {
@@ -145,28 +142,28 @@ bool CBoxAlgorithmViz::initialize()
 	m_Builder = gtk_builder_new();
 	gtk_builder_add_from_file(m_Builder, std::string(Directories::getDataDir() + "/plugins/advanced-visualization.ui").c_str(), nullptr);
 
-	GtkWidget* main    = GTK_WIDGET(::gtk_builder_get_object(m_Builder, "table"));
-	GtkWidget* toolbar = GTK_WIDGET(::gtk_builder_get_object(m_Builder, "toolbar-window"));
-	m_Viewport         = GTK_WIDGET(::gtk_builder_get_object(m_Builder, "viewport"));
-	m_Top              = GTK_WIDGET(::gtk_builder_get_object(m_Builder, "label_top"));
-	m_Left             = GTK_WIDGET(::gtk_builder_get_object(m_Builder, "drawingarea_left"));
-	m_Right            = GTK_WIDGET(::gtk_builder_get_object(m_Builder, "drawingarea_right"));
-	m_Bottom           = GTK_WIDGET(::gtk_builder_get_object(m_Builder, "drawingarea_bottom"));
-	m_CornerLeft       = GTK_WIDGET(::gtk_builder_get_object(m_Builder, "label_corner_left"));
-	m_CornerRight      = GTK_WIDGET(::gtk_builder_get_object(m_Builder, "label_corner_right"));
+	GtkWidget* main    = GTK_WIDGET(gtk_builder_get_object(m_Builder, "table"));
+	GtkWidget* toolbar = GTK_WIDGET(gtk_builder_get_object(m_Builder, "toolbar-window"));
+	m_Viewport         = GTK_WIDGET(gtk_builder_get_object(m_Builder, "viewport"));
+	m_Top              = GTK_WIDGET(gtk_builder_get_object(m_Builder, "label_top"));
+	m_Left             = GTK_WIDGET(gtk_builder_get_object(m_Builder, "drawingarea_left"));
+	m_Right            = GTK_WIDGET(gtk_builder_get_object(m_Builder, "drawingarea_right"));
+	m_Bottom           = GTK_WIDGET(gtk_builder_get_object(m_Builder, "drawingarea_bottom"));
+	m_CornerLeft       = GTK_WIDGET(gtk_builder_get_object(m_Builder, "label_corner_left"));
+	m_CornerRight      = GTK_WIDGET(gtk_builder_get_object(m_Builder, "label_corner_right"));
 
 	// Gets important widgets
-	m_TimeScaleW       = GTK_WIDGET(::gtk_builder_get_object(m_Builder, "spinbutton_time_scale"));
-	m_nElementW        = GTK_WIDGET(::gtk_builder_get_object(m_Builder, "spinbutton_element_count"));
-	m_ERPRange         = GTK_WIDGET(::gtk_builder_get_object(m_Builder, "range_erp"));
-	m_ERPPlayerButton  = GTK_WIDGET(::gtk_builder_get_object(m_Builder, "button_erp_play_pause"));
-	m_ERPPlayer        = GTK_WIDGET(::gtk_builder_get_object(m_Builder, "table_erp"));
-	m_ScaleVisible     = GTK_WIDGET(::gtk_builder_get_object(m_Builder, "checkbutton_show_scale"));
-	m_FrequencyBandMin = GTK_WIDGET(::gtk_builder_get_object(m_Builder, "spinbutton_freq_band_min"));
-	m_FrequencyBandMax = GTK_WIDGET(::gtk_builder_get_object(m_Builder, "spinbutton_freq_band_max"));
+	m_TimeScaleW       = GTK_WIDGET(gtk_builder_get_object(m_Builder, "spinbutton_time_scale"));
+	m_nElementW        = GTK_WIDGET(gtk_builder_get_object(m_Builder, "spinbutton_element_count"));
+	m_ERPRange         = GTK_WIDGET(gtk_builder_get_object(m_Builder, "range_erp"));
+	m_ERPPlayerButton  = GTK_WIDGET(gtk_builder_get_object(m_Builder, "button_erp_play_pause"));
+	m_ERPPlayer        = GTK_WIDGET(gtk_builder_get_object(m_Builder, "table_erp"));
+	m_ScaleVisible     = GTK_WIDGET(gtk_builder_get_object(m_Builder, "checkbutton_show_scale"));
+	m_FrequencyBandMin = GTK_WIDGET(gtk_builder_get_object(m_Builder, "spinbutton_freq_band_min"));
+	m_FrequencyBandMax = GTK_WIDGET(gtk_builder_get_object(m_Builder, "spinbutton_freq_band_max"));
 
-	m_ChannelTreeView  = GTK_TREE_VIEW(::gtk_builder_get_object(m_Builder, "expander_select_treeview"));
-	m_ChannelListStore = GTK_LIST_STORE(::gtk_builder_get_object(m_Builder, "liststore_select"));
+	m_ChannelTreeView  = GTK_TREE_VIEW(gtk_builder_get_object(m_Builder, "expander_select_treeview"));
+	m_ChannelListStore = GTK_LIST_STORE(gtk_builder_get_object(m_Builder, "liststore_select"));
 
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(m_ChannelTreeView), GTK_SELECTION_MULTIPLE);
 
@@ -175,43 +172,41 @@ bool CBoxAlgorithmViz::initialize()
 	gtk_spin_button_set_value(GTK_SPIN_BUTTON(m_FrequencyBandMax), 48);
 
 	// Connects GTK signals
-	g_signal_connect(::gtk_builder_get_object(m_Builder, "expander_sort_button_default"), "pressed", G_CALLBACK(::toolbar_sort_changed_<1>::callback), this);
-	g_signal_connect(::gtk_builder_get_object(m_Builder, "expander_sort_button_alpha"), "pressed", G_CALLBACK(::toolbar_sort_changed_<2>::callback), this);
-	g_signal_connect(::gtk_builder_get_object(m_Builder, "expander_sort_button_reversed"), "pressed", G_CALLBACK(::toolbar_sort_changed_<3>::callback), this);
-	g_signal_connect(::gtk_builder_get_object(m_Builder, "expander_sort_button_left_right"), "pressed", G_CALLBACK(::toolbar_sort_changed_<4>::callback), this);
-	g_signal_connect(::gtk_builder_get_object(m_Builder, "expander_sort_button_front_back"), "pressed", G_CALLBACK(::toolbar_sort_changed_<5>::callback), this);
-	g_signal_connect(::gtk_builder_get_object(m_Builder, "spinbutton_time_scale"), "value-changed",
-					 G_CALLBACK(::spinbutton_time_scale_change_value_callback), m_RendererCtx);
-	g_signal_connect(::gtk_builder_get_object(m_Builder, "spinbutton_element_count"), "value-changed",
-					 G_CALLBACK(::spinbutton_element_count_change_value_callback), m_RendererCtx);
-	g_signal_connect(::gtk_builder_get_object(m_Builder, "spinbutton_element_count"), "value-changed",
-					 G_CALLBACK(::spinbutton_element_count_change_value_callback), m_SubRendererCtx);
-	g_signal_connect(::gtk_builder_get_object(m_Builder, "checkbutton_positive"), "toggled", G_CALLBACK(::checkbutton_positive_toggled_callback),
+	g_signal_connect(gtk_builder_get_object(m_Builder, "expander_sort_button_default"), "pressed", G_CALLBACK(toolbar_sort_changed_<1>::callback), this);
+	g_signal_connect(gtk_builder_get_object(m_Builder, "expander_sort_button_alpha"), "pressed", G_CALLBACK(toolbar_sort_changed_<2>::callback), this);
+	g_signal_connect(gtk_builder_get_object(m_Builder, "expander_sort_button_reversed"), "pressed", G_CALLBACK(toolbar_sort_changed_<3>::callback), this);
+	g_signal_connect(gtk_builder_get_object(m_Builder, "expander_sort_button_left_right"), "pressed", G_CALLBACK(toolbar_sort_changed_<4>::callback), this);
+	g_signal_connect(gtk_builder_get_object(m_Builder, "expander_sort_button_front_back"), "pressed", G_CALLBACK(toolbar_sort_changed_<5>::callback), this);
+	g_signal_connect(gtk_builder_get_object(m_Builder, "spinbutton_time_scale"), "value-changed", G_CALLBACK(SpinbuttonTimeScaleChangeValueCB), m_RendererCtx);
+	g_signal_connect(gtk_builder_get_object(m_Builder, "spinbutton_element_count"), "value-changed", G_CALLBACK(SpinbuttonElementCountChangeValueCB),
 					 m_RendererCtx);
-	g_signal_connect(::gtk_builder_get_object(m_Builder, "checkbutton_show_scale"), "toggled", G_CALLBACK(::checkbutton_show_scale_toggled_callback),
-					 &Mensia::AdvancedVisualization::getContext());
-	g_signal_connect(::gtk_builder_get_object(m_Builder, "button_erp_play_pause"), "pressed", G_CALLBACK(::button_erp_play_pause_pressed_callback),
-					 &Mensia::AdvancedVisualization::getContext());
-	g_signal_connect(::gtk_builder_get_object(m_Builder, "button_video_recording"), "pressed", G_CALLBACK(::button_video_recording_pressed_callback), this);
-	g_signal_connect(::gtk_builder_get_object(m_Builder, "range_erp"), "value-changed", G_CALLBACK(::range_erp_value_changed_callback),
-					 ::gtk_builder_get_object(m_Builder, "label_erp_progress"));
-	g_signal_connect(::gtk_builder_get_object(m_Builder, "spinbutton_freq_band_min"), "value-changed",
-					 G_CALLBACK(::spinbutton_freq_band_min_change_value_callback), m_RendererCtx);
-	g_signal_connect(::gtk_builder_get_object(m_Builder, "spinbutton_freq_band_max"), "value-changed",
-					 G_CALLBACK(::spinbutton_freq_band_max_change_value_callback), m_RendererCtx);
+	g_signal_connect(gtk_builder_get_object(m_Builder, "spinbutton_element_count"), "value-changed", G_CALLBACK(SpinbuttonElementCountChangeValueCB),
+					 m_SubRendererCtx);
+	g_signal_connect(gtk_builder_get_object(m_Builder, "checkbutton_positive"), "toggled", G_CALLBACK(CheckbuttonPositiveToggledCB), m_RendererCtx);
+	g_signal_connect(gtk_builder_get_object(m_Builder, "checkbutton_show_scale"), "toggled", G_CALLBACK(CheckbuttonShowScaleToggledCB),
+					 &OpenViBE::AdvancedVisualization::getContext());
+	g_signal_connect(gtk_builder_get_object(m_Builder, "button_erp_play_pause"), "pressed", G_CALLBACK(ButtonERPPlayPausePressedCB),
+					 &OpenViBE::AdvancedVisualization::getContext());
+	g_signal_connect(gtk_builder_get_object(m_Builder, "button_video_recording"), "pressed", G_CALLBACK(ButtonVideoRecordingPressedCB), this);
+	g_signal_connect(gtk_builder_get_object(m_Builder, "range_erp"), "value-changed", G_CALLBACK(RangeERPValueChangedCB),
+					 gtk_builder_get_object(m_Builder, "label_erp_progress"));
+	g_signal_connect(gtk_builder_get_object(m_Builder, "spinbutton_freq_band_min"), "value-changed", G_CALLBACK(SpinbuttonFreqBandMinChangeValueCB),
+					 m_RendererCtx);
+	g_signal_connect(gtk_builder_get_object(m_Builder, "spinbutton_freq_band_max"), "value-changed", G_CALLBACK(SpinbuttonFreqBandMaxChangeValueCB),
+					 m_RendererCtx);
 
-	g_signal_connect(::gtk_tree_view_get_selection(m_ChannelTreeView), "changed", G_CALLBACK(channel_selection_changed_), m_RendererCtx);
+	g_signal_connect(gtk_tree_view_get_selection(m_ChannelTreeView), "changed", G_CALLBACK(ChannelSelectionChanged), m_RendererCtx);
 
 	// Hides unnecessary widgets
 	if (std::find(m_Parameters.begin(), m_Parameters.end(), S_DataScale) == m_Parameters.end())
 	{
-		gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_Builder, "checkbutton_positive")));
+		gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_Builder, "checkbutton_positive")));
 	}
 	if (std::find(m_Parameters.begin(), m_Parameters.end(), S_ChannelLocalisation) == m_Parameters.end())
 	{
-		gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_Builder, "expander_sort")));
+		gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_Builder, "expander_sort")));
 	}
-	if (m_TypeID != OV_TypeId_Spectrum) { gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_Builder, "expander_freq_band"))); }
+	if (m_TypeID != OV_TypeId_Spectrum) { gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_Builder, "expander_freq_band"))); }
 	gtk_widget_hide(m_ERPPlayer);
 
 	// Prepares 3D View
@@ -221,7 +216,7 @@ bool CBoxAlgorithmViz::initialize()
 	// Fowards widgets to the OpenViBE viz context
 	if (!this->canCreatePluginObject(OVP_ClassId_Plugin_VisualizationCtx))
 	{
-		this->getLogManager() << LogLevel_Error << "Visualization framework is not loaded" << "\n";
+		this->getLogManager() << Kernel::LogLevel_Error << "Visualization framework is not loaded" << "\n";
 		return false;
 	}
 
@@ -279,11 +274,11 @@ bool CBoxAlgorithmViz::initialize()
 
 			case F_FixedChannelOrder:
 				settingIndex--;
-				gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_Builder, "expander_sort")));
+				gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_Builder, "expander_sort")));
 				break;
 			case F_FixedChannelSelection:
 				settingIndex--;
-				gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_Builder, "expander_select")));
+				gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_Builder, "expander_select")));
 				break;
 			default:
 				settingIndex--;
@@ -293,7 +288,7 @@ bool CBoxAlgorithmViz::initialize()
 		settingIndex++;
 	}
 
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(::gtk_builder_get_object(m_Builder, "checkbutton_positive")), gboolean(m_IsPositive));
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(m_Builder, "checkbutton_positive")), gboolean(m_IsPositive));
 
 	// Parses color string
 	parseColor(m_Color, color.toASCIIString());
@@ -313,18 +308,18 @@ bool CBoxAlgorithmViz::initialize()
 	// Sets time scale
 	if (m_TemporalCoherence == ETemporalCoherence::TimeLocked)
 	{
-		gtk_spin_button_set_value(GTK_SPIN_BUTTON(::gtk_builder_get_object(m_Builder, "spinbutton_time_scale")), (m_TimeScale >> 22) / 1024.);
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(gtk_builder_get_object(m_Builder, "spinbutton_time_scale")), (m_TimeScale >> 22) / 1024.);
 		m_IsTimeLocked = true;
 	}
-	else { gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_Builder, "vbox_time_scale"))); }
+	else { gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_Builder, "vbox_time_scale"))); }
 
 	// Sets matrix count
 	if (m_TemporalCoherence == ETemporalCoherence::Independant)
 	{
-		gtk_spin_button_set_value(GTK_SPIN_BUTTON(::gtk_builder_get_object(m_Builder, "spinbutton_element_count")), double(m_NElement));
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(gtk_builder_get_object(m_Builder, "spinbutton_element_count")), double(m_NElement));
 		m_IsTimeLocked = false;
 	}
-	else { gtk_widget_hide(GTK_WIDGET(::gtk_builder_get_object(m_Builder, "vbox_element_count"))); }
+	else { gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_Builder, "vbox_element_count"))); }
 
 	// Shows / hides scale
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_ScaleVisible), gboolean(m_RendererCtx->getScaleVisibility()));
@@ -332,13 +327,13 @@ bool CBoxAlgorithmViz::initialize()
 	// Reads channel localisation
 	if (m_Localisation != CString(""))
 	{
-		IAlgorithmProxy* channelPosReader = &this->getAlgorithmManager().getAlgorithm(
+		Kernel::IAlgorithmProxy* channelPosReader = &this->getAlgorithmManager().getAlgorithm(
 			this->getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_OVMatrixFileReader));
 		channelPosReader->initialize();
 
-		const TParameterHandler<CString*> ip_filename(
+		const Kernel::TParameterHandler<CString*> ip_filename(
 			channelPosReader->getInputParameter(OVP_GD_Algorithm_OVMatrixFileReader_InputParameterId_Filename));
-		TParameterHandler<IMatrix*> op_matrix(channelPosReader->getOutputParameter(OVP_GD_Algorithm_OVMatrixFileReader_OutputParameterId_Matrix));
+		Kernel::TParameterHandler<CMatrix*> op_matrix(channelPosReader->getOutputParameter(OVP_GD_Algorithm_OVMatrixFileReader_OutputParameterId_Matrix));
 
 		*ip_filename = m_Localisation;
 
@@ -346,7 +341,7 @@ bool CBoxAlgorithmViz::initialize()
 
 		if (op_matrix->getDimensionCount() != 2 || op_matrix->getDimensionSize(1) != 3)
 		{
-			this->getLogManager() << LogLevel_Warning << "Invalid channel localisation file " << m_Localisation << "\n";
+			this->getLogManager() << Kernel::LogLevel_Warning << "Invalid channel localisation file " << m_Localisation << "\n";
 		}
 		else
 		{
@@ -374,8 +369,8 @@ bool CBoxAlgorithmViz::initialize()
 	m_IsVideoOutputEnabled   = (basePath != CString(""));
 	m_IsVideoOutputWorking   = false;
 	m_FrameId                = 0;
-	gtk_widget_set_visible(GTK_WIDGET(::gtk_builder_get_object(m_Builder, "hbox_video_recording")), m_IsVideoOutputEnabled ? TRUE : FALSE);
-	gtk_label_set_markup(GTK_LABEL(::gtk_builder_get_object(m_Builder, "label_video_recording_filename")),
+	gtk_widget_set_visible(GTK_WIDGET(gtk_builder_get_object(m_Builder, "hbox_video_recording")), m_IsVideoOutputEnabled ? TRUE : FALSE);
+	gtk_label_set_markup(GTK_LABEL(gtk_builder_get_object(m_Builder, "label_video_recording_filename")),
 						 (CString("<span foreground=\"darkblue\"><small>") + m_FrameFilenameFormat + CString("</small></span>")).toASCIIString());
 
 	m_Width  = 0;
@@ -413,7 +408,7 @@ bool CBoxAlgorithmViz::processClock(Kernel::CMessageClock& /*msg*/)
 	const uint64_t minDeltaTimeLD2 = (1LL << 32) * 5;
 
 	uint64_t minDeltaTime;
-	if (this->getPlayerContext().getStatus() == EPlayerStatus::Play) { minDeltaTime = minDeltaTimeHD; }
+	if (this->getPlayerContext().getStatus() == Kernel::EPlayerStatus::Play) { minDeltaTime = minDeltaTimeHD; }
 	else
 	{
 		const auto fastForwardMaxFactor = float(this->getPlayerContext().getCurrentFastForwardMaximumFactor());
@@ -426,8 +421,8 @@ bool CBoxAlgorithmViz::processClock(Kernel::CMessageClock& /*msg*/)
 		else { minDeltaTime = minDeltaTimeLD2; }
 	}
 
-	if (currentTime > m_lastProcessTime + minDeltaTime || this->getPlayerContext().getStatus() == EPlayerStatus::Step || this->getPlayerContext().getStatus() ==
-		EPlayerStatus::Pause)
+	if (currentTime > m_lastProcessTime + minDeltaTime || this->getPlayerContext().getStatus() == Kernel::EPlayerStatus::Step
+		|| this->getPlayerContext().getStatus() == Kernel::EPlayerStatus::Pause)
 	{
 		m_lastProcessTime    = currentTime;
 		this->m_RedrawNeeded = true;
@@ -553,3 +548,6 @@ void CBoxAlgorithmViz::parseColor(color_t& rColor, const std::string& sColor)
 		rColor.b = 1;
 	}
 }
+
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE

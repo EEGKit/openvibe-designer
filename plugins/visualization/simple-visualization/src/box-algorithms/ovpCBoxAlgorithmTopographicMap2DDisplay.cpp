@@ -2,10 +2,9 @@
 #include "../algorithms/ovpCAlgorithmSphericalSplineInterpolation.h"
 #include <cstdlib>
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Kernel;
-using namespace /*OpenViBE::*/Plugins;
-using namespace SimpleVisualization;
+namespace OpenViBE {
+namespace Plugins {
+namespace SimpleVisualization {
 
 bool CBoxAlgorithmTopographicMap2DDisplay::initialize()
 
@@ -42,7 +41,7 @@ bool CBoxAlgorithmTopographicMap2DDisplay::initialize()
 
 	if (!this->canCreatePluginObject(OVP_ClassId_Plugin_VisualizationCtx))
 	{
-		this->getLogManager() << LogLevel_Error << "Visualization framework is not loaded" << "\n";
+		this->getLogManager() << Kernel::LogLevel_Error << "Visualization framework is not loaded" << "\n";
 		return false;
 	}
 
@@ -92,7 +91,7 @@ bool CBoxAlgorithmTopographicMap2DDisplay::process()
 		m_decoder.decode(i);
 		if (m_decoder.isBufferReceived())
 		{
-			IMatrix* iMatrix = m_decoder.getOutputMatrix();
+			CMatrix* iMatrix = m_decoder.getOutputMatrix();
 
 			//do we need to recopy this for each chunk?
 			if (!m_hasFirstBuffer)
@@ -130,3 +129,7 @@ bool CBoxAlgorithmTopographicMap2DDisplay::process()
 	//disable plugin upon errors
 	return processValues;
 }
+
+}  // namespace SimpleVisualization
+}  // namespace Plugins
+}  // namespace OpenViBE

@@ -2,19 +2,11 @@
 
 #include <cmath>
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Plugins;
-using namespace /*OpenViBE::*/Kernel;
+namespace OpenViBE {
+namespace Plugins {
+namespace SimpleVisualization {
 
-using namespace /*OpenViBE::*/Plugins;
-using namespace SimpleVisualization;
-
-using namespace /*OpenViBE::*/Toolkit;
-
-using namespace std;
-
-
-CTopographicMapDatabase::CTopographicMapDatabase(TBoxAlgorithm<IBoxAlgorithm>& plugin, IAlgorithmProxy& interpolation)
+CTopographicMapDatabase::CTopographicMapDatabase(Toolkit::TBoxAlgorithm<IBoxAlgorithm>& plugin, Kernel::IAlgorithmProxy& interpolation)
 	: CBufferDatabase(plugin), m_interpolation(interpolation)
 {
 	//map input parameters
@@ -45,11 +37,7 @@ void CTopographicMapDatabase::setMatrixDimensionSize(const size_t index, const s
 {
 	CBufferDatabase::setMatrixDimensionSize(index, size);
 
-	if (index == 0)
-	{
-		m_electrodePotentials.setDimensionCount(1);
-		m_electrodePotentials.setDimensionSize(0, size_t(m_NElectrodes));
-	}
+	if (index == 0) { m_electrodePotentials.resize(size_t(m_NElectrodes)); }
 }
 
 bool CTopographicMapDatabase::onChannelLocalisationBufferReceived(const size_t bufferIndex)
@@ -58,7 +46,7 @@ bool CTopographicMapDatabase::onChannelLocalisationBufferReceived(const size_t b
 
 	if (!m_ChannelLookupTableInitialized || m_channelLocalisationCoords.empty() || m_NElectrodes == 0)
 	{
-		m_ParentPlugin.getLogManager() << LogLevel_Warning
+		m_ParentPlugin.getLogManager() << Kernel::LogLevel_Warning
 				<< "Channel localisation buffer received before channel lookup table was initialized! Can't process buffer!\n";
 	}
 
@@ -69,8 +57,7 @@ bool CTopographicMapDatabase::onChannelLocalisationBufferReceived(const size_t b
 		if (m_cartesianCoords)
 		{
 			//fill electrode coordinates matrix
-			m_electrodeCoords.setDimensionCount(1);
-			m_electrodeCoords.setDimensionSize(0, size_t(3 * m_NElectrodes));
+			m_electrodeCoords.resize(size_t(3 * m_NElectrodes));
 			const double* coords = m_channelLocalisationCoords[0].first->getBuffer();
 			for (size_t i = 0; i < size_t(m_NElectrodes); ++i)
 			{
@@ -158,7 +145,7 @@ bool CTopographicMapDatabase::processValues()
 	bool process = true;
 	if (m_interpolation.isOutputTriggerActive(OVP_Algorithm_SphericalSplineInterpolation_OutputTriggerId_Error))
 	{
-		m_ParentPlugin.getLogManager() << LogLevel_Warning << "An error occurred while interpolating potentials!\n";
+		m_ParentPlugin.getLogManager() << Kernel::LogLevel_Warning << "An error occurred while interpolating potentials!\n";
 		process = false;
 	}
 	else
@@ -166,7 +153,7 @@ bool CTopographicMapDatabase::processValues()
 		if (m_samplePointCoords != nullptr)
 		{
 			//retrieve interpolation results
-			TParameterHandler<IMatrix*> sampleValuesMatrix;
+			Kernel::TParameterHandler<CMatrix*> sampleValuesMatrix;
 			sampleValuesMatrix.initialize(
 				m_interpolation.getOutputParameter(OVP_Algorithm_SphericalSplineInterpolation_OutputParameterId_SamplePointsValues));
 			dynamic_cast<CTopographicMapDrawable*>(m_Drawable)->setSampleValuesMatrix(sampleValuesMatrix);
@@ -214,14 +201,14 @@ bool CTopographicMapDatabase::interpolateValues()
 
 	if (m_interpolation.isOutputTriggerActive(OVP_Algorithm_SphericalSplineInterpolation_OutputTriggerId_Error))
 	{
-		m_ParentPlugin.getLogManager() << LogLevel_Warning << "An error occurred while interpolating potentials!\n";
+		m_ParentPlugin.getLogManager() << Kernel::LogLevel_Warning << "An error occurred while interpolating potentials!\n";
 	}
 	else
 	{
 		if (m_samplePointCoords != nullptr)
 		{
 			//retrieve interpolation results
-			TParameterHandler<IMatrix*> sampleValuesMatrix;
+			Kernel::TParameterHandler<CMatrix*> sampleValuesMatrix;
 			sampleValuesMatrix.initialize(m_interpolation.getOutputParameter(OVP_Algorithm_SphericalSplineInterpolation_OutputParameterId_SamplePointsValues));
 			dynamic_cast<CTopographicMapDrawable*>(m_Drawable)->setSampleValuesMatrix(sampleValuesMatrix);
 		}
@@ -267,7 +254,7 @@ bool CTopographicMapDatabase::checkElectrodeCoordinates()
 		{
 			CString channelLabel;
 			getChannelLabel(i, channelLabel);
-			m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error
+			m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << Kernel::LogLevel_Error
 					<< "Couldn't retrieve coordinates of electrode #" << i
 					<< "(" << channelLabel << "), aborting model frame electrode coordinates computation\n";
 			return false;
@@ -281,7 +268,7 @@ bool CTopographicMapDatabase::checkElectrodeCoordinates()
 		{
 			CString channelLabel;
 			getChannelLabel(i, channelLabel);
-			m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << LogLevel_Error
+			m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << Kernel::LogLevel_Error
 					<< "Coordinates of electrode #" << i << "(" << channelLabel
 					<< "), are not normalized, aborting model frame electrode coordinates computation\n";
 			return false;
@@ -290,3 +277,7 @@ bool CTopographicMapDatabase::checkElectrodeCoordinates()
 
 	return true;
 }
+
+}  // namespace SimpleVisualization
+}  // namespace Plugins
+}  // namespace OpenViBE

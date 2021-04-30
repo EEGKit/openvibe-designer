@@ -21,8 +21,8 @@
 
 #include "mCRendererSlice.hpp"
 
-using namespace Mensia;
-using namespace AdvancedVisualization;
+namespace OpenViBE {
+namespace AdvancedVisualization {
 
 void CRendererSlice::rebuild(const CRendererContext& ctx)
 {
@@ -242,3 +242,6 @@ bool CRendererSlice::render(const CRendererContext& ctx)
 
 	return true;
 }
+
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE

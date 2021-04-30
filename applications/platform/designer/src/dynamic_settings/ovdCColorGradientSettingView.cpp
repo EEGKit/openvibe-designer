@@ -4,9 +4,9 @@
 
 #include <cmath>
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Designer;
-using namespace Setting;
+namespace OpenViBE {
+namespace Designer {
+namespace Setting {
 
 static void OnColorGradientColorButtonPressed(GtkColorButton* button, gpointer data) { static_cast<CColorGradientSettingView*>(data)->colorChange(button); }
 
@@ -86,10 +86,7 @@ void CColorGradientSettingView::configurePressed()
 	if (gtk_dialog_run(GTK_DIALOG(m_dialog)) == GTK_RESPONSE_APPLY)
 	{
 		CString finalGradient;
-		CMatrix finalColorGradient;
-		finalColorGradient.setDimensionCount(2);
-		finalColorGradient.setDimensionSize(0, 4);
-		finalColorGradient.setDimensionSize(1, m_colorGradient.size());
+		CMatrix finalColorGradient(4, m_colorGradient.size());
 		size_t idx = 0;
 		for (size_t i = 0; i < m_colorGradient.size(); ++i)
 		{
@@ -160,10 +157,7 @@ void CColorGradientSettingView::refreshColorGradient()
 	gint sizey         = 0;
 	gdk_drawable_get_size(m_drawingArea->window, &sizex, &sizey);
 
-	CMatrix gradient;
-	gradient.setDimensionCount(2);
-	gradient.setDimensionSize(0, 4);
-	gradient.setDimensionSize(1, m_colorGradient.size());
+	CMatrix gradient(4, m_colorGradient.size());
 	for (size_t i = 0; i < m_colorGradient.size(); ++i)
 	{
 		const size_t idx  = i * 4;
@@ -250,3 +244,7 @@ void CColorGradientSettingView::onChange()
 		getBox().setSettingValue(getSettingIndex(), value);
 	}
 }
+
+}  // namespace Setting
+}  // namespace Designer
+}  // namespace OpenViBE

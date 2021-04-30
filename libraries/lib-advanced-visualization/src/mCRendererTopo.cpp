@@ -24,8 +24,8 @@
 
 #include <cmath>
 
-using namespace Mensia;
-using namespace AdvancedVisualization;
+namespace OpenViBE {
+namespace AdvancedVisualization {
 
 const bool MULTI_SLICE = false;
 
@@ -433,3 +433,6 @@ bool CRendererTopo::render(const CRendererContext& ctx)
 
 	return true;
 }
+
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE

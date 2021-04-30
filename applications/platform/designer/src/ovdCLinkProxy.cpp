@@ -2,11 +2,10 @@
 #include "ovdTAttributeHandler.h"
 #include "../../../../../sdk/openvibe/include/openvibe/ov_defines.h"
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Kernel;
-using namespace /*OpenViBE::*/Designer;
+namespace OpenViBE {
+namespace Designer {
 
-CLinkProxy::CLinkProxy(const ILink& link) : m_constLink(&link)
+CLinkProxy::CLinkProxy(const Kernel::ILink& link) : m_constLink(&link)
 {
 	if (m_constLink)
 	{
@@ -18,7 +17,7 @@ CLinkProxy::CLinkProxy(const ILink& link) : m_constLink(&link)
 	}
 }
 
-CLinkProxy::CLinkProxy(IScenario& scenario, const CIdentifier& linkID)
+CLinkProxy::CLinkProxy(Kernel::IScenario& scenario, const CIdentifier& linkID)
 	: m_constLink(scenario.getLinkDetails(linkID)), m_link(scenario.getLinkDetails(linkID))
 {
 	if (m_constLink)
@@ -62,3 +61,6 @@ void CLinkProxy::setTarget(const int x, const int y)
 	m_xDst = x;
 	m_yDst = y;
 }
+
+}  // namespace Designer
+}  // namespace OpenViBE

@@ -27,9 +27,8 @@
 #include <cmath>
 #include <iostream>
 
-using namespace Mensia;
-using namespace AdvancedVisualization;
-
+namespace OpenViBE {
+namespace AdvancedVisualization {
 
 namespace {
 void getLeftRightScore(std::map<std::string, float>& scores, const std::vector<std::string>& names, const std::vector<CVertex>& positions)
@@ -97,7 +96,6 @@ struct SSortSpecial
 	const std::map<std::string, float>& scores;
 };
 }  // namespace
-
 
 CRendererContext::CRendererContext(CRendererContext* parentCtx)
 {
@@ -260,3 +258,6 @@ float CRendererContext::getERPFraction() const
 	const float erpFraction = m_erpFraction + (m_parentCtx ? m_parentCtx->getERPFraction() : 0);
 	return erpFraction - floorf(erpFraction);
 }
+
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE

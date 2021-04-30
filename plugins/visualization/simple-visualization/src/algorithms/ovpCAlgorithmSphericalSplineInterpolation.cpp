@@ -8,10 +8,9 @@
 #include <cstring>
 #include <sstream>
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Kernel;
-using namespace /*OpenViBE::*/Plugins;
-using namespace Test;
+namespace OpenViBE {
+namespace Plugins {
+namespace Test {
 
 bool CAlgorithmSphericalSplineInterpolation::initialize()
 
@@ -86,7 +85,7 @@ bool CAlgorithmSphericalSplineInterpolation::process()
 
 		if (result != 0)
 		{
-			getLogManager() << LogLevel_ImportantWarning << "Spline tables precomputation failed!\n";
+			getLogManager() << Kernel::LogLevel_ImportantWarning << "Spline tables precomputation failed!\n";
 			activateOutputTrigger(OVP_Algorithm_SphericalSplineInterpolation_OutputTriggerId_Error, true);
 		}
 	}
@@ -101,9 +100,9 @@ bool CAlgorithmSphericalSplineInterpolation::process()
 
 		if (result != 0)
 		{
-			getLogManager() << LogLevel_ImportantWarning << "Spline coefficients computation failed!\n";
+			getLogManager() << Kernel::LogLevel_ImportantWarning << "Spline coefficients computation failed!\n";
 
-			const ELogLevel level = LogLevel_Debug;
+			const Kernel::ELogLevel level = Kernel::LogLevel_Debug;
 
 			getLogManager() << level << "CtrlPointsCount = " << int(ip_nControlPoints) << "\n";
 			const auto size = size_t(ip_nControlPoints);
@@ -149,7 +148,7 @@ bool CAlgorithmSphericalSplineInterpolation::process()
 
 		if (result != 0)
 		{
-			getLogManager() << LogLevel_ImportantWarning << "Laplacian coefficients computation failed!\n";
+			getLogManager() << Kernel::LogLevel_ImportantWarning << "Laplacian coefficients computation failed!\n";
 			activateOutputTrigger(OVP_Algorithm_SphericalSplineInterpolation_OutputTriggerId_Error, true);
 		}
 	}
@@ -178,10 +177,10 @@ bool CAlgorithmSphericalSplineInterpolation::process()
 				_finite(*(ip_samplePointsCoords->getBuffer() + 3 * i + 1)) == 0 ||
 				_finite(*(ip_samplePointsCoords->getBuffer() + 3 * i + 2)) == 0) //tests whether a double is infinite or a NaN
 			{
-				getLogManager() << LogLevel_ImportantWarning << "Bad interpolation point coordinates !\n";
-				getLogManager() << LogLevel_ImportantWarning << *(ip_samplePointsCoords->getBuffer() + 3 * i) << "\n";
-				getLogManager() << LogLevel_ImportantWarning << *(ip_samplePointsCoords->getBuffer() + 3 * i + 1) << "\n";
-				getLogManager() << LogLevel_ImportantWarning << *(ip_samplePointsCoords->getBuffer() + 3 * i + 2) << "\n";
+				getLogManager() << Kernel::LogLevel_ImportantWarning << "Bad interpolation point coordinates !\n";
+				getLogManager() << Kernel::LogLevel_ImportantWarning << *(ip_samplePointsCoords->getBuffer() + 3 * i) << "\n";
+				getLogManager() << Kernel::LogLevel_ImportantWarning << *(ip_samplePointsCoords->getBuffer() + 3 * i + 1) << "\n";
+				getLogManager() << Kernel::LogLevel_ImportantWarning << *(ip_samplePointsCoords->getBuffer() + 3 * i + 2) << "\n";
 				ok = false;
 			}
 #endif
@@ -200,10 +199,10 @@ bool CAlgorithmSphericalSplineInterpolation::process()
 #ifndef NDEBUG
 			if (_finite(*sampleValue) == 0) //tests whether a double is infinite or a NaN
 			{
-				getLogManager() << LogLevel_ImportantWarning << "Interpolation fails !\n";
-				getLogManager() << LogLevel_ImportantWarning << *(ip_samplePointsCoords->getBuffer() + 3 * i) << "\n";
-				getLogManager() << LogLevel_ImportantWarning << *(ip_samplePointsCoords->getBuffer() + 3 * i + 1) << "\n";
-				getLogManager() << LogLevel_ImportantWarning << *(ip_samplePointsCoords->getBuffer() + 3 * i + 2) << "\n";
+				getLogManager() << Kernel::LogLevel_ImportantWarning << "Interpolation fails !\n";
+				getLogManager() << Kernel::LogLevel_ImportantWarning << *(ip_samplePointsCoords->getBuffer() + 3 * i) << "\n";
+				getLogManager() << Kernel::LogLevel_ImportantWarning << *(ip_samplePointsCoords->getBuffer() + 3 * i + 1) << "\n";
+				getLogManager() << Kernel::LogLevel_ImportantWarning << *(ip_samplePointsCoords->getBuffer() + 3 * i + 2) << "\n";
 				ok = false;
 				break;
 			}
@@ -262,3 +261,7 @@ bool CAlgorithmSphericalSplineInterpolation::process()
 
 	return true;
 }
+
+}  // namespace Test
+}  // namespace Plugins
+}  // namespace OpenViBE

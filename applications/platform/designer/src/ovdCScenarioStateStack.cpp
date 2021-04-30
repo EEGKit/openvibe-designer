@@ -4,13 +4,10 @@
 #include <zlib.h>
 #include <ovp_global_defines.h>
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Kernel;
-using namespace /*OpenViBE::*/Plugins;
-using namespace /*OpenViBE::*/Toolkit;
-using namespace /*OpenViBE::*/Designer;
+namespace OpenViBE {
+namespace Designer {
 
-CScenarioStateStack::CScenarioStateStack(const IKernelContext& ctx, CInterfacedScenario& interfacedScenario, IScenario& scenario)
+CScenarioStateStack::CScenarioStateStack(const Kernel::IKernelContext& ctx, CInterfacedScenario& interfacedScenario, Kernel::IScenario& scenario)
 	: m_kernelCtx(ctx), m_interfacedScenario(interfacedScenario), m_scenario(scenario)
 {
 	m_currentState  = m_states.begin();
@@ -23,7 +20,6 @@ bool CScenarioStateStack::undo()
 	if (it == m_states.begin()) { return false; }
 
 	--it;
-
 	m_currentState = it;
 
 	return this->restoreState(**m_currentState);
@@ -86,9 +82,9 @@ bool CScenarioStateStack::restoreState(const IMemoryBuffer& state)
 	if (state.getSize() == 0) { return false; }
 
 	const CIdentifier importerID = m_kernelCtx.getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_XMLScenarioImporter);
-	if (importerID == OV_UndefinedIdentifier) { return false; }
+	if (importerID == CIdentifier::undefined()) { return false; }
 
-	IAlgorithmProxy* importer = &m_kernelCtx.getAlgorithmManager().getAlgorithm(importerID);
+	Kernel::IAlgorithmProxy* importer = &m_kernelCtx.getAlgorithmManager().getAlgorithm(importerID);
 	if (!importer) { return false; }
 
 	const uLongf srcSize = uLongf(state.getSize()) - sizeof(uLongf);
@@ -102,8 +98,8 @@ bool CScenarioStateStack::restoreState(const IMemoryBuffer& state)
 
 	importer->initialize();
 
-	TParameterHandler<const IMemoryBuffer*> ip_buffer(importer->getInputParameter(OV_Algorithm_ScenarioImporter_InputParameterId_MemoryBuffer));
-	TParameterHandler<IScenario*> op_scenario(importer->getOutputParameter(OV_Algorithm_ScenarioImporter_OutputParameterId_Scenario));
+	Kernel::TParameterHandler<const IMemoryBuffer*> ip_buffer(importer->getInputParameter(OV_Algorithm_ScenarioImporter_InputParameterId_MemoryBuffer));
+	Kernel::TParameterHandler<Kernel::IScenario*> op_scenario(importer->getOutputParameter(OV_Algorithm_ScenarioImporter_OutputParameterId_Scenario));
 
 	m_scenario.clear();
 
@@ -115,9 +111,9 @@ bool CScenarioStateStack::restoreState(const IMemoryBuffer& state)
 	m_kernelCtx.getAlgorithmManager().releaseAlgorithm(*importer);
 
 	// Find the VisualizationTree metadata
-	IMetadata* treeMetadata = nullptr;
-	CIdentifier metadataID  = OV_UndefinedIdentifier;
-	while ((metadataID = m_scenario.getNextMetadataIdentifier(metadataID)) != OV_UndefinedIdentifier)
+	Kernel::IMetadata* treeMetadata = nullptr;
+	CIdentifier metadataID          = CIdentifier::undefined();
+	while ((metadataID = m_scenario.getNextMetadataIdentifier(metadataID)) != CIdentifier::undefined())
 	{
 		treeMetadata = m_scenario.getMetadataDetails(metadataID);
 		if (treeMetadata && treeMetadata->getType() == OVVIZ_MetadataIdentifier_VisualizationTree) { break; }
@@ -137,15 +133,15 @@ bool CScenarioStateStack::dumpState(IMemoryBuffer& state)
 	// Update the scenario metadata according to the current state of the visualization tree
 
 	// Remove all VisualizationTree type metadata
-	CIdentifier oldTreeMetadataID = OV_UndefinedIdentifier;
-	CIdentifier metadataID        = OV_UndefinedIdentifier;
-	while ((metadataID = m_scenario.getNextMetadataIdentifier(metadataID)) != OV_UndefinedIdentifier)
+	CIdentifier oldTreeMetadataID = CIdentifier::undefined();
+	CIdentifier metadataID        = CIdentifier::undefined();
+	while ((metadataID = m_scenario.getNextMetadataIdentifier(metadataID)) != CIdentifier::undefined())
 	{
 		if (m_scenario.getMetadataDetails(metadataID)->getType() == OVVIZ_MetadataIdentifier_VisualizationTree)
 		{
 			oldTreeMetadataID = metadataID;
 			m_scenario.removeMetadata(metadataID);
-			metadataID = OV_UndefinedIdentifier;
+			metadataID = CIdentifier::undefined();
 		}
 	}
 
@@ -156,15 +152,15 @@ bool CScenarioStateStack::dumpState(IMemoryBuffer& state)
 
 	const CIdentifier exporterID = m_kernelCtx.getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_XMLScenarioExporter);
 
-	if (exporterID == OV_UndefinedIdentifier) { return false; }
+	if (exporterID == CIdentifier::undefined()) { return false; }
 
-	IAlgorithmProxy* exporter = &m_kernelCtx.getAlgorithmManager().getAlgorithm(exporterID);
+	Kernel::IAlgorithmProxy* exporter = &m_kernelCtx.getAlgorithmManager().getAlgorithm(exporterID);
 	if (!exporter) { return false; }
 
 	exporter->initialize();
 
-	TParameterHandler<const IScenario*> ip_scenario(exporter->getInputParameter(OV_Algorithm_ScenarioExporter_InputParameterId_Scenario));
-	TParameterHandler<IMemoryBuffer*> op_buffer(exporter->getOutputParameter(OV_Algorithm_ScenarioExporter_OutputParameterId_MemoryBuffer));
+	Kernel::TParameterHandler<const Kernel::IScenario*> ip_scenario(exporter->getInputParameter(OV_Algorithm_ScenarioExporter_InputParameterId_Scenario));
+	Kernel::TParameterHandler<IMemoryBuffer*> op_buffer(exporter->getOutputParameter(OV_Algorithm_ScenarioExporter_OutputParameterId_MemoryBuffer));
 
 	ip_scenario = &m_scenario;
 	op_buffer   = &uncompressedBuffer;
@@ -189,3 +185,6 @@ bool CScenarioStateStack::dumpState(IMemoryBuffer& state)
 
 	return true;
 }
+
+}  // namespace Designer
+}  // namespace OpenViBE

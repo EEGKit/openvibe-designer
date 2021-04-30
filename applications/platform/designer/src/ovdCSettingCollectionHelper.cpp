@@ -6,13 +6,11 @@
 #include <cstring>
 #include <cstdlib>
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Kernel;
-using namespace /*OpenViBE::*/Designer;
-using namespace std;
-
 #include <visualization-toolkit/ovvizColorGradient.h>
 // ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- -----------
+
+namespace OpenViBE {
+namespace Designer {
 
 typedef struct
 {
@@ -24,20 +22,18 @@ typedef struct
 
 typedef struct
 {
-	string guiFilename;
+	std::string guiFilename;
 	GtkWidget* dialog;
 	GtkWidget* container;
 	GtkWidget* drawingArea;
-	vector<color_gradient_node_t> colorGradient;
-	map<GtkColorButton*, uint32_t> colorButtons;
-	map<GtkSpinButton*, uint32_t> spinButtons;
+	std::vector<color_gradient_node_t> colorGradient;
+	std::map<GtkColorButton*, uint32_t> colorButtons;
+	std::map<GtkSpinButton*, uint32_t> spinButtons;
 } color_gradient_t;
 
-static void gradients2Matrix(const vector<color_gradient_node_t>& in, CMatrix& out)
+static void gradients2Matrix(const std::vector<color_gradient_node_t>& in, CMatrix& out)
 {
-	out.setDimensionCount(2);
-	out.setDimensionSize(0, 4);
-	out.setDimensionSize(1, in.size());
+	out.resize(4, in.size());
 	size_t i = 0;
 	for (const auto& color : in)
 	{
@@ -48,14 +44,14 @@ static void gradients2Matrix(const vector<color_gradient_node_t>& in, CMatrix& o
 	}
 }
 
-static void CollectWidgetCB(GtkWidget* widget, gpointer data) { static_cast<vector<GtkWidget*>*>(data)->push_back(widget); }
+static void CollectWidgetCB(GtkWidget* widget, gpointer data) { static_cast<std::vector<GtkWidget*>*>(data)->push_back(widget); }
 static void RemoveWidgetCB(GtkWidget* widget, gpointer data) { gtk_container_remove(GTK_CONTAINER(data), widget); }
 
 // ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- ----------- -----------
 
 static void OnEntrySettingBOOLEdited(GtkEntry* entry, gpointer /*data*/)
 {
-	vector<GtkWidget*> widgets;
+	std::vector<GtkWidget*> widgets;
 	gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(entry))), CollectWidgetCB, &widgets);
 	GtkToggleButton* widget = GTK_TOGGLE_BUTTON(widgets[1]);
 
@@ -75,7 +71,7 @@ static void OnEntrySettingBOOLEdited(GtkEntry* entry, gpointer /*data*/)
 
 static void OnCheckbuttonSettingBOOLPressed(GtkToggleButton* button, gpointer /*data*/)
 {
-	vector<GtkWidget*> widgets;
+	std::vector<GtkWidget*> widgets;
 	gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), CollectWidgetCB, &widgets);
 	GtkEntry* widget = GTK_ENTRY(widgets[0]);
 
@@ -86,9 +82,9 @@ static void OnCheckbuttonSettingBOOLPressed(GtkToggleButton* button, gpointer /*
 
 static void OnButtonSettingIntegerPressed(GtkButton* button, gpointer data, const gint iOffset)
 {
-	const IKernelContext& ctx = static_cast<CSettingCollectionHelper*>(data)->m_KernelCtx;
+	const Kernel::IKernelContext& ctx = static_cast<CSettingCollectionHelper*>(data)->m_KernelCtx;
 
-	vector<GtkWidget*> widgets;
+	std::vector<GtkWidget*> widgets;
 	gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), CollectWidgetCB, &widgets);
 	GtkEntry* widget = GTK_ENTRY(widgets[0]);
 
@@ -102,9 +98,9 @@ static void OnButtonSettingIntegerDownPressed(GtkButton* button, gpointer data) 
 
 static void OnButtonSettingFloatPressed(GtkButton* button, gpointer data, const gdouble offset)
 {
-	const IKernelContext& ctx = static_cast<CSettingCollectionHelper*>(data)->m_KernelCtx;
+	const Kernel::IKernelContext& ctx = static_cast<CSettingCollectionHelper*>(data)->m_KernelCtx;
 
-	vector<GtkWidget*> widgets;
+	std::vector<GtkWidget*> widgets;
 	gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), CollectWidgetCB, &widgets);
 	GtkEntry* widget = GTK_ENTRY(widgets[0]);
 
@@ -119,9 +115,9 @@ static void OnButtonSettingFloatDownPressed(GtkButton* button, gpointer data) { 
 
 static void OnButtonSettingFilenameBrowsePressed(GtkButton* button, gpointer data)
 {
-	const IKernelContext& ctx = static_cast<CSettingCollectionHelper*>(data)->m_KernelCtx;
+	const Kernel::IKernelContext& ctx = static_cast<CSettingCollectionHelper*>(data)->m_KernelCtx;
 
-	vector<GtkWidget*> widgets;
+	std::vector<GtkWidget*> widgets;
 	gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), CollectWidgetCB, &widgets);
 	GtkEntry* widget = GTK_ENTRY(widgets[0]);
 
@@ -152,9 +148,9 @@ static void OnButtonSettingFilenameBrowsePressed(GtkButton* button, gpointer dat
 
 static void OnButtonSettingFoldernameBrowsePressed(GtkButton* button, gpointer data)
 {
-	const IKernelContext& ctx = static_cast<CSettingCollectionHelper*>(data)->m_KernelCtx;
+	const Kernel::IKernelContext& ctx = static_cast<CSettingCollectionHelper*>(data)->m_KernelCtx;
 
-	vector<GtkWidget*> widgets;
+	std::vector<GtkWidget*> widgets;
 	gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), CollectWidgetCB, &widgets);
 	GtkEntry* widget = GTK_ENTRY(widgets[0]);
 
@@ -186,9 +182,9 @@ static void OnButtonSettingFoldernameBrowsePressed(GtkButton* button, gpointer d
 
 static void OnButtonSettingScriptEditPressed(GtkButton* button, gpointer data)
 {
-	const IKernelContext& ctx = static_cast<CSettingCollectionHelper*>(data)->m_KernelCtx;
+	const Kernel::IKernelContext& ctx = static_cast<CSettingCollectionHelper*>(data)->m_KernelCtx;
 
-	vector<GtkWidget*> widgets;
+	std::vector<GtkWidget*> widgets;
 	gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), CollectWidgetCB, &widgets);
 	GtkEntry* widget = GTK_ENTRY(widgets[0]);
 
@@ -204,7 +200,7 @@ static void OnButtonSettingScriptEditPressed(GtkButton* button, gpointer data)
 			fullCmd = fullCmd + " &";
 #else
 #endif
-		if (system(fullCmd.toASCIIString()) < 0) { ctx.getLogManager() << LogLevel_Warning << "Could not run command " << fullCmd << "\n"; }
+		if (system(fullCmd.toASCIIString()) < 0) { ctx.getLogManager() << Kernel::LogLevel_Warning << "Could not run command " << fullCmd << "\n"; }
 	}
 }
 
@@ -212,7 +208,7 @@ static void OnButtonSettingScriptEditPressed(GtkButton* button, gpointer data)
 
 static void OnButtonSettingColorChoosePressed(GtkColorButton* button, gpointer /*data*/)
 {
-	vector<GtkWidget*> widgets;
+	std::vector<GtkWidget*> widgets;
 	gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), CollectWidgetCB, &widgets);
 	GtkEntry* widget = GTK_ENTRY(widgets[0]);
 	GdkColor color;
@@ -368,7 +364,7 @@ static void OnButtonSettingColorGradientConfigurePressed(GtkButton* button, gpoi
 
 	userData.guiFilename = static_cast<CSettingCollectionHelper*>(data)->m_GUIFilename.toASCIIString();
 
-	vector<GtkWidget*> widgets;
+	std::vector<GtkWidget*> widgets;
 	gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), CollectWidgetCB, &widgets);
 	GtkEntry* widget = GTK_ENTRY(widgets[0]);
 
@@ -473,7 +469,7 @@ CString CSettingCollectionHelper::getValue(const CIdentifier& typeID, GtkWidget*
 
 CString CSettingCollectionHelper::getValueBoolean(GtkWidget* widget)
 {
-	vector<GtkWidget*> widgets;
+	std::vector<GtkWidget*> widgets;
 	if (!GTK_IS_CONTAINER(widget)) { return "false"; }
 	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
 	if (!GTK_IS_ENTRY(widgets[1])) { return "false"; }
@@ -483,7 +479,7 @@ CString CSettingCollectionHelper::getValueBoolean(GtkWidget* widget)
 
 CString CSettingCollectionHelper::getValueInteger(GtkWidget* widget)
 {
-	vector<GtkWidget*> widgets;
+	std::vector<GtkWidget*> widgets;
 	if (!GTK_IS_CONTAINER(widget)) { return "0"; }
 	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
 	if (!GTK_IS_ENTRY(widgets[0])) { return "O"; }
@@ -493,7 +489,7 @@ CString CSettingCollectionHelper::getValueInteger(GtkWidget* widget)
 
 CString CSettingCollectionHelper::getValueFloat(GtkWidget* widget)
 {
-	vector<GtkWidget*> widgets;
+	std::vector<GtkWidget*> widgets;
 	if (!GTK_IS_CONTAINER(widget)) { return "0"; }
 	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
 	if (!GTK_IS_ENTRY(widgets[0])) { return "O"; }
@@ -510,7 +506,7 @@ CString CSettingCollectionHelper::getValueString(GtkWidget* widget)
 
 CString CSettingCollectionHelper::getValueFilename(GtkWidget* widget)
 {
-	vector<GtkWidget*> widgets;
+	std::vector<GtkWidget*> widgets;
 	if (!GTK_IS_CONTAINER(widget)) { return ""; }
 	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
 	if (!GTK_IS_ENTRY(widgets[0])) { return ""; }
@@ -520,7 +516,7 @@ CString CSettingCollectionHelper::getValueFilename(GtkWidget* widget)
 
 CString CSettingCollectionHelper::getValueFoldername(GtkWidget* widget)
 {
-	vector<GtkWidget*> widgets;
+	std::vector<GtkWidget*> widgets;
 	if (!GTK_IS_CONTAINER(widget)) { return ""; }
 	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
 	if (!GTK_IS_ENTRY(widgets[0])) { return ""; }
@@ -530,7 +526,7 @@ CString CSettingCollectionHelper::getValueFoldername(GtkWidget* widget)
 
 CString CSettingCollectionHelper::getValueScript(GtkWidget* widget)
 {
-	vector<GtkWidget*> widgets;
+	std::vector<GtkWidget*> widgets;
 	if (!GTK_IS_CONTAINER(widget)) { return ""; }
 	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
 	if (!GTK_IS_ENTRY(widgets[0])) { return ""; }
@@ -540,7 +536,7 @@ CString CSettingCollectionHelper::getValueScript(GtkWidget* widget)
 
 CString CSettingCollectionHelper::getValueColor(GtkWidget* widget)
 {
-	vector<GtkWidget*> widgets;
+	std::vector<GtkWidget*> widgets;
 	if (!GTK_IS_CONTAINER(widget)) { return ""; }
 	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
 	if (!GTK_IS_ENTRY(widgets[0])) { return ""; }
@@ -550,7 +546,7 @@ CString CSettingCollectionHelper::getValueColor(GtkWidget* widget)
 
 CString CSettingCollectionHelper::getValueColorGradient(GtkWidget* widget)
 {
-	vector<GtkWidget*> widgets;
+	std::vector<GtkWidget*> widgets;
 	if (!GTK_IS_CONTAINER(widget)) { return ""; }
 	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
 	if (!GTK_IS_ENTRY(widgets[0])) { return ""; }
@@ -567,17 +563,17 @@ CString CSettingCollectionHelper::getValueEnumeration(const CIdentifier& /*typeI
 
 CString CSettingCollectionHelper::getValueBitMask(const CIdentifier& /*typeID*/, GtkWidget* widget)
 {
-	vector<GtkWidget*> widgets;
+	std::vector<GtkWidget*> widgets;
 	if (!GTK_IS_CONTAINER(widget)) { return ""; }
 	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
-	string res;
+	std::string res;
 
 	for (auto& window : widgets)
 	{
 		if (!GTK_IS_TOGGLE_BUTTON(window)) { return ""; }
 		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(window)))
 		{
-			if (!res.empty()) { res += string(1, OV_Value_EnumeratedStringSeparator); }
+			if (!res.empty()) { res += std::string(1, OV_Value_EnumeratedStringSeparator); }
 			res += gtk_button_get_label(GTK_BUTTON(window));
 		}
 	}
@@ -605,7 +601,7 @@ void CSettingCollectionHelper::setValue(const CIdentifier& typeID, GtkWidget* wi
 
 void CSettingCollectionHelper::setValueBoolean(GtkWidget* widget, const CString& value)
 {
-	vector<GtkWidget*> widgets;
+	std::vector<GtkWidget*> widgets;
 	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
 	GtkEntry* entry               = GTK_ENTRY(widgets[0]);
 	GtkToggleButton* toggleButton = GTK_TOGGLE_BUTTON(widgets[1]);
@@ -622,7 +618,7 @@ void CSettingCollectionHelper::setValueBoolean(GtkWidget* widget, const CString&
 
 void CSettingCollectionHelper::setValueInteger(GtkWidget* widget, const CString& value)
 {
-	vector<GtkWidget*> widgets;
+	std::vector<GtkWidget*> widgets;
 	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
 	GtkEntry* entry = GTK_ENTRY(widgets[0]);
 
@@ -634,7 +630,7 @@ void CSettingCollectionHelper::setValueInteger(GtkWidget* widget, const CString&
 
 void CSettingCollectionHelper::setValueFloat(GtkWidget* widget, const CString& value)
 {
-	vector<GtkWidget*> widgets;
+	std::vector<GtkWidget*> widgets;
 	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
 	GtkEntry* entry = GTK_ENTRY(widgets[0]);
 
@@ -652,7 +648,7 @@ void CSettingCollectionHelper::setValueString(GtkWidget* widget, const CString& 
 
 void CSettingCollectionHelper::setValueFilename(GtkWidget* widget, const CString& value)
 {
-	vector<GtkWidget*> widgets;
+	std::vector<GtkWidget*> widgets;
 	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
 	GtkEntry* entry = GTK_ENTRY(widgets[0]);
 
@@ -663,7 +659,7 @@ void CSettingCollectionHelper::setValueFilename(GtkWidget* widget, const CString
 
 void CSettingCollectionHelper::setValueFoldername(GtkWidget* widget, const CString& value)
 {
-	vector<GtkWidget*> widgets;
+	std::vector<GtkWidget*> widgets;
 	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
 	GtkEntry* entry = GTK_ENTRY(widgets[0]);
 
@@ -674,7 +670,7 @@ void CSettingCollectionHelper::setValueFoldername(GtkWidget* widget, const CStri
 
 void CSettingCollectionHelper::setValueScript(GtkWidget* widget, const CString& value)
 {
-	vector<GtkWidget*> widgets;
+	std::vector<GtkWidget*> widgets;
 	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
 	GtkEntry* entry = GTK_ENTRY(widgets[0]);
 
@@ -686,7 +682,7 @@ void CSettingCollectionHelper::setValueScript(GtkWidget* widget, const CString& 
 
 void CSettingCollectionHelper::setValueColor(GtkWidget* widget, const CString& value)
 {
-	vector<GtkWidget*> widgets;
+	std::vector<GtkWidget*> widgets;
 	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
 	GtkEntry* entry = GTK_ENTRY(widgets[0]);
 
@@ -706,7 +702,7 @@ void CSettingCollectionHelper::setValueColor(GtkWidget* widget, const CString& v
 
 void CSettingCollectionHelper::setValueColorGradient(GtkWidget* widget, const CString& value)
 {
-	vector<GtkWidget*> widgets;
+	std::vector<GtkWidget*> widgets;
 	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
 	GtkEntry* entry = GTK_ENTRY(widgets[0]);
 
@@ -777,7 +773,7 @@ void CSettingCollectionHelper::setValueBitMask(const CIdentifier& typeID, GtkWid
 {
 	gtk_container_foreach(GTK_CONTAINER(widget), RemoveWidgetCB, widget);
 
-	const string str(value);
+	const std::string str(value);
 
 	const gint size        = guint((m_KernelCtx.getTypeManager().getBitMaskEntryCount(typeID) + 1) >> 1);
 	GtkTable* bitMaskTable = GTK_TABLE(widget);
@@ -793,7 +789,7 @@ void CSettingCollectionHelper::setValueBitMask(const CIdentifier& typeID, GtkWid
 			gtk_table_attach_defaults(bitMaskTable, settingButton, guint(i & 1), guint((i & 1) + 1), guint(i >> 1), guint((i >> 1) + 1));
 			gtk_button_set_label(GTK_BUTTON(settingButton), entryName.toASCIIString());
 
-			if (str.find(entryName.toASCIIString()) != string::npos) { gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(settingButton), true); }
+			if (str.find(entryName.toASCIIString()) != std::string::npos) { gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(settingButton), true); }
 		}
 	}
 
@@ -804,3 +800,6 @@ void CSettingCollectionHelper::setValueBitMask(const CIdentifier& typeID, GtkWid
 
 	gtk_widget_show_all(GTK_WIDGET(bitMaskTable));
 }
+
+}  // namespace Designer
+}  // namespace OpenViBE

@@ -22,25 +22,22 @@
 #include "shellapi.h"
 #endif
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Kernel;
-using namespace /*OpenViBE::*/Plugins;
-using namespace /*OpenViBE::*/Designer;
-using namespace std;
+namespace OpenViBE {
+namespace Designer {
 
-map<size_t, GdkColor> gColors;
+std::map<size_t, GdkColor> gColors;
 
 class CPluginObjectDescEnum
 {
 public:
 
-	explicit CPluginObjectDescEnum(const IKernelContext& ctx) : m_kernelCtx(ctx) { }
+	explicit CPluginObjectDescEnum(const Kernel::IKernelContext& ctx) : m_kernelCtx(ctx) { }
 	virtual ~CPluginObjectDescEnum() = default;
 
 	virtual bool enumeratePluginObjectDesc()
 	{
 		CIdentifier id;
-		while ((id = m_kernelCtx.getPluginManager().getNextPluginObjectDescIdentifier(id)) != OV_UndefinedIdentifier)
+		while ((id = m_kernelCtx.getPluginManager().getNextPluginObjectDescIdentifier(id)) != CIdentifier::undefined())
 		{
 			this->callback(*m_kernelCtx.getPluginManager().getPluginObjectDesc(id));
 		}
@@ -50,18 +47,18 @@ public:
 	virtual bool enumeratePluginObjectDesc(const CIdentifier& parentClassID)
 	{
 		CIdentifier id;
-		while ((id = m_kernelCtx.getPluginManager().getNextPluginObjectDescIdentifier(id, parentClassID)) != OV_UndefinedIdentifier)
+		while ((id = m_kernelCtx.getPluginManager().getNextPluginObjectDescIdentifier(id, parentClassID)) != CIdentifier::undefined())
 		{
 			this->callback(*m_kernelCtx.getPluginManager().getPluginObjectDesc(id));
 		}
 		return true;
 	}
 
-	virtual bool callback(const IPluginObjectDesc& pod) = 0;
+	virtual bool callback(const Plugins::IPluginObjectDesc& pod) = 0;
 
 protected:
 
-	const IKernelContext& m_kernelCtx;
+	const Kernel::IKernelContext& m_kernelCtx;
 };
 
 // ------------------------------------------------------------------------------------------------------------------------------------
@@ -72,26 +69,26 @@ class CPluginObjectDescCollector final : public CPluginObjectDescEnum
 {
 public:
 
-	explicit CPluginObjectDescCollector(const IKernelContext& ctx) : CPluginObjectDescEnum(ctx) { }
+	explicit CPluginObjectDescCollector(const Kernel::IKernelContext& ctx) : CPluginObjectDescEnum(ctx) { }
 
-	bool callback(const IPluginObjectDesc& pod) override
+	bool callback(const Plugins::IPluginObjectDesc& pod) override
 	{
-		const string name = string(pod.getCategory()) + "/" + string(pod.getName());
-		const auto it     = m_pods.find(name);
+		const std::string name = std::string(pod.getCategory()) + "/" + std::string(pod.getName());
+		const auto it          = m_pods.find(name);
 		if (it != m_pods.end())
 		{
-			m_kernelCtx.getLogManager() << LogLevel_ImportantWarning << "Duplicate plugin object name " << name << " "
+			m_kernelCtx.getLogManager() << Kernel::LogLevel_ImportantWarning << "Duplicate plugin object name " << name << " "
 					<< it->second->getCreatedClass() << " and " << pod.getCreatedClass() << "\n";
 		}
 		m_pods[name] = &pod;
 		return true;
 	}
 
-	map<string, const IPluginObjectDesc*>& getPluginObjectDescMap() { return m_pods; }
+	std::map<std::string, const Plugins::IPluginObjectDesc*>& getPluginObjectDescMap() { return m_pods; }
 
 private:
 
-	map<string, const IPluginObjectDesc*> m_pods;
+	std::map<std::string, const Plugins::IPluginObjectDesc*> m_pods;
 };
 
 // ------------------------------------------------------------------------------------------------------------------------------------
@@ -102,18 +99,18 @@ class CPluginObjectDescLogger final : public CPluginObjectDescEnum
 {
 public:
 
-	explicit CPluginObjectDescLogger(const IKernelContext& ctx) : CPluginObjectDescEnum(ctx) { }
+	explicit CPluginObjectDescLogger(const Kernel::IKernelContext& ctx) : CPluginObjectDescEnum(ctx) { }
 
-	bool callback(const IPluginObjectDesc& pod) override
+	bool callback(const Plugins::IPluginObjectDesc& pod) override
 	{
 		// Outputs plugin info to console
-		m_kernelCtx.getLogManager() << LogLevel_Trace << "Plugin <" << pod.getName() << ">\n";
-		m_kernelCtx.getLogManager() << LogLevel_Debug << " | Plugin category        : " << pod.getCategory() << "\n";
-		m_kernelCtx.getLogManager() << LogLevel_Debug << " | Class identifier       : " << pod.getCreatedClass() << "\n";
-		m_kernelCtx.getLogManager() << LogLevel_Debug << " | Author name            : " << pod.getAuthorName() << "\n";
-		m_kernelCtx.getLogManager() << LogLevel_Debug << " | Author company name    : " << pod.getAuthorCompanyName() << "\n";
-		m_kernelCtx.getLogManager() << LogLevel_Debug << " | Short description      : " << pod.getShortDescription() << "\n";
-		m_kernelCtx.getLogManager() << LogLevel_Debug << " | Detailed description   : " << pod.getDetailedDescription() << "\n";
+		m_kernelCtx.getLogManager() << Kernel::LogLevel_Trace << "Plugin <" << pod.getName() << ">\n";
+		m_kernelCtx.getLogManager() << Kernel::LogLevel_Debug << " | Plugin category        : " << pod.getCategory() << "\n";
+		m_kernelCtx.getLogManager() << Kernel::LogLevel_Debug << " | Class identifier       : " << pod.getCreatedClass() << "\n";
+		m_kernelCtx.getLogManager() << Kernel::LogLevel_Debug << " | Author name            : " << pod.getAuthorName() << "\n";
+		m_kernelCtx.getLogManager() << Kernel::LogLevel_Debug << " | Author company name    : " << pod.getAuthorCompanyName() << "\n";
+		m_kernelCtx.getLogManager() << Kernel::LogLevel_Debug << " | Short description      : " << pod.getShortDescription() << "\n";
+		m_kernelCtx.getLogManager() << Kernel::LogLevel_Debug << " | Detailed description   : " << pod.getDetailedDescription() << "\n";
 
 		return true;
 	}
@@ -127,7 +124,7 @@ namespace {
 typedef std::map<std::string, std::tuple<int, int, int>> components_map_t;
 // Parses a JSON encoded list of components with their versions
 // We use an output variable because we want to be able to "enhance" an already existing list if necessary
-void getVersionComponentsFromConfigToken(const IKernelContext& ctx, const char* configToken, components_map_t& componentVersions)
+void getVersionComponentsFromConfigToken(const Kernel::IKernelContext& ctx, const char* configToken, components_map_t& componentVersions)
 {
 	json::Object versionsObject;
 	// We use a lookup instead of expansion as JSON can contain { } characters
@@ -147,9 +144,9 @@ void getVersionComponentsFromConfigToken(const IKernelContext& ctx, const char* 
 }
 }  // namespace
 
-static void InsertPluginObjectDescToGtkTreeStore(const IKernelContext& ctx, map<string, const IPluginObjectDesc*>& pods, GtkTreeStore* treeStore,
-												 std::vector<const IPluginObjectDesc*>& newBoxes, std::vector<const IPluginObjectDesc*>& updatedBoxes,
-												 bool isNewVersion = false)
+static void InsertPluginObjectDescToGtkTreeStore(const Kernel::IKernelContext& ctx, std::map<std::string, const Plugins::IPluginObjectDesc*>& pods,
+												 GtkTreeStore* treeStore, std::vector<const Plugins::IPluginObjectDesc*>& newBoxes,
+												 std::vector<const Plugins::IPluginObjectDesc*>& updatedBoxes, bool isNewVersion = false)
 {
 	typedef std::map<std::string, std::tuple<int, int, int>> components_map_t;
 	components_map_t currentVersions;
@@ -160,11 +157,11 @@ static void InsertPluginObjectDescToGtkTreeStore(const IKernelContext& ctx, map<
 
 	for (const auto& pod : pods)
 	{
-		const IPluginObjectDesc* p = pod.second;
+		const Plugins::IPluginObjectDesc* p = pod.second;
 
 		CString stockItemName;
 
-		const auto* desc = dynamic_cast<const IBoxAlgorithmDesc*>(p);
+		const auto* desc = dynamic_cast<const Plugins::IBoxAlgorithmDesc*>(p);
 		if (desc != nullptr) { stockItemName = desc->getStockItemName(); }
 
 		bool shouldShow = true;
@@ -183,13 +180,13 @@ static void InsertPluginObjectDescToGtkTreeStore(const IKernelContext& ctx, map<
 			if (gtk_stock_lookup(stockItemName, &stockItem) == 0) { stockItemName = GTK_STOCK_NEW; }
 
 			// Splits the plugin category
-			vector<string> categories;
-			string str  = string(p->getCategory());
-			size_t j, i = size_t(-1);
-			while ((j = str.find('/', i + 1)) != string::npos)
+			std::vector<std::string> categories;
+			std::string str = std::string(p->getCategory());
+			size_t j, i     = size_t(-1);
+			while ((j = str.find('/', i + 1)) != std::string::npos)
 			{
-				string subCategory = string(str, i + 1, j - i - 1);
-				if (subCategory != string("")) { categories.push_back(subCategory); }
+				std::string subCategory = std::string(str, i + 1, j - i - 1);
+				if (subCategory != std::string("")) { categories.push_back(subCategory); }
 				i = j;
 			}
 			if (i + 1 != str.length()) { categories.emplace_back(str, i + 1, str.length() - i - 1); }
@@ -199,7 +196,7 @@ static void InsertPluginObjectDescToGtkTreeStore(const IKernelContext& ctx, map<
 			GtkTreeIter iter2;
 			GtkTreeIter* iterParent = nullptr;
 			GtkTreeIter* iterChild  = &iter1;
-			for (const string& category : categories)
+			for (const std::string& category : categories)
 			{
 				bool found = false;
 				bool valid = gtk_tree_model_iter_children(GTK_TREE_MODEL(treeStore), iterChild, iterParent) != 0;
@@ -284,8 +281,8 @@ static void InsertPluginObjectDescToGtkTreeStore(const IKernelContext& ctx, map<
 						updatedBoxes.push_back(p);
 					}
 						// Otherwise
-					else if (!isNewVersion && (boxCompoUpdatedVMajor == currentVMajor && boxCompoUpdatedVMinor == currentVMinor && boxCompoUpdatedVPatch ==
-											   currentVPatch)) { updatedBoxes.push_back(p); }
+					else if (!isNewVersion && (boxCompoUpdatedVMajor == currentVMajor && boxCompoUpdatedVMinor == currentVMinor
+											   && boxCompoUpdatedVPatch == currentVPatch)) { updatedBoxes.push_back(p); }
 				}
 			}
 
@@ -341,7 +338,7 @@ static char backslash_to_slash(const char c) { return c == '\\' ? '/' : c; }
 * \param logMgr: name of the scenario to open
 ------------------------------------------------------------------------------------------------------------------------------------**/
 #if defined NDEBUG
-static bool ensureOneInstanceOfDesigner(config_t& config, ILogManager& logMgr)
+static bool ensureOneInstanceOfDesigner(config_t& config, Kernel::ILogManager& logMgr)
 {
 	try
 	{
@@ -377,7 +374,7 @@ static bool ensureOneInstanceOfDesigner(config_t& config, ILogManager& logMgr)
 	}
 }
 #else
-static bool ensureOneInstanceOfDesigner(config_t& /*config*/, ILogManager& /*logMgr*/) { return true; }
+static bool ensureOneInstanceOfDesigner(config_t& /*config*/, Kernel::ILogManager& /*logMgr*/) { return true; }
 #endif
 
 bool parse_arguments(int argc, char** argv, config_t& config)
@@ -523,7 +520,7 @@ void message(const char* title, const char* msg, const GtkMessageType type)
 	gtk_widget_destroy(dialog);
 }
 
-void user_info(char** argv, ILogManager* logManager)
+void user_info(char** argv, Kernel::ILogManager* logManager)
 {
 	const std::vector<std::string> messages =
 	{
@@ -543,8 +540,8 @@ void user_info(char** argv, ILogManager* logManager)
 		"  --random-seed uint      : initialize random number generator with value, default=time(nullptr)\n"
 	};
 
-	if (logManager != nullptr) { for (const auto& m : messages) { (*logManager) << LogLevel_Info << m; } }
-	else { for (const auto& m : messages) { cout << m; } }
+	if (logManager != nullptr) { for (const auto& m : messages) { (*logManager) << Kernel::LogLevel_Info << m; } }
+	else { for (const auto& m : messages) { std::cout << m; } }
 }
 
 int go(int argc, char** argv)
@@ -605,7 +602,7 @@ int go(int argc, char** argv)
 
 	CKernelLoader loader;
 
-	cout << "[  INF  ] Created kernel loader, trying to load kernel module" << "\n";
+	std::cout << "[  INF  ] Created kernel loader, trying to load kernel module" << "\n";
 	CString errorMsg;
 #if defined TARGET_OS_Windows
 	CString file = Directories::getLibDir() + "/openvibe-kernel.dll";
@@ -614,18 +611,18 @@ int go(int argc, char** argv)
 #elif defined TARGET_OS_MacOS
 	CString file = Directories::getLibDir() + "/libopenvibe-kernel.dylib";
 #endif
-	if (!loader.load(file, &errorMsg)) { cout << "[ FAILED ] Error loading kernel (" << errorMsg << ")" << " from [" << file << "]\n"; }
+	if (!loader.load(file, &errorMsg)) { std::cout << "[ FAILED ] Error loading kernel (" << errorMsg << ")" << " from [" << file << "]\n"; }
 	else
 	{
-		cout << "[  INF  ] Kernel module loaded, trying to get kernel descriptor" << "\n";
-		IKernelDesc* desc       = nullptr;
-		IKernelContext* context = nullptr;
+		std::cout << "[  INF  ] Kernel module loaded, trying to get kernel descriptor" << "\n";
+		Kernel::IKernelDesc* desc       = nullptr;
+		Kernel::IKernelContext* context = nullptr;
 		loader.initialize();
 		loader.getKernelDesc(desc);
-		if (desc == nullptr) { cout << "[ FAILED ] No kernel descriptor" << "\n"; }
+		if (desc == nullptr) { std::cout << "[ FAILED ] No kernel descriptor" << "\n"; }
 		else
 		{
-			cout << "[  INF  ] Got kernel descriptor, trying to create kernel" << "\n";
+			std::cout << "[  INF  ] Got kernel descriptor, trying to create kernel" << "\n";
 
 			context = desc->createKernel("designer", Directories::getDataDir() + "/kernel/openvibe.conf");
 			context->initialize();
@@ -654,7 +651,7 @@ int go(int argc, char** argv)
 			}
 
 
-			if (context == nullptr) { cout << "[ FAILED ] No kernel created by kernel descriptor" << "\n"; }
+			if (context == nullptr) { std::cout << "[ FAILED ] No kernel created by kernel descriptor" << "\n"; }
 			else
 			{
 				Toolkit::initialize(*context);
@@ -679,8 +676,8 @@ int go(int argc, char** argv)
 				while (gtk_events_pending()) { gtk_main_iteration(); }
 #endif
 
-				IConfigurationManager& configMgr = context->getConfigurationManager();
-				ILogManager& logMgr              = context->getLogManager();
+				Kernel::IConfigurationManager& configMgr = context->getConfigurationManager();
+				Kernel::ILogManager& logMgr              = context->getLogManager();
 
 				bArgParseResult = parse_arguments(argc, argv, config);
 
@@ -696,7 +693,8 @@ int go(int argc, char** argv)
 				{
 					if ((!configMgr.expandAsBoolean("${Kernel_WithGUI}", true)) && ((config.getFlags() & CommandLineFlag_NoGui) == 0))
 					{
-						logMgr << LogLevel_ImportantWarning << "${Kernel_WithGUI} is set to false and --no-gui flag not set. Forcing the --no-gui flag\n";
+						logMgr << Kernel::LogLevel_ImportantWarning <<
+								"${Kernel_WithGUI} is set to false and --no-gui flag not set. Forcing the --no-gui flag\n";
 						config.noGui             = CommandLineFlag_NoGui;
 						config.noCheckColorDepth = CommandLineFlag_NoCheckColorDepth;
 						config.noManageSession   = CommandLineFlag_NoManageSession;
@@ -704,7 +702,7 @@ int go(int argc, char** argv)
 
 					if (config.noGui != CommandLineFlag_NoGui && !ensureOneInstanceOfDesigner(config, logMgr))
 					{
-						logMgr << LogLevel_Trace << "An instance of Designer is already running.\n";
+						logMgr << Kernel::LogLevel_Trace << "An instance of Designer is already running.\n";
 						return 0;
 					}
 
@@ -728,7 +726,7 @@ int go(int argc, char** argv)
 										//isScreenValid=true;
 										break;
 									default:
-										logMgr << LogLevel_Error << "Please change the color depth of your screen to either 24 or 32 bits\n";
+										logMgr << Kernel::LogLevel_Error << "Please change the color depth of your screen to either 24 or 32 bits\n";
 										// TODO find a way to break
 										break;
 								}
@@ -738,7 +736,7 @@ int go(int argc, char** argv)
 						// Add or replace a configuration token if required in command line
 						for (const auto& t : config.tokens)
 						{
-							logMgr << LogLevel_Trace << "Adding command line configuration token [" << t.first << " = " << t.second << "]\n";
+							logMgr << Kernel::LogLevel_Trace << "Adding command line configuration token [" << t.first << " = " << t.second << "]\n";
 							configMgr.addOrReplaceConfigurationToken(t.first.c_str(), t.second.c_str());
 						}
 
@@ -750,38 +748,38 @@ int go(int argc, char** argv)
 							switch (f.first)
 							{
 								case CommandLineFlag_Open:
-									logMgr << LogLevel_Info << "Opening scenario [" << fileName << "]\n";
+									logMgr << Kernel::LogLevel_Info << "Opening scenario [" << fileName << "]\n";
 									if (!app.openScenario(fileName.c_str()))
 									{
-										logMgr << LogLevel_Error << "Could not open scenario " << fileName << "\n";
+										logMgr << Kernel::LogLevel_Error << "Could not open scenario " << fileName << "\n";
 										errorWhileLoadingScenario = config.noGui == CommandLineFlag_NoGui;
 									}
 									break;
 								case CommandLineFlag_Play:
-									logMgr << LogLevel_Info << "Opening and playing scenario [" << fileName << "]\n";
+									logMgr << Kernel::LogLevel_Info << "Opening and playing scenario [" << fileName << "]\n";
 									error = !app.openScenario(fileName.c_str());
 									if (!error)
 									{
 										app.playScenarioCB();
-										error = app.getCurrentInterfacedScenario()->m_PlayerStatus != EPlayerStatus::Play;
+										error = app.getCurrentInterfacedScenario()->m_PlayerStatus != Kernel::EPlayerStatus::Play;
 									}
 									if (error)
 									{
-										logMgr << LogLevel_Error << "Scenario open or load error with --play.\n";
+										logMgr << Kernel::LogLevel_Error << "Scenario open or load error with --play.\n";
 										errorWhileLoadingScenario = config.noGui == CommandLineFlag_NoGui;
 									}
 									break;
 								case CommandLineFlag_PlayFast:
-									logMgr << LogLevel_Info << "Opening and fast playing scenario [" << fileName << "]\n";
+									logMgr << Kernel::LogLevel_Info << "Opening and fast playing scenario [" << fileName << "]\n";
 									error = !app.openScenario(fileName.c_str());
 									if (!error)
 									{
 										app.forwardScenarioCB();
-										error = app.getCurrentInterfacedScenario()->m_PlayerStatus != EPlayerStatus::Forward;
+										error = app.getCurrentInterfacedScenario()->m_PlayerStatus != Kernel::EPlayerStatus::Forward;
 									}
 									if (error)
 									{
-										logMgr << LogLevel_Error << "Scenario open or load error with --play-fast.\n";
+										logMgr << Kernel::LogLevel_Error << "Scenario open or load error with --play-fast.\n";
 										errorWhileLoadingScenario = config.noGui == CommandLineFlag_NoGui;
 									}
 									playRequested = true;
@@ -795,7 +793,8 @@ int go(int argc, char** argv)
 
 						if (!playRequested && config.noGui == CommandLineFlag_NoGui)
 						{
-							logMgr << LogLevel_Info << "Switch --no-gui is enabled but no play operation was requested. Designer will exit automatically.\n";
+							logMgr << Kernel::LogLevel_Info
+									<< "Switch --no-gui is enabled but no play operation was requested. Designer will exit automatically.\n";
 						}
 
 						if (app.m_Scenarios.empty() && config.noGui != CommandLineFlag_NoGui) { app.newScenarioCB(); }
@@ -813,23 +812,23 @@ int go(int argc, char** argv)
 							InsertPluginObjectDescToGtkTreeStore(*context, cbCollector2.getPluginObjectDescMap(), app.m_AlgorithmTreeModel, app.m_NewBoxes,
 																 app.m_UpdatedBoxes);
 
-							std::map<std::string, const IPluginObjectDesc*> metaboxDescMap;
-							CIdentifier identifier;
-							while ((identifier = context->getMetaboxManager().getNextMetaboxObjectDescIdentifier(identifier)) != OV_UndefinedIdentifier
-							) { metaboxDescMap[std::string(identifier.toString())] = context->getMetaboxManager().getMetaboxObjectDesc(identifier); }
+							std::map<std::string, const Plugins::IPluginObjectDesc*> metaboxDescMap;
+							CIdentifier id;
+							while ((id = context->getMetaboxManager().getNextMetaboxObjectDescIdentifier(id)) != CIdentifier::undefined()
+							) { metaboxDescMap[id.str()] = context->getMetaboxManager().getMetaboxObjectDesc(id); }
 							InsertPluginObjectDescToGtkTreeStore(*context, metaboxDescMap, app.m_BoxAlgorithmTreeModel, app.m_NewBoxes, app.m_UpdatedBoxes,
 																 app.m_IsNewVersion);
 
-							context->getLogManager() << LogLevel_Info << "Initialization took " << context->getConfigurationManager().expand("$Core{real-time}")
-									<< " ms\n";
+							context->getLogManager() << Kernel::LogLevel_Info << "Initialization took "
+									<< context->getConfigurationManager().expand("$Core{real-time}") << " ms\n";
 							// If the application is a newly launched version, and not launched without GUI -> display changelog
 							if (app.m_IsNewVersion && config.noGui != CommandLineFlag_NoGui) { app.displayChangelogWhenAvailable(); }
 							try { gtk_main(); }
 							catch (DesignerException& ex)
 							{
 								std::cerr << "Caught designer exception" << std::endl;
-								GtkWidget* errorDialog = gtk_message_dialog_new(nullptr, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, "%s",
-																				ex.getErrorString().c_str());
+								GtkWidget* errorDialog = gtk_message_dialog_new(nullptr, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE,
+																				"%s", ex.getErrorString().c_str());
 								gtk_window_set_title(GTK_WINDOW(errorDialog), (std::string(BRAND_NAME) + " has stopped functioning").c_str());
 								gtk_dialog_run(GTK_DIALOG(errorDialog));
 							}
@@ -838,7 +837,7 @@ int go(int argc, char** argv)
 					}
 				}
 
-				logMgr << LogLevel_Info << "Application terminated, releasing allocated objects\n";
+				logMgr << Kernel::LogLevel_Info << "Application terminated, releasing allocated objects\n";
 
 				VisualizationToolkit::uninitialize(*context);
 				Toolkit::uninitialize(*context);
@@ -855,13 +854,16 @@ int go(int argc, char** argv)
 	return errorWhileLoadingScenario ? -1 : 0;
 }
 
+}  // namespace Designer
+}  // namespace OpenViBE
+
 int main(const int argc, char** argv)
 {
 	// Remove mutex at startup, as the main loop regenerates frequently this mutex,
 	// if another instance is running, it should have the time to regenerate it
 	// Avoids that after crashing, a mutex stays blocking
 	boost::interprocess::named_mutex::remove(MUTEX_NAME);
-	try { go(argc, argv); }
+	try { OpenViBE::Designer::go(argc, argv); }
 	catch (...) { std::cout << "Caught an exception at the very top...\nLeaving application!\n"; }
 	//return go(argc, argv);
 }

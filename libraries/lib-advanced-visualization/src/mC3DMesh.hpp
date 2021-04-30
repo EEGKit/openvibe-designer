@@ -30,8 +30,7 @@
 
 #include "mCVertex.hpp"
 
-
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 class C3DMesh final
 {
@@ -53,7 +52,7 @@ public:
 	std::array<float, 3> m_Color;
 };
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE
 
 
 #endif // TARGET_HAS_ThirdPartyOpenGL

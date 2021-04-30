@@ -1,8 +1,8 @@
 #include "mCRendererTopo2D.hpp"
 #include <cmath>
 
-using namespace Mensia;
-using namespace AdvancedVisualization;
+namespace OpenViBE {
+namespace AdvancedVisualization {
 
 // constexpr constexpr float OFFSET = 0.0001f; //Macro modernization, Not yet with jenkins (not the last visual 2013 which it works)
 #define OFFSET 0.0001f
@@ -76,29 +76,17 @@ void CRendererTopo2D::rebuild3DMeshesPre(const CRendererContext& /*rContext*/)
 
 		// Nose mesh
 		/*
-		vertices[k].x=-1;
-		vertices[k].y=.01;
-		vertices[k].z=-.5;
+		vertices[k].x=-1;	vertices[k].y=.01;	vertices[k].z=-.5;
 		k++;
-		vertices[k].x=-1;
-		vertices[k].y=-.01;
-		vertices[k].z=-.5;
+		vertices[k].x=-1;	vertices[k].y=-.01;	vertices[k].z=-.5;
 		k++;
-		vertices[k].x=0;
-		vertices[k].y=.01;
-		vertices[k].z=-1.5;
+		vertices[k].x=0;	vertices[k].y=.01;	vertices[k].z=-1.5;
 		k++;
-		vertices[k].x=0;
-		vertices[k].y=-.01;
-		vertices[k].z=-1.5;
+		vertices[k].x=0;	vertices[k].y=-.01;	vertices[k].z=-1.5;
 		k++;
-		vertices[k].x=1;
-		vertices[k].y=.01;
-		vertices[k].z=-.5;
+		vertices[k].x=1;	vertices[k].y=.01;	vertices[k].z=-.5;
 		k++;
-		vertices[k].x=1;
-		vertices[k].y=-.01;
-		vertices[k].z=-.5;
+		vertices[k].x=1;	vertices[k].y=-.01;	vertices[k].z=-.5;
 		*/
 		// Ribon mesh
 
@@ -117,21 +105,10 @@ void CRendererTopo2D::rebuild3DMeshesPre(const CRendererContext& /*rContext*/)
 
 		// Nose mesh
 		/*
-		triangles[k++] = mod;
-		triangles[k++] = mod + 1;
-		triangles[k++] = mod + 2;
-
-		triangles[k++] = mod + 1;
-		triangles[k++] = mod + 2;
-		triangles[k++] = mod + 3;
-
-		triangles[k++] = mod + 2;
-		triangles[k++] = mod + 3;
-		triangles[k++] = mod + 4;
-		
-		triangles[k++] = mod + 3;
-		triangles[k++] = mod + 4;
-		triangles[k++] = mod + 5;
+		triangles[k++] = mod;		triangles[k++] = mod + 1;	triangles[k++] = mod + 2;
+		triangles[k++] = mod + 1;	triangles[k++] = mod + 2;	triangles[k++] = mod + 3;
+		triangles[k++] = mod + 2;	triangles[k++] = mod + 3;	triangles[k++] = mod + 4;
+		triangles[k++] = mod + 3;	triangles[k++] = mod + 4;	triangles[k++] = mod + 5;
 		*/
 		m_face.m_Color.fill(1.15F);
 		// m_face.compile();
@@ -162,3 +139,6 @@ void CRendererTopo2D::rebuild3DMeshesPost(const CRendererContext& /*ctx*/)
 	unfold(m_face.m_Vertices, layer);
 	unfold(m_projectedPositions);
 }
+
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE

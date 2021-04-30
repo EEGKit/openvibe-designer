@@ -47,11 +47,11 @@ public:
 private:
 
 	const Kernel::IKernelContext& m_kernelCtx;
-	CIdentifier m_id = OV_UndefinedIdentifier;
+	CIdentifier m_id = CIdentifier::undefined();
 	CString m_name;
 	VisualizationToolkit::EVisualizationWidget m_type = VisualizationToolkit::EVisualizationWidget::Undefined;
-	CIdentifier m_parentID                            = OV_UndefinedIdentifier;
-	CIdentifier m_boxID                               = OV_UndefinedIdentifier;
+	CIdentifier m_parentID                            = CIdentifier::undefined();
+	CIdentifier m_boxID                               = CIdentifier::undefined();
 	std::vector<CIdentifier> m_childrens;
 
 	// @fixme should initialize meaningfully in constructor or initialize()?

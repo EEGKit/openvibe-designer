@@ -8,27 +8,22 @@
 #include <cmath>
 #include <visualization-toolkit/ovvizColorGradient.h>
 
-using namespace std;
+namespace OpenViBE {
+namespace Plugins {
+namespace SimpleVisualization {
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Kernel;
-using namespace /*OpenViBE::*/Plugins;
-using namespace SimpleVisualization;
-
-namespace {
-void show_values_toggle_button_cb(GtkToggleToolButton* button, gpointer data)
+static void ShowValuesToggleButtonCB(GtkToggleToolButton* button, gpointer data)
 {
 	auto* display         = reinterpret_cast<CBoxAlgorithmMatrixDisplay*>(data);
 	display->m_ShowValues = (gtk_toggle_tool_button_get_active(button) != 0);
 }
 
-void show_colors_toggle_button_cb(GtkToggleToolButton* button, gpointer data)
+static void ShowColorsToggleButtonCB(GtkToggleToolButton* button, gpointer data)
 {
 	auto* display         = reinterpret_cast<CBoxAlgorithmMatrixDisplay*>(data);
 	display->m_ShowColors = (gtk_toggle_tool_button_get_active(button) != 0);
 	display->resetColors();
 }
-}  // namespace
 
 bool CBoxAlgorithmMatrixDisplay::resetColors()
 
@@ -78,9 +73,9 @@ bool CBoxAlgorithmMatrixDisplay::initialize()
 	gtk_builder_connect_signals(m_toolbarWidgetInterface, nullptr);
 
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_toolbarWidgetInterface, "show-values-toggle-button")), "toggled",
-					 G_CALLBACK(::show_values_toggle_button_cb), this);
+					 G_CALLBACK(ShowValuesToggleButtonCB), this);
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_toolbarWidgetInterface, "show-colors-toggle-button")), "toggled",
-					 G_CALLBACK(::show_colors_toggle_button_cb), this);
+					 G_CALLBACK(ShowColorsToggleButtonCB), this);
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(m_toolbarWidgetInterface, "matrix-display-toolbar")), "delete_event", G_CALLBACK(gtk_widget_hide),
 					 nullptr);
 
@@ -89,7 +84,7 @@ bool CBoxAlgorithmMatrixDisplay::initialize()
 
 	if (!this->canCreatePluginObject(OVP_ClassId_Plugin_VisualizationCtx))
 	{
-		this->getLogManager() << LogLevel_Error << "Visualization framework is not loaded" << "\n";
+		this->getLogManager() << Kernel::LogLevel_Error << "Visualization framework is not loaded" << "\n";
 		return false;
 	}
 
@@ -156,7 +151,7 @@ bool CBoxAlgorithmMatrixDisplay::processInput(const size_t /*index*/)
 bool CBoxAlgorithmMatrixDisplay::process()
 
 {
-	IBoxIO& boxContext = this->getDynamicBoxContext();
+	Kernel::IBoxIO& boxContext = this->getDynamicBoxContext();
 
 	for (size_t i = 0; i < boxContext.getInputChunkCount(0); ++i)
 	{
@@ -171,14 +166,15 @@ bool CBoxAlgorithmMatrixDisplay::process()
 			guint nRow, nCol;
 			if (op_matrix->getDimensionCount() == 1)
 			{
-				//getLogManager() << LogLevel_Warning<< "The streamed matrix received has 1 dimensions (found "<< op_matrix->getDimensionCount() <<" dimensions)\n";
+				//getLogManager() << Kernel::LogLevel_Warning<< "The streamed matrix received has 1 dimensions (found "<< op_matrix->getDimensionCount() <<" dimensions)\n";
 				nRow = 1;
 				nCol = guint(op_matrix->getDimensionSize(0));
 				//return false;
 			}
 			else if (op_matrix->getDimensionCount() != 2)
 			{
-				getLogManager() << LogLevel_Error << "The streamed matrix received has more than 2 dimensions (found " << op_matrix->getDimensionCount() <<
+				getLogManager() << Kernel::LogLevel_Error << "The streamed matrix received has more than 2 dimensions (found " << op_matrix->getDimensionCount()
+						<<
 						" dimensions)\n";
 				return false;
 			}
@@ -212,7 +208,7 @@ bool CBoxAlgorithmMatrixDisplay::process()
 				gtk_widget_set_visible(label, 1);
 				gtk_table_attach(table, label, col, col + 1, r, r + 1, GtkAttachOptions(GTK_EXPAND | GTK_FILL), GtkAttachOptions(GTK_EXPAND | GTK_FILL), 0, 0);
 
-				stringstream ss;
+				std::stringstream ss;
 				ss << char(r - 1 + int('A'));
 				gtk_label_set_label(GTK_LABEL(label), ss.str().c_str());
 				m_rowLabelCache.emplace_back(GTK_LABEL(label), ss.str().c_str());
@@ -324,7 +320,7 @@ bool CBoxAlgorithmMatrixDisplay::process()
 				//first line : labels
 				for (size_t c = 0; c < nCol; ++c)
 				{
-					if (m_columnLabelCache[c].second != op_matrix->getDimensionLabel(1, c) && !string(op_matrix->getDimensionLabel(1, c)).empty())
+					if (m_columnLabelCache[c].second != op_matrix->getDimensionLabel(1, c) && !std::string(op_matrix->getDimensionLabel(1, c)).empty())
 					{
 						gtk_label_set_label(GTK_LABEL(m_columnLabelCache[c].first), op_matrix->getDimensionLabel(1, c));
 						m_columnLabelCache[c].second = op_matrix->getDimensionLabel(1, c);
@@ -334,7 +330,7 @@ bool CBoxAlgorithmMatrixDisplay::process()
 				//first column : labels
 				for (size_t r = 0; r < nRow; ++r)
 				{
-					if (m_rowLabelCache[r].second != op_matrix->getDimensionLabel(0, r) && !string(op_matrix->getDimensionLabel(0, r)).empty())
+					if (m_rowLabelCache[r].second != op_matrix->getDimensionLabel(0, r) && !std::string(op_matrix->getDimensionLabel(0, r)).empty())
 					{
 						gtk_label_set_label(GTK_LABEL(m_rowLabelCache[r].first), op_matrix->getDimensionLabel(0, r));
 						m_rowLabelCache[r].second = op_matrix->getDimensionLabel(0, r);
@@ -346,7 +342,7 @@ bool CBoxAlgorithmMatrixDisplay::process()
 				//first line : labels
 				for (size_t c = 0; c < nCol; ++c)
 				{
-					if (m_columnLabelCache[c].second != op_matrix->getDimensionLabel(0, c) && !string(op_matrix->getDimensionLabel(0, c)).empty())
+					if (m_columnLabelCache[c].second != op_matrix->getDimensionLabel(0, c) && !std::string(op_matrix->getDimensionLabel(0, c)).empty())
 					{
 						gtk_label_set_label(GTK_LABEL(m_columnLabelCache[c].first), op_matrix->getDimensionLabel(0, c));
 						m_columnLabelCache[c].second = op_matrix->getDimensionLabel(0, c);
@@ -362,3 +358,7 @@ bool CBoxAlgorithmMatrixDisplay::process()
 
 	return true;
 }
+
+}  // namespace SimpleVisualization
+}  // namespace Plugins
+}  // namespace OpenViBE

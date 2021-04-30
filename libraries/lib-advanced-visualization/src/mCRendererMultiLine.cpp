@@ -22,8 +22,8 @@
 #include <cstdint>
 #include "mCRendererMultiLine.hpp"
 
-using namespace Mensia;
-using namespace AdvancedVisualization;
+namespace OpenViBE {
+namespace AdvancedVisualization {
 
 bool CRendererMultiLine::render(const CRendererContext& ctx)
 {
@@ -98,3 +98,6 @@ bool CRendererMultiLine::render(const CRendererContext& ctx)
 
 	return true;
 }
+
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE

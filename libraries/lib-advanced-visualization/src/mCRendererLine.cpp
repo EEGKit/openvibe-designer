@@ -22,10 +22,8 @@
 #include <cstdint>
 #include "mCRendererLine.hpp"
 
-using namespace Mensia;
-using namespace AdvancedVisualization;
-
-CRendererLine::CRendererLine() = default;
+namespace OpenViBE {
+namespace AdvancedVisualization {
 
 void CRendererLine::rebuild(const CRendererContext& ctx)
 {
@@ -163,3 +161,6 @@ bool CRendererLine::render(const CRendererContext& ctx)
 
 	return true;
 }
+
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE

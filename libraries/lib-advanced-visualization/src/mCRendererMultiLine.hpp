@@ -22,7 +22,7 @@
 
 #include "mCRendererLine.hpp"
 
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 class CRendererMultiLine : public CRendererLine
 {
@@ -31,4 +31,4 @@ public:
 	bool render(const CRendererContext& ctx) override;
 };
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE

@@ -2,10 +2,8 @@
 
 #include <cstring>
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Designer;
-using namespace /*OpenViBE::*/Plugins;
-using namespace /*OpenViBE::*/Kernel;
+namespace OpenViBE {
+namespace Designer {
 
 static void BoldSelectionCB(GtkButton* /*button*/, gpointer data) { static_cast<CCommentEditorDialog*>(data)->applyTagCB("<b>", "</b>"); }
 static void ItalicSelectionCB(GtkButton* /*button*/, gpointer data) { static_cast<CCommentEditorDialog*>(data)->applyTagCB("<i>", "</i>"); }
@@ -29,28 +27,28 @@ bool CCommentEditorDialog::run()
 	gtk_builder_add_from_file(m_interface, m_guiFilename.toASCIIString(), nullptr);
 	gtk_builder_connect_signals(m_interface, nullptr);
 
-	::g_signal_connect(::gtk_builder_get_object(m_interface, "comment_toolbutton_bold"), "clicked", G_CALLBACK(BoldSelectionCB), this);
-	::g_signal_connect(::gtk_builder_get_object(m_interface, "comment_toolbutton_italic"), "clicked", G_CALLBACK(ItalicSelectionCB), this);
-	::g_signal_connect(::gtk_builder_get_object(m_interface, "comment_toolbutton_underline"), "clicked", G_CALLBACK(UnderlineCB), this);
-	::g_signal_connect(::gtk_builder_get_object(m_interface, "comment_toolbutton_strikethrough"), "clicked", G_CALLBACK(StrikethroughCB), this);
-	::g_signal_connect(::gtk_builder_get_object(m_interface, "comment_toolbutton_mono"), "clicked", G_CALLBACK(MonoCB), this);
-	::g_signal_connect(::gtk_builder_get_object(m_interface, "comment_toolbutton_subscript"), "clicked", G_CALLBACK(SubscriptCB), this);
-	::g_signal_connect(::gtk_builder_get_object(m_interface, "comment_toolbutton_superscript"), "clicked", G_CALLBACK(SuperscriptCB), this);
-	::g_signal_connect(::gtk_builder_get_object(m_interface, "comment_toolbutton_big"), "clicked", G_CALLBACK(BigCB), this);
-	::g_signal_connect(::gtk_builder_get_object(m_interface, "comment_toolbutton_small"), "clicked", G_CALLBACK(SmallCB), this);
-	::g_signal_connect(::gtk_builder_get_object(m_interface, "comment_toolbutton_red"), "clicked", G_CALLBACK(RedCB), this);
-	::g_signal_connect(::gtk_builder_get_object(m_interface, "comment_toolbutton_green"), "clicked", G_CALLBACK(GreenCB), this);
-	::g_signal_connect(::gtk_builder_get_object(m_interface, "comment_toolbutton_blue"), "clicked", G_CALLBACK(BlueCB), this);
-	::g_signal_connect(::gtk_builder_get_object(m_interface, "comment_toolbutton_info"), "clicked", G_CALLBACK(InfoCB), this);
+	::g_signal_connect(gtk_builder_get_object(m_interface, "comment_toolbutton_bold"), "clicked", G_CALLBACK(BoldSelectionCB), this);
+	::g_signal_connect(gtk_builder_get_object(m_interface, "comment_toolbutton_italic"), "clicked", G_CALLBACK(ItalicSelectionCB), this);
+	::g_signal_connect(gtk_builder_get_object(m_interface, "comment_toolbutton_underline"), "clicked", G_CALLBACK(UnderlineCB), this);
+	::g_signal_connect(gtk_builder_get_object(m_interface, "comment_toolbutton_strikethrough"), "clicked", G_CALLBACK(StrikethroughCB), this);
+	::g_signal_connect(gtk_builder_get_object(m_interface, "comment_toolbutton_mono"), "clicked", G_CALLBACK(MonoCB), this);
+	::g_signal_connect(gtk_builder_get_object(m_interface, "comment_toolbutton_subscript"), "clicked", G_CALLBACK(SubscriptCB), this);
+	::g_signal_connect(gtk_builder_get_object(m_interface, "comment_toolbutton_superscript"), "clicked", G_CALLBACK(SuperscriptCB), this);
+	::g_signal_connect(gtk_builder_get_object(m_interface, "comment_toolbutton_big"), "clicked", G_CALLBACK(BigCB), this);
+	::g_signal_connect(gtk_builder_get_object(m_interface, "comment_toolbutton_small"), "clicked", G_CALLBACK(SmallCB), this);
+	::g_signal_connect(gtk_builder_get_object(m_interface, "comment_toolbutton_red"), "clicked", G_CALLBACK(RedCB), this);
+	::g_signal_connect(gtk_builder_get_object(m_interface, "comment_toolbutton_green"), "clicked", G_CALLBACK(GreenCB), this);
+	::g_signal_connect(gtk_builder_get_object(m_interface, "comment_toolbutton_blue"), "clicked", G_CALLBACK(BlueCB), this);
+	::g_signal_connect(gtk_builder_get_object(m_interface, "comment_toolbutton_info"), "clicked", G_CALLBACK(InfoCB), this);
 
 	m_dialog = GTK_WIDGET(gtk_builder_get_object(m_interface, "comment"));
 	m_desc   = GTK_WIDGET(gtk_builder_get_object(m_interface, "comment-textview_description"));
 
 	m_infoDialog = GTK_WIDGET(gtk_builder_get_object(m_interface, "messagedialog_howto_comment"));
-	::g_signal_connect(m_infoDialog, "close", G_CALLBACK(::gtk_widget_hide), nullptr);
-	::g_signal_connect(m_infoDialog, "delete-event", G_CALLBACK(::gtk_widget_hide), nullptr);
+	::g_signal_connect(m_infoDialog, "close", G_CALLBACK(gtk_widget_hide), nullptr);
+	::g_signal_connect(m_infoDialog, "delete-event", G_CALLBACK(gtk_widget_hide), nullptr);
 
-	//::g_signal_connect(GTK_WIDGET(gtk_builder_get_object(m_interface, "messagedialog_howto_comment_button_close")), "clicked", G_CALLBACK(::gtk_widget_hide), nullptr);
+	//::g_signal_connect(GTK_WIDGET(gtk_builder_get_object(m_interface, "messagedialog_howto_comment_button_close")), "clicked", G_CALLBACK(gtk_widget_hide), nullptr);
 
 	g_object_unref(m_interface);
 
@@ -109,3 +107,6 @@ void CCommentEditorDialog::applyTagCB(const char* in, const char* out) const
 	// set focus on the text, to get back in edition mode directly
 	gtk_widget_grab_focus(m_desc);
 }
+
+}  // namespace Designer
+}  // namespace OpenViBE

@@ -1,9 +1,7 @@
 #include "ovdCAboutPluginDialog.h"
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Designer;
-using namespace /*OpenViBE::*/Plugins;
-using namespace /*OpenViBE::*/Kernel;
+namespace OpenViBE {
+namespace Designer {
 
 bool CAboutPluginDialog::run()
 {
@@ -53,3 +51,6 @@ bool CAboutPluginDialog::run()
 
 	return true;
 }
+
+}  // namespace Designer
+}  // namespace OpenViBE

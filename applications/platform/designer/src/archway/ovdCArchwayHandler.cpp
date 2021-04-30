@@ -13,10 +13,7 @@
 #include <sstream>
 #include <regex>
 
-using namespace Mensia;
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Kernel;
-using namespace std;
+namespace OpenViBE {
 
 const std::string CArchwayHandler::ARCHWAY_CONFIG_FILE           = (Directories::getUserDataDir() + "/studio-archway.conf").toASCIIString();
 const std::string CArchwayHandler::ARCHWAY_PIPELINES_CONFIG_FILE = (Directories::getUserDataDir() + "/studio-archway-pipeline-configuration.conf").
@@ -51,11 +48,13 @@ EEngineInitialisationStatus CArchwayHandler::initialize()
 	didLoad &= System::CDynamicModuleSymbolLoader::getSymbol<>(m_archwayModule, "getLastError", &m_archway->getLastError);
 	didLoad &= System::CDynamicModuleSymbolLoader::getSymbol<>(m_archwayModule, "getErrorString", &m_archway->getErrorString);
 	didLoad &= System::CDynamicModuleSymbolLoader::getSymbol<>(m_archwayModule, "getVersionDescription", &m_archway->getVersionDescription);
-	didLoad &= System::CDynamicModuleSymbolLoader::getSymbol<>(m_archwayModule, "getConfigurationParameterAsString", &m_archway->getConfigurationParameterAsString);
+	didLoad &= System::CDynamicModuleSymbolLoader::getSymbol<>(m_archwayModule, "getConfigurationParameterAsString",
+															   &m_archway->getConfigurationParameterAsString);
 	didLoad &= System::CDynamicModuleSymbolLoader::getSymbol<>(m_archwayModule, "getPipelineScenarioPath", &m_archway->getPipelineScenarioPath);
 	didLoad &= System::CDynamicModuleSymbolLoader::getSymbol<>(m_archwayModule, "initialize", &m_archway->initialize);
 	didLoad &= System::CDynamicModuleSymbolLoader::getSymbol<>(m_archwayModule, "startAllAcquisitionDevices", &m_archway->startAllAcquisitionDevices);
-	didLoad &= System::CDynamicModuleSymbolLoader::getSymbol<>(m_archwayModule, "startImpedanceCheckOnAllAcquisitionDevices", &m_archway->startImpedanceCheckOnAllAcquisitionDevices);
+	didLoad &= System::CDynamicModuleSymbolLoader::getSymbol<>(m_archwayModule, "startImpedanceCheckOnAllAcquisitionDevices",
+															   &m_archway->startImpedanceCheckOnAllAcquisitionDevices);
 	didLoad &= System::CDynamicModuleSymbolLoader::getSymbol<>(m_archwayModule, "startEngine", &m_archway->startEngine);
 	didLoad &= System::CDynamicModuleSymbolLoader::getSymbol<>(m_archwayModule, "startEngineInFastForward", &m_archway->startEngineInFastForward);
 	didLoad &= System::CDynamicModuleSymbolLoader::getSymbol<>(m_archwayModule, "stopEngine", &m_archway->stopEngine);
@@ -83,13 +82,14 @@ EEngineInitialisationStatus CArchwayHandler::initialize()
 
 	if (!didLoad)
 	{
-		m_kernelCtx.getLogManager() << LogLevel_Warning << "Failed to load symbols from Archway library [" << m_archwayModule.getErrorDetails() << "]\n";
+		m_kernelCtx.getLogManager() << Kernel::LogLevel_Warning << "Failed to load symbols from Archway library [" << m_archwayModule.getErrorDetails() <<
+				"]\n";
 		delete m_archway;
 		m_archway = nullptr;
 		return EEngineInitialisationStatus::NotAvailable;
 	}
 
-	m_kernelCtx.getLogManager() << LogLevel_Trace << "Working with Archway version: " << m_archway->getVersionDescription() << "\n";
+	m_kernelCtx.getLogManager() << Kernel::LogLevel_Trace << "Working with Archway version: " << m_archway->getVersionDescription() << "\n";
 
 	// Now initialize the ArchwayBridge structure with closures that bridge to local Archway functions
 	// this way we do not have to expose the Archway object or the C API
@@ -101,7 +101,7 @@ EEngineInitialisationStatus CArchwayHandler::initialize()
 	};
 
 	// This function returns the last getPendingValue result as a vector
-// Such encapsulation enables us to avoid a call to getPendingValueDimension
+	// Such encapsulation enables us to avoid a call to getPendingValueDimension
 	// from the client plugin.
 	m_ArchwayBridge.popValueMatrix = [this](const size_t valueChannelId)
 	{
@@ -112,7 +112,7 @@ EEngineInitialisationStatus CArchwayHandler::initialize()
 		{
 			if (!this->m_archway->getPendingValue(m_RunningPipelineId, valueChannelId, &valueMatrix[0]))
 			{
-				m_kernelCtx.getLogManager() << LogLevel_Warning << "Failed to get pending value " << this->getArchwayErrorString().c_str() << "\n";
+				m_kernelCtx.getLogManager() << Kernel::LogLevel_Warning << "Failed to get pending value " << this->getArchwayErrorString().c_str() << "\n";
 			}
 		}
 		return valueMatrix;
@@ -164,7 +164,7 @@ EEngineInitialisationStatus CArchwayHandler::initialize()
 
 	if (!this->initializeArchway())
 	{
-		m_kernelCtx.getLogManager() << LogLevel_Warning << "Failed to initialize the engine " << this->getArchwayErrorString().c_str() << "\n";
+		m_kernelCtx.getLogManager() << Kernel::LogLevel_Warning << "Failed to initialize the engine " << this->getArchwayErrorString().c_str() << "\n";
 		return EEngineInitialisationStatus::Failure;
 	}
 
@@ -183,7 +183,7 @@ bool CArchwayHandler::uninitialize()
 	{
 		if (!m_archway->stopEngine())
 		{
-			m_kernelCtx.getLogManager() << LogLevel_Warning << "Failed to stop Engine " << this->getArchwayErrorString().c_str() << "\n";
+			m_kernelCtx.getLogManager() << Kernel::LogLevel_Warning << "Failed to stop Engine " << this->getArchwayErrorString().c_str() << "\n";
 		}
 	}
 
@@ -191,7 +191,8 @@ bool CArchwayHandler::uninitialize()
 	{
 		if (!m_archway->stopAllAcquisitionDevices())
 		{
-			m_kernelCtx.getLogManager() << LogLevel_Warning << "Failed to stop all acquisition devices " << this->getArchwayErrorString().c_str() << "\n";
+			m_kernelCtx.getLogManager() << Kernel::LogLevel_Warning << "Failed to stop all acquisition devices " << this->getArchwayErrorString().c_str() <<
+					"\n";
 		}
 	}
 
@@ -199,7 +200,7 @@ bool CArchwayHandler::uninitialize()
 	{
 		if (!m_archway->uninitialize())
 		{
-			m_kernelCtx.getLogManager() << LogLevel_Warning << "Failed to uninitialize Archway " << this->getArchwayErrorString().c_str() << "\n";
+			m_kernelCtx.getLogManager() << Kernel::LogLevel_Warning << "Failed to uninitialize Archway " << this->getArchwayErrorString().c_str() << "\n";
 		}
 	}
 
@@ -218,7 +219,8 @@ bool CArchwayHandler::initializeArchway()
 {
 	assert(m_Archway);
 
-	m_kernelCtx.getLogManager() << LogLevel_Trace << "Re-initializing engine in [" << (m_EngineType == EEngineType::Local ? "Local" : "LAN") << "]" << "\n";
+	m_kernelCtx.getLogManager() << Kernel::LogLevel_Trace << "Re-initializing engine in [" << (m_EngineType == EEngineType::Local ? "Local" : "LAN") << "]" <<
+			"\n";
 	return m_archway->initialize("user", "pass", "neurort-studio", ARCHWAY_CONFIG_FILE.c_str());
 }
 
@@ -230,7 +232,7 @@ bool CArchwayHandler::uninitializeArchway()
 	{
 		if (!m_archway->uninitialize())
 		{
-			m_kernelCtx.getLogManager() << LogLevel_Warning << "Failed to uninitialize Archway " << this->getArchwayErrorString().c_str() << "\n";
+			m_kernelCtx.getLogManager() << Kernel::LogLevel_Warning << "Failed to uninitialize Archway " << this->getArchwayErrorString().c_str() << "\n";
 			return false;
 		}
 	}
@@ -244,7 +246,7 @@ bool CArchwayHandler::reinitializeArchway()
 
 	if (!this->uninitializeArchway())
 	{
-		m_kernelCtx.getLogManager() << LogLevel_Warning << "Failed to uninitialize Engine " << this->getArchwayErrorString().c_str() << "\n";
+		m_kernelCtx.getLogManager() << Kernel::LogLevel_Warning << "Failed to uninitialize Engine " << this->getArchwayErrorString().c_str() << "\n";
 		return false;
 	}
 
@@ -252,11 +254,11 @@ bool CArchwayHandler::reinitializeArchway()
 
 	if (!this->initializeArchway())
 	{
-		m_kernelCtx.getLogManager() << LogLevel_Warning << "Failed to initialize Engine " << this->getArchwayErrorString().c_str() << "\n";
+		m_kernelCtx.getLogManager() << Kernel::LogLevel_Warning << "Failed to initialize Engine " << this->getArchwayErrorString().c_str() << "\n";
 		return false;
 	}
 
-	m_kernelCtx.getLogManager() << LogLevel_Info << "Archway re-initialized \n";
+	m_kernelCtx.getLogManager() << Kernel::LogLevel_Info << "Archway re-initialized \n";
 	return true;
 }
 
@@ -266,7 +268,7 @@ bool CArchwayHandler::startEngineWithPipeline(const size_t pipelineClassID, cons
 
 	if (m_archway->isStarted())
 	{
-		m_kernelCtx.getLogManager() << LogLevel_Info << "Engine is already started\n";
+		m_kernelCtx.getLogManager() << Kernel::LogLevel_Info << "Engine is already started\n";
 		return true;
 	}
 
@@ -276,13 +278,14 @@ bool CArchwayHandler::startEngineWithPipeline(const size_t pipelineClassID, cons
 		{
 			if (!m_archway->startImpedanceCheckOnAllAcquisitionDevices())
 			{
-				m_kernelCtx.getLogManager() << LogLevel_Error << "Failed to start the impedance acquisition" << this->getArchwayErrorString().c_str() << "\n";
+				m_kernelCtx.getLogManager() << Kernel::LogLevel_Error << "Failed to start the impedance acquisition" << this->getArchwayErrorString().c_str() <<
+						"\n";
 				return false;
 			}
 		}
 		else if (!m_archway->startAllAcquisitionDevices())
 		{
-			m_kernelCtx.getLogManager() << LogLevel_Error << "Failed to start the data acquisition" << this->getArchwayErrorString().c_str() << "\n";
+			m_kernelCtx.getLogManager() << Kernel::LogLevel_Error << "Failed to start the data acquisition" << this->getArchwayErrorString().c_str() << "\n";
 			return false;
 		}
 	}
@@ -292,7 +295,7 @@ bool CArchwayHandler::startEngineWithPipeline(const size_t pipelineClassID, cons
 	if (m_RunningPipelineId == 0)
 	{
 		m_archway->stopAllAcquisitionDevices();
-		m_kernelCtx.getLogManager() << LogLevel_Error << "Failed to create pipeline " << this->getArchwayErrorString().c_str() << "\n";
+		m_kernelCtx.getLogManager() << Kernel::LogLevel_Error << "Failed to create pipeline " << this->getArchwayErrorString().c_str() << "\n";
 		return false;
 	}
 
@@ -306,7 +309,7 @@ bool CArchwayHandler::startEngineWithPipeline(const size_t pipelineClassID, cons
 
 	if (!(isFastForward ? m_archway->startEngineInFastForward() : m_archway->startEngine()))
 	{
-		m_kernelCtx.getLogManager() << LogLevel_Error << "Engine failed to start " << this->getArchwayErrorString().c_str() << "\n";
+		m_kernelCtx.getLogManager() << Kernel::LogLevel_Error << "Engine failed to start " << this->getArchwayErrorString().c_str() << "\n";
 
 		const size_t nPendingLogMessage = m_archway->getPendingLogMessageCount(m_RunningPipelineId);
 
@@ -317,18 +320,18 @@ bool CArchwayHandler::startEngineWithPipeline(const size_t pipelineClassID, cons
 			std::string logMessages;
 
 			m_archway->getPendingLogMessage(m_RunningPipelineId, &logLevel, messageBuffer, sizeof(messageBuffer));
-			m_kernelCtx.getLogManager() << ELogLevel(logLevel) << messageBuffer;
+			m_kernelCtx.getLogManager() << Kernel::ELogLevel(logLevel) << messageBuffer;
 		}
 
 		if (!m_archway->stopAllAcquisitionDevices())
 		{
-			m_kernelCtx.getLogManager() << LogLevel_Error << "Failed to stop all acquisition devices " << this->getArchwayErrorString().c_str() << "\n";
+			m_kernelCtx.getLogManager() << Kernel::LogLevel_Error << "Failed to stop all acquisition devices " << this->getArchwayErrorString().c_str() << "\n";
 		}
 
 		return false;
 	}
 
-	m_kernelCtx.getLogManager() << LogLevel_Info << "Engine Started\n";
+	m_kernelCtx.getLogManager() << Kernel::LogLevel_Info << "Engine Started\n";
 
 	return true;
 }
@@ -343,7 +346,7 @@ bool CArchwayHandler::stopEngine()
 	{
 		if (!m_archway->stopEngine())
 		{
-			m_kernelCtx.getLogManager() << LogLevel_Warning << "Failed to stop Engine " << this->getArchwayErrorString().c_str() << "\n";
+			m_kernelCtx.getLogManager() << Kernel::LogLevel_Warning << "Failed to stop Engine " << this->getArchwayErrorString().c_str() << "\n";
 			hasStopSucceeded = false;
 		}
 	}
@@ -352,7 +355,7 @@ bool CArchwayHandler::stopEngine()
 	{
 		if (!m_archway->stopAllAcquisitionDevices())
 		{
-			m_kernelCtx.getLogManager() << LogLevel_Warning << "Failed to all acquisition devices " << this->getArchwayErrorString().c_str() << "\n";
+			m_kernelCtx.getLogManager() << Kernel::LogLevel_Warning << "Failed to all acquisition devices " << this->getArchwayErrorString().c_str() << "\n";
 			hasStopSucceeded = false;
 		}
 	}
@@ -361,14 +364,15 @@ bool CArchwayHandler::stopEngine()
 	{
 		if (!m_archway->releasePipeline(m_RunningPipelineId))
 		{
-			m_kernelCtx.getLogManager() << LogLevel_Warning << "Failed to release pipeline [" << m_RunningPipelineId << "] " << this->getArchwayErrorString().c_str() << "\n";
+			m_kernelCtx.getLogManager() << Kernel::LogLevel_Warning << "Failed to release pipeline [" << m_RunningPipelineId << "] " << this->
+					getArchwayErrorString().c_str() << "\n";
 			hasStopSucceeded = false;
 		}
 
 		m_RunningPipelineId = 0;
 	}
 
-	m_kernelCtx.getLogManager() << LogLevel_Info << "Engine Stopped\n";
+	m_kernelCtx.getLogManager() << Kernel::LogLevel_Info << "Engine Stopped\n";
 	return hasStopSucceeded;
 }
 
@@ -381,9 +385,9 @@ bool CArchwayHandler::loopEngine()
 	const bool isPipelineRunning      = m_archway->isPipelineRunning(m_RunningPipelineId);
 	const bool isPipelineInErrorState = m_archway->isPipelineInErrorState(m_RunningPipelineId);
 
-	if (!isPipelineRunning) { m_kernelCtx.getLogManager() << LogLevel_Info << "Pipeline [" << m_RunningPipelineId << "] is not running.\n"; }
+	if (!isPipelineRunning) { m_kernelCtx.getLogManager() << Kernel::LogLevel_Info << "Pipeline [" << m_RunningPipelineId << "] is not running.\n"; }
 
-	if (isPipelineInErrorState) { m_kernelCtx.getLogManager() << LogLevel_Error << "Pipeline [" << m_RunningPipelineId << "] is in error state.\n"; }
+	if (isPipelineInErrorState) { m_kernelCtx.getLogManager() << Kernel::LogLevel_Error << "Pipeline [" << m_RunningPipelineId << "] is in error state.\n"; }
 
 	const size_t nPendingLogMessage = m_archway->getPendingLogMessageCount(m_RunningPipelineId);
 
@@ -394,7 +398,7 @@ bool CArchwayHandler::loopEngine()
 		std::string logMessages;
 
 		m_archway->getPendingLogMessage(m_RunningPipelineId, &logLevel, messageBuffer, sizeof(messageBuffer));
-		m_kernelCtx.getLogManager() << ELogLevel(logLevel) << messageBuffer;
+		m_kernelCtx.getLogManager() << Kernel::ELogLevel(logLevel) << messageBuffer;
 	}
 
 	if (!isPipelineRunning || isPipelineInErrorState)
@@ -415,38 +419,37 @@ bool CArchwayHandler::isEngineStarted()
 	return m_archway->isStarted();
 }
 
-namespace
+namespace {
+void enumerateEnginePipelinesCallback(const size_t pipelineID, const char* pipelineDescription, void* userData)
 {
-	void enumerateEnginePipelinesCallback(const size_t pipelineID, const char* pipelineDescription, void* userData)
-	{
-		const auto callbackParameters = static_cast<pair<vector<SPipeline>*, map<size_t, map<string, string>>*>*>(userData);
-		auto enginePipelines          = callbackParameters->first;
-		const auto pipelineSettings   = callbackParameters->second;
+	const auto callbackParameters = static_cast<std::pair<std::vector<SPipeline>*, std::map<size_t, std::map<std::string, std::string>>*>*>(userData);
+	auto enginePipelines          = callbackParameters->first;
+	const auto pipelineSettings   = callbackParameters->second;
 
-		enginePipelines->push_back({ pipelineID, pipelineDescription, pipelineSettings->count(pipelineID) != 0 });
-	}
+	enginePipelines->push_back({ pipelineID, pipelineDescription, pipelineSettings->count(pipelineID) != 0 });
+}
 
-	void enumeratePipelineParametersCallback(size_t/*pipelineID*/, const char* parameterName, const char* parameterValue, void* userData)
-	{
-		// This callback will go through the pipeline parameters one by one and push them into the
-// vector of SPipelineParameters which is passed as the first element of the data input pair
-// This callback receives the parameter's name and default value from Archway, which is why we pass
-		// it the list of the _currently set_ parameters for the pipeline
-		const auto parameters = static_cast<pair<vector<SPipelineParameter>*, map<string, string> const*>*>(userData);
+void enumeratePipelineParametersCallback(size_t/*pipelineID*/, const char* parameterName, const char* parameterValue, void* userData)
+{
+	// This callback will go through the pipeline parameters one by one and push them into the
+	// vector of SPipelineParameters which is passed as the first element of the data input pair
+	// This callback receives the parameter's name and default value from Archway, which is why we pass
+	// it the list of the _currently set_ parameters for the pipeline
+	const auto parameters = static_cast<std::pair<std::vector<SPipelineParameter>*, std::map<std::string, std::string> const*>*>(userData);
 
-		// Our output parameter is the list of pipeline parameters
-		auto pipelineParameters = parameters->first;
-		// Our additional input parameter is the map of currently set parameters for the pipeline
-		// (note that if no parameters are set for the pipeline then this pointer will be null)
-		const auto pipelineSettings = parameters->second;
+	// Our output parameter is the list of pipeline parameters
+	auto pipelineParameters = parameters->first;
+	// Our additional input parameter is the map of currently set parameters for the pipeline
+	// (note that if no parameters are set for the pipeline then this pointer will be null)
+	const auto pipelineSettings = parameters->second;
 
-		// Search for the currently set value of the currently handled parameter
-		std::string str;
+	// Search for the currently set value of the currently handled parameter
+	std::string str;
 
-		if (pipelineSettings && pipelineSettings->count(parameterName) != 0) { str = pipelineSettings->at(parameterName); }
+	if (pipelineSettings && pipelineSettings->count(parameterName) != 0) { str = pipelineSettings->at(parameterName); }
 
-		pipelineParameters->push_back({ parameterName, parameterValue, str });
-	}
+	pipelineParameters->push_back({ parameterName, parameterValue, str });
+}
 }  // namespace
 
 std::vector<SPipeline> CArchwayHandler::getEnginePipelines() const
@@ -458,7 +461,7 @@ std::vector<SPipeline> CArchwayHandler::getEnginePipelines() const
 
 	if (!m_archway->enumerateAvailablePipelines(enumerateEnginePipelinesCallback, &callbackParameters))
 	{
-		m_kernelCtx.getLogManager() << LogLevel_Warning << "Failed enumerate the available pipelines " << this->getArchwayErrorString().c_str() << "\n";
+		m_kernelCtx.getLogManager() << Kernel::LogLevel_Warning << "Failed enumerate the available pipelines " << this->getArchwayErrorString().c_str() << "\n";
 	}
 
 	return enginePipelines;
@@ -469,7 +472,7 @@ std::vector<SPipelineParameter> CArchwayHandler::getPipelineParameters(const siz
 	assert(m_Archway);
 
 	std::vector<SPipelineParameter> pipelineParameters;
-	map<string, string> const* pipelineSettings = nullptr;
+	std::map<std::string, std::string> const* pipelineSettings = nullptr;
 
 	if (m_pipelineSettings.count(pipelineClassID) != 0) { pipelineSettings = &m_pipelineSettings.at(pipelineClassID); }
 
@@ -479,12 +482,13 @@ std::vector<SPipelineParameter> CArchwayHandler::getPipelineParameters(const siz
 
 	if (!m_archway->enumeratePipelineParameters(pipelineID, enumeratePipelineParametersCallback, &callbackParameters))
 	{
-		m_kernelCtx.getLogManager() << LogLevel_Warning << "Failed enumerate the pipeline's parameters " << this->getArchwayErrorString().c_str() << "\n";
+		m_kernelCtx.getLogManager() << Kernel::LogLevel_Warning << "Failed enumerate the pipeline's parameters " << this->getArchwayErrorString().c_str() <<
+				"\n";
 	}
 
 	if (!m_archway->releasePipeline(pipelineID))
 	{
-		m_kernelCtx.getLogManager() << LogLevel_Warning << "Failed to release pipeline " << this->getArchwayErrorString().c_str() << "\n";
+		m_kernelCtx.getLogManager() << Kernel::LogLevel_Warning << "Failed to release pipeline " << this->getArchwayErrorString().c_str() << "\n";
 	}
 
 	return pipelineParameters;
@@ -506,7 +510,8 @@ bool CArchwayHandler::setPipelineParameterValue(const size_t pipelineClassID, st
 {
 	if (m_pipelineSettings.find(pipelineClassID) == m_pipelineSettings.end())
 	{
-		m_kernelCtx.getLogManager() << LogLevel_Error << "Failed to set the value [" << parameterValue << "] to the parameter [" << parameterName << "]. The pipeline class id is invalid.\n";
+		m_kernelCtx.getLogManager() << Kernel::LogLevel_Error << "Failed to set the value [" << parameterValue << "] to the parameter [" << parameterName <<
+				"]. The pipeline class id is invalid.\n";
 		return false;
 	}
 
@@ -518,13 +523,12 @@ bool CArchwayHandler::setPipelineParameterValue(const size_t pipelineClassID, st
 			if (m_pipelineSettings[pipelineClassID].count(parameterName) != 0)
 			{
 				m_pipelineSettings[pipelineClassID].erase(m_pipelineSettings[pipelineClassID].find(parameterName));
-
 				if (m_pipelineSettings[pipelineClassID].size() == 0) { m_pipelineSettings.erase(m_pipelineSettings.find(pipelineClassID)); }
 			}
 		}
 	}
 
-	// m_kernelCtx.getLogManager() << LogLevel_Info << "Set [" << uiPipelineClassId << "/" << sParameterName << "] to [" << sParameterValue << "]\n";
+	// m_kernelCtx.getLogManager() << Kernel::LogLevel_Info << "Set [" << uiPipelineClassId << "/" << sParameterName << "] to [" << sParameterValue << "]\n";
 	return true;
 }
 
@@ -553,7 +557,7 @@ bool CArchwayHandler::savePipelineConfigurations()
 
 	if (!file.good())
 	{
-		m_kernelCtx.getLogManager() << LogLevel_Warning << "Cannot open file for writing\n";
+		m_kernelCtx.getLogManager() << Kernel::LogLevel_Warning << "Cannot open file for writing\n";
 		return false;
 	}
 
@@ -574,7 +578,7 @@ bool CArchwayHandler::loadPipelineConfigurations()
 
 	if (!file.good())
 	{
-		m_kernelCtx.getLogManager() << LogLevel_Trace << "Cannot open Engine Pipeline Configuration file for reading\n";
+		m_kernelCtx.getLogManager() << Kernel::LogLevel_Trace << "Cannot open Engine Pipeline Configuration file for reading\n";
 		return false;
 	}
 
@@ -603,4 +607,5 @@ bool CArchwayHandler::loadPipelineConfigurations()
 	return true;
 }
 
+}  // namespace OpenViBE
 #endif

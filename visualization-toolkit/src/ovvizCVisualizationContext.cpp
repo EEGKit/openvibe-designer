@@ -1,12 +1,12 @@
 #include "ovvizCVisualizationContext.hpp"
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/VisualizationToolkit;
+namespace OpenViBE {
+namespace VisualizationToolkit {
 
 bool CVisualizationContext::setWidget(Toolkit::TBoxAlgorithm<Plugins::IBoxAlgorithm>& box, GtkWidget* widget)
 {
 	const CIdentifier boxID    = box.getStaticBoxContext().getIdentifier();
-	CIdentifier treeIdentifier = OV_UndefinedIdentifier;
+	CIdentifier treeIdentifier = CIdentifier::undefined();
 
 	// When a scenario is created in the designer, the designer creates a visualization tree for it. The box will then need to add
 	// visualization widgets into this tree. The designer can not pass this information directly to a box in a way that can be read
@@ -22,9 +22,12 @@ bool CVisualizationContext::setWidget(Toolkit::TBoxAlgorithm<Plugins::IBoxAlgori
 bool CVisualizationContext::setToolbar(Toolkit::TBoxAlgorithm<Plugins::IBoxAlgorithm>& box, GtkWidget* toolbarWidget)
 {
 	const CIdentifier boxID    = box.getStaticBoxContext().getIdentifier();
-	CIdentifier treeIdentifier = OV_UndefinedIdentifier;
+	CIdentifier treeIdentifier = CIdentifier::undefined();
 
 	if (!treeIdentifier.fromString(box.getConfigurationManager().lookUpConfigurationTokenValue("VisualizationContext_VisualizationTreeId"))) { return false; }
 
 	return m_VisualizationManager->setToolbar(treeIdentifier, boxID, toolbarWidget);
 }
+
+}  // namespace VisualizationToolkit
+}  // namespace OpenViBE

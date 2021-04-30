@@ -67,7 +67,7 @@ public:
 	 * \param [in] matrix Pointer to matrix of sample points values
 	 * \return True if values were successfully set, false otherwise
 	 */
-	bool setSampleValuesMatrix(IMatrix* matrix) override;
+	bool setSampleValuesMatrix(CMatrix* matrix) override;
 
 	//@}
 

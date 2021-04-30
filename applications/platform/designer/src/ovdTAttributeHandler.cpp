@@ -2,9 +2,8 @@
 
 #include <cstdlib>
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Kernel;
-using namespace /*OpenViBE::*/Designer;
+namespace OpenViBE {
+namespace Designer {
 
 bool TAttributeHandler::removeAttribute(const CIdentifier& id)
 {
@@ -19,8 +18,6 @@ bool TAttributeHandler::removeAllAttributes()
 	return m_attributable->removeAllAttributes();
 }
 
-namespace OpenViBE {
-namespace Designer {
 template <>
 bool TAttributeHandler::addAttribute(const CIdentifier& id, const int& value) const
 {

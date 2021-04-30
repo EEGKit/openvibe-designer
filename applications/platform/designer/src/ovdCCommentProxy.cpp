@@ -1,12 +1,10 @@
 #include "ovdCCommentProxy.h"
 #include "ovdTAttributeHandler.h"
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Kernel;
-using namespace /*OpenViBE::*/Designer;
-using namespace std;
+namespace OpenViBE {
+namespace Designer {
 
-CCommentProxy::CCommentProxy(const IKernelContext& ctx, const IComment& comment)
+CCommentProxy::CCommentProxy(const Kernel::IKernelContext& ctx, const Kernel::IComment& comment)
 	: m_kernelCtx(ctx), m_constComment(&comment)
 {
 	if (m_constComment)
@@ -17,7 +15,7 @@ CCommentProxy::CCommentProxy(const IKernelContext& ctx, const IComment& comment)
 	}
 }
 
-CCommentProxy::CCommentProxy(const IKernelContext& ctx, IScenario& scenario, const CIdentifier& commentID)
+CCommentProxy::CCommentProxy(const Kernel::IKernelContext& ctx, Kernel::IScenario& scenario, const CIdentifier& commentID)
 	: m_kernelCtx(ctx), m_constComment(scenario.getCommentDetails(commentID)), m_comment(scenario.getCommentDetails(commentID))
 {
 	if (m_constComment)
@@ -85,3 +83,6 @@ void CCommentProxy::updateSize(GtkWidget* widget, const char* text, int* xSize, 
 	g_object_unref(layout);
 	g_object_unref(context);
 }
+
+}  // namespace Designer
+}  // namespace OpenViBE

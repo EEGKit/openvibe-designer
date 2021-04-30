@@ -163,8 +163,8 @@ public:
 	std::vector<const Plugins::IPluginObjectDesc*> m_UpdatedBoxes;
 
 #ifdef MENSIA_DISTRIBUTION
-		Mensia::CArchwayHandler* m_ArchwayHandler       = nullptr;
-		Mensia::CArchwayHandlerGUI* m_ArchwayHandlerGUI = nullptr;
+	CArchwayHandler* m_ArchwayHandler       = nullptr;
+	CArchwayHandlerGUI* m_ArchwayHandlerGUI = nullptr;
 #endif
 
 protected:

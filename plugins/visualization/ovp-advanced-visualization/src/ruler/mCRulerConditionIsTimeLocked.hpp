@@ -22,7 +22,7 @@
 
 #include "../mIRuler.hpp"
 
-namespace Mensia {
+namespace OpenViBE {
 namespace AdvancedVisualization {
 class CRulerConditionIsTimeLocked : public IRuler
 {
@@ -40,4 +40,4 @@ protected:
 	const IRenderer* m_renderer;
 };
 }  // namespace AdvancedVisualization
-}  // namespace Mensia
+}  // namespace OpenViBE
