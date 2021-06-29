@@ -23,7 +23,7 @@ INCLUDE("Utilities") # Include functions debug_message, SET_BUILD_PLATFORM
 # Build CMake flags
 # ----------------------
 OPTION(Flag_VerboseOutput "Verbose CMake output" OFF)
-SET(OEM_DISTRIBUTION "openvibe" CACHE STRING "The OEM distribution for this build, can be openvibe or mensia")
+SET(OEM_DISTRIBUTION "openvibe" CACHE STRING "The OEM distribution for this build, can be openvibe")
 OPTION(OV_DISPLAY_ERROR_LOCATION ON)
 
 SET(OV_SOURCE_DEPENDENCIES_PATH "${CMAKE_SOURCE_DIR}/dependencies-source")
@@ -199,12 +199,6 @@ Affero General Public License for more details.\
 \
 You should have received a copy of the GNU Affero General Public\
 License along with this program.  If not, see http://www.gnu.org/licenses/ .")
-ELSEIF(OEM_DISTRIBUTION STREQUAL "mensia")
-	SET(OV_CONFIG_SUBDIR "mensia" CACHE STRING "Subdirectory under user directory when configuration and logs will be saved")
-	SET(BRAND_NAME "NeuroRT")
-	SET(DESIGNER_NAME "Studio")
-	SET(COMPANY_NAME "Mensia Technologies SA")
-	ADD_DEFINITIONS(-DMENSIA_DISTRIBUTION)
 ELSE()
 	MESSAGE(FATAL_ERROR "OEM_DISTRIBUTION unrecognized (${OEM_DISTRIBUTION}) ! CMake cannot deduce the brand and product names. ")
 ENDIF()
