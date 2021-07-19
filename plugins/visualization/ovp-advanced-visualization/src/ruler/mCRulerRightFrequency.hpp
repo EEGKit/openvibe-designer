@@ -37,27 +37,35 @@ public:
 			m_lastScale = scale;
 		}
 
-		gint w, h;
-		gint lw, lh;
+        GdkWindow* window = gtk_widget_get_window(widget);
+        const int h = gdk_window_get_height(window);
+
+        cairo_region_t * cairoRegion = cairo_region_create();
+        GdkDrawingContext* gdc = gdk_window_begin_draw_frame(window,cairoRegion);
+        cairo_t* cr = gdk_drawing_context_get_cairo_context(gdc);
 
 		const size_t nChannel = m_rendererCtx->getSelectedCount();
 		for (size_t i = 0; i < nChannel; ++i)
 		{
-			gdk_drawable_get_size(widget->window, &w, &h);
-			GdkGC* drawGC = gdk_gc_new(widget->window);
 			for (const auto& r : m_range)
 			{
 				const gint y        = gint((i + r / scale) * (h * 1.F / nChannel));
 				PangoLayout* layout = gtk_widget_create_pango_layout(widget, getLabel(r).c_str());
+
+                gint lw, lh;
 				pango_layout_get_size(layout, &lw, &lh);
 				lw /= PANGO_SCALE;
 				lh /= PANGO_SCALE;
-				gdk_draw_layout(widget->window, drawGC, 8, h - y - lh / 2, layout);
-				gdk_draw_line(widget->window, drawGC, 0, h - y, 3, h - y);
+                cairo_move_to(cr, 8, h - y - lh / 2);
+                pango_cairo_show_layout(cr, layout);
+                cairo_move_to(cr, 0, h - y);
+                cairo_line_to(cr, 3, h - y);
 				g_object_unref(layout);
 			}
-			g_object_unref(drawGC);
 		}
+        cairo_stroke(cr); // Useful ??
+        gdk_window_end_draw_frame(window,gdc);
+        cairo_region_destroy(cairoRegion);
 	}
 
 protected:

@@ -42,22 +42,30 @@ public:
 
 		const float offset = m_rendererCtx->isPositiveOnly() ? 0 : 0.5F;
 
-		gint w, h, lw, lh;
-
-		gdk_drawable_get_size(widget->window, &w, &h);
-		GdkGC* drawGC = gdk_gc_new(widget->window);
+        GdkWindow* window = gtk_widget_get_window(widget);
+        const int h = gdk_window_get_height(window);
+        
+        cairo_region_t * cairoRegion = cairo_region_create();
+        GdkDrawingContext* gdc = gdk_window_begin_draw_frame(window,cairoRegion);
+        cairo_t* cr = gdk_drawing_context_get_cairo_context(gdc);
 		for (const auto& i : m_range)
 		{
 			PangoLayout* layout = gtk_widget_create_pango_layout(widget, getLabel(i).c_str());
+
+            gint lw, lh;
 			pango_layout_get_size(layout, &lw, &lh);
 			lw /= PANGO_SCALE;
 			lh /= PANGO_SCALE;
 			const gint y = gint((1 - (offset + i / scale)) * h);
-			gdk_draw_layout(widget->window, drawGC, 8, y - lh / 2, layout);
-			gdk_draw_line(widget->window, drawGC, 0, y, 3, y);
+            cairo_move_to(cr, 8, y - lh / 2);
+            pango_cairo_show_layout(cr, layout);
+            cairo_move_to(cr, 0, y);
+            cairo_line_to(cr, 3, y);
 			g_object_unref(layout);
 		}
-		g_object_unref(drawGC);
+        cairo_stroke(cr); // Useful ??
+        gdk_window_end_draw_frame(window,gdc);
+        cairo_region_destroy(cairoRegion);
 	}
 
 protected:

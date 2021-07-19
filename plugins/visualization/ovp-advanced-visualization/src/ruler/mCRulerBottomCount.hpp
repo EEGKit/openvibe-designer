@@ -47,18 +47,22 @@ public:
 		std::vector<double> range1 = splitRange(double(leftIdx1), double(leftIdx1 + nSample), 10);
 		std::vector<double> range2 = splitRange(double(rightIdx1), double(rightIdx1 + nSample), 10);
 
-		gint w, h, x;
+        GdkWindow* window = gtk_widget_get_window(widget);
+        const int w = gdk_window_get_width(window);
 
-		gdk_drawable_get_size(widget->window, &w, &h);
-		GdkGC* drawGC = gdk_gc_new(widget->window);
+        cairo_region_t * cairoRegion = cairo_region_create();
+        GdkDrawingContext* gdc = gdk_window_begin_draw_frame(window,cairoRegion);
+        cairo_t* cr = gdk_drawing_context_get_cairo_context(gdc);
 		for (const auto& i : range1)
 		{
 			if (i >= leftIdx1 && i < leftIdx2)
 			{
-				x                   = gint(((i - leftIdx1) / nSample) * w);
+				const gint x        = gint(((i - leftIdx1) / nSample) * w);
 				PangoLayout* layout = gtk_widget_create_pango_layout(widget, getLabel(i).c_str());
-				gdk_draw_layout(widget->window, drawGC, x, 5, layout);
-				gdk_draw_line(widget->window, drawGC, x, 0, x, 3);
+                cairo_move_to(cr, x, 5);
+                pango_cairo_show_layout(cr, layout);
+                cairo_move_to(cr, x, 0);
+                cairo_line_to(cr, x, 3);
 				g_object_unref(layout);
 			}
 		}
@@ -66,14 +70,18 @@ public:
 		{
 			if (i >= rightIdx1 && i < rightIdx2)
 			{
-				x                   = gint(((i + nSample - leftIdx1) / nSample) * w);
+				const gint x        = gint(((i + nSample - leftIdx1) / nSample) * w);
 				PangoLayout* layout = gtk_widget_create_pango_layout(widget, getLabel(i).c_str());
-				gdk_draw_layout(widget->window, drawGC, x, 5, layout);
-				gdk_draw_line(widget->window, drawGC, x, 0, x, 3);
+                cairo_move_to(cr, x, 5);
+                pango_cairo_show_layout(cr, layout);
+                cairo_move_to(cr, x, 0);
+                cairo_line_to(cr, x, 3);
 				g_object_unref(layout);
 			}
 		}
-		g_object_unref(drawGC);
+        cairo_stroke(cr); // Useful ??
+        gdk_window_end_draw_frame(window,gdc);
+        cairo_region_destroy(cairoRegion);
 	}
 };
 }  // namespace AdvancedVisualization

@@ -32,21 +32,30 @@ public:
 
 	void renderLeft(GtkWidget* widget) override
 	{
-		gint w, h, lw, lh;
-		gdk_drawable_get_size(widget->window, &w, &h);
-		GdkGC* drawGC = gdk_gc_new(widget->window);
+        GdkWindow* window = gtk_widget_get_window(widget);
+        const int w = gdk_window_get_width(window);
+        const int h = gdk_window_get_height(window);
+        
+        cairo_region_t * cairoRegion = cairo_region_create();
+        GdkDrawingContext* gdc = gdk_window_begin_draw_frame(window,cairoRegion);
+        cairo_t* cr = gdk_drawing_context_get_cairo_context(gdc);
 		for (size_t i = 0; i < m_rendererCtx->getSelectedCount(); ++i)
 		{
 			const size_t idx        = m_rendererCtx->getSelected(i);
 			const std::string label = (m_rendererCtx->getChannelName(idx) + " (" + std::to_string(idx + 1) + ")");
 			PangoLayout* layout     = gtk_widget_create_pango_layout(widget, label.c_str());
+
+            gint lw, lh;
 			pango_layout_get_size(layout, &lw, &lh);
 			lw /= PANGO_SCALE;
 			lh /= PANGO_SCALE;
-			gdk_draw_layout(widget->window, drawGC, w - lw, gint(((i + 0.5) * h) / m_rendererCtx->getSelectedCount() - float(lh) / 2), layout);
+            cairo_move_to(cr, w - lw, ((i + 0.5) * h) / m_rendererCtx->getSelectedCount() - float(lh) / 2);
+            pango_cairo_show_layout(cr, layout);
 			g_object_unref(layout);
 		}
-		g_object_unref(drawGC);
+        cairo_stroke(cr); // Useful ??
+        gdk_window_end_draw_frame(window,gdc);
+        cairo_region_destroy(cairoRegion);
 	}
 };
 }  // namespace AdvancedVisualization
