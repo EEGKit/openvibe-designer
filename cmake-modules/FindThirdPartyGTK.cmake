@@ -14,9 +14,9 @@
 INCLUDE("FindPkgConfig")
 
 IF(WIN32)
-	pkg_check_modules(GTK gtk+-win32-2.0 gthread-2.0)
+	pkg_check_modules(GTK gtk+-win32-3.0 gthread-2.0)
 ELSE(WIN32)
-	pkg_check_modules(GTK "gtk+-2.0" "gthread-2.0")
+	pkg_check_modules(GTK gtk+-3.0 gthread-2.0)
 ENDIF(WIN32)
 
 IF(${OV_DEPENDENCIES_PLATFORM_FOLDER_NAME} STREQUAL "dependencies")
