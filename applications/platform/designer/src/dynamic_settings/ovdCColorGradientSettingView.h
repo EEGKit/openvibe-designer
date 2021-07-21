@@ -13,7 +13,7 @@ namespace Setting {
 typedef struct
 {
 	double percent;
-	GdkColor color;
+	GdkRGBA color;
 	GtkColorButton* colorButton;
 	GtkSpinButton* spinButton;
 } color_gradient_data_node_t;

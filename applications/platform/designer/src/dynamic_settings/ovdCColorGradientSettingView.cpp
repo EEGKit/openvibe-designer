@@ -129,7 +129,7 @@ void CColorGradientSettingView::initializeGradient()
 		cg.colorButton = GTK_COLOR_BUTTON(gtk_builder_get_object(builder, "setting_editor-color_gradient-colorbutton"));
 		cg.spinButton  = GTK_SPIN_BUTTON(gtk_builder_get_object(builder, "setting_editor-color_gradient-spinbutton"));
 
-		gtk_color_button_set_color(cg.colorButton, &cg.color);
+		gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(cg.colorButton), &cg.color);
 		gtk_spin_button_set_value(cg.spinButton, cg.percent);
 
 		g_signal_connect(G_OBJECT(cg.colorButton), "color-set", G_CALLBACK(OnColorGradientColorButtonPressed), this);
@@ -156,9 +156,9 @@ void CColorGradientSettingView::initializeGradient()
 void CColorGradientSettingView::refreshColorGradient()
 {
 	const size_t steps = 100;
-	gint sizex         = 0;
-	gint sizey         = 0;
-	gdk_drawable_get_size(m_drawingArea->window, &sizex, &sizey);
+    GdkWindow* window = gtk_widget_get_window(m_drawingArea);
+    const gint sizex  = gdk_window_get_width(window);
+    const gint sizey  = gdk_window_get_height(window);
 
 	CMatrix gradient;
 	gradient.setDimensionCount(2);
@@ -176,18 +176,21 @@ void CColorGradientSettingView::refreshColorGradient()
 	CMatrix interpolated;
 	VisualizationToolkit::ColorGradient::interpolate(interpolated, gradient, steps);
 
-	GdkGC* gc = gdk_gc_new(m_drawingArea->window);
-	GdkColor color;
+    cairo_region_t * cairoRegion = cairo_region_create();
+    GdkDrawingContext* gdc = gdk_window_begin_draw_frame(window,cairoRegion);
+    cairo_t* cr = gdk_drawing_context_get_cairo_context(gdc);
 
 	for (size_t i = 0; i < steps; ++i)
 	{
-		color.red   = guint(interpolated[i * 4 + 1] * 65535 * .01);
-		color.green = guint(interpolated[i * 4 + 2] * 65535 * .01);
-		color.blue  = guint(interpolated[i * 4 + 3] * 65535 * .01);
-		gdk_gc_set_rgb_fg_color(gc, &color);
-		gdk_draw_rectangle(m_drawingArea->window, gc, TRUE, gint((sizex * i) / steps), 0, gint((sizex * (i + 1)) / steps), sizey);
+		const double red   = interpolated[i * 4 + 1] * .01;
+		const double green = interpolated[i * 4 + 2] * .01;
+		const double blue  = interpolated[i * 4 + 3] * .01;
+        cairo_set_source_rgb(cr, red, green, blue);
+        cairo_rectangle(cr, (sizex * i) / steps, 0, sizex / steps, sizey);
+        cairo_fill(cr);
 	}
-	g_object_unref(gc);
+    gdk_window_end_draw_frame(window,gdc);
+    cairo_region_destroy(cairoRegion);
 }
 
 void CColorGradientSettingView::addColor()
@@ -234,9 +237,8 @@ void CColorGradientSettingView::spinChange(GtkSpinButton* button)
 
 void CColorGradientSettingView::colorChange(GtkColorButton* button)
 {
-	GdkColor color;
-	gtk_color_button_get_color(button, &color);
-
+	GdkRGBA color;
+	gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(button), &color);
 	m_colorGradient[m_colorButtons[button]].color = color;
 
 	refreshColorGradient();

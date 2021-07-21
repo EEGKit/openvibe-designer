@@ -57,7 +57,7 @@ void CAbstractSettingView::generateNameWidget()
 
 GtkWidget* CAbstractSettingView::generateEntryWidget()
 {
-	GtkTable* table = GTK_TABLE(gtk_table_new(1, 3, false));
+	GtkGrid* table = GTK_GRID(gtk_grid_new());
 
 	GtkWidget* settingWidget  = GTK_WIDGET(gtk_builder_get_object(m_builder, m_settingWidgetName.toASCIIString()));
 	GtkWidget* settingRevert  = GTK_WIDGET(gtk_builder_get_object(m_builder, "settings_collection-button_setting_revert"));
@@ -67,9 +67,9 @@ GtkWidget* CAbstractSettingView::generateEntryWidget()
 	gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(settingRevert)), settingRevert);
 	gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(settingDefault)), settingDefault);
 
-	gtk_table_attach(table, settingWidget, 0, 1, 0, 1, GtkAttachOptions(GTK_FILL | GTK_EXPAND), GtkAttachOptions(GTK_FILL | GTK_EXPAND), 0, 0);
-	//gtk_table_attach(m_table, settingDefault, 1, 2, 0, 1, ::GtkAttachOptions(GTK_SHRINK),          ::GtkAttachOptions(GTK_SHRINK),          0, 0);
-	//gtk_table_attach(m_table, settingRevert,  2, 3, 0, 1, ::GtkAttachOptions(GTK_SHRINK),          ::GtkAttachOptions(GTK_SHRINK),          0, 0);
+	gtk_grid_attach(table, settingWidget, 0, 0, 1, 1);
+	//gtk_grid_attach(m_table, settingDefault, 1, 0, 1, 1); // Possible replacement.
+	//gtk_grid_attach(m_table, settingRevert,  2, 0, 1, 1); // Possible replacement.
 
 	setEntryWidget(GTK_WIDGET(table));
 	gtk_widget_set_visible(getEntryWidget(), true);

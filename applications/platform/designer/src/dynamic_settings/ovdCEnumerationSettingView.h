@@ -20,8 +20,8 @@ public:
 
 
 private:
-	GtkComboBox* m_comboBox = nullptr;
-	CIdentifier m_typeID    = OV_UndefinedIdentifier;
+	GtkComboBoxText* m_comboBox = nullptr;
+	CIdentifier      m_typeID   = OV_UndefinedIdentifier;
 
 	std::map<CString, size_t> m_entriesIdx;
 

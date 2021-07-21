@@ -12,10 +12,7 @@ CBitMaskSettingView::CBitMaskSettingView(Kernel::IBox& box, const size_t index, 
 	: CAbstractSettingView(box, index, builderName, "settings_collection-table_setting_bitmask"), m_typeID(typeID), m_kernelCtx(ctx)
 {
 	GtkWidget* settingWidget = CAbstractSettingView::getEntryFieldWidget();
-
-	const gint tableSize   = guint((m_kernelCtx.getTypeManager().getBitMaskEntryCount(m_typeID) + 1) >> 1);
-	GtkTable* bitMaskTable = GTK_TABLE(settingWidget);
-	gtk_table_resize(bitMaskTable, 2, tableSize);
+	GtkGrid* bitMaskTable = GTK_GRID(settingWidget);
 
 	for (size_t i = 0; i < m_kernelCtx.getTypeManager().getBitMaskEntryCount(m_typeID); ++i)
 	{
@@ -24,7 +21,7 @@ CBitMaskSettingView::CBitMaskSettingView(Kernel::IBox& box, const size_t index, 
 		if (m_kernelCtx.getTypeManager().getBitMaskEntry(m_typeID, i, name, value))
 		{
 			GtkWidget* button = gtk_check_button_new();
-			gtk_table_attach_defaults(bitMaskTable, button, guint(i & 1), guint((i & 1) + 1), guint(i >> 1), guint((i >> 1) + 1));
+			gtk_grid_attach(bitMaskTable, button, guint(i & 1), guint(i >> 1), 1, 1);
 			gtk_button_set_label(GTK_BUTTON(button), name.toASCIIString());
 			m_toggleButton.push_back(GTK_TOGGLE_BUTTON(button));
 			g_signal_connect(G_OBJECT(button), "toggled", G_CALLBACK(OnCheckbuttonPressed), this);
