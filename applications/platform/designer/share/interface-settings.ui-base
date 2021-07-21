@@ -2,6 +2,10 @@
 <!-- Generated with glade 3.38.2 -->
 <interface>
   <requires lib="gtk+" version="3.24"/>
+  <object class="GtkComboBoxText">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+  </object>
   <object class="GtkAdjustment" id="adjustment">
     <property name="upper">100</property>
     <property name="step-increment">1</property>
@@ -264,6 +268,158 @@
       </row>
     </data>
   </object>
+  <object class="GtkWindow" id="scenario_configuration_setting">
+    <property name="can-focus">False</property>
+    <child>
+      <!-- n-columns=5 n-rows=3 -->
+      <object class="GtkGrid" id="scenario_configuration_setting-table">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <child>
+          <object class="GtkButton" id="scenario_configuration_setting-button_move_up">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <child>
+              <object class="GtkImage" id="image1">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="stock">gtk-go-up</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="left-attach">2</property>
+            <property name="top-attach">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="scenario_configuration_setting-button_move_down">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <child>
+              <object class="GtkImage" id="image2">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="stock">gtk-go-down</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="left-attach">3</property>
+            <property name="top-attach">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="scenario_configuration_setting-button_delete">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <child>
+              <object class="GtkImage" id="image3">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="tooltip-text" translatable="yes">Delete setting</property>
+                <property name="stock">gtk-delete</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="left-attach">4</property>
+            <property name="top-attach">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="scenario_configuration_setting-button_reset_identifier">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <child>
+              <object class="GtkImage" id="image4">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="stock">gtk-refresh</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="left-attach">4</property>
+            <property name="top-attach">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label2">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="label" translatable="yes">Default Value</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label1">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="label" translatable="yes">Identifier</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkEntry" id="scenario_configuration_setting-entry_name">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="invisible-char">●</property>
+            <property name="primary-icon-activatable">False</property>
+            <property name="secondary-icon-activatable">False</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkEntry" id="scenario_configuration_setting-entry_identifier">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="invisible-char">●</property>
+            <property name="primary-icon-activatable">False</property>
+            <property name="secondary-icon-activatable">False</property>
+          </object>
+          <packing>
+            <property name="left-attach">1</property>
+            <property name="top-attach">2</property>
+            <property name="width">3</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkComboBoxText" id="scenario_configuration_setting-combobox_type">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="hexpand">True</property>
+          </object>
+          <packing>
+            <property name="left-attach">1</property>
+            <property name="top-attach">0</property>
+          </packing>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
+      </object>
+    </child>
+  </object>
   <object class="GtkListStore" id="scenario_io_setting-liststore_type">
     <columns>
       <!-- column-name name -->
@@ -475,206 +631,6 @@
       <column type="gchararray"/>
     </columns>
   </object>
-  <object class="GtkWindow" id="scenario_configuration_setting">
-    <property name="can-focus">False</property>
-    <child>
-      <!-- n-columns=5 n-rows=3 -->
-      <object class="GtkGrid" id="scenario_configuration_setting-table">
-        <property name="visible">True</property>
-        <property name="can-focus">False</property>
-        <child>
-          <object class="GtkButton" id="scenario_configuration_setting-button_move_up">
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="receives-default">True</property>
-            <child>
-              <object class="GtkImage" id="image1">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="stock">gtk-go-up</property>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="left-attach">2</property>
-            <property name="top-attach">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="scenario_configuration_setting-button_move_down">
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="receives-default">True</property>
-            <child>
-              <object class="GtkImage" id="image2">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="stock">gtk-go-down</property>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="left-attach">3</property>
-            <property name="top-attach">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="scenario_configuration_setting-button_delete">
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="receives-default">True</property>
-            <child>
-              <object class="GtkImage" id="image3">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="tooltip-text" translatable="yes">Delete setting</property>
-                <property name="stock">gtk-delete</property>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="left-attach">4</property>
-            <property name="top-attach">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkComboBox" id="scenario_configuration_setting-combobox_type">
-            <property name="visible">True</property>
-            <property name="can-focus">False</property>
-            <property name="model">scenario_setting-liststore_type</property>
-            <property name="wrap-width">2</property>
-            <child>
-              <object class="GtkCellRendererText" id="cellrenderertext1"/>
-              <attributes>
-                <attribute name="text">0</attribute>
-              </attributes>
-            </child>
-          </object>
-          <packing>
-            <property name="left-attach">1</property>
-            <property name="top-attach">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="scenario_configuration_setting-button_reset_identifier">
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="receives-default">True</property>
-            <child>
-              <object class="GtkImage" id="image4">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="stock">gtk-refresh</property>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="left-attach">2</property>
-            <property name="top-attach">2</property>
-            <property name="width">3</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkLabel" id="label2">
-            <property name="visible">True</property>
-            <property name="can-focus">False</property>
-            <property name="label" translatable="yes">Default Value</property>
-          </object>
-          <packing>
-            <property name="left-attach">0</property>
-            <property name="top-attach">1</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkLabel" id="label1">
-            <property name="visible">True</property>
-            <property name="can-focus">False</property>
-            <property name="label" translatable="yes">Identifier</property>
-          </object>
-          <packing>
-            <property name="left-attach">0</property>
-            <property name="top-attach">2</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkEntry" id="scenario_configuration_setting-entry_name">
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="invisible-char">●</property>
-            <property name="primary-icon-activatable">False</property>
-            <property name="secondary-icon-activatable">False</property>
-          </object>
-          <packing>
-            <property name="left-attach">0</property>
-            <property name="top-attach">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkEntry" id="scenario_configuration_setting-entry_identifier">
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="invisible-char">●</property>
-            <property name="primary-icon-activatable">False</property>
-            <property name="secondary-icon-activatable">False</property>
-          </object>
-          <packing>
-            <property name="left-attach">1</property>
-            <property name="top-attach">1</property>
-            <property name="width">2</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="scenario_configuration_setting-button_move_up1">
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="receives-default">True</property>
-            <child>
-              <placeholder/>
-            </child>
-          </object>
-          <packing>
-            <property name="left-attach">2</property>
-            <property name="top-attach">1</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkEntry" id="scenario_configuration_setting-entry_identifier1">
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="invisible-char">●</property>
-            <property name="primary-icon-activatable">False</property>
-            <property name="secondary-icon-activatable">False</property>
-          </object>
-          <packing>
-            <property name="left-attach">1</property>
-            <property name="top-attach">2</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkImage" id="image6">
-            <property name="visible">True</property>
-            <property name="can-focus">False</property>
-            <property name="stock">gtk-go-down</property>
-          </object>
-          <packing>
-            <property name="left-attach">4</property>
-            <property name="top-attach">1</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkImage" id="image5">
-            <property name="visible">True</property>
-            <property name="can-focus">False</property>
-            <property name="stock">gtk-go-up</property>
-          </object>
-          <packing>
-            <property name="left-attach">3</property>
-            <property name="top-attach">1</property>
-          </packing>
-        </child>
-      </object>
-    </child>
-  </object>
   <object class="GtkWindow" id="settings_collection">
     <property name="can-focus">False</property>
     <property name="skip-taskbar-hint">True</property>
@@ -787,10 +743,6 @@
               <object class="GtkEntry" id="settings_collection-entry_setting_integer_string">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
-                <property name="hexpand">True</property>
-                <property name="invisible-char">●</property>
-                <property name="primary-icon-activatable">False</property>
-                <property name="secondary-icon-activatable">False</property>
               </object>
               <packing>
                 <property name="expand">True</property>
