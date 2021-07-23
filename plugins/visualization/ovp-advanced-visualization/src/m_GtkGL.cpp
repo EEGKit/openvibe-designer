@@ -235,15 +235,11 @@ void Mensia::AdvancedVisualization::GtkGL::initialize(::GtkWidget * widget)
 	::GLXContext glRenderingCtx = glXCreateContext(display, visualInfo, nullptr, True);
 	g_object_set_data(G_OBJECT(widget), GTK_GL_RENDERING_CONTEXT_NAME, glRenderingCtx);
 
-#if 1
 	/* Fix up colormap */
 	::GdkVisual* visual = ::gdk_x11_screen_lookup_visual(screen, visualInfo->visualid);
-	::GdkColormap* colorMap = ::gdk_colormap_new(visual, FALSE);
-	::gtk_widget_set_colormap(widget, colorMap);
-#endif
+    gtk_widget_set_visual(widget, visual);
 
 	::gtk_widget_queue_resize(widget);
-	::gtk_widget_set_double_buffered(widget, FALSE);
 
 	glXSwapIntervalEXT = (glXSwapIntervalEXT_t) ::glXGetProcAddressARB(reinterpret_cast <const unsigned char*>("glXSwapIntervalEXT"));
 

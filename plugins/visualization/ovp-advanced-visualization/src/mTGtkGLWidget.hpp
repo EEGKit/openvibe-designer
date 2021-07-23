@@ -100,53 +100,58 @@ public:
 		GtkWidget* top = gtk_widget_get_toplevel(m_widget);
 		if (top != nullptr)
 		{
+            GdkWindow* window = gtk_widget_get_window(top);
 			if (immediate)
 			{
-				gdk_window_process_updates(top->window, false);
+				gdk_window_process_updates(window, false);
 				gtk_widget_queue_draw(top);
 			}
-			else { gdk_window_invalidate_rect(top->window, nullptr, true); }
+			else { gdk_window_invalidate_rect(window, nullptr, true); }
 		}
 	}
 
 	virtual void redraw(const bool immediate = false)
 	{
+        GdkWindow* window = gtk_widget_get_window(m_widget);
 		if (immediate)
 		{
-			gdk_window_process_updates(m_widget->window, false);
+			gdk_window_process_updates(window, false);
 			gtk_widget_queue_draw(m_widget);
 		}
-		else { gdk_window_invalidate_rect(m_widget->window, nullptr, true); }
+		else { gdk_window_invalidate_rect(window, nullptr, true); }
 	}
 
 	virtual void redrawLeft(const bool immediate = false)
 	{
+        GdkWindow* window = gtk_widget_get_window(m_left);
 		if (immediate)
 		{
-			gdk_window_process_updates(m_left->window, false);
+			gdk_window_process_updates(window, false);
 			gtk_widget_queue_draw(m_left);
 		}
-		else { gdk_window_invalidate_rect(m_left->window, nullptr, true); }
+		else { gdk_window_invalidate_rect(window, nullptr, true); }
 	}
 
 	virtual void redrawRight(const bool immediate = false)
 	{
+        GdkWindow* window = gtk_widget_get_window(m_right);
 		if (immediate)
 		{
-			gdk_window_process_updates(m_right->window, false);
+			gdk_window_process_updates(window, false);
 			gtk_widget_queue_draw(m_right);
 		}
-		else { gdk_window_invalidate_rect(m_right->window, nullptr, true); }
+		else { gdk_window_invalidate_rect(window, nullptr, true); }
 	}
 
 	virtual void redrawBottom(const bool immediate = false)
 	{
+        GdkWindow* window = gtk_widget_get_window(m_bottom);
 		if (immediate)
 		{
-			gdk_window_process_updates(m_bottom->window, false);
+			gdk_window_process_updates(window, false);
 			gtk_widget_queue_draw(m_bottom);
 		}
-		else { gdk_window_invalidate_rect(m_bottom->window, nullptr, true); }
+		else { gdk_window_invalidate_rect(window, nullptr, true); }
 	}
 
 	virtual void setPointSmoothingActive(const bool active = false)
@@ -215,17 +220,22 @@ private:
 	static gboolean configureCB(GtkWidget* widget, GdkEventConfigure* /*event*/, TBox* box)
 	{
 		GtkGL::preRender(widget);
-		glViewport(0, 0, widget->allocation.width, widget->allocation.height);
-		box->reshape(widget->allocation.width, widget->allocation.height);
+        const int w = gtk_widget_get_allocated_width(widget);
+        const int h = gtk_widget_get_allocated_height(widget);
+		glViewport(0, 0, w, h);
+		box->reshape(w, h);
 		GtkGL::postRender(widget);
 		return TRUE;
 	}
 
 	static gboolean exposeCB(GtkWidget* widget, GdkEventExpose* /*event*/, TBox* box)
 	{
+        const int w = gtk_widget_get_allocated_width(widget);
+        const int h = gtk_widget_get_allocated_height(widget);
+
 		const float d  = 1.F;
-		const float dx = d / (widget->allocation.width - d);
-		const float dy = d / (widget->allocation.height - d);
+		const float dx = d / (w - d);
+		const float dy = d / (h - d);
 
 		GtkGL::preRender(widget);
 

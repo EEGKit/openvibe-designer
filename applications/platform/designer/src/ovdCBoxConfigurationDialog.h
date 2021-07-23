@@ -46,7 +46,7 @@ protected:
 
 	Setting::CSettingViewFactory m_settingFactory;
 	std::vector<Setting::CAbstractSettingView*> m_settingViews;
-	GtkTable* m_settingsTable           = nullptr;
+	GtkGrid* m_settingsTable            = nullptr;
 	GtkViewport* m_viewPort             = nullptr;
 	GtkScrolledWindow* m_scrolledWindow = nullptr;
 	GtkEntry* m_overrideEntry           = nullptr;

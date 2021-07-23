@@ -54,12 +54,11 @@ bool CConnectorEditor::run()
 	gtk_builder_add_from_file(builder, m_guiFilename.c_str(), nullptr);
 	gtk_builder_connect_signals(builder, nullptr);
 
-	GtkWidget* dialog         = GTK_WIDGET(gtk_builder_get_object(builder, "connector_editor"));
-	GtkEntry* nameEntry       = GTK_ENTRY(gtk_builder_get_object(builder, "connector_editor-connector_name_entry"));
-	GtkComboBox* typeComboBox = GTK_COMBO_BOX(gtk_builder_get_object(builder, "connector_editor-connector_type_combobox"));
-	m_IDEntry                 = GTK_ENTRY(gtk_builder_get_object(builder, "connector_editor-connector_identifier_entry"));
-	GtkButton* idResetButton  = GTK_BUTTON(gtk_builder_get_object(builder, "connector_editor-connector_identifier_reset_button"));
-	gtk_list_store_clear(GTK_LIST_STORE(gtk_combo_box_get_model(typeComboBox)));
+	GtkWidget* dialog             = GTK_WIDGET(gtk_builder_get_object(builder, "connector_editor"));
+	GtkEntry* nameEntry           = GTK_ENTRY(gtk_builder_get_object(builder, "connector_editor-connector_name_entry"));
+	GtkComboBoxText* typeComboBox = GTK_COMBO_BOX_TEXT(gtk_builder_get_object(builder, "connector_editor-connector_type_combobox"));
+	m_IDEntry                     = GTK_ENTRY(gtk_builder_get_object(builder, "connector_editor-connector_identifier_entry"));
+	GtkButton* idResetButton      = GTK_BUTTON(gtk_builder_get_object(builder, "connector_editor-connector_identifier_reset_button"));
 	gtk_window_set_title(GTK_WINDOW(dialog), m_title.c_str());
 
 	if (m_Box.getAlgorithmClassIdentifier() == OV_UndefinedIdentifier)
@@ -82,11 +81,11 @@ bool CConnectorEditor::run()
 			//If the input type is support by the connector, let's add it to the list
 			if (m_kernelCtx.getTypeManager().isStream(currentTypeID.first))
 			{
-				gtk_combo_box_append_text(typeComboBox, currentTypeID.second.toASCIIString());
+				gtk_combo_box_text_append_text(typeComboBox, currentTypeID.second.toASCIIString());
 				if (currentTypeID.first == typeID)
 				{
 					active = gint(streamTypes.size());
-					gtk_combo_box_set_active(typeComboBox, active);
+					gtk_combo_box_set_active(GTK_COMBO_BOX(typeComboBox), active);
 				}
 				streamTypes[currentTypeID.second.toASCIIString()] = currentTypeID.first;
 			}
@@ -104,7 +103,7 @@ bool CConnectorEditor::run()
 		const gint result = gtk_dialog_run(GTK_DIALOG(dialog));
 		if (result == GTK_RESPONSE_APPLY)
 		{
-			char* activeText = gtk_combo_box_get_active_text(typeComboBox);
+			char* activeText = gtk_combo_box_text_get_active_text(typeComboBox);
 			if (activeText)
 			{
 				const auto newName  = gtk_entry_get_text(nameEntry);
@@ -129,7 +128,7 @@ bool CConnectorEditor::run()
 			m_Box.getInterfacorType(interfacorType, m_index, typeID);
 
 			gtk_entry_set_text(nameEntry, name.toASCIIString());
-			gtk_combo_box_set_active(typeComboBox, active);
+			gtk_combo_box_set_active(GTK_COMBO_BOX(typeComboBox), active);
 		}
 		else
 		{

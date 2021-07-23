@@ -21,10 +21,10 @@ CInputDialog::CInputDialog(const char* gtkBuilder, const fpButtonCB okButtonCB, 
 	m_dialogOkButton     = GTK_BUTTON(gtk_builder_get_object(builder, "input-button_ok"));
 	m_dialogCancelButton = GTK_BUTTON(gtk_builder_get_object(builder, "input-button_cancel"));
 
-	GTK_WIDGET_SET_FLAGS(GTK_WIDGET(m_dialogEntry), GDK_KEY_PRESS_MASK);
+    gtk_widget_add_events(GTK_WIDGET(m_dialogEntry), GDK_KEY_PRESS_MASK);
 	g_signal_connect(G_OBJECT(m_dialogEntry), "key-press-event", G_CALLBACK(keyPressEventCB), m_dialog);
 
-	if (label != nullptr) { gtk_label_set(m_dialogLabel, label); }
+	if (label != nullptr) { gtk_label_set_text(m_dialogLabel, label); }
 	if (entry != nullptr) { gtk_entry_set_text(m_dialogEntry, entry); }
 
 	g_signal_connect(G_OBJECT(m_dialogOkButton), "clicked", G_CALLBACK(buttonClickedCB), this);
@@ -40,17 +40,17 @@ void CInputDialog::run()
 {
 	const gint res = gtk_dialog_run(m_dialog);
 	if (res == GTK_RESPONSE_ACCEPT) { if (m_okButtonCB != nullptr) { m_okButtonCB(GTK_WIDGET(m_dialogOkButton), this); } }
-	gtk_widget_hide_all(GTK_WIDGET(m_dialog));
+	gtk_widget_hide(GTK_WIDGET(m_dialog));
 }
 
 gboolean CInputDialog::keyPressEventCB(GtkWidget* /*widget*/, GdkEventKey* eventKey, gpointer data)
 {
-	if (eventKey->keyval == GDK_Return || eventKey->keyval == GDK_KP_Enter)
+	if (eventKey->keyval == GDK_KEY_Return || eventKey->keyval == GDK_KEY_KP_Enter)
 	{
 		gtk_dialog_response(GTK_DIALOG(data), GTK_RESPONSE_ACCEPT);
 		return TRUE;
 	}
-	if (eventKey->keyval == GDK_Escape)
+	if (eventKey->keyval == GDK_KEY_Escape)
 	{
 		gtk_dialog_response(GTK_DIALOG(data), GTK_RESPONSE_REJECT);
 		return TRUE;

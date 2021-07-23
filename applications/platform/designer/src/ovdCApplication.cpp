@@ -346,13 +346,13 @@ static gboolean window_state_changed_cb(GtkWidget* /*widget*/, GdkEventWindowSta
 static void log_level_cb(GtkButton* /*button*/, gpointer data) { static_cast<CApplication*>(data)->logLevelCB(); }
 static void cpu_usage_cb(GtkToggleButton* /*button*/, gpointer data) { static_cast<CApplication*>(data)->cpuUsageCB(); }
 
-static gboolean change_current_scenario_cb(GtkNotebook* /*notebook*/, GtkNotebookPage* /*notebookPage*/, const guint pageNumber, gpointer data)
+static gboolean change_current_scenario_cb(GtkNotebook* /*notebook*/, GtkWidget* /*notebookPage*/, const guint pageNumber, gpointer data)
 {
 	static_cast<CApplication*>(data)->changeCurrentScenario(int(pageNumber));
 	return TRUE;
 }
 
-static gboolean reorder_scenario_cb(GtkNotebook* /*notebook*/, GtkNotebookPage* /*notebookPage*/, const guint pageNumber, gpointer data)
+static gboolean reorder_scenario_cb(GtkNotebook* /*notebook*/, GtkWidget* /*notebookPage*/, const guint pageNumber, gpointer data)
 {
 	static_cast<CApplication*>(data)->reorderCurrentScenario(int(pageNumber));
 	return TRUE;
@@ -526,23 +526,23 @@ static gboolean idle_application_loop(gpointer data)
 			switch (app->getPlayer()->getStatus())
 			{
 				case Kernel::EPlayerStatus::Stop:
-					gtk_signal_emit_by_name(GTK_OBJECT(gtk_builder_get_object(app->m_Builder, "openvibe-button_stop")), "clicked");
+					g_signal_emit_by_name(gtk_builder_get_object(app->m_Builder, "openvibe-button_stop"), "clicked");
 					break;
 				case Kernel::EPlayerStatus::Pause:
 					while (scenario->m_PlayerStatus != Kernel::EPlayerStatus::Pause)
 					{
-						gtk_signal_emit_by_name(GTK_OBJECT(gtk_builder_get_object(app->m_Builder, "openvibe-button_play_pause")), "clicked");
+						g_signal_emit_by_name(gtk_builder_get_object(app->m_Builder, "openvibe-button_play_pause"), "clicked");
 					}
 					break;
 				case Kernel::EPlayerStatus::Step: break;
 				case Kernel::EPlayerStatus::Play:
 					while (scenario->m_PlayerStatus != Kernel::EPlayerStatus::Play)
 					{
-						gtk_signal_emit_by_name(GTK_OBJECT(gtk_builder_get_object(app->m_Builder, "openvibe-button_play_pause")), "clicked");
+						g_signal_emit_by_name(gtk_builder_get_object(app->m_Builder, "openvibe-button_play_pause"), "clicked");
 					}
 					break;
 				case Kernel::EPlayerStatus::Forward:
-					gtk_signal_emit_by_name(GTK_OBJECT(gtk_builder_get_object(app->m_Builder, "openvibe-button_forward")), "clicked");
+					g_signal_emit_by_name(gtk_builder_get_object(app->m_Builder, "openvibe-button_forward"), "clicked");
 					break;
 				default:
 					std::cout << "unhandled player status : " << toString(app->getPlayer()->getStatus()) << " :(\n";
@@ -657,7 +657,7 @@ static gboolean receiveSecondInstanceMessage(gpointer data)
 				char* msg = strtok(buffer, ";");
 				while (msg != nullptr)
 				{
-					sscanf(msg, "%1d : <%2048[^>]> ", &mode, &path);
+					sscanf(msg, "%1d : <%2048[^>]> ", &mode, path);
 					switch (mode)
 					{
 						case CommandLineFlag_Open:
@@ -679,7 +679,7 @@ static gboolean receiveSecondInstanceMessage(gpointer data)
 		}
 	}
 		// An interprocess_exception is throwed if no messages could be found, in this case we do nothing
-	catch (boost::interprocess::interprocess_exception) {}
+	catch (boost::interprocess::interprocess_exception&) {}
 	return TRUE;
 }
 #endif
@@ -692,7 +692,9 @@ static void spinner_zoom_changed_cb(GtkSpinButton* button, gpointer data)
 	static_cast<CApplication*>(data)->spinnerZoomChangedCB(size_t(gtk_spin_button_get_value(button)));
 }
 
-static const GtkTargetEntry TARGET_ENTRY[] = { { static_cast<gchar*>("STRING"), 0, 0 }, { static_cast<gchar*>("text/plain"), 0, 0 } };
+static gchar EntryString[] = "STRING";
+static gchar EntryType[]   = "text/plain";
+static const GtkTargetEntry TARGET_ENTRY[] = { { EntryString, 0, 0 }, { EntryType, 0, 0 } };
 
 
 CApplication::CApplication(const Kernel::IKernelContext& ctx) : m_kernelCtx(ctx)
@@ -995,8 +997,8 @@ void CApplication::initialize(const ECommandLineFlag cmdLineFlags)
 
 	GtkWidget* scenarioLinksVBox = GTK_WIDGET(gtk_builder_get_object(m_Builder, "openvibe-scenario_links_vbox"));
 
-	m_Inputs  = gtk_table_new(1, 3, FALSE);
-	m_Outputs = gtk_table_new(1, 3, FALSE);
+	m_Inputs  = gtk_grid_new();
+	m_Outputs = gtk_grid_new();
 
 	GtkWidget* scrolledWindowInputs = gtk_scrolled_window_new(nullptr, nullptr);
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolledWindowInputs), GTK_WIDGET(m_Inputs));
@@ -1438,7 +1440,7 @@ void CApplication::saveOpenedScenarios()
 			{
 				if (!scenario->m_Filename.empty())
 				{
-					fprintf(file, "Designer_LastScenarioFilename_%03u = %s\n", i, scenario->m_Filename.c_str());
+					fprintf(file, "Designer_LastScenarioFilename_%03zu = %s\n", i, scenario->m_Filename.c_str());
 					i++;
 				}
 			}
@@ -1457,7 +1459,7 @@ void CApplication::saveOpenedScenarios()
 			for (const GtkWidget* recentScenario : m_recentScenarios)
 			{
 				const gchar* recentScenarioPath = gtk_menu_item_get_label(GTK_MENU_ITEM(recentScenario));
-				fprintf(file, "Designer_RecentScenario_%03u = %s\n", scenarioID, recentScenarioPath);
+				fprintf(file, "Designer_RecentScenario_%03zu = %s\n", scenarioID, recentScenarioPath);
 				++scenarioID;
 			}
 			fprintf(file, "\n");
@@ -1545,40 +1547,29 @@ void CApplication::preferencesCB() const
 	GtkTreeView* configMgrTreeView = GTK_TREE_VIEW(gtk_builder_get_object(builder, "configuration_manager-treeview"));
 
 	// Prepares tree view
-	GtkTreeViewColumn* treeViewColumnTokenName   = gtk_tree_view_column_new();
-	GtkTreeViewColumn* treeViewColumnTokenValue  = gtk_tree_view_column_new();
-	GtkTreeViewColumn* treeViewColumnTokenExpand = gtk_tree_view_column_new();
-	GtkCellRenderer* cellRendererTokenName       = gtk_cell_renderer_text_new();
-	GtkCellRenderer* cellRendererTokenValue      = gtk_cell_renderer_text_new();
-	GtkCellRenderer* cellRendererTokenExpand     = gtk_cell_renderer_text_new();
-	gtk_tree_view_column_set_title(treeViewColumnTokenName, "Token name");
-	gtk_tree_view_column_set_title(treeViewColumnTokenValue, "Token value");
-	gtk_tree_view_column_set_title(treeViewColumnTokenExpand, "Expanded token value");
-	gtk_tree_view_column_pack_start(treeViewColumnTokenName, cellRendererTokenName, TRUE);
-	gtk_tree_view_column_pack_start(treeViewColumnTokenValue, cellRendererTokenValue, TRUE);
-	gtk_tree_view_column_pack_start(treeViewColumnTokenExpand, cellRendererTokenExpand, TRUE);
-	gtk_tree_view_column_set_attributes(treeViewColumnTokenName, cellRendererTokenName, "text", Resource_TokenName, nullptr);
-	gtk_tree_view_column_set_attributes(treeViewColumnTokenValue, cellRendererTokenValue, "text", Resource_TokenValue, nullptr);
-	gtk_tree_view_column_set_attributes(treeViewColumnTokenExpand, cellRendererTokenExpand, "text", Resource_TokenExpand, nullptr);
-	gtk_tree_view_column_set_sort_column_id(treeViewColumnTokenName, Resource_TokenName);
-	gtk_tree_view_column_set_sort_column_id(treeViewColumnTokenValue, Resource_TokenValue);
-	gtk_tree_view_column_set_sort_column_id(treeViewColumnTokenExpand, Resource_TokenExpand);
-	gtk_tree_view_column_set_sizing(treeViewColumnTokenName, GTK_TREE_VIEW_COLUMN_FIXED);
-	gtk_tree_view_column_set_sizing(treeViewColumnTokenValue, GTK_TREE_VIEW_COLUMN_FIXED);
-	gtk_tree_view_column_set_sizing(treeViewColumnTokenExpand, GTK_TREE_VIEW_COLUMN_FIXED);
-	gtk_tree_view_column_set_expand(treeViewColumnTokenName, TRUE);
-	gtk_tree_view_column_set_expand(treeViewColumnTokenValue, TRUE);
-	gtk_tree_view_column_set_expand(treeViewColumnTokenExpand, TRUE);
-	gtk_tree_view_column_set_resizable(treeViewColumnTokenName, TRUE);
-	gtk_tree_view_column_set_resizable(treeViewColumnTokenValue, TRUE);
-	gtk_tree_view_column_set_resizable(treeViewColumnTokenExpand, TRUE);
-	gtk_tree_view_column_set_min_width(treeViewColumnTokenName, 256);
-	gtk_tree_view_column_set_min_width(treeViewColumnTokenValue, 256);
-	gtk_tree_view_column_set_min_width(treeViewColumnTokenExpand, 256);
-	gtk_tree_view_append_column(configMgrTreeView, treeViewColumnTokenName);
-	gtk_tree_view_append_column(configMgrTreeView, treeViewColumnTokenValue);
-	gtk_tree_view_append_column(configMgrTreeView, treeViewColumnTokenExpand);
-	gtk_tree_view_column_set_sort_indicator(treeViewColumnTokenName, TRUE);
+
+    constexpr int width = 1024; 
+    gtk_widget_set_size_request(configMgr,1200, 600);
+    gtk_widget_set_size_request(GTK_WIDGET(configMgrTreeView), width, -1);
+
+    constexpr const char* column_names[] = { "Token name", "Token value", "Expanded token value" };
+    GtkTreeViewColumn* columns[3];
+    for (unsigned i=0; i<3; ++i) {
+        columns[i] = gtk_tree_view_column_new();
+        GtkCellRenderer* renderer = gtk_cell_renderer_text_new();
+        gtk_tree_view_column_set_title(columns[i], column_names[i]);
+        gtk_tree_view_column_pack_start(columns[i], renderer, TRUE);
+        gtk_tree_view_column_set_attributes(columns[i], renderer, "text", i, nullptr);
+        gtk_tree_view_column_set_sort_column_id(columns[i], i);
+        gtk_tree_view_column_set_sizing(columns[i], GTK_TREE_VIEW_COLUMN_FIXED);
+        gtk_tree_view_column_set_expand(columns[i], TRUE);
+        gtk_tree_view_column_set_resizable(columns[i], TRUE);
+        gtk_tree_view_column_set_min_width(columns[i], 256);
+        gtk_tree_view_column_set_fixed_width(columns[i], width / 3);
+        gtk_tree_view_append_column(configMgrTreeView, columns[i]);
+    }
+    gtk_tree_view_column_set_sort_indicator(columns[0], TRUE);
+
 
 	// Prepares tree model
 	CIdentifier tokenID;
@@ -1594,7 +1585,7 @@ void CApplication::preferencesCB() const
 						   Resource_TokenExpand, expand.toASCIIString(), -1);
 	}
 	gtk_tree_view_set_model(configMgrTreeView, GTK_TREE_MODEL(configMgrTreeModel));
-	g_signal_emit_by_name(treeViewColumnTokenName, "clicked");
+    g_signal_emit_by_name(columns[0], "clicked");
 
 	gtk_dialog_run(GTK_DIALOG(configMgr));
 	gtk_widget_destroy(configMgr);
@@ -1652,8 +1643,8 @@ void CApplication::openScenarioCB()
 	gtk_file_filter_set_name(all, "All files");
 	gtk_file_filter_add_pattern(all, "*");
 
-	GtkWidget* widgetDialogOpen = gtk_file_chooser_dialog_new("Select scenario to open...", nullptr, GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL,
-															  GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, nullptr);
+	GtkWidget* widgetDialogOpen = gtk_file_chooser_dialog_new("Select scenario to open...", nullptr, GTK_FILE_CHOOSER_ACTION_OPEN, "_Cancel",
+															  GTK_RESPONSE_CANCEL, "_Open", GTK_RESPONSE_ACCEPT, nullptr);
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(widgetDialogOpen), specific);
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(widgetDialogOpen), all);
 	gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(widgetDialogOpen), specific);
@@ -1954,8 +1945,8 @@ void CApplication::saveScenarioAsCB(CInterfacedScenario* scenario)
 	// gtk_file_filter_set_name(fileFilterSVG, "SVG image");
 	// gtk_file_filter_add_pattern(fileFilterSVG, "*.svg");
 
-	GtkWidget* widgetDialogSaveAs = gtk_file_chooser_dialog_new("Select scenario to save...", nullptr, GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL,
-																GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, nullptr);
+	GtkWidget* widgetDialogSaveAs = gtk_file_chooser_dialog_new("Select scenario to save...", nullptr, GTK_FILE_CHOOSER_ACTION_SAVE, "_Cancel",
+																GTK_RESPONSE_CANCEL, "_Save", GTK_RESPONSE_ACCEPT, nullptr);
 
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(widgetDialogSaveAs), allCompatibleFormatsFileFilter);
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(widgetDialogSaveAs), all);
@@ -2772,7 +2763,7 @@ void CApplication::changeCurrentScenario(const int pageIdx)
 		g_list_free(settingWidgets);
 
 		GtkWidget* settingPlaceholderLabel = gtk_label_new("This scenario has no settings");
-		gtk_box_pack_end_defaults(GTK_BOX(settingsVBox), settingPlaceholderLabel);
+		gtk_box_pack_end(GTK_BOX(settingsVBox), settingPlaceholderLabel, TRUE, TRUE, 0);
 		gtk_widget_show_all(settingsVBox);
 
 
@@ -2780,7 +2771,7 @@ void CApplication::changeCurrentScenario(const int pageIdx)
 		m_currentScenarioIdx = i;
 	}
 		//switching to an existing scenario
-	else if (pageIdx < m_Scenarios.size())
+	else if (pageIdx < static_cast<int>(m_Scenarios.size()))
 	{
 		CInterfacedScenario* scenario            = m_Scenarios[pageIdx];
 		const Kernel::EPlayerStatus playerStatus = (scenario->m_Player ? scenario->m_Player->getStatus() : Kernel::EPlayerStatus::Stop);

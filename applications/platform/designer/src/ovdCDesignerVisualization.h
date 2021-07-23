@@ -44,10 +44,10 @@ public:
 		static gboolean window_state_event_cb(GtkWidget* widget, GdkEventWindowState* event, gpointer data);
 #endif
 	static gboolean configureEventCB(GtkWidget* widget, GdkEventConfigure* event, gpointer data);
-	static gboolean widgetExposeEventCB(GtkWidget* widget, GdkEventExpose* event, gpointer data);
+	static gboolean widgetDrawCB(GtkWidget* widget, cairo_t* cr, gpointer data);
 	void resizeCB(VisualizationToolkit::IVisualizationWidget* widget);
 
-	static void notebookPageSwitchCB(GtkNotebook* notebook, GtkNotebookPage* page, guint pagenum, gpointer data);
+	static void notebookPageSwitchCB(GtkNotebook* notebook, GtkWidget* page, guint pagenum, gpointer data);
 
 	//callback for paned handle position changes
 	static gboolean notifyPositionPanedCB(GtkWidget* widget, GParamSpec* spec, gpointer data);
@@ -74,7 +74,7 @@ private:
 
 	void setActiveVisualization(const char* activeWindow, const char* activePanel);
 
-	GtkTable* newWidgetsTable();
+	GtkGrid* newWidgetsTable();
 	void setupNewEventBoxTable(GtkBuilder* xml);
 
 	//visualization windows
@@ -156,6 +156,8 @@ private:
 	size_t m_previewWindowW     = 0;
 	size_t m_previewWindowH     = 0;
 
+    #if 0
+    // This is very old code (already deprecated in gtk+2, not sure of what it does exactly.
 	//Factories
 	GtkItemFactory* m_unaffectedItemFactory          = nullptr;
 	GtkItemFactory* m_visualizationWindowItemFactory = nullptr;
@@ -163,6 +165,7 @@ private:
 	GtkItemFactory* m_visualizationBoxItemFactory    = nullptr;
 	GtkItemFactory* m_undefinedItemFactory           = nullptr;
 	GtkItemFactory* m_splitItemFactory               = nullptr;
+    #endif
 
 	std::string m_topEventBoxData;
 	std::string m_leftEventBoxData;

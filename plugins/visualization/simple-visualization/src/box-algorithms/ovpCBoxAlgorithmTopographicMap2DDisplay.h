@@ -53,7 +53,7 @@ public:
 	CString getDetailedDescription() const override { return CString(""); }
 	CString getCategory() const override { return CString("Visualization/Topography"); }
 	CString getVersion() const override { return CString("2.0"); }
-	CString getStockItemName() const override { return CString(GTK_STOCK_EXECUTE); }
+	CString getIconName() const override { return CString(GTK_STOCK_EXECUTE); }
 	CString getSoftwareComponent() const override { return CString("openvibe-designer"); }
 	CString getAddedSoftwareVersion() const override { return CString("0.0.0"); }
 	CString getUpdatedSoftwareVersion() const override { return CString("0.0.0"); }

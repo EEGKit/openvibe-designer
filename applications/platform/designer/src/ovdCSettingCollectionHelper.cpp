@@ -17,7 +17,7 @@ using namespace std;
 typedef struct
 {
 	double percent;
-	GdkColor color;
+	GdkRGBA color;
 	GtkColorButton* colorButton;
 	GtkSpinButton* spinButton;
 } color_gradient_node_t;
@@ -125,8 +125,8 @@ static void OnButtonSettingFilenameBrowsePressed(GtkButton* button, gpointer dat
 	gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), CollectWidgetCB, &widgets);
 	GtkEntry* widget = GTK_ENTRY(widgets[0]);
 
-	GtkWidget* widgetDialogOpen = gtk_file_chooser_dialog_new("Select file to open...", nullptr, GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL,
-															  GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, nullptr);
+	GtkWidget* widgetDialogOpen = gtk_file_chooser_dialog_new("Select file to open...", nullptr, GTK_FILE_CHOOSER_ACTION_SAVE, "_Cancel",
+															  GTK_RESPONSE_CANCEL, "_Open", GTK_RESPONSE_ACCEPT, nullptr);
 
 	const CString filename = ctx.getConfigurationManager().expand(gtk_entry_get_text(widget));
 	if (g_path_is_absolute(filename.toASCIIString())) { gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(widgetDialogOpen), filename.toASCIIString()); }
@@ -159,7 +159,7 @@ static void OnButtonSettingFoldernameBrowsePressed(GtkButton* button, gpointer d
 	GtkEntry* widget = GTK_ENTRY(widgets[0]);
 
 	GtkWidget* widgetDialogOpen = gtk_file_chooser_dialog_new("Select folder to open...", nullptr, GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
-															  GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, nullptr);
+															  "_Cancel", GTK_RESPONSE_CANCEL, "_Open", GTK_RESPONSE_ACCEPT, nullptr);
 
 	const CString filename = ctx.getConfigurationManager().expand(gtk_entry_get_text(widget));
 	if (g_path_is_absolute(filename.toASCIIString())) { gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(widgetDialogOpen), filename.toASCIIString()); }
@@ -215,8 +215,8 @@ static void OnButtonSettingColorChoosePressed(GtkColorButton* button, gpointer /
 	vector<GtkWidget*> widgets;
 	gtk_container_foreach(GTK_CONTAINER(gtk_widget_get_parent(GTK_WIDGET(button))), CollectWidgetCB, &widgets);
 	GtkEntry* widget = GTK_ENTRY(widgets[0]);
-	GdkColor color;
-	gtk_color_button_get_color(button, &color);
+	GdkRGBA color;
+    gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(button), &color);
 
 	const std::string res = std::to_string((color.red * 100) / 65535) + "," + std::to_string((color.green * 100) / 65535) + ","
 							+ std::to_string((color.blue * 100) / 65535);
@@ -233,9 +233,9 @@ static void OnRefreshColorGradient(GtkWidget* /*widget*/, GdkEventExpose* /*even
 	auto* userData = static_cast<color_gradient_t*>(data);
 
 	const size_t steps = 100;
-	gint sizex         = 0;
-	gint sizey         = 0;
-	gdk_drawable_get_size(userData->drawingArea->window, &sizex, &sizey);
+    GdkWindow* window = gtk_widget_get_window(userData->drawingArea);
+	const gint sizex  = gdk_window_get_width(window);
+	const gint sizey  = gdk_window_get_height(window);
 
 	CMatrix gradient;
 	gradients2Matrix(userData->colorGradient, gradient);
@@ -243,18 +243,22 @@ static void OnRefreshColorGradient(GtkWidget* /*widget*/, GdkEventExpose* /*even
 	CMatrix interpolated;
 	VisualizationToolkit::ColorGradient::interpolate(interpolated, gradient, steps);
 
-	GdkGC* gc = gdk_gc_new(userData->drawingArea->window);
-	GdkColor color;
+	cairo_region_t * cairoRegion = cairo_region_create();
+    GdkDrawingContext* gdc = gdk_window_begin_draw_frame(window,cairoRegion);
+    cairo_t* cr = gdk_drawing_context_get_cairo_context(gdc);
 
 	for (size_t i = 0; i < steps; ++i)
 	{
+        GdkColor color;
 		color.red   = guint(interpolated[i * 4 + 1] * 655.35);
 		color.green = guint(interpolated[i * 4 + 2] * 655.35);
 		color.blue  = guint(interpolated[i * 4 + 3] * 655.35);
-		gdk_gc_set_rgb_fg_color(gc, &color);
-		gdk_draw_rectangle(userData->drawingArea->window, gc, TRUE, (sizex * i) / steps, 0, (sizex * (i + 1)) / steps, sizey);
+        cairo_set_source_rgb(cr, color.red, color.green, color.blue);
+        cairo_rectangle(cr, (sizex * i) / steps, 0, (sizex * (i + 1)) / steps, sizey);
+        cairo_fill(cr);
 	}
-	g_object_unref(gc);
+    gdk_window_end_draw_frame(window,gdc);
+    cairo_region_destroy(cairoRegion);
 }
 
 static void OnColorGradientSpinButtonValueChanged(GtkSpinButton* button, gpointer data)
@@ -286,10 +290,8 @@ static void OnColorGradientColorButtonPressed(GtkColorButton* button, gpointer d
 {
 	auto* userData = static_cast<color_gradient_t*>(data);
 
-	GdkColor color;
-	gtk_color_button_get_color(button, &color);
-
-	userData->colorGradient[userData->colorButtons[button]].color = color;
+	GdkRGBA& color = userData->colorGradient[userData->colorButtons[button]].color;
+    gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(button), &color);
 
 	OnRefreshColorGradient(nullptr, nullptr, data);
 }
@@ -317,7 +319,7 @@ static void OnInitializeColorGradient(GtkWidget* /*widget*/, gpointer data)
 		it.colorButton = GTK_COLOR_BUTTON(gtk_builder_get_object(builder, "setting_editor-color_gradient-colorbutton"));
 		it.spinButton  = GTK_SPIN_BUTTON(gtk_builder_get_object(builder, "setting_editor-color_gradient-spinbutton"));
 
-		gtk_color_button_set_color(it.colorButton, &it.color);
+		gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(it.colorButton), &it.color);
 		gtk_spin_button_set_value(it.spinButton, it.percent);
 
 		g_signal_connect(G_OBJECT(it.colorButton), "color-set", G_CALLBACK(OnColorGradientColorButtonPressed), userData);
@@ -561,8 +563,8 @@ CString CSettingCollectionHelper::getValueColorGradient(GtkWidget* widget)
 CString CSettingCollectionHelper::getValueEnumeration(const CIdentifier& /*typeID*/, GtkWidget* widget)
 {
 	if (!GTK_IS_COMBO_BOX(widget)) { return ""; }
-	GtkComboBox* comboBox = GTK_COMBO_BOX(widget);
-	return CString(gtk_combo_box_get_active_text(comboBox));
+	GtkComboBoxText* comboBox = GTK_COMBO_BOX_TEXT(widget);
+	return CString(gtk_combo_box_text_get_active_text(comboBox));
 }
 
 CString CSettingCollectionHelper::getValueBitMask(const CIdentifier& /*typeID*/, GtkWidget* widget)
@@ -624,12 +626,11 @@ void CSettingCollectionHelper::setValueInteger(GtkWidget* widget, const CString&
 {
 	vector<GtkWidget*> widgets;
 	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
-	GtkEntry* entry = GTK_ENTRY(widgets[0]);
 
 	g_signal_connect(G_OBJECT(widgets[1]), "clicked", G_CALLBACK(OnButtonSettingIntegerUpPressed), this);
 	g_signal_connect(G_OBJECT(widgets[2]), "clicked", G_CALLBACK(OnButtonSettingIntegerDownPressed), this);
 
-	gtk_entry_set_text(entry, value);
+	gtk_entry_set_text(GTK_ENTRY(widgets[0]), value);
 }
 
 void CSettingCollectionHelper::setValueFloat(GtkWidget* widget, const CString& value)
@@ -695,11 +696,12 @@ void CSettingCollectionHelper::setValueColor(GtkWidget* widget, const CString& v
 	int r = 0, g = 0, b = 0;
 	sscanf(m_KernelCtx.getConfigurationManager().expand(value).toASCIIString(), "%i,%i,%i", &r, &g, &b);
 
-	GdkColor color;
-	color.red   = (r * 65535) / 100;
-	color.green = (g * 65535) / 100;
-	color.blue  = (b * 65535) / 100;
-	gtk_color_button_set_color(GTK_COLOR_BUTTON(widgets[1]), &color);
+	GdkRGBA color;
+	color.red   = static_cast<double>(r) / 100;
+	color.green = static_cast<double>(g) / 100;
+	color.blue  = static_cast<double>(b) / 100;
+    color.alpha = 1.0;
+	gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(widgets[1]), &color);
 
 	gtk_entry_set_text(entry, value);
 }
@@ -779,9 +781,7 @@ void CSettingCollectionHelper::setValueBitMask(const CIdentifier& typeID, GtkWid
 
 	const string str(value);
 
-	const gint size        = guint((m_KernelCtx.getTypeManager().getBitMaskEntryCount(typeID) + 1) >> 1);
-	GtkTable* bitMaskTable = GTK_TABLE(widget);
-	gtk_table_resize(bitMaskTable, 2, size);
+	GtkGrid* bitMaskGrid = GTK_GRID(widget);
 
 	for (uint64_t i = 0; i < m_KernelCtx.getTypeManager().getBitMaskEntryCount(typeID); ++i)
 	{
@@ -790,7 +790,7 @@ void CSettingCollectionHelper::setValueBitMask(const CIdentifier& typeID, GtkWid
 		if (m_KernelCtx.getTypeManager().getBitMaskEntry(typeID, i, entryName, entryValue))
 		{
 			GtkWidget* settingButton = gtk_check_button_new();
-			gtk_table_attach_defaults(bitMaskTable, settingButton, guint(i & 1), guint((i & 1) + 1), guint(i >> 1), guint((i >> 1) + 1));
+			gtk_grid_attach(bitMaskGrid, settingButton, guint(i & 1), guint(i >> 1), 1, 1);
 			gtk_button_set_label(GTK_BUTTON(settingButton), entryName.toASCIIString());
 
 			if (str.find(entryName.toASCIIString()) != string::npos) { gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(settingButton), true); }
@@ -802,5 +802,5 @@ void CSettingCollectionHelper::setValueBitMask(const CIdentifier& typeID, GtkWid
 	 * configuration through configuration manager !
 	 */
 
-	gtk_widget_show_all(GTK_WIDGET(bitMaskTable));
+	gtk_widget_show_all(GTK_WIDGET(bitMaskGrid));
 }

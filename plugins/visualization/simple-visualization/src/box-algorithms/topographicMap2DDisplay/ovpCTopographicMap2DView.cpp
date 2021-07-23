@@ -101,10 +101,11 @@ CTopographicMap2DView::CTopographicMap2DView(CTopographicMapDatabase& mapDatabas
 	//set default delay
 	setDelayCB(delay);
 	//configure delay slider
-	GtkWidget* delayScale = gtk_hscale_new_with_range(0.0, m_maxDelay, 0.1);
+	//GtkWidget* delayScale = gtk_hscale_new_with_range(0.0, m_maxDelay, 0.1);
+	GtkWidget* delayScale = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 0.0, m_maxDelay, 0.1);
 	gtk_range_set_value(GTK_RANGE(delayScale), delay);
 	gtk_scale_set_value_pos(GTK_SCALE(delayScale), GTK_POS_TOP);
-	gtk_range_set_update_policy(GTK_RANGE(delayScale), GTK_UPDATE_CONTINUOUS);
+	//gtk_range_set_update_policy(GTK_RANGE(delayScale), GTK_UPDATE_CONTINUOUS);
 	gtk_widget_set_size_request(delayScale, 100, -1);
 	gtk_widget_show_all(delayScale);
 	g_signal_connect(G_OBJECT(delayScale), "value_changed", G_CALLBACK(setDelayCallback), this);
@@ -206,25 +207,9 @@ CTopographicMap2DView::CTopographicMap2DView(CTopographicMapDatabase& mapDatabas
 
 CTopographicMap2DView::~CTopographicMap2DView()
 {
-	//destroy clip mask
-	if (m_clipmask != nullptr)
-	{
-		g_object_unref(m_clipmask);
-		m_clipmask = nullptr;
-	}
-	if (m_clipmaskGC != nullptr)
-	{
-		g_object_unref(m_clipmaskGC);
-		m_clipmaskGC = nullptr;
-	}
-	//destroy visible region
-	if (m_visibleRegion != nullptr)
-	{
-		gdk_region_destroy(m_visibleRegion);
-		m_visibleRegion = nullptr;
-	}
 	//destroy pixmap
-	m_skullRGBBuffer.clear();
+	//m_skullRGBBuffer.clear();
+    g_object_unref(m_skullRGBBuffer);
 
 	//unref the xml file as it's not needed anymore
 	g_object_unref(G_OBJECT(m_builderInterface));
@@ -237,7 +222,9 @@ void CTopographicMap2DView::init()
 
 	gtk_widget_set_double_buffered(m_drawingArea, TRUE);
 
+    std::cerr << "HERE" << std::endl;
 	g_signal_connect(G_OBJECT(m_drawingArea), "expose_event", G_CALLBACK(redrawCallback), this);
+    std::cerr << "THERE" << std::endl;
 	g_signal_connect(G_OBJECT(m_drawingArea), "size-allocate", G_CALLBACK(resizeCallback), this);
 
 	gtk_widget_show(m_drawingArea);
@@ -273,7 +260,7 @@ void CTopographicMap2DView::init()
 
 void CTopographicMap2DView::redraw()
 {
-	if (m_drawingArea != nullptr && GTK_WIDGET_VISIBLE(m_drawingArea))
+	if (m_drawingArea != nullptr && gtk_widget_get_visible(m_drawingArea))
 	{
 		if (m_needResize) { resizeData(); }
 
@@ -349,7 +336,8 @@ void CTopographicMap2DView::toggleElectrodesCB()
 	if (!m_electrodesToggledOn)
 	{
 		//clear screen so that electrode labels are hidden
-		if (m_drawingArea->window != nullptr) { gdk_window_invalidate_rect(m_drawingArea->window, nullptr, 1); }
+        GdkWindow* window = gtk_widget_get_window(m_drawingArea);
+		if (window != nullptr) { gdk_window_invalidate_rect(window, nullptr, 1); }
 	}
 }
 
@@ -364,7 +352,8 @@ void CTopographicMap2DView::setProjectionCB(GtkWidget* widget)
 	m_needResize = true;
 
 	//clear screen
-	if (m_drawingArea->window != nullptr) { gdk_window_invalidate_rect(m_drawingArea->window, nullptr, 1); }
+    GdkWindow* window = gtk_widget_get_window(m_drawingArea);
+	if (window != nullptr) { gdk_window_invalidate_rect(window, nullptr, 1); }
 }
 
 void CTopographicMap2DView::setViewCB(GtkWidget* widget)
@@ -380,7 +369,8 @@ void CTopographicMap2DView::setViewCB(GtkWidget* widget)
 	m_needResize = true;
 
 	//clear screen
-	if (m_drawingArea->window != nullptr) { gdk_window_invalidate_rect(m_drawingArea->window, nullptr, 1); }
+    GdkWindow* window = gtk_widget_get_window(m_drawingArea);
+	if (window != nullptr) { gdk_window_invalidate_rect(window, nullptr, 1); }
 }
 
 void CTopographicMap2DView::setInterpolationCB(GtkWidget* widget)
@@ -435,48 +425,82 @@ void CTopographicMap2DView::drawPalette(const size_t x, const size_t y, const si
 	pango_layout_get_pixel_size(text, &textWidth, nullptr);
 	gint labelX = gint(x + (width - textWidth) / 2);
 
-	gdk_draw_layout(m_drawingArea->window, m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], labelX, labelY, text);
+	//gdk_draw_layout(m_drawingArea->window, m_drawingArea->style->fg_gc[gtk_widget_get_state(m_drawingArea)], labelX, labelY, text);
+
+    GdkWindow* window = gtk_widget_get_window(m_drawingArea);
+    cairo_region_t * cairoRegion = cairo_region_create();
+    GdkDrawingContext* gdc = gdk_window_begin_draw_frame(window,cairoRegion);
+    cairo_t* cr = gdk_drawing_context_get_cairo_context(gdc);
+
+    GdkRGBA rgba;
+    GtkStyleContext* context = gtk_widget_get_style_context(m_drawingArea);
+    GtkStateFlags state = gtk_widget_get_state_flags(m_drawingArea);
+    gtk_style_context_get_color(context, state, &rgba);
+    gdk_cairo_set_source_rgba(cr, &rgba);
+    cairo_move_to(cr, labelX, labelY);
+    pango_cairo_show_layout(cr, text);
 
 	//draw + label
 	pango_layout_set_text(text, "+", 1);
 	pango_layout_get_pixel_size(text, &textWidth, nullptr);
 	labelX = barStartX - textWidth / 2;
 	if (labelX < 0) { labelX = 0; }
-	gdk_draw_layout(m_drawingArea->window, m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], labelX, labelY, text);
+	//gdk_draw_layout(m_drawingArea->window, m_drawingArea->style->fg_gc[gtk_widget_get_state(m_drawingArea)], labelX, labelY, text);
+    cairo_move_to(cr, labelX, labelY);
+    pango_cairo_show_layout(cr, text);
 
 	//draw - label
 	pango_layout_set_text(text, "-", 1);
 	pango_layout_get_pixel_size(text, &textWidth, nullptr);
 	labelX = barStartX + barWidth - textWidth / 2;
 	if (labelX + textWidth >= gint(width)) { labelX = gint(width) - textWidth; }
-	gdk_draw_layout(m_drawingArea->window, m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)],
-					labelX, labelY, text);
+	//gdk_draw_layout(m_drawingArea->window, m_drawingArea->style->fg_gc[gtk_widget_get_state(m_drawingArea)],
+	//				labelX, labelY, text);
+    cairo_move_to(cr, labelX, labelY);
+    pango_cairo_show_layout(cr, text);
 
 	//draw palette bar (typically reversed : high potentials to the left; low potentials to the right)
 	gint currentX = barStartX;
 
 	for (int i = NB_COLORS - 1; i >= 0; i--)
 	{
-		gdk_gc_set_rgb_fg_color(m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], &palette[i]);
+		//gdk_gc_set_rgb_fg_color(m_drawingArea->style->fg_gc[gtk_widget_get_state(m_drawingArea)], &palette[i]);
+        //const GdkColor& color = m_drawingArea->style->fg[gtk_widget_get_state(m_drawingArea)];
+        gdk_cairo_set_source_color(cr, &palette[i]);
+        //cairo_set_source_rgb(cr, color.red, color.green, color.blue);
 
-		gdk_draw_rectangle(m_drawingArea->window, m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)],
-						   TRUE, currentX, barStartY, barWidth / NB_COLORS, barHeight);
+		//gdk_draw_rectangle(m_drawingArea->window, m_drawingArea->style->fg_gc[gtk_widget_get_state(m_drawingArea)],
+		//				   TRUE, currentX, barStartY, barWidth / NB_COLORS, barHeight);
+        cairo_rectangle(cr, currentX, barStartY, barWidth / NB_COLORS, barHeight);
+        cairo_fill(cr);
 
 		currentX += barWidth / 13;
 	}
 
 	//restore default black color
-	GdkColor black;
-	black.red = black.green = black.blue = 0;
-	gdk_gc_set_rgb_fg_color(m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], &black);
+    // Unneeded as we have not changed them....
+	//GdkColor black;
+	//black.red = black.green = black.blue = 0;
+	//gdk_gc_set_rgb_fg_color(m_drawingArea->style->fg_gc[gtk_widget_get_state(m_drawingArea)], &black);
 
 	//delete pango layout
 	g_object_unref(text);
+    gdk_window_end_draw_frame(window,gdc);
+    cairo_region_destroy(cairoRegion);
 }
 
 void CTopographicMap2DView::drawFace(size_t /*X*/, size_t /*Y*/, size_t /*width*/, size_t /*height*/) const
 {
-	gdk_gc_set_line_attributes(m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], 2, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
+	//gdk_gc_set_line_attributes(m_drawingArea->style->fg_gc[gtk_widget_get_state(m_drawingArea)], 2, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
+    GdkWindow* window = gtk_widget_get_window(m_drawingArea);
+    cairo_region_t * cairoRegion = cairo_region_create();
+    GdkDrawingContext* gdc = gdk_window_begin_draw_frame(window,cairoRegion);
+    cairo_t* cr = gdk_drawing_context_get_cairo_context(gdc);
+
+    cairo_set_line_width(cr, 2);
+    cairo_set_dash(cr, nullptr, 0, 0);
+    cairo_set_line_cap(cr, CAIRO_LINE_CAP_BUTT); // Is this necessary ?
+    cairo_set_line_join(cr, CAIRO_LINE_JOIN_BEVEL);
 
 	//head center
 	const gint skullCenterX = gint(m_skullX + m_skullDiameter / 2);
@@ -491,51 +515,85 @@ void CTopographicMap2DView::drawFace(size_t /*X*/, size_t /*Y*/, size_t /*width*
 		const gint rx = gint(size_t(skullCenterX + 1.0 * m_skullDiameter / 2 * cos(Deg2Rad(90 - noseHalfAngle))));
 		const gint ry = gint(size_t(skullCenterY - 1.0 * m_skullDiameter / 2 * sin(Deg2Rad(90 - noseHalfAngle))));
 
-		gdk_draw_line(m_drawingArea->window, m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], lx, ly, skullCenterX, gint(m_noseY));
-		gdk_draw_line(m_drawingArea->window, m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], rx, ry, skullCenterX, gint(m_noseY));
+		//gdk_draw_line(m_drawingArea->window, m_drawingArea->style->fg_gc[gtk_widget_get_state(m_drawingArea)], lx, ly, skullCenterX, gint(m_noseY));
+        cairo_move_to(cr, lx, ly);
+        cairo_line_to(cr, skullCenterX, gint(m_noseY));
+		//gdk_draw_line(m_drawingArea->window, m_drawingArea->style->fg_gc[gtk_widget_get_state(m_drawingArea)], rx, ry, skullCenterX, gint(m_noseY));
+        cairo_move_to(cr, rx, ry);
+        cairo_line_to(cr, skullCenterX, gint(m_noseY));
 	}
 	else if (m_currentView == EView::Back)
 	{
-		gdk_draw_line(m_drawingArea->window, m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], gint(m_skullOutlineLeftPointX),
-					  gint(m_skullOutlineLeftPointY), gint(m_leftNeckX), gint(m_leftNeckY));
-		gdk_draw_line(m_drawingArea->window, m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], gint(m_skullOutlineRightPointX),
-					  gint(m_skullOutlineRightPointY), gint(m_rightNeckX), gint(m_rightNeckY));
+		//gdk_draw_line(m_drawingArea->window, m_drawingArea->style->fg_gc[gtk_widget_get_state(m_drawingArea)], gint(m_skullOutlineLeftPointX),
+		//			  gint(m_skullOutlineLeftPointY), gint(m_leftNeckX), gint(m_leftNeckY));
+        cairo_move_to(cr, gint(m_skullOutlineLeftPointX), gint(m_skullOutlineLeftPointY)); 
+        cairo_line_to(cr, gint(m_leftNeckX), gint(m_leftNeckY));
+		//gdk_draw_line(m_drawingArea->window, m_drawingArea->style->fg_gc[gtk_widget_get_state(m_drawingArea)], gint(m_skullOutlineRightPointX),
+		//			  gint(m_skullOutlineRightPointY), gint(m_rightNeckX), gint(m_rightNeckY));
+        cairo_move_to(cr, gint(m_skullOutlineRightPointX), gint(m_skullOutlineRightPointY)); 
+        cairo_line_to(cr, gint(m_rightNeckX), gint(m_skullOutlineRightPointY));
 	}
 	else if (m_currentView == EView::Left || m_currentView == EView::Right)
 	{
-		gdk_draw_line(m_drawingArea->window, m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], gint(m_noseTopX), gint(m_noseTopY),
-					  gint(m_noseBumpX), gint(m_noseBumpY));
-		gdk_draw_line(m_drawingArea->window, m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], gint(m_noseBumpX), gint(m_noseBumpY),
-					  gint(m_noseTipX), gint(m_noseTipY));
-		gdk_draw_line(m_drawingArea->window, m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], gint(m_noseTipX), gint(m_noseTipY),
-					  gint(m_noseBaseX), gint(m_noseBaseY));
-		gdk_draw_line(m_drawingArea->window, m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], gint(m_noseBaseX), gint(m_noseBaseY),
-					  gint(m_noseBottomX), gint(m_noseBottomY));
+		//gdk_draw_line(m_drawingArea->window, m_drawingArea->style->fg_gc[gtk_widget_get_state(m_drawingArea)], gint(m_noseTopX), gint(m_noseTopY),
+		//			  gint(m_noseBumpX), gint(m_noseBumpY));
+        cairo_move_to(cr, gint(m_noseTopX), gint(m_noseTopY));
+        cairo_line_to(cr, gint(m_noseBumpX), gint(m_noseBumpY));
+		//gdk_draw_line(m_drawingArea->window, m_drawingArea->style->fg_gc[gtk_widget_get_state(m_drawingArea)], gint(m_noseBumpX), gint(m_noseBumpY),
+		//			  gint(m_noseTipX), gint(m_noseTipY));
+        cairo_move_to(cr, gint(m_noseBumpX), gint(m_noseBumpY));
+        cairo_line_to(cr, gint(m_noseTipX), gint(m_noseTipY));
+		//gdk_draw_line(m_drawingArea->window, m_drawingArea->style->fg_gc[gtk_widget_get_state(m_drawingArea)], gint(m_noseTipX), gint(m_noseTipY),
+		//			  gint(m_noseBaseX), gint(m_noseBaseY));
+        cairo_move_to(cr, gint(m_noseTipX), gint(m_noseTipY));
+        cairo_line_to(cr, gint(m_noseBaseX), gint(m_noseBaseY));
+		//gdk_draw_line(m_drawingArea->window, m_drawingArea->style->fg_gc[gtk_widget_get_state(m_drawingArea)], gint(m_noseBaseX), gint(m_noseBaseY),
+		//			  gint(m_noseBottomX), gint(m_noseBottomY));
+        cairo_move_to(cr, gint(m_noseBaseX), gint(m_noseBaseY));
+        cairo_line_to(cr, gint(m_noseBottomX), gint(m_noseBottomY));
 	}
+    cairo_stroke(cr);  
+    gdk_window_end_draw_frame(window,gdc);
+    cairo_region_destroy(cairoRegion);
 }
 
 void CTopographicMap2DView::drawHead() const
 {
 	//draw head outline
-	gdk_gc_set_line_attributes(m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], 2, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
-	gdk_draw_arc(m_drawingArea->window, m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], FALSE, gint(m_skullX), gint(m_skullY),
-				 gint(m_skullDiameter), gint(m_skullDiameter), gint(64 * m_skullOutlineStartAngle),
-				 gint(64 * (m_skullOutlineEndAngle - m_skullOutlineStartAngle)));
-	gdk_gc_set_line_attributes(m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
-	gdk_gc_set_clip_origin(m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], gint(m_skullX), gint(m_skullY));
-	gdk_gc_set_clip_mask(m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], m_clipmask);
+	//gdk_gc_set_line_attributes(m_drawingArea->style->fg_gc[gtk_widget_get_state(m_drawingArea)], 2, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
+    GdkWindow* window = gtk_widget_get_window(m_drawingArea);
+    cairo_region_t * cairoRegion = cairo_region_create();
+    GdkDrawingContext* gdc = gdk_window_begin_draw_frame(window,cairoRegion);
+    cairo_t* cr = gdk_drawing_context_get_cairo_context(gdc);
 
-	drawPotentials();
-	drawElectrodes();
+    cairo_set_line_width(cr, 2);
+    cairo_set_dash(cr, nullptr, 0, 0);
+    cairo_set_line_cap(cr, CAIRO_LINE_CAP_BUTT); // Is this necessary ?
+    cairo_set_line_join(cr, CAIRO_LINE_JOIN_BEVEL);
 
-	gdk_gc_set_clip_mask(m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], nullptr);
+	//gdk_draw_arc(m_drawingArea->window, m_drawingArea->style->fg_gc[gtk_widget_get_state(m_drawingArea)], FALSE, gint(m_skullX), gint(m_skullY),
+	//			 gint(m_skullDiameter), gint(m_skullDiameter), gint(64 * m_skullOutlineStartAngle),
+	//			 gint(64 * (m_skullOutlineEndAngle - m_skullOutlineStartAngle)));
+    cairo_arc(cr, m_skullX, m_skullY, m_skullDiameter, m_skullOutlineStartAngle, m_skullOutlineEndAngle);
+	//gdk_gc_set_line_attributes(m_drawingArea->style->fg_gc[gtk_widget_get_state(m_drawingArea)], 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
+    cairo_set_line_width(cr, 1);
+	//gdk_gc_set_clip_origin(m_drawingArea->style->fg_gc[gtk_widget_get_state(m_drawingArea)], gint(m_skullX), gint(m_skullY));
+    cairo_translate(cr, m_skullX, m_skullY);
+
+    setClipMask(cr);
+	drawPotentials(cr);
+	drawElectrodes(cr);
+
+	//gdk_gc_set_clip_mask(m_drawingArea->style->fg_gc[gtk_widget_get_state(m_drawingArea)], nullptr); //unneeded
+    gdk_window_end_draw_frame(window,gdc);
+    cairo_region_destroy(cairoRegion);
 }
 
 void CTopographicMap2DView::resizeData()
 {
 	//window size
-	const size_t width  = m_drawingArea->allocation.width;
-	const size_t height = m_drawingArea->allocation.height;
+	const size_t width  = gtk_widget_get_allocated_width(m_drawingArea);
+	const size_t height = gtk_widget_get_allocated_height(m_drawingArea);
 
 	//retrieve text size
 	PangoLayout* text = gtk_widget_create_pango_layout(GTK_WIDGET(m_drawingArea), "0");
@@ -575,13 +633,9 @@ void CTopographicMap2DView::resizeData()
 
 		//skull outline and filled area start/end angles
 		m_skullOutlineStartAngle = 0;
-		m_skullOutlineEndAngle   = 360;
+		m_skullOutlineEndAngle   = 2 * M_PI;
 		m_skullFillStartAngle    = 0;
-		m_skullFillEndAngle      = 360;
-
-		//clip mask
-		m_clipmaskWidth  = m_skullDiameter;
-		m_clipmaskHeight = m_skullDiameter;
+		m_skullFillEndAngle      = 2 * M_PI;
 	}
 	else if (m_currentView == EView::Back)
 	{
@@ -597,23 +651,23 @@ void CTopographicMap2DView::resizeData()
 		m_skullY = (m_headWindowHeight - headMaxSize) / 2;
 
 		//skull outline and filled area start/end angles
-		m_skullOutlineStartAngle = -38;
-		m_skullOutlineEndAngle   = 180 - m_skullOutlineStartAngle;
-		m_skullFillStartAngle    = -30;
-		m_skullFillEndAngle      = 180 - m_skullFillStartAngle;
+		m_skullOutlineStartAngle = -Deg2Rad(38);
+		m_skullOutlineEndAngle   = M_PI - m_skullOutlineStartAngle;
+		m_skullFillStartAngle    = -Deg2Rad(30);
+		m_skullFillEndAngle      = M_PI - m_skullFillStartAngle;
 
 		const size_t skullCenterX = m_skullX + m_skullDiameter / 2;
 		const size_t skullCenterY = m_skullY + m_skullDiameter / 2;
 
-		m_skullOutlineLeftPointX  = skullCenterX + size_t(1.0 * m_skullDiameter / 2 * cosf(float(Deg2Rad(m_skullOutlineEndAngle))));
-		m_skullOutlineLeftPointY  = skullCenterY - size_t(1.0 * m_skullDiameter / 2 * sinf(float(Deg2Rad(m_skullOutlineEndAngle))));
-		m_skullOutlineRightPointX = skullCenterX + size_t(1.0 * m_skullDiameter / 2 * cosf(float(Deg2Rad(m_skullOutlineStartAngle))));
-		m_skullOutlineRightPointY = skullCenterY - size_t(1.0 * m_skullDiameter / 2 * sinf(float(Deg2Rad(m_skullOutlineStartAngle))));
+		m_skullOutlineLeftPointX  = skullCenterX + size_t(1.0 * m_skullDiameter / 2 * cosf(m_skullOutlineEndAngle));
+		m_skullOutlineLeftPointY  = skullCenterY - size_t(1.0 * m_skullDiameter / 2 * sinf(m_skullOutlineEndAngle));
+		m_skullOutlineRightPointX = skullCenterX + size_t(1.0 * m_skullDiameter / 2 * cosf(m_skullOutlineStartAngle));
+		m_skullOutlineRightPointY = skullCenterY - size_t(1.0 * m_skullDiameter / 2 * sinf(m_skullOutlineStartAngle));
 
-		m_skullFillLeftPointX   = skullCenterX + size_t(1.0 * m_skullDiameter / 2 * cosf(float(Deg2Rad(m_skullFillEndAngle))));
-		m_skullFillLeftPointY   = skullCenterY - size_t(1.0 * m_skullDiameter / 2 * sinf(float(Deg2Rad(m_skullFillEndAngle))));
-		m_skullFillRightPointX  = skullCenterX + size_t(1.0 * m_skullDiameter / 2 * cosf(float(Deg2Rad(m_skullFillStartAngle))));
-		m_skullFillRightPointY  = skullCenterY - size_t(1.0 * m_skullDiameter / 2 * sinf(float(Deg2Rad(m_skullFillStartAngle))));
+		m_skullFillLeftPointX   = skullCenterX + size_t(1.0 * m_skullDiameter / 2 * cosf(m_skullFillEndAngle));
+		m_skullFillLeftPointY   = skullCenterY - size_t(1.0 * m_skullDiameter / 2 * sinf(m_skullFillEndAngle));
+		m_skullFillRightPointX  = skullCenterX + size_t(1.0 * m_skullDiameter / 2 * cosf(m_skullFillStartAngle));
+		m_skullFillRightPointY  = skullCenterY - size_t(1.0 * m_skullDiameter / 2 * sinf(m_skullFillStartAngle));
 		m_skullFillBottomPointX = m_skullX + m_skullDiameter / 2;
 		m_skullFillBottomPointY = m_skullFillRightPointY;
 
@@ -622,10 +676,6 @@ void CTopographicMap2DView::resizeData()
 		m_leftNeckY  = m_skullOutlineLeftPointY + neckProtrudingHeight;
 		m_rightNeckX = m_skullOutlineRightPointX - size_t(0.025F * m_skullDiameter);
 		m_rightNeckY = m_leftNeckY;
-
-		//clip mask
-		m_clipmaskWidth  = m_skullDiameter;
-		m_clipmaskHeight = m_skullFillBottomPointY - m_skullY + 1;
 	}
 	else if (m_currentView == EView::Left || m_currentView == EView::Right)
 	{
@@ -645,17 +695,17 @@ void CTopographicMap2DView::resizeData()
 			//leftmost skull coordinate
 			m_skullX = m_noseTipX + noseProtrudingWidth;
 			//skull outline and filled area start/end angles
-			m_skullOutlineStartAngle = -41;
-			m_skullOutlineEndAngle   = 193;//194;
-			m_skullFillStartAngle    = -22;
-			m_skullFillEndAngle      = 188;
+			m_skullOutlineStartAngle = -Deg2Rad(41);
+			m_skullOutlineEndAngle   = Deg2Rad(193);//194;
+			m_skullFillStartAngle    = -Deg2Rad(22);
+			m_skullFillEndAngle      = Deg2Rad(188);
 
 			const size_t skullCenterX = m_skullX + m_skullDiameter / 2;
 			const size_t skullCenterY = m_skullY + m_skullDiameter / 2;
 
 			//nose top = head outline left boundary
-			m_noseTopX = skullCenterX + size_t(float(m_skullDiameter) / 2 * cosf(float(Deg2Rad(m_skullOutlineEndAngle))));
-			m_noseTopY = skullCenterY - size_t(float(m_skullDiameter) / 2 * sinf(float(Deg2Rad(m_skullOutlineEndAngle))));
+			m_noseTopX = skullCenterX + size_t(float(m_skullDiameter) / 2 * cosf(m_skullOutlineEndAngle));
+			m_noseTopY = skullCenterY - size_t(float(m_skullDiameter) / 2 * sinf(m_skullOutlineEndAngle));
 			//nose bump
 			m_noseBumpX = m_noseTipX;
 			m_noseBumpY = m_noseTopY + size_t(0.15F * m_skullDiameter);//size_t(0.179f * m_skullDiameter);
@@ -676,17 +726,17 @@ void CTopographicMap2DView::resizeData()
 			//leftmost skull coordinate
 			m_skullX = (m_headWindowWidth - headMaxSize) / 2;
 			//skull outline and filled area start/end angles
-			m_skullOutlineStartAngle = -13; //-14;
-			m_skullOutlineEndAngle   = 221;
-			m_skullFillStartAngle    = -8;
-			m_skullFillEndAngle      = 202;
+			m_skullOutlineStartAngle = -Deg2Rad(13); //-14;
+			m_skullOutlineEndAngle   = Deg2Rad(221);
+			m_skullFillStartAngle    = -Deg2Rad(8);
+			m_skullFillEndAngle      = Deg2Rad(202);
 
 			const size_t skullCenterX = m_skullX + m_skullDiameter / 2;
 			const size_t skullCenterY = m_skullY + m_skullDiameter / 2;
 
 			//nose top = head outline right boundary
-			m_noseTopX = skullCenterX + size_t(float(m_skullDiameter) / 2 * cosf(float(Deg2Rad(m_skullOutlineStartAngle))));
-			m_noseTopY = skullCenterY - size_t(float(m_skullDiameter) / 2 * sinf(float(Deg2Rad(m_skullOutlineStartAngle))));
+			m_noseTopX = skullCenterX + size_t(float(m_skullDiameter) / 2 * cosf(m_skullOutlineStartAngle));
+			m_noseTopY = skullCenterY - size_t(float(m_skullDiameter) / 2 * sinf(m_skullOutlineStartAngle));
 			//nose bump
 			m_noseBumpX = m_noseTipX;
 			m_noseBumpY = m_noseTopY + size_t(0.15F * m_skullDiameter);//size_t(0.179f * m_skullDiameter);
@@ -703,41 +753,27 @@ void CTopographicMap2DView::resizeData()
 
 		const size_t skullCenterX = m_skullX + m_skullDiameter / 2;
 		const size_t skullCenterY = m_skullY + m_skullDiameter / 2;
-		m_skullFillLeftPointX     = skullCenterX + size_t(float(m_skullDiameter) / 2 * cosf(float(Deg2Rad(m_skullFillEndAngle))));
-		m_skullFillLeftPointY     = skullCenterY - size_t(float(m_skullDiameter) / 2 * sinf(float(Deg2Rad(m_skullFillEndAngle))));
-		m_skullFillRightPointX    = skullCenterX + size_t(float(m_skullDiameter) / 2 * cosf(float(Deg2Rad(m_skullFillStartAngle))));
-		m_skullFillRightPointY    = skullCenterY - size_t(float(m_skullDiameter) / 2 * sinf(float(Deg2Rad(m_skullFillStartAngle))));
+		m_skullFillLeftPointX     = skullCenterX + size_t(float(m_skullDiameter) / 2 * cosf(m_skullFillEndAngle));
+		m_skullFillLeftPointY     = skullCenterY - size_t(float(m_skullDiameter) / 2 * sinf(m_skullFillEndAngle));
+		m_skullFillRightPointX    = skullCenterX + size_t(float(m_skullDiameter) / 2 * cosf(m_skullFillStartAngle));
+		m_skullFillRightPointY    = skullCenterY - size_t(float(m_skullDiameter) / 2 * sinf(m_skullFillStartAngle));
 
 		m_skullFillBottomPointX = m_skullX + m_skullDiameter / 2;
 		m_skullFillBottomPointY = m_skullY + size_t(0.684F * m_skullDiameter);
-
-		//clip mask
-		m_clipmaskWidth  = m_skullDiameter;
-		m_clipmaskHeight = m_skullFillBottomPointY - m_skullY + 1;
 	}
-
-	//free existing clipmask, if any
-	if (m_clipmaskGC != nullptr) { g_object_unref(m_clipmaskGC); }
-	if (m_clipmask != nullptr) { g_object_unref(m_clipmask); }
-
-	//allocate clipmask
-	m_clipmask   = gdk_pixmap_new(m_drawingArea->window, gint(m_clipmaskWidth), gint(m_clipmaskHeight), 1);
-	m_clipmaskGC = gdk_gc_new(GDK_DRAWABLE(m_clipmask));
-	gdk_gc_set_colormap(m_clipmaskGC, gdk_gc_get_colormap(m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)]));
-
-	//redraw it
-	redrawClipmask();
 
 	//allocate main pixmap
 	//TODO!
 
 	//allocate RGB pixmap
 
-	m_skullRGBBuffer.clear();
+	//m_skullRGBBuffer.clear();
+    g_object_unref(m_skullRGBBuffer);
 
 	//align lines on 32bit boundaries
-	m_rowStride = ((m_skullDiameter * 3) % 4 == 0) ? (m_skullDiameter * 3) : ((((m_skullDiameter * 3) >> 2) + 1) << 2);
-	m_skullRGBBuffer.resize(m_rowStride * m_skullDiameter);
+	const int m_rowStride = ((m_skullDiameter * 3) % 4 == 0) ? (m_skullDiameter * 3) : ((((m_skullDiameter * 3) >> 2) + 1) << 2);
+	//m_skullRGBBuffer.resize(m_rowStride * m_skullDiameter);
+    m_skullRGBBuffer = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 24, m_skullDiameter, m_rowStride);
 
 	//determine size of colored cells
 #if 1
@@ -772,43 +808,22 @@ void CTopographicMap2DView::resizeData()
 	m_needResize = false;
 }
 
-void CTopographicMap2DView::redrawClipmask()
+void CTopographicMap2DView::setClipMask(cairo_t* cr) const
 {
-	//clear clipmask by drawing a black rectangle
-	GdkColor black;
-	black.red = black.green = black.blue = 0;
-	gdk_gc_set_rgb_fg_color(m_clipmaskGC, &black);
-	gdk_draw_rectangle(m_clipmask, m_clipmaskGC, TRUE, 0, 0, gint(m_clipmaskWidth), gint(m_clipmaskHeight));
-
-	//draw visible circular region with a white filled arc
-	GdkColor white;
-	white.red = white.green = white.blue = 65535;
-	gdk_gc_set_rgb_fg_color(m_clipmaskGC, &white);
-	gdk_draw_arc(m_clipmask, m_clipmaskGC, TRUE, 0, 0, gint(m_skullDiameter), gint(m_skullDiameter), gint(64 * m_skullFillStartAngle),
-				 gint(64 * (m_skullFillEndAngle - m_skullFillStartAngle)));
+    cairo_arc(cr, m_skullX, m_skullY, m_skullDiameter, m_skullFillStartAngle, m_skullFillEndAngle);
 
 	//views other than top have an extra non-clipped area
 	if (m_currentView == EView::Left || m_currentView == EView::Right || m_currentView == EView::Back)
 	{
 		//draw polygon : { skullCenter, skullFillStartPoint, skullFillBottomPoint, skullFillEndPoint, skullCenter }
-		GdkPoint polygon[4];
-		polygon[0].x = gint(m_skullX + m_skullDiameter / 2 - m_skullX);
-		polygon[0].y = gint(m_skullY + m_skullDiameter / 2 - m_skullY - 2);
-		polygon[1].x = gint(m_skullFillRightPointX - m_skullX);
-		polygon[1].y = gint(m_skullFillRightPointY - m_skullY - 2);
-		polygon[2].x = gint(m_skullFillBottomPointX - m_skullX);
-		polygon[2].y = gint(m_skullFillBottomPointY - m_skullY - 2);
-		polygon[3].x = gint(m_skullFillLeftPointX - m_skullX);
-		polygon[3].y = gint(m_skullFillLeftPointY - m_skullY - 2);
-		gdk_draw_polygon(m_clipmask, m_clipmaskGC, TRUE, polygon, 4);
+        cairo_move_to(cr, m_skullX + m_skullDiameter / 2, m_skullY + m_skullDiameter / 2);
+        cairo_line_to(cr, m_skullFillRightPointX, m_skullFillRightPointY - 2);
+        cairo_line_to(cr, m_skullFillBottomPointX, m_skullFillBottomPointY - 2);
+        cairo_line_to(cr, m_skullFillLeftPointX, m_skullFillLeftPointY - 2);
+        cairo_close_path(cr);
 	}
 
-	//restore default black color
-	gdk_gc_set_rgb_fg_color(m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], &black);
-
-	//update visible region
-	if (m_visibleRegion != nullptr) { gdk_region_destroy(m_visibleRegion); }
-	m_visibleRegion = gdk_drawable_get_visible_region(GDK_DRAWABLE(m_clipmask));
+    cairo_clip(cr);
 }
 
 void CTopographicMap2DView::refreshPotentials()
@@ -836,13 +851,14 @@ void CTopographicMap2DView::refreshPotentials()
 	}
 }
 
-void CTopographicMap2DView::drawPotentials() const
+void CTopographicMap2DView::drawPotentials(cairo_t* cr) const
 {
-	gdk_draw_rgb_image(m_drawingArea->window, m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], gint(m_skullX), gint(m_skullY),
-					   gint(m_skullDiameter), gint(m_skullDiameter), GDK_RGB_DITHER_NONE, m_skullRGBBuffer.data(), gint(m_rowStride));
+	//gdk_draw_rgb_image(m_drawingArea->window, m_drawingArea->style->fg_gc[gtk_widget_get_state(m_drawingArea)], gint(m_skullX), gint(m_skullY),
+	//				   gint(m_skullDiameter), gint(m_skullDiameter), GDK_RGB_DITHER_NONE, m_skullRGBBuffer.data(), gint(m_rowStride));
+    gdk_cairo_set_source_pixbuf(cr, m_skullRGBBuffer, m_skullX, m_skullY);
 }
 
-void CTopographicMap2DView::drawElectrodes() const
+void CTopographicMap2DView::drawElectrodes(cairo_t* cr) const
 {
 	if (!m_electrodesToggledOn) { return; }
 
@@ -870,8 +886,12 @@ void CTopographicMap2DView::drawElectrodes() const
 
 	//set electrode ring thickness
 	const gint electrodeRingThickness = 1;
-	gdk_gc_set_line_attributes(m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], electrodeRingThickness, GDK_LINE_SOLID, GDK_CAP_BUTT,
-							   GDK_JOIN_BEVEL);
+	//gdk_gc_set_line_attributes(m_drawingArea->style->fg_gc[gtk_widget_get_state(m_drawingArea)], electrodeRingThickness, GDK_LINE_SOLID, GDK_CAP_BUTT,
+	//						   GDK_JOIN_BEVEL);
+    cairo_set_line_width(cr, electrodeRingThickness);
+    cairo_set_dash(cr, nullptr, 0, 0);
+    cairo_set_line_cap(cr, CAIRO_LINE_CAP_BUTT); // Is this necessary ?
+    cairo_set_line_join(cr, CAIRO_LINE_JOIN_BEVEL);
 
 	//electrode label
 	CString electrodeLabel;
@@ -885,43 +905,56 @@ void CTopographicMap2DView::drawElectrodes() const
 
 	for (size_t i = 0; i < nChannel; ++i)
 	{
-		if (!getChannel2DPosition(i, channelX, channelY)) { continue; }
+		if (!getChannel2DPosition(i, channelX, channelY)) continue;
 
 #ifdef INTERPOLATE_AT_CHANNEL_LOCATION
 				//disk colored according to value interpolated at this channel location
-				gdk_gc_set_rgb_fg_color(m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], &PALETTE[m_sampleValues[i]]);
+				//gdk_gc_set_rgb_fg_color(m_drawingArea->style->fg_gc[gtk_widget_get_state(m_drawingArea)], &PALETTE[m_sampleValues[i]]);
+                gdk_cairo_set_source_color(cr, &PALETTE[m_sampleValues[i]]);
 #else
 		//fill ring with white
-		gdk_gc_set_rgb_fg_color(m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], &white);
+		//gdk_gc_set_rgb_fg_color(m_drawingArea->style->fg_gc[gtk_widget_get_state(m_drawingArea)], &white);
+        gdk_cairo_set_source_color(cr, &white);
 #endif
-		gdk_draw_arc(m_drawingArea->window, m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], TRUE,
-					 channelX - electrodeRingSize / 2, channelY - electrodeRingSize / 2, electrodeRingSize, electrodeRingSize, 0, 64 * 360);
+		//gdk_draw_arc(m_drawingArea->window, m_drawingArea->style->fg_gc[gtk_widget_get_state(m_drawingArea)], TRUE,
+		//			 channelX - electrodeRingSize / 2, channelY - electrodeRingSize / 2, electrodeRingSize, electrodeRingSize, 0, 64 * 360);
+        cairo_arc(cr, channelX - electrodeRingSize / 2, channelY - electrodeRingSize / 2, electrodeRingSize, 0, 2 * M_PI);
+        cairo_fill_preserve(cr);
+        cairo_stroke(cr);
 
 		//ring centered on channel location
-		gdk_gc_set_rgb_fg_color(m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], &black);
+		//gdk_gc_set_rgb_fg_color(m_drawingArea->style->fg_gc[gtk_widget_get_state(m_drawingArea)], &black);
+        gdk_cairo_set_source_color(cr, &black);
 
-		gdk_draw_arc(m_drawingArea->window,
-					 m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], FALSE,
-					 channelX - electrodeRingSize / 2, channelY - electrodeRingSize / 2,
-					 electrodeRingSize, electrodeRingSize, 0, 64 * 360);
+		//gdk_draw_arc(m_drawingArea->window,
+		//			 m_drawingArea->style->fg_gc[gtk_widget_get_state(m_drawingArea)], FALSE,
+		//			 channelX - electrodeRingSize / 2, channelY - electrodeRingSize / 2,
+		//			 electrodeRingSize, electrodeRingSize, 0, 64 * 360);
+        cairo_arc(cr, channelX - electrodeRingSize / 2, channelY - electrodeRingSize / 2, electrodeRingSize, 0, 2 * M_PI);
+        cairo_stroke(cr);
 
 		//channel label
-		gdk_gc_set_rgb_fg_color(m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], &black/*&white*/);
+		//gdk_gc_set_rgb_fg_color(m_drawingArea->style->fg_gc[gtk_widget_get_state(m_drawingArea)], &black/*&white*/);
+        gdk_cairo_set_source_color(cr, &black/*&white*/); // Unneeded ?
 
 		m_mapDatabase.getChannelLabel(i, electrodeLabel);
 		pango_layout_set_text(electrodeLabelLayout, electrodeLabel, int(strlen(electrodeLabel)));
 		pango_layout_get_pixel_size(electrodeLabelLayout, &textWidth, nullptr);
-		gdk_draw_layout(m_drawingArea->window, m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)],
-						channelX - textWidth / 2,
-						channelY - electrodeRingSize / 2 - textHeight - 5,
-						electrodeLabelLayout);
+		//gdk_draw_layout(m_drawingArea->window, m_drawingArea->style->fg_gc[gtk_widget_get_state(m_drawingArea)],
+		//				channelX - textWidth / 2,
+		//				channelY - electrodeRingSize / 2 - textHeight - 5,
+		//				electrodeLabelLayout);
+        cairo_move_to(cr, channelX - textWidth / 2, channelY - electrodeRingSize / 2 - textHeight - 5);
+        pango_cairo_show_layout(cr, electrodeLabelLayout);
 	}
 
 	//restore default line thickness
-	gdk_gc_set_line_attributes(m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
+	//gdk_gc_set_line_attributes(m_drawingArea->style->fg_gc[gtk_widget_get_state(m_drawingArea)], 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
+    cairo_set_line_width(cr, 1); // unneeded ?
 
 	//restore default black color
-	gdk_gc_set_rgb_fg_color(m_drawingArea->style->fg_gc[GTK_WIDGET_STATE(m_drawingArea)], &black);
+	//gdk_gc_set_rgb_fg_color(m_drawingArea->style->fg_gc[gtk_widget_get_state(m_drawingArea)], &black);
+    gdk_cairo_set_source_color(cr, &black);
 
 	//delete pango layout
 	g_object_unref(electrodeLabelLayout);
@@ -1014,35 +1047,34 @@ bool CTopographicMap2DView::getChannel2DPosition(const size_t index, gint& x, gi
 			compute2DCoordinates(theta, phi, skullCenterX, skullCenterY, x, y);
 		}
 	}
-
-	//make sure electrode is in the non clipped area of the display
-	//TODO : perform this test once per view only!
-	return gdk_region_point_in(m_visibleRegion, x - int(m_skullX), y - int(m_skullY)) != 0;
+    return true;
 }
 
 void CTopographicMap2DView::drawBoxToBuffer(const size_t x, const size_t y, const size_t width, const size_t height,
 											const uint8_t red, const uint8_t green, const uint8_t blue) const
 {
+    const int rowstride = gdk_pixbuf_get_rowstride(m_skullRGBBuffer);
 #ifdef TARGET_OS_Windows
 #ifndef NDEBUG
-	//m_skullRGBBuffer == m_rowStride*m_skullDiameter
+	//m_skullRGBBuffer == rowstride*m_skullDiameter
 	assert(x < m_skullDiameter);
 	assert(y < m_skullDiameter);
-	assert((m_rowStride * y) + (x * 3) + 2 < m_rowStride * m_skullDiameter);
+	assert((rowstride * y) + (x * 3) + 2 < rowstride * m_skullDiameter);
 #endif
 #endif
-	guchar* lineBase = const_cast<guchar*>(m_skullRGBBuffer.data()) + (m_rowStride * y) + (x * 3);
+	//guchar* lineBase = const_cast<guchar*>(m_skullRGBBuffer.data()) + (m_rowStride * y) + (x * 3);
+    guchar* pixels = gdk_pixbuf_get_pixels(m_skullRGBBuffer)+ (rowstride * y) + (x * 3);
 
 	for (size_t j = 0; j < height; ++j)
 	{
 		for (size_t i = 0; i < (width * 3); i += 3)
 		{
-			*(lineBase + i)     = red;
-			*(lineBase + i + 1) = green;
-			*(lineBase + i + 2) = blue;
+			*(pixels + i)     = red;
+			*(pixels + i + 1) = green;
+			*(pixels + i + 2) = blue;
 		}
 
-		lineBase += (m_rowStride);
+		pixels += rowstride;
 	}
 }
 
@@ -1092,100 +1124,96 @@ size_t CTopographicMap2DView::computeSamplesNormalizedCoordinates(const bool all
 			if ((closestX - skullCenterX) * (closestX - skullCenterX) +
 				(closestY - skullCenterY) * (closestY - skullCenterY) <= (float(m_skullDiameter * m_skullDiameter) / 4.F))
 			{
-				//ensure this point is in the non clipped skull area
 				//FIXME : the previous test remains necessary to get rid of all points lying outside "skull sphere"... Bug in gdk_region_point_in()?
-				if (gdk_region_point_in(m_visibleRegion, int(closestX - m_skullX), int(closestY - m_skullY)))
-				{
-					if (all)
-					{
-						m_sample2DCoordinates[curSample].first  = size_t(j * m_cellSize);
-						m_sample2DCoordinates[curSample].second = size_t(i * m_cellSize);
+                if (all)
+                {
+                    m_sample2DCoordinates[curSample].first  = size_t(j * m_cellSize);
+                    m_sample2DCoordinates[curSample].second = size_t(i * m_cellSize);
 
-						//compute normalized coordinates to be fed to spherical spline algorithm
-						//----------------------------------------------------------------------
-						const size_t baseIndex = 3 * curSample;
+                    //compute normalized coordinates to be fed to spherical spline algorithm
+                    //----------------------------------------------------------------------
+                    const size_t baseIndex = 3 * curSample;
 
-						//normalized X, Y coords in (X, Y) projection plane
-						const float x = (closestX - skullCenterX) / (m_skullDiameter / 2.F);
-						const float y = -(closestY - skullCenterY) / (m_skullDiameter / 2.F); //y axis down in 2D but up in 3D convention
+                    //normalized X, Y coords in (X, Y) projection plane
+                    const float x = (closestX - skullCenterX) / (m_skullDiameter / 2.F);
+                    const float y = -(closestY - skullCenterY) / (m_skullDiameter / 2.F); //y axis down in 2D but up in 3D convention
 
-						if (m_currentProjection == EProjection::Axial)
-						{
-							if (m_currentView == EView::Top)
-							{
-								*(buffer + baseIndex)     = x;
-								*(buffer + baseIndex + 1) = y;
-								//z = sqrt(1-x*x-y*y)
-								const float squareXYSum   = x * x + y * y;
-								*(buffer + baseIndex + 2) = (squareXYSum >= 1) ? 0 : sqrt(1 - squareXYSum);
-							}
-							else if (m_currentView == EView::Back)
-							{
-								*(buffer + baseIndex)     = x;
-								*(buffer + baseIndex + 2) = y;
-								//y = sqrt(1-x*x-z*z)
-								const float squareXYSum   = x * x + y * y;
-								*(buffer + baseIndex + 1) = (squareXYSum >= 1) ? 0 : sqrt(1 - squareXYSum);
-							}
-							else if (m_currentView == EView::Left)
-							{
-								*(buffer + baseIndex + 1) = -x;
-								*(buffer + baseIndex + 2) = y;
-								//x = sqrt(1-y*y-z*z)
-								const float squareXYSum = x * x + y * y;
-								*(buffer + baseIndex)   = (squareXYSum >= 1) ? 0 : sqrt(1 - squareXYSum);
-							}
-							else if (m_currentView == EView::Right)
-							{
-								*(buffer + baseIndex + 1) = x;
-								*(buffer + baseIndex + 2) = y;
-								//x = sqrt(1-y*y-z*z)
-								const float squareXYSum = x * x + y * y;
-								*(buffer + baseIndex)   = (squareXYSum >= 1) ? 0 : sqrt(1 - squareXYSum);
-							}
-						}
-						else //radial
-						{
-							//theta = (X,Y) arc length
-							const float theta         = float(M_PI / 2 * sqrtf(x * x + y * y));
-							const float scalingFactor = (theta <= 1e-3) ? 0 : (sinf(theta) / theta);
-							std::array<float, 3> sampleLocalCoordinates;
-							//x = sin(theta) / theta * X
-							sampleLocalCoordinates[0] = float(scalingFactor * x * (M_PI / 2));
-							//y = sin(theta) / theta * Y
-							sampleLocalCoordinates[1] = float(scalingFactor * y * (M_PI / 2));
-							//z = cos(theta)
-							sampleLocalCoordinates[2] = cosf(theta);
+                    if (m_currentProjection == EProjection::Axial)
+                    {
+                        if (m_currentView == EView::Top)
+                        {
+                            *(buffer + baseIndex)     = x;
+                            *(buffer + baseIndex + 1) = y;
+                            //z = sqrt(1-x*x-y*y)
+                            const float squareXYSum   = x * x + y * y;
+                            *(buffer + baseIndex + 2) = (squareXYSum >= 1) ? 0 : sqrt(1 - squareXYSum);
+                        }
+                        else if (m_currentView == EView::Back)
+                        {
+                            *(buffer + baseIndex)     = x;
+                            *(buffer + baseIndex + 2) = y;
+                            //y = sqrt(1-x*x-z*z)
+                            const float squareXYSum   = x * x + y * y;
+                            *(buffer + baseIndex + 1) = (squareXYSum >= 1) ? 0 : sqrt(1 - squareXYSum);
+                        }
+                        else if (m_currentView == EView::Left)
+                        {
+                            *(buffer + baseIndex + 1) = -x;
+                            *(buffer + baseIndex + 2) = y;
+                            //x = sqrt(1-y*y-z*z)
+                            const float squareXYSum = x * x + y * y;
+                            *(buffer + baseIndex)   = (squareXYSum >= 1) ? 0 : sqrt(1 - squareXYSum);
+                        }
+                        else if (m_currentView == EView::Right)
+                        {
+                            *(buffer + baseIndex + 1) = x;
+                            *(buffer + baseIndex + 2) = y;
+                            //x = sqrt(1-y*y-z*z)
+                            const float squareXYSum = x * x + y * y;
+                            *(buffer + baseIndex)   = (squareXYSum >= 1) ? 0 : sqrt(1 - squareXYSum);
+                        }
+                    }
+                    else //radial
+                    {
+                        //theta = (X,Y) arc length
+                        const float theta         = float(M_PI / 2 * sqrtf(x * x + y * y));
+                        const float scalingFactor = (theta <= 1e-3) ? 0 : (sinf(theta) / theta);
+                        std::array<float, 3> sampleLocalCoordinates;
+                        //x = sin(theta) / theta * X
+                        sampleLocalCoordinates[0] = float(scalingFactor * x * (M_PI / 2));
+                        //y = sin(theta) / theta * Y
+                        sampleLocalCoordinates[1] = float(scalingFactor * y * (M_PI / 2));
+                        //z = cos(theta)
+                        sampleLocalCoordinates[2] = cosf(theta);
 
-							if (m_currentView == EView::Top)
-							{
-								*(buffer + baseIndex)     = sampleLocalCoordinates[0];
-								*(buffer + baseIndex + 1) = sampleLocalCoordinates[1];
-								*(buffer + baseIndex + 2) = sampleLocalCoordinates[2];
-							}
-							else if (m_currentView == EView::Back)
-							{
-								*(buffer + baseIndex)     = sampleLocalCoordinates[0];
-								*(buffer + baseIndex + 1) = -sampleLocalCoordinates[2];
-								*(buffer + baseIndex + 2) = sampleLocalCoordinates[1];
-							}
-							else if (m_currentView == EView::Left)
-							{
-								*(buffer + baseIndex)     = -sampleLocalCoordinates[2];
-								*(buffer + baseIndex + 1) = -sampleLocalCoordinates[0];
-								*(buffer + baseIndex + 2) = sampleLocalCoordinates[1];
-							}
-							else if (m_currentView == EView::Right)
-							{
-								*(buffer + baseIndex)     = sampleLocalCoordinates[2];
-								*(buffer + baseIndex + 1) = sampleLocalCoordinates[0];
-								*(buffer + baseIndex + 2) = sampleLocalCoordinates[1];
-							}
-						}
-					}
+                        if (m_currentView == EView::Top)
+                        {
+                            *(buffer + baseIndex)     = sampleLocalCoordinates[0];
+                            *(buffer + baseIndex + 1) = sampleLocalCoordinates[1];
+                            *(buffer + baseIndex + 2) = sampleLocalCoordinates[2];
+                        }
+                        else if (m_currentView == EView::Back)
+                        {
+                            *(buffer + baseIndex)     = sampleLocalCoordinates[0];
+                            *(buffer + baseIndex + 1) = -sampleLocalCoordinates[2];
+                            *(buffer + baseIndex + 2) = sampleLocalCoordinates[1];
+                        }
+                        else if (m_currentView == EView::Left)
+                        {
+                            *(buffer + baseIndex)     = -sampleLocalCoordinates[2];
+                            *(buffer + baseIndex + 1) = -sampleLocalCoordinates[0];
+                            *(buffer + baseIndex + 2) = sampleLocalCoordinates[1];
+                        }
+                        else if (m_currentView == EView::Right)
+                        {
+                            *(buffer + baseIndex)     = sampleLocalCoordinates[2];
+                            *(buffer + baseIndex + 1) = sampleLocalCoordinates[0];
+                            *(buffer + baseIndex + 2) = sampleLocalCoordinates[1];
+                        }
+                    }
+                }
 
-					curSample++;
-				} //point in non clipped area
+                curSample++;
 			} //point in "skull sphere"
 			curX += m_cellSize;
 		}

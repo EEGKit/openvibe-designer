@@ -39,7 +39,7 @@ bool CSettingEditorDialog::run()
 	{
 		if (!m_kernelCtx.getTypeManager().isStream(currentTypeID.first))
 		{
-			gtk_combo_box_append_text(GTK_COMBO_BOX(m_type), currentTypeID.second.toASCIIString());
+			gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(m_type), currentTypeID.second.toASCIIString());
 			if (currentTypeID.first == settingType) { active = gint(nSettings); }
 			m_settingTypes[currentTypeID.second.toASCIIString()] = currentTypeID.first;
 			nSettings++;
@@ -55,7 +55,7 @@ bool CSettingEditorDialog::run()
 		const gint result = gtk_dialog_run(GTK_DIALOG(dialog));
 		if (result == GTK_RESPONSE_APPLY)
 		{
-			char* activeText = gtk_combo_box_get_active_text(GTK_COMBO_BOX(m_type));
+			char* activeText = gtk_combo_box_text_get_active_text(GTK_COMBO_BOX_TEXT(m_type));
 			if (activeText)
 			{
 				settingType = m_settingTypes[activeText];
@@ -86,7 +86,7 @@ bool CSettingEditorDialog::run()
 void CSettingEditorDialog::typeChangedCB()
 
 {
-	const CIdentifier settingType = m_settingTypes[gtk_combo_box_get_active_text(GTK_COMBO_BOX(m_type))];
+	const CIdentifier settingType = m_settingTypes[gtk_combo_box_text_get_active_text(GTK_COMBO_BOX_TEXT(m_type))];
 
 	CString name             = m_helper.getSettingWidgetName(settingType);
 	GtkBuilder* builderDummy = gtk_builder_new(); // glade_xml_new(m_guiFilename.toASCIIString(), name, nullptr);
@@ -96,7 +96,7 @@ void CSettingEditorDialog::typeChangedCB()
 	if (m_defaultValue) { gtk_container_remove(GTK_CONTAINER(m_table), m_defaultValue); }
 	m_defaultValue = GTK_WIDGET(gtk_builder_get_object(builderDummy, name.toASCIIString()));
 	gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(m_defaultValue)), m_defaultValue);
-	gtk_table_attach(GTK_TABLE(m_table), m_defaultValue, 1, 2, 2, 3, GtkAttachOptions(GTK_FILL | GTK_EXPAND), GtkAttachOptions(GTK_FILL | GTK_EXPAND), 0, 0);
+	gtk_grid_attach(GTK_GRID(m_table), m_defaultValue, 1, 2, 1, 1);
 	g_object_unref(builderDummy);
 
 	CString value;

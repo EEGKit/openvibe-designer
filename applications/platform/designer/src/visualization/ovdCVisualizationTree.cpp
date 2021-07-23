@@ -739,7 +739,7 @@ bool CVisualizationTree::loadVisualizationWidget(IVisualizationWidget* widget, G
 		const IBoxAlgorithmDesc* boxDesc = dynamic_cast<const IBoxAlgorithmDesc*>(m_kernelCtx
 																				  .getPluginManager().getPluginObjectDescCreating(
 																					  box->getAlgorithmClassIdentifier()));
-		if (boxDesc) { stockIconString = boxDesc->getStockItemName(); }
+		if (boxDesc) { stockIconString = boxDesc->getIconName(); }
 	}
 
 	//set tree node fields

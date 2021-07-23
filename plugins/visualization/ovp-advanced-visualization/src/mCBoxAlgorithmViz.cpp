@@ -473,7 +473,9 @@ void CBoxAlgorithmViz::preDraw()
 	if (m_TextureID == 0U) { m_TextureID = m_GtkGLWidget.createTexture(m_ColorGradient.toASCIIString()); }
 	glBindTexture(GL_TEXTURE_1D, m_TextureID);
 
-	m_RendererCtx->setAspect(m_Viewport->allocation.width * 1.F / m_Viewport->allocation.height);
+    const int w = gtk_widget_get_allocated_width(m_Viewport);
+    const int h = gtk_widget_get_allocated_height(m_Viewport);
+	m_RendererCtx->setAspect(w * 1.F / h);
 }
 
 void CBoxAlgorithmViz::postDraw()

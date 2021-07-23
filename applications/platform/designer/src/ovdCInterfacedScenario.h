@@ -34,7 +34,7 @@ public:
 	virtual void redraw(Kernel::IComment& comment);
 	virtual void redraw(Kernel::ILink& link);
 	virtual void updateScenarioLabel();
-	size_t pickInterfacedObject(int x, int y) const;
+	size_t pickInterfacedObject(int x, int y);
 	bool pickInterfacedObject(int x, int y, int sizeX, int sizeY);
 
 	void undoCB(bool manageModifiedStatusFlag = true);
@@ -66,7 +66,7 @@ public:
 	void redrawScenarioInputSettings();
 	void redrawScenarioOutputSettings();
 
-	void scenarioDrawingAreaExposeCB(GdkEventExpose* event);
+	void scenarioDrawingAreaDrawCB(cairo_t* cr);
 	void scenarioDrawingAreaDragDataReceivedCB(GdkDragContext* dc, gint x, gint y, GtkSelectionData* selectionData, guint info, guint t);
 	void scenarioDrawingAreaMotionNotifyCB(GtkWidget* widget, GdkEventMotion* event);
 	void scenarioDrawingAreaButtonPressedCB(GtkWidget* widget, GdkEventButton* event);
@@ -196,6 +196,105 @@ public:
 	std::string m_SerializedSettingGUIXML;
 
 private:
+
+    struct GtkCairoContext {
+        GtkCairoContext(GtkWidget* widget) {
+            window = gtk_widget_get_window(widget);
+            region = cairo_region_create();
+            gdc = gdk_window_begin_draw_frame(window,region);
+            cr = gdk_drawing_context_get_cairo_context(gdc);
+        }
+
+        ~GtkCairoContext() {
+            gdk_window_end_draw_frame(window,gdc);
+            cairo_region_destroy(region);
+        }
+
+        operator cairo_t*() { return cr; }
+
+        GdkWindow*         window;
+        cairo_region_t*    region;
+        GdkDrawingContext* gdc;
+        cairo_t*           cr;
+    };
+
+    struct CairoStencil {
+        CairoStencil() { }
+
+        ~CairoStencil() { destroy(); }
+
+        operator cairo_surface_t*() { return surface; }
+        operator cairo_t*()         { return cr;      }
+
+        void reset_index() { ind = 0; }
+
+        bool is_valid() const { return surface!=nullptr; }
+
+        void create(const int x,const int y) {
+            destroy();
+            surface = cairo_image_surface_create(CAIRO_FORMAT_RGB24, x, y);
+            cr = cairo_create(surface);
+            cairo_set_antialias(cr, CAIRO_ANTIALIAS_NONE); // Disable antialiasing
+        }
+
+        void destroy() {
+            if (is_valid()) {
+                cairo_destroy(cr);
+                cairo_surface_destroy(surface);
+                surface = nullptr;
+                cr      = nullptr;
+            }
+        }
+
+        // Create a new unique index and map it to a unique color.
+
+        size_t new_index() {
+            ++ind;
+            const double red   = static_cast<double>((ind&0xff0000)>>16)/255;
+            const double green = static_cast<double>((ind&0x00ff00)>>8)/255;
+            const double blue  = static_cast<double>(ind&0x0000ff)/255;
+            cairo_set_source_rgb(cr, red, green, blue);
+            return ind;
+        }
+
+        size_t get_index(const int x,const int y) {
+            if (!is_valid()) 
+                return invalid;
+
+            const int maxX = cairo_image_surface_get_width(surface);
+            const int maxY = cairo_image_surface_get_height(surface);
+
+            if (x < 0 || y < 0 || x >= maxX || y >= maxY)
+                return invalid;
+
+            cairo_surface_flush(surface);
+            const unsigned stride = cairo_image_surface_get_stride(surface);
+            const unsigned char* data = cairo_image_surface_get_data(surface);
+            if (data==nullptr)
+                return invalid;
+
+            const unsigned char* pixel = data+y*stride + x*4;
+            return (pixel[0]) | (pixel[1] << 8) | (pixel[2] << 16);
+        }
+
+        template <size_t N>
+        void draw_polygon(const std::array<GdkPoint, N>& points,const bool fill=true) {
+            cairo_new_sub_path(cr);
+            cairo_move_to(cr, points[0].x, points[0].y);
+            for (unsigned i=1; i<N; ++i)
+                cairo_line_to(cr, points[i].x, points[i].y);
+            cairo_close_path(cr);
+            if (fill)
+                cairo_fill(cr);
+        }
+
+        static constexpr size_t invalid = 0xffffffff;
+
+        size_t           ind     = 0;
+        cairo_surface_t* surface = nullptr;
+        cairo_t*         cr      = nullptr;
+    };
+
 	const Kernel::IKernelContext& m_kernelCtx;
 	GtkNotebook& m_notebook;
 	bool m_designerVisualizationToggled         = false;
@@ -205,7 +304,7 @@ private:
 	GtkWidget* m_notebookPageContent            = nullptr;
 	GtkViewport* m_scenarioViewport             = nullptr;
 	GtkDrawingArea* m_scenarioDrawingArea       = nullptr;
-	GdkPixmap* m_stencilBuffer                  = nullptr;
+	CairoStencil m_stencil_cr;
 	GdkPixbuf* m_mensiaLogoPixbuf               = nullptr;
 
 	bool m_buttonPressed  = false;
@@ -231,7 +330,6 @@ private:
 	size_t m_nComment = 0;
 	size_t m_nLink    = 0;
 
-	size_t m_interfacedObjectId = 0;
 	std::map<size_t, CInterfacedObject> m_interfacedObjects;
 	CInterfacedObject m_currentObject;
 
@@ -254,10 +352,10 @@ private:
 	std::vector<CBoxConfigurationDialog*> m_boxConfigDialogs;
 
 	typedef void (*menu_cb_function_t)(GtkMenuItem*, box_ctx_menu_cb_t*);
-	GtkImageMenuItem* addNewImageMenuItemWithCBGeneric(GtkMenu* menu, const char* icon, const char* label, menu_cb_function_t cb,
-													   Kernel::IBox* box, EContextMenu command, const size_t index, const size_t index2);
+	GtkWidget* addNewImageMenuItemWithCBGeneric(GtkMenu* menu, const char* icon, const char* label, menu_cb_function_t cb,
+											    Kernel::IBox* box, EContextMenu command, const size_t index, const size_t index2);
 
-	GtkImageMenuItem* addNewImageMenuItemWithCB(GtkMenu* menu, const char* icon, const char* label, const menu_cb_function_t cb,
+	GtkWidget* addNewImageMenuItemWithCB(GtkMenu* menu, const char* icon, const char* label, const menu_cb_function_t cb,
 												Kernel::IBox* box, const EContextMenu command, const size_t index)
 	{
 		return addNewImageMenuItemWithCBGeneric(menu, icon, label, cb, box, command, index, 0);

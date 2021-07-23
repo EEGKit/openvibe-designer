@@ -66,7 +66,7 @@ public:
 
 	CString getCategory() const override { return CString("Examples/Basic"); }
 	CString getVersion() const override { return CString("1.0"); }
-	CString getStockItemName() const override { return CString(""); }
+	CString getIconName() const override { return CString(""); }
 
 	CIdentifier getCreatedClass() const override { return OVP_ClassId_BoxAlgorithm_ModifiableSettings; }
 	IPluginObject* create() override { return new CBoxAlgorithmModifiableSettings; }

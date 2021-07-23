@@ -28,7 +28,8 @@ using namespace /*OpenViBE::*/Plugins;
 using namespace /*OpenViBE::*/Designer;
 using namespace std;
 
-map<size_t, GdkColor> gColors;
+
+map<size_t, GdkRGBA> gColors;
 
 class CPluginObjectDescEnum
 {
@@ -162,10 +163,10 @@ static void InsertPluginObjectDescToGtkTreeStore(const IKernelContext& ctx, map<
 	{
 		const IPluginObjectDesc* p = pod.second;
 
-		CString stockItemName;
+		CString iconName;
 
 		const auto* desc = dynamic_cast<const IBoxAlgorithmDesc*>(p);
-		if (desc != nullptr) { stockItemName = desc->getStockItemName(); }
+		if (desc != nullptr) { iconName = desc->getIconName(); }
 
 		bool shouldShow = true;
 
@@ -179,8 +180,7 @@ static void InsertPluginObjectDescToGtkTreeStore(const IKernelContext& ctx, map<
 
 		if (shouldShow)
 		{
-			GtkStockItem stockItem;
-			if (gtk_stock_lookup(stockItemName, &stockItem) == 0) { stockItemName = GTK_STOCK_NEW; }
+            if (iconName==CString("")) { iconName = GTK_STOCK_NEW; }
 
 			// Splits the plugin category
 			vector<string> categories;
@@ -301,7 +301,7 @@ static void InsertPluginObjectDescToGtkTreeStore(const IKernelContext& ctx, map<
 			gtk_tree_store_set(GTK_TREE_STORE(treeStore), iterChild, Resource_StringName, str.c_str(),
 							   Resource_StringShortDescription, static_cast<const char*>(p->getShortDescription()),
 							   Resource_StringIdentifier, static_cast<const char*>(boxAlgorithmDesc.c_str()),
-							   Resource_StringStockIcon, static_cast<const char*>(stockItemName), Resource_StringColor, textColor.c_str(),
+							   Resource_StringStockIcon, static_cast<const char*>(iconName), Resource_StringColor, textColor.c_str(),
 							   Resource_StringFont, textFont.c_str(), Resource_BooleanIsPlugin, gboolean(TRUE),
 							   Resource_BackGroundColor, static_cast<const char*>(bgColor.c_str()), -1);
 		}
@@ -550,45 +550,39 @@ void user_info(char** argv, ILogManager* logManager)
 int go(int argc, char** argv)
 {
 	bool errorWhileLoadingScenario = false, playRequested = false;
-	/*
-	{ 0,     0,     0,     0 },
-	{ 0, 16383, 16383, 16383 },
-	{ 0, 32767, 32767, 32767 },
-	{ 0, 49151, 49151, 49151 },
-	{ 0, 65535, 65535, 65535 },
-	*/
-#define GDK_COLOR_SET(c, r, g, b) { (c).pixel=0; (c).red=r; (c).green=g; (c).blue=b; }
-	GDK_COLOR_SET(gColors[Color_BackgroundPlayerStarted], 32767, 32767, 32767);
-	GDK_COLOR_SET(gColors[Color_BoxBackgroundSelected], 65535, 65535, 49151);
-	GDK_COLOR_SET(gColors[Color_BoxBackgroundMissing], 49151, 32767, 32767);
-	GDK_COLOR_SET(gColors[Color_BoxBackgroundDisabled], 46767, 46767, 59151);
-	GDK_COLOR_SET(gColors[Color_BoxBackgroundDeprecated], 65535, 50000, 32767);
-	GDK_COLOR_SET(gColors[Color_BoxBackgroundOutdated], 57343, 57343, 57343);
-	GDK_COLOR_SET(gColors[Color_BoxBackgroundMetabox], 58343, 65535, 62343);
-	GDK_COLOR_SET(gColors[Color_BoxBackgroundUnstable], 49151, 49151, 49151);
-	GDK_COLOR_SET(gColors[Color_BoxBackground], 65535, 65535, 65535);
-	GDK_COLOR_SET(gColors[Color_BoxBorderSelected], 0, 0, 0);
-	GDK_COLOR_SET(gColors[Color_BoxBorder], 0, 0, 0);
-	GDK_COLOR_SET(gColors[Color_BoxInputBackground], 65535, 49151, 32767);
-	GDK_COLOR_SET(gColors[Color_BoxInputBorder], 16383, 16383, 16383);
-	GDK_COLOR_SET(gColors[Color_BoxOutputBackground], 32767, 65535, 49151);
-	GDK_COLOR_SET(gColors[Color_BoxOutputBorder], 16383, 16383, 16383);
-	GDK_COLOR_SET(gColors[Color_BoxSettingBackground], 49151, 32767, 65535);
-	GDK_COLOR_SET(gColors[Color_BoxSettingBorder], 16383, 16383, 16383);
 
-	GDK_COLOR_SET(gColors[Color_CommentBackground], 65535, 65535, 57343);
-	GDK_COLOR_SET(gColors[Color_CommentBackgroundSelected], 65535, 65535, 49151);
-	GDK_COLOR_SET(gColors[Color_CommentBorder], 32767, 32767, 32767);
-	GDK_COLOR_SET(gColors[Color_CommentBorderSelected], 32767, 32767, 32767);
+    // Almost duplicated in extras (twice !) TODO...
+	gColors[Color_BackgroundPlayerStarted]   = {   0.5,     0.5,    0.5, 1.0};
+	gColors[Color_BoxBackgroundSelected]     = {   1.0,     1.0,   0.75, 1.0 };
+	gColors[Color_BoxBackgroundMissing]      = {   0.75,    0.5,    0.5, 1.0 };
+	gColors[Color_BoxBackgroundDisabled]     = { 0.7136, 0.7136, 0.9026, 1.0 };
+	gColors[Color_BoxBackgroundDeprecated]   = {    1.0,  0.763,    0.5, 1.0 };
+	gColors[Color_BoxBackgroundOutdated]     = {  0.875,  0.875,  0.875, 1.0 };
+	gColors[Color_BoxBackgroundMetabox]      = {   0.89,    1.0,   0.95, 1.0 };
+	gColors[Color_BoxBackgroundUnstable]     = {   0.75,   0.75,   0.75, 1.0 };
+	gColors[Color_BoxBackground]             = {    1.0,    1.0,    1.0, 1.0 };
+	gColors[Color_BoxBorderSelected]         = {    0.0,    0.0,    0.0, 1.0 };
+	gColors[Color_BoxBorder]                 = {    0.0,    0.0,    0.0, 1.0 };
+	gColors[Color_BoxInputBackground]        = {    1.0,   0.75,    0.5, 1.0 };
+	gColors[Color_BoxInputBorder]            = {   0.25,   0.25,   0.25, 1.0 };
+	gColors[Color_BoxOutputBackground]       = {    0.5,    1.0,   0.75, 1.0 };
+	gColors[Color_BoxOutputBorder]           = {   0.25,   0.25,   0.25, 1.0 };
+	gColors[Color_BoxSettingBackground]      = {   0.75,    0.5,    1.0, 1.0 };
+	gColors[Color_BoxSettingBorder]          = {   0.25,   0.25,   0.25, 1.0 };
 
-	GDK_COLOR_SET(gColors[Color_Link], 0, 0, 0);
-	GDK_COLOR_SET(gColors[Color_LinkSelected], 49151, 49151, 16383);
-	GDK_COLOR_SET(gColors[Color_LinkUpCast], 32767, 16383, 16383);
-	GDK_COLOR_SET(gColors[Color_LinkDownCast], 16383, 32767, 16383);
-	GDK_COLOR_SET(gColors[Color_LinkInvalid], 49151, 16383, 16383);
-	GDK_COLOR_SET(gColors[Color_SelectionArea], 0x3f00, 0x3f00, 0x3f00);
-	GDK_COLOR_SET(gColors[Color_SelectionAreaBorder], 0, 0, 0);
-#undef GDK_COLOR_SET
+	gColors[Color_CommentBackground]         = {    1.0,    1.0,  0.875, 1.0 };
+	gColors[Color_CommentBackgroundSelected] = {    1.0,    1.0,   0.75, 1.0 };
+	gColors[Color_CommentBorder]             = {    0.5,    0.5,    0.5, 1.0 };
+	gColors[Color_CommentBorderSelected]     = {    0.5,    0.5,    0.5, 1.0 };
+
+	gColors[Color_Link]                      = {    0.0,    0.0,    0.0, 1.0 };
+	gColors[Color_LinkSelected]              = {   0.75,   0.75,   0.25, 1.0 };
+	gColors[Color_LinkUpCast]                = {    0.5,   0.25,   0.25, 1.0 };
+	gColors[Color_LinkDownCast]              = {   0.25,    0.5,   0.25, 1.0 };
+	gColors[Color_LinkInvalid]               = {   0.75,   0.25,   0.25, 1.0 };
+	gColors[Color_SelectionArea]             = {  0.246,  0.246,  0.246, 1.0 };
+	gColors[Color_SelectionAreaBorder]       = {    0.0,    0.0,    0.0, 1.0 };
+
 	//___________________________________________________________________//
 	//                                                                   //
 
@@ -712,28 +706,17 @@ int go(int argc, char** argv)
 						CApplication app(*context);
 						app.initialize(config.getFlags());
 
-						// FIXME is it necessary to keep next line uncomment ?
-						//bool isScreenValid=true;
+                        // Is this still relevant ? TODO
 						if (config.noCheckColorDepth == 0)
 						{
-							if (GDK_IS_DRAWABLE(GTK_WIDGET(app.m_MainWindow)->window))
-							{
-								// FIXME is it necessary to keep next line uncomment ?
-								//isScreenValid=false;
-								switch (gdk_drawable_get_depth(GTK_WIDGET(app.m_MainWindow)->window))
-								{
-									case 24:
-									case 32:
-										// FIXME is it necessary to keep next line uncomment ?
-										//isScreenValid=true;
-										break;
-									default:
-										logMgr << LogLevel_Error << "Please change the color depth of your screen to either 24 or 32 bits\n";
-										// TODO find a way to break
-										break;
-								}
-							}
-						}
+                            GdkWindow* window = gtk_widget_get_window(app.m_MainWindow);
+                            GdkScreen* screen = gdk_window_get_screen(window);
+                            GdkVisual* visual = gdk_screen_get_system_visual(screen);
+                            const gint depth  = gdk_visual_get_depth(visual);
+                            if (depth<24) {
+                                logMgr << LogLevel_Error << "Please change the color depth of your screen to either 24 or 32 bits\n";
+                            }
+                        }
 
 						// Add or replace a configuration token if required in command line
 						for (const auto& t : config.tokens)

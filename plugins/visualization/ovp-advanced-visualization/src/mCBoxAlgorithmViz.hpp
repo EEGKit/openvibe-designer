@@ -337,7 +337,7 @@ public:
 	OpenViBE::CString getSoftwareComponent() const override { return "openvibe-designer"; }
 	OpenViBE::CString getAddedSoftwareVersion() const override { return m_AddedSoftwareVersion; }
 	OpenViBE::CString getUpdatedSoftwareVersion() const override { return m_UpdatedSoftwareVersion; }
-	OpenViBE::CString getStockItemName() const override { return OpenViBE::CString("gtk-find"); }
+	OpenViBE::CString getIconName() const override { return OpenViBE::CString("edit-find"); }
 	OpenViBE::CIdentifier getCreatedClass() const override { return m_ClassID; }
 
 	void releaseBoxListener(OpenViBE::Plugins::IBoxListener* listener) const override { delete listener; }

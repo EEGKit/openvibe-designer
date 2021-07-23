@@ -107,17 +107,16 @@ private:
 	void drawHead() const;
 
 	//draw RGB buffer
-	void drawPotentials() const;
+	void drawPotentials(cairo_t* cr) const;
 
 	//draw electrodes corresponding to visible channels as rings
-	void drawElectrodes() const;
+	void drawElectrodes(cairo_t* cr) const;
 
 	/**
 	 * \brief Get channel position in 2D
 	 * \param index[in] Index of channel which position is to be retrieved
 	 * \param x[out] X coordinate of channel location, if channel is visible
 	 * \param y[out] Y coordinate of channel location, if channel is visible
-	 * \return True if channel is visible in current view, false otherwise
 	 */
 	bool getChannel2DPosition(size_t index, gint& x, gint& y) const;
 
@@ -143,7 +142,7 @@ private:
 
 	void resizeData();
 
-	void redrawClipmask();
+	void setClipMask(cairo_t* cr) const;
 
 	double getThetaFromCartesianCoordinates(const std::array<double, 3>& cartesian) const;
 
@@ -159,12 +158,7 @@ private:
 
 	GtkBuilder* m_builderInterface = nullptr;
 
-	GtkWidget* m_drawingArea   = nullptr;
-	GdkBitmap* m_clipmask      = nullptr; //origin (m_skullX, m_skullY)
-	size_t m_clipmaskWidth     = 0;
-	size_t m_clipmaskHeight    = 0;
-	GdkGC* m_clipmaskGC        = nullptr;
-	GdkRegion* m_visibleRegion = nullptr; //reallocated whenever clipmask changes
+	GtkWidget* m_drawingArea    = nullptr;
 
 	GdkColor m_bgColor;
 
@@ -263,11 +257,10 @@ private:
 
 	/**
 	 * \brief Skull pixmap
-	 * \remarks This pixmap is 32-bit aligned. Each row is m_rowStride wide, and the pixmap has m_skullDiameter rows.
+	 * \remarks This pixmap is 32-bit aligned. The pixmap has m_skullDiameter rows.
 	 * It is pasted into the main pixmap everytime changes happen (window resizing, display options toggled on/off, etc)
 	 */
-	std::vector<guchar> m_skullRGBBuffer;
-	size_t m_rowStride = 0;
+	GdkPixbuf* m_skullRGBBuffer;
 };
 }  // namespace SimpleVisualization
 }  // namespace Plugins

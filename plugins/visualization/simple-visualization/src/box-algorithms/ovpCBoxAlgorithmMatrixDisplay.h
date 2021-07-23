@@ -83,7 +83,7 @@ public:
 
 	CString getCategory() const override { return CString("Visualization/Basic"); }
 	CString getVersion() const override { return CString("1.0"); }
-	CString getStockItemName() const override { return CString("gtk-select-color"); }
+	CString getIconName() const override { return CString("gtk-select-color"); }
 	CString getSoftwareComponent() const override { return CString("openvibe-designer"); }
 	CString getAddedSoftwareVersion() const override { return CString("0.0.0"); }
 	CString getUpdatedSoftwareVersion() const override { return CString("0.0.0"); }

@@ -11,7 +11,9 @@ using namespace /*OpenViBE::*/Designer;
 using namespace std;
 using namespace /*OpenViBE::*/VisualizationToolkit;
 
-static GtkTargetEntry targets[] = { { static_cast<gchar*>("STRING"), 0, 0 }, { static_cast<gchar*>("text/plain"), 0, 0 }, };
+static gchar EntryString[] = "STRING";
+static gchar EntryType[]   = "text/plain";
+static GtkTargetEntry targets[] = { { EntryString, 0, 0 }, { EntryType, 0, 0 }, };
 
 static void delete_window_manager_window_cb(GtkWidget* widget, GdkEvent* /*event*/, gpointer data)
 {
@@ -104,7 +106,7 @@ GtkWidget* CPlayerVisualization::loadTreeWidget(IVisualizationWidget* widget)
 		else if (widget->getType() == EVisualizationWidget::HorizontalSplit || widget->getType() ==
 				 EVisualizationWidget::VerticalSplit)
 		{
-			treeWidget = (widget->getType() == EVisualizationWidget::HorizontalSplit) ? gtk_hpaned_new() : gtk_vpaned_new();
+			treeWidget = gtk_paned_new((widget->getType() == EVisualizationWidget::HorizontalSplit) ? GTK_ORIENTATION_HORIZONTAL : GTK_ORIENTATION_VERTICAL);
 
 			//store paned widget in paned map
 			m_splitWidgets[GTK_PANED(treeWidget)] = widget->getIdentifier();
@@ -199,7 +201,7 @@ GtkWidget* CPlayerVisualization::loadTreeWidget(IVisualizationWidget* widget)
 			}
 
 			//FIXME wrong spelling (-)
-			gtk_signal_connect(GTK_OBJECT(treeWidget), "configure_event", G_CALLBACK(configureEventCB), this);
+			g_signal_connect(treeWidget, "configure_event", G_CALLBACK(configureEventCB), this);
 			//FIXME wrong spelling (-)
 			g_signal_connect(treeWidget, "delete_event", G_CALLBACK(delete_window_manager_window_cb), this);
 		}
@@ -311,19 +313,18 @@ bool CPlayerVisualization::setWidget(const CIdentifier& boxID, GtkWidget* widget
 	GtkWidget* parent = gtk_widget_get_parent(widget);
 	if (GTK_IS_CONTAINER(parent))
 	{
-		gtk_object_ref(GTK_OBJECT(widget));
+		g_object_ref(widget);
 		gtk_container_remove(GTK_CONTAINER(parent), widget);
 	}
 
 	//create a box to store toolbar button and plugin widget
-	GtkBox* box = GTK_BOX(gtk_vbox_new(FALSE, 0));
-	//gtk_widget_set_size_request(GTK_WIDGET(vBox), 0, 0);
+	GtkBox* box = GTK_BOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, 0));
 
 	//create toolbar button
 	GtkToggleButton* button = GTK_TOGGLE_BUTTON(gtk_toggle_button_new());
 	{
 		//horizontal container : icon + label
-		GtkBox* hBox = GTK_BOX(gtk_hbox_new(FALSE, 0));
+		GtkBox* hBox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
 		//gtk_widget_set_size_request(GTK_WIDGET(hBox), 0, 0);
 
 		//retrieve icon name
@@ -333,7 +334,7 @@ bool CPlayerVisualization::setWidget(const CIdentifier& boxID, GtkWidget* widget
 		) { m_visualizationTree.getStringValueFromTreeIter(&iter, iconString, EVisualizationTreeColumn::StringStockIcon); }
 
 		//create icon
-		GtkWidget* icon = gtk_image_new_from_stock(iconString != nullptr ? iconString : GTK_STOCK_EXECUTE, GTK_ICON_SIZE_BUTTON);
+		GtkWidget* icon = gtk_image_new_from_icon_name((iconString != nullptr) ? iconString : GTK_STOCK_EXECUTE, GTK_ICON_SIZE_BUTTON);
 		//gtk_widget_set_size_request(icon, 0, 0);
 		gtk_box_pack_start(hBox, icon, TRUE, TRUE, 0);
 
@@ -461,7 +462,7 @@ bool CPlayerVisualization::parentWidgetBox(IVisualizationWidget* widget, GtkBox*
 
 			//resize widgets once they are allocated : this is the case when they are shown on an expose event
 			//FIXME : perform resizing only once (when it is done as many times as there are widgets in the tree here)
-			if (parent != nullptr) { gtk_signal_connect(GTK_OBJECT(parent), "expose-event", G_CALLBACK(widgetExposeEventCB), this); }
+			if (parent != nullptr) { g_signal_connect(parent, "expose-event", G_CALLBACK(widgetExposeEventCB), this); }
 
 			//show window (and realize widget if it owns a 3D context)
 			//--------------------------------------------------------
@@ -600,8 +601,9 @@ void CPlayerVisualization::resizeCB(GtkContainer* container)
 		if (maxPos > 0)
 		{
 			//retrieve current maximum handle position
-			const int currentMaxPos = GTK_IS_VPANED(paned) ? paned->container.widget.allocation.height
-										  : paned->container.widget.allocation.width;
+            const bool vertical = gtk_orientable_get_orientation(GTK_ORIENTABLE(paned))==GTK_ORIENTATION_VERTICAL;
+			const int currentMaxPos = (vertical) ? gtk_widget_get_allocated_height(GTK_WIDGET(container))
+										  : gtk_widget_get_allocated_width(GTK_WIDGET(container));
 
 			//set new paned handle position
 			gtk_paned_set_position(paned, pos * currentMaxPos / maxPos);
@@ -632,7 +634,7 @@ void CPlayerVisualization::dragDataReceivedInWidgetCB(GtkWidget* dstWidget, GdkD
 
 	//retrieve source box and parent widgets
 	GtkWidget* srcBoxWidget;
-	do { srcBoxWidget = gtk_widget_get_parent(GTK_WIDGET(srcWidget)); } while (srcBoxWidget != nullptr && !GTK_IS_VBOX(srcBoxWidget));
+	do { srcBoxWidget = gtk_widget_get_parent(GTK_WIDGET(srcWidget)); } while (srcBoxWidget != nullptr && !GTK_IS_BOX(srcBoxWidget));
 
 	if (srcBoxWidget == nullptr) { return; }
 
@@ -642,7 +644,7 @@ void CPlayerVisualization::dragDataReceivedInWidgetCB(GtkWidget* dstWidget, GdkD
 
 	//retrieve dest box and parent widgets
 	GtkWidget* dstBoxWidget;
-	do { dstBoxWidget = gtk_widget_get_parent(dstWidget); } while (dstBoxWidget != nullptr && !GTK_IS_VBOX(dstBoxWidget));
+	do { dstBoxWidget = gtk_widget_get_parent(dstWidget); } while (dstBoxWidget != nullptr && !GTK_IS_BOX(dstBoxWidget));
 
 	if (dstBoxWidget == nullptr) { return; }
 
@@ -663,7 +665,7 @@ void CPlayerVisualization::dragDataReceivedInWidgetCB(GtkWidget* dstWidget, GdkD
 		srcIndex    = gtk_notebook_page_num(GTK_NOTEBOOK(srcParentWidget), srcBoxWidget);
 		srcTabLabel = gtk_label_new(gtk_notebook_get_tab_label_text(GTK_NOTEBOOK(srcParentWidget), srcBoxWidget));
 	}
-	else if (GTK_IS_PANED(srcParentWidget)) { srcIndex = reinterpret_cast<GtkPaned*>(srcParentWidget)->child1 == srcBoxWidget ? 1 : 2; }
+	else if (GTK_IS_PANED(srcParentWidget)) { srcIndex = gtk_paned_get_child1(GTK_PANED(srcParentWidget)) == srcBoxWidget ? 1 : 2; }
 	else { return; }
 
 	//remove dst box from parent
@@ -675,13 +677,13 @@ void CPlayerVisualization::dragDataReceivedInWidgetCB(GtkWidget* dstWidget, GdkD
 		dstIndex    = gtk_notebook_page_num(GTK_NOTEBOOK(dstParentWidget), dstBoxWidget);
 		dstTabLabel = gtk_label_new(gtk_notebook_get_tab_label_text(GTK_NOTEBOOK(dstParentWidget), dstBoxWidget));
 	}
-	else if (GTK_IS_PANED(dstParentWidget)) { dstIndex = reinterpret_cast<GtkPaned*>(dstParentWidget)->child1 == dstBoxWidget ? 1 : 2; }
+	else if (GTK_IS_PANED(dstParentWidget)) { dstIndex = gtk_paned_get_child1(GTK_PANED(dstParentWidget)) == dstBoxWidget ? 1 : 2; }
 	else { return; }
 
-	gtk_object_ref(GTK_OBJECT(srcBoxWidget));
+	g_object_ref(srcBoxWidget);
 	gtk_container_remove(GTK_CONTAINER(srcParentWidget), srcBoxWidget);
 
-	gtk_object_ref(GTK_OBJECT(dstBoxWidget));
+	g_object_ref(dstBoxWidget);
 	gtk_container_remove(GTK_CONTAINER(dstParentWidget), dstBoxWidget);
 
 	//parent src box to dst parent

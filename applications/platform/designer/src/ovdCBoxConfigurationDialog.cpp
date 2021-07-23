@@ -52,11 +52,9 @@ CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& ctx, IBox
 			// This is actually *not* a dialog
 			m_settingDialog = GTK_WIDGET(gtk_builder_get_object(builder, "box_configuration-scrolledwindow"));
 		}
-		m_settingsTable  = GTK_TABLE(gtk_builder_get_object(builder, "box_configuration-table"));
+		m_settingsTable  = GTK_GRID(gtk_builder_get_object(builder, "box_configuration-table"));
 		m_scrolledWindow = GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder, "box_configuration-scrolledwindow"));
 		m_viewPort       = GTK_VIEWPORT(gtk_builder_get_object(builder, "box_configuration-viewport"));
-
-		gtk_table_resize(m_settingsTable, guint(m_box.getInterfacorCountIncludingDeprecated(EBoxInterfacorType::Setting)), 4);
 
 		generateSettingsTable();
 
@@ -116,7 +114,6 @@ bool CBoxConfigurationDialog::run()
 	bool modified = false;
 	if (m_box.getInterfacorCountIncludingDeprecated(EBoxInterfacorType::Setting))
 	{
-		//CSettingCollectionHelper helper(m_kernelCtx, m_guiSettingsFilename.toASCIIString());
 		storeState();
 		bool finished = false;
 		while (!finished)
@@ -155,12 +152,9 @@ bool CBoxConfigurationDialog::run()
 					CString value;
 					m_box.getSettingDefaultValue(i, value);
 					m_box.setSettingValue(i, value);
-					//m_settingViews[i]->setValue(value);
-					//helper.setValue(settingType, i < m_settingViews.size()? m_settingViews[i]->getEntryWidget() : nullptr, value);
 				}
 				gtk_entry_set_text(GTK_ENTRY(m_overrideEntryContainer), "");
 				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_fileOverrideCheck), false);
-				//gtk_widget_set_sensitive(GTK_WIDGET(m_settingsTable), true);
 				modified = false;
 			}
 			else if (result == 2) // revert
@@ -231,19 +225,6 @@ void CBoxConfigurationDialog::generateSettingsTable()
 						  [](GtkWidget* widget, gpointer data) { gtk_container_remove(GTK_CONTAINER(data), widget); },
 						  GTK_WIDGET(m_settingsTable));
 
-	size_t size = 0;
-	if (m_isScenarioRunning)
-	{
-		for (size_t i = 0; i < m_box.getInterfacorCountIncludingDeprecated(EBoxInterfacorType::Setting); ++i)
-		{
-			bool mod = false;
-			m_box.getSettingMod(i, mod);
-			if (mod) { size++; }
-		}
-	}
-	else { size = m_box.getInterfacorCountIncludingDeprecated(EBoxInterfacorType::Setting); }
-	gtk_table_resize(m_settingsTable, guint(size + 2), 4);
-
 	// Iterate over box settings, generate corresponding gtk widgets. If the scenario is running, we are making a
 	// 'modifiable settings' dialog and use a subset of widgets with a slightly different layout and buttons.
 	for (size_t settingIdx = 0, tableIdx = 0; settingIdx < m_box.getInterfacorCountIncludingDeprecated(EBoxInterfacorType::Setting); ++settingIdx)
@@ -273,10 +254,8 @@ bool CBoxConfigurationDialog::addSettingsToView(const size_t settingIdx, const s
 			gtk_widget_set_sensitive(GTK_WIDGET(view->getEntryWidget()), false);
 		}
 
-		gtk_table_attach(m_settingsTable, view->getNameWidget(), 0, 1, guint(tableIdx), guint(tableIdx + 1), GtkAttachOptions(GTK_FILL),
-						 GtkAttachOptions(GTK_FILL), 0, 0);
-		gtk_table_attach(m_settingsTable, view->getEntryWidget(), 1, 4, guint(tableIdx), guint(tableIdx + 1),
-						 GtkAttachOptions(GTK_SHRINK | GTK_FILL | GTK_EXPAND), GtkAttachOptions(GTK_SHRINK), 0, 0);
+		gtk_grid_attach(m_settingsTable, view->getNameWidget(), 0, guint(tableIdx), 1,1);
+		gtk_grid_attach(m_settingsTable, view->getEntryWidget(), 1, guint(tableIdx), 3, 1);
 
 		m_settingViews.insert(m_settingViews.begin() + tableIdx, view);
 
@@ -308,8 +287,6 @@ void CBoxConfigurationDialog::addSetting(const size_t index)
 		*/
 		const size_t tableIdx = (index > m_settingViews[size - 1]->getSettingIndex()) ? size : getTableIndex(index);
 
-		gtk_table_resize(m_settingsTable, guint(size + 2), 4);
-
 		if (index <= m_settingViews[size - 1]->getSettingIndex())
 		{
 			for (size_t i = size - 1; i >= tableIdx; --i)
@@ -320,12 +297,10 @@ void CBoxConfigurationDialog::addSetting(const size_t index)
 				view->setSettingIndex(view->getSettingIndex() + 1);
 
 				gtk_container_remove(GTK_CONTAINER(m_settingsTable), view->getNameWidget());
-				gtk_table_attach(m_settingsTable, view->getNameWidget(), 0, 1, guint(i + 1), guint(i + 2), GtkAttachOptions(GTK_FILL),
-								 GtkAttachOptions(GTK_FILL), 0, 0);
+				gtk_grid_attach(m_settingsTable, view->getNameWidget(), 0, guint(i + 1), 1, 1);
 
 				gtk_container_remove(GTK_CONTAINER(m_settingsTable), view->getEntryWidget());
-				gtk_table_attach(m_settingsTable, view->getEntryWidget(), 1, 4, guint(i + 1), guint(i + 2),
-								 GtkAttachOptions(GTK_SHRINK | GTK_FILL | GTK_EXPAND), GtkAttachOptions(GTK_SHRINK), 0, 0);
+				gtk_grid_attach(m_settingsTable, view->getEntryWidget(), 1, guint(i + 1), 3, 1);
 			}
 		}
 		addSettingsToView(size_t(tableIdx), index);
@@ -366,15 +341,12 @@ void CBoxConfigurationDialog::removeSetting(const size_t index, const bool shift
 				view->setSettingIndex(view->getSettingIndex() - 1);
 
 				gtk_container_remove(GTK_CONTAINER(m_settingsTable), view->getNameWidget());
-				gtk_table_attach(m_settingsTable, view->getNameWidget(), 0, 1, guint(i), guint(i + 1), GtkAttachOptions(GTK_FILL), GtkAttachOptions(GTK_FILL),
-								 0, 0);
+				gtk_grid_attach(m_settingsTable, view->getNameWidget(), 0, guint(i), 1, 1);
 
 				gtk_container_remove(GTK_CONTAINER(m_settingsTable), view->getEntryWidget());
-				gtk_table_attach(m_settingsTable, view->getEntryWidget(), 1, 4, guint(i), guint(i + 1), GtkAttachOptions(GTK_SHRINK | GTK_FILL | GTK_EXPAND),
-								 GtkAttachOptions(GTK_SHRINK), 0, 0);
+				gtk_grid_attach(m_settingsTable, view->getEntryWidget(), 1, guint(i), 3, 1);
 			}
 			//Now let's resize everything
-			gtk_table_resize(m_settingsTable, guint(m_settingViews.size() + 2), 4);
 			updateSize();
 		}
 	}
