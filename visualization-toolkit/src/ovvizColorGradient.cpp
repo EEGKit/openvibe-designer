@@ -4,16 +4,12 @@
 #include <string>
 #include <map>
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/VisualizationToolkit;
-
+namespace OpenViBE {
+namespace VisualizationToolkit {
 namespace {
 typedef struct
 {
-	double percent;
-	double red;
-	double green;
-	double blue;
+	double percent, red, green, blue;
 } SColor;
 }  // namespace
 
@@ -143,3 +139,6 @@ bool ColorGradient::interpolate(CMatrix& interpolatedColorGradient, const CMatri
 
 	return true;
 }
+
+}  // namespace VisualizationToolkit
+}  // namespace OpenViBE

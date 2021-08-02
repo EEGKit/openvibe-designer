@@ -2,13 +2,10 @@
 #include "ovdTAttributeHandler.h"
 #include <fs/Files.h>
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Kernel;
-using namespace /*OpenViBE::*/Plugins;
-using namespace /*OpenViBE::*/Designer;
-using namespace std;
+namespace OpenViBE {
+namespace Designer {
 
-CBoxProxy::CBoxProxy(const IKernelContext& ctx, IScenario& scenario, const CIdentifier& boxID)
+CBoxProxy::CBoxProxy(const Kernel::IKernelContext& ctx, Kernel::IScenario& scenario, const CIdentifier& boxID)
 	: m_kernelCtx(ctx), m_constBox(scenario.getBoxDetails(boxID)), m_box(scenario.getBoxDetails(boxID)),
 	  m_isDeprecated(m_kernelCtx.getPluginManager().isPluginObjectFlaggedAsDeprecated(m_constBox->getAlgorithmClassIdentifier()))
 {
@@ -54,7 +51,10 @@ void CBoxProxy::setCenter(const int x, const int y)
 	m_applied = false;
 }
 
-void CBoxProxy::setBoxAlgorithmDescriptorOverride(const IBoxAlgorithmDesc* pBoxAlgorithmDescriptor) { m_boxAlgorithmDescOverride = pBoxAlgorithmDescriptor; }
+void CBoxProxy::setBoxAlgorithmDescriptorOverride(const Plugins::IBoxAlgorithmDesc* pBoxAlgorithmDescriptor)
+{
+	m_boxAlgorithmDescOverride = pBoxAlgorithmDescriptor;
+}
 
 void CBoxProxy::apply()
 {
@@ -81,15 +81,13 @@ const char* CBoxProxy::getLabel() const
 	const bool canChangeSetting(
 		m_constBox->hasAttribute(OV_AttributeId_Box_FlagCanModifySetting) || m_constBox->hasAttribute(OV_AttributeId_Box_FlagCanAddSetting));
 
-	const IPluginObjectDesc* desc = (m_boxAlgorithmDescOverride == nullptr
-										 ? m_kernelCtx.getPluginManager().getPluginObjectDescCreating(m_constBox->getAlgorithmClassIdentifier())
-										 : m_boxAlgorithmDescOverride);
+	const Plugins::IPluginObjectDesc* desc = (m_boxAlgorithmDescOverride == nullptr
+												  ? m_kernelCtx.getPluginManager().getPluginObjectDescCreating(m_constBox->getAlgorithmClassIdentifier())
+												  : m_boxAlgorithmDescOverride);
 
-	string name(m_constBox->getName());
+	std::string name(m_constBox->getName());
 
-	const string red("#602020");
-	const string green("#206020");
-	const string grey("#404040");
+	const std::string red("#602020"), green("#206020"), grey("#404040");
 
 	// pango is used in the box diplay to format the box name (e.g. bold to tell it's a configurable box)
 	// incidently, this makes the box name pango-enabled. If an error appears in the markup, the box display would be wrong.
@@ -124,7 +122,7 @@ const char* CBoxProxy::getLabel() const
 
 	if (m_showOriginalNameWhenModified)
 	{
-		const string boxOriginalName(desc ? string(desc->getName()) : name);
+		const std::string boxOriginalName(desc ? std::string(desc->getName()) : name);
 		if (boxOriginalName != name) { m_label = "<small><i><span foreground=\"" + grey + "\">" + boxOriginalName + "</span></i></small>\n" + m_label; }
 	}
 
@@ -147,7 +145,7 @@ const char* CBoxProxy::getStatusLabel() const
 	const bool isDeprecated(this->isBoxAlgorithmPluginPresent() && this->isDeprecated());
 	const bool isDisabled(this->isDisabled());
 
-	const string blue("#202060");
+	const std::string blue("#202060");
 
 	m_status = "";
 	if (isDeprecated || toBeUpdated || isDisabled || pendingDeprecatedInterfacors)
@@ -185,9 +183,12 @@ void CBoxProxy::updateSize(GtkWidget* widget, const char* label, const char* sta
 		statusRect.height = 0;
 	}
 
-	*xSize = max(labelRect.width, statusRect.width);
+	*xSize = std::max(labelRect.width, statusRect.width);
 	*ySize = labelRect.height + statusRect.height;
 
 	g_object_unref(layout);
 	g_object_unref(context);
 }
+
+}  // namespace Designer
+}  // namespace OpenViBE

@@ -21,7 +21,6 @@
 
 #pragma once
 
-
 #include "m_defines.hpp"
 
 #include <openvibe/ov_all.h>

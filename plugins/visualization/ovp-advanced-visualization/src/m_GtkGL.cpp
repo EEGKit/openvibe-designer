@@ -75,7 +75,7 @@ void on_realize_cb(GtkWidget* widget, void* /*data*/)
 
 	gdk_window_ensure_native(gtk_widget_get_window(widget));
 
-	const HWND window    = HWND(GDK_WINDOW_HWND(::gtk_widget_get_window(widget)));
+	const HWND window    = HWND(GDK_WINDOW_HWND(gtk_widget_get_window(widget)));
 	const HDC drawingCtx = GetDC(window);
 
 	PIXELFORMATDESCRIPTOR pixelFormatDesc;
@@ -135,7 +135,7 @@ void OpenViBE::AdvancedVisualization::GtkGL::uninitialize(GtkWidget* widget)
 {
 	GTK_GL_DEBUG("uninitialize");
 
-	const HWND window = HWND(GDK_WINDOW_HWND(::gtk_widget_get_window(widget)));
+	const HWND window = HWND(GDK_WINDOW_HWND(gtk_widget_get_window(widget)));
 
 	const auto glRenderingCtx = HGLRC(g_object_get_data(G_OBJECT(widget), GTK_GL_RENDERING_CONTEXT_NAME));
 	wglDeleteContext(glRenderingCtx);
@@ -203,7 +203,7 @@ void OpenViBE::AdvancedVisualization::GtkGL::postRender(GtkWidget* widget)
 
 // ##  LINUX  ################################################################################################################################################
 
-void OpenViBE::AdvancedVisualization::GtkGL::initialize(::GtkWidget * widget)
+void OpenViBE::AdvancedVisualization::GtkGL::initialize(GtkWidget * widget)
 {
 	GTK_GL_DEBUG("initialize");
 
@@ -250,12 +250,12 @@ void OpenViBE::AdvancedVisualization::GtkGL::initialize(::GtkWidget * widget)
 	GTK_GL_DEBUG("initialize::success");
 }
 
-void OpenViBE::AdvancedVisualization::GtkGL::uninitialize(::GtkWidget * widget)
+void OpenViBE::AdvancedVisualization::GtkGL::uninitialize(GtkWidget * widget)
 {
 	GTK_GL_DEBUG("uninitialize");
 
-	::Display* display = GDK_SCREEN_XDISPLAY(::gtk_widget_get_screen(widget));
-	::GLXContext glRenderingCtx = (::GLXContext) g_object_get_data(G_OBJECT(widget), GTK_GL_RENDERING_CONTEXT_NAME);
+	::Display* display = GDK_SCREEN_XDISPLAY(gtk_widget_get_screen(widget));
+	::GLXContext glRenderingCtx = (GLXContext) g_object_get_data(G_OBJECT(widget), GTK_GL_RENDERING_CONTEXT_NAME);
 	if (!display || !glRenderingCtx)
 	{
 		GTK_GL_WARNING("uninitialize::failed");
@@ -267,13 +267,13 @@ void OpenViBE::AdvancedVisualization::GtkGL::uninitialize(::GtkWidget * widget)
 	GTK_GL_DEBUG("uninitialize::success");
 }
 
-void OpenViBE::AdvancedVisualization::GtkGL::preRender(::GtkWidget * widget, bool bVerticalSync)
+void OpenViBE::AdvancedVisualization::GtkGL::preRender(GtkWidget * widget, bool bVerticalSync)
 {
 	GTK_GL_DEBUG("pre-render");
 
-	::Display* display = GDK_SCREEN_XDISPLAY(::gtk_widget_get_screen(widget));
+	::Display* display = GDK_SCREEN_XDISPLAY(gtk_widget_get_screen(widget));
 	::Window window = GDK_WINDOW_XID(gtk_widget_get_window(widget));
-	::GLXContext glRenderingCtx = (::GLXContext) g_object_get_data(G_OBJECT(widget), GTK_GL_RENDERING_CONTEXT_NAME);
+	::GLXContext glRenderingCtx = (GLXContext) g_object_get_data(G_OBJECT(widget), GTK_GL_RENDERING_CONTEXT_NAME);
 	if (!display || !glRenderingCtx)
 	{
 		GTK_GL_WARNING("pre-render::failed");
@@ -290,11 +290,11 @@ void OpenViBE::AdvancedVisualization::GtkGL::preRender(::GtkWidget * widget, boo
 	GTK_GL_DEBUG("pre-render::success");
 }
 
-void OpenViBE::AdvancedVisualization::GtkGL::postRender(::GtkWidget * widget)
+void OpenViBE::AdvancedVisualization::GtkGL::postRender(GtkWidget * widget)
 {
 	GTK_GL_DEBUG("post-render");
 
-	::Display* display = GDK_SCREEN_XDISPLAY(::gtk_widget_get_screen(widget));
+	::Display* display = GDK_SCREEN_XDISPLAY(gtk_widget_get_screen(widget));
 	::Window window = GDK_WINDOW_XID(gtk_widget_get_window(widget));
 	if (!display)
 	{

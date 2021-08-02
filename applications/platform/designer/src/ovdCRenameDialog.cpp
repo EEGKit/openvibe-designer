@@ -1,9 +1,7 @@
 #include "ovdCRenameDialog.h"
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Designer;
-using namespace /*OpenViBE::*/Plugins;
-using namespace /*OpenViBE::*/Kernel;
+namespace OpenViBE {
+namespace Designer {
 
 bool CRenameDialog::run()
 {
@@ -41,3 +39,6 @@ bool CRenameDialog::run()
 
 	return res;
 }
+
+}  // namespace Designer
+}  // namespace OpenViBE

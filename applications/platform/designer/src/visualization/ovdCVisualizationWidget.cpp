@@ -4,14 +4,11 @@
 
 #include "ovdCVisualizationWidget.h"
 
-using namespace std;
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Designer;
-using namespace /*OpenViBE::*/Kernel;
-using namespace /*OpenViBE::*/VisualizationToolkit;
+namespace OpenViBE {
+namespace Designer {
 
-bool CVisualizationWidget::initialize(const CIdentifier& id, const CString& name, const EVisualizationWidget type, const CIdentifier& parentID,
-									  const CIdentifier& boxID, const size_t nChild)
+bool CVisualizationWidget::initialize(const CIdentifier& id, const CString& name, const VisualizationToolkit::EVisualizationWidget type,
+									  const CIdentifier& parentID,  const CIdentifier& boxID, const size_t nChild)
 {
 	m_id       = id;
 	m_name     = name;
@@ -41,7 +38,7 @@ bool CVisualizationWidget::removeChild(const CIdentifier& id)
 		if (m_childrens[i] == id)
 		{
 			//remove tab from a window (variable number of children)
-			if (m_type == EVisualizationWidget::Window) { m_childrens.erase(m_childrens.begin() + i); }
+			if (m_type == VisualizationToolkit::EVisualizationWidget::Window) { m_childrens.erase(m_childrens.begin() + i); }
 			else //clear identifier if ith child for a regular widget (fixed number of children)
 			{
 				m_childrens[i] = CIdentifier::undefined();
@@ -50,7 +47,7 @@ bool CVisualizationWidget::removeChild(const CIdentifier& id)
 		}
 	}
 
-	OV_ERROR_DRF("Trying to remove non existing visualization widget " << id.str(), ErrorType::ResourceNotFound);
+	OV_ERROR_DRF("Trying to remove non existing visualization widget " << id.str(), Kernel::ErrorType::ResourceNotFound);
 }
 
 bool CVisualizationWidget::getChildIdentifier(const size_t index, CIdentifier& id) const
@@ -58,7 +55,7 @@ bool CVisualizationWidget::getChildIdentifier(const size_t index, CIdentifier& i
 	if (index >= m_childrens.size())
 	{
 		id = CIdentifier::undefined();
-		OV_ERROR_DRF("Child with index " << index << " not found", ErrorType::ResourceNotFound);
+		OV_ERROR_DRF("Child with index " << index << " not found", Kernel::ErrorType::ResourceNotFound);
 	}
 	id = m_childrens[index];
 	return true;
@@ -66,7 +63,10 @@ bool CVisualizationWidget::getChildIdentifier(const size_t index, CIdentifier& i
 
 bool CVisualizationWidget::setChildIdentifier(const size_t index, const CIdentifier& id)
 {
-	if (index >= m_childrens.size()) { OV_ERROR_DRF("Child with index " << index << " not found", ErrorType::ResourceNotFound); }
+	if (index >= m_childrens.size()) { OV_ERROR_DRF("Child with index " << index << " not found", Kernel::ErrorType::ResourceNotFound); }
 	m_childrens[index] = id;
 	return true;
 }
+
+}  // namespace Designer
+}  // namespace OpenViBE

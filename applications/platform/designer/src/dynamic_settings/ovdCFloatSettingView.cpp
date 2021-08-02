@@ -1,9 +1,9 @@
 #include "ovdCFloatSettingView.h"
 #include "../ovd_base.h"
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Designer;
-using namespace Setting;
+namespace OpenViBE {
+namespace Designer {
+namespace Setting {
 
 static void OnButtonSettingFloatUpPressed(GtkButton* /*button*/, gpointer data) { static_cast<CFloatSettingView*>(data)->adjustValue(1.0); }
 static void OnButtonSettingFloatDownPressed(GtkButton* /*button*/, gpointer data) { static_cast<CFloatSettingView*>(data)->adjustValue(-1.0); }
@@ -51,3 +51,7 @@ void CFloatSettingView::onChange()
 		getBox().setSettingValue(getSettingIndex(), value);
 	}
 }
+
+}  // namespace Setting
+}  // namespace Designer
+}  // namespace OpenViBE

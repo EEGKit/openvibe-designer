@@ -1,9 +1,9 @@
 #include "ovdCBooleanSettingView.h"
 #include "../ovd_base.h"
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Designer;
-using namespace Setting;
+namespace OpenViBE {
+namespace Designer {
+namespace Setting {
 
 static void OnCheckbuttonSettingBooleanPressed(GtkToggleButton* /*button*/, gpointer data) { static_cast<CBooleanSettingView*>(data)->toggleButtonClick(); }
 
@@ -72,3 +72,7 @@ void CBooleanSettingView::onChange()
 		getBox().setSettingValue(getSettingIndex(), value);
 	}
 }
+
+}  // namespace Setting
+}  // namespace Designer
+}  // namespace OpenViBE

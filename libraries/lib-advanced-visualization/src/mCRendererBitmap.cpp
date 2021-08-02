@@ -21,8 +21,8 @@
 
 #include "mCRendererBitmap.hpp"
 
-using namespace OpenViBE;
-using namespace AdvancedVisualization;
+namespace OpenViBE {
+namespace AdvancedVisualization {
 
 void CRendererBitmap::rebuild(const CRendererContext& ctx)
 {
@@ -118,3 +118,6 @@ bool CRendererBitmap::render(const CRendererContext& ctx)
 
 	return true;
 }
+
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE

@@ -21,8 +21,8 @@
 
 #include "mCRendererBars.hpp"
 
-using namespace OpenViBE;
-using namespace AdvancedVisualization;
+namespace OpenViBE {
+namespace AdvancedVisualization {
 
 void CRendererBars::rebuild(const CRendererContext& ctx)
 {
@@ -129,3 +129,6 @@ bool CRendererBars::render(const CRendererContext& ctx)
 
 	return true;
 }
+
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE

@@ -39,8 +39,8 @@
 #include <cmath>
 #include <algorithm>	// std::min_element, std::max_element
 
-using namespace OpenViBE;
-using namespace AdvancedVisualization;
+namespace OpenViBE {
+namespace AdvancedVisualization {
 
 static int iCount = 0;
 
@@ -314,3 +314,6 @@ void IRenderer::draw2DCoordinateSystem()
 
 	glPopAttrib();
 }
+
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE

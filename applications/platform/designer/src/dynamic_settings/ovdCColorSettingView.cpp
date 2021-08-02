@@ -3,9 +3,9 @@
 
 #include <cmath>
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Designer;
-using namespace Setting;
+namespace OpenViBE {
+namespace Designer {
+namespace Setting {
 
 static int Color2Percent(const guint16 color) { return int(round(color / 655.350)); }	// c * 100 / 65535
 static guint16 Percent2Color(const int color) { return guint16(color * 655.35); }		// c * 65535 / 100
@@ -66,3 +66,7 @@ void CColorSettingView::onChange()
 		getBox().setSettingValue(getSettingIndex(), value);
 	}
 }
+
+}  // namespace Setting
+}  // namespace Designer
+}  // namespace OpenViBE

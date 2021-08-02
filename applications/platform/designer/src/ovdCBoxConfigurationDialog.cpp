@@ -9,10 +9,8 @@
 
 #include <fs/Files.h>
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Kernel;
-using namespace /*OpenViBE::*/Designer;
-using namespace std;
+namespace OpenViBE {
+namespace Designer {
 
 static const char* const ROOT_NAME    = "OpenViBE-SettingsOverride";
 static const char* const SETTING_NAME = "SettingValue";
@@ -27,14 +25,14 @@ static void OnButtonSaveClicked(GtkButton* /*button*/, gpointer data) { static_c
 static void OnOverrideBrowseClicked(GtkButton* /*button*/, gpointer data) { static_cast<CBoxConfigurationDialog*>(data)->onOverrideBrowse(); }
 static void CollectWidgetCB(GtkWidget* widget, gpointer data) { static_cast<std::vector<GtkWidget*>*>(data)->push_back(widget); }
 
-CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& ctx, IBox& box, const char* guiFilename, const char* guiSettingsFilename,
-												 const bool isScenarioRunning)
+CBoxConfigurationDialog::CBoxConfigurationDialog(const Kernel::IKernelContext& ctx, Kernel::IBox& box, const char* guiFilename,
+												 const char* guiSettingsFilename, const bool isScenarioRunning)
 	: m_kernelCtx(ctx), m_box(box), m_guiFilename(guiFilename), m_guiSettingsFilename(guiSettingsFilename),
 	  m_settingFactory(m_guiSettingsFilename.toASCIIString(), ctx), m_isScenarioRunning(isScenarioRunning)
 {
 	m_box.addObserver(this);
 
-	if (m_box.getInterfacorCountIncludingDeprecated(EBoxInterfacorType::Setting))
+	if (m_box.getInterfacorCountIncludingDeprecated(Kernel::EBoxInterfacorType::Setting))
 	{
 		GtkBuilder* builder = gtk_builder_new(); // glade_xml_new(m_guiFilename.toASCIIString(), "box_configuration", nullptr);
 		gtk_builder_add_from_file(builder, m_guiFilename.toASCIIString(), nullptr);
@@ -56,7 +54,7 @@ CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& ctx, IBox
 		m_scrolledWindow = GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder, "box_configuration-scrolledwindow"));
 		m_viewPort       = GTK_VIEWPORT(gtk_builder_get_object(builder, "box_configuration-viewport"));
 
-		gtk_table_resize(m_settingsTable, guint(m_box.getInterfacorCountIncludingDeprecated(EBoxInterfacorType::Setting)), 4);
+		gtk_table_resize(m_settingsTable, guint(m_box.getInterfacorCountIncludingDeprecated(Kernel::EBoxInterfacorType::Setting)), 4);
 
 		generateSettingsTable();
 
@@ -69,7 +67,7 @@ CBoxConfigurationDialog::CBoxConfigurationDialog(const IKernelContext& ctx, IBox
 			GtkButton* buttonLoad               = GTK_BUTTON(gtk_builder_get_object(builder, "box_configuration-button_load_current_from_file"));
 			GtkButton* buttonSave               = GTK_BUTTON(gtk_builder_get_object(builder, "box_configuration-button_save_current_to_file"));
 
-			const string settingOverrideWidgetName        = helper.getSettingWidgetName(OV_TypeId_Filename).toASCIIString();
+			const std::string settingOverrideWidgetName   = helper.getSettingWidgetName(OV_TypeId_Filename).toASCIIString();
 			GtkBuilder* builderInterfaceSettingCollection = gtk_builder_new();
 			gtk_builder_add_from_file(builderInterfaceSettingCollection, m_guiSettingsFilename.toASCIIString(), nullptr);
 
@@ -114,7 +112,7 @@ CBoxConfigurationDialog::~CBoxConfigurationDialog()
 bool CBoxConfigurationDialog::run()
 {
 	bool modified = false;
-	if (m_box.getInterfacorCountIncludingDeprecated(EBoxInterfacorType::Setting))
+	if (m_box.getInterfacorCountIncludingDeprecated(Kernel::EBoxInterfacorType::Setting))
 	{
 		//CSettingCollectionHelper helper(m_kernelCtx, m_guiSettingsFilename.toASCIIString());
 		storeState();
@@ -189,15 +187,15 @@ bool CBoxConfigurationDialog::run()
 
 void CBoxConfigurationDialog::update(CObservable& /*o*/, void* data)
 {
-	const BoxEventMessage* event = static_cast<BoxEventMessage*>(data);
+	const Kernel::BoxEventMessage* event = static_cast<Kernel::BoxEventMessage*>(data);
 
 	switch (event->m_Type)
 	{
-		case SettingsAllChange:
+		case Kernel::SettingsAllChange:
 			generateSettingsTable();
 			break;
 
-		case SettingValueUpdate:
+		case Kernel::SettingValueUpdate:
 		{
 			CString value;
 			m_box.getSettingValue(event->m_FirstIdx, value);
@@ -206,19 +204,20 @@ void CBoxConfigurationDialog::update(CObservable& /*o*/, void* data)
 			break;
 		}
 
-		case SettingDelete:
+		case Kernel::SettingDelete:
 			removeSetting(event->m_FirstIdx);
 			break;
 
-		case SettingAdd:
+		case Kernel::SettingAdd:
 			addSetting(event->m_FirstIdx);
 			break;
 
-		case SettingChange:
+		case Kernel::SettingChange:
 			settingChange(event->m_FirstIdx);
 			break;
 
-		default: break;		//OV_ERROR_KRF("wtf", ErrorType::BadSetting);
+		case Kernel::SettingsReorder: break;
+		default: break;		//OV_ERROR_KRF("wtf", Kernel::ErrorType::BadSetting);
 	}
 }
 
@@ -234,19 +233,19 @@ void CBoxConfigurationDialog::generateSettingsTable()
 	size_t size = 0;
 	if (m_isScenarioRunning)
 	{
-		for (size_t i = 0; i < m_box.getInterfacorCountIncludingDeprecated(EBoxInterfacorType::Setting); ++i)
+		for (size_t i = 0; i < m_box.getInterfacorCountIncludingDeprecated(Kernel::EBoxInterfacorType::Setting); ++i)
 		{
 			bool mod = false;
 			m_box.getSettingMod(i, mod);
 			if (mod) { size++; }
 		}
 	}
-	else { size = m_box.getInterfacorCountIncludingDeprecated(EBoxInterfacorType::Setting); }
+	else { size = m_box.getInterfacorCountIncludingDeprecated(Kernel::EBoxInterfacorType::Setting); }
 	gtk_table_resize(m_settingsTable, guint(size + 2), 4);
 
 	// Iterate over box settings, generate corresponding gtk widgets. If the scenario is running, we are making a
 	// 'modifiable settings' dialog and use a subset of widgets with a slightly different layout and buttons.
-	for (size_t settingIdx = 0, tableIdx = 0; settingIdx < m_box.getInterfacorCountIncludingDeprecated(EBoxInterfacorType::Setting); ++settingIdx)
+	for (size_t settingIdx = 0, tableIdx = 0; settingIdx < m_box.getInterfacorCountIncludingDeprecated(Kernel::EBoxInterfacorType::Setting); ++settingIdx)
 	{
 		if (addSettingsToView(settingIdx, tableIdx)) { ++tableIdx; }
 	}
@@ -266,7 +265,7 @@ bool CBoxConfigurationDialog::addSettingsToView(const size_t settingIdx, const s
 		Setting::CAbstractSettingView* view = m_settingFactory.getSettingView(m_box, settingIdx);
 
 		bool isDeprecated = false;
-		m_box.getInterfacorDeprecatedStatus(EBoxInterfacorType::Setting, settingIdx, isDeprecated);
+		m_box.getInterfacorDeprecatedStatus(Kernel::EBoxInterfacorType::Setting, settingIdx, isDeprecated);
 		if (isDeprecated)
 		{
 			gtk_widget_set_sensitive(GTK_WIDGET(view->getNameWidget()), false);
@@ -394,7 +393,7 @@ int CBoxConfigurationDialog::getTableIndex(const size_t index)
 	for (auto it = m_settingViews.begin(); it != m_settingViews.end(); ++it, ++tableIdx)
 	{
 		Setting::CAbstractSettingView* view = *it;
-		if (view->getSettingIndex() == index) { return index; }
+		if (view->getSettingIndex() == index) { return int(index); }
 	}
 
 	return -1;
@@ -439,7 +438,7 @@ void CBoxConfigurationDialog::saveConfig() const
 
 		XML::IXMLHandler* handler = XML::createXMLHandler();
 		XML::IXMLNode* rootNode   = XML::createNode(ROOT_NAME);
-		for (size_t i = 0; i < m_box.getInterfacorCountIncludingDeprecated(EBoxInterfacorType::Setting); ++i)
+		for (size_t i = 0; i < m_box.getInterfacorCountIncludingDeprecated(Kernel::EBoxInterfacorType::Setting); ++i)
 		{
 			XML::IXMLNode* tmpNode = XML::createNode(SETTING_NAME);
 			CString value;
@@ -528,7 +527,7 @@ void CBoxConfigurationDialog::onOverrideBrowse() const
 void CBoxConfigurationDialog::storeState()
 {
 	m_settingsMemory.clear();
-	for (size_t i = 0; i < m_box.getInterfacorCountIncludingDeprecated(EBoxInterfacorType::Setting); ++i)
+	for (size_t i = 0; i < m_box.getInterfacorCountIncludingDeprecated(Kernel::EBoxInterfacorType::Setting); ++i)
 	{
 		CString temp;
 		m_box.getSettingValue(i, temp);
@@ -540,7 +539,10 @@ void CBoxConfigurationDialog::restoreState()
 {
 	for (size_t i = 0; i < m_settingsMemory.size(); ++i)
 	{
-		if (i >= m_box.getInterfacorCountIncludingDeprecated(EBoxInterfacorType::Setting)) { return; }	// This is not supposed to happen
+		if (i >= m_box.getInterfacorCountIncludingDeprecated(Kernel::EBoxInterfacorType::Setting)) { return; }	// This is not supposed to happen
 		m_box.setSettingValue(i, m_settingsMemory[i]);
 	}
 }
+
+}  // namespace Designer
+}  // namespace OpenViBE

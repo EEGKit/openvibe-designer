@@ -1,14 +1,11 @@
 #include "ovdCSettingEditorDialog.h"
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Kernel;
-using namespace /*OpenViBE::*/Designer;
-using namespace std;
+namespace OpenViBE {
+namespace Designer {
 
 static void TypeChangedCB(GtkComboBox* /*widget*/, gpointer data) { static_cast<CSettingEditorDialog*>(data)->typeChangedCB(); }
 
 bool CSettingEditorDialog::run()
-
 {
 	GtkBuilder* builder = gtk_builder_new(); // glade_xml_new(m_guiFilename.toASCIIString(), "setting_editor", nullptr);
 	gtk_builder_add_from_file(builder, m_guiFilename.toASCIIString(), nullptr);
@@ -88,7 +85,7 @@ void CSettingEditorDialog::typeChangedCB()
 {
 	const CIdentifier settingType = m_settingTypes[gtk_combo_box_get_active_text(GTK_COMBO_BOX(m_type))];
 
-	CString name             = m_helper.getSettingWidgetName(settingType);
+	const CString name       = m_helper.getSettingWidgetName(settingType);
 	GtkBuilder* builderDummy = gtk_builder_new(); // glade_xml_new(m_guiFilename.toASCIIString(), name, nullptr);
 	gtk_builder_add_from_file(builderDummy, m_guiSettingsFilename.toASCIIString(), nullptr);
 	gtk_builder_connect_signals(builderDummy, nullptr);
@@ -103,3 +100,6 @@ void CSettingEditorDialog::typeChangedCB()
 	m_box.getSettingDefaultValue(m_settingIdx, value);
 	m_helper.setValue(settingType, m_defaultValue, value);
 }
+
+}  // namespace Designer
+}  // namespace OpenViBE

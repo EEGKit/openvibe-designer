@@ -4,9 +4,9 @@
 #include <algorithm> // std::sort
 #include <map>
 
-using namespace OpenViBE;
-using namespace /*OpenViBE::*/Designer;
-using namespace Setting;
+namespace OpenViBE {
+namespace Designer {
+namespace Setting {
 
 static void OnChange(GtkEntry* /*entry*/, gpointer data) { static_cast<CEnumerationSettingView*>(data)->onChange(); }
 
@@ -97,3 +97,7 @@ void CEnumerationSettingView::onChange()
 		g_free(value);
 	}
 }
+
+}  // namespace Setting
+}  // namespace Designer
+}  // namespace OpenViBE
