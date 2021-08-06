@@ -1,4 +1,4 @@
-project(openvibe-designer)
+project(openvibe-designer VERSION  ${OPENVIBE_MAJOR_VERSION}.${OPENVIBE_MINOR_VERSION}.${OPENVIBE_PATCH_VERSION})
 
 set(PROJECT_PRODUCT_NAME "${BRAND_NAME} Designer")
 

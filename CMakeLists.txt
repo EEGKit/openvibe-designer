@@ -132,10 +132,6 @@ else()
 	message(FATAL_ERROR "Build should specify a type or use a multi-type generator (like Visual Studio)")
 endif()
 
-find_path(SDK_MODULE_PATH NAMES "AddOpenViBESDKComponents.cmake" PATHS ${OPENVIBE_SDK_PATH} PATH_SUFFIXES share NO_DEFAULT_PATH) # Finds multi-type builds
-
-include(FindOVSDK)
-
 # OpenViBE SDK modules list
 SET(INCLUDED_OV_SDK_COMPONENTS BASE ALLPLUGINS EBML SYSTEM FS XML TOOLKIT)
 
