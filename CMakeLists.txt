@@ -8,11 +8,9 @@ SET(CMAKE_MODULE_PATH
 
 # OpenViBE-specific helper functions that are used by the CMakeLists of the subprojects.
 INCLUDE("OvAddProjects")
-INCLUDE("OvInstallLaunchScript")
 INCLUDE("OvLinkBoostLib")
 INCLUDE("OvDelayLoad")
 INCLUDE("SetProjectVersion")
-INCLUDE("Utilities") # Include functions debug_message, SET_BUILD_PLATFORM
 
 # ----------------------
 # Build CMake flags
