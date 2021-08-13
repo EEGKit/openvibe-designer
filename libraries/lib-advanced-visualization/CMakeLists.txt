@@ -3,14 +3,16 @@ message(STATUS "Now building ${PROJECT_NAME} ${PROJECT_VERSION} (${OV_PROJECT_BR
 
 file(GLOB_RECURSE SRC_FILES src/*.cpp src/*.hpp include/*.hpp)
 include("FindSourceRCProperties")
+
 add_library(${PROJECT_NAME}-static STATIC ${SRC_FILES})
 
 target_include_directories(${PROJECT_NAME}-static
                            PRIVATE include/mensia include/mensia/advanced-visualization
                            PUBLIC include
 )
+
 add_library(${PROJECT_NAME} SHARED EXCLUDE_FROM_ALL ${SRC_FILES})
-target_include_directories(${PROJECT_NAME}-static
+target_include_directories(${PROJECT_NAME}
                            PRIVATE include/mensia include/mensia/advanced-visualization
                            PUBLIC include
 )
