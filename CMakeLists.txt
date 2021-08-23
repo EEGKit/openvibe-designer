@@ -164,4 +164,4 @@ ENDIF()
 FILE(GLOB_RECURSE script_files scripts/*.cmd scripts/*.sh )
 ADD_CUSTOM_TARGET(openvibe-designer-scripts SOURCES ${script_files})
 
-INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/.install-designer" DESTINATION ${CMAKE_INSTALL_PREFIX})
+INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/.install-designer" DESTINATION ${DIST_ROOT})
