@@ -31,6 +31,11 @@ target_link_libraries(${PROJECT_NAME}
                       openvibe-module-communication
 )
 
+set_target_properties(${PROJECT_NAME} PROPERTIES
+	VERSION ${PROJECT_VERSION}
+	FOLDER ${APP_FOLDER}
+)
+
 add_definitions(-DTARGET_HAS_ThirdPartyOpenViBEPluginsGlobalDefines)
 
 # Generate launch script

@@ -1,4 +1,4 @@
-project(openvibe-visualization-toolkit)
+project(openvibe-visualization-toolkit VERSION ${OPENVIBE_MAJOR_VERSION}.${OPENVIBE_MINOR_VERSION}.${OPENVIBE_PATCH_VERSION})
 MESSAGE(STATUS "Now building ${PROJECT_NAME} ${PROJECT_VERSION} (${OV_PROJECT_BRANCH}~${OV_PROJECT_COMMITHASH})" )
 
 OV_ADD_THIS_TO_PROJECT_LIST()
@@ -26,6 +26,11 @@ target_link_libraries(${PROJECT_NAME}
 target_compile_options(${PROJECT_NAME}
                        PRIVATE -DOVVIZ_Exports
                        PUBLIC -DOVVIZ_Shared
+)
+
+set_target_properties(${PROJECT_NAME} PROPERTIES
+	VERSION ${PROJECT_VERSION}
+	FOLDER ${MODULES_FOLDER}
 )
 
 add_definitions(-DTARGET_HAS_ThirdPartyOpenViBEPluginsGlobalDefines)
