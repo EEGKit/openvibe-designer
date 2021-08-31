@@ -1,27 +1,46 @@
-PROJECT(mensia-advanced-visualization)
-MESSAGE(STATUS "Now building ${PROJECT_NAME} ${PROJECT_VERSION} (${OV_PROJECT_BRANCH}~${OV_PROJECT_COMMITHASH})" )
+project(mensia-advanced-visualization VERSION ${OPENVIBE_MAJOR_VERSION}.${OPENVIBE_MINOR_VERSION}.${OPENVIBE_PATCH_VERSION})
+message(STATUS "Now building ${PROJECT_NAME} ${PROJECT_VERSION} (${OV_PROJECT_BRANCH}~${OV_PROJECT_COMMITHASH})" )
 
-INCLUDE_DIRECTORIES("include/mensia/")
-INCLUDE_DIRECTORIES("include/mensia/advanced-visualization")
+file(GLOB_RECURSE SRC_FILES src/*.cpp src/*.hpp include/*.hpp)
+include("FindSourceRCProperties")
 
-FILE(GLOB_RECURSE SRC_FILES src/*.cpp src/*.hpp include/*.hpp)
-INCLUDE("FindSourceRCProperties")
-ADD_LIBRARY(${PROJECT_NAME}-static STATIC ${SRC_FILES})
-ADD_LIBRARY(${PROJECT_NAME} SHARED EXCLUDE_FROM_ALL ${SRC_FILES})
+add_library(${PROJECT_NAME}-static STATIC ${SRC_FILES})
 
-IF(UNIX)
-	SET_TARGET_PROPERTIES(${PROJECT_NAME}-static PROPERTIES COMPILE_FLAGS "-fPIC")
-ENDIF(UNIX)
+target_include_directories(${PROJECT_NAME}-static
+                           PRIVATE include/mensia include/mensia/advanced-visualization
+                           PUBLIC include
+)
 
-SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES
+set_target_properties(${PROJECT_NAME}-static PROPERTIES
+	VERSION ${PROJECT_VERSION}
+	FOLDER ${MODULES_FOLDER}
+)
+
+add_library(${PROJECT_NAME} SHARED EXCLUDE_FROM_ALL ${SRC_FILES})
+target_include_directories(${PROJECT_NAME}
+                           PRIVATE include/mensia include/mensia/advanced-visualization
+                           PUBLIC include
+)
+
+if(UNIX)
+	set_target_properties(${PROJECT_NAME}-static PROPERTIES COMPILE_FLAGS "-fPIC")
+endif(UNIX)
+
+set_target_properties(${PROJECT_NAME} PROPERTIES
 	VERSION ${PROJECT_VERSION}
 	SOVERSION ${PROJECT_VERSION_MAJOR}
-	COMPILE_FLAGS "-DLMAV_Exports -DLMAV_Shared")
+	FOLDER ${MODULES_FOLDER}
+)
 
-ADD_DEFINITIONS(-D_USE_MATH_DEFINES)	# Definition for constant math as M_PI
+target_compile_options(${PROJECT_NAME}
+                       PRIVATE -DLMAV_Exports
+                       PUBLIC -DLMAV_Shared
+)
 
-INCLUDE("FindThirdPartyOpenGL")
-INCLUDE("FindThirdPartyEigen")
+add_definitions(-D_USE_MATH_DEFINES)	# Definition for constant math as M_PI
+
+include("FindThirdPartyOpenGL")
+include("FindThirdPartyEigen")
 
 # ---------------------------------
 # Target macros
@@ -36,12 +55,12 @@ SET_BUILD_PLATFORM()
 #	RUNTIME DESTINATION ${DIST_BINDIR}
 #	LIBRARY DESTINATION ${DIST_LIBDIR}
 #	ARCHIVE DESTINATION ${DIST_LIBDIR})
-INSTALL(TARGETS ${PROJECT_NAME}-static
+install(TARGETS ${PROJECT_NAME}-static
 	RUNTIME DESTINATION ${DIST_BINDIR}
 	LIBRARY DESTINATION ${DIST_LIBDIR}
 	ARCHIVE DESTINATION ${DIST_LIBDIR})
 
 
-INSTALL(DIRECTORY include/ DESTINATION ${DIST_INCLUDEDIR} FILES_MATCHING PATTERN "*.hpp")
+install(DIRECTORY include/ DESTINATION ${DIST_INCLUDEDIR} FILES_MATCHING PATTERN "*.hpp")
 
-ADD_SUBDIRECTORY(test)
+add_subdirectory(test)
