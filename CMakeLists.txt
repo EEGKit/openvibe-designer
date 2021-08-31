@@ -154,5 +154,8 @@ ENDIF()
 # add the scripts to the project so IDEs using the CMake file are aware of them
 FILE(GLOB_RECURSE script_files scripts/*.cmd scripts/*.sh )
 ADD_CUSTOM_TARGET(openvibe-designer-scripts SOURCES ${script_files})
+set_target_properties(openvibe-designer-scripts PROPERTIES
+	FOLDER ${MISC_FOLDER}
+)
 
 INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/.install-designer" DESTINATION ${DIST_ROOT})
