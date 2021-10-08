@@ -116,8 +116,8 @@ public:
 	}
 
 	IRenderer* m_Renderer = nullptr;
-	std::array<GtkTreeView*, 3> m_LookupTreeView{};
-	std::array<GtkListStore*, 3> m_LookupListStore{};
+	std::array<GtkTreeView*, 3> m_LookupTreeView;
+	std::array<GtkListStore*, 3> m_LookupListStore;
 };
 }  // namespace AdvancedVisualization
 }  // namespace OpenViBE
