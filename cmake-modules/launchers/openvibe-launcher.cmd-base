@@ -1,53 +1,55 @@
 @ECHO OFF
-SETLOCAL EnableDelayedExpansion
 SETLOCAL EnableExtensions
+SETLOCAL EnableDelayedExpansion
+
+REM If not set to PASSIVE, OpenMP (Eigen) boxes may load the cores fully even if there's little to do.
+SET "OMP_WAIT_POLICY=@OV_OMP_WAIT_POLICY@"
 
 REM Get the directory location of this script, assume it contains the OpenViBE dist tree. These variables will be used by OpenViBE executables.
 SET "OV_PATH_ROOT=%~dp0"
-SET "OV_PATH_BIN=%OV_PATH_ROOT%\bin"
-SET "OV_PATH_LIB=%OV_PATH_ROOT%\bin"
-SET "OV_PATH_DATA=%OV_PATH_ROOT%\share\openvibe"
-SET "MENSIA_PATH_DATA=%OV_PATH_ROOT%\share\mensia"
 
-SET OV_PAUSE=@OV_PAUSE@
+REM Default behavior
+SET OV_PAUSE=PAUSE
 SET OV_RUN_IN_BG=
 
-IF /i "%1"=="--no-pause" (
-	SET OV_PAUSE=
+REM Parse out Windows specific args ...
+SET "ARGS="
+SET EMPTY=
+:loop
+SET "STRIPPEDARG=%~1"
+if NOT !STRIPPEDARG! == !EMPTY! (
+	IF /i "!STRIPPEDARG!" == "--no-pause" (
+		SET OV_PAUSE=
+		goto found:
+	)
+	IF /i "!STRIPPEDARG!" == "--run-bg" (
+		REM Run in background, disable pause. The second parameter below is because CMD requires a 'title'
+		SET OV_RUN_IN_BG=START "@OV_CMD_EXECUTABLE@"
+		SET OV_PAUSE=
+		goto found:
+	)
+	
+	REM Pass the non-stripped arg to the launched application...
+	SET ARGS=%ARGS% %1
+	
+:found	
 	SHIFT
-)
-IF /i "%1"=="--pause" (
-	SET OV_PAUSE=PAUSE
-	SHIFT
-)
-IF /i "%1"=="--run-bg" (
-	REM Run in background, disable pause. The first start arg is the app title.
-	SET OV_RUN_IN_BG=START "@OV_CMD_EXECUTABLE@"
-	SET OV_PAUSE=
-	SHIFT
+	goto loop:
 )
 
-SET LUA_EXE_PATH=
-FOR %%F IN (lua.exe) DO (
-	SET LUA_EXE_PATH_FULL=%%~$PATH:F
-	SET LUA_EXE_PATH=!LUA_EXE_PATH_FULL:lua.exe=!
+REM Set dependency paths etc...
+SET "OV_ENVIRONMENT_FILE=%OV_PATH_ROOT%\bin\OpenViBE-set-env.cmd"
+IF NOT EXIST "%OV_ENVIRONMENT_FILE%" (
+	ECHO Error: "%OV_ENVIRONMENT_FILE%" was not found
+	GOTO EndOfScript
 )
+CALL "%OV_ENVIRONMENT_FILE%"
 
-SET PATH=%OV_PATH_LIB%;%PATH%
-SET LUA_CPATH=%LUA_CPATH%;%LUA_EXE_PATH%\clibs\?.dll;%OV_PATH_ROOT%\bin\?.dll
-SET LUA_PATH=%LUA_PATH%;%LUA_EXE_PATH%\lua\?.lua;%OV_PATH_ROOT%\bin\?.lua
+REM cmake variable OV_CMD_ARGS below may specify additional arguments outside this script
 
-REM get the arguments
-REM this allows to build the full argument list (even when # > 9)
-REM %* is not modifed by SHIFT
-SET "args="
-:getArgs
-IF "%~1" NEQ "" (
-  SET args=%args% %1
-  SHIFT
-  goto :getArgs
-)
-
-%OV_RUN_IN_BG% "@OV_CMD_EXECUTABLE@" @OV_CMD_ARGS@ %args%
+%OV_RUN_IN_BG% "%OV_PATH_ROOT%\bin\@OV_CMD_EXECUTABLE@" @OV_CMD_ARGS@ %ARGS%
+	
+:EndOfScript
 
 %OV_PAUSE%
+

@@ -2,11 +2,7 @@
 
 install(DIRECTORY DESTINATION "${DIST_DOCTMP}/sphinx")
 
-# Collect all sphinx documentation files from all projects
-set(INCLUDED_OV_SDK_COMPONENTS DEPENDENCIES DEVELOPER_TOOLS)
-include("AddOpenViBESDKComponents")
-
-add_custom_target(copy_sdk_documentation ALL COMMAND ${CMAKE_COMMAND} -E copy "${OPENVIBE_SDK_PATH}/doc-tmp/" "${CMAKE_CURRENT_BINARY_DIR}/doc-tmp")
+#add_custom_target(copy_sdk_documentation ALL COMMAND ${CMAKE_COMMAND} -E copy "${OPENVIBE_SDK_PATH}/doc-tmp/" "${CMAKE_CURRENT_BINARY_DIR}/doc-tmp")
 
 file(GLOB SPHINX_DOC_DIRS LIST_DIRECTORIES true LIST_FILES false
 	"${PROJECT_SOURCE_DIR}/plugins/visualization/*"

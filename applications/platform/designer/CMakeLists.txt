@@ -1,4 +1,4 @@
-project(openvibe-designer)
+project(openvibe-designer VERSION  ${OPENVIBE_MAJOR_VERSION}.${OPENVIBE_MINOR_VERSION}.${OPENVIBE_PATCH_VERSION})
 
 set(PROJECT_PRODUCT_NAME "${BRAND_NAME} Designer")
 
@@ -14,14 +14,34 @@ file(GLOB_RECURSE SRC_FILES src/*.cpp src/*.h src/*.hpp src/visualization/*.cpp 
 
 include("FindSourceDependencyJSON")
 
+message(STATUS "***** ${CMAKE_BINARY_DIR}/resource-files/${LOWER_BRAND_NAME}-${LOWER_DESIGNER_NAME}.rc")
 set(SRC_FILES "${SRC_FILES};${CMAKE_BINARY_DIR}/resource-files/${LOWER_BRAND_NAME}-${LOWER_DESIGNER_NAME}.rc")
 add_executable(${PROJECT_NAME} ${ENTRYPOINT} ${SRC_FILES})
+target_link_libraries(${PROJECT_NAME}
+                      openvibe
+                      openvibe-kernel
+                      openvibe-toolkit
+                      openvibe-module-ebml
+                      openvibe-module-system
+                      openvibe-module-fs
+                      openvibe-module-socket
+                      openvibe-module-xml
+                      openvibe-module-csv
+                      openvibe-module-date
+                      openvibe-module-communication
+)
+
+set_target_properties(${PROJECT_NAME} PROPERTIES
+	VERSION ${PROJECT_VERSION}
+	FOLDER ${APP_FOLDER}
+)
+
+add_definitions(-DTARGET_HAS_ThirdPartyOpenViBEPluginsGlobalDefines)
 
 # Generate launch script
-OV_INSTALL_LAUNCH_SCRIPT(SCRIPT_PREFIX "${LOWER_BRAND_NAME}-${LOWER_DESIGNER_NAME}" EXECUTABLE_NAME "${PROJECT_NAME}" ICON_PATH "${OV_ICON_PATH}/designer.ico")
+OV_INSTALL_LAUNCH_SCRIPT(SCRIPT_PREFIX "${LOWER_BRAND_NAME}-${LOWER_DESIGNER_NAME}" EXECUTABLE_NAME "${PROJECT_NAME}" ICON_PATH "${OV_ICON_PATH}/designer.ico" CONFIG_RC)
 
-SET(INCLUDED_OV_SDK_COMPONENTS BASE ALLPLUGINS ALLMODULES DEPENDENCIES)
-include("AddOpenViBESDKComponents")
+
 include("FindOpenViBEVisualizationToolkit")
 include("FindThirdPartyGTK")
 include("FindThirdPartyBoost")

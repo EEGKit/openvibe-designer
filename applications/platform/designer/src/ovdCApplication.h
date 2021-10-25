@@ -3,9 +3,6 @@
 #include <visualization-toolkit/ovvizIVisualizationManager.h>
 #include "ovd_base.h"
 
-#include "archway/ovdCArchwayHandler.h"
-#include "archway/ovdCArchwayHandlerGUI.h"
-
 #define OVD_ScenarioImportContext_OpenScenario	OpenViBE::CIdentifier(0xA180DB91, 0x19235AEE)
 #define OVD_ScenarioExportContext_SaveScenario	OpenViBE::CIdentifier(0xC98C47AD, 0xCBD952B2)
 #define OVD_ScenarioExportContext_SaveMetabox	OpenViBE::CIdentifier(0x529494F1, 0x6C2527D9)
@@ -112,7 +109,6 @@ public:
 	void aboutLinkClickedCB(const gchar* url) const;
 
 	void browseDocumentationCB() const;
-	static void registerLicenseCB();
 	void reportIssueCB() const;
 	void windowStateChangedCB(bool isMaximized);
 	bool displayChangelogWhenAvailable();
@@ -161,11 +157,6 @@ public:
 	std::vector<CInterfacedScenario*> m_Scenarios;
 	std::vector<const Plugins::IPluginObjectDesc*> m_NewBoxes;
 	std::vector<const Plugins::IPluginObjectDesc*> m_UpdatedBoxes;
-
-#ifdef MENSIA_DISTRIBUTION
-	CArchwayHandler* m_ArchwayHandler       = nullptr;
-	CArchwayHandlerGUI* m_ArchwayHandlerGUI = nullptr;
-#endif
 
 protected:
 	VisualizationToolkit::IVisualizationContext* m_visualizationCtx = nullptr;
