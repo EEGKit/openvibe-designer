@@ -43,8 +43,8 @@ protected:
 	std::vector<double*> m_coordsPtr;
 	std::vector<double> m_splineCoefs;
 	std::vector<double> m_laplacianCoefs;
-	std::array<double, 2004> m_scd{};
-	std::array<double, 2004> m_pot{};
+	std::array<double, 2004> m_scd;
+	std::array<double, 2004> m_pot;
 };
 
 class CAlgorithmSphericalSplineInterpolationDesc final : public IAlgorithmDesc

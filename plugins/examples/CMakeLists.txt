@@ -7,9 +7,17 @@ SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES
 	SOVERSION ${PROJECT_VERSION_MAJOR}
 	FOLDER ${PLUGINS_FOLDER}
 	COMPILE_FLAGS "-DOVP_Exports -DOVP_Shared")
+target_link_libraries(${PROJECT_NAME} 
+                      openvibe
+					  openvibe-common
+                      openvibe-toolkit
+                      openvibe-module-ebml
+                      openvibe-module-system
+                      openvibe-module-xml
+)
 
-SET(INCLUDED_OV_SDK_COMPONENTS MAIN COMMON TOOLKIT EBML SYSTEM XML)
-INCLUDE("AddOpenViBESDKComponents")
+add_definitions(-DTARGET_HAS_ThirdPartyOpenViBEPluginsGlobalDefines)
+
 INCLUDE("FindOpenViBEVisualizationToolkit")
 INCLUDE("FindThirdPartyGTK")
 

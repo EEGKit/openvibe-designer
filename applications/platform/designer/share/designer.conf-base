@@ -1,7 +1,7 @@
 ProjectVersion_Major = @OV_GLOBAL_VERSION_MAJOR@
 ProjectVersion_Minor = @OV_GLOBAL_VERSION_MINOR@
 ProjectVersion_Patch = @OV_GLOBAL_VERSION_PATCH@
-ProjectVersion_Components = \{"openvibe-sdk":"@OV_SDK_VERSION_STRING@", "openvibe-designer":"@OV_GLOBAL_VERSION_MAJOR@.@OV_GLOBAL_VERSION_MINOR@.@OV_GLOBAL_VERSION_PATCH@"\}
+ProjectVersion_Components = \{"openvibe-sdk":"@OV_SDK_VERSION_STRING@", "openvibe-designer":"@OV_GLOBAL_VERSION_MAJOR@.@OV_GLOBAL_VERSION_MINOR@.@OV_GLOBAL_VERSION_PATCH@", "openvibe-extras":"@PROJECT_VERSION@"\}
 
 Designer_Locale = C
 Designer_UndoRedoStackSize = 64
@@ -30,7 +30,7 @@ Designer_WebBrowserCommandPostfix_MacOS = &
 Designer_WebBrowserCommandPostfix = ${Designer_WebBrowserCommandPostfix_${OperatingSystem}}
 Designer_WebBrowserOpenViBEHomepage = http://openvibe.inria.fr/
 Designer_WebBrowserSupportURL = ${Designer_WebBrowserOpenViBEHomepage}/tracker
-Designer_WebBrowserHelpURLBase = ${Designer_WebBrowserOpenViBEHomepage}/documentation/@OV_GLOBAL_VERSION_STRING@
+Designer_WebBrowserHelpURLBase = ${Designer_WebBrowserOpenViBEHomepage}/documentation/@PROJECT_VERSION@
 
 #####################################################################################
 # Designer Help (F1) Configuration
@@ -66,3 +66,7 @@ Kernel_PluginsPatternLinux = ${Path_Lib}/libopenvibe-plugins-*.so
 Kernel_PluginsPatternWindows = ${Path_Bin}/openvibe-plugins-*.dll
 
 Designer_CustomConfigurationFile = ${Path_UserData}/openvibe-designer.conf
+
+Application_Name = OpenViBE Designer
+Application_Version = @PROJECT_VERSION@
+AcquisitionServer_HostName = localhost

@@ -9,10 +9,14 @@ SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES
 	SOVERSION ${PROJECT_VERSION_MAJOR}
 	FOLDER ${PLUGINS_FOLDER}
 	COMPILE_FLAGS "-DOVP_Exports -DOVP_Shared")
+target_link_libraries(${PROJECT_NAME}
+                      openvibe
+                      openvibe-toolkit
+)
+add_definitions(-DTARGET_HAS_ThirdPartyOpenViBEPluginsGlobalDefines)
 
 ADD_DEFINITIONS(-D_USE_MATH_DEFINES)	# Definition for constant math as M_PI
 
-INCLUDE("AddOpenViBESDKComponents")
 INCLUDE("FindOpenViBEVisualizationToolkit")
 INCLUDE("FindThirdPartyGTK")
 

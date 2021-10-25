@@ -4353,15 +4353,6 @@ u
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="openvibe-menu_register_license">
-                        <property name="label" translatable="yes">Register _license</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="use_underline">True</property>
-                        <property name="use_stock">False</property>
-                      </object>
-                    </child>
-                    <child>
                       <object class="GtkImageMenuItem" id="openvibe-menu_issue_report">
                         <property name="label">_Report issue</property>
                         <property name="visible">True</property>
@@ -4614,19 +4605,6 @@ the information about the scenario...</property>
                 <property name="show_arrow">False</property>
                 <property name="icon_size">1</property>
                 <property name="icon_size_set">True</property>
-                <child>
-                  <object class="GtkToggleToolButton" id="neurort-toggle_engine_configuration">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">open engine control panel...</property>
-                    <property name="label" translatable="yes">Mensia Engine</property>
-                    <property name="stock_id">gtk-connect</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
-                </child>
               </object>
               <packing>
                 <property name="left_attach">2</property>

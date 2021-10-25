@@ -7,19 +7,26 @@ FILE(GLOB_RECURSE SRC_FILES src/*.cpp src/*.h src/*.hpp src/*.inl include/*.h in
 INCLUDE("FindSourceRCProperties")
 
 ADD_LIBRARY(${PROJECT_NAME} SHARED ${SRC_FILES})
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${RLM_LIB_FILES})
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} 
+                      ${RLM_LIB_FILES}
+                      openvibe
+					  openvibe-common
+					  openvibe-toolkit
+                      openvibe-module-system
+)
 SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES
 	VERSION ${PROJECT_VERSION}
 	SOVERSION ${PROJECT_VERSION_MAJOR}
 	FOLDER ${PLUGINS_FOLDER}
 	COMPILE_FLAGS "-DOVP_Exports -DOVP_Shared")
 
+add_definitions(-DTARGET_HAS_ThirdPartyOpenViBEPluginsGlobalDefines)
+
 IF(MENSIA_ADVANCED_VISUALIZATION_EXPERIMENTAL)
 	MESSAGE(STATUS "  MENSIA_ADVANCED_VISUALIZATION_EXPERIMENTAL is set, experimental visualization will be built.")
 	ADD_DEFINITIONS(-DTARGET_Has_Experimental)
 ENDIF()
 
-INCLUDE("AddOpenViBESDKComponents")
 INCLUDE("FindOpenViBEVisualizationToolkit")
 INCLUDE("FindThirdPartyGTK")
 
