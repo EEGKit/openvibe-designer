@@ -549,13 +549,6 @@
 			</Outputs>
 			<Settings>
 				<Setting>
-					<TypeIdentifier>(0x2f2c606c, 0x8512ed68)</TypeIdentifier>
-					<Name>Filter method</Name>
-					<DefaultValue>Butterworth</DefaultValue>
-					<Value>Butterworth</Value>
-					<Modifiability>false</Modifiability>
-				</Setting>
-				<Setting>
 					<TypeIdentifier>(0xfa20178e, 0x4cba62e9)</TypeIdentifier>
 					<Name>Filter type</Name>
 					<DefaultValue>Band pass</DefaultValue>
@@ -581,13 +574,6 @@
 					<Name>High cut frequency (Hz)</Name>
 					<DefaultValue>40</DefaultValue>
 					<Value>30</Value>
-					<Modifiability>false</Modifiability>
-				</Setting>
-				<Setting>
-					<TypeIdentifier>(0x512a166f, 0x5c3ef83f)</TypeIdentifier>
-					<Name>Pass band ripple (dB)</Name>
-					<DefaultValue>0.5</DefaultValue>
-					<Value>0.5</Value>
 					<Modifiability>false</Modifiability>
 				</Setting>
 			</Settings>
