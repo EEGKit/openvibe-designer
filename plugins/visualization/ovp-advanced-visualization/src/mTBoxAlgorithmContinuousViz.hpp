@@ -258,10 +258,10 @@ bool TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>::process()
 			m_oStimulationDecoder.decode(i);
 			if (m_oStimulationDecoder.isBufferReceived())
 			{
-				IStimulationSet* stimulationSet = m_oStimulationDecoder.getOutputStimulationSet();
-				for (size_t j = 0; j < stimulationSet->getStimulationCount(); ++j)
+				CStimulationSet* stimulationSet = m_oStimulationDecoder.getOutputStimulationSet();
+				for (size_t j = 0; j < stimulationSet->size(); ++j)
 				{
-					m_Renderer->feed(stimulationSet->getStimulationDate(j), stimulationSet->getStimulationIdentifier(j));
+					m_Renderer->feed(stimulationSet->getDate(j), stimulationSet->getId(j));
 					m_RedrawNeeded = true;
 				}
 			}
