@@ -301,10 +301,10 @@ bool TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRenderer
 			m_StimDecoder.decode(size_t(i));
 			if (m_StimDecoder.isBufferReceived())
 			{
-				IStimulationSet* stimulationSet = m_StimDecoder.getOutputStimulationSet();
-				for (j = 0; j < stimulationSet->getStimulationCount(); ++j)
+				CStimulationSet* stimulationSet = m_StimDecoder.getOutputStimulationSet();
+				for (j = 0; j < stimulationSet->size(); ++j)
 				{
-					m_Renderers[0]->feed(stimulationSet->getStimulationDate(j), stimulationSet->getStimulationIdentifier(j));
+					m_Renderers[0]->feed(stimulationSet->getDate(j), stimulationSet->getId(j));
 					m_RedrawNeeded = true;
 				}
 			}
