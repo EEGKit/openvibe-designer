@@ -44,10 +44,6 @@ OV_INSTALL_LAUNCH_SCRIPT(SCRIPT_PREFIX "${LOWER_BRAND_NAME}-${LOWER_DESIGNER_NAM
 
 include("FindOpenViBEVisualizationToolkit")
 include("FindThirdPartyGTK")
-include("FindThirdPartyBoost")
-include("FindThirdPartyBoost_System")
-include("FindThirdPartyBoost_Thread")
-include("FindThirdPartyBoost_Filesystem")
 
 add_definitions(-DProjectVersion=\"${OV_GLOBAL_VERSION_STRING}\")
 add_definitions(-DM_VERSION_MAJOR=${OV_GLOBAL_VERSION_MAJOR})
