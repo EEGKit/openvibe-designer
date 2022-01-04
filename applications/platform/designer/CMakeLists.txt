@@ -31,6 +31,15 @@ target_link_libraries(${PROJECT_NAME}
                       openvibe-module-communication
 )
 
+if(UNIX AND NOT APPLE)
+	find_library(LIB_RT rt)
+	if(LIB_RT)
+		target_link_libraries(${PROJECT_NAME} ${LIB_RT})
+	else()
+		message(WARNING "  FAILED to find rt...")
+	endif()
+endif()
+
 set_target_properties(${PROJECT_NAME} PROPERTIES
 	VERSION ${PROJECT_VERSION}
 	FOLDER ${APP_FOLDER}
