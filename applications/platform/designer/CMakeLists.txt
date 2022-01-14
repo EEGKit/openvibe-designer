@@ -14,7 +14,6 @@ file(GLOB_RECURSE SRC_FILES src/*.cpp src/*.h src/*.hpp src/visualization/*.cpp 
 
 include("FindSourceDependencyJSON")
 
-message(STATUS "***** ${CMAKE_BINARY_DIR}/resource-files/${LOWER_BRAND_NAME}-${LOWER_DESIGNER_NAME}.rc")
 set(SRC_FILES "${SRC_FILES};${CMAKE_BINARY_DIR}/resource-files/${LOWER_BRAND_NAME}-${LOWER_DESIGNER_NAME}.rc")
 add_executable(${PROJECT_NAME} ${ENTRYPOINT} ${SRC_FILES})
 target_link_libraries(${PROJECT_NAME}
@@ -29,6 +28,7 @@ target_link_libraries(${PROJECT_NAME}
                       openvibe-module-csv
                       openvibe-module-date
                       openvibe-module-communication
+					  Boost::boost
 )
 
 if(UNIX AND NOT APPLE)
