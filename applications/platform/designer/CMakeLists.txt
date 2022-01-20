@@ -14,7 +14,6 @@ file(GLOB_RECURSE SRC_FILES src/*.cpp src/*.h src/*.hpp src/visualization/*.cpp 
 
 include("FindSourceDependencyJSON")
 
-message(STATUS "***** ${CMAKE_BINARY_DIR}/resource-files/${LOWER_BRAND_NAME}-${LOWER_DESIGNER_NAME}.rc")
 set(SRC_FILES "${SRC_FILES};${CMAKE_BINARY_DIR}/resource-files/${LOWER_BRAND_NAME}-${LOWER_DESIGNER_NAME}.rc")
 add_executable(${PROJECT_NAME} ${ENTRYPOINT} ${SRC_FILES})
 target_link_libraries(${PROJECT_NAME}
@@ -29,7 +28,17 @@ target_link_libraries(${PROJECT_NAME}
                       openvibe-module-csv
                       openvibe-module-date
                       openvibe-module-communication
+					  Boost::boost
 )
+
+if(UNIX AND NOT APPLE)
+	find_library(LIB_RT rt)
+	if(LIB_RT)
+		target_link_libraries(${PROJECT_NAME} ${LIB_RT})
+	else()
+		message(WARNING "  FAILED to find rt...")
+	endif()
+endif()
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
 	VERSION ${PROJECT_VERSION}
@@ -44,10 +53,6 @@ OV_INSTALL_LAUNCH_SCRIPT(SCRIPT_PREFIX "${LOWER_BRAND_NAME}-${LOWER_DESIGNER_NAM
 
 include("FindOpenViBEVisualizationToolkit")
 include("FindThirdPartyGTK")
-include("FindThirdPartyBoost")
-include("FindThirdPartyBoost_System")
-include("FindThirdPartyBoost_Thread")
-include("FindThirdPartyBoost_Filesystem")
 
 add_definitions(-DProjectVersion=\"${OV_GLOBAL_VERSION_STRING}\")
 add_definitions(-DM_VERSION_MAJOR=${OV_GLOBAL_VERSION_MAJOR})
