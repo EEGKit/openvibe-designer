@@ -115,10 +115,6 @@ ADD_DEFINITIONS(-DDESIGNER_NAME="${DESIGNER_NAME}")
 
 SET(OV_LAUNCHER_SOURCE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules/launchers")
 
-# a list of all project which will be filled by the directory traversal. This is needed to generate the documentation.
-SET_PROPERTY(GLOBAL PROPERTY OV_PROP_CURRENT_PROJECTS "")
-SET_PROPERTY(GLOBAL PROPERTY OV_PROP_CURRENT_PROJECTS_BUILD_DIR "")
-
 # Used by the various Find* scripts to locate OpenViBE modules
 SET(OV_BASE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -131,8 +127,6 @@ MESSAGE(STATUS "Building ${BRAND_NAME} ${DESIGNER_NAME} [${OEM_DISTRIBUTION}] Ve
 
 # Add vendor specific installation instructions
 # Traverse these directories and build their components
-
-ADD_SUBDIRECTORY("documentation/")
 
 IF(NOT(SKIP_PLUGINS))
 	ADD_SUBDIRECTORY("plugins/")

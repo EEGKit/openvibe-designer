@@ -33,8 +33,6 @@ INCLUDE("FindThirdPartyGTK")
 INCLUDE("FindLibMensiaAdvancedVisualisation")
 INCLUDE("FindThirdPartyOpenGL")
 
-INCLUDE("GenerateDocumentation")
-
 # ---------------------------------
 # Target macros
 # Defines target operating system, architecture and compiler
