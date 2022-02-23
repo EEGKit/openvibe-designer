@@ -11,6 +11,10 @@ target_include_directories(${PROJECT_NAME}-static
                            PUBLIC include
 )
 
+target_link_libraries(${PROJECT_NAME}-static
+					  Eigen3::Eigen
+)
+
 set_target_properties(${PROJECT_NAME}-static PROPERTIES
 	VERSION ${PROJECT_VERSION}
 	FOLDER ${MODULES_FOLDER}
@@ -20,6 +24,10 @@ add_library(${PROJECT_NAME} SHARED EXCLUDE_FROM_ALL ${SRC_FILES})
 target_include_directories(${PROJECT_NAME}
                            PRIVATE include/mensia include/mensia/advanced-visualization
                            PUBLIC include
+)
+
+target_link_libraries(${PROJECT_NAME}
+					  Eigen3::Eigen
 )
 
 if(UNIX)
@@ -40,7 +48,6 @@ target_compile_options(${PROJECT_NAME}
 add_definitions(-D_USE_MATH_DEFINES)	# Definition for constant math as M_PI
 
 include("FindThirdPartyOpenGL")
-include("FindThirdPartyEigen")
 
 # ---------------------------------
 # Target macros
