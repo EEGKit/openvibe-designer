@@ -99,7 +99,7 @@ Examples
 In the following example, we compute the alpha band power of the signal, and deduce the corresponding sources activity using 
 an inverse model of the headset (eLORETA), that outputs the source components along x, y and z axis and the source current density power.
 
-You can find a commented scenario in the provided sample set, the scenario file name is \textit{3DTomographicVisualization.mxs}.
+You can find a commented scenario in the provided sample set, the scenario file name is \textit{3DTomographicVisualization.xml}.
 
 .. figure:: images/3DTomographicVisualization_Example.png
    :alt: Example of scenario using the 3D Tomographic Visualization

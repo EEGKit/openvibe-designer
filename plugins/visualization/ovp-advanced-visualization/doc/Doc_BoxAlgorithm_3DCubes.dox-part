@@ -85,7 +85,7 @@ __________________________________________________________________
  * |OVP_DocBegin_BoxAlgorithm_3DCubes_Examples|
  In the following example, we compute the band power of the signal in the 8-15 Hz frequency range, and average it over the last 32 epochs received.
  
- You can find a commented scenario in the provided sample set, the scenario file name is \textit{3DCubes.mxs}.
+ You can find a commented scenario in the provided sample set, the scenario file name is \textit{3DCubes.xml}.
  
  \image html 3DCubes_Example.png "Example of scenario using the 3D cubes"
  \image latex 3DCubes_Example.png "Example of scenario using the 3D cubes" width=\textwidth

@@ -1,14 +1,14 @@
 <OpenViBE-Scenario>
-	<FormatVersion>1</FormatVersion>
-	<Creator>OpenVIBE</Creator>
-	<CreatorVersion>0.0.0</CreatorVersion>
+	<FormatVersion>2</FormatVersion>
+	<Creator>OpenViBE Designer</Creator>
+	<CreatorVersion>3.2.0</CreatorVersion>
 	<Settings></Settings>
 	<Inputs></Inputs>
 	<Outputs></Outputs>
 	<Boxes>
 		<Box>
 			<Identifier>(0x0b4d1813, 0x72678d31)</Identifier>
-			<Name>cos(2&#960;t + 100 x 2&#960;(1 - cos(k)))</Name>
+			<Name>cos(2πt + 100 x 2π(1 - cos(k)))</Name>
 			<AlgorithmClassIdentifier>(0x00e26fa1, 0x1dbab1b2)</AlgorithmClassIdentifier>
 			<Inputs>
 				<Input>
@@ -184,7 +184,7 @@
 		</Box>
 		<Box>
 			<Identifier>(0x3a56e295, 0x1e35c220)</Identifier>
-			<Name>k = cos(2&#960;t x 0.05)</Name>
+			<Name>k = cos(2πt x 0.05)</Name>
 			<AlgorithmClassIdentifier>(0x00e26fa1, 0x1dbab1b2)</AlgorithmClassIdentifier>
 			<Inputs>
 				<Input>
@@ -478,11 +478,12 @@
 			</Target>
 		</Link>
 	</Links>
+	<Comments></Comments>
 	<Metadata>
 		<Entry>
 			<Identifier>(0x0000775c, 0x000078ff)</Identifier>
 			<Type>(0x3bcce5d2, 0x43f2d968)</Type>
-			<Data>[{"boxIdentifier":"(0xffffffff, 0xffffffff)","childCount":1,"height":320,"identifier":"(0x000068b7, 0x0000338b)","index":0,"name":"Default window","parentIdentifier":"(0xffffffff, 0xffffffff)","type":1,"width":480},{"boxIdentifier":"(0x6d31f980, 0x6bf37a82)","childCount":0,"identifier":"(0x6d31f980, 0x6bf37a82)","index":0,"parentIdentifier":"(0xffffffff, 0xffffffff)","type":3},{"boxIdentifier":"(0xffffffff, 0xffffffff)","childCount":1,"identifier":"(0x00001b63, 0x000049e2)","index":0,"name":"Default tab","parentIdentifier":"(0x000068b7, 0x0000338b)","type":2},{"boxIdentifier":"(0xffffffff, 0xffffffff)","childCount":0,"identifier":"(0x00001a25, 0x00004cd1)","index":0,"name":"Empty","parentIdentifier":"(0x00001b63, 0x000049e2)","type":0}]</Data>
+			<Data>[{"boxIdentifier":"(0xffffffff, 0xffffffff)","childCount":1,"height":320,"identifier":"(0x000068b7, 0x0000338b)","name":"Default window","parentIdentifier":"(0xffffffff, 0xffffffff)","type":1,"width":480},{"boxIdentifier":"(0x6d31f980, 0x6bf37a82)","childCount":0,"identifier":"(0x6d31f980, 0x6bf37a82)","parentIdentifier":"(0xffffffff, 0xffffffff)","type":3},{"boxIdentifier":"(0xffffffff, 0xffffffff)","childCount":1,"identifier":"(0x00001b63, 0x000049e2)","index":0,"name":"Default tab","parentIdentifier":"(0x000068b7, 0x0000338b)","type":2},{"boxIdentifier":"(0xffffffff, 0xffffffff)","childCount":0,"identifier":"(0x00001a25, 0x00004cd1)","index":0,"name":"Empty","parentIdentifier":"(0x00001b63, 0x000049e2)","type":0}]</Data>
 		</Entry>
 	</Metadata>
 </OpenViBE-Scenario>

@@ -1,7 +1,10 @@
 <OpenViBE-Scenario>
-	<FormatVersion>1</FormatVersion>
-	<Creator>openvibe</Creator>
-	<CreatorVersion>2.0</CreatorVersion>
+	<FormatVersion>2</FormatVersion>
+	<Creator>OpenViBE Designer</Creator>
+	<CreatorVersion>3.2.0</CreatorVersion>
+	<Settings></Settings>
+	<Inputs></Inputs>
+	<Outputs></Outputs>
 	<Boxes>
 		<Box>
 			<Identifier>(0x00002e59, 0x00005225)</Identifier>
@@ -82,27 +85,15 @@
 			<Attributes>
 				<Attribute>
 					<Identifier>(0x1fa7a38f, 0x54edbe0b)</Identifier>
-					<Value>144.000000</Value>
-				</Attribute>
-				<Attribute>
-					<Identifier>(0x1fa963f5, 0x1a638cd4)</Identifier>
-					<Value>38</Value>
+					<Value>128</Value>
 				</Attribute>
 				<Attribute>
 					<Identifier>(0x207c9054, 0x3c841b63)</Identifier>
-					<Value>432.000000</Value>
+					<Value>368</Value>
 				</Attribute>
 				<Attribute>
 					<Identifier>(0x4e7b798a, 0x183beafb)</Identifier>
 					<Value>(0x905adcea, 0xd88c907d)</Value>
-				</Attribute>
-				<Attribute>
-					<Identifier>(0xad100179, 0xa3c984ab)</Identifier>
-					<Value>222</Value>
-				</Attribute>
-				<Attribute>
-					<Identifier>(0xc67a01dc, 0x28ce06c1)</Identifier>
-					<Value></Value>
 				</Attribute>
 				<Attribute>
 					<Identifier>(0xc73e83ec, 0xf855c5bc)</Identifier>
@@ -142,7 +133,7 @@ chanfes accordingly.</Text>
 		<Entry>
 			<Identifier>(0x0000775c, 0x000078ff)</Identifier>
 			<Type>(0x3bcce5d2, 0x43f2d968)</Type>
-			<Data>[{"boxIdentifier":"(0xffffffff, 0xffffffff)","childCount":1,"height":477,"identifier":"(0x00002cca, 0x000017dc)","index":0,"name":"Default window","parentIdentifier":"(0xffffffff, 0xffffffff)","type":1,"width":614},{"boxIdentifier":"(0xffffffff, 0xffffffff)","childCount":1,"identifier":"(0x00002075, 0x000044ac)","index":0,"name":"config","parentIdentifier":"(0x00002cca, 0x000017dc)","type":2},{"boxIdentifier":"(0x00002e59, 0x00005225)","childCount":0,"identifier":"(0x0000463a, 0x00002105)","index":0,"parentIdentifier":"(0x00002075, 0x000044ac)","type":3}]</Data>
+			<Data>[{"boxIdentifier":"(0xffffffff, 0xffffffff)","childCount":1,"height":477,"identifier":"(0x00002cca, 0x000017dc)","name":"Default window","parentIdentifier":"(0xffffffff, 0xffffffff)","type":1,"width":614},{"boxIdentifier":"(0xffffffff, 0xffffffff)","childCount":1,"identifier":"(0x00002075, 0x000044ac)","index":0,"name":"config","parentIdentifier":"(0x00002cca, 0x000017dc)","type":2},{"boxIdentifier":"(0x00002e59, 0x00005225)","childCount":0,"identifier":"(0x0000463a, 0x00002105)","index":0,"parentIdentifier":"(0x00002075, 0x000044ac)","type":3}]</Data>
 		</Entry>
 	</Metadata>
 	<Attributes>

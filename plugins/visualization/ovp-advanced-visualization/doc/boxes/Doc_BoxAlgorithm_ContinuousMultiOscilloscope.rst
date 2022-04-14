@@ -135,7 +135,7 @@ Examples
 
 In the following example, we compute the band power of the input signal in the 8-15 Hz frequency range, and average it over the last 32 epochs received.
 
-You can find a commented scenario in the provided sample set, the scenario file name is \textit{ContinuousMultiOscilloscope.mxs}.
+You can find a commented scenario in the provided sample set, the scenario file name is \textit{ContinuousMultiOscilloscope.xml}.
 
 .. figure:: images/ContinuousMultiOscilloscope_Example.png
    :alt: Example of scenario using the Continuous Multi-Oscilloscope

@@ -111,7 +111,7 @@ Examples
 In the following example, we compute the FFT of the average right hand trial in a Motor Imagery session,
 and visualize the spectrum around left and right motor cortices through 2 Laplacian filters around C3 and C4.
 
-You can find a commented scenario in the provided sample set, the scenario file name is \textit{InstantMultiOscilloscope.mxs}.
+You can find a commented scenario in the provided sample set, the scenario file name is \textit{InstantMultiOscilloscope.xml}.
 
 .. figure:: images/InstantMultiOscilloscope_Example.png
    :alt: Example of scenario using the Instant Multi-Oscilloscope
