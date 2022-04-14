@@ -135,7 +135,7 @@ Examples
 
 In the following example, we filter the input signal in the 8-15 Hz frequency range and simply display it.
 
-You can find a commented scenario in the provided sample set, the scenario file name is \textit{ContinuousOscilloscope.mxs}.
+You can find a commented scenario in the provided sample set, the scenario file name is \textit{ContinuousOscilloscope.xml}.
 
 .. figure:: images/ContinuousOscilloscope_Example.png
    :alt: Example of scenario using the Continuous Oscilloscope

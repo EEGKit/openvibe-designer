@@ -125,7 +125,7 @@ Examples
 In the following example, we compute the FFT of every right-hand trial in a Motor Imagery session, filtered spatially around the two motor cortices.
 All the spectra are stacked on top of each other.
 
-You can find a commented scenario in the provided sample set, the scenario file name is \textit{StackedBitmapHorz.mxs}.
+You can find a commented scenario in the provided sample set, the scenario file name is \textit{StackedBitmapHorz.xml}.
 
 .. figure:: images/StackedBitmapHorz_Example.png
    :alt: Example of scenario using the Stacked Bitmap (Horizontal)

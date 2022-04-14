@@ -92,7 +92,7 @@ Examples
 
 In the following example, we compute the FFT of the input EEG signal and display it.
 
-You can find a commented scenario in the provided sample set, the scenario file name is \textit{InstantBitmap.mxs}.
+You can find a commented scenario in the provided sample set, the scenario file name is \textit{InstantBitmap.xml}.
 
 .. figure:: images/InstantBitmap_Example.png
    :alt: Example of scenario using the Instant Bitmap to display spectrum

@@ -10,7 +10,7 @@
   - Spectrum, time-frequency map
   - 2D and 3D topographies
   
-  You can find this scenario in the provided sample set, the scenario file name is \textit{UseCase-1-EEG-signal-analysis.mxs}.
+  You can find this scenario in the provided sample set, the scenario file name is \textit{UseCase-1-EEG-signal-analysis.xml}.
   
   \subpage Doc_Mensia_AdvViz_UseCases_SignalAnalysis
 
@@ -18,7 +18,7 @@
   This use-case is focused on the ERP extraction and visualization, applied to P300 speller data.
   The Mensia Advanced Visualization boxes allows concurrent and comparative displays (e.g. target versus non-target potentials), and synchronized replay capabilities
   
-  You can find this scenario in the provided sample set, the scenario file name is \textit{UseCase-2-ERP-analysis.mxs}.
+  You can find this scenario in the provided sample set, the scenario file name is \textit{UseCase-2-ERP-analysis.xml}.
   
   \subpage Doc_Mensia_AdvViz_UseCases_ERPAnalysis
 

@@ -88,7 +88,7 @@ __________________________________________________________________
  * |OVP_DocBegin_BoxAlgorithm_2DTopography_Examples|
  In the following example, we compute the band power of the signal in the 8-15 Hz frequency range, and average it over the last 32 epochs received.
  
- You can find a commented scenario in the provided sample set, the scenario file name is \textit{2DTopography.mxs}.
+ You can find a commented scenario in the provided sample set, the scenario file name is \textit{2DTopography.xml}.
  
  \image html 2DTopography_Example.png "Example of scenario using the 2D topography"
  \image latex 2DTopography_Example.png "Example of scenario using the 2D topography" width=\textwidth

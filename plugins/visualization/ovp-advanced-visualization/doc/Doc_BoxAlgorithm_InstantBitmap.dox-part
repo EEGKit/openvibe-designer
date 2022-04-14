@@ -77,7 +77,7 @@ __________________________________________________________________
  * |OVP_DocBegin_BoxAlgorithm_InstantBitmap_Examples|
  In the following example, we compute the FFT of the input EEG signal and display it.
  
- You can find a commented scenario in the provided sample set, the scenario file name is \textit{InstantBitmap.mxs}.
+ You can find a commented scenario in the provided sample set, the scenario file name is \textit{InstantBitmap.xml}.
  
  \image html InstantBitmap_Example.png "Example of scenario using the Instant Bitmap to display spectrum"
  \image latex InstantBitmap_Example.png "Example of scenario using the Instant Bitmap to display spectrum" width=\textwidth
