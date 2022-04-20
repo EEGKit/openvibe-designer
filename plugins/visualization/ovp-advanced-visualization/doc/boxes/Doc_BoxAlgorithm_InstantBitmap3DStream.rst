@@ -94,7 +94,7 @@ Examples
 --------
 
 In the following example, we compute the Time-Frequency Analysis for a generated signal.
-You can find a commented scenario in the provided sample set, the scenario file name is InstantBitmap3DStream.mxs.
+You can find a commented scenario in the provided sample set, the scenario file name is InstantBitmap3DStream.xml.
 
 .. figure:: images/InstantBitmap3DStream_Example.png
    :alt: Example of scenario using the Instant Bitmap (3D Stream)

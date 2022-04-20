@@ -309,10 +309,10 @@ bool TBoxAlgorithmStackedInstantViz<TDrawBorders, TRendererFactoryClass, TRulerC
 			m_StimDecoder.decode(i);
 			if (m_StimDecoder.isBufferReceived())
 			{
-				IStimulationSet* stimSet = m_StimDecoder.getOutputStimulationSet();
-				for (size_t j = 0; j < stimSet->getStimulationCount(); ++j)
+				CStimulationSet* stimSet = m_StimDecoder.getOutputStimulationSet();
+				for (size_t j = 0; j < stimSet->size(); ++j)
 				{
-					m_Renderers[0]->feed(stimSet->getStimulationDate(j), stimSet->getStimulationIdentifier(j));
+					m_Renderers[0]->feed(stimSet->getDate(j), stimSet->getId(j));
 					m_RedrawNeeded = true;
 				}
 			}

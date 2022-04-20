@@ -5,8 +5,8 @@
 #include <fs/Files.h>
 
 #include <openvibe/ovAssert.h>
-#include <openvibe/kernel/error/ovIErrorManager.h>
-#include <openvibe/kernel/error/ovIError.h>
+#include <openvibe/kernel/error/CErrorManager.hpp>
+#include <openvibe/kernel/error/CError.hpp>
 
 #define OV_ERROR_D(description, type, returnValue) OV_ERROR(description, type, returnValue, m_kernelCtx.getErrorManager(), m_kernelCtx.getLogManager())
 #define OV_ERROR_DRF(description, type) OV_ERROR(description, type, false, m_kernelCtx.getErrorManager(), m_kernelCtx.getLogManager())
@@ -34,7 +34,7 @@
 class DesignerException final : public std::runtime_error
 {
 public:
-	DesignerException(OpenViBE::Kernel::IErrorManager& errorManager)
+	DesignerException(OpenViBE::Kernel::CErrorManager& errorManager)
 		: std::runtime_error("Designer caused an exception"), m_ErrorManager(errorManager) {}
 
 	const char* what() const NOEXCEPT override { return m_ErrorManager.getLastErrorString(); }
@@ -42,7 +42,7 @@ public:
 	std::string getErrorString() const
 	{
 		std::string errorMessage;
-		const OpenViBE::Kernel::IError* error = m_ErrorManager.getLastError();
+		const OpenViBE::Kernel::CError* error = m_ErrorManager.getLastError();
 		while (error)
 		{
 			char location[1024];
@@ -56,12 +56,12 @@ public:
 
 	void releaseErrors() NOEXCEPT { m_ErrorManager.releaseErrors(); }
 
-	OpenViBE::Kernel::IErrorManager& m_ErrorManager;
+	OpenViBE::Kernel::CErrorManager& m_ErrorManager;
 };
 
 #define OV_EXCEPTION_D(description, type) \
 do { \
-	m_kernelCtx.getErrorManager().pushErrorAtLocation(type, static_cast<const OpenViBE::ErrorStream&>(OpenViBE::ErrorStream() << description).str().c_str(), __FILE__, __LINE__ ); \
+	m_kernelCtx.getErrorManager().pushError(type, static_cast<const OpenViBE::ErrorStream&>(OpenViBE::ErrorStream() << description).str().c_str(), __FILE__, __LINE__ ); \
 	m_kernelCtx.getLogManager() << OpenViBE::Kernel::LogLevel_Fatal << "[Error description] = " << description << "; [Error code] = " << size_t((type)) << "\n"; \
 	throw DesignerException(m_kernelCtx.getErrorManager()); \
 } while(0)
