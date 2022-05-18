@@ -1208,7 +1208,7 @@ bool CApplication::openScenario(const char* filename)
 		const auto scenario = m_Scenarios[i];
 		if (scenario->m_Filename == std::string(filename))
 		{
-			gtk_notebook_set_current_page(m_scenarioNotebook, i);
+			gtk_notebook_set_current_page(m_scenarioNotebook, gint(i));
 			return true;
 		}
 	}
@@ -2818,7 +2818,7 @@ void CApplication::reorderCurrentScenario(const size_t newPageIdx)
 	m_Scenarios.erase(m_Scenarios.begin() + m_currentScenarioIdx);
 	m_Scenarios.insert(m_Scenarios.begin() + newPageIdx, scenario);
 
-	this->changeCurrentScenario(newPageIdx);
+	this->changeCurrentScenario(int(newPageIdx));
 }
 
 //Increase the zoom of the current scenario

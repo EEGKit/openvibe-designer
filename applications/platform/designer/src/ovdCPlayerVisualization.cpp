@@ -452,10 +452,10 @@ bool CPlayerVisualization::parentWidgetBox(IVTWidget* widget, GtkBox* widgetBox)
 				parentWindow->getChildIndex(parentWidget->getIdentifier(), index);
 
 				//remove temporary page
-				gtk_notebook_remove_page(GTK_NOTEBOOK(parent), index);
+				gtk_notebook_remove_page(GTK_NOTEBOOK(parent), gint(index));
 
 				//insert final page
-				gtk_notebook_insert_page(GTK_NOTEBOOK(parent), GTK_WIDGET(widgetBox), gtk_label_new(parentWidget->getName().toASCIIString()), index);
+				gtk_notebook_insert_page(GTK_NOTEBOOK(parent), GTK_WIDGET(widgetBox), gtk_label_new(parentWidget->getName().toASCIIString()), gint(index));
 			}
 
 			//resize widgets once they are allocated : this is the case when they are shown on an expose event
@@ -493,7 +493,7 @@ bool CPlayerVisualization::parentWidgetBox(IVTWidget* widget, GtkBox* widgetBox)
 					// gdk_flush();
 
 					//set panel containing widget as current (this realizes the widget)
-					gtk_notebook_set_current_page(GTK_NOTEBOOK(panelWidget), index);
+					gtk_notebook_set_current_page(GTK_NOTEBOOK(panelWidget), gint(index));
 
 					//then reset first panel as current
 					gtk_notebook_set_current_page(GTK_NOTEBOOK(panelWidget), 0);

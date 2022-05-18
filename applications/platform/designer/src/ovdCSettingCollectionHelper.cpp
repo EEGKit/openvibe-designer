@@ -27,8 +27,8 @@ typedef struct
 	GtkWidget* container;
 	GtkWidget* drawingArea;
 	std::vector<color_gradient_node_t> colorGradient;
-	std::map<GtkColorButton*, uint32_t> colorButtons;
-	std::map<GtkSpinButton*, uint32_t> spinButtons;
+	std::map<GtkColorButton*, size_t> colorButtons;
+	std::map<GtkSpinButton*, size_t> spinButtons;
 } color_gradient_t;
 
 static void gradients2Matrix(const std::vector<color_gradient_node_t>& in, CMatrix& out)
@@ -248,7 +248,7 @@ static void OnRefreshColorGradient(GtkWidget* /*widget*/, GdkEventExpose* /*even
 		color.green = guint(interpolated[i * 4 + 2] * 655.35);
 		color.blue  = guint(interpolated[i * 4 + 3] * 655.35);
 		gdk_gc_set_rgb_fg_color(gc, &color);
-		gdk_draw_rectangle(userData->drawingArea->window, gc, TRUE, (sizex * i) / steps, 0, (sizex * (i + 1)) / steps, sizey);
+		gdk_draw_rectangle(userData->drawingArea->window, gc, TRUE, gint((sizex * i) / steps), 0, gint((sizex * (i + 1)) / steps), sizey);
 	}
 	g_object_unref(gc);
 }
