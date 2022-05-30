@@ -998,12 +998,13 @@ void CInterfacedScenario::redrawScenarioLinkSettings(GtkWidget* links, const boo
 			gtk_misc_set_alignment(GTK_MISC(entryLinkName), 0.0, 0.5);
 			gtk_widget_set_sensitive(GTK_WIDGET(entryLinkName), GTK_SENSITIVITY_OFF);
 
-			gtk_table_attach(GTK_TABLE(links), entryLinkName, 0, 1, i, i + 1, GtkAttachOptions(GTK_EXPAND | GTK_FILL), GTK_SHRINK, 4, 4);
-			gtk_table_attach(GTK_TABLE(links), comboBoxType, 1, 2, i, i + 1, GTK_SHRINK, GTK_SHRINK, 4, 4);
-			gtk_table_attach(GTK_TABLE(links), buttonUp, 3, 4, i, i + 1, GTK_SHRINK, GTK_SHRINK, 4, 4);
-			gtk_table_attach(GTK_TABLE(links), buttonDown, 4, 5, i, i + 1, GTK_SHRINK, GTK_SHRINK, 4, 4);
-			gtk_table_attach(GTK_TABLE(links), buttonEdit, 5, 6, i, i + 1, GTK_SHRINK, GTK_SHRINK, 4, 4);
-			gtk_table_attach(GTK_TABLE(links), buttonDelete, 6, 7, i, i + 1, GTK_SHRINK, GTK_SHRINK, 4, 4);
+			const guint gi = guint(i);
+			gtk_table_attach(GTK_TABLE(links), entryLinkName, 0, 1, gi, gi + 1, GtkAttachOptions(GTK_EXPAND | GTK_FILL), GTK_SHRINK, 4, 4);
+			gtk_table_attach(GTK_TABLE(links), comboBoxType, 1, 2, gi, gi + 1, GTK_SHRINK, GTK_SHRINK, 4, 4);
+			gtk_table_attach(GTK_TABLE(links), buttonUp, 3, 4, gi, gi + 1, GTK_SHRINK, GTK_SHRINK, 4, 4);
+			gtk_table_attach(GTK_TABLE(links), buttonDown, 4, 5, gi, gi + 1, GTK_SHRINK, GTK_SHRINK, 4, 4);
+			gtk_table_attach(GTK_TABLE(links), buttonEdit, 5, 6, gi, gi + 1, GTK_SHRINK, GTK_SHRINK, 4, 4);
+			gtk_table_attach(GTK_TABLE(links), buttonDelete, 6, 7, gi, gi + 1, GTK_SHRINK, GTK_SHRINK, 4, 4);
 
 			// Set the callbacks
 			link_cb_data_t cbData;
