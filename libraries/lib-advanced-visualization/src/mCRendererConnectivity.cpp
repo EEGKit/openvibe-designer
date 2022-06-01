@@ -37,13 +37,13 @@ static void q_rotate(Eigen::VectorXd& dst, const Eigen::VectorXd& src, const Eig
 
 static void q_from_polar(Eigen::Quaterniond& q, Eigen::VectorXd& v1, Eigen::VectorXd& v2, const CVertex& cv1, const CVertex& cv2)
 {
-	v1(0) = cv1.x;
-	v1(1) = cv1.y;
-	v1(2) = cv1.z;
+	v1(0) = double(cv1.x);
+	v1(1) = double(cv1.y);
+	v1(2) = double(cv1.z);
 
-	v2(0) = cv2.x;
-	v2(1) = cv2.y;
-	v2(2) = cv2.z;
+	v2(0) = double(cv2.x);
+	v2(1) = double(cv2.y);
+	v2(2) = double(cv2.z);
 
 	q.setFromTwoVectors(v1, v2);
 }
@@ -61,7 +61,7 @@ void CRendererConnectivity::rebuild(const CRendererContext& ctx)
 	Eigen::VectorXd v2(3);
 
 	C3DMesh scalp;
-	scalp.load(SCALP_DATA);
+	scalp.load(SCALP_DATA.data());
 
 	// Projects electrode coordinates to 3D mesh
 
@@ -76,39 +76,35 @@ void CRendererConnectivity::rebuild(const CRendererContext& ctx)
 	m_vertex.clear();
 	m_vertex.resize(m_nChannel * (m_nChannel - 1) / 2);
 	size_t l = 0;
-	for (size_t i = 0; i < m_nChannel; ++i)
-	{
-		for (size_t j = 0; j < i; ++j)
-		{
+	for (size_t i = 0; i < m_nChannel; ++i) {
+		for (size_t j = 0; j < i; ++j) {
 			m_vertex[l].resize(COUNT);
 
 			CVertex vi, vj;
 			vi = channelPos[i];
 			vj = channelPos[j];
 
-			const float viLen = projectedChannelPos[i].length();
-			const float vjLen = projectedChannelPos[j].length();
+			const double viLen = double(projectedChannelPos[i].length());
+			const double vjLen = double(projectedChannelPos[j].length());
 
 			q_from_polar(qDiff, v1, v2, vi, vj);
 
-			const double alpha = 0;
-			const double dot   = (1 - CVertex::dot(vi, vj)) * .5;
+			const double dot   = double(1 - CVertex::dot(vi, vj)) * 0.5;
 
-			for (size_t k = 0; k < COUNT; ++k)
-			{
-				const float t = float(k * 1. / (COUNT - 1));
-				auto s        = float((t - .5) * 2);
-				s             = float(1 + .5 * (1 - s * s) * dot);
+			for (size_t k = 0; k < COUNT; ++k) {
+				const double t = double(k) * 1.0 / (COUNT - 1);
+				auto s        = (t - 0.5) * 2;
+				s             = 1 + 0.5 * (1 - s * s) * dot;
 
 				q = qId.slerp(t, qDiff);
 
 				q_rotate(v, v1, q);
 
-				const float len  = (viLen * (1 - t) + vjLen * t);
+				const double len  = (viLen * (1 - t) + vjLen * t);
 				m_vertex[l][k].x = float(s * v[0] * len);
 				m_vertex[l][k].y = float(s * v[1] * len);
 				m_vertex[l][k].z = float(s * v[2] * len);
-				m_vertex[l][k].u = float(alpha);
+				m_vertex[l][k].u = 0.0F;
 			}
 
 			l++;
@@ -126,10 +122,8 @@ void CRendererConnectivity::refresh(const CRendererContext& ctx)
 	if (m_nHistory < m_nChannel) { return; }
 
 	size_t l = 0;
-	for (size_t i = 0; i < m_nChannel; ++i)
-	{
-		for (size_t j = 0; j < i; ++j)
-		{
+	for (size_t i = 0; i < m_nChannel; ++i) {
+		for (size_t j = 0; j < i; ++j) {
 			for (size_t k = 0; k < COUNT; ++k) { m_vertex[l][k].u = m_history[i][m_nHistory - 1 - j]; }
 			l++;
 		}
@@ -149,7 +143,7 @@ bool CRendererConnectivity::render(const CRendererContext& ctx)
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
-	gluPerspective(60, ctx.getAspect(), .01, 100);
+	gluPerspective(60, double(ctx.getAspect()), .01, 100);
 	glTranslatef(0, 0, -d);
 	glRotatef(ctx.getRotationX() * 10, 1, 0, 0);
 	glRotatef(ctx.getRotationY() * 10, 0, 1, 0);
@@ -163,19 +157,18 @@ bool CRendererConnectivity::render(const CRendererContext& ctx)
 	glLoadIdentity();
 	glScalef(ctx.getZoom(), ctx.getZoom(), ctx.getZoom());
 
-	const float rgb = 1.F;
+	const float rgb = 1.0F;
 	glColor4f(rgb, rgb, rgb, ctx.getTranslucency());
 	glPushMatrix();
 
-	glTranslatef(0, .5F, 0);
+	glTranslatef(0, 0.5F, 0);
 	glRotatef(19, 1, 0, 0);
-	glTranslatef(0, -.2F, .35F);
+	glTranslatef(0, -.2F, 0.35F);
 	// ::glScalef(1.8f, 1.8f, 1.8f);
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	for (size_t i = 0; i < m_nChannel * (m_nChannel - 1) / 2; ++i)
-	{
+	for (size_t i = 0; i < m_nChannel * (m_nChannel - 1) / 2; ++i) {
 		glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_vertex[i][0].x);
 		glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_vertex[i][0].u);
 		glDrawArrays(GL_LINE_STRIP, 0, COUNT);

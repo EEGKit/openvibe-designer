@@ -24,10 +24,9 @@
 
 namespace OpenViBE {
 namespace AdvancedVisualization {
-class CRendererCube : public IRenderer
+class CRendererCube final : public IRenderer
 {
 public:
-
 	CRendererCube();
 
 	void rebuild(const CRendererContext& ctx) override;

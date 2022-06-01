@@ -35,8 +35,8 @@ bool CRendererMultiLine::render(const CRendererContext& ctx)
 
 	if (!nSample) { return false; }
 
-	const float t1 = n2 * 1.F / nSample;
-	const float t2 = -n1 * 1.F / nSample;
+	const float t1 = float(n2) * 1.0F / float(nSample);
+	const float t2 = -float(n1) * 1.0F / float(nSample);
 
 	glMatrixMode(GL_TEXTURE);
 	glPushMatrix();
@@ -47,36 +47,31 @@ bool CRendererMultiLine::render(const CRendererContext& ctx)
 	glTranslatef(0, ctx.isPositiveOnly() ? 0 : 0.5F, 0);
 	glScalef(1, ctx.getScale(), 1);
 	glEnableClientState(GL_VERTEX_ARRAY);
-	for (size_t i = 0; i < ctx.getSelectedCount(); ++i)
-	{
+	for (size_t i = 0; i < ctx.getSelectedCount(); ++i) {
 		std::vector<CVertex>& vertices = m_vertices[ctx.getSelected(i)];
-		glTexCoord1f(1 - (i + .5F) / ctx.getSelectedCount());
-		if (ctx.isScrollModeActive())
-		{
+		glTexCoord1f(1 - (float(i) + 0.5F) / float(ctx.getSelectedCount()));
+		if (ctx.isScrollModeActive()) {
 			glPushMatrix();
 			glTranslatef(t1, 0, 0);
 			glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &vertices[0].x);
 			glDrawArrays(GL_LINE_STRIP, 0, n1);
 			glPopMatrix();
-			if (n2 > 0)
-			{
+			if (n2 > 0) {
 				glPushMatrix();
 				glTranslatef(t2, 0, 0);
 				glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &vertices[n1].x);
 				glDrawArrays(GL_LINE_STRIP, 0, n2);
 				glPopMatrix();
 
-				if (n1 > 0)
-				{
+				if (n1 > 0) {
 					glBegin(GL_LINES);
-					glVertex2f(vertices[nSample - 1].x + t2, vertices[nSample - 1].y);
+					glVertex2f(vertices[m_nSample - 1].x + t2, vertices[m_nSample - 1].y);
 					glVertex2f(vertices[0].x + t1, vertices[0].y);
 					glEnd();
 				}
 			}
 		}
-		else
-		{
+		else {
 			glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &vertices[0].x);
 			glDrawArrays(GL_LINE_STRIP, 0, nSample);
 		}
@@ -90,7 +85,7 @@ bool CRendererMultiLine::render(const CRendererContext& ctx)
 	glMatrixMode(GL_MODELVIEW);
 
 	glDisable(GL_TEXTURE_1D);
-	glColor3f(.2F, .2F, .2F);
+	glColor3f(0.2F, 0.2F, 0.2F);
 	glBegin(GL_LINES);
 	glVertex2f(0, ctx.isPositiveOnly() ? 0 : 0.5F);
 	glVertex2f(1, ctx.isPositiveOnly() ? 0 : 0.5F);

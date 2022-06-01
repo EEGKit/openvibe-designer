@@ -33,10 +33,9 @@ void CRendererXYZPlot::rebuild(const CRendererContext& ctx)
 	m_nPlot    = (ctx.getChannelCount() + m_plotDim - 1) / m_plotDim;
 	m_vertex.resize(m_nPlot);
 	const float inverseSampleCount = 1.0F / float(m_nSample < 2 ? 1 : (m_nSample - 1));
-	for (size_t i = 0; i < m_nPlot; ++i)
-	{
+	for (size_t i = 0; i < m_nPlot; ++i) {
 		m_vertex[i].resize(this->m_nSample);
-		for (size_t j = 0; j < this->m_nSample; ++j) { m_vertex[i][j].u = j * inverseSampleCount; }
+		for (size_t j = 0; j < this->m_nSample; ++j) { m_vertex[i][j].u = float(j) * inverseSampleCount; }
 	}
 
 	m_historyIdx = 0;
@@ -48,20 +47,16 @@ void CRendererXYZPlot::refresh(const CRendererContext& ctx)
 
 	if (!m_nHistory) { return; }
 
-	while (m_historyIdx < m_nHistory)
-	{
+	while (m_historyIdx < m_nHistory) {
 		const size_t j = m_historyIdx % this->m_nSample;
-		for (size_t i = 0; i < m_nPlot; ++i)
-		{
-			if (m_hasDepth)
-			{
+		for (size_t i = 0; i < m_nPlot; ++i) {
+			if (m_hasDepth) {
 				const size_t i3  = i * 3;
 				m_vertex[i][j].x = (i3 < m_history.size() ? m_history[i3][m_historyIdx] : 0);
 				m_vertex[i][j].y = (i3 + 1 < m_history.size() ? m_history[i3 + 1][m_historyIdx] : 0);
 				m_vertex[i][j].z = (i3 + 2 < m_history.size() ? m_history[i3 + 2][m_historyIdx] : 0);
 			}
-			else
-			{
+			else {
 				const size_t i3  = i * 2;
 				m_vertex[i][j].x = (i3 < m_history.size() ? m_history[i3][m_historyIdx] : 0);
 				m_vertex[i][j].y = (i3 + 1 < m_history.size() ? m_history[i3 + 1][m_historyIdx] : 0);
@@ -77,14 +72,13 @@ bool CRendererXYZPlot::render(const CRendererContext& ctx)
 
 	glPointSize(5);
 
-	if (m_hasDepth)
-	{
+	if (m_hasDepth) {
 		const float d = 3.5;
 
 		glMatrixMode(GL_PROJECTION);
 		glPushMatrix();
 		glLoadIdentity();
-		gluPerspective(60, ctx.getAspect(), .01, 100);
+		gluPerspective(60, double(ctx.getAspect()), .01, 100);
 		glTranslatef(0, 0, -d);
 		glRotatef(ctx.getRotationX() * 10, 1, 0, 0);
 		glRotatef(ctx.getRotationY() * 10, 0, 1, 0);
@@ -98,19 +92,17 @@ bool CRendererXYZPlot::render(const CRendererContext& ctx)
 	glTranslatef(m_hasDepth ? 0 : 0.5F, m_hasDepth ? 0 : 0.5F, 0);
 	glScalef(ctx.getZoom(), ctx.getZoom(), ctx.getZoom());
 
-	if (ctx.isAxisDisplayed())
-	{
+	if (ctx.isAxisDisplayed()) {
 		if (m_hasDepth) { this->draw3DCoordinateSystem(); }
 		else { this->draw2DCoordinateSystem(); }
 	}
 
-	size_t n       = m_nSample;
+	const size_t n = m_nSample;
 	const size_t d = (m_historyIdx % m_nSample);
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	for (size_t i = 0; i < m_nPlot; ++i)
-	{
+	for (size_t i = 0; i < m_nPlot; ++i) {
 		glPushMatrix();
 		glScalef(ctx.getScale(), ctx.getScale(), ctx.getScale());
 
@@ -130,8 +122,7 @@ bool CRendererXYZPlot::render(const CRendererContext& ctx)
 	glMatrixMode(GL_TEXTURE);
 	glPopMatrix();
 
-	if (m_hasDepth)
-	{
+	if (m_hasDepth) {
 		glMatrixMode(GL_PROJECTION);
 		glPopMatrix();
 	}

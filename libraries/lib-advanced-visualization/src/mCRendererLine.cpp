@@ -32,10 +32,9 @@ void CRendererLine::rebuild(const CRendererContext& ctx)
 	m_vertices.clear();
 	m_vertices.resize(m_nChannel);
 
-	for (size_t i = 0; i < m_nChannel; ++i)
-	{
+	for (size_t i = 0; i < m_nChannel; ++i) {
 		m_vertices[i].resize(m_nSample);
-		for (size_t j = 0; j < m_nSample; ++j) { m_vertices[i][j].x = j * m_nInverseSample; }
+		for (size_t j = 0; j < m_nSample; ++j) { m_vertices[i][j].x = float(j) * m_nInverseSample; }
 	}
 
 	m_historyIdx = 0;
@@ -52,14 +51,12 @@ void CRendererLine::refresh(const CRendererContext& ctx)
 	if (m_historyDrawIdx == 0) { maxIdx = m_nHistory; }	// Draw real-time 
 	else { maxIdx = m_historyDrawIdx; }					// stay at the m_historyDrawIdx
 
-	for (size_t i = 0; i < m_nChannel; ++i)
-	{
+	for (size_t i = 0; i < m_nChannel; ++i) {
 		const size_t firstIdx       = ((maxIdx - 1) / m_nSample) * m_nSample;
 		std::vector<float>& history = m_history[i];
 		CVertex* vertex             = &m_vertices[i][0];
 
-		for (size_t j = 0; j < m_nSample; ++j)
-		{
+		for (size_t j = 0; j < m_nSample; ++j) {
 			const size_t idx = firstIdx + j;
 
 			if (idx < maxIdx) { vertex->y = history[idx]; }
@@ -96,20 +93,19 @@ bool CRendererLine::render(const CRendererContext& ctx)
 
 	if (!nSample) { return false; }
 
-	const float t1 = n2 * 1.F / nSample;
-	const float t2 = -n1 * 1.F / nSample;
+	const float t1 = float(n2) * 1.0F / float(nSample);
+	const float t2 = -float(n1) * 1.0F / float(nSample);
 
 	glDisable(GL_TEXTURE_1D);
 
 	glPushMatrix();
-	glScalef(1, 1.F / ctx.getSelectedCount(), 1);
+	glScalef(1, 1.0F / float(ctx.getSelectedCount()), 1);
 	glTranslatef(0, ctx.isPositiveOnly() ? 0 : 0.5F, 0);
 
 	glPushAttrib(GL_CURRENT_BIT);
-	glColor3f(.2F, .2F, .2F);
+	glColor3f(0.2F, 0.2F, 0.2F);
 	glBegin(GL_LINES);
-	for (size_t i = 0; i < ctx.getSelectedCount(); ++i)
-	{
+	for (size_t i = 0; i < ctx.getSelectedCount(); ++i) {
 		glVertex2f(0, float(i));
 		glVertex2f(1, float(i));
 	}
@@ -117,30 +113,26 @@ bool CRendererLine::render(const CRendererContext& ctx)
 	glPopAttrib();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
-	for (size_t i = 0; i < ctx.getSelectedCount(); ++i)
-	{
+	for (size_t i = 0; i < ctx.getSelectedCount(); ++i) {
 		glPushMatrix();
-		glTranslatef(0, float(ctx.getSelectedCount() - i) - 1.F, 0);
+		glTranslatef(0, float(ctx.getSelectedCount() - i) - 1.0F, 0);
 		glScalef(1, ctx.getScale(), 1);
 
 		std::vector<CVertex>& vertices = m_vertices[ctx.getSelected(i)];
-		if (ctx.isScrollModeActive())
-		{
+		if (ctx.isScrollModeActive()) {
 			glPushMatrix();
 			glTranslatef(t1, 0, 0);
 			glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &vertices[0].x);
 			glDrawArrays(GL_LINE_STRIP, 0, n1);
 			glPopMatrix();
-			if (n2 > 0)
-			{
+			if (n2 > 0) {
 				glPushMatrix();
 				glTranslatef(t2, 0, 0);
 				glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &vertices[n1].x);
 				glDrawArrays(GL_LINE_STRIP, 0, n2);
 				glPopMatrix();
 
-				if (n1 > 0)
-				{
+				if (n1 > 0) {
 					glBegin(GL_LINES);
 					glVertex2f(vertices[nSample - 1].x + t2, vertices[nSample - 1].y);
 					glVertex2f(vertices[0].x + t1, vertices[0].y);
@@ -148,8 +140,7 @@ bool CRendererLine::render(const CRendererContext& ctx)
 				}
 			}
 		}
-		else
-		{
+		else {
 			glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &vertices[0].x);
 			glDrawArrays(GL_LINE_STRIP, 0, nSample);
 		}

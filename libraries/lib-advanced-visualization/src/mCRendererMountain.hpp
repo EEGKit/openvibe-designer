@@ -25,10 +25,9 @@
 
 namespace OpenViBE {
 namespace AdvancedVisualization {
-class CRendererMountain : public IRenderer
+class CRendererMountain final : public IRenderer
 {
 public:
-
 	void rebuild(const CRendererContext& ctx) override;
 	void refresh(const CRendererContext& ctx) override;
 	bool render(const CRendererContext& ctx) override;

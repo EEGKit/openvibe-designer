@@ -34,7 +34,6 @@ namespace AdvancedVisualization {
 class LMAV_API CRendererContext
 {
 public:
-
 	enum class EDataType { Matrix, Signal, Spectrum, TimeFrequency };
 
 	CRendererContext() { clear(); }
@@ -128,7 +127,6 @@ public:
 	static size_t getMaximumSampleCountPerDisplay() { return 1000; } /*500;*/ /*128*/
 
 protected:
-
 	CRendererContext* m_parentCtx = nullptr;
 
 	std::vector<size_t> m_channelLookup;

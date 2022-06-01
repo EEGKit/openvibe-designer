@@ -35,7 +35,6 @@ namespace AdvancedVisualization {
 class C3DMesh final
 {
 public:
-
 	C3DMesh() { m_Color.fill(1.0); }
 	//C3DMesh(const char* filename);
 	~C3DMesh() = default;
@@ -44,7 +43,7 @@ public:
 	bool load(const void* buffer);
 	bool compile();
 
-	bool project(std::vector<CVertex>& out, const std::vector<CVertex>& in);
+	bool project(std::vector<CVertex>& out, const std::vector<CVertex>& in) const;
 
 	std::vector<CVertex> m_Vertices;
 	std::vector<CVertex> m_Normals;

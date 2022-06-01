@@ -20,21 +20,16 @@
  */
 #pragma once
 
-// #if defined TARGET_HAS_ThirdPartyVRPN
-
 #include "mIRenderer.hpp"
 
 namespace OpenViBE {
 namespace AdvancedVisualization {
-class CRendererConnectivity : public IRenderer
+class CRendererConnectivity final : public IRenderer
 {
 public:
-
 	void rebuild(const CRendererContext& ctx) override;
 	void refresh(const CRendererContext& ctx) override;
 	bool render(const CRendererContext& ctx) override;
 };
 }  // namespace AdvancedVisualization
 }  // namespace OpenViBE
-
-// #endif // TARGET_HAS_ThirdPartyVRPN

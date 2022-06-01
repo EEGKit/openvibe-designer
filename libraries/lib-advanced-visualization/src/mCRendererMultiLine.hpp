@@ -27,7 +27,6 @@ namespace AdvancedVisualization {
 class CRendererMultiLine : public CRendererLine
 {
 public:
-
 	bool render(const CRendererContext& ctx) override;
 };
 }  // namespace AdvancedVisualization

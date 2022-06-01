@@ -26,6 +26,7 @@
 #include <cstdio>
 #include <cmath>
 #include <iostream>
+#include <float.h>
 
 namespace OpenViBE {
 namespace AdvancedVisualization {
@@ -33,21 +34,19 @@ namespace AdvancedVisualization {
 namespace {
 void getLeftRightScore(std::map<std::string, float>& scores, const std::vector<std::string>& names, const std::vector<CVertex>& positions)
 {
-	for (size_t i = 0; i < names.size() && i < positions.size(); ++i)
-	{
+	for (size_t i = 0; i < names.size() && i < positions.size(); ++i) {
 		std::string name = std::string(",") + names[i] + std::string(",");
 		std::transform(name.begin(), name.end(), name.begin(), tolower);
-		scores[name] = float(positions[i].x * 1E-0 + positions[i].y * 1E-10 + positions[i].z * 1E-5);
+		scores[name] = positions[i].x * 1E-0F + positions[i].y * 1E-10F + positions[i].z * 1E-5F;
 	}
 }
 
 void getFrontBackScore(std::map<std::string, float>& scores, const std::vector<std::string>& names, const std::vector<CVertex>& positions)
 {
-	for (size_t i = 0; i < names.size() && i < positions.size(); ++i)
-	{
+	for (size_t i = 0; i < names.size() && i < positions.size(); ++i) {
 		std::string name = std::string(",") + names[i] + std::string(",");
 		std::transform(name.begin(), name.end(), name.begin(), tolower);
-		scores[name] = float(positions[i].x * 1E-5 + positions[i].y * 1E-10 + positions[i].z * 1E-0);
+		scores[name] = positions[i].x * 1E-5F + positions[i].y * 1E-10F + positions[i].z * 1E-0F;
 	}
 }
 
@@ -83,8 +82,7 @@ struct SSortSpecial
 		std::transform(nameI.begin(), nameI.end(), nameI.begin(), tolower);
 		std::transform(nameJ.begin(), nameJ.end(), nameJ.begin(), tolower);
 
-		for (auto it = scores.begin(); it != scores.end(); ++it)
-		{
+		for (auto it = scores.begin(); it != scores.end(); ++it) {
 			if (it->first == nameI) { scoreI = it->second; }
 			if (it->first == nameJ) { scoreJ = it->second; }
 		}
@@ -123,7 +121,7 @@ void CRendererContext::clearChannelInfo()
 void CRendererContext::addChannel(const std::string& name, const float x, const float y, const float z)
 {
 	const auto norm     = float(sqrt(x * x + y * y + z * z));
-	const float invNorm = (norm != 0 ? 1.F / norm : 0);
+	const float invNorm = (norm > FLT_EPSILON ? 1.0F / norm : 0);
 	CVertex pos;
 	pos.x = x * invNorm;
 	pos.y = y * invNorm;
@@ -135,16 +133,14 @@ void CRendererContext::addChannel(const std::string& name, const float x, const 
 
 void CRendererContext::selectChannel(const size_t index)
 {
-	for (auto& i : m_channelLookup) { if (i == index) { return; } }
+	for (const auto& i : m_channelLookup) { if (i == index) { return; } }
 	m_channelLookup.push_back(index);
 }
 
 void CRendererContext::unselectChannel(const size_t index)
 {
-	for (size_t i = 0; i < m_channelLookup.size(); ++i)
-	{
-		if (m_channelLookup[i] == index)
-		{
+	for (size_t i = 0; i < m_channelLookup.size(); ++i) {
+		if (m_channelLookup[i] == index) {
 			m_channelLookup.erase(m_channelLookup.begin() + i);
 			return;
 		}
@@ -156,8 +152,7 @@ void CRendererContext::sortSelectedChannel(const size_t mode)
 	if (m_leftRightScore.empty()) { getLeftRightScore(m_leftRightScore, m_channelName, m_channelPos); }
 	if (m_frontBackScore.empty()) { getFrontBackScore(m_frontBackScore, m_channelName, m_channelPos); }
 
-	switch (mode)
-	{
+	switch (mode) {
 		case 0: break;
 
 		case 1: std::stable_sort(m_channelLookup.begin(), m_channelLookup.end());

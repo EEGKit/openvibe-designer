@@ -24,10 +24,9 @@
 
 namespace OpenViBE {
 namespace AdvancedVisualization {
-class CRendererFlower : public IRenderer
+class CRendererFlower final : public IRenderer
 {
 public:
-
 	explicit CRendererFlower(size_t multiCount = 1);
 
 	void rebuild(const CRendererContext& ctx) override;

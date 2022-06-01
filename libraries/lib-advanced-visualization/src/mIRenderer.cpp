@@ -46,8 +46,7 @@ static int iCount = 0;
 
 IRenderer* IRenderer::create(const ERendererType type, const bool stimulation)
 {
-	switch (type)
-	{
+	switch (type) {
 		case ERendererType::Topography2D: return (stimulation ? nullptr : new CRendererTopo2D);
 		case ERendererType::Topography3D: return (stimulation ? nullptr : new CRendererTopo3D);
 		case ERendererType::Bars: return (stimulation ? new TRendererStimulation<true, CRendererBars> : new CRendererBars);
@@ -61,7 +60,8 @@ IRenderer* IRenderer::create(const ERendererType type, const bool stimulation)
 		case ERendererType::MultiLine: return (stimulation ? new TRendererStimulation<false, CRendererMultiLine> : new CRendererMultiLine);
 		case ERendererType::Slice: return (stimulation ? nullptr : new CRendererSlice);
 		case ERendererType::XYZPlot: return (stimulation ? nullptr : new CRendererXYZPlot);
-			// case ERendererType::Default: return (stimulation ? new TRendererStimulation<false, CRenderer> : new CRenderer);
+		case ERendererType::Default: // return (stimulation ? new TRendererStimulation<false, CRenderer> : new CRenderer);
+		case ERendererType::Last:
 		default: return nullptr;
 	}
 }
@@ -73,7 +73,7 @@ IRenderer::~IRenderer() { iCount--; }
 void IRenderer::setChannelCount(const size_t nChannel)
 {
 	m_nChannel        = nChannel;
-	m_nInverseChannel = (nChannel ? 1.F / nChannel : 1);
+	m_nInverseChannel = (nChannel != 0 ? 1.0F / float(nChannel) : 1);
 	m_vertex.clear();
 	m_mesh.clear();
 
@@ -86,7 +86,7 @@ void IRenderer::setChannelCount(const size_t nChannel)
 void IRenderer::setSampleCount(const size_t nSample)
 {
 	m_nSample        = nSample == 0 ? 1 : nSample;
-	m_nInverseSample = (m_nSample ? 1.F / m_nSample : 1);
+	m_nInverseSample = (m_nSample != 0 ? 1.0F / float(m_nSample) : 1);
 	m_vertex.clear();
 	m_mesh.clear();
 }
@@ -99,8 +99,7 @@ void IRenderer::feed(const float* data)
 
 void IRenderer::feed(const float* data, const size_t nSample)
 {
-	for (size_t i = 0; i < m_nChannel; ++i)
-	{
+	for (size_t i = 0; i < m_nChannel; ++i) {
 		for (size_t j = 0; j < nSample; ++j) { m_history[i].push_back(data[j]); }
 		data += nSample;
 	}
@@ -109,19 +108,17 @@ void IRenderer::feed(const float* data, const size_t nSample)
 
 void IRenderer::prefeed(const size_t nPreFeedSample)
 {
-	for (size_t i = 0; i < m_nChannel; ++i) { m_history[i].insert(m_history[i].begin(), nPreFeedSample, 0.F); }
+	for (size_t i = 0; i < m_nChannel; ++i) { m_history[i].insert(m_history[i].begin(), nPreFeedSample, 0.0F); }
 	m_nHistory += nPreFeedSample;
 	m_historyIdx = 0;
 }
 
-float IRenderer::getSuggestedScale()
+float IRenderer::getSuggestedScale() const
 {
-	if (m_nChannel != 0)
-	{
+	if (m_nChannel != 0) {
 		std::vector<float> averages;
 
-		for (size_t i = 0; i < m_nChannel; ++i)
-		{
+		for (size_t i = 0; i < m_nChannel; ++i) {
 			averages.push_back(0);
 
 			const size_t n = (m_history[i].size() < m_nSample) ? m_history[i].size() : m_nSample;
@@ -138,19 +135,15 @@ float IRenderer::getSuggestedScale()
 
 void IRenderer::clear(const size_t nSampleToKeep)
 {
-	if (!m_history.empty())
-	{
-		if (nSampleToKeep == 0)
-		{
+	if (!m_history.empty()) {
+		if (nSampleToKeep == 0) {
 			for (auto& vec : m_history) { vec.clear(); }
 			m_nHistory = 0;
 		}
-		else if (nSampleToKeep < m_history[0].size())
-		{
+		else if (nSampleToKeep < m_history[0].size()) {
 			const size_t sampleToDelete = m_history[0].size() - nSampleToKeep;
 
-			if (sampleToDelete > 1)
-			{
+			if (sampleToDelete > 1) {
 				for (auto& vec : m_history) { std::vector<float>(vec.begin() + sampleToDelete, vec.end()).swap(vec); }
 				m_nHistory -= size_t(sampleToDelete);
 			}
@@ -179,8 +172,7 @@ bool IRenderer::getSampleAtERPFraction(const float erpFraction, std::vector<floa
 	const size_t sampleIndexERP1 = size_t(sampleIndexERP) % m_nSample;
 	const size_t sampleIndexERP2 = size_t(sampleIndexERP + 1) % m_nSample;
 
-	for (size_t i = 0; i < m_nChannel; ++i)
-	{
+	for (size_t i = 0; i < m_nChannel; ++i) {
 		samples[i] = m_history[i][m_nHistory - m_nSample + sampleIndexERP1] * (1 - alpha)
 					 + m_history[i][m_nHistory - m_nSample + sampleIndexERP2] * (alpha);
 	}
@@ -190,8 +182,7 @@ bool IRenderer::getSampleAtERPFraction(const float erpFraction, std::vector<floa
 
 void IRenderer::refresh(const CRendererContext& ctx)
 {
-	if (!m_nSample)
-	{
+	if (!m_nSample) {
 		m_erpFraction    = 0;
 		m_sampleIndexERP = 0;
 		return;
@@ -233,22 +224,18 @@ void IRenderer::draw3DCoordinateSystem()
 	glLineWidth(2);
 
 	glPushMatrix();
-	glColor3f(.2F, .2F, .2F);
-	glScalef(.2F, .2F, .2F);
+	glColor3f(0.2F, 0.2F, 0.2F);
+	glScalef(0.2F, 0.2F, 0.2F);
 	glBegin(GL_LINES);
-	for (int x = -10; x <= 10; ++x)
-	{
-		for (int z = -10; z <= 10; ++z)
-		{
-			if (x != 0)
-			{
-				glVertex3f(float(x), 0, 10.F);
-				glVertex3f(float(x), 0, -10.F);
+	for (int x = -10; x <= 10; ++x) {
+		for (int z = -10; z <= 10; ++z) {
+			if (x != 0) {
+				glVertex3f(float(x), 0, 10.0F);
+				glVertex3f(float(x), 0, -10.0F);
 			}
-			if (z != 0)
-			{
-				glVertex3f(10.F, 0, float(z));
-				glVertex3f(-10.F, 0, float(z));
+			if (z != 0) {
+				glVertex3f(10.0F, 0, float(z));
+				glVertex3f(-10.0F, 0, float(z));
 			}
 		}
 	}
@@ -257,14 +244,14 @@ void IRenderer::draw3DCoordinateSystem()
 
 	glBegin(GL_LINES);
 	glColor3f(0, 0, 1);
-	glVertex3f(0, 0, 2.F);
-	glVertex3f(0, 0, -3.F);
+	glVertex3f(0, 0, 2.0F);
+	glVertex3f(0, 0, -3.0F);
 	glColor3f(0, 1, 0);
 	glVertex3f(0, 1.25F, 0);
 	glVertex3f(0, -1.25F, 0);
 	glColor3f(1, 0, 0);
-	glVertex3f(2.F, 0, 0);
-	glVertex3f(-2.F, 0, 0);
+	glVertex3f(2.0F, 0, 0);
+	glVertex3f(-2.0F, 0, 0);
 	glEnd();
 
 	glPopAttrib();
@@ -281,22 +268,18 @@ void IRenderer::draw2DCoordinateSystem()
 	glLineWidth(2);
 
 	glPushMatrix();
-	glColor3f(.2F, .2F, .2F);
-	glScalef(.2F, .2F, .2F);
+	glColor3f(0.2F, 0.2F, 0.2F);
+	glScalef(0.2F, 0.2F, 0.2F);
 	glBegin(GL_LINES);
-	for (int x = -10; x <= 10; ++x)
-	{
-		for (int y = -10; y <= 10; ++y)
-		{
-			if (x != 0)
-			{
-				glVertex2f(float(x), 10.F);
-				glVertex2f(float(x), -10.F);
+	for (int x = -10; x <= 10; ++x) {
+		for (int y = -10; y <= 10; ++y) {
+			if (x != 0) {
+				glVertex2f(float(x), 10.0F);
+				glVertex2f(float(x), -10.0F);
 			}
-			if (y != 0)
-			{
-				glVertex2f(10.F, float(y));
-				glVertex2f(-10.F, float(y));
+			if (y != 0) {
+				glVertex2f(10.0F, float(y));
+				glVertex2f(-10.0F, float(y));
 			}
 		}
 	}
@@ -308,8 +291,8 @@ void IRenderer::draw2DCoordinateSystem()
 	glVertex2f(0, 2.0F);
 	glVertex2f(0, -2.0F);
 	glColor3f(1, 0, 0);
-	glVertex2f(2.F, 0);
-	glVertex2f(-2.F, 0);
+	glVertex2f(2.0F, 0);
+	glVertex2f(-2.0F, 0);
 	glEnd();
 
 	glPopAttrib();

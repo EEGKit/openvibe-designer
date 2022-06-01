@@ -36,10 +36,8 @@ void CRendererSlice::rebuild(const CRendererContext& ctx)
 	m_quads.resize(m_nSample * m_nChannel * 6 * 4);
 
 	size_t k = 0, l = 0;
-	for (size_t i = 0; i < m_nSample; ++i)
-	{
-		for (size_t j = 0; j < m_nChannel; ++j)
-		{
+	for (size_t i = 0; i < m_nSample; ++i) {
+		for (size_t j = 0; j < m_nChannel; ++j) {
 			const float size = .5;
 
 			m_quads[l++] = k + 0;
@@ -73,8 +71,8 @@ void CRendererSlice::rebuild(const CRendererContext& ctx)
 			m_quads[l++] = k + 2;
 
 			const float ox = 0;
-			const float oy = 0.5F * float(m_nChannel - 1) - j;
-			const float oz = 0.5F * float(m_nSample - 1) - i;
+			const float oy = 0.5F * float(m_nChannel - 1 - j);
+			const float oz = 0.5F * float(m_nSample - 1 - i);
 
 			m_vertices[k].x = ox + size;
 			m_vertices[k].y = oy - size; // v0
@@ -124,8 +122,7 @@ void CRendererSlice::refresh(const CRendererContext& ctx)
 {
 	IRenderer::refresh(ctx);
 
-	for (size_t i = m_historyIdx; i < m_nHistory; ++i)
-	{
+	for (size_t i = m_historyIdx; i < m_nHistory; ++i) {
 		size_t k = (i % m_nSample) * m_nChannel * 8;
 		for (size_t j = 0; j < m_nChannel; ++j) { for (size_t l = 0; l < 8; ++l) { m_vertices[k++].u = m_history[j][i]; } }
 	}
@@ -147,7 +144,7 @@ bool CRendererSlice::render(const CRendererContext& ctx)
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
-	gluPerspective(60, ctx.getAspect(), .01, 100);
+	gluPerspective(60, double(ctx.getAspect()), .01, 100);
 	glTranslatef(0, 0, -d);
 	glRotatef(ctx.getRotationX() * 10, 1, 0, 0);
 	glRotatef(ctx.getRotationY() * 10, 0, 1, 0);
@@ -163,9 +160,9 @@ bool CRendererSlice::render(const CRendererContext& ctx)
 	glScalef(1., 1., 3.);
 
 	glPushMatrix();
-	glScalef(1.F / ctx.getStackCount(), 1.F / m_nChannel, 1.F / m_nSample);
-	glTranslatef(ctx.getStackIndex() - 0.5F * float(ctx.getStackCount() - 1), 0, 0);
-	glColor4f(.1F, .1F, .1F, ctx.getTranslucency());
+	glScalef(1.0F / float(ctx.getStackCount()), 1.0F / float(m_nChannel), 1.0F / float(m_nSample));
+	glTranslatef(float(ctx.getStackIndex()) - 0.5F * float(ctx.getStackCount() - 1), 0, 0);
+	glColor4f(0.1F, 0.1F, 0.1F, ctx.getTranslucency());
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -180,7 +177,7 @@ bool CRendererSlice::render(const CRendererContext& ctx)
 
 	glDisable(GL_TEXTURE_1D);
 
-	const float progress = 1 - 2.0F * float(m_historyIdx % m_nSample) / m_nSample;
+	const float progress = 1 - 2.0F * float(m_historyIdx % m_nSample) / float(m_nSample);
 	glScalef(.5, .5, .5);
 	glBegin(GL_LINE_LOOP);
 	glColor3f(1, 1, 1);
@@ -211,14 +208,14 @@ bool CRendererSlice::render(const CRendererContext& ctx)
 	glVertex3f(1, -1, 1);
 	glEnd();
 	glBegin(GL_LINE_LOOP);
-	glColor4f(0.25F, 1, 0.25F, .9F / ctx.getStackCount());
+	glColor4f(0.25F, 1, 0.25F, 0.9F / float(ctx.getStackCount()));
 	glVertex3f(-1, -1, progress);
 	glVertex3f(-1, 1, progress);
 	glVertex3f(1, 1, progress);
 	glVertex3f(1, -1, progress);
 	glEnd();
 	glBegin(GL_QUADS);
-	glColor4f(0.25F, 1, 0.25F, .1F / ctx.getStackCount());
+	glColor4f(0.25F, 1, 0.25F, 0.1F / float(ctx.getStackCount()));
 	glVertex3f(-1, -1, progress);
 	glVertex3f(-1, 1, progress);
 	glVertex3f(1, 1, progress);
