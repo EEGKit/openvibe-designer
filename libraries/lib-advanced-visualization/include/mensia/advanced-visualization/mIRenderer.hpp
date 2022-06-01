@@ -58,10 +58,10 @@ public:
 	void setHistoryDrawIndex(const size_t index);
 	void feed(const float* data);
 	void feed(const float* data, const size_t nSample);
-	void feed(const uint64_t stimDate, const uint64_t stimID) { m_stimulationHistory.emplace_back((stimDate >> 16) / 65536., stimID); }
+	void feed(const uint64_t stimDate, const uint64_t stimID) { m_stimulationHistory.emplace_back(double(stimDate >> 16) / 65536.0, stimID); }
 	void prefeed(const size_t nPreFeedSample);
 
-	float getSuggestedScale();
+	float getSuggestedScale() const;
 
 	void clear(const size_t nSampleToKeep = 0);
 
@@ -92,7 +92,6 @@ public:
 
 
 protected:
-
 	std::string m_channelPosFilename;
 	size_t m_historyIdx     = 0;
 	size_t m_historyDrawIdx = 0;

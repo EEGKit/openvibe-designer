@@ -33,7 +33,6 @@ namespace AdvancedVisualization {
 class CRendererTopo : public IRenderer
 {
 public:
-
 	void rebuild(const CRendererContext& ctx) override;
 	void refresh(const CRendererContext& ctx) override;
 	bool render(const CRendererContext& ctx) override;
@@ -44,11 +43,9 @@ public:
 	virtual void rebuild3DMeshesPost(const CRendererContext& ctx) = 0;
 
 private:
-
 	void interpolate(const Eigen::VectorXd& v, Eigen::VectorXd& w, Eigen::VectorXd& z) const;
 
 protected:
-
 	std::vector<CVertex> m_projectedPositions;
 
 	C3DMesh m_face;

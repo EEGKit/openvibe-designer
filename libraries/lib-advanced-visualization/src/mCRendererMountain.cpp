@@ -28,15 +28,12 @@ void CRendererMountain::rebuild(const CRendererContext& ctx)
 {
 	IRenderer::rebuild(ctx);
 
-
 	m_mountain.m_Vertices.clear();
 	m_mountain.m_Vertices.resize(m_nChannel * m_nSample);
-	for (size_t i = 0, k = 0; i < m_nChannel; ++i)
-	{
-		for (size_t j = 0; j < m_nSample; ++j)
-		{
-			const float a              = i * 1.F / float(m_nChannel - 1);
-			const float b              = 1 - j * 1.F / float(m_nSample - 1);
+	for (size_t i = 0, k = 0; i < m_nChannel; ++i) {
+		for (size_t j = 0; j < m_nSample; ++j) {
+			const float a              = float(i) * 1.0F / float(m_nChannel - 1);
+			const float b              = 1 - float(j) * 1.0F / float(m_nSample - 1);
 			m_mountain.m_Vertices[k].x = a;
 			m_mountain.m_Vertices[k].y = 0;
 			m_mountain.m_Vertices[k].z = b;
@@ -48,12 +45,10 @@ void CRendererMountain::rebuild(const CRendererContext& ctx)
 	m_mountain.m_Triangles.clear();
 	m_mountain.m_Triangles.resize((m_nChannel - 1) * (m_nSample - 1) * 6);
 	size_t id = 0;
-	for (size_t i = 0; i < m_nChannel - 1; ++i)
-	{
-		for (size_t j = 0; j < m_nSample - 1; ++j)
-		{
-			const size_t v1              = i * m_nSample + j;
-			const size_t v2              = v1 + m_nSample;
+	for (size_t i = 0; i < m_nChannel - 1; ++i) {
+		for (size_t j = 0; j < m_nSample - 1; ++j) {
+			const uint32_t v1            = uint32_t(i * m_nSample + j);
+			const uint32_t v2            = uint32_t(v1 + m_nSample);
 			m_mountain.m_Triangles[id++] = v1;
 			m_mountain.m_Triangles[id++] = v2;
 			m_mountain.m_Triangles[id++] = v2 + 1;
@@ -73,15 +68,12 @@ void CRendererMountain::refresh(const CRendererContext& ctx)
 	if (!m_nHistory) { return; }
 
 
-	for (size_t i = 0; i < ctx.getSelectedCount(); ++i)
-	{
+	for (size_t i = 0; i < ctx.getSelectedCount(); ++i) {
 		size_t k                    = ((m_nHistory - 1) / m_nSample) * m_nSample;
 		std::vector<float>& history = m_history[ctx.getSelected(i)];
 		CVertex* vertex             = &m_mountain.m_Vertices[i * m_nSample];
-		for (size_t j = 0; j < m_nSample; ++j, ++k)
-		{
-			if (/*k>=m_historyIdx && */k < m_nHistory)
-			{
+		for (size_t j = 0; j < m_nSample; ++j, ++k) {
+			if (/*k>=m_historyIdx && */k < m_nHistory) {
 				vertex[j].u = history[k];
 				vertex[j].y = history[k] / 2;
 			}
@@ -107,7 +99,7 @@ bool CRendererMountain::render(const CRendererContext& ctx)
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
-	gluPerspective(60, ctx.getAspect(), .01, 100);
+	gluPerspective(60, double(ctx.getAspect()), .01, 100);
 	glTranslatef(0, -.2F, -d);
 	glRotatef(ctx.getRotationX() * 10, 1, 0, 0);
 	glRotatef(ctx.getRotationY() * 10, 0, 1, 0);
@@ -121,7 +113,7 @@ bool CRendererMountain::render(const CRendererContext& ctx)
 	glLoadIdentity();
 	glScalef(3 * ctx.getZoom(), 3 * ctx.getZoom(), 3 * ctx.getZoom());
 	glTranslatef(-.5F, 0, -.5F);
-	glScalef(m_nChannel * 1.F / ctx.getSelectedCount(), ctx.getScale(), 1);
+	glScalef(float(m_nChannel) * 1.0F / float(ctx.getSelectedCount()), ctx.getScale(), 1);
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);

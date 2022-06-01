@@ -27,7 +27,6 @@ namespace AdvancedVisualization {
 class CRendererBitmap : public IRenderer
 {
 public:
-
 	void rebuild(const CRendererContext& ctx) override;
 	void refresh(const CRendererContext& ctx) override;
 	bool render(const CRendererContext& ctx) override;

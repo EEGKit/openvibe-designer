@@ -64,8 +64,7 @@ bool C3DMesh::load(const void* buffer)
 
 	size_t j = 2;
 
-	for (size_t i = 0; i < nVertex; ++i)
-	{
+	for (size_t i = 0; i < nVertex; ++i) {
 		littleEndianToHost<float>(reinterpret_cast<const uint8_t*>(&tmp[j++]), &m_Vertices[i].x);
 		littleEndianToHost<float>(reinterpret_cast<const uint8_t*>(&tmp[j++]), &m_Vertices[i].y);
 		littleEndianToHost<float>(reinterpret_cast<const uint8_t*>(&tmp[j++]), &m_Vertices[i].z);
@@ -82,8 +81,7 @@ bool C3DMesh::compile()
 {
 	m_Normals.clear();
 	m_Normals.resize(m_Vertices.size());
-	for (size_t i = 0; i < m_Triangles.size(); i += 3)
-	{
+	for (size_t i = 0; i < m_Triangles.size(); i += 3) {
 		const uint32_t i1 = m_Triangles[i];
 		const uint32_t i2 = m_Triangles[i + 1];
 		const uint32_t i3 = m_Triangles[i + 2];
@@ -113,16 +111,14 @@ bool C3DMesh::compile()
 	return true;
 }
 
-bool C3DMesh::project(std::vector<CVertex>& out, const std::vector<CVertex>& in)
+bool C3DMesh::project(std::vector<CVertex>& out, const std::vector<CVertex>& in) const
 {
 	out.resize(in.size());
-	for (size_t i = 0; i < in.size(); ++i)
-	{
+	for (size_t i = 0; i < in.size(); ++i) {
 		CVertex p, q;
 		p = in[i];
 		// q = vChannelCoordinate[i];
-		for (size_t j = 0; j < this->m_Triangles.size(); j += 3)
-		{
+		for (size_t j = 0; j < this->m_Triangles.size(); j += 3) {
 			const uint32_t i1 = this->m_Triangles[j];
 			const uint32_t i2 = this->m_Triangles[j + 1];
 			const uint32_t i3 = this->m_Triangles[j + 2];

@@ -29,13 +29,11 @@ void CRendererBars::rebuild(const CRendererContext& ctx)
 	IRenderer::rebuild(ctx);
 
 	m_vertex.resize(m_nChannel);
-	for (size_t i = 0; i < m_nChannel; ++i)
-	{
+	for (size_t i = 0; i < m_nChannel; ++i) {
 		m_vertex[i].resize(size_t(m_nSample) * 4);
-		for (size_t j = 0; j < m_nSample; ++j)
-		{
+		for (size_t j = 0; j < m_nSample; ++j) {
 			const size_t id       = j * 4;
-			const float value     = j * m_nInverseSample;
+			const float value     = float(j) * m_nInverseSample;
 			m_vertex[i][id].x     = value;
 			m_vertex[i][id + 1].x = value + m_nInverseSample;
 			m_vertex[i][id + 2].x = value + m_nInverseSample;
@@ -57,15 +55,12 @@ void CRendererBars::refresh(const CRendererContext& ctx)
 
 	if (!m_nHistory) { return; }
 
-	for (size_t i = 0; i < m_nChannel; ++i)
-	{
+	for (size_t i = 0; i < m_nChannel; ++i) {
 		size_t k                    = ((m_nHistory - 1) / m_nSample) * m_nSample;
 		std::vector<float>& history = m_history[i];
 		CVertex* vertex             = &m_vertex[i][0];
-		for (size_t j = 0; j < m_nSample; j++, k++)
-		{
-			if (k >= m_historyIdx && k < m_nHistory)
-			{
+		for (size_t j = 0; j < m_nSample; j++, k++) {
+			if (k >= m_historyIdx && k < m_nHistory) {
 				const float value = history[k];
 				vertex++->y       = 0;
 				vertex++->y       = 0;
@@ -90,15 +85,14 @@ bool CRendererBars::render(const CRendererContext& ctx)
 
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
-	glScalef(1, 1.F / ctx.getSelectedCount(), 1);
+	glScalef(1, 1.0F / float(ctx.getSelectedCount()), 1);
 	glTranslatef(0, ctx.isPositiveOnly() ? 0 : 0.5F, 0);
 
 	glPushAttrib(GL_CURRENT_BIT);
 	glDisable(GL_TEXTURE_1D);
-	glColor3f(.2F, .2F, .2F);
+	glColor3f(0.2F, 0.2F, 0.2F);
 	glBegin(GL_LINES);
-	for (i = 0; i < ctx.getSelectedCount(); ++i)
-	{
+	for (i = 0; i < ctx.getSelectedCount(); ++i) {
 		glVertex2f(0, float(i));
 		glVertex2f(1, float(i));
 	}
@@ -108,10 +102,9 @@ bool CRendererBars::render(const CRendererContext& ctx)
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	for (i = 0; i < ctx.getSelectedCount(); ++i)
-	{
+	for (i = 0; i < ctx.getSelectedCount(); ++i) {
 		glPushMatrix();
-		glTranslatef(0, float(ctx.getSelectedCount()) - i - 1.F, 0);
+		glTranslatef(0, float(ctx.getSelectedCount() - i) - 1.0F, 0);
 		glScalef(1, ctx.getScale(), 1);
 		glVertexPointer(2, GL_FLOAT, sizeof(CVertex), &m_vertex[ctx.getSelected(i)][0].x);
 		glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_vertex[ctx.getSelected(i)][0].u);

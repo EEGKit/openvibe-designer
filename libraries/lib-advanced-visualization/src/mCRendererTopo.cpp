@@ -40,9 +40,8 @@ void legendre(const size_t n, const double x, std::vector<double>& legendres)
 	legendres.resize(n + 1);
 	legendres[0] = 1;
 	legendres[1] = x;
-	for (size_t i = 2; i <= n; ++i)
-	{
-		const double invi = 1. / i;
+	for (size_t i = 2; i <= n; ++i) {
+		const double invi = 1.0 / double(i);
 		legendres[i]      = (2 - invi) * x * legendres[i - 1] - (1 - invi) * legendres[i - 2];
 	}
 }
@@ -54,7 +53,7 @@ void legendre(const size_t n, const double x, std::vector<double>& legendres)
 double g(const size_t n, const size_t m, const std::vector<double>& legendres)
 {
 	double result = 0;
-	for (size_t i = 1; i <= n; ++i) { result += (2 * i + 1) / pow(double(i * (i + 1)), int(m)) * legendres[i]; }
+	for (size_t i = 1; i <= n; ++i) { result += double(2 * i + 1) / pow(double(i * (i + 1)), int(m)) * legendres[i]; }
 	return result / (4 * M_PI);
 }
 
@@ -65,7 +64,7 @@ double g(const size_t n, const size_t m, const std::vector<double>& legendres)
 double h(const size_t n, const size_t m, const std::vector<double>& legendres)
 {
 	double result = 0;
-	for (size_t i = 1; i <= n; ++i) { result += (2 * i + 1) / pow(double(i * (i + 1)), int(m - 1)) * legendres[i]; }
+	for (size_t i = 1; i <= n; ++i) { result += double(2 * i + 1) / pow(double(i * (i + 1)), int(m - 1)) * legendres[i]; }
 	return result / (4 * M_PI);
 }
 
@@ -75,8 +74,7 @@ void build(const size_t n, const size_t m, std::vector<double>& gCache, std::vec
 {
 	gCache.resize(2 * S + 1);
 	hCache.resize(2 * S + 1);
-	for (size_t i = 0; i <= 2 * S; ++i)
-	{
+	for (size_t i = 0; i <= 2 * S; ++i) {
 		std::vector<double> legendres;
 		const double cosine = (double(i) - S) / S;
 
@@ -88,7 +86,7 @@ void build(const size_t n, const size_t m, std::vector<double>& gCache, std::vec
 	hCache.push_back(hCache.back());
 }
 
-double cache(const double x, std::vector<double>& rCache)
+double cache(const double x, const std::vector<double>& rCache)
 {
 	if (x < -1) { return rCache[0]; }
 	if (x > 1) { return rCache[2 * S]; }
@@ -167,22 +165,20 @@ void CRendererTopo::rebuild(const CRendererContext& ctx)
 	std::vector<double> hCaches;
 	build(n, m, gCaches, hCaches);
 
-	const size_t nc = ctx.getChannelCount();
-	const size_t vc = m_scalp.m_Vertices.size();
+	const Eigen::Index nc = Eigen::Index(ctx.getChannelCount());
+	const Eigen::Index vc = Eigen::Index(m_scalp.m_Vertices.size());
 
 	A         = Eigen::MatrixXd(nc + 1, nc + 1);
 	A(nc, nc) = 0;
-	for (size_t i = 0; i < nc; ++i)
-	{
+	for (Eigen::Index i = 0; i < nc; ++i) {
 		A(i, nc) = 1;
 		A(nc, i) = 1;
-		for (size_t j = 0; j <= i; ++j)
-		{
+		for (Eigen::Index j = 0; j <= i; ++j) {
 			CVertex v1, v2;
 			ctx.getChannelLocalisation(i, v1.x, v1.y, v1.z);
 			ctx.getChannelLocalisation(j, v2.x, v2.y, v2.z);
 
-			const double cosine = CVertex::dot(v1, v2);
+			const double cosine = double(CVertex::dot(v1, v2));
 			A(i, j)             = cache(cosine, gCaches);
 			A(j, i)             = cache(cosine, gCaches);
 		}
@@ -192,12 +188,10 @@ void CRendererTopo::rebuild(const CRendererContext& ctx)
 	D         = Eigen::MatrixXd(vc + 1, nc + 1);
 	B(vc, nc) = 0;
 	D(vc, nc) = 0;
-	for (size_t i = 0; i < vc; ++i)
-	{
+	for (Eigen::Index i = 0; i < vc; ++i) {
 		B(i, nc) = 1;
 		D(i, nc) = 1;
-		for (size_t j = 0; j < nc; ++j)
-		{
+		for (Eigen::Index j = 0; j < nc; ++j) {
 			B(vc, j) = 1;
 			D(vc, j) = 1;
 			CVertex v1, v2;
@@ -205,7 +199,7 @@ void CRendererTopo::rebuild(const CRendererContext& ctx)
 			v1.normalize();
 			ctx.getChannelLocalisation(j, v2.x, v2.y, v2.z);
 
-			const double cosine = CVertex::dot(v1, v2);
+			const double cosine = double(CVertex::dot(v1, v2));
 			B(i, j)             = cache(cosine, gCaches);
 			D(i, j)             = cache(cosine, hCaches);
 		}
@@ -219,10 +213,9 @@ void CRendererTopo::rebuild(const CRendererContext& ctx)
 
 	// Rebuilds texture coordinates array
 
-	if (MULTI_SLICE)
-	{
+	if (MULTI_SLICE) {
 		m_interpolatedSamples.clear();
-		m_interpolatedSamples.resize(m_nSample, Eigen::VectorXd::Zero(m_scalp.m_Vertices.size()));
+		m_interpolatedSamples.resize(m_nSample, Eigen::VectorXd::Zero(Eigen::Index(m_scalp.m_Vertices.size())));
 	}
 
 	// Finalizes
@@ -247,28 +240,24 @@ void CRendererTopo::refresh(const CRendererContext& ctx)
 
 	if (!m_nHistory) { return; }
 
-	size_t nc       = ctx.getChannelCount();
-	const size_t vc = m_scalp.m_Vertices.size();
+	const Eigen::Index nc = Eigen::Index(ctx.getChannelCount());
+	const Eigen::Index vc = Eigen::Index(m_scalp.m_Vertices.size());
 
-	std::vector<float> samples;
 	Eigen::VectorXd v = Eigen::VectorXd::Zero(nc + 1);
 	Eigen::VectorXd w;
 	Eigen::VectorXd z;
 
-	if (!MULTI_SLICE)
-	{
+	if (!MULTI_SLICE) {
+		std::vector<float> samples;
 		this->getSampleAtERPFraction(m_erpFraction, samples);
-		for (size_t i = 0; i < nc; ++i) { v(i) = samples[i]; }
+		for (Eigen::Index i = 0; i < nc; ++i) { v(i) = double(samples[i]); }
 		this->interpolate(v, w, z);
-		for (size_t j = 0; j < vc; ++j) { m_scalp.m_Vertices[j].u = float(w(j)); }
+		for (Eigen::Index j = 0; j < vc; ++j) { m_scalp.m_Vertices[j].u = float(w(j)); }
 	}
-	else
-	{
-		if (m_nHistory >= m_nSample)
-		{
-			for (size_t k = 0; k < m_nSample; ++k)
-			{
-				for (size_t i = 0; i < nc; ++i) { v(i) = m_history[i][m_nHistory - m_nSample + k]; }
+	else {
+		if (m_nHistory >= m_nSample) {
+			for (size_t k = 0; k < m_nSample; ++k) {
+				for (Eigen::Index i = 0; i < nc; ++i) { v(i) = double(m_history[i][m_nHistory - m_nSample + k]); }
 				this->interpolate(v, w, z);
 				m_interpolatedSamples[k] = w;
 			}
@@ -290,7 +279,7 @@ bool CRendererTopo::render(const CRendererContext& ctx)
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
-	gluPerspective(60, ctx.getAspect(), .01, 100);
+	gluPerspective(60, double(ctx.getAspect()), .01, 100);
 	glTranslatef(0, 0, -d);
 	glRotatef(ctx.getRotationX() * 10, 1, 0, 0);
 	glRotatef(ctx.getRotationY() * 10, 0, 1, 0);
@@ -308,9 +297,9 @@ bool CRendererTopo::render(const CRendererContext& ctx)
 
 	glPushMatrix();
 #if 1
-	glTranslatef(0, .5F, 0);
+	glTranslatef(0, 0.5F, 0);
 	glRotatef(19, 1, 0, 0);
-	glTranslatef(0, -.2F, .35F);
+	glTranslatef(0, -.2F, 0.35F);
 	// ::glScalef(1.8f, 1.8f, 1.8f);
 #else
 	::glRotatef(19, 1, 0, 0);
@@ -318,15 +307,12 @@ bool CRendererTopo::render(const CRendererContext& ctx)
 	// ::glScalef(1.8f, 1.8f, 1.8f);
 #endif
 
-	if (ctx.isFaceMeshVisible())
-	{
+	if (ctx.isFaceMeshVisible()) {
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
 		glDisable(GL_TEXTURE_1D);
-		if (!m_face.m_Triangles.empty())
-		{
-			if (!m_face.m_Normals.empty())
-			{
+		if (!m_face.m_Triangles.empty()) {
+			if (!m_face.m_Normals.empty()) {
 				glEnable(GL_LIGHTING);
 				glEnableClientState(GL_NORMAL_ARRAY);
 			}
@@ -341,13 +327,10 @@ bool CRendererTopo::render(const CRendererContext& ctx)
 		}
 	}
 
-	if (ctx.isScalpMeshVisible())
-	{
+	if (ctx.isScalpMeshVisible()) {
 		glEnable(GL_TEXTURE_1D);
-		if (!m_scalp.m_Triangles.empty())
-		{
-			if (!m_scalp.m_Normals.empty())
-			{
+		if (!m_scalp.m_Triangles.empty()) {
+			if (!m_scalp.m_Normals.empty()) {
 				glEnable(GL_LIGHTING);
 				glEnableClientState(GL_NORMAL_ARRAY);
 			}
@@ -357,22 +340,19 @@ bool CRendererTopo::render(const CRendererContext& ctx)
 			glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &m_scalp.m_Vertices[0].x);
 			if (!m_scalp.m_Normals.empty()) { glNormalPointer(GL_FLOAT, sizeof(CVertex), &m_scalp.m_Normals[0].x); }
 
-			if (!MULTI_SLICE)
-			{
+			if (!MULTI_SLICE) {
 				glColor3f(1, 1, 1);
 				glEnable(GL_DEPTH_TEST);
 				glDisable(GL_BLEND);
 				glTexCoordPointer(1, GL_FLOAT, sizeof(CVertex), &m_scalp.m_Vertices[0].u);
 				glDrawElements(GL_TRIANGLES, GLsizei(m_scalp.m_Triangles.size()), GL_UNSIGNED_INT, &m_scalp.m_Triangles[0]);
 			}
-			else
-			{
-				glColor4f(1.F, 1.F, 1.F, 4.F / m_nSample);
+			else {
+				glColor4f(1.0F, 1.0F, 1.0F, 4.0F / float(m_nSample));
 				glDisable(GL_DEPTH_TEST);
 				glEnable(GL_BLEND);
-				for (size_t i = 0; i < m_nSample; ++i)
-				{
-					float scale = 1.F + i * 0.25F / m_nSample;
+				for (size_t i = 0; i < m_nSample; ++i) {
+					float scale = 1.0F + float(i) * 0.25F / float(m_nSample);
 					glPushMatrix();
 					glScalef(scale, scale, scale);
 					glTexCoordPointer(1, GL_DOUBLE, 0, &m_interpolatedSamples[i][0]);
@@ -392,9 +372,8 @@ bool CRendererTopo::render(const CRendererContext& ctx)
 	glDisable(GL_TEXTURE_1D);
 
 	glLineWidth(3);
-	for (size_t j = 0; j < ctx.getChannelCount(); ++j)
-	{
-		const float scale = .025F;
+	for (size_t j = 0; j < ctx.getChannelCount(); ++j) {
+		const float scale = 0.025F;
 		const CVertex v   = m_projectedPositions[j];
 		//ctx.getChannelLocalisation(j, v.x, v.y, v.z);
 

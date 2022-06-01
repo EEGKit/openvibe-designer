@@ -49,8 +49,7 @@ void CRendererCube::refresh(const CRendererContext& ctx)
 	const size_t indexERP1 = size_t(indexERP) % m_nSample;
 	const size_t indexERP2 = size_t(indexERP + 1) % m_nSample;
 
-	for (size_t i = 0; i < m_vertices.size(); ++i)
-	{
+	for (size_t i = 0; i < m_vertices.size(); ++i) {
 		m_vertices[i].u = m_history[i][m_nHistory - m_nSample + indexERP1] * (1 - alpha) + m_history[i][m_nHistory - m_nSample + indexERP2] * (alpha);
 	}
 
@@ -69,7 +68,7 @@ bool CRendererCube::render(const CRendererContext& ctx)
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
-	gluPerspective(60, ctx.getAspect(), .01, 100);
+	gluPerspective(60, double(ctx.getAspect()), .01, 100);
 	glTranslatef(0, 0, -d);
 	glRotatef(ctx.getRotationX() * 10, 1, 0, 0);
 	glRotatef(ctx.getRotationY() * 10, 0, 1, 0);
@@ -85,12 +84,11 @@ bool CRendererCube::render(const CRendererContext& ctx)
 
 	glPushMatrix();
 	glRotatef(19, 1, 0, 0);
-	for (size_t j = 0; j < ctx.getSelectedCount(); ++j)
-	{
+	for (size_t j = 0; j < ctx.getSelectedCount(); ++j) {
 		CVertex v;
 		const size_t k = ctx.getSelected(j);
 		ctx.getChannelLocalisation(k, v.x, v.y, v.z);
-		const float scale = .1F * (.25F + fabs(m_vertices[k].u * ctx.getScale()));
+		const float scale = 0.1F * (0.25F + fabs(m_vertices[k].u * ctx.getScale()));
 
 		glPushMatrix();
 		glTranslatef(v.x, v.y, v.z);

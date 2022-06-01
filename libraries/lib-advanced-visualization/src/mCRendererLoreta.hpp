@@ -30,10 +30,9 @@
 
 namespace OpenViBE {
 namespace AdvancedVisualization {
-class CRendererLoreta : public IRenderer
+class CRendererLoreta final : public IRenderer
 {
 public:
-
 	CRendererLoreta();
 
 	void rebuild(const CRendererContext& ctx) override { IRenderer::rebuild(ctx); }
@@ -51,7 +50,6 @@ public:
 	void refreshBrainSubset();
 
 protected:
-
 	std::vector<std::map<std::string, std::vector<size_t>>> m_lookups;
 	std::vector<bool> m_selecteds;
 

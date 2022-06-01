@@ -9,42 +9,37 @@ namespace AdvancedVisualization {
 
 void CRendererTopo2D::rebuild3DMeshesPre(const CRendererContext& /*rContext*/)
 {
-	const size_t nVertex1      = 32;
-	const size_t nVertex2      = 32;
-	const size_t nCircleVertex = 128;
-
-	{	// Scalp
+	{
+		const size_t nVertex1 = 32;
+		const size_t nVertex2 = 32;
+		// Scalp
 		m_scalp.clear();
 
 		std::vector<CVertex>& vertices   = m_scalp.m_Vertices;
 		std::vector<uint32_t>& triangles = m_scalp.m_Triangles;
 
 		vertices.resize(nVertex1 * nVertex2);
-		for (size_t i = 0, k = 0; i < nVertex1; ++i)
-		{
-			for (size_t j = 0; j < nVertex2; j++, k++)
-			{
-				const auto a  = float(i * M_PI / (nVertex1 - 1));
-				const auto b  = float(j * 1.25 * M_PI / (nVertex2 - 1) - M_PI * .2);
+		for (size_t i = 0, k = 0; i < nVertex1; ++i) {
+			for (size_t j = 0; j < nVertex2; j++, k++) {
+				const auto a  = float(double(i) * M_PI / (nVertex1 - 1));
+				const auto b  = float(double(j) * 1.25 * M_PI / (nVertex2 - 1) - M_PI * .2);
 				vertices[k].x = cosf(a);
 				vertices[k].y = sinf(a) * sinf(b) - OFFSET;
 				vertices[k].z = sinf(a) * cosf(b);
-				vertices[k].u = k * 200.F / (nVertex1 * nVertex2);
+				vertices[k].u = float(k) * 200.0F / (nVertex1 * nVertex2);
 			}
 		}
 
 		triangles.resize((nVertex1 - 1) * (nVertex2 - 1) * 6);
-		for (size_t i = 0, k = 0; i < nVertex1 - 1; ++i)
-		{
-			for (size_t j = 0; j < nVertex2 - 1; j++, k += 6)
-			{
-				triangles[k]     = (i) * nVertex2 + (j);
-				triangles[k + 1] = (i + 1) * nVertex2 + (j);
-				triangles[k + 2] = (i + 1) * nVertex2 + (j + 1);
+		for (size_t i = 0, k = 0; i < nVertex1 - 1; ++i) {
+			for (size_t j = 0; j < nVertex2 - 1; j++, k += 6) {
+				triangles[k]     = uint32_t((i) * nVertex2 + (j));
+				triangles[k + 1] = uint32_t((i + 1) * nVertex2 + (j));
+				triangles[k + 2] = uint32_t((i + 1) * nVertex2 + (j + 1));
 
 				triangles[k + 3] = triangles[k];
 				triangles[k + 4] = triangles[k + 2];
-				triangles[k + 5] = (i) * nVertex2 + (j + 1);
+				triangles[k + 5] = uint32_t((i) * nVertex2 + (j + 1));
 			}
 		}
 
@@ -52,7 +47,9 @@ void CRendererTopo2D::rebuild3DMeshesPre(const CRendererContext& /*rContext*/)
 		// m_scalp.compile();
 	}
 
-	{	// Face
+	{
+		const size_t nCircleVertex = 128;
+		// Face
 		m_face.clear();
 
 		std::vector<CVertex>& vertices   = m_face.m_Vertices;
@@ -61,12 +58,11 @@ void CRendererTopo2D::rebuild3DMeshesPre(const CRendererContext& /*rContext*/)
 		// Ribbon mesh
 
 		vertices.resize(nCircleVertex * 2/*+6*/);
-		for (size_t i = 0, k = 0; i < nCircleVertex; ++i, ++k)
-		{
-			const auto a = float(i * 4 * M_PI / nCircleVertex);
+		for (size_t i = 0, k = 0; i < nCircleVertex; ++i, ++k) {
+			const auto a = float(double(i * 4) * M_PI / nCircleVertex);
 
 			vertices[k].x = cosf(a);
-			vertices[k].y = .01F;
+			vertices[k].y = 0.01F;
 			vertices[k].z = sinf(a);
 			k++;
 			vertices[k].x = cosf(a);
@@ -92,8 +88,7 @@ void CRendererTopo2D::rebuild3DMeshesPre(const CRendererContext& /*rContext*/)
 
 		triangles.resize(nCircleVertex * 6/*+12*/);
 		const size_t mod = nCircleVertex * 2;
-		for (size_t i = 0, k = 0; i < nCircleVertex; ++i)
-		{
+		for (size_t i = 0, k = 0; i < nCircleVertex; ++i) {
 			triangles[k++] = (i) % mod;
 			triangles[k++] = (i + 1) % mod;
 			triangles[k++] = (i + 2) % mod;
@@ -118,10 +113,9 @@ void CRendererTopo2D::rebuild3DMeshesPre(const CRendererContext& /*rContext*/)
 namespace {
 void unfold(std::vector<CVertex>& vertices, const float layer = 0)
 {
-	for (auto& v : vertices)
-	{
+	for (auto& v : vertices) {
 		v.y += OFFSET;
-		const float phi = float(M_PI) * .5F - asinf(v.y);
+		const float phi = float(M_PI) * 0.5F - asinf(v.y);
 		const float psi = atan2f(v.z, v.x);
 
 		v.x = phi * cos(psi);

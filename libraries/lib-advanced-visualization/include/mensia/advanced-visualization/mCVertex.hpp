@@ -22,6 +22,7 @@
 #pragma once
 
 #include <cmath>
+#include <float.h>
 
 #pragma pack(1)
 namespace OpenViBE {
@@ -29,7 +30,6 @@ namespace AdvancedVisualization {
 class CVertex
 {
 public:
-
 	explicit CVertex(const double _x = 0, const double _y = 0, const double _z = 0, const double _u = 0, const double _v = 0)
 		: x(float(_x)), y(float(_y)), z(float(_z)), u(float(_u)), v(float(_v)) { }
 
@@ -46,9 +46,8 @@ public:
 
 	{
 		const float n = this->length();
-		if (n != 0)
-		{
-			const float in = 1.F / n;
+		if (n > FLT_EPSILON) {
+			const float in = 1.0F / n;
 			this->x *= in;
 			this->y *= in;
 			this->z *= in;

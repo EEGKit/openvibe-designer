@@ -19,7 +19,6 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define _USE_MATH_DEFINES
 #include <cmath>
 
 #include "mCRendererFlower.hpp"
@@ -33,30 +32,26 @@ void CRendererFlower::rebuild(const CRendererContext& ctx)
 {
 	IRenderer::rebuild(ctx);
 
-	m_autoDecimationFactor = 1 + size_t((m_nSample - 1) / ctx.getMaximumSampleCountPerDisplay());
+	m_autoDecimationFactor = 1 + size_t((m_nSample - 1) / CRendererContext::getMaximumSampleCountPerDisplay());
 
 	const size_t n = m_nSample / m_autoDecimationFactor;
 
-	for (auto& multivertex : m_muliVertices)
-	{
+	for (auto& multivertex : m_muliVertices) {
 		multivertex.clear();
 		multivertex.resize(m_nChannel);
-		for (size_t i = 0; i < m_nChannel; ++i)
-		{
+		for (size_t i = 0; i < m_nChannel; ++i) {
 			multivertex[i].resize(n);
-			for (size_t j = 0; j < m_nSample - m_autoDecimationFactor + 1; j += m_autoDecimationFactor)
-			{
-				multivertex[i][j / m_autoDecimationFactor].u = j * m_nInverseSample;
+			for (size_t j = 0; j < m_nSample - m_autoDecimationFactor + 1; j += m_autoDecimationFactor) {
+				multivertex[i][j / m_autoDecimationFactor].u = float(j) * m_nInverseSample;
 			}
 		}
 	}
 
 	m_circles.clear();
 	m_circles.resize(n);
-	for (size_t i = 0; i < n; ++i)
-	{
-		m_circles[i].x = cosf(float(ctx.getFlowerRingCount()) * i * float(M_PI) * 2.F / n);
-		m_circles[i].y = sinf(float(ctx.getFlowerRingCount()) * i * float(M_PI) * 2.F / n);
+	for (size_t i = 0; i < n; ++i) {
+		m_circles[i].x = cosf(float(ctx.getFlowerRingCount()) * float(i) * float(M_PI) * 2.0F / float(n));
+		m_circles[i].y = sinf(float(ctx.getFlowerRingCount()) * float(i) * float(M_PI) * 2.0F / float(n));
 		m_circles[i].z = 0;
 	}
 
@@ -69,39 +64,32 @@ void CRendererFlower::refresh(const CRendererContext& ctx)
 
 	if (!m_nHistory) { return; }
 
-	for (size_t z = 0; z < m_muliVertices.size(); ++z)
-	{
-		for (size_t i = 0; i < m_nChannel; ++i)
-		{
+	for (size_t z = 0; z < m_muliVertices.size(); ++z) {
+		for (size_t i = 0; i < m_nChannel; ++i) {
 			size_t k                    = ((m_nHistory - 1 - z * m_muliVertices[z][i].size()) / m_nSample) * m_nSample;
 			std::vector<float>& history = m_history[i];
 			CVertex* vertex             = &m_muliVertices[z][i][0];
 			CVertex* circleVertex       = &m_circles[0];
-			for (size_t j = 0; j < m_nSample - m_autoDecimationFactor + 1; j += m_autoDecimationFactor, k += m_autoDecimationFactor)
-			{
+			for (size_t j = 0; j < m_nSample - m_autoDecimationFactor + 1; j += m_autoDecimationFactor, k += m_autoDecimationFactor) {
 				float sum    = 0;
 				size_t count = 0;
 
-				for (size_t l = 0; l < m_autoDecimationFactor; ++l)
-				{
-					if (/*k+l>=m_historyIdx && */k + l < m_nHistory)
-					{
+				for (size_t l = 0; l < m_autoDecimationFactor; ++l) {
+					if (/*k+l>=m_historyIdx && */k + l < m_nHistory) {
 						sum += history[k + l];
 						count++;
 					}
 				}
 
-				if (count)
-				{
-					const float v = sum / count;
+				if (count) {
+					const float v = sum / float(count);
 					vertex->x     = circleVertex->x * v;
 					vertex->y     = circleVertex->y * v;
 					vertex->z     = circleVertex->z * v;
 					vertex++;
 					circleVertex++;
 				}
-				else
-				{
+				else {
 					vertex++;
 					circleVertex++;
 				}
@@ -127,16 +115,13 @@ bool CRendererFlower::render(const CRendererContext& ctx)
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	for (size_t i = 0; i < ctx.getSelectedCount(); ++i)
-	{
+	for (size_t i = 0; i < ctx.getSelectedCount(); ++i) {
 		glPushMatrix();
-		glTranslatef(.5F, .5F, 0);
+		glTranslatef(0.5F, 0.5F, 0);
 		glScalef(ctx.getScale(), ctx.getScale(), ctx.getScale());
 
-		for (auto& multi : m_muliVertices)
-		{
-			if (!multi.empty())
-			{
+		for (auto& multi : m_muliVertices) {
+			if (!multi.empty()) {
 				std::vector<CVertex>& vertices = multi[ctx.getSelected(i)];
 
 				glVertexPointer(3, GL_FLOAT, sizeof(CVertex), &vertices[0].x);
