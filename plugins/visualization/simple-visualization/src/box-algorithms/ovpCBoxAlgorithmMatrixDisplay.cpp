@@ -28,15 +28,12 @@ static void ShowColorsToggleButtonCB(GtkToggleToolButton* button, gpointer data)
 bool CBoxAlgorithmMatrixDisplay::resetColors()
 
 {
-	if (m_ShowColors)
-	{
+	if (m_ShowColors) {
 		//we take colors from cache and re-put it in the table
 		for (auto it = m_eventBoxCache.begin(); it != m_eventBoxCache.end(); ++it) { gtk_widget_modify_bg((*it).first, GTK_STATE_NORMAL, &(*it).second); }
 	}
-	else
-	{
-		for (auto it = m_eventBoxCache.begin(); it != m_eventBoxCache.end(); ++it)
-		{
+	else {
+		for (auto it = m_eventBoxCache.begin(); it != m_eventBoxCache.end(); ++it) {
 			GdkColor white;
 			white.red   = 65535;
 			white.green = 65535;
@@ -82,8 +79,7 @@ bool CBoxAlgorithmMatrixDisplay::initialize()
 	m_mainWidget    = GTK_WIDGET(gtk_builder_get_object(m_mainWidgetInterface, "matrix-display-table"));
 	m_toolbarWidget = GTK_WIDGET(gtk_builder_get_object(m_toolbarWidgetInterface, "matrix-display-toolbar"));
 
-	if (!this->canCreatePluginObject(OVP_ClassId_Plugin_VisualizationCtx))
-	{
+	if (!this->canCreatePluginObject(OVP_ClassId_Plugin_VisualizationCtx)) {
 		this->getLogManager() << Kernel::LogLevel_Error << "Visualization framework is not loaded" << "\n";
 		return false;
 	}
@@ -153,33 +149,28 @@ bool CBoxAlgorithmMatrixDisplay::process()
 {
 	Kernel::IBoxIO& boxContext = this->getDynamicBoxContext();
 
-	for (size_t i = 0; i < boxContext.getInputChunkCount(0); ++i)
-	{
+	for (size_t i = 0; i < boxContext.getInputChunkCount(0); ++i) {
 		ip_buffer = boxContext.getInputChunk(0, i);
 		iMatrix->process();
 
-		if (iMatrix->isOutputTriggerActive(OVP_GD_Algorithm_StreamedMatrixDecoder_OutputTriggerId_ReceivedHeader))
-		{
+		if (iMatrix->isOutputTriggerActive(OVP_GD_Algorithm_StreamedMatrixDecoder_OutputTriggerId_ReceivedHeader)) {
 			//header received
 			//adding the event  to the window
 			GtkTable* table = GTK_TABLE(gtk_builder_get_object(m_mainWidgetInterface, "matrix-display-table"));
 			guint nRow, nCol;
-			if (op_matrix->getDimensionCount() == 1)
-			{
+			if (op_matrix->getDimensionCount() == 1) {
 				//getLogManager() << Kernel::LogLevel_Warning<< "The streamed matrix received has 1 dimensions (found "<< op_matrix->getDimensionCount() <<" dimensions)\n";
 				nRow = 1;
 				nCol = guint(op_matrix->getDimensionSize(0));
 				//return false;
 			}
-			else if (op_matrix->getDimensionCount() != 2)
-			{
+			else if (op_matrix->getDimensionCount() != 2) {
 				getLogManager() << Kernel::LogLevel_Error << "The streamed matrix received has more than 2 dimensions (found " << op_matrix->getDimensionCount()
 						<<
 						" dimensions)\n";
 				return false;
 			}
-			else
-			{
+			else {
 				nRow = guint(op_matrix->getDimensionSize(0));
 				nCol = guint(op_matrix->getDimensionSize(1));
 			}
@@ -187,26 +178,22 @@ bool CBoxAlgorithmMatrixDisplay::process()
 			gtk_table_resize(table, nRow + 1, nCol + 1);
 
 			//first line : labels
-			guint row = 0;
-			for (guint c = 1; c < nCol + 1; ++c)
-			{
+			for (guint c = 1; c < nCol + 1; ++c) {
 				GtkWidget* label = gtk_label_new("");
 				gtk_widget_set_visible(label, 1);
-				gtk_table_attach(table, label, c, c + 1, row, row + 1, GtkAttachOptions(GTK_EXPAND | GTK_FILL), GtkAttachOptions(GTK_EXPAND | GTK_FILL), 0, 0);
+				gtk_table_attach(table, label, c, c + 1, 0, 1, GtkAttachOptions(GTK_EXPAND | GTK_FILL), GtkAttachOptions(GTK_EXPAND | GTK_FILL), 0, 0);
 				//g_object_unref(l_pGtkBuilderLabel);
 
-				const char* cstr = std::to_string(c).c_str();
-				gtk_label_set_label(GTK_LABEL(label), cstr);
-				m_columnLabelCache.emplace_back(GTK_LABEL(label), cstr);
+				const std::string str = std::to_string(c);
+				gtk_label_set_label(GTK_LABEL(label), str.c_str());
+				m_columnLabelCache.emplace_back(GTK_LABEL(label), str.c_str());
 			}
 
 			//first column : labels
-			guint col = 0;
-			for (guint r = 1; r < nRow + 1; ++r)
-			{
+			for (guint r = 1; r < nRow + 1; ++r) {
 				GtkWidget* label = gtk_label_new("");
 				gtk_widget_set_visible(label, 1);
-				gtk_table_attach(table, label, col, col + 1, r, r + 1, GtkAttachOptions(GTK_EXPAND | GTK_FILL), GtkAttachOptions(GTK_EXPAND | GTK_FILL), 0, 0);
+				gtk_table_attach(table, label, 0, 1, r, r + 1, GtkAttachOptions(GTK_EXPAND | GTK_FILL), GtkAttachOptions(GTK_EXPAND | GTK_FILL), 0, 0);
 
 				std::stringstream ss;
 				ss << char(r - 1 + int('A'));
@@ -214,10 +201,8 @@ bool CBoxAlgorithmMatrixDisplay::process()
 				m_rowLabelCache.emplace_back(GTK_LABEL(label), ss.str().c_str());
 			}
 
-			for (guint r = 1; r < nRow + 1; ++r)
-			{
-				for (guint c = 1; c < nCol + 1; ++c)
-				{
+			for (guint r = 1; r < nRow + 1; ++r) {
+				for (guint c = 1; c < nCol + 1; ++c) {
 					GtkWidget* eventBox = gtk_event_box_new();
 					gtk_widget_set_visible(eventBox, 1);
 					GtkWidget* label = gtk_label_new("");
@@ -239,24 +224,21 @@ bool CBoxAlgorithmMatrixDisplay::process()
 			}
 		}
 
-		if (iMatrix->isOutputTriggerActive(OVP_GD_Algorithm_StreamedMatrixDecoder_OutputTriggerId_ReceivedBuffer))
-		{
+		if (iMatrix->isOutputTriggerActive(OVP_GD_Algorithm_StreamedMatrixDecoder_OutputTriggerId_ReceivedBuffer)) {
 			//buffer received
 			//2-dimension-matrix values
 			size_t nRow, nCol;
-			if (op_matrix->getDimensionCount() == 1)
-			{
+			if (op_matrix->getDimensionCount() == 1) {
 				nRow = 1;
 				nCol = op_matrix->getDimensionSize(0);
 			}
-			else
-			{
+			else {
 				nRow = op_matrix->getDimensionSize(0);
 				nCol = op_matrix->getDimensionSize(1);
 			}
 
 			if (m_realTimeMinMax || // we need recompute the min max at each loop call
-				(m_max == 0 && m_min == 0)) // we have never computed the min max values.
+				(std::fabs(m_max) <= DBL_EPSILON && std::fabs(m_min) <= DBL_EPSILON)) // we have never computed the min max values.
 			{
 				if (op_matrix->getBufferElementCount() != 0) // if the matrix is not empty.
 				{
@@ -266,16 +248,13 @@ bool CBoxAlgorithmMatrixDisplay::process()
 			}
 
 			// MIN-MAX computation
-			for (size_t r = 0; r < nRow; ++r)
-			{
-				for (size_t c = 0; c < nCol; ++c)
-				{
+			for (size_t r = 0; r < nRow; ++r) {
+				for (size_t c = 0; c < nCol; ++c) {
 					double value = op_matrix->getBuffer()[r * nCol + c];
 					m_max        = (value > m_max ? value : m_max);
 					m_min        = (value < m_min ? value : m_min);
 
-					if (m_symetricMinMax)
-					{
+					if (m_symetricMinMax) {
 						double maxAbsValue = (fabs(m_max) > fabs(m_min) ? fabs(m_max) : fabs(m_min));
 						m_max              = maxAbsValue;
 						m_min              = -maxAbsValue;
@@ -283,23 +262,21 @@ bool CBoxAlgorithmMatrixDisplay::process()
 				}
 			}
 
-			for (size_t r = 0; r < nRow; ++r)
-			{
-				for (size_t c = 0; c < nCol; ++c)
-				{
+			for (size_t r = 0; r < nRow; ++r) {
+				for (size_t c = 0; c < nCol; ++c) {
 					double value = op_matrix->getBuffer()[r * nCol + c];
-					if (m_max != 0 || m_min != 0) // if the first value ever sent is 0, both are 0, and we dont want to divide by 0 :)
+					if (std::fabs(m_max) > DBL_EPSILON || std::fabs(m_min) >
+						DBL_EPSILON) // if the first value ever sent is 0, both are 0, and we dont want to divide by 0 :)
 					{
-						const size_t step = size_t(((value - m_min) / (m_max - m_min)) * (m_gradientSteps - 1));
+						const size_t step = size_t(((value - m_min) / (m_max - m_min)) * double(m_gradientSteps - 1));
 
 						// gtk_widget_modify_bg uses 16bit colors, the interpolated gradients gives 8bits colors.
 						GdkColor color;
-						color.red   = uint16_t(m_interpolatedColorGardient[step * 4 + 1] * 65535. / 100.);
-						color.green = uint16_t(m_interpolatedColorGardient[step * 4 + 2] * 65535. / 100.);
-						color.blue  = uint16_t(m_interpolatedColorGardient[step * 4 + 3] * 65535. / 100.);
+						color.red   = uint16_t(m_interpolatedColorGardient[step * 4 + 1] * 65535.0 / 100.0);
+						color.green = uint16_t(m_interpolatedColorGardient[step * 4 + 2] * 65535.0 / 100.0);
+						color.blue  = uint16_t(m_interpolatedColorGardient[step * 4 + 3] * 65535.0 / 100.0);
 
-						if (memcmp(&(m_eventBoxCache[r * nCol + c].second), &color, sizeof(GdkColor)) != 0 && m_ShowColors)
-						{
+						if (memcmp(&(m_eventBoxCache[r * nCol + c].second), &color, sizeof(GdkColor)) != 0 && m_ShowColors) {
 							gtk_widget_modify_bg(m_eventBoxCache[r * nCol + c].first, GTK_STATE_NORMAL, &color);
 						}
 						m_eventBoxCache[r * nCol + c].second = color;
@@ -315,35 +292,27 @@ bool CBoxAlgorithmMatrixDisplay::process()
 				}
 			}
 
-			if (op_matrix->getDimensionCount() != 1)
-			{
+			if (op_matrix->getDimensionCount() != 1) {
 				//first line : labels
-				for (size_t c = 0; c < nCol; ++c)
-				{
-					if (m_columnLabelCache[c].second != op_matrix->getDimensionLabel(1, c) && !std::string(op_matrix->getDimensionLabel(1, c)).empty())
-					{
+				for (size_t c = 0; c < nCol; ++c) {
+					if (m_columnLabelCache[c].second != op_matrix->getDimensionLabel(1, c) && !std::string(op_matrix->getDimensionLabel(1, c)).empty()) {
 						gtk_label_set_label(GTK_LABEL(m_columnLabelCache[c].first), op_matrix->getDimensionLabel(1, c));
 						m_columnLabelCache[c].second = op_matrix->getDimensionLabel(1, c);
 					}
 				}
 
 				//first column : labels
-				for (size_t r = 0; r < nRow; ++r)
-				{
-					if (m_rowLabelCache[r].second != op_matrix->getDimensionLabel(0, r) && !std::string(op_matrix->getDimensionLabel(0, r)).empty())
-					{
+				for (size_t r = 0; r < nRow; ++r) {
+					if (m_rowLabelCache[r].second != op_matrix->getDimensionLabel(0, r) && !std::string(op_matrix->getDimensionLabel(0, r)).empty()) {
 						gtk_label_set_label(GTK_LABEL(m_rowLabelCache[r].first), op_matrix->getDimensionLabel(0, r));
 						m_rowLabelCache[r].second = op_matrix->getDimensionLabel(0, r);
 					}
 				}
 			}
-			else
-			{
+			else {
 				//first line : labels
-				for (size_t c = 0; c < nCol; ++c)
-				{
-					if (m_columnLabelCache[c].second != op_matrix->getDimensionLabel(0, c) && !std::string(op_matrix->getDimensionLabel(0, c)).empty())
-					{
+				for (size_t c = 0; c < nCol; ++c) {
+					if (m_columnLabelCache[c].second != op_matrix->getDimensionLabel(0, c) && !std::string(op_matrix->getDimensionLabel(0, c)).empty()) {
 						gtk_label_set_label(GTK_LABEL(m_columnLabelCache[c].first), op_matrix->getDimensionLabel(0, c));
 						m_columnLabelCache[c].second = op_matrix->getDimensionLabel(0, c);
 					}

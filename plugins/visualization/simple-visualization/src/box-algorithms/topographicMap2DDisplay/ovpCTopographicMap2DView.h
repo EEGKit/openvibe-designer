@@ -114,15 +114,15 @@ private:
 
 	/**
 	 * \brief Get channel position in 2D
-	 * \param index[in] Index of channel which position is to be retrieved
-	 * \param x[out] X coordinate of channel location, if channel is visible
-	 * \param y[out] Y coordinate of channel location, if channel is visible
+	 * \param index Index of channel which position is to be retrieved
+	 * \param x X coordinate of channel location, if channel is visible
+	 * \param y Y coordinate of channel location, if channel is visible
 	 * \return True if channel is visible in current view, false otherwise
 	 */
 	bool getChannel2DPosition(size_t index, gint& x, gint& y) const;
 
 	//update RGB buffer with interpolated values
-	void refreshPotentials();
+	void refreshPotentials() const;
 
 	//draw a box in RGB buffer
 	void drawBoxToBuffer(size_t x, size_t y, size_t width, size_t height, uint8_t red, uint8_t green, uint8_t blue) const;
@@ -207,8 +207,8 @@ private:
 
 	size_t m_skullX = 0, m_skullY = 0, m_skullDiameter = 0;
 	//angles relative to 3 o'clock position, CCW, in degrees
-	float m_skullOutlineStartAngle = 0.0, m_skullOutlineEndAngle = 0.0;
-	float m_skullFillStartAngle    = 0.0, m_skullFillEndAngle    = 0.0;
+	double m_skullOutlineStartAngle = 0.0, m_skullOutlineEndAngle = 0.0;
+	double m_skullFillStartAngle    = 0.0, m_skullFillEndAngle    = 0.0;
 
 	//determined from m_skullOutlineEndAngle
 	size_t m_skullOutlineLeftPointX = 0, m_skullOutlineLeftPointY = 0;

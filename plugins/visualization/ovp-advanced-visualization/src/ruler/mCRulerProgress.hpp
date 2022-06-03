@@ -27,7 +27,6 @@ namespace AdvancedVisualization {
 class CRulerProgress : public IRuler
 {
 public:
-
 	virtual void renderFinal(const float progress) = 0;
 
 	void render() override
@@ -37,11 +36,11 @@ public:
 		if (m_renderer->getHistoryCount() == 0) { return; }
 		if (m_renderer->getHistoryIndex() == 0) { return; }
 
-		const size_t nSample    = m_renderer->getSampleCount();
-		const size_t historyIdx = m_renderer->getHistoryIndex();
+		const float nSample    = float(m_renderer->getSampleCount());
+		const float historyIdx = float(m_renderer->getHistoryIndex());
 
-		const float progress = float(historyIdx - (float(historyIdx) / nSample) * nSample) / nSample;
-		if (progress != 0 && progress != 1) { this->renderFinal(progress); }
+		const float progress = (historyIdx - (historyIdx / nSample) * nSample) / nSample;
+		if (std::fabs(progress) > FLT_EPSILON && std::fabs(progress - 1) > FLT_EPSILON) { this->renderFinal(progress); }
 	}
 };
 }  // namespace AdvancedVisualization

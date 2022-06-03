@@ -24,10 +24,9 @@
 
 namespace OpenViBE {
 namespace AdvancedVisualization {
-class CRulerProgressH : public CRulerProgress
+class CRulerProgressH final : public CRulerProgress
 {
 public:
-
 	void renderFinal(const float progress) override
 	{
 		const size_t selectedCount = m_rendererCtx->getSelectedCount();
@@ -37,20 +36,18 @@ public:
 		glLineWidth(4);
 		glColor3f(0, 0, 0);
 		glBegin(GL_LINES);
-		for (size_t i = 0; i < selectedCount; ++i)
-		{
-			glVertex2f(0, (i + progress) / selectedCount);
-			glVertex2f(1, (i + progress) / selectedCount);
+		for (size_t i = 0; i < selectedCount; ++i) {
+			glVertex2f(0, (float(i) + progress) / float(selectedCount));
+			glVertex2f(1, (float(i) + progress) / float(selectedCount));
 		}
 		glEnd();
 
 		glLineWidth(2);
 		glColor3f(0.25, 1, 0.25);
 		glBegin(GL_LINES);
-		for (size_t i = 0; i < selectedCount; ++i)
-		{
-			glVertex2f(0, (i + progress) / selectedCount);
-			glVertex2f(1, (i + progress) / selectedCount);
+		for (size_t i = 0; i < selectedCount; ++i) {
+			glVertex2f(0, (float(i) + progress) / float(selectedCount));
+			glVertex2f(1, (float(i) + progress) / float(selectedCount));
 		}
 		glEnd();
 	}

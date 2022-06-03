@@ -27,7 +27,6 @@ namespace AdvancedVisualization {
 class CRulerTexture : public IRuler
 {
 protected:
-
 	virtual void preRender()
 
 	{

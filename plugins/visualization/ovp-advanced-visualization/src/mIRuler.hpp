@@ -42,7 +42,6 @@ namespace AdvancedVisualization {
 class IRuler
 {
 public:
-
 	IRuler() { }
 	IRuler(const IRuler&) = delete;
 	virtual ~IRuler()     = default;
@@ -56,7 +55,6 @@ public:
 	virtual void doRenderBottom(GtkWidget* widget) { if (m_rendererCtx->getScaleVisibility()) { this->renderBottom(widget); } }
 
 protected:
-
 	virtual void render() { }
 	virtual void renderLeft(GtkWidget* /*widget*/) { }
 	virtual void renderRight(GtkWidget* /*widget*/) { }
@@ -66,25 +64,22 @@ protected:
 	{
 		std::vector<double> res;
 		const double range = stop - start;
-		const double order = floor(log(range) / log(10.) - .1F);
+		const double order = floor(log(range) / log(10.0) - 0.1);
 		double step        = pow(10, order);
 		double nStep       = trunc(range / step);
 
-		while (nStep < count)
-		{
+		while (nStep < double(count)) {
 			nStep *= 2;
 			step /= 2;
 		}
-		while (nStep > count)
-		{
+		while (nStep > double(count)) {
 			nStep /= 2;
 			step *= 2;
 		}
 
 		double value = trunc(start / step) * step;
 		while (value < start) { value += step; }
-		while (value <= stop)
-		{
+		while (value <= stop) {
 			res.push_back(std::abs(value) < std::abs(range / 1000) ? 0 : value);
 			value += step;
 		}
@@ -96,6 +91,7 @@ protected:
 		char label[1024];
 		(fabs(v) < 1E-10) ? sprintf(label, "0") : sprintf(label, "%g", v);
 		return label;
+		//return (fabs(v) < 1E-10) ? "0" : std::to_string(v); // To string can cause problem, fstream method is a little long for g : https://stackoverflow.com/questions/35591647/how-to-let-ss-f-work-like-printfg-f
 	}
 
 	const CRendererContext* m_rendererCtx = nullptr;

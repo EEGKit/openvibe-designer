@@ -63,13 +63,11 @@ enum EParameter
 class CParameterSet
 {
 public:
-
 	explicit CParameterSet(int p, ...)
 	{
 		va_list args;
 		va_start(args, p);
-		while (p != P_None)
-		{
+		while (p != P_None) {
 			m_parameters.push_back(p);
 			p = va_arg(args, int);
 		}
@@ -79,14 +77,12 @@ public:
 	explicit operator const std::vector<int>&() const { return m_parameters; }
 
 protected:
-
 	std::vector<int> m_parameters;
 };
 
 class CBoxAlgorithmViz : public Toolkit::TBoxAlgorithm<Plugins::IBoxAlgorithm>
 {
 public:
-
 	typedef struct
 	{
 		float r, g, b;
@@ -113,8 +109,7 @@ public:
 	virtual void redraw(const bool immediate = false)
 	{
 		const uint64_t currentTime = System::Time::zgetTime();
-		if (m_RedrawNeeded || currentTime - m_LastRenderTime > ((1LL << 32) / 16))
-		{
+		if (m_RedrawNeeded || currentTime - m_LastRenderTime > ((1LL << 32) / 16)) {
 			// immediate |= (currentTime - m_lastRenderTime > ((1LL<<32)/4));
 			m_GtkGLWidget.redraw(immediate);
 			m_GtkGLWidget.redrawLeft(immediate);
@@ -138,11 +133,9 @@ public:
 	virtual void keyboard(int x, int y, size_t key, bool status);
 
 protected:
-
 	static void parseColor(color_t& rColor, const std::string& sColor);
 
 public:
-
 	CIdentifier m_ClassID = CIdentifier::undefined();
 	std::vector<int> m_Parameters;
 	uint64_t m_lastProcessTime = 0;
@@ -224,14 +217,12 @@ private:
 class CBoxAlgorithmVizListener : public Toolkit::TBoxListener<Plugins::IBoxListener>
 {
 public:
-
 	explicit CBoxAlgorithmVizListener(const std::vector<int>& parameters) : m_Parameters(parameters) { }
 
-	size_t getBaseSettingCount()
+	size_t getBaseSettingCount() const
 	{
 		size_t result = 0;
-		for (const auto& p : m_Parameters)
-		{
+		for (const auto& p : m_Parameters) {
 			// if(p == I_Matrix) { result++; }
 			// if(p == I_Signal) { result++; }
 			// if(p == I_Spectrum) { result++; }
@@ -272,11 +263,9 @@ public:
 		const bool isCovariance = (std::find(m_Parameters.begin(), m_Parameters.end(), I_Covariance) != m_Parameters.end());
 		CIdentifier typeID      = CIdentifier::undefined();
 
-		for (size_t i = 0; i < box.getInputCount(); ++i)
-		{
+		for (size_t i = 0; i < box.getInputCount(); ++i) {
 			box.getInputType(i, typeID);
-			if (typeID == OV_TypeId_StreamedMatrix)
-			{
+			if (typeID == OV_TypeId_StreamedMatrix) {
 				if (isSignal) { box.setInputType(i, OV_TypeId_Signal); }
 				if (isSpectrum) { box.setInputType(i, OV_TypeId_Spectrum); }
 				if (isCovariance) { box.setInputType(i, OV_TypeId_CovarianceMatrix); }
@@ -293,7 +282,6 @@ public:
 class CBoxAlgorithmVizDesc : public Plugins::IBoxAlgorithmDesc
 {
 public:
-
 	CString m_Name;
 	CString m_CategoryName;
 	CString m_ShortDesc;
@@ -312,13 +300,11 @@ public:
 	{
 		const std::string fullname(name.toASCIIString());
 		const size_t i = fullname.rfind('/');
-		if (i != std::string::npos)
-		{
+		if (i != std::string::npos) {
 			m_Name         = CString(fullname.substr(i + 1).c_str());
 			m_CategoryName = CString(fullname.substr(0, i).c_str());
 		}
-		else
-		{
+		else {
 			m_Name         = CString(name);
 			m_CategoryName = CString("");
 		}
@@ -327,16 +313,17 @@ public:
 	void release() override { }
 
 	CString getName() const override { return m_Name; }
-	CString getAuthorName() const override { return CString("Yann Renard"); }
-	CString getAuthorCompanyName() const override { return CString("Mensia Technologies SA"); }
+	CString getAuthorName() const override { return "Yann Renard"; }
+	CString getAuthorCompanyName() const override { return "Mensia Technologies SA"; }
 	CString getShortDescription() const override { return m_ShortDesc; }
 	CString getDetailedDescription() const override { return m_DetailedDesc; }
-	// virtual OpenViBE::CString getCategory() const            { return OpenViBE::CString(""); }
-	CString getVersion() const override { return CString("1.0"); }
+	// CString getCategory() const override { return ""; }
+	CString getVersion() const override { return "1.0"; }
 	CString getSoftwareComponent() const override { return "openvibe-designer"; }
 	CString getAddedSoftwareVersion() const override { return m_AddedSoftwareVersion; }
 	CString getUpdatedSoftwareVersion() const override { return m_UpdatedSoftwareVersion; }
-	CString getStockItemName() const override { return CString("gtk-find"); }
+	CString getStockItemName() const override { return "gtk-find"; }
+
 	CIdentifier getCreatedClass() const override { return m_ClassID; }
 
 	void releaseBoxListener(Plugins::IBoxListener* listener) const override { delete listener; }
@@ -348,19 +335,15 @@ public:
 
 	bool getBoxPrototype(Kernel::IBoxProto& prototype) const override
 	{
-		for (auto p : m_Parameters)
-		{
+		for (const auto p : m_Parameters) {
 			if (p == I_Matrix) { prototype.addInput("Matrix", OV_TypeId_StreamedMatrix); }
 			if (p == I_Signal) { prototype.addInput("Matrix", OV_TypeId_StreamedMatrix); }			// This is later changed in the listener 
 			if (p == I_Spectrum) { prototype.addInput("Matrix", OV_TypeId_StreamedMatrix); }		// This is later changed in the listener 
 			if (p == I_TimeFrequency) { prototype.addInput("Matrix", OV_TypeId_TimeFrequency); }	// This is later changed in the listener
 			if (p == I_Covariance) { prototype.addInput("Matrix", OV_TypeId_StreamedMatrix); }		// This is later changed in the listener 
 			if (p == I_Stimulations) { prototype.addInput("Markers", OV_TypeId_Stimulations); }
-			if (p == S_ChannelLocalisation
-			)
-			{
-				prototype.addSetting("Channel Localisation", OV_TypeId_Filename, "${AdvancedViz_ChannelLocalisation}");
-			} // "../share/electrode_sets/electrode_set_standard_cartesian.txt" 
+			// "../share/electrode_sets/electrode_set_standard_cartesian.txt" 
+			if (p == S_ChannelLocalisation) { prototype.addSetting("Channel Localisation", OV_TypeId_Filename, "${AdvancedViz_ChannelLocalisation}"); }
 			if (p == S_DataPositive) { prototype.addSetting("Positive Data Only ?", OV_TypeId_Boolean, "false"); }
 			if (p == S_TemporalCoherence) { prototype.addSetting("Temporal Coherence", OVP_TypeId_TemporalCoherence, "Time Locked"); }
 			if (p == S_TimeScale) { prototype.addSetting("Time Scale", OV_TypeId_Float, "20"); }

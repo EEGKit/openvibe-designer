@@ -30,7 +30,6 @@ template <class TRendererFactoryClass, class TRulerClass>
 class TBoxAlgorithmInstantLoretaViz final : public TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>
 {
 public:
-
 	TBoxAlgorithmInstantLoretaViz(const CIdentifier& classID, const std::vector<int>& parameters)
 		: TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>(classID, parameters) { }
 
@@ -39,25 +38,20 @@ public:
 		box->regionSelectionChanged(selection);
 	}
 
-	void regionSelectionChanged(GtkTreeSelection* pTreeSelection)
+	void regionSelectionChanged(GtkTreeSelection* treeSelection) const
 	{
 		m_Renderer->clearRegionSelection();
 
 		GtkTreeIter iter;
 
 		char* value = nullptr;
-		for (size_t i = 0; i < 3; ++i)
-		{
+		for (size_t i = 0; i < 3; ++i) {
 			GtkTreeSelection* selection = gtk_tree_view_get_selection(m_LookupTreeView[i]);
 
-			if (selection == pTreeSelection)
-			{
-				if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(m_LookupListStore[i]), &iter))
-				{
-					do
-					{
-						if (gtk_tree_selection_iter_is_selected(selection, &iter))
-						{
+			if (selection == treeSelection) {
+				if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(m_LookupListStore[i]), &iter)) {
+					do {
+						if (gtk_tree_selection_iter_is_selected(selection, &iter)) {
 							gtk_tree_model_get(GTK_TREE_MODEL(m_LookupListStore[i]), &iter, 0, &value, -1);
 							m_Renderer->selectRegion(i, value);
 						}
@@ -74,8 +68,7 @@ public:
 
 		gtk_list_store_clear(listStore);
 		gtk_tree_selection_set_mode(gtk_tree_view_get_selection(view), GTK_SELECTION_MULTIPLE);
-		for (size_t i = 0; i < renderer->getRegionCount(category); ++i)
-		{
+		for (size_t i = 0; i < renderer->getRegionCount(category); ++i) {
 			const char* name = m_Renderer->getRegionName(category, i);
 			gtk_list_store_append((listStore), &gtkTreeIter);
 			gtk_list_store_set(listStore, &gtkTreeIter, 0, name ? name : "", -1);
@@ -103,8 +96,7 @@ public:
 		m_LookupListStore[1] = GTK_LIST_STORE(gtk_builder_get_object(m_Builder, "liststore_select_neuro_1"));
 		m_LookupListStore[2] = GTK_LIST_STORE(gtk_builder_get_object(m_Builder, "liststore_select_neuro_2"));
 
-		for (size_t i = 0; i < m_Renderer->getRegionCategoryCount() && i < 3; ++i)
-		{
+		for (size_t i = 0; i < m_Renderer->getRegionCategoryCount() && i < 3; ++i) {
 			this->fillRegion(m_LookupListStore[i], m_LookupTreeView[i], m_Renderer, i);
 		}
 

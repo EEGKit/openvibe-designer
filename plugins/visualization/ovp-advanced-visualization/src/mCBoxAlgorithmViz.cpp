@@ -42,20 +42,17 @@ public:
 
 static void ChannelSelectionChanged(GtkTreeSelection* selection, CRendererContext* ctx)
 {
-	size_t i                = 0;
-	GtkTreeView* treeView   = gtk_tree_selection_get_tree_view(selection);
-	GtkTreeModel* treeModel = gtk_tree_view_get_model(treeView);
-	if (treeModel != nullptr)
-	{
+	GtkTreeView* view   = gtk_tree_selection_get_tree_view(selection);
+	GtkTreeModel* model = gtk_tree_view_get_model(view);
+	if (model != nullptr) {
 		GtkTreeIter iter;
-		if (gtk_tree_model_get_iter_first(treeModel, &iter) != 0)
-		{
-			do
-			{
+		if (gtk_tree_model_get_iter_first(model, &iter) != 0) {
+			size_t i = 0;
+			do {
 				if (gtk_tree_selection_iter_is_selected(selection, &iter) != 0) { ctx->selectChannel(i); }
 				else { ctx->unselectChannel(i); }
 				i++;
-			} while (gtk_tree_model_iter_next(treeModel, &iter) != 0);
+			} while (gtk_tree_model_iter_next(model, &iter) != 0);
 		}
 	}
 }
@@ -132,8 +129,8 @@ bool CBoxAlgorithmViz::initialize()
 
 
 	// Initializes fast forward behavior
-	m_fastForwardMaxFactorHD = float(this->getConfigurationManager().expandAsFloat("${AdvancedViz_HighDefinition_FastForwardFactor}", 5.F));
-	m_fastForwardMaxFactorLD = float(this->getConfigurationManager().expandAsFloat("${AdvancedViz_LowDefinition_FastForwardFactor}", 20.F));
+	m_fastForwardMaxFactorHD = float(this->getConfigurationManager().expandAsFloat("${AdvancedViz_HighDefinition_FastForwardFactor}", 5.0));
+	m_fastForwardMaxFactorLD = float(this->getConfigurationManager().expandAsFloat("${AdvancedViz_LowDefinition_FastForwardFactor}", 20.0));
 
 	// Gets data stream type
 	this->getStaticBoxContext().getInputType(0, m_TypeID);
@@ -198,12 +195,10 @@ bool CBoxAlgorithmViz::initialize()
 	g_signal_connect(gtk_tree_view_get_selection(m_ChannelTreeView), "changed", G_CALLBACK(ChannelSelectionChanged), m_RendererCtx);
 
 	// Hides unnecessary widgets
-	if (std::find(m_Parameters.begin(), m_Parameters.end(), S_DataScale) == m_Parameters.end())
-	{
+	if (std::find(m_Parameters.begin(), m_Parameters.end(), S_DataScale) == m_Parameters.end()) {
 		gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_Builder, "checkbutton_positive")));
 	}
-	if (std::find(m_Parameters.begin(), m_Parameters.end(), S_ChannelLocalisation) == m_Parameters.end())
-	{
+	if (std::find(m_Parameters.begin(), m_Parameters.end(), S_ChannelLocalisation) == m_Parameters.end()) {
 		gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_Builder, "expander_sort")));
 	}
 	if (m_TypeID != OV_TypeId_Spectrum) { gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_Builder, "expander_freq_band"))); }
@@ -214,8 +209,7 @@ bool CBoxAlgorithmViz::initialize()
 	m_GtkGLWidget.setPointSmoothingActive(this->getConfigurationManager().expandAsBoolean("${AdvancedViz_SmoothPoint}", false));
 
 	// Fowards widgets to the OpenViBE viz context
-	if (!this->canCreatePluginObject(OVP_ClassId_Plugin_VisualizationCtx))
-	{
+	if (!this->canCreatePluginObject(OVP_ClassId_Plugin_VisualizationCtx)) {
 		this->getLogManager() << Kernel::LogLevel_Error << "Visualization framework is not loaded" << "\n";
 		return false;
 	}
@@ -226,11 +220,9 @@ bool CBoxAlgorithmViz::initialize()
 
 	// Parses box settings
 	size_t settingIndex = 0;
-	for (int iParameter : m_Parameters)
-	{
+	for (const int iParameter : m_Parameters) {
 		double value;
-		switch (iParameter)
-		{
+		switch (iParameter) {
 			case S_ChannelLocalisation:
 				m_Localisation = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), settingIndex);
 				break;
@@ -295,8 +287,7 @@ bool CBoxAlgorithmViz::initialize()
 	m_Colors.push_back(m_Color);
 
 	// Parses color string - special for instant oscilloscope which can have several inputs
-	for (size_t i = settingIndex; i < this->getStaticBoxContext().getSettingCount(); ++i)
-	{
+	for (size_t i = settingIndex; i < this->getStaticBoxContext().getSettingCount(); ++i) {
 		color = FSettingValueAutoCast(*this->getBoxAlgorithmContext(), i);
 		parseColor(m_Color, color.toASCIIString());
 		m_Colors.push_back(m_Color);
@@ -306,16 +297,14 @@ bool CBoxAlgorithmViz::initialize()
 	if (m_Caption != CString("")) { gtk_label_set_text(GTK_LABEL(m_Top), std::string(m_Caption.toASCIIString()).c_str()); }
 
 	// Sets time scale
-	if (m_TemporalCoherence == ETemporalCoherence::TimeLocked)
-	{
-		gtk_spin_button_set_value(GTK_SPIN_BUTTON(gtk_builder_get_object(m_Builder, "spinbutton_time_scale")), (m_TimeScale >> 22) / 1024.);
+	if (m_TemporalCoherence == ETemporalCoherence::TimeLocked) {
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(gtk_builder_get_object(m_Builder, "spinbutton_time_scale")), double(m_TimeScale >> 22) / 1024.0);
 		m_IsTimeLocked = true;
 	}
 	else { gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(m_Builder, "vbox_time_scale"))); }
 
 	// Sets matrix count
-	if (m_TemporalCoherence == ETemporalCoherence::Independant)
-	{
+	if (m_TemporalCoherence == ETemporalCoherence::Independant) {
 		gtk_spin_button_set_value(GTK_SPIN_BUTTON(gtk_builder_get_object(m_Builder, "spinbutton_element_count")), double(m_NElement));
 		m_IsTimeLocked = false;
 	}
@@ -325,31 +314,27 @@ bool CBoxAlgorithmViz::initialize()
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_ScaleVisible), gboolean(m_RendererCtx->getScaleVisibility()));
 
 	// Reads channel localisation
-	if (m_Localisation != CString(""))
-	{
+	if (m_Localisation != CString("")) {
 		Kernel::IAlgorithmProxy* channelPosReader = &this->getAlgorithmManager().getAlgorithm(
 			this->getAlgorithmManager().createAlgorithm(OVP_GD_ClassId_Algorithm_OVMatrixFileReader));
 		channelPosReader->initialize();
 
 		const Kernel::TParameterHandler<CString*> ip_filename(
 			channelPosReader->getInputParameter(OVP_GD_Algorithm_OVMatrixFileReader_InputParameterId_Filename));
-		Kernel::TParameterHandler<CMatrix*> op_matrix(channelPosReader->getOutputParameter(OVP_GD_Algorithm_OVMatrixFileReader_OutputParameterId_Matrix));
+		Kernel::TParameterHandler<CMatrix*> matrix(channelPosReader->getOutputParameter(OVP_GD_Algorithm_OVMatrixFileReader_OutputParameterId_Matrix));
 
 		*ip_filename = m_Localisation;
 
 		channelPosReader->process();
 
-		if (op_matrix->getDimensionCount() != 2 || op_matrix->getDimensionSize(1) != 3)
-		{
+		if (matrix->getDimensionCount() != 2 || matrix->getDimensionSize(1) != 3) {
 			this->getLogManager() << Kernel::LogLevel_Warning << "Invalid channel localisation file " << m_Localisation << "\n";
 		}
-		else
-		{
-			const size_t nChannel = op_matrix->getDimensionSize(0);
-			double* buffer        = op_matrix->getBuffer();
-			for (size_t i = 0; i < nChannel; ++i)
-			{
-				std::string name = trim(op_matrix->getDimensionLabel(0, i));
+		else {
+			const size_t nChannel = matrix->getDimensionSize(0);
+			double* buffer        = matrix->getBuffer();
+			for (size_t i = 0; i < nChannel; ++i) {
+				std::string name = trim(matrix->getDimensionLabel(0, i));
 				std::transform(name.begin(), name.end(), name.begin(), tolower);
 				m_ChannelPositions[name] = CVertex(-buffer[1], buffer[2], -buffer[0]);
 				buffer += 3;
@@ -409,21 +394,18 @@ bool CBoxAlgorithmViz::processClock(Kernel::CMessageClock& /*msg*/)
 
 	uint64_t minDeltaTime;
 	if (this->getPlayerContext().getStatus() == Kernel::EPlayerStatus::Play) { minDeltaTime = minDeltaTimeHD; }
-	else
-	{
+	else {
 		const auto fastForwardMaxFactor = float(this->getPlayerContext().getCurrentFastForwardMaximumFactor());
 		if (fastForwardMaxFactor <= m_fastForwardMaxFactorHD) { minDeltaTime = minDeltaTimeHD; }
-		else if (fastForwardMaxFactor <= m_fastForwardMaxFactorLD)
-		{
+		else if (fastForwardMaxFactor <= m_fastForwardMaxFactorLD) {
 			const float alpha = (fastForwardMaxFactor - m_fastForwardMaxFactorHD) / (m_fastForwardMaxFactorLD - m_fastForwardMaxFactorHD);
-			minDeltaTime      = uint64_t((minDeltaTimeLD * alpha) + minDeltaTimeHD * (1.F - alpha));
+			minDeltaTime      = uint64_t((float(minDeltaTimeLD) * alpha) + float(minDeltaTimeHD) * (1.0F - alpha));
 		}
 		else { minDeltaTime = minDeltaTimeLD2; }
 	}
 
 	if (currentTime > m_lastProcessTime + minDeltaTime || this->getPlayerContext().getStatus() == Kernel::EPlayerStatus::Step
-		|| this->getPlayerContext().getStatus() == Kernel::EPlayerStatus::Pause)
-	{
+		|| this->getPlayerContext().getStatus() == Kernel::EPlayerStatus::Pause) {
 		m_lastProcessTime    = currentTime;
 		this->m_RedrawNeeded = true;
 		this->getBoxAlgorithmContext()->markAlgorithmAsReadyToProcess();
@@ -435,12 +417,10 @@ bool CBoxAlgorithmViz::processClock(Kernel::CMessageClock& /*msg*/)
 
 void CBoxAlgorithmViz::updateRulerVisibility()
 {
-	if (m_IsScaleVisible != m_RendererCtx->getScaleVisibility())
-	{
+	if (m_IsScaleVisible != m_RendererCtx->getScaleVisibility()) {
 		m_IsScaleVisible = m_RendererCtx->getScaleVisibility();
 
-		if ((gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(m_ScaleVisible)) != 0) != m_IsScaleVisible)
-		{
+		if ((gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(m_ScaleVisible)) != 0) != m_IsScaleVisible) {
 			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_ScaleVisible), gboolean(m_IsScaleVisible));
 		}
 
@@ -468,7 +448,7 @@ void CBoxAlgorithmViz::preDraw()
 	if (m_TextureID == 0U) { m_TextureID = m_GtkGLWidget.createTexture(m_ColorGradient.toASCIIString()); }
 	glBindTexture(GL_TEXTURE_1D, m_TextureID);
 
-	m_RendererCtx->setAspect(m_Viewport->allocation.width * 1.F / m_Viewport->allocation.height);
+	m_RendererCtx->setAspect(float(m_Viewport->allocation.width) / float(m_Viewport->allocation.height));
 }
 
 void CBoxAlgorithmViz::postDraw()
@@ -478,8 +458,7 @@ void CBoxAlgorithmViz::postDraw()
 	if (m_Ruler != nullptr) { m_Ruler->doRender(); }
 	glPopAttrib();
 
-	if (m_IsVideoOutputEnabled && m_IsVideoOutputWorking && m_Width > 0 && m_Height > 0)
-	{
+	if (m_IsVideoOutputEnabled && m_IsVideoOutputWorking && m_Width > 0 && m_Height > 0) {
 		// Builds up filename to save PNG to
 		char filename[1024];
 		sprintf(filename, m_FrameFilenameFormat.toASCIIString(), ++m_FrameId);
@@ -494,8 +473,7 @@ void CBoxAlgorithmViz::postDraw()
 		unsigned char* swap = &swaps[0];
 		unsigned char* src1 = cairo_image_surface_get_data(cairoSurface);
 		unsigned char* src2 = cairo_image_surface_get_data(cairoSurface) + m_Width * (m_Height - 1) * size;
-		for (size_t i = 0; i < m_Height / 2; ++i)
-		{
+		for (size_t i = 0; i < m_Height / 2; ++i) {
 			memcpy(swap, src1, m_Width * size);
 			memcpy(src1, src2, m_Width * size);
 			memcpy(src2, swap, m_Width * size);
@@ -535,14 +513,12 @@ void CBoxAlgorithmViz::keyboard(const int x, const int y, const size_t key, cons
 void CBoxAlgorithmViz::parseColor(color_t& rColor, const std::string& sColor)
 {
 	float r, g, b;
-	if (sscanf(sColor.c_str(), "%f,%f,%f", &r, &g, &b) == 3)
-	{
-		rColor.r = r * .01F;
-		rColor.g = g * .01F;
-		rColor.b = b * .01F;
+	if (sscanf(sColor.c_str(), "%f,%f,%f", &r, &g, &b) == 3) {
+		rColor.r = r * 0.01F;
+		rColor.g = g * 0.01F;
+		rColor.b = b * 0.01F;
 	}
-	else
-	{
+	else {
 		rColor.r = 1;
 		rColor.g = 1;
 		rColor.b = 1;

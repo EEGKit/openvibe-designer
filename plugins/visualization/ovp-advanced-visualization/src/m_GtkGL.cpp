@@ -90,23 +90,20 @@ void on_realize_cb(GtkWidget* widget, void* /*data*/)
 
 	const int pixelFormatID = ChoosePixelFormat(drawingCtx, &pixelFormatDesc);
 
-	if (pixelFormatID == 0)
-	{
+	if (pixelFormatID == 0) {
 		GTK_GL_WARNING("ChoosePixelFormat failed");
 		GTK_GL_DEBUG("realize-callback::failed");
 		return;
 	}
 
-	if (SetPixelFormat(drawingCtx, pixelFormatID, &pixelFormatDesc) == 0)
-	{
+	if (SetPixelFormat(drawingCtx, pixelFormatID, &pixelFormatDesc) == 0) {
 		GTK_GL_WARNING("SetPixelFormat failed");
 		GTK_GL_DEBUG("realize-callback::failed");
 		return;
 	}
 
 	const HGLRC glRenderingCtx = wglCreateContext(drawingCtx);
-	if (glRenderingCtx == nullptr)
-	{
+	if (glRenderingCtx == nullptr) {
 		GTK_GL_WARNING("wglCreateContext failed");
 		GTK_GL_DEBUG("realize-callback::failed");
 		return;
@@ -153,15 +150,13 @@ void OpenViBE::AdvancedVisualization::GtkGL::preRender(GtkWidget* widget, const 
 	const HDC drawingCtx      = HDC(g_object_get_data(G_OBJECT(widget), GTK_GL_DEVICE_CONTEXT_NAME));
 	const auto glRenderingCtx = HGLRC(g_object_get_data(G_OBJECT(widget), GTK_GL_RENDERING_CONTEXT_NAME));
 
-	if (glRenderingCtx == nullptr)
-	{
+	if (glRenderingCtx == nullptr) {
 		GTK_GL_DEBUG("Rendering context not ready");
 		GTK_GL_DEBUG("pre-render::failed");
 		return;
 	}
 
-	if (wglMakeCurrent(drawingCtx, glRenderingCtx) == 0)
-	{
+	if (wglMakeCurrent(drawingCtx, glRenderingCtx) == 0) {
 		GTK_GL_WARNING("wglMakeCurrent failed");
 		GTK_GL_DEBUG("pre-render::failed");
 		return;
@@ -179,18 +174,15 @@ void OpenViBE::AdvancedVisualization::GtkGL::postRender(GtkWidget* widget)
 
 	const HDC drawingCtx = HDC(g_object_get_data(G_OBJECT(widget), GTK_GL_DEVICE_CONTEXT_NAME));
 
-	if (drawingCtx == nullptr)
-	{
+	if (drawingCtx == nullptr) {
 		GTK_GL_DEBUG("Rendering context not ready");
 		GTK_GL_DEBUG("post-render::failed");
 	}
-	else if (SwapBuffers(drawingCtx) == 0)
-	{
+	else if (SwapBuffers(drawingCtx) == 0) {
 		GTK_GL_WARNING("SwapBuffers failed");
 		GTK_GL_DEBUG("post-render::failed");
 	}
-	else if (wglMakeCurrent(drawingCtx, nullptr) == 0)
-	{
+	else if (wglMakeCurrent(drawingCtx, nullptr) == 0) {
 		GTK_GL_WARNING("wglMakeCurrent failed");
 		GTK_GL_DEBUG("post-render::failed");
 	}

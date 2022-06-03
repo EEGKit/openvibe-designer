@@ -53,8 +53,7 @@ bool C3DMesh::load(const void* buffer)
 {
 	const auto* tmp = reinterpret_cast<const uint32_t*>(buffer);
 
-	uint32_t nVertex;
-	uint32_t nTriangle;
+	uint32_t nVertex = 0, nTriangle = 0;
 
 	littleEndianToHost<uint32_t>(reinterpret_cast<const uint8_t*>(&tmp[0]), &nVertex);
 	littleEndianToHost<uint32_t>(reinterpret_cast<const uint8_t*>(&tmp[1]), &nTriangle);
@@ -70,7 +69,7 @@ bool C3DMesh::load(const void* buffer)
 		littleEndianToHost<float>(reinterpret_cast<const uint8_t*>(&tmp[j++]), &m_Vertices[i].z);
 	}
 
-	for (size_t i = 0; i < nTriangle * 3; ++i) { littleEndianToHost<uint32_t>(reinterpret_cast<const uint8_t*>(&tmp[j++]), &m_Triangles[i]); }
+	for (size_t i = 0; i < size_t(nTriangle * 3); ++i) { littleEndianToHost<uint32_t>(reinterpret_cast<const uint8_t*>(&tmp[j++]), &m_Triangles[i]); }
 
 	this->compile();
 

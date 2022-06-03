@@ -24,10 +24,9 @@
 
 namespace OpenViBE {
 namespace AdvancedVisualization {
-class CRulerLeftTexture : public CRulerTexture
+class CRulerLeftTexture final : public CRulerTexture
 {
 public:
-
 	void render() override
 
 	{

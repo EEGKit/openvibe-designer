@@ -24,10 +24,9 @@
 
 namespace OpenViBE {
 namespace AdvancedVisualization {
-class CRulerBottomERPTime : public IRuler
+class CRulerBottomERPTime final : public IRuler
 {
 public:
-
 	void renderBottom(GtkWidget* widget) override
 	{
 		if (m_renderer == nullptr) { return; }
@@ -39,14 +38,13 @@ public:
 		const uint64_t sampleDuration = m_rendererCtx->getSampleDuration();
 		const double duration         = double((nSample * sampleDuration) >> 16) / 65536.;
 
-		std::vector<double> range = splitRange(0, duration, 10);
+		const std::vector<double> range = splitRange(0, duration, 10);
 
 		gint w, h;
 
 		gdk_drawable_get_size(widget->window, &w, &h);
 		GdkGC* drawGC = gdk_gc_new(widget->window);
-		for (const auto& i : range)
-		{
+		for (const auto& i : range) {
 			const gint x        = gint((i / duration) * w);
 			PangoLayout* layout = gtk_widget_create_pango_layout(widget, getLabel(i).c_str());
 			gdk_draw_layout(widget->window, drawGC, x, 5, layout);

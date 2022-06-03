@@ -73,8 +73,7 @@ void sspfa(double* ap, const int* n, int* kpvt, int* info)
 
 begin_dspfa:;
 	if (k == 0) { goto end_dspfa; }
-	if (k <= 1)
-	{
+	if (k <= 1) {
 		*kpvt = 1;
 		if (*ap == 0.0) { *info = 1; }
 		goto end_dspfa;
@@ -86,64 +85,51 @@ begin_dspfa:;
 	imax   = isamax(&itmp, (ap + ik), &one);
 	imk    = ik + imax;
 	colmax = fabs(*(ap + imk - 1));
-	if (absakk >= (alpha * colmax))
-	{
+	if (absakk >= (alpha * colmax)) {
 		kstep = 1;
 		swap  = 0;
 	}
-	else
-	{
+	else {
 		rowmax = 0.0;
 		imaxp1 = imax + 1;
 		im     = (imax * (imax - 1)) / 2;
 		imj    = im + 2 * imax;
-		for (j = imaxp1; j <= k; ++j)
-		{
+		for (j = imaxp1; j <= k; ++j) {
 			rowmax = dmax(rowmax, fabs(*(ap + imj - 1)));
 			imj += j;
 		}
-		if (imax != 1)
-		{
+		if (imax != 1) {
 			itmp   = imax - 1;
 			jmax   = isamax(&itmp, (ap + im), &one);
 			jmim   = jmax + im;
 			rowmax = dmax(rowmax, fabs(*(ap + jmim - 1)));
 		}
 		imim = imax + im;
-		if (fabs(*(ap + imim - 1)) >= (alpha * rowmax))
-		{
+		if (fabs(*(ap + imim - 1)) >= (alpha * rowmax)) {
 			kstep = 1;
 			swap  = 1;
 		}
-		else
-		{
-			if (absakk >= (alpha * colmax * (colmax / rowmax)))
-			{
+		else {
+			if (absakk >= (alpha * colmax * (colmax / rowmax))) {
 				kstep = 1;
 				swap  = 0;
 			}
-			else
-			{
+			else {
 				kstep = 2;
 				swap  = (imax != km1);
 			}
 		}
 	}
-	if (dmax(absakk, colmax) == 0.0)
-	{
+	if (dmax(absakk, colmax) == 0.0) {
 		*(kpvt + k - 1) = k;
 		*info           = k;
 	}
-	else
-	{
-		if (kstep != 2)
-		{
-			if (swap)
-			{
+	else {
+		if (kstep != 2) {
+			if (swap) {
 				sswap(&imax, (ap + im), &one, (ap + ik), &one);
 				imj = ik + imax;
-				for (jj = imax; jj <= k; ++jj)
-				{
+				for (jj = imax; jj <= k; ++jj) {
 					j               = k + imax - jj;
 					jk              = ik + j;
 					t               = *(ap + jk - 1);
@@ -153,8 +139,7 @@ begin_dspfa:;
 				}
 			}
 			ij = ik - (k - 1);
-			for (jj = 1; jj <= km1; ++jj)
-			{
+			for (jj = 1; jj <= km1; ++jj) {
 				j    = k - jj;
 				jk   = ik + j;
 				tulk = -(*(ap + jk - 1)) / (*(ap + kk - 1));
@@ -168,16 +153,13 @@ begin_dspfa:;
 			*(kpvt + k - 1) = k;
 			if (swap) { *(kpvt + k - 1) = imax; }
 		}
-		else
-		{
+		else {
 			km1K = ik + k - 1;
 			ikm1 = ik - (k - 1);
-			if (swap)
-			{
+			if (swap) {
 				sswap(&imax, (ap + im), &one, (ap + ikm1), &one);
 				imj = ikm1 + imax;
-				for (jj = imax; jj <= km1; ++jj)
-				{
+				for (jj = imax; jj <= km1; ++jj) {
 					j                = km1 + imax - jj;
 					jkm1             = ikm1 + j;
 					t                = *(ap + jkm1 - 1);
@@ -190,15 +172,13 @@ begin_dspfa:;
 				*(ap + imk - 1)  = t;
 			}
 			km2 = k - 2;
-			if (km2 != 0)
-			{
+			if (km2 != 0) {
 				ak     = *(ap + kk - 1) / (*(ap + km1K - 1));
 				km1Km1 = ikm1 + k - 1;
 				akm1   = *(ap + km1Km1 - 1) / (*(ap + km1K - 1));
 				denom  = 1.0 - ak * akm1;
 				ij     = ik - (k - 1) - (k - 2);
-				for (jj = 1; jj <= km2; ++jj)
-				{
+				for (jj = 1; jj <= km2; ++jj) {
 					j      = km1 - jj;
 					jk     = ik + j;
 					bk     = *(ap + jk - 1) / (*(ap + km1K - 1));
@@ -261,16 +241,12 @@ void sspsl(double* ap, const int* n, const int* kpvt, double* b)
 	int k  = *n;
 	int ik = (*n * (*n - 1)) / 2;
 
-	while (k > 0)
-	{
+	while (k > 0) {
 		int kk = ik + k;
-		if (*(kpvt + k - 1) >= 0)
-		{
-			if (k != 1)
-			{
+		if (*(kpvt + k - 1) >= 0) {
+			if (k != 1) {
 				kp = *(kpvt + k - 1);
-				if (kp != k)
-				{
+				if (kp != k) {
 					temp          = *(b + k - 1);
 					*(b + k - 1)  = *(b + kp - 1);
 					*(b + kp - 1) = temp;
@@ -282,14 +258,11 @@ void sspsl(double* ap, const int* n, const int* kpvt, double* b)
 			k--;
 			ik -= k;
 		}
-		else
-		{
+		else {
 			const int ikm1 = ik - (k - 1);
-			if (ik != 2)
-			{
+			if (ik != 2) {
 				kp = abs(*(kpvt + k - 1));
-				if (kp != (k - 1))
-				{
+				if (kp != (k - 1)) {
 					temp          = *(b + k - 2);
 					*(b + k - 2)  = *(b + kp - 1);
 					*(b + kp - 1) = temp;
@@ -315,17 +288,13 @@ void sspsl(double* ap, const int* n, const int* kpvt, double* b)
 	{
 		k  = 1;
 		ik = 0;
-		while (k <= *n)
-		{
-			if (*(kpvt + k - 1) >= 0)
-			{
-				if (k != 1)
-				{
+		while (k <= *n) {
+			if (*(kpvt + k - 1) >= 0) {
+				if (k != 1) {
 					itmp = k - 1;
 					*(b + k - 1) += sdot(&itmp, (ap + ik), &one, b, &oneb);
 					kp = *(kpvt + k - 1);
-					if (kp != k)
-					{
+					if (kp != k) {
 						temp          = *(b + k - 1);
 						*(b + k - 1)  = *(b + kp - 1);
 						*(b + kp - 1) = temp;
@@ -334,17 +303,14 @@ void sspsl(double* ap, const int* n, const int* kpvt, double* b)
 				ik += k;
 				k++;
 			}
-			else
-			{
-				if (k != 1)
-				{
+			else {
+				if (k != 1) {
 					itmp = k - 1;
 					*(b + k - 1) += sdot(&itmp, (ap + ik), &one, b, &oneb);
 					const int ikp1 = ik + k;
 					*(b + k) += sdot(&itmp, (ap + ikp1), &one, b, &oneb);
 					kp = abs(*(kpvt + k - 1));
-					if (kp != k)
-					{
+					if (kp != k) {
 						temp          = *(b + k - 1);
 						*(b + k - 1)  = *(b + kp - 1);
 						*(b + kp - 1) = temp;
@@ -379,38 +345,28 @@ void sspsl(double* ap, const int* n, const int* kpvt, double* b)
 
 void saxpy(const int* n, const double* sa, const double* sx, const int* incx, double* sy, const int* incy)
 {
-	int i;
-
-	if (*n > 0)
-	{
-		if (*sa != 0)
-		{
-			if ((*incx != 1) || (*incy != 1))
-			{
+	if (*n > 0) {
+		if (*sa != 0) {
+			if ((*incx != 1) || (*incy != 1)) {
 				int ix = 1;
 				int iy = 1;
 				if (*incx < 0) { ix = (1 - *n) * (*incx) + 1; }
 				if (*incy < 0) { iy = (1 - *n) * (*incy) + 1; }
-				for (i = 1; i <= *n; ++i)
-				{
+				for (int i = 1; i <= *n; ++i) {
 					*(sy + iy - 1) += *sa * (*(sx + ix - 1));
 					ix += *incx;
 					iy += *incy;
 				}
 			}
-			else
-			{
+			else {
 				int ok = 1;
 				int m  = int(fmod(double(*n), 4.0));
-				if (m != 0)
-				{
-					for (i = 1; i <= m; ++i) { *(sy + i - 1) += *sa * (*(sx + i - 1)); }
+				if (m != 0) {
+					for (int i = 1; i <= m; ++i) { *(sy + i - 1) += *sa * (*(sx + i - 1)); }
 					if (*n < 4) { ok = 0; }
 				}
-				if (ok == 1)
-				{
-					for (i = ++m; i <= *n; i += 4)
-					{
+				if (ok == 1) {
+					for (int i = ++m; i <= *n; i += 4) {
 						*(sy + i - 1) += *sa * (*(sx + i - 1));
 						*(sy + i) += *sa * (*(sx + i));
 						*(sy + i + 1) += *sa * (*(sx + i + 1));
@@ -443,37 +399,29 @@ void saxpy(const int* n, const double* sa, const double* sx, const int* incx, do
 
 double sdot(const int* n, const double* sx, const int* incx, const double* sy, const int* incy)
 {
-	int i;
 	double stemp = 0.0;
 
-	if (*n > 0)
-	{
-		if ((*incx != 1) || (*incy != 1))
-		{
+	if (*n > 0) {
+		if ((*incx != 1) || (*incy != 1)) {
 			int ix = 1;
 			int iy = 1;
 			if (*incx < 0) { ix = (1 - *n) * (*incx) + 1; }
 			if (*incy < 0) { iy = (1 - *n) * (*incy) + 1; }
-			for (i = 1; i <= *n; ++i)
-			{
+			for (int i = 1; i <= *n; ++i) {
 				stemp += *(sx + ix - 1) * (*(sy + iy - 1));
 				ix += *incx;
 				iy += *incy;
 			}
 		}
-		else
-		{
+		else {
 			int ok = 1;
 			int m  = int(fmod(double(*n), 5.0));
-			if (m != 0)
-			{
-				for (i = 1; i <= m; ++i) { stemp += *(sx + i - 1) * (*(sy + i - 1)); }
+			if (m != 0) {
+				for (int i = 1; i <= m; ++i) { stemp += *(sx + i - 1) * (*(sy + i - 1)); }
 				if (*n < 5) { ok = 0; }
 			}
-			if (ok == 1)
-			{
-				for (i = ++m; i <= *n; i += 5)
-				{
+			if (ok == 1) {
+				for (int i = ++m; i <= *n; i += 5) {
 					stemp += *(sx + i - 1) * (*(sy + i - 1)) + *(sx + i) * (*(sy + i))
 							+ *(sx + i + 1) * (*(sy + i + 1)) + *(sx + i + 2) * (*(sy + i + 2))
 							+ *(sx + i + 3) * (*(sy + i + 3));
@@ -505,45 +453,34 @@ double sdot(const int* n, const double* sx, const int* incx, const double* sy, c
 
 void sswap(const int* n, double* sx, const int* incx, double* sy, const int* incy)
 {
-	double stemp;
-	int i;
-
-	if (*n > 0)
-	{
-		if ((*incx != 1) || (*incy != 1))
-		{
+	if (*n > 0) {
+		if ((*incx != 1) || (*incy != 1)) {
 			int ix = 1;
 			int iy = 1;
 			if (*incx < 0) { ix = (1 - *n) * (*incx) + 1; }
 			if (*incy < 0) { iy = (1 - *n) * (*incy) + 1; }
-			for (i = 1; i <= *n; ++i)
-			{
-				stemp          = *(sx + ix - 1);
-				*(sx + ix - 1) = *(sy + iy - 1);
-				*(sy + iy - 1) = stemp;
+			for (int i = 1; i <= *n; ++i) {
+				const double stemp = *(sx + ix - 1);
+				*(sx + ix - 1)     = *(sy + iy - 1);
+				*(sy + iy - 1)     = stemp;
 				ix += *incx;
 				iy += *incy;
 			}
 		}
-		else
-		{
+		else {
 			int ok = 1;
 			int m  = int(fmod(double(*n), 3.0));
-			if (m != 0)
-			{
-				for (i = 1; i <= m; ++i)
-				{
-					stemp         = *(sx + i - 1);
-					*(sx + i - 1) = *(sy + i - 1);
-					*(sy + i - 1) = stemp;
+			if (m != 0) {
+				for (int i = 1; i <= m; ++i) {
+					const double stemp = *(sx + i - 1);
+					*(sx + i - 1)      = *(sy + i - 1);
+					*(sy + i - 1)      = stemp;
 				}
 				if (*n < 3) { ok = 0; }
 			}
-			if (ok == 1)
-			{
-				for (i = ++m; i <= *n; i += 3)
-				{
-					stemp         = *(sx + i - 1);
+			if (ok == 1) {
+				for (int i = ++m; i <= *n; i += 3) {
+					double stemp  = *(sx + i - 1);
 					*(sx + i - 1) = *(sy + i - 1);
 					*(sy + i - 1) = stemp;
 					stemp         = *(sx + i);
@@ -582,28 +519,22 @@ int isamax(const int* n, const double* sx, const int* incx)
 	if (*n < 1) { return ida; }
 	ida = 1;
 	if (*n == 1) { return ida; }
-	if (*incx != 1)
-	{
+	if (*incx != 1) {
 		int ix = 1;
 		smax   = fabs(*sx);
 		ix += *incx;
-		for (i = 2; i <= *n; ++i)
-		{
-			if (fabs(*(sx + ix - 1)) > smax)
-			{
+		for (i = 2; i <= *n; ++i) {
+			if (fabs(*(sx + ix - 1)) > smax) {
 				ida  = i;
 				smax = fabs(*(sx + ix - 1));
 			}
 			ix += *incx;
 		}
 	}
-	else
-	{
+	else {
 		smax = fabs(*sx);
-		for (i = 2; i <= *n; ++i)
-		{
-			if (fabs(*(sx + i - 1)) > smax)
-			{
+		for (i = 2; i <= *n; ++i) {
+			if (fabs(*(sx + i - 1)) > smax) {
 				ida  = i;
 				smax = fabs(*(sx + i - 1));
 			}

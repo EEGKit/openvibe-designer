@@ -25,29 +25,25 @@
 namespace OpenViBE {
 namespace AdvancedVisualization {
 template <size_t TDim>
-class CRulerRightLabels : public IRuler
+class CRulerRightLabels final : public IRuler
 {
 public:
-
 	void renderRight(GtkWidget* widget) override
 	{
 		gint w, h, lw, lh;
 
 		const size_t nChannel = m_rendererCtx->getSelectedCount();
-		for (size_t channel = 0; channel < nChannel; ++channel)
-		{
+		for (size_t channel = 0; channel < nChannel; ++channel) {
 			gdk_drawable_get_size(widget->window, &w, &h);
 			GdkGC* drawGC = gdk_gc_new(widget->window);
 
-			const auto labelCount = float(m_rendererCtx->getDimensionLabelCount(TDim));
+			const auto labelCount = double(m_rendererCtx->getDimensionLabelCount(TDim));
 
-			gint lastY = gint((channel + (-1 + 0.5F) / labelCount) * (h * 1.F / nChannel));
+			gint lastY = gint((double(channel) + (-1.0 + 0.5) / labelCount) * (double(h) / double(nChannel)));
 
-			for (size_t label = 0; label < m_rendererCtx->getDimensionLabelCount(TDim); ++label)
-			{
-				const gint y = gint((channel + (label + 0.5F) / labelCount) * (h * 1.F / nChannel));
-				if (y >= lastY + 10)
-				{
+			for (size_t label = 0; label < m_rendererCtx->getDimensionLabelCount(TDim); ++label) {
+				const gint y = gint((double(channel) + (double(label) + 0.5) / labelCount) * (double(h) / double(nChannel)));
+				if (y >= lastY + 10) {
 					PangoLayout* layout = gtk_widget_create_pango_layout(widget, m_rendererCtx->getDimensionLabel(TDim, label));
 					pango_layout_get_size(layout, &lw, &lh);
 					lw /= PANGO_SCALE;

@@ -24,10 +24,9 @@
 
 namespace OpenViBE {
 namespace AdvancedVisualization {
-class CRulerBottomTime : public IRuler
+class CRulerBottomTime final : public IRuler
 {
 public:
-
 	void renderBottom(GtkWidget* widget) override
 	{
 		if (m_renderer == nullptr) { return; }
@@ -41,25 +40,23 @@ public:
 
 		const size_t leftIdx  = historyIdx - historyIdx % nSample;
 		const size_t midIdx   = historyIdx;
-		double startTime      = double((leftIdx * sampleDuration) >> 16) / 65536.;
-		double midTime        = double((midIdx * sampleDuration) >> 16) / 65536.;
-		const double duration = double((nSample * sampleDuration) >> 16) / 65536.;
+		double startTime      = double((leftIdx * sampleDuration) >> 16) / 65536.0;
+		double midTime        = double((midIdx * sampleDuration) >> 16) / 65536.0;
+		const double duration = double((nSample * sampleDuration) >> 16) / 65536.0;
 
-		const double offset = (m_renderer->getTimeOffset() >> 16) / 65536.;
+		const double offset = double(m_renderer->getTimeOffset() >> 16) / 65536.0;
 		startTime += offset;
 		midTime += offset;
 
-		std::vector<double> range1 = this->splitRange(startTime - duration, startTime, 10);
-		std::vector<double> range2 = this->splitRange(startTime, startTime + duration, 10);
+		const std::vector<double> range1 = this->splitRange(startTime - duration, startTime, 10);
+		const std::vector<double> range2 = this->splitRange(startTime, startTime + duration, 10);
 
 		gint w, h, x;
 
 		gdk_drawable_get_size(widget->window, &w, &h);
 		GdkGC* drawGC = gdk_gc_new(widget->window);
-		for (const auto& i : range1)
-		{
-			if (i >= 0 && i + duration > midTime)
-			{
+		for (const auto& i : range1) {
+			if (i >= 0 && i + duration > midTime) {
 				x                   = gint(((i + duration - startTime) / duration) * w);
 				PangoLayout* layout = gtk_widget_create_pango_layout(widget, getLabel(i).c_str());
 				gdk_draw_layout(widget->window, drawGC, x, 5, layout);
@@ -67,10 +64,8 @@ public:
 				g_object_unref(layout);
 			}
 		}
-		for (const auto& i : range2)
-		{
-			if (i >= 0 && i < midTime)
-			{
+		for (const auto& i : range2) {
+			if (i >= 0 && i < midTime) {
 				x                   = gint(((i - startTime) / duration) * w);
 				PangoLayout* layout = gtk_widget_create_pango_layout(widget, getLabel(i).c_str());
 				gdk_draw_layout(widget->window, drawGC, x, 5, layout);

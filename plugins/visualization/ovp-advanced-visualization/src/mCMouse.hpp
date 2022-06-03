@@ -32,11 +32,10 @@ class CBoxAlgorithmViz;
 class CMouse
 {
 public:
-
 	explicit CMouse(CBoxAlgorithmViz& boxAlgorithmViz) : m_BoxAlgorithmViz(boxAlgorithmViz) { }
 	void mouseButton(CRendererContext& ctx, const int x, const int y, const int button, const int status);
 	void mouseMotion(CRendererContext& ctx, const int x, const int y);
-	bool hasButtonPressed();
+	bool hasButtonPressed() const;
 
 
 	CBoxAlgorithmViz& m_BoxAlgorithmViz;

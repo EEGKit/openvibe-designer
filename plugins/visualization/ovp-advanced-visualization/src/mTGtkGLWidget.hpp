@@ -36,6 +36,7 @@
 #include <GL/glu.h>
 
 #include <string>
+#include <array>
 
 // #define __DIRECT_RENDER__
 
@@ -45,15 +46,12 @@ template <class TBox>
 class TGtkGLWidget
 {
 public:
-
 	TGtkGLWidget() : m_box(nullptr) { }
 
 	virtual ~TGtkGLWidget()
 	{
-		if (m_widget)
-		{
-			if (m_textureId)
-			{
+		if (m_widget) {
+			if (m_textureId) {
 				GtkGL::preRender(m_widget);
 				glDeleteTextures(1, &m_textureId);
 				GtkGL::postRender(m_widget);
@@ -98,10 +96,8 @@ public:
 	virtual void redrawTopLevelWindow(const bool immediate = false)
 	{
 		GtkWidget* top = gtk_widget_get_toplevel(m_widget);
-		if (top != nullptr)
-		{
-			if (immediate)
-			{
+		if (top != nullptr) {
+			if (immediate) {
 				gdk_window_process_updates(top->window, false);
 				gtk_widget_queue_draw(top);
 			}
@@ -111,8 +107,7 @@ public:
 
 	virtual void redraw(const bool immediate = false)
 	{
-		if (immediate)
-		{
+		if (immediate) {
 			gdk_window_process_updates(m_widget->window, false);
 			gtk_widget_queue_draw(m_widget);
 		}
@@ -121,8 +116,7 @@ public:
 
 	virtual void redrawLeft(const bool immediate = false)
 	{
-		if (immediate)
-		{
+		if (immediate) {
 			gdk_window_process_updates(m_left->window, false);
 			gtk_widget_queue_draw(m_left);
 		}
@@ -131,8 +125,7 @@ public:
 
 	virtual void redrawRight(const bool immediate = false)
 	{
-		if (immediate)
-		{
+		if (immediate) {
 			gdk_window_process_updates(m_right->window, false);
 			gtk_widget_queue_draw(m_right);
 		}
@@ -141,8 +134,7 @@ public:
 
 	virtual void redrawBottom(const bool immediate = false)
 	{
-		if (immediate)
-		{
+		if (immediate) {
 			gdk_window_process_updates(m_bottom->window, false);
 			gtk_widget_queue_draw(m_bottom);
 		}
@@ -159,20 +151,18 @@ public:
 	{
 #define M_GRADIENT_SIZE 128
 
-		if (m_textureId == 0)
-		{
+		if (m_textureId == 0) {
 			const std::string str = (value.empty() ? "0:0,0,100; 25:0,100,100; 50:0,49,0; 75:100,100,0; 100:100,0,0" : value);
 
 			CMatrix gradientBase, gradient;
 			VisualizationToolkit::ColorGradient::parse(gradientBase, str.c_str());
 			VisualizationToolkit::ColorGradient::interpolate(gradient, gradientBase, M_GRADIENT_SIZE);
 
-			float texture[M_GRADIENT_SIZE][3];
-			for (size_t i = 0; i < M_GRADIENT_SIZE; ++i)
-			{
-				texture[i][0] = float(gradient[i * 4 + 1] * .01);
-				texture[i][1] = float(gradient[i * 4 + 2] * .01);
-				texture[i][2] = float(gradient[i * 4 + 3] * .01);
+			std::array<std::array<float, 3>, M_GRADIENT_SIZE> texture;
+			for (size_t i = 0; i < M_GRADIENT_SIZE; ++i) {
+				texture[i][0] = float(gradient[i * 4 + 1] * 0.01);
+				texture[i][1] = float(gradient[i * 4 + 2] * 0.01);
+				texture[i][2] = float(gradient[i * 4 + 3] * 0.01);
 			}
 
 			glGenTextures(1, &m_textureId);
@@ -183,7 +173,7 @@ public:
 			glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 			//glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 			//glTexImage1D(GL_TEXTURE_1D, 0, GL_RGB, __SIZE__, 0, GL_RGB, GL_UNSIGNED_BYTE, texture);
-			gluBuild1DMipmaps(GL_TEXTURE_1D, GL_RGB, M_GRADIENT_SIZE, GL_RGB, GL_FLOAT, texture);
+			gluBuild1DMipmaps(GL_TEXTURE_1D, GL_RGB, M_GRADIENT_SIZE, GL_RGB, GL_FLOAT, texture.data());
 		}
 
 #undef M_GRADIENT_SIZE
@@ -192,7 +182,6 @@ public:
 	}
 
 protected:
-
 	GtkWidget* m_widget   = nullptr;
 	GtkWidget* m_left     = nullptr;
 	GtkWidget* m_right    = nullptr;
@@ -204,8 +193,6 @@ protected:
 	uint32_t m_textureId = 0;
 
 private:
-
-
 	static gboolean timeoutRedrawCB(TBox* box)
 	{
 		box->redraw();
@@ -223,9 +210,9 @@ private:
 
 	static gboolean exposeCB(GtkWidget* widget, GdkEventExpose* /*event*/, TBox* box)
 	{
-		const float d  = 1.F;
-		const float dx = d / (widget->allocation.width - d);
-		const float dy = d / (widget->allocation.height - d);
+		const double d  = 1.0;
+		const double dx = d / (double(widget->allocation.width) - d);
+		const double dy = d / (double(widget->allocation.height) - d);
 
 		GtkGL::preRender(widget);
 
@@ -235,7 +222,7 @@ private:
 
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		gluOrtho2D(0 - dx, 1 + dx, 0 - dy, 1 + dy);
+		gluOrtho2D(0.0 - dx, 1.0 + dx, 0.0 - dy, 1.0 + dy);
 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
@@ -259,22 +246,22 @@ private:
 		glColor3f(1, 1, 1);
 
 		// Lighting
-		const float fAmbient  = 0.0F;
-		const float fDiffuse  = 1.0F;
-		const float fSpecular = 1.0F;
-		GLfloat ambient[]     = { fAmbient, fAmbient, fAmbient, 1 };
-		GLfloat diffuse[]     = { fDiffuse, fDiffuse, fDiffuse, 1 };
-		GLfloat specular[]    = { fSpecular, fSpecular, fSpecular, 1 };
-		GLfloat position0[]   = { 3, 1, 2, 1 };
-		GLfloat position1[]   = { -3, 0, -2, 1 };
-		glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
-		glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
-		glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
-		glLightfv(GL_LIGHT0, GL_POSITION, position0);
-		glLightfv(GL_LIGHT1, GL_AMBIENT, ambient);
-		glLightfv(GL_LIGHT1, GL_DIFFUSE, diffuse);
-		glLightfv(GL_LIGHT1, GL_SPECULAR, specular);
-		glLightfv(GL_LIGHT1, GL_POSITION, position1);
+		const float fAmbient                   = 0.0F;
+		const float fDiffuse                   = 1.0F;
+		const float fSpecular                  = 1.0F;
+		const std::array<GLfloat, 4> ambient   = { fAmbient, fAmbient, fAmbient, 1 };
+		const std::array<GLfloat, 4> diffuse   = { fDiffuse, fDiffuse, fDiffuse, 1 };
+		const std::array<GLfloat, 4> specular  = { fSpecular, fSpecular, fSpecular, 1 };
+		const std::array<GLfloat, 4> position0 = { 3, 1, 2, 1 };
+		const std::array<GLfloat, 4> position1 = { -3, 0, -2, 1 };
+		glLightfv(GL_LIGHT0, GL_AMBIENT, ambient.data());
+		glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse.data());
+		glLightfv(GL_LIGHT0, GL_SPECULAR, specular.data());
+		glLightfv(GL_LIGHT0, GL_POSITION, position0.data());
+		glLightfv(GL_LIGHT1, GL_AMBIENT, ambient.data());
+		glLightfv(GL_LIGHT1, GL_DIFFUSE, diffuse.data());
+		glLightfv(GL_LIGHT1, GL_SPECULAR, specular.data());
+		glLightfv(GL_LIGHT1, GL_POSITION, position1.data());
 		glShadeModel(GL_SMOOTH);
 		glEnable(GL_LIGHT0);
 		glEnable(GL_LIGHT1);
@@ -317,8 +304,7 @@ private:
 	static gboolean mouseButtonCB(GtkWidget* /*widget*/, GdkEventButton* event, TBox* box)
 	{
 		int status = 0;
-		switch (event->type)
-		{
+		switch (event->type) {
 			case GDK_BUTTON_PRESS: status = 1;
 				break;
 			case GDK_2BUTTON_PRESS: status = 2;

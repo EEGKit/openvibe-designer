@@ -5,7 +5,6 @@
 #include <toolkit/ovtk_all.h>
 #include <visualization-toolkit/ovviz_all.h>
 #include <gtk/gtk.h>
-#include <map>
 #include <string>
 
 namespace OpenViBE {
@@ -14,7 +13,6 @@ namespace SimpleVisualization {
 class CBoxAlgorithmMatrixDisplay final : public Toolkit::TBoxAlgorithm<IBoxAlgorithm>
 {
 public:
-
 	void release() override { delete this; }
 
 	bool initialize() override;
@@ -25,7 +23,6 @@ public:
 	_IsDerivedFromClass_Final_(Toolkit::TBoxAlgorithm<IBoxAlgorithm>, OVP_ClassId_BoxAlgorithm_MatrixDisplay)
 
 protected:
-
 	// we need an algorithm to decode the EBML stream (memory buffer) into a Streamed Matrix
 
 	// for the TARGET
@@ -54,10 +51,9 @@ protected:
 	bool m_symetricMinMax = false;
 	bool m_realTimeMinMax = false;
 
-	VisualizationToolkit::IVisualizationContext* m_visualizationCtx{};
+	VisualizationToolkit::IVisualizationContext* m_visualizationCtx{ };
 
 public:
-
 	bool m_ShowValues = false;
 	bool m_ShowColors = false;
 
@@ -67,25 +63,19 @@ public:
 class CBoxAlgorithmMatrixDisplayDesc final : public IBoxAlgorithmDesc
 {
 public:
-
 	void release() override { }
 
-	CString getName() const override { return CString("Matrix Display"); }
-	CString getAuthorName() const override { return CString("Laurent Bonnet"); }
-	CString getAuthorCompanyName() const override { return CString("INRIA/IRISA"); }
-	CString getShortDescription() const override { return CString("Display a streamed matrix"); }
-
-	CString getDetailedDescription() const override
-	{
-		return CString("The streamed matrix can be visualized using a table of values and/or a color gradient.");
-	}
-
-	CString getCategory() const override { return CString("Visualization/Basic"); }
-	CString getVersion() const override { return CString("1.0"); }
-	CString getStockItemName() const override { return CString("gtk-select-color"); }
-	CString getSoftwareComponent() const override { return CString("openvibe-designer"); }
-	CString getAddedSoftwareVersion() const override { return CString("0.0.0"); }
-	CString getUpdatedSoftwareVersion() const override { return CString("0.0.0"); }
+	CString getName() const override { return "Matrix Display"; }
+	CString getAuthorName() const override { return "Laurent Bonnet"; }
+	CString getAuthorCompanyName() const override { return "INRIA/IRISA"; }
+	CString getShortDescription() const override { return "Display a streamed matrix"; }
+	CString getDetailedDescription() const override { return "The streamed matrix can be visualized using a table of values and/or a color gradient."; }
+	CString getCategory() const override { return "Visualization/Basic"; }
+	CString getVersion() const override { return "1.0"; }
+	CString getStockItemName() const override { return "gtk-select-color"; }
+	CString getSoftwareComponent() const override { return "openvibe-designer"; }
+	CString getAddedSoftwareVersion() const override { return "0.0.0"; }
+	CString getUpdatedSoftwareVersion() const override { return "0.0.0"; }
 
 	CIdentifier getCreatedClass() const override { return OVP_ClassId_BoxAlgorithm_MatrixDisplay; }
 	IPluginObject* create() override { return new CBoxAlgorithmMatrixDisplay; }

@@ -17,17 +17,11 @@
 /*&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&*/
 
 #include <cmath>
-#include <cstdio>
-#include <cstdlib>
 
 #include "linpack.h"
 #include <iostream>
-
-/*&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&*/
-/*& Define                                                                  &*/
-/*&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&*/
-
-#define imin(x,y) (((x) < (y)) ? (x) : (y))
+#include <vector>
+#include <algorithm>
 
 /**********************************************************************************/
 /*                               SplineTables                                    */
@@ -54,51 +48,46 @@
 
 int SplineTables(const int order, double* pot, double* scd)
 {
-	if (order <= 2)
-	{
+	if (order <= 2) {
 		std::cout << "spline_table error : spline order <= 2\n";
 		return -1;
 	}
 
 	double cnpn, fn;
-	int j, n;
+	size_t j, n;
 
 	/*===========================================================*/
 	/* Estimate the number of terms for the Legendre series      */
 	/* to have an error lower than 1e-10                         */
 	/*===========================================================*/
-	double dexp  = 10. / float(2 * order - 2);
-	const int kv = imin(400, int(pow(10.0, dexp) - 1.0));
-	double fsv   = 1.0;
+	double dexp     = 10.0 / double(2 * order - 2);
+	const size_t kv = std::min(size_t(400), size_t(pow(10.0, dexp) - 1.0));
+	double fsv      = 1.0;
 	if (int(fmod(double(kv), 2.0)) == 1) { fsv = -1.0; }
 
-	dexp         = 10. / float(2 * order - 4);
-	const int kc = imin(400, int(pow(10.0, dexp) - 1.0));
-	double fsc   = 1.0;
+	dexp            = 10.0 / double(2 * order - 4);
+	const size_t kc = std::min(size_t(400), size_t(pow(10.0, dexp) - 1.0));
+	double fsc      = 1.0;
 	if (int(fmod(double(kc), 2.0)) == 1) { fsc = -1.0; }
-
-	double* c = static_cast<double*>(malloc(sizeof(double) * kc));
-	double* p = static_cast<double*>(malloc(sizeof(double) * kc));
 
 	/*=========================*/
 	/* Coefficient computation */
 	/*=========================*/
+	std::vector<double> c(kc), p(kc);
 	double cn = 1.0;
-	for (j = 1; j < order; ++j) { cn /= 2.0; }
+	for (j = 1; j < size_t(order); ++j) { cn /= 2.0; }
 	c[0] = cn * 3.0;
-	for (n = 2; n <= kc; ++n)
-	{
+	for (n = 2; n <= kc; ++n) {
 		fn              = double(n);
 		const double cx = (fn - 1.0) / (fn + 1.0);
-		for (j = 1; j < order; ++j) { cn *= cx; }
+		for (j = 1; j < size_t(order); ++j) { cn *= cx; }
 		c[n - 1] = (2.0 * fn + 1.0) * cn;
 	}
 
 	/*========================*/
 	/* Table generation       */
 	/*========================*/
-	for (int ig = 0; ig <= 1000; ++ig)
-	{
+	for (size_t ig = 0; ig <= 1000; ++ig) {
 		/*-------------------------*/
 		/* Pn polynomial           */
 		/*-------------------------*/
@@ -107,8 +96,7 @@ int SplineTables(const int order, double* pot, double* scd)
 		double p0    = 1.0;
 		double p1    = gamma;
 		p[0]         = p1;
-		for (n = 2; n <= kc; ++n)
-		{
+		for (n = 2; n <= kc; ++n) {
 			fn                = double(n);
 			const double usfn = 1.0 / fn;
 			const double pn   = (2.0 - usfn) * gamma * p1 - (1.0 - usfn) * p0;
@@ -123,8 +111,7 @@ int SplineTables(const int order, double* pot, double* scd)
 		double s1 = 0.0;
 		double s2 = 0.0;
 		double fs = fsv;
-		for (n = kv; n >= 1; n--)
-		{
+		for (n = kv; n >= 1; n--) {
 			fn   = double(n);
 			cnpn = c[n - 1] * p[n - 1] / (fn * (fn + 1.0));
 			s1 += cnpn;
@@ -140,8 +127,7 @@ int SplineTables(const int order, double* pot, double* scd)
 		s1 = 0.0;
 		s2 = 0.0;
 		fs = fsc;
-		for (n = kc; n >= 1; n--)
-		{
+		for (n = kc; n >= 1; n--) {
 			cnpn = c[n - 1] * p[n - 1];
 			s1 += cnpn;
 			s2 += fs * cnpn;
@@ -158,8 +144,6 @@ int SplineTables(const int order, double* pot, double* scd)
 	*pot          = *(pot + 1);
 	*scd          = *(scd + 1);
 
-	free(c);
-	free(p);
 	return 0;
 }
 
@@ -197,59 +181,46 @@ int SplineCoef(const int n, double** xyz, const double* values, const double* ta
 	/*=========================================*/
 	/* allocation of temporary arrays          */
 	/*=========================================*/
-	double* p_mat_a = static_cast<double*>(malloc(sizeof(double) * ((n + 1) * (n + 2)) / 2));
-	if (p_mat_a == nullptr)
-	{
-		std::cout << "SplineCoef error : allocation p_mat_a\n";
-		return (-1);
-	}
-	int* p_iwork = static_cast<int*>(malloc(sizeof(int) * (n + 1)));
-	if (p_iwork == nullptr)
-	{
-		std::cout << "SplineCoef error : allocation p_iwork\n";
-		return (-1);
-	}
+	std::vector<double> a((n + 1) * (n + 2) / 2);
+	std::vector<int> iwork(n + 1);
 
 	/*================================*/
 	/* Initialization of matrix A     */
 	/*================================*/
 	const int l0 = ((n + 1) * (n)) / 2;
-	for (i = l0; i < l0 + n; ++i) { *(p_mat_a + i) = 1.0; }
-	*(p_mat_a + i) = 0.0;
+	for (i = l0; i < l0 + n; ++i) { a[i] = 1.0; }
+	a[i] = 0.0;
 
 	/*=========================*/
 	/* computation of matrix A */
 	/*=========================*/
 	int ih = 0;
-	for (int j = 0; j < n; ++j)
-	{
+	for (int j = 0; j < n; ++j) {
 		const double xj = xyz[j][0];
 		const double yj = xyz[j][1];
 		const double zj = xyz[j][2];
-		for (i = 0; i < j; ++i)
-		{
+		for (i = 0; i < j; ++i) {
 			const double t1 = xyz[i][0] - xj;
 			const double t2 = xyz[i][1] - yj;
 			const double t3 = xyz[i][2] - zj;
 			const double tp = (t1 * t1 + t2 * t2 + t3 * t3) / 2.0;
 			double fgam     = (1.0 - tp) * 1000.0 + 1002.0;
 			const int igam  = int(fgam);
-			fgam -= float(igam);
-			const double v1   = *(table + igam - 1);
-			const double v2   = *(table + igam) - v1;
-			*(p_mat_a + ih++) = v2 * fgam + v1;
+			fgam -= double(igam);
+			const double v1 = *(table + igam - 1);
+			const double v2 = *(table + igam) - v1;
+			a[ih++]         = v2 * fgam + v1;
 		}
-		*(p_mat_a + ih++) = *(table + 2001);
+		a[ih++] = *(table + 2001);
 	}
 
 	/*=================================*/
 	/* Triangularization of matrix A   */
 	/*=================================*/
 	itmp = n + 1;
-	sspfa(p_mat_a, &itmp, p_iwork, &info);
-	if (info != 0)
-	{
-		printf("SplineCoef error : triangularization of matrix a (sspfa : %d) \n", info);
+	sspfa(a.data(), &itmp, iwork.data(), &info);
+	if (info != 0) {
+		std::cout << "SplineCoef error : triangularization of matrix a (sspfa : " << info << "d)" << std::endl;
 		return (-1);
 	}
 
@@ -258,9 +229,7 @@ int SplineCoef(const int n, double** xyz, const double* values, const double* ta
 	/*=======================================================*/
 	for (i = 0; i < n; ++i) { coef[i] = values[i]; }
 	coef[n] = 0.0;
-	sspsl(p_mat_a, &itmp, p_iwork, coef);
-	free(p_mat_a);
-	free(p_iwork);
+	sspsl(a.data(), &itmp, iwork.data(), coef);
 	return 0;
 }
 
@@ -299,8 +268,7 @@ double SplineInterp(const int n, double** xyz, const double* table, const double
 {
 	double ffn = coef[n];
 	int k      = 0;
-	for (int i = 0; i < n; ++i)
-	{
+	for (int i = 0; i < n; ++i) {
 		const double t1   = xx - xyz[i][0];
 		const double t2   = yy - xyz[i][1];
 		const double t3   = zz - xyz[i][2];

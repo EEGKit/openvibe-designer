@@ -24,10 +24,9 @@
 
 namespace OpenViBE {
 namespace AdvancedVisualization {
-class CRulerProgressV : public CRulerProgress
+class CRulerProgressV final : public CRulerProgress
 {
 public:
-
 	void renderFinal(const float progress) override
 	{
 		glDisable(GL_TEXTURE_1D);

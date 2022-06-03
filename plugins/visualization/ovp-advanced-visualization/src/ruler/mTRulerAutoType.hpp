@@ -26,10 +26,9 @@
 namespace OpenViBE {
 namespace AdvancedVisualization {
 template <class TRulerMatrix, class TRulerSignal, class TRulerSpectrum>
-class TRulerAutoType : public IRuler
+class TRulerAutoType final : public IRuler
 {
 public:
-
 	void setRendererContext(const CRendererContext* ctx) override
 	{
 		IRuler::setRendererContext(ctx);
@@ -80,7 +79,6 @@ public:
 	}
 
 protected:
-
 	TRulerMatrix m_rulerMatrix;
 	TRulerSignal m_rulerSignal;
 	TRulerSpectrum m_rulerSpectrum;
