@@ -24,10 +24,9 @@
 
 namespace OpenViBE {
 namespace AdvancedVisualization {
-class CRulerConditionIsTimeLocked : public IRuler
+class CRulerConditionIsTimeLocked final : public IRuler
 {
 public:
-
 	CRulerConditionIsTimeLocked() : m_rendererCtx(nullptr), m_renderer(nullptr) { }
 
 	void setRendererContext(const CRendererContext* ctx) override { m_rendererCtx = ctx; }

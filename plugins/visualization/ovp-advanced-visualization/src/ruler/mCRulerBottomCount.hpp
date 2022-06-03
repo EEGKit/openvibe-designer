@@ -24,10 +24,9 @@
 
 namespace OpenViBE {
 namespace AdvancedVisualization {
-class CRulerBottomCount : public IRuler
+class CRulerBottomCount final : public IRuler
 {
 public:
-
 	void renderBottom(GtkWidget* widget) override
 	{
 		if (m_renderer == nullptr) { return; }
@@ -35,26 +34,24 @@ public:
 		if (m_renderer->getHistoryCount() == 0) { return; }
 		if (m_renderer->getHistoryIndex() == 0) { return; }
 
-		const size_t nSample    = m_renderer->getSampleCount();
-		const size_t historyIdx = m_renderer->getHistoryIndex();
+		const double nSample = double(m_renderer->getSampleCount());
+		const double historyIdx = double(m_renderer->getHistoryIndex());
 
+		const double leftIdx1 = historyIdx - double(size_t(historyIdx) % size_t(nSample));
+		const double leftIdx2 = historyIdx;
+		const double rightIdx1 = leftIdx2 - nSample;
+		const double rightIdx2 = leftIdx1;
 
-		const size_t leftIdx1  = historyIdx - historyIdx % nSample;
-		const size_t leftIdx2  = historyIdx;
-		const size_t rightIdx1 = leftIdx2 - nSample;
-		const size_t rightIdx2 = leftIdx1;
-
-		std::vector<double> range1 = splitRange(double(leftIdx1), double(leftIdx1 + nSample), 10);
-		std::vector<double> range2 = splitRange(double(rightIdx1), double(rightIdx1 + nSample), 10);
+		const std::vector<double> range1 = splitRange(leftIdx1, leftIdx1 + nSample, 10);
+		const std::vector<double> range2 = splitRange(rightIdx1, rightIdx1 + nSample, 10);
 
 		gint w, h, x;
 
 		gdk_drawable_get_size(widget->window, &w, &h);
 		GdkGC* drawGC = gdk_gc_new(widget->window);
-		for (const auto& i : range1)
-		{
-			if (i >= leftIdx1 && i < leftIdx2)
-			{
+
+		for (const auto& i : range1) {
+			if (i >= leftIdx1 && i < leftIdx2) {
 				x                   = gint(((i - leftIdx1) / nSample) * w);
 				PangoLayout* layout = gtk_widget_create_pango_layout(widget, getLabel(i).c_str());
 				gdk_draw_layout(widget->window, drawGC, x, 5, layout);
@@ -62,10 +59,8 @@ public:
 				g_object_unref(layout);
 			}
 		}
-		for (const auto& i : range2)
-		{
-			if (i >= rightIdx1 && i < rightIdx2)
-			{
+		for (const auto& i : range2) {
+			if (i >= rightIdx1 && i < rightIdx2) {
 				x                   = gint(((i + nSample - leftIdx1) / nSample) * w);
 				PangoLayout* layout = gtk_widget_create_pango_layout(widget, getLabel(i).c_str());
 				gdk_draw_layout(widget->window, drawGC, x, 5, layout);

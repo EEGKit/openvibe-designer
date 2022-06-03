@@ -29,7 +29,6 @@ template <class TRendererFactoryClass, class TRulerClass>
 class TBoxAlgorithmInstantViz : public CBoxAlgorithmViz
 {
 public:
-
 	TBoxAlgorithmInstantViz(const CIdentifier& classID, const std::vector<int>& params);
 	bool initialize() override;
 	bool uninitialize() override;
@@ -46,14 +45,12 @@ public:
 	double m_LastERPFraction = 0;
 
 protected:
-
 	void draw() override;
 };
 
 class CBoxAlgorithmInstantVizListener final : public CBoxAlgorithmVizListener
 {
 public:
-
 	explicit CBoxAlgorithmInstantVizListener(const std::vector<int>& parameters) : CBoxAlgorithmVizListener(parameters) { }
 
 	bool onInputTypeChanged(Kernel::IBox& box, const size_t index) override
@@ -83,10 +80,9 @@ public:
 };
 
 template <class TRendererFactoryClass, class TRulerClass = IRuler, template < typename, typename > class TBoxAlgorithm = TBoxAlgorithmInstantViz>
-class TBoxAlgorithmInstantVizDesc : public CBoxAlgorithmVizDesc
+class TBoxAlgorithmInstantVizDesc final : public CBoxAlgorithmVizDesc
 {
 public:
-
 	TBoxAlgorithmInstantVizDesc(const CString& name, const CIdentifier& descClassID, const CIdentifier& classID,
 								const CString& addedSoftwareVersion, const CString& updatedSoftwareVersion,
 								const CParameterSet& parameterSet, const CString& shortDesc, const CString& detailedDesc)
@@ -114,12 +110,10 @@ bool TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::initialize()
 	m_NInput = this->getStaticBoxContext().getInputCount();
 	m_Renderers.resize(m_NInput);
 	m_Decoder.resize(m_NInput);
-	for (size_t i = 0; i < m_NInput; ++i)
-	{
+	for (size_t i = 0; i < m_NInput; ++i) {
 		m_Renderers[i] = m_RendererFactory.create();
 		m_Decoder[i].initialize(*this, i);
-		if (!m_Renderers[i])
-		{
+		if (!m_Renderers[i]) {
 			this->getLogManager() << Kernel::LogLevel_Error << "Could not create renderer, it might have been disabled at compile time\n";
 			res = false;
 		}
@@ -137,8 +131,7 @@ bool TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::initialize()
 template <class TRendererFactoryClass, class TRulerClass>
 bool TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::uninitialize()
 {
-	for (size_t i = 0; i < m_NInput; ++i)
-	{
+	for (size_t i = 0; i < m_NInput; ++i) {
 		m_RendererFactory.release(m_Renderers[i]);
 		m_Decoder[i].uninitialize();
 	}
@@ -153,33 +146,28 @@ template <class TRendererFactoryClass, class TRulerClass>
 bool TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::process()
 
 {
-	Kernel::IBoxIO& boxContext = this->getDynamicBoxContext();
-	const size_t nInput        = this->getStaticBoxContext().getInputCount();
+	const Kernel::IBoxIO& boxContext = this->getDynamicBoxContext();
+	const size_t nInput              = this->getStaticBoxContext().getInputCount();
 
-	for (size_t i = 0; i < nInput; ++i)
-	{
-		for (size_t j = 0; j < boxContext.getInputChunkCount(i); ++j)
-		{
+	for (size_t i = 0; i < nInput; ++i) {
+		for (size_t j = 0; j < boxContext.getInputChunkCount(i); ++j) {
 			m_Decoder[i].decode(j);
 
 			CMatrix* matrix = m_Decoder[i].getOutputMatrix();
 			size_t nChannel = matrix->getDimensionSize(0);
 			size_t nSample  = matrix->getDimensionSize(1);
 
-			if (nChannel == 0)
-			{
+			if (nChannel == 0) {
 				this->getLogManager() << Kernel::LogLevel_Error << "Input stream " << i << " has 0 channels\n";
 				return false;
 			}
 
-			if (matrix->getDimensionCount() == 1)
-			{
+			if (matrix->getDimensionCount() == 1) {
 				nChannel = 1;
 				nSample  = matrix->getDimensionSize(0);
 			}
 
-			if (m_Decoder[i].isHeaderReceived())
-			{
+			if (m_Decoder[i].isHeaderReceived()) {
 				// TODO
 				// Check dimension coherence
 				// Only apply renderer context when first header is received
@@ -200,8 +188,7 @@ bool TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::process()
 				m_RendererCtx->setXYZPlotDepth(m_XYZPlotHasDepth);
 
 				gtk_tree_view_set_model(m_ChannelTreeView, nullptr);
-				for (j = 0; j < nChannel; ++j)
-				{
+				for (j = 0; j < nChannel; ++j) {
 					std::string name    = trim(matrix->getDimensionLabel(0, j));
 					std::string subname = name;
 					std::transform(name.begin(), name.end(), subname.begin(), tolower);
@@ -229,8 +216,7 @@ bool TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::process()
 				m_RefreshNeeded = true;
 				m_RedrawNeeded  = true;
 			}
-			if (m_Decoder[i].isBufferReceived())
-			{
+			if (m_Decoder[i].isBufferReceived()) {
 				const uint64_t chunkDuration = (boxContext.getInputChunkEndTime(i, j) - boxContext.getInputChunkStartTime(i, j));
 
 				m_RendererCtx->setSampleDuration(chunkDuration / nSample);
@@ -243,8 +229,7 @@ bool TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::process()
 					GTK_SPIN_BUTTON(gtk_builder_get_object(m_Builder, "spinbutton_time_scale")), (chunkDuration >> 22) / 1024.);
 
 				m_Renderers[i]->clear(0); // Drop last samples as they will be fed again
-				for (size_t k = 0; k < nSample; ++k)
-				{
+				for (size_t k = 0; k < nSample; ++k) {
 					for (size_t l = 0; l < nChannel; ++l) { m_Swaps[l] = float(matrix->getBuffer()[l * nSample + k]); }
 					m_Renderers[i]->feed(&m_Swaps[0]);
 				}
@@ -255,22 +240,20 @@ bool TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::process()
 		}
 	}
 
-	double erpFraction = getContext().getERPFraction();
-	if (m_RendererCtx->isERPPlayerActive())
-	{
+	double erpFraction = double(getContext().getERPFraction());
+	if (m_RendererCtx->isERPPlayerActive()) {
 		erpFraction += .0025;
 		if (erpFraction > 1) { erpFraction = 0; }
 	}
-	if (m_LastERPFraction != erpFraction)
-	{
+	if (std::fabs(m_LastERPFraction - erpFraction) > DBL_EPSILON) {
 		gtk_range_set_value(GTK_RANGE(m_ERPRange), erpFraction);
 		m_LastERPFraction = erpFraction;
 		m_RefreshNeeded   = true;
 		m_RedrawNeeded    = true;
 	}
 
-	if (m_RebuildNeeded) { for (auto& renderer : m_Renderers) { renderer->rebuild(*m_RendererCtx); } }
-	if (m_RefreshNeeded) { for (auto& renderer : m_Renderers) { renderer->refresh(*m_RendererCtx); } }
+	if (m_RebuildNeeded) { for (const auto& renderer : m_Renderers) { renderer->rebuild(*m_RendererCtx); } }
+	if (m_RefreshNeeded) { for (const auto& renderer : m_Renderers) { renderer->refresh(*m_RendererCtx); } }
 	if (m_RedrawNeeded) { this->redraw(); }
 
 	m_RebuildNeeded = false;
@@ -289,8 +272,7 @@ void TBoxAlgorithmInstantViz<TRendererFactoryClass, TRulerClass>::draw()
 {
 	CBoxAlgorithmViz::preDraw();
 
-	for (size_t i = 0; i < m_NInput; ++i)
-	{
+	for (size_t i = 0; i < m_NInput; ++i) {
 		glPushAttrib(GL_ALL_ATTRIB_BITS);
 		if (i < m_Colors.size()) { glColor4f(m_Colors[i].r, m_Colors[i].g, m_Colors[i].b, m_RendererCtx->getTranslucency()); }
 		else { glColor4f(m_Color.r, m_Color.g, m_Color.b, m_RendererCtx->getTranslucency()); }

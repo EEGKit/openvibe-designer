@@ -41,22 +41,19 @@ protected:
 class CBoxAlgorithmTopographicMap2DDisplayDesc final : public IBoxAlgorithmDesc
 {
 public:
-
 	void release() override { }
 
-	CString getName() const override { return CString("2D topographic map"); }
-	CString getAuthorName() const override { return CString("Vincent Delannoy"); }
-	CString getAuthorCompanyName() const override { return CString("INRIA/IRISA"); }
-
-	CString getShortDescription() const override { return CString("This box demonstrates how to perform spherical spline interpolation"); }
-
-	CString getDetailedDescription() const override { return CString(""); }
-	CString getCategory() const override { return CString("Visualization/Topography"); }
-	CString getVersion() const override { return CString("2.0"); }
-	CString getStockItemName() const override { return CString(GTK_STOCK_EXECUTE); }
-	CString getSoftwareComponent() const override { return CString("openvibe-designer"); }
-	CString getAddedSoftwareVersion() const override { return CString("0.0.0"); }
-	CString getUpdatedSoftwareVersion() const override { return CString("0.0.0"); }
+	CString getName() const override { return "2D topographic map"; }
+	CString getAuthorName() const override { return "Vincent Delannoy"; }
+	CString getAuthorCompanyName() const override { return "INRIA/IRISA"; }
+	CString getShortDescription() const override { return "This box demonstrates how to perform spherical spline interpolation"; }
+	CString getDetailedDescription() const override { return ""; }
+	CString getCategory() const override { return "Visualization/Topography"; }
+	CString getVersion() const override { return "2.0"; }
+	CString getStockItemName() const override { return GTK_STOCK_EXECUTE; }
+	CString getSoftwareComponent() const override { return "openvibe-designer"; }
+	CString getAddedSoftwareVersion() const override { return "0.0.0"; }
+	CString getUpdatedSoftwareVersion() const override { return "0.0.0"; }
 
 	CIdentifier getCreatedClass() const override { return OVP_ClassId_TopographicMap2DDisplay; }
 	IPluginObject* create() override { return new CBoxAlgorithmTopographicMap2DDisplay(); }

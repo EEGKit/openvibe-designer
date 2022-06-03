@@ -37,30 +37,26 @@ void CTopographicMapDatabase::setMatrixDimensionSize(const size_t index, const s
 {
 	CBufferDatabase::setMatrixDimensionSize(index, size);
 
-	if (index == 0) { m_electrodePotentials.resize(size_t(m_NElectrodes)); }
+	if (index == 0) { m_electrodePotentials.resize(m_NElectrodes); }
 }
 
 bool CTopographicMapDatabase::onChannelLocalisationBufferReceived(const size_t bufferIndex)
 {
 	CBufferDatabase::onChannelLocalisationBufferReceived(bufferIndex);
 
-	if (!m_ChannelLookupTableInitialized || m_channelLocalisationCoords.empty() || m_NElectrodes == 0)
-	{
+	if (!m_ChannelLookupTableInitialized || m_channelLocalisationCoords.empty() || m_NElectrodes == 0) {
 		m_ParentPlugin.getLogManager() << Kernel::LogLevel_Warning
 				<< "Channel localisation buffer received before channel lookup table was initialized! Can't process buffer!\n";
 	}
 
 	//static electrode coordinates
-	if (!m_dynamicChannelLocalisation)
-	{
+	if (!m_dynamicChannelLocalisation) {
 		//if streamed coordinates are cartesian
-		if (m_cartesianCoords)
-		{
+		if (m_cartesianCoords) {
 			//fill electrode coordinates matrix
-			m_electrodeCoords.resize(size_t(3 * m_NElectrodes));
+			m_electrodeCoords.resize(3 * m_NElectrodes);
 			const double* coords = m_channelLocalisationCoords[0].first->getBuffer();
-			for (size_t i = 0; i < size_t(m_NElectrodes); ++i)
-			{
+			for (size_t i = 0; i < m_NElectrodes; ++i) {
 				const size_t lookupIdx       = m_ChannelLookupIndices[i];
 				m_electrodeCoords[3 * i]     = *(coords + 3 * lookupIdx);
 				m_electrodeCoords[3 * i + 1] = *(coords + 3 * lookupIdx + 1);
@@ -86,8 +82,7 @@ bool CTopographicMapDatabase::processValues()
 	//wait for electrode coordinates
 	if (!m_electrodeCoordsInitialized) { return true; }
 
-	if (m_firstProcess)
-	{
+	if (m_firstProcess) {
 		//done in CBufferDatabase::setMatrixBuffer
 		//initialize the drawable object
 		//m_Drawable->init();
@@ -111,13 +106,12 @@ bool CTopographicMapDatabase::processValues()
 	size_t sampleIdx;
 	if (displayTime <= m_StartTime[bufferIdx]) { sampleIdx = 0; }
 	else if (displayTime >= m_EndTime[bufferIdx]) { sampleIdx = m_DimSizes[1] - 1; }
-	else { sampleIdx = size_t(double(displayTime - m_StartTime[bufferIdx]) / double(m_BufferDuration) * m_DimSizes[1]); }
+	else { sampleIdx = size_t(double(displayTime - m_StartTime[bufferIdx]) / double(m_BufferDuration * m_DimSizes[1])); }
 
-	for (int64_t i = 0; i < m_NElectrodes; ++i) { *(m_electrodePotentials.getBuffer() + i) = m_SampleBuffers[bufferIdx][i * m_DimSizes[1] + sampleIdx]; }
+	for (size_t i = 0; i < m_NElectrodes; ++i) { *(m_electrodePotentials.getBuffer() + i) = m_SampleBuffers[bufferIdx][i * m_DimSizes[1] + sampleIdx]; }
 
 	//interpolate spline values (potentials)
-	if (m_interpolationType == EInterpolationType::Spline)
-	{
+	if (m_interpolationType == EInterpolationType::Spline) {
 		m_interpolation.activateInputTrigger(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_ComputeSplineCoefs, true);
 	}
 	else //interpolate spline laplacian (currents)
@@ -128,14 +122,12 @@ bool CTopographicMapDatabase::processValues()
 	//retrieve up-to-date pointer to sample matrix
 	m_samplePointCoords = dynamic_cast<CTopographicMapDrawable*>(m_Drawable)->getSampleCoordinatesMatrix();
 
-	if (m_samplePointCoords != nullptr)
-	{
+	if (m_samplePointCoords != nullptr) {
 		//map pointer to input parameter
 		m_interpolation.getInputParameter(OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_SamplePointsCoordinates)->
 						setReferenceTarget(&m_samplePointCoords);
 
-		if (m_interpolationType == EInterpolationType::Spline)
-		{
+		if (m_interpolationType == EInterpolationType::Spline) {
 			m_interpolation.activateInputTrigger(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_InterpolateSpline, true);
 		}
 		else { m_interpolation.activateInputTrigger(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_InterpolateLaplacian, true); }
@@ -143,15 +135,12 @@ bool CTopographicMapDatabase::processValues()
 
 	m_interpolation.process();
 	bool process = true;
-	if (m_interpolation.isOutputTriggerActive(OVP_Algorithm_SphericalSplineInterpolation_OutputTriggerId_Error))
-	{
+	if (m_interpolation.isOutputTriggerActive(OVP_Algorithm_SphericalSplineInterpolation_OutputTriggerId_Error)) {
 		m_ParentPlugin.getLogManager() << Kernel::LogLevel_Warning << "An error occurred while interpolating potentials!\n";
 		process = false;
 	}
-	else
-	{
-		if (m_samplePointCoords != nullptr)
-		{
+	else {
+		if (m_samplePointCoords != nullptr) {
 			//retrieve interpolation results
 			Kernel::TParameterHandler<CMatrix*> sampleValuesMatrix;
 			sampleValuesMatrix.initialize(
@@ -183,15 +172,13 @@ bool CTopographicMapDatabase::interpolateValues()
 	//retrieve up-to-date pointer to sample matrix
 	m_samplePointCoords = dynamic_cast<CTopographicMapDrawable*>(m_Drawable)->getSampleCoordinatesMatrix();
 
-	if (m_samplePointCoords != nullptr)
-	{
+	if (m_samplePointCoords != nullptr) {
 		//map pointer to input parameter
 		m_interpolation.getInputParameter(OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_SamplePointsCoordinates)->
 						setReferenceTarget(&m_samplePointCoords);
 
 		//interpolate using spline or laplacian coefficients depending on interpolation mode
-		if (m_interpolationType == EInterpolationType::Spline)
-		{
+		if (m_interpolationType == EInterpolationType::Spline) {
 			m_interpolation.activateInputTrigger(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_InterpolateSpline, true);
 		}
 		else { m_interpolation.activateInputTrigger(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_InterpolateLaplacian, true); }
@@ -199,14 +186,11 @@ bool CTopographicMapDatabase::interpolateValues()
 
 	m_interpolation.process();
 
-	if (m_interpolation.isOutputTriggerActive(OVP_Algorithm_SphericalSplineInterpolation_OutputTriggerId_Error))
-	{
+	if (m_interpolation.isOutputTriggerActive(OVP_Algorithm_SphericalSplineInterpolation_OutputTriggerId_Error)) {
 		m_ParentPlugin.getLogManager() << Kernel::LogLevel_Warning << "An error occurred while interpolating potentials!\n";
 	}
-	else
-	{
-		if (m_samplePointCoords != nullptr)
-		{
+	else {
+		if (m_samplePointCoords != nullptr) {
 			//retrieve interpolation results
 			Kernel::TParameterHandler<CMatrix*> sampleValuesMatrix;
 			sampleValuesMatrix.initialize(m_interpolation.getOutputParameter(OVP_Algorithm_SphericalSplineInterpolation_OutputParameterId_SamplePointsValues));
@@ -217,24 +201,20 @@ bool CTopographicMapDatabase::interpolateValues()
 	return true;
 }
 
-bool CTopographicMapDatabase::getBufferIndexFromTime(const uint64_t time, size_t& bufferIndex)
+bool CTopographicMapDatabase::getBufferIndexFromTime(const uint64_t time, size_t& bufferIndex) const
 {
 	if (m_SampleBuffers.empty()) { return false; }
 
-	if (time < m_StartTime[0])
-	{
+	if (time < m_StartTime[0]) {
 		bufferIndex = 0;
 		return false;
 	}
-	if (time > m_EndTime.back())
-	{
+	if (time > m_EndTime.back()) {
 		bufferIndex = size_t(m_SampleBuffers.size() - 1);
 		return false;
 	}
-	for (size_t i = 0; i < m_SampleBuffers.size(); ++i)
-	{
-		if (time <= m_EndTime[i])
-		{
+	for (size_t i = 0; i < m_SampleBuffers.size(); ++i) {
+		if (time <= m_EndTime[i]) {
 			bufferIndex = i;
 			break;
 		}
@@ -247,11 +227,9 @@ bool CTopographicMapDatabase::checkElectrodeCoordinates()
 {
 	const size_t nChannel = getChannelCount();
 
-	for (size_t i = 0; i < nChannel; ++i)
-	{
+	for (size_t i = 0; i < nChannel; ++i) {
 		double* normalizedChannelCoords = nullptr;
-		if (!getChannelPosition(i, normalizedChannelCoords))
-		{
+		if (!getChannelPosition(i, normalizedChannelCoords)) {
 			CString channelLabel;
 			getChannelLabel(i, channelLabel);
 			m_ParentPlugin.getBoxAlgorithmContext()->getPlayerContext()->getLogManager() << Kernel::LogLevel_Error

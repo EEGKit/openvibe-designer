@@ -25,10 +25,9 @@
 namespace OpenViBE {
 namespace AdvancedVisualization {
 template <class T1, class T2, class TCondition>
-class TRulerConditionalPair : public IRuler
+class TRulerConditionalPair final : public IRuler
 {
 public:
-
 	void setRendererContext(const CRendererContext* ctx) override
 	{
 		IRuler::setRendererContext(ctx);

@@ -24,10 +24,9 @@
 
 namespace OpenViBE {
 namespace AdvancedVisualization {
-class CRulerBottomPercent : public IRuler
+class CRulerBottomPercent final : public IRuler
 {
 public:
-
 	void renderBottom(GtkWidget* widget) override
 	{
 		gint w, h;
@@ -35,8 +34,7 @@ public:
 
 		gdk_drawable_get_size(widget->window, &w, &h);
 		GdkGC* drawGC = gdk_gc_new(widget->window);
-		for (int i = 0; i <= 10; i += 2)
-		{
+		for (int i = 0; i <= 10; i += 2) {
 			const gint x            = (i * (w - 1)) / 10;
 			const std::string label = (std::to_string(i * 10) + "%");
 			PangoLayout* layout     = gtk_widget_create_pango_layout(widget, label.c_str());

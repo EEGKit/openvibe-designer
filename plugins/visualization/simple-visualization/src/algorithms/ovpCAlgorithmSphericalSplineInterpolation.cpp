@@ -59,15 +59,13 @@ bool CAlgorithmSphericalSplineInterpolation::uninitialize()
 bool CAlgorithmSphericalSplineInterpolation::process()
 
 {
-	if (m_firstProcess)
-	{
+	if (m_firstProcess) {
 		//store coords as doubles
 		m_coords.resize(3 * size_t(ip_nControlPoints));
 		//set up matrix of pointers to double coords matrix
 		m_coordsPtr.resize(size_t(ip_nControlPoints));
 		//fill both matrices
-		for (size_t i = 0; i < size_t(ip_nControlPoints); ++i)
-		{
+		for (size_t i = 0; i < size_t(ip_nControlPoints); ++i) {
 			const size_t id  = 3 * i;
 			m_coords[id]     = double((*ip_controlPointsCoords)[id]);
 			m_coords[id + 1] = double((*ip_controlPointsCoords)[id + 1]);
@@ -78,28 +76,24 @@ bool CAlgorithmSphericalSplineInterpolation::process()
 	}
 
 	//do we want to precompute tables?
-	if (isInputTriggerActive(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_PrecomputeTables))
-	{
+	if (isInputTriggerActive(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_PrecomputeTables)) {
 		//compute cos/sin values used in spline polynomias
 		const int result = SplineTables(int(ip_splineOrder), m_pot.data(), m_scd.data());
 
-		if (result != 0)
-		{
+		if (result != 0) {
 			getLogManager() << Kernel::LogLevel_ImportantWarning << "Spline tables precomputation failed!\n";
 			activateOutputTrigger(OVP_Algorithm_SphericalSplineInterpolation_OutputTriggerId_Error, true);
 		}
 	}
 
-	if (isInputTriggerActive(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_ComputeSplineCoefs))
-	{
+	if (isInputTriggerActive(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_ComputeSplineCoefs)) {
 		if (m_splineCoefs.empty() && size_t(ip_nControlPoints) != 0) { m_splineCoefs.resize(size_t(ip_nControlPoints) + 1); }
 
 		//compute spline ponderation coefficients using spline values
 		//FIXME : have a working copy of control points values stored as doubles?
 		const int result = SplineCoef(int(ip_nControlPoints), m_coordsPtr.data(), ip_controlPointsValues->getBuffer(), m_pot.data(), m_splineCoefs.data());
 
-		if (result != 0)
-		{
+		if (result != 0) {
 			getLogManager() << Kernel::LogLevel_ImportantWarning << "Spline coefficients computation failed!\n";
 
 			const Kernel::ELogLevel level = Kernel::LogLevel_Debug;
@@ -136,8 +130,7 @@ bool CAlgorithmSphericalSplineInterpolation::process()
 		}
 	}
 
-	if (isInputTriggerActive(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_ComputeLaplacianCoefs))
-	{
+	if (isInputTriggerActive(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_ComputeLaplacianCoefs)) {
 		if (m_laplacianCoefs.empty() && size_t(ip_nControlPoints) != 0) { m_laplacianCoefs.resize(size_t(ip_nControlPoints) + 1); }
 
 		//compute spline ponderation coefficients using spline values
@@ -146,31 +139,27 @@ bool CAlgorithmSphericalSplineInterpolation::process()
 									  m_laplacianCoefs.data());
 		m_laplacianCoefs[int(ip_nControlPoints)] = 0;
 
-		if (result != 0)
-		{
+		if (result != 0) {
 			getLogManager() << Kernel::LogLevel_ImportantWarning << "Laplacian coefficients computation failed!\n";
 			activateOutputTrigger(OVP_Algorithm_SphericalSplineInterpolation_OutputTriggerId_Error, true);
 		}
 	}
 
-	if (isInputTriggerActive(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_InterpolateSpline))
-	{
+	if (isInputTriggerActive(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_InterpolateSpline)) {
 		bool ok = true;
 
 		//ensure we got enough storage space for interpolated values
-		if (op_samplePointsValues->getDimensionSize(0) != ip_samplePointsCoords->getDimensionSize(0))
-		{
+		if (op_samplePointsValues->getDimensionSize(0) != ip_samplePointsCoords->getDimensionSize(0)) {
 			op_samplePointsValues->setDimensionSize(0, ip_samplePointsCoords->getDimensionSize(0));
 		}
 
 		//compute interpolated values using spline
-		double* sampleValue = static_cast<double*>(op_samplePointsValues->getBuffer());
+		double* sampleValue = op_samplePointsValues->getBuffer();
 
 		op_minSamplePointValue = +DBL_MAX;
 		op_maxSamplePointValue = -DBL_MAX;
 
-		for (size_t i = 0; i < ip_samplePointsCoords->getDimensionSize(0); i++, sampleValue++)
-		{
+		for (size_t i = 0; i < ip_samplePointsCoords->getDimensionSize(0); i++, sampleValue++) {
 #if defined TARGET_OS_Windows
 #ifndef NDEBUG
 			if (_finite(*(ip_samplePointsCoords->getBuffer() + 3 * i)) == 0 ||
@@ -215,23 +204,19 @@ bool CAlgorithmSphericalSplineInterpolation::process()
 
 		if (!ok) { activateOutputTrigger(OVP_Algorithm_SphericalSplineInterpolation_OutputTriggerId_Error, true); }
 	}
-	else if (isInputTriggerActive(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_InterpolateLaplacian))
-	{
-		const bool ok = true;
+	else if (isInputTriggerActive(OVP_Algorithm_SphericalSplineInterpolation_InputTriggerId_InterpolateLaplacian)) {
 		//ensure we got enough storage space for interpolated values
-		if (op_samplePointsValues->getDimensionSize(0) != ip_samplePointsCoords->getDimensionSize(0))
-		{
+		if (op_samplePointsValues->getDimensionSize(0) != ip_samplePointsCoords->getDimensionSize(0)) {
 			op_samplePointsValues->setDimensionSize(0, ip_samplePointsCoords->getDimensionSize(0));
 		}
 
 		//compute interpolated values using spline
-		auto* sampleValue = static_cast<double*>(op_samplePointsValues->getBuffer());
+		auto* sampleValue = op_samplePointsValues->getBuffer();
 
 		op_minSamplePointValue = +DBL_MAX;
 		op_maxSamplePointValue = -DBL_MAX;
 
-		for (size_t i = 0; i < ip_samplePointsCoords->getDimensionSize(0); i++, sampleValue++)
-		{
+		for (size_t i = 0; i < ip_samplePointsCoords->getDimensionSize(0); i++, sampleValue++) {
 			*sampleValue = SplineInterp(int(ip_nControlPoints), //number of fixed values
 										m_coordsPtr.data(), //coordinates of fixed values
 										m_scd.data(), //sin/cos table for laplacian
@@ -255,8 +240,6 @@ bool CAlgorithmSphericalSplineInterpolation::process()
 			if (*sampleValue < op_minSamplePointValue) { op_minSamplePointValue = *sampleValue; }
 			if (*sampleValue > op_maxSamplePointValue) { op_maxSamplePointValue = *sampleValue; }
 		}
-
-		if (!ok) { activateOutputTrigger(OVP_Algorithm_SphericalSplineInterpolation_OutputTriggerId_Error, true); }
 	}
 
 	return true;

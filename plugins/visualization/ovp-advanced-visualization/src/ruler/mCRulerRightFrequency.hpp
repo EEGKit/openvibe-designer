@@ -24,15 +24,13 @@
 
 namespace OpenViBE {
 namespace AdvancedVisualization {
-class CRulerRightFrequency : public IRuler
+class CRulerRightFrequency final : public IRuler
 {
 public:
-
 	void renderRight(GtkWidget* widget) override
 	{
-		const auto scale = float(m_rendererCtx->getSpectrumFrequencyRange());
-		if (m_lastScale != scale)
-		{
+		const auto scale = double(m_rendererCtx->getSpectrumFrequencyRange());
+		if (std::fabs(m_lastScale - scale) > DBL_EPSILON) {
 			m_range     = splitRange(0, scale);
 			m_lastScale = scale;
 		}
@@ -41,13 +39,11 @@ public:
 		gint lw, lh;
 
 		const size_t nChannel = m_rendererCtx->getSelectedCount();
-		for (size_t i = 0; i < nChannel; ++i)
-		{
+		for (size_t i = 0; i < nChannel; ++i) {
 			gdk_drawable_get_size(widget->window, &w, &h);
 			GdkGC* drawGC = gdk_gc_new(widget->window);
-			for (const auto& r : m_range)
-			{
-				const gint y        = gint((i + r / scale) * (h * 1.F / nChannel));
+			for (const auto& r : m_range) {
+				const gint y        = gint((double(i) + r / scale) * (double(h) / double(nChannel)));
 				PangoLayout* layout = gtk_widget_create_pango_layout(widget, getLabel(r).c_str());
 				pango_layout_get_size(layout, &lw, &lh);
 				lw /= PANGO_SCALE;
@@ -61,7 +57,7 @@ public:
 	}
 
 protected:
-	float m_lastScale = 1;
+	double m_lastScale = 1;
 	std::vector<double> m_range;
 };
 }  // namespace AdvancedVisualization

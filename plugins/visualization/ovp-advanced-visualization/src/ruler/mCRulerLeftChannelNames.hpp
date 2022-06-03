@@ -26,24 +26,22 @@
 
 namespace OpenViBE {
 namespace AdvancedVisualization {
-class CRulerLeftChannelNames : public IRuler
+class CRulerLeftChannelNames final : public IRuler
 {
 public:
-
 	void renderLeft(GtkWidget* widget) override
 	{
 		gint w, h, lw, lh;
 		gdk_drawable_get_size(widget->window, &w, &h);
 		GdkGC* drawGC = gdk_gc_new(widget->window);
-		for (size_t i = 0; i < m_rendererCtx->getSelectedCount(); ++i)
-		{
+		for (size_t i = 0; i < m_rendererCtx->getSelectedCount(); ++i) {
 			const size_t idx        = m_rendererCtx->getSelected(i);
 			const std::string label = (m_rendererCtx->getChannelName(idx) + " (" + std::to_string(idx + 1) + ")");
 			PangoLayout* layout     = gtk_widget_create_pango_layout(widget, label.c_str());
 			pango_layout_get_size(layout, &lw, &lh);
 			lw /= PANGO_SCALE;
 			lh /= PANGO_SCALE;
-			gdk_draw_layout(widget->window, drawGC, w - lw, gint(((i + 0.5) * h) / m_rendererCtx->getSelectedCount() - float(lh) / 2), layout);
+			gdk_draw_layout(widget->window, drawGC, w - lw, gint(((double(i) + 0.5) * h) / double(m_rendererCtx->getSelectedCount()) - double(lh) / 2.0), layout);
 			g_object_unref(layout);
 		}
 		g_object_unref(drawGC);

@@ -24,10 +24,9 @@
 
 namespace OpenViBE {
 namespace AdvancedVisualization {
-class CRulerBottomTexture : public CRulerTexture
+class CRulerBottomTexture final : public CRulerTexture
 {
 public:
-
 	void render() override
 
 	{
@@ -58,10 +57,9 @@ public:
 
 	void renderBottom(GtkWidget* widget) override
 	{
-		const float scale = 1.F / m_rendererCtx->getScale();
-		if (m_lastScale != scale)
-		{
-			m_range     = splitRange(-scale * .5, scale * .5);
+		const double scale = 1.0 / double(m_rendererCtx->getScale());
+		if (std::fabs(m_lastScale - scale) > DBL_EPSILON) {
+			m_range     = splitRange(-scale * 0.5, scale * 0.5);
 			m_lastScale = scale;
 		}
 
@@ -70,20 +68,19 @@ public:
 
 		gdk_drawable_get_size(widget->window, &w, &h);
 		GdkGC* drawGC = gdk_gc_new(widget->window);
-		for (const auto& i : m_range)
-		{
+		for (const auto& i : m_range) {
 			PangoLayout* layout = gtk_widget_create_pango_layout(widget, getLabel(i).c_str());
 			pango_layout_get_size(layout, &lw, &lh);
 			lw /= PANGO_SCALE;
 			lh /= PANGO_SCALE;
-			gdk_draw_layout(widget->window, drawGC, gint((.5 + i / scale) * w - lw * .5), 0, layout);
+			gdk_draw_layout(widget->window, drawGC, gint((0.5 + i / scale) * w - lw * 0.5), 0, layout);
 			g_object_unref(layout);
 		}
 		g_object_unref(drawGC);
 	}
 
 protected:
-	float m_lastScale = 0;
+	double m_lastScale = 0;
 	std::vector<double> m_range;
 };
 }  // namespace AdvancedVisualization

@@ -29,7 +29,6 @@ template <class TRendererFactoryClass, class TRulerClass>
 class TBoxAlgorithmContinuousViz final : public CBoxAlgorithmViz
 {
 public:
-
 	TBoxAlgorithmContinuousViz(const CIdentifier& classID, const std::vector<int>& parameters);
 	bool initialize() override;
 	bool uninitialize() override;
@@ -43,14 +42,12 @@ public:
 	IRenderer* m_Renderer = nullptr;
 
 protected:
-
 	void draw() override;
 };
 
 class CBoxAlgorithmContinuousVizListener final : public CBoxAlgorithmVizListener
 {
 public:
-
 	explicit CBoxAlgorithmContinuousVizListener(const std::vector<int>& parameters) : CBoxAlgorithmVizListener(parameters) { }
 
 	bool onInputTypeChanged(Kernel::IBox& box, const size_t index) override
@@ -67,7 +64,6 @@ template <class TRendererFactoryClass, class TRulerClass = IRuler>
 class TBoxAlgorithmContinuousVizDesc final : public CBoxAlgorithmVizDesc
 {
 public:
-
 	TBoxAlgorithmContinuousVizDesc(const CString& name, const CIdentifier& descClassID, const CIdentifier& classID,
 								   const CString& addedSoftwareVersion, const CString& updatedSoftwareVersion,
 								   const CParameterSet& parameterSet, const CString& shortDesc, const CString& detailedDesc)
@@ -119,29 +115,25 @@ bool TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>::uninitializ
 template <class TRendererFactoryClass, class TRulerClass>
 bool TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>::process()
 {
-	Kernel::IBoxIO& boxContext = this->getDynamicBoxContext();
-	for (size_t i = 0; i < boxContext.getInputChunkCount(0); ++i)
-	{
+	const Kernel::IBoxIO& boxContext = this->getDynamicBoxContext();
+	for (size_t i = 0; i < boxContext.getInputChunkCount(0); ++i) {
 		m_oMatrixDecoder.decode(i);
 
 		CMatrix* matrix = m_oMatrixDecoder.getOutputMatrix();
 		size_t nChannel = matrix->getDimensionSize(0);
 		size_t nSample  = matrix->getDimensionSize(1);
 
-		if (nChannel == 0)
-		{
+		if (nChannel == 0) {
 			this->getLogManager() << Kernel::LogLevel_Error << "Input stream " << i << " has 0 channels\n";
 			return false;
 		}
 
-		if (matrix->getDimensionCount() == 1)
-		{
+		if (matrix->getDimensionCount() == 1) {
 			nChannel = matrix->getDimensionSize(0);
 			nSample  = 1;
 		}
 
-		if (m_oMatrixDecoder.isHeaderReceived())
-		{
+		if (m_oMatrixDecoder.isHeaderReceived()) {
 			GtkTreeIter gtkTreeIt;
 			gtk_list_store_clear(m_ChannelListStore);
 
@@ -160,8 +152,7 @@ bool TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>::process()
 			m_RendererCtx->setXYZPlotDepth(m_XYZPlotHasDepth);
 
 			gtk_tree_view_set_model(m_ChannelTreeView, nullptr);
-			for (size_t j = 0; j < nChannel; ++j)
-			{
+			for (size_t j = 0; j < nChannel; ++j) {
 				std::string name    = trim(matrix->getDimensionLabel(0, j));
 				std::string subname = name;
 				std::transform(name.begin(), name.end(), subname.begin(), tolower);
@@ -182,11 +173,9 @@ bool TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>::process()
 			else if (m_TypeID == OV_TypeId_Spectrum) { m_RendererCtx->setDataType(CRendererContext::EDataType::Spectrum); }
 			else { m_RendererCtx->setDataType(CRendererContext::EDataType::Matrix); }
 
-			if (nSample != 1)
-			{
+			if (nSample != 1) {
 				//bool warned = false;
-				if (m_TypeID == OV_TypeId_Spectrum)
-				{
+				if (m_TypeID == OV_TypeId_Spectrum) {
 					//warned = true;
 					this->getLogManager() << Kernel::LogLevel_Warning << "Input matrix has 'spectrum' type\n";
 					this->getLogManager() << Kernel::LogLevel_Warning << "Such configuration is uncommon for a 'continous' kind of visualization !\n";
@@ -194,10 +183,8 @@ bool TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>::process()
 							"You might want to consider the 'stacked' kind of visualization for time/frequency analysis for instance\n";
 					this->getLogManager() << Kernel::LogLevel_Warning << "Please double check your scenario\n";
 				}
-				else
-				{
-					if (!m_RendererCtx->isTimeLocked())
-					{
+				else {
+					if (!m_RendererCtx->isTimeLocked()) {
 						//warned = true;
 						this->getLogManager() << Kernel::LogLevel_Warning << "Input matrix has " << nSample
 								<< " elements and the box settings say the elements are independant with " << m_NElement << " elements to render\n";
@@ -217,8 +204,7 @@ bool TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>::process()
 			m_RefreshNeeded = true;
 			m_RedrawNeeded  = true;
 		}
-		if (m_oMatrixDecoder.isBufferReceived())
-		{
+		if (m_oMatrixDecoder.isBufferReceived()) {
 			m_Time1                 = m_Time2;
 			m_Time2                 = boxContext.getInputChunkEndTime(0, i);
 			const uint64_t duration = (m_Time2 - m_Time1) / nSample;
@@ -232,15 +218,13 @@ bool TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>::process()
 			m_RendererCtx->setMaximumSpectrumFrequency(size_t(gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_FrequencyBandMax))));
 
 			// Feed renderer with actual samples
-			for (size_t j = 0; j < nSample; ++j)
-			{
+			for (size_t j = 0; j < nSample; ++j) {
 				for (size_t k = 0; k < nChannel; ++k) { m_Swaps[k] = float(matrix->getBuffer()[k * nSample + j]); }
 				m_Renderer->feed(&m_Swaps[0]);
 			}
 
 			// Adjust feeding depending on theoretical dates
-			if (m_RendererCtx->isTimeLocked() && m_RendererCtx->getSampleDuration())
-			{
+			if (m_RendererCtx->isTimeLocked() && m_RendererCtx->getSampleDuration()) {
 				const auto nTheoreticalSample = size_t(m_Time2 / m_RendererCtx->getSampleDuration());
 				if (nTheoreticalSample > m_Renderer->getHistoryCount()) { m_Renderer->prefeed(nTheoreticalSample - m_Renderer->getHistoryCount()); }
 			}
@@ -251,17 +235,13 @@ bool TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>::process()
 	}
 
 	const size_t nInput = this->getStaticBoxContext().getInputCount();
-	if (nInput > 1)
-	{
-		for (size_t i = 0; i < boxContext.getInputChunkCount(1); ++i)
-		{
+	if (nInput > 1) {
+		for (size_t i = 0; i < boxContext.getInputChunkCount(1); ++i) {
 			m_oStimulationDecoder.decode(i);
-			if (m_oStimulationDecoder.isBufferReceived())
-			{
-				CStimulationSet* stimulationSet = m_oStimulationDecoder.getOutputStimulationSet();
-				for (size_t j = 0; j < stimulationSet->size(); ++j)
-				{
-					m_Renderer->feed(stimulationSet->getDate(j), stimulationSet->getId(j));
+			if (m_oStimulationDecoder.isBufferReceived()) {
+				const CStimulationSet* stimSet = m_oStimulationDecoder.getOutputStimulationSet();
+				for (size_t j = 0; j < stimSet->size(); ++j) {
+					m_Renderer->feed(stimSet->getDate(j), stimSet->getId(j));
 					m_RedrawNeeded = true;
 				}
 			}
@@ -269,17 +249,14 @@ bool TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>::process()
 	}
 
 	size_t rendererSampleCount = 0;
-	if (m_RendererCtx->isTimeLocked())
-	{
+	if (m_RendererCtx->isTimeLocked()) {
 		if (0 != m_RendererCtx->getSampleDuration()) { rendererSampleCount = size_t(m_RendererCtx->getTimeScale() / m_RendererCtx->getSampleDuration()); }
 	}
-	else
-	{
+	else {
 		rendererSampleCount = size_t(m_RendererCtx->getElementCount()); // *nSample;
 	}
 
-	if (rendererSampleCount != 0 && rendererSampleCount != m_Renderer->getSampleCount())
-	{
+	if (rendererSampleCount != 0 && rendererSampleCount != m_Renderer->getSampleCount()) {
 		m_Renderer->setSampleCount(rendererSampleCount);
 		m_RebuildNeeded = true;
 		m_RefreshNeeded = true;

@@ -24,10 +24,9 @@
 
 namespace OpenViBE {
 namespace AdvancedVisualization {
-class CRulerRightScale : public IRuler
+class CRulerRightScale final : public IRuler
 {
 public:
-
 	CRulerRightScale() : m_lastScale(-1) { }
 
 	void renderRight(GtkWidget* pWidget) override
@@ -35,29 +34,26 @@ public:
 		const size_t nSelected = m_rendererCtx->getSelectedCount();
 		if (!nSelected) { return; }
 
-		const float scale = 1.F / m_rendererCtx->getScale();
-		if (m_lastScale != scale)
-		{
+		const double scale = 1.0 / double(m_rendererCtx->getScale());
+		if (std::fabs(m_lastScale - scale) > DBL_EPSILON) {
 			if (m_rendererCtx->isPositiveOnly()) { m_range = splitRange(0, scale, IRuler_SplitCount); }
-			else { m_range = splitRange(-scale * .5, scale * .5, IRuler_SplitCount); }
+			else { m_range = splitRange(-scale * 0.5, scale * 0.5, IRuler_SplitCount); }
 			m_lastScale = scale;
 		}
 
-		const float offset = m_rendererCtx->isPositiveOnly() ? 0.0F : 0.5F;
+		const double offset = m_rendererCtx->isPositiveOnly() ? 0.0 : 0.5;
 
 		gint w, h, lw, lh;
 
 		gdk_drawable_get_size(pWidget->window, &w, &h);
 		GdkGC* drawGC = gdk_gc_new(pWidget->window);
-		for (size_t i = 0; i < m_rendererCtx->getSelectedCount(); ++i)
-		{
-			for (const auto& j : m_range)
-			{
+		for (size_t i = 0; i < m_rendererCtx->getSelectedCount(); ++i) {
+			for (const auto& j : m_range) {
 				PangoLayout* layout = gtk_widget_create_pango_layout(pWidget, getLabel(j).c_str());
 				pango_layout_get_size(layout, &lw, &lh);
 				lw /= PANGO_SCALE;
 				lh /= PANGO_SCALE;
-				const gint y = gint((1 - (float(i) + offset + j / scale) / nSelected) * h);
+				const gint y = gint((1 - (double(i) + offset + j / scale) / double(nSelected)) * h);
 				gdk_draw_layout(pWidget->window, drawGC, 8, y - lh / 2, layout);
 				gdk_draw_line(pWidget->window, drawGC, 0, y, 3, y);
 				g_object_unref(layout);
@@ -67,7 +63,7 @@ public:
 	}
 
 protected:
-	float m_lastScale = 1;
+	double m_lastScale = 1;
 	std::vector<double> m_range;
 };
 }  // namespace AdvancedVisualization

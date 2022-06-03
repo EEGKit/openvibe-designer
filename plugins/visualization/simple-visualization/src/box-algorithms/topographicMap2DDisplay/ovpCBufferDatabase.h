@@ -22,7 +22,6 @@ class CSignalDisplayDrawable;
 class CSignalDisplayDrawable
 {
 public:
-
 	virtual ~CSignalDisplayDrawable() = default;
 	virtual void init() = 0;
 	virtual void redraw() = 0;
@@ -35,12 +34,12 @@ public:
 class CBufferDatabase
 {
 public:
-	int64_t m_NElectrodes = 0;						///<  Number of channels
-	std::array<size_t, 2> m_DimSizes;				///< Number of channels and number of samples per buffer
-	std::vector<std::string> m_DimLabels[2];		///< Channel labels, buffer labels
-	bool m_HasFirstBuffer = false;					///< Flag set to true once first buffer is received
-	size_t m_Sampling     = 0;						///< Sampling frequency of the incoming stream
-	std::deque<double*> m_SampleBuffers;			///< double-linked list of pointers to the samples buffers of the current time window
+	size_t m_NElectrodes = 0;									///< Number of channels
+	std::array<size_t, 2> m_DimSizes;							///< Number of channels and number of samples per buffer
+	std::array<std::vector<std::string>, 2> m_DimLabels;		///< Channel labels, buffer labels
+	bool m_HasFirstBuffer = false;								///< Flag set to true once first buffer is received
+	size_t m_Sampling     = 0;									///< Sampling frequency of the incoming stream
+	std::deque<double*> m_SampleBuffers;						///< double-linked list of pointers to the samples buffers of the current time window
 	std::deque<std::pair<uint64_t, uint64_t>> m_Stimulations;	///< stimulations to display. pair values are <date, stimcode>
 
 	bool m_ChannelLookupTableInitialized = false;	///< flag set to true once channel lookup indices are determined
@@ -184,8 +183,8 @@ public:
 
 	/**
 	 * \brief Get index of sample buffer which starts at a given time
-	 * \param time[in] Start time of buffer
-	 * \param index[out] Buffer index
+	 * \param time Start time of buffer
+	 * \param index Buffer index
 	 * \return True if buffer index could be determined, false otherwise
 	 */
 	virtual bool getIndexOfBufferStartingAtTime(const uint64_t& time, size_t& index) const;

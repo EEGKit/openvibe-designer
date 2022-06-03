@@ -69,7 +69,6 @@ template <ERendererType TType, bool TStimulation = false>
 class TRendererProto
 {
 public:
-
 	static IRenderer* create() { return IRenderer::create(TType, TStimulation); }
 	static void release(IRenderer* renderer) { return IRenderer::release(renderer); }
 };
@@ -91,7 +90,8 @@ typedef TBoxAlgorithmContinuousVizDesc<TRendererProto<ERendererType::Bars, true>
 typedef TBoxAlgorithmContinuousVizDesc<TRendererProto<ERendererType::MultiLine, true>, TRulerPair<
 										   CRulerProgressV, TRulerPair<
 											   TRulerAutoType<IRuler, TRulerConditionalPair<CRulerBottomTime, CRulerBottomCount, CRulerConditionIsTimeLocked>,
-															  IRuler>, TRulerPair<TRulerPair<CRulerLeftChannelNames, CRulerLeftTexture>, CRulerRightMonoScale>>>> MOscilloscope;
+															  IRuler>, TRulerPair<
+												   TRulerPair<CRulerLeftChannelNames, CRulerLeftTexture>, CRulerRightMonoScale>>>> MOscilloscope;
 typedef TBoxAlgorithmContinuousVizDesc<TRendererProto<ERendererType::XYZPlot>> xyz_plot_t;
 
 typedef TBoxAlgorithmInstantVizDesc<TRendererProto<ERendererType::Bitmap>, TRulerPair<

@@ -31,8 +31,7 @@ void CMouse::mouseButton(CRendererContext& ctx, const int x, const int y, const 
 {
 	m_Buttons[button] = status;
 
-	if (m_Buttons[1] == 2)
-	{
+	if (m_Buttons[1] == 2) {
 		ctx.setScaleVisibility(!ctx.getScaleVisibility());
 		m_BoxAlgorithmViz.redrawTopLevelWindow();
 	}
@@ -43,20 +42,18 @@ void CMouse::mouseButton(CRendererContext& ctx, const int x, const int y, const 
 
 void CMouse::mouseMotion(CRendererContext& ctx, const int x, const int y)
 {
-	if (m_Buttons[3]) { ctx.scaleBy(powf(.99F, float(y - m_Y))); }
-	if (m_Buttons[2]) { ctx.zoomBy(powf(.99F, float(y - m_Y))); }
-	if (m_Buttons[1])
-	{
-		ctx.rotateByY(float(x - m_X) * .1F);
-		ctx.rotateByX(float(y - m_Y) * .1F);
+	if (m_Buttons[3]) { ctx.scaleBy(powf(0.99F, float(y - m_Y))); }
+	if (m_Buttons[2]) { ctx.zoomBy(powf(0.99F, float(y - m_Y))); }
+	if (m_Buttons[1]) {
+		ctx.rotateByY(float(x - m_X) * 0.1F);
+		ctx.rotateByX(float(y - m_Y) * 0.1F);
 	}
 
 	m_X = x;
 	m_Y = y;
 }
 
-bool CMouse::hasButtonPressed()
-
+bool CMouse::hasButtonPressed() const
 {
 	for (const auto& button : m_Buttons) { if (button.second) { return true; } }
 	return false;

@@ -26,10 +26,9 @@
 namespace OpenViBE {
 namespace AdvancedVisualization {
 template <bool bHorizontalStack, bool bDrawBorders, class TRendererFactoryClass, class TRulerClass>
-class TBoxAlgorithmStackedContinuousViz : public CBoxAlgorithmViz
+class TBoxAlgorithmStackedContinuousViz final : public CBoxAlgorithmViz
 {
 public:
-
 	TBoxAlgorithmStackedContinuousViz(const CIdentifier& classID, const std::vector<int>& parameters);
 	bool initialize() override;
 	bool uninitialize() override;
@@ -45,14 +44,12 @@ public:
 	std::vector<IRenderer*> m_Renderers;
 
 protected:
-
 	void draw() override;
 };
 
 class CBoxAlgorithmStackedContinuousVizListener final : public CBoxAlgorithmVizListener
 {
 public:
-
 	explicit CBoxAlgorithmStackedContinuousVizListener(const std::vector<int>& parameters) : CBoxAlgorithmVizListener(parameters) { }
 
 	bool onInputTypeChanged(Kernel::IBox& box, const size_t index) override
@@ -66,10 +63,9 @@ public:
 };
 
 template <bool bHorizontalStack, bool bDrawBorders, class TRendererFactoryClass, class TRulerClass = IRuler>
-class TBoxAlgorithmStackedContinuousVizDesc : public CBoxAlgorithmVizDesc
+class TBoxAlgorithmStackedContinuousVizDesc final : public CBoxAlgorithmVizDesc
 {
 public:
-
 	TBoxAlgorithmStackedContinuousVizDesc(const CString& name, const CIdentifier& descClassID,
 										  const CIdentifier& classID, const CString& addedSoftwareVersion,
 										  const CString& updatedSoftwareVersion, const CParameterSet& parameterSet,
@@ -144,32 +140,28 @@ bool TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRenderer
 template <bool bHorizontalStack, bool bDrawBorders, class TRendererFactoryClass, class TRulerClass>
 bool TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRendererFactoryClass, TRulerClass>::process()
 {
-	Kernel::IBoxIO& boxContext = this->getDynamicBoxContext();
-	const size_t nInput        = this->getStaticBoxContext().getInputCount();
+	const Kernel::IBoxIO& boxContext = this->getDynamicBoxContext();
+	const size_t nInput              = this->getStaticBoxContext().getInputCount();
 	size_t i, j;
 
-	for (i = 0; i < boxContext.getInputChunkCount(0); ++i)
-	{
+	for (i = 0; i < boxContext.getInputChunkCount(0); ++i) {
 		m_MatrixDecoder.decode(size_t(i));
 
 		CMatrix* matrix = m_MatrixDecoder.getOutputMatrix();
 		size_t nChannel = matrix->getDimensionSize(0);
 		size_t nSample  = matrix->getDimensionSize(1);
 
-		if (nChannel == 0)
-		{
+		if (nChannel == 0) {
 			this->getLogManager() << Kernel::LogLevel_Error << "Input stream " << i << " has 0 channels\n";
 			return false;
 		}
 
-		if (matrix->getDimensionCount() == 1)
-		{
+		if (matrix->getDimensionCount() == 1) {
 			nChannel = matrix->getDimensionSize(0);
 			nSample  = 1;
 		}
 
-		if (m_MatrixDecoder.isHeaderReceived())
-		{
+		if (m_MatrixDecoder.isHeaderReceived()) {
 			GtkTreeIter gtkTreeIter;
 			gtk_list_store_clear(m_ChannelListStore);
 
@@ -183,8 +175,7 @@ bool TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRenderer
 			m_SubRendererCtx->setParentRendererContext(m_RendererCtx);
 			m_SubRendererCtx->setTimeLocked(m_IsTimeLocked);
 			m_SubRendererCtx->setStackCount(nChannel);
-			for (j = 0; j < nSample; ++j)
-			{
+			for (j = 0; j < nSample; ++j) {
 				std::string name    = trim(matrix->getDimensionLabel(1, size_t(j)));
 				std::string subname = name;
 				std::transform(name.begin(), name.end(), subname.begin(), tolower);
@@ -202,8 +193,7 @@ bool TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRenderer
 			m_RendererCtx->setXYZPlotDepth(m_XYZPlotHasDepth);
 
 			gtk_tree_view_set_model(m_ChannelTreeView, nullptr);
-			for (j = 0; j < nChannel; ++j)
-			{
+			for (j = 0; j < nChannel; ++j) {
 				std::string name    = trim(matrix->getDimensionLabel(0, size_t(j)));
 				std::string subname = name;
 				std::transform(name.begin(), name.end(), subname.begin(), tolower);
@@ -224,18 +214,15 @@ bool TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRenderer
 			gtk_tree_view_set_model(m_ChannelTreeView, GTK_TREE_MODEL(m_ChannelListStore));
 			gtk_tree_selection_select_all(gtk_tree_view_get_selection(m_ChannelTreeView));
 
-			if (m_TypeID == OV_TypeId_Signal)
-			{
+			if (m_TypeID == OV_TypeId_Signal) {
 				m_RendererCtx->setDataType(CRendererContext::EDataType::Signal);
 				m_SubRendererCtx->setDataType(CRendererContext::EDataType::Signal);
 			}
-			else if (m_TypeID == OV_TypeId_Spectrum)
-			{
+			else if (m_TypeID == OV_TypeId_Spectrum) {
 				m_RendererCtx->setDataType(CRendererContext::EDataType::Spectrum);
 				m_SubRendererCtx->setDataType(CRendererContext::EDataType::Spectrum);
 			}
-			else
-			{
+			else {
 				m_RendererCtx->setDataType(CRendererContext::EDataType::Matrix);
 				m_SubRendererCtx->setDataType(CRendererContext::EDataType::Matrix);
 			}
@@ -246,15 +233,13 @@ bool TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRenderer
 			m_RefreshNeeded = true;
 			m_RedrawNeeded  = true;
 		}
-		if (m_MatrixDecoder.isBufferReceived())
-		{
+		if (m_MatrixDecoder.isBufferReceived()) {
 			m_Time1                           = m_Time2;
 			m_Time2                           = boxContext.getInputChunkEndTime(0, size_t(i));
 			const uint64_t interChunkDuration = m_Time2 - m_Time1;
 			const uint64_t chunkDuration      = (boxContext.getInputChunkEndTime(0, size_t(i)) - boxContext.getInputChunkStartTime(0, size_t(i)));
 			const uint64_t sampleDuration     = chunkDuration / m_NElement;
-			if (m_RendererCtx->isTimeLocked())
-			{
+			if (m_RendererCtx->isTimeLocked()) {
 				if ((interChunkDuration & ~0xf) != (m_RendererCtx->getSampleDuration() & ~0xf) && interChunkDuration != 0
 				) // 0xf mask avoids rounding errors
 				{
@@ -262,8 +247,7 @@ bool TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRenderer
 					m_RendererCtx->setSampleDuration(interChunkDuration);
 				}
 			}
-			else
-			{
+			else {
 				m_SubRendererCtx->setSampleDuration(sampleDuration);
 				m_RendererCtx->setSampleDuration(sampleDuration);
 			}
@@ -272,18 +256,15 @@ bool TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRenderer
 			m_RendererCtx->setMinimumSpectrumFrequency(size_t(gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_FrequencyBandMin))));
 			m_RendererCtx->setMaximumSpectrumFrequency(size_t(gtk_spin_button_get_value(GTK_SPIN_BUTTON(m_FrequencyBandMax))));
 
-			for (j = 0; j < nChannel; ++j)
-			{
+			for (j = 0; j < nChannel; ++j) {
 				// Feed renderer with actual samples
 				for (size_t k = 0; k < nSample; ++k) { m_Swaps[nSample - k - 1] = float(matrix->getBuffer()[j * nSample + k]); }
 				m_Renderers[j]->feed(&m_Swaps[0]);
 
 				// Adjust feeding depending on theoretical dates
-				if (m_RendererCtx->isTimeLocked() && m_RendererCtx->getSampleDuration())
-				{
+				if (m_RendererCtx->isTimeLocked() && m_RendererCtx->getSampleDuration()) {
 					const auto nTheoreticalSample = size_t(m_Time2 / m_RendererCtx->getSampleDuration());
-					if (nTheoreticalSample > m_Renderers[j]->getHistoryCount())
-					{
+					if (nTheoreticalSample > m_Renderers[j]->getHistoryCount()) {
 						m_Renderers[j]->prefeed(nTheoreticalSample - m_Renderers[j]->getHistoryCount());
 					}
 				}
@@ -294,17 +275,13 @@ bool TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRenderer
 		}
 	}
 
-	if (nInput > 1)
-	{
-		for (i = 0; i < boxContext.getInputChunkCount(1); ++i)
-		{
+	if (nInput > 1) {
+		for (i = 0; i < boxContext.getInputChunkCount(1); ++i) {
 			m_StimDecoder.decode(size_t(i));
-			if (m_StimDecoder.isBufferReceived())
-			{
-				CStimulationSet* stimulationSet = m_StimDecoder.getOutputStimulationSet();
-				for (j = 0; j < stimulationSet->size(); ++j)
-				{
-					m_Renderers[0]->feed(stimulationSet->getDate(j), stimulationSet->getId(j));
+			if (m_StimDecoder.isBufferReceived()) {
+				const CStimulationSet* stimSet = m_StimDecoder.getOutputStimulationSet();
+				for (j = 0; j < stimSet->size(); ++j) {
+					m_Renderers[0]->feed(stimSet->getDate(j), stimSet->getId(j));
 					m_RedrawNeeded = true;
 				}
 			}
@@ -312,18 +289,14 @@ bool TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRenderer
 	}
 
 	size_t rendererSampleCount = 0;
-	if (m_RendererCtx->isTimeLocked())
-	{
+	if (m_RendererCtx->isTimeLocked()) {
 		if (0 != m_RendererCtx->getSampleDuration()) { rendererSampleCount = size_t(m_RendererCtx->getTimeScale() / m_RendererCtx->getSampleDuration()); }
 	}
 	else { rendererSampleCount = size_t(m_RendererCtx->getElementCount()); }
 
-	if (rendererSampleCount != 0)
-	{
-		for (j = 0; j < m_Renderers.size(); ++j)
-		{
-			if (rendererSampleCount != m_Renderers[j]->getSampleCount())
-			{
+	if (rendererSampleCount != 0) {
+		for (j = 0; j < m_Renderers.size(); ++j) {
+			if (rendererSampleCount != m_Renderers[j]->getSampleCount()) {
 				m_Renderers[j]->setSampleCount(rendererSampleCount);
 				m_RebuildNeeded = true;
 				m_RefreshNeeded = true;
@@ -332,8 +305,8 @@ bool TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRenderer
 		}
 	}
 
-	if (m_RebuildNeeded) { for (auto& renderer : m_Renderers) { renderer->rebuild(*m_SubRendererCtx); } }
-	if (m_RefreshNeeded) { for (auto& renderer : m_Renderers) { renderer->refresh(*m_SubRendererCtx); } }
+	if (m_RebuildNeeded) { for (const auto& renderer : m_Renderers) { renderer->rebuild(*m_SubRendererCtx); } }
+	if (m_RefreshNeeded) { for (const auto& renderer : m_Renderers) { renderer->refresh(*m_SubRendererCtx); } }
 	if (m_RedrawNeeded) { this->redraw(); }
 
 	m_RebuildNeeded = false;
@@ -349,18 +322,15 @@ void TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRenderer
 {
 	CBoxAlgorithmViz::preDraw();
 
-	if (m_RendererCtx->getSelectedCount() != 0)
-	{
+	if (m_RendererCtx->getSelectedCount() != 0) {
 		glPushMatrix();
-		glScalef(1, 1.F / m_RendererCtx->getSelectedCount(), 1);
-		for (size_t i = 0; i < m_RendererCtx->getSelectedCount(); ++i)
-		{
+		glScalef(1, 1.0F / float(m_RendererCtx->getSelectedCount()), 1);
+		for (size_t i = 0; i < m_RendererCtx->getSelectedCount(); ++i) {
 			glPushAttrib(GL_ALL_ATTRIB_BITS);
 			glPushMatrix();
 			glColor4f(m_Color.r, m_Color.g, m_Color.b, m_RendererCtx->getTranslucency());
-			glTranslatef(0, m_RendererCtx->getSelectedCount() - i - 1.F, 0);
-			if (!bHorizontalStack)
-			{
+			glTranslatef(0, float(m_RendererCtx->getSelectedCount() - i) - 1.0F, 0);
+			if (!bHorizontalStack) {
 				glScalef(1, -1, 1);
 				glRotatef(-90, 0, 0, 1);
 			}
@@ -368,8 +338,7 @@ void TBoxAlgorithmStackedContinuousViz<bHorizontalStack, bDrawBorders, TRenderer
 			m_SubRendererCtx->setStackCount(m_RendererCtx->getSelectedCount());
 			m_SubRendererCtx->setStackIndex(i);
 			m_Renderers[m_RendererCtx->getSelected(i)]->render(*m_SubRendererCtx);
-			if (bDrawBorders)
-			{
+			if (bDrawBorders) {
 				glDisable(GL_TEXTURE_1D);
 				glDisable(GL_BLEND);
 				glColor3f(0, 0, 0);

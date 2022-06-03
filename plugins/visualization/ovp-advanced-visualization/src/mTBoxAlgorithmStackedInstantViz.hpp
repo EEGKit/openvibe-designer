@@ -32,10 +32,9 @@
 namespace OpenViBE {
 namespace AdvancedVisualization {
 template <bool bDrawBorders, class TRendererFactoryClass, class TRulerClass>
-class TBoxAlgorithmStackedInstantViz : public CBoxAlgorithmViz
+class TBoxAlgorithmStackedInstantViz final : public CBoxAlgorithmViz
 {
 public:
-
 	TBoxAlgorithmStackedInstantViz(const CIdentifier& classId, const std::vector<int>& parameters);
 	bool initialize() override;
 	bool uninitialize() override;
@@ -50,15 +49,13 @@ public:
 	std::vector<IRenderer*> m_Renderers;
 
 protected:
-
 	void draw() override;
 };
 
 class CBoxAlgorithmStackedInstantVizListener final : public CBoxAlgorithmVizListener
 {
 public:
-
-	CBoxAlgorithmStackedInstantVizListener(const std::vector<int>& parameters) : CBoxAlgorithmVizListener(parameters) { }
+	explicit CBoxAlgorithmStackedInstantVizListener(const std::vector<int>& parameters) : CBoxAlgorithmVizListener(parameters) { }
 
 	bool onInputTypeChanged(Kernel::IBox& box, const size_t index) override
 	{
@@ -71,10 +68,9 @@ public:
 };
 
 template <bool bDrawBorders, class TRendererFactoryClass, class TRulerClass = IRuler>
-class TBoxAlgorithmStackedInstantVizDesc : public CBoxAlgorithmVizDesc
+class TBoxAlgorithmStackedInstantVizDesc final : public CBoxAlgorithmVizDesc
 {
 public:
-
 	TBoxAlgorithmStackedInstantVizDesc(const CString& name, const CIdentifier& descClassID, const CIdentifier& classID,
 									   const CString& addedSoftwareVersion, const CString& updatedSoftwareVersion,
 									   const CParameterSet& parameterSet, const CString& shortDesc, const CString& detailedDesc)
@@ -122,8 +118,7 @@ bool TBoxAlgorithmStackedInstantViz<bDrawBorders, TRendererFactoryClass, TRulerC
 
 	CMatrix gradientMatrix;
 	VisualizationToolkit::ColorGradient::parse(gradientMatrix, m_ColorGradient);
-	for (size_t step = 0; step < gradientMatrix.getDimensionSize(1); ++step)
-	{
+	for (size_t step = 0; step < gradientMatrix.getDimensionSize(1); ++step) {
 		const double currentStepValue            = gradientMatrix.getBuffer()[4 * step + 0];
 		gradientMatrix.getBuffer()[4 * step + 0] = (currentStepValue / 100.0) * 50.0 + 50.0;
 	}
@@ -158,24 +153,21 @@ template <bool TDrawBorders, class TRendererFactoryClass, class TRulerClass>
 bool TBoxAlgorithmStackedInstantViz<TDrawBorders, TRendererFactoryClass, TRulerClass>::process()
 
 {
-	const Kernel::IBox& staticBoxContext = this->getStaticBoxContext();
-	Kernel::IBoxIO& dynamicBoxContext    = this->getDynamicBoxContext();
+	const Kernel::IBoxIO& boxCtx = this->getDynamicBoxContext();
+	const size_t nInput          = this->getStaticBoxContext().getInputCount();
 
-	for (size_t chunk = 0; chunk < dynamicBoxContext.getInputChunkCount(0); ++chunk)
-	{
+	for (size_t chunk = 0; chunk < boxCtx.getInputChunkCount(0); ++chunk) {
 		m_MatrixDecoder.decode(chunk);
 
 		CMatrix* inputMatrix  = m_MatrixDecoder.getOutputMatrix();
 		const size_t nChannel = inputMatrix->getDimensionSize(0);
 
-		if (nChannel == 0)
-		{
+		if (nChannel == 0) {
 			this->getLogManager() << Kernel::LogLevel_Error << "Input stream " << chunk << " has 0 channels\n";
 			return false;
 		}
 
-		if (m_MatrixDecoder.isHeaderReceived())
-		{
+		if (m_MatrixDecoder.isHeaderReceived()) {
 			for (auto renderer : m_Renderers) { m_RendererFactory.release(renderer); }
 			m_Renderers.clear();
 			m_Renderers.resize(nChannel);
@@ -196,8 +188,7 @@ bool TBoxAlgorithmStackedInstantViz<TDrawBorders, TRendererFactoryClass, TRulerC
 			m_RendererCtx->setXYZPlotDepth(false);
 			m_RendererCtx->setPositiveOnly(true);
 
-			if (m_TypeID == OV_TypeId_TimeFrequency)
-			{
+			if (m_TypeID == OV_TypeId_TimeFrequency) {
 				GtkTreeIter gtkTreeIter;
 				gtk_list_store_clear(m_ChannelListStore);
 
@@ -205,14 +196,11 @@ bool TBoxAlgorithmStackedInstantViz<TDrawBorders, TRendererFactoryClass, TRulerC
 				const size_t nSample        = inputMatrix->getDimensionSize(2);
 
 				// I do not know what this is for...
-				for (size_t frequency = 0; frequency < frequencyCount; ++frequency)
-				{
-					try
-					{
+				for (size_t frequency = 0; frequency < frequencyCount; ++frequency) {
+					try {
 						const double frequencyValue = std::stod(inputMatrix->getDimensionLabel(1, frequency), nullptr);
 						const int stringSize        = snprintf(nullptr, 0, "%.2f", frequencyValue) + 1;
-						if (stringSize > 0)
-						{
+						if (stringSize > 0) {
 							std::unique_ptr<char[]> buffer(new char[stringSize]);
 							snprintf(buffer.get(), size_t(stringSize), "%.2f", frequencyValue);
 							m_RendererCtx->setDimensionLabel(1, frequencyCount - frequency - 1, buffer.get());
@@ -230,8 +218,7 @@ bool TBoxAlgorithmStackedInstantViz<TDrawBorders, TRendererFactoryClass, TRulerC
 				m_SubRendererCtx->setElementCount(nSample);
 				gtk_tree_view_set_model(m_ChannelTreeView, nullptr);
 
-				for (size_t channel = 0; channel < nChannel; ++channel)
-				{
+				for (size_t channel = 0; channel < nChannel; ++channel) {
 					std::string channelName          = trim(inputMatrix->getDimensionLabel(0, channel));
 					std::string lowercaseChannelName = channelName;
 					std::transform(channelName.begin(), channelName.end(), lowercaseChannelName.begin(), tolower);
@@ -252,8 +239,7 @@ bool TBoxAlgorithmStackedInstantViz<TDrawBorders, TRendererFactoryClass, TRulerC
 				gtk_tree_view_set_model(m_ChannelTreeView, GTK_TREE_MODEL(m_ChannelListStore));
 				gtk_tree_selection_select_all(gtk_tree_view_get_selection(m_ChannelTreeView));
 			}
-			else
-			{
+			else {
 				this->getLogManager() << Kernel::LogLevel_Error << "Input stream type is not supported\n";
 				return false;
 			}
@@ -265,30 +251,25 @@ bool TBoxAlgorithmStackedInstantViz<TDrawBorders, TRendererFactoryClass, TRulerC
 			m_RedrawNeeded  = true;
 		}
 
-		if (m_MatrixDecoder.isBufferReceived())
-		{
-			if (m_TypeID == OV_TypeId_TimeFrequency)
-			{
+		if (m_MatrixDecoder.isBufferReceived()) {
+			if (m_TypeID == OV_TypeId_TimeFrequency) {
 				m_Time1 = m_Time2;
-				m_Time2 = dynamicBoxContext.getInputChunkEndTime(0, chunk);
+				m_Time2 = boxCtx.getInputChunkEndTime(0, chunk);
 
 				const size_t frequencyCount = inputMatrix->getDimensionSize(1);
 				const size_t nSample        = inputMatrix->getDimensionSize(2);
 
-				const uint64_t chunkDuration  = dynamicBoxContext.getInputChunkEndTime(0, chunk) - dynamicBoxContext.getInputChunkStartTime(0, chunk);
+				const uint64_t chunkDuration  = boxCtx.getInputChunkEndTime(0, chunk) - boxCtx.getInputChunkStartTime(0, chunk);
 				const uint64_t sampleDuration = chunkDuration / nSample;
 
 				m_SubRendererCtx->setSampleDuration(sampleDuration);
 				m_RendererCtx->setSampleDuration(sampleDuration);
 
-				for (size_t channel = 0; channel < nChannel; ++channel)
-				{
+				for (size_t channel = 0; channel < nChannel; ++channel) {
 					// Feed renderer with actual samples
-					for (size_t sample = 0; sample < nSample; ++sample)
-					{
+					for (size_t sample = 0; sample < nSample; ++sample) {
 						m_Swaps.resize(frequencyCount);
-						for (size_t frequency = 0; frequency < frequencyCount; ++frequency)
-						{
+						for (size_t frequency = 0; frequency < frequencyCount; ++frequency) {
 							m_Swaps[frequencyCount - frequency - 1] = float(
 								inputMatrix->getBuffer()[sample + frequency * nSample + channel * nSample * frequencyCount]);
 						}
@@ -302,16 +283,12 @@ bool TBoxAlgorithmStackedInstantViz<TDrawBorders, TRendererFactoryClass, TRulerC
 		}
 	}
 
-	if (staticBoxContext.getInputCount() > 1)
-	{
-		for (size_t i = 0; i < dynamicBoxContext.getInputChunkCount(1); ++i)
-		{
+	if (nInput > 1) {
+		for (size_t i = 0; i < boxCtx.getInputChunkCount(1); ++i) {
 			m_StimDecoder.decode(i);
-			if (m_StimDecoder.isBufferReceived())
-			{
-				CStimulationSet* stimSet = m_StimDecoder.getOutputStimulationSet();
-				for (size_t j = 0; j < stimSet->size(); ++j)
-				{
+			if (m_StimDecoder.isBufferReceived()) {
+				const CStimulationSet* stimSet = m_StimDecoder.getOutputStimulationSet();
+				for (size_t j = 0; j < stimSet->size(); ++j) {
 					m_Renderers[0]->feed(stimSet->getDate(j), stimSet->getId(j));
 					m_RedrawNeeded = true;
 				}
@@ -319,8 +296,8 @@ bool TBoxAlgorithmStackedInstantViz<TDrawBorders, TRendererFactoryClass, TRulerC
 		}
 	}
 
-	if (m_RebuildNeeded) { for (auto& renderer : m_Renderers) { renderer->rebuild(*m_SubRendererCtx); } }
-	if (m_RefreshNeeded) { for (auto& renderer : m_Renderers) { renderer->refresh(*m_SubRendererCtx); } }
+	if (m_RebuildNeeded) { for (const auto& renderer : m_Renderers) { renderer->rebuild(*m_SubRendererCtx); } }
+	if (m_RefreshNeeded) { for (const auto& renderer : m_Renderers) { renderer->refresh(*m_SubRendererCtx); } }
 	if (m_RedrawNeeded) { this->redraw(); }
 
 	m_RebuildNeeded = false;
@@ -336,23 +313,20 @@ void TBoxAlgorithmStackedInstantViz<bDrawBorders, TRendererFactoryClass, TRulerC
 {
 	CBoxAlgorithmViz::preDraw();
 
-	if (m_RendererCtx->getSelectedCount() != 0)
-	{
+	if (m_RendererCtx->getSelectedCount() != 0) {
 		glPushMatrix();
-		glScalef(1, 1.F / m_RendererCtx->getSelectedCount(), 1);
-		for (size_t i = 0; i < m_RendererCtx->getSelectedCount(); ++i)
-		{
+		glScalef(1, 1.0F / float(m_RendererCtx->getSelectedCount()), 1);
+		for (size_t i = 0; i < m_RendererCtx->getSelectedCount(); ++i) {
 			glPushAttrib(GL_ALL_ATTRIB_BITS);
 			glPushMatrix();
 			glColor4f(m_Color.r, m_Color.g, m_Color.b, m_RendererCtx->getTranslucency());
-			glTranslatef(0, m_RendererCtx->getSelectedCount() - i - 1.F, 0);
+			glTranslatef(0, float(m_RendererCtx->getSelectedCount() - i) - 1.0F, 0);
 
 			m_SubRendererCtx->setAspect(m_RendererCtx->getAspect());
 			m_SubRendererCtx->setStackCount(m_RendererCtx->getSelectedCount());
 			m_SubRendererCtx->setStackIndex(i);
 			m_Renderers[m_RendererCtx->getSelected(i)]->render(*m_SubRendererCtx);
-			if (bDrawBorders)
-			{
+			if (bDrawBorders) {
 				glDisable(GL_TEXTURE_1D);
 				glDisable(GL_BLEND);
 				glColor3f(0, 0, 0);

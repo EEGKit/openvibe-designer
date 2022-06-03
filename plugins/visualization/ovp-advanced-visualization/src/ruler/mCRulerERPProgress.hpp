@@ -24,10 +24,9 @@
 
 namespace OpenViBE {
 namespace AdvancedVisualization {
-class CRulerERPProgress : public IRuler
+class CRulerERPProgress final : public IRuler
 {
 public:
-
 	void render() override
 	{
 		if (m_renderer == nullptr) { return; }
@@ -36,8 +35,7 @@ public:
 		if (m_renderer->getHistoryIndex() == 0) { return; }
 
 		const float progress = m_rendererCtx->getERPFraction();
-		if (progress != 0 && progress != 1)
-		{
+		if (std::fabs(progress) > FLT_EPSILON && std::fabs(progress - 1) > FLT_EPSILON) {
 			glDisable(GL_TEXTURE_1D);
 
 			glLineWidth(4);

@@ -24,30 +24,27 @@
 
 namespace OpenViBE {
 namespace AdvancedVisualization {
-class CRulerRightMonoScale : public IRuler
+class CRulerRightMonoScale final : public IRuler
 {
 public:
-
 	CRulerRightMonoScale() : m_lastScale(-1) { }
 
 	void renderRight(GtkWidget* widget) override
 	{
-		const float scale = 1.F / m_rendererCtx->getScale();
-		if (m_lastScale != scale)
-		{
+		const double scale = 1.0 / double(m_rendererCtx->getScale());
+		if (std::fabs(m_lastScale - scale) > DBL_EPSILON) {
 			if (m_rendererCtx->isPositiveOnly()) { m_range = splitRange(0, scale, IRuler_SplitCount); }
-			else { m_range = splitRange(-scale * .5, scale * .5, IRuler_SplitCount); }
+			else { m_range = splitRange(-scale * 0.5, scale * 0.5, IRuler_SplitCount); }
 			m_lastScale = scale;
 		}
 
-		const float offset = m_rendererCtx->isPositiveOnly() ? 0 : 0.5F;
+		const double offset = m_rendererCtx->isPositiveOnly() ? 0 : 0.5;
 
 		gint w, h, lw, lh;
 
 		gdk_drawable_get_size(widget->window, &w, &h);
 		GdkGC* drawGC = gdk_gc_new(widget->window);
-		for (const auto& i : m_range)
-		{
+		for (const auto& i : m_range) {
 			PangoLayout* layout = gtk_widget_create_pango_layout(widget, getLabel(i).c_str());
 			pango_layout_get_size(layout, &lw, &lh);
 			lw /= PANGO_SCALE;
@@ -61,7 +58,7 @@ public:
 	}
 
 protected:
-	float m_lastScale = 1;
+	double m_lastScale = 1;
 	std::vector<double> m_range;
 };
 }  // namespace AdvancedVisualization

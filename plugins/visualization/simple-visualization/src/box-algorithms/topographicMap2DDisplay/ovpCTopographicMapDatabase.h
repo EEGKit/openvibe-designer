@@ -22,7 +22,7 @@ public:
 * This class is used to store information about the incoming signal stream. It can request a CSignalDisplayDrawable
 * object to redraw himself in case of some changes in its data.
 */
-class CTopographicMapDatabase : public CBufferDatabase
+class CTopographicMapDatabase final : public CBufferDatabase
 {
 public:
 	CTopographicMapDatabase(Toolkit::TBoxAlgorithm<IBoxAlgorithm>& plugin, Kernel::IAlgorithmProxy& interpolation);
@@ -61,7 +61,7 @@ private:
 	 * \param bufferIndex [out] Index of buffer closest to time passed as parameter
 	 * \return True if time passed as parameter lies within a buffer's timeframe, false otherwise
 	 */
-	bool getBufferIndexFromTime(uint64_t time, size_t& bufferIndex);
+	bool getBufferIndexFromTime(uint64_t time, size_t& bufferIndex) const;
 
 	/**
 	 * \brief Ensure electrode coordinates are normalized
@@ -81,7 +81,7 @@ private:
 	 */
 	EInterpolationType m_interpolationType = EInterpolationType::Spline;
 	//number of electrodes (see CBufferDatabase) - mapped to OVP_Algorithm_SphericalSplineInterpolation_InputParameterId_ControlPointsCount
-	//int64_t m_NElectrodes = 0;
+	//size_t m_NElectrodes = 0;
 	//flag set to true once electrode coordinates have been initialized
 	bool m_electrodeCoordsInitialized = false;
 	//electrode cartesian coordinates, in normalized space (X right Y front Z up)

@@ -39,8 +39,7 @@ bool CBoxAlgorithmTopographicMap2DDisplay::initialize()
 	GtkWidget* toolbarWidget = nullptr;
 	dynamic_cast<CTopographicMap2DView*>(m_view)->getWidgets(widget, toolbarWidget);
 
-	if (!this->canCreatePluginObject(OVP_ClassId_Plugin_VisualizationCtx))
-	{
+	if (!this->canCreatePluginObject(OVP_ClassId_Plugin_VisualizationCtx)) {
 		this->getLogManager() << Kernel::LogLevel_Error << "Visualization framework is not loaded" << "\n";
 		return false;
 	}
@@ -86,22 +85,17 @@ bool CBoxAlgorithmTopographicMap2DDisplay::process()
 	IDynamicBoxContext* context = getBoxAlgorithmContext()->getDynamicBoxContext();
 
 	//decode signal data
-	for (size_t i = 0; i < context->getInputChunkCount(0); ++i)
-	{
+	for (size_t i = 0; i < context->getInputChunkCount(0); ++i) {
 		m_decoder.decode(i);
-		if (m_decoder.isBufferReceived())
-		{
+		if (m_decoder.isBufferReceived()) {
 			CMatrix* iMatrix = m_decoder.getOutputMatrix();
 
 			//do we need to recopy this for each chunk?
-			if (!m_hasFirstBuffer)
-			{
+			if (!m_hasFirstBuffer) {
 				m_database->setMatrixDimensionCount(iMatrix->getDimensionCount());
-				for (size_t dimension = 0; dimension < iMatrix->getDimensionCount(); ++dimension)
-				{
+				for (size_t dimension = 0; dimension < iMatrix->getDimensionCount(); ++dimension) {
 					m_database->setMatrixDimensionSize(dimension, iMatrix->getDimensionSize(dimension));
-					for (size_t entryIndex = 0; entryIndex < iMatrix->getDimensionSize(dimension); ++entryIndex)
-					{
+					for (size_t entryIndex = 0; entryIndex < iMatrix->getDimensionSize(dimension); ++entryIndex) {
 						m_database->setMatrixDimensionLabel(dimension, entryIndex, iMatrix->getDimensionLabel(dimension, entryIndex));
 					}
 				}
@@ -109,16 +103,14 @@ bool CBoxAlgorithmTopographicMap2DDisplay::process()
 			}
 			//
 
-			if (!m_database->setMatrixBuffer(iMatrix->getBuffer(), context->getInputChunkStartTime(0, i), context->getInputChunkEndTime(0, i)))
-			{
+			if (!m_database->setMatrixBuffer(iMatrix->getBuffer(), context->getInputChunkStartTime(0, i), context->getInputChunkEndTime(0, i))) {
 				return false;
 			}
 		}
 	}
 
 	//decode channel localisation data
-	for (size_t i = 0; i < context->getInputChunkCount(1); ++i)
-	{
+	for (size_t i = 0; i < context->getInputChunkCount(1); ++i) {
 		const IMemoryBuffer* buf = context->getInputChunk(1, i);
 		m_database->decodeChannelLocalisationMemoryBuffer(buf, context->getInputChunkStartTime(1, i), context->getInputChunkEndTime(1, i));
 		context->markInputAsDeprecated(1, i);
