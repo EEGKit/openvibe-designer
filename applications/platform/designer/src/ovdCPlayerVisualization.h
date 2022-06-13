@@ -52,7 +52,6 @@ protected:
 	bool deleteToolbarCB(GtkWidget* widget);
 
 private:
-
 	const Kernel::IKernelContext& m_kernelCtx;
 	VisualizationToolkit::IVisualizationTree& m_visualizationTree;
 	CInterfacedScenario& m_interfacedScenario;

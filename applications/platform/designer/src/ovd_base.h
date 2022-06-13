@@ -23,7 +23,6 @@
 class G_CALLBACK_AUTOCAST
 {
 public:
-
 	typedef union
 	{
 		GCallback fp;
@@ -39,6 +38,5 @@ public:
 	operator GCallback() const { return m_Data.fp; }
 
 private:
-
 	G_CALLBACK_AUTOCAST();
 };

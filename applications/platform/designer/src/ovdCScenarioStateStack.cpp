@@ -51,16 +51,14 @@ bool CScenarioStateStack::snapshot()
 {
 	CMemoryBuffer* newState = new CMemoryBuffer();
 
-	if (!this->dumpState(*newState))
-	{
+	if (!this->dumpState(*newState)) {
 		delete newState;
 		return false;
 	}
 
 	if (m_currentState != m_states.end()) { ++m_currentState; }
 
-	while (m_currentState != m_states.end())
-	{
+	while (m_currentState != m_states.end()) {
 		delete*m_currentState;
 		m_currentState = m_states.erase(m_currentState);
 	}
@@ -75,7 +73,7 @@ bool CScenarioStateStack::snapshot()
 	return true;
 }
 
-bool CScenarioStateStack::restoreState(const IMemoryBuffer& state)
+bool CScenarioStateStack::restoreState(const IMemoryBuffer& state) const
 {
 	CMemoryBuffer uncompressedBuffer;
 
@@ -87,24 +85,24 @@ bool CScenarioStateStack::restoreState(const IMemoryBuffer& state)
 	Kernel::IAlgorithmProxy* importer = &m_kernelCtx.getAlgorithmManager().getAlgorithm(importerID);
 	if (!importer) { return false; }
 
-	const uLongf srcSize = uLongf(state.getSize()) - sizeof(uLongf);
-	Bytef* srcBuffer     = const_cast<Bytef*>(state.getDirectPointer());
+	const uLongf srcSize   = uLongf(state.getSize()) - sizeof(uLongf);
+	const Bytef* srcBuffer = state.getDirectPointer();
 
 	uLongf dstSize = *(uLongf*)(state.getDirectPointer() + state.getSize() - sizeof(uLongf));
 	uncompressedBuffer.setSize(dstSize, true);
-	Bytef* dstBuffer = static_cast<Bytef*>(uncompressedBuffer.getDirectPointer());
+	Bytef* dstBuffer = uncompressedBuffer.getDirectPointer();
 
 	if (uncompress(dstBuffer, &dstSize, srcBuffer, srcSize) != Z_OK) { return false; }
 
 	importer->initialize();
 
-	Kernel::TParameterHandler<const IMemoryBuffer*> ip_buffer(importer->getInputParameter(OV_Algorithm_ScenarioImporter_InputParameterId_MemoryBuffer));
-	Kernel::TParameterHandler<Kernel::IScenario*> op_scenario(importer->getOutputParameter(OV_Algorithm_ScenarioImporter_OutputParameterId_Scenario));
+	Kernel::TParameterHandler<const IMemoryBuffer*> buffer(importer->getInputParameter(OV_Algorithm_ScenarioImporter_InputParameterId_MemoryBuffer));
+	Kernel::TParameterHandler<Kernel::IScenario*> scenario(importer->getOutputParameter(OV_Algorithm_ScenarioImporter_OutputParameterId_Scenario));
 
 	m_scenario.clear();
 
-	ip_buffer   = &uncompressedBuffer;
-	op_scenario = &m_scenario;
+	buffer   = &uncompressedBuffer;
+	scenario = &m_scenario;
 
 	importer->process();
 	importer->uninitialize();
@@ -113,8 +111,7 @@ bool CScenarioStateStack::restoreState(const IMemoryBuffer& state)
 	// Find the VisualizationTree metadata
 	Kernel::IMetadata* treeMetadata = nullptr;
 	CIdentifier metadataID          = CIdentifier::undefined();
-	while ((metadataID = m_scenario.getNextMetadataIdentifier(metadataID)) != CIdentifier::undefined())
-	{
+	while ((metadataID = m_scenario.getNextMetadataIdentifier(metadataID)) != CIdentifier::undefined()) {
 		treeMetadata = m_scenario.getMetadataDetails(metadataID);
 		if (treeMetadata && treeMetadata->getType() == OVVIZ_MetadataIdentifier_VisualizationTree) { break; }
 	}
@@ -125,7 +122,7 @@ bool CScenarioStateStack::restoreState(const IMemoryBuffer& state)
 	return true;
 }
 
-bool CScenarioStateStack::dumpState(IMemoryBuffer& state)
+bool CScenarioStateStack::dumpState(IMemoryBuffer& state) const
 {
 	CMemoryBuffer uncompressedBuffer;
 	CMemoryBuffer compressedBuffer;
@@ -135,10 +132,8 @@ bool CScenarioStateStack::dumpState(IMemoryBuffer& state)
 	// Remove all VisualizationTree type metadata
 	CIdentifier oldTreeMetadataID = CIdentifier::undefined();
 	CIdentifier metadataID        = CIdentifier::undefined();
-	while ((metadataID = m_scenario.getNextMetadataIdentifier(metadataID)) != CIdentifier::undefined())
-	{
-		if (m_scenario.getMetadataDetails(metadataID)->getType() == OVVIZ_MetadataIdentifier_VisualizationTree)
-		{
+	while ((metadataID = m_scenario.getNextMetadataIdentifier(metadataID)) != CIdentifier::undefined()) {
+		if (m_scenario.getMetadataDetails(metadataID)->getType() == OVVIZ_MetadataIdentifier_VisualizationTree) {
 			oldTreeMetadataID = metadataID;
 			m_scenario.removeMetadata(metadataID);
 			metadataID = CIdentifier::undefined();
@@ -159,23 +154,23 @@ bool CScenarioStateStack::dumpState(IMemoryBuffer& state)
 
 	exporter->initialize();
 
-	Kernel::TParameterHandler<const Kernel::IScenario*> ip_scenario(exporter->getInputParameter(OV_Algorithm_ScenarioExporter_InputParameterId_Scenario));
-	Kernel::TParameterHandler<IMemoryBuffer*> op_buffer(exporter->getOutputParameter(OV_Algorithm_ScenarioExporter_OutputParameterId_MemoryBuffer));
+	Kernel::TParameterHandler<const Kernel::IScenario*> scenario(exporter->getInputParameter(OV_Algorithm_ScenarioExporter_InputParameterId_Scenario));
+	Kernel::TParameterHandler<IMemoryBuffer*> buffer(exporter->getOutputParameter(OV_Algorithm_ScenarioExporter_OutputParameterId_MemoryBuffer));
 
-	ip_scenario = &m_scenario;
-	op_buffer   = &uncompressedBuffer;
+	scenario = &m_scenario;
+	buffer   = &uncompressedBuffer;
 
 	exporter->process();
 	exporter->uninitialize();
 	m_kernelCtx.getAlgorithmManager().releaseAlgorithm(*exporter);
 
-	uLongf srcSize   = uLongf(uncompressedBuffer.getSize());
-	Bytef* srcBuffer = static_cast<Bytef*>(uncompressedBuffer.getDirectPointer());
+	const uLongf srcSize   = uLongf(uncompressedBuffer.getSize());
+	const Bytef* srcBuffer = uncompressedBuffer.getDirectPointer();
 
 	compressedBuffer.setSize(12 + uint64_t(srcSize * 1.1), true);
 
 	uLongf dstSize   = uLongf(compressedBuffer.getSize());
-	Bytef* dstBuffer = static_cast<Bytef*>(compressedBuffer.getDirectPointer());
+	Bytef* dstBuffer = compressedBuffer.getDirectPointer();
 
 	if (compress(dstBuffer, &dstSize, srcBuffer, srcSize) != Z_OK) { return false; }
 

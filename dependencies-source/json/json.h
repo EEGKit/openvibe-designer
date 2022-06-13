@@ -195,15 +195,12 @@ class Value;
 class Object
 {
 public:
-
 	typedef std::map<std::string, Value> ValueMap;
 
 protected:
-
 	ValueMap mValues;
 
 public:
-
 	Object() = default;
 	Object(const Object& obj) : mValues(obj.mValues) {}
 
@@ -247,15 +244,12 @@ public:
 class Array
 {
 public:
-
 	typedef std::vector<Value> ValueVector;
 
 protected:
-
 	ValueVector mValues;
 
 public:
-
 	Array() = default;
 	Array(const Array& a) : mValues(a.mValues) { }
 
@@ -294,7 +288,6 @@ public:
 class Value
 {
 protected:
-
 	ValueType mValueType = nullptrVal;
 	int mIntVal          = 0;
 	float mFloatVal      = 0;
@@ -491,8 +484,7 @@ inline bool operator ==(const Value& lhs, const Value& rhs)
 {
 	if ((lhs.mValueType != rhs.mValueType) && !lhs.IsNumeric() && !rhs.IsNumeric()) { return false; }
 
-	switch (lhs.mValueType)
-	{
+	switch (lhs.mValueType) {
 		case StringVal: return lhs.mStringVal == rhs.mStringVal;
 
 		case IntVal:
@@ -528,8 +520,7 @@ inline bool operator <(const Value& lhs, const Value& rhs)
 {
 	if ((lhs.mValueType != rhs.mValueType) && !lhs.IsNumeric() && !rhs.IsNumeric()) { return false; }
 
-	switch (lhs.mValueType)
-	{
+	switch (lhs.mValueType) {
 		case StringVal: return lhs.mStringVal < rhs.mStringVal;
 
 		case IntVal:

@@ -29,8 +29,7 @@ bool CVisualizationManager::createVisualizationTree(CIdentifier& treeID)
 bool CVisualizationManager::releaseVisualizationTree(const CIdentifier& treeID)
 {
 	auto it = m_trees.find(treeID);
-	if (it != m_trees.end())
-	{
+	if (it != m_trees.end()) {
 		delete it->second;
 		m_trees.erase(it);
 		return true;
@@ -65,8 +64,7 @@ CIdentifier CVisualizationManager::getUnusedIdentifier() const
 	uint64_t id = CIdentifier::random().id();
 	CIdentifier res;
 	std::map<CIdentifier, IVTTree*>::const_iterator it;
-	do
-	{
+	do {
 		res = CIdentifier(id++);
 		it  = m_trees.find(res);
 	} while (it != m_trees.end() || res == CIdentifier::undefined());

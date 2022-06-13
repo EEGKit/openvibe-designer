@@ -3,8 +3,6 @@
 #include <iostream>
 #include <sstream>
 
-#define OVD_GUI_File		OpenViBE::Directories::getDataDir() + "/applications/designer/interface.ui"
-
 namespace {
 void close_messages_alert_window_cb(GtkButton* /*button*/, gpointer data) { gtk_widget_hide(GTK_WIDGET(data)); }
 void focus_message_window_cb(GtkButton* /*button*/, gpointer data) { static_cast<OpenViBE::Designer::CLogListenerDesigner*>(data)->focusMessageWindow(); }
@@ -16,16 +14,15 @@ void refresh_search_log_entry(GtkEntry* text, gpointer data)
 	ptr->searchMessages(ptr->m_SearchTerm);
 }
 
-void focus_on_box_cidentifier_clicked(GtkWidget* widget, GdkEventButton* event, gpointer data)
+void focus_on_box_cidentifier_clicked(GtkWidget* widget, const GdkEventButton* event, gpointer data)
 {
 	//log text view grab the focus so isLogAreaClicked() return true and CTRL+F will focus on the log searchEntry
 	gtk_widget_grab_focus(widget);
 
-	auto* ptr = static_cast<OpenViBE::Designer::CLogListenerDesigner*>(data);
+	const auto* ptr = static_cast<OpenViBE::Designer::CLogListenerDesigner*>(data);
 
 	//if left click
-	if (event->button == 1)
-	{
+	if (event->button == 1) {
 		GtkTextView* textView              = GTK_TEXT_VIEW(widget);
 		const GtkTextWindowType windowType = gtk_text_view_get_window_type(textView, event->window);
 		gint bufferX, bufferY;
@@ -66,7 +63,7 @@ void CLogListenerDesigner::searchMessages(const CString& searchTerm)
 	for (CLogObject* log : m_storedLogs) { if (log->filter(searchTerm)) { appendLog(log); } }	//display the log
 }
 
-void CLogListenerDesigner::appendLog(CLogObject* log) const
+void CLogListenerDesigner::appendLog(const CLogObject* log) const
 {
 	GtkTextIter endIter, begin, end;
 	gtk_text_buffer_get_end_iter(m_buffer, &endIter);
@@ -265,8 +262,7 @@ void CLogListenerDesigner::log(const Kernel::ELogLevel level)
 		gtk_text_buffer_insert_with_tags_by_name(m_currentLog->getTextBuffer(), &endIter, " ] ", -1, "w_bold", "f_mono", nullptr);
 	};
 
-	switch (level)
-	{
+	switch (level) {
 		case Kernel::LogLevel_Debug:
 			addTagName(m_buttonActiveDebug, m_nMsg, "DEBUG", "c_blue");
 			break;
@@ -299,16 +295,18 @@ void CLogListenerDesigner::log(const Kernel::ELogLevel level)
 			addTagName(m_buttonActiveFatal, m_nError, "FATAL", "c_red");
 			break;
 
+		case Kernel::LogLevel_First: break;
+		case Kernel::LogLevel_None: break;
+		case Kernel::LogLevel_Last: break;
+
 		default:
 			addTagName(nullptr, m_nMsg, "UNKNOWN", nullptr);
 			break;
 	}
 
 	if (gtk_toggle_button_get_active(m_buttonPopup) && (level == Kernel::LogLevel_Warning || level == Kernel::LogLevel_ImportantWarning
-														|| level == Kernel::LogLevel_Error || level == Kernel::LogLevel_Fatal))
-	{
-		if (!gtk_widget_get_visible(GTK_WIDGET(m_alertWindow)))
-		{
+														|| level == Kernel::LogLevel_Error || level == Kernel::LogLevel_Fatal)) {
+		if (!gtk_widget_get_visible(GTK_WIDGET(m_alertWindow))) {
 			gtk_window_set_position(GTK_WINDOW(m_alertWindow), GTK_WIN_POS_CENTER);
 			gtk_window_present(GTK_WINDOW(m_alertWindow));
 			gtk_window_set_keep_above(GTK_WINDOW(m_alertWindow), true);
@@ -343,8 +341,7 @@ void CLogListenerDesigner::updateMessageCounts() const
 
 	gtk_label_set_markup(m_labelnMsg, ss.str().data());
 
-	if (m_nWarning > 0)
-	{
+	if (m_nWarning > 0) {
 		ss.str("");
 		ss << "<b>" << m_nWarning << "</b> Warning";
 		if (m_nWarning > 1) { ss << "s"; }
@@ -355,8 +352,7 @@ void CLogListenerDesigner::updateMessageCounts() const
 		gtk_widget_set_visible(GTK_WIDGET(m_imageWarnings), true);
 	}
 
-	if (m_nError > 0)
-	{
+	if (m_nError > 0) {
 		ss.str("");
 		ss << "<b>" << m_nError << "</b> Error";
 		if (m_nError > 1) { ss << "s"; }
@@ -402,8 +398,7 @@ void CLogListenerDesigner::focusMessageWindow() const
 
 void CLogListenerDesigner::checkAppendFilterCurrentLog(const char* textColor, const char* logMessage, const bool isLink) const
 {
-	if (!m_currentLog)
-	{
+	if (!m_currentLog) {
 		std::cout << "Ouch, current log had been deleted before creating new, this shouldn't happen...\n";
 		return;
 	}

@@ -11,25 +11,22 @@ class CInterfacedScenario;
 class CScenarioStateStack
 {
 public:
-
 	CScenarioStateStack(const Kernel::IKernelContext& ctx, CInterfacedScenario& interfacedScenario, Kernel::IScenario& scenario);
-	virtual ~CScenarioStateStack() { for (auto& state : m_states) { delete state; } }
+	~CScenarioStateStack() { for (const auto& state : m_states) { delete state; } }
 
-	virtual bool isUndoPossible() { return m_currentState != m_states.begin(); }
-	virtual bool undo();
-	virtual bool isRedoPossible();
-	virtual bool redo();
+	bool isUndoPossible() { return m_currentState != m_states.begin(); }
+	bool undo();
+	bool isRedoPossible();
+	bool redo();
 	void dropLastState() { m_states.pop_back(); }
 
-	virtual bool snapshot();
+	bool snapshot();
 
 private:
-
-	virtual bool restoreState(const IMemoryBuffer& state);
-	virtual bool dumpState(IMemoryBuffer& state);
+	bool restoreState(const IMemoryBuffer& state) const;
+	bool dumpState(IMemoryBuffer& state) const;
 
 protected:
-
 	const Kernel::IKernelContext& m_kernelCtx;
 	CInterfacedScenario& m_interfacedScenario;
 	Kernel::IScenario& m_scenario;

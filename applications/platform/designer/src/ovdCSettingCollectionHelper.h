@@ -9,7 +9,6 @@ namespace Designer {
 class CSettingCollectionHelper final
 {
 public:
-
 	CSettingCollectionHelper(const Kernel::IKernelContext& ctx, const char* guiFilename) : m_KernelCtx(ctx), m_GUIFilename(guiFilename) { }
 	~CSettingCollectionHelper() = default;
 

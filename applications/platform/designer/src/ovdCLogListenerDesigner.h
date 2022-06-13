@@ -18,12 +18,7 @@ public:
 	class CLogObject
 	{
 	public:
-		explicit CLogObject(GtkTextBuffer* buffer)
-		{
-			m_Buffer       = gtk_text_buffer_new(gtk_text_buffer_get_tag_table(buffer));
-			m_PassedFilter = false;//by default the log does not pass the filter;
-		}
-
+		explicit CLogObject(GtkTextBuffer* buffer) : m_Buffer(gtk_text_buffer_new(gtk_text_buffer_get_tag_table(buffer))) { }
 		GtkTextBuffer* getTextBuffer() const { return m_Buffer; }
 
 		//determine if the log contains the searchTerm and tag the part with the sSerachTerm in gray
@@ -42,8 +37,7 @@ public:
 			gtk_text_buffer_remove_tag_by_name(m_Buffer, "gray_bg", &startFind, &endFind);
 
 			//no term means no research so no filter we let all pass
-			if (searchTerm == CString(""))
-			{
+			if (searchTerm == CString("")) {
 				m_PassedFilter = true;
 				return m_PassedFilter;
 			}
@@ -51,8 +45,7 @@ public:
 
 			GtkTextIter startMatch, endMatch;
 			const gchar* text = searchTerm.toASCIIString();
-			while (gtk_text_iter_forward_search(&startFind, text, GTK_TEXT_SEARCH_TEXT_ONLY, &startMatch, &endMatch, nullptr))
-			{
+			while (gtk_text_iter_forward_search(&startFind, text, GTK_TEXT_SEARCH_TEXT_ONLY, &startMatch, &endMatch, nullptr)) {
 				gtk_text_buffer_apply_tag_by_name(m_Buffer, "gray_bg", &startMatch, &endMatch);
 				//offset to end_match
 				const int offset = gtk_text_iter_get_offset(&endMatch);
@@ -73,7 +66,7 @@ public:
 		}
 
 		GtkTextBuffer* m_Buffer = nullptr;
-		bool m_PassedFilter     = false;
+		bool m_PassedFilter     = false;	//by default the log does not pass the filter;
 	};
 
 	CLogListenerDesigner(const Kernel::IKernelContext& ctx, GtkBuilder* builder);
@@ -109,7 +102,7 @@ public:
 	// TODO
 	void searchMessages(const CString& searchTerm);
 	void displayLog(CLogObject* log) const;
-	void appendLog(CLogObject* log) const;
+	void appendLog(const CLogObject* log) const;
 
 	_IsDerivedFromClass_Final_(Kernel::ILogListener, CIdentifier::undefined())
 
@@ -118,14 +111,12 @@ public:
 	std::function<void(CIdentifier&)> m_CenterOnBoxFun;
 
 protected:
-
 	std::map<Kernel::ELogLevel, bool> m_activeLevels;
 
 	//logs
 	std::vector<CLogObject*> m_storedLogs;
 
 private:
-
 	GtkBuilder* m_builder   = nullptr;
 	GtkTextView* m_textView = nullptr;
 	GtkTextBuffer* m_buffer = nullptr;

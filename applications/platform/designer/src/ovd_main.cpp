@@ -30,15 +30,13 @@ std::map<size_t, GdkColor> gColors;
 class CPluginObjectDescEnum
 {
 public:
-
 	explicit CPluginObjectDescEnum(const Kernel::IKernelContext& ctx) : m_kernelCtx(ctx) { }
 	virtual ~CPluginObjectDescEnum() = default;
 
 	virtual bool enumeratePluginObjectDesc()
 	{
 		CIdentifier id;
-		while ((id = m_kernelCtx.getPluginManager().getNextPluginObjectDescIdentifier(id)) != CIdentifier::undefined())
-		{
+		while ((id = m_kernelCtx.getPluginManager().getNextPluginObjectDescIdentifier(id)) != CIdentifier::undefined()) {
 			this->callback(*m_kernelCtx.getPluginManager().getPluginObjectDesc(id));
 		}
 		return true;
@@ -47,8 +45,7 @@ public:
 	virtual bool enumeratePluginObjectDesc(const CIdentifier& parentClassID)
 	{
 		CIdentifier id;
-		while ((id = m_kernelCtx.getPluginManager().getNextPluginObjectDescIdentifier(id, parentClassID)) != CIdentifier::undefined())
-		{
+		while ((id = m_kernelCtx.getPluginManager().getNextPluginObjectDescIdentifier(id, parentClassID)) != CIdentifier::undefined()) {
 			this->callback(*m_kernelCtx.getPluginManager().getPluginObjectDesc(id));
 		}
 		return true;
@@ -57,7 +54,6 @@ public:
 	virtual bool callback(const Plugins::IPluginObjectDesc& pod) = 0;
 
 protected:
-
 	const Kernel::IKernelContext& m_kernelCtx;
 };
 
@@ -68,15 +64,13 @@ protected:
 class CPluginObjectDescCollector final : public CPluginObjectDescEnum
 {
 public:
-
 	explicit CPluginObjectDescCollector(const Kernel::IKernelContext& ctx) : CPluginObjectDescEnum(ctx) { }
 
 	bool callback(const Plugins::IPluginObjectDesc& pod) override
 	{
 		const std::string name = std::string(pod.getCategory()) + "/" + std::string(pod.getName());
 		const auto it          = m_pods.find(name);
-		if (it != m_pods.end())
-		{
+		if (it != m_pods.end()) {
 			m_kernelCtx.getLogManager() << Kernel::LogLevel_ImportantWarning << "Duplicate plugin object name " << name << " "
 					<< it->second->getCreatedClass() << " and " << pod.getCreatedClass() << "\n";
 		}
@@ -87,7 +81,6 @@ public:
 	std::map<std::string, const Plugins::IPluginObjectDesc*>& getPluginObjectDescMap() { return m_pods; }
 
 private:
-
 	std::map<std::string, const Plugins::IPluginObjectDesc*> m_pods;
 };
 
@@ -98,7 +91,6 @@ private:
 class CPluginObjectDescLogger final : public CPluginObjectDescEnum
 {
 public:
-
 	explicit CPluginObjectDescLogger(const Kernel::IKernelContext& ctx) : CPluginObjectDescEnum(ctx) { }
 
 	bool callback(const Plugins::IPluginObjectDesc& pod) override
@@ -126,19 +118,18 @@ typedef std::map<std::string, std::tuple<int, int, int>> components_map_t;
 // We use an output variable because we want to be able to "enhance" an already existing list if necessary
 void getVersionComponentsFromConfigToken(const Kernel::IKernelContext& ctx, const char* configToken, components_map_t& componentVersions)
 {
-	json::Object versionsObject;
 	// We use a lookup instead of expansion as JSON can contain { } characters
-
 	const CString versionsJSON = ctx.getConfigurationManager().expand(CString("${") + configToken + "}");
-	if (versionsJSON.length() != 0)
-	{
+	if (versionsJSON.length() != 0) {
+		json::Object versionsObject;
 		// This check is necessary because the asignemt operator would fail with an assert
 		if (json::Deserialize(versionsJSON.toASCIIString()).GetType() == json::ObjectVal) { versionsObject = json::Deserialize(versionsJSON.toASCIIString()); }
-		for (const auto& component : versionsObject)
-		{
-			int versionMajor, versionMinor, versionPatch;
-			sscanf(component.second, "%d.%d.%d", &versionMajor, &versionMinor, &versionPatch);
-			componentVersions[component.first] = std::make_tuple(versionMajor, versionMinor, versionPatch);
+		for (const auto& component : versionsObject) {
+			int major, minor, patch;
+			char c;
+			std::stringstream ss(component.second.ToString());
+			ss >> major >> c >> minor >> c >> patch;
+			componentVersions[component.first] = std::make_tuple(major, minor, patch);
 		}
 	}
 }
@@ -148,15 +139,13 @@ static void InsertPluginObjectDescToGtkTreeStore(const Kernel::IKernelContext& c
 												 GtkTreeStore* treeStore, std::vector<const Plugins::IPluginObjectDesc*>& newBoxes,
 												 std::vector<const Plugins::IPluginObjectDesc*>& updatedBoxes, bool isNewVersion = false)
 {
-	typedef std::map<std::string, std::tuple<int, int, int>> components_map_t;
 	components_map_t currentVersions;
 	getVersionComponentsFromConfigToken(ctx, "ProjectVersion_Components", currentVersions);
 	// By default, fix version to current version - to display the new/update boxes available since current version only
 	components_map_t lastUsedVersions = currentVersions;
 	getVersionComponentsFromConfigToken(ctx, "Designer_LastComponentVersionsUsed", lastUsedVersions);
 
-	for (const auto& pod : pods)
-	{
+	for (const auto& pod : pods) {
 		const Plugins::IPluginObjectDesc* p = pod.second;
 
 		CString stockItemName;
@@ -174,8 +163,7 @@ static void InsertPluginObjectDescToGtkTreeStore(const Kernel::IKernelContext& c
 		&& !ctx.getConfigurationManager().expandAsBoolean("${Designer_ShowUnstable}", false)) { shouldShow = false; }
 		*/
 
-		if (shouldShow)
-		{
+		if (shouldShow) {
 			GtkStockItem stockItem;
 			if (gtk_stock_lookup(stockItemName, &stockItem) == 0) { stockItemName = GTK_STOCK_NEW; }
 
@@ -183,8 +171,7 @@ static void InsertPluginObjectDescToGtkTreeStore(const Kernel::IKernelContext& c
 			std::vector<std::string> categories;
 			std::string str = std::string(p->getCategory());
 			size_t j, i     = size_t(-1);
-			while ((j = str.find('/', i + 1)) != std::string::npos)
-			{
+			while ((j = str.find('/', i + 1)) != std::string::npos) {
 				std::string subCategory = std::string(str, i + 1, j - i - 1);
 				if (subCategory != std::string("")) { categories.push_back(subCategory); }
 				i = j;
@@ -196,20 +183,17 @@ static void InsertPluginObjectDescToGtkTreeStore(const Kernel::IKernelContext& c
 			GtkTreeIter iter2;
 			GtkTreeIter* iterParent = nullptr;
 			GtkTreeIter* iterChild  = &iter1;
-			for (const std::string& category : categories)
-			{
+			for (const std::string& category : categories) {
 				bool found = false;
 				bool valid = gtk_tree_model_iter_children(GTK_TREE_MODEL(treeStore), iterChild, iterParent) != 0;
-				while (valid && !found)
-				{
+				while (valid && !found) {
 					gchar* name = nullptr;
 					gboolean isPlugin;
 					gtk_tree_model_get(GTK_TREE_MODEL(treeStore), iterChild, Resource_StringName, &name, Resource_BooleanIsPlugin, &isPlugin, -1);
 					if ((isPlugin == 0) && name == category) { found = true; }
 					else { valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(treeStore), iterChild) != 0; }
 				}
-				if (!found)
-				{
+				if (!found) {
 					gtk_tree_store_append(GTK_TREE_STORE(treeStore), iterChild, iterParent);
 					gtk_tree_store_set(GTK_TREE_STORE(treeStore), iterChild, Resource_StringName, category.c_str(),
 									   Resource_StringShortDescription, "", Resource_StringStockIcon, "gtk-directory", Resource_StringColor, "#000000",
@@ -233,64 +217,57 @@ static void InsertPluginObjectDescToGtkTreeStore(const Kernel::IKernelContext& c
 			// If the software is launched for the first time after update, highlight new/updated boxes in tree-view
 			std::string boxSoftwareComponent = p->getSoftwareComponent().toASCIIString();
 
-			if (boxSoftwareComponent != "unknown")
-			{
-				int currentVMajor  = std::get<0>(currentVersions[boxSoftwareComponent]);
-				int currentVMinor  = std::get<1>(currentVersions[boxSoftwareComponent]);
-				int currentVPatch  = std::get<2>(currentVersions[boxSoftwareComponent]);
-				int lastUsedVMajor = std::get<0>(lastUsedVersions[boxSoftwareComponent]);
-				int lastUsedVMinor = std::get<1>(lastUsedVersions[boxSoftwareComponent]);
-				int lastUsedVPatch = std::get<2>(lastUsedVersions[boxSoftwareComponent]);
-				int boxCompoVMajor = 0;
-				int boxCompoVMinor = 0;
-				int boxCompoVPatch = 0;
+			if (boxSoftwareComponent != "unknown") {
+				int currentMajor  = std::get<0>(currentVersions[boxSoftwareComponent]);
+				int currentMinor  = std::get<1>(currentVersions[boxSoftwareComponent]);
+				int currentPatch  = std::get<2>(currentVersions[boxSoftwareComponent]);
+				int lastUsedMajor = std::get<0>(lastUsedVersions[boxSoftwareComponent]);
+				int lastUsedMinor = std::get<1>(lastUsedVersions[boxSoftwareComponent]);
+				int lastUsedPatch = std::get<2>(lastUsedVersions[boxSoftwareComponent]);
+				int boxMajor      = 0, boxMinor = 0, boxPatch = 0;
+				char c;
+				std::stringstream ss(p->getAddedSoftwareVersion().toASCIIString());
+				ss >> boxMajor >> c >> boxMinor >> c >> boxPatch;
 
-				sscanf(p->getAddedSoftwareVersion().toASCIIString(), "%d.%d.%d", &boxCompoVMajor, &boxCompoVMinor, &boxCompoVPatch);
 				// If this is a new version, then add in list all the updated/new boxes since last version opened
 				if (isNewVersion
-					&& ((lastUsedVMajor < boxCompoVMajor && boxCompoVMajor <= currentVMajor)
-						|| (boxCompoVMajor == currentVMajor && lastUsedVMinor < boxCompoVMinor && boxCompoVMinor <= currentVMinor)
-						|| (boxCompoVMinor == currentVMinor && lastUsedVPatch < boxCompoVPatch && boxCompoVPatch <= currentVPatch)
+					&& ((lastUsedMajor < boxMajor && boxMajor <= currentMajor)
+						|| (boxMajor == currentMajor && lastUsedMinor < boxMinor && boxMinor <= currentMinor)
+						|| (boxMinor == currentMinor && lastUsedPatch < boxPatch && boxPatch <= currentPatch)
 						// As default value for lastUsedVMinor and lastUsedVMajor are the current software version
-						|| (boxCompoVMajor == currentVMajor && boxCompoVMinor == currentVMinor && boxCompoVPatch == currentVPatch)))
-				{
+						|| (boxMajor == currentMajor && boxMinor == currentMinor && boxPatch == currentPatch))) {
 					str += " (New)";
 					bgColor = "#FFFFC4";
 					newBoxes.push_back(p);
 				}
-					// Otherwise
-				else if (boxCompoVMajor == currentVMajor && boxCompoVMinor == currentVMinor && boxCompoVPatch ==
-						 currentVPatch) { newBoxes.push_back(p); }
-				else
-				{
-					int boxCompoUpdatedVMajor = 0;
-					int boxCompoUpdatedVMinor = 0;
-					int boxCompoUpdatedVPatch = 0;
-					sscanf(p->getUpdatedSoftwareVersion().toASCIIString(), "%d.%d.%d", &boxCompoUpdatedVMajor,
-						   &boxCompoUpdatedVMinor, &boxCompoUpdatedVPatch);
+				// Otherwise
+				else if (boxMajor == currentMajor && boxMinor == currentMinor && boxPatch ==
+						 currentPatch) { newBoxes.push_back(p); }
+				else {
+					int updatedMajor = 0, updatedMinor = 0, updatedPatch = 0;
+					ss.str(p->getUpdatedSoftwareVersion().toASCIIString());
+					ss >> updatedMajor >> c >> updatedMinor >> c >> updatedPatch;
 					// If this is a new version, then add in list all the updated/new boxes since last version opened
 					if (isNewVersion
-						&& ((lastUsedVMajor < boxCompoUpdatedVMajor && boxCompoUpdatedVMajor <= currentVMajor)
-							|| (boxCompoUpdatedVMajor == currentVMajor && lastUsedVMinor < boxCompoUpdatedVMinor && boxCompoUpdatedVMinor <= currentVMinor)
-							|| (boxCompoUpdatedVMinor == currentVMinor && lastUsedVPatch < boxCompoUpdatedVPatch && boxCompoUpdatedVPatch <= currentVPatch)
+						&& ((lastUsedMajor < updatedMajor && updatedMajor <= currentMajor)
+							|| (updatedMajor == currentMajor && lastUsedMinor < updatedMinor && updatedMinor <= currentMinor)
+							|| (updatedMinor == currentMinor && lastUsedPatch < updatedPatch && updatedPatch <= currentPatch)
 							// If this is a new version Designer, and last version opened was set to default value i.e. version of current software
-							|| (boxCompoUpdatedVMajor == currentVMajor && boxCompoUpdatedVMinor == currentVMinor && boxCompoUpdatedVPatch == currentVPatch)))
-					{
+							|| (updatedMajor == currentMajor && updatedMinor == currentMinor && updatedPatch == currentPatch))) {
 						str += " (New)";
 						bgColor = "#FFFFC4";
 						updatedBoxes.push_back(p);
 					}
-						// Otherwise
-					else if (!isNewVersion && (boxCompoUpdatedVMajor == currentVMajor && boxCompoUpdatedVMinor == currentVMinor
-											   && boxCompoUpdatedVPatch == currentVPatch)) { updatedBoxes.push_back(p); }
+					// Otherwise
+					else if (!isNewVersion && (updatedMajor == currentMajor && updatedMinor == currentMinor
+											   && updatedPatch == currentPatch)) { updatedBoxes.push_back(p); }
 				}
 			}
 
 			// Construct a string containing the BoxAlgorithmIdentifier concatenated with a metabox identifier if necessary
 			std::string boxAlgorithmDesc = p->getCreatedClass().str();
 
-			if (p->getCreatedClass() == OVP_ClassId_BoxAlgorithm_Metabox)
-			{
+			if (p->getCreatedClass() == OVP_ClassId_BoxAlgorithm_Metabox) {
 				boxAlgorithmDesc += dynamic_cast<const Metabox::IMetaboxObjectDesc*>(p)->getMetaboxDescriptor();
 				textColor = "#007020";
 			}
@@ -338,10 +315,9 @@ static char backslash_to_slash(const char c) { return c == '\\' ? '/' : c; }
 * \param logMgr: name of the scenario to open
 ------------------------------------------------------------------------------------------------------------------------------------**/
 #if defined NDEBUG
-static bool ensureOneInstanceOfDesigner(config_t& config, Kernel::ILogManager& logMgr)
+static bool ensureOneInstanceOfDesigner(const config_t& config, Kernel::ILogManager& /*logMgr*/)
 {
-	try
-	{
+	try {
 		// If the mutex cannot be opened, it's the first instance of Designer, go to catch
 		boost::interprocess::named_mutex mutex(boost::interprocess::open_only, MUTEX_NAME);
 
@@ -351,8 +327,7 @@ static bool ensureOneInstanceOfDesigner(config_t& config, Kernel::ILogManager& l
 		std::string msg;
 		if (config.flags.empty()) { msg = std::to_string(int(CommandLineFlag_None)) + ": ;"; }
 
-		for (auto& flag : config.flags)
-		{
+		for (const auto& flag : config.flags) {
 			std::string fileName = flag.second;
 			std::transform(fileName.begin(), fileName.end(), fileName.begin(), backslash_to_slash);
 
@@ -366,8 +341,7 @@ static bool ensureOneInstanceOfDesigner(config_t& config, Kernel::ILogManager& l
 
 		return false;
 	}
-	catch (boost::interprocess::interprocess_exception&)
-	{
+	catch (boost::interprocess::interprocess_exception&) {
 		//Create the named mutex to catch the potential next instance of Designer that could open
 		boost::interprocess::named_mutex mutex(boost::interprocess::create_only, MUTEX_NAME);
 		return true;
@@ -384,15 +358,13 @@ bool parse_arguments(int argc, char** argv, config_t& config)
 	std::vector<std::string> args;
 #if defined TARGET_OS_Windows
 	int nArg;
-	LPWSTR* argListUtf16 = CommandLineToArgvW(GetCommandLineW(), &nArg);
-	for (int i = 1; i < nArg; ++i)
-	{
+	const LPWSTR* argListUtf16 = CommandLineToArgvW(GetCommandLineW(), &nArg);
+	for (int i = 1; i < nArg; ++i) {
 		GError* error = nullptr;
 		glong itemsRead, itemsWritten;
 		char* argUtf8 = g_utf16_to_utf8(reinterpret_cast<gunichar2*>(argListUtf16[i]), glong(wcslen(argListUtf16[i])), &itemsRead, &itemsWritten, &error);
 		args.emplace_back(argUtf8);
-		if (error != nullptr)
-		{
+		if (error != nullptr) {
 			g_error_free(error);
 			return false;
 		}
@@ -402,11 +374,9 @@ bool parse_arguments(int argc, char** argv, config_t& config)
 #endif
 	args.emplace_back("");
 
-	for (auto it = args.cbegin(); it != args.cend(); ++it)
-	{
-		if (*it == "") {}
-		else if (*it == "-h" || *it == "--help")
-		{
+	for (auto it = args.cbegin(); it != args.cend(); ++it) {
+		if (it->empty()) {}
+		else if (*it == "-h" || *it == "--help") {
 			tmp.help = true;
 			config   = tmp;
 			return false;
@@ -414,15 +384,13 @@ bool parse_arguments(int argc, char** argv, config_t& config)
 		else if (*it == "-o" || *it == "--open") { tmp.flags.emplace_back(CommandLineFlag_Open, *++it); }
 		else if (*it == "-p" || *it == "--play") { tmp.flags.emplace_back(CommandLineFlag_Play, *++it); }
 		else if (*it == "-pf" || *it == "--play-fast") { tmp.flags.emplace_back(CommandLineFlag_PlayFast, *++it); }
-		else if (*it == "--no-gui")
-		{
+		else if (*it == "--no-gui") {
 			tmp.noGui             = CommandLineFlag_NoGui;
 			tmp.noCheckColorDepth = CommandLineFlag_NoCheckColorDepth;
 			tmp.noManageSession   = CommandLineFlag_NoManageSession;
 		}
 		else if (*it == "--no-visualization") { tmp.noVisualization = CommandLineFlag_NoVisualization; }
-		else if (*it == "--invisible")
-		{
+		else if (*it == "--invisible") {
 			// no-gui + no-visualization
 			tmp.noVisualization   = CommandLineFlag_NoVisualization;
 			tmp.noGui             = CommandLineFlag_NoGui;
@@ -431,19 +399,15 @@ bool parse_arguments(int argc, char** argv, config_t& config)
 		}
 		else if (*it == "--no-check-color-depth") { tmp.noCheckColorDepth = CommandLineFlag_NoCheckColorDepth; }
 		else if (*it == "--no-session-management") { tmp.noManageSession = CommandLineFlag_NoManageSession; }
-		else if (*it == "-c" || *it == "--config")
-		{
-			if (*++it == "")
-			{
+		else if (*it == "-c" || *it == "--config") {
+			if (*++it == "") {
 				std::cout << "Error: Switch --config needs an argument\n";
 				return false;
 			}
 			tmp.flags.emplace_back(CommandLineFlag_Config, *it);
 		}
-		else if (*it == "-d" || *it == "--define")
-		{
-			if (*++it == "")
-			{
+		else if (*it == "-d" || *it == "--define") {
+			if (*++it == "") {
 				std::cout << "Error: Need two arguments after -d / --define.\n";
 				return false;
 			}
@@ -451,8 +415,7 @@ bool parse_arguments(int argc, char** argv, config_t& config)
 			// Were not using = as a separator for token/value, as on Windows its a problem passing = to the cmd interpreter
 			// which is used to launch the actual designer exe.
 			const std::string& token = *it;
-			if (*++it == "")
-			{
+			if (*++it == "") {
 				std::cout << "Error: Need two arguments after -d / --define.\n";
 				return false;
 			}
@@ -461,21 +424,17 @@ bool parse_arguments(int argc, char** argv, config_t& config)
 
 			tmp.tokens[token] = value;
 		}
-		else if (*it == "--random-seed")
-		{
-			if (*++it == "")
-			{
+		else if (*it == "--random-seed") {
+			if (*++it == "") {
 				std::cout << "Error: Switch --random-seed needs an argument\n";
 				return false;
 			}
 			tmp.flags.emplace_back(CommandLineFlag_RandomSeed, *it);
 		}
-		else if (*it == "--g-fatal-warnings")
-		{
+		else if (*it == "--g-fatal-warnings") {
 			// Do nothing here but accept this gtk flag
 		}
-		else
-		{
+		else {
 #if 0
 			// Assumes we just open a scenario - this is for retro compatibility and should not be supported in the future
 			config.flags.push_back(std::make_pair(CommandLineFlag_Open, *++it));
@@ -532,7 +491,7 @@ void user_info(char** argv, Kernel::ILogManager* logManager)
 		"  --open filename         : opens a scenario (see also --no-session-management)\n",
 		"  --play filename         : plays the opened scenario (see also --no-session-management)\n",
 		"  --play-fast filename    : plays fast forward the opened scenario (see also --no-session-management)\n",
-		"  --no-gui                : hides the " DESIGNER_NAME " graphical user interface (assumes --no-color-depth-test)\n",
+		"  --no-gui                : hides the ", DESIGNER_NAME, " graphical user interface (assumes --no-color-depth-test)\n",
 		"  --no-visualization      : hides the visualisation widgets\n",
 		"  --invisible             : hides the designer and the visualisation widgets (assumes --no-check-color-depth and --no-session-management)\n",
 		"  --no-check-color-depth  : does not check 24/32 bits color depth\n",
@@ -546,7 +505,7 @@ void user_info(char** argv, Kernel::ILogManager* logManager)
 
 int go(int argc, char** argv)
 {
-	bool errorWhileLoadingScenario = false, playRequested = false;
+	bool errorWhileLoadingScenario = false;
 	/*
 	{ 0,     0,     0,     0 },
 	{ 0, 16383, 16383, 16383 },
@@ -555,46 +514,44 @@ int go(int argc, char** argv)
 	{ 0, 65535, 65535, 65535 },
 	*/
 #define GDK_COLOR_SET(c, r, g, b) { (c).pixel=0; (c).red=r; (c).green=g; (c).blue=b; }
-	GDK_COLOR_SET(gColors[Color_BackgroundPlayerStarted], 32767, 32767, 32767);
-	GDK_COLOR_SET(gColors[Color_BoxBackgroundSelected], 65535, 65535, 49151);
-	GDK_COLOR_SET(gColors[Color_BoxBackgroundMissing], 49151, 32767, 32767);
-	GDK_COLOR_SET(gColors[Color_BoxBackgroundDisabled], 46767, 46767, 59151);
-	GDK_COLOR_SET(gColors[Color_BoxBackgroundDeprecated], 65535, 50000, 32767);
-	GDK_COLOR_SET(gColors[Color_BoxBackgroundOutdated], 57343, 57343, 57343);
-	GDK_COLOR_SET(gColors[Color_BoxBackgroundMetabox], 58343, 65535, 62343);
-	GDK_COLOR_SET(gColors[Color_BoxBackgroundUnstable], 49151, 49151, 49151);
-	GDK_COLOR_SET(gColors[Color_BoxBackground], 65535, 65535, 65535);
-	GDK_COLOR_SET(gColors[Color_BoxBorderSelected], 0, 0, 0);
-	GDK_COLOR_SET(gColors[Color_BoxBorder], 0, 0, 0);
-	GDK_COLOR_SET(gColors[Color_BoxInputBackground], 65535, 49151, 32767);
-	GDK_COLOR_SET(gColors[Color_BoxInputBorder], 16383, 16383, 16383);
-	GDK_COLOR_SET(gColors[Color_BoxOutputBackground], 32767, 65535, 49151);
-	GDK_COLOR_SET(gColors[Color_BoxOutputBorder], 16383, 16383, 16383);
-	GDK_COLOR_SET(gColors[Color_BoxSettingBackground], 49151, 32767, 65535);
-	GDK_COLOR_SET(gColors[Color_BoxSettingBorder], 16383, 16383, 16383);
+	GDK_COLOR_SET(gColors[Color_BackgroundPlayerStarted], 32767, 32767, 32767)
+	GDK_COLOR_SET(gColors[Color_BoxBackgroundSelected], 65535, 65535, 49151)
+	GDK_COLOR_SET(gColors[Color_BoxBackgroundMissing], 49151, 32767, 32767)
+	GDK_COLOR_SET(gColors[Color_BoxBackgroundDisabled], 46767, 46767, 59151)
+	GDK_COLOR_SET(gColors[Color_BoxBackgroundDeprecated], 65535, 50000, 32767)
+	GDK_COLOR_SET(gColors[Color_BoxBackgroundOutdated], 57343, 57343, 57343)
+	GDK_COLOR_SET(gColors[Color_BoxBackgroundMetabox], 58343, 65535, 62343)
+	GDK_COLOR_SET(gColors[Color_BoxBackgroundUnstable], 49151, 49151, 49151)
+	GDK_COLOR_SET(gColors[Color_BoxBackground], 65535, 65535, 65535)
+	GDK_COLOR_SET(gColors[Color_BoxBorderSelected], 0, 0, 0)
+	GDK_COLOR_SET(gColors[Color_BoxBorder], 0, 0, 0)
+	GDK_COLOR_SET(gColors[Color_BoxInputBackground], 65535, 49151, 32767)
+	GDK_COLOR_SET(gColors[Color_BoxInputBorder], 16383, 16383, 16383)
+	GDK_COLOR_SET(gColors[Color_BoxOutputBackground], 32767, 65535, 49151)
+	GDK_COLOR_SET(gColors[Color_BoxOutputBorder], 16383, 16383, 16383)
+	GDK_COLOR_SET(gColors[Color_BoxSettingBackground], 49151, 32767, 65535)
+	GDK_COLOR_SET(gColors[Color_BoxSettingBorder], 16383, 16383, 16383)
 
-	GDK_COLOR_SET(gColors[Color_CommentBackground], 65535, 65535, 57343);
-	GDK_COLOR_SET(gColors[Color_CommentBackgroundSelected], 65535, 65535, 49151);
-	GDK_COLOR_SET(gColors[Color_CommentBorder], 32767, 32767, 32767);
-	GDK_COLOR_SET(gColors[Color_CommentBorderSelected], 32767, 32767, 32767);
+	GDK_COLOR_SET(gColors[Color_CommentBackground], 65535, 65535, 57343)
+	GDK_COLOR_SET(gColors[Color_CommentBackgroundSelected], 65535, 65535, 49151)
+	GDK_COLOR_SET(gColors[Color_CommentBorder], 32767, 32767, 32767)
+	GDK_COLOR_SET(gColors[Color_CommentBorderSelected], 32767, 32767, 32767)
 
-	GDK_COLOR_SET(gColors[Color_Link], 0, 0, 0);
-	GDK_COLOR_SET(gColors[Color_LinkSelected], 49151, 49151, 16383);
-	GDK_COLOR_SET(gColors[Color_LinkUpCast], 32767, 16383, 16383);
-	GDK_COLOR_SET(gColors[Color_LinkDownCast], 16383, 32767, 16383);
-	GDK_COLOR_SET(gColors[Color_LinkInvalid], 49151, 16383, 16383);
-	GDK_COLOR_SET(gColors[Color_SelectionArea], 0x3f00, 0x3f00, 0x3f00);
-	GDK_COLOR_SET(gColors[Color_SelectionAreaBorder], 0, 0, 0);
+	GDK_COLOR_SET(gColors[Color_Link], 0, 0, 0)
+	GDK_COLOR_SET(gColors[Color_LinkSelected], 49151, 49151, 16383)
+	GDK_COLOR_SET(gColors[Color_LinkUpCast], 32767, 16383, 16383)
+	GDK_COLOR_SET(gColors[Color_LinkDownCast], 16383, 32767, 16383)
+	GDK_COLOR_SET(gColors[Color_LinkInvalid], 49151, 16383, 16383)
+	GDK_COLOR_SET(gColors[Color_SelectionArea], 0x3f00, 0x3f00, 0x3f00)
+	GDK_COLOR_SET(gColors[Color_SelectionAreaBorder], 0, 0, 0)
 #undef GDK_COLOR_SET
 	//___________________________________________________________________//
 	//                                                                   //
 
 	config_t config;
 	bool bArgParseResult = parse_arguments(argc, argv, config);
-	if (!bArgParseResult)
-	{
-		if (config.help)
-		{
+	if (!bArgParseResult) {
+		if (config.help) {
 			user_info(argv, nullptr);
 			return 0;
 		}
@@ -612,19 +569,16 @@ int go(int argc, char** argv)
 	CString file = Directories::getLibDir() + "/libopenvibe-kernel.dylib";
 #endif
 	if (!loader.load(file, &errorMsg)) { std::cout << "[ FAILED ] Error loading kernel (" << errorMsg << ")" << " from [" << file << "]\n"; }
-	else
-	{
+	else {
 		std::cout << "[  INF  ] Kernel module loaded, trying to get kernel descriptor" << "\n";
-		Kernel::IKernelDesc* desc       = nullptr;
-		Kernel::IKernelContext* context = nullptr;
+		Kernel::IKernelDesc* desc = nullptr;
 		loader.initialize();
 		loader.getKernelDesc(desc);
 		if (desc == nullptr) { std::cout << "[ FAILED ] No kernel descriptor" << "\n"; }
-		else
-		{
+		else {
 			std::cout << "[  INF  ] Got kernel descriptor, trying to create kernel" << "\n";
 
-			context = desc->createKernel("designer", Directories::getDataDir() + "/kernel/openvibe.conf");
+			Kernel::IKernelContext* context = desc->createKernel("designer", Directories::getDataDir() + "/kernel/openvibe.conf");
 			context->initialize();
 			context->getConfigurationManager().addConfigurationFromFile(Directories::getDataDir() + "/applications/designer/designer.conf");
 			CString appConfigFile = context->getConfigurationManager().expand("${Designer_CustomConfigurationFile}");
@@ -635,15 +589,12 @@ int go(int argc, char** argv)
 			// initialize random number generator with nullptr by default
 			System::Math::initializeRandomMachine(time(nullptr));
 
-			while (it != config.flags.end())
-			{
-				if (it->first == CommandLineFlag_Config)
-				{
+			while (it != config.flags.end()) {
+				if (it->first == CommandLineFlag_Config) {
 					appConfigFile = CString(it->second.c_str());
 					context->getConfigurationManager().addConfigurationFromFile(appConfigFile);
 				}
-				else if (it->first == CommandLineFlag_RandomSeed)
-				{
+				else if (it->first == CommandLineFlag_RandomSeed) {
 					const size_t seed = size_t(strtol(it->second.c_str(), nullptr, 10));
 					System::Math::initializeRandomMachine(seed);
 				}
@@ -652,8 +603,7 @@ int go(int argc, char** argv)
 
 
 			if (context == nullptr) { std::cout << "[ FAILED ] No kernel created by kernel descriptor" << "\n"; }
-			else
-			{
+			else {
 				Toolkit::initialize(*context);
 				VisualizationToolkit::initialize(*context);
 
@@ -689,10 +639,8 @@ int go(int argc, char** argv)
 				setlocale(LC_ALL, locale.toASCIIString());
 
 				if (!(bArgParseResult || config.help)) { user_info(argv, &logMgr); }
-				else
-				{
-					if ((!configMgr.expandAsBoolean("${Kernel_WithGUI}", true)) && ((config.getFlags() & CommandLineFlag_NoGui) == 0))
-					{
+				else {
+					if ((!configMgr.expandAsBoolean("${Kernel_WithGUI}", true)) && ((config.getFlags() & CommandLineFlag_NoGui) == 0)) {
 						logMgr << Kernel::LogLevel_ImportantWarning <<
 								"${Kernel_WithGUI} is set to false and --no-gui flag not set. Forcing the --no-gui flag\n";
 						config.noGui             = CommandLineFlag_NoGui;
@@ -700,26 +648,23 @@ int go(int argc, char** argv)
 						config.noManageSession   = CommandLineFlag_NoManageSession;
 					}
 
-					if (config.noGui != CommandLineFlag_NoGui && !ensureOneInstanceOfDesigner(config, logMgr))
-					{
+					if (config.noGui != CommandLineFlag_NoGui && !ensureOneInstanceOfDesigner(config, logMgr)) {
 						logMgr << Kernel::LogLevel_Trace << "An instance of Designer is already running.\n";
 						return 0;
 					}
 
 					{
+						bool playRequested = false;
 						CApplication app(*context);
 						app.initialize(config.getFlags());
 
 						// FIXME is it necessary to keep next line uncomment ?
 						//bool isScreenValid=true;
-						if (config.noCheckColorDepth == 0)
-						{
-							if (GDK_IS_DRAWABLE(GTK_WIDGET(app.m_MainWindow)->window))
-							{
+						if (config.noCheckColorDepth == 0) {
+							if (GDK_IS_DRAWABLE(GTK_WIDGET(app.m_MainWindow)->window)) {
 								// FIXME is it necessary to keep next line uncomment ?
 								//isScreenValid=false;
-								switch (gdk_drawable_get_depth(GTK_WIDGET(app.m_MainWindow)->window))
-								{
+								switch (gdk_drawable_get_depth(GTK_WIDGET(app.m_MainWindow)->window)) {
 									case 24:
 									case 32:
 										// FIXME is it necessary to keep next line uncomment ?
@@ -727,30 +672,26 @@ int go(int argc, char** argv)
 										break;
 									default:
 										logMgr << Kernel::LogLevel_Error << "Please change the color depth of your screen to either 24 or 32 bits\n";
-										// TODO find a way to break
+									// TODO find a way to break
 										break;
 								}
 							}
 						}
 
 						// Add or replace a configuration token if required in command line
-						for (const auto& t : config.tokens)
-						{
+						for (const auto& t : config.tokens) {
 							logMgr << Kernel::LogLevel_Trace << "Adding command line configuration token [" << t.first << " = " << t.second << "]\n";
 							configMgr.addOrReplaceConfigurationToken(t.first.c_str(), t.second.c_str());
 						}
 
-						for (const auto& f : config.flags)
-						{
+						for (const auto& f : config.flags) {
 							std::string fileName = f.second;
 							std::transform(fileName.begin(), fileName.end(), fileName.begin(), backslash_to_slash);
 							bool error;
-							switch (f.first)
-							{
+							switch (f.first) {
 								case CommandLineFlag_Open:
 									logMgr << Kernel::LogLevel_Info << "Opening scenario [" << fileName << "]\n";
-									if (!app.openScenario(fileName.c_str()))
-									{
+									if (!app.openScenario(fileName.c_str())) {
 										logMgr << Kernel::LogLevel_Error << "Could not open scenario " << fileName << "\n";
 										errorWhileLoadingScenario = config.noGui == CommandLineFlag_NoGui;
 									}
@@ -758,13 +699,11 @@ int go(int argc, char** argv)
 								case CommandLineFlag_Play:
 									logMgr << Kernel::LogLevel_Info << "Opening and playing scenario [" << fileName << "]\n";
 									error = !app.openScenario(fileName.c_str());
-									if (!error)
-									{
+									if (!error) {
 										app.playScenarioCB();
 										error = app.getCurrentInterfacedScenario()->m_PlayerStatus != Kernel::EPlayerStatus::Play;
 									}
-									if (error)
-									{
+									if (error) {
 										logMgr << Kernel::LogLevel_Error << "Scenario open or load error with --play.\n";
 										errorWhileLoadingScenario = config.noGui == CommandLineFlag_NoGui;
 									}
@@ -772,35 +711,37 @@ int go(int argc, char** argv)
 								case CommandLineFlag_PlayFast:
 									logMgr << Kernel::LogLevel_Info << "Opening and fast playing scenario [" << fileName << "]\n";
 									error = !app.openScenario(fileName.c_str());
-									if (!error)
-									{
+									if (!error) {
 										app.forwardScenarioCB();
 										error = app.getCurrentInterfacedScenario()->m_PlayerStatus != Kernel::EPlayerStatus::Forward;
 									}
-									if (error)
-									{
+									if (error) {
 										logMgr << Kernel::LogLevel_Error << "Scenario open or load error with --play-fast.\n";
 										errorWhileLoadingScenario = config.noGui == CommandLineFlag_NoGui;
 									}
 									playRequested = true;
 									break;
-									//case CommandLineFlag_Define:
-									//break;
-								default:
-									break;
+
+								case CommandLineFlag_None: break;
+								case CommandLineFlag_NoGui: break;
+								case CommandLineFlag_NoCheckColorDepth: break;
+								case CommandLineFlag_NoManageSession: break;
+								case CommandLineFlag_Define: break;
+								case CommandLineFlag_Config: break;
+								case CommandLineFlag_RandomSeed: break;
+								case CommandLineFlag_NoVisualization: break;
+								default: break;
 							}
 						}
 
-						if (!playRequested && config.noGui == CommandLineFlag_NoGui)
-						{
+						if (!playRequested && config.noGui == CommandLineFlag_NoGui) {
 							logMgr << Kernel::LogLevel_Info
 									<< "Switch --no-gui is enabled but no play operation was requested. Designer will exit automatically.\n";
 						}
 
 						if (app.m_Scenarios.empty() && config.noGui != CommandLineFlag_NoGui) { app.newScenarioCB(); }
 
-						if (!app.m_Scenarios.empty())
-						{
+						if (!app.m_Scenarios.empty()) {
 							CPluginObjectDescCollector cbCollector1(*context);
 							CPluginObjectDescCollector cbCollector2(*context);
 							CPluginObjectDescLogger cbLogger(*context);
@@ -824,8 +765,7 @@ int go(int argc, char** argv)
 							// If the application is a newly launched version, and not launched without GUI -> display changelog
 							if (app.m_IsNewVersion && config.noGui != CommandLineFlag_NoGui) { app.displayChangelogWhenAvailable(); }
 							try { gtk_main(); }
-							catch (DesignerException& ex)
-							{
+							catch (DesignerException& ex) {
 								std::cerr << "Caught designer exception" << std::endl;
 								GtkWidget* errorDialog = gtk_message_dialog_new(nullptr, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE,
 																				"%s", ex.getErrorString().c_str());

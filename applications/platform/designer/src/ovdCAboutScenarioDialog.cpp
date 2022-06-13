@@ -5,7 +5,7 @@ namespace Designer {
 
 static void buttonMetaboxReset_clicked(GtkWidget* /*widget*/, gpointer data) { gtk_entry_set_text(GTK_ENTRY(data), CIdentifier::random().str().c_str()); }
 
-bool CAboutScenarioDialog::run()
+bool CAboutScenarioDialog::run() const
 
 {
 	GtkBuilder* interface = gtk_builder_new(); // glade_xml_new(m_guiFilename.toASCIIString(), "scenario_about", nullptr);
@@ -42,8 +42,7 @@ bool CAboutScenarioDialog::run()
 	gtk_entry_set_text(GTK_ENTRY(updatedSoftwareVersion), m_scenario.getAttributeValue(OV_AttributeId_Scenario_UpdatedSoftwareVersion).toASCIIString());
 
 	if (m_scenario.isMetabox()) { gtk_entry_set_text(GTK_ENTRY(metaboxId), m_scenario.getAttributeValue(OVP_AttributeId_Metabox_ID).toASCIIString()); }
-	else
-	{
+	else {
 		gtk_widget_set_sensitive(metaboxId, FALSE);
 		gtk_widget_set_sensitive(resetMetaboxId, FALSE);
 	}
@@ -65,12 +64,10 @@ bool CAboutScenarioDialog::run()
 	m_scenario.setAttributeValue(OV_AttributeId_Scenario_AddedSoftwareVersion, gtk_entry_get_text(GTK_ENTRY(addedSoftwareVersion)));
 	m_scenario.setAttributeValue(OV_AttributeId_Scenario_UpdatedSoftwareVersion, gtk_entry_get_text(GTK_ENTRY(updatedSoftwareVersion)));
 
-	if (m_scenario.isMetabox())
-	{
+	if (m_scenario.isMetabox()) {
 		const CString id(gtk_entry_get_text(GTK_ENTRY(metaboxId)));
 		CIdentifier tmp;
-		if (!tmp.fromString(id))
-		{
+		if (!tmp.fromString(id)) {
 			m_kernelCtx.getLogManager() << Kernel::LogLevel_Error << "Invalid identifier " << id
 					<< " is not in the \"(0x[0-9a-f]{1-8}, 0x[0-9a-f]{1-8})\" format. ";
 			m_kernelCtx.getLogManager() << "Reverting to " << m_scenario.getAttributeValue(OVP_AttributeId_Metabox_ID).toASCIIString() << ".\n";

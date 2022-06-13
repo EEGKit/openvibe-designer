@@ -2,6 +2,7 @@
 
 #include <exception>
 #include <stdexcept>
+#include <sstream>
 #include <fs/Files.h>
 
 #include <openvibe/ovAssert.h>
@@ -34,7 +35,7 @@
 class DesignerException final : public std::runtime_error
 {
 public:
-	DesignerException(OpenViBE::Kernel::CErrorManager& errorManager)
+	explicit DesignerException(OpenViBE::Kernel::CErrorManager& errorManager)
 		: std::runtime_error("Designer caused an exception"), m_ErrorManager(errorManager) {}
 
 	const char* what() const NOEXCEPT override { return m_ErrorManager.getLastErrorString(); }
@@ -43,8 +44,7 @@ public:
 	{
 		std::string errorMessage;
 		const OpenViBE::Kernel::CError* error = m_ErrorManager.getLastError();
-		while (error)
-		{
+		while (error) {
 			char location[1024];
 			FS::Files::getFilename(error->getErrorLocation(), location);
 			errorMessage += "Message: " + std::string(error->getErrorString()) + "\nFile: " + location + "\n";
@@ -54,14 +54,14 @@ public:
 		return errorMessage;
 	}
 
-	void releaseErrors() NOEXCEPT { m_ErrorManager.releaseErrors(); }
+	void releaseErrors() const NOEXCEPT { m_ErrorManager.releaseErrors(); }
 
 	OpenViBE::Kernel::CErrorManager& m_ErrorManager;
 };
 
 #define OV_EXCEPTION_D(description, type) \
 do { \
-	m_kernelCtx.getErrorManager().pushError(type, static_cast<const OpenViBE::ErrorStream&>(OpenViBE::ErrorStream() << description).str().c_str(), __FILE__, __LINE__ ); \
+	m_kernelCtx.getErrorManager().pushError(type, static_cast<const std::ostringstream&>(std::ostringstream() << description).str().c_str(), __FILE__, __LINE__ ); \
 	m_kernelCtx.getLogManager() << OpenViBE::Kernel::LogLevel_Fatal << "[Error description] = " << description << "; [Error code] = " << size_t((type)) << "\n"; \
 	throw DesignerException(m_kernelCtx.getErrorManager()); \
 } while(0)

@@ -64,8 +64,7 @@ void CColorGradientSettingView::configurePressed()
 
 	VisualizationToolkit::ColorGradient::parse(colorGradient, initialGradient);
 	m_colorGradient.resize(std::max<size_t>(colorGradient.getDimensionSize(1), 2));
-	for (size_t i = 0; i < colorGradient.getDimensionSize(1); ++i)
-	{
+	for (size_t i = 0; i < colorGradient.getDimensionSize(1); ++i) {
 		const size_t idx               = i * 4;
 		m_colorGradient[i].percent     = colorGradient[idx];
 		m_colorGradient[i].color.red   = guint(colorGradient[idx + 1] * .01 * 65535.);
@@ -83,13 +82,11 @@ void CColorGradientSettingView::configurePressed()
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(builder, "setting_editor-color_gradient-remove_button")), "pressed",
 					 G_CALLBACK(OnButtonColorGradientRemovePressed), this);
 
-	if (gtk_dialog_run(GTK_DIALOG(m_dialog)) == GTK_RESPONSE_APPLY)
-	{
+	if (gtk_dialog_run(GTK_DIALOG(m_dialog)) == GTK_RESPONSE_APPLY) {
 		CString finalGradient;
 		CMatrix finalColorGradient(4, m_colorGradient.size());
 		size_t idx = 0;
-		for (size_t i = 0; i < m_colorGradient.size(); ++i)
-		{
+		for (size_t i = 0; i < m_colorGradient.size(); ++i) {
 			finalColorGradient[idx++] = m_colorGradient[i].percent;
 			finalColorGradient[idx++] = round(m_colorGradient[i].color.red * 100. / 65535.);
 			finalColorGradient[idx++] = round(m_colorGradient[i].color.green * 100. / 65535.);
@@ -115,8 +112,7 @@ void CColorGradientSettingView::initializeGradient()
 	const size_t count = m_colorGradient.size();
 	m_colorButtons.clear();
 	m_spinButtons.clear();
-	for (auto& cg : m_colorGradient)
-	{
+	for (auto& cg : m_colorGradient) {
 		GtkBuilder* builder = gtk_builder_new();
 		gtk_builder_add_from_file(builder, m_builderName.toASCIIString(), nullptr);
 		gtk_builder_connect_signals(builder, nullptr);
@@ -158,8 +154,7 @@ void CColorGradientSettingView::refreshColorGradient()
 	gdk_drawable_get_size(m_drawingArea->window, &sizex, &sizey);
 
 	CMatrix gradient(4, m_colorGradient.size());
-	for (size_t i = 0; i < m_colorGradient.size(); ++i)
-	{
+	for (size_t i = 0; i < m_colorGradient.size(); ++i) {
 		const size_t idx  = i * 4;
 		gradient[idx]     = m_colorGradient[i].percent;
 		gradient[idx + 1] = m_colorGradient[i].color.red * 100. / 65535.;
@@ -173,8 +168,7 @@ void CColorGradientSettingView::refreshColorGradient()
 	GdkGC* gc = gdk_gc_new(m_drawingArea->window);
 	GdkColor color;
 
-	for (size_t i = 0; i < steps; ++i)
-	{
+	for (size_t i = 0; i < steps; ++i) {
 		color.red   = guint(interpolated[i * 4 + 1] * 65535 * .01);
 		color.green = guint(interpolated[i * 4 + 2] * 65535 * .01);
 		color.blue  = guint(interpolated[i * 4 + 3] * 65535 * .01);
@@ -194,8 +188,7 @@ void CColorGradientSettingView::addColor()
 
 void CColorGradientSettingView::removeColor()
 {
-	if (m_colorGradient.size() > 2)
-	{
+	if (m_colorGradient.size() > 2) {
 		m_colorGradient.resize(m_colorGradient.size() - 1);
 		m_colorGradient[m_colorGradient.size() - 1].percent = 100;
 		initializeGradient();
@@ -212,12 +205,10 @@ void CColorGradientSettingView::spinChange(GtkSpinButton* button)
 	GtkSpinButton* nextSpinButton = i < m_colorGradient.size() - 1 ? m_colorGradient[i + 1].spinButton : nullptr;
 	if (!prevSpinButton) { gtk_spin_button_set_value(button, 0); }
 	if (!nextSpinButton) { gtk_spin_button_set_value(button, 100); }
-	if (prevSpinButton && gtk_spin_button_get_value(button) < gtk_spin_button_get_value(prevSpinButton))
-	{
+	if (prevSpinButton && gtk_spin_button_get_value(button) < gtk_spin_button_get_value(prevSpinButton)) {
 		gtk_spin_button_set_value(button, gtk_spin_button_get_value(prevSpinButton));
 	}
-	if (nextSpinButton && gtk_spin_button_get_value(button) > gtk_spin_button_get_value(nextSpinButton))
-	{
+	if (nextSpinButton && gtk_spin_button_get_value(button) > gtk_spin_button_get_value(nextSpinButton)) {
 		gtk_spin_button_set_value(button, gtk_spin_button_get_value(nextSpinButton));
 	}
 
@@ -238,8 +229,7 @@ void CColorGradientSettingView::colorChange(GtkColorButton* button)
 
 void CColorGradientSettingView::onChange()
 {
-	if (!m_onValueSetting)
-	{
+	if (!m_onValueSetting) {
 		const gchar* value = gtk_entry_get_text(m_entry);
 		getBox().setSettingValue(getSettingIndex(), value);
 	}

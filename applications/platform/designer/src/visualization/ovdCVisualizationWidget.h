@@ -45,7 +45,6 @@ public:
 	int getMaxDividerPosition() override { return m_maxDividerPosition; }
 
 private:
-
 	const Kernel::IKernelContext& m_kernelCtx;
 	CIdentifier m_id = CIdentifier::undefined();
 	CString m_name;

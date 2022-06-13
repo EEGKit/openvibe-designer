@@ -7,8 +7,7 @@ namespace Designer {
 CCommentProxy::CCommentProxy(const Kernel::IKernelContext& ctx, const Kernel::IComment& comment)
 	: m_kernelCtx(ctx), m_constComment(&comment)
 {
-	if (m_constComment)
-	{
+	if (m_constComment) {
 		const TAttributeHandler handler(*m_constComment);
 		m_centerX = handler.getAttributeValue<int>(OV_AttributeId_Comment_XCenterPosition);
 		m_centerY = handler.getAttributeValue<int>(OV_AttributeId_Comment_YCenterPosition);
@@ -18,8 +17,7 @@ CCommentProxy::CCommentProxy(const Kernel::IKernelContext& ctx, const Kernel::IC
 CCommentProxy::CCommentProxy(const Kernel::IKernelContext& ctx, Kernel::IScenario& scenario, const CIdentifier& commentID)
 	: m_kernelCtx(ctx), m_constComment(scenario.getCommentDetails(commentID)), m_comment(scenario.getCommentDetails(commentID))
 {
-	if (m_constComment)
-	{
+	if (m_constComment) {
 		const TAttributeHandler handler(*m_constComment);
 		m_centerX = handler.getAttributeValue<int>(OV_AttributeId_Comment_XCenterPosition);
 		m_centerY = handler.getAttributeValue<int>(OV_AttributeId_Comment_YCenterPosition);
@@ -49,8 +47,7 @@ void CCommentProxy::setCenter(const int centerX, const int centerY)
 
 void CCommentProxy::apply()
 {
-	if (m_comment)
-	{
+	if (m_comment) {
 		TAttributeHandler handler(*m_comment);
 
 		if (handler.hasAttribute(OV_AttributeId_Comment_XCenterPosition)) { handler.setAttributeValue<int>(OV_AttributeId_Comment_XCenterPosition, m_centerX); }

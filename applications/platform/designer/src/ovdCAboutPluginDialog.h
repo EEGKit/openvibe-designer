@@ -7,7 +7,6 @@ namespace Designer {
 class CAboutPluginDialog final
 {
 public:
-
 	CAboutPluginDialog(const Kernel::IKernelContext& ctx, const CIdentifier& pluginClassID, const char* guiFilename)
 		: m_kernelCtx(ctx), m_pluginClassID(pluginClassID), m_guiFilename(guiFilename) { }
 
@@ -19,7 +18,6 @@ public:
 	bool run();
 
 protected:
-
 	const Kernel::IKernelContext& m_kernelCtx;
 	CIdentifier m_pluginClassID = CIdentifier::undefined();
 	CString m_guiFilename;

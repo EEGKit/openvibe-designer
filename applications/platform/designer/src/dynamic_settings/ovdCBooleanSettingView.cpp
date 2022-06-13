@@ -30,13 +30,11 @@ void CBooleanSettingView::getValue(CString& value) const { value = CString(gtk_e
 void CBooleanSettingView::setValue(const CString& value)
 {
 	m_onValueSetting = true;
-	if (value == CString("true"))
-	{
+	if (value == CString("true")) {
 		gtk_toggle_button_set_active(m_toggle, true);
 		gtk_toggle_button_set_inconsistent(m_toggle, false);
 	}
-	else if (value == CString("false"))
-	{
+	else if (value == CString("false")) {
 		gtk_toggle_button_set_active(m_toggle, false);
 		gtk_toggle_button_set_inconsistent(m_toggle, false);
 	}
@@ -49,15 +47,12 @@ void CBooleanSettingView::setValue(const CString& value)
 
 void CBooleanSettingView::toggleButtonClick()
 {
-	if (!m_onValueSetting)
-	{
-		if (gtk_toggle_button_get_active(m_toggle))
-		{
+	if (!m_onValueSetting) {
+		if (gtk_toggle_button_get_active(m_toggle)) {
 			getBox().setSettingValue(getSettingIndex(), "true");
 			setValue("true");
 		}
-		else
-		{
+		else {
 			getBox().setSettingValue(getSettingIndex(), "false");
 			setValue("false");
 		}
@@ -66,8 +61,7 @@ void CBooleanSettingView::toggleButtonClick()
 
 void CBooleanSettingView::onChange()
 {
-	if (!m_onValueSetting)
-	{
+	if (!m_onValueSetting) {
 		const gchar* value = gtk_entry_get_text(m_entry);
 		getBox().setSettingValue(getSettingIndex(), value);
 	}

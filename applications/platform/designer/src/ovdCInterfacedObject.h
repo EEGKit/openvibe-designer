@@ -7,7 +7,6 @@ namespace Designer {
 class CInterfacedObject
 {
 public:
-
 	CInterfacedObject() = default;
 	explicit CInterfacedObject(const CIdentifier& identifier) : m_ID(identifier) { }
 

@@ -4,21 +4,22 @@
 #include "ovdCPlayerVisualization.h"
 
 #include <cstring>
+#include <array>
 
 namespace OpenViBE {
 namespace Designer {
 
 using EVTColumn = VisualizationToolkit::EVisualizationTreeColumn;
 using EVTNode = VisualizationToolkit::EVisualizationTreeNode;
-using EVTWidget = VisualizationToolkit::EVisualizationWidget;
-using IVTWidget = VisualizationToolkit::IVisualizationWidget;
+using EVWidget = VisualizationToolkit::EVisualizationWidget;
+using IVWidget = VisualizationToolkit::IVisualizationWidget;
 
-static GtkTargetEntry targets[] = { { static_cast<gchar*>("STRING"), 0, 0 }, { static_cast<gchar*>("text/plain"), 0, 0 }, };
+static std::array<GtkTargetEntry, 2> targets = { { { const_cast<gchar*>("STRING"), 0, 0 }, { const_cast<gchar*>("text/plain"), 0, 0 } } };
 
 static void delete_window_manager_window_cb(GtkWidget* widget, GdkEvent* /*event*/, gpointer data)
 {
 	CPlayerVisualization* visualization = reinterpret_cast<CPlayerVisualization*>(data);
-	CInterfacedScenario& scenario       = visualization->getInterfacedScenario();
+	const CInterfacedScenario& scenario = visualization->getInterfacedScenario();
 	GtkWidget* dialog                   = gtk_message_dialog_new(GTK_WINDOW(widget), GTK_DIALOG_MODAL, GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
 																 "Would you like to stop the scenario execution?");
 	const gint res = gtk_dialog_run(GTK_DIALOG(dialog));
@@ -35,8 +36,7 @@ CPlayerVisualization::~CPlayerVisualization()
 
 	m_activeToolbarButton = nullptr;
 
-	for (auto& window : m_windows)
-	{
+	for (const auto& window : m_windows) {
 		g_signal_handlers_disconnect_by_func(G_OBJECT(window), G_CALLBACK2(CPlayerVisualization::configureEventCB), this);
 		gtk_widget_destroy(GTK_WIDGET(window));
 	}
@@ -56,16 +56,14 @@ void CPlayerVisualization::init()
 	m_interfacedScenario.setModifiableSettingsWidgets();	// must be called after the previous call to reload tree
 }
 
-GtkWidget* CPlayerVisualization::loadTreeWidget(IVTWidget* widget)
+GtkWidget* CPlayerVisualization::loadTreeWidget(IVWidget* widget)
 {
 	GtkWidget* treeWidget = nullptr;
 
-	if (widget->getType() == EVTWidget::Panel)
-	{
+	if (widget->getType() == EVWidget::Panel) {
 		//retrieve panel index
-		IVTWidget* window = m_visualizationTree.getVisualizationWidget(widget->getParentIdentifier());
-		if (window != nullptr)
-		{
+		IVWidget* window = m_visualizationTree.getVisualizationWidget(widget->getParentIdentifier());
+		if (window != nullptr) {
 			size_t index;
 			window->getChildIndex(widget->getIdentifier(), index);
 
@@ -83,26 +81,21 @@ GtkWidget* CPlayerVisualization::loadTreeWidget(IVTWidget* widget)
 			}
 		}
 	}
-	else if (widget->getType() == EVTWidget::VerticalSplit || widget->getType() == EVTWidget::HorizontalSplit
-			 || widget->getType() == EVTWidget::Undefined || widget->getType() == EVTWidget::Box)
-	{
-		if (widget->getType() == EVTWidget::Box)
-		{
-			if (widget->getParentIdentifier() != CIdentifier::undefined())
-			{
+	else if (widget->getType() == EVWidget::VerticalSplit || widget->getType() == EVWidget::HorizontalSplit
+			 || widget->getType() == EVWidget::Undefined || widget->getType() == EVWidget::Box) {
+		if (widget->getType() == EVWidget::Box) {
+			if (widget->getParentIdentifier() != CIdentifier::undefined()) {
 				//dummy widget (actual one will be created at plugin initialization time)
 				treeWidget = gtk_button_new();
 			}
 			else { }	//widget will be added to a top level window in setWidget()
 		}
-		else if (widget->getType() == EVTWidget::Undefined)
-		{
+		else if (widget->getType() == EVWidget::Undefined) {
 			treeWidget = gtk_button_new();
 			gtk_button_set_label(GTK_BUTTON(treeWidget), widget->getName().toASCIIString());
 		}
-		else if (widget->getType() == EVTWidget::HorizontalSplit || widget->getType() == EVTWidget::VerticalSplit)
-		{
-			treeWidget = (widget->getType() == EVTWidget::HorizontalSplit) ? gtk_hpaned_new() : gtk_vpaned_new();
+		else if (widget->getType() == EVWidget::HorizontalSplit || widget->getType() == EVWidget::VerticalSplit) {
+			treeWidget = (widget->getType() == EVWidget::HorizontalSplit) ? gtk_hpaned_new() : gtk_vpaned_new();
 
 			//store paned widget in paned map
 			m_splitWidgets[GTK_PANED(treeWidget)] = widget->getIdentifier();
@@ -116,15 +109,14 @@ GtkWidget* CPlayerVisualization::loadTreeWidget(IVTWidget* widget)
 
 		//parent widget to its parent
 		//---------------------------
-		IVTWidget* parentWidget = m_visualizationTree.getVisualizationWidget(widget->getParentIdentifier());
+		IVWidget* parentWidget = m_visualizationTree.getVisualizationWidget(widget->getParentIdentifier());
 
 		if (parentWidget != nullptr) //unparented visualization boxes don't have a parent
 		{
 			GtkTreeIter parentIter;
 			m_visualizationTree.findChildNodeFromRoot(&parentIter, parentWidget->getIdentifier());
 
-			if (parentWidget->getType() == EVTWidget::Panel)
-			{
+			if (parentWidget->getType() == EVWidget::Panel) {
 				//parent widget to notebook as a new page
 				void* notebook = nullptr;
 				m_visualizationTree.getPointerValueFromTreeIter(&parentIter, notebook, EVTColumn::PointerWidget);
@@ -132,16 +124,13 @@ GtkWidget* CPlayerVisualization::loadTreeWidget(IVTWidget* widget)
 				m_visualizationTree.getStringValueFromTreeIter(&parentIter, name, EVTColumn::StringName);
 				gtk_notebook_append_page(GTK_NOTEBOOK(notebook), treeWidget, gtk_label_new(name));
 			}
-			else if (parentWidget->getType() == EVTWidget::VerticalSplit || parentWidget->getType() == EVTWidget::HorizontalSplit)
-			{
+			else if (parentWidget->getType() == EVWidget::VerticalSplit || parentWidget->getType() == EVWidget::HorizontalSplit) {
 				//insert widget in parent paned
 				void* paned = nullptr;
 				m_visualizationTree.getPointerValueFromTreeIter(&parentIter, paned, EVTColumn::PointerWidget);
-				if (paned != nullptr && GTK_IS_PANED(paned))
-				{
+				if (paned != nullptr && GTK_IS_PANED(paned)) {
 					size_t index;
-					if (parentWidget->getChildIndex(widget->getIdentifier(), index))
-					{
+					if (parentWidget->getChildIndex(widget->getIdentifier(), index)) {
 						if (index == 0) { gtk_paned_pack1(GTK_PANED(paned), treeWidget, TRUE, TRUE); }
 						else { gtk_paned_pack2(GTK_PANED(paned), treeWidget, TRUE, TRUE); }
 					}
@@ -149,34 +138,29 @@ GtkWidget* CPlayerVisualization::loadTreeWidget(IVTWidget* widget)
 			}
 		}
 	}
-	else if (widget->getType() == EVTWidget::Window)
-	{
+	else if (widget->getType() == EVWidget::Window) {
 		//create this window only if it contains at least one visualization box
 		CIdentifier identifier = CIdentifier::undefined();
 		bool createWindow      = false;
 
 		//for all visualization boxes
-		while (m_visualizationTree.getNextVisualizationWidgetIdentifier(identifier, EVTWidget::Box))
-		{
+		while (m_visualizationTree.getNextVisualizationWidgetIdentifier(identifier, EVWidget::Box)) {
 			//retrieve window containing current visualization box
 			CIdentifier parentID;
-			IVTWidget* visualizationWidget = m_visualizationTree.getVisualizationWidget(identifier);
-			while (visualizationWidget->getParentIdentifier() != CIdentifier::undefined())
-			{
+			const IVWidget* visualizationWidget = m_visualizationTree.getVisualizationWidget(identifier);
+			while (visualizationWidget->getParentIdentifier() != CIdentifier::undefined()) {
 				parentID            = visualizationWidget->getParentIdentifier();
 				visualizationWidget = m_visualizationTree.getVisualizationWidget(parentID);
 			}
 
 			//if current box is parented to window passed in parameter, break and create it
-			if (m_visualizationTree.getVisualizationWidget(parentID) == widget)
-			{
+			if (m_visualizationTree.getVisualizationWidget(parentID) == widget) {
 				createWindow = true;
 				break;
 			}
 		}
 
-		if (createWindow)
-		{
+		if (createWindow) {
 			//create new top level window
 			treeWidget = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 			m_windows.push_back(GTK_WINDOW(treeWidget));
@@ -190,8 +174,7 @@ GtkWidget* CPlayerVisualization::loadTreeWidget(IVTWidget* widget)
 			//gtk_window_set_transient_for(GTK_WINDOW(treeWidget), GTK_WINDOW(m_interfacedScenario.m_rApplication.m_MainWindow));
 
 			//centered on the main window
-			if (m_kernelCtx.getConfigurationManager().expandAsBoolean("${Designer_WindowManager_Center}", false))
-			{
+			if (m_kernelCtx.getConfigurationManager().expandAsBoolean("${Designer_WindowManager_Center}", false)) {
 				gtk_window_set_position(GTK_WINDOW(treeWidget), GTK_WIN_POS_CENTER_ON_PARENT);
 			}
 
@@ -203,12 +186,12 @@ GtkWidget* CPlayerVisualization::loadTreeWidget(IVTWidget* widget)
 	}
 
 	//show newly created widget
-	if (treeWidget != nullptr && widget->getType() != EVTWidget::Window) { gtk_widget_show(treeWidget); }
+	if (treeWidget != nullptr && widget->getType() != EVWidget::Window) { gtk_widget_show(treeWidget); }
 
 	return treeWidget;
 }
 
-void CPlayerVisualization::endLoadTreeWidget(IVTWidget* widget)
+void CPlayerVisualization::endLoadTreeWidget(IVWidget* widget)
 {
 	//retrieve tree widget
 	GtkTreeIter iter;
@@ -216,8 +199,7 @@ void CPlayerVisualization::endLoadTreeWidget(IVTWidget* widget)
 	void* treeWidget;
 	m_visualizationTree.getPointerValueFromTreeIter(&iter, treeWidget, EVTColumn::PointerWidget);
 
-	if (treeWidget != nullptr && widget->getType() == EVTWidget::Window)
-	{
+	if (treeWidget != nullptr && widget->getType() == EVWidget::Window) {
 		//retrieve notebook
 		CIdentifier id;
 		widget->getChildIdentifier(0, id);
@@ -227,8 +209,7 @@ void CPlayerVisualization::endLoadTreeWidget(IVTWidget* widget)
 		m_visualizationTree.getPointerValueFromTreeIter(&childIter, childTree, EVTColumn::PointerWidget);
 
 		//insert notebook in window
-		if (childTree != nullptr && GTK_IS_NOTEBOOK(static_cast<GtkWidget*>(childTree)))
-		{
+		if (childTree != nullptr && GTK_IS_NOTEBOOK(static_cast<GtkWidget*>(childTree))) {
 			gtk_container_add(GTK_CONTAINER(static_cast<GtkWidget*>(treeWidget)), static_cast<GtkWidget*>(childTree));
 		}
 	}
@@ -237,25 +218,22 @@ void CPlayerVisualization::endLoadTreeWidget(IVTWidget* widget)
 bool CPlayerVisualization::setToolbar(const CIdentifier& boxID, GtkWidget* widget)
 {
 	//retrieve visualization widget
-	IVTWidget* visuWidget = m_visualizationTree.getVisualizationWidgetFromBoxIdentifier(boxID);
-	if (visuWidget == nullptr)
-	{
+	IVWidget* visuWidget = m_visualizationTree.getVisualizationWidgetFromBoxIdentifier(boxID);
+	if (visuWidget == nullptr) {
 		m_kernelCtx.getLogManager() << Kernel::LogLevel_Warning << "CPlayerVisualization::setToolbar FAILED : couldn't retrieve simulated box with identifier "
 				<< boxID << "\n";
 		return false;
 	}
 
 	//ensure toolbar pointer is not null
-	if (widget == nullptr)
-	{
+	if (widget == nullptr) {
 		m_kernelCtx.getLogManager() << Kernel::LogLevel_Warning << "CPlayerVisualization::setToolbar FAILED : toolbar pointer is nullptr for plugin "
 				<< visuWidget->getName() << "\n";
 		return false;
 	}
 
 	//ensure toolbar pointer is a window
-	if (GTK_IS_WINDOW(widget) == 0)
-	{
+	if (GTK_IS_WINDOW(widget) == 0) {
 		m_kernelCtx.getLogManager() << Kernel::LogLevel_Warning << "CPlayerVisualization::setToolbar FAILED : toolbar pointer is not a GtkWindow for plugin "
 				<< visuWidget->getName() << "\n";
 		return false;
@@ -271,8 +249,7 @@ bool CPlayerVisualization::setToolbar(const CIdentifier& boxID, GtkWidget* widge
 	gtk_window_set_position(GTK_WINDOW(widget), GTK_WIN_POS_MOUSE);
 
 	//if toolbar button has been created, set it sensitive (otherwise it will be set active later)
-	if (m_plugins[id].m_ToolbarButton != nullptr)
-	{
+	if (m_plugins[id].m_ToolbarButton != nullptr) {
 		gtk_widget_set_sensitive(GTK_WIDGET(m_plugins[id].m_ToolbarButton), 1);
 
 		//associate toolbar button to toolbar window
@@ -288,17 +265,15 @@ bool CPlayerVisualization::setToolbar(const CIdentifier& boxID, GtkWidget* widge
 bool CPlayerVisualization::setWidget(const CIdentifier& boxID, GtkWidget* widget)
 {
 	//retrieve visualization widget
-	IVTWidget* visuWidget = m_visualizationTree.getVisualizationWidgetFromBoxIdentifier(boxID);
-	if (visuWidget == nullptr)
-	{
+	IVWidget* visuWidget = m_visualizationTree.getVisualizationWidgetFromBoxIdentifier(boxID);
+	if (visuWidget == nullptr) {
 		m_kernelCtx.getLogManager() << Kernel::LogLevel_Warning << "CPlayerVisualization::setWidget FAILED : couldn't retrieve simulated box with identifier "
 				<< boxID << "\n";
 		return false;
 	}
 
 	//ensure widget pointer is not null
-	if (widget == nullptr)
-	{
+	if (widget == nullptr) {
 		m_kernelCtx.getLogManager() << Kernel::LogLevel_Warning << "CPlayerVisualization::setWidget FAILED : widget pointer is nullptr for plugin "
 				<< visuWidget->getName() << "\n";
 		return false;
@@ -306,8 +281,7 @@ bool CPlayerVisualization::setWidget(const CIdentifier& boxID, GtkWidget* widget
 
 	//unparent top widget, if necessary
 	GtkWidget* parent = gtk_widget_get_parent(widget);
-	if (GTK_IS_CONTAINER(parent))
-	{
+	if (GTK_IS_CONTAINER(parent)) {
 		gtk_object_ref(GTK_OBJECT(widget));
 		gtk_container_remove(GTK_CONTAINER(parent), widget);
 	}
@@ -326,8 +300,7 @@ bool CPlayerVisualization::setWidget(const CIdentifier& boxID, GtkWidget* widget
 		//retrieve icon name
 		GtkTreeIter iter;
 		char* iconString = nullptr;
-		if (m_visualizationTree.findChildNodeFromRoot(&iter, static_cast<const char*>(visuWidget->getName()), EVTNode::VisualizationBox))
-		{
+		if (m_visualizationTree.findChildNodeFromRoot(&iter, static_cast<const char*>(visuWidget->getName()), EVTNode::VisualizationBox)) {
 			m_visualizationTree.getStringValueFromTreeIter(&iter, iconString, EVTColumn::StringStockIcon);
 		}
 
@@ -349,11 +322,11 @@ bool CPlayerVisualization::setWidget(const CIdentifier& boxID, GtkWidget* widget
 	g_signal_connect(G_OBJECT(button), "toggled", G_CALLBACK(toolbarButtonToggledCB), this);
 
 	//set up toolbar button as drag destination
-	gtk_drag_dest_set(GTK_WIDGET(button), GTK_DEST_DEFAULT_ALL, targets, sizeof(targets) / sizeof(GtkTargetEntry), GDK_ACTION_COPY);
+	gtk_drag_dest_set(GTK_WIDGET(button), GTK_DEST_DEFAULT_ALL, targets.data(), gint(targets.size()), GDK_ACTION_COPY);
 	g_signal_connect(G_OBJECT(button), "drag_data_received", G_CALLBACK(dragDataReceivedInWidgetCB), this);
 
 	//set up toolbar button as drag source as well
-	gtk_drag_source_set(GTK_WIDGET(button), GDK_BUTTON1_MASK, targets, sizeof(targets) / sizeof(GtkTargetEntry), GDK_ACTION_COPY);
+	gtk_drag_source_set(GTK_WIDGET(button), GDK_BUTTON1_MASK, targets.data(), gint(targets.size()), GDK_ACTION_COPY);
 	g_signal_connect(G_OBJECT(button), "drag_data_get", G_CALLBACK(dragDataGetFromWidgetCB), this);
 
 	//store plugin widget and toolbar button
@@ -362,8 +335,7 @@ bool CPlayerVisualization::setWidget(const CIdentifier& boxID, GtkWidget* widget
 	m_plugins[id].m_ToolbarButton = button;
 
 	//if a toolbar was registered for this widget, set its button sensitive
-	if (m_plugins[id].m_Toolbar != nullptr)
-	{
+	if (m_plugins[id].m_Toolbar != nullptr) {
 		gtk_widget_set_sensitive(GTK_WIDGET(button), 1);
 
 		//associate toolbar button to toolbar window
@@ -384,11 +356,10 @@ bool CPlayerVisualization::setWidget(const CIdentifier& boxID, GtkWidget* widget
 	return true;
 }
 
-bool CPlayerVisualization::parentWidgetBox(IVTWidget* widget, GtkBox* widgetBox)
+bool CPlayerVisualization::parentWidgetBox(IVWidget* widget, GtkBox* widgetBox)
 {
 	//if widget is unaffected, open it in its own window
-	if (widget->getParentIdentifier() == CIdentifier::undefined())
-	{
+	if (widget->getParentIdentifier() == CIdentifier::undefined()) {
 		//create a top level window
 		GtkWidget* window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 		m_windows.push_back(GTK_WINDOW(window));
@@ -406,8 +377,7 @@ bool CPlayerVisualization::parentWidgetBox(IVTWidget* widget, GtkBox* widgetBox)
 		g_signal_connect(window, "delete_event", G_CALLBACK(delete_window_manager_window_cb), this);
 
 		//position: centered in the main window
-		if (m_kernelCtx.getConfigurationManager().expandAsBoolean("${Designer_WindowManager_Center}", false))
-		{
+		if (m_kernelCtx.getConfigurationManager().expandAsBoolean("${Designer_WindowManager_Center}", false)) {
 			gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER_ON_PARENT);
 		}
 
@@ -417,28 +387,24 @@ bool CPlayerVisualization::parentWidgetBox(IVTWidget* widget, GtkBox* widgetBox)
 	else //retrieve parent widget in which to insert current widget
 	{
 		GtkTreeIter iter;
-		if (m_visualizationTree.findChildNodeFromRoot(&iter, widget->getParentIdentifier()))
-		{
+		if (m_visualizationTree.findChildNodeFromRoot(&iter, widget->getParentIdentifier())) {
 			void* parent = nullptr;
 			m_visualizationTree.getPointerValueFromTreeIter(&iter, parent, EVTColumn::PointerWidget);
 			CIdentifier id;
 			m_visualizationTree.getIdentifierFromTreeIter(&iter, id, EVTColumn::StringIdentifier);
 
 			//widget is to be parented to a paned widget
-			if (GTK_IS_PANED(parent))
-			{
+			if (GTK_IS_PANED(parent)) {
 				//retrieve index at which to insert child
-				IVTWidget* parentWidget = m_visualizationTree.getVisualizationWidget(id);
+				const IVWidget* parentWidget = m_visualizationTree.getVisualizationWidget(id);
 				size_t index;
 				parentWidget->getChildIndex(widget->getIdentifier(), index);
 				//insert visualization box in paned
-				if (index == 0)
-				{
+				if (index == 0) {
 					gtk_container_remove(GTK_CONTAINER(parent), gtk_paned_get_child1(GTK_PANED(parent)));
 					gtk_paned_pack1(GTK_PANED(parent), GTK_WIDGET(widgetBox), TRUE, TRUE);
 				}
-				else
-				{
+				else {
 					gtk_container_remove(GTK_CONTAINER(parent), gtk_paned_get_child2(GTK_PANED(parent)));
 					gtk_paned_pack2(GTK_PANED(parent), GTK_WIDGET(widgetBox), TRUE, TRUE);
 				}
@@ -446,8 +412,8 @@ bool CPlayerVisualization::parentWidgetBox(IVTWidget* widget, GtkBox* widgetBox)
 			else if (GTK_IS_NOTEBOOK(parent)) //widget is to be added to a notebook page
 			{
 				//retrieve notebook page index
-				IVTWidget* parentWidget = m_visualizationTree.getVisualizationWidget(id);
-				IVTWidget* parentWindow = m_visualizationTree.getVisualizationWidget(parentWidget->getParentIdentifier());
+				const IVWidget* parentWidget = m_visualizationTree.getVisualizationWidget(id);
+				const IVWidget* parentWindow = m_visualizationTree.getVisualizationWidget(parentWidget->getParentIdentifier());
 				size_t index;
 				parentWindow->getChildIndex(parentWidget->getIdentifier(), index);
 
@@ -466,8 +432,7 @@ bool CPlayerVisualization::parentWidgetBox(IVTWidget* widget, GtkBox* widgetBox)
 			//--------------------------------------------------------
 			//get panel containing widget
 			GtkTreeIter panelIter = iter;
-			if (m_visualizationTree.findParentNode(&panelIter, EVTNode::VisualizationPanel))
-			{
+			if (m_visualizationTree.findParentNode(&panelIter, EVTNode::VisualizationPanel)) {
 				//get panel identifier
 				m_visualizationTree.getIdentifierFromTreeIter(&panelIter, id, EVTColumn::StringIdentifier);
 
@@ -481,8 +446,7 @@ bool CPlayerVisualization::parentWidgetBox(IVTWidget* widget, GtkBox* widgetBox)
 
 				//get parent window
 				GtkTreeIter windowIter = panelIter;
-				if (m_visualizationTree.findParentNode(&windowIter, EVTNode::VisualizationWindow))
-				{
+				if (m_visualizationTree.findParentNode(&windowIter, EVTNode::VisualizationWindow)) {
 					//get parent window pointer
 					void* windowWidget = nullptr;
 					m_visualizationTree.getPointerValueFromTreeIter(&windowIter, windowWidget, EVTColumn::PointerWidget);
@@ -509,15 +473,13 @@ bool CPlayerVisualization::parentWidgetBox(IVTWidget* widget, GtkBox* widgetBox)
 void CPlayerVisualization::showTopLevelWindows()
 
 {
-	for (auto& window : m_windows) { gtk_widget_show(GTK_WIDGET(window)); }
-	if (m_activeToolbarButton != nullptr)
-	{
+	for (const auto& window : m_windows) { gtk_widget_show(GTK_WIDGET(window)); }
+	if (m_activeToolbarButton != nullptr) {
 		//show active toolbar
 		gtk_widget_show(m_toolbars[m_activeToolbarButton]);
 	}
 	auto it = m_plugins.begin();
-	while (it != m_plugins.end())
-	{
+	while (it != m_plugins.end()) {
 		if (GTK_IS_WIDGET(it->second.m_Widget)) { gtk_widget_show(it->second.m_Widget); }
 		++it;
 	}
@@ -528,13 +490,12 @@ void CPlayerVisualization::hideTopLevelWindows()
 
 {
 	auto it = m_plugins.begin();
-	while (it != m_plugins.end())
-	{
+	while (it != m_plugins.end()) {
 		if (GTK_IS_WIDGET(it->second.m_Widget)) { gtk_widget_hide(it->second.m_Widget); }
 		++it;
 	}
 
-	for (auto& window : m_windows) { gtk_widget_hide(GTK_WIDGET(window)); }
+	for (const auto& window : m_windows) { gtk_widget_hide(GTK_WIDGET(window)); }
 
 	//hide active toolbar
 	if (m_activeToolbarButton != nullptr) { gtk_widget_hide(m_toolbars[m_activeToolbarButton]); }
@@ -565,36 +526,31 @@ gboolean CPlayerVisualization::widgetExposeEventCB(GtkWidget* widget, GdkEventEx
 
 void CPlayerVisualization::resizeCB(GtkContainer* container)
 {
-	if (GTK_IS_WINDOW(container))
-	{
+	if (GTK_IS_WINDOW(container)) {
 		const gpointer data = g_list_first(gtk_container_get_children(container))->data;
 
 		if (GTK_IS_CONTAINER(data)) { resizeCB(GTK_CONTAINER(data)); }
 	}
-	else if (GTK_IS_NOTEBOOK(container))
-	{
+	else if (GTK_IS_NOTEBOOK(container)) {
 		GtkNotebook* notebook = GTK_NOTEBOOK(container);
 
-		for (int i = 0; i < gtk_notebook_get_n_pages(notebook); ++i)
-		{
+		for (int i = 0; i < gtk_notebook_get_n_pages(notebook); ++i) {
 			GtkWidget* widget = gtk_notebook_get_nth_page(notebook, i);
 			if (GTK_IS_CONTAINER(widget)) { resizeCB(GTK_CONTAINER(widget)); }
 		}
 	}
-	else if (GTK_IS_PANED(container))
-	{
+	else if (GTK_IS_PANED(container)) {
 		GtkPaned* paned = GTK_PANED(container);
 
 		//retrieve paned identifier from paned map
-		CIdentifier& id = m_splitWidgets[GTK_PANED(paned)];
+		const CIdentifier& id = m_splitWidgets[GTK_PANED(paned)];
 
 		//retrieve its attributes
-		IVTWidget* widget = m_visualizationTree.getVisualizationWidget(id);
+		IVWidget* widget = m_visualizationTree.getVisualizationWidget(id);
 		const int pos     = widget->getDividerPosition();
 		const int maxPos  = widget->getMaxDividerPosition();
 
-		if (maxPos > 0)
-		{
+		if (maxPos > 0) {
 			//retrieve current maximum handle position
 			const int currentMaxPos = GTK_IS_VPANED(paned) ? paned->container.widget.allocation.height
 										  : paned->container.widget.allocation.width;
@@ -654,8 +610,7 @@ void CPlayerVisualization::dragDataReceivedInWidgetCB(GtkWidget* dstWidget, GdkD
 	GtkWidget* srcTabLabel = nullptr;
 
 	if (GTK_IS_WINDOW(srcParentWidget)) { srcIndex = 0; }
-	else if (GTK_IS_NOTEBOOK(srcParentWidget))
-	{
+	else if (GTK_IS_NOTEBOOK(srcParentWidget)) {
 		srcIndex    = gtk_notebook_page_num(GTK_NOTEBOOK(srcParentWidget), srcBoxWidget);
 		srcTabLabel = gtk_label_new(gtk_notebook_get_tab_label_text(GTK_NOTEBOOK(srcParentWidget), srcBoxWidget));
 	}
@@ -666,8 +621,7 @@ void CPlayerVisualization::dragDataReceivedInWidgetCB(GtkWidget* dstWidget, GdkD
 	int dstIndex;
 	GtkWidget* dstTabLabel = nullptr;
 	if (GTK_IS_WINDOW(dstParentWidget)) { dstIndex = 0; }
-	else if (GTK_IS_NOTEBOOK(dstParentWidget))
-	{
+	else if (GTK_IS_NOTEBOOK(dstParentWidget)) {
 		dstIndex    = gtk_notebook_page_num(GTK_NOTEBOOK(dstParentWidget), dstBoxWidget);
 		dstTabLabel = gtk_label_new(gtk_notebook_get_tab_label_text(GTK_NOTEBOOK(dstParentWidget), dstBoxWidget));
 	}
@@ -708,11 +662,9 @@ bool CPlayerVisualization::toggleToolbarCB(GtkToggleButton* button)
 	GtkWidget* toolbar = m_toolbars[button];
 
 	//if current toolbar is toggled on or off, update toolbar state accordingly
-	if (button == m_activeToolbarButton)
-	{
+	if (button == m_activeToolbarButton) {
 		//hiding active toolbar
-		if (gtk_toggle_button_get_active(button) == FALSE)
-		{
+		if (gtk_toggle_button_get_active(button) == FALSE) {
 			gtk_widget_hide(toolbar);
 			m_activeToolbarButton = nullptr;
 		}
@@ -721,8 +673,7 @@ bool CPlayerVisualization::toggleToolbarCB(GtkToggleButton* button)
 	else //a new toolbar is to be shown
 	{
 		//hide previously active toolbar, if any
-		if (m_activeToolbarButton != nullptr)
-		{
+		if (m_activeToolbarButton != nullptr) {
 			gtk_widget_hide(m_toolbars[m_activeToolbarButton]);
 
 			g_signal_handlers_disconnect_by_func(m_activeToolbarButton, G_CALLBACK2(toolbarButtonToggledCB), this);
@@ -753,8 +704,7 @@ gboolean CPlayerVisualization::toolbarDeleteEventCB(GtkWidget* widget, GdkEvent*
 
 bool CPlayerVisualization::deleteToolbarCB(GtkWidget* widget)
 {
-	if (m_activeToolbarButton == nullptr || m_toolbars[m_activeToolbarButton] != widget)
-	{
+	if (m_activeToolbarButton == nullptr || m_toolbars[m_activeToolbarButton] != widget) {
 		//error : active toolbar isn't the one registered as such
 		gtk_widget_hide(widget);
 		return FALSE;

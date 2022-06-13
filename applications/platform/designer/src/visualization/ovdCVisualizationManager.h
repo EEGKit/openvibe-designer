@@ -13,7 +13,6 @@ namespace Designer {
 class CVisualizationManager final : public VisualizationToolkit::IVisualizationManager
 {
 public:
-
 	explicit CVisualizationManager(const Kernel::IKernelContext& ctx) : m_kernelCtx(ctx) {}
 	~CVisualizationManager() override = default;
 
@@ -25,7 +24,6 @@ public:
 	bool setWidget(const CIdentifier& treeID, const CIdentifier& boxID, GtkWidget* topmostWidget) override;
 
 private:
-
 	CIdentifier getUnusedIdentifier() const;
 
 	/// Map of visualization trees (one per scenario, storing visualization widgets arrangement in space)

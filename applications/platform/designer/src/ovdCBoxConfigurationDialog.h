@@ -12,7 +12,6 @@ namespace Designer {
 class CBoxConfigurationDialog final : public IObserver
 {
 public:
-
 	CBoxConfigurationDialog(const Kernel::IKernelContext& ctx, Kernel::IBox& box, const char* guiFilename,
 							const char* guiSettingsFilename, const bool isScenarioRunning = false);
 	~CBoxConfigurationDialog() override;
@@ -25,12 +24,11 @@ public:
 	void onOverrideBrowse() const;
 
 	void storeState();
-	void restoreState();
+	void restoreState() const;
 
 	CIdentifier getBoxID() const { return m_box.getIdentifier(); }
 	GtkWidget* getWidget() const { return m_settingDialog; }
 protected:
-
 	void generateSettingsTable();
 	bool addSettingsToView(const size_t settingIdx, const size_t tableIdx);
 	void updateSize() const;
