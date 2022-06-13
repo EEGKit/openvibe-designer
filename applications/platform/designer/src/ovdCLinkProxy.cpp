@@ -7,8 +7,7 @@ namespace Designer {
 
 CLinkProxy::CLinkProxy(const Kernel::ILink& link) : m_constLink(&link)
 {
-	if (m_constLink)
-	{
+	if (m_constLink) {
 		const TAttributeHandler handler(*m_constLink);
 		m_xSrc = handler.getAttributeValue<int>(OV_AttributeId_Link_XSrc);
 		m_ySrc = handler.getAttributeValue<int>(OV_AttributeId_Link_YSrc);
@@ -20,8 +19,7 @@ CLinkProxy::CLinkProxy(const Kernel::ILink& link) : m_constLink(&link)
 CLinkProxy::CLinkProxy(Kernel::IScenario& scenario, const CIdentifier& linkID)
 	: m_constLink(scenario.getLinkDetails(linkID)), m_link(scenario.getLinkDetails(linkID))
 {
-	if (m_constLink)
-	{
+	if (m_constLink) {
 		const TAttributeHandler handler(*m_constLink);
 		m_xSrc = handler.getAttributeValue<int>(OV_AttributeId_Link_XSrc);
 		m_ySrc = handler.getAttributeValue<int>(OV_AttributeId_Link_YSrc);
@@ -32,8 +30,7 @@ CLinkProxy::CLinkProxy(Kernel::IScenario& scenario, const CIdentifier& linkID)
 
 CLinkProxy::~CLinkProxy()
 {
-	if (m_link)
-	{
+	if (m_link) {
 		TAttributeHandler handler(*m_link);
 
 		if (handler.hasAttribute(OV_AttributeId_Link_XSrc)) { handler.setAttributeValue<int>(OV_AttributeId_Link_XSrc, m_xSrc); }

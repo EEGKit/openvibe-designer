@@ -17,19 +17,16 @@ bool CRenameDialog::run()
 
 	bool finished = false;
 	bool res      = false;
-	while (!finished)
-	{
+	while (!finished) {
 		const gint valid = gtk_dialog_run(GTK_DIALOG(dialog));
-		if (valid == GTK_RESPONSE_APPLY)
-		{
+		if (valid == GTK_RESPONSE_APPLY) {
 			m_result = gtk_entry_get_text(GTK_ENTRY(name));
 			finished = true;
 			res      = true;
 		}
 		else if (valid == 1) { gtk_entry_set_text(GTK_ENTRY(name), m_defaultName.toASCIIString()); } // default
 		else if (valid == 2) { gtk_entry_set_text(GTK_ENTRY(name), m_initialName.toASCIIString()); } // revert
-		else
-		{
+		else {
 			finished = true;
 			res      = false;
 		}

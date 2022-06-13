@@ -9,12 +9,8 @@ CBoxProxy::CBoxProxy(const Kernel::IKernelContext& ctx, Kernel::IScenario& scena
 	: m_kernelCtx(ctx), m_constBox(scenario.getBoxDetails(boxID)), m_box(scenario.getBoxDetails(boxID)),
 	  m_isDeprecated(m_kernelCtx.getPluginManager().isPluginObjectFlaggedAsDeprecated(m_constBox->getAlgorithmClassIdentifier()))
 {
-	m_isBoxAlgorithmPresent = false;
-
-	if (m_constBox)
-	{
-		if (m_constBox->getAlgorithmClassIdentifier() == OVP_ClassId_BoxAlgorithm_Metabox)
-		{
+	if (m_constBox) {
+		if (m_constBox->getAlgorithmClassIdentifier() == OVP_ClassId_BoxAlgorithm_Metabox) {
 			CIdentifier metaboxId;
 			metaboxId.fromString(m_constBox->getAttributeValue(OVP_AttributeId_Metabox_ID));
 			const CString path(m_kernelCtx.getMetaboxManager().getMetaboxFilePath(metaboxId));
@@ -58,8 +54,7 @@ void CBoxProxy::setBoxAlgorithmDescriptorOverride(const Plugins::IBoxAlgorithmDe
 
 void CBoxProxy::apply()
 {
-	if (m_box)
-	{
+	if (m_box) {
 		TAttributeHandler handler(*m_box);
 
 		if (handler.hasAttribute(OV_AttributeId_Box_XCenterPosition)) { handler.setAttributeValue<int>(OV_AttributeId_Box_XCenterPosition, m_centerX); }
@@ -91,21 +86,17 @@ const char* CBoxProxy::getLabel() const
 
 	// pango is used in the box diplay to format the box name (e.g. bold to tell it's a configurable box)
 	// incidently, this makes the box name pango-enabled. If an error appears in the markup, the box display would be wrong.
-	if (!pango_parse_markup(name.c_str(), -1, 0, nullptr, nullptr, nullptr, nullptr))
-	{
+	if (!pango_parse_markup(name.c_str(), -1, 0, nullptr, nullptr, nullptr, nullptr)) {
 		// the name uses invalid markup characters
 		// we sanitize the markup tag overture '<'
 		// markup should not be used in the box name anyway (hidden feature),
 		// but the character '<' may actually be useful in a valid name
-		for (size_t c = 0; c < name.size(); ++c)
-		{
-			if (name[c] == '<')
-			{
+		for (size_t c = 0; c < name.size(); ++c) {
+			if (name[c] == '<') {
 				name[c] = ';';
 				name.insert(c, "&lt");
 			}
-			else if (name[c] == '&')
-			{
+			else if (name[c] == '&') {
 				name[c] = ';';
 				name.insert(c, "&amp");
 			}
@@ -120,14 +111,12 @@ const char* CBoxProxy::getLabel() const
 
 	if (m_constBox->getSettingCount() != 0) { m_label = "<span color=\"" + boxNameColor + R"(" weight="bold">)" + m_label + "</span>"; }
 
-	if (m_showOriginalNameWhenModified)
-	{
+	if (m_showOriginalNameWhenModified) {
 		const std::string boxOriginalName(desc ? std::string(desc->getName()) : name);
 		if (boxOriginalName != name) { m_label = "<small><i><span foreground=\"" + grey + "\">" + boxOriginalName + "</span></i></small>\n" + m_label; }
 	}
 
-	if (canChangeInput || canChangeOutput || canChangeSetting)
-	{
+	if (canChangeInput || canChangeOutput || canChangeSetting) {
 		m_label += "\n<span size=\"smaller\">";
 		m_label += "<span foreground=\"" + (canChangeInput ? green : red) + "\">In</span>";
 		m_label += "|<span foreground=\"" + (canChangeOutput ? green : red) + "\">Out</span>";
@@ -148,8 +137,7 @@ const char* CBoxProxy::getStatusLabel() const
 	const std::string blue("#202060");
 
 	m_status = "";
-	if (isDeprecated || toBeUpdated || isDisabled || pendingDeprecatedInterfacors)
-	{
+	if (isDeprecated || toBeUpdated || isDisabled || pendingDeprecatedInterfacors) {
 		m_status += R"(<span size="smaller" foreground=")" + blue + "\">";
 		if (isDeprecated) { m_status += " <span style=\"italic\">deprecated</span>"; }
 		if (toBeUpdated) { m_status += " <span style=\"italic\">update</span>"; }
@@ -177,8 +165,7 @@ void CBoxProxy::updateSize(GtkWidget* widget, const char* label, const char* sta
 	pango_layout_set_markup(layout, status, -1);
 	pango_layout_get_pixel_extents(layout, nullptr, &statusRect);
 
-	if (!strlen(status))
-	{
+	if (!strlen(status)) {
 		statusRect.width  = 0;
 		statusRect.height = 0;
 	}

@@ -9,12 +9,11 @@ namespace Designer {
 class CBoxProxy final
 {
 public:
-
 	CBoxProxy(const Kernel::IKernelContext& ctx, Kernel::IScenario& scenario, const CIdentifier& boxID);
 	~CBoxProxy() { if (!m_applied) { this->apply(); } }
 
-	operator Kernel::IBox*() const { return m_box; }
-	operator const Kernel::IBox*() const { return m_constBox; }
+	explicit operator Kernel::IBox*() const { return m_box; }
+	explicit operator const Kernel::IBox*() const { return m_constBox; }
 
 	int getWidth(GtkWidget* widget) const;
 	int getHeight(GtkWidget* widget) const;
@@ -39,7 +38,6 @@ public:
 	bool isMetabox() const { return m_constBox->getAlgorithmClassIdentifier() == OVP_ClassId_BoxAlgorithm_Metabox; }
 
 protected:
-
 	void updateSize(GtkWidget* widget, const char* label, const char* status, int* xSize, int* ySize) const;
 
 	const Kernel::IKernelContext& m_kernelCtx;

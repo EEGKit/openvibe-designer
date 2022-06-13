@@ -16,14 +16,12 @@ CAbstractSettingView::~CAbstractSettingView()
 CAbstractSettingView::CAbstractSettingView(Kernel::IBox& box, const size_t index, const char* builderName, const char* widgetName)
 	: m_box(box), m_index(index), m_settingWidgetName("")
 {
-	if (builderName != nullptr)
-	{
+	if (builderName != nullptr) {
 		m_builder = gtk_builder_new();
 		gtk_builder_add_from_file(m_builder, builderName, nullptr);
 		gtk_builder_connect_signals(m_builder, nullptr);
 
-		if (widgetName != nullptr)
-		{
+		if (widgetName != nullptr) {
 			m_settingWidgetName = widgetName;
 			CAbstractSettingView::generateNameWidget();
 			m_entryFieldWidget = CAbstractSettingView::generateEntryWidget();

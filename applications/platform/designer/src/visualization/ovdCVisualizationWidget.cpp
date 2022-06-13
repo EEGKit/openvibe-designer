@@ -8,7 +8,7 @@ namespace OpenViBE {
 namespace Designer {
 
 bool CVisualizationWidget::initialize(const CIdentifier& id, const CString& name, const VisualizationToolkit::EVisualizationWidget type,
-									  const CIdentifier& parentID,  const CIdentifier& boxID, const size_t nChild)
+									  const CIdentifier& parentID, const CIdentifier& boxID, const size_t nChild)
 {
 	m_id       = id;
 	m_name     = name;
@@ -33,10 +33,8 @@ bool CVisualizationWidget::addChild(const CIdentifier& childID)
 
 bool CVisualizationWidget::removeChild(const CIdentifier& id)
 {
-	for (size_t i = 0; i < m_childrens.size(); ++i)
-	{
-		if (m_childrens[i] == id)
-		{
+	for (size_t i = 0; i < m_childrens.size(); ++i) {
+		if (m_childrens[i] == id) {
 			//remove tab from a window (variable number of children)
 			if (m_type == VisualizationToolkit::EVisualizationWidget::Window) { m_childrens.erase(m_childrens.begin() + i); }
 			else //clear identifier if ith child for a regular widget (fixed number of children)
@@ -52,8 +50,7 @@ bool CVisualizationWidget::removeChild(const CIdentifier& id)
 
 bool CVisualizationWidget::getChildIdentifier(const size_t index, CIdentifier& id) const
 {
-	if (index >= m_childrens.size())
-	{
+	if (index >= m_childrens.size()) {
 		id = CIdentifier::undefined();
 		OV_ERROR_DRF("Child with index " << index << " not found", Kernel::ErrorType::ResourceNotFound);
 	}

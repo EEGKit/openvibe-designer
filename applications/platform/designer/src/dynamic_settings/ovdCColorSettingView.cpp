@@ -60,8 +60,7 @@ void CColorSettingView::selectColor()
 
 void CColorSettingView::onChange()
 {
-	if (!m_onValueSetting)
-	{
+	if (!m_onValueSetting) {
 		const gchar* value = gtk_entry_get_text(m_entry);
 		getBox().setSettingValue(getSettingIndex(), value);
 	}

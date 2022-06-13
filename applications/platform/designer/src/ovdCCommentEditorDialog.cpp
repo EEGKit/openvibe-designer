@@ -60,8 +60,7 @@ bool CCommentEditorDialog::run()
 	gtk_widget_grab_focus(m_desc);
 
 	const gint result = gtk_dialog_run(GTK_DIALOG(m_dialog));
-	if (result == GTK_RESPONSE_APPLY)
-	{
+	if (result == GTK_RESPONSE_APPLY) {
 		res = true;
 		GtkTextIter start, end;
 		m_buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(m_desc));
@@ -80,8 +79,7 @@ void CCommentEditorDialog::applyTagCB(const char* in, const char* out) const
 {
 	GtkTextIter start, end;
 
-	if (gtk_text_buffer_get_has_selection(m_buffer))
-	{
+	if (gtk_text_buffer_get_has_selection(m_buffer)) {
 		gtk_text_buffer_get_selection_bounds(m_buffer, &start, &end);
 		gtk_text_buffer_insert(m_buffer, &start, in, gint(strlen(in)));
 		gtk_text_buffer_get_selection_bounds(m_buffer, &start, &end);
@@ -92,8 +90,7 @@ void CCommentEditorDialog::applyTagCB(const char* in, const char* out) const
 		gtk_text_iter_backward_chars(&end, gint(strlen(out)));
 		gtk_text_buffer_select_range(m_buffer, &start, &end);
 	}
-	else
-	{
+	else {
 		gtk_text_buffer_get_selection_bounds(m_buffer, &start, &end);
 		const gint offset = gtk_text_iter_get_offset(&start);
 

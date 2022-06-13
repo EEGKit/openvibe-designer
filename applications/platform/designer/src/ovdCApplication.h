@@ -35,13 +35,13 @@ public:
 	/** \name Selection management */
 	//@{
 
-	void undoCB();
-	void redoCB();
+	void undoCB() const;
+	void redoCB() const;
 
-	void copySelectionCB();
-	void cutSelectionCB();
-	void pasteSelectionCB();
-	void deleteSelectionCB();
+	void copySelectionCB() const;
+	void cutSelectionCB() const;
+	void pasteSelectionCB() const;
+	void deleteSelectionCB() const;
 	void preferencesCB() const;
 
 	//@}
@@ -49,12 +49,12 @@ public:
 	/** \name Scenario management */
 	//@{
 
-	CString getWorkingDirectory();
+	CString getWorkingDirectory() const;
 
 	bool hasRunningScenario();
 	bool hasUnsavedScenario();
 
-	CInterfacedScenario* getCurrentInterfacedScenario();
+	CInterfacedScenario* getCurrentInterfacedScenario() const;
 	void saveOpenedScenarios();
 
 	void testCB() const;
@@ -66,8 +66,8 @@ public:
 	void restoreDefaultScenariosCB() const;
 
 	void stopScenarioCB();
-	void pauseScenarioCB();
-	void nextScenarioCB();
+	void pauseScenarioCB() const;
+	void nextScenarioCB() const;
 	void playScenarioCB();
 	void forwardScenarioCB();
 
@@ -86,17 +86,17 @@ public:
 	/** \name Designer visualization management */
 	//@{
 
-	void deleteDesignerVisualizationCB();
-	void toggleDesignerVisualizationCB();
+	void deleteDesignerVisualizationCB() const;
+	void toggleDesignerVisualizationCB() const;
 
 	//@}
 
 	/** \name Player management */
 	//@{
 
-	Kernel::IPlayer* getPlayer();
-	bool createPlayer();
-	void stopInterfacedScenarioAndReleasePlayer(CInterfacedScenario* scenario);
+	Kernel::IPlayer* getPlayer() const;
+	bool createPlayer() const;
+	void stopInterfacedScenarioAndReleasePlayer(CInterfacedScenario* scenario) const;
 
 	//@}
 
@@ -117,10 +117,10 @@ public:
 
 	void logLevelCB() const;
 	//void logLevelMessagesCB();
-	void cpuUsageCB();
-	void zoomInCB();	//Call when a zoom in is required
-	void zoomOutCB();	//Call when a zoom out is required
-	void spinnerZoomChangedCB(const size_t scaleDelta);
+	void cpuUsageCB() const;
+	void zoomInCB() const;	//Call when a zoom in is required
+	void zoomOutCB() const;	//Call when a zoom out is required
+	void spinnerZoomChangedCB(const size_t scaleDelta) const;
 
 	const Kernel::IKernelContext& m_kernelCtx;
 	Kernel::IPluginManager* m_PluginMgr                             = nullptr;

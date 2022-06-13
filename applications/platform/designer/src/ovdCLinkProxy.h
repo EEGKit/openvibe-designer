@@ -7,13 +7,12 @@ namespace Designer {
 class CLinkProxy final
 {
 public:
-
 	explicit CLinkProxy(const Kernel::ILink& link);
 	CLinkProxy(Kernel::IScenario& scenario, const CIdentifier& linkID);
 	~CLinkProxy();
 
-	operator Kernel::ILink*() const { return m_link; }
-	operator const Kernel::ILink*() const { return m_constLink; }
+	explicit operator Kernel::ILink*() const { return m_link; }
+	explicit operator const Kernel::ILink*() const { return m_constLink; }
 
 	int getXSource() const { return m_xSrc; }
 	int getYSource() const { return m_ySrc; }
@@ -24,7 +23,6 @@ public:
 	void setTarget(int x, int y);
 
 protected:
-
 	const Kernel::ILink* m_constLink;
 	Kernel::ILink* m_link = nullptr;
 	int m_xSrc            = 0;

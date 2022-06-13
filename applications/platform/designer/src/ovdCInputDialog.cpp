@@ -5,10 +5,8 @@ namespace OpenViBE {
 namespace Designer {
 
 CInputDialog::CInputDialog(const char* gtkBuilder, const fpButtonCB okButtonCB, void* data, const char* title, const char* label, const char* entry)
+	: m_userData(data), m_okButtonCB(okButtonCB)
 {
-	m_okButtonCB = okButtonCB;
-	m_userData   = data;
-
 	//retrieve input dialog
 	GtkBuilder* builder = gtk_builder_new(); // glade_xml_new(gtkBuilder, "input", nullptr);
 	gtk_builder_add_from_file(builder, gtkBuilder, nullptr);
@@ -44,13 +42,11 @@ void CInputDialog::run()
 
 gboolean CInputDialog::keyPressEventCB(GtkWidget* /*widget*/, GdkEventKey* eventKey, gpointer data)
 {
-	if (eventKey->keyval == GDK_Return || eventKey->keyval == GDK_KP_Enter)
-	{
+	if (eventKey->keyval == GDK_Return || eventKey->keyval == GDK_KP_Enter) {
 		gtk_dialog_response(GTK_DIALOG(data), GTK_RESPONSE_ACCEPT);
 		return TRUE;
 	}
-	if (eventKey->keyval == GDK_Escape)
-	{
+	if (eventKey->keyval == GDK_Escape) {
 		gtk_dialog_response(GTK_DIALOG(data), GTK_RESPONSE_REJECT);
 		return TRUE;
 	}

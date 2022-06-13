@@ -7,7 +7,6 @@ namespace Designer {
 class CRenameDialog final
 {
 public:
-
 	CRenameDialog(const Kernel::IKernelContext& ctx, const CString& initialName, const CString& defaultName, const char* guiFilename)
 		: m_kernelCtx(ctx), m_initialName(initialName), m_defaultName(defaultName), m_result(initialName), m_guiFilename(guiFilename) { }
 
@@ -17,7 +16,6 @@ public:
 	CString getResult() const { return m_result; }
 
 protected:
-
 	const Kernel::IKernelContext& m_kernelCtx;
 	CString m_initialName;
 	CString m_defaultName;

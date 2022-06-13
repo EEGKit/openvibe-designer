@@ -35,8 +35,7 @@ static void gradients2Matrix(const std::vector<color_gradient_node_t>& in, CMatr
 {
 	out.resize(4, in.size());
 	size_t i = 0;
-	for (const auto& color : in)
-	{
+	for (const auto& color : in) {
 		out[i++] = color.percent;
 		out[i++] = color.color.red / 655.35;	// * 100.0 / 65535.0;
 		out[i++] = color.color.green / 655.35;	// * 100.0 / 65535.0;
@@ -56,13 +55,11 @@ static void OnEntrySettingBOOLEdited(GtkEntry* entry, gpointer /*data*/)
 	GtkToggleButton* widget = GTK_TOGGLE_BUTTON(widgets[1]);
 
 	const std::string value = gtk_entry_get_text(entry);
-	if (value == "true")
-	{
+	if (value == "true") {
 		gtk_toggle_button_set_active(widget, true);
 		gtk_toggle_button_set_inconsistent(widget, false);
 	}
-	else if (value == "false")
-	{
+	else if (value == "false") {
 		gtk_toggle_button_set_active(widget, false);
 		gtk_toggle_button_set_inconsistent(widget, false);
 	}
@@ -126,8 +123,7 @@ static void OnButtonSettingFilenameBrowsePressed(GtkButton* button, gpointer dat
 
 	const CString filename = ctx.getConfigurationManager().expand(gtk_entry_get_text(widget));
 	if (g_path_is_absolute(filename.toASCIIString())) { gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(widgetDialogOpen), filename.toASCIIString()); }
-	else
-	{
+	else {
 		char* fullPath = g_build_filename(g_get_current_dir(), filename.toASCIIString(), nullptr);
 		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(widgetDialogOpen), fullPath);
 		g_free(fullPath);
@@ -135,8 +131,7 @@ static void OnButtonSettingFilenameBrowsePressed(GtkButton* button, gpointer dat
 
 	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(widgetDialogOpen), false);
 
-	if (gtk_dialog_run(GTK_DIALOG(widgetDialogOpen)) == GTK_RESPONSE_ACCEPT)
-	{
+	if (gtk_dialog_run(GTK_DIALOG(widgetDialogOpen)) == GTK_RESPONSE_ACCEPT) {
 		char* name = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widgetDialogOpen));
 		char* backslash;
 		while ((backslash = strchr(name, '\\')) != nullptr) { *backslash = '/'; }
@@ -159,8 +154,7 @@ static void OnButtonSettingFoldernameBrowsePressed(GtkButton* button, gpointer d
 
 	const CString filename = ctx.getConfigurationManager().expand(gtk_entry_get_text(widget));
 	if (g_path_is_absolute(filename.toASCIIString())) { gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(widgetDialogOpen), filename.toASCIIString()); }
-	else
-	{
+	else {
 		char* fullPath = g_build_filename(g_get_current_dir(), filename.toASCIIString(), nullptr);
 		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(widgetDialogOpen), fullPath);
 		g_free(fullPath);
@@ -168,8 +162,7 @@ static void OnButtonSettingFoldernameBrowsePressed(GtkButton* button, gpointer d
 
 	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(widgetDialogOpen), false);
 
-	if (gtk_dialog_run(GTK_DIALOG(widgetDialogOpen)) == GTK_RESPONSE_ACCEPT)
-	{
+	if (gtk_dialog_run(GTK_DIALOG(widgetDialogOpen)) == GTK_RESPONSE_ACCEPT) {
 		char* name = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widgetDialogOpen));
 		char* backslash;
 		while ((backslash = strchr(name, '\\')) != nullptr) { *backslash = '/'; }
@@ -191,8 +184,7 @@ static void OnButtonSettingScriptEditPressed(GtkButton* button, gpointer data)
 	const CString name = ctx.getConfigurationManager().expand(gtk_entry_get_text(widget));
 	const CString cmd  = ctx.getConfigurationManager().expand("${Designer_ScriptEditorCommand}");
 
-	if (cmd != CString(""))
-	{
+	if (cmd != CString("")) {
 		CString fullCmd = cmd + CString(" \"") + name + CString("\"");
 #if defined TARGET_OS_Windows
 		fullCmd = "START " + fullCmd;
@@ -226,7 +218,7 @@ static void OnInitializeColorGradient(GtkWidget* widget, gpointer data);
 
 static void OnRefreshColorGradient(GtkWidget* /*widget*/, GdkEventExpose* /*event*/, gpointer data)
 {
-	auto* userData = static_cast<color_gradient_t*>(data);
+	const auto* userData = static_cast<color_gradient_t*>(data);
 
 	const size_t steps = 100;
 	gint sizex         = 0;
@@ -242,11 +234,10 @@ static void OnRefreshColorGradient(GtkWidget* /*widget*/, GdkEventExpose* /*even
 	GdkGC* gc = gdk_gc_new(userData->drawingArea->window);
 	GdkColor color;
 
-	for (size_t i = 0; i < steps; ++i)
-	{
-		color.red   = guint(interpolated[i * 4 + 1] * 655.35);
-		color.green = guint(interpolated[i * 4 + 2] * 655.35);
-		color.blue  = guint(interpolated[i * 4 + 3] * 655.35);
+	for (size_t i = 0; i < steps; ++i) {
+		color.red   = guint16(interpolated[i * 4 + 1] * 655.35);
+		color.green = guint16(interpolated[i * 4 + 2] * 655.35);
+		color.blue  = guint16(interpolated[i * 4 + 3] * 655.35);
 		gdk_gc_set_rgb_fg_color(gc, &color);
 		gdk_draw_rectangle(userData->drawingArea->window, gc, TRUE, gint((sizex * i) / steps), 0, gint((sizex * (i + 1)) / steps), sizey);
 	}
@@ -264,12 +255,10 @@ static void OnColorGradientSpinButtonValueChanged(GtkSpinButton* button, gpointe
 	GtkSpinButton* nextSpin = (i < userData->colorGradient.size() - 1 ? userData->colorGradient[i + 1].spinButton : nullptr);
 	if (!prevSpin) { gtk_spin_button_set_value(button, 0); }
 	if (!nextSpin) { gtk_spin_button_set_value(button, 100); }
-	if (prevSpin && gtk_spin_button_get_value(button) < gtk_spin_button_get_value(prevSpin))
-	{
+	if (prevSpin && gtk_spin_button_get_value(button) < gtk_spin_button_get_value(prevSpin)) {
 		gtk_spin_button_set_value(button, gtk_spin_button_get_value(prevSpin));
 	}
-	if (nextSpin && gtk_spin_button_get_value(button) > gtk_spin_button_get_value(nextSpin))
-	{
+	if (nextSpin && gtk_spin_button_get_value(button) > gtk_spin_button_get_value(nextSpin)) {
 		gtk_spin_button_set_value(button, gtk_spin_button_get_value(nextSpin));
 	}
 
@@ -302,8 +291,7 @@ static void OnInitializeColorGradient(GtkWidget* /*widget*/, gpointer data)
 	userData->colorButtons.clear();
 	userData->spinButtons.clear();
 	size_t i = 0;
-	for (auto& it : userData->colorGradient)
-	{
+	for (auto& it : userData->colorGradient) {
 		GtkBuilder* builder = gtk_builder_new(); // glade_xml_new(userData->guiFilename.c_str(), "setting_editor-color_gradient-hbox", nullptr);
 		gtk_builder_add_from_file(builder, userData->guiFilename.c_str(), nullptr);
 		gtk_builder_connect_signals(builder, nullptr);
@@ -349,8 +337,7 @@ static void OnButtonColorGradientAddPressed(GtkButton* /*button*/, gpointer data
 static void OnButtonColorGradientRemovePressed(GtkButton* /*button*/, gpointer data)
 {
 	auto* userData = static_cast<color_gradient_t*>(data);
-	if (userData->colorGradient.size() > 2)
-	{
+	if (userData->colorGradient.size() > 2) {
 		userData->colorGradient.resize(userData->colorGradient.size() - 1);
 		userData->colorGradient[userData->colorGradient.size() - 1].percent = 100;
 		OnInitializeColorGradient(nullptr, data);
@@ -380,12 +367,11 @@ static void OnButtonSettingColorGradientConfigurePressed(GtkButton* button, gpoi
 	VisualizationToolkit::ColorGradient::parse(initialGradient, sInitialGradient);
 
 	userData.colorGradient.resize(initialGradient.getDimensionSize(1) > 2 ? initialGradient.getDimensionSize(1) : 2);
-	for (size_t i = 0; i < initialGradient.getDimensionSize(1); ++i)
-	{
+	for (size_t i = 0; i < initialGradient.getDimensionSize(1); ++i) {
 		userData.colorGradient[i].percent     = initialGradient[i * 4];
-		userData.colorGradient[i].color.red   = guint(initialGradient[i * 4 + 1] * 655.35);
-		userData.colorGradient[i].color.green = guint(initialGradient[i * 4 + 2] * 655.35);
-		userData.colorGradient[i].color.blue  = guint(initialGradient[i * 4 + 3] * 655.35);
+		userData.colorGradient[i].color.red   = guint16(initialGradient[i * 4 + 1] * 655.35);
+		userData.colorGradient[i].color.green = guint16(initialGradient[i * 4 + 2] * 655.35);
+		userData.colorGradient[i].color.blue  = guint16(initialGradient[i * 4 + 3] * 655.35);
 	}
 
 	userData.container   = GTK_WIDGET(gtk_builder_get_object(builder, "setting_editor-color_gradient-vbox"));
@@ -398,8 +384,7 @@ static void OnButtonSettingColorGradientConfigurePressed(GtkButton* button, gpoi
 	g_signal_connect(G_OBJECT(gtk_builder_get_object(builder, "setting_editor-color_gradient-remove_button")), "pressed",
 					 G_CALLBACK(OnButtonColorGradientRemovePressed), &userData);
 
-	if (gtk_dialog_run(GTK_DIALOG(userData.dialog)) == GTK_RESPONSE_APPLY)
-	{
+	if (gtk_dialog_run(GTK_DIALOG(userData.dialog)) == GTK_RESPONSE_APPLY) {
 		CString str;
 		CMatrix gradient;
 		gradients2Matrix(userData.colorGradient, gradient);
@@ -568,11 +553,9 @@ CString CSettingCollectionHelper::getValueBitMask(const CIdentifier& /*typeID*/,
 	gtk_container_foreach(GTK_CONTAINER(widget), CollectWidgetCB, &widgets);
 	std::string res;
 
-	for (auto& window : widgets)
-	{
+	for (const auto& window : widgets) {
 		if (!GTK_IS_TOGGLE_BUTTON(window)) { return ""; }
-		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(window)))
-		{
+		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(window))) {
 			if (!res.empty()) { res += std::string(1, OV_Value_EnumeratedStringSeparator); }
 			res += gtk_button_get_label(GTK_BUTTON(window));
 		}
@@ -689,12 +672,14 @@ void CSettingCollectionHelper::setValueColor(GtkWidget* widget, const CString& v
 	g_signal_connect(G_OBJECT(widgets[1]), "color-set", G_CALLBACK(OnButtonSettingColorChoosePressed), this);
 
 	int r = 0, g = 0, b = 0;
-	sscanf(m_KernelCtx.getConfigurationManager().expand(value).toASCIIString(), "%i,%i,%i", &r, &g, &b);
+	char c;
+	std::stringstream ss(m_KernelCtx.getConfigurationManager().expand(value).toASCIIString());
+	ss >> r >> c >> g >> c >> b;
 
 	GdkColor color;
-	color.red   = (r * 65535) / 100;
-	color.green = (g * 65535) / 100;
-	color.blue  = (b * 65535) / 100;
+	color.red   = guint16(double(r) * 655.35);
+	color.green = guint16(double(g) * 655.35);
+	color.blue  = guint16(double(b) * 655.35);
 	gtk_color_button_set_color(GTK_COLOR_BUTTON(widgets[1]), &color);
 
 	gtk_entry_set_text(entry, value);
@@ -725,8 +710,7 @@ void CSettingCollectionHelper::setValueEnumeration(const CIdentifier& typeID, Gt
 #endif
 
 	std::map<CString, uint64_t> listEntries;
-	for (i = 0; i < m_KernelCtx.getTypeManager().getEnumerationEntryCount(typeID); ++i)
-	{
+	for (i = 0; i < m_KernelCtx.getTypeManager().getEnumerationEntryCount(typeID); ++i) {
 		CString entryName;
 		uint64_t entryValue;
 		if (m_KernelCtx.getTypeManager().getEnumerationEntry(typeID, i, entryName, entryValue)) { listEntries[entryName] = entryValue; }
@@ -735,8 +719,7 @@ void CSettingCollectionHelper::setValueEnumeration(const CIdentifier& typeID, Gt
 	gtk_combo_box_set_wrap_width(comboBox, 0);
 	gtk_list_store_clear(list);
 	i = 0;
-	for (auto it = listEntries.begin(); it != listEntries.end(); ++it, i++)
-	{
+	for (auto it = listEntries.begin(); it != listEntries.end(); ++it, i++) {
 		gtk_list_store_append(list, &listIter);
 		gtk_list_store_set(list, &listIter, 0, it->first.toASCIIString(), -1);
 
@@ -761,8 +744,7 @@ void CSettingCollectionHelper::setValueEnumeration(const CIdentifier& typeID, Gt
 		}
 	}
 #endif
-	if (gtk_combo_box_get_active(comboBox) == -1)
-	{
+	if (gtk_combo_box_get_active(comboBox) == -1) {
 		gtk_list_store_append(list, &listIter);
 		gtk_list_store_set(list, &listIter, 0, value.toASCIIString(), -1);
 		gtk_combo_box_set_active(comboBox, gint(i)); // $$$ i should be ok :)
@@ -775,16 +757,14 @@ void CSettingCollectionHelper::setValueBitMask(const CIdentifier& typeID, GtkWid
 
 	const std::string str(value);
 
-	const gint size        = guint((m_KernelCtx.getTypeManager().getBitMaskEntryCount(typeID) + 1) >> 1);
+	const gint size        = gint((m_KernelCtx.getTypeManager().getBitMaskEntryCount(typeID) + 1) >> 1);
 	GtkTable* bitMaskTable = GTK_TABLE(widget);
 	gtk_table_resize(bitMaskTable, 2, size);
 
-	for (uint64_t i = 0; i < m_KernelCtx.getTypeManager().getBitMaskEntryCount(typeID); ++i)
-	{
+	for (uint64_t i = 0; i < m_KernelCtx.getTypeManager().getBitMaskEntryCount(typeID); ++i) {
 		CString entryName;
 		uint64_t entryValue;
-		if (m_KernelCtx.getTypeManager().getBitMaskEntry(typeID, i, entryName, entryValue))
-		{
+		if (m_KernelCtx.getTypeManager().getBitMaskEntry(typeID, i, entryName, entryValue)) {
 			GtkWidget* settingButton = gtk_check_button_new();
 			gtk_table_attach_defaults(bitMaskTable, settingButton, guint(i & 1), guint((i & 1) + 1), guint(i >> 1), guint((i >> 1) + 1));
 			gtk_button_set_label(GTK_BUTTON(settingButton), entryName.toASCIIString());

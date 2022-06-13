@@ -9,7 +9,6 @@ typedef void (*fpButtonCB)(GtkWidget* pWidget, gpointer data);
 class CInputDialog
 {
 public:
-
 	CInputDialog(const char* gtkBuilder, fpButtonCB okButtonCB, void* data = nullptr, const char* title = nullptr, const char* label = nullptr,
 				 const char* entry                                         = nullptr);
 	~CInputDialog();
@@ -19,7 +18,6 @@ public:
 	const char* getEntry() const { return static_cast<const char*>(gtk_entry_get_text(m_dialogEntry)); }
 
 private:
-
 	static gboolean keyPressEventCB(GtkWidget* widget, GdkEventKey* eventKey, gpointer data);
 	static void buttonClickedCB(GtkButton* button, gpointer data);
 	void buttonClicked(GtkButton* button) const;

@@ -23,17 +23,16 @@ class CPlayerVisualization;
 class CInterfacedScenario
 {
 public:
-
 	CInterfacedScenario(const Kernel::IKernelContext& ctx, CApplication& application, Kernel::IScenario& scenario,
 						CIdentifier& scenarioID, GtkNotebook& notebook, const char* guiFilename, const char* guiSettingsFilename);
-	virtual ~CInterfacedScenario();
+	~CInterfacedScenario();
 
-	virtual bool isLocked() const { return m_Player != nullptr; }
-	virtual void redraw();
-	virtual void redraw(Kernel::IBox& box);
-	virtual void redraw(Kernel::IComment& comment);
-	virtual void redraw(Kernel::ILink& link);
-	virtual void updateScenarioLabel();
+	bool isLocked() const { return m_Player != nullptr; }
+	void redraw() const;
+	void redraw(Kernel::IBox& box);
+	void redraw(Kernel::IComment& comment);
+	void redraw(const Kernel::ILink& link);
+	void updateScenarioLabel();
 	size_t pickInterfacedObject(int x, int y) const;
 	bool pickInterfacedObject(int x, int y, int sizeX, int sizeY);
 
@@ -74,14 +73,14 @@ public:
 	void scenarioDrawingAreaKeyPressEventCB(GtkWidget* widget, GdkEventKey* event);
 	void scenarioDrawingAreaKeyReleaseEventCB(GtkWidget* widget, GdkEventKey* event);
 
-	void copySelection();
+	void copySelection() const;
 	void cutSelection();
 	void pasteSelection();
 	void deleteSelection();
 
-	void deleteBox(const CIdentifier& boxID); // Utility method to remove box from scenario and visualization
-	void contextMenuBoxUpdateCB(Kernel::IBox& box);
-	void contextMenuBoxRemoveDeprecatedInterfacorsCB(Kernel::IBox& box);
+	void deleteBox(const CIdentifier& boxID) const; // Utility method to remove box from scenario and visualization
+	void contextMenuBoxUpdateCB(const Kernel::IBox& box);
+	void contextMenuBoxRemoveDeprecatedInterfacorsCB(const Kernel::IBox& box);
 	void contextMenuBoxRenameCB(Kernel::IBox& box);
 	void contextMenuBoxRenameAllCB();
 	void contextMenuBoxToggleEnableAllCB();
@@ -128,7 +127,7 @@ public:
 
 
 	void stopAndReleasePlayer();
-	bool setModifiableSettingsWidgets();
+	bool setModifiableSettingsWidgets() const;
 	bool hasSelection() const { return !m_SelectedObjects.empty(); }
 	bool centerOnBox(const CIdentifier& identifier);
 	void setScale(double scale);

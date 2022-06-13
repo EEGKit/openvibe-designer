@@ -21,8 +21,7 @@ bool CConnectorEditor::run()
 	//update_identifier_t updateID;
 
 	Kernel::EBoxInterfacorType interfacorType;
-	switch (m_type)
-	{
+	switch (m_type) {
 		case Box_Input:
 			setName = &Kernel::IBox::setInputName;
 			setType         = &Kernel::IBox::setInputType;
@@ -60,8 +59,7 @@ bool CConnectorEditor::run()
 	gtk_list_store_clear(GTK_LIST_STORE(gtk_combo_box_get_model(typeComboBox)));
 	gtk_window_set_title(GTK_WINDOW(dialog), m_title.c_str());
 
-	if (m_Box.getAlgorithmClassIdentifier() == CIdentifier::undefined())
-	{
+	if (m_Box.getAlgorithmClassIdentifier() == CIdentifier::undefined()) {
 		gtk_widget_show(GTK_WIDGET(gtk_builder_get_object(builder, "connector_editor-connector_identifier_label")));
 		gtk_widget_show(GTK_WIDGET(m_IDEntry));
 		gtk_widget_show(GTK_WIDGET(idResetButton));
@@ -72,17 +70,13 @@ bool CConnectorEditor::run()
 	std::map<std::string, CIdentifier> streamTypes;
 	gint active = -1;
 
-	for (const auto& currentTypeID : m_kernelCtx.getTypeManager().getSortedTypes())
-	{
+	for (const auto& currentTypeID : m_kernelCtx.getTypeManager().getSortedTypes()) {
 		//First check if the type is support by the connector
-		if ((m_Box.*isTypeSupported)(currentTypeID.first))
-		{
+		if ((m_Box.*isTypeSupported)(currentTypeID.first)) {
 			//If the input type is support by the connector, let's add it to the list
-			if (m_kernelCtx.getTypeManager().isStream(currentTypeID.first))
-			{
+			if (m_kernelCtx.getTypeManager().isStream(currentTypeID.first)) {
 				gtk_combo_box_append_text(typeComboBox, currentTypeID.second.toASCIIString());
-				if (currentTypeID.first == typeID)
-				{
+				if (currentTypeID.first == typeID) {
 					active = gint(streamTypes.size());
 					gtk_combo_box_set_active(typeComboBox, active);
 				}
@@ -97,14 +91,11 @@ bool CConnectorEditor::run()
 
 	bool finished = false;
 	bool res      = false;
-	while (!finished)
-	{
+	while (!finished) {
 		const gint result = gtk_dialog_run(GTK_DIALOG(dialog));
-		if (result == GTK_RESPONSE_APPLY)
-		{
+		if (result == GTK_RESPONSE_APPLY) {
 			char* activeText = gtk_combo_box_get_active_text(typeComboBox);
-			if (activeText)
-			{
+			if (activeText) {
 				const auto newName  = gtk_entry_get_text(nameEntry);
 				auto newType        = streamTypes[activeText];
 				const auto newIdStr = gtk_entry_get_text(m_IDEntry);
@@ -129,8 +120,7 @@ bool CConnectorEditor::run()
 			gtk_entry_set_text(nameEntry, name.toASCIIString());
 			gtk_combo_box_set_active(typeComboBox, active);
 		}
-		else
-		{
+		else {
 			finished = true;
 			res      = false;
 		}

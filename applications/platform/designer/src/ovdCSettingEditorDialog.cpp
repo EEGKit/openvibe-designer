@@ -32,10 +32,8 @@ bool CSettingEditorDialog::run()
 	gint active      = -1;
 	size_t nSettings = 0; // Cannot rely on m_settingTypes.size() -- if there are any duplicates, it wont increment properly (and should be an error anyway) ...
 
-	for (const auto& currentTypeID : m_kernelCtx.getTypeManager().getSortedTypes())
-	{
-		if (!m_kernelCtx.getTypeManager().isStream(currentTypeID.first))
-		{
+	for (const auto& currentTypeID : m_kernelCtx.getTypeManager().getSortedTypes()) {
+		if (!m_kernelCtx.getTypeManager().isStream(currentTypeID.first)) {
 			gtk_combo_box_append_text(GTK_COMBO_BOX(m_type), currentTypeID.second.toASCIIString());
 			if (currentTypeID.first == settingType) { active = gint(nSettings); }
 			m_settingTypes[currentTypeID.second.toASCIIString()] = currentTypeID.first;
@@ -47,14 +45,11 @@ bool CSettingEditorDialog::run()
 
 	bool finished = false;
 	bool res      = false;
-	while (!finished)
-	{
+	while (!finished) {
 		const gint result = gtk_dialog_run(GTK_DIALOG(dialog));
-		if (result == GTK_RESPONSE_APPLY)
-		{
+		if (result == GTK_RESPONSE_APPLY) {
 			char* activeText = gtk_combo_box_get_active_text(GTK_COMBO_BOX(m_type));
-			if (activeText)
-			{
+			if (activeText) {
 				settingType = m_settingTypes[activeText];
 				m_box.setSettingName(m_settingIdx, gtk_entry_get_text(GTK_ENTRY(name)));
 				m_box.setSettingType(m_settingIdx, settingType);
@@ -69,8 +64,7 @@ bool CSettingEditorDialog::run()
 			gtk_entry_set_text(GTK_ENTRY(name), settingName.toASCIIString());
 			if (active != -1) { gtk_combo_box_set_active(GTK_COMBO_BOX(m_type), active); }
 		}
-		else
-		{
+		else {
 			finished = true;
 			res      = false;
 		}

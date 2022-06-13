@@ -5,13 +5,13 @@
 namespace OpenViBE {
 namespace Designer {
 
-bool TAttributeHandler::removeAttribute(const CIdentifier& id)
+bool TAttributeHandler::removeAttribute(const CIdentifier& id) const
 {
 	if (!m_attributable) { return false; }
 	return m_attributable->removeAttribute(id);
 }
 
-bool TAttributeHandler::removeAllAttributes()
+bool TAttributeHandler::removeAllAttributes() const
 
 {
 	if (!m_attributable) { return false; }

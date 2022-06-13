@@ -9,13 +9,12 @@ namespace Designer {
 class CCommentProxy final
 {
 public:
-
 	CCommentProxy(const Kernel::IKernelContext& ctx, const Kernel::IComment& comment);
 	CCommentProxy(const Kernel::IKernelContext& ctx, Kernel::IScenario& scenario, const CIdentifier& commentID);
 	~CCommentProxy() { if (!m_applied) { this->apply(); } }
 
-	operator Kernel::IComment*() const { return m_comment; }
-	operator const Kernel::IComment*() const { return m_constComment; }
+	explicit operator Kernel::IComment*() const { return m_comment; }
+	explicit operator const Kernel::IComment*() const { return m_constComment; }
 
 	int getWidth(GtkWidget* widget) const;
 	int getHeight(GtkWidget* widget) const;
@@ -30,7 +29,6 @@ public:
 	const char* getLabel() const;
 
 protected:
-
 	static void updateSize(GtkWidget* widget, const char* text, int* xSize, int* ySize);
 
 	const Kernel::IKernelContext& m_kernelCtx;

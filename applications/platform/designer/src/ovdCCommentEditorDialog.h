@@ -7,7 +7,6 @@ namespace Designer {
 class CCommentEditorDialog final
 {
 public:
-
 	CCommentEditorDialog(const Kernel::IKernelContext& ctx, Kernel::IComment& comment, const char* guiFilename)
 		: m_kernelCtx(ctx), m_comment(comment), m_guiFilename(guiFilename) { }
 
@@ -21,7 +20,6 @@ public:
 	// help formatting pango
 	void infoCB() const { gtk_widget_show(m_infoDialog); }
 protected:
-
 	const Kernel::IKernelContext& m_kernelCtx;
 	Kernel::IComment& m_comment;
 	CString m_guiFilename;

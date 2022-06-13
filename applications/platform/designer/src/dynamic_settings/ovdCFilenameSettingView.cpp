@@ -53,12 +53,10 @@ void CFilenameSettingView::browse() const
 															  GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, nullptr);
 
 	const CString initialFilename = m_kernelCtx.getConfigurationManager().expand(gtk_entry_get_text(m_entry));
-	if (g_path_is_absolute(initialFilename.toASCIIString()))
-	{
+	if (g_path_is_absolute(initialFilename.toASCIIString())) {
 		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(widgetDialogOpen), initialFilename.toASCIIString());
 	}
-	else
-	{
+	else {
 		char* fullPath = g_build_filename(g_get_current_dir(), initialFilename.toASCIIString(), nullptr);
 		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(widgetDialogOpen), fullPath);
 		g_free(fullPath);
@@ -66,8 +64,7 @@ void CFilenameSettingView::browse() const
 
 	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(widgetDialogOpen), false);
 
-	if (gtk_dialog_run(GTK_DIALOG(widgetDialogOpen)) == GTK_RESPONSE_ACCEPT)
-	{
+	if (gtk_dialog_run(GTK_DIALOG(widgetDialogOpen)) == GTK_RESPONSE_ACCEPT) {
 		char* fileName = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widgetDialogOpen));
 		char* backslash;
 		while ((backslash = strchr(fileName, '\\')) != nullptr) { *backslash = '/'; }
@@ -79,8 +76,7 @@ void CFilenameSettingView::browse() const
 
 void CFilenameSettingView::onChange()
 {
-	if (!m_onValueSetting)
-	{
+	if (!m_onValueSetting) {
 		const gchar* value = gtk_entry_get_text(m_entry);
 		getBox().setSettingValue(getSettingIndex(), value);
 	}
@@ -90,15 +86,12 @@ void CFilenameSettingView::onChange()
 void CFilenameSettingView::onFocusLost()
 {
 	// We replace antislash, interpreted as escape, by slash in Windows path
-	if (!m_onValueSetting)
-	{
+	if (!m_onValueSetting) {
 		std::string fileName = gtk_entry_get_text(m_entry);
 		auto it              = fileName.begin();
 
-		while ((it = std::find(it, fileName.end(), '\\')) != fileName.end())
-		{
-			if (it == std::prev(fileName.end()))
-			{
+		while ((it = std::find(it, fileName.end(), '\\')) != fileName.end()) {
+			if (it == std::prev(fileName.end())) {
 				*it = '/';
 				break;
 			}

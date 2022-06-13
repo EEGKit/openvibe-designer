@@ -9,7 +9,6 @@ namespace Designer {
 class CConnectorEditor final
 {
 public:
-
 	CConnectorEditor(const Kernel::IKernelContext& ctx, Kernel::IBox& box, const size_t type, const size_t index, const char* title, const char* guiFilename)
 		: m_Box(box), m_kernelCtx(ctx), m_type(type), m_index(index), m_guiFilename(guiFilename), m_title(title ? title : "") { }
 

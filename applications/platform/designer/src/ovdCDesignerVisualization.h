@@ -127,7 +127,7 @@ private:
 	static void dragDataGetFromWidgetCB(GtkWidget* srcWidget, GdkDragContext* dc, GtkSelectionData* selection, guint info, guint time, gpointer data);
 
 	//Drop methods
-	static void dragDataReceivedInWidgetCB(GtkWidget* dstWidget, GdkDragContext*, gint, gint, GtkSelectionData* selection, guint info, guint time,
+	static void dragDataReceivedInWidgetCB(GtkWidget* dstWidget, GdkDragContext* dc, gint x, gint y, GtkSelectionData* selection, guint info, guint time,
 										   gpointer data);
 	static void dataReceivedInEventBoxCB(GtkWidget* dstWidget, GdkDragContext* dc, gint x, gint y, GtkSelectionData* selection, guint info, guint time,
 										 gpointer data);

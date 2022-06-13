@@ -444,7 +444,7 @@ public:
 	 * simplified to avoid placeholders creation.
 	 * \param srcWidgetID identifier of widget being dropped
 	 * \param dstWidget pointer to widget on which the drop operation is performed
-	 * \param location
+	 * \param location Position of drag
 	 * \return true if drop operation was successfully completed, false otherwise
 	 */
 	virtual bool dragDataReceivedOutsideWidgetCB(const CIdentifier& srcWidgetID, GtkWidget* dstWidget, EDragLocation location) = 0;

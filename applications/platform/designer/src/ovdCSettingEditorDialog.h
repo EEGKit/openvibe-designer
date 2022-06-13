@@ -10,7 +10,6 @@ namespace Designer {
 class CSettingEditorDialog final
 {
 public:
-
 	CSettingEditorDialog(const Kernel::IKernelContext& ctx, Kernel::IBox& box, const size_t index, const char* title,
 						 const char* guiFilename, const char* guiSettingsFilename)
 		: m_kernelCtx(ctx), m_box(box), m_helper(ctx, guiFilename), m_settingIdx(index), m_guiFilename(guiFilename),
@@ -22,7 +21,6 @@ public:
 	void typeChangedCB();
 
 protected:
-
 	const Kernel::IKernelContext& m_kernelCtx;
 	Kernel::IBox& m_box;
 	CSettingCollectionHelper m_helper;
