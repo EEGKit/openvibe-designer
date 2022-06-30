@@ -561,13 +561,9 @@ int go(int argc, char** argv)
 
 	std::cout << "[  INF  ] Created kernel loader, trying to load kernel module" << "\n";
 	CString errorMsg;
-#if defined TARGET_OS_Windows
-	CString file = Directories::getLibDir() + "/openvibe-kernel.dll";
-#elif defined TARGET_OS_Linux
-	CString file = Directories::getLibDir() + "/libopenvibe-kernel.so";
-#elif defined TARGET_OS_MacOS
-	CString file = Directories::getLibDir() + "/libopenvibe-kernel.dylib";
-#endif
+
+	CString file = Directories::getLib("kernel");
+
 	if (!loader.load(file, &errorMsg)) { std::cout << "[ FAILED ] Error loading kernel (" << errorMsg << ")" << " from [" << file << "]\n"; }
 	else {
 		std::cout << "[  INF  ] Kernel module loaded, trying to get kernel descriptor" << "\n";
