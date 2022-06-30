@@ -98,7 +98,7 @@ bool CConnectorEditor::run()
 			if (activeText) {
 				const auto newName  = gtk_entry_get_text(nameEntry);
 				auto newType        = streamTypes[activeText];
-				const auto newIdStr = gtk_entry_get_text(m_IDEntry);
+				const std::string newIdStr(gtk_entry_get_text(m_IDEntry));
 
 				(m_Box.*setType)(m_index, newType);
 				(m_Box.*setName)(m_index, newName);

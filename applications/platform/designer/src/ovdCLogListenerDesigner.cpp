@@ -43,10 +43,10 @@ void focus_on_box_cidentifier_clicked(GtkWidget* widget, const GdkEventButton* e
 		//we went one char to far for start
 		gtk_text_iter_forward_char(&start);
 		//this contains the CIdentifier
-		gchar* link = gtk_text_iter_get_text(&start, &end);
+		const std::string link = gtk_text_iter_get_text(&start, &end);
 		//std::cout << "cid is |" << link << "|" << std::endl;
 		OpenViBE::CIdentifier id;
-		id.fromString(OpenViBE::CString(link));
+		id.fromString(link);
 		ptr->m_CenterOnBoxFun(id);
 	}
 }

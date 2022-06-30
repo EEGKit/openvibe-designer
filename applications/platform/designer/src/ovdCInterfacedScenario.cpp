@@ -425,7 +425,7 @@ static void reset_scenario_setting_identifier_cb(GtkWidget* /*button*/, CInterfa
 static void modify_scenario_setting_identifier_cb(GtkWidget* entry, CInterfacedScenario::setting_cb_data_t* data)
 {
 	CIdentifier id;
-	if (id.fromString(gtk_entry_get_text(GTK_ENTRY(entry)))) {
+	if (id.fromString(std::string(gtk_entry_get_text(GTK_ENTRY(entry))))) {
 		data->scenario->m_Scenario.updateInterfacorIdentifier(Kernel::EBoxInterfacorType::Setting, data->index, id);
 	}
 }
@@ -1862,7 +1862,7 @@ void CInterfacedScenario::scenarioDrawingAreaDragDataReceivedCB(GdkDragContext* 
 		std::string str(reinterpret_cast<const char*>(gtk_selection_data_get_text(selectionData)));
 
 		// check that there is an identifier inside the string, its form is (0xXXXXXXXX, 0xXXXXXXXX)
-		if (str.find(')') != std::string::npos) { boxAlgorithmClassID.fromString(str.substr(0, str.find(')')).c_str()); }
+		if (str.find(')') != std::string::npos) { boxAlgorithmClassID.fromString(str.substr(0, str.find(')'))); }
 
 		Kernel::IBox* box                     = nullptr;
 		const Plugins::IPluginObjectDesc* pod = nullptr;
@@ -1875,7 +1875,7 @@ void CInterfacedScenario::scenarioDrawingAreaDragDataReceivedCB(GdkDragContext* 
 		if (boxAlgorithmClassID == OVP_ClassId_BoxAlgorithm_Metabox) {
 			// extract the name of the metabox from the drag data string
 			CIdentifier id;
-			id.fromString(CString(str.substr(str.find(')') + 1).c_str()));
+			id.fromString(str.substr(str.find(')') + 1));
 
 			//m_kernelCtx.getLogManager() << Kernel::LogLevel_Info << "This is a metabox with ID " << metaboxID << "\n";
 			pod = m_kernelCtx.getMetaboxManager().getMetaboxObjectDesc(id);
