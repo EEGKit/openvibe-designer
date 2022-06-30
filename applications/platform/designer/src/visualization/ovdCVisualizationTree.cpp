@@ -367,7 +367,7 @@ bool CVisualizationTree::getIdentifierFromTreeIter(GtkTreeIter* iter, CIdentifie
 {
 	char* str = nullptr;
 	getStringValueFromTreeIter(iter, str, colType);
-	id.fromString(CString(str));
+	id.fromString(std::string(str));
 	return true;
 }
 
@@ -515,7 +515,7 @@ bool CVisualizationTree::findChildNodeFromParentR(GtkTreeIter* iter, const CIden
 
 	//is current node the one looked for?
 	gtk_tree_model_get(GTK_TREE_MODEL(m_treeStore), iter, EVTColumn::StringIdentifier, &str, -1);
-	currentID.fromString(CString(str));
+	currentID.fromString(std::string(str));
 	if (id == currentID) {
 		m_internalTreeNode = *iter;
 		return true;
@@ -820,10 +820,10 @@ bool CVisualizationTree::deserialize(const CString& tree)
 	for (auto it = representation.begin(); it != representation.end(); ++it) {
 		json::Value& jsonWidget = *it;
 
-		widgetID.fromString(jsonWidget["identifier"].ToString().c_str());
+		widgetID.fromString(jsonWidget["identifier"].ToString());
 
 		CIdentifier boxID;
-		boxID.fromString(jsonWidget["boxIdentifier"].ToString().c_str());
+		boxID.fromString(jsonWidget["boxIdentifier"].ToString());
 
 		const EVTWidget widgetType = EVTWidget(jsonWidget["type"].ToInt());
 
@@ -840,7 +840,7 @@ bool CVisualizationTree::deserialize(const CString& tree)
 		else { name = jsonWidget["name"].ToString().c_str(); }
 
 		CIdentifier id, parentID;
-		parentID.fromString(jsonWidget["parentIdentifier"].ToString().c_str());
+		parentID.fromString(jsonWidget["parentIdentifier"].ToString());
 
 		size_t index = 0;
 		if (this->getVisualizationWidget(parentID)) { index = size_t(jsonWidget["index"].ToInt()); }

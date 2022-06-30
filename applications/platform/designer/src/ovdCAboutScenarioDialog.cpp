@@ -65,14 +65,14 @@ bool CAboutScenarioDialog::run() const
 	m_scenario.setAttributeValue(OV_AttributeId_Scenario_UpdatedSoftwareVersion, gtk_entry_get_text(GTK_ENTRY(updatedSoftwareVersion)));
 
 	if (m_scenario.isMetabox()) {
-		const CString id(gtk_entry_get_text(GTK_ENTRY(metaboxId)));
+		const std::string id(gtk_entry_get_text(GTK_ENTRY(metaboxId)));
 		CIdentifier tmp;
 		if (!tmp.fromString(id)) {
 			m_kernelCtx.getLogManager() << Kernel::LogLevel_Error << "Invalid identifier " << id
 					<< " is not in the \"(0x[0-9a-f]{1-8}, 0x[0-9a-f]{1-8})\" format. ";
 			m_kernelCtx.getLogManager() << "Reverting to " << m_scenario.getAttributeValue(OVP_AttributeId_Metabox_ID).toASCIIString() << ".\n";
 		}
-		else { m_scenario.setAttributeValue(OVP_AttributeId_Metabox_ID, id); }
+		else { m_scenario.setAttributeValue(OVP_AttributeId_Metabox_ID, id.c_str()); }
 	}
 
 	GtkTextIter start, end;
