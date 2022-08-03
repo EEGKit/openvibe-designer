@@ -73,7 +73,7 @@ bool CScenarioStateStack::snapshot()
 	return true;
 }
 
-bool CScenarioStateStack::restoreState(const IMemoryBuffer& state) const
+bool CScenarioStateStack::restoreState(const CMemoryBuffer& state) const
 {
 	CMemoryBuffer uncompressedBuffer;
 
@@ -96,7 +96,7 @@ bool CScenarioStateStack::restoreState(const IMemoryBuffer& state) const
 
 	importer->initialize();
 
-	Kernel::TParameterHandler<const IMemoryBuffer*> buffer(importer->getInputParameter(OV_Algorithm_ScenarioImporter_InputParameterId_MemoryBuffer));
+	Kernel::TParameterHandler<const CMemoryBuffer*> buffer(importer->getInputParameter(OV_Algorithm_ScenarioImporter_InputParameterId_MemoryBuffer));
 	Kernel::TParameterHandler<Kernel::IScenario*> scenario(importer->getOutputParameter(OV_Algorithm_ScenarioImporter_OutputParameterId_Scenario));
 
 	m_scenario.clear();
@@ -122,7 +122,7 @@ bool CScenarioStateStack::restoreState(const IMemoryBuffer& state) const
 	return true;
 }
 
-bool CScenarioStateStack::dumpState(IMemoryBuffer& state) const
+bool CScenarioStateStack::dumpState(CMemoryBuffer& state) const
 {
 	CMemoryBuffer uncompressedBuffer;
 	CMemoryBuffer compressedBuffer;
@@ -155,7 +155,7 @@ bool CScenarioStateStack::dumpState(IMemoryBuffer& state) const
 	exporter->initialize();
 
 	Kernel::TParameterHandler<const Kernel::IScenario*> scenario(exporter->getInputParameter(OV_Algorithm_ScenarioExporter_InputParameterId_Scenario));
-	Kernel::TParameterHandler<IMemoryBuffer*> buffer(exporter->getOutputParameter(OV_Algorithm_ScenarioExporter_OutputParameterId_MemoryBuffer));
+	Kernel::TParameterHandler<CMemoryBuffer*> buffer(exporter->getOutputParameter(OV_Algorithm_ScenarioExporter_OutputParameterId_MemoryBuffer));
 
 	scenario = &m_scenario;
 	buffer   = &uncompressedBuffer;

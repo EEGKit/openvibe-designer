@@ -111,7 +111,7 @@ bool CBoxAlgorithmTopographicMap2DDisplay::process()
 
 	//decode channel localisation data
 	for (size_t i = 0; i < context->getInputChunkCount(1); ++i) {
-		const IMemoryBuffer* buf = context->getInputChunk(1, i);
+		const CMemoryBuffer* buf = context->getInputChunk(1, i);
 		m_database->decodeChannelLocalisationMemoryBuffer(buf, context->getInputChunkStartTime(1, i), context->getInputChunkEndTime(1, i));
 		context->markInputAsDeprecated(1, i);
 	}
