@@ -23,8 +23,8 @@ public:
 	bool snapshot();
 
 private:
-	bool restoreState(const IMemoryBuffer& state) const;
-	bool dumpState(IMemoryBuffer& state) const;
+	bool restoreState(const CMemoryBuffer& state) const;
+	bool dumpState(CMemoryBuffer& state) const;
 
 protected:
 	const Kernel::IKernelContext& m_kernelCtx;

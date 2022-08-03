@@ -40,7 +40,7 @@ CBufferDatabase::~CBufferDatabase()
 	}*/
 }
 
-bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const IMemoryBuffer* buffer, uint64_t startTime, uint64_t endTime)
+bool CBufferDatabase::decodeChannelLocalisationMemoryBuffer(const CMemoryBuffer* buffer, uint64_t startTime, uint64_t endTime)
 {
 	//feed memory buffer to decoder
 	m_decoder->getInputParameter(OVP_GD_Algorithm_ChannelLocalisationDecoder_InputParameterId_MemoryBufferToDecode)->setReferenceTarget(&buffer);

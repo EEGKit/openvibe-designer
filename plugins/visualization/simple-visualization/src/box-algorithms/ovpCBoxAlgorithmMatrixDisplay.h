@@ -28,7 +28,7 @@ protected:
 	// for the TARGET
 	Toolkit::TStreamedMatrixDecoder<CBoxAlgorithmMatrixDisplay> m_decoder;
 	Kernel::IAlgorithmProxy* iMatrix = nullptr;
-	Kernel::TParameterHandler<const IMemoryBuffer*> ip_buffer;
+	Kernel::TParameterHandler<const CMemoryBuffer*> ip_buffer;
 	Kernel::TParameterHandler<CMatrix*> op_matrix;
 
 	// Outputs: visualization in a gtk window

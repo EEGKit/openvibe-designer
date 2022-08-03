@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <exception>
 #include <stdexcept>
 #include <sstream>
@@ -45,9 +46,9 @@ public:
 		std::string errorMessage;
 		const OpenViBE::Kernel::CError* error = m_ErrorManager.getLastError();
 		while (error) {
-			char location[1024];
-			FS::Files::getFilename(error->getErrorLocation(), location);
-			errorMessage += "Message: " + std::string(error->getErrorString()) + "\nFile: " + location + "\n";
+			std::array<char, 1024> location;
+			FS::Files::getFilename(error->getErrorLocation(), location.data());
+			errorMessage += "Message: " + std::string(error->getErrorString()) + "\nFile: " + location.data() + "\n";
 			error = error->getNestedError();
 		}
 		m_ErrorManager.releaseErrors();
