@@ -64,9 +64,8 @@ class TBoxAlgorithmContinuousVizDesc final : public CBoxAlgorithmVizDesc
 {
 public:
 	TBoxAlgorithmContinuousVizDesc(const CString& name, const CIdentifier& descClassID, const CIdentifier& classID,
-								   const CString& addedSoftwareVersion, const CString& updatedSoftwareVersion,
 								   const CParameterSet& parameterSet, const CString& shortDesc, const CString& detailedDesc)
-		: CBoxAlgorithmVizDesc(name, descClassID, classID, addedSoftwareVersion, updatedSoftwareVersion, parameterSet, shortDesc, detailedDesc) { }
+		: CBoxAlgorithmVizDesc(name, descClassID, classID, parameterSet, shortDesc, detailedDesc) { }
 
 	Plugins::IPluginObject* create() override { return new TBoxAlgorithmContinuousViz<TRendererFactoryClass, TRulerClass>(m_ClassID, m_Parameters); }
 	Plugins::IBoxListener* createBoxListener() const override { return new CBoxAlgorithmContinuousVizListener(m_Parameters); }

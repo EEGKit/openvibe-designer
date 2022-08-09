@@ -65,11 +65,9 @@ template <bool bHorizontalStack, bool bDrawBorders, class TRendererFactoryClass,
 class TBoxAlgorithmStackedContinuousVizDesc final : public CBoxAlgorithmVizDesc
 {
 public:
-	TBoxAlgorithmStackedContinuousVizDesc(const CString& name, const CIdentifier& descClassID,
-										  const CIdentifier& classID, const CString& addedSoftwareVersion,
-										  const CString& updatedSoftwareVersion, const CParameterSet& parameterSet,
-										  const CString& shortDesc, const CString& detailedDesc)
-		: CBoxAlgorithmVizDesc(name, descClassID, classID, addedSoftwareVersion, updatedSoftwareVersion, parameterSet, shortDesc, detailedDesc) { }
+	TBoxAlgorithmStackedContinuousVizDesc(const CString& name, const CIdentifier& descClassID, const CIdentifier& classID,  
+										  const CParameterSet& parameterSet, const CString& shortDesc, const CString& detailedDesc)
+		: CBoxAlgorithmVizDesc(name, descClassID, classID, parameterSet, shortDesc, detailedDesc) { }
 
 	Plugins::IPluginObject* create() override
 	{

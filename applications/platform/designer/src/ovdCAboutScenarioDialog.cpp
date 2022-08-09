@@ -19,8 +19,6 @@ bool CAboutScenarioDialog::run() const
 	GtkWidget* category               = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_category"));
 	GtkWidget* version                = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_version"));
 	GtkWidget* documentationPage      = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_documentation_page"));
-	GtkWidget* addedSoftwareVersion   = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_added_software_version"));
-	GtkWidget* updatedSoftwareVersion = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_update_software_version"));
 
 	GtkWidget* metaboxId = GTK_WIDGET(gtk_builder_get_object(interface, "scenario_about-entry_metabox_id"));
 
@@ -38,8 +36,6 @@ bool CAboutScenarioDialog::run() const
 	gtk_entry_set_text(GTK_ENTRY(category), m_scenario.getAttributeValue(OV_AttributeId_Scenario_Category).toASCIIString());
 	gtk_entry_set_text(GTK_ENTRY(version), m_scenario.getAttributeValue(OV_AttributeId_Scenario_Version).toASCIIString());
 	gtk_entry_set_text(GTK_ENTRY(documentationPage), m_scenario.getAttributeValue(OV_AttributeId_Scenario_DocumentationPage).toASCIIString());
-	gtk_entry_set_text(GTK_ENTRY(addedSoftwareVersion), m_scenario.getAttributeValue(OV_AttributeId_Scenario_AddedSoftwareVersion).toASCIIString());
-	gtk_entry_set_text(GTK_ENTRY(updatedSoftwareVersion), m_scenario.getAttributeValue(OV_AttributeId_Scenario_UpdatedSoftwareVersion).toASCIIString());
 
 	if (m_scenario.isMetabox()) { gtk_entry_set_text(GTK_ENTRY(metaboxId), m_scenario.getAttributeValue(OVP_AttributeId_Metabox_ID).toASCIIString()); }
 	else {
@@ -61,8 +57,6 @@ bool CAboutScenarioDialog::run() const
 	m_scenario.setAttributeValue(OV_AttributeId_Scenario_Category, gtk_entry_get_text(GTK_ENTRY(category)));
 	m_scenario.setAttributeValue(OV_AttributeId_Scenario_Version, gtk_entry_get_text(GTK_ENTRY(version)));
 	m_scenario.setAttributeValue(OV_AttributeId_Scenario_DocumentationPage, gtk_entry_get_text(GTK_ENTRY(documentationPage)));
-	m_scenario.setAttributeValue(OV_AttributeId_Scenario_AddedSoftwareVersion, gtk_entry_get_text(GTK_ENTRY(addedSoftwareVersion)));
-	m_scenario.setAttributeValue(OV_AttributeId_Scenario_UpdatedSoftwareVersion, gtk_entry_get_text(GTK_ENTRY(updatedSoftwareVersion)));
 
 	if (m_scenario.isMetabox()) {
 		const std::string id(gtk_entry_get_text(GTK_ENTRY(metaboxId)));

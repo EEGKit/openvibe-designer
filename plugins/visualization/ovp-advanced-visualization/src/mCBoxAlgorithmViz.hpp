@@ -287,15 +287,12 @@ public:
 	CString m_DetailedDesc;
 	CIdentifier m_DescClassID = CIdentifier::undefined();
 	CIdentifier m_ClassID     = CIdentifier::undefined();
-	CString m_AddedSoftwareVersion;
-	CString m_UpdatedSoftwareVersion;
 	std::vector<int> m_Parameters;
 
 	CBoxAlgorithmVizDesc(const CString& name, const CIdentifier& descClassID, const CIdentifier& classID,
-						 const CString& addedSoftwareVersion, const CString& updatedSoftwareVersion,
 						 const CParameterSet& parameterSet, const CString& shortDesc, const CString& detailedDesc)
 		: m_ShortDesc(shortDesc), m_DetailedDesc(detailedDesc), m_DescClassID(descClassID), m_ClassID(classID),
-		  m_AddedSoftwareVersion(addedSoftwareVersion), m_UpdatedSoftwareVersion(updatedSoftwareVersion), m_Parameters(parameterSet)
+		  m_Parameters(parameterSet)
 	{
 		const std::string fullname(name.toASCIIString());
 		const size_t i = fullname.rfind('/');
@@ -318,9 +315,6 @@ public:
 	CString getDetailedDescription() const override { return m_DetailedDesc; }
 	// CString getCategory() const override { return ""; }
 	CString getVersion() const override { return "1.0"; }
-	CString getSoftwareComponent() const override { return "openvibe-designer"; }
-	CString getAddedSoftwareVersion() const override { return m_AddedSoftwareVersion; }
-	CString getUpdatedSoftwareVersion() const override { return m_UpdatedSoftwareVersion; }
 	CString getStockItemName() const override { return "gtk-find"; }
 
 	CIdentifier getCreatedClass() const override { return m_ClassID; }

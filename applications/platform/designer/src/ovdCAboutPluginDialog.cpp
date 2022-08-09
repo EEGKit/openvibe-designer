@@ -19,8 +19,6 @@ bool CAboutPluginDialog::run()
 	GtkWidget* authorCompanyName      = GTK_WIDGET(gtk_builder_get_object(interface, "plugin_about-entry_company_name"));
 	GtkWidget* category               = GTK_WIDGET(gtk_builder_get_object(interface, "plugin_about-entry_category"));
 	GtkWidget* version                = GTK_WIDGET(gtk_builder_get_object(interface, "plugin_about-entry_version"));
-	GtkWidget* addedSoftwareVersion   = GTK_WIDGET(gtk_builder_get_object(interface, "plugin_about-entry_added_software_version"));
-	GtkWidget* updatedSoftwareVersion = GTK_WIDGET(gtk_builder_get_object(interface, "plugin_about-entry_update_software_version"));
 	GtkWidget* shortDesc              = GTK_WIDGET(gtk_builder_get_object(interface, "plugin_about-textview_short_description"));
 	GtkWidget* detailedDesc           = GTK_WIDGET(gtk_builder_get_object(interface, "plugin_about-textview_detailed_description"));
 	g_object_unref(interface);
@@ -39,8 +37,6 @@ bool CAboutPluginDialog::run()
 	gtk_entry_set_text(GTK_ENTRY(authorCompanyName), m_pods->getAuthorCompanyName());
 	gtk_entry_set_text(GTK_ENTRY(category), m_pods->getCategory());
 	gtk_entry_set_text(GTK_ENTRY(version), m_pods->getVersion());
-	gtk_entry_set_text(GTK_ENTRY(addedSoftwareVersion), m_pods->getAddedSoftwareVersion());
-	gtk_entry_set_text(GTK_ENTRY(updatedSoftwareVersion), m_pods->getUpdatedSoftwareVersion());
 	gtk_text_view_set_buffer(GTK_TEXT_VIEW(shortDesc), shortDescBuffer);
 	gtk_text_view_set_buffer(GTK_TEXT_VIEW(detailedDesc), detailedDescBuffer);
 	g_object_unref(shortDescBuffer);
