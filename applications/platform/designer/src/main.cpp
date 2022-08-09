@@ -136,8 +136,7 @@ void getVersionComponentsFromConfigToken(const Kernel::IKernelContext& ctx, cons
 }  // namespace
 
 static void InsertPluginObjectDescToGtkTreeStore(const Kernel::IKernelContext& ctx, std::map<std::string, const Plugins::IPluginObjectDesc*>& pods,
-												 GtkTreeStore* treeStore, std::vector<const Plugins::IPluginObjectDesc*>& newBoxes,
-												 std::vector<const Plugins::IPluginObjectDesc*>& updatedBoxes, bool isNewVersion = false)
+												 GtkTreeStore* treeStore)
 {
 	components_map_t currentVersions;
 	getVersionComponentsFromConfigToken(ctx, "ProjectVersion_Components", currentVersions);
@@ -213,56 +212,6 @@ static void InsertPluginObjectDescToGtkTreeStore(const Kernel::IKernelContext& c
 			str = p->getName().toASCIIString();
 
 			if (ctx.getPluginManager().isPluginObjectFlaggedAsDeprecated(p->getCreatedClass())) { textColor = "#3f7f7f"; }
-
-			// If the software is launched for the first time after update, highlight new/updated boxes in tree-view
-			std::string boxSoftwareComponent = p->getSoftwareComponent().toASCIIString();
-
-			if (boxSoftwareComponent != "unknown") {
-				int currentMajor  = std::get<0>(currentVersions[boxSoftwareComponent]);
-				int currentMinor  = std::get<1>(currentVersions[boxSoftwareComponent]);
-				int currentPatch  = std::get<2>(currentVersions[boxSoftwareComponent]);
-				int lastUsedMajor = std::get<0>(lastUsedVersions[boxSoftwareComponent]);
-				int lastUsedMinor = std::get<1>(lastUsedVersions[boxSoftwareComponent]);
-				int lastUsedPatch = std::get<2>(lastUsedVersions[boxSoftwareComponent]);
-				int boxMajor      = 0, boxMinor = 0, boxPatch = 0;
-				char c;
-				std::stringstream ss(p->getAddedSoftwareVersion().toASCIIString());
-				ss >> boxMajor >> c >> boxMinor >> c >> boxPatch;
-
-				// If this is a new version, then add in list all the updated/new boxes since last version opened
-				if (isNewVersion
-					&& ((lastUsedMajor < boxMajor && boxMajor <= currentMajor)
-						|| (boxMajor == currentMajor && lastUsedMinor < boxMinor && boxMinor <= currentMinor)
-						|| (boxMinor == currentMinor && lastUsedPatch < boxPatch && boxPatch <= currentPatch)
-						// As default value for lastUsedVMinor and lastUsedVMajor are the current software version
-						|| (boxMajor == currentMajor && boxMinor == currentMinor && boxPatch == currentPatch))) {
-					str += " (New)";
-					bgColor = "#FFFFC4";
-					newBoxes.push_back(p);
-				}
-				// Otherwise
-				else if (boxMajor == currentMajor && boxMinor == currentMinor && boxPatch ==
-						 currentPatch) { newBoxes.push_back(p); }
-				else {
-					int updatedMajor = 0, updatedMinor = 0, updatedPatch = 0;
-					ss.str(p->getUpdatedSoftwareVersion().toASCIIString());
-					ss >> updatedMajor >> c >> updatedMinor >> c >> updatedPatch;
-					// If this is a new version, then add in list all the updated/new boxes since last version opened
-					if (isNewVersion
-						&& ((lastUsedMajor < updatedMajor && updatedMajor <= currentMajor)
-							|| (updatedMajor == currentMajor && lastUsedMinor < updatedMinor && updatedMinor <= currentMinor)
-							|| (updatedMinor == currentMinor && lastUsedPatch < updatedPatch && updatedPatch <= currentPatch)
-							// If this is a new version Designer, and last version opened was set to default value i.e. version of current software
-							|| (updatedMajor == currentMajor && updatedMinor == currentMinor && updatedPatch == currentPatch))) {
-						str += " (New)";
-						bgColor = "#FFFFC4";
-						updatedBoxes.push_back(p);
-					}
-					// Otherwise
-					else if (!isNewVersion && (updatedMajor == currentMajor && updatedMinor == currentMinor
-											   && updatedPatch == currentPatch)) { updatedBoxes.push_back(p); }
-				}
-			}
 
 			// Construct a string containing the BoxAlgorithmIdentifier concatenated with a metabox identifier if necessary
 			std::string boxAlgorithmDesc = p->getCreatedClass().str();
@@ -744,17 +693,14 @@ int go(int argc, char** argv)
 							cbLogger.enumeratePluginObjectDesc();
 							cbCollector1.enumeratePluginObjectDesc(OV_ClassId_Plugins_BoxAlgorithmDesc);
 							cbCollector2.enumeratePluginObjectDesc(OV_ClassId_Plugins_AlgorithmDesc);
-							InsertPluginObjectDescToGtkTreeStore(*context, cbCollector1.getPluginObjectDescMap(), app.m_BoxAlgorithmTreeModel, app.m_NewBoxes,
-																 app.m_UpdatedBoxes, app.m_IsNewVersion);
-							InsertPluginObjectDescToGtkTreeStore(*context, cbCollector2.getPluginObjectDescMap(), app.m_AlgorithmTreeModel, app.m_NewBoxes,
-																 app.m_UpdatedBoxes);
+							InsertPluginObjectDescToGtkTreeStore(*context, cbCollector1.getPluginObjectDescMap(), app.m_BoxAlgorithmTreeModel);
+							InsertPluginObjectDescToGtkTreeStore(*context, cbCollector2.getPluginObjectDescMap(), app.m_AlgorithmTreeModel);
 
 							std::map<std::string, const Plugins::IPluginObjectDesc*> metaboxDescMap;
 							CIdentifier id;
 							while ((id = context->getMetaboxManager().getNextMetaboxObjectDescIdentifier(id)) != CIdentifier::undefined()
 							) { metaboxDescMap[id.str()] = context->getMetaboxManager().getMetaboxObjectDesc(id); }
-							InsertPluginObjectDescToGtkTreeStore(*context, metaboxDescMap, app.m_BoxAlgorithmTreeModel, app.m_NewBoxes, app.m_UpdatedBoxes,
-																 app.m_IsNewVersion);
+							InsertPluginObjectDescToGtkTreeStore(*context, metaboxDescMap, app.m_BoxAlgorithmTreeModel);
 
 							context->getLogManager() << Kernel::LogLevel_Info << "Initialization took "
 									<< context->getConfigurationManager().expand("$Core{real-time}") << " ms\n";

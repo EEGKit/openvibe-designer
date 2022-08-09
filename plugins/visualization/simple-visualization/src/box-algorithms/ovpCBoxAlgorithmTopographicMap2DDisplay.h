@@ -51,9 +51,6 @@ public:
 	CString getCategory() const override { return "Visualization/Topography"; }
 	CString getVersion() const override { return "2.0"; }
 	CString getStockItemName() const override { return GTK_STOCK_EXECUTE; }
-	CString getSoftwareComponent() const override { return "openvibe-designer"; }
-	CString getAddedSoftwareVersion() const override { return "0.0.0"; }
-	CString getUpdatedSoftwareVersion() const override { return "0.0.0"; }
 
 	CIdentifier getCreatedClass() const override { return OVP_ClassId_TopographicMap2DDisplay; }
 	IPluginObject* create() override { return new CBoxAlgorithmTopographicMap2DDisplay(); }

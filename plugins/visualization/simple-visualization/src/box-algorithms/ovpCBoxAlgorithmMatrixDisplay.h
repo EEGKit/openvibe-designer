@@ -73,9 +73,6 @@ public:
 	CString getCategory() const override { return "Visualization/Basic"; }
 	CString getVersion() const override { return "1.0"; }
 	CString getStockItemName() const override { return "gtk-select-color"; }
-	CString getSoftwareComponent() const override { return "openvibe-designer"; }
-	CString getAddedSoftwareVersion() const override { return "0.0.0"; }
-	CString getUpdatedSoftwareVersion() const override { return "0.0.0"; }
 
 	CIdentifier getCreatedClass() const override { return OVP_ClassId_BoxAlgorithm_MatrixDisplay; }
 	IPluginObject* create() override { return new CBoxAlgorithmMatrixDisplay; }
