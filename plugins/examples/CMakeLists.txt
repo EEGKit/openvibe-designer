@@ -8,13 +8,11 @@ SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES
 	FOLDER ${PLUGINS_FOLDER}
 	COMPILE_FLAGS "-DOVP_Exports -DOVP_Shared")
 target_link_libraries(${PROJECT_NAME} 
-                      openvibe
+					  openvibe
 					  openvibe-common
-                      openvibe-toolkit
-                      openvibe-module-ebml
-                      openvibe-module-system
-                      openvibe-module-xml
-)
+					  openvibe-toolkit
+					  openvibe-module-system
+					  openvibe-module-xml)
 
 add_definitions(-DTARGET_HAS_ThirdPartyOpenViBEPluginsGlobalDefines)
 
