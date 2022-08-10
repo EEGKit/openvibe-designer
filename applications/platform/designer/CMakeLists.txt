@@ -26,7 +26,6 @@ target_link_libraries(${PROJECT_NAME}
                       openvibe-module-socket
                       openvibe-module-xml
                       openvibe-module-csv
-                      openvibe-module-date
                       openvibe-module-communication
 					  Boost::boost
 )
