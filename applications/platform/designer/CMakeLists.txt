@@ -24,7 +24,6 @@ target_link_libraries(${PROJECT_NAME}
                       openvibe-module-ebml
 					  openvibe-module-fs
 					  openvibe-module-socket
-					  openvibe-module-xml
 					  openvibe-module-csv
 					  openvibe-module-communication
 					  Boost::boost)
