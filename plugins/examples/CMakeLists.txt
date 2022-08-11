@@ -11,8 +11,7 @@ target_link_libraries(${PROJECT_NAME}
 					  openvibe
 					  openvibe-common
 					  openvibe-toolkit
-					  openvibe-module-system
-					  openvibe-module-xml)
+					  openvibe-module-system)
 
 add_definitions(-DTARGET_HAS_ThirdPartyOpenViBEPluginsGlobalDefines)
 
