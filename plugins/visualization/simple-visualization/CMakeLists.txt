@@ -1,4 +1,4 @@
-PROJECT(openvibe-plugins-designer-simple-visualization)
+PROJECT(openvibe-plugins-designer-simple-vis)
 MESSAGE(STATUS "Now building ${PROJECT_NAME} ${PROJECT_VERSION} (${OV_PROJECT_BRANCH}~${OV_PROJECT_COMMITHASH})" )
 
 FILE(GLOB_RECURSE SRC_FILES src/*.cpp src/*.h src/*.hpp src/*.inl)

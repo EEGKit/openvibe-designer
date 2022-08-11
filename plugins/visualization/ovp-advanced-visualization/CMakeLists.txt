@@ -1,4 +1,4 @@
-PROJECT(openvibe-plugins-designer-advanced-visualization)
+PROJECT(openvibe-plugins-designer-advanced-vis)
 SET(PROJECT_PRODUCT_NAME "Mensia Advanced Visualization Toolset")
 MESSAGE(STATUS "Now building ${PROJECT_NAME} ${PROJECT_VERSION} (${OV_PROJECT_BRANCH}~${OV_PROJECT_COMMITHASH})" )
 
