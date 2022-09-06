@@ -1,6 +1,6 @@
 ///-------------------------------------------------------------------------------------------------
 /// 
-/// \file advanced-visualization.hpp
+/// \file CRendererXYZPlot.hpp
 /// \copyright Copyright (C) 2022 Inria
 ///
 /// This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,22 @@
 
 #pragma once
 
-#include "advanced-visualization/IRenderer.hpp"
-#include "advanced-visualization/CRendererContext.hpp"
-#include "advanced-visualization/CVertex.hpp"
+#include "IRenderer.hpp"
+
+namespace OpenViBE {
+namespace AdvancedVisualization {
+class CRendererXYZPlot final : public IRenderer
+{
+public:
+	void Rebuild(const CRendererContext& ctx) override;
+	void Refresh(const CRendererContext& ctx) override;
+	bool Render(const CRendererContext& ctx) override;
+
+protected:
+	bool m_hasDepth  = false;
+	size_t m_plotDim = 0;
+	size_t m_nPlot   = 0;
+	std::vector<std::vector<CVertex>> m_vertex;
+};
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE

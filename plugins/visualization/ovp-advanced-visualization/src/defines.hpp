@@ -1,6 +1,6 @@
 ///-------------------------------------------------------------------------------------------------
 /// 
-/// \file advanced-visualization.hpp
+/// \file defines.hpp
 /// \copyright Copyright (C) 2022 Inria
 ///
 /// This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,13 @@
 
 #pragma once
 
-#include "advanced-visualization/IRenderer.hpp"
-#include "advanced-visualization/CRendererContext.hpp"
-#include "advanced-visualization/CVertex.hpp"
+namespace OpenViBE {
+// Types
+//---------------------------------------------------------------------------------------------------
+// Temporal coherence definition
+#define TypeId_TemporalCoherence								CIdentifier(0x8F02E3F6, 0xFFB00F4B)
+
+enum class ETemporalCoherence { TimeLocked, Independant };
+
+#define TypeId_TimeFrequency									CIdentifier(0x5A90816B, 0xFF2AFF72)
+}  // namespace OpenViBE

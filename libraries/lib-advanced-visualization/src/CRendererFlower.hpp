@@ -1,6 +1,6 @@
 ///-------------------------------------------------------------------------------------------------
 /// 
-/// \file advanced-visualization.hpp
+/// \file CRendererFlower.hpp
 /// \copyright Copyright (C) 2022 Inria
 ///
 /// This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,22 @@
 
 #pragma once
 
-#include "advanced-visualization/IRenderer.hpp"
-#include "advanced-visualization/CRendererContext.hpp"
-#include "advanced-visualization/CVertex.hpp"
+#include "IRenderer.hpp"
+
+namespace OpenViBE {
+namespace AdvancedVisualization {
+class CRendererFlower final : public IRenderer
+{
+public:
+	explicit CRendererFlower(size_t multiCount = 1);
+
+	void Rebuild(const CRendererContext& ctx) override;
+	void Refresh(const CRendererContext& ctx) override;
+	bool Render(const CRendererContext& ctx) override;
+
+protected:
+	std::vector<std::vector<std::vector<CVertex>>> m_muliVertices;
+	std::vector<CVertex> m_circles;
+};
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE

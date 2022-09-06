@@ -5,14 +5,14 @@ namespace OAV = OpenViBE::AdvancedVisualization;
 int main()
 {
 	OAV::CRendererContext context;
-	context.clear();
+	context.Clear();
 
-	context.setDataType(OAV::CRendererContext::EDataType::Matrix);
+	context.SetDataType(OAV::CRendererContext::EDataType::Matrix);
 
-	OAV::IRenderer* rend = OAV::IRenderer::create(OAV::ERendererType::Bitmap, false);
+	OAV::IRenderer* rend = OAV::IRenderer::Create(OAV::ERendererType::Bitmap, false);
 
-	rend->setChannelCount(10);
+	rend->SetChannelCount(10);
 	auto* tmp = new float[666];
-	rend->feed(tmp);
-	rend->refresh(context);
+	rend->Feed(tmp);
+	rend->Refresh(context);
 }

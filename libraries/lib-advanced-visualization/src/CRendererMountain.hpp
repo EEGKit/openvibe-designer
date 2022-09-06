@@ -1,6 +1,6 @@
 ///-------------------------------------------------------------------------------------------------
 /// 
-/// \file advanced-visualization.hpp
+/// \file CRendererMountain.hpp
 /// \copyright Copyright (C) 2022 Inria
 ///
 /// This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,20 @@
 
 #pragma once
 
-#include "advanced-visualization/IRenderer.hpp"
-#include "advanced-visualization/CRendererContext.hpp"
-#include "advanced-visualization/CVertex.hpp"
+#include "IRenderer.hpp"
+#include "C3DMesh.hpp"
+
+namespace OpenViBE {
+namespace AdvancedVisualization {
+class CRendererMountain final : public IRenderer
+{
+public:
+	void Rebuild(const CRendererContext& ctx) override;
+	void Refresh(const CRendererContext& ctx) override;
+	bool Render(const CRendererContext& ctx) override;
+
+protected:
+	C3DMesh m_mountain;
+};
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE

@@ -1,6 +1,6 @@
 ///-------------------------------------------------------------------------------------------------
 /// 
-/// \file advanced-visualization.hpp
+/// \file CRulerLeftTexture.hpp
 /// \copyright Copyright (C) 2022 Inria
 ///
 /// This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,40 @@
 
 #pragma once
 
-#include "advanced-visualization/IRenderer.hpp"
-#include "advanced-visualization/CRendererContext.hpp"
-#include "advanced-visualization/CVertex.hpp"
+#include "CRulerTexture.hpp"
+
+namespace OpenViBE {
+namespace AdvancedVisualization {
+class CRulerLeftTexture final : public CRulerTexture
+{
+public:
+	void render() override
+
+	{
+		this->preRender();
+
+		glColor4f(0, 0, 0, m_blackAlpha);
+		glBegin(GL_QUADS);
+		glTexCoord1f(0);
+		glVertex2f(0.00F, 0);
+		glVertex2f(0.05F, 0);
+		glTexCoord1f(1);
+		glVertex2f(0.05F, 1);
+		glVertex2f(0.00F, 1);
+		glEnd();
+
+		glColor4f(1, 1, 1, m_whiteAlpha);
+		glBegin(GL_QUADS);
+		glTexCoord1f(0);
+		glVertex2f(0.00F, 0);
+		glVertex2f(0.04F, 0);
+		glTexCoord1f(1);
+		glVertex2f(0.04F, 1);
+		glVertex2f(0.00F, 1);
+		glEnd();
+
+		this->postRender();
+	}
+};
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE

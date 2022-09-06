@@ -422,9 +422,8 @@ double sdot(const int* n, const double* sx, const int* incx, const double* sy, c
 			}
 			if (ok == 1) {
 				for (int i = ++m; i <= *n; i += 5) {
-					stemp += *(sx + i - 1) * (*(sy + i - 1)) + *(sx + i) * (*(sy + i))
-							+ *(sx + i + 1) * (*(sy + i + 1)) + *(sx + i + 2) * (*(sy + i + 2))
-							+ *(sx + i + 3) * (*(sy + i + 3));
+					stemp += *(sx + i - 1) * (*(sy + i - 1)) + *(sx + i) * (*(sy + i)) + *(sx + i + 1) * (*(sy + i + 1))
+							+ *(sx + i + 2) * (*(sy + i + 2)) + *(sx + i + 3) * (*(sy + i + 3));
 				}
 			}
 		}

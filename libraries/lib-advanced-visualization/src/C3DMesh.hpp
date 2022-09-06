@@ -1,6 +1,6 @@
 ///-------------------------------------------------------------------------------------------------
 /// 
-/// \file advanced-visualization.hpp
+/// \file C3DMesh.hpp
 /// \copyright Copyright (C) 2022 Inria
 ///
 /// This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,37 @@
 
 #pragma once
 
-#include "advanced-visualization/IRenderer.hpp"
-#include "advanced-visualization/CRendererContext.hpp"
-#include "advanced-visualization/CVertex.hpp"
+#if defined TARGET_HAS_ThirdPartyOpenGL
+
+#include <vector>
+#include <array>
+#include <cstdint>
+#include <cstdlib>	// size_t for unix
+
+#include "CVertex.hpp"
+
+namespace OpenViBE {
+namespace AdvancedVisualization {
+class C3DMesh final
+{
+public:
+	C3DMesh() { m_Color.fill(1.0); }
+	//C3DMesh(const char* filename);
+	~C3DMesh() = default;
+
+	void Clear();
+	bool Load(const void* buffer);
+	bool Compile();
+
+	bool Project(std::vector<CVertex>& out, const std::vector<CVertex>& in) const;
+
+	std::vector<CVertex> m_Vertices;
+	std::vector<CVertex> m_Normals;
+	std::vector<uint32_t> m_Triangles;
+	std::array<float, 3> m_Color;
+};
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE
+
+
+#endif // TARGET_HAS_ThirdPartyOpenGL

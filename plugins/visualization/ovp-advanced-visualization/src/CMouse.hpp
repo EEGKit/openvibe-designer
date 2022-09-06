@@ -1,6 +1,6 @@
 ///-------------------------------------------------------------------------------------------------
 /// 
-/// \file advanced-visualization.hpp
+/// \file CMouse.hpp
 /// \copyright Copyright (C) 2022 Inria
 ///
 /// This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,27 @@
 
 #pragma once
 
-#include "advanced-visualization/IRenderer.hpp"
-#include "advanced-visualization/CRendererContext.hpp"
-#include "advanced-visualization/CVertex.hpp"
+#include <mensia/advanced-visualization.hpp>
+
+#include <map>
+
+namespace OpenViBE {
+namespace AdvancedVisualization {
+class CBoxAlgorithmViz;
+
+class CMouse
+{
+public:
+	explicit CMouse(CBoxAlgorithmViz& boxAlgorithmViz) : m_BoxAlgorithmViz(boxAlgorithmViz) { }
+	void MouseButton(CRendererContext& ctx, const int x, const int y, const int button, const int status);
+	void MouseMotion(CRendererContext& ctx, const int x, const int y);
+	bool HasButtonPressed() const;
+
+
+	CBoxAlgorithmViz& m_BoxAlgorithmViz;
+	std::map<int, int> m_Buttons;
+	int m_X = 0;
+	int m_Y = 0;
+};
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE

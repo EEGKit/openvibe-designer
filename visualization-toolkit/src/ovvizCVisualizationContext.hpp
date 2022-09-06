@@ -21,7 +21,6 @@ namespace VisualizationToolkit {
 class CVisualizationContext final : public IVisualizationContext
 {
 public:
-
 	/**
 	 * The release function is neutralized. The object is only allocated once in the descriptor as a unique_ptr
 	 * and will be released at its destruction.
@@ -54,7 +53,6 @@ private:
 class CVisualizationContextDesc final : public Plugins::IPluginObjectDesc
 {
 public:
-
 	CVisualizationContextDesc() : m_visualizationCtx(new CVisualizationContext()) {}
 
 	void release() override { }
