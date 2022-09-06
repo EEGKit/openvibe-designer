@@ -1,6 +1,6 @@
 ///-------------------------------------------------------------------------------------------------
 /// 
-/// \file advanced-visualization.hpp
+/// \file CRulerConditionIsTimeLocked.hpp
 /// \copyright Copyright (C) 2022 Inria
 ///
 /// This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,23 @@
 
 #pragma once
 
-#include "advanced-visualization/IRenderer.hpp"
-#include "advanced-visualization/CRendererContext.hpp"
-#include "advanced-visualization/CVertex.hpp"
+#include "../IRuler.hpp"
+
+namespace OpenViBE {
+namespace AdvancedVisualization {
+class CRulerConditionIsTimeLocked final : public IRuler
+{
+public:
+	CRulerConditionIsTimeLocked() : m_rendererCtx(nullptr), m_renderer(nullptr) { }
+
+	void SetRendererContext(const CRendererContext* ctx) override { m_rendererCtx = ctx; }
+	void SetRenderer(const IRenderer* renderer) override { m_renderer = renderer; }
+
+	bool operator()() const { return m_rendererCtx->IsTimeLocked(); }
+
+protected:
+	const CRendererContext* m_rendererCtx;
+	const IRenderer* m_renderer;
+};
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE

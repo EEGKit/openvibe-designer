@@ -1,6 +1,6 @@
 ///-------------------------------------------------------------------------------------------------
 /// 
-/// \file advanced-visualization.hpp
+/// \file CRendererSlice.hpp
 /// \copyright Copyright (C) 2022 Inria
 ///
 /// This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,20 @@
 
 #pragma once
 
-#include "advanced-visualization/IRenderer.hpp"
-#include "advanced-visualization/CRendererContext.hpp"
-#include "advanced-visualization/CVertex.hpp"
+#include "IRenderer.hpp"
+
+namespace OpenViBE {
+namespace AdvancedVisualization {
+class CRendererSlice final : public IRenderer
+{
+public:
+	void Rebuild(const CRendererContext& ctx) override;
+	void Refresh(const CRendererContext& ctx) override;
+	bool Render(const CRendererContext& ctx) override;
+
+protected:
+	std::vector<CVertex> m_vertices;
+	std::vector<size_t> m_quads;
+};
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE

@@ -1,6 +1,6 @@
 ///-------------------------------------------------------------------------------------------------
 /// 
-/// \file advanced-visualization.hpp
+/// \file CRendererTopo3D.cpp
 /// \copyright Copyright (C) 2022 Inria
 ///
 /// This program is free software: you can redistribute it and/or modify
@@ -18,8 +18,28 @@
 /// 
 ///-------------------------------------------------------------------------------------------------
 
-#pragma once
+#include "CRendererTopo3D.hpp"
 
-#include "advanced-visualization/IRenderer.hpp"
-#include "advanced-visualization/CRendererContext.hpp"
-#include "advanced-visualization/CVertex.hpp"
+#include "content/Face.obj.hpp"
+#include "content/Scalp.obj.hpp"
+
+namespace OpenViBE {
+namespace AdvancedVisualization {
+
+void CRendererTopo3D::Rebuild3DMeshesPre(const CRendererContext& /*ctx*/)
+{
+	m_face.Clear();
+	m_scalp.Clear();
+
+	//m_face.load(OpenViBE::Directories::getDataDir() + "/content/Face.obj");
+	//m_scalp.load(OpenViBE::Directories::getDataDir() + "/content/Scalp.obj");
+	m_face.Load(FACE_DATA.data());
+	m_scalp.Load(SCALP_DATA.data());
+
+	m_face.m_Color[0] = 0.8F;
+	m_face.m_Color[1] = 0.6F;
+	m_face.m_Color[2] = 0.5F;
+}
+
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE

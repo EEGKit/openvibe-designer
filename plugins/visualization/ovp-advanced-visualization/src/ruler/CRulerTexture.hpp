@@ -1,6 +1,6 @@
 ///-------------------------------------------------------------------------------------------------
 /// 
-/// \file advanced-visualization.hpp
+/// \file CRulerTexture.hpp
 /// \copyright Copyright (C) 2022 Inria
 ///
 /// This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,41 @@
 
 #pragma once
 
-#include "advanced-visualization/IRenderer.hpp"
-#include "advanced-visualization/CRendererContext.hpp"
-#include "advanced-visualization/CVertex.hpp"
+#include "../IRuler.hpp"
+
+namespace OpenViBE {
+namespace AdvancedVisualization {
+class CRulerTexture : public IRuler
+{
+protected:
+	virtual void preRender()
+
+	{
+		glDisable(GL_BLEND);
+		glDisable(GL_DEPTH_TEST);
+		glEnable(GL_TEXTURE_1D);
+		glColor3f(1, 1, 1);
+
+		glMatrixMode(GL_TEXTURE);
+		glPushMatrix();
+		glLoadIdentity();
+
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+		glLoadIdentity();
+	}
+
+	virtual void postRender()
+
+	{
+		glMatrixMode(GL_MODELVIEW);
+		glPopMatrix();
+
+		glMatrixMode(GL_TEXTURE);
+		glPopMatrix();
+
+		glMatrixMode(GL_MODELVIEW);
+	}
+};
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE

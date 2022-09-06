@@ -1,6 +1,6 @@
 ///-------------------------------------------------------------------------------------------------
 /// 
-/// \file advanced-visualization.hpp
+/// \file GtkGL.hpp
 /// \copyright Copyright (C) 2022 Inria
 ///
 /// This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,16 @@
 
 #pragma once
 
-#include "advanced-visualization/IRenderer.hpp"
-#include "advanced-visualization/CRendererContext.hpp"
-#include "advanced-visualization/CVertex.hpp"
+#include <gtk/gtk.h>
+
+namespace OpenViBE {
+namespace AdvancedVisualization {
+namespace GtkGL {
+void initialize(GtkWidget* widget);
+void uninitialize(GtkWidget* widget);
+
+void preRender(GtkWidget* widget, bool verticalSync = false);
+void postRender(GtkWidget* widget);
+}  // namespace GtkGL
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE

@@ -1,6 +1,6 @@
 ///-------------------------------------------------------------------------------------------------
 /// 
-/// \file advanced-visualization.hpp
+/// \file CRulerProgress.hpp
 /// \copyright Copyright (C) 2022 Inria
 ///
 /// This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,28 @@
 
 #pragma once
 
-#include "advanced-visualization/IRenderer.hpp"
-#include "advanced-visualization/CRendererContext.hpp"
-#include "advanced-visualization/CVertex.hpp"
+#include "../IRuler.hpp"
+
+namespace OpenViBE {
+namespace AdvancedVisualization {
+class CRulerProgress : public IRuler
+{
+public:
+	virtual void RenderFinal(const float progress) = 0;
+
+	void render() override
+	{
+		if (m_renderer == nullptr) { return; }
+		if (m_renderer->GetSampleCount() == 0) { return; }
+		if (m_renderer->GetHistoryCount() == 0) { return; }
+		if (m_renderer->GetHistoryIndex() == 0) { return; }
+
+		const float nSample    = float(m_renderer->GetSampleCount());
+		const float historyIdx = float(m_renderer->GetHistoryIndex());
+
+		const float progress = (historyIdx - (historyIdx / nSample) * nSample) / nSample;
+		if (std::fabs(progress) > FLT_EPSILON && std::fabs(progress - 1) > FLT_EPSILON) { this->RenderFinal(progress); }
+	}
+};
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE

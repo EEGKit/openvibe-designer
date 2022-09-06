@@ -1,6 +1,6 @@
 ///-------------------------------------------------------------------------------------------------
 /// 
-/// \file advanced-visualization.hpp
+/// \file CRulerProgressH.hpp
 /// \copyright Copyright (C) 2022 Inria
 ///
 /// This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,37 @@
 
 #pragma once
 
-#include "advanced-visualization/IRenderer.hpp"
-#include "advanced-visualization/CRendererContext.hpp"
-#include "advanced-visualization/CVertex.hpp"
+#include "CRulerProgress.hpp"
+
+namespace OpenViBE {
+namespace AdvancedVisualization {
+class CRulerProgressH final : public CRulerProgress
+{
+public:
+	void RenderFinal(const float progress) override
+	{
+		const size_t selectedCount = m_rendererCtx->GetSelectedCount();
+		glDisable(GL_TEXTURE_1D);
+		glDisable(GL_BLEND);
+
+		glLineWidth(4);
+		glColor3f(0, 0, 0);
+		glBegin(GL_LINES);
+		for (size_t i = 0; i < selectedCount; ++i) {
+			glVertex2f(0, (float(i) + progress) / float(selectedCount));
+			glVertex2f(1, (float(i) + progress) / float(selectedCount));
+		}
+		glEnd();
+
+		glLineWidth(2);
+		glColor3f(0.25, 1, 0.25);
+		glBegin(GL_LINES);
+		for (size_t i = 0; i < selectedCount; ++i) {
+			glVertex2f(0, (float(i) + progress) / float(selectedCount));
+			glVertex2f(1, (float(i) + progress) / float(selectedCount));
+		}
+		glEnd();
+	}
+};
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE

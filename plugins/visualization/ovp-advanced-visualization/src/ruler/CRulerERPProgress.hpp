@@ -1,6 +1,6 @@
 ///-------------------------------------------------------------------------------------------------
 /// 
-/// \file advanced-visualization.hpp
+/// \file CRulerERPProgress.hpp
 /// \copyright Copyright (C) 2022 Inria
 ///
 /// This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,39 @@
 
 #pragma once
 
-#include "advanced-visualization/IRenderer.hpp"
-#include "advanced-visualization/CRendererContext.hpp"
-#include "advanced-visualization/CVertex.hpp"
+#include "../IRuler.hpp"
+
+namespace OpenViBE {
+namespace AdvancedVisualization {
+class CRulerERPProgress final : public IRuler
+{
+public:
+	void render() override
+	{
+		if (m_renderer == nullptr) { return; }
+		if (m_renderer->GetSampleCount() == 0) { return; }
+		if (m_renderer->GetHistoryCount() == 0) { return; }
+		if (m_renderer->GetHistoryIndex() == 0) { return; }
+
+		const float progress = m_rendererCtx->GetERPFraction();
+		if (std::fabs(progress) > FLT_EPSILON && std::fabs(progress - 1) > FLT_EPSILON) {
+			glDisable(GL_TEXTURE_1D);
+
+			glLineWidth(4);
+			glColor3f(0, 0, 0);
+			glBegin(GL_LINES);
+			glVertex2f(progress, 0);
+			glVertex2f(progress, 1);
+			glEnd();
+
+			glLineWidth(2);
+			glColor3f(0.25, 1, 0.25);
+			glBegin(GL_LINES);
+			glVertex2f(progress, 0);
+			glVertex2f(progress, 1);
+			glEnd();
+		}
+	}
+};
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE

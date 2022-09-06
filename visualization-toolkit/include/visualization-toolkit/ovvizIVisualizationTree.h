@@ -232,10 +232,8 @@ public:
 	 * \param suggestedID a suggestion as to the identifier to use
 	 * \return true if widget successfully added to the internal tree store, false otherwise
 	 */
-	virtual bool addVisualizationWidget(CIdentifier& id, const CString& name,
-										EVisualizationWidget type, const CIdentifier& parentID,
-										size_t parentIdx, const CIdentifier& boxID,
-										size_t nChild, const CIdentifier& suggestedID) = 0;
+	virtual bool addVisualizationWidget(CIdentifier& id, const CString& name, EVisualizationWidget type, const CIdentifier& parentID, size_t parentIdx,
+										const CIdentifier& boxID, size_t nChild, const CIdentifier& suggestedID) = 0;
 
 	/**
 	 * \brief Returns the index where a widget is parented

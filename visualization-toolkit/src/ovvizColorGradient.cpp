@@ -20,8 +20,7 @@ bool ColorGradient::parse(CMatrix& colorGradient, const CString& string)
 
 	std::map<double, SColor> colorGradientVector;
 
-	do
-	{
+	do {
 		size_t endPosition = colorString.find(OV_Value_EnumeratedStringSeparator, startPosition);
 		if (endPosition == std::string::npos) { endPosition = colorString.length(); }
 
@@ -29,8 +28,7 @@ bool ColorGradient::parse(CMatrix& colorGradient, const CString& string)
 		colorSubString.assign(colorString, startPosition, endPosition - startPosition);
 
 		int p, r, g, b;
-		if (sscanf(colorSubString.c_str(), "%i:%i,%i,%i", &p, &r, &g, &b) == 4)
-		{
+		if (sscanf(colorSubString.c_str(), "%i:%i,%i,%i", &p, &r, &g, &b) == 4) {
 			SColor color;
 			color.percent                      = p;
 			color.red                          = r;
@@ -45,8 +43,7 @@ bool ColorGradient::parse(CMatrix& colorGradient, const CString& string)
 	colorGradient.resize(4, colorGradientVector.size());
 
 	size_t i = 0;
-	for (auto it = colorGradientVector.begin(); it != colorGradientVector.end(); ++it, i++)
-	{
+	for (auto it = colorGradientVector.begin(); it != colorGradientVector.end(); ++it, i++) {
 		colorGradient[i * 4]     = it->second.percent;
 		colorGradient[i * 4 + 1] = it->second.red;
 		colorGradient[i * 4 + 2] = it->second.green;
@@ -66,8 +63,7 @@ bool ColorGradient::format(CString& string, const CMatrix& colorGradient)
 	separator[0] = OV_Value_EnumeratedStringSeparator;
 
 	std::string result;
-	for (size_t i = 0; i < colorGradient.getDimensionSize(1); ++i)
-	{
+	for (size_t i = 0; i < colorGradient.getDimensionSize(1); ++i) {
 		char buffer[1024];
 		sprintf(buffer, "%.0lf:%i,%i,%i", colorGradient[i * 4], int(colorGradient[i * 4 + 1]), int(colorGradient[i * 4 + 2]), int(colorGradient[i * 4 + 3]));
 		result += (i == 0 ? "" : separator);
@@ -90,8 +86,7 @@ bool ColorGradient::interpolate(CMatrix& interpolatedColorGradient, const CMatri
 
 	std::map<double, SColor> colors;
 
-	for (i = 0; i < colorGradient.getDimensionSize(1); ++i)
-	{
+	for (i = 0; i < colorGradient.getDimensionSize(1); ++i) {
 		SColor color;
 		color.percent         = colorGradient[i * 4];
 		color.red             = colorGradient[i * 4 + 1];
@@ -100,15 +95,13 @@ bool ColorGradient::interpolate(CMatrix& interpolatedColorGradient, const CMatri
 		colors[color.percent] = color;
 	}
 
-	if (colors.find(0) == colors.end())
-	{
+	if (colors.find(0) == colors.end()) {
 		SColor color  = colors.begin()->second;
 		color.percent = 0;
 		colors[0]     = color;
 	}
 
-	if (colors.find(100) == colors.end())
-	{
+	if (colors.find(100) == colors.end()) {
 		SColor color  = colors.rbegin()->second;
 		color.percent = 100;
 		colors[100]   = color;
@@ -118,11 +111,9 @@ bool ColorGradient::interpolate(CMatrix& interpolatedColorGradient, const CMatri
 	auto it2 = colors.begin();
 	++it2;
 
-	for (i = 0; i < steps; ++i)
-	{
+	for (i = 0; i < steps; ++i) {
 		const double t = double(100 * i) / (steps - 1);
-		while (it2->first < t)
-		{
+		while (it2->first < t) {
 			++it1;
 			++it2;
 		}

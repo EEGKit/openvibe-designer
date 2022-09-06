@@ -37,8 +37,7 @@ public:
 	 * \param nChild number of children of this widget (none for a visualization box, 1 for a visualization panel, 2 for split widgets, variable number for windows)
 	 * \return True if widget was successfully initialized, false otherwise
 	 */
-	virtual bool initialize(const CIdentifier& identifier, const CString& name,
-							const EVisualizationWidget type, const CIdentifier& parentID,
+	virtual bool initialize(const CIdentifier& identifier, const CString& name, const EVisualizationWidget type, const CIdentifier& parentID,
 							const CIdentifier& boxID, const size_t nChild) = 0;
 
 	/**

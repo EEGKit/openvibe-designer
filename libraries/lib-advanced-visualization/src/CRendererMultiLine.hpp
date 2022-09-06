@@ -1,6 +1,6 @@
 ///-------------------------------------------------------------------------------------------------
 /// 
-/// \file advanced-visualization.hpp
+/// \file CRendererMultiLine.hpp
 /// \copyright Copyright (C) 2022 Inria
 ///
 /// This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,14 @@
 
 #pragma once
 
-#include "advanced-visualization/IRenderer.hpp"
-#include "advanced-visualization/CRendererContext.hpp"
-#include "advanced-visualization/CVertex.hpp"
+#include "CRendererLine.hpp"
+
+namespace OpenViBE {
+namespace AdvancedVisualization {
+class CRendererMultiLine : public CRendererLine
+{
+public:
+	bool Render(const CRendererContext& ctx) override;
+};
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE

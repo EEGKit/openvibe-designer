@@ -1,6 +1,6 @@
 ///-------------------------------------------------------------------------------------------------
 /// 
-/// \file advanced-visualization.hpp
+/// \file CRendererTopo3D.hpp
 /// \copyright Copyright (C) 2022 Inria
 ///
 /// This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,15 @@
 
 #pragma once
 
-#include "advanced-visualization/IRenderer.hpp"
-#include "advanced-visualization/CRendererContext.hpp"
-#include "advanced-visualization/CVertex.hpp"
+#include "CRendererTopo.hpp"
+
+namespace OpenViBE {
+namespace AdvancedVisualization {
+class CRendererTopo3D final : public CRendererTopo
+{
+public:
+	void Rebuild3DMeshesPre(const CRendererContext& ctx) override;
+	void Rebuild3DMeshesPost(const CRendererContext& /*ctx*/) override { }
+};
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE

@@ -1,6 +1,6 @@
 ///-------------------------------------------------------------------------------------------------
 /// 
-/// \file advanced-visualization.hpp
+/// \file VisualizationTools.cpp
 /// \copyright Copyright (C) 2022 Inria
 ///
 /// This program is free software: you can redistribute it and/or modify
@@ -18,8 +18,26 @@
 /// 
 ///-------------------------------------------------------------------------------------------------
 
-#pragma once
+#include "VisualizationTools.hpp"
 
-#include "advanced-visualization/IRenderer.hpp"
-#include "advanced-visualization/CRendererContext.hpp"
-#include "advanced-visualization/CVertex.hpp"
+namespace OpenViBE {
+namespace AdvancedVisualization {
+
+std::string trim(const std::string& value)
+{
+	if (value.length() == 0) { return ""; }
+	size_t i = 0;
+	size_t j = value.length() - 1;
+	while (i < value.length() && value[i] == ' ') { i++; }
+	while (j > i && value[j] == ' ') { j--; }
+	return value.substr(i, j - i + 1);
+}
+
+CRendererContext& getContext()
+{
+	static CRendererContext* ctx = new CRendererContext();
+	return *ctx;
+}
+
+}  // namespace AdvancedVisualization
+}  // namespace OpenViBE
