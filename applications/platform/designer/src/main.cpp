@@ -1,3 +1,23 @@
+///-------------------------------------------------------------------------------------------------
+/// 
+/// \file main.cpp
+/// \copyright Copyright (C) 2022 Inria
+///
+/// This program is free software: you can redistribute it and/or modify
+/// it under the terms of the GNU Affero General Public License as published
+/// by the Free Software Foundation, either version 3 of the License, or
+/// (at your option) any later version.
+///
+/// This program is distributed in the hope that it will be useful,
+/// but WITHOUT ANY WARRANTY; without even the implied warranty of
+/// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+/// GNU Affero General Public License for more details.
+///
+/// You should have received a copy of the GNU Affero General Public License
+/// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+/// 
+///-------------------------------------------------------------------------------------------------
+
 #include <stack>
 #include <vector>
 #include <map>
@@ -10,13 +30,13 @@
 #include <system/ovCTime.h>
 #include <system/ovCMath.h>
 #include <openvibe/kernel/metabox/ovIMetaboxManager.h>
-#include "ovd_base.h"
+#include "base.hpp"
 
-#include "ovdCInterfacedObject.h"
-#include "ovdCInterfacedScenario.h"
-#include "ovdCApplication.h"
+#include "CInterfacedObject.hpp"
+#include "CInterfacedScenario.hpp"
+#include "CApplication.hpp"
 
-#include "ovdAssert.h"
+#include "Assert.hpp"
 #if defined TARGET_OS_Windows
 #include "Windows.h"
 #include "shellapi.h"
@@ -33,25 +53,25 @@ public:
 	explicit CPluginObjectDescEnum(const Kernel::IKernelContext& ctx) : m_kernelCtx(ctx) { }
 	virtual ~CPluginObjectDescEnum() = default;
 
-	virtual bool enumeratePluginObjectDesc()
+	virtual bool EnumeratePluginObjectDesc()
 	{
 		CIdentifier id;
 		while ((id = m_kernelCtx.getPluginManager().getNextPluginObjectDescIdentifier(id)) != CIdentifier::undefined()) {
-			this->callback(*m_kernelCtx.getPluginManager().getPluginObjectDesc(id));
+			this->Callback(*m_kernelCtx.getPluginManager().getPluginObjectDesc(id));
 		}
 		return true;
 	}
 
-	virtual bool enumeratePluginObjectDesc(const CIdentifier& parentClassID)
+	virtual bool EnumeratePluginObjectDesc(const CIdentifier& parentClassID)
 	{
 		CIdentifier id;
 		while ((id = m_kernelCtx.getPluginManager().getNextPluginObjectDescIdentifier(id, parentClassID)) != CIdentifier::undefined()) {
-			this->callback(*m_kernelCtx.getPluginManager().getPluginObjectDesc(id));
+			this->Callback(*m_kernelCtx.getPluginManager().getPluginObjectDesc(id));
 		}
 		return true;
 	}
 
-	virtual bool callback(const Plugins::IPluginObjectDesc& pod) = 0;
+	virtual bool Callback(const Plugins::IPluginObjectDesc& pod) = 0;
 
 protected:
 	const Kernel::IKernelContext& m_kernelCtx;
@@ -66,7 +86,7 @@ class CPluginObjectDescCollector final : public CPluginObjectDescEnum
 public:
 	explicit CPluginObjectDescCollector(const Kernel::IKernelContext& ctx) : CPluginObjectDescEnum(ctx) { }
 
-	bool callback(const Plugins::IPluginObjectDesc& pod) override
+	bool Callback(const Plugins::IPluginObjectDesc& pod) override
 	{
 		const std::string name = std::string(pod.getCategory()) + "/" + std::string(pod.getName());
 		const auto it          = m_pods.find(name);
@@ -78,7 +98,7 @@ public:
 		return true;
 	}
 
-	std::map<std::string, const Plugins::IPluginObjectDesc*>& getPluginObjectDescMap() { return m_pods; }
+	std::map<std::string, const Plugins::IPluginObjectDesc*>& GetPluginObjectDescMap() { return m_pods; }
 
 private:
 	std::map<std::string, const Plugins::IPluginObjectDesc*> m_pods;
@@ -93,7 +113,7 @@ class CPluginObjectDescLogger final : public CPluginObjectDescEnum
 public:
 	explicit CPluginObjectDescLogger(const Kernel::IKernelContext& ctx) : CPluginObjectDescEnum(ctx) { }
 
-	bool callback(const Plugins::IPluginObjectDesc& pod) override
+	bool Callback(const Plugins::IPluginObjectDesc& pod) override
 	{
 		// Outputs plugin info to console
 		m_kernelCtx.getLogManager() << Kernel::LogLevel_Trace << "Plugin <" << pod.getName() << ">\n";
@@ -239,7 +259,7 @@ typedef struct SConfig
 {
 	SConfig() = default;
 
-	ECommandLineFlag getFlags() const { return ECommandLineFlag(noGui | noCheckColorDepth | noManageSession | noVisualization | define | randomSeed | config); }
+	ECommandLineFlag GetFlags() const { return ECommandLineFlag(noGui | noCheckColorDepth | noManageSession | noVisualization | define | randomSeed | config); }
 
 	std::vector<std::pair<ECommandLineFlag, std::string>> flags;
 	ECommandLineFlag noGui             = CommandLineFlag_None;
@@ -255,7 +275,7 @@ typedef struct SConfig
 	std::map<std::string, std::string> tokens;
 } config_t;
 
-static char backslash_to_slash(const char c) { return c == '\\' ? '/' : c; }
+static char BackslashToSlash(const char c) { return c == '\\' ? '/' : c; }
 
 /** ------------------------------------------------------------------------------------------------------------------------------------
 * Use Mutex to ensure that only one instance with GUI of Designer runs at the same time
@@ -278,7 +298,7 @@ static bool ensureOneInstanceOfDesigner(const config_t& config, Kernel::ILogMana
 
 		for (const auto& flag : config.flags) {
 			std::string fileName = flag.second;
-			std::transform(fileName.begin(), fileName.end(), fileName.begin(), backslash_to_slash);
+			std::transform(fileName.begin(), fileName.end(), fileName.begin(), BackslashToSlash);
 
 			msg += std::to_string(int(flag.first)) + ": <" + fileName + "> ; ";
 		}
@@ -300,7 +320,7 @@ static bool ensureOneInstanceOfDesigner(const config_t& config, Kernel::ILogMana
 static bool ensureOneInstanceOfDesigner(config_t& /*config*/, Kernel::ILogManager& /*logMgr*/) { return true; }
 #endif
 
-bool parse_arguments(int argc, char** argv, config_t& config)
+bool ParseArguments(int argc, char** argv, config_t& config)
 {
 	config_t tmp;
 
@@ -421,14 +441,13 @@ void message(const char* title, const char* msg, const GtkMessageType type)
 {
 	GtkWidget* dialog = gtk_message_dialog_new(nullptr, GtkDialogFlags(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT), type, GTK_BUTTONS_OK, "%s", title);
 	gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog), "%s", msg);
-	::gtk_window_set_icon_from_file(GTK_WINDOW(dialog), (Directories::getDataDir() + CString("/applications/designer/designer.ico")).toASCIIString(),
-									nullptr);
+	::gtk_window_set_icon_from_file(GTK_WINDOW(dialog), (Directories::getDataDir() + CString("/applications/designer/designer.ico")).toASCIIString(), nullptr);
 	gtk_window_set_title(GTK_WINDOW(dialog), title);
 	gtk_dialog_run(GTK_DIALOG(dialog));
 	gtk_widget_destroy(dialog);
 }
 
-void user_info(char** argv, Kernel::ILogManager* logManager)
+void UserInfo(char** argv, Kernel::ILogManager* logManager)
 {
 	const std::vector<std::string> messages =
 	{
@@ -498,10 +517,10 @@ int go(int argc, char** argv)
 	//                                                                   //
 
 	config_t config;
-	bool bArgParseResult = parse_arguments(argc, argv, config);
+	bool bArgParseResult = ParseArguments(argc, argv, config);
 	if (!bArgParseResult) {
 		if (config.help) {
-			user_info(argv, nullptr);
+			UserInfo(argv, nullptr);
 			return 0;
 		}
 	}
@@ -574,7 +593,7 @@ int go(int argc, char** argv)
 				Kernel::IConfigurationManager& configMgr = context->getConfigurationManager();
 				Kernel::ILogManager& logMgr              = context->getLogManager();
 
-				bArgParseResult = parse_arguments(argc, argv, config);
+				bArgParseResult = ParseArguments(argc, argv, config);
 
 				context->getPluginManager().addPluginsFromFiles(configMgr.expand("${Kernel_Plugins}"));
 
@@ -583,9 +602,9 @@ int go(int argc, char** argv)
 				if (locale == CString("")) { locale = "C"; }
 				setlocale(LC_ALL, locale.toASCIIString());
 
-				if (!(bArgParseResult || config.help)) { user_info(argv, &logMgr); }
+				if (!(bArgParseResult || config.help)) { UserInfo(argv, &logMgr); }
 				else {
-					if ((!configMgr.expandAsBoolean("${Kernel_WithGUI}", true)) && ((config.getFlags() & CommandLineFlag_NoGui) == 0)) {
+					if ((!configMgr.expandAsBoolean("${Kernel_WithGUI}", true)) && ((config.GetFlags() & CommandLineFlag_NoGui) == 0)) {
 						logMgr << Kernel::LogLevel_ImportantWarning <<
 								"${Kernel_WithGUI} is set to false and --no-gui flag not set. Forcing the --no-gui flag\n";
 						config.noGui             = CommandLineFlag_NoGui;
@@ -601,7 +620,7 @@ int go(int argc, char** argv)
 					{
 						bool playRequested = false;
 						CApplication app(*context);
-						app.initialize(config.getFlags());
+						app.Initialize(config.GetFlags());
 
 						// FIXME is it necessary to keep next line uncomment ?
 						//bool isScreenValid=true;
@@ -631,22 +650,22 @@ int go(int argc, char** argv)
 
 						for (const auto& f : config.flags) {
 							std::string fileName = f.second;
-							std::transform(fileName.begin(), fileName.end(), fileName.begin(), backslash_to_slash);
+							std::transform(fileName.begin(), fileName.end(), fileName.begin(), BackslashToSlash);
 							bool error;
 							switch (f.first) {
 								case CommandLineFlag_Open:
 									logMgr << Kernel::LogLevel_Info << "Opening scenario [" << fileName << "]\n";
-									if (!app.openScenario(fileName.c_str())) {
+									if (!app.OpenScenario(fileName.c_str())) {
 										logMgr << Kernel::LogLevel_Error << "Could not open scenario " << fileName << "\n";
 										errorWhileLoadingScenario = config.noGui == CommandLineFlag_NoGui;
 									}
 									break;
 								case CommandLineFlag_Play:
 									logMgr << Kernel::LogLevel_Info << "Opening and playing scenario [" << fileName << "]\n";
-									error = !app.openScenario(fileName.c_str());
+									error = !app.OpenScenario(fileName.c_str());
 									if (!error) {
-										app.playScenarioCB();
-										error = app.getCurrentInterfacedScenario()->m_PlayerStatus != Kernel::EPlayerStatus::Play;
+										app.PlayScenarioCB();
+										error = app.GetCurrentInterfacedScenario()->m_PlayerStatus != Kernel::EPlayerStatus::Play;
 									}
 									if (error) {
 										logMgr << Kernel::LogLevel_Error << "Scenario open or load error with --play.\n";
@@ -655,10 +674,10 @@ int go(int argc, char** argv)
 									break;
 								case CommandLineFlag_PlayFast:
 									logMgr << Kernel::LogLevel_Info << "Opening and fast playing scenario [" << fileName << "]\n";
-									error = !app.openScenario(fileName.c_str());
+									error = !app.OpenScenario(fileName.c_str());
 									if (!error) {
-										app.forwardScenarioCB();
-										error = app.getCurrentInterfacedScenario()->m_PlayerStatus != Kernel::EPlayerStatus::Forward;
+										app.ForwardScenarioCB();
+										error = app.GetCurrentInterfacedScenario()->m_PlayerStatus != Kernel::EPlayerStatus::Forward;
 									}
 									if (error) {
 										logMgr << Kernel::LogLevel_Error << "Scenario open or load error with --play-fast.\n";
@@ -684,17 +703,17 @@ int go(int argc, char** argv)
 									<< "Switch --no-gui is enabled but no play operation was requested. Designer will exit automatically.\n";
 						}
 
-						if (app.m_Scenarios.empty() && config.noGui != CommandLineFlag_NoGui) { app.newScenarioCB(); }
+						if (app.m_Scenarios.empty() && config.noGui != CommandLineFlag_NoGui) { app.NewScenarioCB(); }
 
 						if (!app.m_Scenarios.empty()) {
 							CPluginObjectDescCollector cbCollector1(*context);
 							CPluginObjectDescCollector cbCollector2(*context);
 							CPluginObjectDescLogger cbLogger(*context);
-							cbLogger.enumeratePluginObjectDesc();
-							cbCollector1.enumeratePluginObjectDesc(OV_ClassId_Plugins_BoxAlgorithmDesc);
-							cbCollector2.enumeratePluginObjectDesc(OV_ClassId_Plugins_AlgorithmDesc);
-							InsertPluginObjectDescToGtkTreeStore(*context, cbCollector1.getPluginObjectDescMap(), app.m_BoxAlgorithmTreeModel);
-							InsertPluginObjectDescToGtkTreeStore(*context, cbCollector2.getPluginObjectDescMap(), app.m_AlgorithmTreeModel);
+							cbLogger.EnumeratePluginObjectDesc();
+							cbCollector1.EnumeratePluginObjectDesc(OV_ClassId_Plugins_BoxAlgorithmDesc);
+							cbCollector2.EnumeratePluginObjectDesc(OV_ClassId_Plugins_AlgorithmDesc);
+							InsertPluginObjectDescToGtkTreeStore(*context, cbCollector1.GetPluginObjectDescMap(), app.m_BoxAlgorithmTreeModel);
+							InsertPluginObjectDescToGtkTreeStore(*context, cbCollector2.GetPluginObjectDescMap(), app.m_AlgorithmTreeModel);
 
 							std::map<std::string, const Plugins::IPluginObjectDesc*> metaboxDescMap;
 							CIdentifier id;
@@ -705,16 +724,15 @@ int go(int argc, char** argv)
 							context->getLogManager() << Kernel::LogLevel_Info << "Initialization took "
 									<< context->getConfigurationManager().expand("$Core{real-time}") << " ms\n";
 							// If the application is a newly launched version, and not launched without GUI -> display changelog
-							if (app.m_IsNewVersion && config.noGui != CommandLineFlag_NoGui) { app.displayChangelogWhenAvailable(); }
+							if (app.m_IsNewVersion && config.noGui != CommandLineFlag_NoGui) { app.DisplayChangelogWhenAvailable(); }
 							try { gtk_main(); }
 							catch (DesignerException& ex) {
 								std::cerr << "Caught designer exception" << std::endl;
 								GtkWidget* errorDialog = gtk_message_dialog_new(nullptr, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE,
-																				"%s", ex.getErrorString().c_str());
+																				"%s", ex.GetErrorString().c_str());
 								gtk_window_set_title(GTK_WINDOW(errorDialog), (std::string(BRAND_NAME) + " has stopped functioning").c_str());
 								gtk_dialog_run(GTK_DIALOG(errorDialog));
-							}
-							catch (...) { std::cerr << "Caught top level exception" << std::endl; }
+							} catch (...) { std::cerr << "Caught top level exception" << std::endl; }
 						}
 					}
 				}
