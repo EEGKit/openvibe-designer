@@ -23,7 +23,8 @@ target_link_libraries(${PROJECT_NAME}
 					  openvibe-module-system
 					  openvibe-module-fs
 					  openvibe-module-communication
-					  Boost::boost)
+					  Boost::boost
+					  tinyxml2)
 
 if(UNIX AND NOT APPLE)
 	find_library(LIB_RT rt)
