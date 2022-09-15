@@ -24,10 +24,7 @@
 #include <vector>
 #include <string>
 
-#include <xml/IXMLHandler.h>
-#include <xml/IXMLNode.h>
-
-#include <fs/Files.h>
+#include "tinyxml2.h"
 
 namespace OpenViBE {
 namespace Designer {
@@ -421,21 +418,18 @@ void CBoxConfigurationDialog::SaveConfig() const
 	if (gtk_dialog_run(GTK_DIALOG(widgetDialogOpen)) == GTK_RESPONSE_ACCEPT) {
 		char* fileName = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widgetDialogOpen));
 
-		XML::IXMLHandler* handler = XML::createXMLHandler();
-		XML::IXMLNode* rootNode   = XML::createNode(ROOT_NAME);
+		tinyxml2::XMLDocument xmlDoc;
+		tinyxml2::XMLNode* root = xmlDoc.NewElement(ROOT_NAME);			// Create root node
+		xmlDoc.InsertFirstChild(root);									// Add root to XML
 		for (size_t i = 0; i < m_box.getInterfacorCountIncludingDeprecated(Kernel::EBoxInterfacorType::Setting); ++i) {
-			XML::IXMLNode* tmpNode = XML::createNode(SETTING_NAME);
+			tinyxml2::XMLElement* e = xmlDoc.NewElement(SETTING_NAME);	// Create data node
 			CString value;
-			m_box.getSettingValue(size_t(i), value);
-			tmpNode->setPCData(value.toASCIIString());
-
-			rootNode->addChild(tmpNode);
+			m_box.getSettingValue(i, value);
+			e->SetText(value.toASCIIString());
+			root->InsertEndChild(e);									// Add node to root
 		}
+		xmlDoc.SaveFile(fileName);
 
-		handler->writeXMLInFile(*rootNode, fileName);
-
-		handler->release();
-		rootNode->release();
 		g_free(fileName);
 	}
 	gtk_widget_destroy(widgetDialogOpen);
@@ -459,16 +453,20 @@ void CBoxConfigurationDialog::LoadConfig() const
 	if (gtk_dialog_run(GTK_DIALOG(widgetDialogOpen)) == GTK_RESPONSE_ACCEPT) {
 		char* path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widgetDialogOpen));
 
-		XML::IXMLHandler* handler = XML::createXMLHandler();
-		XML::IXMLNode* rootNode   = handler->parseFile(path);
-
-		for (size_t i = 0; i < rootNode->getChildCount(); ++i) {
-			//Hope everything will fit in the right place
-			m_box.setSettingValue(size_t(i), rootNode->getChild(i)->getPCData());
+		// Load File
+		tinyxml2::XMLDocument xmlDoc;
+		if (xmlDoc.LoadFile(path) == 0) {					// Check File Exist and Loading
+			tinyxml2::XMLNode* root = xmlDoc.FirstChild();	// Get Root Node
+			if (root != nullptr) {							// Check Root Node Exist
+				size_t i                = 0;
+				tinyxml2::XMLElement* e = root->FirstChildElement(SETTING_NAME);
+				while (e != nullptr) {
+					m_box.setSettingValue(i++, e->GetText());
+					e = e->NextSiblingElement(SETTING_NAME);
+				}
+			}
 		}
 
-		rootNode->release();
-		handler->release();
 		g_free(path);
 	}
 	gtk_widget_destroy(widgetDialogOpen);
