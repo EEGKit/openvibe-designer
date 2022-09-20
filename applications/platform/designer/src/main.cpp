@@ -671,6 +671,7 @@ int go(int argc, char** argv)
 										logMgr << Kernel::LogLevel_Error << "Scenario open or load error with --play.\n";
 										errorWhileLoadingScenario = config.noGui == CommandLineFlag_NoGui;
 									}
+									playRequested = true;
 									break;
 								case CommandLineFlag_PlayFast:
 									logMgr << Kernel::LogLevel_Info << "Opening and fast playing scenario [" << fileName << "]\n";
