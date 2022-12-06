@@ -21,7 +21,6 @@ namespace VisualizationToolkit {
 class CVisualizationContext final : public IVisualizationContext
 {
 public:
-
 	/**
 	 * The release function is neutralized. The object is only allocated once in the descriptor as a unique_ptr
 	 * and will be released at its destruction.
@@ -54,18 +53,17 @@ private:
 class CVisualizationContextDesc final : public Plugins::IPluginObjectDesc
 {
 public:
-
 	CVisualizationContextDesc() : m_visualizationCtx(new CVisualizationContext()) {}
 
 	void release() override { }
 
-	CString getName() const override { return CString("Visualization Context"); }
-	CString getAuthorName() const override { return CString("Jozef Legény"); }
-	CString getAuthorCompanyName() const override { return CString("Mensia Technologies"); }
-	CString getShortDescription() const override { return CString(""); }
-	CString getDetailedDescription() const override { return CString(""); }
-	CString getCategory() const override { return CString(""); }
-	CString getVersion() const override { return CString("1.0"); }
+	CString getName() const override { return "Visualization Context"; }
+	CString getAuthorName() const override { return "Jozef Legény"; }
+	CString getAuthorCompanyName() const override { return "Mensia Technologies"; }
+	CString getShortDescription() const override { return ""; }
+	CString getDetailedDescription() const override { return ""; }
+	CString getCategory() const override { return ""; }
+	CString getVersion() const override { return "1.0"; }
 
 	CIdentifier getCreatedClass() const override { return OVP_ClassId_Plugin_VisualizationCtx; }
 

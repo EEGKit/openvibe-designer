@@ -70,7 +70,7 @@ struct ITreeViewCB
 	 * \brief Notifies the tree view that a new widget is being created
 	 * \param widget pointer to the newly created widget
 	 */
-	virtual void createTreeWidget(IVisualizationWidget* widget) { }
+	virtual void CreateTreeWidget(IVisualizationWidget* widget) { }
 
 	/**
 	 * \brief Notifies the tree view that a widget is being loaded.
@@ -81,7 +81,7 @@ struct ITreeViewCB
 	 * \param widget pointer to loaded visualization widget
 	 * \return GtkWidget* pointer to Gtk widget associated to visualization widget (possibly nullptr)
 	 */
-	virtual GtkWidget* loadTreeWidget(IVisualizationWidget* widget) { return nullptr; }
+	virtual GtkWidget* LoadTreeWidget(IVisualizationWidget* widget) { return nullptr; }
 
 	/**
 	 * \brief Notifies the tree view that a widget hierarchy has been loaded
@@ -89,7 +89,7 @@ struct ITreeViewCB
 	 * process
 	 * \param widget pointer to visualization widget
 	 */
-	virtual void endLoadTreeWidget(IVisualizationWidget* widget) { }
+	virtual void EndLoadTreeWidget(IVisualizationWidget* widget) { }
 
 	/**
 	 * \brief Asks for the visualization (visible) widget associated to the tree widget passed in parameter
@@ -103,7 +103,7 @@ struct ITreeViewCB
 	 * \return pointer to the visible Gtk widget if pTreeWidget is a table, pTreeWidget itself otherwise(default)
 	 * \sa getTreeWidget()
 	 */
-	virtual GtkWidget* getVisualizationWidget(GtkWidget* widget) { return widget; }
+	virtual GtkWidget* GetVisualizationWidget(GtkWidget* widget) { return widget; }
 
 	/**
 	 * \brief Asks for the tree widget associated to a visualization widget
@@ -114,7 +114,7 @@ struct ITreeViewCB
 	 * \return parent table if any, visualizationWidget otherwise (default)
 	 * \sa getVisualizationWidget()
 	 */
-	virtual GtkWidget* getTreeWidget(GtkWidget* widget) { return widget; }
+	virtual GtkWidget* GetTreeWidget(GtkWidget* widget) { return widget; }
 
 	/**
 	 * \brief Icon associated to a visualization tree node
@@ -123,7 +123,7 @@ struct ITreeViewCB
 	 * \param nodeType type of node whose icon name is to be retrieved
 	 * \return name of stock icon to be associated to the type of node passed in parameter
 	 */
-	virtual const char* getTreeWidgetIcon(EVisualizationTreeNode nodeType) { return ""; }
+	virtual const char* GetTreeWidgetIcon(EVisualizationTreeNode nodeType) { return ""; }
 
 	/**
 	 * \brief Set toolbar pointer of a visualization box
@@ -133,7 +133,7 @@ struct ITreeViewCB
 	 * \param toolbar pointer to toolbar of visualization box
 	 * \return true if widget was successfully registered, false otherwise
 	 */
-	virtual bool setToolbar(const CIdentifier& boxID, GtkWidget* toolbar) { return false; }
+	virtual bool SetToolbar(const CIdentifier& boxID, GtkWidget* toolbar) { return false; }
 
 	/**
 	 * \brief Set topmost widget pointer of a visualization box
@@ -144,7 +144,7 @@ struct ITreeViewCB
 	 * \param widget pointer to main window of visualization box
 	 * \return true if widget was successfully registered, false otherwise
 	 */
-	virtual bool setWidget(const CIdentifier& boxID, GtkWidget* widget) { return false; }
+	virtual bool SetWidget(const CIdentifier& boxID, GtkWidget* widget) { return false; }
 };
 
 /**
@@ -232,10 +232,8 @@ public:
 	 * \param suggestedID a suggestion as to the identifier to use
 	 * \return true if widget successfully added to the internal tree store, false otherwise
 	 */
-	virtual bool addVisualizationWidget(CIdentifier& id, const CString& name,
-										EVisualizationWidget type, const CIdentifier& parentID,
-										size_t parentIdx, const CIdentifier& boxID,
-										size_t nChild, const CIdentifier& suggestedID) = 0;
+	virtual bool addVisualizationWidget(CIdentifier& id, const CString& name, EVisualizationWidget type, const CIdentifier& parentID, size_t parentIdx,
+										const CIdentifier& boxID, size_t nChild, const CIdentifier& suggestedID) = 0;
 
 	/**
 	 * \brief Returns the index where a widget is parented
@@ -444,7 +442,7 @@ public:
 	 * simplified to avoid placeholders creation.
 	 * \param srcWidgetID identifier of widget being dropped
 	 * \param dstWidget pointer to widget on which the drop operation is performed
-	 * \param location
+	 * \param location Position of drag
 	 * \return true if drop operation was successfully completed, false otherwise
 	 */
 	virtual bool dragDataReceivedOutsideWidgetCB(const CIdentifier& srcWidgetID, GtkWidget* dstWidget, EDragLocation location) = 0;

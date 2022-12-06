@@ -17,19 +17,14 @@ include("FindSourceDependencyJSON")
 set(SRC_FILES "${SRC_FILES};${CMAKE_BINARY_DIR}/resource-files/${LOWER_BRAND_NAME}-${LOWER_DESIGNER_NAME}.rc")
 add_executable(${PROJECT_NAME} ${ENTRYPOINT} ${SRC_FILES})
 target_link_libraries(${PROJECT_NAME}
-                      openvibe
-                      openvibe-kernel
-                      openvibe-toolkit
-                      openvibe-module-ebml
-                      openvibe-module-system
-                      openvibe-module-fs
-                      openvibe-module-socket
-                      openvibe-module-xml
-                      openvibe-module-csv
-                      openvibe-module-date
-                      openvibe-module-communication
+					  openvibe
+					  openvibe-kernel
+					  openvibe-toolkit
+					  openvibe-module-system
+					  openvibe-module-fs
+					  openvibe-module-communication
 					  Boost::boost
-)
+					  tinyxml2)
 
 if(UNIX AND NOT APPLE)
 	find_library(LIB_RT rt)
@@ -41,9 +36,8 @@ if(UNIX AND NOT APPLE)
 endif()
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
-	VERSION ${PROJECT_VERSION}
-	FOLDER ${APP_FOLDER}
-)
+					  VERSION ${PROJECT_VERSION}
+					  FOLDER ${APP_FOLDER})
 
 add_definitions(-DTARGET_HAS_ThirdPartyOpenViBEPluginsGlobalDefines)
 
@@ -62,9 +56,9 @@ SET_BUILD_PLATFORM()
 
 # Install files
 install(TARGETS ${PROJECT_NAME}
-	RUNTIME DESTINATION ${DIST_BINDIR}
-	LIBRARY DESTINATION ${DIST_LIBDIR}
-	ARCHIVE DESTINATION ${DIST_LIBDIR})
+		RUNTIME DESTINATION ${DIST_BINDIR}
+		LIBRARY DESTINATION ${DIST_LIBDIR}
+		ARCHIVE DESTINATION ${DIST_LIBDIR})
 
 
 configure_file(share/designer.conf-base "${CMAKE_CURRENT_BINARY_DIR}/designer.conf" @ONLY)
