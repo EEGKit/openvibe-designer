@@ -7,43 +7,36 @@ include("FindSourceRCProperties")
 add_library(${PROJECT_NAME}-static STATIC ${SRC_FILES})
 
 target_include_directories(${PROJECT_NAME}-static
-                           PRIVATE include/mensia include/mensia/advanced-visualization
-                           PUBLIC include
-)
+						   PRIVATE include/mensia include/mensia/advanced-visualization
+						   PUBLIC include)
 
 target_link_libraries(${PROJECT_NAME}-static
-					  Eigen3::Eigen
-)
+					  Eigen3::Eigen)
 
 set_target_properties(${PROJECT_NAME}-static PROPERTIES
 	VERSION ${PROJECT_VERSION}
-	FOLDER ${MODULES_FOLDER}
-)
+	FOLDER ${MODULES_FOLDER})
 
 add_library(${PROJECT_NAME} SHARED EXCLUDE_FROM_ALL ${SRC_FILES})
 target_include_directories(${PROJECT_NAME}
-                           PRIVATE include/mensia include/mensia/advanced-visualization
-                           PUBLIC include
-)
+						   PRIVATE include/mensia include/mensia/advanced-visualization
+						   PUBLIC include)
 
 target_link_libraries(${PROJECT_NAME}
-					  Eigen3::Eigen
-)
+					  Eigen3::Eigen)
 
 if(UNIX)
 	set_target_properties(${PROJECT_NAME}-static PROPERTIES COMPILE_FLAGS "-fPIC")
 endif(UNIX)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
-	VERSION ${PROJECT_VERSION}
-	SOVERSION ${PROJECT_VERSION_MAJOR}
-	FOLDER ${MODULES_FOLDER}
-)
+					  VERSION ${PROJECT_VERSION}
+					  SOVERSION ${PROJECT_VERSION_MAJOR}
+					  FOLDER ${MODULES_FOLDER})
 
 target_compile_options(${PROJECT_NAME}
-                       PRIVATE -DLMAV_Exports
-                       PUBLIC -DLMAV_Shared
-)
+					   PRIVATE -DLMAV_Exports
+					   PUBLIC -DLMAV_Shared)
 
 add_definitions(-D_USE_MATH_DEFINES)	# Definition for constant math as M_PI
 
@@ -63,10 +56,9 @@ SET_BUILD_PLATFORM()
 #	LIBRARY DESTINATION ${DIST_LIBDIR}
 #	ARCHIVE DESTINATION ${DIST_LIBDIR})
 install(TARGETS ${PROJECT_NAME}-static
-	RUNTIME DESTINATION ${DIST_BINDIR}
-	LIBRARY DESTINATION ${DIST_LIBDIR}
-	ARCHIVE DESTINATION ${DIST_LIBDIR})
-
+		RUNTIME DESTINATION ${DIST_BINDIR}
+		LIBRARY DESTINATION ${DIST_LIBDIR}
+		ARCHIVE DESTINATION ${DIST_LIBDIR})
 
 install(DIRECTORY include/ DESTINATION ${DIST_INCLUDEDIR} FILES_MATCHING PATTERN "*.hpp")
 

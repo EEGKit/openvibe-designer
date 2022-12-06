@@ -36,10 +36,6 @@ export GTK_PATH=/usr/local/lib/gtk-2.0
 export LUA_CPATH="$OV_PATH_LIB/lib?.dylib;`echo 'print(package.cpath)' | lua - `"
 export LUA_PATH="$OV_PATH_BIN/?.lua;`echo 'print(package.path)' | lua - `"
 
-# The following line is there to help in cases where OpenViBE can consume excessive
-# amounts of CPU or grind the swap. You can remove it if you know what you're doing.
-renice 19 $$
-
 ov_debugger=
 if [ "$1" == "--debug" ]; then
 	ov_debugger="gdb --args"
@@ -47,17 +43,8 @@ if [ "$1" == "--debug" ]; then
 fi
 ov_run_bg=0
 if [ "$1" == "--run-bg" ]; then
-	ov_run_bg=1
-	shift
+	echo 'The option --run-bg is deprecated. Use the shell background facility instead.'
+    exit 1
 fi
 
-ret_code=0
-
-if [ $ov_run_bg == 0 ]; then
-	eval $ov_debugger "$OV_PATH_BIN/@OV_CMD_EXECUTABLE@" @OV_CMD_ARGS@ $*
-	ret_code=$?
-else
-	$ov_debugger "$OV_PATH_BIN/@OV_CMD_EXECUTABLE@" @OV_CMD_ARGS@ $* &
-fi
-
-exit $ret_code
+exec $ov_debugger "$OV_PATH_BIN/@OV_CMD_EXECUTABLE@" @OV_CMD_ARGS@ "$@"

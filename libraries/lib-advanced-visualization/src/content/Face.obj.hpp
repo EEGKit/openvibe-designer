@@ -1,26 +1,28 @@
-/*********************************************************************
- * Software License Agreement (AGPL-3 License)
- *
- * OpenViBE Designer
- * Based on OpenViBE V1.1.0, Copyright (C) Inria, 2006-2015
- * Copyright (C) Inria, 2015-2017,V1.0
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.
- * If not, see <http://www.gnu.org/licenses/>.
- */
+///-------------------------------------------------------------------------------------------------
+/// 
+/// \file Face.obj.hpp
+/// \copyright Copyright (C) 2022 Inria
+///
+/// This program is free software: you can redistribute it and/or modify
+/// it under the terms of the GNU Affero General Public License as published
+/// by the Free Software Foundation, either version 3 of the License, or
+/// (at your option) any later version.
+///
+/// This program is distributed in the hope that it will be useful,
+/// but WITHOUT ANY WARRANTY; without even the implied warranty of
+/// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+/// GNU Affero General Public License for more details.
+///
+/// You should have received a copy of the GNU Affero General Public License
+/// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+/// 
+///-------------------------------------------------------------------------------------------------
+
 #pragma once
 
-static const unsigned char FACE_DATA[122432] = {
+#include <array>
+
+static const std::array<unsigned char, 122432> FACE_DATA = {
 	0x8a, 0x0d, 0x00, 0x00, 0x50, 0x1a, 0x00, 0x00, 0x59, 0x03, 0xfe, 0xbe, 0xe8, 0x35, 0xd7, 0xbe, 0x46, 0x1a, 0x43, 0xbf, 0xe5, 0x39, 0xfe, 0xbe, 0x2d, 0xc3,
 	0xd7, 0xbe, 0x4a, 0x27, 0x43, 0xbf, 0xc5, 0xe0, 0xfe, 0xbe, 0xd0, 0x3a, 0xd8, 0xbe, 0x4d, 0xb7, 0x43, 0xbf, 0x3d, 0x5e, 0x92, 0xbe, 0xfa, 0x59, 0xf3, 0xbe,
 	0x84, 0xb0, 0x53, 0xbf, 0x1d, 0xf1, 0x57, 0xbe, 0xa2, 0x72, 0xdc, 0xbe, 0x5c, 0xc9, 0x4b, 0xbf, 0x8a, 0x81, 0x92, 0xbe, 0x42, 0xc9, 0xfb, 0xbe, 0x47, 0x05,

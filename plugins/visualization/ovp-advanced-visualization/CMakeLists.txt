@@ -1,4 +1,4 @@
-PROJECT(openvibe-plugins-designer-advanced-visualization)
+PROJECT(openvibe-plugins-designer-advanced-vis)
 SET(PROJECT_PRODUCT_NAME "Mensia Advanced Visualization Toolset")
 MESSAGE(STATUS "Now building ${PROJECT_NAME} ${PROJECT_VERSION} (${OV_PROJECT_BRANCH}~${OV_PROJECT_COMMITHASH})" )
 
@@ -8,11 +8,11 @@ INCLUDE("FindSourceRCProperties")
 
 ADD_LIBRARY(${PROJECT_NAME} SHARED ${SRC_FILES})
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} 
-                      ${RLM_LIB_FILES}
-                      openvibe
+					  ${RLM_LIB_FILES}
+					  openvibe
 					  openvibe-common
 					  openvibe-toolkit
-                      openvibe-module-system
+					  openvibe-module-system
 )
 SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES
 	VERSION ${PROJECT_VERSION}
