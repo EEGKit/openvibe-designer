@@ -35,6 +35,8 @@
 #include "CSettingEditorDialog.hpp"
 #include "CCommentEditorDialog.hpp"
 
+#include <cmath>
+#include <array>
 #include <vector>
 #include <fstream>
 #include <sstream>

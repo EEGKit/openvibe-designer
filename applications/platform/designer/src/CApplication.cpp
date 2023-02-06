@@ -32,6 +32,7 @@
 #include <sstream>
 #include <fstream>
 
+#include <cmath>
 #include <cstring>
 #include <cstdlib>
 #include <algorithm>

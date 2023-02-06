@@ -22,6 +22,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <cmath>
 
 namespace {
 void CloseMessagesAlertWindowCB(GtkButton* /*button*/, gpointer data) { gtk_widget_hide(GTK_WIDGET(data)); }
